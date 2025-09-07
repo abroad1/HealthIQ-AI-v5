@@ -1,0 +1,89 @@
+# Single Source of Truth - Unit Definitions
+# HealthIQ-AI v5 Backend
+
+units:
+  # Volume Units
+  mg_dL:
+    name: "mg/dL"
+    description: "Milligrams per deciliter"
+    category: "concentration"
+    si_equivalent: "mg/dL"
+    
+  g_dL:
+    name: "g/dL"
+    description: "Grams per deciliter"
+    category: "concentration"
+    si_equivalent: "g/dL"
+    
+  # Percentage Units
+  percent:
+    name: "%"
+    description: "Percentage"
+    category: "ratio"
+    si_equivalent: "%"
+    
+  # Enzyme Activity Units
+  U_L:
+    name: "U/L"
+    description: "Units per liter"
+    category: "enzyme_activity"
+    si_equivalent: "U/L"
+    
+  # Count Units
+  K_uL:
+    name: "K/μL"
+    description: "Thousands per microliter"
+    category: "count"
+    si_equivalent: "10³/μL"
+    
+  # Insulin Units
+  uU_mL:
+    name: "μU/mL"
+    description: "Microunits per milliliter"
+    category: "concentration"
+    si_equivalent: "μU/mL"
+    
+  # Inflammatory Units
+  mg_L:
+    name: "mg/L"
+    description: "Milligrams per liter"
+    category: "concentration"
+    si_equivalent: "mg/L"
+    
+  # Conversion Factors
+  conversions:
+    mg_dL_to_mmol_L:
+      from_unit: "mg/dL"
+      to_unit: "mmol/L"
+      factor: 0.0259
+      description: "Cholesterol conversion"
+      
+    mg_dL_to_mmol_L_glucose:
+      from_unit: "mg/dL"
+      to_unit: "mmol/L"
+      factor: 0.0555
+      description: "Glucose conversion"
+      
+    percent_to_mmol_mol:
+      from_unit: "%"
+      to_unit: "mmol/mol"
+      factor: 10.929
+      description: "HbA1c conversion"
+      
+  # Unit Categories
+  categories:
+    concentration:
+      description: "Concentration-based measurements"
+      units: ["mg/dL", "g/dL", "μU/mL", "mg/L"]
+      
+    ratio:
+      description: "Ratio and percentage measurements"
+      units: ["%"]
+      
+    enzyme_activity:
+      description: "Enzyme activity measurements"
+      units: ["U/L"]
+      
+    count:
+      description: "Cell and particle counts"
+      units: ["K/μL"]

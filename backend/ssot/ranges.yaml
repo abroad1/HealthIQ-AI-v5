@@ -1,0 +1,217 @@
+# Single Source of Truth - Reference Ranges
+# HealthIQ-AI v5 Backend
+
+reference_ranges:
+  # Cardiovascular Biomarkers
+  total_cholesterol:
+    normal:
+      min: 0
+      max: 200
+      unit: "mg/dL"
+      population: "general_adult"
+    borderline_high:
+      min: 200
+      max: 239
+      unit: "mg/dL"
+      population: "general_adult"
+    high:
+      min: 240
+      max: 999
+      unit: "mg/dL"
+      population: "general_adult"
+      
+  ldl_cholesterol:
+    optimal:
+      min: 0
+      max: 100
+      unit: "mg/dL"
+      population: "general_adult"
+    near_optimal:
+      min: 100
+      max: 129
+      unit: "mg/dL"
+      population: "general_adult"
+    borderline_high:
+      min: 130
+      max: 159
+      unit: "mg/dL"
+      population: "general_adult"
+    high:
+      min: 160
+      max: 189
+      unit: "mg/dL"
+      population: "general_adult"
+    very_high:
+      min: 190
+      max: 999
+      unit: "mg/dL"
+      population: "general_adult"
+      
+  hdl_cholesterol:
+    low:
+      min: 0
+      max: 40
+      unit: "mg/dL"
+      population: "male_adult"
+    normal:
+      min: 40
+      max: 999
+      unit: "mg/dL"
+      population: "male_adult"
+    low:
+      min: 0
+      max: 50
+      unit: "mg/dL"
+      population: "female_adult"
+    normal:
+      min: 50
+      max: 999
+      unit: "mg/dL"
+      population: "female_adult"
+      
+  triglycerides:
+    normal:
+      min: 0
+      max: 150
+      unit: "mg/dL"
+      population: "general_adult"
+    borderline_high:
+      min: 150
+      max: 199
+      unit: "mg/dL"
+      population: "general_adult"
+    high:
+      min: 200
+      max: 499
+      unit: "mg/dL"
+      population: "general_adult"
+    very_high:
+      min: 500
+      max: 999
+      unit: "mg/dL"
+      population: "general_adult"
+      
+  # Metabolic Biomarkers
+  glucose:
+    normal:
+      min: 70
+      max: 100
+      unit: "mg/dL"
+      population: "fasting_adult"
+    prediabetes:
+      min: 100
+      max: 125
+      unit: "mg/dL"
+      population: "fasting_adult"
+    diabetes:
+      min: 126
+      max: 999
+      unit: "mg/dL"
+      population: "fasting_adult"
+      
+  hba1c:
+    normal:
+      min: 0
+      max: 5.6
+      unit: "%"
+      population: "general_adult"
+    prediabetes:
+      min: 5.7
+      max: 6.4
+      unit: "%"
+      population: "general_adult"
+    diabetes:
+      min: 6.5
+      max: 20
+      unit: "%"
+      population: "general_adult"
+      
+  # Kidney Function
+  creatinine:
+    normal:
+      min: 0.6
+      max: 1.2
+      unit: "mg/dL"
+      population: "male_adult"
+    normal:
+      min: 0.5
+      max: 1.1
+      unit: "mg/dL"
+      population: "female_adult"
+      
+  # Liver Function
+  alt:
+    normal:
+      min: 7
+      max: 56
+      unit: "U/L"
+      population: "male_adult"
+    normal:
+      min: 7
+      max: 35
+      unit: "U/L"
+      population: "female_adult"
+      
+  ast:
+    normal:
+      min: 10
+      max: 40
+      unit: "U/L"
+      population: "general_adult"
+      
+  # Inflammatory Markers
+  crp:
+    low_risk:
+      min: 0
+      max: 1.0
+      unit: "mg/L"
+      population: "general_adult"
+    average_risk:
+      min: 1.0
+      max: 3.0
+      unit: "mg/L"
+      population: "general_adult"
+    high_risk:
+      min: 3.0
+      max: 999
+      unit: "mg/L"
+      population: "general_adult"
+      
+  # Complete Blood Count
+  hemoglobin:
+    normal:
+      min: 13.8
+      max: 17.2
+      unit: "g/dL"
+      population: "male_adult"
+    normal:
+      min: 12.1
+      max: 15.1
+      unit: "g/dL"
+      population: "female_adult"
+      
+  hematocrit:
+    normal:
+      min: 40.7
+      max: 50.3
+      unit: "%"
+      population: "male_adult"
+    normal:
+      min: 36.1
+      max: 44.3
+      unit: "%"
+      population: "female_adult"
+      
+  white_blood_cells:
+    normal:
+      min: 4.5
+      max: 11.0
+      unit: "K/μL"
+      population: "general_adult"
+      
+  platelets:
+    normal:
+      min: 150
+      max: 450
+      unit: "K/μL"
+      population: "general_adult"
