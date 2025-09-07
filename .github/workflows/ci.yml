@@ -37,7 +37,7 @@ jobs:
         run: python -m mypy --version || pip install mypy
 
       - name: Run ruff
-        run: python -m ruff backend
+        run: python -m ruff check backend
 
       - name: Run mypy
         run: python -m mypy backend
