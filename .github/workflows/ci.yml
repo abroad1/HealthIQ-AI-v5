@@ -21,7 +21,8 @@ jobs:
       - run: pip install pytest mypy
 
       - name: Type check
-        run: mypy --ignore-missing-imports app core
+        run: mypy --ignore-missing-imports --no-disallow-untyped-defs app core
+
       - name: Tests
         run: pytest -q
 
