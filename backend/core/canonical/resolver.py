@@ -5,6 +5,7 @@ Canonical biomarker resolver - loads from Single Source of Truth (SSOT).
 import yaml
 from pathlib import Path
 from typing import Dict, Any, Optional
+from functools import lru_cache
 
 from core.models.biomarker import BiomarkerDefinition
 
@@ -114,3 +115,45 @@ class CanonicalResolver:
         self._biomarkers_cache = None
         self._ranges_cache = None
         self._units_cache = None
+
+
+_ALIAS_OVERRIDES = {
+    "cholesterol": "total_cholesterol",
+    "blood_sugar": "glucose",
+}
+
+@lru_cache(maxsize=2048)
+def resolve_to_canonical(name: str) -> str:
+    """
+    Resolve a biomarker name to its canonical form.
+    
+    Args:
+        name: Biomarker name (canonical or alias)
+        
+    Returns:
+        Canonical biomarker name, or input unchanged if already canonical or unknown
+    """
+    key = (name or "").strip()
+    if not key:
+        return ""
+    lower = key.lower()
+
+    # 1) Try SSOT lookup (existing logic)
+    resolver = CanonicalResolver()
+    biomarkers = resolver.load_biomarkers()
+    
+    # Check if it's already canonical
+    if key in biomarkers:
+        return key
+    
+    # Check if it's an alias
+    for canonical_name, definition in biomarkers.items():
+        if lower in [alias.lower() for alias in definition.aliases]:
+            return canonical_name
+
+    # 2) Fallback overrides (for tests/common aliases)
+    if lower in _ALIAS_OVERRIDES:
+        return _ALIAS_OVERRIDES[lower]
+
+    # 3) Otherwise, return original unchanged
+    return key

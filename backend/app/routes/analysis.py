@@ -16,15 +16,16 @@ except ImportError:
     def generate_analysis_id() -> str:
         return str(uuid.uuid4())
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from core.models.biomarker import BiomarkerPanel
 from core.models.user import User
 from core.pipeline.orchestrator import AnalysisOrchestrator
-from core.pipeline.events import AnalysisEventStream
+from core.pipeline.events import stream_status
 from core.dto.builders import build_analysis_result_dto
+from core.canonical.normalize import normalize_panel
 
 router = APIRouter()
 
@@ -55,12 +56,14 @@ async def start_analysis(request: AnalysisStartRequest):
         # Generate unique analysis ID (ULID or uuid4)
         analysis_id = generate_analysis_id()
         
+        # normalize incoming raw biomarkers to canonical first
+        normalized = normalize_panel(request.biomarkers)
+        
         # Create orchestrator and start analysis
         orchestrator = AnalysisOrchestrator()
         
-        # Store analysis request (in production, this would be persisted)
-        # For now, we'll just return the analysis ID
-        # The actual processing happens via the SSE endpoint
+        # orchestrator expects canonical-only; we tell it we already normalized
+        dto = orchestrator.run(normalized, request.user, assume_canonical=True)
         
         return AnalysisStartResponse(analysis_id=analysis_id)
         
@@ -69,33 +72,23 @@ async def start_analysis(request: AnalysisStartRequest):
 
 
 @router.get("/analysis/events")
-async def stream_analysis_events(analysis_id: str):
-    """
-    Stream analysis progress events via Server-Sent Events.
-    
-    Args:
-        analysis_id: The analysis ID to stream events for
-        
-    Returns:
-        StreamingResponse: SSE stream of analysis events
-    """
-    try:
-        # Create event stream
-        event_stream = AnalysisEventStream(analysis_id)
-        
-        return StreamingResponse(
-            event_stream.generate_events(),
-            media_type="text/event-stream",
-            headers={
-                "Cache-Control": "no-cache",
-                "Connection": "keep-alive",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Headers": "Cache-Control",
-            }
-        )
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to stream events: {str(e)}")
+@router.get("/analysis/events/")  # allow trailing slash to avoid redirects
+async def analysis_events(request: Request, analysis_id: str):
+    async def event_gen():
+        async for chunk in stream_status(analysis_id):
+            # stop if client disconnected
+            if await request.is_disconnected():
+                break
+            yield chunk
+    return StreamingResponse(
+        event_gen(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
 
 
 @router.get("/analysis/result")

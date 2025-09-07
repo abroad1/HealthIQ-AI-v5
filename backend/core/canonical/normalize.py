@@ -122,3 +122,18 @@ class BiomarkerNormalizer:
         """
         biomarkers = self.resolver.load_biomarkers()
         return list(biomarkers.keys())
+
+
+def normalize_panel(raw_biomarkers: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Normalize raw biomarker data to canonical form.
+    
+    Args:
+        raw_biomarkers: Raw biomarker data with potential aliases
+        
+    Returns:
+        Dict with canonical biomarker names as keys
+    """
+    normalizer = BiomarkerNormalizer()
+    panel, _ = normalizer.normalize_biomarkers(raw_biomarkers)
+    return {name: value.value for name, value in panel.biomarkers.items()}
