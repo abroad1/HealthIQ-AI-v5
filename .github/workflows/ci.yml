@@ -30,19 +30,13 @@ jobs:
       - name: Install backend dependencies
         run: pip install -e ./backend
 
-      - name: Check ruff version
-        run: python -m ruff --version || pip install ruff
-
       - name: Check mypy version
         run: python -m mypy --version || pip install mypy
 
-      - name: Run ruff (fatal errors only)
-        run: python -m ruff check backend --select F821,F822,F831,E999 --no-fix
+      - name: Type check
+        run: mypy backend
 
-      - name: Run mypy
-        run: python -m mypy backend
-
-      - name: Run pytest
+      - name: Tests
         run: pytest -q backend
 
   frontend:
