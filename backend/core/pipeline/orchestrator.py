@@ -2,9 +2,10 @@
 Analysis orchestrator - enforces canonical-only keys and coordinates analysis.
 """
 
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Mapping
 
-from core.canonical.normalize import BiomarkerNormalizer
+from core.canonical.normalize import BiomarkerNormalizer, normalize_panel
+from core.canonical.resolver import resolve_to_canonical
 from core.pipeline.context_factory import AnalysisContextFactory
 from core.models.context import AnalysisContext
 from core.models.user import User
@@ -27,7 +28,9 @@ class AnalysisOrchestrator:
         self,
         analysis_id: str,
         raw_biomarkers: Dict[str, Any],
-        user_data: Dict[str, Any]
+        user_data: Dict[str, Any],
+        *,
+        assume_canonical: bool = False
     ) -> AnalysisContext:
         """
         Create analysis context with canonical enforcement.
@@ -36,6 +39,7 @@ class AnalysisOrchestrator:
             analysis_id: Unique analysis identifier
             raw_biomarkers: Raw biomarker data (may contain aliases)
             user_data: Raw user data
+            assume_canonical: If True, skip canonical validation
             
         Returns:
             AnalysisContext with canonical biomarkers only
@@ -43,6 +47,9 @@ class AnalysisOrchestrator:
         Raises:
             ValueError: If non-canonical biomarkers are found after normalization
         """
+        if not assume_canonical:
+            self._assert_canonical_only(raw_biomarkers, where="create_analysis_context")
+        
         # Normalize biomarkers (maps aliases to canonical names)
         biomarker_panel, unmapped_keys = self.normalizer.normalize_biomarkers(raw_biomarkers)
         
@@ -90,3 +97,33 @@ class AnalysisOrchestrator:
             List of canonical biomarker names
         """
         return self.normalizer.get_canonical_biomarkers()
+    
+    def _assert_canonical_only(self, raw_map: Mapping[str, Any], *, where: str = "pre-context") -> None:
+        """Raise if any biomarker keys are not already canonical.
+        We resolve each key; if resolution changes the name, it was an alias.
+        """
+        offenders = []
+        for k in raw_map.keys():
+            canonical = resolve_to_canonical(k)
+            if canonical != k:
+                offenders.append(k)
+        if offenders:
+            offenders.sort()
+            raise ValueError(f"Non-canonical biomarker keys found: {', '.join(offenders)}")
+
+    def run(self, biomarkers: Mapping[str, Any], user: Mapping[str, Any], *, assume_canonical: bool = False):
+        if not assume_canonical:
+            self._assert_canonical_only(biomarkers, where="run")
+        
+        canonical_map = dict(biomarkers)
+
+        # continue with existing scoring → clustering → insights using `canonical_map`
+        # For now, return a stub result
+        from core.models.results import AnalysisDTO
+        return AnalysisDTO(
+            analysis_id="stub_analysis_id",
+            clusters=[],
+            insights=[],
+            status="complete",
+            created_at="2024-01-01T00:00:00Z"
+        )
