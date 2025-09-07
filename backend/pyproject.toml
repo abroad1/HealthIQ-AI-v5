@@ -116,6 +116,7 @@ ignore = [
     "PLR2004", # Magic value used in comparison
     "D", # Missing docstrings in tests
 ]
+"backend/tools/*.py" = ["T201"]
 
 [tool.ruff.isort]
 known-first-party = ["app", "core", "tools", "tests"]
