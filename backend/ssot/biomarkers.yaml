@@ -1,0 +1,121 @@
+# Single Source of Truth - Biomarker Definitions
+# HealthIQ-AI v5 Backend
+
+biomarkers:
+  # Cardiovascular Biomarkers
+  total_cholesterol:
+    aliases: ["cholesterol", "total_chol", "chol_total"]
+    unit: "mg/dL"
+    description: "Total cholesterol level"
+    category: "cardiovascular"
+    data_type: "numeric"
+    
+  ldl_cholesterol:
+    aliases: ["ldl", "ldl_chol", "bad_cholesterol"]
+    unit: "mg/dL"
+    description: "Low-density lipoprotein cholesterol"
+    category: "cardiovascular"
+    data_type: "numeric"
+    
+  hdl_cholesterol:
+    aliases: ["hdl", "hdl_chol", "good_cholesterol"]
+    unit: "mg/dL"
+    description: "High-density lipoprotein cholesterol"
+    category: "cardiovascular"
+    data_type: "numeric"
+    
+  triglycerides:
+    aliases: ["trig", "triglyceride"]
+    unit: "mg/dL"
+    description: "Triglyceride level"
+    category: "cardiovascular"
+    data_type: "numeric"
+    
+  # Metabolic Biomarkers
+  glucose:
+    aliases: ["blood_sugar", "blood_glucose", "sugar"]
+    unit: "mg/dL"
+    description: "Blood glucose level"
+    category: "metabolic"
+    data_type: "numeric"
+    
+  hba1c:
+    aliases: ["hemoglobin_a1c", "a1c", "glycated_hemoglobin"]
+    unit: "%"
+    description: "Hemoglobin A1c percentage"
+    category: "metabolic"
+    data_type: "numeric"
+    
+  insulin:
+    aliases: ["insulin_level", "serum_insulin"]
+    unit: "μU/mL"
+    description: "Fasting insulin level"
+    category: "metabolic"
+    data_type: "numeric"
+    
+  # Kidney Function
+  creatinine:
+    aliases: ["creat", "serum_creatinine"]
+    unit: "mg/dL"
+    description: "Serum creatinine level"
+    category: "kidney"
+    data_type: "numeric"
+    
+  bun:
+    aliases: ["blood_urea_nitrogen", "urea_nitrogen"]
+    unit: "mg/dL"
+    description: "Blood urea nitrogen"
+    category: "kidney"
+    data_type: "numeric"
+    
+  # Liver Function
+  alt:
+    aliases: ["alanine_aminotransferase", "sgot"]
+    unit: "U/L"
+    description: "Alanine aminotransferase"
+    category: "liver"
+    data_type: "numeric"
+    
+  ast:
+    aliases: ["aspartate_aminotransferase", "sgpt"]
+    unit: "U/L"
+    description: "Aspartate aminotransferase"
+    category: "liver"
+    data_type: "numeric"
+    
+  # Inflammatory Markers
+  crp:
+    aliases: ["c_reactive_protein", "hs_crp", "high_sensitivity_crp"]
+    unit: "mg/L"
+    description: "C-reactive protein"
+    category: "inflammatory"
+    data_type: "numeric"
+    
+  # Complete Blood Count
+  hemoglobin:
+    aliases: ["hgb", "hb"]
+    unit: "g/dL"
+    description: "Hemoglobin level"
+    category: "cbc"
+    data_type: "numeric"
+    
+  hematocrit:
+    aliases: ["hct", "pcv"]
+    unit: "%"
+    description: "Hematocrit percentage"
+    category: "cbc"
+    data_type: "numeric"
+    
+  white_blood_cells:
+    aliases: ["wbc", "leukocytes"]
+    unit: "K/μL"
+    description: "White blood cell count"
+    category: "cbc"
+    data_type: "numeric"
+    
+  platelets:
+    aliases: ["plt", "platelet_count"]
+    unit: "K/μL"
+    description: "Platelet count"
+    category: "cbc"
+    data_type: "numeric"
