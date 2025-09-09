@@ -3,7 +3,7 @@ Analysis context factory - creates immutable AnalysisContext objects.
 """
 
 from datetime import datetime
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 from core.models.context import AnalysisContext
 from core.models.user import User
@@ -18,7 +18,7 @@ class AnalysisContextFactory:
         analysis_id: str,
         user: User,
         biomarker_panel: BiomarkerPanel,
-        analysis_parameters: Dict[str, Any] = None
+        analysis_parameters: Optional[Dict[str, Any]] = None
     ) -> AnalysisContext:
         """
         Create an immutable AnalysisContext.
