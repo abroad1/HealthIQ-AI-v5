@@ -2,7 +2,7 @@
 Analysis orchestrator - enforces canonical-only keys and coordinates analysis.
 """
 
-from typing import Dict, Any, List, Mapping
+from typing import Dict, Any, List, Mapping, Optional
 
 from core.canonical.normalize import BiomarkerNormalizer, normalize_panel
 from core.canonical.resolver import resolve_to_canonical
@@ -14,7 +14,8 @@ from core.models.user import User
 class AnalysisOrchestrator:
     """Orchestrates biomarker analysis with canonical enforcement."""
     
-    def __init__(self, normalizer: BiomarkerNormalizer = None):
+    def __init__(self, normalizer: Optional[BiomarkerNormalizer] = None):
+
         """
         Initialize the orchestrator.
         
