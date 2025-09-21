@@ -1,73 +1,115 @@
-# Welcome to your Lovable project
+# HealthIQ AI v5 - Frontend
 
-## Project info
+This is the Next.js 14+ App Router frontend for HealthIQ AI v5, a precision biomarker intelligence platform.
 
-**URL**: https://lovable.dev/projects/be96bbf1-54f9-4d3b-9d93-e50d58effd49
+## Architecture Overview
 
-## How can I edit this code?
+- **Framework**: Next.js 14+ with App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS with semantic design tokens
+- **Component Library**: shadcn/ui (built on Radix UI)
+- **Animation**: Framer Motion
+- **Icons**: lucide-react
+- **State Management**: 
+  - **Zustand** for client state
+  - **TanStack Query** for server state
+- **Testing**: Jest + React Testing Library + Storybook + Playwright
 
-There are several ways of editing your application.
+## Project Structure
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/be96bbf1-54f9-4d3b-9d93-e50d58effd49) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+frontend/
+├── app/                  # Next.js App Router (file-system routing)
+├── components/           # Shared + feature-specific components
+├── styles/               # Tailwind config and design tokens
+├── state/                # Zustand stores
+├── queries/              # TanStack Query hooks
+├── lib/                  # Frontend utilities
+├── types/                # TypeScript type definitions
+├── public/               # Static assets
+├── tests/                # Jest + RTL tests
+└── .storybook/           # Storybook configuration
 ```
 
-**Edit a file directly in GitHub**
+## Key Features
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### 🧠 Intelligence Lifecycle Integration
+- **Stage 1**: User Interface for data upload
+- **Stage 8**: Lifestyle recommendations display
+- **Stage 9**: Visualization & insight rendering
+- **Stage 10**: Monitoring & feedback
 
-**Use GitHub Codespaces**
+### 🎨 Design System
+- Medical-grade aesthetic with "Natural Sophistication" palette
+- Holographic UI elements (gauges, grids, dials)
+- Dark/light mode support via `data-theme` attribute
+- Scroll-based animations and transitions
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### 📊 Data Visualization
+- Interactive cluster graphs (D3 + Recharts)
+- Biomarker visualization with holographic gauges
+- Real-time progress tracking
+- Actionable recommendation flows
 
-## What technologies are used for this project?
+### 🔄 State Management
+- **Client State**: Zustand stores for UI interactions
+- **Server State**: TanStack Query for API data
+- **Real-time Updates**: WebSocket integration (future)
 
-This project is built with:
+## Development Guidelines
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Component Development
+1. Use TypeScript for all components
+2. Follow shadcn/ui patterns
+3. Implement proper error boundaries
+4. Use Tailwind CSS design tokens
+5. Write comprehensive tests
+6. Document with Storybook
 
-## How can I deploy this project?
+### State Management
+- **UI toggles** → `uiStore.ts`
+- **User selections** → `uiStore.ts`
+- **API data** → TanStack Query
+- **Analysis workflow** → `analysisStore.ts`
+- **Cluster interactions** → `clusterStore.ts`
 
-Simply open [Lovable](https://lovable.dev/projects/be96bbf1-54f9-4d3b-9d93-e50d58effd49) and click on Share -> Publish.
+### Testing Strategy
+- **Unit Tests**: Jest + React Testing Library
+- **Visual Tests**: Storybook Snapshots
+- **E2E Tests**: Playwright (planned)
+- **Coverage Target**: 90%+
 
-## Can I connect a custom domain to my Lovable project?
+## Getting Started
 
-Yes, you can!
+```bash
+# Install dependencies
+npm install
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+# Start development server
+npm run dev
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+# Run tests
+npm run test
+
+# Run Storybook
+npm run storybook
+
+# Build for production
+npm run build
+```
+
+## Team Responsibilities
+
+- **Lovable.dev**: Primary UX builder and component implementation
+- **Cursor Agents**: Component scaffolding, state logic, and integrations
+
+## Integration Points
+
+- **Backend API**: FastAPI endpoints for data processing
+- **Authentication**: Supabase Auth integration
+- **Real-time Data**: WebSocket connections for live updates
+- **File Upload**: Biomarker data processing pipeline
+
+---
+
+**Note**: This frontend architecture replaces the previous Vite + React Router setup and represents our canonical structure for Sprint 1 and beyond.

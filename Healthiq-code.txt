@@ -1,0 +1,124 @@
+cd C:\Users\abroa\HealthIQ-AI-v5
+venv\Scripts\activate
+
+***********************************
+
+STARTING THE BACKEND
+cd C:\Users\abroa\HealthIQ-AI-v5\backend
+.\.venv\Scripts\Activate.ps1
+uvicorn app.main:app --reload --port 8000
+
+**********************************
+
+STARTING THE FRONTEND
+cd C:\Users\abroa\HealthIQ-AI-v5\frontend
+npm run dev
+
+*********************************
+
+PUSH CHANGES TO GITHUB REPO
+cd C:\Users\abroa\HealthIQ-AI-v5
+git add .github\workflows\ci.yml
+git commit -m "ci: add GitHub Actions for backend tests and frontend build"
+git push
+
+
+*************************************
+cd C:\Users\abroa\HealthIQ-AI-v5\backend
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -U pip
+# If Cursor created pyproject.toml:
+pip install -e .
+# Or, if it created requirements.txt:
+# pip install -r requirements.txt
+
+uvicorn app.main:app --reload
+
+
+********************************
+Pull the latest from Lovable (one command pair)
+
+Run these whenever Lovable pushes new UI:
+
+git fetch lovable
+git subtree pull --prefix=frontend lovable main -m "chore: pull latest from Lovable"
+
+**********************************************************
+
+When Cursor finishes, commit & push to Github:
+
+git add backend docs
+git commit -m "feat(backend): minimal FastAPI + canonical boundary + SSE + guard test"
+git push
+
+***********************************************************
+
+HealthIQ-AI v5 — Local Test Cheat Sheet
+
+## 0) Activate backend env (once per terminal)
+
+```powershell
+cd C:\Users\abroa\HealthIQ-AI-v5\backend
+python -m venv .venv         # only the first time
+.\.venv\Scripts\Activate.ps1
+pip install -U pip
+pip install -e .
+```
+
+## 1) Run all tests
+
+```powershell
+pytest -q
+```
+
+## 2) Useful pytest flags
+
+```powershell
+pytest -vv                    # verbose test names
+pytest -q -k canonical        # run tests matching keyword, e.g. "canonical"
+pytest -q tests\enforcement\test_canonical_only.py
+pytest -q tests\enforcement\test_canonical_only.py::TestCanonicalOnlyEnforcement::test_orchestrator_enforces_canonical_only
+
+pytest -q -x                  # stop on first failure (fail-fast)
+pytest -q -s                  # show print/log output (don’t capture)
+pytest -q --maxfail=1         # stop after N failures
+pytest -q --lf                # run last-failed tests only
+pytest -q --ff                # run last-failed first, then the rest
+pytest -q --durations=10      # show slowest 10 tests
+pytest -q -ra                 # summary of skipped/xfailed at end
+```
+
+## 3) Type checks & lint (when you want them)
+
+```powershell
+# Type checking
+mypy backend
+
+# Lint: fatal issues only (syntax/name errors)
+python -m ruff check backend --select E9,F63,F7,F82
+
+# Lint: full style pass locally (optional)
+# (may report lots; you can auto-fix many)
+python -m ruff check backend --fix
+```
+
+## 4) Quick API/SSE smoke checks (handy during dev)
+
+```powershell
+# Backend must be running: uvicorn app.main:app --reload --port 8000
+
+# Health
+curl.exe http://127.0.0.1:8000/api/health
+
+# SSE stream (Ctrl+C to stop)
+curl.exe -N "http://127.0.0.1:8000/api/analysis/events?analysis_id=demo"
+```
+
+## 5) Common troubleshooting
+
+* **Import errors?** Ensure venv is active and `pip install -e .` ran without errors.
+* **CORS/FE calls fail?** Confirm FE origin is in `allow_origins` and Vite port is correct.
+* **Pytest not found?** `pip install pytest` (inside the venv).
+* **Weird path issues?** Run commands from `C:\Users\abroa\HealthIQ-AI-v5\backend`.
+
