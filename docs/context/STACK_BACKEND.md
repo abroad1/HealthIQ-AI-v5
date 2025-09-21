@@ -1,0 +1,131 @@
+# 🧠 STACK_BACKEND.md
+
+> **Note:** This document describes the **backend execution pipeline** (Stages 2–7) within the full 10-stage Intelligence Lifecycle. For the complete frontend + backend lifecycle, refer to `INTELLIGENCE_LIFECYCLE.md`.
+
+This document defines the target backend architecture for HealthIQ-AI v5, covering the **backend processing stages** (2–7) of the full 10-stage Intelligence Lifecycle.
+
+---
+
+## 🔁 Backend Pipeline Overview (Stages 2–7)
+
+> **📌 Partial Lifecycle View:** The backend handles stages 2–7 of the 10-stage Intelligence Lifecycle. Stages 1, 8–10 are handled by the frontend.
+
+| Stage | Module | Description | Global Stage |
+|-------|--------|-------------|--------------|
+| 1 | Parse | Raw text extraction (PDF/HTML parsing) | **2. Parsing** |
+| 2 | Canonical Normalisation | Alias resolution + standardisation | **3. Canonical Normalisation** |
+| 3 | Data Completeness Gate | Assess sufficiency for analysis, flag gaps | **3.5. Data Completeness Gate** |
+| 4 | Orchestration & Engine Dispatch | Determine which engines to run | **4. Orchestration & Engine Dispatch** |
+| 5 | Engine Execution | Score biomarkers, clusters, systems | **5. Engine Execution** |
+| 6 | Insight Synthesis | AI-generated insight narratives (Gemini) | **6. Insight Synthesis** |
+| 7 | Result Packaging | Format output for frontend delivery | **7. Visualisation** |
+
+---
+
+## 🚀 Core Framework
+
+| Component | Tool | Purpose |
+|----------|------|---------|
+| API Layer | FastAPI | Async REST endpoints |
+| Models | Pydantic v2 | Immutable DTOs and validation |
+| Orchestrator | Custom Python | Step-wise pipeline driver |
+| Env Management | `env.py` | Secure secrets via `.env` |
+
+---
+
+## 📁 Target Directory Structure
+
+```
+backend/
+├── app/                     # FastAPI application layer
+│   ├── __init__.py
+│   ├── main.py              # FastAPI app entry point with CORS config
+│   └── routes/              # API route handlers
+│       ├── __init__.py
+│       ├── health.py        # Health check endpoints
+│       ├── analysis.py      # Biomarker analysis endpoints
+│       ├── auth.py          # Authentication & authorization
+│       ├── users.py         # User management endpoints
+│       └── reports.py       # Report generation endpoints
+├── core/                    # Models and core pipeline logic
+│   ├── pipeline/            # Steps 1–6 orchestration
+│   ├── scoring/             # Static scoring rules
+│   ├── clustering/          # Rule-based and statistical engines
+│   ├── insights/            # Gemini insight handlers
+│   ├── canonical/           # Biomarker alias resolution
+│   └── models/              # Biomarkers, DTOs, users, metadata
+├── config/                  # Environment variables, settings
+├── ssot/                    # Canonical biomarker YAMLs
+└── tools/                   # Exports, tests, developer helpers
+```
+
+---
+
+## 📐 Component-Level Descriptions
+
+### `core/models/`
+- Biomarker, Cluster, Result, Context, and User models
+- Strict type enforcement via Pydantic v2
+- Immutable payload design
+
+### `core/pipeline/orchestrator.py`
+- Entry point for all backend insight runs
+- Sequentially triggers backend pipeline stages (2–7 of the full lifecycle)
+
+### `core/scoring/`
+- Step 4: Per-biomarker scoring rules
+- Thresholds, flag logic, lifestyle overlays
+
+### `core/clustering/`
+- Step 5: Multi-engine analysis
+- MetabolicAge, HeartResilience, InflammationRisk engines
+- Weighted scoring and cross-biomarker reasoning
+
+### `core/insights/`
+- Step 6: Gemini prompt generation and response parsing
+- Orchestration of structured → narrative insights
+
+### `core/canonical/`
+- Canonical ID matching
+- Alias/units mapping with fallback safety
+- Resilient to lab noise
+
+---
+
+## ✅ Current Status vs Planned
+
+| Module | Status | Notes |
+|--------|--------|-------|
+| Upload API | ✅ Complete | `/api/analysis/start` |
+| Canonical Normaliser | ✅ Complete | Uses SSOT |
+| Scoring Engine | ⚠️ Partial | Placeholder logic only |
+| Cluster Engines | ❌ Not implemented | Stub exists |
+| Gemini Synthesis | ❌ Not implemented | Base class only |
+| Parsing Adapter | ❌ Not implemented | Needs Document AI or Gemini API |
+
+---
+
+## 📌 TODO
+
+- [ ] Complete all cluster engines and scoring rules
+- [ ] Connect Gemini to Step 6 payload
+- [ ] Implement parsing adapter module (PDF, HTML)
+- [ ] Finalise all DTO version tracking for reproducibility
+
+---
+
+## 🔄 Role in the Full Intelligence Lifecycle
+
+This backend stack implements **Stages 2 through 7** of the full 10-stage Intelligence Lifecycle as defined in `INTELLIGENCE_LIFECYCLE.md`.
+
+| Global Stage | Backend Responsibility |
+|--------------|----------------------|
+| **2. Parsing** | Raw text extraction (PDF/HTML parsing) via Gemini |
+| **3. Canonical Normalization** | Resolves biomarker aliases to canonical identifiers |
+| **3.5. Data Completeness Gate** | Assesses sufficiency for analysis, flags gaps |
+| **4. Orchestration & Engine Dispatch** | Determines which engines to run based on user tier |
+| **5. Engine Execution** | Executes root cause analysis engines |
+| **6. Insight Synthesis** | Runs Gemini-powered synthesis engines |
+| **7. Visualisation** | Formats output for frontend delivery via DTOs and SSE |
+
+**Frontend Handles:** Stage 1 (User Input), Stages 8–10 (Recommendations, Delivery, Integrations)
