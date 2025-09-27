@@ -154,15 +154,22 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 minversion = "7.0"
 addopts = "-ra -q --strict-markers --strict-config"
-testpaths = ["tests"]
+testpaths = ["backend/tests"]
 python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-markers = [
-    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
-    "integration: marks tests as integration tests",
-    "unit: marks tests as unit tests",
-]
+
+[tool.pytest-asyncio]
+asyncio_mode = "auto"
+
+[tool.pytest.ini_options.markers]
+unit = "marks tests as unit tests"
+integration = "marks tests as integration tests"
+e2e = "marks tests as end-to-end tests"
+slow = "marks slow tests"
+asyncio = "marks tests as asyncio tests"
+gemini = "marks tests that require Gemini API"
+database = "marks tests requiring database"
 
 [tool.coverage.run]
 source = ["app", "core", "tools"]

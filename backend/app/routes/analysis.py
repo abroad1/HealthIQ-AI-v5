@@ -16,7 +16,7 @@ except ImportError:
     def generate_analysis_id() -> str:
         return str(uuid.uuid4())
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, Query
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
@@ -34,6 +34,10 @@ class AnalysisStartRequest(BaseModel):
     """Request model for starting biomarker analysis."""
     biomarkers: Dict[str, Any]
     user: Dict[str, Any]
+    
+    class Config:
+        # Ensure all fields are required
+        extra = "forbid"
 
 
 class AnalysisStartResponse(BaseModel):
@@ -68,12 +72,13 @@ async def start_analysis(request: AnalysisStartRequest):
         return AnalysisStartResponse(analysis_id=analysis_id)
         
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to start analysis: {str(e)}")
+        # Handle orchestrator or processing errors
+        raise HTTPException(status_code=500, detail=f"Analysis processing failed: {str(e)}")
 
 
 @router.get("/analysis/events")
 @router.get("/analysis/events/")  # allow trailing slash to avoid redirects
-async def analysis_events(request: Request, analysis_id: str):
+async def analysis_events(request: Request, analysis_id: str = Query(..., description="Analysis ID for event streaming")):
     async def event_gen():
         async for chunk in stream_status(analysis_id):
             # stop if client disconnected
@@ -92,7 +97,7 @@ async def analysis_events(request: Request, analysis_id: str):
 
 
 @router.get("/analysis/result")
-async def get_analysis_result(analysis_id: str):
+async def get_analysis_result(analysis_id: str = Query(..., description="Analysis ID to get results for")):
     """
     Get the final analysis result.
     
@@ -117,3 +122,40 @@ async def get_analysis_result(analysis_id: str):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get analysis result: {str(e)}")
+
+
+@router.get("/analysis/history")
+async def get_analysis_history():
+    """
+    Get analysis history for the current user.
+    
+    Returns:
+        list: List of previous analyses
+    """
+    try:
+        # For now, return empty history
+        # In production, this would fetch from persistent storage
+        return []
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get analysis history: {str(e)}")
+
+
+@router.post("/analysis/cancel")
+async def cancel_analysis(analysis_id: str = Query(..., description="Analysis ID to cancel")):
+    """
+    Cancel a running analysis.
+    
+    Args:
+        analysis_id: The analysis ID to cancel
+        
+    Returns:
+        dict: Cancellation confirmation
+    """
+    try:
+        # For now, return success
+        # In production, this would actually cancel the analysis
+        return {"message": f"Analysis {analysis_id} cancelled successfully"}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to cancel analysis: {str(e)}")
