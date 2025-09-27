@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import DevApiProbe from './components/DevApiProbe'
 
 export const metadata: Metadata = {
   title: 'HealthIQ AI v5 - Precision Biomarker Intelligence',
@@ -24,6 +25,7 @@ export default function HomePage() {
           </p>
         </div>
       </div>
+      {process.env.NODE_ENV === 'development' && <DevApiProbe />}
     </main>
   )
 }

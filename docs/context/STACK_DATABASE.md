@@ -67,10 +67,10 @@ We do **not** use SQLModel or Supabase's built-in ORM layers (e.g. PostgREST) at
 | `users` | Auth-managed user profile and tier |
 | `uploads` | Raw file or text data from users |
 | `lifestyle_answers` | Structured questionnaire results |
-| `parsed_panels` | Output of Gemini parsing step |
+| `parsed_panels` | Output of LLM parsing step |
 | `canonical_panels` | Normalised biomarkers (Step 3) |
 | `engine_results` | Output of all engines run per user |
-| `insight_payloads` | Gemini narrative outputs |
+| `insight_payloads` | LLM narrative outputs |
 | `recommendations` | Behavioural, supplement, diet actions |
 | `audit_log` | Transformation history (planned) |
 

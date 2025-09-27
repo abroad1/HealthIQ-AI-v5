@@ -1,0 +1,70 @@
+# Pre-commit hooks for HealthIQ AI v5
+# Install with: pip install pre-commit && pre-commit install
+
+repos:
+  # General hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-json
+
+  # Python hooks
+  - repo: https://github.com/psf/black
+    rev: 23.7.0
+    hooks:
+      - id: black
+        files: \.py$
+        language_version: python3.11
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.0.284
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.5.1
+    hooks:
+      - id: mypy
+        additional_dependencies: [types-all]
+        files: backend/.*\.py$
+
+  # Node.js hooks
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v8.47.0
+    hooks:
+      - id: eslint
+        files: frontend/.*\.(ts|tsx|js|jsx)$
+        additional_dependencies:
+          - eslint@8.47.0
+          - "@typescript-eslint/eslint-plugin@6.4.0"
+          - "@typescript-eslint/parser@6.4.0"
+
+  # Test-first enforcement hooks
+  - repo: local
+    hooks:
+      - id: test-first-enforcement
+        name: Test-First Development Enforcement
+        entry: scripts/hooks/test-first-check.sh
+        language: script
+        files: \.(py|ts|tsx)$
+        exclude: ^(tests/|.*\.test\.(py|ts|tsx)|.*\.spec\.(py|ts|tsx))$
+
+      - id: test-ledger-update
+        name: TEST_LEDGER.md Update Check
+        entry: scripts/hooks/test-ledger-check.sh
+        language: script
+        files: \.(py|ts|tsx)$
+        exclude: ^(tests/|.*\.test\.(py|ts|tsx)|.*\.spec\.(py|ts|tsx))$
+
+      - id: run-affected-tests
+        name: Run Tests for Changed Files
+        entry: scripts/hooks/run-affected-tests.sh
+        language: script
+        files: \.(py|ts|tsx)$
+        pass_filenames: true

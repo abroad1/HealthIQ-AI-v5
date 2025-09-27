@@ -1,0 +1,87 @@
+// React Component Test Template
+// Copy this template when creating new component tests
+// Replace ComponentName with actual component name
+
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { ComponentName } from './ComponentName';
+
+// Mock dependencies
+jest.mock('../hooks/useCustomHook', () => ({
+  useCustomHook: () => ({
+    data: mockData,
+    isLoading: false,
+    error: null,
+  }),
+}));
+
+describe('ComponentName', () => {
+  const mockData = { /* test data */ };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should render without crashing', () => {
+    render(<ComponentName />);
+    expect(screen.getByText('Expected Text')).toBeInTheDocument();
+  });
+
+  it('should handle user interactions', async () => {
+    // Arrange
+    const mockHandler = jest.fn();
+    render(<ComponentName onAction={mockHandler} />);
+
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: 'Action Button' }));
+
+    // Assert
+    await waitFor(() => {
+      expect(mockHandler).toHaveBeenCalledWith(expectedValue);
+    });
+  });
+
+  it('should display loading state', () => {
+    // Arrange
+    jest.mocked(useCustomHook).mockReturnValue({
+      data: null,
+      isLoading: true,
+      error: null,
+    });
+
+    render(<ComponentName />);
+
+    // Assert
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
+  });
+
+  it('should display error state', () => {
+    // Arrange
+    jest.mocked(useCustomHook).mockReturnValue({
+      data: null,
+      isLoading: false,
+      error: new Error('Test error'),
+    });
+
+    render(<ComponentName />);
+
+    // Assert
+    expect(screen.getByText('Error: Test error')).toBeInTheDocument();
+  });
+
+  it('should handle form submission', async () => {
+    // Arrange
+    render(<ComponentName />);
+    const form = screen.getByRole('form');
+    const input = screen.getByLabelText('Input Label');
+
+    // Act
+    fireEvent.change(input, { target: { value: 'test value' } });
+    fireEvent.submit(form);
+
+    // Assert
+    await waitFor(() => {
+      expect(screen.getByText('Success message')).toBeInTheDocument();
+    });
+  });
+});

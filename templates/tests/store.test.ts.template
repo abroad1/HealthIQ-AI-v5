@@ -1,0 +1,78 @@
+// State Store Test Template
+// Copy this template when creating new store tests
+// Replace StoreName with actual store name
+
+import { renderHook, act } from '@testing-library/react';
+import { useStoreName } from './storeName';
+
+describe('useStoreName', () => {
+  beforeEach(() => {
+    // Reset store state before each test
+    useStoreName.getState().reset();
+  });
+
+  describe('actionName', () => {
+    it('should update state correctly', () => {
+      // Arrange
+      const { result } = renderHook(() => useStoreName());
+      const newValue = { /* test value */ };
+
+      // Act
+      act(() => {
+        result.current.actionName(newValue);
+      });
+
+      // Assert
+      expect(result.current.stateProperty).toEqual(newValue);
+    });
+
+    it('should handle async actions', async () => {
+      // Arrange
+      const { result } = renderHook(() => useStoreName());
+      const input = { /* test input */ };
+
+      // Act
+      await act(async () => {
+        await result.current.asyncAction(input);
+      });
+
+      // Assert
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.data).toBeDefined();
+    });
+
+    it('should handle errors gracefully', async () => {
+      // Arrange
+      const { result } = renderHook(() => useStoreName());
+      const input = { /* test input */ };
+
+      // Mock service to throw error
+      jest.spyOn(result.current, 'asyncAction').mockRejectedValueOnce(
+        new Error('Action failed')
+      );
+
+      // Act & Assert
+      await act(async () => {
+        await expect(result.current.asyncAction(input)).rejects.toThrow('Action failed');
+      });
+
+      expect(result.current.error).toBeDefined();
+      expect(result.current.isLoading).toBe(false);
+    });
+  });
+
+  describe('computed values', () => {
+    it('should calculate derived state correctly', () => {
+      // Arrange
+      const { result } = renderHook(() => useStoreName());
+      
+      // Act
+      act(() => {
+        result.current.setData({ /* test data */ });
+      });
+
+      // Assert
+      expect(result.current.computedValue).toBe(expectedValue);
+    });
+  });
+});

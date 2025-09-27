@@ -1,0 +1,60 @@
+// Service Test Template
+// Copy this template when creating new service tests
+// Replace ServiceName with actual service name
+
+import { ServiceName } from './serviceName';
+import { mockFetch } from '../__mocks__/fetch';
+
+describe('ServiceName', () => {
+  let service: ServiceName;
+  let mockFetch: jest.MockedFunction<typeof fetch>;
+
+  beforeEach(() => {
+    service = new ServiceName();
+    mockFetch = mockFetch as jest.MockedFunction<typeof fetch>;
+    jest.clearAllMocks();
+  });
+
+  describe('methodName', () => {
+    it('should handle success case', async () => {
+      // Arrange
+      const mockResponse = { /* expected response */ };
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockResponse,
+      } as Response);
+
+      const input = { /* test input */ };
+
+      // Act
+      const result = await service.methodName(input);
+
+      // Assert
+      expect(result).toEqual(mockResponse);
+      expect(mockFetch).toHaveBeenCalledWith(
+        '/api/endpoint',
+        expect.objectContaining({
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        })
+      );
+    });
+
+    it('should handle API errors', async () => {
+      // Arrange
+      mockFetch.mockRejectedValueOnce(new Error('Network error'));
+      const input = { /* test input */ };
+
+      // Act & Assert
+      await expect(service.methodName(input)).rejects.toThrow('Network error');
+    });
+
+    it('should handle validation errors', async () => {
+      // Arrange
+      const invalidInput = { /* invalid input */ };
+
+      // Act & Assert
+      await expect(service.methodName(invalidInput)).rejects.toThrow('Validation error');
+    });
+  });
+});

@@ -1,0 +1,7 @@
+# TODO: Implement Kubernetes namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: healthiq-ai-v5
+  labels:
+    name: healthiq-ai-v5

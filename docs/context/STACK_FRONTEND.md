@@ -187,13 +187,45 @@ const { data: analysisResult, isLoading } = useQuery({
 - **ESLint + TypeScript** strict mode
 - Component snapshots for UX regression detection
 
-### Frontend Testing Strategy
+### Frontend Testing Strategy (Value-First)
 
-- Unit Testing: **Jest + React Testing Library**
-- Visual Testing: **Storybook Snapshots**
-- E2E Testing: **Playwright** (planned for full flows)
+#### **Test Pyramid Distribution**
+- **Unit Tests (70%)**: Business logic, state management, critical components
+- **Integration Tests (25%)**: API integration, service boundaries
+- **E2E Tests (5%)**: Critical user journeys only
 
-Cursor agents should scaffold tests using the correct tool based on component scope.
+#### **Testing Framework**
+- **Jest + React Testing Library**: Unit and integration testing
+- **Playwright**: E2E testing for critical user workflows
+- **Storybook**: Visual regression testing (optional)
+
+#### **Value-First Testing Principles**
+- **Business Value**: Test user workflows and business-critical functionality
+- **Component Focus**: Test high-value components that impact user experience
+- **State Management**: Test Zustand stores for data consistency
+- **API Integration**: Test service layer for reliable data flow
+
+#### **Test Structure**
+```
+frontend/tests/
+├── state/                    # Store tests (business logic)
+│   ├── analysisStore.test.ts
+│   ├── clusterStore.test.ts
+│   └── uiStore.test.ts
+├── services/                 # API integration tests
+│   └── analysis.test.ts
+├── components/               # High-value component tests only
+└── e2e/                     # Critical user journeys
+    └── analysis-flow.spec.ts
+```
+
+#### **Test Quality Checklist**
+- Does this test **prevent user pain**?
+- Does this test **catch real bugs**?
+- Is this test **maintainable**?
+- Would I **delete this test** if it broke?
+
+**Cursor agents should create tests only for business-critical functionality, not for testing's sake.**
 
 ---
 

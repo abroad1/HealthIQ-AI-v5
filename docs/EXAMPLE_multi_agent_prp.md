@@ -209,7 +209,7 @@ CREATE tests/:
   - PATTERN: Mirror examples test structure
   - Mock external API calls
   - Test happy path, edge cases, errors
-  - Ensure 80%+ coverage
+  - Ensure Critical Path Coverage ≥60% for business-critical modules only
 
 Task 8: Create Documentation
 CREATE README.md:
