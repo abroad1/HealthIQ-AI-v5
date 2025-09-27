@@ -17,7 +17,7 @@ This document defines the target backend architecture for HealthIQ-AI v5, coveri
 | 3 | Data Completeness Gate | Assess sufficiency for analysis, flag gaps | **3.5. Data Completeness Gate** |
 | 4 | Orchestration & Engine Dispatch | Determine which engines to run | **4. Orchestration & Engine Dispatch** |
 | 5 | Engine Execution | Score biomarkers, clusters, systems | **5. Engine Execution** |
-| 6 | Insight Synthesis | AI-generated insight narratives (Gemini) | **6. Insight Synthesis** |
+| 6 | Insight Synthesis | AI-generated insight narratives (LLM) | **6. Insight Synthesis** |
 | 7 | Result Packaging | Format output for frontend delivery | **7. Visualisation** |
 
 ---
@@ -51,7 +51,7 @@ backend/
 │   ├── pipeline/            # Steps 1–6 orchestration
 │   ├── scoring/             # Static scoring rules
 │   ├── clustering/          # Rule-based and statistical engines
-│   ├── insights/            # Gemini insight handlers
+│   ├── insights/            # LLM insight handlers
 │   ├── canonical/           # Biomarker alias resolution
 │   └── models/              # Biomarkers, DTOs, users, metadata
 ├── config/                  # Environment variables, settings
@@ -82,7 +82,7 @@ backend/
 - Weighted scoring and cross-biomarker reasoning
 
 ### `core/insights/`
-- Step 6: Gemini prompt generation and response parsing
+- Step 6: LLM prompt generation and response parsing
 - Orchestration of structured → narrative insights
 
 ### `core/canonical/`
@@ -100,15 +100,15 @@ backend/
 | Canonical Normaliser | ✅ Complete | Uses SSOT |
 | Scoring Engine | ⚠️ Partial | Placeholder logic only |
 | Cluster Engines | ❌ Not implemented | Stub exists |
-| Gemini Synthesis | ❌ Not implemented | Base class only |
-| Parsing Adapter | ❌ Not implemented | Needs Document AI or Gemini API |
+| LLM Synthesis | ❌ Not implemented | Base class only |
+| Parsing Adapter | ❌ Not implemented | Needs Document AI or LLM API |
 
 ---
 
 ## 📌 TODO
 
 - [ ] Complete all cluster engines and scoring rules
-- [ ] Connect Gemini to Step 6 payload
+- [ ] Connect LLM to Step 6 payload
 - [ ] Implement parsing adapter module (PDF, HTML)
 - [ ] Finalise all DTO version tracking for reproducibility
 
@@ -120,12 +120,82 @@ This backend stack implements **Stages 2 through 7** of the full 10-stage Intell
 
 | Global Stage | Backend Responsibility |
 |--------------|----------------------|
-| **2. Parsing** | Raw text extraction (PDF/HTML parsing) via Gemini |
+| **2. Parsing** | Raw text extraction (PDF/HTML parsing) via LLM |
 | **3. Canonical Normalization** | Resolves biomarker aliases to canonical identifiers |
 | **3.5. Data Completeness Gate** | Assesses sufficiency for analysis, flags gaps |
 | **4. Orchestration & Engine Dispatch** | Determines which engines to run based on user tier |
 | **5. Engine Execution** | Executes root cause analysis engines |
-| **6. Insight Synthesis** | Runs Gemini-powered synthesis engines |
+| **6. Insight Synthesis** | Runs LLM-powered synthesis engines |
 | **7. Visualisation** | Formats output for frontend delivery via DTOs and SSE |
 
 **Frontend Handles:** Stage 1 (User Input), Stages 8–10 (Recommendations, Delivery, Integrations)
+
+---
+
+## 🧪 **Testing Strategy (Value-First)**
+
+### **Test Pyramid Distribution**
+- **Unit Tests (70%)**: Business logic, data processing, validation
+- **Integration Tests (25%)**: API endpoints, service boundaries, database interactions
+- **E2E Tests (5%)**: Critical user workflows only
+
+### **Testing Framework**
+- **pytest**: Primary testing framework with async support
+- **pytest-cov**: Coverage reporting (critical path only ≥60%)
+- **mypy**: Type checking and validation
+- **ruff**: Linting and code quality
+
+### **Canonical Testing Tools List**
+
+**Core Testing Framework:**
+- **pytest**: Primary testing framework with async support
+- **pytest-asyncio**: Async test support for FastAPI endpoints
+- **pytest-cov**: Coverage reporting (critical path only ≥60%)
+- **pytest-mock**: Mocking utilities for external dependencies
+- **pytest-xdist**: Parallel test execution for faster CI/CD
+
+**HTTP Testing:**
+- **httpx**: Async HTTP client for testing API endpoints
+- **factory-boy**: Test data factories for consistent test data generation
+
+**Code Quality & Security:**
+- **mypy**: Type checking and validation
+- **ruff**: Linting and code quality
+- **bandit**: Security vulnerability scanning
+- **safety**: Dependency vulnerability scanning
+
+**Test Utilities:**
+- **freezegun**: Time mocking for date/time dependent tests
+- **pytest-mock**: Mocking utilities and fixtures
+
+**Installation Command:**
+```bash
+pip install pytest pytest-asyncio pytest-cov pytest-mock pytest-xdist httpx factory-boy mypy ruff bandit safety freezegun
+```
+
+### **Test Structure**
+```
+backend/tests/
+├── unit/                    # Business logic tests (70%)
+│   ├── test_analysis_routes.py
+│   ├── test_analysis_service.py
+│   ├── test_biomarker_service.py
+│   └── test_canonical_resolver.py
+├── integration/             # API and service tests (25%)
+│   ├── test_api_endpoints.py
+│   └── test_service_integration.py
+├── e2e/                     # Critical user journeys (5%)
+│   └── test_analysis_flow.py
+└── fixtures/                # Test data and mocks
+```
+
+### **Value-First Testing Principles**
+- **Business Value**: Every test must prevent user pain or catch business-critical bugs
+- **Critical Path Coverage**: Focus on core analysis workflow, not framework behavior
+- **Test-Alongside Development**: Write tests for new business logic, not implementation details
+- **Archive Policy**: Medium-value tests archived, low-value tests deleted
+
+### **CI/CD Integration**
+- **Blocking**: High-value tests, linting, type-checking, security scans
+- **Warning Only**: Coverage reports, performance benchmarks
+- **Excluded**: Archived tests never run in CI/CD

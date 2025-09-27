@@ -1,5 +1,7 @@
 # 📘 WORKFLOW_RULE.md
 
+> **🎯 PURPOSE**: **CANONICAL SPECIFICATION (Level 2)** - This document defines operational boundaries, file routing rules, and safety constraints for all contributors. Follow these rules to maintain architectural integrity and prevent violations.
+
 This document defines the workflow, governance, and safety boundaries for any AI agent or human contributor working on the HealthIQ-AI v5 project.
 
 It is a **source of operational truth** for:

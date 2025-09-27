@@ -1,0 +1,44 @@
+# TODO: Implement frontend Kubernetes deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: healthiq-frontend
+  namespace: healthiq-ai-v5
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: healthiq-frontend
+  template:
+    metadata:
+      labels:
+        app: healthiq-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: healthiq-ai-v5/frontend:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NEXT_PUBLIC_API_BASE
+          value: "http://healthiq-backend-service:8000"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: healthiq-frontend-service
+  namespace: healthiq-ai-v5
+spec:
+  selector:
+    app: healthiq-frontend
+  ports:
+  - port: 3000
+    targetPort: 3000
+  type: LoadBalancer

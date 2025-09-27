@@ -1,0 +1,25 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "HealthIQ AI v5 - System Overview",
+    "tags": ["healthiq", "ai", "biomarkers"],
+    "style": "dark",
+    "timezone": "browser",
+    "panels": [],
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "templating": {
+      "list": []
+    },
+    "annotations": {
+      "list": []
+    },
+    "refresh": "5s",
+    "schemaVersion": 16,
+    "version": 0,
+    "links": []
+  }
+}

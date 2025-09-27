@@ -1,0 +1,52 @@
+# TODO: Implement backend Kubernetes deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: healthiq-backend
+  namespace: healthiq-ai-v5
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: healthiq-backend
+  template:
+    metadata:
+      labels:
+        app: healthiq-backend
+    spec:
+      containers:
+      - name: backend
+        image: healthiq-ai-v5/backend:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: healthiq-secrets
+              key: database-url
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: healthiq-secrets
+              key: redis-url
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: healthiq-backend-service
+  namespace: healthiq-ai-v5
+spec:
+  selector:
+    app: healthiq-backend
+  ports:
+  - port: 8000
+    targetPort: 8000
+  type: ClusterIP

@@ -1,5 +1,7 @@
 # Project Structure
 
+> **🎯 PURPOSE**: **CANONICAL SPECIFICATION (Level 2)** - This document defines the canonical folder structure and file organization for HealthIQ AI v5. Use this as the blueprint for where to place new files and how to organize the codebase.
+
 > 🛠️ Architectural Blueprint Notice:  
 > This document defines the **planned, canonical folder structure** for the full HealthIQ AI v5 application.  
 > It is a **forward-looking design**, not a reflection of the current file tree.  
@@ -73,9 +75,9 @@ healthiq/
 │   │       └── builders.py           # DTO construction and mapping
 │   ├── services/                     # External service integrations
 │   │   ├── __init__.py
-│   │   ├── ai/                       # Gemini LLM service integrations
+│   │   ├── ai/                       # LLM service integrations
 │   │   │   ├── __init__.py
-│   │   │   ├── gemini.py             # Google Gemini API integration
+│   │   │   ├── llm.py                # LLM API integration
 │   │   │   └── local_models.py       # Local ML model inference
 │   │   ├── storage/                  # Data storage services
 │   │   │   ├── __init__.py
@@ -94,13 +96,14 @@ healthiq/
 │   │   ├── env.py                    # Secure environment variable access
 │   │   ├── settings.py               # Application settings
 │   │   ├── database.py               # Database configuration
-│   │   └── ai.py                     # Gemini LLM configuration
-│   ├── tests/                        # Backend test suite
+│   │   └── ai.py                     # LLM configuration
+│   ├── tests/                        # Backend test suite (value-first)
 │   │   ├── __init__.py
-│   │   ├── unit/                     # Unit tests
-│   │   ├── integration/              # Integration tests
-│   │   ├── e2e/                      # End-to-end tests
+│   │   ├── unit/                     # Unit tests (70% - business logic)
+│   │   ├── integration/              # Integration tests (25% - API contracts)
+│   │   ├── e2e/                      # E2E tests (5% - critical user journeys)
 │   │   └── fixtures/                 # Test data and fixtures
+│   ├── tests_archive/                # Archived tests (excluded from CI/CD)
 │   ├── ssot/                         # Single Source of Truth data
 │   │   ├── biomarkers.yaml           # Biomarker definitions and ranges
 │   │   ├── ranges.yaml               # Reference ranges by population
@@ -110,7 +113,7 @@ healthiq/
 │   │   ├── __init__.py
 │   │   ├── export_openapi.py         # OpenAPI schema export
 │   │   ├── data_migration.py         # Database migration tools
-│   │   └── model_training.py         # Gemini model training scripts
+│   │   └── model_training.py         # LLM model training scripts
 │   ├── docs/                         # Backend-specific documentation
 │   │   └── openapi.yaml              # OpenAPI specification
 │   ├── requirements.txt              # Python dependencies
@@ -201,12 +204,12 @@ healthiq/
 │   │       ├── logos/
 │   │       ├── medical-icons/
 │   │       └── backgrounds/
-│   ├── tests/                        # Jest + RTL tests
-│   │   ├── components/               # Component tests
-│   │   ├── app/                      # App Router page tests
-│   │   ├── queries/                  # Query hook tests
-│   │   ├── state/                    # Store tests
-│   │   └── utils/                    # Utility tests
+│   ├── tests/                        # Frontend test suite (value-first)
+│   │   ├── components/               # Component tests (high-value only)
+│   │   ├── state/                    # Store tests (business logic)
+│   │   ├── services/                 # Service tests (API integration)
+│   │   └── e2e/                      # E2E tests (critical user journeys)
+│   ├── tests_archive/                # Archived tests (excluded from CI/CD)
 │   ├── .storybook/                   # Storybook configuration
 │   │   ├── main.ts                   # Storybook main config
 │   │   ├── preview.ts                # Storybook preview config
@@ -299,11 +302,12 @@ This blueprint represents the complete architectural vision for HealthIQ AI v5, 
 - **Component-Based Frontend**: Reusable UI components with clear separation of concerns
 - **Comprehensive Documentation**: Context engineering files for AI agent guidance
 - **Infrastructure as Code**: All deployment and infrastructure configurations versioned
-- **Testing Strategy**: Comprehensive test coverage across all layers
+- **Testing Strategy**: Value-first testing focused on business-critical functionality
 
 ### Implementation Status
 
-- **✅ Currently Implemented**: Core backend structure, basic frontend, essential documentation
+- **✅ Currently Implemented**: Core backend structure, Next.js 14+ frontend with App Router, essential documentation, scaffolding infrastructure
+- **✅ Recently Completed**: Frontend migration (Vite → Next.js), Dev API Probe migration, CORS configuration, service layer scaffolding, DevOps scaffolding
 - **🔄 In Progress**: Pipeline orchestration, insight engines, cluster algorithms
-- **📋 Planned**: Full services layer, comprehensive testing, deployment infrastructure
+- **📋 Planned**: Full services layer implementation, comprehensive testing, deployment infrastructure
 - **🔮 Future**: Advanced integrations, clinical-grade features, enterprise capabilities

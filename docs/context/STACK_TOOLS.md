@@ -22,7 +22,7 @@ This document describes the core tooling and AI orchestration stack powering Hea
 
 ## 📄 Document Parsing Tools (Step 2)
 
-### 🔮 Google Gemini (Primary Parser)
+### 🔮 LLM Engine (Primary Parser)
 - PDF and HTML-based blood test parsing
 - Lab report extraction (biomarkers, ranges, units)
 - OCR/structured text interpretation for non-standard formats
@@ -44,9 +44,9 @@ All accessed by `core/canonical/normalize.py`.
 
 ## 🤖 AI/LLM Integration
 
-**Google Gemini is the sole LLM engine used across all intelligence stages.**
+**Our configured LLM engine is used across all intelligence stages.**
 
-### 🔮 Google Gemini (Primary Engine)
+### 🔮 LLM Engine (Primary Engine)
 - **Document Parsing**: PDF and HTML-based blood test parsing
 - **Insight Synthesis**: Produces elegant, actionable insight stories from final context
 - **Behavioural Recommendations**: Generates personalized lifestyle and supplement advice
@@ -76,7 +76,7 @@ Cursor agents should scaffold tests using the correct tool based on component sc
 
 ## 📌 TODO
 
-- [ ] Build parsing adapter for Google Gemini
-- [ ] Finalise Gemini payload structure
+- [ ] Build parsing adapter for LLM engine
+- [ ] Finalise LLM payload structure
 - [ ] Add CLI runner for full pipeline testing
-- [ ] Expand coverage of orchestrator tests
+- [ ] Implement value-first testing for orchestrator

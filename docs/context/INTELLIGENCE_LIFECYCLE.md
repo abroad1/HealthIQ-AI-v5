@@ -1,5 +1,7 @@
 # 🧠 HealthIQ-AI Intelligence Lifecycle
 
+> **🎯 PURPOSE**: **CANONICAL SPECIFICATION (Level 2)** - This document defines the complete data flow and pipeline stages for the HealthIQ AI platform. Use this to understand how data moves through the system from input to insights.
+
 > **Note:** This document describes the full end-to-end intelligence lifecycle across both frontend and backend layers. For backend execution stages only, refer to `STACK_BACKEND.md`.
 
 > For our AI/LLM strategy, see [`LLM_POLICY.md`](./LLM_POLICY.md)
@@ -16,14 +18,14 @@
 | Stage | Description |
 |-------|-------------|
 | **1. User Input** | User uploads a lab report and completes lifestyle questionnaire |
-| **2. Parsing** | Extract biomarkers, units, ranges via Gemini-powered parsing |
+| **2. Parsing** | Extract biomarkers, units, ranges via LLM-powered parsing |
 | **3. Canonical Normalisation** | Map aliases to canonical IDs, apply reference ranges, units |
 | **3.5. Data Completeness Gate** | Assess sufficiency for analysis, flag gaps, assign confidence |
 | **4. Orchestration & Engine Dispatch** | Determine which engines to run based on user tier and biomarker set |
 | **5. Engine Execution** | Score biomarkers, clusters, systems (e.g. metabolic, inflammation) |
-| **6. Insight Synthesis** | Generate natural language narratives and summaries via Gemini |
+| **6. Insight Synthesis** | Generate natural language narratives and summaries via LLM |
 | **7. Visualisation** | Render dials, clusters, timelines, risk zones, summaries |
-| **8. Recommendations** | Provide behavioural, dietary, or supplement advice (Gemini-driven) |
+| **8. Recommendations** | Provide behavioural, dietary, or supplement advice (LLM-driven) |
 | **9. Delivery & Feedback** | Return results, export options, track outcomes, trigger retests |
 | **10. Integrations & APIs** | Future EHR, wearables, telehealth, and 3rd-party services |
 
@@ -37,9 +39,10 @@
 - **Entry Point**: `/upload` page + API
 
 ### 2. **Parsing**
-- **Gemini Extractor**: This stage is powered by Google Gemini
+- **LLM Extractor**: This stage is powered by our configured LLM engine
 - **Output**: `RawBiomarkerExtraction[]`
 - **Edge Handling**: OCR fuzziness, multi-marker lines
+> For our AI/LLM strategy, see [`LLM_POLICY.md`](./LLM_POLICY.md)
 
 ### 3. **Canonical Normalisation**
 - **Maps**: Aliases → Canonical IDs (e.g., "ALT" → `alanine_transaminase`)
@@ -73,12 +76,14 @@
   - Confidence score
 
 ### 6. **Insight Synthesis**
-- **Gemini Layer**: This stage is powered by Google Gemini
+- **LLM Layer**: This stage is powered by our configured LLM engine
 - **Payload**: All engine + cluster outputs, user profile, questionnaire
 - **Prompt Templating**: Ensures safe, scoped, factual summaries
+- **RAG Enhancement**: Retrieval-Augmented Generation may be used to enrich LLM outputs with curated knowledge (e.g., biomarker definitions, lifestyle libraries, clinical references)
 - **Output**:
   - System narratives (e.g., "Your liver markers suggest...")  
   - Individual biomarker synthesis
+> For our AI/LLM strategy, see [`LLM_POLICY.md`](./LLM_POLICY.md)
 
 ### 7. **Visualisation**
 - **Components**:
@@ -92,12 +97,13 @@
   - Export PDF
 
 ### 8. **Behavioural Recommendations**
-- **Sources**: This stage is powered by Gemini (Google AI) + Rules + Biomarker states
+- **Sources**: This stage is powered by our configured LLM engine + Rules + Biomarker states
 - **Types**:
   - Food and supplements
   - Sleep, stress, hydration
   - Diagnostic retesting
 - **Confidence + Justification** included
+> For our AI/LLM strategy, see [`LLM_POLICY.md`](./LLM_POLICY.md)
 
 ### 9. **Delivery & Feedback**
 - **User sees**:

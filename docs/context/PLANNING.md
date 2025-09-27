@@ -6,7 +6,7 @@ This document tracks high-level phases for HealthIQ AI v5.
 
 - Phase 0: Context Finalisation
 - Phase 1: Canonical Models + Pipeline (Q4 2025)
-- Phase 2: Cluster Engine Build + Gemini Layer
+- Phase 2: Cluster Engine Build + LLM Layer
 - Phase 3: Frontend Integration (Q1 2026)
 - Phase 4: MVP Launch and Feedback Loop
 

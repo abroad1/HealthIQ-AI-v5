@@ -194,7 +194,7 @@ xl: 1280px
 - Theme presets per persona
 - Real-time biomarker animation effects
 - Lottie illustrations for storytelling
-- Insight video/voice narration (Gemini integration)
+- Insight video/voice narration (LLM integration)
 
 ---
 

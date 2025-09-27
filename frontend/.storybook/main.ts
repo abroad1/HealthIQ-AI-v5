@@ -1,22 +1,16 @@
-import type { StorybookConfig } from '@storybook/nextjs'
+import type { StorybookConfig } from '@storybook/nextjs';
 
 const config: StorybookConfig = {
-  stories: ['../components/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
-  addons: [
-    '@storybook/addon-onboarding',
-    '@storybook/addon-links',
-    '@storybook/addon-essentials',
-    '@chromatic-com/storybook',
-    '@storybook/addon-interactions',
+  "stories": [
+    "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)"
   ],
-  framework: {
-    name: '@storybook/nextjs',
-    options: {},
+  "addons": [],
+  "framework": {
+    "name": "@storybook/nextjs",
+    "options": {}
   },
-  docs: {
-    autodocs: 'tag',
-  },
-  staticDirs: ['../public'],
-}
-
-export default config
+  "staticDirs": [
+    "..\\public"
+  ]
+};
+export default config;

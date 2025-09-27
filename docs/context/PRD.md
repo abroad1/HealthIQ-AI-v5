@@ -1,5 +1,7 @@
 # HealthIQ AI – Product Requirements Document (PRD)
 
+> **🎯 PURPOSE**: **SUPPORTING CONTEXT (Level 3)** - This document defines product requirements, features, and user experience goals. Use this for understanding the "what" and "why" behind feature development.
+
 > For our AI/LLM strategy, see [`LLM_POLICY.md`](./LLM_POLICY.md)
 
 ## 1. Overview
@@ -17,14 +19,15 @@ This is not a wellness coach. This is a precision tool for people who want to ta
 - 🧠 **Biomarker-to-Behaviour Bridge**: We don't stop at insight — we drive transformation. Every out-of-range marker triggers AI-generated lifestyle, supplement, or diet guidance, grounded in physiology and personal context.
 - 📈 **Interpretability at a Glance**: Visual dials, grouped clusters, and dynamic UX make complexity accessible without simplification.
 - 📤 **Designed for Sharing**: Beautiful, exportable summaries for users, clinicians, or health partners — readable, rational, and real.
-- 🤖 **Built for Agents**: Fully modular context engineering structure that powers Cursor, Gemini, or other AI workflows out-of-the-box.
+- 🤖 **Built for Agents**: Fully modular context engineering structure that powers Cursor, LLM engines, or other AI workflows out-of-the-box.
 
 ---
 
 ## 3. Key Features
 
 ### Blood Panel Upload
-Users upload a PDF or plaintext blood panel from any lab. We parse this using Google Gemini to extract biomarker values and reference ranges.
+Users upload a PDF or plaintext blood panel from any lab. We parse this using our configured LLM engine to extract biomarker values and reference ranges.
+> For our AI/LLM strategy, see [`LLM_POLICY.md`](./LLM_POLICY.md)
 
 ### Canonicalisation Engine
 All biomarkers are mapped to canonical IDs using our alias registry, and normalised into unified units and per-lab reference ranges. This ensures downstream scorers and clusters never handle aliases.
@@ -45,13 +48,14 @@ Within each cluster:
 
 Every insight ends with a "Next Step" — a behavioural intervention tailored to that specific dysfunction pattern.
 
-### Behavioural Guidance Engine (Gemini)
-We use Gemini to generate:
+### Behavioural Guidance Engine (LLM)
+We use our configured LLM engine to generate:
 - Personalised lifestyle changes
 - Dietary suggestions
 - Targeted supplement options
 
 These are precise, not generic. Each suggestion is directly linked to the cluster or marker it's meant to address, and includes clinical reasoning.
+> For our AI/LLM strategy, see [`LLM_POLICY.md`](./LLM_POLICY.md)
 
 ### Dashboard + Visualisations
 We present biomarker dials grouped by cluster, showing:
@@ -85,12 +89,12 @@ Users can export a PDF or JSON summary with dial snapshots, narrative interpreta
 ## 5. Functional Requirements
 
 - ✅ File upload for blood test data (PDF or text)
-- ✅ AI-powered parsing (Google Gemini)
+- ✅ AI-powered parsing (LLM engine)
 - ✅ Canonicalisation of biomarker IDs and ranges
 - ✅ Lifestyle intake questionnaire (structured form)
 - ✅ Scoring engine (versioned thresholds + weights)
 - ✅ Cluster engine (correlation + compensation analysis)
-- ✅ Behavioural suggestion engine (Gemini)
+- ✅ Behavioural suggestion engine (LLM)
 - ✅ SSE streaming results to frontend
 - ✅ Frontend dial components and insight cards
 - ✅ Export to PDF and JSON
@@ -104,7 +108,7 @@ Users can export a PDF or JSON summary with dial snapshots, narrative interpreta
 - **Analysis**: Modular Python insight engine with DTOs
 - **ORM**: SQLAlchemy for database interactions with Supabase PostgreSQL
 - **Data**: YAML (SSOT) for biomarker alias mapping and canonical reference ranges
-- **Agent Support**: Cursor + Gemini workflows with structured context files
+- **Agent Support**: Cursor + LLM workflows with structured context files
 - **Streaming**: Server-Sent Events (SSE) for streaming responses
 - **CI/CD**: GitHub Actions with black + ruff + mypy linters
 
@@ -113,7 +117,7 @@ Users can export a PDF or JSON summary with dial snapshots, narrative interpreta
 ## 7. Insight Engine Architecture
 
 The platform is built as a pipeline:
-> `Scorer → Cluster Inference → Insight Engine → Gemini Narrator → DTO → Frontend`
+> `Scorer → Cluster Inference → Insight Engine → LLM Narrator → DTO → Frontend`
 
 Each module is stateless, version-controlled, and independently testable. Context is passed as structured DTOs between modules.
 

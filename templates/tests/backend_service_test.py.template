@@ -1,0 +1,70 @@
+# Backend Service Test Template
+# Copy this template when creating new backend service tests
+# Replace ServiceName with actual service name
+
+import pytest
+from unittest.mock import Mock, patch
+from services.service_name import ServiceName
+
+class TestServiceName:
+    def setup_method(self):
+        self.service = ServiceName()
+        self.mock_dependency = Mock()
+        self.service.dependency = self.mock_dependency
+
+    def test_method_name_success(self):
+        # Arrange
+        mock_input = {"key": "value"}
+        mock_result = {"result": "success"}
+        self.mock_dependency.process.return_value = mock_result
+
+        # Act
+        result = self.service.method_name(mock_input)
+
+        # Assert
+        assert result == mock_result
+        self.mock_dependency.process.assert_called_once_with(mock_input)
+
+    def test_method_name_validation_error(self):
+        # Arrange
+        invalid_input = {"invalid": "data"}
+
+        # Act & Assert
+        with pytest.raises(ValueError, match="Invalid input"):
+            self.service.method_name(invalid_input)
+
+    def test_method_name_processing_error(self):
+        # Arrange
+        mock_input = {"key": "value"}
+        self.mock_dependency.process.side_effect = Exception("Processing error")
+
+        # Act & Assert
+        with pytest.raises(Exception, match="Processing error"):
+            self.service.method_name(mock_input)
+
+    def test_method_name_with_mock_data(self):
+        # Arrange
+        mock_data = [
+            Mock(id=1, name="item1"),
+            Mock(id=2, name="item2"),
+        ]
+        
+        with patch.object(self.service, 'load_data', return_value=mock_data):
+            # Act
+            result = self.service.method_name({})
+
+            # Assert
+            assert len(result) == 2
+            assert result[0].name == "item1"
+            assert result[1].name == "item2"
+
+    def test_method_name_edge_case(self):
+        # Arrange
+        edge_case_input = {"empty": ""}
+
+        # Act
+        result = self.service.method_name(edge_case_input)
+
+        # Assert
+        assert result is not None
+        assert "empty" in result
