@@ -1,0 +1,536 @@
+[
+    {
+      "id": "full_name",
+      "section": "demographics",
+      "question": "Full Name",
+      "type": "text",
+      "required": true
+    },
+    {
+      "id": "email_address",
+      "section": "demographics",
+      "question": "Email Address",
+      "type": "email",
+      "required": true
+    },
+    {
+      "id": "phone_number",
+      "section": "demographics",
+      "question": "Phone Number",
+      "type": "phone",
+      "required": true
+    },
+    {
+      "id": "country",
+      "section": "demographics",
+      "question": "Country",
+      "type": "dropdown",
+      "options": ["United Kingdom","United States","Canada","Australia","Other"],
+      "required": true
+    },
+    {
+      "id": "state_province",
+      "section": "demographics",
+      "question": "State/Province",
+      "type": "text",
+      "required": false
+    },
+    {
+      "id": "date_of_birth",
+      "section": "demographics",
+      "question": "Date of Birth",
+      "type": "date",
+      "required": true
+    },
+    {
+      "id": "biological_sex",
+      "section": "demographics",
+      "question": "Biological Sex",
+      "type": "dropdown",
+      "options": ["Male","Female","Intersex"],
+      "required": true
+    },
+    {
+      "id": "height",
+      "section": "demographics",
+      "question": "Height",
+      "type": "group",
+      "fields": [
+        {"label":"Feet","type":"number","min":3,"max":8},
+        {"label":"Inches","type":"number","min":0,"max":11}
+      ],
+      "alternativeUnit": {
+        "label": "Height (cm)",
+        "type": "number",
+        "min": 100,
+        "max": 250
+      },
+      "required": true
+    },
+    {
+      "id": "weight",
+      "section": "demographics",
+      "question": "Weight",
+      "type": "number",
+      "label": "Weight (lbs)",
+      "alternativeUnit": {
+        "label": "Weight (kg)",
+        "type": "number",
+        "min": 30,
+        "max": 300
+      },
+      "required": true
+    },
+    {
+      "id": "waist_circumference",
+      "section": "demographics",
+      "question": "Waist circumference",
+      "type": "number",
+      "label": "Waist circumference (inches)",
+      "alternativeUnit": {
+        "label": "Waist circumference (cm)",
+        "type": "number",
+        "min": 50,
+        "max": 200
+      },
+      "required": true
+    },
+    {
+      "id": "body_composition",
+      "section": "demographics",
+      "question": "Body Composition (if known)",
+      "type": "group",
+      "fields": [
+        {"label":"Body fat %","type":"number","min":5,"max":50},
+        {"label":"Lean mass %","type":"number","min":40,"max":90}
+      ],
+      "required": false
+    },
+    {
+      "id": "ethnicity",
+      "section": "demographics",
+      "question": "Race/Ethnicity",
+      "type": "dropdown",
+      "options": ["White/Caucasian","Black/African American","Hispanic/Latino","Asian","Native American","Pacific Islander","Mixed/Other"],
+      "required": true
+    },
+    {
+      "id": "overall_health_rating",
+      "section": "demographics",
+      "question": "Overall, how would you rate your current health?",
+      "type": "dropdown",
+      "options": ["Excellent","Very Good","Good","Fair","Poor"],
+      "required": true
+    },
+    {
+      "id": "blood_pressure_reading",
+      "section": "medical_history",
+      "question": "Blood Pressure Reading (if available)",
+      "type": "group",
+      "fields": [
+        {"label":"Systolic (mmHg)","type":"number","min":70,"max":250},
+        {"label":"Diastolic (mmHg)","type":"number","min":40,"max":150}
+      ],
+      "required": false,
+      "helpText": "If you don't know, leave blank — we'll use biomarker values instead"
+    },
+    {
+      "id": "current_medications",
+      "section": "medical_history",
+      "question": "Are you currently taking any prescription medications?",
+      "type": "dropdown",
+      "options": ["None","1-2 medications","3-5 medications","6+ medications","Prefer not to say"],
+      "required": true
+    },
+    {
+      "id": "long_term_medications",
+      "section": "medical_history",
+      "question": "Are you currently taking any of the following long-term medications?",
+      "type": "checkbox",
+      "options": ["None","Corticosteroids","Atypical antipsychotics","HIV/AIDS treatments"],
+      "required": true,
+      "helpText": "These medications can affect cardiovascular risk assessment"
+    },
+    {
+      "id": "chronic_conditions",
+      "section": "medical_history",
+      "question": "Do you have any diagnosed chronic conditions?",
+      "type": "checkbox",
+      "options": ["None","High blood pressure","High cholesterol","Diabetes Type 1","Diabetes Type 2","Heart disease","Thyroid disorder","Autoimmune condition","Liver disease","Kidney disease","Other"],
+      "allowOther": true,
+      "required": true
+    },
+    {
+      "id": "medical_conditions",
+      "section": "medical_history",
+      "question": "Have you ever been diagnosed with any of the following medical conditions?",
+      "type": "checkbox",
+      "options": ["None","Atrial fibrillation","Rheumatoid arthritis","Systemic lupus erythematosus (SLE)"],
+      "required": true,
+      "helpText": "These conditions can affect cardiovascular risk assessment"
+    },
+    {
+      "id": "recent_blood_work",
+      "section": "medical_history",
+      "question": "Have you had blood work done in the past 6 months?",
+      "type": "dropdown",
+      "options": ["Yes","No","Don't remember"],
+      "required": true
+    },
+    {
+      "id": "energy_level",
+      "section": "symptoms",
+      "question": "What is your current energy level throughout the day?",
+      "type": "dropdown",
+      "options": ["Consistent high energy","Good energy with afternoon dip","Moderate energy need rest","Low energy tired most days","Exhausted need multiple rests"],
+      "required": true
+    },
+    {
+      "id": "current_symptoms",
+      "section": "symptoms",
+      "question": "Do you have any current symptoms affecting your daily life?",
+      "type": "checkbox",
+      "options": ["None","Fatigue","Brain fog","Joint pain","Digestive issues","Sleep problems","Mood changes","Other"],
+      "allowOther": true,
+      "required": true
+    },
+    {
+      "id": "regular_migraines",
+      "section": "symptoms",
+      "question": "Do you suffer from regular migraines?",
+      "type": "dropdown",
+      "options": ["Yes","No","Not sure"],
+      "required": true,
+      "helpText": "Migraines can be associated with cardiovascular risk factors"
+    },
+    {
+      "id": "recent_infections",
+      "section": "symptoms",
+      "question": "Recent Infections or Illness (last 4 weeks)",
+      "type": "dropdown",
+      "options": ["None","Cold/Flu","COVID-19","Other"],
+      "allowOther": true,
+      "required": true
+    },
+    {
+      "id": "menstrual_hormonal_status",
+      "section": "demographics",
+      "question": "Menstrual/hormonal status",
+      "type": "dropdown",
+      "options": ["Regular periods","Irregular periods","Postmenopausal","Using hormonal birth control/HRT","Not applicable"],
+      "required": true,
+      "conditionalDisplay": {
+        "dependsOn": "biological_sex",
+        "showWhen": ["Female"]
+      }
+    },
+    {
+      "id": "low_testosterone_symptoms",
+      "section": "demographics",
+      "question": "Low testosterone symptoms",
+      "type": "dropdown",
+      "options": ["No symptoms","Decreased energy/libido","Mood changes","Muscle mass loss","Multiple symptoms","Not sure"],
+      "required": true,
+      "conditionalDisplay": {
+        "dependsOn": "biological_sex",
+        "showWhen": ["Male"]
+      }
+    },
+    {
+      "id": "diet_quality_rating",
+      "section": "lifestyle",
+      "question": "Rate your overall diet quality (1-10)",
+      "type": "slider",
+      "min": 1,
+      "max": 10,
+      "labels": {
+        "1": "Mostly processed/fast food",
+        "5": "Mixed diet",
+        "10": "Excellent whole food diet"
+      },
+      "required": true
+    },
+    {
+      "id": "fasting_hours",
+      "section": "lifestyle",
+      "question": "How many hours do you typically fast between dinner and breakfast?",
+      "type": "dropdown",
+      "options": ["Less than 8 hours","8-10 hours","11-12 hours","13-14 hours","15+ hours"],
+      "required": true
+    },
+    {
+      "id": "sugar_beverages_weekly",
+      "section": "lifestyle",
+      "question": "How many sugar-sweetened beverages do you consume weekly?",
+      "type": "dropdown",
+      "options": ["None","1-3 drinks","4-7 drinks","8-14 drinks","15+ drinks"],
+      "required": true
+    },
+    {
+      "id": "alcohol_drinks_weekly",
+      "section": "lifestyle",
+      "question": "How many alcoholic drinks do you consume per week?",
+      "type": "dropdown",
+      "options": ["None","1-3 drinks","4-7 drinks","8-14 drinks","15+ drinks"],
+      "helpText": "1 drink = 12oz beer, 5oz wine, or 1.5oz spirits",
+      "required": true
+    },
+    {
+      "id": "fruit_vegetable_servings",
+      "section": "lifestyle",
+      "question": "How many servings of vegetables and fruits do you eat daily?",
+      "type": "dropdown",
+      "options": ["0-1 servings","2-3 servings","4-5 servings","6+ servings"],
+      "required": true
+    },
+    {
+      "id": "supplements",
+      "section": "lifestyle",
+      "question": "What supplements do you take regularly?",
+      "type": "checkbox",
+      "options": ["Multivitamin","Vitamin D","Omega-3/Fish Oil","Probiotics","Iron","Other","None"],
+      "allowOther": true,
+      "required": false
+    },
+    {
+      "id": "dietary_pattern",
+      "section": "lifestyle",
+      "question": "Do you follow any specific dietary pattern?",
+      "type": "dropdown",
+      "options": ["None","Mediterranean","Low-carb/Keto","Plant-based","Intermittent fasting","Other"],
+      "allowOther": true,
+      "required": true
+    },
+    {
+      "id": "vigorous_exercise_days",
+      "section": "lifestyle",
+      "question": "How many days per week do you do vigorous exercise (20+ min)?",
+      "type": "dropdown",
+      "options": ["0 days","1 day","2 days","3 days","4+ days"],
+      "helpText": "Vigorous = hard breathing and sweating",
+      "required": true
+    },
+    {
+      "id": "sitting_hours_daily",
+      "section": "lifestyle",
+      "question": "How many hours per day do you spend sitting?",
+      "type": "dropdown",
+      "options": ["Less than 4 hours","4-6 hours","7-9 hours","10-12 hours","13+ hours"],
+      "helpText": "Include work, commuting, TV, meals",
+      "required": true
+    },
+    {
+      "id": "resistance_training_days",
+      "section": "lifestyle",
+      "question": "How many days per week do you do resistance training?",
+      "type": "dropdown",
+      "options": ["0 days","1 day","2 days","3+ days"],
+      "required": true
+    },
+    {
+      "id": "tobacco_use",
+      "section": "lifestyle",
+      "question": "Do you currently use tobacco products?",
+      "type": "dropdown",
+      "options": ["Never used","Former user quit >1 year","Former user quit <1 year","Occasional use","Daily use"],
+      "required": true
+    },
+    {
+      "id": "caffeine_beverages_daily",
+      "section": "lifestyle",
+      "question": "How many caffeinated beverages do you consume daily?",
+      "type": "dropdown",
+      "options": ["None","1-2","3-4","5-6","7+"],
+      "required": true
+    },
+    {
+      "id": "daily_fluid_intake",
+      "section": "lifestyle",
+      "question": "Average Daily Fluid Intake",
+      "type": "dropdown",
+      "options": ["Less than 1 litre","1-2 litres","2-3 litres","More than 3 litres"],
+      "required": true
+    },
+    {
+      "id": "pollution_exposure",
+      "section": "lifestyle",
+      "question": "Are you regularly exposed to smoke/pollution/chemicals?",
+      "type": "dropdown",
+      "options": ["No exposure","Occasional exposure","Regular exposure"],
+      "required": true
+    },
+    {
+      "id": "sleep_hours_nightly",
+      "section": "lifestyle",
+      "question": "How many hours of sleep do you typically get per night?",
+      "type": "dropdown",
+      "options": ["Less than 5 hours","5-6 hours","7-8 hours","9+ hours"],
+      "required": true
+    },
+    {
+      "id": "sleep_quality_rating",
+      "section": "lifestyle",
+      "question": "Rate your sleep quality (1-10)",
+      "type": "slider",
+      "min": 1,
+      "max": 10,
+      "labels": {
+        "1": "Wake up exhausted",
+        "5": "Somewhat rested",
+        "10": "Always refreshed"
+      },
+      "required": true
+    },
+    {
+      "id": "sleep_schedule_consistency",
+      "section": "lifestyle",
+      "question": "How consistent is your sleep schedule?",
+      "type": "dropdown",
+      "options": ["Very consistent (within 30 min)","Mostly consistent (within 1 hour)","Somewhat inconsistent (1-2 hours)","Very inconsistent (2+ hours)"],
+      "required": true
+    },
+    {
+      "id": "sleep_disorders",
+      "section": "lifestyle",
+      "question": "Do you have diagnosed sleep disorders or snoring?",
+      "type": "dropdown",
+      "options": ["No sleep issues","Mild snoring","Loud snoring","Sleep apnea","Other disorder"],
+      "allowOther": true,
+      "required": true
+    },
+    {
+      "id": "stress_level_rating",
+      "section": "lifestyle",
+      "question": "Rate your average stress level (1-10)",
+      "type": "slider",
+      "min": 1,
+      "max": 10,
+      "labels": {
+        "1": "Very low stress",
+        "5": "Moderate stress",
+        "10": "Overwhelming stress"
+      },
+      "required": true
+    },
+    {
+      "id": "stress_control_frequency",
+      "section": "lifestyle",
+      "question": "In the past month, how often have you felt unable to control important things?",
+      "type": "dropdown",
+      "options": ["Never","Almost never","Sometimes","Fairly often","Very often"],
+      "required": true
+    },
+    {
+      "id": "major_life_stressors",
+      "section": "lifestyle",
+      "question": "Have you experienced major life stressors in the past 6 months?",
+      "type": "dropdown",
+      "options": ["No major stressors","1 major stressor","2-3 major stressors","4+ major stressors"],
+      "required": true
+    },
+    {
+      "id": "stress_management_method",
+      "section": "lifestyle",
+      "question": "What is your primary stress management method?",
+      "type": "dropdown",
+      "options": ["Exercise","Meditation/mindfulness","Social support","Alcohol/substances","Prescription medication","No specific method"],
+      "required": true
+    },
+    {
+      "id": "balance_ability",
+      "section": "physical_assessment",
+      "question": "Can you balance on one foot for 10+ seconds?",
+      "type": "dropdown",
+      "options": ["Yes easily","Yes with concentration","With difficulty","Cannot balance"],
+      "required": true
+    },
+    {
+      "id": "stair_climbing_ability",
+      "section": "physical_assessment",
+      "question": "Can you climb 3 flights of stairs without significant breathlessness?",
+      "type": "dropdown",
+      "options": ["Yes easily","Yes with some effort","Yes with difficulty","Cannot do this"],
+      "required": true
+    },
+    {
+      "id": "push_up_capacity",
+      "section": "physical_assessment",
+      "question": "How many push-ups can you do?",
+      "type": "dropdown",
+      "options": ["10+ push-ups","5-9 push-ups","1-4 push-ups","Cannot do push-ups"],
+      "helpText": "Knee or full push-ups",
+      "required": true
+    },
+    {
+      "id": "grip_strength_assessment",
+      "section": "physical_assessment",
+      "question": "Grip strength assessment (tennis ball squeeze test)",
+      "type": "dropdown",
+      "options": ["Can squeeze firmly for 30+ seconds","Can squeeze for 15-30 seconds","Difficulty squeezing firmly","Cannot squeeze both hands equally"],
+      "required": true
+    },
+    {
+      "id": "physical_recovery_time",
+      "section": "physical_assessment",
+      "question": "How long does it take you to recover after physical exertion?",
+      "type": "dropdown",
+      "options": ["Minutes","1-2 hours","Several hours","Full day","Multiple days"],
+      "required": true
+    },
+    {
+      "id": "memory_changes",
+      "section": "cognitive_assessment",
+      "question": "Have you noticed memory changes compared to 5 years ago?",
+      "type": "dropdown",
+      "options": ["Memory is better or the same","Slight memory changes (normal aging)","Noticeable memory decline","Significant memory problems"],
+      "required": true
+    },
+    {
+      "id": "food_sensitivities",
+      "section": "medical_history",
+      "question": "Do you have foods that consistently cause digestive symptoms?",
+      "type": "dropdown",
+      "options": ["No food sensitivities","Dairy/lactose issues","Gluten sensitivity","Multiple food reactions","Suspected but unconfirmed"],
+      "required": true
+    },
+    {
+      "id": "antibiotics_past_two_years",
+      "section": "medical_history",
+      "question": "How many courses of antibiotics have you taken in the past 2 years?",
+      "type": "dropdown",
+      "options": ["None","1 course","2-3 courses","4+ courses","Don't remember"],
+      "required": true
+    },
+    {
+      "id": "family_cardiovascular_disease",
+      "section": "family_history",
+      "question": "Has anyone in your immediate family had cardiovascular disease before age 65?",
+      "type": "dropdown",
+      "options": ["No family history","Heart attack","Stroke","Both","Don't know"],
+      "required": true
+    },
+    {
+      "id": "family_diabetes_metabolic",
+      "section": "family_history",
+      "question": "Has anyone in your immediate family had Type 2 diabetes or metabolic syndrome?",
+      "type": "dropdown",
+      "options": ["No family history","Type 2 diabetes","Obesity","Both","Don't know"],
+      "required": true
+    },
+    {
+      "id": "family_cancer_history",
+      "section": "family_history",
+      "question": "Has anyone in your immediate family had cancer before age 60?",
+      "type": "dropdown",
+      "options": ["No early cancer","Breast/prostate cancer","Colon cancer","Multiple cancers","Don't know"],
+      "required": true
+    },
+    {
+      "id": "family_lifespan",
+      "section": "family_history",
+      "question": "What is the average lifespan of your parents/grandparents?",
+      "type": "dropdown",
+      "options": ["60-70 years","71-80 years","81-90 years","90+ years","Don't know/Not applicable"],
+      "required": true
+    }
+  ]

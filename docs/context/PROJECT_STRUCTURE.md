@@ -36,7 +36,7 @@ healthiq/
 │   │   ├── models/                   # Domain models and data structures
 │   │   │   ├── __init__.py
 │   │   │   ├── biomarker.py          # Biomarker data models
-│   │   │   ├── questionnaire.py      # Questionnaire data models (59-question schema)
+│   │   │   ├── questionnaire.py      # Questionnaire data models (58-question schema with semantic IDs)
 │   │   │   ├── user.py               # User profile and preferences
 │   │   │   ├── context.py            # Analysis context and metadata
 │   │   │   ├── results.py            # Analysis results and insights
@@ -45,7 +45,7 @@ healthiq/
 │   │   │   ├── __init__.py
 │   │   │   ├── orchestrator.py       # orchestrates: score → clusters → insights → dto
 │   │   │   ├── context_factory.py    # Creates analysis context from user data
-│   │   │   ├── questionnaire_mapper.py # Maps questionnaire responses to lifestyle factors
+│   │   │   ├── questionnaire_mapper.py # Maps questionnaire responses (semantic IDs) to lifestyle factors
 │   │   │   ├── events.py             # Pipeline event handling
 │   │   │   └── middleware.py         # Pipeline processing middleware
 │   │   ├── canonical/                # Data normalization and standardization
@@ -164,7 +164,7 @@ healthiq/
 │   │   │   └── AnalysisPipeline.tsx
 │   │   ├── forms/                    # Form components
 │   │   │   ├── BiomarkerForm.tsx
-│   │   │   ├── QuestionnaireForm.tsx # 59-question questionnaire form
+│   │   │   ├── QuestionnaireForm.tsx # 58-question questionnaire form with semantic IDs and sections
 │   │   │   ├── UserProfileForm.tsx
 │   │   │   └── ReportFilters.tsx
 │   │   └── layout/                   # Layout components

@@ -66,6 +66,7 @@ class AnalysisContextFactory:
             medical_history=user_data.get("medical_history", {}),
             medications=user_data.get("medications", []),
             lifestyle_factors=user_data.get("lifestyle_factors", {}),
+            questionnaire=user_data.get("questionnaire", {}),
             created_at=user_data.get("created_at"),
             updated_at=user_data.get("updated_at")
         )

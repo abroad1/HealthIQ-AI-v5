@@ -44,6 +44,10 @@ interface AnalysisState {
   // User context
   userProfile: UserProfile | null;
   
+  // Questionnaire state
+  questionnaireResponses: Record<string, any>;
+  questionnaireCompleted: boolean;
+  
   // SSE connection
   eventSource: EventSource | null;
   
@@ -58,6 +62,8 @@ interface AnalysisState {
   setNormalizedBiomarkers: (biomarkers: BiomarkerData) => void;
   setUnmappedBiomarkers: (unmapped: string[]) => void;
   setUserProfile: (profile: UserProfile | null) => void;
+  setQuestionnaireResponses: (responses: Record<string, any>) => void;
+  setQuestionnaireCompleted: (completed: boolean) => void;
   
   // Complex actions
   startAnalysis: (request: AnalysisRequest) => Promise<void>;
@@ -93,6 +99,8 @@ export const useAnalysisStore = create<AnalysisState>()(
       normalizedBiomarkers: {},
       unmappedBiomarkers: [],
       userProfile: null,
+      questionnaireResponses: {},
+      questionnaireCompleted: false,
       eventSource: null,
 
       // Basic setters
@@ -117,6 +125,10 @@ export const useAnalysisStore = create<AnalysisState>()(
       setUnmappedBiomarkers: (unmapped) => set({ unmappedBiomarkers: unmapped }),
       
       setUserProfile: (profile) => set({ userProfile: profile }),
+      
+      setQuestionnaireResponses: (responses) => set({ questionnaireResponses: responses }),
+      
+      setQuestionnaireCompleted: (completed) => set({ questionnaireCompleted: completed }),
 
       // Complex actions
       startAnalysis: async (request) => {
@@ -144,6 +156,7 @@ export const useAnalysisStore = create<AnalysisState>()(
           progress: 0,
           rawBiomarkers: request.biomarkers,
           userProfile: request.user,
+          questionnaireResponses: request.questionnaire || {},
         });
 
         try {
@@ -298,6 +311,8 @@ export const useAnalysisStore = create<AnalysisState>()(
           rawBiomarkers: {},
           normalizedBiomarkers: {},
           unmappedBiomarkers: [],
+          questionnaireResponses: {},
+          questionnaireCompleted: false,
           eventSource: null,
         });
       },
@@ -308,6 +323,7 @@ export const useAnalysisStore = create<AnalysisState>()(
           const request: AnalysisRequest = {
             biomarkers: state.rawBiomarkers,
             user: state.userProfile,
+            questionnaire: state.questionnaireResponses,
           };
           get().startAnalysis(request);
         }
