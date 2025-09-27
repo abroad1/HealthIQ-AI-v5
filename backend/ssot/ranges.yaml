@@ -48,22 +48,22 @@ reference_ranges:
       population: "general_adult"
       
   hdl_cholesterol:
-    low:
+    low_male:
       min: 0
       max: 40
       unit: "mg/dL"
       population: "male_adult"
-    normal:
+    normal_male:
       min: 40
       max: 999
       unit: "mg/dL"
       population: "male_adult"
-    low:
+    low_female:
       min: 0
       max: 50
       unit: "mg/dL"
       population: "female_adult"
-    normal:
+    normal_female:
       min: 50
       max: 999
       unit: "mg/dL"
@@ -128,12 +128,12 @@ reference_ranges:
       
   # Kidney Function
   creatinine:
-    normal:
+    normal_male:
       min: 0.6
       max: 1.2
       unit: "mg/dL"
       population: "male_adult"
-    normal:
+    normal_female:
       min: 0.5
       max: 1.1
       unit: "mg/dL"
@@ -141,12 +141,12 @@ reference_ranges:
       
   # Liver Function
   alt:
-    normal:
+    normal_male:
       min: 7
       max: 56
       unit: "U/L"
       population: "male_adult"
-    normal:
+    normal_female:
       min: 7
       max: 35
       unit: "U/L"
@@ -179,24 +179,24 @@ reference_ranges:
       
   # Complete Blood Count
   hemoglobin:
-    normal:
+    normal_male:
       min: 13.8
       max: 17.2
       unit: "g/dL"
       population: "male_adult"
-    normal:
+    normal_female:
       min: 12.1
       max: 15.1
       unit: "g/dL"
       population: "female_adult"
       
   hematocrit:
-    normal:
+    normal_male:
       min: 40.7
       max: 50.3
       unit: "%"
       population: "male_adult"
-    normal:
+    normal_female:
       min: 36.1
       max: 44.3
       unit: "%"
