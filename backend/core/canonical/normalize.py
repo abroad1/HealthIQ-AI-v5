@@ -62,11 +62,21 @@ class BiomarkerNormalizer:
             canonical_key = alias_mapping.get(key.lower())
             
             if canonical_key:
+                # Extract numeric value and unit from the biomarker data
+                numeric_value = value
+                unit = self._get_unit_for_biomarker(canonical_key)
+                
+                # Handle dict format like {"value": 95, "unit": "mg/dL"}
+                if isinstance(value, dict) and "value" in value:
+                    numeric_value = value["value"]
+                    if "unit" in value:
+                        unit = value["unit"]
+                
                 # Create BiomarkerValue with canonical name
                 normalized_values[canonical_key] = BiomarkerValue(
                     name=canonical_key,
-                    value=value,
-                    unit=self._get_unit_for_biomarker(canonical_key)
+                    value=numeric_value,
+                    unit=unit
                 )
             else:
                 unmapped_keys.append(key)

@@ -12,6 +12,11 @@ from core.models.user import User
 from core.validation.completeness import DataCompletenessValidator
 from core.validation.gaps import BiomarkerGapAnalyzer
 from core.validation.recommendations import RecommendationEngine
+from core.scoring.engine import ScoringEngine
+from core.scoring.overlays import LifestyleOverlays, LifestyleProfile
+from core.pipeline.questionnaire_mapper import QuestionnaireMapper, MappedLifestyleFactors
+from core.models.questionnaire import QuestionnaireSubmission, create_questionnaire_validator
+from core.clustering.engine import ClusteringEngine
 
 
 class AnalysisOrchestrator:
@@ -29,12 +34,18 @@ class AnalysisOrchestrator:
         self.completeness_validator = DataCompletenessValidator(normalizer)
         self.gap_analyzer = BiomarkerGapAnalyzer(normalizer)
         self.recommendation_engine = RecommendationEngine(normalizer)
+        self.scoring_engine = ScoringEngine(normalizer)
+        self.lifestyle_overlays = LifestyleOverlays()
+        self.questionnaire_mapper = QuestionnaireMapper()
+        self.questionnaire_validator = create_questionnaire_validator()
+        self.clustering_engine = ClusteringEngine()
     
     def create_analysis_context(
         self,
         analysis_id: str,
         raw_biomarkers: Dict[str, Any],
         user_data: Dict[str, Any],
+        questionnaire_data: Optional[Dict[str, Any]] = None,
         *,
         assume_canonical: bool = False
     ) -> AnalysisContext:
@@ -45,6 +56,7 @@ class AnalysisOrchestrator:
             analysis_id: Unique analysis identifier
             raw_biomarkers: Raw biomarker data (may contain aliases)
             user_data: Raw user data
+            questionnaire_data: Optional questionnaire responses
             assume_canonical: If True, skip canonical validation
             
         Returns:
@@ -70,6 +82,50 @@ class AnalysisOrchestrator:
                 f"Non-canonical biomarker keys found after normalization: {non_canonical}. "
                 "All biomarkers must use canonical names only."
             )
+        
+        # Process questionnaire data if provided
+        if questionnaire_data:
+            # Validate questionnaire data
+            submission = QuestionnaireSubmission(
+                responses=questionnaire_data,
+                submission_id=f"{analysis_id}_questionnaire"
+            )
+            is_valid, errors = self.questionnaire_validator.validate_submission(submission)
+            if not is_valid:
+                print(f"Warning: Questionnaire validation errors: {errors}")
+            
+            # Map questionnaire to lifestyle factors and medical history
+            lifestyle_factors, medical_history = self.questionnaire_mapper.map_submission(submission)
+            
+            # Extract demographic data
+            demographics = self.questionnaire_mapper.get_demographic_data(questionnaire_data)
+            
+            # Update user_data with questionnaire-derived information
+            user_data.update({
+                "questionnaire": questionnaire_data,
+                "lifestyle_factors": {
+                    "diet_level": lifestyle_factors.diet_level.value,
+                    "sleep_hours": lifestyle_factors.sleep_hours,
+                    "exercise_minutes_per_week": lifestyle_factors.exercise_minutes_per_week,
+                    "alcohol_units_per_week": lifestyle_factors.alcohol_units_per_week,
+                    "smoking_status": lifestyle_factors.smoking_status,
+                    "stress_level": lifestyle_factors.stress_level.value,
+                    "sedentary_hours_per_day": lifestyle_factors.sedentary_hours_per_day,
+                    "caffeine_consumption": lifestyle_factors.caffeine_consumption,
+                    "fluid_intake_liters": lifestyle_factors.fluid_intake_liters
+                },
+                "medical_history": {
+                    "conditions": medical_history.conditions,
+                    "medications": medical_history.medications,
+                    "family_history": medical_history.family_history,
+                    "supplements": medical_history.supplements,
+                    "sleep_disorders": medical_history.sleep_disorders,
+                    "allergies": medical_history.allergies
+                }
+            })
+            
+            # Update demographics if available
+            user_data.update(demographics)
         
         # Create user object
         user = self.context_factory.create_user_from_dict(user_data)
@@ -225,6 +281,148 @@ class AnalysisOrchestrator:
                 }
                 for rec in recommendation_set.high_priority_recommendations
             ]
+        }
+    
+    def score_biomarkers(
+        self,
+        biomarkers: Dict[str, Any],
+        age: Optional[int] = None,
+        sex: Optional[str] = None,
+        lifestyle_data: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        Score biomarkers across all health systems.
+        
+        Args:
+            biomarkers: Dictionary of biomarker data with canonical keys
+            age: Patient age for adjustments
+            sex: Patient sex for adjustments
+            lifestyle_data: Lifestyle profile data for overlays
+            
+        Returns:
+            Dictionary with scoring results
+        """
+        # Create lifestyle profile if provided
+        lifestyle_profile = None
+        if lifestyle_data:
+            lifestyle_profile = self.lifestyle_overlays.create_lifestyle_profile(
+                diet_level=lifestyle_data.get("diet_level", "average"),
+                sleep_hours=lifestyle_data.get("sleep_hours", 7.0),
+                exercise_minutes_per_week=lifestyle_data.get("exercise_minutes_per_week", 150),
+                alcohol_units_per_week=lifestyle_data.get("alcohol_units_per_week", 5),
+                smoking_status=lifestyle_data.get("smoking_status", "never"),
+                stress_level=lifestyle_data.get("stress_level", "average")
+            )
+        
+        # Normalize biomarkers first
+        normalized_biomarkers, unmapped = self.normalizer.normalize_biomarkers(biomarkers)
+        
+        # Score biomarkers
+        scoring_result = self.scoring_engine.score_biomarkers(
+            normalized_biomarkers, age, sex, lifestyle_profile
+        )
+        
+        return {
+            "overall_score": scoring_result.overall_score,
+            "confidence": scoring_result.confidence.value,
+            "health_system_scores": {
+                system_name: {
+                    "overall_score": system_score.overall_score,
+                    "confidence": system_score.confidence.value,
+                    "missing_biomarkers": system_score.missing_biomarkers,
+                    "recommendations": system_score.recommendations,
+                    "biomarker_scores": [
+                        {
+                            "biomarker_name": score.biomarker_name,
+                            "value": score.value,
+                            "score": score.score,
+                            "score_range": score.score_range.value,
+                            "confidence": score.confidence.value
+                        }
+                        for score in system_score.biomarker_scores
+                    ]
+                }
+                for system_name, system_score in scoring_result.health_system_scores.items()
+            },
+            "missing_biomarkers": scoring_result.missing_biomarkers,
+            "recommendations": scoring_result.recommendations,
+            "lifestyle_adjustments": scoring_result.lifestyle_adjustments
+        }
+    
+    def cluster_biomarkers(
+        self,
+        context: AnalysisContext,
+        scoring_result: Optional[Dict[str, Any]] = None,
+        lifestyle_data: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """
+        Cluster biomarkers based on scoring results.
+        
+        Args:
+            context: Analysis context with biomarker data
+            scoring_result: Optional pre-computed scoring results
+            lifestyle_data: Lifestyle profile data for overlays
+            
+        Returns:
+            Dictionary with clustering results
+        """
+        # If scoring result not provided, compute it
+        if scoring_result is None:
+            # Extract biomarkers from context
+            biomarkers = {}
+            for biomarker_name, biomarker_value in context.biomarker_panel.biomarkers.items():
+                if hasattr(biomarker_value, 'value'):
+                    biomarkers[biomarker_name] = biomarker_value.value
+                else:
+                    biomarkers[biomarker_name] = biomarker_value
+            
+            # Create lifestyle profile if provided
+            lifestyle_profile = None
+            if lifestyle_data:
+                lifestyle_profile = self.lifestyle_overlays.create_lifestyle_profile(
+                    diet_level=lifestyle_data.get("diet_level", "average"),
+                    sleep_hours=lifestyle_data.get("sleep_hours", 7.0),
+                    exercise_minutes_per_week=lifestyle_data.get("exercise_minutes_per_week", 150),
+                    alcohol_units_per_week=lifestyle_data.get("alcohol_units_per_week", 5),
+                    smoking_status=lifestyle_data.get("smoking_status", "never"),
+                    stress_level=lifestyle_data.get("stress_level", "average")
+                )
+            
+            # Normalize biomarkers first
+            normalized_biomarkers, unmapped = self.normalizer.normalize_biomarkers(biomarkers)
+            
+            # Score biomarkers
+            scoring_result = self.scoring_engine.score_biomarkers(
+                normalized_biomarkers, 
+                context.user.age, 
+                context.user.gender, 
+                lifestyle_profile
+            )
+        
+        # Cluster biomarkers
+        # Note: The clustering engine expects a ScoringResult object, but we're working with dict format
+        # For now, we'll extract the necessary data and create a simplified result
+        clustering_result = self.clustering_engine.cluster_biomarkers(context, scoring_result)
+        
+        return {
+            "clusters": [
+                {
+                    "cluster_id": cluster.cluster_id,
+                    "name": cluster.name,
+                    "biomarkers": cluster.biomarkers,
+                    "description": cluster.description,
+                    "severity": cluster.severity,
+                    "confidence": cluster.confidence
+                }
+                for cluster in clustering_result.clusters
+            ],
+            "clustering_summary": {
+                "total_clusters": len(clustering_result.clusters),
+                "algorithm_used": clustering_result.algorithm_used.value if hasattr(clustering_result.algorithm_used, 'value') else clustering_result.algorithm_used,
+                "confidence_score": clustering_result.confidence_score,
+                "processing_time_ms": clustering_result.processing_time_ms,
+                "validation_summary": clustering_result.validation_summary
+            }
         }
     
     def _assert_canonical_only(self, raw_map: Mapping[str, Any], *, where: str = "pre-context") -> None:

@@ -30,6 +30,10 @@ class User(BaseModel):
         default_factory=dict, 
         description="Lifestyle factors (smoking, exercise, etc.)"
     )
+    questionnaire: Dict[str, Any] = Field(
+        default_factory=dict, 
+        description="Questionnaire responses (56-question health assessment)"
+    )
     created_at: Optional[str] = Field(default=None, description="User creation timestamp")
     updated_at: Optional[str] = Field(default=None, description="Last update timestamp")
 
