@@ -4,7 +4,7 @@ Persistence service for orchestration-level database operations.
 
 from typing import Dict, Any, Optional, List
 from uuid import UUID, uuid4
-from datetime import datetime
+from datetime import datetime, UTC
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 import logging
@@ -76,7 +76,7 @@ class PersistenceService:
                 "processing_time_seconds": analysis_dto.get("processing_time_seconds"),
                 "analysis_version": analysis_dto.get("analysis_version", "1.0.0"),
                 "pipeline_version": analysis_dto.get("pipeline_version", "1.0.0"),
-                "completed_at": datetime.utcnow() if analysis_dto.get("status") == "completed" else None
+                "completed_at": datetime.now(UTC) if analysis_dto.get("status") == "completed" else None
             }
             
             analysis = self.analysis_repo.upsert_by_analysis_id(str(analysis_id), **analysis_data)

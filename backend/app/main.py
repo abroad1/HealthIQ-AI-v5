@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.routes import health, analysis
+from core.insights.registry import ensure_insights_registered
 
 # Create FastAPI application
 app = FastAPI(
@@ -17,6 +18,9 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc",
 )
+
+# Register insight modules at startup
+ensure_insights_registered()
 
 # Configure CORS for localhost development
 app.add_middleware(

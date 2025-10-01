@@ -96,18 +96,29 @@ class ClusterHit(BaseModel):
 
 
 class InsightResult(BaseModel):
-    """Immutable insight result."""
+    """Immutable insight result with provenance tracking."""
     
     model_config = ConfigDict(frozen=True, extra="forbid")
     
+    # Core insight data
     insight_id: str = Field(..., description="Insight identifier")
     title: str = Field(..., description="Insight title")
     description: str = Field(..., description="Insight description")
-    category: str = Field(..., description="Insight category")
+    category: str = Field(..., description="Insight category (maintained for frontend compatibility)")
     confidence: float = Field(..., description="Confidence score (0-1)")
     severity: str = Field(..., description="Severity level")
     biomarkers: List[str] = Field(default_factory=list, description="Related biomarkers")
     recommendations: List[str] = Field(default_factory=list, description="Recommendations")
+    
+    # Provenance fields (Sprint 9c)
+    version: str = Field(default="v1.0.0", description="Insight version")
+    manifest_id: str = Field(default="legacy_v1", description="Manifest identifier")
+    experiment_id: Optional[str] = Field(default=None, description="Experiment identifier")
+    drivers: Optional[Dict[str, Any]] = Field(default=None, description="Insight drivers")
+    evidence: Optional[Dict[str, Any]] = Field(default=None, description="Supporting evidence")
+    error_code: Optional[str] = Field(default=None, description="Error code if failed")
+    error_detail: Optional[str] = Field(default=None, description="Error details if failed")
+    latency_ms: int = Field(default=0, description="Processing latency in milliseconds")
 
 
 class AnalysisDTO(BaseModel):

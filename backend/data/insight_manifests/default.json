@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "manifest_id": "production_v1",
+  "name": "Production Insights Manifest",
+  "description": "Default production insight configuration",
+  "created_by": "HealthIQ Team",
+  "updated_by": "HealthIQ Team",
+  "insights": [
+    {
+      "insight_id": "metabolic_age",
+      "version": "v1.0.0",
+      "enabled": true,
+      "weight": 1.0
+    },
+    {
+      "insight_id": "heart_insight", 
+      "version": "v1.0.0",
+      "enabled": true,
+      "weight": 1.0
+    },
+    {
+      "insight_id": "inflammation",
+      "version": "v1.0.0", 
+      "enabled": true,
+      "weight": 1.0
+    },
+    {
+      "insight_id": "fatigue_root_cause",
+      "version": "v1.0.0",
+      "enabled": true,
+      "weight": 1.0
+    },
+    {
+      "insight_id": "detox_filtration",
+      "version": "v1.0.0",
+      "enabled": true,
+      "weight": 1.0
+    }
+  ]
+}

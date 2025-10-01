@@ -12,7 +12,7 @@ from sqlalchemy import (
     ForeignKey, JSON, ARRAY, Enum as SQLEnum, Index, CheckConstraint,
     UniqueConstraint, func
 )
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -280,18 +280,28 @@ class Insight(Base):
     
     # Insight data
     insight_type = Column(String(50), nullable=False, index=True)
-    category = Column(String(50), nullable=False, index=True)
+    category = Column(String(50), nullable=True, index=True)  # Made nullable for Sprint 9c
     title = Column(String(200), nullable=False)
     content = Column(Text, nullable=False)
     confidence = Column(Float, nullable=True)
     priority = Column(String(20), nullable=True, index=True)
     actionable = Column(Boolean, default=True, nullable=False)
     
+    # Provenance fields (Sprint 9c)
+    insight_id = Column(String(100), nullable=False, index=True)
+    version = Column(String(20), nullable=False, index=True)
+    manifest_id = Column(String(100), nullable=False, index=True)
+    experiment_id = Column(String(100), nullable=True)
+    drivers = Column(JSON, nullable=True)
+    evidence = Column(JSON, nullable=True)
+    error_code = Column(String(50), nullable=True)
+    error_detail = Column(Text, nullable=True)
+    latency_ms = Column(Integer, nullable=False, default=0)
+    
     # Additional metadata
     severity = Column(String(20), nullable=True, index=True)
     biomarkers_involved = Column(ARRAY(String), nullable=True)
     health_system = Column(String(50), nullable=True, index=True)
-    evidence = Column(JSON, nullable=True)
     recommendations = Column(ARRAY(Text), nullable=True)
     
     # Timestamps
@@ -305,6 +315,7 @@ class Insight(Base):
         CheckConstraint("confidence >= 0 AND confidence <= 1", name="ck_insights_confidence_range"),
         CheckConstraint("priority IN ('low', 'medium', 'high', 'critical')", name="ck_insights_priority_valid"),
         CheckConstraint("severity IN ('normal', 'mild', 'moderate', 'high', 'critical')", name="ck_insights_severity_valid"),
+        CheckConstraint("latency_ms >= 0", name="ck_insights_latency_positive"),
         Index("idx_insights_analysis_id", "analysis_id"),
         Index("idx_insights_category", "category"),
         Index("idx_insights_analysis_category", "analysis_id", "category"),
@@ -312,6 +323,13 @@ class Insight(Base):
         Index("idx_insights_severity", "severity"),
         Index("idx_insights_health_system", "health_system"),
         Index("idx_insights_actionable", "actionable"),
+        # New provenance indexes
+        Index("idx_insights_insight_id_version", "insight_id", "version"),
+        Index("idx_insights_manifest_id", "manifest_id"),
+        Index("idx_insights_drivers_gin", "drivers", postgresql_using="gin"),
+        Index("idx_insights_evidence_gin", "evidence", postgresql_using="gin"),
+        # Unique constraint for analysis + insight + version
+        UniqueConstraint("analysis_id", "insight_id", "version", name="idx_insights_unique_analysis_insight_version"),
     )
 
 
