@@ -165,6 +165,17 @@ def example_function(param1: str, param2: int) -> bool:
 - **Comment non-obvious code** and ensure everything is understandable to a mid-level developer.
 - When writing complex logic, **add an inline `# Reason:` comment** explaining the why, not just the what.
 
+### 🔄 Sprint Documentation Requirements (MANDATORY)
+- **ALWAYS update ALL relevant documentation files** after completing sprint work or significant changes
+- **MANDATORY files to update** after each sprint or major change:
+  - `docs/context/IMPLEMENTATION_PLAN.md` - Update sprint status, deliverables, and success criteria
+  - `docs/context/PROJECT_STRUCTURE.md` - Update file structure, implementation status, and new components
+  - `TEST_LEDGER.md` - Document new tests, test results, and business value
+  - `docs/context/ARCHITECTURE_REVIEW_REPORT.md` - Update current sprint status and implementation state
+- **Documentation must be updated BEFORE marking sprint as complete**
+- **Include specific details**: What was implemented, test results, business value, run commands
+- **Future developers must be able to understand**: What changed, why it changed, how to test it
+
 ### 🧠 AI Behavior Rules
 - **Never assume missing context. Ask questions if uncertain.**
 - **Never hallucinate libraries or functions** – only use known, verified Python packages.

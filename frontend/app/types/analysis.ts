@@ -43,24 +43,70 @@ export interface ClusteringSummary {
   };
 }
 
+export interface BiomarkerResult {
+  biomarker_name: string;
+  value: number;
+  unit: string;
+  score: number;
+  percentile?: number;
+  status: 'optimal' | 'normal' | 'elevated' | 'low' | 'critical';
+  reference_range?: {
+    min: number;
+    max: number;
+    unit: string;
+  };
+  interpretation: string;
+}
+
 export interface AnalysisResult {
   analysis_id: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
-  progress?: number;
-  results?: {
-    scoring?: {
-      overall_score: number;
-      confidence: string;
-      health_system_scores: Record<string, any>;
-      missing_biomarkers: string[];
-      recommendations: string[];
-      lifestyle_adjustments: string[];
-    };
-    clustering?: {
-      clusters: ClusterData[];
-      clustering_summary: ClusteringSummary;
-    };
+  result_version: string;
+  biomarkers: BiomarkerResult[];
+  clusters: ClusterData[];
+  insights: InsightData[];
+  recommendations: string[];
+  overall_score: number | null;
+  meta: {
+    confidence_score?: number;
+    processing_metadata?: Record<string, any>;
   };
   created_at: string;
-  completed_at?: string;
+}
+
+export interface InsightData {
+  insight_id: string;
+  title: string;
+  description: string;
+  category: string;
+  confidence: number;
+  severity: string;
+  biomarkers: string[];
+  recommendations: string[];
+}
+
+export interface AnalysisHistoryItem {
+  id: string;
+  created_at: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  overall_score: number | null;
+  processing_time_seconds?: number;
+}
+
+export interface AnalysisHistoryResponse {
+  history: AnalysisHistoryItem[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface ExportRequest {
+  analysis_id: string;
+  export_type: 'pdf' | 'json' | 'csv';
+  user_id?: string;
+}
+
+export interface ExportResponse {
+  export_id: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  message?: string;
 }

@@ -1,41 +1,37 @@
-import React from 'react';
+import React from "react";
 
-interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'default' | 'destructive';
+export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: "default" | "destructive";
+  className?: string;
   children: React.ReactNode;
 }
 
-export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
-  ({ className = '', variant = 'default', children, ...props }, ref) => {
-    const variantClasses = {
-      default: 'bg-blue-50 border-blue-200 text-blue-800',
-      destructive: 'bg-red-50 border-red-200 text-red-800'
-    };
+export function Alert({ variant = "default", className = "", children, ...props }: AlertProps) {
+  const variantClasses = {
+    default: "bg-background text-foreground border",
+    destructive: "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive"
+  };
 
-    return (
-      <div
-        ref={ref}
-        className={`rounded-lg border p-4 ${variantClasses[variant]} ${className}`}
-        {...props}
-      >
-        {children}
-      </div>
-    );
-  }
-);
-
-Alert.displayName = 'Alert';
-
-interface AlertDescriptionProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
-}
-
-export const AlertDescription = React.forwardRef<HTMLDivElement, AlertDescriptionProps>(
-  ({ className = '', children, ...props }, ref) => (
-    <div ref={ref} className={`text-sm ${className}`} {...props}>
+  return (
+    <div
+      role="alert"
+      className={`relative w-full rounded-lg border p-4 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground [&>svg~*]:pl-7 ${variantClasses[variant]} ${className}`}
+      {...props}
+    >
       {children}
     </div>
-  )
-);
+  );
+}
 
-AlertDescription.displayName = 'AlertDescription';
+export interface AlertDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {
+  className?: string;
+  children: React.ReactNode;
+}
+
+export function AlertDescription({ className = "", children, ...props }: AlertDescriptionProps) {
+  return (
+    <div className={`text-sm [&_p]:leading-relaxed ${className}`} {...props}>
+      {children}
+    </div>
+  );
+}

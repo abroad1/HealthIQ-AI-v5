@@ -6,7 +6,8 @@ from typing import Dict, Any, List
 from datetime import datetime
 
 from core.models.biomarker import BiomarkerCluster, BiomarkerInsight
-from core.models.results import AnalysisResult, AnalysisSummary
+from core.models.results import AnalysisResult, AnalysisSummary, BiomarkerScore
+from core.models.insight import Insight, InsightSynthesisResult
 
 
 def build_analysis_result_dto(result: Dict[str, Any]) -> Dict[str, Any]:
@@ -21,13 +22,38 @@ def build_analysis_result_dto(result: Dict[str, Any]) -> Dict[str, Any]:
     """
     return {
         "analysis_id": result.get("analysis_id", ""),
+        "biomarkers": result.get("biomarkers", []),
         "clusters": result.get("clusters", []),
         "insights": result.get("insights", []),
-        "status": result.get("status", "unknown"),
+        "status": result.get("status", "complete"),
         "created_at": result.get("created_at", datetime.utcnow().isoformat()),
         "overall_score": result.get("overall_score"),
         "risk_assessment": result.get("risk_assessment", {}),
-        "recommendations": result.get("recommendations", [])
+        "recommendations": result.get("recommendations", []),
+        "result_version": result.get("result_version", "1.0.0"),
+        "meta": result.get("meta", {})
+    }
+
+
+def build_biomarker_score_dto(score: BiomarkerScore) -> Dict[str, Any]:
+    """
+    Build frontend-safe biomarker score DTO.
+    
+    Args:
+        score: BiomarkerScore object
+        
+    Returns:
+        Frontend-safe dictionary
+    """
+    return {
+        "biomarker_name": score.biomarker_name,
+        "value": score.value,
+        "unit": score.unit,
+        "score": score.score,
+        "percentile": score.percentile,
+        "status": score.status,
+        "reference_range": score.reference_range,
+        "interpretation": score.interpretation
     }
 
 
@@ -137,6 +163,68 @@ def build_user_dto(user_data: Dict[str, Any]) -> Dict[str, Any]:
         "lifestyle_factors": user_data.get("lifestyle_factors", {}),
         # Note: email is excluded for privacy
         "created_at": user_data.get("created_at")
+    }
+
+
+def build_insight_dto(insight) -> Dict[str, Any]:
+    """
+    Build frontend-safe insight DTO.
+    
+    Args:
+        insight: Insight object or dict with insight data
+        
+    Returns:
+        Frontend-safe dictionary
+    """
+    # Handle both Insight objects and dicts
+    if isinstance(insight, dict):
+        return {
+            "id": insight.get("id", ""),
+            "category": insight.get("category", ""),
+            "summary": insight.get("summary", ""),
+            "evidence": insight.get("evidence", {}),
+            "confidence": insight.get("confidence", 0.0),
+            "severity": insight.get("severity", "info"),
+            "recommendations": insight.get("recommendations", []),
+            "biomarkers_involved": insight.get("biomarkers_involved", []),
+            "lifestyle_factors": insight.get("lifestyle_factors", []),
+            "created_at": insight.get("created_at", "")
+        }
+    else:
+        # Insight object
+        return {
+            "id": insight.id,
+            "category": insight.category,
+            "summary": insight.summary,
+            "evidence": insight.evidence,
+            "confidence": insight.confidence,
+            "severity": insight.severity,
+            "recommendations": insight.recommendations,
+            "biomarkers_involved": insight.biomarkers_involved,
+            "lifestyle_factors": insight.lifestyle_factors,
+            "created_at": insight.created_at
+        }
+
+
+def build_insight_synthesis_result_dto(result: InsightSynthesisResult) -> Dict[str, Any]:
+    """
+    Build frontend-safe insight synthesis result DTO.
+    
+    Args:
+        result: InsightSynthesisResult object
+        
+    Returns:
+        Frontend-safe dictionary
+    """
+    return {
+        "analysis_id": result.analysis_id,
+        "insights": [build_insight_dto(insight) for insight in result.insights],
+        "synthesis_summary": result.synthesis_summary,
+        "total_insights": result.total_insights,
+        "categories_covered": result.categories_covered,
+        "overall_confidence": result.overall_confidence,
+        "processing_time_ms": result.processing_time_ms,
+        "created_at": result.created_at
     }
 
 
