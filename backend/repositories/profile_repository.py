@@ -70,11 +70,11 @@ class ProfileRepository(BaseRepository[Profile]):
             Updated profile instance or None if not found
         """
         try:
-            from datetime import datetime
+            from datetime import datetime, UTC
             update_data = {
                 "consent_given": consent_given,
                 "consent_version": consent_version,
-                "consent_given_at": datetime.utcnow() if consent_given else None
+                "consent_given_at": datetime.now(UTC) if consent_given else None
             }
             return self.update_by_user_id(user_id, **update_data)
         except Exception as e:
@@ -218,13 +218,13 @@ class ConsentRepository(BaseRepository[Consent]):
             Updated consent instance or None if not found
         """
         try:
-            from datetime import datetime
+            from datetime import datetime, UTC
             consent = self.get_by_user_and_type(user_id, consent_type)
             if not consent:
                 return None
             
             consent.granted = False
-            consent.revoked_at = datetime.utcnow()
+            consent.revoked_at = datetime.now(UTC)
             self.db_session.commit()
             self.db_session.refresh(consent)
             logger.info(f"Revoked consent for user {user_id}, type {consent_type}")
@@ -406,8 +406,8 @@ class DeletionRequestRepository(BaseRepository[DeletionRequest]):
             Updated deletion request instance or None if not found
         """
         try:
-            from datetime import datetime
-            return self.update(request_id, status="completed", completed_at=datetime.utcnow())
+            from datetime import datetime, UTC
+            return self.update(request_id, status="completed", completed_at=datetime.now(UTC))
         except Exception as e:
             logger.error(f"Failed to mark deletion request as completed for {request_id}: {str(e)}")
             raise

@@ -2,7 +2,7 @@ from typing import Optional
 from uuid import UUID, uuid4
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-from datetime import datetime
+from datetime import datetime, UTC
 from core.models.database import Export  # existing ORM model
 
 class ExportRepository:
@@ -19,7 +19,7 @@ class ExportRepository:
             status=kwargs.get("status", "pending"),
             storage_path=kwargs.get("file_path"),
             file_size_bytes=kwargs.get("file_size_bytes"),
-            completed_at=datetime.utcnow() if kwargs.get("status") == "ready" else None,
+            completed_at=datetime.now(UTC) if kwargs.get("status") == "ready" else None,
         )
         self.db.add(exp)
         self.db.commit()
@@ -43,7 +43,7 @@ class ExportRepository:
             status="ready",
             storage_path=storage_path,
             file_size_bytes=file_size_bytes,
-            completed_at=datetime.utcnow(),
+            completed_at=datetime.now(UTC),
         )
         self.db.add(exp)
         self.db.commit()

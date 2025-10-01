@@ -4,7 +4,7 @@ Analysis routes for biomarker processing and SSE streaming.
 
 import asyncio
 import uuid
-from datetime import datetime
+from datetime import datetime, UTC
 from typing import Dict, Any
 from uuid import UUID, uuid4
 
@@ -50,6 +50,8 @@ class AnalysisStartRequest(BaseModel):
 class AnalysisStartResponse(BaseModel):
     """Response model for analysis start."""
     analysis_id: str
+    status: str
+    message: str
 
 
 @router.post("/analysis/start", response_model=AnalysisStartResponse)
@@ -226,7 +228,7 @@ async def get_analysis_result(analysis_id: str, db: Session = Depends(get_db)):
                 "clusters": [],
                 "insights": [],
                 "status": "complete",
-                "created_at": datetime.utcnow().isoformat(),
+                "created_at": datetime.now(UTC).isoformat(),
                 "result_version": "1.0.0"
             }
         

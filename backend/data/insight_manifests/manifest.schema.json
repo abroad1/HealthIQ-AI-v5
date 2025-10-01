@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Insight Manifest Schema",
+  "description": "Schema for validating insight manifests",
+  "required": ["schema_version", "manifest_id", "name", "description", "created_by", "updated_by", "insights"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "Schema version in SemVer format"
+    },
+    "manifest_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Unique manifest identifier"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable manifest name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Manifest description"
+    },
+    "created_by": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Creator identifier"
+    },
+    "updated_by": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Last updater identifier"
+    },
+    "insights": {
+      "type": "array",
+      "description": "List of insight configurations",
+      "items": {
+        "type": "object",
+        "required": ["insight_id", "version", "enabled"],
+        "properties": {
+          "insight_id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$",
+            "description": "Insight identifier (lowercase snake_case)"
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^v\\d+\\.\\d+\\.\\d+$",
+            "description": "SemVer version string"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Whether insight is enabled"
+          },
+          "weight": {
+            "type": "number",
+            "minimum": 0,
+            "default": 1.0,
+            "description": "Insight weight for scoring"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "overrides": {
+      "type": "object",
+      "description": "Optional override configurations",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}
