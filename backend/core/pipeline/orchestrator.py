@@ -17,6 +17,7 @@ from core.scoring.overlays import LifestyleOverlays, LifestyleProfile
 from core.pipeline.questionnaire_mapper import QuestionnaireMapper, MappedLifestyleFactors
 from core.models.questionnaire import QuestionnaireSubmission, create_questionnaire_validator
 from core.clustering.engine import ClusteringEngine
+from core.insights.synthesis import InsightSynthesizer
 
 
 class AnalysisOrchestrator:
@@ -39,6 +40,7 @@ class AnalysisOrchestrator:
         self.questionnaire_mapper = QuestionnaireMapper()
         self.questionnaire_validator = create_questionnaire_validator()
         self.clustering_engine = ClusteringEngine()
+        self.insight_synthesizer = InsightSynthesizer()
     
     def create_analysis_context(
         self,
@@ -425,6 +427,140 @@ class AnalysisOrchestrator:
             }
         }
     
+    def synthesize_insights(
+        self,
+        context: AnalysisContext,
+        biomarker_scores: Optional[Dict[str, Any]] = None,
+        clustering_results: Optional[Dict[str, Any]] = None,
+        lifestyle_data: Optional[Dict[str, Any]] = None,
+        requested_categories: Optional[List[str]] = None,
+        max_insights_per_category: int = 3
+    ) -> Dict[str, Any]:
+        """
+        Synthesize insights from analysis context and results.
+        
+        Args:
+            context: Analysis context with user and biomarker data
+            biomarker_scores: Optional pre-computed biomarker scoring results
+            clustering_results: Optional pre-computed clustering results
+            lifestyle_data: Lifestyle profile data
+            requested_categories: Specific categories to generate insights for
+            max_insights_per_category: Maximum insights per category
+            
+        Returns:
+            Dictionary with insight synthesis results
+        """
+        # If biomarker scores not provided, compute them
+        if biomarker_scores is None:
+            # Extract biomarkers from context
+            biomarkers = {}
+            for biomarker_name, biomarker_value in context.biomarker_panel.biomarkers.items():
+                if hasattr(biomarker_value, 'value'):
+                    biomarkers[biomarker_name] = biomarker_value.value
+                else:
+                    biomarkers[biomarker_name] = biomarker_value
+            
+            # Create lifestyle profile if provided
+            lifestyle_profile = None
+            if lifestyle_data:
+                lifestyle_profile = self.lifestyle_overlays.create_lifestyle_profile(
+                    diet_level=lifestyle_data.get("diet_level", "average"),
+                    sleep_hours=lifestyle_data.get("sleep_hours", 7.0),
+                    exercise_minutes_per_week=lifestyle_data.get("exercise_minutes_per_week", 150),
+                    alcohol_units_per_week=lifestyle_data.get("alcohol_units_per_week", 5),
+                    smoking_status=lifestyle_data.get("smoking_status", "never"),
+                    stress_level=lifestyle_data.get("stress_level", "average")
+                )
+            
+            # Normalize biomarkers first
+            normalized_biomarkers, unmapped = self.normalizer.normalize_biomarkers(biomarkers)
+            
+            # Score biomarkers
+            scoring_result = self.scoring_engine.score_biomarkers(
+                normalized_biomarkers, 
+                context.user.age, 
+                context.user.gender, 
+                lifestyle_profile
+            )
+            
+            # Convert scoring result to dict format
+            biomarker_scores = {
+                "overall_score": scoring_result.overall_score,
+                "confidence": scoring_result.confidence.value,
+                "health_system_scores": {
+                    system_name: {
+                        "overall_score": system_score.overall_score,
+                        "confidence": system_score.confidence.value,
+                        "missing_biomarkers": system_score.missing_biomarkers,
+                        "recommendations": system_score.recommendations,
+                        "biomarker_scores": [
+                            {
+                                "biomarker_name": score.biomarker_name,
+                                "value": score.value,
+                                "score": score.score,
+                                "score_range": score.score_range.value,
+                                "confidence": score.confidence.value
+                            }
+                            for score in system_score.biomarker_scores
+                        ]
+                    }
+                    for system_name, system_score in scoring_result.health_system_scores.items()
+                },
+                "missing_biomarkers": scoring_result.missing_biomarkers,
+                "recommendations": scoring_result.recommendations,
+                "lifestyle_adjustments": scoring_result.lifestyle_adjustments
+            }
+        
+        # If clustering results not provided, compute them
+        if clustering_results is None:
+            clustering_results = self.cluster_biomarkers(
+                context=context,
+                scoring_result=biomarker_scores,
+                lifestyle_data=lifestyle_data
+            )
+        
+        # Extract lifestyle profile from context or provided data
+        lifestyle_profile = {}
+        if lifestyle_data:
+            lifestyle_profile = lifestyle_data
+        elif hasattr(context.user, 'lifestyle_factors') and context.user.lifestyle_factors:
+            lifestyle_profile = context.user.lifestyle_factors
+        
+        # Synthesize insights
+        synthesis_result = self.insight_synthesizer.synthesize_insights(
+            context=context,
+            biomarker_scores=biomarker_scores,
+            clustering_results=clustering_results,
+            lifestyle_profile=lifestyle_profile,
+            requested_categories=requested_categories,
+            max_insights_per_category=max_insights_per_category
+        )
+        
+        return {
+            "analysis_id": synthesis_result.analysis_id,
+            "insights": [
+                {
+                    "id": insight.id,
+                    "category": insight.category,
+                    "summary": insight.summary,
+                    "evidence": insight.evidence,
+                    "confidence": insight.confidence,
+                    "severity": insight.severity,
+                    "recommendations": insight.recommendations,
+                    "biomarkers_involved": insight.biomarkers_involved,
+                    "lifestyle_factors": insight.lifestyle_factors,
+                    "created_at": insight.created_at
+                }
+                for insight in synthesis_result.insights
+            ],
+            "synthesis_summary": synthesis_result.synthesis_summary,
+            "total_insights": synthesis_result.total_insights,
+            "categories_covered": synthesis_result.categories_covered,
+            "overall_confidence": synthesis_result.overall_confidence,
+            "processing_time_ms": synthesis_result.processing_time_ms,
+            "created_at": synthesis_result.created_at
+        }
+    
     def _assert_canonical_only(self, raw_map: Mapping[str, Any], *, where: str = "pre-context") -> None:
         """Raise if any biomarker keys are not already canonical.
         We resolve each key; if resolution changes the name, it was an alias.
@@ -447,10 +583,22 @@ class AnalysisOrchestrator:
         # continue with existing scoring → clustering → insights using `canonical_map`
         # For now, return a stub result
         from core.models.results import AnalysisDTO
-        return AnalysisDTO(
+        result = AnalysisDTO(
             analysis_id="stub_analysis_id",
             clusters=[],
             insights=[],
             status="complete",
             created_at="2024-01-01T00:00:00Z"
         )
+        
+        # Sprint 9b - Persistence integration at phase:"complete"
+        if result.status == "complete":
+            # Note: Persistence is handled by the calling service/route
+            # This ensures non-blocking SSE and proper error handling
+            import logging
+            logger = logging.getLogger(__name__)
+            
+            logger.info(f"Analysis {result.analysis_id} completed, ready for persistence")
+            logger.debug(f"Analysis {result.analysis_id} marked for persistence by calling service")
+        
+        return result

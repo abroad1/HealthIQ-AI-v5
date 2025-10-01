@@ -67,6 +67,11 @@ export interface UserPreferences {
 
 interface UIState {
   // Layout state
+  layout: {
+    sidebarOpen: boolean;
+    headerHeight: number;
+    footerHeight: number;
+  };
   sidebarOpen: boolean;
   sidebarCollapsed: boolean;
   headerHeight: number;
@@ -96,10 +101,17 @@ interface UIState {
   // Loading states
   globalLoading: boolean;
   loadingStates: Record<string, boolean>;
+  loading: Record<string, boolean>;
   
   // Error states
   globalError: string | null;
   errorStates: Record<string, string | null>;
+  errors: Record<string, string | null>;
+  
+  // Questionnaire navigation
+  currentStep: number;
+  totalSteps: number;
+  progress: number;
   
   // Actions - Layout
   setSidebarOpen: (open: boolean) => void;
@@ -147,6 +159,22 @@ interface UIState {
   setGlobalError: (error: string | null) => void;
   setError: (key: string, error: string | null) => void;
   clearError: (key?: string) => void;
+  clearAllErrors: () => void;
+  clearLoading: (key: string) => void;
+  
+  // Actions - Questionnaire Navigation
+  setCurrentStep: (step: number) => void;
+  setTotalSteps: (steps: number) => void;
+  nextStep: () => void;
+  prevStep: () => void;
+  resetSteps: () => void;
+  updateLayout: (layout: Partial<UIState['layout']>) => void;
+  updatePreferences: (preferences: Partial<UserPreferences>) => void;
+  showToast: (toast: Omit<Toast, 'id'>) => string;
+  hideToast: (id: string) => void;
+  clearAllLoading: () => void;
+  hasError: (key: string) => boolean;
+  getError: (key: string) => string | null;
   
   // Utility actions
   isMobile: () => boolean;
@@ -180,13 +208,18 @@ export const useUIStore = create<UIState>()(
     persist(
       (set, get) => ({
         // Initial state
+        layout: {
+          sidebarOpen: false,
+          headerHeight: 64,
+          footerHeight: 48,
+        },
         sidebarOpen: false,
         sidebarCollapsed: false,
         headerHeight: 64,
         footerHeight: 48,
-        theme: 'system',
+        theme: 'dark',
         systemTheme: 'light',
-        actualTheme: 'light',
+        actualTheme: 'dark',
         viewport: {
           width: typeof window !== 'undefined' ? window.innerWidth : 1024,
           height: typeof window !== 'undefined' ? window.innerHeight : 768,
@@ -201,13 +234,24 @@ export const useUIStore = create<UIState>()(
         toasts: [],
         globalLoading: false,
         loadingStates: {},
+        loading: {},
         globalError: null,
         errorStates: {},
+        errors: {},
+        currentStep: 1,
+        totalSteps: 1,
+        progress: 0,
 
         // Layout actions
-        setSidebarOpen: (open) => set({ sidebarOpen: open }),
+        setSidebarOpen: (open) => set((state) => ({ 
+          sidebarOpen: open,
+          layout: { ...state.layout, sidebarOpen: open }
+        })),
         
-        toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
+        toggleSidebar: () => set((state) => ({ 
+          sidebarOpen: !state.sidebarOpen,
+          layout: { ...state.layout, sidebarOpen: !state.sidebarOpen }
+        })),
         
         setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
         
@@ -340,7 +384,8 @@ export const useUIStore = create<UIState>()(
         setGlobalLoading: (loading) => set({ globalLoading: loading }),
         
         setLoading: (key, loading) => set((state) => ({
-          loadingStates: { ...state.loadingStates, [key]: loading }
+          loadingStates: { ...state.loadingStates, [key]: loading },
+          loading: { ...state.loading, [key]: loading }
         })),
         
         isLoading: (key) => {
@@ -355,17 +400,83 @@ export const useUIStore = create<UIState>()(
         setGlobalError: (error) => set({ globalError: error }),
         
         setError: (key, error) => set((state) => ({
-          errorStates: { ...state.errorStates, [key]: error }
+          errorStates: { ...state.errorStates, [key]: error },
+          errors: { ...state.errors, [key]: error }
         })),
         
         clearError: (key) => {
           if (key) {
             set((state) => ({
-              errorStates: { ...state.errorStates, [key]: null }
+              errorStates: { ...state.errorStates, [key]: null },
+              errors: { ...state.errors, [key]: null }
             }));
           } else {
-            set({ globalError: null, errorStates: {} });
+            set({ globalError: null, errorStates: {}, errors: {} });
           }
+        },
+        
+        clearLoading: (key) => set((state) => ({
+          loadingStates: { ...state.loadingStates, [key]: false },
+          loading: { ...state.loading, [key]: false }
+        })),
+        
+        clearAllErrors: () => set({ globalError: null, errorStates: {}, errors: {} }),
+        
+        // Questionnaire navigation actions
+        setCurrentStep: (step) => {
+          const state = get();
+          const progress = state.totalSteps > 0 ? (step / state.totalSteps) * 100 : 0;
+          set({ currentStep: step, progress });
+        },
+        
+        setTotalSteps: (steps) => {
+          const state = get();
+          const progress = steps > 0 ? (state.currentStep / steps) * 100 : 0;
+          set({ totalSteps: steps, progress });
+        },
+        
+        nextStep: () => {
+          const state = get();
+          if (state.currentStep < state.totalSteps) {
+            get().setCurrentStep(state.currentStep + 1);
+          }
+        },
+        
+        prevStep: () => {
+          const state = get();
+          if (state.currentStep > 1) {
+            get().setCurrentStep(state.currentStep - 1);
+          }
+        },
+        
+        resetSteps: () => set({ currentStep: 1, totalSteps: 1, progress: 0 }),
+        
+        updateLayout: (layout) => set((state) => ({
+          layout: { ...state.layout, ...layout }
+        })),
+        
+        updatePreferences: (preferences) => set((state) => ({
+          preferences: { ...state.preferences, ...preferences }
+        })),
+        
+        showToast: (toast) => {
+          return get().addToast(toast);
+        },
+        
+        hideToast: (id) => {
+          get().removeToast(id);
+        },
+        
+        clearAllLoading: () => set({ globalLoading: false, loadingStates: {}, loading: {} }),
+        
+        hasError: (key) => {
+          const state = get();
+          return !!(state.errorStates[key] || state.globalError);
+        },
+        
+        getError: (key) => {
+          const state = get();
+          return state.errorStates[key] || state.globalError;
         },
 
         // Utility functions
@@ -392,13 +503,18 @@ export const useUIStore = create<UIState>()(
         },
         
         resetUI: () => set({
+          layout: {
+            sidebarOpen: false,
+            headerHeight: 64,
+            footerHeight: 48,
+          },
           sidebarOpen: false,
           sidebarCollapsed: false,
           headerHeight: 64,
           footerHeight: 48,
-          theme: 'system',
+          theme: 'dark',
           systemTheme: 'light',
-          actualTheme: 'light',
+          actualTheme: 'dark',
           viewport: {
             width: typeof window !== 'undefined' ? window.innerWidth : 1024,
             height: typeof window !== 'undefined' ? window.innerHeight : 768,
@@ -413,8 +529,13 @@ export const useUIStore = create<UIState>()(
           toasts: [],
           globalLoading: false,
           loadingStates: {},
+          loading: {},
           globalError: null,
           errorStates: {},
+          errors: {},
+          currentStep: 1,
+          totalSteps: 1,
+          progress: 0,
         }),
       }),
       {

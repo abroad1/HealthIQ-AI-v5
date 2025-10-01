@@ -2,49 +2,94 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Natural Sophistication Theme - HealthIQ AI v5 */
 :root {
+  /* Base Colors - Natural & Sophisticated */
   --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
+  --foreground: 220 13% 18%;
   --card: 0 0% 100%;
-  --card-foreground: 222.2 84% 4.9%;
+  --card-foreground: 220 13% 18%;
   --popover: 0 0% 100%;
-  --popover-foreground: 222.2 84% 4.9%;
-  --primary: 222.2 47.4% 11.2%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96%;
-  --secondary-foreground: 222.2 84% 4.9%;
-  --muted: 210 40% 96%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 96%;
-  --accent-foreground: 222.2 84% 4.9%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 222.2 84% 4.9%;
-  --radius: 0.5rem;
+  --popover-foreground: 220 13% 18%;
+  
+  /* Primary - Deep Forest Green (Natural, Trustworthy) */
+  --primary: 142 76% 36%;
+  --primary-foreground: 0 0% 100%;
+  --primary-glow: 142 76% 46%;
+  
+  /* Secondary - Warm Sage (Calming, Professional) */
+  --secondary: 120 15% 85%;
+  --secondary-foreground: 220 13% 18%;
+  
+  /* Muted - Soft Gray (Subtle, Clean) */
+  --muted: 210 20% 95%;
+  --muted-foreground: 220 13% 45%;
+  
+  /* Accent - Ocean Blue (Fresh, Reliable) */
+  --accent: 200 100% 40%;
+  --accent-foreground: 0 0% 100%;
+  
+  /* Destructive - Medical Red (Alert, Clear) */
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  
+  /* Borders & Inputs - Light Gray (Clean, Minimal) */
+  --border: 210 20% 90%;
+  --input: 210 20% 90%;
+  --ring: 142 76% 36%;
+  
+  /* Medical Status Colors */
+  --medical-success: 142 76% 36%;
+  --medical-warning: 38 92% 50%;
+  --medical-info: 200 100% 40%;
+  
+  /* Medical Shadow System - Now handled by Tailwind utilities */
+  
+  /* Border Radius */
+  --radius: 0.75rem;
 }
 
 .dark {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
-  --card: 222.2 84% 4.9%;
-  --card-foreground: 210 40% 98%;
-  --popover: 222.2 84% 4.9%;
-  --popover-foreground: 210 40% 98%;
-  --primary: 210 40% 98%;
-  --primary-foreground: 222.2 47.4% 11.2%;
-  --secondary: 217.2 32.6% 17.5%;
-  --secondary-foreground: 210 40% 98%;
-  --muted: 217.2 32.6% 17.5%;
-  --muted-foreground: 215 20.2% 65.1%;
-  --accent: 217.2 32.6% 17.5%;
-  --accent-foreground: 210 40% 98%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 217.2 32.6% 17.5%;
-  --input: 217.2 32.6% 17.5%;
-  --ring: 212.7 26.8% 83.9%;
+  /* Dark Mode - Deep Natural Tones */
+  --background: 220 13% 8%;
+  --foreground: 210 20% 95%;
+  --card: 220 13% 12%;
+  --card-foreground: 210 20% 95%;
+  --popover: 220 13% 12%;
+  --popover-foreground: 210 20% 95%;
+  
+  /* Primary - Brighter Forest Green */
+  --primary: 142 76% 46%;
+  --primary-foreground: 220 13% 8%;
+  --primary-glow: 142 76% 56%;
+  
+  /* Secondary - Darker Sage */
+  --secondary: 120 15% 25%;
+  --secondary-foreground: 210 20% 95%;
+  
+  /* Muted - Dark Gray */
+  --muted: 220 13% 15%;
+  --muted-foreground: 210 20% 70%;
+  
+  /* Accent - Brighter Ocean Blue */
+  --accent: 200 100% 50%;
+  --accent-foreground: 220 13% 8%;
+  
+  /* Destructive - Brighter Medical Red */
+  --destructive: 0 84% 70%;
+  --destructive-foreground: 220 13% 8%;
+  
+  /* Borders & Inputs - Dark Gray */
+  --border: 220 13% 20%;
+  --input: 220 13% 20%;
+  --ring: 142 76% 46%;
+  
+  /* Medical Status Colors - Dark Mode */
+  --medical-success: 142 76% 46%;
+  --medical-warning: 38 92% 60%;
+  --medical-info: 200 100% 50%;
+  
+  /* Medical Shadow System - Now handled by Tailwind utilities */
 }
 
 * {
@@ -54,4 +99,123 @@
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Focus Styles */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+}
+
+/* Medical Card Styles */
+.medical-card {
+  @apply bg-card border border-border rounded-lg shadow-lg hover:shadow-xl transition-all duration-300;
+}
+
+.medical-card-header {
+  @apply border-b border-border bg-muted/30 px-6 py-4;
+}
+
+.medical-card-content {
+  @apply p-6;
+}
+
+/* Status Indicators */
+.status-optimal {
+  @apply text-green-600 bg-green-50 border-green-200;
+}
+
+.status-normal {
+  @apply text-blue-600 bg-blue-50 border-blue-200;
+}
+
+.status-warning {
+  @apply text-yellow-600 bg-yellow-50 border-yellow-200;
+}
+
+.status-critical {
+  @apply text-red-600 bg-red-50 border-red-200;
+}
+
+/* Responsive Typography */
+.text-responsive-xl {
+  @apply text-2xl md:text-3xl lg:text-4xl;
+}
+
+.text-responsive-lg {
+  @apply text-lg md:text-xl lg:text-2xl;
+}
+
+.text-responsive-base {
+  @apply text-sm md:text-base lg:text-lg;
+}
+
+/* Animation Utilities */
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes scaleIn {
+  from { 
+    opacity: 0; 
+    transform: scale(0.95); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-break {
+    page-break-before: always;
+  }
 }

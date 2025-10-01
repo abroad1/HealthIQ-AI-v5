@@ -68,6 +68,16 @@ We present biomarker dials grouped by cluster, showing:
 ### Shareable Report Export
 Users can export a PDF or JSON summary with dial snapshots, narrative interpretations, and action plans — shareable with doctors, health coaches, or friends.
 
+### Persistent Memory & History (Sprint 9b)
+- **User Profiles**: Complete demographic and lifestyle data stored securely
+- **Analysis History**: All completed analyses saved and retrievable
+- **Longitudinal Tracking**: Compare results over time to track health trends
+- **Data Export**: Full historical data export for personal records
+- **Privacy-First**: GDPR-compliant with row-level security (RLS)
+- **Persistence Layer**: Store analyses, results, insights with minimal PII, RLS enforced
+- **APIs**: History retrieval, result fetch, and export functionality
+- **Data Integrity**: Idempotent operations ensure consistent data state
+
 ---
 
 ## 4. User Personas
@@ -84,6 +94,14 @@ Users can export a PDF or JSON summary with dial snapshots, narrative interpreta
 - Has symptoms or chronic conditions, needs deeper pattern understanding
 - We give medically informed insights and structural explanations
 
+### 📊 Longitudinal Health Tracker (Sprint 9b)
+- **User Story**: "I want to track my biomarker improvements over time"
+- **User Story**: "I want to retrieve my previous analysis results"
+- **User Story**: "I want to export my complete health history"
+- **User Story**: "I want to compare my results from different time periods"
+- **User Story**: "As a user I can retrieve past analyses from my history"
+- **User Story**: "As a user I can export results anytime in PDF or JSON format"
+
 ---
 
 ## 5. Functional Requirements
@@ -98,6 +116,11 @@ Users can export a PDF or JSON summary with dial snapshots, narrative interpreta
 - ✅ SSE streaming results to frontend
 - ✅ Frontend dial components and insight cards
 - ✅ Export to PDF and JSON
+- ✅ **User profile persistence** (Sprint 9b)
+- ✅ **Analysis history storage** (Sprint 9b)
+- ✅ **Longitudinal tracking** (Sprint 9b)
+- ✅ **Database persistence layer** (Sprint 9b)
+- ✅ **History and export APIs** (Sprint 9b)
 
 ---
 
@@ -152,6 +175,12 @@ Each module is stateless, version-controlled, and independently testable. Contex
 - 🔁 Conversion rate from free report → paid insight bundle
 - 💬 Time to first actionable recommendation
 - 📤 Share/export rate
+- 📊 **Analysis history retention rate** (Sprint 9b)
+- 🔄 **User profile completion rate** (Sprint 9b)
+- 📈 **Longitudinal tracking engagement** (Sprint 9b)
+- 💾 **% analyses persisted successfully** (Sprint 9b)
+- ⚡ **Retrieval latency < 500ms** (Sprint 9b)
+- 🔒 **GDPR compliance rate 100%** (Sprint 9b)
 
 ---
 

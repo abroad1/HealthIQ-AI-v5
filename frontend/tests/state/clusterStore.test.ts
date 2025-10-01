@@ -7,8 +7,27 @@ import { useClusterStore } from '../../app/state/clusterStore';
 
 describe('ClusterStore', () => {
   beforeEach(() => {
-    // Reset store state
+    // Reset store state completely
     useClusterStore.getState().clearClusters();
+    // Clear any remaining state
+    useClusterStore.setState({
+      clusters: [],
+      selectedCluster: null,
+      clusterInsights: [],
+      isLoading: false,
+      error: null,
+      filters: {},
+      sort: { field: 'score', direction: 'desc' },
+      searchQuery: '',
+      currentPage: 1,
+      itemsPerPage: 10,
+      totalItems: 0,
+      pagination: {
+        page: 1,
+        perPage: 10,
+        total: 0,
+      },
+    });
     jest.clearAllMocks();
   });
 
@@ -94,29 +113,41 @@ describe('ClusterStore', () => {
         {
           id: 'cluster-1',
           name: 'Metabolic Health',
-          category: 'metabolic',
-          biomarkers: ['glucose', 'insulin'],
-          status: 'normal',
-          score: 85,
           description: 'Metabolic health cluster',
+          biomarkers: ['glucose', 'insulin'],
+          score: 85,
+          risk_level: 'low' as const,
+          category: 'metabolic',
+          insights: ['Normal glucose metabolism'],
+          recommendations: ['Maintain current lifestyle'],
+          created_at: new Date().toISOString(),
+          status: 'normal' as const,
         },
         {
           id: 'cluster-2',
           name: 'Cardiovascular',
-          category: 'cardiovascular',
-          biomarkers: ['cholesterol', 'ldl'],
-          status: 'warning',
-          score: 65,
           description: 'Cardiovascular health cluster',
+          biomarkers: ['cholesterol', 'ldl'],
+          score: 65,
+          risk_level: 'medium' as const,
+          category: 'cardiovascular',
+          insights: ['Elevated cholesterol levels'],
+          recommendations: ['Consider lifestyle modifications'],
+          created_at: new Date().toISOString(),
+          status: 'warning' as const,
         },
         {
           id: 'cluster-3',
           name: 'Inflammation',
-          category: 'inflammation',
-          biomarkers: ['crp', 'esr'],
-          status: 'critical',
-          score: 45,
           description: 'Inflammation cluster',
+          biomarkers: ['crp', 'esr'],
+          score: 45,
+          risk_level: 'high' as const,
+          category: 'inflammation',
+          insights: ['High inflammation detected'],
+          recommendations: ['Consult healthcare provider'],
+          created_at: new Date().toISOString(),
+          status: 'critical' as const,
         },
       ];
 
@@ -177,29 +208,41 @@ describe('ClusterStore', () => {
         {
           id: 'cluster-1',
           name: 'Zebra Cluster',
-          category: 'metabolic',
-          biomarkers: ['glucose'],
-          status: 'normal',
-          score: 85,
           description: 'Z cluster',
+          biomarkers: ['glucose'],
+          score: 85,
+          risk_level: 'low' as const,
+          category: 'metabolic',
+          insights: ['Normal glucose metabolism'],
+          recommendations: ['Maintain current lifestyle'],
+          created_at: new Date().toISOString(),
+          status: 'normal' as const,
         },
         {
           id: 'cluster-2',
           name: 'Alpha Cluster',
-          category: 'cardiovascular',
-          biomarkers: ['cholesterol'],
-          status: 'warning',
-          score: 65,
           description: 'A cluster',
+          biomarkers: ['cholesterol'],
+          score: 65,
+          risk_level: 'medium' as const,
+          category: 'cardiovascular',
+          insights: ['Elevated cholesterol levels'],
+          recommendations: ['Consider lifestyle modifications'],
+          created_at: new Date().toISOString(),
+          status: 'warning' as const,
         },
         {
           id: 'cluster-3',
           name: 'Beta Cluster',
-          category: 'inflammation',
-          biomarkers: ['crp'],
-          status: 'critical',
-          score: 45,
           description: 'B cluster',
+          biomarkers: ['crp'],
+          score: 45,
+          risk_level: 'high' as const,
+          category: 'inflammation',
+          insights: ['High inflammation detected'],
+          recommendations: ['Consult healthcare provider'],
+          created_at: new Date().toISOString(),
+          status: 'critical' as const,
         },
       ];
 
@@ -248,11 +291,15 @@ describe('ClusterStore', () => {
       const clusters = Array.from({ length: 25 }, (_, i) => ({
         id: `cluster-${i}`,
         name: `Cluster ${i}`,
-        category: 'metabolic',
-        biomarkers: ['glucose'],
-        status: 'normal',
-        score: 80,
         description: `Cluster ${i} description`,
+        biomarkers: ['glucose'],
+        score: 80,
+        risk_level: 'low' as const,
+        category: 'metabolic',
+        insights: ['Normal glucose metabolism'],
+        recommendations: ['Maintain current lifestyle'],
+        created_at: new Date().toISOString(),
+        status: 'normal' as const,
       }));
 
       useClusterStore.getState().setClusters(clusters);
@@ -287,50 +334,55 @@ describe('ClusterStore', () => {
   });
 
   describe('Complex Actions', () => {
-    it('should load clusters with pagination', () => {
-      const clusters = [
-        {
-          id: 'cluster-1',
-          name: 'Metabolic Health',
-          category: 'metabolic',
-          biomarkers: ['glucose', 'insulin'],
-          status: 'normal',
-          score: 85,
-          description: 'Metabolic health cluster',
-        },
-      ];
-
-      useClusterStore.getState().loadClusters(clusters, 1, 10, 1);
+    it('should load clusters with pagination', async () => {
+      const analysisId = 'test-analysis-123';
+      
+      await useClusterStore.getState().loadClusters(analysisId);
 
       const state = useClusterStore.getState();
-      expect(state.clusters).toEqual(clusters);
-      expect(state.pagination).toEqual({
-        page: 1,
-        perPage: 10,
-        total: 1,
-      });
+      expect(state.clusters).toHaveLength(3); // Mock data returns 3 clusters
       expect(state.isLoading).toBe(false);
       expect(state.error).toBeNull();
+      expect(state.totalItems).toBe(3);
+      expect(state.pagination.total).toBe(3);
     });
 
     it('should select cluster and load clusterInsights', () => {
       const clusterId = 'cluster-1';
+      const mockCluster = {
+        id: 'cluster-1',
+        name: 'Metabolic Health',
+        description: 'Metabolic health cluster',
+        biomarkers: ['glucose', 'insulin'],
+        score: 85,
+        risk_level: 'low' as const,
+        category: 'metabolic',
+        insights: ['Normal glucose metabolism'],
+        recommendations: ['Maintain current lifestyle'],
+        created_at: new Date().toISOString(),
+        status: 'normal' as const,
+      };
       const clusterInsights = [
         {
           id: 'insight-1',
           cluster_id: clusterId,
-          type: 'recommendation',
+          type: 'pattern' as const,
           title: 'Improve glucose control',
           description: 'Focus on diet and exercise',
-          priority: 'high',
-          actionable: true,
+          confidence: 0.8,
+          severity: 'high' as const,
+          biomarkers_involved: ['glucose'],
+          recommendations: ['Exercise regularly'],
+          created_at: new Date().toISOString(),
         },
       ];
 
+      // First set the cluster in the store
+      useClusterStore.getState().setClusters([mockCluster]);
       useClusterStore.getState().selectCluster(clusterId, clusterInsights);
 
       const state = useClusterStore.getState();
-      expect(state.selectedCluster).toBe(clusterId);
+      expect(state.selectedCluster).toEqual(mockCluster);
       expect(state.clusterInsights).toEqual(clusterInsights);
     });
 
@@ -367,29 +419,41 @@ describe('ClusterStore', () => {
         {
           id: 'cluster-1',
           name: 'Metabolic Health',
-          category: 'metabolic',
-          biomarkers: ['glucose', 'insulin'],
-          status: 'normal',
-          score: 85,
           description: 'Metabolic health cluster',
+          biomarkers: ['glucose', 'insulin'],
+          score: 85,
+          risk_level: 'low' as const,
+          category: 'metabolic',
+          insights: ['Normal glucose metabolism'],
+          recommendations: ['Maintain current lifestyle'],
+          created_at: new Date().toISOString(),
+          status: 'normal' as const,
         },
         {
           id: 'cluster-2',
           name: 'Cardiovascular',
-          category: 'cardiovascular',
-          biomarkers: ['cholesterol', 'ldl'],
-          status: 'warning',
-          score: 65,
           description: 'Cardiovascular health cluster',
+          biomarkers: ['cholesterol', 'ldl'],
+          score: 65,
+          risk_level: 'medium' as const,
+          category: 'cardiovascular',
+          insights: ['Elevated cholesterol levels'],
+          recommendations: ['Consider lifestyle modifications'],
+          created_at: new Date().toISOString(),
+          status: 'warning' as const,
         },
         {
           id: 'cluster-3',
           name: 'Inflammation',
-          category: 'inflammation',
-          biomarkers: ['crp', 'esr'],
-          status: 'critical',
-          score: 45,
           description: 'Inflammation cluster',
+          biomarkers: ['crp', 'esr'],
+          score: 45,
+          risk_level: 'high' as const,
+          category: 'inflammation',
+          insights: ['High inflammation detected'],
+          recommendations: ['Consult healthcare provider'],
+          created_at: new Date().toISOString(),
+          status: 'critical' as const,
         },
       ];
 
@@ -406,18 +470,10 @@ describe('ClusterStore', () => {
       const summary = useClusterStore.getState().getClusterSummary();
 
       expect(summary).toEqual({
-        total: 3,
-        byCategory: {
-          metabolic: 1,
-          cardiovascular: 1,
-          inflammation: 1,
-        },
-        byStatus: {
-          normal: 1,
-          warning: 1,
-          critical: 1,
-        },
-        averageScore: 65,
+        totalClusters: 3,
+        highRiskClusters: 1, // Only inflammation cluster is high risk
+        averageScore: 65, // (85 + 65 + 45) / 3
+        categories: ['metabolic', 'cardiovascular', 'inflammation'],
       });
     });
 
@@ -426,20 +482,26 @@ describe('ClusterStore', () => {
         {
           id: 'insight-1',
           cluster_id: 'cluster-1',
-          type: 'recommendation',
+          type: 'pattern' as const,
           title: 'Improve glucose control',
           description: 'Focus on diet and exercise',
-          priority: 'high',
-          actionable: true,
+          confidence: 0.8,
+          severity: 'high' as const,
+          biomarkers_involved: ['glucose'],
+          recommendations: ['Exercise regularly'],
+          created_at: new Date().toISOString(),
         },
         {
           id: 'insight-2',
           cluster_id: 'cluster-2',
-          type: 'warning',
+          type: 'anomaly' as const,
           title: 'Cholesterol warning',
           description: 'Monitor cholesterol levels',
-          priority: 'medium',
-          actionable: true,
+          confidence: 0.6,
+          severity: 'medium' as const,
+          biomarkers_involved: ['cholesterol'],
+          recommendations: ['Consult doctor'],
+          created_at: new Date().toISOString(),
         },
       ];
 
@@ -455,28 +517,47 @@ describe('ClusterStore', () => {
         {
           id: 'insight-1',
           cluster_id: 'cluster-1',
-          type: 'recommendation',
+          type: 'pattern' as const,
           title: 'Improve glucose control',
           description: 'Focus on diet and exercise',
-          priority: 'high',
-          actionable: true,
+          confidence: 0.8,
+          severity: 'high' as const,
+          biomarkers_involved: ['glucose'],
+          recommendations: ['Exercise regularly'],
+          created_at: new Date().toISOString(),
         },
         {
           id: 'insight-2',
           cluster_id: 'cluster-2',
-          type: 'warning',
+          type: 'anomaly' as const,
           title: 'Cholesterol warning',
           description: 'Monitor cholesterol levels',
-          priority: 'medium',
-          actionable: false,
+          confidence: 0.6,
+          severity: 'medium' as const,
+          biomarkers_involved: ['cholesterol'],
+          recommendations: ['Consult doctor'],
+          created_at: new Date().toISOString(),
+        },
+        {
+          id: 'insight-3',
+          cluster_id: 'cluster-3',
+          type: 'trend' as const,
+          title: 'Critical inflammation',
+          description: 'Immediate attention required',
+          confidence: 0.9,
+          severity: 'critical' as const,
+          biomarkers_involved: ['crp'],
+          recommendations: ['See doctor immediately'],
+          created_at: new Date().toISOString(),
         },
       ];
 
       useClusterStore.getState().setClusterInsights(clusterInsights);
 
       const actionableInsights = useClusterStore.getState().getActionableInsights();
-      expect(actionableInsights).toHaveLength(1);
-      expect(actionableInsights[0].actionable).toBe(true);
+      expect(actionableInsights).toHaveLength(2); // high and critical severity
+      expect(actionableInsights[0].severity).toBe('high');
+      expect(actionableInsights[1].severity).toBe('critical');
     });
   });
 });

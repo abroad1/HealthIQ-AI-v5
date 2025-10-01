@@ -1,34 +1,39 @@
-import React from 'react';
+import React from "react";
 
-interface SliderProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface SliderProps {
+  value?: number[];
+  onValueChange?: (value: number[]) => void;
   min?: number;
   max?: number;
   step?: number;
-  value?: number;
-  onValueChange?: (value: number) => void;
+  className?: string;
 }
 
-export const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
-  ({ className = '', min = 0, max = 100, step = 1, value, onValueChange, ...props }, ref) => {
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = parseInt(e.target.value);
-      onValueChange?.(newValue);
-    };
+export function Slider({ 
+  value = [0], 
+  onValueChange, 
+  min = 0, 
+  max = 100, 
+  step = 1, 
+  className = "" 
+}: SliderProps) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (onValueChange) {
+      onValueChange([parseInt(e.target.value)]);
+    }
+  };
 
-    return (
+  return (
+    <div className={`relative flex w-full touch-none select-none items-center ${className}`}>
       <input
         type="range"
         min={min}
         max={max}
         step={step}
-        value={value}
+        value={value[0]}
         onChange={handleChange}
-        className={`w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer ${className}`}
-        ref={ref}
-        {...props}
+        className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer"
       />
-    );
-  }
-);
-
-Slider.displayName = 'Slider';
+    </div>
+  );
+}

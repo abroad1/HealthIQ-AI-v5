@@ -3,11 +3,27 @@ import { devtools } from 'zustand/middleware';
 import { AnalysisService } from '../services/analysis';
 import { BiomarkerValue, BiomarkerData, UserProfile, AnalysisRequest } from '../types/analysis';
 
+export interface BiomarkerResult {
+  biomarker_name: string;
+  value: number;
+  unit: string;
+  score: number;
+  percentile?: number;
+  status: 'optimal' | 'normal' | 'elevated' | 'low' | 'critical';
+  reference_range?: {
+    min: number;
+    max: number;
+    unit: string;
+  };
+  interpretation: string;
+}
+
 export interface AnalysisResult {
   analysis_id: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
   progress?: number;
   results?: {
+    biomarkers: BiomarkerResult[];
     clusters: any[];
     insights: any[];
     overall_score?: number;
@@ -28,6 +44,7 @@ export interface AnalysisError {
 interface AnalysisState {
   // Current analysis state
   currentAnalysis: AnalysisResult | null;
+  currentAnalysisId: string | null;
   analysisHistory: AnalysisResult[];
   isLoading: boolean;
   error: AnalysisError | null;
@@ -53,6 +70,7 @@ interface AnalysisState {
   
   // Actions
   setCurrentAnalysis: (analysis: AnalysisResult | null) => void;
+  setCurrentAnalysisId: (analysisId: string | null) => void;
   addToHistory: (analysis: AnalysisResult) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: AnalysisError | null) => void;
@@ -68,10 +86,15 @@ interface AnalysisState {
   // Complex actions
   startAnalysis: (request: AnalysisRequest) => Promise<void>;
   updateAnalysisProgress: (analysisId: string, progress: number, phase: string) => void;
-  completeAnalysis: (analysisId: string, results: AnalysisResult['results']) => void;
+  completeAnalysis: (analysisId: string, results: AnalysisResult['results']) => Promise<void>;
   failAnalysis: (analysisId: string, error: AnalysisError) => void;
   clearAnalysis: () => void;
   retryAnalysis: () => void;
+  
+  // Questionnaire actions
+  setResponse: (id: string, value: any) => void;
+  getResponse: (id: string) => any;
+  resetResponses: () => void;
   
   // Utility actions
   getAnalysisById: (analysisId: string) => AnalysisResult | undefined;
@@ -90,6 +113,7 @@ export const useAnalysisStore = create<AnalysisState>()(
     (set, get) => ({
       // Initial state
       currentAnalysis: null,
+      currentAnalysisId: null,
       analysisHistory: [],
       isLoading: false,
       error: null,
@@ -105,6 +129,8 @@ export const useAnalysisStore = create<AnalysisState>()(
 
       // Basic setters
       setCurrentAnalysis: (analysis) => set({ currentAnalysis: analysis }),
+      
+      setCurrentAnalysisId: (analysisId) => set({ currentAnalysisId: analysisId }),
       
       addToHistory: (analysis) => set((state) => ({
         analysisHistory: [analysis, ...state.analysisHistory.slice(0, 49)] // Keep last 50
@@ -130,6 +156,18 @@ export const useAnalysisStore = create<AnalysisState>()(
       
       setQuestionnaireCompleted: (completed) => set({ questionnaireCompleted: completed }),
 
+      // Questionnaire actions
+      setResponse: (id, value) => set((state) => ({
+        questionnaireResponses: { ...state.questionnaireResponses, [id]: value }
+      })),
+      
+      getResponse: (id) => {
+        const state = get();
+        return state.questionnaireResponses[id];
+      },
+      
+      resetResponses: () => set({ questionnaireResponses: {} }),
+
       // Complex actions
       startAnalysis: async (request) => {
         // Validate input data
@@ -145,6 +183,7 @@ export const useAnalysisStore = create<AnalysisState>()(
               details: { biomarkerErrors: biomarkerValidation.errors, userErrors: userValidation.errors },
             },
             isLoading: false,
+            currentPhase: 'idle',
           });
           return;
         }
@@ -177,9 +216,10 @@ export const useAnalysisStore = create<AnalysisState>()(
 
           set({
             currentAnalysis: analysis,
-            isLoading: true,
+            currentAnalysisId: analysisId,
+            isLoading: false, // Set to false after successful start
             error: null,
-            currentPhase: 'ingestion',
+            currentPhase: 'ingestion', // Move to ingestion phase
             progress: 0,
           });
 
@@ -192,14 +232,22 @@ export const useAnalysisStore = create<AnalysisState>()(
             (event) => {
               try {
                 const data = JSON.parse(event.data);
-                if (data.type === 'progress') {
+                console.log('SSE Event received:', data);
+                
+                // Handle analysis_status events
+                if (data.phase && typeof data.progress === 'number') {
                   get().updateAnalysisProgress(analysisId, data.progress, data.phase);
-                } else if (data.type === 'complete') {
+                  
+                  // Check if this is a completion event
+                  if (data.phase === 'complete') {
+                    get().completeAnalysis(analysisId, data.results);
+                  }
+                } else if (data.type === 'complete' || data.phase === 'complete') {
                   get().completeAnalysis(analysisId, data.results);
-                } else if (data.type === 'error') {
+                } else if (data.type === 'error' || data.error) {
                   get().failAnalysis(analysisId, {
-                    message: data.message,
-                    code: data.code,
+                    message: data.message || data.error || 'Analysis failed',
+                    code: data.code || 'ANALYSIS_ERROR',
                     details: data.details,
                   });
                 }
@@ -209,14 +257,21 @@ export const useAnalysisStore = create<AnalysisState>()(
             },
             (error) => {
               console.error('SSE connection error:', error);
-              get().failAnalysis(analysisId, {
-                message: 'Connection lost during analysis',
-                code: 'CONNECTION_ERROR',
-                details: error,
-              });
+              // Only fail if analysis hasn't completed
+              const state = get();
+              if (state.currentPhase !== 'completed') {
+                get().failAnalysis(analysisId, {
+                  message: 'Connection lost during analysis',
+                  code: 'CONNECTION_ERROR',
+                  details: error,
+                });
+              } else {
+                console.log('SSE error after completion - ignoring');
+              }
             },
             () => {
               console.log('Analysis completed via SSE');
+              get().completeAnalysis(analysisId, null);
             }
           );
 
@@ -231,6 +286,7 @@ export const useAnalysisStore = create<AnalysisState>()(
               details: error,
             },
             isLoading: false,
+            currentPhase: 'idle', // Reset to idle on error
           });
         }
       },
@@ -250,27 +306,93 @@ export const useAnalysisStore = create<AnalysisState>()(
         }
       },
 
-      completeAnalysis: (analysisId, results) => {
+      completeAnalysis: async (analysisId, results) => {
         const state = get();
         if (state.currentAnalysis?.analysis_id === analysisId) {
-          const completedAnalysis: AnalysisResult = {
-            ...state.currentAnalysis,
-            status: 'completed',
-            progress: 100,
-            results,
-            completed_at: new Date().toISOString(),
-          };
+          try {
+            // Fetch the full analysis results from the API
+            const response = await AnalysisService.getAnalysisResult(analysisId);
+            
+            if (response.success && response.data) {
+              const completedAnalysis: AnalysisResult = {
+                ...state.currentAnalysis,
+                ...response.data, // Use the properly mapped data from the service
+                completed_at: new Date().toISOString(),
+              };
 
+              set({
+                currentAnalysis: completedAnalysis,
+                isLoading: false,
+                currentPhase: 'completed',
+                progress: 100,
+                error: null,
+              });
+
+              // Update in history
+              get().addToHistory(completedAnalysis);
+            } else {
+              // Fallback to the results passed in (if any)
+              const completedAnalysis: AnalysisResult = {
+                ...state.currentAnalysis,
+                status: 'completed',
+                progress: 100,
+                results: results || {
+                  biomarkers: [],
+                  clusters: [],
+                  insights: [],
+                  risk_assessment: {},
+                  recommendations: []
+                },
+                completed_at: new Date().toISOString(),
+              };
+
+              set({
+                currentAnalysis: completedAnalysis,
+                isLoading: false,
+                currentPhase: 'completed',
+                progress: 100,
+                error: null,
+              });
+
+              // Update in history
+              get().addToHistory(completedAnalysis);
+            }
+          } catch (error) {
+            console.error('Failed to fetch analysis results:', error);
+            // Fallback to the results passed in (if any)
+            const completedAnalysis: AnalysisResult = {
+              ...state.currentAnalysis,
+              status: 'completed',
+              progress: 100,
+              results: results || {
+                biomarkers: [],
+                clusters: [],
+                insights: [],
+                risk_assessment: {},
+                recommendations: []
+              },
+              completed_at: new Date().toISOString(),
+            };
+
+            set({
+              currentAnalysis: completedAnalysis,
+              isLoading: false,
+              currentPhase: 'completed',
+              progress: 100,
+              error: null,
+            });
+
+            // Update in history
+            get().addToHistory(completedAnalysis);
+          }
+        } else {
+          // If no current analysis, just update the phase and progress
           set({
-            currentAnalysis: completedAnalysis,
             isLoading: false,
             currentPhase: 'completed',
             progress: 100,
             error: null,
           });
-
-          // Update in history
-          get().addToHistory(completedAnalysis);
         }
       },
 
@@ -292,6 +414,13 @@ export const useAnalysisStore = create<AnalysisState>()(
 
           // Update in history
           get().addToHistory(failedAnalysis);
+        } else {
+          // If no current analysis, just update the phase and error
+          set({
+            isLoading: false,
+            currentPhase: 'error',
+            error,
+          });
         }
       },
 
@@ -304,6 +433,7 @@ export const useAnalysisStore = create<AnalysisState>()(
         
         set({
           currentAnalysis: null,
+          currentAnalysisId: null,
           isLoading: false,
           error: null,
           currentPhase: 'idle',

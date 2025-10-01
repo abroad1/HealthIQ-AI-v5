@@ -3,7 +3,15 @@
  * Handles biomarker analysis operations and SSE streaming
  */
 
-import { AnalysisRequest, AnalysisResult, BiomarkerData, UserProfile } from '../types/analysis';
+import { 
+  AnalysisRequest, 
+  BiomarkerData, 
+  UserProfile, 
+  AnalysisResult, 
+  AnalysisHistoryResponse,
+  ExportRequest,
+  ExportResponse
+} from '../types/analysis';
 import { ApiResponse, ApiError } from '../types/api';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
@@ -60,8 +68,22 @@ export class AnalysisService {
       }
 
       const result = await response.json();
+      
+      // Map API response to frontend AnalysisResult format (Sprint 9b DTO parity)
+      const analysisResult: AnalysisResult = {
+        analysis_id: result.analysis_id,
+        result_version: result.result_version,
+        biomarkers: result.biomarkers || [],
+        clusters: result.clusters || [],
+        insights: result.insights || [],
+        recommendations: result.recommendations || [],
+        overall_score: result.overall_score,
+        meta: result.meta || {},
+        created_at: result.created_at
+      };
+      
       return {
-        data: result,
+        data: analysisResult,
         success: true,
         message: 'Analysis result retrieved successfully',
       };
@@ -87,6 +109,8 @@ export class AnalysisService {
       `${API_BASE_URL}/analysis/events?analysis_id=${encodeURIComponent(analysisId)}`
     );
 
+    let isCompleted = false;
+
     eventSource.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
@@ -99,10 +123,35 @@ export class AnalysisService {
 
     eventSource.onerror = (error) => {
       console.error('SSE connection error:', error);
-      onError?.(error);
+      // Only call onError if not completed - this prevents false error states
+      if (!isCompleted) {
+        onError?.(error);
+      } else {
+        console.log('SSE closed gracefully after completion');
+      }
     };
 
+    // Listen for specific event types
+    eventSource.addEventListener('analysis_status', (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        onEvent(event);
+        
+        // Check if this is a completion event
+        if (data.phase === 'complete') {
+          isCompleted = true;
+          eventSource.close(); // Close cleanly
+          console.log('SSE closed gracefully after completion');
+          onComplete?.();
+        }
+      } catch (error) {
+        console.error('Failed to parse analysis_status event:', error);
+        onError?.(error as Event);
+      }
+    });
+
     eventSource.addEventListener('complete', () => {
+      isCompleted = true;
       eventSource.close();
       onComplete?.();
     });
@@ -182,32 +231,83 @@ export class AnalysisService {
   }
 
   /**
-   * Get analysis history (mock implementation)
-   * TODO: Implement when backend endpoint is available
+   * Get analysis history for a user
    */
-  static async getAnalysisHistory(): Promise<ApiResponse<AnalysisResult[]>> {
+  static async getAnalysisHistory(
+    userId: string, 
+    limit: number = 10, 
+    offset: number = 0
+  ): Promise<ApiResponse<AnalysisHistoryResponse>> {
     try {
-      // Mock implementation - replace with actual API call
-      const mockHistory: AnalysisResult[] = [
+      const response = await fetch(
+        `${API_BASE_URL}/analysis/history?user_id=${encodeURIComponent(userId)}&limit=${limit}&offset=${offset}`,
         {
-          analysis_id: 'mock-1',
-          status: 'completed',
-          progress: 100,
-          created_at: new Date().toISOString(),
-          completed_at: new Date().toISOString(),
-        },
-      ];
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const result = await response.json();
 
       return {
-        data: mockHistory,
+        data: result,
         success: true,
         message: 'Analysis history retrieved successfully',
       };
     } catch (error) {
       return {
-        data: [],
+        data: { history: [], total: 0, page: 1, limit },
         success: false,
         error: error instanceof Error ? error.message : 'Failed to get analysis history',
+      };
+    }
+  }
+
+  /**
+   * Export analysis results
+   */
+  static async exportAnalysis(
+    analysisId: string, 
+    format: 'pdf' | 'json' | 'csv' = 'json',
+    userId?: string
+  ): Promise<ApiResponse<ExportResponse>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/analysis/export`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          analysis_id: analysisId,
+          format,
+          user_id: userId
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+
+      return {
+        data: result,
+        success: true,
+        message: 'Export request created successfully',
+      };
+    } catch (error) {
+      return {
+        data: { export_id: '', status: 'failed' as const },
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to export analysis',
       };
     }
   }
