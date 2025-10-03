@@ -48,10 +48,12 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        medical: {
-          success: "hsl(var(--medical-success))",
-          warning: "hsl(var(--medical-warning))",
-          info: "hsl(var(--medical-info))",
+        status: {
+          excellent: "hsl(var(--status-excellent))",
+          good: "hsl(var(--status-good))",
+          fair: "hsl(var(--status-fair))",
+          poor: "hsl(var(--status-poor))",
+          critical: "hsl(var(--status-critical))",
         },
         // Natural Sophistication Theme Colors
         forest: {
