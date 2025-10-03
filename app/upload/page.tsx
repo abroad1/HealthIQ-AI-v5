@@ -179,7 +179,7 @@ export default function UploadPage() {
               <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Analysis Started!</h2>
               <p className="text-gray-600 mb-4">
-                Your health analysis is being processed. You'll be redirected to your results shortly.
+                Your health analysis is being processed. You&apos;ll be redirected to your results shortly.
               </p>
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto"></div>
             </div>
