@@ -1,0 +1,59 @@
+{
+  "analysis_id": "mock-analysis-001",
+  "result_version": "v1.0",
+  "biomarkers": [
+    {
+      "biomarker_name": "Total Cholesterol",
+      "value": 195,
+      "unit": "mg/dL",
+      "score": 85,
+      "percentile": 60,
+      "status": "normal",
+      "reference_range": { "min": 125, "max": 200, "unit": "mg/dL" },
+      "interpretation": "Your cholesterol is within normal range."
+    },
+    {
+      "biomarker_name": "LDL Cholesterol",
+      "value": 120,
+      "unit": "mg/dL",
+      "score": 75,
+      "percentile": 55,
+      "status": "elevated",
+      "reference_range": { "min": 0, "max": 100, "unit": "mg/dL" },
+      "interpretation": "Slightly elevated. Consider dietary adjustments."
+    }
+  ],
+  "clusters": [
+    {
+      "cluster_id": "cardio-001",
+      "name": "Cardiovascular Health",
+      "biomarkers": ["Total Cholesterol", "LDL Cholesterol", "HDL Cholesterol", "Triglycerides"],
+      "description": "Your cardiovascular markers show good overall health with minor areas for improvement.",
+      "severity": "mild",
+      "confidence": 0.85
+    }
+  ],
+  "insights": [
+    {
+      "insight_id": "ins-001",
+      "title": "Optimize LDL Levels",
+      "description": "Your LDL cholesterol is slightly elevated. Reducing saturated fat intake can help.",
+      "category": "cardiovascular",
+      "confidence": 0.82,
+      "severity": "mild",
+      "biomarkers": ["LDL Cholesterol"],
+      "recommendations": ["Increase fiber intake", "Reduce saturated fats", "Exercise regularly"]
+    }
+  ],
+  "recommendations": [
+    "Incorporate more omega-3 fatty acids",
+    "Maintain regular physical activity",
+    "Monitor cholesterol levels quarterly"
+  ],
+  "overall_score": 82,
+  "meta": {
+    "confidence_score": 0.87,
+    "processing_metadata": {}
+  },
+  "created_at": "2025-01-15T10:35:00Z"
+}
