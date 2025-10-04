@@ -6,8 +6,8 @@ import Providers from './providers'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'HealthIQ AI v5',
-  description: 'Precision biomarker intelligence platform',
+  title: 'HealthIQ AI v5 - Precision Biomarker Intelligence',
+  description: 'AI-powered biomarker analysis platform for personalized health insights',
 }
 
 export default function RootLayout({

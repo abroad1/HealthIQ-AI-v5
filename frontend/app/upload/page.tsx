@@ -1,24 +1,84 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Upload, FileText, Database, AlertCircle, CheckCircle } from 'lucide-react';
+import { Upload, FileText, Database, AlertCircle, CheckCircle, FileUp, Type } from 'lucide-react';
 import BiomarkerForm from '@/components/forms/BiomarkerForm';
 import QuestionnaireForm from '@/components/forms/QuestionnaireForm';
+import FileDropzone from '../components/upload/FileDropzone';
+import PasteInput from '../components/upload/PasteInput';
+import ParsedTable from '../components/preview/ParsedTable';
 import { useAnalysisStore } from '../state/analysisStore';
+import { useUploadStore, useUploadStatus, useParsedData } from '../state/upload';
+import { useParseUpload } from '../queries/parsing';
 import { useRouter } from 'next/navigation';
 
 export default function UploadPage() {
-  const [activeTab, setActiveTab] = useState('biomarkers');
+  const [activeTab, setActiveTab] = useState('upload');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   
   const { startAnalysis, isLoading: isAnalyzing } = useAnalysisStore();
   const router = useRouter();
+  
+  // Upload workflow state
+  const uploadStatus = useUploadStatus();
+  const parsedData = useParsedData();
+  const { setParsedResults, updateBiomarker, confirmAll, setError } = useUploadStore();
+  const parseUpload = useParseUpload();
+
+  // Handle file upload parsing
+  const handleFileUpload = async (file: File) => {
+    setError(null);
+    parseUpload.mutate({ file });
+  };
+
+  // Handle text paste parsing
+  const handleTextPaste = async (text: string) => {
+    setError(null);
+    parseUpload.mutate({ text });
+  };
+
+  // Handle biomarker edit in parsed table
+  const handleBiomarkerEdit = (index: number, biomarker: any) => {
+    updateBiomarker(index, biomarker);
+  };
+
+  // Handle confirm all biomarkers
+  const handleConfirmAll = async () => {
+    try {
+      confirmAll();
+      setSubmitSuccess(true);
+      // Redirect to results page after a short delay
+      setTimeout(() => {
+        router.push('/results');
+      }, 2000);
+    } catch (error) {
+      console.error('Confirmation failed:', error);
+      setError({ code: 'CONFIRMATION_FAILED', message: 'Failed to confirm biomarkers' });
+    }
+  };
+
+  // Handle parse upload success/error
+  useEffect(() => {
+    if (parseUpload.isSuccess && parseUpload.data) {
+      const { parsed_data } = parseUpload.data;
+      setParsedResults(
+        parsed_data.biomarkers,
+        parseUpload.data.analysis_id,
+        parsed_data.metadata
+      );
+    } else if (parseUpload.isError && parseUpload.error) {
+      setError({
+        code: 'PARSE_ERROR',
+        message: parseUpload.error.message || 'Failed to parse upload'
+      });
+    }
+  }, [parseUpload.isSuccess, parseUpload.isError, parseUpload.data, parseUpload.error, setParsedResults, setError]);
 
   const handleBiomarkerSubmit = async (biomarkerData: any) => {
     setIsSubmitting(true);
@@ -119,7 +179,7 @@ export default function UploadPage() {
               <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Analysis Started!</h2>
               <p className="text-gray-600 mb-4">
-                Your health analysis is being processed. You'll be redirected to your results shortly.
+                Your health analysis is being processed. You&apos;ll be redirected to your results shortly.
               </p>
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto"></div>
             </div>
@@ -151,20 +211,91 @@ export default function UploadPage() {
         )}
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
+          <TabsList className="grid w-full grid-cols-4 mb-8">
+            <TabsTrigger value="upload" className="flex items-center gap-2">
+              <FileUp className="h-4 w-4" />
+              Upload & Parse
+            </TabsTrigger>
             <TabsTrigger value="biomarkers" className="flex items-center gap-2">
               <Database className="h-4 w-4" />
-              Biomarker Data
+              Manual Entry
             </TabsTrigger>
             <TabsTrigger value="questionnaire" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
-              Health Questionnaire
+              Questionnaire
             </TabsTrigger>
             <TabsTrigger value="combined" className="flex items-center gap-2">
               <Upload className="h-4 w-4" />
-              Combined Analysis
+              Combined
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="upload">
+            <div className="space-y-6">
+              {/* Upload Methods */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <FileUp className="h-5 w-5" />
+                    Upload Lab Report
+                  </h3>
+                  <FileDropzone
+                    onFileSelect={handleFileUpload}
+                    onError={(error) => setError({ code: 'UPLOAD_ERROR', message: error })}
+                    disabled={parseUpload.isLoading}
+                  />
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <Type className="h-5 w-5" />
+                    Paste Lab Results
+                  </h3>
+                  <PasteInput
+                    onTextSubmit={handleTextPaste}
+                    onError={(error) => setError({ code: 'PASTE_ERROR', message: error })}
+                    disabled={parseUpload.isLoading}
+                  />
+                </div>
+              </div>
+
+              {/* Parsing Status */}
+              {parseUpload.isLoading && (
+                <Card>
+                  <CardContent className="p-6 text-center">
+                    <div className="flex items-center justify-center space-x-3">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                      <span className="text-lg font-medium">Parsing your lab results...</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Parsed Results */}
+              {uploadStatus === 'ready' && parsedData.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Review Parsed Results</h3>
+                  <ParsedTable
+                    biomarkers={parsedData}
+                    onBiomarkerEdit={handleBiomarkerEdit}
+                    onConfirmAll={handleConfirmAll}
+                    isLoading={isSubmitting}
+                    error={submitError}
+                  />
+                </div>
+              )}
+
+              {/* Error Display */}
+              {(parseUpload.isError || submitError) && (
+                <Alert className="border-red-200 bg-red-50">
+                  <AlertCircle className="h-4 w-4 text-red-600" />
+                  <AlertDescription className="text-red-800">
+                    {parseUpload.error?.message || submitError}
+                  </AlertDescription>
+                </Alert>
+              )}
+            </div>
+          </TabsContent>
 
           <TabsContent value="biomarkers">
             <Card>

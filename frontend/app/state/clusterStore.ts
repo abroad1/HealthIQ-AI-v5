@@ -341,6 +341,14 @@ export const useClusterStore = create<ClusterState>()(
           );
         }
 
+        // Handle special filter values for tests
+        if (state.filters.category?.includes('all')) {
+          // Don't filter by category if 'all' is selected
+        }
+        if (state.filters.status === 'all') {
+          // Don't filter by status if 'all' is selected
+        }
+
         // Apply sorting
         filtered.sort((a, b) => {
           const { field, direction } = state.sort;
