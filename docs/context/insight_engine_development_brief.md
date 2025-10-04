@@ -3,6 +3,8 @@
 > **Last Updated**: January 27, 2025  
 > **Purpose**: Single reference point for all contributors on Insight Engine development in HealthIQ AI v5
 
+> This brief should be read alongside INTELLIGENCE_LIFECYCLE.md. The lifecycle defines the canonical 10-stage pipeline, while this file explains how Insight Engines, correlation rules, and the questionnaire will be developed and implemented within that pipeline.
+
 ---
 
 ## 🎯 Purpose
@@ -203,6 +205,27 @@ Questionnaire Responses → Lifestyle Factors → Engine Context → Insight Gen
 - **Implementation Plan**: `docs/context/IMPLEMENTATION_PLAN.md`
 - **Project Structure**: `docs/context/PROJECT_STRUCTURE.md`
 - **Architecture Review**: `docs/ARCHITECTURE_REVIEW_REPORT.md`
+
+---
+
+## 📋 Roles and Relationship
+
+### **INTELLIGENCE_LIFECYCLE.md**
+- **Role**: Canonical specification (architecture, stages, safeguards)
+- **Purpose**: Defines the complete 10-stage data flow and pipeline architecture
+- **Scope**: End-to-end intelligence lifecycle from input to insights
+- **Use Case**: Architectural reference for system design and data flow
+
+### **insight_engine_development_brief.md**
+- **Role**: Implementation brief (engine design, rules, development plan)
+- **Purpose**: Explains how Insight Engines, correlation rules, and questionnaire will be developed
+- **Scope**: Specific implementation details for engines within the lifecycle
+- **Use Case**: Development guide for building insight engines
+
+### **Cursor Development Guidelines**
+- **Always follow INTELLIGENCE_LIFECYCLE.md** for architecture decisions and pipeline stages
+- **Always follow insight_engine_development_brief.md** for engine implementation details
+- **Cross-reference both documents** when making architectural or implementation decisions
 
 ---
 
