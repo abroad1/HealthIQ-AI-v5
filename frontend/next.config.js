@@ -6,6 +6,7 @@ const nextConfig = {
   },
   eslint: {
     ignoreDuringBuilds: false,
+    dirs: ['app', 'components', 'lib', 'services', 'state', 'types'],
   },
 }
 

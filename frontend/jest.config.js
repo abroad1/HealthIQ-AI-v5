@@ -9,7 +9,15 @@ const createJestConfig = nextJest({
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testEnvironment: 'jsdom',
-  testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/', '<rootDir>/tests/e2e/', '<rootDir>/tests_archive/'],
+  testPathIgnorePatterns: [
+    '<rootDir>/.next/', 
+    '<rootDir>/node_modules/', 
+    '<rootDir>/tests/e2e/', 
+    '<rootDir>/tests_new/e2e/',
+    '<rootDir>/tests_archive/',
+    '<rootDir>/playwright-report/',
+    '<rootDir>/test-results/'
+  ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/app/$1',
     '^@/components/(.*)$': '<rootDir>/app/components/$1',
@@ -34,7 +42,11 @@ const customJestConfig = {
     },
   },
   testMatch: [
-    '<rootDir>/tests/**/*.{js,jsx,ts,tsx}',
+    '<rootDir>/tests/components/**/*.{js,jsx,ts,tsx}',
+    '<rootDir>/tests/hooks/**/*.{js,jsx,ts,tsx}',
+    '<rootDir>/tests/integration/**/*.{js,jsx,ts,tsx}',
+    '<rootDir>/tests/services/**/*.{js,jsx,ts,tsx}',
+    '<rootDir>/tests/state/**/*.{js,jsx,ts,tsx}',
     '<rootDir>/app/**/__tests__/**/*.{js,jsx,ts,tsx}',
     '<rootDir>/app/**/*.{test,spec}.{js,jsx,ts,tsx}',
   ],
