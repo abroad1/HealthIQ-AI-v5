@@ -141,123 +141,152 @@ healthiq/
 │   ├── pyproject.toml                # Python project configuration
 │   ├── mypy.ini                      # Type checking configuration
 │   └── README.md                     # Backend documentation
-├── frontend/                         # Next.js 14+ App Router frontend (PLANNED)
+├── frontend/                         # Next.js 14+ App Router frontend (IMPLEMENTED)
 │   ├── app/                          # Next.js App Router (file-system routing)
+│   │   ├── (app)/                    # App route group
+│   │   │   ├── layout.tsx            # App layout component
+│   │   │   ├── dashboard/            # Dashboard pages
+│   │   │   │   └── page.tsx          # Main dashboard
+│   │   │   ├── analysis/             # Analysis pages
+│   │   │   │   └── page.tsx          # Analysis input page
+│   │   │   ├── reports/              # Reports pages
+│   │   │   │   └── page.tsx          # Reports listing
+│   │   │   ├── profile/              # User profile pages
+│   │   │   │   └── page.tsx          # User profile
+│   │   │   └── settings/             # Settings pages
+│   │   │       └── page.tsx          # User settings
+│   │   ├── components/               # Shared + feature-specific components
+│   │   │   ├── biomarkers/           # Biomarker visualization components
+│   │   │   │   ├── BiomarkerCard.tsx
+│   │   │   │   └── BiomarkerGrid.tsx
+│   │   │   ├── clusters/             # Cluster visualization suite
+│   │   │   │   ├── ClusterCard.tsx
+│   │   │   │   ├── ClusterGrid.tsx
+│   │   │   │   ├── ClusterInsightPanel.tsx
+│   │   │   │   ├── ClusterRadarChart.tsx
+│   │   │   │   └── types.ts
+│   │   │   ├── insights/             # Insight delivery system
+│   │   │   │   ├── InsightCard.tsx
+│   │   │   │   ├── InsightGrid.tsx
+│   │   │   │   └── InsightPanel.tsx
+│   │   │   ├── forms/                # Form components
+│   │   │   │   ├── BiomarkerForm.tsx
+│   │   │   │   └── QuestionnaireForm.tsx
+│   │   │   ├── layout/               # Layout components
+│   │   │   │   ├── Header.tsx
+│   │   │   │   ├── Sidebar.tsx
+│   │   │   │   └── Footer.tsx
+│   │   │   ├── pipeline/             # User upload-to-results pipeline
+│   │   │   │   └── AnalysisPipeline.tsx
+│   │   │   ├── preview/              # Preview components
+│   │   │   │   ├── EditDialog.tsx
+│   │   │   │   └── ParsedTable.tsx
+│   │   │   ├── ui/                   # Base UI components (shadcn/ui)
+│   │   │   │   ├── button.tsx
+│   │   │   │   ├── card.tsx
+│   │   │   │   ├── dialog.tsx
+│   │   │   │   ├── form.tsx
+│   │   │   │   ├── input.tsx
+│   │   │   │   ├── label.tsx
+│   │   │   │   ├── select.tsx
+│   │   │   │   ├── table.tsx
+│   │   │   │   ├── textarea.tsx
+│   │   │   │   ├── toast.tsx
+│   │   │   │   ├── tooltip.tsx
+│   │   │   │   ├── badge.tsx
+│   │   │   │   ├── progress.tsx
+│   │   │   │   ├── tabs.tsx
+│   │   │   │   └── sheet.tsx
+│   │   │   └── upload/               # Upload components
+│   │   │       ├── FileDropzone.tsx
+│   │   │       └── PasteInput.tsx
+│   │   ├── hooks/                    # Custom React hooks
+│   │   │   └── useHistory.ts         # Analysis history hook
+│   │   ├── lib/                      # Frontend utilities
+│   │   │   ├── api.ts                # Base API client
+│   │   │   ├── mock/                 # Mock data
+│   │   │   │   ├── analysis.json
+│   │   │   │   ├── biomarkers.json
+│   │   │   │   ├── clusters.json
+│   │   │   │   └── insights.json
+│   │   │   ├── supabase.ts           # Supabase client configuration
+│   │   │   └── utils.ts              # General utilities
+│   │   ├── queries/                  # TanStack Query hooks
+│   │   │   └── parsing.ts            # Parsing queries
+│   │   ├── services/                 # API service layer
+│   │   │   ├── analysis.ts           # Analysis service
+│   │   │   ├── auth.ts               # Authentication service
+│   │   │   ├── history.ts            # Analysis history service
+│   │   │   └── reports.ts            # Reports service
+│   │   ├── state/                    # Zustand stores
+│   │   │   ├── analysisStore.ts      # Analysis state
+│   │   │   ├── clusterStore.ts       # Cluster interactions
+│   │   │   ├── uiStore.ts            # UI state
+│   │   │   └── upload.ts             # Upload state
+│   │   ├── types/                    # TypeScript type definitions
+│   │   │   ├── analysis.ts           # Analysis data types
+│   │   │   ├── api.ts                # API response types
+│   │   │   ├── parsed.ts             # Parsed data types
+│   │   │   └── user.ts               # User data types
+│   │   ├── upload/                   # Upload pages
+│   │   │   └── page.tsx              # Upload page
+│   │   ├── results/                  # Results pages
+│   │   │   └── page.tsx              # Results page
 │   │   ├── layout.tsx                # Root layout component
 │   │   ├── page.tsx                  # Homepage
 │   │   ├── loading.tsx               # Global loading UI
 │   │   ├── error.tsx                 # Global error UI
 │   │   ├── not-found.tsx             # 404 page
-│   │   ├── dashboard/                # Dashboard pages
-│   │   │   ├── page.tsx              # Main dashboard
-│   │   │   └── loading.tsx           # Dashboard loading UI
-│   │   ├── analysis/                 # Analysis pages
-│   │   │   ├── page.tsx              # Analysis input page
-│   │   │   ├── [id]/                 # Dynamic analysis results
-│   │   │   │   └── page.tsx          # Analysis results page
-│   │   │   └── loading.tsx           # Analysis loading UI
-│   │   ├── reports/                  # Reports pages
-│   │   │   ├── page.tsx              # Reports listing
-│   │   │   └── loading.tsx           # Reports loading UI
-│   │   ├── profile/                  # User profile pages
-│   │   │   ├── page.tsx              # User profile
-│   │   │   └── loading.tsx           # Profile loading UI
-│   │   └── settings/                 # Settings pages
-│   │       ├── page.tsx              # User settings
-│   │       └── loading.tsx           # Settings loading UI
-│   │   ├── services/                 # API service layer (Sprint 9b)
-│   │   │   └── history.ts            # Analysis history service
-│   │   └── hooks/                    # Custom React hooks (Sprint 9b)
-│   │       ├── useAnalysisHistory.ts # Analysis history hook
-│   │       └── useUserProfile.ts     # User profile hook
+│   │   ├── providers.tsx             # App providers
+│   │   ├── globals.css               # Global styles
+│   │   └── README.md                 # Frontend documentation
 │   ├── components/                   # Shared + feature-specific components
-│   │   ├── ui/                       # Base UI components (shadcn/ui)
-│   │   ├── clusters/                 # Cluster visualization suite
-│   │   │   ├── ClusterRadarChart.tsx
-│   │   │   ├── ClusterConnectionMap.tsx
-│   │   │   └── ClusterInsightPanel.tsx
-│   │   ├── biomarkers/               # Biomarker visualization components
-│   │   │   ├── HolographicGauge.tsx
-│   │   │   ├── BiomarkerGrid.tsx
-│   │   │   └── BiomarkerTrendPanel.tsx
-│   │   ├── insights/                 # Insight delivery system (Sprint 6)
-│   │   │   ├── InsightCard.tsx       # Individual insight display component
-│   │   │   ├── InsightsPanel.tsx     # Multi-insight panel with filtering
-│   │   │   ├── ActionableRecommendation.tsx
-│   │   │   └── ProgressTracker.tsx
-│   │   ├── pipeline/                 # User upload-to-results pipeline
-│   │   │   └── AnalysisPipeline.tsx
-│   │   ├── forms/                    # Form components
-│   │   │   ├── BiomarkerForm.tsx
-│   │   │   ├── QuestionnaireForm.tsx # 58-question questionnaire form with semantic IDs and sections
-│   │   │   ├── UserProfileForm.tsx
-│   │   │   └── ReportFilters.tsx
-│   │   └── layout/                   # Layout components
-│   │       ├── Header.tsx
-│   │       ├── Sidebar.tsx
-│   │       └── Footer.tsx
-│   ├── styles/                       # Tailwind config and design tokens
-│   │   ├── globals.css               # Global styles with Natural Sophistication theme
-│   │   ├── components.css            # Component-specific styles
-│   │   ├── tailwind.config.ts        # Tailwind CSS configuration with medical shadow system
-│   │   └── themes/                   # Theme definitions
-│   │       ├── light.css
-│   │       └── dark.css
-│   │
-│   │   # Medical Shadow System
-│   │   # Custom shadow utilities for premium healthcare aesthetic:
-│   │   # - shadow-medical: Standard medical card shadow (0 4px 20px rgba(37, 99, 235, 0.15))
-│   │   # - shadow-medical-hover: Hover state shadow (0 8px 32px rgba(37, 99, 235, 0.25))
-│   │   # - shadow-medical-card: Subtle card shadow (0 2px 12px rgba(37, 99, 235, 0.08))
-│   │   # - shadow-medical-intense: CTA button shadow (0 6px 24px rgba(37, 99, 235, 0.20))
-│   │   # - shadow-float: General floating element shadow (0 8px 25px rgba(0, 0, 0, 0.08))
-│   ├── state/                        # Zustand stores
-│   │   ├── authStore.ts              # Authentication state
-│   │   ├── analysisStore.ts          # Analysis state
-│   │   ├── clusterStore.ts           # Cluster interactions
-│   │   └── uiStore.ts                # UI state
+│   │   └── README.md                 # Components documentation
+│   ├── coverage/                     # Test coverage reports
 │   ├── queries/                      # TanStack Query hooks
-│   │   ├── auth.ts                   # Authentication queries
-│   │   ├── analysis.ts               # Analysis data queries
-│   │   ├── reports.ts                # Reports data queries
-│   │   └── user.ts                   # User data queries
-│   ├── lib/                          # Frontend utilities
-│   │   ├── api.ts                    # Base API client
-│   │   ├── auth.ts                   # Authentication utilities
-│   │   ├── formatters.ts             # Data formatting
-│   │   ├── validators.ts             # Form validation
-│   │   ├── constants.ts              # Application constants
-│   │   ├── utils.ts                  # General utilities
-│   │   └── supabase.ts               # Supabase client configuration (Sprint 9b)
-│   ├── types/                        # TypeScript type definitions
-│   │   ├── api.ts                    # API response types
-│   │   ├── analysis.ts               # Analysis data types
-│   │   ├── user.ts                   # User data types
-│   │   └── common.ts                 # Common types
+│   │   └── README.md                 # Queries documentation
+│   ├── state/                        # Zustand stores
+│   │   └── README.md                 # State documentation
+│   ├── stories/                      # Storybook stories
+│   │   ├── assets/                   # Storybook assets
+│   │   ├── Button.stories.ts
+│   │   ├── Button.tsx
+│   │   ├── Header.stories.ts
+│   │   ├── Header.tsx
+│   │   ├── Page.stories.ts
+│   │   ├── Page.tsx
+│   │   ├── button.css
+│   │   ├── header.css
+│   │   └── page.css
+│   ├── tests/                        # Frontend test suite
+│   │   ├── components/               # Component tests
+│   │   ├── e2e/                      # E2E tests
+│   │   ├── hooks/                    # Hook tests
+│   │   ├── integration/              # Integration tests
+│   │   ├── services/                 # Service tests
+│   │   └── state/                    # Store tests
+│   ├── tests_archive/                # Archived tests
+│   ├── bun.lockb                     # Bun lock file
+│   ├── components.json               # shadcn/ui configuration
+│   ├── eslint.config.js              # ESLint configuration
+│   ├── jest.config.js                # Jest configuration
+│   ├── jest.setup.ts                 # Jest setup
+│   ├── next-env.d.ts                 # Next.js type definitions
+│   ├── next.config.js                # Next.js configuration
+│   ├── package-lock.json             # Dependency lock file
+│   ├── package.json                  # Node.js dependencies
+│   ├── playwright.config.ts          # Playwright configuration
+│   ├── postcss.config.js             # PostCSS configuration
 │   ├── public/                       # Static assets
 │   │   ├── favicon.ico
-│   │   ├── robots.txt
-│   │   └── assets/                   # Static images and icons
-│   │       ├── logos/
-│   │       ├── medical-icons/
-│   │       └── backgrounds/
-│   ├── tests/                        # Frontend test suite (value-first)
-│   │   ├── components/               # Component tests (high-value only)
-│   │   ├── state/                    # Store tests (business logic)
-│   │   ├── services/                 # Service tests (API integration)
-│   │   └── e2e/                      # E2E tests (critical user journeys)
-│   ├── tests_archive/                # Archived tests (excluded from CI/CD)
-│   ├── .storybook/                   # Storybook configuration
-│   │   ├── main.ts                   # Storybook main config
-│   │   ├── preview.ts                # Storybook preview config
-│   │   └── stories/                  # Component stories
-│   ├── package.json                  # Node.js dependencies
-│   ├── package-lock.json             # Dependency lock file
-│   ├── next.config.js                # Next.js configuration
+│   │   ├── placeholder.svg
+│   │   └── robots.txt
+│   ├── README.md                     # Frontend documentation
 │   ├── tailwind.config.ts            # Tailwind CSS configuration
+│   ├── tsconfig.app.json             # TypeScript app configuration
 │   ├── tsconfig.json                 # TypeScript configuration
-│   ├── eslint.config.js              # ESLint configuration
-│   └── README.md                     # Frontend architecture overview
+│   ├── tsconfig.node.json            # TypeScript node configuration
+│   └── vite.config.js                # Vite configuration
 ├── docs/                             # Project documentation
 │   ├── context/                      # Context engineering files
 │   │   ├── PRD.md                    # Product Requirements Document
@@ -329,7 +358,7 @@ healthiq/
 
 This blueprint represents the complete architectural vision for HealthIQ AI v5, including:
 
-> **⚠️ Frontend Architecture Note**: The `frontend/` structure above reflects our **planned Next.js 14+ App Router architecture**. The initial build will follow this structure, replacing the current Vite + React Router setup. This is our **canonical frontend architecture** for Sprint 1 and beyond.
+> **✅ Frontend Architecture Note**: The `frontend/` structure above reflects our **implemented Next.js 14+ App Router architecture**. The frontend has been fully restored from lovable/main with complete component structure, state management, and testing infrastructure.
 
 ### Key Architectural Principles
 
@@ -347,11 +376,12 @@ This blueprint represents the complete architectural vision for HealthIQ AI v5, 
 ### Implementation Status
 
 - **✅ Currently Implemented**: Core backend structure, Next.js 14+ frontend with App Router, essential documentation, scaffolding infrastructure
-- **✅ Recently Completed**: Frontend migration (Vite → Next.js), Dev API Probe migration, CORS configuration, service layer scaffolding, DevOps scaffolding
+- **✅ Recently Completed**: Frontend restoration from lovable/main, complete component structure, state management, testing infrastructure
 - **✅ Sprint 6-7 Completed**: Insight synthesis engine, Gemini LLM integration, prompt templates, deterministic MockLLMClient, environment configuration
 - **✅ Sprint 8 Completed**: Frontend state management (Zustand stores), API service layer, TypeScript types, CORS configuration, comprehensive testing
 - **✅ Sprint 9 Completed**: Core UI components, biomarker forms, results visualization, responsive design, medical shadow system
 - **✅ Sprint 9b Completed**: Persistence foundation fully implemented and validated with 369 passing tests, complete database integration, export v1 with Supabase Storage, comprehensive testing coverage
+- **✅ Frontend Restoration Completed**: Full frontend structure restored from lovable/main with all components, pages, and supporting files
 - **🔄 In Progress**: Sprint 10 preparation
 - **📋 Planned**: Full persistence implementation, database integration, comprehensive testing, deployment infrastructure
 - **🔮 Future**: Advanced integrations, clinical-grade features, enterprise capabilities

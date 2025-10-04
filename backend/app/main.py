@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.routes import health, analysis
+from app.routes import health, analysis, questionnaire, upload
 from core.insights.registry import ensure_insights_registered
 
 # Create FastAPI application
@@ -41,6 +41,8 @@ app.add_middleware(
 # Include API routes with /api prefix
 app.include_router(health.router, prefix="/api", tags=["health"])
 app.include_router(analysis.router, prefix="/api", tags=["analysis"])
+app.include_router(questionnaire.router, prefix="/api/questionnaire", tags=["questionnaire"])
+app.include_router(upload.router, prefix="/api/upload", tags=["upload"])
 
 
 @app.get("/")
