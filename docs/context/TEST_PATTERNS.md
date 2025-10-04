@@ -315,7 +315,7 @@ describe('AnalysisService - Core User Workflow', () => {
 ### Backend Tests
 - **File**: `test_analysis_service.py`
 - **Purpose**: Core business logic - analysis orchestration
-- **Run Command**: `pytest backend/tests/unit/test_analysis_service.py -v`
+- **Run Command**: `pytest tests/unit/test_analysis_service.py -v`
 - **Last Result**: 14 passed, 0 failed
 - **Business Value**: Ensures analysis pipeline works correctly
 

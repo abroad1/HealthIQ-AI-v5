@@ -17,6 +17,18 @@ class AnalysisContext(BaseModel):
     analysis_id: str = Field(..., description="Unique analysis identifier")
     user: User = Field(..., description="User information")
     biomarker_panel: BiomarkerPanel = Field(..., description="Normalized biomarker data")
+    questionnaire_responses: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Questionnaire responses from the 58-question form"
+    )
+    lifestyle_factors: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Mapped lifestyle factors from questionnaire responses"
+    )
+    medical_history: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Mapped medical history from questionnaire responses"
+    )
     analysis_parameters: Dict[str, Any] = Field(
         default_factory=dict, 
         description="Analysis configuration parameters"
