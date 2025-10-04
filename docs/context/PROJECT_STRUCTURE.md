@@ -64,8 +64,13 @@ healthiq/
 │   │   │   ├── __init__.py
 │   │   │   ├── base.py               # Base insight classes (scaffolded)
 │   │   │   ├── registry.py           # Insight type registry (scaffolded)
-│   │   │   ├── modules/              # Specific insight generators (empty)
-│   │   │   │   └── [no modules implemented] # Insight modules pending implementation
+│   │   │   ├── modules/              # Specific insight generators (planned)
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── metabolic_age.py  # Metabolic age insight module (planned - see insight_design_outline.md)
+│   │   │   │   ├── heart_insight.py  # Cardiovascular health insight module (planned - see insight_design_outline.md)
+│   │   │   │   ├── inflammation.py   # Systemic inflammation insight module (planned - see insight_design_outline.md)
+│   │   │   │   ├── fatigue_root_cause.py # Fatigue root cause analysis module (planned - see insight_design_outline.md)
+│   │   │   │   └── detox_filtration.py # Detoxification and filtration insight module (planned - see insight_design_outline.md)
 │   │   │   └── validators/           # Insight validation logic (planned)
 │   │   │       ├── __init__.py
 │   │   │       └── medical.py        # Medical accuracy validation (planned)
