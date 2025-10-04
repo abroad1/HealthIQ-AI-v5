@@ -161,7 +161,7 @@ export default function LandingPage() {
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="mb-4 text-3xl font-bold md:text-4xl">Ready to Understand Your Health?</h2>
             <p className="mb-8 text-lg text-muted-foreground">
-              Join thousands who've taken control of their health journey with data-driven insights.
+              Join thousands who&apos;ve taken control of their health journey with data-driven insights.
             </p>
             <Button asChild size="lg" className="gap-2 text-lg">
               <Link href="/upload">
