@@ -81,14 +81,14 @@ export default function PasteInput({
             className="min-h-[200px] resize-none"
           />
           
-          <div className="flex justify-between items-center text-xs text-gray-500">
+          <div className="flex justify-between items-center text-xs text-muted-foreground">
             <span>{text.length} characters</span>
             <span>Minimum 10 characters required</span>
           </div>
         </div>
 
         {error && (
-          <div className="flex items-center space-x-2 text-red-600 text-sm">
+          <div className="flex items-center space-x-2 text-destructive text-sm">
             <AlertCircle className="h-4 w-4" />
             <span>{error}</span>
           </div>

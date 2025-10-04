@@ -64,8 +64,8 @@ export default function FileDropzone({
           {...getRootProps()}
           className={`
             border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
-            ${isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'}
-            ${isDragReject ? 'border-red-500 bg-red-50' : ''}
+            ${isDragActive ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}
+            ${isDragReject ? 'border-destructive bg-destructive/5' : ''}
             ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
           `}
           onMouseEnter={() => setIsDragActive(true)}
@@ -74,20 +74,20 @@ export default function FileDropzone({
           <input {...getInputProps()} />
           
           <div className="flex flex-col items-center space-y-4">
-            <div className="p-3 bg-blue-100 rounded-full">
-              <Upload className="h-8 w-8 text-blue-600" />
+            <div className="p-3 bg-primary/10 rounded-full">
+              <Upload className="h-8 w-8 text-primary" />
             </div>
             
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-foreground">
                 Drop your lab report here
               </h3>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-muted-foreground mt-1">
                 or click to browse files
               </p>
             </div>
             
-            <div className="flex items-center space-x-2 text-xs text-gray-400">
+            <div className="flex items-center space-x-2 text-xs text-muted-foreground">
               <FileText className="h-4 w-4" />
               <span>PDF, TXT, JSON, CSV up to {Math.round(maxSize / 1024 / 1024)}MB</span>
             </div>
@@ -95,7 +95,7 @@ export default function FileDropzone({
         </div>
         
         {error && (
-          <div className="mt-4 flex items-center space-x-2 text-red-600 text-sm">
+          <div className="mt-4 flex items-center space-x-2 text-destructive text-sm">
             <AlertCircle className="h-4 w-4" />
             <span>{error}</span>
           </div>
