@@ -281,6 +281,7 @@ export default function ClusterSummary({ clusters, isLoading = false, showDetail
                   variant="ghost"
                   size="sm"
                   onClick={() => toggleCluster(cluster.id)}
+                  aria-label={expandedClusters.has(cluster.id) ? "Collapse cluster details" : "Expand cluster details"}
                 >
                   {expandedClusters.has(cluster.id) ? (
                     <ChevronDown className="h-4 w-4" />
@@ -292,7 +293,14 @@ export default function ClusterSummary({ clusters, isLoading = false, showDetail
 
               {/* Score Bar */}
               <div className="mb-4">
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className="w-full bg-gray-200 rounded-full h-2"
+                  role="progressbar"
+                  aria-valuenow={cluster.score}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label={`Cluster score: ${Math.round(cluster.score)}%`}
+                >
                   <div 
                     className={`h-2 rounded-full transition-all duration-1000 ${getScoreBarColor(cluster.score)}`}
                     style={{ width: `${cluster.score}%` }}

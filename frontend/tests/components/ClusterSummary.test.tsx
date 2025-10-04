@@ -17,8 +17,8 @@ jest.mock('@/components/ui/badge', () => ({
 }));
 
 jest.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled, className }: any) => (
-    <button onClick={onClick} disabled={disabled} className={className}>{children}</button>
+  Button: ({ children, onClick, disabled, className, ...props }: any) => (
+    <button onClick={onClick} disabled={disabled} className={className} {...props}>{children}</button>
   ),
 }));
 
@@ -128,7 +128,7 @@ describe('ClusterSummary', () => {
     expect(screen.queryByText('Biomarkers Analyzed')).not.toBeInTheDocument();
     
     // Click to expand first cluster
-    const expandButtons = screen.getAllByRole('button', { name: /chevron/i });
+    const expandButtons = screen.getAllByRole('button', { name: /expand cluster details/i });
     await user.click(expandButtons[0]);
     
     // Should now show details
@@ -140,7 +140,7 @@ describe('ClusterSummary', () => {
     const user = userEvent.setup();
     render(<ClusterSummary clusters={mockClusters} />);
     
-    const expandButtons = screen.getAllByRole('button', { name: /chevron/i });
+    const expandButtons = screen.getAllByRole('button', { name: /expand cluster details/i });
     await user.click(expandButtons[0]);
     
     expect(screen.getByText('Glucose')).toBeInTheDocument();
@@ -152,7 +152,7 @@ describe('ClusterSummary', () => {
     const user = userEvent.setup();
     render(<ClusterSummary clusters={mockClusters} />);
     
-    const expandButtons = screen.getAllByRole('button', { name: /chevron/i });
+    const expandButtons = screen.getAllByRole('button', { name: /expand cluster details/i });
     await user.click(expandButtons[0]);
     
     expect(screen.getByText('Increase physical activity to at least 150 minutes per week')).toBeInTheDocument();
@@ -220,7 +220,7 @@ describe('ClusterSummary', () => {
     const user = userEvent.setup();
     render(<ClusterSummary clusters={mockClusters} />);
     
-    const expandButtons = screen.getAllByRole('button', { name: /chevron/i });
+    const expandButtons = screen.getAllByRole('button', { name: /expand cluster details/i });
     await user.click(expandButtons[0]);
     
     expect(screen.getByText('Category')).toBeInTheDocument();
@@ -264,8 +264,15 @@ describe('ClusterSummary', () => {
   it('shows correct biomarker count for each cluster', () => {
     render(<ClusterSummary clusters={mockClusters} />);
     
-    expect(screen.getByText('3')).toBeInTheDocument(); // Metabolic cluster has 3 biomarkers
-    expect(screen.getByText('3')).toBeInTheDocument(); // Cardiovascular cluster has 3 biomarkers
-    expect(screen.getByText('2')).toBeInTheDocument(); // Inflammatory cluster has 2 biomarkers
+    // Check that biomarker counts are displayed
+    const biomarkerCounts = screen.getAllByText(/Biomarkers:/);
+    expect(biomarkerCounts).toHaveLength(3);
+    
+    // Check specific counts using getAllByText to handle multiple matches
+    const count3Elements = screen.getAllByText('3');
+    expect(count3Elements.length).toBeGreaterThanOrEqual(2); // At least 2 clusters have 3 biomarkers
+    
+    const count2Elements = screen.getAllByText('2');
+    expect(count2Elements.length).toBeGreaterThanOrEqual(1); // At least 1 cluster has 2 biomarkers
   });
 });

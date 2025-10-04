@@ -325,6 +325,7 @@ export default function BiomarkerForm({
                           size="sm"
                           onClick={() => removeBiomarker(index)}
                           className="text-red-600 hover:text-red-700"
+                          aria-label="Remove biomarker"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
