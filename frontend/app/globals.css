@@ -2,114 +2,94 @@
 @tailwind components;
 @tailwind utilities;
 
-/* HealthIQ AI v5 Design System */
+/* Natural Sophistication Theme - HealthIQ AI v5 */
 :root {
-  /* Light Mode (Brief Specification) */
-  --background: 210 20% 98%;
-  --foreground: 215 25% 27%;
+  /* Base Colors - Natural & Sophisticated */
+  --background: 0 0% 100%;
+  --foreground: 220 13% 18%;
   --card: 0 0% 100%;
-  --card-foreground: 215 25% 27%;
+  --card-foreground: 220 13% 18%;
   --popover: 0 0% 100%;
-  --popover-foreground: 215 25% 27%;
+  --popover-foreground: 220 13% 18%;
   
-  /* Primary - Green */
-  --primary: 142 71% 45%;
+  /* Primary - Deep Forest Green (Natural, Trustworthy) */
+  --primary: 142 76% 36%;
   --primary-foreground: 0 0% 100%;
-  --primary-glow: 142 71% 55%;
+  --primary-glow: 142 76% 46%;
   
-  /* Secondary - Sky Blue Accent */
-  --secondary: 197 71% 73%;
-  --secondary-foreground: 215 25% 27%;
+  /* Secondary - Warm Sage (Calming, Professional) */
+  --secondary: 120 15% 85%;
+  --secondary-foreground: 220 13% 18%;
   
-  /* Muted */
+  /* Muted - Soft Gray (Subtle, Clean) */
   --muted: 210 20% 95%;
-  --muted-foreground: 215 25% 45%;
+  --muted-foreground: 220 13% 45%;
   
-  /* Accent - Sky Blue */
-  --accent: 197 71% 73%;
-  --accent-foreground: 215 25% 27%;
+  /* Accent - Ocean Blue (Fresh, Reliable) */
+  --accent: 200 100% 40%;
+  --accent-foreground: 0 0% 100%;
   
-  /* Destructive */
+  /* Destructive - Medical Red (Alert, Clear) */
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
   
-  /* Borders & Inputs */
+  /* Borders & Inputs - Light Gray (Clean, Minimal) */
   --border: 210 20% 90%;
   --input: 210 20% 90%;
-  --ring: 142 71% 45%;
+  --ring: 142 76% 36%;
   
-  /* Health Status Colors - Light Mode */
-  --status-excellent: 142 71% 45%;
-  --status-good: 66 70% 54%;
-  --status-fair: 38 92% 50%;
-  --status-poor: 0 84% 60%;
-  --status-critical: 0 72% 51%;
+  /* Medical Status Colors */
+  --medical-success: 142 76% 36%;
+  --medical-warning: 38 92% 50%;
+  --medical-info: 200 100% 40%;
   
-  /* Sidebar */
-  --sidebar-background: 0 0% 100%;
-  --sidebar-foreground: 215 25% 27%;
-  --sidebar-primary: 142 71% 45%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 197 71% 73%;
-  --sidebar-accent-foreground: 215 25% 27%;
-  --sidebar-border: 210 20% 90%;
-  --sidebar-ring: 142 71% 45%;
+  /* Medical Shadow System - Now handled by Tailwind utilities */
   
   /* Border Radius */
   --radius: 0.75rem;
 }
 
 .dark {
-  /* Dark Mode (Brief Specification - Default) */
-  --background: 220 30% 6%;
-  --foreground: 190 100% 95%;
-  --card: 220 30% 8%;
-  --card-foreground: 190 100% 95%;
-  --popover: 220 30% 8%;
-  --popover-foreground: 190 100% 95%;
+  /* Dark Mode - Deep Natural Tones */
+  --background: 220 13% 8%;
+  --foreground: 210 20% 95%;
+  --card: 220 13% 12%;
+  --card-foreground: 210 20% 95%;
+  --popover: 220 13% 12%;
+  --popover-foreground: 210 20% 95%;
   
-  /* Primary - Electric Blue */
-  --primary: 213 100% 56%;
-  --primary-foreground: 0 0% 100%;
-  --primary-glow: 213 100% 66%;
+  /* Primary - Brighter Forest Green */
+  --primary: 142 76% 46%;
+  --primary-foreground: 220 13% 8%;
+  --primary-glow: 142 76% 56%;
   
-  /* Secondary - Darker tone */
-  --secondary: 220 30% 12%;
-  --secondary-foreground: 190 100% 95%;
+  /* Secondary - Darker Sage */
+  --secondary: 120 15% 25%;
+  --secondary-foreground: 210 20% 95%;
   
-  /* Muted */
-  --muted: 220 30% 10%;
-  --muted-foreground: 190 50% 70%;
+  /* Muted - Dark Gray */
+  --muted: 220 13% 15%;
+  --muted-foreground: 210 20% 70%;
   
-  /* Accent - Aqua */
-  --accent: 188 95% 68%;
-  --accent-foreground: 220 30% 6%;
+  /* Accent - Brighter Ocean Blue */
+  --accent: 200 100% 50%;
+  --accent-foreground: 220 13% 8%;
   
-  /* Destructive */
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 100%;
+  /* Destructive - Brighter Medical Red */
+  --destructive: 0 84% 70%;
+  --destructive-foreground: 220 13% 8%;
   
-  /* Borders & Inputs */
-  --border: 220 30% 15%;
-  --input: 220 30% 15%;
-  --ring: 213 100% 56%;
+  /* Borders & Inputs - Dark Gray */
+  --border: 220 13% 20%;
+  --input: 220 13% 20%;
+  --ring: 142 76% 46%;
   
-  /* Health Status Colors - Dark Mode */
-  --status-excellent: 188 95% 68%;
-  --status-good: 166 85% 58%;
-  --status-fair: 38 92% 50%;
-  --status-poor: 0 84% 60%;
-  --status-critical: 0 72% 51%;
+  /* Medical Status Colors - Dark Mode */
+  --medical-success: 142 76% 46%;
+  --medical-warning: 38 92% 60%;
+  --medical-info: 200 100% 50%;
   
-  /* Sidebar */
-  --sidebar-background: 220 30% 8%;
-  --sidebar-foreground: 190 100% 95%;
-  --sidebar-primary: 213 100% 56%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 188 95% 68%;
-  --sidebar-accent-foreground: 220 30% 6%;
-  --sidebar-border: 220 30% 15%;
-  --sidebar-ring: 213 100% 56%;
+  /* Medical Shadow System - Now handled by Tailwind utilities */
 }
 
 * {

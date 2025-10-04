@@ -1,12 +1,8 @@
-"""
-LLM integration module for HealthIQ AI v5.
 
-This module provides Google Gemini integration for biomarker analysis,
-insight synthesis, and narrative generation.
+"""
+LLM client implementations for HealthIQ AI v5.
 """
 
-from .client import GeminiClient
-from .prompts import PromptTemplates
-from .parsing import ResponseParser
+from .gemini_client import GeminiClient
 
-__all__ = ["GeminiClient", "PromptTemplates", "ResponseParser"]
+__all__ = ["GeminiClient"]

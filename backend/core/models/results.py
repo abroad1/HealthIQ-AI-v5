@@ -2,11 +2,32 @@
 Analysis results models - immutable Pydantic v2 models for analysis results.
 """
 
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, TYPE_CHECKING
 from pydantic import BaseModel, ConfigDict, Field
 
 from core.models.biomarker import BiomarkerCluster, BiomarkerInsight
 from core.models.context import AnalysisContext
+
+if TYPE_CHECKING:
+    pass
+
+
+class BiomarkerScore(BaseModel):
+    """Immutable biomarker scoring result."""
+    
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    
+    biomarker_name: str = Field(..., description="Canonical biomarker name")
+    value: Any = Field(..., description="Biomarker value")
+    unit: str = Field(default="", description="Unit of measurement")
+    score: float = Field(..., description="Normalized score (0-1)")
+    percentile: Optional[float] = Field(default=None, description="Population percentile")
+    status: str = Field(..., description="Status (normal, elevated, low, etc.)")
+    reference_range: Optional[Dict[str, Any]] = Field(
+        default=None, 
+        description="Reference range information"
+    )
+    interpretation: str = Field(default="", description="Clinical interpretation")
 
 
 class AnalysisResult(BaseModel):
@@ -16,6 +37,10 @@ class AnalysisResult(BaseModel):
     
     analysis_id: str = Field(..., description="Analysis identifier")
     context: AnalysisContext = Field(..., description="Analysis context")
+    biomarkers: List[BiomarkerScore] = Field(
+        default_factory=list, 
+        description="Individual biomarker results with scores and status"
+    )
     clusters: List[BiomarkerCluster] = Field(
         default_factory=list, 
         description="Biomarker clusters"
@@ -34,6 +59,7 @@ class AnalysisResult(BaseModel):
         description="General recommendations"
     )
     created_at: str = Field(..., description="Result creation timestamp")
+    result_version: str = Field(default="1.0.0", description="Result schema version for DTO parity")
     processing_time_seconds: Optional[float] = Field(
         default=None, 
         description="Total processing time"
@@ -56,24 +82,6 @@ class AnalysisSummary(BaseModel):
     completed_at: Optional[str] = Field(default=None, description="Analysis completion timestamp")
 
 
-class BiomarkerScore(BaseModel):
-    """Immutable biomarker scoring result."""
-    
-    model_config = ConfigDict(frozen=True, extra="forbid")
-    
-    biomarker_name: str = Field(..., description="Canonical biomarker name")
-    value: Any = Field(..., description="Biomarker value")
-    unit: str = Field(default="", description="Unit of measurement")
-    score: float = Field(..., description="Normalized score (0-1)")
-    percentile: Optional[float] = Field(default=None, description="Population percentile")
-    status: str = Field(..., description="Status (normal, elevated, low, etc.)")
-    reference_range: Optional[Dict[str, Any]] = Field(
-        default=None, 
-        description="Reference range information"
-    )
-    interpretation: str = Field(default="", description="Clinical interpretation")
-
-
 class ClusterHit(BaseModel):
     """Immutable cluster hit result."""
     
@@ -88,18 +96,29 @@ class ClusterHit(BaseModel):
 
 
 class InsightResult(BaseModel):
-    """Immutable insight result."""
+    """Immutable insight result with provenance tracking."""
     
     model_config = ConfigDict(frozen=True, extra="forbid")
     
+    # Core insight data
     insight_id: str = Field(..., description="Insight identifier")
     title: str = Field(..., description="Insight title")
     description: str = Field(..., description="Insight description")
-    category: str = Field(..., description="Insight category")
+    category: str = Field(..., description="Insight category (maintained for frontend compatibility)")
     confidence: float = Field(..., description="Confidence score (0-1)")
     severity: str = Field(..., description="Severity level")
     biomarkers: List[str] = Field(default_factory=list, description="Related biomarkers")
     recommendations: List[str] = Field(default_factory=list, description="Recommendations")
+    
+    # Provenance fields (Sprint 9c)
+    version: str = Field(default="v1.0.0", description="Insight version")
+    manifest_id: str = Field(default="legacy_v1", description="Manifest identifier")
+    experiment_id: Optional[str] = Field(default=None, description="Experiment identifier")
+    drivers: Optional[Dict[str, Any]] = Field(default=None, description="Insight drivers")
+    evidence: Optional[Dict[str, Any]] = Field(default=None, description="Supporting evidence")
+    error_code: Optional[str] = Field(default=None, description="Error code if failed")
+    error_detail: Optional[str] = Field(default=None, description="Error details if failed")
+    latency_ms: int = Field(default=0, description="Processing latency in milliseconds")
 
 
 class AnalysisDTO(BaseModel):
@@ -108,6 +127,7 @@ class AnalysisDTO(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
     
     analysis_id: str = Field(..., description="Analysis identifier")
+    biomarkers: List[BiomarkerScore] = Field(default_factory=list, description="Biomarker results")
     clusters: List[ClusterHit] = Field(default_factory=list, description="Cluster hits")
     insights: List[InsightResult] = Field(default_factory=list, description="Insight results")
     status: str = Field(..., description="Analysis status")
