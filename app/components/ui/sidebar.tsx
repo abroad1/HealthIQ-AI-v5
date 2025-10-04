@@ -62,6 +62,8 @@ const SidebarProvider = React.forwardRef<
   const [isMobile, setIsMobile] = React.useState(false)
 
   React.useEffect(() => {
+    if (typeof window === 'undefined') return
+    
     const mql = window.matchMedia('(max-width: 1024px)')
     setIsMobile(mql.matches)
     const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
