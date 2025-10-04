@@ -75,6 +75,15 @@
   - Flags (e.g. driver biomarkers)
   - Confidence score
 
+### 5.5. **Persistence Hook (Sprint 9b)**
+- **Database Storage**: All analysis results persisted to Supabase Postgres at phase:"complete"
+- **Idempotence**: Upsert by `analysis_id` ensures data consistency and prevents duplicates
+- **Fallback Mechanism**: If DB write fails, log error and return in-memory DTO (backwards compatibility)
+- **Audit Trail**: All database operations logged for compliance and debugging
+- **RLS Enforcement**: Row-level security ensures users can only access own data
+- **Non-blocking**: SSE streams continue uninterrupted during persistence operations
+- **Confidence Tracking**: Persist confidence scores and processing metadata with results
+
 ### 6. **Insight Synthesis**
 - **LLM Layer**: This stage is powered by our configured LLM engine
 - **Payload**: All engine + cluster outputs, user profile, questionnaire
@@ -128,6 +137,8 @@
 - Every stage emits an **immutable DTO**, validated by `pydantic v2`
 - No engine or synthesis logic permitted to use aliases or fuzzy data
 - All insight payloads are **versioned and traceable**
+- **All analyses persisted to Supabase** with complete audit trail (Sprint 9b)
+- **Database fallback** ensures backwards compatibility if persistence fails
 
 ---
 
@@ -141,6 +152,7 @@
 | **Engine Expansion** | Plugin system, feature flags, custom pipelines |
 | **Result QA** | Validation, contradiction detection, threshold sanity check |
 | **Compliance** | GDPR-ready retention + opt-out framework |
+| **Persistence** | Database fallback, idempotence, RLS enforcement (Sprint 9b) |
 
 ---
 

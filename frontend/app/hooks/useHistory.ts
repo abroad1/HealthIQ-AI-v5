@@ -3,7 +3,7 @@
  * TODO: Implement actual Supabase integration in Sprint 9b.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { getAnalysisHistory, AnalysisHistoryItem, HistoryResponse } from '../services/history';
 
 export interface UseHistoryOptions {
@@ -42,7 +42,7 @@ export function useHistory(
   const [total, setTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(page);
 
-  const fetchHistory = useCallback(async () => {
+  const fetchHistory = async () => {
     if (!userId) return;
     
     setLoading(true);
@@ -57,13 +57,13 @@ export function useHistory(
     } finally {
       setLoading(false);
     }
-  }, [userId, currentPage, limit]);
+  };
 
   useEffect(() => {
     if (autoFetch) {
       fetchHistory();
     }
-  }, [autoFetch, fetchHistory]);
+  }, [userId, currentPage, limit, autoFetch]);
 
   const nextPage = () => {
     if (currentPage * limit < total) {

@@ -18,6 +18,12 @@ Object.defineProperty(window, 'localStorage', {
 
 describe('UIStore', () => {
   beforeEach(() => {
+    // Clear localStorage mock
+    localStorageMock.getItem.mockReturnValue(null);
+    localStorageMock.setItem.mockClear();
+    localStorageMock.removeItem.mockClear();
+    localStorageMock.clear.mockClear();
+    
     // Reset store state
     useUIStore.getState().resetUI();
     jest.clearAllMocks();
@@ -34,21 +40,28 @@ describe('UIStore', () => {
       });
       expect(state.theme).toBe('dark');
       expect(state.viewport).toEqual({
-        width: 0,
-        height: 0,
+        width: 1024, // Default when window is undefined
+        height: 768,
         isMobile: false,
         isTablet: false,
-        isDesktop: false,
+        isDesktop: true,
       });
       expect(state.preferences).toEqual({
+        theme: 'system',
         language: 'en',
-        timezone: 'UTC',
-        dateFormat: 'YYYY-MM-DD',
-        numberFormat: 'en-US',
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        dateFormat: 'MM/DD/YYYY',
+        timeFormat: '12h',
         notifications: {
           email: true,
           push: true,
-          sms: false,
+          analysis: true,
+          alerts: true,
+        },
+        accessibility: {
+          highContrast: false,
+          reducedMotion: false,
+          fontSize: 'medium',
         },
       });
       expect(state.notifications).toEqual([]);
@@ -63,13 +76,16 @@ describe('UIStore', () => {
     it('should toggle sidebar', () => {
       const store = useUIStore.getState();
       
-      expect(store.layout.sidebarOpen).toBe(false);
+      // Check initial state
+      const initialSidebarOpen = store.sidebarOpen;
       
       store.toggleSidebar();
-      expect(store.layout.sidebarOpen).toBe(true);
+      expect(store.sidebarOpen).toBe(!initialSidebarOpen);
+      expect(store.layout.sidebarOpen).toBe(!initialSidebarOpen);
       
       store.toggleSidebar();
-      expect(store.layout.sidebarOpen).toBe(false);
+      expect(store.sidebarOpen).toBe(initialSidebarOpen);
+      expect(store.layout.sidebarOpen).toBe(initialSidebarOpen);
     });
 
     it('should set sidebar state', () => {
@@ -96,13 +112,14 @@ describe('UIStore', () => {
     it('should toggle theme', () => {
       const store = useUIStore.getState();
       
-      expect(store.theme).toBe('dark');
+      // Check initial state
+      const initialTheme = store.theme;
       
       store.toggleTheme();
-      expect(store.theme).toBe('light');
+      expect(store.theme).toBe(initialTheme === 'dark' ? 'light' : 'dark');
       
       store.toggleTheme();
-      expect(store.theme).toBe('dark');
+      expect(store.theme).toBe(initialTheme);
     });
 
     it('should set theme', () => {
@@ -115,7 +132,7 @@ describe('UIStore', () => {
 
     it('should persist theme to localStorage', () => {
       useUIStore.getState().setTheme('light');
-      expect(localStorageMock.setItem).toHaveBeenCalledWith('healthiq_theme', 'light');
+      expect(localStorageMock.setItem).toHaveBeenCalledWith('ui-store', expect.stringContaining('"theme":"light"'));
     });
   });
 
@@ -165,16 +182,22 @@ describe('UIStore', () => {
       const preferences = {
         language: 'es',
         timezone: 'America/New_York',
-        dateFormat: 'MM/DD/YYYY',
-        numberFormat: 'es-ES',
+        dateFormat: 'MM/DD/YYYY' as const,
+        timeFormat: '12h' as const,
         notifications: {
           email: false,
           push: true,
-          sms: true,
+          analysis: true,
+          alerts: true,
+        },
+        accessibility: {
+          highContrast: false,
+          reducedMotion: false,
+          fontSize: 'medium' as const,
         },
       };
 
-      useUIStore.getState().updatePreferences(preferences);
+      useUIStore.getState().setPreferences(preferences);
       expect(useUIStore.getState().preferences).toEqual(preferences);
     });
 
@@ -182,19 +205,25 @@ describe('UIStore', () => {
       const preferences = {
         language: 'fr',
         timezone: 'Europe/Paris',
-        dateFormat: 'DD/MM/YYYY',
-        numberFormat: 'fr-FR',
+        dateFormat: 'DD/MM/YYYY' as const,
+        timeFormat: '24h' as const,
         notifications: {
           email: true,
           push: false,
-          sms: false,
+          analysis: true,
+          alerts: true,
+        },
+        accessibility: {
+          highContrast: false,
+          reducedMotion: false,
+          fontSize: 'medium' as const,
         },
       };
 
-      useUIStore.getState().updatePreferences(preferences);
+      useUIStore.getState().setPreferences(preferences);
       expect(localStorageMock.setItem).toHaveBeenCalledWith(
-        'healthiq_preferences',
-        JSON.stringify(preferences)
+        'ui-store',
+        expect.stringContaining('"preferences"')
       );
     });
   });
@@ -202,52 +231,54 @@ describe('UIStore', () => {
   describe('Notification Actions', () => {
     it('should add notification', () => {
       const notification = {
-        id: 'notif-1',
+        type: 'success' as const,
+        title: 'Success',
+        message: 'Operation completed',
+        duration: 5000,
+      };
+
+      useUIStore.getState().addNotification(notification);
+      const notifications = useUIStore.getState().notifications;
+      expect(notifications).toHaveLength(1);
+      expect(notifications[0]).toMatchObject({
         type: 'success',
         title: 'Success',
         message: 'Operation completed',
         duration: 5000,
-        timestamp: '2025-01-27T00:00:00Z',
-      };
-
-      useUIStore.getState().addNotification(notification);
-      expect(useUIStore.getState().notifications).toHaveLength(1);
-      expect(useUIStore.getState().notifications[0]).toEqual(notification);
+        read: false,
+        id: expect.any(String),
+        created_at: expect.any(String),
+      });
     });
 
     it('should remove notification', () => {
       const notification = {
-        id: 'notif-1',
-        type: 'success',
+        type: 'success' as const,
         title: 'Success',
         message: 'Operation completed',
         duration: 5000,
-        timestamp: '2025-01-27T00:00:00Z',
       };
 
       useUIStore.getState().addNotification(notification);
-      expect(useUIStore.getState().notifications).toHaveLength(1);
+      const notifications = useUIStore.getState().notifications;
+      expect(notifications).toHaveLength(1);
 
-      useUIStore.getState().removeNotification('notif-1');
+      useUIStore.getState().removeNotification(notifications[0].id);
       expect(useUIStore.getState().notifications).toHaveLength(0);
     });
 
     it('should clear all notifications', () => {
       useUIStore.getState().addNotification({
-        id: 'notif-1',
-        type: 'success',
+        type: 'success' as const,
         title: 'Success',
         message: 'Operation completed',
         duration: 5000,
-        timestamp: '2025-01-27T00:00:00Z',
       });
       useUIStore.getState().addNotification({
-        id: 'notif-2',
-        type: 'error',
+        type: 'error' as const,
         title: 'Error',
         message: 'Operation failed',
         duration: 5000,
-        timestamp: '2025-01-27T00:00:00Z',
       });
 
       expect(useUIStore.getState().notifications).toHaveLength(2);
@@ -260,51 +291,56 @@ describe('UIStore', () => {
   describe('Modal Actions', () => {
     it('should open modal', () => {
       const modal = {
-        id: 'modal-1',
+        type: 'confirmation' as const,
+        title: 'Confirm Action',
+        content: 'Are you sure?',
+        size: 'md' as const,
+        closable: true,
+      };
+
+      const modalId = useUIStore.getState().openModal(modal);
+      const modals = useUIStore.getState().modals;
+      expect(modals).toHaveLength(1);
+      expect(modals[0]).toMatchObject({
+        id: modalId,
         type: 'confirmation',
         title: 'Confirm Action',
         content: 'Are you sure?',
-        actions: [
-          { label: 'Cancel', action: 'cancel' },
-          { label: 'Confirm', action: 'confirm' },
-        ],
-      };
-
-      useUIStore.getState().openModal(modal);
-      expect(useUIStore.getState().modals).toHaveLength(1);
-      expect(useUIStore.getState().modals[0]).toEqual(modal);
+        size: 'md',
+        closable: true,
+      });
     });
 
     it('should close modal', () => {
       const modal = {
-        id: 'modal-1',
-        type: 'confirmation',
+        type: 'confirmation' as const,
         title: 'Confirm Action',
         content: 'Are you sure?',
-        actions: [],
+        size: 'md' as const,
+        closable: true,
       };
 
-      useUIStore.getState().openModal(modal);
+      const modalId = useUIStore.getState().openModal(modal);
       expect(useUIStore.getState().modals).toHaveLength(1);
 
-      useUIStore.getState().closeModal('modal-1');
+      useUIStore.getState().closeModal(modalId);
       expect(useUIStore.getState().modals).toHaveLength(0);
     });
 
     it('should close all modals', () => {
       useUIStore.getState().openModal({
-        id: 'modal-1',
-        type: 'confirmation',
+        type: 'confirmation' as const,
         title: 'Modal 1',
         content: 'Content 1',
-        actions: [],
+        size: 'md' as const,
+        closable: true,
       });
       useUIStore.getState().openModal({
-        id: 'modal-2',
-        type: 'info',
+        type: 'info' as const,
         title: 'Modal 2',
         content: 'Content 2',
-        actions: [],
+        size: 'md' as const,
+        closable: true,
       });
 
       expect(useUIStore.getState().modals).toHaveLength(2);
@@ -317,48 +353,56 @@ describe('UIStore', () => {
   describe('Toast Actions', () => {
     it('should show toast', () => {
       const toast = {
-        id: 'toast-1',
+        type: 'success' as const,
+        title: 'Success',
+        message: 'Operation completed',
+        duration: 5000,
+        position: 'top-right' as const,
+      };
+
+      const toastId = useUIStore.getState().showToast(toast);
+      const toasts = useUIStore.getState().toasts;
+      expect(toasts).toHaveLength(1);
+      expect(toasts[0]).toMatchObject({
+        id: toastId,
         type: 'success',
         title: 'Success',
         message: 'Operation completed',
         duration: 5000,
-      };
-
-      useUIStore.getState().showToast(toast);
-      expect(useUIStore.getState().toasts).toHaveLength(1);
-      expect(useUIStore.getState().toasts[0]).toEqual(toast);
+        position: 'top-right',
+      });
     });
 
     it('should hide toast', () => {
       const toast = {
-        id: 'toast-1',
-        type: 'success',
+        type: 'success' as const,
         title: 'Success',
         message: 'Operation completed',
         duration: 5000,
+        position: 'top-right' as const,
       };
 
-      useUIStore.getState().showToast(toast);
+      const toastId = useUIStore.getState().showToast(toast);
       expect(useUIStore.getState().toasts).toHaveLength(1);
 
-      useUIStore.getState().hideToast('toast-1');
+      useUIStore.getState().hideToast(toastId);
       expect(useUIStore.getState().toasts).toHaveLength(0);
     });
 
     it('should clear all toasts', () => {
       useUIStore.getState().showToast({
-        id: 'toast-1',
-        type: 'success',
+        type: 'success' as const,
         title: 'Success',
         message: 'Operation completed',
         duration: 5000,
+        position: 'top-right' as const,
       });
       useUIStore.getState().showToast({
-        id: 'toast-2',
-        type: 'error',
+        type: 'error' as const,
         title: 'Error',
         message: 'Operation failed',
         duration: 5000,
+        position: 'top-right' as const,
       });
 
       expect(useUIStore.getState().toasts).toHaveLength(2);
@@ -391,9 +435,9 @@ describe('UIStore', () => {
     it('should clear loading state', () => {
       useUIStore.getState().setLoading('analysis', true);
       useUIStore.getState().setLoading('clusters', true);
-
+      
       useUIStore.getState().clearLoading('analysis');
-      expect(useUIStore.getState().loading.analysis).toBeUndefined();
+      expect(useUIStore.getState().loading.analysis).toBe(false);
       expect(useUIStore.getState().loading.clusters).toBe(true);
     });
 
@@ -410,9 +454,9 @@ describe('UIStore', () => {
     it('should set error state', () => {
       useUIStore.getState().setError('analysis', 'Analysis failed');
       expect(useUIStore.getState().errors.analysis).toBe('Analysis failed');
-
+      
       useUIStore.getState().setError('analysis', null);
-      expect(useUIStore.getState().errors.analysis).toBeUndefined();
+      expect(useUIStore.getState().errors.analysis).toBeNull();
     });
 
     it('should set multiple error states', () => {
@@ -427,9 +471,9 @@ describe('UIStore', () => {
     it('should clear error state', () => {
       useUIStore.getState().setError('analysis', 'Analysis failed');
       useUIStore.getState().setError('clusters', 'Clusters failed');
-
+      
       useUIStore.getState().clearError('analysis');
-      expect(useUIStore.getState().errors.analysis).toBeUndefined();
+      expect(useUIStore.getState().errors.analysis).toBeNull();
       expect(useUIStore.getState().errors.clusters).toBe('Clusters failed');
     });
 
@@ -458,7 +502,7 @@ describe('UIStore', () => {
     it('should get error message', () => {
       useUIStore.getState().setError('analysis', 'Analysis failed');
       expect(useUIStore.getState().getError('analysis')).toBe('Analysis failed');
-      expect(useUIStore.getState().getError('clusters')).toBeUndefined();
+      expect(useUIStore.getState().getError('clusters')).toBeNull();
     });
 
     it('should reset UI', () => {

@@ -2,8 +2,8 @@
 Analysis context factory - creates immutable AnalysisContext objects.
 """
 
-from datetime import datetime
-from typing import Dict, Any, Optional
+from datetime import datetime, UTC
+from typing import Dict, Any, Optional, List
 
 from core.models.context import AnalysisContext
 from core.models.user import User
@@ -49,7 +49,7 @@ class AnalysisContextFactory:
             lifestyle_factors=lifestyle_factors,
             medical_history=medical_history,
             analysis_parameters=analysis_parameters,
-            created_at=datetime.utcnow().isoformat(),
+            created_at=datetime.now(UTC).isoformat(),
             version="1.0"
         )
     
@@ -79,3 +79,115 @@ class AnalysisContextFactory:
             created_at=user_data.get("created_at"),
             updated_at=user_data.get("updated_at")
         )
+    
+    @staticmethod
+    def create_context_with_insights(
+        analysis_id: str,
+        user: User,
+        biomarker_panel: BiomarkerPanel,
+        analysis_parameters: Optional[Dict[str, Any]] = None,
+        insights: Optional[List[Dict[str, Any]]] = None
+    ) -> AnalysisContext:
+        """
+        Create an AnalysisContext with pre-computed insights.
+        
+        Args:
+            analysis_id: Unique analysis identifier
+            user: User information
+            biomarker_panel: Normalized biomarker data
+            analysis_parameters: Optional analysis configuration
+            insights: Optional pre-computed insights
+            
+        Returns:
+            AnalysisContext with insights included in parameters
+        """
+        if analysis_parameters is None:
+            analysis_parameters = {}
+        
+        # Add insights to analysis parameters if provided
+        if insights:
+            analysis_parameters["insights"] = insights
+        
+        return AnalysisContext(
+            analysis_id=analysis_id,
+            user=user,
+            biomarker_panel=biomarker_panel,
+            analysis_parameters=analysis_parameters,
+            created_at=datetime.now(UTC).isoformat(),
+            version="1.0"
+        )
+    
+    @staticmethod
+    def extract_lifestyle_profile(context: AnalysisContext) -> Dict[str, Any]:
+        """
+        Extract lifestyle profile from analysis context for insight synthesis.
+        
+        Args:
+            context: Analysis context
+            
+        Returns:
+            Lifestyle profile dictionary
+        """
+        lifestyle_profile = {}
+        
+        # Extract from user lifestyle factors
+        if hasattr(context.user, 'lifestyle_factors') and context.user.lifestyle_factors:
+            lifestyle_profile.update(context.user.lifestyle_factors)
+        
+        # Extract from questionnaire if available
+        if hasattr(context.user, 'questionnaire') and context.user.questionnaire:
+            questionnaire = context.user.questionnaire
+            
+            # Map questionnaire responses to lifestyle factors
+            if "diet_level" in questionnaire:
+                lifestyle_profile["diet_level"] = questionnaire["diet_level"]
+            if "sleep_hours" in questionnaire:
+                lifestyle_profile["sleep_hours"] = questionnaire["sleep_hours"]
+            if "exercise_minutes_per_week" in questionnaire:
+                lifestyle_profile["exercise_minutes_per_week"] = questionnaire["exercise_minutes_per_week"]
+            if "alcohol_units_per_week" in questionnaire:
+                lifestyle_profile["alcohol_units_per_week"] = questionnaire["alcohol_units_per_week"]
+            if "smoking_status" in questionnaire:
+                lifestyle_profile["smoking_status"] = questionnaire["smoking_status"]
+            if "stress_level" in questionnaire:
+                lifestyle_profile["stress_level"] = questionnaire["stress_level"]
+        
+        return lifestyle_profile
+    
+    @staticmethod
+    def extract_biomarker_scores(context: AnalysisContext) -> Dict[str, Any]:
+        """
+        Extract biomarker scores from analysis context for insight synthesis.
+        
+        Args:
+            context: Analysis context
+            
+        Returns:
+            Biomarker scores dictionary
+        """
+        biomarker_scores = {}
+        
+        # Extract from analysis parameters if available
+        if "biomarker_scores" in context.analysis_parameters:
+            biomarker_scores = context.analysis_parameters["biomarker_scores"]
+        
+        return biomarker_scores
+    
+    @staticmethod
+    def extract_clustering_results(context: AnalysisContext) -> Dict[str, Any]:
+        """
+        Extract clustering results from analysis context for insight synthesis.
+        
+        Args:
+            context: Analysis context
+            
+        Returns:
+            Clustering results dictionary
+        """
+        clustering_results = {}
+        
+        # Extract from analysis parameters if available
+        if "clustering_results" in context.analysis_parameters:
+            clustering_results = context.analysis_parameters["clustering_results"]
+        
+        return clustering_results
