@@ -105,7 +105,7 @@ Users can export a PDF or JSON summary with dial snapshots, narrative interpreta
 
 - **Backend**: FastAPI, Pydantic v2, SQLAlchemy, Supabase, Redis
 - **Frontend**: Next.js 14+, App Router, Tailwind, TypeScript, Zustand, TanStack Query, D3
-- **Analysis**: Modular Python insight engine with DTOs
+- **Analysis**: Modular Python insight engine with DTOs (pending implementation - currently scaffolded)
 - **ORM**: SQLAlchemy for database interactions with Supabase PostgreSQL
 - **Data**: YAML (SSOT) for biomarker alias mapping and canonical reference ranges
 - **Agent Support**: Cursor + LLM workflows with structured context files

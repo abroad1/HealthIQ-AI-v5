@@ -62,16 +62,13 @@ healthiq/
 │   │   │   └── rules.py              # Scoring rules and thresholds
 │   │   ├── insights/                 # AI insight generation
 │   │   │   ├── __init__.py
-│   │   │   ├── base.py               # Base insight classes
-│   │   │   ├── registry.py           # Insight type registry
-│   │   │   ├── generators/           # Specific insight generators
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── biomarker.py      # Biomarker-specific insights
-│   │   │   │   ├── trend.py          # Trend analysis insights
-│   │   │   │   └── risk.py           # Risk assessment insights
-│   │   │   └── validators/           # Insight validation logic
+│   │   │   ├── base.py               # Base insight classes (scaffolded)
+│   │   │   ├── registry.py           # Insight type registry (scaffolded)
+│   │   │   ├── modules/              # Specific insight generators (empty)
+│   │   │   │   └── [no modules implemented] # Insight modules pending implementation
+│   │   │   └── validators/           # Insight validation logic (planned)
 │   │   │       ├── __init__.py
-│   │   │       └── medical.py        # Medical accuracy validation
+│   │   │       └── medical.py        # Medical accuracy validation (planned)
 │   │   └── dto/                      # Data Transfer Objects
 │   │       ├── __init__.py
 │   │       └── builders.py           # DTO construction and mapping

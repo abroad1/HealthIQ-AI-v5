@@ -238,7 +238,7 @@ This implementation plan outlines a **10-sprint development cycle** (20 weeks) t
 - [x] Statistical significance testing - **✅ Implemented** (z-score outlier detection and correlation validation)
 - [x] **Value-First Testing**: All clustering components created with high-value tests - **✅ Implemented** (104 tests covering all components)
 - [x] **Critical Path Coverage**: ≥60% for business-critical code only - **✅ Implemented** (comprehensive unit and integration tests)
-- [x] **Integration Tests**: DTO builders and result models tests - **✅ Implemented** (full pipeline integration testing)
+- [x] **Integration Tests**: Clustering pipeline integration tests - **✅ Implemented** (full pipeline integration testing)
 
 **Success Criteria:**
 - [x] Clustering produces coherent health system groupings - **✅ Implemented** (metabolic, cardiovascular, inflammatory, organ, nutritional, hormonal clusters)
@@ -257,7 +257,14 @@ This implementation plan outlines a **10-sprint development cycle** (20 weeks) t
 - `core/insights/prompts.py` - **❌ Planned** (structured prompt templates)
 - `core/insights/base.py` - **🔧 Scaffolded** (insight base classes)
 - `core/insights/registry.py` - **🔧 Scaffolded** (insight registry)
+- `core/insights/modules/` - **❌ EMPTY** (no insight modules implemented)
 - `core/dto/builders.py` - **🔧 Scaffolded** (result formatting and serialization)
+
+**Current State Notes:**
+- Base classes (`base.py`, `registry.py`) exist as scaffolding
+- No insight modules are present in `/modules/` directory
+- Module auto-discovery (`ensure_insights_registered`) is not implemented
+- Registry system is basic scaffolding without module loading capability
 
 **Deliverables:**
 - [ ] LLM integration for insight generation - **❌ Planned**
@@ -489,7 +496,7 @@ Starting from Sprint 9 (Core UI Components), we have established a new workflow 
 
 ## 📊 **Sprint Progress Tracking Table**
 
-**Current Status**: End of Sprint 4, beginning Sprint 4.5
+**Current Status**: End of Sprint 5, beginning Sprint 6
 
 | Sprint | Major Deliverable | Status | Implementation Level | Critical Path |
 |--------|------------------|--------|---------------------|---------------|
@@ -498,7 +505,7 @@ Starting from Sprint 9 (Core UI Components), we have established a new workflow 
 | **4** | Scoring engines (6) | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
 | **4.5** | Questionnaire integration & data mapping | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
 | **5** | Clustering + multi-engine analysis | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
-| **6** | Insight synthesis + DTOs | 🔧 **SCAFFOLDED** | 10% | ❌ **BLOCKED** |
+| **6** | Insight synthesis + DTOs | 🔧 **SCAFFOLDED** | 5% | ❌ **BLOCKED** |
 | **7** | LLM integration | ❌ **PLANNED** | 0% | ❌ **CRITICAL** |
 | **8** | Frontend state + services | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
 | **9** | Core UI components | 🔧 **SCAFFOLDED** | 20% | ❌ **BLOCKED** |
