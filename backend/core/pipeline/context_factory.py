@@ -18,7 +18,10 @@ class AnalysisContextFactory:
         analysis_id: str,
         user: User,
         biomarker_panel: BiomarkerPanel,
-        analysis_parameters: Optional[Dict[str, Any]] = None
+        analysis_parameters: Optional[Dict[str, Any]] = None,
+        questionnaire_responses: Optional[Dict[str, Any]] = None,
+        lifestyle_factors: Optional[Dict[str, Any]] = None,
+        medical_history: Optional[Dict[str, Any]] = None
     ) -> AnalysisContext:
         """
         Create an immutable AnalysisContext.
@@ -28,6 +31,9 @@ class AnalysisContextFactory:
             user: User information
             biomarker_panel: Normalized biomarker data
             analysis_parameters: Optional analysis configuration
+            questionnaire_responses: Optional questionnaire responses
+            lifestyle_factors: Optional mapped lifestyle factors
+            medical_history: Optional mapped medical history
             
         Returns:
             Immutable AnalysisContext
@@ -39,6 +45,9 @@ class AnalysisContextFactory:
             analysis_id=analysis_id,
             user=user,
             biomarker_panel=biomarker_panel,
+            questionnaire_responses=questionnaire_responses,
+            lifestyle_factors=lifestyle_factors,
+            medical_history=medical_history,
             analysis_parameters=analysis_parameters,
             created_at=datetime.utcnow().isoformat(),
             version="1.0"

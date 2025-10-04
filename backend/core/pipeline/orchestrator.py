@@ -130,11 +130,19 @@ class AnalysisOrchestrator:
         # Create user object
         user = self.context_factory.create_user_from_dict(user_data)
         
+        # Extract questionnaire data for AnalysisContext
+        questionnaire_responses = user_data.get("questionnaire")
+        lifestyle_factors = user_data.get("lifestyle_factors")
+        medical_history = user_data.get("medical_history")
+        
         # Create analysis context
         context = self.context_factory.create_context(
             analysis_id=analysis_id,
             user=user,
-            biomarker_panel=biomarker_panel
+            biomarker_panel=biomarker_panel,
+            questionnaire_responses=questionnaire_responses,
+            lifestyle_factors=lifestyle_factors,
+            medical_history=medical_history
         )
         
         return context
