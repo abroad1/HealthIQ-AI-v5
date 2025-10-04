@@ -396,6 +396,42 @@ This implementation plan outlines a **10-sprint development cycle** (20 weeks) t
 
 ---
 
+#### **Sprint 10b: Insight Module Design**
+**Duration**: 1 week | **Dependencies**: Sprint 6 (Insight Synthesis) | **Parallelizable**: ✅ | **Status**: ✅ **COMPLETED**
+
+**Components:**
+- Insight module design specification - **✅ Completed** (`docs/insight_design_outline.md`)
+- Biomarker requirements analysis - **✅ Completed** (5 modules, 12 unique biomarkers)
+- Calculation logic specification - **✅ Completed** (mathematical algorithms defined)
+- Severity level definitions - **✅ Completed** (5-level severity system)
+- Expected output specifications - **✅ Completed** (InsightResult field definitions)
+
+**Deliverables:**
+- [x] **Insight Module Design Document** - **✅ Completed** (`docs/insight_design_outline.md`)
+- [x] **Biomarker Requirements Matrix** - **✅ Completed** (12 biomarkers across 5 modules)
+- [x] **Calculation Logic Specifications** - **✅ Completed** (mathematical algorithms for each module)
+- [x] **Severity Classification System** - **✅ Completed** (5-level severity: Optimal/Good/Fair/Poor/Critical)
+- [x] **Expected Output Definitions** - **✅ Completed** (InsightResult field specifications)
+- [x] **Implementation Architecture** - **✅ Completed** (BaseInsight integration, registry system)
+- [x] **Testing Strategy** - **✅ Completed** (high-value test scenarios, coverage requirements)
+- [x] **Implementation Priority** - **✅ Completed** (Phase 1: Core modules, Phase 2: Advanced modules)
+
+**Success Criteria:**
+- [x] All 5 insight modules designed with complete specifications - **✅ ACHIEVED**
+- [x] Biomarker requirements mapped to canonical IDs from `ssot/biomarkers.yaml` - **✅ ACHIEVED**
+- [x] Mathematical calculation logic defined for each module - **✅ ACHIEVED**
+- [x] Severity levels and risk classifications specified - **✅ ACHIEVED**
+- [x] Expected outputs and recommendations framework defined - **✅ ACHIEVED**
+- [x] Implementation architecture and integration requirements documented - **✅ ACHIEVED**
+- [x] Testing strategy and success criteria established - **✅ ACHIEVED**
+
+**Design Document Status**: ✅ **COMPLETE**  
+**Next Phase**: Implementation in Sprint 6-7  
+**Dependencies**: Insight synthesis infrastructure, LLM integration  
+**Estimated Implementation Time**: 4-6 weeks (2 sprints)
+
+---
+
 ## 🎯 Sprint Strategy
 
 ### Sprint Structure
