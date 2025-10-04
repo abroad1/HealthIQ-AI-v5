@@ -409,6 +409,84 @@ This implementation plan outlines a **10-sprint development cycle** (20 weeks) t
 
 ---
 
+## 🎨 **Lovable Frontend Mock-up Integration Workflow**
+
+### **Workflow Definition**
+Starting from Sprint 9 (Core UI Components), we have established a new workflow for handling Lovable frontend mock-ups:
+
+**Key Constraints:**
+- Lovable cannot run Next.js directly - it only produces Vite/React previews that cannot be integrated directly
+- Mock-ups are now treated as design inputs only, not runnable code
+- All Lovable output must be manually captured and converted by Cursor
+
+### **Integration Process**
+
+#### **1. Lovable Mock-up Capture**
+- **Location**: `/frontend/_drafts/lovable/[feature].html`
+- **Format**: Static HTML snapshots or equivalent static files
+- **Status**: Non-functional design reference only
+- **Build Exclusion**: These drafts are excluded from all build processes
+
+#### **2. Cursor Conversion Process**
+- **Input**: Static HTML drafts from `/frontend/_drafts/lovable/`
+- **Output**: Production-ready Next.js 14 App Router components
+- **Pages**: Convert to `/frontend/app/[route]/page.tsx`
+- **Components**: Convert to `/frontend/app/components/[category]/`
+- **Styling**: Preserve and adapt Tailwind classes to Natural Sophistication theme + medical shadows
+
+#### **3. Documentation Updates**
+- **Requirement**: Cursor must update documentation after each conversion
+- **Coverage**: Update relevant docs to reflect new component/page implementations
+- **Testing**: Add placeholders for test coverage of converted pages
+
+### **Sprint 9-10 Integration Checklist**
+
+#### **For Each Lovable Mock-up Conversion:**
+- [ ] Capture mock-up as static HTML in `/frontend/_drafts/lovable/[feature].html`
+- [ ] Analyze design patterns and component structure
+- [ ] Convert to Next.js 14 App Router page/component structure
+- [ ] Adapt Tailwind classes to Natural Sophistication theme
+- [ ] Apply medical shadow styling conventions
+- [ ] Integrate with existing Zustand stores and API services
+- [ ] Add responsive design considerations
+- [ ] Update documentation (IMPLEMENTATION_PLAN.md, PROJECT_STRUCTURE.md)
+- [ ] Create placeholder test entries in TEST_LEDGER.md
+- [ ] Verify integration with existing analysis workflow
+
+#### **Quality Gates:**
+- [ ] Converted components render correctly in Next.js
+- [ ] Tailwind classes follow Natural Sophistication theme
+- [ ] Medical shadows applied consistently
+- [ ] Integration with existing state management works
+- [ ] Responsive design functions across devices
+- [ ] Documentation updated to reflect new components
+
+### **Technical Implementation Notes**
+
+#### **Theme Adaptation:**
+- **Natural Sophistication**: Maintain clean, medical-grade aesthetic
+- **Medical Shadows**: Apply consistent shadow patterns for depth and professionalism
+- **Color Palette**: Ensure accessibility and medical context appropriateness
+- **Typography**: Use medical-grade font hierarchy and readability standards
+
+#### **Component Structure:**
+- **Reusability**: Extract common patterns into reusable components
+- **Accessibility**: Ensure WCAG compliance for medical applications
+- **Performance**: Optimize for fast loading and smooth interactions
+- **Integration**: Seamless connection with existing analysis workflow
+
+### **Success Criteria for Lovable Integration:**
+- [ ] All mock-ups successfully converted to functional Next.js components
+- [ ] Design consistency maintained across all converted components
+- [ ] Natural Sophistication theme applied uniformly
+- [ ] Medical shadow styling implemented consistently
+- [ ] Full integration with existing state management and API services
+- [ ] Responsive design working across all device sizes
+- [ ] Documentation updated to reflect new workflow and components
+- [ ] Test coverage placeholders established for all converted pages
+
+---
+
 ## 📊 **Sprint Progress Tracking Table**
 
 **Current Status**: End of Sprint 4, beginning Sprint 4.5

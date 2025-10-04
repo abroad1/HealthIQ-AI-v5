@@ -123,6 +123,10 @@ healthiq/
 │   ├── mypy.ini                      # Type checking configuration
 │   └── README.md                     # Backend documentation
 ├── frontend/                         # Next.js 14+ App Router frontend (PLANNED)
+│   ├── _drafts/                      # Design reference files (excluded from builds)
+│   │   └── lovable/                  # Lovable mock-up HTML snapshots
+│   │       ├── [feature].html        # Static HTML design references
+│   │       └── README.md             # Lovable draft workflow documentation
 │   ├── app/                          # Next.js App Router (file-system routing)
 │   │   ├── layout.tsx                # Root layout component
 │   │   ├── page.tsx                  # Homepage
@@ -306,6 +310,7 @@ This blueprint represents the complete architectural vision for HealthIQ AI v5, 
 - **Comprehensive Documentation**: Context engineering files for AI agent guidance
 - **Infrastructure as Code**: All deployment and infrastructure configurations versioned
 - **Testing Strategy**: Value-first testing focused on business-critical functionality
+- **Lovable Integration**: Design mock-ups stored as static HTML drafts in `/frontend/_drafts/lovable/` and converted to production Next.js components by Cursor
 
 ### Implementation Status
 
