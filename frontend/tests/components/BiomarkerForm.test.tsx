@@ -145,7 +145,7 @@ describe('BiomarkerForm', () => {
     await user.click(addButton);
     
     // Remove the biomarker
-    const removeButton = screen.getByRole('button', { name: /trash/i });
+    const removeButton = screen.getByRole('button', { name: /remove biomarker/i });
     await user.click(removeButton);
     
     expect(screen.getByText('No biomarkers added yet')).toBeInTheDocument();

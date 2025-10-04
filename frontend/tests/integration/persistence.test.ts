@@ -29,8 +29,11 @@ describe('Persistence Integration', () => {
   });
 
   describe('UI Store Persistence', () => {
-    it('should persist theme preference', () => {
+    it('should persist theme preference', async () => {
       useUIStore.getState().setTheme('light');
+      
+      // Wait for persistence middleware to flush
+      await new Promise(resolve => setTimeout(resolve, 0));
       
       expect(localStorageMock.setItem).toHaveBeenCalledWith(
         'ui-store',
@@ -38,7 +41,7 @@ describe('Persistence Integration', () => {
       );
     });
 
-    it('should persist user preferences', () => {
+    it('should persist user preferences', async () => {
       const preferences = {
         language: 'es',
         timezone: 'America/New_York',
@@ -59,14 +62,20 @@ describe('Persistence Integration', () => {
 
       useUIStore.getState().setPreferences(preferences);
       
+      // Wait for persistence middleware to flush
+      await new Promise(resolve => setTimeout(resolve, 0));
+      
       expect(localStorageMock.setItem).toHaveBeenCalledWith(
         'ui-store',
         expect.stringContaining('"preferences"')
       );
     });
 
-    it('should persist sidebar state', () => {
+    it('should persist sidebar state', async () => {
       useUIStore.getState().setSidebarCollapsed(true);
+      
+      // Wait for persistence middleware to flush
+      await new Promise(resolve => setTimeout(resolve, 0));
       
       expect(localStorageMock.setItem).toHaveBeenCalledWith(
         'ui-store',
