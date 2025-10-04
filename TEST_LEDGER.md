@@ -1539,6 +1539,118 @@ cd backend; python -m pytest tests/integration/test_questionnaire_pipeline_integ
 
 **Sprint 5 delivers the clustering and multi-engine analysis infrastructure that transforms individual biomarker scores into meaningful health patterns, providing the foundation for personalized health insights in subsequent sprints.**
 
+---
+
+## 🎨 **Lovable Frontend Mock-up Integration Testing Placeholders**
+
+### **Sprint 9-10: Core UI Components Testing Framework**
+
+**Date**: 2025-01-27  
+**Business Value**: Establish testing framework for Lovable mock-up conversions  
+**Workflow**: Static HTML drafts → Next.js components → Production testing
+
+#### **Testing Placeholders for Converted Components**
+
+**Dashboard Components (Sprint 9)**
+- **File**: `tests/components/dashboard/DashboardPage.test.tsx` (PLACEHOLDER)
+- **Purpose**: Core user workflow - main dashboard functionality
+- **Run Command**: `cd frontend; npm test -- dashboard/DashboardPage.test.tsx`
+- **Expected Tests**: Dashboard rendering, state integration, responsive design
+- **Business Value**: Ensures main dashboard works correctly for user analysis workflow
+
+- **File**: `tests/components/dashboard/BiomarkerOverview.test.tsx` (PLACEHOLDER)
+- **Purpose**: Business logic - biomarker data visualization
+- **Run Command**: `cd frontend; npm test -- dashboard/BiomarkerOverview.test.tsx`
+- **Expected Tests**: Biomarker data display, chart rendering, data accuracy
+- **Business Value**: Prevents incorrect biomarker visualization that would mislead users
+
+**Analysis Components (Sprint 9)**
+- **File**: `tests/components/analysis/AnalysisInputForm.test.tsx` (PLACEHOLDER)
+- **Purpose**: Core user workflow - analysis input and validation
+- **Run Command**: `cd frontend; npm test -- analysis/AnalysisInputForm.test.tsx`
+- **Expected Tests**: Form validation, file upload, progress tracking
+- **Business Value**: Ensures users can successfully start biomarker analysis
+
+- **File**: `tests/components/analysis/ResultsVisualization.test.tsx` (PLACEHOLDER)
+- **Purpose**: Business logic - analysis results display
+- **Run Command**: `cd frontend; npm test -- analysis/ResultsVisualization.test.tsx`
+- **Expected Tests**: Results rendering, chart accuracy, insight display
+- **Business Value**: Prevents incorrect results display that would affect user health decisions
+
+**Reports Components (Sprint 9)**
+- **File**: `tests/components/reports/ReportGenerator.test.tsx` (PLACEHOLDER)
+- **Purpose**: Business logic - report generation and export
+- **Run Command**: `cd frontend; npm test -- reports/ReportGenerator.test.tsx`
+- **Expected Tests**: Report generation, PDF export, data accuracy
+- **Business Value**: Ensures users can generate accurate reports for sharing with healthcare providers
+
+**Profile Components (Sprint 10)**
+- **File**: `tests/components/profile/UserProfileForm.test.tsx` (PLACEHOLDER)
+- **Purpose**: Core user workflow - profile management
+- **Run Command**: `cd frontend; npm test -- profile/UserProfileForm.test.tsx`
+- **Expected Tests**: Profile editing, data persistence, validation
+- **Business Value**: Ensures user profile data is correctly managed and persisted
+
+**Settings Components (Sprint 10)**
+- **File**: `tests/components/settings/SettingsPanel.test.tsx` (PLACEHOLDER)
+- **Purpose**: UI functionality - application settings
+- **Run Command**: `cd frontend; npm test -- settings/SettingsPanel.test.tsx`
+- **Expected Tests**: Settings persistence, theme switching, preferences
+- **Business Value**: Ensures user preferences are correctly saved and applied
+
+#### **Integration Testing Placeholders**
+
+**End-to-End Workflow Tests (Sprint 10)**
+- **File**: `tests/e2e/complete-analysis-workflow.spec.ts` (PLACEHOLDER)
+- **Purpose**: Critical user journey - complete analysis from upload to results
+- **Run Command**: `cd frontend; npx playwright test -- complete-analysis-workflow.spec.ts`
+- **Expected Tests**: File upload → processing → results → report generation
+- **Business Value**: Ensures complete user workflow functions end-to-end
+
+- **File**: `tests/e2e/dashboard-navigation.spec.ts` (PLACEHOLDER)
+- **Purpose**: Critical user journey - dashboard navigation and functionality
+- **Run Command**: `cd frontend; npx playwright test -- dashboard-navigation.spec.ts`
+- **Expected Tests**: Navigation between pages, state persistence, responsive design
+- **Business Value**: Ensures users can navigate the application successfully across devices
+
+#### **Testing Framework Requirements**
+
+**Component Testing Standards:**
+- **Render Testing**: All converted components must render without errors
+- **State Integration**: Components must integrate correctly with Zustand stores
+- **Theme Compliance**: Components must follow Natural Sophistication theme
+- **Responsive Design**: Components must work across all device sizes
+- **Accessibility**: Components must meet WCAG compliance standards
+
+**Business Value Testing:**
+- **User Workflow Validation**: Critical user journeys must work end-to-end
+- **Data Accuracy**: All data display components must show accurate information
+- **Error Handling**: Graceful error handling for all user interactions
+- **Performance**: Components must load and interact smoothly
+
+#### **Implementation Notes**
+
+**Testing Priority:**
+1. **High Priority**: Core user workflow components (dashboard, analysis, reports)
+2. **Medium Priority**: Profile and settings components
+3. **Low Priority**: UI enhancement and polish components
+
+**Coverage Targets:**
+- **Component Tests**: ≥80% coverage for business-critical components
+- **Integration Tests**: 100% coverage for critical user workflows
+- **E2E Tests**: 100% coverage for complete user journeys
+
+**Test Execution:**
+- **Component Tests**: Run with Jest + React Testing Library
+- **Integration Tests**: Run with Jest + MSW for API mocking
+- **E2E Tests**: Run with Playwright across multiple browsers
+
+**Documentation Requirements:**
+- All test files must include business value justification
+- Test commands must be copy-pasteable and documented
+- Test results must be recorded in this ledger
+- Failed tests must be investigated and resolved before deployment
+
 ### 🧪 Sprint 5 Edge Case Testing (Clean-up Phase)
 
 **Date**: 2025-01-27  

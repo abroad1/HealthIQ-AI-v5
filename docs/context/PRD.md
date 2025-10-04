@@ -111,6 +111,7 @@ Users can export a PDF or JSON summary with dial snapshots, narrative interpreta
 - **Agent Support**: Cursor + LLM workflows with structured context files
 - **Streaming**: Server-Sent Events (SSE) for streaming responses
 - **CI/CD**: GitHub Actions with black + ruff + mypy linters
+- **Lovable Integration**: Lovable mock-ups are captured as static HTML drafts in `/frontend/_drafts/lovable/` and converted to production Next.js components by Cursor. Lovable cannot run Next.js directly and produces only Vite/React previews that require manual conversion.
 
 ---
 
