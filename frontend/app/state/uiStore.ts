@@ -286,9 +286,14 @@ export const useUIStore = create<UIState>()(
         })),
 
         // Preferences actions
-        setPreferences: (updates) => set((state) => ({
-          preferences: { ...state.preferences, ...updates }
-        })),
+        setPreferences: (updates) => set((state) => {
+          const newPreferences = { ...state.preferences, ...updates };
+          // Remove theme from preferences if it's being set separately
+          if (updates.theme !== undefined) {
+            delete newPreferences.theme;
+          }
+          return { preferences: newPreferences };
+        }),
         
         resetPreferences: () => set({ preferences: defaultPreferences }),
 

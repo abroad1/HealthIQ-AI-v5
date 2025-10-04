@@ -13,12 +13,13 @@ export interface UseHistoryOptions {
 }
 
 export interface UseHistoryReturn {
-  history: AnalysisHistoryItem[];
+  analyses: AnalysisHistoryItem[];
   loading: boolean;
   error: string | null;
   total: number;
   page: number;
   limit: number;
+  loadAnalyses: (userId: string, page?: number, limit?: number) => Promise<void>;
   refetch: () => Promise<void>;
   nextPage: () => void;
   prevPage: () => void;
@@ -31,27 +32,30 @@ export interface UseHistoryReturn {
  * @returns UseHistoryReturn
  */
 export function useHistory(
-  userId: string,
+  userId?: string,
   options: UseHistoryOptions = {}
 ): UseHistoryReturn {
   const { page = 1, limit = 10, autoFetch = true } = options;
   
-  const [history, setHistory] = useState<AnalysisHistoryItem[]>([]);
+  const [analyses, setAnalyses] = useState<AnalysisHistoryItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(page);
 
-  const fetchHistory = async () => {
-    if (!userId) return;
+  const loadAnalyses = async (userIdParam: string, pageParam?: number, limitParam?: number) => {
+    if (!userIdParam) return;
     
     setLoading(true);
     setError(null);
     
     try {
-      const response = await getAnalysisHistory(userId, currentPage, limit);
-      setHistory(response.history);
+      const response = await getAnalysisHistory(userIdParam, pageParam || currentPage, limitParam || limit);
+      setAnalyses(response.history);
       setTotal(response.total);
+      if (pageParam) {
+        setCurrentPage(pageParam);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch history');
     } finally {
@@ -59,8 +63,14 @@ export function useHistory(
     }
   };
 
+  const fetchHistory = async () => {
+    if (userId) {
+      await loadAnalyses(userId, currentPage, limit);
+    }
+  };
+
   useEffect(() => {
-    if (autoFetch) {
+    if (autoFetch && userId) {
       fetchHistory();
     }
   }, [userId, currentPage, limit, autoFetch]);
@@ -78,12 +88,13 @@ export function useHistory(
   };
 
   return {
-    history,
+    analyses,
     loading,
     error,
     total,
     page: currentPage,
     limit,
+    loadAnalyses,
     refetch: fetchHistory,
     nextPage,
     prevPage

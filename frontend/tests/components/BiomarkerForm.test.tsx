@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import BiomarkerForm from '@/app/components/forms/BiomarkerForm';
+import BiomarkerForm from '../../app/components/forms/BiomarkerForm';
 
 // Mock the UI components
 jest.mock('@/components/ui/card', () => ({

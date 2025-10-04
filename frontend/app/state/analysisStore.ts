@@ -313,7 +313,7 @@ export const useAnalysisStore = create<AnalysisState>()(
             // Fetch the full analysis results from the API
             const response = await AnalysisService.getAnalysisResult(analysisId);
             
-            if (response.success && response.data) {
+            if (response && response.success && response.data) {
               const completedAnalysis: AnalysisResult = {
                 ...state.currentAnalysis,
                 ...response.data, // Use the properly mapped data from the service

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import ClusterSummary from '@/app/components/clusters/ClusterSummary';
+import ClusterSummary from '../../app/components/clusters/ClusterSummary';
 
 // Mock the UI components
 jest.mock('@/components/ui/card', () => ({

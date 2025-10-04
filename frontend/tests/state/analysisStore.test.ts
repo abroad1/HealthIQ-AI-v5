@@ -495,6 +495,7 @@ describe('AnalysisStore', () => {
       const mockRequest: AnalysisRequest = {
         biomarkers: { cholesterol: { value: 4.9, unit: 'mmol/L' } },
         user: { age: 35, sex: 'male' },
+        questionnaire: {},
       };
 
       // Set up initial state with current analysis
