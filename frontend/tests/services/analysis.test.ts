@@ -77,7 +77,7 @@ describe('AnalysisService', () => {
 
       // Assert
       expect(fetch).toHaveBeenCalledWith(
-        `/api/analysis/result?analysis_id=${analysisId}`,
+        `http://localhost:8000/api/analysis/result?analysis_id=${analysisId}`,
         {
           method: 'GET',
           headers: {
@@ -87,8 +87,11 @@ describe('AnalysisService', () => {
       );
 
       expect(result).toEqual({
-        analysis_id: analysisId,
-        result_version: '1.0.0',
+        success: true,
+        message: 'Analysis result retrieved successfully',
+        data: {
+          analysis_id: analysisId,
+          result_version: '1.0.0',
         biomarkers: [
           {
             biomarker_name: 'glucose',
@@ -134,6 +137,7 @@ describe('AnalysisService', () => {
           processing_metadata: { test: 'data' }
         },
         created_at: '2024-01-01T00:00:00Z'
+        }
       });
     });
 
@@ -144,10 +148,16 @@ describe('AnalysisService', () => {
         ok: false,
         status: 404,
         statusText: 'Not Found',
+        json: jest.fn().mockRejectedValue(new Error('response.json is not a function')),
       });
 
-      // Act & Assert
-      await expect(AnalysisService.getAnalysisResult(analysisId)).rejects.toThrow('Failed to fetch analysis result: 404 Not Found');
+      // Act
+      const result = await AnalysisService.getAnalysisResult(analysisId);
+
+      // Assert - service returns error response instead of throwing
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('HTTP 404: Not Found');
+      expect(result.data).toBeNull();
     });
   });
 
@@ -187,7 +197,7 @@ describe('AnalysisService', () => {
 
       // Assert
       expect(fetch).toHaveBeenCalledWith(
-        `/api/analysis/history?user_id=${userId}&limit=10&offset=0`,
+        `http://localhost:8000/api/analysis/history?user_id=${userId}&limit=10&offset=0`,
         {
           method: 'GET',
           headers: {
@@ -196,7 +206,11 @@ describe('AnalysisService', () => {
         }
       );
 
-      expect(result).toEqual(mockApiResponse);
+      expect(result).toEqual({
+        success: true,
+        message: 'Analysis history retrieved successfully',
+        data: mockApiResponse
+      });
     });
 
     it('should handle API errors for history', async () => {
@@ -206,10 +220,16 @@ describe('AnalysisService', () => {
         ok: false,
         status: 500,
         statusText: 'Internal Server Error',
+        json: jest.fn().mockRejectedValue(new Error('response.json is not a function')),
       });
 
-      // Act & Assert
-      await expect(AnalysisService.getAnalysisHistory(userId, 10, 0)).rejects.toThrow('Failed to fetch analysis history: 500 Internal Server Error');
+      // Act
+      const result = await AnalysisService.getAnalysisHistory(userId, 10, 0);
+
+      // Assert - service returns error response instead of throwing
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('HTTP 500: Internal Server Error');
+      expect(result.data).toEqual({ history: [], limit: 10, page: 1, total: 0 });
     });
   });
 
@@ -236,7 +256,7 @@ describe('AnalysisService', () => {
 
       // Assert
       expect(fetch).toHaveBeenCalledWith(
-        '/api/analysis/export',
+        'http://localhost:8000/api/analysis/export',
         {
           method: 'POST',
           headers: {
@@ -250,7 +270,11 @@ describe('AnalysisService', () => {
         }
       );
 
-      expect(result).toEqual(mockApiResponse);
+      expect(result).toEqual({
+        success: true,
+        message: 'Export request created successfully',
+        data: mockApiResponse
+      });
     });
 
     it('should handle API errors for export', async () => {
@@ -263,10 +287,16 @@ describe('AnalysisService', () => {
         ok: false,
         status: 400,
         statusText: 'Bad Request',
+        json: jest.fn().mockRejectedValue(new Error('response.json is not a function')),
       });
 
-      // Act & Assert
-      await expect(AnalysisService.exportAnalysis(analysisId, format, userId)).rejects.toThrow('Failed to export analysis: 400 Bad Request');
+      // Act
+      const result = await AnalysisService.exportAnalysis(analysisId, format, userId);
+
+      // Assert - service returns error response instead of throwing
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('HTTP 400: Bad Request');
+      expect(result.data).toEqual({ export_id: '', status: 'failed' });
     });
   });
 });
