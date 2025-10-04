@@ -85,8 +85,16 @@ class AnalysisOrchestrator:
                 "All biomarkers must use canonical names only."
             )
         
+        # Initialize questionnaire-related variables
+        questionnaire_responses = None
+        lifestyle_factors = None
+        medical_history = None
+        
         # Process questionnaire data if provided
         if questionnaire_data:
+            # Always set questionnaire_responses, even if validation fails
+            questionnaire_responses = questionnaire_data
+            
             # Validate questionnaire data
             submission = QuestionnaireSubmission(
                 responses=questionnaire_data,
@@ -95,39 +103,50 @@ class AnalysisOrchestrator:
             is_valid, errors = self.questionnaire_validator.validate_submission(submission)
             if not is_valid:
                 print(f"Warning: Questionnaire validation errors: {errors}")
+                # Continue processing with raw data even if validation fails
             
             # Map questionnaire to lifestyle factors and medical history
-            lifestyle_factors, medical_history = self.questionnaire_mapper.map_submission(submission)
-            
-            # Extract demographic data
-            demographics = self.questionnaire_mapper.get_demographic_data(questionnaire_data)
-            
-            # Update user_data with questionnaire-derived information
-            user_data.update({
-                "questionnaire": questionnaire_data,
-                "lifestyle_factors": {
-                    "diet_level": lifestyle_factors.diet_level.value,
-                    "sleep_hours": lifestyle_factors.sleep_hours,
-                    "exercise_minutes_per_week": lifestyle_factors.exercise_minutes_per_week,
-                    "alcohol_units_per_week": lifestyle_factors.alcohol_units_per_week,
-                    "smoking_status": lifestyle_factors.smoking_status,
-                    "stress_level": lifestyle_factors.stress_level.value,
-                    "sedentary_hours_per_day": lifestyle_factors.sedentary_hours_per_day,
-                    "caffeine_consumption": lifestyle_factors.caffeine_consumption,
-                    "fluid_intake_liters": lifestyle_factors.fluid_intake_liters
-                },
-                "medical_history": {
-                    "conditions": medical_history.conditions,
-                    "medications": medical_history.medications,
-                    "family_history": medical_history.family_history,
-                    "supplements": medical_history.supplements,
-                    "sleep_disorders": medical_history.sleep_disorders,
-                    "allergies": medical_history.allergies
+            try:
+                mapped_lifestyle_factors, mapped_medical_history = self.questionnaire_mapper.map_submission(submission)
+                
+                # Convert to dictionaries for context
+                lifestyle_factors = {
+                    "diet_level": mapped_lifestyle_factors.diet_level.value,
+                    "sleep_hours": mapped_lifestyle_factors.sleep_hours,
+                    "exercise_minutes_per_week": mapped_lifestyle_factors.exercise_minutes_per_week,
+                    "alcohol_units_per_week": mapped_lifestyle_factors.alcohol_units_per_week,
+                    "smoking_status": mapped_lifestyle_factors.smoking_status,
+                    "stress_level": mapped_lifestyle_factors.stress_level.value,
+                    "sedentary_hours_per_day": mapped_lifestyle_factors.sedentary_hours_per_day,
+                    "caffeine_consumption": mapped_lifestyle_factors.caffeine_consumption,
+                    "fluid_intake_liters": mapped_lifestyle_factors.fluid_intake_liters
                 }
-            })
-            
-            # Update demographics if available
-            user_data.update(demographics)
+                
+                medical_history = {
+                    "conditions": mapped_medical_history.conditions,
+                    "medications": mapped_medical_history.medications,
+                    "family_history": mapped_medical_history.family_history,
+                    "supplements": mapped_medical_history.supplements,
+                    "sleep_disorders": mapped_medical_history.sleep_disorders,
+                    "allergies": mapped_medical_history.allergies
+                }
+                
+                # Update user_data with questionnaire-derived information
+                user_data.update({
+                    "questionnaire": questionnaire_data,
+                    "lifestyle_factors": lifestyle_factors,
+                    "medical_history": medical_history
+                })
+                
+                # Extract demographic data
+                demographics = self.questionnaire_mapper.get_demographic_data(questionnaire_data)
+                user_data.update(demographics)
+                
+            except Exception as e:
+                print(f"Warning: Error mapping questionnaire data: {e}")
+                # Continue with empty lifestyle_factors and medical_history
+                lifestyle_factors = {}
+                medical_history = {}
         
         # Create user object
         user = self.context_factory.create_user_from_dict(user_data)
@@ -136,7 +155,10 @@ class AnalysisOrchestrator:
         context = self.context_factory.create_context(
             analysis_id=analysis_id,
             user=user,
-            biomarker_panel=biomarker_panel
+            biomarker_panel=biomarker_panel,
+            questionnaire_responses=questionnaire_responses,
+            lifestyle_factors=lifestyle_factors,
+            medical_history=medical_history
         )
         
         return context

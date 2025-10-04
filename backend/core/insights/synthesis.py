@@ -266,17 +266,17 @@ class InsightSynthesizer:
             
             # Try to create Gemini client if configured
             if "gemini" in LLMConfig.PROVIDERS and LLMConfig.is_provider_configured("gemini"):
-                print("✅ Creating GeminiClient for production LLM integration")
+                print("[OK] Creating GeminiClient for production LLM integration")
                 return GeminiClient()
             else:
-                print("⚠️ Gemini not configured, using MockLLMClient for testing")
+                print("[WARN] Gemini not configured, using MockLLMClient for testing")
                 return MockLLMClient()
                 
         except ValueError as e:
-            print(f"❌ Configuration error: {e}, falling back to MockLLMClient")
+            print(f"[ERROR] Configuration error: {e}, falling back to MockLLMClient")
             return MockLLMClient()
         except Exception as e:
-            print(f"❌ Unexpected error creating LLM client: {e}, falling back to MockLLMClient")
+            print(f"[ERROR] Unexpected error creating LLM client: {e}, falling back to MockLLMClient")
             return MockLLMClient()
     
     def synthesize_insights(
@@ -313,7 +313,7 @@ class InsightSynthesizer:
         # Generate insights for each category with robust error handling
         for category in categories:
             try:
-                print(f"🔄 Generating insights for category: {category}")
+                print(f"[INFO] Generating insights for category: {category}")
                 category_insights = self._generate_category_insights(
                     category=category,
                     context=context,
@@ -326,12 +326,12 @@ class InsightSynthesizer:
                 if category_insights:
                     all_insights.extend(category_insights)
                     categories_covered.append(category)
-                    print(f"✅ Generated {len(category_insights)} insights for {category}")
+                    print(f"[OK] Generated {len(category_insights)} insights for {category}")
                 else:
-                    print(f"⚠️ No insights generated for {category}")
+                    print(f"[WARN] No insights generated for {category}")
                     
             except Exception as e:
-                print(f"❌ Error generating insights for category {category}: {e}")
+                print(f"[ERROR] Error generating insights for category {category}: {e}")
                 # Continue with other categories instead of failing completely
                 continue
         
@@ -434,7 +434,7 @@ class InsightSynthesizer:
         try:
             # Check for errors in LLM response
             if "error" in llm_response:
-                print(f"⚠️ LLM error for {category}: {llm_response['error']}")
+                print(f"[WARN] LLM error for {category}: {llm_response['error']}")
                 return []
             
             # Handle new GeminiClient format
@@ -456,7 +456,7 @@ class InsightSynthesizer:
                     else:
                         raw_insights = []
                 except (json.JSONDecodeError, TypeError) as e:
-                    print(f"⚠️ JSON parsing error for {category}: {e}")
+                    print(f"[WARN] JSON parsing error for {category}: {e}")
                     # Fallback: create a single insight from text
                     raw_insights = [{
                         "id": f"{category}_text_insight",
@@ -519,11 +519,11 @@ class InsightSynthesizer:
                     insights.append(insight)
                     
                 except Exception as e:
-                    print(f"Error parsing insight {i}: {e}")
+                    print(f"[ERROR] Error parsing insight {i}: {e}")
                     continue
                     
         except Exception as e:
-            print(f"Error parsing LLM response: {e}")
+            print(f"[ERROR] Error parsing LLM response: {e}")
         
         return insights
     
