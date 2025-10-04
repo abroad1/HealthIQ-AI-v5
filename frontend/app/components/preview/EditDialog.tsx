@@ -189,7 +189,7 @@ export default function EditDialog({
               />
             </div>
             {errors.name && (
-              <div className="flex items-center space-x-1 text-red-600 text-sm">
+              <div className="flex items-center space-x-1 text-destructive text-sm">
                 <AlertCircle className="h-4 w-4" />
                 <span>{errors.name}</span>
               </div>
@@ -209,7 +209,7 @@ export default function EditDialog({
               className={errors.value ? 'border-red-500' : ''}
             />
             {errors.value && (
-              <div className="flex items-center space-x-1 text-red-600 text-sm">
+              <div className="flex items-center space-x-1 text-destructive text-sm">
                 <AlertCircle className="h-4 w-4" />
                 <span>{errors.value}</span>
               </div>
@@ -241,7 +241,7 @@ export default function EditDialog({
               />
             </div>
             {errors.unit && (
-              <div className="flex items-center space-x-1 text-red-600 text-sm">
+              <div className="flex items-center space-x-1 text-destructive text-sm">
                 <AlertCircle className="h-4 w-4" />
                 <span>{errors.unit}</span>
               </div>
@@ -253,7 +253,7 @@ export default function EditDialog({
             <Label>Status</Label>
             <div className="flex items-center space-x-2">
               <Badge variant="default">Edited</Badge>
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-muted-foreground">
                 This biomarker has been modified from the original
               </span>
             </div>

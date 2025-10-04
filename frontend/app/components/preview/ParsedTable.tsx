@@ -33,7 +33,7 @@ export default function ParsedTable({
       case 'edited':
         return <Badge variant="default">Edited</Badge>
       case 'confirmed':
-        return <Badge variant="outline" className="text-green-600 border-green-600">Confirmed</Badge>
+        return <Badge variant="outline" className="text-[hsl(var(--status-excellent))] border-[hsl(var(--status-excellent))]">Confirmed</Badge>
       default:
         return <Badge variant="secondary">Raw</Badge>
     }
@@ -61,7 +61,7 @@ export default function ParsedTable({
     return (
       <Card className="w-full">
         <CardContent className="p-6">
-          <div className="flex items-center space-x-2 text-red-600">
+          <div className="flex items-center space-x-2 text-destructive">
             <AlertCircle className="h-5 w-5" />
             <span>{error}</span>
           </div>
@@ -73,7 +73,7 @@ export default function ParsedTable({
   if (biomarkers.length === 0) {
     return (
       <Card className="w-full">
-        <CardContent className="p-6 text-center text-gray-500">
+        <CardContent className="p-6 text-center text-muted-foreground">
           No biomarkers found. Please upload or paste lab results to get started.
         </CardContent>
       </Card>
@@ -88,12 +88,12 @@ export default function ParsedTable({
             <span>Parsed Biomarkers ({biomarkers.length})</span>
             <div className="flex items-center space-x-2">
               {hasUnconfirmed && (
-                <Badge variant="outline" className="text-orange-600 border-orange-600">
+                <Badge variant="outline" className="text-[hsl(var(--status-fair))] border-[hsl(var(--status-fair))]">
                   Review Required
                 </Badge>
               )}
               {allConfirmed && (
-                <Badge variant="outline" className="text-green-600 border-green-600">
+                <Badge variant="outline" className="text-[hsl(var(--status-excellent))] border-[hsl(var(--status-excellent))]">
                   All Confirmed
                 </Badge>
               )}
