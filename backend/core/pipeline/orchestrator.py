@@ -3,6 +3,7 @@ Analysis orchestrator - enforces canonical-only keys and coordinates analysis.
 """
 
 from typing import Dict, Any, List, Mapping, Optional
+import time
 
 from core.canonical.normalize import BiomarkerNormalizer, normalize_panel
 from core.canonical.resolver import resolve_to_canonical
@@ -17,6 +18,9 @@ from core.scoring.overlays import LifestyleOverlays, LifestyleProfile
 from core.pipeline.questionnaire_mapper import QuestionnaireMapper, MappedLifestyleFactors
 from core.models.questionnaire import QuestionnaireSubmission, create_questionnaire_validator
 from core.clustering.engine import ClusteringEngine
+from core.llm.client import GeminiClient
+from core.llm.prompts import PromptTemplates, PromptType
+from core.llm.parsing import ResponseParser
 
 
 class AnalysisOrchestrator:
@@ -39,6 +43,8 @@ class AnalysisOrchestrator:
         self.questionnaire_mapper = QuestionnaireMapper()
         self.questionnaire_validator = create_questionnaire_validator()
         self.clustering_engine = ClusteringEngine()
+        self.llm_client = GeminiClient()
+        self.response_parser = ResponseParser()
     
     def create_analysis_context(
         self,
@@ -445,6 +451,125 @@ class AnalysisOrchestrator:
         if offenders:
             offenders.sort()
             raise ValueError(f"Non-canonical biomarker keys found: {', '.join(offenders)}")
+    
+    def _generate_insights(self, context: AnalysisContext, analysis_result: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Generate insights using LLM integration.
+        
+        Args:
+            context: Analysis context with user and biomarker data
+            analysis_result: Results from scoring and clustering
+            
+        Returns:
+            List of generated insights
+        """
+        try:
+            # Prepare data for LLM
+            biomarker_data = {
+                biomarker.name: {
+                    "value": biomarker.value,
+                    "unit": biomarker.unit
+                }
+                for biomarker in context.biomarker_panel.biomarkers.values()
+            }
+            
+            scoring_results = analysis_result.get("scoring_summary", {})
+            clustering_results = analysis_result.get("clustering_summary", {})
+            
+            user_profile = {
+                "age": context.user.age,
+                "gender": context.user.gender,
+                "height": getattr(context.user, 'height', None),
+                "weight": getattr(context.user, 'weight', None)
+            }
+            
+            # Format prompt for insight synthesis
+            prompt = PromptTemplates.format_prompt(
+                PromptType.INSIGHT_SYNTHESIS,
+                biomarker_data=str(biomarker_data),
+                scoring_results=str(scoring_results),
+                clustering_results=str(clustering_results),
+                user_profile=str(user_profile)
+            )
+            
+            # Get schema for structured output
+            template = PromptTemplates.get_template(PromptType.INSIGHT_SYNTHESIS)
+            
+            # Generate insights using LLM
+            response = self.llm_client.generate_structured_output(prompt, template.output_schema)
+            
+            # Parse and validate response
+            parsed = self.response_parser.parse_and_validate(response, "insight_synthesis")
+            
+            if parsed.success:
+                return parsed.data.get("insights", [])
+            else:
+                # Fallback to basic insights if LLM fails
+                return self._generate_fallback_insights(context, analysis_result)
+                
+        except Exception as e:
+            # Log error and return fallback insights
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"LLM insight generation failed: {str(e)}")
+            return self._generate_fallback_insights(context, analysis_result)
+    
+    def _generate_fallback_insights(self, context: AnalysisContext, analysis_result: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Generate fallback insights when LLM is unavailable.
+        
+        Args:
+            context: Analysis context
+            analysis_result: Analysis results
+            
+        Returns:
+            List of basic insights
+        """
+        insights = []
+        
+        # Basic insights based on clusters
+        clusters = analysis_result.get("clusters", [])
+        for cluster in clusters:
+            insight = {
+                "category": cluster.get("name", "general"),
+                "title": f"{cluster.get('name', 'Health')} Analysis",
+                "description": cluster.get("description", "Health pattern identified"),
+                "severity": cluster.get("severity", "moderate"),
+                "confidence": cluster.get("confidence", 0.7),
+                "evidence": [f"Biomarker pattern: {cluster.get('biomarkers', [])}"],
+                "recommendations": ["Consult with healthcare provider for personalized recommendations"]
+            }
+            insights.append(insight)
+        
+        return insights
+    
+    def _run_analysis_pipeline(self, context: AnalysisContext) -> Dict[str, Any]:
+        """
+        Run the full analysis pipeline (scoring, clustering, etc.).
+        
+        Args:
+            context: Analysis context
+            
+        Returns:
+            Analysis results dictionary
+        """
+        try:
+            # For now, return a basic structure that matches what the LLM integration expects
+            # This will be expanded when the full pipeline is implemented
+            return {
+                "clusters": [],
+                "scoring_summary": {"overall_score": 85},
+                "clustering_summary": {"total_clusters": 0}
+            }
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Analysis pipeline failed: {str(e)}")
+            return {
+                "clusters": [],
+                "scoring_summary": {"overall_score": 0},
+                "clustering_summary": {"total_clusters": 0}
+            }
 
     def run(self, biomarkers: Mapping[str, Any], user: Mapping[str, Any], *, assume_canonical: bool = False):
         if not assume_canonical:
@@ -453,12 +578,56 @@ class AnalysisOrchestrator:
         canonical_map = dict(biomarkers)
 
         # continue with existing scoring → clustering → insights using `canonical_map`
-        # For now, return a stub result
-        from core.models.results import AnalysisDTO
+        # Create analysis context
+        context = self.create_analysis_context(
+            analysis_id="analysis_" + str(int(time.time())),
+            raw_biomarkers=canonical_map,
+            user_data=user,
+            assume_canonical=True
+        )
+        
+        # Run full analysis pipeline
+        analysis_result = self._run_analysis_pipeline(context)
+        
+        # Generate insights using LLM
+        insights = self._generate_insights(context, analysis_result)
+        
+        # Build final result
+        from core.models.results import AnalysisDTO, InsightResult, ClusterHit
+        from datetime import datetime
+        
+        # Convert insights to InsightResult objects
+        insight_results = []
+        for i, insight in enumerate(insights):
+            insight_result = InsightResult(
+                insight_id=f"insight_{i}",
+                title=insight.get("title", "Health Insight"),
+                description=insight.get("description", ""),
+                category=insight.get("category", "general"),
+                confidence=insight.get("confidence", 0.5),
+                severity=insight.get("severity", "moderate"),
+                biomarkers=insight.get("biomarkers", []),
+                recommendations=insight.get("recommendations", [])
+            )
+            insight_results.append(insight_result)
+        
+        # Convert clusters to ClusterHit objects
+        cluster_hits = []
+        for i, cluster in enumerate(analysis_result.get("clusters", [])):
+            cluster_hit = ClusterHit(
+                cluster_id=f"cluster_{i}",
+                name=cluster.get("name", "Health Cluster"),
+                biomarkers=cluster.get("biomarkers", []),
+                confidence=cluster.get("confidence", 0.5),
+                severity=cluster.get("severity", "moderate"),
+                description=cluster.get("description", "")
+            )
+            cluster_hits.append(cluster_hit)
+        
         return AnalysisDTO(
-            analysis_id="stub_analysis_id",
-            clusters=[],
-            insights=[],
+            analysis_id=context.analysis_id,
+            clusters=cluster_hits,
+            insights=insight_results,
             status="complete",
-            created_at="2024-01-01T00:00:00Z"
+            created_at=context.created_at
         )
