@@ -18,7 +18,7 @@ export default function FileDropzone({
   onFileSelect,
   onError,
   maxSize = 10 * 1024 * 1024, // 10MB default
-  acceptedTypes = ['.pdf', '.txt', '.json', '.csv'],
+  acceptedTypes = ['application/pdf', 'text/plain', 'application/json', 'text/csv'],
   disabled = false
 }: FileDropzoneProps) {
   const [isDragActive, setIsDragActive] = useState(false)
@@ -39,7 +39,7 @@ export default function FileDropzone({
       setError(errorMsg)
       onError?.(errorMsg)
     } else if (rejection.errors[0]?.code === 'file-invalid-type') {
-      const errorMsg = `Invalid file type. Accepted types: ${acceptedTypes.join(', ')}`
+      const errorMsg = `Invalid file type. Accepted types: PDF, TXT, JSON, CSV`
       setError(errorMsg)
       onError?.(errorMsg)
     }
@@ -48,10 +48,12 @@ export default function FileDropzone({
   const { getRootProps, getInputProps, isDragReject } = useDropzone({
     onDrop,
     onDropRejected,
-    accept: acceptedTypes.reduce((acc, type) => {
-      acc[type] = []
-      return acc
-    }, {} as Record<string, string[]>),
+    accept: {
+      'application/pdf': ['.pdf'],
+      'text/plain': ['.txt'],
+      'application/json': ['.json'],
+      'text/csv': ['.csv']
+    },
     maxSize,
     multiple: false,
     disabled

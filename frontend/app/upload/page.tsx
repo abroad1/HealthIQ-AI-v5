@@ -67,6 +67,17 @@ export default function UploadPage() {
   useEffect(() => {
     if (parseUpload.isSuccess && parseUpload.data) {
       const { parsed_data } = parseUpload.data;
+      
+      // Validate the response structure
+      if (!parsed_data || !parsed_data.biomarkers) {
+        console.error('Invalid parsed_data structure:', parsed_data);
+        setError({
+          code: 'INVALID_RESPONSE_STRUCTURE',
+          message: 'Invalid response structure received from server'
+        });
+        return;
+      }
+      
       setParsedResults(
         parsed_data.biomarkers,
         parseUpload.data.analysis_id,

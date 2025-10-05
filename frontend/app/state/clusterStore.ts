@@ -13,7 +13,7 @@ export interface BiomarkerCluster {
   insights: string[];
   recommendations: string[];
   created_at: string;
-  status?: 'normal' | 'warning' | 'critical';
+  status?: 'normal' | 'warning' | 'critical' | 'all';
 }
 
 export interface ClusterInsight {
@@ -34,7 +34,7 @@ export interface ClusterFilter {
   category?: string[];
   score_range?: [number, number];
   biomarkers?: string[];
-  status?: 'normal' | 'warning' | 'critical';
+  status?: 'normal' | 'warning' | 'critical' | 'all';
   search?: string;
 }
 

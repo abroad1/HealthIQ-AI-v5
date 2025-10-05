@@ -63,6 +63,19 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
   }),
   
   setParsedResults: (biomarkers, analysisId, metadata) => {
+    // Validate that biomarkers is an array
+    if (!Array.isArray(biomarkers)) {
+      console.error('setParsedResults: biomarkers is not an array:', biomarkers)
+      set({
+        error: {
+          code: 'INVALID_BIOMARKERS_DATA',
+          message: 'Invalid biomarkers data received from server'
+        },
+        status: 'error'
+      })
+      return
+    }
+    
     // Mark all biomarkers as 'raw' initially
     const processedBiomarkers = biomarkers.map(biomarker => ({
       ...biomarker,
