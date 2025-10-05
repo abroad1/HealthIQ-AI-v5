@@ -12,7 +12,7 @@ import FileDropzone from '../components/upload/FileDropzone';
 import PasteInput from '../components/upload/PasteInput';
 import ParsedTable from '../components/preview/ParsedTable';
 import { useAnalysisStore } from '../state/analysisStore';
-import { useUploadStore, useUploadStatus, useParsedData } from '../state/upload';
+import { useUploadStore, useUploadStatus, useParsedData } from '../../../app/state/upload';
 import { useParseUpload } from '../queries/parsing';
 import { useRouter } from 'next/navigation';
 

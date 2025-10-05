@@ -23,6 +23,7 @@ interface UploadStore extends UploadState {
   // Computed state
   hasUnconfirmedBiomarkers: () => boolean
   allBiomarkersConfirmed: () => boolean
+  getBiomarkersByStatus: (status: ParsedBiomarker['status']) => ParsedBiomarker[]
 }
 
 export const useUploadStore = create<UploadStore>()(
@@ -43,7 +44,7 @@ export const useUploadStore = create<UploadStore>()(
   updateBiomarker: (index, biomarker) => {
     const { parsedData } = get()
     const updatedData = [...parsedData]
-    updatedData[index] = biomarker
+    updatedData[index] = { ...biomarker, status: 'edited' }
     set({ parsedData: updatedData })
   },
   
@@ -65,9 +66,20 @@ export const useUploadStore = create<UploadStore>()(
   }),
   
   setParsedResults: (biomarkers, analysisId, metadata) => {
-    // Store biomarkers exactly as received from backend
+    // Mark all biomarkers as 'raw' initially
+    const processedBiomarkers = biomarkers.map(biomarker => ({
+      ...biomarker,
+      status: 'raw' as const
+    }))
+    
+    console.debug('Upload store: Setting parsed results', {
+      biomarkerCount: processedBiomarkers.length,
+      analysisId,
+      status: 'ready'
+    })
+    
     set({
-      parsedData: biomarkers,
+      parsedData: processedBiomarkers,
       analysisId,
       sourceMetadata: metadata,
       status: 'ready',
@@ -76,28 +88,48 @@ export const useUploadStore = create<UploadStore>()(
   },
   
   confirmAll: () => {
+    const { parsedData } = get()
+    const confirmedData = parsedData.map(biomarker => ({
+      ...biomarker,
+      status: 'confirmed' as const
+    }))
+    
+    console.debug('Upload store: Confirming all biomarkers', {
+      biomarkerCount: confirmedData.length,
+      status: 'confirmed'
+    })
+    
     set({
+      parsedData: confirmedData,
       status: 'confirmed'
     })
   },
   
-  reset: () => set({
-    status: 'idle',
-    parsedData: [],
-    error: null,
-    analysisId: null,
-    sourceMetadata: null
-  }),
+  reset: () => {
+    console.debug('Upload store: Resetting store')
+    set({
+      status: 'idle',
+      parsedData: [],
+      error: null,
+      analysisId: null,
+      sourceMetadata: null
+    })
+  },
 
   // Computed state
   hasUnconfirmedBiomarkers: () => {
-    const { status } = get()
-    return status !== 'confirmed'
+    const { parsedData } = get()
+    return parsedData.some(biomarker => biomarker.status !== 'confirmed')
   },
   
   allBiomarkersConfirmed: () => {
-    const { status } = get()
-    return status === 'confirmed'
+    const { parsedData } = get()
+    return parsedData.length > 0 && parsedData.every(biomarker => biomarker.status === 'confirmed')
+  },
+  
+  getBiomarkersByStatus: (status) => {
+    const { parsedData } = get()
+    return parsedData.filter(biomarker => biomarker.status === status)
   }
 }),
     {
@@ -108,7 +140,15 @@ export const useUploadStore = create<UploadStore>()(
         analysisId: state.analysisId,
         sourceMetadata: state.sourceMetadata,
         status: state.status
-      })
+      }),
+      // Debug logging for rehydration and persistence
+      onRehydrateStorage: () => (state) => {
+        console.debug('Upload store rehydrated:', {
+          parsedDataCount: state?.parsedData?.length || 0,
+          status: state?.status,
+          analysisId: state?.analysisId
+        })
+      }
     }
   )
 )
