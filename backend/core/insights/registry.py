@@ -104,20 +104,48 @@ class InsightRegistry:
 insight_registry = InsightRegistry()
 
 
-def ensure_insights_registered():
+def ensure_insights_registered() -> None:
     """
     Ensure all insight modules are imported so their decorators register them
     into the global registry. Safe to call multiple times.
+    
+    Logs successful discovery of insight modules.
     """
     import importlib
     import pkgutil
     import core.insights.modules as modules
-
+    
+    # Count modules before import
+    initial_count = len(insight_registry._registry)
+    
     # Import every submodule in core/insights/modules
     for _, name, _ in pkgutil.iter_modules(modules.__path__):
         importlib.import_module(f"{modules.__name__}.{name}")
-
+    
+    # Count modules after import
+    final_count = len(insight_registry._registry)
+    discovered_count = final_count - initial_count
+    
+    print(f"[OK] Registered {discovered_count} insight modules")
+    if discovered_count > 0:
+        registered_ids = list(insight_registry._registry.keys())
+        print(f"[INFO] Discovered insight IDs: {', '.join(registered_ids)}")
+    
     return insight_registry
+
+
+def list_registered_insights() -> List[Type[BaseInsight]]:
+    """
+    Returns a list of registered insight classes.
+    
+    Returns:
+        List of registered insight classes
+    """
+    classes = []
+    for insight_id in insight_registry._registry:
+        for version in insight_registry._registry[insight_id]:
+            classes.append(insight_registry._registry[insight_id][version])
+    return classes
 
 
 def get_insight(insight_id: str, version: str) -> BaseInsight:
@@ -155,4 +183,4 @@ def register_insight(insight_id: str, version: str):
 
 
 # Make sure ensure_insights_registered is included in __all__:
-__all__ = ["register_insight", "get_insight", "insight_registry", "ensure_insights_registered"]
+__all__ = ["register_insight", "get_insight", "insight_registry", "ensure_insights_registered", "list_registered_insights"]

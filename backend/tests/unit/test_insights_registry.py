@@ -3,7 +3,7 @@ Unit tests for insight registry functionality.
 """
 
 import pytest
-from core.insights.registry import InsightRegistry, register_insight, insight_registry, ensure_insights_registered
+from core.insights.registry import InsightRegistry, register_insight, insight_registry, ensure_insights_registered, list_registered_insights
 from core.insights.base import BaseInsight
 from core.insights.metadata import InsightMetadata, InsightResult
 from core.models.context import AnalysisContext
@@ -305,3 +305,33 @@ class TestInsightModules:
         ]
         for expected in expected_insights:
             assert expected in insight_ids
+    
+    def test_list_registered_insights(self):
+        """Test list_registered_insights returns all registered insight classes."""
+        # Ensure insights are registered
+        ensure_insights_registered()
+        
+        # Get list of registered insight classes
+        insight_classes = list_registered_insights()
+        
+        # Should have at least 5 insight classes
+        assert len(insight_classes) >= 5
+        
+        # Print discovered insight IDs for debug visibility
+        insight_ids = []
+        for cls in insight_classes:
+            # Create instance to get metadata
+            instance = cls()
+            insight_ids.append(instance.metadata.insight_id)
+        
+        print(f"[DEBUG] Discovered insight IDs: {', '.join(insight_ids)}")
+        
+        # Verify all expected insights are present
+        expected_insights = [
+            "metabolic_age", "heart_insight", "inflammation", 
+            "fatigue_root_cause", "detox_filtration"
+        ]
+        for expected in expected_insights:
+            assert expected in insight_ids, f"Expected insight '{expected}' not found in discovered insights: {insight_ids}"
+        
+        print(f"[OK] All {len(expected_insights)} expected insights discovered successfully")
