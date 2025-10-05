@@ -170,12 +170,17 @@ export const useAnalysisStore = create<AnalysisState>()(
 
       // Complex actions
       startAnalysis: async (request) => {
+        console.debug('[AnalysisStore] Starting analysis with request:', request);
+        
         // Validate input data
         const biomarkerValidation = AnalysisService.validateBiomarkerData(request.biomarkers);
         const userValidation = AnalysisService.validateUserProfile(request.user);
+        
+        console.debug('[AnalysisStore] Validation results:', { biomarkerValidation, userValidation });
 
         if (!biomarkerValidation.valid || !userValidation.valid) {
           const errors = [...biomarkerValidation.errors, ...userValidation.errors];
+          console.error('[AnalysisStore] Validation failed:', errors);
           set({
             error: {
               message: `Validation failed: ${errors.join(', ')}`,
@@ -200,7 +205,9 @@ export const useAnalysisStore = create<AnalysisState>()(
 
         try {
           // Call the API service
+          console.debug('[AnalysisStore] Calling AnalysisService.startAnalysis');
           const response = await AnalysisService.startAnalysis(request);
+          console.debug('[AnalysisStore] AnalysisService response:', response);
           
           if (!response.success) {
             throw new Error(response.error || 'Failed to start analysis');

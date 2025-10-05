@@ -22,6 +22,7 @@ interface BiomarkerFormProps {
   onCancel?: () => void;
   isLoading?: boolean;
   showSubmitButton?: boolean;
+  initialData?: any;
 }
 
 // Common biomarkers with their units and reference ranges
@@ -90,12 +91,27 @@ export default function BiomarkerForm({
   onSubmit, 
   onCancel, 
   isLoading = false,
-  showSubmitButton = true 
+  showSubmitButton = true,
+  initialData = null
 }: BiomarkerFormProps) {
   const [biomarkers, setBiomarkers] = useState<BiomarkerValue[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [activeTab, setActiveTab] = useState<string>('manual');
   const [csvData, setCsvData] = useState<string>('');
+  
+  // Initialize biomarkers from initialData
+  React.useEffect(() => {
+    if (initialData && Object.keys(initialData).length > 0) {
+      console.debug('[BiomarkerForm] Initializing with data:', initialData);
+      const initialBiomarkers: BiomarkerValue[] = Object.entries(initialData).map(([id, data]: [string, any]) => ({
+        id,
+        value: data.value || 0,
+        unit: data.unit || '',
+        date: data.date || new Date().toISOString().split('T')[0]
+      }));
+      setBiomarkers(initialBiomarkers);
+    }
+  }, [initialData]);
 
   const addBiomarker = () => {
     const newBiomarker: BiomarkerValue = {

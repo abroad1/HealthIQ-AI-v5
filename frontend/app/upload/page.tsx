@@ -66,13 +66,16 @@ export default function UploadPage() {
   // Handle parse upload success/error
   useEffect(() => {
     if (parseUpload.isSuccess && parseUpload.data) {
+      console.debug('[UploadPage] Parse upload successful:', parseUpload.data);
       const { parsed_data } = parseUpload.data;
+      console.debug('[UploadPage] Setting parsed results:', parsed_data.biomarkers);
       setParsedResults(
         parsed_data.biomarkers,
         parseUpload.data.analysis_id,
         parsed_data.metadata
       );
     } else if (parseUpload.isError && parseUpload.error) {
+      console.error('[UploadPage] Parse upload failed:', parseUpload.error);
       setError({
         code: 'PARSE_ERROR',
         message: parseUpload.error.message || 'Failed to parse upload'
@@ -141,12 +144,13 @@ export default function UploadPage() {
   };
 
   const handleCombinedSubmit = async (data: { biomarkers: any; questionnaire: any }) => {
+    console.debug('[UploadPage] Combined submit called with:', data);
     setIsSubmitting(true);
     setSubmitError(null);
     
     try {
       // Start analysis with both biomarker and questionnaire data
-      await startAnalysis({
+      const analysisPayload = {
         biomarkers: data.biomarkers,
         user: {
           age: 35,
@@ -155,7 +159,9 @@ export default function UploadPage() {
           weight: 75
         },
         questionnaire: data.questionnaire
-      });
+      };
+      console.debug('[UploadPage] Starting analysis with payload:', analysisPayload);
+      await startAnalysis(analysisPayload);
       
       setSubmitSuccess(true);
       // Redirect to results page after a short delay
@@ -163,7 +169,7 @@ export default function UploadPage() {
         router.push('/results');
       }, 2000);
     } catch (error) {
-      console.error('Analysis failed:', error);
+      console.error('[UploadPage] Analysis failed:', error);
       setSubmitError('Failed to start analysis. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -374,18 +380,53 @@ function CombinedAnalysisForm({
   const [biomarkerData, setBiomarkerData] = useState<any>(null);
   const [questionnaireData, setQuestionnaireData] = useState<any>(null);
   const [currentStep, setCurrentStep] = useState<'biomarkers' | 'questionnaire' | 'review'>('biomarkers');
+  
+  // Get parsed biomarkers from upload store
+  const parsedData = useParsedData();
+  const uploadStatus = useUploadStatus();
+  
+  // Convert parsed biomarkers to the format expected by the form
+  const convertParsedToBiomarkers = (parsed: any[]) => {
+    console.debug('[CombinedAnalysisForm] Converting parsed biomarkers:', parsed);
+    const biomarkers: any = {};
+    parsed.forEach(item => {
+      if (item.name && item.value !== undefined) {
+        // Convert biomarker name to ID format (lowercase, underscores)
+        const biomarkerId = item.name.toLowerCase().replace(/[^a-z0-9_]/g, '_');
+        biomarkers[biomarkerId] = {
+          value: typeof item.value === 'string' ? parseFloat(item.value) || 0 : item.value,
+          unit: item.unit || '',
+          date: new Date().toISOString().split('T')[0]
+        };
+      }
+    });
+    console.debug('[CombinedAnalysisForm] Converted biomarkers:', biomarkers);
+    return biomarkers;
+  };
+  
+  // Auto-populate biomarkers from parsed data when available
+  React.useEffect(() => {
+    if (parsedData.length > 0 && uploadStatus === 'ready' && !biomarkerData) {
+      console.debug('[CombinedAnalysisForm] Auto-populating biomarkers from parsed data');
+      const convertedBiomarkers = convertParsedToBiomarkers(parsedData);
+      setBiomarkerData(convertedBiomarkers);
+    }
+  }, [parsedData, uploadStatus, biomarkerData]);
 
   const handleBiomarkerSubmit = (data: any) => {
+    console.debug('[CombinedAnalysisForm] Biomarker form submitted:', data);
     setBiomarkerData(data);
     setCurrentStep('questionnaire');
   };
 
   const handleQuestionnaireSubmit = (data: any) => {
+    console.debug('[CombinedAnalysisForm] Questionnaire form submitted:', data);
     setQuestionnaireData(data);
     setCurrentStep('review');
   };
 
   const handleFinalSubmit = () => {
+    console.debug('[CombinedAnalysisForm] Final submit - biomarkers:', biomarkerData, 'questionnaire:', questionnaireData);
     if (biomarkerData && questionnaireData) {
       onSubmit({ biomarkers: biomarkerData, questionnaire: questionnaireData });
     }
@@ -434,10 +475,18 @@ function CombinedAnalysisForm({
       {currentStep === 'biomarkers' && (
         <div>
           <h3 className="text-lg font-semibold mb-4">Step 1: Enter Biomarker Data</h3>
+          {parsedData.length > 0 && uploadStatus === 'ready' && (
+            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-sm text-green-800">
+                ✅ Found {parsedData.length} biomarkers from uploaded file. They have been pre-populated below.
+              </p>
+            </div>
+          )}
           <BiomarkerForm
             onSubmit={handleBiomarkerSubmit}
             isLoading={isLoading}
             showSubmitButton={true}
+            initialData={biomarkerData}
           />
         </div>
       )}
