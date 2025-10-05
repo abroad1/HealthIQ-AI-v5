@@ -1,12 +1,16 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
-import path from 'path'
+import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { componentTagger } from 'lovable-tagger'
+
+const rootDir = fileURLToPath(new URL('.', import.meta.url))
 
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    strictPort: true,
   },
   plugins: [
     react(),
@@ -14,7 +18,7 @@ export default defineConfig(({ mode }) => ({
   ].filter(Boolean),
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': resolve(rootDir, './src'),
     },
   },
 }));
