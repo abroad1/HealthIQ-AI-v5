@@ -2,7 +2,7 @@
 
 **Purpose**: Persistent record of high-value tests that prevent user pain or catch business-critical bugs.
 
-**Last Updated**: 2025-01-30 - Sprint 9b Persistence Foundation Fully Completed
+**Last Updated**: 2025-01-30 - Sprint 9c Biomarker Status Classification Fully Completed
 
 > ⚠️ **LEGACY COVERAGE TARGETS DEPRECATED**  
 > Any references to ≥90% backend or ≥80% frontend coverage are historical only.  
@@ -28,6 +28,55 @@
 - **Business Logic**: Data processing, analysis, and decision-making (Unit)
 - **API Contracts**: Service boundaries and data flow (Integration)
 - **Error Scenarios**: Critical failure modes that must be handled gracefully
+
+---
+
+## 🚀 **Sprint 9c: Biomarker Status Classification Test Plans**
+
+### **Backend Classification Tests (Integration)**
+- **File**: `test_llm_biomarker_parsing.py`
+- **Purpose**: Biomarker health status classification - deterministic "Normal/High/Low" classification
+- **Run Command**: `cd backend; python -m pytest tests/integration/test_llm_biomarker_parsing.py -v`
+- **Status**: ✅ **IMPLEMENTED** - Updated integration tests to validate `healthStatus` classification
+- **Business Value**: Ensures biomarker health status classification works correctly and prevents incorrect health assessments
+- **Coverage**: All classification scenarios tested (Low, High, Normal, Unknown)
+- **Test Results**: All tests passing with proper `healthStatus` field validation
+
+### **Frontend Display Tests (Manual Validation)**
+- **File**: `ParsedTable.tsx` component
+- **Purpose**: Color-coded health status badges - visual display of health status
+- **Run Command**: `npm run dev` and verify color-coded badges display correctly
+- **Status**: ✅ **IMPLEMENTED** - Color-coded badges with Tailwind CSS styling
+- **Business Value**: Provides clear visual feedback for health status and improves user experience
+- **Coverage**: All health status types (Normal=Green, High=Red, Low=Yellow, Unknown=Grey)
+- **Test Results**: Manual validation confirmed color-coded badges display correctly
+
+### **Accessibility Tests (Manual Validation)**
+- **File**: `FileDropzone.tsx` and `PasteInput.tsx` components
+- **Purpose**: Form accessibility - proper form input attributes
+- **Run Command**: Browser DevTools → Console, verify no accessibility warnings
+- **Status**: ✅ **IMPLEMENTED** - All form inputs have proper `id`, `name`, and `autoComplete` attributes
+- **Business Value**: Ensures form inputs are accessible to screen readers and support autofill
+- **Coverage**: All form inputs properly configured
+- **Test Results**: No accessibility warnings in browser console
+
+### **CSP Compliance Tests (Manual Validation)**
+- **File**: All frontend components
+- **Purpose**: Content Security Policy compliance - no eval or string-based function calls
+- **Run Command**: Browser DevTools → Console, verify no CSP warnings
+- **Status**: ✅ **IMPLEMENTED** - No eval or string-based function calls found
+- **Business Value**: Ensures secure frontend code and prevents XSS vulnerabilities
+- **Coverage**: All `setTimeout` calls use arrow functions, no `eval` or `new Function` calls
+- **Test Results**: No CSP warnings in browser console
+
+### **Type Safety Tests (TypeScript)**
+- **File**: `app/types/parsed.ts`
+- **Purpose**: Type definition updates - proper TypeScript interfaces
+- **Run Command**: `npm run type-check`
+- **Status**: ✅ **IMPLEMENTED** - Updated interfaces with `healthStatus` and `referenceRange` fields
+- **Business Value**: Ensures type safety and prevents runtime errors
+- **Coverage**: All biomarker-related types properly defined
+- **Test Results**: TypeScript compilation successful with no errors
 
 ---
 

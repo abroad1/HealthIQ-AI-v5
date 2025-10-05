@@ -43,7 +43,7 @@ This implementation plan outlines a **10-sprint development cycle** (20 weeks) t
 - **Testing Strategy**: Value-first testing focused on business-critical functionality
 - **Agent Integration**: PRP-based feature development with MCP-style RAG capabilities
 
-**Current Status**: Sprint 8 completed, CORS configuration fixed, ready to begin Sprint 9
+**Current Status**: Sprint 9b completed, Biomarker Status Classification sprint completed, ready to begin Sprint 10
 
 ---
 
@@ -505,6 +505,69 @@ This implementation plan outlines a **10-sprint development cycle** (20 weeks) t
 
 ---
 
+#### **Sprint 9c: Biomarker Status Classification & Frontend Simplification**
+**Duration**: 1 week | **Dependencies**: Sprint 9b | **Parallelizable**: ✅ | **Status**: ✅ **COMPLETED**
+
+**Components:**
+- `backend/services/parsing/llm_parser.py` - **✅ Implemented** (deterministic health status classification)
+- `app/components/preview/ParsedTable.tsx` - **✅ Implemented** (color-coded health status badges)
+- `app/state/upload.ts` - **✅ Implemented** (simplified state management)
+- `app/types/parsed.ts` - **✅ Implemented** (updated type definitions)
+- `app/components/upload/FileDropzone.tsx` - **✅ Implemented** (accessibility improvements)
+- `app/components/upload/PasteInput.tsx` - **✅ Implemented** (accessibility improvements)
+
+**Deliverables:**
+- [x] Deterministic "Normal/High/Low" classification restored - **✅ Implemented** (backend classification logic)
+- [x] Frontend table simplification with color-coded badges - **✅ Implemented** (Tailwind CSS styling)
+- [x] Accessibility improvements for form inputs - **✅ Implemented** (id, name, autoComplete attributes)
+- [x] CSP compliance verification - **✅ Implemented** (no eval or string-based function calls)
+- [x] Type definition updates - **✅ Implemented** (healthStatus and referenceRange fields)
+- [x] State management simplification - **✅ Implemented** (removed redundant status field)
+- [x] **Value-First Testing**: All changes validated and tested - **✅ Implemented** (backend tests updated)
+- [x] **Critical Path Coverage**: ≥60% for business-critical code only - **✅ Implemented** (verified)
+- [x] **Manual Validation**: Color-coded badges display correctly - **✅ Implemented** (frontend validation)
+
+**Success Criteria:**
+- [x] Backend returns proper healthStatus classification - **✅ ACHIEVED** (deterministic classification)
+- [x] Frontend displays color-coded health status badges - **✅ ACHIEVED** (green/red/yellow/grey)
+- [x] All form inputs have proper accessibility attributes - **✅ ACHIEVED** (id, name, autoComplete)
+- [x] No browser console warnings or CSP violations - **✅ ACHIEVED** (clean console)
+- [x] **Value-First Compliance**: Every change has business value - **✅ ACHIEVED** (improved UX)
+- [x] **Coverage Target**: Critical path coverage ≥60% for business-critical code - **✅ ACHIEVED** (verified)
+
+**Build Information & Implementation Details:**
+
+**Development Priority Order:**
+1. **Backend Classification** - Restore deterministic health status classification logic
+2. **Frontend Display** - Implement color-coded badges and table simplification
+3. **Accessibility** - Add proper form input attributes
+4. **Security** - Verify CSP compliance and clean console
+5. **Testing** - Update tests and validate all changes
+
+**Business Logic Requirements:**
+- **Health Status Classification**: Deterministic "Normal/High/Low/Unknown" based on value vs reference ranges
+- **Color Coding**: Green for Normal, Red for High, Yellow for Low, Grey for Unknown
+- **Accessibility**: All form inputs must have id, name, and autoComplete attributes
+- **CSP Compliance**: No eval or string-based function calls in frontend code
+- **State Management**: Preserve healthStatus from backend, remove redundant status field
+
+**Integration Architecture:**
+- **Backend-Frontend Sync**: healthStatus field flows from backend to frontend display
+- **Type Safety**: TypeScript interfaces updated to match backend output
+- **State Management**: Zustand store preserves backend data without modification
+- **Component Architecture**: ParsedTable component simplified with color-coded badges
+
+**Testing Requirements:**
+- **High-Value Test Scenarios**: 
+  - Backend health status classification accuracy
+  - Frontend color-coded badge display
+  - Form accessibility compliance
+  - CSP compliance verification
+- **Coverage Target**: ≥60% critical path coverage for business-critical classification logic
+- **Test Documentation**: All changes validated and documented
+
+---
+
 #### **Sprint 10: Integration, Testing & Polish**
 **Duration**: 2 weeks | **Dependencies**: All Previous | **Parallelizable**: ❌ | **Status**: ❌ **PLANNED**
 
@@ -571,7 +634,8 @@ This implementation plan outlines a **10-sprint development cycle** (20 weeks) t
 | **7** | LLM integration | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
 | **8** | Frontend state + services | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
 | **9** | Core UI components | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
-| **9b** | Persistence Foundation | ❌ **PLANNED** | 0% | ❌ **BLOCKED** |
+| **9b** | Persistence Foundation | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
+| **9c** | Biomarker Status Classification | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
 | **10** | Integration & polish | ❌ **PLANNED** | 0% | ❌ **BLOCKED** |
 
 ### **Status Legend**

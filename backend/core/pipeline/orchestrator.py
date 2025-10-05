@@ -18,6 +18,7 @@ from core.pipeline.questionnaire_mapper import QuestionnaireMapper, MappedLifest
 from core.models.questionnaire import QuestionnaireSubmission, create_questionnaire_validator
 from core.clustering.engine import ClusteringEngine
 from core.insights.synthesis import InsightSynthesizer
+from core.insights.registry import list_registered_insights, ensure_insights_registered
 
 
 class AnalysisOrchestrator:
@@ -548,7 +549,33 @@ class AnalysisOrchestrator:
         elif hasattr(context.user, 'lifestyle_factors') and context.user.lifestyle_factors:
             lifestyle_profile = context.user.lifestyle_factors
         
-        # Synthesize insights
+        # Execute modular insight engines first
+        import time
+        start_time = time.time()
+        
+        # Ensure all insight modules are registered
+        ensure_insights_registered()
+        
+        # Execute all registered modular insight engines
+        modular_insights = []
+        executed_engines = []
+        
+        for insight_class in list_registered_insights():
+            try:
+                engine = insight_class()
+                if engine.can_analyze(context):
+                    results = engine.analyze(context)
+                    modular_insights.extend(results)
+                    executed_engines.append(engine.metadata.insight_id)
+            except Exception as e:
+                print(f"[WARN] Error executing insight engine {insight_class.__name__}: {e}")
+                continue
+        
+        modular_time_ms = int((time.time() - start_time) * 1000)
+        print(f"[OK] Executed {len(executed_engines)} modular insight engines in {modular_time_ms}ms")
+        print(f"[INFO] Modular engines executed: {', '.join(executed_engines)}")
+        
+        # Synthesize insights using LLM
         synthesis_result = self.insight_synthesizer.synthesize_insights(
             context=context,
             biomarker_scores=biomarker_scores,
@@ -558,28 +585,53 @@ class AnalysisOrchestrator:
             max_insights_per_category=max_insights_per_category
         )
         
+        # Combine modular and LLM insights
+        all_insights = []
+        
+        # Add modular insights first
+        for insight in modular_insights:
+            all_insights.append({
+                "id": insight.insight_id,
+                "version": insight.version,
+                "category": getattr(insight, 'category', 'modular'),
+                "summary": getattr(insight, 'summary', ''),
+                "evidence": insight.evidence or {},
+                "confidence": insight.confidence or 0.0,
+                "severity": insight.severity or "info",
+                "recommendations": insight.recommendations or [],
+                "biomarkers_involved": insight.biomarkers_involved or [],
+                "lifestyle_factors": getattr(insight, 'lifestyle_factors', []),
+                "created_at": getattr(insight, 'created_at', ''),
+                "source": "modular"
+            })
+        
+        # Add LLM insights
+        for insight in synthesis_result.insights:
+            all_insights.append({
+                "id": insight.id,
+                "category": insight.category,
+                "summary": insight.summary,
+                "evidence": insight.evidence,
+                "confidence": insight.confidence,
+                "severity": insight.severity,
+                "recommendations": insight.recommendations,
+                "biomarkers_involved": insight.biomarkers_involved,
+                "lifestyle_factors": insight.lifestyle_factors,
+                "created_at": insight.created_at,
+                "source": "llm"
+            })
+        
         return {
             "analysis_id": synthesis_result.analysis_id,
-            "insights": [
-                {
-                    "id": insight.id,
-                    "category": insight.category,
-                    "summary": insight.summary,
-                    "evidence": insight.evidence,
-                    "confidence": insight.confidence,
-                    "severity": insight.severity,
-                    "recommendations": insight.recommendations,
-                    "biomarkers_involved": insight.biomarkers_involved,
-                    "lifestyle_factors": insight.lifestyle_factors,
-                    "created_at": insight.created_at
-                }
-                for insight in synthesis_result.insights
-            ],
+            "insights": all_insights,
             "synthesis_summary": synthesis_result.synthesis_summary,
-            "total_insights": synthesis_result.total_insights,
+            "total_insights": len(all_insights),
+            "modular_insights_count": len(modular_insights),
+            "llm_insights_count": len(synthesis_result.insights),
             "categories_covered": synthesis_result.categories_covered,
             "overall_confidence": synthesis_result.overall_confidence,
-            "processing_time_ms": synthesis_result.processing_time_ms,
+            "processing_time_ms": synthesis_result.processing_time_ms + modular_time_ms,
+            "modular_processing_time_ms": modular_time_ms,
             "created_at": synthesis_result.created_at
         }
     

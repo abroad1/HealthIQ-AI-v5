@@ -190,19 +190,22 @@ class PersistenceService:
                 self.insight_repo.delete_by_analysis_id(analysis_id)
                 
                 for insight in insights:
+                    # Handle both old and new insight formats
                     insight_data = {
-                        "insight_type": insight.get("insight_type"),
-                        "category": insight.get("category"),
-                        "title": insight.get("title"),
-                        "content": insight.get("content"),
-                        "confidence": insight.get("confidence"),
-                        "priority": insight.get("priority"),
+                        "insight_type": insight.get("insight_type", insight.get("id", "unknown")),
+                        "category": insight.get("category", "unknown"),
+                        "title": insight.get("title", insight.get("summary", "")),
+                        "content": insight.get("content", insight.get("description", "")),
+                        "confidence": insight.get("confidence", 0.0),
+                        "priority": insight.get("priority", "medium"),
                         "actionable": insight.get("actionable", True),
-                        "severity": insight.get("severity"),
-                        "biomarkers_involved": insight.get("biomarkers_involved"),
-                        "health_system": insight.get("health_system"),
-                        "evidence": insight.get("evidence"),
-                        "recommendations": insight.get("recommendations")
+                        "severity": insight.get("severity", "info"),
+                        "biomarkers_involved": insight.get("biomarkers_involved", []),
+                        "health_system": insight.get("health_system", "general"),
+                        "evidence": insight.get("evidence", {}),
+                        "recommendations": insight.get("recommendations", []),
+                        "source": insight.get("source", "unknown"),
+                        "version": insight.get("version", "v1.0.0")
                     }
                     self.insight_repo.create(**insight_data)
             

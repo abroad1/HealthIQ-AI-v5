@@ -20,18 +20,37 @@ def build_analysis_result_dto(result: Dict[str, Any]) -> Dict[str, Any]:
     Returns:
         Frontend-safe dictionary
     """
+    # Process insights to ensure proper DTO format
+    insights = result.get("insights", [])
+    processed_insights = []
+    
+    for insight in insights:
+        if isinstance(insight, dict):
+            # Already in dict format from orchestrator
+            processed_insights.append(insight)
+        else:
+            # Convert using build_insight_dto
+            processed_insights.append(build_insight_dto(insight))
+    
     return {
         "analysis_id": result.get("analysis_id", ""),
         "biomarkers": result.get("biomarkers", []),
         "clusters": result.get("clusters", []),
-        "insights": result.get("insights", []),
+        "insights": processed_insights,
         "status": result.get("status", "complete"),
         "created_at": result.get("created_at", datetime.now(UTC).isoformat()),
         "overall_score": result.get("overall_score"),
         "risk_assessment": result.get("risk_assessment", {}),
         "recommendations": result.get("recommendations", []),
         "result_version": result.get("result_version", "1.0.0"),
-        "meta": result.get("meta", {})
+        "meta": {
+            **result.get("meta", {}),
+            "total_insights": result.get("total_insights", len(processed_insights)),
+            "modular_insights_count": result.get("modular_insights_count", 0),
+            "llm_insights_count": result.get("llm_insights_count", 0),
+            "processing_time_ms": result.get("processing_time_ms", 0),
+            "modular_processing_time_ms": result.get("modular_processing_time_ms", 0)
+        }
     }
 
 
