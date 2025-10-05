@@ -45,9 +45,9 @@ Tick each box when the stage is completed and committed to `main`.
 | [x] **2. Orchestrator Integration** | Modify `orchestrator.py` to execute registered insights after scoring and clustering. | Backend | `AnalysisResult.insights` populated with deterministic results. | ✅ |
 | [x] **3. DTO + Persistence Update** | Extend `core/dto/builders.py` and DB models so modular insight results persist in `analysis_results.insights`. | Backend | Data visible via `/api/analysis/result`. | ✅ |
 | [x] **4. Integration Tests** | Create `tests/integration/test_modular_insights_flow.py` with mock biomarkers for each module. | Backend | All tests passing locally and in CI. | ✅ |
-| [ ] **5. Frontend Placeholder** | Update `InsightPanel.tsx` to list returned insights with ID, severity, and first recommendation. | Frontend | Insights render on results page with no errors. | ☑ |
-| [ ] **6. Documentation Update** | Add example JSON output and README note. | Docs | Updated docs committed and linked from PRD. | ☑ |
-| [ ] **7. Review + Merge** | Code review, QA validation, merge to `main`. | All | Tag `insight-engine-sprint-v1` created. | ☑ |
+| [x] **5. Frontend Placeholder** | Update `InsightPanel.tsx` to list returned insights with ID, severity, and first recommendation. | Frontend | Insights render on results page with no errors. | ✅ |
+| [x] **6. Documentation Update** | Add example JSON output and README note. | Docs | Updated docs committed and linked from PRD. | ✅ |
+| [ ] **7. Review + Merge** | Code review, QA validation, merge to `main`. | All | Tag `insight-engine-sprint-v1` created. | 🧪 In Testing |
 
 ---
 
@@ -100,6 +100,21 @@ Tick each box when the stage is completed and committed to `main`.
 - This sprint lays the groundwork for the upcoming **Hybrid Insight Layer**, where modular outputs feed into Gemini for natural-language synthesis.  
 - Keep deterministic logic explicit and unit-tested; avoid embedding reasoning inside the LLM prompt.  
 - Each sub-stage must be ticked by its owner in this file before release.
+
+---
+
+## 🧪 Testing Status
+
+**Sub-Stages 1-6: COMPLETED** ✅  
+**Sub-Stage 7: PENDING USER VALIDATION** 🧪
+
+The modular insight engines are now fully integrated and ready for user testing. All backend components are working together, and the frontend placeholder is displaying insights correctly.
+
+**Next Steps:**
+- User validation testing with real biomarker data
+- Performance monitoring under load
+- UX feedback collection
+- Final review and merge to main
 
 ---
 
