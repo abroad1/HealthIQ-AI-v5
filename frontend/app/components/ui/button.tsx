@@ -1,10 +1,12 @@
 import React from "react";
+import { Slot } from "@radix-ui/react-slot";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
   size?: "default" | "sm" | "lg" | "icon";
   className?: string;
   children: React.ReactNode;
+  asChild?: boolean;
 }
 
 export function Button({ 
@@ -12,6 +14,7 @@ export function Button({
   size = "default",
   className = "", 
   children, 
+  asChild = false,
   ...props 
 }: ButtonProps) {
   const baseClasses = "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
@@ -32,12 +35,15 @@ export function Button({
     icon: "h-10 w-10"
   };
 
+  const Comp = asChild ? Slot : "button";
+  const buttonClassName = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
+
   return (
-    <button 
-      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
+    <Comp 
+      className={buttonClassName}
       {...props}
     >
       {children}
-    </button>
+    </Comp>
   );
 }
