@@ -71,6 +71,8 @@ export default function PasteInput({
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Textarea
+            id="lab-results-text"
+            name="labResults"
             value={text}
             onChange={(e) => {
               setText(e.target.value)
@@ -79,6 +81,7 @@ export default function PasteInput({
             placeholder={placeholder}
             disabled={disabled}
             className="min-h-[200px] resize-none"
+            autoComplete="off"
           />
           
           <div className="flex justify-between items-center text-xs text-muted-foreground">

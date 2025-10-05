@@ -7,6 +7,7 @@ from typing import Dict, Any, Optional
 from pydantic import BaseModel
 import json
 from datetime import datetime
+from services.parsing.llm_parser import LLMParser
 
 router = APIRouter()
 
@@ -26,91 +27,95 @@ async def parse_upload(
     text_content: Optional[str] = Form(None)
 ) -> ParseResponse:
     """
-    Parse uploaded file or text content (placeholder implementation).
+    Parse uploaded file or text content using LLM-powered biomarker extraction.
     
-    This is a placeholder endpoint that will be integrated with the LLM parsing service
-    in Sprint 10b. Currently returns mock structured payload.
+    Uses Gemini LLM to extract quantitative biomarkers from lab reports and medical documents.
+    Supports PDF, TXT, CSV, and JSON file formats.
     
     Args:
         file: Optional uploaded file
         text_content: Optional text content from form data
         
     Returns:
-        Mock parsed data structure compatible with future parsing service
+        Parsed biomarker data with confidence scores and metadata
     """
     try:
-        # Generate mock analysis ID
+        # Generate analysis ID
         analysis_id = f"analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         
-        # Mock parsed data structure
-        mock_parsed_data = {
-            "biomarkers": {
-                "total_cholesterol": {
-                    "value": 180,
-                    "unit": "mg/dL",
-                    "reference_range": "< 200 mg/dL"
-                },
-                "hdl_cholesterol": {
-                    "value": 45,
-                    "unit": "mg/dL", 
-                    "reference_range": "> 40 mg/dL"
-                },
-                "ldl_cholesterol": {
-                    "value": 120,
-                    "unit": "mg/dL",
-                    "reference_range": "< 100 mg/dL"
-                },
-                "triglycerides": {
-                    "value": 150,
-                    "unit": "mg/dL",
-                    "reference_range": "< 150 mg/dL"
-                },
-                "glucose": {
-                    "value": 95,
-                    "unit": "mg/dL",
-                    "reference_range": "70-100 mg/dL"
-                }
-            },
-            "demographics": {
-                "age": 35,
-                "gender": "male",
-                "height": 175,
-                "weight": 70,
-                "ethnicity": "white"
-            },
-            "questionnaire_responses": {
-                "diet_quality_rating": 7,
-                "exercise_frequency": "3-4 days per week",
-                "sleep_hours": 7.5,
-                "stress_level": 5,
-                "smoking_status": "never"
-            },
+        # Initialize LLM parser
+        parser = LLMParser()
+        
+        # Determine input source and process
+        if file:
+            # Read file bytes
+            file_bytes = await file.read()
+            filename = file.filename or "unknown"
+            content_type = file.content_type
+            
+            # Extract biomarkers using LLM
+            result = await parser.extract_biomarkers(file_bytes, filename, content_type)
+            
+            input_source = "file_upload"
+            content_info = f" (filename: {filename}, content_type: {content_type})"
+            
+        elif text_content:
+            # Convert text content to bytes for processing
+            file_bytes = text_content.encode('utf-8')
+            filename = "text_input"
+            
+            # Extract biomarkers using LLM
+            result = await parser.extract_biomarkers(file_bytes, filename, "text/plain")
+            
+            input_source = "text_input"
+            content_info = f" (text length: {len(text_content)} characters)"
+            
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail="Either file or text_content must be provided"
+            )
+        
+        # Check for parsing errors
+        if result.get("metadata", {}).get("error"):
+            return ParseResponse(
+                success=False,
+                message=f"Parsing failed for {input_source}{content_info}: {result['metadata']['error']}",
+                parsed_data=None,
+                analysis_id=analysis_id,
+                timestamp=datetime.now().isoformat()
+            )
+        
+        # Format response data
+        parsed_data = {
+            "biomarkers": result.get("biomarkers", []),
             "metadata": {
-                "parsing_method": "mock_placeholder",
-                "confidence_score": 0.95,
-                "source_type": "lab_report" if file else "text_input",
-                "parsed_at": datetime.now().isoformat()
+                "parsing_method": "gemini_llm",
+                "source_type": input_source,
+                "parsed_at": datetime.now().isoformat(),
+                **result.get("metadata", {})
             }
         }
         
-        # Determine input source
-        input_source = "file_upload" if file else "text_input"
-        content_info = ""
-        
-        if file:
-            content_info = f" (filename: {file.filename}, content_type: {file.content_type})"
-        elif text_content:
-            content_info = f" (text length: {len(text_content)} characters)"
+        # Calculate overall confidence
+        biomarkers = result.get("biomarkers", [])
+        if biomarkers:
+            avg_confidence = sum(b.get("confidence", 0) for b in biomarkers) / len(biomarkers)
+            parsed_data["metadata"]["overall_confidence"] = round(avg_confidence, 3)
+        else:
+            parsed_data["metadata"]["overall_confidence"] = 0.0
         
         return ParseResponse(
             success=True,
-            message=f"Mock parsing completed for {input_source}{content_info}. "
-                   f"This is a placeholder implementation for Sprint 10b integration.",
-            parsed_data=mock_parsed_data,
+            message=f"LLM parsing completed for {input_source}{content_info}. "
+                   f"Extracted {len(biomarkers)} biomarkers.",
+            parsed_data=parsed_data,
             analysis_id=analysis_id,
             timestamp=datetime.now().isoformat()
         )
         
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=500,

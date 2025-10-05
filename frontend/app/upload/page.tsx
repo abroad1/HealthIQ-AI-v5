@@ -32,7 +32,7 @@ export default function UploadPage() {
   const parseUpload = useParseUpload();
 
   // Handle file upload parsing
-  const handleFileUpload = async (file: File) => {
+  const handleFileParse = async (file: File) => {
     setError(null);
     parseUpload.mutate({ file });
   };
@@ -240,9 +240,10 @@ export default function UploadPage() {
                     Upload Lab Report
                   </h3>
                   <FileDropzone
-                    onFileSelect={handleFileUpload}
+                    onFileParse={handleFileParse}
                     onError={(error) => setError({ code: 'UPLOAD_ERROR', message: error })}
                     disabled={parseUpload.isLoading}
+                    isParsing={parseUpload.isLoading}
                   />
                 </div>
                 

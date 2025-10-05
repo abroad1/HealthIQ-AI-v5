@@ -26,16 +26,18 @@ export default function ParsedTable({
 }: ParsedTableProps) {
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
 
-  const getStatusBadge = (status: ParsedBiomarker['status']) => {
-    switch (status) {
-      case 'raw':
-        return <Badge variant="secondary">Raw</Badge>
-      case 'edited':
-        return <Badge variant="default">Edited</Badge>
-      case 'confirmed':
-        return <Badge variant="outline" className="text-[hsl(var(--status-excellent))] border-[hsl(var(--status-excellent))]">Confirmed</Badge>
+  const getHealthStatusBadge = (healthStatus: string) => {
+    switch (healthStatus) {
+      case 'Low':
+        return <Badge variant="outline" className="rounded-md px-2 py-1 text-sm font-medium text-yellow-600 border-yellow-600 bg-yellow-50">Low</Badge>
+      case 'High':
+        return <Badge variant="outline" className="rounded-md px-2 py-1 text-sm font-medium text-red-600 border-red-600 bg-red-50">High</Badge>
+      case 'Normal':
+        return <Badge variant="outline" className="rounded-md px-2 py-1 text-sm font-medium text-green-600 border-green-600 bg-green-50">Normal</Badge>
+      case 'Unknown':
+        return <Badge variant="outline" className="rounded-md px-2 py-1 text-sm font-medium text-gray-600 border-gray-600 bg-gray-50">Unknown</Badge>
       default:
-        return <Badge variant="secondary">Raw</Badge>
+        return <Badge variant="outline" className="rounded-md px-2 py-1 text-sm font-medium text-gray-600 border-gray-600 bg-gray-50">Unknown</Badge>
     }
   }
 
@@ -54,8 +56,8 @@ export default function ParsedTable({
     setEditingIndex(null)
   }
 
-  const allConfirmed = biomarkers.every(b => b.status === 'confirmed')
-  const hasUnconfirmed = biomarkers.some(b => b.status !== 'confirmed')
+  const allConfirmed = biomarkers.length > 0
+  const hasUnconfirmed = biomarkers.length === 0
 
   if (error) {
     return (
@@ -106,10 +108,11 @@ export default function ParsedTable({
               <TableHeader>
                 <TableRow>
                   <TableHead>Biomarker</TableHead>
-                  <TableHead>Value</TableHead>
+                  <TableHead className="text-right">Value</TableHead>
                   <TableHead>Unit</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="w-[100px]">Actions</TableHead>
+                  <TableHead>Reference Range</TableHead>
+                  <TableHead>Health Status</TableHead>
+                  <TableHead className="w-[100px]">Edit</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -118,7 +121,7 @@ export default function ParsedTable({
                     <TableCell className="font-medium">
                       {biomarker.name}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="text-right">
                       {typeof biomarker.value === 'number' 
                         ? biomarker.value.toFixed(2)
                         : biomarker.value
@@ -126,7 +129,10 @@ export default function ParsedTable({
                     </TableCell>
                     <TableCell>{biomarker.unit}</TableCell>
                     <TableCell>
-                      {getStatusBadge(biomarker.status)}
+                      {biomarker.referenceRange || '—'}
+                    </TableCell>
+                    <TableCell>
+                      {getHealthStatusBadge(biomarker.healthStatus || 'Unknown')}
                     </TableCell>
                     <TableCell>
                       <Button

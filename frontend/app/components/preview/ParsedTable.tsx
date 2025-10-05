@@ -39,6 +39,19 @@ export default function ParsedTable({
     }
   }
 
+  const getHealthStatusBadge = (healthStatus: ParsedBiomarker['healthStatus']) => {
+    switch (healthStatus) {
+      case 'Low':
+        return <Badge variant="outline" className="text-blue-600 border-blue-600">Low</Badge>
+      case 'Normal':
+        return <Badge variant="outline" className="text-green-600 border-green-600">Normal</Badge>
+      case 'High':
+        return <Badge variant="outline" className="text-red-600 border-red-600">High</Badge>
+      default:
+        return <Badge variant="secondary">Unknown</Badge>
+    }
+  }
+
   const handleEdit = (index: number) => {
     setEditingIndex(index)
   }
@@ -108,6 +121,8 @@ export default function ParsedTable({
                   <TableHead>Biomarker</TableHead>
                   <TableHead>Value</TableHead>
                   <TableHead>Unit</TableHead>
+                  <TableHead>Reference Range</TableHead>
+                  <TableHead>Health Status</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="w-[100px]">Actions</TableHead>
                 </TableRow>
@@ -125,6 +140,10 @@ export default function ParsedTable({
                       }
                     </TableCell>
                     <TableCell>{biomarker.unit}</TableCell>
+                    <TableCell>{biomarker.reference || '-'}</TableCell>
+                    <TableCell>
+                      {getHealthStatusBadge(biomarker.healthStatus)}
+                    </TableCell>
                     <TableCell>
                       {getStatusBadge(biomarker.status)}
                     </TableCell>
