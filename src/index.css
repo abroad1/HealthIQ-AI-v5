@@ -1,0 +1,241 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* HealthIQ AI v5 Design System */
+:root {
+  /* Light Mode (Brief Specification) */
+  --background: 210 20% 98%;
+  --foreground: 215 25% 27%;
+  --card: 0 0% 100%;
+  --card-foreground: 215 25% 27%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 215 25% 27%;
+  
+  /* Primary - Green */
+  --primary: 142 71% 45%;
+  --primary-foreground: 0 0% 100%;
+  --primary-glow: 142 71% 55%;
+  
+  /* Secondary - Sky Blue Accent */
+  --secondary: 197 71% 73%;
+  --secondary-foreground: 215 25% 27%;
+  
+  /* Muted */
+  --muted: 210 20% 95%;
+  --muted-foreground: 215 25% 45%;
+  
+  /* Accent - Sky Blue */
+  --accent: 197 71% 73%;
+  --accent-foreground: 215 25% 27%;
+  
+  /* Destructive */
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  
+  /* Borders & Inputs */
+  --border: 210 20% 90%;
+  --input: 210 20% 90%;
+  --ring: 142 71% 45%;
+  
+  /* Health Status Colors - Light Mode */
+  --status-excellent: 142 71% 45%;
+  --status-good: 66 70% 54%;
+  --status-fair: 38 92% 50%;
+  --status-poor: 0 84% 60%;
+  --status-critical: 0 72% 51%;
+  
+  /* Sidebar */
+  --sidebar-background: 0 0% 100%;
+  --sidebar-foreground: 215 25% 27%;
+  --sidebar-primary: 142 71% 45%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 197 71% 73%;
+  --sidebar-accent-foreground: 215 25% 27%;
+  --sidebar-border: 210 20% 90%;
+  --sidebar-ring: 142 71% 45%;
+  
+  /* Border Radius */
+  --radius: 0.75rem;
+}
+
+.dark {
+  /* Dark Mode (Brief Specification - Default) */
+  --background: 220 30% 6%;
+  --foreground: 190 100% 95%;
+  --card: 220 30% 8%;
+  --card-foreground: 190 100% 95%;
+  --popover: 220 30% 8%;
+  --popover-foreground: 190 100% 95%;
+  
+  /* Primary - Electric Blue */
+  --primary: 213 100% 56%;
+  --primary-foreground: 0 0% 100%;
+  --primary-glow: 213 100% 66%;
+  
+  /* Secondary - Darker tone */
+  --secondary: 220 30% 12%;
+  --secondary-foreground: 190 100% 95%;
+  
+  /* Muted */
+  --muted: 220 30% 10%;
+  --muted-foreground: 190 50% 70%;
+  
+  /* Accent - Aqua */
+  --accent: 188 95% 68%;
+  --accent-foreground: 220 30% 6%;
+  
+  /* Destructive */
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  
+  /* Borders & Inputs */
+  --border: 220 30% 15%;
+  --input: 220 30% 15%;
+  --ring: 213 100% 56%;
+  
+  /* Health Status Colors - Dark Mode */
+  --status-excellent: 188 95% 68%;
+  --status-good: 166 85% 58%;
+  --status-fair: 38 92% 50%;
+  --status-poor: 0 84% 60%;
+  --status-critical: 0 72% 51%;
+  
+  /* Sidebar */
+  --sidebar-background: 220 30% 8%;
+  --sidebar-foreground: 190 100% 95%;
+  --sidebar-primary: 213 100% 56%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 188 95% 68%;
+  --sidebar-accent-foreground: 220 30% 6%;
+  --sidebar-border: 220 30% 15%;
+  --sidebar-ring: 213 100% 56%;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Focus Styles */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
+}
+
+/* Medical Card Styles */
+.medical-card {
+  @apply bg-card border border-border rounded-lg shadow-lg hover:shadow-xl transition-all duration-300;
+}
+
+.medical-card-header {
+  @apply border-b border-border bg-muted/30 px-6 py-4;
+}
+
+.medical-card-content {
+  @apply p-6;
+}
+
+/* Status Indicators */
+.status-optimal {
+  @apply text-green-600 bg-green-50 border-green-200;
+}
+
+.status-normal {
+  @apply text-blue-600 bg-blue-50 border-blue-200;
+}
+
+.status-warning {
+  @apply text-yellow-600 bg-yellow-50 border-yellow-200;
+}
+
+.status-critical {
+  @apply text-red-600 bg-red-50 border-red-200;
+}
+
+/* Responsive Typography */
+.text-responsive-xl {
+  @apply text-2xl md:text-3xl lg:text-4xl;
+}
+
+.text-responsive-lg {
+  @apply text-lg md:text-xl lg:text-2xl;
+}
+
+.text-responsive-base {
+  @apply text-sm md:text-base lg:text-lg;
+}
+
+/* Animation Utilities */
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes scaleIn {
+  from { 
+    opacity: 0; 
+    transform: scale(0.95); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-break {
+    page-break-before: always;
+  }
+}

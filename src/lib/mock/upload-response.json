@@ -1,0 +1,23 @@
+{
+  "success": true,
+  "message": "Lab report parsed successfully",
+  "analysis_id": "mock-analysis-001",
+  "timestamp": "2025-01-15T10:30:00Z",
+  "parsed_data": {
+    "metadata": {
+      "analysis_id": "mock-analysis-001",
+      "timestamp": "2025-01-15T10:30:00Z",
+      "source_type": "lab_report",
+      "source_name": "sample_blood_test.pdf"
+    },
+    "biomarkers": [
+      { "name": "Total Cholesterol", "value": 195, "unit": "mg/dL", "status": "raw" },
+      { "name": "LDL Cholesterol", "value": 120, "unit": "mg/dL", "status": "raw" },
+      { "name": "HDL Cholesterol", "value": 55, "unit": "mg/dL", "status": "raw" },
+      { "name": "Triglycerides", "value": 100, "unit": "mg/dL", "status": "raw" },
+      { "name": "Glucose", "value": 92, "unit": "mg/dL", "status": "raw" },
+      { "name": "HbA1c", "value": 5.4, "unit": "%", "status": "raw" }
+    ],
+    "extracted_text": "Sample lab report text..."
+  }
+}
