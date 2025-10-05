@@ -1,6 +1,7 @@
 'use client'
 
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import { ParsedBiomarker, ParseMetadata, UploadError, UploadState } from '../types/parsed'
 
 interface UploadStore extends UploadState {
@@ -24,7 +25,9 @@ interface UploadStore extends UploadState {
   allBiomarkersConfirmed: () => boolean
 }
 
-export const useUploadStore = create<UploadStore>((set, get) => ({
+export const useUploadStore = create<UploadStore>()(
+  persist(
+    (set, get) => ({
   // Initial state
   status: 'idle',
   parsedData: [],
@@ -96,7 +99,19 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
     const { status } = get()
     return status === 'confirmed'
   }
-}))
+}),
+    {
+      name: 'upload-store',
+      // Only persist parsed data and analysis ID, not error states
+      partialize: (state) => ({
+        parsedData: state.parsedData,
+        analysisId: state.analysisId,
+        sourceMetadata: state.sourceMetadata,
+        status: state.status
+      })
+    }
+  )
+)
 
 // Selector hooks for common state patterns
 export const useUploadStatus = () => useUploadStore(state => state.status)

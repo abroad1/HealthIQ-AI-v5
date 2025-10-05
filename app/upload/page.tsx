@@ -51,6 +51,7 @@ export default function UploadPage() {
   // Handle confirm all biomarkers
   const handleConfirmAll = async () => {
     try {
+      console.debug("Accept clicked, persisting parsed data:", parsedData.length);
       confirmAll();
       setSubmitSuccess(true);
       // Redirect to results page after a short delay
@@ -373,6 +374,10 @@ function CombinedAnalysisForm({
   const [biomarkerData, setBiomarkerData] = useState<any>(null);
   const [questionnaireData, setQuestionnaireData] = useState<any>(null);
   const [currentStep, setCurrentStep] = useState<'biomarkers' | 'questionnaire' | 'review'>('biomarkers');
+  
+  // Access parsed data from upload store
+  const parsedData = useParsedData();
+  const uploadStatus = useUploadStatus();
 
   const handleBiomarkerSubmit = (data: any) => {
     setBiomarkerData(data);
@@ -385,19 +390,20 @@ function CombinedAnalysisForm({
   };
 
   const handleFinalSubmit = () => {
-    if (biomarkerData && questionnaireData) {
-      onSubmit({ biomarkers: biomarkerData, questionnaire: questionnaireData });
+    const finalBiomarkerData = biomarkerData || (parsedData.length > 0 && uploadStatus === 'confirmed' ? parsedData : null);
+    if (finalBiomarkerData && questionnaireData) {
+      onSubmit({ biomarkers: finalBiomarkerData, questionnaire: questionnaireData });
     }
   };
 
   const canProceed = () => {
     switch (currentStep) {
       case 'biomarkers':
-        return biomarkerData !== null;
+        return biomarkerData !== null || (parsedData.length > 0 && uploadStatus === 'confirmed');
       case 'questionnaire':
         return questionnaireData !== null;
       case 'review':
-        return biomarkerData !== null && questionnaireData !== null;
+        return (biomarkerData !== null || (parsedData.length > 0 && uploadStatus === 'confirmed')) && questionnaireData !== null;
       default:
         return false;
     }
@@ -407,9 +413,9 @@ function CombinedAnalysisForm({
     <div className="space-y-6">
       {/* Progress Indicator */}
       <div className="flex items-center justify-center space-x-4">
-        <div className={`flex items-center ${currentStep === 'biomarkers' ? 'text-blue-600' : biomarkerData ? 'text-green-600' : 'text-gray-400'}`}>
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === 'biomarkers' ? 'bg-blue-100' : biomarkerData ? 'bg-green-100' : 'bg-gray-100'}`}>
-            {biomarkerData ? <CheckCircle className="h-4 w-4" /> : '1'}
+        <div className={`flex items-center ${currentStep === 'biomarkers' ? 'text-blue-600' : (biomarkerData || (parsedData.length > 0 && uploadStatus === 'confirmed')) ? 'text-green-600' : 'text-gray-400'}`}>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === 'biomarkers' ? 'bg-blue-100' : (biomarkerData || (parsedData.length > 0 && uploadStatus === 'confirmed')) ? 'bg-green-100' : 'bg-gray-100'}`}>
+            {(biomarkerData || (parsedData.length > 0 && uploadStatus === 'confirmed')) ? <CheckCircle className="h-4 w-4" /> : '1'}
           </div>
           <span className="ml-2 text-sm font-medium">Biomarkers</span>
         </div>
@@ -433,11 +439,39 @@ function CombinedAnalysisForm({
       {currentStep === 'biomarkers' && (
         <div>
           <h3 className="text-lg font-semibold mb-4">Step 1: Enter Biomarker Data</h3>
-          <BiomarkerForm
-            onSubmit={handleBiomarkerSubmit}
-            isLoading={isLoading}
-            showSubmitButton={true}
-          />
+          {parsedData.length > 0 && uploadStatus === 'confirmed' ? (
+            <div className="space-y-4">
+              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-center space-x-2 text-green-800">
+                  <CheckCircle className="h-5 w-5" />
+                  <span className="font-medium">Parsed biomarkers confirmed!</span>
+                </div>
+                <p className="text-sm text-green-700 mt-1">
+                  {parsedData.length} biomarkers are ready for analysis. You can proceed to the questionnaire or add additional biomarkers manually.
+                </p>
+              </div>
+              <div className="flex space-x-4">
+                <Button
+                  onClick={() => setCurrentStep('questionnaire')}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  Use Parsed Data & Continue
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setBiomarkerData({})}
+                >
+                  Add Additional Biomarkers
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <BiomarkerForm
+              onSubmit={handleBiomarkerSubmit}
+              isLoading={isLoading}
+              showSubmitButton={true}
+            />
+          )}
         </div>
       )}
 
@@ -461,8 +495,13 @@ function CombinedAnalysisForm({
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600">
-                  {Object.keys(biomarkerData || {}).length} biomarkers entered
+                  {biomarkerData ? Object.keys(biomarkerData).length : parsedData.length} biomarkers ready for analysis
                 </p>
+                {parsedData.length > 0 && uploadStatus === 'confirmed' && !biomarkerData && (
+                  <p className="text-xs text-green-600 mt-1">
+                    Using confirmed parsed biomarkers
+                  </p>
+                )}
               </CardContent>
             </Card>
             
