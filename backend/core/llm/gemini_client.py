@@ -1,6 +1,6 @@
 import google.generativeai as genai
 from config.ai import LLMConfig
-from typing import Dict, Any
+from typing import Dict, Any, List, Optional
 from abc import ABC, abstractmethod
 import time
 import random
@@ -45,10 +45,18 @@ class GeminiClient(LLMClient):
 
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel(self.model_name)
-    def generate(self, prompt: str, **kwargs) -> dict:
+    def generate(self, prompt: str, input_files: Optional[List[tuple]] = None, **kwargs) -> dict:
         """
         Generate content from Gemini with retry logic and error handling.
-        Returns structured dict with text and metadata.
+        Supports both text prompts and multimodal input with files.
+        
+        Args:
+            prompt: Text prompt for the LLM
+            input_files: List of (mime_type, file_bytes) tuples for multimodal input
+            **kwargs: Additional arguments for generate_content
+            
+        Returns:
+            Structured dict with text and metadata
         """
         max_retries = 3
         base_delay = 1.0
@@ -56,7 +64,19 @@ class GeminiClient(LLMClient):
         for attempt in range(max_retries):
             try:
                 start_time = time.time()
-                response = self.model.generate_content(prompt, **kwargs)
+                
+                # Prepare content for multimodal input
+                if input_files:
+                    content_parts = [prompt]
+                    for mime_type, file_bytes in input_files:
+                        content_parts.append({
+                            "mime_type": mime_type,
+                            "data": file_bytes
+                        })
+                    response = self.model.generate_content(content_parts, **kwargs)
+                else:
+                    response = self.model.generate_content(prompt, **kwargs)
+                
                 latency_ms = int((time.time() - start_time) * 1000)
                 
                 # Extract token count safely

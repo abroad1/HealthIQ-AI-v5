@@ -22,7 +22,6 @@ interface UploadStore extends UploadState {
   // Computed state
   hasUnconfirmedBiomarkers: () => boolean
   allBiomarkersConfirmed: () => boolean
-  getBiomarkersByStatus: (status: ParsedBiomarker['status']) => ParsedBiomarker[]
 }
 
 export const useUploadStore = create<UploadStore>((set, get) => ({
@@ -41,7 +40,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
   updateBiomarker: (index, biomarker) => {
     const { parsedData } = get()
     const updatedData = [...parsedData]
-    updatedData[index] = { ...biomarker, status: 'edited' }
+    updatedData[index] = biomarker
     set({ parsedData: updatedData })
   },
   
@@ -63,14 +62,9 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
   }),
   
   setParsedResults: (biomarkers, analysisId, metadata) => {
-    // Mark all biomarkers as 'raw' initially
-    const processedBiomarkers = biomarkers.map(biomarker => ({
-      ...biomarker,
-      status: 'raw' as const
-    }))
-    
+    // Store biomarkers exactly as received from backend
     set({
-      parsedData: processedBiomarkers,
+      parsedData: biomarkers,
       analysisId,
       sourceMetadata: metadata,
       status: 'ready',
@@ -79,14 +73,7 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
   },
   
   confirmAll: () => {
-    const { parsedData } = get()
-    const confirmedData = parsedData.map(biomarker => ({
-      ...biomarker,
-      status: 'confirmed' as const
-    }))
-    
     set({
-      parsedData: confirmedData,
       status: 'confirmed'
     })
   },
@@ -101,18 +88,13 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
 
   // Computed state
   hasUnconfirmedBiomarkers: () => {
-    const { parsedData } = get()
-    return parsedData.some(biomarker => biomarker.status !== 'confirmed')
+    const { status } = get()
+    return status !== 'confirmed'
   },
   
   allBiomarkersConfirmed: () => {
-    const { parsedData } = get()
-    return parsedData.length > 0 && parsedData.every(biomarker => biomarker.status === 'confirmed')
-  },
-  
-  getBiomarkersByStatus: (status) => {
-    const { parsedData } = get()
-    return parsedData.filter(biomarker => biomarker.status === status)
+    const { status } = get()
+    return status === 'confirmed'
   }
 }))
 

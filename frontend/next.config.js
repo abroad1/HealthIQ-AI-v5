@@ -8,6 +8,9 @@ const nextConfig = {
     ignoreDuringBuilds: false,
     dirs: ['app', 'components', 'lib', 'services', 'state', 'types'],
   },
+  // Add cache busting for development
+  generateEtags: false,
+  poweredByHeader: false,
 }
 
 module.exports = nextConfig

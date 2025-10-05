@@ -71,7 +71,12 @@ export default function FileDropzone({
           onMouseEnter={() => setIsDragActive(true)}
           onMouseLeave={() => setIsDragActive(false)}
         >
-          <input {...getInputProps()} />
+          <input 
+            {...getInputProps()} 
+            id="file-upload"
+            name="file"
+            autoComplete="off"
+          />
           
           <div className="flex flex-col items-center space-y-4">
             <div className="p-3 bg-primary/10 rounded-full">

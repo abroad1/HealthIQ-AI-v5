@@ -13,8 +13,11 @@ export interface ParsedBiomarker {
   /** Unit of measurement (e.g., "mg/dL", "mmol/L") */
   unit: string;
   
-  /** Processing status of this biomarker */
-  status?: "raw" | "edited" | "confirmed";
+  /** Reference range (e.g., "70-100 mg/dL") */
+  referenceRange?: string;
+  
+  /** Health status classification (Low/Normal/High/Unknown) */
+  healthStatus?: string;
 }
 
 export interface ParseMetadata {
