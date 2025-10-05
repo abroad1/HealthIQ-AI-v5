@@ -129,7 +129,7 @@ export default function ParsedTable({
                     </TableCell>
                     <TableCell>{biomarker.unit}</TableCell>
                     <TableCell>
-                      {biomarker.referenceRange || '—'}
+                      {biomarker.reference || '—'}
                     </TableCell>
                     <TableCell>
                       {getHealthStatusBadge(biomarker.healthStatus || 'Unknown')}
