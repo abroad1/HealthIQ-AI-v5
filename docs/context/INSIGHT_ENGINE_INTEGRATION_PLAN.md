@@ -42,9 +42,9 @@ Tick each box when the stage is completed and committed to `main`.
 | # | Sub-Stage | Description | Owner | Deliverable | Status |
 |---|------------|-------------|--------|-------------|--------|
 | [x] **1. Registry Activation** | Enable `ensure_insights_registered()` to import all modules (`metabolic_age`, `heart_insight`, `inflammation`, `fatigue_root_cause`, `detox_filtration`). | Backend | Verified discovery log shows 5/5 modules. | ✅ |
-| [ ] **2. Orchestrator Integration** | Modify `orchestrator.py` to execute registered insights after scoring and clustering. | Backend | `AnalysisResult.insights` populated with deterministic results. | ☑ |
-| [ ] **3. DTO + Persistence Update** | Extend `core/dto/builders.py` and DB models so modular insight results persist in `analysis_results.insights`. | Backend | Data visible via `/api/analysis/result`. | ☑ |
-| [ ] **4. Integration Tests** | Create `tests/integration/test_modular_insights_flow.py` with mock biomarkers for each module. | Backend | All tests passing locally and in CI. | ☑ |
+| [x] **2. Orchestrator Integration** | Modify `orchestrator.py` to execute registered insights after scoring and clustering. | Backend | `AnalysisResult.insights` populated with deterministic results. | ✅ |
+| [x] **3. DTO + Persistence Update** | Extend `core/dto/builders.py` and DB models so modular insight results persist in `analysis_results.insights`. | Backend | Data visible via `/api/analysis/result`. | ✅ |
+| [x] **4. Integration Tests** | Create `tests/integration/test_modular_insights_flow.py` with mock biomarkers for each module. | Backend | All tests passing locally and in CI. | ✅ |
 | [ ] **5. Frontend Placeholder** | Update `InsightPanel.tsx` to list returned insights with ID, severity, and first recommendation. | Frontend | Insights render on results page with no errors. | ☑ |
 | [ ] **6. Documentation Update** | Add example JSON output and README note. | Docs | Updated docs committed and linked from PRD. | ☑ |
 | [ ] **7. Review + Merge** | Code review, QA validation, merge to `main`. | All | Tag `insight-engine-sprint-v1` created. | ☑ |
