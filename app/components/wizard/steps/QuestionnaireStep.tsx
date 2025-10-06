@@ -16,7 +16,10 @@ export default function QuestionnaireStep() {
     
     try {
       setQuestionnaire(questionnaireData)
-      setCurrentStep('complete')
+      // Use setTimeout to avoid state update during render
+      setTimeout(() => {
+        setCurrentStep('complete')
+      }, 0)
     } catch (error) {
       console.error('Failed to save questionnaire:', error)
     } finally {
@@ -48,7 +51,7 @@ export default function QuestionnaireStep() {
               </span>
             </div>
             <p className="text-sm text-green-700 mt-1">
-              Your biomarker data is ready. Now let's learn about your lifestyle to provide better insights.
+              Your biomarker data is ready. Now let&apos;s learn about your lifestyle to provide better insights.
             </p>
           </CardContent>
         </Card>
@@ -62,6 +65,8 @@ export default function QuestionnaireStep() {
         <CardContent>
           <QuestionnaireForm
             onSubmit={handleQuestionnaireSubmit}
+            onCancel={() => setCurrentStep('review')}
+            initialData={questionnaire}
             isLoading={isSubmitting}
           />
         </CardContent>

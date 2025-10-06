@@ -21,7 +21,7 @@ import { useClusterStore } from '../state/clusterStore';
 import { InsightsPanel } from '@/components/insights/InsightsPanel';
 import BiomarkerDials from '@/components/biomarkers/BiomarkerDials';
 import ClusterSummary from '@/components/clusters/ClusterSummary';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function ResultsPage() {
   const { 
@@ -29,7 +29,8 @@ export default function ResultsPage() {
     isLoading: isAnalyzing, 
     error: analysisError, 
     retryAnalysis,
-    clearAnalysis 
+    clearAnalysis,
+    setCurrentAnalysis
   } = useAnalysisStore();
   
   const { 
@@ -41,10 +42,18 @@ export default function ResultsPage() {
   const [activeTab, setActiveTab] = useState('overview');
   const [showDetails, setShowDetails] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const analysisId = searchParams.get('analysis_id');
 
   useEffect(() => {
-    // If no analysis data, redirect to upload
-    if (!currentAnalysis && !isAnalyzing) {
+    // If we have an analysis_id from URL but no current analysis, fetch it
+    if (analysisId && !currentAnalysis && !isAnalyzing) {
+      console.log('ResultsPage: Loading analysis from URL parameter:', analysisId);
+      fetchAnalysisById(analysisId);
+    }
+
+    // If no analysis data and no analysis_id, redirect to upload
+    if (!currentAnalysis && !isAnalyzing && !analysisId) {
       router.push('/upload');
       return;
     }
@@ -53,7 +62,46 @@ export default function ResultsPage() {
     if (currentAnalysis && !clusters.length && !clustersLoading) {
       loadClusters(currentAnalysis.analysis_id);
     }
-  }, [currentAnalysis, isAnalyzing, clusters.length, clustersLoading, loadClusters, router]);
+  }, [currentAnalysis, isAnalyzing, clusters.length, clustersLoading, loadClusters, router, analysisId]);
+
+  const fetchAnalysisById = async (id: string) => {
+    try {
+      console.log('ResultsPage: Fetching analysis result for ID:', id);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/analysis/result?analysis_id=${encodeURIComponent(id)}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      console.log('ResultsPage: Analysis result fetched:', data);
+      
+      // Convert the API response to the format expected by the analysis store
+      const analysisResult = {
+        analysis_id: data.analysis_id || id,
+        status: 'completed' as const,
+        progress: 100,
+        results: {
+          biomarkers: data.biomarkers || [],
+          clusters: data.clusters || [],
+          insights: data.insights || [],
+          overall_score: data.overall_score,
+          risk_assessment: data.risk_assessment || {},
+          recommendations: data.recommendations || []
+        },
+        created_at: data.created_at || new Date().toISOString(),
+        completed_at: data.completed_at || new Date().toISOString(),
+        processing_time_seconds: data.processing_time_seconds
+      };
+      
+      // Set the analysis in the store
+      setCurrentAnalysis(analysisResult);
+      
+    } catch (error) {
+      console.error('ResultsPage: Failed to fetch analysis result:', error);
+      // You might want to show an error message to the user here
+    }
+  };
 
   const handleRetry = () => {
     if (currentAnalysis) {

@@ -37,7 +37,10 @@ export default function DataReviewStep() {
         updateBiomarker(index, { ...biomarker, status: 'confirmed' })
       }
     })
-    setCurrentStep('questionnaire')
+    // Use setTimeout to avoid state update during render
+    setTimeout(() => {
+      setCurrentStep('questionnaire')
+    }, 0)
   }
 
   if (biomarkers.length === 0) {
@@ -159,7 +162,7 @@ export default function DataReviewStep() {
       {/* Skip Option */}
       <div className="text-center pt-4 border-t">
         <p className="text-sm text-gray-500 mb-2">
-          Don't want to review biomarkers? You can skip to the questionnaire.
+          Don&apos;t want to review biomarkers? You can skip to the questionnaire.
         </p>
         <Button 
           variant="ghost" 

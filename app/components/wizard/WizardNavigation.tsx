@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from '../ui/button'
 import { useHealthWizardStore } from '../../state/healthWizard'
 
@@ -10,6 +10,11 @@ interface WizardNavigationProps {
 
 export default function WizardNavigation({ isLoading = false }: WizardNavigationProps) {
   const { currentStep, canProceed, setCurrentStep } = useHealthWizardStore()
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   const getNextStep = (current: string) => {
     switch (current) {
@@ -66,7 +71,7 @@ export default function WizardNavigation({ isLoading = false }: WizardNavigation
 
       <Button 
         onClick={handleNext}
-        disabled={!canProceed() || isLoading}
+        disabled={!isClient || !canProceed() || isLoading}
         className="min-w-[120px] bg-blue-600 hover:bg-blue-700"
       >
         {isLoading ? (

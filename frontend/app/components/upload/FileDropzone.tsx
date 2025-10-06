@@ -62,10 +62,12 @@ export default function FileDropzone({
   const { getRootProps, getInputProps, isDragReject } = useDropzone({
     onDrop,
     onDropRejected,
-    accept: acceptedTypes.reduce((acc, type) => {
-      acc[type] = []
-      return acc
-    }, {} as Record<string, string[]>),
+    accept: {
+      'application/pdf': ['.pdf'],
+      'text/plain': ['.txt'],
+      'text/csv': ['.csv'],
+      'application/json': ['.json'],
+    },
     maxSize,
     multiple: false,
     disabled: disabled || isParsing

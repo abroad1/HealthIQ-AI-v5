@@ -8,24 +8,99 @@ import FileDropzone from '../../upload/FileDropzone'
 import PasteInput from '../../upload/PasteInput'
 import BiomarkerForm from '../../forms/BiomarkerForm'
 import { useHealthWizardStore } from '../../../state/healthWizard'
-import { useParseUpload } from '../../../queries/parsing'
 import { ParsedBiomarker } from '../../../types/parsed'
+
+// API configuration
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
 type InputMethod = 'upload' | 'manual' | null
 
 export default function DataInputStep() {
   const [inputMethod, setInputMethod] = useState<InputMethod>(null)
-  const { addBiomarkers, setCurrentStep, setError, clearError } = useHealthWizardStore()
-  const parseUpload = useParseUpload()
+  const { addBiomarkers, setCurrentStep, setError, clearError, currentStep } = useHealthWizardStore()
+  const [isParsing, setIsParsing] = useState(false)
 
   const handleFileUpload = async (file: File) => {
     clearError('upload')
-    parseUpload.mutate({ file })
+    console.log('DataInputStep: File upload received:', {
+      name: file.name,
+      type: file.type,
+      size: file.size
+    })
+    
+    // File is now stored in FileDropzone component state
+    // User can see the file preview with Remove and Parse buttons
+    // No automatic progression - let user decide when to proceed
+  }
+
+  const handleFileRemove = () => {
+    clearError('upload')
+    console.log('DataInputStep: File removed')
+    // File removal is handled by the FileDropzone component's internal state
+  }
+
+  const handleFileParse = async (file: File) => {
+    clearError('upload')
+    console.log('DataInputStep: Parsing file:', {
+      name: file.name,
+      type: file.type,
+      size: file.size
+    })
+    
+    setIsParsing(true)
+    
+    try {
+      console.log('DataInputStep: Sending file to backend for Gemini parsing')
+      
+      // Create FormData for file upload
+      const formData = new FormData()
+      formData.append('file', file)
+      
+      // Send file to backend for real Gemini parsing
+      const response = await fetch(`${API_BASE}/api/upload/parse`, {
+        method: 'POST',
+        body: formData,
+      })
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`)
+      }
+      
+      const data = await response.json()
+      console.log('DataInputStep: Parsing successful:', data)
+      
+      if (!data.success) {
+        throw new Error(data.message || 'Parsing failed')
+      }
+      
+      // Extract biomarkers from the response
+      const biomarkers = data.parsed_data.biomarkers.map((biomarker: any) => ({
+        ...biomarker,
+        status: 'raw' as const
+      }))
+      
+      console.log('DataInputStep: Extracted biomarkers:', biomarkers)
+      
+      // Add real biomarkers to store
+      addBiomarkers(biomarkers)
+      
+      // Proceed to review step
+      console.log('DataInputStep: Proceeding to review step')
+      setCurrentStep('review')
+      
+    } catch (error) {
+      console.error('DataInputStep: Error during parsing:', error)
+      setError('upload', `Error during parsing: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } finally {
+      setIsParsing(false)
+    }
   }
 
   const handleTextPaste = async (text: string) => {
     clearError('paste')
-    parseUpload.mutate({ text })
+    // TODO: Implement text parsing
+    console.log('Text paste:', text)
   }
 
   const handleBiomarkerSubmit = (biomarkerData: any) => {
@@ -38,19 +113,13 @@ export default function DataInputStep() {
     }))
     
     addBiomarkers(biomarkers)
-    setCurrentStep('review')
+    // Use setTimeout to avoid state update during render
+    setTimeout(() => {
+      setCurrentStep('review')
+    }, 0)
   }
 
-  // Handle parse upload success
-  React.useEffect(() => {
-    if (parseUpload.isSuccess && parseUpload.data) {
-      const { parsed_data } = parseUpload.data
-      addBiomarkers(parsed_data.biomarkers)
-      setCurrentStep('review')
-    } else if (parseUpload.isError && parseUpload.error) {
-      setError('upload', parseUpload.error.message || 'Failed to parse upload')
-    }
-  }, [parseUpload.isSuccess, parseUpload.isError, parseUpload.data, parseUpload.error, addBiomarkers, setCurrentStep, setError])
+  // TODO: Add parse upload success handling
 
   if (inputMethod === 'upload') {
     return (
@@ -71,8 +140,9 @@ export default function DataInputStep() {
             <CardContent>
               <FileDropzone
                 onFileSelect={handleFileUpload}
+                onFileRemove={handleFileRemove}
+                onFileParse={handleFileParse}
                 onError={(error) => setError('upload', error)}
-                disabled={parseUpload.isLoading}
               />
             </CardContent>
           </Card>
@@ -88,16 +158,18 @@ export default function DataInputStep() {
               <PasteInput
                 onTextSubmit={handleTextPaste}
                 onError={(error) => setError('paste', error)}
-                disabled={parseUpload.isLoading}
               />
             </CardContent>
           </Card>
         </div>
 
-        {parseUpload.isLoading && (
-          <div className="text-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Parsing your lab results...</p>
+        {/* Loading state for file parsing */}
+        {isParsing && (
+          <div className="text-center p-4">
+            <div className="inline-flex items-center space-x-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+              <span className="text-sm text-muted-foreground">Parsing file with Gemini AI...</span>
+            </div>
           </div>
         )}
 
@@ -105,7 +177,6 @@ export default function DataInputStep() {
           <Button 
             variant="outline" 
             onClick={() => setInputMethod(null)}
-            disabled={parseUpload.isLoading}
           >
             Back to Options
           </Button>
@@ -160,7 +231,7 @@ export default function DataInputStep() {
           </CardHeader>
           <CardContent>
             <p className="text-gray-600 mb-4">
-              Upload a PDF or image of your lab results. We'll automatically extract and parse your biomarker values.
+              Upload a PDF or image of your lab results. We&apos;ll automatically extract and parse your biomarker values.
             </p>
             <div className="flex items-center text-sm text-green-600">
               <CheckCircle className="h-4 w-4 mr-1" />
@@ -193,7 +264,7 @@ export default function DataInputStep() {
 
       <div className="text-center">
         <p className="text-sm text-gray-500">
-          Don't have your lab results? You can skip this step and complete the questionnaire only.
+          Don&apos;t have your lab results? You can skip this step and complete the questionnaire only.
         </p>
         <Button 
           variant="ghost" 
