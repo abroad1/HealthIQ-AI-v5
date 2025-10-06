@@ -161,6 +161,7 @@
 - Reference this lifecycle in all engine and insight README files
 - Use this structure to define engine contract interfaces
 - For implementation detail on Insight Engines, correlation rules, and questionnaire integration, see insight_engine_development_brief.md
+- **Sprint 10 Status**: Sprint 10 is now subdivided into 10a–10d to manage the final integration and release work
 
 ---
 

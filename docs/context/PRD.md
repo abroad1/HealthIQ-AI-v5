@@ -157,6 +157,8 @@ Each module is stateless, version-controlled, and independently testable. Contex
 - Comorbidity-aware scoring weights
 - Wearable and lifestyle integrations (HRV, sleep, etc.)
 
+**Sprint 10 Status**: Sprint 10 is now subdivided into 10a–10d to manage the final integration and release work.
+
 ---
 
 ## 9. Out of Scope
