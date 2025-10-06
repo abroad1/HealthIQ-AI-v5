@@ -58,7 +58,33 @@ export default function QuestionnaireForm({
   isLoading = false 
 }: QuestionnaireFormProps) {
   const [questions, setQuestions] = useState<QuestionnaireQuestion[]>([]);
-  const [responses, setResponses] = useState<Record<string, any>>(initialData);
+  const [responses, setResponses] = useState<Record<string, any>>(() => {
+    // Initialize with proper defaults to avoid uncontrolled input warnings
+    const defaults: Record<string, any> = {
+      full_name: '',
+      email_address: '',
+      phone_number: '',
+      country: '',
+      state_province: '',
+      date_of_birth: '',
+      biological_sex: '',
+      height: { 'Feet': '', 'Inches': '' },
+      weight: '',
+      sleep_hours_nightly: '',
+      sleep_quality_rating: 5,
+      alcohol_drinks_weekly: '',
+      tobacco_use: '',
+      stress_level_rating: 5,
+      vigorous_exercise_days: '',
+      current_medications: '',
+      long_term_medications: [],
+      chronic_conditions: [],
+      medical_conditions: [],
+      current_symptoms: [],
+      regular_migraines: '',
+    };
+    return { ...defaults, ...initialData };
+  });
   const [currentStep, setCurrentStep] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -322,8 +348,21 @@ export default function QuestionnaireForm({
     const newErrors: Record<string, string> = {};
 
     currentQuestions.forEach(question => {
-      if (question.required && (!responses[question.id] || responses[question.id] === '')) {
-        newErrors[question.id] = 'This field is required';
+      if (question.required) {
+        const value = responses[question.id];
+        let isValid = false;
+        
+        if (question.type === 'checkbox') {
+          isValid = Array.isArray(value) && value.length > 0;
+        } else if (question.type === 'group') {
+          isValid = value && Object.values(value).some(v => v !== '' && v !== null && v !== undefined);
+        } else {
+          isValid = value !== '' && value !== null && value !== undefined;
+        }
+        
+        if (!isValid) {
+          newErrors[question.id] = 'This field is required';
+        }
       }
     });
 
@@ -374,7 +413,7 @@ export default function QuestionnaireForm({
             <Input
               id={question.id}
               type={question.type}
-              value={value || ''}
+              value={value ?? ''}
               onChange={(e) => handleResponseChange(question.id, e.target.value)}
               className={error ? 'border-red-500' : ''}
             />
@@ -399,8 +438,8 @@ export default function QuestionnaireForm({
               type="number"
               min={question.min}
               max={question.max}
-              value={value || ''}
-              onChange={(e) => handleResponseChange(question.id, parseFloat(e.target.value))}
+              value={value ?? ''}
+              onChange={(e) => handleResponseChange(question.id, parseFloat(e.target.value) || 0)}
               className={error ? 'border-red-500' : ''}
             />
             {question.helpText && (
@@ -420,7 +459,7 @@ export default function QuestionnaireForm({
               {question.required && <span className="text-red-500 ml-1">*</span>}
             </Label>
             <Select
-              value={value || ''}
+              value={value ?? ''}
               onValueChange={(val) => handleResponseChange(question.id, val)}
             >
               <SelectTrigger className={error ? 'border-red-500' : ''}>
@@ -455,8 +494,8 @@ export default function QuestionnaireForm({
                 min={question.min || 1}
                 max={question.max || 10}
                 step={1}
-                value={value || (question.min || 1)}
-                onValueChange={(val) => handleResponseChange(question.id, val)}
+                value={[value ?? (question.min || 1)]}
+                onValueChange={(val) => handleResponseChange(question.id, val[0])}
                 className="w-full"
               />
               <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -468,7 +507,7 @@ export default function QuestionnaireForm({
                 )}
               </div>
               <div className="text-center mt-2">
-                <span className="text-lg font-semibold">{value || (question.min || 1)}</span>
+                <span className="text-lg font-semibold">{value ?? (question.min || 1)}</span>
               </div>
             </div>
             {question.helpText && (
@@ -492,7 +531,7 @@ export default function QuestionnaireForm({
                 <div key={option} className="flex items-center space-x-2">
                   <Checkbox
                     id={`${question.id}-${option}`}
-                    checked={Array.isArray(value) && value.includes(option)}
+                    checked={Array.isArray(value) ? value.includes(option) : false}
                     onCheckedChange={(checked) => {
                       const currentValues = Array.isArray(value) ? value : [];
                       if (checked) {
@@ -535,11 +574,11 @@ export default function QuestionnaireForm({
                     type={field.type}
                     min={field.min}
                     max={field.max}
-                    value={value?.[field.label] || ''}
+                    value={value?.[field.label] ?? ''}
                     onChange={(e) => {
                       const newValue = {
                         ...value,
-                        [field.label]: field.type === 'number' ? parseFloat(e.target.value) : e.target.value
+                        [field.label]: field.type === 'number' ? (parseFloat(e.target.value) || 0) : e.target.value
                       };
                       handleResponseChange(question.id, newValue);
                     }}
@@ -565,7 +604,7 @@ export default function QuestionnaireForm({
             </Label>
             <Textarea
               id={question.id}
-              value={value || ''}
+              value={value ?? ''}
               onChange={(e) => handleResponseChange(question.id, e.target.value)}
               className={error ? 'border-red-500' : ''}
             />

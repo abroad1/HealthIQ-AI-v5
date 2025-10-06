@@ -8,14 +8,9 @@ from datetime import datetime, UTC
 from typing import Dict, Any
 from uuid import UUID, uuid4
 
-# For ULID generation (fallback to uuid4 if ulid not available)
-try:
-    from ulid import ULID
-    def generate_analysis_id() -> str:
-        return str(ULID())
-except ImportError:
-    def generate_analysis_id() -> str:
-        return str(uuid.uuid4())
+# Generate analysis ID as UUID (for database compatibility)
+def generate_analysis_id() -> str:
+    return str(uuid.uuid4())
 
 from fastapi import APIRouter, HTTPException, Request, Depends, status
 from fastapi.responses import StreamingResponse
@@ -118,7 +113,11 @@ async def start_analysis(request: AnalysisStartRequest, db: Session = Depends(ge
                 logger = logging.getLogger(__name__)
                 logger.error(f"Persistence failed for analysis {analysis_id}: {str(persistence_error)}")
         
-        return AnalysisStartResponse(analysis_id=analysis_id)
+        return AnalysisStartResponse(
+            analysis_id=analysis_id,
+            status="started",
+            message="Analysis started successfully"
+        )
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to start analysis: {str(e)}")

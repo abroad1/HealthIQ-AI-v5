@@ -4,10 +4,12 @@ import { useState, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Button } from '../ui/button'
 import { Card, CardContent } from '../ui/card'
-import { Upload, FileText, AlertCircle } from 'lucide-react'
+import { Upload, FileText, AlertCircle, X, File } from 'lucide-react'
 
 interface FileDropzoneProps {
   onFileSelect: (file: File) => void
+  onFileRemove?: () => void
+  onFileParse?: (file: File) => void
   onError?: (error: string) => void
   maxSize?: number // in bytes
   acceptedTypes?: string[]
@@ -16,6 +18,8 @@ interface FileDropzoneProps {
 
 export default function FileDropzone({
   onFileSelect,
+  onFileRemove,
+  onFileParse,
   onError,
   maxSize = 10 * 1024 * 1024, // 10MB default
   acceptedTypes = ['.pdf', '.txt', '.json', '.csv'],
@@ -23,14 +27,32 @@ export default function FileDropzone({
 }: FileDropzoneProps) {
   const [isDragActive, setIsDragActive] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0]
     if (file) {
       setError(null)
+      setSelectedFile(file)
+      console.log('FileDropzone: Accepted file:', {
+        name: file.name,
+        type: file.type,
+        size: file.size
+      })
       onFileSelect(file)
     }
   }, [onFileSelect])
+
+  const handleRemoveFile = useCallback(() => {
+    setSelectedFile(null)
+    onFileRemove?.()
+  }, [onFileRemove])
+
+  const handleParseFile = useCallback(() => {
+    if (selectedFile) {
+      onFileParse?.(selectedFile)
+    }
+  }, [selectedFile, onFileParse])
 
   const onDropRejected = useCallback((rejectedFiles: any[]) => {
     const rejection = rejectedFiles[0]
@@ -48,10 +70,12 @@ export default function FileDropzone({
   const { getRootProps, getInputProps, isDragReject } = useDropzone({
     onDrop,
     onDropRejected,
-    accept: acceptedTypes.reduce((acc, type) => {
-      acc[type] = []
-      return acc
-    }, {} as Record<string, string[]>),
+    accept: {
+      'application/pdf': ['.pdf'],
+      'text/plain': ['.txt'],
+      'text/csv': ['.csv'],
+      'application/json': ['.json'],
+    },
     maxSize,
     multiple: false,
     disabled
@@ -103,6 +127,45 @@ export default function FileDropzone({
           <div className="mt-4 flex items-center space-x-2 text-destructive text-sm">
             <AlertCircle className="h-4 w-4" />
             <span>{error}</span>
+          </div>
+        )}
+
+        {/* File Preview Section */}
+        {selectedFile && (
+          <div className="mt-4 p-4 border border-border rounded-lg bg-muted/50">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-primary/10 rounded-full">
+                  <File className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium text-foreground">{selectedFile.name}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedFile.type} • {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                {selectedFile.type === 'application/pdf' && (
+                  <Button
+                    onClick={handleParseFile}
+                    size="sm"
+                    className="bg-primary hover:bg-primary/90"
+                  >
+                    Parse
+                  </Button>
+                )}
+                <Button
+                  onClick={handleRemoveFile}
+                  variant="outline"
+                  size="sm"
+                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Remove
+                </Button>
+              </div>
+            </div>
           </div>
         )}
       </CardContent>

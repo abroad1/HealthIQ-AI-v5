@@ -13,12 +13,19 @@ export default function AnalysisLaunchStep() {
   const { startAnalysis, isLoading: isAnalyzing } = useAnalysisStore()
   const router = useRouter()
   const [isStarting, setIsStarting] = React.useState(false)
+  const [isSuccess, setIsSuccess] = React.useState(false)
+  const [analysisId, setAnalysisId] = React.useState<string | null>(null)
 
   const handleStartAnalysis = async () => {
     setIsStarting(true)
     
     try {
-      // Convert biomarkers to the format expected by the analysis store
+      console.log('AnalysisLaunchStep: Starting analysis with data:', {
+        biomarkers: biomarkers.length,
+        questionnaire: Object.keys(questionnaire).length
+      })
+
+      // Convert biomarkers to the format expected by the backend API
       const biomarkerData = biomarkers.reduce((acc, biomarker) => {
         acc[biomarker.name] = {
           value: typeof biomarker.value === 'number' ? biomarker.value : parseFloat(biomarker.value as string),
@@ -27,25 +34,87 @@ export default function AnalysisLaunchStep() {
         return acc
       }, {} as Record<string, { value: number; unit: string }>)
 
-      // Start analysis with biomarker and questionnaire data
-      await startAnalysis({
+      // Extract user data from questionnaire
+      const userData = {
+        user_id: 'temp_user_' + Date.now(), // Temporary user ID
+        age: calculateAge(questionnaire.date_of_birth) || 35,
+        sex: questionnaire.biological_sex?.toLowerCase() || 'male',
+        height: extractHeight(questionnaire.height) || 180,
+        weight: parseFloat(questionnaire.weight) || 75,
+        questionnaire: questionnaire
+      }
+
+      console.log('AnalysisLaunchStep: Prepared analysis payload:', {
         biomarkers: biomarkerData,
-        user: {
-          age: 35, // Default age, could be made configurable
-          sex: 'male' as const, // Default sex, could be made configurable
-          height: 180, // Default height, could be made configurable
-          weight: 75 // Default weight, could be made configurable
-        },
-        questionnaire: Object.keys(questionnaire).length > 0 ? questionnaire : null
+        user: userData
       })
+
+      // Make direct API call to backend
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/analysis/start`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          biomarkers: biomarkerData,
+          user: userData
+        }),
+      })
+
+      console.log('AnalysisLaunchStep: API response status:', response.status)
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`)
+      }
+
+      const result = await response.json()
+      console.log('AnalysisLaunchStep: Analysis started successfully:', result)
       
-      // Redirect to results page
-      router.push('/results')
+      // Show success message briefly before redirect
+      if (result.analysis_id) {
+        console.log('AnalysisLaunchStep: Redirecting to results page with analysis_id:', result.analysis_id)
+        
+        // Set success state
+        setIsSuccess(true)
+        setAnalysisId(result.analysis_id)
+        setIsStarting(false)
+        
+        // Small delay to show success state before redirect
+        setTimeout(() => {
+          router.push(`/results?analysis_id=${result.analysis_id}`)
+        }, 2000)
+      } else {
+        throw new Error('No analysis_id received from server')
+      }
     } catch (error) {
-      console.error('Failed to start analysis:', error)
+      console.error('AnalysisLaunchStep: Failed to start analysis:', error)
+      // You might want to show an error message to the user here
     } finally {
       setIsStarting(false)
     }
+  }
+
+  // Helper function to calculate age from date of birth
+  const calculateAge = (dateOfBirth: string): number | null => {
+    if (!dateOfBirth) return null
+    const today = new Date()
+    const birthDate = new Date(dateOfBirth)
+    let age = today.getFullYear() - birthDate.getFullYear()
+    const monthDiff = today.getMonth() - birthDate.getMonth()
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--
+    }
+    return age
+  }
+
+  // Helper function to extract height in cm from feet/inches
+  const extractHeight = (heightData: any): number | null => {
+    if (!heightData || typeof heightData !== 'object') return null
+    const feet = parseFloat(heightData.Feet) || 0
+    const inches = parseFloat(heightData.Inches) || 0
+    if (feet === 0 && inches === 0) return null
+    return Math.round((feet * 12 + inches) * 2.54) // Convert to cm
   }
 
   const hasBiomarkers = biomarkers.length > 0
@@ -61,7 +130,7 @@ export default function AnalysisLaunchStep() {
           Ready for Analysis!
         </h3>
         <p className="text-gray-600">
-          Your health data is complete. Let's generate your personalized health insights.
+          Your health data is complete. Let&apos;s generate your personalized health insights.
         </p>
       </div>
 
@@ -141,10 +210,15 @@ export default function AnalysisLaunchStep() {
 
         <Button 
           onClick={handleStartAnalysis}
-          disabled={isStarting || isAnalyzing}
+          disabled={isStarting || isAnalyzing || isSuccess}
           className="bg-blue-600 hover:bg-blue-700 min-w-[160px]"
         >
-          {isStarting || isAnalyzing ? (
+          {isSuccess ? (
+            <>
+              <CheckCircle className="h-4 w-4 mr-2" />
+              Analysis Started!
+            </>
+          ) : isStarting || isAnalyzing ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
               Starting Analysis...
@@ -157,6 +231,26 @@ export default function AnalysisLaunchStep() {
           )}
         </Button>
       </div>
+
+      {/* Success Message */}
+      {isSuccess && analysisId && (
+        <Card className="bg-green-50 border-green-200">
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-green-800 mb-2">
+                Analysis Started Successfully!
+              </h3>
+              <p className="text-sm text-green-700 mb-2">
+                Your analysis is now processing. Redirecting to results page...
+              </p>
+              <p className="text-xs text-green-600 font-mono">
+                Analysis ID: {analysisId}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Processing Time Info */}
       <div className="text-center">

@@ -12,7 +12,6 @@ import mimetypes
 import re
 from typing import Dict, Any, List, Optional
 from pathlib import Path
-import PyPDF2
 from pydantic import BaseModel, Field, ValidationError
 
 from core.llm.gemini_client import GeminiClient
@@ -122,9 +121,7 @@ class LLMParser:
     def _convert_to_text(self, file_bytes: bytes, mime_type: str, filename: str) -> str:
         """Convert file bytes to text based on MIME type."""
         try:
-            if mime_type == 'application/pdf':
-                return self._extract_pdf_text(file_bytes)
-            elif mime_type == 'text/plain':
+            if mime_type == 'text/plain':
                 return file_bytes.decode('utf-8')
             elif mime_type in ['text/csv', 'application/vnd.ms-excel']:
                 return self._extract_csv_text(file_bytes)
@@ -134,17 +131,6 @@ class LLMParser:
                 return file_bytes.decode('utf-8', errors='ignore')
         except Exception as e:
             raise ValueError(f"Failed to convert {mime_type} file to text: {str(e)}")
-    
-    def _extract_pdf_text(self, file_bytes: bytes) -> str:
-        """Extract text from PDF file."""
-        try:
-            pdf_reader = PyPDF2.PdfReader(io.BytesIO(file_bytes))
-            text = ""
-            for page in pdf_reader.pages:
-                text += page.extract_text() + "\n"
-            return text.strip()
-        except Exception as e:
-            raise ValueError(f"Failed to extract PDF text: {str(e)}")
     
     def _extract_csv_text(self, file_bytes: bytes) -> str:
         """Extract text from CSV file."""

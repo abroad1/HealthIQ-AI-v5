@@ -33,7 +33,29 @@ export const useHealthWizardStore = create<HealthWizardStore>()(
     (set, get) => ({
       currentStep: 'input',
       biomarkers: [],
-      questionnaire: {},
+      questionnaire: {
+        full_name: '',
+        email_address: '',
+        phone_number: '',
+        country: '',
+        state_province: '',
+        date_of_birth: '',
+        biological_sex: '',
+        height: { 'Feet': '', 'Inches': '' },
+        weight: '',
+        sleep_hours_nightly: '',
+        sleep_quality_rating: 5,
+        alcohol_drinks_weekly: '',
+        tobacco_use: '',
+        stress_level_rating: 5,
+        vigorous_exercise_days: '',
+        current_medications: '',
+        long_term_medications: [],
+        chronic_conditions: [],
+        medical_conditions: [],
+        current_symptoms: [],
+        regular_migraines: '',
+      },
       isLoading: false,
       errors: {},
       
@@ -92,7 +114,26 @@ export const useHealthWizardStore = create<HealthWizardStore>()(
           case 'review':
             return biomarkers.every(b => b.value && b.name)
           case 'questionnaire':
-            return Object.keys(questionnaire).length > 0
+            // Check if all required fields are filled
+            const requiredFields = [
+              'full_name', 'email_address', 'phone_number', 'country', 
+              'date_of_birth', 'biological_sex', 'height', 'weight',
+              'sleep_hours_nightly', 'sleep_quality_rating', 'alcohol_drinks_weekly',
+              'tobacco_use', 'stress_level_rating', 'vigorous_exercise_days',
+              'current_medications', 'long_term_medications', 'chronic_conditions',
+              'medical_conditions', 'current_symptoms', 'regular_migraines'
+            ]
+            
+            return requiredFields.every(field => {
+              const value = questionnaire[field]
+              if (field === 'height') {
+                return value && Object.values(value).some(v => v !== '' && v !== null && v !== undefined)
+              } else if (['long_term_medications', 'chronic_conditions', 'medical_conditions', 'current_symptoms'].includes(field)) {
+                return Array.isArray(value) && value.length > 0
+              } else {
+                return value !== '' && value !== null && value !== undefined
+              }
+            })
           case 'complete':
             return true
           default:

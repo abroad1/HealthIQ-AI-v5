@@ -2,7 +2,7 @@
 
 **Purpose**: Persistent record of high-value tests that prevent user pain or catch business-critical bugs.
 
-**Last Updated**: 2025-01-30 - Sprint 9c Biomarker Status Classification Fully Completed
+**Last Updated**: 2025-01-30 - Analysis Submission & Redirect Flow Fully Completed
 
 > ⚠️ **LEGACY COVERAGE TARGETS DEPRECATED**  
 > Any references to ≥90% backend or ≥80% frontend coverage are historical only.  
@@ -28,6 +28,64 @@
 - **Business Logic**: Data processing, analysis, and decision-making (Unit)
 - **API Contracts**: Service boundaries and data flow (Integration)
 - **Error Scenarios**: Critical failure modes that must be handled gracefully
+
+---
+
+## 🚀 **Analysis Submission & Redirect Flow Test Plans**
+
+### **Frontend Analysis Submission Tests (Integration)**
+- **File**: `AnalysisLaunchStep.tsx` component
+- **Purpose**: Core user workflow - analysis submission and redirect functionality
+- **Run Command**: Manual testing via browser - upload PDF, complete questionnaire, click "Start Analysis"
+- **Status**: ✅ **IMPLEMENTED** - Complete analysis submission flow with success state and redirect
+- **Business Value**: Ensures users can successfully submit analysis and be redirected to results page
+- **Coverage**: All submission states tested (loading, success, error, redirect)
+- **Test Results**: Manual validation confirmed complete workflow functions correctly
+
+### **Backend Analysis API Tests (Integration)**
+- **File**: `backend/app/routes/analysis.py`
+- **Purpose**: Analysis start API endpoint - receives biomarkers and questionnaire data
+- **Run Command**: `cd backend; python -m pytest tests/unit/test_analysis_routes.py -v`
+- **Status**: ✅ **IMPLEMENTED** - Analysis start endpoint returns proper UUID and success message
+- **Business Value**: Ensures backend can process analysis requests and return valid analysis IDs
+- **Coverage**: API endpoint validation, UUID generation, response formatting
+- **Test Results**: All tests passing with proper response structure
+
+### **Results Page Integration Tests (Integration)**
+- **File**: `app/results/page.tsx`
+- **Purpose**: Results page - fetches analysis data by ID from URL parameters
+- **Run Command**: Manual testing via browser - navigate to `/results?analysis_id=...`
+- **Status**: ✅ **IMPLEMENTED** - Results page fetches analysis data from backend API
+- **Business Value**: Ensures users can view their analysis results after submission
+- **Coverage**: URL parameter handling, API data fetching, state management
+- **Test Results**: Manual validation confirmed analysis data loads correctly
+
+### **UUID Generation Fix Tests (Unit)**
+- **File**: `backend/app/routes/analysis.py`
+- **Purpose**: UUID generation - ensures database-compatible UUID format
+- **Run Command**: `cd backend; python -c "from app.routes.analysis import generate_analysis_id; print(generate_analysis_id())"`
+- **Status**: ✅ **IMPLEMENTED** - Fixed ULID to UUID4 generation for database compatibility
+- **Business Value**: Prevents database persistence errors and ensures data integrity
+- **Coverage**: UUID format validation, database compatibility
+- **Test Results**: UUID generation working correctly with proper format
+
+### **Success State UI Tests (Manual Validation)**
+- **File**: `AnalysisLaunchStep.tsx` component
+- **Purpose**: User feedback - success state display before redirect
+- **Run Command**: Manual testing via browser - observe success message and countdown
+- **Status**: ✅ **IMPLEMENTED** - Success state with analysis ID display and 2-second delay
+- **Business Value**: Provides clear user feedback that analysis has started successfully
+- **Coverage**: Success state display, countdown timer, analysis ID display
+- **Test Results**: Manual validation confirmed success UI displays correctly
+
+### **Redirect Flow Tests (E2E)**
+- **File**: Complete analysis workflow
+- **Purpose**: End-to-end user journey - upload to results page
+- **Run Command**: Manual testing - complete full analysis workflow
+- **Status**: ✅ **IMPLEMENTED** - Complete workflow from upload to results page
+- **Business Value**: Ensures complete user experience works end-to-end
+- **Coverage**: File upload, PDF parsing, questionnaire, analysis submission, redirect, results display
+- **Test Results**: Manual validation confirmed complete workflow functions correctly
 
 ---
 
