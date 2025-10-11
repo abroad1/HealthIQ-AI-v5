@@ -61,16 +61,20 @@ export interface BiomarkerResult {
 export interface AnalysisResult {
   analysis_id: string;
   result_version: string;
+  context: Record<string, any>; // Mirrors backend AnalysisContext
   biomarkers: BiomarkerResult[];
   clusters: ClusterData[];
   insights: InsightData[];
-  recommendations: string[];
   overall_score: number | null;
-  meta: {
+  risk_assessment: Record<string, any>; // Risk assessment results from backend
+  recommendations: string[];
+  created_at: string;
+  processing_time_seconds?: number; // Total processing time
+  meta?: {
+    // Legacy field, kept for backwards compatibility
     confidence_score?: number;
     processing_metadata?: Record<string, any>;
   };
-  created_at: string;
 }
 
 export interface InsightData {

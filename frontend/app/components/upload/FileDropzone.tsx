@@ -45,13 +45,27 @@ export default function FileDropzone({
     }
   }, [maxSize, acceptedTypes, onError])
 
+  // Map file extensions to MIME types
+  const mimeTypeMap: Record<string, { mime: string; ext: string }> = {
+    '.pdf': { mime: 'application/pdf', ext: '.pdf' },
+    '.txt': { mime: 'text/plain', ext: '.txt' },
+    '.json': { mime: 'application/json', ext: '.json' },
+    '.csv': { mime: 'text/csv', ext: '.csv' }
+  }
+
+  // Build accept object with proper MIME types
+  const acceptConfig = acceptedTypes.reduce((acc, type) => {
+    const mapped = mimeTypeMap[type]
+    if (mapped) {
+      acc[mapped.mime] = [mapped.ext]
+    }
+    return acc
+  }, {} as Record<string, string[]>)
+
   const { getRootProps, getInputProps, isDragReject } = useDropzone({
     onDrop,
     onDropRejected,
-    accept: acceptedTypes.reduce((acc, type) => {
-      acc[type] = []
-      return acc
-    }, {} as Record<string, string[]>),
+    accept: acceptConfig,
     maxSize,
     multiple: false,
     disabled

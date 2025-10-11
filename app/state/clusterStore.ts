@@ -13,7 +13,7 @@ export interface BiomarkerCluster {
   insights: string[];
   recommendations: string[];
   created_at: string;
-  status?: 'normal' | 'warning' | 'critical';
+  status?: 'all' | 'normal' | 'warning' | 'critical';
 }
 
 export interface ClusterInsight {
@@ -34,7 +34,7 @@ export interface ClusterFilter {
   category?: string[];
   score_range?: [number, number];
   biomarkers?: string[];
-  status?: 'normal' | 'warning' | 'critical';
+  status?: 'all' | 'normal' | 'warning' | 'critical';
   search?: string;
 }
 
@@ -316,7 +316,7 @@ export const useClusterStore = create<ClusterState>()(
         }
         
         // Handle status filter (for tests)
-        if (state.filters.status) {
+        if (state.filters.status && state.filters.status !== 'all') {
           filtered = filtered.filter(cluster => cluster.status === state.filters.status);
         }
 
