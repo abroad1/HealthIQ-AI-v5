@@ -21,6 +21,7 @@ export default function UploadPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   
   const { startAnalysis, isLoading: isAnalyzing } = useAnalysisStore();
   const router = useRouter();
@@ -35,6 +36,7 @@ export default function UploadPage() {
   const handleFileUpload = async (file: File) => {
     setError(null);
     parseUpload.mutate({ file });
+    setSelectedFile(null); // Clear after starting parse
   };
 
   // Handle text paste parsing
@@ -240,10 +242,41 @@ export default function UploadPage() {
                     Upload Lab Report
                   </h3>
                   <FileDropzone
-                    onFileSelect={handleFileUpload}
+                    onFileSelect={setSelectedFile}
                     onError={(error) => setError({ code: 'UPLOAD_ERROR', message: error })}
                     disabled={parseUpload.isLoading}
                   />
+                  
+                  {/* File Preview Section */}
+                  {selectedFile && !parseUpload.isLoading && (
+                    <div className="mt-4 p-4 border rounded-lg bg-gray-50">
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <p className="font-medium">{selectedFile.name}</p>
+                          <p className="text-sm text-gray-500">
+                            {(selectedFile.size / 1024).toFixed(2)} KB
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-3">
+                        <Button
+                          onClick={() => handleFileUpload(selectedFile)}
+                          className="flex-1"
+                        >
+                          <FileText className="h-4 w-4 mr-2" />
+                          Parse Document
+                        </Button>
+                        
+                        <Button
+                          onClick={() => setSelectedFile(null)}
+                          variant="outline"
+                        >
+                          Remove File
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 
                 <div>
