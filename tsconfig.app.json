@@ -26,5 +26,19 @@
       "@/*": ["./app/*"]
     }
   },
-  "include": ["app"]
+  "include": ["app"],
+  "exclude": [
+    "node_modules",
+    "stories",
+    "stories/**/*",
+    "**/*.stories.*",
+    ".storybook",
+    "stories/Button.tsx",
+    "stories/Button.stories.ts",
+    "tests/**/*",
+    "tests_archive/**/*",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts"
+  ]
 }

@@ -38,6 +38,12 @@
   ],
   "exclude": [
     "node_modules",
+    "stories",
+    "stories/**/*",
+    "**/*.stories.*",
+    ".storybook",
+    "stories/Button.tsx",
+    "stories/Button.stories.ts",
     "tests/**/*",
     "tests_archive/**/*",
     "**/*.test.ts",

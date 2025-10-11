@@ -34,7 +34,7 @@ export interface ClusterFilter {
   category?: string[];
   score_range?: [number, number];
   biomarkers?: string[];
-  status?: 'normal' | 'warning' | 'critical';
+  status?: 'all' | 'normal' | 'warning' | 'critical';
   search?: string;
 }
 

@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { ArrowRight, Shield, Zap, Activity, CheckCircle2, Moon, Sun } from 'lucide-react'
-import { Button } from './components/ui/button'
-import { Card } from './components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import { useTheme } from 'next-themes'
 
 export default function LandingPage() {

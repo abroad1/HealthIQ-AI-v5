@@ -18,5 +18,14 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["next.config.js", "postcss.config.js", "tailwind.config.ts"]
+  "include": ["next.config.js", "postcss.config.js", "tailwind.config.ts"],
+  "exclude": [
+    "node_modules",
+    "stories",
+    "stories/**/*",
+    "**/*.stories.*",
+    ".storybook",
+    "stories/Button.tsx",
+    "stories/Button.stories.ts"
+  ]
 }

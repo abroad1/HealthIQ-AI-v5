@@ -63,19 +63,52 @@ export const useUploadStore = create<UploadStore>((set, get) => ({
   }),
   
   setParsedResults: (biomarkers, analysisId, metadata) => {
+    // DEFENSIVE: Ensure biomarkers is always an array
+    console.log('🔍 setParsedResults called with:', { 
+      biomarkers, 
+      biomarkersType: typeof biomarkers,
+      isArray: Array.isArray(biomarkers),
+      analysisId, 
+      metadata 
+    });
+    
+    // Convert to array if needed
+    let biomarkersArray: any[] = [];
+    if (Array.isArray(biomarkers)) {
+      biomarkersArray = biomarkers;
+    } else if (biomarkers && typeof biomarkers === 'object') {
+      // Backend returned object instead of array - convert it
+      console.warn('⚠️ Biomarkers is an object, converting to array');
+      biomarkersArray = Object.entries(biomarkers).map(([key, value]) => ({
+        name: key,
+        ...(typeof value === 'object' ? value : { value })
+      }));
+    } else {
+      console.error('❌ Invalid biomarkers data:', biomarkers);
+      set({ 
+        status: 'error',
+        error: {
+          code: 'INVALID_DATA',
+          message: 'Received invalid biomarker data from server'
+        }
+      });
+      return;
+    }
+    
     // Mark all biomarkers as 'raw' initially
-    const processedBiomarkers = biomarkers.map(biomarker => ({
+    const processedBiomarkers = biomarkersArray.map(biomarker => ({
       ...biomarker,
       status: 'raw' as const
-    }))
+    }));
+    
+    console.log('✅ Processed biomarkers:', processedBiomarkers);
     
     set({
       parsedData: processedBiomarkers,
       analysisId,
       sourceMetadata: metadata,
-      status: 'ready',
-      error: null
-    })
+      status: 'ready'
+    });
   },
   
   confirmAll: () => {

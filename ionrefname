@@ -1,0 +1,20 @@
+[33m27c5d85[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;33mtag: [m[1;33mv5.2-restored-working-parsing-questionnaire[m[33m, [m[1;33mtag: [m[1;33mv5.10-stable[m[33m, [m[1;33mtag: [m[1;33mv5.0-integration-ready[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Pre-Sprint 10 cleanup – frontend stable, 78 % pass rate
+[33m221a8fd[m[33m ([m[1;33mtag: [m[1;33mfrontend-v5-stable-pre-s10[m[33m)[m Frontend Sprint 8–9 repairs complete – 75 % integration readiness
+[33m953286c[m[33m ([m[1;33mtag: [m[1;33mbackend-v5-stable[m[33m)[m chore: resolve merge conflict with vite.config.js
+[33m8414cbf[m chore: clean up build artifacts before lovable pull
+[33m7aa8296[m test(frontend): align Jest tests with current component behavior (BiomarkerDials, Insights, Clusters, etc.)
+[33mb14df56[m[33m ([m[1;33mtag: [m[1;33mv1.0-full-stack-stable[m[33m, [m[1;32mbackup/frontend-restore-2025-10-04[m[33m)[m feat: restore complete frontend from lovable/main
+[33mbb27059[m chore: stop tracking generated build/test outputs
+[33m4251fd5[m Merge: unify main with Sprint 9d + restored Sprint 6/7 LLM/synthesis
+[33m4036d2f[m[33m ([m[1;32mbackup/current-main-2025-10-04[m[33m)[m Sprint 7: implement Gemini LLM integration (verified, missing components added)
+[33m4ec29eb[m Docs: align INTELLIGENCE_LIFECYCLE.md and Insight Engine Development Brief with cross-references and roles
+[33m3d65458[m Docs: add Insight Engine Development Brief to context folder
+[33m86cd719[m Docs: add insight module design outline (metabolic, heart, inflammation, fatigue, detox)
+[33m204b001[m Docs: re-baseline insight system (scaffold only, modules not implemented)
+[33m5b34374[m Update docs: define Lovable draft workflow and integration process
+[33m238a466[m[33m ([m[1;31mlovable/main[m[33m, [m[1;31mlovable/HEAD[m[33m)[m Update Lovable template
+[33m8006fe1[m feat: Implement Phase 3 Upload Flow
+[33m2f303f7[m Start Phase 1 and 2
+[33m91c663a[m Update Lovable template
+[33m1d1d394[m Resolve merge conflicts from stashed changes, keep frontend integration
+[33mede7ef2[m Complete lovable frontend integration: align with monorepo standards, add .env.local.example, clean up Vite scaffolding
