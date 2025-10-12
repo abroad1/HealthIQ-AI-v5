@@ -376,6 +376,6 @@ class TestLLMIntegration:
         
         # Verify results
         assert result is not None
-        assert result.status == "complete"
+        assert result.status == "completed"
         assert result.analysis_id is not None
         assert result.created_at is not None

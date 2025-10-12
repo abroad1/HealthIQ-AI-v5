@@ -379,6 +379,7 @@ This blueprint represents the complete architectural vision for HealthIQ AI v5, 
 - **✅ Recently Completed**: Frontend restoration from lovable/main, complete component structure, state management, testing infrastructure
 - **✅ Sprint 6-7 Completed**: Insight synthesis engine, Gemini LLM integration, prompt templates, deterministic MockLLMClient, environment configuration
 - **✅ Sprint 8 Completed**: Frontend state management (Zustand stores), API service layer, TypeScript types, CORS configuration, comprehensive testing
+- **✅ Sprint 9 Enhanced (2025-10-11)**: Two-step upload flow - file preview before parsing, improved user control, prevents accidental processing
 - **✅ Sprint 9 Completed**: Core UI components, biomarker forms, results visualization, responsive design, medical shadow system
 - **✅ Sprint 9b Completed**: Persistence foundation fully implemented and validated with 369 passing tests, complete database integration, export v1 with Supabase Storage, comprehensive testing coverage
 - **✅ Frontend Restoration Completed**: Full frontend structure restored from lovable/main with all components, pages, and supporting files

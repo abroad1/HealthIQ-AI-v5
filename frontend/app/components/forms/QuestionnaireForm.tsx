@@ -12,6 +12,7 @@ import { Textarea } from '../ui/textarea';
 import { Progress } from '../ui/progress';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import mockData from '@/lib/mock/questionnaire';
 
 interface QuestionnaireQuestion {
   id: string;
@@ -69,6 +70,13 @@ export default function QuestionnaireForm({
 
   useEffect(() => {
     loadQuestions();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.search.includes('autofill=true')) {
+      setResponses(mockData);
+      console.log('🧪 Questionnaire auto-filled');
+    }
   }, []);
 
   const loadQuestions = async () => {
@@ -322,8 +330,35 @@ export default function QuestionnaireForm({
     const newErrors: Record<string, string> = {};
 
     currentQuestions.forEach(question => {
-      if (question.required && (!responses[question.id] || responses[question.id] === '')) {
+      const value = responses[question.id];
+      
+      // Required field validation
+      if (question.required && (!value || value === '')) {
         newErrors[question.id] = 'This field is required';
+        return;
+      }
+      
+      // Email format validation
+      if (question.type === 'email' && value) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+          newErrors[question.id] = 'Please enter a valid email address';
+        }
+      }
+      
+      // Phone format validation
+      if (question.type === 'phone' && value) {
+        const phoneRegex = /^[\d\s()+-]{6,}$/;
+        if (!phoneRegex.test(value)) {
+          newErrors[question.id] = 'Please enter a valid phone number';
+        }
+      }
+      
+      // Number validation
+      if (question.type === 'number' && value) {
+        if (isNaN(parseFloat(value))) {
+          newErrors[question.id] = 'Please enter a valid number';
+        }
       }
     });
 
@@ -444,6 +479,10 @@ export default function QuestionnaireForm({
         );
 
       case 'slider':
+        // Ensure slider always has a defined value (prevent uncontrolled → controlled warning)
+        const defaultSliderValue = Math.floor(((question.min || 1) + (question.max || 10)) / 2);
+        const sliderValue = Array.isArray(value) ? value[0] : (value ?? defaultSliderValue);
+        
         return (
           <div key={question.id} className="space-y-2">
             <Label htmlFor={question.id} className="text-sm font-medium">
@@ -455,8 +494,9 @@ export default function QuestionnaireForm({
                 min={question.min || 1}
                 max={question.max || 10}
                 step={1}
-                value={value || (question.min || 1)}
-                onValueChange={(val) => handleResponseChange(question.id, val)}
+                value={[sliderValue]}
+                defaultValue={[defaultSliderValue]}
+                onValueChange={(val) => handleResponseChange(question.id, val[0])}
                 className="w-full"
               />
               <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -468,7 +508,7 @@ export default function QuestionnaireForm({
                 )}
               </div>
               <div className="text-center mt-2">
-                <span className="text-lg font-semibold">{value || (question.min || 1)}</span>
+                <span className="text-lg font-semibold">{sliderValue}</span>
               </div>
             </div>
             {question.helpText && (

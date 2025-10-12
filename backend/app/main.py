@@ -10,6 +10,11 @@ from fastapi.responses import JSONResponse
 from app.routes import health, analysis, questionnaire, upload
 from core.insights.registry import ensure_insights_registered
 
+# Import dev seed for default profile creation
+import logging
+
+logger = logging.getLogger(__name__)
+
 # Create FastAPI application
 app = FastAPI(
     title="HealthIQ-AI v5",
@@ -21,6 +26,17 @@ app = FastAPI(
 
 # Register insight modules at startup
 ensure_insights_registered()
+
+# Startup event to seed dev profile
+@app.on_event("startup")
+async def startup_event():
+    """Run startup tasks."""
+    try:
+        from scripts.dev_seed import seed_dev_user
+        seed_dev_user()
+        logger.info("✅ Startup tasks completed")
+    except Exception as e:
+        logger.warning(f"⚠️ Startup tasks failed (non-critical): {str(e)}")
 
 # Configure CORS for localhost development
 app.add_middleware(

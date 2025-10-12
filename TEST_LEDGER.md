@@ -2,7 +2,7 @@
 
 **Purpose**: Persistent record of high-value tests that prevent user pain or catch business-critical bugs.
 
-**Last Updated**: 2025-01-30 - Sprint 9b Persistence Foundation Fully Completed
+**Last Updated**: 2025-10-11 - Sprint 9 Upload Flow Enhancement & Sprint 9b Persistence Foundation
 
 > ⚠️ **LEGACY COVERAGE TARGETS DEPRECATED**  
 > Any references to ≥90% backend or ≥80% frontend coverage are historical only.  
@@ -208,6 +208,21 @@
 - **Purpose**: Core user workflow - biomarker data entry and validation
 - **Run Command**: `cd frontend; npm test -- BiomarkerForm.test.tsx`
 - **Last Result**: 12 passed, 0 failed
+
+### **Sprint 9 Enhancement: Two-Step Upload Flow (2025-10-11)**
+
+- **Component**: `frontend/app/upload/page.tsx`
+- **Enhancement**: File preview before parsing - prevents accidental immediate processing
+- **Business Value**: Improves user control over upload workflow, reduces errors from accidental parsing
+- **User Scenario**: User drops file → sees preview with file details → consciously clicks "Parse" button
+- **Test Coverage Status**: ⚠️ **Recommended** - E2E tests for upload flow should be added
+- **Recommended Tests**:
+  - File drop displays preview without parsing
+  - "Parse Document" button triggers analysis
+  - "Remove File" button clears selection
+  - File preview clears after parse starts
+  - Multiple file selections (should only accept one file)
+- **Run Command** (when implemented): `cd frontend; npx playwright test upload-flow.spec.ts`
 - **Business Value**: Prevents users from entering invalid biomarker data and ensures data integrity
 
 - **File**: `BiomarkerDials.test.tsx`

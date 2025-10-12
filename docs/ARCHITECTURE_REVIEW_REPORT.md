@@ -516,6 +516,35 @@ This assessment represents a joint evaluation between the Head of Architecture a
 
 ---
 
+## 🚀 **Sprint 9 Implementation Status**
+
+### **✅ Sprint 9: Core UI Components & Pages - COMPLETED AND ENHANCED (2025-10-11)**
+
+**Sprint 9** has been fully implemented with recent enhancements to improve user experience:
+
+#### **Upload Flow Enhancement (2025-10-11)**
+- **✅ Two-Step Upload Flow**: File preview before parsing implemented
+- **✅ State Management**: Added `selectedFile` state to decouple selection from parsing
+- **✅ UI Enhancement**: File preview card with name, size, Parse and Remove buttons
+- **✅ User Experience**: Drop file → Preview details → Confirm parse OR Remove file
+- **✅ Code Quality**: Zero linter errors, follows React best practices
+- **✅ Backward Compatibility**: All existing functionality maintained
+
+**Implementation Details:**
+- **File**: `frontend/app/upload/page.tsx` (Lines 24, 36-40, 245-279)
+- **Change**: Modified `FileDropzone` callback from `handleFileUpload` to `setSelectedFile`
+- **Benefit**: Prevents accidental immediate parsing, gives users control over when parsing starts
+- **Technical**: File preview component conditionally renders based on `selectedFile && !parseUpload.isLoading`
+
+**Success Criteria Met:**
+- ✅ Drop file shows preview without immediate parsing
+- ✅ "Parse Document" button triggers analysis
+- ✅ "Remove File" button clears selection
+- ✅ File state cleared after parse starts
+- ✅ No breaking changes to existing workflows
+
+---
+
 ## 🚀 **Sprint 9b Implementation Status**
 
 ### **✅ Sprint 9b: Persistence Foundation - FULLY COMPLETED (2025-01-30)**

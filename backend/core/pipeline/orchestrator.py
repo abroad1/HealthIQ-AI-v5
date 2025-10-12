@@ -602,25 +602,66 @@ class AnalysisOrchestrator:
         
         canonical_map = dict(biomarkers)
 
+        # Transform raw biomarkers into BiomarkerScore format for persistence
+        biomarker_scores = []
+        for biomarker_name, biomarker_data in canonical_map.items():
+            # Handle different input formats
+            if isinstance(biomarker_data, dict):
+                value = biomarker_data.get('value', biomarker_data.get('measurement', 0))
+                unit = biomarker_data.get('unit', '')
+            else:
+                value = biomarker_data
+                unit = ''
+            
+            # Create biomarker score entry
+            biomarker_scores.append({
+                "biomarker_name": biomarker_name,
+                "value": float(value) if value else 0.0,
+                "unit": unit,
+                "score": 0.75,  # Default score (can be computed by scoring engine)
+                "percentile": None,
+                "status": "normal",  # Default status (can be computed by scoring engine)
+                "reference_range": None,
+                "interpretation": "Value recorded from upload"
+            })
+        
         # continue with existing scoring → clustering → insights using `canonical_map`
-        # For now, return a stub result
-        from core.models.results import AnalysisDTO
+        # For now, return a stub result with actual biomarkers
+        from core.models.results import AnalysisDTO, BiomarkerScore as BiomarkerScoreDTO
+        from datetime import datetime
+        
+        # Convert dict biomarkers to BiomarkerScore DTOs
+        biomarker_dtos = [
+            BiomarkerScoreDTO(
+                biomarker_name=b["biomarker_name"],
+                value=b["value"],
+                unit=b["unit"],
+                score=b["score"],
+                percentile=b.get("percentile"),
+                status=b["status"],
+                reference_range=b.get("reference_range"),
+                interpretation=b.get("interpretation", "")
+            )
+            for b in biomarker_scores
+        ]
+        
         result = AnalysisDTO(
             analysis_id="stub_analysis_id",
+            biomarkers=biomarker_dtos,
             clusters=[],
             insights=[],
-            status="complete",
-            created_at="2024-01-01T00:00:00Z"
+            status="completed",
+            created_at=datetime.now().isoformat()
         )
         
-        # Sprint 9b - Persistence integration at phase:"complete"
-        if result.status == "complete":
+        # Sprint 9b - Persistence integration at phase:"completed"
+        if result.status == "completed":
             # Note: Persistence is handled by the calling service/route
             # This ensures non-blocking SSE and proper error handling
             import logging
             logger = logging.getLogger(__name__)
             
-            logger.info(f"Analysis {result.analysis_id} completed, ready for persistence")
+            logger.info(f"Analysis {result.analysis_id} completed with {len(biomarker_scores)} biomarkers, ready for persistence")
             logger.debug(f"Analysis {result.analysis_id} marked for persistence by calling service")
         
         return result

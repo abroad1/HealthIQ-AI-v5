@@ -21,8 +21,16 @@ export class AnalysisService {
    * Start a new biomarker analysis
    */
   static async startAnalysis(data: AnalysisRequest): Promise<ApiResponse<{ analysis_id: string }>> {
+    console.log("📤 AnalysisService.startAnalysis() called with payload:", data);
+    console.log("📤 Biomarkers count:", Object.keys(data.biomarkers).length);
+    console.log("📤 User data:", data.user);
+    
     try {
-      const response = await fetch(`${API_BASE_URL}/analysis/start`, {
+      const url = `${API_BASE_URL}/analysis/start`;
+      console.log("🌐 POST /api/analysis/start →", url);
+      console.log("📨 Request body:", JSON.stringify(data, null, 2));
+      
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -30,18 +38,25 @@ export class AnalysisService {
         body: JSON.stringify(data),
       });
 
+      console.log("📥 Response status:", response.status, response.statusText);
+      
       if (!response.ok) {
+        const errorText = await response.clone().text();
+        console.error("❌ Response error body:", errorText);
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
       }
 
       const result = await response.json();
+      console.log("✅ Response data:", result);
+      
       return {
         data: result,
         success: true,
         message: 'Analysis started successfully',
       };
     } catch (error) {
+      console.error("❌ AnalysisService.startAnalysis() error:", error);
       return {
         data: null,
         success: false,

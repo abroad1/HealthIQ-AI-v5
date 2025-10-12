@@ -170,12 +170,18 @@ export const useAnalysisStore = create<AnalysisState>()(
 
       // Complex actions
       startAnalysis: async (request) => {
+        console.log("🔍 analysisStore.startAnalysis() called");
+        
         // Validate input data
         const biomarkerValidation = AnalysisService.validateBiomarkerData(request.biomarkers);
         const userValidation = AnalysisService.validateUserProfile(request.user);
+        
+        console.log("🔍 Biomarker validation:", biomarkerValidation);
+        console.log("🔍 User validation:", userValidation);
 
         if (!biomarkerValidation.valid || !userValidation.valid) {
           const errors = [...biomarkerValidation.errors, ...userValidation.errors];
+          console.warn("⚠️ Validation failed in analysisStore:", errors);
           set({
             error: {
               message: `Validation failed: ${errors.join(', ')}`,
@@ -188,6 +194,7 @@ export const useAnalysisStore = create<AnalysisState>()(
           return;
         }
 
+        console.log("🔔 Phase changed to: ingestion");
         set({
           isLoading: true,
           error: null,
@@ -232,10 +239,12 @@ export const useAnalysisStore = create<AnalysisState>()(
             (event) => {
               try {
                 const data = JSON.parse(event.data);
-                console.log('SSE Event received:', data);
+                console.log('📡 SSE Event received:', data);
+                console.log('📡 Event phase:', data.phase, 'Progress:', data.progress);
                 
                 // Handle analysis_status events
                 if (data.phase && typeof data.progress === 'number') {
+                  console.log('🔔 Updating phase to:', data.phase);
                   get().updateAnalysisProgress(analysisId, data.progress, data.phase);
                   
                   // Check if this is a completion event
