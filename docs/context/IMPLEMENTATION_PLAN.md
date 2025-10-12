@@ -358,16 +358,25 @@ This implementation plan outlines a **10-sprint development cycle** (20 weeks) t
 **Duration**: 2 weeks | **Dependencies**: State Management | **Parallelizable**: ✅ | **Status**: ✅ **IMPLEMENTED (VALIDATED)**
 
 **Components:**
-- `frontend/app/upload/page.tsx` - **✅ Implemented** (biomarker input and questionnaire forms)
+- `frontend/app/upload/page.tsx` - **✅ Implemented** (biomarker input and questionnaire forms with two-step upload flow)
 - `frontend/app/results/page.tsx` - **✅ Implemented** (dynamic analysis results display)
 - `frontend/app/components/forms/BiomarkerForm.tsx` - **✅ Implemented** (structured biomarker entry with validation)
 - `frontend/app/components/biomarkers/BiomarkerDials.tsx` - **✅ Implemented** (interactive biomarker visualization)
 - `frontend/app/components/clusters/ClusterSummary.tsx` - **✅ Implemented** (health cluster analysis display)
 - `frontend/app/globals.css` - **✅ Updated** (Natural Sophistication theme with responsive design)
 
+**Latest Update (2025-10-11)**: Two-Step Upload Flow Enhancement
+- **Feature**: File preview before parsing - prevents accidental immediate processing
+- **Implementation**: Added `selectedFile` state to decouple file selection from parsing action
+- **UI Enhancement**: File preview card displays file name, size, and action buttons (Parse/Remove)
+- **User Experience**: Drop file → Preview → Confirm parse OR Remove file
+- **Technical Details**: Modified `FileDropzone` callback to `setSelectedFile` instead of immediate `handleFileUpload`
+- **Verification**: Zero linter errors, follows React best practices, maintains existing functionality
+
 **Deliverables:**
-- [x] Analysis upload and results pages - **✅ Implemented** (complete user workflows with validation)
+- [x] Analysis upload and results pages - **✅ Implemented** (complete user workflows with validation and two-step upload)
 - [x] Biomarker input forms and validation - **✅ Implemented** (manual entry + CSV upload support)
+- [x] Two-step upload flow - **✅ Implemented** (file preview before parsing prevents accidental processing)
 - [x] Results visualization components - **✅ Implemented** (biomarker dials, cluster summaries, insight cards)
 - [x] Responsive design and theming - **✅ Implemented** (Natural Sophistication theme, mobile-first design, medical shadow system)
 - [x] Medical shadow system - **✅ Implemented** (Custom Tailwind shadow utilities for premium healthcare aesthetic)

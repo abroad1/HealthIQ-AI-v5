@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -15,6 +15,7 @@ import { useAnalysisStore } from '../state/analysisStore';
 import { useUploadStore, useUploadStatus, useParsedData } from '../state/upload';
 import { useParseUpload } from '../queries/parsing';
 import { useRouter } from 'next/navigation';
+import mockBiomarkers from '@/lib/mock/biomarkers';
 
 export default function UploadPage() {
   const [activeTab, setActiveTab] = useState('upload');
@@ -23,14 +24,53 @@ export default function UploadPage() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   
-  const { startAnalysis, isLoading: isAnalyzing } = useAnalysisStore();
+  const { startAnalysis, isLoading: isAnalyzing, currentPhase, currentAnalysisId, error: analysisError } = useAnalysisStore();
   const router = useRouter();
   
   // Upload workflow state
   const uploadStatus = useUploadStatus();
   const parsedData = useParsedData();
-  const { setParsedResults, updateBiomarker, confirmAll, setError } = useUploadStore();
+  const { setParsedResults, updateBiomarker, confirmAll, setError, setStatus } = useUploadStore();
   const parseUpload = useParseUpload();
+  
+  // Idempotent guard for handleConfirmAll
+  const confirmAllOnceRef = useRef(false);
+
+  // DEBUG: Log state changes
+  useEffect(() => {
+    console.log('🎯 Upload page state:', {
+      uploadStatus,
+      parsedDataLength: parsedData.length,
+      shouldRenderTable: (uploadStatus === 'ready' || uploadStatus === 'confirmed') && parsedData.length > 0,
+      parseSuccess: parseUpload.isSuccess,
+      hasParseData: !!parseUpload.data
+    });
+  }, [uploadStatus, parsedData, parseUpload.isSuccess, parseUpload.data]);
+
+  // Auto-fill mock biomarkers when autofill=true
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.search.includes('autofill=true')) {
+      // Transform mock biomarkers to expected format
+      const transformedBiomarkers = mockBiomarkers.map((biomarker) => ({
+        name: biomarker.id,
+        value: biomarker.value,
+        unit: biomarker.unit,
+        status: 'raw' as const
+      }));
+      
+      // Create proper metadata
+      const metadata = {
+        analysis_id: 'mock-analysis-id',
+        timestamp: new Date().toISOString(),
+        source_type: 'unknown' as const,
+        source_name: 'autofill-mock-data'
+      };
+      
+      setParsedResults(transformedBiomarkers, 'mock-analysis-id', metadata);
+      setStatus('ready');
+      console.log('🧪 Mock biomarkers loaded');
+    }
+  }, [setParsedResults, setStatus]);
 
   // Handle file upload parsing
   const handleFileUpload = async (file: File) => {
@@ -51,30 +91,184 @@ export default function UploadPage() {
   };
 
   // Handle confirm all biomarkers
-  const handleConfirmAll = async () => {
+  const handleConfirmAll = useCallback(() => {
+    // Idempotent guard - prevent double execution
+    if (confirmAllOnceRef.current) {
+      console.warn("⚠️ handleConfirmAll already executed, ignoring duplicate call");
+      return;
+    }
+    
+    console.log("🧭 handleConfirmAll triggered. uploadStatus =", uploadStatus);
+    console.log("🧭 parsedData length:", parsedData.length);
+    
+    // Mark as executed
+    confirmAllOnceRef.current = true;
+    
+    // Mark biomarkers as confirmed
+    confirmAll();
+    
+    // Transition to questionnaire step (DO NOT start analysis yet)
+    setStatus('questionnaire');
+    
+    console.log("✅ Biomarkers confirmed — awaiting questionnaire");
+  }, [uploadStatus, parsedData.length, confirmAll, setStatus]);
+
+  // Handle questionnaire submission from Upload & Parse flow (AFTER biomarker confirmation)
+  const handleQuestionnaireFromUpload = async (questionnaireData: any) => {
+    console.log("📝 Questionnaire submitted with data:", questionnaireData);
+    
     try {
-      confirmAll();
-      setSubmitSuccess(true);
-      // Redirect to results page after a short delay
-      setTimeout(() => {
-        router.push('/results');
-      }, 2000);
+      // Convert biomarkers array to object format
+      const biomarkersObject: Record<string, any> = {};
+      parsedData.forEach((biomarker) => {
+        const key = biomarker.name.toLowerCase().replace(/\s+/g, '_');
+        biomarkersObject[key] = {
+          value: parseFloat(biomarker.value.toString()),
+          unit: biomarker.unit,
+          timestamp: new Date().toISOString()
+        };
+      });
+      
+      console.log("🚀 Preparing to start analysis with", parsedData.length, "biomarkers");
+      console.log("🔍 Biomarkers object keys:", Object.keys(biomarkersObject));
+      console.log("📋 Questionnaire data keys:", Object.keys(questionnaireData || {}));
+      
+      // Convert height object to number (if group field with Feet/Inches)
+      let heightInCm = 180; // default
+      if (questionnaireData?.height) {
+        if (typeof questionnaireData.height === 'number') {
+          heightInCm = questionnaireData.height;
+        } else if (typeof questionnaireData.height === 'object') {
+          // Handle group field: {Feet: 6, Inches: 2} OR {cm: 180}
+          if ('cm' in questionnaireData.height) {
+            heightInCm = parseFloat(questionnaireData.height.cm);
+          } else if ('Feet' in questionnaireData.height || 'Inches' in questionnaireData.height) {
+            const feet = parseFloat(questionnaireData.height.Feet || 0);
+            const inches = parseFloat(questionnaireData.height.Inches || 0);
+            heightInCm = (feet * 12 + inches) * 2.54; // Convert to cm
+          }
+        }
+      }
+      
+      // Convert weight object to number (if group field with lbs/kg)
+      let weightInKg = 75; // default
+      if (questionnaireData?.weight) {
+        if (typeof questionnaireData.weight === 'number') {
+          weightInKg = questionnaireData.weight;
+        } else if (typeof questionnaireData.weight === 'object') {
+          // Handle group field: {lbs: 165} OR {kg: 75}
+          if ('kg' in questionnaireData.weight) {
+            weightInKg = parseFloat(questionnaireData.weight.kg);
+          } else if ('lbs' in questionnaireData.weight) {
+            weightInKg = parseFloat(questionnaireData.weight.lbs) * 0.453592; // Convert to kg
+          }
+        }
+      }
+      
+      // Convert biological_sex to lowercase sex
+      let sex: 'male' | 'female' | 'other' = 'male';
+      if (questionnaireData?.biological_sex) {
+        sex = questionnaireData.biological_sex.toLowerCase() as 'male' | 'female' | 'other';
+      } else if (questionnaireData?.sex) {
+        sex = questionnaireData.sex.toLowerCase() as 'male' | 'female' | 'other';
+      }
+      
+      // Calculate age from date_of_birth if provided
+      let age = 35; // default
+      if (questionnaireData?.date_of_birth) {
+        const dob = new Date(questionnaireData.date_of_birth);
+        const today = new Date();
+        age = today.getFullYear() - dob.getFullYear();
+        const monthDiff = today.getMonth() - dob.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+          age--;
+        }
+      } else if (questionnaireData?.age) {
+        age = parseFloat(questionnaireData.age);
+      }
+      
+      console.log("🔄 Converted user data:", { age, sex, height: heightInCm, weight: weightInKg });
+      
+      // Prepare analysis payload WITH questionnaire data
+      const payload = {
+        biomarkers: biomarkersObject,
+        user: {
+          user_id: questionnaireData?.user_id || "5029514b-f7fd-4dff-8d60-4fb8b7f90dd4",
+          age: age,
+          sex: sex,
+          height: heightInCm,
+          weight: weightInKg
+        },
+        questionnaire: questionnaireData  // ✅ GOOD - Include questionnaire data
+      };
+      
+      console.log("📦 Analysis payload prepared:", payload);
+      console.log("🔍 Biomarkers validation check:", Object.keys(payload.biomarkers));
+      console.log("🔍 User validation check:", payload.user);
+      console.log("🎬 Calling startAnalysis()...");
+      
+      await startAnalysis(payload);
+      
+      // Check if validation failed silently in store
+      const storeState = useAnalysisStore.getState();
+      if (storeState.error) {
+        console.error("❌ startAnalysis validation error:", storeState.error);
+        setError({
+          code: storeState.error.code,
+          message: storeState.error.message
+        });
+        return;  // Don't proceed to confirmed state
+      }
+      
+      console.log("✅ startAnalysis() resolved successfully");
+      
+      // Mark as confirmed
+      setStatus('confirmed');
+      
+      console.log("⏳ Waiting for analysis to complete via SSE...");
+      console.log("🔔 Will navigate when phase === 'completed'");
+      
+      // Navigation will happen automatically via useEffect watching currentPhase
     } catch (error) {
-      console.error('Confirmation failed:', error);
-      setError({ code: 'CONFIRMATION_FAILED', message: 'Failed to confirm biomarkers' });
+      console.error("❌ Analysis failed:", error);
+      setError({ 
+        code: 'ANALYSIS_START_FAILED', 
+        message: error instanceof Error ? error.message : 'Failed to start analysis'
+      });
     }
   };
+
+  // Auto-navigate when analysis completes
+  useEffect(() => {
+    console.log("🔔 Phase changed to:", currentPhase);
+    
+    if (currentPhase === 'completed' && uploadStatus === 'confirmed' && currentAnalysisId) {
+      console.log("✅ Analysis completed! Navigating to results...");
+      console.log("📍 Analysis ID:", currentAnalysisId);
+      
+      setTimeout(() => {
+        console.log("➡️ Navigating to results for", currentAnalysisId);
+        console.log("🔀 Executing router.push(\"/results\")");
+        router.push(`/results?analysis_id=${currentAnalysisId}`);
+      }, 500);
+    }
+  }, [currentPhase, uploadStatus, currentAnalysisId, router]);
 
   // Handle parse upload success/error
   useEffect(() => {
     if (parseUpload.isSuccess && parseUpload.data) {
+      console.log('📥 Parse upload success! Raw data:', parseUpload.data);
       const { parsed_data } = parseUpload.data;
+      console.log('📊 Extracted parsed_data:', parsed_data);
+      console.log('🧬 Biomarkers array:', parsed_data.biomarkers, 'Length:', parsed_data.biomarkers?.length);
+      
       setParsedResults(
         parsed_data.biomarkers,
         parseUpload.data.analysis_id,
         parsed_data.metadata
       );
     } else if (parseUpload.isError && parseUpload.error) {
+      console.error('❌ Parse upload error:', parseUpload.error);
       setError({
         code: 'PARSE_ERROR',
         message: parseUpload.error.message || 'Failed to parse upload'
@@ -212,6 +406,21 @@ export default function UploadPage() {
           </Alert>
         )}
 
+        {analysisError && (
+          <Alert className="mb-6 border-red-200 bg-red-50">
+            <AlertCircle className="h-4 w-4 text-red-600" />
+            <AlertDescription className="text-red-800">
+              <strong>Analysis Error:</strong> {analysisError.message || 'Validation failed'}
+              {analysisError.details && (
+                <details className="mt-2">
+                  <summary className="cursor-pointer text-sm font-semibold">View Details</summary>
+                  <pre className="mt-2 text-xs bg-white p-2 rounded overflow-auto">{JSON.stringify(analysisError.details, null, 2)}</pre>
+                </details>
+              )}
+            </AlertDescription>
+          </Alert>
+        )}
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="upload" className="flex items-center gap-2">
@@ -326,6 +535,47 @@ export default function UploadPage() {
                     {parseUpload.error?.message || submitError}
                   </AlertDescription>
                 </Alert>
+              )}
+
+              {/* Questionnaire Stage - shown after biomarker confirmation */}
+              {uploadStatus === 'questionnaire' && parsedData.length > 0 && (
+                <div className="space-y-6 mt-6">
+                  {/* Confirmation Success Message */}
+                  <Card className="border-green-200 bg-green-50">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center gap-3">
+                        <CheckCircle className="h-5 w-5 text-green-600" />
+                        <div>
+                          <h3 className="font-semibold text-green-900">
+                            Biomarkers Confirmed ({parsedData.length})
+                          </h3>
+                          <p className="text-sm text-green-700 mt-1">
+                            Please complete the health questionnaire below to start your analysis.
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Questionnaire Form */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <FileText className="h-5 w-5" />
+                        Health Assessment Questionnaire
+                      </CardTitle>
+                      <CardDescription>
+                        Complete this questionnaire to provide context for your biomarker analysis.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <QuestionnaireForm
+                        onSubmit={handleQuestionnaireFromUpload}
+                        isLoading={isSubmitting || isAnalyzing}
+                      />
+                    </CardContent>
+                  </Card>
+                </div>
               )}
             </div>
           </TabsContent>

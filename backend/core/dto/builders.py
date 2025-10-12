@@ -25,7 +25,7 @@ def build_analysis_result_dto(result: Dict[str, Any]) -> Dict[str, Any]:
         "biomarkers": result.get("biomarkers", []),
         "clusters": result.get("clusters", []),
         "insights": result.get("insights", []),
-        "status": result.get("status", "complete"),
+        "status": result.get("status", "completed"),
         "created_at": result.get("created_at", datetime.now(UTC).isoformat()),
         "overall_score": result.get("overall_score"),
         "risk_assessment": result.get("risk_assessment", {}),

@@ -10,6 +10,7 @@ export interface BiomarkerData {
 }
 
 export interface UserProfile {
+  user_id?: string;  // Optional user ID for profile linking
   age: number;
   sex: 'male' | 'female' | 'other';
   weight?: number;

@@ -3,7 +3,7 @@ import json
 import time
 from typing import AsyncIterator, Dict, List
 
-PHASES: List[str] = ["ingest", "normalize", "scoring", "clustering", "insights", "complete"]
+PHASES: List[str] = ["ingest", "normalize", "scoring", "clustering", "insights", "completed"]
 
 def _sse(event: str, payload: Dict) -> bytes:
     # Proper SSE framing: event + data + blank line

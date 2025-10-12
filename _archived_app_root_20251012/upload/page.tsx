@@ -51,15 +51,16 @@ export default function UploadPage() {
   // Handle confirm all biomarkers
   const handleConfirmAll = async () => {
     try {
+      console.log('🧭 handleConfirmAll triggered');
       confirmAll();
-      setSubmitSuccess(true);
-      // Redirect to results page after a short delay
-      setTimeout(() => {
-        router.push('/results');
-      }, 2000);
+      useUploadStore.setState({ status: 'questionnaire' });
+      console.log('✅ Biomarkers confirmed — awaiting questionnaire');
     } catch (error) {
       console.error('Confirmation failed:', error);
-      setError({ code: 'CONFIRMATION_FAILED', message: 'Failed to confirm biomarkers' });
+      setError({
+        code: 'CONFIRMATION_FAILED',
+        message: 'Failed to confirm biomarkers'
+      });
     }
   };
 

@@ -1,0 +1,9 @@
+export const mockBiomarkers = [
+  { id: "glucose", value: 5.1, unit: "mmol/L" },
+  { id: "hdl", value: 1.4, unit: "mmol/L" },
+  { id: "ldl", value: 2.3, unit: "mmol/L" },
+  { id: "triglycerides", value: 1.1, unit: "mmol/L" }
+];
+
+export default mockBiomarkers;
+

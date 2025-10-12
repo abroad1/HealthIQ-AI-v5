@@ -80,7 +80,7 @@ async def start_analysis(request: AnalysisStartRequest, db: Session = Depends(ge
         dto = orchestrator.run(normalized, request.user, assume_canonical=True)
         
         # Sprint 9b - Persist analysis data
-        if dto.status == "complete":
+        if dto.status == "completed":
             try:
                 persistence_service = PersistenceService(db)
                 
@@ -103,10 +103,30 @@ async def start_analysis(request: AnalysisStartRequest, db: Session = Depends(ge
                 
                 if analysis_uuid:
                     # Save results if analysis was persisted
+                    # Convert BiomarkerScore DTOs to dicts for persistence
+                    biomarker_dicts = []
+                    for biomarker in dto.biomarkers:
+                        if hasattr(biomarker, 'model_dump'):
+                            biomarker_dicts.append(biomarker.model_dump())
+                        elif isinstance(biomarker, dict):
+                            biomarker_dicts.append(biomarker)
+                        else:
+                            # Handle BiomarkerScore DTO
+                            biomarker_dicts.append({
+                                "biomarker_name": biomarker.biomarker_name,
+                                "value": biomarker.value,
+                                "unit": biomarker.unit,
+                                "score": biomarker.score,
+                                "percentile": biomarker.percentile,
+                                "status": biomarker.status,
+                                "reference_range": biomarker.reference_range,
+                                "interpretation": biomarker.interpretation
+                            })
+                    
                     results_data = {
-                        "biomarkers": dto.biomarkers,
-                        "clusters": dto.clusters,
-                        "insights": dto.insights,
+                        "biomarkers": biomarker_dicts,
+                        "clusters": [c.model_dump() if hasattr(c, 'model_dump') else c for c in dto.clusters] if dto.clusters else [],
+                        "insights": [i.model_dump() if hasattr(i, 'model_dump') else i for i in dto.insights] if dto.insights else [],
                         "overall_score": dto.overall_score,
                         "result_version": "1.0.0"
                     }
@@ -118,7 +138,11 @@ async def start_analysis(request: AnalysisStartRequest, db: Session = Depends(ge
                 logger = logging.getLogger(__name__)
                 logger.error(f"Persistence failed for analysis {analysis_id}: {str(persistence_error)}")
         
-        return AnalysisStartResponse(analysis_id=analysis_id)
+        return AnalysisStartResponse(
+            analysis_id=analysis_id,
+            status="completed",
+            message="Analysis started successfully"
+        )
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to start analysis: {str(e)}")
@@ -227,7 +251,7 @@ async def get_analysis_result(analysis_id: str, db: Session = Depends(get_db)):
                 ],
                 "clusters": [],
                 "insights": [],
-                "status": "complete",
+                "status": "completed",
                 "created_at": datetime.now(UTC).isoformat(),
                 "result_version": "1.0.0"
             }

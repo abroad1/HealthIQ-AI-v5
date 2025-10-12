@@ -87,7 +87,7 @@ export interface UploadError {
 
 export interface UploadState {
   /** Current upload/parsing status */
-  status: "idle" | "uploading" | "parsing" | "ready" | "confirmed" | "error";
+  status: "idle" | "uploading" | "parsing" | "ready" | "confirmed" | "questionnaire" | "error";
   
   /** Parsed biomarkers data */
   parsedData: ParsedBiomarker[];
