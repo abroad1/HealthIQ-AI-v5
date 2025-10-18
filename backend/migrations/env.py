@@ -21,27 +21,38 @@ from alembic import context
 # access to the values within the .ini file in use.
 config = context.config
 
-# Override sqlalchemy.url with DATABASE_URL from environment
-DATABASE_URL = os.getenv("DATABASE_URL")
+# Get the URL from config first
+url = config.get_main_option("sqlalchemy.url")
 
-# If DATABASE_URL is not set, try to construct it from Supabase configuration
-if not DATABASE_URL:
-    SUPABASE_URL = os.getenv("SUPABASE_URL")
-    SUPABASE_PASSWORD = os.getenv("SUPABASE_PASSWORD")  # User needs to set this
-    if SUPABASE_URL and SUPABASE_PASSWORD:
-        # Convert Supabase URL to PostgreSQL connection string
-        # Format: postgresql://postgres:[password]@[host]:5432/postgres
-        host = SUPABASE_URL.replace("https://", "").replace("http://", "")
-        DATABASE_URL = f"postgresql://postgres:{SUPABASE_PASSWORD}@{host}:5432/postgres"
-    elif SUPABASE_URL:
-        # Fallback: construct URL without password (user will need to set SUPABASE_PASSWORD)
-        host = SUPABASE_URL.replace("https://", "").replace("http://", "")
-        DATABASE_URL = f"postgresql://postgres:YOUR_PASSWORD@{host}:5432/postgres"
-        print(f"Warning: SUPABASE_PASSWORD not set. Using placeholder. Set SUPABASE_PASSWORD in .env file.")
-        print(f"Constructed DATABASE_URL: {DATABASE_URL}")
+# Allow dynamic override via CLI: `-x url=...`
+cmd_opts = context.get_x_argument(as_dictionary=True)
+if "url" in cmd_opts:
+    url = cmd_opts["url"]
+else:
+    # Fallback to environment variables if no CLI override
+    DATABASE_URL = os.getenv("DATABASE_URL")
+    
+    # If DATABASE_URL is not set, try to construct it from Supabase configuration
+    if not DATABASE_URL:
+        SUPABASE_URL = os.getenv("SUPABASE_URL")
+        SUPABASE_PASSWORD = os.getenv("SUPABASE_PASSWORD")  # User needs to set this
+        if SUPABASE_URL and SUPABASE_PASSWORD:
+            # Convert Supabase URL to PostgreSQL connection string
+            # Format: postgresql://postgres:[password]@[host]:5432/postgres
+            host = SUPABASE_URL.replace("https://", "").replace("http://", "")
+            DATABASE_URL = f"postgresql://postgres:{SUPABASE_PASSWORD}@{host}:5432/postgres"
+        elif SUPABASE_URL:
+            # Fallback: construct URL without password (user will need to set SUPABASE_PASSWORD)
+            host = SUPABASE_URL.replace("https://", "").replace("http://", "")
+            DATABASE_URL = f"postgresql://postgres:YOUR_PASSWORD@{host}:5432/postgres"
+            print(f"Warning: SUPABASE_PASSWORD not set. Using placeholder. Set SUPABASE_PASSWORD in .env file.")
+            print(f"Constructed DATABASE_URL: {DATABASE_URL}")
+    
+    if DATABASE_URL:
+        url = DATABASE_URL
 
-if DATABASE_URL:
-    config.set_main_option("sqlalchemy.url", DATABASE_URL)
+# Set the final URL in config
+config.set_main_option("sqlalchemy.url", url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -71,7 +82,6 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
         target_metadata=target_metadata,

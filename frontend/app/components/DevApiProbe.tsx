@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { pingHealth, openAnalysisSSE, startAnalysis, getAnalysisResult } from '../lib/api';
+import { pingHealth, startAnalysis, getAnalysisResult } from '../lib/api';
+import { AnalysisService } from '../services/analysis';
 import { useAnalysisStore } from '../state/analysisStore';
 import { useClusterStore } from '../state/clusterStore';
 import { useUIStore } from '../state/uiStore';
@@ -35,22 +36,28 @@ export default function DevApiProbe() {
 
   function handleStartSSE() {
     if (esRef.current) esRef.current.close();
-   const es = openAnalysisSSE('demo');
-    esRef.current = es;
-    es.onopen = () => log('[SSE] open');
-    es.onerror = (e) => log('[SSE] error');
-    es.addEventListener('analysis_status', (evt) => {
-      try {
-        const data = JSON.parse((evt as MessageEvent).data);
-        log('[SSE] ' + data.phase + ' ' + (data.progress?.toFixed?.(2) ?? ''));
-        if (data.phase === 'complete') {
-          es.close();
-          log('[SSE] closed (complete)');
+    
+    // Use the proper AnalysisService method with cleanup
+    const es = AnalysisService.subscribeToAnalysisEvents(
+      'demo',
+      (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          log('[SSE] ' + data.phase + ' ' + (data.progress?.toFixed?.(2) ?? ''));
+          if (data.phase === 'complete') {
+            es.close();
+            log('[SSE] closed (complete)');
+          }
+        } catch {
+          log('[SSE] parse error');
         }
-      } catch {
-        log('[SSE] parse error');
-      }
-    });
+      },
+      (error) => log('[SSE] error: ' + error),
+      () => log('[SSE] completed')
+    );
+    
+    esRef.current = es;
+    log('[SSE] connection started');
   }
 
   function handleStopSSE() {

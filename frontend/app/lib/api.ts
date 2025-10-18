@@ -6,12 +6,16 @@ export async function pingHealth(): Promise<any> {
   return res.json();
 }
 
-export function openAnalysisSSE(analysisId: string): EventSource {
-  const url = `${API_BASE}/api/analysis/events?analysis_id=${encodeURIComponent(
-    analysisId
-  )}`;
-  return new EventSource(url);
-}
+// DEPRECATED: This function has no cleanup and is not used in production flow
+// EventSource connections should be managed through AnalysisService.subscribeToAnalysisEvents()
+// which includes proper cleanup and error handling
+//
+// export function openAnalysisSSE(analysisId: string): EventSource {
+//   const url = `${API_BASE}/api/analysis/events?analysis_id=${encodeURIComponent(
+//     analysisId
+//   )}`;
+//   return new EventSource(url);
+// }
 
 export async function startAnalysis(payload: {
   biomarkers: Record<string, any>;

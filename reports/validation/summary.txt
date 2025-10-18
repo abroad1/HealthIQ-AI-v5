@@ -1,0 +1,20 @@
+HealthIQ-AI Test Validation Summary
+Generated: 2025-10-17T16:38:06.811265
+Total Execution Time: 2.38 seconds
+
+Test Suite Results:
+==================================================
+Integration Tests: FAILED (0.58s)
+Security Tests: FAILED (0.59s)
+Performance Tests: FAILED (0.58s)
+==================================================
+Overall Status: SOME TESTS FAILED
+
+Failed Test Suites:
+==================================================
+Integration Tests: ERROR: usage: __main__.py [options] [file_or_dir] [file_or_dir] [...]
+__main__.py: error: unrecognized arguments: --html=reports/validation/pytest_report.html --self-contained-html --json-report --jso...
+Security Tests: ERROR: usage: __main__.py [options] [file_or_dir] [file_or_dir] [...]
+__main__.py: error: unrecognized arguments: --html=reports/validation/pytest_report.html --self-contained-html --json-report --jso...
+Performance Tests: ERROR: usage: __main__.py [options] [file_or_dir] [file_or_dir] [...]
+__main__.py: error: unrecognized arguments: --html=reports/validation/pytest_report.html --self-contained-html --json-report --jso...

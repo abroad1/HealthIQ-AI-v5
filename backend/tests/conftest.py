@@ -18,3 +18,32 @@ def _register_insights_once():
     """Ensure all insight modules are registered before any tests run."""
     from core.insights.registry import ensure_insights_registered
     ensure_insights_registered()
+
+
+@pytest.fixture(scope="function")
+def db_session():
+    """Provide a temporary SQLAlchemy session for tests."""
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    from config.settings import get_config
+    
+    config = get_config()
+    
+    # Use test database if available, otherwise fall back to production
+    database_url = config.database.test_url or config.database.url
+    
+    # Safety check: prevent accidental production database usage
+    if '.supabase.co' in database_url:
+        raise ValueError(
+            "Tests cannot run against Supabase production database. "
+            "Use DATABASE_URL_TEST for local testing. "
+            "Set DATABASE_URL_TEST=postgresql://postgres:test@localhost:5433/healthiq_test"
+        )
+    
+    engine = create_engine(database_url)
+    SessionLocal = sessionmaker(bind=engine)
+    session = SessionLocal()
+    try:
+        yield session
+    finally:
+        session.close()

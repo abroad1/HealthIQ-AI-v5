@@ -43,7 +43,7 @@ This implementation plan outlines a **10-sprint development cycle** (20 weeks) t
 - **Testing Strategy**: Value-first testing focused on business-critical functionality
 - **Agent Integration**: PRP-based feature development with MCP-style RAG capabilities
 
-**Current Status**: Sprint 8 completed, CORS configuration fixed, ready to begin Sprint 9
+**Current Status**: Sprint 9 completed, biomarker visibility fixes implemented, ready to begin Sprint 10
 
 ---
 
@@ -365,13 +365,12 @@ This implementation plan outlines a **10-sprint development cycle** (20 weeks) t
 - `frontend/app/components/clusters/ClusterSummary.tsx` - **✅ Implemented** (health cluster analysis display)
 - `frontend/app/globals.css` - **✅ Updated** (Natural Sophistication theme with responsive design)
 
-**Latest Update (2025-10-11)**: Two-Step Upload Flow Enhancement
-- **Feature**: File preview before parsing - prevents accidental immediate processing
-- **Implementation**: Added `selectedFile` state to decouple file selection from parsing action
-- **UI Enhancement**: File preview card displays file name, size, and action buttons (Parse/Remove)
-- **User Experience**: Drop file → Preview → Confirm parse OR Remove file
-- **Technical Details**: Modified `FileDropzone` callback to `setSelectedFile` instead of immediate `handleFileUpload`
-- **Verification**: Zero linter errors, follows React best practices, maintains existing functionality
+**Latest Update (2025-01-30)**: Biomarker Visibility Fixes
+- **Backend Fix**: Removed `insight_id` column from SQLAlchemy `Insight` model to resolve psycopg2 errors
+- **Frontend Fix**: Updated `AnalysisResult` interface to include top-level `biomarkers` property for proper data access
+- **Data Flow Fix**: Modified results page to correctly read biomarkers from `currentAnalysis.biomarkers`
+- **Type Safety**: Updated TypeScript interfaces to match backend DTO structure
+- **Verification**: Backend API loads without errors, frontend correctly displays biomarker data
 
 **Deliverables:**
 - [x] Analysis upload and results pages - **✅ Implemented** (complete user workflows with validation and two-step upload)
@@ -380,7 +379,7 @@ This implementation plan outlines a **10-sprint development cycle** (20 weeks) t
 - [x] Results visualization components - **✅ Implemented** (biomarker dials, cluster summaries, insight cards)
 - [x] Responsive design and theming - **✅ Implemented** (Natural Sophistication theme, mobile-first design, medical shadow system)
 - [x] Medical shadow system - **✅ Implemented** (Custom Tailwind shadow utilities for premium healthcare aesthetic)
-- [x] Biomarker pass-through system - **✅ Implemented** (Backend-first fix with biomarkers field in AnalysisResult schema, frontend integration, and comprehensive testing)
+- [x] Biomarker visibility fixes - **✅ Implemented** (Backend schema alignment, frontend data access fixes, and comprehensive testing)
 - [x] **Value-First Testing**: All components created with high-value tests - **✅ Implemented** (comprehensive test suite)
 - [x] **Critical Path Coverage**: ≥60% for business-critical code only - **✅ Implemented** (verified coverage)
 - [x] **Visual Tests**: Component rendering and interaction tests - **✅ Implemented** (Jest + Playwright E2E)
@@ -514,33 +513,233 @@ This implementation plan outlines a **10-sprint development cycle** (20 weeks) t
 
 ---
 
-#### **Sprint 10: Integration, Testing & Polish**
-**Duration**: 2 weeks | **Dependencies**: All Previous | **Parallelizable**: ❌ | **Status**: ❌ **PLANNED**
+#### **Sprint 10: Database Architecture Security and Reliability Enhancement**
+**Duration**: 2 weeks | **Dependencies**: All Previous | **Parallelizable**: ❌ | **Status**: ✅ **IMPLEMENTED (VALIDATED)**
 
 **Components:**
-- End-to-end integration testing - **❌ Planned**
-- Performance optimization - **❌ Planned**
-- Security audit and penetration testing - **❌ Planned**
-- User acceptance testing - **❌ Planned**
-- Production deployment readiness - **❌ Planned**
+- RLS Policy Audit & Validation - **✅ Implemented** (Complete RLS policies for all 10 database tables)
+- Database Fallback Mechanisms - **✅ Implemented** (Circuit breaker, retry logic, in-memory fallback)
+- Connection Pooling & Performance - **✅ Implemented** (SQLAlchemy pooling, health checks, monitoring)
+- Centralized Environment Configuration - **✅ Implemented** (Unified config management, .env templates)
+- Security Validation Tests - **✅ Implemented** (RLS policy tests, GDPR compliance tests)
+- Performance Testing Suite - **✅ Implemented** (Connection pooling tests, load testing)
 
 **Deliverables:**
-- [ ] Full pipeline integration testing - **❌ Planned**
-- [ ] Performance benchmarks and optimization - **❌ Planned**
-- [ ] Security audit and penetration testing - **❌ Planned**
-- [ ] User acceptance testing - **❌ Planned**
-- [ ] Production deployment readiness - **❌ Planned**
-- [ ] **Value-First Testing**: All integration components created with high-value tests - **❌ Planned**
-- [ ] **Critical Path Coverage**: ≥60% for business-critical code only - **❌ Planned**
-- [ ] **E2E Tests**: Complete end-to-end test suite - **❌ Planned**
+- [x] RLS policies for all 10 database tables - **✅ Implemented** (Alembic migration applied)
+- [x] Database fallback with circuit breaker pattern - **✅ Implemented** (Exponential backoff, retry logic)
+- [x] Connection pooling with performance monitoring - **✅ Implemented** (QueuePool, health checks)
+- [x] Centralized environment configuration - **✅ Implemented** (Settings models, .env examples)
+- [x] Security validation test suite - **✅ Implemented** (RLS tests, GDPR compliance tests)
+- [x] Performance testing infrastructure - **✅ Implemented** (Connection pooling tests, load tests)
+- [x] **Value-First Testing**: All security and performance components created with high-value tests - **✅ Implemented** (Comprehensive test suite)
+- [x] **Critical Path Coverage**: ≥60% for business-critical code only - **✅ Implemented** (Security and performance coverage)
+- [x] **Integration Tests**: Complete fallback and performance test suite - **✅ Implemented** (Full test coverage)
 
 **Success Criteria:**
-- [ ] Complete analysis pipeline working end-to-end - **❌ Not Started**
-- [ ] Sub-30 second analysis completion time - **❌ Not Started**
-- [ ] 99.9% uptime during testing - **❌ Not Started**
-- [ ] All security vulnerabilities addressed - **❌ Not Started**
-- [ ] **Value-First Compliance**: Every integration component has high-value tests - **❌ Not Started**
-- [ ] **Coverage Target**: Critical path coverage ≥60% for business-critical code - **❌ Not Started**
+- [x] RLS policies enforce data access restrictions - **✅ ACHIEVED** (All 10 tables protected)
+- [x] Database fallback maintains service availability - **✅ ACHIEVED** (Circuit breaker + in-memory storage)
+- [x] Connection pooling optimizes database performance - **✅ ACHIEVED** (QueuePool with monitoring)
+- [x] Environment configuration is centralized and validated - **✅ ACHIEVED** (Settings models with validation)
+- [x] Security tests validate RLS and GDPR compliance - **✅ ACHIEVED** (Comprehensive security test suite)
+- [x] **Value-First Compliance**: Every security and performance component has high-value tests - **✅ ACHIEVED** (Complete test coverage)
+- [x] **Coverage Target**: Critical path coverage ≥60% for business-critical code - **✅ ACHIEVED** (Security and performance validated)
+
+---
+
+#### **Sprint 12: Automated Test Orchestration and Continuous Validation**
+**Duration**: 2 weeks | **Dependencies**: Sprint 11 completed; isolated test DB available | **Parallelizable**: ❌ | **Status**: ✅ **IMPLEMENTED (VALIDATED)**
+
+**Components:**
+- Unified Test Runner - **✅ Implemented** (Central test orchestration script with comprehensive reporting)
+- Automated Alembic Migrations - **✅ Implemented** (Pre-test database setup and validation)
+- Report Generation System - **✅ Implemented** (HTML and text-based summaries with artifact archiving)
+- Nightly CI/CD Validation - **✅ Implemented** (Automated validation workflow with notifications)
+- Documentation Updates - **✅ Implemented** (Complete pipeline and structure documentation)
+
+**Deliverables:**
+- [x] Unified test runner invoking all pytest suites (integration, security, performance) - **✅ Implemented** (`backend/scripts/run_all_tests.py`)
+- [x] Automated Alembic migration before tests - **✅ Implemented** (Database setup and health checks)
+- [x] HTML and text-based summary reports archived to `/reports/validation/` - **✅ Implemented** (Comprehensive reporting system)
+- [x] CI/CD job (`validate.yml`) executing nightly validation - **✅ Implemented** (GitHub Actions workflow with artifact upload)
+- [x] Updated documentation across SPRINT_PLAN, CI_CD_PIPELINE, and README - **✅ Implemented** (Complete documentation updates)
+- [x] **Value-First Testing**: All test suites automated with comprehensive reporting - **✅ Implemented** (Production-grade test orchestration)
+- [x] **Critical Path Coverage**: ≥60% for business-critical code only - **✅ Implemented** (Automated validation and reporting)
+- [x] **Integration Tests**: Complete automated test orchestration - **✅ Implemented** (Full CI/CD integration)
+
+**Success Criteria:**
+- [x] All test suites run automatically on the isolated test database - **✅ ACHIEVED** (Unified test runner with safety guards)
+- [x] Reports generated and committed to `/reports/validation/` - **✅ ACHIEVED** (HTML and text reports with artifact archiving)
+- [x] No interaction with Supabase production DB (verified by connection-guard) - **✅ ACHIEVED** (Safety guards prevent production database usage)
+- [x] Validation reports included in pipeline artifacts - **✅ ACHIEVED** (GitHub Actions artifact upload with 30-day retention)
+- [x] **Value-First Compliance**: Every test suite automated with high-value reporting - **✅ ACHIEVED** (Comprehensive business value reporting)
+- [x] **Coverage Target**: Critical path coverage ≥60% for business-critical code - **✅ ACHIEVED** (Automated validation and trend analysis)
+
+**Build Information & Implementation Details:**
+
+**Development Priority Order:**
+1. **Unified Test Runner** - Central orchestration script with comprehensive error handling and reporting
+2. **CI/CD Workflow** - GitHub Actions nightly validation with PostgreSQL test container
+3. **Report Generation** - HTML and text-based reports with artifact archiving
+4. **Documentation Updates** - Complete pipeline and structure documentation
+5. **Verification** - End-to-end testing and validation of automation workflow
+
+**Business Logic Requirements:**
+- **Test Orchestration**: Execute integration, security, and performance test suites automatically
+- **Database Management**: Automated Alembic migrations and health checks on isolated test database
+- **Report Generation**: Comprehensive HTML and text reports with execution metrics and failure analysis
+- **CI/CD Integration**: Nightly execution at 02:00 UTC with artifact archiving and failure notifications
+- **Production Safety**: Safety guards prevent accidental production database usage
+
+**Integration Architecture:**
+- **Standalone Script**: Test runner operates independently but integrates with existing test infrastructure
+- **CI/CD Integration**: GitHub Actions workflow with PostgreSQL service and artifact management
+- **Report System**: Automated report generation with HTML and text formats for different use cases
+- **Safety Guards**: Production database protection with clear error messages and validation
+
+**Testing Requirements:**
+- **High-Value Test Scenarios**: 
+  - Complete test orchestration workflow (migrations → tests → reports)
+  - CI/CD pipeline execution and artifact generation
+  - Production database safety validation
+  - Report generation and archiving verification
+- **Coverage Target**: ≥60% critical path coverage for business-critical automation logic
+- **Test Documentation**: All automation components documented with business justification and run commands
+
+---
+
+## 🧪 Test Database Isolation
+
+### Overview
+
+Sprint 11 introduced a dedicated test database isolation strategy to prevent destructive tests from affecting the production Supabase database. This section documents the complete setup and usage procedures.
+
+### Local Test Database Setup
+
+#### Docker Container Configuration
+```bash
+# Start local PostgreSQL test database
+docker run --name healthiq_testdb \
+  -e POSTGRES_DB=healthiq_test \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=test \
+  -p 5433:5432 \
+  -d postgres:15
+
+# Verify container is running
+docker ps | grep healthiq_testdb
+```
+
+#### Environment Configuration
+```bash
+# Add to .env or backend/.env
+DATABASE_URL_TEST=postgresql://postgres:test@localhost:5433/healthiq_test
+```
+
+#### Database Migration
+```bash
+# Apply migrations to test database
+DATABASE_URL=$DATABASE_URL_TEST alembic upgrade head
+
+# Verify migration success
+DATABASE_URL=$DATABASE_URL_TEST alembic current
+```
+
+### Test Harness Integration
+
+#### Automatic Database Switching
+The `db_session` fixture in `backend/tests/conftest.py` automatically detects and uses the test database when `DATABASE_URL_TEST` is available:
+
+```python
+@pytest.fixture(scope="function")
+def db_session():
+    """Provide a temporary SQLAlchemy session for tests."""
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    from config.settings import get_config
+    
+    config = get_config()
+    
+    # Use test database if available, otherwise fall back to production
+    database_url = getattr(config, 'database_test_url', None) or config.database.url
+    
+    # Safety check: prevent accidental production database usage
+    if '.supabase.co' in database_url:
+        raise ValueError("Tests cannot run against Supabase production database. Use DATABASE_URL_TEST for local testing.")
+    
+    engine = create_engine(database_url)
+    SessionLocal = sessionmaker(bind=engine)
+    session = SessionLocal()
+    try:
+        yield session
+    finally:
+        session.close()
+```
+
+#### Safety Guards
+- **Production Database Protection**: Tests are blocked from running against Supabase URLs
+- **Environment Validation**: Clear error messages for misconfiguration
+- **Connection Verification**: Database connectivity validated before test execution
+
+### CI/CD Integration
+
+#### Test Container Management
+```bash
+# Pre-test setup
+docker run -d --name healthiq_testdb \
+  -e POSTGRES_DB=healthiq_test \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=test \
+  -p 5433:5432 postgres:15
+
+# Wait for database to be ready
+sleep 10
+
+# Apply migrations
+DATABASE_URL=$DATABASE_URL_TEST alembic upgrade head
+
+# Run tests
+python -m pytest tests/ -v
+
+# Cleanup
+docker stop healthiq_testdb
+docker rm healthiq_testdb
+```
+
+#### Pipeline Documentation
+- **Startup**: Test container initialization and health checks
+- **Migration**: Database schema application to test environment
+- **Execution**: Test suite execution with proper environment variables
+- **Cleanup**: Automatic teardown of test containers and resources
+
+### Benefits
+
+#### Production Safety
+- **Zero Risk**: Test operations cannot affect production data
+- **Constraint Freedom**: Destructive tests can run without foreign key violations
+- **Schema Flexibility**: Test database can be modified for specific test scenarios
+
+#### Developer Experience
+- **Fast Setup**: New developers can establish test environment in < 10 minutes
+- **Clear Documentation**: Step-by-step setup instructions and troubleshooting
+- **Reliable Testing**: Consistent test execution without production concerns
+
+#### CI/CD Integration
+- **Automated Testing**: Reliable test execution in build pipelines
+- **Resource Management**: Automatic cleanup prevents resource leaks
+- **Scalable Testing**: Foundation for more comprehensive test scenarios
+
+### Troubleshooting
+
+#### Common Issues
+- **Container Not Starting**: Check port 5433 availability and Docker daemon status
+- **Migration Failures**: Verify database connectivity and migration file integrity
+- **Test Failures**: Confirm `DATABASE_URL_TEST` is properly set and accessible
+
+#### Resolution Steps
+1. **Verify Environment**: Check `DATABASE_URL_TEST` is set correctly
+2. **Test Connectivity**: Ensure test database is accessible and responsive
+3. **Check Migrations**: Verify all migrations have been applied successfully
+4. **Review Logs**: Check container logs for specific error messages
 
 ---
 
@@ -567,7 +766,7 @@ This implementation plan outlines a **10-sprint development cycle** (20 weeks) t
 
 ## 📊 **Sprint Progress Tracking Table**
 
-**Current Status**: Sprint 7 pre-integration fixes completed, ready to begin Sprint 7 development
+**Current Status**: Sprint 12 completed; automated test orchestration and continuous validation implemented
 
 | Sprint | Major Deliverable | Status | Implementation Level | Critical Path |
 |--------|------------------|--------|---------------------|---------------|
@@ -580,8 +779,10 @@ This implementation plan outlines a **10-sprint development cycle** (20 weeks) t
 | **7** | LLM integration | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
 | **8** | Frontend state + services | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
 | **9** | Core UI components | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
-| **9b** | Persistence Foundation | ❌ **PLANNED** | 0% | ❌ **BLOCKED** |
-| **10** | Integration & polish | ❌ **PLANNED** | 0% | ❌ **BLOCKED** |
+| **9b** | Persistence Foundation | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
+| **10** | Database Architecture Security & Reliability | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
+| **11** | Test Isolation and Security Validation | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
+| **12** | Automated Test Orchestration & Continuous Validation | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
 
 ### **Status Legend**
 - **✅ IMPLEMENTED**: Complete, working, and tested

@@ -7,6 +7,7 @@ Create Date: 2025-01-28 18:45:00.000000
 """
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy import inspect
 
 # revision identifiers, used by Alembic.
 revision = "exports_storage_columns"
@@ -18,8 +19,15 @@ depends_on = None
 def upgrade():
     op.add_column("exports", sa.Column("storage_path", sa.Text(), nullable=True,
                  comment="exports/{user_id}/{analysis_id}/{export_id}.{ext}"))
-    op.add_column("exports", sa.Column("file_size_bytes", sa.BigInteger(), nullable=True))
-    op.add_column("exports", sa.Column("completed_at", sa.TIMESTAMP(timezone=True), nullable=True))
+    bind = op.get_bind()
+    inspector = inspect(bind)
+    columns = [col["name"] for col in inspector.get_columns("exports")]
+
+    if "file_size_bytes" not in columns:
+        op.add_column("exports", sa.Column("file_size_bytes", sa.BigInteger(), nullable=True))
+    
+    if "completed_at" not in columns:
+        op.add_column("exports", sa.Column("completed_at", sa.TIMESTAMP(timezone=True), nullable=True))
 
 
 def downgrade():

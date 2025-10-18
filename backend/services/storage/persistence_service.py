@@ -1,5 +1,6 @@
 """
 Persistence service for orchestration-level database operations.
+Enhanced with fallback capabilities for database outages.
 """
 
 from typing import Dict, Any, Optional, List
@@ -7,6 +8,7 @@ from uuid import UUID, uuid4
 from datetime import datetime, UTC
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import text
 import logging
 
 from core.models.results import AnalysisResult as AnalysisResultDTO
@@ -21,6 +23,7 @@ from repositories import (
     ProfileRepository,
     AuditLogRepository
 )
+from .fallback_service import DatabaseFallbackService, CircuitBreakerConfig, RetryConfig, fallback_decorator
 
 logger = logging.getLogger(__name__)
 
@@ -28,12 +31,13 @@ logger = logging.getLogger(__name__)
 class PersistenceService:
     """Service for orchestration-level persistence operations."""
     
-    def __init__(self, db_session: Session):
+    def __init__(self, db_session: Session, enable_fallback: bool = True):
         """
         Initialize the persistence service.
         
         Args:
             db_session: Database session
+            enable_fallback: Whether to enable fallback capabilities
         """
         self.db_session = db_session
         self.analysis_repo = AnalysisRepository(db_session)
@@ -44,7 +48,31 @@ class PersistenceService:
         self.export_repo = ExportRepository(db_session)
         self.profile_repo = ProfileRepository(db_session)
         self.audit_log_repo = AuditLogRepository(db_session)
+        
+        # Initialize fallback service if enabled
+        if enable_fallback:
+            circuit_config = CircuitBreakerConfig(
+                failure_threshold=5,
+                recovery_timeout=60,
+                success_threshold=3,
+                timeout=30
+            )
+            retry_config = RetryConfig(
+                max_attempts=3,
+                base_delay=1.0,
+                max_delay=60.0,
+                exponential_base=2.0,
+                jitter=True
+            )
+            self.fallback_service = DatabaseFallbackService(
+                self, circuit_config, retry_config
+            )
+            logger.info("Persistence service initialized with fallback capabilities")
+        else:
+            self.fallback_service = None
+            logger.info("Persistence service initialized without fallback capabilities")
     
+    @fallback_decorator("save_analysis")
     def save_analysis(self, analysis_dto: Dict[str, Any], user_id: UUID) -> Optional[UUID]:
         """
         Save analysis data to database.
@@ -107,6 +135,7 @@ class PersistenceService:
             )
             return None
     
+    @fallback_decorator("save_results")
     def save_results(self, results_dto: Dict[str, Any], analysis_id: UUID) -> bool:
         """
         Save analysis results to database.
@@ -145,8 +174,10 @@ class PersistenceService:
                 self.biomarker_score_repo.delete_by_analysis_id(analysis_id)
                 
                 for biomarker in biomarkers:
+                    biomarker_name = biomarker.get("biomarker_name")
+                    
+                    # Extract biomarker_name before building data dict to avoid duplicate argument
                     biomarker_data = {
-                        "biomarker_name": biomarker.get("biomarker_name"),
                         "value": biomarker.get("value"),
                         "unit": biomarker.get("unit"),
                         "score": biomarker.get("score"),
@@ -158,8 +189,12 @@ class PersistenceService:
                         "health_system": biomarker.get("health_system"),
                         "critical_flag": biomarker.get("critical_flag", False)
                     }
+                    
+                    logger.info(f"[DB] Upserting biomarker '{biomarker_name}' for analysis {analysis_id}")
                     self.biomarker_score_repo.upsert_by_analysis_and_biomarker(
-                        analysis_id, biomarker_data["biomarker_name"], **biomarker_data
+                        analysis_id=analysis_id,
+                        biomarker_name=biomarker_name,
+                        **biomarker_data
                     )
             
             # Save clusters
@@ -342,6 +377,7 @@ class PersistenceService:
             )
             return None
     
+    @fallback_decorator("get_analysis_history")
     def get_analysis_history(self, user_id: UUID, limit: int = 10, offset: int = 0) -> List[Dict[str, Any]]:
         """
         Get analysis history for a user.
@@ -377,6 +413,7 @@ class PersistenceService:
             logger.error(f"Error getting analysis history for user {user_id}: {str(e)}")
             return []
     
+    @fallback_decorator("get_analysis_result")
     def get_analysis_result(self, analysis_id: UUID) -> Optional[Dict[str, Any]]:
         """
         Get analysis result from database.
@@ -429,7 +466,7 @@ class PersistenceService:
             insight_list = []
             for insight in insights:
                 insight_list.append({
-                    "insight_id": str(insight.id),
+                    "id": str(insight.id),
                     "title": insight.title,
                     "description": insight.content,
                     "category": insight.category,
@@ -486,3 +523,37 @@ class PersistenceService:
         except Exception as e:
             logger.error(f"Failed to log audit action {action}: {str(e)}")
             # Don't raise here to avoid breaking the main operation
+    
+    def get_fallback_status(self) -> Optional[Dict[str, Any]]:
+        """
+        Get fallback service status including circuit breaker state.
+        
+        Returns:
+            Fallback status dictionary or None if fallback is disabled
+        """
+        if self.fallback_service:
+            return self.fallback_service.get_circuit_breaker_status()
+        return None
+    
+    def reset_fallback_circuit_breaker(self):
+        """Reset the circuit breaker to closed state."""
+        if self.fallback_service:
+            self.fallback_service.reset_circuit_breaker()
+            logger.info("Circuit breaker reset requested")
+        else:
+            logger.warning("Fallback service is not enabled")
+    
+    def is_database_available(self) -> bool:
+        """
+        Check if database is available by testing a simple query.
+        
+        Returns:
+            True if database is available, False otherwise
+        """
+        try:
+            # Test database connectivity with a simple query
+            self.db_session.execute(text("SELECT 1"))
+            return True
+        except Exception as e:
+            logger.warning(f"Database availability check failed: {str(e)}")
+            return False

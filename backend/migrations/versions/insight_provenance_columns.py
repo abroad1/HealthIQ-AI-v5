@@ -83,10 +83,12 @@ def upgrade():
         op.create_index('idx_insights_manifest_id', 'insights', ['manifest_id'])
     
     if 'idx_insights_drivers_gin' not in existing_indexes:
-        op.create_index('idx_insights_drivers_gin', 'insights', ['drivers'], postgresql_using='gin')
+        op.execute("CREATE INDEX idx_insights_drivers_gin ON insights USING gin ((drivers::jsonb));")
+
     
     if 'idx_insights_evidence_gin' not in existing_indexes:
-        op.create_index('idx_insights_evidence_gin', 'insights', ['evidence'], postgresql_using='gin')
+        op.execute("CREATE INDEX idx_insights_evidence_gin ON insights USING gin ((evidence::jsonb));")
+
     
     # Make category nullable for one sprint (only if not already nullable)
     if 'category' in columns:

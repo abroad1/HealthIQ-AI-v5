@@ -495,7 +495,6 @@ export default function QuestionnaireForm({
                 max={question.max || 10}
                 step={1}
                 value={[sliderValue]}
-                defaultValue={[defaultSliderValue]}
                 onValueChange={(val) => handleResponseChange(question.id, val[0])}
                 className="w-full"
               />

@@ -25,3 +25,7 @@ dist-ssr
 
 *storybook.log
 storybook-static
+
+# Validation reports (keep README.md)
+backend/reports/validation/*
+!backend/reports/validation/README.md

@@ -117,6 +117,12 @@ export default function UploadPage() {
   const handleQuestionnaireFromUpload = async (questionnaireData: any) => {
     console.log("📝 Questionnaire submitted with data:", questionnaireData);
     
+    // Guard against duplicate analysis starts
+    if (isAnalyzing) {
+      console.warn('⚠️ Analysis already in progress, ignoring duplicate start.');
+      return;
+    }
+    
     try {
       // Convert biomarkers array to object format
       const biomarkersObject: Record<string, any> = {};
@@ -276,95 +282,12 @@ export default function UploadPage() {
     }
   }, [parseUpload.isSuccess, parseUpload.isError, parseUpload.data, parseUpload.error, setParsedResults, setError]);
 
-  const handleBiomarkerSubmit = async (biomarkerData: any) => {
-    setIsSubmitting(true);
-    setSubmitError(null);
-    
-    try {
-      // Start analysis with biomarker data
-      await startAnalysis({
-        biomarkers: biomarkerData,
-        user: {
-          age: 35,
-          sex: 'male' as const,
-          height: 180,
-          weight: 75
-        },
-        questionnaire: null
-      });
-      
-      setSubmitSuccess(true);
-      // Redirect to results page after a short delay
-      setTimeout(() => {
-        router.push('/results');
-      }, 2000);
-    } catch (error) {
-      console.error('Analysis failed:', error);
-      setSubmitError('Failed to start analysis. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleQuestionnaireSubmit = async (questionnaireData: any) => {
-    setIsSubmitting(true);
-    setSubmitError(null);
-    
-    try {
-      // Start analysis with questionnaire data
-      await startAnalysis({
-        biomarkers: {},
-        user: {
-          age: 35,
-          sex: 'male' as const,
-          height: 180,
-          weight: 75
-        },
-        questionnaire: questionnaireData
-      });
-      
-      setSubmitSuccess(true);
-      // Redirect to results page after a short delay
-      setTimeout(() => {
-        router.push('/results');
-      }, 2000);
-    } catch (error) {
-      console.error('Analysis failed:', error);
-      setSubmitError('Failed to start analysis. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleCombinedSubmit = async (data: { biomarkers: any; questionnaire: any }) => {
-    setIsSubmitting(true);
-    setSubmitError(null);
-    
-    try {
-      // Start analysis with both biomarker and questionnaire data
-      await startAnalysis({
-        biomarkers: data.biomarkers,
-        user: {
-          age: 35,
-          sex: 'male' as const,
-          height: 180,
-          weight: 75
-        },
-        questionnaire: data.questionnaire
-      });
-      
-      setSubmitSuccess(true);
-      // Redirect to results page after a short delay
-      setTimeout(() => {
-        router.push('/results');
-      }, 2000);
-    } catch (error) {
-      console.error('Analysis failed:', error);
-      setSubmitError('Failed to start analysis. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  // LEGACY HANDLERS REMOVED - These were causing duplicate EventSource connections
+  // All analysis should now go through handleQuestionnaireFromUpload only
+  // 
+  // const handleBiomarkerSubmit = async (biomarkerData: any) => { ... }
+  // const handleQuestionnaireSubmit = async (questionnaireData: any) => { ... }
+  // const handleCombinedSubmit = async (data: { biomarkers: any; questionnaire: any }) => { ... }
 
   if (submitSuccess) {
     return (
@@ -593,7 +516,10 @@ export default function UploadPage() {
               </CardHeader>
               <CardContent>
                 <BiomarkerForm
-                  onSubmit={handleBiomarkerSubmit}
+                  onSubmit={() => {
+                    console.warn('⚠️ BiomarkerForm tab is deprecated. Please use the Upload & Parse flow instead.');
+                    alert('This tab is deprecated. Please use the "Upload & Parse" tab for biomarker analysis.');
+                  }}
                   isLoading={isSubmitting || isAnalyzing}
                 />
               </CardContent>
@@ -613,7 +539,10 @@ export default function UploadPage() {
               </CardHeader>
               <CardContent>
                 <QuestionnaireForm
-                  onSubmit={handleQuestionnaireSubmit}
+                  onSubmit={() => {
+                    console.warn('⚠️ QuestionnaireForm tab is deprecated. Please use the Upload & Parse flow instead.');
+                    alert('This tab is deprecated. Please use the "Upload & Parse" tab for questionnaire analysis.');
+                  }}
                   isLoading={isSubmitting || isAnalyzing}
                 />
               </CardContent>
@@ -633,7 +562,10 @@ export default function UploadPage() {
               </CardHeader>
               <CardContent>
                 <CombinedAnalysisForm
-                  onSubmit={handleCombinedSubmit}
+                  onSubmit={() => {
+                    console.warn('⚠️ CombinedAnalysisForm tab is deprecated. Please use the Upload & Parse flow instead.');
+                    alert('This tab is deprecated. Please use the "Upload & Parse" tab for combined analysis.');
+                  }}
                   isLoading={isSubmitting || isAnalyzing}
                 />
               </CardContent>
@@ -688,6 +620,19 @@ function CombinedAnalysisForm({
 
   return (
     <div className="space-y-6">
+      {/* Deprecation Notice */}
+      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <div className="flex items-center">
+          <AlertCircle className="h-5 w-5 text-yellow-600 mr-2" />
+          <div>
+            <h3 className="text-sm font-medium text-yellow-800">This tab is deprecated</h3>
+            <p className="text-sm text-yellow-700 mt-1">
+              Please use the "Upload & Parse" tab for biomarker analysis. This provides the same functionality with improved workflow.
+            </p>
+          </div>
+        </div>
+      </div>
+      
       {/* Progress Indicator */}
       <div className="flex items-center justify-center space-x-4">
         <div className={`flex items-center ${currentStep === 'biomarkers' ? 'text-blue-600' : biomarkerData ? 'text-green-600' : 'text-gray-400'}`}>
