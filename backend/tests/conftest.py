@@ -6,11 +6,30 @@ import sys
 import os
 import pytest
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load test environment variables
+load_dotenv(dotenv_path="backend/.env.test")
 
 # Add the backend directory to Python path for imports
 backend_dir = Path(__file__).parent.parent
 if str(backend_dir) not in sys.path:
     sys.path.insert(0, str(backend_dir))
+
+
+@pytest.fixture(scope="session", autouse=True)
+def cleanup_test_db():
+    """Truncate key tables after tests finish to ensure clean state."""
+    from sqlalchemy import create_engine, text
+    
+    db_url = os.getenv("DATABASE_URL_TEST")
+    if not db_url:
+        return
+    
+    engine = create_engine(db_url)
+    yield
+    with engine.begin() as conn:
+        conn.execute(text("TRUNCATE profiles, analyses, consents, audit_logs RESTART IDENTITY CASCADE;"))
 
 
 @pytest.fixture(scope="session", autouse=True)

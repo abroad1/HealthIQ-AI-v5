@@ -276,7 +276,7 @@ class TestOrchestrator:
         import subprocess
         
         logger.info("Seeding test database with base data...")
-        subprocess.run(["python", "backend/tests/fixtures/seed_test_db.py"], check=False)
+        subprocess.run(["python", "backend/tests/fixtures/seed_test_db.py"], check=True)
         
         logger.info("Executing pytest suites from backend directory...")
         
@@ -322,6 +322,7 @@ class TestOrchestrator:
         # Log final summary
         total_time = time.time() - self.start_time
         logger.info(f"Test orchestration completed in {total_time:.2f} seconds")
+        logger.info("Sprint 13 integrity validation complete — reports generated.")
         logger.info(f"Overall result: {'SUCCESS' if all_passed else 'FAILURE'}")
         
         return all_passed
