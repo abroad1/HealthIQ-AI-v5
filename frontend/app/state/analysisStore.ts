@@ -22,6 +22,13 @@ export interface AnalysisResult {
   analysis_id: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
   progress?: number;
+  // Top-level properties (matching AnalysisService mapping)
+  biomarkers?: BiomarkerResult[];
+  clusters?: any[];
+  insights?: any[];
+  overall_score?: number;
+  recommendations?: string[];
+  // Nested results (legacy structure)
   results?: {
     biomarkers: BiomarkerResult[];
     clusters: any[];
@@ -232,6 +239,13 @@ export const useAnalysisStore = create<AnalysisState>()(
 
           // Add to history
           get().addToHistory(analysis);
+
+          // Close any existing EventSource before creating a new one
+          const state = get();
+          if (state.eventSource) {
+            console.log('🧹 Closing previous SSE connection before starting new one');
+            state.eventSource.close();
+          }
 
           // Start listening to SSE events
           const eventSource = AnalysisService.subscribeToAnalysisEvents(

@@ -300,10 +300,13 @@ class BiomarkerScoreRepository(BaseRepository[BiomarkerScore]):
         Returns:
             BiomarkerScore instance
         """
-        return self.upsert(
+        logger.debug(f"[Repository] Upserting biomarker '{biomarker_name}' for analysis {analysis_id} with data: {list(kwargs.keys())}")
+        result = self.upsert(
             {"analysis_id": analysis_id, "biomarker_name": biomarker_name},
             **kwargs
         )
+        logger.info(f"[Repository] Successfully upserted biomarker '{biomarker_name}' for analysis {analysis_id}")
+        return result
     
     def delete_by_analysis_id(self, analysis_id: UUID) -> int:
         """

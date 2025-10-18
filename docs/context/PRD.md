@@ -147,7 +147,34 @@ Each module is stateless, version-controlled, and independently testable. Contex
 
 ---
 
-## 8. Future Scope
+## 8. Testing and Validation Strategy
+
+### Test Isolation and Security Validation
+
+**Test Database Isolation**: All destructive tests (security, GDPR, performance) run against an isolated local PostgreSQL test database to prevent any impact on the production Supabase database.
+
+**Key Principles**:
+- **Production Safety**: Zero risk of test operations affecting production data
+- **Constraint Freedom**: Destructive tests can run without foreign key violations
+- **Schema Flexibility**: Test database can be modified for specific test scenarios
+- **Automated Cleanup**: Test containers are automatically destroyed after test completion
+
+**Implementation**:
+- Local PostgreSQL container (`healthiq_testdb`) on port 5433
+- Environment variable `DATABASE_URL_TEST` for test database configuration
+- Automatic database switching in test fixtures when test database is available
+- Safety guards preventing accidental production database usage
+
+**Benefits**:
+- **Developer Confidence**: Clear separation between test and production environments
+- **CI/CD Integration**: Reliable automated testing in build pipelines
+- **Scalable Testing**: Foundation for more comprehensive test scenarios
+
+> For detailed implementation procedures, see [Sprint 11 Documentation](../../sprints/SPRINT_11_TEST_ISOLATION_AND_SECURITY_VALIDATION.md)
+
+---
+
+## 10. Future Scope
 
 - Longitudinal biomarker tracking
 - API integrations with testing providers
@@ -159,7 +186,7 @@ Each module is stateless, version-controlled, and independently testable. Contex
 
 ---
 
-## 9. Out of Scope
+## 11. Out of Scope
 
 - Live doctor chat
 - Medical diagnosis or prescription
@@ -168,7 +195,7 @@ Each module is stateless, version-controlled, and independently testable. Contex
 
 ---
 
-## 10. Metrics of Success
+## 12. Metrics of Success
 
 - 🧠 % of users who understand their bloodwork more clearly (UX survey)
 - 🧪 # of biomarkers with recommended actions
@@ -185,7 +212,7 @@ Each module is stateless, version-controlled, and independently testable. Contex
 
 ---
 
-## 11. Why We Win
+## 13. Why We Win
 
 HealthIQ AI delivers:
 - A blood report people **actually understand**

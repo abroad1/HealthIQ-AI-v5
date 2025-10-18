@@ -30,6 +30,23 @@ def upgrade() -> None:
     for table in tables:
         op.execute(f'ALTER TABLE {table} ENABLE ROW LEVEL SECURITY;')
     
+    # Create auth schema and functions for local test databases
+    op.execute("""
+CREATE SCHEMA IF NOT EXISTS auth;
+CREATE OR REPLACE FUNCTION auth.uid()
+RETURNS uuid
+LANGUAGE sql
+AS $$
+  SELECT '00000000-0000-0000-0000-000000000000'::uuid;
+$$;
+CREATE OR REPLACE FUNCTION auth.role()
+RETURNS text
+LANGUAGE sql
+AS $$
+  SELECT 'authenticated'::text;
+$$;
+""")
+    
     # Profiles table policies
     op.execute('''
         CREATE POLICY "Users can view own profile" ON profiles

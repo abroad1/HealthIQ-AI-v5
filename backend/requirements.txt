@@ -1,6 +1,12 @@
--e .
-pytest
 mypy
 google-generativeai>=0.5.0
 python-dotenv>=1.0.0
 supabase>=2.4.0
+alembic
+sqlalchemy
+psycopg2
+pytest
+pytest-asyncio
+pytest-html
+pytest-json-report
+python-dotenv

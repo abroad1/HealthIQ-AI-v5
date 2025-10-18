@@ -1,0 +1,130 @@
+name: Nightly Validation
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # nightly 02:00 UTC
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        ports: ["5433:5432"]
+        env:
+          POSTGRES_PASSWORD: test
+          POSTGRES_USER: postgres
+          POSTGRES_DB: healthiq_test
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    
+    env:
+      DATABASE_URL_TEST: postgresql://postgres:test@localhost:5433/healthiq_test
+      PYTHONPATH: ${{ github.workspace }}/backend
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+            
+      - name: Install Python dependencies
+        run: |
+          cd backend
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest-html pytest-json-report
+          
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          timeout 60 bash -c 'until pg_isready -h localhost -p 5433 -U postgres; do sleep 1; done'
+          
+      - name: Run Alembic migrations
+        run: |
+          cd backend
+          alembic upgrade head
+          
+      - name: Run unified test orchestration
+        run: |
+          cd backend
+          python scripts/run_all_tests.py
+          
+      - name: Upload validation reports
+        uses: actions/upload-artifact@v4
+        if: always() # Upload reports even if tests fail
+        with:
+          name: validation-reports-${{ github.run_number }}
+          path: |
+            backend/reports/validation/
+            backend/reports/validation/*.html
+            backend/reports/validation/*.txt
+            backend/reports/validation/*.json
+            backend/reports/validation/*.log
+          retention-days: 30
+          
+      - name: Comment on PR (if applicable)
+        if: github.event_name == 'workflow_dispatch' && github.event.pull_request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            try {
+              const summaryPath = path.join('backend', 'reports', 'validation', 'summary.txt');
+              if (fs.existsSync(summaryPath)) {
+                const summary = fs.readFileSync(summaryPath, 'utf8');
+                github.rest.issues.createComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: `## 🔍 Nightly Validation Results\n\n\`\`\`\n${summary}\n\`\`\``
+                });
+              }
+            } catch (error) {
+              console.log('Could not post summary comment:', error.message);
+            }
+            
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            try {
+              const summaryPath = path.join('backend', 'reports', 'validation', 'summary.txt');
+              let summary = 'Test execution failed - summary not available';
+              
+              if (fs.existsSync(summaryPath)) {
+                summary = fs.readFileSync(summaryPath, 'utf8');
+              }
+              
+              // Create an issue for test failures
+              github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `🚨 Nightly Validation Failed - ${new Date().toISOString().split('T')[0]}`,
+                body: `## Nightly validation failed\n\n**Run ID:** ${context.runId}\n**Commit:** ${context.sha}\n\n\`\`\`\n${summary}\n\`\`\`\n\nPlease check the [workflow run](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}) for detailed logs.`,
+                labels: ['bug', 'ci-failure', 'validation']
+              });
+            } catch (error) {
+              console.log('Could not create failure issue:', error.message);
+            }

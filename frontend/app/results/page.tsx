@@ -21,7 +21,15 @@ import { useClusterStore } from '../state/clusterStore';
 import { InsightsPanel } from '@/components/insights/InsightsPanel';
 import BiomarkerDials from '@/components/biomarkers/BiomarkerDials';
 import ClusterSummary from '@/components/clusters/ClusterSummary';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { AnalysisService } from '../services/analysis';
+
+// Global debug interface
+declare global {
+  interface Window {
+    __HEALTHIQ_DEBUG__?: any;
+  }
+}
 
 export default function ResultsPage() {
   const { 
@@ -40,11 +48,53 @@ export default function ResultsPage() {
   
   const [activeTab, setActiveTab] = useState('overview');
   const [showDetails, setShowDetails] = useState(false);
+  const [isFetchingFromUrl, setIsFetchingFromUrl] = useState(false);
+  const [lastFetchedId, setLastFetchedId] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const analysisIdFromUrl = searchParams.get('analysis_id');
+  
+  console.log('🔍 URL analysis_id:', analysisIdFromUrl);
+
+  // Fetch analysis result from URL if analysis_id is provided (single controlled sequence)
+  useEffect(() => {
+    if (!analysisIdFromUrl || analysisIdFromUrl === lastFetchedId) return;
+
+    console.log("📡 Fetching analysis result for:", analysisIdFromUrl);
+    setLastFetchedId(analysisIdFromUrl);
+    setIsFetchingFromUrl(true);
+    
+    AnalysisService.getAnalysisResult(analysisIdFromUrl)
+      .then((result) => {
+        console.log('✅ Analysis result fetched:', result);
+        
+        if (result?.success && result.data) {
+          // Update the analysis store with the fetched data
+          const analysisStore = useAnalysisStore.getState();
+          // Add the missing status field for store compatibility
+          const analysisData = {
+            ...result.data,
+            status: 'completed' as const,
+            progress: 100
+          };
+          analysisStore.setCurrentAnalysis(analysisData);
+          console.log("✅ Analysis data loaded:", analysisData);
+          
+          // Set debug data after store update
+          if (typeof window !== 'undefined') {
+            window.__HEALTHIQ_DEBUG__ = analysisData;
+          }
+        } else {
+          console.warn("⚠️ Empty or invalid result for:", analysisIdFromUrl);
+        }
+      })
+      .catch((err) => console.error("❌ Failed to fetch result:", err))
+      .finally(() => setIsFetchingFromUrl(false));
+  }, [analysisIdFromUrl, lastFetchedId]);
 
   useEffect(() => {
-    // If no analysis data, redirect to upload
-    if (!currentAnalysis && !isAnalyzing) {
+    // If no analysis data and no URL parameter, redirect to upload
+    if (!currentAnalysis && !isAnalyzing && !analysisIdFromUrl && !isFetchingFromUrl) {
       router.push('/upload');
       return;
     }
@@ -53,7 +103,7 @@ export default function ResultsPage() {
     if (currentAnalysis && !clusters.length && !clustersLoading) {
       loadClusters(currentAnalysis.analysis_id);
     }
-  }, [currentAnalysis, isAnalyzing, clusters.length, clustersLoading, loadClusters, router]);
+  }, [currentAnalysis, isAnalyzing, clusters.length, clustersLoading, loadClusters, router, analysisIdFromUrl, isFetchingFromUrl]);
 
   const handleRetry = () => {
     if (currentAnalysis) {
@@ -94,16 +144,21 @@ export default function ResultsPage() {
     }
   };
 
-  if (isAnalyzing) {
+  if (isAnalyzing || isFetchingFromUrl) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <Card className="w-full max-w-md">
           <CardContent className="pt-6">
             <div className="text-center">
               <RefreshCw className="h-16 w-16 text-blue-500 mx-auto mb-4 animate-spin" />
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Analyzing Your Data</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                {isFetchingFromUrl ? 'Loading Your Results' : 'Analyzing Your Data'}
+              </h2>
               <p className="text-gray-600 mb-4">
-                Our AI is processing your biomarker data and generating personalized insights. This may take a few moments.
+                {isFetchingFromUrl 
+                  ? 'Fetching your analysis results from the server...' 
+                  : 'Our AI is processing your biomarker data and generating personalized insights. This may take a few moments.'
+                }
               </p>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div className="bg-blue-600 h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
@@ -165,12 +220,20 @@ export default function ResultsPage() {
 
   const { results, created_at, completed_at } = currentAnalysis;
   const insights = results?.insights || [];
+  
+  // Fix: Read biomarkers from the correct location
+  const biomarkers = (currentAnalysis as any)?.biomarkers || results?.biomarkers || [];
+  
   const metadata = {
     analysisId: currentAnalysis.analysis_id,
     completedAt: completed_at,
-    biomarkerCount: results?.biomarkers?.length || 0,
+    biomarkerCount: biomarkers.length,
     confidence: 0.85 // This would need to be calculated from actual data
   };
+
+  // Debug: Log rendered biomarkers count
+  console.log("🧩 Biomarkers to render:", biomarkers.length);
+  console.log("🧩 Biomarkers data:", biomarkers);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -353,7 +416,7 @@ export default function ResultsPage() {
 
           <TabsContent value="biomarkers" className="space-y-6">
             <BiomarkerDials 
-              biomarkers={results?.biomarkers?.reduce((acc, biomarker) => {
+              biomarkers={biomarkers.reduce((acc, biomarker) => {
                 acc[biomarker.biomarker_name] = {
                   value: biomarker.value,
                   unit: biomarker.unit,
@@ -366,7 +429,7 @@ export default function ResultsPage() {
                   date: created_at
                 };
                 return acc;
-              }, {} as Record<string, any>) || {}} 
+              }, {} as Record<string, any>)} 
               showDetails={showDetails}
             />
           </TabsContent>

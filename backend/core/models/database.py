@@ -288,7 +288,6 @@ class Insight(Base):
     actionable = Column(Boolean, default=True, nullable=False)
     
     # Provenance fields (Sprint 9c)
-    insight_id = Column(String(100), nullable=False, index=True)
     version = Column(String(20), nullable=False, index=True)
     manifest_id = Column(String(100), nullable=False, index=True)
     experiment_id = Column(String(100), nullable=True)
@@ -324,12 +323,9 @@ class Insight(Base):
         Index("idx_insights_health_system", "health_system"),
         Index("idx_insights_actionable", "actionable"),
         # New provenance indexes
-        Index("idx_insights_insight_id_version", "insight_id", "version"),
         Index("idx_insights_manifest_id", "manifest_id"),
         Index("idx_insights_drivers_gin", "drivers", postgresql_using="gin"),
         Index("idx_insights_evidence_gin", "evidence", postgresql_using="gin"),
-        # Unique constraint for analysis + insight + version
-        UniqueConstraint("analysis_id", "insight_id", "version", name="idx_insights_unique_analysis_insight_version"),
     )
 
 

@@ -76,13 +76,48 @@ Forks must include a README with a summary of:
 
 ---
 
+## 🧪 Non-production Environments
+
+### Test Database and Local Containers
+
+**Exclusion Policy**: The following environments are **explicitly excluded** from backup strategies and may be destroyed after each test cycle:
+
+- **Local Test Database**: `healthiq_testdb` PostgreSQL container (port 5433)
+- **Docker Test Containers**: Any containers created for testing purposes
+- **Temporary Test Data**: Data generated during integration, performance, or security tests
+- **Local Development Databases**: Any local database instances used for development
+
+### Rationale
+
+- **Test Isolation**: Test databases contain synthetic data and destructive operations
+- **Resource Management**: Prevents accumulation of test containers and data
+- **Security**: Test environments may contain sensitive test data that should not persist
+- **Performance**: Regular cleanup prevents resource leaks and performance degradation
+
+### Cleanup Procedures
+
+- **Nightly Teardown**: Test containers are automatically destroyed after test completion
+- **Manual Cleanup**: Developers can run `docker system prune` to clean up test resources
+- **CI/CD Integration**: Build pipelines include automatic cleanup of test environments
+
+### Backup Exclusions
+
+The following are **never backed up**:
+- Test database containers and volumes
+- Temporary test files and logs
+- Local development database snapshots
+- Test-specific environment configurations
+
+---
+
 ## 📘 Related Files
 
 - `PROJECT_STRUCTURE.md` → for canonical folder layout  
 - `CURSOR_RULES.md` → for Cursor development constraints  
 - `IMPLEMENTATION_PLAN.md` → for milestone definitions  
 - `ARCHITECTURE_REVIEW_REPORT.md` → for current stack audit summary  
+- `docs/sprints/SPRINT_11_TEST_ISOLATION_AND_SECURITY_VALIDATION.md` → for test isolation details
 
 ---
 
-Maintaining this backup policy ensures that **no architectural context or milestone is ever lost**, even across experimental branches or major refactors.
+Maintaining this backup policy ensures that **no architectural context or milestone is ever lost**, even across experimental branches or major refactors, while properly managing test environments.

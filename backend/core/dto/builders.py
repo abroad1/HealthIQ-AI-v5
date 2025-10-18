@@ -88,7 +88,7 @@ def build_biomarker_insight_dto(insight: BiomarkerInsight) -> Dict[str, Any]:
         Frontend-safe dictionary
     """
     return {
-        "insight_id": insight.insight_id,
+        "id": insight.insight_id,
         "title": insight.title,
         "description": insight.description,
         "biomarkers": insight.biomarkers,
