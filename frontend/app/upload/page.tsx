@@ -14,8 +14,8 @@ import ParsedTable from '../components/preview/ParsedTable';
 import { useAnalysisStore } from '../state/analysisStore';
 import { useUploadStore, useUploadStatus, useParsedData } from '../state/upload';
 import { useParseUpload } from '../queries/parsing';
-import { useRouter } from 'next/navigation';
-import { getAnalysisResult } from '@/lib/api';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { getAnalysisResult, fetchFixtureAnalysis } from '@/lib/api';
 
 export default function UploadPage() {
   const [activeTab, setActiveTab] = useState('upload');
@@ -26,11 +26,35 @@ export default function UploadPage() {
   
   const { startAnalysis, isLoading: isAnalyzing, currentPhase, currentAnalysisId, error: analysisError } = useAnalysisStore();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isFixtureMode = searchParams.get('fixture') === 'true';
   
   // Upload workflow state
   const uploadStatus = useUploadStatus();
   const parsedData = useParsedData();
   const { setParsedResults, updateBiomarker, confirmAll, setError, setStatus } = useUploadStore();
+
+  // Helper function to handle parsed data from fixture
+  const handleParsedData = useCallback((analysisData: any) => {
+    if (!analysisData?.biomarkers) return;
+    const analysisId = 'fixture-0001'; // fixture test ID
+    const transformed = analysisData.biomarkers.map((b: any) => ({
+      name: b.biomarker_name ?? b.name ?? b.id,
+      value: b.value,
+      unit: b.unit,
+      status: b.status ?? 'parsed',
+      referenceRange: b.reference_range,
+    }));
+    const metadata = {
+      analysis_id: analysisId,
+      timestamp: new Date().toISOString(),
+      source_type: 'unknown' as const,
+      source_name: 'test-fixture',
+    };
+    setParsedResults(transformed, analysisId, metadata);
+    setStatus('ready');
+    console.log(`✅ Fetched ${transformed.length} biomarkers from ${process.env.NEXT_PUBLIC_API_BASE || 'http://127.0.0.1:8000'}/api/analysis/fixture`);
+  }, [setParsedResults, setStatus]);
   const parseUpload = useParseUpload();
   
   // Idempotent guard for handleConfirmAll
@@ -47,37 +71,25 @@ export default function UploadPage() {
     });
   }, [uploadStatus, parsedData, parseUpload.isSuccess, parseUpload.data]);
 
-  // Load fixture biomarkers when fixture=true
+  // Dual-path upload logic: fixture mode vs manual mode
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const params = new URLSearchParams(window.location.search);
-    if (!params.get('fixture')) return;
+    async function loadData() {
+      try {
+        if (isFixtureMode) {
+          console.log("📦 Fixture mode active — fetching static test data...");
+          const data = await fetchFixtureAnalysis();
+          handleParsedData(data);
+        } else {
+          console.log("📤 Manual mode active — waiting for user input...");
+          // Manual upload logic remains unchanged
+        }
+      } catch (err) {
+        console.error("❌ Fixture backend fetch failed:", err);
+      }
+    }
 
-    const analysisId = 'fixture-0001'; // fixture test ID
-
-    fetch('/api/analysis/fixture')
-      .then((res) => res.json())
-      .then((analysisData) => {
-        if (!analysisData?.biomarkers) return;
-        const transformed = analysisData.biomarkers.map((b: any) => ({
-          name: b.biomarker_name ?? b.name ?? b.id,
-          value: b.value,
-          unit: b.unit,
-          status: b.status ?? 'parsed',
-          referenceRange: b.reference_range,
-        }));
-        const metadata = {
-          analysis_id: analysisId,
-          timestamp: new Date().toISOString(),
-          source_type: 'fixture' as const,
-          source_name: 'test-fixture',
-        };
-        setParsedResults(transformed, analysisId, metadata);
-        setStatus('ready');
-        console.log('✅ Fixture biomarkers loaded from backend.');
-      })
-      .catch((err) => console.error('❌ Fixture backend fetch failed:', err));
-  }, [setParsedResults, setStatus]);
+    loadData();
+  }, [isFixtureMode, handleParsedData]);
 
   // Handle file upload parsing
   const handleFileUpload = async (file: File) => {
