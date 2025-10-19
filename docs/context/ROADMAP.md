@@ -23,9 +23,10 @@
 
 ### Versioning
 Each milestone tagged `v5.<sprint>.0`.  
+Current tags: `v5.14.0-backup-fallback-verified` (Sprint 14 release), `v5.14.1-docs-refactor` (Documentation refactor baseline), `v5.14.2-docs-synced` (Current synchronised set)  
 Backup policy per [BACKUP_STRATEGY.md](./BACKUP_STRATEGY.md).
 
 ---
 
 ### Governance
-All changes follow `CHATGPT_RULES.md` for deterministic, Cursor-executed edits.  
+All changes follow [CHATGPT_RULES.md](./CHATGPT_RULES.md) for deterministic, Cursor-executed edits.  
