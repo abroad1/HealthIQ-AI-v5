@@ -15,7 +15,7 @@ import { useAnalysisStore } from '../state/analysisStore';
 import { useUploadStore, useUploadStatus, useParsedData } from '../state/upload';
 import { useParseUpload } from '../queries/parsing';
 import { useRouter } from 'next/navigation';
-import mockBiomarkers from '@/lib/mock/biomarkers';
+import { getAnalysisResult } from '@/lib/api';
 
 export default function UploadPage() {
   const [activeTab, setActiveTab] = useState('upload');
@@ -47,29 +47,35 @@ export default function UploadPage() {
     });
   }, [uploadStatus, parsedData, parseUpload.isSuccess, parseUpload.data]);
 
-  // Auto-fill mock biomarkers when autofill=true
+  // Auto-fill seeded biomarkers when autofill=true
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.location.search.includes('autofill=true')) {
-      // Transform mock biomarkers to expected format
-      const transformedBiomarkers = mockBiomarkers.map((biomarker) => ({
-        name: biomarker.id,
-        value: biomarker.value,
-        unit: biomarker.unit,
-        status: 'raw' as const
-      }));
-      
-      // Create proper metadata
-      const metadata = {
-        analysis_id: 'mock-analysis-id',
-        timestamp: new Date().toISOString(),
-        source_type: 'unknown' as const,
-        source_name: 'autofill-mock-data'
-      };
-      
-      setParsedResults(transformedBiomarkers, 'mock-analysis-id', metadata);
-      setStatus('ready');
-      console.log('🧪 Mock biomarkers loaded');
-    }
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    if (!params.get('autofill')) return;
+
+    const analysisId = '00000000-0000-0000-0000-000000000002'; // seeded test ID
+
+    getAnalysisResult(analysisId)
+      .then((analysisData) => {
+        if (!analysisData?.biomarkers) return;
+        const transformed = analysisData.biomarkers.map((b: any) => ({
+          name: b.biomarker_name ?? b.name ?? b.id,
+          value: b.value,
+          unit: b.unit,
+          status: b.status ?? 'parsed',
+          referenceRange: b.reference_range,
+        }));
+        const metadata = {
+          analysis_id: analysisId,
+          timestamp: new Date().toISOString(),
+          source_type: 'unknown' as const,
+          source_name: 'seeded-db',
+        };
+        setParsedResults(transformed, analysisId, metadata);
+        setStatus('ready');
+        console.log('✅ Seeded biomarkers loaded from backend.');
+      })
+      .catch((err) => console.error('❌ Autofill backend fetch failed:', err));
   }, [setParsedResults, setStatus]);
 
   // Handle file upload parsing
@@ -268,11 +274,20 @@ export default function UploadPage() {
       console.log('📊 Extracted parsed_data:', parsed_data);
       console.log('🧬 Biomarkers array:', parsed_data.biomarkers, 'Length:', parsed_data.biomarkers?.length);
       
-      setParsedResults(
-        parsed_data.biomarkers,
-        parseUpload.data.analysis_id,
-        parsed_data.metadata
-      );
+      // Transform biomarkers to include referenceRange object
+      const transformed = parsed_data.biomarkers.map((b: any) => ({
+        name: b.name ?? b.id ?? b.biomarker_name,
+        value: b.value,
+        unit: b.unit,
+        status: 'raw' as const,
+        referenceRange: (b.ref_low != null && b.ref_high != null)
+          ? { min: Number(b.ref_low), max: Number(b.ref_high), unit: b.unit }
+          : (b.referenceRange && typeof b.referenceRange === 'object')
+            ? b.referenceRange
+            : undefined,
+      }));
+
+      setParsedResults(transformed, parseUpload.data.analysis_id, parsed_data.metadata);
     } else if (parseUpload.isError && parseUpload.error) {
       console.error('❌ Parse upload error:', parseUpload.error);
       setError({

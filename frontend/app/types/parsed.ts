@@ -15,6 +15,9 @@ export interface ParsedBiomarker {
   
   /** Processing status of this biomarker */
   status?: "raw" | "edited" | "confirmed";
+  
+  /** Reference range for this biomarker */
+  referenceRange?: { min: number; max: number; unit: string };
 }
 
 export interface ParseMetadata {

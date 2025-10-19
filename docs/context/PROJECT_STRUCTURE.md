@@ -119,7 +119,13 @@ healthiq/
 │   │   ├── unit/                     # Unit tests (70% - business logic)
 │   │   ├── integration/              # Integration tests (25% - API contracts)
 │   │   ├── e2e/                      # E2E tests (5% - critical user journeys)
-│   │   └── fixtures/                 # Test data and fixtures
+│   │   ├── fixtures/                 # Test data and fixtures (Sprint 13)
+│   │   │   └── seed_test_db.py       # Comprehensive test data seeding script
+│   │   ├── security/                 # Security validation tests (Sprint 10)
+│   │   │   ├── test_rls_policies.py  # RLS policy validation tests
+│   │   │   └── test_gdpr_compliance.py # GDPR compliance tests
+│   │   └── performance/              # Performance benchmark tests (Sprint 10)
+│   │       └── test_connection_pooling.py # Connection pooling tests
 │   ├── tests_archive/                # Archived tests (excluded from CI/CD)
 │   ├── ssot/                         # Single Source of Truth data
 │   │   ├── biomarkers.yaml           # Biomarker definitions and ranges
@@ -137,7 +143,9 @@ healthiq/
 │   │   ├── model_training.py         # LLM model training scripts
 │   │   ├── run_all_tests.py          # Unified test orchestrator (Sprint 12)
 │   │   ├── generate_validation_report.py # Validation report generator (Sprint 12)
-│   │   └── run_sprint10_tests.py     # Sprint 10 test runner
+│   │   ├── run_sprint10_tests.py     # Sprint 10 test runner
+│   │   ├── validate_rls_policies.py  # RLS policy validation script (Sprint 10)
+│   │   └── seed_analysis_scores.py   # Real biomarker score generation for seeded analyses (Sprint 14)
 │   ├── reports/                      # Test and validation reports
 │   │   ├── validation/               # Automated validation reports (Sprint 12)
 │   │   │   ├── README.md             # Report storage policy and usage
@@ -148,9 +156,16 @@ healthiq/
 │   │   └── performance/              # Performance benchmark reports
 │   ├── docs/                         # Backend-specific documentation
 │   │   └── openapi.yaml              # OpenAPI specification
+│   ├── services/                     # External service integrations (Sprint 10)
+│   │   ├── storage/                  # Data storage services
+│   │   │   ├── fallback_service.py   # Circuit breaker and retry logic
+│   │   │   └── persistence_service.py # Database persistence service
+│   │   └── monitoring/               # Performance monitoring services
+│   │       └── performance_monitor.py # Performance monitoring and metrics
 │   ├── requirements.txt              # Python dependencies
 │   ├── pyproject.toml                # Python project configuration
 │   ├── mypy.ini                      # Type checking configuration
+│   ├── env.example                   # Environment variables template (Sprint 10)
 │   └── README.md                     # Backend documentation
 ├── frontend/                         # Next.js 14+ App Router frontend (IMPLEMENTED)
 │   ├── app/                          # Next.js App Router (file-system routing)
@@ -314,6 +329,8 @@ healthiq/
 │   │   └── README.md                 # Context documentation index
 │   ├── sprints/                      # Sprint-specific documentation
 │   │   ├── SPRINT_11_TEST_ISOLATION_AND_SECURITY_VALIDATION.md
+│   │   ├── SPRINT_12_AUTOMATED_TEST_ORCHESTRATION_AND_CONTINUOUS_VALIDATION.md
+│   │   ├── SPRINT_13_TEST_DATA_INTEGRITY_AND_BASELINE_VALIDATION.md
 │   │   └── README.md                 # Sprint documentation index
 │   ├── RULES/                        # AI agent rule definitions
 │   │   └── GENERATE_RULE.md          # Context generation rules
@@ -357,7 +374,8 @@ healthiq/
 │   ├── workflows/                    # CI/CD workflows
 │   │   ├── ci.yml                    # Continuous Integration
 │   │   ├── cd.yml                    # Continuous Deployment
-│   │   └── security.yml              # Security scanning
+│   │   ├── security.yml              # Security scanning
+│   │   └── validate.yml              # Nightly validation workflow (Sprint 12)
 │   └── ISSUE_TEMPLATE/               # Issue templates
 ├── .env                              # Environment variables (uncommitted - contains secrets)
 ├── .env.example                      # Environment variables template (committed - Gemini-only policy)
@@ -398,9 +416,13 @@ This blueprint represents the complete architectural vision for HealthIQ AI v5, 
 - **✅ Sprint 9 Completed**: Core UI components, biomarker forms, results visualization, responsive design, medical shadow system
 - **✅ Sprint 9b Completed**: Persistence foundation fully implemented and validated with 369 passing tests, complete database integration, export v1 with Supabase Storage, comprehensive testing coverage
 - **✅ Sprint 10 Completed**: Database Architecture Security and Reliability Enhancement with RLS policies, fallback mechanisms, connection pooling, centralized configuration, and comprehensive security testing
+- **✅ Sprint 11 Completed**: Test Isolation and Security Validation with dedicated PostgreSQL test database, safety guards, and comprehensive test infrastructure
+- **✅ Sprint 12 Completed**: Automated Test Orchestration and Continuous Validation with unified test runner, automated migrations, report generation, and nightly CI/CD validation
+- **✅ Sprint 13 Completed**: Test Data Integrity and Baseline Validation with comprehensive test data seeding, automatic cleanup, environment configuration loading, and enhanced test orchestration
+- **✅ Sprint 14 Completed**: Biomarker Data Flow and API Fallback Correction with database connection fixes, dynamic fallback mechanism, frontend data integration, and complete biomarker data pipeline
 - **✅ Frontend Restoration Completed**: Full frontend structure restored from lovable/main with all components, pages, and supporting files
 - **✅ Biomarker Visibility Fixes (2025-01-30)**: Backend schema alignment, frontend data access fixes, TypeScript interface updates
-- **✅ All Sprints Completed**: Complete 10-sprint development cycle finished with production-ready database layer
+- **✅ All Sprints Completed**: Complete 14-sprint development cycle finished with production-ready database layer, comprehensive test automation, and fully functional biomarker data pipeline
 - **🔮 Future**: Advanced integrations, clinical-grade features, enterprise capabilities
 
 ### Sprint 8 Implementation Details

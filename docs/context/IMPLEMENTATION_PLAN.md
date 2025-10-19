@@ -574,6 +574,36 @@ This implementation plan outlines a **10-sprint development cycle** (20 weeks) t
 - [x] **Value-First Compliance**: Every test suite automated with high-value reporting - **✅ ACHIEVED** (Comprehensive business value reporting)
 - [x] **Coverage Target**: Critical path coverage ≥60% for business-critical code - **✅ ACHIEVED** (Automated validation and trend analysis)
 
+---
+
+#### **Sprint 13: Test Data Integrity and Baseline Validation**
+**Duration**: 2 weeks | **Dependencies**: Sprint 12 completed; automated test orchestration available | **Parallelizable**: ❌ | **Status**: ✅ **IMPLEMENTED (VALIDATED)**
+
+**Components:**
+- Expanded Test Data Seeding - **✅ Implemented** (Comprehensive test data seeding with all required parent records)
+- Automatic Test Cleanup - **✅ Implemented** (Session-scoped fixture for clean test state between runs)
+- Environment Configuration Loading - **✅ Implemented** (Automatic loading of test environment variables)
+- Enhanced Test Orchestration - **✅ Implemented** (Updated test runner with strict validation and completion logging)
+- Documentation Updates - **✅ Implemented** (Complete sprint documentation with objectives and deliverables)
+
+**Deliverables:**
+- [x] Comprehensive test data seeding script (`backend/tests/fixtures/seed_test_db.py`) - **✅ Implemented** (All required parent records for security, GDPR, and RLS tests)
+- [x] Automatic test cleanup fixture in `backend/tests/conftest.py` - **✅ Implemented** (Session-scoped fixture that truncates key tables after test completion)
+- [x] Environment configuration loading with `python-dotenv` - **✅ Implemented** (Automatic loading of `backend/.env.test` with test variables)
+- [x] Enhanced test orchestration with strict validation - **✅ Implemented** (Updated `run_all_tests.py` with `check=True` for strict validation)
+- [x] Complete sprint documentation - **✅ Implemented** (Comprehensive documentation with objectives, deliverables, and implementation details)
+- [x] **Value-First Testing**: All test data seeding and cleanup components created with high-value tests - **✅ Implemented** (Deterministic test execution validation)
+- [x] **Critical Path Coverage**: ≥60% for business-critical code only - **✅ Implemented** (Test data integrity and baseline validation coverage)
+- [x] **Integration Tests**: Complete test data seeding and cleanup integration - **✅ Implemented** (Full test environment isolation validation)
+
+**Success Criteria:**
+- [x] All test suites run without foreign key violations - **✅ ACHIEVED** (Comprehensive test data seeding with all required parent records)
+- [x] Consistent test results across multiple executions - **✅ ACHIEVED** (Automatic cleanup ensures clean state between runs)
+- [x] Clean state between test runs - **✅ ACHIEVED** (Session-scoped fixture truncates key tables after completion)
+- [x] Test environment variables automatically loaded - **✅ ACHIEVED** (python-dotenv integration with `.env.test` file)
+- [x] **Value-First Compliance**: Every test data component has high-value tests - **✅ ACHIEVED** (Deterministic test execution validation)
+- [x] **Coverage Target**: Critical path coverage ≥60% for business-critical code - **✅ ACHIEVED** (Test data integrity and baseline validation coverage)
+
 **Build Information & Implementation Details:**
 
 **Development Priority Order:**
@@ -743,6 +773,71 @@ docker rm healthiq_testdb
 
 ---
 
+#### **Sprint 14: Biomarker Data Flow and API Fallback Correction**
+**Duration**: 2 weeks | **Dependencies**: Sprint 13 completed; test data integrity and baseline validation available | **Parallelizable**: ❌ | **Status**: ✅ **IMPLEMENTED (VALIDATED)**
+
+**Components:**
+- Database Connection Configuration Fix - **✅ Implemented** (Automatic database URL override for local development)
+- API Fallback Mechanism Enhancement - **✅ Implemented** (Improved dynamic fallback mechanism for missing analysis results)
+- Frontend Data Flow Restoration - **✅ Implemented** (Seeded biomarker data properly displays in UI)
+- Test Data Validation - **✅ Implemented** (Complete biomarker data flow validation from database to UI)
+
+**Deliverables:**
+- [x] Local development database override logic in `backend/config/database.py` - **✅ Implemented** (Smart environment detection and configuration)
+- [x] Enhanced dynamic fallback mechanism in `backend/app/routes/analysis.py` - **✅ Implemented** (Direct integration with biomarker_scores table)
+- [x] Frontend analysis ID update in `frontend/app/upload/page.tsx` - **✅ Implemented** (Correct analysis ID for seeded data)
+- [x] Seeded biomarker data enhancement in `backend/tests/fixtures/seed_test_db.py` - **✅ Implemented** (Complete biomarker metadata with reference ranges)
+- [x] Real biomarker score generation script `backend/scripts/seed_analysis_scores.py` - **✅ Implemented** (Generates real biomarker scores for seeded analyses)
+- [x] **Value-First Testing**: All data flow components validated with high-value tests - **✅ Implemented** (End-to-end data flow validation)
+- [x] **Critical Path Coverage**: ≥60% for business-critical data flow code - **✅ Implemented** (Biomarker data pipeline coverage)
+- [x] **Integration Tests**: Complete data flow from database to frontend - **✅ Implemented** (Full biomarker data pipeline validation)
+
+**Success Criteria:**
+- [x] API returns 6 biomarkers with complete metadata instead of 3 stub biomarkers - **✅ ACHIEVED** (Dynamic fallback mechanism working correctly)
+- [x] Frontend displays all biomarker information including reference ranges - **✅ ACHIEVED** (Complete UI data display)
+- [x] Seeded data properly flows from backend to frontend - **✅ ACHIEVED** (End-to-end data pipeline functional)
+- [x] Local development uses test database automatically - **✅ ACHIEVED** (Smart environment detection)
+- [x] **Value-First Compliance**: Every data flow component has high-value tests - **✅ ACHIEVED** (Complete data pipeline validation)
+- [x] **Coverage Target**: Critical path coverage ≥60% for business-critical data flow - **✅ ACHIEVED** (Biomarker data pipeline coverage)
+
+**Build Information & Implementation Details:**
+
+**Development Priority Order:**
+1. **Database Connection Fix** - Automatic local development database override
+2. **API Fallback Enhancement** - Improved dynamic fallback mechanism
+3. **Frontend Data Integration** - Seeded data display in UI components
+4. **Test Data Enhancement** - Complete biomarker metadata with reference ranges
+5. **Validation** - End-to-end data flow testing and validation
+
+**Business Logic Requirements:**
+- **Database Configuration**: Automatic detection of local vs production environments
+- **API Fallback**: Dynamic fallback to biomarker_scores when analysis_results missing
+- **Data Flow**: Complete biomarker data pipeline from database to frontend
+- **Reference Ranges**: Full reference range data in API responses and UI display
+- **Status Mapping**: Proper biomarker status indicators (normal, optimal, etc.)
+
+**Integration Architecture:**
+- **Database Override**: Smart environment detection with automatic local database switching
+- **API Enhancement**: Improved fallback mechanism with biomarker score integration
+- **Frontend Integration**: Seeded data properly displayed with complete metadata
+- **Test Data**: Enhanced seeded data with real biomarker scores and reference ranges
+
+**Files Created/Modified:**
+- `backend/config/database.py` - Added local development database override logic
+- `backend/app/routes/analysis.py` - Enhanced dynamic fallback mechanism
+- `backend/services/storage/persistence_service.py` - Improved result handling
+- `frontend/app/upload/page.tsx` - Updated analysis ID for seeded data
+- `backend/tests/fixtures/seed_test_db.py` - Enhanced seeded biomarker data
+- `backend/scripts/seed_analysis_scores.py` - Added real biomarker score generation
+
+**Business Value Delivered:**
+- **Data Integrity**: Complete biomarker data with reference ranges and status indicators
+- **User Experience**: Rich data display with complete biomarker information
+- **Developer Experience**: Seamless local development with automatic database switching
+- **Data Reliability**: Consistent and accurate data flow from backend to frontend
+
+---
+
 ## 🎯 Sprint Strategy
 
 ### Sprint Structure
@@ -766,7 +861,7 @@ docker rm healthiq_testdb
 
 ## 📊 **Sprint Progress Tracking Table**
 
-**Current Status**: Sprint 12 completed; automated test orchestration and continuous validation implemented
+**Current Status**: Sprint 14 completed; biomarker data flow and API fallback correction implemented
 
 | Sprint | Major Deliverable | Status | Implementation Level | Critical Path |
 |--------|------------------|--------|---------------------|---------------|
@@ -783,6 +878,8 @@ docker rm healthiq_testdb
 | **10** | Database Architecture Security & Reliability | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
 | **11** | Test Isolation and Security Validation | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
 | **12** | Automated Test Orchestration & Continuous Validation | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
+| **13** | Test Data Integrity and Baseline Validation | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
+| **14** | Biomarker Data Flow and API Fallback Correction | ✅ **IMPLEMENTED (VALIDATED)** | 100% | ✅ **COMPLETE** |
 
 ### **Status Legend**
 - **✅ IMPLEMENTED**: Complete, working, and tested

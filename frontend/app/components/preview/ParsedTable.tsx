@@ -108,6 +108,7 @@ export default function ParsedTable({
                   <TableHead>Biomarker</TableHead>
                   <TableHead>Value</TableHead>
                   <TableHead>Unit</TableHead>
+                  <TableHead>Range</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="w-[100px]">Actions</TableHead>
                 </TableRow>
@@ -125,6 +126,12 @@ export default function ParsedTable({
                       }
                     </TableCell>
                     <TableCell>{biomarker.unit}</TableCell>
+                    <TableCell>
+                      {biomarker.referenceRange 
+                        ? `${biomarker.referenceRange.min}–${biomarker.referenceRange.max} ${biomarker.referenceRange.unit}`
+                        : '—'
+                      }
+                    </TableCell>
                     <TableCell>
                       {getStatusBadge(biomarker.status)}
                     </TableCell>

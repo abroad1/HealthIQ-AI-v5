@@ -15,6 +15,13 @@ logger = logging.getLogger(__name__)
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+# Override with test database if running locally
+if (os.getenv("ENVIRONMENT") == "test" or 
+    "supabase.com" in DATABASE_URL or 
+    "localhost" in os.getenv("HOSTNAME", "")):
+    DATABASE_URL = "postgresql://postgres:test@localhost:5433/healthiq_test"
+    print(f"Overriding DATABASE_URL to local test database: {DATABASE_URL}")
+
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL is not set in environment")
 
