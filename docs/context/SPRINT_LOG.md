@@ -7,7 +7,8 @@
 **Date:** 2025-10-19  
 **Objective:** Restore seeded test-DB integration and full backend→frontend flow.  
 **Completed:** Dynamic fallback logic, test-DB connection, frontend autofill, UI verification.  
-**Tag:** `v5.14.0-backup-fallback-verified`  
+**Tag:** `v5.14.0-backup-fallback-verified` (Sprint 14 release)  
+**Documentation:** `v5.14.1-docs-refactor` (Documentation refactor baseline), `v5.14.2-docs-synced` (Current synchronised set)  
 **Next:** Sprint 15 – Analysis Results Persistence Automation.
 
 ---

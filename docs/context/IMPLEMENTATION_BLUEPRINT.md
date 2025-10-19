@@ -5,9 +5,10 @@
 
 ## 1. Overview
 - Platform: HealthIQ AI v5  
-- Duration: 20 weeks (10 initial sprints + extensions)  
-- Status: Sprint 14 complete (v5.14.0)  
+- Duration: 28 weeks (14-sprint development cycle: 10 initial + 4 extensions)  
+- Status: All 14 sprints of the initial development cycle are complete  
 - Next Planned Sprint: 15 – Analysis Results Persistence Automation  
+- Version Tags: v5.14.0-backup-fallback-verified (Sprint 14 release), v5.14.1-docs-refactor (Documentation refactor baseline), v5.14.2-docs-synced (Current synchronised set)
 - Linked Docs: [SPRINT_LOG.md](./SPRINT_LOG.md) • [ROADMAP.md](./ROADMAP.md) • [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)
 
 ---
