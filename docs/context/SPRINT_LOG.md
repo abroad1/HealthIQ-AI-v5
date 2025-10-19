@@ -22,7 +22,8 @@
 **Next:** Sprint 16 – Frontend Advanced Mode Expansion.  
 **Cleanup:** Legacy seeding and manual test infrastructure removed (v5.15.3-legacy-cleanup)  
 **Refactor:** Replaced seeded dataset with fixture-based test harness (v5.15.4-test-harness-refactor)  
-**Smoke Runner:** Added automated smoke-test runner (v5.15.5-smoke-runner)
+**Smoke Runner:** Added automated smoke-test runner (v5.15.5-smoke-runner)  
+**Database Removal:** Removed database dependency, transitioned to fixture-only backend (v5.15.6-db-dependency-removed)
 
 ---
 

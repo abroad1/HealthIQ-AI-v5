@@ -42,6 +42,7 @@
 | 14 | Biomarker Data Flow Restoration | ✅ | Full fallback logic + seeded data |
 | 15 | Analysis Results Persistence Automation | ✅ | Automatic analysis_results creation |
 | 15.1 | Automated Smoke Runner | ✅ | One-command system health validation |
+| 15.2 | Database Dependency Removed | ✅ | Backend now fully fixture-driven |
 
 ---
 
