@@ -10,3 +10,5 @@ pytest-asyncio
 pytest-html
 pytest-json-report
 python-dotenv
+requests
+selenium

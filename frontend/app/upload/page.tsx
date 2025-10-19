@@ -47,15 +47,16 @@ export default function UploadPage() {
     });
   }, [uploadStatus, parsedData, parseUpload.isSuccess, parseUpload.data]);
 
-  // Auto-fill seeded biomarkers when autofill=true
+  // Load fixture biomarkers when fixture=true
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
-    if (!params.get('autofill')) return;
+    if (!params.get('fixture')) return;
 
-    const analysisId = '00000000-0000-0000-0000-000000000002'; // seeded test ID
+    const analysisId = 'fixture-0001'; // fixture test ID
 
-    getAnalysisResult(analysisId)
+    fetch('/api/analysis/fixture')
+      .then((res) => res.json())
       .then((analysisData) => {
         if (!analysisData?.biomarkers) return;
         const transformed = analysisData.biomarkers.map((b: any) => ({
@@ -68,14 +69,14 @@ export default function UploadPage() {
         const metadata = {
           analysis_id: analysisId,
           timestamp: new Date().toISOString(),
-          source_type: 'unknown' as const,
-          source_name: 'seeded-db',
+          source_type: 'fixture' as const,
+          source_name: 'test-fixture',
         };
         setParsedResults(transformed, analysisId, metadata);
         setStatus('ready');
-        console.log('✅ Seeded biomarkers loaded from backend.');
+        console.log('✅ Fixture biomarkers loaded from backend.');
       })
-      .catch((err) => console.error('❌ Autofill backend fetch failed:', err));
+      .catch((err) => console.error('❌ Fixture backend fetch failed:', err));
   }, [setParsedResults, setStatus]);
 
   // Handle file upload parsing

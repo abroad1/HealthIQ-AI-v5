@@ -258,7 +258,7 @@ export interface AnalysisResult {
 ### **Sprint 13 Deliverables Implemented**
 
 #### **1. Expanded Test Data Seeding**
-- **✅ Comprehensive Seeding**: `backend/tests/fixtures/seed_test_db.py` with all required parent records
+- **✅ Comprehensive Seeding**: Test data seeding with all required parent records
 - **✅ Foreign Key Satisfaction**: All security, GDPR, and RLS tests have proper data relationships
 - **✅ Idempotent Insertion**: Safe re-runs with `ON CONFLICT DO NOTHING` logic
 - **✅ Complete Data Set**: Base profiles, analyses, consents, and audit logs
@@ -290,7 +290,7 @@ export interface AnalysisResult {
 ### **Files Created/Modified**
 
 #### **New Files Created**
-- `backend/tests/fixtures/seed_test_db.py` - Comprehensive test data seeding script
+- Comprehensive test data seeding script
 - `backend/.env.test` - Test environment configuration template
 - `docs/sprints/SPRINT_13_TEST_DATA_INTEGRITY_AND_BASELINE_VALIDATION.md` - Sprint documentation
 
@@ -1007,8 +1007,8 @@ Sprint 9b is **COMPLETE** and ready for Sprint 9c or Sprint 10:
 - `frontend/app/components/biomarkers/BiomarkerDials.tsx` - Enhanced reference range display
 
 #### **Test Data Updates**
-- `backend/tests/fixtures/seed_test_db.py` - Enhanced seeded biomarker data
-- `backend/scripts/seed_analysis_scores.py` - Added real biomarker score generation
+- Enhanced seeded biomarker data
+- Real biomarker score generation - Added real biomarker score generation
 
 ### **Business Value Delivered**
 

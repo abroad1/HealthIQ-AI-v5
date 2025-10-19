@@ -119,8 +119,10 @@ healthiq/
 │   │   ├── unit/                     # Unit tests (70% - business logic)
 │   │   ├── integration/              # Integration tests (25% - API contracts)
 │   │   ├── e2e/                      # E2E tests (5% - critical user journeys)
+│   │   ├── smoke/                    # Smoke tests (Phase 2 refactor)
+│   │   │   └── test_fixture_analysis.py # Fixture endpoint smoke tests
 │   │   ├── fixtures/                 # Test data and fixtures (Sprint 13)
-│   │   │   └── seed_test_db.py       # Comprehensive test data seeding script
+│   │   │   └── sample_analysis.py    # Fixture-based test data (Phase 2 refactor)
 │   │   ├── security/                 # Security validation tests (Sprint 10)
 │   │   │   ├── test_rls_policies.py  # RLS policy validation tests
 │   │   │   └── test_gdpr_compliance.py # GDPR compliance tests
@@ -145,7 +147,8 @@ healthiq/
 │   │   ├── generate_validation_report.py # Validation report generator (Sprint 12)
 │   │   ├── run_sprint10_tests.py     # Sprint 10 test runner
 │   │   ├── validate_rls_policies.py  # RLS policy validation script (Sprint 10)
-│   │   └── seed_analysis_scores.py   # Real biomarker score generation for seeded analyses (Sprint 14)
+│   │   ├── smoke_runner.py           # Automated smoke test runner (Sprint 15.1)
+│   │   └── (removed)                 # Legacy biomarker score generation script (Phase 1 cleanup)
 │   ├── reports/                      # Test and validation reports
 │   │   ├── validation/               # Automated validation reports (Sprint 12)
 │   │   │   ├── README.md             # Report storage policy and usage
