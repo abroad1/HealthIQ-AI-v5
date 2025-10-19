@@ -337,3 +337,13 @@ def export_analysis(request: ExportRequest, db: Session = Depends(get_db)):
         "download_url": url,
         "file_size_bytes": size
     }
+
+
+@router.get("/fixture")
+def load_fixture_analysis():
+    """
+    Load sample analysis data from fixture for testing and development.
+    Returns in-memory JSON data without database dependencies.
+    """
+    from tests.fixtures.sample_analysis import SAMPLE_ANALYSIS
+    return SAMPLE_ANALYSIS

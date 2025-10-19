@@ -19,7 +19,10 @@
 **Completed:** Backend service automation, idempotence tests, integration coverage, environment guards.  
 **Tag:** `v5.15.0-results-auto-persist` (Sprint 15 release)  
 **Metrics:** 100% DB consistency achieved; automatic persistence implemented.  
-**Next:** Sprint 16 – Frontend Advanced Mode Expansion.
+**Next:** Sprint 16 – Frontend Advanced Mode Expansion.  
+**Cleanup:** Legacy seeding and manual test infrastructure removed (v5.15.3-legacy-cleanup)  
+**Refactor:** Replaced seeded dataset with fixture-based test harness (v5.15.4-test-harness-refactor)  
+**Smoke Runner:** Added automated smoke-test runner (v5.15.5-smoke-runner)
 
 ---
 
