@@ -35,7 +35,7 @@ from services.storage.persistence_service import PersistenceService
 from sqlalchemy.orm import Session
 from config.database import get_db
 from repositories.export_repository import ExportRepository
-from repositories.analysis_repository import AnalysisRepository
+from repositories.analysis_repository import AnalysisRepository, BiomarkerScoreRepository
 from services.storage.export_service import ExportService
 
 router = APIRouter()
@@ -213,48 +213,73 @@ async def get_analysis_result(analysis_id: str, db: Session = Depends(get_db)):
         persistence_service = PersistenceService(db)
         result = persistence_service.get_analysis_result(UUID(analysis_id))
         
-        if not result:
-            # Fallback to stub result if not found in database
-            result = {
-                "analysis_id": analysis_id,
-                "biomarkers": [
+        # Check if result is None or contains stub data (3 biomarkers with specific names)
+        is_stub_data = (result and 
+                       result.get("biomarkers") and 
+                       len(result.get("biomarkers", [])) == 3 and
+                       all(b.get("biomarker_name") in ["glucose", "total_cholesterol", "hdl_cholesterol"] 
+                           for b in result.get("biomarkers", [])))
+        
+        if not result or is_stub_data:
+            # --- Begin: dynamic fallback using biomarker_scores ---
+            score_repo = BiomarkerScoreRepository(db)
+            scores = score_repo.list_by_analysis_id(UUID(analysis_id))
+            
+            if scores and len(scores) > 0:
+                biomarker_data = [
                     {
-                        "biomarker_name": "glucose",
-                        "value": 95.0,
-                        "unit": "mg/dL",
-                        "score": 0.75,
-                        "percentile": 65.0,
-                        "status": "normal",
-                        "reference_range": {"min": 70, "max": 100, "unit": "mg/dL"},
-                        "interpretation": "Within normal range"
-                    },
-                    {
-                        "biomarker_name": "total_cholesterol",
-                        "value": 180.0,
-                        "unit": "mg/dL",
-                        "score": 0.85,
-                        "percentile": 45.0,
-                        "status": "optimal",
-                        "reference_range": {"min": 150, "max": 200, "unit": "mg/dL"},
-                        "interpretation": "Optimal cholesterol levels"
-                    },
-                    {
-                        "biomarker_name": "hdl_cholesterol",
-                        "value": 45.0,
-                        "unit": "mg/dL",
-                        "score": 0.60,
-                        "percentile": 35.0,
-                        "status": "low",
-                        "reference_range": {"min": 40, "max": 60, "unit": "mg/dL"},
-                        "interpretation": "HDL cholesterol is below optimal range"
+                        "biomarker_name": s.biomarker_name,
+                        "value": s.value,
+                        "unit": s.unit,
+                        "status": s.status,
+                        "reference_range": s.reference_range,
                     }
-                ],
-                "clusters": [],
-                "insights": [],
-                "status": "completed",
-                "created_at": datetime.now(UTC).isoformat(),
-                "result_version": "1.0.0"
-            }
+                    for s in scores
+                ]
+                result = {"analysis_id": analysis_id, "biomarkers": biomarker_data}
+            else:
+                # Fallback to stub result if no biomarker scores found
+                result = {
+                    "analysis_id": analysis_id,
+                    "biomarkers": [
+                        {
+                            "biomarker_name": "glucose",
+                            "value": 95.0,
+                            "unit": "mg/dL",
+                            "score": 0.75,
+                            "percentile": 65.0,
+                            "status": "normal",
+                            "reference_range": {"min": 70, "max": 100, "unit": "mg/dL"},
+                            "interpretation": "Within normal range"
+                        },
+                        {
+                            "biomarker_name": "total_cholesterol",
+                            "value": 180.0,
+                            "unit": "mg/dL",
+                            "score": 0.85,
+                            "percentile": 45.0,
+                            "status": "optimal",
+                            "reference_range": {"min": 150, "max": 200, "unit": "mg/dL"},
+                            "interpretation": "Optimal cholesterol levels"
+                        },
+                        {
+                            "biomarker_name": "hdl_cholesterol",
+                            "value": 45.0,
+                            "unit": "mg/dL",
+                            "score": 0.60,
+                            "percentile": 35.0,
+                            "status": "low",
+                            "reference_range": {"min": 40, "max": 60, "unit": "mg/dL"},
+                            "interpretation": "HDL cholesterol is below optimal range"
+                        }
+                    ],
+                    "clusters": [],
+                    "insights": [],
+                    "status": "completed",
+                    "created_at": datetime.now(UTC).isoformat(),
+                    "result_version": "1.0.0"
+                }
+            # --- End: dynamic fallback using biomarker_scores ---
         
         return build_analysis_result_dto(result)
         

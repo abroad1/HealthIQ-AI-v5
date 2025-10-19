@@ -197,6 +197,50 @@ class PersistenceService:
                         **biomarker_data
                     )
             
+            # --- Begin: process raw_biomarkers fallback ---
+            if not biomarkers:
+                # Get the analysis record to access raw_biomarkers
+                analysis = self.analysis_repo.get_by_analysis_id(str(analysis_id))
+                if analysis and hasattr(analysis, "raw_biomarkers") and analysis.raw_biomarkers:
+                    logger.info(f"[DB] Processing raw_biomarkers fallback for analysis {analysis_id}")
+                    
+                    # Canonical alias mapping for raw biomarkers
+                    canonical_map = {
+                        "hdl": "hdl_cholesterol",
+                        "ldl": "ldl_cholesterol",
+                        "cholesterol_total": "total_cholesterol",
+                        "tc": "total_cholesterol",
+                    }
+                    
+                    # Convert raw_biomarkers normal_range -> reference_range format
+                    for name, data in analysis.raw_biomarkers.items():
+                        canonical_name = canonical_map.get(name, name)
+                        ref = data.get("normal_range")
+                        reference_range = None
+                        if ref and isinstance(ref, (list, tuple)) and len(ref) >= 2:
+                            reference_range = {"min": ref[0], "max": ref[1], "unit": data.get("unit")}
+
+                        biomarker_data = {
+                            "value": data.get("value"),
+                            "unit": data.get("unit"),
+                            "status": data.get("status"),
+                            "reference_range": reference_range,
+                            "score": None,  # Raw biomarkers don't have scores
+                            "percentile": None,
+                            "interpretation": None,
+                            "confidence": None,
+                            "health_system": None,
+                            "critical_flag": False
+                        }
+                        
+                        logger.info(f"[DB] Upserting raw biomarker '{canonical_name}' (from '{name}') for analysis {analysis_id}")
+                        self.biomarker_score_repo.upsert_by_analysis_and_biomarker(
+                            analysis_id=analysis_id,
+                            biomarker_name=canonical_name,
+                            **biomarker_data
+                        )
+            # --- End: process raw_biomarkers fallback ---
+            
             # Save clusters
             clusters = results_dto.get("clusters", [])
             if clusters:

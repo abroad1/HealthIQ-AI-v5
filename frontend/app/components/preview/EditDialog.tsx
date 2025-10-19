@@ -132,6 +132,7 @@ export default function EditDialog({
 
     const numValue = parseFloat(formData.value)
     const editedBiomarker: ParsedBiomarker = {
+      ...biomarker, // Preserve all existing fields including referenceRange
       name: formData.name.trim(),
       value: isNaN(numValue) ? formData.value : numValue,
       unit: formData.unit.trim(),
