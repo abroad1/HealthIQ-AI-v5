@@ -147,7 +147,6 @@ healthiq/
 │   │   ├── generate_validation_report.py # Validation report generator (Sprint 12)
 │   │   ├── run_sprint10_tests.py     # Sprint 10 test runner
 │   │   ├── validate_rls_policies.py  # RLS policy validation script (Sprint 10)
-│   │   ├── smoke_runner.py           # Automated smoke test runner (Sprint 15.1)
 │   │   └── (removed)                 # Legacy biomarker score generation script (Phase 1 cleanup)
 │   ├── reports/                      # Test and validation reports
 │   │   ├── validation/               # Automated validation reports (Sprint 12)
