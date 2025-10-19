@@ -599,17 +599,36 @@ class PersistenceService:
             True if successful, False if failed
         """
         try:
-            # Convert DTO to dict format for persistence
+            from datetime import datetime, timezone
+            
+            # Prepare payload using only valid AnalysisResult fields
+            result_payload = {
+                "analysis_id": str(analysis_id),
+                "biomarkers": dto.biomarkers,
+                "clusters": getattr(dto, "clusters", []),
+                "insights": getattr(dto, "insights", []),
+                "overall_score": getattr(dto, "overall_score", 0.0),
+                "risk_assessment": getattr(dto, "risk_assessment", {}) or {},
+                "recommendations": getattr(dto, "recommendations", []) or [],
+                "context": getattr(dto, "context", {}),
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "result_version": getattr(dto, "result_version", "1.0.0"),
+                "processing_time_seconds": getattr(dto, "processing_time_seconds", None)
+            }
+            
+            # Remove deprecated or disallowed fields if present
+            result_payload.pop("confidence_score", None)
+            result_payload.pop("processing_metadata", None)
+            
+            # Convert to dict format for database persistence
             result_data = {
-                "biomarkers": [b.model_dump() if hasattr(b, 'model_dump') else b for b in dto.biomarkers] if dto.biomarkers else [],
-                "clusters": [c.model_dump() if hasattr(c, 'model_dump') else c for c in dto.clusters] if dto.clusters else [],
-                "insights": [i.model_dump() if hasattr(i, 'model_dump') else i for i in dto.insights] if dto.insights else [],
-                "overall_score": dto.overall_score,
-                "risk_assessment": dto.risk_assessment,
-                "recommendations": dto.recommendations,
-                "result_version": dto.result_version,
-                "confidence_score": getattr(dto, 'confidence_score', None),
-                "processing_metadata": getattr(dto, 'processing_metadata', None)
+                "biomarkers": [b.model_dump() if hasattr(b, 'model_dump') else b for b in result_payload["biomarkers"]] if result_payload["biomarkers"] else [],
+                "clusters": [c.model_dump() if hasattr(c, 'model_dump') else c for c in result_payload["clusters"]] if result_payload["clusters"] else [],
+                "insights": [i.model_dump() if hasattr(i, 'model_dump') else i for i in result_payload["insights"]] if result_payload["insights"] else [],
+                "overall_score": result_payload["overall_score"],
+                "risk_assessment": result_payload["risk_assessment"],
+                "recommendations": result_payload["recommendations"],
+                "result_version": result_payload["result_version"]
             }
             
             # Use upsert to ensure idempotence
@@ -697,7 +716,7 @@ class PersistenceService:
                     }
                     self.insight_repo.create(**insight_data)
             
-            logger.info(f"[AUTO-PERSIST] Successfully created analysis result for {analysis_id}")
+            logger.info(f"[AutoPersist] Saved analysis_results for {analysis_id}")
             self._log_audit_action(
                 action="analysis_result_auto_created",
                 resource_type="analysis_result",
