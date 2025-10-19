@@ -79,7 +79,7 @@ async def start_analysis(request: AnalysisStartRequest, db: Session = Depends(ge
         # orchestrator expects canonical-only; we tell it we already normalized
         dto = orchestrator.run(normalized, request.user, assume_canonical=True)
         
-        # Sprint 9b - Persist analysis data
+        # Sprint 15 - Automatic analysis results persistence
         if dto.status == "completed":
             try:
                 persistence_service = PersistenceService(db)
@@ -102,41 +102,35 @@ async def start_analysis(request: AnalysisStartRequest, db: Session = Depends(ge
                 }, UUID(user_id))
                 
                 if analysis_uuid:
-                    # Save results if analysis was persisted
-                    # Convert BiomarkerScore DTOs to dicts for persistence
-                    biomarker_dicts = []
-                    for biomarker in dto.biomarkers:
-                        if hasattr(biomarker, 'model_dump'):
-                            biomarker_dicts.append(biomarker.model_dump())
-                        elif isinstance(biomarker, dict):
-                            biomarker_dicts.append(biomarker)
-                        else:
-                            # Handle BiomarkerScore DTO
-                            biomarker_dicts.append({
-                                "biomarker_name": biomarker.biomarker_name,
-                                "value": biomarker.value,
-                                "unit": biomarker.unit,
-                                "score": biomarker.score,
-                                "percentile": biomarker.percentile,
-                                "status": biomarker.status,
-                                "reference_range": biomarker.reference_range,
-                                "interpretation": biomarker.interpretation
-                            })
+                    # Sprint 15 - Automatically create analysis_results record
+                    from core.models.results import AnalysisResult as AnalysisResultDTO
                     
-                    results_data = {
-                        "biomarkers": biomarker_dicts,
-                        "clusters": [c.model_dump() if hasattr(c, 'model_dump') else c for c in dto.clusters] if dto.clusters else [],
-                        "insights": [i.model_dump() if hasattr(i, 'model_dump') else i for i in dto.insights] if dto.insights else [],
-                        "overall_score": dto.overall_score,
-                        "result_version": "1.0.0"
-                    }
-                    persistence_service.save_results(results_data, analysis_uuid)
+                    # Convert DTO to AnalysisResultDTO for automatic persistence
+                    analysis_result_dto = AnalysisResultDTO(
+                        analysis_id=analysis_id,
+                        biomarkers=dto.biomarkers,
+                        clusters=dto.clusters,
+                        insights=dto.insights,
+                        overall_score=dto.overall_score,
+                        risk_assessment=None,  # Could be added later
+                        recommendations=[],  # Could be added later
+                        result_version="1.0.0",
+                        confidence_score=None,  # Could be added later
+                        processing_metadata=None  # Could be added later
+                    )
+                    
+                    # Automatically create analysis_results record
+                    success = persistence_service.create_analysis_result(analysis_uuid, analysis_result_dto)
+                    if success:
+                        logger.info(f"[AUTO-PERSIST] Successfully created analysis_results for {analysis_id}")
+                    else:
+                        logger.warning(f"[AUTO-PERSIST] Failed to create analysis_results for {analysis_id}, fallback will be used")
                     
             except Exception as persistence_error:
                 # Log persistence error but don't fail the request
                 import logging
                 logger = logging.getLogger(__name__)
-                logger.error(f"Persistence failed for analysis {analysis_id}: {str(persistence_error)}")
+                logger.error(f"Automatic persistence failed for analysis {analysis_id}: {str(persistence_error)}")
         
         return AnalysisStartResponse(
             analysis_id=analysis_id,

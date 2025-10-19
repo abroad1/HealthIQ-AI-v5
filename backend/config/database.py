@@ -15,12 +15,21 @@ logger = logging.getLogger(__name__)
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+# Sprint 15 - Environment guards for local/prod separation
+ENV = os.getenv("ENVIRONMENT", "local")
+DATABASE_URL_TEST = os.getenv("DATABASE_URL_TEST", "postgresql://postgres:test@localhost:5433/healthiq_test")
+
 # Override with test database if running locally
-if (os.getenv("ENVIRONMENT") == "test" or 
+if (ENV == "test" or 
+    ENV == "local" or
     "supabase.com" in DATABASE_URL or 
     "localhost" in os.getenv("HOSTNAME", "")):
-    DATABASE_URL = "postgresql://postgres:test@localhost:5433/healthiq_test"
-    print(f"Overriding DATABASE_URL to local test database: {DATABASE_URL}")
+    DATABASE_URL = DATABASE_URL_TEST
+    print(f"[ENV-GUARD] Overriding DATABASE_URL to local test database: {DATABASE_URL}")
+
+# Sprint 15 - Assertion to prevent production writes during local testing
+if ENV == "local" and "supabase.com" in DATABASE_URL:
+    raise ValueError("Cannot use Supabase production database in local environment. Use DATABASE_URL_TEST instead.")
 
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL is not set in environment")

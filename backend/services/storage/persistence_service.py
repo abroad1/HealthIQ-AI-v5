@@ -587,6 +587,141 @@ class PersistenceService:
         else:
             logger.warning("Fallback service is not enabled")
     
+    def create_analysis_result(self, analysis_id: UUID, dto: AnalysisResultDTO) -> bool:
+        """
+        Create or upsert analysis_results record with idempotence.
+        
+        Args:
+            analysis_id: Analysis ID
+            dto: AnalysisResultDTO containing all result data
+            
+        Returns:
+            True if successful, False if failed
+        """
+        try:
+            # Convert DTO to dict format for persistence
+            result_data = {
+                "biomarkers": [b.model_dump() if hasattr(b, 'model_dump') else b for b in dto.biomarkers] if dto.biomarkers else [],
+                "clusters": [c.model_dump() if hasattr(c, 'model_dump') else c for c in dto.clusters] if dto.clusters else [],
+                "insights": [i.model_dump() if hasattr(i, 'model_dump') else i for i in dto.insights] if dto.insights else [],
+                "overall_score": dto.overall_score,
+                "risk_assessment": dto.risk_assessment,
+                "recommendations": dto.recommendations,
+                "result_version": dto.result_version,
+                "confidence_score": getattr(dto, 'confidence_score', None),
+                "processing_metadata": getattr(dto, 'processing_metadata', None)
+            }
+            
+            # Use upsert to ensure idempotence
+            analysis_result = self.analysis_result_repo.upsert_by_analysis_id(analysis_id, **result_data)
+            
+            if not analysis_result:
+                logger.error(f"Failed to create analysis result for {analysis_id}")
+                return False
+            
+            # Save individual biomarker scores
+            biomarkers = result_data.get("biomarkers", [])
+            if biomarkers:
+                # Clear existing biomarker scores
+                self.biomarker_score_repo.delete_by_analysis_id(analysis_id)
+                
+                for biomarker in biomarkers:
+                    biomarker_name = biomarker.get("biomarker_name")
+                    
+                    # Extract biomarker_name before building data dict to avoid duplicate argument
+                    biomarker_data = {
+                        "value": biomarker.get("value"),
+                        "unit": biomarker.get("unit"),
+                        "score": biomarker.get("score"),
+                        "percentile": biomarker.get("percentile"),
+                        "status": biomarker.get("status"),
+                        "reference_range": biomarker.get("reference_range"),
+                        "interpretation": biomarker.get("interpretation"),
+                        "confidence": biomarker.get("confidence"),
+                        "health_system": biomarker.get("health_system"),
+                        "critical_flag": biomarker.get("critical_flag", False)
+                    }
+                    
+                    logger.info(f"[AUTO-PERSIST] Upserting biomarker '{biomarker_name}' for analysis {analysis_id}")
+                    self.biomarker_score_repo.upsert_by_analysis_and_biomarker(
+                        analysis_id=analysis_id,
+                        biomarker_name=biomarker_name,
+                        **biomarker_data
+                    )
+            
+            # Save clusters
+            clusters = result_data.get("clusters", [])
+            if clusters:
+                # Clear existing clusters
+                self.cluster_repo.delete_by_analysis_id(analysis_id)
+                
+                for cluster in clusters:
+                    cluster_data = {
+                        "analysis_id": analysis_id,
+                        "cluster_name": cluster.get("name"),
+                        "cluster_type": "health_system",  # Default type
+                        "score": None,  # Not in DTO
+                        "confidence": cluster.get("confidence"),
+                        "biomarkers": cluster.get("biomarkers"),
+                        "insights": None,  # Not in DTO
+                        "severity": cluster.get("severity"),
+                        "description": cluster.get("description"),
+                        "health_system": None,  # Not in DTO
+                        "algorithm_used": None  # Not in DTO
+                    }
+                    self.cluster_repo.create(**cluster_data)
+            
+            # Save insights
+            insights = result_data.get("insights", [])
+            if insights:
+                # Clear existing insights
+                self.insight_repo.delete_by_analysis_id(analysis_id)
+                
+                for insight in insights:
+                    insight_data = {
+                        "analysis_id": analysis_id,
+                        "insight_type": "biomarker_analysis",  # Default type
+                        "category": insight.get("category"),
+                        "title": insight.get("title"),
+                        "content": insight.get("description"),  # Map description to content
+                        "confidence": insight.get("confidence"),
+                        "priority": "medium",  # Default priority
+                        "actionable": True,  # Default actionable
+                        "severity": insight.get("severity"),
+                        "biomarkers_involved": insight.get("biomarkers"),
+                        "health_system": None,  # Not in DTO
+                        "recommendations": insight.get("recommendations"),
+                        "version": "1.0.0",  # Required field
+                        "manifest_id": "test_manifest",  # Required field
+                        "latency_ms": 0  # Required field
+                    }
+                    self.insight_repo.create(**insight_data)
+            
+            logger.info(f"[AUTO-PERSIST] Successfully created analysis result for {analysis_id}")
+            self._log_audit_action(
+                action="analysis_result_auto_created",
+                resource_type="analysis_result",
+                resource_id=analysis_id,
+                details={
+                    "biomarkers_count": len(biomarkers),
+                    "clusters_count": len(clusters),
+                    "insights_count": len(insights)
+                }
+            )
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error creating analysis result for {analysis_id}: {str(e)}")
+            self._log_audit_action(
+                action="analysis_result_auto_create_failed",
+                resource_type="analysis_result",
+                resource_id=analysis_id,
+                details={"error": str(e)},
+                severity="error",
+                outcome="failure"
+            )
+            return False
+
     def is_database_available(self) -> bool:
         """
         Check if database is available by testing a simple query.
