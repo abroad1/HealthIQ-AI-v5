@@ -24,6 +24,7 @@ def cleanup_test_db():
     
     db_url = os.getenv("DATABASE_URL_TEST")
     if not db_url:
+        yield
         return
     
     engine = create_engine(db_url)

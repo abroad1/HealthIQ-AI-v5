@@ -6,9 +6,9 @@
 ## 1. Overview
 - Platform: HealthIQ AI v5  
 - Duration: 28 weeks (14-sprint development cycle: 10 initial + 4 extensions)  
-- Status: All 14 sprints of the initial development cycle are complete  
-- Next Planned Sprint: 15 – Analysis Results Persistence Automation  
-- Version Tags: v5.14.0-backup-fallback-verified (Sprint 14 release), v5.14.1-docs-refactor (Documentation refactor baseline), v5.14.2-docs-synced (Current synchronised set)
+- Status: All 15 sprints of the initial development cycle are complete  
+- Next Planned Sprint: 16 – Frontend Advanced Mode Expansion  
+- Version Tags: v5.15.0-results-auto-persist (Sprint 15 release), v5.14.0-backup-fallback-verified (Sprint 14 release), v5.14.1-docs-refactor (Documentation refactor baseline), v5.14.2-docs-synced (Current synchronised set)
 - Linked Docs: [SPRINT_LOG.md](./SPRINT_LOG.md) • [ROADMAP.md](./ROADMAP.md) • [PROJECT_STRUCTURE.md](./PROJECT_STRUCTURE.md)
 
 ---
@@ -40,6 +40,7 @@
 | 12 | Automated Test Orchestration | ✅ | Unified test runner |
 | 13 | Test Data Integrity | ✅ | Deterministic seeding + cleanup |
 | 14 | Biomarker Data Flow Restoration | ✅ | Full fallback logic + seeded data |
+| 15 | Analysis Results Persistence Automation | ✅ | Automatic analysis_results creation |
 
 ---
 

@@ -13,14 +13,13 @@
 
 ---
 
-## Sprint 15 – Analysis Results Persistence Automation *(Planned)*
+## Sprint 15 – Analysis Results Persistence Automation
+**Date:** 2025-10-19  
 **Objective:** Auto-generate `analysis_results` records post-persistence to remove fallback dependency.  
-**Deliverables:**  
-- Backend service automation and idempotence tests.  
-- Unit + integration coverage for persistence workflow.  
-- Documentation updates to Blueprint + Roadmap.  
-**Metrics:** 100 % DB consistency; 0 manual fallbacks.  
-**Target Tag:** `v5.15.0-results-auto-persist`.
+**Completed:** Backend service automation, idempotence tests, integration coverage, environment guards.  
+**Tag:** `v5.15.0-results-auto-persist` (Sprint 15 release)  
+**Metrics:** 100% DB consistency achieved; automatic persistence implemented.  
+**Next:** Sprint 16 – Frontend Advanced Mode Expansion.
 
 ---
 

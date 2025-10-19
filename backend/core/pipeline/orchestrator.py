@@ -654,14 +654,14 @@ class AnalysisOrchestrator:
             created_at=datetime.now().isoformat()
         )
         
-        # Sprint 9b - Persistence integration at phase:"completed"
+        # Sprint 15 - Automatic persistence integration at phase:"completed"
         if result.status == "completed":
-            # Note: Persistence is handled by the calling service/route
-            # This ensures non-blocking SSE and proper error handling
+            # Note: Automatic persistence is now handled here
+            # This ensures analysis_results are automatically created
             import logging
             logger = logging.getLogger(__name__)
             
-            logger.info(f"Analysis {result.analysis_id} completed with {len(biomarker_scores)} biomarkers, ready for persistence")
-            logger.debug(f"Analysis {result.analysis_id} marked for persistence by calling service")
+            logger.info(f"Analysis {result.analysis_id} completed with {len(biomarker_scores)} biomarkers, ready for automatic persistence")
+            logger.debug(f"Analysis {result.analysis_id} marked for automatic persistence")
         
         return result
