@@ -2,7 +2,8 @@
 
 > **🎯 PURPOSE**: **SUPPORTING CONTEXT (Level 3)** - This document defines product requirements, features, and user experience goals. Use this for understanding the "what" and "why" behind feature development.
 
-> For our AI/LLM strategy, see [`LLM_POLICY.md`](./LLM_POLICY.md)
+> For our AI/LLM strategy, see [`LLM_POLICY.md`](./LLM_POLICY.md)  
+> For build phases see [IMPLEMENTATION_BLUEPRINT.md](./IMPLEMENTATION_BLUEPRINT.md).
 
 ## 1. Overview
 
