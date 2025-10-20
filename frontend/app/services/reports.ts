@@ -6,7 +6,9 @@
 import { AnalysisResult } from '../types/analysis';
 import { ApiResponse, PaginatedResponse } from '../types/api';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+// Disabled: backend reports routes are not registered; keep file for future restoration
+// const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000/api';
+const API_BASE_URL = 'about:blank';
 
 export interface Report {
   id: string;

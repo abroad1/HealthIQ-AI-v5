@@ -6,7 +6,9 @@
 import { User, UserProfile, UserPreferences } from '../types/user';
 import { ApiResponse, ApiError } from '../types/api';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+// Disabled: backend auth routes are not present; keep file for future restoration
+// const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000/api';
+const API_BASE_URL = 'about:blank';
 
 // Token management
 const TOKEN_KEY = 'healthiq_auth_token';
