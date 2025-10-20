@@ -14,7 +14,7 @@ import {
 } from '../types/analysis';
 import { ApiResponse, ApiError } from '../types/api';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000/api';
 
 export class AnalysisService {
   /**

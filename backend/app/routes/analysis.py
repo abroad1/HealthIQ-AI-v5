@@ -31,12 +31,13 @@ from core.pipeline.orchestrator import AnalysisOrchestrator
 from core.pipeline.events import stream_status
 from core.dto.builders import build_analysis_result_dto
 from core.canonical.normalize import normalize_panel
-from services.storage.persistence_service import PersistenceService
+# DB-dependent services (temporarily disabled in DB-optional mode)
+# from services.storage.persistence_service import PersistenceService
 from sqlalchemy.orm import Session
 from config.database import get_db
-from repositories.export_repository import ExportRepository
-from repositories.analysis_repository import AnalysisRepository, BiomarkerScoreRepository
-from services.storage.export_service import ExportService
+# from repositories.export_repository import ExportRepository
+# from repositories.analysis_repository import AnalysisRepository, BiomarkerScoreRepository
+# from services.storage.export_service import ExportService
 
 router = APIRouter()
 
@@ -79,64 +80,8 @@ async def start_analysis(request: AnalysisStartRequest, db: Session = Depends(ge
         # orchestrator expects canonical-only; we tell it we already normalized
         dto = orchestrator.run(normalized, request.user, assume_canonical=True)
         
-        # Sprint 9b - Persist analysis data
-        if dto.status == "completed":
-            try:
-                persistence_service = PersistenceService(db)
-                
-                # Extract user_id from request (assuming it's in user data)
-                user_id = request.user.get("user_id")
-                if not user_id:
-                    # Generate a temporary user_id if not provided
-                    user_id = str(uuid4())
-                
-                # Save analysis
-                analysis_uuid = persistence_service.save_analysis({
-                    "analysis_id": analysis_id,
-                    "status": dto.status,
-                    "raw_biomarkers": request.biomarkers,
-                    "questionnaire_data": request.user.get("questionnaire"),
-                    "processing_time_seconds": None,  # Could be calculated
-                    "analysis_version": "1.0.0",
-                    "pipeline_version": "1.0.0"
-                }, UUID(user_id))
-                
-                if analysis_uuid:
-                    # Save results if analysis was persisted
-                    # Convert BiomarkerScore DTOs to dicts for persistence
-                    biomarker_dicts = []
-                    for biomarker in dto.biomarkers:
-                        if hasattr(biomarker, 'model_dump'):
-                            biomarker_dicts.append(biomarker.model_dump())
-                        elif isinstance(biomarker, dict):
-                            biomarker_dicts.append(biomarker)
-                        else:
-                            # Handle BiomarkerScore DTO
-                            biomarker_dicts.append({
-                                "biomarker_name": biomarker.biomarker_name,
-                                "value": biomarker.value,
-                                "unit": biomarker.unit,
-                                "score": biomarker.score,
-                                "percentile": biomarker.percentile,
-                                "status": biomarker.status,
-                                "reference_range": biomarker.reference_range,
-                                "interpretation": biomarker.interpretation
-                            })
-                    
-                    results_data = {
-                        "biomarkers": biomarker_dicts,
-                        "clusters": [c.model_dump() if hasattr(c, 'model_dump') else c for c in dto.clusters] if dto.clusters else [],
-                        "insights": [i.model_dump() if hasattr(i, 'model_dump') else i for i in dto.insights] if dto.insights else [],
-                        "overall_score": dto.overall_score,
-                        "result_version": "1.0.0"
-                    }
-                    persistence_service.save_results(results_data, analysis_uuid)
-                    
-            except Exception as persistence_error:
-                # Log persistence error but don't fail the request
-                import logging
-                logger = logging.getLogger(__name__)
-                logger.error(f"Persistence failed for analysis {analysis_id}: {str(persistence_error)}")
+        # Persistence temporarily disabled in DB-optional runtime
+        # (Would persist dto and related results when DB is available)
         
         return AnalysisStartResponse(
             analysis_id=analysis_id,
@@ -168,33 +113,12 @@ async def analysis_events(request: Request, analysis_id: str):
     )
 
 
-@router.get("/analysis/history")
-async def get_analysis_history(user_id: str, limit: int = 10, offset: int = 0, db: Session = Depends(get_db)):
-    """
-    Get analysis history for a user.
-    
-    Args:
-        user_id: User ID to get history for
-        limit: Number of results to return (default: 10)
-        offset: Number of results to skip (default: 0)
-        db: Database session
-        
-    Returns:
-        dict: Analysis history with pagination
-    """
-    try:
-        persistence_service = PersistenceService(db)
-        history = persistence_service.get_analysis_history(UUID(user_id), limit, offset)
-        
-        return {
-            "history": history,
-            "total": len(history),
-            "page": (offset // limit) + 1,
-            "limit": limit
-        }
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get analysis history: {str(e)}")
+# @router.get("/analysis/history")
+# async def get_analysis_history(user_id: str, limit: int = 10, offset: int = 0, db: Session = Depends(get_db)):
+#     """
+#     Temporarily disabled: DB-backed history requires database.
+#     """
+#     raise HTTPException(status_code=503, detail="history temporarily unavailable")
 
 
 @router.get("/analysis/result")
@@ -210,8 +134,8 @@ async def get_analysis_result(analysis_id: str, db: Session = Depends(get_db)):
         dict: Analysis result with biomarkers, clusters and insights
     """
     try:
-        persistence_service = PersistenceService(db)
-        result = persistence_service.get_analysis_result(UUID(analysis_id))
+        # DB-optional runtime: skip persistence fetch
+        result = None
         
         # Check if result is None or contains stub data (3 biomarkers with specific names)
         is_stub_data = (result and 
@@ -222,24 +146,8 @@ async def get_analysis_result(analysis_id: str, db: Session = Depends(get_db)):
         
         if not result or is_stub_data:
             # --- Begin: dynamic fallback using biomarker_scores ---
-            score_repo = BiomarkerScoreRepository(db)
-            scores = score_repo.list_by_analysis_id(UUID(analysis_id))
-            
-            if scores and len(scores) > 0:
-                biomarker_data = [
-                    {
-                        "biomarker_name": s.biomarker_name,
-                        "value": s.value,
-                        "unit": s.unit,
-                        "status": s.status,
-                        "reference_range": s.reference_range,
-                    }
-                    for s in scores
-                ]
-                result = {"analysis_id": analysis_id, "biomarkers": biomarker_data}
-            else:
-                # Fallback to stub result if no biomarker scores found
-                result = {
+            # Fallback to stub result if no persisted data found
+            result = {
                     "analysis_id": analysis_id,
                     "biomarkers": [
                         {
@@ -287,59 +195,9 @@ async def get_analysis_result(analysis_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Failed to get analysis result: {str(e)}")
 
 
-@router.post("/analysis/export")
-def export_analysis(request: ExportRequest, db: Session = Depends(get_db)):
-    """
-    Export analysis results in specified format.
-    
-    Args:
-        request: Export request containing analysis_id and format
-        db: Database session
-        
-    Returns:
-        dict: Export information with download URL
-    """
-    fmt = request.format.upper()
-    if fmt not in ("JSON", "CSV"):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="unsupported_format")
-
-    # Fetch analysis result and owning user_id
-    arepo = AnalysisRepository(db)
-    result = arepo.get_result_dto(request.analysis_id)
-    if not result:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="analysis_not_found_or_forbidden")
-
-    user_id = result.get("user_id")  # ensure AnalysisRepository includes user_id in DTO
-    if not user_id:
-        # fallback: fetch from analyses table if dto omits it
-        user_id = arepo.get_user_id_for_analysis(request.analysis_id)
-        if not user_id:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="analysis_not_found_or_forbidden")
-
-    svc = ExportService()
-    try:
-        storage_path, size = svc.generate_and_upload(
-            result_dto=result,
-            user_id=UUID(user_id),
-            analysis_id=request.analysis_id,
-            fmt=fmt
-        )
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="export_failed") from e
-
-    erepo = ExportRepository(db)
-    exp = erepo.create_completed(
-        analysis_id=request.analysis_id,
-        user_id=UUID(user_id),
-        format=fmt,
-        storage_path=storage_path,
-        file_size_bytes=size
-    )
-
-    url = svc.signed_url(storage_path)
-
-    return {
-        "export_id": str(exp.id),
-        "download_url": url,
-        "file_size_bytes": size
-    }
+# @router.post("/analysis/export")
+# def export_analysis(request: ExportRequest, db: Session = Depends(get_db)):
+#     """
+#     Temporarily disabled: DB-backed export requires database and storage.
+#     """
+#     raise HTTPException(status_code=503, detail="export temporarily unavailable")
