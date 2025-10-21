@@ -53,6 +53,13 @@ biomarkers:
     category: "metabolic"
     data_type: "numeric"
     
+  creatine_kinase:
+    aliases: ["total_creatine_kinase", "total_ck", "ck_total", "creatine_kinase_(total)"]
+    unit: "U/L"
+    description: "Creatine kinase (total)"
+    category: "metabolic"
+    data_type: "numeric"
+    
   # Kidney Function
   creatinine:
     aliases: ["creat", "serum_creatinine"]
