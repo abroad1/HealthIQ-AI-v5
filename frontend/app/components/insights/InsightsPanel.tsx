@@ -34,57 +34,10 @@ export function InsightsPanel({ insights, className = '' }: InsightsPanelProps) 
   const [selectedSeverity, setSelectedSeverity] = useState<string>('all');
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
 
-  // Group insights by category
-  const insightsByCategory = insights.reduce((acc, insight) => {
-    if (!acc[insight.category]) {
-      acc[insight.category] = [];
-    }
-    acc[insight.category].push(insight);
-    return acc;
-  }, {} as Record<string, Insight[]>);
-
-  // Sort insights within each category by severity and confidence
-  Object.keys(insightsByCategory).forEach(category => {
-    insightsByCategory[category].sort((a, b) => {
-      const severityDiff = severityOrder[b.severity] - severityOrder[a.severity];
-      if (severityDiff !== 0) return severityDiff;
-      return b.confidence - a.confidence;
-    });
-  });
-
-  // Filter insights based on selected filters
-  const filteredInsights = insights.filter(insight => {
-    const categoryMatch = selectedCategory === 'all' || insight.category === selectedCategory;
-    const severityMatch = selectedSeverity === 'all' || insight.severity === selectedSeverity;
-    return categoryMatch && severityMatch;
-  });
-
-  // Get unique categories and severities for filters
-  const categories = Array.from(new Set(insights.map(i => i.category)));
-  const severities = Array.from(new Set(insights.map(i => i.severity)));
-
-  // Calculate summary statistics
-  const totalInsights = insights.length;
-  const criticalInsights = insights.filter(i => i.severity === 'critical').length;
-  const warningInsights = insights.filter(i => i.severity === 'warning').length;
-  const averageConfidence = insights.reduce((sum, i) => sum + i.confidence, 0) / totalInsights || 0;
-
-  const toggleCategory = (category: string) => {
-    const newExpanded = new Set(expandedCategories);
-    if (newExpanded.has(category)) {
-      newExpanded.delete(category);
-    } else {
-      newExpanded.add(category);
-    }
-    setExpandedCategories(newExpanded);
-  };
-
-  const clearFilters = () => {
-    setSelectedCategory('all');
-    setSelectedSeverity('all');
-  };
-
-  if (totalInsights === 0) {
+  // Guard against undefined insights
+  const safeInsights = insights ?? [];
+  
+  if (!safeInsights.length) {
     return (
       <Card className={className}>
         <CardHeader>
@@ -103,6 +56,57 @@ export function InsightsPanel({ insights, className = '' }: InsightsPanelProps) 
       </Card>
     );
   }
+
+  // Group insights by category
+  const insightsByCategory = safeInsights.reduce((acc, insight) => {
+    if (!acc[insight.category]) {
+      acc[insight.category] = [];
+    }
+    acc[insight.category].push(insight);
+    return acc;
+  }, {} as Record<string, Insight[]>);
+
+  // Sort insights within each category by severity and confidence
+  Object.keys(insightsByCategory).forEach(category => {
+    insightsByCategory[category].sort((a, b) => {
+      const severityDiff = severityOrder[b.severity] - severityOrder[a.severity];
+      if (severityDiff !== 0) return severityDiff;
+      return (b.confidence ?? 0) - (a.confidence ?? 0);
+    });
+  });
+
+  // Filter insights based on selected filters
+  const filteredInsights = safeInsights.filter(insight => {
+    const categoryMatch = selectedCategory === 'all' || insight.category === selectedCategory;
+    const severityMatch = selectedSeverity === 'all' || insight.severity === selectedSeverity;
+    return categoryMatch && severityMatch;
+  });
+
+  // Get unique categories and severities for filters
+  const categories = Array.from(new Set(safeInsights.map(i => i.category)));
+  const severities = Array.from(new Set(safeInsights.map(i => i.severity)));
+
+  // Calculate summary statistics
+  const totalInsights = safeInsights.length;
+  const criticalInsights = safeInsights.filter(i => i.severity === 'critical').length;
+  const warningInsights = safeInsights.filter(i => i.severity === 'warning').length;
+  const averageConfidence = safeInsights.reduce((sum, i) => sum + (i.confidence ?? 0), 0) / totalInsights || 0;
+
+  const toggleCategory = (category: string) => {
+    const newExpanded = new Set(expandedCategories);
+    if (newExpanded.has(category)) {
+      newExpanded.delete(category);
+    } else {
+      newExpanded.add(category);
+    }
+    setExpandedCategories(newExpanded);
+  };
+
+  const clearFilters = () => {
+    setSelectedCategory('all');
+    setSelectedSeverity('all');
+  };
+
 
   return (
     <Card className={className}>

@@ -143,7 +143,7 @@ export class AnalysisService {
       try {
         eventSource.close();
       } catch (_) { /* ignore */ }
-      // Treat as graceful completion instead of hard error
+      // Single fallback fetch on error, then close
       if (!isCompleted) {
         isCompleted = true;
         onComplete?.();
