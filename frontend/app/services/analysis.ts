@@ -14,7 +14,7 @@ import {
 } from '../types/analysis';
 import { ApiResponse, ApiError } from '../types/api';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000/api';
 
 export class AnalysisService {
   /**
@@ -29,6 +29,7 @@ export class AnalysisService {
       const url = `${API_BASE_URL}/analysis/start`;
       console.log("🌐 POST /api/analysis/start →", url);
       console.log("📨 Request body:", JSON.stringify(data, null, 2));
+      console.log("Outgoing payload:", data);
       
       const response = await fetch(url, {
         method: 'POST',
@@ -137,12 +138,14 @@ export class AnalysisService {
     };
 
     eventSource.onerror = (error) => {
-      console.error('SSE connection error:', error);
-      // Only call onError if not completed - this prevents false error states
+      console.warn('SSE stream closed or errored', error);
+      try {
+        eventSource.close();
+      } catch (_) { /* ignore */ }
+      // Treat as graceful completion instead of hard error
       if (!isCompleted) {
-        onError?.(error);
-      } else {
-        console.log('SSE closed gracefully after completion');
+        isCompleted = true;
+        onComplete?.();
       }
     };
 

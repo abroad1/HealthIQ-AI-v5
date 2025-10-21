@@ -20,6 +20,7 @@ def build_analysis_result_dto(result: Dict[str, Any]) -> Dict[str, Any]:
     Returns:
         Frontend-safe dictionary
     """
+    print("[TRACE] DTO biomarkers in result:", len(result.get("biomarkers", [])))
     return {
         "analysis_id": result.get("analysis_id", ""),
         "biomarkers": result.get("biomarkers", []),

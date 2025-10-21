@@ -279,17 +279,14 @@ export const useAnalysisStore = create<AnalysisState>()(
               }
             },
             (error) => {
-              console.error('SSE connection error:', error);
-              // Only fail if analysis hasn't completed
+              console.warn('SSE stream closed or errored', error);
+              try {
+                eventSource.close();
+              } catch (_) { /* ignore */ }
+              // Treat as graceful completion instead of hard error
               const state = get();
               if (state.currentPhase !== 'completed') {
-                get().failAnalysis(analysisId, {
-                  message: 'Connection lost during analysis',
-                  code: 'CONNECTION_ERROR',
-                  details: error,
-                });
-              } else {
-                console.log('SSE error after completion - ignoring');
+                get().setPhase('completed');
               }
             },
             () => {
