@@ -5,17 +5,13 @@ import { BiomarkerValue, BiomarkerData, UserProfile, AnalysisRequest } from '../
 
 export interface BiomarkerResult {
   biomarker_name: string;
-  value: number;
+  value: number | null;
   unit: string;
-  score: number;
-  percentile?: number;
-  status: 'optimal' | 'normal' | 'elevated' | 'low' | 'critical';
-  reference_range?: {
-    min: number;
-    max: number;
-    unit: string;
-  };
-  interpretation: string;
+  score?: number | null;
+  percentile?: number | null;
+  status?: string | null;
+  reference_range?: any;
+  interpretation?: string | null;
 }
 
 export interface AnalysisResult {
@@ -28,7 +24,7 @@ export interface AnalysisResult {
   overall_score: number | null;
   recommendations?: string[];
   risk_assessment?: Record<string, any>;
-  created_at: string;
+  created_at?: string;
   completed_at?: string;
   processing_time_seconds?: number;
   result_version?: string;
@@ -86,7 +82,7 @@ interface AnalysisState {
   // Complex actions
   startAnalysis: (request: AnalysisRequest) => Promise<void>;
   updateAnalysisProgress: (analysisId: string, progress: number, phase: string) => void;
-  completeAnalysis: (analysisId: string, results: AnalysisResult['results']) => Promise<void>;
+  completeAnalysis: (analysisId: string, results: any) => Promise<void>;
   failAnalysis: (analysisId: string, error: AnalysisError) => void;
   clearAnalysis: () => void;
   retryAnalysis: () => void;
@@ -219,6 +215,10 @@ export const useAnalysisStore = create<AnalysisState>()(
             status: 'pending',
             progress: 0,
             created_at: new Date().toISOString(),
+            biomarkers: [],
+            clusters: [],
+            insights: [],
+            overall_score: null,
           };
 
           set({
@@ -513,7 +513,7 @@ export const useAnalysisStore = create<AnalysisState>()(
         const completed = analyses.filter(a => a.status === 'completed');
         const failed = analyses.filter(a => a.status === 'failed');
         const scores = completed
-          .map(a => a.results?.overall_score)
+          .map(a => a.overall_score)
           .filter(score => typeof score === 'number') as number[];
         
         return {

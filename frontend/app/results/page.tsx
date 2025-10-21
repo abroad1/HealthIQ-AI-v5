@@ -41,7 +41,7 @@ export default function ResultsPage() {
   } = useAnalysisStore();
   
   const { 
-    clusters, 
+    clusters: clusterStoreClusters, 
     isLoading: clustersLoading,
     loadClusters 
   } = useClusterStore();
@@ -100,10 +100,10 @@ export default function ResultsPage() {
     }
 
     // Fetch clusters if we have analysis data
-    if (currentAnalysis && !clusters.length && !clustersLoading) {
+    if (currentAnalysis && !clusterStoreClusters.length && !clustersLoading) {
       loadClusters(currentAnalysis.analysis_id);
     }
-  }, [currentAnalysis, isAnalyzing, clusters.length, clustersLoading, loadClusters, router, analysisIdFromUrl, isFetchingFromUrl]);
+  }, [currentAnalysis, isAnalyzing, clusterStoreClusters.length, clustersLoading, loadClusters, router, analysisIdFromUrl, isFetchingFromUrl]);
 
   const handleRetry = () => {
     if (currentAnalysis) {
@@ -435,7 +435,7 @@ export default function ResultsPage() {
 
           <TabsContent value="clusters" className="space-y-6">
             <ClusterSummary 
-              clusters={clusters.map(cluster => ({
+              clusters={clusterStoreClusters.map(cluster => ({
                 id: cluster.id,
                 name: cluster.name,
                 category: cluster.category,

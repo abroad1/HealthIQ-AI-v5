@@ -95,7 +95,8 @@ export class AnalysisService {
         recommendations: result.recommendations || [],
         overall_score: result.overall_score,
         meta: result.meta || {},
-        created_at: result.created_at
+        created_at: result.created_at,
+        status: 'completed'
       };
       
       return {
