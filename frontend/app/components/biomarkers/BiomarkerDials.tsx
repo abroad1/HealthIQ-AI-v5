@@ -179,7 +179,7 @@ export default function BiomarkerDials({ biomarkers, showDetails = false }: Biom
     const result: Record<string, Array<{ id: string; data: BiomarkerValue }>> = {};
     
     Object.entries(biomarkers).forEach(([id, data]) => {
-      // Find which category this biomarker belongs to
+      // Find which category this biomarker belongs to, or use 'other' if not found
       const category = Object.entries(BIOMARKER_CATEGORIES).find(([_, cat]) => 
         cat.biomarkers.includes(id)
       )?.[0] || 'other';

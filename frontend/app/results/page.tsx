@@ -218,11 +218,10 @@ export default function ResultsPage() {
     );
   }
 
-  const { results, created_at, completed_at } = currentAnalysis;
-  const insights = results?.insights || [];
-  
-  // Fix: Read biomarkers from the correct location
-  const biomarkers = (currentAnalysis as any)?.biomarkers || results?.biomarkers || [];
+  const { created_at, completed_at } = currentAnalysis;
+  const insights = currentAnalysis?.insights ?? [];
+  const biomarkers = currentAnalysis?.biomarkers ?? [];
+  const clusters = currentAnalysis?.clusters ?? [];
   
   const metadata = {
     analysisId: currentAnalysis.analysis_id,
@@ -336,14 +335,14 @@ export default function ResultsPage() {
                 <CardContent>
                   <div className="text-center">
                     <div className="text-6xl font-bold text-green-600 mb-2">
-                      {results?.overall_score ? Math.round(results.overall_score) : 'N/A'}
+                      {currentAnalysis?.overall_score ? Math.round(currentAnalysis.overall_score) : 'N/A'}
                     </div>
                     <p className="text-gray-600">out of 100</p>
                     <div className="mt-4">
                       <div className="w-full bg-gray-200 rounded-full h-3">
                         <div 
                           className="bg-green-500 h-3 rounded-full transition-all duration-1000"
-                          style={{ width: `${results?.overall_score || 0}%` }}
+                          style={{ width: `${currentAnalysis?.overall_score || 0}%` }}
                         ></div>
                       </div>
                     </div>
@@ -358,7 +357,7 @@ export default function ResultsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {results?.risk_assessment && Object.entries(results.risk_assessment).map(([category, score]) => (
+                    {currentAnalysis?.risk_assessment && Object.entries(currentAnalysis.risk_assessment).map(([category, score]) => (
                       <div key={category} className="flex justify-between items-center">
                         <span className="capitalize text-sm font-medium">
                           {category.replace(/([A-Z])/g, ' $1').trim()}
