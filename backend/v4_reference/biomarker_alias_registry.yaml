@@ -236,6 +236,13 @@ ck:
   aliases:
   - CK
   - Creatine Kinase
+total_creatine_kinese_ck:
+  canonical_id: creatine_kinase
+  aliases:
+  - total_creatine_kinase
+  - total_ck
+  - ck_total
+  - creatine_kinase_(total)
 calcium:
   canonical_id: calcium
   aliases:

@@ -83,8 +83,11 @@ class AliasRegistryService:
             v4_registry = self._load_v4_registry()
             if v4_registry:
                 print("[TRACE] Using v4 alias registry for comprehensive alias mapping")
-                for canonical_id, definition in v4_registry.items():
+                for key, definition in v4_registry.items():
                     if isinstance(definition, dict) and 'aliases' in definition:
+                        # Use canonical_id if specified, otherwise use the key
+                        canonical_id = definition.get('canonical_id', key)
+                        
                         # Map canonical name to itself
                         alias_mapping[canonical_id.lower()] = canonical_id
                         alias_mapping[canonical_id.upper()] = canonical_id
