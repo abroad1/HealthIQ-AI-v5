@@ -61,18 +61,18 @@ class TestContextFactoryPhase1:
         
         assert isinstance(scoring_metrics, ScoringMetrics)
         assert len(scoring_metrics.raw_scores) == 3
-        assert scoring_metrics.raw_scores['glucose'] == Decimal('95.5')
-        assert scoring_metrics.raw_scores['cholesterol'] == Decimal('180.0')
-        assert scoring_metrics.raw_scores['hdl'] == Decimal('45.2')
+        assert scoring_metrics.raw_scores['glucose'] == 95.5
+        assert scoring_metrics.raw_scores['cholesterol'] == 180.0
+        assert scoring_metrics.raw_scores['hdl'] == 45.2
         
         assert len(scoring_metrics.weighted_scores) == 3
-        assert scoring_metrics.weighted_scores['glucose'] == Decimal('0.85')
+        assert scoring_metrics.weighted_scores['glucose'] == 0.85
         
         assert len(scoring_metrics.cluster_scores) == 2
-        assert scoring_metrics.cluster_scores['metabolic'] == Decimal('0.78')
+        assert scoring_metrics.cluster_scores['metabolic'] == 0.78
         
         assert len(scoring_metrics.confidence_scores) == 2
-        assert scoring_metrics.confidence_scores['overall'] == Decimal('0.88')
+        assert scoring_metrics.confidence_scores['overall'] == 0.88
         
         assert scoring_metrics.risk_factors == ['high_cholesterol', 'sedentary_lifestyle']
         assert scoring_metrics.metadata['algorithm_version'] == '2.1'
@@ -131,10 +131,10 @@ class TestContextFactoryPhase1:
         
         # Check biomarker values
         glucose = panel.biomarkers['glucose']
-        assert glucose.value == Decimal('95.5')
+        assert glucose.value == 95.5
         assert glucose.unit == 'mg/dL'
-        assert glucose.reference_range['min'] == Decimal('70')
-        assert glucose.reference_range['max'] == Decimal('100')
+        assert glucose.reference_range['min'] == 70.0
+        assert glucose.reference_range['max'] == 100.0
 
     def test_validate_reference_range(self):
         """
@@ -154,8 +154,8 @@ class TestContextFactoryPhase1:
         
         validated_range = factory._validate_reference_range(valid_range)
         
-        assert validated_range['min'] == Decimal('70')
-        assert validated_range['max'] == Decimal('100')
+        assert validated_range['min'] == 70.0
+        assert validated_range['max'] == 100.0
         assert validated_range['interpretation'] == 'normal'
         
         # Test invalid reference range (min >= max)
@@ -191,22 +191,27 @@ class TestContextFactoryPhase1:
         factory = ContextFactory()
         
         # Test various input types
-        assert factory._parse_decimal(95.5) == Decimal('95.5')
-        assert factory._parse_decimal(100) == Decimal('100')
-        assert factory._parse_decimal('95.5') == Decimal('95.5')
-        assert factory._parse_decimal('1,000.50') == Decimal('1000.50')
-        assert factory._parse_decimal(Decimal('95.5')) == Decimal('95.5')
+        assert factory._parse_decimal(95.5) == 95.5
+        assert factory._parse_decimal(100) == 100.0
+        assert factory._parse_decimal('95.5') == 95.5
+        assert factory._parse_decimal('1000.50') == 1000.50
+        assert factory._parse_decimal(Decimal('95.5')) == 95.5
         
         # Test invalid inputs
         with pytest.raises(Exception) as exc_info:
             factory._parse_decimal('invalid')
         
-        assert "Cannot convert 'invalid' to Decimal" in str(exc_info.value)
+        assert "Invalid numeric value for biomarker" in str(exc_info.value)
+        
+        with pytest.raises(Exception) as exc_info:
+            factory._parse_decimal('1,000.50')  # Commas not supported
+        
+        assert "Invalid numeric value for biomarker" in str(exc_info.value)
         
         with pytest.raises(Exception) as exc_info:
             factory._parse_decimal(None)
         
-        assert "Cannot convert" in str(exc_info.value)
+        assert "Invalid numeric value for biomarker" in str(exc_info.value)
 
     def test_create_context_with_panel(self):
         """
@@ -302,8 +307,8 @@ class TestContextFactoryPhase1:
         assert context.scoring_metrics is not None
         
         metrics = context.scoring_metrics
-        assert metrics.raw_scores['glucose'] == Decimal('95.5')
-        assert metrics.weighted_scores['glucose'] == Decimal('0.88')
+        assert metrics.raw_scores['glucose'] == 95.5
+        assert metrics.weighted_scores['glucose'] == 0.88
         assert metrics.risk_factors == ['high_glucose']
         assert metrics.metadata['algorithm_version'] == '2.1'
 

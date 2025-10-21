@@ -24,7 +24,7 @@ class BiomarkerContext(BaseModel):
     """Context for a single biomarker value."""
     
     name: str = Field(..., description="Biomarker name")
-    value: Union[float, int, Decimal] = Field(..., description="Biomarker value")
+    value: float = Field(..., description="Biomarker value")
     unit: str = Field(default="unknown", description="Unit of measurement")
     measured_at: Optional[datetime] = Field(default=None, description="When the biomarker was measured")
     reference_range: Optional[Dict[str, Any]] = Field(default=None, description="Reference range data")
@@ -34,7 +34,7 @@ class BiomarkerContext(BaseModel):
     @classmethod
     def validate_value(cls, v):
         """Validate that value is numeric."""
-        if not isinstance(v, (int, float, Decimal)):
+        if not isinstance(v, (int, float)):
             try:
                 v = float(v)
             except (ValueError, TypeError):
@@ -72,34 +72,13 @@ class BiomarkerPanel(BaseModel):
 class ScoringMetrics(BaseModel):
     """Scoring metrics for analysis results."""
     
-    raw_scores: Dict[str, Decimal] = Field(default_factory=dict, description="Raw scoring values")
-    weighted_scores: Dict[str, Decimal] = Field(default_factory=dict, description="Weighted scoring values")
-    cluster_scores: Dict[str, Decimal] = Field(default_factory=dict, description="Cluster scoring values")
+    raw_scores: Dict[str, float] = Field(default_factory=dict, description="Raw scoring values")
+    weighted_scores: Dict[str, float] = Field(default_factory=dict, description="Weighted scoring values")
+    cluster_scores: Dict[str, float] = Field(default_factory=dict, description="Cluster scoring values")
     risk_factors: List[str] = Field(default_factory=list, description="Identified risk factors")
-    confidence_scores: Dict[str, Decimal] = Field(default_factory=dict, description="Confidence scores")
+    confidence_scores: Dict[str, float] = Field(default_factory=dict, description="Confidence scores")
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
     computed_at: datetime = Field(default_factory=datetime.now, description="When metrics were computed")
-    
-    @field_validator('raw_scores', 'weighted_scores', 'cluster_scores', 'confidence_scores')
-    @classmethod
-    def validate_decimal_scores(cls, v):
-        """Validate that score values are properly converted to Decimal."""
-        if not isinstance(v, dict):
-            return v
-        result = {}
-        for key, value in v.items():
-            if isinstance(value, (int, float)):
-                result[key] = Decimal(str(value))
-            elif isinstance(value, str):
-                try:
-                    result[key] = Decimal(value)
-                except (ValueError, TypeError):
-                    result[key] = Decimal('0')
-            elif isinstance(value, Decimal):
-                result[key] = value
-            else:
-                result[key] = Decimal('0')
-        return result
 
 
 class UserContext(BaseModel):
@@ -108,11 +87,11 @@ class UserContext(BaseModel):
     user_id: str = Field(..., description="Unique user identifier")
     sex: Sex = Field(..., description="User's sex")
     chronological_age: int = Field(..., ge=0, le=150, description="User's age in years")
-    height_cm: Union[float, int, Decimal] = Field(..., ge=0, le=300, description="Height in centimeters")
-    weight_kg: Union[float, int, Decimal] = Field(..., ge=0, le=1000, description="Weight in kilograms")
-    waist_cm: Optional[Union[float, int, Decimal]] = Field(default=None, ge=0, le=300, description="Waist circumference in centimeters")
+    height_cm: float = Field(..., ge=0, le=300, description="Height in centimeters")
+    weight_kg: float = Field(..., ge=0, le=1000, description="Weight in kilograms")
+    waist_cm: Optional[float] = Field(default=None, ge=0, le=300, description="Waist circumference in centimeters")
     stress_level: int = Field(default=5, ge=1, le=10, description="Stress level (1-10 scale)")
-    sleep_hours: Union[float, int, Decimal] = Field(default=8.0, ge=0, le=24, description="Average sleep hours per night")
+    sleep_hours: float = Field(default=8.0, ge=0, le=24, description="Average sleep hours per night")
     physical_activity_minutes: int = Field(default=0, ge=0, le=1440, description="Physical activity minutes per day")
     fluid_intake_frequency: str = Field(default="moderate", description="Fluid intake frequency")
     alcohol_units_per_week: int = Field(default=0, ge=0, le=100, description="Alcohol units per week")
@@ -124,18 +103,6 @@ class UserContext(BaseModel):
     created_at: Optional[datetime] = Field(default=None, description="When the user context was created")
     updated_at: Optional[datetime] = Field(default=None, description="When the user context was last updated")
     
-    @field_validator('height_cm', 'weight_kg', 'waist_cm', 'sleep_hours')
-    @classmethod
-    def validate_numeric_fields(cls, v):
-        """Validate numeric fields are properly converted."""
-        if v is None:
-            return v
-        if not isinstance(v, (int, float, Decimal)):
-            try:
-                v = float(v)
-            except (ValueError, TypeError):
-                raise ValueError(f"Value must be numeric, got {type(v)}")
-        return v
     
     @field_validator('sex')
     @classmethod

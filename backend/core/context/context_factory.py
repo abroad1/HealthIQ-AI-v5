@@ -234,16 +234,11 @@ class ContextFactory:
             if value is None:
                 raise ValidationError(f"Biomarker '{name}' must have a value")
             
-            # Convert value to numeric using Decimal parsing
+            # Convert value to numeric using strict parsing
             try:
                 value = self._parse_decimal(value)
-            except ValidationError:
-                # Fall back to float if Decimal parsing fails
-                try:
-                    value = float(value)
-                    self._log(f"[WARN] Biomarker '{name}' value converted to float instead of Decimal", "WARNING")
-                except (ValueError, TypeError):
-                    raise ValidationError(f"Biomarker '{name}' value must be numeric, got {type(value)}")
+            except ValueError as e:
+                raise ValidationError(f"Biomarker '{name}' value must be numeric: {str(e)}") from e
             
             # Validate reference range if provided
             if reference_range:
@@ -334,33 +329,19 @@ class ContextFactory:
         except Exception as e:
             raise ValidationError(f"Failed to create user context: {str(e)}") from e
     
-    def _parse_decimal(self, value: Any) -> Decimal:
+    def _parse_decimal(self, value: Any) -> float:
         """
-        Parse a value to Decimal with proper error handling.
-        
-        Args:
-            value: Value to parse
-            
-        Returns:
-            Decimal value
-            
-        Raises:
-            ValidationError: If value cannot be parsed to Decimal
+        Convert input to float with strict numeric validation.
+        Raises ValueError if value is not numeric or cannot be parsed.
         """
-        if value is None:
-            raise ValidationError("Value cannot be None")
+        logger.debug(f"Parsing biomarker value: {value} ({type(value).__name__})")
         
+        if isinstance(value, (int, float, Decimal)):
+            return float(value)
         try:
-            if isinstance(value, (int, float)):
-                return Decimal(str(value))
-            elif isinstance(value, str):
-                return Decimal(value)
-            elif isinstance(value, Decimal):
-                return value
-            else:
-                return Decimal(str(value))
-        except (ValueError, TypeError) as e:
-            raise ValidationError(f"Cannot convert '{value}' to Decimal: {str(e)}") from e
+            return float(Decimal(str(value)))
+        except (decimal.InvalidOperation, TypeError, ValueError):
+            raise ValueError(f"Invalid numeric value for biomarker: {value!r}")
     
     def _parse_datetime(self, value: Any) -> Optional[datetime]:
         """
@@ -437,7 +418,7 @@ class ContextFactory:
             ValidationError: If scoring data validation fails
         """
         try:
-            # Extract scores with proper decimal conversion
+            # Extract scores with proper numeric conversion
             raw_scores = {
                 k: self._parse_decimal(v) 
                 for k, v in raw_scoring_data.get('raw_scores', {}).items()
@@ -568,32 +549,6 @@ class ContextFactory:
                 raise
             raise ValidationError(f"Invalid reference range: {str(e)}") from e
 
-    def _parse_decimal(self, value: Any) -> Decimal:
-        """
-        Parse a value to Decimal with proper error handling.
-        
-        Args:
-            value: Value to parse to Decimal
-            
-        Returns:
-            Decimal value
-            
-        Raises:
-            ValidationError: If value cannot be converted to Decimal
-        """
-        try:
-            if isinstance(value, Decimal):
-                return value
-            elif isinstance(value, (int, float)):
-                return Decimal(str(value))
-            elif isinstance(value, str):
-                # Handle common string formats
-                cleaned = value.strip().replace(',', '')
-                return Decimal(cleaned)
-            else:
-                raise ValueError(f"Cannot convert {type(value)} to Decimal")
-        except (ValueError, TypeError, decimal.InvalidOperation) as e:
-            raise ValidationError(f"Cannot convert '{value}' to Decimal: {str(e)}") from e
 
     def _generate_analysis_id(self) -> str:
         """
