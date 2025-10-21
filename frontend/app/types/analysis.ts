@@ -46,44 +46,49 @@ export interface ClusteringSummary {
 
 export interface BiomarkerResult {
   biomarker_name: string;
-  value: number;
+  value: number | null;
   unit: string;
-  score: number;
-  percentile?: number;
-  status: 'optimal' | 'normal' | 'elevated' | 'low' | 'critical';
-  reference_range?: {
-    min: number;
-    max: number;
-    unit: string;
-  };
-  interpretation: string;
+  score?: number | null;
+  percentile?: number | null;
+  status?: string | null;
+  reference_range?: any;
+  interpretation?: string | null;
+}
+
+export interface Insight {
+  id: string;
+  category: string;
+  summary: string;
+  description: string;
+  confidence: number;
+  severity: string;
+  recommendations: string[];
+  biomarkers_involved: string[];
+}
+
+export interface Cluster {
+  id: string;
+  category: string;
+  summary: string;
+  biomarkers_involved: string[];
+  score?: number;
 }
 
 export interface AnalysisResult {
   analysis_id: string;
-  result_version: string;
   biomarkers: BiomarkerResult[];
-  clusters: ClusterData[];
-  insights: InsightData[];
-  recommendations: string[];
+  clusters: Cluster[];
+  insights: Insight[];
   overall_score: number | null;
-  meta: {
-    confidence_score?: number;
-    processing_metadata?: Record<string, any>;
-  };
-  created_at: string;
+  status: string;
+  created_at?: string;
+  completed_at?: string;
+  result_version?: string;
+  risk_assessment?: Record<string, any>;
+  recommendations?: string[];
+  meta?: Record<string, any>;
 }
 
-export interface InsightData {
-  insight_id: string;
-  title: string;
-  description: string;
-  category: string;
-  confidence: number;
-  severity: string;
-  biomarkers: string[];
-  recommendations: string[];
-}
 
 export interface AnalysisHistoryItem {
   id: string;

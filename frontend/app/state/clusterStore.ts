@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
+import { useAnalysisStore } from './analysisStore';
 
 // Cluster-related types
 export interface BiomarkerCluster {
@@ -212,60 +213,49 @@ export const useClusterStore = create<ClusterState>()(
       loadClusters: async (analysisId) => {
         set({ isLoading: true, error: null });
         try {
-          // This would typically call an API service
-          // For now, we'll simulate with mock data
-          const mockClusters: BiomarkerCluster[] = [
-            {
-              id: 'cluster-1',
-              name: 'Metabolic Health',
-              description: 'Metabolic health cluster',
-              biomarkers: ['glucose', 'insulin'],
-              score: 85,
-              risk_level: 'low',
-              category: 'metabolic',
-              insights: ['Normal glucose metabolism'],
-              recommendations: ['Maintain current lifestyle'],
-              created_at: new Date().toISOString(),
-              status: 'normal',
-            },
-            {
-              id: 'cluster-2',
-              name: 'Cardiovascular',
-              description: 'Cardiovascular health cluster',
-              biomarkers: ['cholesterol', 'triglycerides'],
-              score: 75,
-              risk_level: 'medium',
-              category: 'cardiovascular',
-              insights: ['Elevated cholesterol levels'],
-              recommendations: ['Consider lifestyle modifications'],
-              created_at: new Date().toISOString(),
-              status: 'warning',
-            },
-            {
-              id: 'cluster-3',
-              name: 'Inflammation',
-              description: 'Inflammation markers',
-              biomarkers: ['crp', 'esr'],
-              score: 45,
-              risk_level: 'high',
-              category: 'inflammation',
-              insights: ['High inflammation detected'],
-              recommendations: ['Consult healthcare provider'],
-              created_at: new Date().toISOString(),
-              status: 'critical',
-            },
-          ];
+          // Get the current analysis from the analysis store
+          const analysisStore = useAnalysisStore.getState();
+          const currentAnalysis = analysisStore.currentAnalysis;
           
-          set({ 
-            clusters: mockClusters, 
-            totalItems: mockClusters.length,
-            pagination: {
-              page: 1,
-              perPage: 10,
-              total: mockClusters.length,
-            },
-            isLoading: false 
-          });
+          if (currentAnalysis && currentAnalysis.clusters) {
+            // Convert analysis clusters to BiomarkerCluster format
+            const clusters: BiomarkerCluster[] = currentAnalysis.clusters.map((cluster: any) => ({
+              id: cluster.id || `cluster-${Math.random()}`,
+              name: cluster.name || cluster.category || 'Unknown Cluster',
+              description: cluster.description || cluster.summary || 'No description available',
+              biomarkers: cluster.biomarkers_involved || cluster.biomarkers || [],
+              score: cluster.score || 0,
+              risk_level: cluster.risk_level || 'low',
+              category: cluster.category || 'other',
+              insights: cluster.insights || [],
+              recommendations: cluster.recommendations || [],
+              created_at: cluster.created_at || new Date().toISOString(),
+              status: cluster.status || 'normal',
+            }));
+            
+            set({ 
+              clusters, 
+              totalItems: clusters.length,
+              pagination: {
+                page: 1,
+                perPage: 10,
+                total: clusters.length,
+              },
+              isLoading: false 
+            });
+          } else {
+            // No clusters available
+            set({ 
+              clusters: [], 
+              totalItems: 0,
+              pagination: {
+                page: 1,
+                perPage: 10,
+                total: 0,
+              },
+              isLoading: false 
+            });
+          }
         } catch (error) {
           set({ 
             error: error instanceof Error ? error.message : 'Failed to load clusters',
