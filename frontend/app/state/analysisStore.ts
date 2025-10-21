@@ -124,7 +124,13 @@ export const useAnalysisStore = create<AnalysisState>()(
       eventSource: null,
 
       // Basic setters
-      setCurrentAnalysis: (analysis) => set({ currentAnalysis: analysis }),
+      setCurrentAnalysis: (analysis) => {
+        console.debug('🔧 setCurrentAnalysis called with biomarkers count:', analysis?.biomarkers?.length);
+        console.debug('🔧 setCurrentAnalysis biomarkers data:', analysis?.biomarkers);
+        set({ currentAnalysis: analysis });
+        const newState = get();
+        console.debug('🔧 setCurrentAnalysis after update - biomarkers count:', newState.currentAnalysis?.biomarkers?.length);
+      },
       
       setCurrentAnalysisId: (analysisId) => set({ currentAnalysisId: analysisId }),
       

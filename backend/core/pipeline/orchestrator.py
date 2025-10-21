@@ -686,6 +686,31 @@ class AnalysisOrchestrator:
                         interpretation=f"Scored {biomarker_score['score']:.1f}/100"
                     ))
             
+            # --- Include all original biomarkers, not just scored ones ---
+            logger.debug("Adding unscored biomarkers to DTO output")
+            all_biomarkers = {}
+            for biomarker_name, biomarker_data in biomarkers.items():
+                if isinstance(biomarker_data, dict):
+                    all_biomarkers[biomarker_name] = biomarker_data.get('value', biomarker_data.get('measurement', 0))
+                else:
+                    all_biomarkers[biomarker_name] = biomarker_data
+
+            scored_biomarker_names = {b.biomarker_name for b in biomarker_dtos}
+            for biomarker_name, value in all_biomarkers.items():
+                if biomarker_name not in scored_biomarker_names:
+                    logger.debug(f"Added unscored biomarker: {biomarker_name} value={value}")
+                    biomarker_dtos.append(BiomarkerScoreDTO(
+                        biomarker_name=biomarker_name,
+                        value=value,
+                        unit='',
+                        score=0.0,
+                        percentile=None,
+                        status='unscored',
+                        reference_range=None,
+                        interpretation='No scoring rules available (score=0)'
+                    ))
+            logger.info(f"Total biomarkers in DTO: {len(biomarker_dtos)}")
+            
             # Step 7: Build cluster DTOs
             logger.info("Step 7: Building cluster DTOs")
             cluster_dtos = []

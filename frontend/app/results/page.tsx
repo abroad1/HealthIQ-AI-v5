@@ -32,39 +32,47 @@ declare global {
 }
 
 export default function ResultsPage() {
-  const { 
-    currentAnalysis, 
-    isLoading: isAnalyzing, 
-    error: analysisError, 
-    retryAnalysis,
-    clearAnalysis 
-  } = useAnalysisStore();
+  // ALL HOOKS MUST BE AT TOP LEVEL - NO CONDITIONAL HOOKS OR EARLY RETURNS
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const analysisIdFromUrl = searchParams.get('analysis_id');
   
+  // Store selectors - all at top level
+  const currentAnalysis = useAnalysisStore(state => state.currentAnalysis);
+  const isAnalyzing = useAnalysisStore(state => state.isLoading);
+  const analysisError = useAnalysisStore(state => state.error);
+  const retryAnalysis = useAnalysisStore(state => state.retryAnalysis);
+  const clearAnalysis = useAnalysisStore(state => state.clearAnalysis);
+  const setCurrentAnalysis = useAnalysisStore(state => state.setCurrentAnalysis);
+  
+  // Cluster store
   const { 
     clusters: clusterStoreClusters, 
     isLoading: clustersLoading,
     loadClusters 
   } = useClusterStore();
   
+  // Local state
   const [activeTab, setActiveTab] = useState('overview');
   const [showDetails, setShowDetails] = useState(false);
   const [isFetchingFromUrl, setIsFetchingFromUrl] = useState(false);
-  const [lastFetchedId, setLastFetchedId] = useState<string | null>(null);
   const fetchedRef = useRef<string | null>(null);
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const analysisIdFromUrl = searchParams.get('analysis_id');
+  
+  // Derived data from store - no new hooks
+  const insights = currentAnalysis?.insights ?? [];
+  const biomarkers = currentAnalysis?.biomarkers ?? [];
+  const clusters = currentAnalysis?.clusters ?? [];
+  const { created_at, completed_at } = currentAnalysis || {};
   
   console.log('🔍 URL analysis_id:', analysisIdFromUrl);
 
-  // Fetch analysis result from URL if analysis_id is provided (single controlled sequence)
+  // Fetch analysis result from URL - runs once per analysisId
   useEffect(() => {
     if (!analysisIdFromUrl) return;
     if (fetchedRef.current === analysisIdFromUrl) return;
     
     console.log("📡 Fetching analysis result for:", analysisIdFromUrl);
     fetchedRef.current = analysisIdFromUrl;
-    setLastFetchedId(analysisIdFromUrl);
     setIsFetchingFromUrl(true);
     
     AnalysisService.getAnalysisResult(analysisIdFromUrl)
@@ -72,15 +80,20 @@ export default function ResultsPage() {
         console.log('✅ Analysis result fetched:', result);
         
         if (result?.success && result.data) {
-          // Update the analysis store with the fetched data
-          const analysisStore = useAnalysisStore.getState();
           // Add the missing status field for store compatibility
           const analysisData = {
             ...result.data,
             status: 'completed' as const,
             progress: 100
           };
-          analysisStore.setCurrentAnalysis(analysisData);
+          
+          // Debug: Log before store update
+          console.debug('Store update biomarkers count', analysisData.biomarkers?.length);
+          console.debug('API response biomarkers count', result.data.biomarkers?.length);
+          
+          // Update store - this will trigger re-render
+          setCurrentAnalysis(analysisData);
+          
           console.log("✅ Analysis data loaded:", analysisData);
           
           // Set debug data after store update
@@ -93,8 +106,9 @@ export default function ResultsPage() {
       })
       .catch((err) => console.error("❌ Failed to fetch result:", err))
       .finally(() => setIsFetchingFromUrl(false));
-  }, [analysisIdFromUrl]);
+  }, [analysisIdFromUrl, setCurrentAnalysis]);
 
+  // Handle navigation and cluster loading - all side effects in useEffect
   useEffect(() => {
     // If no analysis data and no URL parameter, redirect to upload
     if (!currentAnalysis && !isAnalyzing && !analysisIdFromUrl && !isFetchingFromUrl) {
@@ -147,6 +161,12 @@ export default function ResultsPage() {
     }
   };
 
+  // Debug: Log rendered biomarkers count to confirm sync
+  console.debug('🧩 Biomarkers rendered:', biomarkers.length);
+  console.log("🧩 Biomarkers to render:", biomarkers.length);
+  console.log("🧩 Biomarkers data:", biomarkers);
+
+  // Guard clauses AFTER all hooks - no early returns before this point
   if (isAnalyzing || isFetchingFromUrl) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -220,11 +240,6 @@ export default function ResultsPage() {
       </div>
     );
   }
-
-  const { created_at, completed_at } = currentAnalysis;
-  const insights = currentAnalysis?.insights ?? [];
-  const biomarkers = currentAnalysis?.biomarkers ?? [];
-  const clusters = currentAnalysis?.clusters ?? [];
   
   const metadata = {
     analysisId: currentAnalysis.analysis_id,
@@ -232,10 +247,6 @@ export default function ResultsPage() {
     biomarkerCount: biomarkers.length,
     confidence: 0.85 // This would need to be calculated from actual data
   };
-
-  // Debug: Log rendered biomarkers count
-  console.log("🧩 Biomarkers to render:", biomarkers.length);
-  console.log("🧩 Biomarkers data:", biomarkers);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
