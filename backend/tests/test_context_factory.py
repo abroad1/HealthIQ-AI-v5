@@ -374,7 +374,7 @@ class TestContextFactory:
                 user=user
             )
         
-        assert "Analysis context must contain at least one biomarker" in str(exc_info.value)
+        assert "Analysis context biomarkers must contain at least one biomarker" in str(exc_info.value)
     
     def test_analysis_context_requirements_validation(self):
         """
