@@ -58,19 +58,19 @@ export interface BiomarkerResult {
 export interface Insight {
   id: string;
   category: string;
-  summary: string;
-  description: string;
-  confidence: number;
-  severity: string;
-  recommendations: string[];
-  biomarkers_involved: string[];
+  summary?: string;
+  description?: string;
+  confidence?: number;
+  severity?: string;
+  recommendations?: string[];
+  biomarkers_involved?: string[];
 }
 
 export interface Cluster {
   id: string;
   category: string;
-  summary: string;
-  biomarkers_involved: string[];
+  summary?: string;
+  biomarkers_involved?: string[];
   score?: number;
 }
 

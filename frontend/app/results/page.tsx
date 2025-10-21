@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -50,6 +50,7 @@ export default function ResultsPage() {
   const [showDetails, setShowDetails] = useState(false);
   const [isFetchingFromUrl, setIsFetchingFromUrl] = useState(false);
   const [lastFetchedId, setLastFetchedId] = useState<string | null>(null);
+  const fetchedRef = useRef<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const analysisIdFromUrl = searchParams.get('analysis_id');
@@ -58,9 +59,11 @@ export default function ResultsPage() {
 
   // Fetch analysis result from URL if analysis_id is provided (single controlled sequence)
   useEffect(() => {
-    if (!analysisIdFromUrl || analysisIdFromUrl === lastFetchedId) return;
-
+    if (!analysisIdFromUrl) return;
+    if (fetchedRef.current === analysisIdFromUrl) return;
+    
     console.log("📡 Fetching analysis result for:", analysisIdFromUrl);
+    fetchedRef.current = analysisIdFromUrl;
     setLastFetchedId(analysisIdFromUrl);
     setIsFetchingFromUrl(true);
     
@@ -90,7 +93,7 @@ export default function ResultsPage() {
       })
       .catch((err) => console.error("❌ Failed to fetch result:", err))
       .finally(() => setIsFetchingFromUrl(false));
-  }, [analysisIdFromUrl, lastFetchedId]);
+  }, [analysisIdFromUrl]);
 
   useEffect(() => {
     // If no analysis data and no URL parameter, redirect to upload
@@ -389,7 +392,7 @@ export default function ResultsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {insights.slice(0, 6).map((insight, index) => (
+                    {insights.map((insight, index) => (
                       <div key={index} className="p-4 border rounded-lg">
                         <div className="flex items-start gap-2">
                           <div className={`w-2 h-2 rounded-full mt-2 ${
