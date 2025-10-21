@@ -74,14 +74,14 @@ export default function UploadPage() {
   useEffect(() => {
     async function loadData() {
       try {
-        if (isFixtureMode) {
-          console.log("📦 Fixture mode active — fetching static test data...");
-          const data = await fetchFixtureAnalysis();
-          handleParsedData(data);
-        } else {
+        // if (isFixtureMode) {
+        //   console.log("📦 Fixture mode active — fetching static test data...");
+        //   const data = await fetchFixtureAnalysis();
+        //   handleParsedData(data);
+        // } else {
           console.log("📤 Manual mode active — waiting for user input...");
           // Manual upload logic remains unchanged
-        }
+        // }
       } catch (err) {
         console.error("❌ Fixture backend fetch failed:", err);
       }
