@@ -47,13 +47,20 @@ class BiomarkerNormalizer:
         Returns:
             Tuple of (normalized BiomarkerPanel, list of unmapped keys)
         """
-        # Use the new alias service for comprehensive resolution
-        normalized_panel = self.alias_service.normalize_panel(raw_biomarkers)
-        
         normalized_values = {}
         unmapped_keys = []
         
         for key, value in raw_biomarkers.items():
+            # Skip re-normalizing already flagged biomarkers
+            if key.startswith("unmapped_"):
+                normalized_values[key] = BiomarkerValue(
+                    name=key,
+                    value=value,
+                    unit=""
+                )
+                unmapped_keys.append(key)
+                continue
+            
             # Use v4 alias service for comprehensive resolution
             canonical_key = self.alias_service.resolve(key)
             
@@ -146,6 +153,10 @@ def normalize_panel(raw_biomarkers: Dict[str, Any]) -> Dict[str, Any]:
     Returns:
         Dict with canonical biomarker names as keys
     """
+    # Skip re-normalizing already flagged biomarkers
+    if any(key.startswith("unmapped_") for key in raw_biomarkers.keys()):
+        return raw_biomarkers
+    
     normalizer = BiomarkerNormalizer()
     panel, _ = normalizer.normalize_biomarkers(raw_biomarkers)
     return {name: value.value for name, value in panel.biomarkers.items()}
