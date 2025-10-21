@@ -15,7 +15,6 @@ import { useAnalysisStore } from '../state/analysisStore';
 import { useUploadStore, useUploadStatus, useParsedData } from '../state/upload';
 import { useParseUpload } from '../queries/parsing';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { getAnalysisResult, fetchFixtureAnalysis } from '@/lib/api';
 
 export default function UploadPage() {
   const [activeTab, setActiveTab] = useState('upload');
