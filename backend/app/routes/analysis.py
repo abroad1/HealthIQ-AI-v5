@@ -42,6 +42,7 @@ from core.pipeline.orchestrator import AnalysisOrchestrator
 from core.pipeline.events import stream_status
 from core.dto.builders import build_analysis_result_dto
 from core.canonical.normalize import normalize_panel
+from core.context import ContextFactory, ValidationError
 
 router = APIRouter()
 
@@ -69,6 +70,19 @@ async def start_analysis(request: AnalysisStartRequest):
         print("[TRACE] Incoming payload keys:", data.keys())
         print("[TRACE] Biomarker count:", len(data.get("biomarkers", {})))
         print("[TRACE] Route received biomarkers:", list(data.get("biomarkers", {}).keys()))
+        
+        # Create ContextFactory and validate payload
+        context_factory = ContextFactory()
+        try:
+            context = context_factory.create_context(data, analysis_id)
+            print(f"[TRACE] Created AnalysisContext with {len(context.biomarkers)} biomarkers, user={context.user.user_id}")
+        except ValidationError as e:
+            print(f"[ERROR] ContextFactory validation failed: {str(e)}")
+            return AnalysisStartResponse(
+                analysis_id=analysis_id,
+                status="error",
+                message=f"Validation failed: {str(e)}"
+            )
         
         # Normalize incoming raw biomarkers to canonical first
         normalized = normalize_panel(request.biomarkers)
