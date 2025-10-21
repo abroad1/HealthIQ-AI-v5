@@ -50,6 +50,58 @@ class BiomarkerContext(BaseModel):
         return v.strip().lower()
 
 
+class BiomarkerPanel(BaseModel):
+    """Panel containing multiple biomarkers with metadata."""
+    
+    name: str = Field(..., description="Panel name")
+    biomarkers: Dict[str, BiomarkerContext] = Field(..., description="Biomarkers in this panel")
+    collected_at: datetime = Field(..., description="When the panel was collected")
+    laboratory: Optional[str] = Field(default=None, description="Laboratory that processed the panel")
+    panel_type: str = Field(default="custom", description="Type of panel")
+    notes: Optional[str] = Field(default=None, description="Additional panel notes")
+    
+    @field_validator('biomarkers')
+    @classmethod
+    def validate_biomarkers(cls, v):
+        """Validate biomarkers dictionary is not empty."""
+        if not v:
+            raise ValueError("Panel must contain at least one biomarker")
+        return v
+
+
+class ScoringMetrics(BaseModel):
+    """Scoring metrics for analysis results."""
+    
+    raw_scores: Dict[str, Decimal] = Field(default_factory=dict, description="Raw scoring values")
+    weighted_scores: Dict[str, Decimal] = Field(default_factory=dict, description="Weighted scoring values")
+    cluster_scores: Dict[str, Decimal] = Field(default_factory=dict, description="Cluster scoring values")
+    risk_factors: List[str] = Field(default_factory=list, description="Identified risk factors")
+    confidence_scores: Dict[str, Decimal] = Field(default_factory=dict, description="Confidence scores")
+    metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
+    computed_at: datetime = Field(default_factory=datetime.now, description="When metrics were computed")
+    
+    @field_validator('raw_scores', 'weighted_scores', 'cluster_scores', 'confidence_scores')
+    @classmethod
+    def validate_decimal_scores(cls, v):
+        """Validate that score values are properly converted to Decimal."""
+        if not isinstance(v, dict):
+            return v
+        result = {}
+        for key, value in v.items():
+            if isinstance(value, (int, float)):
+                result[key] = Decimal(str(value))
+            elif isinstance(value, str):
+                try:
+                    result[key] = Decimal(value)
+                except (ValueError, TypeError):
+                    result[key] = Decimal('0')
+            elif isinstance(value, Decimal):
+                result[key] = value
+            else:
+                result[key] = Decimal('0')
+        return result
+
+
 class UserContext(BaseModel):
     """Context for user demographic and lifestyle data."""
     
@@ -100,18 +152,29 @@ class UserContext(BaseModel):
 class AnalysisContext(BaseModel):
     """Main analysis context containing all validated data."""
     
-    biomarkers: Dict[str, BiomarkerContext] = Field(..., description="Validated biomarker data")
+    # Support both old and new structure for backward compatibility
+    biomarkers: Optional[Dict[str, BiomarkerContext]] = Field(default=None, description="Validated biomarker data (legacy)")
+    biomarker_panel: Optional[BiomarkerPanel] = Field(default=None, description="Biomarker panel with metadata")
     user: UserContext = Field(..., description="Validated user context")
     questionnaire: Optional[Dict[str, Any]] = Field(default=None, description="Optional questionnaire data")
+    scoring_metrics: Optional[ScoringMetrics] = Field(default=None, description="Scoring metrics for analysis")
     analysis_id: Optional[str] = Field(default=None, description="Analysis identifier")
     created_at: Optional[datetime] = Field(default=None, description="When the analysis context was created")
     
     @field_validator('biomarkers')
     @classmethod
     def validate_biomarkers(cls, v):
-        """Validate biomarkers dictionary is not empty."""
-        if not v:
-            raise ValueError("Analysis context must contain at least one biomarker")
+        """Validate biomarkers dictionary is not empty if provided."""
+        if v is not None and not v:
+            raise ValueError("Analysis context biomarkers must contain at least one biomarker")
+        return v
+    
+    @field_validator('biomarker_panel')
+    @classmethod
+    def validate_biomarker_panel(cls, v):
+        """Validate biomarker panel if provided."""
+        if v is not None and not v.biomarkers:
+            raise ValueError("Biomarker panel must contain at least one biomarker")
         return v
     
     @model_validator(mode='after')
@@ -144,17 +207,24 @@ class AnalysisContext(BaseModel):
             'warnings': []
         }
         
+        # Get biomarker data from either structure
+        biomarker_data = {}
+        if self.biomarker_panel:
+            biomarker_data = self.biomarker_panel.biomarkers
+        elif self.biomarkers:
+            biomarker_data = self.biomarkers
+        
         # Check minimum biomarker count
         min_biomarkers = requirements.get('min_biomarkers', 1)
-        if len(self.biomarkers) < min_biomarkers:
+        if len(biomarker_data) < min_biomarkers:
             result['valid'] = False
-            result['errors'].append(f"Analysis requires at least {min_biomarkers} biomarkers, got {len(self.biomarkers)}")
+            result['errors'].append(f"Analysis requires at least {min_biomarkers} biomarkers, got {len(biomarker_data)}")
         
         # Check required biomarkers
         required_biomarkers = requirements.get('required_biomarkers', [])
         missing_biomarkers = []
         for biomarker in required_biomarkers:
-            if biomarker.lower() not in self.biomarkers:
+            if biomarker.lower() not in biomarker_data:
                 missing_biomarkers.append(biomarker)
         
         if missing_biomarkers:

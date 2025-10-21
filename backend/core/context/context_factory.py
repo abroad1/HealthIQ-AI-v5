@@ -16,13 +16,14 @@ The factory handles:
 
 from typing import Dict, List, Optional, Union, Any, Tuple
 from decimal import Decimal
+import decimal
 from datetime import datetime, date
 import logging
 import uuid
 
 from pydantic import ValidationError as PydanticValidationError
 
-from .models import AnalysisContext, UserContext, BiomarkerContext, Sex
+from .models import AnalysisContext, UserContext, BiomarkerContext, BiomarkerPanel, ScoringMetrics, Sex
 
 
 # Configure logging
@@ -79,7 +80,9 @@ class ContextFactory:
     def create_context(
         self,
         payload: Dict[str, Any],
-        analysis_id: Optional[str] = None
+        analysis_id: Optional[str] = None,
+        scoring_metrics: Optional[Dict[str, Any]] = None,
+        validate_requirements: Optional[Dict[str, Any]] = None
     ) -> AnalysisContext:
         """
         Create a validated AnalysisContext from raw payload data.
@@ -90,6 +93,8 @@ class ContextFactory:
         Args:
             payload: Raw payload data containing biomarkers and user data
             analysis_id: Optional analysis identifier (generated if not provided)
+            scoring_metrics: Optional scoring metrics data
+            validate_requirements: Optional requirements to validate against
             
         Returns:
             Validated AnalysisContext object
@@ -106,8 +111,11 @@ class ContextFactory:
             raw_user_data = payload.get('user', {})
             questionnaire_data = payload.get('questionnaire')
             
+            # Check if this is a panel-based payload
+            is_panel_payload = 'panel' in payload or 'panel_name' in payload or 'panel_type' in payload
+            
             # Validate required sections
-            if not raw_biomarkers:
+            if not raw_biomarkers and not is_panel_payload:
                 raise ValidationError("Payload must contain 'biomarkers' section")
             if not raw_user_data:
                 raise ValidationError("Payload must contain 'user' section")
@@ -116,31 +124,68 @@ class ContextFactory:
             if analysis_id is None:
                 analysis_id = self._generate_analysis_id()
             
-            # Create validated biomarker contexts
-            biomarker_contexts = {}
-            for name, raw_biomarker in raw_biomarkers.items():
-                try:
-                    biomarker_context = self._create_biomarker_context(name, raw_biomarker)
-                    biomarker_contexts[name.lower()] = biomarker_context
-                except Exception as e:
-                    self._log(f"Failed to create biomarker '{name}': {str(e)}", "WARNING")
-                    continue
-            
-            if not biomarker_contexts:
-                raise ValidationError("No valid biomarkers found in payload")
-            
             # Create validated user context
             user_context = self._create_user_context(raw_user_data)
+            self._log(f"[TRACE] Created user context for user_id: {user_context.user_id}")
+            
+            # Handle panel-based payload
+            biomarker_panel = None
+            biomarker_contexts = None
+            
+            if is_panel_payload:
+                # Create biomarker panel with metadata
+                if 'panel' in payload:
+                    panel_data = payload['panel']
+                else:
+                    # Use entire payload if panel data is at root level
+                    panel_data = payload
+                biomarker_panel = self._create_biomarker_panel(panel_data)
+                self._log(f"[TRACE] Created biomarker panel with {len(biomarker_panel.biomarkers)} biomarkers")
+            else:
+                # Create individual biomarker contexts (legacy mode)
+                biomarker_contexts = {}
+                for name, raw_biomarker in raw_biomarkers.items():
+                    try:
+                        biomarker_context = self._create_biomarker_context(name, raw_biomarker)
+                        biomarker_contexts[name.lower()] = biomarker_context
+                    except Exception as e:
+                        self._log(f"Failed to create biomarker '{name}': {str(e)}", "WARNING")
+                        continue
+                
+                if not biomarker_contexts:
+                    raise ValidationError("No valid biomarkers found in payload")
+                
+                self._log(f"[TRACE] Created {len(biomarker_contexts)} individual biomarkers")
+            
+            # Create scoring metrics if provided
+            scoring_metrics_obj = None
+            if scoring_metrics:
+                scoring_metrics_obj = self._create_scoring_metrics(scoring_metrics)
+                self._log("[TRACE] Created scoring metrics")
             
             # Create analysis context
             analysis_context = AnalysisContext(
                 biomarkers=biomarker_contexts,
+                biomarker_panel=biomarker_panel,
                 user=user_context,
                 questionnaire=questionnaire_data,
+                scoring_metrics=scoring_metrics_obj,
                 analysis_id=analysis_id
             )
             
-            self._log(f"[OK] AnalysisContext validated successfully with {len(biomarker_contexts)} biomarkers, user={user_context.user_id}")
+            # Validate against requirements if provided
+            if validate_requirements:
+                validation_result = analysis_context.validate_analysis_requirements(validate_requirements)
+                if not validation_result['valid']:
+                    error_msg = f"Analysis context validation failed: {', '.join(validation_result['errors'])}"
+                    self._log(error_msg, "ERROR")
+                    raise ValidationError(error_msg)
+                
+                if validation_result['warnings']:
+                    self._log(f"Analysis context validation warnings: {', '.join(validation_result['warnings'])}", "WARNING")
+            
+            biomarker_count = len(biomarker_panel.biomarkers) if biomarker_panel else len(biomarker_contexts or {})
+            self._log(f"[OK] AnalysisContext validated successfully with {biomarker_count} biomarkers, user={user_context.user_id}")
             return analysis_context
             
         except PydanticValidationError as e:
@@ -189,14 +234,24 @@ class ContextFactory:
             if value is None:
                 raise ValidationError(f"Biomarker '{name}' must have a value")
             
-            # Convert value to numeric
+            # Convert value to numeric using Decimal parsing
             try:
-                if isinstance(value, str):
+                value = self._parse_decimal(value)
+            except ValidationError:
+                # Fall back to float if Decimal parsing fails
+                try:
                     value = float(value)
-                elif not isinstance(value, (int, float, Decimal)):
-                    value = float(value)
-            except (ValueError, TypeError):
-                raise ValidationError(f"Biomarker '{name}' value must be numeric, got {type(value)}")
+                    self._log(f"[WARN] Biomarker '{name}' value converted to float instead of Decimal", "WARNING")
+                except (ValueError, TypeError):
+                    raise ValidationError(f"Biomarker '{name}' value must be numeric, got {type(value)}")
+            
+            # Validate reference range if provided
+            if reference_range:
+                try:
+                    reference_range = self._validate_reference_range(reference_range)
+                except ValidationError as e:
+                    self._log(f"[WARN] Invalid reference range for biomarker '{name}': {str(e)}", "WARNING")
+                    reference_range = None
             
             return BiomarkerContext(
                 name=name,
@@ -368,6 +423,178 @@ class ContextFactory:
         except (ValueError, TypeError) as e:
             raise ValidationError(f"Cannot convert '{value}' to Sex: {str(e)}") from e
     
+    def _create_scoring_metrics(self, raw_scoring_data: Dict[str, Any]) -> ScoringMetrics:
+        """
+        Create a validated ScoringMetrics from raw scoring data.
+        
+        Args:
+            raw_scoring_data: Raw scoring data dictionary
+            
+        Returns:
+            Validated ScoringMetrics object
+            
+        Raises:
+            ValidationError: If scoring data validation fails
+        """
+        try:
+            # Extract scores with proper decimal conversion
+            raw_scores = {
+                k: self._parse_decimal(v) 
+                for k, v in raw_scoring_data.get('raw_scores', {}).items()
+            }
+            
+            weighted_scores = {
+                k: self._parse_decimal(v) 
+                for k, v in raw_scoring_data.get('weighted_scores', {}).items()
+            }
+            
+            cluster_scores = {
+                k: self._parse_decimal(v) 
+                for k, v in raw_scoring_data.get('cluster_scores', {}).items()
+            }
+            
+            confidence_scores = {
+                k: self._parse_decimal(v) 
+                for k, v in raw_scoring_data.get('confidence_scores', {}).items()
+            }
+            
+            # Extract other fields
+            risk_factors = raw_scoring_data.get('risk_factors', [])
+            metadata = raw_scoring_data.get('metadata', {})
+            computed_at = self._parse_datetime(raw_scoring_data.get('computed_at', datetime.now()))
+            
+            return ScoringMetrics(
+                raw_scores=raw_scores,
+                weighted_scores=weighted_scores,
+                cluster_scores=cluster_scores,
+                risk_factors=risk_factors,
+                confidence_scores=confidence_scores,
+                metadata=metadata,
+                computed_at=computed_at
+            )
+            
+        except Exception as e:
+            raise ValidationError(f"Failed to create scoring metrics: {str(e)}") from e
+
+    def _create_biomarker_panel(self, raw_panel_data: Dict[str, Any]) -> BiomarkerPanel:
+        """
+        Create a validated BiomarkerPanel from raw panel data.
+        
+        Args:
+            raw_panel_data: Raw panel data dictionary
+            
+        Returns:
+            Validated BiomarkerPanel object
+            
+        Raises:
+            ValidationError: If panel data validation fails
+        """
+        try:
+            # Extract panel metadata
+            panel_name = raw_panel_data.get('name') or raw_panel_data.get('panel_name', 'Unknown Panel')
+            panel_type = raw_panel_data.get('panel_type', 'custom')
+            collected_at = self._parse_datetime(raw_panel_data.get('collected_at', datetime.now()))
+            laboratory = raw_panel_data.get('laboratory')
+            notes = raw_panel_data.get('notes')
+            
+            # Extract and validate biomarkers
+            raw_biomarkers = raw_panel_data.get('biomarkers', {})
+            if not raw_biomarkers:
+                raise ValidationError("Panel must contain at least one biomarker")
+            
+            biomarkers = {}
+            for name, raw_biomarker in raw_biomarkers.items():
+                try:
+                    biomarker = self._create_biomarker_context(name, raw_biomarker)
+                    biomarkers[name.lower()] = biomarker
+                except Exception as e:
+                    self._log(f"Failed to create biomarker '{name}': {str(e)}", "WARNING")
+                    continue
+            
+            if not biomarkers:
+                raise ValidationError("No valid biomarkers found in panel data")
+            
+            panel = BiomarkerPanel(
+                name=panel_name,
+                biomarkers=biomarkers,
+                collected_at=collected_at,
+                laboratory=laboratory,
+                panel_type=panel_type,
+                notes=notes
+            )
+            
+            self._log(f"[TRACE] Created biomarker panel: {panel_name}")
+            return panel
+            
+        except Exception as e:
+            if isinstance(e, ValidationError):
+                raise
+            raise ValidationError(f"Failed to create biomarker panel: {str(e)}") from e
+
+    def _validate_reference_range(self, reference_range: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Validate and normalize reference range data.
+        
+        Args:
+            reference_range: Raw reference range data
+            
+        Returns:
+            Validated reference range data
+            
+        Raises:
+            ValidationError: If reference range validation fails
+        """
+        if not isinstance(reference_range, dict):
+            raise ValidationError("Reference range must be a dictionary")
+        
+        required_keys = {'min', 'max', 'interpretation'}
+        if not all(key in reference_range for key in required_keys):
+            raise ValidationError("Reference range must contain 'min', 'max', and 'interpretation' keys")
+        
+        try:
+            min_val = self._parse_decimal(reference_range['min'])
+            max_val = self._parse_decimal(reference_range['max'])
+            
+            if min_val >= max_val:
+                raise ValidationError("Reference range min must be less than max")
+            
+            return {
+                'min': min_val,
+                'max': max_val,
+                'interpretation': str(reference_range['interpretation'])
+            }
+        except Exception as e:
+            if isinstance(e, ValidationError):
+                raise
+            raise ValidationError(f"Invalid reference range: {str(e)}") from e
+
+    def _parse_decimal(self, value: Any) -> Decimal:
+        """
+        Parse a value to Decimal with proper error handling.
+        
+        Args:
+            value: Value to parse to Decimal
+            
+        Returns:
+            Decimal value
+            
+        Raises:
+            ValidationError: If value cannot be converted to Decimal
+        """
+        try:
+            if isinstance(value, Decimal):
+                return value
+            elif isinstance(value, (int, float)):
+                return Decimal(str(value))
+            elif isinstance(value, str):
+                # Handle common string formats
+                cleaned = value.strip().replace(',', '')
+                return Decimal(cleaned)
+            else:
+                raise ValueError(f"Cannot convert {type(value)} to Decimal")
+        except (ValueError, TypeError, decimal.InvalidOperation) as e:
+            raise ValidationError(f"Cannot convert '{value}' to Decimal: {str(e)}") from e
+
     def _generate_analysis_id(self) -> str:
         """
         Generate a unique analysis ID.

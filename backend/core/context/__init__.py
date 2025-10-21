@@ -15,7 +15,7 @@ The factory handles:
 """
 
 from .context_factory import ContextFactory, ContextFactoryError, ValidationError
-from .models import AnalysisContext, UserContext, BiomarkerContext
+from .models import AnalysisContext, UserContext, BiomarkerContext, BiomarkerPanel, ScoringMetrics, Sex
 
 __all__ = [
     "ContextFactory",
@@ -23,5 +23,8 @@ __all__ = [
     "ValidationError",
     "AnalysisContext",
     "UserContext",
-    "BiomarkerContext"
+    "BiomarkerContext",
+    "BiomarkerPanel",
+    "ScoringMetrics",
+    "Sex"
 ]
