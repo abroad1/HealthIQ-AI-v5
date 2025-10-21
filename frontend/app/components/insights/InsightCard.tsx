@@ -56,12 +56,6 @@ const categoryColors = {
 };
 
 export function InsightCard({ insight, className = '' }: InsightCardProps) {
-  // Add debug logging
-  console.debug('InsightCard props', {
-    hasInsight: !!insight,
-    recCount: insight?.recommendations?.length ?? 0,
-    bioCount: insight?.biomarkers_involved?.length ?? 0,
-  });
 
   // Null-safe array reads
   const recs = insight?.recommendations ?? [];
