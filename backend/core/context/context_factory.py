@@ -20,6 +20,7 @@ import decimal
 from datetime import datetime, date
 import logging
 import uuid
+import os
 
 from pydantic import ValidationError as PydanticValidationError
 
@@ -57,14 +58,25 @@ class ContextFactory:
     - Comprehensive error handling and logging
     """
     
-    def __init__(self, enable_logging: bool = True):
+    def __init__(self, enable_logging: bool = True, strict_validation: Optional[bool] = None):
         """
         Initialize the ContextFactory.
         
         Args:
             enable_logging: Whether to enable logging for factory operations
+            strict_validation: If True, raises on first invalid biomarker instead of skipping.
+                              If None, uses STRICT_VALIDATION environment variable.
         """
         self.enable_logging = enable_logging
+        
+        if strict_validation is None:
+            strict_validation = os.getenv("STRICT_VALIDATION", "false").lower() == "true"
+        
+        self.strict_validation = strict_validation
+        
+        if self.strict_validation:
+            self._log("Strict validation mode enabled - will fail on first invalid biomarker", "INFO")
+        
         self._log("ContextFactory initialized")
     
     def _log(self, message: str, level: str = "INFO") -> None:
@@ -149,8 +161,14 @@ class ContextFactory:
                         biomarker_context = self._create_biomarker_context(name, raw_biomarker)
                         biomarker_contexts[name.lower()] = biomarker_context
                     except Exception as e:
-                        self._log(f"Failed to create biomarker '{name}': {str(e)}", "WARNING")
-                        continue
+                        if self.strict_validation:
+                            # In strict mode, re-raise the exception to fail context creation
+                            self._log(f"Strict validation: failing on invalid biomarker '{name}': {str(e)}", "ERROR")
+                            raise ValidationError(f"Strict validation failed for biomarker '{name}': {str(e)}") from e
+                        else:
+                            # In normal mode, log warning and continue
+                            self._log(f"Failed to create biomarker '{name}': {str(e)}", "WARNING")
+                            continue
                 
                 if not biomarker_contexts:
                     raise ValidationError("No valid biomarkers found in payload")
@@ -489,8 +507,14 @@ class ContextFactory:
                     biomarker = self._create_biomarker_context(name, raw_biomarker)
                     biomarkers[name.lower()] = biomarker
                 except Exception as e:
-                    self._log(f"Failed to create biomarker '{name}': {str(e)}", "WARNING")
-                    continue
+                    if self.strict_validation:
+                        # In strict mode, re-raise the exception to fail panel creation
+                        self._log(f"Strict validation: failing on invalid biomarker '{name}': {str(e)}", "ERROR")
+                        raise ValidationError(f"Strict validation failed for biomarker '{name}': {str(e)}") from e
+                    else:
+                        # In normal mode, log warning and continue
+                        self._log(f"Failed to create biomarker '{name}': {str(e)}", "WARNING")
+                        continue
             
             if not biomarkers:
                 raise ValidationError("No valid biomarkers found in panel data")
