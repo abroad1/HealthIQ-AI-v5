@@ -132,3 +132,52 @@ class TestNormalizeAliases:
         for key in panel.biomarkers.keys():
             if not key.startswith("unmapped_"):
                 assert key in ["hdl", "ldl", "total_cholesterol"]
+    
+    def test_venous_aliases_resolve_to_canonical(self):
+        """Test that _(venous) variants resolve to correct canonical IDs."""
+        normalizer = BiomarkerNormalizer()
+        
+        # Test all required _(venous) aliases
+        test_cases = [
+            ("c-reactive_protein_crp_(venous)", "crp"),
+            ("total_creatine_kinese_ck_(venous)", "creatine_kinase"),
+            ("magnesium_(venous)", "magnesium"),
+            ("potassium_(venous)", "potassium"),
+            ("calcium_(venous)", "calcium"),
+            ("sodium_(venous)", "sodium"),
+            ("chloride_(venous)", "chloride"),
+            ("corrected_calcium_(venous)", "corrected_calcium"),
+            ("triglycerides_(venous)", "triglycerides"),  # Already working
+        ]
+        
+        for raw_key, expected_canonical in test_cases:
+            input_data = {raw_key: 100.0}
+            result = normalizer.normalize_biomarkers(input_data)
+            panel = result[0]
+            unmapped_keys = result[1]
+            
+            # Should resolve to canonical name, not unmapped
+            assert expected_canonical in panel.biomarkers, \
+                f"Failed to resolve '{raw_key}' to '{expected_canonical}'. Got keys: {list(panel.biomarkers.keys())}"
+            assert raw_key not in unmapped_keys, \
+                f"'{raw_key}' should not be in unmapped_keys"
+            assert not any(key.startswith("unmapped_") for key in panel.biomarkers.keys() if expected_canonical in key), \
+                f"'{raw_key}' should not produce unmapped_ prefix"
+    
+    def test_venous_aliases_preserve_values(self):
+        """Test that _(venous) aliases preserve biomarker values correctly."""
+        normalizer = BiomarkerNormalizer()
+        
+        input_data = {
+            "c-reactive_protein_crp_(venous)": 2.5,
+            "magnesium_(venous)": 1.8,
+            "calcium_(venous)": 9.5,
+        }
+        
+        result = normalizer.normalize_biomarkers(input_data)
+        panel = result[0]
+        
+        # Check values are preserved
+        assert panel.biomarkers["crp"].value == 2.5
+        assert panel.biomarkers["magnesium"].value == 1.8
+        assert panel.biomarkers["calcium"].value == 9.5

@@ -10,7 +10,12 @@ export interface BiomarkerResult {
   score?: number | null;
   percentile?: number | null;
   status?: string | null;
-  reference_range?: any;
+  reference_range?: {
+    min: number | null;
+    max: number | null;
+    unit: string;
+    source: string | null;
+  } | null;
   interpretation?: string | null;
 }
 

@@ -31,6 +31,7 @@ triglycerides:
   aliases:
   - TG
   - Triglycerides
+  - triglycerides_(venous)
 ldl:
   canonical_id: ldl
   aliases:

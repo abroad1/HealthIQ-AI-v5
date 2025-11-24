@@ -397,7 +397,8 @@ class ScoringRules:
         biomarker_name: str, 
         value: float, 
         age: Optional[int] = None,
-        sex: Optional[str] = None
+        sex: Optional[str] = None,
+        input_reference_range: Optional[Dict[str, Any]] = None
     ) -> Tuple[float, ScoreRange]:
         """
         Calculate score for a single biomarker.
@@ -407,10 +408,34 @@ class ScoringRules:
             value: Biomarker value
             age: Patient age for age adjustments
             sex: Patient sex for sex adjustments
+            input_reference_range: Optional input reference range from lab (takes precedence)
             
         Returns:
             Tuple of (score, score_range) where score is 0-100
         """
+        # Priority 1: Use input reference range if available and valid
+        if input_reference_range and isinstance(input_reference_range, dict):
+            min_val = input_reference_range.get('min')
+            max_val = input_reference_range.get('max')
+            if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)) and min_val < max_val:
+                return self._calculate_score_from_range(value, float(min_val), float(max_val))
+        
+        # Priority 2: Try to get reference range from SSOT
+        try:
+            ssot_range = self.resolver.get_reference_range(
+                biomarker_name,
+                age=age,
+                sex=sex
+            )
+            if ssot_range and isinstance(ssot_range, dict):
+                min_val = ssot_range.get('min')
+                max_val = ssot_range.get('max')
+                if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)) and min_val < max_val:
+                    return self._calculate_score_from_range(value, float(min_val), float(max_val))
+        except Exception:
+            pass  # Fall through to rule-based scoring
+        
+        # Priority 3: Fall back to rule-based scoring (existing logic)
         rule = self.get_biomarker_rule(biomarker_name)
         if not rule:
             return 0.0, ScoreRange.CRITICAL
@@ -423,6 +448,84 @@ class ScoringRules:
         
         # Calculate score based on range
         score = self._calculate_range_score(adjusted_value, rule, score_range)
+        
+        return score, score_range
+    
+    def _calculate_score_from_range(self, value: float, min_val: float, max_val: float) -> Tuple[float, ScoreRange]:
+        """
+        Calculate score and status from a reference range.
+        
+        Args:
+            value: Biomarker value
+            min_val: Minimum of reference range
+            max_val: Maximum of reference range
+            
+        Returns:
+            Tuple of (score, score_range) where score is 0-100
+        """
+        range_span = max_val - min_val
+        if range_span <= 0:
+            return 0.0, ScoreRange.CRITICAL
+        
+        # Calculate how far into the range the value is (0.0 = at min, 1.0 = at max)
+        position = (value - min_val) / range_span
+        
+        # Determine score range based on position within reference range
+        # Optimal: middle 60% of range (20% to 80%)
+        # Normal: 10% to 90% of range
+        # Borderline: 5% to 95% of range
+        # High/Low: outside normal but within borderline
+        # Critical: outside borderline
+        
+        if 0.2 <= position <= 0.8:
+            # Optimal range (middle 60%)
+            score = 100.0
+            score_range = ScoreRange.OPTIMAL
+        elif 0.1 <= position <= 0.9:
+            # Normal range (80% of range)
+            # Score decreases linearly from 100 at 20% to 90 at 10%, and from 100 at 80% to 90 at 90%
+            if position < 0.2:
+                score = 90.0 + (position - 0.1) / 0.1 * 10.0  # 90 to 100
+            elif position > 0.8:
+                score = 100.0 - (position - 0.8) / 0.1 * 10.0  # 100 to 90
+            else:
+                score = 100.0
+            score_range = ScoreRange.NORMAL
+        elif 0.05 <= position <= 0.95:
+            # Borderline range
+            if position < 0.1:
+                score = 70.0 + (position - 0.05) / 0.05 * 20.0  # 70 to 90
+            elif position > 0.9:
+                score = 90.0 - (position - 0.9) / 0.05 * 20.0  # 90 to 70
+            else:
+                score = 90.0
+            score_range = ScoreRange.BORDERLINE
+        elif position < 0.05:
+            # Low (below range)
+            if position < 0:
+                # Critical low - value is below minimum
+                excess_ratio = abs(position)  # How far below min (as ratio of range)
+                score = max(0.0, 10.0 - excess_ratio * 50.0)  # 10 to 0, decreases with distance
+                score_range = ScoreRange.CRITICAL
+            else:
+                # Borderline low - just below normal range
+                score = 50.0 + (position - 0.0) / 0.05 * 20.0  # 50 to 70
+                score_range = ScoreRange.BORDERLINE
+        else:  # position > 0.95
+            # High (above range)
+            if position > 1.0:
+                # Critical high - value is above maximum
+                excess_ratio = position - 1.0  # How far above max (as ratio of range)
+                score = max(0.0, 30.0 - excess_ratio * 50.0)  # 30 to 0, decreases with distance
+                score_range = ScoreRange.CRITICAL
+            else:
+                # Borderline high - just above normal range
+                score = 70.0 - (position - 0.95) / 0.05 * 20.0  # 70 to 50
+                score_range = ScoreRange.HIGH
+        
+        # Store position info for status mapping (value < min = low, value > max = elevated)
+        # We'll use this in the orchestrator to map to frontend status strings
+        return score, score_range
         
         return score, score_range
     

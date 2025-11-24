@@ -149,13 +149,30 @@ export default function UploadPage() {
         biomarkersObject[key] = {
           value: parseFloat(biomarker.value.toString()),
           unit: biomarker.unit,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          // Include reference range data if available
+          reference_range: biomarker.referenceRange ? {
+            min: biomarker.referenceRange.min,
+            max: biomarker.referenceRange.max,
+            unit: biomarker.referenceRange.unit,
+            source: "lab"
+          } : null
         };
       });
       
       console.log("🚀 Preparing to start analysis with", parsedData.length, "biomarkers");
       console.log("🔍 Biomarkers object keys:", Object.keys(biomarkersObject));
       console.log("📋 Questionnaire data keys:", Object.keys(questionnaireData || {}));
+      
+      // Console verification: Log reference ranges in payload
+      console.log("🔬 Reference range verification:");
+      Object.entries(biomarkersObject).forEach(([key, biomarker]) => {
+        if (biomarker.reference_range) {
+          console.log(`  ✅ ${key}: ${biomarker.reference_range.min}-${biomarker.reference_range.max} ${biomarker.reference_range.unit} (source: ${biomarker.reference_range.source})`);
+        } else {
+          console.log(`  ❌ ${key}: No reference range`);
+        }
+      });
       
       // Convert height object to number (if group field with Feet/Inches)
       let heightInCm = 180; // default
@@ -229,6 +246,18 @@ export default function UploadPage() {
       console.log("📦 Analysis payload prepared:", payload);
       console.log("🔍 Biomarkers validation check:", Object.keys(payload.biomarkers));
       console.log("🔍 User validation check:", payload.user);
+      
+      // Final verification: Log complete biomarker structure with reference ranges
+      console.log("🔬 Final payload biomarker structure verification:");
+      Object.entries(payload.biomarkers).forEach(([key, biomarker]) => {
+        console.log(`  📊 ${key}:`, {
+          value: biomarker.value,
+          unit: biomarker.unit,
+          timestamp: biomarker.timestamp,
+          reference_range: biomarker.reference_range
+        });
+      });
+      
       console.log("🎬 Calling startAnalysis()...");
       
       await startAnalysis(payload);

@@ -6,16 +6,57 @@ venv\Scripts\activate
 STARTING THE BACKEND
 cd C:\Users\abroa\HealthIQ-AI-v5\backend
 .\.venv\Scripts\Activate.ps1
-uvicorn app.main:app --reload --port 8000
+uvicorn app.main:app --reload --port 8000 
+
+Or
+
+python -m uvicorn app.main:app --reload --port 8000
+
+Or without reload
+
+python -m uvicorn app.main:app --port 8000
+
+
+curl -X GET "http://localhost:8000/api/analysis/result?analysis_id=72b63e97-915f-4ff9-b0d6-0d9671177c3f" | jq '.biomarkers[] | {name: .biomarker_name, reference_range: .reference_range}'
 
 **********************************
 
-STARTING THE FRONTEND
+# STARTING THE FRONTEND
 cd C:\Users\abroa\HealthIQ-AI-v5\frontend
 npm run dev
 
-*********************************
+Autofill upload page
+http://localhost:3000/upload?autofill=true
 
+*********************************
+Run these in PowerShell from your project root:
+
+cd C:\Users\abroa\HealthIQ-AI-v5
+docker ps
+
+#If you don’t see healthiq_testdb listed, start it manually:
+docker start healthiq_testdb
+
+
+#If it’s not created yet (first run after reboot), recreate it:
+docker run --name healthiq_testdb -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=test -e POSTGRES_DB=healthiq_test -p 5433:5432 -d postgres:15
+
+#Confirm it’s running:
+docker ps
+
+#set data base
+setx DATABASE_URL "postgresql://postgres:test@localhost:5433/healthiq_test"
+
+#verify with
+echo $env:DATABASE_URL
+
+
+#Then you can reconnect with:
+docker exec -it healthiq_testdb psql -U postgres -d healthiq_test
+
+#This restores your seeded Postgres container and makes the backend usable again.
+
+*******************************************
 PUSH CHANGES TO GITHUB REPO
 cd C:\Users\abroa\HealthIQ-AI-v5
 git add .github\workflows\ci.yml
