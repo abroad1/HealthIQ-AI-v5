@@ -41,7 +41,7 @@ from core.models.user import User
 from core.pipeline.orchestrator import AnalysisOrchestrator
 from core.pipeline.events import stream_status
 from core.dto.builders import build_analysis_result_dto
-from core.canonical.normalize import normalize_panel
+from core.canonical.normalize import normalize_biomarkers_with_metadata
 from core.context import ContextFactory, ValidationError
 
 router = APIRouter()
@@ -84,8 +84,9 @@ async def start_analysis(request: AnalysisStartRequest):
                 message=f"Validation failed: {str(e)}"
             )
         
-        # Normalize incoming raw biomarkers to canonical first
-        normalized = normalize_panel(request.biomarkers)
+        # Normalize incoming raw biomarkers to canonical form, preserving reference_range metadata
+        # This ensures lab-provided ranges are not lost before orchestrator processing
+        normalized = normalize_biomarkers_with_metadata(request.biomarkers)
         
         # Create orchestrator and run analysis
         orchestrator = AnalysisOrchestrator()
@@ -104,7 +105,17 @@ async def start_analysis(request: AnalysisStartRequest):
                     "score": b.score,
                     "percentile": b.percentile,
                     "status": b.status,
-                    "reference_range": b.reference_range,
+                    "reference_range": {
+                        "min": b.reference_range.get("min") if b.reference_range else None,
+                        "max": b.reference_range.get("max") if b.reference_range else None,
+                        "unit": b.reference_range.get("unit", b.unit) if b.reference_range else b.unit,
+                        "source": b.reference_range.get("source", "lab") if b.reference_range else "lab"
+                    } if b.reference_range else {
+                        "min": None,
+                        "max": None,
+                        "unit": b.unit,
+                        "source": "lab"
+                    },
                     "interpretation": b.interpretation
                 }
                 for b in dto.biomarkers
@@ -113,10 +124,12 @@ async def start_analysis(request: AnalysisStartRequest):
                 {
                     "cluster_id": c.cluster_id,
                     "name": c.name,
+                    "category": getattr(c, "category", "other"),
                     "biomarkers": c.biomarkers,
                     "description": c.description,
                     "severity": c.severity,
-                    "confidence": c.confidence
+                    "confidence": c.confidence,
+                    "recommendations": getattr(c, "recommendations", [])
                 }
                 for c in dto.clusters
             ],
@@ -124,7 +137,8 @@ async def start_analysis(request: AnalysisStartRequest):
                 {
                     "id": i.insight_id,
                     "category": i.category,
-                    "summary": i.title,
+                    "title": i.title,
+                    "summary": getattr(i, "summary", i.title),
                     "description": i.description,
                     "confidence": i.confidence,
                     "severity": i.severity,

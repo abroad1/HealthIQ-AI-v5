@@ -28,6 +28,10 @@ class BiomarkerValue(BaseModel):
     value: Any = Field(..., description="Measured value")
     unit: str = Field(default="", description="Unit of measurement")
     timestamp: Optional[str] = Field(default=None, description="Measurement timestamp")
+    reference_range: Optional[Dict[str, Any]] = Field(
+        default=None, 
+        description="Reference range with min, max, unit, and source"
+    )
 
 
 class BiomarkerPanel(BaseModel):
