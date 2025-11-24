@@ -37,6 +37,11 @@ export function InsightsPanel({ insights, className = '' }: InsightsPanelProps) 
   // Guard against undefined insights
   const safeInsights = insights ?? [];
   
+  // Debug: Log what InsightsPanel receives
+  console.log('💡 InsightsPanel received insights:', safeInsights);
+  console.log('💡 InsightsPanel insights count:', safeInsights.length);
+  console.log('💡 First insight:', safeInsights[0]);
+  
   if (!safeInsights.length) {
     return (
       <Card className={className}>

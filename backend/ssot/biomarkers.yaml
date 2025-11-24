@@ -25,7 +25,7 @@ biomarkers:
     data_type: "numeric"
     
   triglycerides:
-    aliases: ["trig", "triglyceride"]
+    aliases: ["trig", "triglyceride", "triglycerides_(venous)"]
     unit: "mg/dL"
     description: "Triglyceride level"
     category: "cardiovascular"
@@ -54,7 +54,7 @@ biomarkers:
     data_type: "numeric"
     
   creatine_kinase:
-    aliases: ["total_creatine_kinase", "total_ck", "ck_total", "creatine_kinase_(total)"]
+    aliases: ["total_creatine_kinase", "total_ck", "ck_total", "creatine_kinase_(total)", "total_creatine_kinese_ck_(venous)"]
     unit: "U/L"
     description: "Creatine kinase (total)"
     category: "metabolic"
@@ -92,7 +92,7 @@ biomarkers:
     
   # Inflammatory Markers
   crp:
-    aliases: ["c_reactive_protein", "hs_crp", "high_sensitivity_crp"]
+    aliases: ["c_reactive_protein", "hs_crp", "high_sensitivity_crp", "c-reactive_protein_crp_(venous)"]
     unit: "mg/L"
     description: "C-reactive protein"
     category: "inflammatory"
@@ -125,4 +125,47 @@ biomarkers:
     unit: "K/μL"
     description: "Platelet count"
     category: "cbc"
+    data_type: "numeric"
+    
+  # Electrolytes
+  calcium:
+    aliases: ["calcium_(venous)"]
+    unit: "mg/dL"
+    description: "Serum calcium level"
+    category: "electrolyte"
+    data_type: "numeric"
+    
+  corrected_calcium:
+    aliases: ["corrected_calcium_(venous)"]
+    unit: "mg/dL"
+    description: "Corrected serum calcium level"
+    category: "electrolyte"
+    data_type: "numeric"
+    
+  sodium:
+    aliases: ["sodium_(venous)"]
+    unit: "mEq/L"
+    description: "Serum sodium level"
+    category: "electrolyte"
+    data_type: "numeric"
+    
+  potassium:
+    aliases: ["potassium_(venous)"]
+    unit: "mEq/L"
+    description: "Serum potassium level"
+    category: "electrolyte"
+    data_type: "numeric"
+    
+  chloride:
+    aliases: ["chloride_(venous)"]
+    unit: "mEq/L"
+    description: "Serum chloride level"
+    category: "electrolyte"
+    data_type: "numeric"
+    
+  magnesium:
+    aliases: ["magnesium_(venous)"]
+    unit: "mg/dL"
+    description: "Serum magnesium level"
+    category: "electrolyte"
     data_type: "numeric"

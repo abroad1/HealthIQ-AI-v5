@@ -39,11 +39,13 @@ export default function ResultsPage() {
   
   // Store selectors - all at top level
   const currentAnalysis = useAnalysisStore(state => state.currentAnalysis);
+  const currentAnalysisId = useAnalysisStore(state => state.currentAnalysisId);
   const isAnalyzing = useAnalysisStore(state => state.isLoading);
   const analysisError = useAnalysisStore(state => state.error);
   const retryAnalysis = useAnalysisStore(state => state.retryAnalysis);
   const clearAnalysis = useAnalysisStore(state => state.clearAnalysis);
   const setCurrentAnalysis = useAnalysisStore(state => state.setCurrentAnalysis);
+  const setCurrentAnalysisId = useAnalysisStore(state => state.setCurrentAnalysisId);
   
   // Cluster store
   const { 
@@ -65,17 +67,28 @@ export default function ResultsPage() {
   const { created_at, completed_at } = currentAnalysis || {};
   
   console.log('🔍 URL analysis_id:', analysisIdFromUrl);
+  console.log('📍 Current analysis ID from store:', currentAnalysisId);
 
-  // Fetch analysis result from URL - runs once per analysisId
+  // Sync analysis_id from URL to store
   useEffect(() => {
-    if (!analysisIdFromUrl) return;
-    if (fetchedRef.current === analysisIdFromUrl) return;
+    if (analysisIdFromUrl && analysisIdFromUrl !== currentAnalysisId) {
+      console.log(`🔄 Syncing analysis_id from URL to store: ${analysisIdFromUrl}`);
+      setCurrentAnalysisId(analysisIdFromUrl);
+    }
+  }, [analysisIdFromUrl, currentAnalysisId, setCurrentAnalysisId]);
+
+  // Fetch analysis result - runs once per analysisId
+  useEffect(() => {
+    // Use store ID as primary source, fallback to URL param
+    const idToFetch = currentAnalysisId || analysisIdFromUrl;
+    if (!idToFetch) return;
+    if (fetchedRef.current === idToFetch) return;
     
-    console.log("📡 Fetching analysis result for:", analysisIdFromUrl);
-    fetchedRef.current = analysisIdFromUrl;
+    console.log("📡 Fetching analysis result for:", idToFetch, "(from store:", currentAnalysisId, ", from URL:", analysisIdFromUrl, ")");
+    fetchedRef.current = idToFetch;
     setIsFetchingFromUrl(true);
     
-    AnalysisService.getAnalysisResult(analysisIdFromUrl)
+    AnalysisService.getAnalysisResult(idToFetch)
       .then((result) => {
         console.log('✅ Analysis result fetched:', result);
         
@@ -101,12 +114,12 @@ export default function ResultsPage() {
             window.__HEALTHIQ_DEBUG__ = analysisData;
           }
         } else {
-          console.warn("⚠️ Empty or invalid result for:", analysisIdFromUrl);
+          console.warn("⚠️ Empty or invalid result for:", idToFetch);
         }
       })
       .catch((err) => console.error("❌ Failed to fetch result:", err))
       .finally(() => setIsFetchingFromUrl(false));
-  }, [analysisIdFromUrl, setCurrentAnalysis]);
+  }, [currentAnalysisId, analysisIdFromUrl, setCurrentAnalysis]);
 
   // Handle navigation and cluster loading - all side effects in useEffect
   useEffect(() => {
@@ -165,6 +178,9 @@ export default function ResultsPage() {
   console.debug('🧩 Biomarkers rendered:', biomarkers.length);
   console.log("🧩 Biomarkers to render:", biomarkers.length);
   console.log("🧩 Biomarkers data:", biomarkers);
+  console.log("🧩 Insights data:", insights);
+  console.log("🧩 Clusters data:", clusters);
+  console.log("🧩 Current analysis:", currentAnalysis);
 
   // Guard clauses AFTER all hooks - no early returns before this point
   if (isAnalyzing || isFetchingFromUrl) {
@@ -415,7 +431,7 @@ export default function ResultsPage() {
                               {insight.category?.replace(/([A-Z])/g, ' $1').trim()}
                             </p>
                             <p className="text-xs text-gray-600 line-clamp-2">
-                              {insight.summary}
+                              {insight.title || insight.description || 'No summary available'}
                             </p>
                           </div>
                         </div>
@@ -429,38 +445,61 @@ export default function ResultsPage() {
 
           <TabsContent value="biomarkers" className="space-y-6">
             <BiomarkerDials 
-              biomarkers={biomarkers.reduce((acc, biomarker) => {
-                acc[biomarker.biomarker_name] = {
-                  value: biomarker.value,
-                  unit: biomarker.unit,
-                  status: biomarker.status,
-                  referenceRange: biomarker.reference_range ? {
-                    min: biomarker.reference_range.min,
-                    max: biomarker.reference_range.max,
-                    unit: biomarker.reference_range.unit
-                  } : undefined,
-                  date: created_at
-                };
-                return acc;
-              }, {} as Record<string, any>)} 
+              biomarkers={(() => {
+                // Defensive filtering: only process valid biomarkers
+                const validBiomarkers = biomarkers.filter(b => 
+                  b.biomarker_name && 
+                  b.value != null && 
+                  typeof b.value === 'number'
+                );
+                
+                console.log(`[Results Page] Total biomarkers from store: ${biomarkers.length}`);
+                console.log(`[Results Page] Valid biomarkers after filtering: ${validBiomarkers.length}`);
+                
+                const biomarkerObject = validBiomarkers.reduce((acc, biomarker) => {
+                  // Use biomarker_name as key - BiomarkerDials will handle display name mapping
+                  console.log(`[Results Page] Mapping biomarker: ${biomarker.biomarker_name} (value: ${biomarker.value}, score: ${biomarker.score})`);
+                  acc[biomarker.biomarker_name] = {
+                    value: biomarker.value,
+                    unit: biomarker.unit,
+                    status: biomarker.status ?? undefined,
+                    score: biomarker.score ?? undefined,
+                    referenceRange: biomarker.reference_range
+                      ? {
+                          min: biomarker.reference_range.min ?? undefined,
+                          max: biomarker.reference_range.max ?? undefined,
+                          unit: biomarker.reference_range.unit,
+                          source: biomarker.reference_range.source ?? undefined,
+                        }
+                      : undefined,
+                    date: created_at
+                  };
+                  return acc;
+                }, {} as Record<string, any>);
+                
+                console.log(`[Results Page] Final biomarker object keys: ${Object.keys(biomarkerObject).length}`);
+                console.log(`[Results Page] Final biomarker object keys:`, Object.keys(biomarkerObject));
+                
+                return biomarkerObject;
+              })()} 
               showDetails={showDetails}
             />
           </TabsContent>
 
           <TabsContent value="clusters" className="space-y-6">
             <ClusterSummary 
-              clusters={clusterStoreClusters.map(cluster => ({
-                id: cluster.id,
+              clusters={clusters.map(cluster => ({
+                id: cluster.cluster_id || cluster.id,
                 name: cluster.name,
-                category: cluster.category,
-                score: cluster.score,
-                confidence: 0.85, // Default confidence
-                biomarkers: cluster.biomarkers,
+                category: cluster.category || 'other',
+                score: cluster.confidence ? cluster.confidence * 100 : 0,
+                confidence: cluster.confidence || 0.85,
+                biomarkers: cluster.biomarkers || [],
                 description: cluster.description,
-                recommendations: cluster.recommendations,
-                severity: cluster.risk_level === 'low' ? 'low' : 
-                         cluster.risk_level === 'medium' ? 'moderate' :
-                         cluster.risk_level === 'high' ? 'high' : 'critical',
+                recommendations: cluster.recommendations || [],
+                severity: cluster.severity === 'low' ? 'low' : 
+                         cluster.severity === 'medium' ? 'moderate' :
+                         cluster.severity === 'high' ? 'high' : 'critical',
                 trend: 'stable' as const
               }))} 
               isLoading={clustersLoading}

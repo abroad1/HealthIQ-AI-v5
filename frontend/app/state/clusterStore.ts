@@ -220,12 +220,12 @@ export const useClusterStore = create<ClusterState>()(
           if (currentAnalysis && currentAnalysis.clusters) {
             // Convert analysis clusters to BiomarkerCluster format
             const clusters: BiomarkerCluster[] = currentAnalysis.clusters.map((cluster: any) => ({
-              id: cluster.id || `cluster-${Math.random()}`,
-              name: cluster.name || cluster.category || 'Unknown Cluster',
-              description: cluster.description || cluster.summary || 'No description available',
-              biomarkers: cluster.biomarkers_involved || cluster.biomarkers || [],
-              score: cluster.score || 0,
-              risk_level: cluster.risk_level || 'low',
+              id: cluster.cluster_id || cluster.id || `cluster-${Math.random()}`,
+              name: cluster.name || 'Unknown Cluster',
+              description: cluster.description || 'No description available',
+              biomarkers: cluster.biomarkers || [],
+              score: cluster.confidence ? cluster.confidence * 100 : 0,
+              risk_level: cluster.severity || 'low',
               category: cluster.category || 'other',
               insights: cluster.insights || [],
               recommendations: cluster.recommendations || [],

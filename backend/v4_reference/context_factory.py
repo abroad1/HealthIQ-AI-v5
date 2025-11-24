@@ -477,9 +477,10 @@ class ContextFactory:
         if not isinstance(reference_range, dict):
             raise ValidationError("Reference range must be a dictionary")
         
-        required_keys = {'min', 'max', 'interpretation'}
+        # Make interpretation optional for lab ranges
+        required_keys = {'min', 'max'}
         if not all(key in reference_range for key in required_keys):
-            raise ValidationError("Reference range must contain 'min', 'max', and 'interpretation' keys")
+            raise ValidationError("Reference range must contain 'min' and 'max' keys")
         
         try:
             min_val = self._parse_decimal(reference_range['min'])
@@ -491,7 +492,7 @@ class ContextFactory:
             return {
                 'min': min_val,
                 'max': max_val,
-                'interpretation': str(reference_range['interpretation'])
+                'interpretation': str(reference_range.get('interpretation', ''))  # Optional with default
             }
         except Exception as e:
             if isinstance(e, ValidationError):

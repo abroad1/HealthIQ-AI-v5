@@ -8,6 +8,7 @@ backward compatibility and performance.
 
 import os
 import yaml
+from pathlib import Path
 from typing import Dict, List, Optional, Any
 from difflib import get_close_matches
 
@@ -44,14 +45,17 @@ class AliasRegistryService:
     
     def _load_v4_registry(self) -> Dict[str, Any]:
         """Load the v4 alias registry from YAML file."""
+        print(f"[TRACE] [AliasRegistryService] Loading v4 registry from: {self.v4_registry_path}")
         try:
             with open(self.v4_registry_path, 'r', encoding='utf-8') as f:
-                return yaml.safe_load(f)
+                registry = yaml.safe_load(f)
+                print(f"[TRACE] [AliasRegistryService] Loaded {len(registry)} entries from v4 registry")
+                return registry
         except FileNotFoundError:
-            print(f"Warning: v4 alias registry not found at {self.v4_registry_path}")
+            print(f"[WARN] v4 alias registry not found at {self.v4_registry_path}")
             return {}
         except yaml.YAMLError as e:
-            print(f"Error parsing v4 alias registry: {e}")
+            print(f"[ERROR] Error parsing v4 alias registry: {e}")
             return {}
     
     def _load_v5_config(self) -> Dict[str, Any]:
@@ -64,6 +68,20 @@ class AliasRegistryService:
             return {}
         except yaml.YAMLError as e:
             print(f"Error parsing v5 biomarkers config: {e}")
+            return {}
+    
+    def _load_ssot_biomarkers(self) -> Dict[str, Any]:
+        """Load biomarkers from SSOT (Single Source of Truth)."""
+        ssot_path = Path(__file__).parent.parent.parent / "ssot" / "biomarkers.yaml"
+        try:
+            with open(ssot_path, 'r', encoding='utf-8') as f:
+                data = yaml.safe_load(f)
+                return data.get('biomarkers', {})
+        except FileNotFoundError:
+            print(f"[WARN] SSOT biomarkers file not found at {ssot_path}")
+            return {}
+        except yaml.YAMLError as e:
+            print(f"[ERROR] Error parsing SSOT biomarkers: {e}")
             return {}
     
     def _build_alias_mapping(self) -> Dict[str, str]:
@@ -99,6 +117,18 @@ class AliasRegistryService:
                             # Handle variations with spaces, hyphens, underscores
                             normalized = alias.lower().replace(' ', '_').replace('-', '_')
                             alias_mapping[normalized] = canonical_id
+                            # Handle parentheses variations: create both (a) and _(a) versions
+                            if '(' in normalized and ')' in normalized:
+                                # Create version with underscore before parentheses: (a) -> _(a)
+                                parens_with_underscore = normalized.replace('(', '_(').replace(')', '_)')
+                                if parens_with_underscore != normalized:
+                                    alias_mapping[parens_with_underscore] = canonical_id
+                                # Also ensure we have the version without underscore: _(a) -> (a) if needed
+                                # (This handles cases where alias already has _(a) format)
+                                if '_(' in normalized:
+                                    parens_without_underscore = normalized.replace('_(', '(').replace('_)', ')')
+                                    if parens_without_underscore != normalized:
+                                        alias_mapping[parens_without_underscore] = canonical_id
                             # Handle common medical abbreviations
                             if ' ' in alias:
                                 abbrev = ''.join(word[0] for word in alias.split() if word)
@@ -107,6 +137,36 @@ class AliasRegistryService:
             else:
                 print("[WARN] v4 registry not available, falling back to v5 config")
                 self.use_v4_registry = False
+        
+        # Load SSOT aliases to supplement v4 registry (or as primary source if v4 unavailable)
+        ssot_biomarkers = self._load_ssot_biomarkers()
+        if ssot_biomarkers:
+            print("[TRACE] Loading aliases from SSOT biomarkers.yaml")
+            for canonical_name, definition in ssot_biomarkers.items():
+                if isinstance(definition, dict) and 'aliases' in definition:
+                    # Map canonical name to itself
+                    alias_mapping[canonical_name.lower()] = canonical_name
+                    alias_mapping[canonical_name.upper()] = canonical_name
+                    
+                    # Map all aliases to canonical name
+                    for alias in definition.get('aliases', []):
+                        # Direct lowercase/uppercase mappings
+                        alias_mapping[alias.lower()] = canonical_name
+                        alias_mapping[alias.upper()] = canonical_name
+                        # Handle variations with spaces, hyphens, underscores (but preserve parentheses)
+                        normalized = alias.lower().replace(' ', '_').replace('-', '_')
+                        alias_mapping[normalized] = canonical_name
+                        # Handle parentheses variations: create both (a) and _(a) versions
+                        if '(' in normalized and ')' in normalized:
+                            # Create version with underscore before parentheses: (a) -> _(a)
+                            parens_with_underscore = normalized.replace('(', '_(').replace(')', '_)')
+                            if parens_with_underscore != normalized:
+                                alias_mapping[parens_with_underscore] = canonical_name
+                            # Also ensure we have the version without underscore: _(a) -> (a) if needed
+                            if '_(' in normalized:
+                                parens_without_underscore = normalized.replace('_(', '(').replace('_)', ')')
+                                if parens_without_underscore != normalized:
+                                    alias_mapping[parens_without_underscore] = canonical_name
         
         if not self.use_v4_registry:
             # Fallback to v5 config
@@ -146,7 +206,10 @@ class AliasRegistryService:
         self._alias_to_canonical = alias_mapping
         self._loaded = True
         
-        print(f"[TRACE] Alias registry loaded: {len(alias_mapping)} aliases mapped")
+        print(f"[TRACE] [AliasRegistryService] Registry building complete: {len(alias_mapping)} aliases mapped")
+        # Show sample of mappings for debugging
+        sample_keys = list(alias_mapping.keys())[:10]
+        print(f"[TRACE] [AliasRegistryService] Sample mappings: {sample_keys}")
         return alias_mapping
     
     def _add_common_aliases(self, alias_mapping: Dict[str, str]):
@@ -230,13 +293,20 @@ class AliasRegistryService:
         Returns:
             Canonical name if found, "unmapped_{name}" if not found
         """
+        # === BEGIN DEBUG LOGGING FOR ALIAS RESOLVER ===
+        print(f"[TRACE] [AliasRegistryService] Resolving: '{name}'")
+        # === END DEBUG LOGGING ===
+        
         if not self._loaded:
             self._build_alias_mapping()
         
         # Direct lookup (case-insensitive)
         canonical = self._alias_to_canonical.get(name.lower())
         if canonical:
+            print(f"[TRACE] [AliasRegistryService] Direct lookup found: '{canonical}'")
             return canonical
+        
+        print(f"[TRACE] [AliasRegistryService] Direct lookup failed for: '{name.lower()}'")
         
         # Fuzzy matching for close matches
         all_aliases = list(self._alias_to_canonical.keys())
@@ -248,8 +318,11 @@ class AliasRegistryService:
         )
         
         if close_matches:
-            return self._alias_to_canonical[close_matches[0]]
+            result = self._alias_to_canonical[close_matches[0]]
+            print(f"[TRACE] [AliasRegistryService] Fuzzy match found: '{close_matches[0]}' -> '{result}'")
+            return result
         
+        print(f"[TRACE] [AliasRegistryService] No match found, returning: 'unmapped_{name}'")
         # Return unmapped key
         return f"unmapped_{name}"
     

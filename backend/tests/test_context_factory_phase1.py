@@ -170,16 +170,27 @@ class TestContextFactoryPhase1:
         
         assert "Reference range min must be less than max" in str(exc_info.value)
         
-        # Test missing required keys
-        incomplete_range = {
+        # Test reference range WITHOUT interpretation (now valid, defaults to empty string)
+        range_without_interpretation = {
             'min': 70,
             'max': 100
+        }
+        
+        validated_range_no_interpretation = factory._validate_reference_range(range_without_interpretation)
+        assert validated_range_no_interpretation['min'] == 70.0
+        assert validated_range_no_interpretation['max'] == 100.0
+        assert validated_range_no_interpretation['interpretation'] == ''  # Default to empty string
+        
+        # Test missing required keys (min or max)
+        incomplete_range = {
+            'min': 70
+            # Missing 'max'
         }
         
         with pytest.raises(Exception) as exc_info:
             factory._validate_reference_range(incomplete_range)
         
-        assert "Reference range must contain 'min', 'max', and 'interpretation' keys" in str(exc_info.value)
+        assert "Reference range must contain 'min' and 'max' keys" in str(exc_info.value)
 
     def test_parse_decimal(self):
         """

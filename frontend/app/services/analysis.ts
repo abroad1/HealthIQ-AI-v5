@@ -31,6 +31,23 @@ export class AnalysisService {
       console.log("📨 Request body:", JSON.stringify(data, null, 2));
       console.log("Outgoing payload:", data);
       
+      // === BEGIN DEBUG LOGGING FOR OUTGOING ANALYSIS PAYLOAD ===
+      try {
+        console.group("[TRACE] Outgoing Analysis Payload");
+        console.log("Payload keys:", Object.keys(data || {}));
+        console.log("Biomarker count:", Object.keys(data?.biomarkers || {}).length);
+        console.log("Sample biomarker keys:", Object.keys(data?.biomarkers || {}).slice(0, 5));
+        console.log("User object:", data?.user || {});
+        console.log(
+          "[TRACE] Full Payload JSON:\n",
+          JSON.stringify(data, null, 2)
+        );
+        console.groupEnd();
+      } catch (err) {
+        console.warn("[WARN] Failed to log outgoing payload:", err);
+      }
+      // === END DEBUG LOGGING ===
+      
       const response = await fetch(url, {
         method: 'POST',
         headers: {

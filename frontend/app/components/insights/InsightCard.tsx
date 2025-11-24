@@ -9,6 +9,7 @@ import { AlertTriangle, Info, CheckCircle, XCircle } from 'lucide-react';
 export interface Insight {
   id: string;
   category: string;
+  title?: string;
   summary?: string;
   description?: string;
   evidence?: Record<string, any>;
@@ -91,7 +92,7 @@ export function InsightCard({ insight, className = '' }: InsightCardProps) {
           <div className="flex items-center gap-2">
             <SeverityIcon className="h-5 w-5 text-gray-600" />
             <CardTitle className="text-lg font-semibold text-gray-900">
-              {summary}
+              {insight?.title || summary || 'No title available'}
             </CardTitle>
           </div>
           <div className="flex flex-col items-end gap-2">
