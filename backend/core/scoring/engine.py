@@ -82,7 +82,8 @@ class ScoringEngine:
         biomarkers: Dict[str, Any],
         age: Optional[int] = None,
         sex: Optional[str] = None,
-        lifestyle_profile: Optional[LifestyleProfile] = None
+        lifestyle_profile: Optional[LifestyleProfile] = None,
+        input_reference_ranges: Optional[Dict[str, Dict[str, Any]]] = None
     ) -> ScoringResult:
         """
         Score biomarkers across all health systems.
@@ -92,6 +93,7 @@ class ScoringEngine:
             age: Patient age for adjustments
             sex: Patient sex for adjustments
             lifestyle_profile: Lifestyle profile for overlays
+            input_reference_ranges: Optional dict mapping biomarker names to their input reference ranges
             
         Returns:
             Complete scoring result
@@ -124,7 +126,8 @@ class ScoringEngine:
                 canonical_biomarkers, 
                 age, 
                 sex, 
-                lifestyle_profile
+                lifestyle_profile,
+                input_reference_ranges=input_reference_ranges
             )
             health_system_scores[system_name] = system_score
             all_missing_biomarkers.extend(system_score.missing_biomarkers)
@@ -158,7 +161,8 @@ class ScoringEngine:
         biomarkers: Dict[str, float],
         age: Optional[int],
         sex: Optional[str],
-        lifestyle_profile: Optional[LifestyleProfile]
+        lifestyle_profile: Optional[LifestyleProfile],
+        input_reference_ranges: Optional[Dict[str, Dict[str, Any]]] = None
     ) -> HealthSystemScore:
         """Score a specific health system."""
         system_rules = self.rules.get_health_system_rules(system_name)
@@ -186,8 +190,14 @@ class ScoringEngine:
                     value = biomarker_value.value
                 else:
                     value = biomarker_value
+                
+                # Get input reference range for this biomarker if available
+                input_range = None
+                if input_reference_ranges and rule.biomarker_name in input_reference_ranges:
+                    input_range = input_reference_ranges[rule.biomarker_name]
+                
                 score, score_range = self.rules.calculate_biomarker_score(
-                    rule.biomarker_name, value, age, sex
+                    rule.biomarker_name, value, age, sex, input_reference_range=input_range
                 )
                 
                 # Apply lifestyle overlays if provided

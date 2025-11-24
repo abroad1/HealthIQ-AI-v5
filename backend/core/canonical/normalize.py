@@ -47,12 +47,24 @@ class BiomarkerNormalizer:
         Returns:
             Tuple of (normalized BiomarkerPanel, list of unmapped keys)
         """
+        # === BEGIN DEBUG LOGGING FOR ALIAS NORMALIZATION ===
+        print("\n[TRACE] --- Alias Normalization Debug Start ---")
+        if isinstance(raw_biomarkers, dict):
+            print(f"[TRACE] Processing {len(raw_biomarkers)} biomarkers")
+            for key in raw_biomarkers.keys():
+                print(f"[TRACE] Incoming key: '{key}'")
+        else:
+            print("[WARN] Biomarkers is not a dict during normalization")
+        print("[TRACE] --- Alias Normalization Debug End ---\n")
+        # === END DEBUG LOGGING ===
+        
         normalized_values = {}
         unmapped_keys = []
         
         for key, value in raw_biomarkers.items():
             # Skip re-normalizing already flagged biomarkers
             if key.startswith("unmapped_"):
+                print(f"[WARN] Skipping already-flagged unmapped key: '{key}'")
                 normalized_values[key] = BiomarkerValue(
                     name=key,
                     value=value,
@@ -61,8 +73,18 @@ class BiomarkerNormalizer:
                 unmapped_keys.append(key)
                 continue
             
+            # === BEGIN DEBUG LOGGING FOR ALIAS RESOLVER ===
+            print(f"[TRACE] Resolving alias for key: '{key}'")
+            # === END DEBUG LOGGING ===
+            
             # Use v4 alias service for comprehensive resolution
             canonical_key = self.alias_service.resolve(key)
+            
+            # === BEGIN DEBUG LOGGING FOR ALIAS RESOLVER ===
+            print(f"[TRACE] Registry lookup result: '{canonical_key}'")
+            if canonical_key.startswith("unmapped_"):
+                print(f"[WARN] Key '{key}' failed to map to canonical name → {canonical_key}")
+            # === END DEBUG LOGGING ===
             
             if canonical_key.startswith("unmapped_"):
                 # Keep unmapped biomarkers but tag them as "unmapped"
@@ -77,18 +99,40 @@ class BiomarkerNormalizer:
                 # Extract numeric value and unit from the biomarker data
                 numeric_value = value
                 unit = self._get_unit_for_biomarker(canonical_key)
+                reference_range = None
                 
-                # Handle dict format like {"value": 95, "unit": "mg/dL"}
+                # Handle dict format like {"value": 95, "unit": "mg/dL", "reference_range": {...}}
                 if isinstance(value, dict) and "value" in value:
                     numeric_value = value["value"]
                     if "unit" in value:
                         unit = value["unit"]
+                    # Preserve reference_range if present
+                    if "reference_range" in value:
+                        ref_range = value["reference_range"]
+                        if isinstance(ref_range, dict) and ref_range.get("min") is not None and ref_range.get("max") is not None:
+                            reference_range = {
+                                "min": float(ref_range.get("min")),
+                                "max": float(ref_range.get("max")),
+                                "unit": ref_range.get("unit", unit),
+                                "source": ref_range.get("source", "lab")
+                            }
+                    # Also check for camelCase variant
+                    elif "referenceRange" in value:
+                        ref_range = value["referenceRange"]
+                        if isinstance(ref_range, dict) and ref_range.get("min") is not None and ref_range.get("max") is not None:
+                            reference_range = {
+                                "min": float(ref_range.get("min")),
+                                "max": float(ref_range.get("max")),
+                                "unit": ref_range.get("unit", unit),
+                                "source": ref_range.get("source", "lab")
+                            }
                 
-                # Create BiomarkerValue with canonical name
+                # Create BiomarkerValue with canonical name, preserving reference_range
                 normalized_values[canonical_key] = BiomarkerValue(
                     name=canonical_key,
                     value=numeric_value,
-                    unit=unit
+                    unit=unit,
+                    reference_range=reference_range
                 )
         
         # Create BiomarkerPanel with normalized values
@@ -147,11 +191,14 @@ def normalize_panel(raw_biomarkers: Dict[str, Any]) -> Dict[str, Any]:
     """
     Normalize raw biomarker data to canonical form.
     
+    WARNING: This function returns only {name: value} pairs, losing metadata.
+    For routes that need reference_range, use normalize_biomarkers() directly.
+    
     Args:
         raw_biomarkers: Raw biomarker data with potential aliases
         
     Returns:
-        Dict with canonical biomarker names as keys
+        Dict with canonical biomarker names as keys and numeric values only
     """
     # Skip re-normalizing already flagged biomarkers
     if any(key.startswith("unmapped_") for key in raw_biomarkers.keys()):
@@ -160,3 +207,30 @@ def normalize_panel(raw_biomarkers: Dict[str, Any]) -> Dict[str, Any]:
     normalizer = BiomarkerNormalizer()
     panel, _ = normalizer.normalize_biomarkers(raw_biomarkers)
     return {name: value.value for name, value in panel.biomarkers.items()}
+
+
+def normalize_biomarkers_with_metadata(raw_biomarkers: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Normalize raw biomarker data to canonical form, preserving all metadata including reference_range.
+    
+    Args:
+        raw_biomarkers: Raw biomarker data with potential aliases
+        
+    Returns:
+        Dict with canonical biomarker names as keys, containing value, unit, and reference_range
+    """
+    normalizer = BiomarkerNormalizer()
+    panel, _ = normalizer.normalize_biomarkers(raw_biomarkers)
+    
+    # Convert BiomarkerPanel to dict format preserving all metadata
+    result = {}
+    for name, biomarker_value in panel.biomarkers.items():
+        result[name] = {
+            "value": biomarker_value.value,
+            "unit": biomarker_value.unit,
+            "reference_range": biomarker_value.reference_range
+        }
+        if biomarker_value.timestamp:
+            result[name]["timestamp"] = biomarker_value.timestamp
+    
+    return result
