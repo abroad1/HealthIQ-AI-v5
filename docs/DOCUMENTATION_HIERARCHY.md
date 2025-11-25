@@ -23,7 +23,7 @@
 ### **LEVEL 3: SUPPORTING CONTEXT** (Additional Reference)
 - **`docs/context/PRD.md`** - **PRODUCT REQUIREMENTS**
   - **Purpose**: Product requirements and feature specifications
-- **`docs/context/IMPLEMENTATION_PLAN.md`** - **DEVELOPMENT PHASES**
+- **`docs/context/IMPLEMENTATION_PLAN_V5.md`** - **DEVELOPMENT PHASES**
   - **Purpose**: Development phases and sprint planning
 - **`docs/prp_*.md`** - **PRP TEMPLATES**
   - **Purpose**: PRP templates for agent-driven development
@@ -60,7 +60,7 @@
 ### **Supporting Context**
 **USE**: `docs/context/` files (Level 3)
 - `PRD.md` - Product requirements and feature specifications
-- `IMPLEMENTATION_PLAN.md` - Development phases and sprint planning
+- `IMPLEMENTATION_PLAN_V5.md` - Development phases and sprint planning
 - `prp_*.md` - PRP templates for agent-driven development
 
 ### **Implementation Reality Check**
