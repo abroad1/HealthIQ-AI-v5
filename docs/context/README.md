@@ -7,7 +7,7 @@ This folder contains the context engineering skeleton for HealthIQ-AI v5. Each f
 | File | Purpose |
 |------|---------|
 | `PRD.md` | Product Requirements Document - Features and Goals |
-| `IMPLEMENTATION_PLAN.md` | Phase/task/subtask tracker for agent execution |
+| `IMPLEMENTATION_PLAN_V5.md` | Phase/task/subtask tracker for agent execution |
 | `PROJECT_STRUCTURE.md` | Mirror and document monorepo folder layout |
 | `UX_UI_GUIDE.md` | Style rules, layout guidance, design tokens |
 | `BUG_TRACKER.md` | Known bugs and DO-NOT-FIX entries |

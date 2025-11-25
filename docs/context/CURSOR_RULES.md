@@ -28,7 +28,7 @@ This file defines architectural and behavioral rules Cursor must follow when wor
 ### **LEVEL 3: SUPPORTING CONTEXT** (Additional Reference)
 - `@file docs/context/PRD.md` – **PRODUCT REQUIREMENTS**
   - **Purpose**: Product requirements and feature specifications
-- `@file docs/context/IMPLEMENTATION_PLAN.md` – **DEVELOPMENT PHASES**
+- `@file docs/context/IMPLEMENTATION_PLAN_V5.md` – **DEVELOPMENT PHASES**
   - **Purpose**: Development phases and sprint planning
 
 ## 🎯 **CURSOR WORKFLOW:**
@@ -168,7 +168,7 @@ def example_function(param1: str, param2: int) -> bool:
 ### 🔄 Sprint Documentation Requirements (MANDATORY)
 - **ALWAYS update ALL relevant documentation files** after completing sprint work or significant changes
 - **MANDATORY files to update** after each sprint or major change:
-  - `docs/context/IMPLEMENTATION_PLAN.md` - Update sprint status, deliverables, and success criteria
+  - `docs/context/IMPLEMENTATION_PLAN_V5.md` - Update sprint status, deliverables, and success criteria
   - `docs/context/PROJECT_STRUCTURE.md` - Update file structure, implementation status, and new components
   - `TEST_LEDGER.md` - Document new tests, test results, and business value
   - `docs/context/ARCHITECTURE_REVIEW_REPORT.md` - Update current sprint status and implementation state

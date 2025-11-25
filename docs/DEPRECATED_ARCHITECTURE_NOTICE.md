@@ -23,7 +23,7 @@ The following documents are **DEPRECATED** and should **NOT** be used for sprint
 
 2. **`docs/context/`** directory - **CANONICAL ARCHITECTURE SPECIFICATION**
    - `PROJECT_STRUCTURE.md` - Target folder structure
-   - `IMPLEMENTATION_PLAN.md` - Development phases and tasks
+   - `IMPLEMENTATION_PLAN_V5.md` - Development phases and tasks
    - `STACK_*.md` files - Technology decisions and constraints
 
 3. **Actual Codebase** - **IMPLEMENTATION REALITY**

@@ -202,7 +202,7 @@ Questionnaire Responses → Lifestyle Factors → Engine Context → Insight Gen
 ## 🔗 Related Documentation
 
 - **Design Specification**: `docs/insight_design_outline.md`
-- **Implementation Plan**: `docs/context/IMPLEMENTATION_PLAN.md`
+- **Implementation Plan**: `docs/context/IMPLEMENTATION_PLAN_V5.md`
 - **Project Structure**: `docs/context/PROJECT_STRUCTURE.md`
 - **Architecture Review**: `docs/ARCHITECTURE_REVIEW_REPORT.md`
 
