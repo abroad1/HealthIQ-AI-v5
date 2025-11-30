@@ -39,7 +39,8 @@ Guardrail: End‑to‑end Upload→Parse→Render smoke must remain green after 
 - Unit tests + selective snapshot tests pass locally.  
 - No fallback/dummy code paths introduced.  
 - CI (where present) includes lint + new validations.  
-- Feature flags default **OFF** for new engines; no change to live API unless stated.  
+- Feature flags default **OFF** for new engines; no change to live API unless stated.
+- CI guardrails green (validator + smokes + no-fallback grep). No manual evidence required.  
 
 ---
 
@@ -283,6 +284,24 @@ python backend/scripts/smoke_prompt_v2.py
 - **Snapshots**: Cluster and insight outputs on canonical fixtures.  
 - **Property‑based checks**: Monotonicity invariants (e.g., TG:HDL ↑ should not reduce metabolic stress).  
 - **Safety**: Red‑flag routing; no diagnostic language; strict LLM schema with allow‑listed fields.
+
+### CI-enforced governance (no hand-pasted evidence)
+
+To reduce overhead, sprint governance is enforced by CI:
+
+- Smokes: Upload two-line sample → 200; empty → 400.
+
+- Validator: SSOT schema and biomarker completeness.
+
+- Safety grep: forbids fallback/dummy parsers.
+
+- Feature flags default **OFF**; no new engines wired unless the PR explicitly enables a flag.
+
+Developer responsibility:
+
+- Keep changes additive and behind flags.
+
+- Let CI enforce gates; **do not paste logs** into PRs (CI artifacts carry evidence).
 
 ---
 
