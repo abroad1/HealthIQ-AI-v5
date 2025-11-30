@@ -1,0 +1,31 @@
+{
+  "insights": [
+    {
+      "id": "metabolic_health",
+      "title": "Metabolic Health Assessment",
+      "severity": "low",
+      "evidence": ["glucose", "hba1c"],
+      "actions": [
+        "Maintain current dietary patterns",
+        "Continue regular physical activity"
+      ],
+      "red_flags": [],
+      "confidence": 0.85
+    },
+    {
+      "id": "cardiovascular_risk",
+      "title": "Cardiovascular Risk Profile",
+      "severity": "moderate",
+      "evidence": ["total_cholesterol", "ldl_cholesterol"],
+      "actions": [
+        "Consider dietary modifications to reduce LDL",
+        "Discuss lipid management with healthcare provider"
+      ],
+      "red_flags": ["ldl_cholesterol"],
+      "confidence": 0.75
+    }
+  ],
+  "tokens_used": 450,
+  "latency_ms": 1200
+}
+

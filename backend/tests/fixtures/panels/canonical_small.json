@@ -1,0 +1,49 @@
+{
+  "biomarkers": [
+    {
+      "name": "glucose",
+      "value": 95.0,
+      "unit": "mg/dL",
+      "reference_range": {
+        "min": 70.0,
+        "max": 100.0,
+        "unit": "mg/dL",
+        "source": "lab"
+      }
+    },
+    {
+      "name": "hba1c",
+      "value": 5.4,
+      "unit": "%",
+      "reference_range": {
+        "min": 4.0,
+        "max": 5.6,
+        "unit": "%",
+        "source": "lab"
+      }
+    },
+    {
+      "name": "total_cholesterol",
+      "value": 200.0,
+      "unit": "mg/dL",
+      "reference_range": {
+        "min": 0.0,
+        "max": 200.0,
+        "unit": "mg/dL",
+        "source": "lab"
+      }
+    },
+    {
+      "name": "ldl_cholesterol",
+      "value": 120.0,
+      "unit": "mg/dL",
+      "reference_range": {
+        "min": 0.0,
+        "max": 100.0,
+        "unit": "mg/dL",
+        "source": "lab"
+      }
+    }
+  ]
+}
+

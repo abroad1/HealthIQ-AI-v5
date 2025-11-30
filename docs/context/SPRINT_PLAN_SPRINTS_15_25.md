@@ -116,6 +116,47 @@ Guardrail: End‑to‑end Upload→Parse→Render smoke must remain green after 
 
 ---
 
+## Sprint 17 (Prompt Builder v2 + LLM Output Validator) — Implementation Summary
+
+**Status**: ✅ Compute-only implementation, not wired to runtime.
+
+**Deliverables**:
+- `backend/core/prompt_builder/v2.py`: Deterministic prompt builder emitting strict JSON
+- `backend/core/llm/schemas_v2.py`: Pydantic schemas with `extra="forbid"` and constraints
+- `backend/core/llm/validator_v2.py`: Validator with numeric invention and evidence referencing checks
+- `backend/tests/fixtures/panels/canonical_small.json`: Test panel with 2-4 biomarkers
+- `backend/tests/snapshots/prompt_v2_canonical.json`: Frozen expected prompt structure
+- `backend/tests/fixtures/llm/`: Valid and invalid LLM result fixtures
+- `backend/tests/unit/test_prompt_builder_v2.py`: Prompt builder unit tests
+- `backend/tests/unit/test_llm_validator_v2.py`: Validator unit tests
+- `backend/scripts/smoke_prompt_v2.py`: Local smoke script
+- `backend/config/flags.py`: Feature flag definition (`ENABLE_PROMPT_V2 = False`)
+
+**Validation Rules**:
+- Schema validation: `extra="forbid"` rejects unknown fields
+- Numeric invention detector: Rejects numeric values not present in prompt
+- Evidence referencing: Ensures evidence IDs reference prompt biomarkers/clusters
+- Red flag safety: Red flags must reference prompt red flags or IDs
+
+**Runtime Status**: Prompt Builder v2 and LLM Validator v2 are **not wired** to FastAPI routes, orchestrator, or frontend. No runtime behavior changes. Feature flag defined but unused.
+
+**Commands**:
+```bash
+# Run SSOT validator
+python -m backend.core.ssot.validate
+
+# Run unit tests
+pytest backend/tests/unit/test_prompt_builder_v2.py -q
+pytest backend/tests/unit/test_llm_validator_v2.py -q
+
+# Run smoke script
+python backend/scripts/smoke_prompt_v2.py
+```
+
+**Next Steps**: Sprint 18+ will wire Prompt Builder v2 to runtime via feature flag `ENABLE_PROMPT_V2`.
+
+---
+
 ## Sprint 18 — Insight Engine v3 (deterministic network reasoning)
 **Objective**: Deterministic logic for core and secondary insights with personalisation overlays.
 
