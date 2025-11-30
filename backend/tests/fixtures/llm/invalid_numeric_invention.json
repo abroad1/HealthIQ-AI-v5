@@ -1,0 +1,18 @@
+{
+  "insights": [
+    {
+      "id": "metabolic_health",
+      "title": "Metabolic Health Assessment",
+      "severity": "low",
+      "evidence": ["glucose value is 95.0 mg/dL which is normal"],
+      "actions": [
+        "Your glucose of 95.0 is good, but consider targeting 85.0 for optimal health"
+      ],
+      "red_flags": [],
+      "confidence": 0.85
+    }
+  ],
+  "tokens_used": 200,
+  "latency_ms": 800
+}
+

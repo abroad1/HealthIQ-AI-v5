@@ -1,0 +1,17 @@
+{
+  "insights": [
+    {
+      "id": "metabolic_health",
+      "title": "Metabolic Health Assessment",
+      "severity": "low",
+      "evidence": ["glucose", "hba1c"],
+      "actions": ["Maintain current patterns"],
+      "red_flags": [],
+      "confidence": 0.85,
+      "diagnosis": "Type 2 diabetes risk is low"
+    }
+  ],
+  "tokens_used": 200,
+  "latency_ms": 800
+}
+
