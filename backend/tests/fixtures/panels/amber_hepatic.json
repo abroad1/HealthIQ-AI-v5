@@ -1,0 +1,18 @@
+{
+  "biomarkers": [
+    {
+      "name": "alt",
+      "value": 45.0,
+      "unit": "U/L",
+      "flag": "high"
+    },
+    {
+      "name": "ast",
+      "value": 38.0,
+      "unit": "U/L",
+      "flag": "normal"
+    }
+  ],
+  "derived": []
+}
+
