@@ -6,10 +6,25 @@ from fastapi import APIRouter, HTTPException, UploadFile, File, Form
 from typing import Dict, Any, Optional
 from pydantic import BaseModel
 import json
+import yaml
+from pathlib import Path
 from datetime import datetime
 from services.parsing.llm_parser import LLMParser
+from core.canonical.resolver import resolve_to_canonical
 
 router = APIRouter()
+
+
+def _load_ssot_metadata() -> Dict[str, Any]:
+    """Load SSOT metadata for biomarkers. Cached per request."""
+    ssot_path = Path(__file__).parent.parent.parent / "ssot" / "biomarkers.yaml"
+    if not ssot_path.exists():
+        return {}
+    
+    with open(ssot_path, "r", encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    
+    return data.get("biomarkers", {})
 
 
 class ParseResponse(BaseModel):
@@ -86,9 +101,32 @@ async def parse_upload(
                 timestamp=datetime.now().isoformat()
             )
         
+        # Enrich biomarkers with SSOT metadata
+        enriched_biomarkers = []
+        ssot_data = _load_ssot_metadata()
+        
+        for biomarker in result.get("biomarkers", []):
+            # Resolve to canonical name
+            canonical_id = resolve_to_canonical(biomarker.get("id", ""))
+            
+            # Get SSOT metadata if available
+            ssot_metadata = {}
+            if canonical_id and canonical_id in ssot_data:
+                ssot_def = ssot_data[canonical_id]
+                ssot_metadata = {
+                    "system": ssot_def.get("system", ""),
+                    "clusters": ssot_def.get("clusters", []),
+                    "roles": ssot_def.get("roles", []),
+                    "clinical_weight": ssot_def.get("clinical_weight", 0.0),
+                }
+            
+            # Add SSOT block (empty if not found, but still include it)
+            enriched_biomarker = {**biomarker, "ssot": ssot_metadata}
+            enriched_biomarkers.append(enriched_biomarker)
+        
         # Format response data
         parsed_data = {
-            "biomarkers": result.get("biomarkers", []),
+            "biomarkers": enriched_biomarkers,
             "metadata": {
                 "parsing_method": "gemini_llm",
                 "source_type": input_source,
