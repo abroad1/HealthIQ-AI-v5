@@ -9,6 +9,13 @@ biomarkers:
     description: "Total cholesterol level"
     category: "cardiovascular"
     data_type: "numeric"
+    system: "cardiovascular"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
     
   ldl_cholesterol:
     aliases: ["ldl", "ldl_chol", "bad_cholesterol"]
@@ -16,6 +23,13 @@ biomarkers:
     description: "Low-density lipoprotein cholesterol"
     category: "cardiovascular"
     data_type: "numeric"
+    system: "cardiovascular"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.8
     
   hdl_cholesterol:
     aliases: ["hdl", "hdl_chol", "good_cholesterol"]
@@ -23,6 +37,13 @@ biomarkers:
     description: "High-density lipoprotein cholesterol"
     category: "cardiovascular"
     data_type: "numeric"
+    system: "cardiovascular"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.8
     
   triglycerides:
     aliases: ["trig", "triglyceride", "triglycerides_(venous)"]
@@ -30,6 +51,13 @@ biomarkers:
     description: "Triglyceride level"
     category: "cardiovascular"
     data_type: "numeric"
+    system: "cardiovascular"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
     
   # Metabolic Biomarkers
   glucose:
@@ -38,6 +66,13 @@ biomarkers:
     description: "Blood glucose level"
     category: "metabolic"
     data_type: "numeric"
+    system: "metabolic"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: ["fasting_state"]
+    clinical_weight: 0.8
     
   hba1c:
     aliases: ["hemoglobin_a1c", "a1c", "glycated_hemoglobin"]
@@ -45,6 +80,13 @@ biomarkers:
     description: "Hemoglobin A1c percentage"
     category: "metabolic"
     data_type: "numeric"
+    system: "metabolic"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.8
     
   insulin:
     aliases: ["insulin_level", "serum_insulin"]
@@ -52,6 +94,13 @@ biomarkers:
     description: "Fasting insulin level"
     category: "metabolic"
     data_type: "numeric"
+    system: "metabolic"
+    clusters: []
+    roles: ["insulin_sensitivity_marker"]
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: ["fasting_state"]
+    clinical_weight: 0.8
     
   creatine_kinase:
     aliases: ["total_creatine_kinase", "total_ck", "ck_total", "creatine_kinase_(total)", "total_creatine_kinese_ck_(venous)"]
@@ -59,6 +108,13 @@ biomarkers:
     description: "Creatine kinase (total)"
     category: "metabolic"
     data_type: "numeric"
+    system: "metabolic"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: ["training_load"]
+    clinical_weight: 0.4
     
   # Kidney Function
   creatinine:
@@ -67,6 +123,13 @@ biomarkers:
     description: "Serum creatinine level"
     category: "kidney"
     data_type: "numeric"
+    system: "renal"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.8
     
   bun:
     aliases: ["blood_urea_nitrogen", "urea_nitrogen"]
@@ -74,6 +137,13 @@ biomarkers:
     description: "Blood urea nitrogen"
     category: "kidney"
     data_type: "numeric"
+    system: "renal"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
     
   # Liver Function
   alt:
@@ -82,6 +152,13 @@ biomarkers:
     description: "Alanine aminotransferase"
     category: "liver"
     data_type: "numeric"
+    system: "hepatic"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: ["alcohol"]
+    clinical_weight: 0.8
     
   ast:
     aliases: ["aspartate_aminotransferase", "sgpt"]
@@ -89,6 +166,13 @@ biomarkers:
     description: "Aspartate aminotransferase"
     category: "liver"
     data_type: "numeric"
+    system: "hepatic"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: ["alcohol"]
+    clinical_weight: 0.8
     
   # Inflammatory Markers
   crp:
@@ -97,6 +181,13 @@ biomarkers:
     description: "C-reactive protein"
     category: "inflammatory"
     data_type: "numeric"
+    system: "immune"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: ["stress"]
+    clinical_weight: 0.8
     
   # Complete Blood Count
   hemoglobin:
@@ -105,6 +196,13 @@ biomarkers:
     description: "Hemoglobin level"
     category: "cbc"
     data_type: "numeric"
+    system: "hematological"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
     
   hematocrit:
     aliases: ["hct", "pcv"]
@@ -112,6 +210,13 @@ biomarkers:
     description: "Hematocrit percentage"
     category: "cbc"
     data_type: "numeric"
+    system: "hematological"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.4
     
   white_blood_cells:
     aliases: ["wbc", "leukocytes"]
@@ -119,6 +224,13 @@ biomarkers:
     description: "White blood cell count"
     category: "cbc"
     data_type: "numeric"
+    system: "hematological"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
     
   platelets:
     aliases: ["plt", "platelet_count"]
@@ -126,6 +238,13 @@ biomarkers:
     description: "Platelet count"
     category: "cbc"
     data_type: "numeric"
+    system: "hematological"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
     
   # Electrolytes
   calcium:
@@ -134,6 +253,13 @@ biomarkers:
     description: "Serum calcium level"
     category: "electrolyte"
     data_type: "numeric"
+    system: "nutritional"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.4
     
   corrected_calcium:
     aliases: ["corrected_calcium_(venous)"]
@@ -141,6 +267,13 @@ biomarkers:
     description: "Corrected serum calcium level"
     category: "electrolyte"
     data_type: "numeric"
+    system: "nutritional"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.4
     
   sodium:
     aliases: ["sodium_(venous)"]
@@ -148,6 +281,13 @@ biomarkers:
     description: "Serum sodium level"
     category: "electrolyte"
     data_type: "numeric"
+    system: "nutritional"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
     
   potassium:
     aliases: ["potassium_(venous)"]
@@ -155,6 +295,13 @@ biomarkers:
     description: "Serum potassium level"
     category: "electrolyte"
     data_type: "numeric"
+    system: "nutritional"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
     
   chloride:
     aliases: ["chloride_(venous)"]
@@ -162,6 +309,13 @@ biomarkers:
     description: "Serum chloride level"
     category: "electrolyte"
     data_type: "numeric"
+    system: "nutritional"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.4
     
   magnesium:
     aliases: ["magnesium_(venous)"]
@@ -169,3 +323,10 @@ biomarkers:
     description: "Serum magnesium level"
     category: "electrolyte"
     data_type: "numeric"
+    system: "nutritional"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.4
