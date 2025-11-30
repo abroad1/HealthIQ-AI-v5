@@ -54,6 +54,59 @@ Forks must include a README with a summary of:
 
 ---
 
+## ⚡ Fast Path: Routine Sprint Backups (default)
+
+Purpose: quickly back work up to GitHub with traceability.
+
+**Developer steps**
+
+1) Commit and push your sprint branch:
+
+   ```bash
+   git push -u origin sprintNN/<short-name>
+   ```
+
+2. Open a PR into `dev` using the Sprint PR template.
+
+3. Let CI run the guardrails. **Do not paste logs** into the PR.
+
+**CI guardrails (must be green to merge)**
+
+* SSOT validator passes.
+
+* Upload two-line smoke returns 200 (empty upload returns 400).
+
+* "No fallback parser" grep finds 0 matches.
+
+**Outputs**
+
+* CI artifacts contain validator/smoke outputs.
+
+* PR shows pass/fail status; no manual evidence required.
+
+**Scope**
+
+* No tags; no annotated milestone messages. This is backup, not a release.
+
+---
+
+## 🏷️ Milestone/Tag Backups (governed)
+
+Use this section for **stable milestones only** (e.g., after a sprint merges to `dev`). Create an **annotated tag** and ensure traceability.
+
+**Tag workflow**
+
+1) Merge PR to `dev` with CI green.
+
+2) Create annotated tag and push:
+
+   ```bash
+   git tag -a vX.Y-sprintNN -m "Sprint NN: <summary>"
+   git push origin vX.Y-sprintNN
+   ```
+
+3. Verify tag appears under Releases. CI artifacts on the milestone PR serve as evidence.
+
 ## 🛡️ Backup Verification Checklist
 
 ✅ Run `git tag` to confirm your milestone tag exists  
@@ -117,6 +170,20 @@ The following are **never backed up**:
 - `IMPLEMENTATION_PLAN.md` → for milestone definitions  
 - `ARCHITECTURE_REVIEW_REPORT.md` → for current stack audit summary  
 - `docs/sprints/SPRINT_11_TEST_ISOLATION_AND_SECURITY_VALIDATION.md` → for test isolation details
+
+---
+
+## 🧪 CI guardrails (reference)
+
+The pipeline enforces:
+
+- SSOT validator
+
+- Upload smokes (two-line → 200; empty → 400)
+
+- Repo grep: no fallback/dummy parsers
+
+If any guardrail fails, PRs cannot merge.
 
 ---
 
