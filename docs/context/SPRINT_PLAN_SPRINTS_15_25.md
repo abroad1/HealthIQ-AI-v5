@@ -80,6 +80,27 @@ Guardrail: End‑to‑end Upload→Parse→Render smoke must remain green after 
 
 ---
 
+## Sprint 16 (Engine Only) — Implementation Summary
+
+**Status**: ✅ Engine module implemented, not wired to runtime.
+
+**Deliverables**:
+- `backend/core/clustering/cluster_engine_v2.py`: Engine module with `load_cluster_rules()` and `score_clusters()` functions
+- `backend/ssot/cluster_rules.yaml`: Minimal stub rules file (empty rules array)
+- `backend/tests/fixtures/panels/`: Three synthetic test panels (green_metabolic.json, amber_hepatic.json, red_metabolic.json)
+- `backend/scripts/smoke_cluster_engine_v2.py`: Smoke script that runs engine and prints 8 cluster objects
+- `backend/tests/unit/test_cluster_engine_v2.py`: Unit tests for happy path, hepatic scoring, and confidence behavior
+
+**Banding**: 0–49 green, 50–69 amber, 70+ red (temporary bands for smoke testing)
+
+**Confidence**: Fraction of required cluster members present (temporary heuristic)
+
+**Runtime Status**: Engine is **not wired** to FastAPI routes, orchestrator, or frontend. No runtime behavior changes. Upload parse still returns same shape.
+
+**Next Steps**: Sprint 17+ will wire engine to runtime via feature flag `ENABLE_CLUSTER_ENGINE_V2`.
+
+---
+
 ## Sprint 17 — Prompt Builder v2 + LLM Output Validator
 **Objective**: Replace loose prompts with structured JSON context and strict output validation.
 

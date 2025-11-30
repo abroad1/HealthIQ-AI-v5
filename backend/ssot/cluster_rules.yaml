@@ -1,0 +1,7 @@
+# Cluster Rules - Sprint 16 (Engine Only)
+# Minimal stub for Cluster Engine v2
+# Rules will be expanded in future sprints
+
+version: "v1"
+rules: []
+
