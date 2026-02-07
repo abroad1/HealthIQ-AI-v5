@@ -23,7 +23,7 @@ Guardrail: End‑to‑end Upload→Parse→Render smoke must remain green after 
 | 15 | SSOT metadata foundation | `ssot/biomarkers.yaml`, validator, additive DTO fields | N/A | None (metadata only) |
 | 16 | Cluster Engine v2 (deterministic) | `core/clustering/engine_v2.py`, `ssot/cluster_rules.yaml` | `ENABLE_CLUSTER_ENGINE_V2` | None (flag off) |
 | 17 | Prompt Builder v2 + LLM output validator | `prompt_builder/v2.py`, Pydantic schemas | `ENABLE_PROMPT_V2` | None (flag off) |
-| 18 | Insight Engine v3 (network reasoning) | Deterministic insight modules & safety rules | `ENABLE_INSIGHTS_V3` | None (flag off) |
+| 18 | Stabilisation + hygiene | Cleanup artefacts, tighter pre‑PR checks, branch clarity | N/A | None |
 | 19 | Biomarker expansion batch 2 (~40) | SSOT entries, converters, aliases | N/A | Expanded coverage in results |
 | 20 | Cluster/UI surfaces | Cluster grid, dial polish, biomarker→cluster links | `ENABLE_CLUSTER_UI` | New dashboards |
 | 21 | Longitudinal trends | Trend engine + FE sparklines | `ENABLE_TRENDS` | Trends views |
@@ -158,23 +158,20 @@ python backend/scripts/smoke_prompt_v2.py
 
 ---
 
-## Sprint 18 — Insight Engine v3 (deterministic network reasoning)
-**Objective**: Deterministic logic for core and secondary insights with personalisation overlays.
-
-**Insights in scope**
-- Core (3): Metabolic Age; Cardiovascular Health (physiological resilience); Inflammation Load.  
-- Secondary (7): Fatigue Root Cause; Detox & Filtration (Liver+Kidney); Thyroid Regulation; Nutritional Sufficiency; Metabolic Instability; Silent Inflammation Load; **QRISK3 10‑year event risk** (deterministic).  
+## Sprint 18 — Stabilisation + hygiene (short sprint)
+**Objective**: Reduce friction and prevent accidental artefacts or missing files from slowing development.
 
 **Scope**
-- Deterministic rules per insight; uses clusters/derived metrics when available.  
-- Personalisation overlays: age, sex, alcohol, exercise, sleep, stress.  
-- Red‑flag detector table and retest intervals.  
-- Comprehensive unit + black‑box tests; QRISK3 verified against published examples.
+- Remove tracked artefacts (`tatus`, `tatus --porcelain`, `.tsbuildinfo`, `result.json`) and add minimal ignore rules to prevent recurrence.  
+- Keep pre‑PR checks lightweight and Windows‑friendly; document any required local services (upload parse requires `localhost:8000`).  
+- Clarify branch usage and backup expectations (no new runtime behaviour).  
 
-**Flag**: `ENABLE_INSIGHTS_V3` (default OFF).  
-**Acceptance**: Tests pass; JSON outputs stable; no live API/FE change.
+**Acceptance**
+- `git status --porcelain` is clean after the cleanup steps.  
+- `.gitignore` blocks known artefacts without masking real source files.  
+- No fallback/dummy parsers introduced; no runtime changes.  
 
-**Out of scope**: FE surface; public routing.
+**Out of scope**: New engines, feature flags, or UI changes.
 
 ---
 
