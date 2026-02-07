@@ -215,3 +215,67 @@ reference_ranges:
       max: 450
       unit: "K/μL"
       population: "general_adult"
+  
+  # Metabolic - Creatine Kinase
+  creatine_kinase:
+    normal:
+      min: 0
+      max: 200
+      unit: "U/L"
+      population: "male_adult"
+    normal:
+      min: 0
+      max: 170
+      unit: "U/L"
+      population: "female_adult"
+  
+  # Electrolytes
+  calcium:
+    normal:
+      min: 8.5
+      max: 10.5
+      unit: "mg/dL"
+      population: "general_adult"
+  
+  corrected_calcium:
+    normal:
+      min: 8.5
+      max: 10.5
+      unit: "mg/dL"
+      population: "general_adult"
+  
+  sodium:
+    normal:
+      min: 136
+      max: 145
+      unit: "mEq/L"
+      population: "general_adult"
+  
+  potassium:
+    normal:
+      min: 3.5
+      max: 5.0
+      unit: "mEq/L"
+      population: "general_adult"
+  
+  chloride:
+    normal:
+      min: 98
+      max: 107
+      unit: "mEq/L"
+      population: "general_adult"
+  
+  magnesium:
+    normal:
+      min: 1.7
+      max: 2.2
+      unit: "mg/dL"
+      population: "general_adult"
+  
+  # Cardiovascular - Lipoprotein(a)
+  lipoprotein_a:
+    normal:
+      min: 0
+      max: 30
+      unit: "mg/dL"
+      population: "general_adult"

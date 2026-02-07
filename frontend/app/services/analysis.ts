@@ -14,7 +14,7 @@ import {
 } from '../types/analysis';
 import { ApiResponse, ApiError } from '../types/api';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000/api';
 
 export class AnalysisService {
   /**
@@ -29,6 +29,24 @@ export class AnalysisService {
       const url = `${API_BASE_URL}/analysis/start`;
       console.log("🌐 POST /api/analysis/start →", url);
       console.log("📨 Request body:", JSON.stringify(data, null, 2));
+      console.log("Outgoing payload:", data);
+      
+      // === BEGIN DEBUG LOGGING FOR OUTGOING ANALYSIS PAYLOAD ===
+      try {
+        console.group("[TRACE] Outgoing Analysis Payload");
+        console.log("Payload keys:", Object.keys(data || {}));
+        console.log("Biomarker count:", Object.keys(data?.biomarkers || {}).length);
+        console.log("Sample biomarker keys:", Object.keys(data?.biomarkers || {}).slice(0, 5));
+        console.log("User object:", data?.user || {});
+        console.log(
+          "[TRACE] Full Payload JSON:\n",
+          JSON.stringify(data, null, 2)
+        );
+        console.groupEnd();
+      } catch (err) {
+        console.warn("[WARN] Failed to log outgoing payload:", err);
+      }
+      // === END DEBUG LOGGING ===
       
       const response = await fetch(url, {
         method: 'POST',
@@ -94,7 +112,8 @@ export class AnalysisService {
         recommendations: result.recommendations || [],
         overall_score: result.overall_score,
         meta: result.meta || {},
-        created_at: result.created_at
+        created_at: result.created_at,
+        status: 'completed'
       };
       
       return {
@@ -137,12 +156,14 @@ export class AnalysisService {
     };
 
     eventSource.onerror = (error) => {
-      console.error('SSE connection error:', error);
-      // Only call onError if not completed - this prevents false error states
+      console.warn('SSE stream closed or errored', error);
+      try {
+        eventSource.close();
+      } catch (_) { /* ignore */ }
+      // Single fallback fetch on error, then close
       if (!isCompleted) {
-        onError?.(error);
-      } else {
-        console.log('SSE closed gracefully after completion');
+        isCompleted = true;
+        onComplete?.();
       }
     };
 

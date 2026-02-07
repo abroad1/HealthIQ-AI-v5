@@ -60,7 +60,7 @@ Each sprint document provides:
 
 ## 📖 Related Documentation
 
-- **Implementation Plan**: [../context/IMPLEMENTATION_PLAN.md](../context/IMPLEMENTATION_PLAN.md)
+- **Implementation Plan**: [../context/IMPLEMENTATION_PLAN_V5.md](../context/IMPLEMENTATION_PLAN_V5.md)
 - **Project Structure**: [../context/PROJECT_STRUCTURE.md](../context/PROJECT_STRUCTURE.md)
 - **Architecture Review**: [../ARCHITECTURE_REVIEW_REPORT.md](../ARCHITECTURE_REVIEW_REPORT.md)
 - **Test Ledger**: [../../TEST_LEDGER.md](../../TEST_LEDGER.md)

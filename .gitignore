@@ -29,3 +29,21 @@ storybook-static
 # Validation reports (keep README.md)
 backend/reports/validation/*
 !backend/reports/validation/README.md
+
+# Build artefacts
+frontend/.next/
+backend/reports/
+reports/forensics/
+
+# Tooling / caches
+.cursor/
+**/__pycache__/
+.pytest_cache/
+*.pyc
+*.log
+
+# OS junk
+.DS_Store
+
+# Local env
+.env

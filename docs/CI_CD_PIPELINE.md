@@ -556,7 +556,7 @@ alembic -x url=postgresql://postgres:test@localhost:5433/healthiq_test upgrade h
 ## 📚 Related Documentation
 
 - **Sprint 11**: [Test Isolation and Security Validation](../sprints/SPRINT_11_TEST_ISOLATION_AND_SECURITY_VALIDATION.md)
-- **Implementation Plan**: [Test Database Isolation](../context/IMPLEMENTATION_PLAN.md#test-database-isolation)
+- **Implementation Plan**: [Test Database Isolation](../context/IMPLEMENTATION_PLAN_V5.md#test-database-isolation)
 - **Backup Strategy**: [Non-production Environments](../context/BACKUP_STRATEGY.md#non-production-environments)
 - **Test Ledger**: [Value-First Testing](../../TEST_LEDGER.md)
 

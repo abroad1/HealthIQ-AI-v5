@@ -110,6 +110,89 @@ class CanonicalResolver:
         biomarkers = self.load_biomarkers()
         return biomarkers.get(name)
     
+    def get_biomarker_metadata(self, name: str) -> Dict[str, Any]:
+        """
+        Get biomarker metadata including unit and other properties.
+        
+        Args:
+            name: Canonical biomarker name
+            
+        Returns:
+            Dict with biomarker metadata (unit, description, etc.)
+        """
+        definition = self.get_biomarker_definition(name)
+        if definition:
+            return {
+                "name": definition.name,
+                "unit": definition.unit,
+                "description": definition.description,
+                "category": definition.category,
+                "data_type": definition.data_type,
+                "aliases": definition.aliases
+            }
+        return {}
+    
+    def get_reference_range(self, name: str, age: Optional[int] = None, sex: Optional[str] = None) -> Optional[Dict[str, Any]]:
+        """
+        Get reference range for a biomarker with optional age/sex filtering.
+        
+        Args:
+            name: Canonical biomarker name
+            age: Patient age for age-specific ranges
+            sex: Patient sex ('male'/'female') for sex-specific ranges
+            
+        Returns:
+            Dict with min, max, unit, and source, or None if not found
+        """
+        ranges_data = self.load_ranges()
+        
+        # Load reference_ranges from SSOT structure
+        reference_ranges = ranges_data.get("reference_ranges", {})
+        
+        if name not in reference_ranges:
+            return None
+        
+        biomarker_ranges = reference_ranges[name]
+        
+        # Convert sex to population string format used in SSOT
+        population_filter = None
+        if sex:
+            if sex.lower() in ['male', 'm']:
+                population_filter = "male_adult"
+            elif sex.lower() in ['female', 'f']:
+                population_filter = "female_adult"
+            else:
+                population_filter = "general_adult"
+        else:
+            population_filter = "general_adult"
+        
+        # Find the appropriate range based on population
+        matched_range = None
+        
+        # First try to match by population (sex-specific)
+        for range_type, range_data in biomarker_ranges.items():
+            if range_data.get("population") == population_filter:
+                matched_range = range_data
+                break
+        
+        # Fall back to any range if no population match
+        if not matched_range and biomarker_ranges:
+            # Prefer "normal" range if it exists
+            matched_range = biomarker_ranges.get("normal")
+            if not matched_range:
+                # Use first available range
+                matched_range = list(biomarker_ranges.values())[0]
+        
+        if matched_range:
+            return {
+                "min": matched_range.get("min"),
+                "max": matched_range.get("max"),
+                "unit": matched_range.get("unit", ""),
+                "source": "ssot"
+            }
+        
+        return None
+    
     def clear_cache(self):
         """Clear all cached data."""
         self._biomarkers_cache = None

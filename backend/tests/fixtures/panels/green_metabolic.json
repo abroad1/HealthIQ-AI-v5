@@ -1,0 +1,24 @@
+{
+  "biomarkers": [
+    {
+      "name": "glucose",
+      "value": 85.0,
+      "unit": "mg/dL",
+      "flag": "normal"
+    },
+    {
+      "name": "hba1c",
+      "value": 5.2,
+      "unit": "%",
+      "flag": "normal"
+    },
+    {
+      "name": "insulin",
+      "value": 8.0,
+      "unit": "μU/mL",
+      "flag": "normal"
+    }
+  ],
+  "derived": []
+}
+

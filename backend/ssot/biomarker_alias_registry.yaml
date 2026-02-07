@@ -1,0 +1,117 @@
+# Single Source of Truth - Biomarker Alias Registry
+# HealthIQ-AI v5 Backend
+
+aliases:
+  # Cardiovascular Biomarkers
+  cholesterol:
+    canonical_name: "total_cholesterol"
+    description: "Total cholesterol alias"
+    
+  total_chol:
+    canonical_name: "total_cholesterol"
+    description: "Total cholesterol short alias"
+    
+  chol_total:
+    canonical_name: "total_cholesterol"
+    description: "Total cholesterol alternative alias"
+    
+  ldl:
+    canonical_name: "ldl_cholesterol"
+    description: "LDL cholesterol alias"
+    
+  ldl_chol:
+    canonical_name: "ldl_cholesterol"
+    description: "LDL cholesterol short alias"
+    
+  bad_cholesterol:
+    canonical_name: "ldl_cholesterol"
+    description: "LDL cholesterol descriptive alias"
+    
+  hdl:
+    canonical_name: "hdl_cholesterol"
+    description: "HDL cholesterol alias"
+    
+  hdl_chol:
+    canonical_name: "hdl_cholesterol"
+    description: "HDL cholesterol short alias"
+    
+  good_cholesterol:
+    canonical_name: "hdl_cholesterol"
+    description: "HDL cholesterol descriptive alias"
+    
+  # Metabolic Biomarkers
+  glucose:
+    canonical_name: "glucose"
+    description: "Blood glucose alias"
+    
+  blood_sugar:
+    canonical_name: "glucose"
+    description: "Blood sugar alias"
+    
+  fasting_glucose:
+    canonical_name: "glucose"
+    description: "Fasting glucose alias"
+    
+  hba1c:
+    canonical_name: "hba1c"
+    description: "HbA1c alias"
+    
+  hemoglobin_a1c:
+    canonical_name: "hba1c"
+    description: "Hemoglobin A1c alias"
+    
+  # Inflammatory Biomarkers
+  crp:
+    canonical_name: "crp"
+    description: "C-reactive protein alias"
+    
+  c_reactive_protein:
+    canonical_name: "crp"
+    description: "C-reactive protein full name alias"
+    
+  # Liver Function Biomarkers
+  alt:
+    canonical_name: "alt"
+    description: "ALT alias"
+    
+  alanine_aminotransferase:
+    canonical_name: "alt"
+    description: "Alanine aminotransferase alias"
+    
+  ast:
+    canonical_name: "ast"
+    description: "AST alias"
+    
+  aspartate_aminotransferase:
+    canonical_name: "ast"
+    description: "Aspartate aminotransferase alias"
+    
+  # Kidney Function Biomarkers
+  creatinine:
+    canonical_name: "creatinine"
+    description: "Creatinine alias"
+    
+  bun:
+    canonical_name: "bun"
+    description: "Blood urea nitrogen alias"
+    
+  blood_urea_nitrogen:
+    canonical_name: "bun"
+    description: "Blood urea nitrogen full name alias"
+    
+  # CBC Biomarkers
+  hgb:
+    canonical_name: "hemoglobin"
+    description: "Hemoglobin alias"
+    
+  hct:
+    canonical_name: "hematocrit"
+    description: "Hematocrit alias"
+    
+  wbc:
+    canonical_name: "white_blood_cells"
+    description: "White blood cells alias"
+    
+  plt:
+    canonical_name: "platelets"
+    description: "Platelets alias"

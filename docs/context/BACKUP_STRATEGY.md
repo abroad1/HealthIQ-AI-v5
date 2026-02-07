@@ -1,6 +1,6 @@
 # 🔐 BACKUP_STRATEGY.md
 
-This document defines the **canonical backup and versioning strategy** for HealthIQ AI v5. It ensures all architectural decisions, implementation milestones, and context alignments are safely preserved and traceable across all environments.
+This document defines the **backup and release governance strategy** for HealthIQ AI v5. It keeps sprint work lightweight while preserving the ability to cut verified, stable milestones.
 
 ---
 
@@ -10,69 +10,97 @@ All production-authoritative code is stored in:
 
 https://github.com/abroad1/HealthIQ-AI-v5
 
-This is the **source of truth** for all development history, tags, and official context.
+This is the **source of truth** for all history, tags, and official context.
 
 ---
 
-## 🌲 Branching Strategy
+## 🌿 Branch Model
 
-| Branch         | Purpose                                            |
-|----------------|----------------------------------------------------|
-| `main`         | ✅ Stable, production-tracked builds               |
-| `dev`          | 🔄 Active feature and architectural development    |
-| `feature/*`    | 🔧 Feature-specific or refactor-specific branches  |
-
-> All experimental branches must eventually be merged to `dev`, and then to `main` via PR with contextual justification.
+If you are unsure which branch to use as a base, read `BRANCHING_MODEL.md`; default is `main`.
 
 ---
 
-## 🪢 Tagging Policy
+## 🌲 Branch Model (Current)
 
-Tags must be created at all key milestones for traceability.
-
-| Tag Example                     | When to Use                                             |
-|--------------------------------|----------------------------------------------------------|
-| `v5.0-architecture-finalized`  | After context refactor, frontend decision, and scaffold |
-| `v5.1-insight-engine-milestone`| After core engine integration milestone                 |
-| `v5.2-alpha-release`           | First end-to-end demo deployment                        |
-
-> Tags must be annotated (`-a`) with a meaningful description.
+- `main` is the trunk and integration branch; `origin/HEAD` points to `origin/main`.
+- `sprintXX/*` for compute-only sprint work.
+- `docs/*` for docs-only work.
+- `release/*` is optional for stabilisation before a milestone.
+- `backup/*` branches are historical; do not create new ones unless an explicit archival snapshot is required.
 
 ---
 
-## 🔁 Forking Guidelines
+## ⚡ Fast Path (Default) — Sprint and Compute-Only Work
 
-- Experimental forks are allowed but must follow naming convention: `feature/<purpose>-fork`
-- All forks must be short-lived and either:
-  - Merged into `dev`
-  - Or explicitly archived with a reference tag (e.g., `v5.0-fork-experiment-diagnostics`)
+**Definition of backup:** work is considered safe once it is pushed to `origin` **and** a PR to `main` exists (draft PR is OK).
 
-Forks must include a README with a summary of:
-- Purpose
-- Divergence point (commit SHA or tag)
-- Key architectural assumptions
+**Steps**
+1. Create a branch from `main`: `sprintXX/<topic>` or `docs/<topic>`.
+2. Commit small, coherent changes.
+3. Push to `origin` early (even WIP).
+4. Open a PR to `main` using the sprint PR template.
+5. CI green = verification.
 
----
-
-## 🛡️ Backup Verification Checklist
-
-✅ Run `git tag` to confirm your milestone tag exists  
-✅ Run `git branch --show-current` to confirm you are on `main`  
-✅ Push tag with `git push origin <tag>`  
-✅ Verify on GitHub → "Releases" tab or use `git ls-remote --tags origin`  
-✅ Confirm that **tag content matches committed project state**
+**What not to do**
+- Do not use detached HEAD for real work.
+- Do not keep important docs only locally.
+- Do not run `git fsck` as standard backup validation (forensics only).
 
 ---
 
-## 🔄 Backup Frequency
+## 🏁 Release Path — Stable Line or Milestone Only
 
-- **Manual backups** must occur after:
-  - Major architectural decisions
-  - Context-wide documentation updates
-  - Frontend or backend scaffolding
+**When to use**
+- After a set of sprints, before an external demo, before deployment, or when creating a stable tag.
 
-- **Optional automation**:
-  - Use GitHub Actions to trigger a backup tag on successful PR to `main` with `#backup` label
+**Steps**
+1. Ensure `main` is green.
+2. Optionally create or update a `release/*` branch (e.g. `release/pre-sprint15-stable`).
+3. Tag the release (use the established naming pattern).
+4. Run heavier checks (smoke scripts, SSOT validation, key endpoint smoke).
+5. Document release notes and link the tag and PR.
+
+**Important:** the release path is not required for every sprint.
+
+---
+
+## ✅ Verification (Automation-First)
+
+- CI on the PR is the source of truth for verification.
+- Optional quick checks (keep minimal):
+  - `python backend/scripts/validate_manifest.py`
+  - `python backend/scripts/smoke_cluster_engine_v2.py` (if present in the sprint branch)
+  - `python backend/scripts/smoke_prompt_v2.py` (if present in the sprint branch)
+  - Upload parse smoke (two-line, when the upload route is wired):
+    ```
+    curl -s -X POST http://localhost:8000/api/upload/parse -F "text_content=Hemoglobin 13.2 g/dL" > /tmp/upload_parse.json
+    python -m json.tool < /tmp/upload_parse.json
+    ```
+  - Accidental deletion check:
+    ```
+    git diff --name-status origin/main...HEAD | findstr "^D"
+    ```
+    If this prints anything, review deletions before PR.
+
+---
+
+## 🧾 Protected Assets (Docs Safety)
+
+These files are considered critical context and should not be deleted or moved without an explicit reason in the PR:
+- `docs/context/INSIGHTS.md`
+- `docs/context/SPRINT_PLAN_SPRINTS_15_25.md`
+- `docs/context/INTELLIGENCE_LIFECYCLE.md`
+- `docs/context/BACKUP_STRATEGY.md`
+
+**Policy:** changes to these files should be called out in the PR summary. Enforcement should be automated later via CI (no code changes in this update).
+
+---
+
+## 🪢 Tagging Policy (Simplified)
+
+- Tags are for releases and milestones, not every sprint.
+- Tags must be annotated (`-a`) with a meaningful description.
+- Sprint branches are backed up by push + PR, not by tags.
 
 ---
 
@@ -85,7 +113,7 @@ Forks must include a README with a summary of:
 - **Local Test Database**: `healthiq_testdb` PostgreSQL container (port 5433)
 - **Docker Test Containers**: Any containers created for testing purposes
 - **Temporary Test Data**: Data generated during integration, performance, or security tests
-- **Local Development Databases**: Any local database instances used for development
+- **Local Work Databases**: Any local database instances used for day-to-day work
 
 ### Rationale
 
@@ -97,7 +125,7 @@ Forks must include a README with a summary of:
 ### Cleanup Procedures
 
 - **Nightly Teardown**: Test containers are automatically destroyed after test completion
-- **Manual Cleanup**: Developers can run `docker system prune` to clean up test resources
+- **Manual Cleanup**: Contributors can run `docker system prune` to clean up test resources
 - **CI/CD Integration**: Build pipelines include automatic cleanup of test environments
 
 ### Backup Exclusions
@@ -105,7 +133,7 @@ Forks must include a README with a summary of:
 The following are **never backed up**:
 - Test database containers and volumes
 - Temporary test files and logs
-- Local development database snapshots
+- Local database snapshots
 - Test-specific environment configurations
 
 ---
@@ -113,11 +141,12 @@ The following are **never backed up**:
 ## 📘 Related Files
 
 - `PROJECT_STRUCTURE.md` → for canonical folder layout  
-- `CURSOR_RULES.md` → for Cursor development constraints  
+- `CURSOR_RULES.md` → for Cursor work constraints  
 - `IMPLEMENTATION_PLAN.md` → for milestone definitions  
 - `ARCHITECTURE_REVIEW_REPORT.md` → for current stack audit summary  
 - `docs/sprints/SPRINT_11_TEST_ISOLATION_AND_SECURITY_VALIDATION.md` → for test isolation details
 
 ---
 
-Maintaining this backup policy ensures that **no architectural context or milestone is ever lost**, even across experimental branches or major refactors, while properly managing test environments.
+Maintaining this policy ensures that **no architectural context or milestone is lost**, while keeping backup steps fast for sprint work.
+

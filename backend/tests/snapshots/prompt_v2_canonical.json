@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "result_version": "2.0",
+    "timestamp": "2025-11-30T00:00:00Z"
+  },
+  "user": {
+    "age": 35,
+    "sex": "male"
+  },
+  "biomarkers": [
+    {
+      "id": "glucose",
+      "value": 95.0,
+      "unit": "mg/dL",
+      "lab_range": {
+        "min": 70.0,
+        "max": 100.0,
+        "unit": "mg/dL",
+        "source": "lab"
+      }
+    },
+    {
+      "id": "hba1c",
+      "value": 5.4,
+      "unit": "%",
+      "lab_range": {
+        "min": 4.0,
+        "max": 5.6,
+        "unit": "%",
+        "source": "lab"
+      }
+    },
+    {
+      "id": "total_cholesterol",
+      "value": 200.0,
+      "unit": "mg/dL",
+      "lab_range": {
+        "min": 0.0,
+        "max": 200.0,
+        "unit": "mg/dL",
+        "source": "lab"
+      }
+    },
+    {
+      "id": "ldl_cholesterol",
+      "value": 120.0,
+      "unit": "mg/dL",
+      "lab_range": {
+        "min": 0.0,
+        "max": 100.0,
+        "unit": "mg/dL",
+        "source": "lab"
+      }
+    }
+  ],
+  "completeness": {
+    "score": 0.16,
+    "missing": []
+  },
+  "clusters": [],
+  "red_flags": [],
+  "insight_stubs": [
+    {
+      "id": "metabolic_health",
+      "reasoning_inputs": ["glucose", "hba1c"]
+    },
+    {
+      "id": "cardiovascular_risk",
+      "reasoning_inputs": ["total_cholesterol", "ldl_cholesterol"]
+    }
+  ],
+  "policy": {
+    "rules": [
+      "no diagnosis",
+      "no numeric invention",
+      "cite sources only if known"
+    ],
+    "max_fields": 32
+  }
+}
+

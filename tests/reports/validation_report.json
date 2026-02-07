@@ -1,0 +1,32 @@
+{
+  "timestamp": "2025-10-22T13:39:15.102068Z",
+  "alias_validation": {
+    "summary": {
+      "total_aliases": 27,
+      "valid_aliases": 27,
+      "invalid_aliases": 0,
+      "total_biomarkers": 17,
+      "valid_ranges": 12,
+      "invalid_ranges": 0
+    },
+    "errors": [],
+    "warnings": [
+      "Biomarker 'ldl_cholesterol' missing normal range",
+      "Biomarker 'crp' missing normal range"
+    ]
+  },
+  "schema_validation": {
+    "summary": {
+      "total_biomarkers": 17,
+      "valid_biomarkers": 17,
+      "invalid_biomarkers": 0,
+      "duplicate_names": 0,
+      "invalid_categories": 0
+    },
+    "errors": [],
+    "warnings": [
+      "Unused expected categories: other"
+    ]
+  },
+  "status": "PASS"
+}
