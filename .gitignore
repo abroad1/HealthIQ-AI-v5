@@ -49,3 +49,6 @@ reports/forensics/
 # Local env
 .env
 /result.json
+pr_body.txt
+
+SPRINT_15_BACKUP_VERIFICATION.md
