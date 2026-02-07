@@ -218,7 +218,7 @@ export interface AnalysisResult {
 - `docs/sprints/SPRINT_12_AUTOMATED_TEST_ORCHESTRATION_AND_CONTINUOUS_VALIDATION.md` - Sprint documentation
 
 #### **Files Enhanced**
-- `docs/context/IMPLEMENTATION_PLAN.md` - Sprint 12 progress tracking
+- `docs/context/IMPLEMENTATION_PLAN_V5.md` - Sprint 12 progress tracking
 - `docs/context/PROJECT_STRUCTURE.md` - Report storage and script organization
 - `TEST_LEDGER.md` - Sprint 12 test plans and business value
 
@@ -298,7 +298,7 @@ export interface AnalysisResult {
 - `backend/tests/conftest.py` - Added automatic cleanup fixture and environment loading
 - `backend/scripts/run_all_tests.py` - Enhanced with strict validation and completion logging
 - `TEST_LEDGER.md` - Added Sprint 13 test plans and business value
-- `docs/context/IMPLEMENTATION_PLAN.md` - Sprint 13 progress tracking
+- `docs/context/IMPLEMENTATION_PLAN_V5.md` - Sprint 13 progress tracking
 - `docs/context/PROJECT_STRUCTURE.md` - Test fixtures and environment configuration
 
 ### **Business Value Delivered**
@@ -489,7 +489,7 @@ ops/
 # DECISION MADE: Next.js 14+ App Router selected
 # Updated documentation:
 docs/context/STACK_FRONTEND.md ✅
-docs/context/IMPLEMENTATION_PLAN.md ✅
+docs/context/IMPLEMENTATION_PLAN_V5.md ✅
 docs/context/PROJECT_STRUCTURE.md ✅
 # All references updated to Next.js App Router
 ```
@@ -1046,7 +1046,86 @@ Sprint 9b is **COMPLETE** and ready for Sprint 9c or Sprint 10:
 
 ---
 
+## ✅ **COMPLETED: Sprint 16 Lab-First Reference Range Handling and Dial Visibility Fixes**
+
+**Status**: ✅ **COMPLETED** - Sprint 16 has been fully implemented with comprehensive lab-first reference range handling and frontend biomarker dial visibility improvements.
+
+### **Sprint 16 Deliverables Implemented**
+
+#### **1. Lab-First Reference Range Handling (Backend)**
+- **✅ Data Model Extension**: Extended `BiomarkerValue` model to include `reference_range` field
+- **✅ Normalization Preservation**: Modified `normalize_biomarkers()` to preserve lab-provided reference ranges during normalization
+- **✅ Route Handler Update**: Updated `/api/analysis/start` to use `normalize_biomarkers_with_metadata()` instead of `normalize_panel()` to prevent early data loss
+- **✅ Orchestrator Integration**: Ensured `input_reference_ranges` is correctly populated from incoming request and passed to scoring engine
+- **✅ Scoring Engine Priority**: Implemented clear priority: lab-provided range first, then SSOT, then hardcoded rules, then "Unknown"
+- **✅ DTO Builder Enhancement**: Ensured DTO construction for both scored and unscored biomarkers correctly applies "lab-first" rule for `reference_range` and `unit`, setting the `source` field appropriately
+- **✅ SSOT Coverage**: Added missing reference ranges for several biomarkers in `backend/ssot/ranges.yaml` as fallback
+
+#### **2. Frontend Biomarker Dial Visibility Fixes**
+- **✅ Text Color Updates**: Changed text classes to light colors (`text-slate-50`, `text-slate-300`, `text-slate-400`) for readability on dark card backgrounds
+- **✅ Container Layout**: Updated container from `space-y-3` to responsive grid layout (`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6`)
+- **✅ Explicit Sizing**: Added explicit sizes (`min-h-[200px]`, `w-24 h-24`) to ensure dials are visible
+- **✅ Robust Rendering Logic**: Replaced over-strict checks with robust logic that renders dials when score OR value is present (score 0 is valid)
+- **✅ Value Display**: Made value display more robust with proper type checking and formatting
+
+#### **3. Git Branch Cleanup**
+- **✅ Local Branch Cleanup**: Deleted 13 local backup branches while preserving remote copies
+- **✅ Safety Verification**: Verified all deleted branches had remote counterparts before deletion
+- **✅ Repository Hygiene**: Maintained clean local repository with only active branches (main, feature/sprint16-validation)
+
+### **Files Modified**
+
+#### **Backend Changes**
+- `backend/core/models/biomarker.py` - Added `reference_range` field to `BiomarkerValue` model
+- `backend/core/canonical/normalize.py` - Modified to preserve `reference_range` and added `normalize_biomarkers_with_metadata()` function
+- `backend/app/routes/analysis.py` - Updated to use `normalize_biomarkers_with_metadata()` instead of `normalize_panel()`
+- `backend/core/pipeline/orchestrator.py` - Enhanced DTO builder to prioritize lab ranges over SSOT
+- `backend/core/scoring/engine.py` - Modified to accept and pass `input_reference_ranges` to scoring rules
+- `backend/core/scoring/rules.py` - Implemented lab-first priority in `calculate_biomarker_score()`
+- `backend/ssot/ranges.yaml` - Added missing reference ranges for `creatine_kinase`, `calcium`, `corrected_calcium`, `sodium`, `potassium`, `chloride`, `magnesium`, `lipoprotein_a`
+
+#### **Frontend Changes**
+- `frontend/app/components/biomarkers/BiomarkerDials.tsx` - Updated text colors, container layout, explicit sizing, and robust rendering logic
+
+#### **Integration Tests**
+- `backend/tests/integration/test_venous_aliases_orchestrator_integration.py` - Added tests for lab-first range handling and SSOT fallback
+
+### **Business Value Delivered**
+
+#### **Data Accuracy & Clinical Relevance**
+- **Lab Range Priority**: Lab-provided reference ranges are now correctly used for scoring, ensuring clinical accuracy
+- **Proper Scoring**: Biomarkers that previously showed "Unknown" status with score 0 now display proper scores and statuses based on lab ranges
+- **SSOT Fallback**: Comprehensive fallback coverage ensures biomarkers can be scored even when lab ranges are missing
+- **Source Attribution**: Clear `source` field in DTOs indicates whether ranges came from lab or SSOT
+
+#### **User Experience Enhancement**
+- **Readable Text**: All biomarker card text is now clearly visible on dark backgrounds
+- **Visible Dials**: Biomarker dials render correctly with proper sizing and layout
+- **Proper Scores**: Users see accurate scores and statuses for all biomarkers, not just those with SSOT coverage
+- **Complete Information**: Reference ranges, units, and statuses are all properly displayed
+
+#### **Developer Experience**
+- **Clean Repository**: Local branch cleanup maintains organized development workflow
+- **Clear Data Flow**: Lab ranges flow correctly from input through normalization to scoring to DTO
+- **Comprehensive Testing**: Integration tests validate lab-first behavior and SSOT fallback
+
+### **Technical Achievements**
+- **✅ Lab-First Implementation**: Complete lab-first reference range handling throughout the pipeline
+- **✅ Frontend Visibility**: All biomarker dials now visible with readable text
+- **✅ SSOT Coverage**: Added missing reference ranges for 8 biomarkers as fallback
+- **✅ Integration Tests**: Comprehensive tests for lab-first behavior and fallback scenarios
+- **✅ Repository Hygiene**: Clean local branch structure with only active branches
+
+### **Validation Results**
+- **✅ Lab Range Usage**: Lab-provided ranges correctly used for scoring when present
+- **✅ SSOT Fallback**: SSOT ranges used when lab ranges are missing
+- **✅ Unknown Handling**: Proper "Unknown" status only when both lab and SSOT ranges are missing
+- **✅ Frontend Display**: All biomarker dials visible with readable text and proper scores
+- **✅ End-to-End Flow**: Complete data pipeline from lab input to frontend display functional
+
+---
+
 **Architecture Review Completed**: January 2025  
-**Next Review Scheduled**: After Sprint 15 completion  
+**Next Review Scheduled**: After Sprint 17 completion  
 **Critical Decisions Required**: Advanced monitoring and alerting capabilities  
-**Overall Assessment**: Production-ready foundation with comprehensive test automation, continuous validation infrastructure, and fully functional biomarker data pipeline
+**Overall Assessment**: Production-ready foundation with comprehensive test automation, continuous validation infrastructure, fully functional biomarker data pipeline, and lab-first reference range handling

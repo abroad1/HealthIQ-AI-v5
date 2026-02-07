@@ -6,7 +6,7 @@ import { ParseResponse, ValidationResponse, UseParseUploadResult, UseValidatePar
 /**
  * Base API URL for parsing endpoints
  */
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000'
 
 /**
  * Parse upload hook - calls backend /api/upload/parse

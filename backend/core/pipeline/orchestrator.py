@@ -5,7 +5,7 @@ Analysis orchestrator - enforces canonical-only keys and coordinates analysis.
 from typing import Dict, Any, List, Mapping, Optional
 
 from core.canonical.normalize import BiomarkerNormalizer, normalize_panel
-from core.canonical.resolver import resolve_to_canonical
+from core.canonical.resolver import resolve_to_canonical, CanonicalResolver
 from core.pipeline.context_factory import AnalysisContextFactory
 from core.models.context import AnalysisContext
 from core.models.user import User
@@ -67,11 +67,23 @@ class AnalysisOrchestrator:
         Raises:
             ValueError: If non-canonical biomarkers are found after normalization
         """
+        # === BEGIN DEBUG LOGGING FOR ORCHESTRATOR NORMALIZATION ===
+        print("\n[TRACE] [Orchestrator] Starting normalization in create_analysis_context")
+        print(f"[TRACE] [Orchestrator] Input biomarkers count: {len(raw_biomarkers)}")
+        print(f"[TRACE] [Orchestrator] Input biomarker keys: {list(raw_biomarkers.keys())}")
+        # === END DEBUG LOGGING ===
+        
         if not assume_canonical:
             self._assert_canonical_only(raw_biomarkers, where="create_analysis_context")
         
         # Normalize biomarkers (maps aliases to canonical names)
         biomarker_panel, unmapped_keys = self.normalizer.normalize_biomarkers(raw_biomarkers)
+        
+        # === BEGIN DEBUG LOGGING FOR ORCHESTRATOR NORMALIZATION ===
+        print(f"[TRACE] [Orchestrator] Normalization complete")
+        print(f"[TRACE] [Orchestrator] Output biomarker keys: {list(biomarker_panel.biomarkers.keys())}")
+        print(f"[TRACE] [Orchestrator] Unmapped keys: {unmapped_keys}\n")
+        # === END DEBUG LOGGING ===
         
         # Log unmapped keys (in production, this would be proper logging)
         if unmapped_keys:
@@ -312,7 +324,8 @@ class AnalysisOrchestrator:
         biomarkers: Dict[str, Any],
         age: Optional[int] = None,
         sex: Optional[str] = None,
-        lifestyle_data: Optional[Dict[str, Any]] = None
+        lifestyle_data: Optional[Dict[str, Any]] = None,
+        input_reference_ranges: Optional[Dict[str, Dict[str, Any]]] = None
     ) -> Dict[str, Any]:
         """
         Score biomarkers across all health systems.
@@ -322,6 +335,7 @@ class AnalysisOrchestrator:
             age: Patient age for adjustments
             sex: Patient sex for adjustments
             lifestyle_data: Lifestyle profile data for overlays
+            input_reference_ranges: Optional dict mapping biomarker names to their input reference ranges
             
         Returns:
             Dictionary with scoring results
@@ -341,9 +355,9 @@ class AnalysisOrchestrator:
         # Normalize biomarkers first
         normalized_biomarkers, unmapped = self.normalizer.normalize_biomarkers(biomarkers)
         
-        # Score biomarkers
+        # Score biomarkers with input reference ranges
         scoring_result = self.scoring_engine.score_biomarkers(
-            normalized_biomarkers, age, sex, lifestyle_profile
+            normalized_biomarkers, age, sex, lifestyle_profile, input_reference_ranges=input_reference_ranges
         )
         
         return {
@@ -597,71 +611,436 @@ class AnalysisOrchestrator:
             raise ValueError(f"Non-canonical biomarker keys found: {', '.join(offenders)}")
 
     def run(self, biomarkers: Mapping[str, Any], user: Mapping[str, Any], *, assume_canonical: bool = False):
-        if not assume_canonical:
-            self._assert_canonical_only(biomarkers, where="run")
+        """
+        Run the complete analysis pipeline: scoring → clustering → insights.
         
-        canonical_map = dict(biomarkers)
-
-        # Transform raw biomarkers into BiomarkerScore format for persistence
-        biomarker_scores = []
-        for biomarker_name, biomarker_data in canonical_map.items():
-            # Handle different input formats
-            if isinstance(biomarker_data, dict):
-                value = biomarker_data.get('value', biomarker_data.get('measurement', 0))
-                unit = biomarker_data.get('unit', '')
-            else:
-                value = biomarker_data
-                unit = ''
+        Args:
+            biomarkers: Canonical biomarker data
+            user: User data
+            assume_canonical: Whether to skip canonical validation
             
-            # Create biomarker score entry
-            biomarker_scores.append({
-                "biomarker_name": biomarker_name,
-                "value": float(value) if value else 0.0,
-                "unit": unit,
-                "score": 0.75,  # Default score (can be computed by scoring engine)
-                "percentile": None,
-                "status": "normal",  # Default status (can be computed by scoring engine)
-                "reference_range": None,
-                "interpretation": "Value recorded from upload"
-            })
+        Returns:
+            AnalysisDTO with complete analysis results
+        """
+        import logging
+        import uuid
+        from datetime import datetime, UTC
+        from core.models.results import AnalysisDTO, BiomarkerScore as BiomarkerScoreDTO, ClusterHit, InsightResult
         
-        # continue with existing scoring → clustering → insights using `canonical_map`
-        # For now, return a stub result with actual biomarkers
-        from core.models.results import AnalysisDTO, BiomarkerScore as BiomarkerScoreDTO
-        from datetime import datetime
+        logger = logging.getLogger(__name__)
         
-        # Convert dict biomarkers to BiomarkerScore DTOs
-        biomarker_dtos = [
-            BiomarkerScoreDTO(
-                biomarker_name=b["biomarker_name"],
-                value=b["value"],
-                unit=b["unit"],
-                score=b["score"],
-                percentile=b.get("percentile"),
-                status=b["status"],
-                reference_range=b.get("reference_range"),
-                interpretation=b.get("interpretation", "")
+        try:
+            if not assume_canonical:
+                self._assert_canonical_only(biomarkers, where="run")
+            
+            # Initialize canonical resolver for units and reference ranges
+            resolver = CanonicalResolver()
+            
+            # Generate unique analysis ID
+            analysis_id = str(uuid.uuid4())
+            logger.info(f"Starting analysis {analysis_id} with {len(biomarkers)} biomarkers")
+            
+            # Trace biomarkers received by orchestrator
+            print("[TRACE] Orchestrator input biomarkers:", list(biomarkers.keys()))
+            
+            # Step 1: Convert biomarkers to simple format for scoring engine and preserve reference ranges
+            logger.info("Step 1: Converting biomarkers for scoring")
+            simple_biomarkers = {}
+            input_reference_ranges = {}  # Preserve reference ranges from input
+            for biomarker_name, biomarker_data in biomarkers.items():
+                if isinstance(biomarker_data, dict):
+                    simple_biomarkers[biomarker_name] = biomarker_data.get('value', biomarker_data.get('measurement', 0))
+                    # Extract reference range if present and valid
+                    ref_range = biomarker_data.get('reference_range') or biomarker_data.get('referenceRange')
+                    if ref_range and isinstance(ref_range, dict):
+                        min_val = ref_range.get('min')
+                        max_val = ref_range.get('max')
+                        if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)):
+                            input_reference_ranges[biomarker_name] = {
+                                'min': float(min_val),
+                                'max': float(max_val),
+                                'unit': ref_range.get('unit', ''),
+                                'source': ref_range.get('source', 'lab')
+                            }
+                            logger.debug(f"[Orchestrator] Preserved input reference range for {biomarker_name}: {input_reference_ranges[biomarker_name]}")
+                else:
+                    simple_biomarkers[biomarker_name] = biomarker_data
+            
+            # Step 2: Score biomarkers using the scoring engine with input reference ranges
+            logger.info("Step 2: Scoring biomarkers")
+            scoring_result = self.score_biomarkers(
+                biomarkers=simple_biomarkers,
+                age=user.get('age'),
+                sex=user.get('gender'),
+                lifestyle_data=user.get('lifestyle_factors', {}),
+                input_reference_ranges=input_reference_ranges
             )
-            for b in biomarker_scores
-        ]
-        
-        result = AnalysisDTO(
-            analysis_id="stub_analysis_id",
-            biomarkers=biomarker_dtos,
-            clusters=[],
-            insights=[],
-            status="completed",
-            created_at=datetime.now().isoformat()
-        )
-        
-        # Sprint 15 - Automatic persistence integration at phase:"completed"
-        if result.status == "completed":
-            # Note: Automatic persistence is now handled here
-            # This ensures analysis_results are automatically created
-            import logging
-            logger = logging.getLogger(__name__)
             
-            logger.info(f"Analysis {result.analysis_id} completed with {len(biomarker_scores)} biomarkers, ready for automatic persistence")
-            logger.debug(f"Analysis {result.analysis_id} marked for automatic persistence")
-        
-        return result
+            # Step 3: Create analysis context for clustering and insights
+            logger.info("Step 3: Creating analysis context")
+            context = self.create_analysis_context(
+                analysis_id=analysis_id,
+                raw_biomarkers=biomarkers,
+                user_data=user,
+                assume_canonical=True
+            )
+            
+            # Step 4: Cluster biomarkers
+            logger.info("Step 4: Clustering biomarkers")
+            clustering_result = self.cluster_biomarkers(
+                context=context,
+                scoring_result=scoring_result,
+                lifestyle_data=user.get('lifestyle_factors', {})
+            )
+            
+            # Step 5: Synthesize insights
+            logger.info("Step 5: Synthesizing insights")
+            insights_result = self.synthesize_insights(
+                context=context,
+                biomarker_scores=scoring_result,
+                clustering_results=clustering_result,
+                lifestyle_data=user.get('lifestyle_factors', {})
+            )
+            
+            # Step 6: Build biomarker DTOs from scoring results
+            logger.info("Step 6: Building biomarker DTOs")
+            biomarker_dtos = []
+            for system_name, system_score in scoring_result.get('health_system_scores', {}).items():
+                for biomarker_score in system_score.get('biomarker_scores', []):
+                    biomarker_name = biomarker_score['biomarker_name']
+                    value = biomarker_score['value']
+                    
+                    # Extract biomarker metadata from context
+                    biomarker_data = context.biomarker_panel.biomarkers.get(biomarker_name, {})
+                    
+                    # Get unit from resolver or context
+                    unit = biomarker_data.get('unit', '') if isinstance(biomarker_data, dict) else ''
+                    if not unit:
+                        # Try to get canonical unit from resolver
+                        try:
+                            canonical_data = resolver.get_biomarker_metadata(biomarker_name)
+                            unit = canonical_data.get('unit', '')
+                        except Exception as e:
+                            logger.warning(f"Could not resolve unit for {biomarker_name}: {e}")
+                            unit = ''
+                    
+                    # Get reference range: Priority 1 = input, Priority 2 = SSOT
+                    reference_range_dict = None
+                    
+                    # Priority 1: Check input reference ranges
+                    if input_reference_ranges and biomarker_name in input_reference_ranges:
+                        input_range = input_reference_ranges[biomarker_name]
+                        if isinstance(input_range, dict) and input_range.get('min') is not None and input_range.get('max') is not None:
+                            reference_range_dict = {
+                                'min': input_range.get('min'),
+                                'max': input_range.get('max'),
+                                'unit': input_range.get('unit', unit),
+                                'source': input_range.get('source', 'lab')
+                            }
+                            logger.debug(f"[DTO Builder] Using input reference range for {biomarker_name}: {reference_range_dict}")
+                    
+                    # Priority 2: Fall back to SSOT if input range not available
+                    if reference_range_dict is None:
+                        try:
+                            ref_range = resolver.get_reference_range(
+                                biomarker_name,
+                                age=context.user.age,
+                                sex=context.user.gender
+                            )
+                            if ref_range and ref_range.get('min') is not None and ref_range.get('max') is not None:
+                                reference_range_dict = {
+                                    'min': ref_range.get('min'),
+                                    'max': ref_range.get('max'),
+                                    'unit': ref_range.get('unit', unit),
+                                    'source': 'ssot'
+                                }
+                                logger.debug(f"[DTO Builder] Using SSOT reference range for {biomarker_name}: {reference_range_dict}")
+                        except Exception as e:
+                            logger.warning(f"Could not resolve reference range for {biomarker_name}: {e}")
+                    
+                    # Map score_range enum to status string (frontend expects: optimal, normal, elevated, low, critical, unknown)
+                    score_range_value = biomarker_score.get('score_range', 'normal')
+                    if isinstance(score_range_value, str):
+                        status_str = score_range_value
+                    else:
+                        # Convert enum to string
+                        status_str = score_range_value.value if hasattr(score_range_value, 'value') else str(score_range_value)
+                    
+                    # Map ScoreRange enum values to frontend status strings
+                    # Also check if value is below/above reference range to determine "low" vs "elevated"
+                    status_map = {
+                        'optimal': 'optimal',
+                        'normal': 'normal',
+                        'borderline': 'normal',  # Will be refined based on value vs range
+                        'high': 'elevated',
+                        'very_high': 'elevated',
+                        'critical': 'critical'
+                    }
+                    status = status_map.get(status_str.lower(), status_str)
+                    
+                    # Refine borderline status: check if value is below or above reference range
+                    if status == 'normal' and status_str.lower() == 'borderline' and reference_range_dict:
+                        min_val = reference_range_dict.get('min')
+                        max_val = reference_range_dict.get('max')
+                        if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)):
+                            if value < min_val:
+                                status = 'low'
+                            elif value > max_val:
+                                status = 'elevated'
+                    
+                    # Also check critical - if value is outside range, map to low/elevated
+                    if status == 'critical' and reference_range_dict:
+                        min_val = reference_range_dict.get('min')
+                        max_val = reference_range_dict.get('max')
+                        if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)):
+                            if value < min_val:
+                                status = 'low'  # Critical low becomes "low"
+                            elif value > max_val:
+                                status = 'elevated'  # Critical high becomes "elevated"
+                    
+                    logger.debug(f"[DTO Builder] {biomarker_name} unit resolved as: {unit}, ref_range: {reference_range_dict}, status: {status}")
+                    
+                    biomarker_dtos.append(BiomarkerScoreDTO(
+                        biomarker_name=biomarker_name,
+                        value=value,
+                        unit=unit,
+                        score=biomarker_score['score'] / 100.0,  # Convert to 0-1 scale
+                        percentile=None,
+                        status=status,
+                        reference_range=reference_range_dict,
+                        interpretation=f"Scored {biomarker_score['score']:.1f}/100"
+                    ))
+            
+            # --- Include all original biomarkers, not just scored ones ---
+            logger.debug("Adding unscored biomarkers to DTO output")
+            all_biomarkers = {}
+            for biomarker_name, biomarker_data in biomarkers.items():
+                if isinstance(biomarker_data, dict):
+                    all_biomarkers[biomarker_name] = biomarker_data.get('value', biomarker_data.get('measurement', 0))
+                else:
+                    all_biomarkers[biomarker_name] = biomarker_data
+
+            scored_biomarker_names = {b.biomarker_name for b in biomarker_dtos}
+            for biomarker_name, value in all_biomarkers.items():
+                if biomarker_name not in scored_biomarker_names:
+                    # Extract biomarker metadata from context
+                    biomarker_data = context.biomarker_panel.biomarkers.get(biomarker_name)
+                    
+                    # Get unit: Priority 1 = input_reference_ranges, Priority 2 = BiomarkerValue, Priority 3 = dict, Priority 4 = SSOT
+                    unit = ''
+                    
+                    # Priority 1: Unit from lab reference range if available
+                    if input_reference_ranges and biomarker_name in input_reference_ranges:
+                        input_range = input_reference_ranges[biomarker_name]
+                        if isinstance(input_range, dict) and input_range.get('unit'):
+                            unit = input_range.get('unit', '')
+                            logger.debug(f"[Unscored] Using unit from input_reference_ranges for {biomarker_name}: {unit}")
+                    
+                    # Priority 2: Unit from BiomarkerValue object
+                    if not unit and biomarker_data:
+                        from core.models.biomarker import BiomarkerValue
+                        if isinstance(biomarker_data, BiomarkerValue):
+                            unit = biomarker_data.unit or ''
+                            logger.debug(f"[Unscored] Using unit from BiomarkerValue for {biomarker_name}: {unit}")
+                        elif isinstance(biomarker_data, dict):
+                            unit = biomarker_data.get('unit', '')
+                            logger.debug(f"[Unscored] Using unit from dict for {biomarker_name}: {unit}")
+                    
+                    # Priority 3: Fall back to SSOT resolver only if unit still empty
+                    if not unit:
+                        try:
+                            canonical_data = resolver.get_biomarker_metadata(biomarker_name)
+                            if canonical_data:
+                                unit = canonical_data.get('unit', '')
+                                logger.debug(f"[Unscored] Using unit from SSOT resolver for {biomarker_name}: {unit}")
+                        except Exception as e:
+                            logger.warning(f"[Unscored] Could not resolve unit for {biomarker_name}: {e}")
+                    
+                    # Get reference range: Priority 1 = input_reference_ranges (lab), Priority 2 = SSOT
+                    reference_range_dict = None
+                    
+                    # Priority 1: ALWAYS use input_reference_ranges if present (lab range takes precedence)
+                    if input_reference_ranges and biomarker_name in input_reference_ranges:
+                        input_range = input_reference_ranges[biomarker_name]
+                        if isinstance(input_range, dict):
+                            min_val = input_range.get('min')
+                            max_val = input_range.get('max')
+                            # Validate that min and max are numeric and valid
+                            if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)) and min_val < max_val:
+                                # Use unit from lab range if available, otherwise use extracted unit
+                                range_unit = input_range.get('unit', '') or unit
+                                reference_range_dict = {
+                                    'min': float(min_val),
+                                    'max': float(max_val),
+                                    'unit': range_unit,
+                                    'source': input_range.get('source', 'lab')
+                                }
+                                logger.debug(f"[Unscored] Using lab reference range for {biomarker_name}: {reference_range_dict}")
+                            else:
+                                logger.warning(f"[Unscored] Invalid min/max in input_reference_ranges for {biomarker_name}: min={min_val}, max={max_val}")
+                    
+                    # Priority 2: Fall back to SSOT ONLY if no lab range was found
+                    if reference_range_dict is None:
+                        try:
+                            ref_range = resolver.get_reference_range(
+                                biomarker_name,
+                                age=context.user.age,
+                                sex=context.user.gender
+                            )
+                            if ref_range and isinstance(ref_range, dict):
+                                min_val = ref_range.get('min')
+                                max_val = ref_range.get('max')
+                                if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)) and min_val < max_val:
+                                    # Use SSOT unit, or fall back to extracted unit
+                                    range_unit = ref_range.get('unit', '') or unit
+                                    reference_range_dict = {
+                                        'min': float(min_val),
+                                        'max': float(max_val),
+                                        'unit': range_unit,
+                                        'source': 'ssot'
+                                    }
+                                    logger.debug(f"[Unscored] Using SSOT reference range for {biomarker_name}: {reference_range_dict}")
+                                else:
+                                    logger.warning(f"[Unscored] Invalid SSOT range for {biomarker_name}: min={min_val}, max={max_val}")
+                            else:
+                                logger.warning(f"[Unscored] No valid SSOT reference range for {biomarker_name}")
+                        except Exception as e:
+                            logger.warning(f"[Unscored] Could not resolve SSOT reference range for {biomarker_name}: {e}")
+                    
+                    # If both failed, use fallback structure
+                    if reference_range_dict is None:
+                        reference_range_dict = {
+                            'min': None,
+                            'max': None,
+                            'unit': unit,
+                            'source': 'lab'
+                        }
+                    
+                    # Update unit to match reference_range unit if we have a lab range
+                    # This ensures consistency: if source is 'lab', unit should match lab range unit
+                    if reference_range_dict and reference_range_dict.get('source') == 'lab' and reference_range_dict.get('unit'):
+                        unit = reference_range_dict.get('unit', unit)
+                        logger.debug(f"[Unscored] Updated unit to match lab range unit for {biomarker_name}: {unit}")
+                    
+                    # Determine status based on reference range if available
+                    status = "Unknown"
+                    score = 0.0
+                    if reference_range_dict and reference_range_dict.get('min') is not None and reference_range_dict.get('max') is not None:
+                        # Try to score using the reference range
+                        try:
+                            score, score_range = self.scoring_engine.rules._calculate_score_from_range(
+                                float(value),
+                                float(reference_range_dict['min']),
+                                float(reference_range_dict['max'])
+                            )
+                            # Map score_range to status string (frontend expects: optimal, normal, elevated, low, critical, unknown)
+                            if hasattr(score_range, 'value'):
+                                status_str = score_range.value
+                            else:
+                                status_str = str(score_range)
+                            
+                            # Map ScoreRange enum values to frontend status strings
+                            # Also check if value is below/above reference range to determine "low" vs "elevated"
+                            status_map = {
+                                'optimal': 'optimal',
+                                'normal': 'normal',
+                                'borderline': 'normal',  # Will be refined based on value vs range
+                                'high': 'elevated',
+                                'very_high': 'elevated',
+                                'critical': 'critical'
+                            }
+                            status = status_map.get(status_str.lower(), status_str)
+                            
+                            # Refine borderline status: check if value is below or above reference range
+                            if status == 'normal' and status_str.lower() == 'borderline' and reference_range_dict:
+                                min_val = reference_range_dict.get('min')
+                                max_val = reference_range_dict.get('max')
+                                if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)):
+                                    if value < min_val:
+                                        status = 'low'
+                                    elif value > max_val:
+                                        status = 'elevated'
+                            
+                            # Also check critical - if value is outside range, map to low/elevated
+                            if status == 'critical' and reference_range_dict:
+                                min_val = reference_range_dict.get('min')
+                                max_val = reference_range_dict.get('max')
+                                if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)):
+                                    if value < min_val:
+                                        status = 'low'  # Critical low becomes "low"
+                                    elif value > max_val:
+                                        status = 'elevated'  # Critical high becomes "elevated"
+                            score = score / 100.0  # Convert to 0-1 scale
+                        except Exception as e:
+                            logger.warning(f"Could not score unscored biomarker {biomarker_name} using reference range: {e}")
+                    
+                    logger.debug(f"Added unscored biomarker: {biomarker_name} value={value} unit={unit} range={reference_range_dict} status={status} score={score}")
+                    
+                    biomarker_dtos.append(BiomarkerScoreDTO(
+                        biomarker_name=biomarker_name,
+                        value=value,
+                        unit=unit,
+                        score=score,
+                        percentile=None,
+                        status=status,
+                        reference_range=reference_range_dict,
+                        interpretation="Scored using reference range" if status != "Unknown" else "Not scored - no reference range available"
+                    ))
+            logger.info(f"Total biomarkers in DTO: {len(biomarker_dtos)}")
+            
+            # Step 7: Build cluster DTOs
+            logger.info("Step 7: Building cluster DTOs")
+            cluster_dtos = []
+            for cluster in clustering_result.get('clusters', []):
+                cluster_dtos.append(ClusterHit(
+                    cluster_id=cluster['cluster_id'],
+                    name=cluster['name'],
+                    biomarkers=cluster['biomarkers'],
+                    confidence=cluster['confidence'],
+                    severity=cluster['severity'],
+                    description=cluster['description']
+                ))
+            
+            # Step 8: Build insight DTOs
+            logger.info("Step 8: Building insight DTOs")
+            insight_dtos = []
+            for insight in insights_result.get('insights', []):
+                insight_dtos.append(InsightResult(
+                    insight_id=insight['id'],
+                    title=insight.get('summary', ''),
+                    description=insight.get('summary', ''),
+                    category=insight.get('category', 'general'),
+                    confidence=insight.get('confidence', 0.5),
+                    severity=insight.get('severity', 'info'),
+                    biomarkers=insight.get('biomarkers_involved', []),
+                    recommendations=insight.get('recommendations', [])
+                ))
+            
+            # Step 9: Create final analysis DTO
+            logger.info("Step 9: Creating final analysis DTO")
+            result = AnalysisDTO(
+                analysis_id=analysis_id,
+                biomarkers=biomarker_dtos,
+                clusters=cluster_dtos,
+                insights=insight_dtos,
+                status="completed",
+                created_at=datetime.now(UTC).isoformat(),
+                overall_score=scoring_result.get('overall_score', 0.0) / 100.0  # Convert to 0-1 scale
+            )
+            
+            logger.info(f"Analysis {analysis_id} completed successfully with {len(biomarker_dtos)} biomarkers, {len(cluster_dtos)} clusters, {len(insight_dtos)} insights")
+            print("[TRACE] Orchestrator output biomarkers:", len(result.biomarkers))
+            return result
+            
+        except Exception as e:
+            logger.error(f"Analysis failed: {str(e)}", exc_info=True)
+            # Return error result instead of crashing
+            return AnalysisDTO(
+                analysis_id=str(uuid.uuid4()),
+                biomarkers=[],
+                clusters=[],
+                insights=[],
+                status="error",
+                created_at=datetime.now(UTC).isoformat(),
+                overall_score=0.0
+            )

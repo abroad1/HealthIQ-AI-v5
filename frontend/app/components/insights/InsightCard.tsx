@@ -9,14 +9,16 @@ import { AlertTriangle, Info, CheckCircle, XCircle } from 'lucide-react';
 export interface Insight {
   id: string;
   category: string;
-  summary: string;
-  evidence: Record<string, any>;
-  confidence: number;
-  severity: 'info' | 'warning' | 'critical';
-  recommendations: string[];
-  biomarkers_involved: string[];
-  lifestyle_factors: string[];
-  created_at: string;
+  title?: string;
+  summary?: string;
+  description?: string;
+  evidence?: Record<string, any>;
+  confidence?: number;
+  severity?: 'info' | 'warning' | 'critical';
+  recommendations?: string[];
+  biomarkers_involved?: string[];
+  lifestyle_factors?: string[];
+  created_at?: string;
 }
 
 interface InsightCardProps {
@@ -55,9 +57,21 @@ const categoryColors = {
 };
 
 export function InsightCard({ insight, className = '' }: InsightCardProps) {
-  const severity = severityConfig[insight.severity];
-  const SeverityIcon = severity.icon;
-  const categoryColor = categoryColors[insight.category as keyof typeof categoryColors] || 'bg-gray-100 text-gray-800';
+
+  // Null-safe array reads
+  const recs = insight?.recommendations ?? [];
+  const biomarkers = insight?.biomarkers_involved ?? [];
+  const lifestyleFactors = insight?.lifestyle_factors ?? [];
+  const desc = insight?.description ?? '';
+  const summary = insight?.summary ?? '';
+  const confidence = insight?.confidence ?? 0;
+  const severity = insight?.severity ?? 'info';
+  const evidence = insight?.evidence ?? {};
+  const created_at = insight?.created_at ?? new Date().toISOString();
+
+  const severityConfig_item = severityConfig[severity];
+  const SeverityIcon = severityConfig_item.icon;
+  const categoryColor = categoryColors[insight?.category as keyof typeof categoryColors] || 'bg-gray-100 text-gray-800';
 
   const formatConfidence = (confidence: number) => {
     return Math.round(confidence * 100);
@@ -72,21 +86,21 @@ export function InsightCard({ insight, className = '' }: InsightCardProps) {
   };
 
   return (
-    <Card className={`${className} ${severity.borderColor} ${severity.bgColor}`}>
+    <Card className={`${className} ${severityConfig_item.borderColor} ${severityConfig_item.bgColor}`}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-2">
             <SeverityIcon className="h-5 w-5 text-gray-600" />
             <CardTitle className="text-lg font-semibold text-gray-900">
-              {insight.summary}
+              {insight?.title || summary || 'No title available'}
             </CardTitle>
           </div>
           <div className="flex flex-col items-end gap-2">
             <Badge className={categoryColor}>
-              {insight.category}
+              {insight?.category}
             </Badge>
-            <Badge className={severity.color}>
-              {insight.severity}
+            <Badge className={severityConfig_item.color}>
+              {severity}
             </Badge>
           </div>
         </div>
@@ -97,20 +111,20 @@ export function InsightCard({ insight, className = '' }: InsightCardProps) {
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="font-medium text-gray-700">Confidence</span>
-            <span className="text-gray-600">{formatConfidence(insight.confidence)}%</span>
+            <span className="text-gray-600">{formatConfidence(confidence)}%</span>
           </div>
           <Progress 
-            value={insight.confidence * 100} 
+            value={confidence * 100} 
             className="h-2"
           />
         </div>
 
         {/* Biomarkers Involved */}
-        {insight.biomarkers_involved.length > 0 && (
+        {(biomarkers?.length ?? 0) > 0 && (
           <div className="space-y-2">
             <h4 className="text-sm font-medium text-gray-700">Biomarkers Involved</h4>
             <div className="flex flex-wrap gap-1">
-              {insight.biomarkers_involved.map((biomarker) => (
+              {biomarkers.map((biomarker) => (
                 <Badge key={biomarker} variant="outline" className="text-xs">
                   {biomarker}
                 </Badge>
@@ -120,11 +134,11 @@ export function InsightCard({ insight, className = '' }: InsightCardProps) {
         )}
 
         {/* Lifestyle Factors */}
-        {insight.lifestyle_factors.length > 0 && (
+        {(lifestyleFactors?.length ?? 0) > 0 && (
           <div className="space-y-2">
             <h4 className="text-sm font-medium text-gray-700">Lifestyle Factors</h4>
             <div className="flex flex-wrap gap-1">
-              {insight.lifestyle_factors.map((factor) => (
+              {lifestyleFactors.map((factor) => (
                 <Badge key={factor} variant="secondary" className="text-xs">
                   {factor}
                 </Badge>
@@ -134,11 +148,11 @@ export function InsightCard({ insight, className = '' }: InsightCardProps) {
         )}
 
         {/* Recommendations */}
-        {insight.recommendations.length > 0 && (
+        {(recs?.length ?? 0) > 0 && (
           <div className="space-y-2">
             <h4 className="text-sm font-medium text-gray-700">Recommendations</h4>
             <ul className="space-y-1">
-              {insight.recommendations.map((recommendation, index) => (
+              {recs.map((recommendation, index) => (
                 <li key={index} className="flex items-start gap-2 text-sm text-gray-600">
                   <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                   <span>{recommendation}</span>
@@ -149,12 +163,12 @@ export function InsightCard({ insight, className = '' }: InsightCardProps) {
         )}
 
         {/* Evidence Summary */}
-        {insight.evidence && Object.keys(insight.evidence).length > 0 && (
+        {evidence && Object.keys(evidence).length > 0 && (
           <div className="space-y-2">
             <h4 className="text-sm font-medium text-gray-700">Evidence Summary</h4>
             <div className="text-sm text-gray-600 bg-white p-3 rounded-md border">
               <pre className="whitespace-pre-wrap text-xs">
-                {JSON.stringify(insight.evidence, null, 2)}
+                {JSON.stringify(evidence, null, 2)}
               </pre>
             </div>
           </div>
@@ -163,8 +177,8 @@ export function InsightCard({ insight, className = '' }: InsightCardProps) {
         {/* Footer */}
         <div className="pt-2 border-t border-gray-200">
           <div className="flex items-center justify-between text-xs text-gray-500">
-            <span>Generated on {formatDate(insight.created_at)}</span>
-            <span>ID: {insight.id}</span>
+            <span>Generated on {formatDate(created_at)}</span>
+            <span>ID: {insight?.id}</span>
           </div>
         </div>
       </CardContent>

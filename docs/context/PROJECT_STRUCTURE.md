@@ -318,7 +318,7 @@ healthiq/
 ├── docs/                             # Project documentation
 │   ├── context/                      # Context engineering files
 │   │   ├── PRD.md                    # Product Requirements Document
-│   │   ├── IMPLEMENTATION_PLAN.md    # Development phases and tasks
+│   │   ├── IMPLEMENTATION_PLAN_V5.md    # Development phases and tasks
 │   │   ├── PROJECT_STRUCTURE.md      # This file - repository layout
 │   │   ├── UX_UI_GUIDE.md            # Design system and UI guidelines
 │   │   ├── BUG_TRACKER.md            # Known issues and bug tracking

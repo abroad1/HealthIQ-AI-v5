@@ -5,41 +5,35 @@ import { BiomarkerValue, BiomarkerData, UserProfile, AnalysisRequest } from '../
 
 export interface BiomarkerResult {
   biomarker_name: string;
-  value: number;
+  value: number | null;
   unit: string;
-  score: number;
-  percentile?: number;
-  status: 'optimal' | 'normal' | 'elevated' | 'low' | 'critical';
+  score?: number | null;
+  percentile?: number | null;
+  status?: string | null;
   reference_range?: {
-    min: number;
-    max: number;
+    min: number | null;
+    max: number | null;
     unit: string;
-  };
-  interpretation: string;
+    source: string | null;
+  } | null;
+  interpretation?: string | null;
 }
 
 export interface AnalysisResult {
   analysis_id: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
   progress?: number;
-  // Top-level properties (matching AnalysisService mapping)
-  biomarkers?: BiomarkerResult[];
-  clusters?: any[];
-  insights?: any[];
-  overall_score?: number;
+  biomarkers: BiomarkerResult[];
+  clusters: any[];
+  insights: any[];
+  overall_score: number | null;
   recommendations?: string[];
-  // Nested results (legacy structure)
-  results?: {
-    biomarkers: BiomarkerResult[];
-    clusters: any[];
-    insights: any[];
-    overall_score?: number;
-    risk_assessment: Record<string, any>;
-    recommendations: string[];
-  };
-  created_at: string;
+  risk_assessment?: Record<string, any>;
+  created_at?: string;
   completed_at?: string;
   processing_time_seconds?: number;
+  result_version?: string;
+  meta?: Record<string, any>;
 }
 
 export interface AnalysisError {
@@ -93,7 +87,7 @@ interface AnalysisState {
   // Complex actions
   startAnalysis: (request: AnalysisRequest) => Promise<void>;
   updateAnalysisProgress: (analysisId: string, progress: number, phase: string) => void;
-  completeAnalysis: (analysisId: string, results: AnalysisResult['results']) => Promise<void>;
+  completeAnalysis: (analysisId: string, results: any) => Promise<void>;
   failAnalysis: (analysisId: string, error: AnalysisError) => void;
   clearAnalysis: () => void;
   retryAnalysis: () => void;
@@ -135,7 +129,13 @@ export const useAnalysisStore = create<AnalysisState>()(
       eventSource: null,
 
       // Basic setters
-      setCurrentAnalysis: (analysis) => set({ currentAnalysis: analysis }),
+      setCurrentAnalysis: (analysis) => {
+        console.debug('🔧 setCurrentAnalysis called with biomarkers count:', analysis?.biomarkers?.length);
+        console.debug('🔧 setCurrentAnalysis biomarkers data:', analysis?.biomarkers);
+        set({ currentAnalysis: analysis });
+        const newState = get();
+        console.debug('🔧 setCurrentAnalysis after update - biomarkers count:', newState.currentAnalysis?.biomarkers?.length);
+      },
       
       setCurrentAnalysisId: (analysisId) => set({ currentAnalysisId: analysisId }),
       
@@ -226,6 +226,10 @@ export const useAnalysisStore = create<AnalysisState>()(
             status: 'pending',
             progress: 0,
             created_at: new Date().toISOString(),
+            biomarkers: [],
+            clusters: [],
+            insights: [],
+            overall_score: null,
           };
 
           set({
@@ -279,17 +283,14 @@ export const useAnalysisStore = create<AnalysisState>()(
               }
             },
             (error) => {
-              console.error('SSE connection error:', error);
-              // Only fail if analysis hasn't completed
+              console.warn('SSE stream closed or errored', error);
+              try {
+                eventSource.close();
+              } catch (_) { /* ignore */ }
+              // Treat as graceful completion instead of hard error
               const state = get();
               if (state.currentPhase !== 'completed') {
-                get().failAnalysis(analysisId, {
-                  message: 'Connection lost during analysis',
-                  code: 'CONNECTION_ERROR',
-                  details: error,
-                });
-              } else {
-                console.log('SSE error after completion - ignoring');
+                get().setPhase('completed');
               }
             },
             () => {
@@ -338,9 +339,41 @@ export const useAnalysisStore = create<AnalysisState>()(
             
             if (response && response.success && response.data) {
               const completedAnalysis: AnalysisResult = {
-                ...state.currentAnalysis,
-                ...response.data, // Use the properly mapped data from the service
+                ...(response.data as AnalysisResult),
                 completed_at: new Date().toISOString(),
+              };
+
+              // Overwrite currentAnalysis completely to ensure clean structure
+              set({
+                currentAnalysis: completedAnalysis,
+                isLoading: false,
+                currentPhase: 'completed',
+                progress: 100,
+                error: null,
+              });
+
+              // Add debug logging
+              console.debug("Completed Analysis stored:", {
+                biomarkers: completedAnalysis.biomarkers?.length,
+                insights: completedAnalysis.insights?.length,
+                clusters: completedAnalysis.clusters?.length,
+              });
+
+              // Update in history
+              get().addToHistory(completedAnalysis);
+            } else {
+              // Fallback to the results passed in (if any)
+              const completedAnalysis: AnalysisResult = {
+                analysis_id: analysisId,
+                biomarkers: results?.biomarkers || [],
+                clusters: results?.clusters || [],
+                insights: results?.insights || [],
+                overall_score: results?.overall_score || null,
+                status: 'completed',
+                created_at: state.currentAnalysis.created_at,
+                completed_at: new Date().toISOString(),
+                risk_assessment: results?.risk_assessment || {},
+                recommendations: results?.recommendations || []
               };
 
               set({
@@ -351,30 +384,11 @@ export const useAnalysisStore = create<AnalysisState>()(
                 error: null,
               });
 
-              // Update in history
-              get().addToHistory(completedAnalysis);
-            } else {
-              // Fallback to the results passed in (if any)
-              const completedAnalysis: AnalysisResult = {
-                ...state.currentAnalysis,
-                status: 'completed',
-                progress: 100,
-                results: results || {
-                  biomarkers: [],
-                  clusters: [],
-                  insights: [],
-                  risk_assessment: {},
-                  recommendations: []
-                },
-                completed_at: new Date().toISOString(),
-              };
-
-              set({
-                currentAnalysis: completedAnalysis,
-                isLoading: false,
-                currentPhase: 'completed',
-                progress: 100,
-                error: null,
+              // Add debug logging
+              console.debug("Completed Analysis stored (fallback):", {
+                biomarkers: completedAnalysis.biomarkers?.length,
+                insights: completedAnalysis.insights?.length,
+                clusters: completedAnalysis.clusters?.length,
               });
 
               // Update in history
@@ -384,17 +398,16 @@ export const useAnalysisStore = create<AnalysisState>()(
             console.error('Failed to fetch analysis results:', error);
             // Fallback to the results passed in (if any)
             const completedAnalysis: AnalysisResult = {
-              ...state.currentAnalysis,
+              analysis_id: analysisId,
+              biomarkers: results?.biomarkers || [],
+              clusters: results?.clusters || [],
+              insights: results?.insights || [],
+              overall_score: results?.overall_score || null,
               status: 'completed',
-              progress: 100,
-              results: results || {
-                biomarkers: [],
-                clusters: [],
-                insights: [],
-                risk_assessment: {},
-                recommendations: []
-              },
+              created_at: state.currentAnalysis.created_at,
               completed_at: new Date().toISOString(),
+              risk_assessment: results?.risk_assessment || {},
+              recommendations: results?.recommendations || []
             };
 
             set({
@@ -403,6 +416,13 @@ export const useAnalysisStore = create<AnalysisState>()(
               currentPhase: 'completed',
               progress: 100,
               error: null,
+            });
+
+            // Add debug logging
+            console.debug("Completed Analysis stored (error fallback):", {
+              biomarkers: completedAnalysis.biomarkers?.length,
+              insights: completedAnalysis.insights?.length,
+              clusters: completedAnalysis.clusters?.length,
             });
 
             // Update in history
@@ -504,7 +524,7 @@ export const useAnalysisStore = create<AnalysisState>()(
         const completed = analyses.filter(a => a.status === 'completed');
         const failed = analyses.filter(a => a.status === 'failed');
         const scores = completed
-          .map(a => a.results?.overall_score)
+          .map(a => a.overall_score)
           .filter(score => typeof score === 'number') as number[];
         
         return {
