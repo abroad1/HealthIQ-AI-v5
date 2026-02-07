@@ -41,9 +41,11 @@ reports/forensics/
 .pytest_cache/
 *.pyc
 *.log
+*.tsbuildinfo
 
 # OS junk
 .DS_Store
 
 # Local env
 .env
+/result.json
