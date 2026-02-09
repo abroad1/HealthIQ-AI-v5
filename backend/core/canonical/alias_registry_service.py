@@ -384,6 +384,11 @@ class AliasRegistryService:
         
         # Fuzzy matching for close matches
         all_aliases = list({alias for alias in self._alias_to_canonical.keys() if alias == alias.lower()})
+        input_tokens = self.analyte_tokens(normalized_input)
+        if not input_tokens:
+            print(f"[TRACE] [AliasRegistryService] Empty analyte tokens for: '{normalized_input}'")
+            return f"unmapped_{raw_name}"
+
         close_matches = get_close_matches(
             normalized_input.lower(),
             all_aliases, 
@@ -392,11 +397,6 @@ class AliasRegistryService:
         )
         
         if close_matches:
-            input_tokens = self.analyte_tokens(normalized_input)
-            if not input_tokens:
-                print(f"[TRACE] [AliasRegistryService] Empty analyte tokens for: '{normalized_input}'")
-                return f"unmapped_{raw_name}"
-
             candidate = close_matches[0]
             candidate_tokens = self.analyte_tokens(candidate)
             if input_tokens.isdisjoint(candidate_tokens):
@@ -405,6 +405,42 @@ class AliasRegistryService:
 
             result = self._alias_to_canonical[candidate]
             print(f"[TRACE] [AliasRegistryService] Fuzzy match found: '{candidate}' -> '{result}'")
+            return result
+
+        # Allow slightly lower cutoff only with strong analyte overlap
+        strong_tokens = {
+            "albumin",
+            "creatine",
+            "kinase",
+            "glucose",
+            "cholesterol",
+            "triglycerides",
+            "calcium",
+            "sodium",
+            "potassium",
+            "hemoglobin",
+            "thyroid",
+        }
+        relaxed_matches = get_close_matches(
+            normalized_input.lower(),
+            all_aliases,
+            n=1,
+            cutoff=0.85
+        )
+        if relaxed_matches:
+            candidate = relaxed_matches[0]
+            candidate_tokens = self.analyte_tokens(candidate)
+            overlap = input_tokens.intersection(candidate_tokens)
+            strong_overlap = overlap.intersection(strong_tokens)
+            if not overlap:
+                print(f"[TRACE] [AliasRegistryService] Token gate blocked relaxed fuzzy match: '{normalized_input}' -> '{candidate}'")
+                return f"unmapped_{raw_name}"
+            if not strong_overlap:
+                print(f"[TRACE] [AliasRegistryService] Strong token gate blocked relaxed fuzzy match: '{normalized_input}' -> '{candidate}'")
+                return f"unmapped_{raw_name}"
+
+            result = self._alias_to_canonical[candidate]
+            print(f"[TRACE] [AliasRegistryService] Relaxed fuzzy match found: '{candidate}' -> '{result}'")
             return result
         
         print(f"[TRACE] [AliasRegistryService] No match found, returning: 'unmapped_{raw_name}'")
