@@ -133,3 +133,7 @@ class AnalysisDTO(BaseModel):
     status: str = Field(..., description="Analysis status")
     created_at: str = Field(..., description="Creation timestamp")
     overall_score: Optional[float] = Field(default=None, description="Overall health score")
+    unmapped_biomarkers: List[str] = Field(
+        default_factory=list,
+        description="Unrecognised biomarkers excluded from analysis"
+    )

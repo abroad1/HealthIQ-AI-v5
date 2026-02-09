@@ -67,6 +67,33 @@ class TestAliasRegistryService:
         result = service.resolve("Unknown Biomarker")
         assert result == "unmapped_Unknown Biomarker"
         assert result.startswith("unmapped_")
+
+    @patch('core.canonical.alias_registry_service.yaml.safe_load')
+    @patch('builtins.open')
+    def test_specimen_suffix_stripping_and_safety(self, mock_open, mock_yaml_load):
+        """Test specimen suffix stripping and fail-closed behavior."""
+        mock_registry_data = {
+            'calcium': {
+                'canonical_id': 'calcium',
+                'aliases': ['calcium']
+            },
+            'lipoprotein_a': {
+                'canonical_id': 'lipoprotein_a',
+                'aliases': ['lipoprotein_(a)']
+            },
+            'hdl': {
+                'canonical_id': 'hdl',
+                'aliases': ['hdl']
+            }
+        }
+        mock_yaml_load.return_value = mock_registry_data
+
+        service = AliasRegistryService(use_v4_registry=True)
+
+        assert service.resolve("calcium_(venous)") == "calcium"
+        assert service.resolve("lipoprotein_(a)_(venous)") == "lipoprotein_a"
+        assert service.resolve("hdl_(venous)") == "hdl"
+        assert service.resolve("albumin_(venous)") == "unmapped_albumin_(venous)"
     
     @patch('core.canonical.alias_registry_service.yaml.safe_load')
     @patch('builtins.open')
@@ -224,23 +251,20 @@ class TestAliasRegistryService:
     
     @patch('core.canonical.alias_registry_service.yaml.safe_load')
     @patch('builtins.open')
-    def test_fuzzy_matching(self, mock_open, mock_yaml_load):
-        """Test fuzzy matching for close aliases."""
+    def test_fuzzy_matching_blocked_without_token_overlap(self, mock_open, mock_yaml_load):
+        """Test fuzzy matching fails closed when analyte tokens do not overlap."""
         mock_registry_data = {
-            'hdl': {
-                'canonical_id': 'hdl',
-                'aliases': ['HDL Cholesterol', 'High-Density Lipoprotein']
+            'calcium': {
+                'canonical_id': 'calcium',
+                'aliases': ['calcium']
             }
         }
         mock_yaml_load.return_value = mock_registry_data
         
         service = AliasRegistryService(use_v4_registry=True)
         
-        # Test fuzzy matching (should work with close matches)
-        # Note: This test might need adjustment based on actual fuzzy matching behavior
-        result = service.resolve("HDL Chol")  # Close to "HDL Cholesterol"
-        # The result depends on the fuzzy matching implementation
-        assert result in ["hdl", "unmapped_HDL Chol"]
+        result = service.resolve("albumin_(venous)")
+        assert result == "unmapped_albumin_(venous)"
     
     def test_common_aliases_integration(self):
         """Test that common aliases are properly integrated."""
