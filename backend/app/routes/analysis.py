@@ -147,6 +147,7 @@ async def start_analysis(request: AnalysisStartRequest):
                 }
                 for i in dto.insights
             ],
+            "unmapped_biomarkers": dto.unmapped_biomarkers,
             "status": dto.status,
             "created_at": dto.created_at,
             "overall_score": dto.overall_score,

@@ -88,6 +88,13 @@ class AnalysisOrchestrator:
         # Log unmapped keys (in production, this would be proper logging)
         if unmapped_keys:
             print(f"Warning: Unmapped biomarker keys: {unmapped_keys}")
+
+        # Drop any unmapped_* entries before canonical enforcement
+        filtered_biomarkers = {
+            key: value for key, value in biomarker_panel.biomarkers.items()
+            if not key.startswith("unmapped_")
+        }
+        biomarker_panel = biomarker_panel.model_copy(update={"biomarkers": filtered_biomarkers})
         
         # Enforce canonical-only keys in the final panel
         non_canonical = self.normalizer.validate_canonical_only(biomarker_panel.biomarkers)
@@ -643,11 +650,27 @@ class AnalysisOrchestrator:
             # Trace biomarkers received by orchestrator
             print("[TRACE] Orchestrator input biomarkers:", list(biomarkers.keys()))
             
+            # Quarantine unmapped biomarkers before downstream processing
+            unmapped_biomarkers = sorted(
+                [key for key in biomarkers.keys() if key.startswith("unmapped_")]
+            )
+            filtered_biomarkers = {
+                key: value for key, value in biomarkers.items()
+                if not key.startswith("unmapped_")
+            }
+            skipped_unmapped = len(biomarkers) - len(filtered_biomarkers)
+            logger.info(
+                "Biomarker quarantine: total=%s, canonical=%s, unmapped_skipped=%s",
+                len(biomarkers),
+                len(filtered_biomarkers),
+                skipped_unmapped,
+            )
+
             # Step 1: Convert biomarkers to simple format for scoring engine and preserve reference ranges
             logger.info("Step 1: Converting biomarkers for scoring")
             simple_biomarkers = {}
             input_reference_ranges = {}  # Preserve reference ranges from input
-            for biomarker_name, biomarker_data in biomarkers.items():
+            for biomarker_name, biomarker_data in filtered_biomarkers.items():
                 if isinstance(biomarker_data, dict):
                     simple_biomarkers[biomarker_name] = biomarker_data.get('value', biomarker_data.get('measurement', 0))
                     # Extract reference range if present and valid
@@ -680,7 +703,7 @@ class AnalysisOrchestrator:
             logger.info("Step 3: Creating analysis context")
             context = self.create_analysis_context(
                 analysis_id=analysis_id,
-                raw_biomarkers=biomarkers,
+                raw_biomarkers=filtered_biomarkers,
                 user_data=user,
                 assume_canonical=True
             )
@@ -814,7 +837,7 @@ class AnalysisOrchestrator:
             # --- Include all original biomarkers, not just scored ones ---
             logger.debug("Adding unscored biomarkers to DTO output")
             all_biomarkers = {}
-            for biomarker_name, biomarker_data in biomarkers.items():
+            for biomarker_name, biomarker_data in filtered_biomarkers.items():
                 if isinstance(biomarker_data, dict):
                     all_biomarkers[biomarker_name] = biomarker_data.get('value', biomarker_data.get('measurement', 0))
                 else:
@@ -1025,7 +1048,8 @@ class AnalysisOrchestrator:
                 insights=insight_dtos,
                 status="completed",
                 created_at=datetime.now(UTC).isoformat(),
-                overall_score=scoring_result.get('overall_score', 0.0) / 100.0  # Convert to 0-1 scale
+                overall_score=scoring_result.get('overall_score', 0.0) / 100.0,  # Convert to 0-1 scale
+                unmapped_biomarkers=unmapped_biomarkers
             )
             
             logger.info(f"Analysis {analysis_id} completed successfully with {len(biomarker_dtos)} biomarkers, {len(cluster_dtos)} clusters, {len(insight_dtos)} insights")
