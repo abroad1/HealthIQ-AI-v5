@@ -128,12 +128,26 @@ class BiomarkerNormalizer:
                             }
                 
                 # Create BiomarkerValue with canonical name, preserving reference_range
-                normalized_values[canonical_key] = BiomarkerValue(
-                    name=canonical_key,
-                    value=numeric_value,
-                    unit=unit,
-                    reference_range=reference_range
-                )
+                if canonical_key in normalized_values and key != canonical_key:
+                    unmapped_key = f"unmapped_{key}"
+                    unmapped_keys.append(key)
+                    print(
+                        f"[WARN] Collision detected for '{canonical_key}' from raw key '{key}'. "
+                        f"Preserving existing value and storing '{unmapped_key}' to protect data integrity."
+                    )
+                    normalized_values[unmapped_key] = BiomarkerValue(
+                        name=key,
+                        value=numeric_value,
+                        unit=unit,
+                        reference_range=reference_range
+                    )
+                else:
+                    normalized_values[canonical_key] = BiomarkerValue(
+                        name=canonical_key,
+                        value=numeric_value,
+                        unit=unit,
+                        reference_range=reference_range
+                    )
         
         # Create BiomarkerPanel with normalized values
         panel = BiomarkerPanel(
