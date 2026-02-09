@@ -651,13 +651,19 @@ class AnalysisOrchestrator:
             print("[TRACE] Orchestrator input biomarkers:", list(biomarkers.keys()))
             
             # Quarantine unmapped biomarkers before downstream processing
-            unmapped_biomarkers = sorted(
-                [key for key in biomarkers.keys() if key.startswith("unmapped_")]
-            )
-            filtered_biomarkers = {
-                key: value for key, value in biomarkers.items()
-                if not key.startswith("unmapped_")
-            }
+            unmapped_biomarkers = []
+            filtered_biomarkers = {}
+            alias_service = self.normalizer.alias_service
+            for key, value in biomarkers.items():
+                if key.startswith("unmapped_"):
+                    unmapped_biomarkers.append(key)
+                    continue
+                resolved = alias_service.resolve(key)
+                if resolved.startswith("unmapped_"):
+                    unmapped_biomarkers.append(resolved)
+                    continue
+                filtered_biomarkers[key] = value
+            unmapped_biomarkers = sorted(set(unmapped_biomarkers))
             skipped_unmapped = len(biomarkers) - len(filtered_biomarkers)
             logger.info(
                 "Biomarker quarantine: total=%s, canonical=%s, unmapped_skipped=%s",

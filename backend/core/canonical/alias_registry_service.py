@@ -10,7 +10,7 @@ import os
 import re
 import yaml
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, Set
 from difflib import get_close_matches
 
 
@@ -43,6 +43,67 @@ class AliasRegistryService:
             os.path.dirname(__file__), 
             "..", "..", "v4_reference", "biomarkers_config.yaml"
         )
+
+    def normalize_key(self, raw: str) -> str:
+        """
+        Normalize an input key for matching while preserving the raw key for output.
+        """
+        if raw is None:
+            return ""
+        key = str(raw).strip().lower()
+        key = re.sub(r"[-/]", "_", key)
+        key = re.sub(r"\s+", "_", key)
+        key = re.sub(r"_+", "_", key)
+
+        specimen_suffixes = [
+            "venous",
+            "serum",
+            "plasma",
+            "urine",
+            "blood",
+            "whole_blood",
+            "capillary",
+            "arterial",
+        ]
+        for suffix in specimen_suffixes:
+            paren_suffix = f"_({suffix})"
+            bare_suffix = f"_{suffix}"
+            if key.endswith(paren_suffix):
+                key = key[: -len(paren_suffix)]
+                break
+            if key.endswith(bare_suffix):
+                key = key[: -len(bare_suffix)]
+                break
+
+        key = re.sub(r"_+", "_", key).strip("_")
+        return key
+
+    def analyte_tokens(self, name: str) -> Set[str]:
+        if not name:
+            return set()
+
+        key = str(name).strip().lower()
+        key = re.sub(r"[-/]", "_", key)
+        key = re.sub(r"\s+", "_", key)
+        key = re.sub(r"_+", "_", key).strip("_")
+
+        remove_tokens = {
+            "calculation",
+            "calc",
+            "ratio",
+            "total",
+            "free",
+            "venous",
+            "serum",
+            "plasma",
+            "urine",
+            "blood",
+            "whole",
+            "whole_blood",
+            "capillary",
+            "arterial",
+        }
+        return {token for token in key.split("_") if token and token not in remove_tokens}
     
     def _load_v4_registry(self) -> Dict[str, Any]:
         """Load the v4 alias registry from YAML file."""
@@ -283,28 +344,6 @@ class AliasRegistryService:
         for alias, canonical in common_aliases.items():
             alias_mapping[alias.lower()] = canonical
             alias_mapping[alias.upper()] = canonical
-
-    def _strip_specimen_suffix(self, name: str) -> str:
-        """Strip trailing specimen suffixes like _(venous), _(serum), etc."""
-        return re.sub(r"(?:_?\(?(venous|serum|plasma|urine|blood)\)?)$", "", name)
-
-    def _normalize_input_name(self, name: str) -> str:
-        """Normalize input name for matching without altering core analyte tokens."""
-        normalized = (name or "").strip().lower()
-        normalized = re.sub(r"[-/\\s]+", "_", normalized)
-        normalized = re.sub(r"_+", "_", normalized).strip("_")
-        normalized = self._strip_specimen_suffix(normalized).strip("_")
-        return normalized
-
-    def _tokenize_analyte(self, name: str) -> set:
-        """Tokenize analyte name for fuzzy-match guardrails."""
-        stopwords = {
-            "calculation", "calc", "ratio", "total", "free",
-            "venous", "serum", "plasma", "urine", "blood"
-        }
-        cleaned = re.sub(r"[()]", "", name.lower())
-        tokens = {t for t in cleaned.split("_") if t}
-        return {t for t in tokens if t not in stopwords}
     
     def resolve(self, name: str) -> str:
         """
@@ -323,53 +362,54 @@ class AliasRegistryService:
         if not self._loaded:
             self._build_alias_mapping()
 
-        original_raw = name or ""
-        input_norm = self._normalize_input_name(original_raw)
-        alias_lookup = {alias.lower(): canonical for alias, canonical in self._alias_to_canonical.items()}
-
-        # Direct lookup (case-insensitive) using normalized form first
-        canonical = alias_lookup.get(input_norm)
-        if canonical:
-            print(f"[TRACE] [AliasRegistryService] Direct lookup found: '{canonical}'")
-            return canonical
-
-        # Fall back to raw lowercase lookup
-        canonical = alias_lookup.get(original_raw.lower())
+        raw_name = name
+        normalized_input = self.normalize_key(name)
+        if not normalized_input:
+            print(f"[TRACE] [AliasRegistryService] Empty normalized input for: '{raw_name}'")
+            return f"unmapped_{raw_name}"
+        
+        # Direct lookup (case-insensitive) on normalized input
+        canonical = self._alias_to_canonical.get(normalized_input.lower())
         if canonical:
             print(f"[TRACE] [AliasRegistryService] Direct lookup found: '{canonical}'")
             return canonical
         
-        print(f"[TRACE] [AliasRegistryService] Direct lookup failed for: '{input_norm}'")
+        print(f"[TRACE] [AliasRegistryService] Direct lookup failed for: '{normalized_input.lower()}'")
+
+        # Exact match against canonical ids (if applicable)
+        for canonical_id in set(self._alias_to_canonical.values()):
+            if canonical_id.lower() == normalized_input.lower():
+                print(f"[TRACE] [AliasRegistryService] Canonical id match found: '{canonical_id}'")
+                return canonical_id
         
-        # Fuzzy matching for close matches (guarded by analyte token overlap)
-        all_aliases = list(alias_lookup.keys())
-        input_tokens = self._tokenize_analyte(input_norm)
+        # Fuzzy matching for close matches
+        all_aliases = list({alias for alias in self._alias_to_canonical.keys() if alias == alias.lower()})
         close_matches = get_close_matches(
-            input_norm,
+            normalized_input.lower(),
             all_aliases, 
-            n=2,
+            n=1, 
             cutoff=0.9
         )
         
         if close_matches:
-            if len(close_matches) > 1 and close_matches[0] != close_matches[1]:
-                print(f"[TRACE] [AliasRegistryService] Fuzzy match ambiguous: {close_matches}")
-                return f"unmapped_{original_raw}"
+            input_tokens = self.analyte_tokens(normalized_input)
+            if not input_tokens:
+                print(f"[TRACE] [AliasRegistryService] Empty analyte tokens for: '{normalized_input}'")
+                return f"unmapped_{raw_name}"
 
             candidate = close_matches[0]
-            candidate_tokens = self._tokenize_analyte(candidate)
-            if input_tokens and candidate_tokens and input_tokens.isdisjoint(candidate_tokens):
-                print(f"[TRACE] [AliasRegistryService] Fuzzy match blocked by token mismatch: '{candidate}'")
-                return f"unmapped_{original_raw}"
+            candidate_tokens = self.analyte_tokens(candidate)
+            if input_tokens.isdisjoint(candidate_tokens):
+                print(f"[TRACE] [AliasRegistryService] Token gate blocked fuzzy match: '{normalized_input}' -> '{candidate}'")
+                return f"unmapped_{raw_name}"
 
-            result = alias_lookup.get(candidate)
-            if result:
-                print(f"[TRACE] [AliasRegistryService] Fuzzy match found: '{candidate}' -> '{result}'")
-                return result
+            result = self._alias_to_canonical[candidate]
+            print(f"[TRACE] [AliasRegistryService] Fuzzy match found: '{candidate}' -> '{result}'")
+            return result
         
-        print(f"[TRACE] [AliasRegistryService] No match found, returning: 'unmapped_{original_raw}'")
+        print(f"[TRACE] [AliasRegistryService] No match found, returning: 'unmapped_{raw_name}'")
         # Return unmapped key
-        return f"unmapped_{original_raw}"
+        return f"unmapped_{raw_name}"
     
     def normalize_panel(self, panel: Dict[str, Any]) -> Dict[str, Any]:
         """
