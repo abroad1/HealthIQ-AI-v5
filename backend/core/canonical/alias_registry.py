@@ -6,13 +6,12 @@ Ports v4's comprehensive alias resolution logic into v5 architecture.
 import os
 import yaml
 from typing import Dict, List, Optional, Tuple
-from difflib import get_close_matches
 
 
 class BiomarkerAliasResolver:
     """
-    Biomarker alias resolver with v4's comprehensive alias mapping and fuzzy matching.
-    Provides case-insensitive and fuzzy matching capabilities.
+    Biomarker alias resolver with v4's comprehensive alias mapping.
+    Provides case-insensitive matching capabilities.
     """
     
     def __init__(self, config_path: Optional[str] = None):
@@ -222,7 +221,7 @@ class BiomarkerAliasResolver:
     
     def resolve_to_canonical(self, alias: str) -> Optional[str]:
         """
-        Resolve an alias to its canonical name with fuzzy matching.
+        Resolve an alias to its canonical name with deterministic matching.
         
         Args:
             alias: Alias to resolve
@@ -237,18 +236,6 @@ class BiomarkerAliasResolver:
         canonical = self._alias_to_canonical.get(alias.lower())
         if canonical:
             return canonical
-        
-        # Fuzzy matching for close matches
-        all_aliases = list(self._alias_to_canonical.keys())
-        close_matches = get_close_matches(
-            alias.lower(), 
-            all_aliases, 
-            n=1, 
-            cutoff=0.8
-        )
-        
-        if close_matches:
-            return self._alias_to_canonical[close_matches[0]]
         
         return None
     

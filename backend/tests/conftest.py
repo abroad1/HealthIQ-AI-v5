@@ -21,6 +21,7 @@ if str(backend_dir) not in sys.path:
 def cleanup_test_db():
     """Truncate key tables after tests finish to ensure clean state."""
     from sqlalchemy import create_engine, text
+    from sqlalchemy.exc import OperationalError
     
     db_url = os.getenv("DATABASE_URL_TEST")
     if not db_url:
@@ -29,8 +30,12 @@ def cleanup_test_db():
     
     engine = create_engine(db_url)
     yield
-    with engine.begin() as conn:
-        conn.execute(text("TRUNCATE profiles, analyses, consents, audit_logs RESTART IDENTITY CASCADE;"))
+    try:
+        with engine.begin() as conn:
+            conn.execute(text("TRUNCATE profiles, analyses, consents, audit_logs RESTART IDENTITY CASCADE;"))
+    except OperationalError:
+        # Skip cleanup if database is unreachable
+        return
 
 
 @pytest.fixture(scope="session", autouse=True)

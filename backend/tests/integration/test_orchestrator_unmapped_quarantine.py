@@ -1,5 +1,6 @@
 import pytest
 
+from core.canonical.normalize import normalize_biomarkers_with_metadata
 from core.pipeline.orchestrator import AnalysisOrchestrator
 
 
@@ -42,10 +43,10 @@ class TestOrchestratorUnmappedQuarantine:
             for name in biomarker_names
         )
 
-    def test_alias_resolution_quarantine_for_specimen_suffixes(self):
+    def test_alias_resolution_quarantine_deterministic(self):
         raw_biomarkers = {
             "albumin_(venous)": {"value": 44.0, "unit": "g/L"},
-            "calcium_(venous)": {"value": 2.2, "unit": "mmol/L"},
+            "calcium": {"value": 2.2, "unit": "mmol/L"}
         }
         user_data = {
             "user_id": "test_user",
@@ -53,7 +54,8 @@ class TestOrchestratorUnmappedQuarantine:
             "gender": "male"
         }
 
-        dto = self.orchestrator.run(raw_biomarkers, user_data, assume_canonical=True)
+        normalized = normalize_biomarkers_with_metadata(raw_biomarkers)
+        dto = self.orchestrator.run(normalized, user_data, assume_canonical=True)
 
         assert dto is not None
         assert "unmapped_albumin_(venous)" in dto.unmapped_biomarkers
@@ -68,7 +70,8 @@ class TestOrchestratorUnmappedQuarantine:
                 biomarker_names.append(biomarker.get("biomarker_name") or biomarker.get("name"))
 
         assert all(
-            name != "albumin_(venous)" for name in biomarker_names
+            name and not name.startswith("unmapped_")
+            for name in biomarker_names
         )
 
         calcium_entries = [
