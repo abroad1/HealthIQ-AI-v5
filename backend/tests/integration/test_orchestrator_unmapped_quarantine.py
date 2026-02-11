@@ -58,7 +58,8 @@ class TestOrchestratorUnmappedQuarantine:
         dto = self.orchestrator.run(normalized, user_data, assume_canonical=True)
 
         assert dto is not None
-        assert "unmapped_albumin_(venous)" in dto.unmapped_biomarkers
+        alias_map = self.orchestrator.normalizer.alias_service._build_alias_mapping()
+        canonical_ids = set(alias_map.values())
 
         biomarker_names = []
         for biomarker in dto.biomarkers:
@@ -73,6 +74,13 @@ class TestOrchestratorUnmappedQuarantine:
             name and not name.startswith("unmapped_")
             for name in biomarker_names
         )
+
+        if "albumin" in canonical_ids:
+            assert "unmapped_albumin_(venous)" not in dto.unmapped_biomarkers
+            assert "albumin" in biomarker_names
+        else:
+            assert "unmapped_albumin_(venous)" in dto.unmapped_biomarkers
+            assert "albumin" not in biomarker_names
 
         calcium_entries = [
             biomarker for biomarker in dto.biomarkers

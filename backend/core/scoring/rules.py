@@ -1,15 +1,30 @@
 """
 Static biomarker rules and thresholds for scoring engines.
 
-This module defines clinical thresholds and scoring rules for biomarkers
-based on medical guidelines and reference ranges from SSOT data.
+Lab-provided biomarkers: use ONLY lab reference ranges. No SSOT/global lookups.
+Derived ratios (v5-computed, lab did not supply): may use explicit hard-coded bounds table.
 """
 
 from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
 
-from core.canonical.resolver import CanonicalResolver
+# Derived ratios v5 computes - only these may use hard-coded bounds when lab didn't supply
+DERIVED_RATIOS = frozenset({
+    "tc_hdl_ratio", "tg_hdl_ratio", "ldl_hdl_ratio", "chol_hdl_ratio",
+    "apoB_apoA1_ratio", "non_hdl_cholesterol"
+})
+
+# Explicit hard-coded bounds for derived ratios only. Used when lab did not provide.
+# Format: biomarker_name -> {min, max} for _calculate_score_from_range
+DERIVED_RATIO_BOUNDS: Dict[str, Dict[str, float]] = {
+    "tc_hdl_ratio": {"min": 0.0, "max": 5.0},
+    "tg_hdl_ratio": {"min": 0.0, "max": 4.0},
+    "ldl_hdl_ratio": {"min": 0.0, "max": 3.5},
+}
+
+# Sentinel for unscored (missing lab reference range)
+UNSCORED_REASON = "missing_lab_reference_range"
 
 
 class ScoreRange(Enum):
@@ -48,16 +63,10 @@ class HealthSystemRules:
 
 
 class ScoringRules:
-    """Static rules and thresholds for biomarker scoring."""
-    
-    def __init__(self, resolver: Optional[CanonicalResolver] = None):
-        """
-        Initialize scoring rules.
-        
-        Args:
-            resolver: CanonicalResolver instance for reference ranges
-        """
-        self.resolver = resolver or CanonicalResolver()
+    """Static rules and thresholds for biomarker scoring. No SSOT/global range lookups."""
+
+    def __init__(self):
+        """Initialize scoring rules."""
         self._rules = self._load_biomarker_rules()
     
     def _load_biomarker_rules(self) -> Dict[str, HealthSystemRules]:
@@ -135,7 +144,7 @@ class ScoringRules:
                 weight=0.2
             ),
             BiomarkerRule(
-                biomarker_name="ldl_cholesterol",
+                biomarker_name="ldl",
                 optimal_range=(0, 100),
                 normal_range=(0, 100),
                 borderline_range=(100, 129),
@@ -146,7 +155,7 @@ class ScoringRules:
                 weight=0.3
             ),
             BiomarkerRule(
-                biomarker_name="hdl_cholesterol",
+                biomarker_name="hdl",
                 optimal_range=(60, 200),
                 normal_range=(40, 200),
                 borderline_range=(35, 40),
@@ -167,6 +176,17 @@ class ScoringRules:
                 critical_range=(1000, 5000),
                 unit="mg/dL",
                 weight=0.2
+            ),
+            BiomarkerRule(
+                biomarker_name="tc_hdl_ratio",
+                optimal_range=(0, 3.5),
+                normal_range=(3.5, 5.0),
+                borderline_range=(5.0, 6.0),
+                high_range=(6.0, 8.0),
+                very_high_range=(8.0, 10.0),
+                critical_range=(10.0, 20.0),
+                unit="ratio",
+                weight=0.1
             )
         ]
         
@@ -357,10 +377,10 @@ class ScoringRules:
     
     def get_biomarker_rule(self, biomarker_name: str) -> Optional[BiomarkerRule]:
         """
-        Get rule for a specific biomarker.
+        Get rule for a specific biomarker by canonical key.
         
         Args:
-            biomarker_name: Name of the biomarker
+            biomarker_name: Canonical biomarker name (e.g. hdl, ldl)
             
         Returns:
             BiomarkerRule if found, None otherwise
@@ -392,6 +412,10 @@ class ScoringRules:
         """
         return self._rules.copy()
     
+    def _is_derived_ratio(self, biomarker_name: str) -> bool:
+        """True if biomarker is a derived ratio v5 computes (may use DERIVED_RATIO_BOUNDS when lab didn't supply)."""
+        return biomarker_name in DERIVED_RATIOS
+
     def calculate_biomarker_score(
         self, 
         biomarker_name: str, 
@@ -399,57 +423,40 @@ class ScoringRules:
         age: Optional[int] = None,
         sex: Optional[str] = None,
         input_reference_range: Optional[Dict[str, Any]] = None
-    ) -> Tuple[float, ScoreRange]:
+    ) -> Tuple[float, ScoreRange, Optional[str]]:
         """
         Calculate score for a single biomarker.
         
-        Args:
-            biomarker_name: Name of the biomarker
-            value: Biomarker value
-            age: Patient age for age adjustments
-            sex: Patient sex for sex adjustments
-            input_reference_range: Optional input reference range from lab (takes precedence)
-            
+        Lab-provided biomarkers: use ONLY lab reference range. Never SSOT/global.
+        If no lab range, returns unscored with reason 'missing_lab_reference_range'.
+        
+        Derived ratios: may use hard-coded range only when lab did not supply it.
+        
         Returns:
-            Tuple of (score, score_range) where score is 0-100
+            Tuple of (score, score_range, unscored_reason). unscored_reason is None when scored.
         """
-        # Priority 1: Use input reference range if available and valid
+        # Priority 1: Use input reference range (lab) if available and valid
         if input_reference_range and isinstance(input_reference_range, dict):
             min_val = input_reference_range.get('min')
             max_val = input_reference_range.get('max')
             if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)) and min_val < max_val:
-                return self._calculate_score_from_range(value, float(min_val), float(max_val))
-        
-        # Priority 2: Try to get reference range from SSOT
-        try:
-            ssot_range = self.resolver.get_reference_range(
-                biomarker_name,
-                age=age,
-                sex=sex
-            )
-            if ssot_range and isinstance(ssot_range, dict):
-                min_val = ssot_range.get('min')
-                max_val = ssot_range.get('max')
-                if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)) and min_val < max_val:
-                    return self._calculate_score_from_range(value, float(min_val), float(max_val))
-        except Exception:
-            pass  # Fall through to rule-based scoring
-        
-        # Priority 3: Fall back to rule-based scoring (existing logic)
-        rule = self.get_biomarker_rule(biomarker_name)
-        if not rule:
-            return 0.0, ScoreRange.CRITICAL
-        
-        # Apply age/sex adjustments if needed
-        adjusted_value = self._apply_adjustments(value, rule, age, sex)
-        
-        # Determine score range
-        score_range = self._determine_score_range(adjusted_value, rule)
-        
-        # Calculate score based on range
-        score = self._calculate_range_score(adjusted_value, rule, score_range)
-        
-        return score, score_range
+                score, score_range = self._calculate_score_from_range(value, float(min_val), float(max_val))
+                return score, score_range, None
+
+        # Lab-provided biomarkers: NEVER use SSOT or rule fallback
+        if not self._is_derived_ratio(biomarker_name):
+            return 0.0, ScoreRange.CRITICAL, UNSCORED_REASON
+
+        # Derived ratios only: use explicit DERIVED_RATIO_BOUNDS table (no SSOT, no rule fallback)
+        bounds = DERIVED_RATIO_BOUNDS.get(biomarker_name)
+        if bounds and isinstance(bounds.get('min'), (int, float)) and isinstance(bounds.get('max'), (int, float)):
+            min_val, max_val = bounds['min'], bounds['max']
+            if min_val < max_val:
+                score, score_range = self._calculate_score_from_range(value, float(min_val), float(max_val))
+                return score, score_range, None
+
+        # Derived ratio not in table: unscored
+        return 0.0, ScoreRange.CRITICAL, UNSCORED_REASON
     
     def _calculate_score_from_range(self, value: float, min_val: float, max_val: float) -> Tuple[float, ScoreRange]:
         """
@@ -523,10 +530,6 @@ class ScoringRules:
                 score = 70.0 - (position - 0.95) / 0.05 * 20.0  # 70 to 50
                 score_range = ScoreRange.HIGH
         
-        # Store position info for status mapping (value < min = low, value > max = elevated)
-        # We'll use this in the orchestrator to map to frontend status strings
-        return score, score_range
-        
         return score, score_range
     
     def _apply_adjustments(
@@ -551,7 +554,7 @@ class ScoringRules:
             if sex.lower() == "female":
                 if rule.biomarker_name in ["hemoglobin", "hematocrit"]:
                     adjusted_value *= 0.9  # Lower normal for females
-                elif rule.biomarker_name in ["hdl_cholesterol"]:
+                elif rule.biomarker_name in ["hdl"]:
                     adjusted_value *= 1.1  # Higher normal for females
         
         return adjusted_value

@@ -9,7 +9,7 @@ from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
 
-from core.scoring.rules import ScoringRules, ScoreRange
+from core.scoring.rules import ScoringRules, ScoreRange, UNSCORED_REASON
 from core.scoring.overlays import LifestyleOverlays, LifestyleProfile
 from core.canonical.normalize import BiomarkerNormalizer
 from core.validation.completeness import DataCompletenessValidator
@@ -31,6 +31,7 @@ class BiomarkerScore:
     score_range: ScoreRange
     confidence: ConfidenceLevel
     missing: bool = False
+    unscored_reason: Optional[str] = None  # e.g. UNSCORED_REASON when lab range missing
 
 
 @dataclass
@@ -53,6 +54,7 @@ class ScoringResult:
     missing_biomarkers: List[str]
     recommendations: List[str]
     lifestyle_adjustments: List[str]
+    unscored_biomarkers: Optional[List[Dict[str, Any]]] = None  # [{biomarker_name, reason}]
 
 
 class ScoringEngine:
@@ -119,40 +121,45 @@ class ScoringEngine:
         health_system_scores = {}
         all_missing_biomarkers = []
         all_recommendations = []
-        
+        unscored_list: List[Dict[str, Any]] = []
+
         for system_name in ["metabolic", "cardiovascular", "inflammatory", "hormonal", "nutritional", "kidney", "liver", "cbc"]:
             system_score = self._score_health_system(
-                system_name, 
-                canonical_biomarkers, 
-                age, 
-                sex, 
+                system_name,
+                canonical_biomarkers,
+                age,
+                sex,
                 lifestyle_profile,
                 input_reference_ranges=input_reference_ranges
             )
             health_system_scores[system_name] = system_score
             all_missing_biomarkers.extend(system_score.missing_biomarkers)
             all_recommendations.extend(system_score.recommendations)
-        
+            for bs in system_score.biomarker_scores:
+                if getattr(bs, 'unscored_reason', None):
+                    unscored_list.append({"biomarker_name": bs.biomarker_name, "reason": bs.unscored_reason})
+
         # Calculate overall score
         overall_score = self._calculate_overall_score(health_system_scores)
-        
+
         # Determine overall confidence
         confidence = self._determine_overall_confidence(health_system_scores, completeness_result)
-        
+
         # Apply lifestyle overlays if provided
         lifestyle_adjustments = []
         if lifestyle_profile:
             adjusted_score, adjustments = self.overlays.apply_lifestyle_overlays(overall_score, lifestyle_profile)
             overall_score = adjusted_score
             lifestyle_adjustments = adjustments
-        
+
         return ScoringResult(
             overall_score=overall_score,
             confidence=confidence,
             health_system_scores=health_system_scores,
             missing_biomarkers=list(set(all_missing_biomarkers)),
             recommendations=list(set(all_recommendations)),
-            lifestyle_adjustments=lifestyle_adjustments
+            lifestyle_adjustments=lifestyle_adjustments,
+            unscored_biomarkers=unscored_list if unscored_list else None
         )
     
     def _score_health_system(
@@ -180,45 +187,47 @@ class ScoringEngine:
         missing_biomarkers = []
         total_weighted_score = 0.0
         total_weight = 0.0
-        
-        # Score each biomarker in the system
+
         for rule in system_rules.biomarkers:
-            if rule.biomarker_name in biomarkers:
-                biomarker_value = biomarkers[rule.biomarker_name]
-                # Extract numeric value from BiomarkerValue object
-                if hasattr(biomarker_value, 'value'):
-                    value = biomarker_value.value
-                else:
-                    value = biomarker_value
-                
-                # Get input reference range for this biomarker if available
-                input_range = None
-                if input_reference_ranges and rule.biomarker_name in input_reference_ranges:
-                    input_range = input_reference_ranges[rule.biomarker_name]
-                
-                score, score_range = self.rules.calculate_biomarker_score(
-                    rule.biomarker_name, value, age, sex, input_reference_range=input_range
-                )
-                
-                # Apply lifestyle overlays if provided
-                if lifestyle_profile:
-                    adjusted_score, _ = self.overlays.apply_lifestyle_overlays(score, lifestyle_profile)
-                    score = adjusted_score
-                
+            biomarker_name = rule.biomarker_name
+            if biomarker_name not in biomarkers:
+                missing_biomarkers.append(biomarker_name)
+                continue
+
+            val = biomarkers[biomarker_name]
+            value = val.value if hasattr(val, 'value') else val
+            input_range = (input_reference_ranges or {}).get(biomarker_name)
+
+            score, score_range, unscored_reason = self.rules.calculate_biomarker_score(
+                biomarker_name, value, age, sex, input_reference_range=input_range
+            )
+
+            if unscored_reason:
                 biomarker_score = BiomarkerScore(
-                    biomarker_name=rule.biomarker_name,
+                    biomarker_name=biomarker_name,
                     value=value,
-                    score=score,
+                    score=0.0,
                     score_range=score_range,
-                    confidence=self._determine_biomarker_confidence(score, score_range)
+                    confidence=ConfidenceLevel.LOW,
+                    unscored_reason=unscored_reason
                 )
                 biomarker_scores.append(biomarker_score)
-                
-                # Add to weighted total
-                total_weighted_score += score * rule.weight
-                total_weight += rule.weight
-            else:
-                missing_biomarkers.append(rule.biomarker_name)
+                # Do not add to weighted total
+                continue
+
+            if lifestyle_profile:
+                score, _ = self.overlays.apply_lifestyle_overlays(score, lifestyle_profile)
+
+            biomarker_score = BiomarkerScore(
+                biomarker_name=biomarker_name,
+                value=value,
+                score=score,
+                score_range=score_range,
+                confidence=self._determine_biomarker_confidence(score, score_range)
+            )
+            biomarker_scores.append(biomarker_score)
+            total_weighted_score += score * rule.weight
+            total_weight += rule.weight
         
         # Calculate overall system score
         if total_weight > 0:
