@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Tuple
 
 class BiomarkerAliasResolver:
     """
-    Biomarker alias resolver with v4's comprehensive alias mapping.
+    Biomarker alias resolver with SSOT alias mapping.
     Provides case-insensitive matching capabilities.
     """
     
@@ -22,10 +22,10 @@ class BiomarkerAliasResolver:
             config_path: Path to biomarkers config YAML file
         """
         if config_path is None:
-            # Default to v4 reference config
+            # Default to SSOT alias registry
             config_path = os.path.join(
                 os.path.dirname(__file__), 
-                "..", "..", "v4_reference", "biomarkers_config.yaml"
+                "..", "..", "ssot", "biomarker_alias_registry.yaml"
             )
         
         self.config_path = config_path
@@ -33,32 +33,16 @@ class BiomarkerAliasResolver:
         self._canonical_biomarkers: Optional[List[str]] = None
         self._loaded = False
     
-    def _load_biomarker_config(self) -> Dict[str, any]:
-        """Load biomarker configuration from YAML file."""
+    def _load_alias_registry(self) -> Dict[str, any]:
+        """Load SSOT alias registry from YAML file."""
         try:
             with open(self.config_path, 'r', encoding='utf-8') as f:
                 return yaml.safe_load(f)
         except FileNotFoundError:
-            print(f"Warning: Biomarker config file not found at {self.config_path}")
+            print(f"Warning: SSOT alias registry not found at {self.config_path}")
             return {}
         except yaml.YAMLError as e:
-            print(f"Error parsing biomarker config: {e}")
-            return {}
-    
-    def _load_v4_alias_registry(self) -> Dict[str, any]:
-        """Load v4 alias registry from YAML file."""
-        v4_registry_path = os.path.join(
-            os.path.dirname(__file__), 
-            "..", "..", "v4_reference", "biomarker_alias_registry.yaml"
-        )
-        try:
-            with open(v4_registry_path, 'r', encoding='utf-8') as f:
-                return yaml.safe_load(f)
-        except FileNotFoundError:
-            print(f"Warning: v4 alias registry not found at {v4_registry_path}")
-            return {}
-        except yaml.YAMLError as e:
-            print(f"Error parsing v4 alias registry: {e}")
+            print(f"Error parsing SSOT alias registry: {e}")
             return {}
     
     def _build_alias_mapping(self) -> Dict[str, str]:
@@ -71,11 +55,10 @@ class BiomarkerAliasResolver:
         
         alias_mapping = {}
         
-        # Try to load v4 alias registry first (most comprehensive)
-        v4_registry = self._load_v4_alias_registry()
-        if v4_registry:
-            print("Using v4 alias registry for comprehensive alias mapping")
-            for canonical_id, definition in v4_registry.items():
+        ssot_registry = self._load_alias_registry()
+        if ssot_registry:
+            print("Using SSOT alias registry for comprehensive alias mapping")
+            for canonical_id, definition in ssot_registry.items():
                 if isinstance(definition, dict) and 'aliases' in definition:
                     # Map canonical name to itself
                     alias_mapping[canonical_id.lower()] = canonical_id
@@ -88,37 +71,6 @@ class BiomarkerAliasResolver:
                         # Handle variations with spaces, hyphens, underscores
                         normalized = alias.lower().replace(' ', '_').replace('-', '_')
                         alias_mapping[normalized] = canonical_id
-        else:
-            # Fallback to biomarkers config
-            print("Using biomarkers config as fallback for alias mapping")
-            config = self._load_biomarker_config()
-            raw_biomarkers = config.get('raw_biomarkers', {})
-            derived_biomarkers = config.get('derived_biomarkers', {})
-            
-            # Process raw biomarkers
-            for biomarker_id, definition in raw_biomarkers.items():
-                canonical_name = biomarker_id
-                alias_mapping[canonical_name.lower()] = canonical_name
-                alias_mapping[canonical_name.upper()] = canonical_name
-                
-                # Map display name variations
-                display_name = definition.get('display_name', '')
-                if display_name:
-                    alias_mapping[display_name.lower()] = canonical_name
-                    alias_mapping[display_name.upper()] = canonical_name
-                    normalized_display = display_name.lower().replace(' ', '_').replace('-', '_')
-                    alias_mapping[normalized_display] = canonical_name
-            
-            # Process derived biomarkers
-            for biomarker_id, definition in derived_biomarkers.items():
-                canonical_name = biomarker_id
-                alias_mapping[canonical_name.lower()] = canonical_name
-                alias_mapping[canonical_name.upper()] = canonical_name
-                
-                display_name = definition.get('name', '')
-                if display_name:
-                    alias_mapping[display_name.lower()] = canonical_name
-                    alias_mapping[display_name.upper()] = canonical_name
         
         # Add common medical abbreviations and variations
         self._add_common_aliases(alias_mapping)

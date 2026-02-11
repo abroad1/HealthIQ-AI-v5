@@ -7,6 +7,8 @@ backward compatibility and performance.
 """
 
 import os
+import re
+import string
 import yaml
 from pathlib import Path
 from typing import Dict, List, Optional, Any
@@ -32,41 +34,25 @@ class AliasRegistryService:
         self._canonical_to_aliases: Optional[Dict[str, List[str]]] = None
         self._loaded = False
         
-        # Paths to registry files
-        self.v4_registry_path = os.path.join(
-            os.path.dirname(__file__), 
-            "..", "..", "v4_reference", "biomarker_alias_registry.yaml"
-        )
-        self.v5_config_path = os.path.join(
-            os.path.dirname(__file__), 
-            "..", "..", "v4_reference", "biomarkers_config.yaml"
+        # Paths to SSOT registry files
+        self.ssot_alias_registry_path = os.path.join(
+            os.path.dirname(__file__),
+            "..", "..", "ssot", "biomarker_alias_registry.yaml"
         )
     
-    def _load_v4_registry(self) -> Dict[str, Any]:
-        """Load the v4 alias registry from YAML file."""
-        print(f"[TRACE] [AliasRegistryService] Loading v4 registry from: {self.v4_registry_path}")
+    def _load_alias_registry(self) -> Dict[str, Any]:
+        """Load the SSOT alias registry from YAML file."""
+        print(f"[TRACE] [AliasRegistryService] Loading SSOT alias registry from: {self.ssot_alias_registry_path}")
         try:
-            with open(self.v4_registry_path, 'r', encoding='utf-8') as f:
+            with open(self.ssot_alias_registry_path, 'r', encoding='utf-8') as f:
                 registry = yaml.safe_load(f)
-                print(f"[TRACE] [AliasRegistryService] Loaded {len(registry)} entries from v4 registry")
+                print(f"[TRACE] [AliasRegistryService] Loaded {len(registry)} entries from SSOT alias registry")
                 return registry
         except FileNotFoundError:
-            print(f"[WARN] v4 alias registry not found at {self.v4_registry_path}")
+            print(f"[WARN] SSOT alias registry not found at {self.ssot_alias_registry_path}")
             return {}
         except yaml.YAMLError as e:
-            print(f"[ERROR] Error parsing v4 alias registry: {e}")
-            return {}
-    
-    def _load_v5_config(self) -> Dict[str, Any]:
-        """Load the v5 biomarkers config as fallback."""
-        try:
-            with open(self.v5_config_path, 'r', encoding='utf-8') as f:
-                return yaml.safe_load(f)
-        except FileNotFoundError:
-            print(f"Warning: v5 biomarkers config not found at {self.v5_config_path}")
-            return {}
-        except yaml.YAMLError as e:
-            print(f"Error parsing v5 biomarkers config: {e}")
+            print(f"[ERROR] Error parsing SSOT alias registry: {e}")
             return {}
     
     def _load_ssot_biomarkers(self) -> Dict[str, Any]:
@@ -95,47 +81,42 @@ class AliasRegistryService:
         
         alias_mapping = {}
         
-        if self.use_v4_registry:
-            # Load v4 alias registry (most comprehensive)
-            v4_registry = self._load_v4_registry()
-            if v4_registry:
-                print("[TRACE] Using v4 alias registry for comprehensive alias mapping")
-                for key, definition in v4_registry.items():
-                    if isinstance(definition, dict) and 'aliases' in definition:
-                        # Use canonical_id if specified, otherwise use the key
-                        canonical_id = definition.get('canonical_id', key)
-                        
-                        # Map canonical name to itself
-                        alias_mapping[canonical_id.lower()] = canonical_id
-                        alias_mapping[canonical_id.upper()] = canonical_id
-                        
-                        # Map all aliases to canonical name
-                        for alias in definition['aliases']:
-                            alias_mapping[alias.lower()] = canonical_id
-                            alias_mapping[alias.upper()] = canonical_id
-                            # Handle variations with spaces, hyphens, underscores
-                            normalized = alias.lower().replace(' ', '_').replace('-', '_')
-                            alias_mapping[normalized] = canonical_id
-                            # Handle parentheses variations: create both (a) and _(a) versions
-                            if '(' in normalized and ')' in normalized:
-                                # Create version with underscore before parentheses: (a) -> _(a)
-                                parens_with_underscore = normalized.replace('(', '_(').replace(')', '_)')
-                                if parens_with_underscore != normalized:
-                                    alias_mapping[parens_with_underscore] = canonical_id
-                                # Also ensure we have the version without underscore: _(a) -> (a) if needed
-                                # (This handles cases where alias already has _(a) format)
-                                if '_(' in normalized:
-                                    parens_without_underscore = normalized.replace('_(', '(').replace('_)', ')')
-                                    if parens_without_underscore != normalized:
-                                        alias_mapping[parens_without_underscore] = canonical_id
-                            # Handle common medical abbreviations
-                            if ' ' in alias:
-                                abbrev = ''.join(word[0] for word in alias.split() if word)
-                                alias_mapping[abbrev.lower()] = canonical_id
-                                alias_mapping[abbrev.upper()] = canonical_id
-            else:
-                print("[WARN] v4 registry not available, falling back to v5 config")
-                self.use_v4_registry = False
+        ssot_alias_registry = self._load_alias_registry()
+        if ssot_alias_registry:
+            print("[TRACE] Using SSOT alias registry for comprehensive alias mapping")
+            for key, definition in ssot_alias_registry.items():
+                if isinstance(definition, dict) and 'aliases' in definition:
+                    # Use canonical_id if specified, otherwise use the key
+                    canonical_id = definition.get('canonical_id', key)
+                    
+                    # Map canonical name to itself
+                    alias_mapping[canonical_id.lower()] = canonical_id
+                    alias_mapping[canonical_id.upper()] = canonical_id
+                    
+                    # Map all aliases to canonical name
+                    for alias in definition['aliases']:
+                        alias_mapping[alias.lower()] = canonical_id
+                        alias_mapping[alias.upper()] = canonical_id
+                        # Handle variations with spaces, hyphens, underscores
+                        normalized = alias.lower().replace(' ', '_').replace('-', '_')
+                        alias_mapping[normalized] = canonical_id
+                        # Handle parentheses variations: create both (a) and _(a) versions
+                        if '(' in normalized and ')' in normalized:
+                            # Create version with underscore before parentheses: (a) -> _(a)
+                            parens_with_underscore = normalized.replace('(', '_(').replace(')', '_)')
+                            if parens_with_underscore != normalized:
+                                alias_mapping[parens_with_underscore] = canonical_id
+                            # Also ensure we have the version without underscore: _(a) -> (a) if needed
+                            # (This handles cases where alias already has _(a) format)
+                            if '_(' in normalized:
+                                parens_without_underscore = normalized.replace('_(', '(').replace('_)', ')')
+                                if parens_without_underscore != normalized:
+                                    alias_mapping[parens_without_underscore] = canonical_id
+                        # Handle common medical abbreviations
+                        if ' ' in alias:
+                            abbrev = ''.join(word[0] for word in alias.split() if word)
+                            alias_mapping[abbrev.lower()] = canonical_id
+                            alias_mapping[abbrev.upper()] = canonical_id
         
         # Load SSOT aliases to supplement v4 registry (or as primary source if v4 unavailable)
         ssot_biomarkers = self._load_ssot_biomarkers()
@@ -166,38 +147,6 @@ class AliasRegistryService:
                                 parens_without_underscore = normalized.replace('_(', '(').replace('_)', ')')
                                 if parens_without_underscore != normalized:
                                     alias_mapping[parens_without_underscore] = canonical_name
-        
-        if not self.use_v4_registry:
-            # Fallback to v5 config
-            print("[TRACE] Using v5 biomarkers config as fallback for alias mapping")
-            config = self._load_v5_config()
-            raw_biomarkers = config.get('raw_biomarkers', {})
-            derived_biomarkers = config.get('derived_biomarkers', {})
-            
-            # Process raw biomarkers
-            for biomarker_id, definition in raw_biomarkers.items():
-                canonical_name = biomarker_id
-                alias_mapping[canonical_name.lower()] = canonical_name
-                alias_mapping[canonical_name.upper()] = canonical_name
-                
-                # Map display name variations
-                display_name = definition.get('display_name', '')
-                if display_name:
-                    alias_mapping[display_name.lower()] = canonical_name
-                    alias_mapping[display_name.upper()] = canonical_name
-                    normalized_display = display_name.lower().replace(' ', '_').replace('-', '_')
-                    alias_mapping[normalized_display] = canonical_name
-            
-            # Process derived biomarkers
-            for biomarker_id, definition in derived_biomarkers.items():
-                canonical_name = biomarker_id
-                alias_mapping[canonical_name.lower()] = canonical_name
-                alias_mapping[canonical_name.upper()] = canonical_name
-                
-                display_name = definition.get('name', '')
-                if display_name:
-                    alias_mapping[display_name.lower()] = canonical_name
-                    alias_mapping[display_name.upper()] = canonical_name
         
         # Add common medical abbreviations and variations
         self._add_common_aliases(alias_mapping)
@@ -283,14 +232,40 @@ class AliasRegistryService:
             alias_mapping[alias.upper()] = canonical
     
     @staticmethod
-    def normalize_separators(raw: str) -> str:
-        if raw is None:
-            return ""
-        normalized = str(raw).strip().lower()
-        normalized = normalized.replace("-", "_")
-        normalized = "_".join(normalized.split())
-        while "__" in normalized:
-            normalized = normalized.replace("__", "_")
+    def _strip_surrounding_punctuation(value: str) -> str:
+        strip_chars = string.punctuation.replace("_", "")
+        return value.strip(strip_chars)
+
+    @staticmethod
+    def _normalize_key(raw: str) -> str:
+        normalized = (raw or "").strip().lower()
+        normalized = re.sub(r"[-/\s]+", "_", normalized)
+        normalized = re.sub(r"_+", "_", normalized)
+        return normalized
+
+    @staticmethod
+    def _normalize_special_patterns(normalized: str) -> str:
+        if normalized.endswith("_(a)"):
+            return normalized[:-4] + "_a"
+        return normalized
+
+    @staticmethod
+    def _strip_specimen_suffix(normalized: str) -> str:
+        specimen_suffixes = [
+            "venous",
+            "serum",
+            "plasma",
+            "whole_blood",
+            "urine",
+            "csf",
+        ]
+        for suffix in specimen_suffixes:
+            paren_suffix = f"_({suffix})"
+            bare_suffix = f"_{suffix}"
+            if normalized.endswith(paren_suffix):
+                return normalized[: -len(paren_suffix)]
+            if normalized.endswith(bare_suffix):
+                return normalized[: -len(bare_suffix)]
         return normalized
 
     def resolve(self, name: str) -> str:
@@ -310,11 +285,13 @@ class AliasRegistryService:
         if not self._loaded:
             self._build_alias_mapping()
         
-        raw = name
-        norm = self.normalize_separators(raw)
+        raw = name or ""
+        base = self._normalize_special_patterns(self._normalize_key(raw))
+        norm = self._strip_surrounding_punctuation(base)
+        norm_stripped = self._strip_surrounding_punctuation(self._strip_specimen_suffix(base))
 
         # Direct lookup (case-insensitive)
-        canonical = self._alias_to_canonical.get((raw or "").lower())
+        canonical = self._alias_to_canonical.get(raw.lower())
         if canonical:
             print(f"[TRACE] [AliasRegistryService] Direct lookup found: '{canonical}'")
             return canonical
@@ -323,6 +300,12 @@ class AliasRegistryService:
             canonical = self._alias_to_canonical.get(norm)
             if canonical:
                 print(f"[TRACE] [AliasRegistryService] Normalized lookup found: '{canonical}'")
+                return canonical
+
+        if norm_stripped and norm_stripped != norm:
+            canonical = self._alias_to_canonical.get(norm_stripped)
+            if canonical:
+                print(f"[TRACE] [AliasRegistryService] Specimen-stripped lookup found: '{canonical}'")
                 return canonical
 
         print(f"[TRACE] [AliasRegistryService] No match found, returning: 'unmapped_{raw}'")

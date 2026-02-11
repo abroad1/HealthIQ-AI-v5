@@ -34,7 +34,6 @@ def cleanup_test_db():
         with engine.begin() as conn:
             conn.execute(text("TRUNCATE profiles, analyses, consents, audit_logs RESTART IDENTITY CASCADE;"))
     except OperationalError:
-        # Skip cleanup if database is unreachable
         return
 
 
