@@ -174,6 +174,7 @@ ehthumbs.db
 Desktop.ini
 
 # HealthIQ-AI specific
+test.db
 docs/openapi.yaml
 *.log
 temp/
