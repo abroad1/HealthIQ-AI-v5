@@ -342,10 +342,16 @@ class TestLLMIntegration:
             "gender": "male"
         }
         
-        # Test through orchestrator
-        from core.pipeline.orchestrator import AnalysisOrchestrator
+        # Sprint 5: Unit normalisation required before orchestrator.run
+        from core.canonical.normalize import normalize_biomarkers_with_metadata
+        from core.units.registry import apply_unit_normalisation, UNIT_REGISTRY_VERSION
+        from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
+        normalized = normalize_biomarkers_with_metadata(biomarkers)
+        normalized = apply_unit_normalisation(normalized)
+        normalized[UNIT_NORMALISATION_META_KEY] = {"unit_normalised": True, "unit_registry_version": UNIT_REGISTRY_VERSION}
+        
         orchestrator = AnalysisOrchestrator()
-        result = orchestrator.run(biomarkers, user, assume_canonical=True)
+        result = orchestrator.run(normalized, user, assume_canonical=True)
         
         # Verify results
         assert result is not None

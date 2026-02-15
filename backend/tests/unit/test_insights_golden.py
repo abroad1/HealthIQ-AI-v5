@@ -4,10 +4,14 @@ Golden tests for insight modules.
 These tests validate that the implemented insight modules produce results
 within ±1% tolerance of v4 reference outputs, ensuring clinical accuracy
 and maintaining backward compatibility.
+
+Sprint 4: Lipid ratios are now centralised in RatioRegistry. Tests that
+require lipid ratios inject them via _add_derived_ratios_for_context.
 """
 
 import pytest
 from typing import Dict, Any, List
+from core.analytics.ratio_registry import compute
 from core.insights.modules.metabolic_age import MetabolicAgeInsight
 from core.insights.modules.heart_insight import HeartInsight
 from core.insights.modules.inflammation import InflammationInsight
@@ -45,10 +49,22 @@ class TestInsightsGolden:
         """Detox Filtration Insight instance."""
         return DetoxFiltrationInsight()
     
+    def _add_derived_ratios_for_context(self, biomarkers: Dict[str, Any]) -> Dict[str, Any]:
+        """Inject derived markers (RatioRegistry output) for tests that bypass orchestrator."""
+        result = compute(biomarkers)
+        out = dict(biomarkers)
+        for rid, entry in result.get("derived", {}).items():
+            if isinstance(entry, dict) and entry.get("value") is not None:
+                out[rid] = entry["value"]
+        return out
+
     def create_analysis_context(self, biomarkers: Dict[str, float]) -> AnalysisContext:
         """Create AnalysisContext from biomarker values."""
         from core.models.user import User
-        
+
+        # Sprint 4: Add derived ratios so insights find them (simulates orchestrator)
+        biomarkers = self._add_derived_ratios_for_context(biomarkers)
+
         biomarker_values = {}
         for name, value in biomarkers.items():
             biomarker_values[name] = BiomarkerValue(

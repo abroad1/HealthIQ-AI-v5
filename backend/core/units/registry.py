@@ -20,6 +20,9 @@ def _allow_unmapped() -> bool:
     return os.environ.get("UNIT_ALLOW_UNMAPPED", "false").lower() == "true"
 
 
+UNIT_REGISTRY_VERSION = "1.0"
+
+
 class UnitConversionError(ValueError):
     """Raised when unit conversion fails (unknown unit, no conversion path)."""
     def __init__(

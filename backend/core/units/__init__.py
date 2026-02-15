@@ -8,6 +8,7 @@ Source: Delivery_Sprint_Plan_v5.2, Master_PRD_v5.2 §3.2.
 from core.units.registry import (
     UnitConversionError,
     UnitRegistry,
+    UNIT_REGISTRY_VERSION,
     convert_value,
     apply_unit_normalisation,
 )
@@ -15,6 +16,7 @@ from core.units.registry import (
 __all__ = [
     "UnitConversionError",
     "UnitRegistry",
+    "UNIT_REGISTRY_VERSION",
     "convert_value",
     "apply_unit_normalisation",
 ]

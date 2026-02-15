@@ -33,6 +33,16 @@ if str(backend_dir) not in sys.path:
 
 
 @pytest.fixture(scope="session", autouse=True)
+def _force_test_db_env():
+    """Earliest fixture: force DATABASE_URL from DATABASE_URL_TEST; opt-in migrations."""
+    test_url = os.getenv("DATABASE_URL_TEST")
+    if test_url:
+        os.environ["DATABASE_URL"] = test_url
+    if os.getenv("ALLOW_TEST_DB_MIGRATIONS") is None:
+        os.environ.setdefault("ALLOW_TEST_DB_MIGRATIONS", "1")
+
+
+@pytest.fixture(scope="session", autouse=True)
 def cleanup_test_db():
     """Truncate key tables after tests finish to ensure clean state."""
     from sqlalchemy import create_engine, text

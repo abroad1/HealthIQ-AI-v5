@@ -222,6 +222,15 @@ This phase now contains all safety-critical systems.
 * No duplicate local ratio calculations exist
 * Snapshot includes derived markers
 
+### Implemented (Sprint 4):
+
+* `backend/core/analytics/ratio_registry.py` — RatioRegistry, compute()
+* Orchestrator wires ratio computation after simple_biomarkers, before score_biomarkers
+* tc_hdl_ratio, tg_hdl_ratio, ldl_hdl_ratio, non_hdl_cholesterol, apoB_apoA1_ratio (when apob+apoa1 present)
+* Static bounds for tc/tg/ldl HDL applied via input_reference_ranges; meta["derived_ratios"] persists
+* metabolic_age.py and heart_insight.py read lipid ratios from panel; no local computation
+* Deferred: nlr, bun_creatinine_ratio, urea_creatinine_ratio, ast_alt_ratio
+
 ---
 
 ## Sprint 5 — Derived Ratio Centralisation

@@ -206,6 +206,67 @@ class TestApplyUnitNormalisation:
         assert result["creatinine"]["unit"] == "mg/dL"
 
 
+class TestApplyUnitNormalisationRatioBiomarker:
+    """apply_unit_normalisation for ratio biomarkers (tc_hdl_ratio)."""
+
+    def test_ratio_biomarker_unit_ratio_no_ref_range_identity(self):
+        """unit='ratio', no reference_range -> PASS, identity conversion, unit_normalised False."""
+        normalized = {
+            "tc_hdl_ratio": {"value": 3.5, "unit": "ratio", "reference_range": None},
+        }
+        result = apply_unit_normalisation(normalized)
+        tc = result["tc_hdl_ratio"]
+        assert tc["value"] == 3.5
+        assert tc["unit"] == "ratio"
+        assert tc["unit_normalised"] is False
+
+    def test_ratio_biomarker_unit_missing_ref_unit_ratio_adopts(self):
+        """unit missing, reference_range.unit='ratio' -> PASS, unit_source='reference_range', identity."""
+        normalized = {
+            "tc_hdl_ratio": {
+                "value": 4.1,
+                "unit": "",
+                "reference_range": {"min": 2.0, "max": 5.0, "unit": "ratio", "source": "lab"},
+            },
+        }
+        result = apply_unit_normalisation(normalized)
+        tc = result["tc_hdl_ratio"]
+        assert tc["value"] == 4.1
+        assert tc["unit"] == "ratio"
+        assert tc["unit_source"] == "reference_range"
+        assert tc["unit_normalised"] is False
+
+    def test_ratio_biomarker_unit_missing_no_ref_rejects(self):
+        """unit missing, no reference_range at all -> FAIL with UnitConversionError."""
+        normalized = {
+            "tc_hdl_ratio": {"value": 3.5, "unit": "", "reference_range": None},
+        }
+        with pytest.raises(UnitConversionError) as exc:
+            apply_unit_normalisation(normalized)
+        assert "tc_hdl_ratio" in str(exc.value) or exc.value.biomarker_id == "tc_hdl_ratio"
+
+    def test_neutrophils_unit_10_9_L_identity(self):
+        """neutrophils (10^9/L) passes with identity when unit matches SSOT."""
+        normalized = {
+            "neutrophils": {"value": 5.2, "unit": "10^9/L", "reference_range": None},
+        }
+        result = apply_unit_normalisation(normalized)
+        n = result["neutrophils"]
+        assert n["value"] == 5.2
+        assert n["unit"] == "10^9/L"
+        assert n["unit_normalised"] is False
+
+    def test_bun_creatinine_ratio_unit_ratio_identity(self):
+        """bun_creatinine_ratio (unit=ratio) passes with identity."""
+        normalized = {
+            "bun_creatinine_ratio": {"value": 15.0, "unit": "ratio", "reference_range": None},
+        }
+        result = apply_unit_normalisation(normalized)
+        bc = result["bun_creatinine_ratio"]
+        assert bc["value"] == 15.0
+        assert bc["unit"] == "ratio"
+
+
 class TestAnalysisRouteUnitValidation:
     """Verify analysis route returns 400 on unit conversion failure."""
 

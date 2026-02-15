@@ -19,6 +19,7 @@ from core.analytics.primitives import (
 )
 
 from core.analytics.criticality import load_criticality_policy, evaluate_criticality
+from core.analytics.ratio_registry import RatioRegistry, compute, DERIVED_IDS
 
 __all__ = [
     "position_in_range",
@@ -28,4 +29,7 @@ __all__ = [
     "frontend_status_from_value_and_range",
     "load_criticality_policy",
     "evaluate_criticality",
+    "RatioRegistry",
+    "compute",
+    "DERIVED_IDS",
 ]

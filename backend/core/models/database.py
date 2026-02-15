@@ -156,6 +156,9 @@ class AnalysisResult(Base):
     risk_assessment = Column(JSON, nullable=True)
     recommendations = Column(ARRAY(Text), nullable=True)
     
+    # Derived markers (Sprint 5: first-class for replay determinism)
+    derived_markers = Column(JSON, nullable=True)
+    
     # Metadata
     result_version = Column(String(50), nullable=False, default="1.0.0", index=True)
     confidence_score = Column(Float, nullable=True)

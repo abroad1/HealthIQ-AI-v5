@@ -119,8 +119,16 @@ class DetoxFiltrationInsight(BaseInsight):
         # Calculate liver score
         liver_score = self._calculate_liver_score(alt, ast, ggt, alp, bilirubin, albumin)
         
-        # Calculate kidney score
-        kidney_score = self._calculate_kidney_score(creatinine, egfr, bun, age, gender)
+        # Get bun_creatinine_ratio from RatioRegistry (do not compute locally)
+        bun_creatinine_ratio = biomarkers.get('bun_creatinine_ratio')
+        if bun_creatinine_ratio is not None:
+            if isinstance(bun_creatinine_ratio, dict):
+                bun_creatinine_ratio = bun_creatinine_ratio.get('value') if isinstance(bun_creatinine_ratio.get('value'), (int, float)) else None
+            elif not isinstance(bun_creatinine_ratio, (int, float)):
+                bun_creatinine_ratio = float(getattr(bun_creatinine_ratio, 'value', bun_creatinine_ratio)) if isinstance(getattr(bun_creatinine_ratio, 'value', None), (int, float)) else None
+            else:
+                bun_creatinine_ratio = float(bun_creatinine_ratio)
+        kidney_score = self._calculate_kidney_score(creatinine, egfr, bun, age, gender, bun_creatinine_ratio)
         
         # Calculate overall detox filtration score
         overall_score = (liver_score + kidney_score) / 2
@@ -149,18 +157,16 @@ class DetoxFiltrationInsight(BaseInsight):
             risk_factors.append("low_albumin")
             drivers['albumin'] = round(albumin, 1)
         
-        # Kidney risk factors
+        # Kidney risk factors (bun_creatinine_ratio from RatioRegistry; already extracted above)
         if egfr and egfr < 60:
             risk_factors.append("reduced_egfr")
             drivers['egfr'] = round(egfr, 1)
         if creatinine > 1.2:
             risk_factors.append("elevated_creatinine")
             drivers['creatinine'] = round(creatinine, 2)
-        if bun and creatinine > 0:
-            bun_creatinine_ratio = bun / creatinine
-            if bun_creatinine_ratio > 20:
-                risk_factors.append("elevated_bun_creatinine_ratio")
-                drivers['bun_creatinine_ratio'] = round(bun_creatinine_ratio, 1)
+        if bun_creatinine_ratio is not None and bun_creatinine_ratio > 20:
+            risk_factors.append("elevated_bun_creatinine_ratio")
+            drivers['bun_creatinine_ratio'] = round(bun_creatinine_ratio, 1)
         
         # Generate recommendations
         recommendations = self._generate_recommendations(risk_factors, liver_score, kidney_score)
@@ -253,7 +259,7 @@ class DetoxFiltrationInsight(BaseInsight):
         return max(0, min(100, base_score))
     
     def _calculate_kidney_score(self, creatinine: float, egfr: Optional[float], bun: Optional[float], 
-                               age: float, gender: str) -> float:
+                               age: float, gender: str, bun_creatinine_ratio: Optional[float] = None) -> float:
         """Calculate kidney function score (0-100, higher is better)."""
         base_score = 100.0
         
@@ -283,9 +289,8 @@ class DetoxFiltrationInsight(BaseInsight):
             elif estimated_egfr < 60:
                 base_score -= 12
         
-        # BUN/Creatinine ratio adjustments
-        if bun and creatinine > 0:
-            bun_creatinine_ratio = bun / creatinine
+        # BUN/Creatinine ratio adjustments (from RatioRegistry; do not compute locally)
+        if bun_creatinine_ratio is not None:
             if bun_creatinine_ratio > 30:
                 base_score -= 15  # Severe dehydration or kidney dysfunction
             elif bun_creatinine_ratio > 20:

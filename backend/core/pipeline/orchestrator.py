@@ -4,6 +4,9 @@ Analysis orchestrator - enforces canonical-only keys and coordinates analysis.
 
 from typing import Dict, Any, List, Mapping, Optional
 
+# Reserved key for unit-normalisation invariant (Sprint 5). Set by callers after apply_unit_normalisation.
+UNIT_NORMALISATION_META_KEY = "__unit_normalisation_meta__"
+
 from core.canonical.normalize import BiomarkerNormalizer, normalize_panel
 from core.canonical.resolver import resolve_to_canonical, CanonicalResolver
 from core.pipeline.context_factory import AnalysisContextFactory
@@ -20,6 +23,9 @@ from core.clustering.engine import ClusteringEngine
 from core.insights.synthesis import InsightSynthesizer
 from core.analytics.primitives import frontend_status_from_value_and_range
 from core.analytics.criticality import evaluate_criticality
+from core.analytics.ratio_registry import RatioRegistry, DERIVED_IDS, compute
+from core.analytics.cluster_schema import get_cluster_schema_version_stamp
+from core.scoring.rules import DERIVED_RATIO_BOUNDS
 
 
 class AnalysisOrchestrator:
@@ -612,12 +618,15 @@ class AnalysisOrchestrator:
         Run the complete analysis pipeline: scoring → clustering → insights.
         
         Args:
-            biomarkers: Canonical biomarker data
+            biomarkers: Canonical biomarker data (must be unit-normalised; carry __unit_normalisation_meta__)
             user: User data
             assume_canonical: Whether to skip canonical validation
             
         Returns:
             AnalysisDTO with complete analysis results
+            
+        Raises:
+            ValueError: If unit normalisation meta is missing (apply_unit_normalisation required before run).
         """
         import logging
         import uuid
@@ -625,6 +634,14 @@ class AnalysisOrchestrator:
         from core.models.results import AnalysisDTO, BiomarkerScore as BiomarkerScoreDTO, ClusterHit, InsightResult
         
         logger = logging.getLogger(__name__)
+        
+        # Sprint 5: Enforce unit-normalisation invariant (non-bypassable)
+        biomarkers = dict(biomarkers)
+        unit_meta = biomarkers.pop(UNIT_NORMALISATION_META_KEY, None)
+        if not unit_meta or not unit_meta.get("unit_normalised"):
+            raise ValueError(
+                "Unit normalisation required before orchestrator.run (apply_unit_normalisation)."
+            )
         
         try:
             if not assume_canonical:
@@ -684,7 +701,73 @@ class AnalysisOrchestrator:
                             logger.debug(f"[Orchestrator] Preserved input reference range for {biomarker_name}: {input_reference_ranges[biomarker_name]}")
                 else:
                     simple_biomarkers[biomarker_name] = biomarker_data
-            
+
+            # Step 1.5: Compute derived markers (RatioRegistry; lab-supplied wins; never overwrite)
+            logger.info("Step 1.5: Computing derived markers")
+            derived_result = compute(simple_biomarkers)
+            derived_ratios_meta = {
+                "ratio_registry_version": derived_result.get("registry_version", RatioRegistry.version),
+                "ratios": {},
+            }
+
+            def _ratio_unit(rid: str) -> str:
+                return "mmol/L" if rid == "non_hdl_cholesterol" else "ratio"
+
+            for ratio_id, entry in derived_result.get("derived", {}).items():
+                if not isinstance(entry, dict) or "value" not in entry:
+                    continue
+                val = entry.get("value")
+                unit = entry.get("unit") or _ratio_unit(ratio_id)
+                source = entry.get("source", "computed")
+                bounds_applied = entry.get("bounds_applied", False)
+                inputs_used = entry.get("inputs_used") or []
+
+                if source == "lab":
+                    # Lab-supplied: value already in simple_biomarkers; never overwrite
+                    ref = input_reference_ranges.get(ratio_id)
+                    if ref is None and ratio_id in DERIVED_RATIO_BOUNDS:
+                        bounds = DERIVED_RATIO_BOUNDS[ratio_id]
+                        if isinstance(bounds.get("min"), (int, float)) and isinstance(bounds.get("max"), (int, float)):
+                            input_reference_ranges[ratio_id] = {
+                                "min": float(bounds["min"]),
+                                "max": float(bounds["max"]),
+                                "unit": unit,
+                                "source": "ratio_registry",
+                            }
+                            ref = input_reference_ranges[ratio_id]
+                    bounds_applied = ref is not None and isinstance(ref.get("min"), (int, float)) and isinstance(ref.get("max"), (int, float))
+                else:
+                    # Computed: merge only if key doesn't exist
+                    if ratio_id not in simple_biomarkers:
+                        simple_biomarkers[ratio_id] = val
+                        filtered_biomarkers[ratio_id] = {
+                            "value": val,
+                            "unit": unit,
+                            "reference_range": None,
+                        }
+                        bounds = DERIVED_RATIO_BOUNDS.get(ratio_id)
+                        bounds_valid = bounds and isinstance(bounds.get("min"), (int, float)) and isinstance(bounds.get("max"), (int, float))
+                        if bounds_valid:
+                            filtered_biomarkers[ratio_id]["reference_range"] = {
+                                **bounds, "unit": unit, "source": "ratio_registry",
+                            }
+                            if ratio_id not in input_reference_ranges:
+                                input_reference_ranges[ratio_id] = {
+                                    "min": float(bounds["min"]),
+                                    "max": float(bounds["max"]),
+                                    "unit": unit,
+                                    "source": "ratio_registry",
+                                }
+                        bounds_applied = bool(bounds_valid)
+
+                derived_ratios_meta["ratios"][ratio_id] = {
+                    "value": val,
+                    "unit": unit,
+                    "source": source,
+                    "bounds_applied": bounds_applied,
+                    "inputs_used": inputs_used if source == "computed" else None,
+                }
+
             # Step 2: Score biomarkers using the scoring engine with input reference ranges
             logger.info("Step 2: Scoring biomarkers")
             scoring_result = self.score_biomarkers(
@@ -974,6 +1057,16 @@ class AnalysisOrchestrator:
             
             # Step 9: Create final analysis DTO
             logger.info("Step 9: Creating final analysis DTO")
+            meta = dict(criticality_result) if criticality_result else {}
+            meta["derived_ratios"] = derived_ratios_meta
+            try:
+                meta.update(get_cluster_schema_version_stamp())
+            except (FileNotFoundError, ValueError):
+                pass
+            derived_markers = {
+                "registry_version": derived_ratios_meta.get("ratio_registry_version"),
+                "derived": derived_ratios_meta.get("ratios", {}),
+            }
             result = AnalysisDTO(
                 analysis_id=analysis_id,
                 biomarkers=biomarker_dtos,
@@ -983,7 +1076,8 @@ class AnalysisOrchestrator:
                 created_at=datetime.now(UTC).isoformat(),
                 overall_score=scoring_result.get('overall_score', 0.0) / 100.0,  # Convert to 0-1 scale
                 unmapped_biomarkers=unmapped_biomarkers,
-                meta=criticality_result,
+                derived_markers=derived_markers,
+                meta=meta,
             )
             
             logger.info(f"Analysis {analysis_id} completed successfully with {len(biomarker_dtos)} biomarkers, {len(cluster_dtos)} clusters, {len(insight_dtos)} insights")

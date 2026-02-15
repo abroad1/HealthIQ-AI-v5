@@ -730,9 +730,17 @@ pdw:
 
   - Platelet Distribution Width
 
+neutrophils:
+
+  canonical_id: neutrophils
+
+  aliases:
+
+  - NLR_neutrophils
+
 neutrophil_count:
 
-  canonical_id: neutrophil_count
+  canonical_id: neutrophils
 
   aliases:
 
@@ -740,9 +748,17 @@ neutrophil_count:
 
   - Neutrophil Count
 
+lymphocytes:
+
+  canonical_id: lymphocytes
+
+  aliases:
+
+  - NLR_lymphocytes
+
 lymphocyte_count:
 
-  canonical_id: lymphocyte_count
+  canonical_id: lymphocytes
 
   aliases:
 
@@ -1319,6 +1335,26 @@ urea_creatinine_ratio:
   aliases:
 
   - Urea/Creatinine Ratio
+
+bun_creatinine_ratio:
+
+  canonical_id: bun_creatinine_ratio
+
+  aliases:
+
+  - BUN/Creatinine Ratio
+
+  - BUN:Creatinine
+
+ast_alt_ratio:
+
+  canonical_id: ast_alt_ratio
+
+  aliases:
+
+  - AST/ALT Ratio
+
+  - De Ritis ratio
 
 fluid_intake_frequency:
 
