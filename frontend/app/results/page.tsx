@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -22,7 +22,7 @@ import { InsightsPanel } from '@/components/insights/InsightsPanel';
 import BiomarkerDials from '@/components/biomarkers/BiomarkerDials';
 import ClusterSummary from '@/components/clusters/ClusterSummary';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { AnalysisService } from '../services/analysis';
+import { useAnalysisResult } from '../queries/analysisResult';
 
 // Global debug interface
 declare global {
@@ -44,7 +44,6 @@ export default function ResultsPage() {
   const analysisError = useAnalysisStore(state => state.error);
   const retryAnalysis = useAnalysisStore(state => state.retryAnalysis);
   const clearAnalysis = useAnalysisStore(state => state.clearAnalysis);
-  const setCurrentAnalysis = useAnalysisStore(state => state.setCurrentAnalysis);
   const setCurrentAnalysisId = useAnalysisStore(state => state.setCurrentAnalysisId);
   
   // Cluster store
@@ -57,8 +56,11 @@ export default function ResultsPage() {
   // Local state
   const [activeTab, setActiveTab] = useState('overview');
   const [showDetails, setShowDetails] = useState(false);
-  const [isFetchingFromUrl, setIsFetchingFromUrl] = useState(false);
-  const fetchedRef = useRef<string | null>(null);
+
+  // Single source of truth: one useQuery per analysis_id
+  const idToFetch = currentAnalysisId || analysisIdFromUrl;
+  const { isLoading: isResultLoading } = useAnalysisResult(idToFetch || null);
+  const isFetchingFromUrl = !!idToFetch && isResultLoading;
   
   // Derived data from store - no new hooks
   const insights = currentAnalysis?.insights ?? [];
@@ -66,60 +68,19 @@ export default function ResultsPage() {
   const clusters = currentAnalysis?.clusters ?? [];
   const { created_at, completed_at } = currentAnalysis || {};
   
-  console.log('🔍 URL analysis_id:', analysisIdFromUrl);
-  console.log('📍 Current analysis ID from store:', currentAnalysisId);
-
   // Sync analysis_id from URL to store
   useEffect(() => {
     if (analysisIdFromUrl && analysisIdFromUrl !== currentAnalysisId) {
-      console.log(`🔄 Syncing analysis_id from URL to store: ${analysisIdFromUrl}`);
       setCurrentAnalysisId(analysisIdFromUrl);
     }
   }, [analysisIdFromUrl, currentAnalysisId, setCurrentAnalysisId]);
 
-  // Fetch analysis result - runs once per analysisId
+  // Set debug data when currentAnalysis updates (from useAnalysisResult sync)
   useEffect(() => {
-    // Use store ID as primary source, fallback to URL param
-    const idToFetch = currentAnalysisId || analysisIdFromUrl;
-    if (!idToFetch) return;
-    if (fetchedRef.current === idToFetch) return;
-    
-    console.log("📡 Fetching analysis result for:", idToFetch, "(from store:", currentAnalysisId, ", from URL:", analysisIdFromUrl, ")");
-    fetchedRef.current = idToFetch;
-    setIsFetchingFromUrl(true);
-    
-    AnalysisService.getAnalysisResult(idToFetch)
-      .then((result) => {
-        console.log('✅ Analysis result fetched:', result);
-        
-        if (result?.success && result.data) {
-          // Add the missing status field for store compatibility
-          const analysisData = {
-            ...result.data,
-            status: 'completed' as const,
-            progress: 100
-          };
-          
-          // Debug: Log before store update
-          console.debug('Store update biomarkers count', analysisData.biomarkers?.length);
-          console.debug('API response biomarkers count', result.data.biomarkers?.length);
-          
-          // Update store - this will trigger re-render
-          setCurrentAnalysis(analysisData);
-          
-          console.log("✅ Analysis data loaded:", analysisData);
-          
-          // Set debug data after store update
-          if (typeof window !== 'undefined') {
-            window.__HEALTHIQ_DEBUG__ = analysisData;
-          }
-        } else {
-          console.warn("⚠️ Empty or invalid result for:", idToFetch);
-        }
-      })
-      .catch((err) => console.error("❌ Failed to fetch result:", err))
-      .finally(() => setIsFetchingFromUrl(false));
-  }, [currentAnalysisId, analysisIdFromUrl, setCurrentAnalysis]);
+    if (currentAnalysis && typeof window !== 'undefined') {
+      window.__HEALTHIQ_DEBUG__ = currentAnalysis;
+    }
+  }, [currentAnalysis]);
 
   // Handle navigation and cluster loading - all side effects in useEffect
   useEffect(() => {
@@ -173,14 +134,6 @@ export default function ResultsPage() {
       // You could add a toast notification here
     }
   };
-
-  // Debug: Log rendered biomarkers count to confirm sync
-  console.debug('🧩 Biomarkers rendered:', biomarkers.length);
-  console.log("🧩 Biomarkers to render:", biomarkers.length);
-  console.log("🧩 Biomarkers data:", biomarkers);
-  console.log("🧩 Insights data:", insights);
-  console.log("🧩 Clusters data:", clusters);
-  console.log("🧩 Current analysis:", currentAnalysis);
 
   // Guard clauses AFTER all hooks - no early returns before this point
   if (isAnalyzing || isFetchingFromUrl) {
@@ -453,12 +406,9 @@ export default function ResultsPage() {
                   typeof b.value === 'number'
                 );
                 
-                console.log(`[Results Page] Total biomarkers from store: ${biomarkers.length}`);
-                console.log(`[Results Page] Valid biomarkers after filtering: ${validBiomarkers.length}`);
                 
                 const biomarkerObject = validBiomarkers.reduce((acc, biomarker) => {
                   // Use biomarker_name as key - BiomarkerDials will handle display name mapping
-                  console.log(`[Results Page] Mapping biomarker: ${biomarker.biomarker_name} (value: ${biomarker.value}, score: ${biomarker.score})`);
                   acc[biomarker.biomarker_name] = {
                     value: biomarker.value,
                     unit: biomarker.unit,
@@ -477,8 +427,6 @@ export default function ResultsPage() {
                   return acc;
                 }, {} as Record<string, any>);
                 
-                console.log(`[Results Page] Final biomarker object keys: ${Object.keys(biomarkerObject).length}`);
-                console.log(`[Results Page] Final biomarker object keys:`, Object.keys(biomarkerObject));
                 
                 return biomarkerObject;
               })()} 

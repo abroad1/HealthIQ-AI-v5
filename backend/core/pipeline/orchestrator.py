@@ -18,6 +18,8 @@ from core.pipeline.questionnaire_mapper import QuestionnaireMapper, MappedLifest
 from core.models.questionnaire import QuestionnaireSubmission, create_questionnaire_validator
 from core.clustering.engine import ClusteringEngine
 from core.insights.synthesis import InsightSynthesizer
+from core.analytics.primitives import frontend_status_from_value_and_range
+from core.analytics.criticality import evaluate_criticality
 
 
 class AnalysisOrchestrator:
@@ -32,10 +34,10 @@ class AnalysisOrchestrator:
         """
         self.normalizer = normalizer or BiomarkerNormalizer()
         self.context_factory = AnalysisContextFactory()
-        self.completeness_validator = DataCompletenessValidator(normalizer)
-        self.gap_analyzer = BiomarkerGapAnalyzer(normalizer)
-        self.recommendation_engine = RecommendationEngine(normalizer)
-        self.scoring_engine = ScoringEngine(normalizer)
+        self.completeness_validator = DataCompletenessValidator(self.normalizer)
+        self.gap_analyzer = BiomarkerGapAnalyzer(self.normalizer)
+        self.recommendation_engine = RecommendationEngine(self.normalizer)
+        self.scoring_engine = ScoringEngine(self.normalizer)
         self.lifestyle_overlays = LifestyleOverlays()
         self.questionnaire_mapper = QuestionnaireMapper()
         self.questionnaire_validator = create_questionnaire_validator()
@@ -67,24 +69,12 @@ class AnalysisOrchestrator:
         Raises:
             ValueError: If non-canonical biomarkers are found after normalization
         """
-        # === BEGIN DEBUG LOGGING FOR ORCHESTRATOR NORMALIZATION ===
-        print("\n[TRACE] [Orchestrator] Starting normalization in create_analysis_context")
-        print(f"[TRACE] [Orchestrator] Input biomarkers count: {len(raw_biomarkers)}")
-        print(f"[TRACE] [Orchestrator] Input biomarker keys: {list(raw_biomarkers.keys())}")
-        # === END DEBUG LOGGING ===
-        
         if not assume_canonical:
             self._assert_canonical_only(raw_biomarkers, where="create_analysis_context")
         
         # Normalize biomarkers (maps aliases to canonical names)
         biomarker_panel, unmapped_keys = self.normalizer.normalize_biomarkers(raw_biomarkers)
-        
-        # === BEGIN DEBUG LOGGING FOR ORCHESTRATOR NORMALIZATION ===
-        print(f"[TRACE] [Orchestrator] Normalization complete")
-        print(f"[TRACE] [Orchestrator] Output biomarker keys: {list(biomarker_panel.biomarkers.keys())}")
-        print(f"[TRACE] [Orchestrator] Unmapped keys: {unmapped_keys}\n")
-        # === END DEBUG LOGGING ===
-        
+
         # Log unmapped keys (in production, this would be proper logging)
         if unmapped_keys:
             print(f"Warning: Unmapped biomarker keys: {unmapped_keys}")
@@ -722,6 +712,11 @@ class AnalysisOrchestrator:
                 lifestyle_data=user.get('lifestyle_factors', {})
             )
             
+            # Step 4.5: Evaluate biomarker criticality (Sprint 3)
+            logger.info("Step 4.5: Evaluating criticality")
+            available_biomarkers = set(filtered_biomarkers.keys())
+            criticality_result = evaluate_criticality(scoring_result, available_biomarkers)
+
             # Step 5: Synthesize insights
             logger.info("Step 5: Synthesizing insights")
             insights_result = self.synthesize_insights(
@@ -787,46 +782,15 @@ class AnalysisOrchestrator:
                         except Exception as e:
                             logger.warning(f"Could not resolve reference range for {biomarker_name}: {e}")
                     
-                    # Map score_range enum to status string (frontend expects: optimal, normal, elevated, low, critical, unknown)
-                    score_range_value = biomarker_score.get('score_range', 'normal')
-                    if isinstance(score_range_value, str):
-                        status_str = score_range_value
+                    # Use HAS v1 primitive for status (single source of truth)
+                    if reference_range_dict and reference_range_dict.get('min') is not None and reference_range_dict.get('max') is not None:
+                        status = frontend_status_from_value_and_range(
+                            float(value),
+                            float(reference_range_dict['min']),
+                            float(reference_range_dict['max']),
+                        )
                     else:
-                        # Convert enum to string
-                        status_str = score_range_value.value if hasattr(score_range_value, 'value') else str(score_range_value)
-                    
-                    # Map ScoreRange enum values to frontend status strings
-                    # Also check if value is below/above reference range to determine "low" vs "elevated"
-                    status_map = {
-                        'optimal': 'optimal',
-                        'normal': 'normal',
-                        'borderline': 'normal',  # Will be refined based on value vs range
-                        'high': 'elevated',
-                        'very_high': 'elevated',
-                        'critical': 'critical'
-                    }
-                    status = status_map.get(status_str.lower(), status_str)
-                    
-                    # Refine borderline status: check if value is below or above reference range
-                    if status == 'normal' and status_str.lower() == 'borderline' and reference_range_dict:
-                        min_val = reference_range_dict.get('min')
-                        max_val = reference_range_dict.get('max')
-                        if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)):
-                            if value < min_val:
-                                status = 'low'
-                            elif value > max_val:
-                                status = 'elevated'
-                    
-                    # Also check critical - if value is outside range, map to low/elevated
-                    if status == 'critical' and reference_range_dict:
-                        min_val = reference_range_dict.get('min')
-                        max_val = reference_range_dict.get('max')
-                        if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)):
-                            if value < min_val:
-                                status = 'low'  # Critical low becomes "low"
-                            elif value > max_val:
-                                status = 'elevated'  # Critical high becomes "elevated"
-                    
+                        status = 'unknown'
                     logger.debug(f"[DTO Builder] {biomarker_name} unit resolved as: {unit}, ref_range: {reference_range_dict}, status: {status}")
                     
                     biomarker_dtos.append(BiomarkerScoreDTO(
@@ -951,55 +915,18 @@ class AnalysisOrchestrator:
                         unit = reference_range_dict.get('unit', unit)
                         logger.debug(f"[Unscored] Updated unit to match lab range unit for {biomarker_name}: {unit}")
                     
-                    # Determine status based on reference range if available
-                    status = "Unknown"
+                    # Determine status and score using HAS primitives + scoring (single source)
+                    status = "unknown"
                     score = 0.0
                     if reference_range_dict and reference_range_dict.get('min') is not None and reference_range_dict.get('max') is not None:
-                        # Try to score using the reference range
                         try:
-                            score, score_range = self.scoring_engine.rules._calculate_score_from_range(
-                                float(value),
-                                float(reference_range_dict['min']),
-                                float(reference_range_dict['max'])
+                            min_val = float(reference_range_dict['min'])
+                            max_val = float(reference_range_dict['max'])
+                            status = frontend_status_from_value_and_range(float(value), min_val, max_val)
+                            score_raw, _ = self.scoring_engine.rules._calculate_score_from_range(
+                                float(value), min_val, max_val
                             )
-                            # Map score_range to status string (frontend expects: optimal, normal, elevated, low, critical, unknown)
-                            if hasattr(score_range, 'value'):
-                                status_str = score_range.value
-                            else:
-                                status_str = str(score_range)
-                            
-                            # Map ScoreRange enum values to frontend status strings
-                            # Also check if value is below/above reference range to determine "low" vs "elevated"
-                            status_map = {
-                                'optimal': 'optimal',
-                                'normal': 'normal',
-                                'borderline': 'normal',  # Will be refined based on value vs range
-                                'high': 'elevated',
-                                'very_high': 'elevated',
-                                'critical': 'critical'
-                            }
-                            status = status_map.get(status_str.lower(), status_str)
-                            
-                            # Refine borderline status: check if value is below or above reference range
-                            if status == 'normal' and status_str.lower() == 'borderline' and reference_range_dict:
-                                min_val = reference_range_dict.get('min')
-                                max_val = reference_range_dict.get('max')
-                                if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)):
-                                    if value < min_val:
-                                        status = 'low'
-                                    elif value > max_val:
-                                        status = 'elevated'
-                            
-                            # Also check critical - if value is outside range, map to low/elevated
-                            if status == 'critical' and reference_range_dict:
-                                min_val = reference_range_dict.get('min')
-                                max_val = reference_range_dict.get('max')
-                                if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)):
-                                    if value < min_val:
-                                        status = 'low'  # Critical low becomes "low"
-                                    elif value > max_val:
-                                        status = 'elevated'  # Critical high becomes "elevated"
-                            score = score / 100.0  # Convert to 0-1 scale
+                            score = score_raw / 100.0  # Convert to 0-1 scale
                         except Exception as e:
                             logger.warning(f"Could not score unscored biomarker {biomarker_name} using reference range: {e}")
                     
@@ -1013,7 +940,7 @@ class AnalysisOrchestrator:
                         percentile=None,
                         status=status,
                         reference_range=reference_range_dict,
-                        interpretation="Scored using reference range" if status != "Unknown" else "Not scored - no reference range available"
+                        interpretation="Scored using reference range" if status != "unknown" else "Not scored - no reference range available"
                     ))
             logger.info(f"Total biomarkers in DTO: {len(biomarker_dtos)}")
             
@@ -1055,7 +982,8 @@ class AnalysisOrchestrator:
                 status="completed",
                 created_at=datetime.now(UTC).isoformat(),
                 overall_score=scoring_result.get('overall_score', 0.0) / 100.0,  # Convert to 0-1 scale
-                unmapped_biomarkers=unmapped_biomarkers
+                unmapped_biomarkers=unmapped_biomarkers,
+                meta=criticality_result,
             )
             
             logger.info(f"Analysis {analysis_id} completed successfully with {len(biomarker_dtos)} biomarkers, {len(cluster_dtos)} clusters, {len(insight_dtos)} insights")

@@ -100,15 +100,15 @@ class TestRuntimeGuard:
             from core.scoring.engine import ScoringEngine
 
             biomarkers = {
-                "hdl": 50.0,
-                "ldl": 90.0,
+                "hdl_cholesterol": 50.0,
+                "ldl_cholesterol": 90.0,
                 "total_cholesterol": 180.0,
                 "triglycerides": 120.0,
                 "tc_hdl_ratio": 3.6,
             }
             input_reference_ranges = {
-                "hdl": {"min": 40.0, "max": 60.0, "unit": "mg/dL", "source": "lab"},
-                "ldl": {"min": 0.0, "max": 100.0, "unit": "mg/dL", "source": "lab"},
+                "hdl_cholesterol": {"min": 40.0, "max": 60.0, "unit": "mg/dL", "source": "lab"},
+                "ldl_cholesterol": {"min": 0.0, "max": 100.0, "unit": "mg/dL", "source": "lab"},
                 "total_cholesterol": {"min": 0.0, "max": 200.0, "unit": "mg/dL", "source": "lab"},
                 "triglycerides": {"min": 0.0, "max": 150.0, "unit": "mg/dL", "source": "lab"},
             }

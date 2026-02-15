@@ -15,6 +15,9 @@ class Settings:
     # LLM Configuration (policy-driven)
     LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "gemini")
     GEMINI_API_KEY: Optional[str] = os.getenv("GEMINI_API_KEY")
+    # Test mode: when HEALTHIQ_MODE=test or LLM_ENABLED=false, skip LLM init/calls
+    HEALTHIQ_MODE: str = os.getenv("HEALTHIQ_MODE", "")
+    LLM_ENABLED: bool = os.getenv("LLM_ENABLED", "true").lower() in ("true", "1", "yes")
     CLAUDE_API_KEY: Optional[str] = os.getenv("CLAUDE_API_KEY")
     OPENAI_API_KEY: Optional[str] = os.getenv("OPENAI_API_KEY")  # reserved, policy-restricted
     

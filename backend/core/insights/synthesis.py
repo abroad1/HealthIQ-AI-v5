@@ -15,6 +15,7 @@ import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from config.ai import LLMConfig
+from config.env import settings
 from core.llm.gemini_client import GeminiClient, LLMClient
 
 
@@ -204,11 +205,11 @@ class MockLLMClient(LLMClient):
         }
         
         response_data = mock_responses.get(category, {"insights": []})
-        
-        # Convert to GeminiClient format
+
+        # Return valid JSON so _parse_llm_response parses correctly (not str(dict) which fails)
         return {
-            "text": str(response_data),  # Convert to string for compatibility
-            "candidates": [str(response_data)],
+            "text": json.dumps(response_data),
+            "candidates": [json.dumps(response_data)],
             "model": "mock-llm-client"
         }
     
@@ -257,13 +258,22 @@ class InsightSynthesizer:
         """
         Create LLM client based on configuration with robust error handling.
         
+        In test mode (HEALTHIQ_MODE=test or LLM_ENABLED=false): always use MockLLMClient,
+        never construct GeminiClient or make external calls.
+        
         Returns:
             Configured LLM client (GeminiClient or MockLLMClient)
         """
+        # Test mode: skip LLM entirely, no Gemini init/calls
+        if getattr(settings, "HEALTHIQ_MODE", "") == "test":
+            return MockLLMClient()
+        if not getattr(settings, "LLM_ENABLED", True):
+            return MockLLMClient()
+
         try:
             # Validate configuration first
             LLMConfig.validate()
-            
+
             # Try to create Gemini client if configured
             if "gemini" in LLMConfig.PROVIDERS and LLMConfig.is_provider_configured("gemini"):
                 print("[OK] Creating GeminiClient for production LLM integration")
@@ -271,7 +281,7 @@ class InsightSynthesizer:
             else:
                 print("[WARN] Gemini not configured, using MockLLMClient for testing")
                 return MockLLMClient()
-                
+
         except ValueError as e:
             print(f"[ERROR] Configuration error: {e}, falling back to MockLLMClient")
             return MockLLMClient()
@@ -488,22 +498,14 @@ class InsightSynthesizer:
                     }
                     normalized_severity = severity_mapping.get(raw_severity.lower(), "info")
                     
-                    # Normalize category values
-                    raw_category = raw_insight.get("category", category)
-                    category_mapping = {
-                        "protective_factor": "metabolic",
-                        "cardiovascular_metabolic_crossover": "cardiovascular",
-                        "metabolic_syndrome_risk": "metabolic",
-                        "inflammatory": "inflammatory",
-                        "cardiovascular": "cardiovascular",
-                        "metabolic": "metabolic"
-                    }
-                    normalized_category = category_mapping.get(raw_category.lower(), category)
+                    # Enforce requested category at boundary (contract: insight.category == requested category)
+                    # LLM/mock may return wrong or missing category; overwrite unconditionally
+                    insight_category = category
                     
                     # Create Insight object
                     insight = Insight(
                         id=raw_insight.get("id", f"{category}_insight_{i+1}"),
-                        category=normalized_category,
+                        category=insight_category,
                         summary=raw_insight.get("summary", ""),
                         evidence=raw_insight.get("evidence", {}),
                         confidence=raw_insight.get("confidence", 0.5),

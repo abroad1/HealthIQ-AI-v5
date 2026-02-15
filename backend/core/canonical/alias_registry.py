@@ -103,15 +103,15 @@ class BiomarkerAliasResolver:
     def _add_common_aliases(self, alias_mapping: Dict[str, str]):
         """Add common medical abbreviations and aliases."""
         common_aliases = {
-            # Cardiovascular
-            'hdl': 'hdl',
-            'hdl_chol': 'hdl',
-            'hdl_cholesterol': 'hdl',
-            'good_cholesterol': 'hdl',
-            'ldl': 'ldl',
-            'ldl_chol': 'ldl',
-            'ldl_cholesterol': 'ldl',
-            'bad_cholesterol': 'ldl',
+            # Cardiovascular - canonical: ldl_cholesterol, hdl_cholesterol (aligns with clustering, insights, SSOT)
+            'hdl': 'hdl_cholesterol',
+            'hdl_chol': 'hdl_cholesterol',
+            'hdl_cholesterol': 'hdl_cholesterol',
+            'good_cholesterol': 'hdl_cholesterol',
+            'ldl': 'ldl_cholesterol',
+            'ldl_chol': 'ldl_cholesterol',
+            'ldl_cholesterol': 'ldl_cholesterol',
+            'bad_cholesterol': 'ldl_cholesterol',
             'total_chol': 'total_cholesterol',
             'cholesterol': 'total_cholesterol',
             'trig': 'triglycerides',

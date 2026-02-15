@@ -25,13 +25,20 @@ class BiomarkerValue(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
     
     name: str = Field(..., description="Canonical biomarker name")
-    value: Any = Field(..., description="Measured value")
-    unit: str = Field(default="", description="Unit of measurement")
+    value: Any = Field(..., description="Measured value (in base units when normalised)")
+    unit: str = Field(default="", description="Unit of measurement (base unit when normalised)")
     timestamp: Optional[str] = Field(default=None, description="Measurement timestamp")
     reference_range: Optional[Dict[str, Any]] = Field(
         default=None, 
         description="Reference range with min, max, unit, and source"
     )
+    # Unit audit fields (Sprint 1 - Unit Registry)
+    original_unit: Optional[str] = Field(default=None, description="Original unit before conversion")
+    original_value: Optional[float] = Field(default=None, description="Original value before conversion")
+    unit_normalised: bool = Field(default=False, description="True if value was converted to base unit")
+    unit_source: Optional[str] = Field(default=None, description="explicit | reference_range | ssot_assumed")
+    confidence_downgrade_unit_assumed: bool = Field(default=False, description="True when unit was assumed from SSOT")
+    reference_unit_assumed: bool = Field(default=False, description="True when ref range unit was assumed from input")
 
 
 class BiomarkerPanel(BaseModel):

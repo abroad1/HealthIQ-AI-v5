@@ -4,14 +4,31 @@ Alias Registry Service - v4 integration for v5 canonicalization.
 This service provides a clean interface to the v4 alias registry system,
 integrating it seamlessly into the v5 architecture while maintaining
 backward compatibility and performance.
+
+Process-level singleton via get_alias_registry_service() ensures the registry
+is built once and reused for all resolves within the process.
 """
 
 import os
 import re
 import string
+import threading
 import yaml
+from functools import lru_cache
 from pathlib import Path
 from typing import Dict, List, Optional, Any
+
+# Lock for thread-safe first load
+_load_lock = threading.Lock()
+
+
+@lru_cache(maxsize=2)
+def get_alias_registry_service(use_v4_registry: bool = True) -> "AliasRegistryService":
+    """
+    Get the process-level AliasRegistryService singleton.
+    Registry is built once lazily on first use.
+    """
+    return AliasRegistryService(use_v4_registry=use_v4_registry)
 
 
 class AliasRegistryService:
@@ -41,13 +58,10 @@ class AliasRegistryService:
         )
     
     def _load_alias_registry(self) -> Dict[str, Any]:
-        """Load the SSOT alias registry from YAML file."""
-        print(f"[TRACE] [AliasRegistryService] Loading SSOT alias registry from: {self.ssot_alias_registry_path}")
+        """Load the SSOT alias registry from YAML file (called once per process)."""
         try:
             with open(self.ssot_alias_registry_path, 'r', encoding='utf-8') as f:
-                registry = yaml.safe_load(f)
-                print(f"[TRACE] [AliasRegistryService] Loaded {len(registry)} entries from SSOT alias registry")
-                return registry
+                return yaml.safe_load(f)
         except FileNotFoundError:
             print(f"[WARN] SSOT alias registry not found at {self.ssot_alias_registry_path}")
             return {}
@@ -72,18 +86,30 @@ class AliasRegistryService:
     def _build_alias_mapping(self) -> Dict[str, str]:
         """
         Build comprehensive alias mapping using v4 registry as primary source.
+        Thread-safe; builds once per instance.
         
         Returns:
             Dict mapping aliases to canonical biomarker names
         """
         if self._alias_to_canonical is not None:
             return self._alias_to_canonical
-        
+
+        with _load_lock:
+            if self._alias_to_canonical is not None:
+                return self._alias_to_canonical
+            alias_mapping = self._build_alias_mapping_impl()
+            self._alias_to_canonical = alias_mapping
+            self._loaded = True
+            # Log once per process when registry is first built
+            print(f"[TRACE] [AliasRegistryService] Registry built: {len(alias_mapping)} aliases mapped")
+            return alias_mapping
+
+    def _build_alias_mapping_impl(self) -> Dict[str, str]:
+        """Internal implementation of alias mapping build (called under lock)."""
         alias_mapping = {}
-        
+
         ssot_alias_registry = self._load_alias_registry()
         if ssot_alias_registry:
-            print("[TRACE] Using SSOT alias registry for comprehensive alias mapping")
             for key, definition in ssot_alias_registry.items():
                 if isinstance(definition, dict) and 'aliases' in definition:
                     # Use canonical_id if specified, otherwise use the key
@@ -121,7 +147,6 @@ class AliasRegistryService:
         # Load SSOT aliases to supplement v4 registry (or as primary source if v4 unavailable)
         ssot_biomarkers = self._load_ssot_biomarkers()
         if ssot_biomarkers:
-            print("[TRACE] Loading aliases from SSOT biomarkers.yaml")
             for canonical_name, definition in ssot_biomarkers.items():
                 if isinstance(definition, dict) and 'aliases' in definition:
                     # Map canonical name to itself
@@ -150,28 +175,20 @@ class AliasRegistryService:
         
         # Add common medical abbreviations and variations
         self._add_common_aliases(alias_mapping)
-        
-        self._alias_to_canonical = alias_mapping
-        self._loaded = True
-        
-        print(f"[TRACE] [AliasRegistryService] Registry building complete: {len(alias_mapping)} aliases mapped")
-        # Show sample of mappings for debugging
-        sample_keys = list(alias_mapping.keys())[:10]
-        print(f"[TRACE] [AliasRegistryService] Sample mappings: {sample_keys}")
         return alias_mapping
     
     def _add_common_aliases(self, alias_mapping: Dict[str, str]):
         """Add common medical abbreviations and aliases."""
         common_aliases = {
-            # Cardiovascular
-            'hdl': 'hdl',
-            'hdl_chol': 'hdl',
-            'hdl_cholesterol': 'hdl',
-            'good_cholesterol': 'hdl',
-            'ldl': 'ldl',
-            'ldl_chol': 'ldl',
-            'ldl_cholesterol': 'ldl',
-            'bad_cholesterol': 'ldl',
+            # Cardiovascular - canonical: ldl_cholesterol, hdl_cholesterol (aligns with clustering, insights, SSOT)
+            'hdl': 'hdl_cholesterol',
+            'hdl_chol': 'hdl_cholesterol',
+            'hdl_cholesterol': 'hdl_cholesterol',
+            'good_cholesterol': 'hdl_cholesterol',
+            'ldl': 'ldl_cholesterol',
+            'ldl_chol': 'ldl_cholesterol',
+            'ldl_cholesterol': 'ldl_cholesterol',
+            'bad_cholesterol': 'ldl_cholesterol',
             'total_chol': 'total_cholesterol',
             'cholesterol': 'total_cholesterol',
             'trig': 'triglycerides',
@@ -278,10 +295,6 @@ class AliasRegistryService:
         Returns:
             Canonical name if found, "unmapped_{name}" if not found
         """
-        # === BEGIN DEBUG LOGGING FOR ALIAS RESOLVER ===
-        print(f"[TRACE] [AliasRegistryService] Resolving: '{name}'")
-        # === END DEBUG LOGGING ===
-        
         if not self._loaded:
             self._build_alias_mapping()
         
@@ -293,22 +306,18 @@ class AliasRegistryService:
         # Direct lookup (case-insensitive)
         canonical = self._alias_to_canonical.get(raw.lower())
         if canonical:
-            print(f"[TRACE] [AliasRegistryService] Direct lookup found: '{canonical}'")
             return canonical
 
         if norm:
             canonical = self._alias_to_canonical.get(norm)
             if canonical:
-                print(f"[TRACE] [AliasRegistryService] Normalized lookup found: '{canonical}'")
                 return canonical
 
         if norm_stripped and norm_stripped != norm:
             canonical = self._alias_to_canonical.get(norm_stripped)
             if canonical:
-                print(f"[TRACE] [AliasRegistryService] Specimen-stripped lookup found: '{canonical}'")
                 return canonical
 
-        print(f"[TRACE] [AliasRegistryService] No match found, returning: 'unmapped_{raw}'")
         # Return unmapped key
         return f"unmapped_{raw}"
     
@@ -337,10 +346,8 @@ class AliasRegistryService:
                 print(f"[WARN] Unmapped biomarker: {key} -> {canonical_key}")
             else:
                 mapped_count += 1
-            
+
             normalized_panel[canonical_key] = value
-        
-        print(f"[TRACE] Alias normalization used v4 registry: {mapped_count} mapped, {unmapped_count} unmapped")
         return normalized_panel
     
     def get_all_aliases(self) -> Dict[str, List[str]]:

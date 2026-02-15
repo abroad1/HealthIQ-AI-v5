@@ -1,0 +1,61 @@
+# Lab Provider Registry - UK-first
+# Sprint 2 - Lab Header Detection. Deterministic regex patterns.
+
+labs:
+  medichecks:
+    display_name: "MediChecks"
+    patterns:
+      header_regex:
+        - "(?i)medichecks"
+        - "(?i)medicheck"
+      footer_regex: []
+      filename_regex:
+        - "(?i)medicheck"
+
+  randox:
+    display_name: "Randox"
+    patterns:
+      header_regex:
+        - "(?i)randox"
+        - "(?i)randox health"
+        - "(?i)randox laboratories"
+      footer_regex: []
+      filename_regex:
+        - "(?i)randox"
+
+  nhs_generic:
+    # Hardened: no bare "NHS" - require structured pathology markers to avoid false positives.
+    display_name: "NHS"
+    patterns:
+      header_regex:
+        - "(?i)NHS Foundation Trust"
+        - "(?i)NHS Trust"
+        - "(?i)Pathology Services"
+        - "(?i)Pathology Laboratory"
+        - "(?i)Department of Pathology"
+        - "(?i)Laboratory Services"
+        - "(?i)Clinical Biochemistry"
+        - "(?i)Haematology Department"
+        - "(?i)Microbiology Department"
+        - "(?i)NHS England"
+        - "(?i)NHS Pathology"
+      footer_regex: []
+      filename_regex:
+        - "(?i)NHS Foundation Trust"
+        - "(?i)NHS Trust"
+        - "(?i)Pathology Services"
+        - "(?i)Pathology Laboratory"
+        - "(?i)Department of Pathology"
+        - "(?i)NHS Pathology"
+
+  london_medical_laboratory:
+    display_name: "London Medical Laboratory"
+    patterns:
+      header_regex:
+        - "(?i)london medical laboratory"
+        - "(?i)London Medical Laboratory"
+        - "(?i)\\bLML\\b"
+      footer_regex: []
+      filename_regex:
+        - "(?i)london.?medical.?lab"
+        - "(?i)lml"

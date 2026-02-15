@@ -50,8 +50,8 @@ class TestNormalizeAliases:
         assert "unmapped_calcium_(venous)" in panel.biomarkers
         assert "unmapped_unknown_test" in panel.biomarkers
         
-        # Check that normal biomarkers are processed
-        assert "hdl" in panel.biomarkers
+        # Check that normal biomarkers are processed (HDL -> hdl_cholesterol per PR)
+        assert "hdl_cholesterol" in panel.biomarkers
         
         # Check unmapped keys list
         assert "unmapped_calcium_(venous)" in unmapped_keys
@@ -123,15 +123,15 @@ class TestNormalizeAliases:
         result = normalizer.normalize_biomarkers(input_data)
         panel = result[0]
         
-        # Should convert to canonical names
-        assert "hdl" in panel.biomarkers
-        assert "ldl" in panel.biomarkers
+        # Should convert to canonical names (hdl/ldl -> hdl_cholesterol/ldl_cholesterol per PR)
+        assert "hdl_cholesterol" in panel.biomarkers
+        assert "ldl_cholesterol" in panel.biomarkers
         assert "total_cholesterol" in panel.biomarkers
         
         # Should not have unmapped prefixes for known biomarkers
         for key in panel.biomarkers.keys():
             if not key.startswith("unmapped_"):
-                assert key in ["hdl", "ldl", "total_cholesterol"]
+                assert key in ["hdl_cholesterol", "ldl_cholesterol", "total_cholesterol"]
     
     def test_venous_aliases_resolve_to_canonical(self):
         """Test that _(venous) variants resolve to correct canonical IDs."""

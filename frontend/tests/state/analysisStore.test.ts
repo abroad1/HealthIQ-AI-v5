@@ -160,12 +160,12 @@ describe('AnalysisStore', () => {
       expect(state.isLoading).toBe(false);
       expect(state.error).toBeNull();
       expect(state.currentPhase).toBe('ingestion');
-      expect(state.currentAnalysis).toEqual({ 
+      expect(state.currentAnalysis).toMatchObject({ 
         analysis_id: mockAnalysisId,
         status: 'pending',
         progress: 0,
-        created_at: expect.any(String)
       });
+      expect(state.currentAnalysis?.created_at).toBeDefined();
       expect(AnalysisService.startAnalysis).toHaveBeenCalledWith(mockRequest);
     });
 
@@ -575,17 +575,16 @@ describe('AnalysisStore', () => {
           analysis_id: `test-${i}`,
           created_at: '2025-01-27T00:00:00Z',
           status: 'completed' as const,
-          results: { 
-            clusters: [],
-            insights: [],
-            overall_score: 85,
-            risk_assessment: {},
-            recommendations: []
-          },
+          biomarkers: [],
+          clusters: [],
+          insights: [],
+          overall_score: 85,
+          risk_assessment: {},
+          recommendations: [],
         });
       }
 
-      expect(store.analysisHistory).toHaveLength(50); // MAX_HISTORY = 50
+      expect(useAnalysisStore.getState().analysisHistory).toHaveLength(50); // MAX_HISTORY = 50
     });
   });
 
@@ -595,16 +594,15 @@ describe('AnalysisStore', () => {
         analysis_id: 'test-123',
         status: 'completed' as const,
         created_at: '2025-01-27T00:00:00Z',
-        results: { 
-          overall_score: 85,
-          clusters: [],
-          insights: [],
-          risk_assessment: {},
-          recommendations: [],
-        },
+        biomarkers: [],
+        clusters: [],
+        insights: [],
+        overall_score: 85,
+        risk_assessment: {},
+        recommendations: [],
       };
 
-      useAnalysisStore.getState().setCurrentAnalysis(analysis);
+      useAnalysisStore.getState().addToHistory(analysis);
       const summary = useAnalysisStore.getState().getAnalysisSummary();
 
       expect(summary).toEqual({

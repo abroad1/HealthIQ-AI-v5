@@ -23,9 +23,7 @@ def _lab_ranges_for(biomarker_keys: list) -> Dict[str, Dict[str, Any]]:
         "insulin": {"min": 2.0, "max": 25.0, "unit": "μU/mL", "source": "lab"},
         "total_cholesterol": {"min": 0.0, "max": 200.0, "unit": "mg/dL", "source": "lab"},
         "ldl_cholesterol": {"min": 0.0, "max": 100.0, "unit": "mg/dL", "source": "lab"},
-        "ldl": {"min": 0.0, "max": 100.0, "unit": "mg/dL", "source": "lab"},
         "hdl_cholesterol": {"min": 40.0, "max": 60.0, "unit": "mg/dL", "source": "lab"},
-        "hdl": {"min": 40.0, "max": 60.0, "unit": "mg/dL", "source": "lab"},
         "triglycerides": {"min": 0.0, "max": 150.0, "unit": "mg/dL", "source": "lab"},
         "crp": {"min": 0.0, "max": 3.0, "unit": "mg/L", "source": "lab"},
         "creatinine": {"min": 0.6, "max": 1.2, "unit": "mg/dL", "source": "lab"},
@@ -37,13 +35,7 @@ def _lab_ranges_for(biomarker_keys: list) -> Dict[str, Dict[str, Any]]:
         "white_blood_cells": {"min": 4.5, "max": 11.0, "unit": "K/μL", "source": "lab"},
         "platelets": {"min": 150.0, "max": 450.0, "unit": "K/μL", "source": "lab"},
     }
-    out = {k: ranges[k] for k in biomarker_keys if k in ranges}
-    # Include both forms for hdl/ldl (normalizer may produce short form)
-    if "ldl_cholesterol" in biomarker_keys:
-        out["ldl"] = ranges["ldl"]
-    if "hdl_cholesterol" in biomarker_keys:
-        out["hdl"] = ranges["hdl"]
-    return out
+    return {k: ranges[k] for k in biomarker_keys if k in ranges}
 
 
 class TestScoringEngine:
@@ -120,7 +112,7 @@ class TestScoringEngine:
         
         # Check that missing biomarkers are identified (canonical keys)
         assert "hba1c" in result.missing_biomarkers, "Should identify missing hba1c"
-        assert "ldl" in result.missing_biomarkers, "Should identify missing ldl"
+        assert "ldl_cholesterol" in result.missing_biomarkers, "Should identify missing ldl_cholesterol"
     
     def test_metabolic_health_system_scoring(self):
         """

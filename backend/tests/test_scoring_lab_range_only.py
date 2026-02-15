@@ -17,13 +17,13 @@ from core.scoring.engine import ScoringEngine
 
 
 class TestHDLWithLabBounds:
-    """HDL with lab bounds must be scored using those bounds (canonical key: hdl)."""
+    """HDL with lab bounds must be scored using those bounds (canonical key: hdl_cholesterol)."""
 
     def test_hdl_with_lab_bounds_gets_scored(self):
         rules = ScoringRules()
         lab_range = {"min": 40.0, "max": 60.0, "unit": "mg/dL", "source": "lab"}
         score, score_range, reason = rules.calculate_biomarker_score(
-            "hdl", 50.0, input_reference_range=lab_range
+            "hdl_cholesterol", 50.0, input_reference_range=lab_range
         )
         assert reason is None
         assert score > 0
@@ -31,13 +31,13 @@ class TestHDLWithLabBounds:
 
 
 class TestLDLWithLabBounds:
-    """LDL with lab bounds must be scored using those bounds (canonical key: ldl)."""
+    """LDL with lab bounds must be scored using those bounds (canonical key: ldl_cholesterol)."""
 
     def test_ldl_with_lab_bounds_gets_scored(self):
         rules = ScoringRules()
         lab_range = {"min": 0.0, "max": 100.0, "unit": "mg/dL", "source": "lab"}
         score, score_range, reason = rules.calculate_biomarker_score(
-            "ldl", 80.0, input_reference_range=lab_range
+            "ldl_cholesterol", 80.0, input_reference_range=lab_range
         )
         assert reason is None
         assert score > 0
@@ -48,7 +48,7 @@ class TestHDLWithoutLabBounds:
 
     def test_hdl_without_lab_bounds_is_unscored_with_reason(self):
         rules = ScoringRules()
-        score, score_range, reason = rules.calculate_biomarker_score("hdl", 50.0)
+        score, score_range, reason = rules.calculate_biomarker_score("hdl_cholesterol", 50.0)
         assert reason == UNSCORED_REASON
         assert UNSCORED_REASON == "missing_lab_reference_range"
         assert score == 0.0
@@ -59,7 +59,7 @@ class TestLDLWithoutLabBounds:
 
     def test_ldl_without_lab_bounds_is_unscored_with_reason(self):
         rules = ScoringRules()
-        score, score_range, reason = rules.calculate_biomarker_score("ldl", 120.0)
+        score, score_range, reason = rules.calculate_biomarker_score("ldl_cholesterol", 120.0)
         assert reason == UNSCORED_REASON
 
 
@@ -101,10 +101,10 @@ class TestSSOTNeverInvoked:
         """Full engine scoring must not invoke any SSOT reference range lookup."""
         with patch("core.canonical.resolver.CanonicalResolver.get_reference_range") as mock_get:
             engine = ScoringEngine()
-            biomarkers = {"hdl": 50.0, "ldl": 90.0}
+            biomarkers = {"hdl_cholesterol": 50.0, "ldl_cholesterol": 90.0}
             input_reference_ranges = {
-                "hdl": {"min": 40.0, "max": 60.0, "unit": "mg/dL"},
-                "ldl": {"min": 0.0, "max": 100.0, "unit": "mg/dL"},
+                "hdl_cholesterol": {"min": 40.0, "max": 60.0, "unit": "mg/dL"},
+                "ldl_cholesterol": {"min": 0.0, "max": 100.0, "unit": "mg/dL"},
             }
             engine.score_biomarkers(biomarkers, input_reference_ranges=input_reference_ranges)
             mock_get.assert_not_called()
@@ -115,15 +115,15 @@ class TestEngineIntegration:
 
     def test_engine_hdl_with_lab_bounds_scored(self):
         engine = ScoringEngine()
-        biomarkers = {"hdl": 50.0}
-        input_reference_ranges = {"hdl": {"min": 40.0, "max": 60.0, "unit": "mg/dL"}}
+        biomarkers = {"hdl_cholesterol": 50.0}
+        input_reference_ranges = {"hdl_cholesterol": {"min": 40.0, "max": 60.0, "unit": "mg/dL"}}
         result = engine.score_biomarkers(
             biomarkers, input_reference_ranges=input_reference_ranges
         )
         hdl_scores = [
             s for sys_score in result.health_system_scores.values()
             for s in sys_score.biomarker_scores
-            if s.biomarker_name == "hdl"
+            if s.biomarker_name == "hdl_cholesterol"
         ]
         assert len(hdl_scores) == 1
         assert hdl_scores[0].score > 0
@@ -131,27 +131,27 @@ class TestEngineIntegration:
 
     def test_engine_ldl_with_lab_bounds_scored(self):
         engine = ScoringEngine()
-        biomarkers = {"ldl": 90.0}
-        input_reference_ranges = {"ldl": {"min": 0.0, "max": 100.0, "unit": "mg/dL"}}
+        biomarkers = {"ldl_cholesterol": 90.0}
+        input_reference_ranges = {"ldl_cholesterol": {"min": 0.0, "max": 100.0, "unit": "mg/dL"}}
         result = engine.score_biomarkers(
             biomarkers, input_reference_ranges=input_reference_ranges
         )
         ldl_scores = [
             s for sys_score in result.health_system_scores.values()
             for s in sys_score.biomarker_scores
-            if s.biomarker_name == "ldl"
+            if s.biomarker_name == "ldl_cholesterol"
         ]
         assert len(ldl_scores) == 1
         assert ldl_scores[0].score > 0
 
     def test_engine_hdl_without_lab_bounds_unscored_with_reason(self):
         engine = ScoringEngine()
-        biomarkers = {"hdl": 50.0}
+        biomarkers = {"hdl_cholesterol": 50.0}
         result = engine.score_biomarkers(biomarkers)
         hdl_scores = [
             s for sys_score in result.health_system_scores.values()
             for s in sys_score.biomarker_scores
-            if s.biomarker_name == "hdl"
+            if s.biomarker_name == "hdl_cholesterol"
         ]
         assert len(hdl_scores) == 1
         assert hdl_scores[0].unscored_reason == UNSCORED_REASON
@@ -159,12 +159,12 @@ class TestEngineIntegration:
 
     def test_engine_ldl_without_lab_bounds_unscored_with_reason(self):
         engine = ScoringEngine()
-        biomarkers = {"ldl": 120.0}
+        biomarkers = {"ldl_cholesterol": 120.0}
         result = engine.score_biomarkers(biomarkers)
         ldl_scores = [
             s for sys_score in result.health_system_scores.values()
             for s in sys_score.biomarker_scores
-            if s.biomarker_name == "ldl"
+            if s.biomarker_name == "ldl_cholesterol"
         ]
         assert len(ldl_scores) == 1
         assert ldl_scores[0].unscored_reason == UNSCORED_REASON

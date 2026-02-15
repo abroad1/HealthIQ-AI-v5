@@ -330,106 +330,17 @@ export const useAnalysisStore = create<AnalysisState>()(
         }
       },
 
-      completeAnalysis: async (analysisId, results) => {
+      completeAnalysis: async (analysisId) => {
         const state = get();
         if (state.currentAnalysis?.analysis_id === analysisId) {
-          try {
-            // Fetch the full analysis results from the API
-            const response = await AnalysisService.getAnalysisResult(analysisId);
-            
-            if (response && response.success && response.data) {
-              const completedAnalysis: AnalysisResult = {
-                ...(response.data as AnalysisResult),
-                completed_at: new Date().toISOString(),
-              };
-
-              // Overwrite currentAnalysis completely to ensure clean structure
-              set({
-                currentAnalysis: completedAnalysis,
-                isLoading: false,
-                currentPhase: 'completed',
-                progress: 100,
-                error: null,
-              });
-
-              // Add debug logging
-              console.debug("Completed Analysis stored:", {
-                biomarkers: completedAnalysis.biomarkers?.length,
-                insights: completedAnalysis.insights?.length,
-                clusters: completedAnalysis.clusters?.length,
-              });
-
-              // Update in history
-              get().addToHistory(completedAnalysis);
-            } else {
-              // Fallback to the results passed in (if any)
-              const completedAnalysis: AnalysisResult = {
-                analysis_id: analysisId,
-                biomarkers: results?.biomarkers || [],
-                clusters: results?.clusters || [],
-                insights: results?.insights || [],
-                overall_score: results?.overall_score || null,
-                status: 'completed',
-                created_at: state.currentAnalysis.created_at,
-                completed_at: new Date().toISOString(),
-                risk_assessment: results?.risk_assessment || {},
-                recommendations: results?.recommendations || []
-              };
-
-              set({
-                currentAnalysis: completedAnalysis,
-                isLoading: false,
-                currentPhase: 'completed',
-                progress: 100,
-                error: null,
-              });
-
-              // Add debug logging
-              console.debug("Completed Analysis stored (fallback):", {
-                biomarkers: completedAnalysis.biomarkers?.length,
-                insights: completedAnalysis.insights?.length,
-                clusters: completedAnalysis.clusters?.length,
-              });
-
-              // Update in history
-              get().addToHistory(completedAnalysis);
-            }
-          } catch (error) {
-            console.error('Failed to fetch analysis results:', error);
-            // Fallback to the results passed in (if any)
-            const completedAnalysis: AnalysisResult = {
-              analysis_id: analysisId,
-              biomarkers: results?.biomarkers || [],
-              clusters: results?.clusters || [],
-              insights: results?.insights || [],
-              overall_score: results?.overall_score || null,
-              status: 'completed',
-              created_at: state.currentAnalysis.created_at,
-              completed_at: new Date().toISOString(),
-              risk_assessment: results?.risk_assessment || {},
-              recommendations: results?.recommendations || []
-            };
-
-            set({
-              currentAnalysis: completedAnalysis,
-              isLoading: false,
-              currentPhase: 'completed',
-              progress: 100,
-              error: null,
-            });
-
-            // Add debug logging
-            console.debug("Completed Analysis stored (error fallback):", {
-              biomarkers: completedAnalysis.biomarkers?.length,
-              insights: completedAnalysis.insights?.length,
-              clusters: completedAnalysis.clusters?.length,
-            });
-
-            // Update in history
-            get().addToHistory(completedAnalysis);
-          }
+          // Stop events; result fetch is done by useAnalysisResult (single source of truth)
+          set({
+            isLoading: false,
+            currentPhase: 'completed',
+            progress: 100,
+            error: null,
+          });
         } else {
-          // If no current analysis, just update the phase and progress
           set({
             isLoading: false,
             currentPhase: 'completed',

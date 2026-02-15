@@ -13,6 +13,7 @@ from .biomarker import (
 from .user import User, UserContext
 from .context import AnalysisContext, AnalysisPhase, AnalysisEvent
 from .results import AnalysisResult, AnalysisSummary, BiomarkerScore, ClusterHit, InsightResult, AnalysisDTO
+from .lab_origin import LabOrigin
 
 __all__ = [
     "BiomarkerDefinition",
@@ -32,4 +33,5 @@ __all__ = [
     "ClusterHit",
     "InsightResult",
     "AnalysisDTO",
+    "LabOrigin",
 ]

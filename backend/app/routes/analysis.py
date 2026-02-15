@@ -5,7 +5,7 @@ Analysis routes for biomarker processing and SSE streaming.
 import asyncio
 import uuid
 from datetime import datetime, UTC
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from uuid import UUID, uuid4
 
 # For ULID generation (fallback to uuid4 if ulid not available)
@@ -29,6 +29,7 @@ class AnalysisStartRequest(BaseModel):
     """Request model for starting biomarker analysis."""
     biomarkers: Dict[str, Any]
     user: Dict[str, Any]
+    lab_origin: Optional[Dict[str, Any]] = None
 
 class AnalysisStartResponse(BaseModel):
     """Response model for analysis start."""
@@ -43,6 +44,7 @@ from core.pipeline.events import stream_status
 from core.dto.builders import build_analysis_result_dto
 from core.canonical.normalize import normalize_biomarkers_with_metadata
 from core.context import ContextFactory, ValidationError
+from core.units.registry import apply_unit_normalisation, UnitConversionError
 
 router = APIRouter()
 
@@ -87,7 +89,19 @@ async def start_analysis(request: AnalysisStartRequest):
         # Normalize incoming raw biomarkers to canonical form, preserving reference_range metadata
         # This ensures lab-provided ranges are not lost before orchestrator processing
         normalized = normalize_biomarkers_with_metadata(request.biomarkers)
-        
+
+        # Sprint 1: Convert to base units at ingestion (Layer A). Deterministic; rejects unknown units.
+        try:
+            normalized = apply_unit_normalisation(normalized)
+        except UnitConversionError as e:
+            detail = str(e)
+            if e.biomarker_id:
+                detail = f"{detail} (biomarker={e.biomarker_id}, from_unit={e.from_unit}, expected_base_unit={e.expected_base_unit})"
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Unit conversion failed: {detail}"
+            )
+
         # Create orchestrator and run analysis
         orchestrator = AnalysisOrchestrator()
         
@@ -95,8 +109,18 @@ async def start_analysis(request: AnalysisStartRequest):
         dto = orchestrator.run(normalized, request.user, assume_canonical=True)
         
         # Store result in memory (replaces database persistence)
+        lab_origin_meta = request.lab_origin or {
+            "lab_provider_id": "unknown",
+            "lab_provider_name": None,
+            "detection_method": "unknown",
+            "detection_confidence": 0.0,
+            "raw_evidence": None,
+        }
+        meta = dict(dto.meta or {})
+        meta["lab_origin"] = lab_origin_meta
         _analysis_results[analysis_id] = {
             "analysis_id": dto.analysis_id,
+            "meta": meta,
             "biomarkers": [
                 {
                     "biomarker_name": b.biomarker_name,
@@ -162,6 +186,8 @@ async def start_analysis(request: AnalysisStartRequest):
             message="Analysis completed successfully"
         )
         
+    except HTTPException:
+        raise
     except Exception as e:
         return AnalysisStartResponse(
             analysis_id=generate_analysis_id(),
@@ -181,28 +207,12 @@ async def get_analysis_result(analysis_id: str):
     Returns:
         dict: Analysis result with biomarkers, clusters and insights
     """
+    result = _analysis_results.get(analysis_id)
+    if not result:
+        raise HTTPException(status_code=404, detail="Analysis not found")
+
     try:
-        # Get result from in-memory storage
-        result = _analysis_results.get(analysis_id)
-        
-        if not result:
-            # Return error result if not found
-            return {
-                "analysis_id": analysis_id,
-                "biomarkers": [],
-                "clusters": [],
-                "insights": [],
-                "status": "error",
-                "created_at": datetime.now(UTC).isoformat(),
-                "overall_score": 0.0,
-                "risk_assessment": {},
-                "recommendations": [],
-                "result_version": "1.0.0",
-                "error": "Analysis not found"
-            }
-        
         return build_analysis_result_dto(result)
-        
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get analysis result: {str(e)}")
 

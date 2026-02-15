@@ -18,7 +18,7 @@ class TestScoringOrchestratorIntegration:
         """Set up test fixtures."""
         self.orchestrator = AnalysisOrchestrator()
     
-    def test_complete_biomarker_panel_scoring_integration(self):
+    def test_complete_biomarker_panel_scoring_integration(self, lab_reference_ranges):
         """
         Test scoring integration with complete biomarker panel.
         
@@ -44,7 +44,10 @@ class TestScoringOrchestratorIntegration:
             "platelets": 280.0
         }
         
-        result = self.orchestrator.score_biomarkers(complete_biomarkers, age=35, sex="male")
+        result = self.orchestrator.score_biomarkers(
+            complete_biomarkers, age=35, sex="male",
+            input_reference_ranges=lab_reference_ranges
+        )
         
         # Validate result structure
         assert "overall_score" in result, "Should include overall score"
@@ -78,7 +81,7 @@ class TestScoringOrchestratorIntegration:
             assert isinstance(system_score["recommendations"], list), f"Recommendations should be list for {system_name}"
             assert isinstance(system_score["biomarker_scores"], list), f"Biomarker scores should be list for {system_name}"
     
-    def test_incomplete_biomarker_panel_scoring_integration(self):
+    def test_incomplete_biomarker_panel_scoring_integration(self, lab_reference_ranges):
         """
         Test scoring integration with incomplete biomarker panel.
         
@@ -91,7 +94,10 @@ class TestScoringOrchestratorIntegration:
             "crp": 1.2
         }
         
-        result = self.orchestrator.score_biomarkers(incomplete_biomarkers, age=35, sex="male")
+        result = self.orchestrator.score_biomarkers(
+            incomplete_biomarkers, age=35, sex="male",
+            input_reference_ranges=lab_reference_ranges
+        )
         
         # Validate result structure
         assert "overall_score" in result, "Should include overall score"
@@ -111,7 +117,7 @@ class TestScoringOrchestratorIntegration:
         # Validate confidence level is appropriate for incomplete data
         assert result["confidence"] in ["low", "medium"], "Should have lower confidence for incomplete data"
     
-    def test_lifestyle_overlay_integration(self):
+    def test_lifestyle_overlay_integration(self, lab_reference_ranges):
         """
         Test lifestyle overlay integration with orchestrator.
         
@@ -123,8 +129,11 @@ class TestScoringOrchestratorIntegration:
             "crp": 2.0
         }
         
-        # Test without lifestyle data
-        result_no_lifestyle = self.orchestrator.score_biomarkers(biomarkers, age=35, sex="male")
+        # Test without lifestyle data (lab ranges required for scoring)
+        result_no_lifestyle = self.orchestrator.score_biomarkers(
+            biomarkers, age=35, sex="male",
+            input_reference_ranges=lab_reference_ranges
+        )
         
         # Test with lifestyle data
         lifestyle_data = {
@@ -137,7 +146,8 @@ class TestScoringOrchestratorIntegration:
         }
         
         result_with_lifestyle = self.orchestrator.score_biomarkers(
-            biomarkers, age=35, sex="male", lifestyle_data=lifestyle_data
+            biomarkers, age=35, sex="male", lifestyle_data=lifestyle_data,
+            input_reference_ranges=lab_reference_ranges
         )
         
         # Validate lifestyle integration
@@ -150,7 +160,7 @@ class TestScoringOrchestratorIntegration:
         # Excellent lifestyle should improve score
         assert result_with_lifestyle["overall_score"] > result_no_lifestyle["overall_score"], "Excellent lifestyle should improve score"
     
-    def test_age_and_sex_adjustment_integration(self):
+    def test_age_and_sex_adjustment_integration(self, lab_reference_ranges):
         """
         Test age and sex adjustment integration with orchestrator.
         
@@ -162,9 +172,15 @@ class TestScoringOrchestratorIntegration:
             "hemoglobin": 14.0
         }
         
-        # Test with different demographics
-        result_young_male = self.orchestrator.score_biomarkers(biomarkers, age=25, sex="male")
-        result_older_female = self.orchestrator.score_biomarkers(biomarkers, age=65, sex="female")
+        # Test with different demographics (lab ranges required for scoring)
+        result_young_male = self.orchestrator.score_biomarkers(
+            biomarkers, age=25, sex="male",
+            input_reference_ranges=lab_reference_ranges
+        )
+        result_older_female = self.orchestrator.score_biomarkers(
+            biomarkers, age=65, sex="female",
+            input_reference_ranges=lab_reference_ranges
+        )
         
         # Age and sex adjustments may not be significant in current implementation
         assert result_young_male["overall_score"] > 0, "Should have positive score"
@@ -205,7 +221,7 @@ class TestScoringOrchestratorIntegration:
         assert len(result["missing_biomarkers"]) > 0, "Should identify all biomarkers as missing"
         assert len(result["recommendations"]) > 0, "Should provide recommendations for data collection"
     
-    def test_health_system_scoring_accuracy_integration(self):
+    def test_health_system_scoring_accuracy_integration(self, lab_reference_ranges):
         """
         Test health system scoring accuracy through orchestrator.
         
@@ -223,7 +239,10 @@ class TestScoringOrchestratorIntegration:
             "hemoglobin": 14.5  # Normal
         }
         
-        result = self.orchestrator.score_biomarkers(optimal_biomarkers, age=35, sex="male")
+        result = self.orchestrator.score_biomarkers(
+            optimal_biomarkers, age=35, sex="male",
+            input_reference_ranges=lab_reference_ranges
+        )
         
         # Validate health system scores
         assert "metabolic" in result["health_system_scores"], "Should have metabolic score"
@@ -246,7 +265,7 @@ class TestScoringOrchestratorIntegration:
         assert result["health_system_scores"]["cardiovascular"]["confidence"] == "high", "Should have high confidence"
         assert result["health_system_scores"]["inflammatory"]["confidence"] == "high", "Should have high confidence"
     
-    def test_biomarker_score_detail_integration(self):
+    def test_biomarker_score_detail_integration(self, lab_reference_ranges):
         """
         Test biomarker score detail integration through orchestrator.
         
@@ -259,7 +278,10 @@ class TestScoringOrchestratorIntegration:
             "ldl_cholesterol": 90.0
         }
         
-        result = self.orchestrator.score_biomarkers(biomarkers, age=35, sex="male")
+        result = self.orchestrator.score_biomarkers(
+            biomarkers, age=35, sex="male",
+            input_reference_ranges=lab_reference_ranges
+        )
         
         # Validate biomarker score details
         metabolic_scores = result["health_system_scores"]["metabolic"]["biomarker_scores"]
@@ -284,7 +306,7 @@ class TestScoringOrchestratorIntegration:
             assert score["score_range"] in ["optimal", "normal", "borderline", "high", "very_high", "critical"], "Score range should be valid"
             assert score["confidence"] in ["high", "medium", "low"], "Confidence should be valid"
     
-    def test_scoring_consistency_integration(self):
+    def test_scoring_consistency_integration(self, lab_reference_ranges):
         """
         Test scoring consistency through orchestrator.
         
@@ -301,7 +323,10 @@ class TestScoringOrchestratorIntegration:
         # Run scoring multiple times
         results = []
         for _ in range(3):
-            result = self.orchestrator.score_biomarkers(biomarkers, age=35, sex="male")
+            result = self.orchestrator.score_biomarkers(
+                biomarkers, age=35, sex="male",
+                input_reference_ranges=lab_reference_ranges
+            )
             results.append(result)
         
         # Results should be consistent
@@ -310,7 +335,7 @@ class TestScoringOrchestratorIntegration:
             assert results[i]["confidence"] == results[0]["confidence"], "Confidence levels should be consistent"
             assert results[i]["missing_biomarkers"] == results[0]["missing_biomarkers"], "Missing biomarkers should be consistent"
     
-    def test_scoring_performance_integration(self):
+    def test_scoring_performance_integration(self, lab_reference_ranges):
         """
         Test scoring performance through orchestrator.
         
@@ -339,7 +364,10 @@ class TestScoringOrchestratorIntegration:
         
         # Measure scoring time
         start_time = time.time()
-        result = self.orchestrator.score_biomarkers(biomarkers, age=35, sex="male")
+        result = self.orchestrator.score_biomarkers(
+            biomarkers, age=35, sex="male",
+            input_reference_ranges=lab_reference_ranges
+        )
         end_time = time.time()
         
         scoring_time = end_time - start_time

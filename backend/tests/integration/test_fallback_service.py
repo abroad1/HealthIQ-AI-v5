@@ -34,13 +34,14 @@ class TestCircuitBreaker:
         """Test circuit breaker opens after failure threshold."""
         config = CircuitBreakerConfig(failure_threshold=3)
         breaker = CircuitBreaker(config)
-        
-        # Simulate failures up to threshold
-        for i in range(3):
-            breaker.on_failure()
-            assert breaker.state == CircuitState.CLOSED
-        
-        # Next failure should open circuit
+
+        # 1st failure - still CLOSED
+        breaker.on_failure()
+        assert breaker.state == CircuitState.CLOSED
+        # 2nd failure - still CLOSED
+        breaker.on_failure()
+        assert breaker.state == CircuitState.CLOSED
+        # 3rd failure - opens circuit
         breaker.on_failure()
         assert breaker.state == CircuitState.OPEN
         assert breaker.can_execute() is False
@@ -171,8 +172,9 @@ class TestInMemoryFallback:
         }
         
         result = storage.save_analysis(analysis_dto, user_id)
-        
-        assert result == analysis_id
+
+        # save_analysis returns str(analysis_id) from dto
+        assert result == str(analysis_id)
         assert str(analysis_id) in storage.analyses
         assert storage.analyses[str(analysis_id)]["user_id"] == str(user_id)
         assert storage.analyses[str(analysis_id)]["status"] == "completed"
@@ -201,7 +203,12 @@ class TestInMemoryFallback:
         """Test getting analysis result from fallback storage."""
         storage = InMemoryFallback()
         analysis_id = uuid4()
-        
+
+        storage.save_analysis(
+            {"analysis_id": str(analysis_id), "status": "completed"},
+            analysis_id
+        )
+
         # Save some data first
         results_dto = {
             "biomarkers": [{"name": "glucose", "value": 100}],
@@ -280,17 +287,18 @@ class TestDatabaseFallbackService:
         mock_primary.save_analysis.assert_not_called()
     
     def test_execute_with_fallback_primary_failure(self):
-        """Test fallback service uses fallback when primary fails."""
+        """Test fallback service uses fallback when primary fails after retries."""
         mock_primary = MagicMock()
         mock_primary.save_analysis.side_effect = SQLAlchemyError("Database error")
-        
+
         service = DatabaseFallbackService(mock_primary)
         service.fallback_storage.save_analysis = MagicMock(return_value="fallback_result")
-        
+
         result = service.execute_with_fallback("save_analysis", {"test": "data"}, uuid4())
-        
+
         assert result == "fallback_result"
-        mock_primary.save_analysis.assert_called_once()
+        # RetryConfig default max_attempts=3; primary called 3 times before fallback
+        assert mock_primary.save_analysis.call_count == 3
     
     def test_circuit_breaker_status(self):
         """Test circuit breaker status reporting."""
@@ -355,20 +363,18 @@ class TestPersistenceServiceFallback:
         
         assert isinstance(is_available, bool)
     
-    @patch('services.storage.persistence_service.PersistenceService.save_analysis')
-    def test_fallback_decorator_integration(self, mock_save_analysis, db_session):
-        """Test that fallback decorator works with persistence service."""
+    def test_fallback_decorator_integration(self, db_session):
+        """Test that fallback decorator works: primary fails -> fallback used."""
         service = PersistenceService(db_session, enable_fallback=True)
-        
-        # Mock primary operation to fail
-        mock_save_analysis.side_effect = SQLAlchemyError("Database error")
-        
-        # Mock fallback storage
-        service.fallback_storage.save_analysis = MagicMock(return_value="fallback_result")
-        
-        # Call decorated method
-        result = service.save_analysis({"test": "data"}, uuid4())
-        
-        # Should return fallback result
+
+        # Correct attribute: fallback_service.fallback_storage (not service.fallback_storage)
+        service.fallback_service.fallback_storage.save_analysis = MagicMock(return_value="fallback_result")
+
+        # Make primary fail so decorator triggers fallback
+        with patch.object(service.analysis_repo, 'upsert_by_analysis_id', side_effect=SQLAlchemyError("Database error")):
+            result = service.save_analysis(
+                {"analysis_id": str(uuid4()), "status": "completed"},
+                uuid4()
+            )
+
         assert result == "fallback_result"
-        mock_save_analysis.assert_called_once()

@@ -31,7 +31,7 @@ class TestPersistenceFlow:
         
         profile = profile_repo.create(
             user_id=user_id,
-            email="test@example.com",
+            email=f"test-{user_id}@example.com",
             demographics={"age": 30, "sex": "male"}
         )
         
@@ -136,7 +136,7 @@ class TestPersistenceFlow:
         
         profile = profile_repo.create(
             user_id=user_id,
-            email="test2@example.com",
+            email=f"test2-{user_id}@example.com",
             demographics={"age": 30, "sex": "male"}
         )
         
@@ -305,7 +305,7 @@ class TestPersistenceFlow:
         
         profile = profile_repo.create(
             user_id=user_id,
-            email="test3@example.com",
+            email=f"test3-{user_id}@example.com",
             demographics={"age": 30, "sex": "male"}
         )
         

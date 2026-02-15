@@ -1,9 +1,25 @@
 # 📚 HealthIQ AI v5 - Documentation Hierarchy & Source of Truth
 
+## 🏛️ **v5.2 BASELINE AUTHORITY** (Start Here)
+
+**For v5.2 execution, the top-level authority is:**
+
+1. **`docs/README_V5.2_BASELINE.md`** — Navigation hub; open first
+2. **`docs/Master_PRD_v5.2.md`** — Constitutional document (what we build)
+3. **`docs/Delivery_Sprint_Plan_v5.2.md`** — Sprint sequencing and implementation order
+4. **`docs/architecture/ANALYTICAL_ASSETS_INVENTORY_v5.2.md`** — Analytical assets inventory
+
+Use these as the authoritative baseline for sprint planning and implementation decisions.
+
+---
+
 ## 🎯 **Documentation Authority Levels**
 
 ### **LEVEL 1: PRIMARY SSOT** (Always Check First)
-- **`docs/ARCHITECTURE_REVIEW_REPORT.md`** - **CURRENT SPRINT STATUS & IMPLEMENTATION STATE**
+- **`docs/README_V5.2_BASELINE.md`** — **NAVIGATION HUB & v5.2 BASELINE POINTER**
+  - **Purpose**: Single entry point; directs to v5.2 authoritative docs
+  - **When to Use**: Start every new chat window here
+- **`docs/ARCHITECTURE_REVIEW_REPORT.md`** — **CURRENT SPRINT STATUS & IMPLEMENTATION STATE**
   - **Purpose**: Authoritative source for current build/sprint status
   - **Contains**: What's implemented vs scaffolded vs missing, current sprint objectives, Definition of Done, critical gaps and next steps
   - **When to Use**: Before any code changes, sprint planning, status checks
@@ -38,10 +54,11 @@
 
 ### **For Cursor Agents & Developers**
 
-1. **BEFORE ANY CODE CHANGE**: Read `ARCHITECTURE_REVIEW_REPORT.md` for current status
-2. **FOR IMPLEMENTATION GUIDANCE**: Consult `docs/context/` specifications
-3. **FOR OPERATIONAL RULES**: Follow `WORKFLOW_RULE.md` boundaries
-4. **WHEN IN DOUBT**: Check this document (`DOCUMENTATION_HIERARCHY.md`) for navigation
+1. **START HERE**: Open `docs/README_V5.2_BASELINE.md` for v5.2 baseline navigation
+2. **BEFORE ANY CODE CHANGE**: Read v5.2 baseline docs + `ARCHITECTURE_REVIEW_REPORT.md` for current status
+3. **FOR IMPLEMENTATION GUIDANCE**: Consult `docs/context/` specifications
+4. **FOR OPERATIONAL RULES**: Follow `WORKFLOW_RULE.md` boundaries
+5. **WHEN IN DOUBT**: Check this document (`DOCUMENTATION_HIERARCHY.md`) for navigation
 
 ### **Sprint Planning & Architecture Decisions**
 **USE**: `docs/ARCHITECTURE_REVIEW_REPORT.md` (Level 1)
@@ -80,6 +97,7 @@
 - ❌ Ignore existing scaffolded files
 
 ### **DO:**
+- ✅ Start with `docs/README_V5.2_BASELINE.md` for v5.2 baseline
 - ✅ Check `ARCHITECTURE_REVIEW_REPORT.md` for current status
 - ✅ Verify actual codebase before building new components
 - ✅ Implement logic in existing scaffolded files

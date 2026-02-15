@@ -8,19 +8,9 @@ biomarker alias mappings.
 
 from fastapi import APIRouter, HTTPException
 from typing import Dict, List, Any
-from core.canonical.alias_registry_service import AliasRegistryService
+from core.canonical.alias_registry_service import get_alias_registry_service
 
 router = APIRouter()
-
-# Global alias service instance (singleton pattern for performance)
-_alias_service = None
-
-def get_alias_service() -> AliasRegistryService:
-    """Get or create the global alias service instance."""
-    global _alias_service
-    if _alias_service is None:
-        _alias_service = AliasRegistryService(use_v4_registry=True)
-    return _alias_service
 
 
 @router.get("/aliases")
@@ -33,12 +23,12 @@ async def get_aliases() -> Dict[str, List[str]]:
         
     Example:
         {
-            "hdl": ["HDL", "HDL Cholesterol", "High-Density Lipoprotein"],
-            "ldl": ["LDL", "LDL Cholesterol", "Low-Density Lipoprotein"]
+            "hdl_cholesterol": ["HDL", "HDL Cholesterol", "High-Density Lipoprotein"],
+            "ldl_cholesterol": ["LDL", "LDL Cholesterol", "Low-Density Lipoprotein"]
         }
     """
     try:
-        service = get_alias_service()
+        service = get_alias_registry_service()
         aliases = service.get_all_aliases()
         return aliases
     except Exception as e:
@@ -57,7 +47,7 @@ async def get_canonical_biomarkers() -> List[str]:
         List of canonical biomarker names
     """
     try:
-        service = get_alias_service()
+        service = get_alias_registry_service()
         canonical = service.get_canonical_biomarkers()
         return canonical
     except Exception as e:
@@ -79,7 +69,7 @@ async def resolve_alias(alias: str) -> Dict[str, str]:
         Dict with 'alias' and 'canonical' keys
     """
     try:
-        service = get_alias_service()
+        service = get_alias_registry_service()
         canonical = service.resolve(alias)
         
         return {
@@ -103,7 +93,7 @@ async def get_alias_stats() -> Dict[str, Any]:
         Dict with alias count, canonical count, and other metrics
     """
     try:
-        service = get_alias_service()
+        service = get_alias_registry_service()
         
         return {
             "alias_count": service.get_alias_count(),
@@ -130,7 +120,7 @@ async def normalize_biomarkers(panel: Dict[str, Any]) -> Dict[str, Any]:
         Normalized panel with canonical names as keys
     """
     try:
-        service = get_alias_service()
+        service = get_alias_registry_service()
         normalized = service.normalize_panel(panel)
         
         return {

@@ -13,6 +13,7 @@ from core.scoring.rules import ScoringRules, ScoreRange, UNSCORED_REASON
 from core.scoring.overlays import LifestyleOverlays, LifestyleProfile
 from core.canonical.normalize import BiomarkerNormalizer
 from core.validation.completeness import DataCompletenessValidator
+from core.analytics.primitives import calculate_confidence
 
 
 class ConfidenceLevel(Enum):
@@ -306,23 +307,28 @@ class ScoringEngine:
         missing_biomarkers: List[str],
         system_rules: Any
     ) -> ConfidenceLevel:
-        """Determine confidence level for a health system."""
+        """Determine confidence level for a health system. Uses HAS calculate_confidence."""
         if not biomarker_scores:
             return ConfidenceLevel.LOW
-        
+
         # Check if minimum biomarkers are present
         if len(biomarker_scores) < system_rules.min_biomarkers_required:
             return ConfidenceLevel.LOW
-        
-        # Check biomarker confidence levels
+
         high_confidence_count = sum(
-            1 for score in biomarker_scores 
+            1 for score in biomarker_scores
             if score.confidence == ConfidenceLevel.HIGH
         )
-        
-        if high_confidence_count >= len(biomarker_scores) * 0.8:
+        conf_ratio = calculate_confidence(
+            high_confidence_count,
+            len(biomarker_scores),
+            floor=0.0,
+            ceiling=1.0,
+        )
+
+        if conf_ratio >= 0.8:
             return ConfidenceLevel.HIGH
-        elif high_confidence_count >= len(biomarker_scores) * 0.5:
+        elif conf_ratio >= 0.5:
             return ConfidenceLevel.MEDIUM
         else:
             return ConfidenceLevel.LOW

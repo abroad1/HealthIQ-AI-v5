@@ -223,6 +223,28 @@ class TestInsightSynthesizer:
         assert result.total_insights > 0
         assert len(result.categories_covered) > 0
     
+    def test_synthesize_insights_enforces_requested_category(self, synthesizer, mock_context):
+        """When requested category is metabolic, all returned insights have category metabolic
+        even if underlying mock returns wrong or different category."""
+        biomarker_scores = {"overall_score": 0.75, "health_system_scores": {}}
+        clustering_results = {"clusters": []}
+        lifestyle_profile = {"diet_level": "good"}
+        
+        result = synthesizer.synthesize_insights(
+            context=mock_context,
+            biomarker_scores=biomarker_scores,
+            clustering_results=clustering_results,
+            lifestyle_profile=lifestyle_profile,
+            requested_categories=["metabolic"],
+            max_insights_per_category=3
+        )
+        
+        assert result.total_insights > 0, "Expected at least one insight"
+        for insight in result.insights:
+            assert insight.category == "metabolic", (
+                f"Expected all insights to have category 'metabolic', got {insight.category}"
+            )
+    
     def test_synthesize_insights_error_handling(self, synthesizer, mock_context):
         """Test insight synthesis error handling."""
         # Test with invalid data

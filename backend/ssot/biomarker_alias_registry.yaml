@@ -30,7 +30,7 @@
 
 hdl:
 
-  canonical_id: hdl
+  canonical_id: hdl_cholesterol
 
   aliases:
 
@@ -41,6 +41,8 @@ hdl:
   - High-Density Lipoprotein
 
   - hdlcholesterol
+
+  - hdl
 
 total_cholesterol:
 
@@ -68,7 +70,7 @@ triglycerides:
 
 ldl:
 
-  canonical_id: ldl
+  canonical_id: ldl_cholesterol
 
   aliases:
 
@@ -79,6 +81,8 @@ ldl:
   - LDL Cholesterol
 
   - low_density_lipoproteins_(venous)
+
+  - ldl
 
 apoa1:
 
