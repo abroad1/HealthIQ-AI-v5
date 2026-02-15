@@ -25,6 +25,7 @@ from core.analytics.primitives import frontend_status_from_value_and_range
 from core.analytics.criticality import evaluate_criticality
 from core.analytics.ratio_registry import RatioRegistry, DERIVED_IDS, compute
 from core.analytics.cluster_schema import get_cluster_schema_version_stamp
+from core.analytics.insight_graph_builder import build_insight_graph_v1
 from core.scoring.rules import DERIVED_RATIO_BOUNDS
 
 
@@ -564,12 +565,29 @@ class AnalysisOrchestrator:
             lifestyle_profile = lifestyle_data
         elif hasattr(context.user, 'lifestyle_factors') and context.user.lifestyle_factors:
             lifestyle_profile = context.user.lifestyle_factors
-        
-        # Synthesize insights
+
+        # Sprint 7: Build InsightGraph as sole LLM input
+        filtered_biomarkers = {}
+        for bm_name, bm_val in context.biomarker_panel.biomarkers.items():
+            v = bm_val.value if hasattr(bm_val, 'value') else bm_val
+            filtered_biomarkers[bm_name] = v if isinstance(v, (int, float)) else (v.get('value', v) if isinstance(v, dict) else v)
+        insight_graph = build_insight_graph_v1(
+            analysis_id=context.analysis_id,
+            scoring_result=biomarker_scores,
+            clustering_result=clustering_results,
+            criticality_result=evaluate_criticality(biomarker_scores, set(filtered_biomarkers.keys())) if biomarker_scores else None,
+            derived_ratios_meta=None,
+            input_reference_ranges=None,
+            filtered_biomarkers=filtered_biomarkers,
+            context=context,
+            lab_origin=None,
+            unit_normalisation_meta=None,
+        )
+
+        # Synthesize insights (LLM receives only InsightGraph)
         synthesis_result = self.insight_synthesizer.synthesize_insights(
             context=context,
-            biomarker_scores=biomarker_scores,
-            clustering_results=clustering_results,
+            insight_graph=insight_graph,
             lifestyle_profile=lifestyle_profile,
             requested_categories=requested_categories,
             max_insights_per_category=max_insights_per_category
@@ -599,7 +617,44 @@ class AnalysisOrchestrator:
             "processing_time_ms": synthesis_result.processing_time_ms,
             "created_at": synthesis_result.created_at
         }
-    
+
+    def _synthesize_from_insight_graph(
+        self,
+        context: AnalysisContext,
+        insight_graph: Any,
+        lifestyle_profile: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Sprint 7: Synthesize insights using InsightGraph only. Used by run()."""
+        synthesis_result = self.insight_synthesizer.synthesize_insights(
+            context=context,
+            insight_graph=insight_graph,
+            lifestyle_profile=lifestyle_profile,
+        )
+        return {
+            "analysis_id": synthesis_result.analysis_id,
+            "insights": [
+                {
+                    "id": insight.id,
+                    "category": insight.category,
+                    "summary": insight.summary,
+                    "evidence": insight.evidence,
+                    "confidence": insight.confidence,
+                    "severity": insight.severity,
+                    "recommendations": insight.recommendations,
+                    "biomarkers_involved": insight.biomarkers_involved,
+                    "lifestyle_factors": insight.lifestyle_factors,
+                    "created_at": insight.created_at
+                }
+                for insight in synthesis_result.insights
+            ],
+            "synthesis_summary": synthesis_result.synthesis_summary,
+            "total_insights": synthesis_result.total_insights,
+            "categories_covered": synthesis_result.categories_covered,
+            "overall_confidence": synthesis_result.overall_confidence,
+            "processing_time_ms": synthesis_result.processing_time_ms,
+            "created_at": synthesis_result.created_at
+        }
+
     def _assert_canonical_only(self, raw_map: Mapping[str, Any], *, where: str = "pre-context") -> None:
         """Raise if any biomarker keys are not already canonical.
         We resolve each key; if resolution changes the name, it was an alias.
@@ -800,13 +855,27 @@ class AnalysisOrchestrator:
             available_biomarkers = set(filtered_biomarkers.keys())
             criticality_result = evaluate_criticality(scoring_result, available_biomarkers)
 
-            # Step 5: Synthesize insights
-            logger.info("Step 5: Synthesizing insights")
-            insights_result = self.synthesize_insights(
+            # Step 4.6: Build InsightGraph_v1 (Sprint 7) — sole LLM input
+            logger.info("Step 4.6: Building InsightGraph")
+            insight_graph = build_insight_graph_v1(
+                analysis_id=analysis_id,
+                scoring_result=scoring_result,
+                clustering_result=clustering_result,
+                criticality_result=criticality_result,
+                derived_ratios_meta=derived_ratios_meta,
+                input_reference_ranges=input_reference_ranges,
+                filtered_biomarkers=filtered_biomarkers,
                 context=context,
-                biomarker_scores=scoring_result,
-                clustering_results=clustering_result,
-                lifestyle_data=user.get('lifestyle_factors', {})
+                lab_origin=user.get("lab_origin") if isinstance(user.get("lab_origin"), dict) else None,
+                unit_normalisation_meta=unit_meta,
+            )
+
+            # Step 5: Synthesize insights (LLM receives only InsightGraph_v1)
+            logger.info("Step 5: Synthesizing insights")
+            insights_result = self._synthesize_from_insight_graph(
+                context=context,
+                insight_graph=insight_graph,
+                lifestyle_profile=user.get('lifestyle_factors', {}) or {},
             )
             
             # Step 6: Build biomarker DTOs from scoring results
@@ -1063,6 +1132,7 @@ class AnalysisOrchestrator:
                 meta.update(get_cluster_schema_version_stamp())
             except (FileNotFoundError, ValueError):
                 pass
+            meta["insight_graph"] = insight_graph.model_dump() if hasattr(insight_graph, "model_dump") else {}
             derived_markers = {
                 "registry_version": derived_ratios_meta.get("ratio_registry_version"),
                 "derived": derived_ratios_meta.get("ratios", {}),
