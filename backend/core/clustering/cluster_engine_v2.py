@@ -73,33 +73,18 @@ def score_clusters(
             "tags": List[str]        # Optional tags from rules
         }
     """
-    # Load SSOT biomarkers to determine cluster membership
-    ssot_path = Path(__file__).parent.parent.parent / "ssot" / "biomarkers.yaml"
-    with open(ssot_path, 'r', encoding='utf-8') as f:
-        ssot_data = yaml.safe_load(f) or {}
-    
-    ssot_biomarkers = ssot_data.get("biomarkers", {})
-    
-    # Define 8 health system clusters
-    cluster_ids = [
-        "metabolic",
-        "cardiovascular",
-        "hepatic",
-        "renal",
-        "inflammatory",
-        "hematological",
-        "hormonal",
-        "nutritional"
-    ]
-    
-    # Build cluster -> biomarkers mapping from SSOT
-    cluster_biomarkers: Dict[str, List[str]] = {}
-    for biomarker_name, definition in ssot_biomarkers.items():
-        system = definition.get("system", "")
-        if system in cluster_ids:
-            if system not in cluster_biomarkers:
-                cluster_biomarkers[system] = []
-            cluster_biomarkers[system].append(biomarker_name)
+    # Sprint 6: Schema-driven cluster definitions
+    try:
+        from core.analytics.cluster_schema import load_cluster_schema
+        schema = load_cluster_schema()
+        cluster_biomarkers = {
+            cid: list(cdef.all_biomarkers())
+            for cid, cdef in schema.clusters.items()
+        }
+        cluster_ids = list(cluster_biomarkers.keys())
+    except (ImportError, FileNotFoundError, ValueError):
+        cluster_ids = []
+        cluster_biomarkers = {}
     
     # Load cluster rules
     rules = load_cluster_rules()

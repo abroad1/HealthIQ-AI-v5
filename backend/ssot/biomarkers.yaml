@@ -59,6 +59,101 @@ biomarkers:
     known_modifiers: []
     clinical_weight: 0.6
     
+  # Derived ratios (lab may supply; unit "ratio" = dimensionless, no conversion)
+  tc_hdl_ratio:
+    aliases: []
+    unit: "ratio"
+    description: "Total cholesterol / HDL ratio"
+    category: "cardiovascular"
+    data_type: "numeric"
+    system: "cardiovascular"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
+  tg_hdl_ratio:
+    aliases: []
+    unit: "ratio"
+    description: "Triglycerides / HDL ratio"
+    category: "cardiovascular"
+    data_type: "numeric"
+    system: "cardiovascular"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.5
+  ldl_hdl_ratio:
+    aliases: []
+    unit: "ratio"
+    description: "LDL / HDL ratio"
+    category: "cardiovascular"
+    data_type: "numeric"
+    system: "cardiovascular"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.7
+  non_hdl_cholesterol:
+    aliases: []
+    unit: "mmol/L"
+    description: "Non-HDL cholesterol (TC - HDL)"
+    category: "cardiovascular"
+    data_type: "numeric"
+    system: "cardiovascular"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
+  apoB_apoA1_ratio:
+    aliases: []
+    unit: "ratio"
+    description: "ApoB / ApoA1 ratio"
+    category: "cardiovascular"
+    data_type: "numeric"
+    system: "cardiovascular"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
+
+  # Apolipoprotein inputs (for apoB_apoA1_ratio)
+  apob:
+    aliases: ["apo_b", "apolipoprotein_b"]
+    unit: "g/L"
+    description: "Apolipoprotein B"
+    category: "cardiovascular"
+    data_type: "numeric"
+    system: "cardiovascular"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
+  apoa1:
+    aliases: ["apo_a1", "apolipoprotein_a1"]
+    unit: "g/L"
+    description: "Apolipoprotein A1"
+    category: "cardiovascular"
+    data_type: "numeric"
+    system: "cardiovascular"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
+    
   # Metabolic Biomarkers
   glucose:
     aliases: ["blood_sugar", "blood_glucose", "sugar"]
@@ -174,6 +269,34 @@ biomarkers:
     known_modifiers: ["alcohol"]
     clinical_weight: 0.8
     
+  # CBC differential (for NLR)
+  neutrophils:
+    aliases: ["neutrophil_count", "neutrophils_(venous)"]
+    unit: "10^9/L"
+    description: "Neutrophil count (absolute)"
+    category: "cbc"
+    data_type: "numeric"
+    system: "hematological"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.5
+  lymphocytes:
+    aliases: ["lymphocyte_count", "lymphocytes_(venous)"]
+    unit: "10^9/L"
+    description: "Lymphocyte count (absolute)"
+    category: "cbc"
+    data_type: "numeric"
+    system: "hematological"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.5
+    
   # Inflammatory Markers
   crp:
     aliases: ["c_reactive_protein", "hs_crp", "high_sensitivity_crp", "c-reactive_protein_crp_(venous)"]
@@ -245,6 +368,47 @@ biomarkers:
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.6
+
+  # Derived ratios / computed (Sprint 5)
+  nlr:
+    aliases: []
+    unit: "ratio"
+    description: "Neutrophil-to-lymphocyte ratio"
+    category: "inflammatory"
+    data_type: "numeric"
+    system: "immune"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.5
+  bun_creatinine_ratio:
+    aliases: []
+    unit: "ratio"
+    description: "BUN / Creatinine ratio"
+    category: "kidney"
+    data_type: "numeric"
+    system: "renal"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
+  ast_alt_ratio:
+    aliases: []
+    unit: "ratio"
+    description: "AST / ALT ratio (De Ritis ratio)"
+    category: "liver"
+    data_type: "numeric"
+    system: "hepatic"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.5
     
   # Electrolytes
   calcium:

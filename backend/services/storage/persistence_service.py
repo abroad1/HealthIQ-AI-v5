@@ -523,6 +523,11 @@ class PersistenceService:
                     "recommendations": insight.recommendations or []
                 })
             
+            # Sprint 5: Prefer first-class derived_markers column; fallback to processing_metadata
+            derived_markers = getattr(result, "derived_markers", None)
+            if derived_markers is None and isinstance(result.processing_metadata, dict) and "derived_markers" in result.processing_metadata:
+                derived_markers = result.processing_metadata["derived_markers"]
+
             return {
                 "analysis_id": str(analysis_id),
                 "result_version": result.result_version,
@@ -531,6 +536,7 @@ class PersistenceService:
                 "insights": insight_list,
                 "recommendations": result.recommendations or [],
                 "overall_score": result.overall_score,
+                "derived_markers": derived_markers,
                 "meta": {
                     "confidence_score": result.confidence_score,
                     "processing_metadata": result.processing_metadata
@@ -624,6 +630,7 @@ class PersistenceService:
             result_payload.pop("processing_metadata", None)
             
             # Convert to dict format for database persistence
+            derived_markers = getattr(dto, "derived_markers", None)
             result_data = {
                 "biomarkers": [b.model_dump() if hasattr(b, 'model_dump') else b for b in result_payload["biomarkers"]] if result_payload["biomarkers"] else [],
                 "clusters": [c.model_dump() if hasattr(c, 'model_dump') else c for c in result_payload["clusters"]] if result_payload["clusters"] else [],
@@ -633,6 +640,9 @@ class PersistenceService:
                 "recommendations": result_payload["recommendations"],
                 "result_version": result_payload["result_version"]
             }
+            # Sprint 5: Persist derived_markers to first-class column
+            if derived_markers is not None:
+                result_data["derived_markers"] = derived_markers
             
             # Use upsert to ensure idempotence
             analysis_result = self.analysis_result_repo.upsert_by_analysis_id(analysis_id, **result_data)

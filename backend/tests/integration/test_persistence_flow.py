@@ -103,7 +103,13 @@ class TestPersistenceFlow:
             risk_assessment={},
             recommendations=[],
             created_at=datetime.now(UTC).isoformat(),
-            result_version="1.0.0"
+            result_version="1.0.0",
+            derived_markers={
+                "registry_version": "1.1.0",
+                "derived": {
+                    "tc_hdl_ratio": {"value": 4.0, "unit": "ratio", "source": "computed", "bounds_applied": True, "inputs_used": ["total_cholesterol", "hdl_cholesterol"]},
+                },
+            },
         )
         
         # Test automatic persistence
@@ -118,7 +124,21 @@ class TestPersistenceFlow:
         assert result is not None, "Analysis result should be created"
         assert result.overall_score == 0.75
         assert result.result_version == "1.0.0"
-        
+
+        # Verify derived_markers round-trip via first-class column (Sprint 5)
+        assert result.derived_markers is not None, "DB model derived_markers column should be populated"
+        assert result.derived_markers.get("registry_version") == "1.1.0"
+        assert "tc_hdl_ratio" in result.derived_markers.get("derived", {})
+
+        fetched = persistence_service.get_analysis_result(analysis_id)
+        assert fetched is not None
+        assert "derived_markers" in fetched
+        dm = fetched["derived_markers"]
+        assert dm is not None
+        assert dm.get("registry_version") == "1.1.0"
+        assert "tc_hdl_ratio" in dm.get("derived", {})
+        assert dm["derived"]["tc_hdl_ratio"]["value"] == 4.0
+
         # Verify biomarker scores were created
         biomarker_repo = BiomarkerScoreRepository(db_session)
         biomarker_scores = biomarker_repo.list_by_analysis_id(analysis_id)

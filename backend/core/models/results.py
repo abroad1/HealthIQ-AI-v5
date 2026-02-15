@@ -64,6 +64,10 @@ class AnalysisResult(BaseModel):
         default=None, 
         description="Total processing time"
     )
+    derived_markers: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Derived/ratio markers (registry_version + derived dict) for replay determinism"
+    )
 
 
 class AnalysisSummary(BaseModel):
@@ -136,5 +140,9 @@ class AnalysisDTO(BaseModel):
     unmapped_biomarkers: List[str] = Field(
         default_factory=list,
         description="Unrecognised biomarkers excluded from analysis"
+    )
+    derived_markers: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Derived/ratio markers (registry_version + derived dict with provenance)"
     )
     meta: Optional[Dict[str, Any]] = Field(default=None, description="Analysis meta (criticality, etc.)")
