@@ -377,6 +377,57 @@ Return insights in this JSON format:
         
         return formatted_prompt
 
+    @classmethod
+    def format_template_from_insight_graph(
+        cls,
+        category: str,
+        insight_graph_json: str,
+        lifestyle_profile: Dict[str, Any],
+    ) -> str:
+        """
+        Sprint 7: Format prompt using ONLY InsightGraph_v1. LLM receives structured payload only.
+
+        Args:
+            category: Health category
+            insight_graph_json: JSON-serialised InsightGraphV1
+            lifestyle_profile: User lifestyle (minimal; not raw biomarkers)
+
+        Returns:
+            Formatted prompt string
+        """
+        template = cls.get_template(category)
+        # Use same template structure but with insight_graph as sole data source.
+        # Legacy templates expect biomarker_scores and clustering_results - we pass
+        # derived views from insight_graph to satisfy template placeholders without
+        # exposing raw data. For Sprint 7, we inject the full InsightGraph as the
+        # primary payload and use placeholder text for backward template compat.
+        import json
+        try:
+            ig = json.loads(insight_graph_json)
+            # PRD §4.7: No raw values, units, ranges. Only status and score (interpreted outputs).
+            biomarker_summary = {
+                n["biomarker_id"]: {
+                    "status": n.get("status", "unknown"),
+                    "score": n.get("score"),
+                }
+                for n in ig.get("biomarker_nodes", [])
+            }
+            cluster_summary = ig.get("cluster_summary", {}) or {}
+            clusters_list = cluster_summary.get("clusters", [])
+        except (json.JSONDecodeError, TypeError):
+            biomarker_summary = {}
+            clusters_list = []
+        return template.format(
+            biomarker_scores=biomarker_summary,
+            diet_level=lifestyle_profile.get("diet_level", "average"),
+            exercise_minutes_per_week=lifestyle_profile.get("exercise_minutes_per_week", 150),
+            sleep_hours=lifestyle_profile.get("sleep_hours", 7.0),
+            stress_level=lifestyle_profile.get("stress_level", "average"),
+            smoking_status=lifestyle_profile.get("smoking_status", "never"),
+            alcohol_units_per_week=lifestyle_profile.get("alcohol_units_per_week", 5),
+            clustering_results=clusters_list,
+        )
+
 
 def create_insight_templates() -> List[InsightTemplate]:
     """

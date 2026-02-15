@@ -290,49 +290,69 @@ class InsightSynthesizer:
             return MockLLMClient()
     
     def synthesize_insights(
-        self, 
+        self,
         context: AnalysisContext,
-        biomarker_scores: Dict[str, Any],
-        clustering_results: Dict[str, Any],
-        lifestyle_profile: Dict[str, Any],
+        insight_graph: Optional[Any] = None,
+        lifestyle_profile: Optional[Dict[str, Any]] = None,
+        biomarker_scores: Optional[Dict[str, Any]] = None,
+        clustering_results: Optional[Dict[str, Any]] = None,
         requested_categories: Optional[List[str]] = None,
         max_insights_per_category: int = 3
     ) -> InsightSynthesisResult:
         """
-        Synthesize insights from analysis context and results.
-        
+        Synthesize insights. Sprint 7: when insight_graph provided, LLM receives only InsightGraph.
+
         Args:
-            context: Analysis context with user and biomarker data
-            biomarker_scores: Biomarker scoring results
-            clustering_results: Clustering analysis results
+            context: Analysis context
+            insight_graph: InsightGraphV1 (preferred; sole LLM input when provided)
             lifestyle_profile: User lifestyle profile
-            requested_categories: Specific categories to generate insights for
-            max_insights_per_category: Maximum insights per category
-            
+            biomarker_scores: Fallback when insight_graph is None (legacy)
+            clustering_results: Fallback when insight_graph is None (legacy)
+            requested_categories: Categories to generate
+            max_insights_per_category: Max per category
+
         Returns:
-            InsightSynthesisResult with generated insights
+            InsightSynthesisResult
         """
         start_time = time.time()
-        
-        # Determine categories to process
+        lifestyle_profile = lifestyle_profile or {}
+
         categories = requested_categories or self.prompt_templates.get_supported_categories()
-        
         all_insights = []
         categories_covered = []
-        
-        # Generate insights for each category with robust error handling
+
+        insight_graph_json = ""
+        if insight_graph is not None:
+            if hasattr(insight_graph, "model_dump"):
+                import json
+                insight_graph_json = json.dumps(insight_graph.model_dump(), default=str)
+            elif isinstance(insight_graph, dict):
+                import json
+                insight_graph_json = json.dumps(insight_graph, default=str)
+            else:
+                insight_graph_json = str(insight_graph)
+
         for category in categories:
             try:
                 print(f"[INFO] Generating insights for category: {category}")
-                category_insights = self._generate_category_insights(
-                    category=category,
-                    context=context,
-                    biomarker_scores=biomarker_scores,
-                    clustering_results=clustering_results,
-                    lifestyle_profile=lifestyle_profile,
-                    max_insights=max_insights_per_category
-                )
-                
+                if insight_graph is not None and insight_graph_json:
+                    category_insights = self._generate_category_insights_from_graph(
+                        category=category,
+                        context=context,
+                        insight_graph_json=insight_graph_json,
+                        lifestyle_profile=lifestyle_profile,
+                        max_insights=max_insights_per_category
+                    )
+                else:
+                    category_insights = self._generate_category_insights(
+                        category=category,
+                        context=context,
+                        biomarker_scores=biomarker_scores or {},
+                        clustering_results=clustering_results or {},
+                        lifestyle_profile=lifestyle_profile,
+                        max_insights=max_insights_per_category
+                    )
+
                 if category_insights:
                     all_insights.extend(category_insights)
                     categories_covered.append(category)
@@ -375,6 +395,19 @@ class InsightSynthesizer:
             created_at=datetime.now(UTC).isoformat()
         )
     
+    def _strip_to_safe_biomarker_view(self, biomarker_scores: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+        """PRD §4.7: Extract only status and score; no raw values, units, ranges."""
+        safe = {}
+        for system_name, system_score in (biomarker_scores.get("health_system_scores") or {}).items():
+            for bs in system_score.get("biomarker_scores", []):
+                name = bs.get("biomarker_name")
+                if name and name not in safe:
+                    safe[name] = {
+                        "status": bs.get("status", "unknown"),
+                        "score": bs.get("score"),
+                    }
+        return safe
+
     def _generate_category_insights(
         self,
         category: str,
@@ -398,10 +431,12 @@ class InsightSynthesizer:
         Returns:
             List of Insight objects
         """
-        # Format the prompt template
+        # PRD §4.7: Strip to status+score only; no raw values/units/ranges
+        safe_biomarker_view = self._strip_to_safe_biomarker_view(biomarker_scores)
+        # Format the prompt template (clustering_results: cluster IDs + metadata only, no raw values)
         user_prompt = self.prompt_templates.format_template(
             category=category,
-            biomarker_scores=biomarker_scores,
+            biomarker_scores=safe_biomarker_view,
             lifestyle_profile=lifestyle_profile,
             clustering_results=clustering_results
         )
@@ -421,7 +456,30 @@ class InsightSynthesizer:
         
         # Limit to max_insights
         return insights[:max_insights]
-    
+
+    def _generate_category_insights_from_graph(
+        self,
+        category: str,
+        context: AnalysisContext,
+        insight_graph_json: str,
+        lifestyle_profile: Dict[str, Any],
+        max_insights: int
+    ) -> List[Insight]:
+        """Sprint 7: Generate insights using ONLY InsightGraph. LLM receives structured payload only."""
+        user_prompt = self.prompt_templates.format_template_from_insight_graph(
+            category=category,
+            insight_graph_json=insight_graph_json,
+            lifestyle_profile=lifestyle_profile,
+        )
+        system_prompt = self.prompt_templates.get_system_prompt()
+        llm_response = self.llm_client.generate_insights(
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+            category=category
+        )
+        insights = self._parse_llm_response(llm_response, category, context.analysis_id)
+        return insights[:max_insights]
+
     def _parse_llm_response(
         self, 
         llm_response: Dict[str, Any], 
