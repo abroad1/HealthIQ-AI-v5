@@ -343,7 +343,9 @@ class AuditLogRepository(BaseRepository[AuditLog]):
             logger.info(f"Logged action {action} for resource {resource_type}")
             return audit_log
         except Exception as e:
-            self.db_session.rollback()
+            tx = self.db_session.get_transaction()
+            if tx is not None and tx.is_active:
+                self.db_session.rollback()
             logger.error(f"Failed to log action {action}: {str(e)}")
             raise
 

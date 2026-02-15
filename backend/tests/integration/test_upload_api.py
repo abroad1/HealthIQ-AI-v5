@@ -22,73 +22,51 @@ class TestUploadAPI:
             "/api/upload/parse",
             data={"text_content": "Sample lab report text content"}
         )
-        
+
         assert response.status_code == 200
         data = response.json()
-        
-        # Verify response structure
+
+        assert data["success"] is True
+        assert data["parsed_data"] is not None
+        assert data["analysis_id"] is not None and len(data["analysis_id"]) > 0
+        assert data["message"] and len(data["message"]) > 0
+        assert "parsing completed" in data["message"].lower()
+
+        # Verify parsed data structure
+        parsed_data = data["parsed_data"]
+        assert "biomarkers" in parsed_data
+        assert "metadata" in parsed_data
+    
+    def test_parse_upload_with_file(self, client):
+        """Test POST /api/upload/parse with file upload."""
+        # Minimal valid PDF (dummy PDF may be rejected by LLM; we assert actual response)
+        minimal_pdf = b"%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n"
+        files = {"file": ("test_report.pdf", minimal_pdf, "application/pdf")}
+
+        response = client.post("/api/upload/parse", files=files)
+
+        assert response.status_code == 200
+        data = response.json()
+
         assert "success" in data
         assert "message" in data
         assert "parsed_data" in data
         assert "analysis_id" in data
         assert "timestamp" in data
-        
-        # Verify response content
-        assert data["success"] is True
-        assert "Mock parsing completed" in data["message"]
-        assert "placeholder implementation" in data["message"]
-        assert data["analysis_id"] is not None
-        assert data["timestamp"] is not None
-        
-        # Verify parsed data structure
-        parsed_data = data["parsed_data"]
-        assert "biomarkers" in parsed_data
-        assert "demographics" in parsed_data
-        assert "questionnaire_responses" in parsed_data
-        assert "metadata" in parsed_data
-        
-        # Verify biomarkers structure
-        biomarkers = parsed_data["biomarkers"]
-        assert "total_cholesterol" in biomarkers
-        assert "hdl_cholesterol" in biomarkers
-        assert "glucose" in biomarkers
-        
-        # Verify metadata
-        metadata = parsed_data["metadata"]
-        assert metadata["parsing_method"] == "mock_placeholder"
-        assert metadata["confidence_score"] == 0.95
-        assert metadata["source_type"] == "text_input"
-    
-    def test_parse_upload_with_file(self, client):
-        """Test POST /api/upload/parse with file upload."""
-        # Create a mock file
-        files = {"file": ("test_report.pdf", b"mock pdf content", "application/pdf")}
-        
-        response = client.post("/api/upload/parse", files=files)
-        
-        assert response.status_code == 200
-        data = response.json()
-        
-        # Verify response structure
-        assert data["success"] is True
-        assert "Mock parsing completed" in data["message"]
-        assert "file_upload" in data["message"]
-        
-        # Verify parsed data metadata indicates file source
-        parsed_data = data["parsed_data"]
-        metadata = parsed_data["metadata"]
-        assert metadata["source_type"] == "lab_report"
+        assert data["analysis_id"] is not None and len(data["analysis_id"]) > 0
+
+        # Dummy PDF may return success=False (e.g. "document has no pages")
+        if data["success"]:
+            assert data["parsed_data"] is not None
+            assert "file_upload" in data["message"].lower() or "parsing" in data["message"].lower()
+        else:
+            assert data["message"] and len(data["message"]) > 0
     
     def test_parse_upload_without_input(self, client):
         """Test POST /api/upload/parse without any input."""
         response = client.post("/api/upload/parse")
-        
-        assert response.status_code == 200
-        data = response.json()
-        
-        # Should still return mock data even without input
-        assert data["success"] is True
-        assert data["parsed_data"] is not None
+
+        assert response.status_code == 400
     
     def test_validate_upload_format_with_text(self, client):
         """Test POST /api/upload/validate with text content."""
@@ -173,13 +151,10 @@ class TestUploadAPI:
     
     def test_upload_endpoints_error_handling(self, client):
         """Test error handling in upload endpoints."""
-        # Test with malformed request
+        # Malformed request: invalid_field instead of file/text_content
         response = client.post(
             "/api/upload/parse",
             data={"invalid_field": "invalid_value"}
         )
-        
-        # Should still work (mock implementation handles missing inputs gracefully)
-        assert response.status_code == 200
-        data = response.json()
-        assert data["success"] is True
+
+        assert response.status_code == 400

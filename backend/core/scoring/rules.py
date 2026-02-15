@@ -3,11 +3,15 @@ Static biomarker rules and thresholds for scoring engines.
 
 Lab-provided biomarkers: use ONLY lab reference ranges. No SSOT/global lookups.
 Derived ratios (v5-computed, lab did not supply): may use explicit hard-coded bounds table.
+
+Uses HAS v1 primitives for position-in-range and status (core/analytics/primitives).
 """
 
 from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
+
+from core.analytics.primitives import position_in_range, map_position_to_status
 
 # Derived ratios v5 computes - only these may use hard-coded bounds when lab didn't supply
 DERIVED_RATIOS = frozenset({
@@ -144,7 +148,7 @@ class ScoringRules:
                 weight=0.2
             ),
             BiomarkerRule(
-                biomarker_name="ldl",
+                biomarker_name="ldl_cholesterol",
                 optimal_range=(0, 100),
                 normal_range=(0, 100),
                 borderline_range=(100, 129),
@@ -155,7 +159,7 @@ class ScoringRules:
                 weight=0.3
             ),
             BiomarkerRule(
-                biomarker_name="hdl",
+                biomarker_name="hdl_cholesterol",
                 optimal_range=(60, 200),
                 normal_range=(40, 200),
                 borderline_range=(35, 40),
@@ -458,88 +462,77 @@ class ScoringRules:
         # Derived ratio not in table: unscored
         return 0.0, ScoreRange.CRITICAL, UNSCORED_REASON
     
+    _HAS_TO_SCORE_RANGE = {
+        "low_critical": ScoreRange.CRITICAL,
+        "low_borderline": ScoreRange.BORDERLINE,
+        "normal": ScoreRange.NORMAL,
+        "optimal": ScoreRange.OPTIMAL,
+        "high_borderline": ScoreRange.HIGH,
+        "high_critical": ScoreRange.CRITICAL,
+    }
+
     def _calculate_score_from_range(self, value: float, min_val: float, max_val: float) -> Tuple[float, ScoreRange]:
         """
         Calculate score and status from a reference range.
-        
+
+        Uses HAS v1 position_in_range and map_position_to_status for consistency.
+
         Args:
             value: Biomarker value
             min_val: Minimum of reference range
             max_val: Maximum of reference range
-            
+
         Returns:
             Tuple of (score, score_range) where score is 0-100
         """
-        range_span = max_val - min_val
-        if range_span <= 0:
+        position = position_in_range(value, min_val, max_val)
+        if position is None:
             return 0.0, ScoreRange.CRITICAL
-        
-        # Calculate how far into the range the value is (0.0 = at min, 1.0 = at max)
-        position = (value - min_val) / range_span
-        
-        # Determine score range based on position within reference range
-        # Optimal: middle 60% of range (20% to 80%)
-        # Normal: 10% to 90% of range
-        # Borderline: 5% to 95% of range
-        # High/Low: outside normal but within borderline
-        # Critical: outside borderline
-        
+
+        has_status = map_position_to_status(position)
+        score_range = self._HAS_TO_SCORE_RANGE.get(has_status, ScoreRange.CRITICAL)
+
+        # Score (0-100) from position - same bands as before for backward compatibility
         if 0.2 <= position <= 0.8:
-            # Optimal range (middle 60%)
             score = 100.0
-            score_range = ScoreRange.OPTIMAL
         elif 0.1 <= position <= 0.9:
-            # Normal range (80% of range)
-            # Score decreases linearly from 100 at 20% to 90 at 10%, and from 100 at 80% to 90 at 90%
             if position < 0.2:
-                score = 90.0 + (position - 0.1) / 0.1 * 10.0  # 90 to 100
+                score = 90.0 + (position - 0.1) / 0.1 * 10.0
             elif position > 0.8:
-                score = 100.0 - (position - 0.8) / 0.1 * 10.0  # 100 to 90
+                score = 100.0 - (position - 0.8) / 0.1 * 10.0
             else:
                 score = 100.0
-            score_range = ScoreRange.NORMAL
         elif 0.05 <= position <= 0.95:
-            # Borderline range
             if position < 0.1:
-                score = 70.0 + (position - 0.05) / 0.05 * 20.0  # 70 to 90
+                score = 70.0 + (position - 0.05) / 0.05 * 20.0
             elif position > 0.9:
-                score = 90.0 - (position - 0.9) / 0.05 * 20.0  # 90 to 70
+                score = 90.0 - (position - 0.9) / 0.05 * 20.0
             else:
                 score = 90.0
-            score_range = ScoreRange.BORDERLINE
         elif position < 0.05:
-            # Low (below range)
             if position < 0:
-                # Critical low - value is below minimum
-                excess_ratio = abs(position)  # How far below min (as ratio of range)
-                score = max(0.0, 10.0 - excess_ratio * 50.0)  # 10 to 0, decreases with distance
-                score_range = ScoreRange.CRITICAL
+                excess_ratio = abs(position)
+                score = max(0.0, 10.0 - excess_ratio * 50.0)
             else:
-                # Borderline low - just below normal range
-                score = 50.0 + (position - 0.0) / 0.05 * 20.0  # 50 to 70
-                score_range = ScoreRange.BORDERLINE
-        else:  # position > 0.95
-            # High (above range)
+                score = 50.0 + (position - 0.0) / 0.05 * 20.0
+        else:
             if position > 1.0:
-                # Critical high - value is above maximum
-                excess_ratio = position - 1.0  # How far above max (as ratio of range)
-                score = max(0.0, 30.0 - excess_ratio * 50.0)  # 30 to 0, decreases with distance
-                score_range = ScoreRange.CRITICAL
+                excess_ratio = position - 1.0
+                score = max(0.0, 30.0 - excess_ratio * 50.0)
             else:
-                # Borderline high - just above normal range
-                score = 70.0 - (position - 0.95) / 0.05 * 20.0  # 70 to 50
-                score_range = ScoreRange.HIGH
-        
+                score = 70.0 - (position - 0.95) / 0.05 * 20.0
+
         return score, score_range
     
     def _apply_adjustments(
-        self, 
-        value: float, 
-        rule: BiomarkerRule, 
-        age: Optional[int], 
+        self,
+        value: float,
+        rule: BiomarkerRule,
+        age: Optional[int],
         sex: Optional[str]
     ) -> float:
-        """Apply age and sex adjustments to biomarker value."""
+        # TODO: Age/sex adjustments defined but NOT applied in calculate_biomarker_score.
+        # Single hook would be needed for consistency. See test_scoring_rules.py for coverage.
         adjusted_value = value
         
         # Age adjustments (simplified - in production would use more complex formulas)
@@ -554,7 +547,7 @@ class ScoringRules:
             if sex.lower() == "female":
                 if rule.biomarker_name in ["hemoglobin", "hematocrit"]:
                     adjusted_value *= 0.9  # Lower normal for females
-                elif rule.biomarker_name in ["hdl"]:
+                elif rule.biomarker_name in ["hdl_cholesterol"]:
                     adjusted_value *= 1.1  # Higher normal for females
         
         return adjusted_value

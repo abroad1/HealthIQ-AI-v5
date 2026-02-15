@@ -68,20 +68,23 @@ class TestInsightPipelineIntegration:
     
     @pytest.fixture
     def sample_questionnaire_data(self):
-        """Sample questionnaire data."""
+        """Sample questionnaire data using schema IDs (mapper expects these keys)."""
         return {
-            "diet_level": "good",
-            "sleep_hours": 7.5,
-            "exercise_minutes_per_week": 180,
-            "alcohol_units_per_week": 5,
-            "smoking_status": "never",
-            "stress_level": "moderate",
-            "sedentary_hours_per_day": 8,
-            "caffeine_consumption": "moderate",
-            "fluid_intake_liters": 2.5
+            "dietary_pattern": "Mediterranean",
+            "fruit_vegetable_servings": "4-5 servings",
+            "sugar_beverages_weekly": "1-3 drinks",
+            "sleep_hours_nightly": "7-8 hours",
+            "vigorous_exercise_days": "3 days",
+            "resistance_training_days": "2 days",
+            "alcohol_drinks_weekly": "1-3 drinks",
+            "tobacco_use": "Never used",
+            "stress_level_rating": 5,
+            "sitting_hours_daily": "4-6 hours",
+            "caffeine_beverages_daily": "1-2",
+            "daily_fluid_intake": "2-3 litres",
         }
     
-    def test_full_pipeline_with_questionnaire(self, orchestrator, sample_biomarkers, sample_user_data, sample_questionnaire_data):
+    def test_full_pipeline_with_questionnaire(self, orchestrator, sample_biomarkers, sample_user_data, sample_questionnaire_data, lab_reference_ranges):
         """Test complete pipeline from biomarkers + questionnaire to insights."""
         analysis_id = "integration_test_001"
         
@@ -99,12 +102,13 @@ class TestInsightPipelineIntegration:
         assert context.user.gender == "male"
         assert len(context.biomarker_panel.biomarkers) > 0
         
-        # Step 2: Score biomarkers
+        # Step 2: Score biomarkers (lab ranges required for scoring)
         scoring_result = orchestrator.score_biomarkers(
             biomarkers=sample_biomarkers,
             age=context.user.age,
             sex=context.user.gender,
-            lifestyle_data=context.user.lifestyle_factors
+            lifestyle_data=context.user.lifestyle_factors,
+            input_reference_ranges=lab_reference_ranges
         )
         
         assert "overall_score" in scoring_result
@@ -163,7 +167,7 @@ class TestInsightPipelineIntegration:
             assert insight["category"] in ["metabolic", "cardiovascular", "inflammatory", "organ", "nutritional", "hormonal"]
             assert len(insight["recommendations"]) > 0
     
-    def test_pipeline_without_questionnaire(self, orchestrator, sample_biomarkers, sample_user_data):
+    def test_pipeline_without_questionnaire(self, orchestrator, sample_biomarkers, sample_user_data, lab_reference_ranges):
         """Test pipeline without questionnaire data."""
         analysis_id = "integration_test_002"
         
@@ -175,11 +179,12 @@ class TestInsightPipelineIntegration:
             assume_canonical=True
         )
         
-        # Score biomarkers
+        # Score biomarkers (lab ranges required for scoring)
         scoring_result = orchestrator.score_biomarkers(
             biomarkers=sample_biomarkers,
             age=context.user.age,
-            sex=context.user.gender
+            sex=context.user.gender,
+            input_reference_ranges=lab_reference_ranges
         )
         
         # Cluster biomarkers
@@ -198,7 +203,7 @@ class TestInsightPipelineIntegration:
         assert "insights" in insights_result
         assert insights_result["total_insights"] > 0
     
-    def test_pipeline_with_specific_categories(self, orchestrator, sample_biomarkers, sample_user_data):
+    def test_pipeline_with_specific_categories(self, orchestrator, sample_biomarkers, sample_user_data, lab_reference_ranges):
         """Test pipeline with specific insight categories."""
         analysis_id = "integration_test_003"
         
@@ -209,9 +214,17 @@ class TestInsightPipelineIntegration:
             assume_canonical=True
         )
         
+        # Score first (lab ranges required)
+        scoring_result = orchestrator.score_biomarkers(
+            biomarkers=sample_biomarkers,
+            age=context.user.age,
+            sex=context.user.gender,
+            input_reference_ranges=lab_reference_ranges
+        )
         # Test with only metabolic category
         insights_result = orchestrator.synthesize_insights(
             context=context,
+            biomarker_scores=scoring_result,
             requested_categories=["metabolic"],
             max_insights_per_category=1
         )
@@ -241,7 +254,7 @@ class TestInsightPipelineIntegration:
         assert "insights" in insights_result
         # May have 0 insights due to insufficient data, but should not crash
     
-    def test_dto_builder_integration(self, orchestrator, sample_biomarkers, sample_user_data):
+    def test_dto_builder_integration(self, orchestrator, sample_biomarkers, sample_user_data, lab_reference_ranges):
         """Test DTO builder integration with insights."""
         analysis_id = "integration_test_005"
         
@@ -252,8 +265,23 @@ class TestInsightPipelineIntegration:
             assume_canonical=True
         )
         
+        # Score with lab ranges, then synthesize
+        scoring_result = orchestrator.score_biomarkers(
+            biomarkers=sample_biomarkers,
+            age=context.user.age,
+            sex=context.user.gender,
+            input_reference_ranges=lab_reference_ranges
+        )
+        clustering_result = orchestrator.cluster_biomarkers(
+            context=context,
+            scoring_result=scoring_result
+        )
         # Generate insights
-        insights_result = orchestrator.synthesize_insights(context=context)
+        insights_result = orchestrator.synthesize_insights(
+            context=context,
+            biomarker_scores=scoring_result,
+            clustering_results=clustering_result
+        )
         
         # Test individual insight DTO
         if insights_result["insights"]:
@@ -379,7 +407,7 @@ class TestInsightPipelineIntegration:
             assert len(insight.recommendations) > 0
     
     @pytest.mark.slow
-    def test_pipeline_performance(self, orchestrator, sample_biomarkers, sample_user_data):
+    def test_pipeline_performance(self, orchestrator, sample_biomarkers, sample_user_data, lab_reference_ranges):
         """Test pipeline performance with timing."""
         import time
         
@@ -387,15 +415,28 @@ class TestInsightPipelineIntegration:
         
         start_time = time.time()
         
-        # Run complete pipeline
+        # Run complete pipeline (lab ranges required for scoring)
         context = orchestrator.create_analysis_context(
             analysis_id=analysis_id,
             raw_biomarkers=sample_biomarkers,
             user_data=sample_user_data,
             assume_canonical=True
         )
-        
-        insights_result = orchestrator.synthesize_insights(context=context)
+        scoring_result = orchestrator.score_biomarkers(
+            biomarkers=sample_biomarkers,
+            age=context.user.age,
+            sex=context.user.gender,
+            input_reference_ranges=lab_reference_ranges
+        )
+        clustering_result = orchestrator.cluster_biomarkers(
+            context=context,
+            scoring_result=scoring_result
+        )
+        insights_result = orchestrator.synthesize_insights(
+            context=context,
+            biomarker_scores=scoring_result,
+            clustering_results=clustering_result
+        )
         
         end_time = time.time()
         total_time = end_time - start_time

@@ -122,21 +122,21 @@ class TestScoringRules:
         """
         lab_optimal = {"min": 0.0, "max": 100.0, "unit": "mg/dL", "source": "lab"}
         score_optimal, range_optimal, _ = self.rules.calculate_biomarker_score(
-            "ldl", 90.0, input_reference_range=lab_optimal
+            "ldl_cholesterol", 90.0, input_reference_range=lab_optimal
         )
         assert score_optimal >= 90, "Optimal LDL should score high"
         assert range_optimal in [ScoreRange.OPTIMAL, ScoreRange.NORMAL], "Should be in optimal/normal range"
 
         lab_borderline = {"min": 0.0, "max": 130.0, "unit": "mg/dL", "source": "lab"}
         score_borderline, range_borderline, _ = self.rules.calculate_biomarker_score(
-            "ldl", 140.0, input_reference_range=lab_borderline
+            "ldl_cholesterol", 140.0, input_reference_range=lab_borderline
         )
         assert score_borderline > 0, "Borderline LDL should be scored"
         assert range_borderline in [ScoreRange.BORDERLINE, ScoreRange.HIGH, ScoreRange.CRITICAL], "Should indicate elevated"
 
         lab_high = {"min": 0.0, "max": 130.0, "unit": "mg/dL", "source": "lab"}
         score_high, range_high, _ = self.rules.calculate_biomarker_score(
-            "ldl", 180.0, input_reference_range=lab_high
+            "ldl_cholesterol", 180.0, input_reference_range=lab_high
         )
         assert score_high < 50, "High LDL should score low"
         assert range_high in [ScoreRange.HIGH, ScoreRange.VERY_HIGH, ScoreRange.CRITICAL], "Should be in high range"
@@ -209,10 +209,10 @@ class TestScoringRules:
 
         lab_hdl = {"min": 40.0, "max": 60.0, "unit": "mg/dL", "source": "lab"}
         score_male_hdl, _, _ = self.rules.calculate_biomarker_score(
-            "hdl", 50.0, sex="male", input_reference_range=lab_hdl
+            "hdl_cholesterol", 50.0, sex="male", input_reference_range=lab_hdl
         )
         score_female_hdl, _, _ = self.rules.calculate_biomarker_score(
-            "hdl", 50.0, sex="female", input_reference_range=lab_hdl
+            "hdl_cholesterol", 50.0, sex="female", input_reference_range=lab_hdl
         )
         assert score_male_hdl > 0, "Should have positive score"
         assert score_female_hdl > 0, "Should have positive score"
@@ -247,11 +247,11 @@ class TestScoringRules:
         cardiovascular_rules = self.rules.get_health_system_rules("cardiovascular")
         assert cardiovascular_rules is not None, "Should have cardiovascular rules"
         
-        # Check required biomarkers (canonical keys: hdl, ldl)
+        # Check required biomarkers (canonical keys: hdl_cholesterol, ldl_cholesterol)
         biomarker_names = [rule.biomarker_name for rule in cardiovascular_rules.biomarkers]
         assert "total_cholesterol" in biomarker_names, "Should include total cholesterol"
-        assert "ldl" in biomarker_names, "Should include LDL (canonical key)"
-        assert "hdl" in biomarker_names, "Should include HDL (canonical key)"
+        assert "ldl_cholesterol" in biomarker_names, "Should include LDL (canonical key)"
+        assert "hdl_cholesterol" in biomarker_names, "Should include HDL (canonical key)"
         assert "triglycerides" in biomarker_names, "Should include triglycerides"
         
         # Check minimum biomarkers required
@@ -382,7 +382,7 @@ class TestScoringRules:
                     assert biomarker_rule.optimal_range[1] <= biomarker_rule.normal_range[1], "Optimal max should be <= normal max"
                 
                 # Check range ordering (skip for biomarkers with reverse ordering or complex ranges)
-                if biomarker_rule.biomarker_name not in ["hdl", "hemoglobin", "hematocrit", "white_blood_cells", "platelets", "tc_hdl_ratio"]:
+                if biomarker_rule.biomarker_name not in ["hdl_cholesterol", "hemoglobin", "hematocrit", "white_blood_cells", "platelets", "tc_hdl_ratio"]:
                     assert biomarker_rule.normal_range[1] <= biomarker_rule.borderline_range[0], "Normal max should be <= borderline min"
                     assert biomarker_rule.borderline_range[1] <= biomarker_rule.high_range[0], "Borderline max should be <= high min"
                     assert biomarker_rule.high_range[1] <= biomarker_rule.very_high_range[0], "High max should be <= very high min"

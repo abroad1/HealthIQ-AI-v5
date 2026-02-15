@@ -4,7 +4,7 @@ Biomarker normalization - maps aliases to canonical names and builds BiomarkerPa
 
 from typing import Dict, Any, List, Optional, Tuple
 from core.canonical.resolver import CanonicalResolver
-from core.canonical.alias_registry_service import AliasRegistryService
+from core.canonical.alias_registry_service import AliasRegistryService, get_alias_registry_service
 from core.models.biomarker import BiomarkerPanel, BiomarkerValue
 
 
@@ -20,7 +20,7 @@ class BiomarkerNormalizer:
             alias_service: AliasRegistryService instance, creates new one if None
         """
         self.resolver = resolver or CanonicalResolver()
-        self.alias_service = alias_service or AliasRegistryService()
+        self.alias_service = alias_service or get_alias_registry_service()
         self._alias_to_canonical: Optional[Dict[str, str]] = None
     
     def _build_alias_mapping(self) -> Dict[str, str]:
@@ -47,17 +47,6 @@ class BiomarkerNormalizer:
         Returns:
             Tuple of (normalized BiomarkerPanel, list of unmapped keys)
         """
-        # === BEGIN DEBUG LOGGING FOR ALIAS NORMALIZATION ===
-        print("\n[TRACE] --- Alias Normalization Debug Start ---")
-        if isinstance(raw_biomarkers, dict):
-            print(f"[TRACE] Processing {len(raw_biomarkers)} biomarkers")
-            for key in raw_biomarkers.keys():
-                print(f"[TRACE] Incoming key: '{key}'")
-        else:
-            print("[WARN] Biomarkers is not a dict during normalization")
-        print("[TRACE] --- Alias Normalization Debug End ---\n")
-        # === END DEBUG LOGGING ===
-        
         normalized_values = {}
         unmapped_keys = []
         
@@ -73,19 +62,8 @@ class BiomarkerNormalizer:
                 unmapped_keys.append(key)
                 continue
             
-            # === BEGIN DEBUG LOGGING FOR ALIAS RESOLVER ===
-            print(f"[TRACE] Resolving alias for key: '{key}'")
-            # === END DEBUG LOGGING ===
-            
             # Use v4 alias service for comprehensive resolution
             canonical_key = self.alias_service.resolve(key)
-            
-            # === BEGIN DEBUG LOGGING FOR ALIAS RESOLVER ===
-            print(f"[TRACE] Registry lookup result: '{canonical_key}'")
-            if canonical_key.startswith("unmapped_"):
-                print(f"[WARN] Key '{key}' failed to map to canonical name → {canonical_key}")
-            # === END DEBUG LOGGING ===
-            
             if canonical_key.startswith("unmapped_"):
                 # Keep unmapped biomarkers but tag them as "unmapped"
                 unmapped_keys.append(key)
@@ -127,7 +105,14 @@ class BiomarkerNormalizer:
                                 "source": ref_range.get("source", "lab")
                             }
                 
-                # Create BiomarkerValue with canonical name, preserving reference_range
+                # Build BiomarkerValue; pass unit audit fields if present (from apply_unit_normalisation)
+                extra = {}
+                if isinstance(value, dict):
+                    for k in ("original_unit", "original_value", "unit_normalised", "unit_source",
+                              "confidence_downgrade_unit_assumed", "reference_unit_assumed"):
+                        if k in value:
+                            extra[k] = value[k]
+
                 if canonical_key in normalized_values and key != canonical_key:
                     unmapped_key = f"unmapped_{key}"
                     unmapped_keys.append(key)
@@ -139,14 +124,16 @@ class BiomarkerNormalizer:
                         name=key,
                         value=numeric_value,
                         unit=unit,
-                        reference_range=reference_range
+                        reference_range=reference_range,
+                        **extra
                     )
                 else:
                     normalized_values[canonical_key] = BiomarkerValue(
                         name=canonical_key,
                         value=numeric_value,
                         unit=unit,
-                        reference_range=reference_range
+                        reference_range=reference_range,
+                        **extra
                     )
         
         # Create BiomarkerPanel with normalized values

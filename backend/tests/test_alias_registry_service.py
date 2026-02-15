@@ -30,11 +30,11 @@ class TestAliasRegistryService:
     @patch('core.canonical.alias_registry_service.yaml.safe_load')
     @patch('builtins.open')
     def test_resolve_known_alias(self, mock_open, mock_yaml_load):
-        """Test resolving a known alias to canonical name."""
-        # Mock v4 registry data
+        """Test resolving a known alias to canonical name (hdl->hdl_cholesterol per PR)."""
+        # Mock v4 registry data - common_aliases overwrite to hdl_cholesterol
         mock_registry_data = {
-            'hdl': {
-                'canonical_id': 'hdl',
+            'hdl_cholesterol': {
+                'canonical_id': 'hdl_cholesterol',
                 'aliases': ['HDL', 'HDL Cholesterol', 'High-Density Lipoprotein']
             }
         }
@@ -42,12 +42,12 @@ class TestAliasRegistryService:
         
         service = AliasRegistryService(use_v4_registry=True)
         
-        # Test various forms of HDL
-        assert service.resolve("HDL") == "hdl"
-        assert service.resolve("hdl") == "hdl"
-        assert service.resolve("HDL Cholesterol") == "hdl"
-        assert service.resolve("High-Density Lipoprotein") == "hdl"
-        assert service.resolve("hdl_cholesterol") == "hdl"
+        # Test various forms of HDL -> hdl_cholesterol (canonical per PR)
+        assert service.resolve("HDL") == "hdl_cholesterol"
+        assert service.resolve("hdl") == "hdl_cholesterol"
+        assert service.resolve("HDL Cholesterol") == "hdl_cholesterol"
+        assert service.resolve("High-Density Lipoprotein") == "hdl_cholesterol"
+        assert service.resolve("hdl_cholesterol") == "hdl_cholesterol"
     
     @patch('core.canonical.alias_registry_service.yaml.safe_load')
     @patch('builtins.open')
@@ -83,14 +83,14 @@ class TestAliasRegistryService:
     @patch('core.canonical.alias_registry_service.yaml.safe_load')
     @patch('builtins.open')
     def test_normalize_panel(self, mock_open, mock_yaml_load):
-        """Test normalizing a biomarker panel."""
+        """Test normalizing a biomarker panel (canonical: hdl_cholesterol, ldl_cholesterol)."""
         mock_registry_data = {
-            'hdl': {
-                'canonical_id': 'hdl',
+            'hdl_cholesterol': {
+                'canonical_id': 'hdl_cholesterol',
                 'aliases': ['HDL', 'HDL Cholesterol']
             },
-            'ldl': {
-                'canonical_id': 'ldl',
+            'ldl_cholesterol': {
+                'canonical_id': 'ldl_cholesterol',
                 'aliases': ['LDL', 'LDL Cholesterol']
             }
         }
@@ -107,11 +107,11 @@ class TestAliasRegistryService:
         
         normalized = service.normalize_panel(test_panel)
         
-        # Check that known biomarkers are mapped correctly
-        assert "hdl" in normalized
-        assert normalized["hdl"] == 45.0
-        assert "ldl" in normalized
-        assert normalized["ldl"] == 120.0
+        # Check that known biomarkers are mapped to canonical IDs
+        assert "hdl_cholesterol" in normalized
+        assert normalized["hdl_cholesterol"] == 45.0
+        assert "ldl_cholesterol" in normalized
+        assert normalized["ldl_cholesterol"] == 120.0
         
         # Check that unknown biomarker is prefixed
         assert "unmapped_Unknown Biomarker" in normalized
@@ -119,14 +119,14 @@ class TestAliasRegistryService:
     
     @patch('core.canonical.alias_registry_service.AliasRegistryService._load_alias_registry')
     def test_get_all_aliases(self, mock_load_v4):
-        """Test getting all aliases grouped by canonical name."""
+        """Test getting all aliases grouped by canonical name (hdl_cholesterol, ldl_cholesterol)."""
         mock_registry_data = {
-            'hdl': {
-                'canonical_id': 'hdl',
+            'hdl_cholesterol': {
+                'canonical_id': 'hdl_cholesterol',
                 'aliases': ['HDL', 'HDL Cholesterol']
             },
-            'ldl': {
-                'canonical_id': 'ldl',
+            'ldl_cholesterol': {
+                'canonical_id': 'ldl_cholesterol',
                 'aliases': ['LDL', 'LDL Cholesterol']
             }
         }
@@ -137,18 +137,16 @@ class TestAliasRegistryService:
         
         # Check structure
         assert isinstance(aliases, dict)
-        assert "hdl" in aliases
-        assert "ldl" in aliases
+        assert "hdl_cholesterol" in aliases
+        assert "ldl_cholesterol" in aliases
         
         # Check that aliases are lists
-        assert isinstance(aliases["hdl"], list)
-        assert isinstance(aliases["ldl"], list)
+        assert isinstance(aliases["hdl_cholesterol"], list)
+        assert isinstance(aliases["ldl_cholesterol"], list)
         
         # Check specific aliases (note: case variations are generated)
-        assert "hdl" in aliases["hdl"]
-        assert "HDL" in aliases["hdl"]
-        # The service generates case variations, so check for the normalized version
-        assert any("cholesterol" in alias.lower() for alias in aliases["hdl"])
+        assert "hdl" in aliases["hdl_cholesterol"] or "HDL" in aliases["hdl_cholesterol"]
+        assert any("cholesterol" in alias.lower() for alias in aliases["hdl_cholesterol"])
     
     @patch('core.canonical.alias_registry_service.AliasRegistryService._load_alias_registry')
     def test_get_canonical_biomarkers(self, mock_load_v4):
@@ -170,8 +168,8 @@ class TestAliasRegistryService:
         
         # Check structure
         assert isinstance(canonical, list)
-        assert "hdl" in canonical
-        assert "ldl" in canonical
+        assert "hdl_cholesterol" in canonical
+        assert "ldl_cholesterol" in canonical
         # Should have at least 2 canonical biomarkers from mock + common aliases
         assert len(canonical) >= 2
     
@@ -189,8 +187,8 @@ class TestAliasRegistryService:
         
         service = AliasRegistryService(use_v4_registry=True)
         
-        # Test canonical names
-        assert service.is_canonical("hdl") is True
+        # Test canonical names (hdl_cholesterol per PR; hdl may still be canonical from common_aliases self-map)
+        assert service.is_canonical("hdl_cholesterol") is True
         
         # Test non-canonical names
         assert service.is_canonical("HDL") is False
@@ -235,12 +233,12 @@ class TestAliasRegistryService:
         assert count >= 2
     
     def test_common_aliases_integration(self):
-        """Test that common aliases are properly integrated."""
+        """Test that common aliases are properly integrated (hdl/ldl->hdl_cholesterol/ldl_cholesterol)."""
         service = AliasRegistryService(use_v4_registry=False)  # Use fallback to test common aliases
         
-        # Test common aliases that should be available
-        assert service.resolve("hdl") == "hdl"
-        assert service.resolve("ldl") == "ldl"
+        # Test common aliases - lipids use _cholesterol suffix per PR
+        assert service.resolve("hdl") == "hdl_cholesterol"
+        assert service.resolve("ldl") == "ldl_cholesterol"
         assert service.resolve("cholesterol") == "total_cholesterol"
         assert service.resolve("glucose") == "glucose"
         assert service.resolve("hba1c") == "hba1c"
@@ -248,10 +246,10 @@ class TestAliasRegistryService:
     @patch('core.canonical.alias_registry_service.yaml.safe_load')
     @patch('builtins.open')
     def test_case_insensitive_resolution(self, mock_open, mock_yaml_load):
-        """Test that resolution is case-insensitive."""
+        """Test that resolution is case-insensitive (hdl->hdl_cholesterol)."""
         mock_registry_data = {
-            'hdl': {
-                'canonical_id': 'hdl',
+            'hdl_cholesterol': {
+                'canonical_id': 'hdl_cholesterol',
                 'aliases': ['HDL', 'HDL Cholesterol']
             }
         }
@@ -259,12 +257,12 @@ class TestAliasRegistryService:
         
         service = AliasRegistryService(use_v4_registry=True)
         
-        # Test various cases
-        assert service.resolve("HDL") == "hdl"
-        assert service.resolve("hdl") == "hdl"
-        assert service.resolve("Hdl") == "hdl"
-        assert service.resolve("HDL CHOLESTEROL") == "hdl"
-        assert service.resolve("hdl cholesterol") == "hdl"
+        # Test various cases -> hdl_cholesterol
+        assert service.resolve("HDL") == "hdl_cholesterol"
+        assert service.resolve("hdl") == "hdl_cholesterol"
+        assert service.resolve("Hdl") == "hdl_cholesterol"
+        assert service.resolve("HDL CHOLESTEROL") == "hdl_cholesterol"
+        assert service.resolve("hdl cholesterol") == "hdl_cholesterol"
 
 
 class TestAliasRegistryServiceIntegration:
@@ -279,20 +277,20 @@ class TestAliasRegistryServiceIntegration:
         assert isinstance(canonical, list)
         assert len(canonical) > 0
         
-        # Test that common biomarkers are available
-        common_biomarkers = ["hdl", "ldl", "total_cholesterol", "triglycerides"]
+        # Test that common biomarkers are available (lipids use _cholesterol suffix)
+        common_biomarkers = ["hdl_cholesterol", "ldl_cholesterol", "total_cholesterol", "triglycerides"]
         for biomarker in common_biomarkers:
             if biomarker in canonical:
                 assert service.is_canonical(biomarker) is True
     
     def test_real_v4_alias_resolution(self):
-        """Test resolving real v4 aliases."""
+        """Test resolving real v4 aliases (HDL/LDL->hdl_cholesterol/ldl_cholesterol per PR)."""
         service = AliasRegistryService(use_v4_registry=True)
         
-        # Test common aliases that should be in v4 registry
+        # Test common aliases - lipids use _cholesterol suffix
         test_cases = [
-            ("HDL", "hdl"),
-            ("LDL", "ldl"),
+            ("HDL", "hdl_cholesterol"),
+            ("LDL", "ldl_cholesterol"),
             ("Total Cholesterol", "total_cholesterol"),
             ("Triglycerides", "triglycerides"),
         ]
@@ -303,7 +301,7 @@ class TestAliasRegistryServiceIntegration:
                 assert result == expected_canonical, f"Failed to resolve '{alias}' to '{expected_canonical}', got '{result}'"
     
     def test_real_v4_panel_normalization(self):
-        """Test normalizing a real biomarker panel."""
+        """Test normalizing a real biomarker panel (hdl/ldl->hdl_cholesterol/ldl_cholesterol)."""
         service = AliasRegistryService(use_v4_registry=True)
         
         # Test panel with common biomarkers
@@ -317,9 +315,9 @@ class TestAliasRegistryServiceIntegration:
         
         normalized = service.normalize_panel(test_panel)
         
-        # Check that known biomarkers are normalized
-        assert "hdl" in normalized
-        assert "ldl" in normalized
+        # Check that known biomarkers are normalized to canonical IDs
+        assert "hdl_cholesterol" in normalized
+        assert "ldl_cholesterol" in normalized
         assert "total_cholesterol" in normalized
         assert "triglycerides" in normalized
         
@@ -327,8 +325,8 @@ class TestAliasRegistryServiceIntegration:
         assert "unmapped_Unknown Test" in normalized
         
         # Check values are preserved
-        assert normalized["hdl"] == 45.0
-        assert normalized["ldl"] == 120.0
+        assert normalized["hdl_cholesterol"] == 45.0
+        assert normalized["ldl_cholesterol"] == 120.0
         assert normalized["total_cholesterol"] == 200.0
         assert normalized["triglycerides"] == 150.0
         assert normalized["unmapped_Unknown Test"] == 10.0
@@ -360,7 +358,7 @@ class TestAliasRegistryServiceIntegration:
             "alanine_aminotransferase_alt_(venous)": "alt",
             "gamma-glutamiltransferase_ggt_(venous)": "ggt",
             "alkaline_photosphatase_alp_(venous)": "alp",
-            "low_density_lipoproteins_(venous)": "ldl",
+            "low_density_lipoproteins_(venous)": "ldl_cholesterol",
             "non_hdl_cholesterol_calculation_(venous)": "non_hdl_cholesterol",
             "total_cholesterol/hdl_ratio_calculation_(venous)": "tc_hdl_ratio",
         }

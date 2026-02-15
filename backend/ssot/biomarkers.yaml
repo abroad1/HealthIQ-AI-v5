@@ -147,7 +147,7 @@ biomarkers:
     
   # Liver Function
   alt:
-    aliases: ["alanine_aminotransferase", "sgot"]
+    aliases: ["alt", "alanine_aminotransferase", "sgot"]
     unit: "U/L"
     description: "Alanine aminotransferase"
     category: "liver"

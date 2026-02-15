@@ -45,6 +45,7 @@ const customJestConfig = {
     '<rootDir>/tests/components/**/*.{js,jsx,ts,tsx}',
     '<rootDir>/tests/hooks/**/*.{js,jsx,ts,tsx}',
     '<rootDir>/tests/integration/**/*.{js,jsx,ts,tsx}',
+    '<rootDir>/tests/queries/**/*.{js,jsx,ts,tsx}',
     '<rootDir>/tests/services/**/*.{js,jsx,ts,tsx}',
     '<rootDir>/tests/state/**/*.{js,jsx,ts,tsx}',
     '<rootDir>/app/**/__tests__/**/*.{js,jsx,ts,tsx}',

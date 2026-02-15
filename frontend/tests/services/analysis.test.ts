@@ -92,6 +92,7 @@ describe('AnalysisService', () => {
         data: {
           analysis_id: analysisId,
           result_version: '1.0.0',
+          status: 'completed',
         biomarkers: [
           {
             biomarker_name: 'glucose',

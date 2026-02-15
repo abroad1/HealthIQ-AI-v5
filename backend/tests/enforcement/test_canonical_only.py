@@ -14,7 +14,7 @@ class TestCanonicalOnlyEnforcement:
         """Test that normalizer correctly identifies canonical vs non-canonical keys."""
         normalizer = BiomarkerNormalizer()
         
-        # Test with canonical keys
+        # Test with canonical keys (hdl_cholesterol, ldl_cholesterol per standardized SSOT)
         canonical_biomarkers = {
             "total_cholesterol": 200,
             "glucose": 95,
@@ -25,12 +25,12 @@ class TestCanonicalOnlyEnforcement:
         assert len(non_canonical) == 0, f"Expected no non-canonical keys, got: {non_canonical}"
     
     def test_normalizer_detects_non_canonical_keys(self):
-        """Test that normalizer detects non-canonical keys."""
+        """Test that normalizer detects non-canonical keys (aliases)."""
         normalizer = BiomarkerNormalizer()
         
-        # Test with non-canonical keys (aliases)
+        # Test with non-canonical keys (aliases) - hdl, ldl resolve to hdl_cholesterol, ldl_cholesterol
         non_canonical_biomarkers = {
-            "cholesterol": 200,  # alias for total_cholesterol
+            "cholesterol": 200,   # alias for total_cholesterol
             "blood_sugar": 95,   # alias for glucose
             "hdl": 45            # alias for hdl_cholesterol
         }
@@ -48,8 +48,8 @@ class TestCanonicalOnlyEnforcement:
         # Test with mixed canonical and alias keys
         mixed_biomarkers = {
             "total_cholesterol": 200,  # canonical
-            "blood_sugar": 95,         # alias
-            "hdl": 45                  # alias
+            "blood_sugar": 95,         # alias -> glucose
+            "hdl": 45                   # alias -> hdl_cholesterol
         }
         
         panel, unmapped = normalizer.normalize_biomarkers(mixed_biomarkers)
@@ -57,7 +57,7 @@ class TestCanonicalOnlyEnforcement:
         # Should have no unmapped keys
         assert len(unmapped) == 0, f"Expected no unmapped keys, got: {unmapped}"
         
-        # Should have canonical keys in the panel
+        # Should have canonical keys in the panel (hdl_cholesterol per standardized SSOT)
         assert "total_cholesterol" in panel.biomarkers
         assert "glucose" in panel.biomarkers  # blood_sugar -> glucose
         assert "hdl_cholesterol" in panel.biomarkers  # hdl -> hdl_cholesterol
@@ -90,10 +90,10 @@ class TestCanonicalOnlyEnforcement:
             )
     
     def test_orchestrator_accepts_canonical_keys(self):
-        """Test that orchestrator accepts canonical keys."""
+        """Test that orchestrator accepts canonical keys (hdl_cholesterol, ldl_cholesterol)."""
         orchestrator = AnalysisOrchestrator()
         
-        # Test with canonical keys - should succeed
+        # Canonical keys: hdl_cholesterol, ldl_cholesterol (standardized)
         canonical_biomarkers = {
             "total_cholesterol": 200,
             "glucose": 95,

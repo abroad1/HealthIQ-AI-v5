@@ -1,0 +1,61 @@
+# Sprint 3 - Biomarker Criticality Policy (System-aware)
+# Canonical IDs only. Used for coverage + confidence downgrades.
+
+version: "1.0.0"
+systems:
+  metabolic:
+    required:
+      - glucose
+      - hba1c
+    important:
+      - triglycerides
+      - hdl_cholesterol
+    optional:
+      - insulin
+  cardiovascular:
+    required:
+      - ldl_cholesterol
+      - hdl_cholesterol
+      - total_cholesterol
+      - triglycerides
+    important:
+      - crp
+    optional: []
+  inflammatory:
+    required:
+      - crp
+    important: []
+    optional: []
+  kidney:
+    required:
+      - creatinine
+      - bun
+    important: []
+    optional: []
+  liver:
+    required:
+      - alt
+      - ast
+    important: []
+    optional: []
+  cbc:
+    required:
+      - hemoglobin
+      - white_blood_cells
+      - platelets
+    important: []
+    optional: []
+  hormonal:
+    required: []
+    important: []
+    optional: []
+  nutritional:
+    required: []
+    important: []
+    optional: []
+
+penalties:
+  required_missing: 25
+  important_missing: 10
+  optional_missing: 3
+  max_penalty_per_system: 70

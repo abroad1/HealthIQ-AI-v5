@@ -61,19 +61,19 @@ class TestPersistenceService:
             mock_upsert.assert_called_once()
     
     def test_save_analysis_failure(self, persistence_service, mock_db_session):
-        """Test analysis saving failure."""
+        """Test analysis saving failure: primary fails (invalid UUID) -> fallback used."""
         # Arrange
         analysis_dto = {
             "analysis_id": "invalid-uuid",
             "status": "completed"
         }
         user_id = uuid4()
-        
-        # Act
+
+        # Act: primary fails due to invalid UUID; fallback decorator triggers
         result = persistence_service.save_analysis(analysis_dto, user_id)
-        
-        # Assert
-        assert result is None
+
+        # Assert: fallback returns analysis_id from dto
+        assert result == "invalid-uuid"
     
     def test_save_results_success(self, persistence_service, mock_db_session):
         """Test successful results saving."""

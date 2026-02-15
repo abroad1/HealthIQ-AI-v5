@@ -125,16 +125,19 @@ class PersistenceService:
                 
         except Exception as e:
             logger.error(f"Error saving analysis: {str(e)}")
-            self._log_audit_action(
-                action="analysis_save_failed",
-                resource_type="analysis",
-                user_id=user_id,
-                details={"error": str(e)},
-                severity="error",
-                outcome="failure"
-            )
-            return None
-    
+            try:
+                self._log_audit_action(
+                    action="analysis_save_failed",
+                    resource_type="analysis",
+                    user_id=user_id,
+                    details={"error": str(e)},
+                    severity="error",
+                    outcome="failure"
+                )
+            except Exception:
+                pass  # Avoid masking original error
+            raise  # Re-raise so fallback decorator can trigger
+
     @fallback_decorator("save_results")
     def save_results(self, results_dto: Dict[str, Any], analysis_id: UUID) -> bool:
         """

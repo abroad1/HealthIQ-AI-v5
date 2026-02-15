@@ -14,6 +14,7 @@ import ParsedTable from '../components/preview/ParsedTable';
 import { useAnalysisStore } from '../state/analysisStore';
 import { useUploadStore, useUploadStatus, useParsedData } from '../state/upload';
 import { useParseUpload } from '../queries/parsing';
+import { useAnalysisResult } from '../queries/analysisResult';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function UploadPage() {
@@ -25,6 +26,9 @@ export default function UploadPage() {
   
   const { startAnalysis, isLoading: isAnalyzing, currentPhase, currentAnalysisId, error: analysisError } = useAnalysisStore();
   const router = useRouter();
+
+  // Single source of truth: prefetch result when complete so results page gets cache hit
+  useAnalysisResult(currentPhase === 'completed' && currentAnalysisId ? currentAnalysisId : null);
   const searchParams = useSearchParams();
   const isFixtureMode = searchParams.get('fixture') === 'true';
   

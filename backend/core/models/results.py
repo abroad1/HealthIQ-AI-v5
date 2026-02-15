@@ -137,3 +137,4 @@ class AnalysisDTO(BaseModel):
         default_factory=list,
         description="Unrecognised biomarkers excluded from analysis"
     )
+    meta: Optional[Dict[str, Any]] = Field(default=None, description="Analysis meta (criticality, etc.)")
