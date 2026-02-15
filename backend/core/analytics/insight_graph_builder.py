@@ -13,6 +13,7 @@ from core.contracts.insight_graph_v1 import (
     INSIGHTGRAPH_V1_VERSION,
 )
 from core.analytics.primitives import frontend_status_from_value_and_range
+from core.analytics.confidence_builder import build_confidence_model_v1
 
 
 def build_insight_graph_v1(
@@ -121,6 +122,15 @@ def build_insight_graph_v1(
             "derived": derived_ratios_meta.get("ratios", {}),
         }
 
+    # Sprint 8: Confidence model (deterministic, Layer B only)
+    available = set(seen.keys())
+    confidence_model = build_confidence_model_v1(
+        available_biomarkers=available,
+        cluster_results=clustering_result,
+        criticality_result=criticality_result,
+        derived_markers=derived_markers,
+    )
+
     # Cluster summary
     clusters = clustering_result.get("clusters", [])
     cluster_summary = None
@@ -157,6 +167,7 @@ def build_insight_graph_v1(
         derived_markers=derived_markers,
         cluster_summary=cluster_summary,
         criticality=criticality_result,
+        confidence=confidence_model,
         biomarker_nodes=nodes,
         edges=[],
     )
