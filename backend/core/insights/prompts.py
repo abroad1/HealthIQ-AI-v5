@@ -39,6 +39,9 @@ Analyze the following metabolic biomarker data and lifestyle factors to generate
 **Clustering Results:**
 {clustering_results}
 
+**Confidence (data coverage):**
+{confidence_context}
+
 Generate 1-3 metabolic health insights focusing on:
 - Insulin resistance patterns (glucose, hba1c, insulin markers)
 - Metabolic syndrome indicators
@@ -84,6 +87,9 @@ Analyze the following cardiovascular biomarker data and lifestyle factors to gen
 **Clustering Results:**
 {clustering_results}
 
+**Confidence (data coverage):**
+{confidence_context}
+
 Generate 1-3 cardiovascular health insights focusing on:
 - Heart disease risk factors
 - Cholesterol and lipid patterns
@@ -128,6 +134,9 @@ Analyze the following inflammatory biomarker data and lifestyle factors to gener
 
 **Clustering Results:**
 {clustering_results}
+
+**Confidence (data coverage):**
+{confidence_context}
 
 Generate 1-3 inflammatory health insights focusing on:
 - Chronic inflammation patterns (CRP, ESR markers)
@@ -175,6 +184,9 @@ Analyze the following organ health biomarker data and lifestyle factors to gener
 **Clustering Results:**
 {clustering_results}
 
+**Confidence (data coverage):**
+{confidence_context}
+
 Generate 1-3 organ health insights focusing on:
 - Liver function patterns (ALT, AST, GGT markers)
 - Kidney function indicators
@@ -220,6 +232,9 @@ Analyze the following nutritional biomarker data and lifestyle factors to genera
 **Clustering Results:**
 {clustering_results}
 
+**Confidence (data coverage):**
+{confidence_context}
+
 Generate 1-3 nutritional health insights focusing on:
 - Vitamin and mineral status
 - Nutritional deficiency assessment and excesses
@@ -264,6 +279,9 @@ Analyze the following hormonal biomarker data and lifestyle factors to generate 
 
 **Clustering Results:**
 {clustering_results}
+
+**Confidence (data coverage):**
+{confidence_context}
 
 Generate 1-3 hormonal health insights focusing on:
 - Hormonal balance patterns
@@ -363,7 +381,7 @@ Return insights in this JSON format:
         """
         template = cls.get_template(category)
         
-        # Format the template with provided data
+        # Format the template with provided data (legacy path: no confidence model)
         formatted_prompt = template.format(
             biomarker_scores=biomarker_scores,
             diet_level=lifestyle_profile.get("diet_level", "average"),
@@ -372,7 +390,8 @@ Return insights in this JSON format:
             stress_level=lifestyle_profile.get("stress_level", "average"),
             smoking_status=lifestyle_profile.get("smoking_status", "never"),
             alcohol_units_per_week=lifestyle_profile.get("alcohol_units_per_week", 5),
-            clustering_results=clustering_results
+            clustering_results=clustering_results,
+            confidence_context="(Legacy path: confidence model not available)",
         )
         
         return formatted_prompt
@@ -417,6 +436,16 @@ Return insights in this JSON format:
         except (json.JSONDecodeError, TypeError):
             biomarker_summary = {}
             clusters_list = []
+        # Sprint 8: Build confidence_context from ConfidenceModel_v1 (no inference from absence)
+        conf = ig.get("confidence")
+        if conf is None or not isinstance(conf, dict) or "system_confidence" not in conf:
+            confidence_context = "(Confidence model not available)"
+        else:
+            confidence_context = (
+                f"System confidence: {conf.get('system_confidence', 0):.2f}. "
+                f"Missing required biomarkers: {conf.get('missing_required_biomarkers', [])}. "
+                f"Incomplete clusters: {conf.get('missing_required_clusters', [])}."
+            )
         return template.format(
             biomarker_scores=biomarker_summary,
             diet_level=lifestyle_profile.get("diet_level", "average"),
@@ -426,6 +455,7 @@ Return insights in this JSON format:
             smoking_status=lifestyle_profile.get("smoking_status", "never"),
             alcohol_units_per_week=lifestyle_profile.get("alcohol_units_per_week", 5),
             clustering_results=clusters_list,
+            confidence_context=confidence_context,
         )
 
 

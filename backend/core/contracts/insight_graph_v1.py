@@ -5,10 +5,14 @@ Strict output object between Layer B (deterministic) and Layer C (narrative).
 LLM receives ONLY this object. No raw biomarkers, no local computation.
 
 PRD §4.6, §4.7; Delivery Plan Sprint 7.
+Sprint 8: Added confidence field (ConfidenceModel_v1).
 """
 
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, TYPE_CHECKING
 from pydantic import BaseModel, ConfigDict, Field
+
+if TYPE_CHECKING:
+    from core.contracts.confidence_model_v1 import ConfidenceModelV1
 
 # Version stamp for replay determinism
 INSIGHTGRAPH_V1_VERSION = "1.0.0"
@@ -70,6 +74,12 @@ class InsightGraphV1(BaseModel):
     criticality: Optional[Dict[str, Any]] = Field(
         default=None,
         description="confidence_score, missing_required, system_confidence"
+    )
+
+    # Sprint 8: Formal confidence model (deterministic, Layer B only)
+    confidence: Optional[Any] = Field(
+        default=None,
+        description="ConfidenceModel_v1; system/cluster/biomarker confidence, missing_required"
     )
 
     # Biomarker nodes (deterministic order by biomarker_id)
