@@ -19,6 +19,7 @@ from core.analytics.relationship_registry import (
     evaluate_relationships,
     load_relationship_registry,
 )
+from core.analytics.biomarker_context_builder import build_biomarker_context_v1
 
 
 def build_insight_graph_v1(
@@ -214,6 +215,18 @@ def build_insight_graph_v1(
             registry=registry,
         )
 
+    # Sprint 11: BiomarkerContext_v1 (safe explanatory context for Layer C)
+    context_nodes, context_stamp = build_biomarker_context_v1(
+        {
+            "biomarker_nodes": [n.model_dump() for n in nodes],
+            "confidence": confidence_model.model_dump() if hasattr(confidence_model, "model_dump") else {},
+            "cluster_summary": cluster_summary or {},
+            "relationships": [
+                r.model_dump() if hasattr(r, "model_dump") else r for r in relationship_detections
+            ],
+        }
+    )
+
     return InsightGraphV1(
         graph_version=INSIGHTGRAPH_V1_VERSION,
         analysis_id=analysis_id,
@@ -230,6 +243,9 @@ def build_insight_graph_v1(
             relationship_stamp.relationship_registry_hash if relationship_stamp else None
         ),
         relationships=relationship_detections,
+        biomarker_context_version=context_stamp.biomarker_context_version,
+        biomarker_context_hash=context_stamp.biomarker_context_hash,
+        biomarker_context=context_nodes,
         biomarker_nodes=nodes,
         edges=[],
     )

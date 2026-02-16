@@ -14,6 +14,7 @@ from unittest.mock import patch, MagicMock
 from core.insights.synthesis import InsightSynthesizer
 from core.insights.prompts import InsightPromptTemplates
 from core.contracts.insight_graph_v1 import InsightGraphV1, BiomarkerNode
+from core.contracts.biomarker_context_v1 import BiomarkerContextNode
 
 # PRD §4.7: Forbidden keys in LLM payload (raw biomarker data)
 _FORBIDDEN_KEYS = {"value", "unit", "range", "reference_range", "lab_range", "lower", "upper"}
@@ -49,6 +50,18 @@ def minimal_insight_graph():
             BiomarkerNode(biomarker_id="glucose", status="normal", score=75.0),
             BiomarkerNode(biomarker_id="hba1c", status="normal", score=80.0),
         ],
+        biomarker_context_version="1.0.0",
+        biomarker_context_hash="testhash",
+        biomarker_context=[
+            BiomarkerContextNode(
+                biomarker_id="glucose",
+                status="normal",
+                score=75.0,
+                reason_codes=["status_normal", "score_high_band"],
+                missing_codes=[],
+                relationship_codes=[],
+            )
+        ],
         edges=[],
     )
 
@@ -82,6 +95,7 @@ def test_payload_from_insight_graph_contains_no_raw_biomarker_dict(mock_context,
     # Prepared payload must contain biomarker data derived from InsightGraph (biomarker nodes)
     assert "glucose" in captured_prompt
     assert "hba1c" in captured_prompt
+    assert "Biomarker Context" in captured_prompt
     # Must NOT contain raw structure that would indicate raw biomarker dict
     assert "biomarker_panel" not in captured_prompt
     assert "raw_biomarkers" not in captured_prompt.lower()
@@ -104,5 +118,6 @@ def test_format_template_from_insight_graph_produces_structured_only(minimal_ins
     assert "glucose" in result
     assert "hba1c" in result
     assert "metabolic" in result.lower()
+    assert "Biomarker Context" in result
     has_forbidden, found = _payload_contains_forbidden_keys(result)
     assert not has_forbidden, f"Formatted prompt contains forbidden keys: {found}"

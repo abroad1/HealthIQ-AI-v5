@@ -121,3 +121,17 @@ def test_relationship_registry_stamp_in_manifest():
     )
     assert m.relationship_registry_version == "1.0.0"
     assert m.relationship_registry_hash == "abc123"
+
+
+def test_biomarker_context_stamp_in_manifest():
+    """Manifest carries biomarker context version/hash for replay stamping."""
+    m = build_replay_manifest_v1(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        biomarker_context_version="1.0.0",
+        biomarker_context_hash="ctxhash123",
+    )
+    assert m.biomarker_context_version == "1.0.0"
+    assert m.biomarker_context_hash == "ctxhash123"

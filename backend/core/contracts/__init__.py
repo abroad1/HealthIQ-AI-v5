@@ -19,6 +19,11 @@ from core.contracts.relationship_registry_v1 import (
     RelationshipRegistryStamp,
     RELATIONSHIP_REGISTRY_V1_VERSION,
 )
+from core.contracts.biomarker_context_v1 import (
+    BiomarkerContextNode,
+    BiomarkerContextStamp,
+    BIOMARKER_CONTEXT_V1_VERSION,
+)
 
 __all__ = [
     "InsightGraphV1",
@@ -32,4 +37,7 @@ __all__ = [
     "RelationshipDetection",
     "RelationshipRegistryStamp",
     "RELATIONSHIP_REGISTRY_V1_VERSION",
+    "BiomarkerContextNode",
+    "BiomarkerContextStamp",
+    "BIOMARKER_CONTEXT_V1_VERSION",
 ]
