@@ -421,6 +421,8 @@ Return insights in this JSON format:
         # exposing raw data. For Sprint 7, we inject the full InsightGraph as the
         # primary payload and use placeholder text for backward template compat.
         import json
+        ig = {}
+        biomarker_context = []
         try:
             ig = json.loads(insight_graph_json)
             # PRD §4.7: No raw values, units, ranges. Only status and score (interpreted outputs).
@@ -433,9 +435,23 @@ Return insights in this JSON format:
             }
             cluster_summary = ig.get("cluster_summary", {}) or {}
             clusters_list = cluster_summary.get("clusters", [])
+            biomarker_context = [
+                {
+                    "biomarker_id": c.get("biomarker_id", ""),
+                    "status": c.get("status", "unknown"),
+                    "score": c.get("score"),
+                    "reason_codes": c.get("reason_codes", []),
+                    "missing_codes": c.get("missing_codes", []),
+                    "relationship_codes": c.get("relationship_codes", []),
+                }
+                for c in (ig.get("biomarker_context", []) or [])
+                if isinstance(c, dict)
+            ]
+            biomarker_context.sort(key=lambda x: x.get("biomarker_id", ""))
         except (json.JSONDecodeError, TypeError):
             biomarker_summary = {}
             clusters_list = []
+            biomarker_context = []
         # Sprint 8: Build confidence_context from ConfidenceModel_v1 (no inference from absence)
         conf = ig.get("confidence")
         if conf is None or not isinstance(conf, dict) or "system_confidence" not in conf:
@@ -446,7 +462,7 @@ Return insights in this JSON format:
                 f"Missing required biomarkers: {conf.get('missing_required_biomarkers', [])}. "
                 f"Incomplete clusters: {conf.get('missing_required_clusters', [])}."
             )
-        return template.format(
+        formatted = template.format(
             biomarker_scores=biomarker_summary,
             diet_level=lifestyle_profile.get("diet_level", "average"),
             exercise_minutes_per_week=lifestyle_profile.get("exercise_minutes_per_week", 150),
@@ -456,6 +472,11 @@ Return insights in this JSON format:
             alcohol_units_per_week=lifestyle_profile.get("alcohol_units_per_week", 5),
             clustering_results=clusters_list,
             confidence_context=confidence_context,
+        )
+        return (
+            f"{formatted}\n\n"
+            f"**Biomarker Context (code-only):**\n"
+            f"{biomarker_context}"
         )
 
 

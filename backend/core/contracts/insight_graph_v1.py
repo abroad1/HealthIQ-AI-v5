@@ -11,6 +11,7 @@ Sprint 8: Added confidence field (ConfidenceModel_v1).
 from typing import Dict, List, Any, Optional, TYPE_CHECKING
 from pydantic import BaseModel, ConfigDict, Field
 from core.contracts.relationship_registry_v1 import RelationshipDetection
+from core.contracts.biomarker_context_v1 import BiomarkerContextNode
 
 if TYPE_CHECKING:
     from core.contracts.confidence_model_v1 import ConfidenceModelV1
@@ -95,6 +96,11 @@ class InsightGraphV1(BaseModel):
 
     # Sprint 10: Relationship detections (safe status/score-derived, no raw values)
     relationships: List[RelationshipDetection] = Field(default_factory=list)
+
+    # Sprint 11: BiomarkerContext_v1 stamp + nodes (code-only explanatory context)
+    biomarker_context_version: Optional[str] = Field(default=None)
+    biomarker_context_hash: Optional[str] = Field(default=None)
+    biomarker_context: List[BiomarkerContextNode] = Field(default_factory=list)
 
     # Biomarker nodes (deterministic order by biomarker_id)
     biomarker_nodes: List[BiomarkerNode] = Field(default_factory=list)

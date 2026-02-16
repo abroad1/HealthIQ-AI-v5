@@ -43,6 +43,14 @@ class ReplayManifestV1(BaseModel):
         default="",
         description="Deterministic hash of relationships.yaml canonical JSON",
     )
+    biomarker_context_version: str = Field(
+        default="",
+        description="BiomarkerContext_v1 version stamp from InsightGraph",
+    )
+    biomarker_context_hash: str = Field(
+        default="",
+        description="BiomarkerContext_v1 deterministic hash from InsightGraph",
+    )
 
     schema_hashes: Dict[str, str] = Field(
         default_factory=dict,

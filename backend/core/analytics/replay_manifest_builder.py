@@ -34,6 +34,8 @@ def build_replay_manifest_v1(
     derived_markers_registry_version: Optional[str] = None,
     relationship_registry_version: Optional[str] = None,
     relationship_registry_hash: Optional[str] = None,
+    biomarker_context_version: Optional[str] = None,
+    biomarker_context_hash: Optional[str] = None,
     analysis_result_version: str = "1.0.0",
 ) -> ReplayManifestV1:
     """
@@ -49,6 +51,8 @@ def build_replay_manifest_v1(
         derived_markers_registry_version: If distinct; else use ratio_registry_version
         relationship_registry_version: Relationship registry version stamp
         relationship_registry_hash: Relationship registry hash stamp
+        biomarker_context_version: BiomarkerContext version stamp
+        biomarker_context_hash: BiomarkerContext hash stamp
         analysis_result_version: Existing result_version if present
 
     Returns:
@@ -67,6 +71,10 @@ def build_replay_manifest_v1(
                 relationship_registry_version = str(dump.get("relationship_registry_version", ""))
             if not relationship_registry_hash:
                 relationship_registry_hash = str(dump.get("relationship_registry_hash", ""))
+            if not biomarker_context_version:
+                biomarker_context_version = str(dump.get("biomarker_context_version", ""))
+            if not biomarker_context_hash:
+                biomarker_context_hash = str(dump.get("biomarker_context_hash", ""))
         except Exception:
             pass
 
@@ -97,6 +105,8 @@ def build_replay_manifest_v1(
         derived_markers_registry_version=derived_ver,
         relationship_registry_version=relationship_registry_version or "",
         relationship_registry_hash=relationship_registry_hash or "",
+        biomarker_context_version=biomarker_context_version or "",
+        biomarker_context_hash=biomarker_context_hash or "",
         schema_hashes=schema_hashes,
         analysis_result_version=analysis_result_version,
     )
