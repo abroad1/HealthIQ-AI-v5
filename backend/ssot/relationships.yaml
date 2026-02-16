@@ -1,0 +1,116 @@
+registry_version: "1.0.0"
+schema_version: "1.0"
+relationships:
+  - relationship_id: "tg_hdl_metabolic_pattern"
+    version: "1.0.0"
+    biomarkers: ["triglycerides", "hdl_cholesterol"]
+    uses_derived_markers: ["tg_hdl_ratio"]
+    logic:
+      any:
+        - all:
+            - biomarker: "triglycerides"
+              status_in: ["high"]
+              evidence_code: "tg_high"
+            - biomarker: "hdl_cholesterol"
+              status_in: ["low"]
+              evidence_code: "hdl_low"
+        - all:
+            - derived_marker: "tg_hdl_ratio"
+              status_in: ["high"]
+              evidence_code: "tg_hdl_ratio_high"
+    classification_code: "METABOLIC_LIPID_PATTERN"
+    severity: "moderate"
+    description_short: "High TG with low HDL, or elevated TG/HDL ratio pattern."
+
+  - relationship_id: "apob_ldl_discordance"
+    version: "1.0.0"
+    biomarkers: ["apob", "ldl_cholesterol"]
+    logic:
+      all:
+        - biomarker: "apob"
+          status_in: ["high"]
+          evidence_code: "apob_high"
+        - biomarker: "ldl_cholesterol"
+          status_in: ["normal"]
+          evidence_code: "ldl_normal"
+    classification_code: "LIPOPROTEIN_DISCORDANCE"
+    severity: "moderate"
+    description_short: "ApoB elevated while LDL-C remains in normal range."
+
+  - relationship_id: "ferritin_crp_inflammation_modifier"
+    version: "1.0.0"
+    biomarkers: ["ferritin", "crp"]
+    logic:
+      all:
+        - biomarker: "ferritin"
+          status_in: ["high"]
+          evidence_code: "ferritin_high"
+        - biomarker: "crp"
+          status_in: ["high"]
+          evidence_code: "crp_high"
+    classification_code: "INFLAMMATION_MODIFIER_PATTERN"
+    severity: "moderate"
+    description_short: "Concurrent ferritin and CRP elevation pattern."
+
+  - relationship_id: "ast_alt_hepatic_pattern"
+    version: "1.0.0"
+    biomarkers: ["ast", "alt"]
+    uses_derived_markers: ["ast_alt_ratio"]
+    logic:
+      any:
+        - all:
+            - derived_marker: "ast_alt_ratio"
+              status_in: ["high"]
+              evidence_code: "ast_alt_ratio_high"
+        - all:
+            - biomarker: "ast"
+              status_in: ["high"]
+              evidence_code: "ast_high"
+            - biomarker: "alt"
+              status_in: ["normal", "high"]
+              evidence_code: "alt_normal_or_high"
+    classification_code: "HEPATIC_PATTERN"
+    severity: "moderate"
+    description_short: "AST/ALT ratio elevation or AST-high with ALT normal/high."
+
+  - relationship_id: "bun_creatinine_renal_pattern"
+    version: "1.0.0"
+    biomarkers: ["bun", "creatinine"]
+    uses_derived_markers: ["bun_creatinine_ratio"]
+    logic:
+      any:
+        - all:
+            - derived_marker: "bun_creatinine_ratio"
+              status_in: ["high"]
+              evidence_code: "bun_creatinine_ratio_high"
+        - all:
+            - biomarker: "bun"
+              status_in: ["high"]
+              evidence_code: "bun_high"
+            - biomarker: "creatinine"
+              status_in: ["normal", "high"]
+              evidence_code: "creatinine_normal_or_high"
+    classification_code: "RENAL_PATTERN"
+    severity: "moderate"
+    description_short: "BUN/creatinine ratio high or BUN-high with creatinine normal/high."
+
+  - relationship_id: "neutrophils_lymphocytes_inflammation_pattern"
+    version: "1.0.0"
+    biomarkers: ["neutrophils", "lymphocytes"]
+    uses_derived_markers: ["nlr"]
+    logic:
+      any:
+        - all:
+            - derived_marker: "nlr"
+              status_in: ["high"]
+              evidence_code: "nlr_high"
+        - all:
+            - biomarker: "neutrophils"
+              status_in: ["high"]
+              evidence_code: "neutrophils_high"
+            - biomarker: "lymphocytes"
+              status_in: ["low"]
+              evidence_code: "lymphocytes_low"
+    classification_code: "INFLAMMATION_CELLULAR_PATTERN"
+    severity: "moderate"
+    description_short: "High NLR or neutrophilia with lymphopenia pattern."

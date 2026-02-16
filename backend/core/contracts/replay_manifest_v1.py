@@ -1,0 +1,55 @@
+"""
+Sprint 9 - Replay Manifest v1 Contract.
+
+Strict, versioned execution manifest for replay/debug/audit.
+Deterministic: no timestamps, no random, no environment-dependent fields.
+"""
+
+from typing import Dict, Optional
+from pydantic import BaseModel, ConfigDict, Field
+
+REPLAY_MANIFEST_V1_VERSION = "1.0.0"
+
+
+class ReplayManifestV1(BaseModel):
+    """
+    Immutable execution manifest — Layer B output only.
+
+    For replay determinism. No timestamps, no DB IDs, no env identifiers.
+    """
+
+    model_config = ConfigDict(frozen=False, extra="forbid")
+
+    manifest_version: str = Field(
+        default=REPLAY_MANIFEST_V1_VERSION,
+        description="Contract version",
+    )
+
+    unit_registry_version: str = Field(default="", description="From units.yaml / UnitRegistry")
+    ratio_registry_version: str = Field(default="", description="From RatioRegistry")
+    cluster_schema_version: str = Field(default="", description="From cluster schema")
+    cluster_schema_hash: str = Field(default="", description="From cluster schema")
+    insight_graph_version: str = Field(default="", description="InsightGraphV1 graph_version")
+    confidence_model_version: str = Field(default="", description="ConfidenceModelV1 model_version")
+    derived_markers_registry_version: str = Field(
+        default="",
+        description="Same as ratio_registry_version if not distinct",
+    )
+    relationship_registry_version: str = Field(
+        default="",
+        description="From RelationshipRegistry",
+    )
+    relationship_registry_hash: str = Field(
+        default="",
+        description="Deterministic hash of relationships.yaml canonical JSON",
+    )
+
+    schema_hashes: Dict[str, str] = Field(
+        default_factory=dict,
+        description="insight_graph_hash, confidence_model_hash (SHA-256 of canonical JSON)",
+    )
+
+    analysis_result_version: str = Field(
+        default="1.0.0",
+        description="Existing result schema version if present",
+    )

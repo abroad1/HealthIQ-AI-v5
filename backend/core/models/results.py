@@ -68,6 +68,10 @@ class AnalysisResult(BaseModel):
         default=None,
         description="Derived/ratio markers (registry_version + derived dict) for replay determinism"
     )
+    replay_manifest: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Sprint 9: ReplayManifestV1 for determinism/replay"
+    )
 
 
 class AnalysisSummary(BaseModel):
@@ -146,3 +150,7 @@ class AnalysisDTO(BaseModel):
         description="Derived/ratio markers (registry_version + derived dict with provenance)"
     )
     meta: Optional[Dict[str, Any]] = Field(default=None, description="Analysis meta (criticality, etc.)")
+    replay_manifest: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Sprint 9: ReplayManifestV1 for determinism/replay (version stamps + schema hashes)"
+    )
