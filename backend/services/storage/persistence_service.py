@@ -161,7 +161,8 @@ class PersistenceService:
                 "recommendations": results_dto.get("recommendations"),
                 "result_version": results_dto.get("result_version", "1.0.0"),
                 "confidence_score": results_dto.get("confidence_score"),
-                "processing_metadata": results_dto.get("processing_metadata")
+                "processing_metadata": results_dto.get("processing_metadata"),
+                "replay_manifest": results_dto.get("replay_manifest"),
             }
             
             analysis_result = self.analysis_result_repo.upsert_by_analysis_id(analysis_id, **result_data)
@@ -537,6 +538,7 @@ class PersistenceService:
                 "recommendations": result.recommendations or [],
                 "overall_score": result.overall_score,
                 "derived_markers": derived_markers,
+                "replay_manifest": getattr(result, "replay_manifest", None),
                 "meta": {
                     "confidence_score": result.confidence_score,
                     "processing_metadata": result.processing_metadata
@@ -643,7 +645,12 @@ class PersistenceService:
             # Sprint 5: Persist derived_markers to first-class column
             if derived_markers is not None:
                 result_data["derived_markers"] = derived_markers
-            
+
+            # Sprint 9: Persist replay_manifest to first-class column
+            replay_manifest = getattr(dto, "replay_manifest", None)
+            if replay_manifest is not None:
+                result_data["replay_manifest"] = replay_manifest
+
             # Use upsert to ensure idempotence
             analysis_result = self.analysis_result_repo.upsert_by_analysis_id(analysis_id, **result_data)
             

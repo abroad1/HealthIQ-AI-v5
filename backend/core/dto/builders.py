@@ -33,7 +33,8 @@ def build_analysis_result_dto(result: Dict[str, Any]) -> Dict[str, Any]:
         "recommendations": result.get("recommendations", []),
         "result_version": result.get("result_version", "1.0.0"),
         "derived_markers": result.get("derived_markers"),
-        "meta": result.get("meta", {})
+        "meta": result.get("meta", {}),
+        "replay_manifest": result.get("replay_manifest"),
     }
 
 

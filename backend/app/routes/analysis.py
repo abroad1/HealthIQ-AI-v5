@@ -127,6 +127,7 @@ async def start_analysis(request: AnalysisStartRequest):
         _analysis_results[analysis_id] = {
             "analysis_id": dto.analysis_id,
             "meta": meta,
+            "replay_manifest": getattr(dto, "replay_manifest", None),
             "derived_markers": dto.derived_markers,
             "biomarkers": [
                 {

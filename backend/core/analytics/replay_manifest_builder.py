@@ -1,0 +1,102 @@
+"""
+Sprint 9 - Replay Manifest Builder (Layer B only).
+
+Builds ReplayManifestV1 from already-built objects. No clinical computation.
+Deterministic hashing via canonical JSON + SHA-256.
+"""
+
+import hashlib
+import json
+from typing import Dict, Any, Optional
+
+from core.contracts.replay_manifest_v1 import ReplayManifestV1, REPLAY_MANIFEST_V1_VERSION
+
+
+def _canonical_json_hash(obj: Any) -> str:
+    """Stable SHA-256 hash of canonical JSON (sorted keys, stable ordering)."""
+    if obj is None:
+        return ""
+    try:
+        # Canonical: sort_keys, no whitespace
+        payload = json.dumps(obj, sort_keys=True, default=str, separators=(",", ":"))
+        return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+    except (TypeError, ValueError):
+        return ""
+
+
+def build_replay_manifest_v1(
+    unit_registry_version: str,
+    ratio_registry_version: str,
+    cluster_schema_version: str,
+    cluster_schema_hash: str,
+    insight_graph: Optional[Any] = None,
+    confidence_model: Optional[Any] = None,
+    derived_markers_registry_version: Optional[str] = None,
+    relationship_registry_version: Optional[str] = None,
+    relationship_registry_hash: Optional[str] = None,
+    analysis_result_version: str = "1.0.0",
+) -> ReplayManifestV1:
+    """
+    Build ReplayManifestV1 from Layer B outputs.
+
+    Args:
+        unit_registry_version: From UNIT_REGISTRY_VERSION or units.yaml
+        ratio_registry_version: From RatioRegistry.version / derived output
+        cluster_schema_version: From get_cluster_schema_version_stamp
+        cluster_schema_hash: From get_cluster_schema_version_stamp
+        insight_graph: InsightGraphV1 instance (already built)
+        confidence_model: ConfidenceModelV1 instance (already built)
+        derived_markers_registry_version: If distinct; else use ratio_registry_version
+        relationship_registry_version: Relationship registry version stamp
+        relationship_registry_hash: Relationship registry hash stamp
+        analysis_result_version: Existing result_version if present
+
+    Returns:
+        ReplayManifestV1 instance
+    """
+    derived_ver = derived_markers_registry_version or ratio_registry_version
+
+    ig_version = ""
+    ig_hash = ""
+    if insight_graph is not None:
+        try:
+            dump = insight_graph.model_dump() if hasattr(insight_graph, "model_dump") else insight_graph
+            ig_version = str(dump.get("graph_version", ""))
+            ig_hash = _canonical_json_hash(dump)
+            if not relationship_registry_version:
+                relationship_registry_version = str(dump.get("relationship_registry_version", ""))
+            if not relationship_registry_hash:
+                relationship_registry_hash = str(dump.get("relationship_registry_hash", ""))
+        except Exception:
+            pass
+
+    conf_version = ""
+    conf_hash = ""
+    if confidence_model is not None:
+        try:
+            dump = confidence_model.model_dump() if hasattr(confidence_model, "model_dump") else confidence_model
+            conf_version = str(dump.get("model_version", ""))
+            conf_hash = _canonical_json_hash(dump)
+        except Exception:
+            pass
+
+    schema_hashes: Dict[str, str] = {}
+    if ig_hash:
+        schema_hashes["insight_graph_hash"] = ig_hash
+    if conf_hash:
+        schema_hashes["confidence_model_hash"] = conf_hash
+
+    return ReplayManifestV1(
+        manifest_version=REPLAY_MANIFEST_V1_VERSION,
+        unit_registry_version=unit_registry_version,
+        ratio_registry_version=ratio_registry_version,
+        cluster_schema_version=cluster_schema_version,
+        cluster_schema_hash=cluster_schema_hash,
+        insight_graph_version=ig_version,
+        confidence_model_version=conf_version,
+        derived_markers_registry_version=derived_ver,
+        relationship_registry_version=relationship_registry_version or "",
+        relationship_registry_hash=relationship_registry_hash or "",
+        schema_hashes=schema_hashes,
+        analysis_result_version=analysis_result_version,
+    )

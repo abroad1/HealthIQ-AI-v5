@@ -5,6 +5,7 @@ Sole assembler of InsightGraph_v1. Layer B computes; builder translates.
 Input: orchestrator result structures. Output: InsightGraphV1 (JSON-serialisable).
 """
 
+import os
 from typing import Dict, List, Any, Optional
 
 from core.contracts.insight_graph_v1 import (
@@ -14,6 +15,10 @@ from core.contracts.insight_graph_v1 import (
 )
 from core.analytics.primitives import frontend_status_from_value_and_range
 from core.analytics.confidence_builder import build_confidence_model_v1
+from core.analytics.relationship_registry import (
+    evaluate_relationships,
+    load_relationship_registry,
+)
 
 
 def build_insight_graph_v1(
@@ -51,6 +56,17 @@ def build_insight_graph_v1(
     """
     input_reference_ranges = input_reference_ranges or {}
     filtered_biomarkers = filtered_biomarkers or {}
+
+    def _to_relationship_status(status: Any) -> str:
+        """Normalize frontend/legacy statuses into RelationshipRegistry vocabulary."""
+        s = str(status or "").strip().lower()
+        if s in {"low"}:
+            return "low"
+        if s in {"normal", "optimal"}:
+            return "normal"
+        if s in {"high", "elevated", "critical"}:
+            return "high"
+        return "unknown"
 
     # Collect biomarker nodes: status + score only (PRD §4.7: no raw values/units/ranges)
     seen: Dict[str, Dict[str, Any]] = {}
@@ -122,6 +138,23 @@ def build_insight_graph_v1(
             "derived": derived_ratios_meta.get("ratios", {}),
         }
 
+    # Safe marker views for RelationshipRegistry (status/score only, deterministic)
+    panel_view = {
+        v["name"]: {
+            "status": _to_relationship_status(v.get("status")),
+            "score": v.get("score"),
+        }
+        for v in seen.values()
+    }
+    derived_markers_view: Dict[str, Dict[str, Any]] = {}
+    if derived_markers and isinstance(derived_markers.get("derived"), dict):
+        for derived_id in sorted(derived_markers["derived"].keys()):
+            marker = panel_view.get(derived_id, {})
+            derived_markers_view[derived_id] = {
+                "status": _to_relationship_status(marker.get("status")),
+                "score": marker.get("score"),
+            }
+
     # Sprint 8: Confidence model (deterministic, Layer B only)
     available = set(seen.keys())
     confidence_model = build_confidence_model_v1(
@@ -159,6 +192,28 @@ def build_insight_graph_v1(
             ],
         }
 
+    # Sprint 10: RelationshipRegistry evaluation (cluster-agnostic, deterministic)
+    relationship_detections = []
+    relationship_stamp = None
+    mode = os.getenv("HEALTHIQ_MODE", "").strip().lower()
+    fixture_mode = mode in {"fixture", "fixtures"}
+    try:
+        registry = load_relationship_registry()
+    except (ImportError, FileNotFoundError, ValueError):
+        # Determinism hardening: fail loudly in normal runtime.
+        # Soft-fail allowed only for explicit fixture-only mode.
+        if not fixture_mode:
+            raise
+        registry = None
+
+    if registry is not None:
+        relationship_stamp = registry.stamp
+        relationship_detections = evaluate_relationships(
+            panel_view=panel_view,
+            derived_markers_view=derived_markers_view,
+            registry=registry,
+        )
+
     return InsightGraphV1(
         graph_version=INSIGHTGRAPH_V1_VERSION,
         analysis_id=analysis_id,
@@ -168,6 +223,13 @@ def build_insight_graph_v1(
         cluster_summary=cluster_summary,
         criticality=criticality_result,
         confidence=confidence_model,
+        relationship_registry_version=(
+            relationship_stamp.relationship_registry_version if relationship_stamp else None
+        ),
+        relationship_registry_hash=(
+            relationship_stamp.relationship_registry_hash if relationship_stamp else None
+        ),
+        relationships=relationship_detections,
         biomarker_nodes=nodes,
         edges=[],
     )

@@ -26,6 +26,8 @@ from core.analytics.criticality import evaluate_criticality
 from core.analytics.ratio_registry import RatioRegistry, DERIVED_IDS, compute
 from core.analytics.cluster_schema import get_cluster_schema_version_stamp
 from core.analytics.insight_graph_builder import build_insight_graph_v1
+from core.analytics.replay_manifest_builder import build_replay_manifest_v1
+from core.units.registry import UNIT_REGISTRY_VERSION
 from core.scoring.rules import DERIVED_RATIO_BOUNDS
 
 
@@ -870,6 +872,26 @@ class AnalysisOrchestrator:
                 unit_normalisation_meta=unit_meta,
             )
 
+            # Step 4.7: Build ReplayManifest_v1 (Sprint 9) — determinism lock
+            logger.info("Step 4.7: Building ReplayManifest")
+            cluster_stamp = {}
+            try:
+                cluster_stamp = get_cluster_schema_version_stamp()
+            except (FileNotFoundError, ValueError):
+                pass
+            replay_manifest = build_replay_manifest_v1(
+                unit_registry_version=unit_meta.get("unit_registry_version", UNIT_REGISTRY_VERSION),
+                ratio_registry_version=derived_ratios_meta.get("ratio_registry_version", RatioRegistry.version),
+                cluster_schema_version=cluster_stamp.get("cluster_schema_version", ""),
+                cluster_schema_hash=cluster_stamp.get("cluster_schema_hash", ""),
+                insight_graph=insight_graph,
+                confidence_model=getattr(insight_graph, "confidence", None),
+                derived_markers_registry_version=derived_ratios_meta.get("ratio_registry_version"),
+                relationship_registry_version=getattr(insight_graph, "relationship_registry_version", ""),
+                relationship_registry_hash=getattr(insight_graph, "relationship_registry_hash", ""),
+                analysis_result_version="1.0.0",
+            )
+
             # Step 5: Synthesize insights (LLM receives only InsightGraph_v1)
             logger.info("Step 5: Synthesizing insights")
             insights_result = self._synthesize_from_insight_graph(
@@ -1148,6 +1170,7 @@ class AnalysisOrchestrator:
                 unmapped_biomarkers=unmapped_biomarkers,
                 derived_markers=derived_markers,
                 meta=meta,
+                replay_manifest=replay_manifest.model_dump(),
             )
             
             logger.info(f"Analysis {analysis_id} completed successfully with {len(biomarker_dtos)} biomarkers, {len(cluster_dtos)} clusters, {len(insight_dtos)} insights")

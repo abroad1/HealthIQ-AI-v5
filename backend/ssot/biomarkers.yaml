@@ -297,6 +297,21 @@ biomarkers:
     known_modifiers: []
     clinical_weight: 0.5
     
+  # Iron/inflammation markers
+  ferritin:
+    aliases: ["ferritin_(venous)"]
+    unit: "ng/mL"
+    description: "Ferritin"
+    category: "inflammatory"
+    data_type: "numeric"
+    system: "immune"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
+
   # Inflammatory Markers
   crp:
     aliases: ["c_reactive_protein", "hs_crp", "high_sensitivity_crp", "c-reactive_protein_crp_(venous)"]

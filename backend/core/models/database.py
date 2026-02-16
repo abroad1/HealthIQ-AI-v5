@@ -158,6 +158,9 @@ class AnalysisResult(Base):
     
     # Derived markers (Sprint 5: first-class for replay determinism)
     derived_markers = Column(JSON, nullable=True)
+
+    # Sprint 9: Replay manifest (ReplayManifestV1) for determinism/replay
+    replay_manifest = Column(JSON, nullable=True)
     
     # Metadata
     result_version = Column(String(50), nullable=False, default="1.0.0", index=True)

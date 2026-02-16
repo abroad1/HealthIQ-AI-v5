@@ -93,6 +93,20 @@ class TestPersistenceFlow:
             created_at=datetime.now(UTC).isoformat()
         )
         
+        replay_manifest = {
+            "manifest_version": "1.0.0",
+            "unit_registry_version": "1.0",
+            "ratio_registry_version": "1.1.0",
+            "relationship_registry_version": "1.0.0",
+            "relationship_registry_hash": "relhash123",
+            "cluster_schema_version": "1.0.0",
+            "cluster_schema_hash": "abc123",
+            "insight_graph_version": "1.0.0",
+            "confidence_model_version": "1.0.0",
+            "derived_markers_registry_version": "1.1.0",
+            "schema_hashes": {"insight_graph_hash": "def456", "confidence_model_hash": "ghi789"},
+            "analysis_result_version": "1.0.0",
+        }
         analysis_result_dto = AnalysisResultDTO(
             analysis_id=str(analysis_id),
             context=context,
@@ -110,6 +124,7 @@ class TestPersistenceFlow:
                     "tc_hdl_ratio": {"value": 4.0, "unit": "ratio", "source": "computed", "bounds_applied": True, "inputs_used": ["total_cholesterol", "hdl_cholesterol"]},
                 },
             },
+            replay_manifest=replay_manifest,
         )
         
         # Test automatic persistence
@@ -138,6 +153,17 @@ class TestPersistenceFlow:
         assert dm.get("registry_version") == "1.1.0"
         assert "tc_hdl_ratio" in dm.get("derived", {})
         assert dm["derived"]["tc_hdl_ratio"]["value"] == 4.0
+
+        # Sprint 9: Verify replay_manifest round-trip via first-class column
+        assert "replay_manifest" in fetched
+        rm = fetched["replay_manifest"]
+        assert rm is not None
+        assert rm.get("manifest_version") == "1.0.0"
+        assert rm.get("cluster_schema_hash") == "abc123"
+        assert rm.get("relationship_registry_version") == "1.0.0"
+        assert rm.get("relationship_registry_hash") == "relhash123"
+        assert "insight_graph_hash" in rm.get("schema_hashes", {})
+        assert rm["schema_hashes"]["insight_graph_hash"] == "def456"
 
         # Verify biomarker scores were created
         biomarker_repo = BiomarkerScoreRepository(db_session)

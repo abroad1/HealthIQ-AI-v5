@@ -62,3 +62,39 @@ def test_ordering_deterministic():
     ids = [n.biomarker_id for n in graph.biomarker_nodes]
     assert ids == sorted(ids)
     assert ids == ["a_marker", "z_marker"]
+
+
+def test_relationship_registry_load_error_raises_in_normal_mode(monkeypatch):
+    """Registry errors must fail loudly in normal runtime mode."""
+    monkeypatch.setenv("HEALTHIQ_MODE", "")
+
+    def _boom():
+        raise ValueError("invalid relationships registry")
+
+    monkeypatch.setattr("core.analytics.insight_graph_builder.load_relationship_registry", _boom)
+
+    with pytest.raises(ValueError, match="invalid relationships registry"):
+        build_insight_graph_v1(
+            analysis_id="bad-registry",
+            scoring_result={},
+            clustering_result={},
+        )
+
+
+def test_relationship_registry_load_error_soft_fails_in_fixture_mode(monkeypatch):
+    """Fixture mode may soft-fail and emit empty relationship outputs."""
+    monkeypatch.setenv("HEALTHIQ_MODE", "fixture")
+
+    def _boom():
+        raise ValueError("invalid relationships registry")
+
+    monkeypatch.setattr("core.analytics.insight_graph_builder.load_relationship_registry", _boom)
+
+    graph = build_insight_graph_v1(
+        analysis_id="fixture-registry",
+        scoring_result={},
+        clustering_result={},
+    )
+    assert graph.relationships == []
+    assert graph.relationship_registry_version is None
+    assert graph.relationship_registry_hash is None
