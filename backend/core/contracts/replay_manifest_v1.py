@@ -51,6 +51,14 @@ class ReplayManifestV1(BaseModel):
         default="",
         description="BiomarkerContext_v1 deterministic hash from InsightGraph",
     )
+    scoring_policy_version: str = Field(
+        default="",
+        description="From scoring_policy.yaml deterministic policy version",
+    )
+    scoring_policy_hash: str = Field(
+        default="",
+        description="Deterministic hash of scoring_policy.yaml canonical JSON",
+    )
 
     schema_hashes: Dict[str, str] = Field(
         default_factory=dict,

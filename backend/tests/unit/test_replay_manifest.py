@@ -135,3 +135,17 @@ def test_biomarker_context_stamp_in_manifest():
     )
     assert m.biomarker_context_version == "1.0.0"
     assert m.biomarker_context_hash == "ctxhash123"
+
+
+def test_scoring_policy_stamp_in_manifest():
+    """Manifest carries scoring policy version/hash for replay stamping."""
+    m = build_replay_manifest_v1(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        scoring_policy_version="1.0.0",
+        scoring_policy_hash="policyhash123",
+    )
+    assert m.scoring_policy_version == "1.0.0"
+    assert m.scoring_policy_hash == "policyhash123"
