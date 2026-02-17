@@ -19,7 +19,7 @@ from core.scoring.engine import ScoringEngine
 from core.scoring.overlays import LifestyleOverlays, LifestyleProfile
 from core.pipeline.questionnaire_mapper import QuestionnaireMapper, MappedLifestyleFactors
 from core.models.questionnaire import QuestionnaireSubmission, create_questionnaire_validator
-from core.clustering.engine import ClusteringEngine
+from core.clustering.cluster_engine_v2 import ClusterEngineV2
 from core.insights.synthesis import InsightSynthesizer
 from core.analytics.primitives import frontend_status_from_value_and_range
 from core.analytics.criticality import evaluate_criticality
@@ -50,7 +50,7 @@ class AnalysisOrchestrator:
         self.lifestyle_overlays = LifestyleOverlays()
         self.questionnaire_mapper = QuestionnaireMapper()
         self.questionnaire_validator = create_questionnaire_validator()
-        self.clustering_engine = ClusteringEngine()
+        self.clustering_engine = ClusterEngineV2()
         self.insight_synthesizer = InsightSynthesizer()
     
     def create_analysis_context(

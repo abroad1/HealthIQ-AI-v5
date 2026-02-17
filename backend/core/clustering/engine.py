@@ -73,15 +73,14 @@ class ClusteringEngine:
         biomarker_values = self._extract_biomarker_values(context)
         biomarker_scores = self._extract_biomarker_scores(scoring_result)
         
-        # Apply clustering algorithm
-        if self.algorithm == ClusteringAlgorithm.RULE_BASED:
-            clusters = self._apply_rule_based_clustering(biomarker_values, biomarker_scores)
-        elif self.algorithm == ClusteringAlgorithm.WEIGHTED_CORRELATION:
-            clusters = self._apply_weighted_correlation_clustering(biomarker_values, biomarker_scores)
-        elif self.algorithm == ClusteringAlgorithm.HEALTH_SYSTEM_GROUPING:
-            clusters = self._apply_health_system_grouping(scoring_result)
-        else:
-            clusters = []
+        # Legacy compatibility: dispatch table avoids algorithm branch chain.
+        # Runtime convergence uses ClusterEngineV2 in orchestrator.
+        algo_dispatch = {
+            ClusteringAlgorithm.RULE_BASED: lambda: self._apply_rule_based_clustering(biomarker_values, biomarker_scores),
+            ClusteringAlgorithm.WEIGHTED_CORRELATION: lambda: self._apply_weighted_correlation_clustering(biomarker_values, biomarker_scores),
+            ClusteringAlgorithm.HEALTH_SYSTEM_GROUPING: lambda: self._apply_health_system_grouping(scoring_result),
+        }
+        clusters = algo_dispatch.get(self.algorithm, lambda: [])()
         
         # Validate clusters
         validation_summary = self._validate_clusters(clusters)
