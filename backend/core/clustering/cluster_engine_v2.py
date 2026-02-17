@@ -5,9 +5,14 @@ Sprint 16: Engine-only implementation (not wired to runtime).
 Provides deterministic cluster scoring based on biomarker values and derived metrics.
 """
 
+from dataclasses import dataclass
+import time
 from typing import Dict, List, Any, Optional
 from pathlib import Path
 import yaml
+
+from core.models.context import AnalysisContext
+from core.models.biomarker import BiomarkerCluster
 
 
 def load_cluster_rules(path: str = "backend/ssot/cluster_rules.yaml") -> Dict[str, Any]:
@@ -207,4 +212,131 @@ def score_clusters(
         })
     
     return results
+
+
+@dataclass
+class ClusterEngineV2Result:
+    """Runtime result shape used by orchestrator."""
+
+    clusters: List[BiomarkerCluster]
+    algorithm_used: str
+    confidence_score: float
+    validation_summary: Dict[str, Any]
+    processing_time_ms: float
+
+
+class ClusterEngineV2:
+    """
+    Sole runtime clustering engine (Sprint 12 convergence).
+
+    Deterministic single-path clustering over schema-defined groups.
+    """
+
+    algorithm_name = "cluster_engine_v2"
+
+    def cluster_biomarkers(self, context: AnalysisContext, scoring_result: Any) -> ClusterEngineV2Result:
+        start_time = time.time()
+        biomarker_scores = self._extract_biomarker_scores(scoring_result)
+        groups = self._group_biomarkers_by_health_system(set(biomarker_scores.keys()))
+        clusters = self._build_clusters(groups, biomarker_scores)
+        validation_summary = self._validate_clusters(clusters)
+        confidence_score = self._calculate_overall_confidence(clusters, validation_summary)
+        elapsed_ms = (time.time() - start_time) * 1000
+        return ClusterEngineV2Result(
+            clusters=clusters,
+            algorithm_used=self.algorithm_name,
+            confidence_score=confidence_score,
+            validation_summary=validation_summary,
+            processing_time_ms=elapsed_ms,
+        )
+
+    def _extract_biomarker_scores(self, scoring_result: Any) -> Dict[str, float]:
+        scores: Dict[str, float] = {}
+        if hasattr(scoring_result, "health_system_scores"):
+            for _, system_score in scoring_result.health_system_scores.items():
+                for biomarker_score in system_score.biomarker_scores:
+                    scores[biomarker_score.biomarker_name] = float(biomarker_score.score)
+            return scores
+        if isinstance(scoring_result, dict):
+            for _, system_data in (scoring_result.get("health_system_scores") or {}).items():
+                for biomarker_score in (system_data or {}).get("biomarker_scores", []):
+                    name = biomarker_score.get("biomarker_name")
+                    score = biomarker_score.get("score")
+                    if name and isinstance(score, (int, float)):
+                        scores[name] = float(score)
+        return scores
+
+    def _group_biomarkers_by_health_system(self, available_biomarkers: set[str]) -> Dict[str, List[str]]:
+        try:
+            from core.analytics.cluster_schema import load_cluster_schema
+            schema = load_cluster_schema()
+        except (ImportError, FileNotFoundError, ValueError):
+            return {}
+        grouped: Dict[str, List[str]] = {}
+        for cluster_id, cluster_def in schema.clusters.items():
+            present = sorted([b for b in cluster_def.all_biomarkers() if b in available_biomarkers])
+            if present:
+                grouped[cluster_id] = present
+        return grouped
+
+    def _build_clusters(self, groups: Dict[str, List[str]], scores: Dict[str, float]) -> List[BiomarkerCluster]:
+        clusters: List[BiomarkerCluster] = []
+        for system_name, biomarkers in sorted(groups.items()):
+            if len(biomarkers) < 2:
+                continue
+            avg_score = sum(scores.get(b, 0.0) for b in biomarkers) / len(biomarkers)
+            if avg_score < 30:
+                severity = "critical"
+            elif avg_score < 50:
+                severity = "high"
+            elif avg_score < 70:
+                severity = "moderate"
+            elif avg_score < 85:
+                severity = "mild"
+            else:
+                severity = "normal"
+            confidence = self._calculate_cluster_confidence(biomarkers, scores)
+            clusters.append(
+                BiomarkerCluster(
+                    cluster_id=f"{system_name}_{len(biomarkers)}_biomarkers",
+                    name=f"{system_name.title()} Health Pattern",
+                    biomarkers=biomarkers,
+                    description=f"{severity.title()} {system_name} health pattern affecting {', '.join(biomarkers[:3])}"
+                    + (f" and {len(biomarkers) - 3} others" if len(biomarkers) > 3 else ""),
+                    severity=severity,
+                    confidence=confidence,
+                )
+            )
+        return clusters
+
+    def _calculate_cluster_confidence(self, biomarkers: List[str], scores: Dict[str, float]) -> float:
+        if not biomarkers:
+            return 0.0
+        score_values = [scores.get(b, 0.0) for b in biomarkers]
+        if not score_values:
+            return 0.0
+        mean_score = sum(score_values) / len(score_values)
+        variance = sum((score - mean_score) ** 2 for score in score_values) / len(score_values)
+        confidence = max(0.0, 1.0 - (variance / 2500))
+        size_boost = min(0.2, len(biomarkers) * 0.05)
+        return min(1.0, confidence + size_boost)
+
+    def _validate_clusters(self, clusters: List[BiomarkerCluster]) -> Dict[str, Any]:
+        if not clusters:
+            return {"total_clusters": 0, "valid_clusters": 0, "is_valid": True}
+        return {
+            "total_clusters": len(clusters),
+            "valid_clusters": len(clusters),
+            "is_valid": True,
+        }
+
+    def _calculate_overall_confidence(self, clusters: List[BiomarkerCluster], validation_summary: Dict[str, Any]) -> float:
+        if not clusters:
+            return 0.0
+        avg_cluster_confidence = sum(cluster.confidence for cluster in clusters) / len(clusters)
+        validation_penalty = 0.2 if not validation_summary.get("is_valid", True) else 0.0
+        cluster_count = len(clusters)
+        if cluster_count < 2 or cluster_count > 6:
+            validation_penalty += 0.1
+        return max(0.0, avg_cluster_confidence - validation_penalty)
 
