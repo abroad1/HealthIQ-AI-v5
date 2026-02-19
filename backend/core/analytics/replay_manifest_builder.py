@@ -44,6 +44,8 @@ def build_replay_manifest_v1(
     biomarker_context_hash: Optional[str] = None,
     scoring_policy_version: Optional[str] = None,
     scoring_policy_hash: Optional[str] = None,
+    evidence_registry_version: Optional[str] = None,
+    evidence_registry_hash: Optional[str] = None,
     analysis_result_version: str = "1.0.0",
 ) -> ReplayManifestV1:
     """
@@ -63,6 +65,8 @@ def build_replay_manifest_v1(
         biomarker_context_hash: BiomarkerContext hash stamp
         scoring_policy_version: Scoring policy version stamp
         scoring_policy_hash: Scoring policy hash stamp
+        evidence_registry_version: Evidence registry version stamp
+        evidence_registry_hash: Evidence registry hash stamp
         analysis_result_version: Existing result_version if present
 
     Returns:
@@ -121,6 +125,8 @@ def build_replay_manifest_v1(
         biomarker_context_hash=biomarker_context_hash or "",
         scoring_policy_version=scoring_policy_version or "",
         scoring_policy_hash=scoring_policy_hash or "",
+        evidence_registry_version=evidence_registry_version or "",
+        evidence_registry_hash=evidence_registry_hash or "",
         schema_hashes=schema_hashes,
         analysis_result_version=analysis_result_version,
     )

@@ -151,6 +151,20 @@ def test_scoring_policy_stamp_in_manifest():
     assert m.scoring_policy_hash == "policyhash123"
 
 
+def test_evidence_registry_stamp_in_manifest():
+    """Manifest carries evidence registry version/hash for replay stamping."""
+    m = build_replay_manifest_v1(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        evidence_registry_version="1.0.0",
+        evidence_registry_hash="evidencehash123",
+    )
+    assert m.evidence_registry_version == "1.0.0"
+    assert m.evidence_registry_hash == "evidencehash123"
+
+
 def test_replay_manifest_builder_fails_loud_on_unserialisable_insight_graph(monkeypatch):
     """Production mode: replay stamp assembly must fail loudly."""
     monkeypatch.delenv("HEALTHIQ_MODE", raising=False)
