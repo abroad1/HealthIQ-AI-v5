@@ -7,6 +7,7 @@ Deterministic hashing via canonical JSON + SHA-256.
 
 import hashlib
 import json
+import os
 from typing import Dict, Any, Optional
 
 from core.contracts.replay_manifest_v1 import ReplayManifestV1, REPLAY_MANIFEST_V1_VERSION
@@ -22,6 +23,11 @@ def _canonical_json_hash(obj: Any) -> str:
         return hashlib.sha256(payload.encode("utf-8")).hexdigest()
     except (TypeError, ValueError):
         return ""
+
+
+def _fixture_mode_enabled() -> bool:
+    mode = os.getenv("HEALTHIQ_MODE", "").strip().lower()
+    return mode in {"fixture", "fixtures"}
 
 
 def build_replay_manifest_v1(
@@ -79,8 +85,9 @@ def build_replay_manifest_v1(
                 biomarker_context_version = str(dump.get("biomarker_context_version", ""))
             if not biomarker_context_hash:
                 biomarker_context_hash = str(dump.get("biomarker_context_hash", ""))
-        except Exception:
-            pass
+        except Exception as exc:
+            if not _fixture_mode_enabled():
+                raise ValueError(f"Replay manifest build failed for insight_graph: {exc}") from exc
 
     conf_version = ""
     conf_hash = ""
@@ -89,8 +96,9 @@ def build_replay_manifest_v1(
             dump = confidence_model.model_dump() if hasattr(confidence_model, "model_dump") else confidence_model
             conf_version = str(dump.get("model_version", ""))
             conf_hash = _canonical_json_hash(dump)
-        except Exception:
-            pass
+        except Exception as exc:
+            if not _fixture_mode_enabled():
+                raise ValueError(f"Replay manifest build failed for confidence_model: {exc}") from exc
 
     schema_hashes: Dict[str, str] = {}
     if ig_hash:

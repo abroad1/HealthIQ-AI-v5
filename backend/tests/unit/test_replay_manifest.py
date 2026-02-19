@@ -149,3 +149,39 @@ def test_scoring_policy_stamp_in_manifest():
     )
     assert m.scoring_policy_version == "1.0.0"
     assert m.scoring_policy_hash == "policyhash123"
+
+
+def test_replay_manifest_builder_fails_loud_on_unserialisable_insight_graph(monkeypatch):
+    """Production mode: replay stamp assembly must fail loudly."""
+    monkeypatch.delenv("HEALTHIQ_MODE", raising=False)
+
+    class BadInsightGraph:
+        def model_dump(self):
+            raise RuntimeError("boom")
+
+    with pytest.raises(ValueError, match="Replay manifest build failed for insight_graph"):
+        build_replay_manifest_v1(
+            unit_registry_version="1.0",
+            ratio_registry_version="1.1.0",
+            cluster_schema_version="1.0.0",
+            cluster_schema_hash="x",
+            insight_graph=BadInsightGraph(),
+        )
+
+
+def test_replay_manifest_builder_fixture_mode_allows_soft_fail(monkeypatch):
+    """Fixture mode: allow replay stamp soft-fail for fixture generation paths."""
+    monkeypatch.setenv("HEALTHIQ_MODE", "fixture")
+
+    class BadConfidenceModel:
+        def model_dump(self):
+            raise RuntimeError("boom")
+
+    m = build_replay_manifest_v1(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        confidence_model=BadConfidenceModel(),
+    )
+    assert m.confidence_model_version == ""

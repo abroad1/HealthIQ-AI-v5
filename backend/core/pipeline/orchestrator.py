@@ -701,6 +701,7 @@ class AnalysisOrchestrator:
                 "Unit normalisation required before orchestrator.run (apply_unit_normalisation)."
             )
         
+        analysis_id = str(uuid.uuid4())
         try:
             if not assume_canonical:
                 self._assert_canonical_only(biomarkers, where="run")
@@ -708,8 +709,6 @@ class AnalysisOrchestrator:
             # Initialize canonical resolver for units and reference ranges
             resolver = CanonicalResolver()
             
-            # Generate unique analysis ID
-            analysis_id = str(uuid.uuid4())
             logger.info(f"Starting analysis {analysis_id} with {len(biomarkers)} biomarkers")
             
             # Trace biomarkers received by orchestrator
@@ -1184,11 +1183,17 @@ class AnalysisOrchestrator:
             logger.error(f"Analysis failed: {str(e)}", exc_info=True)
             # Return error result instead of crashing
             return AnalysisDTO(
-                analysis_id=str(uuid.uuid4()),
+                analysis_id=analysis_id,
                 biomarkers=[],
                 clusters=[],
                 insights=[],
                 status="error",
-                created_at=datetime.now(UTC).isoformat(),
-                overall_score=0.0
+                created_at="1970-01-01T00:00:00+00:00",
+                overall_score=0.0,
+                replay_manifest={
+                    "manifest_version": "1.0.0",
+                    "failure_code": "analysis_pipeline_failed",
+                    "failure_type": type(e).__name__,
+                    "stage": "orchestrator.run",
+                },
             )

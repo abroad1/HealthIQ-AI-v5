@@ -198,7 +198,7 @@ async def start_analysis(request: AnalysisStartRequest):
         raise
     except Exception as e:
         return AnalysisStartResponse(
-            analysis_id=generate_analysis_id(),
+            analysis_id=analysis_id,
             status="error",
             message=f"Analysis failed: {str(e)}"
         )
