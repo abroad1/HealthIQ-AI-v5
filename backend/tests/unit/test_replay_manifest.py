@@ -255,6 +255,20 @@ def test_causal_layer_stamp_in_manifest():
     assert m.causal_layer_hash == "causalhash123"
 
 
+def test_calibration_layer_stamp_in_manifest():
+    """Manifest carries calibration layer version/hash for replay stamping."""
+    m = build_replay_manifest_v1(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        calibration_version="1.0.0",
+        calibration_hash="calibrationhash123",
+    )
+    assert m.calibration_version == "1.0.0"
+    assert m.calibration_hash == "calibrationhash123"
+
+
 def test_replay_manifest_builder_fails_loud_on_unserialisable_insight_graph(monkeypatch):
     """Production mode: replay stamp assembly must fail loudly."""
     monkeypatch.delenv("HEALTHIQ_MODE", raising=False)

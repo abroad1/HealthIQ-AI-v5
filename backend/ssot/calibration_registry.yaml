@@ -1,0 +1,66 @@
+registry_version: "1.0.0"
+schema_version: "1.0"
+
+calibration_rules:
+  - rule_id: "calibration_inflammatory_p0_urgent"
+    match:
+      required_system_ids: ["inflammatory"]
+      required_state_codes: ["system_multi_marker_derangement"]
+      required_transition_codes: ["system_trending_worse"]
+      required_precedence_codes: ["primary_driver:inflammatory"]
+      required_causal_codes: ["causal_edge_type:driver"]
+    outputs:
+      priority_tier: "p0"
+      urgency_band: "urgent"
+      action_intensity: "high"
+      stability_flag: "unstable"
+      explanation_codes:
+        - "calibration:state_multi_marker"
+        - "calibration:transition_worsening"
+        - "calibration:precedence_primary_driver"
+    precedence:
+      rank: 10
+
+  - rule_id: "calibration_driver_p1_soon"
+    match:
+      required_state_codes: ["system_multi_marker_derangement"]
+      required_precedence_codes: []
+      required_causal_codes: ["causal_edge_type:driver"]
+    outputs:
+      priority_tier: "p1"
+      urgency_band: "soon"
+      action_intensity: "high"
+      stability_flag: "unstable"
+      explanation_codes:
+        - "calibration:causal_driver"
+        - "calibration:state_multi_marker"
+    precedence:
+      rank: 20
+
+  - rule_id: "calibration_amplifier_p2_monitor"
+    match:
+      required_causal_codes: ["causal_edge_type:amplifier"]
+      required_transition_codes: ["system_trending_improving"]
+    outputs:
+      priority_tier: "p2"
+      urgency_band: "monitor"
+      action_intensity: "medium"
+      stability_flag: "stable"
+      explanation_codes:
+        - "calibration:causal_amplifier"
+        - "calibration:transition_improving"
+    precedence:
+      rank: 30
+
+  - rule_id: "calibration_constraint_p2_routine"
+    match:
+      required_causal_codes: ["causal_edge_type:constraint"]
+    outputs:
+      priority_tier: "p2"
+      urgency_band: "routine"
+      action_intensity: "low"
+      stability_flag: "stable"
+      explanation_codes:
+        - "calibration:causal_constraint"
+    precedence:
+      rank: 40
