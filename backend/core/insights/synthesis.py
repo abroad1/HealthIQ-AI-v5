@@ -316,6 +316,12 @@ class InsightSynthesizer:
         """
         start_time = time.time()
         lifestyle_profile = lifestyle_profile or {}
+        mode = os.getenv("HEALTHIQ_MODE", "").strip().lower()
+        allow_legacy_path = mode in {"fixture", "fixtures", "test"}
+        if insight_graph is None and not allow_legacy_path:
+            raise ValueError(
+                "Runtime purity violation: insight_graph is required in production synthesis path"
+            )
 
         categories = requested_categories or self.prompt_templates.get_supported_categories()
         all_insights = []
@@ -344,6 +350,10 @@ class InsightSynthesizer:
                         max_insights=max_insights_per_category
                     )
                 else:
+                    if not allow_legacy_path:
+                        raise RuntimeError(
+                            "Runtime purity violation: legacy insight synthesis path disabled in production"
+                        )
                     category_insights = self._generate_category_insights(
                         category=category,
                         context=context,
@@ -431,6 +441,11 @@ class InsightSynthesizer:
         Returns:
             List of Insight objects
         """
+        mode = os.getenv("HEALTHIQ_MODE", "").strip().lower()
+        if mode not in {"fixture", "fixtures", "test"}:
+            raise RuntimeError(
+                "Runtime purity violation: legacy category synthesis path disabled in production"
+            )
         # PRD §4.7: Strip to status+score only; no raw values/units/ranges
         safe_biomarker_view = self._strip_to_safe_biomarker_view(biomarker_scores)
         # Format the prompt template (clustering_results: cluster IDs + metadata only, no raw values)
