@@ -2,6 +2,7 @@
 Analysis orchestrator - enforces canonical-only keys and coordinates analysis.
 """
 
+import os
 from typing import Dict, Any, List, Mapping, Optional
 
 # Reserved key for unit-normalisation invariant (Sprint 5). Set by callers after apply_unit_normalisation.
@@ -29,6 +30,8 @@ from core.analytics.insight_graph_builder import build_insight_graph_v1
 from core.analytics.replay_manifest_builder import build_replay_manifest_v1
 from core.analytics.scoring_policy_registry import load_scoring_policy
 from core.analytics.evidence_registry import load_evidence_registry
+from core.analytics.snapshot_linker import link_prior_snapshot_insight_graphs
+from core.analytics.state_transition_engine import build_state_transition_v1
 from core.units.registry import UNIT_REGISTRY_VERSION
 from core.scoring.rules import DERIVED_RATIO_BOUNDS
 
@@ -36,14 +39,16 @@ from core.scoring.rules import DERIVED_RATIO_BOUNDS
 class AnalysisOrchestrator:
     """Orchestrates biomarker analysis with canonical enforcement."""
     
-    def __init__(self, normalizer: Optional[BiomarkerNormalizer] = None):
+    def __init__(self, normalizer: Optional[BiomarkerNormalizer] = None, db_session: Any = None):
         """
         Initialize the orchestrator.
         
         Args:
             normalizer: BiomarkerNormalizer instance, creates new one if None
+            db_session: Optional DB session for longitudinal snapshot linking
         """
         self.normalizer = normalizer or BiomarkerNormalizer()
+        self.db_session = db_session
         self.context_factory = AnalysisContextFactory()
         self.completeness_validator = DataCompletenessValidator(self.normalizer)
         self.gap_analyzer = BiomarkerGapAnalyzer(self.normalizer)
@@ -873,6 +878,30 @@ class AnalysisOrchestrator:
                 unit_normalisation_meta=unit_meta,
             )
 
+            # Step 4.65: v5.3 Sprint 1 longitudinal state transitions (code-only)
+            linked_snapshot_ids: List[str] = []
+            fixture_mode = os.getenv("HEALTHIQ_MODE", "").strip().lower() in {"fixture", "fixtures"}
+            user_id = user.get("user_id")
+            if self.db_session is not None and user_id:
+                try:
+                    linked = link_prior_snapshot_insight_graphs(
+                        db_session=self.db_session,
+                        user_id=user_id,
+                        current_analysis_id=analysis_id,
+                    )
+                    stamp, transitions = build_state_transition_v1(
+                        current_insight_graph=insight_graph,
+                        prior_insight_graphs=linked.prior_insight_graphs,
+                    )
+                    insight_graph.state_transition_version = stamp.state_transition_version
+                    insight_graph.state_transition_hash = stamp.state_transition_hash
+                    insight_graph.state_transitions = transitions
+                    linked_snapshot_ids = linked.linked_snapshot_ids
+                except Exception as exc:
+                    if not fixture_mode:
+                        raise ValueError(f"Snapshot linking failed: {exc}") from exc
+                    logger.warning("Fixture mode soft-fail for snapshot linking: %s", exc)
+
             # Step 4.7: Build ReplayManifest_v1 (Sprint 9) — determinism lock
             logger.info("Step 4.7: Building ReplayManifest")
             cluster_stamp = {}
@@ -894,6 +923,9 @@ class AnalysisOrchestrator:
                 scoring_policy_hash=load_scoring_policy().stamp.scoring_policy_hash,
                 evidence_registry_version=load_evidence_registry().stamp.evidence_registry_version,
                 evidence_registry_hash=load_evidence_registry().stamp.evidence_registry_hash,
+                state_transition_version=getattr(insight_graph, "state_transition_version", ""),
+                state_transition_hash=getattr(insight_graph, "state_transition_hash", ""),
+                linked_snapshot_ids=linked_snapshot_ids,
                 analysis_result_version="1.0.0",
             )
 
