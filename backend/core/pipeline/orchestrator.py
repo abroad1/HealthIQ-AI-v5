@@ -33,6 +33,7 @@ from core.analytics.evidence_registry import load_evidence_registry
 from core.analytics.snapshot_linker import link_prior_snapshot_insight_graphs
 from core.analytics.state_transition_engine import build_state_transition_v1
 from core.analytics.state_engine import build_state_engine_v1
+from core.analytics.precedence_engine import build_precedence_v1
 from core.units.registry import UNIT_REGISTRY_VERSION
 from core.scoring.rules import DERIVED_RATIO_BOUNDS
 
@@ -914,6 +915,17 @@ class AnalysisOrchestrator:
                     raise ValueError(f"State engine build failed: {exc}") from exc
                 logger.warning("Fixture mode soft-fail for state engine: %s", exc)
 
+            # Step 4.67: v5.3 Sprint 3 interaction precedence arbitration (code-only)
+            try:
+                precedence_output, precedence_stamp = build_precedence_v1(insight_graph)
+                insight_graph.precedence_output = precedence_output
+                insight_graph.precedence_engine_version = precedence_stamp.precedence_engine_version
+                insight_graph.precedence_engine_hash = precedence_stamp.precedence_engine_hash
+            except Exception as exc:
+                if not fixture_mode:
+                    raise ValueError(f"Precedence engine build failed: {exc}") from exc
+                logger.warning("Fixture mode soft-fail for precedence engine: %s", exc)
+
             # Step 4.7: Build ReplayManifest_v1 (Sprint 9) — determinism lock
             logger.info("Step 4.7: Building ReplayManifest")
             cluster_stamp = {}
@@ -939,6 +951,8 @@ class AnalysisOrchestrator:
                 state_transition_hash=getattr(insight_graph, "state_transition_hash", ""),
                 state_engine_version=getattr(insight_graph, "state_engine_version", ""),
                 state_engine_hash=getattr(insight_graph, "state_engine_hash", ""),
+                precedence_engine_version=getattr(insight_graph, "precedence_engine_version", ""),
+                precedence_engine_hash=getattr(insight_graph, "precedence_engine_hash", ""),
                 linked_snapshot_ids=linked_snapshot_ids,
                 analysis_result_version="1.0.0",
             )

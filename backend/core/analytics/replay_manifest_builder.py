@@ -50,6 +50,8 @@ def build_replay_manifest_v1(
     state_transition_hash: Optional[str] = None,
     state_engine_version: Optional[str] = None,
     state_engine_hash: Optional[str] = None,
+    precedence_engine_version: Optional[str] = None,
+    precedence_engine_hash: Optional[str] = None,
     linked_snapshot_ids: Optional[list[str]] = None,
     analysis_result_version: str = "1.0.0",
 ) -> ReplayManifestV1:
@@ -76,6 +78,8 @@ def build_replay_manifest_v1(
         state_transition_hash: State transition hash stamp
         state_engine_version: State engine version stamp
         state_engine_hash: State engine hash stamp
+        precedence_engine_version: Precedence engine version stamp
+        precedence_engine_hash: Precedence engine hash stamp
         linked_snapshot_ids: Prior snapshot IDs linked for longitudinal compute
         analysis_result_version: Existing result_version if present
 
@@ -107,6 +111,10 @@ def build_replay_manifest_v1(
                 state_engine_version = str(dump.get("state_engine_version", ""))
             if not state_engine_hash:
                 state_engine_hash = str(dump.get("state_engine_hash", ""))
+            if not precedence_engine_version:
+                precedence_engine_version = str(dump.get("precedence_engine_version", ""))
+            if not precedence_engine_hash:
+                precedence_engine_hash = str(dump.get("precedence_engine_hash", ""))
             if linked_snapshot_ids is None and isinstance(dump.get("linked_snapshot_ids"), list):
                 linked_snapshot_ids = [str(x) for x in dump.get("linked_snapshot_ids", [])]
         except Exception as exc:
@@ -151,6 +159,8 @@ def build_replay_manifest_v1(
         state_transition_hash=state_transition_hash or "",
         state_engine_version=state_engine_version or "",
         state_engine_hash=state_engine_hash or "",
+        precedence_engine_version=precedence_engine_version or "",
+        precedence_engine_hash=precedence_engine_hash or "",
         linked_snapshot_ids=list(linked_snapshot_ids or []),
         schema_hashes=schema_hashes,
         analysis_result_version=analysis_result_version,

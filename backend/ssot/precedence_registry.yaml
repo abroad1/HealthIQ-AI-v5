@@ -1,0 +1,77 @@
+registry_version: "1.0.0"
+schema_version: "1.0"
+
+systems:
+  - cardiovascular
+  - hepatic
+  - hematological
+  - hormonal
+  - inflammatory
+  - metabolic
+  - nutritional
+  - renal
+
+rules:
+  - rule_id: "metabolic_over_inflammatory_progression"
+    applies_to:
+      system_a: "metabolic"
+      system_b: "inflammatory"
+    dominance: "conditional"
+    conditions:
+      - "a_has_transition:system_trending_worse"
+      - "b_has_transition:system_trending_improving"
+      - "a_confidence_at_least:moderate"
+    tie_breakers:
+      - "confidence_gate"
+      - "high_criticality_wins"
+      - "explicit_registry_order"
+
+  - rule_id: "inflammatory_over_metabolic_progression"
+    applies_to:
+      system_a: "inflammatory"
+      system_b: "metabolic"
+    dominance: "conditional"
+    conditions:
+      - "a_has_transition:system_trending_worse"
+      - "b_has_transition:system_trending_improving"
+      - "a_confidence_at_least:moderate"
+    tie_breakers:
+      - "confidence_gate"
+      - "high_criticality_wins"
+      - "explicit_registry_order"
+
+  - rule_id: "cardiovascular_over_metabolic_multi_marker"
+    applies_to:
+      system_a: "cardiovascular"
+      system_b: "metabolic"
+    dominance: "conditional"
+    conditions:
+      - "a_has_state:system_multi_marker_derangement"
+      - "b_has_state:system_focal_derangement"
+      - "a_confidence_at_least:moderate"
+    tie_breakers:
+      - "high_criticality_wins"
+      - "confidence_gate"
+      - "explicit_registry_order"
+
+  - rule_id: "renal_over_hepatic_multi_marker"
+    applies_to:
+      system_a: "renal"
+      system_b: "hepatic"
+    dominance: "conditional"
+    conditions:
+      - "a_has_state:system_multi_marker_derangement"
+      - "b_has_state:system_focal_derangement"
+    tie_breakers:
+      - "persistence_beats_spike"
+      - "confidence_gate"
+      - "explicit_registry_order"
+
+  - rule_id: "registry_order_fallback_metabolic_vs_inflammatory"
+    applies_to:
+      system_a: "metabolic"
+      system_b: "inflammatory"
+    dominance: "a_over_b"
+    conditions: []
+    tie_breakers:
+      - "explicit_registry_order"

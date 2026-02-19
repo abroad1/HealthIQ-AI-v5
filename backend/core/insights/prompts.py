@@ -452,6 +452,7 @@ Return insights in this JSON format:
             biomarker_summary = {}
             clusters_list = []
             biomarker_context = []
+            ig = {}
         # Sprint 8: Build confidence_context from ConfidenceModel_v1 (no inference from absence)
         conf = ig.get("confidence")
         if conf is None or not isinstance(conf, dict) or "system_confidence" not in conf:
@@ -473,10 +474,21 @@ Return insights in this JSON format:
             clustering_results=clusters_list,
             confidence_context=confidence_context,
         )
+        precedence = ig.get("precedence_output") if isinstance(ig, dict) else None
+        if not isinstance(precedence, dict):
+            precedence = {}
+        arbitration = {
+            "primary_driver_system_id": str(precedence.get("primary_driver_system_id", "")),
+            "dominant_edges": precedence.get("dominant_edges", []),
+            "conflicts_resolved": precedence.get("conflicts_resolved", []),
+            "rationale_codes": precedence.get("rationale_codes", []),
+        }
         return (
             f"{formatted}\n\n"
             f"**Biomarker Context (code-only):**\n"
-            f"{biomarker_context}"
+            f"{biomarker_context}\n\n"
+            f"**Biological Arbitration (code-only):**\n"
+            f"{arbitration}"
         )
 
 
