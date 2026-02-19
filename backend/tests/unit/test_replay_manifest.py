@@ -241,6 +241,20 @@ def test_precedence_engine_stamp_deterministic_across_runs():
     assert m1.precedence_engine_hash == m2.precedence_engine_hash
 
 
+def test_causal_layer_stamp_in_manifest():
+    """Manifest carries causal layer version/hash for replay stamping."""
+    m = build_replay_manifest_v1(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        causal_layer_version="1.0.0",
+        causal_layer_hash="causalhash123",
+    )
+    assert m.causal_layer_version == "1.0.0"
+    assert m.causal_layer_hash == "causalhash123"
+
+
 def test_replay_manifest_builder_fails_loud_on_unserialisable_insight_graph(monkeypatch):
     """Production mode: replay stamp assembly must fail loudly."""
     monkeypatch.delenv("HEALTHIQ_MODE", raising=False)

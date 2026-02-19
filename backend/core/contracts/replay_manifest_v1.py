@@ -91,6 +91,14 @@ class ReplayManifestV1(BaseModel):
         default="",
         description="Deterministic hash of precedence arbitration payload",
     )
+    causal_layer_version: str = Field(
+        default="",
+        description="CausalLayer_v1 version stamp",
+    )
+    causal_layer_hash: str = Field(
+        default="",
+        description="Deterministic hash of causal layer payload",
+    )
     linked_snapshot_ids: List[str] = Field(
         default_factory=list,
         description="Prior analysis_ids linked for longitudinal state transition compute",

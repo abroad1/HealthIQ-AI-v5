@@ -483,12 +483,15 @@ Return insights in this JSON format:
             "conflicts_resolved": precedence.get("conflicts_resolved", []),
             "rationale_codes": precedence.get("rationale_codes", []),
         }
+        causal_edges = ig.get("causal_edges", []) if isinstance(ig, dict) else []
         return (
             f"{formatted}\n\n"
             f"**Biomarker Context (code-only):**\n"
             f"{biomarker_context}\n\n"
             f"**Biological Arbitration (code-only):**\n"
-            f"{arbitration}"
+            f"{arbitration}\n\n"
+            f"**Causal ordering (code-only):**\n"
+            f"{causal_edges}"
         )
 
 
