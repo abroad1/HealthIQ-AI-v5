@@ -83,6 +83,14 @@ class ReplayManifestV1(BaseModel):
         default="",
         description="Deterministic hash of system state payload",
     )
+    precedence_engine_version: str = Field(
+        default="",
+        description="InteractionPrecedenceEngine_v1 version stamp",
+    )
+    precedence_engine_hash: str = Field(
+        default="",
+        description="Deterministic hash of precedence arbitration payload",
+    )
     linked_snapshot_ids: List[str] = Field(
         default_factory=list,
         description="Prior analysis_ids linked for longitudinal state transition compute",

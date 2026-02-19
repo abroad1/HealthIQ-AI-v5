@@ -34,6 +34,12 @@ from core.contracts.state_engine_v1 import (
     StateEngineStamp,
     STATE_ENGINE_V1_VERSION,
 )
+from core.contracts.precedence_engine_v1 import (
+    DominantEdge,
+    PrecedenceOutput,
+    PrecedenceStamp,
+    PRECEDENCE_ENGINE_V1_VERSION,
+)
 
 __all__ = [
     "InsightGraphV1",
@@ -56,4 +62,8 @@ __all__ = [
     "SystemStateNode",
     "StateEngineStamp",
     "STATE_ENGINE_V1_VERSION",
+    "DominantEdge",
+    "PrecedenceOutput",
+    "PrecedenceStamp",
+    "PRECEDENCE_ENGINE_V1_VERSION",
 ]
