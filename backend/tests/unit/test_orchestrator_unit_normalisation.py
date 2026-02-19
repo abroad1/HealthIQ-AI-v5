@@ -5,6 +5,8 @@ Orchestrator.run() must reject input without unit normalisation.
 """
 
 import pytest
+from uuid import UUID
+from unittest.mock import patch
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 from core.canonical.normalize import normalize_biomarkers_with_metadata
 from core.units.registry import apply_unit_normalisation, UNIT_REGISTRY_VERSION
@@ -58,3 +60,22 @@ class TestOrchestratorUnitNormalisationInvariant:
         val = non_hdl.get("value")
         assert val is not None
         assert abs(val - 3.885) < 0.1, f"non_hdl should be ~3.885 mmol/L, got {val}"
+
+    def test_orchestrator_failure_envelope_is_deterministic(self):
+        """Failure DTO reuses analysis_id and fixed timestamp with code-only manifest."""
+        orchestrator = AnalysisOrchestrator()
+        prepared = _prepare_unit_normalised({"glucose": {"value": 95.0, "unit": "mg/dL"}})
+        user = {"user_id": "test", "age": 35, "gender": "male"}
+
+        with patch("uuid.uuid4", side_effect=[UUID("11111111-1111-1111-1111-111111111111")]) as uuid_mock:
+            orchestrator.score_biomarkers = lambda *args, **kwargs: (_ for _ in ()).throw(RuntimeError("forced"))
+            dto = orchestrator.run(prepared, user, assume_canonical=True)
+
+        assert dto.status == "error"
+        assert dto.analysis_id == "11111111-1111-1111-1111-111111111111"
+        assert dto.created_at == "1970-01-01T00:00:00+00:00"
+        assert uuid_mock.call_count == 1
+        assert dto.replay_manifest is not None
+        assert dto.replay_manifest.get("failure_code") == "analysis_pipeline_failed"
+        assert dto.replay_manifest.get("failure_type") == "RuntimeError"
+        assert dto.replay_manifest.get("stage") == "orchestrator.run"
