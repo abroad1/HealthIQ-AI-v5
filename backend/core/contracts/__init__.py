@@ -40,6 +40,11 @@ from core.contracts.precedence_engine_v1 import (
     PrecedenceStamp,
     PRECEDENCE_ENGINE_V1_VERSION,
 )
+from core.contracts.causal_layer_v1 import (
+    CausalEdgeNode,
+    CausalLayerStamp,
+    CAUSAL_LAYER_V1_VERSION,
+)
 
 __all__ = [
     "InsightGraphV1",
@@ -66,4 +71,7 @@ __all__ = [
     "PrecedenceOutput",
     "PrecedenceStamp",
     "PRECEDENCE_ENGINE_V1_VERSION",
+    "CausalEdgeNode",
+    "CausalLayerStamp",
+    "CAUSAL_LAYER_V1_VERSION",
 ]

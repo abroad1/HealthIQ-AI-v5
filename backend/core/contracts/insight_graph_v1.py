@@ -15,6 +15,7 @@ from core.contracts.biomarker_context_v1 import BiomarkerContextNode
 from core.contracts.state_transition_v1 import BiomarkerTransitionNode
 from core.contracts.state_engine_v1 import SystemStateNode
 from core.contracts.precedence_engine_v1 import PrecedenceOutput
+from core.contracts.causal_layer_v1 import CausalEdgeNode
 
 if TYPE_CHECKING:
     from core.contracts.confidence_model_v1 import ConfidenceModelV1
@@ -126,6 +127,9 @@ class InsightGraphV1(BaseModel):
             rationale_codes=[],
         )
     )
+    causal_layer_version: Optional[str] = Field(default=None)
+    causal_layer_hash: Optional[str] = Field(default=None)
+    causal_edges: List[CausalEdgeNode] = Field(default_factory=list)
 
     # Biomarker nodes (deterministic order by biomarker_id)
     biomarker_nodes: List[BiomarkerNode] = Field(default_factory=list)

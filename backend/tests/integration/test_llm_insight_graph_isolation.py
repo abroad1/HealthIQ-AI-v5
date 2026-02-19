@@ -108,6 +108,7 @@ def test_payload_from_insight_graph_contains_no_raw_biomarker_dict(mock_context,
     assert "glucose" in captured_prompt
     assert "hba1c" in captured_prompt
     assert "Biomarker Context" in captured_prompt
+    assert "Causal ordering (code-only)" in captured_prompt
     if "state_transitions" in captured_prompt:
         assert "from_status" in captured_prompt
         assert "to_status" in captured_prompt
@@ -136,6 +137,7 @@ def test_format_template_from_insight_graph_produces_structured_only(minimal_ins
     assert "hba1c" in result
     assert "metabolic" in result.lower()
     assert "Biomarker Context" in result
+    assert "Causal ordering (code-only)" in result
     if "state_transitions" in result:
         assert "from_status" in result
         assert "to_status" in result
