@@ -29,6 +29,11 @@ from core.contracts.state_transition_v1 import (
     StateTransitionStamp,
     STATE_TRANSITION_V1_VERSION,
 )
+from core.contracts.state_engine_v1 import (
+    SystemStateNode,
+    StateEngineStamp,
+    STATE_ENGINE_V1_VERSION,
+)
 
 __all__ = [
     "InsightGraphV1",
@@ -48,4 +53,7 @@ __all__ = [
     "BiomarkerTransitionNode",
     "StateTransitionStamp",
     "STATE_TRANSITION_V1_VERSION",
+    "SystemStateNode",
+    "StateEngineStamp",
+    "STATE_ENGINE_V1_VERSION",
 ]
