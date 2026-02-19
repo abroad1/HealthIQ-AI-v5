@@ -1,0 +1,65 @@
+"""
+v5.3 Sprint 6 - Unit tests for GoldenPanelRunner_v1.
+"""
+
+import json
+from pathlib import Path
+
+from tools.run_golden_panel import (
+    _normalise_for_artifact_write,
+    run_golden_panel,
+)
+
+
+def _load_json(path: Path):
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def test_golden_panel_runner_writes_snapshot_pack_with_required_stamps(tmp_path):
+    fixture = Path(__file__).parent.parent / "fixtures" / "golden_panel_160.json"
+    run_dir, _ = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path,
+        run_id="unit-golden",
+        write_narrative=True,
+    )
+
+    analysis_path = run_dir / "analysis_result.json"
+    insight_path = run_dir / "insight_graph.json"
+    replay_path = run_dir / "replay_manifest.json"
+    narrative_path = run_dir / "narrative.txt"
+
+    assert analysis_path.exists()
+    assert insight_path.exists()
+    assert replay_path.exists()
+    assert narrative_path.exists()
+
+    replay = _load_json(replay_path)
+    assert replay.get("state_transition_version")
+    assert replay.get("state_transition_hash")
+    assert replay.get("state_engine_version")
+    assert replay.get("state_engine_hash")
+    assert replay.get("precedence_engine_version")
+    assert replay.get("precedence_engine_hash")
+    assert replay.get("causal_layer_version")
+    assert replay.get("causal_layer_hash")
+    assert replay.get("calibration_version")
+    assert replay.get("calibration_hash")
+    assert replay.get("evidence_registry_version")
+    assert replay.get("evidence_registry_hash")
+    assert "linked_snapshot_ids" in replay
+    assert isinstance(replay["linked_snapshot_ids"], list)
+
+
+def test_golden_panel_runner_artifact_normaliser_strips_volatile_fields():
+    payload = {
+        "created_at": "2026-01-01T00:00:00Z",
+        "elapsed_ms": 101,
+        "nested": {"created_at": "2026-01-01T00:00:01Z", "keep": True},
+        "insights": [{"id": "x", "created_at": "2026-01-01T00:00:02Z", "text": "ok"}],
+    }
+    out = _normalise_for_artifact_write(payload)
+    assert "created_at" not in out
+    assert "elapsed_ms" not in out
+    assert "created_at" not in out["nested"]
+    assert "created_at" not in out["insights"][0]
