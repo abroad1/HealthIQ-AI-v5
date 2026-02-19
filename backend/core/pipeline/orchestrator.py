@@ -28,6 +28,7 @@ from core.analytics.cluster_schema import get_cluster_schema_version_stamp
 from core.analytics.insight_graph_builder import build_insight_graph_v1
 from core.analytics.replay_manifest_builder import build_replay_manifest_v1
 from core.analytics.scoring_policy_registry import load_scoring_policy
+from core.analytics.evidence_registry import load_evidence_registry
 from core.units.registry import UNIT_REGISTRY_VERSION
 from core.scoring.rules import DERIVED_RATIO_BOUNDS
 
@@ -891,6 +892,8 @@ class AnalysisOrchestrator:
                 relationship_registry_hash=getattr(insight_graph, "relationship_registry_hash", ""),
                 scoring_policy_version=load_scoring_policy().stamp.scoring_policy_version,
                 scoring_policy_hash=load_scoring_policy().stamp.scoring_policy_hash,
+                evidence_registry_version=load_evidence_registry().stamp.evidence_registry_version,
+                evidence_registry_hash=load_evidence_registry().stamp.evidence_registry_hash,
                 analysis_result_version="1.0.0",
             )
 

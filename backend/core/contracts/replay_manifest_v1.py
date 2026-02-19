@@ -59,6 +59,14 @@ class ReplayManifestV1(BaseModel):
         default="",
         description="Deterministic hash of scoring_policy.yaml canonical JSON",
     )
+    evidence_registry_version: str = Field(
+        default="",
+        description="From EvidenceRegistry SSOT",
+    )
+    evidence_registry_hash: str = Field(
+        default="",
+        description="Deterministic hash of evidence_registry.yaml canonical JSON",
+    )
 
     schema_hashes: Dict[str, str] = Field(
         default_factory=dict,
