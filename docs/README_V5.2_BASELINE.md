@@ -22,9 +22,30 @@ All sprint execution and implementation must reference these documents explicitl
 
 ## Current Sprint
 
-**Sprint 4 = Derived Ratio Registry (Static Bounds Only)**
+**Sprint 11 complete (v5.2 Phase 2 complete).**
 
-We are about to start Sprint 4. Reference `Delivery_Sprint_Plan_v5.2.md` for detailed scope, Definition of Done, and dependencies.
+Execution sequencing authority:
+
+- `docs/Delivery_Sprint_Plan_v5.2.md`
+- `docs/MASTER_ROADMAP_v5.2_to_v5.3.md`
+
+## Completed Sprints (v5.2 to date)
+
+- Sprint 1-3: Unit registry, lab-origin metadata, criticality/missing-data confidence
+- Sprint 4-6: Ratio registry/centralisation and cluster schema refactor
+- Sprint 7-8: InsightGraph boundary hardening and confidence contract freeze
+- Sprint 9-11: ReplayManifest + deterministic replay stamps, RelationshipRegistry_v1, BiomarkerContext_v1
+
+Latest stable savepoint tags present:
+
+- `v5.2-p2-sprint10-stable`
+- `v5.2-p2-sprint11-stable`
+
+## Next Up (Depth-Oriented v5.2 Priorities)
+
+1. Move remaining scoring policy thresholds/weights into SSOT so inference policy is fully versioned and auditable.
+2. Converge runtime clustering to one production path and quarantine inactive engines from production execution.
+3. Standardise deterministic failure artifacts so failed runs remain replay-compatible and governance-safe.
 
 ---
 
