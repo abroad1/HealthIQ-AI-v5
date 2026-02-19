@@ -13,6 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from core.contracts.relationship_registry_v1 import RelationshipDetection
 from core.contracts.biomarker_context_v1 import BiomarkerContextNode
 from core.contracts.state_transition_v1 import BiomarkerTransitionNode
+from core.contracts.state_engine_v1 import SystemStateNode
 
 if TYPE_CHECKING:
     from core.contracts.confidence_model_v1 import ConfidenceModelV1
@@ -107,6 +108,11 @@ class InsightGraphV1(BaseModel):
     state_transition_version: Optional[str] = Field(default=None)
     state_transition_hash: Optional[str] = Field(default=None)
     state_transitions: List[BiomarkerTransitionNode] = Field(default_factory=list)
+
+    # v5.3 Sprint 2: Multi-marker system state engine (code-only)
+    state_engine_version: Optional[str] = Field(default=None)
+    state_engine_hash: Optional[str] = Field(default=None)
+    system_states: List[SystemStateNode] = Field(default_factory=list)
 
     # Biomarker nodes (deterministic order by biomarker_id)
     biomarker_nodes: List[BiomarkerNode] = Field(default_factory=list)

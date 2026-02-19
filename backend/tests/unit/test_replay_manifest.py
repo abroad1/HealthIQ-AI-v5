@@ -181,6 +181,36 @@ def test_state_transition_stamp_and_linked_snapshot_ids_in_manifest():
     assert m.linked_snapshot_ids == ["a-1", "a-2"]
 
 
+def test_state_engine_stamp_in_manifest():
+    """Manifest carries state engine version/hash for replay stamping."""
+    m = build_replay_manifest_v1(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        state_engine_version="1.0.0",
+        state_engine_hash="enginehash123",
+    )
+    assert m.state_engine_version == "1.0.0"
+    assert m.state_engine_hash == "enginehash123"
+
+
+def test_state_engine_stamp_deterministic_across_runs():
+    """State engine fields remain deterministic across repeated builds."""
+    kwargs = dict(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        state_engine_version="1.0.0",
+        state_engine_hash="enginehash123",
+    )
+    m1 = build_replay_manifest_v1(**kwargs)
+    m2 = build_replay_manifest_v1(**kwargs)
+    assert m1.state_engine_version == m2.state_engine_version
+    assert m1.state_engine_hash == m2.state_engine_hash
+
+
 def test_replay_manifest_builder_fails_loud_on_unserialisable_insight_graph(monkeypatch):
     """Production mode: replay stamp assembly must fail loudly."""
     monkeypatch.delenv("HEALTHIQ_MODE", raising=False)

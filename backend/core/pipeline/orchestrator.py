@@ -32,6 +32,7 @@ from core.analytics.scoring_policy_registry import load_scoring_policy
 from core.analytics.evidence_registry import load_evidence_registry
 from core.analytics.snapshot_linker import link_prior_snapshot_insight_graphs
 from core.analytics.state_transition_engine import build_state_transition_v1
+from core.analytics.state_engine import build_state_engine_v1
 from core.units.registry import UNIT_REGISTRY_VERSION
 from core.scoring.rules import DERIVED_RATIO_BOUNDS
 
@@ -902,6 +903,17 @@ class AnalysisOrchestrator:
                         raise ValueError(f"Snapshot linking failed: {exc}") from exc
                     logger.warning("Fixture mode soft-fail for snapshot linking: %s", exc)
 
+            # Step 4.66: v5.3 Sprint 2 system-level state engine (code-only)
+            try:
+                system_states, state_engine_stamp = build_state_engine_v1(insight_graph)
+                insight_graph.system_states = system_states
+                insight_graph.state_engine_version = state_engine_stamp.state_engine_version
+                insight_graph.state_engine_hash = state_engine_stamp.state_engine_hash
+            except Exception as exc:
+                if not fixture_mode:
+                    raise ValueError(f"State engine build failed: {exc}") from exc
+                logger.warning("Fixture mode soft-fail for state engine: %s", exc)
+
             # Step 4.7: Build ReplayManifest_v1 (Sprint 9) — determinism lock
             logger.info("Step 4.7: Building ReplayManifest")
             cluster_stamp = {}
@@ -925,6 +937,8 @@ class AnalysisOrchestrator:
                 evidence_registry_hash=load_evidence_registry().stamp.evidence_registry_hash,
                 state_transition_version=getattr(insight_graph, "state_transition_version", ""),
                 state_transition_hash=getattr(insight_graph, "state_transition_hash", ""),
+                state_engine_version=getattr(insight_graph, "state_engine_version", ""),
+                state_engine_hash=getattr(insight_graph, "state_engine_hash", ""),
                 linked_snapshot_ids=linked_snapshot_ids,
                 analysis_result_version="1.0.0",
             )
