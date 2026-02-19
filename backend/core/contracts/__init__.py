@@ -24,6 +24,11 @@ from core.contracts.biomarker_context_v1 import (
     BiomarkerContextStamp,
     BIOMARKER_CONTEXT_V1_VERSION,
 )
+from core.contracts.state_transition_v1 import (
+    BiomarkerTransitionNode,
+    StateTransitionStamp,
+    STATE_TRANSITION_V1_VERSION,
+)
 
 __all__ = [
     "InsightGraphV1",
@@ -40,4 +45,7 @@ __all__ = [
     "BiomarkerContextNode",
     "BiomarkerContextStamp",
     "BIOMARKER_CONTEXT_V1_VERSION",
+    "BiomarkerTransitionNode",
+    "StateTransitionStamp",
+    "STATE_TRANSITION_V1_VERSION",
 ]

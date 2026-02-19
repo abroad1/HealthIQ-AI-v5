@@ -5,7 +5,7 @@ Strict, versioned execution manifest for replay/debug/audit.
 Deterministic: no timestamps, no random, no environment-dependent fields.
 """
 
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 from pydantic import BaseModel, ConfigDict, Field
 
 REPLAY_MANIFEST_V1_VERSION = "1.0.0"
@@ -66,6 +66,18 @@ class ReplayManifestV1(BaseModel):
     evidence_registry_hash: str = Field(
         default="",
         description="Deterministic hash of evidence_registry.yaml canonical JSON",
+    )
+    state_transition_version: str = Field(
+        default="",
+        description="StateTransitionEngine_v1 version stamp",
+    )
+    state_transition_hash: str = Field(
+        default="",
+        description="Deterministic hash of state transition payload",
+    )
+    linked_snapshot_ids: List[str] = Field(
+        default_factory=list,
+        description="Prior analysis_ids linked for longitudinal state transition compute",
     )
 
     schema_hashes: Dict[str, str] = Field(

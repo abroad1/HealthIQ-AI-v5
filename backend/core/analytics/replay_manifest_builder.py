@@ -46,6 +46,9 @@ def build_replay_manifest_v1(
     scoring_policy_hash: Optional[str] = None,
     evidence_registry_version: Optional[str] = None,
     evidence_registry_hash: Optional[str] = None,
+    state_transition_version: Optional[str] = None,
+    state_transition_hash: Optional[str] = None,
+    linked_snapshot_ids: Optional[list[str]] = None,
     analysis_result_version: str = "1.0.0",
 ) -> ReplayManifestV1:
     """
@@ -67,6 +70,9 @@ def build_replay_manifest_v1(
         scoring_policy_hash: Scoring policy hash stamp
         evidence_registry_version: Evidence registry version stamp
         evidence_registry_hash: Evidence registry hash stamp
+        state_transition_version: State transition version stamp
+        state_transition_hash: State transition hash stamp
+        linked_snapshot_ids: Prior snapshot IDs linked for longitudinal compute
         analysis_result_version: Existing result_version if present
 
     Returns:
@@ -89,6 +95,12 @@ def build_replay_manifest_v1(
                 biomarker_context_version = str(dump.get("biomarker_context_version", ""))
             if not biomarker_context_hash:
                 biomarker_context_hash = str(dump.get("biomarker_context_hash", ""))
+            if not state_transition_version:
+                state_transition_version = str(dump.get("state_transition_version", ""))
+            if not state_transition_hash:
+                state_transition_hash = str(dump.get("state_transition_hash", ""))
+            if linked_snapshot_ids is None and isinstance(dump.get("linked_snapshot_ids"), list):
+                linked_snapshot_ids = [str(x) for x in dump.get("linked_snapshot_ids", [])]
         except Exception as exc:
             if not _fixture_mode_enabled():
                 raise ValueError(f"Replay manifest build failed for insight_graph: {exc}") from exc
@@ -127,6 +139,9 @@ def build_replay_manifest_v1(
         scoring_policy_hash=scoring_policy_hash or "",
         evidence_registry_version=evidence_registry_version or "",
         evidence_registry_hash=evidence_registry_hash or "",
+        state_transition_version=state_transition_version or "",
+        state_transition_hash=state_transition_hash or "",
+        linked_snapshot_ids=list(linked_snapshot_ids or []),
         schema_hashes=schema_hashes,
         analysis_result_version=analysis_result_version,
     )

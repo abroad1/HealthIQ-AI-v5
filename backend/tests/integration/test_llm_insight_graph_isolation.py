@@ -15,6 +15,7 @@ from core.insights.synthesis import InsightSynthesizer
 from core.insights.prompts import InsightPromptTemplates
 from core.contracts.insight_graph_v1 import InsightGraphV1, BiomarkerNode
 from core.contracts.biomarker_context_v1 import BiomarkerContextNode
+from core.contracts.state_transition_v1 import BiomarkerTransitionNode
 
 # PRD §4.7: Forbidden keys in LLM payload (raw biomarker data)
 _FORBIDDEN_KEYS = {"value", "unit", "range", "reference_range", "lab_range", "lower", "upper"}
@@ -62,6 +63,17 @@ def minimal_insight_graph():
                 relationship_codes=[],
             )
         ],
+        state_transition_version="1.0.0",
+        state_transition_hash="statehash",
+        state_transitions=[
+            BiomarkerTransitionNode(
+                biomarker_id="glucose",
+                from_status="normal",
+                to_status="normal",
+                transition="stable_normal",
+                evidence_codes=["status_change"],
+            )
+        ],
         edges=[],
     )
 
@@ -96,9 +108,14 @@ def test_payload_from_insight_graph_contains_no_raw_biomarker_dict(mock_context,
     assert "glucose" in captured_prompt
     assert "hba1c" in captured_prompt
     assert "Biomarker Context" in captured_prompt
+    if "state_transitions" in captured_prompt:
+        assert "from_status" in captured_prompt
+        assert "to_status" in captured_prompt
+        assert "transition" in captured_prompt
     # Must NOT contain raw structure that would indicate raw biomarker dict
     assert "biomarker_panel" not in captured_prompt
     assert "raw_biomarkers" not in captured_prompt.lower()
+    assert "prior_snapshots" not in captured_prompt.lower()
     # PRD §4.7: No forbidden keys (value, unit, range, lower, upper, etc.)
     has_forbidden, found = _payload_contains_forbidden_keys(captured_prompt)
     assert not has_forbidden, f"Payload contains forbidden keys: {found}"
@@ -119,5 +136,10 @@ def test_format_template_from_insight_graph_produces_structured_only(minimal_ins
     assert "hba1c" in result
     assert "metabolic" in result.lower()
     assert "Biomarker Context" in result
+    if "state_transitions" in result:
+        assert "from_status" in result
+        assert "to_status" in result
+        assert "transition" in result
+    assert "prior_snapshots" not in result.lower()
     has_forbidden, found = _payload_contains_forbidden_keys(result)
     assert not has_forbidden, f"Formatted prompt contains forbidden keys: {found}"
