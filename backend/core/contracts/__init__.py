@@ -45,6 +45,11 @@ from core.contracts.causal_layer_v1 import (
     CausalLayerStamp,
     CAUSAL_LAYER_V1_VERSION,
 )
+from core.contracts.calibration_layer_v1 import (
+    CalibrationItem,
+    CalibrationStamp,
+    CALIBRATION_LAYER_V1_VERSION,
+)
 
 __all__ = [
     "InsightGraphV1",
@@ -74,4 +79,7 @@ __all__ = [
     "CausalEdgeNode",
     "CausalLayerStamp",
     "CAUSAL_LAYER_V1_VERSION",
+    "CalibrationItem",
+    "CalibrationStamp",
+    "CALIBRATION_LAYER_V1_VERSION",
 ]

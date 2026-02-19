@@ -54,6 +54,8 @@ def build_replay_manifest_v1(
     precedence_engine_hash: Optional[str] = None,
     causal_layer_version: Optional[str] = None,
     causal_layer_hash: Optional[str] = None,
+    calibration_version: Optional[str] = None,
+    calibration_hash: Optional[str] = None,
     linked_snapshot_ids: Optional[list[str]] = None,
     analysis_result_version: str = "1.0.0",
 ) -> ReplayManifestV1:
@@ -84,6 +86,8 @@ def build_replay_manifest_v1(
         precedence_engine_hash: Precedence engine hash stamp
         causal_layer_version: Causal layer version stamp
         causal_layer_hash: Causal layer hash stamp
+        calibration_version: Calibration layer version stamp
+        calibration_hash: Calibration layer hash stamp
         linked_snapshot_ids: Prior snapshot IDs linked for longitudinal compute
         analysis_result_version: Existing result_version if present
 
@@ -123,6 +127,10 @@ def build_replay_manifest_v1(
                 causal_layer_version = str(dump.get("causal_layer_version", ""))
             if not causal_layer_hash:
                 causal_layer_hash = str(dump.get("causal_layer_hash", ""))
+            if not calibration_version:
+                calibration_version = str(dump.get("calibration_version", ""))
+            if not calibration_hash:
+                calibration_hash = str(dump.get("calibration_hash", ""))
             if linked_snapshot_ids is None and isinstance(dump.get("linked_snapshot_ids"), list):
                 linked_snapshot_ids = [str(x) for x in dump.get("linked_snapshot_ids", [])]
         except Exception as exc:
@@ -171,6 +179,8 @@ def build_replay_manifest_v1(
         precedence_engine_hash=precedence_engine_hash or "",
         causal_layer_version=causal_layer_version or "",
         causal_layer_hash=causal_layer_hash or "",
+        calibration_version=calibration_version or "",
+        calibration_hash=calibration_hash or "",
         linked_snapshot_ids=list(linked_snapshot_ids or []),
         schema_hashes=schema_hashes,
         analysis_result_version=analysis_result_version,

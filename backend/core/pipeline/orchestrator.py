@@ -35,6 +35,7 @@ from core.analytics.state_transition_engine import build_state_transition_v1
 from core.analytics.state_engine import build_state_engine_v1
 from core.analytics.precedence_engine import build_precedence_v1
 from core.analytics.causal_layer_engine import build_causal_layer_v1
+from core.analytics.calibration_engine import build_calibration_layer_v1
 from core.units.registry import UNIT_REGISTRY_VERSION
 from core.scoring.rules import DERIVED_RATIO_BOUNDS
 
@@ -938,6 +939,17 @@ class AnalysisOrchestrator:
                     raise ValueError(f"Causal layer build failed: {exc}") from exc
                 logger.warning("Fixture mode soft-fail for causal layer: %s", exc)
 
+            # Step 4.69: v5.3 Sprint 5 outcome calibration layer (code-only)
+            try:
+                calibration_items, calibration_stamp = build_calibration_layer_v1(insight_graph)
+                insight_graph.calibration_items = calibration_items
+                insight_graph.calibration_version = calibration_stamp.calibration_version
+                insight_graph.calibration_hash = calibration_stamp.calibration_hash
+            except Exception as exc:
+                if not fixture_mode:
+                    raise ValueError(f"Calibration layer build failed: {exc}") from exc
+                logger.warning("Fixture mode soft-fail for calibration layer: %s", exc)
+
             # Step 4.7: Build ReplayManifest_v1 (Sprint 9) — determinism lock
             logger.info("Step 4.7: Building ReplayManifest")
             cluster_stamp = {}
@@ -967,6 +979,8 @@ class AnalysisOrchestrator:
                 precedence_engine_hash=getattr(insight_graph, "precedence_engine_hash", ""),
                 causal_layer_version=getattr(insight_graph, "causal_layer_version", ""),
                 causal_layer_hash=getattr(insight_graph, "causal_layer_hash", ""),
+                calibration_version=getattr(insight_graph, "calibration_version", ""),
+                calibration_hash=getattr(insight_graph, "calibration_hash", ""),
                 linked_snapshot_ids=linked_snapshot_ids,
                 analysis_result_version="1.0.0",
             )
