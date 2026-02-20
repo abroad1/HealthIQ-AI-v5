@@ -32,17 +32,21 @@ def _transition_codes(insight_graph: InsightGraphV1) -> Set[str]:
 
 def _precedence_codes(insight_graph: InsightGraphV1) -> Set[str]:
     out: Set[str] = set()
+    final_driver = str(getattr(insight_graph, "primary_driver_system_id", "") or "")
+    if final_driver:
+        out.add(f"primary_driver:{final_driver}")
     precedence = insight_graph.precedence_output
-    if precedence is None:
-        return out
-    if precedence.primary_driver_system_id:
-        out.add(f"primary_driver:{precedence.primary_driver_system_id}")
-    for edge in precedence.dominant_edges:
-        out.add(f"dominant_edge:{edge.from_system_id}>{edge.to_system_id}")
-    for code in precedence.conflicts_resolved:
-        out.add(f"precedence_conflict:{code}")
-    for code in precedence.rationale_codes:
-        out.add(f"precedence_rationale:{code}")
+    if precedence is not None:
+        if not final_driver and precedence.primary_driver_system_id:
+            out.add(f"primary_driver:{precedence.primary_driver_system_id}")
+        if precedence.primary_driver_system_id:
+            out.add(f"precedence_candidate_driver:{precedence.primary_driver_system_id}")
+        for edge in precedence.dominant_edges:
+            out.add(f"dominant_edge:{edge.from_system_id}>{edge.to_system_id}")
+        for code in precedence.conflicts_resolved:
+            out.add(f"precedence_conflict:{code}")
+        for code in precedence.rationale_codes:
+            out.add(f"precedence_rationale:{code}")
     return out
 
 

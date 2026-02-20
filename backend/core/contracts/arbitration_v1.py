@@ -20,6 +20,7 @@ class ConflictItem(BaseModel):
     system_a: str
     system_b: str
     conflict_type: str
+    conflict_severity: str
     rationale_codes: List[str] = Field(default_factory=list)
 
 

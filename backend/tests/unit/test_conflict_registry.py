@@ -17,3 +17,9 @@ def test_conflict_registry_sorted_by_rank_then_id():
     reg = load_conflict_registry()
     ordered = [(r.rank, r.conflict_id) for r in reg.rules]
     assert ordered == sorted(ordered)
+
+
+def test_conflict_registry_has_three_required_types():
+    reg = load_conflict_registry()
+    kinds = sorted({r.conflict_type for r in reg.rules})
+    assert kinds == ["cross_system_cascade", "depth_gap", "severity_override"]

@@ -131,8 +131,22 @@ def test_calibration_coupling_promotes_primary_driver_tier_deterministically():
     # Synthetic arbitration depth signals
     graph.primary_driver_system_id = "inflammatory"
     graph.conflict_set = [
-        ConflictItem(conflict_id="c1", system_a="inflammatory", system_b="metabolic", conflict_type="x", rationale_codes=[]),
-        ConflictItem(conflict_id="c2", system_a="inflammatory", system_b="hepatic", conflict_type="x", rationale_codes=[]),
+        ConflictItem(
+            conflict_id="c1",
+            system_a="inflammatory",
+            system_b="metabolic",
+            conflict_type="depth_gap",
+            conflict_severity="moderate",
+            rationale_codes=[],
+        ),
+        ConflictItem(
+            conflict_id="c2",
+            system_a="inflammatory",
+            system_b="hepatic",
+            conflict_type="severity_override",
+            conflict_severity="high",
+            rationale_codes=[],
+        ),
     ]
     graph.dominance_edges = [
         ArbitrationDominanceEdge(
@@ -140,7 +154,7 @@ def test_calibration_coupling_promotes_primary_driver_tier_deterministically():
             to_system_id="metabolic",
             rule_id="r1",
             conflict_id="c1",
-            conflict_type="x",
+            conflict_type="depth_gap",
             precedence_tier=10,
             rationale_codes=[],
         ),
@@ -149,7 +163,7 @@ def test_calibration_coupling_promotes_primary_driver_tier_deterministically():
             to_system_id="hepatic",
             rule_id="r2",
             conflict_id="c2",
-            conflict_type="x",
+            conflict_type="severity_override",
             precedence_tier=10,
             rationale_codes=[],
         ),

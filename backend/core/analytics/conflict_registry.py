@@ -13,6 +13,9 @@ import yaml
 
 from core.contracts.arbitration_v1 import canonical_json_sha256
 
+_ALLOWED_CONFLICT_TYPES = {"depth_gap", "severity_override", "cross_system_cascade"}
+_ALLOWED_CONFLICT_SEVERITY = {"low", "moderate", "high"}
+
 
 @dataclass(frozen=True)
 class ConflictRegistryStamp:
@@ -26,6 +29,7 @@ class ConflictRule:
     system_a: str
     system_b: str
     conflict_type: str
+    conflict_severity: str
     trigger_conditions: List[str]
     rationale_codes: List[str]
     rank: int
@@ -88,8 +92,13 @@ def load_conflict_registry() -> LoadedConflictRegistry:
         system_a = str(item.get("system_a", "*")).strip() or "*"
         system_b = str(item.get("system_b", "*")).strip() or "*"
         conflict_type = str(item.get("conflict_type", "")).strip()
+        conflict_severity = str(item.get("conflict_severity", "")).strip()
         if not conflict_type:
             raise ValueError(f"rule {conflict_id} missing conflict_type")
+        if conflict_type not in _ALLOWED_CONFLICT_TYPES:
+            raise ValueError(f"rule {conflict_id} invalid conflict_type")
+        if conflict_severity not in _ALLOWED_CONFLICT_SEVERITY:
+            raise ValueError(f"rule {conflict_id} invalid conflict_severity")
         conditions = item.get("trigger_conditions", [])
         rationale_codes = item.get("rationale_codes", [])
         precedence = item.get("precedence", {})
@@ -105,6 +114,7 @@ def load_conflict_registry() -> LoadedConflictRegistry:
                 system_a=system_a,
                 system_b=system_b,
                 conflict_type=conflict_type,
+                conflict_severity=conflict_severity,
                 trigger_conditions=sorted(set(str(x).strip() for x in conditions if str(x).strip())),
                 rationale_codes=sorted(set(str(x).strip() for x in rationale_codes if str(x).strip())),
                 rank=int(precedence["rank"]),
@@ -121,6 +131,7 @@ def load_conflict_registry() -> LoadedConflictRegistry:
                 "system_a": r.system_a,
                 "system_b": r.system_b,
                 "conflict_type": r.conflict_type,
+                "conflict_severity": r.conflict_severity,
                 "trigger_conditions": r.trigger_conditions,
                 "rationale_codes": r.rationale_codes,
                 "precedence": {"rank": r.rank},

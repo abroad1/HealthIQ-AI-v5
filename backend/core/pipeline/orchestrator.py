@@ -944,6 +944,20 @@ class AnalysisOrchestrator:
                     raise ValueError(f"Causal layer build failed: {exc}") from exc
                 logger.warning("Fixture mode soft-fail for causal layer: %s", exc)
 
+            # Step 4.69: baseline calibration prior to arbitration weighting (code-only)
+            try:
+                calibration_items, calibration_stamp = build_calibration_layer_v1(
+                    insight_graph,
+                    apply_arbitration_coupling=False,
+                )
+                insight_graph.calibration_items = calibration_items
+                insight_graph.calibration_version = calibration_stamp.calibration_version
+                insight_graph.calibration_hash = calibration_stamp.calibration_hash
+            except Exception as exc:
+                if not fixture_mode:
+                    raise ValueError(f"Calibration baseline build failed: {exc}") from exc
+                logger.warning("Fixture mode soft-fail for calibration baseline: %s", exc)
+
             # Step 4.70: v5.3 Sprint 7 arbitration depth (conflicts + dominance + causal + arbitration)
             try:
                 conflict_set = build_conflict_set_v1(insight_graph)

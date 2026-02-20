@@ -9,13 +9,14 @@ from core.analytics.arbitration_engine import build_arbitration_result_v1, build
 from core.analytics.causal_edge_engine import build_causal_edges_v1
 from core.analytics.calibration_engine import build_calibration_layer_v1
 from core.analytics.conflict_detector import build_conflict_set_v1
+from core.contracts.calibration_layer_v1 import CalibrationItem
 from core.contracts.insight_graph_v1 import InsightGraphV1
 from core.contracts.state_engine_v1 import SystemStateNode
 from tools.run_golden_panel import build_arbitration_report
 
 
 def _load_scenarios():
-    path = Path(__file__).parent.parent / "fixtures" / "arbitration_scenarios_v1.json"
+    path = Path(__file__).parent.parent / "fixtures" / "arbitration_scenarios_v2.json"
     return json.loads(path.read_text(encoding="utf-8"))["scenarios"]
 
 
@@ -36,6 +37,21 @@ def _to_graph(scenario: dict) -> InsightGraphV1:
 def test_arbitration_report_contains_expected_values_for_curated_scenarios():
     for scenario in _load_scenarios():
         graph = _to_graph(scenario)
+        graph.calibration_items = sorted(
+            [
+                CalibrationItem(
+                    system_id=sid,
+                    priority_tier=tier,
+                    urgency_band="routine",
+                    action_intensity="info",
+                    stability_flag="stable",
+                    explanation_codes=["calibration:scenario_seed"],
+                    applied_rule_ids=[],
+                )
+                for sid, tier in scenario.get("baseline_calibration_tiers", {}).items()
+            ],
+            key=lambda x: x.system_id,
+        )
         conflicts = build_conflict_set_v1(graph)
         dominance = build_dominance_edges_v1(graph, conflicts)
         causal = build_causal_edges_v1(conflicts, dominance)
@@ -54,8 +70,8 @@ def test_arbitration_report_contains_expected_values_for_curated_scenarios():
         )
         expected = scenario["expected"]
         assert report["arbitration_decisions"]["primary_driver_system_id"] == expected["primary_driver_system_id"]
-        found_conflict_ids = sorted({c["conflict_id"] for c in report["conflict_summary"]})
-        assert found_conflict_ids == sorted(expected["conflict_ids"])
+        found_conflict_types = sorted({c["conflict_type"] for c in report["conflict_summary"]})
+        assert found_conflict_types == sorted(expected["conflict_types"])
         found_edges = sorted([f"{e['from_system_id']}>{e['to_system_id']}:{e['edge_code']}" for e in report["causal_edges"]])
         for edge in expected["top_causal_edges"]:
             assert edge in found_edges
