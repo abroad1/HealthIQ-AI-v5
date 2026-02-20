@@ -36,6 +36,11 @@ from core.analytics.state_engine import build_state_engine_v1
 from core.analytics.precedence_engine import build_precedence_v1
 from core.analytics.causal_layer_engine import build_causal_layer_v1
 from core.analytics.calibration_engine import build_calibration_layer_v1
+from core.analytics.conflict_detector import build_conflict_set_v1
+from core.analytics.causal_edge_engine import build_causal_edges_v1
+from core.analytics.arbitration_engine import build_dominance_edges_v1, build_arbitration_result_v1
+from core.analytics.conflict_registry import load_conflict_registry
+from core.analytics.arbitration_registry import load_arbitration_registry
 from core.units.registry import UNIT_REGISTRY_VERSION
 from core.scoring.rules import DERIVED_RATIO_BOUNDS
 
@@ -950,6 +955,29 @@ class AnalysisOrchestrator:
                     raise ValueError(f"Calibration layer build failed: {exc}") from exc
                 logger.warning("Fixture mode soft-fail for calibration layer: %s", exc)
 
+            # Step 4.70: v5.3 Sprint 7 arbitration depth (conflicts + dominance + causal + arbitration)
+            try:
+                conflict_set = build_conflict_set_v1(insight_graph)
+                dominance_edges = build_dominance_edges_v1(insight_graph, conflict_set)
+                causal_edges = build_causal_edges_v1(conflict_set, dominance_edges)
+                arbitration_result, arbitration_stamp = build_arbitration_result_v1(
+                    insight_graph=insight_graph,
+                    conflicts=conflict_set,
+                    dominance_edges=dominance_edges,
+                    causal_edges=causal_edges,
+                )
+                insight_graph.conflict_set = conflict_set
+                insight_graph.dominance_edges = dominance_edges
+                insight_graph.causal_edges = causal_edges
+                insight_graph.arbitration_result = arbitration_result
+                insight_graph.primary_driver_system_id = arbitration_result.primary_driver_system_id
+                insight_graph.arbitration_version = arbitration_stamp.arbitration_version
+                insight_graph.arbitration_hash = arbitration_stamp.arbitration_hash
+            except Exception as exc:
+                if not fixture_mode:
+                    raise ValueError(f"Arbitration depth build failed: {exc}") from exc
+                logger.warning("Fixture mode soft-fail for arbitration depth: %s", exc)
+
             # Step 4.7: Build ReplayManifest_v1 (Sprint 9) — determinism lock
             logger.info("Step 4.7: Building ReplayManifest")
             cluster_stamp = {}
@@ -981,6 +1009,12 @@ class AnalysisOrchestrator:
                 causal_layer_hash=getattr(insight_graph, "causal_layer_hash", ""),
                 calibration_version=getattr(insight_graph, "calibration_version", ""),
                 calibration_hash=getattr(insight_graph, "calibration_hash", ""),
+                conflict_registry_version=load_conflict_registry().stamp.conflict_registry_version,
+                conflict_registry_hash=load_conflict_registry().stamp.conflict_registry_hash,
+                arbitration_registry_version=load_arbitration_registry().stamp.arbitration_registry_version,
+                arbitration_registry_hash=load_arbitration_registry().stamp.arbitration_registry_hash,
+                arbitration_version=getattr(insight_graph, "arbitration_version", ""),
+                arbitration_hash=getattr(insight_graph, "arbitration_hash", ""),
                 linked_snapshot_ids=linked_snapshot_ids,
                 analysis_result_version="1.0.0",
             )

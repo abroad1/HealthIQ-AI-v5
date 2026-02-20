@@ -1,0 +1,41 @@
+registry_version: "1.0.0"
+schema_version: "1.0"
+
+dominance_rules:
+  - rule_id: "depth_gap_a_over_b"
+    conflict_type: "derangement_depth_gap"
+    dominance: "a_over_b"
+    precedence_tier: 10
+    rationale_codes:
+      - "dominance:depth_gap"
+
+  - rule_id: "instability_a_over_b"
+    conflict_type: "instability_vs_stability"
+    dominance: "a_over_b"
+    precedence_tier: 20
+    rationale_codes:
+      - "dominance:instability_over_stable"
+
+causal_edge_rules:
+  - edge_rule_id: "depth_gap_driver_edge"
+    conflict_type: "derangement_depth_gap"
+    edge_type: "driver"
+    direction: "winner_to_loser"
+    priority: 100
+    rationale_codes:
+      - "causal_edge:depth_gap_driver"
+
+  - edge_rule_id: "instability_driver_edge"
+    conflict_type: "instability_vs_stability"
+    edge_type: "driver"
+    direction: "winner_to_loser"
+    priority: 90
+    rationale_codes:
+      - "causal_edge:instability_driver"
+
+arbitration_scoring:
+  tie_breakers:
+    - "wins_desc"
+    - "precedence_tier_asc"
+    - "confidence_bucket_desc"
+    - "system_id_asc"

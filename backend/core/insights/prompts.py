@@ -485,6 +485,12 @@ Return insights in this JSON format:
         }
         causal_edges = ig.get("causal_edges", []) if isinstance(ig, dict) else []
         calibration_items = ig.get("calibration_items", []) if isinstance(ig, dict) else []
+        arbitration_depth = {
+            "primary_driver_system_id": str(ig.get("primary_driver_system_id", "")) if isinstance(ig, dict) else "",
+            "conflict_set": ig.get("conflict_set", []) if isinstance(ig, dict) else [],
+            "dominance_edges": ig.get("dominance_edges", []) if isinstance(ig, dict) else [],
+            "arbitration_result": ig.get("arbitration_result", {}) if isinstance(ig, dict) else {},
+        }
         return (
             f"{formatted}\n\n"
             f"**Biomarker Context (code-only):**\n"
@@ -493,6 +499,8 @@ Return insights in this JSON format:
             f"{arbitration}\n\n"
             f"**Causal ordering (code-only):**\n"
             f"{causal_edges}\n\n"
+            f"**Arbitration depth (code-only):**\n"
+            f"{arbitration_depth}\n\n"
             f"**Calibration (code-only):**\n"
             f"{calibration_items}"
         )

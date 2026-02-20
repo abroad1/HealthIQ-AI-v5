@@ -45,10 +45,24 @@ def test_golden_panel_runner_writes_snapshot_pack_with_required_stamps(tmp_path)
     assert replay.get("causal_layer_hash")
     assert replay.get("calibration_version")
     assert replay.get("calibration_hash")
+    assert replay.get("arbitration_version")
+    assert replay.get("arbitration_hash")
+    assert replay.get("conflict_registry_version")
+    assert replay.get("conflict_registry_hash")
+    assert replay.get("arbitration_registry_version")
+    assert replay.get("arbitration_registry_hash")
     assert replay.get("evidence_registry_version")
     assert replay.get("evidence_registry_hash")
     assert "linked_snapshot_ids" in replay
     assert isinstance(replay["linked_snapshot_ids"], list)
+
+    insight = _load_json(insight_path)
+    assert isinstance(insight.get("conflict_set", []), list)
+    assert isinstance(insight.get("dominance_edges", []), list)
+    assert isinstance(insight.get("causal_edges", []), list)
+    assert len(insight.get("conflict_set", [])) > 0
+    assert len(insight.get("dominance_edges", [])) > 0
+    assert len(insight.get("causal_edges", [])) > 0
 
 
 def test_golden_panel_runner_artifact_normaliser_strips_volatile_fields():

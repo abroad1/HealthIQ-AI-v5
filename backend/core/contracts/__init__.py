@@ -50,6 +50,14 @@ from core.contracts.calibration_layer_v1 import (
     CalibrationStamp,
     CALIBRATION_LAYER_V1_VERSION,
 )
+from core.contracts.arbitration_v1 import (
+    ConflictItem,
+    DominanceEdge as ArbitrationDominanceEdge,
+    CausalEdge as ArbitrationCausalEdge,
+    ArbitrationNode,
+    ArbitrationStamp,
+    ARBITRATION_V1_VERSION,
+)
 
 __all__ = [
     "InsightGraphV1",
@@ -82,4 +90,10 @@ __all__ = [
     "CalibrationItem",
     "CalibrationStamp",
     "CALIBRATION_LAYER_V1_VERSION",
+    "ConflictItem",
+    "ArbitrationDominanceEdge",
+    "ArbitrationCausalEdge",
+    "ArbitrationNode",
+    "ArbitrationStamp",
+    "ARBITRATION_V1_VERSION",
 ]

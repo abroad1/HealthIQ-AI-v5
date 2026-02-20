@@ -1,0 +1,27 @@
+registry_version: "1.0.0"
+schema_version: "1.0"
+
+conflict_definitions:
+  - conflict_id: "multi_vs_focal_derangement"
+    system_a: "*"
+    system_b: "*"
+    conflict_type: "derangement_depth_gap"
+    trigger_conditions:
+      - "a_has_state:system_multi_marker_derangement"
+      - "b_has_state:system_focal_derangement"
+    rationale_codes:
+      - "conflict:multi_marker_vs_focal"
+    precedence:
+      rank: 10
+
+  - conflict_id: "bidirectional_vs_stable"
+    system_a: "*"
+    system_b: "*"
+    conflict_type: "instability_vs_stability"
+    trigger_conditions:
+      - "a_has_state:system_bidirectional_instability"
+      - "b_has_state:system_stable_normal"
+    rationale_codes:
+      - "conflict:bidirectional_vs_stable"
+    precedence:
+      rank: 20
