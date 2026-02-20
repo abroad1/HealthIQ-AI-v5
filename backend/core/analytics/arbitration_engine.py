@@ -61,7 +61,7 @@ def build_arbitration_result_v1(
     conflicts: List[ConflictItem],
     dominance_edges: List[DominanceEdge],
     causal_edges: List[object],
-) -> Tuple[ArbitrationNode, ArbitrationStamp]:
+) -> Tuple[str, ArbitrationNode, ArbitrationStamp]:
     registry = load_arbitration_registry()
     wins: Dict[str, int] = {}
     min_tier: Dict[str, int] = {}
@@ -86,8 +86,11 @@ def build_arbitration_result_v1(
         ),
     )
     primary = ranked[0] if ranked else ""
+    supporting_systems = [sid for sid in ranked if sid and sid != primary]
+    decision_trace_codes = sorted({f"rule:{e.rule_id}" for e in dominance_edges})
     result = ArbitrationNode(
-        primary_driver_system_id=primary,
+        supporting_system_ids=supporting_systems,
+        decision_trace_codes=decision_trace_codes,
         tie_breaker_codes=tie_breakers,
         rationale_codes=sorted(
             {
@@ -109,4 +112,4 @@ def build_arbitration_result_v1(
         arbitration_version=ARBITRATION_V1_VERSION,
         arbitration_hash=canonical_json_sha256(payload),
     )
-    return result, stamp
+    return primary, result, stamp

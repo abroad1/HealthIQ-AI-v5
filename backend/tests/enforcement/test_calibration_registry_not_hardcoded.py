@@ -30,6 +30,7 @@ def test_calibration_rule_ids_not_hardcoded_in_engine():
 def test_orchestrator_stamps_calibration_from_insight_graph():
     path = Path(__file__).parent.parent.parent / "core" / "pipeline" / "orchestrator.py"
     text = path.read_text(encoding="utf-8", errors="ignore")
-    assert "build_calibration_layer_v1(insight_graph)" in text
+    assert "build_calibration_layer_v1(" in text
+    assert "apply_arbitration_coupling=True" in text
     assert "calibration_version=getattr(insight_graph, \"calibration_version\", \"\")" in text
     assert "calibration_hash=getattr(insight_graph, \"calibration_hash\", \"\")" in text

@@ -478,7 +478,6 @@ Return insights in this JSON format:
         if not isinstance(precedence, dict):
             precedence = {}
         arbitration = {
-            "primary_driver_system_id": str(precedence.get("primary_driver_system_id", "")),
             "dominant_edges": precedence.get("dominant_edges", []),
             "conflicts_resolved": precedence.get("conflicts_resolved", []),
             "rationale_codes": precedence.get("rationale_codes", []),

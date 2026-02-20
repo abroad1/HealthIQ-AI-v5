@@ -45,11 +45,12 @@ def test_arbitration_depth_non_empty_and_sorted():
     conflicts = build_conflict_set_v1(graph)
     dominance = build_dominance_edges_v1(graph, conflicts)
     causal = build_causal_edges_v1(conflicts, dominance)
-    result, _ = build_arbitration_result_v1(graph, conflicts, dominance, causal)
+    primary_driver, result, _ = build_arbitration_result_v1(graph, conflicts, dominance, causal)
     assert conflicts
     assert dominance
     assert causal
-    assert result.primary_driver_system_id
+    assert primary_driver
+    assert result.supporting_system_ids
     ordered = [(e.from_system_id, e.to_system_id, e.edge_type) for e in causal]
     assert ordered == sorted(ordered)
 
@@ -59,12 +60,13 @@ def test_arbitration_hash_stability_for_same_input():
     c1 = build_conflict_set_v1(graph)
     d1 = build_dominance_edges_v1(graph, c1)
     e1 = build_causal_edges_v1(c1, d1)
-    r1, s1 = build_arbitration_result_v1(graph, c1, d1, e1)
+    p1, r1, s1 = build_arbitration_result_v1(graph, c1, d1, e1)
 
     c2 = build_conflict_set_v1(graph)
     d2 = build_dominance_edges_v1(graph, c2)
     e2 = build_causal_edges_v1(c2, d2)
-    r2, s2 = build_arbitration_result_v1(graph, c2, d2, e2)
+    p2, r2, s2 = build_arbitration_result_v1(graph, c2, d2, e2)
+    assert p1 == p2
     assert r1.model_dump() == r2.model_dump()
     assert s1.arbitration_hash == s2.arbitration_hash
 
@@ -74,5 +76,5 @@ def test_arbitration_tiebreakers_deterministic():
     conflicts = build_conflict_set_v1(graph)
     dominance = build_dominance_edges_v1(graph, conflicts)
     causal = build_causal_edges_v1(conflicts, dominance)
-    result, _ = build_arbitration_result_v1(graph, conflicts, dominance, causal)
+    _, result, _ = build_arbitration_result_v1(graph, conflicts, dominance, causal)
     assert result.tie_breaker_codes
