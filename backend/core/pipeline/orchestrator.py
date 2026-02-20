@@ -944,23 +944,12 @@ class AnalysisOrchestrator:
                     raise ValueError(f"Causal layer build failed: {exc}") from exc
                 logger.warning("Fixture mode soft-fail for causal layer: %s", exc)
 
-            # Step 4.69: v5.3 Sprint 5 outcome calibration layer (code-only)
-            try:
-                calibration_items, calibration_stamp = build_calibration_layer_v1(insight_graph)
-                insight_graph.calibration_items = calibration_items
-                insight_graph.calibration_version = calibration_stamp.calibration_version
-                insight_graph.calibration_hash = calibration_stamp.calibration_hash
-            except Exception as exc:
-                if not fixture_mode:
-                    raise ValueError(f"Calibration layer build failed: {exc}") from exc
-                logger.warning("Fixture mode soft-fail for calibration layer: %s", exc)
-
             # Step 4.70: v5.3 Sprint 7 arbitration depth (conflicts + dominance + causal + arbitration)
             try:
                 conflict_set = build_conflict_set_v1(insight_graph)
                 dominance_edges = build_dominance_edges_v1(insight_graph, conflict_set)
                 causal_edges = build_causal_edges_v1(conflict_set, dominance_edges)
-                arbitration_result, arbitration_stamp = build_arbitration_result_v1(
+                primary_driver_system_id, arbitration_result, arbitration_stamp = build_arbitration_result_v1(
                     insight_graph=insight_graph,
                     conflicts=conflict_set,
                     dominance_edges=dominance_edges,
@@ -970,13 +959,27 @@ class AnalysisOrchestrator:
                 insight_graph.dominance_edges = dominance_edges
                 insight_graph.causal_edges = causal_edges
                 insight_graph.arbitration_result = arbitration_result
-                insight_graph.primary_driver_system_id = arbitration_result.primary_driver_system_id
+                insight_graph.primary_driver_system_id = primary_driver_system_id
                 insight_graph.arbitration_version = arbitration_stamp.arbitration_version
                 insight_graph.arbitration_hash = arbitration_stamp.arbitration_hash
             except Exception as exc:
                 if not fixture_mode:
                     raise ValueError(f"Arbitration depth build failed: {exc}") from exc
                 logger.warning("Fixture mode soft-fail for arbitration depth: %s", exc)
+
+            # Step 4.71: v5.3 Sprint 8 calibration coupling from arbitration depth (code-only)
+            try:
+                calibration_items, calibration_stamp = build_calibration_layer_v1(
+                    insight_graph,
+                    apply_arbitration_coupling=True,
+                )
+                insight_graph.calibration_items = calibration_items
+                insight_graph.calibration_version = calibration_stamp.calibration_version
+                insight_graph.calibration_hash = calibration_stamp.calibration_hash
+            except Exception as exc:
+                if not fixture_mode:
+                    raise ValueError(f"Calibration layer build failed: {exc}") from exc
+                logger.warning("Fixture mode soft-fail for calibration layer: %s", exc)
 
             # Step 4.7: Build ReplayManifest_v1 (Sprint 9) — determinism lock
             logger.info("Step 4.7: Building ReplayManifest")

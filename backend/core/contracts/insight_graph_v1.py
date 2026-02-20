@@ -140,7 +140,8 @@ class InsightGraphV1(BaseModel):
     causal_edges: List[CausalEdge] = Field(default_factory=list)
     arbitration_result: ArbitrationNode = Field(
         default_factory=lambda: ArbitrationNode(
-            primary_driver_system_id="",
+            supporting_system_ids=[],
+            decision_trace_codes=[],
             tie_breaker_codes=[],
             rationale_codes=[],
         )

@@ -9,11 +9,14 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import subprocess
 from datetime import datetime, UTC
 from pathlib import Path
 from typing import Any, Dict, Mapping, Optional, Tuple
 
 from core.canonical.normalize import normalize_biomarkers_with_metadata
+from core.contracts.insight_graph_v1 import InsightGraphV1
+from core.analytics.calibration_engine import build_calibration_layer_v1
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 from core.units.registry import UNIT_REGISTRY_VERSION, UnitRegistry, apply_unit_normalisation
 
@@ -83,6 +86,147 @@ def _ensure_run_dir(output_root: Path, run_id: Optional[str]) -> Path:
     return run_dir
 
 
+def _current_git_short_sha() -> str:
+    try:
+        out = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], text=True)
+        return out.strip()
+    except Exception:
+        return ""
+
+
+def _sorted_dict_list(items: list[dict[str, Any]], sort_keys: tuple[str, ...]) -> list[dict[str, Any]]:
+    return sorted(items, key=lambda item: tuple(str(item.get(k, "")) for k in sort_keys))
+
+
+def _calibration_tier_by_system(calibration_items: list[dict[str, Any]]) -> dict[str, str]:
+    out: dict[str, str] = {}
+    for item in calibration_items:
+        if not isinstance(item, dict):
+            continue
+        system_id = str(item.get("system_id", "")).strip()
+        if not system_id:
+            continue
+        out[system_id] = str(item.get("priority_tier", "")).strip()
+    return out
+
+
+def build_arbitration_report(
+    insight_graph: dict[str, Any],
+    replay_manifest: dict[str, Any],
+    run_id: str,
+) -> dict[str, Any]:
+    conflict_set = insight_graph.get("conflict_set", []) if isinstance(insight_graph, dict) else []
+    dominance_edges = insight_graph.get("dominance_edges", []) if isinstance(insight_graph, dict) else []
+    causal_edges = insight_graph.get("causal_edges", []) if isinstance(insight_graph, dict) else []
+    arbitration_result = insight_graph.get("arbitration_result", {}) if isinstance(insight_graph, dict) else {}
+    primary_driver_system_id = str(insight_graph.get("primary_driver_system_id", "")) if isinstance(insight_graph, dict) else ""
+
+    conflict_summary = _sorted_dict_list(
+        [
+            {
+                "conflict_id": str(c.get("conflict_id", "")),
+                "conflict_type": str(c.get("conflict_type", "")),
+                "severity": "unspecified",
+                "system_ids": sorted([str(c.get("system_a", "")), str(c.get("system_b", ""))]),
+                "rationale_codes": sorted(set(c.get("rationale_codes", []))),
+            }
+            for c in conflict_set
+            if isinstance(c, dict)
+        ],
+        ("conflict_id", "conflict_type", "system_ids"),
+    )
+
+    precedence_summary = _sorted_dict_list(
+        [
+            {
+                "rule_id": str(e.get("rule_id", "")),
+                "conflict_id": str(e.get("conflict_id", "")),
+                "from_system_id": str(e.get("from_system_id", "")),
+                "to_system_id": str(e.get("to_system_id", "")),
+                "precedence_tier": int(e.get("precedence_tier", 0)),
+                "rationale_codes": sorted(set(e.get("rationale_codes", []))),
+            }
+            for e in dominance_edges
+            if isinstance(e, dict)
+        ],
+        ("from_system_id", "to_system_id", "precedence_tier", "rule_id", "conflict_id"),
+    )
+
+    causal_used = _sorted_dict_list(
+        [
+            {
+                "edge_id": str(e.get("edge_id", "")),
+                "from_system_id": str(e.get("from_system_id", "")),
+                "to_system_id": str(e.get("to_system_id", "")),
+                "edge_code": str(e.get("edge_type", "")),
+                "priority": int(e.get("priority", 0)),
+                "source_conflict_ids": sorted(set(e.get("source_conflict_ids", []))),
+            }
+            for e in causal_edges
+            if isinstance(e, dict)
+        ],
+        ("from_system_id", "to_system_id", "edge_code", "edge_id"),
+    )
+
+    supporting = sorted(
+        set(str(x).strip() for x in arbitration_result.get("supporting_system_ids", []) if str(x).strip())
+    ) if isinstance(arbitration_result, dict) else []
+    decision_trace = sorted(
+        set(str(x).strip() for x in arbitration_result.get("decision_trace_codes", []) if str(x).strip())
+    ) if isinstance(arbitration_result, dict) else []
+
+    # Compute pre-coupling calibration baseline from same graph (artifact-only analysis).
+    previous_tier = ""
+    final_tier = ""
+    reasons: list[str] = []
+    if isinstance(insight_graph, dict):
+        ig_model = InsightGraphV1(**insight_graph)
+        baseline_items, _ = build_calibration_layer_v1(ig_model, apply_arbitration_coupling=False)
+        baseline_map = _calibration_tier_by_system([x.model_dump() for x in baseline_items])
+        final_map = _calibration_tier_by_system(
+            [x for x in (insight_graph.get("calibration_items", []) or []) if isinstance(x, dict)]
+        )
+        previous_tier = baseline_map.get(primary_driver_system_id, "")
+        final_tier = final_map.get(primary_driver_system_id, "")
+        for item in insight_graph.get("calibration_items", []) or []:
+            if isinstance(item, dict) and str(item.get("system_id", "")) == primary_driver_system_id:
+                reasons = sorted(set(str(x) for x in item.get("explanation_codes", []) if str(x)))
+                break
+
+    report = {
+        "run_metadata": {
+            "run_id": run_id,
+            "git_commit_short": _current_git_short_sha(),
+            "generated_at_utc": datetime.now(UTC).isoformat(),
+            "arbitration_version": str(insight_graph.get("arbitration_version", "")) if isinstance(insight_graph, dict) else "",
+            "arbitration_hash": str(insight_graph.get("arbitration_hash", "")) if isinstance(insight_graph, dict) else "",
+        },
+        "conflict_summary": conflict_summary,
+        "precedence_summary": precedence_summary,
+        "causal_edges": causal_used,
+        "arbitration_decisions": {
+            "primary_driver_system_id": primary_driver_system_id,
+            "supporting_systems": supporting,
+            "decision_trace": decision_trace,
+        },
+        "calibration_impact": {
+            "system_id": primary_driver_system_id,
+            "previous_calibration_tier": previous_tier,
+            "final_calibration_tier": final_tier,
+            "reasons": reasons,
+        },
+        "replay_stamps": {
+            "conflict_registry_version": replay_manifest.get("conflict_registry_version", ""),
+            "conflict_registry_hash": replay_manifest.get("conflict_registry_hash", ""),
+            "arbitration_registry_version": replay_manifest.get("arbitration_registry_version", ""),
+            "arbitration_registry_hash": replay_manifest.get("arbitration_registry_hash", ""),
+            "arbitration_version": replay_manifest.get("arbitration_version", ""),
+            "arbitration_hash": replay_manifest.get("arbitration_hash", ""),
+        },
+    }
+    return report
+
+
 def _filter_unit_registry_supported(normalized: Mapping[str, Any]) -> Dict[str, Any]:
     """Keep only biomarkers that unit registry can deterministically convert."""
     base_units = UnitRegistry()._load_biomarker_base_units()
@@ -148,6 +292,15 @@ def run_golden_panel(
     )
     (run_dir / "replay_manifest.json").write_text(
         json.dumps(_normalise_for_artifact_write(replay_manifest), indent=2, sort_keys=True),
+        encoding="utf-8",
+    )
+    report = build_arbitration_report(
+        insight_graph=insight_graph if isinstance(insight_graph, dict) else {},
+        replay_manifest=replay_manifest if isinstance(replay_manifest, dict) else {},
+        run_id=run_dir.name,
+    )
+    (run_dir / "arbitration_report.json").write_text(
+        json.dumps(_normalise_for_artifact_write(report), indent=2, sort_keys=True),
         encoding="utf-8",
     )
 

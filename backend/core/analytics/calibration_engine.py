@@ -57,6 +57,35 @@ def _causal_codes(insight_graph: InsightGraphV1) -> Set[str]:
     return out
 
 
+def _promote_priority_tier(priority_tier: str, steps: int) -> str:
+    order = ["p3", "p2", "p1", "p0"]
+    idx = order.index(priority_tier) if priority_tier in order else 0
+    return order[min(idx + max(steps, 0), len(order) - 1)]
+
+
+def _promote_urgency_band(urgency_band: str, steps: int) -> str:
+    order = ["routine", "monitor", "soon", "urgent"]
+    idx = order.index(urgency_band) if urgency_band in order else 0
+    return order[min(idx + max(steps, 0), len(order) - 1)]
+
+
+def _promote_action_intensity(action_intensity: str, steps: int) -> str:
+    order = ["info", "low", "medium", "high"]
+    idx = order.index(action_intensity) if action_intensity in order else 0
+    return order[min(idx + max(steps, 0), len(order) - 1)]
+
+
+def _coupling_steps(insight_graph: InsightGraphV1) -> int:
+    conflict_count = len(getattr(insight_graph, "conflict_set", []) or [])
+    dominance_count = len(getattr(insight_graph, "dominance_edges", []) or [])
+    causal_count = len(getattr(insight_graph, "causal_edges", []) or [])
+    if conflict_count == 0:
+        return 0
+    if conflict_count >= 2 or dominance_count >= 2 or causal_count >= 2:
+        return 2
+    return 1
+
+
 def _rule_matches(
     rule_match: Dict[str, List[str]],
     system_id: str,
@@ -91,7 +120,11 @@ def _rule_matches(
     return True
 
 
-def build_calibration_layer_v1(insight_graph: InsightGraphV1) -> Tuple[List[CalibrationItem], CalibrationStamp]:
+def build_calibration_layer_v1(
+    insight_graph: InsightGraphV1,
+    *,
+    apply_arbitration_coupling: bool = True,
+) -> Tuple[List[CalibrationItem], CalibrationStamp]:
     registry = load_calibration_registry()
     states = _state_map(insight_graph)
     transition_codes = _transition_codes(insight_graph)
@@ -143,9 +176,32 @@ def build_calibration_layer_v1(insight_graph: InsightGraphV1) -> Tuple[List[Cali
             )
         )
 
+    if apply_arbitration_coupling:
+        primary_driver_system_id = str(getattr(insight_graph, "primary_driver_system_id", "") or "")
+        steps = _coupling_steps(insight_graph)
+        if primary_driver_system_id and steps > 0:
+            adjusted: List[CalibrationItem] = []
+            for item in items:
+                if item.system_id != primary_driver_system_id:
+                    adjusted.append(item)
+                    continue
+                adjusted.append(
+                    CalibrationItem(
+                        system_id=item.system_id,
+                        priority_tier=_promote_priority_tier(item.priority_tier, steps),
+                        urgency_band=_promote_urgency_band(item.urgency_band, steps),
+                        action_intensity=_promote_action_intensity(item.action_intensity, steps),
+                        stability_flag=item.stability_flag,
+                        explanation_codes=sorted(set(item.explanation_codes + [f"calibration:arbitration_coupling_depth:{steps}"])),
+                        applied_rule_ids=sorted(set(item.applied_rule_ids)),
+                    )
+                )
+            items = adjusted
+
     items.sort(key=lambda i: i.system_id)
     payload = {
         "version": CALIBRATION_LAYER_V1_VERSION,
+        "coupling_enabled": apply_arbitration_coupling,
         "calibration_items": [item.model_dump() for item in items],
     }
     stamp = CalibrationStamp(

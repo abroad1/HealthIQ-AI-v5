@@ -50,7 +50,8 @@ class CausalEdge(BaseModel):
 class ArbitrationNode(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    primary_driver_system_id: str
+    supporting_system_ids: List[str] = Field(default_factory=list)
+    decision_trace_codes: List[str] = Field(default_factory=list)
     tie_breaker_codes: List[str] = Field(default_factory=list)
     rationale_codes: List[str] = Field(default_factory=list)
 

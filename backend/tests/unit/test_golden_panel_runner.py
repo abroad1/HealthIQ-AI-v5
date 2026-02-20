@@ -27,11 +27,13 @@ def test_golden_panel_runner_writes_snapshot_pack_with_required_stamps(tmp_path)
     analysis_path = run_dir / "analysis_result.json"
     insight_path = run_dir / "insight_graph.json"
     replay_path = run_dir / "replay_manifest.json"
+    arbitration_report_path = run_dir / "arbitration_report.json"
     narrative_path = run_dir / "narrative.txt"
 
     assert analysis_path.exists()
     assert insight_path.exists()
     assert replay_path.exists()
+    assert arbitration_report_path.exists()
     assert narrative_path.exists()
 
     replay = _load_json(replay_path)
@@ -63,6 +65,15 @@ def test_golden_panel_runner_writes_snapshot_pack_with_required_stamps(tmp_path)
     assert len(insight.get("conflict_set", [])) > 0
     assert len(insight.get("dominance_edges", [])) > 0
     assert len(insight.get("causal_edges", [])) > 0
+    assert insight.get("primary_driver_system_id")
+
+    report = _load_json(arbitration_report_path)
+    assert "conflict_summary" in report
+    assert "precedence_summary" in report
+    assert "causal_edges" in report
+    assert "arbitration_decisions" in report
+    assert "calibration_impact" in report
+    assert report["arbitration_decisions"].get("primary_driver_system_id")
 
 
 def test_golden_panel_runner_artifact_normaliser_strips_volatile_fields():

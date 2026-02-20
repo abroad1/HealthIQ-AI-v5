@@ -5,6 +5,7 @@ v5.3 Sprint 5 - Unit tests for calibration engine.
 from pathlib import Path
 
 from core.analytics.calibration_engine import build_calibration_layer_v1
+from core.contracts.arbitration_v1 import ConflictItem, DominanceEdge as ArbitrationDominanceEdge
 from core.contracts.arbitration_v1 import CausalEdge
 from core.contracts.insight_graph_v1 import InsightGraphV1
 from core.contracts.precedence_engine_v1 import DominantEdge, PrecedenceOutput
@@ -123,6 +124,43 @@ def test_calibration_engine_hash_deterministic():
     i2, s2 = build_calibration_layer_v1(graph)
     assert [x.model_dump() for x in i1] == [x.model_dump() for x in i2]
     assert s1.calibration_hash == s2.calibration_hash
+
+
+def test_calibration_coupling_promotes_primary_driver_tier_deterministically():
+    graph = _graph()
+    # Synthetic arbitration depth signals
+    graph.primary_driver_system_id = "inflammatory"
+    graph.conflict_set = [
+        ConflictItem(conflict_id="c1", system_a="inflammatory", system_b="metabolic", conflict_type="x", rationale_codes=[]),
+        ConflictItem(conflict_id="c2", system_a="inflammatory", system_b="hepatic", conflict_type="x", rationale_codes=[]),
+    ]
+    graph.dominance_edges = [
+        ArbitrationDominanceEdge(
+            from_system_id="inflammatory",
+            to_system_id="metabolic",
+            rule_id="r1",
+            conflict_id="c1",
+            conflict_type="x",
+            precedence_tier=10,
+            rationale_codes=[],
+        ),
+        ArbitrationDominanceEdge(
+            from_system_id="inflammatory",
+            to_system_id="hepatic",
+            rule_id="r2",
+            conflict_id="c2",
+            conflict_type="x",
+            precedence_tier=10,
+            rationale_codes=[],
+        ),
+    ]
+    base_items, _ = build_calibration_layer_v1(graph, apply_arbitration_coupling=False)
+    coupled_items, _ = build_calibration_layer_v1(graph, apply_arbitration_coupling=True)
+    base = {i.system_id: i for i in base_items}
+    coupled = {i.system_id: i for i in coupled_items}
+    rank = {"p3": 0, "p2": 1, "p1": 2, "p0": 3}
+    assert rank[coupled["inflammatory"].priority_tier] >= rank[base["inflammatory"].priority_tier]
+    assert any(code.startswith("calibration:arbitration_coupling_depth:") for code in coupled["inflammatory"].explanation_codes)
 
 
 def test_calibration_engine_no_raw_fields_dependency():

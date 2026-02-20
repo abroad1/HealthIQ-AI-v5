@@ -1,0 +1,79 @@
+{
+  "scenarios": [
+    {
+      "scenario_id": "multi_vs_focal_dual_conflict",
+      "system_states": [
+        {
+          "system_id": "alpha",
+          "state_codes": ["system_multi_marker_derangement"],
+          "transition_summary_codes": [],
+          "confidence_bucket": "high"
+        },
+        {
+          "system_id": "beta",
+          "state_codes": ["system_focal_derangement"],
+          "transition_summary_codes": [],
+          "confidence_bucket": "moderate"
+        },
+        {
+          "system_id": "gamma",
+          "state_codes": ["system_focal_derangement"],
+          "transition_summary_codes": [],
+          "confidence_bucket": "low"
+        }
+      ],
+      "expected": {
+        "conflict_ids": ["multi_vs_focal_derangement"],
+        "primary_driver_system_id": "alpha",
+        "top_causal_edges": ["alpha>beta:driver", "alpha>gamma:driver"],
+        "expected_calibration_tier": "p0"
+      }
+    },
+    {
+      "scenario_id": "bidirectional_vs_stable_single_conflict",
+      "system_states": [
+        {
+          "system_id": "omega",
+          "state_codes": ["system_bidirectional_instability"],
+          "transition_summary_codes": [],
+          "confidence_bucket": "high"
+        },
+        {
+          "system_id": "sigma",
+          "state_codes": ["system_stable_normal"],
+          "transition_summary_codes": [],
+          "confidence_bucket": "moderate"
+        }
+      ],
+      "expected": {
+        "conflict_ids": ["bidirectional_vs_stable"],
+        "primary_driver_system_id": "omega",
+        "top_causal_edges": ["omega>sigma:driver"],
+        "expected_calibration_tier": "p2"
+      }
+    },
+    {
+      "scenario_id": "single_depth_gap_conflict",
+      "system_states": [
+        {
+          "system_id": "kappa",
+          "state_codes": ["system_multi_marker_derangement"],
+          "transition_summary_codes": [],
+          "confidence_bucket": "high"
+        },
+        {
+          "system_id": "lambda",
+          "state_codes": ["system_focal_derangement"],
+          "transition_summary_codes": [],
+          "confidence_bucket": "low"
+        }
+      ],
+      "expected": {
+        "conflict_ids": ["multi_vs_focal_derangement"],
+        "primary_driver_system_id": "kappa",
+        "top_causal_edges": ["kappa>lambda:driver"],
+        "expected_calibration_tier": "p0"
+      }
+    }
+  ]
+}
