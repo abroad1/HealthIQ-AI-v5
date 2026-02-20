@@ -126,7 +126,7 @@ def build_arbitration_report(
             {
                 "conflict_id": str(c.get("conflict_id", "")),
                 "conflict_type": str(c.get("conflict_type", "")),
-                "severity": "unspecified",
+                "severity": str(c.get("conflict_severity", "")),
                 "system_ids": sorted([str(c.get("system_a", "")), str(c.get("system_b", ""))]),
                 "rationale_codes": sorted(set(c.get("rationale_codes", []))),
             }

@@ -45,7 +45,12 @@ class CausalEdgeRule:
 
 @dataclass(frozen=True)
 class ArbitrationScoring:
+    cycle_policy: str
     tie_breakers: List[str]
+    score_components: Dict[str, int]
+    conflict_type_weights: Dict[str, int]
+    precedence_tier_weights: Dict[str, int]
+    calibration_tier_weights: Dict[str, int]
 
 
 @dataclass(frozen=True)
@@ -78,7 +83,14 @@ def load_arbitration_registry() -> LoadedArbitrationRegistry:
             _registry_cache = LoadedArbitrationRegistry(
                 dominance_rules=[],
                 causal_edge_rules=[],
-                scoring=ArbitrationScoring(tie_breakers=[]),
+                scoring=ArbitrationScoring(
+                    cycle_policy="fail_loud",
+                    tie_breakers=[],
+                    score_components={},
+                    conflict_type_weights={},
+                    precedence_tier_weights={},
+                    calibration_tier_weights={},
+                ),
                 stamp=ArbitrationRegistryStamp(arbitration_registry_version="1.0.0", arbitration_registry_hash=""),
             )
             return _registry_cache
@@ -169,9 +181,31 @@ def load_arbitration_registry() -> LoadedArbitrationRegistry:
         )
 
     tie_breakers = scoring_raw.get("tie_breakers", [])
+    cycle_policy = str(scoring_raw.get("cycle_policy", "fail_loud")).strip().lower()
+    if cycle_policy not in {"fail_loud"}:
+        raise ValueError("arbitration_scoring.cycle_policy must be fail_loud")
     if not isinstance(tie_breakers, list) or not all(isinstance(x, str) for x in tie_breakers):
         raise ValueError("arbitration_scoring.tie_breakers must be list[str]")
-    scoring = ArbitrationScoring(tie_breakers=[str(x).strip() for x in tie_breakers if str(x).strip()])
+    score_components = scoring_raw.get("score_components", {})
+    conflict_type_weights = scoring_raw.get("conflict_type_weights", {})
+    precedence_tier_weights = scoring_raw.get("precedence_tier_weights", {})
+    calibration_tier_weights = scoring_raw.get("calibration_tier_weights", {})
+    if not isinstance(score_components, dict) or not all(isinstance(v, int) for v in score_components.values()):
+        raise ValueError("arbitration_scoring.score_components must be map[str,int]")
+    if not isinstance(conflict_type_weights, dict) or not all(isinstance(v, int) for v in conflict_type_weights.values()):
+        raise ValueError("arbitration_scoring.conflict_type_weights must be map[str,int]")
+    if not isinstance(precedence_tier_weights, dict) or not all(isinstance(v, int) for v in precedence_tier_weights.values()):
+        raise ValueError("arbitration_scoring.precedence_tier_weights must be map[str,int]")
+    if not isinstance(calibration_tier_weights, dict) or not all(isinstance(v, int) for v in calibration_tier_weights.values()):
+        raise ValueError("arbitration_scoring.calibration_tier_weights must be map[str,int]")
+    scoring = ArbitrationScoring(
+        cycle_policy=cycle_policy,
+        tie_breakers=[str(x).strip() for x in tie_breakers if str(x).strip()],
+        score_components={str(k): int(v) for k, v in score_components.items()},
+        conflict_type_weights={str(k): int(v) for k, v in conflict_type_weights.items()},
+        precedence_tier_weights={str(k): int(v) for k, v in precedence_tier_weights.items()},
+        calibration_tier_weights={str(k): int(v) for k, v in calibration_tier_weights.items()},
+    )
 
     dominance_rules.sort(key=lambda r: (r.precedence_tier, r.rule_id))
     edge_rules.sort(key=lambda r: (-r.priority, r.edge_rule_id))
@@ -199,7 +233,14 @@ def load_arbitration_registry() -> LoadedArbitrationRegistry:
             }
             for r in edge_rules
         ],
-        "arbitration_scoring": {"tie_breakers": scoring.tie_breakers},
+        "arbitration_scoring": {
+            "cycle_policy": scoring.cycle_policy,
+            "tie_breakers": scoring.tie_breakers,
+            "score_components": scoring.score_components,
+            "conflict_type_weights": scoring.conflict_type_weights,
+            "precedence_tier_weights": scoring.precedence_tier_weights,
+            "calibration_tier_weights": scoring.calibration_tier_weights,
+        },
     }
     stamp = ArbitrationRegistryStamp(
         arbitration_registry_version=version,

@@ -66,6 +66,7 @@ def build_conflict_set_v1(insight_graph: InsightGraphV1) -> List[ConflictItem]:
                                 system_a=a_id,
                                 system_b=b_id,
                                 conflict_type=rule.conflict_type,
+                                conflict_severity=rule.conflict_severity,
                                 rationale_codes=rule.rationale_codes,
                             )
                         )
@@ -73,12 +74,12 @@ def build_conflict_set_v1(insight_graph: InsightGraphV1) -> List[ConflictItem]:
                 else:
                     continue
                 break
-    conflicts.sort(key=lambda c: (c.system_a, c.system_b, c.conflict_type, c.conflict_id))
+    conflicts.sort(key=lambda c: (c.system_a, c.system_b, c.conflict_type, c.conflict_id, c.conflict_severity))
     # deterministic dedupe
     unique: List[ConflictItem] = []
     seen = set()
     for c in conflicts:
-        key = (c.conflict_id, c.system_a, c.system_b, c.conflict_type)
+        key = (c.conflict_id, c.system_a, c.system_b, c.conflict_type, c.conflict_severity)
         if key in seen:
             continue
         seen.add(key)

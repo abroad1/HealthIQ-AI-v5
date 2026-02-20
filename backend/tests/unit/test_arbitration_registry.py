@@ -10,6 +10,10 @@ def test_arbitration_registry_load_and_stamp():
     assert reg.dominance_rules
     assert reg.causal_edge_rules
     assert reg.scoring.tie_breakers
+    assert reg.scoring.score_components
+    assert reg.scoring.conflict_type_weights
+    assert reg.scoring.precedence_tier_weights
+    assert reg.scoring.calibration_tier_weights
     assert reg.stamp.arbitration_registry_version == "1.0.0"
     assert len(reg.stamp.arbitration_registry_hash) == 64
 
