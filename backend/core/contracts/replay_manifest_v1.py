@@ -107,6 +107,30 @@ class ReplayManifestV1(BaseModel):
         default="",
         description="Deterministic hash of calibration payload",
     )
+    conflict_registry_version: str = Field(
+        default="",
+        description="Conflict registry version used in arbitration depth",
+    )
+    conflict_registry_hash: str = Field(
+        default="",
+        description="Deterministic hash of conflict registry payload",
+    )
+    arbitration_registry_version: str = Field(
+        default="",
+        description="Arbitration registry version used in arbitration depth",
+    )
+    arbitration_registry_hash: str = Field(
+        default="",
+        description="Deterministic hash of arbitration registry payload",
+    )
+    arbitration_version: str = Field(
+        default="",
+        description="ArbitrationDepth_v1 version stamp",
+    )
+    arbitration_hash: str = Field(
+        default="",
+        description="Deterministic hash of arbitration result payload",
+    )
     linked_snapshot_ids: List[str] = Field(
         default_factory=list,
         description="Prior analysis_ids linked for longitudinal state transition compute",

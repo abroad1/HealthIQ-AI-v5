@@ -15,8 +15,13 @@ from core.contracts.biomarker_context_v1 import BiomarkerContextNode
 from core.contracts.state_transition_v1 import BiomarkerTransitionNode
 from core.contracts.state_engine_v1 import SystemStateNode
 from core.contracts.precedence_engine_v1 import PrecedenceOutput
-from core.contracts.causal_layer_v1 import CausalEdgeNode
 from core.contracts.calibration_layer_v1 import CalibrationItem
+from core.contracts.arbitration_v1 import (
+    ArbitrationNode,
+    ConflictItem,
+    DominanceEdge,
+    CausalEdge,
+)
 
 if TYPE_CHECKING:
     from core.contracts.confidence_model_v1 import ConfidenceModelV1
@@ -130,7 +135,19 @@ class InsightGraphV1(BaseModel):
     )
     causal_layer_version: Optional[str] = Field(default=None)
     causal_layer_hash: Optional[str] = Field(default=None)
-    causal_edges: List[CausalEdgeNode] = Field(default_factory=list)
+    conflict_set: List[ConflictItem] = Field(default_factory=list)
+    dominance_edges: List[DominanceEdge] = Field(default_factory=list)
+    causal_edges: List[CausalEdge] = Field(default_factory=list)
+    arbitration_result: ArbitrationNode = Field(
+        default_factory=lambda: ArbitrationNode(
+            primary_driver_system_id="",
+            tie_breaker_codes=[],
+            rationale_codes=[],
+        )
+    )
+    primary_driver_system_id: str = Field(default="")
+    arbitration_version: str = Field(default="")
+    arbitration_hash: str = Field(default="")
     calibration_version: str = Field(default="")
     calibration_hash: str = Field(default="")
     calibration_items: List[CalibrationItem] = Field(default_factory=list)

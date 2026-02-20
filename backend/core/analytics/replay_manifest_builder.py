@@ -56,6 +56,12 @@ def build_replay_manifest_v1(
     causal_layer_hash: Optional[str] = None,
     calibration_version: Optional[str] = None,
     calibration_hash: Optional[str] = None,
+    conflict_registry_version: Optional[str] = None,
+    conflict_registry_hash: Optional[str] = None,
+    arbitration_registry_version: Optional[str] = None,
+    arbitration_registry_hash: Optional[str] = None,
+    arbitration_version: Optional[str] = None,
+    arbitration_hash: Optional[str] = None,
     linked_snapshot_ids: Optional[list[str]] = None,
     analysis_result_version: str = "1.0.0",
 ) -> ReplayManifestV1:
@@ -88,6 +94,12 @@ def build_replay_manifest_v1(
         causal_layer_hash: Causal layer hash stamp
         calibration_version: Calibration layer version stamp
         calibration_hash: Calibration layer hash stamp
+        conflict_registry_version: Conflict registry version stamp
+        conflict_registry_hash: Conflict registry hash stamp
+        arbitration_registry_version: Arbitration registry version stamp
+        arbitration_registry_hash: Arbitration registry hash stamp
+        arbitration_version: Arbitration depth version stamp
+        arbitration_hash: Arbitration depth hash stamp
         linked_snapshot_ids: Prior snapshot IDs linked for longitudinal compute
         analysis_result_version: Existing result_version if present
 
@@ -131,6 +143,10 @@ def build_replay_manifest_v1(
                 calibration_version = str(dump.get("calibration_version", ""))
             if not calibration_hash:
                 calibration_hash = str(dump.get("calibration_hash", ""))
+            if not arbitration_version:
+                arbitration_version = str(dump.get("arbitration_version", ""))
+            if not arbitration_hash:
+                arbitration_hash = str(dump.get("arbitration_hash", ""))
             if linked_snapshot_ids is None and isinstance(dump.get("linked_snapshot_ids"), list):
                 linked_snapshot_ids = [str(x) for x in dump.get("linked_snapshot_ids", [])]
         except Exception as exc:
@@ -181,6 +197,12 @@ def build_replay_manifest_v1(
         causal_layer_hash=causal_layer_hash or "",
         calibration_version=calibration_version or "",
         calibration_hash=calibration_hash or "",
+        conflict_registry_version=conflict_registry_version or "",
+        conflict_registry_hash=conflict_registry_hash or "",
+        arbitration_registry_version=arbitration_registry_version or "",
+        arbitration_registry_hash=arbitration_registry_hash or "",
+        arbitration_version=arbitration_version or "",
+        arbitration_hash=arbitration_hash or "",
         linked_snapshot_ids=list(linked_snapshot_ids or []),
         schema_hashes=schema_hashes,
         analysis_result_version=analysis_result_version,

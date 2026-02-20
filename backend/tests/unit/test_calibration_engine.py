@@ -5,7 +5,7 @@ v5.3 Sprint 5 - Unit tests for calibration engine.
 from pathlib import Path
 
 from core.analytics.calibration_engine import build_calibration_layer_v1
-from core.contracts.causal_layer_v1 import CausalEdgeNode
+from core.contracts.arbitration_v1 import CausalEdge
 from core.contracts.insight_graph_v1 import InsightGraphV1
 from core.contracts.precedence_engine_v1 import DominantEdge, PrecedenceOutput
 from core.contracts.state_engine_v1 import SystemStateNode
@@ -55,13 +55,14 @@ def _graph() -> InsightGraphV1:
             rationale_codes=[],
         ),
         causal_edges=[
-            CausalEdgeNode(
+            CausalEdge(
                 edge_id="e1",
                 from_system_id="inflammatory",
                 to_system_id="metabolic",
                 edge_type="driver",
                 priority=100,
                 rationale_codes=["x"],
+                source_conflict_ids=[],
             )
         ],
         edges=[],
