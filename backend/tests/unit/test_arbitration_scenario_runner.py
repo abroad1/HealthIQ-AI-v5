@@ -38,17 +38,22 @@ def test_scenario_runner_writes_required_artifacts_and_expected_driver(tmp_path)
         sdir = run_dir / "scenarios" / sid
         assert (sdir / "insight_graph.json").exists()
         assert (sdir / "arbitration_report.json").exists()
+        assert (sdir / "explainability_report.json").exists()
         assert (sdir / "replay_manifest.json").exists()
         assert (sdir / "summary.txt").exists()
 
         insight_graph = _load_json(sdir / "insight_graph.json")
         report = _load_json(sdir / "arbitration_report.json")
+        explainability = _load_json(sdir / "explainability_report.json")
         replay = _load_json(sdir / "replay_manifest.json")
         assert "conflict_summary" in report
         assert "precedence_summary" in report
         assert "causal_edges" in report
         assert "arbitration_decisions" in report
         assert "replay_stamps" in report
+        assert "dominance_resolution" in explainability
+        assert "arbitration_decisions" in explainability
+        assert "replay_stamps" in explainability
         assert report["arbitration_decisions"]["primary_driver_system_id"] == expected_driver[sid]
         assert report["arbitration_decisions"]["primary_driver_system_id"]
         assert insight_graph.get("primary_driver_system_id")
@@ -56,6 +61,15 @@ def test_scenario_runner_writes_required_artifacts_and_expected_driver(tmp_path)
             insight_graph.get("primary_driver_system_id")
             == report["arbitration_decisions"]["primary_driver_system_id"]
         )
+        assert (
+            explainability["arbitration_decisions"]["primary_driver_system_id"]
+            == report["arbitration_decisions"]["primary_driver_system_id"]
+        )
+        assert (
+            explainability["arbitration_decisions"]["primary_driver_system_id"]
+            == insight_graph.get("primary_driver_system_id")
+        )
+        assert explainability["replay_stamps"].get("explainability_hash")
         assert replay.get("arbitration_version")
         assert replay.get("arbitration_hash")
         assert replay.get("conflict_registry_version")
@@ -82,4 +96,7 @@ def test_scenario_runner_hash_is_stable_across_repeated_runs(tmp_path):
     )
     h1 = m1["scenario_results"][0]["arbitration_hash"]
     h2 = m2["scenario_results"][0]["arbitration_hash"]
+    e1 = m1["scenario_results"][0]["explainability_hash"]
+    e2 = m2["scenario_results"][0]["explainability_hash"]
     assert h1 == h2
+    assert e1 == e2
