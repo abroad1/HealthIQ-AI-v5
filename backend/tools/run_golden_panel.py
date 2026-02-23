@@ -279,7 +279,10 @@ def run_golden_panel(
     analysis_result = dto_dump
     meta = analysis_result.get("meta", {}) if isinstance(analysis_result, dict) else {}
     insight_graph = meta.get("insight_graph", {}) if isinstance(meta, dict) else {}
+    explainability_report = meta.get("explainability_report", {}) if isinstance(meta, dict) else {}
     replay_manifest = analysis_result.get("replay_manifest", {}) if isinstance(analysis_result, dict) else {}
+    if not isinstance(explainability_report, dict) or not explainability_report:
+        raise ValueError("Golden panel runner requires stamped explainability_report in production artifacts")
 
     run_dir = _ensure_run_dir(out_root, run_id)
     (run_dir / "analysis_result.json").write_text(
@@ -292,6 +295,10 @@ def run_golden_panel(
     )
     (run_dir / "replay_manifest.json").write_text(
         json.dumps(_normalise_for_artifact_write(replay_manifest), indent=2, sort_keys=True),
+        encoding="utf-8",
+    )
+    (run_dir / "explainability_report.json").write_text(
+        json.dumps(_normalise_for_artifact_write(explainability_report), indent=2, sort_keys=True),
         encoding="utf-8",
     )
     report = build_arbitration_report(

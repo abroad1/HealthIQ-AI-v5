@@ -290,6 +290,21 @@ def test_arbitration_depth_and_registry_stamps_in_manifest():
     assert m.arbitration_hash == "arbitrationhash123"
 
 
+def test_explainability_stamp_in_manifest():
+    m = build_replay_manifest_v1(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        explainability_version="1.0.0",
+        explainability_hash="explainabilityhash123",
+        explainability_artifact_filename="explainability_report.json",
+    )
+    assert m.explainability_version == "1.0.0"
+    assert m.explainability_hash == "explainabilityhash123"
+    assert m.explainability_artifact_filename == "explainability_report.json"
+
+
 def test_replay_manifest_builder_fails_loud_on_unserialisable_insight_graph(monkeypatch):
     """Production mode: replay stamp assembly must fail loudly."""
     monkeypatch.delenv("HEALTHIQ_MODE", raising=False)

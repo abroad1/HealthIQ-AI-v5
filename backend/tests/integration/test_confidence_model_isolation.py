@@ -16,6 +16,43 @@ from core.insights.prompts import InsightPromptTemplates
 from core.contracts.insight_graph_v1 import InsightGraphV1, BiomarkerNode
 
 
+def _minimal_explainability_json() -> str:
+    return json.dumps(
+        {
+            "run_metadata": {"report_version": "1.0.0"},
+            "conflict_summary": [],
+            "precedence_summary": [],
+            "dominance_resolution": {
+                "cycle_check": {"has_cycle": False, "status_code": "acyclic"},
+                "direct_edges": [],
+                "transitive_edges": [],
+                "influence_ordering": {
+                    "primary_driver_system_id": "metabolic",
+                    "supporting_systems": [],
+                    "influence_order": ["metabolic"],
+                },
+            },
+            "causal_edges": [],
+            "arbitration_decisions": {
+                "primary_driver_system_id": "metabolic",
+                "supporting_systems": [],
+                "decision_trace": [],
+                "tie_breakers": [],
+            },
+            "calibration_impact": {"system_id": "metabolic", "final_calibration_tier": "p1", "reasons": []},
+            "replay_stamps": {
+                "conflict_registry_version": "1.0.0",
+                "conflict_registry_hash": "h1",
+                "arbitration_registry_version": "1.0.0",
+                "arbitration_registry_hash": "h2",
+                "arbitration_version": "1.0.0",
+                "arbitration_hash": "h3",
+                "explainability_hash": "h4",
+            },
+        }
+    )
+
+
 def test_llm_payload_includes_confidence_fields():
     """LLM prompt includes confidence context (system_confidence, missing_required)."""
     # Build InsightGraph with confidence
@@ -35,6 +72,7 @@ def test_llm_payload_includes_confidence_fields():
     result = InsightPromptTemplates.format_template_from_insight_graph(
         category="metabolic",
         insight_graph_json=ig_json,
+        explainability_report_json=_minimal_explainability_json(),
         lifestyle_profile={"diet_level": "average"},
     )
     assert "System confidence:" in result
@@ -56,6 +94,7 @@ def test_no_inference_from_missing_dict_keys():
     result = InsightPromptTemplates.format_template_from_insight_graph(
         category="metabolic",
         insight_graph_json=ig_json,
+        explainability_report_json=_minimal_explainability_json(),
         lifestyle_profile={},
     )
     assert "Confidence model not available" in result or "(Confidence model not available)" in result

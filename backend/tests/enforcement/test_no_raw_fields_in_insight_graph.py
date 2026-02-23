@@ -12,6 +12,43 @@ from core.insights.prompts import InsightPromptTemplates
 _FORBIDDEN_KEYS = {"value", "unit", "range", "reference_range", "lab_range", "lower", "upper"}
 
 
+def _minimal_explainability_json() -> str:
+    return json.dumps(
+        {
+            "run_metadata": {"report_version": "1.0.0"},
+            "conflict_summary": [],
+            "precedence_summary": [],
+            "dominance_resolution": {
+                "cycle_check": {"has_cycle": False, "status_code": "acyclic"},
+                "direct_edges": [],
+                "transitive_edges": [],
+                "influence_ordering": {
+                    "primary_driver_system_id": "metabolic",
+                    "supporting_systems": [],
+                    "influence_order": ["metabolic"],
+                },
+            },
+            "causal_edges": [],
+            "arbitration_decisions": {
+                "primary_driver_system_id": "metabolic",
+                "supporting_systems": [],
+                "decision_trace": [],
+                "tie_breakers": [],
+            },
+            "calibration_impact": {"system_id": "metabolic", "final_calibration_tier": "p1", "reasons": []},
+            "replay_stamps": {
+                "conflict_registry_version": "1.0.0",
+                "conflict_registry_hash": "h1",
+                "arbitration_registry_version": "1.0.0",
+                "arbitration_registry_hash": "h2",
+                "arbitration_version": "1.0.0",
+                "arbitration_hash": "h3",
+                "explainability_hash": "h4",
+            },
+        }
+    )
+
+
 def _contains_forbidden_key(payload: str) -> bool:
     for key in _FORBIDDEN_KEYS:
         if re.search(rf'["\']{key}["\']\s*:', payload):
@@ -68,6 +105,7 @@ def test_prompt_from_insight_graph_contains_no_units_or_raw_field_keys():
     prompt = InsightPromptTemplates.format_template_from_insight_graph(
         category="metabolic",
         insight_graph_json=json.dumps(graph.model_dump()),
+        explainability_report_json=_minimal_explainability_json(),
         lifestyle_profile={"diet_level": "average"},
     )
     lowered = prompt.lower()

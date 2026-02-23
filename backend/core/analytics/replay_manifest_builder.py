@@ -62,6 +62,9 @@ def build_replay_manifest_v1(
     arbitration_registry_hash: Optional[str] = None,
     arbitration_version: Optional[str] = None,
     arbitration_hash: Optional[str] = None,
+    explainability_version: Optional[str] = None,
+    explainability_hash: Optional[str] = None,
+    explainability_artifact_filename: Optional[str] = None,
     linked_snapshot_ids: Optional[list[str]] = None,
     analysis_result_version: str = "1.0.0",
 ) -> ReplayManifestV1:
@@ -100,6 +103,9 @@ def build_replay_manifest_v1(
         arbitration_registry_hash: Arbitration registry hash stamp
         arbitration_version: Arbitration depth version stamp
         arbitration_hash: Arbitration depth hash stamp
+        explainability_version: Explainability report version stamp
+        explainability_hash: Explainability report canonical hash
+        explainability_artifact_filename: Explainability artifact file name
         linked_snapshot_ids: Prior snapshot IDs linked for longitudinal compute
         analysis_result_version: Existing result_version if present
 
@@ -203,6 +209,9 @@ def build_replay_manifest_v1(
         arbitration_registry_hash=arbitration_registry_hash or "",
         arbitration_version=arbitration_version or "",
         arbitration_hash=arbitration_hash or "",
+        explainability_version=explainability_version or "",
+        explainability_hash=explainability_hash or "",
+        explainability_artifact_filename=explainability_artifact_filename or "",
         linked_snapshot_ids=list(linked_snapshot_ids or []),
         schema_hashes=schema_hashes,
         analysis_result_version=analysis_result_version,

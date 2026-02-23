@@ -401,6 +401,7 @@ Return insights in this JSON format:
         cls,
         category: str,
         insight_graph_json: str,
+        explainability_report_json: str,
         lifestyle_profile: Dict[str, Any],
     ) -> str:
         """
@@ -409,6 +410,7 @@ Return insights in this JSON format:
         Args:
             category: Health category
             insight_graph_json: JSON-serialised InsightGraphV1
+            explainability_report_json: JSON-serialised ExplainabilityReport_v1
             lifestyle_profile: User lifestyle (minimal; not raw biomarkers)
 
         Returns:
@@ -422,6 +424,7 @@ Return insights in this JSON format:
         # primary payload and use placeholder text for backward template compat.
         import json
         ig = {}
+        explainability = {}
         biomarker_context = []
         try:
             ig = json.loads(insight_graph_json)
@@ -453,6 +456,13 @@ Return insights in this JSON format:
             clusters_list = []
             biomarker_context = []
             ig = {}
+        try:
+            explainability = json.loads(explainability_report_json)
+        except (json.JSONDecodeError, TypeError):
+            raise ValueError("Explainability report is required for prompt assembly")
+
+        if not isinstance(explainability, dict):
+            raise ValueError("Explainability report is required for prompt assembly")
         # Sprint 8: Build confidence_context from ConfidenceModel_v1 (no inference from absence)
         conf = ig.get("confidence")
         if conf is None or not isinstance(conf, dict) or "system_confidence" not in conf:
@@ -474,18 +484,39 @@ Return insights in this JSON format:
             clustering_results=clusters_list,
             confidence_context=confidence_context,
         )
-        precedence = ig.get("precedence_output") if isinstance(ig, dict) else None
-        if not isinstance(precedence, dict):
-            precedence = {}
-        arbitration = {
-            "dominant_edges": precedence.get("dominant_edges", []),
-            "conflicts_resolved": precedence.get("conflicts_resolved", []),
-            "rationale_codes": precedence.get("rationale_codes", []),
+        arbitration_decisions = explainability.get("arbitration_decisions", {})
+        if not isinstance(arbitration_decisions, dict):
+            raise ValueError("Explainability report missing arbitration_decisions")
+        dominance_resolution = explainability.get("dominance_resolution", {})
+        if not isinstance(dominance_resolution, dict):
+            raise ValueError("Explainability report missing dominance_resolution")
+        influence_ordering = dominance_resolution.get("influence_ordering", {})
+        if not isinstance(influence_ordering, dict):
+            raise ValueError("Explainability report missing influence_ordering")
+        top_causal_edges = (explainability.get("causal_edges", []) or [])[:5]
+        decision_trace = (arbitration_decisions.get("decision_trace", []) or [])[:10]
+        tie_breakers = arbitration_decisions.get("tie_breakers", []) or []
+        arbitration_summary = {
+            "primary_driver_system_id": str(arbitration_decisions.get("primary_driver_system_id", "")),
+            "supporting_systems": list(influence_ordering.get("supporting_systems", [])),
+            "decision_trace": decision_trace,
+            "tie_breakers": tie_breakers,
+            "top_causal_edges": top_causal_edges,
+            "influence_order": list(influence_ordering.get("influence_order", [])),
+            "explainability_hash": str(
+                (explainability.get("replay_stamps", {}) or {}).get("explainability_hash", "")
+            ),
+            "arbitration_hash": str((explainability.get("replay_stamps", {}) or {}).get("arbitration_hash", "")),
         }
+        if not arbitration_summary["primary_driver_system_id"] or not arbitration_summary["influence_order"]:
+            raise ValueError("Explainability report missing stamped authority ordering fields")
+
         causal_edges = ig.get("causal_edges", []) if isinstance(ig, dict) else []
         calibration_items = ig.get("calibration_items", []) if isinstance(ig, dict) else []
         arbitration_depth = {
             "primary_driver_system_id": str(ig.get("primary_driver_system_id", "")) if isinstance(ig, dict) else "",
+            "influence_order": ig.get("influence_order", []) if isinstance(ig, dict) else [],
+            "supporting_systems": ig.get("supporting_systems", []) if isinstance(ig, dict) else [],
             "conflict_set": ig.get("conflict_set", []) if isinstance(ig, dict) else [],
             "dominance_edges": ig.get("dominance_edges", []) if isinstance(ig, dict) else [],
             "arbitration_result": ig.get("arbitration_result", {}) if isinstance(ig, dict) else {},
@@ -494,8 +525,8 @@ Return insights in this JSON format:
             f"{formatted}\n\n"
             f"**Biomarker Context (code-only):**\n"
             f"{biomarker_context}\n\n"
-            f"**Biological Arbitration (code-only):**\n"
-            f"{arbitration}\n\n"
+            f"**Arbitration summary (stamped):**\n"
+            f"{arbitration_summary}\n\n"
             f"**Causal ordering (code-only):**\n"
             f"{causal_edges}\n\n"
             f"**Arbitration depth (code-only):**\n"

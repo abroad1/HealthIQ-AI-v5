@@ -3,6 +3,7 @@ Analysis orchestrator - enforces canonical-only keys and coordinates analysis.
 """
 
 import os
+import subprocess
 from typing import Dict, Any, List, Mapping, Optional
 
 # Reserved key for unit-normalisation invariant (Sprint 5). Set by callers after apply_unit_normalisation.
@@ -28,6 +29,10 @@ from core.analytics.ratio_registry import RatioRegistry, DERIVED_IDS, compute
 from core.analytics.cluster_schema import get_cluster_schema_version_stamp
 from core.analytics.insight_graph_builder import build_insight_graph_v1
 from core.analytics.replay_manifest_builder import build_replay_manifest_v1
+from core.analytics.explainability_builder import (
+    build_explainability_report_v1,
+    assert_single_authority_driver,
+)
 from core.analytics.scoring_policy_registry import load_scoring_policy
 from core.analytics.evidence_registry import load_evidence_registry
 from core.analytics.snapshot_linker import link_prior_snapshot_insight_graphs
@@ -640,12 +645,14 @@ class AnalysisOrchestrator:
         self,
         context: AnalysisContext,
         insight_graph: Any,
+        explainability_report: Any,
         lifestyle_profile: Dict[str, Any],
     ) -> Dict[str, Any]:
         """Sprint 7: Synthesize insights using InsightGraph only. Used by run()."""
         synthesis_result = self.insight_synthesizer.synthesize_insights(
             context=context,
             insight_graph=insight_graph,
+            explainability_report=explainability_report,
             lifestyle_profile=lifestyle_profile,
         )
         return {
@@ -685,6 +692,13 @@ class AnalysisOrchestrator:
         if offenders:
             offenders.sort()
             raise ValueError(f"Non-canonical biomarker keys found: {', '.join(offenders)}")
+
+    def _git_short_sha(self) -> str:
+        try:
+            out = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], text=True)
+            return out.strip()
+        except Exception:
+            return ""
 
     def run(self, biomarkers: Mapping[str, Any], user: Mapping[str, Any], *, assume_canonical: bool = False):
         """
@@ -889,7 +903,9 @@ class AnalysisOrchestrator:
 
             # Step 4.65: v5.3 Sprint 1 longitudinal state transitions (code-only)
             linked_snapshot_ids: List[str] = []
-            fixture_mode = os.getenv("HEALTHIQ_MODE", "").strip().lower() in {"fixture", "fixtures"}
+            runtime_mode = os.getenv("HEALTHIQ_MODE", "").strip().lower()
+            fixture_mode = runtime_mode in {"fixture", "fixtures"}
+            soft_mode = fixture_mode or runtime_mode == "test"
             user_id = user.get("user_id")
             if self.db_session is not None and user_id:
                 try:
@@ -995,6 +1011,43 @@ class AnalysisOrchestrator:
                     raise ValueError(f"Calibration layer build failed: {exc}") from exc
                 logger.warning("Fixture mode soft-fail for calibration layer: %s", exc)
 
+            # Step 4.72: Build ExplainabilityReport_v1 from final mutated InsightGraph.
+            run_id = analysis_id
+            generated_at_utc = datetime.now(UTC).isoformat()
+            git_commit_short = self._git_short_sha()
+            conflict_stamp = load_conflict_registry().stamp
+            arbitration_registry_stamp = load_arbitration_registry().stamp
+            if not str(getattr(insight_graph, "primary_driver_system_id", "")).strip() and soft_mode:
+                system_ids = sorted(
+                    {
+                        str(node.system_id).strip()
+                        for node in (getattr(insight_graph, "system_states", []) or [])
+                        if str(getattr(node, "system_id", "")).strip()
+                    }
+                )
+                if system_ids:
+                    insight_graph.primary_driver_system_id = system_ids[0]
+                    if not getattr(insight_graph.arbitration_result, "supporting_system_ids", None):
+                        insight_graph.arbitration_result.supporting_system_ids = system_ids[1:]
+            explainability_report = build_explainability_report_v1(
+                insight_graph,
+                run_id=run_id,
+                git_commit_short=git_commit_short,
+                generated_at_utc=generated_at_utc,
+                conflict_registry_version=conflict_stamp.conflict_registry_version,
+                conflict_registry_hash=conflict_stamp.conflict_registry_hash,
+                arbitration_registry_version=arbitration_registry_stamp.arbitration_registry_version,
+                arbitration_registry_hash=arbitration_registry_stamp.arbitration_registry_hash,
+                arbitration_version=getattr(insight_graph, "arbitration_version", ""),
+                arbitration_hash=getattr(insight_graph, "arbitration_hash", ""),
+            )
+            insight_graph_driver = str(getattr(insight_graph, "primary_driver_system_id", "") or "")
+            explainability_driver = str(explainability_report.arbitration_decisions.primary_driver_system_id or "")
+            if insight_graph_driver != explainability_driver:
+                raise ValueError(
+                    "Single-authority primary driver mismatch between insight graph and explainability report"
+                )
+
             # Step 4.7: Build ReplayManifest_v1 (Sprint 9) — determinism lock
             logger.info("Step 4.7: Building ReplayManifest")
             cluster_stamp = {}
@@ -1026,12 +1079,15 @@ class AnalysisOrchestrator:
                 causal_layer_hash=getattr(insight_graph, "causal_layer_hash", ""),
                 calibration_version=getattr(insight_graph, "calibration_version", ""),
                 calibration_hash=getattr(insight_graph, "calibration_hash", ""),
-                conflict_registry_version=load_conflict_registry().stamp.conflict_registry_version,
-                conflict_registry_hash=load_conflict_registry().stamp.conflict_registry_hash,
-                arbitration_registry_version=load_arbitration_registry().stamp.arbitration_registry_version,
-                arbitration_registry_hash=load_arbitration_registry().stamp.arbitration_registry_hash,
+                conflict_registry_version=conflict_stamp.conflict_registry_version,
+                conflict_registry_hash=conflict_stamp.conflict_registry_hash,
+                arbitration_registry_version=arbitration_registry_stamp.arbitration_registry_version,
+                arbitration_registry_hash=arbitration_registry_stamp.arbitration_registry_hash,
                 arbitration_version=getattr(insight_graph, "arbitration_version", ""),
                 arbitration_hash=getattr(insight_graph, "arbitration_hash", ""),
+                explainability_version=explainability_report.run_metadata.report_version,
+                explainability_hash=explainability_report.replay_stamps.explainability_hash,
+                explainability_artifact_filename="explainability_report.json",
                 linked_snapshot_ids=linked_snapshot_ids,
                 analysis_result_version="1.0.0",
             )
@@ -1041,6 +1097,7 @@ class AnalysisOrchestrator:
             insights_result = self._synthesize_from_insight_graph(
                 context=context,
                 insight_graph=insight_graph,
+                explainability_report=explainability_report,
                 lifestyle_profile=user.get('lifestyle_factors', {}) or {},
             )
             
@@ -1299,6 +1356,15 @@ class AnalysisOrchestrator:
             except (FileNotFoundError, ValueError):
                 pass
             meta["insight_graph"] = insight_graph.model_dump() if hasattr(insight_graph, "model_dump") else {}
+            meta["explainability_report"] = (
+                explainability_report.model_dump() if hasattr(explainability_report, "model_dump") else {}
+            )
+            analysis_primary_driver = insight_graph_driver
+            assert_single_authority_driver(
+                insight_graph_driver=insight_graph_driver,
+                explainability_driver=explainability_driver,
+                analysis_result_driver=analysis_primary_driver,
+            )
             derived_markers = {
                 "registry_version": derived_ratios_meta.get("ratio_registry_version"),
                 "derived": derived_ratios_meta.get("ratios", {}),
@@ -1311,6 +1377,7 @@ class AnalysisOrchestrator:
                 status="completed",
                 created_at=datetime.now(UTC).isoformat(),
                 overall_score=scoring_result.get('overall_score', 0.0) / 100.0,  # Convert to 0-1 scale
+                primary_driver_system_id=analysis_primary_driver,
                 unmapped_biomarkers=unmapped_biomarkers,
                 derived_markers=derived_markers,
                 meta=meta,

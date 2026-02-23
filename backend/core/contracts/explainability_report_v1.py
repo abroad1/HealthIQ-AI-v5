@@ -60,6 +60,14 @@ class ExplainabilityDominanceResolution(BaseModel):
     cycle_check: ExplainabilityCycleCheck
     direct_edges: List[ExplainabilityDominanceEdgeItem] = Field(default_factory=list)
     transitive_edges: List[ExplainabilityDominanceEdgeItem] = Field(default_factory=list)
+    influence_ordering: "ExplainabilityInfluenceOrdering"
+
+
+class ExplainabilityInfluenceOrdering(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    primary_driver_system_id: str = Field(default="")
+    supporting_systems: List[str] = Field(default_factory=list)
+    influence_order: List[str] = Field(default_factory=list)
 
 
 class ExplainabilityCausalEdgeItem(BaseModel):

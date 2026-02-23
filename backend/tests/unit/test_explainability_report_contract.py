@@ -68,6 +68,11 @@ def test_explainability_report_contains_required_keys_and_sorted_sections(tmp_pa
         transitive_edges,
         key=lambda row: (row["from_system_id"], row["to_system_id"], row["edge_id"]),
     )
+    influence_ordering = report["dominance_resolution"]["influence_ordering"]
+    assert influence_ordering.get("primary_driver_system_id")
+    assert isinstance(influence_ordering.get("supporting_systems", []), list)
+    assert isinstance(influence_ordering.get("influence_order", []), list)
+    assert influence_ordering["influence_order"][0] == influence_ordering["primary_driver_system_id"]
     causal_edges = report["causal_edges"]
     assert causal_edges == sorted(
         causal_edges,

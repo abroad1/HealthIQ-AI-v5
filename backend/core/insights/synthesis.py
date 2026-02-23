@@ -293,6 +293,7 @@ class InsightSynthesizer:
         self,
         context: AnalysisContext,
         insight_graph: Optional[Any] = None,
+        explainability_report: Optional[Any] = None,
         lifestyle_profile: Optional[Dict[str, Any]] = None,
         biomarker_scores: Optional[Dict[str, Any]] = None,
         clustering_results: Optional[Dict[str, Any]] = None,
@@ -305,6 +306,7 @@ class InsightSynthesizer:
         Args:
             context: Analysis context
             insight_graph: InsightGraphV1 (preferred; sole LLM input when provided)
+            explainability_report: ExplainabilityReport_v1 (required for production prompt payload)
             lifestyle_profile: User lifestyle profile
             biomarker_scores: Fallback when insight_graph is None (legacy)
             clustering_results: Fallback when insight_graph is None (legacy)
@@ -322,12 +324,17 @@ class InsightSynthesizer:
             raise ValueError(
                 "Runtime purity violation: insight_graph is required in production synthesis path"
             )
+        if insight_graph is not None and explainability_report is None and not allow_legacy_path:
+            raise ValueError(
+                "Runtime purity violation: explainability_report is required in production synthesis path"
+            )
 
         categories = requested_categories or self.prompt_templates.get_supported_categories()
         all_insights = []
         categories_covered = []
 
         insight_graph_json = ""
+        explainability_report_json = ""
         if insight_graph is not None:
             if hasattr(insight_graph, "model_dump"):
                 import json
@@ -337,6 +344,15 @@ class InsightSynthesizer:
                 insight_graph_json = json.dumps(insight_graph, default=str)
             else:
                 insight_graph_json = str(insight_graph)
+        if explainability_report is not None:
+            if hasattr(explainability_report, "model_dump"):
+                import json
+                explainability_report_json = json.dumps(explainability_report.model_dump(), default=str)
+            elif isinstance(explainability_report, dict):
+                import json
+                explainability_report_json = json.dumps(explainability_report, default=str)
+            else:
+                explainability_report_json = str(explainability_report)
 
         for category in categories:
             try:
@@ -346,6 +362,7 @@ class InsightSynthesizer:
                         category=category,
                         context=context,
                         insight_graph_json=insight_graph_json,
+                        explainability_report_json=explainability_report_json,
                         lifestyle_profile=lifestyle_profile,
                         max_insights=max_insights_per_category
                     )
@@ -477,6 +494,7 @@ class InsightSynthesizer:
         category: str,
         context: AnalysisContext,
         insight_graph_json: str,
+        explainability_report_json: str,
         lifestyle_profile: Dict[str, Any],
         max_insights: int
     ) -> List[Insight]:
@@ -484,6 +502,7 @@ class InsightSynthesizer:
         user_prompt = self.prompt_templates.format_template_from_insight_graph(
             category=category,
             insight_graph_json=insight_graph_json,
+            explainability_report_json=explainability_report_json,
             lifestyle_profile=lifestyle_profile,
         )
         system_prompt = self.prompt_templates.get_system_prompt()

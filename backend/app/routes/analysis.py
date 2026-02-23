@@ -183,6 +183,7 @@ async def start_analysis(request: AnalysisStartRequest):
             "status": dto.status,
             "created_at": dto.created_at,
             "overall_score": dto.overall_score,
+            "primary_driver_system_id": getattr(dto, "primary_driver_system_id", ""),
             "risk_assessment": {},
             "recommendations": [],
             "result_version": "1.0.0"

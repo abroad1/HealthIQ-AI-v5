@@ -21,10 +21,10 @@ def test_precedence_engine_has_no_raw_tokens():
     assert not offenders, "Forbidden raw tokens found in precedence engine: " + ", ".join(offenders)
 
 
-def test_biological_arbitration_prompt_section_has_no_raw_tokens():
+def test_arbitration_summary_prompt_section_has_no_raw_tokens():
     path = Path(__file__).parent.parent.parent / "core" / "insights" / "prompts.py"
     text = path.read_text(encoding="utf-8", errors="ignore")
-    marker = "**Biological Arbitration (code-only):**"
+    marker = "**Arbitration summary (stamped):**"
     assert marker in text
     section = text.split(marker, 1)[1].lower()
     forbidden = [
@@ -33,4 +33,4 @@ def test_biological_arbitration_prompt_section_has_no_raw_tokens():
         "raw_biomarkers",
     ]
     offenders = [token for token in forbidden if token in section]
-    assert not offenders, "Forbidden raw tokens found in biological arbitration prompt section: " + ", ".join(offenders)
+    assert not offenders, "Forbidden raw tokens found in arbitration summary prompt section: " + ", ".join(offenders)
