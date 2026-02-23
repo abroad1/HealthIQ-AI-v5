@@ -60,6 +60,7 @@ from core.contracts.arbitration_v1 import (
 )
 from core.contracts.explainability_report_v1 import (
     ExplainabilityReportV1,
+    ExplainabilityInfluenceOrdering,
     EXPLAINABILITY_REPORT_V1_VERSION,
 )
 
@@ -101,5 +102,6 @@ __all__ = [
     "ArbitrationStamp",
     "ARBITRATION_V1_VERSION",
     "ExplainabilityReportV1",
+    "ExplainabilityInfluenceOrdering",
     "EXPLAINABILITY_REPORT_V1_VERSION",
 ]

@@ -147,6 +147,8 @@ class InsightGraphV1(BaseModel):
         )
     )
     primary_driver_system_id: str = Field(default="")
+    supporting_systems: List[str] = Field(default_factory=list)
+    influence_order: List[str] = Field(default_factory=list)
     arbitration_version: str = Field(default="")
     arbitration_hash: str = Field(default="")
     calibration_version: str = Field(default="")

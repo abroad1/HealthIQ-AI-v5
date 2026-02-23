@@ -27,12 +27,14 @@ def test_golden_panel_runner_writes_snapshot_pack_with_required_stamps(tmp_path)
     analysis_path = run_dir / "analysis_result.json"
     insight_path = run_dir / "insight_graph.json"
     replay_path = run_dir / "replay_manifest.json"
+    explainability_path = run_dir / "explainability_report.json"
     arbitration_report_path = run_dir / "arbitration_report.json"
     narrative_path = run_dir / "narrative.txt"
 
     assert analysis_path.exists()
     assert insight_path.exists()
     assert replay_path.exists()
+    assert explainability_path.exists()
     assert arbitration_report_path.exists()
     assert narrative_path.exists()
 
@@ -49,6 +51,9 @@ def test_golden_panel_runner_writes_snapshot_pack_with_required_stamps(tmp_path)
     assert replay.get("calibration_hash")
     assert replay.get("arbitration_version")
     assert replay.get("arbitration_hash")
+    assert replay.get("explainability_version")
+    assert replay.get("explainability_hash")
+    assert replay.get("explainability_artifact_filename") == "explainability_report.json"
     assert replay.get("conflict_registry_version")
     assert replay.get("conflict_registry_hash")
     assert replay.get("arbitration_registry_version")
@@ -66,6 +71,16 @@ def test_golden_panel_runner_writes_snapshot_pack_with_required_stamps(tmp_path)
     assert len(insight.get("dominance_edges", [])) > 0
     assert len(insight.get("causal_edges", [])) > 0
     assert insight.get("primary_driver_system_id")
+    assert isinstance(insight.get("influence_order", []), list)
+    assert len(insight.get("influence_order", [])) > 0
+
+    explainability = _load_json(explainability_path)
+    assert explainability.get("arbitration_decisions", {}).get("primary_driver_system_id")
+    assert (
+        explainability.get("arbitration_decisions", {}).get("primary_driver_system_id")
+        == insight.get("primary_driver_system_id")
+    )
+    assert explainability.get("dominance_resolution", {}).get("influence_ordering", {}).get("influence_order")
 
     report = _load_json(arbitration_report_path)
     assert "conflict_summary" in report

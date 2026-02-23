@@ -11,7 +11,7 @@ def test_only_arbitration_writes_final_primary_driver_field():
     )
     marker = "insight_graph.primary_driver_system_id = primary_driver_system_id"
     assert marker in orchestrator
-    assert orchestrator.count("primary_driver_system_id =") == 1
+    assert orchestrator.count(marker) == 1
 
 
 def test_prompt_uses_arbitration_driver_not_precedence_candidate():

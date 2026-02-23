@@ -21,6 +21,43 @@ from core.contracts.state_transition_v1 import BiomarkerTransitionNode
 _FORBIDDEN_KEYS = {"value", "unit", "range", "reference_range", "lab_range", "lower", "upper"}
 
 
+def _minimal_explainability() -> str:
+    return json.dumps(
+        {
+            "run_metadata": {"report_version": "1.0.0"},
+            "conflict_summary": [],
+            "precedence_summary": [],
+            "dominance_resolution": {
+                "cycle_check": {"has_cycle": False, "status_code": "acyclic"},
+                "direct_edges": [],
+                "transitive_edges": [],
+                "influence_ordering": {
+                    "primary_driver_system_id": "metabolic",
+                    "supporting_systems": ["inflammatory"],
+                    "influence_order": ["metabolic", "inflammatory"],
+                },
+            },
+            "causal_edges": [],
+            "arbitration_decisions": {
+                "primary_driver_system_id": "metabolic",
+                "supporting_systems": ["inflammatory"],
+                "decision_trace": ["trace:1"],
+                "tie_breakers": [],
+            },
+            "calibration_impact": {"system_id": "metabolic", "final_calibration_tier": "p1", "reasons": []},
+            "replay_stamps": {
+                "conflict_registry_version": "1.0.0",
+                "conflict_registry_hash": "h1",
+                "arbitration_registry_version": "1.0.0",
+                "arbitration_registry_hash": "h2",
+                "arbitration_version": "1.0.0",
+                "arbitration_hash": "h3",
+                "explainability_hash": "h4",
+            },
+        }
+    )
+
+
 def _payload_contains_forbidden_keys(payload: str) -> Tuple[bool, List[str]]:
     """
     Recursively check if payload contains forbidden keys (raw biomarker data).
@@ -100,6 +137,7 @@ def test_payload_from_insight_graph_contains_no_raw_biomarker_dict(mock_context,
         synthesizer.synthesize_insights(
             context=mock_context,
             insight_graph=minimal_insight_graph,
+            explainability_report=json.loads(_minimal_explainability()),
             lifestyle_profile={"diet_level": "average"},
         )
 
@@ -108,6 +146,7 @@ def test_payload_from_insight_graph_contains_no_raw_biomarker_dict(mock_context,
     assert "glucose" in captured_prompt
     assert "hba1c" in captured_prompt
     assert "Biomarker Context" in captured_prompt
+    assert "Arbitration summary (stamped)" in captured_prompt
     assert "Causal ordering (code-only)" in captured_prompt
     assert "Arbitration depth (code-only)" in captured_prompt
     assert "Calibration (code-only)" in captured_prompt
@@ -133,12 +172,14 @@ def test_format_template_from_insight_graph_produces_structured_only(minimal_ins
     result = InsightPromptTemplates.format_template_from_insight_graph(
         category="metabolic",
         insight_graph_json=ig_json,
+        explainability_report_json=_minimal_explainability(),
         lifestyle_profile={"diet_level": "average"},
     )
     assert "glucose" in result
     assert "hba1c" in result
     assert "metabolic" in result.lower()
     assert "Biomarker Context" in result
+    assert "Arbitration summary (stamped)" in result
     assert "Causal ordering (code-only)" in result
     assert "Arbitration depth (code-only)" in result
     assert "Calibration (code-only)" in result

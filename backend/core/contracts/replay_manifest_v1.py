@@ -131,6 +131,18 @@ class ReplayManifestV1(BaseModel):
         default="",
         description="Deterministic hash of arbitration result payload",
     )
+    explainability_version: str = Field(
+        default="",
+        description="ExplainabilityReport_v1 version stamp",
+    )
+    explainability_hash: str = Field(
+        default="",
+        description="Deterministic hash of explainability payload",
+    )
+    explainability_artifact_filename: str = Field(
+        default="",
+        description="Artifact file name for explainability report in snapshot packs",
+    )
     linked_snapshot_ids: List[str] = Field(
         default_factory=list,
         description="Prior analysis_ids linked for longitudinal state transition compute",
