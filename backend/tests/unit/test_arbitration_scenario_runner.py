@@ -41,6 +41,7 @@ def test_scenario_runner_writes_required_artifacts_and_expected_driver(tmp_path)
         assert (sdir / "replay_manifest.json").exists()
         assert (sdir / "summary.txt").exists()
 
+        insight_graph = _load_json(sdir / "insight_graph.json")
         report = _load_json(sdir / "arbitration_report.json")
         replay = _load_json(sdir / "replay_manifest.json")
         assert "conflict_summary" in report
@@ -49,6 +50,12 @@ def test_scenario_runner_writes_required_artifacts_and_expected_driver(tmp_path)
         assert "arbitration_decisions" in report
         assert "replay_stamps" in report
         assert report["arbitration_decisions"]["primary_driver_system_id"] == expected_driver[sid]
+        assert report["arbitration_decisions"]["primary_driver_system_id"]
+        assert insight_graph.get("primary_driver_system_id")
+        assert (
+            insight_graph.get("primary_driver_system_id")
+            == report["arbitration_decisions"]["primary_driver_system_id"]
+        )
         assert replay.get("arbitration_version")
         assert replay.get("arbitration_hash")
         assert replay.get("conflict_registry_version")

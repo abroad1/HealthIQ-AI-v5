@@ -208,7 +208,6 @@ def _run_one_scenario(
     scenarios_dir: Path,
 ) -> Dict[str, Any]:
     seed_graph = _build_seed_graph(scenario)
-    input_dump = seed_graph.model_dump()
 
     precedence_out, precedence_stamp = build_precedence_v1(seed_graph)
     seed_graph.precedence_output = precedence_out
@@ -273,12 +272,13 @@ def _run_one_scenario(
     replay_dump = replay.model_dump()
 
     report = _build_report(seed_graph, replay_dump)
+    final_graph_dump = seed_graph.model_dump()
 
     scenario_id = str(scenario.get("scenario_id", ""))
     out_dir = scenarios_dir / scenario_id
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "insight_graph.json").write_text(
-        json.dumps(_normalise_for_artifact_write(input_dump), indent=2, sort_keys=True),
+        json.dumps(_normalise_for_artifact_write(final_graph_dump), indent=2, sort_keys=True),
         encoding="utf-8",
     )
     (out_dir / "arbitration_report.json").write_text(
