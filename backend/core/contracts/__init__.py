@@ -58,6 +58,10 @@ from core.contracts.arbitration_v1 import (
     ArbitrationStamp,
     ARBITRATION_V1_VERSION,
 )
+from core.contracts.explainability_report_v1 import (
+    ExplainabilityReportV1,
+    EXPLAINABILITY_REPORT_V1_VERSION,
+)
 
 __all__ = [
     "InsightGraphV1",
@@ -96,4 +100,6 @@ __all__ = [
     "ArbitrationNode",
     "ArbitrationStamp",
     "ARBITRATION_V1_VERSION",
+    "ExplainabilityReportV1",
+    "EXPLAINABILITY_REPORT_V1_VERSION",
 ]
