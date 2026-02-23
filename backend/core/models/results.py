@@ -145,6 +145,14 @@ class AnalysisDTO(BaseModel):
         default="",
         description="Single-authority primary driver from final arbitration/explainability",
     )
+    system_capacity_scores: Dict[str, int] = Field(
+        default_factory=dict,
+        description="Deterministic system capacity scores from burden engine",
+    )
+    burden_hash: str = Field(
+        default="",
+        description="Deterministic hash of adjusted burden + capacity vectors",
+    )
     unmapped_biomarkers: List[str] = Field(
         default_factory=list,
         description="Unrecognised biomarkers excluded from analysis"

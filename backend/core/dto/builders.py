@@ -30,6 +30,8 @@ def build_analysis_result_dto(result: Dict[str, Any]) -> Dict[str, Any]:
         "created_at": result.get("created_at", datetime.now(UTC).isoformat()),
         "overall_score": result.get("overall_score"),
         "primary_driver_system_id": result.get("primary_driver_system_id", ""),
+        "system_capacity_scores": result.get("system_capacity_scores", {}),
+        "burden_hash": result.get("burden_hash", ""),
         "risk_assessment": result.get("risk_assessment", {}),
         "recommendations": result.get("recommendations", []),
         "result_version": result.get("result_version", "1.0.0"),

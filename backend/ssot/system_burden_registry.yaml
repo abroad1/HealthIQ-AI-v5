@@ -1,0 +1,127 @@
+registry_version: "1.0.0"
+schema_version: "1.0.0"
+biomarkers:
+  alt:
+    system: hepatic
+    risk_direction: HIGH_IS_RISK
+    weight: 0.6
+  apoa1:
+    system: cardiovascular
+    risk_direction: LOW_IS_RISK
+    weight: 0.6
+  apob:
+    system: cardiovascular
+    risk_direction: HIGH_IS_RISK
+    weight: 0.6
+  bun:
+    system: renal
+    risk_direction: HIGH_IS_RISK
+    weight: 0.5
+  calcium:
+    system: metabolic
+    risk_direction: BOTH_SIDES_RISK
+    weight: 0.5
+  chloride:
+    system: metabolic
+    risk_direction: BOTH_SIDES_RISK
+    weight: 0.4
+  corrected_calcium:
+    system: metabolic
+    risk_direction: BOTH_SIDES_RISK
+    weight: 0.5
+  creatine_kinase:
+    system: metabolic
+    risk_direction: HIGH_IS_RISK
+    weight: 0.4
+  creatinine:
+    system: renal
+    risk_direction: HIGH_IS_RISK
+    weight: 0.8
+  crp:
+    system: immune
+    risk_direction: HIGH_IS_RISK
+    weight: 0.8
+  ferritin:
+    system: hematological
+    risk_direction: BOTH_SIDES_RISK
+    weight: 0.6
+  glucose:
+    system: metabolic
+    risk_direction: HIGH_IS_RISK
+    weight: 0.8
+  hba1c:
+    system: metabolic
+    risk_direction: HIGH_IS_RISK
+    weight: 0.8
+  hdl_cholesterol:
+    system: cardiovascular
+    risk_direction: LOW_IS_RISK
+    weight: 0.8
+  hematocrit:
+    system: hematological
+    risk_direction: BOTH_SIDES_RISK
+    weight: 0.6
+  hemoglobin:
+    system: hematological
+    risk_direction: BOTH_SIDES_RISK
+    weight: 0.6
+  insulin:
+    system: metabolic
+    risk_direction: HIGH_IS_RISK
+    weight: 0.8
+  ldl_hdl_ratio:
+    system: cardiovascular
+    risk_direction: HIGH_IS_RISK
+    weight: 0.7
+  ldl_cholesterol:
+    system: cardiovascular
+    risk_direction: HIGH_IS_RISK
+    weight: 0.8
+  non_hdl_cholesterol:
+    system: cardiovascular
+    risk_direction: HIGH_IS_RISK
+    weight: 0.6
+  apoB_apoA1_ratio:
+    system: cardiovascular
+    risk_direction: HIGH_IS_RISK
+    weight: 0.6
+  bun_creatinine_ratio:
+    system: renal
+    risk_direction: HIGH_IS_RISK
+    weight: 0.5
+  magnesium:
+    system: metabolic
+    risk_direction: BOTH_SIDES_RISK
+    weight: 0.4
+  platelets:
+    system: hematological
+    risk_direction: BOTH_SIDES_RISK
+    weight: 0.5
+  potassium:
+    system: metabolic
+    risk_direction: BOTH_SIDES_RISK
+    weight: 0.6
+  sodium:
+    system: metabolic
+    risk_direction: BOTH_SIDES_RISK
+    weight: 0.6
+  total_cholesterol:
+    system: cardiovascular
+    risk_direction: HIGH_IS_RISK
+    weight: 0.6
+  tc_hdl_ratio:
+    system: cardiovascular
+    risk_direction: HIGH_IS_RISK
+    weight: 0.6
+  tg_hdl_ratio:
+    system: cardiovascular
+    risk_direction: HIGH_IS_RISK
+    weight: 0.5
+  triglycerides:
+    system: cardiovascular
+    risk_direction: HIGH_IS_RISK
+    weight: 0.6
+  white_blood_cells:
+    system: hematological
+    risk_direction: BOTH_SIDES_RISK
+    weight: 0.4

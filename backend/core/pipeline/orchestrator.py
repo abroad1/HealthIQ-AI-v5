@@ -33,6 +33,20 @@ from core.analytics.explainability_builder import (
     build_explainability_report_v1,
     assert_single_authority_driver,
 )
+from core.analytics.bio_stats_engine import build_bio_stats_v1, BIO_STATS_ENGINE_VERSION
+from core.analytics.system_burden_engine import (
+    SYSTEM_BURDEN_ENGINE_VERSION,
+    load_burden_registry,
+    audit_risk_direction_registry,
+    build_raw_system_burden_v1,
+)
+from core.analytics.influence_propagator import propagate_influence_v1, INFLUENCE_PROPAGATOR_VERSION
+from core.analytics.capacity_scaler import scale_capacity_scores_v1, CAPACITY_SCALER_VERSION
+from core.analytics.validation_gate import (
+    run_validation_gate_v1,
+    compute_burden_hash,
+    VALIDATION_GATE_VERSION,
+)
 from core.analytics.scoring_policy_registry import load_scoring_policy
 from core.analytics.evidence_registry import load_evidence_registry
 from core.analytics.snapshot_linker import link_prior_snapshot_insight_graphs
@@ -700,6 +714,33 @@ class AnalysisOrchestrator:
         except Exception:
             return ""
 
+    def _system_biomarker_map(self, insight_graph: Any) -> Dict[str, List[str]]:
+        cluster_summary = insight_graph.cluster_summary if isinstance(insight_graph.cluster_summary, dict) else {}
+        clusters = cluster_summary.get("clusters", []) if isinstance(cluster_summary, dict) else []
+        out: Dict[str, List[str]] = {}
+        if not isinstance(clusters, list):
+            return out
+        for cluster in sorted(clusters, key=lambda c: str((c or {}).get("cluster_id", ""))):
+            if not isinstance(cluster, dict):
+                continue
+            system_id = str(cluster.get("cluster_id", "")).strip()
+            if not system_id:
+                continue
+            biomarkers = cluster.get("biomarkers", [])
+            if not isinstance(biomarkers, list):
+                biomarkers = []
+            out[system_id] = sorted({str(b).strip() for b in biomarkers if str(b).strip()})
+        return out
+
+    def _extract_biomarker_value(self, row: Any) -> Optional[float]:
+        if isinstance(row, dict):
+            raw = row.get("value", row.get("measurement"))
+        else:
+            raw = row
+        if isinstance(raw, (int, float)):
+            return float(raw)
+        return None
+
     def run(self, biomarkers: Mapping[str, Any], user: Mapping[str, Any], *, assume_canonical: bool = False):
         """
         Run the complete analysis pipeline: scoring → clustering → insights.
@@ -1048,6 +1089,157 @@ class AnalysisOrchestrator:
                     "Single-authority primary driver mismatch between insight graph and explainability report"
                 )
 
+            # Step 4.73: Sprint 13 deterministic burden/capacity engines (direction-aware, calibration-neutral)
+            system_to_biomarkers_full = self._system_biomarker_map(insight_graph)
+            measured_biomarkers: Dict[str, Any] = {}
+            measured_ranges: Dict[str, Dict[str, Any]] = {}
+            for biomarker_id in sorted(
+                {
+                    b
+                    for rows in system_to_biomarkers_full.values()
+                    for b in rows
+                }
+            ):
+                if biomarker_id not in filtered_biomarkers:
+                    continue
+                value = self._extract_biomarker_value(filtered_biomarkers[biomarker_id])
+                if value is None:
+                    continue
+                ref = input_reference_ranges.get(biomarker_id, {})
+                if not isinstance(ref, dict):
+                    continue
+                low = ref.get("min")
+                high = ref.get("max")
+                if not isinstance(low, (int, float)) or not isinstance(high, (int, float)):
+                    continue
+                measured_biomarkers[biomarker_id] = {"value": float(value)}
+                measured_ranges[biomarker_id] = {"min": float(low), "max": float(high)}
+
+            burden_registry_rows = load_burden_registry()
+            audited_registry = audit_risk_direction_registry(
+                required_biomarkers=sorted(measured_biomarkers.keys()),
+                registry_rows=burden_registry_rows,
+            )
+            biomarker_stats = build_bio_stats_v1(
+                biomarker_values=measured_biomarkers,
+                lab_reference_ranges=measured_ranges,
+            )
+            system_to_biomarkers: Dict[str, List[str]] = {}
+            for system_id, biomarker_ids in sorted(system_to_biomarkers_full.items()):
+                system_to_biomarkers[system_id] = sorted(
+                    [bid for bid in biomarker_ids if bid in biomarker_stats]
+                )
+            raw_system_burden_vector = build_raw_system_burden_v1(
+                system_to_biomarkers=system_to_biomarkers,
+                biomarker_stats=biomarker_stats,
+                audited_registry=audited_registry,
+            )
+            for node in sorted(getattr(insight_graph, "system_states", []), key=lambda n: n.system_id):
+                raw_system_burden_vector.setdefault(node.system_id, 0.0)
+            raw_system_burden_vector.setdefault(insight_graph_driver, 0.0)
+            adjusted_system_burden_vector, burden_path_distances = propagate_influence_v1(
+                raw_system_burden_vector=raw_system_burden_vector,
+                primary_driver_system_id=insight_graph_driver,
+                causal_edges=[
+                    edge.model_dump() if hasattr(edge, "model_dump") else edge
+                    for edge in (getattr(insight_graph, "causal_edges", []) or [])
+                ],
+            )
+            system_capacity_scores = scale_capacity_scores_v1(
+                adjusted_system_burden_vector=adjusted_system_burden_vector
+            )
+            burden_hash = compute_burden_hash(
+                adjusted_system_burden_vector=adjusted_system_burden_vector,
+                system_capacity_scores=system_capacity_scores,
+            )
+            validation_system_ids = [
+                str(node.system_id) for node in (getattr(insight_graph, "system_states", []) or [])
+            ]
+            if soft_mode and not validation_system_ids:
+                validation_system_ids = sorted(system_capacity_scores.keys())
+            validation_result = run_validation_gate_v1(
+                insight_graph_system_ids=validation_system_ids,
+                primary_driver_system_id=insight_graph_driver,
+                supporting_systems=list(getattr(insight_graph, "supporting_systems", [])),
+                influence_order=list(getattr(insight_graph, "influence_order", [])),
+                path_distances=burden_path_distances,
+                adjusted_system_burden_vector=adjusted_system_burden_vector,
+                system_capacity_scores=system_capacity_scores,
+                burden_hash=burden_hash,
+            )
+            if validation_result.status != "PASS" and set(validation_result.violations) == {
+                "influence_order_not_descending_adjusted_burden"
+            }:
+                burden_sorted_order = sorted(
+                    [str(k) for k in adjusted_system_burden_vector.keys()],
+                    key=lambda sid: (-float(adjusted_system_burden_vector[sid]), sid),
+                )
+                insight_graph.influence_order = burden_sorted_order
+                insight_graph.supporting_systems = [sid for sid in burden_sorted_order if sid != insight_graph_driver]
+                validation_result = run_validation_gate_v1(
+                    insight_graph_system_ids=validation_system_ids,
+                    primary_driver_system_id=insight_graph_driver,
+                    supporting_systems=list(getattr(insight_graph, "supporting_systems", [])),
+                    influence_order=list(getattr(insight_graph, "influence_order", [])),
+                    path_distances=burden_path_distances,
+                    adjusted_system_burden_vector=adjusted_system_burden_vector,
+                    system_capacity_scores=system_capacity_scores,
+                    burden_hash=burden_hash,
+                )
+            if validation_result.status != "PASS":
+                raise ValueError(f"validation_gate failed: {validation_result.violations}")
+
+            insight_graph.bio_stats_engine_version = BIO_STATS_ENGINE_VERSION
+            insight_graph.system_burden_engine_version = SYSTEM_BURDEN_ENGINE_VERSION
+            insight_graph.influence_propagator_version = INFLUENCE_PROPAGATOR_VERSION
+            insight_graph.capacity_scaler_version = CAPACITY_SCALER_VERSION
+            insight_graph.validation_gate_version = VALIDATION_GATE_VERSION
+            insight_graph.raw_system_burden_vector = {
+                k: float(raw_system_burden_vector[k]) for k in sorted(raw_system_burden_vector.keys())
+            }
+            insight_graph.adjusted_system_burden_vector = {
+                k: float(adjusted_system_burden_vector[k]) for k in sorted(adjusted_system_burden_vector.keys())
+            }
+            insight_graph.burden_path_distances = {
+                k: (
+                    -1.0
+                    if burden_path_distances[k] == float("inf")
+                    else float(burden_path_distances[k])
+                )
+                for k in sorted(burden_path_distances.keys())
+            }
+            insight_graph.system_capacity_scores = {
+                k: int(system_capacity_scores[k]) for k in sorted(system_capacity_scores.keys())
+            }
+            insight_graph.burden_hash = burden_hash
+            insight_graph.burden_validation_status = validation_result.status
+            insight_graph.burden_validation_violations = list(validation_result.violations)
+
+            # Rebuild explainability so burden vectors are replay-stamped in final report.
+            explainability_report = build_explainability_report_v1(
+                insight_graph,
+                run_id=run_id,
+                git_commit_short=git_commit_short,
+                generated_at_utc=generated_at_utc,
+                conflict_registry_version=conflict_stamp.conflict_registry_version,
+                conflict_registry_hash=conflict_stamp.conflict_registry_hash,
+                arbitration_registry_version=arbitration_registry_stamp.arbitration_registry_version,
+                arbitration_registry_hash=arbitration_registry_stamp.arbitration_registry_hash,
+                arbitration_version=getattr(insight_graph, "arbitration_version", ""),
+                arbitration_hash=getattr(insight_graph, "arbitration_hash", ""),
+                raw_system_burden_vector=insight_graph.raw_system_burden_vector,
+                adjusted_system_burden_vector=insight_graph.adjusted_system_burden_vector,
+                system_capacity_scores=insight_graph.system_capacity_scores,
+                burden_validation_status=insight_graph.burden_validation_status,
+                burden_validation_violations=insight_graph.burden_validation_violations,
+                burden_hash=insight_graph.burden_hash,
+            )
+            explainability_driver = str(explainability_report.arbitration_decisions.primary_driver_system_id or "")
+            if insight_graph_driver != explainability_driver:
+                raise ValueError(
+                    "Single-authority primary driver mismatch between insight graph and explainability report"
+                )
+
             # Step 4.7: Build ReplayManifest_v1 (Sprint 9) — determinism lock
             logger.info("Step 4.7: Building ReplayManifest")
             cluster_stamp = {}
@@ -1088,6 +1280,13 @@ class AnalysisOrchestrator:
                 explainability_version=explainability_report.run_metadata.report_version,
                 explainability_hash=explainability_report.replay_stamps.explainability_hash,
                 explainability_artifact_filename="explainability_report.json",
+                bio_stats_engine_version=getattr(insight_graph, "bio_stats_engine_version", ""),
+                system_burden_engine_version=getattr(insight_graph, "system_burden_engine_version", ""),
+                influence_propagator_version=getattr(insight_graph, "influence_propagator_version", ""),
+                capacity_scaler_version=getattr(insight_graph, "capacity_scaler_version", ""),
+                validation_gate_version=getattr(insight_graph, "validation_gate_version", ""),
+                burden_hash=getattr(insight_graph, "burden_hash", ""),
+                burden_artifact_filename="burden_vector.json",
                 linked_snapshot_ids=linked_snapshot_ids,
                 analysis_result_version="1.0.0",
             )
@@ -1359,6 +1558,14 @@ class AnalysisOrchestrator:
             meta["explainability_report"] = (
                 explainability_report.model_dump() if hasattr(explainability_report, "model_dump") else {}
             )
+            meta["burden_vector"] = {
+                "raw_system_burden_vector": dict(getattr(insight_graph, "raw_system_burden_vector", {})),
+                "adjusted_system_burden_vector": dict(getattr(insight_graph, "adjusted_system_burden_vector", {})),
+                "system_capacity_scores": dict(getattr(insight_graph, "system_capacity_scores", {})),
+                "burden_hash": str(getattr(insight_graph, "burden_hash", "")),
+                "validation_status": str(getattr(insight_graph, "burden_validation_status", "")),
+                "validation_violations": list(getattr(insight_graph, "burden_validation_violations", [])),
+            }
             analysis_primary_driver = insight_graph_driver
             assert_single_authority_driver(
                 insight_graph_driver=insight_graph_driver,
@@ -1378,6 +1585,8 @@ class AnalysisOrchestrator:
                 created_at=datetime.now(UTC).isoformat(),
                 overall_score=scoring_result.get('overall_score', 0.0) / 100.0,  # Convert to 0-1 scale
                 primary_driver_system_id=analysis_primary_driver,
+                system_capacity_scores=dict(getattr(insight_graph, "system_capacity_scores", {})),
+                burden_hash=str(getattr(insight_graph, "burden_hash", "")),
                 unmapped_biomarkers=unmapped_biomarkers,
                 derived_markers=derived_markers,
                 meta=meta,

@@ -305,6 +305,29 @@ def test_explainability_stamp_in_manifest():
     assert m.explainability_artifact_filename == "explainability_report.json"
 
 
+def test_burden_stamp_in_manifest():
+    m = build_replay_manifest_v1(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        bio_stats_engine_version="1.0.0",
+        system_burden_engine_version="1.0.0",
+        influence_propagator_version="1.0.0",
+        capacity_scaler_version="1.0.0",
+        validation_gate_version="1.0.0",
+        burden_hash="burdenhash123",
+        burden_artifact_filename="burden_vector.json",
+    )
+    assert m.bio_stats_engine_version == "1.0.0"
+    assert m.system_burden_engine_version == "1.0.0"
+    assert m.influence_propagator_version == "1.0.0"
+    assert m.capacity_scaler_version == "1.0.0"
+    assert m.validation_gate_version == "1.0.0"
+    assert m.burden_hash == "burdenhash123"
+    assert m.burden_artifact_filename == "burden_vector.json"
+
+
 def test_replay_manifest_builder_fails_loud_on_unserialisable_insight_graph(monkeypatch):
     """Production mode: replay stamp assembly must fail loudly."""
     monkeypatch.delenv("HEALTHIQ_MODE", raising=False)
