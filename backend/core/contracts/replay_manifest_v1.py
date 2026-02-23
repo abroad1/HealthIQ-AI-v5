@@ -143,6 +143,16 @@ class ReplayManifestV1(BaseModel):
         default="",
         description="Artifact file name for explainability report in snapshot packs",
     )
+    bio_stats_engine_version: str = Field(default="", description="BioStatsEngine_v1 version stamp")
+    system_burden_engine_version: str = Field(default="", description="SystemBurdenEngine_v1 version stamp")
+    influence_propagator_version: str = Field(default="", description="InfluencePropagator_v1 version stamp")
+    capacity_scaler_version: str = Field(default="", description="CapacityScaler_v1 version stamp")
+    validation_gate_version: str = Field(default="", description="ValidationGate_v1 version stamp")
+    burden_hash: str = Field(default="", description="Deterministic hash of burden/capacity vectors")
+    burden_artifact_filename: str = Field(
+        default="",
+        description="Artifact file name for burden vector output in snapshot packs",
+    )
     linked_snapshot_ids: List[str] = Field(
         default_factory=list,
         description="Prior analysis_ids linked for longitudinal state transition compute",

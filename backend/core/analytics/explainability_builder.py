@@ -22,6 +22,7 @@ from core.contracts.explainability_report_v1 import (
     ExplainabilityReplayStamps,
     ExplainabilityReportV1,
     ExplainabilityRunMetadata,
+    ExplainabilitySystemBurden,
 )
 from core.contracts.insight_graph_v1 import InsightGraphV1
 
@@ -205,6 +206,12 @@ def build_explainability_report_v1(
     arbitration_registry_hash: str = "",
     arbitration_version: str = "",
     arbitration_hash: str = "",
+    raw_system_burden_vector: Mapping[str, float] | None = None,
+    adjusted_system_burden_vector: Mapping[str, float] | None = None,
+    system_capacity_scores: Mapping[str, int] | None = None,
+    burden_validation_status: str = "",
+    burden_validation_violations: Sequence[str] | None = None,
+    burden_hash: str = "",
 ) -> ExplainabilityReportV1:
     conflict_rows = [
         {
@@ -283,8 +290,18 @@ def build_explainability_report_v1(
         )
     )
 
-    ordering = apply_influence_ordering(graph)
-    primary = str(ordering["primary_driver_system_id"])
+    if list(getattr(graph, "influence_order", [])):
+        primary = str(getattr(graph, "primary_driver_system_id", "") or "")
+        supporting = [str(x) for x in list(getattr(graph, "supporting_systems", []))]
+        influence_order = [str(x) for x in list(getattr(graph, "influence_order", []))]
+        ordering = {
+            "primary_driver_system_id": primary,
+            "supporting_systems": supporting,
+            "influence_order": influence_order,
+        }
+    else:
+        ordering = apply_influence_ordering(graph)
+        primary = str(ordering["primary_driver_system_id"])
 
     coupled_tier = ""
     reasons: List[str] = []
@@ -329,6 +346,20 @@ def build_explainability_report_v1(
             final_calibration_tier=coupled_tier,
             reasons=reasons,
         ),
+        system_burden=ExplainabilitySystemBurden(
+            raw_system_burden_vector={
+                str(k): float(v) for k, v in sorted((raw_system_burden_vector or {}).items(), key=lambda x: str(x[0]))
+            },
+            adjusted_system_burden_vector={
+                str(k): float(v)
+                for k, v in sorted((adjusted_system_burden_vector or {}).items(), key=lambda x: str(x[0]))
+            },
+            system_capacity_scores={
+                str(k): int(v) for k, v in sorted((system_capacity_scores or {}).items(), key=lambda x: str(x[0]))
+            },
+            burden_validation_status=str(burden_validation_status or ""),
+            burden_validation_violations=sorted(set(str(x) for x in (burden_validation_violations or []))),
+        ),
         replay_stamps=ExplainabilityReplayStamps(
             conflict_registry_version=conflict_registry_version,
             conflict_registry_hash=conflict_registry_hash,
@@ -337,6 +368,7 @@ def build_explainability_report_v1(
             arbitration_version=arbitration_version,
             arbitration_hash=arbitration_hash,
             explainability_hash="",
+            burden_hash=str(burden_hash or ""),
         ),
     )
     hash_payload = report.model_dump()

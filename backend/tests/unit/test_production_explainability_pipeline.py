@@ -157,8 +157,13 @@ def test_production_pipeline_emits_explainability_and_driver_authority():
     insight_graph = dto.meta.get("insight_graph", {})
     assert explainability
     assert explainability.get("replay_stamps", {}).get("explainability_hash")
+    assert explainability.get("replay_stamps", {}).get("burden_hash")
     assert insight_graph.get("influence_order")
     assert insight_graph.get("supporting_systems") is not None
+    assert insight_graph.get("system_capacity_scores")
+    assert insight_graph.get("burden_hash")
+    assert dto.system_capacity_scores
+    assert dto.burden_hash
     assert (
         insight_graph.get("primary_driver_system_id")
         == explainability.get("arbitration_decisions", {}).get("primary_driver_system_id")

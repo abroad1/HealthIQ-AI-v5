@@ -65,6 +65,13 @@ def build_replay_manifest_v1(
     explainability_version: Optional[str] = None,
     explainability_hash: Optional[str] = None,
     explainability_artifact_filename: Optional[str] = None,
+    bio_stats_engine_version: Optional[str] = None,
+    system_burden_engine_version: Optional[str] = None,
+    influence_propagator_version: Optional[str] = None,
+    capacity_scaler_version: Optional[str] = None,
+    validation_gate_version: Optional[str] = None,
+    burden_hash: Optional[str] = None,
+    burden_artifact_filename: Optional[str] = None,
     linked_snapshot_ids: Optional[list[str]] = None,
     analysis_result_version: str = "1.0.0",
 ) -> ReplayManifestV1:
@@ -106,6 +113,13 @@ def build_replay_manifest_v1(
         explainability_version: Explainability report version stamp
         explainability_hash: Explainability report canonical hash
         explainability_artifact_filename: Explainability artifact file name
+        bio_stats_engine_version: Bio stats engine version stamp
+        system_burden_engine_version: System burden engine version stamp
+        influence_propagator_version: Influence propagator version stamp
+        capacity_scaler_version: Capacity scaler version stamp
+        validation_gate_version: Validation gate version stamp
+        burden_hash: Burden vector canonical hash
+        burden_artifact_filename: Burden vector artifact file name
         linked_snapshot_ids: Prior snapshot IDs linked for longitudinal compute
         analysis_result_version: Existing result_version if present
 
@@ -212,6 +226,13 @@ def build_replay_manifest_v1(
         explainability_version=explainability_version or "",
         explainability_hash=explainability_hash or "",
         explainability_artifact_filename=explainability_artifact_filename or "",
+        bio_stats_engine_version=bio_stats_engine_version or "",
+        system_burden_engine_version=system_burden_engine_version or "",
+        influence_propagator_version=influence_propagator_version or "",
+        capacity_scaler_version=capacity_scaler_version or "",
+        validation_gate_version=validation_gate_version or "",
+        burden_hash=burden_hash or "",
+        burden_artifact_filename=burden_artifact_filename or "",
         linked_snapshot_ids=list(linked_snapshot_ids or []),
         schema_hashes=schema_hashes,
         analysis_result_version=analysis_result_version,

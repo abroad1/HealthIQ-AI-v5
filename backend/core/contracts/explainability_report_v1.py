@@ -95,6 +95,15 @@ class ExplainabilityCalibrationImpact(BaseModel):
     reasons: List[str] = Field(default_factory=list)
 
 
+class ExplainabilitySystemBurden(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    raw_system_burden_vector: dict[str, float] = Field(default_factory=dict)
+    adjusted_system_burden_vector: dict[str, float] = Field(default_factory=dict)
+    system_capacity_scores: dict[str, int] = Field(default_factory=dict)
+    burden_validation_status: str = Field(default="")
+    burden_validation_violations: List[str] = Field(default_factory=list)
+
+
 class ExplainabilityReplayStamps(BaseModel):
     model_config = ConfigDict(extra="forbid")
     conflict_registry_version: str = Field(default="")
@@ -104,6 +113,7 @@ class ExplainabilityReplayStamps(BaseModel):
     arbitration_version: str = Field(default="")
     arbitration_hash: str = Field(default="")
     explainability_hash: str = Field(default="")
+    burden_hash: str = Field(default="")
 
 
 class ExplainabilityReportV1(BaseModel):
@@ -115,4 +125,5 @@ class ExplainabilityReportV1(BaseModel):
     causal_edges: List[ExplainabilityCausalEdgeItem] = Field(default_factory=list)
     arbitration_decisions: ExplainabilityArbitrationDecisions
     calibration_impact: ExplainabilityCalibrationImpact
+    system_burden: ExplainabilitySystemBurden
     replay_stamps: ExplainabilityReplayStamps

@@ -34,6 +34,7 @@ def test_explainability_report_contains_required_keys_and_sorted_sections(tmp_pa
     assert "causal_edges" in report
     assert "arbitration_decisions" in report
     assert "calibration_impact" in report
+    assert "system_burden" in report
     assert "replay_stamps" in report
 
     conflicts = report["conflict_summary"]
@@ -89,3 +90,6 @@ def test_explainability_report_contains_required_keys_and_sorted_sections(tmp_pa
     assert report["calibration_impact"]["reasons"] == sorted(
         report["calibration_impact"]["reasons"]
     )
+    assert isinstance(report["system_burden"]["raw_system_burden_vector"], dict)
+    assert isinstance(report["system_burden"]["adjusted_system_burden_vector"], dict)
+    assert isinstance(report["system_burden"]["system_capacity_scores"], dict)

@@ -28,6 +28,7 @@ def test_golden_panel_runner_writes_snapshot_pack_with_required_stamps(tmp_path)
     insight_path = run_dir / "insight_graph.json"
     replay_path = run_dir / "replay_manifest.json"
     explainability_path = run_dir / "explainability_report.json"
+    burden_path = run_dir / "burden_vector.json"
     arbitration_report_path = run_dir / "arbitration_report.json"
     narrative_path = run_dir / "narrative.txt"
 
@@ -35,6 +36,7 @@ def test_golden_panel_runner_writes_snapshot_pack_with_required_stamps(tmp_path)
     assert insight_path.exists()
     assert replay_path.exists()
     assert explainability_path.exists()
+    assert burden_path.exists()
     assert arbitration_report_path.exists()
     assert narrative_path.exists()
 
@@ -54,6 +56,13 @@ def test_golden_panel_runner_writes_snapshot_pack_with_required_stamps(tmp_path)
     assert replay.get("explainability_version")
     assert replay.get("explainability_hash")
     assert replay.get("explainability_artifact_filename") == "explainability_report.json"
+    assert replay.get("bio_stats_engine_version")
+    assert replay.get("system_burden_engine_version")
+    assert replay.get("influence_propagator_version")
+    assert replay.get("capacity_scaler_version")
+    assert replay.get("validation_gate_version")
+    assert replay.get("burden_hash")
+    assert replay.get("burden_artifact_filename") == "burden_vector.json"
     assert replay.get("conflict_registry_version")
     assert replay.get("conflict_registry_hash")
     assert replay.get("arbitration_registry_version")
@@ -81,6 +90,14 @@ def test_golden_panel_runner_writes_snapshot_pack_with_required_stamps(tmp_path)
         == insight.get("primary_driver_system_id")
     )
     assert explainability.get("dominance_resolution", {}).get("influence_ordering", {}).get("influence_order")
+    assert explainability.get("system_burden", {}).get("system_capacity_scores")
+    assert explainability.get("replay_stamps", {}).get("burden_hash")
+
+    burden = _load_json(burden_path)
+    assert burden.get("raw_system_burden_vector") is not None
+    assert burden.get("adjusted_system_burden_vector") is not None
+    assert burden.get("system_capacity_scores") is not None
+    assert burden.get("burden_hash")
 
     report = _load_json(arbitration_report_path)
     assert "conflict_summary" in report
