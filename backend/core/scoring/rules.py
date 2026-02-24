@@ -14,10 +14,21 @@ from core.analytics.scoring_policy_registry import load_scoring_policy
 
 _POLICY = load_scoring_policy()
 DERIVED_RATIOS = frozenset(_POLICY.raw.get("derived_ratios", []))
+DERIVED_RATIO_POLICY_BOUNDS: Dict[str, Dict[str, Any]] = {
+    k: {
+        "min": float(v["min"]),
+        "max": float(v["max"]),
+        "unit": str(v.get("unit", "")).strip(),
+        "source": str(v.get("source", "")).strip(),
+        "notes": str(v.get("notes", "")).strip(),
+    }
+    for k, v in (_POLICY.raw.get("derived_ratio_policy_bounds", {}) or {}).items()
+    if isinstance(v, dict)
+}
+# Back-compat alias for existing tests/modules that expect min/max table.
 DERIVED_RATIO_BOUNDS: Dict[str, Dict[str, float]] = {
     k: {"min": float(v["min"]), "max": float(v["max"])}
-    for k, v in (_POLICY.raw.get("derived_ratio_bounds", {}) or {}).items()
-    if isinstance(v, dict)
+    for k, v in DERIVED_RATIO_POLICY_BOUNDS.items()
 }
 
 # Sentinel for unscored (missing lab reference range)
@@ -187,8 +198,8 @@ class ScoringRules:
         if not self._is_derived_ratio(biomarker_name):
             return 0.0, ScoreRange.CRITICAL, UNSCORED_REASON
 
-        # Derived ratios only: use explicit DERIVED_RATIO_BOUNDS table (no SSOT, no rule fallback)
-        bounds = DERIVED_RATIO_BOUNDS.get(biomarker_name)
+        # Derived ratios only: use explicit policy bounds table (no SSOT/rule fallback).
+        bounds = DERIVED_RATIO_POLICY_BOUNDS.get(biomarker_name)
         if bounds and isinstance(bounds.get('min'), (int, float)) and isinstance(bounds.get('max'), (int, float)):
             min_val, max_val = bounds['min'], bounds['max']
             if min_val < max_val:

@@ -4,7 +4,7 @@ Analysis orchestrator - enforces canonical-only keys and coordinates analysis.
 
 import os
 import subprocess
-from typing import Dict, Any, List, Mapping, Optional
+from typing import Dict, Any, List, Mapping, Optional, Tuple
 
 # Reserved key for unit-normalisation invariant (Sprint 5). Set by callers after apply_unit_normalisation.
 UNIT_NORMALISATION_META_KEY = "__unit_normalisation_meta__"
@@ -62,7 +62,7 @@ from core.analytics.arbitration_engine import build_dominance_edges_v1, build_ar
 from core.analytics.conflict_registry import load_conflict_registry
 from core.analytics.arbitration_registry import load_arbitration_registry
 from core.units.registry import UNIT_REGISTRY_VERSION
-from core.scoring.rules import DERIVED_RATIO_BOUNDS
+from core.scoring.rules import DERIVED_RATIO_POLICY_BOUNDS
 
 
 class AnalysisOrchestrator:
@@ -837,9 +837,51 @@ class AnalysisOrchestrator:
                 "ratio_registry_version": derived_result.get("registry_version", RatioRegistry.version),
                 "ratios": {},
             }
+            policy_bounds_rejected_reason: Dict[str, str] = {}
 
             def _ratio_unit(rid: str) -> str:
                 return "mmol/L" if rid == "non_hdl_cholesterol" else "ratio"
+
+            def _has_valid_numeric_bounds(ref: Any) -> bool:
+                if not isinstance(ref, dict):
+                    return False
+                min_val = ref.get("min")
+                max_val = ref.get("max")
+                return (
+                    isinstance(min_val, (int, float))
+                    and isinstance(max_val, (int, float))
+                    and float(min_val) < float(max_val)
+                )
+
+            def _is_valid_lab_range(ref: Any) -> bool:
+                if not _has_valid_numeric_bounds(ref):
+                    return False
+                return str(ref.get("source", "")).strip().lower() == "lab"
+
+            def _policy_bounds_for_ratio(rid: str, expected_unit: str) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
+                bounds = DERIVED_RATIO_POLICY_BOUNDS.get(rid)
+                if not isinstance(bounds, dict):
+                    return None, "policy_bounds_missing"
+                min_val = bounds.get("min")
+                max_val = bounds.get("max")
+                policy_unit = str(bounds.get("unit", "")).strip()
+                if not isinstance(min_val, (int, float)) or not isinstance(max_val, (int, float)) or float(min_val) >= float(max_val):
+                    return None, "policy_bounds_invalid"
+                if not policy_unit:
+                    return None, "policy_unit_missing"
+                expected = str(expected_unit or "").strip()
+                unit_compatible = (
+                    (policy_unit == expected)
+                    or (policy_unit == "ratio" and expected == "ratio")
+                )
+                if not unit_compatible:
+                    return None, f"policy_unit_mismatch:{policy_unit}!={expected}"
+                return {
+                    "min": float(min_val),
+                    "max": float(max_val),
+                    "unit": policy_unit,
+                    "source": "policy",
+                }, None
 
             for ratio_id, entry in derived_result.get("derived", {}).items():
                 if not isinstance(entry, dict) or "value" not in entry:
@@ -851,19 +893,17 @@ class AnalysisOrchestrator:
                 inputs_used = entry.get("inputs_used") or []
 
                 if source == "lab":
-                    # Lab-supplied: value already in simple_biomarkers; never overwrite
+                    # Lab-supplied: value already in simple_biomarkers; never overwrite.
+                    # Only inject policy bounds when no valid lab range exists.
                     ref = input_reference_ranges.get(ratio_id)
-                    if ref is None and ratio_id in DERIVED_RATIO_BOUNDS:
-                        bounds = DERIVED_RATIO_BOUNDS[ratio_id]
-                        if isinstance(bounds.get("min"), (int, float)) and isinstance(bounds.get("max"), (int, float)):
-                            input_reference_ranges[ratio_id] = {
-                                "min": float(bounds["min"]),
-                                "max": float(bounds["max"]),
-                                "unit": unit,
-                                "source": "ratio_registry",
-                            }
-                            ref = input_reference_ranges[ratio_id]
-                    bounds_applied = ref is not None and isinstance(ref.get("min"), (int, float)) and isinstance(ref.get("max"), (int, float))
+                    if not _is_valid_lab_range(ref):
+                        policy_ref, policy_reason = _policy_bounds_for_ratio(ratio_id, unit)
+                        if policy_ref is not None:
+                            input_reference_ranges[ratio_id] = policy_ref
+                            ref = policy_ref
+                        elif policy_reason:
+                            policy_bounds_rejected_reason[ratio_id] = policy_reason
+                    bounds_applied = _has_valid_numeric_bounds(ref)
                 else:
                     # Computed: merge only if key doesn't exist
                     if ratio_id not in simple_biomarkers:
@@ -873,26 +913,32 @@ class AnalysisOrchestrator:
                             "unit": unit,
                             "reference_range": None,
                         }
-                        bounds = DERIVED_RATIO_BOUNDS.get(ratio_id)
-                        bounds_valid = bounds and isinstance(bounds.get("min"), (int, float)) and isinstance(bounds.get("max"), (int, float))
-                        if bounds_valid:
-                            filtered_biomarkers[ratio_id]["reference_range"] = {
-                                **bounds, "unit": unit, "source": "ratio_registry",
-                            }
-                            if ratio_id not in input_reference_ranges:
-                                input_reference_ranges[ratio_id] = {
-                                    "min": float(bounds["min"]),
-                                    "max": float(bounds["max"]),
-                                    "unit": unit,
-                                    "source": "ratio_registry",
+                        existing_range = input_reference_ranges.get(ratio_id)
+                        if not _is_valid_lab_range(existing_range):
+                            policy_ref, policy_reason = _policy_bounds_for_ratio(ratio_id, unit)
+                            if policy_ref is not None:
+                                filtered_biomarkers[ratio_id]["reference_range"] = {
+                                    "min": policy_ref["min"],
+                                    "max": policy_ref["max"],
+                                    "unit": policy_ref["unit"],
+                                    "source": "policy",
                                 }
-                        bounds_applied = bool(bounds_valid)
+                                input_reference_ranges[ratio_id] = policy_ref
+                            elif policy_reason:
+                                policy_bounds_rejected_reason[ratio_id] = policy_reason
+                        bounds_applied = _has_valid_numeric_bounds(input_reference_ranges.get(ratio_id))
 
                 derived_ratios_meta["ratios"][ratio_id] = {
                     "value": val,
                     "unit": unit,
                     "source": source,
                     "bounds_applied": bounds_applied,
+                    "bounds_source": (
+                        str((input_reference_ranges.get(ratio_id) or {}).get("source", "")).strip()
+                        if _has_valid_numeric_bounds(input_reference_ranges.get(ratio_id))
+                        else None
+                    ),
+                    "bounds_rejected_reason": policy_bounds_rejected_reason.get(ratio_id),
                     "inputs_used": inputs_used if source == "computed" else None,
                 }
 
@@ -1376,7 +1422,8 @@ class AnalysisOrchestrator:
                             logger.warning(f"Could not resolve unit for {biomarker_name}: {e}")
                             unit = ''
                     
-                    # Get reference range: Priority 1 = input, Priority 2 = SSOT
+                    # Get reference range from input_reference_ranges only.
+                    # Lab-Range Sovereignty: no SSOT fallback for scoring/display status paths.
                     reference_range_dict = None
                     
                     # Priority 1: Check input reference ranges
@@ -1391,25 +1438,6 @@ class AnalysisOrchestrator:
                             }
                             logger.debug(f"[DTO Builder] Using input reference range for {biomarker_name}: {reference_range_dict}")
                     
-                    # Priority 2: Fall back to SSOT if input range not available
-                    if reference_range_dict is None:
-                        try:
-                            ref_range = resolver.get_reference_range(
-                                biomarker_name,
-                                age=context.user.age,
-                                sex=context.user.gender
-                            )
-                            if ref_range and ref_range.get('min') is not None and ref_range.get('max') is not None:
-                                reference_range_dict = {
-                                    'min': ref_range.get('min'),
-                                    'max': ref_range.get('max'),
-                                    'unit': ref_range.get('unit', unit),
-                                    'source': 'ssot'
-                                }
-                                logger.debug(f"[DTO Builder] Using SSOT reference range for {biomarker_name}: {reference_range_dict}")
-                        except Exception as e:
-                            logger.warning(f"Could not resolve reference range for {biomarker_name}: {e}")
-                    
                     # Use HAS v1 primitive for status (single source of truth)
                     if reference_range_dict and reference_range_dict.get('min') is not None and reference_range_dict.get('max') is not None:
                         status = frontend_status_from_value_and_range(
@@ -1420,7 +1448,20 @@ class AnalysisOrchestrator:
                     else:
                         status = 'unknown'
                     logger.debug(f"[DTO Builder] {biomarker_name} unit resolved as: {unit}, ref_range: {reference_range_dict}, status: {status}")
+                    range_source = None
+                    if isinstance(reference_range_dict, dict):
+                        source_val = str(reference_range_dict.get("source", "")).strip().lower()
+                        if source_val in {"lab", "policy", "ssot"}:
+                            range_source = source_val
                     
+                    interpretation = f"Scored {biomarker_score['score']:.1f}/100"
+                    if (
+                        str(biomarker_score.get("unscored_reason", "")).strip()
+                        or status == "unknown"
+                        or not _has_valid_numeric_bounds(reference_range_dict)
+                    ):
+                        interpretation = "Not scored - no reference range available"
+
                     biomarker_dtos.append(BiomarkerScoreDTO(
                         biomarker_name=biomarker_name,
                         value=value,
@@ -1428,8 +1469,9 @@ class AnalysisOrchestrator:
                         score=biomarker_score['score'] / 100.0,  # Convert to 0-1 scale
                         percentile=None,
                         status=status,
+                        range_source=range_source,
                         reference_range=reference_range_dict,
-                        interpretation=f"Scored {biomarker_score['score']:.1f}/100"
+                        interpretation=interpretation
                     ))
             
             # --- Include all original biomarkers, not just scored ones ---
@@ -1477,7 +1519,8 @@ class AnalysisOrchestrator:
                         except Exception as e:
                             logger.warning(f"[Unscored] Could not resolve unit for {biomarker_name}: {e}")
                     
-                    # Get reference range: Priority 1 = input_reference_ranges (lab), Priority 2 = SSOT
+                    # Get reference range from input_reference_ranges only.
+                    # Lab-Range Sovereignty: no SSOT fallback for scoring/display status paths.
                     reference_range_dict = None
                     
                     # Priority 1: ALWAYS use input_reference_ranges if present (lab range takes precedence)
@@ -1500,41 +1543,14 @@ class AnalysisOrchestrator:
                             else:
                                 logger.warning(f"[Unscored] Invalid min/max in input_reference_ranges for {biomarker_name}: min={min_val}, max={max_val}")
                     
-                    # Priority 2: Fall back to SSOT ONLY if no lab range was found
-                    if reference_range_dict is None:
-                        try:
-                            ref_range = resolver.get_reference_range(
-                                biomarker_name,
-                                age=context.user.age,
-                                sex=context.user.gender
-                            )
-                            if ref_range and isinstance(ref_range, dict):
-                                min_val = ref_range.get('min')
-                                max_val = ref_range.get('max')
-                                if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)) and min_val < max_val:
-                                    # Use SSOT unit, or fall back to extracted unit
-                                    range_unit = ref_range.get('unit', '') or unit
-                                    reference_range_dict = {
-                                        'min': float(min_val),
-                                        'max': float(max_val),
-                                        'unit': range_unit,
-                                        'source': 'ssot'
-                                    }
-                                    logger.debug(f"[Unscored] Using SSOT reference range for {biomarker_name}: {reference_range_dict}")
-                                else:
-                                    logger.warning(f"[Unscored] Invalid SSOT range for {biomarker_name}: min={min_val}, max={max_val}")
-                            else:
-                                logger.warning(f"[Unscored] No valid SSOT reference range for {biomarker_name}")
-                        except Exception as e:
-                            logger.warning(f"[Unscored] Could not resolve SSOT reference range for {biomarker_name}: {e}")
-                    
                     # If both failed, use fallback structure
                     if reference_range_dict is None:
+                        fallback_source = "policy" if biomarker_name in policy_bounds_rejected_reason else None
                         reference_range_dict = {
                             'min': None,
                             'max': None,
                             'unit': unit,
-                            'source': 'lab'
+                            'source': fallback_source,
                         }
                     
                     # Update unit to match reference_range unit if we have a lab range
@@ -1546,6 +1562,11 @@ class AnalysisOrchestrator:
                     # Determine status and score using HAS primitives + scoring (single source)
                     status = "unknown"
                     score = 0.0
+                    range_source = None
+                    if isinstance(reference_range_dict, dict):
+                        source_val = str(reference_range_dict.get("source", "")).strip().lower()
+                        if source_val in {"lab", "policy", "ssot"}:
+                            range_source = source_val
                     if reference_range_dict and reference_range_dict.get('min') is not None and reference_range_dict.get('max') is not None:
                         try:
                             min_val = float(reference_range_dict['min'])
@@ -1559,6 +1580,18 @@ class AnalysisOrchestrator:
                             logger.warning(f"Could not score unscored biomarker {biomarker_name} using reference range: {e}")
                     
                     logger.debug(f"Added unscored biomarker: {biomarker_name} value={value} unit={unit} range={reference_range_dict} status={status} score={score}")
+                    interpretation = "Not scored - no reference range available"
+                    if status != "unknown":
+                        if range_source == "policy":
+                            interpretation = "Scored using HealthIQ fallback bounds (lab range not provided)"
+                        elif range_source == "lab":
+                            interpretation = "Scored using lab reference range"
+                        else:
+                            interpretation = "Scored using reference range"
+                    elif biomarker_name in policy_bounds_rejected_reason:
+                        interpretation = "Not scored - no compatible policy bounds"
+                        if range_source is None:
+                            range_source = "policy"
                     
                     biomarker_dtos.append(BiomarkerScoreDTO(
                         biomarker_name=biomarker_name,
@@ -1567,8 +1600,9 @@ class AnalysisOrchestrator:
                         score=score,
                         percentile=None,
                         status=status,
+                        range_source=range_source,
                         reference_range=reference_range_dict,
-                        interpretation="Scored using reference range" if status != "unknown" else "Not scored - no reference range available"
+                        interpretation=interpretation,
                     ))
             logger.info(f"Total biomarkers in DTO: {len(biomarker_dtos)}")
             

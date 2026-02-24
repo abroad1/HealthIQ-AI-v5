@@ -23,6 +23,10 @@ class BiomarkerScore(BaseModel):
     score: float = Field(..., description="Normalized score (0-1)")
     percentile: Optional[float] = Field(default=None, description="Population percentile")
     status: str = Field(..., description="Status (normal, elevated, low, etc.)")
+    range_source: Optional[str] = Field(
+        default=None,
+        description="Range provenance: lab | policy | ssot"
+    )
     reference_range: Optional[Dict[str, Any]] = Field(
         default=None, 
         description="Reference range information"

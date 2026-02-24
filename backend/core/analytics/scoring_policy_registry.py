@@ -93,13 +93,24 @@ def _validate_policy(raw: Dict[str, Any]) -> None:
                     f"System '{system_name}' references unknown biomarker '{biomarker_id}'"
                 )
 
-    derived_ratio_bounds = raw.get("derived_ratio_bounds", {})
-    if not isinstance(derived_ratio_bounds, dict):
-        raise ValueError("derived_ratio_bounds must be a mapping")
-    for ratio_id, bounds in derived_ratio_bounds.items():
+    derived_ratio_policy_bounds = raw.get("derived_ratio_policy_bounds", {})
+    if not isinstance(derived_ratio_policy_bounds, dict):
+        raise ValueError("derived_ratio_policy_bounds must be a mapping")
+    for ratio_id, bounds in derived_ratio_policy_bounds.items():
         if not isinstance(bounds, dict):
-            raise ValueError(f"derived_ratio_bounds['{ratio_id}'] must be mapping")
-        _validate_range_dict(f"derived_ratio_bounds.{ratio_id}", bounds)
+            raise ValueError(f"derived_ratio_policy_bounds['{ratio_id}'] must be mapping")
+        _validate_range_dict(f"derived_ratio_policy_bounds.{ratio_id}", bounds)
+        unit = str(bounds.get("unit", "")).strip()
+        if not unit:
+            raise ValueError(f"derived_ratio_policy_bounds['{ratio_id}'] must include unit")
+        source = str(bounds.get("source", "")).strip()
+        if source != "healthiq_policy":
+            raise ValueError(
+                f"derived_ratio_policy_bounds['{ratio_id}'] source must be 'healthiq_policy'"
+            )
+        notes = str(bounds.get("notes", "")).strip()
+        if not notes:
+            raise ValueError(f"derived_ratio_policy_bounds['{ratio_id}'] must include notes")
 
     if not isinstance(raw.get("status_map"), dict) or not raw.get("status_map"):
         raise ValueError("status_map must be a non-empty mapping")
