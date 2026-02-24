@@ -1,0 +1,28 @@
+{
+  "biomarkers": {
+    "HDL": {
+      "value": 1.3,
+      "unit": "mmol/L",
+      "reference_range": {
+        "min": 1.0,
+        "max": 2.0,
+        "unit": "mmol/L",
+        "source": "lab"
+      }
+    },
+    "HDL Cholesterol": {
+      "value": 1.4,
+      "unit": "mmol/L",
+      "reference_range": {
+        "min": 1.0,
+        "max": 2.0,
+        "unit": "mmol/L",
+        "source": "lab"
+      }
+    }
+  },
+  "user": {
+    "age": 30,
+    "gender": "male"
+  }
+}
