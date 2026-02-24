@@ -16,6 +16,17 @@ CALIBRATION_FACTOR = 1.0
 # TODO (Sprint 14+): introduce tier-aware calibration multiplier
 
 ALLOWED_RISK_DIRECTIONS = {"HIGH_IS_RISK", "LOW_IS_RISK", "BOTH_SIDES_RISK"}
+ALLOWED_BURDEN_SYSTEM_IDS = {
+    "cardiovascular",
+    "hematological",
+    "hepatic",
+    "hormonal",
+    "immune",
+    "metabolic",
+    "nutritional",
+    "renal",
+    "thyroid",
+}
 
 
 def _biomarker_registry_path() -> Path:
@@ -37,6 +48,30 @@ def load_burden_registry() -> Dict[str, Dict[str, Any]]:
             raise ValueError(f"system_burden_engine: invalid registry row for {biomarker_id}")
         out[biomarker_id] = row
     return out
+
+
+def audit_burden_registry_system_ids(
+    *,
+    registry_rows: Mapping[str, Mapping[str, Any]],
+) -> List[str]:
+    unknown: List[str] = []
+    systems: set[str] = set()
+    for biomarker_id in sorted(str(k) for k in registry_rows.keys()):
+        row = registry_rows.get(biomarker_id)
+        if not isinstance(row, Mapping):
+            raise ValueError(f"system_burden_engine: invalid registry row for {biomarker_id}")
+        system_id = str(row.get("system", "")).strip()
+        if not system_id:
+            raise ValueError(f"system_burden_engine: missing system for {biomarker_id}")
+        systems.add(system_id)
+        if system_id not in ALLOWED_BURDEN_SYSTEM_IDS:
+            unknown.append(f"{biomarker_id}:{system_id}")
+    if unknown:
+        raise ValueError(
+            "system_burden_engine: unknown system ids in burden registry "
+            f"(unknown={unknown}, allowed={sorted(ALLOWED_BURDEN_SYSTEM_IDS)})"
+        )
+    return sorted(systems)
 
 
 def audit_risk_direction_registry(
