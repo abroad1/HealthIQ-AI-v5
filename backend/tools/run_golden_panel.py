@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any, Dict, Mapping, Optional, Tuple
 
 from core.canonical.normalize import normalize_biomarkers_with_metadata
+from core.canonical.alias_registry_service import get_alias_registry_service
 from core.contracts.insight_graph_v1 import InsightGraphV1
 from core.analytics.calibration_engine import build_calibration_layer_v1
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
@@ -253,6 +254,60 @@ def _coerce_to_ssot_units(normalized: Mapping[str, Any]) -> Dict[str, Any]:
     return out
 
 
+def _detect_canonical_collisions(raw_biomarkers: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Deterministically detect duplicate canonical targets from raw input labels."""
+    alias_service = get_alias_registry_service()
+    canonical_to_raw: dict[str, set[str]] = {}
+    for raw_key in sorted(str(k) for k in raw_biomarkers.keys()):
+        canonical_id = str(alias_service.resolve(raw_key)).strip()
+        if not canonical_id or canonical_id.startswith("unmapped_"):
+            continue
+        canonical_to_raw.setdefault(canonical_id, set()).add(raw_key)
+    collisions: list[dict[str, Any]] = []
+    for canonical_id in sorted(canonical_to_raw.keys()):
+        raw_markers = sorted(canonical_to_raw[canonical_id])
+        if len(raw_markers) > 1:
+            collisions.append(
+                {
+                    "canonical_id": canonical_id,
+                    "raw_markers": raw_markers,
+                    "reason": "multiple_raw_inputs_resolve_to_same_canonical_id",
+                }
+            )
+    return collisions
+
+
+def _write_collision_error_artifacts(
+    *,
+    run_dir: Path,
+    fixture: Path,
+    collisions: list[dict[str, Any]],
+) -> Dict[str, Any]:
+    now = datetime.now(UTC).isoformat()
+    analysis_result: Dict[str, Any] = {
+        "status": "error",
+        "error_type": "canonical_collision",
+        "error_payload": {"collisions": collisions},
+        "created_at": now,
+        "run_id": run_dir.name,
+        "fixture": str(fixture),
+    }
+    (run_dir / "analysis_result.json").write_text(
+        json.dumps(_normalise_for_artifact_write(analysis_result), indent=2, sort_keys=True),
+        encoding="utf-8",
+    )
+    error_payload = {
+        "status": "error",
+        "error_type": "canonical_collision",
+        "error_payload": {"collisions": collisions},
+    }
+    (run_dir / "error.json").write_text(
+        json.dumps(_normalise_for_artifact_write(error_payload), indent=2, sort_keys=True),
+        encoding="utf-8",
+    )
+    return analysis_result
+
+
 def run_golden_panel(
     fixture_path: Optional[Path] = None,
     output_root: Optional[Path] = None,
@@ -261,9 +316,28 @@ def run_golden_panel(
 ) -> Tuple[Path, Dict[str, Any]]:
     fixture = fixture_path or _default_fixture_path()
     out_root = output_root or _default_output_root()
+    run_dir = _ensure_run_dir(out_root, run_id)
     payload = _read_payload(fixture)
+    collisions = _detect_canonical_collisions(payload["biomarkers"])
+    if collisions:
+        return run_dir, _write_collision_error_artifacts(
+            run_dir=run_dir,
+            fixture=fixture,
+            collisions=collisions,
+        )
 
-    biomarkers = normalize_biomarkers_with_metadata(payload["biomarkers"])
+    try:
+        biomarkers = normalize_biomarkers_with_metadata(payload["biomarkers"])
+    except Exception as err:
+        if type(err).__name__ != "CanonicalCollisionError":
+            raise
+        fallback_collisions = _detect_canonical_collisions(payload["biomarkers"])
+        return run_dir, _write_collision_error_artifacts(
+            run_dir=run_dir,
+            fixture=fixture,
+            collisions=fallback_collisions,
+        )
+
     biomarkers = _filter_unit_registry_supported(biomarkers)
     biomarkers = _coerce_to_ssot_units(biomarkers)
     biomarkers = apply_unit_normalisation(biomarkers)
@@ -285,7 +359,6 @@ def run_golden_panel(
     if not isinstance(explainability_report, dict) or not explainability_report:
         raise ValueError("Golden panel runner requires stamped explainability_report in production artifacts")
 
-    run_dir = _ensure_run_dir(out_root, run_id)
     (run_dir / "analysis_result.json").write_text(
         json.dumps(_normalise_for_artifact_write(analysis_result), indent=2, sort_keys=True),
         encoding="utf-8",
@@ -344,8 +417,14 @@ def _cli() -> int:
         run_id=args.run_id,
         write_narrative=not args.no_narrative,
     )
+    status = str(result.get("status", "unknown"))
+    error_type = str(result.get("error_type", "")).strip()
+    if status == "error" and error_type == "canonical_collision":
+        print(f"Golden panel run complete: {run_dir}")
+        print("Status: error (canonical_collision)")
+        return 2
     print(f"Golden panel run complete: {run_dir}")
-    print(f"Status: {result.get('status', 'unknown')}")
+    print(f"Status: {status}")
     return 0
 
 
