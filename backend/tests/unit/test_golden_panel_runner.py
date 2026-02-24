@@ -5,6 +5,9 @@ v5.3 Sprint 6 - Unit tests for GoldenPanelRunner_v1.
 import json
 from pathlib import Path
 
+from core.canonical.normalize import normalize_biomarkers_with_metadata
+from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
+from core.units.registry import UNIT_REGISTRY_VERSION, apply_unit_normalisation
 from tools.run_golden_panel import (
     _normalise_for_artifact_write,
     run_golden_panel,
@@ -13,6 +16,28 @@ from tools.run_golden_panel import (
 
 def _load_json(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _biomarker_rows_by_name(analysis_result: dict) -> dict:
+    rows = analysis_result.get("biomarkers", []) if isinstance(analysis_result, dict) else []
+    out = {}
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        name = str(row.get("biomarker_name", "")).strip()
+        if name:
+            out[name] = row
+    return out
+
+
+def _prepare_unit_normalised(biomarkers: dict) -> dict:
+    normalized = normalize_biomarkers_with_metadata(biomarkers)
+    normalized = apply_unit_normalisation(normalized)
+    normalized[UNIT_NORMALISATION_META_KEY] = {
+        "unit_normalised": True,
+        "unit_registry_version": UNIT_REGISTRY_VERSION,
+    }
+    return normalized
 
 
 def test_golden_panel_runner_writes_snapshot_pack_with_required_stamps(tmp_path):
@@ -120,3 +145,184 @@ def test_golden_panel_runner_artifact_normaliser_strips_volatile_fields():
     assert "elapsed_ms" not in out
     assert "created_at" not in out["nested"]
     assert "created_at" not in out["insights"][0]
+
+
+def test_regression_golden_derived_markers_have_scored_ranges(tmp_path):
+    fixture = Path(__file__).parent.parent / "fixtures" / "golden_panel_160.json"
+    run_dir, analysis_result = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path,
+        run_id="unit-golden-derived-ranges",
+        write_narrative=False,
+    )
+    assert (run_dir / "analysis_result.json").exists()
+    by_name = _biomarker_rows_by_name(analysis_result if isinstance(analysis_result, dict) else {})
+    for biomarker_name in ("non_hdl_cholesterol", "apoB_apoA1_ratio", "bun_creatinine_ratio"):
+        row = by_name.get(biomarker_name)
+        assert row is not None, f"Missing biomarker row: {biomarker_name}"
+        assert row.get("status") != "unknown", f"{biomarker_name} remains unscored"
+        assert row.get("range_source") == "policy"
+        assert row.get("interpretation") == "Scored using HealthIQ fallback bounds (lab range not provided)"
+        ref = row.get("reference_range", {})
+        assert isinstance(ref, dict)
+        assert ref.get("min") is not None
+        assert ref.get("max") is not None
+        assert str(ref.get("source", "")).lower() == "policy"
+
+
+def test_regression_golden_hashes_are_deterministic_with_derived_ranges(tmp_path):
+    fixture = Path(__file__).parent.parent / "fixtures" / "golden_panel_160.json"
+    run_a, _ = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path / "a",
+        run_id="unit-golden-derived-a",
+        write_narrative=False,
+    )
+    run_b, _ = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path / "b",
+        run_id="unit-golden-derived-b",
+        write_narrative=False,
+    )
+    replay_a = _load_json(run_a / "replay_manifest.json")
+    replay_b = _load_json(run_b / "replay_manifest.json")
+    assert replay_a.get("burden_hash")
+    assert replay_a.get("burden_hash") == replay_b.get("burden_hash")
+    assert replay_a.get("explainability_hash")
+    assert replay_a.get("explainability_hash") == replay_b.get("explainability_hash")
+
+
+def test_regression_mini_hashes_are_deterministic_with_derived_ranges(tmp_path):
+    fixture = Path(__file__).parent.parent / "fixtures" / "golden_panel_sprint14_2_thyroid_immune_mini.json"
+    run_a, _ = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path / "a-mini",
+        run_id="unit-mini-derived-a",
+        write_narrative=False,
+    )
+    run_b, _ = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path / "b-mini",
+        run_id="unit-mini-derived-b",
+        write_narrative=False,
+    )
+    replay_a = _load_json(run_a / "replay_manifest.json")
+    replay_b = _load_json(run_b / "replay_manifest.json")
+    assert replay_a.get("burden_hash")
+    assert replay_a.get("burden_hash") == replay_b.get("burden_hash")
+    assert replay_a.get("explainability_hash")
+    assert replay_a.get("explainability_hash") == replay_b.get("explainability_hash")
+
+
+def test_primary_markers_never_use_policy_or_ssot_ranges():
+    prepared = _prepare_unit_normalised(
+        {
+            "glucose": {
+                "value": 105.0,
+                "unit": "mg/dL",
+            }
+        }
+    )
+    dto = AnalysisOrchestrator().run(
+        prepared,
+        {"user_id": "00000000-0000-0000-0000-000000000017", "age": 40, "gender": "female"},
+        assume_canonical=True,
+    )
+    row = next((b for b in dto.biomarkers if b.biomarker_name == "glucose"), None)
+    assert row is not None
+    assert row.status == "unknown"
+    assert row.range_source is None
+    assert row.interpretation == "Not scored - no reference range available"
+    assert row.reference_range is None
+
+
+def test_derived_ratio_uses_policy_only_when_lab_range_missing():
+    prepared = _prepare_unit_normalised(
+        {
+            "apoB": {
+                "value": 1.2,
+                "unit": "g/L",
+                "reference_range": {"min": 0.6, "max": 1.0, "unit": "g/L", "source": "lab"},
+            },
+            "apoA1": {
+                "value": 1.0,
+                "unit": "g/L",
+                "reference_range": {"min": 1.1, "max": 1.8, "unit": "g/L", "source": "lab"},
+            },
+        }
+    )
+    dto = AnalysisOrchestrator().run(
+        prepared,
+        {"user_id": "00000000-0000-0000-0000-000000000018", "age": 40, "gender": "female"},
+        assume_canonical=True,
+    )
+    row = next((b for b in dto.biomarkers if b.biomarker_name == "apoB_apoA1_ratio"), None)
+    assert row is not None
+    assert row.status != "unknown"
+    assert row.range_source == "policy"
+    assert row.interpretation == "Scored using HealthIQ fallback bounds (lab range not provided)"
+    assert isinstance(row.reference_range, dict)
+    assert str(row.reference_range.get("source", "")).lower() == "policy"
+
+
+def test_derived_ratio_lab_range_precedence_over_policy():
+    prepared = _prepare_unit_normalised(
+        {
+            "apoB_apoA1_ratio": {
+                "value": 1.1,
+                "unit": "ratio",
+                "reference_range": {"min": 0.0, "max": 2.0, "unit": "ratio", "source": "lab"},
+            }
+        }
+    )
+    dto = AnalysisOrchestrator().run(
+        prepared,
+        {"user_id": "00000000-0000-0000-0000-000000000015", "age": 40, "gender": "female"},
+        assume_canonical=True,
+    )
+    row = next((b for b in dto.biomarkers if b.biomarker_name == "apoB_apoA1_ratio"), None)
+    assert row is not None
+    assert row.range_source == "lab"
+    assert row.interpretation == "Scored using lab reference range"
+    assert isinstance(row.reference_range, dict)
+    assert str(row.reference_range.get("source", "")).lower() == "lab"
+
+
+def test_derived_policy_unit_mismatch_is_unscored_with_deterministic_reason(monkeypatch):
+    import core.pipeline.orchestrator as orch_mod
+
+    original = dict(orch_mod.DERIVED_RATIO_POLICY_BOUNDS)
+    mismatched = dict(original)
+    mismatched["non_hdl_cholesterol"] = {
+        "min": 0.0,
+        "max": 4.0,
+        "unit": "ratio",
+        "source": "healthiq_policy",
+        "notes": "intentional mismatch for test",
+    }
+    monkeypatch.setattr(orch_mod, "DERIVED_RATIO_POLICY_BOUNDS", mismatched)
+
+    prepared = _prepare_unit_normalised(
+        {
+            "total_cholesterol": {
+                "value": 220.0,
+                "unit": "mg/dL",
+                "reference_range": {"min": 0.0, "max": 239.0, "unit": "mg/dL", "source": "lab"},
+            },
+            "hdl_cholesterol": {
+                "value": 40.0,
+                "unit": "mg/dL",
+                "reference_range": {"min": 0.0, "max": 50.0, "unit": "mg/dL", "source": "lab"},
+            },
+        }
+    )
+    dto = AnalysisOrchestrator().run(
+        prepared,
+        {"user_id": "00000000-0000-0000-0000-000000000016", "age": 40, "gender": "female"},
+        assume_canonical=True,
+    )
+    row = next((b for b in dto.biomarkers if b.biomarker_name == "non_hdl_cholesterol"), None)
+    assert row is not None
+    assert row.status == "unknown"
+    assert row.range_source == "policy"
+    assert row.interpretation == "Not scored - no compatible policy bounds"
