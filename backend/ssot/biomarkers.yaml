@@ -296,6 +296,73 @@ biomarkers:
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.5
+
+  # Immune differential absolute counts (Sprint 14.1)
+  basophils_abs:
+    aliases: ["basophils_(bas_#)", "basophils_abs_count"]
+    unit: "10^9/L"
+    description: "Basophils absolute count"
+    category: "cbc"
+    data_type: "numeric"
+    system: "immune"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.05
+  eosinophils_abs:
+    aliases: ["eosinophils_(eos_#)", "eosinophils_abs_count"]
+    unit: "10^9/L"
+    description: "Eosinophils absolute count"
+    category: "cbc"
+    data_type: "numeric"
+    system: "immune"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.1
+  lymphocytes_abs:
+    aliases: ["lymphocyte_(lym_#)", "lymphocytes_abs_count"]
+    unit: "10^9/L"
+    description: "Lymphocytes absolute count"
+    category: "cbc"
+    data_type: "numeric"
+    system: "immune"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.2
+  monocytes_abs:
+    aliases: ["monocyte_(mon_#)", "monocytes_abs_count"]
+    unit: "10^9/L"
+    description: "Monocytes absolute count"
+    category: "cbc"
+    data_type: "numeric"
+    system: "immune"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.1
+  neutrophils_abs:
+    aliases: ["neutrophil_(neu_#)", "neutrophils_abs_count"]
+    unit: "10^9/L"
+    description: "Neutrophils absolute count"
+    category: "cbc"
+    data_type: "numeric"
+    system: "immune"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.2
     
   # Iron/inflammation markers
   ferritin:
@@ -325,6 +392,48 @@ biomarkers:
     key_risks_when_high: []
     key_risks_when_low: []
     known_modifiers: ["stress"]
+    clinical_weight: 0.8
+
+  free_t4:
+    aliases: ["free_thyroxine", "freet4"]
+    unit: "ng/dL"
+    description: "Free thyroxine (Free T4)"
+    category: "hormonal"
+    data_type: "numeric"
+    system: "thyroid"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.5
+
+  tgab:
+    aliases: ["thyroglobulin_antibodies_-_tgab", "thyroglobulin_antibodies"]
+    unit: "IU/mL"
+    description: "Thyroglobulin antibodies (TgAb)"
+    category: "hormonal"
+    data_type: "numeric"
+    system: "thyroid"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.4
+
+  tsh:
+    aliases: ["thyroid_stimulating_hormone", "thyrotropin"]
+    unit: "mIU/L"
+    description: "Thyroid stimulating hormone (TSH)"
+    category: "hormonal"
+    data_type: "numeric"
+    system: "thyroid"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
     clinical_weight: 0.8
     
   # Complete Blood Count

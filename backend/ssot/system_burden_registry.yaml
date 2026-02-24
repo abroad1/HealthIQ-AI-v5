@@ -1,5 +1,6 @@
 registry_version: "1.0.0"
 schema_version: "1.0.0"
+# Sprint 14: thyroid marker weights are provisional v1 (deterministic baseline).
 biomarkers:
   alt:
     system: hepatic
@@ -13,6 +14,10 @@ biomarkers:
     system: cardiovascular
     risk_direction: HIGH_IS_RISK
     weight: 0.6
+  basophils_abs:
+    system: immune
+    risk_direction: BOTH_SIDES_RISK
+    weight: 0.05
   bun:
     system: renal
     risk_direction: HIGH_IS_RISK
@@ -41,10 +46,22 @@ biomarkers:
     system: immune
     risk_direction: HIGH_IS_RISK
     weight: 0.8
+  eosinophils_abs:
+    system: immune
+    risk_direction: BOTH_SIDES_RISK
+    weight: 0.1
   ferritin:
     system: hematological
     risk_direction: BOTH_SIDES_RISK
     weight: 0.6
+  free_t3:
+    system: thyroid
+    risk_direction: BOTH_SIDES_RISK
+    weight: 0.5
+  free_t4:
+    system: thyroid
+    risk_direction: BOTH_SIDES_RISK
+    weight: 0.5
   glucose:
     system: metabolic
     risk_direction: HIGH_IS_RISK
@@ -77,6 +94,10 @@ biomarkers:
     system: cardiovascular
     risk_direction: HIGH_IS_RISK
     weight: 0.8
+  lymphocytes_abs:
+    system: immune
+    risk_direction: BOTH_SIDES_RISK
+    weight: 0.2
   non_hdl_cholesterol:
     system: cardiovascular
     risk_direction: HIGH_IS_RISK
@@ -93,6 +114,14 @@ biomarkers:
     system: metabolic
     risk_direction: BOTH_SIDES_RISK
     weight: 0.4
+  monocytes_abs:
+    system: immune
+    risk_direction: BOTH_SIDES_RISK
+    weight: 0.1
+  neutrophils_abs:
+    system: immune
+    risk_direction: BOTH_SIDES_RISK
+    weight: 0.2
   platelets:
     system: hematological
     risk_direction: BOTH_SIDES_RISK
@@ -117,10 +146,22 @@ biomarkers:
     system: cardiovascular
     risk_direction: HIGH_IS_RISK
     weight: 0.5
+  tgab:
+    system: thyroid
+    risk_direction: HIGH_IS_RISK
+    weight: 0.4
   triglycerides:
     system: cardiovascular
     risk_direction: HIGH_IS_RISK
     weight: 0.6
+  tpo_ab:
+    system: thyroid
+    risk_direction: HIGH_IS_RISK
+    weight: 0.6
+  tsh:
+    system: thyroid
+    risk_direction: BOTH_SIDES_RISK
+    weight: 0.8
   white_blood_cells:
     system: hematological
     risk_direction: BOTH_SIDES_RISK

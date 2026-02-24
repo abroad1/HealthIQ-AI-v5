@@ -37,6 +37,7 @@ from core.analytics.bio_stats_engine import build_bio_stats_v1, BIO_STATS_ENGINE
 from core.analytics.system_burden_engine import (
     SYSTEM_BURDEN_ENGINE_VERSION,
     load_burden_registry,
+    audit_burden_registry_system_ids,
     audit_risk_direction_registry,
     build_raw_system_burden_v1,
 )
@@ -1091,15 +1092,13 @@ class AnalysisOrchestrator:
 
             # Step 4.73: Sprint 13 deterministic burden/capacity engines (direction-aware, calibration-neutral)
             system_to_biomarkers_full = self._system_biomarker_map(insight_graph)
+            burden_registry_rows = load_burden_registry()
+            audit_burden_registry_system_ids(registry_rows=burden_registry_rows)
             measured_biomarkers: Dict[str, Any] = {}
             measured_ranges: Dict[str, Dict[str, Any]] = {}
-            for biomarker_id in sorted(
-                {
-                    b
-                    for rows in system_to_biomarkers_full.values()
-                    for b in rows
-                }
-            ):
+            for biomarker_id in sorted(str(k) for k in filtered_biomarkers.keys()):
+                if biomarker_id not in burden_registry_rows:
+                    continue
                 if biomarker_id not in filtered_biomarkers:
                     continue
                 value = self._extract_biomarker_value(filtered_biomarkers[biomarker_id])
@@ -1115,7 +1114,6 @@ class AnalysisOrchestrator:
                 measured_biomarkers[biomarker_id] = {"value": float(value)}
                 measured_ranges[biomarker_id] = {"min": float(low), "max": float(high)}
 
-            burden_registry_rows = load_burden_registry()
             audited_registry = audit_risk_direction_registry(
                 required_biomarkers=sorted(measured_biomarkers.keys()),
                 registry_rows=burden_registry_rows,
@@ -1129,53 +1127,90 @@ class AnalysisOrchestrator:
                 system_to_biomarkers[system_id] = sorted(
                     [bid for bid in biomarker_ids if bid in biomarker_stats]
                 )
-            raw_system_burden_vector = build_raw_system_burden_v1(
-                system_to_biomarkers=system_to_biomarkers,
-                biomarker_stats=biomarker_stats,
-                audited_registry=audited_registry,
+            covered_biomarkers = {
+                bid for rows in system_to_biomarkers.values() for bid in rows
+            }
+            for biomarker_id in sorted(biomarker_stats.keys()):
+                if biomarker_id in covered_biomarkers:
+                    continue
+                row = burden_registry_rows.get(biomarker_id, {})
+                system_id = str(row.get("system", "")).strip() if isinstance(row, dict) else ""
+                if not system_id:
+                    raise ValueError(
+                        f"system_burden_engine: missing system for scored biomarker {biomarker_id}"
+                    )
+                system_to_biomarkers.setdefault(system_id, [])
+                system_to_biomarkers[system_id].append(biomarker_id)
+            for system_id in sorted(system_to_biomarkers.keys()):
+                system_to_biomarkers[system_id] = sorted(set(system_to_biomarkers[system_id]))
+            has_scorable_inputs = bool(biomarker_stats) and any(
+                bool(bids) for bids in system_to_biomarkers.values()
             )
-            for node in sorted(getattr(insight_graph, "system_states", []), key=lambda n: n.system_id):
-                raw_system_burden_vector.setdefault(node.system_id, 0.0)
-            raw_system_burden_vector.setdefault(insight_graph_driver, 0.0)
-            adjusted_system_burden_vector, burden_path_distances = propagate_influence_v1(
-                raw_system_burden_vector=raw_system_burden_vector,
-                primary_driver_system_id=insight_graph_driver,
-                causal_edges=[
-                    edge.model_dump() if hasattr(edge, "model_dump") else edge
-                    for edge in (getattr(insight_graph, "causal_edges", []) or [])
-                ],
-            )
-            system_capacity_scores = scale_capacity_scores_v1(
-                adjusted_system_burden_vector=adjusted_system_burden_vector
-            )
-            burden_hash = compute_burden_hash(
-                adjusted_system_burden_vector=adjusted_system_burden_vector,
-                system_capacity_scores=system_capacity_scores,
-            )
-            validation_system_ids = [
-                str(node.system_id) for node in (getattr(insight_graph, "system_states", []) or [])
-            ]
-            if soft_mode and not validation_system_ids:
-                validation_system_ids = sorted(system_capacity_scores.keys())
-            validation_result = run_validation_gate_v1(
-                insight_graph_system_ids=validation_system_ids,
-                primary_driver_system_id=insight_graph_driver,
-                supporting_systems=list(getattr(insight_graph, "supporting_systems", [])),
-                influence_order=list(getattr(insight_graph, "influence_order", [])),
-                path_distances=burden_path_distances,
-                adjusted_system_burden_vector=adjusted_system_burden_vector,
-                system_capacity_scores=system_capacity_scores,
-                burden_hash=burden_hash,
-            )
-            if validation_result.status != "PASS" and set(validation_result.violations) == {
-                "influence_order_not_descending_adjusted_burden"
-            }:
-                burden_sorted_order = sorted(
-                    [str(k) for k in adjusted_system_burden_vector.keys()],
-                    key=lambda sid: (-float(adjusted_system_burden_vector[sid]), sid),
+            if not has_scorable_inputs:
+                # Deterministic not-computed contract when no range-qualified biomarkers are available.
+                raw_system_burden_vector = {}
+                adjusted_system_burden_vector = {}
+                burden_path_distances = {}
+                system_capacity_scores = {}
+                burden_hash = compute_burden_hash(
+                    adjusted_system_burden_vector=adjusted_system_burden_vector,
+                    system_capacity_scores=system_capacity_scores,
                 )
-                insight_graph.influence_order = burden_sorted_order
-                insight_graph.supporting_systems = [sid for sid in burden_sorted_order if sid != insight_graph_driver]
+                validation_result = run_validation_gate_v1(
+                    insight_graph_system_ids=[],
+                    primary_driver_system_id="",
+                    supporting_systems=[],
+                    influence_order=[],
+                    path_distances={},
+                    adjusted_system_burden_vector={},
+                    system_capacity_scores={},
+                    burden_hash=burden_hash,
+                )
+            else:
+                raw_system_burden_vector = build_raw_system_burden_v1(
+                    system_to_biomarkers=system_to_biomarkers,
+                    biomarker_stats=biomarker_stats,
+                    audited_registry=audited_registry,
+                )
+                for node in sorted(getattr(insight_graph, "system_states", []), key=lambda n: n.system_id):
+                    node_system_id = str(getattr(node, "system_id", "")).strip()
+                    if node_system_id and node_system_id != "unknown":
+                        raw_system_burden_vector.setdefault(node_system_id, 0.0)
+                burden_driver_system_id = ""
+                if insight_graph_driver and insight_graph_driver != "unknown":
+                    burden_driver_system_id = insight_graph_driver
+                elif raw_system_burden_vector:
+                    burden_driver_system_id = sorted(str(k) for k in raw_system_burden_vector.keys())[0]
+                else:
+                    raise ValueError(
+                        "influence_propagator: no scored systems available to establish burden propagation driver"
+                    )
+                if burden_driver_system_id not in raw_system_burden_vector:
+                    raw_system_burden_vector[burden_driver_system_id] = 0.0
+                adjusted_system_burden_vector, burden_path_distances = propagate_influence_v1(
+                    raw_system_burden_vector=raw_system_burden_vector,
+                    primary_driver_system_id=burden_driver_system_id,
+                    causal_edges=[
+                        edge.model_dump() if hasattr(edge, "model_dump") else edge
+                        for edge in (getattr(insight_graph, "causal_edges", []) or [])
+                    ],
+                )
+                system_capacity_scores = scale_capacity_scores_v1(
+                    adjusted_system_burden_vector=adjusted_system_burden_vector
+                )
+                burden_hash = compute_burden_hash(
+                    adjusted_system_burden_vector=adjusted_system_burden_vector,
+                    system_capacity_scores=system_capacity_scores,
+                )
+                validation_system_ids = sorted(
+                    {
+                        str(node.system_id)
+                        for node in (getattr(insight_graph, "system_states", []) or [])
+                    }
+                    | {str(k) for k in system_capacity_scores.keys()}
+                )
+                if soft_mode and not validation_system_ids:
+                    validation_system_ids = sorted(system_capacity_scores.keys())
                 validation_result = run_validation_gate_v1(
                     insight_graph_system_ids=validation_system_ids,
                     primary_driver_system_id=insight_graph_driver,
@@ -1186,8 +1221,27 @@ class AnalysisOrchestrator:
                     system_capacity_scores=system_capacity_scores,
                     burden_hash=burden_hash,
                 )
-            if validation_result.status != "PASS":
-                raise ValueError(f"validation_gate failed: {validation_result.violations}")
+                if validation_result.status != "PASS" and set(validation_result.violations) == {
+                    "influence_order_not_descending_adjusted_burden"
+                }:
+                    burden_sorted_order = sorted(
+                        [str(k) for k in adjusted_system_burden_vector.keys()],
+                        key=lambda sid: (-float(adjusted_system_burden_vector[sid]), sid),
+                    )
+                    insight_graph.influence_order = burden_sorted_order
+                    insight_graph.supporting_systems = [sid for sid in burden_sorted_order if sid != insight_graph_driver]
+                    validation_result = run_validation_gate_v1(
+                        insight_graph_system_ids=validation_system_ids,
+                        primary_driver_system_id=insight_graph_driver,
+                        supporting_systems=list(getattr(insight_graph, "supporting_systems", [])),
+                        influence_order=list(getattr(insight_graph, "influence_order", [])),
+                        path_distances=burden_path_distances,
+                        adjusted_system_burden_vector=adjusted_system_burden_vector,
+                        system_capacity_scores=system_capacity_scores,
+                        burden_hash=burden_hash,
+                    )
+                if validation_result.status != "PASS":
+                    raise ValueError(f"validation_gate failed: {validation_result.violations}")
 
             insight_graph.bio_stats_engine_version = BIO_STATS_ENGINE_VERSION
             insight_graph.system_burden_engine_version = SYSTEM_BURDEN_ENGINE_VERSION

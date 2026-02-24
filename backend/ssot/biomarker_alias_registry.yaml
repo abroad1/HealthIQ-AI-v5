@@ -748,6 +748,14 @@ neutrophil_count:
 
   - Neutrophil Count
 
+neutrophils_abs:
+
+  canonical_id: neutrophils_abs
+
+  aliases:
+
+  - "Neutrophil (NEU #)"
+
 lymphocytes:
 
   canonical_id: lymphocytes
@@ -766,6 +774,14 @@ lymphocyte_count:
 
   - Lymphocyte Count
 
+lymphocytes_abs:
+
+  canonical_id: lymphocytes_abs
+
+  aliases:
+
+  - "Lymphocyte (LYM #)"
+
 monocyte_count:
 
   canonical_id: monocyte_count
@@ -773,6 +789,14 @@ monocyte_count:
   aliases:
 
   - Monocyte Count
+
+monocytes_abs:
+
+  canonical_id: monocytes_abs
+
+  aliases:
+
+  - "Monocyte (MON #)"
 
 eosinophil_count:
 
@@ -782,6 +806,14 @@ eosinophil_count:
 
   - Eosinophil Count
 
+eosinophils_abs:
+
+  canonical_id: eosinophils_abs
+
+  aliases:
+
+  - "Eosinophils (EOS #)"
+
 basophil_count:
 
   canonical_id: basophil_count
@@ -789,6 +821,14 @@ basophil_count:
   aliases:
 
   - Basophil Count
+
+basophils_abs:
+
+  canonical_id: basophils_abs
+
+  aliases:
+
+  - "Basophils (BAS #)"
 
 neutrophil_pct:
 
@@ -850,6 +890,14 @@ tpo_ab:
 
   - Thyroid Peroxidase Antibody
 
+tgab:
+
+  canonical_id: tgab
+
+  aliases:
+
+  - Thyroglobulin Antibodies - TgAb
+
 tg_hdl_ratio:
 
   canonical_id: tg_hdl_ratio
@@ -861,8 +909,6 @@ tg_hdl_ratio:
   - Triglyceride to HDL Ratio
 
   - triglyceride_hdl_ratio
-
-  - tgab
 
 tc_hdl_ratio:
 
