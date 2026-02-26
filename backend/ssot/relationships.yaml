@@ -73,26 +73,26 @@ relationships:
     severity: "moderate"
     description_short: "AST/ALT ratio elevation or AST-high with ALT normal/high."
 
-  - relationship_id: "bun_creatinine_renal_pattern"
+  - relationship_id: "urea_creatinine_renal_pattern"
     version: "1.0.0"
-    biomarkers: ["bun", "creatinine"]
-    uses_derived_markers: ["bun_creatinine_ratio"]
+    biomarkers: ["urea", "creatinine"]
+    uses_derived_markers: ["urea_creatinine_ratio"]
     logic:
       any:
         - all:
-            - derived_marker: "bun_creatinine_ratio"
+            - derived_marker: "urea_creatinine_ratio"
               status_in: ["high"]
-              evidence_code: "bun_creatinine_ratio_high"
+              evidence_code: "urea_creatinine_ratio_high"
         - all:
-            - biomarker: "bun"
+            - biomarker: "urea"
               status_in: ["high"]
-              evidence_code: "bun_high"
+              evidence_code: "urea_high"
             - biomarker: "creatinine"
               status_in: ["normal", "high"]
               evidence_code: "creatinine_normal_or_high"
     classification_code: "RENAL_PATTERN"
     severity: "moderate"
-    description_short: "BUN/creatinine ratio high or BUN-high with creatinine normal/high."
+    description_short: "Urea/creatinine ratio high or urea-high with creatinine normal/high."
 
   - relationship_id: "neutrophils_lymphocytes_inflammation_pattern"
     version: "1.0.0"

@@ -29,7 +29,7 @@ systems:
   kidney:
     required:
       - creatinine
-      - bun
+      - urea
     important: []
     optional: []
   liver:

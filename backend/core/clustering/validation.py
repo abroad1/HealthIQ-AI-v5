@@ -397,7 +397,7 @@ class ClusterValidator:
             "metabolic": ["glucose", "hba1c", "insulin", "homa_ir"],
             "cardiovascular": ["total_cholesterol", "ldl_cholesterol", "hdl_cholesterol", "triglycerides"],
             "inflammatory": ["crp", "esr", "il6"],
-            "kidney": ["creatinine", "bun", "egfr"],
+            "kidney": ["creatinine", "urea", "egfr"],
             "liver": ["alt", "ast", "bilirubin", "alp"],
             "cbc": ["hemoglobin", "hematocrit", "wbc", "platelets"],
             "hormonal": ["tsh", "free_t4", "testosterone", "estradiol"],

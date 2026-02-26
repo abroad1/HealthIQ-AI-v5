@@ -21,7 +21,7 @@ class DetoxFiltrationInsight(BaseInsight):
     - Liver enzymes (ALT, AST, GGT, ALP) indicate hepatocyte damage and bile flow
     - Bilirubin levels reflect liver conjugation and bile excretion capacity
     - Creatinine and eGFR assess kidney filtration function
-    - BUN/creatinine ratio indicates kidney function and hydration status
+    - Urea/creatinine ratio indicates kidney function and hydration status
     - Albumin levels reflect liver synthetic function and protein status
     
     Thresholds:
@@ -32,7 +32,7 @@ class DetoxFiltrationInsight(BaseInsight):
     - Bilirubin > 1.2 mg/dL: Jaundice/liver dysfunction
     - eGFR < 60 mL/min/1.73m²: Kidney dysfunction
     - Creatinine > 1.2 mg/dL: Kidney dysfunction
-    - BUN/Creatinine > 20: Dehydration or kidney dysfunction
+    - Urea/Creatinine > 20: Dehydration or kidney dysfunction
     - Albumin < 3.5 g/dL: Liver dysfunction or malnutrition
     """
     
@@ -43,7 +43,7 @@ class DetoxFiltrationInsight(BaseInsight):
             version="v1.0.0",
             category="metabolic",
             required_biomarkers=["creatinine"],
-            optional_biomarkers=["alt", "ast", "ggt", "alp", "bilirubin", "egfr", "bun", "albumin"],
+            optional_biomarkers=["alt", "ast", "ggt", "alp", "bilirubin", "egfr", "urea", "albumin"],
             description="Comprehensive detox and filtration system assessment using liver and kidney function markers",
             author="HealthIQ Team",
             created_at="2024-01-30T00:00:00Z",
@@ -111,7 +111,7 @@ class DetoxFiltrationInsight(BaseInsight):
         alp = biomarkers.get('alp')
         bilirubin = biomarkers.get('bilirubin')
         egfr = biomarkers.get('egfr')
-        bun = biomarkers.get('bun')
+        urea = biomarkers.get('urea')
         albumin = biomarkers.get('albumin')
         age = biomarkers.get('age', 50)  # Default age for eGFR calculation
         gender = biomarkers.get('gender', 'male')  # Default gender for eGFR calculation
@@ -119,16 +119,16 @@ class DetoxFiltrationInsight(BaseInsight):
         # Calculate liver score
         liver_score = self._calculate_liver_score(alt, ast, ggt, alp, bilirubin, albumin)
         
-        # Get bun_creatinine_ratio from RatioRegistry (do not compute locally)
-        bun_creatinine_ratio = biomarkers.get('bun_creatinine_ratio')
-        if bun_creatinine_ratio is not None:
-            if isinstance(bun_creatinine_ratio, dict):
-                bun_creatinine_ratio = bun_creatinine_ratio.get('value') if isinstance(bun_creatinine_ratio.get('value'), (int, float)) else None
-            elif not isinstance(bun_creatinine_ratio, (int, float)):
-                bun_creatinine_ratio = float(getattr(bun_creatinine_ratio, 'value', bun_creatinine_ratio)) if isinstance(getattr(bun_creatinine_ratio, 'value', None), (int, float)) else None
+        # Get urea_creatinine_ratio from RatioRegistry (do not compute locally)
+        urea_creatinine_ratio = biomarkers.get('urea_creatinine_ratio', biomarkers.get('bun_creatinine_ratio'))
+        if urea_creatinine_ratio is not None:
+            if isinstance(urea_creatinine_ratio, dict):
+                urea_creatinine_ratio = urea_creatinine_ratio.get('value') if isinstance(urea_creatinine_ratio.get('value'), (int, float)) else None
+            elif not isinstance(urea_creatinine_ratio, (int, float)):
+                urea_creatinine_ratio = float(getattr(urea_creatinine_ratio, 'value', urea_creatinine_ratio)) if isinstance(getattr(urea_creatinine_ratio, 'value', None), (int, float)) else None
             else:
-                bun_creatinine_ratio = float(bun_creatinine_ratio)
-        kidney_score = self._calculate_kidney_score(creatinine, egfr, bun, age, gender, bun_creatinine_ratio)
+                urea_creatinine_ratio = float(urea_creatinine_ratio)
+        kidney_score = self._calculate_kidney_score(creatinine, egfr, urea, age, gender, urea_creatinine_ratio)
         
         # Calculate overall detox filtration score
         overall_score = (liver_score + kidney_score) / 2
@@ -157,16 +157,16 @@ class DetoxFiltrationInsight(BaseInsight):
             risk_factors.append("low_albumin")
             drivers['albumin'] = round(albumin, 1)
         
-        # Kidney risk factors (bun_creatinine_ratio from RatioRegistry; already extracted above)
+        # Kidney risk factors (urea_creatinine_ratio from RatioRegistry; already extracted above)
         if egfr and egfr < 60:
             risk_factors.append("reduced_egfr")
             drivers['egfr'] = round(egfr, 1)
         if creatinine > 1.2:
             risk_factors.append("elevated_creatinine")
             drivers['creatinine'] = round(creatinine, 2)
-        if bun_creatinine_ratio is not None and bun_creatinine_ratio > 20:
-            risk_factors.append("elevated_bun_creatinine_ratio")
-            drivers['bun_creatinine_ratio'] = round(bun_creatinine_ratio, 1)
+        if urea_creatinine_ratio is not None and urea_creatinine_ratio > 20:
+            risk_factors.append("elevated_urea_creatinine_ratio")
+            drivers['urea_creatinine_ratio'] = round(urea_creatinine_ratio, 1)
         
         # Generate recommendations
         recommendations = self._generate_recommendations(risk_factors, liver_score, kidney_score)
@@ -189,11 +189,11 @@ class DetoxFiltrationInsight(BaseInsight):
                 'bilirubin': round(bilirubin, 2) if bilirubin else None,
                 'egfr': round(egfr, 1) if egfr else None,
                 'creatinine': round(creatinine, 2),
-                'bun': round(bun, 1) if bun else None,
+                'urea': round(urea, 1) if urea else None,
                 'albumin': round(albumin, 1) if albumin else None,
                 'risk_factors': risk_factors
             },
-            'biomarkers_involved': [b for b in ['creatinine', 'alt', 'ast', 'ggt', 'alp', 'bilirubin', 'egfr', 'bun', 'albumin'] if b in biomarkers],
+            'biomarkers_involved': [b for b in ['creatinine', 'alt', 'ast', 'ggt', 'alp', 'bilirubin', 'egfr', 'urea', 'albumin'] if b in biomarkers],
             'recommendations': recommendations
         }
     
@@ -258,8 +258,8 @@ class DetoxFiltrationInsight(BaseInsight):
         
         return max(0, min(100, base_score))
     
-    def _calculate_kidney_score(self, creatinine: float, egfr: Optional[float], bun: Optional[float], 
-                               age: float, gender: str, bun_creatinine_ratio: Optional[float] = None) -> float:
+    def _calculate_kidney_score(self, creatinine: float, egfr: Optional[float], urea: Optional[float], 
+                               age: float, gender: str, urea_creatinine_ratio: Optional[float] = None) -> float:
         """Calculate kidney function score (0-100, higher is better)."""
         base_score = 100.0
         
@@ -289,11 +289,11 @@ class DetoxFiltrationInsight(BaseInsight):
             elif estimated_egfr < 60:
                 base_score -= 12
         
-        # BUN/Creatinine ratio adjustments (from RatioRegistry; do not compute locally)
-        if bun_creatinine_ratio is not None:
-            if bun_creatinine_ratio > 30:
+        # Urea/Creatinine ratio adjustments (from RatioRegistry; do not compute locally)
+        if urea_creatinine_ratio is not None:
+            if urea_creatinine_ratio > 30:
                 base_score -= 15  # Severe dehydration or kidney dysfunction
-            elif bun_creatinine_ratio > 20:
+            elif urea_creatinine_ratio > 20:
                 base_score -= 8   # Moderate dehydration or kidney dysfunction
         
         return max(0, min(100, base_score))
@@ -321,7 +321,7 @@ class DetoxFiltrationInsight(BaseInsight):
     def _calculate_confidence(self, biomarkers: Dict[str, Any]) -> float:
         """Calculate confidence based on available biomarkers."""
         required_count = len([b for b in ["creatinine"] if b in biomarkers])
-        optional_count = len([b for b in ["alt", "ast", "ggt", "alp", "bilirubin", "egfr", "bun", "albumin"] if b in biomarkers])
+        optional_count = len([b for b in ["alt", "ast", "ggt", "alp", "bilirubin", "egfr", "urea", "albumin"] if b in biomarkers])
         
         # Base confidence from required biomarkers
         base_confidence = 0.7 + (required_count * 0.2)
@@ -345,7 +345,7 @@ class DetoxFiltrationInsight(BaseInsight):
             recommendations.append("Improve protein synthesis through adequate protein intake and liver support")
         if "reduced_egfr" in risk_factors or "elevated_creatinine" in risk_factors:
             recommendations.append("Support kidney function through adequate hydration and kidney-supporting nutrients")
-        if "elevated_bun_creatinine_ratio" in risk_factors:
+        if "elevated_urea_creatinine_ratio" in risk_factors:
             recommendations.append("Address dehydration and kidney function through proper hydration")
         
         if not recommendations:

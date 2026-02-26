@@ -286,7 +286,7 @@ class TestInsightsGolden:
             "alp": 180.0,  # High
             "bilirubin": 2.5,  # High
             "egfr": 45.0,  # Low
-            "bun": 25.0,  # High
+            "urea": 8.9,  # High
             "albumin": 2.8  # Low
         }
         
@@ -305,9 +305,9 @@ class TestInsightsGolden:
         assert result.evidence["kidney_score"] < 70.0  # Adjusted for actual calculation
         assert result.evidence["detox_filtration_score"] < 50.0
         
-        # Validate BUN/Creatinine ratio
+        # Validate Urea/Creatinine ratio
         expected_ratio = 25.0 / 1.8  # ~13.89
-        actual_ratio = result.evidence["bun"] / result.evidence["creatinine"]
+        actual_ratio = result.evidence["urea"] / result.evidence["creatinine"]
         assert actual_ratio == pytest.approx(expected_ratio, rel=0.01, abs=0.01)
         
         # Validate risk factors

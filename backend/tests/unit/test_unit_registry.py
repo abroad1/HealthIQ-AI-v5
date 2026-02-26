@@ -319,12 +319,12 @@ class TestApplyUnitNormalisationRatioBiomarker:
         assert n["unit_normalised"] is False
 
     def test_bun_creatinine_ratio_unit_ratio_identity(self):
-        """bun_creatinine_ratio (unit=ratio) passes with identity."""
+        """urea_creatinine_ratio (unit=ratio) passes with identity."""
         normalized = {
-            "bun_creatinine_ratio": {"value": 15.0, "unit": "ratio", "reference_range": None},
+            "urea_creatinine_ratio": {"value": 15.0, "unit": "ratio", "reference_range": None},
         }
         result = apply_unit_normalisation(normalized)
-        bc = result["bun_creatinine_ratio"]
+        bc = result["urea_creatinine_ratio"]
         assert bc["value"] == 15.0
         assert bc["unit"] == "ratio"
 

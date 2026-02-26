@@ -521,10 +521,10 @@ biomarkers:
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.5
-  bun_creatinine_ratio:
+  urea_creatinine_ratio:
     aliases: []
     unit: "ratio"
-    description: "BUN / Creatinine ratio"
+    description: "Urea / Creatinine ratio"
     category: "kidney"
     data_type: "numeric"
     system: "renal"
