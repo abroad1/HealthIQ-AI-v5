@@ -68,13 +68,19 @@ from core.scoring.rules import DERIVED_RATIO_POLICY_BOUNDS
 class AnalysisOrchestrator:
     """Orchestrates biomarker analysis with canonical enforcement."""
     
-    def __init__(self, normalizer: Optional[BiomarkerNormalizer] = None, db_session: Any = None):
+    def __init__(
+        self,
+        normalizer: Optional[BiomarkerNormalizer] = None,
+        db_session: Any = None,
+        allow_llm: Optional[bool] = None,
+    ):
         """
         Initialize the orchestrator.
         
         Args:
             normalizer: BiomarkerNormalizer instance, creates new one if None
             db_session: Optional DB session for longitudinal snapshot linking
+            allow_llm: Explicit runtime gate for LLM usage in insight synthesis.
         """
         self.normalizer = normalizer or BiomarkerNormalizer()
         self.db_session = db_session
@@ -87,7 +93,7 @@ class AnalysisOrchestrator:
         self.questionnaire_mapper = QuestionnaireMapper()
         self.questionnaire_validator = create_questionnaire_validator()
         self.clustering_engine = ClusterEngineV2()
-        self.insight_synthesizer = InsightSynthesizer()
+        self.insight_synthesizer = InsightSynthesizer(allow_llm=allow_llm)
     
     def create_analysis_context(
         self,
@@ -880,7 +886,7 @@ class AnalysisOrchestrator:
                     "min": float(min_val),
                     "max": float(max_val),
                     "unit": policy_unit,
-                    "source": "policy",
+                    "source": "ratio_registry",
                 }, None
 
             for ratio_id, entry in derived_result.get("derived", {}).items():
@@ -921,7 +927,7 @@ class AnalysisOrchestrator:
                                     "min": policy_ref["min"],
                                     "max": policy_ref["max"],
                                     "unit": policy_ref["unit"],
-                                    "source": "policy",
+                                    "source": "ratio_registry",
                                 }
                                 input_reference_ranges[ratio_id] = policy_ref
                             elif policy_reason:
