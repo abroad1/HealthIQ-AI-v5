@@ -157,7 +157,7 @@ def test_regression_golden_derived_markers_have_scored_ranges(tmp_path):
     )
     assert (run_dir / "analysis_result.json").exists()
     by_name = _biomarker_rows_by_name(analysis_result if isinstance(analysis_result, dict) else {})
-    for biomarker_name in ("non_hdl_cholesterol", "apoB_apoA1_ratio", "bun_creatinine_ratio"):
+    for biomarker_name in ("non_hdl_cholesterol", "apoB_apoA1_ratio", "urea_creatinine_ratio"):
         row = by_name.get(biomarker_name)
         assert row is not None, f"Missing biomarker row: {biomarker_name}"
         assert row.get("status") != "unknown", f"{biomarker_name} remains unscored"

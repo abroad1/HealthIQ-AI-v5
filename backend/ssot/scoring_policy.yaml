@@ -25,7 +25,7 @@ systems:
   kidney:
     min_biomarkers_required: 1
     system_weight: 0.15
-    biomarkers: ["creatinine", "bun"]
+    biomarkers: ["creatinine", "urea"]
   liver:
     min_biomarkers_required: 1
     system_weight: 0.1
@@ -166,19 +166,19 @@ biomarkers:
       high: {min: 1.5, max: 2.0}
       very_high: {min: 2.0, max: 3.0}
       critical: {min: 3.0, max: 10.0}
-  bun:
+  urea:
     scoring_type: "range_position"
-    unit: "mg/dL"
+    unit: "mmol/L"
     weight: 0.4
     age_adjustment: false
     sex_adjustment: false
     bands:
-      optimal: {min: 7.0, max: 20.0}
-      normal: {min: 7.0, max: 20.0}
-      borderline: {min: 20.0, max: 25.0}
-      high: {min: 25.0, max: 50.0}
-      very_high: {min: 50.0, max: 100.0}
-      critical: {min: 100.0, max: 200.0}
+      optimal: {min: 2.5, max: 7.1}
+      normal: {min: 2.5, max: 7.1}
+      borderline: {min: 7.1, max: 8.9}
+      high: {min: 8.9, max: 17.8}
+      very_high: {min: 17.8, max: 35.7}
+      critical: {min: 35.7, max: 71.4}
   alt:
     scoring_type: "range_position"
     unit: "U/L"
@@ -265,7 +265,7 @@ derived_ratios:
   - "chol_hdl_ratio"
   - "apoB_apoA1_ratio"
   - "non_hdl_cholesterol"
-  - "bun_creatinine_ratio"
+  - "urea_creatinine_ratio"
 
 derived_ratio_policy_bounds:
   tc_hdl_ratio:
@@ -298,12 +298,12 @@ derived_ratio_policy_bounds:
     unit: "ratio"
     source: "healthiq_policy"
     notes: "Computed as apoB / apoA1, dimensionless ratio basis."
-  bun_creatinine_ratio:
+  urea_creatinine_ratio:
     min: 0.0
     max: 20.0
     unit: "ratio"
     source: "healthiq_policy"
-    notes: "Computed as BUN / creatinine, dimensionless ratio basis."
+    notes: "Computed as urea / creatinine, dimensionless ratio basis."
 
 status_map:
   low_critical: "critical"

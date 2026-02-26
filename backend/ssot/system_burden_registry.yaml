@@ -110,7 +110,7 @@ biomarkers:
     system: cardiovascular
     risk_direction: HIGH_IS_RISK
     weight: 0.6
-  bun_creatinine_ratio:
+  urea_creatinine_ratio:
     system: renal
     risk_direction: HIGH_IS_RISK
     weight: 0.5

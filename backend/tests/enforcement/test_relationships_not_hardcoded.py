@@ -11,7 +11,7 @@ _RELATIONSHIP_IDS = (
     "apob_ldl_discordance",
     "ferritin_crp_inflammation_modifier",
     "ast_alt_hepatic_pattern",
-    "bun_creatinine_renal_pattern",
+    "urea_creatinine_renal_pattern",
     "neutrophils_lymphocytes_inflammation_pattern",
 )
 
@@ -55,7 +55,7 @@ def test_no_inline_pairwise_relationship_conditions_in_insight_modules():
         r"if\s+.*['\"]apob['\"].*and.*['\"]ldl_cholesterol['\"]",
         r"if\s+.*['\"]ferritin['\"].*and.*['\"]crp['\"]",
         r"if\s+.*['\"]ast['\"].*and.*['\"]alt['\"]",
-        r"if\s+.*['\"]bun['\"].*and.*['\"]creatinine['\"]",
+        r"if\s+.*['\"]urea['\"].*and.*['\"]creatinine['\"]",
         r"if\s+.*['\"]neutrophils['\"].*and.*['\"]lymphocytes['\"]",
     ]
     offenders: list[str] = []

@@ -134,9 +134,9 @@ class BiomarkerAliasResolver:
             'creat': 'creatinine',
             'creatinine': 'creatinine',
             'serum_creatinine': 'creatinine',
-            'bun': 'bun',
-            'blood_urea_nitrogen': 'bun',
-            'urea_nitrogen': 'bun',
+            'bun': 'urea',
+            'blood_urea_nitrogen': 'urea',
+            'urea_nitrogen': 'urea',
             
             # Liver
             'alt': 'alt',

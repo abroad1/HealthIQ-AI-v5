@@ -291,7 +291,7 @@ class TestScoringRules:
         # Check required biomarkers
         biomarker_names = [rule.biomarker_name for rule in kidney_rules.biomarkers]
         assert "creatinine" in biomarker_names, "Should include creatinine"
-        assert "bun" in biomarker_names, "Should include BUN"
+        assert "urea" in biomarker_names, "Should include urea"
         
         # Check minimum biomarkers required
         assert kidney_rules.min_biomarkers_required >= 1, "Should require at least 1 biomarker"

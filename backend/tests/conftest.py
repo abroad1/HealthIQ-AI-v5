@@ -85,7 +85,7 @@ def lab_reference_ranges():
         "triglycerides": {"min": 0.0, "max": 150.0, "unit": "mg/dL"},
         "crp": {"min": 0.0, "max": 3.0, "unit": "mg/L"},
         "creatinine": {"min": 0.6, "max": 1.2, "unit": "mg/dL"},
-        "bun": {"min": 7.0, "max": 20.0, "unit": "mg/dL"},
+        "urea": {"min": 2.5, "max": 7.1, "unit": "mmol/L"},
         "alt": {"min": 7.0, "max": 56.0, "unit": "U/L"},
         "ast": {"min": 10.0, "max": 40.0, "unit": "U/L"},
         "hemoglobin": {"min": 12.0, "max": 16.0, "unit": "g/dL"},

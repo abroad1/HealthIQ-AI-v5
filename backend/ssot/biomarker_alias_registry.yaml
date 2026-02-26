@@ -222,11 +222,12 @@ chol_hdl_ratio:
   aliases:
   - Cholesterol/HDL Ratio
   - chol_hdl_ratio
-bun_creatinine_ratio:
-  canonical_id: bun_creatinine_ratio
+urea_creatinine_ratio:
+  canonical_id: urea_creatinine_ratio
   aliases:
   - BUN/Creatinine Ratio
   - BUN:Creatinine
+  - bun_creatinine_ratio
 urea:
   canonical_id: urea
   aliases:

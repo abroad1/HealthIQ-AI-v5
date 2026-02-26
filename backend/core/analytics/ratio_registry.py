@@ -2,7 +2,7 @@
 Derived Ratio Registry — centralised deterministic ratio computation.
 
 Sprint 4 (Derived Ratio Registry). PRD §3.4, §4.5.
-Sprint 5: Extended with nlr, bun_creatinine_ratio, ast_alt_ratio; structured output.
+Sprint 5: Extended with nlr, urea_creatinine_ratio, ast_alt_ratio; structured output.
 All derived ratios computed here; insights must not compute ratios locally.
 Runs after unit normalisation; uses base-unit values only.
 """
@@ -25,7 +25,7 @@ NON_HDL_PRECISION = 2
 # All derived markers (order: lipid first, then others)
 DERIVED_IDS = (
     "tc_hdl_ratio", "tg_hdl_ratio", "ldl_hdl_ratio", "non_hdl_cholesterol", "apoB_apoA1_ratio",
-    "nlr", "bun_creatinine_ratio", "ast_alt_ratio",
+    "nlr", "urea_creatinine_ratio", "ast_alt_ratio",
 )
 RATIO_IDS = DERIVED_IDS  # Backwards compatibility
 
@@ -37,7 +37,7 @@ _DERIVED_INPUTS: Dict[str, List[str]] = {
     "non_hdl_cholesterol": ["total_cholesterol", "hdl_cholesterol"],
     "apoB_apoA1_ratio": ["apob", "apoa1"],
     "nlr": ["neutrophils", "lymphocytes"],
-    "bun_creatinine_ratio": ["bun", "creatinine"],
+    "urea_creatinine_ratio": ["urea", "creatinine"],
     "ast_alt_ratio": ["ast", "alt"],
 }
 
@@ -176,21 +176,22 @@ def compute(panel: Dict[str, Any]) -> Dict[str, Any]:
                 "bounds_applied": False, "inputs_used": _DERIVED_INPUTS["nlr"],
             }
 
-    # BUN/creatinine
-    bun = _numeric(panel.get("bun"))
+    # Urea/creatinine
+    urea = _numeric(panel.get("urea"))
     creat = _numeric(panel.get("creatinine"))
-    if _lab_supplied(panel, "bun_creatinine_ratio"):
-        v = _numeric(panel["bun_creatinine_ratio"])
-        result["derived"]["bun_creatinine_ratio"] = {
+    if _lab_supplied(panel, "urea_creatinine_ratio") or _lab_supplied(panel, "bun_creatinine_ratio"):
+        ratio_key = "urea_creatinine_ratio" if _lab_supplied(panel, "urea_creatinine_ratio") else "bun_creatinine_ratio"
+        v = _numeric(panel[ratio_key])
+        result["derived"]["urea_creatinine_ratio"] = {
             "value": v, "unit": "ratio", "source": "lab",
             "bounds_applied": False, "inputs_used": [],
         }
     else:
-        bc_ratio = safe_ratio(bun, creat)
+        bc_ratio = safe_ratio(urea, creat)
         if bc_ratio is not None:
-            result["derived"]["bun_creatinine_ratio"] = {
+            result["derived"]["urea_creatinine_ratio"] = {
                 "value": round(bc_ratio, RATIO_PRECISION), "unit": "ratio", "source": "computed",
-                "bounds_applied": False, "inputs_used": _DERIVED_INPUTS["bun_creatinine_ratio"],
+                "bounds_applied": False, "inputs_used": _DERIVED_INPUTS["urea_creatinine_ratio"],
             }
 
     # AST/ALT

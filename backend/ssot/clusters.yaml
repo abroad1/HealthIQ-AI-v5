@@ -46,7 +46,7 @@ clusters:
       required:
         - creatinine
       important:
-        - bun
+        - urea
       optional: []
 
   inflammatory:

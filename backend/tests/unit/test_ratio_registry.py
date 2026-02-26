@@ -90,10 +90,10 @@ class TestRatioRegistryCompute:
         assert out["derived"]["nlr"]["source"] == "computed"
 
     def test_bun_creatinine_ratio_computed(self):
-        """bun_creatinine_ratio computed when bun and creatinine present."""
-        panel = {"bun": 20.0, "creatinine": 1.0}
+        """urea_creatinine_ratio computed when urea and creatinine present."""
+        panel = {"urea": 7.14, "creatinine": 1.0}
         out = compute(panel)
-        assert _get_val(out, "bun_creatinine_ratio") == pytest.approx(20.0, abs=0.001)
+        assert _get_val(out, "urea_creatinine_ratio") == pytest.approx(7.14, abs=0.001)
 
     def test_ast_alt_ratio_computed(self):
         """ast_alt_ratio computed when ast and alt present."""
@@ -139,7 +139,7 @@ class TestInsightNoLocalRatioDivision:
         assert "lymphocytes / neutrophils" not in text
 
     def test_detox_filtration_no_division_for_bun_creatinine(self):
-        """detox_filtration must not compute bun_creatinine_ratio via bun / creatinine."""
+        """detox_filtration must not compute urea_creatinine_ratio via urea / creatinine."""
         from pathlib import Path
         path = Path(__file__).parent.parent.parent / "core" / "insights" / "modules" / "detox_filtration.py"
         text = path.read_text(encoding="utf-8")
