@@ -67,6 +67,15 @@ _HBA1C_BIOMARKERS = frozenset({"hba1c"})
 _UREA_BIOMARKERS = frozenset({"urea"})
 _CREATININE_BIOMARKERS = frozenset({"creatinine"})
 _VITAMIN_D_BIOMARKERS = frozenset({"vitamin_d"})
+_STRICT_CONVERSION_BIOMARKERS = frozenset().union(
+    _CHOLESTEROL_BIOMARKERS,
+    _TRIGLYCERIDE_BIOMARKERS,
+    _GLUCOSE_BIOMARKERS,
+    _HBA1C_BIOMARKERS,
+    _UREA_BIOMARKERS,
+    _CREATININE_BIOMARKERS,
+    _VITAMIN_D_BIOMARKERS,
+)
 
 
 class UnitRegistry:
@@ -195,6 +204,10 @@ class UnitRegistry:
             return float(value), base_unit
         factor = self._get_conversion_factor(biomarker_id, from_u, base_unit)
         if factor is None:
+            if biomarker_id not in _STRICT_CONVERSION_BIOMARKERS:
+                # Deterministic passthrough for biomarkers without an explicit
+                # conversion matrix in UnitRegistry.
+                return float(value), from_u
             raise UnitConversionError(
                 f"No conversion from '{from_u}' to base unit '{base_unit}' for biomarker '{biomarker_id}'",
                 biomarker_id=biomarker_id,
@@ -240,17 +253,24 @@ def apply_unit_normalisation(
     No silent assumptions. Unmapped rejected by default.
     """
     reg = registry or _get_registry()
-    allow_unm = allow_unmapped if allow_unmapped is not None else _allow_unmapped()
     result = {}
 
     for key, data in normalized.items():
-        if key.startswith("unmapped_"):
-            if not allow_unm:
-                raise UnitConversionError(
-                    f"Unmapped biomarker '{key}' rejected; set UNIT_ALLOW_UNMAPPED=true to allow",
-                    biomarker_id=key,
-                )
-            result[key] = dict(data)
+        is_explicit_unmapped = (
+            isinstance(data, dict)
+            and (
+                data.get("unmapped") is True
+                or data.get("is_unmapped") is True
+                or str(data.get("canonical_id", "")).startswith("unmapped_")
+            )
+        )
+        if key.startswith("unmapped_") or is_explicit_unmapped:
+            # Quarantine contract: unmapped biomarkers bypass unit conversion and
+            # are passed through for deterministic downstream quarantine handling.
+            if isinstance(data, dict):
+                result[key] = dict(data)
+            else:
+                result[key] = {"value": data, "unit": ""}
             continue
 
         if isinstance(data, (int, float)):

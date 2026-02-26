@@ -238,13 +238,15 @@ class MockLLMClient(LLMClient):
 class InsightSynthesizer:
     """Main insight synthesis engine."""
     
-    def __init__(self, llm_client: Optional[LLMClient] = None):
+    def __init__(self, llm_client: Optional[LLMClient] = None, allow_llm: Optional[bool] = None):
         """
         Initialize the insight synthesizer.
         
         Args:
             llm_client: LLM client for insight generation (defaults to configured provider)
+            allow_llm: Explicit runtime gate for network LLM usage. False disables LLM.
         """
+        self.allow_llm = allow_llm
         # Use provided client or create based on LLM_PROVIDER configuration
         if llm_client:
             self.llm_client = llm_client
@@ -264,6 +266,10 @@ class InsightSynthesizer:
         Returns:
             Configured LLM client (GeminiClient or MockLLMClient)
         """
+        # Explicit runtime gate (used by deterministic runners).
+        if self.allow_llm is False:
+            return MockLLMClient()
+
         # Test mode: skip LLM entirely, no Gemini init/calls
         if getattr(settings, "HEALTHIQ_MODE", "") == "test":
             return MockLLMClient()
@@ -344,6 +350,8 @@ class InsightSynthesizer:
                 insight_graph_json = json.dumps(insight_graph, default=str)
             else:
                 insight_graph_json = str(insight_graph)
+        if insight_graph is not None and explainability_report is None and allow_legacy_path:
+            explainability_report = self._build_legacy_explainability_placeholder(insight_graph)
         if explainability_report is not None:
             if hasattr(explainability_report, "model_dump"):
                 import json
@@ -421,6 +429,35 @@ class InsightSynthesizer:
             processing_time_ms=synthesis_summary["processing_time_ms"],
             created_at=datetime.now(UTC).isoformat()
         )
+
+    def _build_legacy_explainability_placeholder(self, insight_graph: Any) -> Dict[str, Any]:
+        """
+        Build deterministic explainability payload for legacy test/fixture synthesis paths.
+        """
+        graph = insight_graph.model_dump() if hasattr(insight_graph, "model_dump") else (
+            insight_graph if isinstance(insight_graph, dict) else {}
+        )
+        primary_driver = str(graph.get("primary_driver_system_id", "")).strip()
+        if not primary_driver:
+            primary_driver = "metabolic"
+        return {
+            "arbitration_decisions": {
+                "primary_driver_system_id": primary_driver,
+                "decision_trace": [],
+                "tie_breakers": [],
+            },
+            "dominance_resolution": {
+                "influence_ordering": {
+                    "supporting_systems": [],
+                    "influence_order": [primary_driver],
+                }
+            },
+            "causal_edges": [],
+            "replay_stamps": {
+                "explainability_hash": "legacy_explainability_placeholder",
+                "arbitration_hash": "legacy_explainability_placeholder",
+            },
+        }
     
     def _strip_to_safe_biomarker_view(self, biomarker_scores: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
         """PRD §4.7: Extract only status and score; no raw values, units, ranges."""
