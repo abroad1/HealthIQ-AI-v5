@@ -45,9 +45,41 @@ class TestConvertValue:
 
     def test_identity_for_biomarkers_without_conversion(self):
         """Biomarkers without conversion path use SSOT unit as base."""
+        val, unit = convert_value("sodium", 140.0, "mEq/L")
+        assert unit == "mEq/L"
+        assert val == 140.0
+
+    def test_bun_mg_dl_to_mmol_l(self):
+        """BUN: mg/dL -> mmol/L (factor 0.357)."""
+        val, unit = convert_value("bun", 20.0, "mg/dL")
+        assert unit == "mmol/L"
+        assert abs(val - 7.14) < 0.001
+
+    def test_creatinine_mg_dl_to_umol_l(self):
+        """Creatinine: mg/dL -> µmol/L (factor 88.4)."""
         val, unit = convert_value("creatinine", 1.0, "mg/dL")
-        assert unit == "mg/dL"
-        assert val == 1.0
+        assert unit == "µmol/L"
+        assert abs(val - 88.4) < 0.001
+
+    def test_vitamin_d_ng_ml_to_nmol_l(self):
+        """Vitamin D: ng/mL -> nmol/L (factor 2.5)."""
+        val, unit = convert_value("vitamin_d", 20.0, "ng/mL")
+        assert unit == "nmol/L"
+        assert abs(val - 50.0) < 0.001
+
+    def test_registry_reverse_glucose_factor_present(self):
+        """Registry includes reverse glucose conversion for future display."""
+        reg = UnitRegistry()
+        factor = reg._get_conversion_factor("glucose", "mmol/L", "mg/dL")
+        assert factor == pytest.approx(18.0, abs=0.0001)
+
+    def test_registry_reverse_cholesterol_and_triglycerides_factors_present(self):
+        """Registry includes reverse lipid factors with triglyceride-specific value."""
+        reg = UnitRegistry()
+        chol_factor = reg._get_conversion_factor("total_cholesterol", "mmol/L", "mg/dL")
+        trig_factor = reg._get_conversion_factor("triglycerides", "mmol/L", "mg/dL")
+        assert chol_factor == pytest.approx(38.67, abs=0.0001)
+        assert trig_factor == pytest.approx(88.57, abs=0.0001)
 
     def test_reject_unknown_unit_no_conversion_path(self):
         """Reject when from_unit has no conversion to base."""
@@ -196,14 +228,31 @@ class TestApplyUnitNormalisation:
         """Input in base units: output identical values."""
         normalized = {
             "glucose": {"value": 5.27, "unit": "mmol/L", "reference_range": None},
-            "creatinine": {"value": 1.0, "unit": "mg/dL", "reference_range": None},
+            "creatinine": {"value": 88.4, "unit": "µmol/L", "reference_range": None},
         }
         result = apply_unit_normalisation(normalized)
         assert result["glucose"]["value"] == 5.27
         assert result["glucose"]["unit"] == "mmol/L"
         assert result["glucose"]["unit_normalised"] is False
-        assert result["creatinine"]["value"] == 1.0
-        assert result["creatinine"]["unit"] == "mg/dL"
+        assert result["creatinine"]["value"] == 88.4
+        assert result["creatinine"]["unit"] == "µmol/L"
+
+    def test_ingestion_path_bun_mg_dl_canonicalises_to_mmol_l(self):
+        """Ingestion normalisation canonicalises BUN to mmol/L deterministically."""
+        normalized = {
+            "bun": {
+                "value": 20.0,
+                "unit": "mg/dL",
+                "reference_range": {"min": 7.0, "max": 20.0, "unit": "mg/dL", "source": "lab"},
+            }
+        }
+        result = apply_unit_normalisation(normalized)
+        bun = result["bun"]
+        assert bun["unit"] == "mmol/L"
+        assert bun["value"] == pytest.approx(7.14, abs=0.001)
+        assert bun["reference_range"]["unit"] == "mmol/L"
+        assert bun["reference_range"]["min"] == pytest.approx(2.499, abs=0.001)
+        assert bun["reference_range"]["max"] == pytest.approx(7.14, abs=0.001)
 
 
 class TestApplyUnitNormalisationRatioBiomarker:
@@ -342,4 +391,4 @@ class TestUnitRegistryDirect:
 
     def test_get_base_unit_creatinine(self):
         reg = UnitRegistry()
-        assert reg.get_base_unit("creatinine") == "mg/dL"
+        assert reg.get_base_unit("creatinine") == "µmol/L"

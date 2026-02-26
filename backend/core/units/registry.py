@@ -49,6 +49,9 @@ class UnitEnum(str, Enum):
     UU_ML = "μU/mL"
     MG_L = "mg/L"
     MMOL_L = "mmol/L"
+    UMOL_L = "µmol/L"
+    NMOL_L = "nmol/L"
+    NG_ML = "ng/mL"
     MMOL_MOL = "mmol/mol"
     MEQ_L = "mEq/L"
     RATIO = "ratio"
@@ -56,10 +59,17 @@ class UnitEnum(str, Enum):
 
 # Biomarkers that use cholesterol conversion (mg/dL -> mmol/L, factor 0.0259)
 _CHOLESTEROL_BIOMARKERS = frozenset({
-    "total_cholesterol", "ldl_cholesterol", "hdl_cholesterol", "triglycerides",
+    "total_cholesterol", "ldl_cholesterol", "hdl_cholesterol",
 })
+_TRIGLYCERIDE_BIOMARKERS = frozenset({"triglycerides"})
 _GLUCOSE_BIOMARKERS = frozenset({"glucose"})
 _HBA1C_BIOMARKERS = frozenset({"hba1c"})
+_BUN_BIOMARKERS = frozenset({"bun"})
+_CREATININE_BIOMARKERS = frozenset({"creatinine"})
+_VITAMIN_D_BIOMARKERS = frozenset({"vitamin_d"})
+_SPECIAL_BASE_UNITS = {
+    "vitamin_d": "nmol/L",
+}
 
 
 class UnitRegistry:
@@ -98,17 +108,29 @@ class UnitRegistry:
             ssot_unit = (defn.get("unit") or "").strip() or "mg/dL"
             if name in _CHOLESTEROL_BIOMARKERS:
                 base[name] = "mmol/L"
+            elif name in _TRIGLYCERIDE_BIOMARKERS:
+                base[name] = "mmol/L"
             elif name in _GLUCOSE_BIOMARKERS:
                 base[name] = "mmol/L"
             elif name in _HBA1C_BIOMARKERS:
                 base[name] = "mmol/mol"
+            elif name in _BUN_BIOMARKERS:
+                base[name] = "mmol/L"
+            elif name in _CREATININE_BIOMARKERS:
+                base[name] = "µmol/L"
+            elif name in _VITAMIN_D_BIOMARKERS:
+                base[name] = "nmol/L"
             else:
                 base[name] = ssot_unit
+        for biomarker_id, base_unit in _SPECIAL_BASE_UNITS.items():
+            base.setdefault(biomarker_id, base_unit)
         self._biomarker_base_units = base
         self._biomarker_ssot_units = {
             name: (defn.get("unit") or "").strip() or "mg/dL"
             for name, defn in data.get("biomarkers", {}).items()
         }
+        for biomarker_id, ssot_unit in _SPECIAL_BASE_UNITS.items():
+            self._biomarker_ssot_units.setdefault(biomarker_id, ssot_unit)
         return self._biomarker_base_units
 
     def _get_ssot_unit(self, biomarker_id: str) -> Optional[str]:
@@ -137,14 +159,42 @@ class UnitRegistry:
             c = convs.get("mg_dL_to_mmol_L_glucose", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
                 return float(c.get("factor", 0.0555))
+        if biomarker_id in _GLUCOSE_BIOMARKERS and from_u == "mmol/L" and to_u == "mg/dL":
+            c = convs.get("mmol_L_to_mg_dL_glucose", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 18.0))
         if biomarker_id in _CHOLESTEROL_BIOMARKERS and from_u == "mg/dL" and to_u == "mmol/L":
-            c = convs.get("mg_dL_to_mmol_L", {})
+            c = convs.get("mg_dL_to_mmol_L_cholesterol", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
                 return float(c.get("factor", 0.0259))
+        if biomarker_id in _CHOLESTEROL_BIOMARKERS and from_u == "mmol/L" and to_u == "mg/dL":
+            c = convs.get("mmol_L_to_mg_dL_cholesterol", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 38.67))
+        if biomarker_id in _TRIGLYCERIDE_BIOMARKERS and from_u == "mg/dL" and to_u == "mmol/L":
+            c = convs.get("mg_dL_to_mmol_L_triglycerides", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 0.01129))
+        if biomarker_id in _TRIGLYCERIDE_BIOMARKERS and from_u == "mmol/L" and to_u == "mg/dL":
+            c = convs.get("mmol_L_to_mg_dL_triglycerides", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 88.57))
         if biomarker_id in _HBA1C_BIOMARKERS and from_u == "%" and to_u == "mmol/mol":
             c = convs.get("percent_to_mmol_mol", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
                 return float(c.get("factor", 10.929))
+        if biomarker_id in _BUN_BIOMARKERS and from_u == "mg/dL" and to_u == "mmol/L":
+            c = convs.get("mg_dL_to_mmol_L_bun", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 0.357))
+        if biomarker_id in _CREATININE_BIOMARKERS and from_u == "mg/dL" and to_u == "µmol/L":
+            c = convs.get("mg_dL_to_umol_L_creatinine", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 88.4))
+        if biomarker_id in _VITAMIN_D_BIOMARKERS and from_u == "ng/mL" and to_u == "nmol/L":
+            c = convs.get("ng_mL_to_nmol_L_vitamin_d", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 2.5))
         return None
 
     def _convert_with_explicit_unit(

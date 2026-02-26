@@ -18,7 +18,7 @@ biomarkers:
     system: immune
     risk_direction: BOTH_SIDES_RISK
     weight: 0.05
-  bun:
+  urea:
     system: renal
     risk_direction: HIGH_IS_RISK
     weight: 0.5
