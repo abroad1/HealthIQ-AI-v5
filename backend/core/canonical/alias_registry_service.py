@@ -31,6 +31,10 @@ def get_alias_registry_service(use_v4_registry: bool = True) -> "AliasRegistrySe
     return AliasRegistryService(use_v4_registry=use_v4_registry)
 
 
+class AliasCollisionError(ValueError):
+    """Raised when a normalized alias key maps to multiple canonical IDs."""
+
+
 class AliasRegistryService:
     """
     Service for resolving biomarker aliases to canonical names using v4 registry.
@@ -106,7 +110,26 @@ class AliasRegistryService:
 
     def _build_alias_mapping_impl(self) -> Dict[str, str]:
         """Internal implementation of alias mapping build (called under lock)."""
-        alias_mapping = {}
+        alias_mapping: Dict[str, str] = {}
+        alias_sources: Dict[str, set[str]] = {}
+
+        def _insert_alias(alias_key: str, canonical_id: str, source_alias: Optional[str] = None) -> None:
+            key = str(alias_key)
+            source = str(source_alias if source_alias is not None else alias_key)
+            existing = alias_mapping.get(key)
+            if existing is None:
+                alias_mapping[key] = canonical_id
+                alias_sources[key] = {source}
+                return
+            alias_sources.setdefault(key, set()).add(source)
+            if existing == canonical_id:
+                return
+            encountered = sorted({existing, canonical_id})
+            sources = sorted(alias_sources.get(key, set()))
+            raise AliasCollisionError(
+                f"Alias collision for key '{key}': "
+                f"canonical_ids={encountered}; source_aliases={sources}"
+            )
 
         ssot_alias_registry = self._load_alias_registry()
         if ssot_alias_registry:
@@ -116,33 +139,28 @@ class AliasRegistryService:
                     canonical_id = definition.get('canonical_id', key)
                     
                     # Map canonical name to itself
-                    alias_mapping[canonical_id.lower()] = canonical_id
-                    alias_mapping[canonical_id.upper()] = canonical_id
+                    _insert_alias(canonical_id.lower(), canonical_id, canonical_id)
+                    _insert_alias(canonical_id.upper(), canonical_id, canonical_id)
                     
                     # Map all aliases to canonical name
                     for alias in definition['aliases']:
-                        alias_mapping[alias.lower()] = canonical_id
-                        alias_mapping[alias.upper()] = canonical_id
+                        _insert_alias(alias.lower(), canonical_id, alias)
+                        _insert_alias(alias.upper(), canonical_id, alias)
                         # Handle variations with spaces, hyphens, underscores
                         normalized = alias.lower().replace(' ', '_').replace('-', '_')
-                        alias_mapping[normalized] = canonical_id
+                        _insert_alias(normalized, canonical_id, alias)
                         # Handle parentheses variations: create both (a) and _(a) versions
                         if '(' in normalized and ')' in normalized:
                             # Create version with underscore before parentheses: (a) -> _(a)
                             parens_with_underscore = normalized.replace('(', '_(').replace(')', '_)')
                             if parens_with_underscore != normalized:
-                                alias_mapping[parens_with_underscore] = canonical_id
+                                _insert_alias(parens_with_underscore, canonical_id, alias)
                             # Also ensure we have the version without underscore: _(a) -> (a) if needed
                             # (This handles cases where alias already has _(a) format)
                             if '_(' in normalized:
                                 parens_without_underscore = normalized.replace('_(', '(').replace('_)', ')')
                                 if parens_without_underscore != normalized:
-                                    alias_mapping[parens_without_underscore] = canonical_id
-                        # Handle common medical abbreviations
-                        if ' ' in alias:
-                            abbrev = ''.join(word[0] for word in alias.split() if word)
-                            alias_mapping[abbrev.lower()] = canonical_id
-                            alias_mapping[abbrev.upper()] = canonical_id
+                                    _insert_alias(parens_without_underscore, canonical_id, alias)
         
         # Load SSOT aliases to supplement v4 registry (or as primary source if v4 unavailable)
         ssot_biomarkers = self._load_ssot_biomarkers()
@@ -150,34 +168,34 @@ class AliasRegistryService:
             for canonical_name, definition in ssot_biomarkers.items():
                 if isinstance(definition, dict) and 'aliases' in definition:
                     # Map canonical name to itself
-                    alias_mapping[canonical_name.lower()] = canonical_name
-                    alias_mapping[canonical_name.upper()] = canonical_name
+                    _insert_alias(canonical_name.lower(), canonical_name, canonical_name)
+                    _insert_alias(canonical_name.upper(), canonical_name, canonical_name)
                     
                     # Map all aliases to canonical name
                     for alias in definition.get('aliases', []):
                         # Direct lowercase/uppercase mappings
-                        alias_mapping[alias.lower()] = canonical_name
-                        alias_mapping[alias.upper()] = canonical_name
+                        _insert_alias(alias.lower(), canonical_name, alias)
+                        _insert_alias(alias.upper(), canonical_name, alias)
                         # Handle variations with spaces, hyphens, underscores (but preserve parentheses)
                         normalized = alias.lower().replace(' ', '_').replace('-', '_')
-                        alias_mapping[normalized] = canonical_name
+                        _insert_alias(normalized, canonical_name, alias)
                         # Handle parentheses variations: create both (a) and _(a) versions
                         if '(' in normalized and ')' in normalized:
                             # Create version with underscore before parentheses: (a) -> _(a)
                             parens_with_underscore = normalized.replace('(', '_(').replace(')', '_)')
                             if parens_with_underscore != normalized:
-                                alias_mapping[parens_with_underscore] = canonical_name
+                                _insert_alias(parens_with_underscore, canonical_name, alias)
                             # Also ensure we have the version without underscore: _(a) -> (a) if needed
                             if '_(' in normalized:
                                 parens_without_underscore = normalized.replace('_(', '(').replace('_)', ')')
                                 if parens_without_underscore != normalized:
-                                    alias_mapping[parens_without_underscore] = canonical_name
+                                    _insert_alias(parens_without_underscore, canonical_name, alias)
         
         # Add common medical abbreviations and variations
-        self._add_common_aliases(alias_mapping)
+        self._add_common_aliases(alias_mapping, _insert_alias)
         return alias_mapping
     
-    def _add_common_aliases(self, alias_mapping: Dict[str, str]):
+    def _add_common_aliases(self, alias_mapping: Dict[str, str], insert_alias):
         """Add common medical abbreviations and aliases."""
         common_aliases = {
             # Cardiovascular - canonical: ldl_cholesterol, hdl_cholesterol (aligns with clustering, insights, SSOT)
@@ -245,8 +263,8 @@ class AliasRegistryService:
         }
         
         for alias, canonical in common_aliases.items():
-            alias_mapping[alias.lower()] = canonical
-            alias_mapping[alias.upper()] = canonical
+            insert_alias(alias.lower(), canonical, alias)
+            insert_alias(alias.upper(), canonical, alias)
     
     @staticmethod
     def _strip_surrounding_punctuation(value: str) -> str:

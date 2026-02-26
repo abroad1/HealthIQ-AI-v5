@@ -1,0 +1,646 @@
+# AB Full Panel - biomarker_alias_registry.yaml additions
+# Target file: backend/ssot/biomarker_alias_registry.yaml
+# INSTRUCTION TO CURSOR: ADD these entries under the existing alias registry.
+# DO NOT delete, reorder, or modify any existing entries. Append only.
+# These aliases are the EXACT raw label strings as they appear on the AB / Sussex Pathology report.
+
+ab_full_panel:
+
+  # ─── FULL BLOOD COUNT ────────────────────────────────────────────────────────
+
+  - canonical_id: wbc
+    aliases:
+      - "Leukocytes (WBC)"
+      - "Leukocytes (WBC) - venous"
+      - "WBC"
+      - "White Blood Cell Count"
+      - "White Cell Count"
+
+  - canonical_id: rbc
+    aliases:
+      - "Erythrocytes (RBC)"
+      - "Erythrocytes (RBC) - venous"
+      - "RBC"
+      - "Red Blood Cell Count"
+
+  - canonical_id: hemoglobin
+    aliases:
+      - "Haemoglobin (HGB)"
+      - "Haemoglobin (HGB) - venous"
+      - "HGB"
+      - "Hemoglobin"
+      - "Haemoglobin"
+
+  - canonical_id: hematocrit
+    aliases:
+      - "Haematocrit (HCT)"
+      - "Haematocrit (HCT) - venous"
+      - "HCT"
+      - "Hematocrit"
+      - "Haematocrit"
+
+  - canonical_id: mcv
+    aliases:
+      - "Mean Corpuscular Volume (MCV)"
+      - "Mean Corpuscular Volume (MCV) - venous"
+      - "MCV"
+      - "Mean Corpuscular Volume"
+
+  - canonical_id: mch
+    aliases:
+      - "Mean Corpuscular Haemoglobin (MCH)"
+      - "Mean Corpuscular Haemoglobin (MCH) - venous"
+      - "MCH"
+      - "Mean Corpuscular Hemoglobin"
+
+  - canonical_id: mchc
+    aliases:
+      - "Mean Corpuscular Haemoglobin Concentration (MCHC)"
+      - "Mean Corpuscular Haemoglobin Concentration (MCHC) - venous"
+      - "MCHC"
+      - "Mean Corpuscular Hemoglobin Concentration"
+
+  - canonical_id: rdw_cv
+    aliases:
+      - "Red Cell Distribution Width (RDW-CV)"
+      - "Red Cell Distribution Width (RDW-CV) - venous"
+      - "RDW-CV"
+      - "RDW CV"
+      - "Red Cell Distribution Width CV"
+
+  - canonical_id: rdw_sd
+    aliases:
+      - "Red Cell Distribution Width SD (RDW-SD)"
+      - "Red Cell Distribution Width SD (RDW-SD) - venous"
+      - "RDW-SD"
+      - "RDW SD"
+      - "Red Cell Distribution Width SD"
+
+  - canonical_id: platelets
+    aliases:
+      - "Platelets (PLT)"
+      - "Platelets (PLT) - venous"
+      - "PLT"
+      - "Platelet Count"
+
+  - canonical_id: mpv
+    aliases:
+      - "Mean Platelet Volume (MPV)"
+      - "Mean Platelet Volume (MPV) - venous"
+      - "MPV"
+      - "Mean Platelet Volume"
+
+  - canonical_id: pdw
+    aliases:
+      - "Platelet Distribution Width (PDW)"
+      - "Platelet Distribution Width (PDW) - venous"
+      - "PDW"
+      - "Platelet Distribution Width"
+
+  - canonical_id: neutrophil_pct
+    aliases:
+      - "Neutrophil (NEU %)"
+      - "NEU %"
+      - "Neutrophils %"
+      - "Neutrophil Percentage"
+
+  - canonical_id: neutrophils_abs
+    aliases:
+      - "Neutrophil (NEU #)"
+      - "NEU #"
+      - "Neutrophils Absolute"
+      - "Neutrophil #"
+
+  - canonical_id: lymphocyte_pct
+    aliases:
+      - "Lymphocyte (LYM %)"
+      - "LYM %"
+      - "Lymphocytes %"
+      - "Lymphocyte Percentage"
+
+  - canonical_id: lymphocytes_abs
+    aliases:
+      - "Lymphocyte (LYM #)"
+      - "LYM #"
+      - "Lymphocytes Absolute"
+      - "Lymphocyte #"
+
+  - canonical_id: monocyte_pct
+    aliases:
+      - "Monocyte (MON %)"
+      - "MON %"
+      - "Monocytes %"
+      - "Monocyte Percentage"
+
+  - canonical_id: monocytes_abs
+    aliases:
+      - "Monocyte (MON #)"
+      - "MON #"
+      - "Monocytes Absolute"
+      - "Monocyte #"
+
+  - canonical_id: eosinophil_pct
+    aliases:
+      - "Eosinophils (EOS %)"
+      - "EOS %"
+      - "Eosinophils %"
+      - "Eosinophil Percentage"
+
+  - canonical_id: eosinophils_abs
+    aliases:
+      - "Eosinophils (EOS #)"
+      - "EOS #"
+      - "Eosinophils Absolute"
+      - "Eosinophil #"
+
+  - canonical_id: basophil_pct
+    aliases:
+      - "Basophils (BAS %)"
+      - "BAS %"
+      - "Basophils %"
+      - "Basophil Percentage"
+
+  - canonical_id: basophils_abs
+    aliases:
+      - "Basophils (BAS #)"
+      - "BAS #"
+      - "Basophils Absolute"
+      - "Basophil #"
+
+  # ─── THYROID ─────────────────────────────────────────────────────────────────
+
+  - canonical_id: tsh
+    aliases:
+      - "TSH (Venous)"
+      - "TSH"
+      - "Thyroid Stimulating Hormone"
+      - "Thyrotropin"
+      - "TSH - venous"
+
+  - canonical_id: free_t4
+    aliases:
+      - "Free T4 (Venous)"
+      - "Free T4"
+      - "FT4"
+      - "Free Thyroxine"
+      - "fT4"
+      - "Free T4 - venous"
+
+  - canonical_id: free_t3
+    aliases:
+      - "Free T3 (Venous)"
+      - "Free T3"
+      - "FT3"
+      - "Free Triiodothyronine"
+      - "fT3"
+      - "Free T3 - venous"
+
+  - canonical_id: tpo_ab
+    aliases:
+      - "Thyroid Peroxidase Antibodies - TPO Ab (Venous)"
+      - "TPO Ab"
+      - "TPOAb"
+      - "Thyroid Peroxidase Antibodies"
+      - "Anti-TPO"
+      - "TPO Ab (Venous)"
+
+  - canonical_id: tgab
+    aliases:
+      - "Thyroglobulin Antibodies - TgAb (Venous)"
+      - "TgAb"
+      - "Thyroglobulin Antibodies"
+      - "Thyroglobulin Ab"
+      - "Anti-Thyroglobulin"
+      - "TgAb (Venous)"
+
+  # ─── HORMONAL ────────────────────────────────────────────────────────────────
+
+  - canonical_id: testosterone
+    aliases:
+      - "Testosterone (Venous)"
+      - "Testosterone"
+      - "Total Testosterone"
+      - "Testosterone (Total)"
+      - "Testosterone - venous"
+
+  - canonical_id: free_testosterone
+    aliases:
+      - "Free Testosterone Calculation (IM) (Venous)"
+      - "Free Testosterone"
+      - "Free T"
+      - "Free Testosterone (IM)"
+      - "Free Testosterone Calculation"
+      - "Free Testosterone Calculation - venous"
+
+  - canonical_id: free_testosterone_pct
+    aliases:
+      - "Free Testosterone % Calculation (Venous)"
+      - "Free Testosterone %"
+      - "% Free Testosterone"
+      - "Free Testosterone % Calculation"
+
+  - canonical_id: shbg
+    aliases:
+      - "Sex Hormone Binding Globulin (SHBG) (Venous)"
+      - "SHBG"
+      - "Sex Hormone Binding Globulin"
+      - "SHBG - venous"
+
+  - canonical_id: oestradiol
+    aliases:
+      - "Oestradiol (Venous)"
+      - "Oestradiol"
+      - "Estradiol"
+      - "E2"
+      - "Oestradiol - venous"
+
+  - canonical_id: lh
+    aliases:
+      - "Luteinizing Hormone (Venous)"
+      - "LH"
+      - "LH (Venous)"
+      - "Luteinising Hormone"
+      - "Luteinizing Hormone"
+      - "Luteinizing Hormone - venous"
+
+  - canonical_id: fsh
+    aliases:
+      - "FSH (Venous)"
+      - "FSH"
+      - "Follicle Stimulating Hormone"
+      - "FSH - venous"
+
+  - canonical_id: prolactin
+    aliases:
+      - "Prolactin (Venous)"
+      - "Prolactin"
+      - "PRL"
+      - "Prolactin - venous"
+
+  - canonical_id: cortisol
+    aliases:
+      - "Cortisol (Venous)"
+      - "Cortisol"
+      - "Serum Cortisol"
+      - "Morning Cortisol"
+      - "Cortisol - venous"
+
+  - canonical_id: dhea
+    aliases:
+      - "DHEA (Venous)"
+      - "DHEA"
+      - "Dehydroepiandrosterone"
+      - "DHEA-S"
+      - "DHEA - venous"
+
+  - canonical_id: fai
+    aliases:
+      - "Free Androgen Index - FAI (Venous)"
+      - "FAI"
+      - "Free Androgen Index"
+      - "Free Androgen Index - FAI"
+
+  # ─── RENAL ───────────────────────────────────────────────────────────────────
+
+  - canonical_id: urea
+    aliases:
+      - "Urea (Venous)"
+      - "Urea"
+      - "Blood Urea"
+      - "Urea (Serum)"
+      - "Urea - venous"
+      - "BUN"                          # US variant - maps to same canonical
+      - "Blood Urea Nitrogen"
+
+  - canonical_id: creatinine
+    aliases:
+      - "Creatinine (Venous)"
+      - "Creatinine"
+      - "Creatinine (Serum)"
+      - "Creatinine - venous"
+
+  - canonical_id: egfr
+    aliases:
+      - "eGFR (CKD EPI 2009) (Venous)"
+      - "eGFR"
+      - "Estimated GFR"
+      - "Glomerular Filtration Rate"
+      - "eGFR CKD EPI"
+      - "eGFR (CKD EPI 2009)"
+      - "eGFR - venous"
+
+  - canonical_id: urate
+    aliases:
+      - "Uric Acid (Venous)"
+      - "Uric Acid"
+      - "Urate"
+      - "Serum Urate"
+      - "Uric Acid - venous"
+
+  # ─── HEPATIC ─────────────────────────────────────────────────────────────────
+
+  - canonical_id: alt
+    aliases:
+      - "Alanine AminoTransferase ALT (Venous)"
+      - "ALT"
+      - "Alanine Aminotransferase"
+      - "SGPT"
+      - "ALT (Venous)"
+      - "ALT - venous"
+
+  - canonical_id: ggt
+    aliases:
+      - "Gamma-GlutamilTransferase GGT (Venous)"
+      - "GGT"
+      - "Gamma-Glutamyl Transferase"
+      - "Gamma GT"
+      - "GGT (Venous)"
+      - "GGT - venous"
+      - "Gamma-GlutamylTransferase GGT (Venous)"   # handle spelling variant
+
+  - canonical_id: alp
+    aliases:
+      - "Alkaline Photosphatase ALP (Venous)"
+      - "ALP"
+      - "Alkaline Phosphatase"
+      - "Alk Phos"
+      - "ALP (Venous)"
+      - "ALP - venous"
+      - "Alkaline Phosphatase ALP (Venous)"         # handle spelling variant
+
+  - canonical_id: bilirubin
+    aliases:
+      - "Bilirubin Total (Venous)"
+      - "Total Bilirubin"
+      - "Bilirubin"
+      - "Bilirubin Total"
+      - "Bilirubin Total - venous"
+
+  - canonical_id: albumin
+    aliases:
+      - "Albumin (Venous)"
+      - "Albumin"
+      - "Serum Albumin"
+      - "Albumin - venous"
+
+  - canonical_id: total_protein
+    aliases:
+      - "Total Protein (Venous)"
+      - "Total Protein"
+      - "Serum Total Protein"
+      - "Total Protein - venous"
+
+  - canonical_id: globulin
+    aliases:
+      - "Globulin Calculation (Venous)"
+      - "Globulin"
+      - "Serum Globulin"
+      - "Globulin Calculation"
+      - "Globulin Calculation - venous"
+
+  # ─── CARDIOVASCULAR / LIPIDS ─────────────────────────────────────────────────
+
+  - canonical_id: total_cholesterol
+    aliases:
+      - "Cholesterol (Venous)"
+      - "Cholesterol"
+      - "Total Cholesterol"
+      - "TC"
+      - "Cholesterol - venous"
+
+  - canonical_id: ldl_cholesterol
+    aliases:
+      - "Low Density Lipoproteins (Venous)"
+      - "LDL"
+      - "LDL-C"
+      - "LDL Cholesterol"
+      - "Low Density Lipoprotein"
+      - "LDL - venous"
+
+  - canonical_id: hdl_cholesterol
+    aliases:
+      - "HDL (Venous)"
+      - "HDL"
+      - "HDL-C"
+      - "HDL Cholesterol"
+      - "High Density Lipoprotein"
+      - "HDL - venous"
+
+  - canonical_id: triglycerides
+    aliases:
+      - "Triglycerides (Venous)"
+      - "Triglycerides"
+      - "TG"
+      - "Trigs"
+      - "Triglycerides - venous"
+
+  - canonical_id: non_hdl_cholesterol
+    aliases:
+      - "Non HDL Cholesterol Calculation (Venous)"
+      - "Non-HDL Cholesterol"
+      - "Non HDL-C"
+      - "Non HDL Cholesterol"
+      - "Non HDL Cholesterol - venous"
+
+  - canonical_id: tc_hdl_ratio
+    aliases:
+      - "Total Cholesterol/HDL Ratio Calculation (Venous)"
+      - "TC:HDL Ratio"
+      - "Cholesterol/HDL Ratio"
+      - "Total Cholesterol HDL Ratio"
+      - "Total Cholesterol/HDL Ratio - venous"
+
+  - canonical_id: apob
+    aliases:
+      - "Apolipoprotein B (Venous)"
+      - "ApoB"
+      - "Apo B"
+      - "Apolipoprotein B"
+      - "Apolipoprotein B - venous"
+
+  - canonical_id: apoa1
+    aliases:
+      - "Apolipoprotein A1 (Venous)"
+      - "ApoA1"
+      - "Apo A1"
+      - "Apolipoprotein A1"
+      - "Apolipoprotein A1 - venous"
+
+  - canonical_id: apoB_apoA1_ratio
+    aliases:
+      - "Apolipoprotein ratio (Venous)"
+      - "ApoB/ApoA1 Ratio"
+      - "Apolipoprotein B/A1 Ratio"
+      - "Apolipoprotein ratio"
+      - "Apolipoprotein ratio - venous"
+
+  - canonical_id: lipoprotein_a
+    aliases:
+      - "Lipoprotein (A) (Venous)"
+      - "Lp(a)"
+      - "Lipoprotein a"
+      - "Lipoprotein (a)"
+      - "Lp(a) - venous"
+
+  - canonical_id: homocysteine
+    aliases:
+      - "Homocysteine (Venous)"
+      - "Homocysteine"
+      - "tHcy"
+      - "Total Homocysteine"
+      - "Homocysteine - venous"
+
+  - canonical_id: crp
+    aliases:
+      - "C-Reactive Protein CRP (Venous)"
+      - "CRP"
+      - "hsCRP"
+      - "C-Reactive Protein"
+      - "CRP (Venous)"
+      - "CRP - venous"
+
+  # ─── METABOLIC ───────────────────────────────────────────────────────────────
+
+  - canonical_id: hba1c
+    aliases:
+      - "HbA1c (Venous)"
+      - "HbA1c"
+      - "Glycated Haemoglobin"
+      - "A1c"
+      - "HbA1c (IFCC)"
+      - "HbA1c - venous"
+
+  - canonical_id: hba1c_pct
+    aliases:
+      - "HbA1c % (Venous)"
+      - "HbA1c %"
+      - "Glycated Haemoglobin %"
+      - "HbA1c (NGSP)"
+      - "HbA1c % - venous"
+
+  # ─── NUTRITIONAL ─────────────────────────────────────────────────────────────
+
+  - canonical_id: vitamin_d
+    aliases:
+      - "Vitamin D (Venous)"
+      - "Vitamin D"
+      - "25-OH Vitamin D"
+      - "25-Hydroxyvitamin D"
+      - "Vitamin D3"
+      - "Vitamin D - venous"
+
+  - canonical_id: vitamin_b12
+    aliases:
+      - "Vitamin B12 (Venous)"
+      - "Vitamin B12"
+      - "B12"
+      - "Cobalamin"
+      - "Serum B12"
+      - "Vitamin B12 - venous"
+
+  - canonical_id: active_b12
+    aliases:
+      - "Active Vitamin B12 (Venous)"
+      - "Active B12"
+      - "Holotranscobalamin"
+      - "HoloTC"
+      - "Active Vitamin B12"
+      - "Active Vitamin B12 - venous"
+
+  - canonical_id: folate
+    aliases:
+      - "Folic Acid (Venous)"
+      - "Folate"
+      - "Serum Folate"
+      - "Folic Acid"
+      - "Folic Acid - venous"
+
+  - canonical_id: zinc
+    aliases:
+      - "Zinc (Venous)"
+      - "Zinc"
+      - "Serum Zinc"
+      - "Zinc - venous"
+
+  - canonical_id: ferritin
+    aliases:
+      - "Ferritin (Venous)"
+      - "Ferritin"
+      - "Serum Ferritin"
+      - "Ferritin - venous"
+
+  - canonical_id: iron
+    aliases:
+      - "Serum Iron (Venous)"
+      - "Serum Iron"
+      - "Iron"
+      - "Iron (Serum)"
+      - "Serum Iron - venous"
+
+  - canonical_id: transferrin
+    aliases:
+      - "Transferrin (Venous)"
+      - "Transferrin"
+      - "Serum Transferrin"
+      - "Transferrin - venous"
+
+  # ─── ELECTROLYTES ────────────────────────────────────────────────────────────
+
+  - canonical_id: sodium
+    aliases:
+      - "Sodium (Venous)"
+      - "Sodium"
+      - "Na"
+      - "Serum Sodium"
+      - "Sodium - venous"
+
+  - canonical_id: potassium
+    aliases:
+      - "Potassium (Venous)"
+      - "Potassium"
+      - "K"
+      - "Serum Potassium"
+      - "Potassium - venous"
+
+  - canonical_id: calcium
+    aliases:
+      - "Calcium (Venous)"
+      - "Calcium"
+      - "Ca"
+      - "Serum Calcium"
+      - "Calcium - venous"
+
+  - canonical_id: corrected_calcium
+    aliases:
+      - "Corrected Calcium (Venous)"
+      - "Corrected Calcium"
+      - "Adjusted Calcium"
+      - "Albumin-Corrected Calcium"
+      - "Corrected Calcium - venous"
+
+  - canonical_id: magnesium
+    aliases:
+      - "Magnesium (Venous)"
+      - "Magnesium"
+      - "Mg"
+      - "Serum Magnesium"
+      - "Magnesium - venous"
+
+  - canonical_id: chloride
+    aliases:
+      - "Chloride (Venous)"
+      - "Chloride"
+      - "Cl"
+      - "Serum Chloride"
+      - "Chloride - venous"
+
+  # ─── MUSCLE ──────────────────────────────────────────────────────────────────
+
+  - canonical_id: creatine_kinase
+    aliases:
+      - "Total Creatine Kinese CK (Venous)"
+      - "CPK"
+      - "Creatine Phosphokinase"
+      - "Total CK"
+      - "Total Creatine Kinase CK (Venous)"          # handle spelling variant
+      - "CK - venous"

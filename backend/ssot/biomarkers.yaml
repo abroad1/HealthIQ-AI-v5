@@ -226,10 +226,10 @@ biomarkers:
     known_modifiers: []
     clinical_weight: 0.8
     
-  bun:
-    aliases: ["blood_urea_nitrogen", "urea_nitrogen"]
-    unit: "mg/dL"
-    description: "Blood urea nitrogen"
+  urea:
+    aliases: ["Urea", "BUN", "Blood urea nitrogen"]
+    unit: "mmol/L"
+    description: "Serum urea level"
     category: "kidney"
     data_type: "numeric"
     system: "renal"
