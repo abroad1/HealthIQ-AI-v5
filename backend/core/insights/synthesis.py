@@ -266,8 +266,12 @@ class InsightSynthesizer:
         Returns:
             Configured LLM client (GeminiClient or MockLLMClient)
         """
+        env_enable_llm = os.getenv("HEALTHIQ_ENABLE_LLM", "").strip().lower() in {"1", "true", "yes", "on"}
         # Explicit runtime gate (used by deterministic runners).
         if self.allow_llm is False:
+            return MockLLMClient()
+        # Default gate is NO-LLM unless explicit opt-in via constructor/env.
+        if self.allow_llm is not True and not env_enable_llm:
             return MockLLMClient()
 
         # Test mode: skip LLM entirely, no Gemini init/calls
