@@ -1,15 +1,5 @@
 {
   "biomarkers": {
-    "BUN": {
-      "reference_range": {
-        "max": 100.0,
-        "min": 0.0,
-        "source": "lab",
-        "unit": "mg/dL"
-      },
-      "unit": "mg/dL",
-      "value": 55.0
-    },
     "White Blood Cell Count": {
       "reference_range": {
         "max": 100.0,
@@ -119,16 +109,6 @@
       },
       "unit": "mEq/L",
       "value": 108.62
-    },
-    "ck": {
-      "reference_range": {
-        "max": 100.0,
-        "min": 0.0,
-        "source": "lab",
-        "unit": "mg/dL"
-      },
-      "unit": "mg/dL",
-      "value": 55.0
     },
     "corrected_calcium": {
       "reference_range": {
