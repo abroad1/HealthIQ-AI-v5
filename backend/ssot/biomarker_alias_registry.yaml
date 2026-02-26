@@ -233,6 +233,12 @@ urea:
   - Urea
   - BUN
   - Blood urea nitrogen
+vitamin_d:
+  canonical_id: vitamin_d
+  aliases:
+  - Vitamin D
+  - 25(OH) Vitamin D
+  - 25-Hydroxy Vitamin D
 ast_alt_ratio:
   canonical_id: ast_alt_ratio
   aliases:

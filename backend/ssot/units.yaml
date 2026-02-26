@@ -73,7 +73,7 @@ units:
     mg_dL_to_mmol_L_cholesterol:
       from_unit: "mg/dL"
       to_unit: "mmol/L"
-      factor: 0.0259
+      factor: 0.02586
       description: "Cholesterol conversion"
 
     mmol_L_to_mg_dL_cholesterol:
@@ -97,7 +97,7 @@ units:
     mg_dL_to_mmol_L_glucose:
       from_unit: "mg/dL"
       to_unit: "mmol/L"
-      factor: 0.0555
+      factor: 0.0555555556
       description: "Glucose conversion"
 
     mmol_L_to_mg_dL_glucose:
@@ -112,11 +112,11 @@ units:
       factor: 10.929
       description: "HbA1c conversion"
 
-    mg_dL_to_mmol_L_bun:
+    mg_dL_to_mmol_L_urea:
       from_unit: "mg/dL"
       to_unit: "mmol/L"
       factor: 0.357
-      description: "BUN to urea canonical conversion"
+      description: "BUN-labeled urea conversion"
 
     mg_dL_to_umol_L_creatinine:
       from_unit: "mg/dL"
