@@ -5,7 +5,7 @@ biomarkers:
   # Cardiovascular Biomarkers
   total_cholesterol:
     aliases: ["cholesterol", "total_chol", "chol_total"]
-    unit: "mg/dL"
+    unit: "mmol/L"
     description: "Total cholesterol level"
     category: "cardiovascular"
     data_type: "numeric"
@@ -19,7 +19,7 @@ biomarkers:
     
   ldl_cholesterol:
     aliases: ["ldl", "ldl_chol", "bad_cholesterol"]
-    unit: "mg/dL"
+    unit: "mmol/L"
     description: "Low-density lipoprotein cholesterol"
     category: "cardiovascular"
     data_type: "numeric"
@@ -33,7 +33,7 @@ biomarkers:
     
   hdl_cholesterol:
     aliases: ["hdl", "hdl_chol", "good_cholesterol"]
-    unit: "mg/dL"
+    unit: "mmol/L"
     description: "High-density lipoprotein cholesterol"
     category: "cardiovascular"
     data_type: "numeric"
@@ -47,7 +47,7 @@ biomarkers:
     
   triglycerides:
     aliases: ["trig", "triglyceride", "triglycerides_(venous)"]
-    unit: "mg/dL"
+    unit: "mmol/L"
     description: "Triglyceride level"
     category: "cardiovascular"
     data_type: "numeric"
@@ -157,7 +157,7 @@ biomarkers:
   # Metabolic Biomarkers
   glucose:
     aliases: ["blood_sugar", "blood_glucose", "sugar"]
-    unit: "mg/dL"
+    unit: "mmol/L"
     description: "Blood glucose level"
     category: "metabolic"
     data_type: "numeric"
@@ -214,7 +214,7 @@ biomarkers:
   # Kidney Function
   creatinine:
     aliases: ["creat", "serum_creatinine"]
-    unit: "mg/dL"
+    unit: "µmol/L"
     description: "Serum creatinine level"
     category: "kidney"
     data_type: "numeric"
@@ -233,6 +233,20 @@ biomarkers:
     category: "kidney"
     data_type: "numeric"
     system: "renal"
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
+
+  vitamin_d:
+    aliases: ["Vitamin D", "25(OH) Vitamin D", "25-Hydroxy Vitamin D"]
+    unit: "nmol/L"
+    description: "25-hydroxy vitamin D level"
+    category: "nutritional"
+    data_type: "numeric"
+    system: "nutritional"
     clusters: []
     roles: []
     key_risks_when_high: []

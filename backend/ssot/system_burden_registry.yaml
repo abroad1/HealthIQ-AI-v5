@@ -22,6 +22,10 @@ biomarkers:
     system: renal
     risk_direction: HIGH_IS_RISK
     weight: 0.5
+  vitamin_d:
+    system: nutritional
+    risk_direction: LOW_IS_RISK
+    weight: 0.5
   calcium:
     system: metabolic
     risk_direction: BOTH_SIDES_RISK

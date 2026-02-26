@@ -519,21 +519,22 @@ biomarkers:
   # ─── RENAL ───────────────────────────────────────────────────────────────────
 
   urea:
+    aliases: ["Urea", "BUN", "Blood urea nitrogen"]
     unit: "mmol/L"
-    description: "Blood urea nitrogen equivalent (UK: urea in mmol/L)"
-    category: "Renal Function"
-    data_type: numeric
+    description: "Serum urea level"
+    category: "kidney"
+    data_type: "numeric"
     system: renal
     clusters: []
     roles: []
-    key_risks_when_high: ["renal_impairment", "dehydration", "high_protein_diet", "GI_bleed"]
-    key_risks_when_low: ["liver_failure", "malnutrition", "overhydration"]
-    known_modifiers: ["protein_intake", "hydration", "muscle_mass", "liver_function"]
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
     clinical_weight: 0.6
 
   creatinine:
     aliases: ["creat", "serum_creatinine"]
-    unit: "mg/dL"
+    unit: "µmol/L"
     description: "Serum creatinine level"
     category: "kidney"
     data_type: "numeric"
@@ -669,7 +670,7 @@ biomarkers:
 
   total_cholesterol:
     aliases: ["cholesterol", "total_chol", "chol_total"]
-    unit: "mg/dL"
+    unit: "mmol/L"
     description: "Total cholesterol level"
     category: "cardiovascular"
     data_type: "numeric"
@@ -683,7 +684,7 @@ biomarkers:
 
   ldl_cholesterol:
     aliases: ["ldl", "ldl_chol", "bad_cholesterol"]
-    unit: "mg/dL"
+    unit: "mmol/L"
     description: "Low-density lipoprotein cholesterol"
     category: "cardiovascular"
     data_type: "numeric"
@@ -697,7 +698,7 @@ biomarkers:
 
   hdl_cholesterol:
     aliases: ["hdl", "hdl_chol", "good_cholesterol"]
-    unit: "mg/dL"
+    unit: "mmol/L"
     description: "High-density lipoprotein cholesterol"
     category: "cardiovascular"
     data_type: "numeric"
@@ -711,7 +712,7 @@ biomarkers:
 
   triglycerides:
     aliases: ["trig", "triglyceride", "triglycerides_(venous)"]
-    unit: "mg/dL"
+    unit: "mmol/L"
     description: "Triglyceride level"
     category: "cardiovascular"
     data_type: "numeric"
@@ -865,16 +866,17 @@ biomarkers:
   # ─── NUTRITIONAL ─────────────────────────────────────────────────────────────
 
   vitamin_d:
+    aliases: ["Vitamin D", "25(OH) Vitamin D", "25-Hydroxy Vitamin D"]
     unit: "nmol/L"
-    description: "25-hydroxyvitamin D"
-    category: "Vitamins"
-    data_type: numeric
+    description: "25-hydroxy vitamin D level"
+    category: "nutritional"
+    data_type: "numeric"
     system: nutritional
     clusters: []
     roles: []
-    key_risks_when_high: ["vitamin_d_toxicity", "hypercalcaemia"]
-    key_risks_when_low: ["bone_disease", "immune_dysfunction", "cardiovascular_risk", "depression"]
-    known_modifiers: ["sun_exposure", "supplementation", "obesity", "malabsorption", "age"]
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
     clinical_weight: 0.6
 
   vitamin_b12:

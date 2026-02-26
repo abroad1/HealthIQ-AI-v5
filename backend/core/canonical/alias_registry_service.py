@@ -229,9 +229,6 @@ class AliasRegistryService:
             'creat': 'creatinine',
             'creatinine': 'creatinine',
             'serum_creatinine': 'creatinine',
-            'bun': 'bun',
-            'blood_urea_nitrogen': 'bun',
-            'urea_nitrogen': 'bun',
             
             # Liver
             'alt': 'alt',

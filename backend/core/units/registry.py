@@ -57,19 +57,16 @@ class UnitEnum(str, Enum):
     RATIO = "ratio"
 
 
-# Biomarkers that use cholesterol conversion (mg/dL -> mmol/L, factor 0.0259)
+# Biomarker groups for deterministic conversion dispatch.
 _CHOLESTEROL_BIOMARKERS = frozenset({
     "total_cholesterol", "ldl_cholesterol", "hdl_cholesterol",
 })
 _TRIGLYCERIDE_BIOMARKERS = frozenset({"triglycerides"})
 _GLUCOSE_BIOMARKERS = frozenset({"glucose"})
 _HBA1C_BIOMARKERS = frozenset({"hba1c"})
-_BUN_BIOMARKERS = frozenset({"bun"})
+_UREA_BIOMARKERS = frozenset({"urea"})
 _CREATININE_BIOMARKERS = frozenset({"creatinine"})
 _VITAMIN_D_BIOMARKERS = frozenset({"vitamin_d"})
-_SPECIAL_BASE_UNITS = {
-    "vitamin_d": "nmol/L",
-}
 
 
 class UnitRegistry:
@@ -103,34 +100,15 @@ class UnitRegistry:
             return self._biomarker_base_units
         with open(biomarkers_file, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
-        base = {}
-        for name, defn in data.get("biomarkers", {}).items():
-            ssot_unit = (defn.get("unit") or "").strip() or "mg/dL"
-            if name in _CHOLESTEROL_BIOMARKERS:
-                base[name] = "mmol/L"
-            elif name in _TRIGLYCERIDE_BIOMARKERS:
-                base[name] = "mmol/L"
-            elif name in _GLUCOSE_BIOMARKERS:
-                base[name] = "mmol/L"
-            elif name in _HBA1C_BIOMARKERS:
-                base[name] = "mmol/mol"
-            elif name in _BUN_BIOMARKERS:
-                base[name] = "mmol/L"
-            elif name in _CREATININE_BIOMARKERS:
-                base[name] = "µmol/L"
-            elif name in _VITAMIN_D_BIOMARKERS:
-                base[name] = "nmol/L"
-            else:
-                base[name] = ssot_unit
-        for biomarker_id, base_unit in _SPECIAL_BASE_UNITS.items():
-            base.setdefault(biomarker_id, base_unit)
+        base = {
+            name: ((defn.get("unit") or "").strip() or "mg/dL")
+            for name, defn in data.get("biomarkers", {}).items()
+        }
         self._biomarker_base_units = base
         self._biomarker_ssot_units = {
             name: (defn.get("unit") or "").strip() or "mg/dL"
             for name, defn in data.get("biomarkers", {}).items()
         }
-        for biomarker_id, ssot_unit in _SPECIAL_BASE_UNITS.items():
-            self._biomarker_ssot_units.setdefault(biomarker_id, ssot_unit)
         return self._biomarker_base_units
 
     def _get_ssot_unit(self, biomarker_id: str) -> Optional[str]:
@@ -158,7 +136,7 @@ class UnitRegistry:
         if biomarker_id in _GLUCOSE_BIOMARKERS and from_u == "mg/dL" and to_u == "mmol/L":
             c = convs.get("mg_dL_to_mmol_L_glucose", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
-                return float(c.get("factor", 0.0555))
+                return float(c.get("factor", 1.0 / 18.0))
         if biomarker_id in _GLUCOSE_BIOMARKERS and from_u == "mmol/L" and to_u == "mg/dL":
             c = convs.get("mmol_L_to_mg_dL_glucose", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
@@ -166,7 +144,7 @@ class UnitRegistry:
         if biomarker_id in _CHOLESTEROL_BIOMARKERS and from_u == "mg/dL" and to_u == "mmol/L":
             c = convs.get("mg_dL_to_mmol_L_cholesterol", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
-                return float(c.get("factor", 0.0259))
+                return float(c.get("factor", 1.0 / 38.67))
         if biomarker_id in _CHOLESTEROL_BIOMARKERS and from_u == "mmol/L" and to_u == "mg/dL":
             c = convs.get("mmol_L_to_mg_dL_cholesterol", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
@@ -183,8 +161,8 @@ class UnitRegistry:
             c = convs.get("percent_to_mmol_mol", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
                 return float(c.get("factor", 10.929))
-        if biomarker_id in _BUN_BIOMARKERS and from_u == "mg/dL" and to_u == "mmol/L":
-            c = convs.get("mg_dL_to_mmol_L_bun", {})
+        if biomarker_id in _UREA_BIOMARKERS and from_u == "mg/dL" and to_u == "mmol/L":
+            c = convs.get("mg_dL_to_mmol_L_urea", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
                 return float(c.get("factor", 0.357))
         if biomarker_id in _CREATININE_BIOMARKERS and from_u == "mg/dL" and to_u == "µmol/L":
