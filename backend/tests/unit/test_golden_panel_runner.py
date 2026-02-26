@@ -161,13 +161,13 @@ def test_regression_golden_derived_markers_have_scored_ranges(tmp_path):
         row = by_name.get(biomarker_name)
         assert row is not None, f"Missing biomarker row: {biomarker_name}"
         assert row.get("status") != "unknown", f"{biomarker_name} remains unscored"
-        assert row.get("range_source") == "policy"
-        assert row.get("interpretation") == "Scored using HealthIQ fallback bounds (lab range not provided)"
+        assert row.get("range_source") is None
+        assert row.get("interpretation") == "Scored using reference range"
         ref = row.get("reference_range", {})
         assert isinstance(ref, dict)
         assert ref.get("min") is not None
         assert ref.get("max") is not None
-        assert str(ref.get("source", "")).lower() == "policy"
+        assert str(ref.get("source", "")).lower() == "ratio_registry"
 
 
 def test_regression_golden_hashes_are_deterministic_with_derived_ranges(tmp_path):
@@ -259,10 +259,10 @@ def test_derived_ratio_uses_policy_only_when_lab_range_missing():
     row = next((b for b in dto.biomarkers if b.biomarker_name == "apoB_apoA1_ratio"), None)
     assert row is not None
     assert row.status != "unknown"
-    assert row.range_source == "policy"
-    assert row.interpretation == "Scored using HealthIQ fallback bounds (lab range not provided)"
+    assert row.range_source is None
+    assert row.interpretation == "Scored using reference range"
     assert isinstance(row.reference_range, dict)
-    assert str(row.reference_range.get("source", "")).lower() == "policy"
+    assert str(row.reference_range.get("source", "")).lower() == "ratio_registry"
 
 
 def test_derived_ratio_lab_range_precedence_over_policy():
@@ -326,3 +326,21 @@ def test_derived_policy_unit_mismatch_is_unscored_with_deterministic_reason(monk
     assert row.status == "unknown"
     assert row.range_source == "policy"
     assert row.interpretation == "Not scored - no compatible policy bounds"
+
+
+def test_golden_runner_default_mode_does_not_instantiate_gemini(tmp_path, monkeypatch):
+    fixture = Path(__file__).parent.parent / "fixtures" / "golden_panel_sprint14_2_thyroid_immune_mini.json"
+
+    def _boom(*args, **kwargs):
+        raise AssertionError("GeminiClient must not be instantiated in default NO-LLM mode")
+
+    monkeypatch.setattr("core.insights.synthesis.GeminiClient", _boom)
+
+    run_dir, result = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path,
+        run_id="unit-mini-no-llm-default",
+        write_narrative=False,
+    )
+    assert (run_dir / "analysis_result.json").exists()
+    assert str(result.get("status")) == "completed"

@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import os
 import subprocess
 from datetime import datetime, UTC
 from pathlib import Path
@@ -44,6 +45,11 @@ class _EmptySession:
 
     def all(self) -> list[Any]:
         return []
+
+
+def _env_enable_llm() -> bool:
+    raw = str(os.environ.get("HEALTHIQ_ENABLE_LLM", "")).strip().lower()
+    return raw in {"1", "true", "yes", "on"}
 
 
 def _default_fixture_path() -> Path:
@@ -313,6 +319,7 @@ def run_golden_panel(
     output_root: Optional[Path] = None,
     run_id: Optional[str] = None,
     write_narrative: bool = True,
+    enable_llm: bool = False,
 ) -> Tuple[Path, Dict[str, Any]]:
     fixture = fixture_path or _default_fixture_path()
     out_root = output_root or _default_output_root()
@@ -346,7 +353,7 @@ def run_golden_panel(
         "unit_registry_version": UNIT_REGISTRY_VERSION,
     }
 
-    orchestrator = AnalysisOrchestrator(db_session=_EmptySession())
+    orchestrator = AnalysisOrchestrator(db_session=_EmptySession(), allow_llm=bool(enable_llm))
     dto = orchestrator.run(biomarkers, payload["user"], assume_canonical=True)
     dto_dump = dto.model_dump() if hasattr(dto, "model_dump") else dict(dto)
 
@@ -409,13 +416,20 @@ def _cli() -> int:
     parser.add_argument("--output-root", default=str(_default_output_root()), help="Root directory for golden run artifacts")
     parser.add_argument("--run-id", default=None, help="Output folder name (defaults to UTC timestamp)")
     parser.add_argument("--no-narrative", action="store_true", help="Skip writing narrative.txt")
+    parser.add_argument(
+        "--enable-llm",
+        action="store_true",
+        help="Enable network LLM calls (default: disabled). Also controllable via HEALTHIQ_ENABLE_LLM=1.",
+    )
     args = parser.parse_args()
+    enable_llm = bool(args.enable_llm or _env_enable_llm())
 
     run_dir, result = run_golden_panel(
         fixture_path=Path(args.fixture),
         output_root=Path(args.output_root),
         run_id=args.run_id,
         write_narrative=not args.no_narrative,
+        enable_llm=enable_llm,
     )
     status = str(result.get("status", "unknown"))
     error_type = str(result.get("error_type", "")).strip()
