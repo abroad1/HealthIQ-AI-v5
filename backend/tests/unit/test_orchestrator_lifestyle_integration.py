@@ -11,7 +11,8 @@ from pathlib import Path
 
 import pytest
 
-from core.analytics.validation_gate import DIRECT_SCORING_EXEMPT_IDS, LIFESTYLE_ONLY_SYSTEMS
+from core.analytics.lifestyle_registry_loader import load_lifestyle_registry
+from core.analytics.validation_gate import DIRECT_SCORING_ALLOWED_NO_PATH, LIFESTYLE_ONLY_SYSTEMS
 from core.canonical.normalize import normalize_biomarkers_with_metadata
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 from core.units.registry import UNIT_REGISTRY_VERSION, apply_unit_normalisation
@@ -58,12 +59,30 @@ def _collision_free_fixture() -> Path:
     return Path(__file__).parent.parent / "fixtures" / "golden_panel_160_collision_free.json"
 
 
-def test_validation_gate_allowlists():
-    """LIFESTYLE_ONLY_SYSTEMS remains exactly musculoskeletal, autonomic; direct scoring allowlist explicit."""
+EXPECTED_DIRECT_SCORING_SSOT = {"cardiovascular", "metabolic", "hepatic", "immune", "musculoskeletal"}
+
+
+def test_validation_gate_allowlists_from_explicit_ssot():
+    """Direct scoring allowlist from explicit SSOT key; LIFESTYLE_ONLY_SYSTEMS unchanged."""
+    registry = load_lifestyle_registry()
+    explicit = set(registry.get("direct_scoring_systems_allow_no_influence_path", []))
+    assert explicit == EXPECTED_DIRECT_SCORING_SSOT
     assert LIFESTYLE_ONLY_SYSTEMS == {"musculoskeletal", "autonomic"}
-    assert LIFESTYLE_ONLY_SYSTEMS.issubset(DIRECT_SCORING_EXEMPT_IDS)
-    # Core systems with lifestyle modifiers are in direct-scoring allowlist (not propagation bypass)
-    assert {"cardiovascular", "metabolic", "hepatic", "immune"}.issubset(DIRECT_SCORING_EXEMPT_IDS)
+    assert DIRECT_SCORING_ALLOWED_NO_PATH == explicit | LIFESTYLE_ONLY_SYSTEMS
+
+
+def test_direct_scoring_allowlist_not_derived_from_system_modifiers():
+    """Adding a system to system_modifiers must NOT add it to DIRECT_SCORING_ALLOWED_NO_PATH."""
+    registry = load_lifestyle_registry()
+    modifier_keys = set(registry.get("system_modifiers", {}).keys())
+    explicit_keys = set(registry.get("direct_scoring_systems_allow_no_influence_path", []))
+    # Any system in modifiers but NOT in explicit list must not be in allowed set (unless LIFESTYLE_ONLY)
+    for sid in modifier_keys:
+        if sid not in explicit_keys and sid not in LIFESTYLE_ONLY_SYSTEMS:
+            assert sid not in DIRECT_SCORING_ALLOWED_NO_PATH, (
+                f"{sid} in system_modifiers but not in direct_scoring_systems_allow_no_influence_path; "
+                "allowlist must not expand implicitly"
+            )
 
 
 def test_lifestyle_minimal_succeeds_with_direct_scoring(tmp_path):

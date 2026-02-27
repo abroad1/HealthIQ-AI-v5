@@ -1,4 +1,13 @@
 version: 1
+# Governance-controlled allowlist: systems permitted to have direct burden with path=inf.
+# Do NOT derive from system_modifiers; add systems here explicitly.
+direct_scoring_systems_allow_no_influence_path:
+  - cardiovascular
+  - metabolic
+  - hepatic
+  - immune
+  - musculoskeletal
+
 units:
   height_cm: cm
   weight_kg: kg
