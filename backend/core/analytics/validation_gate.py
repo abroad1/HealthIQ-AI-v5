@@ -6,10 +6,8 @@ Module E: programmatic guardian validation.
 Sprint 20: zero_path_rule validates influence propagation reachability, not direct scoring.
 - Lifestyle modifiers are DIRECT burden on a system (not cross-system propagation).
 - zero_path_rule prevents invalid propagation (burden from unreachable systems).
-- Systems that receive direct lifestyle modifiers may have final burden with path=inf.
-- LIFESTYLE_ONLY_SYSTEMS (musculoskeletal, autonomic): no biomarkers; may always have path=inf.
-- SYSTEMS_WITH_DIRECT_LIFESTYLE_SCORING: from lifestyle_registry system_modifiers;
-  when they receive a lifestyle modifier, burden is direct, so exempt from zero_path_rule.
+- This is NOT a validation bypass for propagation; it permits direct system scoring when path=inf.
+- Allowlist is explicit in SSOT (direct_scoring_systems_allow_no_influence_path); not derived from system_modifiers.
 """
 
 from __future__ import annotations
@@ -17,6 +15,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Dict, List, Mapping, Optional, Sequence, Set
 
+from core.analytics.lifestyle_registry_loader import load_lifestyle_registry
 from core.contracts.arbitration_v1 import canonical_json_sha256
 
 VALIDATION_GATE_VERSION = "1.0.0"
@@ -24,14 +23,12 @@ VALIDATION_GATE_VERSION = "1.0.0"
 # Lifestyle-only: no biomarkers; may have no influence path; always allow direct scoring.
 LIFESTYLE_ONLY_SYSTEMS = frozenset({"musculoskeletal", "autonomic"})
 
-# Systems that can receive direct lifestyle modifiers (from lifestyle_registry system_modifiers).
-# When burden is from lifestyle, it is direct scoring—not propagation. Exempt from zero_path_rule.
-SYSTEMS_WITH_DIRECT_LIFESTYLE_SCORING = frozenset({
-    "cardiovascular", "metabolic", "hepatic", "immune", "musculoskeletal",
-})
-
-# Union: systems allowed to have burden with path=inf when they received lifestyle modifier.
-DIRECT_SCORING_EXEMPT_IDS = LIFESTYLE_ONLY_SYSTEMS | SYSTEMS_WITH_DIRECT_LIFESTYLE_SCORING
+# Explicit SSOT allowlist; NOT derived from system_modifiers (governance-controlled).
+_registry = load_lifestyle_registry()
+_direct_systems = set(
+    str(s) for s in (_registry.get("direct_scoring_systems_allow_no_influence_path") or [])
+)
+DIRECT_SCORING_ALLOWED_NO_PATH = frozenset(_direct_systems) | LIFESTYLE_ONLY_SYSTEMS
 
 
 @dataclass(frozen=True)
@@ -102,9 +99,9 @@ def run_validation_gate_v1(
     if recalculated != burden_hash:
         violations.append("burden_hash_mismatch")
 
-    # Direct scoring (lifestyle modifiers) exempt from zero_path_rule; propagation constraints remain.
-    # Only allowlisted systems (LIFESTYLE_ONLY + registry system_modifiers) may have burden with path=inf.
-    exempt_ids = (allow_lifestyle_only_systems_without_influence_paths or set()) & DIRECT_SCORING_EXEMPT_IDS
+    # Direct scoring exempt from zero_path_rule; propagation constraints remain.
+    # Only explicit SSOT allowlist (direct_scoring_systems_allow_no_influence_path + LIFESTYLE_ONLY).
+    exempt_ids = (allow_lifestyle_only_systems_without_influence_paths or set()) & DIRECT_SCORING_ALLOWED_NO_PATH
     for sid in supporting_systems:
         if sid in exempt_ids:
             continue
