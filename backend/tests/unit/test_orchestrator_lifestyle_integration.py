@@ -11,14 +11,11 @@ from pathlib import Path
 
 import pytest
 
-from core.analytics.validation_gate import LIFESTYLE_ONLY_SYSTEMS
+from core.analytics.validation_gate import DIRECT_SCORING_EXEMPT_IDS, LIFESTYLE_ONLY_SYSTEMS
 from core.canonical.normalize import normalize_biomarkers_with_metadata
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 from core.units.registry import UNIT_REGISTRY_VERSION, apply_unit_normalisation
 from tools.run_golden_panel import run_golden_panel
-
-CORE_SYSTEMS_MUST_NOT_BYPASS = {"cardiovascular", "metabolic", "hepatic", "immune"}
-
 
 def _empty_session():
     class _Empty:
@@ -61,27 +58,36 @@ def _collision_free_fixture() -> Path:
     return Path(__file__).parent.parent / "fixtures" / "golden_panel_160_collision_free.json"
 
 
-def test_validation_gate_bypass_lifestyle_only_systems():
-    """Zero-path bypass allowed only for musculoskeletal and autonomic; core systems must NOT bypass."""
+def test_validation_gate_allowlists():
+    """LIFESTYLE_ONLY_SYSTEMS remains exactly musculoskeletal, autonomic; direct scoring allowlist explicit."""
     assert LIFESTYLE_ONLY_SYSTEMS == {"musculoskeletal", "autonomic"}
-    for sid in CORE_SYSTEMS_MUST_NOT_BYPASS:
-        assert sid not in LIFESTYLE_ONLY_SYSTEMS, f"Core system {sid} must not bypass zero_path_rule"
+    assert LIFESTYLE_ONLY_SYSTEMS.issubset(DIRECT_SCORING_EXEMPT_IDS)
+    # Core systems with lifestyle modifiers are in direct-scoring allowlist (not propagation bypass)
+    assert {"cardiovascular", "metabolic", "hepatic", "immune"}.issubset(DIRECT_SCORING_EXEMPT_IDS)
 
 
-def test_core_systems_with_lifestyle_modifiers_require_influence_path(tmp_path):
-    """When cardiovascular/metabolic get lifestyle modifiers but have path=inf, run fails (validation)."""
-    # Orchestrator catches validation failure and returns error DTO; run_golden_panel then raises
-    # for missing explainability_report. Either way, the run must NOT succeed.
+def test_lifestyle_minimal_succeeds_with_direct_scoring(tmp_path):
+    """lifestyle_minimal.json succeeds; lifestyle key present; burdens change deterministically."""
     fixture = _collision_free_fixture()
     lifestyle_minimal = Path(__file__).parent.parent / "fixtures" / "lifestyle_minimal.json"
-    with pytest.raises(ValueError):
-        run_golden_panel(
-            fixture_path=fixture,
-            output_root=tmp_path,
-            run_id="core-fail",
-            write_narrative=False,
-            lifestyle_fixture_path=lifestyle_minimal,
-        )
+    _, result_no_life = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path,
+        run_id="no-life",
+        write_narrative=False,
+        lifestyle_fixture_path=None,
+    )
+    _, result_with_life = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path,
+        run_id="with-life",
+        write_narrative=False,
+        lifestyle_fixture_path=lifestyle_minimal,
+    )
+    assert "lifestyle" in result_with_life
+    burden_no = _get_burden_vector(result_no_life)
+    burden_with = _get_burden_vector(result_with_life)
+    assert burden_no != burden_with
 
 
 def test_no_lifestyle_input_omits_lifestyle_key(tmp_path):
