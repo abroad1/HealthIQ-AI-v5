@@ -1,0 +1,195 @@
+version: 1
+units:
+  height_cm: cm
+  weight_kg: kg
+  waist_circumference_cm: cm
+  systolic_bp: mmHg
+  diastolic_bp: mmHg
+  resting_heart_rate: bpm
+  alcohol_units_per_week: uk_units
+  sleep_hours: hours
+  sit_stand_value: mixed
+
+inputs:
+  height_cm:
+    type: numeric
+    min: 100
+    max: 250
+    required_for:
+      derived: [waist_to_height_ratio, bmi]
+  weight_kg:
+    type: numeric
+    min: 30
+    max: 250
+    required_for:
+      derived: [bmi]
+  waist_circumference_cm:
+    type: numeric
+    min: 40
+    max: 200
+    required_for:
+      derived: [waist_to_height_ratio]
+  systolic_bp:
+    type: numeric
+    min: 70
+    max: 250
+  diastolic_bp:
+    type: numeric
+    min: 40
+    max: 150
+  resting_heart_rate:
+    type: numeric
+    min: 30
+    max: 200
+  smoking_status:
+    type: categorical
+    values: [never, former, current]
+  alcohol_units_per_week:
+    type: numeric
+    min: 0
+    max: 200
+  sleep_hours:
+    type: numeric
+    min: 0
+    max: 24
+  sit_stand_test_type:
+    type: categorical
+    values: [reps_30s, time_5_reps_seconds]
+  sit_stand_value:
+    type: numeric
+    min: 0
+    max: 999
+
+derived:
+  waist_to_height_ratio:
+    type: ratio
+    numerator: waist_circumference_cm
+    denominator: height_cm
+    multiplier: 1.0
+  bmi:
+    type: formula
+    inputs: [weight_kg, height_cm]
+    formula: "weight_kg / ((height_cm/100)**2)"
+
+system_caps:
+  cardiovascular: 0.20
+  metabolic: 0.20
+  hepatic: 0.15
+  immune: 0.10
+  musculoskeletal: 0.10
+  renal: 0.10
+  hormonal: 0.10
+  autonomic: 0.10
+  hematological: 0.10
+
+system_modifiers:
+  cardiovascular:
+    systolic_bp:
+      type: thresholds_above
+      thresholds:
+        - { above: 120, modifier: 0.03 }
+        - { above: 140, modifier: 0.07 }
+      cap: 0.10
+    diastolic_bp:
+      type: thresholds_above
+      thresholds:
+        - { above: 80, modifier: 0.02 }
+        - { above: 90, modifier: 0.05 }
+      cap: 0.07
+    resting_heart_rate:
+      type: thresholds_above
+      thresholds:
+        - { above: 75, modifier: 0.02 }
+        - { above: 85, modifier: 0.05 }
+      cap: 0.05
+    smoking_status:
+      type: categorical_values
+      values:
+        never: 0.00
+        former: 0.03
+        current: 0.08
+      cap: 0.08
+    waist_to_height_ratio:
+      type: thresholds_above
+      thresholds:
+        - { above: 0.50, modifier: 0.04 }
+        - { above: 0.60, modifier: 0.08 }
+      cap: 0.08
+  metabolic:
+    waist_to_height_ratio:
+      type: thresholds_above
+      thresholds:
+        - { above: 0.50, modifier: 0.05 }
+        - { above: 0.60, modifier: 0.10 }
+      cap: 0.10
+    bmi:
+      type: thresholds_above
+      thresholds:
+        - { above: 25, modifier: 0.03 }
+        - { above: 30, modifier: 0.07 }
+      cap: 0.07
+    sleep_hours:
+      type: thresholds_below
+      thresholds:
+        - { below: 6, modifier: 0.05 }
+      cap: 0.05
+    alcohol_units_per_week:
+      type: thresholds_above
+      thresholds:
+        - { above: 14, modifier: 0.02 }
+        - { above: 21, modifier: 0.04 }
+      cap: 0.04
+    smoking_status:
+      type: categorical_values
+      values:
+        never: 0.00
+        former: 0.01
+        current: 0.03
+      cap: 0.03
+  hepatic:
+    alcohol_units_per_week:
+      type: thresholds_above
+      thresholds:
+        - { above: 14, modifier: 0.04 }
+        - { above: 21, modifier: 0.08 }
+      cap: 0.08
+    smoking_status:
+      type: categorical_values
+      values:
+        never: 0.00
+        former: 0.01
+        current: 0.02
+      cap: 0.02
+  immune:
+    sleep_hours:
+      type: thresholds_below
+      thresholds:
+        - { below: 6, modifier: 0.03 }
+      cap: 0.03
+    smoking_status:
+      type: categorical_values
+      values:
+        never: 0.00
+        former: 0.01
+        current: 0.03
+      cap: 0.03
+  musculoskeletal:
+    sit_stand_test_type:
+      type: passthrough
+    sit_stand_value:
+      type: sit_stand_phase1
+      cap: 0.05
+
+confidence_rules:
+  missing_input_confidence_penalty:
+    cardiovascular: 0.10
+    metabolic: 0.10
+    hepatic: 0.05
+    immune: 0.05
+    musculoskeletal: 0.05
+  core_inputs_by_system:
+    cardiovascular: [systolic_bp, diastolic_bp, smoking_status]
+    metabolic: [waist_circumference_cm, height_cm, weight_kg, sleep_hours]
+    hepatic: [alcohol_units_per_week]
+    immune: [sleep_hours, smoking_status]
+    musculoskeletal: [sit_stand_test_type, sit_stand_value]
