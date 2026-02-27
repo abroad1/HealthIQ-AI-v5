@@ -58,3 +58,6 @@ backend/healthiq_test.db
 
 # Local AI workspace (never commit)
 .claude/
+
+# Quarantined stash patch (scan hit; do not commit)
+docs/stash_archive/2026-02-27/stash2-lovable-pull-mixed.patch
