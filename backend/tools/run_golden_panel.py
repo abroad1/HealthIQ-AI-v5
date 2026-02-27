@@ -30,6 +30,9 @@ VOLATILE_FIELD_ALLOWLIST = {
     "processing_time_seconds",
 }
 
+# Keys to omit entirely when value is None (per schema)
+OMIT_IF_NONE_KEYS = frozenset({"lifestyle", "lifestyle_input_hash"})
+
 
 class _EmptySession:
     """Minimal query-chain stub to force deterministic empty prior snapshots."""
@@ -74,6 +77,8 @@ def _strip_volatile_fields(obj: Any) -> Any:
         out: Dict[str, Any] = {}
         for key, value in obj.items():
             if key in VOLATILE_FIELD_ALLOWLIST:
+                continue
+            if key in OMIT_IF_NONE_KEYS and value is None:
                 continue
             out[key] = _strip_volatile_fields(value)
         return out
@@ -320,11 +325,17 @@ def run_golden_panel(
     run_id: Optional[str] = None,
     write_narrative: bool = True,
     enable_llm: bool = False,
+    lifestyle_fixture_path: Optional[Path] = None,
 ) -> Tuple[Path, Dict[str, Any]]:
     fixture = fixture_path or _default_fixture_path()
     out_root = output_root or _default_output_root()
     run_dir = _ensure_run_dir(out_root, run_id)
     payload = _read_payload(fixture)
+    lifestyle_inputs: Optional[Dict[str, Any]] = None
+    if lifestyle_fixture_path is not None and lifestyle_fixture_path.exists():
+        lifestyle_payload = json.loads(lifestyle_fixture_path.read_text(encoding="utf-8"))
+        if isinstance(lifestyle_payload, dict):
+            lifestyle_inputs = lifestyle_payload
     collisions = _detect_canonical_collisions(payload["biomarkers"])
     if collisions:
         return run_dir, _write_collision_error_artifacts(
@@ -354,10 +365,19 @@ def run_golden_panel(
     }
 
     orchestrator = AnalysisOrchestrator(db_session=_EmptySession(), allow_llm=bool(enable_llm))
-    dto = orchestrator.run(biomarkers, payload["user"], assume_canonical=True)
+    dto = orchestrator.run(
+        biomarkers,
+        payload["user"],
+        assume_canonical=True,
+        lifestyle_inputs=lifestyle_inputs,
+    )
     dto_dump = dto.model_dump() if hasattr(dto, "model_dump") else dict(dto)
 
-    analysis_result = dto_dump
+    # Omit lifestyle key entirely when not provided (per schema)
+    if "lifestyle" in dto_dump and dto_dump["lifestyle"] is None:
+        analysis_result = {k: v for k, v in dto_dump.items() if k != "lifestyle"}
+    else:
+        analysis_result = dto_dump
     meta = analysis_result.get("meta", {}) if isinstance(analysis_result, dict) else {}
     insight_graph = meta.get("insight_graph", {}) if isinstance(meta, dict) else {}
     explainability_report = meta.get("explainability_report", {}) if isinstance(meta, dict) else {}
@@ -417,12 +437,19 @@ def _cli() -> int:
     parser.add_argument("--run-id", default=None, help="Output folder name (defaults to UTC timestamp)")
     parser.add_argument("--no-narrative", action="store_true", help="Skip writing narrative.txt")
     parser.add_argument(
+        "--lifestyle-fixture",
+        default=None,
+        metavar="<json_file>",
+        help="Path to optional lifestyle inputs JSON (UK canonical). When provided, runs LifestyleModifierEngine.",
+    )
+    parser.add_argument(
         "--enable-llm",
         action="store_true",
         help="Enable network LLM calls (default: disabled). Also controllable via HEALTHIQ_ENABLE_LLM=1.",
     )
     args = parser.parse_args()
     enable_llm = bool(args.enable_llm or _env_enable_llm())
+    lifestyle_fixture = Path(args.lifestyle_fixture) if args.lifestyle_fixture else None
 
     run_dir, result = run_golden_panel(
         fixture_path=Path(args.fixture),
@@ -430,6 +457,7 @@ def _cli() -> int:
         run_id=args.run_id,
         write_narrative=not args.no_narrative,
         enable_llm=enable_llm,
+        lifestyle_fixture_path=lifestyle_fixture,
     )
     status = str(result.get("status", "unknown"))
     error_type = str(result.get("error_type", "")).strip()

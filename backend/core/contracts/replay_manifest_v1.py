@@ -157,6 +157,10 @@ class ReplayManifestV1(BaseModel):
         default_factory=list,
         description="Prior analysis_ids linked for longitudinal state transition compute",
     )
+    lifestyle_input_hash: Optional[str] = Field(
+        default=None,
+        description="Sprint 20: SHA-256 of canonical JSON lifestyle_inputs when provided; omitted when not used",
+    )
 
     schema_hashes: Dict[str, str] = Field(
         default_factory=dict,

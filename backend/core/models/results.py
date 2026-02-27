@@ -170,3 +170,7 @@ class AnalysisDTO(BaseModel):
         default=None,
         description="Sprint 9: ReplayManifestV1 for determinism/replay (version stamps + schema hashes)"
     )
+    lifestyle: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Sprint 20: Lifestyle modifier artifact (derived_inputs, system_modifiers, confidence_adjustments) when lifestyle_inputs provided",
+    )
