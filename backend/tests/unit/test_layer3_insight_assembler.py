@@ -22,23 +22,6 @@ from tools.run_golden_panel import (
 )
 
 
-def _empty_session():
-    class _Empty:
-        def query(self, *args, **kwargs):
-            return self
-
-        def join(self, *args, **kwargs):
-            return self
-
-        def filter(self, *args, **kwargs):
-            return self
-
-        def all(self):
-            return []
-
-    return _Empty()
-
-
 def _prepare_biomarkers(biomarkers: dict) -> dict:
     normalized = normalize_biomarkers_with_metadata(biomarkers)
     filtered = _filter_unit_registry_supported(normalized)
@@ -112,12 +95,19 @@ def test_determinism_twice_same_dto(dto_no_lifestyle):
     assert out1.model_dump(mode="json") == out2.model_dump(mode="json")
 
 
-def test_exactly_10_cards(dto_no_lifestyle):
-    """Exactly 10 insight cards must exist."""
+def test_exactly_len_system_card_ids_cards(dto_no_lifestyle):
+    """Exactly len(SYSTEM_CARD_IDS) insight cards must exist."""
     out = assemble_layer3_insights(dto_no_lifestyle)
-    assert len(out.insights) == 10
+    assert len(out.insights) == len(SYSTEM_CARD_IDS)
     ids = [c.insight_id for c in out.insights]
     assert sorted(ids) == sorted(SYSTEM_CARD_IDS)
+
+
+def test_nutritional_card_exists(dto_no_lifestyle):
+    """Nutritional system card must be present."""
+    out = assemble_layer3_insights(dto_no_lifestyle)
+    nutritional = next((c for c in out.insights if c.insight_id == "nutritional__system_pressure"), None)
+    assert nutritional is not None
 
 
 def test_ordering_action_watch_info_then_alphabetical(dto_no_lifestyle):
@@ -178,3 +168,12 @@ def test_with_lifestyle_has_lifestyle_evidence(dto_with_lifestyle):
             has_lifestyle = True
             break
     assert has_lifestyle, "Expected at least one card with lifestyle evidence when lifestyle provided"
+
+
+def test_no_global_confidence_cap_when_cards_have_no_biomarkers_evidence(dto_no_lifestyle):
+    """Cards have no biomarkers in evidence; DTO with biomarkers missing ref must NOT cap confidence globally."""
+    out = assemble_layer3_insights(dto_no_lifestyle)
+    for c in out.insights:
+        assert c.evidence.biomarkers is None or len(c.evidence.biomarkers or []) == 0
+    high_count = sum(1 for c in out.insights if c.confidence == "high")
+    assert high_count >= 1, "Without biomarkers in evidence, confidence should remain high (no global cap)"

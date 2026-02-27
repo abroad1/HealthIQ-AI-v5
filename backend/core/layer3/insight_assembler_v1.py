@@ -80,11 +80,11 @@ def _build_evidence_block(
     dto: "AnalysisDTO",
     system_id: str,
     lifestyle_modifiers: Optional[Dict[str, Any]],
-    any_biomarker_missing_ref: bool,
 ) -> Tuple[EvidenceBlock, bool]:
     """
     Build evidence block for a system card.
-    Returns (block, has_missing_ref) for confidence capping.
+    Returns (block, has_missing_ref_in_evidence) for per-card confidence capping.
+    Cap applies only if this card's evidence includes biomarkers with missing ref; otherwise False.
     Includes: system burdens (base+adjusted), lifestyle top 1-3 modifiers if present.
     """
     meta = dto.meta or {}
@@ -131,7 +131,16 @@ def _build_evidence_block(
     if lifestyle_entries:
         evidence_dict["lifestyle"] = lifestyle_entries
 
-    return EvidenceBlock(**evidence_dict), any_biomarker_missing_ref
+    block = EvidenceBlock(**evidence_dict)
+    has_missing_ref = False
+    biomarkers_in_evidence = block.biomarkers or []
+    for b in biomarkers_in_evidence:
+        ref_min = getattr(b, "reference_min", None)
+        ref_max = getattr(b, "reference_max", None)
+        if ref_min is None or ref_max is None:
+            has_missing_ref = True
+            break
+    return block, has_missing_ref
 
 
 def assemble_layer3_insights(dto: "AnalysisDTO") -> Layer3InsightsV1:
@@ -142,13 +151,6 @@ def assemble_layer3_insights(dto: "AnalysisDTO") -> Layer3InsightsV1:
     adjusted = _get_adjusted_burdens(dto)
     lifestyle = dto.lifestyle
     lifestyle_modifiers = lifestyle if isinstance(lifestyle, dict) else None
-
-    all_biomarkers_missing_ref = False
-    for b in dto.biomarkers or []:
-        bdict = b.model_dump() if hasattr(b, "model_dump") else dict(b)
-        if _has_missing_ref_range(bdict):
-            all_biomarkers_missing_ref = True
-            break
 
     cards: List[InsightCard] = []
     for insight_id in SYSTEM_CARD_IDS:
@@ -173,11 +175,12 @@ def assemble_layer3_insights(dto: "AnalysisDTO") -> Layer3InsightsV1:
 
         confidence = _confidence_from_penalty(confidence_penalty)
         evidence_block, has_missing_ref = _build_evidence_block(
-            dto, system_id, lifestyle_modifiers, all_biomarkers_missing_ref
+            dto, system_id, lifestyle_modifiers
         )
         if has_missing_ref and confidence == "high":
             confidence = "medium"
 
+        # exclude_none removes None but not empty lists; filter empty lists and reconstruct to satisfy contract (omit empty sections)
         evidence_d = evidence_block.model_dump(exclude_none=True)
         filtered_evidence: Dict[str, Any] = {}
         for k, v in evidence_d.items():
