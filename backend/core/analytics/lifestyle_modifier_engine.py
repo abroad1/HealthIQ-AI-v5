@@ -8,7 +8,20 @@ No fuzzy logic. No file I/O. Accepts pre-loaded registry dict.
 from __future__ import annotations
 
 import ast
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
+
+# UK canonical plausible ranges (strict). Values outside these are treated as invalid
+# for derived computation; recorded in invalid_input_plausibility; engine does not crash.
+UK_PLAUSIBLE_RANGES: Dict[str, Tuple[float, float]] = {
+    "height_cm": (120.0, 230.0),
+    "weight_kg": (30.0, 250.0),
+    "waist_circumference_cm": (40.0, 200.0),
+    "systolic_bp": (70.0, 250.0),
+    "diastolic_bp": (40.0, 150.0),
+    "resting_heart_rate": (30.0, 220.0),
+    "sleep_hours": (0.0, 16.0),
+    "alcohol_units_per_week": (0.0, 200.0),
+}
 
 
 def _r4(v: float) -> float:
@@ -21,6 +34,7 @@ class LifestyleModifierEngine:
 
     def __init__(self, registry: dict) -> None:
         self._registry = registry
+        self._sit_stand = registry.get("sit_stand", {})
         self._derived_spec = registry.get("derived", {})
         self._inputs_spec = registry.get("inputs", {})
         self._system_caps = registry.get("system_caps", {})
@@ -63,6 +77,19 @@ class LifestyleModifierEngine:
                         pass
         return out
 
+    def _check_uk_plausible(self, lifestyle_inputs: dict) -> List[Dict[str, Any]]:
+        """Return list of {field, value, reason} for inputs outside UK plausible range."""
+        out: List[Dict[str, Any]] = []
+        for field, (lo, hi) in UK_PLAUSIBLE_RANGES.items():
+            val = lifestyle_inputs.get(field)
+            f = _to_float(val)
+            if f is not None:
+                if f < lo:
+                    out.append({"field": field, "value": _to_json_safe(val), "reason": f"below UK plausible min {lo}"})
+                elif f > hi:
+                    out.append({"field": field, "value": _to_json_safe(val), "reason": f"above UK plausible max {hi}"})
+        return sorted(out, key=lambda x: x["field"])
+
     def validate_inputs(self, lifestyle_inputs: dict) -> List[str]:
         """Return list of validation errors. Does not raise by default."""
         errors: List[str] = []
@@ -95,7 +122,10 @@ class LifestyleModifierEngine:
         lifestyle_inputs: dict,
     ) -> dict:
         """Apply lifestyle modifiers to base burdens. Returns full result contract."""
-        derived = self.compute_derived(lifestyle_inputs)
+        invalid_plausibility = self._check_uk_plausible(lifestyle_inputs)
+        invalid_fields = {x["field"] for x in invalid_plausibility}
+        filtered_inputs = {k: (None if k in invalid_fields else v) for k, v in lifestyle_inputs.items()}
+        derived = self.compute_derived(filtered_inputs)
         validated = {**lifestyle_inputs, **derived}
         input_errors = self.validate_inputs(lifestyle_inputs)
         system_modifiers_out: Dict[str, dict] = {}
@@ -110,6 +140,7 @@ class LifestyleModifierEngine:
             "derived_inputs": {k: v for k, v in sorted(derived.items())},
             "validated_inputs": {k: _to_json_safe(v) for k, v in sorted(validated.items())},
             "input_errors": input_errors,
+            "invalid_input_plausibility": invalid_plausibility,
             "system_modifiers": system_modifiers_out,
             "adjusted_system_burdens": adjusted,
         }
@@ -178,6 +209,9 @@ class LifestyleModifierEngine:
         validated: dict,
     ) -> Optional[float]:
         val = validated.get(input_name)
+        # thresholds_above and thresholds_below: choose the MOST SEVERE single threshold met
+        # (highest modifier), not cumulative. Rationale: avoids double-counting; deterministic;
+        # clinically interpretable.
         if rule_type == "thresholds_above":
             f = _to_float(val)
             if f is None:
@@ -213,10 +247,16 @@ class LifestyleModifierEngine:
             v = _to_float(val)
             if v is None:
                 return 0.0
-            if test_type == "reps_30s":
-                return 0.05 if v < 12 else 0.0
-            if test_type == "time_5_reps_seconds":
-                return 0.05 if v > 15 else 0.0
+            cfg = self._sit_stand.get(str(test_type or ""), {})
+            thresh = _to_float(cfg.get("threshold"))
+            mod = _to_float(cfg.get("modifier")) or 0.0
+            direction = str(cfg.get("direction", "")).strip().lower()
+            if thresh is None:
+                return 0.0
+            if direction == "below" and v < thresh:
+                return mod
+            if direction == "above" and v > thresh:
+                return mod
             return 0.0
         return None
 
