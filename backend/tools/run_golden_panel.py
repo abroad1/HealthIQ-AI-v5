@@ -15,7 +15,8 @@ from datetime import datetime, UTC
 from pathlib import Path
 from typing import Any, Dict, Mapping, Optional, Tuple
 
-from core.canonical.normalize import normalize_biomarkers_with_metadata
+from core.canonical.normalize import normalize_biomarkers_with_metadata, detect_canonical_collisions
+from core.canonical.errors import CanonicalCollisionError
 from core.canonical.alias_registry_service import get_alias_registry_service
 from core.contracts.insight_graph_v1 import InsightGraphV1
 from core.layer3.insight_assembler_v1 import assemble_layer3_insights
@@ -266,29 +267,6 @@ def _coerce_to_ssot_units(normalized: Mapping[str, Any]) -> Dict[str, Any]:
     return out
 
 
-def _detect_canonical_collisions(raw_biomarkers: Mapping[str, Any]) -> list[dict[str, Any]]:
-    """Deterministically detect duplicate canonical targets from raw input labels."""
-    alias_service = get_alias_registry_service()
-    canonical_to_raw: dict[str, set[str]] = {}
-    for raw_key in sorted(str(k) for k in raw_biomarkers.keys()):
-        canonical_id = str(alias_service.resolve(raw_key)).strip()
-        if not canonical_id or canonical_id.startswith("unmapped_"):
-            continue
-        canonical_to_raw.setdefault(canonical_id, set()).add(raw_key)
-    collisions: list[dict[str, Any]] = []
-    for canonical_id in sorted(canonical_to_raw.keys()):
-        raw_markers = sorted(canonical_to_raw[canonical_id])
-        if len(raw_markers) > 1:
-            collisions.append(
-                {
-                    "canonical_id": canonical_id,
-                    "raw_markers": raw_markers,
-                    "reason": "multiple_raw_inputs_resolve_to_same_canonical_id",
-                }
-            )
-    return collisions
-
-
 def _write_collision_error_artifacts(
     *,
     run_dir: Path,
@@ -337,7 +315,7 @@ def run_golden_panel(
         lifestyle_payload = json.loads(lifestyle_fixture_path.read_text(encoding="utf-8"))
         if isinstance(lifestyle_payload, dict):
             lifestyle_inputs = lifestyle_payload
-    collisions = _detect_canonical_collisions(payload["biomarkers"])
+    collisions = detect_canonical_collisions(payload["biomarkers"])
     if collisions:
         return run_dir, _write_collision_error_artifacts(
             run_dir=run_dir,
@@ -347,10 +325,8 @@ def run_golden_panel(
 
     try:
         biomarkers = normalize_biomarkers_with_metadata(payload["biomarkers"])
-    except Exception as err:
-        if type(err).__name__ != "CanonicalCollisionError":
-            raise
-        fallback_collisions = _detect_canonical_collisions(payload["biomarkers"])
+    except CanonicalCollisionError:
+        fallback_collisions = detect_canonical_collisions(payload["biomarkers"])
         return run_dir, _write_collision_error_artifacts(
             run_dir=run_dir,
             fixture=fixture,

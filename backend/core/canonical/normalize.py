@@ -2,9 +2,11 @@
 Biomarker normalization - maps aliases to canonical names and builds BiomarkerPanel.
 """
 
-from typing import Dict, Any, List, Optional, Tuple
-from core.canonical.resolver import CanonicalResolver
+from typing import Dict, Any, List, Mapping, Optional, Tuple
+
 from core.canonical.alias_registry_service import AliasRegistryService, get_alias_registry_service
+from core.canonical.resolver import CanonicalResolver
+from core.canonical.errors import CanonicalCollisionError
 from core.models.biomarker import BiomarkerPanel, BiomarkerValue
 
 
@@ -47,10 +49,12 @@ class BiomarkerNormalizer:
         Returns:
             Tuple of (normalized BiomarkerPanel, list of unmapped keys)
         """
-        normalized_values = {}
-        unmapped_keys = []
-        
-        for key, value in raw_biomarkers.items():
+        normalized_values: Dict[str, BiomarkerValue] = {}
+        unmapped_keys: List[str] = []
+        canonical_to_first_raw: Dict[str, str] = {}
+
+        for key in sorted(str(k) for k in raw_biomarkers.keys()):
+            value = raw_biomarkers[key]
             # Skip re-normalizing already flagged biomarkers
             if key.startswith("unmapped_"):
                 print(f"[WARN] Skipping already-flagged unmapped key: '{key}'")
@@ -114,20 +118,15 @@ class BiomarkerNormalizer:
                             extra[k] = value[k]
 
                 if canonical_key in normalized_values and key != canonical_key:
-                    unmapped_key = f"unmapped_{key}"
-                    unmapped_keys.append(key)
-                    print(
-                        f"[WARN] Collision detected for '{canonical_key}' from raw key '{key}'. "
-                        f"Preserving existing value and storing '{unmapped_key}' to protect data integrity."
-                    )
-                    normalized_values[unmapped_key] = BiomarkerValue(
-                        name=key,
-                        value=numeric_value,
-                        unit=unit,
-                        reference_range=reference_range,
-                        **extra
+                    first_raw = canonical_to_first_raw[canonical_key]
+                    raw_markers = sorted([first_raw, key])
+                    raise CanonicalCollisionError(
+                        canonical_id=canonical_key,
+                        raw_markers=raw_markers,
+                        reason="multiple_raw_inputs_resolve_to_same_canonical_id",
                     )
                 else:
+                    canonical_to_first_raw[canonical_key] = key
                     normalized_values[canonical_key] = BiomarkerValue(
                         name=canonical_key,
                         value=numeric_value,
@@ -235,3 +234,29 @@ def normalize_biomarkers_with_metadata(raw_biomarkers: Dict[str, Any]) -> Dict[s
             result[name]["timestamp"] = biomarker_value.timestamp
     
     return result
+
+
+def detect_canonical_collisions(raw_biomarkers: Mapping[str, Any]) -> List[Dict[str, Any]]:
+    """
+    Deterministically detect duplicate canonical targets from raw input labels.
+    Shared by golden runner and API for consistent collision reporting.
+    """
+    alias_service = get_alias_registry_service()
+    canonical_to_raw: Dict[str, set] = {}
+    for raw_key in sorted(str(k) for k in raw_biomarkers.keys()):
+        canonical_id = str(alias_service.resolve(raw_key)).strip()
+        if not canonical_id or canonical_id.startswith("unmapped_"):
+            continue
+        canonical_to_raw.setdefault(canonical_id, set()).add(raw_key)
+    collisions: List[Dict[str, Any]] = []
+    for canonical_id in sorted(canonical_to_raw.keys()):
+        raw_markers = sorted(canonical_to_raw[canonical_id])
+        if len(raw_markers) > 1:
+            collisions.append(
+                {
+                    "canonical_id": canonical_id,
+                    "raw_markers": raw_markers,
+                    "reason": "multiple_raw_inputs_resolve_to_same_canonical_id",
+                }
+            )
+    return collisions

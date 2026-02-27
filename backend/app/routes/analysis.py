@@ -42,7 +42,8 @@ from core.models.user import User
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 from core.pipeline.events import stream_status
 from core.dto.builders import build_analysis_result_dto
-from core.canonical.normalize import normalize_biomarkers_with_metadata
+from core.canonical.normalize import normalize_biomarkers_with_metadata, detect_canonical_collisions
+from core.canonical.errors import CanonicalCollisionError
 from core.context import ContextFactory, ValidationError
 from core.units.registry import apply_unit_normalisation, UnitConversionError, UNIT_REGISTRY_VERSION
 
@@ -88,7 +89,17 @@ async def start_analysis(request: AnalysisStartRequest):
         
         # Normalize incoming raw biomarkers to canonical form, preserving reference_range metadata
         # This ensures lab-provided ranges are not lost before orchestrator processing
-        normalized = normalize_biomarkers_with_metadata(request.biomarkers)
+        try:
+            normalized = normalize_biomarkers_with_metadata(request.biomarkers)
+        except CanonicalCollisionError:
+            collisions = detect_canonical_collisions(request.biomarkers)
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "error_type": "canonical_collision",
+                    "collisions": collisions,
+                },
+            )
 
         # Sprint 1: Convert to base units at ingestion (Layer A). Deterministic; rejects unknown units.
         try:
