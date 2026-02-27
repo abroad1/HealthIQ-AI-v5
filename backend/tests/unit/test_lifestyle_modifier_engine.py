@@ -6,7 +6,10 @@ Pure unit tests. No DB. No external calls. Registry dict passed directly.
 
 import pytest
 
-from core.analytics.lifestyle_modifier_engine import LifestyleModifierEngine
+from core.analytics.lifestyle_modifier_engine import (
+    LifestyleModifierEngine,
+    UK_PLAUSIBLE_RANGES,
+)
 from core.analytics.lifestyle_registry_loader import load_lifestyle_registry
 
 
@@ -250,3 +253,24 @@ def test_system_in_modifiers_but_absent_from_base_reported(engine):
     assert adj["base_burden"] == 0.0
     assert adj["modifier"] == 0.05
     assert adj["adjusted_burden"] == 0.05
+
+
+# --- 9) Governance: plausibility subset of admissibility ---
+def test_plausibility_ranges_are_subset_of_yaml_admissibility_ranges(registry):
+    """Plausibility bounds must be a subset of SSOT admissibility bounds for every field in both."""
+    # Plausibility-only fields (not in YAML inputs validation): allowed temporarily; we skip them.
+    inputs_spec = registry.get("inputs", {})
+    for field, (plaus_min, plaus_max) in UK_PLAUSIBLE_RANGES.items():
+        spec = inputs_spec.get(field)
+        if spec is None or spec.get("type") != "numeric":
+            continue
+        yaml_min = spec.get("min")
+        yaml_max = spec.get("max")
+        if yaml_min is None or yaml_max is None:
+            continue
+        assert yaml_min <= plaus_min, (
+            f"{field}: admissibility_min={yaml_min} must be <= plausibility_min={plaus_min}"
+        )
+        assert yaml_max >= plaus_max, (
+            f"{field}: admissibility_max={yaml_max} must be >= plausibility_max={plaus_max}"
+        )

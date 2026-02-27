@@ -18,7 +18,7 @@ UK_PLAUSIBLE_RANGES: Dict[str, Tuple[float, float]] = {
     "waist_circumference_cm": (40.0, 200.0),
     "systolic_bp": (70.0, 250.0),
     "diastolic_bp": (40.0, 150.0),
-    "resting_heart_rate": (30.0, 220.0),
+    "resting_heart_rate": (30.0, 200.0),
     "sleep_hours": (0.0, 16.0),
     "alcohol_units_per_week": (0.0, 200.0),
 }
