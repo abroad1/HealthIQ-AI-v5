@@ -37,7 +37,6 @@ from core.analytics.explainability_builder import (
 )
 from core.analytics.bio_stats_engine import build_bio_stats_v1, BIO_STATS_ENGINE_VERSION
 from core.analytics.system_burden_engine import (
-    ALLOWED_BURDEN_SYSTEM_IDS,
     SYSTEM_BURDEN_ENGINE_VERSION,
     load_burden_registry,
     audit_burden_registry_system_ids,
@@ -1699,10 +1698,15 @@ class AnalysisOrchestrator:
             meta["explainability_report"] = exp_dump
             # Base system vectors must contain canonical systems only.
             # Derived diagnostic components are stored separately in derived_components.
+            # Canonical system IDs are SSOT-derived from backend/ssot/system_burden_registry.yaml.
+            canonical_ids = frozenset(
+                str(row.get("system", "")).strip()
+                for row in burden_registry_rows.values()
+                if isinstance(row, dict) and str(row.get("system", "")).strip()
+            )
             raw_full = dict(getattr(insight_graph, "raw_system_burden_vector", {}))
             adj_full = dict(getattr(insight_graph, "adjusted_system_burden_vector", {}))
             cap_full = dict(getattr(insight_graph, "system_capacity_scores", {}))
-            canonical_ids = ALLOWED_BURDEN_SYSTEM_IDS
             raw_canonical = {k: float(v) for k, v in raw_full.items() if k in canonical_ids}
             adj_canonical = {k: float(v) for k, v in adj_full.items() if k in canonical_ids}
             cap_canonical = {k: int(v) for k, v in cap_full.items() if k in canonical_ids}
