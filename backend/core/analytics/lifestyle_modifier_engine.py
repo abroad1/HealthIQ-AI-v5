@@ -8,7 +8,20 @@ No fuzzy logic. No file I/O. Accepts pre-loaded registry dict.
 from __future__ import annotations
 
 import ast
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
+
+# UK canonical plausible ranges (strict). Values outside these are treated as invalid
+# for derived computation; recorded in invalid_input_plausibility; engine does not crash.
+UK_PLAUSIBLE_RANGES: Dict[str, Tuple[float, float]] = {
+    "height_cm": (120.0, 230.0),
+    "weight_kg": (30.0, 250.0),
+    "waist_circumference_cm": (40.0, 200.0),
+    "systolic_bp": (70.0, 250.0),
+    "diastolic_bp": (40.0, 150.0),
+    "resting_heart_rate": (30.0, 220.0),
+    "sleep_hours": (0.0, 16.0),
+    "alcohol_units_per_week": (0.0, 200.0),
+}
 
 
 def _r4(v: float) -> float:
@@ -64,6 +77,19 @@ class LifestyleModifierEngine:
                         pass
         return out
 
+    def _check_uk_plausible(self, lifestyle_inputs: dict) -> List[Dict[str, Any]]:
+        """Return list of {field, value, reason} for inputs outside UK plausible range."""
+        out: List[Dict[str, Any]] = []
+        for field, (lo, hi) in UK_PLAUSIBLE_RANGES.items():
+            val = lifestyle_inputs.get(field)
+            f = _to_float(val)
+            if f is not None:
+                if f < lo:
+                    out.append({"field": field, "value": _to_json_safe(val), "reason": f"below UK plausible min {lo}"})
+                elif f > hi:
+                    out.append({"field": field, "value": _to_json_safe(val), "reason": f"above UK plausible max {hi}"})
+        return sorted(out, key=lambda x: x["field"])
+
     def validate_inputs(self, lifestyle_inputs: dict) -> List[str]:
         """Return list of validation errors. Does not raise by default."""
         errors: List[str] = []
@@ -96,7 +122,10 @@ class LifestyleModifierEngine:
         lifestyle_inputs: dict,
     ) -> dict:
         """Apply lifestyle modifiers to base burdens. Returns full result contract."""
-        derived = self.compute_derived(lifestyle_inputs)
+        invalid_plausibility = self._check_uk_plausible(lifestyle_inputs)
+        invalid_fields = {x["field"] for x in invalid_plausibility}
+        filtered_inputs = {k: (None if k in invalid_fields else v) for k, v in lifestyle_inputs.items()}
+        derived = self.compute_derived(filtered_inputs)
         validated = {**lifestyle_inputs, **derived}
         input_errors = self.validate_inputs(lifestyle_inputs)
         system_modifiers_out: Dict[str, dict] = {}
@@ -111,6 +140,7 @@ class LifestyleModifierEngine:
             "derived_inputs": {k: v for k, v in sorted(derived.items())},
             "validated_inputs": {k: _to_json_safe(v) for k, v in sorted(validated.items())},
             "input_errors": input_errors,
+            "invalid_input_plausibility": invalid_plausibility,
             "system_modifiers": system_modifiers_out,
             "adjusted_system_burdens": adjusted,
         }

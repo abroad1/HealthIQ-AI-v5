@@ -200,7 +200,46 @@ def test_sit_stand_time_5_reps_low_no_modifier(engine):
     assert ms["capped_total_modifier"] == 0.0
 
 
-# --- 7) Missing base_system_burdens key ---
+# --- 7) UK canonical plausible validation ---
+def test_valid_inputs_unchanged_outputs(engine):
+    """Valid inputs within UK plausible ranges produce identical outputs to pre-validation behaviour."""
+    inputs = {
+        "height_cm": 180,
+        "weight_kg": 90,
+        "waist_circumference_cm": 95,
+        "systolic_bp": 145,
+        "diastolic_bp": 88,
+        "resting_heart_rate": 72,
+        "smoking_status": "never",
+        "alcohol_units_per_week": 7,
+        "sleep_hours": 6.5,
+    }
+    base = {"cardiovascular": 0.1, "metabolic": 0.1}
+    result = engine.apply(base, inputs)
+    assert result["invalid_input_plausibility"] == []
+    assert "bmi" in result["derived_inputs"]
+    assert "waist_to_height_ratio" in result["derived_inputs"]
+    assert result["derived_inputs"]["bmi"] == 27.7778
+    assert abs(result["derived_inputs"]["waist_to_height_ratio"] - 0.5278) < 0.0001
+
+
+def test_implausible_height_skips_derived_and_records_adjustment(engine):
+    """Implausible height (70, below UK min 120) skips bmi/waist_to_height_ratio; records invalid_input_plausibility."""
+    inputs = {
+        "height_cm": 70,
+        "weight_kg": 70,
+        "waist_circumference_cm": 80,
+    }
+    base = {"metabolic": 0.1}
+    result = engine.apply(base, inputs)
+    assert len(result["invalid_input_plausibility"]) == 1
+    assert result["invalid_input_plausibility"][0]["field"] == "height_cm"
+    assert "below UK plausible min 120" in result["invalid_input_plausibility"][0]["reason"]
+    assert "bmi" not in result["derived_inputs"]
+    assert "waist_to_height_ratio" not in result["derived_inputs"]
+
+
+# --- 8) Missing base_system_burdens key ---
 def test_system_in_modifiers_but_absent_from_base_reported(engine):
     """System present in system_modifiers but absent from base_system_burdens is reported with base_burden=0.0."""
     inputs = {"sit_stand_test_type": "reps_30s", "sit_stand_value": 10}
