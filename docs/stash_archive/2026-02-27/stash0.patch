@@ -1,0 +1,251 @@
+﻿diff --git a/TEST_LEDGER.md b/TEST_LEDGER.md
+index ba98c9a..3c93e54 100644
+Binary files a/TEST_LEDGER.md and b/TEST_LEDGER.md differ
+diff --git a/backend/app/routes/analysis.py b/backend/app/routes/analysis.py
+index 58ed3c8..f14529b 100644
+--- a/backend/app/routes/analysis.py
++++ b/backend/app/routes/analysis.py
+@@ -243,3 +243,53 @@ def load_fixture_analysis():
+     """
+     from tests.fixtures.sample_analysis import SAMPLE_ANALYSIS
+     return SAMPLE_ANALYSIS
++
++
++@router.get("/stream/{analysis_id}")
++def stream_analysis(analysis_id: str):
++    """
++    SSE stub for demo/testing. Streams a tiny, deterministic sequence when analysis_id == 'fixture'.
++    Does not integrate with the live pipeline yet.
++    """
++    from fastapi import Response
++    from fastapi.responses import StreamingResponse
++    import json
++    from datetime import datetime, timezone
++    from typing import Iterator
++    
++    if analysis_id != "fixture":
++        return Response(
++            content=json.dumps({"detail": "analysis_id not found in demo mode"}),
++            media_type="application/json",
++            status_code=status.HTTP_404_NOT_FOUND,
++        )
++    
++    def _sse_lines(payloads: list[dict]) -> Iterator[bytes]:
++        # Emit standard SSE "data:" lines separated by blank line.
++        for p in payloads:
++            # optional small pause to emulate streaming; keep total under ~200ms
++            # time.sleep(0.05)
++            chunk = "data: " + json.dumps(p, separators=(",", ":")) + "\n\n"
++            yield chunk.encode("utf-8")
++    
++    now = datetime.now(timezone.utc).isoformat()
++    # Minimal shape, intentionally small; does NOT depend on live parsers.
++    result = {
++        "success": True,
++        "message": "Demo analysis completed",
++        "analysis_id": "analysis_fixture",
++        "timestamp": now,
++        "parsed_data": {"biomarkers": []},
++        "clusters": [],
++        "insights": [],
++        "red_flags": [],
++        "confidence_overall": 1.0,
++        "diagnostics": {"timing_ms": 0},
++    }
++    
++    payloads = [
++        {"phase": "starting", "analysis_id": "analysis_fixture", "ts": now},
++        {"phase": "completed", "analysis_id": "analysis_fixture", "result": result, "ts": now},
++    ]
++    
++    return StreamingResponse(_sse_lines(payloads), media_type="text/event-stream")
+\ No newline at end of file
+diff --git a/backend/core/dto/builders.py b/backend/core/dto/builders.py
+index 33cb3f9..5a360ec 100644
+--- a/backend/core/dto/builders.py
++++ b/backend/core/dto/builders.py
+@@ -2,11 +2,11 @@
+ DTO builders - transform internal objects into frontend-safe dictionaries.
+ """
+ 
+-from typing import Dict, Any, List
++from typing import Dict, Any, List, Optional
+ from datetime import datetime, UTC
+ 
+ from core.models.biomarker import BiomarkerCluster, BiomarkerInsight
+-from core.models.results import AnalysisResult, AnalysisSummary, BiomarkerScore
++from core.models.results import AnalysisResult, AnalysisSummary, BiomarkerScore, DerivedMetricDTO, QRISK3DTO
+ from core.models.insight import Insight, InsightSynthesisResult
+ 
+ 
+@@ -281,3 +281,69 @@ def build_error_dto(error_message: str, error_code: str = "UNKNOWN_ERROR") -> Di
+         "message": error_message,
+         "timestamp": datetime.now(UTC).isoformat()
+     }
++
++
++def build_derived_metric_dto(
++    id: str,
++    value: Optional[float],
++    unit: Optional[str],
++    band: Optional[str],
++    method: Optional[str] = None
++) -> DerivedMetricDTO:
++    """
++    Build DerivedMetricDTO instance.
++    
++    Pure helper function that only constructs the DTO; does not read external state or call engines.
++    
++    Args:
++        id: Derived metric identifier (e.g. 'tg_hdl', 'chol_hdl', 'alt_ast', 'urea_creatinine', 'nlr', 'homa_ir', 'ag_ratio')
++        value: Computed metric value
++        unit: Unit of measurement
++        band: Risk band: 'optimal', 'borderline', 'high', or 'low'
++        method: Computation method: 'computed' or 'from_input'
++        
++    Returns:
++        DerivedMetricDTO instance
++    """
++    return DerivedMetricDTO(
++        id=id,
++        value=value,
++        unit=unit,
++        band=band,
++        method=method
++    )
++
++
++def build_qrisk3_dto(
++    risk_10y_percent: float,
++    band: str,
++    primary_drivers: List[str],
++    confidence: float,
++    inputs_used: List[str],
++    version: str = "qrisk3.v1"
++) -> QRISK3DTO:
++    """
++    Build QRISK3DTO instance.
++    
++    Pure helper function that only constructs the DTO; does not read external state or call engines.
++    
++    Args:
++        risk_10y_percent: 10-year cardiovascular risk percentage
++        band: Risk band classification: 'low', 'moderate', or 'high'
++        primary_drivers: Primary risk drivers (e.g. ['Age', 'Chol:HDL 5.2', 'SBP 148'])
++        confidence: Confidence score (0-1) from completeness gate
++        inputs_used: Names/keys of inputs present
++        version: QRISK3 version identifier
++        
++    Returns:
++        QRISK3DTO instance
++    """
++    return QRISK3DTO(
++        id="qrisk3",
++        risk_10y_percent=risk_10y_percent,
++        band=band,  # type: ignore
++        primary_drivers=primary_drivers,
++        confidence=confidence,
++        inputs_used=inputs_used,
++        version=version
++    )
+diff --git a/backend/core/models/__init__.py b/backend/core/models/__init__.py
+index 988fa32..be59e24 100644
+--- a/backend/core/models/__init__.py
++++ b/backend/core/models/__init__.py
+@@ -12,7 +12,7 @@ from .biomarker import (
+ )
+ from .user import User, UserContext
+ from .context import AnalysisContext, AnalysisPhase, AnalysisEvent
+-from .results import AnalysisResult, AnalysisSummary, BiomarkerScore, ClusterHit, InsightResult, AnalysisDTO
++from .results import AnalysisResult, AnalysisSummary, BiomarkerScore, ClusterHit, InsightResult, AnalysisDTO, DerivedMetricDTO, QRISK3DTO
+ 
+ __all__ = [
+     "BiomarkerDefinition",
+@@ -32,4 +32,6 @@ __all__ = [
+     "ClusterHit",
+     "InsightResult",
+     "AnalysisDTO",
++    "DerivedMetricDTO",
++    "QRISK3DTO",
+ ]
+diff --git a/backend/core/models/results.py b/backend/core/models/results.py
+index 9d451f3..c22aab2 100644
+--- a/backend/core/models/results.py
++++ b/backend/core/models/results.py
+@@ -2,7 +2,7 @@
+ Analysis results models - immutable Pydantic v2 models for analysis results.
+ """
+ 
+-from typing import List, Dict, Any, Optional, TYPE_CHECKING
++from typing import List, Dict, Any, Optional, Literal, TYPE_CHECKING
+ from pydantic import BaseModel, ConfigDict, Field
+ 
+ from core.models.biomarker import BiomarkerCluster, BiomarkerInsight
+@@ -133,3 +133,29 @@ class AnalysisDTO(BaseModel):
+     status: str = Field(..., description="Analysis status")
+     created_at: str = Field(..., description="Creation timestamp")
+     overall_score: Optional[float] = Field(default=None, description="Overall health score")
++
++
++class DerivedMetricDTO(BaseModel):
++    """Immutable derived metric data transfer object."""
++    
++    model_config = ConfigDict(frozen=True, extra="forbid")
++    
++    id: str = Field(..., description="Derived metric identifier (e.g. 'tg_hdl', 'chol_hdl', 'alt_ast', 'urea_creatinine', 'nlr', 'homa_ir', 'ag_ratio')")
++    value: Optional[float] = Field(default=None, description="Computed metric value")
++    unit: Optional[str] = Field(default=None, description="Unit of measurement")
++    band: Optional[str] = Field(default=None, description="Risk band: 'optimal', 'borderline', 'high', or 'low'")
++    method: Optional[str] = Field(default=None, description="Computation method: 'computed' or 'from_input'")
++
++
++class QRISK3DTO(BaseModel):
++    """Immutable QRISK3 cardiovascular risk assessment data transfer object."""
++    
++    model_config = ConfigDict(frozen=True, extra="forbid")
++    
++    id: Literal["qrisk3"] = Field(..., description="QRISK3 identifier")
++    risk_10y_percent: float = Field(..., description="10-year cardiovascular risk percentage")
++    band: Literal["low", "moderate", "high"] = Field(..., description="Risk band classification")
++    primary_drivers: List[str] = Field(default_factory=list, description="Primary risk drivers (e.g. ['Age', 'Chol:HDL 5.2', 'SBP 148'])")
++    confidence: float = Field(..., description="Confidence score (0-1) from completeness gate")
++    inputs_used: List[str] = Field(default_factory=list, description="Names/keys of inputs present")
++    version: str = Field(default="qrisk3.v1", description="QRISK3 version identifier")
+diff --git a/docs/context/BACKUP_STRATEGY.md b/docs/context/BACKUP_STRATEGY.md
+index 889f6be..4210284 100644
+--- a/docs/context/BACKUP_STRATEGY.md
++++ b/docs/context/BACKUP_STRATEGY.md
+@@ -74,6 +74,33 @@ Forks must include a README with a summary of:
+ - **Optional automation**:
+   - Use GitHub Actions to trigger a backup tag on successful PR to `main` with `#backup` label
+ 
++## ­ƒñû Automation
++
++Backups can be run locally via `sprint_release.py` or via GitHub Actions (manual or on PRs labeled `backup`).
++
++### Local Execution
++
++Run the sprint release script from the repository root:
++
++```bash
++# Full backup with smoke test and SSOT validation
++python ops/scripts/sprint_release.py --tag "v5.4-sprint15-complete" --desc "Sprint 15 completion milestone"
++
++# Skip smoke test if backend is down
++python ops/scripts/sprint_release.py --tag "v5.4-sprint15-complete" --desc "Sprint 15 completion milestone" --skip-smoke
++
++# Skip SSOT validation
++python ops/scripts/sprint_release.py --tag "v5.4-sprint15-complete" --desc "Sprint 15 completion milestone" --skip-validate
++```
++
++### GitHub Actions
++
++The workflow can be triggered:
++- **Manually** via GitHub Actions UI with custom tag and description
++- **Automatically** when a PR is merged with the `backup` label
++
++Artifacts (smoke test JSON and SSOT validation output) are automatically uploaded and attached to the GitHub Release.
++
+ ---
+ 
+ ## ­ƒº¬ Non-production Environments
