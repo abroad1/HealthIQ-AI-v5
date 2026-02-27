@@ -41,10 +41,11 @@ jobs:
         run: python -m pytest tests/unit/test_golden_panel_runner.py -q
 
       - name: Run golden panel snapshot pack from repo root
+        working-directory: backend
         shell: bash
         run: |
           set -euo pipefail
-          python backend/tools/run_golden_panel.py --fixture backend/tests/fixtures/golden_panel_160.json --run-id ci-golden-160 --no-narrative 2>&1 | tee golden_runner.log
+          python tools/run_golden_panel.py --fixture tests/fixtures/golden_panel_160.json --run-id ci-golden-160 --no-narrative 2>&1 | tee ../golden_runner.log
 
       - name: Enforce NO-LLM logs
         shell: bash
