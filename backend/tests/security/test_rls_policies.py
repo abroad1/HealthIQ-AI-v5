@@ -5,7 +5,23 @@ Tests Row-Level Security policies to ensure user data isolation and GDPR complia
 These tests validate that users can only access their own data and service roles have appropriate access.
 """
 
+import os
 import pytest
+
+if os.getenv("HEALTHIQ_ENABLE_DB_TESTS") != "1":
+    pytest.skip(
+        "DB tests disabled (set HEALTHIQ_ENABLE_DB_TESTS=1 to enable).",
+        allow_module_level=True,
+    )
+
+try:
+    from config.database import get_db
+except ImportError as e:
+    pytest.skip(
+        f"DB test dependencies not available in infra-free mode: {e}",
+        allow_module_level=True,
+    )
+
 from uuid import uuid4, UUID
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -15,7 +31,6 @@ from core.models.database import (
     Profile, ProfilePII, Analysis, AnalysisResult, BiomarkerScore, 
     Cluster, Insight, Export, Consent, AuditLog, DeletionRequest
 )
-from config.database import get_db
 
 
 class TestRLSPolicies:
