@@ -1,0 +1,86 @@
+name: Golden Gate
+
+on:
+  pull_request:
+  push:
+    branches:
+      - sprint17/biomarker-expansion-ab-panel
+
+jobs:
+  golden-gate:
+    runs-on: ubuntu-latest
+    env:
+      HEALTHIQ_ENABLE_LLM: "0"
+      PYTHONUNBUFFERED: "1"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Python version
+        run: python -V
+
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt
+
+      - name: Validate AB SSOT
+        working-directory: backend
+        run: python scripts/validate_ab_panel_ssot.py
+
+      - name: Run enforcement tests
+        working-directory: backend
+        run: python -m pytest tests/enforcement -q
+
+      - name: Run golden runner unit tests
+        working-directory: backend
+        run: python -m pytest tests/unit/test_golden_panel_runner.py -q
+
+      - name: Run golden panel snapshot pack from repo root
+        shell: bash
+        run: |
+          set -euo pipefail
+          python backend/tools/run_golden_panel.py --fixture backend/tests/fixtures/golden_panel_160.json --run-id ci-golden-160 --no-narrative 2>&1 | tee golden_runner.log
+
+      - name: Enforce NO-LLM logs
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -q "Creating GeminiClient" golden_runner.log; then
+            echo "NO-LLM gate failed: golden runner attempted Gemini client creation."
+            exit 1
+          fi
+
+      - name: Verify golden snapshot pack files
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import sys
+
+          root = Path("backend/artifacts/golden_runs/ci-golden-160")
+          required = [
+              "analysis_result.json",
+              "insight_graph.json",
+              "replay_manifest.json",
+              "explainability_report.json",
+              "burden_vector.json",
+              "arbitration_report.json",
+          ]
+          missing = sorted(name for name in required if not (root / name).is_file())
+          if missing:
+              print("Missing golden snapshot files:", ", ".join(missing))
+              sys.exit(1)
+          print("Golden snapshot pack verified.")
+          PY
+
+      - name: Upload golden artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-golden-160
+          path: backend/artifacts/golden_runs/ci-golden-160
+          if-no-files-found: warn
