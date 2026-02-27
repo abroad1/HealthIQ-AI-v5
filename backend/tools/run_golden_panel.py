@@ -18,6 +18,7 @@ from typing import Any, Dict, Mapping, Optional, Tuple
 from core.canonical.normalize import normalize_biomarkers_with_metadata
 from core.canonical.alias_registry_service import get_alias_registry_service
 from core.contracts.insight_graph_v1 import InsightGraphV1
+from core.layer3.insight_assembler_v1 import assemble_layer3_insights
 from core.analytics.calibration_engine import build_calibration_layer_v1
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 from core.units.registry import UNIT_REGISTRY_VERSION, UnitRegistry, apply_unit_normalisation
@@ -406,6 +407,17 @@ def run_golden_panel(
         json.dumps(_normalise_for_artifact_write(burden_vector), indent=2, sort_keys=True),
         encoding="utf-8",
     )
+
+    if burden_vector and burden_vector.get("adjusted_system_burden_vector") is not None:
+        layer3 = assemble_layer3_insights(dto)
+        layer3_dict = layer3.model_dump(mode="json", exclude_none=True)
+    else:
+        layer3_dict = {"schema_version": "1.0.0", "insights": [], "summary": None}
+    (run_dir / "layer3_insights.json").write_text(
+        json.dumps(_normalise_for_artifact_write(layer3_dict), indent=2, sort_keys=True),
+        encoding="utf-8",
+    )
+
     report = build_arbitration_report(
         insight_graph=insight_graph if isinstance(insight_graph, dict) else {},
         replay_manifest=replay_manifest if isinstance(replay_manifest, dict) else {},
