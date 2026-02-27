@@ -19,6 +19,11 @@ units:
   sleep_hours: hours
   sit_stand_value: mixed
 
+# Input validation bounds (ADMISSIBILITY): used by validate_inputs for basic validation/type safety.
+# UK_PLAUSIBLE_RANGES (in lifestyle_modifier_engine) are PLAUSIBILITY bounds (tighter): used to flag
+# clinically implausible inputs, add confidence adjustments, and suppress derived computations.
+# INVARIANT: plausibility bounds must be a subset of admissibility bounds (admissibility_min <= plausibility_min,
+# admissibility_max >= plausibility_max). Enforced by test_plausibility_ranges_are_subset_of_yaml_admissibility_ranges.
 inputs:
   height_cm:
     type: numeric
