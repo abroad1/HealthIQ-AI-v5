@@ -74,6 +74,7 @@ def build_replay_manifest_v1(
     burden_artifact_filename: Optional[str] = None,
     linked_snapshot_ids: Optional[list[str]] = None,
     analysis_result_version: str = "1.0.0",
+    lifestyle_input_hash: Optional[str] = None,
 ) -> ReplayManifestV1:
     """
     Build ReplayManifestV1 from Layer B outputs.
@@ -236,4 +237,5 @@ def build_replay_manifest_v1(
         linked_snapshot_ids=list(linked_snapshot_ids or []),
         schema_hashes=schema_hashes,
         analysis_result_version=analysis_result_version,
+        lifestyle_input_hash=lifestyle_input_hash,
     )
