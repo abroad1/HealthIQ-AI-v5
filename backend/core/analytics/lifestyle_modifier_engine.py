@@ -179,6 +179,9 @@ class LifestyleModifierEngine:
         validated: dict,
     ) -> Optional[float]:
         val = validated.get(input_name)
+        # thresholds_above and thresholds_below: choose the MOST SEVERE single threshold met
+        # (highest modifier), not cumulative. Rationale: avoids double-counting; deterministic;
+        # clinically interpretable.
         if rule_type == "thresholds_above":
             f = _to_float(val)
             if f is None:
