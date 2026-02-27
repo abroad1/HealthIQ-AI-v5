@@ -25,7 +25,7 @@ NON_HDL_PRECISION = 2
 # All derived markers (order: lipid first, then others)
 DERIVED_IDS = (
     "tc_hdl_ratio", "tg_hdl_ratio", "ldl_hdl_ratio", "non_hdl_cholesterol", "apoB_apoA1_ratio",
-    "nlr", "urea_creatinine_ratio", "ast_alt_ratio",
+    "nlr", "urea_creatinine_ratio", "ast_alt_ratio", "testosterone_free_testosterone_ratio",
 )
 RATIO_IDS = DERIVED_IDS  # Backwards compatibility
 
@@ -39,6 +39,7 @@ _DERIVED_INPUTS: Dict[str, List[str]] = {
     "nlr": ["neutrophils", "lymphocytes"],
     "urea_creatinine_ratio": ["urea", "creatinine"],
     "ast_alt_ratio": ["ast", "alt"],
+    "testosterone_free_testosterone_ratio": ["testosterone", "free_testosterone"],
 }
 
 
@@ -209,6 +210,23 @@ def compute(panel: Dict[str, Any]) -> Dict[str, Any]:
             result["derived"]["ast_alt_ratio"] = {
                 "value": round(ast_alt, RATIO_PRECISION), "unit": "ratio", "source": "computed",
                 "bounds_applied": False, "inputs_used": _DERIVED_INPUTS["ast_alt_ratio"],
+            }
+
+    # Testosterone / Free Testosterone ratio (lab-supplied or computed)
+    test_total = _numeric(panel.get("testosterone"))
+    test_free = _numeric(panel.get("free_testosterone"))
+    if _lab_supplied(panel, "testosterone_free_testosterone_ratio"):
+        v = _numeric(panel["testosterone_free_testosterone_ratio"])
+        result["derived"]["testosterone_free_testosterone_ratio"] = {
+            "value": v, "unit": "ratio", "source": "lab",
+            "bounds_applied": False, "inputs_used": [],
+        }
+    else:
+        tf_ratio = safe_ratio(test_total, test_free)
+        if tf_ratio is not None:
+            result["derived"]["testosterone_free_testosterone_ratio"] = {
+                "value": round(tf_ratio, RATIO_PRECISION), "unit": "ratio", "source": "computed",
+                "bounds_applied": False, "inputs_used": _DERIVED_INPUTS["testosterone_free_testosterone_ratio"],
             }
 
     return result

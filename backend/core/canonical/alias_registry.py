@@ -141,10 +141,10 @@ class BiomarkerAliasResolver:
             # Liver
             'alt': 'alt',
             'alanine_aminotransferase': 'alt',
-            'sgot': 'alt',
+            'sgpt': 'alt',
             'ast': 'ast',
             'aspartate_aminotransferase': 'ast',
-            'sgpt': 'ast',
+            'sgot': 'ast',
             
             # Inflammatory
             'crp': 'crp',

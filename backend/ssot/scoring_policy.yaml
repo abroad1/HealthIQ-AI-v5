@@ -266,6 +266,7 @@ derived_ratios:
   - "apoB_apoA1_ratio"
   - "non_hdl_cholesterol"
   - "urea_creatinine_ratio"
+  - "testosterone_free_testosterone_ratio"
 
 derived_ratio_policy_bounds:
   tc_hdl_ratio:
@@ -304,6 +305,12 @@ derived_ratio_policy_bounds:
     unit: "ratio"
     source: "healthiq_policy"
     notes: "Computed as urea / creatinine, dimensionless ratio basis."
+  testosterone_free_testosterone_ratio:
+    min: 0.0
+    max: 50.0
+    unit: "ratio"
+    source: "healthiq_policy"
+    notes: "Computed as testosterone / free_testosterone, dimensionless ratio basis."
 
 status_map:
   low_critical: "critical"

@@ -137,6 +137,13 @@ def main() -> int:
     ssot_dir = backend_dir / "ssot"
     staging_dir = ssot_dir / "_ab_panel_staging"
 
+    # Sprint 18: Staging removed post-migration; validator obsolete when staging absent
+    if not staging_dir.exists():
+        print("AB staging folder not found. This validator is obsolete post-migration.")
+        print("Use runtime SSOT files (biomarkers.yaml, biomarker_alias_registry.yaml, system_burden_registry.yaml)")
+        print("or see docs/sprints/sprint18/ab_panel_migration_log.md")
+        sys.exit(3)
+
     required_files = {
         "prod_biomarkers": ssot_dir / "biomarkers.yaml",
         "prod_alias": ssot_dir / "biomarker_alias_registry.yaml",
