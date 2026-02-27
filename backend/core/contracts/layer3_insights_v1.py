@@ -21,6 +21,7 @@ SYSTEM_CARD_IDS = (
     "hormonal__system_pressure",
     "hematological__system_pressure",
     "musculoskeletal__system_pressure",
+    "nutritional__system_pressure",
     "autonomic__system_pressure",
     "thyroid__system_pressure",
 )
