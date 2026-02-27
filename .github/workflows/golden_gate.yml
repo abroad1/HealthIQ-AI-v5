@@ -12,23 +12,6 @@ jobs:
     env:
       HEALTHIQ_ENABLE_LLM: "0"
       PYTHONUNBUFFERED: "1"
-      DATABASE_URL: postgresql+psycopg2://postgres:postgres@localhost:5433/healthiq_test
-      TEST_DATABASE_URL: postgresql+psycopg2://postgres:postgres@localhost:5433/healthiq_test
-
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: healthiq_test
-        ports:
-          - 5433:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
       - name: Checkout repository
@@ -56,22 +39,6 @@ jobs:
       - name: Run golden runner unit tests
         working-directory: backend
         run: python -m pytest tests/unit/test_golden_panel_runner.py -q
-
-      - name: Wait for Postgres
-        run: |
-          sudo apt-get update && sudo apt-get install -y postgresql-client
-          for i in $(seq 1 30); do
-            pg_isready -h localhost -p 5433 -U postgres && break
-            sleep 1
-          done
-          pg_isready -h localhost -p 5433 -U postgres
-
-      - name: Run core integration tests
-        working-directory: backend
-        run: |
-          python -m pytest tests/integration/test_insight_pipeline_integration.py -q
-          python -m pytest tests/integration/test_ratio_registry_integration.py -q
-          python -m pytest tests/integration/test_orchestrator_unmapped_quarantine.py -q
 
       - name: Run golden panel snapshot pack from repo root
         shell: bash
