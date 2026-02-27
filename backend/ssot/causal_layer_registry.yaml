@@ -1,0 +1,49 @@
+registry_version: "1.0.0"
+schema_version: "1.0"
+
+rules:
+  - edge_id: "edge_inflammatory_to_metabolic_driver"
+    from_system_id: "inflammatory"
+    to_system_id: "metabolic"
+    edge_type: "driver"
+    priority: 100
+    conditions:
+      - "requires_precedence:primary_driver:inflammatory"
+      - "requires_state:system_multi_marker_derangement"
+    rationale_codes:
+      - "causal_rule_precedence_primary_driver"
+      - "causal_rule_multi_marker_state"
+
+  - edge_id: "edge_metabolic_to_cardiovascular_amplifier"
+    from_system_id: "metabolic"
+    to_system_id: "cardiovascular"
+    edge_type: "amplifier"
+    priority: 90
+    conditions:
+      - "requires_state:system_multi_marker_derangement"
+      - "requires_transition:system_trending_worse"
+    rationale_codes:
+      - "causal_rule_transition_worsening"
+      - "causal_rule_system_amplifier"
+
+  - edge_id: "edge_renal_to_hepatic_constraint"
+    from_system_id: "renal"
+    to_system_id: "hepatic"
+    edge_type: "constraint"
+    priority: 80
+    conditions:
+      - "requires_precedence:dominant_edge:renal>hepatic"
+    rationale_codes:
+      - "causal_rule_precedence_edge_alignment"
+
+  - edge_id: "edge_cardiovascular_to_inflammatory_driver"
+    from_system_id: "cardiovascular"
+    to_system_id: "inflammatory"
+    edge_type: "driver"
+    priority: 70
+    conditions:
+      - "requires_state:system_bidirectional_instability"
+      - "requires_precedence:conflict:conflict_trend_opposition"
+    rationale_codes:
+      - "causal_rule_bidirectional_instability"
+      - "causal_rule_conflict_alignment"

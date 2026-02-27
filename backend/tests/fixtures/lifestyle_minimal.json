@@ -1,0 +1,11 @@
+{
+  "height_cm": 180,
+  "weight_kg": 90,
+  "waist_circumference_cm": 95,
+  "systolic_bp": 145,
+  "diastolic_bp": 88,
+  "resting_heart_rate": 72,
+  "smoking_status": "never",
+  "alcohol_units_per_week": 7,
+  "sleep_hours": 6.5
+}

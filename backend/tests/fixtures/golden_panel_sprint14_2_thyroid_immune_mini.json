@@ -1,0 +1,70 @@
+{
+  "biomarkers": {
+    "glucose": {
+      "value": 140.0,
+      "unit": "mg/dL",
+      "reference_range": {
+        "min": 70.0,
+        "max": 100.0,
+        "unit": "mg/dL",
+        "source": "lab"
+      }
+    },
+    "tsh": {
+      "value": 6.0,
+      "unit": "mIU/L",
+      "reference_range": {
+        "min": 0.4,
+        "max": 4.5,
+        "unit": "mIU/L",
+        "source": "lab"
+      }
+    },
+    "free_t4": {
+      "value": 0.7,
+      "unit": "ng/dL",
+      "reference_range": {
+        "min": 0.8,
+        "max": 1.8,
+        "unit": "ng/dL",
+        "source": "lab"
+      }
+    },
+    "tgab": {
+      "value": 80.0,
+      "unit": "IU/mL",
+      "reference_range": {
+        "min": 0.0,
+        "max": 4.0,
+        "unit": "IU/mL",
+        "source": "lab"
+      }
+    },
+    "neutrophils_abs": {
+      "value": 9.0,
+      "unit": "10^9/L",
+      "reference_range": {
+        "min": 2.0,
+        "max": 7.5,
+        "unit": "10^9/L",
+        "source": "lab"
+      }
+    },
+    "lymphocytes_abs": {
+      "value": 0.8,
+      "unit": "10^9/L",
+      "reference_range": {
+        "min": 1.0,
+        "max": 3.0,
+        "unit": "10^9/L",
+        "source": "lab"
+      }
+    }
+  },
+  "user": {
+    "user_id": "00000000-0000-0000-0000-000000000001",
+    "age": 40,
+    "gender": "female",
+    "lifestyle_factors": {}
+  }
+}

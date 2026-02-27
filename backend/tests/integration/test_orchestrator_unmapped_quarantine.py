@@ -1,7 +1,16 @@
 import pytest
 
 from core.canonical.normalize import normalize_biomarkers_with_metadata
-from core.pipeline.orchestrator import AnalysisOrchestrator
+from core.units.registry import apply_unit_normalisation, UNIT_REGISTRY_VERSION
+from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
+
+
+def _prepare_unit_normalised(biomarkers: dict) -> dict:
+    """Sprint 5: normalize -> unit norm -> add meta."""
+    normalized = normalize_biomarkers_with_metadata(biomarkers)
+    normalized = apply_unit_normalisation(normalized)
+    normalized[UNIT_NORMALISATION_META_KEY] = {"unit_normalised": True, "unit_registry_version": UNIT_REGISTRY_VERSION}
+    return normalized
 
 
 class TestOrchestratorUnmappedQuarantine:
@@ -21,7 +30,8 @@ class TestOrchestratorUnmappedQuarantine:
             "gender": "male"
         }
 
-        dto = self.orchestrator.run(raw_biomarkers, user_data, assume_canonical=True)
+        prepared = _prepare_unit_normalised(raw_biomarkers)
+        dto = self.orchestrator.run(prepared, user_data, assume_canonical=True)
 
         assert dto is not None
         assert sorted(dto.unmapped_biomarkers) == [
@@ -54,7 +64,7 @@ class TestOrchestratorUnmappedQuarantine:
             "gender": "male"
         }
 
-        normalized = normalize_biomarkers_with_metadata(raw_biomarkers)
+        normalized = _prepare_unit_normalised(raw_biomarkers)
         dto = self.orchestrator.run(normalized, user_data, assume_canonical=True)
 
         assert dto is not None

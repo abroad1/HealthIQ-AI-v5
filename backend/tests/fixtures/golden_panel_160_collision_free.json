@@ -1,0 +1,641 @@
+{
+  "biomarkers": {
+    "albumin": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 118.0
+    },
+    "alp": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 25.0
+    },
+    "alt": {
+      "reference_range": {
+        "max": 35.0,
+        "min": 7.0,
+        "source": "lab",
+        "unit": "U/L"
+      },
+      "unit": "U/L",
+      "value": 5.95
+    },
+    "anion_gap": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 25.0
+    },
+    "apoa1": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "g/L"
+      },
+      "unit": "g/L",
+      "value": 25.0
+    },
+    "apob": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "g/L"
+      },
+      "unit": "g/L",
+      "value": 118.0
+    },
+    "bicarbonate": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 55.0
+    },
+    "bilirubin": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 118.0
+    },
+    "calcium": {
+      "reference_range": {
+        "max": 10.5,
+        "min": 8.5,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 7.225
+    },
+    "chloride": {
+      "reference_range": {
+        "max": 107.0,
+        "min": 98.0,
+        "source": "lab",
+        "unit": "mEq/L"
+      },
+      "unit": "mEq/L",
+      "value": 108.62
+    },
+    "corrected_calcium": {
+      "reference_range": {
+        "max": 10.5,
+        "min": 8.5,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 9.6
+    },
+    "cortisol": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 55.0
+    },
+    "creatine_kinase": {
+      "reference_range": {
+        "max": 170.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "U/L"
+      },
+      "unit": "U/L",
+      "value": 42.5
+    },
+    "creatinine": {
+      "reference_range": {
+        "max": 1.1,
+        "min": 0.5,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 0.425
+    },
+    "crp": {
+      "reference_range": {
+        "max": 3.0,
+        "min": 1.0,
+        "source": "lab",
+        "unit": "mg/L"
+      },
+      "unit": "mg/L",
+      "value": 0.85
+    },
+    "dhea": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 55.0
+    },
+    "fai": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 55.0
+    },
+    "fasting_glucose": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 25.0
+    },
+    "fasting_insulin": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 25.0
+    },
+    "ferritin": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "ng/mL"
+      },
+      "unit": "ng/mL",
+      "value": 55.0
+    },
+    "folate": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 118.0
+    },
+    "free_t3": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 118.0
+    },
+    "free_t4": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 118.0
+    },
+    "free_testosterone": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 25.0
+    },
+    "fsh": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 118.0
+    },
+    "ggt": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 25.0
+    },
+    "globulin": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 25.0
+    },
+    "glucose": {
+      "reference_range": {
+        "max": 999.0,
+        "min": 126.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 1156.14
+    },
+    "hba1c": {
+      "reference_range": {
+        "max": 20.0,
+        "min": 6.5,
+        "source": "lab",
+        "unit": "%"
+      },
+      "unit": "%",
+      "value": 13.925
+    },
+    "hdl_cholesterol": {
+      "reference_range": {
+        "max": 50.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 27.5
+    },
+    "hematocrit": {
+      "reference_range": {
+        "max": 44.3,
+        "min": 36.1,
+        "source": "lab",
+        "unit": "%"
+      },
+      "unit": "%",
+      "value": 40.61
+    },
+    "hemoglobin": {
+      "reference_range": {
+        "max": 15.1,
+        "min": 12.1,
+        "source": "lab",
+        "unit": "g/dL"
+      },
+      "unit": "g/dL",
+      "value": 10.285
+    },
+    "homocysteine": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 55.0
+    },
+    "insulin": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 55.0
+    },
+    "iron": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 118.0
+    },
+    "ldl_cholesterol": {
+      "reference_range": {
+        "max": 159.0,
+        "min": 130.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 145.95
+    },
+    "lh": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 55.0
+    },
+    "lipoprotein_a": {
+      "reference_range": {
+        "max": 30.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 35.4
+    },
+    "magnesium": {
+      "reference_range": {
+        "max": 2.2,
+        "min": 1.7,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 1.445
+    },
+    "mch": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 118.0
+    },
+    "mchc": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 55.0
+    },
+    "mcv": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 25.0
+    },
+    "oestradiol": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 55.0
+    },
+    "platelets": {
+      "reference_range": {
+        "max": 450.0,
+        "min": 150.0,
+        "source": "lab",
+        "unit": "K/\u03bcL"
+      },
+      "unit": "K/\u03bcL",
+      "value": 315.0
+    },
+    "potassium": {
+      "reference_range": {
+        "max": 5.0,
+        "min": 3.5,
+        "source": "lab",
+        "unit": "mEq/L"
+      },
+      "unit": "mEq/L",
+      "value": 4.325
+    },
+    "prolactin": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 25.0
+    },
+    "rbc": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 118.0
+    },
+    "rdw_cv": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 25.0
+    },
+    "shbg": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 118.0
+    },
+    "sodium": {
+      "reference_range": {
+        "max": 145.0,
+        "min": 136.0,
+        "source": "lab",
+        "unit": "mEq/L"
+      },
+      "unit": "mEq/L",
+      "value": 115.6
+    },
+    "testosterone": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 118.0
+    },
+    "total_cholesterol": {
+      "reference_range": {
+        "max": 239.0,
+        "min": 200.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 170.0
+    },
+    "total_protein": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 118.0
+    },
+    "transferrin": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 25.0
+    },
+    "transferrin_saturation": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 55.0
+    },
+    "triglycerides": {
+      "reference_range": {
+        "max": 199.0,
+        "min": 150.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 176.95
+    },
+    "tsh": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 25.0
+    },
+    "urate": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 118.0
+    },
+    "urea": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 55.0
+    },
+    "vitamin_b12": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 55.0
+    },
+    "vitamin_d": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 55.0
+    },
+    "wbc": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 118.0
+    },
+    "zinc": {
+      "reference_range": {
+        "max": 100.0,
+        "min": 0.0,
+        "source": "lab",
+        "unit": "mg/dL"
+      },
+      "unit": "mg/dL",
+      "value": 55.0
+    }
+  },
+  "description": "Deterministic golden panel for runtime evaluation harness",
+  "fixture_version": "1.0.0",
+  "user": {
+    "age": 41,
+    "gender": "female",
+    "user_id": "00000000-0000-0000-0000-000000000160"
+  }
+}

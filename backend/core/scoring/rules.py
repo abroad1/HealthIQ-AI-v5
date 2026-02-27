@@ -1,10 +1,8 @@
 """
-Static biomarker rules and thresholds for scoring engines.
+Scoring rules loaded from versioned SSOT scoring policy.
 
-Lab-provided biomarkers: use ONLY lab reference ranges. No SSOT/global lookups.
-Derived ratios (v5-computed, lab did not supply): may use explicit hard-coded bounds table.
-
-Uses HAS v1 primitives for position-in-range and status (core/analytics/primitives).
+Lab-provided biomarkers: use ONLY lab reference ranges. No SSOT/global range lookups.
+Derived ratios (v5-computed, lab did not supply): may use policy-defined derived bounds.
 """
 
 from typing import Dict, List, Any, Optional, Tuple
@@ -12,19 +10,25 @@ from dataclasses import dataclass
 from enum import Enum
 
 from core.analytics.primitives import position_in_range, map_position_to_status
+from core.analytics.scoring_policy_registry import load_scoring_policy
 
-# Derived ratios v5 computes - only these may use hard-coded bounds when lab didn't supply
-DERIVED_RATIOS = frozenset({
-    "tc_hdl_ratio", "tg_hdl_ratio", "ldl_hdl_ratio", "chol_hdl_ratio",
-    "apoB_apoA1_ratio", "non_hdl_cholesterol"
-})
-
-# Explicit hard-coded bounds for derived ratios only. Used when lab did not provide.
-# Format: biomarker_name -> {min, max} for _calculate_score_from_range
+_POLICY = load_scoring_policy()
+DERIVED_RATIOS = frozenset(_POLICY.raw.get("derived_ratios", []))
+DERIVED_RATIO_POLICY_BOUNDS: Dict[str, Dict[str, Any]] = {
+    k: {
+        "min": float(v["min"]),
+        "max": float(v["max"]),
+        "unit": str(v.get("unit", "")).strip(),
+        "source": str(v.get("source", "")).strip(),
+        "notes": str(v.get("notes", "")).strip(),
+    }
+    for k, v in (_POLICY.raw.get("derived_ratio_policy_bounds", {}) or {}).items()
+    if isinstance(v, dict)
+}
+# Back-compat alias for existing tests/modules that expect min/max table.
 DERIVED_RATIO_BOUNDS: Dict[str, Dict[str, float]] = {
-    "tc_hdl_ratio": {"min": 0.0, "max": 5.0},
-    "tg_hdl_ratio": {"min": 0.0, "max": 4.0},
-    "ldl_hdl_ratio": {"min": 0.0, "max": 3.5},
+    k: {"min": float(v["min"]), "max": float(v["max"])}
+    for k, v in DERIVED_RATIO_POLICY_BOUNDS.items()
 }
 
 # Sentinel for unscored (missing lab reference range)
@@ -67,317 +71,60 @@ class HealthSystemRules:
 
 
 class ScoringRules:
-    """Static rules and thresholds for biomarker scoring. No SSOT/global range lookups."""
+    """Versioned SSOT-backed rules for biomarker scoring."""
 
     def __init__(self):
-        """Initialize scoring rules."""
+        self._policy = load_scoring_policy()
         self._rules = self._load_biomarker_rules()
+        self._has_to_score_range = self._build_has_status_map()
+        self._score_curve = self._policy.raw.get("score_curve", {})
     
+    def _to_tuple(self, range_map: Dict[str, Any]) -> Tuple[float, float]:
+        return float(range_map["min"]), float(range_map["max"])
+
+    def _build_has_status_map(self) -> Dict[str, ScoreRange]:
+        mapping = self._policy.raw.get("status_map", {})
+        out: Dict[str, ScoreRange] = {}
+        for has_status, score_range in mapping.items():
+            try:
+                out[str(has_status)] = ScoreRange(str(score_range))
+            except ValueError:
+                continue
+        return out
+
+    def _build_biomarker_rule(self, biomarker_name: str, item: Dict[str, Any]) -> BiomarkerRule:
+        bands = item.get("bands", {})
+        return BiomarkerRule(
+            biomarker_name=biomarker_name,
+            optimal_range=self._to_tuple(bands["optimal"]),
+            normal_range=self._to_tuple(bands["normal"]),
+            borderline_range=self._to_tuple(bands["borderline"]),
+            high_range=self._to_tuple(bands["high"]),
+            very_high_range=self._to_tuple(bands["very_high"]),
+            critical_range=self._to_tuple(bands["critical"]),
+            unit=str(item.get("unit", "")),
+            weight=float(item.get("weight", 1.0)),
+            age_adjustment=bool(item.get("age_adjustment", False)),
+            sex_adjustment=bool(item.get("sex_adjustment", False)),
+        )
+
     def _load_biomarker_rules(self) -> Dict[str, HealthSystemRules]:
-        """Load biomarker rules for all health systems."""
-        return {
-            "metabolic": self._get_metabolic_rules(),
-            "cardiovascular": self._get_cardiovascular_rules(),
-            "inflammatory": self._get_inflammatory_rules(),
-            "hormonal": self._get_hormonal_rules(),
-            "nutritional": self._get_nutritional_rules(),
-            "kidney": self._get_kidney_rules(),
-            "liver": self._get_liver_rules(),
-            "cbc": self._get_cbc_rules()
-        }
-    
-    def _get_metabolic_rules(self) -> HealthSystemRules:
-        """Get metabolic health system rules."""
-        biomarkers = [
-            BiomarkerRule(
-                biomarker_name="glucose",
-                optimal_range=(70, 100),
-                normal_range=(70, 100),
-                borderline_range=(100, 125),
-                high_range=(125, 200),
-                very_high_range=(200, 300),
-                critical_range=(300, 1000),
-                unit="mg/dL",
-                weight=0.4,
-                age_adjustment=True
-            ),
-            BiomarkerRule(
-                biomarker_name="hba1c",
-                optimal_range=(4.0, 5.6),
-                normal_range=(4.0, 5.6),
-                borderline_range=(5.7, 6.4),
-                high_range=(6.5, 8.0),
-                very_high_range=(8.0, 10.0),
-                critical_range=(10.0, 15.0),
-                unit="%",
-                weight=0.4,
-                age_adjustment=True
-            ),
-            BiomarkerRule(
-                biomarker_name="insulin",
-                optimal_range=(2, 10),
-                normal_range=(2, 25),
-                borderline_range=(25, 35),
-                high_range=(35, 50),
-                very_high_range=(50, 100),
-                critical_range=(100, 500),
-                unit="μU/mL",
-                weight=0.2
+        systems = self._policy.raw.get("systems", {})
+        biomarkers = self._policy.raw.get("biomarkers", {})
+        out: Dict[str, HealthSystemRules] = {}
+        for system_name, sys_item in systems.items():
+            biomarker_rules: List[BiomarkerRule] = []
+            for biomarker_name in sys_item.get("biomarkers", []):
+                policy_item = biomarkers.get(biomarker_name)
+                if isinstance(policy_item, dict):
+                    biomarker_rules.append(self._build_biomarker_rule(str(biomarker_name), policy_item))
+            out[str(system_name)] = HealthSystemRules(
+                system_name=str(system_name),
+                biomarkers=biomarker_rules,
+                min_biomarkers_required=int(sys_item.get("min_biomarkers_required", 0)),
+                system_weight=float(sys_item.get("system_weight", 0.0)),
             )
-        ]
-        
-        return HealthSystemRules(
-            system_name="metabolic",
-            biomarkers=biomarkers,
-            min_biomarkers_required=2,
-            system_weight=0.25
-        )
-    
-    def _get_cardiovascular_rules(self) -> HealthSystemRules:
-        """Get cardiovascular health system rules."""
-        biomarkers = [
-            BiomarkerRule(
-                biomarker_name="total_cholesterol",
-                optimal_range=(0, 200),
-                normal_range=(0, 200),
-                borderline_range=(200, 239),
-                high_range=(240, 300),
-                very_high_range=(300, 400),
-                critical_range=(400, 1000),
-                unit="mg/dL",
-                weight=0.2
-            ),
-            BiomarkerRule(
-                biomarker_name="ldl_cholesterol",
-                optimal_range=(0, 100),
-                normal_range=(0, 100),
-                borderline_range=(100, 129),
-                high_range=(130, 159),
-                very_high_range=(160, 189),
-                critical_range=(190, 500),
-                unit="mg/dL",
-                weight=0.3
-            ),
-            BiomarkerRule(
-                biomarker_name="hdl_cholesterol",
-                optimal_range=(60, 200),
-                normal_range=(40, 200),
-                borderline_range=(35, 40),
-                high_range=(20, 35),
-                very_high_range=(10, 20),
-                critical_range=(0, 10),
-                unit="mg/dL",
-                weight=0.3,
-                sex_adjustment=True
-            ),
-            BiomarkerRule(
-                biomarker_name="triglycerides",
-                optimal_range=(0, 150),
-                normal_range=(0, 150),
-                borderline_range=(150, 199),
-                high_range=(200, 499),
-                very_high_range=(500, 1000),
-                critical_range=(1000, 5000),
-                unit="mg/dL",
-                weight=0.2
-            ),
-            BiomarkerRule(
-                biomarker_name="tc_hdl_ratio",
-                optimal_range=(0, 3.5),
-                normal_range=(3.5, 5.0),
-                borderline_range=(5.0, 6.0),
-                high_range=(6.0, 8.0),
-                very_high_range=(8.0, 10.0),
-                critical_range=(10.0, 20.0),
-                unit="ratio",
-                weight=0.1
-            )
-        ]
-        
-        return HealthSystemRules(
-            system_name="cardiovascular",
-            biomarkers=biomarkers,
-            min_biomarkers_required=3,
-            system_weight=0.25
-        )
-    
-    def _get_inflammatory_rules(self) -> HealthSystemRules:
-        """Get inflammatory health system rules."""
-        biomarkers = [
-            BiomarkerRule(
-                biomarker_name="crp",
-                optimal_range=(0, 1.0),
-                normal_range=(0, 3.0),
-                borderline_range=(3.0, 10.0),
-                high_range=(10.0, 50.0),
-                very_high_range=(50.0, 100.0),
-                critical_range=(100.0, 500.0),
-                unit="mg/L",
-                weight=1.0
-            )
-        ]
-        
-        return HealthSystemRules(
-            system_name="inflammatory",
-            biomarkers=biomarkers,
-            min_biomarkers_required=1,
-            system_weight=0.15
-        )
-    
-    def _get_hormonal_rules(self) -> HealthSystemRules:
-        """Get hormonal health system rules."""
-        # Note: Hormonal biomarkers not yet defined in SSOT
-        # Placeholder for future implementation
-        biomarkers = []
-        
-        return HealthSystemRules(
-            system_name="hormonal",
-            biomarkers=biomarkers,
-            min_biomarkers_required=0,
-            system_weight=0.0
-        )
-    
-    def _get_nutritional_rules(self) -> HealthSystemRules:
-        """Get nutritional health system rules."""
-        # Note: Nutritional biomarkers not yet defined in SSOT
-        # Placeholder for future implementation
-        biomarkers = []
-        
-        return HealthSystemRules(
-            system_name="nutritional",
-            biomarkers=biomarkers,
-            min_biomarkers_required=0,
-            system_weight=0.0
-        )
-    
-    def _get_kidney_rules(self) -> HealthSystemRules:
-        """Get kidney health system rules."""
-        biomarkers = [
-            BiomarkerRule(
-                biomarker_name="creatinine",
-                optimal_range=(0.6, 1.2),
-                normal_range=(0.6, 1.2),
-                borderline_range=(1.2, 1.5),
-                high_range=(1.5, 2.0),
-                very_high_range=(2.0, 3.0),
-                critical_range=(3.0, 10.0),
-                unit="mg/dL",
-                weight=0.6,
-                age_adjustment=True,
-                sex_adjustment=True
-            ),
-            BiomarkerRule(
-                biomarker_name="bun",
-                optimal_range=(7, 20),
-                normal_range=(7, 20),
-                borderline_range=(20, 25),
-                high_range=(25, 50),
-                very_high_range=(50, 100),
-                critical_range=(100, 200),
-                unit="mg/dL",
-                weight=0.4
-            )
-        ]
-        
-        return HealthSystemRules(
-            system_name="kidney",
-            biomarkers=biomarkers,
-            min_biomarkers_required=1,
-            system_weight=0.15
-        )
-    
-    def _get_liver_rules(self) -> HealthSystemRules:
-        """Get liver health system rules."""
-        biomarkers = [
-            BiomarkerRule(
-                biomarker_name="alt",
-                optimal_range=(7, 56),
-                normal_range=(7, 56),
-                borderline_range=(56, 100),
-                high_range=(100, 200),
-                very_high_range=(200, 500),
-                critical_range=(500, 2000),
-                unit="U/L",
-                weight=0.5,
-                sex_adjustment=True
-            ),
-            BiomarkerRule(
-                biomarker_name="ast",
-                optimal_range=(10, 40),
-                normal_range=(10, 40),
-                borderline_range=(40, 80),
-                high_range=(80, 200),
-                very_high_range=(200, 500),
-                critical_range=(500, 2000),
-                unit="U/L",
-                weight=0.5
-            )
-        ]
-        
-        return HealthSystemRules(
-            system_name="liver",
-            biomarkers=biomarkers,
-            min_biomarkers_required=1,
-            system_weight=0.1
-        )
-    
-    def _get_cbc_rules(self) -> HealthSystemRules:
-        """Get CBC health system rules."""
-        biomarkers = [
-            BiomarkerRule(
-                biomarker_name="hemoglobin",
-                optimal_range=(12, 16),
-                normal_range=(12, 16),
-                borderline_range=(10, 12),
-                high_range=(16, 18),
-                very_high_range=(18, 20),
-                critical_range=(20, 25),
-                unit="g/dL",
-                weight=0.4,
-                sex_adjustment=True
-            ),
-            BiomarkerRule(
-                biomarker_name="hematocrit",
-                optimal_range=(36, 46),
-                normal_range=(36, 46),
-                borderline_range=(30, 36),
-                high_range=(46, 52),
-                very_high_range=(52, 60),
-                critical_range=(60, 70),
-                unit="%",
-                weight=0.3,
-                sex_adjustment=True
-            ),
-            BiomarkerRule(
-                biomarker_name="white_blood_cells",
-                optimal_range=(4.5, 11.0),
-                normal_range=(4.5, 11.0),
-                borderline_range=(3.5, 4.5),
-                high_range=(11.0, 15.0),
-                very_high_range=(15.0, 25.0),
-                critical_range=(25.0, 50.0),
-                unit="K/μL",
-                weight=0.2
-            ),
-            BiomarkerRule(
-                biomarker_name="platelets",
-                optimal_range=(150, 450),
-                normal_range=(150, 450),
-                borderline_range=(100, 150),
-                high_range=(450, 600),
-                very_high_range=(600, 1000),
-                critical_range=(1000, 2000),
-                unit="K/μL",
-                weight=0.1
-            )
-        ]
-        
-        return HealthSystemRules(
-            system_name="cbc",
-            biomarkers=biomarkers,
-            min_biomarkers_required=2,
-            system_weight=0.1
-        )
+        return out
     
     def get_biomarker_rule(self, biomarker_name: str) -> Optional[BiomarkerRule]:
         """
@@ -451,8 +198,8 @@ class ScoringRules:
         if not self._is_derived_ratio(biomarker_name):
             return 0.0, ScoreRange.CRITICAL, UNSCORED_REASON
 
-        # Derived ratios only: use explicit DERIVED_RATIO_BOUNDS table (no SSOT, no rule fallback)
-        bounds = DERIVED_RATIO_BOUNDS.get(biomarker_name)
+        # Derived ratios only: use explicit policy bounds table (no SSOT/rule fallback).
+        bounds = DERIVED_RATIO_POLICY_BOUNDS.get(biomarker_name)
         if bounds and isinstance(bounds.get('min'), (int, float)) and isinstance(bounds.get('max'), (int, float)):
             min_val, max_val = bounds['min'], bounds['max']
             if min_val < max_val:
@@ -462,15 +209,6 @@ class ScoringRules:
         # Derived ratio not in table: unscored
         return 0.0, ScoreRange.CRITICAL, UNSCORED_REASON
     
-    _HAS_TO_SCORE_RANGE = {
-        "low_critical": ScoreRange.CRITICAL,
-        "low_borderline": ScoreRange.BORDERLINE,
-        "normal": ScoreRange.NORMAL,
-        "optimal": ScoreRange.OPTIMAL,
-        "high_borderline": ScoreRange.HIGH,
-        "high_critical": ScoreRange.CRITICAL,
-    }
-
     def _calculate_score_from_range(self, value: float, min_val: float, max_val: float) -> Tuple[float, ScoreRange]:
         """
         Calculate score and status from a reference range.
@@ -490,37 +228,81 @@ class ScoringRules:
             return 0.0, ScoreRange.CRITICAL
 
         has_status = map_position_to_status(position)
-        score_range = self._HAS_TO_SCORE_RANGE.get(has_status, ScoreRange.CRITICAL)
+        score_range = self._has_to_score_range.get(has_status, ScoreRange.CRITICAL)
+        curve = self._score_curve
 
-        # Score (0-100) from position - same bands as before for backward compatibility
-        if 0.2 <= position <= 0.8:
-            score = 100.0
-        elif 0.1 <= position <= 0.9:
-            if position < 0.2:
-                score = 90.0 + (position - 0.1) / 0.1 * 10.0
-            elif position > 0.8:
-                score = 100.0 - (position - 0.8) / 0.1 * 10.0
+        optimal_band = curve.get("optimal_band", {})
+        normal_band = curve.get("normal_band", {})
+        normal_low = curve.get("normal_low", {})
+        normal_high = curve.get("normal_high", {})
+        borderline_band = curve.get("borderline_band", {})
+        borderline_low = curve.get("borderline_low", {})
+        borderline_high = curve.get("borderline_high", {})
+        low_noncritical = curve.get("low_noncritical", {})
+        low_critical = curve.get("low_critical", {})
+        high_noncritical = curve.get("high_noncritical", {})
+        high_critical = curve.get("high_critical", {})
+
+        if float(optimal_band.get("min", 0.2)) <= position <= float(optimal_band.get("max", 0.8)):
+            score = float(optimal_band.get("score", 100.0))
+        elif float(normal_band.get("min", 0.1)) <= position <= float(normal_band.get("max", 0.9)):
+            if position < float(normal_low.get("end", 0.2)):
+                score = float(normal_low.get("score_start", 90.0)) + (
+                    (position - float(normal_low.get("start", 0.1)))
+                    / (float(normal_low.get("end", 0.2)) - float(normal_low.get("start", 0.1)))
+                    * (float(normal_low.get("score_end", 100.0)) - float(normal_low.get("score_start", 90.0)))
+                )
+            elif position > float(normal_high.get("start", 0.8)):
+                score = float(normal_high.get("score_start", 100.0)) - (
+                    (position - float(normal_high.get("start", 0.8)))
+                    / (float(normal_high.get("end", 0.9)) - float(normal_high.get("start", 0.8)))
+                    * (float(normal_high.get("score_start", 100.0)) - float(normal_high.get("score_end", 90.0)))
+                )
             else:
-                score = 100.0
-        elif 0.05 <= position <= 0.95:
-            if position < 0.1:
-                score = 70.0 + (position - 0.05) / 0.05 * 20.0
-            elif position > 0.9:
-                score = 90.0 - (position - 0.9) / 0.05 * 20.0
+                score = float(optimal_band.get("score", 100.0))
+        elif float(borderline_band.get("min", 0.05)) <= position <= float(borderline_band.get("max", 0.95)):
+            if position < float(borderline_low.get("end", 0.1)):
+                score = float(borderline_low.get("score_start", 70.0)) + (
+                    (position - float(borderline_low.get("start", 0.05)))
+                    / (float(borderline_low.get("end", 0.1)) - float(borderline_low.get("start", 0.05)))
+                    * (float(borderline_low.get("score_end", 90.0)) - float(borderline_low.get("score_start", 70.0)))
+                )
+            elif position > float(borderline_high.get("start", 0.9)):
+                score = float(borderline_high.get("score_start", 90.0)) - (
+                    (position - float(borderline_high.get("start", 0.9)))
+                    / (float(borderline_high.get("end", 0.95)) - float(borderline_high.get("start", 0.9)))
+                    * (float(borderline_high.get("score_start", 90.0)) - float(borderline_high.get("score_end", 70.0)))
+                )
             else:
-                score = 90.0
-        elif position < 0.05:
-            if position < 0:
+                score = float(borderline_low.get("score_end", 90.0))
+        elif position < float(low_noncritical.get("end", 0.05)):
+            if position < float(low_noncritical.get("start", 0.0)):
                 excess_ratio = abs(position)
-                score = max(0.0, 10.0 - excess_ratio * 50.0)
+                score = max(
+                    0.0,
+                    float(low_critical.get("base_score", 10.0))
+                    - excess_ratio * float(low_critical.get("excess_multiplier", 50.0)),
+                )
             else:
-                score = 50.0 + (position - 0.0) / 0.05 * 20.0
+                score = float(low_noncritical.get("score_start", 50.0)) + (
+                    (position - float(low_noncritical.get("start", 0.0)))
+                    / (float(low_noncritical.get("end", 0.05)) - float(low_noncritical.get("start", 0.0)))
+                    * (float(low_noncritical.get("score_end", 70.0)) - float(low_noncritical.get("score_start", 50.0)))
+                )
         else:
-            if position > 1.0:
-                excess_ratio = position - 1.0
-                score = max(0.0, 30.0 - excess_ratio * 50.0)
+            if position > float(high_noncritical.get("end", 1.0)):
+                excess_ratio = position - float(high_noncritical.get("end", 1.0))
+                score = max(
+                    0.0,
+                    float(high_critical.get("base_score", 30.0))
+                    - excess_ratio * float(high_critical.get("excess_multiplier", 50.0)),
+                )
             else:
-                score = 70.0 - (position - 0.95) / 0.05 * 20.0
+                score = float(high_noncritical.get("score_start", 70.0)) - (
+                    (position - float(high_noncritical.get("start", 0.95)))
+                    / (float(high_noncritical.get("end", 1.0)) - float(high_noncritical.get("start", 0.95)))
+                    * (float(high_noncritical.get("score_start", 70.0)) - float(high_noncritical.get("score_end", 50.0)))
+                )
 
         return score, score_range
     

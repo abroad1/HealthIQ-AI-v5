@@ -46,7 +46,7 @@ class DataCompletenessValidator:
         HealthSystem.INFLAMMATORY: 1,    # crp
         HealthSystem.HORMONAL: 2,        # Basic hormone markers
         HealthSystem.NUTRITIONAL: 2,     # Basic vitamin markers
-        HealthSystem.KIDNEY: 2,          # creatinine, bun
+        HealthSystem.KIDNEY: 2,          # creatinine, urea
         HealthSystem.LIVER: 2,           # alt, ast
         HealthSystem.CBC: 2              # hemoglobin, hematocrit
     }
@@ -70,7 +70,7 @@ class DataCompletenessValidator:
         HealthSystem.INFLAMMATORY: [],
         HealthSystem.HORMONAL: [],
         HealthSystem.NUTRITIONAL: [],
-        HealthSystem.KIDNEY: ["bun"],
+        HealthSystem.KIDNEY: ["urea"],
         HealthSystem.LIVER: ["ast"],
         HealthSystem.CBC: ["hematocrit", "white_blood_cells", "platelets"]
     }
@@ -136,7 +136,7 @@ class DataCompletenessValidator:
             
             # Kidney
             "creatinine": HealthSystem.KIDNEY,
-            "bun": HealthSystem.KIDNEY,
+            "urea": HealthSystem.KIDNEY,
             
             # Liver
             "alt": HealthSystem.LIVER,

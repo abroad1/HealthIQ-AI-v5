@@ -1,0 +1,42 @@
+registry_version: "1.0.0"
+schema_version: "1.0"
+
+conflict_definitions:
+  - conflict_id: "depth_gap_multi_over_focal"
+    system_a: "*"
+    system_b: "*"
+    conflict_type: "depth_gap"
+    conflict_severity: "moderate"
+    trigger_conditions:
+      - "a_has_state:system_multi_marker_derangement"
+      - "b_has_state:system_focal_derangement"
+    rationale_codes:
+      - "conflict:depth_gap_multi_vs_focal"
+    precedence:
+      rank: 10
+
+  - conflict_id: "severity_override_bidirectional"
+    system_a: "*"
+    system_b: "*"
+    conflict_type: "severity_override"
+    conflict_severity: "high"
+    trigger_conditions:
+      - "a_has_state:system_bidirectional_instability"
+      - "b_has_state:system_focal_derangement"
+    rationale_codes:
+      - "conflict:severity_override_bidirectional"
+    precedence:
+      rank: 20
+
+  - conflict_id: "cross_system_cascade_worse_vs_improving"
+    system_a: "*"
+    system_b: "*"
+    conflict_type: "cross_system_cascade"
+    conflict_severity: "moderate"
+    trigger_conditions:
+      - "a_has_transition:system_trending_worse"
+      - "b_has_transition:system_trending_improving"
+    rationale_codes:
+      - "conflict:cross_system_cascade"
+    precedence:
+      rank: 30

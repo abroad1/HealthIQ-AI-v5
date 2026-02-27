@@ -20,6 +20,9 @@ def _allow_unmapped() -> bool:
     return os.environ.get("UNIT_ALLOW_UNMAPPED", "false").lower() == "true"
 
 
+UNIT_REGISTRY_VERSION = "1.0"
+
+
 class UnitConversionError(ValueError):
     """Raised when unit conversion fails (unknown unit, no conversion path)."""
     def __init__(
@@ -46,17 +49,33 @@ class UnitEnum(str, Enum):
     UU_ML = "μU/mL"
     MG_L = "mg/L"
     MMOL_L = "mmol/L"
+    UMOL_L = "µmol/L"
+    NMOL_L = "nmol/L"
+    NG_ML = "ng/mL"
     MMOL_MOL = "mmol/mol"
     MEQ_L = "mEq/L"
     RATIO = "ratio"
 
 
-# Biomarkers that use cholesterol conversion (mg/dL -> mmol/L, factor 0.0259)
+# Biomarker groups for deterministic conversion dispatch.
 _CHOLESTEROL_BIOMARKERS = frozenset({
-    "total_cholesterol", "ldl_cholesterol", "hdl_cholesterol", "triglycerides",
+    "total_cholesterol", "ldl_cholesterol", "hdl_cholesterol",
 })
+_TRIGLYCERIDE_BIOMARKERS = frozenset({"triglycerides"})
 _GLUCOSE_BIOMARKERS = frozenset({"glucose"})
 _HBA1C_BIOMARKERS = frozenset({"hba1c"})
+_UREA_BIOMARKERS = frozenset({"urea"})
+_CREATININE_BIOMARKERS = frozenset({"creatinine"})
+_VITAMIN_D_BIOMARKERS = frozenset({"vitamin_d"})
+_STRICT_CONVERSION_BIOMARKERS = frozenset().union(
+    _CHOLESTEROL_BIOMARKERS,
+    _TRIGLYCERIDE_BIOMARKERS,
+    _GLUCOSE_BIOMARKERS,
+    _HBA1C_BIOMARKERS,
+    _UREA_BIOMARKERS,
+    _CREATININE_BIOMARKERS,
+    _VITAMIN_D_BIOMARKERS,
+)
 
 
 class UnitRegistry:
@@ -90,17 +109,10 @@ class UnitRegistry:
             return self._biomarker_base_units
         with open(biomarkers_file, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
-        base = {}
-        for name, defn in data.get("biomarkers", {}).items():
-            ssot_unit = (defn.get("unit") or "").strip() or "mg/dL"
-            if name in _CHOLESTEROL_BIOMARKERS:
-                base[name] = "mmol/L"
-            elif name in _GLUCOSE_BIOMARKERS:
-                base[name] = "mmol/L"
-            elif name in _HBA1C_BIOMARKERS:
-                base[name] = "mmol/mol"
-            else:
-                base[name] = ssot_unit
+        base = {
+            name: ((defn.get("unit") or "").strip() or "mg/dL")
+            for name, defn in data.get("biomarkers", {}).items()
+        }
         self._biomarker_base_units = base
         self._biomarker_ssot_units = {
             name: (defn.get("unit") or "").strip() or "mg/dL"
@@ -133,15 +145,43 @@ class UnitRegistry:
         if biomarker_id in _GLUCOSE_BIOMARKERS and from_u == "mg/dL" and to_u == "mmol/L":
             c = convs.get("mg_dL_to_mmol_L_glucose", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
-                return float(c.get("factor", 0.0555))
-        if biomarker_id in _CHOLESTEROL_BIOMARKERS and from_u == "mg/dL" and to_u == "mmol/L":
-            c = convs.get("mg_dL_to_mmol_L", {})
+                return float(c.get("factor", 1.0 / 18.0))
+        if biomarker_id in _GLUCOSE_BIOMARKERS and from_u == "mmol/L" and to_u == "mg/dL":
+            c = convs.get("mmol_L_to_mg_dL_glucose", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
-                return float(c.get("factor", 0.0259))
+                return float(c.get("factor", 18.0))
+        if biomarker_id in _CHOLESTEROL_BIOMARKERS and from_u == "mg/dL" and to_u == "mmol/L":
+            c = convs.get("mg_dL_to_mmol_L_cholesterol", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 1.0 / 38.67))
+        if biomarker_id in _CHOLESTEROL_BIOMARKERS and from_u == "mmol/L" and to_u == "mg/dL":
+            c = convs.get("mmol_L_to_mg_dL_cholesterol", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 38.67))
+        if biomarker_id in _TRIGLYCERIDE_BIOMARKERS and from_u == "mg/dL" and to_u == "mmol/L":
+            c = convs.get("mg_dL_to_mmol_L_triglycerides", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 0.01129))
+        if biomarker_id in _TRIGLYCERIDE_BIOMARKERS and from_u == "mmol/L" and to_u == "mg/dL":
+            c = convs.get("mmol_L_to_mg_dL_triglycerides", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 88.57))
         if biomarker_id in _HBA1C_BIOMARKERS and from_u == "%" and to_u == "mmol/mol":
             c = convs.get("percent_to_mmol_mol", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
                 return float(c.get("factor", 10.929))
+        if biomarker_id in _UREA_BIOMARKERS and from_u == "mg/dL" and to_u == "mmol/L":
+            c = convs.get("mg_dL_to_mmol_L_urea", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 0.357))
+        if biomarker_id in _CREATININE_BIOMARKERS and from_u == "mg/dL" and to_u == "µmol/L":
+            c = convs.get("mg_dL_to_umol_L_creatinine", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 88.4))
+        if biomarker_id in _VITAMIN_D_BIOMARKERS and from_u == "ng/mL" and to_u == "nmol/L":
+            c = convs.get("ng_mL_to_nmol_L_vitamin_d", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 2.5))
         return None
 
     def _convert_with_explicit_unit(
@@ -164,6 +204,10 @@ class UnitRegistry:
             return float(value), base_unit
         factor = self._get_conversion_factor(biomarker_id, from_u, base_unit)
         if factor is None:
+            if biomarker_id not in _STRICT_CONVERSION_BIOMARKERS:
+                # Deterministic passthrough for biomarkers without an explicit
+                # conversion matrix in UnitRegistry.
+                return float(value), from_u
             raise UnitConversionError(
                 f"No conversion from '{from_u}' to base unit '{base_unit}' for biomarker '{biomarker_id}'",
                 biomarker_id=biomarker_id,
@@ -209,17 +253,24 @@ def apply_unit_normalisation(
     No silent assumptions. Unmapped rejected by default.
     """
     reg = registry or _get_registry()
-    allow_unm = allow_unmapped if allow_unmapped is not None else _allow_unmapped()
     result = {}
 
     for key, data in normalized.items():
-        if key.startswith("unmapped_"):
-            if not allow_unm:
-                raise UnitConversionError(
-                    f"Unmapped biomarker '{key}' rejected; set UNIT_ALLOW_UNMAPPED=true to allow",
-                    biomarker_id=key,
-                )
-            result[key] = dict(data)
+        is_explicit_unmapped = (
+            isinstance(data, dict)
+            and (
+                data.get("unmapped") is True
+                or data.get("is_unmapped") is True
+                or str(data.get("canonical_id", "")).startswith("unmapped_")
+            )
+        )
+        if key.startswith("unmapped_") or is_explicit_unmapped:
+            # Quarantine contract: unmapped biomarkers bypass unit conversion and
+            # are passed through for deterministic downstream quarantine handling.
+            if isinstance(data, dict):
+                result[key] = dict(data)
+            else:
+                result[key] = {"value": data, "unit": ""}
             continue
 
         if isinstance(data, (int, float)):

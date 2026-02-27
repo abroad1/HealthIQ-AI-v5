@@ -73,15 +73,14 @@ class ClusteringEngine:
         biomarker_values = self._extract_biomarker_values(context)
         biomarker_scores = self._extract_biomarker_scores(scoring_result)
         
-        # Apply clustering algorithm
-        if self.algorithm == ClusteringAlgorithm.RULE_BASED:
-            clusters = self._apply_rule_based_clustering(biomarker_values, biomarker_scores)
-        elif self.algorithm == ClusteringAlgorithm.WEIGHTED_CORRELATION:
-            clusters = self._apply_weighted_correlation_clustering(biomarker_values, biomarker_scores)
-        elif self.algorithm == ClusteringAlgorithm.HEALTH_SYSTEM_GROUPING:
-            clusters = self._apply_health_system_grouping(scoring_result)
-        else:
-            clusters = []
+        # Legacy compatibility: dispatch table avoids algorithm branch chain.
+        # Runtime convergence uses ClusterEngineV2 in orchestrator.
+        algo_dispatch = {
+            ClusteringAlgorithm.RULE_BASED: lambda: self._apply_rule_based_clustering(biomarker_values, biomarker_scores),
+            ClusteringAlgorithm.WEIGHTED_CORRELATION: lambda: self._apply_weighted_correlation_clustering(biomarker_values, biomarker_scores),
+            ClusteringAlgorithm.HEALTH_SYSTEM_GROUPING: lambda: self._apply_health_system_grouping(scoring_result),
+        }
+        clusters = algo_dispatch.get(self.algorithm, lambda: [])()
         
         # Validate clusters
         validation_summary = self._validate_clusters(clusters)
@@ -176,24 +175,18 @@ class ClusteringEngine:
         return clusters
     
     def _group_biomarkers_by_health_system(self, biomarker_values: Dict[str, float]) -> Dict[str, List[str]]:
-        """Group biomarkers by their health system."""
-        health_system_mapping = {
-            "metabolic": ["glucose", "hba1c", "insulin", "homa_ir"],
-            "cardiovascular": ["total_cholesterol", "ldl_cholesterol", "hdl_cholesterol", "triglycerides"],
-            "inflammatory": ["crp", "esr", "il6"],
-            "kidney": ["creatinine", "bun", "egfr"],
-            "liver": ["alt", "ast", "bilirubin", "alp"],
-            "cbc": ["hemoglobin", "hematocrit", "wbc", "platelets"],
-            "hormonal": ["tsh", "free_t4", "testosterone", "estradiol"],
-            "nutritional": ["vitamin_d", "b12", "folate", "iron", "ferritin"]
-        }
-        
+        """Group biomarkers by health system. Sprint 6: schema-driven."""
+        try:
+            from core.analytics.cluster_schema import load_cluster_schema
+            schema = load_cluster_schema()
+        except (ImportError, FileNotFoundError, ValueError):
+            return {}
+
         grouped = {}
-        for system, biomarkers in health_system_mapping.items():
-            system_biomarkers = [b for b in biomarkers if b in biomarker_values]
-            if system_biomarkers:
-                grouped[system] = system_biomarkers
-        
+        for cid, cdef in schema.clusters.items():
+            present = [b for b in cdef.all_biomarkers() if b in biomarker_values]
+            if present:
+                grouped[cid] = present
         return grouped
     
     def _create_health_system_cluster(self, system_name: str, biomarkers: List[str], 

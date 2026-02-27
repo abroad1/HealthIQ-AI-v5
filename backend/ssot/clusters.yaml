@@ -1,0 +1,90 @@
+# Sprint 6 - Cluster Definition Schema (SSOT)
+# Canonical IDs only (must exist in biomarkers.yaml). Schema-driven; no hardcoded cluster logic in runtime.
+# Aligns with criticality; used by clustering engine and cluster_engine_v2.
+
+version: "1.0.0"
+schema_version: "1.0"
+
+clusters:
+  metabolic:
+    cluster_id: metabolic
+    description: "Metabolic biomarkers (glucose, HbA1c, insulin)"
+    biomarker_membership:
+      required:
+        - glucose
+        - hba1c
+      important: []
+      optional:
+        - insulin
+
+  cardiovascular:
+    cluster_id: cardiovascular
+    description: "Cardiovascular risk biomarkers"
+    biomarker_membership:
+      required:
+        - total_cholesterol
+        - ldl_cholesterol
+      important:
+        - hdl_cholesterol
+      optional:
+        - triglycerides
+
+  hepatic:
+    cluster_id: hepatic
+    description: "Liver function biomarkers"
+    biomarker_membership:
+      required:
+        - alt
+      important:
+        - ast
+      optional: []
+
+  renal:
+    cluster_id: renal
+    description: "Kidney function biomarkers"
+    biomarker_membership:
+      required:
+        - creatinine
+      important:
+        - urea
+      optional: []
+
+  inflammatory:
+    cluster_id: inflammatory
+    description: "Inflammatory biomarkers"
+    biomarker_membership:
+      required:
+        - crp
+      important: []
+      optional: []
+
+  hematological:
+    cluster_id: hematological
+    description: "Complete blood count biomarkers"
+    biomarker_membership:
+      required:
+        - hemoglobin
+        - white_blood_cells
+      important:
+        - platelets
+      optional:
+        - hematocrit
+
+  hormonal:
+    cluster_id: hormonal
+    description: "Hormonal biomarkers"
+    biomarker_membership:
+      required: []
+      important: []
+      optional:
+        - calcium
+
+  nutritional:
+    cluster_id: nutritional
+    description: "Nutritional deficiency biomarkers"
+    biomarker_membership:
+      required:
+        - magnesium
+      important: []
+      optional:
+        - calcium

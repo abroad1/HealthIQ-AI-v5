@@ -1,0 +1,79 @@
+registry_version: "1.0.0"
+schema_version: "1.0"
+
+dominance_rules:
+  - rule_id: "depth_gap_a_over_b_tier10"
+    conflict_type: "depth_gap"
+    dominance: "a_over_b"
+    precedence_tier: 10
+    rationale_codes:
+      - "dominance:depth_gap"
+
+  - rule_id: "severity_override_a_over_b_tier5"
+    conflict_type: "severity_override"
+    dominance: "a_over_b"
+    precedence_tier: 5
+    rationale_codes:
+      - "dominance:severity_override"
+
+  - rule_id: "cross_system_cascade_a_over_b_tier15"
+    conflict_type: "cross_system_cascade"
+    dominance: "a_over_b"
+    precedence_tier: 15
+    rationale_codes:
+      - "dominance:cross_system_cascade"
+
+causal_edge_rules:
+  - edge_rule_id: "depth_gap_driver_edge"
+    conflict_type: "depth_gap"
+    edge_type: "driver"
+    direction: "winner_to_loser"
+    priority: 100
+    rationale_codes:
+      - "causal_edge:depth_gap_driver"
+
+  - edge_rule_id: "severity_override_driver_edge"
+    conflict_type: "severity_override"
+    edge_type: "driver"
+    direction: "winner_to_loser"
+    priority: 110
+    rationale_codes:
+      - "causal_edge:severity_override_driver"
+
+  - edge_rule_id: "cross_system_cascade_driver_edge"
+    conflict_type: "cross_system_cascade"
+    edge_type: "driver"
+    direction: "winner_to_loser"
+    priority: 95
+    rationale_codes:
+      - "causal_edge:cross_system_cascade_driver"
+
+arbitration_scoring:
+  cycle_policy: "fail_loud"
+  tie_breakers:
+    - "wins_desc"
+    - "transitive_desc"
+    - "weighted_score_desc"
+    - "precedence_tier_asc"
+    - "confidence_bucket_desc"
+    - "system_id_asc"
+  score_components:
+    direct_win_weight: 100
+    transitive_win_weight: 70
+    conflict_weight: 10
+    precedence_tier_weight: 5
+    calibration_tier_weight: 4
+  conflict_type_weights:
+    depth_gap: 5
+    severity_override: 9
+    cross_system_cascade: 7
+  precedence_tier_weights:
+    "5": 9
+    "10": 6
+    "15": 4
+    "20": 2
+  calibration_tier_weights:
+    p0: 9
+    p1: 6
+    p2: 3
+    p3: 1

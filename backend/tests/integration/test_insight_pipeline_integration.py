@@ -43,7 +43,7 @@ class TestInsightPipelineIntegration:
             "alt": 35.0,
             "ast": 28.0,
             "creatinine": 1.1,
-            "bun": 18.0
+            "urea": 6.4
         }
     
     @pytest.fixture

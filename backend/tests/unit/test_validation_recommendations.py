@@ -36,7 +36,7 @@ class TestRecommendationEngine:
         complete_biomarkers = {
             "glucose": 95.0, "hba1c": 5.2, "insulin": 8.5,
             "total_cholesterol": 180.0, "ldl_cholesterol": 110.0, "hdl_cholesterol": 55.0,
-            "triglycerides": 120.0, "crp": 1.2, "creatinine": 0.9, "bun": 15.0,
+            "triglycerides": 120.0, "crp": 1.2, "creatinine": 0.9, "urea": 5.4,
             "alt": 25.0, "ast": 30.0, "hemoglobin": 14.5, "hematocrit": 42.0,
             "white_blood_cells": 7.2, "platelets": 280.0
         }

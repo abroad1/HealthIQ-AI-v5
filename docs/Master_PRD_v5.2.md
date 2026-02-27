@@ -211,6 +211,8 @@ All derived biomarkers must be computed centrally.
 * Must be computed in a single deterministic pipeline step.
 * Insights must not compute ratios locally.
 * Ratios must be stored in the AnalysisSnapshot.
+* **Lab-supplied ratios are never overwritten; RatioRegistry is a missing-value filler with provenance tagging.**
+* **Derived markers are exposed as a first-class `derived_markers` field in the API result (registry_version + derived dict with provenance).**
 
 > **All derived ratio calculations occur after full unit normalisation into internal base SI units.**  
 > **RatioRegistry logic must never operate on presentation-layer units.**

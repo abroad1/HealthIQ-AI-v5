@@ -110,33 +110,33 @@ class HeartInsight(BaseInsight):
         apob = biomarkers.get('apob')
         systolic_bp = biomarkers.get('systolic_bp')
         diastolic_bp = biomarkers.get('diastolic_bp')
-        
-        # Calculate lipid ratios
-        ldl_hdl_ratio = (ldl_chol / hdl_chol) if hdl_chol > 0 else 0
-        tc_hdl_ratio = (total_chol / hdl_chol) if hdl_chol > 0 else 0
-        tg_hdl_ratio = (triglycerides / hdl_chol) if triglycerides and hdl_chol and hdl_chol > 0 else None
-        
+
+        # Lipid ratios from RatioRegistry (centralised); read from panel only (no local computation)
+        ldl_hdl_ratio = biomarkers.get('ldl_hdl_ratio')
+        tc_hdl_ratio = biomarkers.get('tc_hdl_ratio')
+        tg_hdl_ratio = biomarkers.get('tg_hdl_ratio')
+
         # Calculate base resilience score (0-100, higher is better)
         base_score = 100.0
-        
+
         # LDL/HDL ratio adjustments (primary risk factor)
-        if ldl_hdl_ratio > 4.0:
+        if ldl_hdl_ratio is not None and ldl_hdl_ratio > 4.0:
             base_score -= 30  # Very high risk
-        elif ldl_hdl_ratio > 3.5:
+        elif ldl_hdl_ratio is not None and ldl_hdl_ratio > 3.5:
             base_score -= 20  # High risk
-        elif ldl_hdl_ratio > 2.5:
+        elif ldl_hdl_ratio is not None and ldl_hdl_ratio > 2.5:
             base_score -= 10  # Moderate risk
-        elif ldl_hdl_ratio > 2.0:
+        elif ldl_hdl_ratio is not None and ldl_hdl_ratio > 2.0:
             base_score -= 5   # Mild risk
         
         # TC/HDL ratio adjustments
-        if tc_hdl_ratio > 5.0:
+        if tc_hdl_ratio is not None and tc_hdl_ratio > 5.0:
             base_score -= 25  # Very high risk
-        elif tc_hdl_ratio > 4.0:
+        elif tc_hdl_ratio is not None and tc_hdl_ratio > 4.0:
             base_score -= 15  # High risk
-        elif tc_hdl_ratio > 3.5:
+        elif tc_hdl_ratio is not None and tc_hdl_ratio > 3.5:
             base_score -= 8   # Moderate risk
-        elif tc_hdl_ratio > 3.0:
+        elif tc_hdl_ratio is not None and tc_hdl_ratio > 3.0:
             base_score -= 3   # Mild risk
         
         # TG/HDL ratio adjustments (metabolic dysfunction)
@@ -179,11 +179,11 @@ class HeartInsight(BaseInsight):
         risk_factors = []
         drivers = {}
         
-        if ldl_hdl_ratio > 3.5:
+        if ldl_hdl_ratio is not None and ldl_hdl_ratio > 3.5:
             risk_factors.append("elevated_ldl_hdl_ratio")
             drivers['ldl_hdl_ratio'] = round(ldl_hdl_ratio, 2)
-        
-        if tc_hdl_ratio > 4.0:
+
+        if tc_hdl_ratio is not None and tc_hdl_ratio > 4.0:
             risk_factors.append("elevated_tc_hdl_ratio")
             drivers['tc_hdl_ratio'] = round(tc_hdl_ratio, 2)
         
@@ -204,8 +204,16 @@ class HeartInsight(BaseInsight):
             drivers['blood_pressure'] = f"{systolic_bp}/{diastolic_bp}"
         
         # Generate recommendations
-        recommendations = self._generate_recommendations(risk_factors, ldl_hdl_ratio, tc_hdl_ratio, 
-                                                       tg_hdl_ratio, crp, apob, systolic_bp, diastolic_bp)
+        recommendations = self._generate_recommendations(
+            risk_factors,
+            ldl_hdl_ratio or 0.0,
+            tc_hdl_ratio or 0.0,
+            tg_hdl_ratio,
+            crp,
+            apob,
+            systolic_bp,
+            diastolic_bp,
+        )
         
         return {
             'heart_resilience_score': round(heart_resilience_score, 1),
@@ -213,8 +221,8 @@ class HeartInsight(BaseInsight):
             'drivers': drivers,
             'evidence': {
                 'heart_resilience_score': round(heart_resilience_score, 1),
-                'ldl_hdl_ratio': round(ldl_hdl_ratio, 2),
-                'tc_hdl_ratio': round(tc_hdl_ratio, 2),
+                'ldl_hdl_ratio': round(ldl_hdl_ratio, 2) if ldl_hdl_ratio is not None else None,
+                'tc_hdl_ratio': round(tc_hdl_ratio, 2) if tc_hdl_ratio is not None else None,
                 'tg_hdl_ratio': round(tg_hdl_ratio, 2) if tg_hdl_ratio else None,
                 'apob': round(apob, 1) if apob else None,
                 'crp': round(crp, 2) if crp else None,

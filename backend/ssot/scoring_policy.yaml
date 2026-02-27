@@ -1,0 +1,334 @@
+policy_version: "1.1.0"
+schema_version: "1.0"
+
+systems:
+  metabolic:
+    min_biomarkers_required: 2
+    system_weight: 0.25
+    biomarkers: ["glucose", "hba1c", "insulin"]
+  cardiovascular:
+    min_biomarkers_required: 3
+    system_weight: 0.25
+    biomarkers: ["total_cholesterol", "ldl_cholesterol", "hdl_cholesterol", "triglycerides", "tc_hdl_ratio"]
+  inflammatory:
+    min_biomarkers_required: 1
+    system_weight: 0.15
+    biomarkers: ["crp"]
+  hormonal:
+    min_biomarkers_required: 0
+    system_weight: 0.0
+    biomarkers: []
+  nutritional:
+    min_biomarkers_required: 0
+    system_weight: 0.0
+    biomarkers: []
+  kidney:
+    min_biomarkers_required: 1
+    system_weight: 0.15
+    biomarkers: ["creatinine", "urea"]
+  liver:
+    min_biomarkers_required: 1
+    system_weight: 0.1
+    biomarkers: ["alt", "ast"]
+  cbc:
+    min_biomarkers_required: 2
+    system_weight: 0.1
+    biomarkers: ["hemoglobin", "hematocrit", "white_blood_cells", "platelets"]
+
+biomarkers:
+  glucose:
+    scoring_type: "range_position"
+    unit: "mg/dL"
+    weight: 0.4
+    age_adjustment: true
+    sex_adjustment: false
+    bands:
+      optimal: {min: 70.0, max: 100.0}
+      normal: {min: 70.0, max: 100.0}
+      borderline: {min: 100.0, max: 125.0}
+      high: {min: 125.0, max: 200.0}
+      very_high: {min: 200.0, max: 300.0}
+      critical: {min: 300.0, max: 1000.0}
+  hba1c:
+    scoring_type: "range_position"
+    unit: "%"
+    weight: 0.4
+    age_adjustment: true
+    sex_adjustment: false
+    bands:
+      optimal: {min: 4.0, max: 5.6}
+      normal: {min: 4.0, max: 5.6}
+      borderline: {min: 5.7, max: 6.4}
+      high: {min: 6.5, max: 8.0}
+      very_high: {min: 8.0, max: 10.0}
+      critical: {min: 10.0, max: 15.0}
+  insulin:
+    scoring_type: "range_position"
+    unit: "μU/mL"
+    weight: 0.2
+    age_adjustment: false
+    sex_adjustment: false
+    bands:
+      optimal: {min: 2.0, max: 10.0}
+      normal: {min: 2.0, max: 25.0}
+      borderline: {min: 25.0, max: 35.0}
+      high: {min: 35.0, max: 50.0}
+      very_high: {min: 50.0, max: 100.0}
+      critical: {min: 100.0, max: 500.0}
+  total_cholesterol:
+    scoring_type: "range_position"
+    unit: "mg/dL"
+    weight: 0.2
+    age_adjustment: false
+    sex_adjustment: false
+    bands:
+      optimal: {min: 0.0, max: 200.0}
+      normal: {min: 0.0, max: 200.0}
+      borderline: {min: 200.0, max: 239.0}
+      high: {min: 240.0, max: 300.0}
+      very_high: {min: 300.0, max: 400.0}
+      critical: {min: 400.0, max: 1000.0}
+  ldl_cholesterol:
+    scoring_type: "range_position"
+    unit: "mg/dL"
+    weight: 0.3
+    age_adjustment: false
+    sex_adjustment: false
+    bands:
+      optimal: {min: 0.0, max: 100.0}
+      normal: {min: 0.0, max: 100.0}
+      borderline: {min: 100.0, max: 129.0}
+      high: {min: 130.0, max: 159.0}
+      very_high: {min: 160.0, max: 189.0}
+      critical: {min: 190.0, max: 500.0}
+  hdl_cholesterol:
+    scoring_type: "range_position"
+    unit: "mg/dL"
+    weight: 0.3
+    age_adjustment: false
+    sex_adjustment: true
+    bands:
+      optimal: {min: 60.0, max: 200.0}
+      normal: {min: 40.0, max: 200.0}
+      borderline: {min: 35.0, max: 40.0}
+      high: {min: 20.0, max: 35.0}
+      very_high: {min: 10.0, max: 20.0}
+      critical: {min: 0.0, max: 10.0}
+  triglycerides:
+    scoring_type: "range_position"
+    unit: "mg/dL"
+    weight: 0.2
+    age_adjustment: false
+    sex_adjustment: false
+    bands:
+      optimal: {min: 0.0, max: 150.0}
+      normal: {min: 0.0, max: 150.0}
+      borderline: {min: 150.0, max: 199.0}
+      high: {min: 200.0, max: 499.0}
+      very_high: {min: 500.0, max: 1000.0}
+      critical: {min: 1000.0, max: 5000.0}
+  tc_hdl_ratio:
+    scoring_type: "range_position"
+    unit: "ratio"
+    weight: 0.1
+    age_adjustment: false
+    sex_adjustment: false
+    bands:
+      optimal: {min: 0.0, max: 3.5}
+      normal: {min: 3.5, max: 5.0}
+      borderline: {min: 5.0, max: 6.0}
+      high: {min: 6.0, max: 8.0}
+      very_high: {min: 8.0, max: 10.0}
+      critical: {min: 10.0, max: 20.0}
+  crp:
+    scoring_type: "range_position"
+    unit: "mg/L"
+    weight: 1.0
+    age_adjustment: false
+    sex_adjustment: false
+    bands:
+      optimal: {min: 0.0, max: 1.0}
+      normal: {min: 0.0, max: 3.0}
+      borderline: {min: 3.0, max: 10.0}
+      high: {min: 10.0, max: 50.0}
+      very_high: {min: 50.0, max: 100.0}
+      critical: {min: 100.0, max: 500.0}
+  creatinine:
+    scoring_type: "range_position"
+    unit: "mg/dL"
+    weight: 0.6
+    age_adjustment: true
+    sex_adjustment: true
+    bands:
+      optimal: {min: 0.6, max: 1.2}
+      normal: {min: 0.6, max: 1.2}
+      borderline: {min: 1.2, max: 1.5}
+      high: {min: 1.5, max: 2.0}
+      very_high: {min: 2.0, max: 3.0}
+      critical: {min: 3.0, max: 10.0}
+  urea:
+    scoring_type: "range_position"
+    unit: "mmol/L"
+    weight: 0.4
+    age_adjustment: false
+    sex_adjustment: false
+    bands:
+      optimal: {min: 2.5, max: 7.1}
+      normal: {min: 2.5, max: 7.1}
+      borderline: {min: 7.1, max: 8.9}
+      high: {min: 8.9, max: 17.8}
+      very_high: {min: 17.8, max: 35.7}
+      critical: {min: 35.7, max: 71.4}
+  alt:
+    scoring_type: "range_position"
+    unit: "U/L"
+    weight: 0.5
+    age_adjustment: false
+    sex_adjustment: true
+    bands:
+      optimal: {min: 7.0, max: 56.0}
+      normal: {min: 7.0, max: 56.0}
+      borderline: {min: 56.0, max: 100.0}
+      high: {min: 100.0, max: 200.0}
+      very_high: {min: 200.0, max: 500.0}
+      critical: {min: 500.0, max: 2000.0}
+  ast:
+    scoring_type: "range_position"
+    unit: "U/L"
+    weight: 0.5
+    age_adjustment: false
+    sex_adjustment: false
+    bands:
+      optimal: {min: 10.0, max: 40.0}
+      normal: {min: 10.0, max: 40.0}
+      borderline: {min: 40.0, max: 80.0}
+      high: {min: 80.0, max: 200.0}
+      very_high: {min: 200.0, max: 500.0}
+      critical: {min: 500.0, max: 2000.0}
+  hemoglobin:
+    scoring_type: "range_position"
+    unit: "g/dL"
+    weight: 0.4
+    age_adjustment: false
+    sex_adjustment: true
+    bands:
+      optimal: {min: 12.0, max: 16.0}
+      normal: {min: 12.0, max: 16.0}
+      borderline: {min: 10.0, max: 12.0}
+      high: {min: 16.0, max: 18.0}
+      very_high: {min: 18.0, max: 20.0}
+      critical: {min: 20.0, max: 25.0}
+  hematocrit:
+    scoring_type: "range_position"
+    unit: "%"
+    weight: 0.3
+    age_adjustment: false
+    sex_adjustment: true
+    bands:
+      optimal: {min: 36.0, max: 46.0}
+      normal: {min: 36.0, max: 46.0}
+      borderline: {min: 30.0, max: 36.0}
+      high: {min: 46.0, max: 52.0}
+      very_high: {min: 52.0, max: 60.0}
+      critical: {min: 60.0, max: 70.0}
+  white_blood_cells:
+    scoring_type: "range_position"
+    unit: "K/μL"
+    weight: 0.2
+    age_adjustment: false
+    sex_adjustment: false
+    bands:
+      optimal: {min: 4.5, max: 11.0}
+      normal: {min: 4.5, max: 11.0}
+      borderline: {min: 3.5, max: 4.5}
+      high: {min: 11.0, max: 15.0}
+      very_high: {min: 15.0, max: 25.0}
+      critical: {min: 25.0, max: 50.0}
+  platelets:
+    scoring_type: "range_position"
+    unit: "K/μL"
+    weight: 0.1
+    age_adjustment: false
+    sex_adjustment: false
+    bands:
+      optimal: {min: 150.0, max: 450.0}
+      normal: {min: 150.0, max: 450.0}
+      borderline: {min: 100.0, max: 150.0}
+      high: {min: 450.0, max: 600.0}
+      very_high: {min: 600.0, max: 1000.0}
+      critical: {min: 1000.0, max: 2000.0}
+
+derived_ratios:
+  - "tc_hdl_ratio"
+  - "tg_hdl_ratio"
+  - "ldl_hdl_ratio"
+  - "chol_hdl_ratio"
+  - "apoB_apoA1_ratio"
+  - "non_hdl_cholesterol"
+  - "urea_creatinine_ratio"
+  - "testosterone_free_testosterone_ratio"
+
+derived_ratio_policy_bounds:
+  tc_hdl_ratio:
+    min: 0.0
+    max: 5.0
+    unit: "ratio"
+    source: "healthiq_policy"
+    notes: "Cardiovascular ratio policy band, dimensionless."
+  tg_hdl_ratio:
+    min: 0.0
+    max: 4.0
+    unit: "ratio"
+    source: "healthiq_policy"
+    notes: "Cardiovascular ratio policy band, dimensionless."
+  ldl_hdl_ratio:
+    min: 0.0
+    max: 3.5
+    unit: "ratio"
+    source: "healthiq_policy"
+    notes: "Cardiovascular ratio policy band, dimensionless."
+  non_hdl_cholesterol:
+    min: 0.0
+    max: 4.0
+    unit: "mmol/L"
+    source: "healthiq_policy"
+    notes: "Computed as total_cholesterol - hdl_cholesterol in mmol/L basis."
+  apoB_apoA1_ratio:
+    min: 0.0
+    max: 1.5
+    unit: "ratio"
+    source: "healthiq_policy"
+    notes: "Computed as apoB / apoA1, dimensionless ratio basis."
+  urea_creatinine_ratio:
+    min: 0.0
+    max: 20.0
+    unit: "ratio"
+    source: "healthiq_policy"
+    notes: "Computed as urea / creatinine, dimensionless ratio basis."
+  testosterone_free_testosterone_ratio:
+    min: 0.0
+    max: 50.0
+    unit: "ratio"
+    source: "healthiq_policy"
+    notes: "Computed as testosterone / free_testosterone, dimensionless ratio basis."
+
+status_map:
+  low_critical: "critical"
+  low_borderline: "borderline"
+  normal: "normal"
+  optimal: "optimal"
+  high_borderline: "high"
+  high_critical: "critical"
+
+score_curve:
+  optimal_band: {min: 0.2, max: 0.8, score: 100.0}
+  normal_band: {min: 0.1, max: 0.9}
+  normal_low: {start: 0.1, end: 0.2, score_start: 90.0, score_end: 100.0}
+  normal_high: {start: 0.8, end: 0.9, score_start: 100.0, score_end: 90.0}
+  borderline_band: {min: 0.05, max: 0.95}
+  borderline_low: {start: 0.05, end: 0.1, score_start: 70.0, score_end: 90.0}
+  borderline_high: {start: 0.9, end: 0.95, score_start: 90.0, score_end: 70.0}
+  low_noncritical: {start: 0.0, end: 0.05, score_start: 50.0, score_end: 70.0}
+  low_critical: {excess_multiplier: 50.0, base_score: 10.0}
+  high_noncritical: {start: 0.95, end: 1.0, score_start: 70.0, score_end: 50.0}
+  high_critical: {excess_multiplier: 50.0, base_score: 30.0}

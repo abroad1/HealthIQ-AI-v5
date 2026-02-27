@@ -23,6 +23,10 @@ class BiomarkerScore(BaseModel):
     score: float = Field(..., description="Normalized score (0-1)")
     percentile: Optional[float] = Field(default=None, description="Population percentile")
     status: str = Field(..., description="Status (normal, elevated, low, etc.)")
+    range_source: Optional[str] = Field(
+        default=None,
+        description="Range provenance: lab | policy | ssot"
+    )
     reference_range: Optional[Dict[str, Any]] = Field(
         default=None, 
         description="Reference range information"
@@ -63,6 +67,14 @@ class AnalysisResult(BaseModel):
     processing_time_seconds: Optional[float] = Field(
         default=None, 
         description="Total processing time"
+    )
+    derived_markers: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Derived/ratio markers (registry_version + derived dict) for replay determinism"
+    )
+    replay_manifest: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Sprint 9: ReplayManifestV1 for determinism/replay"
     )
 
 
@@ -133,8 +145,32 @@ class AnalysisDTO(BaseModel):
     status: str = Field(..., description="Analysis status")
     created_at: str = Field(..., description="Creation timestamp")
     overall_score: Optional[float] = Field(default=None, description="Overall health score")
+    primary_driver_system_id: str = Field(
+        default="",
+        description="Single-authority primary driver from final arbitration/explainability",
+    )
+    system_capacity_scores: Dict[str, int] = Field(
+        default_factory=dict,
+        description="Deterministic system capacity scores from burden engine",
+    )
+    burden_hash: str = Field(
+        default="",
+        description="Deterministic hash of adjusted burden + capacity vectors",
+    )
     unmapped_biomarkers: List[str] = Field(
         default_factory=list,
         description="Unrecognised biomarkers excluded from analysis"
     )
+    derived_markers: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Derived/ratio markers (registry_version + derived dict with provenance)"
+    )
     meta: Optional[Dict[str, Any]] = Field(default=None, description="Analysis meta (criticality, etc.)")
+    replay_manifest: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Sprint 9: ReplayManifestV1 for determinism/replay (version stamps + schema hashes)"
+    )
+    lifestyle: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Sprint 20: Lifestyle modifier artifact (derived_inputs, system_modifiers, confidence_adjustments) when lifestyle_inputs provided",
+    )

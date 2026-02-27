@@ -33,6 +33,16 @@ if str(backend_dir) not in sys.path:
 
 
 @pytest.fixture(scope="session", autouse=True)
+def _force_test_db_env():
+    """Earliest fixture: force DATABASE_URL from DATABASE_URL_TEST; opt-in migrations."""
+    test_url = os.getenv("DATABASE_URL_TEST")
+    if test_url:
+        os.environ["DATABASE_URL"] = test_url
+    if os.getenv("ALLOW_TEST_DB_MIGRATIONS") is None:
+        os.environ.setdefault("ALLOW_TEST_DB_MIGRATIONS", "1")
+
+
+@pytest.fixture(scope="session", autouse=True)
 def cleanup_test_db():
     """Truncate key tables after tests finish to ensure clean state."""
     from sqlalchemy import create_engine, text
@@ -75,7 +85,7 @@ def lab_reference_ranges():
         "triglycerides": {"min": 0.0, "max": 150.0, "unit": "mg/dL"},
         "crp": {"min": 0.0, "max": 3.0, "unit": "mg/L"},
         "creatinine": {"min": 0.6, "max": 1.2, "unit": "mg/dL"},
-        "bun": {"min": 7.0, "max": 20.0, "unit": "mg/dL"},
+        "urea": {"min": 2.5, "max": 7.1, "unit": "mmol/L"},
         "alt": {"min": 7.0, "max": 56.0, "unit": "U/L"},
         "ast": {"min": 10.0, "max": 40.0, "unit": "U/L"},
         "hemoglobin": {"min": 12.0, "max": 16.0, "unit": "g/dL"},

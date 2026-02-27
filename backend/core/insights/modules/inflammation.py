@@ -99,17 +99,18 @@ class InflammationInsight(BaseInsight):
         # Extract values
         crp = float(biomarkers.get('crp', 0))
         
-        # Get optional biomarkers
+        # Get optional biomarkers (NLR from RatioRegistry; do not compute locally)
         wbc = biomarkers.get('white_blood_cells')
-        neutrophils = biomarkers.get('neutrophils')
-        lymphocytes = biomarkers.get('lymphocytes')
+        nlr = biomarkers.get('nlr')
+        if nlr is not None:
+            if isinstance(nlr, dict):
+                nlr = nlr.get('value') if isinstance(nlr.get('value'), (int, float)) else None
+            elif not isinstance(nlr, (int, float)):
+                nlr = float(getattr(nlr, 'value', nlr)) if isinstance(getattr(nlr, 'value', None), (int, float)) else None
+            else:
+                nlr = float(nlr)
         ferritin = biomarkers.get('ferritin')
         gender = biomarkers.get('gender', 'male')  # Default to male for ferritin thresholds
-        
-        # Calculate NLR if both neutrophil and lymphocyte counts are available
-        nlr = None
-        if neutrophils and lymphocytes and lymphocytes > 0:
-            nlr = neutrophils / lymphocytes
         
         # Calculate base inflammation burden score (0-100, higher is worse)
         base_score = 0.0

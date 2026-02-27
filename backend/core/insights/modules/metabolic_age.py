@@ -109,18 +109,17 @@ class MetabolicAgeInsight(BaseInsight):
         # Calculate HOMA-IR
         homa_ir = (glucose * insulin) / 405.0 if glucose > 0 and insulin > 0 else 0
         
-        # Get optional biomarkers
+        # Get optional biomarkers (lipid ratios from RatioRegistry; read from panel)
         total_chol = biomarkers.get('total_cholesterol')
         hdl_chol = biomarkers.get('hdl_cholesterol')
         triglycerides = biomarkers.get('triglycerides')
         bmi = biomarkers.get('bmi')
         waist_circ = biomarkers.get('waist_circumference')
         height = biomarkers.get('height')
-        
-        # Calculate lipid ratios if available
-        tc_hdl_ratio = (total_chol / hdl_chol) if total_chol and hdl_chol and hdl_chol > 0 else None
-        tg_hdl_ratio = (triglycerides / hdl_chol) if triglycerides and hdl_chol and hdl_chol > 0 else None
-        
+
+        tc_hdl_ratio = biomarkers.get('tc_hdl_ratio')
+        tg_hdl_ratio = biomarkers.get('tg_hdl_ratio')
+
         # Calculate waist-to-height ratio if available
         waist_height_ratio = (waist_circ / height) if waist_circ and height and height > 0 else None
         

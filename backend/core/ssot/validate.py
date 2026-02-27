@@ -18,6 +18,7 @@ ALLOWED_SYSTEMS = {
     "hematological",
     "hormonal",
     "nutritional",
+    "thyroid",
 }
 
 REQUIRED_FIELDS = {
