@@ -20,7 +20,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          python-version: "3.11"
 
       - name: Python version
         run: python -V
@@ -39,6 +39,13 @@ jobs:
       - name: Run golden runner unit tests
         working-directory: backend
         run: python -m pytest tests/unit/test_golden_panel_runner.py -q
+
+      - name: Run core integration tests
+        working-directory: backend
+        run: |
+          python -m pytest tests/integration/test_insight_pipeline_integration.py -q
+          python -m pytest tests/integration/test_ratio_registry_integration.py -q
+          python -m pytest tests/integration/test_orchestrator_unmapped_quarantine.py -q
 
       - name: Run golden panel snapshot pack from repo root
         shell: bash
