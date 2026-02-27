@@ -9,10 +9,15 @@ import hashlib
 import json
 from pathlib import Path
 
+import pytest
+
+from core.analytics.validation_gate import LIFESTYLE_ONLY_SYSTEMS
 from core.canonical.normalize import normalize_biomarkers_with_metadata
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 from core.units.registry import UNIT_REGISTRY_VERSION, apply_unit_normalisation
 from tools.run_golden_panel import run_golden_panel
+
+CORE_SYSTEMS_MUST_NOT_BYPASS = {"cardiovascular", "metabolic", "hepatic", "immune"}
 
 
 def _empty_session():
@@ -56,6 +61,29 @@ def _collision_free_fixture() -> Path:
     return Path(__file__).parent.parent / "fixtures" / "golden_panel_160_collision_free.json"
 
 
+def test_validation_gate_bypass_lifestyle_only_systems():
+    """Zero-path bypass allowed only for musculoskeletal and autonomic; core systems must NOT bypass."""
+    assert LIFESTYLE_ONLY_SYSTEMS == {"musculoskeletal", "autonomic"}
+    for sid in CORE_SYSTEMS_MUST_NOT_BYPASS:
+        assert sid not in LIFESTYLE_ONLY_SYSTEMS, f"Core system {sid} must not bypass zero_path_rule"
+
+
+def test_core_systems_with_lifestyle_modifiers_require_influence_path(tmp_path):
+    """When cardiovascular/metabolic get lifestyle modifiers but have path=inf, run fails (validation)."""
+    # Orchestrator catches validation failure and returns error DTO; run_golden_panel then raises
+    # for missing explainability_report. Either way, the run must NOT succeed.
+    fixture = _collision_free_fixture()
+    lifestyle_minimal = Path(__file__).parent.parent / "fixtures" / "lifestyle_minimal.json"
+    with pytest.raises(ValueError):
+        run_golden_panel(
+            fixture_path=fixture,
+            output_root=tmp_path,
+            run_id="core-fail",
+            write_narrative=False,
+            lifestyle_fixture_path=lifestyle_minimal,
+        )
+
+
 def test_no_lifestyle_input_omits_lifestyle_key(tmp_path):
     """Without lifestyle_inputs, analysis_result must NOT contain 'lifestyle' key."""
     fixture = _collision_free_fixture()
@@ -94,7 +122,8 @@ def test_no_lifestyle_byte_for_byte_identical_burdens(tmp_path):
 def test_with_lifestyle_input_adds_lifestyle_section(tmp_path):
     """With lifestyle_inputs, lifestyle section present and burdens change deterministically."""
     fixture = _collision_free_fixture()
-    lifestyle_fixture = Path(__file__).parent.parent / "fixtures" / "lifestyle_minimal.json"
+    # Use musculoskeletal-only fixture so core systems get no modifiers (zero_path_rule compliant)
+    lifestyle_fixture = Path(__file__).parent.parent / "fixtures" / "lifestyle_musculoskeletal_only.json"
     _, result_no_life = run_golden_panel(
         fixture_path=fixture,
         output_root=tmp_path,
@@ -118,7 +147,7 @@ def test_with_lifestyle_input_adds_lifestyle_section(tmp_path):
 def test_with_lifestyle_base_burden_preserved(tmp_path):
     """Lifestyle artifact preserves base_burden in system_modifiers."""
     fixture = _collision_free_fixture()
-    lifestyle_fixture = Path(__file__).parent.parent / "fixtures" / "lifestyle_minimal.json"
+    lifestyle_fixture = Path(__file__).parent.parent / "fixtures" / "lifestyle_musculoskeletal_only.json"
     _, result = run_golden_panel(
         fixture_path=fixture,
         output_root=tmp_path,
@@ -139,7 +168,7 @@ def test_with_lifestyle_base_burden_preserved(tmp_path):
 def test_with_lifestyle_deterministic_ordering(tmp_path):
     """System keys and contributions sorted alphabetically."""
     fixture = _collision_free_fixture()
-    lifestyle_fixture = Path(__file__).parent.parent / "fixtures" / "lifestyle_minimal.json"
+    lifestyle_fixture = Path(__file__).parent.parent / "fixtures" / "lifestyle_musculoskeletal_only.json"
     _, result = run_golden_panel(
         fixture_path=fixture,
         output_root=tmp_path,
@@ -159,7 +188,7 @@ def test_with_lifestyle_deterministic_ordering(tmp_path):
 def test_with_lifestyle_floats_rounded_4dp(tmp_path):
     """All floats in lifestyle section rounded to 4 decimal places."""
     fixture = _collision_free_fixture()
-    lifestyle_fixture = Path(__file__).parent.parent / "fixtures" / "lifestyle_minimal.json"
+    lifestyle_fixture = Path(__file__).parent.parent / "fixtures" / "lifestyle_musculoskeletal_only.json"
     _, result = run_golden_panel(
         fixture_path=fixture,
         output_root=tmp_path,
@@ -188,7 +217,7 @@ def test_with_lifestyle_floats_rounded_4dp(tmp_path):
 def test_with_lifestyle_input_hash_present_and_correct(tmp_path):
     """lifestyle_input_hash in replay_manifest equals sha256(canonical JSON) of lifestyle_inputs."""
     fixture = _collision_free_fixture()
-    lifestyle_fixture = Path(__file__).parent.parent / "fixtures" / "lifestyle_minimal.json"
+    lifestyle_fixture = Path(__file__).parent.parent / "fixtures" / "lifestyle_musculoskeletal_only.json"
     lifestyle_inputs = json.loads(lifestyle_fixture.read_text(encoding="utf-8"))
     expected_hash = hashlib.sha256(
         json.dumps(lifestyle_inputs, sort_keys=True, ensure_ascii=True).encode("utf-8")
