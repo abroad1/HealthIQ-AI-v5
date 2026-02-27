@@ -16,13 +16,10 @@ from core.contracts.arbitration_v1 import canonical_json_sha256
 
 VALIDATION_GATE_VERSION = "1.0.0"
 
-# Systems that may receive lifestyle-adjusted burden and legitimately have no influence path.
-# Lifestyle-only (musculoskeletal, autonomic): no biomarkers; always path=inf.
-# Burden systems with lifestyle modifiers (cardiovascular, metabolic, etc.): may have path=inf
-# when causal graph does not connect them. Explicit allowlist from lifestyle_registry system_modifiers.
-SYSTEMS_ALLOWED_LIFESTYLE_WITHOUT_INFLUENCE_PATHS = frozenset({
-    "cardiovascular", "metabolic", "hepatic", "immune", "musculoskeletal",
-})
+# Lifestyle-only systems: no biomarkers in burden registry; may have no influence-graph path.
+# They are valid to score via lifestyle modifiers. Core systems (cardiovascular, metabolic, etc.)
+# must have an influence path and must NOT bypass zero_path_rule.
+LIFESTYLE_ONLY_SYSTEMS = frozenset({"musculoskeletal", "autonomic"})
 
 
 @dataclass(frozen=True)
@@ -93,8 +90,8 @@ def run_validation_gate_v1(
     if recalculated != burden_hash:
         violations.append("burden_hash_mismatch")
 
-    # Only allowlisted systems (from lifestyle_registry system_modifiers) may bypass zero_path_rule
-    exempt_ids = (allow_lifestyle_only_systems_without_influence_paths or set()) & SYSTEMS_ALLOWED_LIFESTYLE_WITHOUT_INFLUENCE_PATHS
+    # Only lifestyle-only systems may bypass zero_path_rule (no influence path required)
+    exempt_ids = (allow_lifestyle_only_systems_without_influence_paths or set()) & LIFESTYLE_ONLY_SYSTEMS
     for sid in supporting_systems:
         if sid in exempt_ids:
             continue
