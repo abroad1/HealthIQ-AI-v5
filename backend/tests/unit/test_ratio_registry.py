@@ -109,6 +109,29 @@ class TestRatioRegistryCompute:
         assert entry["source"] == "lab"
         assert entry["value"] == pytest.approx(5.0, abs=0.001)
 
+    def test_testosterone_free_testosterone_ratio_computed_when_inputs_present(self):
+        """When testosterone and free_testosterone present, compute ratio (source=computed)."""
+        panel = {"testosterone": 10.96, "free_testosterone": 277.93}
+        out = compute(panel)
+        entry = out.get("derived", {}).get("testosterone_free_testosterone_ratio")
+        assert entry is not None
+        assert entry["source"] == "computed"
+        # 10.96 / 277.93 ≈ 0.0394
+        assert entry["value"] == pytest.approx(0.039, abs=0.001)
+
+    def test_testosterone_free_testosterone_ratio_lab_supplied_wins(self):
+        """When panel has lab-supplied ratio, do not overwrite with computed value."""
+        panel = {
+            "testosterone": 10.96,
+            "free_testosterone": 277.93,
+            "testosterone_free_testosterone_ratio": 0.04,
+        }
+        out = compute(panel)
+        entry = out.get("derived", {}).get("testosterone_free_testosterone_ratio")
+        assert entry is not None
+        assert entry["source"] == "lab"
+        assert entry["value"] == pytest.approx(0.04, abs=0.001)
+
 
 class TestInsightNoLocalRatioDivision:
     """Guard: insight modules must not compute RatioRegistry ratios locally."""
