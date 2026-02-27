@@ -2,6 +2,8 @@
 Analysis orchestrator - enforces canonical-only keys and coordinates analysis.
 """
 
+import hashlib
+import json
 import os
 import subprocess
 from typing import Dict, Any, List, Mapping, Optional, Tuple
@@ -1262,8 +1264,7 @@ class AnalysisOrchestrator:
                 lifestyle_adjusted_systems: set = set()
                 effective_lifestyle_inputs = lifestyle_inputs or user.get("lifestyle_inputs")
                 if effective_lifestyle_inputs and isinstance(effective_lifestyle_inputs, dict) and effective_lifestyle_inputs:
-                    import hashlib
-                    import json
+                    # Intentional lazy-load: lifestyle modules only when lifestyle_inputs provided.
                     from core.analytics.lifestyle_registry_loader import load_lifestyle_registry
                     from core.analytics.lifestyle_modifier_engine import LifestyleModifierEngine
                     registry = load_lifestyle_registry()
