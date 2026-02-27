@@ -6,7 +6,9 @@ import pytest
 import yaml
 import tempfile
 from pathlib import Path
-from backend.core.ssot.validate import validate_ssot, validate_biomarker, ALLOWED_SYSTEMS
+
+from core.analytics.system_burden_engine import ALLOWED_BURDEN_SYSTEM_IDS
+from core.ssot.validate import ALLOWED_SYSTEMS, validate_biomarker, validate_ssot
 
 
 def test_validate_biomarker_happy_path():
@@ -104,4 +106,22 @@ def test_validate_ssot_failing_fixture():
         assert len(errors) > 0
     finally:
         temp_path.unlink()
+
+
+def test_lifestyle_and_burden_system_namespaces_match():
+    """
+    SSOT integrity: lifestyle_registry system_caps must match system_burden allowlist.
+    Ensures single consistent system namespace across lifestyle and burden registries.
+    """
+    ssot_root = Path(__file__).resolve().parent.parent.parent / "ssot"
+    lifestyle_path = ssot_root / "lifestyle_registry.yaml"
+    if not lifestyle_path.exists():
+        pytest.skip("lifestyle_registry.yaml not found")
+    lifestyle_data = yaml.safe_load(lifestyle_path.read_text(encoding="utf-8"))
+    lifestyle_systems = set((lifestyle_data.get("system_caps") or {}).keys())
+    burden_systems = set(ALLOWED_BURDEN_SYSTEM_IDS)
+    assert lifestyle_systems == burden_systems, (
+        f"System namespace mismatch: lifestyle has {sorted(lifestyle_systems - burden_systems)} not in burden; "
+        f"burden has {sorted(burden_systems - lifestyle_systems)} not in lifestyle"
+    )
 

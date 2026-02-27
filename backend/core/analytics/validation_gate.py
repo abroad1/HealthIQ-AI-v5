@@ -2,16 +2,27 @@
 Sprint 13 - Deterministic System Burden & Capacity Engine v1.
 
 Module E: programmatic guardian validation.
+
+Sprint 20: zero_path_rule bypass is explicit and allowlisted. Only lifestyle-only systems
+(musculoskeletal, autonomic) that have no influence graph path may exempt—not arbitrary systems.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Mapping, Sequence
+from typing import Dict, List, Mapping, Optional, Sequence, Set
 
 from core.contracts.arbitration_v1 import canonical_json_sha256
 
 VALIDATION_GATE_VERSION = "1.0.0"
+
+# Systems that may receive lifestyle-adjusted burden and legitimately have no influence path.
+# Lifestyle-only (musculoskeletal, autonomic): no biomarkers; always path=inf.
+# Burden systems with lifestyle modifiers (cardiovascular, metabolic, etc.): may have path=inf
+# when causal graph does not connect them. Explicit allowlist from lifestyle_registry system_modifiers.
+SYSTEMS_ALLOWED_LIFESTYLE_WITHOUT_INFLUENCE_PATHS = frozenset({
+    "cardiovascular", "metabolic", "hepatic", "immune", "musculoskeletal",
+})
 
 
 @dataclass(frozen=True)
@@ -46,6 +57,7 @@ def run_validation_gate_v1(
     adjusted_system_burden_vector: Mapping[str, float],
     system_capacity_scores: Mapping[str, int],
     burden_hash: str,
+    allow_lifestyle_only_systems_without_influence_paths: Optional[Set[str]] = None,
 ) -> ValidationResult:
     violations: List[str] = []
     graph_systems = {str(x) for x in insight_graph_system_ids}
@@ -81,7 +93,11 @@ def run_validation_gate_v1(
     if recalculated != burden_hash:
         violations.append("burden_hash_mismatch")
 
+    # Only allowlisted systems (from lifestyle_registry system_modifiers) may bypass zero_path_rule
+    exempt_ids = (allow_lifestyle_only_systems_without_influence_paths or set()) & SYSTEMS_ALLOWED_LIFESTYLE_WITHOUT_INFLUENCE_PATHS
     for sid in supporting_systems:
+        if sid in exempt_ids:
+            continue
         dist = path_distances.get(sid, float("inf"))
         if dist == float("inf") and float(adjusted_system_burden_vector.get(sid, 0.0)) != 0.0:
             violations.append(f"zero_path_rule_violation:{sid}")

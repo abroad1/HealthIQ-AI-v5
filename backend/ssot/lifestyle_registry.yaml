@@ -81,6 +81,8 @@ system_caps:
   hormonal: 0.10
   autonomic: 0.10
   hematological: 0.10
+  nutritional: 0.10
+  thyroid: 0.10
 
 system_modifiers:
   cardiovascular:
