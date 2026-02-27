@@ -93,6 +93,20 @@ class TestPersistenceFlow:
             created_at=datetime.now(UTC).isoformat()
         )
         
+        replay_manifest = {
+            "manifest_version": "1.0.0",
+            "unit_registry_version": "1.0",
+            "ratio_registry_version": "1.1.0",
+            "relationship_registry_version": "1.0.0",
+            "relationship_registry_hash": "relhash123",
+            "cluster_schema_version": "1.0.0",
+            "cluster_schema_hash": "abc123",
+            "insight_graph_version": "1.0.0",
+            "confidence_model_version": "1.0.0",
+            "derived_markers_registry_version": "1.1.0",
+            "schema_hashes": {"insight_graph_hash": "def456", "confidence_model_hash": "ghi789"},
+            "analysis_result_version": "1.0.0",
+        }
         analysis_result_dto = AnalysisResultDTO(
             analysis_id=str(analysis_id),
             context=context,
@@ -103,7 +117,14 @@ class TestPersistenceFlow:
             risk_assessment={},
             recommendations=[],
             created_at=datetime.now(UTC).isoformat(),
-            result_version="1.0.0"
+            result_version="1.0.0",
+            derived_markers={
+                "registry_version": "1.1.0",
+                "derived": {
+                    "tc_hdl_ratio": {"value": 4.0, "unit": "ratio", "source": "computed", "bounds_applied": True, "inputs_used": ["total_cholesterol", "hdl_cholesterol"]},
+                },
+            },
+            replay_manifest=replay_manifest,
         )
         
         # Test automatic persistence
@@ -118,7 +139,32 @@ class TestPersistenceFlow:
         assert result is not None, "Analysis result should be created"
         assert result.overall_score == 0.75
         assert result.result_version == "1.0.0"
-        
+
+        # Verify derived_markers round-trip via first-class column (Sprint 5)
+        assert result.derived_markers is not None, "DB model derived_markers column should be populated"
+        assert result.derived_markers.get("registry_version") == "1.1.0"
+        assert "tc_hdl_ratio" in result.derived_markers.get("derived", {})
+
+        fetched = persistence_service.get_analysis_result(analysis_id)
+        assert fetched is not None
+        assert "derived_markers" in fetched
+        dm = fetched["derived_markers"]
+        assert dm is not None
+        assert dm.get("registry_version") == "1.1.0"
+        assert "tc_hdl_ratio" in dm.get("derived", {})
+        assert dm["derived"]["tc_hdl_ratio"]["value"] == 4.0
+
+        # Sprint 9: Verify replay_manifest round-trip via first-class column
+        assert "replay_manifest" in fetched
+        rm = fetched["replay_manifest"]
+        assert rm is not None
+        assert rm.get("manifest_version") == "1.0.0"
+        assert rm.get("cluster_schema_hash") == "abc123"
+        assert rm.get("relationship_registry_version") == "1.0.0"
+        assert rm.get("relationship_registry_hash") == "relhash123"
+        assert "insight_graph_hash" in rm.get("schema_hashes", {})
+        assert rm["schema_hashes"]["insight_graph_hash"] == "def456"
+
         # Verify biomarker scores were created
         biomarker_repo = BiomarkerScoreRepository(db_session)
         biomarker_scores = biomarker_repo.list_by_analysis_id(analysis_id)

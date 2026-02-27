@@ -1,0 +1,25 @@
+registry_version: "1.0.0"
+schema_version: "1.0"
+
+evidence_items:
+  - evidence_id: "metabolic_lipid_pattern_001"
+    title: "TG/HDL metabolic pattern reference"
+    source_type: guideline
+    source_ref: "internal:metabolic_lipid_001"
+    quality_grade: moderate
+    last_reviewed: "2025-01-15"
+    notes: "Provenance scaffold for TG/HDL relationship pattern."
+
+  - evidence_id: "apob_ldl_discordance_001"
+    title: "ApoB/LDL discordance clinical reference"
+    source_type: paper
+    source_ref: "PMID:00000000"
+    quality_grade: high
+    last_reviewed: "2025-01-15"
+
+  - evidence_id: "inflammation_modifier_001"
+    title: "Ferritin-CRP inflammation modifier"
+    source_type: expert_consensus
+    source_ref: "internal:inflammation_001"
+    quality_grade: moderate
+    last_reviewed: "2025-01-15"

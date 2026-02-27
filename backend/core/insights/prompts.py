@@ -39,6 +39,9 @@ Analyze the following metabolic biomarker data and lifestyle factors to generate
 **Clustering Results:**
 {clustering_results}
 
+**Confidence (data coverage):**
+{confidence_context}
+
 Generate 1-3 metabolic health insights focusing on:
 - Insulin resistance patterns (glucose, hba1c, insulin markers)
 - Metabolic syndrome indicators
@@ -84,6 +87,9 @@ Analyze the following cardiovascular biomarker data and lifestyle factors to gen
 **Clustering Results:**
 {clustering_results}
 
+**Confidence (data coverage):**
+{confidence_context}
+
 Generate 1-3 cardiovascular health insights focusing on:
 - Heart disease risk factors
 - Cholesterol and lipid patterns
@@ -128,6 +134,9 @@ Analyze the following inflammatory biomarker data and lifestyle factors to gener
 
 **Clustering Results:**
 {clustering_results}
+
+**Confidence (data coverage):**
+{confidence_context}
 
 Generate 1-3 inflammatory health insights focusing on:
 - Chronic inflammation patterns (CRP, ESR markers)
@@ -175,6 +184,9 @@ Analyze the following organ health biomarker data and lifestyle factors to gener
 **Clustering Results:**
 {clustering_results}
 
+**Confidence (data coverage):**
+{confidence_context}
+
 Generate 1-3 organ health insights focusing on:
 - Liver function patterns (ALT, AST, GGT markers)
 - Kidney function indicators
@@ -220,6 +232,9 @@ Analyze the following nutritional biomarker data and lifestyle factors to genera
 **Clustering Results:**
 {clustering_results}
 
+**Confidence (data coverage):**
+{confidence_context}
+
 Generate 1-3 nutritional health insights focusing on:
 - Vitamin and mineral status
 - Nutritional deficiency assessment and excesses
@@ -264,6 +279,9 @@ Analyze the following hormonal biomarker data and lifestyle factors to generate 
 
 **Clustering Results:**
 {clustering_results}
+
+**Confidence (data coverage):**
+{confidence_context}
 
 Generate 1-3 hormonal health insights focusing on:
 - Hormonal balance patterns
@@ -363,7 +381,7 @@ Return insights in this JSON format:
         """
         template = cls.get_template(category)
         
-        # Format the template with provided data
+        # Format the template with provided data (legacy path: no confidence model)
         formatted_prompt = template.format(
             biomarker_scores=biomarker_scores,
             diet_level=lifestyle_profile.get("diet_level", "average"),
@@ -372,10 +390,150 @@ Return insights in this JSON format:
             stress_level=lifestyle_profile.get("stress_level", "average"),
             smoking_status=lifestyle_profile.get("smoking_status", "never"),
             alcohol_units_per_week=lifestyle_profile.get("alcohol_units_per_week", 5),
-            clustering_results=clustering_results
+            clustering_results=clustering_results,
+            confidence_context="(Legacy path: confidence model not available)",
         )
         
         return formatted_prompt
+
+    @classmethod
+    def format_template_from_insight_graph(
+        cls,
+        category: str,
+        insight_graph_json: str,
+        explainability_report_json: str,
+        lifestyle_profile: Dict[str, Any],
+    ) -> str:
+        """
+        Sprint 7: Format prompt using ONLY InsightGraph_v1. LLM receives structured payload only.
+
+        Args:
+            category: Health category
+            insight_graph_json: JSON-serialised InsightGraphV1
+            explainability_report_json: JSON-serialised ExplainabilityReport_v1
+            lifestyle_profile: User lifestyle (minimal; not raw biomarkers)
+
+        Returns:
+            Formatted prompt string
+        """
+        template = cls.get_template(category)
+        # Use same template structure but with insight_graph as sole data source.
+        # Legacy templates expect biomarker_scores and clustering_results - we pass
+        # derived views from insight_graph to satisfy template placeholders without
+        # exposing raw data. For Sprint 7, we inject the full InsightGraph as the
+        # primary payload and use placeholder text for backward template compat.
+        import json
+        ig = {}
+        explainability = {}
+        biomarker_context = []
+        try:
+            ig = json.loads(insight_graph_json)
+            # PRD §4.7: No raw values, units, ranges. Only status and score (interpreted outputs).
+            biomarker_summary = {
+                n["biomarker_id"]: {
+                    "status": n.get("status", "unknown"),
+                    "score": n.get("score"),
+                }
+                for n in ig.get("biomarker_nodes", [])
+            }
+            cluster_summary = ig.get("cluster_summary", {}) or {}
+            clusters_list = cluster_summary.get("clusters", [])
+            biomarker_context = [
+                {
+                    "biomarker_id": c.get("biomarker_id", ""),
+                    "status": c.get("status", "unknown"),
+                    "score": c.get("score"),
+                    "reason_codes": c.get("reason_codes", []),
+                    "missing_codes": c.get("missing_codes", []),
+                    "relationship_codes": c.get("relationship_codes", []),
+                }
+                for c in (ig.get("biomarker_context", []) or [])
+                if isinstance(c, dict)
+            ]
+            biomarker_context.sort(key=lambda x: x.get("biomarker_id", ""))
+        except (json.JSONDecodeError, TypeError):
+            biomarker_summary = {}
+            clusters_list = []
+            biomarker_context = []
+            ig = {}
+        try:
+            explainability = json.loads(explainability_report_json)
+        except (json.JSONDecodeError, TypeError):
+            raise ValueError("Explainability report is required for prompt assembly")
+
+        if not isinstance(explainability, dict):
+            raise ValueError("Explainability report is required for prompt assembly")
+        # Sprint 8: Build confidence_context from ConfidenceModel_v1 (no inference from absence)
+        conf = ig.get("confidence")
+        if conf is None or not isinstance(conf, dict) or "system_confidence" not in conf:
+            confidence_context = "(Confidence model not available)"
+        else:
+            confidence_context = (
+                f"System confidence: {conf.get('system_confidence', 0):.2f}. "
+                f"Missing required biomarkers: {conf.get('missing_required_biomarkers', [])}. "
+                f"Incomplete clusters: {conf.get('missing_required_clusters', [])}."
+            )
+        formatted = template.format(
+            biomarker_scores=biomarker_summary,
+            diet_level=lifestyle_profile.get("diet_level", "average"),
+            exercise_minutes_per_week=lifestyle_profile.get("exercise_minutes_per_week", 150),
+            sleep_hours=lifestyle_profile.get("sleep_hours", 7.0),
+            stress_level=lifestyle_profile.get("stress_level", "average"),
+            smoking_status=lifestyle_profile.get("smoking_status", "never"),
+            alcohol_units_per_week=lifestyle_profile.get("alcohol_units_per_week", 5),
+            clustering_results=clusters_list,
+            confidence_context=confidence_context,
+        )
+        arbitration_decisions = explainability.get("arbitration_decisions", {})
+        if not isinstance(arbitration_decisions, dict):
+            raise ValueError("Explainability report missing arbitration_decisions")
+        dominance_resolution = explainability.get("dominance_resolution", {})
+        if not isinstance(dominance_resolution, dict):
+            raise ValueError("Explainability report missing dominance_resolution")
+        influence_ordering = dominance_resolution.get("influence_ordering", {})
+        if not isinstance(influence_ordering, dict):
+            raise ValueError("Explainability report missing influence_ordering")
+        top_causal_edges = (explainability.get("causal_edges", []) or [])[:5]
+        decision_trace = (arbitration_decisions.get("decision_trace", []) or [])[:10]
+        tie_breakers = arbitration_decisions.get("tie_breakers", []) or []
+        arbitration_summary = {
+            "primary_driver_system_id": str(arbitration_decisions.get("primary_driver_system_id", "")),
+            "supporting_systems": list(influence_ordering.get("supporting_systems", [])),
+            "decision_trace": decision_trace,
+            "tie_breakers": tie_breakers,
+            "top_causal_edges": top_causal_edges,
+            "influence_order": list(influence_ordering.get("influence_order", [])),
+            "explainability_hash": str(
+                (explainability.get("replay_stamps", {}) or {}).get("explainability_hash", "")
+            ),
+            "arbitration_hash": str((explainability.get("replay_stamps", {}) or {}).get("arbitration_hash", "")),
+        }
+        if not arbitration_summary["primary_driver_system_id"] or not arbitration_summary["influence_order"]:
+            raise ValueError("Explainability report missing stamped authority ordering fields")
+
+        causal_edges = ig.get("causal_edges", []) if isinstance(ig, dict) else []
+        calibration_items = ig.get("calibration_items", []) if isinstance(ig, dict) else []
+        arbitration_depth = {
+            "primary_driver_system_id": str(ig.get("primary_driver_system_id", "")) if isinstance(ig, dict) else "",
+            "influence_order": ig.get("influence_order", []) if isinstance(ig, dict) else [],
+            "supporting_systems": ig.get("supporting_systems", []) if isinstance(ig, dict) else [],
+            "conflict_set": ig.get("conflict_set", []) if isinstance(ig, dict) else [],
+            "dominance_edges": ig.get("dominance_edges", []) if isinstance(ig, dict) else [],
+            "arbitration_result": ig.get("arbitration_result", {}) if isinstance(ig, dict) else {},
+        }
+        return (
+            f"{formatted}\n\n"
+            f"**Biomarker Context (code-only):**\n"
+            f"{biomarker_context}\n\n"
+            f"**Arbitration summary (stamped):**\n"
+            f"{arbitration_summary}\n\n"
+            f"**Causal ordering (code-only):**\n"
+            f"{causal_edges}\n\n"
+            f"**Arbitration depth (code-only):**\n"
+            f"{arbitration_depth}\n\n"
+            f"**Calibration (code-only):**\n"
+            f"{calibration_items}"
+        )
 
 
 def create_insight_templates() -> List[InsightTemplate]:

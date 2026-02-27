@@ -20,7 +20,7 @@ Your task is to perform OCR on the image, analyze the visual layout, and extract
 ## Canonical Biomarker IDs (use these exact IDs):
 - total_cholesterol, ldl_cholesterol, hdl_cholesterol, triglycerides
 - glucose, hba1c, insulin
-- creatinine, bun
+- creatinine, urea
 - alt, ast
 - crp
 - hemoglobin, hematocrit, white_blood_cells, platelets

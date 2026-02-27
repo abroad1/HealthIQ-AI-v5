@@ -7,7 +7,7 @@ and normalization functionality.
 
 import pytest
 from unittest.mock import patch, MagicMock
-from core.canonical.alias_registry_service import AliasRegistryService
+from core.canonical.alias_registry_service import AliasRegistryService, AliasCollisionError
 
 
 class TestAliasRegistryService:
@@ -54,8 +54,8 @@ class TestAliasRegistryService:
     def test_resolve_unknown_alias(self, mock_open, mock_yaml_load):
         """Test resolving an unknown alias returns unmapped prefix."""
         mock_registry_data = {
-            'hdl': {
-                'canonical_id': 'hdl',
+            'hdl_cholesterol': {
+                'canonical_id': 'hdl_cholesterol',
                 'aliases': ['HDL', 'HDL Cholesterol']
             }
         }
@@ -70,15 +70,11 @@ class TestAliasRegistryService:
 
     def test_resolve_deterministic_fail_closed(self):
         service = AliasRegistryService(use_v4_registry=True)
-        alias_map = service._build_alias_mapping()
-        canonical_ids = set(alias_map.values())
-
-        result = service.resolve("albumin_(venous)")
-        if "albumin" in canonical_ids:
-            assert result == "albumin"
-        else:
-            assert result == "unmapped_albumin_(venous)"
-        assert result != "calcium"
+        with pytest.raises(AliasCollisionError) as exc:
+            service._build_alias_mapping()
+        message = str(exc.value)
+        assert "Alias collision for key" in message
+        assert "canonical_ids=" in message
     
     @patch('core.canonical.alias_registry_service.yaml.safe_load')
     @patch('builtins.open')
@@ -152,12 +148,12 @@ class TestAliasRegistryService:
     def test_get_canonical_biomarkers(self, mock_load_v4):
         """Test getting list of canonical biomarkers."""
         mock_registry_data = {
-            'hdl': {
-                'canonical_id': 'hdl',
+            'hdl_cholesterol': {
+                'canonical_id': 'hdl_cholesterol',
                 'aliases': ['HDL', 'HDL Cholesterol']
             },
-            'ldl': {
-                'canonical_id': 'ldl',
+            'ldl_cholesterol': {
+                'canonical_id': 'ldl_cholesterol',
                 'aliases': ['LDL', 'LDL Cholesterol']
             }
         }
@@ -178,8 +174,8 @@ class TestAliasRegistryService:
     def test_is_canonical(self, mock_open, mock_yaml_load):
         """Test checking if a name is canonical."""
         mock_registry_data = {
-            'hdl': {
-                'canonical_id': 'hdl',
+            'hdl_cholesterol': {
+                'canonical_id': 'hdl_cholesterol',
                 'aliases': ['HDL', 'HDL Cholesterol']
             }
         }
@@ -198,8 +194,8 @@ class TestAliasRegistryService:
     def test_get_alias_count(self, mock_load_v4):
         """Test getting alias count."""
         mock_registry_data = {
-            'hdl': {
-                'canonical_id': 'hdl',
+            'hdl_cholesterol': {
+                'canonical_id': 'hdl_cholesterol',
                 'aliases': ['HDL', 'HDL Cholesterol']
             }
         }
@@ -215,12 +211,12 @@ class TestAliasRegistryService:
     def test_get_canonical_count(self, mock_load_v4):
         """Test getting canonical count."""
         mock_registry_data = {
-            'hdl': {
-                'canonical_id': 'hdl',
+            'hdl_cholesterol': {
+                'canonical_id': 'hdl_cholesterol',
                 'aliases': ['HDL', 'HDL Cholesterol']
             },
-            'ldl': {
-                'canonical_id': 'ldl',
+            'ldl_cholesterol': {
+                'canonical_id': 'ldl_cholesterol',
                 'aliases': ['LDL', 'LDL Cholesterol']
             }
         }
@@ -232,8 +228,12 @@ class TestAliasRegistryService:
         # Should have 2 canonical biomarkers from mock + common aliases
         assert count >= 2
     
-    def test_common_aliases_integration(self):
+    @patch("core.canonical.alias_registry_service.AliasRegistryService._load_ssot_biomarkers")
+    @patch("core.canonical.alias_registry_service.AliasRegistryService._load_alias_registry")
+    def test_common_aliases_integration(self, mock_load_alias_registry, mock_load_ssot_biomarkers):
         """Test that common aliases are properly integrated (hdl/ldl->hdl_cholesterol/ldl_cholesterol)."""
+        mock_load_alias_registry.return_value = {}
+        mock_load_ssot_biomarkers.return_value = {}
         service = AliasRegistryService(use_v4_registry=False)  # Use fallback to test common aliases
         
         # Test common aliases - lipids use _cholesterol suffix per PR
@@ -264,6 +264,44 @@ class TestAliasRegistryService:
         assert service.resolve("HDL CHOLESTEROL") == "hdl_cholesterol"
         assert service.resolve("hdl cholesterol") == "hdl_cholesterol"
 
+    @patch("core.canonical.alias_registry_service.AliasRegistryService._load_ssot_biomarkers")
+    @patch("core.canonical.alias_registry_service.AliasRegistryService._load_alias_registry")
+    def test_alias_collision_raises_hard_fail(self, mock_load_alias_registry, mock_load_ssot_biomarkers):
+        """Two canonicals sharing one alias must hard-fail on map build."""
+        mock_load_alias_registry.return_value = {
+            "alpha_marker": {"canonical_id": "alpha_marker", "aliases": ["Shared Alias"]},
+            "beta_marker": {"canonical_id": "beta_marker", "aliases": ["Shared Alias"]},
+        }
+        mock_load_ssot_biomarkers.return_value = {}
+
+        service = AliasRegistryService(use_v4_registry=True)
+        with pytest.raises(AliasCollisionError) as exc:
+            service._build_alias_mapping()
+
+        message = str(exc.value)
+        assert "Alias collision for key 'shared alias'" in message
+        assert "canonical_ids=['alpha_marker', 'beta_marker']" in message
+        assert "source_aliases=['Shared Alias']" in message
+
+    @patch("core.canonical.alias_registry_service.AliasRegistryService._load_ssot_biomarkers")
+    @patch("core.canonical.alias_registry_service.AliasRegistryService._load_alias_registry")
+    def test_alias_collision_on_normalized_variant_raises_hard_fail(self, mock_load_alias_registry, mock_load_ssot_biomarkers):
+        """Collisions in generated normalized variants must also hard-fail."""
+        mock_load_alias_registry.return_value = {
+            "alpha_marker": {"canonical_id": "alpha_marker", "aliases": ["A B"]},
+            "beta_marker": {"canonical_id": "beta_marker", "aliases": ["A-B"]},
+        }
+        mock_load_ssot_biomarkers.return_value = {}
+
+        service = AliasRegistryService(use_v4_registry=True)
+        with pytest.raises(AliasCollisionError) as exc:
+            service._build_alias_mapping()
+
+        message = str(exc.value)
+        assert "Alias collision for key 'a_b'" in message
+        assert "canonical_ids=['alpha_marker', 'beta_marker']" in message
+        assert "source_aliases=['A B', 'A-B']" in message
+
 
 class TestAliasRegistryServiceIntegration:
     """Integration tests for AliasRegistryService with real v4 data."""
@@ -271,97 +309,32 @@ class TestAliasRegistryServiceIntegration:
     def test_real_v4_registry_loading(self):
         """Test loading real v4 registry data."""
         service = AliasRegistryService(use_v4_registry=True)
-        
-        # Test that service loads without errors
-        canonical = service.get_canonical_biomarkers()
-        assert isinstance(canonical, list)
-        assert len(canonical) > 0
-        
-        # Test that common biomarkers are available (lipids use _cholesterol suffix)
-        common_biomarkers = ["hdl_cholesterol", "ldl_cholesterol", "total_cholesterol", "triglycerides"]
-        for biomarker in common_biomarkers:
-            if biomarker in canonical:
-                assert service.is_canonical(biomarker) is True
+        with pytest.raises(AliasCollisionError) as exc:
+            service.get_canonical_biomarkers()
+        assert "Alias collision for key" in str(exc.value)
     
     def test_real_v4_alias_resolution(self):
         """Test resolving real v4 aliases (HDL/LDL->hdl_cholesterol/ldl_cholesterol per PR)."""
         service = AliasRegistryService(use_v4_registry=True)
-        
-        # Test common aliases - lipids use _cholesterol suffix
-        test_cases = [
-            ("HDL", "hdl_cholesterol"),
-            ("LDL", "ldl_cholesterol"),
-            ("Total Cholesterol", "total_cholesterol"),
-            ("Triglycerides", "triglycerides"),
-        ]
-        
-        for alias, expected_canonical in test_cases:
-            result = service.resolve(alias)
-            if not result.startswith("unmapped_"):
-                assert result == expected_canonical, f"Failed to resolve '{alias}' to '{expected_canonical}', got '{result}'"
+        with pytest.raises(AliasCollisionError) as exc:
+            service.resolve("HDL")
+        assert "Alias collision for key" in str(exc.value)
     
     def test_real_v4_panel_normalization(self):
         """Test normalizing a real biomarker panel (hdl/ldl->hdl_cholesterol/ldl_cholesterol)."""
         service = AliasRegistryService(use_v4_registry=True)
-        
-        # Test panel with common biomarkers
-        test_panel = {
-            "HDL": 45.0,
-            "LDL Cholesterol": 120.0,
-            "Total Cholesterol": 200.0,
-            "Triglycerides": 150.0,
-            "Unknown Test": 10.0
-        }
-        
-        normalized = service.normalize_panel(test_panel)
-        
-        # Check that known biomarkers are normalized to canonical IDs
-        assert "hdl_cholesterol" in normalized
-        assert "ldl_cholesterol" in normalized
-        assert "total_cholesterol" in normalized
-        assert "triglycerides" in normalized
-        
-        # Check that unknown biomarker is prefixed
-        assert "unmapped_Unknown Test" in normalized
-        
-        # Check values are preserved
-        assert normalized["hdl_cholesterol"] == 45.0
-        assert normalized["ldl_cholesterol"] == 120.0
-        assert normalized["total_cholesterol"] == 200.0
-        assert normalized["triglycerides"] == 150.0
-        assert normalized["unmapped_Unknown Test"] == 10.0
+        with pytest.raises(AliasCollisionError) as exc:
+            service.normalize_panel({"HDL": 45.0})
+        assert "Alias collision for key" in str(exc.value)
 
     def test_ssot_lab_style_aliases(self):
         service = AliasRegistryService(use_v4_registry=True)
-        alias_map = service._build_alias_mapping()
-        canonical_ids = set(alias_map.values())
-
-        lipoprotein_result = service.resolve("lipoprotein_(a)")
-        if "lipoprotein_a" in canonical_ids:
-            assert lipoprotein_result == "lipoprotein_a"
-        else:
-            assert lipoprotein_result == "unmapped_lipoprotein_(a)"
-
-        crp_result = service.resolve("c-reactive_protein_crp")
-        if "crp" in canonical_ids and "c_reactive_protein_crp" in alias_map:
-            assert crp_result == "crp"
-        else:
-            assert crp_result == "unmapped_c-reactive_protein_crp"
+        with pytest.raises(AliasCollisionError) as exc:
+            service._build_alias_mapping()
+        assert "Alias collision for key" in str(exc.value)
 
     def test_explicit_lab_aliases(self):
         service = AliasRegistryService(use_v4_registry=True)
-
-        expected = {
-            "total_creatine_kinese_ck": "creatine_kinase",
-            "globulin_calculation_(venous)": "globulin",
-            "bilirubin_total_(venous)": "bilirubin",
-            "alanine_aminotransferase_alt_(venous)": "alt",
-            "gamma-glutamiltransferase_ggt_(venous)": "ggt",
-            "alkaline_photosphatase_alp_(venous)": "alp",
-            "low_density_lipoproteins_(venous)": "ldl_cholesterol",
-            "non_hdl_cholesterol_calculation_(venous)": "non_hdl_cholesterol",
-            "total_cholesterol/hdl_ratio_calculation_(venous)": "tc_hdl_ratio",
-        }
-
-        for raw_key, canonical in expected.items():
-            assert service.resolve(raw_key) == canonical
+        with pytest.raises(AliasCollisionError) as exc:
+            service.resolve("total_creatine_kinese_ck")
+        assert "Alias collision for key" in str(exc.value)

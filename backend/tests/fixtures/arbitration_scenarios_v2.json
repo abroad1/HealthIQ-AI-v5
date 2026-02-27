@@ -1,0 +1,140 @@
+{
+  "scenarios": [
+    {
+      "scenario_id": "transitive_depth_chain",
+      "system_states": [
+        {
+          "system_id": "alpha",
+          "state_codes": ["system_multi_marker_derangement"],
+          "transition_summary_codes": [],
+          "confidence_bucket": "high"
+        },
+        {
+          "system_id": "beta",
+          "state_codes": ["system_focal_derangement", "system_bidirectional_instability"],
+          "transition_summary_codes": [],
+          "confidence_bucket": "moderate"
+        },
+        {
+          "system_id": "gamma",
+          "state_codes": ["system_focal_derangement"],
+          "transition_summary_codes": [],
+          "confidence_bucket": "low"
+        }
+      ],
+      "baseline_calibration_tiers": {
+        "alpha": "p2",
+        "beta": "p2",
+        "gamma": "p3"
+      },
+      "expected": {
+        "conflict_types": ["depth_gap", "severity_override"],
+        "primary_driver_system_id": "alpha",
+        "top_causal_edges": ["alpha>beta:driver", "beta>gamma:driver"],
+        "expected_calibration_tier": "p0"
+      }
+    },
+    {
+      "scenario_id": "cross_system_cascade_focus",
+      "system_states": [
+        {
+          "system_id": "omega",
+          "state_codes": ["system_focal_derangement"],
+          "transition_summary_codes": ["system_trending_worse"],
+          "confidence_bucket": "high"
+        },
+        {
+          "system_id": "sigma",
+          "state_codes": ["system_focal_derangement"],
+          "transition_summary_codes": ["system_trending_improving"],
+          "confidence_bucket": "moderate"
+        },
+        {
+          "system_id": "tau",
+          "state_codes": ["system_stable_normal"],
+          "transition_summary_codes": [],
+          "confidence_bucket": "low"
+        }
+      ],
+      "baseline_calibration_tiers": {
+        "omega": "p2",
+        "sigma": "p2",
+        "tau": "p3"
+      },
+      "expected": {
+        "conflict_types": ["cross_system_cascade"],
+        "primary_driver_system_id": "omega",
+        "top_causal_edges": ["omega>sigma:driver"],
+        "expected_calibration_tier": "p2"
+      }
+    },
+    {
+      "scenario_id": "tier_weighted_driver_shift",
+      "system_states": [
+        {
+          "system_id": "red",
+          "state_codes": ["system_multi_marker_derangement"],
+          "transition_summary_codes": [],
+          "confidence_bucket": "high"
+        },
+        {
+          "system_id": "blue",
+          "state_codes": ["system_stable_normal"],
+          "transition_summary_codes": ["system_trending_worse"],
+          "confidence_bucket": "high"
+        },
+        {
+          "system_id": "green",
+          "state_codes": ["system_stable_normal"],
+          "transition_summary_codes": ["system_trending_improving"],
+          "confidence_bucket": "moderate"
+        },
+        {
+          "system_id": "amber",
+          "state_codes": ["system_focal_derangement"],
+          "transition_summary_codes": [],
+          "confidence_bucket": "moderate"
+        }
+      ],
+      "baseline_calibration_tiers": {
+        "red": "p3",
+        "blue": "p0",
+        "green": "p3",
+        "amber": "p3"
+      },
+      "expected": {
+        "conflict_types": ["depth_gap", "cross_system_cascade"],
+        "primary_driver_system_id": "blue",
+        "top_causal_edges": ["blue>green:driver", "red>amber:driver"],
+        "expected_calibration_tier": "p1"
+      }
+    },
+    {
+      "scenario_id": "severity_override_single",
+      "system_states": [
+        {
+          "system_id": "kappa",
+          "state_codes": ["system_bidirectional_instability"],
+          "transition_summary_codes": [],
+          "confidence_bucket": "high"
+        },
+        {
+          "system_id": "lambda",
+          "state_codes": ["system_focal_derangement"],
+          "transition_summary_codes": [],
+          "confidence_bucket": "moderate"
+        }
+      ],
+      "baseline_calibration_tiers": {
+        "kappa": "p2",
+        "lambda": "p3"
+      },
+      "expected": {
+        "conflict_types": ["severity_override"],
+        "primary_driver_system_id": "kappa",
+        "top_causal_edges": ["kappa>lambda:driver"],
+        "expected_calibration_tier": "p2"
+      }
+    }
+  ]
+}

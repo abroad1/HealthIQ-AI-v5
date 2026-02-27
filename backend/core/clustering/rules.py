@@ -1,8 +1,8 @@
 """
 Rule-based clustering engine for biomarker correlation grouping.
 
-This module provides rule-based clustering algorithms that group biomarkers
-based on clinical correlations, score patterns, and health system relationships.
+Sprint 6: Schema-driven clusters. Definitions loaded from ssot/clusters.yaml;
+no hardcoded cluster logic. Layer B computes; Layer C translates.
 """
 
 from typing import List, Dict, Any, Optional, Tuple
@@ -12,6 +12,16 @@ import math
 import uuid
 
 from core.models.biomarker import BiomarkerCluster
+
+# Schema-driven clustering (Sprint 6)
+try:
+    from core.analytics.cluster_schema import (
+        load_cluster_schema,
+        compute_cluster_status,
+    )
+    _SCHEMA_AVAILABLE = True
+except ImportError:
+    _SCHEMA_AVAILABLE = False
 
 
 class ClusterType(Enum):
@@ -207,103 +217,8 @@ class ClusteringRuleEngine:
         self._initialize_default_rules()
     
     def _initialize_default_rules(self) -> None:
-        """Initialize default clustering rules."""
-        # Metabolic dysfunction rule
-        metabolic_rule = BiomarkerCorrelationRule(
-            name="metabolic_dysfunction",
-            description="Clusters biomarkers indicating metabolic dysfunction",
-            cluster_type=ClusterType.METABOLIC_DYSFUNCTION
-        )
-        metabolic_rule.required_biomarkers = ["glucose", "hba1c"]
-        metabolic_rule.optional_biomarkers = ["insulin", "homa_ir"]
-        metabolic_rule.score_thresholds = {
-            "glucose": (0, 70),  # Low to moderate scores
-            "hba1c": (0, 70),
-            "insulin": (0, 70)
-        }
-        metabolic_rule.min_cluster_size = 2
-        self.rules.append(metabolic_rule)
-        
-        # Cardiovascular risk rule
-        cardio_rule = BiomarkerCorrelationRule(
-            name="cardiovascular_risk",
-            description="Clusters biomarkers indicating cardiovascular risk",
-            cluster_type=ClusterType.CARDIOVASCULAR_RISK
-        )
-        cardio_rule.required_biomarkers = ["total_cholesterol", "ldl_cholesterol"]
-        cardio_rule.optional_biomarkers = ["hdl_cholesterol", "triglycerides"]
-        cardio_rule.score_thresholds = {
-            "total_cholesterol": (0, 70),
-            "ldl_cholesterol": (0, 70),
-            "hdl_cholesterol": (30, 100),  # HDL is inverted (higher is better)
-            "triglycerides": (0, 70)
-        }
-        cardio_rule.min_cluster_size = 2
-        self.rules.append(cardio_rule)
-        
-        # Inflammatory burden rule
-        inflammatory_rule = BiomarkerCorrelationRule(
-            name="inflammatory_burden",
-            description="Clusters biomarkers indicating inflammatory burden",
-            cluster_type=ClusterType.INFLAMMATORY_BURDEN
-        )
-        inflammatory_rule.required_biomarkers = ["crp"]
-        inflammatory_rule.optional_biomarkers = ["esr", "il6"]
-        inflammatory_rule.score_thresholds = {
-            "crp": (0, 70),
-            "esr": (0, 70)
-        }
-        inflammatory_rule.min_cluster_size = 1
-        self.rules.append(inflammatory_rule)
-        
-        # Organ function rule
-        organ_rule = BiomarkerCorrelationRule(
-            name="organ_function",
-            description="Clusters biomarkers indicating organ function concerns",
-            cluster_type=ClusterType.ORGAN_FUNCTION
-        )
-        organ_rule.required_biomarkers = ["creatinine", "alt"]
-        organ_rule.optional_biomarkers = ["bun", "ast", "egfr"]
-        organ_rule.score_thresholds = {
-            "creatinine": (0, 70),
-            "alt": (0, 70),
-            "ast": (0, 70),
-            "bun": (0, 70)
-        }
-        organ_rule.min_cluster_size = 2
-        self.rules.append(organ_rule)
-        
-        # Nutritional deficiency rule
-        nutritional_rule = BiomarkerCorrelationRule(
-            name="nutritional_deficiency",
-            description="Clusters biomarkers indicating nutritional deficiencies",
-            cluster_type=ClusterType.NUTRITIONAL_DEFICIENCY
-        )
-        nutritional_rule.required_biomarkers = ["vitamin_d", "b12"]
-        nutritional_rule.optional_biomarkers = ["folate", "iron", "ferritin"]
-        nutritional_rule.score_thresholds = {
-            "vitamin_d": (0, 70),
-            "b12": (0, 70),
-            "folate": (0, 70),
-            "iron": (0, 70)
-        }
-        nutritional_rule.min_cluster_size = 2
-        self.rules.append(nutritional_rule)
-        
-        # Hormonal imbalance rule
-        hormonal_rule = BiomarkerCorrelationRule(
-            name="hormonal_imbalance",
-            description="Clusters biomarkers indicating hormonal imbalances",
-            cluster_type=ClusterType.HORMONAL_IMBALANCE
-        )
-        hormonal_rule.required_biomarkers = ["tsh"]
-        hormonal_rule.optional_biomarkers = ["free_t4", "testosterone", "estradiol"]
-        hormonal_rule.score_thresholds = {
-            "tsh": (0, 70),
-            "free_t4": (0, 70)
-        }
-        hormonal_rule.min_cluster_size = 1
-        self.rules.append(hormonal_rule)
+        """Sprint 6: No hardcoded rules. Clusters loaded from ssot/clusters.yaml."""
+        pass
     
     def add_rule(self, rule: BiomarkerCorrelationRule) -> None:
         """
@@ -316,34 +231,56 @@ class ClusteringRuleEngine:
     
     def apply_rules(self, biomarkers: Dict[str, float], scores: Dict[str, float]) -> List[BiomarkerCluster]:
         """
-        Apply all clustering rules to biomarkers.
+        Apply clustering rules to biomarkers. Sprint 6: schema-driven only.
         
         Args:
             biomarkers: Biomarker values
             scores: Biomarker scores
             
         Returns:
-            List of clusters found by rules
+            List of clusters from ssot/clusters.yaml
         """
-        clusters = []
-        used_biomarkers = set()
-        
-        # Sort rules by priority (lower number = higher priority)
-        sorted_rules = sorted(self.rules, key=lambda r: r.priority)
-        
-        for rule in sorted_rules:
-            cluster = rule.apply(biomarkers, scores)
-            if cluster:
-                # Check if any biomarkers are already used
-                cluster_biomarkers = set(cluster.biomarkers)
-                if not cluster_biomarkers.intersection(used_biomarkers):
-                    clusters.append(cluster)
-                    used_biomarkers.update(cluster_biomarkers)
-        
-        # Merge overlapping clusters if needed
-        merged_clusters = self._merge_overlapping_clusters(clusters)
-        
-        return merged_clusters
+        if _SCHEMA_AVAILABLE:
+            return self._apply_schema_rules(biomarkers, scores)
+        return []
+
+    def _apply_schema_rules(self, biomarkers: Dict[str, float], scores: Dict[str, float]) -> List[BiomarkerCluster]:
+        """Schema-driven cluster assignment. Deterministic; no hardcoded logic."""
+        try:
+            schema = load_cluster_schema()
+        except (FileNotFoundError, ValueError) as _:
+            return []
+
+        available = set(biomarkers.keys()) | set(scores.keys())
+        clusters: List[BiomarkerCluster] = []
+
+        for cid, cdef in schema.clusters.items():
+            status = compute_cluster_status(cdef, available)
+            present = status["required_present"] | status["important_present"] | status["optional_present"]
+            if not present:
+                continue
+
+            total = len(cdef.required) + len(cdef.important) + len(cdef.optional)
+            conf = len(present) / total if total > 0 else 0.0
+            if status["complete"]:
+                conf = max(conf, 0.9)
+            conf = round(min(1.0, conf), 2)
+
+            severity = "normal" if status["complete"] else "moderate"
+            desc = ("Complete: " if status["complete"] else "Incomplete: ") + cdef.description
+
+            clusters.append(
+                BiomarkerCluster(
+                    cluster_id=cid,
+                    name=cdef.description,
+                    biomarkers=sorted(present),
+                    description=desc,
+                    severity=severity,
+                    confidence=conf,
+                )
+            )
+
+        return clusters
     
     def _merge_overlapping_clusters(self, clusters: List[BiomarkerCluster]) -> List[BiomarkerCluster]:
         """Merge clusters that have overlapping biomarkers."""
@@ -422,11 +359,17 @@ class ClusteringRuleEngine:
     
     def get_rule_names(self) -> List[str]:
         """
-        Get names of all registered rules.
+        Get names of all registered rules. Sprint 6: from schema when available.
         
         Returns:
-            List of rule names
+            List of rule/cluster names
         """
+        if _SCHEMA_AVAILABLE:
+            try:
+                schema = load_cluster_schema()
+                return list(schema.clusters.keys())
+            except (FileNotFoundError, ValueError):
+                pass
         return [rule.name for rule in self.rules]
     
     def get_rule_by_name(self, name: str) -> Optional[BiomarkerCorrelationRule]:

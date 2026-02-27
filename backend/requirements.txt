@@ -12,3 +12,4 @@ pytest-json-report
 python-dotenv
 requests
 selenium
+PyYAML==6.0.2

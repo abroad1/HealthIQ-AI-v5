@@ -5,14 +5,29 @@ Tests database connection pooling performance, health checks, and load handling.
 These tests validate that the connection pool can handle concurrent operations efficiently.
 """
 
+import os
 import pytest
+
+if os.getenv("HEALTHIQ_ENABLE_DB_TESTS") != "1":
+    pytest.skip(
+        "DB tests disabled (set HEALTHIQ_ENABLE_DB_TESTS=1 to enable).",
+        allow_module_level=True,
+    )
+
+try:
+    from config.database import get_engine, get_pool_status, test_connection
+except ImportError as e:
+    pytest.skip(
+        f"DB test dependencies not available in infra-free mode: {e}",
+        allow_module_level=True,
+    )
+
 import time
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
-from config.database import get_engine, get_pool_status, test_connection
 from services.monitoring.performance_monitor import get_performance_monitor
 
 

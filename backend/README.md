@@ -55,7 +55,13 @@ All endpoints are prefixed with `/api/`:
 
 ## Testing
 
-Run the test suite:
+Baseline (infra-free deterministic) tests:
+
+```bash
+python backend/scripts/run_baseline_tests.py
+```
+
+Run the full test suite:
 
 ```bash
 # Run all tests
@@ -67,6 +73,8 @@ pytest --cov=app --cov=core --cov-report=html
 # Run specific test file
 pytest tests/enforcement/test_canonical_only.py -v
 ```
+
+Full test suite requires additional infrastructure; see `docs/testing/baseline_testing.md`.
 
 ## Code Quality
 

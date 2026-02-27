@@ -52,3 +52,9 @@ reports/forensics/
 pr_body.txt
 
 SPRINT_15_BACKUP_VERIFICATION.md
+
+backend/artifacts/
+backend/healthiq_test.db
+
+# Local AI workspace (never commit)
+.claude/

@@ -1,1372 +1,760 @@
-# ===============================================================
-
-# ÔÜá´©Å DO NOT EDIT WITHOUT TEST COVERAGE
-
-# This file defines all canonical biomarker IDs and their aliases.
-
-#
-
-# All ingestion and insight logic depends on this being accurate.
-
-# 
-
-# Before making any changes:
-
-# 1. Run: python tools/validate_panel_aliases_and_ranges.py --validate-insights
-
-# 2. Run: python test_canonical_updates.py
-
-# 3. Test with real user panel data to ensure stability
-
-# 4. Document your changes and reason here.
-
-#
-
-# Last validated: 2025-07-19 ÔÇö Canonical migration completed
-
-# ===============================================================
-
-
-
-hdl:
-
-  canonical_id: hdl_cholesterol
-
+active_b12:
+  canonical_id: active_b12
   aliases:
-
-  - HDL
-
-  - HDL Cholesterol
-
-  - High-Density Lipoprotein
-
-  - hdlcholesterol
-
-  - hdl
-
-total_cholesterol:
-
-  canonical_id: total_cholesterol
-
-  aliases:
-
-  - cholesterol
-
-  - totalcholesterol
-
-  - Total Cholesterol
-
-triglycerides:
-
-  canonical_id: triglycerides
-
-  aliases:
-
-  - TG
-
-  - Triglycerides
-
-  - triglycerides_(venous)
-
-ldl:
-
-  canonical_id: ldl_cholesterol
-
-  aliases:
-
-  - LDL
-
-  - Low-Density Lipoprotein
-
-  - LDL Cholesterol
-
-  - low_density_lipoproteins_(venous)
-
-  - ldl
-
-apoa1:
-
-  canonical_id: apoa1
-
-  aliases:
-
-  - apoA1
-
-  - ApoA1
-
-  - Apolipoprotein A1
-
-apob:
-
-  canonical_id: apob
-
-  aliases:
-
-  - apoB
-
-  - ApoB
-
-  - Apolipoprotein B
-
-vitamin_b12:
-
-  canonical_id: vitamin_b12
-
-  aliases:
-
-  - b12
-
-  - B12
-
-  - vitaminb12
-
-  - Vitamin B12
-
-  - active_b12
-
-crp:
-
-  canonical_id: crp
-
-  aliases:
-
-  - c_reactive_protein_crp
-
-  - hs_crp
-
-  - hsCRP
-
-  - hscrp
-
-  - High-Sensitivity C-Reactive Protein
-
-glucose:
-
-  canonical_id: glucose
-
-  aliases:
-
-    - glucose
-
-    - blood glucose
-
-    - serum glucose
-
-    - random glucose
-
-    - plasma glucose
-
-    - glucose (random)
-
-    - glucose - non-fasting
-
-fasting_glucose:
-
-  canonical_id: fasting_glucose
-
-  aliases:
-
-    - fasting glucose
-
-    - glucose (fasting)
-
-    - fpg
-
-    - fpg (fasting plasma glucose)
-
-    - fasting plasma glucose
-
-fasting_insulin:
-
-  canonical_id: fasting_insulin
-
-  aliases:
-
-  - insulin
-
-  - fastinginsulin
-
-  - Fasting Insulin
-
-hba1c:
-
-  canonical_id: hba1c
-
-  aliases:
-
-  - HbA1c
-
-  - hba1c_mmol
-
-  - Glycated Hemoglobin
-
-ferritin:
-
-  canonical_id: ferritin
-
-  aliases:
-
-  - Ferritin
-
-iron:
-
-  canonical_id: iron
-
-  aliases:
-
-  - Iron
-
-transferrin:
-
-  canonical_id: transferrin
-
-  aliases:
-
-  - Transferrin
-
-transferrin_saturation:
-
-  canonical_id: transferrin_saturation
-
-  aliases:
-
-  - transferrinsaturation
-
-  - Transferrin Saturation
-
-vitamin_d:
-
-  canonical_id: vitamin_d
-
-  aliases:
-
-  - Vitamin D
-
-  - 25-OH Vitamin D
-
-cortisol:
-
-  canonical_id: cortisol
-
-  aliases:
-
-  - Cortisol
-
-testosterone:
-
-  canonical_id: testosterone
-
-  aliases:
-
-  - Testosterone
-
-free_testosterone:
-
-  canonical_id: free_testosterone
-
-  aliases:
-
-  - Free Testosterone
-
-shbg:
-
-  canonical_id: shbg
-
-  aliases:
-
-  - SHBG
-
-  - Sex Hormone Binding Globulin
-
-fai:
-
-  canonical_id: fai
-
-  aliases:
-
-  - FAI
-
-  - Free Androgen Index
-
-tsh:
-
-  canonical_id: tsh
-
-  aliases:
-
-  - TSH
-
-  - Thyroid Stimulating Hormone
-
-free_t3:
-
-  canonical_id: free_t3
-
-  aliases:
-
-  - Free T3
-
-  - FT3
-
-free_t4:
-
-  canonical_id: free_t4
-
-  aliases:
-
-  - Free T4
-
-  - FT4
-
-fsh:
-
-  canonical_id: fsh
-
-  aliases:
-
-  - FSH
-
-  - Follicle Stimulating Hormone
-
-lh:
-
-  canonical_id: lh
-
-  aliases:
-
-  - LH
-
-  - Luteinizing Hormone
-
-prolactin:
-
-  canonical_id: prolactin
-
-  aliases:
-
-  - Prolactin
-
-oestradiol:
-
-  canonical_id: oestradiol
-
-  aliases:
-
-  - Estradiol
-
-  - E2
-
-dhea:
-
-  canonical_id: dhea
-
-  aliases:
-
-  - DHEA
-
-  - Dehydroepiandrosterone
-
-creatinine:
-
-  canonical_id: creatinine
-
-  aliases:
-
-  - Creatinine
-
-urea:
-
-  canonical_id: urea
-
-  aliases:
-
-  - Urea
-
-  - umea
-
-  - Blood Urea Nitrogen
-
-  - BUN
-
+  - Active B12
+  - Active Vitamin B12
+  - Active Vitamin B12 (Venous)
+  - Active Vitamin B12 - venous
+  - HoloTC
+  - Holotranscobalamin
 albumin:
-
   canonical_id: albumin
-
   aliases:
-
   - Albumin
-
-globulin:
-
-  canonical_id: globulin
-
-  aliases:
-
-  - Globulin
-
-  - globulin_calculation_(venous)
-
-total_protein:
-
-  canonical_id: total_protein
-
-  aliases:
-
-  - totalprotein
-
-  - Total Protein
-
-bilirubin:
-
-  canonical_id: bilirubin
-
-  aliases:
-
-  - Bilirubin
-
-  - bilirubin_total_(venous)
-
-bicarbonate:
-
-  canonical_id: bicarbonate
-
-  aliases:
-
-  - Bicarbonate
-
-  - HCO3
-
-alt:
-
-  canonical_id: alt
-
-  aliases:
-
-  - ALT
-
-  - Alanine Aminotransferase
-
-  - alanine_aminotransferase_alt_(venous)
-
-anion_gap:
-
-  canonical_id: anion_gap
-
-  aliases:
-
-  - Anion Gap
-
-  - aniongap
-
+  - Albumin (Venous)
+  - Albumin - venous
+  - Serum Albumin
 alp:
-
   canonical_id: alp
-
   aliases:
-
   - ALP
-
+  - ALP (Venous)
+  - ALP - venous
+  - Alk Phos
   - Alkaline Phosphatase
-
-  - alkaline_photosphatase_alp_(venous)
-
-ggt:
-
-  canonical_id: ggt
-
+  - Alkaline Phosphatase ALP (Venous)
+  - Alkaline Photosphatase ALP (Venous)
+alt:
+  canonical_id: alt
   aliases:
-
-  - GGT
-
-  - Gamma-Glutamyl Transferase
-
-  - Gamma GT
-
-  - gamma-glutamiltransferase_ggt_(venous)
-
-ck:
-
-  canonical_id: ck
-
-  aliases:
-
-  - CK
-
-  - Creatine Kinase
-
-total_creatine_kinese_ck:
-
-  canonical_id: creatine_kinase
-
-  aliases:
-
-  - total_creatine_kinese_ck
-
-  - total_creatine_kinase
-
-  - total_ck
-
-  - ck_total
-
-  - creatine_kinase_(total)
-
-calcium:
-
-  canonical_id: calcium
-
-  aliases:
-
-  - Calcium
-
-corrected_calcium:
-
-  canonical_id: corrected_calcium
-
-  aliases:
-
-  - Corrected Calcium
-
-sodium:
-
-  canonical_id: sodium
-
-  aliases:
-
-  - Sodium
-
-potassium:
-
-  canonical_id: potassium
-
-  aliases:
-
-  - Potassium
-
-chloride:
-
-  canonical_id: chloride
-
-  aliases:
-
-  - Chloride
-
-magnesium:
-
-  canonical_id: magnesium
-
-  aliases:
-
-  - Magnesium
-
-zinc:
-
-  canonical_id: zinc
-
-  aliases:
-
-  - Zinc
-
-uric_acid:
-
-  canonical_id: urate
-
-  aliases:
-
-  - uric_acid
-
-  - Uric Acid
-
-folate:
-
-  canonical_id: folate
-
-  aliases:
-
-  - Folate
-
-  - Folic Acid
-
-homocysteine:
-
-  canonical_id: homocysteine
-
-  aliases:
-
-  - Homocysteine
-
-lipoprotein_a:
-
-  canonical_id: lipoprotein_a
-
-  aliases:
-
-  - Lp(a)
-
-  - Lipoprotein(a)
-
-wbc:
-
-  canonical_id: wbc
-
-  aliases:
-
-  - WBC
-
-  - White Blood Cell Count
-
-  - leucocyte_count
-
-rbc:
-
-  canonical_id: rbc
-
-  aliases:
-
-  - RBC
-
-  - Red Blood Cell Count
-
-platelets:
-
-  canonical_id: platelets
-
-  aliases:
-
-  - Platelet Count
-
-hemoglobin:
-
-  canonical_id: hemoglobin
-
-  aliases:
-
-  - hemoglobin
-
-  - hgb
-
-  - Hemoglobin
-
-  - Hb
-
-  - haemoglobin
-
-hematocrit:
-
-  canonical_id: hematocrit
-
-  aliases:
-
-  - haematocrit
-
-  - Hematocrit
-
-mcv:
-
-  canonical_id: mcv
-
-  aliases:
-
-  - MCV
-
-  - Mean Corpuscular Volume
-
-mch:
-
-  canonical_id: mch
-
-  aliases:
-
-  - MCH
-
-  - Mean Corpuscular Hemoglobin
-
-mchc:
-
-  canonical_id: mchc
-
-  aliases:
-
-  - MCHC
-
-  - Mean Corpuscular Hemoglobin Concentration
-
-rdw_cv:
-
-  canonical_id: rdw_cv
-
-  aliases:
-
-  - RDW-CV
-
-  - Red Cell Distribution Width
-
-rdw_sd:
-
-  canonical_id: rdw_sd
-
-  aliases:
-
-  - RDW-SD
-
-  - Red Cell Distribution Width SD
-
-mpv:
-
-  canonical_id: mpv
-
-  aliases:
-
-  - MPV
-
-  - Mean Platelet Volume
-
-pdw:
-
-  canonical_id: pdw
-
-  aliases:
-
-  - PDW
-
-  - Platelet Distribution Width
-
-neutrophil_count:
-
-  canonical_id: neutrophil_count
-
-  aliases:
-
-  - neutrophilcount
-
-  - Neutrophil Count
-
-lymphocyte_count:
-
-  canonical_id: lymphocyte_count
-
-  aliases:
-
-  - lymphocytecount
-
-  - Lymphocyte Count
-
-monocyte_count:
-
-  canonical_id: monocyte_count
-
-  aliases:
-
-  - Monocyte Count
-
-eosinophil_count:
-
-  canonical_id: eosinophil_count
-
-  aliases:
-
-  - Eosinophil Count
-
-basophil_count:
-
-  canonical_id: basophil_count
-
-  aliases:
-
-  - Basophil Count
-
-neutrophil_pct:
-
-  canonical_id: neutrophil_pct
-
-  aliases:
-
-  - Neutrophil Percentage
-
-lymphocyte_pct:
-
-  canonical_id: lymphocyte_pct
-
-  aliases:
-
-  - Lymphocyte Percentage
-
-monocyte_pct:
-
-  canonical_id: monocyte_pct
-
-  aliases:
-
-  - Monocyte Percentage
-
-eosinophil_pct:
-
-  canonical_id: eosinophil_pct
-
-  aliases:
-
-  - Eosinophil Percentage
-
-basophil_pct:
-
-  canonical_id: basophil_pct
-
-  aliases:
-
-  - Basophil Percentage
-
-sedimentation_rate:
-
-  canonical_id: sedimentation_rate
-
-  aliases:
-
-  - ESR
-
-  - Erythrocyte Sedimentation Rate
-
-tpo_ab:
-
-  canonical_id: tpo_ab
-
-  aliases:
-
-  - TPO Ab
-
-  - Thyroid Peroxidase Antibody
-
-tg_hdl_ratio:
-
-  canonical_id: tg_hdl_ratio
-
-  aliases:
-
-  - TG/HDL Ratio
-
-  - Triglyceride to HDL Ratio
-
-  - triglyceride_hdl_ratio
-
-  - tgab
-
-tc_hdl_ratio:
-
-  canonical_id: tc_hdl_ratio
-
-  aliases:
-
-  - TC/HDL Ratio
-
-  - Total Cholesterol to HDL Ratio
-
-  - cholesterol_hdl_ratio
-
-  - total_cholesterol/hdl_ratio_calculation_(venous)
-
-ldl_hdl_ratio:
-
-  canonical_id: ldl_hdl_ratio
-
-  aliases:
-
-  - LDL/HDL Ratio
-
-  - LDL to HDL Ratio
-
+  - ALT
+  - ALT (Venous)
+  - ALT - venous
+  - Alanine AminoTransferase ALT (Venous)
+  - Alanine Aminotransferase
+  - alanine_aminotransferase_alt_(venous)
+  - alt
 apoB_apoA1_ratio:
-
   canonical_id: apoB_apoA1_ratio
-
   aliases:
-
   - ApoB/ApoA1 Ratio
-
   - Apolipoprotein B to A1 Ratio
-
+  - Apolipoprotein B/A1 Ratio
+  - Apolipoprotein ratio
+  - Apolipoprotein ratio (Venous)
+  - Apolipoprotein ratio - venous
+  - apoB_apoA1_ratio
   - apolipoprotein_ratio
-
+apoa1:
+  canonical_id: apoa1
+  aliases:
+  - Apo A1
+  - ApoA1
+  - Apolipoprotein A1
+  - Apolipoprotein A1 (Venous)
+  - Apolipoprotein A1 - venous
+  - apoA1
+  - apoa1
+apob:
+  canonical_id: apob
+  aliases:
+  - Apo B
+  - ApoB
+  - Apolipoprotein B
+  - Apolipoprotein B (Venous)
+  - Apolipoprotein B - venous
+  - apoB
+  - apob
 ast:
-
   canonical_id: ast
-
   aliases:
-
   - AST
-
   - Aspartate Aminotransferase
-
+  - ast
+ast_alt_ratio:
+  canonical_id: ast_alt_ratio
+  aliases:
+  - AST/ALT Ratio
+  - De Ritis ratio
+  - ast_alt_ratio
+basophil_pct:
+  canonical_id: basophil_pct
+  aliases:
+  - BAS %
+  - Basophil Percentage
+  - Basophils %
+  - Basophils (BAS %)
+basophils_abs:
+  canonical_id: basophils_abs
+  aliases:
+  - 'BAS #'
+  - 'Basophil #'
+  - 'Basophils (BAS #)'
+  - Basophils Absolute
+  - basophils_abs
+bilirubin:
+  canonical_id: bilirubin
+  aliases:
+  - Bilirubin
+  - Bilirubin Total
+  - Bilirubin Total (Venous)
+  - Bilirubin Total - venous
+  - Total Bilirubin
+calcium:
+  canonical_id: calcium
+  aliases:
+  - Ca
+  - Calcium
+  - Calcium (Venous)
+  - Calcium - venous
+  - Serum Calcium
+  - calcium
+chloride:
+  canonical_id: chloride
+  aliases:
+  - Chloride
+  - Chloride (Venous)
+  - Chloride - venous
+  - Cl
+  - Serum Chloride
+  - chloride
+corrected_calcium:
+  canonical_id: corrected_calcium
+  aliases:
+  - Adjusted Calcium
+  - Albumin-Corrected Calcium
+  - Corrected Calcium
+  - Corrected Calcium (Venous)
+  - Corrected Calcium - venous
+  - corrected_calcium
+cortisol:
+  canonical_id: cortisol
+  aliases:
+  - Cortisol
+  - Cortisol (Venous)
+  - Cortisol - venous
+  - Morning Cortisol
+  - Serum Cortisol
+creatine_kinase:
+  canonical_id: creatine_kinase
+  aliases:
+  - CK
+  - CK - venous
+  - CPK
+  - Creatine Kinase
+  - Creatine Phosphokinase
+  - Total CK
+  - Total Creatine Kinase CK (Venous)
+  - Total Creatine Kinese CK (Venous)
+  - ck_total
+  - creatine_kinase_(total)
+  - total_ck
+  - total_creatine_kinase
+  - total_creatine_kinese_ck
+creatinine:
+  canonical_id: creatinine
+  aliases:
+  - Creatinine
+  - Creatinine (Serum)
+  - Creatinine (Venous)
+  - Creatinine - venous
+  - creatinine
+crp:
+  canonical_id: crp
+  aliases:
+  - C-Reactive Protein
+  - C-Reactive Protein CRP (Venous)
+  - CRP
+  - CRP (Venous)
+  - CRP - venous
+  - High-Sensitivity C-Reactive Protein
+  - c_reactive_protein_crp
+  - crp
+  - hsCRP
+  - hs_crp
+  - hscrp
+dhea:
+  canonical_id: dhea
+  aliases:
+  - DHEA
+  - DHEA (Venous)
+  - DHEA - venous
+  - DHEA-S
+  - Dehydroepiandrosterone
 egfr:
-
   canonical_id: egfr
-
   aliases:
-
+  - Estimated GFR
+  - Glomerular Filtration Rate
   - eGFR
-
-  - Estimated Glomerular Filtration Rate
-
-non_hdl_cholesterol:
-
-  canonical_id: non_hdl_cholesterol
-
+  - eGFR (CKD EPI 2009)
+  - eGFR (CKD EPI 2009) (Venous)
+  - eGFR - venous
+  - eGFR CKD EPI
+eosinophil_pct:
+  canonical_id: eosinophil_pct
   aliases:
-
-  - Non-HDL Cholesterol
-
-  - non_hdl_cholesterol_calculation_(venous)
-
+  - EOS %
+  - Eosinophil Percentage
+  - Eosinophils %
+  - Eosinophils (EOS %)
+eosinophils_abs:
+  canonical_id: eosinophils_abs
+  aliases:
+  - 'EOS #'
+  - 'Eosinophil #'
+  - 'Eosinophils (EOS #)'
+  - Eosinophils Absolute
+  - eosinophils_abs
+fai:
+  canonical_id: fai
+  aliases:
+  - FAI
+  - Free Androgen Index
+  - Free Androgen Index - FAI
+  - Free Androgen Index - FAI (Venous)
+ferritin:
+  canonical_id: ferritin
+  aliases:
+  - Ferritin
+  - Ferritin (Venous)
+  - Ferritin - venous
+  - Serum Ferritin
+  - ferritin
+folate:
+  canonical_id: folate
+  aliases:
+  - Folate
+  - Folic Acid
+  - Folic Acid (Venous)
+  - Folic Acid - venous
+  - Serum Folate
+free_t3:
+  canonical_id: free_t3
+  aliases:
+  - FT3
+  - Free T3
+  - Free T3 (Venous)
+  - Free T3 - venous
+  - Free Triiodothyronine
+  - fT3
+free_t4:
+  canonical_id: free_t4
+  aliases:
+  - FT4
+  - Free T4
+  - Free T4 (Venous)
+  - Free T4 - venous
+  - Free Thyroxine
+  - fT4
+  - free_t4
+free_testosterone:
+  canonical_id: free_testosterone
+  aliases:
+  - Free T
+  - Free Testosterone
+  - Free Testosterone (IM)
+  - Free Testosterone Calculation
+  - Free Testosterone Calculation (IM) (Venous)
+  - Free Testosterone Calculation - venous
 free_testosterone_pct:
-
   canonical_id: free_testosterone_pct
-
   aliases:
-
-  - Free Testosterone Percentage
-
-testosterone_ratio:
-
-  canonical_id: testosterone_ratio
-
+  - '% Free Testosterone'
+  - Free Testosterone %
+  - Free Testosterone % Calculation
+  - Free Testosterone % Calculation (Venous)
+fsh:
+  canonical_id: fsh
   aliases:
-
-  - Testosterone Ratio
-
+  - FSH
+  - FSH (Venous)
+  - FSH - venous
+  - Follicle Stimulating Hormone
+ggt:
+  canonical_id: ggt
+  aliases:
+  - GGT
+  - GGT (Venous)
+  - GGT - venous
+  - Gamma GT
+  - Gamma-GlutamilTransferase GGT (Venous)
+  - Gamma-Glutamyl Transferase
+  - Gamma-GlutamylTransferase GGT (Venous)
+globulin:
+  canonical_id: globulin
+  aliases:
+  - Globulin
+  - Globulin Calculation
+  - Globulin Calculation (Venous)
+  - Globulin Calculation - venous
+  - Serum Globulin
+glucose:
+  canonical_id: glucose
+  aliases:
+  - blood glucose
+  - glucose
+  - glucose (random)
+  - glucose - non-fasting
+  - plasma glucose
+  - random glucose
+  - serum glucose
+hba1c:
+  canonical_id: hba1c
+  aliases:
+  - A1c
+  - Glycated Haemoglobin
+  - Glycated Hemoglobin
+  - HbA1c
+  - HbA1c (IFCC)
+  - HbA1c (Venous)
+  - HbA1c - venous
+  - hba1c
+  - hba1c_mmol
+hba1c_pct:
+  canonical_id: hba1c_pct
+  aliases:
+  - Glycated Haemoglobin %
+  - HbA1c %
+  - HbA1c % (Venous)
+  - HbA1c % - venous
+  - HbA1c (NGSP)
+hdl_cholesterol:
+  canonical_id: hdl_cholesterol
+  aliases:
+  - HDL
+  - HDL (Venous)
+  - HDL - venous
+  - HDL Cholesterol
+  - HDL-C
+  - High Density Lipoprotein
+  - High-Density Lipoprotein
+  - hdl
+  - hdlcholesterol
+hematocrit:
+  canonical_id: hematocrit
+  aliases:
+  - HCT
+  - Haematocrit
+  - Haematocrit (HCT)
+  - Haematocrit (HCT) - venous
+  - Hematocrit
+  - haematocrit
+  - hematocrit
+hemoglobin:
+  canonical_id: hemoglobin
+  aliases:
+  - HGB
+  - Haemoglobin
+  - Haemoglobin (HGB)
+  - Haemoglobin (HGB) - venous
+  - Hb
+  - Hemoglobin
+  - haemoglobin
+  - hemoglobin
+  - hgb
+homocysteine:
+  canonical_id: homocysteine
+  aliases:
+  - Homocysteine
+  - Homocysteine (Venous)
+  - Homocysteine - venous
+  - Total Homocysteine
+  - tHcy
+iron:
+  canonical_id: iron
+  aliases:
+  - Iron
+  - Iron (Serum)
+  - Serum Iron
+  - Serum Iron (Venous)
+  - Serum Iron - venous
+ldl_cholesterol:
+  canonical_id: ldl_cholesterol
+  aliases:
+  - LDL
+  - LDL - venous
+  - LDL Cholesterol
+  - LDL-C
+  - Low Density Lipoprotein
+  - Low Density Lipoproteins (Venous)
+  - Low-Density Lipoprotein
+  - ldl
+  - low_density_lipoproteins_(venous)
+ldl_hdl_ratio:
+  canonical_id: ldl_hdl_ratio
+  aliases:
+  - LDL to HDL Ratio
+  - LDL/HDL Ratio
+  - ldl_hdl_ratio
+lh:
+  canonical_id: lh
+  aliases:
+  - LH
+  - LH (Venous)
+  - Luteinising Hormone
+  - Luteinizing Hormone
+  - Luteinizing Hormone (Venous)
+  - Luteinizing Hormone - venous
+lipoprotein_a:
+  canonical_id: lipoprotein_a
+  aliases:
+  - Lipoprotein (A) (Venous)
+  - Lipoprotein (a)
+  - Lipoprotein a
+  - Lp(a)
+  - Lp(a) - venous
+lymphocyte_pct:
+  canonical_id: lymphocyte_pct
+  aliases:
+  - LYM %
+  - Lymphocyte (LYM %)
+  - Lymphocyte Percentage
+  - Lymphocytes %
+lymphocytes:
+  canonical_id: lymphocytes
+  aliases:
+  - Lymphocyte Count
+  - NLR_lymphocytes
+  - lymphocyte_count
+  - lymphocytecount
+  - lymphocytes
+lymphocytes_abs:
+  canonical_id: lymphocytes_abs
+  aliases:
+  - 'LYM #'
+  - 'Lymphocyte #'
+  - 'Lymphocyte (LYM #)'
+  - Lymphocytes Absolute
+  - lymphocytes_abs
+magnesium:
+  canonical_id: magnesium
+  aliases:
+  - Magnesium
+  - Magnesium (Venous)
+  - Magnesium - venous
+  - Mg
+  - Serum Magnesium
+  - magnesium
+mch:
+  canonical_id: mch
+  aliases:
+  - MCH
+  - Mean Corpuscular Haemoglobin (MCH)
+  - Mean Corpuscular Haemoglobin (MCH) - venous
+  - Mean Corpuscular Hemoglobin
+mchc:
+  canonical_id: mchc
+  aliases:
+  - MCHC
+  - Mean Corpuscular Haemoglobin Concentration (MCHC)
+  - Mean Corpuscular Haemoglobin Concentration (MCHC) - venous
+  - Mean Corpuscular Hemoglobin Concentration
+mcv:
+  canonical_id: mcv
+  aliases:
+  - MCV
+  - Mean Corpuscular Volume
+  - Mean Corpuscular Volume (MCV)
+  - Mean Corpuscular Volume (MCV) - venous
+monocyte_pct:
+  canonical_id: monocyte_pct
+  aliases:
+  - MON %
+  - Monocyte (MON %)
+  - Monocyte Percentage
+  - Monocytes %
+monocytes_abs:
+  canonical_id: monocytes_abs
+  aliases:
+  - 'MON #'
+  - 'Monocyte #'
+  - 'Monocyte (MON #)'
+  - Monocytes Absolute
+  - monocytes_abs
+mpv:
+  canonical_id: mpv
+  aliases:
+  - MPV
+  - Mean Platelet Volume
+  - Mean Platelet Volume (MPV)
+  - Mean Platelet Volume (MPV) - venous
+neutrophil_pct:
+  canonical_id: neutrophil_pct
+  aliases:
+  - NEU %
+  - Neutrophil (NEU %)
+  - Neutrophil Percentage
+  - Neutrophils %
+neutrophils:
+  canonical_id: neutrophils
+  aliases:
+  - NLR_neutrophils
+  - Neutrophil Count
+  - neutrophil_count
+  - neutrophilcount
+  - neutrophils
+neutrophils_abs:
+  canonical_id: neutrophils_abs
+  aliases:
+  - 'NEU #'
+  - 'Neutrophil #'
+  - 'Neutrophil (NEU #)'
+  - Neutrophils Absolute
+  - neutrophils_abs
 nlr:
-
   canonical_id: nlr
-
   aliases:
-
   - Neutrophil to Lymphocyte Ratio
-
-activity_minutes_per_week:
-
-  canonical_id: activity_minutes_per_week
-
+  - nlr
+non_hdl_cholesterol:
+  canonical_id: non_hdl_cholesterol
   aliases:
-
-  - activity_minutes_per_week
-
-  - physical_activity_minutes
-
-waist_to_height:
-
-  canonical_id: waist_to_height_ratio
-
+  - Non HDL Cholesterol
+  - Non HDL Cholesterol - venous
+  - Non HDL Cholesterol Calculation (Venous)
+  - Non HDL-C
+  - Non-HDL Cholesterol
+  - non_hdl_cholesterol
+  - non_hdl_cholesterol_calculation_(venous)
+oestradiol:
+  canonical_id: oestradiol
   aliases:
-
-  - waist_to_height
-
-  - waist_to_height_ratio
-
-family_history_cvd:
-
-  canonical_id: family_history_cvd
-
+  - E2
+  - Estradiol
+  - Oestradiol
+  - Oestradiol (Venous)
+  - Oestradiol - venous
+pdw:
+  canonical_id: pdw
   aliases:
-
-  - Family History CVD
-
-resting_heart_rate:
-
-  canonical_id: resting_heart_rate
-
+  - PDW
+  - Platelet Distribution Width
+  - Platelet Distribution Width (PDW)
+  - Platelet Distribution Width (PDW) - venous
+platelets:
+  canonical_id: platelets
   aliases:
-
-  - Resting Heart Rate
-
-blood_pressure_systolic:
-
-  canonical_id: blood_pressure_systolic
-
+  - PLT
+  - Platelet Count
+  - Platelets (PLT)
+  - Platelets (PLT) - venous
+  - platelets
+potassium:
+  canonical_id: potassium
   aliases:
-
-  - Blood Pressure Systolic
-
-blood_pressure_diastolic:
-
-  canonical_id: blood_pressure_diastolic
-
+  - K
+  - Potassium
+  - Potassium (Venous)
+  - Potassium - venous
+  - Serum Potassium
+  - potassium
+prolactin:
+  canonical_id: prolactin
   aliases:
-
-  - Blood Pressure Diastolic
-
-alcohol_consumption:
-
-  canonical_id: alcohol_consumption
-
+  - PRL
+  - Prolactin
+  - Prolactin (Venous)
+  - Prolactin - venous
+rbc:
+  canonical_id: rbc
   aliases:
-
-  - Alcohol Consumption
-
-smoking_status:
-
-  canonical_id: smoking_status
-
+  - Erythrocytes (RBC)
+  - Erythrocytes (RBC) - venous
+  - RBC
+  - Red Blood Cell Count
+rdw_cv:
+  canonical_id: rdw_cv
   aliases:
-
-  - Smoking Status
-
-activity_level:
-
-  canonical_id: activity_level
-
+  - RDW CV
+  - RDW-CV
+  - Red Cell Distribution Width (RDW-CV)
+  - Red Cell Distribution Width (RDW-CV) - venous
+  - Red Cell Distribution Width CV
+rdw_sd:
+  canonical_id: rdw_sd
   aliases:
-
-  - Activity Level
-
-sleep_quality:
-
-  canonical_id: sleep_quality
-
+  - RDW SD
+  - RDW-SD
+  - Red Cell Distribution Width SD
+  - Red Cell Distribution Width SD (RDW-SD)
+  - Red Cell Distribution Width SD (RDW-SD) - venous
+shbg:
+  canonical_id: shbg
   aliases:
-
-  - Sleep Quality
-
-recent_illness:
-
-  canonical_id: recent_illness
-
+  - SHBG
+  - SHBG - venous
+  - Sex Hormone Binding Globulin
+  - Sex Hormone Binding Globulin (SHBG) (Venous)
+sodium:
+  canonical_id: sodium
   aliases:
-
-  - Recent Illness
-
-processed_food:
-
-  canonical_id: processed_food
-
-  aliases:
-
-  - Processed Food
-
-chronic_pain:
-
-  canonical_id: chronic_pain
-
-  aliases:
-
-  - Chronic Pain
-
-gi_symptoms:
-
-  canonical_id: gi_symptoms
-
-  aliases:
-
-  - GI Symptoms
-
-ag_ratio:
-
-  canonical_id: ag_ratio
-
-  aliases:
-
-  - Albumin/Globulin Ratio
-
-  - albumin_globulin_ratio
-
-chol_hdl_ratio:
-
+  - Na
+  - Serum Sodium
+  - Sodium
+  - Sodium (Venous)
+  - Sodium - venous
+  - sodium
+tc_hdl_ratio:
   canonical_id: tc_hdl_ratio
-
   aliases:
-
   - Cholesterol/HDL Ratio
-
+  - TC/HDL Ratio
+  - TC:HDL Ratio
+  - Total Cholesterol HDL Ratio
+  - Total Cholesterol to HDL Ratio
+  - Total Cholesterol/HDL Ratio - venous
+  - Total Cholesterol/HDL Ratio Calculation (Venous)
   - chol_hdl_ratio
-
-energy_level_rating:
-
-  canonical_id: energy_level_rating
-
+  - cholesterol_hdl_ratio
+  - tc_hdl_ratio
+  - total_cholesterol/hdl_ratio_calculation_(venous)
+testosterone:
+  canonical_id: testosterone
   aliases:
-
-  - Energy Level Rating
-
-chronological_age:
-
-  canonical_id: chronological_age
-
+  - Testosterone
+  - Testosterone (Total)
+  - Testosterone (Venous)
+  - Testosterone - venous
+  - Total Testosterone
+testosterone_free_testosterone_ratio:
+  canonical_id: testosterone_free_testosterone_ratio
   aliases:
-
-  - Chronological Age
-
-diet_score:
-
-  canonical_id: diet_score
-
+  - 'Testosterone : Free Testosterone Ratio'
+  - 'Testosterone : Free Testosterone Ratio (Venous)'
+  - Testosterone/Free Testosterone Ratio
+  - Testosterone:Free Testosterone Ratio
+tg_hdl_ratio:
+  canonical_id: tg_hdl_ratio
   aliases:
-
-  - Diet Score
-
-diet_heart_score:
-
-  canonical_id: diet_heart_score
-
+  - TG/HDL Ratio
+  - Triglyceride to HDL Ratio
+  - tg_hdl_ratio
+  - triglyceride_hdl_ratio
+tgab:
+  canonical_id: tgab
   aliases:
-
-  - Diet Heart Score
-
-body_comp:
-
-  canonical_id: body_comp
-
+  - Anti-Thyroglobulin
+  - TgAb
+  - TgAb (Venous)
+  - Thyroglobulin Ab
+  - Thyroglobulin Antibodies
+  - Thyroglobulin Antibodies - TgAb
+  - Thyroglobulin Antibodies - TgAb (Venous)
+  - tgab
+total_cholesterol:
+  canonical_id: total_cholesterol
   aliases:
-
-  - Body Composition
-
-cardiometabolic:
-
-  canonical_id: cardiometabolic
-
+  - Cholesterol
+  - Cholesterol (Venous)
+  - Cholesterol - venous
+  - TC
+  - Total Cholesterol
+  - cholesterol
+  - total_cholesterol
+  - totalcholesterol
+total_protein:
+  canonical_id: total_protein
   aliases:
-
-  - Cardiometabolic
-
-inflammation:
-
-  canonical_id: inflammation
-
+  - Serum Total Protein
+  - Total Protein
+  - Total Protein (Venous)
+  - Total Protein - venous
+tpo_ab:
+  canonical_id: tpo_ab
   aliases:
-
-  - Inflammation
-
-detoxification:
-
-  canonical_id: detoxification
-
+  - Anti-TPO
+  - TPO Ab
+  - TPO Ab (Venous)
+  - TPOAb
+  - Thyroid Peroxidase Antibodies
+  - Thyroid Peroxidase Antibodies - TPO Ab (Venous)
+transferrin:
+  canonical_id: transferrin
   aliases:
-
-  - Detoxification
-
-oxygenation:
-
-  canonical_id: oxygenation
-
+  - Serum Transferrin
+  - Transferrin
+  - Transferrin (Venous)
+  - Transferrin - venous
+triglycerides:
+  canonical_id: triglycerides
   aliases:
-
-  - Oxygenation
-
-resilience:
-
-  canonical_id: resilience
-
+  - TG
+  - Triglycerides
+  - Triglycerides (Venous)
+  - Triglycerides - venous
+  - Trigs
+  - triglycerides
+  - triglycerides_(venous)
+tsh:
+  canonical_id: tsh
   aliases:
-
-  - Resilience
-
-glycaemic:
-
-  canonical_id: glycaemic
-
+  - TSH
+  - TSH (Venous)
+  - TSH - venous
+  - Thyroid Stimulating Hormone
+  - Thyrotropin
+  - tsh
+urate:
+  canonical_id: urate
   aliases:
-
-  - Glycaemic
-
-lipid:
-
-  canonical_id: lipid
-
+  - Serum Urate
+  - Urate
+  - Uric Acid
+  - Uric Acid (Venous)
+  - Uric Acid - venous
+urea:
+  canonical_id: urea
   aliases:
-
-  - Lipid
-
-liver:
-
-  canonical_id: liver
-
-  aliases:
-
-  - Liver
-
-kidney:
-
-  canonical_id: kidney
-
-  aliases:
-
-  - Kidney
-
-acid_load:
-
-  canonical_id: acid_load
-
-  aliases:
-
-  - Acid Load
-
-current:
-
-  canonical_id: current
-
-  aliases:
-
-  - Current
-
-former:
-
-  canonical_id: former
-
-  aliases:
-
-  - Former
-
-never:
-
-  canonical_id: never
-
-  aliases:
-
-  - Never
-
-high:
-
-  canonical_id: high
-
-  aliases:
-
-  - High
-
-low:
-
-  canonical_id: low
-
-  aliases:
-
-  - Low
-
-moderate:
-
-  canonical_id: moderate
-
-  aliases:
-
-  - Moderate
-
-optimal:
-
-  canonical_id: optimal
-
-  aliases:
-
-  - Optimal
-
-poor:
-
-  canonical_id: poor
-
-  aliases:
-
-  - Poor
-
-mixed:
-
-  canonical_id: mixed
-
-  aliases:
-
-  - Mixed
-
-younger:
-
-  canonical_id: younger
-
-  aliases:
-
-  - Younger
-
-sex:
-
-  canonical_id: sex
-
-  aliases:
-
-  - Sex
-
-ethnicity:
-
-  canonical_id: ethnicity
-
-  aliases:
-
-  - Ethnicity
-
-waist_to_height_ratio:
-
-  canonical_id: waist_to_height_ratio
-
-  aliases:
-
-  - waist_cm
-
-  - Waist to Height Ratio
-
-homa_ir:
-
-  canonical_id: homa_ir
-
-  aliases:
-
-  - homair
-
-  - HOMA-IR
-
-  - Homeostatic Model Assessment
-
+  - BUN
+  - Blood Urea
+  - Blood Urea Nitrogen
+  - Blood urea nitrogen
+  - Urea
+  - Urea (Serum)
+  - Urea (Venous)
+  - Urea - venous
+  - urea
 urea_creatinine_ratio:
-
   canonical_id: urea_creatinine_ratio
-
   aliases:
-
-  - Urea/Creatinine Ratio
-
-fluid_intake_frequency:
-
-  canonical_id: fluid_intake_frequency
-
+  - BUN/Creatinine Ratio
+  - BUN:Creatinine
+  - bun_creatinine_ratio
+  - urea_creatinine_ratio
+vitamin_b12:
+  canonical_id: vitamin_b12
   aliases:
-
-  - fluidintakefrequency
-
-  - Fluid Intake Frequency
-
-sleep_hours:
-
-  canonical_id: sleep_hours
-
+  - B12
+  - Cobalamin
+  - Serum B12
+  - Vitamin B12
+  - Vitamin B12 (Venous)
+  - Vitamin B12 - venous
+vitamin_d:
+  canonical_id: vitamin_d
   aliases:
-
-  - Sleep Hours
-
-stress_level:
-
-  canonical_id: stress_level
-
+  - 25(OH) Vitamin D
+  - 25-Hydroxy Vitamin D
+  - 25-Hydroxyvitamin D
+  - 25-OH Vitamin D
+  - Vitamin D
+  - Vitamin D (Venous)
+  - Vitamin D - venous
+  - Vitamin D3
+  - vitamin_d
+white_blood_cells:
+  canonical_id: white_blood_cells
   aliases:
-
-  - Stress Level
-
-physical_activity_minutes:
-
-  canonical_id: physical_activity_minutes
-
+  - Leukocytes (WBC)
+  - Leukocytes (WBC) - venous
+  - WBC
+  - White Blood Cell Count
+  - White Cell Count
+zinc:
+  canonical_id: zinc
   aliases:
-
-  - Physical Activity Minutes
-
-alcohol_units_per_week:
-
-  canonical_id: alcohol_units_per_week
-
-  aliases:
-
-  - Alcohol Units per Week
-
-height_cm:
-
-  canonical_id: height_cm
-
-  aliases:
-
-  - Height (cm)
-
+  - Serum Zinc
+  - Zinc
+  - Zinc (Venous)
+  - Zinc - venous

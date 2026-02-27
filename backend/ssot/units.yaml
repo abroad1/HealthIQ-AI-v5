@@ -49,26 +49,86 @@ units:
     description: "Milligrams per liter"
     category: "concentration"
     si_equivalent: "mg/L"
+
+  ng_mL:
+    name: "ng/mL"
+    description: "Nanograms per milliliter"
+    category: "concentration"
+    si_equivalent: "ng/mL"
+
+  nmol_L:
+    name: "nmol/L"
+    description: "Nanomoles per liter"
+    category: "concentration"
+    si_equivalent: "nmol/L"
+
+  umol_L:
+    name: "µmol/L"
+    description: "Micromoles per liter"
+    category: "concentration"
+    si_equivalent: "µmol/L"
     
   # Conversion Factors
   conversions:
-    mg_dL_to_mmol_L:
+    mg_dL_to_mmol_L_cholesterol:
       from_unit: "mg/dL"
       to_unit: "mmol/L"
-      factor: 0.0259
+      factor: 0.02586
       description: "Cholesterol conversion"
+
+    mmol_L_to_mg_dL_cholesterol:
+      from_unit: "mmol/L"
+      to_unit: "mg/dL"
+      factor: 38.67
+      description: "Cholesterol reverse conversion"
+
+    mg_dL_to_mmol_L_triglycerides:
+      from_unit: "mg/dL"
+      to_unit: "mmol/L"
+      factor: 0.01129
+      description: "Triglycerides conversion"
+
+    mmol_L_to_mg_dL_triglycerides:
+      from_unit: "mmol/L"
+      to_unit: "mg/dL"
+      factor: 88.57
+      description: "Triglycerides reverse conversion"
       
     mg_dL_to_mmol_L_glucose:
       from_unit: "mg/dL"
       to_unit: "mmol/L"
-      factor: 0.0555
+      factor: 0.0555555556
       description: "Glucose conversion"
+
+    mmol_L_to_mg_dL_glucose:
+      from_unit: "mmol/L"
+      to_unit: "mg/dL"
+      factor: 18.0
+      description: "Glucose reverse conversion"
       
     percent_to_mmol_mol:
       from_unit: "%"
       to_unit: "mmol/mol"
       factor: 10.929
       description: "HbA1c conversion"
+
+    mg_dL_to_mmol_L_urea:
+      from_unit: "mg/dL"
+      to_unit: "mmol/L"
+      factor: 0.357
+      description: "BUN-labeled urea conversion"
+
+    mg_dL_to_umol_L_creatinine:
+      from_unit: "mg/dL"
+      to_unit: "µmol/L"
+      factor: 88.4
+      description: "Creatinine conversion"
+
+    ng_mL_to_nmol_L_vitamin_d:
+      from_unit: "ng/mL"
+      to_unit: "nmol/L"
+      factor: 2.5
+      description: "Vitamin D conversion"
       
   # Unit Categories
   categories:

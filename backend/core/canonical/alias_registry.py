@@ -134,17 +134,17 @@ class BiomarkerAliasResolver:
             'creat': 'creatinine',
             'creatinine': 'creatinine',
             'serum_creatinine': 'creatinine',
-            'bun': 'bun',
-            'blood_urea_nitrogen': 'bun',
-            'urea_nitrogen': 'bun',
+            'bun': 'urea',
+            'blood_urea_nitrogen': 'urea',
+            'urea_nitrogen': 'urea',
             
             # Liver
             'alt': 'alt',
             'alanine_aminotransferase': 'alt',
-            'sgot': 'alt',
+            'sgpt': 'alt',
             'ast': 'ast',
             'aspartate_aminotransferase': 'ast',
-            'sgpt': 'ast',
+            'sgot': 'ast',
             
             # Inflammatory
             'crp': 'crp',

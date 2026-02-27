@@ -1,332 +1,1525 @@
-# Single Source of Truth - Biomarker Definitions
-# HealthIQ-AI v5 Backend
-
 biomarkers:
-  # Cardiovascular Biomarkers
   total_cholesterol:
-    aliases: ["cholesterol", "total_chol", "chol_total"]
-    unit: "mg/dL"
-    description: "Total cholesterol level"
-    category: "cardiovascular"
-    data_type: "numeric"
-    system: "cardiovascular"
+    aliases:
+    - cholesterol
+    - total_chol
+    - chol_total
+    unit: mmol/L
+    description: Total cholesterol level
+    category: cardiovascular
+    data_type: numeric
+    system: cardiovascular
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.6
-    
   ldl_cholesterol:
-    aliases: ["ldl", "ldl_chol", "bad_cholesterol"]
-    unit: "mg/dL"
-    description: "Low-density lipoprotein cholesterol"
-    category: "cardiovascular"
-    data_type: "numeric"
-    system: "cardiovascular"
+    aliases:
+    - ldl
+    - ldl_chol
+    - bad_cholesterol
+    unit: mmol/L
+    description: Low-density lipoprotein cholesterol
+    category: cardiovascular
+    data_type: numeric
+    system: cardiovascular
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.8
-    
   hdl_cholesterol:
-    aliases: ["hdl", "hdl_chol", "good_cholesterol"]
-    unit: "mg/dL"
-    description: "High-density lipoprotein cholesterol"
-    category: "cardiovascular"
-    data_type: "numeric"
-    system: "cardiovascular"
+    aliases:
+    - hdl
+    - hdl_chol
+    - good_cholesterol
+    unit: mmol/L
+    description: High-density lipoprotein cholesterol
+    category: cardiovascular
+    data_type: numeric
+    system: cardiovascular
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.8
-    
   triglycerides:
-    aliases: ["trig", "triglyceride", "triglycerides_(venous)"]
-    unit: "mg/dL"
-    description: "Triglyceride level"
-    category: "cardiovascular"
-    data_type: "numeric"
-    system: "cardiovascular"
+    aliases:
+    - trig
+    - triglyceride
+    - triglycerides_(venous)
+    unit: mmol/L
+    description: Triglyceride level
+    category: cardiovascular
+    data_type: numeric
+    system: cardiovascular
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.6
-    
-  # Metabolic Biomarkers
+  tc_hdl_ratio:
+    aliases: []
+    unit: ratio
+    description: Total cholesterol / HDL ratio
+    category: cardiovascular
+    data_type: numeric
+    system: cardiovascular
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
+  tg_hdl_ratio:
+    aliases: []
+    unit: ratio
+    description: Triglycerides / HDL ratio
+    category: cardiovascular
+    data_type: numeric
+    system: cardiovascular
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.5
+  ldl_hdl_ratio:
+    aliases: []
+    unit: ratio
+    description: LDL / HDL ratio
+    category: cardiovascular
+    data_type: numeric
+    system: cardiovascular
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.7
+  non_hdl_cholesterol:
+    aliases: []
+    unit: mmol/L
+    description: Non-HDL cholesterol (TC - HDL)
+    category: cardiovascular
+    data_type: numeric
+    system: cardiovascular
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
+  apoB_apoA1_ratio:
+    aliases: []
+    unit: ratio
+    description: ApoB / ApoA1 ratio
+    category: cardiovascular
+    data_type: numeric
+    system: cardiovascular
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
+  apob:
+    aliases:
+    - apo_b
+    - apolipoprotein_b
+    unit: g/L
+    description: Apolipoprotein B
+    category: cardiovascular
+    data_type: numeric
+    system: cardiovascular
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
+  apoa1:
+    aliases:
+    - apo_a1
+    - apolipoprotein_a1
+    unit: g/L
+    description: Apolipoprotein A1
+    category: cardiovascular
+    data_type: numeric
+    system: cardiovascular
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
   glucose:
-    aliases: ["blood_sugar", "blood_glucose", "sugar"]
-    unit: "mg/dL"
-    description: "Blood glucose level"
-    category: "metabolic"
-    data_type: "numeric"
-    system: "metabolic"
+    aliases:
+    - blood_sugar
+    - blood_glucose
+    - sugar
+    unit: mmol/L
+    description: Blood glucose level
+    category: metabolic
+    data_type: numeric
+    system: metabolic
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
-    known_modifiers: ["fasting_state"]
+    known_modifiers:
+    - fasting_state
     clinical_weight: 0.8
-    
   hba1c:
-    aliases: ["hemoglobin_a1c", "a1c", "glycated_hemoglobin"]
-    unit: "%"
-    description: "Hemoglobin A1c percentage"
-    category: "metabolic"
-    data_type: "numeric"
-    system: "metabolic"
+    aliases:
+    - hemoglobin_a1c
+    - a1c
+    - glycated_hemoglobin
+    unit: '%'
+    description: Hemoglobin A1c percentage
+    category: metabolic
+    data_type: numeric
+    system: metabolic
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.8
-    
   insulin:
-    aliases: ["insulin_level", "serum_insulin"]
-    unit: "μU/mL"
-    description: "Fasting insulin level"
-    category: "metabolic"
-    data_type: "numeric"
-    system: "metabolic"
+    aliases:
+    - insulin_level
+    - serum_insulin
+    unit: μU/mL
+    description: Fasting insulin level
+    category: metabolic
+    data_type: numeric
+    system: metabolic
     clusters: []
-    roles: ["insulin_sensitivity_marker"]
+    roles:
+    - insulin_sensitivity_marker
     key_risks_when_high: []
     key_risks_when_low: []
-    known_modifiers: ["fasting_state"]
+    known_modifiers:
+    - fasting_state
     clinical_weight: 0.8
-    
   creatine_kinase:
-    aliases: ["total_creatine_kinase", "total_ck", "ck_total", "creatine_kinase_(total)", "total_creatine_kinese_ck_(venous)"]
-    unit: "U/L"
-    description: "Creatine kinase (total)"
-    category: "metabolic"
-    data_type: "numeric"
-    system: "metabolic"
+    aliases:
+    - total_creatine_kinase
+    - total_ck
+    - ck_total
+    - creatine_kinase_(total)
+    - total_creatine_kinese_ck_(venous)
+    unit: U/L
+    description: Creatine kinase (total)
+    category: metabolic
+    data_type: numeric
+    system: metabolic
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
-    known_modifiers: ["training_load"]
+    known_modifiers:
+    - training_load
     clinical_weight: 0.4
-    
-  # Kidney Function
   creatinine:
-    aliases: ["creat", "serum_creatinine"]
-    unit: "mg/dL"
-    description: "Serum creatinine level"
-    category: "kidney"
-    data_type: "numeric"
-    system: "renal"
+    aliases:
+    - creat
+    - serum_creatinine
+    unit: µmol/L
+    description: Serum creatinine level
+    category: kidney
+    data_type: numeric
+    system: renal
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.8
-    
-  bun:
-    aliases: ["blood_urea_nitrogen", "urea_nitrogen"]
-    unit: "mg/dL"
-    description: "Blood urea nitrogen"
-    category: "kidney"
-    data_type: "numeric"
-    system: "renal"
+  urea:
+    aliases:
+    - Urea
+    - BUN
+    - Blood urea nitrogen
+    unit: mmol/L
+    description: Serum urea level
+    category: kidney
+    data_type: numeric
+    system: renal
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.6
-    
-  # Liver Function
+  vitamin_d:
+    aliases:
+    - Vitamin D
+    - 25(OH) Vitamin D
+    - 25-Hydroxy Vitamin D
+    unit: nmol/L
+    description: 25-hydroxy vitamin D level
+    category: nutritional
+    data_type: numeric
+    system: nutritional
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
   alt:
-    aliases: ["alt", "alanine_aminotransferase", "sgot"]
-    unit: "U/L"
-    description: "Alanine aminotransferase"
-    category: "liver"
-    data_type: "numeric"
-    system: "hepatic"
+    aliases:
+    - alt
+    - alanine_aminotransferase
+    - sgpt
+    unit: U/L
+    description: Alanine aminotransferase
+    category: liver
+    data_type: numeric
+    system: hepatic
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
-    known_modifiers: ["alcohol"]
+    known_modifiers:
+    - alcohol
     clinical_weight: 0.8
-    
   ast:
-    aliases: ["aspartate_aminotransferase", "sgpt"]
-    unit: "U/L"
-    description: "Aspartate aminotransferase"
-    category: "liver"
-    data_type: "numeric"
-    system: "hepatic"
+    aliases:
+    - aspartate_aminotransferase
+    - sgot
+    unit: U/L
+    description: Aspartate aminotransferase
+    category: liver
+    data_type: numeric
+    system: hepatic
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
-    known_modifiers: ["alcohol"]
+    known_modifiers:
+    - alcohol
     clinical_weight: 0.8
-    
-  # Inflammatory Markers
+  neutrophils:
+    aliases:
+    - neutrophil_count
+    - neutrophils_(venous)
+    unit: 10^9/L
+    description: Neutrophil count (absolute)
+    category: cbc
+    data_type: numeric
+    system: hematological
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.5
+  lymphocytes:
+    aliases:
+    - lymphocyte_count
+    - lymphocytes_(venous)
+    unit: 10^9/L
+    description: Lymphocyte count (absolute)
+    category: cbc
+    data_type: numeric
+    system: hematological
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.5
+  basophils_abs:
+    aliases:
+    - basophils_(bas_#)
+    - basophils_abs_count
+    unit: 10^9/L
+    description: Basophils absolute count
+    category: cbc
+    data_type: numeric
+    system: immune
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.05
+  eosinophils_abs:
+    aliases:
+    - eosinophils_(eos_#)
+    - eosinophils_abs_count
+    unit: 10^9/L
+    description: Eosinophils absolute count
+    category: cbc
+    data_type: numeric
+    system: immune
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.1
+  lymphocytes_abs:
+    aliases:
+    - lymphocyte_(lym_#)
+    - lymphocytes_abs_count
+    unit: 10^9/L
+    description: Lymphocytes absolute count
+    category: cbc
+    data_type: numeric
+    system: immune
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.2
+  monocytes_abs:
+    aliases:
+    - monocyte_(mon_#)
+    - monocytes_abs_count
+    unit: 10^9/L
+    description: Monocytes absolute count
+    category: cbc
+    data_type: numeric
+    system: immune
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.1
+  neutrophils_abs:
+    aliases:
+    - neutrophil_(neu_#)
+    - neutrophils_abs_count
+    unit: 10^9/L
+    description: Neutrophils absolute count
+    category: cbc
+    data_type: numeric
+    system: immune
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.2
+  ferritin:
+    aliases:
+    - ferritin_(venous)
+    unit: ng/mL
+    description: Ferritin
+    category: inflammatory
+    data_type: numeric
+    system: immune
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
   crp:
-    aliases: ["c_reactive_protein", "hs_crp", "high_sensitivity_crp", "c-reactive_protein_crp_(venous)"]
-    unit: "mg/L"
-    description: "C-reactive protein"
-    category: "inflammatory"
-    data_type: "numeric"
-    system: "immune"
+    aliases:
+    - c_reactive_protein
+    - hs_crp
+    - high_sensitivity_crp
+    - c-reactive_protein_crp_(venous)
+    unit: mg/L
+    description: C-reactive protein
+    category: inflammatory
+    data_type: numeric
+    system: immune
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
-    known_modifiers: ["stress"]
+    known_modifiers:
+    - stress
     clinical_weight: 0.8
-    
-  # Complete Blood Count
+  free_t4:
+    aliases:
+    - free_thyroxine
+    - freet4
+    unit: ng/dL
+    description: Free thyroxine (Free T4)
+    category: hormonal
+    data_type: numeric
+    system: thyroid
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.5
+  tgab:
+    aliases:
+    - thyroglobulin_antibodies_-_tgab
+    - thyroglobulin_antibodies
+    unit: IU/mL
+    description: Thyroglobulin antibodies (TgAb)
+    category: hormonal
+    data_type: numeric
+    system: thyroid
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.4
+  tsh:
+    aliases:
+    - thyroid_stimulating_hormone
+    - thyrotropin
+    unit: mIU/L
+    description: Thyroid stimulating hormone (TSH)
+    category: hormonal
+    data_type: numeric
+    system: thyroid
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.8
   hemoglobin:
-    aliases: ["hgb", "hb"]
-    unit: "g/dL"
-    description: "Hemoglobin level"
-    category: "cbc"
-    data_type: "numeric"
-    system: "hematological"
+    aliases:
+    - hgb
+    - hb
+    unit: g/dL
+    description: Hemoglobin level
+    category: cbc
+    data_type: numeric
+    system: hematological
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.6
-    
   hematocrit:
-    aliases: ["hct", "pcv"]
-    unit: "%"
-    description: "Hematocrit percentage"
-    category: "cbc"
-    data_type: "numeric"
-    system: "hematological"
+    aliases:
+    - hct
+    - pcv
+    unit: '%'
+    description: Hematocrit percentage
+    category: cbc
+    data_type: numeric
+    system: hematological
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.4
-    
   white_blood_cells:
-    aliases: ["wbc", "leukocytes"]
-    unit: "K/μL"
-    description: "White blood cell count"
-    category: "cbc"
-    data_type: "numeric"
-    system: "hematological"
+    aliases:
+    - wbc
+    - leukocytes
+    unit: K/μL
+    description: White blood cell count
+    category: cbc
+    data_type: numeric
+    system: hematological
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.6
-    
   platelets:
-    aliases: ["plt", "platelet_count"]
-    unit: "K/μL"
-    description: "Platelet count"
-    category: "cbc"
-    data_type: "numeric"
-    system: "hematological"
+    aliases:
+    - plt
+    - platelet_count
+    unit: K/μL
+    description: Platelet count
+    category: cbc
+    data_type: numeric
+    system: hematological
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.6
-    
-  # Electrolytes
+  nlr:
+    aliases: []
+    unit: ratio
+    description: Neutrophil-to-lymphocyte ratio
+    category: inflammatory
+    data_type: numeric
+    system: immune
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.5
+  urea_creatinine_ratio:
+    aliases: []
+    unit: ratio
+    description: Urea / Creatinine ratio
+    category: kidney
+    data_type: numeric
+    system: renal
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
+  ast_alt_ratio:
+    aliases: []
+    unit: ratio
+    description: AST / ALT ratio (De Ritis ratio)
+    category: liver
+    data_type: numeric
+    system: hepatic
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.5
   calcium:
-    aliases: ["calcium_(venous)"]
-    unit: "mg/dL"
-    description: "Serum calcium level"
-    category: "electrolyte"
-    data_type: "numeric"
-    system: "nutritional"
+    aliases:
+    - calcium_(venous)
+    unit: mg/dL
+    description: Serum calcium level
+    category: electrolyte
+    data_type: numeric
+    system: nutritional
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.4
-    
   corrected_calcium:
-    aliases: ["corrected_calcium_(venous)"]
-    unit: "mg/dL"
-    description: "Corrected serum calcium level"
-    category: "electrolyte"
-    data_type: "numeric"
-    system: "nutritional"
+    aliases:
+    - corrected_calcium_(venous)
+    unit: mg/dL
+    description: Corrected serum calcium level
+    category: electrolyte
+    data_type: numeric
+    system: nutritional
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.4
-    
   sodium:
-    aliases: ["sodium_(venous)"]
-    unit: "mEq/L"
-    description: "Serum sodium level"
-    category: "electrolyte"
-    data_type: "numeric"
-    system: "nutritional"
+    aliases:
+    - sodium_(venous)
+    unit: mEq/L
+    description: Serum sodium level
+    category: electrolyte
+    data_type: numeric
+    system: nutritional
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.6
-    
   potassium:
-    aliases: ["potassium_(venous)"]
-    unit: "mEq/L"
-    description: "Serum potassium level"
-    category: "electrolyte"
-    data_type: "numeric"
-    system: "nutritional"
+    aliases:
+    - potassium_(venous)
+    unit: mEq/L
+    description: Serum potassium level
+    category: electrolyte
+    data_type: numeric
+    system: nutritional
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.6
-    
   chloride:
-    aliases: ["chloride_(venous)"]
-    unit: "mEq/L"
-    description: "Serum chloride level"
-    category: "electrolyte"
-    data_type: "numeric"
-    system: "nutritional"
+    aliases:
+    - chloride_(venous)
+    unit: mEq/L
+    description: Serum chloride level
+    category: electrolyte
+    data_type: numeric
+    system: nutritional
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.4
-    
   magnesium:
-    aliases: ["magnesium_(venous)"]
-    unit: "mg/dL"
-    description: "Serum magnesium level"
-    category: "electrolyte"
-    data_type: "numeric"
-    system: "nutritional"
+    aliases:
+    - magnesium_(venous)
+    unit: mg/dL
+    description: Serum magnesium level
+    category: electrolyte
+    data_type: numeric
+    system: nutritional
     clusters: []
     roles: []
     key_risks_when_high: []
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.4
+  rbc:
+    unit: 10^12/L
+    description: Red blood cell count (erythrocytes)
+    category: Full Blood Count
+    data_type: numeric
+    system: hematological
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - polycythaemia
+    - dehydration
+    key_risks_when_low:
+    - anaemia
+    known_modifiers:
+    - altitude
+    - smoking
+    - iron_status
+    - b12_status
+    clinical_weight: 0.5
+  mcv:
+    unit: fL
+    description: Mean corpuscular volume - average red cell size
+    category: Full Blood Count
+    data_type: numeric
+    system: hematological
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - b12_deficiency
+    - folate_deficiency
+    - alcohol_excess
+    - hypothyroidism
+    key_risks_when_low:
+    - iron_deficiency_anaemia
+    - thalassaemia
+    known_modifiers:
+    - b12_status
+    - folate_status
+    - iron_status
+    - alcohol
+    clinical_weight: 0.5
+  mch:
+    unit: pg
+    description: Mean corpuscular haemoglobin - average haemoglobin per red cell
+    category: Full Blood Count
+    data_type: numeric
+    system: hematological
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - macrocytic_anaemia
+    key_risks_when_low:
+    - iron_deficiency
+    - thalassaemia
+    known_modifiers:
+    - iron_status
+    - b12_status
+    clinical_weight: 0.4
+  mchc:
+    unit: g/L
+    description: Mean corpuscular haemoglobin concentration
+    category: Full Blood Count
+    data_type: numeric
+    system: hematological
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - hereditary_spherocytosis
+    - severe_dehydration
+    key_risks_when_low:
+    - iron_deficiency_anaemia
+    - thalassaemia
+    known_modifiers:
+    - iron_status
+    clinical_weight: 0.4
+  rdw_cv:
+    unit: '%'
+    description: Red cell distribution width (coefficient of variation) - variability
+      in red cell size
+    category: Full Blood Count
+    data_type: numeric
+    system: hematological
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - mixed_anaemia
+    - iron_deficiency
+    - b12_deficiency
+    - myelodysplasia
+    key_risks_when_low: []
+    known_modifiers:
+    - iron_status
+    - b12_status
+    - folate_status
+    clinical_weight: 0.4
+  rdw_sd:
+    unit: fL
+    description: Red cell distribution width (standard deviation)
+    category: Full Blood Count
+    data_type: numeric
+    system: hematological
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - anisocytosis
+    - mixed_anaemia
+    key_risks_when_low: []
+    known_modifiers:
+    - iron_status
+    - b12_status
+    clinical_weight: 0.3
+  mpv:
+    unit: fL
+    description: Mean platelet volume - average platelet size
+    category: Full Blood Count
+    data_type: numeric
+    system: hematological
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - cardiovascular_risk
+    - thrombosis
+    key_risks_when_low:
+    - bone_marrow_failure
+    known_modifiers: []
+    clinical_weight: 0.3
+  pdw:
+    unit: fL
+    description: Platelet distribution width - variability in platelet size
+    category: Full Blood Count
+    data_type: numeric
+    system: hematological
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - platelet_activation
+    - cardiovascular_risk
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.3
+  neutrophil_pct:
+    unit: '%'
+    description: Neutrophil percentage of white cell differential
+    category: Full Blood Count
+    data_type: numeric
+    system: immune
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - bacterial_infection
+    - inflammation
+    - stress_response
+    key_risks_when_low:
+    - viral_infection
+    - neutropenia
+    known_modifiers:
+    - infection
+    - corticosteroids
+    - chemotherapy
+    clinical_weight: 0.4
+  lymphocyte_pct:
+    unit: '%'
+    description: Lymphocyte percentage of white cell differential
+    category: Full Blood Count
+    data_type: numeric
+    system: immune
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - viral_infection
+    - lymphocytic_leukaemia
+    key_risks_when_low:
+    - immunodeficiency
+    - corticosteroid_use
+    known_modifiers:
+    - viral_infection
+    - stress
+    - corticosteroids
+    clinical_weight: 0.4
+  monocyte_pct:
+    unit: '%'
+    description: Monocyte percentage of white cell differential
+    category: Full Blood Count
+    data_type: numeric
+    system: immune
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - chronic_infection
+    - inflammatory_disease
+    - monocytic_leukaemia
+    key_risks_when_low: []
+    known_modifiers:
+    - infection
+    - inflammation
+    clinical_weight: 0.3
+  eosinophil_pct:
+    unit: '%'
+    description: Eosinophil percentage of white cell differential
+    category: Full Blood Count
+    data_type: numeric
+    system: immune
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - allergy
+    - parasitic_infection
+    - asthma
+    - eosinophilia
+    key_risks_when_low: []
+    known_modifiers:
+    - allergy
+    - corticosteroids
+    clinical_weight: 0.3
+  basophil_pct:
+    unit: '%'
+    description: Basophil percentage of white cell differential
+    category: Full Blood Count
+    data_type: numeric
+    system: immune
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - myeloproliferative_disease
+    - allergic_reaction
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.2
+  free_t3:
+    unit: pmol/L
+    description: Free triiodothyronine
+    category: Thyroid Function
+    data_type: numeric
+    system: thyroid
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - hyperthyroidism
+    - T3_toxicosis
+    key_risks_when_low:
+    - hypothyroidism
+    - non_thyroidal_illness
+    known_modifiers:
+    - illness
+    - fasting
+    - medication
+    clinical_weight: 0.6
+  tpo_ab:
+    unit: kU/L
+    description: Thyroid peroxidase antibodies
+    category: Thyroid Antibodies
+    data_type: numeric
+    system: thyroid
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - hashimotos_thyroiditis
+    - autoimmune_thyroid_disease
+    - graves_disease
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.5
+  testosterone:
+    unit: nmol/L
+    description: Total testosterone
+    category: Sex Hormones
+    data_type: numeric
+    system: hormonal
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - polycystic_ovary_syndrome
+    - androgen_excess
+    key_risks_when_low:
+    - hypogonadism
+    - low_libido
+    - fatigue
+    - sarcopenia
+    known_modifiers:
+    - age
+    - obesity
+    - sleep
+    - exercise
+    - stress
+    clinical_weight: 0.6
+  free_testosterone:
+    unit: pmol/L
+    description: Free testosterone (calculated)
+    category: Sex Hormones
+    data_type: numeric
+    system: hormonal
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - androgen_excess
+    key_risks_when_low:
+    - hypogonadism
+    - high_shbg_binding
+    known_modifiers:
+    - shbg_levels
+    - age
+    - obesity
+    clinical_weight: 0.5
+  free_testosterone_pct:
+    unit: '%'
+    description: Free testosterone as percentage of total testosterone
+    category: Sex Hormones
+    data_type: numeric
+    system: hormonal
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low:
+    - functional_hypogonadism
+    known_modifiers:
+    - shbg_levels
+    clinical_weight: 0.3
+  shbg:
+    unit: nmol/L
+    description: Sex hormone binding globulin
+    category: Sex Hormones
+    data_type: numeric
+    system: hormonal
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - reduced_bioavailable_testosterone
+    - hyperthyroidism
+    - liver_disease
+    key_risks_when_low:
+    - insulin_resistance
+    - obesity
+    - hypothyroidism
+    - androgenic_excess
+    known_modifiers:
+    - obesity
+    - insulin_resistance
+    - thyroid_status
+    - liver_status
+    - age
+    clinical_weight: 0.5
+  oestradiol:
+    unit: pmol/L
+    description: Oestradiol (estradiol, E2)
+    category: Sex Hormones
+    data_type: numeric
+    system: hormonal
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - oestrogen_excess
+    - gynaecomastia_in_males
+    - feminisation
+    key_risks_when_low:
+    - osteoporosis
+    - cardiovascular_risk
+    - menopausal_symptoms
+    known_modifiers:
+    - age
+    - obesity
+    - aromatase_activity
+    - alcohol
+    clinical_weight: 0.5
+  lh:
+    unit: mIU/mL
+    description: Luteinizing hormone
+    category: Pituitary / Gonadal
+    data_type: numeric
+    system: hormonal
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - primary_hypogonadism
+    - menopause
+    - pituitary_tumour
+    key_risks_when_low:
+    - secondary_hypogonadism
+    - pituitary_dysfunction
+    - hyperprolactinaemia
+    known_modifiers:
+    - age
+    - hormonal_status
+    - stress
+    - prolactin
+    clinical_weight: 0.4
+  fsh:
+    unit: mIU/mL
+    description: Follicle stimulating hormone
+    category: Pituitary / Gonadal
+    data_type: numeric
+    system: hormonal
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - primary_hypogonadism
+    - menopause
+    - ovarian_reserve_decline
+    key_risks_when_low:
+    - secondary_hypogonadism
+    - pituitary_dysfunction
+    known_modifiers:
+    - age
+    - hormonal_status
+    - stress
+    clinical_weight: 0.4
+  prolactin:
+    unit: mIU/L
+    description: Prolactin
+    category: Pituitary
+    data_type: numeric
+    system: hormonal
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - prolactinoma
+    - hypogonadism
+    - galactorrhoea
+    - infertility
+    key_risks_when_low: []
+    known_modifiers:
+    - stress
+    - medication
+    - hypothyroidism
+    - renal_failure
+    clinical_weight: 0.4
+  cortisol:
+    unit: nmol/L
+    description: Serum cortisol (time-dependent)
+    category: Adrenal
+    data_type: numeric
+    system: hormonal
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - cushings_syndrome
+    - chronic_stress
+    - hyperglycaemia
+    - immunosuppression
+    key_risks_when_low:
+    - addisons_disease
+    - adrenal_insufficiency
+    - pituitary_failure
+    known_modifiers:
+    - time_of_day
+    - stress
+    - sleep
+    - medication
+    clinical_weight: 0.6
+  dhea:
+    unit: umol/L
+    description: Dehydroepiandrosterone
+    category: Adrenal
+    data_type: numeric
+    system: hormonal
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - adrenal_tumour
+    - congenital_adrenal_hyperplasia
+    key_risks_when_low:
+    - adrenal_ageing
+    - adrenal_insufficiency
+    - chronic_stress
+    known_modifiers:
+    - age
+    - stress
+    - chronic_illness
+    clinical_weight: 0.5
+  fai:
+    unit: '%'
+    description: Free androgen index (FAI) - calculated bioavailable androgen proxy
+    category: Sex Hormones
+    data_type: numeric
+    system: hormonal
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - androgen_excess
+    - PCOS
+    key_risks_when_low:
+    - hypogonadism
+    - androgen_deficiency
+    known_modifiers:
+    - shbg_levels
+    - testosterone_levels
+    clinical_weight: 0.4
+  testosterone_free_testosterone_ratio:
+    aliases: []
+    unit: ratio
+    description: Testosterone / Free Testosterone ratio (lab-supplied or computed)
+    category: Sex Hormones
+    data_type: numeric
+    system: hormonal
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.4
+  egfr:
+    unit: mL/min/1.73m2
+    description: Estimated glomerular filtration rate (CKD-EPI 2009)
+    category: Renal Function
+    data_type: numeric
+    system: renal
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low:
+    - chronic_kidney_disease
+    - cardiovascular_risk
+    - drug_accumulation
+    known_modifiers:
+    - age
+    - sex
+    - muscle_mass
+    - hydration
+    - medication
+    clinical_weight: 0.7
+  urate:
+    unit: umol/L
+    description: Serum uric acid (urate)
+    category: Renal / Metabolic
+    data_type: numeric
+    system: renal
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - gout
+    - hyperuricaemia
+    - cardiovascular_risk
+    - renal_stones
+    key_risks_when_low:
+    - neurological_risk
+    - oxidative_stress
+    known_modifiers:
+    - diet
+    - alcohol
+    - diuretics
+    - renal_function
+    - fructose_intake
+    clinical_weight: 0.5
+  ggt:
+    unit: U/L
+    description: Gamma-glutamyl transferase
+    category: Liver Function
+    data_type: numeric
+    system: hepatic
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - liver_disease
+    - alcohol_excess
+    - bile_duct_obstruction
+    - metabolic_syndrome
+    key_risks_when_low: []
+    known_modifiers:
+    - alcohol
+    - obesity
+    - medication
+    - smoking
+    clinical_weight: 0.6
+  alp:
+    unit: U/L
+    description: Alkaline phosphatase
+    category: Liver Function
+    data_type: numeric
+    system: hepatic
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - cholestasis
+    - bone_disease
+    - liver_disease
+    - Pagets_disease
+    key_risks_when_low:
+    - hypothyroidism
+    - zinc_deficiency
+    - pernicious_anaemia
+    known_modifiers:
+    - age
+    - pregnancy
+    - bone_growth
+    - liver_disease
+    clinical_weight: 0.5
+  bilirubin:
+    unit: umol/L
+    description: Total bilirubin
+    category: Liver Function
+    data_type: numeric
+    system: hepatic
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - liver_disease
+    - haemolysis
+    - bile_duct_obstruction
+    - Gilberts_syndrome
+    key_risks_when_low: []
+    known_modifiers:
+    - fasting
+    - haemolysis
+    - liver_function
+    clinical_weight: 0.5
+  albumin:
+    unit: g/L
+    description: Serum albumin - hepatic synthetic marker and nutritional proxy
+    category: Liver Function / Nutrition
+    data_type: numeric
+    system: hepatic
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - dehydration
+    key_risks_when_low:
+    - liver_disease
+    - malnutrition
+    - nephrotic_syndrome
+    - inflammation
+    known_modifiers:
+    - nutrition
+    - hydration
+    - liver_function
+    - inflammation
+    - age
+    clinical_weight: 0.6
+  total_protein:
+    unit: g/L
+    description: Total serum protein
+    category: Liver Function / Nutrition
+    data_type: numeric
+    system: hepatic
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - dehydration
+    - myeloma
+    - chronic_infection
+    key_risks_when_low:
+    - malnutrition
+    - liver_disease
+    - nephrotic_syndrome
+    known_modifiers:
+    - nutrition
+    - hydration
+    - liver_function
+    clinical_weight: 0.4
+  globulin:
+    unit: g/L
+    description: 'Globulin (calculated: total protein minus albumin)'
+    category: Liver Function / Immune
+    data_type: numeric
+    system: hepatic
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - chronic_infection
+    - autoimmune_disease
+    - myeloma
+    - liver_cirrhosis
+    key_risks_when_low:
+    - immunodeficiency
+    - malnutrition
+    known_modifiers:
+    - infection
+    - autoimmune_disease
+    - liver_function
+    clinical_weight: 0.3
+  lipoprotein_a:
+    unit: g/L
+    description: Lipoprotein(a) - genetically determined cardiovascular risk marker
+    category: Lipids
+    data_type: numeric
+    system: cardiovascular
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - cardiovascular_disease
+    - atherosclerosis
+    - aortic_stenosis
+    key_risks_when_low: []
+    known_modifiers:
+    - genetics
+    - menopause
+    - hypothyroidism
+    clinical_weight: 0.7
+  homocysteine:
+    unit: umol/L
+    description: Homocysteine - methylation and cardiovascular risk marker
+    category: Cardiovascular / Methylation
+    data_type: numeric
+    system: cardiovascular
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - cardiovascular_disease
+    - stroke
+    - dementia
+    - b12_deficiency
+    - folate_deficiency
+    key_risks_when_low: []
+    known_modifiers:
+    - b12_status
+    - folate_status
+    - b6_status
+    - renal_function
+    - age
+    - genetics
+    clinical_weight: 0.7
+  hba1c_pct:
+    unit: '%'
+    description: Glycated haemoglobin (NGSP, %) - long-term glucose control
+    category: Glycaemic Control
+    data_type: numeric
+    system: metabolic
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - type_2_diabetes
+    - prediabetes
+    - cardiovascular_risk
+    key_risks_when_low: []
+    known_modifiers:
+    - diet
+    - exercise
+    - medication
+    - haemoglobin_variants
+    - anaemia
+    clinical_weight: 0.8
+  vitamin_b12:
+    unit: pg/mL
+    description: Serum vitamin B12 (total cobalamin)
+    category: Vitamins
+    data_type: numeric
+    system: nutritional
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low:
+    - macrocytic_anaemia
+    - neuropathy
+    - elevated_homocysteine
+    - dementia
+    known_modifiers:
+    - diet
+    - supplementation
+    - gastric_acid
+    - intrinsic_factor
+    - age
+    clinical_weight: 0.6
+  active_b12:
+    unit: pmol/L
+    description: Active vitamin B12 (holotranscobalamin) - functional B12 status
+    category: Vitamins
+    data_type: numeric
+    system: nutritional
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low:
+    - functional_b12_deficiency
+    - neuropathy
+    - elevated_homocysteine
+    known_modifiers:
+    - diet
+    - supplementation
+    - renal_function
+    - age
+    clinical_weight: 0.6
+  folate:
+    unit: ug/L
+    description: Serum folate (folic acid)
+    category: Vitamins
+    data_type: numeric
+    system: nutritional
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low:
+    - macrocytic_anaemia
+    - neural_tube_defect_risk
+    - elevated_homocysteine
+    known_modifiers:
+    - diet
+    - supplementation
+    - alcohol
+    - medication
+    - malabsorption
+    clinical_weight: 0.5
+  zinc:
+    unit: umol/L
+    description: Serum zinc
+    category: Minerals
+    data_type: numeric
+    system: nutritional
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - zinc_toxicity
+    key_risks_when_low:
+    - immune_dysfunction
+    - wound_healing_impairment
+    - taste_loss
+    - growth_retardation
+    known_modifiers:
+    - diet
+    - supplementation
+    - malabsorption
+    - infection
+    clinical_weight: 0.4
+  iron:
+    unit: umol/L
+    description: Serum iron
+    category: Iron Studies
+    data_type: numeric
+    system: nutritional
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - iron_overload
+    - haemochromatosis
+    key_risks_when_low:
+    - iron_deficiency
+    - anaemia_of_chronic_disease
+    known_modifiers:
+    - diet
+    - recent_meals
+    - inflammation
+    - menstruation
+    clinical_weight: 0.5
+  transferrin:
+    unit: g/L
+    description: Serum transferrin - iron transport protein
+    category: Iron Studies
+    data_type: numeric
+    system: nutritional
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - iron_deficiency
+    key_risks_when_low:
+    - iron_overload
+    - liver_disease
+    - malnutrition
+    - inflammation
+    known_modifiers:
+    - iron_status
+    - liver_function
+    - nutrition
+    - inflammation
+    clinical_weight: 0.5

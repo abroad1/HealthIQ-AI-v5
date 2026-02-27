@@ -54,6 +54,42 @@ v4 codebase files are reference-only and must never be imported into the v5 runt
 
 ---
 
+# 1.1 Execution Status (Current Baseline)
+
+Status update to align documentation with delivered runtime state.
+
+| Sprint | Scope (short) | Status |
+|--------|----------------|--------|
+| 1 | Hard-typed unit registry | Complete |
+| 2 | Lab-origin metadata and variance flag | Complete |
+| 3 | Criticality and missing-data confidence | Complete |
+| 4 | Derived ratio registry (static bounds) | Complete |
+| 5 | Ratio centralisation | Complete |
+| 6 | Cluster schema refactor | Complete |
+| 7 | InsightGraph contract implementation | Complete |
+| 8 | Confidence model + boundary hardening | Complete |
+| 9 | Replay/stamping foundation | Complete |
+| 10 | RelationshipRegistry_v1 + replay stamping | Complete |
+| 11 | BiomarkerContext_v1 + replay stamping | Complete |
+
+Remaining v5.2 execution is re-ordered below to be depth-enabling and deterministic.
+
+## 1.2 Remaining v5.2 — Depth-Enabling Order
+
+1. **SSOT scoring policy migration**  
+   Migrate remaining hardcoded scoring thresholds/weights into versioned SSOT policy artifacts. This reduces policy drift and improves replay/audit traceability.
+
+2. **Runtime convergence (single clustering path)**  
+   Converge production clustering to one deterministic runtime path and quarantine inactive engines from production execution to remove architectural ambiguity.
+
+3. **Deterministic failure envelope** *(Added to support depth)*  
+   Define deterministic failure artifacts for replay compatibility, replacing non-deterministic fallback characteristics in failure outputs.
+
+4. **Runtime purity governance invariants** *(Added to support depth)*  
+   Add enforcement-level governance to prevent legacy/non-authoritative runtime paths from re-entering production flows.
+
+---
+
 # 2. Phase Overview
 
 V5.1 delivery is divided into four macro phases, with **Phase 1 containing all safety-critical systems**:
@@ -221,6 +257,15 @@ This phase now contains all safety-critical systems.
 * All ratios computed centrally
 * No duplicate local ratio calculations exist
 * Snapshot includes derived markers
+
+### Implemented (Sprint 4):
+
+* `backend/core/analytics/ratio_registry.py` — RatioRegistry, compute()
+* Orchestrator wires ratio computation after simple_biomarkers, before score_biomarkers
+* tc_hdl_ratio, tg_hdl_ratio, ldl_hdl_ratio, non_hdl_cholesterol, apoB_apoA1_ratio (when apob+apoa1 present)
+* Static bounds for tc/tg/ldl HDL applied via input_reference_ranges; meta["derived_ratios"] persists
+* metabolic_age.py and heart_insight.py read lipid ratios from panel; no local computation
+* Deferred: nlr, bun_creatinine_ratio, urea_creatinine_ratio, ast_alt_ratio
 
 ---
 
@@ -459,7 +504,7 @@ When opening a new chat:
 Always specify:
 
 ```
-We are executing Delivery Plan v5.1
+We are executing Delivery Plan v5.2
 Current Phase: X
 Current Sprint: Y
 PRD Reference: Section Z

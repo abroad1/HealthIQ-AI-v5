@@ -39,12 +39,12 @@ class AnalysisStartResponse(BaseModel):
 
 from core.models.biomarker import BiomarkerPanel
 from core.models.user import User
-from core.pipeline.orchestrator import AnalysisOrchestrator
+from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 from core.pipeline.events import stream_status
 from core.dto.builders import build_analysis_result_dto
 from core.canonical.normalize import normalize_biomarkers_with_metadata
 from core.context import ContextFactory, ValidationError
-from core.units.registry import apply_unit_normalisation, UnitConversionError
+from core.units.registry import apply_unit_normalisation, UnitConversionError, UNIT_REGISTRY_VERSION
 
 router = APIRouter()
 
@@ -101,6 +101,12 @@ async def start_analysis(request: AnalysisStartRequest):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Unit conversion failed: {detail}"
             )
+        
+        # Sprint 5: Set unit-normalisation meta so orchestrator.run() can enforce invariant
+        normalized[UNIT_NORMALISATION_META_KEY] = {
+            "unit_normalised": True,
+            "unit_registry_version": UNIT_REGISTRY_VERSION,
+        }
 
         # Create orchestrator and run analysis
         orchestrator = AnalysisOrchestrator()
@@ -121,6 +127,8 @@ async def start_analysis(request: AnalysisStartRequest):
         _analysis_results[analysis_id] = {
             "analysis_id": dto.analysis_id,
             "meta": meta,
+            "replay_manifest": getattr(dto, "replay_manifest", None),
+            "derived_markers": dto.derived_markers,
             "biomarkers": [
                 {
                     "biomarker_name": b.biomarker_name,
@@ -175,6 +183,9 @@ async def start_analysis(request: AnalysisStartRequest):
             "status": dto.status,
             "created_at": dto.created_at,
             "overall_score": dto.overall_score,
+            "primary_driver_system_id": getattr(dto, "primary_driver_system_id", ""),
+            "system_capacity_scores": getattr(dto, "system_capacity_scores", {}),
+            "burden_hash": getattr(dto, "burden_hash", ""),
             "risk_assessment": {},
             "recommendations": [],
             "result_version": "1.0.0"
@@ -190,7 +201,7 @@ async def start_analysis(request: AnalysisStartRequest):
         raise
     except Exception as e:
         return AnalysisStartResponse(
-            analysis_id=generate_analysis_id(),
+            analysis_id=analysis_id,
             status="error",
             message=f"Analysis failed: {str(e)}"
         )
