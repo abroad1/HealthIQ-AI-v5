@@ -41,6 +41,9 @@ jobs:
         working-directory: backend
         run: python -m pytest tests/unit/test_golden_panel_runner.py -q
 
+      - name: Verify import path
+        run: python -c "import core; print(core.__file__)"
+
       - name: Run golden panel snapshot pack from repo root
         shell: bash
         run: |
