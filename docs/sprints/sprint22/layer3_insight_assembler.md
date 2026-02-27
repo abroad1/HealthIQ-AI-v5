@@ -25,9 +25,9 @@ Layer 3 "Insight Assembly" is a deterministic, rule-based assembler that convert
 - **EvidenceBlock** (omit empty sections):
   - `biomarkers`, `derived_markers`, `lifestyle`, `system_burdens`
 
-## 10 Card Definitions
+## 11 Card Definitions
 
-Exactly 10 system cards, each with `insight_id` format `<system_id>__system_pressure`:
+Exactly 11 system cards, each with `insight_id` format `<system_id>__system_pressure`:
 
 | system_id      | insight_id                    |
 |----------------|-------------------------------|
@@ -39,6 +39,7 @@ Exactly 10 system cards, each with `insight_id` format `<system_id>__system_pres
 | hormonal       | hormonal__system_pressure    |
 | hematological  | hematological__system_pressure |
 | musculoskeletal| musculoskeletal__system_pressure |
+| nutritional    | nutritional__system_pressure  |
 | autonomic      | autonomic__system_pressure   |
 | thyroid        | thyroid__system_pressure    |
 
