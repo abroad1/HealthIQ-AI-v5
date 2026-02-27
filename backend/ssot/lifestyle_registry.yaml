@@ -80,6 +80,16 @@ derived:
     inputs: [weight_kg, height_cm]
     formula: "weight_kg / ((height_cm/100)**2)"
 
+sit_stand:
+  reps_30s:
+    threshold: 12
+    modifier: 0.05
+    direction: below
+  time_5_reps_seconds:
+    threshold: 15
+    modifier: 0.05
+    direction: above
+
 system_caps:
   cardiovascular: 0.20
   metabolic: 0.20

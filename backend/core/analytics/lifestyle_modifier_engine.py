@@ -21,6 +21,7 @@ class LifestyleModifierEngine:
 
     def __init__(self, registry: dict) -> None:
         self._registry = registry
+        self._sit_stand = registry.get("sit_stand", {})
         self._derived_spec = registry.get("derived", {})
         self._inputs_spec = registry.get("inputs", {})
         self._system_caps = registry.get("system_caps", {})
@@ -213,10 +214,16 @@ class LifestyleModifierEngine:
             v = _to_float(val)
             if v is None:
                 return 0.0
-            if test_type == "reps_30s":
-                return 0.05 if v < 12 else 0.0
-            if test_type == "time_5_reps_seconds":
-                return 0.05 if v > 15 else 0.0
+            cfg = self._sit_stand.get(str(test_type or ""), {})
+            thresh = _to_float(cfg.get("threshold"))
+            mod = _to_float(cfg.get("modifier")) or 0.0
+            direction = str(cfg.get("direction", "")).strip().lower()
+            if thresh is None:
+                return 0.0
+            if direction == "below" and v < thresh:
+                return mod
+            if direction == "above" and v > thresh:
+                return mod
             return 0.0
         return None
 
