@@ -92,9 +92,11 @@ The `apply` method returns a JSON-safe dict with this structure:
 2. **Per-system cap**: The sum of contributions is capped by `system_caps[system]`.
 3. **Final clamp**: `adjusted_burden` is clamped to [0, 1].
 
-## Confidence Penalties
+## Confidence Penalties (Informational Only)
 
 For each system, if any core input (from `confidence_rules.core_inputs_by_system`) is missing or invalid, apply `missing_input_confidence_penalty` **once per system** (not per missing input). The `missing_core_inputs` list reports which inputs were missing or invalid.
+
+**Important:** `confidence_adjustments` and `confidence_penalty` are **informational signals only**. They do **not** reduce `adjusted_burden`. Adjusted burden is computed as `base_burden + modifier` (capped); the confidence penalty is carried for downstream reporting/interpretation only. A future sprint may introduce an explicit confidence score multiplier if desired.
 
 ## How to Run Tests
 
