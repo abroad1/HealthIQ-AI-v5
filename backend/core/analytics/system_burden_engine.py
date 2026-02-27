@@ -23,9 +23,11 @@ ALLOWED_BURDEN_SYSTEM_IDS = {
     "hormonal",
     "immune",
     "metabolic",
+    "musculoskeletal",
     "nutritional",
     "renal",
     "thyroid",
+    "autonomic",
 }
 
 

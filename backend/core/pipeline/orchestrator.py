@@ -748,13 +748,22 @@ class AnalysisOrchestrator:
             return float(raw)
         return None
 
-    def run(self, biomarkers: Mapping[str, Any], user: Mapping[str, Any], *, assume_canonical: bool = False):
+    def run(
+        self,
+        biomarkers: Mapping[str, Any],
+        user: Mapping[str, Any],
+        *,
+        assume_canonical: bool = False,
+        lifestyle_inputs: Optional[Dict[str, Any]] = None,
+    ):
         """
         Run the complete analysis pipeline: scoring → clustering → insights.
-        
+
         Args:
             biomarkers: Canonical biomarker data (must be unit-normalised; carry __unit_normalisation_meta__)
             user: User data
+            lifestyle_inputs: Optional Layer 2 lifestyle inputs (UK canonical). When provided, applies
+                LifestyleModifierEngine to system burdens and attaches lifestyle artifact.
             assume_canonical: Whether to skip canonical validation
             
         Returns:
@@ -1198,6 +1207,8 @@ class AnalysisOrchestrator:
             has_scorable_inputs = bool(biomarker_stats) and any(
                 bool(bids) for bids in system_to_biomarkers.values()
             )
+            lifestyle_artifact: Optional[Dict[str, Any]] = None
+            lifestyle_input_hash_value: Optional[str] = None
             if not has_scorable_inputs:
                 # Deterministic not-computed contract when no range-qualified biomarkers are available.
                 raw_system_burden_vector = {}
@@ -1247,6 +1258,34 @@ class AnalysisOrchestrator:
                         for edge in (getattr(insight_graph, "causal_edges", []) or [])
                     ],
                 )
+                # Sprint 20: Lifestyle modifier integration (Layer 2)
+                lifestyle_adjusted_systems: set = set()
+                effective_lifestyle_inputs = lifestyle_inputs or user.get("lifestyle_inputs")
+                if effective_lifestyle_inputs and isinstance(effective_lifestyle_inputs, dict) and effective_lifestyle_inputs:
+                    import hashlib
+                    import json
+                    from core.analytics.lifestyle_registry_loader import load_lifestyle_registry
+                    from core.analytics.lifestyle_modifier_engine import LifestyleModifierEngine
+                    registry = load_lifestyle_registry()
+                    engine = LifestyleModifierEngine(registry)
+                    engine_result = engine.apply(
+                        dict(adjusted_system_burden_vector),
+                        effective_lifestyle_inputs,
+                    )
+                    lifestyle_adjusted_systems = set(engine_result["adjusted_system_burdens"].keys())
+                    for system, adj_data in engine_result["adjusted_system_burdens"].items():
+                        adjusted_system_burden_vector[system] = adj_data["adjusted_burden"]
+                    lifestyle_artifact = {
+                        "derived_inputs": engine_result["derived_inputs"],
+                        "system_modifiers": engine_result["system_modifiers"],
+                        "confidence_adjustments": {
+                            s: engine_result["adjusted_system_burdens"][s]["confidence_penalty"]
+                            for s in sorted(engine_result["adjusted_system_burdens"].keys())
+                        },
+                    }
+                    lifestyle_input_hash_value = hashlib.sha256(
+                        json.dumps(effective_lifestyle_inputs, sort_keys=True, ensure_ascii=True).encode("utf-8")
+                    ).hexdigest()
                 system_capacity_scores = scale_capacity_scores_v1(
                     adjusted_system_burden_vector=adjusted_system_burden_vector
                 )
@@ -1272,6 +1311,7 @@ class AnalysisOrchestrator:
                     adjusted_system_burden_vector=adjusted_system_burden_vector,
                     system_capacity_scores=system_capacity_scores,
                     burden_hash=burden_hash,
+                    allow_lifestyle_only_systems_without_influence_paths=lifestyle_adjusted_systems,
                 )
                 if validation_result.status != "PASS" and set(validation_result.violations) == {
                     "influence_order_not_descending_adjusted_burden"
@@ -1291,6 +1331,7 @@ class AnalysisOrchestrator:
                         adjusted_system_burden_vector=adjusted_system_burden_vector,
                         system_capacity_scores=system_capacity_scores,
                         burden_hash=burden_hash,
+                        allow_lifestyle_only_systems_without_influence_paths=lifestyle_adjusted_systems,
                     )
                 if validation_result.status != "PASS":
                     raise ValueError(f"validation_gate failed: {validation_result.violations}")
@@ -1395,6 +1436,7 @@ class AnalysisOrchestrator:
                 burden_artifact_filename="burden_vector.json",
                 linked_snapshot_ids=linked_snapshot_ids,
                 analysis_result_version="1.0.0",
+                lifestyle_input_hash=lifestyle_input_hash_value,
             )
 
             # Step 5: Synthesize insights (LLM receives only InsightGraph_v1)
@@ -1649,9 +1691,10 @@ class AnalysisOrchestrator:
             except (FileNotFoundError, ValueError):
                 pass
             meta["insight_graph"] = insight_graph.model_dump() if hasattr(insight_graph, "model_dump") else {}
-            meta["explainability_report"] = (
-                explainability_report.model_dump() if hasattr(explainability_report, "model_dump") else {}
-            )
+            exp_dump = explainability_report.model_dump() if hasattr(explainability_report, "model_dump") else {}
+            if lifestyle_artifact is not None:
+                exp_dump["lifestyle"] = lifestyle_artifact
+            meta["explainability_report"] = exp_dump
             meta["burden_vector"] = {
                 "raw_system_burden_vector": dict(getattr(insight_graph, "raw_system_burden_vector", {})),
                 "adjusted_system_burden_vector": dict(getattr(insight_graph, "adjusted_system_burden_vector", {})),
@@ -1684,7 +1727,8 @@ class AnalysisOrchestrator:
                 unmapped_biomarkers=unmapped_biomarkers,
                 derived_markers=derived_markers,
                 meta=meta,
-                replay_manifest=replay_manifest.model_dump(),
+                replay_manifest=replay_manifest.model_dump(exclude_none=True),
+                lifestyle=lifestyle_artifact,
             )
             
             logger.info(f"Analysis {analysis_id} completed successfully with {len(biomarker_dtos)} biomarkers, {len(cluster_dtos)} clusters, {len(insight_dtos)} insights")

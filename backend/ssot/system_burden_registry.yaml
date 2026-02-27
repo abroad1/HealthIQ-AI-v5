@@ -1,5 +1,7 @@
 registry_version: 1.0.0
 schema_version: 1.0.0
+# Lifestyle-only systems: no biomarkers; weight 0 placeholders so systems exist in allowlist.
+# These never appear in panels and contribute zero to burden scoring.
 biomarkers:
   alt:
     system: hepatic
@@ -337,3 +339,11 @@ biomarkers:
     system: nutritional
     risk_direction: BOTH_SIDES_RISK
     weight: 0.5
+  _lifestyle_system_musculoskeletal:
+    system: musculoskeletal
+    risk_direction: HIGH_IS_RISK
+    weight: 0.0
+  _lifestyle_system_autonomic:
+    system: autonomic
+    risk_direction: HIGH_IS_RISK
+    weight: 0.0
