@@ -54,7 +54,7 @@ inputs:
   resting_heart_rate:
     type: numeric
     min: 30
-    max: 200
+    max: 220
   smoking_status:
     type: categorical
     values: [never, former, current]
