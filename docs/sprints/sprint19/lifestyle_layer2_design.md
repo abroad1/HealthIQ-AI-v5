@@ -73,8 +73,8 @@ The `apply` method returns a JSON-safe dict with this structure:
 
 | Type | Behaviour |
 |------|-----------|
-| `thresholds_above` | Apply the **highest** modifier among thresholds met (not cumulative). E.g. systolic_bp=146 triggers above 140 only (0.07). |
-| `thresholds_below` | Same semantics: highest modifier among thresholds met. E.g. sleep_hours=5 triggers below 6 rule. |
+| `thresholds_above` | Highest-met wins: apply the **highest** modifier among thresholds met (not cumulative). E.g. systolic_bp=146 triggers above 140 only (0.07). Rationale: avoids double-counting; deterministic; clinically interpretable. |
+| `thresholds_below` | Same semantics: highest-met wins. E.g. sleep_hours=5 triggers below 6 rule. |
 | `categorical_values` | Direct map from input value to modifier. Unknown values default to 0.0; error recorded. |
 | `sit_stand_phase1` | Conservative rule keyed by `sit_stand_test_type`: `reps_30s` if value &lt; 12 → 0.05 else 0; `time_5_reps_seconds` if value &gt; 15 → 0.05 else 0. |
 | `passthrough` | No direct modifier contribution; used only to inform interpretation of a sibling input (e.g. `sit_stand_test_type` informs `sit_stand_value`). |
@@ -92,9 +92,11 @@ The `apply` method returns a JSON-safe dict with this structure:
 2. **Per-system cap**: The sum of contributions is capped by `system_caps[system]`.
 3. **Final clamp**: `adjusted_burden` is clamped to [0, 1].
 
-## Confidence Penalties
+## Confidence Penalties (Informational Only)
 
 For each system, if any core input (from `confidence_rules.core_inputs_by_system`) is missing or invalid, apply `missing_input_confidence_penalty` **once per system** (not per missing input). The `missing_core_inputs` list reports which inputs were missing or invalid.
+
+**Important:** `confidence_adjustments` and `confidence_penalty` are **informational signals only**. They do **not** reduce `adjusted_burden`. Adjusted burden is computed as `base_burden + modifier` (capped); the confidence penalty is carried for downstream reporting/interpretation only. A future sprint may introduce an explicit confidence score multiplier if desired.
 
 ## How to Run Tests
 
