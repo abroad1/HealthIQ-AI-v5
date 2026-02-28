@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Tuple
 
+from core.analytics.system_burden_engine import load_burden_registry
 from core.contracts.layer3_insights_v1 import (
     EvidenceBlock,
     EvidenceLifestyle,
@@ -142,15 +143,27 @@ def _build_evidence_block(
     return block, has_missing_ref
 
 
+def _ssot_supported_system_ids(adjusted: Dict[str, float]) -> frozenset[str]:
+    """Supported = (SSOT canonical systems) ∩ (burden vector keys)."""
+    registry = load_burden_registry()
+    ssot_system_ids = frozenset(
+        str(r.get("system", "")).strip()
+        for r in registry.values()
+        if isinstance(r, dict) and str(r.get("system", "")).strip()
+    )
+    vector_system_ids = frozenset(adjusted.keys())
+    return ssot_system_ids & vector_system_ids
+
+
 def assemble_layer3_insights(dto: "AnalysisDTO") -> Layer3InsightsV1:
     """
     Assemble Layer 3 insights from analysis DTO.
-    Emits cards ONLY for systems present in Layer 2 burden vectors.
+    Emits cards ONLY for SSOT-supported systems (system_burden_registry ∩ burden vector keys).
     No fabricated zero-burden cards for unsupported systems (e.g. autonomic, musculoskeletal).
     Deterministic: no datetime, no UUIDs, no random, no file I/O.
     """
     adjusted = _get_adjusted_burdens(dto)
-    supported_system_ids = frozenset(adjusted.keys())
+    supported_system_ids = _ssot_supported_system_ids(adjusted)
     lifestyle = dto.lifestyle
     lifestyle_modifiers = lifestyle if isinstance(lifestyle, dict) else None
 

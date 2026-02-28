@@ -31,6 +31,7 @@ if str(_backend) not in sys.path:
 # Must set before importing run_golden_panel (reads env at import/call time)
 os.environ["HEALTHIQ_ENABLE_LLM"] = "0"
 
+from core.analytics.system_burden_engine import load_burden_registry
 from tools.run_golden_panel import run_golden_panel, _default_fixture_path, _default_output_root
 
 
@@ -100,9 +101,16 @@ def verify_three_layer_pipeline() -> None:
             f"3-LAYER PIPELINE VERIFICATION FAILED: expected at least 1 card, got {len(insights)}"
         )
 
-    supported_system_ids = frozenset(
+    registry = load_burden_registry()
+    ssot_system_ids = frozenset(
+        str(r.get("system", "")).strip()
+        for r in registry.values()
+        if isinstance(r, dict) and str(r.get("system", "")).strip()
+    )
+    vector_system_ids = frozenset(
         burden_vector.get("adjusted_system_burden_vector") or {}
     )
+    supported_system_ids = ssot_system_ids & vector_system_ids
 
     required_card_fields = {"insight_id", "system_id", "severity", "confidence"}
     for i, card in enumerate(insights):
@@ -131,7 +139,7 @@ def verify_three_layer_pipeline() -> None:
         card_system_id = card.get("system_id")
         if card_system_id not in supported_system_ids:
             raise AssertionError(
-                f"3-LAYER PIPELINE VERIFICATION FAILED: card[{i}].system_id='{card_system_id}' not in burden vectors"
+                f"3-LAYER PIPELINE VERIFICATION FAILED: card[{i}].system_id='{card_system_id}' not in SSOT-supported systems"
             )
 
     timestamp_paths = _collect_timestamp_keys(layer3)
