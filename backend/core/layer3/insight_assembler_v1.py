@@ -15,7 +15,6 @@ from core.contracts.layer3_insights_v1 import (
     EvidenceSystemBurden,
     InsightCard,
     Layer3InsightsV1,
-    SYSTEM_CARD_IDS,
 )
 
 if TYPE_CHECKING:
@@ -146,16 +145,19 @@ def _build_evidence_block(
 def assemble_layer3_insights(dto: "AnalysisDTO") -> Layer3InsightsV1:
     """
     Assemble Layer 3 insights from analysis DTO.
+    Emits cards ONLY for systems present in Layer 2 burden vectors.
+    No fabricated zero-burden cards for unsupported systems (e.g. autonomic, musculoskeletal).
     Deterministic: no datetime, no UUIDs, no random, no file I/O.
     """
     adjusted = _get_adjusted_burdens(dto)
+    supported_system_ids = frozenset(adjusted.keys())
     lifestyle = dto.lifestyle
     lifestyle_modifiers = lifestyle if isinstance(lifestyle, dict) else None
 
     cards: List[InsightCard] = []
-    for insight_id in SYSTEM_CARD_IDS:
-        system_id = insight_id.replace("__system_pressure", "")
-        burden = adjusted.get(system_id, 0.0)
+    for system_id in sorted(supported_system_ids):
+        insight_id = f"{system_id}__system_pressure"
+        burden = adjusted[system_id]
         severity = _burden_to_severity(burden)
         band = _burden_to_band(burden)
 
