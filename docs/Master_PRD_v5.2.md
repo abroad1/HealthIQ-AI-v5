@@ -245,6 +245,28 @@ interpretation_bounds (see §6)
 
 No insight file may compute ratios locally.
 
+### Canonical Computation Boundary (Non-Negotiable)
+
+Insight modules in **Layer C** are presentation/narrative translators and must not perform deterministic medical computation.
+
+The following are prohibited inside insight modules:
+
+* Computing derived biomarkers or ratios (including ratio-like arithmetic over biomarker values)
+* Applying hard-coded normal/ideal/critical thresholds to biomarker-derived values
+
+All computation authority belongs only to:
+
+* **Layer A**: unit canonicalisation / ingestion normalisation
+* **Layer B**: deterministic registries and engines
+
+Any Layer C computation breach is an **architectural defect** and must be treated as a blocking governance violation.
+
+### Enforcement Rollout Phases
+
+* **Phase 1 — Detection (Report-Only, Current):** AST enforcement scanner reports deterministic violations without hard-failing CI.
+* **Phase 2 — Migration:** Refactor violating insight modules in controlled batches until residual violations are reduced to zero.
+* **Phase 3 — Hard Enforcement:** Zero-violation policy; enforcement test hard-fails on any detected violation.
+
 ---
 
 # 4. Layer B — Deterministic Intelligence Engine
