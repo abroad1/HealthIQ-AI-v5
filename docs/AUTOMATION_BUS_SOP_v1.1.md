@@ -211,6 +211,31 @@ Note:
 
 ---
 
+# Documentation-Only Classification (v1.1 Clarification)
+
+The Automation Bus is required for any change that affects:
+backend/
+ssot/
+tests/
+automation_bus/
+.github/workflows/
+Runtime behaviour
+Snapshot schema
+InsightGraph structure
+Registry logic
+Contract definitions
+Version increments
+
+The Automation Bus is not required for documentation-only edits under /docs provided all conditions below are met:
+1. No runtime behaviour is altered.
+2. No schema or contract semantics are altered.
+3. No version number is incremented.
+4. git diff --name-only confirms only /docs files changed.
+5. Human reviews diff prior to merge.
+6. Baseline tests and three-layer verification pass on main after merge.
+
+If any ambiguity exists, default to using the Automation Bus.
+
 # Versioning
 
 This document is authoritative.
