@@ -1696,10 +1696,34 @@ class AnalysisOrchestrator:
             if lifestyle_artifact is not None:
                 exp_dump["lifestyle"] = lifestyle_artifact
             meta["explainability_report"] = exp_dump
+            # Base system vectors must contain canonical systems only.
+            # Derived diagnostic components are stored separately in derived_components.
+            # Canonical system IDs are SSOT-derived from backend/ssot/system_burden_registry.yaml.
+            canonical_ids = frozenset(
+                str(row.get("system", "")).strip()
+                for row in burden_registry_rows.values()
+                if isinstance(row, dict) and str(row.get("system", "")).strip()
+            )
+            raw_full = dict(getattr(insight_graph, "raw_system_burden_vector", {}))
+            adj_full = dict(getattr(insight_graph, "adjusted_system_burden_vector", {}))
+            cap_full = dict(getattr(insight_graph, "system_capacity_scores", {}))
+            raw_canonical = {k: float(v) for k, v in raw_full.items() if k in canonical_ids}
+            adj_canonical = {k: float(v) for k, v in adj_full.items() if k in canonical_ids}
+            cap_canonical = {k: int(v) for k, v in cap_full.items() if k in canonical_ids}
+            derived_keys = sorted({k for k in raw_full.keys() | adj_full.keys() | cap_full.keys() if k not in canonical_ids})
+            derived_components = {
+                k: {
+                    "raw": float(raw_full.get(k, 0.0)),
+                    "adjusted": float(adj_full.get(k, 0.0)),
+                    "capacity": int(cap_full.get(k, 100)),
+                }
+                for k in derived_keys
+            }
             meta["burden_vector"] = {
-                "raw_system_burden_vector": dict(getattr(insight_graph, "raw_system_burden_vector", {})),
-                "adjusted_system_burden_vector": dict(getattr(insight_graph, "adjusted_system_burden_vector", {})),
-                "system_capacity_scores": dict(getattr(insight_graph, "system_capacity_scores", {})),
+                "raw_system_burden_vector": {k: raw_canonical[k] for k in sorted(raw_canonical.keys())},
+                "adjusted_system_burden_vector": {k: adj_canonical[k] for k in sorted(adj_canonical.keys())},
+                "system_capacity_scores": {k: cap_canonical[k] for k in sorted(cap_canonical.keys())},
+                "derived_components": derived_components,
                 "burden_hash": str(getattr(insight_graph, "burden_hash", "")),
                 "validation_status": str(getattr(insight_graph, "burden_validation_status", "")),
                 "validation_violations": list(getattr(insight_graph, "burden_validation_violations", [])),

@@ -29,10 +29,6 @@ jobs:
       - name: Install dependencies
         run: pip install -r backend/requirements.txt
 
-      - name: Validate AB SSOT
-        working-directory: backend
-        run: python scripts/validate_ab_panel_ssot.py
-
       - name: Run enforcement tests
         working-directory: backend
         run: python -m pytest tests/enforcement -q

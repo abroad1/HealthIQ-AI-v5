@@ -1,15 +1,5 @@
 {
   "biomarkers": {
-    "White Blood Cell Count": {
-      "reference_range": {
-        "max": 100.0,
-        "min": 0.0,
-        "source": "lab",
-        "unit": "mg/dL"
-      },
-      "unit": "mg/dL",
-      "value": 25.0
-    },
     "albumin": {
       "reference_range": {
         "max": 100.0,

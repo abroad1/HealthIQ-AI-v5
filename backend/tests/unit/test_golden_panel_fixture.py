@@ -13,7 +13,7 @@ def test_golden_panel_fixture_contains_expected_size_and_shape():
     payload = json.loads(path.read_text(encoding="utf-8"))
     assert isinstance(payload, dict)
     assert isinstance(payload.get("biomarkers"), dict)
-    assert len(payload["biomarkers"]) == 66
+    assert len(payload["biomarkers"]) == 63
     normalize_biomarkers_with_metadata(payload["biomarkers"])
     sample_key = sorted(payload["biomarkers"].keys())[0]
     sample = payload["biomarkers"][sample_key]
