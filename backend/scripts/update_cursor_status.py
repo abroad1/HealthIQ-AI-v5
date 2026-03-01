@@ -63,6 +63,57 @@ def write_json(path: Path, payload: dict[str, Any]) -> None:
     path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
 
+def validate_prompt_hardening(bus_dir: Path, expected_work_id: str) -> tuple[bool, str]:
+    hardening_path = bus_dir / "latest_prompt_hardening.json"
+    if not hardening_path.exists():
+        return False, "Missing automation_bus/latest_prompt_hardening.json"
+
+    try:
+        hardening = read_json(hardening_path)
+    except (OSError, json.JSONDecodeError) as exc:
+        return False, f"Failed to read latest_prompt_hardening.json: {exc}"
+
+    if hardening.get("status") != "HARDENED":
+        return False, "latest_prompt_hardening.json status must be HARDENED"
+
+    if hardening.get("work_id") != expected_work_id:
+        return False, "latest_prompt_hardening.json work_id must match prompt work_id"
+
+    if "changes" not in hardening:
+        return False, "latest_prompt_hardening.json must include changes field"
+
+    if not isinstance(hardening.get("changes"), list):
+        return False, "latest_prompt_hardening.json changes must be a list"
+
+    return True, ""
+
+
+def validate_gate_pass(bus_dir: Path, expected_work_id: str) -> tuple[bool, str]:
+    evidence_path = bus_dir / "latest_gate_evidence.json"
+    if not evidence_path.exists():
+        return False, "Missing automation_bus/latest_gate_evidence.json"
+
+    try:
+        evidence = read_json(evidence_path)
+    except (OSError, json.JSONDecodeError) as exc:
+        return False, f"Failed to read latest_gate_evidence.json: {exc}"
+
+    if evidence.get("work_id") != expected_work_id:
+        return False, "latest_gate_evidence.json work_id must match prompt work_id"
+
+    overall = evidence.get("overall")
+    if not isinstance(overall, dict):
+        return False, "latest_gate_evidence.json overall section is missing or invalid"
+
+    if overall.get("status") != "PASS":
+        return False, "Gate not PASS: latest_gate_evidence.json overall.status must be PASS"
+
+    if overall.get("exit_code") != 0:
+        return False, "Gate not PASS: latest_gate_evidence.json overall.exit_code must be 0"
+
+    return True, ""
+
+
 def main() -> int:
     if len(sys.argv) != 2:
         print("Usage: python backend/scripts/update_cursor_status.py <IN_PROGRESS|COMPLETE|FAILED>", file=sys.stderr)
@@ -121,6 +172,18 @@ def main() -> int:
     ):
         print("Refusing overwrite: same work_id is already IN_PROGRESS", file=sys.stderr)
         return 3
+
+    if requested_status == "IN_PROGRESS":
+        ok, message = validate_prompt_hardening(bus_dir, work_id)
+        if not ok:
+            print(message, file=sys.stderr)
+            return 2
+
+    if requested_status == "COMPLETE":
+        ok, message = validate_gate_pass(bus_dir, work_id)
+        if not ok:
+            print(message, file=sys.stderr)
+            return 2
 
     now = utc_now_iso()
     started_utc = previous.get("cursor_started_utc") if previous else None
