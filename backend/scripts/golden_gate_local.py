@@ -166,12 +166,10 @@ def main() -> int:
         checks = [
             {
                 "name": "run_baseline_tests",
-                "command": "python backend/scripts/run_baseline_tests.py",
                 "args": [sys.executable, str(repo_root / "backend" / "scripts" / "run_baseline_tests.py")],
             },
             {
                 "name": "verify_three_layer_pipeline",
-                "command": "python backend/scripts/verify_three_layer_pipeline.py",
                 "args": [sys.executable, str(repo_root / "backend" / "scripts" / "verify_three_layer_pipeline.py")],
             },
         ]
@@ -179,6 +177,7 @@ def main() -> int:
         evidence["checks"] = []
 
         for check in checks:
+            display_command = " ".join(check["args"])
             started = time.perf_counter()
             proc = subprocess.run(
                 check["args"],
@@ -190,7 +189,7 @@ def main() -> int:
             duration_ms = int((time.perf_counter() - started) * 1000)
 
             chunk = (
-                f"$ {check['command']}\n"
+                f"$ {display_command}\n"
                 f"--- STDOUT ---\n{proc.stdout}"
                 f"--- STDERR ---\n{proc.stderr}"
                 f"[exit_code={proc.returncode}]\n"
@@ -203,7 +202,7 @@ def main() -> int:
             evidence["checks"].append(
                 {
                     "name": check["name"],
-                    "command": check["command"],
+                    "command": display_command,
                     "exit_code": proc.returncode,
                     "duration_ms": duration_ms,
                     "status": status,
