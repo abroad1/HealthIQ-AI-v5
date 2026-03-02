@@ -1,5 +1,5 @@
 # AUTOMATION BUS SOP v1.2  
-**Final — Operationally Validated Edition**
+**Final — Operationally Validated Edition (Enforcement-Patched)**
 
 Status: LOCKED  
 Authority: Control-Plane Enforcement  
@@ -19,9 +19,9 @@ It enforces:
 - Branch isolation
 - Deterministic regression gating
 - Clear separation of authority
-- Regulatory-grade reproducibility
+- Reproducibility suitable for future regulatory alignment
 
-Governance must be enforced by mechanism, not memory.
+Critical execution invariants must be enforced by mechanism.
 
 ---
 
@@ -30,13 +30,16 @@ Governance must be enforced by mechanism, not memory.
 | Agent | Authority | Cannot Do |
 |--------|------------|------------|
 | GPT | Architecture authority | Cannot modify repo |
-| Claude Code | Mechanical audit + prompt hardening | Cannot merge |
-| Cursor | Code execution only | Cannot self-certify |
-| Kernel | State enforcement only | Cannot modify evidence |
-| Gate | Deterministic verification | Cannot modify state |
-| Human | Merge authority | Cannot bypass kernel |
+| Claude Code | Prompt hardening + mechanical audit | Cannot merge |
+| Cursor | Code execution only | Cannot self-certify test success |
+| Kernel (`run_work_package.py`) | State enforcement only | Cannot modify gate evidence |
+| Gate (`golden_gate_local.py`) | Deterministic verification | Cannot modify status |
+| Human operator | Merge authority | Cannot bypass kernel for work packages in scope |
 
-No agent writes another agent’s artifact.
+Notes:
+
+- Artifact ownership (single-writer) is a governance convention enforced by review discipline, not by OS-level locking.
+- Critical pass/fail is enforced by kernel + gate evidence.
 
 ---
 
@@ -51,19 +54,15 @@ No agent writes another agent’s artifact.
 | automation_bus/latest_gate_output.txt | Gate |
 | automation_bus/latest_audit_summary.md | Claude |
 
-Artifacts are runtime state and gitignored unless explicitly versioned.
+Artifacts are runtime state and are gitignored unless explicitly versioned.
 
 ---
 
 # 4. Work Package Lifecycle
 
----
+## Stage 0 — Branch Alignment (Pre-Implementation Check)
 
-## Stage 0 — Branch Alignment (Pre-Execution Check)
-
-Before Cursor begins implementation:
-
-Confirm current branch matches `branch:` in prompt front matter.
+Before Cursor begins implementation, confirm current branch matches `branch:` in prompt front matter.
 
 This prevents cross-branch contamination before any work begins.
 
@@ -90,7 +89,7 @@ Rules:
 
 - `execution_model` is mandatory for infrastructure or control-plane work.
 - Work package must define allowed and forbidden actions if sequencing-sensitive.
-- If introducing a new script, prompt must state explicitly:
+- If introducing a new script, prompt must explicitly state:
 
 > Implementation-only. Do not execute target script during this sprint unless explicitly permitted.
 
@@ -104,7 +103,7 @@ Claude:
 - Tightens STOP conditions
 - Validates file scope
 - Ensures PowerShell compatibility
-- Confirms execution_model correctness
+- Confirms `execution_model` correctness
 
 Claude writes:
 
@@ -125,6 +124,8 @@ Schema:
 
 Execution is blocked unless `status == HARDENED`.
 
+This is enforced mechanically by the kernel preflight.
+
 ---
 
 ## Stage 3 — Kernel Start
@@ -139,15 +140,16 @@ Kernel preflight must fail immediately if:
 
 - Prompt missing
 - Hardening file missing
-- work_id mismatch
+- `hardening.status != HARDENED`
+- `work_id` mismatch between prompt and hardening
 - Working tree not clean
 - Current branch ≠ prompt branch
-- Prompt malformed
+- Prompt front matter malformed
 - First non-empty line ≠ `---`
-- Front matter not closed
+- Front matter not closed with `---`
 - Required fields missing
 
-If valid, write:
+If valid, kernel writes:
 
 ```yaml
 status: IN_PROGRESS
@@ -163,17 +165,14 @@ Kernel must not run the gate during `start`.
 
 ## Stage 4 — Cursor Execution
 
-Cursor reads hardened prompt.
-
-Cursor performs implementation work.
+Cursor reads the hardened prompt and performs the implementation work.
 
 Important:
 
 - Cursor is interactive.
 - Kernel does not call Cursor.
 - Kernel does not execute implementation code.
-- Cursor must not run gate manually.
-- Cursor must not modify status file directly.
+- Cursor should not modify `latest_cursor_status.json`.
 
 ---
 
@@ -187,15 +186,20 @@ python backend/scripts/run_work_package.py finish
 
 Kernel must:
 
-- Verify status == IN_PROGRESS
-- Verify work_id consistency
-- Run golden gate
-- Require gate to produce:
-  - latest_gate_evidence.json
-  - latest_gate_output.txt
-- Treat evidence as immutable
+- Verify current status == IN_PROGRESS
+- Verify `work_id` consistency
+- Invoke the gate:
 
-### Gate Is Mandatory Test Phase
+```powershell
+python backend/scripts/golden_gate_local.py
+```
+
+- Require gate to produce:
+  - `automation_bus/latest_gate_evidence.json`
+  - `automation_bus/latest_gate_output.txt`
+- Treat gate evidence as immutable and never mutate it
+
+### Gate Is the Mandatory Test Phase
 
 Kernel finish runs the mandatory regression gate and will not mark COMPLETE unless the gate passes.
 
@@ -203,17 +207,17 @@ Completion rules:
 
 If:
 
-- exit_code == 0
+- gate exit_code == 0
 - evidence.overall.status == PASS
-- work_id matches
+- evidence.work_id matches prompt.work_id
 
-Then set:
+Then kernel writes:
 
 ```yaml
 status = COMPLETE
 ```
 
-Else set:
+Else kernel writes:
 
 ```yaml
 status = FAILED
@@ -221,7 +225,7 @@ status = FAILED
 
 Kernel must exit non-zero on FAILED.
 
-Manual COMPLETE is disallowed.
+Manual COMPLETE is disallowed by governance policy; the kernel is the authoritative state writer.
 
 ---
 
@@ -229,10 +233,10 @@ Manual COMPLETE is disallowed.
 
 No control-plane script may modify:
 
-- latest_gate_evidence.json
-- latest_gate_output.txt
+- `automation_bus/latest_gate_evidence.json`
+- `automation_bus/latest_gate_output.txt`
 
-Kernel is read-only consumer.
+The kernel is a read-only consumer of evidence.
 
 Violation = HIGH risk breach.
 
@@ -240,22 +244,25 @@ Violation = HIGH risk breach.
 
 # 6. Audit Summary (Claude)
 
-After finish:
+After kernel finish:
 
 Claude reads:
 
-- latest_gate_evidence.json
-- latest_cursor_status.json
-- git diff
+- `automation_bus/latest_gate_evidence.json`
+- `automation_bus/latest_cursor_status.json`
+- repository diff
 
 Claude writes:
 
 `automation_bus/latest_audit_summary.md`
 
-Required YAML header:
+## Audit Summary Schema (Authoritative)
+
+YAML header must include:
 
 ```yaml
 ---
+audit_schema_version: "1.0"
 work_id:
 risk_level:
 gate_status:
@@ -268,7 +275,7 @@ escalation_required: true | false
 ---
 ```
 
-Required body sections:
+Body must contain these sections (even if brief):
 
 - Summary
 - Files Touched
@@ -279,18 +286,18 @@ Required body sections:
 
 # 7. HIGH Risk Rules
 
-HIGH risk if:
+A work package is HIGH risk if it touches any of:
 
-- backend/ssot modified
-- backend/core/pipeline modified
-- backend/core/analytics modified
-- run_work_package.py modified
-- golden_gate_local.py modified
-- update_cursor_status.py modified
+- `backend/ssot/`
+- `backend/core/pipeline/`
+- `backend/core/analytics/`
+- `backend/scripts/run_work_package.py`
+- `backend/scripts/golden_gate_local.py`
+- `backend/scripts/update_cursor_status.py`
 
 HIGH risk requires:
 
-- Claude audit
+- Claude audit summary
 - GPT architectural review
 - Dual approval before merge
 
@@ -298,35 +305,37 @@ HIGH risk requires:
 
 # 8. Docs-Only Bypass (Mechanically Enforced)
 
-Allowed only if:
+Docs-only bypass is allowed only when all changes are under `/docs/`.
+
+Operator must run:
 
 ```powershell
-git diff --name-only
+git diff HEAD --name-only
 ```
 
-returns files exclusively under `/docs/`.
-
-If any file outside `/docs/` is present:
-
-Bus required.
+If any file outside `/docs/` is present, the bus is required.
 
 No human judgment exception.
 
 ---
 
-# 9. Infrastructure Introduction Rule
+# 9. Infrastructure / Control-Plane Execution Deferral
 
-If work package modifies:
+If a work package modifies any enforcement script:
 
-- run_work_package.py
-- golden_gate_local.py
-- update_cursor_status.py
+- `backend/scripts/run_work_package.py`
+- `backend/scripts/golden_gate_local.py`
+- `backend/scripts/update_cursor_status.py`
 
-Execution must not occur until after:
+Then execution must not occur until after:
 
-- Implementation complete
-- Merge complete
-- Fresh branch checkout
+- implementation is complete
+- changes are committed and merged
+- a fresh branch checkout is performed
+
+Definition: fresh branch checkout
+
+- Checkout a clean branch state after merge (e.g., checkout main and pull, then create a new feature branch), ensuring there are no uncommitted changes.
 
 Control-plane scripts must not execute themselves mid-refactor.
 
@@ -334,13 +343,12 @@ Control-plane scripts must not execute themselves mid-refactor.
 
 # 10. Determinism Rules
 
-All JSON must:
+All JSON written by control-plane scripts must:
 
-- Use sorted keys
-- Stable indentation
-- ISO UTC timestamps only
-- No randomness
-- No UUID generation in kernel
+- Use stable indentation
+- Use sorted keys where applicable
+- Use ISO UTC timestamps only
+- Avoid randomness and UUID generation in kernel outputs
 
 Kernel must:
 
@@ -352,14 +360,13 @@ Kernel must:
 
 # 11. Non-Negotiables
 
-- No conversational bypass of kernel
-- No manual COMPLETE writing
+- No conversational bypass of kernel for in-scope work packages
+- No manual writing of terminal status as a substitute for kernel finish
 - No gate skipping
 - No evidence mutation
 - No execution without HARDENED prompt
 - No modification of control-plane scripts without HIGH classification
-- No extension of legacy clustering engine
-- No introduction of fallback parsers
+- No introduction of fallback parsers (policy: do not add dummy/fallback parsing paths to replace the deterministic parser; LLM-backed parsing is allowed only when explicitly enabled)
 
 ---
 
@@ -368,15 +375,21 @@ Kernel must:
 The Automation Bus is:
 
 - A deterministic governance layer
-- A regulatory defensibility mechanism
+- A traceable change-control mechanism
 - A control-plane integrity system
 
-If compliance depends on memory, it is not compliance.
+Critical execution invariants are enforced by mechanism:
 
-Governance must be mechanical.
+- hardening must be HARDENED
+- branch must match
+- tree must be clean at start
+- gate must PASS for COMPLETE
+- evidence is immutable
+
+Role separation and artifact ownership are governance conventions enforced by review discipline.
 
 ---
 
-**Version: v1.2 (Operationally Validated Edition)**  
+**Version: v1.2**  
 Status: LOCKED
 
