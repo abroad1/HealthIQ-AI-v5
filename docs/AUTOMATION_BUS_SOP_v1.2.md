@@ -1,9 +1,9 @@
 # AUTOMATION BUS SOP v1.2  
-**Revised — Kernel Clarified Edition**
+**Final — Operationally Validated Edition**
 
 Status: LOCKED  
 Authority: Control-Plane Enforcement  
-Supersedes: Previous v1.2 draft  
+Supersedes: All prior v1.2 drafts  
 
 ---
 
@@ -16,10 +16,12 @@ It enforces:
 - Sequenced execution
 - Immutable evidence
 - State-machine discipline
+- Branch isolation
+- Deterministic regression gating
 - Clear separation of authority
-- Deterministic reproducibility
+- Regulatory-grade reproducibility
 
-Governance must be enforced by code, not conversation.
+Governance must be enforced by mechanism, not memory.
 
 ---
 
@@ -49,11 +51,23 @@ No agent writes another agent’s artifact.
 | automation_bus/latest_gate_output.txt | Gate |
 | automation_bus/latest_audit_summary.md | Claude |
 
-Artifacts are runtime state and gitignored unless otherwise specified.
+Artifacts are runtime state and gitignored unless explicitly versioned.
 
 ---
 
 # 4. Work Package Lifecycle
+
+---
+
+## Stage 0 — Branch Alignment (Pre-Execution Check)
+
+Before Cursor begins implementation:
+
+Confirm current branch matches `branch:` in prompt front matter.
+
+This prevents cross-branch contamination before any work begins.
+
+---
 
 ## Stage 1 — Authoring (GPT)
 
@@ -72,8 +86,13 @@ execution_model: SINGLE_PHASE | TWO_PHASE_START_FINISH
 ---
 ```
 
-If infrastructure or control-plane work:  
-`execution_model` is mandatory.
+Rules:
+
+- `execution_model` is mandatory for infrastructure or control-plane work.
+- Work package must define allowed and forbidden actions if sequencing-sensitive.
+- If introducing a new script, prompt must state explicitly:
+
+> Implementation-only. Do not execute target script during this sprint unless explicitly permitted.
 
 ---
 
@@ -104,7 +123,7 @@ Schema:
 }
 ```
 
-No execution may begin without HARDENED status.
+Execution is blocked unless `status == HARDENED`.
 
 ---
 
@@ -116,26 +135,19 @@ Command:
 python backend/scripts/run_work_package.py start
 ```
 
-Kernel preflight must:
+Kernel preflight must fail immediately if:
 
-Fail immediately if:
-
-- Prompt file missing
+- Prompt missing
 - Hardening file missing
 - work_id mismatch
 - Working tree not clean
 - Current branch ≠ prompt branch
-- Prompt front matter malformed
+- Prompt malformed
 - First non-empty line ≠ `---`
-- Front matter not closed with `---`
-- work_id field missing
-- execution_model missing (if infrastructure work)
+- Front matter not closed
+- Required fields missing
 
-If valid:
-
-Write:
-
-`latest_cursor_status.json`
+If valid, write:
 
 ```yaml
 status: IN_PROGRESS
@@ -151,14 +163,17 @@ Kernel must not run the gate during `start`.
 
 ## Stage 4 — Cursor Execution
 
-Cursor reads hardened prompt.  
-Cursor performs work.  
-Cursor does not invoke gate manually.  
-Cursor does not modify status directly.
+Cursor reads hardened prompt.
 
-Execution is interactive.
+Cursor performs implementation work.
 
-Kernel does not “call Cursor”.
+Important:
+
+- Cursor is interactive.
+- Kernel does not call Cursor.
+- Kernel does not execute implementation code.
+- Cursor must not run gate manually.
+- Cursor must not modify status file directly.
 
 ---
 
@@ -178,29 +193,35 @@ Kernel must:
 - Require gate to produce:
   - latest_gate_evidence.json
   - latest_gate_output.txt
-- Treat gate evidence as immutable
-- Never mutate evidence contents
+- Treat evidence as immutable
+
+### Gate Is Mandatory Test Phase
+
+Kernel finish runs the mandatory regression gate and will not mark COMPLETE unless the gate passes.
 
 Completion rules:
 
 If:
+
 - exit_code == 0
 - evidence.overall.status == PASS
 - work_id matches
 
-Then:
+Then set:
 
 ```yaml
 status = COMPLETE
 ```
 
-Else:
+Else set:
 
 ```yaml
 status = FAILED
 ```
 
 Kernel must exit non-zero on FAILED.
+
+Manual COMPLETE is disallowed.
 
 ---
 
@@ -219,7 +240,7 @@ Violation = HIGH risk breach.
 
 # 6. Audit Summary (Claude)
 
-After gate:
+After finish:
 
 Claude reads:
 
@@ -275,7 +296,7 @@ HIGH risk requires:
 
 ---
 
-# 8. Docs-Only Bypass
+# 8. Docs-Only Bypass (Mechanically Enforced)
 
 Allowed only if:
 
@@ -285,7 +306,8 @@ git diff --name-only
 
 returns files exclusively under `/docs/`.
 
-If any file outside `/docs/`:  
+If any file outside `/docs/` is present:
+
 Bus required.
 
 No human judgment exception.
@@ -294,14 +316,19 @@ No human judgment exception.
 
 # 9. Infrastructure Introduction Rule
 
-If work package introduces a new control-plane script:
+If work package modifies:
 
-- execution_model must be TWO_PHASE_START_FINISH
-- Prompt must explicitly state:
+- run_work_package.py
+- golden_gate_local.py
+- update_cursor_status.py
 
-> Implementation-only. Do not execute target script during this sprint unless explicitly permitted.
+Execution must not occur until after:
 
-New infrastructure file must be committed before kernel invocation.
+- Implementation complete
+- Merge complete
+- Fresh branch checkout
+
+Control-plane scripts must not execute themselves mid-refactor.
 
 ---
 
@@ -315,6 +342,12 @@ All JSON must:
 - No randomness
 - No UUID generation in kernel
 
+Kernel must:
+
+- Exit non-zero on any failure
+- Never silently continue
+- Never swallow exceptions
+
 ---
 
 # 11. Non-Negotiables
@@ -325,25 +358,25 @@ All JSON must:
 - No evidence mutation
 - No execution without HARDENED prompt
 - No modification of control-plane scripts without HIGH classification
+- No extension of legacy clustering engine
+- No introduction of fallback parsers
 
 ---
 
 # 12. Design Philosophy
 
-The Automation Bus is not a convenience layer.
-
-It is:
+The Automation Bus is:
 
 - A deterministic governance layer
 - A regulatory defensibility mechanism
 - A control-plane integrity system
 
-If enforcement depends on memory, it is not enforcement.
+If compliance depends on memory, it is not compliance.
 
 Governance must be mechanical.
 
 ---
 
-**Version: v1.2 (Revised — Kernel Clarified)**  
+**Version: v1.2 (Operationally Validated Edition)**  
 Status: LOCKED
 
