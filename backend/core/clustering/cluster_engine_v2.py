@@ -80,7 +80,7 @@ def score_clusters(
     """
     # Sprint 6: Schema-driven cluster definitions
     try:
-        from core.analytics.cluster_schema import load_cluster_schema
+        from core.clustering.cluster_schema_loader import load_cluster_schema
         schema = load_cluster_schema()
         cluster_biomarkers = {
             cid: list(cdef.all_biomarkers())
@@ -268,7 +268,7 @@ class ClusterEngineV2:
 
     def _group_biomarkers_by_health_system(self, available_biomarkers: set[str]) -> Dict[str, List[str]]:
         try:
-            from core.analytics.cluster_schema import load_cluster_schema
+            from core.clustering.cluster_schema_loader import load_cluster_schema
             schema = load_cluster_schema()
         except (ImportError, FileNotFoundError, ValueError):
             return {}

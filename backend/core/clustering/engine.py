@@ -177,7 +177,7 @@ class ClusteringEngine:
     def _group_biomarkers_by_health_system(self, biomarker_values: Dict[str, float]) -> Dict[str, List[str]]:
         """Group biomarkers by health system. Sprint 6: schema-driven."""
         try:
-            from core.analytics.cluster_schema import load_cluster_schema
+            from core.clustering.cluster_schema_loader import load_cluster_schema
             schema = load_cluster_schema()
         except (ImportError, FileNotFoundError, ValueError):
             return {}
