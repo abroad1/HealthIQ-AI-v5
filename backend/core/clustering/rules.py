@@ -15,7 +15,7 @@ from core.models.biomarker import BiomarkerCluster
 
 # Schema-driven clustering (Sprint 6)
 try:
-    from core.analytics.cluster_schema import (
+    from core.clustering.cluster_schema_loader import (
         load_cluster_schema,
         compute_cluster_status,
     )

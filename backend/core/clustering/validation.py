@@ -393,16 +393,16 @@ class ClusterValidator:
     
     def _get_clinical_groups(self) -> Dict[str, List[str]]:
         """Get clinical grouping of biomarkers."""
-        return {
-            "metabolic": ["glucose", "hba1c", "insulin", "homa_ir"],
-            "cardiovascular": ["total_cholesterol", "ldl_cholesterol", "hdl_cholesterol", "triglycerides"],
-            "inflammatory": ["crp", "esr", "il6"],
-            "kidney": ["creatinine", "urea", "egfr"],
-            "liver": ["alt", "ast", "bilirubin", "alp"],
-            "cbc": ["hemoglobin", "hematocrit", "wbc", "platelets"],
-            "hormonal": ["tsh", "free_t4", "testosterone", "estradiol"],
-            "nutritional": ["vitamin_d", "b12", "folate", "iron"]
-        }
+        try:
+            from core.clustering.cluster_schema_loader import load_cluster_schema
+
+            schema = load_cluster_schema()
+            return {
+                cluster_id: list(cluster_def.all_biomarkers())
+                for cluster_id, cluster_def in schema.clusters.items()
+            }
+        except Exception:
+            return {}
     
     def set_validation_thresholds(self, **kwargs) -> None:
         """Set custom validation thresholds."""
