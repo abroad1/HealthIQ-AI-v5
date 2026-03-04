@@ -28,7 +28,7 @@ from core.insights.synthesis import InsightSynthesizer
 from core.analytics.primitives import frontend_status_from_value_and_range
 from core.analytics.criticality import evaluate_criticality
 from core.analytics.ratio_registry import RatioRegistry, DERIVED_IDS, compute
-from core.analytics.cluster_schema import get_cluster_schema_version_stamp
+from core.clustering.cluster_schema_loader import get_cluster_schema_version_stamp
 from core.analytics.insight_graph_builder import build_insight_graph_v1
 from core.analytics.replay_manifest_builder import build_replay_manifest_v1
 from core.analytics.explainability_builder import (
