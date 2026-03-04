@@ -52,6 +52,69 @@ class ClusterSummaryItem(BaseModel):
     confidence: float
 
 
+class MetabolicAgeFeatureV1(BaseModel):
+    metabolic_age: float = 0.0
+    age_delta_years: float = 0.0
+    homa_ir: float = 0.0
+    severity: str = "normal"
+    confidence: float = 0.0
+    risk_flags: List[str] = Field(default_factory=list)
+    recommendations: List[str] = Field(default_factory=list)
+
+
+class HeartFeatureV1(BaseModel):
+    heart_resilience_score: float = 0.0
+    severity: str = "normal"
+    confidence: float = 0.0
+    risk_factors: List[str] = Field(default_factory=list)
+    ldl_hdl_ratio: Optional[float] = None
+    tc_hdl_ratio: Optional[float] = None
+    tg_hdl_ratio: Optional[float] = None
+    recommendations: List[str] = Field(default_factory=list)
+
+
+class InflammationFeatureV1(BaseModel):
+    inflammation_burden_score: float = 0.0
+    severity: str = "normal"
+    confidence: float = 0.0
+    risk_factors: List[str] = Field(default_factory=list)
+    nlr: Optional[float] = None
+    recommendations: List[str] = Field(default_factory=list)
+
+
+class FatigueFeatureV1(BaseModel):
+    severity: str = "normal"
+    confidence: float = 0.0
+    root_causes: List[str] = Field(default_factory=list)
+    iron_status: str = "unknown"
+    thyroid_status: str = "unknown"
+    vitamin_status: str = "unknown"
+    inflammation_status: str = "unknown"
+    cortisol_status: str = "unknown"
+    recommendations: List[str] = Field(default_factory=list)
+
+
+class DetoxFeatureV1(BaseModel):
+    detox_filtration_score: float = 0.0
+    liver_score: float = 0.0
+    kidney_score: float = 0.0
+    severity: str = "normal"
+    confidence: float = 0.0
+    risk_factors: List[str] = Field(default_factory=list)
+    egfr: Optional[float] = None
+    egfr_source: str = "unknown"
+    urea_creatinine_ratio: Optional[float] = None
+    recommendations: List[str] = Field(default_factory=list)
+
+
+class LayerCFeatureBundleV1(BaseModel):
+    metabolic_age: MetabolicAgeFeatureV1 = Field(default_factory=MetabolicAgeFeatureV1)
+    heart_insight: HeartFeatureV1 = Field(default_factory=HeartFeatureV1)
+    inflammation: InflammationFeatureV1 = Field(default_factory=InflammationFeatureV1)
+    fatigue_root_cause: FatigueFeatureV1 = Field(default_factory=FatigueFeatureV1)
+    detox_filtration: DetoxFeatureV1 = Field(default_factory=DetoxFeatureV1)
+
+
 class InsightGraphV1(BaseModel):
     """
     InsightGraph v1 — sole input to LLM/narrative layer.
@@ -172,3 +235,4 @@ class InsightGraphV1(BaseModel):
 
     # Edges (optional; empty if not implemented)
     edges: List[Dict[str, Any]] = Field(default_factory=list)
+    layer_c_features: Optional[LayerCFeatureBundleV1] = Field(default=None)
