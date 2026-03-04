@@ -536,6 +536,12 @@ class AnalysisOrchestrator:
         Returns:
             Dictionary with insight synthesis results
         """
+        mode = os.getenv("HEALTHIQ_MODE", "").strip().lower()
+        if mode not in {"fixture", "fixtures", "test"}:
+            raise RuntimeError(
+                "orchestrator.synthesize_insights() is fixture/test mode only in production use orchestrator.run()"
+            )
+
         # If biomarker scores not provided, compute them
         if biomarker_scores is None:
             # Extract biomarkers from context
