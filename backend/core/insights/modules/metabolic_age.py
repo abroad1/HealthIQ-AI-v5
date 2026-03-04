@@ -106,7 +106,7 @@ class MetabolicAgeInsight(BaseInsight):
         insulin = float(biomarkers.get('insulin', 0))
         age = float(biomarkers.get('age', 0))
         
-        # Calculate HOMA-IR
+        # Local clinical derivation is intentional here (module-specific, not RatioRegistry bypass).
         homa_ir = (glucose * insulin) / 405.0 if glucose > 0 and insulin > 0 else 0
         
         # Get optional biomarkers (lipid ratios from RatioRegistry; read from panel)
@@ -117,6 +117,7 @@ class MetabolicAgeInsight(BaseInsight):
         waist_circ = biomarkers.get('waist_circumference')
         height = biomarkers.get('height')
 
+        # RatioRegistry-derived ratios are consumed from panel inputs (not recomputed locally).
         tc_hdl_ratio = biomarkers.get('tc_hdl_ratio')
         tg_hdl_ratio = biomarkers.get('tg_hdl_ratio')
 
