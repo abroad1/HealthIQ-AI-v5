@@ -1,14 +1,11 @@
-"""
-Detox filtration insight module.
+"""Detox/filtration narrative module (InsightGraph-driven)."""
 
-Clinical implementation of detoxification and filtration system assessment based on
-liver function markers, kidney function markers, and filtration efficiency indicators.
-"""
+from typing import List
 
-from typing import List, Dict, Any, Optional
+from core.contracts.insight_graph_v1 import InsightGraphV1
 from core.insights.base import BaseInsight
-from core.insights.registry import register_insight
 from core.insights.metadata import InsightMetadata, InsightResult
+from core.insights.registry import register_insight
 from core.models.context import AnalysisContext
 
 
@@ -50,305 +47,59 @@ class DetoxFiltrationInsight(BaseInsight):
             updated_at="2024-01-30T00:00:00Z"
         )
     
+    def _extract_insight_graph(self, context: AnalysisContext) -> InsightGraphV1 | None:
+        params = context.analysis_parameters or {}
+        raw_graph = params.get("insight_graph")
+        if isinstance(raw_graph, InsightGraphV1):
+            return raw_graph
+        if isinstance(raw_graph, dict):
+            return InsightGraphV1.model_validate(raw_graph)
+        return None
+
     def analyze(self, context: AnalysisContext) -> List[InsightResult]:
-        """Analyze context and return structured results. Never raise exceptions."""
+        """Render narrative output from precomputed InsightGraph features only."""
         try:
-            # Extract biomarkers
-            biomarkers = {k: v.value if hasattr(v, 'value') else v 
-                         for k, v in context.biomarker_panel.biomarkers.items()}
-            
-            # Check for required biomarkers
-            required = ["creatinine"]
-            missing = [b for b in required if b not in biomarkers or biomarkers[b] is None]
-            if missing:
+            insight_graph = self._extract_insight_graph(context)
+            if insight_graph is None or insight_graph.layer_c_features is None:
                 return [InsightResult(
                     insight_id=self.metadata.insight_id,
                     version=self.metadata.version,
                     manifest_id="",
-                    error_code="MISSING_BIOMARKERS",
-                    error_detail=f"Missing required biomarkers: {', '.join(missing)}"
+                    error_code="MISSING_INSIGHT_GRAPH",
+                    error_detail="InsightGraph layer_c_features missing from analysis context",
                 )]
-            
-            # Calculate detox filtration score and related metrics
-            result = self._calculate_detox_filtration_score(biomarkers)
-            
-            # Determine severity based on liver and kidney function
-            severity = self._determine_severity(result['liver_score'], result['kidney_score'], result['overall_score'])
-            
-            # Calculate confidence based on available biomarkers
-            confidence = self._calculate_confidence(biomarkers)
-            
+            feature = insight_graph.layer_c_features.detox_filtration
+            drivers = {
+                "risk_factors": list(feature.risk_factors),
+                "egfr": feature.egfr,
+                "egfr_source": feature.egfr_source,
+                "urea_creatinine_ratio": feature.urea_creatinine_ratio,
+            }
+            evidence = {
+                "detox_filtration_score": feature.detox_filtration_score,
+                "liver_score": feature.liver_score,
+                "kidney_score": feature.kidney_score,
+                "risk_factors": list(feature.risk_factors),
+                "egfr": feature.egfr,
+                "egfr_source": feature.egfr_source,
+                "urea_creatinine_ratio": feature.urea_creatinine_ratio,
+            }
             return [InsightResult(
                 insight_id=self.metadata.insight_id,
                 version=self.metadata.version,
-                manifest_id="",  # Will be set by orchestrator
-                drivers=result['drivers'],
-                evidence=result['evidence'],
-                biomarkers_involved=result['biomarkers_involved'],
-                confidence=confidence,
-                severity=severity,
-                recommendations=result['recommendations']
+                manifest_id="",
+                drivers=drivers,
+                evidence=evidence,
+                biomarkers_involved=list(self.metadata.required_biomarkers) + list(self.metadata.optional_biomarkers or []),
+                confidence=feature.confidence,
+                severity=feature.severity,
+                recommendations=list(feature.recommendations),
             )]
-            
         except Exception as e:
             return [InsightResult(
                 insight_id=self.metadata.insight_id,
                 version=self.metadata.version,
                 manifest_id="",
                 error_code="CALCULATION_FAILED",
-                error_detail=str(e)
+                error_detail=str(e),
             )]
-    
-    def _calculate_detox_filtration_score(self, biomarkers: Dict[str, Any]) -> Dict[str, Any]:
-        """Calculate detox filtration score using liver and kidney function markers."""
-        # Extract values
-        creatinine = float(biomarkers.get('creatinine', 0))
-        
-        # Get optional biomarkers
-        alt = biomarkers.get('alt')
-        ast = biomarkers.get('ast')
-        ggt = biomarkers.get('ggt')
-        alp = biomarkers.get('alp')
-        bilirubin = biomarkers.get('bilirubin')
-        egfr = biomarkers.get('egfr')
-        urea = biomarkers.get('urea')
-        albumin = biomarkers.get('albumin')
-        age = biomarkers.get('age', 50)  # Default age for eGFR calculation
-        gender = biomarkers.get('gender', 'male')  # Default gender for eGFR calculation
-        
-        # Calculate liver score
-        liver_score = self._calculate_liver_score(alt, ast, ggt, alp, bilirubin, albumin)
-        
-        # Get urea_creatinine_ratio from RatioRegistry (do not compute locally)
-        urea_creatinine_ratio = biomarkers.get('urea_creatinine_ratio', biomarkers.get('bun_creatinine_ratio'))
-        if urea_creatinine_ratio is not None:
-            if isinstance(urea_creatinine_ratio, dict):
-                urea_creatinine_ratio = urea_creatinine_ratio.get('value') if isinstance(urea_creatinine_ratio.get('value'), (int, float)) else None
-            elif not isinstance(urea_creatinine_ratio, (int, float)):
-                urea_creatinine_ratio = float(getattr(urea_creatinine_ratio, 'value', urea_creatinine_ratio)) if isinstance(getattr(urea_creatinine_ratio, 'value', None), (int, float)) else None
-            else:
-                urea_creatinine_ratio = float(urea_creatinine_ratio)
-        kidney_score = self._calculate_kidney_score(creatinine, egfr, urea, age, gender, urea_creatinine_ratio)
-        
-        # Calculate overall detox filtration score
-        overall_score = (liver_score + kidney_score) / 2
-        
-        # Identify drivers and risk factors
-        drivers = {}
-        risk_factors = []
-        
-        # Liver risk factors
-        if alt and alt > 40:
-            risk_factors.append("elevated_alt")
-            drivers['alt'] = round(alt, 1)
-        if ast and ast > 40:
-            risk_factors.append("elevated_ast")
-            drivers['ast'] = round(ast, 1)
-        if ggt and ggt > 60:
-            risk_factors.append("elevated_ggt")
-            drivers['ggt'] = round(ggt, 1)
-        if alp and alp > 120:
-            risk_factors.append("elevated_alp")
-            drivers['alp'] = round(alp, 1)
-        if bilirubin and bilirubin > 1.2:
-            risk_factors.append("elevated_bilirubin")
-            drivers['bilirubin'] = round(bilirubin, 2)
-        if albumin and albumin < 3.5:
-            risk_factors.append("low_albumin")
-            drivers['albumin'] = round(albumin, 1)
-        
-        # Kidney risk factors (urea_creatinine_ratio from RatioRegistry; already extracted above)
-        if egfr and egfr < 60:
-            risk_factors.append("reduced_egfr")
-            drivers['egfr'] = round(egfr, 1)
-        if creatinine > 1.2:
-            risk_factors.append("elevated_creatinine")
-            drivers['creatinine'] = round(creatinine, 2)
-        if urea_creatinine_ratio is not None and urea_creatinine_ratio > 20:
-            risk_factors.append("elevated_urea_creatinine_ratio")
-            drivers['urea_creatinine_ratio'] = round(urea_creatinine_ratio, 1)
-        
-        # Generate recommendations
-        recommendations = self._generate_recommendations(risk_factors, liver_score, kidney_score)
-        
-        return {
-            'detox_filtration_score': round(overall_score, 1),
-            'liver_score': round(liver_score, 1),
-            'kidney_score': round(kidney_score, 1),
-            'overall_score': round(overall_score, 1),
-            'risk_factors': risk_factors,
-            'drivers': drivers,
-            'evidence': {
-                'detox_filtration_score': round(overall_score, 1),
-                'liver_score': round(liver_score, 1),
-                'kidney_score': round(kidney_score, 1),
-                'alt': round(alt, 1) if alt else None,
-                'ast': round(ast, 1) if ast else None,
-                'ggt': round(ggt, 1) if ggt else None,
-                'alp': round(alp, 1) if alp else None,
-                'bilirubin': round(bilirubin, 2) if bilirubin else None,
-                'egfr': round(egfr, 1) if egfr else None,
-                'creatinine': round(creatinine, 2),
-                'urea': round(urea, 1) if urea else None,
-                'albumin': round(albumin, 1) if albumin else None,
-                'risk_factors': risk_factors
-            },
-            'biomarkers_involved': [b for b in ['creatinine', 'alt', 'ast', 'ggt', 'alp', 'bilirubin', 'egfr', 'urea', 'albumin'] if b in biomarkers],
-            'recommendations': recommendations
-        }
-    
-    def _calculate_liver_score(self, alt: Optional[float], ast: Optional[float], ggt: Optional[float], 
-                              alp: Optional[float], bilirubin: Optional[float], albumin: Optional[float]) -> float:
-        """Calculate liver function score (0-100, higher is better)."""
-        base_score = 100.0
-        
-        # ALT adjustments
-        if alt:
-            if alt > 100:
-                base_score -= 30  # Severe liver damage
-            elif alt > 60:
-                base_score -= 20  # Moderate liver damage
-            elif alt > 40:
-                base_score -= 10  # Mild liver damage
-        
-        # AST adjustments
-        if ast:
-            if ast > 100:
-                base_score -= 30  # Severe liver damage
-            elif ast > 60:
-                base_score -= 20  # Moderate liver damage
-            elif ast > 40:
-                base_score -= 10  # Mild liver damage
-        
-        # GGT adjustments (bile duct function)
-        if ggt:
-            if ggt > 120:
-                base_score -= 25  # Severe bile duct obstruction
-            elif ggt > 80:
-                base_score -= 15  # Moderate bile duct obstruction
-            elif ggt > 60:
-                base_score -= 8   # Mild bile duct obstruction
-        
-        # ALP adjustments (bile duct and bone)
-        if alp:
-            if alp > 200:
-                base_score -= 20  # Severe elevation
-            elif alp > 150:
-                base_score -= 12  # Moderate elevation
-            elif alp > 120:
-                base_score -= 6   # Mild elevation
-        
-        # Bilirubin adjustments (conjugation and excretion)
-        if bilirubin:
-            if bilirubin > 3.0:
-                base_score -= 25  # Severe jaundice
-            elif bilirubin > 2.0:
-                base_score -= 15  # Moderate jaundice
-            elif bilirubin > 1.2:
-                base_score -= 8   # Mild jaundice
-        
-        # Albumin adjustments (synthetic function)
-        if albumin:
-            if albumin < 2.5:
-                base_score -= 20  # Severe hypoalbuminemia
-            elif albumin < 3.0:
-                base_score -= 12  # Moderate hypoalbuminemia
-            elif albumin < 3.5:
-                base_score -= 6   # Mild hypoalbuminemia
-        
-        return max(0, min(100, base_score))
-    
-    def _calculate_kidney_score(self, creatinine: float, egfr: Optional[float], urea: Optional[float], 
-                               age: float, gender: str, urea_creatinine_ratio: Optional[float] = None) -> float:
-        """Calculate kidney function score (0-100, higher is better)."""
-        base_score = 100.0
-        
-        # Creatinine adjustments
-        if creatinine > 2.0:
-            base_score -= 40  # Severe kidney dysfunction
-        elif creatinine > 1.5:
-            base_score -= 25  # Moderate kidney dysfunction
-        elif creatinine > 1.2:
-            base_score -= 12  # Mild kidney dysfunction
-        
-        # eGFR adjustments (if available)
-        if egfr:
-            if egfr < 30:
-                base_score -= 40  # Severe kidney dysfunction
-            elif egfr < 45:
-                base_score -= 25  # Moderate kidney dysfunction
-            elif egfr < 60:
-                base_score -= 12  # Mild kidney dysfunction
-        else:
-            # Estimate eGFR if not provided
-            estimated_egfr = self._estimate_egfr(creatinine, age, gender)
-            if estimated_egfr < 30:
-                base_score -= 40
-            elif estimated_egfr < 45:
-                base_score -= 25
-            elif estimated_egfr < 60:
-                base_score -= 12
-        
-        # Urea/Creatinine ratio adjustments (from RatioRegistry; do not compute locally)
-        if urea_creatinine_ratio is not None:
-            if urea_creatinine_ratio > 30:
-                base_score -= 15  # Severe dehydration or kidney dysfunction
-            elif urea_creatinine_ratio > 20:
-                base_score -= 8   # Moderate dehydration or kidney dysfunction
-        
-        return max(0, min(100, base_score))
-    
-    def _estimate_egfr(self, creatinine: float, age: float, gender: str) -> float:
-        """Estimate eGFR using simplified MDRD formula."""
-        # Simplified MDRD formula: eGFR = 175 * (creatinine^-1.154) * (age^-0.203) * (0.742 if female)
-        gender_factor = 0.742 if gender.lower() == 'female' else 1.0
-        egfr = 175 * (creatinine ** -1.154) * (age ** -0.203) * gender_factor
-        return max(0, min(200, egfr))  # Clamp between 0 and 200
-    
-    def _determine_severity(self, liver_score: float, kidney_score: float, overall_score: float) -> str:
-        """Determine severity based on liver and kidney scores."""
-        if overall_score < 30 or liver_score < 30 or kidney_score < 30:
-            return "critical"
-        elif overall_score < 50 or liver_score < 50 or kidney_score < 50:
-            return "high"
-        elif overall_score < 70 or liver_score < 70 or kidney_score < 70:
-            return "moderate"
-        elif overall_score < 85:
-            return "mild"
-        else:
-            return "normal"
-    
-    def _calculate_confidence(self, biomarkers: Dict[str, Any]) -> float:
-        """Calculate confidence based on available biomarkers."""
-        required_count = len([b for b in ["creatinine"] if b in biomarkers])
-        optional_count = len([b for b in ["alt", "ast", "ggt", "alp", "bilirubin", "egfr", "urea", "albumin"] if b in biomarkers])
-        
-        # Base confidence from required biomarkers
-        base_confidence = 0.7 + (required_count * 0.2)
-        
-        # Bonus for optional biomarkers
-        optional_bonus = min(optional_count * 0.05, 0.2)
-        
-        return min(base_confidence + optional_bonus, 0.95)
-    
-    def _generate_recommendations(self, risk_factors: List[str], liver_score: float, kidney_score: float) -> List[str]:
-        """Generate personalized recommendations based on detox filtration markers."""
-        recommendations = []
-        
-        if "elevated_alt" in risk_factors or "elevated_ast" in risk_factors:
-            recommendations.append("Support liver function through milk thistle, NAC, and reduced alcohol consumption")
-        if "elevated_ggt" in risk_factors or "elevated_alp" in risk_factors:
-            recommendations.append("Address bile duct function through choleretic herbs and digestive support")
-        if "elevated_bilirubin" in risk_factors:
-            recommendations.append("Support liver conjugation and bile excretion through targeted liver support")
-        if "low_albumin" in risk_factors:
-            recommendations.append("Improve protein synthesis through adequate protein intake and liver support")
-        if "reduced_egfr" in risk_factors or "elevated_creatinine" in risk_factors:
-            recommendations.append("Support kidney function through adequate hydration and kidney-supporting nutrients")
-        if "elevated_urea_creatinine_ratio" in risk_factors:
-            recommendations.append("Address dehydration and kidney function through proper hydration")
-        
-        if not recommendations:
-            recommendations.append("Maintain current healthy lifestyle to preserve detox and filtration function")
-        
-        return recommendations
