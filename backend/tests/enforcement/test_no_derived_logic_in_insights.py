@@ -158,6 +158,6 @@ def test_no_derived_logic_in_insight_modules_ast_enforced() -> None:
         report = "\n".join(
             f"{v.filepath}:{v.lineno}: {v.message}" for v in violations
         )
-        pytest.xfail("DERIVED_LOGIC_VIOLATIONS — PHASE_1_REPORT_ONLY\n" + report)
+        raise AssertionError("DERIVED_LOGIC_VIOLATIONS:\n" + report)
 
     print("NO_DERIVED_LOGIC_VIOLATIONS: PASS")
