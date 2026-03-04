@@ -169,7 +169,7 @@ def build_insight_graph_v1(
     clusters = clustering_result.get("clusters", [])
     cluster_summary = None
     try:
-        from core.analytics.cluster_schema import get_cluster_schema_version_stamp
+        from core.clustering.cluster_schema_loader import get_cluster_schema_version_stamp
         stamp = get_cluster_schema_version_stamp()
         cluster_summary = {
             "schema_version": stamp.get("cluster_schema_version"),
