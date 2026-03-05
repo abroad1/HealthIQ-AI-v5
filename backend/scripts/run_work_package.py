@@ -10,10 +10,16 @@ from typing import Any
 
 
 BUS_VERSION = "1.2"
+STATE_DIR = Path("automation_bus") / "state"
+ACTIVE_FILE = STATE_DIR / "work_package_active.json"
 
 
 def utc_now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
 
 
 def get_repo_root() -> Path:
@@ -69,6 +75,22 @@ def read_json(path: Path) -> dict[str, Any]:
 
 def write_json(path: Path, payload: dict[str, Any]) -> None:
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def _write_active_token(work_id: str, branch: str) -> None:
+    STATE_DIR.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "work_id": work_id,
+        "branch": branch,
+        "status": "STARTED",
+        "timestamp_utc": _utc_now_iso(),
+    }
+    ACTIVE_FILE.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+
+
+def _remove_active_token() -> None:
+    if ACTIVE_FILE.exists():
+        ACTIVE_FILE.unlink()
 
 
 def load_prompt_and_hardening(bus_dir: Path) -> tuple[str, str]:
@@ -190,6 +212,11 @@ def run_start(repo_root: Path) -> int:
     except OSError as exc:
         print(f"Failed to write latest_cursor_status.json: {exc}", file=sys.stderr)
         return 1
+    try:
+        _write_active_token(work_id=work_id, branch=current_branch)
+    except OSError as exc:
+        print(f"Failed to write active work package token: {exc}", file=sys.stderr)
+        return 1
     return 0
 
 
@@ -300,6 +327,13 @@ def run_finish(repo_root: Path) -> int:
     except OSError as exc:
         print(f"Failed to write terminal status: {exc}", file=sys.stderr)
         return 1
+
+    if success:
+        try:
+            _remove_active_token()
+        except OSError as exc:
+            print(f"Failed to remove active work package token: {exc}", file=sys.stderr)
+            return 1
 
     return 0 if success else 4
 
