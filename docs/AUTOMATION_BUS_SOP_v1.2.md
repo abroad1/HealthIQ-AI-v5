@@ -1,5 +1,5 @@
 # AUTOMATION BUS SOP v1.2  
-**Final — Operationally Validated Edition (Enforcement-Patched + Stage 1 Authority Guard)**
+**Final — Operationally Validated Edition (Execution Authority Enforcement Update)**
 
 Status: LOCKED  
 Authority: Control-Plane Enforcement  
@@ -55,6 +55,7 @@ Notes:
 | automation_bus/latest_gate_evidence.json | Gate |
 | automation_bus/latest_gate_output.txt | Gate |
 | automation_bus/latest_audit_summary.md | Claude |
+| automation_bus/state/work_package_active.json | Kernel |
 
 Artifacts are runtime state and are gitignored unless explicitly versioned.
 
@@ -171,7 +172,9 @@ Kernel preflight must fail immediately if:
 - Front matter not closed with `---`
 - Required fields missing
 
-If valid, kernel writes:
+If valid, kernel writes two artifacts:
+
+1. Work package lifecycle state
 
 ```yaml
 status: IN_PROGRESS
@@ -181,6 +184,27 @@ head_sha: current_sha
 work_id: ...
 ```
 
+2. Execution authority token
+
+File:
+
+`automation_bus/state/work_package_active.json`
+
+Example:
+
+```json
+{
+  "work_id": "...",
+  "branch": "...",
+  "head_sha": "...",
+  "started_utc": "..."
+}
+```
+
+This token represents kernel-issued execution authority.
+
+Cursor must not begin implementation without this file.
+
 Kernel must not run the gate during `start`.
 
 ---
@@ -188,6 +212,20 @@ Kernel must not run the gate during `start`.
 ## Stage 4 — Cursor Execution
 
 Cursor reads the hardened prompt and performs the implementation work.
+
+### Mandatory Execution Guard
+
+Before modifying any repository files, Cursor must verify:
+
+1. `automation_bus/state/work_package_active.json` exists
+2. `work_id` matches the prompt
+3. Current branch matches the prompt branch
+
+If the token is missing or mismatched, Cursor must STOP and report:
+
+"Kernel start not executed or work package mismatch."
+
+This prevents code modifications occurring outside an active work package lifecycle.
 
 Important:
 
@@ -249,6 +287,12 @@ Kernel must exit non-zero on FAILED.
 
 Manual COMPLETE is disallowed by governance policy; the kernel is the authoritative state writer.
 
+After successful finish the kernel must remove:
+
+`automation_bus/state/work_package_active.json`
+
+This closes the execution authority window.
+
 ---
 
 # 5. Evidence Immutability Invariant
@@ -261,6 +305,14 @@ No control-plane script may modify:
 The kernel is a read-only consumer of evidence.
 
 Violation = HIGH risk breach.
+
+### Evidence Versioning
+
+Gate evidence artifacts contain their own schema version identifier.
+
+Evidence schema versioning is independent from SOP versioning.
+
+This prevents governance documentation changes from invalidating historical audit artifacts.
 
 ---
 
@@ -409,6 +461,6 @@ GPT enforces architectural correctness.
 
 ---
 
-**Version: v1.2 Final — Operationally Validated Edition (Enforcement-Patched + Stage 1 Authority Guard)** 
+**Version: v1.2 Final — Operationally Validated Edition (Execution Authority Enforcement Update)**  
 Status: LOCKED
 
