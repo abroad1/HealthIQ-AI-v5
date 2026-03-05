@@ -53,6 +53,8 @@ class ClusterSummaryItem(BaseModel):
 
 
 class MetabolicAgeFeatureV1(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     metabolic_age: float = 0.0
     age_delta_years: float = 0.0
     homa_ir: float = 0.0
@@ -63,6 +65,8 @@ class MetabolicAgeFeatureV1(BaseModel):
 
 
 class HeartFeatureV1(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     heart_resilience_score: float = 0.0
     severity: str = "normal"
     confidence: float = 0.0
@@ -74,6 +78,8 @@ class HeartFeatureV1(BaseModel):
 
 
 class InflammationFeatureV1(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     inflammation_burden_score: float = 0.0
     severity: str = "normal"
     confidence: float = 0.0
@@ -83,6 +89,8 @@ class InflammationFeatureV1(BaseModel):
 
 
 class FatigueFeatureV1(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     severity: str = "normal"
     confidence: float = 0.0
     root_causes: List[str] = Field(default_factory=list)
@@ -95,6 +103,8 @@ class FatigueFeatureV1(BaseModel):
 
 
 class DetoxFeatureV1(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     detox_filtration_score: float = 0.0
     liver_score: float = 0.0
     kidney_score: float = 0.0
@@ -108,6 +118,8 @@ class DetoxFeatureV1(BaseModel):
 
 
 class LayerCFeatureBundleV1(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     metabolic_age: MetabolicAgeFeatureV1 = Field(default_factory=MetabolicAgeFeatureV1)
     heart_insight: HeartFeatureV1 = Field(default_factory=HeartFeatureV1)
     inflammation: InflammationFeatureV1 = Field(default_factory=InflammationFeatureV1)
