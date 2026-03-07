@@ -356,6 +356,25 @@ def run_finish(repo_root: Path) -> int:
                     and overall.get("exit_code") == 0
                 )
 
+    try:
+        porcelain = run_git(repo_root, "status", "--porcelain")
+    except subprocess.CalledProcessError as exc:
+        print(f"Git command failed: {exc}", file=sys.stderr)
+        return 1
+    if porcelain:
+        print("Kernel finish FAIL", file=sys.stderr)
+        print("", file=sys.stderr)
+        print("Repository contains uncommitted changes.", file=sys.stderr)
+        print("", file=sys.stderr)
+        print(
+            "All work package artefacts must be committed before finish succeeds.",
+            file=sys.stderr,
+        )
+        print("", file=sys.stderr)
+        print("Detected files:", file=sys.stderr)
+        print(porcelain, file=sys.stderr)
+        return 2
+
     success = gate_proc.returncode == 0 and evidence_ok
     terminal_status = "COMPLETE" if success else "FAILED"
 
