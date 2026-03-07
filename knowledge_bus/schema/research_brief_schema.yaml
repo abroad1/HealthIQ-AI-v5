@@ -1,0 +1,105 @@
+schema_name: "HealthIQ Research Brief Schema"
+schema_version: "1.0.0"
+status: "LOCKED"
+
+description: >
+  Deterministic schema for research_brief.yaml.
+  Defines the clinical evidence structure required before signal
+  architecture may be designed or promoted in the Knowledge Bus.
+
+root_required_fields:
+  - research_domain
+  - sources
+  - biomarkers
+  - physiological_claim
+  - evidence_strength
+
+field_rules:
+
+  research_domain:
+    type: string
+    min_length: 1
+    description: >
+      Physiological domain addressed by the research
+      (metabolic, cardiovascular, inflammatory, etc.)
+
+  sources:
+    type: list
+    min_items: 1
+
+source_required_fields:
+  - paper_title
+  - journal
+  - year
+
+source_field_rules:
+
+  paper_title:
+    type: string
+    min_length: 1
+
+  journal:
+    type: string
+    min_length: 1
+
+  year:
+    type: number
+    min: 1900
+    max: 2100
+
+  doi:
+    type: string
+    required: false
+
+  url:
+    type: string
+    required: false
+
+biomarkers:
+  type: list
+  min_items: 1
+  item_pattern: "^[a-z0-9_]+$"
+
+derived_metrics:
+  type: list
+  required: false
+  item_pattern: "^[a-z0-9_\\.]+$"
+
+physiological_claim:
+  type: string
+  min_length: 10
+  description: >
+    The biological claim derived from the literature
+    that motivates the signal architecture.
+
+evidence_strength:
+  type: string
+  allowed:
+    - exploratory
+    - moderate
+    - strong
+    - consensus
+
+optional_fields:
+
+  notes:
+    type: string
+    required: false
+
+  research_summary:
+    type: string
+    required: false
+
+ssot_alignment_rules:
+
+  biomarker_dependencies_must_exist_in_canonical_registry: true
+  derived_metric_dependencies_must_exist_in_metric_registry: true
+
+validator_output_contract:
+
+  audit_file: "research_audit.md"
+
+  required_status_fields:
+    - research_domain
+    - sources
+    - physiological_claim
