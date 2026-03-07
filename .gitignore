@@ -64,3 +64,4 @@ docs/stash_archive/2026-02-27/*lovable*.patch
 docs/stash_archive/2026-02-27/_stash0_temp_review.txt
 automation_bus/
 artifacts/
+knowledge_bus/current/*.json

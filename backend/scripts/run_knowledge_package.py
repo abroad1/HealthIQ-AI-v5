@@ -19,9 +19,10 @@ KNOWLEDGE_BUS_DIR = REPO_ROOT / "knowledge_bus"
 PACKAGES_DIR = KNOWLEDGE_BUS_DIR / "packages"
 CURRENT_DIR = KNOWLEDGE_BUS_DIR / "current"
 ACTIVE_PACKAGE_PATH = CURRENT_DIR / "active_package.json"
+CURRENT_STATUS_PATH = CURRENT_DIR / "knowledge_status.json"
 LATEST_STATUS_PATH = CURRENT_DIR / "latest_knowledge_status.json"
-SCHEMA_PATH = KNOWLEDGE_BUS_DIR / "schema" / "signal_library_schema.yaml"
-VALIDATOR_SCRIPT_PATH = REPO_ROOT / "backend" / "scripts" / "validate_signal_library.py"
+ARTIFACT_STATUS_PATH = REPO_ROOT / "backend" / "artifacts" / "knowledge_status.json"
+VALIDATOR_SCRIPT_PATH = REPO_ROOT / "backend" / "scripts" / "validate_knowledge_package.py"
 PACKAGE_ID_PATTERN_PREFIX = "KBP-"
 
 
@@ -112,14 +113,23 @@ def start_command() -> int:
         "created_utc": utc_now_iso(),
     }
     write_json(ACTIVE_PACKAGE_PATH, active_payload)
+    write_json(
+        CURRENT_STATUS_PATH,
+        {
+            "research_validation": "PENDING",
+            "signal_validation": "PENDING",
+            "ready_for_implementation": False,
+        },
+    )
 
     print(f"Knowledge package started: {package_id}")
     print(f"Package directory: {target_dir}")
     print(f"Active token: {ACTIVE_PACKAGE_PATH}")
+    print(f"Current status: {CURRENT_STATUS_PATH}")
     return 0
 
 
-def finish_command() -> int:
+def validate_command() -> int:
     ensure_structure()
     if not ACTIVE_PACKAGE_PATH.exists():
         print("ERROR: Active package token not found.", file=sys.stderr)
@@ -141,40 +151,74 @@ def finish_command() -> int:
         print(f"ERROR: Package directory not found: {target_dir}", file=sys.stderr)
         return 1
 
-    library_path = target_dir / "signal_library.yaml"
-    if not library_path.exists():
-        print(f"ERROR: Required package artefact missing: {library_path}", file=sys.stderr)
-        return 1
-
     command = [
         sys.executable,
         str(VALIDATOR_SCRIPT_PATH),
-        "--library",
-        str(library_path),
-        "--schema",
-        str(SCHEMA_PATH),
-        "--output-dir",
+        "--package-dir",
         str(target_dir),
     ]
 
     result = subprocess.run(command, cwd=REPO_ROOT, check=False)
+    if not ARTIFACT_STATUS_PATH.exists():
+        print(f"ERROR: Validator output missing: {ARTIFACT_STATUS_PATH}", file=sys.stderr)
+        return 1
+    shutil.copyfile(ARTIFACT_STATUS_PATH, CURRENT_STATUS_PATH)
+
     if result.returncode != 0:
         print(
-            f"ERROR: Validator failed for package {package_id}. Active token preserved.",
+            f"ERROR: Validator failed for package {package_id}. Current status updated.",
+            file=sys.stderr,
+        )
+    else:
+        print(f"Validation completed for package: {package_id}")
+        print(f"Current status copied to: {CURRENT_STATUS_PATH}")
+    return result.returncode
+
+
+def finish_command() -> int:
+    ensure_structure()
+    if not ACTIVE_PACKAGE_PATH.exists():
+        print("ERROR: Active package token not found.", file=sys.stderr)
+        return 1
+
+    try:
+        active_payload = read_json(ACTIVE_PACKAGE_PATH)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"ERROR: Failed to read active package token: {exc}", file=sys.stderr)
+        return 1
+
+    package_id = active_payload.get("package_id")
+    if not isinstance(package_id, str) or not package_id.startswith(PACKAGE_ID_PATTERN_PREFIX):
+        print("ERROR: Active package token contains invalid package_id.", file=sys.stderr)
+        return 1
+
+    if not CURRENT_STATUS_PATH.exists():
+        print(f"ERROR: Current knowledge status not found: {CURRENT_STATUS_PATH}", file=sys.stderr)
+        return 1
+
+    try:
+        current_status = read_json(CURRENT_STATUS_PATH)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"ERROR: Failed to read current knowledge status: {exc}", file=sys.stderr)
+        return 1
+
+    research_status = current_status.get("research_validation")
+    signal_status = current_status.get("signal_validation")
+    failed: list[str] = []
+    if research_status != "PASS":
+        failed.append(f"research_validation={research_status}")
+    if signal_status != "PASS":
+        failed.append(f"signal_validation={signal_status}")
+
+    if failed:
+        print(
+            "ERROR: Knowledge package validation not ready for finish. Failed checks: "
+            + ", ".join(failed),
             file=sys.stderr,
         )
         return 1
 
-    audit_path = target_dir / "architecture_audit.md"
-    status_path = target_dir / "knowledge_status.json"
-    if not audit_path.exists():
-        print(f"ERROR: Validator output missing: {audit_path}", file=sys.stderr)
-        return 1
-    if not status_path.exists():
-        print(f"ERROR: Validator output missing: {status_path}", file=sys.stderr)
-        return 1
-
-    shutil.copyfile(status_path, LATEST_STATUS_PATH)
+    shutil.copyfile(CURRENT_STATUS_PATH, LATEST_STATUS_PATH)
     ACTIVE_PACKAGE_PATH.unlink()
 
     print(f"Knowledge package finished successfully: {package_id}")
@@ -216,19 +260,21 @@ def status_command() -> int:
 def main(argv: list[str] | None = None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
     if len(args) != 1:
-        print("ERROR: Expected exactly one command: start | finish | status", file=sys.stderr)
+        print("ERROR: Expected exactly one command: start | validate | finish | status", file=sys.stderr)
         return 1
 
     command = args[0].strip().lower()
     if command == "start":
         return start_command()
+    if command == "validate":
+        return validate_command()
     if command == "finish":
         return finish_command()
     if command == "status":
         return status_command()
 
     print(
-        f"ERROR: Unsupported command '{args[0]}'. Use one of: start, finish, status.",
+        f"ERROR: Unsupported command '{args[0]}'. Use one of: start, validate, finish, status.",
         file=sys.stderr,
     )
     return 1
