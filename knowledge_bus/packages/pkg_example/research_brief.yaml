@@ -1,0 +1,13 @@
+research_domain: metabolic
+
+sources:
+  - paper_title: Example Research
+    journal: Example Journal
+    year: 2024
+
+biomarkers:
+  - triglycerides
+  - glucose
+
+physiological_claim: Example physiological relationship
+evidence_strength: exploratory

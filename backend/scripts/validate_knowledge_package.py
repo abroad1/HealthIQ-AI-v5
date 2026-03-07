@@ -14,6 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 ARTIFACTS_DIR = ROOT / "backend" / "artifacts"
+MANIFEST_AUDIT_PATH = ARTIFACTS_DIR / "package_manifest_audit.md"
 RESEARCH_AUDIT_PATH = ARTIFACTS_DIR / "research_audit.md"
 ARCHITECTURE_AUDIT_PATH = ARTIFACTS_DIR / "architecture_audit.md"
 AGGREGATED_STATUS_PATH = ARTIFACTS_DIR / "knowledge_status.json"
@@ -21,6 +22,7 @@ RESEARCH_SCHEMA_PATH = ROOT / "knowledge_bus" / "schema" / "research_brief_schem
 SIGNAL_SCHEMA_PATH = ROOT / "knowledge_bus" / "schema" / "signal_library_schema.yaml"
 BIOMARKER_REGISTRY_PATH = ROOT / "backend" / "ssot" / "biomarkers.yaml"
 
+MANIFEST_VALIDATOR = ROOT / "backend" / "scripts" / "validate_package_manifest.py"
 RESEARCH_VALIDATOR = ROOT / "backend" / "scripts" / "validate_research_brief.py"
 SIGNAL_VALIDATOR = ROOT / "backend" / "scripts" / "validate_signal_library.py"
 
@@ -37,12 +39,21 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def write_aggregated_status(research_status: str, signal_status: str) -> None:
+def write_aggregated_status(
+    manifest_status: str,
+    research_status: str,
+    signal_status: str,
+) -> None:
     ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
     payload = {
+        "manifest_validation": manifest_status,
         "research_validation": research_status,
         "signal_validation": signal_status,
-        "ready_for_implementation": research_status == "PASS" and signal_status == "PASS",
+        "ready_for_implementation": (
+            manifest_status == "PASS"
+            and research_status == "PASS"
+            and signal_status == "PASS"
+        ),
     }
     AGGREGATED_STATUS_PATH.write_text(
         json.dumps(payload, indent=2) + "\n",
@@ -61,15 +72,31 @@ def main(argv: list[str] | None = None) -> int:
     if not package_dir.is_absolute():
         package_dir = (ROOT / package_dir).resolve()
 
+    manifest_path = package_dir / "package_manifest.yaml"
     research_brief_path = package_dir / "research_brief.yaml"
     signal_library_path = package_dir / "signal_library.yaml"
 
+    if not manifest_path.exists():
+        print(f"ERROR: Missing required file: {manifest_path}", file=sys.stderr)
+        return 1
     if not research_brief_path.exists():
         print(f"ERROR: Missing required file: {research_brief_path}", file=sys.stderr)
         return 1
     if not signal_library_path.exists():
         print(f"ERROR: Missing required file: {signal_library_path}", file=sys.stderr)
         return 1
+
+    manifest_exit = run_validator(
+        [
+            sys.executable,
+            str(MANIFEST_VALIDATOR),
+            "--manifest",
+            str(manifest_path),
+            "--audit-path",
+            str(MANIFEST_AUDIT_PATH),
+        ]
+    )
+    manifest_status = "PASS" if manifest_exit == 0 else "FAIL"
 
     research_exit = run_validator(
         [
@@ -101,19 +128,25 @@ def main(argv: list[str] | None = None) -> int:
     )
     signal_status = "PASS" if signal_exit == 0 else "FAIL"
 
-    write_aggregated_status(research_status, signal_status)
+    write_aggregated_status(manifest_status, research_status, signal_status)
 
+    print(f"manifest_validation: {manifest_status}")
     print(f"research_validation: {research_status}")
     print(f"signal_validation: {signal_status}")
     print(
         "ready_for_implementation: "
-        f"{research_status == 'PASS' and signal_status == 'PASS'}"
+        f"{manifest_status == 'PASS' and research_status == 'PASS' and signal_status == 'PASS'}"
     )
+    print(f"manifest_audit_path: {MANIFEST_AUDIT_PATH}")
     print(f"research_audit_path: {RESEARCH_AUDIT_PATH}")
     print(f"architecture_audit_path: {ARCHITECTURE_AUDIT_PATH}")
     print(f"aggregated_status_path: {AGGREGATED_STATUS_PATH}")
 
-    return 0 if research_status == "PASS" and signal_status == "PASS" else 1
+    return (
+        0
+        if manifest_status == "PASS" and research_status == "PASS" and signal_status == "PASS"
+        else 1
+    )
 
 
 if __name__ == "__main__":

@@ -1,0 +1,40 @@
+schema_name: "HealthIQ Knowledge Package Manifest"
+schema_version: "1.0.0"
+status: "LOCKED"
+
+description: >
+  Deterministic schema defining the structure of Knowledge Bus
+  promotion packages.
+
+required_fields:
+  - package_id
+  - package_version
+  - research_brief
+  - signal_library
+
+field_rules:
+
+  package_id:
+    type: string
+    pattern: "^pkg_[a-z0-9_]+$"
+
+  package_version:
+    type: string
+    pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+
+  research_brief:
+    type: string
+
+  signal_library:
+    type: string
+
+optional_fields:
+
+  description:
+    type: string
+
+  author:
+    type: string
+
+  created_at:
+    type: string
