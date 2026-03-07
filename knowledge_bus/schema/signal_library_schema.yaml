@@ -41,6 +41,8 @@ signal_required_fields:
   - name
   - description
   - system
+  - primary_metric
+  - supporting_metrics
   - dependencies
   - thresholds
   - activation_logic
@@ -69,6 +71,11 @@ signal_field_rules:
       - hormonal
       - mitochondrial
       - other
+  primary_metric:
+    type: string
+    min_length: 1
+  supporting_metrics:
+    type: list
   dependencies:
     type: map
     required_fields:
