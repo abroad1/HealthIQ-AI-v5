@@ -1,0 +1,7 @@
+signals:
+  - signal_id: signal_example_metabolic
+    primary_metric: triglycerides
+    thresholds:
+      low: 0
+      normal: 150
+      high: 200
