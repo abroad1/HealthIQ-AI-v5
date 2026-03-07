@@ -12,6 +12,7 @@ from typing import Any
 BUS_VERSION = "1.2"
 STATE_DIR = Path("automation_bus") / "state"
 ACTIVE_FILE = STATE_DIR / "work_package_active.json"
+KB_READINESS_FILE = Path("knowledge_bus") / "current" / "latest_knowledge_status.json"
 
 
 def utc_now_iso() -> str:
@@ -71,6 +72,36 @@ def read_json(path: Path) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise json.JSONDecodeError("Expected object", "", 0)
     return value
+
+
+def _requires_signal_library_readiness(front_matter: dict[str, str]) -> bool:
+    return front_matter.get("knowledge_dependency") == "SIGNAL_LIBRARY"
+
+
+def _check_signal_library_readiness(repo_root: Path) -> str | None:
+    readiness_path = repo_root / KB_READINESS_FILE
+    readiness_label = "knowledge_bus/current/latest_knowledge_status.json"
+
+    if not readiness_path.exists():
+        return f"Knowledge Bus readiness file missing: {readiness_label}"
+
+    try:
+        readiness = read_json(readiness_path)
+    except json.JSONDecodeError:
+        return "Knowledge Bus readiness file is not valid JSON"
+    except OSError:
+        return "Knowledge Bus readiness file is not valid JSON"
+
+    if "ready_for_implementation" not in readiness:
+        return "Knowledge Bus readiness file missing required field: ready_for_implementation"
+
+    ready_flag = readiness.get("ready_for_implementation")
+    if not isinstance(ready_flag, bool):
+        return "Knowledge Bus readiness field must be boolean"
+    if not ready_flag:
+        return "Knowledge Bus promotion not complete (ready_for_implementation=false)"
+
+    return None
 
 
 def write_json(path: Path, payload: dict[str, Any]) -> None:
@@ -146,6 +177,7 @@ def write_terminal_status(
 def run_start(repo_root: Path) -> int:
     bus_dir = repo_root / "automation_bus"
     status_path = bus_dir / "latest_cursor_status.json"
+    prompt_path = bus_dir / "latest_cursor_prompt.md"
 
     try:
         work_id, prompt_branch = load_prompt_and_hardening(bus_dir)
@@ -179,6 +211,18 @@ def run_start(repo_root: Path) -> int:
     if porcelain:
         print("Working tree must be clean (git status --porcelain must be empty)", file=sys.stderr)
         return 2
+
+    try:
+        front_matter = parse_front_matter(prompt_path)
+    except OSError as exc:
+        print(f"Failed to read prompt file: {exc}", file=sys.stderr)
+        return 1
+
+    if _requires_signal_library_readiness(front_matter):
+        readiness_error = _check_signal_library_readiness(repo_root)
+        if readiness_error is not None:
+            print(readiness_error, file=sys.stderr)
+            return 2
 
     previous: dict[str, Any] | None = None
     if status_path.exists():
