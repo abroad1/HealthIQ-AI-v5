@@ -9,6 +9,7 @@ import argparse
 import json
 import re
 import sys
+from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -50,6 +51,17 @@ class ValidationState:
         self.warnings.append(f"[{category}] {message}")
         if category in self.category_warnings:
             self.category_warnings[category].append(message)
+
+
+def empty_primary_metric_summary() -> dict[str, int]:
+    return {
+        "total_signals_checked": 0,
+        "missing_primary_metrics": 0,
+        "invalid_primary_metric_type": 0,
+        "missing_supporting_metrics": 0,
+        "thresholds_using_non_primary_non_override_metrics": 0,
+        "duplicate_primary_metric_warnings": 0,
+    }
 
 
 def utc_now_iso() -> str:
@@ -440,6 +452,116 @@ def validate_thresholds(schema: dict[str, Any], signals: list[dict[str, Any]], s
                     )
 
 
+def _extract_override_metric_ids(signal: dict[str, Any]) -> set[str]:
+    metric_ids: set[str] = set()
+    override_rules = signal.get("override_rules")
+    if not isinstance(override_rules, list):
+        return metric_ids
+
+    for rule in override_rules:
+        if not isinstance(rule, dict):
+            continue
+        conditions = rule.get("conditions")
+        if not isinstance(conditions, list):
+            continue
+        for condition in conditions:
+            if not isinstance(condition, dict):
+                continue
+            metric_id = condition.get("metric_id")
+            if isinstance(metric_id, str) and metric_id.strip():
+                metric_ids.add(metric_id)
+    return metric_ids
+
+
+def validate_primary_metric_contract(
+    signals: list[dict[str, Any]],
+    state: ValidationState,
+) -> dict[str, int]:
+    summary = empty_primary_metric_summary()
+    primary_metric_to_signals: dict[str, list[str]] = defaultdict(list)
+
+    for idx, signal in enumerate(signals):
+        summary["total_signals_checked"] += 1
+        signal_label = f"signals[{idx}]"
+        signal_id = signal.get("signal_id")
+        signal_ref = signal_id if isinstance(signal_id, str) else signal_label
+
+        has_primary_metric = "primary_metric" in signal
+        if not has_primary_metric:
+            summary["missing_primary_metrics"] += 1
+            state.add_error("signal identity", f"{signal_label}.primary_metric is required")
+            primary_metric = None
+        else:
+            primary_metric = signal.get("primary_metric")
+            if not isinstance(primary_metric, str) or not primary_metric.strip():
+                summary["invalid_primary_metric_type"] += 1
+                state.add_error(
+                    "signal identity",
+                    f"{signal_label}.primary_metric must be a non-empty string",
+                )
+                primary_metric = None
+
+        has_supporting_metrics = "supporting_metrics" in signal
+        if not has_supporting_metrics:
+            summary["missing_supporting_metrics"] += 1
+            state.add_error("signal identity", f"{signal_label}.supporting_metrics is required")
+        else:
+            supporting_metrics = signal.get("supporting_metrics")
+            if not isinstance(supporting_metrics, list):
+                state.add_error("signal identity", f"{signal_label}.supporting_metrics must be a list")
+
+        dependencies = signal.get("dependencies")
+        declared_dependencies: set[str] = set()
+        if isinstance(dependencies, dict):
+            for dep_key in ("biomarkers", "derived_metrics", "signals"):
+                dep_items = dependencies.get(dep_key)
+                if isinstance(dep_items, list):
+                    for dep_item in dep_items:
+                        if isinstance(dep_item, str):
+                            declared_dependencies.add(dep_item)
+
+        if isinstance(primary_metric, str):
+            primary_metric_to_signals[primary_metric].append(signal_ref)
+            if primary_metric not in declared_dependencies:
+                state.add_error(
+                    "dependencies",
+                    f"{signal_label}.primary_metric '{primary_metric}' must appear in dependencies",
+                )
+
+        override_metric_ids = _extract_override_metric_ids(signal)
+        thresholds = signal.get("thresholds")
+        if not isinstance(thresholds, list):
+            continue
+
+        for threshold_idx, threshold in enumerate(thresholds):
+            if not isinstance(threshold, dict):
+                continue
+            threshold_metric_id = threshold.get("metric_id")
+            if not isinstance(threshold_metric_id, str):
+                continue
+
+            allowed = isinstance(primary_metric, str) and threshold_metric_id == primary_metric
+            if not allowed and threshold_metric_id not in override_metric_ids:
+                summary["thresholds_using_non_primary_non_override_metrics"] += 1
+                state.add_error(
+                    "thresholds",
+                    (
+                        f"{signal_label}.thresholds[{threshold_idx}].metric_id '{threshold_metric_id}' "
+                        f"must equal primary_metric or be referenced by an override_rule"
+                    ),
+                )
+
+    for metric_id, signal_refs in sorted(primary_metric_to_signals.items()):
+        if len(signal_refs) > 1:
+            summary["duplicate_primary_metric_warnings"] += 1
+            state.add_warning(
+                "signal identity",
+                f"primary_metric '{metric_id}' is shared by signals: {', '.join(signal_refs)}",
+            )
+
+    return summary
+
+
 def validate_activation_logic(schema: dict[str, Any], signals: list[dict[str, Any]], state: ValidationState) -> None:
     signal_rules = schema.get("signal_field_rules")
     forbidden_patterns = schema.get("forbidden_patterns")
@@ -604,6 +726,7 @@ def write_architecture_audit(
     validator_status: str,
     signal_count: int,
     state: ValidationState,
+    primary_metric_summary: dict[str, int],
 ) -> None:
     category_lines = []
     for category in CATEGORY_ORDER:
@@ -631,6 +754,14 @@ def write_architecture_audit(
         f"- total warnings: {len(state.warnings)}\n\n"
         "## Validation Results by Category\n"
         f"{chr(10).join(category_lines)}\n\n"
+        "## Primary Metric Contract Validation\n"
+        f"- total signals checked: {primary_metric_summary['total_signals_checked']}\n"
+        f"- missing primary metrics: {primary_metric_summary['missing_primary_metrics']}\n"
+        f"- invalid primary metric type: {primary_metric_summary['invalid_primary_metric_type']}\n"
+        f"- missing supporting_metrics: {primary_metric_summary['missing_supporting_metrics']}\n"
+        "- thresholds using non-primary/non-override metrics: "
+        f"{primary_metric_summary['thresholds_using_non_primary_non_override_metrics']}\n"
+        f"- duplicate primary metric warnings: {primary_metric_summary['duplicate_primary_metric_warnings']}\n\n"
         "## Errors\n"
         f"{error_lines}\n\n"
         "## Warnings\n"
@@ -668,6 +799,7 @@ def write_knowledge_status(
 
 def validate_signal_library(schema_path: Path, library_path: Path, output_dir: Path) -> int:
     state = ValidationState()
+    primary_metric_summary = empty_primary_metric_summary()
 
     schema_obj = read_yaml_file(schema_path, "schema", state)
     library_obj = read_yaml_file(library_path, "library", state)
@@ -683,6 +815,7 @@ def validate_signal_library(schema_path: Path, library_path: Path, output_dir: P
             validator_status="FAIL",
             signal_count=0,
             state=state,
+            primary_metric_summary=primary_metric_summary,
         )
         write_knowledge_status(output_dir=output_dir, package_id=package_id, state=state)
         return 1
@@ -703,6 +836,7 @@ def validate_signal_library(schema_path: Path, library_path: Path, output_dir: P
             validator_status="FAIL",
             signal_count=0,
             state=state,
+            primary_metric_summary=primary_metric_summary,
         )
         write_knowledge_status(output_dir=output_dir, package_id=package_id, state=state)
         return 1
@@ -713,6 +847,7 @@ def validate_signal_library(schema_path: Path, library_path: Path, output_dir: P
     signals = validate_signal_identity(schema_obj, library_obj, state)
     validate_dependencies(schema_obj, signals, state)
     validate_thresholds(schema_obj, signals, state)
+    primary_metric_summary = validate_primary_metric_contract(signals, state)
     validate_activation_logic(schema_obj, signals, state)
     validate_forbidden_fields(schema_obj, signals, state)
 
@@ -740,6 +875,7 @@ def validate_signal_library(schema_path: Path, library_path: Path, output_dir: P
         validator_status=validator_status,
         signal_count=len(library_obj.get("signals", [])) if isinstance(library_obj.get("signals"), list) else 0,
         state=state,
+        primary_metric_summary=primary_metric_summary,
     )
     write_knowledge_status(output_dir=output_dir, package_id=package_id, state=state)
     return 1 if state.errors else 0
