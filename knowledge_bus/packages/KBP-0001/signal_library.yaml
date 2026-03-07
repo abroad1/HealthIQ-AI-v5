@@ -1,0 +1,396 @@
+library:
+  schema_version: "1.0.0"
+  package_id: "KBP-0001"
+  library_name: "HealthIQ Signal Library v2"
+  description: "Deterministic primary-metric signal library for core metabolic and physiological signals."
+
+signals:
+  - signal_id: "signal_insulin_resistance"
+    name: "Insulin Resistance"
+    description: "Detects early insulin resistance phenotype using a single primary metric with deterministic thresholds and explicit override rules."
+    system: "metabolic"
+    primary_metric: "derived.tyg_index"
+    supporting_metrics:
+      - "derived.tg_hdl_ratio"
+      - "derived.homa_ir"
+    dependencies:
+      biomarkers:
+        - "glucose"
+        - "triglycerides"
+        - "hba1c"
+        - "insulin"
+      derived_metrics:
+        - "derived.tyg_index"
+        - "derived.tg_hdl_ratio"
+        - "derived.homa_ir"
+      signals: []
+    optional_dependencies:
+      biomarkers: []
+      derived_metrics: []
+      signals: []
+    thresholds:
+      - threshold_id: "insulin_resistance_optimal"
+        metric_id: "derived.tyg_index"
+        operator: "<"
+        value: 8.30
+        severity: "optimal"
+        description: "Primary metric indicates no elevated insulin resistance signal."
+      - threshold_id: "insulin_resistance_suboptimal"
+        metric_id: "derived.tyg_index"
+        operator: "range"
+        min_value: 8.30
+        max_value: 8.49
+        severity: "suboptimal"
+        description: "Primary metric indicates early metabolic drift."
+      - threshold_id: "insulin_resistance_at_risk"
+        metric_id: "derived.tyg_index"
+        operator: ">="
+        value: 8.50
+        severity: "at_risk"
+        description: "Primary metric indicates elevated insulin resistance risk."
+    activation_logic: "deterministic_threshold"
+    override_rules:
+      - rule_id: "prediabetes_override"
+        description: "Prediabetes-range dysglycaemia forces at-risk state."
+        conditions:
+          - metric_id: "hba1c"
+            operator: ">="
+            value: 5.7
+            condition_type: "any_of"
+          - metric_id: "glucose"
+            operator: ">="
+            value: 5.6
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+    bundle_consumers:
+      - "metabolic_health"
+      - "cardiovascular_risk"
+      - "biological_age"
+      - "brain_metabolic_resilience"
+    output:
+      signal_value: "derived.tyg_index"
+      signal_state: "at_risk"
+      confidence: "confidence_model_v1"
+      primary_metric: "derived.tyg_index"
+      supporting_markers:
+        - "derived.tg_hdl_ratio"
+        - "derived.homa_ir"
+
+  - signal_id: "signal_lipid_transport_dysfunction"
+    name: "Lipid Transport Dysfunction"
+    description: "Represents lipid burden and transport imbalance using a single primary burden metric with supporting dyslipidaemia context."
+    system: "lipid_transport"
+    primary_metric: "derived.non_hdl_cholesterol"
+    supporting_metrics:
+      - "derived.tg_hdl_ratio"
+      - "hdl_cholesterol"
+      - "ldl"
+    dependencies:
+      biomarkers:
+        - "hdl_cholesterol"
+        - "ldl"
+      derived_metrics:
+        - "derived.non_hdl_cholesterol"
+        - "derived.tg_hdl_ratio"
+      signals: []
+    optional_dependencies:
+      biomarkers: []
+      derived_metrics: []
+      signals: []
+    thresholds:
+      - threshold_id: "lipid_transport_optimal"
+        metric_id: "derived.non_hdl_cholesterol"
+        operator: "<"
+        value: 3.4
+        severity: "optimal"
+        description: "Primary lipid burden metric within favourable range."
+      - threshold_id: "lipid_transport_suboptimal"
+        metric_id: "derived.non_hdl_cholesterol"
+        operator: "range"
+        min_value: 3.4
+        max_value: 4.09
+        severity: "suboptimal"
+        description: "Primary lipid burden metric mildly elevated."
+      - threshold_id: "lipid_transport_at_risk"
+        metric_id: "derived.non_hdl_cholesterol"
+        operator: ">="
+        value: 4.1
+        severity: "at_risk"
+        description: "Primary lipid burden metric materially elevated."
+    activation_logic: "deterministic_threshold"
+    override_rules: []
+    bundle_consumers:
+      - "cardiovascular_risk"
+      - "metabolic_health"
+      - "vascular_age"
+    output:
+      signal_value: "derived.non_hdl_cholesterol"
+      signal_state: "at_risk"
+      confidence: "confidence_model_v1"
+      primary_metric: "derived.non_hdl_cholesterol"
+      supporting_markers:
+        - "derived.tg_hdl_ratio"
+        - "hdl_cholesterol"
+        - "ldl"
+
+  - signal_id: "signal_hepatic_metabolic_stress"
+    name: "Hepatic Metabolic Stress"
+    description: "Represents liver metabolic strain using a deterministic hepatic ratio with supporting context from liver enzyme burden and triglycerides."
+    system: "hepatic"
+    primary_metric: "derived.ast_alt_ratio"
+    supporting_metrics:
+      - "alt"
+      - "triglycerides"
+    dependencies:
+      biomarkers:
+        - "alt"
+        - "triglycerides"
+      derived_metrics:
+        - "derived.ast_alt_ratio"
+      signals: []
+    optional_dependencies:
+      biomarkers: []
+      derived_metrics: []
+      signals: []
+    thresholds:
+      - threshold_id: "hepatic_optimal"
+        metric_id: "derived.ast_alt_ratio"
+        operator: ">="
+        value: 0.8
+        severity: "optimal"
+        description: "Primary hepatic ratio not showing metabolic stress pattern."
+      - threshold_id: "hepatic_suboptimal"
+        metric_id: "derived.ast_alt_ratio"
+        operator: "range"
+        min_value: 0.6
+        max_value: 0.79
+        severity: "suboptimal"
+        description: "Primary hepatic ratio suggests early hepatic metabolic stress."
+      - threshold_id: "hepatic_at_risk"
+        metric_id: "derived.ast_alt_ratio"
+        operator: "<"
+        value: 0.6
+        severity: "at_risk"
+        description: "Primary hepatic ratio suggests stronger metabolic stress pattern."
+    activation_logic: "deterministic_threshold"
+    override_rules: []
+    bundle_consumers:
+      - "hepatic_function"
+      - "metabolic_health"
+      - "detoxification"
+    output:
+      signal_value: "derived.ast_alt_ratio"
+      signal_state: "at_risk"
+      confidence: "confidence_model_v1"
+      primary_metric: "derived.ast_alt_ratio"
+      supporting_markers:
+        - "alt"
+        - "triglycerides"
+
+  - signal_id: "signal_systemic_inflammation"
+    name: "Systemic Inflammation"
+    description: "Represents low-grade inflammatory activation using CRP as the primary anchor with NLR as a supporting contextual marker."
+    system: "inflammatory"
+    primary_metric: "crp"
+    supporting_metrics:
+      - "derived.nlr"
+    dependencies:
+      biomarkers:
+        - "crp"
+      derived_metrics:
+        - "derived.nlr"
+      signals: []
+    optional_dependencies:
+      biomarkers: []
+      derived_metrics: []
+      signals: []
+    thresholds:
+      - threshold_id: "systemic_inflammation_optimal"
+        metric_id: "crp"
+        operator: "<"
+        value: 3.0
+        severity: "optimal"
+        description: "Primary inflammation marker not elevated."
+      - threshold_id: "systemic_inflammation_suboptimal"
+        metric_id: "crp"
+        operator: "range"
+        min_value: 3.0
+        max_value: 9.99
+        severity: "suboptimal"
+        description: "Primary inflammation marker moderately elevated."
+      - threshold_id: "systemic_inflammation_at_risk"
+        metric_id: "crp"
+        operator: ">="
+        value: 10.0
+        severity: "at_risk"
+        description: "Primary inflammation marker strongly elevated."
+    activation_logic: "deterministic_threshold"
+    override_rules: []
+    bundle_consumers:
+      - "metabolic_health"
+      - "cardiovascular_risk"
+      - "biological_age"
+      - "brain_metabolic_resilience"
+    output:
+      signal_value: "crp"
+      signal_state: "at_risk"
+      confidence: "confidence_model_v1"
+      primary_metric: "crp"
+      supporting_markers:
+        - "derived.nlr"
+
+  - signal_id: "signal_vascular_inflammatory_stress"
+    name: "Vascular Inflammatory Stress"
+    description: "Represents inflammatory vascular stress using CRP as the primary inflammatory vascular anchor with lipid burden as supporting context."
+    system: "vascular"
+    primary_metric: "crp"
+    supporting_metrics:
+      - "derived.non_hdl_cholesterol"
+    dependencies:
+      biomarkers:
+        - "crp"
+      derived_metrics:
+        - "derived.non_hdl_cholesterol"
+      signals: []
+    optional_dependencies:
+      biomarkers: []
+      derived_metrics: []
+      signals: []
+    thresholds:
+      - threshold_id: "vascular_inflammatory_optimal"
+        metric_id: "crp"
+        operator: "<"
+        value: 3.0
+        severity: "optimal"
+        description: "Primary vascular inflammatory marker not elevated."
+      - threshold_id: "vascular_inflammatory_suboptimal"
+        metric_id: "crp"
+        operator: "range"
+        min_value: 3.0
+        max_value: 4.99
+        severity: "suboptimal"
+        description: "Primary vascular inflammatory marker mildly elevated."
+      - threshold_id: "vascular_inflammatory_at_risk"
+        metric_id: "crp"
+        operator: ">="
+        value: 5.0
+        severity: "at_risk"
+        description: "Primary vascular inflammatory marker elevated enough to indicate vascular inflammatory stress."
+    activation_logic: "deterministic_threshold"
+    override_rules: []
+    bundle_consumers:
+      - "cardiovascular_risk"
+      - "vascular_age"
+      - "brain_metabolic_resilience"
+    output:
+      signal_value: "crp"
+      signal_state: "at_risk"
+      confidence: "confidence_model_v1"
+      primary_metric: "crp"
+      supporting_markers:
+        - "derived.non_hdl_cholesterol"
+
+  - signal_id: "signal_renal_metabolic_stress"
+    name: "Renal Metabolic Stress"
+    description: "Represents kidney stress associated with metabolic load using a primary renal ratio and supporting renal burden markers."
+    system: "renal"
+    primary_metric: "derived.bun_creatinine_ratio"
+    supporting_metrics:
+      - "creatinine"
+      - "uric_acid"
+    dependencies:
+      biomarkers:
+        - "creatinine"
+        - "uric_acid"
+      derived_metrics:
+        - "derived.bun_creatinine_ratio"
+      signals: []
+    optional_dependencies:
+      biomarkers: []
+      derived_metrics: []
+      signals: []
+    thresholds:
+      - threshold_id: "renal_optimal"
+        metric_id: "derived.bun_creatinine_ratio"
+        operator: "<"
+        value: 20
+        severity: "optimal"
+        description: "Primary renal ratio not indicating elevated renal metabolic stress."
+      - threshold_id: "renal_suboptimal"
+        metric_id: "derived.bun_creatinine_ratio"
+        operator: "range"
+        min_value: 20
+        max_value: 24.99
+        severity: "suboptimal"
+        description: "Primary renal ratio mildly elevated."
+      - threshold_id: "renal_at_risk"
+        metric_id: "derived.bun_creatinine_ratio"
+        operator: ">="
+        value: 25
+        severity: "at_risk"
+        description: "Primary renal ratio materially elevated."
+    activation_logic: "deterministic_threshold"
+    override_rules: []
+    bundle_consumers:
+      - "renal_function"
+      - "metabolic_health"
+      - "cardiovascular_risk"
+    output:
+      signal_value: "derived.bun_creatinine_ratio"
+      signal_state: "at_risk"
+      confidence: "confidence_model_v1"
+      primary_metric: "derived.bun_creatinine_ratio"
+      supporting_markers:
+        - "creatinine"
+        - "uric_acid"
+
+  - signal_id: "signal_oxygen_transport_capacity"
+    name: "Oxygen Transport Capacity"
+    description: "Represents oxygen delivery capacity using hemoglobin as the primary anchor with hematologic and iron context as supporting markers."
+    system: "hematologic"
+    primary_metric: "hemoglobin"
+    supporting_metrics:
+      - "hematocrit"
+      - "ferritin"
+      - "iron"
+    dependencies:
+      biomarkers:
+        - "hemoglobin"
+        - "hematocrit"
+        - "ferritin"
+        - "iron"
+      derived_metrics: []
+      signals: []
+    optional_dependencies:
+      biomarkers: []
+      derived_metrics: []
+      signals: []
+    thresholds:
+      - threshold_id: "oxygen_transport_optimal"
+        metric_id: "hemoglobin"
+        operator: ">="
+        value: 1
+        unit: "lab_reference_flag"
+        severity: "optimal"
+        description: "Primary oxygen transport marker within lab-normal range."
+      - threshold_id: "oxygen_transport_suboptimal"
+        metric_id: "hemoglobin"
+        operator: "=="
+        value: 0
+        unit: "lab_reference_flag"
+        severity: "suboptimal"
+        description: "Primary oxygen transport marker below lab reference range."
+    activation_logic: "deterministic_threshold"
+    override_rules: []
+    bundle_consumers:
+      - "energy_metabolism"
+      - "fatigue_root_cause"
+    output:
+      signal_value: "hemoglobin"
+      signal_state: "suboptimal"
+      confidence: "confidence_model_v1"
+      primary_metric: "hemoglobin"
+      supporting_markers:
+        - "hematocrit"
+        - "ferritin"
+        - "iron"
