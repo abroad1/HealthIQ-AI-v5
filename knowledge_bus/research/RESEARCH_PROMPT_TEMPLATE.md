@@ -37,6 +37,13 @@ state "threshold evidence inconclusive — additional validation required."
 
 **Do not extrapolate.** If a finding applies to a specific population, state that limitation.
 
+**Use the threshold the research states for the disease being studied.** The same biomarker
+may carry different thresholds in different research papers because each paper targets a
+specific disease type. Report the threshold as stated for the condition under study — do not
+substitute a threshold from a different condition or a different guideline's general
+classification. Each signal answers a specific biological question; its thresholds must match
+that question exactly.
+
 ---
 
 ## Required Output Structure
