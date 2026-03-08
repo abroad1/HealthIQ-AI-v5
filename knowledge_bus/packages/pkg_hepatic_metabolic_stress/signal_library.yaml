@@ -1,0 +1,134 @@
+library:
+  schema_version: "1.0.0"
+  package_id: "KBP-0004"
+  library_name: "Hepatic Metabolic Stress Signal Library"
+  description: >
+    Evidence-anchored signal library for hepatic metabolic stress detection using TyG index
+    with hepatic-steatosis-specific thresholds from meta-analysis (n=105,365; OR 2.84 per unit).
+    Primary metric is derived.tyg_index with thresholds 8.21/8.97 — distinct from KBP-0002
+    insulin resistance thresholds (8.30/8.50) which target diabetes endpoints.
+    Research-preferred primary metric is TyG-BMI (AUC 0.83 for MASLD, n=339,087) but requires
+    BMI (weight/height not in SSOT). ALT and AST/ALT override rules capture direct liver injury.
+    KBP-0001 uses derived.ast_alt_ratio as primary metric — clinical sign-off required on which
+    design to implement. See clinical_signoff.md.
+
+signals:
+  - signal_id: "signal_hepatic_metabolic_stress"
+    name: "Hepatic Metabolic Stress"
+    description: >
+      Detects hepatic metabolic stress and metabolic dysfunction-associated steatotic liver
+      disease (MASLD) risk using TyG index as the primary blood-test-available surrogate for
+      hepatic insulin resistance. Thresholds are anchored to hepatic steatosis endpoints
+      (TyG Q4 >8.97, OR 2.84 in meta-analysis n=105,365). Override rules capture acute liver
+      injury (ALT >100 IU/L), ALD pattern (AST/ALT >2.0), and pancreatitis risk (TG >=5.6).
+      The research-preferred metric TyG-BMI is not yet computable — requires SSOT extension
+      sprint to add weight and height biomarkers. TyG-BMI should replace this signal's primary
+      metric once available.
+    system: "hepatic"
+    primary_metric: "derived.tyg_index"
+    supporting_metrics:
+      - "derived.ast_alt_ratio"
+      - "alt"
+      - "ggt"
+    dependencies:
+      biomarkers:
+        - "alt"
+        - "ast"
+        - "triglycerides"
+        - "glucose"
+      derived_metrics:
+        - "derived.tyg_index"
+        - "derived.ast_alt_ratio"
+      signals: []
+    optional_dependencies:
+      biomarkers:
+        - "ggt"
+        - "albumin"
+        - "platelets"
+      derived_metrics:
+        - "derived.fib_4"
+      signals: []
+    thresholds:
+      - threshold_id: "hepatic_stress_optimal"
+        metric_id: "derived.tyg_index"
+        operator: "<"
+        value: 8.21
+        severity: "optimal"
+        description: >
+          Below the TyG level associated with stepwise increase in hepatic steatosis risk.
+          Corresponds to below-median TyG strata in hepatic endpoint analysis
+          (Targher et al.; Zhang/Zheng meta-analysis n=105,365).
+      - threshold_id: "hepatic_stress_suboptimal"
+        metric_id: "derived.tyg_index"
+        operator: "range"
+        min_value: 8.21
+        max_value: 8.96
+        severity: "suboptimal"
+        description: >
+          TyG in the intermediate range associated with progressively higher MASLD risk.
+          Corresponds to Q2-Q3 strata in hepatic steatosis cohort analyses.
+      - threshold_id: "hepatic_stress_at_risk"
+        metric_id: "derived.tyg_index"
+        operator: ">="
+        value: 8.97
+        severity: "at_risk"
+        description: >
+          TyG Q4 threshold (>8.97) — highest quartile associated with OR 2.84 per unit increase
+          for incident NAFLD/MASLD in meta-analysis (Zhang/Zheng; n=105,365; 12 studies;
+          median follow-up 6.5 years).
+    activation_logic: "deterministic_threshold"
+    override_rules:
+      - rule_id: "alt_acute_override"
+        description: >
+          Severe ALT elevation (>100 IU/L, approximately 3x the upper limit of normal) indicates
+          acute hepatocellular injury requiring immediate clinical evaluation. Overrides metabolic
+          signal classification regardless of TyG status. Evidence: AASLD standard clinical
+          practice for acute hepatocellular injury identification.
+        conditions:
+          - metric_id: "alt"
+            operator: ">="
+            value: 100
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+      - rule_id: "ald_pattern_override"
+        description: >
+          AST/ALT ratio >2.0 with elevated ALT suggests alcohol-associated liver disease (ALD)
+          or mixed MetALD pattern rather than pure MASLD. Mitochondrial AST release and
+          pyridoxal phosphate depletion drive this ratio high in ALD. Forces at_risk for
+          clinical evaluation of alcohol contribution. Evidence: AASLD/EASL guidelines;
+          standard clinical hepatology practice.
+        conditions:
+          - metric_id: "derived.ast_alt_ratio"
+            operator: ">="
+            value: 2.0
+            condition_type: "all_of"
+          - metric_id: "alt"
+            operator: ">="
+            value: 33
+            condition_type: "all_of"
+        resulting_state: "at_risk"
+      - rule_id: "tg_pancreatitis_override"
+        description: >
+          Severe hypertriglyceridaemia (TG >=5.6 mmol/L / >=500 mg/dL) forces at_risk state.
+          Acute pancreatitis risk at this level requires urgent clinical evaluation regardless
+          of hepatic signal classification. Consistent with KBP-0003 lipid transport signal.
+          Evidence: ESC/EAS 2019 severe hypertriglyceridaemia threshold.
+        conditions:
+          - metric_id: "triglycerides"
+            operator: ">="
+            value: 5.6
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+    bundle_consumers:
+      - "metabolic_health"
+      - "cardiovascular_risk"
+      - "biological_age"
+    output:
+      signal_value: "derived.tyg_index"
+      signal_state: "at_risk"
+      confidence: "confidence_model_v1"
+      primary_metric: "derived.tyg_index"
+      supporting_markers:
+        - "derived.ast_alt_ratio"
+        - "alt"
+        - "ggt"
