@@ -57,31 +57,22 @@ inflammatory risk) as "optimal". The KBP-0005 design correctly classifies this a
 
 ---
 
-### Decision 2 — Primary Threshold Boundary: 2.0 mg/L vs 3.0 mg/L
+### Decision 2 — Primary Threshold Boundary ✓ RESOLVED
 
-The evidence supports two defensible suboptimal/at-risk boundary positions:
+**Resolution (2026-03-08):** The source research conclusions explicitly state:
 
-**Option A — 3.0 mg/L** (implemented in this package):
-- Traditional ACC/AHA three-tier: low (<1.0) / intermediate (1.0–3.0) / high (>3.0)
-- ESC/EAS 2025 and AHA guidelines use >3.0 as the "high risk" entry point
-- Clinically conservative — only flags the highest-risk chronic inflammation cases
+> *"hs-CRP should be utilized for universal cardiovascular risk stratification, with 2.0 mg/L serving as the primary threshold for identifying residual inflammatory risk."*
 
-**Option B — 2.0 mg/L**:
-- ACC/AHA 2025 Scientific Statement: hs-CRP ≥2.0 mg/L = "risk-enhancing factor"
-- Residual inflammatory risk (RIR): patients on statins with LDL-C <70 mg/dL but
-  hs-CRP ≥2.0 mg/L remain at significantly elevated MACE risk (JUPITER trial)
-- More sensitive for secondary prevention population
-- Would reclassify the range 2.0–3.0 mg/L from suboptimal → at_risk
+The signal library has been corrected to use **2.0 mg/L** as the `at_risk` boundary
+(suboptimal: 1.0–2.0 mg/L; at_risk: ≥2.0 mg/L). This follows the primary research
+directly rather than the traditional three-tier general classification (1.0/3.0), which
+describes population-level CVD risk categories rather than the metabolic inflammatory
+risk threshold this signal is designed to detect.
 
-The current signal library schema expresses a single suboptimal/at_risk boundary.
-The RIR concept (2.0 mg/L specifically for statin-treated patients) cannot be natively
-expressed — it would require medication context from `long_term_medications` in
-`questionnaire.json`. This is implementable at runtime (KB-S9) using questionnaire data.
-
-**Decision required:**
-- [ ] Use 3.0 mg/L as the at-risk boundary (current implementation) — document RIR as a runtime logic note for KB-S9
-- [ ] Use 2.0 mg/L as the at-risk boundary — more conservative; will increase at_risk classifications across the platform
-- [ ] Implement runtime RIR logic in KB-S9 using `long_term_medications` from questionnaire
+**Note:** The 3.0 mg/L "high risk" classification remains clinically meaningful for
+general CVD risk stratification and may be appropriate for a different signal (e.g.,
+`signal_vascular_inflammatory_stress`) addressing a different biological question.
+The threshold belongs to the signal, not the biomarker.
 
 ---
 
@@ -259,9 +250,9 @@ Note: `monocytes_abs` biomarker is confirmed in `biomarkers.yaml` for SIRI compu
 
 | Threshold | Value | Evidence source | Accepted |
 |-----------|-------|----------------|---------|
-| hs-CRP optimal | < 1.0 mg/L | ACC/AHA 2025 three-tier low-risk | [ ] |
-| hs-CRP suboptimal | 1.0–3.0 mg/L | ACC/AHA 2025 intermediate risk | [ ] |
-| hs-CRP at-risk | ≥ 3.0 mg/L | ACC/AHA 2025 high-risk; 18% T2DM, 34% ASCVD risk per log-unit (NeLSA) | [ ] |
+| hs-CRP optimal | < 1.0 mg/L | ACC/AHA 2025 low-risk tier | [ ] |
+| hs-CRP suboptimal | 1.0–2.0 mg/L | ACC/AHA 2025; subclinical metabolic stress | [ ] |
+| hs-CRP at-risk | ≥ 2.0 mg/L | JUPITER/A-to-Z trials; ACC/AHA 2025 primary RIR threshold; research conclusions | [ ] |
 | Acute override | CRP ≥ 10.0 mg/L → at_risk + repeat flag | ACC/AHA 2025 stability guidance | [ ] |
 | NLR MetS cutoff (supporting) | 1.67 | NHANES 26-study meta-analysis n=70,937 (sensitivity 74.3%) | [ ] |
 | NLR vascular events (supporting) | > 2.45 | Prospective cohort HR 2.217 for diabetic retinopathy | [ ] |

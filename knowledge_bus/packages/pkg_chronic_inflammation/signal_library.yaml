@@ -4,27 +4,31 @@ library:
   library_name: "Chronic Systemic Inflammation Signal Library"
   description: >
     Evidence-anchored signal library for chronic systemic inflammation using hs-CRP as
-    the primary metric with ACC/AHA 2025 thresholds (optimal <1.0 / suboptimal 1.0-3.0 /
-    at_risk >=3.0 mg/L). Acute inflammatory override at >=10.0 mg/L (repeat after 2 weeks).
-    NLR (derived.nlr, already in ratio_registry.py) as supporting metric with validated
-    MetS cutoff (1.67, sensitivity 74.3%). SII (new derived metric) for composite
-    inflammatory burden. Material threshold difference from KBP-0001 (3.0/10.0 mg/L)
-    — clinical sign-off required before implementation. See clinical_signoff.md.
+    the primary metric with residual inflammatory risk (RIR) threshold from JUPITER/A-to-Z
+    trials and ACC/AHA 2025 (optimal <1.0 / suboptimal 1.0-2.0 / at_risk >=2.0 mg/L).
+    The 2.0 mg/L boundary is the primary threshold for identifying residual inflammatory
+    risk as stated in the source research conclusions. Acute inflammatory override at
+    >=10.0 mg/L (repeat after 2 weeks). NLR (derived.nlr, already in ratio_registry.py)
+    as supporting metric with validated MetS cutoff (1.67, sensitivity 74.3%). SII (new
+    derived metric) for composite inflammatory burden. Material threshold difference from
+    KBP-0001 (3.0/10.0 mg/L) — clinical sign-off required before implementation. See
+    clinical_signoff.md.
 
 signals:
   - signal_id: "signal_systemic_inflammation"
     name: "Chronic Systemic Inflammation"
     description: >
       Detects chronic low-grade systemic inflammation ("meta-inflammation") using
-      hs-CRP as the primary metric. Thresholds are anchored to ACC/AHA 2025 risk
-      stratification: <1.0 mg/L optimal (low CVD risk, high insulin sensitivity);
-      1.0-3.0 mg/L suboptimal (intermediate risk, early MetS; includes the 2.0 mg/L
-      residual inflammatory risk threshold for patients on statin therapy); >=3.0 mg/L
-      at_risk (high CVD and T2DM risk; 18% higher T2DM and 34% higher ASCVD risk per
-      log-unit increase in MetS patients). Acute override at >=10.0 mg/L — likely
-      reflects active infection or tissue injury rather than chronic metabolic
-      inflammation; result should be repeated after 2 weeks. NLR and SII are supporting
-      markers that provide cellular inflammatory burden context.
+      hs-CRP as the primary metric. The primary threshold for identifying residual
+      inflammatory risk (RIR) is 2.0 mg/L, as stated in source research conclusions
+      (JUPITER/A-to-Z trials; ACC/AHA 2025 Scientific Statement). Thresholds:
+      <1.0 mg/L optimal (low CVD risk, high insulin sensitivity); 1.0-2.0 mg/L
+      suboptimal (subclinical metabolic stress, early MetS); >=2.0 mg/L at_risk
+      (residual inflammatory risk; 18% higher T2DM and 34% higher ASCVD risk per
+      log-unit hs-CRP increase in MetS patients; MACE risk persists even with
+      controlled LDL-C). Acute override at >=10.0 mg/L — likely reflects active
+      infection or tissue injury; result should be repeated after 2 weeks. NLR and
+      SII are supporting markers providing cellular inflammatory burden context.
     system: "inflammatory"
     primary_metric: "crp"
     supporting_metrics:
@@ -55,33 +59,33 @@ signals:
         severity: "optimal"
         description: >
           hs-CRP below 1.0 mg/L. Low cardiovascular risk category per ACC/AHA 2025.
-          Associated with high insulin sensitivity and low metabolic stress.
-          Aligns with the ACC/AHA three-tier classification (low: <1.0, intermediate:
-          1.0-3.0, high: >3.0 mg/L) for metabolic and cardiovascular risk stratification.
+          Associated with high insulin sensitivity and low metabolic stress. Below the
+          residual inflammatory risk (RIR) threshold — consistent with well-controlled
+          systemic inflammation.
       - threshold_id: "inflammation_suboptimal"
         metric_id: "crp"
         operator: "range"
         min_value: 1.0
-        max_value: 2.99
+        max_value: 1.99
         severity: "suboptimal"
         description: >
-          hs-CRP 1.0-3.0 mg/L. Intermediate cardiovascular risk per ACC/AHA 2025.
-          Associated with subclinical metabolic stress and early metabolic syndrome.
-          The 2.0 mg/L sub-threshold is the residual inflammatory risk (RIR) cutoff
-          for patients on statin therapy who have achieved LDL-C <70 mg/dL — these
-          patients remain at elevated MACE risk despite lipid control (JUPITER trial).
-          hs-CRP in this range reclassifies 12-14% of intermediate-risk patients.
+          hs-CRP 1.0-2.0 mg/L. Subclinical metabolic stress; associated with early
+          metabolic syndrome. Approaching the primary residual inflammatory risk (RIR)
+          threshold. hs-CRP in this range reclassifies 12-14% of intermediate-risk
+          patients when combined with lipid and lifestyle assessment (ACC/AHA 2025).
       - threshold_id: "inflammation_at_risk"
         metric_id: "crp"
         operator: ">="
-        value: 3.0
+        value: 2.0
         severity: "at_risk"
         description: >
-          hs-CRP >=3.0 mg/L. High cardiovascular risk category per ACC/AHA 2025 and
-          ESC/EAS 2025. Associated with significant systemic inflammation, insulin
-          resistance, and MACE risk. Each log-unit increase in hs-CRP is associated
-          with 18% higher T2DM risk and 34% higher ASCVD risk in MetS patients.
-          Note: values >=10.0 mg/L trigger the acute inflammatory override rule below.
+          hs-CRP >=2.0 mg/L. Primary threshold for residual inflammatory risk (RIR)
+          per study conclusions (JUPITER trial; A-to-Z trial; ACC/AHA 2025 Scientific
+          Statement). Formally classified as a "risk-enhancing factor" by ACC/AHA 2025.
+          Patients at this level remain at elevated MACE risk even when LDL-C targets
+          are met. Each log-unit increase in hs-CRP associated with 18% higher T2DM
+          risk and 34% higher ASCVD risk in MetS patients. Note: values >=10.0 mg/L
+          trigger the acute inflammatory override rule below.
     activation_logic: "deterministic_threshold"
     override_rules:
       - rule_id: "crp_acute_override"
