@@ -1,0 +1,14 @@
+package_id: "pkg_chronic_inflammation"
+package_version: "1.0.0"
+description: >
+  KBP-0005 — Chronic Systemic Inflammation. Evidence-anchored signal package using
+  hs-CRP as the primary metric with ACC/AHA 2025 / ESC thresholds (1.0 / 3.0 mg/L)
+  and an acute-inflammatory override at 10.0 mg/L. Materially different from KBP-0001
+  design (which uses 3.0 / 10.0 mg/L). NLR (derived.nlr, already in platform) and
+  SII (new derived metric) as supporting inflammatory burden markers. See clinical_signoff.md.
+research_brief: "research_brief.yaml"
+signal_library: "signal_library.yaml"
+author: "Claude Translation Engine — Research-to-Knowledge Translation Specification v1"
+created_at: "2026-03-08"
+source_document: "knowledge_bus/research/study_04_chronic_inflammation.md"
+translation_mode: "creation"

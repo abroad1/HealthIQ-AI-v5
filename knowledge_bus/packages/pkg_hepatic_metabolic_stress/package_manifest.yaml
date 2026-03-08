@@ -1,0 +1,13 @@
+package_id: "pkg_hepatic_metabolic_stress"
+package_version: "1.0.0"
+description: >
+  KBP-0004 — Hepatic Metabolic Stress (MASLD). Evidence-anchored signal package using
+  TyG index with hepatic-steatosis-specific thresholds (8.21 / 8.97) and ALT/AST override
+  rules. Research-preferred primary metric (TyG-BMI) requires SSOT extension for weight/height —
+  flagged in clinical_signoff.md. Thresholds differ from KBP-0001 AST/ALT-based design.
+research_brief: "research_brief.yaml"
+signal_library: "signal_library.yaml"
+author: "Claude Translation Engine — Research-to-Knowledge Translation Specification v1"
+created_at: "2026-03-08"
+source_document: "knowledge_bus/research/study_03_hepatic_metabolic_stress.md"
+translation_mode: "creation"
