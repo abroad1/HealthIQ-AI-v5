@@ -1,0 +1,96 @@
+library:
+  schema_version: "1.0.0"
+  package_id: "KBP-0002"
+  library_name: "Insulin Resistance Risk Detection Signal Library"
+  description: >
+    Confirmation signal library for insulin resistance detection using the triglyceride-glucose
+    index. Evidence base documented in research_brief.yaml. Confirms signal_insulin_resistance
+    as defined in KBP-0001 with evidence-anchored thresholds from Navarro-González et al. (2016)
+    and Irace et al. (2022). No new signal logic introduced by this package.
+
+signals:
+  - signal_id: "signal_insulin_resistance"
+    name: "Insulin Resistance"
+    description: >
+      Detects early insulin resistance phenotype using the TyG index as primary metric with
+      deterministic thresholds and explicit prediabetes override. Thresholds confirmed by
+      Navarro-González et al. (2016) Preventive Medicine (optimal boundary, AUC 0.75 in
+      normoglycaemic cohort) and Irace et al. (2022) Nutr Metab Cardiovasc Dis (at-risk
+      boundary ~8.518, incident metabolic syndrome AUROC 0.837 vs HOMA-IR 0.680).
+    system: "metabolic"
+    primary_metric: "derived.tyg_index"
+    supporting_metrics:
+      - "derived.tg_hdl_ratio"
+      - "derived.homa_ir"
+    dependencies:
+      biomarkers:
+        - "glucose"
+        - "triglycerides"
+        - "hba1c"
+      derived_metrics:
+        - "derived.tyg_index"
+        - "derived.tg_hdl_ratio"
+      signals: []
+    optional_dependencies:
+      biomarkers:
+        - "insulin"
+        - "hdl_cholesterol"
+      derived_metrics:
+        - "derived.homa_ir"
+      signals: []
+    thresholds:
+      - threshold_id: "insulin_resistance_optimal"
+        metric_id: "derived.tyg_index"
+        operator: "<"
+        value: 8.30
+        severity: "optimal"
+        description: >
+          Below the level where diabetes risk rose progressively in the Vascular-Metabolic CUN
+          cohort (Navarro-González et al. 2016; n=4,820; AUC 0.75 in normoglycaemic subgroup).
+      - threshold_id: "insulin_resistance_suboptimal"
+        metric_id: "derived.tyg_index"
+        operator: "range"
+        min_value: 8.30
+        max_value: 8.49
+        severity: "suboptimal"
+        description: >
+          Transition zone between the diabetes risk signal observed at TyG ~8.31 (CUN cohort)
+          and the incident metabolic syndrome cut point at approximately 8.518 (Irace et al. 2022).
+      - threshold_id: "insulin_resistance_at_risk"
+        metric_id: "derived.tyg_index"
+        operator: ">="
+        value: 8.50
+        severity: "at_risk"
+        description: >
+          Aligns with the incident metabolic syndrome cut point ~8.518 from a 12-year prospective
+          cohort where TyG achieved AUROC 0.837 vs HOMA-IR 0.680 (Irace et al. 2022; n=9,730).
+    activation_logic: "deterministic_threshold"
+    override_rules:
+      - rule_id: "prediabetes_override"
+        description: >
+          Prediabetes-range dysglycaemia forces at-risk state regardless of TyG value. Based on
+          ADA Standards of Care 2026 diagnostic thresholds for prediabetes. Ensures the signal
+          does not provide false reassurance when formal dysglycaemia criteria are met.
+        conditions:
+          - metric_id: "hba1c"
+            operator: ">="
+            value: 5.7
+            condition_type: "any_of"
+          - metric_id: "glucose"
+            operator: ">="
+            value: 5.6
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+    bundle_consumers:
+      - "metabolic_health"
+      - "cardiovascular_risk"
+      - "biological_age"
+      - "brain_metabolic_resilience"
+    output:
+      signal_value: "derived.tyg_index"
+      signal_state: "at_risk"
+      confidence: "confidence_model_v1"
+      primary_metric: "derived.tyg_index"
+      supporting_markers:
+        - "derived.tg_hdl_ratio"
+        - "derived.homa_ir"

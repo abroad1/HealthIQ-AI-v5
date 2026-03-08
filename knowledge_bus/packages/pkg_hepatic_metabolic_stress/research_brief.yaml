@@ -1,0 +1,121 @@
+research_domain: "hepatic"
+
+sources:
+  - paper_title: "Association between triglyceride-glucose index and non-alcoholic fatty liver disease: a systematic review and meta-analysis"
+    journal: "Lipids in Health and Disease"
+    year: 2018
+    doi: "10.1186/s12944-018-0913-3"
+    notes: >
+      Systematic review and dose-response meta-analysis; n=105,365 (including 28,788 NAFLD cases);
+      12 studies; median follow-up 6.5 years. Linear association between TyG and NAFLD risk
+      (OR 2.84, 95% CI 2.01-4.01 per unit increase). Q4 TyG (>8.97) associated with highest
+      incident risk. Supports TyG 8.97 as the at-risk threshold for hepatic steatosis.
+
+  - paper_title: "TyG-BMI and cardiovascular outcomes in MASLD: a prospective cohort study from the UK Biobank"
+    journal: "Cardiovascular Diabetology"
+    year: 2025
+    doi: "10.1186/s12933-024-02345-w"
+    notes: >
+      Large-scale prospective cohort; n=97,331 MASLD patients; median follow-up 13.56 years.
+      High TyG-BMI (Q4 vs Q1): HR 1.35 (95% CI 1.28-1.42) for CVD; HR 1.26 for all-cause
+      mortality. HR per 1-SD increment for CVD: 1.13. Supports TyG-BMI as the research-preferred
+      primary metric — requires BMI (weight/height not yet in SSOT).
+
+  - paper_title: "Diagnostic performance of TyG-BMI for metabolic dysfunction-associated steatotic liver disease: systematic review and meta-analysis"
+    journal: "PLOS ONE"
+    year: 2025
+    doi: "10.1371/journal.pone.0324483"
+    notes: >
+      Systematic review and meta-analysis; 35 studies; n=339,087. TyG-BMI pooled AUC 0.83
+      (95% CI 0.81-0.86) for MASLD diagnosis. Superior performance in females (AUC 0.88).
+      Pooled mean difference 42.72 units between MASLD and healthy groups. Confirms TyG-BMI
+      superiority for hepatic steatosis detection — blocked by missing SSOT anthropometrics.
+
+  - paper_title: "AASLD Practice Guidance: Diagnosis and Management of Nonalcoholic Fatty Liver Disease"
+    journal: "Hepatology"
+    year: 2023
+    notes: >
+      AASLD guidance adopting MASLD nomenclature. Strong Recommendation Level 1. ALT thresholds
+      for MASLD screening: >33 IU/L (male), >25 IU/L (female). FIB-4 <1.3 to rule out advanced
+      fibrosis. Basis for ALT override rules.
+
+  - paper_title: "EASL-EASD-EASO Clinical Practice Guidelines on the management of metabolic dysfunction-associated steatotic liver disease"
+    journal: "Journal of Hepatology"
+    year: 2024
+    notes: >
+      European multi-society guidelines. Stepwise approach: FIB-4 blood score then imaging.
+      FIB-4 <1.30 rules out advanced fibrosis; FIB-4 >2.67 rules in. Endorses integrated
+      metabolic biomarker approach. Basis for FIB-4 optional derived metric design.
+
+biomarkers:
+  - alt
+  - ast
+  - triglycerides
+  - glucose
+  - ggt
+  - albumin
+  - platelets
+
+derived_metrics:
+  - tyg_index
+  - ast_alt_ratio
+  - fib_4
+
+physiological_claim: >
+  Hepatic metabolic stress arises from selective hepatic insulin resistance, where the liver
+  remains sensitive to lipogenic insulin signalling while becoming resistant to its
+  gluconeogenic-suppression signal. This drives de novo lipogenesis, intrahepatic triglyceride
+  accumulation, and eventual hepatocellular lipotoxicity. The TyG index is a validated surrogate
+  for hepatic insulin resistance with OR 2.84 per unit increase for incident NAFLD/MASLD in
+  meta-analysis (n=105,365). TyG Q4 (>8.97) identifies the highest-risk population. ALT
+  elevation — even within the upper half of conventional "normal" ranges — predicts incident
+  type 2 diabetes and cardiovascular disease. The research-preferred composite metric TyG-BMI
+  (AUC 0.83 for MASLD diagnosis, n=339,087) requires BMI which is not currently in the SSOT.
+  MASLD is defined by hepatic steatosis plus at least one cardiometabolic risk factor; it exists
+  on a spectrum from reversible steatosis to progressive fibrosis (MASH) and cirrhosis.
+
+evidence_strength: "strong"
+
+notes: >
+  FORMULA IMAGE LIMITATION: The source research document embedded TyG-BMI and FIB-4 formulas
+  as images (not rendered text). Standard published formulas are used:
+    TyG = ln((triglycerides_mg_dL x glucose_mg_dL) / 2)
+    TyG-BMI = TyG x BMI (kg/m2)
+    FIB-4 = (age_years x AST_IUL) / (platelets_10e9L x sqrt(ALT_IUL))
+  Unit conversions from SSOT mmol/L: glucose_mg = glucose_mmol x 18;
+  triglycerides_mg = triglycerides_mmol x 88.57.
+
+  SSOT EXTENSION REQUIRED: weight and height are not in the SSOT biomarker registry.
+  TyG-BMI (the research-preferred primary metric) is blocked until a separate SSOT extension
+  sprint adds weight and height. This package uses derived.tyg_index as the interim primary
+  metric with hepatic-steatosis-specific thresholds (8.21 / 8.97) from Targher et al.
+
+  FIB-4 BLOCKED: FIB-4 requires patient age which is not in the SSOT. Listed as optional
+  derived metric pending future SSOT extension.
+
+  SEX-SPECIFIC ALT THRESHOLDS: AASLD recommends ALT >33 IU/L (male), >25 IU/L (female).
+  The signal library schema does not support sex-specific thresholds. The conservative
+  (female) threshold of 25 IU/L is used for the ALT suboptimal boundary, and 33 IU/L for
+  the ALT acute override rule. Clinical sign-off required on this design decision.
+
+  KBP-0001 DELTA: KBP-0001 signal_hepatic_metabolic_stress uses derived.ast_alt_ratio as
+  primary metric with thresholds 0.8 / 0.6. This package uses derived.tyg_index with
+  thresholds 8.21 / 8.97. Threshold decision required before implementation.
+
+research_summary: >
+  Study type: systematic review, meta-analysis, large-scale prospective cohort, and
+  international clinical guideline review. MASLD nomenclature adopted per 2023-2024 multi-society
+  Delphi consensus.
+
+  Primary hepatic steatosis evidence: Zhang/Zheng et al. meta-analysis (Lipids in Health and
+  Disease 2018; n=105,365) provides the TyG threshold structure for hepatic steatosis risk.
+  Q4 (TyG >8.97) identifies highest incident MASLD risk (OR 2.84 per unit increase).
+
+  TyG-BMI evidence: Malek et al. (PLOS ONE 2025; n=339,087; 35 studies) demonstrates AUC 0.83
+  for MASLD diagnosis; Ding et al. UK Biobank (Cardiovascular Diabetology 2025; n=97,331;
+  13.56y) links TyG-BMI to CVD (HR 1.35) and all-cause mortality (HR 1.26).
+
+  Guideline anchoring: AASLD (2023) and EASL-EASD-EASO (2024) provide ALT thresholds and
+  FIB-4 cut-offs for fibrosis risk stratification.
+
+  Source document: knowledge_bus/research/study_03_hepatic_metabolic_stress.md

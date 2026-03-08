@@ -1,0 +1,111 @@
+research_domain: "lipid_transport"
+
+sources:
+  - paper_title: "Long-term cardiovascular risk associated with non-high-density lipoprotein cholesterol — Multinational Cardiovascular Risk Consortium"
+    journal: "Lancet"
+    year: 2019
+    notes: >
+      n=398,846 participants; 54,542 cardiovascular endpoints; median follow-up 13.5 years.
+      Pooled prospective cohorts with derivation and validation arms.
+      Non-HDL-C shows stepwise long-term ASCVD event-rate increases; supports 3.7 mmol/L as the
+      optimal/suboptimal inflection point and 5.7 mmol/L as the high-risk boundary. Primary
+      evidence source for KBP-0003 non-HDL-C thresholds.
+
+  - paper_title: "Apolipoprotein B versus non-HDL-C and LDL-C as risk factors in cardiovascular disease — meta-analysis"
+    journal: "Circulation"
+    year: 2011
+    notes: >
+      n=233,455 participants; 22,950 events. Standardised relative risk comparisons.
+      ApoB is the strongest lipid risk marker; non-HDL-C intermediate; LDL-C weakest.
+      Confirms non-HDL-C as the best standard-panel proxy for atherogenic particle burden when
+      apoB is unavailable.
+
+  - paper_title: "Remnant cholesterol as a causal risk factor for ischaemic heart disease and myocardial infarction"
+    journal: "Clinical Chemistry"
+    year: 2018
+    notes: >
+      Copenhagen General Population Study; n=106,216; 1,565 MI events; up to 11 years follow-up.
+      Calculated remnant cholesterol (TC - LDL-C - HDL-C) ≥1.5 mmol/L associated with ~2-fold MI
+      risk. Supports the optional derived.remnant_cholesterol flag at 1.5 mmol/L cut-off.
+
+  - paper_title: "Triglyceride-rich lipoproteins and their remnants: metabolic insights, role in atherosclerotic cardiovascular disease, and emerging therapeutic strategies"
+    journal: "European Heart Journal"
+    year: 2021
+    notes: >
+      European Atherosclerosis Society consensus statement. TRL/remnants confirmed as causal
+      contributors to MI and ischaemic stroke via genetic, epidemiological, and mechanistic evidence.
+      Supports triglyceride override rules in signal design.
+
+  - paper_title: "ESC/EAS Guidelines for the Management of Dyslipidaemias"
+    journal: "European Heart Journal"
+    year: 2019
+    notes: >
+      Non-HDL-C and apoB endorsed as secondary treatment targets. TG <1.7 mmol/L treated as
+      lower-risk boundary (no hard TG goal established by guideline). TG ≥5.6 mmol/L (≥500 mg/dL)
+      is the established threshold for severe hypertriglyceridaemia requiring urgent evaluation.
+
+  - paper_title: "Pemafibrate to Reduce Cardiovascular Outcomes by Reducing Triglycerides in Patients with Diabetes (PROMINENT)"
+    journal: "New England Journal of Medicine"
+    year: 2022
+    notes: >
+      RCT; n=10,497; median follow-up 3.4 years. Pemafibrate lowered TG and remnants but did not
+      reduce cardiovascular events; apoB and LDL-C increased slightly. Cautionary evidence: TG
+      lowering without apoB/non-HDL-C improvement does not reliably reduce CV event risk. Signal
+      design reflects this by treating TG as a modifier, not the primary outcome-anchored metric.
+
+biomarkers:
+  - total_cholesterol
+  - hdl_cholesterol
+  - triglycerides
+  - ldl_cholesterol
+
+derived_metrics:
+  - non_hdl_cholesterol
+  - tg_hdl_ratio
+  - remnant_cholesterol
+
+physiological_claim: >
+  Lipid transport dysfunction is characterised by excess atherogenic particle burden — reflected by
+  non-HDL cholesterol, which captures cholesterol carried by all apoB-containing lipoproteins (LDL,
+  IDL, VLDL remnants) — compounded by triglyceride-rich lipoprotein and remnant accumulation reflected
+  by fasting triglycerides and calculated remnant cholesterol. Non-HDL-C ≥5.7 mmol/L identifies the
+  population at highest long-term ASCVD event risk in pooled prospective cohort data (Lancet 2019;
+  n=398,846). Elevated TG (≥1.7 mmol/L) adds independent risk enhancement independent of the
+  non-HDL-C axis, and severe TG (≥5.6 mmol/L) introduces acute pancreatitis risk requiring urgent
+  evaluation. TG lowering alone without reduction in non-HDL-C or apoB does not reliably translate
+  into cardiovascular event reduction (PROMINENT, 2022).
+
+evidence_strength: "strong"
+
+notes: >
+  THRESHOLD DELTA ALERT: KBP-0001 contains an existing signal_lipid_transport_dysfunction with
+  non-HDL-C thresholds 3.4 / 4.09 / 4.1 mmol/L. This package (KBP-0003) proposes evidence-anchored
+  thresholds of 3.7 / 5.69 / 5.7 mmol/L derived from Multinational Cardiovascular Risk Consortium
+  outcome data. The at-risk delta is 1.6 mmol/L — this is material. Clinical sign-off and a threshold
+  decision are required before either set is implemented. See clinical_signoff.md.
+
+  derived.remnant_cholesterol is introduced as a new optional derived metric (TC - LDL-C - HDL-C).
+  This metric does not currently exist in backend/core/analytics/ratio_registry.py. It is flagged as
+  optional_dependencies in the signal library. A separate implementation sprint is required before
+  this metric activates.
+
+research_summary: >
+  Study type: systematic review of primary literature, major clinical trial data, and European
+  guideline recommendations, anchored to outcome-validated biomarker thresholds.
+
+  Primary evidence: Multinational Cardiovascular Risk Consortium (Lancet 2019; n=398,846) provides
+  the non-HDL-C long-term risk gradient underpinning the three-tier threshold structure. Prospective
+  design with derivation and validation cohorts. Median follow-up 13.5 years; 54,542 endpoints.
+
+  Supporting evidence: Copenhagen General Population Study validates remnant cholesterol cut-off
+  (RC ≥1.5 mmol/L, ~2-fold MI risk); EAS TRL consensus confirms TRL/remnant causality; ESC/EAS 2019
+  guideline endorses non-HDL-C as secondary target and TG 1.7/5.6 mmol/L boundaries.
+
+  Cautionary finding: PROMINENT RCT demonstrates TG lowering without apoB/non-HDL improvement does
+  not reduce CV events. Signal design reflects this — TG is a risk-enhancement modifier, not a
+  standalone outcome-anchored metric.
+
+  New derived metric introduced: derived.remnant_cholesterol (TC - LDL-C - HDL-C). Not yet in
+  ratio_registry.py. Marked as optional in this package.
+
+  Source document: knowledge_bus/research/study_02_lipid_transport_dysfunction.md

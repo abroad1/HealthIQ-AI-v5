@@ -1,0 +1,403 @@
+schema_name: "HealthIQ Research Package Schema"
+schema_version: "1.3.0"
+status: "LOCKED"
+
+description: >
+  Deterministic schema for structured biomedical research packages produced by
+  the Research Ingestion Bus. A package represents a research topic / ingestion
+  run and may contain multiple sources, claims, formulas, thresholds, and
+  source-linked evidence quotes.
+
+root_required_fields:
+  - package_metadata
+  - research_scope
+  - entities
+  - physiological_claims
+  - evidence_quotes
+  - sources
+
+# ─── PACKAGE METADATA ────────────────────────────────────────────────────────
+
+package_metadata_required_fields:
+  - research_id
+  - topic
+  - generated_utc
+  - source_file
+
+package_metadata_field_rules:
+  research_id:
+    type: string
+    pattern: '^RIB-\d{4}$'
+    operator_supplied: true
+    required_for_llm_output: false
+  topic:
+    type: string
+    min_length: 1
+  generated_utc:
+    type: string
+    pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$'
+    operator_supplied: true
+    required_for_llm_output: false
+  source_file:
+    type: string
+    min_length: 1
+    operator_supplied: true
+    required_for_llm_output: false
+  extraction_model:
+    type: string
+    required: false
+  extraction_mode:
+    type: string
+    required: false
+    allowed:
+      - web_research
+      - api_research
+
+# ─── RESEARCH SCOPE ──────────────────────────────────────────────────────────
+
+research_scope_required_fields:
+  - research_domain
+  - research_question
+
+research_scope_field_rules:
+  research_domain:
+    type: string
+    min_length: 3
+  research_question:
+    type: string
+    min_length: 10
+  evidence_scope:
+    type: string
+    required: false
+
+# ─── ENTITIES ────────────────────────────────────────────────────────────────
+
+entities_required_fields:
+  - biomarkers
+  - derived_metrics
+
+entity_biomarker_required_fields:
+  - id
+
+entity_biomarker_field_rules:
+  id:
+    type: string
+    pattern: '^[a-z0-9_]+$'
+  source_refs:
+    type: list
+    required: false
+    item_pattern: '^source_[a-z0-9_]+$'
+  narrative_context:
+    type: list
+    required: false
+    max_items: 3
+
+entity_metric_required_fields:
+  - id
+
+entity_metric_field_rules:
+  id:
+    type: string
+    pattern: '^derived\.[a-z0-9_]+$'
+  source_refs:
+    type: list
+    required: false
+    item_pattern: '^source_[a-z0-9_]+$'
+  formula_refs:
+    type: list
+    required: false
+    item_pattern: '^formula_[a-z0-9_]+$'
+  narrative_context:
+    type: list
+    required: false
+    max_items: 3
+
+# ─── PHYSIOLOGICAL CLAIMS ────────────────────────────────────────────────────
+
+physiological_claims_rules:
+  type: list
+  min_items: 1
+
+claim_required_fields:
+  - claim_id
+  - claim_text
+  - evidence_strength
+  - source_refs
+
+claim_field_rules:
+  claim_id:
+    type: string
+    pattern: '^claim_[a-z0-9_]+$'
+  claim_text:
+    type: string
+    min_length: 10
+  evidence_strength:
+    type: string
+    allowed:
+      - exploratory
+      - moderate
+      - strong
+      - consensus
+  source_refs:
+    type: list
+    min_items: 1
+    item_pattern: '^source_[a-z0-9_]+$'
+  formula_refs:
+    type: list
+    required: false
+    item_pattern: '^formula_[a-z0-9_]+$'
+  threshold_refs:
+    type: list
+    required: false
+    item_pattern: '^threshold_[a-z0-9_]+$'
+  quote_refs:
+    type: list
+    required: false
+    item_pattern: '^quote_[a-z0-9_]+$'
+  narrative_context:
+    type: list
+    required: false
+    max_items: 3
+
+# ─── FORMULAS ────────────────────────────────────────────────────────────────
+
+formulas_rules:
+  type: list
+  required: false
+
+formula_required_fields:
+  - formula_id
+  - metric_id
+  - expression_text
+  - source_refs
+
+formula_field_rules:
+  formula_id:
+    type: string
+    pattern: '^formula_[a-z0-9_]+$'
+  metric_id:
+    type: string
+    pattern: '^derived\.[a-z0-9_]+$'
+  expression_text:
+    type: string
+    min_length: 1
+  source_refs:
+    type: list
+    min_items: 1
+    item_pattern: '^source_[a-z0-9_]+$'
+  narrative_context:
+    type: list
+    required: false
+    max_items: 3
+
+# ─── THRESHOLDS ──────────────────────────────────────────────────────────────
+
+thresholds_rules:
+  type: list
+  required: false
+
+threshold_required_fields:
+  - threshold_id
+  - metric_id
+  - operator
+  - interpretation
+  - source_refs
+
+threshold_field_rules:
+  threshold_id:
+    type: string
+    pattern: '^threshold_[a-z0-9_]+$'
+  metric_id:
+    type: string
+    min_length: 1
+  operator:
+    type: string
+    allowed:
+      - "<"
+      - "<="
+      - ">"
+      - ">="
+      - "=="
+      - "range"
+  value:
+    type: number
+    required_if:
+      operator:
+        not_equals: "range"
+  min_value:
+    type: number
+    required_if:
+      operator: "range"
+  max_value:
+    type: number
+    required_if:
+      operator: "range"
+  unit:
+    type: string
+    required: false
+  interpretation:
+    type: string
+    min_length: 1
+  source_refs:
+    type: list
+    min_items: 1
+    item_pattern: '^source_[a-z0-9_]+$'
+  narrative_context:
+    type: list
+    required: false
+    max_items: 3
+
+# ─── EVIDENCE QUOTES ─────────────────────────────────────────────────────────
+
+evidence_quotes_rules:
+  type: list
+  min_items: 1
+
+quote_required_fields:
+  - quote_id
+  - source_id
+  - quote_text
+
+quote_field_rules:
+  quote_id:
+    type: string
+    pattern: '^quote_[a-z0-9_]+$'
+  source_id:
+    type: string
+    pattern: '^source_[a-z0-9_]+$'
+  quote_text:
+    type: string
+    min_length: 20
+  context:
+    type: string
+    required: false
+  claim_refs:
+    type: list
+    required: false
+    item_pattern: '^claim_[a-z0-9_]+$'
+
+# ─── EXCLUDED FINDINGS ───────────────────────────────────────────────────────
+
+excluded_findings_rules:
+  type: list
+  required: false
+
+excluded_finding_required_fields:
+  - finding_id
+  - description
+  - exclusion_reason
+
+excluded_finding_field_rules:
+  finding_id:
+    type: string
+    pattern: '^excluded_[a-z0-9_]+$'
+  description:
+    type: string
+    min_length: 10
+  exclusion_reason:
+    type: string
+    min_length: 5
+  source_refs:
+    type: list
+    required: false
+    item_pattern: '^source_[a-z0-9_]+$'
+
+# ─── LIMITATIONS ─────────────────────────────────────────────────────────────
+# Added from Claude review: captures stated limitations from source research.
+# Important context for the Knowledge Bus when weighting evidence.
+
+limitations_rules:
+  type: list
+  required: false
+
+limitation_required_fields:
+  - limitation_id
+  - description
+  - source_refs
+
+limitation_field_rules:
+  limitation_id:
+    type: string
+    pattern: '^limitation_[a-z0-9_]+$'
+  description:
+    type: string
+    min_length: 10
+    description: >
+      Limitation explicitly stated in the source research.
+      Do not infer limitations not present in the source.
+  source_refs:
+    type: list
+    min_items: 1
+    item_pattern: '^source_[a-z0-9_]+$'
+
+# ─── SOURCES ─────────────────────────────────────────────────────────────────
+
+sources_rules:
+  type: list
+  min_items: 1
+
+source_required_fields:
+  - source_id
+  - paper_title
+  - journal
+  - year
+
+source_field_rules:
+  source_id:
+    type: string
+    pattern: '^source_[a-z0-9_]+$'
+  paper_title:
+    type: string
+    min_length: 5
+  journal:
+    type: string
+    min_length: 3
+  year:
+    type: number
+    min: 1900
+    max: 2100
+  doi:
+    type: string
+    required: false
+  url:
+    type: string
+    required: false
+  authors:
+    type: list
+    required: false
+  # Added from Claude review: enables evidence quality stratification
+  # by the clinical validator and Knowledge Bus.
+  publication_type:
+    type: string
+    required: false
+    allowed:
+      - meta_analysis
+      - systematic_review
+      - rct
+      - prospective_cohort
+      - retrospective_cohort
+      - cross_sectional
+      - clinical_guideline
+      - other
+
+# ─── DETERMINISM RULES ───────────────────────────────────────────────────────
+
+determinism_rules:
+  no_signal_architecture_generation: true
+  no_primary_metric_assignment: true
+  no_supporting_metric_assignment: true
+  no_signal_threshold_invention: true
+  no_unsupported_clinical_claims: true
+  no_probabilistic_language_as_fact: true
+  ambiguous_items_must_be_flagged: true
+  # Added from Claude review: closes remaining loopholes on invented
+  # formulas, invented thresholds, and paraphrased quotes.
+  formulas_must_be_source_stated: true
+  thresholds_must_be_source_stated: true
+  quotes_must_be_verbatim: true
+
+# ─── SSOT ALIGNMENT RULES ────────────────────────────────────────────────────
+
+ssot_alignment_rules:
+  biomarker_ids_must_exist_in_canonical_registry: true
+  derived_metric_ids_must_exist_in_metric_registry: true
