@@ -1,0 +1,10 @@
+package_id: pkg_insulin_resistance
+package_version: 1.0.0
+
+research_brief: research_brief.yaml
+signal_library: signal_library.yaml
+
+description: Early insulin resistance risk detection using TyG index
+author: HealthIQ AI
+
+status: research

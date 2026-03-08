@@ -1,0 +1,27 @@
+signals:
+
+  - signal_id: signal_insulin_resistance
+
+    system: metabolic
+
+    primary_metric: derived.tyg_index
+
+    supporting_metrics:
+      - glucose
+      - triglycerides
+
+    thresholds:
+      optimal:
+        max: 8.30
+
+      suboptimal:
+        min: 8.31
+        max: 8.51
+
+      at_risk:
+        min: 8.52
+
+    description: >
+      TyG index derived from fasting triglycerides and glucose
+      used as an early indicator of insulin resistance and
+      increased cardiometabolic risk.

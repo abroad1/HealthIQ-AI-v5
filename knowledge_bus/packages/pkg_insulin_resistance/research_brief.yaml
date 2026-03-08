@@ -1,0 +1,30 @@
+research_domain: metabolic
+
+sources:
+  - paper_title: "Triglyceride-glucose index (TyG index) in comparison with fasting plasma glucose improved diabetes prediction"
+    journal: Preventive Medicine
+    year: 2016
+    doi: 10.1016/j.ypmed.2016.01.022
+
+  - paper_title: "Triglyceride-glucose index predicts independently type 2 diabetes mellitus risk"
+    journal: Primary Care Diabetes
+    year: 2020
+    doi: 10.1016/j.pcd.2020.09.001
+
+biomarkers:
+  - glucose
+  - triglycerides
+
+derived_metrics:
+  - derived.tyg_index
+
+physiological_claim: >
+  Elevated triglyceride-glucose index reflects hepatic insulin resistance
+  and predicts increased future risk of type 2 diabetes.
+
+evidence_strength: strong
+
+research_summary: >
+  Prospective cohort and meta-analysis evidence shows TyG index
+  predicts incident type 2 diabetes and metabolic syndrome,
+  often before conventional dysglycaemia thresholds are crossed.
