@@ -34,6 +34,9 @@ signals:
     supporting_metrics:
       - "derived.nlr"
       - "derived.sii"
+    supporting_metrics_with_thresholds:
+      - metric: "derived.nlr"
+        threshold: 1.67
     dependencies:
       biomarkers:
         - "crp"

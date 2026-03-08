@@ -467,6 +467,45 @@ where evidence-anchored supporting thresholds have been identified.
 
 ---
 
+## KB-S9 Addendum — HOMA-IR Unit Mismatch Note
+
+`backend/core/analytics/insight_graph_builder.py` currently computes:
+
+`homa_ir = (glucose * insulin) / 405.0`
+
+The divisor `405` assumes glucose in mg/dL (legacy HOMA-IR formulation), while SSOT
+canonical glucose values are stored in mmol/L. This creates a unit-system mismatch when
+canonical values are passed through unchanged.
+
+Decision for KB-S9:
+
+- Do not modify runtime implementation in this sprint.
+- Record this as a documented mismatch for correction in a dedicated hardening sprint.
+- Keep derived-metric governance explicit: SSOT canonical values are SI-native and
+  runtime logic must not apply hidden unit conversions.
+
+---
+
+## KB-S9 Addendum — Threshold-Aware Supporting Metrics
+
+`supporting_metrics_with_thresholds` is now used to declare evidence-anchored thresholds
+for supporting markers while retaining backwards-compatible `supporting_metrics`.
+
+Purpose:
+
+- allow deterministic supporting-marker checks where a published cutoff exists
+- preserve contextual supporting markers without thresholds
+- prepare KB-S10 Signal Evaluation Engine to evaluate supporting markers generically
+  (without ad-hoc per-signal logic)
+
+Coexistence rule:
+
+- `supporting_metrics` remains valid for context-only markers
+- `supporting_metrics_with_thresholds` is used for threshold-aware supporting markers
+- both fields may coexist in the same signal definition
+
+---
+
 ## Source Documents
 
 - `architecture/ADR-004-disease-specific-signal-evaluation.md` — superseded predecessor
