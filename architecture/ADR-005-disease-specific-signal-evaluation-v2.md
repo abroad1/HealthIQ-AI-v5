@@ -403,6 +403,70 @@ clinical threshold values.
 
 ---
 
+## Relationship to the HealthIQ Reasoning Pipeline
+
+This ADR governs the **Signal stage** of the HealthIQ canonical reasoning pipeline.
+
+```
+Evidence (Knowledge Bus)           ← governed by ADR-003
+    ↓
+Signal (Signal Evaluation Engine)  ← governed by this ADR (ADR-005)
+    ↓
+Insight (InsightGraph / narrative)  ← governed by ADR-002
+```
+
+The Signal stage is the biological reasoning core. It is where published research
+evidence — stored in Knowledge Bus packages — is applied to a user's raw biomarker
+values to produce disease-specific clinical findings.
+
+The Signal stage receives its inputs from the Evidence stage (compiled signal
+definitions from Knowledge Bus packages via the SignalRegistry). It passes its
+outputs to the Insight stage (signal states consumed by InsightGraph for narrative
+construction).
+
+The Signal stage must not be bypassed, abbreviated, or merged with either adjacent
+stage. Merging Evidence and Signal would introduce unvalidated thresholds. Merging
+Signal and Insight would reintroduce hardcoded clinical logic into the narrative layer.
+
+See `architecture/HEALTHIQ_REASONING_PIPELINE.md` for the full pipeline definition.
+
+---
+
+## Supporting Metrics Schema — Coexistence Decision
+
+Two supporting metric fields coexist in `signal_library.yaml`. Both are valid.
+They serve different purposes and must not be merged or deprecated.
+
+```yaml
+# For contextual markers — no research threshold to declare
+supporting_metrics:
+  - "derived.nlr"
+  - "derived.sii"
+
+# For evidence-anchored markers — evaluated deterministically by the signal engine
+supporting_metrics_with_thresholds:
+  - metric: "derived.nlr"
+    threshold: 1.67
+    evidence: "NHANES meta-analysis n=70,937 — MetS cutoff (sensitivity 74.3%)"
+  - metric: "derived.sii"
+    threshold: 626.51
+    evidence: "Frontiers in Endocrinology 2025 meta-analysis n=85,796"
+```
+
+**`supporting_metrics`** — name-list only. Used when a supporting marker provides
+interpretive context but does not have a research threshold specific to this signal.
+The Signal Evaluation Engine uses this list for output documentation only.
+
+**`supporting_metrics_with_thresholds`** — declarative thresholds. Used when a
+supporting marker has a published, evidence-anchored threshold relevant to the
+disease this signal detects. The Signal Evaluation Engine evaluates these generically
+and includes them in the `supporting_states` of the `SignalResult`.
+
+**KB-S9 task:** Add `supporting_metrics_with_thresholds` to all existing KB packages
+where evidence-anchored supporting thresholds have been identified.
+
+---
+
 ## Source Documents
 
 - `architecture/ADR-004-disease-specific-signal-evaluation.md` — superseded predecessor
