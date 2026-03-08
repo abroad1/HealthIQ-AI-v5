@@ -24,9 +24,9 @@ signals:
       signal schema. It is documented in clinical_signoff.md as a known design limitation requiring
       future schema enhancement or runtime handling in KB-S9.
     system: "lipid_transport"
-    primary_metric: "derived.non_hdl_cholesterol"
+    primary_metric: "non_hdl_cholesterol"
     supporting_metrics:
-      - "derived.tg_hdl_ratio"
+      - "tg_hdl_ratio"
       - "derived.remnant_cholesterol"
       - "triglycerides"
     dependencies:
@@ -35,8 +35,8 @@ signals:
         - "hdl_cholesterol"
         - "triglycerides"
       derived_metrics:
-        - "derived.non_hdl_cholesterol"
-        - "derived.tg_hdl_ratio"
+        - "non_hdl_cholesterol"
+        - "tg_hdl_ratio"
       signals: []
     optional_dependencies:
       biomarkers:
@@ -46,7 +46,7 @@ signals:
       signals: []
     thresholds:
       - threshold_id: "lipid_transport_optimal"
-        metric_id: "derived.non_hdl_cholesterol"
+        metric_id: "non_hdl_cholesterol"
         operator: "<"
         value: 3.7
         severity: "optimal"
@@ -56,7 +56,7 @@ signals:
           (Lancet 2019). Full optimal classification also requires TG <1.7 mmol/L; see
           tg_borderline design note in signal description.
       - threshold_id: "lipid_transport_suboptimal"
-        metric_id: "derived.non_hdl_cholesterol"
+        metric_id: "non_hdl_cholesterol"
         operator: "range"
         min_value: 3.7
         max_value: 5.69
@@ -66,7 +66,7 @@ signals:
           risk. Compatible with early atherogenic particle excess. Warrants deeper phenotyping
           (apoB, Lp(a), glycaemic markers) if available.
       - threshold_id: "lipid_transport_at_risk"
-        metric_id: "derived.non_hdl_cholesterol"
+        metric_id: "non_hdl_cholesterol"
         operator: ">="
         value: 5.7
         severity: "at_risk"
@@ -93,11 +93,11 @@ signals:
       - "metabolic_health"
       - "vascular_age"
     output:
-      signal_value: "derived.non_hdl_cholesterol"
+      signal_value: "non_hdl_cholesterol"
       signal_state: "at_risk"
       confidence: "confidence_model_v1"
-      primary_metric: "derived.non_hdl_cholesterol"
+      primary_metric: "non_hdl_cholesterol"
       supporting_markers:
-        - "derived.tg_hdl_ratio"
+        - "tg_hdl_ratio"
         - "derived.remnant_cholesterol"
         - "triglycerides"
