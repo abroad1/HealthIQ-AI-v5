@@ -2,12 +2,18 @@
 
 | Field | Value |
 |-------|-------|
-| **Status** | Accepted |
+| **Status** | Superseded |
 | **Date** | 2026-03-08 |
 | **Authority** | Knowledge Bus translation programme; KBP-0005 threshold correction |
 | **Supersedes** | — |
-| **Superseded by** | — |
+| **Superseded by** | ADR-005 |
 | **Implements** | ADR-002 (Layer B), ADR-003 (Knowledge Bus) |
+
+> **This ADR was superseded on 2026-03-08 by ADR-005 following product architecture review.**
+> Three errors were identified: (1) compound intelligence was framed as a separate architectural
+> layer rather than belonging inside the signal evaluator; (2) the SignalRegistry startup-load
+> pattern was absent; (3) signal independence — signals must never read each other — was not
+> stated as an invariant. See ADR-005 for the corrected and binding architecture.
 
 ---
 

@@ -25,7 +25,8 @@ accepted ADRs as non-negotiable constraints.
 | [ADR-001](ADR-001-platform-non-negotiables.md) | Platform Non-Negotiables and Governance Invariants | Accepted | 2026-03-08 | — |
 | [ADR-002](ADR-002-deterministic-analysis-engine.md) | Deterministic Three-Layer Analysis Architecture | Accepted | 2026-03-08 | — |
 | [ADR-003](ADR-003-knowledge-bus-architecture.md) | Knowledge Bus Evidence Architecture | Accepted | 2026-03-08 | — |
-| [ADR-004](ADR-004-disease-specific-signal-evaluation.md) | Disease-Specific Signal Evaluation Architecture | Accepted | 2026-03-08 | — |
+| [ADR-004](ADR-004-disease-specific-signal-evaluation.md) | Disease-Specific Signal Evaluation Architecture | Superseded | 2026-03-08 | Superseded by ADR-005 |
+| [ADR-005](ADR-005-disease-specific-signal-evaluation-v2.md) | Disease-Specific Signal Evaluation Architecture (v2) | Accepted | 2026-03-08 | ADR-004 |
 
 ---
 
