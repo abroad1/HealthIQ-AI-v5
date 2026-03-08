@@ -1,0 +1,103 @@
+library:
+  schema_version: "1.0.0"
+  package_id: "KBP-0003"
+  library_name: "Lipid Transport Dysfunction Signal Library"
+  description: >
+    Evidence-anchored signal library for lipid transport dysfunction detection.
+    Non-HDL-C thresholds (3.7 / 5.7 mmol/L) derived from Multinational Cardiovascular Risk Consortium
+    (Lancet 2019; n=398,846). Primary axis: non-HDL-C. TG override for severe hypertriglyceridaemia.
+    NOTE: KBP-0001 contains signal_lipid_transport_dysfunction with different thresholds (3.4 / 4.1 mmol/L).
+    Clinical sign-off and threshold decision required before implementation. See clinical_signoff.md.
+
+signals:
+  - signal_id: "signal_lipid_transport_dysfunction"
+    name: "Lipid Transport Dysfunction"
+    description: >
+      Detects atherogenic particle burden and triglyceride-rich lipoprotein stress using non-HDL
+      cholesterol as the primary outcome-anchored metric, with a triglyceride override rule for
+      severe hypertriglyceridaemia (acute pancreatitis risk threshold).
+      Primary metric thresholds are derived from Multinational Cardiovascular Risk Consortium
+      (Lancet 2019; n=398,846; 54,542 endpoints). TG override threshold from ESC/EAS 2019 guideline.
+      DESIGN NOTE: The two-axis research model specifies that TG ≥1.7 mmol/L should promote
+      signal state to at least suboptimal even when non-HDL-C is in the optimal range. This
+      conditional upgrade logic requires a conditional override feature not yet supported by the
+      signal schema. It is documented in clinical_signoff.md as a known design limitation requiring
+      future schema enhancement or runtime handling in KB-S9.
+    system: "lipid_transport"
+    primary_metric: "derived.non_hdl_cholesterol"
+    supporting_metrics:
+      - "derived.tg_hdl_ratio"
+      - "derived.remnant_cholesterol"
+      - "triglycerides"
+    dependencies:
+      biomarkers:
+        - "total_cholesterol"
+        - "hdl_cholesterol"
+        - "triglycerides"
+      derived_metrics:
+        - "derived.non_hdl_cholesterol"
+        - "derived.tg_hdl_ratio"
+      signals: []
+    optional_dependencies:
+      biomarkers:
+        - "ldl_cholesterol"
+      derived_metrics:
+        - "derived.remnant_cholesterol"
+      signals: []
+    thresholds:
+      - threshold_id: "lipid_transport_optimal"
+        metric_id: "derived.non_hdl_cholesterol"
+        operator: "<"
+        value: 3.7
+        severity: "optimal"
+        description: >
+          Non-HDL-C below evidence-anchored risk inflection point. Corresponds to the lowest
+          long-term ASCVD event rate category in the Multinational Cardiovascular Risk Consortium
+          (Lancet 2019). Full optimal classification also requires TG <1.7 mmol/L; see
+          tg_borderline design note in signal description.
+      - threshold_id: "lipid_transport_suboptimal"
+        metric_id: "derived.non_hdl_cholesterol"
+        operator: "range"
+        min_value: 3.7
+        max_value: 5.69
+        severity: "suboptimal"
+        description: >
+          Non-HDL-C in intermediate range associated with stepwise increase in long-term ASCVD
+          risk. Compatible with early atherogenic particle excess. Warrants deeper phenotyping
+          (apoB, Lp(a), glycaemic markers) if available.
+      - threshold_id: "lipid_transport_at_risk"
+        metric_id: "derived.non_hdl_cholesterol"
+        operator: ">="
+        value: 5.7
+        severity: "at_risk"
+        description: >
+          Non-HDL-C at or above the high-risk boundary from Multinational Cardiovascular Risk
+          Consortium outcome data. Associated with highest long-term ASCVD event rates in pooled
+          prospective cohorts.
+    activation_logic: "deterministic_threshold"
+    override_rules:
+      - rule_id: "tg_severe_override"
+        description: >
+          Severe hypertriglyceridaemia (TG ≥5.6 mmol/L / ≥500 mg/dL) forces at-risk state
+          regardless of non-HDL-C classification. At this level, acute pancreatitis risk becomes
+          a dominant clinical concern requiring urgent evaluation of secondary causes and genetic
+          hypertriglyceridaemia. ESC/EAS 2019 guideline threshold for severe hypertriglyceridaemia.
+        conditions:
+          - metric_id: "triglycerides"
+            operator: ">="
+            value: 5.6
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+    bundle_consumers:
+      - "cardiovascular_risk"
+      - "metabolic_health"
+      - "vascular_age"
+    output:
+      signal_value: "derived.non_hdl_cholesterol"
+      signal_state: "at_risk"
+      confidence: "confidence_model_v1"
+      primary_metric: "derived.non_hdl_cholesterol"
+      supporting_markers:
+        - "derived.tg_hdl_ratio"
+        - "derived.remnant_cholesterol"
+        - "triglycerides"
