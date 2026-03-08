@@ -1,0 +1,115 @@
+library:
+  schema_version: "1.0.0"
+  package_id: "KBP-0005"
+  library_name: "Chronic Systemic Inflammation Signal Library"
+  description: >
+    Evidence-anchored signal library for chronic systemic inflammation using hs-CRP as
+    the primary metric with ACC/AHA 2025 thresholds (optimal <1.0 / suboptimal 1.0-3.0 /
+    at_risk >=3.0 mg/L). Acute inflammatory override at >=10.0 mg/L (repeat after 2 weeks).
+    NLR (derived.nlr, already in ratio_registry.py) as supporting metric with validated
+    MetS cutoff (1.67, sensitivity 74.3%). SII (new derived metric) for composite
+    inflammatory burden. Material threshold difference from KBP-0001 (3.0/10.0 mg/L)
+    — clinical sign-off required before implementation. See clinical_signoff.md.
+
+signals:
+  - signal_id: "signal_systemic_inflammation"
+    name: "Chronic Systemic Inflammation"
+    description: >
+      Detects chronic low-grade systemic inflammation ("meta-inflammation") using
+      hs-CRP as the primary metric. Thresholds are anchored to ACC/AHA 2025 risk
+      stratification: <1.0 mg/L optimal (low CVD risk, high insulin sensitivity);
+      1.0-3.0 mg/L suboptimal (intermediate risk, early MetS; includes the 2.0 mg/L
+      residual inflammatory risk threshold for patients on statin therapy); >=3.0 mg/L
+      at_risk (high CVD and T2DM risk; 18% higher T2DM and 34% higher ASCVD risk per
+      log-unit increase in MetS patients). Acute override at >=10.0 mg/L — likely
+      reflects active infection or tissue injury rather than chronic metabolic
+      inflammation; result should be repeated after 2 weeks. NLR and SII are supporting
+      markers that provide cellular inflammatory burden context.
+    system: "inflammatory"
+    primary_metric: "crp"
+    supporting_metrics:
+      - "derived.nlr"
+      - "derived.sii"
+    dependencies:
+      biomarkers:
+        - "crp"
+      derived_metrics: []
+      signals: []
+    optional_dependencies:
+      biomarkers:
+        - "neutrophils"
+        - "lymphocytes"
+        - "monocytes_abs"
+        - "platelets"
+        - "white_blood_cells"
+        - "rdw_cv"
+      derived_metrics:
+        - "derived.nlr"
+        - "derived.sii"
+      signals: []
+    thresholds:
+      - threshold_id: "inflammation_optimal"
+        metric_id: "crp"
+        operator: "<"
+        value: 1.0
+        severity: "optimal"
+        description: >
+          hs-CRP below 1.0 mg/L. Low cardiovascular risk category per ACC/AHA 2025.
+          Associated with high insulin sensitivity and low metabolic stress.
+          Aligns with the ACC/AHA three-tier classification (low: <1.0, intermediate:
+          1.0-3.0, high: >3.0 mg/L) for metabolic and cardiovascular risk stratification.
+      - threshold_id: "inflammation_suboptimal"
+        metric_id: "crp"
+        operator: "range"
+        min_value: 1.0
+        max_value: 2.99
+        severity: "suboptimal"
+        description: >
+          hs-CRP 1.0-3.0 mg/L. Intermediate cardiovascular risk per ACC/AHA 2025.
+          Associated with subclinical metabolic stress and early metabolic syndrome.
+          The 2.0 mg/L sub-threshold is the residual inflammatory risk (RIR) cutoff
+          for patients on statin therapy who have achieved LDL-C <70 mg/dL — these
+          patients remain at elevated MACE risk despite lipid control (JUPITER trial).
+          hs-CRP in this range reclassifies 12-14% of intermediate-risk patients.
+      - threshold_id: "inflammation_at_risk"
+        metric_id: "crp"
+        operator: ">="
+        value: 3.0
+        severity: "at_risk"
+        description: >
+          hs-CRP >=3.0 mg/L. High cardiovascular risk category per ACC/AHA 2025 and
+          ESC/EAS 2025. Associated with significant systemic inflammation, insulin
+          resistance, and MACE risk. Each log-unit increase in hs-CRP is associated
+          with 18% higher T2DM risk and 34% higher ASCVD risk in MetS patients.
+          Note: values >=10.0 mg/L trigger the acute inflammatory override rule below.
+    activation_logic: "deterministic_threshold"
+    override_rules:
+      - rule_id: "crp_acute_override"
+        description: >
+          hs-CRP >=10.0 mg/L indicates acute inflammatory response (active infection,
+          trauma, autoimmune flare) rather than chronic metabolic inflammation. This
+          level is above the chronic metabolic range. Result remains classified as
+          at_risk but should be flagged for repeat testing after 2 weeks to distinguish
+          transient acute inflammation from persistent chronic metabolic burden.
+          ACC/AHA 2025 recommendation: test during metabolic stability; repeat high
+          values after 2 weeks. Standard CRP (not hs-CRP) detects values above 10 mg/L.
+        conditions:
+          - metric_id: "crp"
+            operator: ">="
+            value: 10.0
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+    bundle_consumers:
+      - "metabolic_health"
+      - "cardiovascular_risk"
+      - "biological_age"
+      - "brain_metabolic_resilience"
+      - "vascular_age"
+    output:
+      signal_value: "crp"
+      signal_state: "at_risk"
+      confidence: "confidence_model_v1"
+      primary_metric: "crp"
+      supporting_markers:
+        - "derived.nlr"
+        - "derived.sii"
