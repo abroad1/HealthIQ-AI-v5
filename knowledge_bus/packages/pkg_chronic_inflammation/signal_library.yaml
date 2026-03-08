@@ -33,7 +33,7 @@ signals:
     primary_metric: "crp"
     supporting_metrics:
       - "derived.nlr"
-      - "derived.sii"
+      - "sii"
     supporting_metrics_with_thresholds:
       - metric: "derived.nlr"
         threshold: 1.67
@@ -52,7 +52,7 @@ signals:
         - "rdw_cv"
       derived_metrics:
         - "derived.nlr"
-        - "derived.sii"
+        - "sii"
       signals: []
     thresholds:
       - threshold_id: "inflammation_optimal"
@@ -119,4 +119,4 @@ signals:
       primary_metric: "crp"
       supporting_markers:
         - "derived.nlr"
-        - "derived.sii"
+        - "sii"

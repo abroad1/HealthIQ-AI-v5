@@ -9,7 +9,7 @@ signals:
     name: "Insulin Resistance"
     description: "Detects early insulin resistance phenotype using a single primary metric with deterministic thresholds and explicit override rules."
     system: "metabolic"
-    primary_metric: "derived.tyg_index"
+    primary_metric: "tyg_index"
     supporting_metrics:
       - "derived.tg_hdl_ratio"
       - "derived.homa_ir"
@@ -20,7 +20,7 @@ signals:
         - "hba1c"
         - "insulin"
       derived_metrics:
-        - "derived.tyg_index"
+        - "tyg_index"
         - "derived.tg_hdl_ratio"
         - "derived.homa_ir"
       signals: []
@@ -30,20 +30,20 @@ signals:
       signals: []
     thresholds:
       - threshold_id: "insulin_resistance_optimal"
-        metric_id: "derived.tyg_index"
+        metric_id: "tyg_index"
         operator: "<"
         value: 8.30
         severity: "optimal"
         description: "Primary metric indicates no elevated insulin resistance signal."
       - threshold_id: "insulin_resistance_suboptimal"
-        metric_id: "derived.tyg_index"
+        metric_id: "tyg_index"
         operator: "range"
         min_value: 8.30
         max_value: 8.49
         severity: "suboptimal"
         description: "Primary metric indicates early metabolic drift."
       - threshold_id: "insulin_resistance_at_risk"
-        metric_id: "derived.tyg_index"
+        metric_id: "tyg_index"
         operator: ">="
         value: 8.50
         severity: "at_risk"
@@ -68,10 +68,10 @@ signals:
       - "biological_age"
       - "brain_metabolic_resilience"
     output:
-      signal_value: "derived.tyg_index"
+      signal_value: "tyg_index"
       signal_state: "at_risk"
       confidence: "confidence_model_v1"
-      primary_metric: "derived.tyg_index"
+      primary_metric: "tyg_index"
       supporting_markers:
         - "derived.tg_hdl_ratio"
         - "derived.homa_ir"
