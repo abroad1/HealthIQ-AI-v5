@@ -1,30 +1,121 @@
-research_domain: metabolic
+research_domain: "metabolic"
 
 sources:
-  - paper_title: "Triglyceride-glucose index (TyG index) in comparison with fasting plasma glucose improved diabetes prediction"
-    journal: Preventive Medicine
+  - paper_title: "TyG index in comparison with fasting plasma glucose improved diabetes prediction in patients with normal fasting glucose: The Vascular-Metabolic CUN cohort"
+    journal: "Preventive Medicine"
     year: 2016
-    doi: 10.1016/j.ypmed.2016.01.022
+    doi: "10.1016/j.ypmed.2016.01.022"
+    notes: >
+      Prospective cohort; n=4,820; mean follow-up 8.84 years. Diabetes risk rose progressively
+      at TyG ≥8.31. Normoglycaemic subgroup: AUC 0.75 (0.70–0.81) for TyG vs 0.66 for fasting
+      glucose (p=0.017). Supports TyG 8.30 as the optimal/suboptimal boundary.
 
-  - paper_title: "Triglyceride-glucose index predicts independently type 2 diabetes mellitus risk"
-    journal: Primary Care Diabetes
+  - paper_title: "Triglyceride-glucose index predicts independently type 2 diabetes mellitus risk: A systematic review and meta-analysis of cohort studies"
+    journal: "Primary Care Diabetes"
     year: 2020
-    doi: 10.1016/j.pcd.2020.09.001
+    doi: "10.1016/j.pcd.2020.09.001"
+    notes: >
+      13 cohort studies; n=70,380. Pooled HR 2.44 (95% CI 2.17–2.76) for incident T2DM
+      with higher TyG. High heterogeneity noted — thresholds may require calibration across
+      populations. Confirms TyG predictive validity at population scale.
+
+  - paper_title: "TyG index as a predictor of incident type 2 diabetes among nonobese adults: 12-year longitudinal study"
+    journal: "Translational Research"
+    year: 2021
+    doi: "10.1016/j.trsl.2020.08.003"
+    notes: >
+      n=4,285 nonobese adults; 12 years; incident diabetes 14.7%. Highest TyG quartile:
+      adjusted HR 3.67 (95% CI 2.71–4.98) vs lowest. Dose–response across quartiles confirmed.
+
+  - paper_title: "Large-scale longitudinal cohort study of TyG index in people with normal fasting glucose and triglycerides"
+    journal: "Frontiers in Endocrinology"
+    year: 2025
+    doi: "10.3389/fendo.2025.1598171"
+    notes: >
+      n=155,337; mean follow-up 3.13 years. Diabetes incidence rose across TyG quartiles;
+      adjusted HR up to 3.80 for highest quartile. Inflection identified around TyG 8.41.
+      Supports higher-risk zone beginning in the mid–high 8s even when component labs appear normal.
+
+  - paper_title: "Triglyceride-glucose index for detection of metabolic syndrome: comparison with HOMA-IR in a community-based prospective cohort"
+    journal: "Nutrition Metabolism and Cardiovascular Diseases"
+    year: 2022
+    doi: "10.1016/j.numecd.2021.11.017"
+    notes: >
+      n=9,730 baseline; n=6,091 incident analysis; 12-year follow-up. TyG outperformed HOMA-IR
+      for prevalent metabolic syndrome (AUROC 0.837 vs 0.680) and incident metabolic syndrome
+      (AUROC 0.654 vs 0.556). Optimal TyG cut-off for incident metabolic syndrome ~8.518.
+      Provides second anchor threshold near 8.50 and justifies the at_risk boundary.
+
+  - paper_title: "Cardiovascular risk prediction using the triglyceride-glucose index in apparently healthy adults"
+    journal: "European Journal of Clinical Investigation"
+    year: 2016
+    doi: "10.1111/eci.12583"
+    notes: >
+      n=5,014; median follow-up 10 years. Highest TyG quintile: HR 2.32 (95% CI 1.65–3.26)
+      for incident CVD. Adding TyG to Framingham variables increased AUC from 0.708 to 0.719
+      (p=0.014). Demonstrates cardiovascular relevance beyond diabetes prediction.
+
+  - paper_title: "Diagnosis and Classification of Diabetes: Standards of Care in Diabetes 2026"
+    journal: "Diabetes Care"
+    year: 2026
+    doi: "10.2337/dc26-S002"
+    notes: >
+      ADA Standards of Care. Provides guideline-anchored prediabetes diagnostic thresholds
+      used in the override rule: HbA1c ≥5.7% (≥39 mmol/mol) and fasting plasma glucose
+      ≥5.6 mmol/L (≥100 mg/dL). Basis for the prediabetes_override logic in KBP-0001.
 
 biomarkers:
   - glucose
   - triglycerides
+  - hba1c
+  - insulin
+  - hdl_cholesterol
 
 derived_metrics:
-  - derived.tyg_index
+  - tyg_index
+  - homa_ir
+  - tg_hdl_ratio
 
 physiological_claim: >
-  Elevated triglyceride-glucose index reflects hepatic insulin resistance
-  and predicts increased future risk of type 2 diabetes.
+  The triglyceride-glucose index detects early insulin resistance before overt dysglycaemia
+  and predicts incident type 2 diabetes in normoglycaemic cohorts with superior discrimination
+  to fasting glucose alone. In the Vascular-Metabolic CUN cohort (n=4,820; 8.84 years follow-up),
+  TyG achieved AUC 0.75 vs 0.66 for fasting glucose in the normoglycaemic subgroup (p=0.017).
+  Meta-analysis of 13 cohorts (n=70,380) showed pooled HR 2.44 for incident diabetes. The
+  threshold at 8.50 aligns with the incident metabolic syndrome cut point (~8.518) from a
+  12-year prospective cohort where TyG outperformed HOMA-IR (AUROC 0.837 vs 0.680). TyG also
+  adds incremental cardiovascular risk information beyond Framingham variables (AUC increase
+  0.708 to 0.719, p=0.014).
 
-evidence_strength: strong
+evidence_strength: "strong"
+
+notes: >
+  CONFIRMATION PACKAGE for signal_insulin_resistance (KBP-0001). Research confirms the
+  existing KBP-0001 thresholds (8.30 / 8.50) and prediabetes override logic are
+  evidence-anchored. No threshold modifications required.
+
+  Known limitation: No universal TyG cut-off exists across ancestries, ages, and clinical
+  settings — high heterogeneity noted in meta-analysis. Thresholds are evidence-anchored
+  zones, not diagnostic criteria.
+
+  Excluded populations: pregnancy (gestational physiology differs), children and adolescents,
+  established diabetes on glucose-lowering therapy, people on intensive triglyceride-lowering
+  treatment (inputs altered by therapy), non-fasting samples, acute illness.
+
+  Implementation note: derived.tyg_index is not yet computed in ratio_registry.py — requires
+  KB-S9. HOMA-IR formula variant (divisor 405 vs 22.5) must be confirmed before KB-S9.
 
 research_summary: >
-  Prospective cohort and meta-analysis evidence shows TyG index
-  predicts incident type 2 diabetes and metabolic syndrome,
-  often before conventional dysglycaemia thresholds are crossed.
+  Study type: prospective cohort evidence, meta-analysis, and clinical guideline review.
+
+  Primary evidence: Vascular-Metabolic CUN cohort (Preventive Medicine 2016; n=4,820) provides
+  the 8.30 threshold with AUC 0.75 in normoglycaemic subgroup. Irace et al. (Nutr Metab
+  Cardiovasc Dis 2022; n=9,730; 12-year follow-up) provides the 8.50 threshold anchored to
+  incident metabolic syndrome (AUROC 0.837 vs HOMA-IR 0.680).
+
+  Meta-analytic confirmation: 13 cohorts, n=70,380, pooled HR 2.44 for incident T2DM.
+
+  Guideline anchoring: ADA Standards of Care 2026 thresholds used for the prediabetes
+  override rule (HbA1c ≥5.7%, FPG ≥5.6 mmol/L).
+
+  Source document: knowledge_bus/research/study_01_insulin_resistance.md
