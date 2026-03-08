@@ -7,6 +7,7 @@ All derived ratios computed here; insights must not compute ratios locally.
 Runs after unit normalisation; uses base-unit values only.
 """
 
+from math import log
 from typing import Dict, Optional, Any, List
 
 from core.analytics.primitives import safe_ratio
@@ -21,11 +22,13 @@ class RatioRegistry:
 RATIO_PRECISION = 3
 # non_hdl_cholesterol uses concentration unit (mmol/L); 2 dp sufficient
 NON_HDL_PRECISION = 2
+TYG_SI_CONSTANT = 1596.0  # 88.5714 * 18.018; SI-native TyG constant (no runtime unit conversion)
 
 # All derived markers (order: lipid first, then others)
 DERIVED_IDS = (
     "tc_hdl_ratio", "tg_hdl_ratio", "ldl_hdl_ratio", "non_hdl_cholesterol", "apoB_apoA1_ratio",
-    "nlr", "urea_creatinine_ratio", "ast_alt_ratio", "testosterone_free_testosterone_ratio",
+    "derived.tyg_index", "derived.tyg_bmi_index", "nlr", "derived.sii",
+    "urea_creatinine_ratio", "ast_alt_ratio", "testosterone_free_testosterone_ratio",
 )
 RATIO_IDS = DERIVED_IDS  # Backwards compatibility
 
@@ -36,7 +39,10 @@ _DERIVED_INPUTS: Dict[str, List[str]] = {
     "ldl_hdl_ratio": ["ldl_cholesterol", "hdl_cholesterol"],
     "non_hdl_cholesterol": ["total_cholesterol", "hdl_cholesterol"],
     "apoB_apoA1_ratio": ["apob", "apoa1"],
+    "derived.tyg_index": ["triglycerides", "glucose"],
+    "derived.tyg_bmi_index": ["triglycerides", "glucose", "bmi"],
     "nlr": ["neutrophils", "lymphocytes"],
+    "derived.sii": ["platelets", "neutrophils", "lymphocytes"],
     "urea_creatinine_ratio": ["urea", "creatinine"],
     "ast_alt_ratio": ["ast", "alt"],
     "testosterone_free_testosterone_ratio": ["testosterone", "free_testosterone"],
@@ -160,6 +166,39 @@ def compute(panel: Dict[str, Any]) -> Dict[str, Any]:
                 "bounds_applied": False, "inputs_used": _DERIVED_INPUTS["apoB_apoA1_ratio"],
             }
 
+    # TyG index (SI-native formulation; no runtime unit conversion)
+    glucose = _numeric(panel.get("glucose"))
+    if _lab_supplied(panel, "derived.tyg_index"):
+        v = _numeric(panel["derived.tyg_index"])
+        result["derived"]["derived.tyg_index"] = {
+            "value": v, "unit": "ratio", "source": "lab",
+            "bounds_applied": False, "inputs_used": [],
+        }
+    elif tg is not None and glucose is not None and tg > 0 and glucose > 0:
+        tyg_index = log((tg * glucose * TYG_SI_CONSTANT) / 2.0)
+        result["derived"]["derived.tyg_index"] = {
+            "value": round(tyg_index, RATIO_PRECISION), "unit": "ratio", "source": "computed",
+            "bounds_applied": False, "inputs_used": _DERIVED_INPUTS["derived.tyg_index"],
+        }
+
+    # TyG-BMI index = TyG * BMI; BMI retrieved directly from panel
+    if _lab_supplied(panel, "derived.tyg_bmi_index"):
+        v = _numeric(panel["derived.tyg_bmi_index"])
+        result["derived"]["derived.tyg_bmi_index"] = {
+            "value": v, "unit": "ratio", "source": "lab",
+            "bounds_applied": False, "inputs_used": [],
+        }
+    else:
+        bmi = _numeric(panel.get("bmi"))
+        tyg_entry = result["derived"].get("derived.tyg_index", {})
+        tyg_value = tyg_entry.get("value") if isinstance(tyg_entry, dict) else None
+        if isinstance(tyg_value, (int, float)) and bmi is not None:
+            tyg_bmi_index = float(tyg_value) * bmi
+            result["derived"]["derived.tyg_bmi_index"] = {
+                "value": round(tyg_bmi_index, RATIO_PRECISION), "unit": "ratio", "source": "computed",
+                "bounds_applied": False, "inputs_used": _DERIVED_INPUTS["derived.tyg_bmi_index"],
+            }
+
     # NLR
     neut = _numeric(panel.get("neutrophils"))
     lymph = _numeric(panel.get("lymphocytes"))
@@ -176,6 +215,26 @@ def compute(panel: Dict[str, Any]) -> Dict[str, Any]:
                 "value": round(nlr_val, RATIO_PRECISION), "unit": "ratio", "source": "computed",
                 "bounds_applied": False, "inputs_used": _DERIVED_INPUTS["nlr"],
             }
+
+    # SII = (platelets * neutrophils) / lymphocytes
+    platelets = _numeric(panel.get("platelets"))
+    if _lab_supplied(panel, "derived.sii"):
+        v = _numeric(panel["derived.sii"])
+        result["derived"]["derived.sii"] = {
+            "value": v, "unit": "ratio", "source": "lab",
+            "bounds_applied": False, "inputs_used": [],
+        }
+    elif (
+        platelets is not None
+        and neut is not None
+        and lymph is not None
+        and lymph > 0
+    ):
+        sii_val = (platelets * neut) / lymph
+        result["derived"]["derived.sii"] = {
+            "value": round(sii_val, RATIO_PRECISION), "unit": "ratio", "source": "computed",
+            "bounds_applied": False, "inputs_used": _DERIVED_INPUTS["derived.sii"],
+        }
 
     # Urea/creatinine
     urea = _numeric(panel.get("urea"))
