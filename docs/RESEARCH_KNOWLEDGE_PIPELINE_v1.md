@@ -1,5 +1,11 @@
 # HealthIQ Research Knowledge Pipeline Architecture v1
 
+> **Pipeline position:** The Knowledge Bus provides the **Evidence stage** of the
+> HealthIQ canonical reasoning pipeline: `Evidence → Signal → Insight`.
+> Signal libraries convert research evidence into deterministic biological detectors.
+> The Signal stage (Signal Evaluation Engine) consumes Knowledge Bus outputs.
+> See `architecture/HEALTHIQ_REASONING_PIPELINE.md` for the full pipeline definition.
+
 ## Purpose
 
 This document defines the complete pipeline by which biomedical research is translated into deterministic analytics logic within the HealthIQ platform.
