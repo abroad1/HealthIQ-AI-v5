@@ -1,0 +1,161 @@
+research_domain: "inflammatory"
+
+sources:
+  - paper_title: "Association between High-Sensitivity C-Reactive Protein and Metabolic Syndrome and Its Components in Older Adults: Neyshabur Longitudinal Study on Ageing (NeLSA)"
+    journal: "Clinical Diabetology (Via Medica Journals)"
+    year: 2024
+    notes: >
+      Each one-unit increase in log-serum hs-CRP associated with 18% higher risk for
+      diabetes and 34% higher risk for ASCVD in metabolic syndrome patients. hs-CRP
+      correlates with Framingham Risk Scores in T2DM (r=0.684, p<0.001). High cardiovascular
+      risk T2DM patients: mean hs-CRP 6.2 mg/L vs 2.1 mg/L in low-risk subjects.
+      Supports hs-CRP as an independent MetS risk predictor.
+
+  - paper_title: "Predictive role of neutrophil-to-lymphocyte ratio in metabolic syndrome"
+    journal: "PMC (Systematic Review/Meta-analysis)"
+    year: 2024
+    doi: "pmc.ncbi.nlm.nih.gov/articles/PMC11334419"
+    notes: >
+      Meta-analysis of 26 observational studies; n=70,937. NLR significantly higher in
+      MetS patients vs healthy controls (mean difference 0.40). High NLR associated with
+      2.23-fold increase in MetS incidence. NLR cutoff 1.67 provides optimal sensitivity
+      (74.3%) and specificity (62.3%) for detecting MetS in US adults (NHANES 1999-2018).
+      Dose-response: NLR increases with number of MetS components. Establishes NLR 1.67
+      as the evidence-anchored threshold for metabolic syndrome detection.
+
+  - paper_title: "The association of Neutrophil-to-Lymphocyte ratio with metabolic syndrome in U.S. Adults: Findings from the 1999-2018 National Health and Nutrition Examination Survey"
+    journal: "PMC"
+    year: 2024
+    doi: "pmc.ncbi.nlm.nih.gov/articles/PMC11714674"
+    notes: >
+      NHANES population data supporting NLR cutoff of 1.67 for metabolic syndrome
+      detection. Confirms NLR as accessible, low-cost metabolic screening tool derivable
+      from standard CBC with differential.
+
+  - paper_title: "Predictive value of systemic immune-inflammation index in patients with diabetes mellitus: a systematic review and meta-analysis"
+    journal: "Frontiers in Endocrinology"
+    year: 2025
+    doi: "10.3389/fendo.2025.1617814"
+    notes: >
+      Meta-analysis of 22 studies; n=85,796. Elevated SII linked to: Diabetic Nephropathy
+      (OR 1.94), Diabetic Retinopathy (SMD 2.70), all-cause mortality in T2DM (OR 1.38),
+      cardiovascular mortality (OR 1.55). SII = (Platelet Count × Neutrophil Count) /
+      Lymphocyte Count. SII superior to NLR alone for predicting diabetic microvascular
+      and macrovascular complications.
+
+  - paper_title: "Associations between neutrophil-lymphocyte ratio with all-cause mortality, major adverse vascular events and progression of diabetic kidney disease in type 2 diabetes mellitus"
+    journal: "Frontiers in Endocrinology"
+    year: 2025
+    doi: "10.3389/fendo.2025.1695139"
+    notes: >
+      Prospective cohort; median follow-up 9.4 years. Highest NLR tertile associated with
+      2.7-fold increased risk of major adverse vascular events (MAVE) and 1.55-fold
+      increased risk of diabetic kidney disease progression. Diabetic retinopathy:
+      NLR >2.45 correlates with HR 2.217 for incident DR after adjusting for HbA1c
+      and diabetes duration.
+
+  - paper_title: "Prospective analysis of metabolic syndrome and inflammation in aortic aneurysm risk: UK Biobank study"
+    journal: "Frontiers in Endocrinology"
+    year: 2025
+    doi: "10.3389/fendo.2025.1612975"
+    notes: >
+      UK Biobank prospective study. INFLA-score (composite: hs-CRP, WBC, platelets,
+      granulocyte/lymphocyte ratio) — high INFLA-score: HR 1.68 (95% CI 1.45-1.95) for
+      aortic aneurysm. Each MetS component increases aortic aneurysm risk by 16%,
+      significantly mediated by chronic inflammation. Validates composite inflammatory
+      burden approach.
+
+  - paper_title: "hsCRP: A Promising Risk Assessment Tool — ACC Scientific Statement 2025"
+    journal: "ACC (American College of Cardiology)"
+    year: 2025
+    doi: "acc.org/latest-in-cardiology/articles/2025/12/01/01/prioritizing-health-hscrp"
+    notes: >
+      ACC 2025 Scientific Statement. Universal hs-CRP screening recommended for primary
+      and secondary prevention. hs-CRP >= 2.0 mg/L formally classified as risk-enhancing
+      factor. Exercise (>=150 min/week) reduces hs-CRP by 0.59 mg/L; weight loss 0.13 mg/L
+      per kg lost; vegan diet 0.54 mg/L reduction. Colchicine for residual inflammatory
+      risk in stable CAD. hs-CRP reclassifies 12-14% of intermediate-risk patients.
+
+  - paper_title: "High-Sensitivity C-Reactive Protein in Atherosclerotic Cardiovascular Disease — JUPITER trial and residual inflammatory risk"
+    journal: "US Cardiology Review / PMC"
+    year: 2023
+    notes: >
+      JUPITER and A to Z trial data: patients meeting LDL-C < 70 mg/dL targets with
+      persistent hs-CRP >= 2.0 mg/L remain at high risk for recurrent MACE. Establishes
+      concept of residual inflammatory risk (RIR) independent of lipid control.
+      Best outcomes when both LDL-C < 70 mg/dL AND hs-CRP < 2.0 mg/L achieved.
+
+biomarkers:
+  - crp
+  - neutrophils
+  - lymphocytes
+  - monocytes_abs
+  - platelets
+  - white_blood_cells
+  - rdw_cv
+
+derived_metrics:
+  - nlr
+  - sii
+
+physiological_claim: >
+  Chronic low-grade systemic inflammation ("meta-inflammation") is the common soil of
+  metabolic dysfunction. Visceral adipose tissue hypertrophy drives macrophage and
+  neutrophil infiltration, releasing IL-6, TNF-alpha, and leptin. These cytokines
+  interfere with insulin receptor substrate (IRS) serine phosphorylation, impairing
+  GLUT4 translocation and driving compensatory hyperinsulinemia. The NLRP3 inflammasome
+  responds to metabolic danger signals (saturated fatty acids, cholesterol crystals,
+  uric acid) generating IL-1β and IL-18, which stimulate hepatic CRP synthesis.
+  hs-CRP is the most extensively validated blood biomarker of this subclinical state.
+  NLR integrates innate over-activation (neutrophilia) and adaptive immune suppression
+  (lymphopenia) — the cellular hallmark of insulin resistance. SII (platelets × neutrophils
+  / lymphocytes) adds pro-thrombotic dimension, predicting microvascular diabetic
+  complications beyond what NLR alone captures.
+
+evidence_strength: "strong"
+
+notes: >
+  THRESHOLD DELTA WITH KBP-0001: KBP-0001 signal_systemic_inflammation uses CRP <3.0
+  (optimal) / 3.0-9.99 (suboptimal) / >=10.0 (at_risk). Study 4 evidence and ACC/AHA
+  2025 guidelines support <1.0 / 1.0-3.0 / >=3.0 mg/L with 10.0 mg/L as an ACUTE
+  OVERRIDE (potential infection/trauma — repeat in 2 weeks), not the chronic at_risk
+  boundary. This is a material design difference requiring clinical sign-off.
+
+  RESIDUAL INFLAMMATORY RISK (RIR): ACC/AHA 2025 defines hs-CRP >= 2.0 mg/L as a
+  risk-enhancing factor specifically for patients on statins who have achieved LDL-C
+  < 70 mg/dL. This sub-threshold concept cannot be expressed in the current signal
+  library schema (which has a single suboptimal/at_risk boundary). Flagged in
+  clinical_signoff.md as a design decision — options: (a) use 2.0 as the boundary
+  for a more conservative signal, (b) use 3.0 and document RIR as a runtime note.
+
+  NLR DERIVATION: derived.nlr is already computed in ratio_registry.py (Sprint 5).
+  No new SSOT extension required for NLR.
+
+  SII NOT IN PLATFORM: derived.sii = (platelets x neutrophils) / lymphocytes requires
+  KB-S9 implementation. All three input biomarkers (platelets, neutrophils, lymphocytes)
+  are confirmed in biomarkers.yaml.
+
+  AGE STRATIFICATION FOR NLR: NLR reference ranges shift with age (adult 0.78-3.53;
+  elderly >75: 0.89-8.80). The 1.67 cutoff is validated for adults 18-75. Age is
+  derivable from date_of_birth in questionnaire.json — KB-S9 can apply age-stratified
+  NLR interpretation at runtime.
+
+  research_summary: >
+  Source: Multi-Omic Integration of Inflammatory Biomarkers in Metabolic Syndrome and
+  Cardiovascular Risk — HealthIQ Evidence Report.
+
+  Primary hs-CRP evidence: ACC 2025 Scientific Statement; JUPITER/A-to-Z RCT data on
+  residual inflammatory risk; observational meta-analyses showing 18% higher T2DM risk
+  and 34% higher ASCVD risk per log-unit hs-CRP increase in MetS patients.
+
+  NLR evidence: Meta-analysis of 26 studies (n=70,937) — NLR 1.67 cutoff for MetS
+  (sensitivity 74.3%, specificity 62.3%); prospective cohort (9.4y follow-up) — highest
+  NLR tertile: HR 2.7 for MAVE, HR 1.55 for diabetic kidney disease progression.
+
+  SII evidence: Meta-analysis of 22 studies (n=85,796) — SII predicts diabetic
+  nephropathy (OR 1.94), retinopathy (SMD 2.70), CVD mortality (OR 1.55).
+
+  Guideline anchoring: ACC 2025 Scientific Statement; ESC/EAS 2025 Focused Update;
+  ADA 2025 Standards of Care.
+
+  Source document: knowledge_bus/research/study_04_chronic_inflammation.md
