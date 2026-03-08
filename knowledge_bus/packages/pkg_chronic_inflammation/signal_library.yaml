@@ -8,7 +8,7 @@ library:
     trials and ACC/AHA 2025 (optimal <1.0 / suboptimal 1.0-2.0 / at_risk >=2.0 mg/L).
     The 2.0 mg/L boundary is the primary threshold for identifying residual inflammatory
     risk as stated in the source research conclusions. Acute inflammatory override at
-    >=10.0 mg/L (repeat after 2 weeks). NLR (derived.nlr, already in ratio_registry.py)
+    >=10.0 mg/L (repeat after 2 weeks). NLR (nlr, already in ratio_registry.py)
     as supporting metric with validated MetS cutoff (1.67, sensitivity 74.3%). SII (new
     derived metric) for composite inflammatory burden. Material threshold difference from
     KBP-0001 (3.0/10.0 mg/L) — clinical sign-off required before implementation. See
@@ -32,10 +32,10 @@ signals:
     system: "inflammatory"
     primary_metric: "crp"
     supporting_metrics:
-      - "derived.nlr"
-      - "derived.sii"
+      - "nlr"
+      - "sii"
     supporting_metrics_with_thresholds:
-      - metric: "derived.nlr"
+      - metric: "nlr"
         threshold: 1.67
     dependencies:
       biomarkers:
@@ -51,8 +51,8 @@ signals:
         - "white_blood_cells"
         - "rdw_cv"
       derived_metrics:
-        - "derived.nlr"
-        - "derived.sii"
+        - "nlr"
+        - "sii"
       signals: []
     thresholds:
       - threshold_id: "inflammation_optimal"
@@ -118,5 +118,5 @@ signals:
       confidence: "confidence_model_v1"
       primary_metric: "crp"
       supporting_markers:
-        - "derived.nlr"
-        - "derived.sii"
+        - "nlr"
+        - "sii"

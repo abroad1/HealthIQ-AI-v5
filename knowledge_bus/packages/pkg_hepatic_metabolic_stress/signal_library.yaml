@@ -5,11 +5,11 @@ library:
   description: >
     Evidence-anchored signal library for hepatic metabolic stress detection using TyG index
     with hepatic-steatosis-specific thresholds from meta-analysis (n=105,365; OR 2.84 per unit).
-    Primary metric is derived.tyg_index with thresholds 8.21/8.97 — distinct from KBP-0002
+    Primary metric is tyg_index with thresholds 8.21/8.97 — distinct from KBP-0002
     insulin resistance thresholds (8.30/8.50) which target diabetes endpoints.
     Research-preferred primary metric is TyG-BMI (AUC 0.83 for MASLD, n=339,087) but requires
     BMI (weight/height not in SSOT). ALT and AST/ALT override rules capture direct liver injury.
-    KBP-0001 uses derived.ast_alt_ratio as primary metric — clinical sign-off required on which
+    KBP-0001 uses ast_alt_ratio as primary metric — clinical sign-off required on which
     design to implement. See clinical_signoff.md.
 
 signals:
@@ -25,9 +25,9 @@ signals:
       sprint to add weight and height biomarkers. TyG-BMI should replace this signal's primary
       metric once available.
     system: "hepatic"
-    primary_metric: "derived.tyg_index"
+    primary_metric: "tyg_index"
     supporting_metrics:
-      - "derived.ast_alt_ratio"
+      - "ast_alt_ratio"
       - "alt"
       - "ggt"
     dependencies:
@@ -37,8 +37,8 @@ signals:
         - "triglycerides"
         - "glucose"
       derived_metrics:
-        - "derived.tyg_index"
-        - "derived.ast_alt_ratio"
+        - "tyg_index"
+        - "ast_alt_ratio"
       signals: []
     optional_dependencies:
       biomarkers:
@@ -50,7 +50,7 @@ signals:
       signals: []
     thresholds:
       - threshold_id: "hepatic_stress_optimal"
-        metric_id: "derived.tyg_index"
+        metric_id: "tyg_index"
         operator: "<"
         value: 8.21
         severity: "optimal"
@@ -59,7 +59,7 @@ signals:
           Corresponds to below-median TyG strata in hepatic endpoint analysis
           (Targher et al.; Zhang/Zheng meta-analysis n=105,365).
       - threshold_id: "hepatic_stress_suboptimal"
-        metric_id: "derived.tyg_index"
+        metric_id: "tyg_index"
         operator: "range"
         min_value: 8.21
         max_value: 8.96
@@ -68,7 +68,7 @@ signals:
           TyG in the intermediate range associated with progressively higher MASLD risk.
           Corresponds to Q2-Q3 strata in hepatic steatosis cohort analyses.
       - threshold_id: "hepatic_stress_at_risk"
-        metric_id: "derived.tyg_index"
+        metric_id: "tyg_index"
         operator: ">="
         value: 8.97
         severity: "at_risk"
@@ -98,7 +98,7 @@ signals:
           clinical evaluation of alcohol contribution. Evidence: AASLD/EASL guidelines;
           standard clinical hepatology practice.
         conditions:
-          - metric_id: "derived.ast_alt_ratio"
+          - metric_id: "ast_alt_ratio"
             operator: ">="
             value: 2.0
             condition_type: "all_of"
@@ -124,11 +124,11 @@ signals:
       - "cardiovascular_risk"
       - "biological_age"
     output:
-      signal_value: "derived.tyg_index"
+      signal_value: "tyg_index"
       signal_state: "at_risk"
       confidence: "confidence_model_v1"
-      primary_metric: "derived.tyg_index"
+      primary_metric: "tyg_index"
       supporting_markers:
-        - "derived.ast_alt_ratio"
+        - "ast_alt_ratio"
         - "alt"
         - "ggt"
