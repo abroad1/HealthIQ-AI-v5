@@ -19,7 +19,7 @@ a completed sign-off.
 | Signal | `signal_hepatic_metabolic_stress` |
 | Translation mode | Creation — new threshold basis and primary metric differ from KBP-0001 |
 | Primary metric (interim) | `derived.tyg_index` (hepatic thresholds 8.21 / 8.97) |
-| Primary metric (research-preferred) | `derived.tyg_bmi_index` — BLOCKED (see below) |
+| Primary metric (research-preferred) | `derived.tyg_bmi_index` — AVAILABLE (see below) |
 | Source document | `knowledge_bus/research/study_03_hepatic_metabolic_stress.md` |
 | Translation date | 2026-03-08 |
 | Translated by | Claude Translation Engine — Research-to-Knowledge Translation Specification v1 |
@@ -31,18 +31,21 @@ a completed sign-off.
 ### Decision 1 — Primary Metric: TyG vs TyG-BMI
 
 The research study (Malek et al. 2025; n=339,087; AUC 0.83) identifies **TyG-BMI** as the
-superior primary metric for MASLD detection. However:
+superior primary metric for MASLD detection.
 
-- TyG-BMI = TyG × BMI (kg/m²)
-- BMI requires `weight` and `height` — **neither is in the SSOT biomarker registry**
-- This package uses `derived.tyg_index` as the interim primary metric
+**CORRECTION (2026-03-08):** An earlier draft of this document flagged TyG-BMI as blocked due
+to missing SSOT anthropometrics. This was incorrect. `weight_kg` and `height_cm` are confirmed
+present in `backend/ssot/lifestyle_registry.yaml`, and `bmi` is already a computed derived metric
+in that registry (`weight_kg / (height_cm/100)²`). TyG-BMI = TyG × BMI is therefore computable
+without any SSOT extension.
 
 **Decision required:**
-- [ ] Accept `derived.tyg_index` as the primary metric for now; plan TyG-BMI upgrade after SSOT extension
-- [ ] Prioritise SSOT extension sprint (add `weight`, `height`) before implementing this signal
-- [ ] Document preferred timeline for TyG-BMI upgrade
+- [ ] Upgrade primary metric to `derived.tyg_bmi_index` — implement TyG-BMI in KB-S9 alongside `derived.tyg_index`
+- [ ] Retain `derived.tyg_index` as primary metric — use TyG-BMI as a supporting metric only
+- [ ] Document preferred threshold: TyG-BMI ≥ 180.71 for at-risk (Liu et al., n=4,753)
 
-If SSOT extension is selected: TyG-BMI threshold from Liu et al. (n=4,753): **>=180.71** for at-risk.
+Note: the signal library `primary_metric` field currently points to `derived.tyg_index`. If
+TyG-BMI is selected, the signal library will need to be updated before KB-S9.
 
 ---
 
@@ -76,7 +79,10 @@ TyG approach as a more sensitive early predictor of MASLD.
 AASLD (2023) recommends sex-specific ALT thresholds:
 - Suboptimal / at-risk boundary: **>33 IU/L (male)**, **>25 IU/L (female)**
 
-The signal library schema does not currently support sex-specific threshold values.
+The signal library schema does not currently support sex-specific threshold values. However,
+`biological_sex` is confirmed present in `backend/ssot/questionnaire.json` as a required
+questionnaire field. Sex-specific logic is therefore implementable at runtime (KB-S9) even
+though it cannot be expressed as a single signal library threshold.
 
 This package uses:
 - `alt_acute_override`: ALT ≥ 100 IU/L → at_risk (acute injury, sex-independent)
@@ -87,9 +93,8 @@ This package uses:
 captured by the current override rules (which use 100 IU/L and 33 IU/L respectively).
 
 **Decision required:**
-- [ ] Accept current design — document sex-specific ALT gap as a known limitation
-- [ ] Add supporting ALT check at 25 IU/L boundary to be handled in runtime logic (KB-S9)
-- [ ] Request schema enhancement to support sex-stratified thresholds
+- [ ] Accept current design — document sex-specific ALT gap as a known limitation; handle in runtime KB-S9 using `biological_sex` from questionnaire
+- [ ] Request schema enhancement to support sex-stratified thresholds natively
 
 ---
 
@@ -97,20 +102,20 @@ captured by the current override rules (which use 100 IU/L and 33 IU/L respectiv
 
 FIB-4 = (age × AST) / (platelets × √ALT) — the gold-standard non-invasive fibrosis rule-out.
 
-- `ast` ✓ in SSOT
-- `alt` ✓ in SSOT
-- `platelets` ✓ in SSOT
-- **`age`** ✗ NOT in SSOT
+- `ast` ✓ in SSOT (biomarkers.yaml)
+- `alt` ✓ in SSOT (biomarkers.yaml)
+- `platelets` ✓ in SSOT (biomarkers.yaml)
+- `age` — **derivable from `date_of_birth`** in `questionnaire.json` (confirmed present as required field)
 
-FIB-4 is listed as `optional_dependencies.derived_metrics` in this package but cannot be
-computed until age is available in the platform.
+FIB-4 is therefore computable if the runtime layer derives age from `date_of_birth`. This is
+an engineering decision, not a data availability gap.
 
 AASLD/EASL thresholds: FIB-4 < 1.30 rules out advanced fibrosis (NPV >90%).
 
 **Decision required:**
-- [ ] Add `age` to SSOT in a future sprint; implement FIB-4 at that point
+- [ ] Implement age derivation from `date_of_birth` in KB-S9; implement FIB-4 at same time
 - [ ] Deprioritise FIB-4 — TyG-based risk stratification is sufficient for current scope
-- [ ] Document as a known gap in the platform's hepatic assessment capability
+- [ ] Document age derivation as a prerequisite for KB-S9 engineering spec
 
 ---
 
@@ -151,8 +156,8 @@ AASLD/EASL thresholds: FIB-4 < 1.30 rules out advanced fibrosis (NPV >90%).
 | Metric | Formula | Status | Blocker |
 |--------|---------|--------|---------|
 | `derived.tyg_index` | ln((TG_mg × Glucose_mg) / 2) | NOT in ratio_registry.py | Required for KB-S9 |
-| `derived.tyg_bmi_index` | TyG × BMI (kg/m²) | NOT in ratio_registry.py | Requires SSOT extension (weight, height) |
-| `derived.fib_4` | (age × AST) / (platelets × √ALT) | NOT in ratio_registry.py | Requires SSOT extension (age) |
+| `derived.tyg_bmi_index` | TyG × BMI (kg/m²) | NOT in ratio_registry.py | BMI available in lifestyle_registry.yaml — implement in KB-S9 |
+| `derived.fib_4` | (age × AST) / (platelets × √ALT) | NOT in ratio_registry.py | age derivable from date_of_birth in questionnaire.json |
 | `derived.ast_alt_ratio` | AST / ALT | Already in ratio_registry.py | None |
 
 Note: `derived.tyg_index` is also required by KBP-0002 (insulin resistance). KB-S9 should
@@ -162,16 +167,18 @@ implement it once for both signals.
 
 ## Known Limitations
 
-1. **TyG-BMI is the research-preferred metric but is unavailable.** Until weight and height
-   are added to the SSOT, TyG alone is used. This underestimates risk in lean individuals
-   (~7% of MASLD cases in lean phenotype where BMI would not flag risk anyway).
+1. **TyG-BMI upgrade pending KB-S9 decision.** `weight_kg`, `height_cm`, and `bmi` are
+   confirmed available in `lifestyle_registry.yaml`. TyG-BMI is computable — see Decision 1
+   above for the upgrade decision. Until upgraded, TyG alone may underestimate risk in lean
+   individuals (~7% of MASLD cases).
 
 2. **Sex-specific ALT thresholds not modelled.** AASLD recommends different cut-offs for
    males and females. This signal applies sex-independent TyG thresholds. The female-specific
    ALT gap (25–33 IU/L) is not captured.
 
-3. **FIB-4 not computable.** Patient age is not in the SSOT. The gold-standard fibrosis
-   rule-out test cannot be used until this is resolved.
+3. **FIB-4 requires age derivation.** `date_of_birth` is a required field in `questionnaire.json`.
+   Age is derivable at runtime. FIB-4 is unblocked pending an engineering decision to implement
+   age calculation — see Decision 4 above.
 
 4. **TyG thresholds derived from predominantly Asian cohorts.** Many underlying studies used
    East Asian populations where triglyceride metabolism may differ. Performance in African

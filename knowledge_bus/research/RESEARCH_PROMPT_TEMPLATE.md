@@ -268,6 +268,37 @@ For each:
 
 ---
 
+## Platform Data Availability Reference
+
+When designing signals, the following inputs are available beyond blood biomarkers.
+
+**Lifestyle registry** (`backend/ssot/lifestyle_registry.yaml`):
+```
+height_cm, weight_kg, waist_circumference_cm
+systolic_bp, diastolic_bp, resting_heart_rate
+smoking_status, alcohol_units_per_week, sleep_hours
+```
+
+**Derived from lifestyle registry** (already computed):
+```
+bmi                  = weight_kg / (height_cm/100)²
+waist_to_height_ratio = waist_circumference_cm / height_cm
+```
+
+**Questionnaire** (`backend/ssot/questionnaire.json`):
+```
+date_of_birth        → age is derivable
+biological_sex       → sex-specific thresholds are possible at runtime
+ethnicity
+chronic_conditions, long_term_medications
+```
+
+When a signal requires anthropometric or lifestyle inputs, reference these canonical names.
+Do not assume they are absent — they are available through a separate SSOT path from blood
+biomarkers.
+
+---
+
 ## Append study topic below this line
 
 [Paste the relevant study topic block from study_topics_metabolic_core.md here]
