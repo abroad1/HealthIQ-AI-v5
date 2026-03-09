@@ -30,6 +30,7 @@ class AnalysisStartRequest(BaseModel):
     biomarkers: Dict[str, Any]
     user: Dict[str, Any]
     lab_origin: Optional[Dict[str, Any]] = None
+    questionnaire_data: Optional[Dict[str, Any]] = None
 
 class AnalysisStartResponse(BaseModel):
     """Response model for analysis start."""
@@ -123,7 +124,7 @@ async def start_analysis(request: AnalysisStartRequest):
         orchestrator = AnalysisOrchestrator()
         
         # Run the complete pipeline: scoring → clustering → insights
-        dto = orchestrator.run(normalized, request.user, assume_canonical=True)
+        dto = orchestrator.run(normalized, request.user, assume_canonical=True, questionnaire_data=request.questionnaire_data)
         
         # Store result in memory (replaces database persistence)
         lab_origin_meta = request.lab_origin or {
