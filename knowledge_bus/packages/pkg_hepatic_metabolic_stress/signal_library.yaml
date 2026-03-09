@@ -46,7 +46,7 @@ signals:
         - "albumin"
         - "platelets"
       derived_metrics:
-        - "derived.fib_4"
+        - "fib_4"
       signals: []
     thresholds:
       - threshold_id: "hepatic_stress_optimal"

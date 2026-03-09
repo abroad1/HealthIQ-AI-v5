@@ -20,9 +20,6 @@ PACKAGES_DIR = ROOT / "knowledge_bus" / "packages"
 
 CANONICAL_PATTERN = re.compile(r"^[a-z0-9_]+$")
 DEFERRED_METRICS_ALLOWLIST = {
-    "derived.homa_ir",
-    "derived.remnant_cholesterol",
-    "derived.fib_4",
 }
 
 METRIC_VALUE_KEYS = {
