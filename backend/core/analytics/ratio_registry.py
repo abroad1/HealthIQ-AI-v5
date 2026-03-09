@@ -26,7 +26,7 @@ TYG_SI_CONSTANT = 1596.0  # 88.5714 * 18.018; SI-native TyG constant (no runtime
 
 # All derived markers (order: lipid first, then others)
 DERIVED_IDS = (
-    "tc_hdl_ratio", "tg_hdl_ratio", "ldl_hdl_ratio", "non_hdl_cholesterol", "apoB_apoA1_ratio",
+    "tc_hdl_ratio", "tg_hdl_ratio", "ldl_hdl_ratio", "non_hdl_cholesterol", "apob_apoa1_ratio",
     "tyg_index", "tyg_bmi_index", "nlr", "sii",
     "urea_creatinine_ratio", "ast_alt_ratio", "testosterone_free_testosterone_ratio",
 )
@@ -38,7 +38,7 @@ _DERIVED_INPUTS: Dict[str, List[str]] = {
     "tg_hdl_ratio": ["triglycerides", "hdl_cholesterol"],
     "ldl_hdl_ratio": ["ldl_cholesterol", "hdl_cholesterol"],
     "non_hdl_cholesterol": ["total_cholesterol", "hdl_cholesterol"],
-    "apoB_apoA1_ratio": ["apob", "apoa1"],
+    "apob_apoa1_ratio": ["apob", "apoa1"],
     "tyg_index": ["triglycerides", "glucose"],
     "tyg_bmi_index": ["triglycerides", "glucose", "bmi"],
     "nlr": ["neutrophils", "lymphocytes"],
@@ -152,18 +152,18 @@ def compute(panel: Dict[str, Any]) -> Dict[str, Any]:
             "bounds_applied": False, "inputs_used": _DERIVED_INPUTS["non_hdl_cholesterol"],
         }
 
-    if _lab_supplied(panel, "apoB_apoA1_ratio"):
-        v = _numeric(panel["apoB_apoA1_ratio"])
-        result["derived"]["apoB_apoA1_ratio"] = {
+    if _lab_supplied(panel, "apob_apoa1_ratio"):
+        v = _numeric(panel["apob_apoa1_ratio"])
+        result["derived"]["apob_apoa1_ratio"] = {
             "value": v, "unit": "ratio", "source": "lab",
             "bounds_applied": False, "inputs_used": [],
         }
     else:
         apo_ratio = safe_ratio(apob_val, apoa1_val)
         if apo_ratio is not None:
-            result["derived"]["apoB_apoA1_ratio"] = {
+            result["derived"]["apob_apoa1_ratio"] = {
                 "value": round(apo_ratio, RATIO_PRECISION), "unit": "ratio", "source": "computed",
-                "bounds_applied": False, "inputs_used": _DERIVED_INPUTS["apoB_apoA1_ratio"],
+                "bounds_applied": False, "inputs_used": _DERIVED_INPUTS["apob_apoa1_ratio"],
             }
 
     # TyG index (SI-native formulation; no runtime unit conversion)

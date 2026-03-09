@@ -34,8 +34,8 @@ alt:
   - Alanine Aminotransferase
   - alanine_aminotransferase_alt_(venous)
   - alt
-apoB_apoA1_ratio:
-  canonical_id: apoB_apoA1_ratio
+apob_apoa1_ratio:
+  canonical_id: apob_apoa1_ratio
   aliases:
   - ApoB/ApoA1 Ratio
   - Apolipoprotein B to A1 Ratio
@@ -43,7 +43,7 @@ apoB_apoA1_ratio:
   - Apolipoprotein ratio
   - Apolipoprotein ratio (Venous)
   - Apolipoprotein ratio - venous
-  - apoB_apoA1_ratio
+  - apob_apoa1_ratio
   - apolipoprotein_ratio
 apoa1:
   canonical_id: apoa1

@@ -19,7 +19,7 @@ RATIO_OPERAND_PAIRS = {
     ("total_cholesterol", "hdl_cholesterol"): "tc_hdl_ratio",
     ("triglycerides", "hdl_cholesterol"): "tg_hdl_ratio",
     ("ldl_cholesterol", "hdl_cholesterol"): "ldl_hdl_ratio",
-    ("apob", "apoa1"): "apoB_apoA1_ratio",
+    ("apob", "apoa1"): "apob_apoa1_ratio",
     ("neutrophils", "lymphocytes"): "nlr",
     ("ast", "alt"): "ast_alt_ratio",
     ("urea", "creatinine"): "urea_creatinine_ratio",
