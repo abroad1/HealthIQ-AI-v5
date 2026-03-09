@@ -18,9 +18,9 @@ signals:
       normoglycaemic cohort) and Irace et al. (2022) Nutr Metab Cardiovasc Dis (at-risk
       boundary ~8.518, incident metabolic syndrome AUROC 0.837 vs HOMA-IR 0.680).
     system: "metabolic"
-    primary_metric: "derived.tyg_index"
+    primary_metric: "tyg_index"
     supporting_metrics:
-      - "derived.tg_hdl_ratio"
+      - "tg_hdl_ratio"
       - "derived.homa_ir"
     dependencies:
       biomarkers:
@@ -28,8 +28,8 @@ signals:
         - "triglycerides"
         - "hba1c"
       derived_metrics:
-        - "derived.tyg_index"
-        - "derived.tg_hdl_ratio"
+        - "tyg_index"
+        - "tg_hdl_ratio"
       signals: []
     optional_dependencies:
       biomarkers:
@@ -40,7 +40,7 @@ signals:
       signals: []
     thresholds:
       - threshold_id: "insulin_resistance_optimal"
-        metric_id: "derived.tyg_index"
+        metric_id: "tyg_index"
         operator: "<"
         value: 8.30
         severity: "optimal"
@@ -48,7 +48,7 @@ signals:
           Below the level where diabetes risk rose progressively in the Vascular-Metabolic CUN
           cohort (Navarro-González et al. 2016; n=4,820; AUC 0.75 in normoglycaemic subgroup).
       - threshold_id: "insulin_resistance_suboptimal"
-        metric_id: "derived.tyg_index"
+        metric_id: "tyg_index"
         operator: "range"
         min_value: 8.30
         max_value: 8.49
@@ -57,7 +57,7 @@ signals:
           Transition zone between the diabetes risk signal observed at TyG ~8.31 (CUN cohort)
           and the incident metabolic syndrome cut point at approximately 8.518 (Irace et al. 2022).
       - threshold_id: "insulin_resistance_at_risk"
-        metric_id: "derived.tyg_index"
+        metric_id: "tyg_index"
         operator: ">="
         value: 8.50
         severity: "at_risk"
@@ -87,10 +87,10 @@ signals:
       - "biological_age"
       - "brain_metabolic_resilience"
     output:
-      signal_value: "derived.tyg_index"
+      signal_value: "tyg_index"
       signal_state: "at_risk"
       confidence: "confidence_model_v1"
-      primary_metric: "derived.tyg_index"
+      primary_metric: "tyg_index"
       supporting_markers:
-        - "derived.tg_hdl_ratio"
+        - "tg_hdl_ratio"
         - "derived.homa_ir"

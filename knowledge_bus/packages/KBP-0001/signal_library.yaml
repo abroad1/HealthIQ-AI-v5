@@ -9,9 +9,9 @@ signals:
     name: "Insulin Resistance"
     description: "Detects early insulin resistance phenotype using a single primary metric with deterministic thresholds and explicit override rules."
     system: "metabolic"
-    primary_metric: "derived.tyg_index"
+    primary_metric: "tyg_index"
     supporting_metrics:
-      - "derived.tg_hdl_ratio"
+      - "tg_hdl_ratio"
       - "derived.homa_ir"
     dependencies:
       biomarkers:
@@ -20,8 +20,8 @@ signals:
         - "hba1c"
         - "insulin"
       derived_metrics:
-        - "derived.tyg_index"
-        - "derived.tg_hdl_ratio"
+        - "tyg_index"
+        - "tg_hdl_ratio"
         - "derived.homa_ir"
       signals: []
     optional_dependencies:
@@ -30,20 +30,20 @@ signals:
       signals: []
     thresholds:
       - threshold_id: "insulin_resistance_optimal"
-        metric_id: "derived.tyg_index"
+        metric_id: "tyg_index"
         operator: "<"
         value: 8.30
         severity: "optimal"
         description: "Primary metric indicates no elevated insulin resistance signal."
       - threshold_id: "insulin_resistance_suboptimal"
-        metric_id: "derived.tyg_index"
+        metric_id: "tyg_index"
         operator: "range"
         min_value: 8.30
         max_value: 8.49
         severity: "suboptimal"
         description: "Primary metric indicates early metabolic drift."
       - threshold_id: "insulin_resistance_at_risk"
-        metric_id: "derived.tyg_index"
+        metric_id: "tyg_index"
         operator: ">="
         value: 8.50
         severity: "at_risk"
@@ -68,21 +68,21 @@ signals:
       - "biological_age"
       - "brain_metabolic_resilience"
     output:
-      signal_value: "derived.tyg_index"
+      signal_value: "tyg_index"
       signal_state: "at_risk"
       confidence: "confidence_model_v1"
-      primary_metric: "derived.tyg_index"
+      primary_metric: "tyg_index"
       supporting_markers:
-        - "derived.tg_hdl_ratio"
+        - "tg_hdl_ratio"
         - "derived.homa_ir"
 
   - signal_id: "signal_lipid_transport_dysfunction"
     name: "Lipid Transport Dysfunction"
     description: "Represents lipid burden and transport imbalance using a single primary burden metric with supporting dyslipidaemia context."
     system: "lipid_transport"
-    primary_metric: "derived.non_hdl_cholesterol"
+    primary_metric: "non_hdl_cholesterol"
     supporting_metrics:
-      - "derived.tg_hdl_ratio"
+      - "tg_hdl_ratio"
       - "hdl_cholesterol"
       - "ldl"
     dependencies:
@@ -90,8 +90,8 @@ signals:
         - "hdl_cholesterol"
         - "ldl"
       derived_metrics:
-        - "derived.non_hdl_cholesterol"
-        - "derived.tg_hdl_ratio"
+        - "non_hdl_cholesterol"
+        - "tg_hdl_ratio"
       signals: []
     optional_dependencies:
       biomarkers: []
@@ -99,20 +99,20 @@ signals:
       signals: []
     thresholds:
       - threshold_id: "lipid_transport_optimal"
-        metric_id: "derived.non_hdl_cholesterol"
+        metric_id: "non_hdl_cholesterol"
         operator: "<"
         value: 3.4
         severity: "optimal"
         description: "Primary lipid burden metric within favourable range."
       - threshold_id: "lipid_transport_suboptimal"
-        metric_id: "derived.non_hdl_cholesterol"
+        metric_id: "non_hdl_cholesterol"
         operator: "range"
         min_value: 3.4
         max_value: 4.09
         severity: "suboptimal"
         description: "Primary lipid burden metric mildly elevated."
       - threshold_id: "lipid_transport_at_risk"
-        metric_id: "derived.non_hdl_cholesterol"
+        metric_id: "non_hdl_cholesterol"
         operator: ">="
         value: 4.1
         severity: "at_risk"
@@ -124,12 +124,12 @@ signals:
       - "metabolic_health"
       - "vascular_age"
     output:
-      signal_value: "derived.non_hdl_cholesterol"
+      signal_value: "non_hdl_cholesterol"
       signal_state: "at_risk"
       confidence: "confidence_model_v1"
-      primary_metric: "derived.non_hdl_cholesterol"
+      primary_metric: "non_hdl_cholesterol"
       supporting_markers:
-        - "derived.tg_hdl_ratio"
+        - "tg_hdl_ratio"
         - "hdl_cholesterol"
         - "ldl"
 
@@ -137,7 +137,7 @@ signals:
     name: "Hepatic Metabolic Stress"
     description: "Represents liver metabolic strain using a deterministic hepatic ratio with supporting context from liver enzyme burden and triglycerides."
     system: "hepatic"
-    primary_metric: "derived.ast_alt_ratio"
+    primary_metric: "ast_alt_ratio"
     supporting_metrics:
       - "alt"
       - "triglycerides"
@@ -146,7 +146,7 @@ signals:
         - "alt"
         - "triglycerides"
       derived_metrics:
-        - "derived.ast_alt_ratio"
+        - "ast_alt_ratio"
       signals: []
     optional_dependencies:
       biomarkers: []
@@ -154,20 +154,20 @@ signals:
       signals: []
     thresholds:
       - threshold_id: "hepatic_optimal"
-        metric_id: "derived.ast_alt_ratio"
+        metric_id: "ast_alt_ratio"
         operator: ">="
         value: 0.8
         severity: "optimal"
         description: "Primary hepatic ratio not showing metabolic stress pattern."
       - threshold_id: "hepatic_suboptimal"
-        metric_id: "derived.ast_alt_ratio"
+        metric_id: "ast_alt_ratio"
         operator: "range"
         min_value: 0.6
         max_value: 0.79
         severity: "suboptimal"
         description: "Primary hepatic ratio suggests early hepatic metabolic stress."
       - threshold_id: "hepatic_at_risk"
-        metric_id: "derived.ast_alt_ratio"
+        metric_id: "ast_alt_ratio"
         operator: "<"
         value: 0.6
         severity: "at_risk"
@@ -179,10 +179,10 @@ signals:
       - "metabolic_health"
       - "detoxification"
     output:
-      signal_value: "derived.ast_alt_ratio"
+      signal_value: "ast_alt_ratio"
       signal_state: "at_risk"
       confidence: "confidence_model_v1"
-      primary_metric: "derived.ast_alt_ratio"
+      primary_metric: "ast_alt_ratio"
       supporting_markers:
         - "alt"
         - "triglycerides"
@@ -193,12 +193,12 @@ signals:
     system: "inflammatory"
     primary_metric: "crp"
     supporting_metrics:
-      - "derived.nlr"
+      - "nlr"
     dependencies:
       biomarkers:
         - "crp"
       derived_metrics:
-        - "derived.nlr"
+        - "nlr"
       signals: []
     optional_dependencies:
       biomarkers: []
@@ -237,7 +237,7 @@ signals:
       confidence: "confidence_model_v1"
       primary_metric: "crp"
       supporting_markers:
-        - "derived.nlr"
+        - "nlr"
 
   - signal_id: "signal_vascular_inflammatory_stress"
     name: "Vascular Inflammatory Stress"
@@ -245,12 +245,12 @@ signals:
     system: "vascular"
     primary_metric: "crp"
     supporting_metrics:
-      - "derived.non_hdl_cholesterol"
+      - "non_hdl_cholesterol"
     dependencies:
       biomarkers:
         - "crp"
       derived_metrics:
-        - "derived.non_hdl_cholesterol"
+        - "non_hdl_cholesterol"
       signals: []
     optional_dependencies:
       biomarkers: []
@@ -288,13 +288,13 @@ signals:
       confidence: "confidence_model_v1"
       primary_metric: "crp"
       supporting_markers:
-        - "derived.non_hdl_cholesterol"
+        - "non_hdl_cholesterol"
 
   - signal_id: "signal_renal_metabolic_stress"
     name: "Renal Metabolic Stress"
     description: "Represents kidney stress associated with metabolic load using a primary renal ratio and supporting renal burden markers."
     system: "renal"
-    primary_metric: "derived.bun_creatinine_ratio"
+    primary_metric: "urea_creatinine_ratio"
     supporting_metrics:
       - "creatinine"
       - "uric_acid"
@@ -303,7 +303,7 @@ signals:
         - "creatinine"
         - "uric_acid"
       derived_metrics:
-        - "derived.bun_creatinine_ratio"
+        - "urea_creatinine_ratio"
       signals: []
     optional_dependencies:
       biomarkers: []
@@ -311,20 +311,20 @@ signals:
       signals: []
     thresholds:
       - threshold_id: "renal_optimal"
-        metric_id: "derived.bun_creatinine_ratio"
+        metric_id: "urea_creatinine_ratio"
         operator: "<"
         value: 20
         severity: "optimal"
         description: "Primary renal ratio not indicating elevated renal metabolic stress."
       - threshold_id: "renal_suboptimal"
-        metric_id: "derived.bun_creatinine_ratio"
+        metric_id: "urea_creatinine_ratio"
         operator: "range"
         min_value: 20
         max_value: 24.99
         severity: "suboptimal"
         description: "Primary renal ratio mildly elevated."
       - threshold_id: "renal_at_risk"
-        metric_id: "derived.bun_creatinine_ratio"
+        metric_id: "urea_creatinine_ratio"
         operator: ">="
         value: 25
         severity: "at_risk"
@@ -336,10 +336,10 @@ signals:
       - "metabolic_health"
       - "cardiovascular_risk"
     output:
-      signal_value: "derived.bun_creatinine_ratio"
+      signal_value: "urea_creatinine_ratio"
       signal_state: "at_risk"
       confidence: "confidence_model_v1"
-      primary_metric: "derived.bun_creatinine_ratio"
+      primary_metric: "urea_creatinine_ratio"
       supporting_markers:
         - "creatinine"
         - "uric_acid"
