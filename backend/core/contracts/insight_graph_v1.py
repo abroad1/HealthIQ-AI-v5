@@ -179,6 +179,11 @@ class InsightGraphV1(BaseModel):
         description="RelationshipRegistry schema hash for deterministic replay",
     )
 
+    # Sprint 14: Signal registry stamp + evaluated signal payload
+    signal_registry_version: Optional[str] = Field(default=None)
+    signal_registry_hash: Optional[str] = Field(default=None)
+    signal_results: List[Dict[str, Any]] = Field(default_factory=list)
+
     # Sprint 10: Relationship detections (safe status/score-derived, no raw values)
     relationships: List[RelationshipDetection] = Field(default_factory=list)
 

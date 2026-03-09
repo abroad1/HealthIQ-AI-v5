@@ -98,3 +98,31 @@ def test_relationship_registry_load_error_soft_fails_in_fixture_mode(monkeypatch
     assert graph.relationships == []
     assert graph.relationship_registry_version is None
     assert graph.relationship_registry_hash is None
+
+
+def test_builder_carries_signal_registry_and_results_fields():
+    graph = build_insight_graph_v1(
+        analysis_id="sig-1",
+        scoring_result={},
+        clustering_result={},
+        signal_registry_version="abc123def456",
+        signal_registry_hash="abc123def456",
+        signal_results=[{"signal_id": "signal_alpha", "signal_state": "suboptimal"}],
+    )
+    assert graph.signal_registry_version == "abc123def456"
+    assert graph.signal_registry_hash == "abc123def456"
+    assert graph.signal_results == [{"signal_id": "signal_alpha", "signal_state": "suboptimal"}]
+
+
+def test_builder_defaults_signal_results_to_empty_list():
+    graph = build_insight_graph_v1(
+        analysis_id="sig-2",
+        scoring_result={},
+        clustering_result={},
+        signal_registry_version=None,
+        signal_registry_hash=None,
+        signal_results=None,
+    )
+    assert graph.signal_registry_version is None
+    assert graph.signal_registry_hash is None
+    assert graph.signal_results == []
