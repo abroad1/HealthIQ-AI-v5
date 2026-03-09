@@ -29,6 +29,7 @@ from core.insights.synthesis import InsightSynthesizer
 from core.analytics.primitives import frontend_status_from_value_and_range
 from core.analytics.criticality import evaluate_criticality
 from core.analytics.ratio_registry import RatioRegistry, DERIVED_IDS, compute
+from core.analytics.signal_evaluator import SignalRegistry, SignalEvaluator
 from core.clustering.cluster_schema_loader import get_cluster_schema_version_stamp
 from core.analytics.insight_graph_builder import build_insight_graph_v1
 from core.analytics.replay_manifest_builder import build_replay_manifest_v1
@@ -97,6 +98,8 @@ class AnalysisOrchestrator:
         self.questionnaire_validator = create_questionnaire_validator()
         self.clustering_engine = ClusterEngineV2()
         self.insight_synthesizer = InsightSynthesizer(allow_llm=allow_llm)
+        self.signal_registry = SignalRegistry()
+        self.signal_evaluator = SignalEvaluator(self.signal_registry)
     
     def create_analysis_context(
         self,
@@ -976,6 +979,20 @@ class AnalysisOrchestrator:
                     "inputs_used": inputs_used if source == "computed" else None,
                 }
 
+            # Step 1.6: Evaluate repository-defined signals from biomarkers + derived metrics
+            signal_biomarkers = {k: v for k, v in simple_biomarkers.items() if k != "age"}
+            signal_derived = {
+                rid: data["value"]
+                for rid, data in derived_ratios_meta["ratios"].items()
+                if isinstance(data, dict) and isinstance(data.get("value"), (int, float))
+            }
+            signal_results_raw = self.signal_evaluator.evaluate_all(
+                signal_biomarkers,
+                signal_derived,
+                lab_ranges=input_reference_ranges,
+            )
+            signal_results_serialized = [r.model_dump() for r in signal_results_raw]
+
             # Step 2: Score biomarkers using the scoring engine with input reference ranges
             logger.info("Step 2: Scoring biomarkers")
             scoring_result = self.score_biomarkers(
@@ -1022,6 +1039,9 @@ class AnalysisOrchestrator:
                 context=context,
                 lab_origin=user.get("lab_origin") if isinstance(user.get("lab_origin"), dict) else None,
                 unit_normalisation_meta=unit_meta,
+                signal_registry_version=self.signal_registry.version,
+                signal_registry_hash=self.signal_registry.package_hash,
+                signal_results=signal_results_serialized,
             )
 
             # Step 4.65: v5.3 Sprint 1 longitudinal state transitions (code-only)

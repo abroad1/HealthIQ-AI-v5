@@ -199,6 +199,9 @@ def build_insight_graph_v1(
     context: Any = None,
     lab_origin: Optional[Dict[str, Any]] = None,
     unit_normalisation_meta: Optional[Dict[str, Any]] = None,
+    signal_registry_version: Optional[str] = None,
+    signal_registry_hash: Optional[str] = None,
+    signal_results: Optional[List[Dict[str, Any]]] = None,
 ) -> InsightGraphV1:
     """
     Build InsightGraph_v1 from orchestrator result structures.
@@ -412,6 +415,9 @@ def build_insight_graph_v1(
         relationship_registry_hash=(
             relationship_stamp.relationship_registry_hash if relationship_stamp else None
         ),
+        signal_registry_version=signal_registry_version,
+        signal_registry_hash=signal_registry_hash,
+        signal_results=signal_results if signal_results is not None else [],
         relationships=relationship_detections,
         biomarker_context_version=context_stamp.biomarker_context_version,
         biomarker_context_hash=context_stamp.biomarker_context_hash,
