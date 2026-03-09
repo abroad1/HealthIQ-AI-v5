@@ -89,6 +89,19 @@ biomarkers:
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.5
+  tyg_index:
+    aliases: []
+    unit: ratio
+    description: Triglyceride-Glucose index (proxy for insulin resistance and metabolic dysfunction)
+    category: metabolic
+    data_type: numeric
+    system: metabolic
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.7
   ldl_hdl_ratio:
     aliases: []
     unit: ratio
@@ -430,9 +443,9 @@ biomarkers:
     aliases: []
     unit: ratio
     description: Fibrosis-4 index (age x AST / (platelets x sqrt(ALT)))
-    category: organ
+    category: liver
     data_type: numeric
-    system: organ
+    system: liver
     clusters: []
     roles: []
     key_risks_when_high: []

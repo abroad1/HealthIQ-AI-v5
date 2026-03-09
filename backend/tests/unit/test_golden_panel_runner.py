@@ -7,6 +7,7 @@ from datetime import date
 from pathlib import Path
 
 import pytest
+import yaml
 from core.analytics.ratio_registry import DERIVED_IDS
 from core.canonical.normalize import normalize_biomarkers_with_metadata
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
@@ -43,11 +44,32 @@ def _prepare_unit_normalised(biomarkers: dict) -> dict:
     return normalized
 
 
+def _load_ssot_biomarkers() -> dict:
+    ssot_path = Path(__file__).parent.parent.parent / "ssot" / "biomarkers.yaml"
+    payload = yaml.safe_load(ssot_path.read_text(encoding="utf-8")) or {}
+    return payload.get("biomarkers", {}) if isinstance(payload, dict) else {}
+
+
 def test_derived_ratio_registry_namespace_is_canonical():
     assert "homa_ir" in DERIVED_IDS
     assert "fib_4" in DERIVED_IDS
     assert "remnant_cholesterol" in DERIVED_IDS
     assert all("." not in rid for rid in DERIVED_IDS)
+
+
+def test_ssot_contains_tyg_index_with_metabolic_system():
+    biomarkers = _load_ssot_biomarkers()
+    entry = biomarkers.get("tyg_index")
+    assert isinstance(entry, dict)
+    assert entry.get("system") == "metabolic"
+
+
+def test_ssot_fib_4_system_is_liver_not_organ():
+    biomarkers = _load_ssot_biomarkers()
+    entry = biomarkers.get("fib_4")
+    assert isinstance(entry, dict)
+    assert entry.get("system") == "liver"
+    assert entry.get("system") != "organ"
 
 
 def test_orchestrator_injects_age_from_valid_questionnaire_dob(monkeypatch):
@@ -228,6 +250,52 @@ def test_regression_golden_derived_markers_have_scored_ranges(tmp_path):
         assert ref.get("min") is not None
         assert ref.get("max") is not None
         assert str(ref.get("source", "")).lower() == "ratio_registry"
+
+
+def test_standard_golden_panel_exposes_expected_derived_markers(tmp_path):
+    fixture = Path(__file__).parent.parent / "fixtures" / "golden_panel_160.json"
+    _, analysis_result = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path,
+        run_id="unit-golden-kb-s13-derived-markers",
+        write_narrative=False,
+    )
+    derived = (analysis_result or {}).get("derived_markers", {}).get("derived", {})
+    assert "homa_ir" in derived
+    assert "remnant_cholesterol" in derived
+    assert "tyg_index" in derived
+
+
+def test_orchestrator_dob_enables_fib4_and_no_unmapped_age_warning(capsys):
+    prepared = _prepare_unit_normalised(
+        {
+            "glucose": {"value": 5.6, "unit": "mmol/L"},
+            "insulin": {"value": 10.0, "unit": "μU/mL"},
+            "triglycerides": {"value": 1.8, "unit": "mmol/L"},
+            "total_cholesterol": {"value": 5.2, "unit": "mmol/L"},
+            "ldl_cholesterol": {"value": 3.0, "unit": "mmol/L"},
+            "hdl_cholesterol": {"value": 1.2, "unit": "mmol/L"},
+            "ast": {"value": 40.0, "unit": "U/L"},
+            "alt": {"value": 20.0, "unit": "U/L"},
+            "platelets": {"value": 200.0, "unit": "K/μL"},
+        }
+    )
+    dto = AnalysisOrchestrator().run(
+        prepared,
+        {"user_id": "00000000-0000-0000-0000-000000000113", "age": 35, "gender": "female"},
+        assume_canonical=True,
+        questionnaire_data={"date_of_birth": "1990-01-01"},
+    )
+    derived = (dto.derived_markers or {}).get("derived", {})
+    assert "fib_4" in derived
+    assert "homa_ir" in derived
+    assert "remnant_cholesterol" in derived
+    assert "tyg_index" in derived
+
+    captured = capsys.readouterr()
+    combined = f"{captured.out}\n{captured.err}"
+    assert "unmapped_age" not in combined
+    assert "Warning: Unmapped biomarker keys" not in combined
 
 
 def test_regression_golden_hashes_are_deterministic_with_derived_ranges(tmp_path):
