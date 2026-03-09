@@ -308,4 +308,22 @@ biomarkers.
 
 ## Append study topic below this line
 
-[Paste the relevant study topic block from study_topics_metabolic_core.md here]
+4. Chronic Inflammation–Metabolism Crosstalk
+
+Metabolic dysfunction and inflammation reinforce each other.
+
+Low-grade inflammation accelerates:
+
+insulin resistance
+
+vascular damage
+
+metabolic ageing
+
+Research signals:
+
+CRP
+neutrophil-to-lymphocyte ratio
+white cell distribution
+
+This study should identify chronic inflammatory load interacting with metabolism.
