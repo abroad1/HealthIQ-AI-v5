@@ -375,7 +375,20 @@ def run_finish(repo_root: Path) -> int:
         print(porcelain, file=sys.stderr)
         return 2
 
-    success = gate_proc.returncode == 0 and evidence_ok
+    print("[Namespace Validator] Checking metric namespace consistency...")
+    try:
+        validator_proc = subprocess.run(
+            [sys.executable, "backend/scripts/validate_metric_namespace.py"],
+            cwd=repo_root,
+            capture_output=False,
+            check=False,
+        )
+    except OSError as exc:
+        print(f"Namespace validator invocation failed: {exc}", file=sys.stderr)
+        return 1
+
+    validator_ok = validator_proc.returncode == 0
+    success = gate_proc.returncode == 0 and evidence_ok and validator_ok
     terminal_status = "COMPLETE" if success else "FAILED"
 
     try:
