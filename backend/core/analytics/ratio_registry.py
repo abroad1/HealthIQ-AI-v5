@@ -7,7 +7,7 @@ All derived ratios computed here; insights must not compute ratios locally.
 Runs after unit normalisation; uses base-unit values only.
 """
 
-from math import log
+from math import log, sqrt
 from typing import Dict, Optional, Any, List
 
 from core.analytics.primitives import safe_ratio
@@ -27,7 +27,7 @@ TYG_SI_CONSTANT = 1596.0  # 88.5714 * 18.018; SI-native TyG constant (no runtime
 # All derived markers (order: lipid first, then others)
 DERIVED_IDS = (
     "tc_hdl_ratio", "tg_hdl_ratio", "ldl_hdl_ratio", "non_hdl_cholesterol", "apob_apoa1_ratio",
-    "tyg_index", "tyg_bmi_index", "nlr", "sii",
+    "remnant_cholesterol", "homa_ir", "fib_4", "tyg_index", "tyg_bmi_index", "nlr", "sii",
     "urea_creatinine_ratio", "ast_alt_ratio", "testosterone_free_testosterone_ratio",
 )
 RATIO_IDS = DERIVED_IDS  # Backwards compatibility
@@ -39,6 +39,9 @@ _DERIVED_INPUTS: Dict[str, List[str]] = {
     "ldl_hdl_ratio": ["ldl_cholesterol", "hdl_cholesterol"],
     "non_hdl_cholesterol": ["total_cholesterol", "hdl_cholesterol"],
     "apob_apoa1_ratio": ["apob", "apoa1"],
+    "remnant_cholesterol": ["total_cholesterol", "ldl_cholesterol", "hdl_cholesterol"],
+    "homa_ir": ["glucose", "insulin"],
+    "fib_4": ["age", "ast", "platelets", "alt"],
     "tyg_index": ["triglycerides", "glucose"],
     "tyg_bmi_index": ["triglycerides", "glucose", "bmi"],
     "nlr": ["neutrophils", "lymphocytes"],
@@ -94,6 +97,7 @@ def compute(panel: Dict[str, Any]) -> Dict[str, Any]:
     hdl = _numeric(panel.get("hdl_cholesterol"))
     ldl = _numeric(panel.get("ldl_cholesterol"))
     tg = _numeric(panel.get("triglycerides"))
+    glucose = _numeric(panel.get("glucose"))
     apob_val = _numeric(panel.get("apob"))
     apoa1_val = _numeric(panel.get("apoa1"))
 
@@ -166,8 +170,60 @@ def compute(panel: Dict[str, Any]) -> Dict[str, Any]:
                 "bounds_applied": False, "inputs_used": _DERIVED_INPUTS["apob_apoa1_ratio"],
             }
 
+    if _lab_supplied(panel, "remnant_cholesterol"):
+        v = _numeric(panel["remnant_cholesterol"])
+        result["derived"]["remnant_cholesterol"] = {
+            "value": v, "unit": "mmol/L", "source": "lab",
+            "bounds_applied": False, "inputs_used": [],
+        }
+    elif tc is not None and ldl is not None and hdl is not None:
+        remnant = tc - ldl - hdl
+        result["derived"]["remnant_cholesterol"] = {
+            "value": round(max(remnant, 0.0), NON_HDL_PRECISION), "unit": "mmol/L", "source": "computed",
+            "bounds_applied": False, "inputs_used": _DERIVED_INPUTS["remnant_cholesterol"],
+        }
+
+    insulin = _numeric(panel.get("insulin"))
+    if _lab_supplied(panel, "homa_ir"):
+        v = _numeric(panel["homa_ir"])
+        result["derived"]["homa_ir"] = {
+            "value": v, "unit": "ratio", "source": "lab",
+            "bounds_applied": False, "inputs_used": [],
+        }
+    elif glucose is not None and insulin is not None:
+        homa = (glucose * insulin) / 22.5
+        result["derived"]["homa_ir"] = {
+            "value": round(homa, RATIO_PRECISION), "unit": "ratio", "source": "computed",
+            "bounds_applied": False, "inputs_used": _DERIVED_INPUTS["homa_ir"],
+        }
+
+    if _lab_supplied(panel, "fib_4"):
+        v = _numeric(panel["fib_4"])
+        result["derived"]["fib_4"] = {
+            "value": v, "unit": "ratio", "source": "lab",
+            "bounds_applied": False, "inputs_used": [],
+        }
+    else:
+        # TODO(KB-S10): orchestrator must inject questionnaire-derived age for deterministic FIB-4.
+        ast_for_fib4 = _numeric(panel.get("ast"))
+        alt_for_fib4 = _numeric(panel.get("alt"))
+        platelets_for_fib4 = _numeric(panel.get("platelets"))
+        age = _numeric(panel.get("age"))
+        if (
+            age is not None
+            and ast_for_fib4 is not None
+            and platelets_for_fib4 is not None
+            and alt_for_fib4 is not None
+            and platelets_for_fib4 > 0
+            and alt_for_fib4 > 0
+        ):
+            fib4 = (age * ast_for_fib4) / (platelets_for_fib4 * sqrt(alt_for_fib4))
+            result["derived"]["fib_4"] = {
+                "value": round(fib4, RATIO_PRECISION), "unit": "ratio", "source": "computed",
+                "bounds_applied": False, "inputs_used": _DERIVED_INPUTS["fib_4"],
+            }
+
     # TyG index (SI-native formulation; no runtime unit conversion)
-    glucose = _numeric(panel.get("glucose"))
     if _lab_supplied(panel, "tyg_index"):
         v = _numeric(panel["tyg_index"])
         result["derived"]["tyg_index"] = {

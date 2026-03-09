@@ -21,7 +21,7 @@ signals:
     primary_metric: "tyg_index"
     supporting_metrics:
       - "tg_hdl_ratio"
-      - "derived.homa_ir"
+      - "homa_ir"
     dependencies:
       biomarkers:
         - "glucose"
@@ -36,7 +36,7 @@ signals:
         - "insulin"
         - "hdl_cholesterol"
       derived_metrics:
-        - "derived.homa_ir"
+        - "homa_ir"
       signals: []
     thresholds:
       - threshold_id: "insulin_resistance_optimal"
@@ -93,4 +93,4 @@ signals:
       primary_metric: "tyg_index"
       supporting_markers:
         - "tg_hdl_ratio"
-        - "derived.homa_ir"
+        - "homa_ir"

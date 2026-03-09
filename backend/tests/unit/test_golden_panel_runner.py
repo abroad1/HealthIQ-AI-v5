@@ -5,6 +5,7 @@ v5.3 Sprint 6 - Unit tests for GoldenPanelRunner_v1.
 import json
 from pathlib import Path
 
+from core.analytics.ratio_registry import DERIVED_IDS
 from core.canonical.normalize import normalize_biomarkers_with_metadata
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 from core.units.registry import UNIT_REGISTRY_VERSION, apply_unit_normalisation
@@ -38,6 +39,13 @@ def _prepare_unit_normalised(biomarkers: dict) -> dict:
         "unit_registry_version": UNIT_REGISTRY_VERSION,
     }
     return normalized
+
+
+def test_derived_ratio_registry_namespace_is_canonical():
+    assert "homa_ir" in DERIVED_IDS
+    assert "fib_4" in DERIVED_IDS
+    assert "remnant_cholesterol" in DERIVED_IDS
+    assert all("." not in rid for rid in DERIVED_IDS)
 
 
 def test_golden_panel_runner_writes_snapshot_pack_with_required_stamps(tmp_path):
