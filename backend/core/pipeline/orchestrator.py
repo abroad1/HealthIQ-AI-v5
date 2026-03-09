@@ -403,8 +403,10 @@ class AnalysisOrchestrator:
                 stress_level=lifestyle_data.get("stress_level", "average")
             )
         
+        # Exclude helper key injected for derived computation; it's not a canonical biomarker.
+        scoring_biomarkers = {k: v for k, v in biomarkers.items() if k != "age"}
         # Normalize biomarkers first
-        normalized_biomarkers, unmapped = self.normalizer.normalize_biomarkers(biomarkers)
+        normalized_biomarkers, unmapped = self.normalizer.normalize_biomarkers(scoring_biomarkers)
         
         # Score biomarkers with input reference ranges
         scoring_result = self.scoring_engine.score_biomarkers(
