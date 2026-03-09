@@ -426,6 +426,19 @@ biomarkers:
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.6
+  fib_4:
+    aliases: []
+    unit: ratio
+    description: Fibrosis-4 index (age x AST / (platelets x sqrt(ALT)))
+    category: organ
+    data_type: numeric
+    system: organ
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.7
   crp:
     aliases:
     - c_reactive_protein
@@ -783,6 +796,19 @@ biomarkers:
     - iron_status
     - b12_status
     clinical_weight: 0.3
+  remnant_cholesterol:
+    aliases: []
+    unit: mmol/L
+    description: Remnant cholesterol (TC - LDL - HDL)
+    category: cardiovascular
+    data_type: numeric
+    system: cardiovascular
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
+    clinical_weight: 0.6
   mpv:
     unit: fL
     description: Mean platelet volume - average platelet size
@@ -1380,6 +1406,19 @@ biomarkers:
     - renal_function
     - age
     - genetics
+    clinical_weight: 0.7
+  homa_ir:
+    aliases: []
+    unit: ratio
+    description: Homeostatic Model Assessment for Insulin Resistance
+    category: metabolic
+    data_type: numeric
+    system: metabolic
+    clusters: []
+    roles: []
+    key_risks_when_high: []
+    key_risks_when_low: []
+    known_modifiers: []
     clinical_weight: 0.7
   hba1c_pct:
     unit: '%'
