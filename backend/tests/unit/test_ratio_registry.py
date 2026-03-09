@@ -40,6 +40,43 @@ class TestRatioRegistryCompute:
         out = compute(panel)
         assert _get_val(out, "non_hdl_cholesterol") == pytest.approx(150.0, abs=0.01)
 
+    def test_remnant_cholesterol_computed_and_clamped(self):
+        panel = {
+            "total_cholesterol": 5.2,
+            "ldl_cholesterol": 3.0,
+            "hdl_cholesterol": 1.3,
+        }
+        out = compute(panel)
+        assert _get_val(out, "remnant_cholesterol") == pytest.approx(0.9, abs=0.01)
+        assert out["derived"]["remnant_cholesterol"]["source"] == "computed"
+
+        panel_negative = {
+            "total_cholesterol": 3.0,
+            "ldl_cholesterol": 2.0,
+            "hdl_cholesterol": 1.5,
+        }
+        out_negative = compute(panel_negative)
+        assert _get_val(out_negative, "remnant_cholesterol") == pytest.approx(0.0, abs=0.01)
+
+    def test_homa_ir_computed_and_missing_input_omitted(self):
+        panel = {"glucose": 5.6, "insulin": 10.0}
+        out = compute(panel)
+        assert _get_val(out, "homa_ir") == pytest.approx((5.6 * 10.0) / 22.5, abs=0.001)
+        assert out["derived"]["homa_ir"]["source"] == "computed"
+
+        out_missing = compute({"glucose": 5.6})
+        assert "homa_ir" not in out_missing.get("derived", {})
+
+    def test_fib_4_computed_and_missing_age_omitted(self):
+        panel = {"age": 50.0, "ast": 40.0, "alt": 20.0, "platelets": 200.0}
+        out = compute(panel)
+        expected = (50.0 * 40.0) / (200.0 * (20.0 ** 0.5))
+        assert _get_val(out, "fib_4") == pytest.approx(expected, abs=0.001)
+        assert out["derived"]["fib_4"]["source"] == "computed"
+
+        out_missing = compute({"ast": 40.0, "alt": 20.0, "platelets": 200.0})
+        assert "fib_4" not in out_missing.get("derived", {})
+
     def test_apoB_apoA1_when_both_present(self):
         panel = {"apob": 100.0, "apoa1": 125.0}
         out = compute(panel)
@@ -168,6 +205,17 @@ class TestInsightNoLocalRatioDivision:
         text = path.read_text(encoding="utf-8")
         assert "bun / creatinine" not in text
         assert "bun / creat" not in text
+
+
+class TestDerivedNamespaceCompliance:
+    """Derived identifiers must remain canonical and unprefixed."""
+
+    def test_no_derived_prefix_in_registry_ids(self):
+        assert "homa_ir" in DERIVED_IDS
+        assert "fib_4" in DERIVED_IDS
+        assert "remnant_cholesterol" in DERIVED_IDS
+        assert all("." not in rid for rid in DERIVED_IDS)
+        assert all(not rid.startswith("derived") for rid in DERIVED_IDS)
 
 
 class TestUnitNormalisationInvariant:

@@ -27,7 +27,7 @@ signals:
     primary_metric: "non_hdl_cholesterol"
     supporting_metrics:
       - "tg_hdl_ratio"
-      - "derived.remnant_cholesterol"
+      - "remnant_cholesterol"
       - "triglycerides"
     dependencies:
       biomarkers:
@@ -42,7 +42,7 @@ signals:
       biomarkers:
         - "ldl_cholesterol"
       derived_metrics:
-        - "derived.remnant_cholesterol"
+        - "remnant_cholesterol"
       signals: []
     thresholds:
       - threshold_id: "lipid_transport_optimal"
@@ -99,5 +99,5 @@ signals:
       primary_metric: "non_hdl_cholesterol"
       supporting_markers:
         - "tg_hdl_ratio"
-        - "derived.remnant_cholesterol"
+        - "remnant_cholesterol"
         - "triglycerides"
