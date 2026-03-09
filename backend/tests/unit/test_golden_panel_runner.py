@@ -3,8 +3,10 @@ v5.3 Sprint 6 - Unit tests for GoldenPanelRunner_v1.
 """
 
 import json
+from datetime import date
 from pathlib import Path
 
+import pytest
 from core.analytics.ratio_registry import DERIVED_IDS
 from core.canonical.normalize import normalize_biomarkers_with_metadata
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
@@ -46,6 +48,56 @@ def test_derived_ratio_registry_namespace_is_canonical():
     assert "fib_4" in DERIVED_IDS
     assert "remnant_cholesterol" in DERIVED_IDS
     assert all("." not in rid for rid in DERIVED_IDS)
+
+
+def test_orchestrator_injects_age_from_valid_questionnaire_dob(monkeypatch):
+    captured = {}
+
+    def _spy_compute(panel):
+        captured["age"] = panel.get("age")
+        return {"registry_version": "test", "derived": {}}
+
+    monkeypatch.setattr("core.pipeline.orchestrator.compute", _spy_compute)
+    prepared = _prepare_unit_normalised(
+        {
+            "glucose": {"value": 95.0, "unit": "mg/dL"},
+            "triglycerides": {"value": 140.0, "unit": "mg/dL"},
+        }
+    )
+    dob = "1990-01-01"
+    AnalysisOrchestrator().run(
+        prepared,
+        {"user_id": "00000000-0000-0000-0000-000000000111", "age": 35, "gender": "female"},
+        assume_canonical=True,
+        questionnaire_data={"date_of_birth": dob},
+    )
+    expected_age = int((date.today() - date.fromisoformat(dob)).days / 365.25)
+    assert captured.get("age") == expected_age
+    assert isinstance(captured.get("age"), int)
+
+
+@pytest.mark.parametrize("dob_value", ["not-a-date", None])
+def test_orchestrator_invalid_or_missing_dob_injects_none_without_exception(monkeypatch, dob_value):
+    captured = {}
+
+    def _spy_compute(panel):
+        captured["age"] = panel.get("age")
+        return {"registry_version": "test", "derived": {}}
+
+    monkeypatch.setattr("core.pipeline.orchestrator.compute", _spy_compute)
+    prepared = _prepare_unit_normalised(
+        {
+            "glucose": {"value": 95.0, "unit": "mg/dL"},
+            "triglycerides": {"value": 140.0, "unit": "mg/dL"},
+        }
+    )
+    AnalysisOrchestrator().run(
+        prepared,
+        {"user_id": "00000000-0000-0000-0000-000000000112", "age": 35, "gender": "female"},
+        assume_canonical=True,
+        questionnaire_data={"date_of_birth": dob_value},
+    )
+    assert captured.get("age") is None
 
 
 def test_golden_panel_runner_writes_snapshot_pack_with_required_stamps(tmp_path):
