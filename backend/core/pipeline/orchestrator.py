@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import subprocess
+from datetime import date
 from typing import Dict, Any, List, Mapping, Optional, Tuple
 
 # Reserved key for unit-normalisation invariant (Sprint 5). Set by callers after apply_unit_normalisation.
@@ -763,6 +764,7 @@ class AnalysisOrchestrator:
         *,
         assume_canonical: bool = False,
         lifestyle_inputs: Optional[Dict[str, Any]] = None,
+        questionnaire_data: Optional[Dict[str, Any]] = None,
     ):
         """
         Run the complete analysis pipeline: scoring → clustering → insights.
@@ -855,6 +857,13 @@ class AnalysisOrchestrator:
 
             # Step 1.5: Compute derived markers (RatioRegistry; lab-supplied wins; never overwrite)
             logger.info("Step 1.5: Computing derived markers")
+            # KB-S11: inject age from questionnaire date_of_birth for fib_4 computation
+            dob = (questionnaire_data or {}).get("date_of_birth")
+            try:
+                age = int((date.today() - date.fromisoformat(dob)).days / 365.25) if dob else None
+            except (ValueError, TypeError):
+                age = None
+            simple_biomarkers["age"] = age
             derived_result = compute(simple_biomarkers)
             derived_ratios_meta = {
                 "ratio_registry_version": derived_result.get("registry_version", RatioRegistry.version),
@@ -981,6 +990,7 @@ class AnalysisOrchestrator:
                 analysis_id=analysis_id,
                 raw_biomarkers=filtered_biomarkers,
                 user_data=user,
+                questionnaire_data=questionnaire_data,
                 assume_canonical=True
             )
             
