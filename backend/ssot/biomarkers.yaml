@@ -115,7 +115,7 @@ biomarkers:
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.6
-  apoB_apoA1_ratio:
+  apob_apoa1_ratio:
     aliases: []
     unit: ratio
     description: ApoB / ApoA1 ratio

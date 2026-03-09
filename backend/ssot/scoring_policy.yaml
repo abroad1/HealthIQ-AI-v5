@@ -263,7 +263,7 @@ derived_ratios:
   - "tg_hdl_ratio"
   - "ldl_hdl_ratio"
   - "chol_hdl_ratio"
-  - "apoB_apoA1_ratio"
+  - "apob_apoa1_ratio"
   - "non_hdl_cholesterol"
   - "urea_creatinine_ratio"
   - "testosterone_free_testosterone_ratio"
@@ -293,7 +293,7 @@ derived_ratio_policy_bounds:
     unit: "mmol/L"
     source: "healthiq_policy"
     notes: "Computed as total_cholesterol - hdl_cholesterol in mmol/L basis."
-  apoB_apoA1_ratio:
+  apob_apoa1_ratio:
     min: 0.0
     max: 1.5
     unit: "ratio"

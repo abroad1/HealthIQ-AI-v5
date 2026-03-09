@@ -43,12 +43,12 @@ class TestRatioRegistryCompute:
     def test_apoB_apoA1_when_both_present(self):
         panel = {"apob": 100.0, "apoa1": 125.0}
         out = compute(panel)
-        assert _get_val(out, "apoB_apoA1_ratio") == pytest.approx(0.8, abs=0.001)
+        assert _get_val(out, "apob_apoa1_ratio") == pytest.approx(0.8, abs=0.001)
 
     def test_apoB_apoA1_missing_omitted(self):
         panel = {"apob": 100.0}
         out = compute(panel)
-        assert "apoB_apoA1_ratio" not in out.get("derived", {})
+        assert "apob_apoa1_ratio" not in out.get("derived", {})
 
     def test_missing_inputs_omitted(self):
         panel = {}

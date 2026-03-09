@@ -107,7 +107,7 @@ biomarkers:
     system: cardiovascular
     risk_direction: HIGH_IS_RISK
     weight: 0.6
-  apoB_apoA1_ratio:
+  apob_apoa1_ratio:
     system: cardiovascular
     risk_direction: HIGH_IS_RISK
     weight: 0.6

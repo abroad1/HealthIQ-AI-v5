@@ -157,7 +157,7 @@ def test_regression_golden_derived_markers_have_scored_ranges(tmp_path):
     )
     assert (run_dir / "analysis_result.json").exists()
     by_name = _biomarker_rows_by_name(analysis_result if isinstance(analysis_result, dict) else {})
-    for biomarker_name in ("non_hdl_cholesterol", "apoB_apoA1_ratio", "urea_creatinine_ratio"):
+    for biomarker_name in ("non_hdl_cholesterol", "apob_apoa1_ratio", "urea_creatinine_ratio"):
         row = by_name.get(biomarker_name)
         assert row is not None, f"Missing biomarker row: {biomarker_name}"
         assert row.get("status") != "unknown", f"{biomarker_name} remains unscored"
@@ -256,7 +256,7 @@ def test_derived_ratio_uses_policy_only_when_lab_range_missing():
         {"user_id": "00000000-0000-0000-0000-000000000018", "age": 40, "gender": "female"},
         assume_canonical=True,
     )
-    row = next((b for b in dto.biomarkers if b.biomarker_name == "apoB_apoA1_ratio"), None)
+    row = next((b for b in dto.biomarkers if b.biomarker_name == "apob_apoa1_ratio"), None)
     assert row is not None
     assert row.status != "unknown"
     assert row.range_source is None
@@ -268,7 +268,7 @@ def test_derived_ratio_uses_policy_only_when_lab_range_missing():
 def test_derived_ratio_lab_range_precedence_over_policy():
     prepared = _prepare_unit_normalised(
         {
-            "apoB_apoA1_ratio": {
+            "apob_apoa1_ratio": {
                 "value": 1.1,
                 "unit": "ratio",
                 "reference_range": {"min": 0.0, "max": 2.0, "unit": "ratio", "source": "lab"},
@@ -280,7 +280,7 @@ def test_derived_ratio_lab_range_precedence_over_policy():
         {"user_id": "00000000-0000-0000-0000-000000000015", "age": 40, "gender": "female"},
         assume_canonical=True,
     )
-    row = next((b for b in dto.biomarkers if b.biomarker_name == "apoB_apoA1_ratio"), None)
+    row = next((b for b in dto.biomarkers if b.biomarker_name == "apob_apoa1_ratio"), None)
     assert row is not None
     assert row.range_source == "lab"
     assert row.interpretation == "Scored using lab reference range"
