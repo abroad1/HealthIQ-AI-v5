@@ -77,6 +77,10 @@ class TestRatioRegistryCompute:
         out_missing = compute({"ast": 40.0, "alt": 20.0, "platelets": 200.0})
         assert "fib_4" not in out_missing.get("derived", {})
 
+    def test_fib_4_absent_when_age_is_none(self):
+        out = compute({"age": None, "ast": 40.0, "alt": 20.0, "platelets": 200.0})
+        assert "fib_4" not in out.get("derived", {})
+
     def test_apoB_apoA1_when_both_present(self):
         panel = {"apob": 100.0, "apoa1": 125.0}
         out = compute(panel)
