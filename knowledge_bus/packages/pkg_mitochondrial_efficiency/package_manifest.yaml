@@ -1,0 +1,18 @@
+package_id: "pkg_mitochondrial_efficiency"
+package_version: "1.0.0"
+description: >
+  KBP-0008 — Mitochondrial Energy Efficiency (signal_mitochondrial_efficiency).
+  Creation package: detects mitochondrial fuel-switching failure and metabolic
+  inflexibility using tyg_index as primary metric and lactate as co-primary supporting
+  metric. tg_hdl_ratio included as required derived metric for display/context.
+  Thresholds anchored to PMC11063788 (TyG cut-offs) and PMC7142375 / MetFlex White
+  Paper (lactate cut-offs). Override rules: critical hyperlactatemia, severe
+  hypertriglyceridemia, overt diabetes. All threshold values in confirmed SSOT
+  canonical units (tyg_index log-scale; lactate mmol/L; triglycerides mmol/L).
+  NOTE: signal pending SSOT addition of lactate biomarker — see clinical_signoff.md.
+research_brief: "research_brief.yaml"
+signal_library: "signal_library.yaml"
+author: "Claude Translation Engine — Research-to-Knowledge Translation Specification v1"
+created_at: "2026-03-10"
+source_document: "knowledge_bus/research/papers/6-Mitochondrial-Energy-Efficiency-Metabolic Flexibility-REV1.md"
+translation_mode: "creation"

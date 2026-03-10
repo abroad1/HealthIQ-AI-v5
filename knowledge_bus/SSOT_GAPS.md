@@ -11,6 +11,7 @@ Tracked during batch ingestion. All items here require a dedicated HIGH risk spr
 |-----------|------|-------------|-------|
 | `albumin_urine` | mg/L | KBP-0006 (pkg_ckd_risk) | Urine albumin; input to uACR |
 | `creatinine_urine` | g/L | KBP-0006 (pkg_ckd_risk) | Urine creatinine; input to uACR. If lab reports mmol/L, convert: g/L = mmol/L × 0.1131 |
+| `lactate` | mmol/L | KBP-0008 (pkg_mitochondrial_efficiency) | Fasting plasma lactate; primary co-metric for signal_mitochondrial_efficiency |
 
 ---
 
@@ -32,6 +33,8 @@ Tracked during batch ingestion. All items here require a dedicated HIGH risk spr
 | `cystatin_c` | mg/L | KBP-0006 optional | Confounded by inflammation, thyroid disease, steroids |
 | `ngal_urine` | ng/mL | KBP-0006 optional | False-positive in sepsis and malignancy |
 | `tmao` | µmol/L | KBP-0006 optional | Parked — signal_kidney_metabolic_stress pending prospective outcome data |
+| `acetylcarnitine_c2` | µmol/L | KBP-0008 optional | Acylcarnitine panel; not routinely available; future c14_c2_ratio |
+| `tetradecanoylcarnitine_c14` | µmol/L | KBP-0008 optional | Acylcarnitine panel; not routinely available; future c14_c2_ratio |
 
 ---
 
@@ -41,6 +44,7 @@ Tracked during batch ingestion. All items here require a dedicated HIGH risk spr
 |---------|--------|-----------------|-----------------|
 | KBP-0006 pkg_ckd_risk | Committed | manifest ✓ signal ✓ research ✗ (2 missing SSOT entries) | albumin_urine, creatinine_urine, uacr, egfr |
 | KBP-0007 pkg_brain_metabolic_resilience | Committed | manifest ✓ signal ✓ research ✓ (full PASS) | ghr_index, pulse_pressure (no new biomarkers — lifestyle_registry inputs already registered) |
+| KBP-0008 pkg_mitochondrial_efficiency | Committed | manifest ✓ signal ✓ research ✗ (1 missing SSOT entry) | lactate (blocking); acetylcarnitine_c2, tetradecanoylcarnitine_c14 (optional) |
 
 ---
 

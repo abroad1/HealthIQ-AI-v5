@@ -1,0 +1,184 @@
+library:
+  schema_version: "1.0.0"
+  package_id: "KBP-0008"
+  library_name: "Mitochondrial Energy Efficiency Signal Library"
+  description: >
+    Signal library for mitochondrial fuel-switching dysfunction detection.
+    tyg_index (Triglyceride-Glucose index) is the primary metric capturing
+    systemic insulin resistance as the upstream metabolic load driver.
+    lactate is the co-primary supporting metric capturing the downstream
+    mitochondrial output signal (pyruvate-to-lactate overflow from blocked
+    fat oxidation). Both metrics carry independent threshold tiers; activation
+    logic takes the worst state across both (optimal only when both optimal;
+    at_risk when either is at_risk). tg_hdl_ratio is a required derived metric
+    for display context only — sex-specific thresholds not schema-encodable.
+    All threshold values in confirmed platform canonical units (tyg_index
+    log-scale; lactate mmol/L; triglycerides mmol/L; glucose mmol/L).
+    NOTE: signal pending SSOT addition of lactate biomarker — see clinical_signoff.md.
+
+signals:
+  - signal_id: "signal_mitochondrial_efficiency"
+    name: "Mitochondrial Energy Efficiency"
+    description: >
+      Detects mitochondrial fuel-switching dysfunction using a two-layer model.
+      tyg_index captures the metabolic load: systemic insulin resistance with
+      combined hyperglycaemia and hypertriglyceridaemia overloading mitochondrial
+      substrate handling. lactate captures the mitochondrial output signal:
+      blocked pyruvate dehydrogenase and impaired fat oxidation drive pyruvate
+      overflow into lactate. Signal is prognostic for metabolic disease risk —
+      not a direct therapeutic target. Thresholds anchored to PMC11063788
+      (tyg_index) and PMC7142375 / MetFlex White Paper (lactate).
+    system: "mitochondrial"
+    primary_metric: "tyg_index"
+    supporting_metrics:
+      - "lactate"
+      - "tg_hdl_ratio"
+    dependencies:
+      biomarkers:
+        - "lactate"
+        - "triglycerides"
+        - "glucose"
+        - "hdl_cholesterol"
+      derived_metrics:
+        - "tyg_index"
+        - "tg_hdl_ratio"
+      signals: []
+    optional_dependencies:
+      biomarkers:
+        - "acetylcarnitine_c2"
+        - "tetradecanoylcarnitine_c14"
+        - "insulin"
+        - "hba1c"
+      derived_metrics:
+        - "homa_ir"
+        - "c14_c2_ratio"
+      signals: []
+    thresholds:
+      - threshold_id: "mito_tyg_optimal"
+        metric_id: "tyg_index"
+        operator: "<"
+        value: 4.49
+        severity: "optimal"
+        description: >
+          tyg_index below 4.49 (log-scale; equivalent to TG_mg/dL × glucose_mg/dL / 2
+          below ~89.5) — insulin-sensitive metabolic state. Adequate mitochondrial
+          substrate handling; low glycaemic and lipid burden. Evidence: PMC11063788.
+
+      - threshold_id: "mito_tyg_suboptimal"
+        metric_id: "tyg_index"
+        operator: "range"
+        min_value: 4.49
+        max_value: 4.68
+        severity: "suboptimal"
+        description: >
+          tyg_index 4.49–4.68 — borderline insulin resistance. Early metabolic
+          inflexibility; elevated glycaemic and lipid burden beginning to impair
+          fuel-switching. Evidence: PMC11063788.
+
+      - threshold_id: "mito_tyg_at_risk"
+        metric_id: "tyg_index"
+        operator: ">"
+        value: 4.68
+        severity: "at_risk"
+        description: >
+          tyg_index above 4.68 — established insulin resistance. Significant
+          mitochondrial substrate overload; impaired pyruvate dehydrogenase activity
+          and reduced fat oxidation capacity. Associated with T2D risk, NAFLD, and
+          cardiovascular disease. Evidence: PMC11063788.
+
+      - threshold_id: "mito_lactate_optimal"
+        metric_id: "lactate"
+        operator: "<"
+        value: 1.0
+        severity: "optimal"
+        description: >
+          Fasting lactate below 1.0 mmol/L — mitochondrial output in healthy range.
+          Efficient pyruvate oxidation via TCA cycle; adequate fat oxidation capacity.
+          Evidence: PMC7142375; MetFlex White Paper.
+
+      - threshold_id: "mito_lactate_suboptimal"
+        metric_id: "lactate"
+        operator: "range"
+        min_value: 1.0
+        max_value: 2.0
+        severity: "suboptimal"
+        description: >
+          Fasting lactate 1.0–2.0 mmol/L — early mitochondrial output stress. Mildly
+          impaired pyruvate oxidation; beginning of fuel-switching dysfunction. May
+          indicate early insulin resistance or reduced mitochondrial efficiency.
+          Evidence: PMC7142375.
+
+      - threshold_id: "mito_lactate_at_risk"
+        metric_id: "lactate"
+        operator: ">="
+        value: 2.1
+        severity: "at_risk"
+        description: >
+          Fasting lactate ≥ 2.1 mmol/L — established mitochondrial output dysfunction.
+          Significant pyruvate overflow into lactate pathway indicating blocked
+          oxidative phosphorylation. Associated with insulin resistance, mitochondrial
+          disease, and metabolic syndrome. Evidence: PMC7142375.
+
+    activation_logic: "deterministic_threshold"
+    override_rules:
+      - rule_id: "lactate_hyperlactatemia"
+        description: >
+          Fasting lactate ≥ 4.0 mmol/L forces at_risk regardless of tyg_index.
+          Severe hyperlactatemia indicates critical mitochondrial or systemic
+          dysfunction — may reflect sepsis, hepatic failure, severe exercise,
+          or mitochondrial disease. Requires urgent clinical review.
+          Evidence: Ampath clinical reference; PMC2810849.
+        conditions:
+          - metric_id: "lactate"
+            operator: ">="
+            value: 4.0
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+
+      - rule_id: "hypertriglyceridemia"
+        description: >
+          Triglycerides ≥ 5.6 mmol/L (500 mg/dL) forces at_risk regardless of
+          tyg_index or lactate. Severe hypertriglyceridaemia at this level carries
+          acute pancreatitis risk and reflects catastrophic lipid metabolism failure
+          beyond the scope of the metabolic flexibility signal.
+          Evidence: Endocrine Society Clinical Practice Guideline (PMC3431581).
+        conditions:
+          - metric_id: "triglycerides"
+            operator: ">="
+            value: 5.6
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+
+      - rule_id: "overt_diabetes"
+        description: >
+          Fasting glucose ≥ 7.0 mmol/L (126 mg/dL) OR HbA1c ≥ 6.5% forces at_risk.
+          Either condition alone meets the ADA diagnostic threshold for diabetes.
+          Overt diabetes represents severe insulin resistance with established beta-cell
+          dysfunction — peak mitochondrial metabolic load. HbA1c only fires when present
+          in the panel (optional dependency). Evidence: ADA Standards of Care 2026.
+        conditions:
+          - metric_id: "glucose"
+            operator: ">="
+            value: 7.0
+            condition_type: "any_of"
+          - metric_id: "hba1c"
+            operator: ">="
+            value: 6.5
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+
+    bundle_consumers:
+      - "metabolic_health"
+      - "cardiovascular_risk"
+      - "biological_age"
+      - "brain_metabolic_resilience"
+      - "vascular_age"
+    output:
+      signal_value: "tyg_index"
+      signal_state: "optimal"
+      confidence: "confidence_model_v1"
+      primary_metric: "tyg_index"
+      supporting_markers:
+        - "lactate"
+        - "tg_hdl_ratio"
+        - "homa_ir"

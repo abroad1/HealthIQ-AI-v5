@@ -1,0 +1,141 @@
+research_domain: "metabolic"
+
+sources:
+  - paper_title: "Plasma lactate as a marker of metabolic health: implications of elevated lactate for the assessment of metabolic dysfunction"
+    journal: "PMC"
+    year: 2020
+    doi: "PMC7142375"
+    notes: >
+      Tier 2 — lactate threshold source. Establishes fasting plasma lactate
+      < 1.0 mmol/L as metabolic health indicator. Elevated fasting lactate
+      reflects impaired pyruvate oxidation and mitochondrial fuel-switching
+      dysfunction. Platform canonical thresholds: optimal < 1.0, suboptimal
+      1.0–2.0, at_risk ≥ 2.1 mmol/L.
+
+  - paper_title: "Triglyceride-Glucose Index As A Biomarker Of Insulin Resistance — A Narrative Review"
+    journal: "Cardiology in Review"
+    year: 2024
+    doi: "PMC11063788"
+    notes: >
+      Tier 2 — TyG threshold source. Comprehensive review establishing TyG < 4.49
+      as insulin-sensitive and TyG > 4.68 as insulin-resistant cut-offs.
+      Platform formula: ln((tg_mmol_l × glucose_mmol_l × 1596.0) / 2.0)
+      where 1596.0 = 88.5714 × 18.018 (SI-to-mg/dL constant). No unit
+      conversion required — platform computes in mg/dL equivalent via SI constant.
+
+  - paper_title: "The MetFlex Index: A Novel Scoring System to Describe Metabolic Flexibility Using a Lactate Biomarker"
+    journal: "Oval.care White Paper"
+    year: 2023
+    doi: "oval.care/MetFlex-White-Paper"
+    notes: >
+      Tier 3 — white paper (non-peer-reviewed). Validates fasting lactate as
+      metabolic flexibility scoring component. Thresholds consistent with
+      PMC7142375. Used for corroborating evidence only; primary lactate threshold
+      anchored to PMC7142375.
+
+  - paper_title: "Metabolic Inflexibility: When Mitochondrial Indecision Leads to Metabolic Gridlock"
+    journal: "Cell Metabolism"
+    year: 2016
+    doi: "PMC4765362"
+    notes: >
+      Tier 1 — conceptual framework. Establishes mitochondrial fuel-switching
+      failure (impaired transition from glucose to fat oxidation) as core
+      mechanism of metabolic inflexibility. Underpins the physiological claim
+      for signal_mitochondrial_efficiency.
+
+  - paper_title: "TG/HDL Ratio: A marker for insulin resistance and atherosclerosis in prediabetics or not?"
+    journal: "PMC"
+    year: 2021
+    doi: "PMC8653431"
+    notes: >
+      Tier 2 — tg_hdl_ratio evidence. Validates TG/HDL ratio as insulin resistance
+      and atherosclerosis surrogate. Sex-specific thresholds (M: 3.5, F: 2.5 mg/dL ratio)
+      noted in this paper. Platform tg_hdl_ratio = tg_mmol_l / hdl_mmol_l (mmol/L ratio);
+      canonical conversion: M < 1.53, F < 1.09 mmol/L ratio. Sex-specific thresholds
+      NOT encoded in signal due to schema limitation — tg_hdl_ratio used as display metric only.
+
+  - paper_title: "Evaluation and Treatment of Hypertriglyceridemia: An Endocrine Society Clinical Practice Guideline"
+    journal: "PMC"
+    year: 2012
+    doi: "PMC3431581"
+    notes: >
+      Tier 1 — hypertriglyceridemia override rule source. Triglycerides ≥ 5.6 mmol/L
+      (500 mg/dL) defines severe hypertriglyceridemia with acute pancreatitis risk.
+      Anchors the hypertriglyceridemia override rule.
+
+  - paper_title: "Diagnosis and Classification of Diabetes: Standards of Care in Diabetes — 2026"
+    journal: "Diabetes Care"
+    year: 2026
+    doi: "10.2337/dc26-S002"
+    notes: >
+      Tier 1 — overt diabetes override rule source. Fasting glucose ≥ 7.0 mmol/L
+      (126 mg/dL) or HbA1c ≥ 6.5% defines diabetes. Anchors the overt_diabetes
+      override rule.
+
+biomarkers:
+  - lactate
+  - triglycerides
+  - glucose
+  - hdl_cholesterol
+
+derived_metrics:
+  - tyg_index
+  - tg_hdl_ratio
+
+physiological_claim: >
+  Mitochondrial energy efficiency is defined by the capacity to switch between glucose
+  and fatty acid oxidation in response to substrate availability (metabolic flexibility).
+  Chronic metabolic inflexibility — impaired fuel-switching — drives elevated fasting
+  lactate (pyruvate overflow from blocked mitochondrial entry) and elevated tyg_index
+  (combined hyperglycaemia + hypertriglyceridaemia). The tyg_index captures systemic
+  insulin resistance as the upstream driver of mitochondrial substrate overload.
+  Fasting lactate captures the downstream mitochondrial output signal: impaired
+  pyruvate dehydrogenase activity and blocked fat oxidation result in pyruvate-to-lactate
+  overflow. Together, tyg_index (metabolic load) and lactate (mitochondrial output) form
+  a two-layer detection system for mitochondrial dysfunction.
+
+evidence_strength: "moderate"
+
+notes: >
+  IMPLEMENTATION PREREQUISITE — signal cannot activate until:
+  1. lactate: not in biomarkers.yaml. Unit: mmol/L. Required before signal validates.
+
+  PLATFORM DERIVED METRICS STATUS:
+  - tyg_index: IN PLATFORM (ratio_registry.py, via KBP-0002). Formula confirmed.
+  - tg_hdl_ratio: IN PLATFORM (ratio_registry.py). Platform computes mmol/L ratio
+    (tg_mmol_l / hdl_mmol_l). Paper formula produces mg/dL ratio — not the same.
+    Canonical conversion for sex-specific thresholds (M: 3.5, F: 2.5 mg/dL) =
+    × 0.4367 → M: 1.53, F: 1.09 (mmol/L). NOT used in signal thresholds — display only.
+  - homa_ir: IN PLATFORM (ratio_registry.py). Optional supporting metric.
+  - c14_c2_ratio: NOT in platform. Optional future derived metric.
+
+  METFORMIN THRESHOLD ADJUSTMENT:
+  Fasting lactate thresholds shift in Metformin users (< 1.3 optimal / ≥ 2.4 at_risk).
+  Evidence: PMC2014521. Pattern does not fit override_rules schema (adjusts threshold
+  values, not resulting state). Deferred to future enhancement. Requires
+  long_term_medications field from questionnaire SSOT.
+
+  OPTIONAL BIOMARKERS — SSOT STATUS UNKNOWN:
+  - acetylcarnitine_c2 (µmol/L) — not in biomarkers.yaml; optional SSOT gap
+  - tetradecanoylcarnitine_c14 (µmol/L) — not in biomarkers.yaml; optional SSOT gap
+
+  EVIDENCE STRENGTH — moderate:
+  Primary TyG thresholds from narrative review (PMC11063788), not prospective cohort.
+  Lactate thresholds from observational data (PMC7142375) + white paper. No RCT
+  validation of combined tyg_index + lactate model for mitochondrial dysfunction
+  diagnosis. Physiological mechanism well-established; clinical threshold evidence
+  is moderate.
+
+  Source document: knowledge_bus/research/papers/6-Mitochondrial-Energy-Efficiency-Metabolic Flexibility-REV1.md
+
+research_summary: >
+  Mitochondrial inflexibility (PMC4765362) manifests as impaired fuel-switching, elevated
+  fasting lactate, and elevated TyG index. TyG cut-offs (< 4.49 optimal, > 4.68 at_risk)
+  sourced from PMC11063788 (narrative review, SI-native platform formula confirmed).
+  Lactate cut-offs (< 1.0 optimal, 1.0–2.0 suboptimal, ≥ 2.1 at_risk) sourced from
+  PMC7142375 and corroborated by MetFlex White Paper. Override rules: critical
+  hyperlactatemia ≥ 4.0 mmol/L (Ampath clinical reference); severe hypertriglyceridaemia
+  ≥ 5.6 mmol/L (Endocrine Society guideline, PMC3431581); overt diabetes: glucose ≥ 7.0
+  mmol/L or HbA1c ≥ 6.5% (ADA Standards 2026). tg_hdl_ratio included as display context
+  metric; sex-specific thresholds (M: 1.53, F: 1.09 mmol/L) documented but not schema-encoded.
+  Metformin threshold adjustment deferred (schema limitation).
