@@ -146,11 +146,12 @@ This package introduces `derived.remnant_cholesterol` as an optional signal depe
 
 **Clinical flag threshold:** RC ≥ 1.5 mmol/L (~2-fold MI risk; Copenhagen General Population Study)
 
-**Current implementation status:** NOT present in `backend/core/analytics/ratio_registry.py`
+**Current implementation status:** ✓ IN PLATFORM — confirmed in `backend/core/analytics/ratio_registry.py`
+DERIVED_IDS (REV1 correction 2026-03-10). Computed path: TC - LDL-C - HDL-C (all mmol/L).
+Conditional on `ldl_cholesterol` availability — platform handles this correctly.
 
-A separate implementation sprint is required before this metric can activate. It is listed under
-`optional_dependencies` in the signal library. The signal will function without it — the remnant
-cholesterol flag will simply not activate until the metric is registered.
+The signal lists `remnant_cholesterol` under `optional_dependencies`. It will activate automatically
+when `ldl_cholesterol` is present in the user's panel.
 
 **LDL-C accuracy caveat:** Calculated LDL-C (Friedewald-type) degrades at TG > 4.5 mmol/L.
 At high TG, skip remnant calculation and rely on non-HDL-C + TG axis only.

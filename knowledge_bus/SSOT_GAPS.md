@@ -65,6 +65,7 @@ Tracked during batch ingestion. All items here require a dedicated HIGH risk spr
 | KBP-0010 pkg_metabolic_inflammation | Committed | manifest ✓ signal ✓ research ✓ (full PASS) | mets_ir (standard sprint — ratio_registry extension); nlr, sii confirmed in platform |
 | KBP-0011 pkg_metabolic_vascular_ageing | Committed | manifest ✓ signal ✓ research ✓ (full PASS) | aip (standard sprint — log10 wrapper on tg_hdl_ratio); pulse_pressure already tracked (KBP-0007) |
 | KBP-0012 pkg_brain_metabolic_health | Committed | manifest ✓ signal ✓ research ✓ (full PASS) | None — tyg_index and tg_hdl_ratio confirmed in platform; unparks signal_brain_metabolic_health |
+| KBP-0003 pkg_lipid_transport | Updated | manifest ✓ signal ✓ research ✓ (full PASS) | None — non_hdl_cholesterol and remnant_cholesterol confirmed in platform (REV1 correction); 4 new sources added |
 
 ---
 

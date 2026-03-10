@@ -53,6 +53,49 @@ sources:
       lowering without apoB/non-HDL-C improvement does not reliably reduce CV event risk. Signal
       design reflects this by treating TG as a modifier, not the primary outcome-anchored metric.
 
+  - paper_title: "Triglyceride to high-density lipoprotein cholesterol ratio and cardiovascular events — meta-analysis"
+    journal: "Not specified in source"
+    year: 2022
+    notes: >
+      Meta-analysis; 13 studies; n=207,515. Higher TG/HDL-C ratio significantly associated with
+      cardiovascular events. Supports tg_hdl_ratio as a supporting metric in this package. No
+      standardised threshold validated across studies — tg_hdl_ratio used as contextual supporting
+      marker, not primary threshold metric. Evidence tier: Tier 2 (meta-analysis of observational
+      cohorts; heterogeneous thresholds across studies).
+
+  - paper_title: "ApoB-containing lipoproteins and peripheral artery disease — UK Biobank and Copenhagen replication"
+    journal: "Not specified in source"
+    year: 2022
+    notes: >
+      Prospective cohort + replication (UK Biobank n=302,167; Copenhagen up to 15yr follow-up).
+      ApoB→PAD risk pathway explained primarily by remnant cholesterol rather than LDL-C.
+      Reinforces remnant_cholesterol as a meaningful optional metric in standard lipid panel
+      signals — residual risk from TRL/remnants is not fully captured by LDL-C.
+      Evidence tier: Tier 2 (observational; PAD ascertainment variability).
+
+  - paper_title: "Cardiovascular Risk Reduction with Icosapent Ethyl for Hypertriglyceridemia (REDUCE-IT)"
+    journal: "New England Journal of Medicine"
+    year: 2019
+    notes: >
+      RCT; n=8,179; median follow-up 4.9 years. Icosapent ethyl (EPA) reduced MACE in
+      statin-treated patients with elevated TG (≥1.5 mmol/L) and established CVD or high risk.
+      HR 0.75 (95% CI 0.68–0.83) for primary composite. Contrasts PROMINENT: mechanism matters
+      beyond TG lowering — EPA has anti-inflammatory and membrane-stabilising effects independent
+      of TG reduction. Signal framing ("TG lowering alone ≠ CV risk reduction") remains correct
+      because EPA benefit extends beyond TG pathway. Evidence tier: Tier 1 (RCT; hard outcomes).
+      Cautionary: increased AF/bleeding signals; high mineral oil placebo debate.
+
+  - paper_title: "VESALIUS-CV: Evolocumab in patients at high cardiovascular risk without prior myocardial infarction or stroke"
+    journal: "New England Journal of Medicine"
+    year: 2026
+    notes: >
+      RCT; n=12,257. Evolocumab (PCSK9 inhibitor) reduced first major CV events in high-risk
+      adults without prior MI or stroke (primary-prevention adjacent). Confirms that reducing
+      apoB-containing lipoprotein burden (LDL-C and non-HDL-C axis) translates to CV event
+      reduction even in primary prevention populations. Supports biological primacy of
+      non-HDL-C/apoB pathway over TG-only reduction. Evidence tier: Tier 1 (RCT; hard outcomes).
+      Limitation: majority White population; cost and access considerations.
+
 biomarkers:
   - total_cholesterol
   - hdl_cholesterol
@@ -84,10 +127,10 @@ notes: >
   outcome data. The at-risk delta is 1.6 mmol/L — this is material. Clinical sign-off and a threshold
   decision are required before either set is implemented. See clinical_signoff.md.
 
-  derived.remnant_cholesterol is introduced as a new optional derived metric (TC - LDL-C - HDL-C).
-  This metric does not currently exist in backend/core/analytics/ratio_registry.py. It is flagged as
-  optional_dependencies in the signal library. A separate implementation sprint is required before
-  this metric activates.
+  PLATFORM STATUS (confirmed 2026-03-10): Both non_hdl_cholesterol and remnant_cholesterol are
+  confirmed in ratio_registry.py DERIVED_IDS. non_hdl_cholesterol: TC - HDL-C (mmol/L). remnant_cholesterol:
+  TC - LDL-C - HDL-C (conditional on ldl_cholesterol availability; platform handles conditional
+  correctly). No SSOT gaps for this package.
 
 research_summary: >
   Study type: systematic review of primary literature, major clinical trial data, and European
@@ -102,10 +145,17 @@ research_summary: >
   guideline endorses non-HDL-C as secondary target and TG 1.7/5.6 mmol/L boundaries.
 
   Cautionary finding: PROMINENT RCT demonstrates TG lowering without apoB/non-HDL improvement does
-  not reduce CV events. Signal design reflects this — TG is a risk-enhancement modifier, not a
-  standalone outcome-anchored metric.
+  not reduce CV events. REDUCE-IT (n=8,179; Tier 1 RCT) confirms mechanism matters — EPA reduced
+  MACE via effects beyond TG reduction. Signal framing ("TG lowering ≠ risk reduction unless
+  apoB/non-HDL-C also improve") is consistent with both trials.
 
-  New derived metric introduced: derived.remnant_cholesterol (TC - LDL-C - HDL-C). Not yet in
-  ratio_registry.py. Marked as optional in this package.
+  Additional supporting evidence (added REV1 2026-03-10): TG/HDL-C meta-analysis (2022; n=207,515)
+  confirms tg_hdl_ratio as a valid supporting marker. UK Biobank + Copenhagen PAD study (2022;
+  n=302,167) confirms remnant_cholesterol risk pathway beyond LDL-C. VESALIUS-CV (NEJM 2026;
+  n=12,257; Tier 1 RCT) confirms non-HDL-C/apoB pathway CV risk reduction in primary prevention.
 
-  Source document: knowledge_bus/research/study_02_lipid_transport_dysfunction.md
+  Platform status: non_hdl_cholesterol ✓ and remnant_cholesterol ✓ confirmed in ratio_registry.py
+  (REV1 correction 2026-03-10).
+
+  Source documents: knowledge_bus/research/study_02_lipid_transport_dysfunction.md;
+  knowledge_bus/research/papers/1-Insulin-Resistance-Signal-Foundational-Study.md (REV1)
