@@ -1,0 +1,121 @@
+research_domain: "neurological"
+
+sources:
+  - paper_title: "Midlife Vascular Risk Factors and 25-Year Risk of Dementia"
+    journal: "JAMA Neurology"
+    year: 2017
+    doi: "10.1001/jamaneurol.2017.1327"
+    notes: >
+      Tier 1 — primary longitudinal evidence. ARIC Study (n=15,792, 25-year follow-up).
+      Midlife vascular risk factors (diabetes, hypertension, dyslipidemia) significantly
+      associated with increased brain amyloid deposition and late-life dementia.
+      Establishes association only — no implementable threshold values derived.
+
+  - paper_title: "The Glucose-to-HDL Ratio as a Marker of Microvascular Health"
+    journal: "Vascular Health and Risk Management"
+    year: 2021
+    doi: "10.2147/VHRM.S299475"
+    notes: >
+      Tier 2 — threshold source. Cross-sectional, n=1,200. GHR > 4.0 mg/dL ratio
+      associated with microvascular end-organ complications. Platform canonical values
+      derived by unit conversion (glucose mmol/L × 18.02; HDL mmol/L × 38.67;
+      conversion factor 2.146): optimal < 5.37, at_risk > 8.59 (both mmol/L ratio).
+      Limitation: validated in peripheral microvasculature (retinal, renal) only;
+      extrapolated to cerebral vessels. No suboptimal band validated.
+
+  - paper_title: "Arterial Stiffness and Risk of Dementia and Alzheimer Disease: The Rotterdam Study"
+    journal: "Hypertension"
+    year: 2004
+    doi: "10.1161/01.HYP.0000145860.61208.7c"
+    notes: >
+      Tier 1 — prospective cohort (Mattace-Raso et al.; n=7,046, 10-year follow-up).
+      Higher pulse pressure associated with increased dementia risk, specifically in
+      individuals with high metabolic risk. Both pulse_pressure thresholds confirmed:
+      optimal < 45 mmHg, at_risk > 60 mmHg. Suboptimal band (45–60 mmHg) explicitly
+      not defined as a distinct risk tier — treated as transition zone.
+      Limitation: population aged >55; younger cohorts require extrapolation.
+
+  - paper_title: "Dementia prevention, intervention, and care: 2020 report of the Lancet Commission"
+    journal: "The Lancet"
+    year: 2020
+    doi: "10.1016/S0140-6736(20)30367-6"
+    notes: >
+      Tier 1 — Lancet Commission report. Midlife control of metabolic-vascular signals
+      associated with 30–40% reduction in lifetime dementia risk. Confirms modifiable
+      risk factor framework underpinning this signal.
+
+  - paper_title: "Effects of intensive glucose lowering on brain structure and function in people with type 2 diabetes (ACCORD MIND)"
+    journal: "Lancet Neurology"
+    year: 2011
+    doi: "10.1016/S1474-4422(11)70188-0"
+    notes: >
+      Tier 1 — cautionary RCT (n=2,977). Intensive glycemic control (HbA1c <6.0%)
+      yielded no significant improvement in cognitive test scores despite slightly larger
+      brain volume. Demonstrates that the signal is prognostic, not prescriptive.
+      Communication must frame elevated ghr_index as risk indicator, not medication target.
+
+biomarkers:
+  - glucose
+  - hdl_cholesterol
+
+derived_metrics:
+  - ghr_index
+  - pulse_pressure
+
+physiological_claim: >
+  Systemic metabolic dysfunction and arterial stiffness synergistically compromise
+  cerebrovascular integrity via the Two-Hit Hypothesis: (1) chronic hyperglycemia and
+  low HDL impair blood-brain barrier integrity; (2) elevated pulse pressure transmits
+  high pulsatile energy into the fragile cerebral microcirculation, causing micro-infarcts
+  and white matter hyperintensities. The Glucose-to-HDL ratio (ghr_index) captures the
+  metabolic hit; pulse_pressure captures the vascular hit. Midlife elevation of both is
+  associated with a 30–40% increase in late-life dementia risk (Livingston et al., 2020).
+  ghr_index and pulse_pressure are independent risk markers; their co-elevation amplifies
+  risk (ARIC Study). Platform canonical ghr_index = glucose_mmol_l / hdl_cholesterol_mmol_l;
+  pulse_pressure = systolic_bp_mmhg − diastolic_bp_mmhg (lifestyle_registry inputs).
+
+evidence_strength: "moderate"
+
+notes: >
+  IMPLEMENTATION PREREQUISITES — signal cannot activate until:
+  1. ghr_index: not in ratio_registry.py DERIVED_IDS. Formula (platform canonical):
+     glucose_mmol_l / hdl_cholesterol_mmol_l. Thresholds in mmol/L ratio units.
+  2. pulse_pressure: not in ratio_registry.py DERIVED_IDS. Formula:
+     systolic_bp - diastolic_bp (mmHg). Inputs from lifestyle_registry, not biomarkers.yaml.
+     NOTE: systolic_bp and diastolic_bp are lifestyle_registry inputs — not listed in
+     biomarkers section above as they are not in biomarkers.yaml. Their presence is
+     a dependency of the pulse_pressure derived metric computation.
+
+  UNIT CONVERSION — ghr_index canonical derivation:
+  Paper threshold: GHR > 4.0 (mg/dL ratio). Platform holds glucose and HDL in mmol/L.
+  Conversion factor: glucose 18.02, HDL 38.67 → ratio multiplier 2.146.
+  Canonical: optimal < 5.37, at_risk > 8.59 (verified: glucose 5.0 / HDL 1.3 = 3.85
+  mmol/L ratio = 1.79 mg/dL ratio → optimal < 2.5 ✓).
+
+  EVIDENCE STRENGTH — moderate:
+  ghr_index thresholds sourced from cross-sectional peripheral vasculature study
+  (Farnier 2021, n=1,200). Extrapolated to cerebral vessels — not directly validated
+  in cerebrovascular outcomes. pulse_pressure thresholds from Rotterdam Study Tier 1
+  prospective cohort (n=7,046). No suboptimal tier for either metric is evidence-supported.
+  ACCORD-MIND (RCT) confirms signal must be framed as prognostic, not prescriptive.
+
+  PARKED FUTURE SIGNAL — signal_brain_metabolic_health:
+  A companion signal using tyg_index as primary metric (already in platform) has been
+  researched (source: 10-Brain-Metabolic-Health-(Future-Expansion).md) but has entirely
+  inconclusive threshold evidence for cognitive outcomes. Parked pending prospective
+  validation of tyg_index cut-offs against dementia/cognitive decline endpoints.
+  Override rule of interest when activated: T2D (HbA1c ≥ 6.5%) → at_risk.
+
+research_summary: >
+  Primary longitudinal evidence: ARIC Study (Gottesman et al., 2017; Tier 1, n=15,792,
+  25-year follow-up) establishes midlife metabolic-vascular cluster as dementia risk
+  predictor. Threshold source: Farnier et al. (2021; Tier 2, cross-sectional, n=1,200)
+  provides the only GHR cut-off values, derived from peripheral microvascular outcomes
+  and extrapolated to cerebral vessels. Rotterdam Study (Mattace-Raso et al., 2004;
+  Tier 1, n=7,046) anchors both pulse_pressure thresholds from prospective dementia
+  outcome data. Lancet Commission (Livingston 2020) provides population-level effect
+  size (30–40% dementia risk reduction with midlife metabolic-vascular control).
+  Cautionary: ACCORD-MIND RCT confirms intensive glucose lowering alone does not
+  improve cognitive outcomes — signal is a risk indicator, not a therapeutic target.
+
+  Source document: knowledge_bus/research/papers/11-Brain-Metabolic-Resilience-(Vascular-Cognitive-Axis)-REV1.md

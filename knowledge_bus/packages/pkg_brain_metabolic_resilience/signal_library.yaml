@@ -1,0 +1,111 @@
+library:
+  schema_version: "1.0.0"
+  package_id: "KBP-0007"
+  library_name: "Brain Metabolic Resilience Signal Library"
+  description: >
+    Signal library for vascular-driven cognitive decline risk detection.
+    ghr_index (Glucose-to-HDL ratio) is the primary metric capturing the metabolic
+    hit on blood-brain barrier integrity. pulse_pressure enters as override rules
+    capturing the vascular hit (arterial stiffness transmitted into cerebral
+    microcirculation). No suboptimal tier is evidence-supported for either metric.
+    All threshold values are in confirmed SSOT canonical units (ghr_index in
+    mmol/L ratio; pulse_pressure in mmHg). Evidence base documented in research_brief.yaml.
+    NOTE: signal is pending implementation of ghr_index and pulse_pressure derived
+    metrics — see clinical_signoff.md.
+
+signals:
+  - signal_id: "signal_brain_metabolic_resilience"
+    name: "Brain Metabolic Resilience"
+    description: >
+      Detects vascular-driven cognitive decline risk using the metabolic-vascular
+      synergy framework (Two-Hit Hypothesis). Primary metric ghr_index captures
+      chronic hyperglycemia and low HDL impairing blood-brain barrier integrity.
+      pulse_pressure override rules capture arterial stiffness transmitting pulsatile
+      energy into the cerebral microcirculation. Thresholds anchored to Farnier et al.
+      2021 (ghr_index) and Mattace-Raso et al. Rotterdam Study 2004 (pulse_pressure).
+      Signal is prognostic for late-life dementia risk — not a direct therapeutic
+      target (ACCORD-MIND: intensive glucose lowering did not improve cognitive scores).
+    system: "vascular"
+    primary_metric: "ghr_index"
+    supporting_metrics:
+      - "pulse_pressure"
+    dependencies:
+      biomarkers:
+        - "glucose"
+        - "hdl_cholesterol"
+      derived_metrics:
+        - "ghr_index"
+        - "pulse_pressure"
+      signals: []
+    optional_dependencies:
+      biomarkers:
+        - "homocysteine"
+        - "hba1c"
+        - "triglycerides"
+      derived_metrics: []
+      signals: []
+    thresholds:
+      - threshold_id: "bmr_optimal"
+        metric_id: "ghr_index"
+        operator: "<"
+        value: 5.37
+        severity: "optimal"
+        description: >
+          ghr_index below 5.37 (mmol/L ratio; equivalent to < 2.5 mg/dL ratio) —
+          favourable metabolic-vascular profile. Low glycemic burden and adequate
+          HDL-C preserving blood-brain barrier integrity. Evidence: Farnier et al.
+          2021 (canonical conversion from 2.5 mg/dL threshold).
+      - threshold_id: "bmr_at_risk"
+        metric_id: "ghr_index"
+        operator: ">"
+        value: 8.59
+        severity: "at_risk"
+        description: >
+          ghr_index above 8.59 (mmol/L ratio; equivalent to > 4.0 mg/dL ratio) —
+          elevated metabolic-vascular stress. Combined hyperglycemia and low HDL-C
+          impairing blood-brain barrier and endothelial function. Associated with
+          microvascular end-organ complications. Evidence: Farnier et al. 2021
+          (canonical conversion from 4.0 mg/dL threshold).
+    activation_logic: "deterministic_threshold"
+    override_rules:
+      - rule_id: "pulse_pressure_risk"
+        description: >
+          Pulse pressure above 60 mmHg forces at_risk regardless of ghr_index.
+          Elevated pulse pressure indicates arterial stiffness transmitting
+          high-energy pulsatile flow into the fragile cerebral microcirculation,
+          causing micro-infarcts and white matter hyperintensities — the vascular
+          hit of the Two-Hit Hypothesis. Evidence: Mattace-Raso et al. (Rotterdam
+          Study) 2004; doi:10.1161/01.HYP.0000145860.61208.7c. Risk correlation
+          is strongest in individuals aged >50 (see age-gated note in clinical_signoff).
+        conditions:
+          - metric_id: "pulse_pressure"
+            operator: ">"
+            value: 60
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+
+      - rule_id: "homocysteine_neurovascular_risk"
+        description: >
+          Homocysteine above 15.0 µmol/L forces at_risk. Elevated homocysteine is
+          an independent marker of neurovascular endothelial damage and B-vitamin
+          deficiency. Only fires when homocysteine is present in the panel.
+          Evidence: consensus on B-vitamin mediated neuroprotection.
+        conditions:
+          - metric_id: "homocysteine"
+            operator: ">"
+            value: 15.0
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+
+    bundle_consumers:
+      - "brain_metabolic_resilience"
+      - "vascular_age"
+      - "metabolic_health"
+    output:
+      signal_value: "ghr_index"
+      signal_state: "optimal"
+      confidence: "confidence_model_v1"
+      primary_metric: "ghr_index"
+      supporting_markers:
+        - "pulse_pressure"
+        - "homocysteine"

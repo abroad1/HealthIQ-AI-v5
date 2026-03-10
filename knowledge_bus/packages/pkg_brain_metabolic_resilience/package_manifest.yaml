@@ -1,0 +1,15 @@
+package_id: "pkg_brain_metabolic_resilience"
+package_version: "1.0.0"
+description: >
+  KBP-0007 — Brain Metabolic Resilience (signal_brain_metabolic_resilience).
+  Creation package: detects vascular-driven cognitive decline risk using ghr_index
+  (Glucose-to-HDL ratio, canonical mmol/L) as primary metric and pulse_pressure
+  as supporting override metric. Thresholds anchored to Farnier et al. 2021
+  (ghr_index) and Mattace-Raso et al. Rotterdam Study 2004 (pulse_pressure).
+  All threshold values in confirmed SSOT canonical units.
+research_brief: "research_brief.yaml"
+signal_library: "signal_library.yaml"
+author: "Claude Translation Engine — Research-to-Knowledge Translation Specification v1"
+created_at: "2026-03-10"
+source_document: "knowledge_bus/research/papers/11-Brain-Metabolic-Resilience-(Vascular-Cognitive-Axis)-REV1.md"
+translation_mode: "creation"
