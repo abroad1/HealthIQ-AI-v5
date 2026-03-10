@@ -236,11 +236,14 @@ class ClusterEngineV2:
 
     def cluster_biomarkers(self, context: AnalysisContext, scoring_result: Any) -> ClusterEngineV2Result:
         start_time = time.time()
+        policy = self._load_cluster_scoring_policy()
         biomarker_scores = self._extract_biomarker_scores(scoring_result)
         groups = self._group_biomarkers_by_health_system(set(biomarker_scores.keys()))
-        clusters = self._build_clusters(groups, biomarker_scores)
+        clusters = self._build_clusters(groups, biomarker_scores, policy=policy)
         validation_summary = self._validate_clusters(clusters)
-        confidence_score = self._calculate_overall_confidence(clusters, validation_summary)
+        confidence_score = self._calculate_overall_confidence(
+            clusters, validation_summary, policy=policy
+        )
         elapsed_ms = (time.time() - start_time) * 1000
         return ClusterEngineV2Result(
             clusters=clusters,
@@ -266,6 +269,17 @@ class ClusterEngineV2:
                         scores[name] = float(score)
         return scores
 
+    def _load_cluster_scoring_policy(self) -> Dict[str, Any]:
+        from core.clustering.cluster_schema_loader import load_cluster_scoring_policy
+
+        policy = load_cluster_scoring_policy()
+        return {
+            "min_members_per_cluster": int(policy.min_members_per_cluster),
+            "severity_thresholds": dict(policy.severity_thresholds),
+            "confidence": dict(policy.confidence),
+            "overall_confidence": dict(policy.overall_confidence),
+        }
+
     def _group_biomarkers_by_health_system(self, available_biomarkers: set[str]) -> Dict[str, List[str]]:
         try:
             from core.clustering.cluster_schema_loader import load_cluster_schema
@@ -279,23 +293,37 @@ class ClusterEngineV2:
                 grouped[cluster_id] = present
         return grouped
 
-    def _build_clusters(self, groups: Dict[str, List[str]], scores: Dict[str, float]) -> List[BiomarkerCluster]:
+    def _build_clusters(
+        self,
+        groups: Dict[str, List[str]],
+        scores: Dict[str, float],
+        *,
+        policy: Dict[str, Any],
+    ) -> List[BiomarkerCluster]:
         clusters: List[BiomarkerCluster] = []
+        min_members = int(policy.get("min_members_per_cluster", 2))
+        severity_thresholds = policy.get("severity_thresholds", {})
+        critical_lt = float(severity_thresholds.get("critical_lt", 30.0))
+        high_lt = float(severity_thresholds.get("high_lt", 50.0))
+        moderate_lt = float(severity_thresholds.get("moderate_lt", 70.0))
+        mild_lt = float(severity_thresholds.get("mild_lt", 85.0))
         for system_name, biomarkers in sorted(groups.items()):
-            if len(biomarkers) < 2:
+            if len(biomarkers) < min_members:
                 continue
             avg_score = sum(scores.get(b, 0.0) for b in biomarkers) / len(biomarkers)
-            if avg_score < 30:
+            if avg_score < critical_lt:
                 severity = "critical"
-            elif avg_score < 50:
+            elif avg_score < high_lt:
                 severity = "high"
-            elif avg_score < 70:
+            elif avg_score < moderate_lt:
                 severity = "moderate"
-            elif avg_score < 85:
+            elif avg_score < mild_lt:
                 severity = "mild"
             else:
                 severity = "normal"
-            confidence = self._calculate_cluster_confidence(biomarkers, scores)
+            confidence = self._calculate_cluster_confidence(
+                biomarkers, scores, policy=policy
+            )
             clusters.append(
                 BiomarkerCluster(
                     cluster_id=f"{system_name}_{len(biomarkers)}_biomarkers",
@@ -309,16 +337,26 @@ class ClusterEngineV2:
             )
         return clusters
 
-    def _calculate_cluster_confidence(self, biomarkers: List[str], scores: Dict[str, float]) -> float:
+    def _calculate_cluster_confidence(
+        self,
+        biomarkers: List[str],
+        scores: Dict[str, float],
+        *,
+        policy: Dict[str, Any],
+    ) -> float:
         if not biomarkers:
             return 0.0
         score_values = [scores.get(b, 0.0) for b in biomarkers]
         if not score_values:
             return 0.0
+        confidence_policy = policy.get("confidence", {})
+        variance_divisor = float(confidence_policy.get("variance_divisor", 2500.0))
+        size_boost_per_member = float(confidence_policy.get("size_boost_per_member", 0.05))
+        max_size_boost = float(confidence_policy.get("max_size_boost", 0.2))
         mean_score = sum(score_values) / len(score_values)
         variance = sum((score - mean_score) ** 2 for score in score_values) / len(score_values)
-        confidence = max(0.0, 1.0 - (variance / 2500))
-        size_boost = min(0.2, len(biomarkers) * 0.05)
+        confidence = max(0.0, 1.0 - (variance / variance_divisor))
+        size_boost = min(max_size_boost, len(biomarkers) * size_boost_per_member)
         return min(1.0, confidence + size_boost)
 
     def _validate_clusters(self, clusters: List[BiomarkerCluster]) -> Dict[str, Any]:
@@ -330,13 +368,28 @@ class ClusterEngineV2:
             "is_valid": True,
         }
 
-    def _calculate_overall_confidence(self, clusters: List[BiomarkerCluster], validation_summary: Dict[str, Any]) -> float:
+    def _calculate_overall_confidence(
+        self,
+        clusters: List[BiomarkerCluster],
+        validation_summary: Dict[str, Any],
+        *,
+        policy: Dict[str, Any],
+    ) -> float:
         if not clusters:
             return 0.0
+        overall_confidence_policy = policy.get("overall_confidence", {})
         avg_cluster_confidence = sum(cluster.confidence for cluster in clusters) / len(clusters)
-        validation_penalty = 0.2 if not validation_summary.get("is_valid", True) else 0.0
+        validation_penalty = (
+            float(overall_confidence_policy.get("invalid_cluster_penalty", 0.2))
+            if not validation_summary.get("is_valid", True)
+            else 0.0
+        )
         cluster_count = len(clusters)
-        if cluster_count < 2 or cluster_count > 6:
-            validation_penalty += 0.1
+        optimal_min = int(overall_confidence_policy.get("optimal_cluster_count_min", 2))
+        optimal_max = int(overall_confidence_policy.get("optimal_cluster_count_max", 6))
+        if cluster_count < optimal_min or cluster_count > optimal_max:
+            validation_penalty += float(
+                overall_confidence_policy.get("out_of_range_cluster_count_penalty", 0.1)
+            )
         return max(0.0, avg_cluster_confidence - validation_penalty)
 

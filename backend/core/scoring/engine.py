@@ -124,7 +124,7 @@ class ScoringEngine:
         all_recommendations = []
         unscored_list: List[Dict[str, Any]] = []
 
-        for system_name in ["metabolic", "cardiovascular", "inflammatory", "hormonal", "nutritional", "kidney", "liver", "cbc"]:
+        for system_name in self.rules.get_system_execution_order():
             system_score = self._score_health_system(
                 system_name,
                 canonical_biomarkers,

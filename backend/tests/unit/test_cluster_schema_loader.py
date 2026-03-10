@@ -125,3 +125,31 @@ def test_clustering_runtime_has_no_analytics_cluster_schema_import():
             continue
         text = py_file.read_text(encoding="utf-8")
         assert "core.analytics.cluster_schema" not in text
+
+
+def test_cluster_scoring_policy_loads():
+    cluster_schema_loader._cluster_scoring_policy_cache = None
+    policy = cluster_schema_loader.load_cluster_scoring_policy()
+    assert policy.policy_version
+    assert policy.schema_version
+    assert policy.min_members_per_cluster >= 1
+    assert policy.severity_thresholds["critical_lt"] < policy.severity_thresholds["high_lt"]
+
+
+def test_cluster_scoring_policy_validation_fails_on_invalid_thresholds(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    bad = tmp_path / "cluster_scoring_policy.yaml"
+    bad.write_text(
+        "policy_version: '1.0.0'\n"
+        "schema_version: '1.0'\n"
+        "cluster_membership: {min_members_per_cluster: 2}\n"
+        "severity_thresholds: {critical_lt: 40, high_lt: 30, moderate_lt: 70, mild_lt: 85}\n"
+        "confidence: {variance_divisor: 2500, size_boost_per_member: 0.05, max_size_boost: 0.2}\n"
+        "overall_confidence: {invalid_cluster_penalty: 0.2, out_of_range_cluster_count_penalty: 0.1, optimal_cluster_count_min: 2, optimal_cluster_count_max: 6}\n",
+        encoding="utf-8",
+    )
+    cluster_schema_loader._cluster_scoring_policy_cache = None
+    monkeypatch.setattr(cluster_schema_loader, "_cluster_scoring_policy_path", lambda: bad)
+    with pytest.raises(ValueError, match="strictly increasing"):
+        cluster_schema_loader.load_cluster_scoring_policy()

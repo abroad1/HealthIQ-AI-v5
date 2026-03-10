@@ -1,6 +1,20 @@
 policy_version: "1.1.0"
 schema_version: "1.0"
 
+system_execution_order:
+  - metabolic
+  - cardiovascular
+  - inflammatory
+  - hormonal
+  - nutritional
+  - kidney
+  - liver
+  - cbc
+
+scoring_runtime:
+  # Preserve existing runtime sentinel for deterministic contracts.
+  unscored_reason_missing_lab_reference_range: "missing_lab_reference_range"
+
 systems:
   metabolic:
     min_biomarkers_required: 2

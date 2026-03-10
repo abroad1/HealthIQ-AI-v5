@@ -450,3 +450,8 @@ class TestScoringEngine:
             incomplete_poor, age=35, sex="male", input_reference_ranges=lab_ranges_poor
         )
         assert result_low_confidence.confidence == ConfidenceLevel.LOW, "Incomplete poor data should have low confidence"
+
+    def test_health_system_order_is_policy_driven(self):
+        """Scoring engine must follow policy-defined traversal order."""
+        result = self.engine.score_biomarkers({})
+        assert list(result.health_system_scores.keys()) == self.engine.rules.get_system_execution_order()
