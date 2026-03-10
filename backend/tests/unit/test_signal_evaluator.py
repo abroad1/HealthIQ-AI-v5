@@ -9,7 +9,13 @@ import pytest
 from core.analytics.signal_evaluator import SignalEvaluator, SignalRegistry
 
 
-def _write_signal_library(path: Path, signal_id: str, primary_metric: str = "glucose") -> None:
+def _write_signal_library(
+    path: Path,
+    signal_id: str,
+    *,
+    primary_metric: str = "glucose",
+    override_threshold: float = 120.0,
+) -> None:
     path.write_text(
         "\n".join(
             [
@@ -32,7 +38,13 @@ def _write_signal_library(path: Path, signal_id: str, primary_metric: str = "glu
                 "        value: 100",
                 "    activation_logic: {}",
                 "    override_rules:",
-                '      - when: "ignored_in_kb_s14"',
+                '      - rule_id: "override_high_glucose"',
+                "        conditions:",
+                f'          - metric_id: "{primary_metric}"',
+                '            operator: ">="',
+                f"            value: {override_threshold}",
+                '            condition_type: "any_of"',
+                '        resulting_state: "at_risk"',
                 '    output:',
                 f'      signal_value: "{primary_metric}"',
                 "      supporting_markers: []",
@@ -85,7 +97,13 @@ class _StubRegistry:
                     {"severity": "at_risk", "operator": ">=", "value": 9.2},
                 ],
                 "override_rules": [
-                    {"state": "at_risk", "any_of": [{"metric_id": "crp", "operator": ">=", "value": 3.0}]}
+                    {
+                        "rule_id": "high_crp_override",
+                        "conditions": [
+                            {"metric_id": "crp", "operator": ">=", "value": 3.0, "condition_type": "any_of"}
+                        ],
+                        "resulting_state": "at_risk",
+                    }
                 ],
                 "output": {"supporting_markers": ["insulin", "glucose"]},
             },
@@ -95,13 +113,32 @@ class _StubRegistry:
                 "primary_metric": "crp",
                 "supporting_metrics": [],
                 "thresholds": [{"severity": "at_risk", "operator": ">=", "value": 3.0}],
-                "override_rules": [],
+                "override_rules": [
+                    {
+                        "rule_id": "severe_inflammation",
+                        "conditions": [
+                            {"metric_id": "sii", "operator": ">=", "value": 800.0, "condition_type": "any_of"}
+                        ],
+                        "resulting_state": "at_risk",
+                    }
+                ],
                 "output": {"supporting_markers": []},
             },
         ]
 
 
-def test_signal_evaluator_uses_thresholds_without_override_rules():
+def test_override_rule_any_of_fires_and_changes_state():
+    evaluator = SignalEvaluator(_StubRegistry())
+    results = evaluator.evaluate_all(
+        signal_biomarkers={"crp": 3.2},
+        signal_derived={"tyg_index": 8.9},
+        lab_ranges={"tyg_index": {"min": 8.0, "max": 9.0}},
+    )
+    by_id = {r.signal_id: r for r in results}
+    assert by_id["signal_alpha"].signal_state == "at_risk"
+
+
+def test_override_rule_any_of_not_met_preserves_threshold_result():
     evaluator = SignalEvaluator(_StubRegistry())
     results = evaluator.evaluate_all(
         signal_biomarkers={"crp": 1.2},
@@ -114,28 +151,168 @@ def test_signal_evaluator_uses_thresholds_without_override_rules():
     assert by_id["signal_alpha"].supporting_markers == ["insulin", "glucose"]
 
 
-def test_signal_evaluator_lab_normal_but_flagged_paths():
+def test_override_rule_all_of_requires_all_conditions_true():
+    class _AllOfRegistry:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_all_of",
+                    "system": "hepatic",
+                    "primary_metric": "tyg_index",
+                    "supporting_metrics": [],
+                    "thresholds": [{"severity": "suboptimal", "operator": ">=", "value": 8.5}],
+                    "override_rules": [
+                        {
+                            "rule_id": "hepatic_override",
+                            "conditions": [
+                                {"metric_id": "ast_alt_ratio", "operator": ">=", "value": 2.0, "condition_type": "all_of"},
+                                {"metric_id": "alt", "operator": ">=", "value": 33.0, "condition_type": "all_of"},
+                            ],
+                            "resulting_state": "at_risk",
+                        }
+                    ],
+                    "output": {"supporting_markers": []},
+                }
+            ]
+
+    evaluator = SignalEvaluator(_AllOfRegistry())
+    one_true = evaluator.evaluate_all(
+        signal_biomarkers={"alt": 20.0},
+        signal_derived={"tyg_index": 8.9, "ast_alt_ratio": 2.2},
+        lab_ranges={},
+    )
+    assert one_true[0].signal_state == "suboptimal"
+
+    both_true = evaluator.evaluate_all(
+        signal_biomarkers={"alt": 35.0},
+        signal_derived={"tyg_index": 8.9, "ast_alt_ratio": 2.2},
+        lab_ranges={},
+    )
+    assert both_true[0].signal_state == "at_risk"
+
+
+def test_multiple_override_rules_highest_rank_wins_deterministically():
+    class _MultiOverrideRegistry:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_multi",
+                    "system": "metabolic",
+                    "primary_metric": "tyg_index",
+                    "supporting_metrics": [],
+                    "thresholds": [{"severity": "optimal", "operator": "<", "value": 8.0}],
+                    "override_rules": [
+                        {
+                            "rule_id": "to_suboptimal",
+                            "conditions": [
+                                {"metric_id": "crp", "operator": ">=", "value": 2.0, "condition_type": "any_of"}
+                            ],
+                            "resulting_state": "suboptimal",
+                        },
+                        {
+                            "rule_id": "to_at_risk",
+                            "conditions": [
+                                {"metric_id": "glucose", "operator": ">=", "value": 5.6, "condition_type": "any_of"}
+                            ],
+                            "resulting_state": "at_risk",
+                        },
+                    ],
+                    "output": {"supporting_markers": []},
+                }
+            ]
+
+    evaluator = SignalEvaluator(_MultiOverrideRegistry())
+    results = evaluator.evaluate_all(
+        signal_biomarkers={"crp": 3.0, "glucose": 6.0},
+        signal_derived={"tyg_index": 7.2},
+        lab_ranges={},
+    )
+    assert len(results) == 1
+    assert results[0].signal_state == "at_risk"
+
+
+def test_override_condition_with_absent_metric_is_false_fail_safe():
     evaluator = SignalEvaluator(_StubRegistry())
     results = evaluator.evaluate_all(
         signal_biomarkers={},
         signal_derived={"tyg_index": 8.9},
-        lab_ranges={"tyg_index": {"min": 8.0, "max": 9.0}},
+        lab_ranges={},
     )
     assert len(results) == 1
     assert results[0].signal_id == "signal_alpha"
-    assert results[0].lab_normal_but_flagged is True
+    assert results[0].signal_state == "suboptimal"
 
-    results_outside = evaluator.evaluate_all(
-        signal_biomarkers={},
+
+def test_signal_skipped_when_primary_metric_absent():
+    evaluator = SignalEvaluator(_StubRegistry())
+    results = evaluator.evaluate_all(
+        signal_biomarkers={"crp": 2.0},
+        signal_derived={},
+        lab_ranges={},
+    )
+    assert results == []
+
+
+def test_no_threshold_match_omits_signal():
+    evaluator = SignalEvaluator(_StubRegistry())
+    results = evaluator.evaluate_all(
+        signal_biomarkers={"crp": 0.8},
+        signal_derived={"tyg_index": 8.1},
+        lab_ranges={},
+    )
+    assert results == []
+
+
+def test_duplicate_loading_keeps_deterministic_override_behavior(monkeypatch, tmp_path):
+    p1 = tmp_path / "a.yaml"
+    p2 = tmp_path / "b.yaml"
+    _write_signal_library(p1, signal_id="dup_signal", primary_metric="glucose", override_threshold=200.0)
+    _write_signal_library(p2, signal_id="dup_signal", primary_metric="glucose", override_threshold=100.0)
+    monkeypatch.setattr(SignalRegistry, "_iter_signal_library_paths", lambda self: [p1, p2])
+
+    registry_a = SignalRegistry()
+    registry_b = SignalRegistry()
+    evaluator_a = SignalEvaluator(registry_a)
+    evaluator_b = SignalEvaluator(registry_b)
+
+    out_a = evaluator_a.evaluate_all(
+        signal_biomarkers={"glucose": 110.0},
+        signal_derived={},
+        lab_ranges={"glucose": {"min": 70.0, "max": 99.0}},
+    )
+    out_b = evaluator_b.evaluate_all(
+        signal_biomarkers={"glucose": 110.0},
+        signal_derived={},
+        lab_ranges={"glucose": {"min": 70.0, "max": 99.0}},
+    )
+    assert len(out_a) == len(out_b) == 1
+    assert out_a[0].signal_state == out_b[0].signal_state == "at_risk"
+
+
+def test_lab_normal_but_flagged_recomputed_after_override_paths():
+    evaluator = SignalEvaluator(_StubRegistry())
+    in_range = evaluator.evaluate_all(
+        signal_biomarkers={"crp": 3.5},
+        signal_derived={"tyg_index": 8.9},
+        lab_ranges={"tyg_index": {"min": 8.0, "max": 9.0}},
+    )
+    assert in_range[0].signal_state == "at_risk"
+    assert in_range[0].lab_normal_but_flagged is True
+
+    outside_range = evaluator.evaluate_all(
+        signal_biomarkers={"crp": 3.5},
         signal_derived={"tyg_index": 9.3},
         lab_ranges={"tyg_index": {"min": 8.0, "max": 9.0}},
     )
-    assert results_outside[0].signal_state == "at_risk"
-    assert results_outside[0].lab_normal_but_flagged is False
+    assert outside_range[0].signal_state == "at_risk"
+    assert outside_range[0].lab_normal_but_flagged is False
 
-    results_no_ranges = evaluator.evaluate_all(
-        signal_biomarkers={},
+    no_ranges = evaluator.evaluate_all(
+        signal_biomarkers={"crp": 3.5},
         signal_derived={"tyg_index": 8.9},
         lab_ranges={},
     )
-    assert results_no_ranges[0].lab_normal_but_flagged is False
+    assert no_ranges[0].signal_state == "at_risk"
+    assert no_ranges[0].lab_normal_but_flagged is False
