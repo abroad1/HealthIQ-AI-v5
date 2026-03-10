@@ -93,6 +93,28 @@ def _validate_policy(raw: Dict[str, Any]) -> None:
                     f"System '{system_name}' references unknown biomarker '{biomarker_id}'"
                 )
 
+    execution_order = raw.get("system_execution_order")
+    if execution_order is not None:
+        if not isinstance(execution_order, list) or not execution_order:
+            raise ValueError("system_execution_order must be a non-empty list when provided")
+        seen = set()
+        for system_name in execution_order:
+            if not isinstance(system_name, str) or not system_name.strip():
+                raise ValueError("system_execution_order entries must be non-empty strings")
+            if system_name in seen:
+                raise ValueError(f"system_execution_order contains duplicate '{system_name}'")
+            if system_name not in systems:
+                raise ValueError(
+                    f"system_execution_order references unknown system '{system_name}'"
+                )
+            seen.add(system_name)
+        missing = sorted(set(systems.keys()) - set(execution_order))
+        if missing:
+            raise ValueError(
+                "system_execution_order must include all systems; missing "
+                f"{missing}"
+            )
+
     derived_ratio_policy_bounds = raw.get("derived_ratio_policy_bounds", {})
     if not isinstance(derived_ratio_policy_bounds, dict):
         raise ValueError("derived_ratio_policy_bounds must be a mapping")
@@ -116,6 +138,15 @@ def _validate_policy(raw: Dict[str, Any]) -> None:
         raise ValueError("status_map must be a non-empty mapping")
     if not isinstance(raw.get("score_curve"), dict) or not raw.get("score_curve"):
         raise ValueError("score_curve must be a non-empty mapping")
+    scoring_runtime = raw.get("scoring_runtime", {})
+    if scoring_runtime:
+        if not isinstance(scoring_runtime, dict):
+            raise ValueError("scoring_runtime must be a mapping")
+        reason = str(scoring_runtime.get("unscored_reason_missing_lab_reference_range", "")).strip()
+        if not reason:
+            raise ValueError(
+                "scoring_runtime.unscored_reason_missing_lab_reference_range must be a non-empty string"
+            )
 
 
 def load_scoring_policy() -> LoadedScoringPolicy:

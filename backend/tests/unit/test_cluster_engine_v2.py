@@ -5,8 +5,9 @@ Unit tests for Cluster Engine v2.
 import pytest
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
-from core.clustering.cluster_engine_v2 import score_clusters, load_cluster_rules
+from core.clustering.cluster_engine_v2 import score_clusters, load_cluster_rules, ClusterEngineV2
 
 
 @pytest.fixture
@@ -130,3 +131,72 @@ def test_red_metabolic_panel_scores_high(red_metabolic_panel):
     # Should have drivers
     assert len(metabolic["drivers"]) > 0
     assert len(cardiovascular["drivers"]) > 0
+
+
+def test_cluster_engine_v2_uses_policy_for_min_members(monkeypatch: pytest.MonkeyPatch):
+    engine = ClusterEngineV2()
+    monkeypatch.setattr(
+        engine,
+        "_load_cluster_scoring_policy",
+        lambda: {
+            "min_members_per_cluster": 3,
+            "severity_thresholds": {"critical_lt": 30.0, "high_lt": 50.0, "moderate_lt": 70.0, "mild_lt": 85.0},
+            "confidence": {"variance_divisor": 2500.0, "size_boost_per_member": 0.05, "max_size_boost": 0.2},
+            "overall_confidence": {
+                "invalid_cluster_penalty": 0.2,
+                "out_of_range_cluster_count_penalty": 0.1,
+                "optimal_cluster_count_min": 2,
+                "optimal_cluster_count_max": 6,
+            },
+        },
+    )
+    monkeypatch.setattr(engine, "_group_biomarkers_by_health_system", lambda _: {"metabolic": ["glucose", "hba1c"]})
+    scoring_result = {
+        "health_system_scores": {
+            "metabolic": {
+                "biomarker_scores": [
+                    {"biomarker_name": "glucose", "score": 80.0},
+                    {"biomarker_name": "hba1c", "score": 82.0},
+                ]
+            }
+        }
+    }
+    result = engine.cluster_biomarkers(context=SimpleNamespace(), scoring_result=scoring_result)
+    assert result.clusters == []
+
+
+def test_cluster_engine_v2_uses_policy_for_severity_thresholds(monkeypatch: pytest.MonkeyPatch):
+    engine = ClusterEngineV2()
+    monkeypatch.setattr(
+        engine,
+        "_load_cluster_scoring_policy",
+        lambda: {
+            "min_members_per_cluster": 2,
+            "severity_thresholds": {"critical_lt": 10.0, "high_lt": 20.0, "moderate_lt": 30.0, "mild_lt": 40.0},
+            "confidence": {"variance_divisor": 2500.0, "size_boost_per_member": 0.05, "max_size_boost": 0.2},
+            "overall_confidence": {
+                "invalid_cluster_penalty": 0.2,
+                "out_of_range_cluster_count_penalty": 0.1,
+                "optimal_cluster_count_min": 2,
+                "optimal_cluster_count_max": 6,
+            },
+        },
+    )
+    monkeypatch.setattr(
+        engine,
+        "_group_biomarkers_by_health_system",
+        lambda _: {"metabolic": ["glucose", "hba1c"]},
+    )
+    scoring_result = {
+        "health_system_scores": {
+            "metabolic": {
+                "biomarker_scores": [
+                    {"biomarker_name": "glucose", "score": 35.0},
+                    {"biomarker_name": "hba1c", "score": 35.0},
+                ]
+            }
+        }
+    }
+    result = engine.cluster_biomarkers(context=SimpleNamespace(), scoring_result=scoring_result)
+    assert len(result.clusters) == 1
+    assert result.clusters[0].severity == "mild"

@@ -31,8 +31,13 @@ DERIVED_RATIO_BOUNDS: Dict[str, Dict[str, float]] = {
     for k, v in DERIVED_RATIO_POLICY_BOUNDS.items()
 }
 
-# Sentinel for unscored (missing lab reference range)
-UNSCORED_REASON = "missing_lab_reference_range"
+# Sentinel for unscored (missing lab reference range), policy-governed.
+UNSCORED_REASON = str(
+    (_POLICY.raw.get("scoring_runtime", {}) or {}).get(
+        "unscored_reason_missing_lab_reference_range",
+        "missing_lab_reference_range",
+    )
+)
 
 
 class ScoreRange(Enum):
@@ -162,6 +167,13 @@ class ScoringRules:
             Dictionary of all health system rules
         """
         return self._rules.copy()
+
+    def get_system_execution_order(self) -> List[str]:
+        """Return policy-driven system traversal order."""
+        order = self._policy.raw.get("system_execution_order")
+        if isinstance(order, list) and order:
+            return [str(system_name) for system_name in order if str(system_name).strip()]
+        return list(self._rules.keys())
     
     def _is_derived_ratio(self, biomarker_name: str) -> bool:
         """True if biomarker is a derived ratio v5 computes (may use DERIVED_RATIO_BOUNDS when lab didn't supply)."""

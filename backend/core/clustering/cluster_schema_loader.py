@@ -37,6 +37,19 @@ class ClusterSchema:
 
 
 _schema_cache: Optional[ClusterSchema] = None
+_cluster_scoring_policy_cache: Optional["ClusterScoringPolicy"] = None
+
+
+@dataclass
+class ClusterScoringPolicy:
+    """Loaded cluster scoring policy for active ClusterEngineV2 runtime."""
+
+    policy_version: str
+    schema_version: str
+    min_members_per_cluster: int
+    severity_thresholds: Dict[str, float]
+    confidence: Dict[str, float]
+    overall_confidence: Dict[str, float]
 
 
 def _get_canonical_biomarker_ids() -> Set[str]:
@@ -58,6 +71,96 @@ def _compute_schema_hash(version: str, schema_version: str, clusters: Dict[str, 
         parts.append(f"{cid}:r={','.join(sorted(c.required))}:i={','.join(sorted(c.important))}:o={','.join(sorted(c.optional))}")
     content = "|".join(parts)
     return hashlib.sha256(content.encode("utf-8")).hexdigest()[:16]
+
+
+def _cluster_scoring_policy_path() -> Path:
+    return Path(__file__).parent.parent.parent / "ssot" / "cluster_scoring_policy.yaml"
+
+
+def _validate_cluster_scoring_policy(raw: Dict[str, Any]) -> ClusterScoringPolicy:
+    policy_version = str(raw.get("policy_version", "")).strip()
+    if not policy_version:
+        raise ValueError("cluster_scoring_policy.yaml must include policy_version")
+    schema_version = str(raw.get("schema_version", "")).strip()
+    if not schema_version:
+        raise ValueError("cluster_scoring_policy.yaml must include schema_version")
+
+    membership = raw.get("cluster_membership", {})
+    if not isinstance(membership, dict):
+        raise ValueError("cluster_membership must be a mapping")
+    min_members = membership.get("min_members_per_cluster")
+    if not isinstance(min_members, int) or min_members < 1:
+        raise ValueError("cluster_membership.min_members_per_cluster must be int >= 1")
+
+    severity = raw.get("severity_thresholds", {})
+    if not isinstance(severity, dict):
+        raise ValueError("severity_thresholds must be a mapping")
+    required_severity_keys = ["critical_lt", "high_lt", "moderate_lt", "mild_lt"]
+    for key in required_severity_keys:
+        if not isinstance(severity.get(key), (int, float)):
+            raise ValueError(f"severity_thresholds.{key} must be numeric")
+    if not (
+        float(severity["critical_lt"])
+        < float(severity["high_lt"])
+        < float(severity["moderate_lt"])
+        < float(severity["mild_lt"])
+    ):
+        raise ValueError(
+            "severity_thresholds must be strictly increasing: critical_lt < high_lt < moderate_lt < mild_lt"
+        )
+
+    confidence = raw.get("confidence", {})
+    if not isinstance(confidence, dict):
+        raise ValueError("confidence must be a mapping")
+    for key in ["variance_divisor", "size_boost_per_member", "max_size_boost"]:
+        if not isinstance(confidence.get(key), (int, float)):
+            raise ValueError(f"confidence.{key} must be numeric")
+    if float(confidence["variance_divisor"]) <= 0.0:
+        raise ValueError("confidence.variance_divisor must be > 0")
+    if float(confidence["size_boost_per_member"]) < 0.0:
+        raise ValueError("confidence.size_boost_per_member must be >= 0")
+    if float(confidence["max_size_boost"]) < 0.0:
+        raise ValueError("confidence.max_size_boost must be >= 0")
+
+    overall = raw.get("overall_confidence", {})
+    if not isinstance(overall, dict):
+        raise ValueError("overall_confidence must be a mapping")
+    for key in [
+        "invalid_cluster_penalty",
+        "out_of_range_cluster_count_penalty",
+        "optimal_cluster_count_min",
+        "optimal_cluster_count_max",
+    ]:
+        if not isinstance(overall.get(key), (int, float)):
+            raise ValueError(f"overall_confidence.{key} must be numeric")
+    if float(overall["invalid_cluster_penalty"]) < 0.0:
+        raise ValueError("overall_confidence.invalid_cluster_penalty must be >= 0")
+    if float(overall["out_of_range_cluster_count_penalty"]) < 0.0:
+        raise ValueError("overall_confidence.out_of_range_cluster_count_penalty must be >= 0")
+    min_count = int(overall["optimal_cluster_count_min"])
+    max_count = int(overall["optimal_cluster_count_max"])
+    if min_count < 0 or max_count < 0 or min_count > max_count:
+        raise ValueError(
+            "overall_confidence optimal cluster count bounds must satisfy 0 <= min <= max"
+        )
+
+    return ClusterScoringPolicy(
+        policy_version=policy_version,
+        schema_version=schema_version,
+        min_members_per_cluster=min_members,
+        severity_thresholds={k: float(severity[k]) for k in required_severity_keys},
+        confidence={
+            "variance_divisor": float(confidence["variance_divisor"]),
+            "size_boost_per_member": float(confidence["size_boost_per_member"]),
+            "max_size_boost": float(confidence["max_size_boost"]),
+        },
+        overall_confidence={
+            "invalid_cluster_penalty": float(overall["invalid_cluster_penalty"]),
+            "out_of_range_cluster_count_penalty": float(overall["out_of_range_cluster_count_penalty"]),
+            "optimal_cluster_count_min": float(min_count),
+            "optimal_cluster_count_max": float(max_count),
+        },
+    )
 
 
 def _validate_cluster(
@@ -134,6 +237,23 @@ def load_cluster_schema() -> ClusterSchema:
         schema_hash=schema_hash,
     )
     return _schema_cache
+
+
+def load_cluster_scoring_policy() -> ClusterScoringPolicy:
+    """Load and validate active cluster scoring policy. Cached."""
+    global _cluster_scoring_policy_cache
+    if _cluster_scoring_policy_cache is not None:
+        return _cluster_scoring_policy_cache
+
+    policy_path = _cluster_scoring_policy_path()
+    if not policy_path.exists():
+        raise FileNotFoundError(f"Cluster scoring policy not found: {policy_path}")
+    with open(policy_path, "r", encoding="utf-8") as f:
+        payload = yaml.safe_load(f) or {}
+    if not isinstance(payload, dict):
+        raise ValueError("cluster_scoring_policy.yaml must parse to a top-level mapping")
+    _cluster_scoring_policy_cache = _validate_cluster_scoring_policy(payload)
+    return _cluster_scoring_policy_cache
 
 
 def compute_cluster_status(

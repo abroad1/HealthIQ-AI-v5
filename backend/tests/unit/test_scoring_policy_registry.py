@@ -83,3 +83,42 @@ def test_scoring_rules_golden_curve_regression_points():
     score_high_out, range_high_out = rules._calculate_score_from_range(110.0, 70.0, 100.0)
     assert score_high_out == pytest.approx(13.3333333333, rel=1e-6, abs=2e-5)
     assert range_high_out == ScoreRange.CRITICAL
+
+
+def test_scoring_policy_validation_fails_when_system_execution_order_missing_system(
+    tmp_path, monkeypatch
+):
+    bad = tmp_path / "scoring_policy.yaml"
+    bad.write_text(
+        "policy_version: '1.0.0'\n"
+        "schema_version: '1.0'\n"
+        "systems:\n"
+        "  metabolic:\n"
+        "    min_biomarkers_required: 1\n"
+        "    system_weight: 1.0\n"
+        "    biomarkers: [glucose]\n"
+        "  cardiovascular:\n"
+        "    min_biomarkers_required: 1\n"
+        "    system_weight: 1.0\n"
+        "    biomarkers: [glucose]\n"
+        "system_execution_order: [metabolic]\n"
+        "biomarkers:\n"
+        "  glucose:\n"
+        "    scoring_type: range_position\n"
+        "    weight: 1.0\n"
+        "    bands:\n"
+        "      optimal: {min: 70, max: 100}\n"
+        "      normal: {min: 70, max: 100}\n"
+        "      borderline: {min: 100, max: 125}\n"
+        "      high: {min: 125, max: 200}\n"
+        "      very_high: {min: 200, max: 300}\n"
+        "      critical: {min: 300, max: 1000}\n"
+        "status_map: {normal: normal}\n"
+        "score_curve: {optimal_band: {min: 0.2, max: 0.8, score: 100.0}}\n"
+        "derived_ratio_policy_bounds: {}\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(scoring_policy_registry, "_policy_path", lambda: bad)
+    _reset_policy_cache()
+    with pytest.raises(ValueError, match="system_execution_order must include all systems"):
+        scoring_policy_registry.load_scoring_policy()
