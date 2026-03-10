@@ -99,12 +99,13 @@ notes: >
   prospective cohort (n=7,046). No suboptimal tier for either metric is evidence-supported.
   ACCORD-MIND (RCT) confirms signal must be framed as prognostic, not prescriptive.
 
-  PARKED FUTURE SIGNAL — signal_brain_metabolic_health:
-  A companion signal using tyg_index as primary metric (already in platform) has been
-  researched (source: 10-Brain-Metabolic-Health-(Future-Expansion).md) but has entirely
-  inconclusive threshold evidence for cognitive outcomes. Parked pending prospective
-  validation of tyg_index cut-offs against dementia/cognitive decline endpoints.
-  Override rule of interest when activated: T2D (HbA1c ≥ 6.5%) → at_risk.
+  COMPANION SIGNAL UNPARKED — signal_brain_metabolic_health (KBP-0012):
+  The previously parked companion signal has been unparked and implemented as
+  pkg_brain_metabolic_health (KBP-0012). Cui et al. 2022 (UK Biobank; n=482,716; 11.5yr;
+  Tier 1) provides prospective threshold evidence for tyg_index cut-offs against dementia
+  endpoints (TyG ≥ 8.8 → HR 1.15 for all-cause dementia and AD). KBP-0012 uses
+  signal_brain_metabolic_health with tyg_index as primary metric, complementing this
+  package's ghr_index-primary vascular-cognitive axis.
 
 research_summary: >
   Primary longitudinal evidence: ARIC Study (Gottesman et al., 2017; Tier 1, n=15,792,

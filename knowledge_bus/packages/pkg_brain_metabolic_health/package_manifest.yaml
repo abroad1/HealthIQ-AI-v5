@@ -1,0 +1,15 @@
+package_id: "pkg_brain_metabolic_health"
+package_version: "1.0.0"
+description: >
+  KBP-0012 — Brain Metabolic Health (Type 3 Diabetes / Insulin Resistance → Neurodegeneration).
+  Companion signal to KBP-0007 (vascular-cognitive axis). Uses tyg_index as primary metric
+  with Cui et al. 2022 UK Biobank thresholds (n=482,716; 11.5yr; < 8.1 / 8.1–8.8 / ≥ 8.8)
+  for dementia risk. HbA1c secondary thresholds from Kerti et al. 2013 for sub-clinical
+  glycation-driven hippocampal atrophy. All derived metrics (tyg_index, tg_hdl_ratio) already
+  in platform — no SSOT gaps. Unparks previously deferred signal_brain_metabolic_health.
+research_brief: "research_brief.yaml"
+signal_library: "signal_library.yaml"
+author: "Claude Translation Engine — Research-to-Knowledge Translation Specification v1"
+created_at: "2026-03-10"
+source_document: "knowledge_bus/research/papers/10-Brain-Metabolic-Dysfunction-Signal-Generation.md"
+translation_mode: "creation"

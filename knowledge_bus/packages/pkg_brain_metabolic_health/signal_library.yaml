@@ -1,0 +1,168 @@
+library:
+  schema_version: "1.0.0"
+  package_id: "KBP-0012"
+  library_name: "Brain Metabolic Health Signal Library"
+  description: >
+    Evidence-anchored signal library for brain metabolic health using tyg_index as the
+    primary metric with Cui et al. 2022 UK Biobank thresholds (n=482,716; 11.5yr;
+    < 8.1 / 8.1–8.8 / ≥ 8.8). Companion to KBP-0007 (vascular-cognitive axis).
+    Captures the Type 3 Diabetes / insulin-resistance → neurodegeneration pathway.
+    HbA1c secondary thresholds (Kerti 2013) for sub-clinical glycation-driven
+    hippocampal atrophy. All derived metrics in platform. See clinical_signoff.md.
+
+signals:
+  - signal_id: "signal_brain_metabolic_health"
+    name: "Brain Metabolic Health"
+    description: >
+      Detects brain metabolic dysfunction risk via the Type 3 Diabetes pathway:
+      systemic insulin resistance (measured by tyg_index) impairing insulin transport
+      across the blood-brain barrier, driving hippocampal glucose hypometabolism and
+      neurodegeneration. tyg_index ≥ 8.8 (highest quartile) is associated with HR 1.15
+      for incident all-cause dementia and Alzheimer's Disease (Cui et al. 2022; UK
+      Biobank; n=482,716; 11.5yr follow-up). HbA1c > 5.6% independently marks
+      sub-clinical glycation-driven hippocampal atrophy even in non-diabetic ranges
+      (Kerti et al. 2013; n=141). Override rules capture overt diabetes (glucose ≥ 7.0
+      OR hba1c ≥ 6.5%), lipid-based cognitive decline proxy (TG/HDL > 1.3), and
+      pancreatitis safety (TG ≥ 5.6). Signal is prognostic — framed as risk indicator,
+      not therapeutic target (per ACCORD-MIND RCT).
+    system: "metabolic"
+    primary_metric: "tyg_index"
+    supporting_metrics:
+      - "hba1c"
+      - "tg_hdl_ratio"
+    dependencies:
+      biomarkers:
+        - "glucose"
+        - "triglycerides"
+        - "hdl_cholesterol"
+        - "hba1c"
+      derived_metrics:
+        - "tyg_index"
+        - "tg_hdl_ratio"
+      signals: []
+    optional_dependencies:
+      biomarkers:
+        - "crp"
+        - "insulin"
+      derived_metrics:
+        - "homa_ir"
+      signals: []
+    thresholds:
+      - threshold_id: "bmh_tyg_optimal"
+        metric_id: "tyg_index"
+        operator: "<"
+        value: 8.1
+        severity: "optimal"
+        description: >
+          TyG index below 8.1 — lowest dementia risk quartile in UK Biobank (Cui et al.
+          2022; n=482,716). Systemic insulin sensitivity preserved; low neurodegeneration
+          risk from the metabolic pathway. Note: these are brain-specific thresholds
+          anchored to dementia endpoints — distinct from KBP-0002 (IR thresholds
+          8.30/8.50 for diabetes endpoints) and KBP-0004 (hepatic 8.21/8.97).
+      - threshold_id: "bmh_tyg_suboptimal"
+        metric_id: "tyg_index"
+        operator: "range"
+        min_value: 8.1
+        max_value: 8.8
+        severity: "suboptimal"
+        description: >
+          TyG index 8.1–8.8 — intermediate dementia risk strata. Gradual increase in
+          systemic insulin resistance; sub-clinical impairment of central insulin
+          signalling likely. Evidence: Cui et al. 2022 intermediate quartile data.
+      - threshold_id: "bmh_tyg_at_risk"
+        metric_id: "tyg_index"
+        operator: ">="
+        value: 8.8
+        severity: "at_risk"
+        description: >
+          TyG index ≥ 8.8 — highest dementia risk quartile. HR 1.15 (95% CI 1.05–1.25)
+          for all-cause dementia and Alzheimer's Disease vs lowest quartile (Cui et al.
+          2022; UK Biobank; n=482,716; follow-up 11.5 years). Significant systemic
+          insulin resistance driving reduced brain insulin availability.
+      - threshold_id: "bmh_hba1c_optimal"
+        metric_id: "hba1c"
+        operator: "<"
+        value: 5.4
+        severity: "optimal"
+        description: >
+          HbA1c below 5.4% — maximal hippocampal microstructure preservation range.
+          Sub-clinical glycation-induced neurotoxicity minimal at this level.
+          Evidence: Kerti et al. 2013 (Neurology; n=141; cross-sectional).
+      - threshold_id: "bmh_hba1c_suboptimal"
+        metric_id: "hba1c"
+        operator: "range"
+        min_value: 5.4
+        max_value: 5.6
+        severity: "suboptimal"
+        description: >
+          HbA1c 5.4–5.6% — graded hippocampal microstructure decline detectable.
+          Still within conventional normal range but associated with progressive
+          reduction in hippocampal volume and memory performance.
+          Evidence: Kerti et al. 2013 gradient data.
+      - threshold_id: "bmh_hba1c_at_risk"
+        metric_id: "hba1c"
+        operator: ">"
+        value: 5.6
+        severity: "at_risk"
+        description: >
+          HbA1c above 5.6% (38 mmol/mol) — associated with significantly reduced
+          hippocampal volume and lower memory scores even in non-diabetic individuals
+          (Kerti et al. 2013). Chronic sub-clinical glycation impairing brain
+          microstructure integrity.
+    activation_logic: "deterministic_threshold"
+    override_rules:
+      - rule_id: "overt_diabetes_brain_risk"
+        description: >
+          Fasting glucose ≥ 7.0 mmol/L OR HbA1c ≥ 6.5% forces at_risk. ADA 2025
+          diagnostic criteria for Type 2 Diabetes. Overt systemic diabetes is a
+          definitive driver of Type 3 Diabetes brain metabolic failure — metabolic
+          changes in the brain often precede cognitive symptoms by 10–20 years.
+          Evidence: ADA 2025 Standards of Medical Care; de la Monte & Tong 2014.
+        conditions:
+          - metric_id: "glucose"
+            operator: ">="
+            value: 7.0
+            condition_type: "any_of"
+          - metric_id: "hba1c"
+            operator: ">="
+            value: 6.5
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+      - rule_id: "tg_hdl_cognitive_decline"
+        description: >
+          TG/HDL ratio > 1.3 (mmol/L) forces suboptimal. Correlates with accelerated
+          decline in executive function and processing speed — a lipid-based proxy for
+          impaired central insulin signalling and hepatic insulin resistance.
+          Evidence: Fan et al. 2019 (Journal of Clinical Lipidology; n=1,536).
+          Note: tg_hdl_ratio < 0.87 optimal threshold is explicitly marked inconclusive
+          by the source paper and is NOT implemented per Translation Rule #1.
+        conditions:
+          - metric_id: "tg_hdl_ratio"
+            operator: ">"
+            value: 1.3
+            condition_type: "any_of"
+        resulting_state: "suboptimal"
+      - rule_id: "pancreatitis_safety_override"
+        description: >
+          Triglycerides ≥ 5.6 mmol/L forces at_risk. Standard clinical safety threshold
+          for acute pancreatitis risk — consistent with KBP-0003, KBP-0004, KBP-0008.
+          Metabolic signal takes priority for clinical safety at this TG level.
+          Evidence: ESC/EAS 2019 severe hypertriglyceridaemia threshold.
+        conditions:
+          - metric_id: "triglycerides"
+            operator: ">="
+            value: 5.6
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+    bundle_consumers:
+      - "brain_metabolic_resilience"
+      - "metabolic_health"
+      - "biological_age"
+    output:
+      signal_value: "tyg_index"
+      signal_state: "at_risk"
+      confidence: "confidence_model_v1"
+      primary_metric: "tyg_index"
+      supporting_markers:
+        - "hba1c"
+        - "tg_hdl_ratio"

@@ -1,0 +1,134 @@
+research_domain: "neurological"
+
+sources:
+  - paper_title: "Association of the triglyceride-glucose index with incident dementia: a prospective cohort study"
+    journal: "Alzheimer's Research & Therapy"
+    year: 2022
+    doi: "10.1186/s13195-022-01015-w"
+    notes: >
+      Prospective cohort (UK Biobank); n=482,716; follow-up 11.5 years. Higher TyG index
+      significantly associated with all-cause dementia, Alzheimer's Disease, and vascular
+      dementia. HR for highest vs lowest quartile: 1.15 (95% CI 1.05–1.25). TyG ≥ 8.8
+      represents the approximate upper quartile and the at_risk threshold. TyG < 8.1
+      represents the lowest dementia-risk quartile. Evidence tier: Tier 1 (large prospective
+      cohort). Primary threshold source for tyg_index tiers in this package.
+      Limitation: proxy measure; APOE genotype not available for all participants.
+
+  - paper_title: "Higher glucose levels associated with lower memory and reduced hippocampal microstructure"
+    journal: "Neurology"
+    year: 2013
+    doi: "10.1212/01.wnl.0000435561.00285.f3"
+    notes: >
+      Cross-sectional / observational; n=141. Higher long-term glucose (HbA1c) and
+      fasting glucose within the normal range associated with lower hippocampal volume
+      and poorer memory performance. HbA1c > 5.6% (38 mmol/mol) associated with reduced
+      hippocampal microstructure. HbA1c < 5.4% associated with maximal preservation.
+      Evidence tier: Tier 2 (small cross-sectional; paper labels "mechanistic Tier 1"
+      referring to mechanistic plausibility, not study design). Limitation: small
+      sample; cross-sectional; causal inference not established.
+
+  - paper_title: "Triglyceride to high-density lipoprotein cholesterol ratio and risk of cognitive decline"
+    journal: "Journal of Clinical Lipidology"
+    year: 2019
+    doi: "10.1016/j.jacl.2019.01.011"
+    notes: >
+      Observational cohort; n=1,536. TG/HDL-C ratio (mmol/L) > 1.3 correlates with
+      accelerated decline in executive function and processing speed. Serves as a
+      lipid-based proxy for impaired central insulin signalling. Threshold 0.87 (optimal)
+      explicitly marked as "evidence inconclusive" in source paper — not implemented.
+      Only the > 1.3 suboptimal association is implemented (override rule). Evidence
+      tier: Tier 2 (observational).
+
+  - paper_title: "Brain metabolic dysfunction at the core of Alzheimer's disease"
+    journal: "Biochemical Pharmacology"
+    year: 2014
+    doi: "10.1016/j.bcp.2013.12.012"
+    notes: >
+      Comprehensive literature review (de la Monte & Tong). Proposes Alzheimer's disease
+      as fundamentally a metabolic disease driven by brain insulin and IGF resistance —
+      the "Type 3 Diabetes" framework. No primary data or thresholds. Provides the
+      pathophysiological mechanism underlying this signal: systemic insulin resistance
+      impairs insulin transport across the blood-brain barrier, reducing hippocampal
+      glucose uptake and triggering neuroinflammation, oxidative stress, and amyloid
+      accumulation. Conceptual background reference only.
+
+  - paper_title: "Brain insulin resistance in Type 2 diabetes and Alzheimer disease: concepts and anomalies"
+    journal: "Nature Reviews Endocrinology"
+    year: 2014
+    doi: "10.1038/nrendo.2014.128"
+    notes: >
+      Expert review (Arnold et al. 2018 / de la Monte 2014). Establishes definition of
+      brain insulin resistance and its link to systemic markers. Confirms systemic IR
+      is a major driver of AD-related brain dysfunction. No specific blood-based
+      thresholds — qualitative synthesis only.
+
+biomarkers:
+  - glucose
+  - triglycerides
+  - hdl_cholesterol
+  - hba1c
+
+derived_metrics:
+  - tyg_index
+  - tg_hdl_ratio
+
+physiological_claim: >
+  Chronic systemic insulin resistance impairs insulin transport across the blood-brain
+  barrier, reducing glucose uptake in the hippocampus and prefrontal cortex — the
+  neurological expression of the same metabolic failure measured by the TyG index
+  peripherally. This state, termed "Type 3 Diabetes," drives hippocampal glucose
+  hypometabolism, neuroinflammation, and accumulation of amyloid-beta and tau proteins.
+  Systemic TyG index ≥ 8.8 (highest quartile) is associated with HR 1.15 (95% CI
+  1.05–1.25) for incident all-cause dementia and Alzheimer's Disease in the UK Biobank
+  prospective cohort (n=482,716; 11.5yr follow-up; Cui et al. 2022). Sub-clinical
+  glycation — HbA1c above 5.6% even within conventional normal range — independently
+  correlates with reduced hippocampal volume and memory impairment (Kerti et al. 2013).
+  Metabolic changes in the brain precede clinical cognitive symptoms by 10–20 years,
+  providing a critical window for intervention. The TG/HDL-C ratio > 1.3 (mmol/L)
+  adds a lipid-based proxy dimension for impaired central insulin signalling (Fan et al.
+  2019; n=1,536).
+
+evidence_strength: "strong"
+
+notes: >
+  COMPANION SIGNAL: This package (KBP-0012; signal_brain_metabolic_health) is the
+  companion to KBP-0007 (signal_brain_metabolic_resilience; ghr_index-primary).
+  KBP-0007 captures the vascular-metabolic axis (ghr_index + pulse_pressure).
+  KBP-0012 captures the insulin resistance / Type 3 Diabetes axis (tyg_index + hba1c).
+  Both reference the same underlying brain metabolic dysfunction but from different
+  entry points.
+
+  SIGNAL ID RESOLUTION: Paper Section 10 assigns signal_brain_metabolic_resilience.
+  KBP-0007 owns that ID. Per prior session note ("PARKED FUTURE SIGNAL —
+  signal_brain_metabolic_health"), this package uses signal_brain_metabolic_health.
+
+  UNPARKED: Prior session parked this signal (source: 10-Brain-Metabolic-Health-
+  (Future-Expansion).md) due to inconclusive threshold evidence. The current source
+  document (10-Brain-Metabolic-Dysfunction-Signal-Generation.md) provides Tier 1
+  prospective evidence (Cui et al. 2022; UK Biobank n=482,716). Parked status removed.
+
+  PLATFORM STATUS: tyg_index ✓ and tg_hdl_ratio ✓ confirmed in ratio_registry.py.
+  No SSOT extension required for this package.
+
+  TG/HDL THRESHOLD CAVEAT: Paper threshold table marks tg_hdl_ratio < 0.87 (optimal)
+  as "evidence inconclusive." Per Translation Rule #1, this threshold is NOT implemented.
+  Fan et al. 2019 > 1.3 → suboptimal is implemented as an override rule.
+
+  CAUTIONARY: ACCORD-MIND RCT confirms intensive glucose lowering alone does not improve
+  cognitive outcomes. Signal is prognostic — improvement must target insulin sensitivity,
+  not just glucose reduction. Consistent with KBP-0007 framing.
+
+  OPTIONAL BIOMARKERS: crp (systemic inflammation context), insulin (for homa_ir
+  derived metric — homa_ir is in ratio_registry.py).
+
+research_summary: >
+  Primary threshold evidence: Cui et al. 2022 (Alzheimer's Research & Therapy;
+  UK Biobank; Tier 1; n=482,716; 11.5yr) — TyG ≥ 8.8 = HR 1.15 for dementia.
+  Secondary threshold evidence: Kerti et al. 2013 (Neurology; Tier 2; n=141) —
+  HbA1c > 5.6% = reduced hippocampal volume; < 5.4% = maximal preservation.
+  Supporting: Fan et al. 2019 (Journal of Clinical Lipidology; Tier 2; n=1,536) —
+  TG/HDL > 1.3 = cognitive decline. Mechanistic framework: de la Monte & Tong 2014
+  (Biochemical Pharmacology) "Type 3 Diabetes" review.
+
+  Source document: knowledge_bus/research/papers/10-Brain-Metabolic-Dysfunction-Signal-Generation.md
+  (REV1: 2026-03-10)
