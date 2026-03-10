@@ -1,0 +1,15 @@
+package_id: "pkg_metabolic_inflammation"
+package_version: "1.0.0"
+description: >
+  KBP-0010 — Metabolic Inflammation. Evidence-anchored signal package using NLR as the
+  primary metric with NHANES/Kailuan-validated thresholds (NLR 2.0/3.0; hs-CRP 1.0/3.0).
+  Complementary to KBP-0005 (signal_systemic_inflammation, crp-primary): this signal
+  captures the cellular/innate immune activation dimension of metaflammation. METS-IR
+  thresholds (38.0/40.56) documented for future implementation when mets_ir is added
+  to ratio_registry.py. See clinical_signoff.md.
+research_brief: "research_brief.yaml"
+signal_library: "signal_library.yaml"
+author: "Claude Translation Engine — Research-to-Knowledge Translation Specification v1"
+created_at: "2026-03-10"
+source_document: "knowledge_bus/research/papers/4-Chronic-Inflammation-Metabolism-Crosstalk.md"
+translation_mode: "creation"

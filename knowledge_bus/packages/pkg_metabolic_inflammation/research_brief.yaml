@@ -1,0 +1,134 @@
+research_domain: "inflammatory"
+
+sources:
+  - paper_title: "The neutrophil–lymphocyte ratio as a risk factor for all-cause and cardiovascular mortality in diabetes patients"
+    journal: "PMC / Cardiovascular Diabetology"
+    year: 2023
+    doi: "10.1186/s12933-023-01998-y"
+    notes: >
+      Prospective cohort (NHANES 2003–2016); n=3,251; median follow-up 91 months.
+      NLR >3.48 associated with 2.03-fold risk of all-cause mortality and 2.76-fold
+      risk of CVD mortality in diabetes patients. Supports NLR > 3.0 as the at_risk
+      threshold (REV1 uses 3.0 as the canonical tier boundary; 3.48 is a supplementary
+      high-risk marker). Evidence anchor for NLR primary metric.
+
+  - paper_title: "Metabolic syndrome, high-sensitivity C-reactive protein and the risk of heart failure: the Kailuan Cohort Study"
+    journal: "ResearchGate / JAPI"
+    year: 2025
+    doi: "unavailable"
+    notes: >
+      Prospective cohort; n=94,841; follow-up 13.1 years. MetS combined with
+      hs-CRP > 3.0 mg/L increases heart failure risk 1.85-fold (HR 1.85).
+      Supports hs-CRP > 3.0 mg/L as a key at_risk threshold for cardiovascular
+      outcomes — consistent with KBP-0005. Population: primarily East Asian.
+
+  - paper_title: "Metabolic score for insulin resistance and the incidence of cardiovascular disease"
+    journal: "PMC / Cardiovascular Diabetology"
+    year: 2025
+    doi: "10.1186/s12933-024-02220-z"
+    notes: >
+      Meta-analysis of cohort studies; multiple cohorts. METS-IR inflection point
+      at 40.56 for composite CVD risk acceleration. Supports METS-IR > 40.56 as
+      at_risk threshold. Heterogeneity in individual cohort risk estimates noted.
+      Formula: METS-IR = ln[(2 × FBG_mg_dL) + TG_mg_dL] × BMI / ln(HDL_mg_dL)
+      (Bello-Chavolla et al. 2018). Threshold tiers (optimal < 38.0, suboptimal
+      38.0–40.56, at_risk > 40.56) documented for future platform implementation.
+
+  - paper_title: "White Blood Cells Count and Incidence of Type 2 Diabetes in Young Men (MELANY Cohort)"
+    journal: "Diabetes Care"
+    year: 2013
+    doi: "10.2337/dc12-1143"
+    notes: >
+      Prospective cohort; n=24,897 young healthy males; follow-up 7.5 years.
+      WBC count > 6,900 cells/µL within normal range increases diabetes risk by 52%.
+      WBC > 11.0 ×10⁹/L = standard clinical leukocytosis threshold (at_risk override).
+      Limitation: young healthy male population only.
+
+  - paper_title: "2025 Focused Update of the 2019 ESC/EAS Guidelines for the Management of Dyslipidaemias"
+    journal: "ESC"
+    year: 2025
+    doi: "unavailable"
+    notes: >
+      Universal screening of hs-CRP for risk modification. Basis for residual
+      inflammatory risk (RIR) concept: patients achieving LDL-C < 70 mg/dL
+      but with hs-CRP ≥ 2.0 mg/L remain at elevated MACE risk. RIR is a clinical
+      narrative flag in this package — schema does not support treatment-conditional
+      thresholds natively.
+
+biomarkers:
+  - crp
+  - neutrophils
+  - lymphocytes
+  - glucose
+  - triglycerides
+  - hdl_cholesterol
+  - white_blood_cells
+
+derived_metrics:
+  - nlr
+  - mets_ir
+
+physiological_claim: >
+  Metaflammation is a subacute, persistent inflammatory state driven by metabolic
+  excess and mediated by the innate immune system within adipose, hepatic, and
+  vascular tissues. Pro-inflammatory cytokines (TNF-α, IL-6) from hypertrophied
+  adipose activate JNK and IKKβ, catalysing inhibitory serine phosphorylation of
+  IRS-1 and blunting glucose uptake. Hyperglycaemia activates neutrophils to release
+  ROS and neutrophil extracellular traps (NETs), promoting endothelial dysfunction.
+  NLR integrates innate over-activation (neutrophilia) with adaptive immune suppression
+  (lymphopenia) — the cellular hallmark of insulin resistance. NLR > 3.0 predicts
+  2.03-fold all-cause and 2.76-fold CVD mortality in diabetic patients (Dong et al.
+  n=3,251). METS-IR is a non-insulin composite index of insulin resistance integrating
+  fasting glucose, TG, HDL-C, and BMI; inflection point 40.56 for CVD risk acceleration
+  (Zhang et al. 2025 meta-analysis).
+
+evidence_strength: "strong"
+
+notes: >
+  FORMULA IMAGE LIMITATION: NLR, METS-IR, and SII formulas are embedded as images
+  in the source document (unreadable). Formulas confirmed from ratio_registry.py
+  (NLR, SII) and published source (METS-IR: Bello-Chavolla et al. 2018):
+    NLR = neutrophils / lymphocytes
+    SII = (platelets × neutrophils) / lymphocytes
+    METS-IR = ln[(2 × glucose_mg_dL) + TG_mg_dL] × BMI / ln(HDL_mg_dL)
+  Unit conversions: glucose_mg = glucose_mmol × 18.018;
+  TG_mg = TG_mmol × 88.57; HDL_mg = HDL_mmol × 38.67; BMI from lifestyle_registry.
+
+  METS-IR SSOT GAP: mets_ir is not in ratio_registry.py DERIVED_IDS. Requires
+  standard sprint to implement (not architecture gap; same BMI integration pattern
+  as tyg_bmi_index). Tracked in SSOT_GAPS.md. NLR carries the full three-tier
+  threshold set for this package; mets_ir enters as override rule once available.
+
+  PLATFORM STATUS (confirmed 2026-03-10): nlr and sii confirmed in ratio_registry.py
+  DERIVED_IDS. mets_ir NOT in platform.
+
+  SIGNAL RELATIONSHIP WITH KBP-0005: KBP-0005 (signal_systemic_inflammation) uses
+  crp as primary — captures humoral/cytokine dimension. KBP-0010 (signal_metabolic_
+  inflammation) uses nlr as primary — captures cellular/innate immune dimension.
+  Complementary signals; both reference the same metaflammation biology.
+
+  RESIDUAL INFLAMMATORY RISK (RIR): ESC/EAS 2025 defines residual inflammatory risk
+  as hs-CRP ≥ 2.0 mg/L despite LDL-C < 70 mg/dL. This treatment-conditional override
+  cannot be expressed in current schema. Documented in clinical_signoff.md as a
+  narrative flag for runtime output.
+
+  BIOMARKER NAMING: paper uses hs_crp (alias → crp), neutrophils_abs/lymphocytes_abs
+  (ratio_registry inputs are neutrophils/lymphocytes), wbc_count (canonical is
+  white_blood_cells). All corrected per REV1.
+
+research_summary: >
+  Study type: prospective cohort (NHANES; Kailuan n=94,841), meta-analysis, and
+  clinical guideline review.
+
+  Primary NLR evidence: Dong et al. 2023 (NHANES; n=3,251; 91mo follow-up) — NLR
+  >3.48 associated with 2.03-fold all-cause and 2.76-fold CVD mortality in diabetes.
+  Leucuța et al. (cross-sectional) NLR thresholds 2.0/3.0 validated in clinical setting.
+
+  hs-CRP evidence: Kailuan 2025 (n=94,841; 13.1y) — MetS + hs-CRP > 3.0 = HR 1.85
+  heart failure. ESC/EAS 2025 RIR concept (hs-CRP ≥ 2.0 persisting with controlled LDL).
+
+  METS-IR evidence: Zhang et al. 2025 meta-analysis — inflection point 40.56 for CVD
+  risk acceleration.
+
+  Source document: knowledge_bus/research/papers/4-Chronic-Inflammation-Metabolism-Crosstalk.md
+  (REV1: 2026-03-10)

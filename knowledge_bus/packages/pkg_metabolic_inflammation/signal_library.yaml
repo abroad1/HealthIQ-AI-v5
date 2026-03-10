@@ -1,0 +1,143 @@
+library:
+  schema_version: "1.0.0"
+  package_id: "KBP-0010"
+  library_name: "Metabolic Inflammation Signal Library"
+  description: >
+    Evidence-anchored signal library for cellular metabolic inflammation using NLR as
+    the primary metric with NHANES/prospective-cohort-validated thresholds (< 2.0 / 2.0–3.0
+    / > 3.0). Complementary to KBP-0005 (crp-primary humoral signal). Override rules
+    capture hs-CRP acute inflammatory response (> 10.0 mg/L), leukocytosis (WBC > 11.0),
+    and METS-IR at_risk (> 40.56, active once mets_ir enters platform). See clinical_signoff.md.
+
+signals:
+  - signal_id: "signal_metabolic_inflammation"
+    name: "Metabolic Inflammation"
+    description: >
+      Detects cellular metaflammation — the innate immune activation pattern that
+      accelerates insulin resistance and cardiovascular ageing. NLR is the primary
+      metric: neutrophil mobilisation (innate over-activation) combined with lymphocyte
+      suppression (adaptive immune depression) is the cellular hallmark of chronic
+      metabolic stress. NLR > 3.0 predicts 2.03-fold all-cause and 2.76-fold CVD
+      mortality in diabetic patients (Dong et al. 2023; NHANES; n=3,251). Override
+      rules capture: hs-CRP acute inflammation (> 10.0 mg/L → not chronic signal;
+      flag for repeat), leukocytosis (WBC > 11.0 ×10⁹/L → clinical acute event),
+      and METS-IR at_risk (> 40.56 → metabolic insulin resistance composite).
+    system: "inflammatory"
+    primary_metric: "nlr"
+    supporting_metrics:
+      - "crp"
+      - "sii"
+      - "white_blood_cells"
+    dependencies:
+      biomarkers:
+        - "crp"
+        - "neutrophils"
+        - "lymphocytes"
+        - "glucose"
+        - "triglycerides"
+        - "hdl_cholesterol"
+        - "white_blood_cells"
+      derived_metrics:
+        - "nlr"
+      signals: []
+    optional_dependencies:
+      biomarkers:
+        - "platelets"
+        - "monocytes_abs"
+        - "hba1c"
+      derived_metrics:
+        - "sii"
+        - "mets_ir"
+      signals: []
+    thresholds:
+      - threshold_id: "metabolic_inflammation_optimal"
+        metric_id: "nlr"
+        operator: "<"
+        value: 2.0
+        severity: "optimal"
+        description: >
+          NLR below 2.0 — within the normal adult innate/adaptive immune balance range.
+          Associated with low metabolic stress and preserved insulin sensitivity.
+          Reference: cross-sectional cohort data (Leucuța et al.); confirmed as the
+          lower boundary for elevated MetS risk in NHANES NLR meta-analysis (NLR 1.67
+          MetS cut-off, n=70,937, KBP-0005 context).
+      - threshold_id: "metabolic_inflammation_suboptimal"
+        metric_id: "nlr"
+        operator: "range"
+        min_value: 2.0
+        max_value: 3.0
+        severity: "suboptimal"
+        description: >
+          NLR 2.0–3.0 — subclinical innate immune activation. Indicates beginning
+          neutrophil mobilisation relative to lymphocyte count, consistent with
+          developing metabolic stress. Dose-response: NLR increases with number of
+          MetS components (meta-analysis 26 studies; n=70,937).
+      - threshold_id: "metabolic_inflammation_at_risk"
+        metric_id: "nlr"
+        operator: ">"
+        value: 3.0
+        severity: "at_risk"
+        description: >
+          NLR > 3.0 — established innate immune over-activation. NLR > 3.48 specifically
+          associated with 2.03-fold all-cause and 2.76-fold CVD mortality in NHANES
+          diabetic cohort (Dong et al. 2023; n=3,251; median follow-up 91 months).
+          Reflects significant neutrophilia and/or lymphopenia — hallmark of chronic
+          metaflammation driving insulin resistance and vascular damage.
+    activation_logic: "deterministic_threshold"
+    override_rules:
+      - rule_id: "crp_acute_response"
+        description: >
+          hs-CRP > 10.0 mg/L indicates acute inflammatory response (active infection,
+          trauma, autoimmune flare, surgical recovery) rather than chronic metabolic
+          inflammation. This level is above the chronic metabolic range. Result remains
+          classified as at_risk but should be flagged for repeat testing after 2 weeks
+          to distinguish transient acute inflammation from persistent metabolic burden.
+          Consistent with KBP-0005 acute override design and ACC/AHA 2025 guidance.
+        conditions:
+          - metric_id: "crp"
+            operator: ">"
+            value: 10.0
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+      - rule_id: "wbc_leukocytosis"
+        description: >
+          White blood cell count > 11.0 ×10⁹/L forces at_risk. Standard clinical
+          threshold for leukocytosis — indicates acute infection, significant
+          inflammatory event, or haematologic abnormality requiring clinical evaluation.
+          WBC within normal range (reference: < 6.9 ×10⁹/L optimal per MELANY cohort)
+          predicts incident T2DM independently. Evidence: MELANY cohort (Twig et al.
+          2013; n=24,897; follow-up 7.5 years).
+        conditions:
+          - metric_id: "white_blood_cells"
+            operator: ">"
+            value: 11.0
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+      - rule_id: "mets_ir_at_risk"
+        description: >
+          METS-IR > 40.56 forces at_risk. Metabolic Score for Insulin Resistance
+          inflection point for CVD risk acceleration (Zhang et al. 2025 meta-analysis).
+          Formula: ln[(2 × FBG_mg_dL) + TG_mg_dL] × BMI / ln(HDL_mg_dL).
+          Requires mets_ir in ratio_registry.py — NOT YET IN PLATFORM (2026-03-10).
+          This rule is schema-documented; will be active once mets_ir is implemented.
+          Tracked as SSOT gap in SSOT_GAPS.md.
+        conditions:
+          - metric_id: "mets_ir"
+            operator: ">"
+            value: 40.56
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+    bundle_consumers:
+      - "metabolic_health"
+      - "cardiovascular_risk"
+      - "biological_age"
+      - "brain_metabolic_resilience"
+    output:
+      signal_value: "nlr"
+      signal_state: "at_risk"
+      confidence: "confidence_model_v1"
+      primary_metric: "nlr"
+      supporting_markers:
+        - "crp"
+        - "sii"
+        - "white_blood_cells"
