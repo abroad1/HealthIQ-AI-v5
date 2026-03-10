@@ -472,3 +472,38 @@ def test_golden_runner_default_mode_does_not_instantiate_gemini(tmp_path, monkey
     )
     assert (run_dir / "analysis_result.json").exists()
     assert str(result.get("status")) == "completed"
+
+
+def test_golden_panel_insight_graph_exposes_signal_fields(tmp_path):
+    fixture = Path(__file__).parent.parent / "fixtures" / "golden_panel_160.json"
+    run_dir, _ = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path,
+        run_id="unit-golden-signals",
+        write_narrative=False,
+    )
+    insight = _load_json(run_dir / "insight_graph.json")
+    assert "signal_registry_version" in insight
+    assert "signal_registry_hash" in insight
+    assert isinstance(insight.get("signal_results", []), list)
+
+
+def test_golden_panel_signal_fields_are_deterministic_across_runs(tmp_path):
+    fixture = Path(__file__).parent.parent / "fixtures" / "golden_panel_160.json"
+    run_a, _ = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path / "signals-a",
+        run_id="unit-golden-signals-a",
+        write_narrative=False,
+    )
+    run_b, _ = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path / "signals-b",
+        run_id="unit-golden-signals-b",
+        write_narrative=False,
+    )
+    insight_a = _load_json(run_a / "insight_graph.json")
+    insight_b = _load_json(run_b / "insight_graph.json")
+    assert insight_a.get("signal_registry_version") == insight_b.get("signal_registry_version")
+    assert insight_a.get("signal_registry_hash") == insight_b.get("signal_registry_hash")
+    assert insight_a.get("signal_results", []) == insight_b.get("signal_results", [])

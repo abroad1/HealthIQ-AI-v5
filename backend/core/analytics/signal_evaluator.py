@@ -140,6 +140,103 @@ class SignalEvaluator:
                 best_state = severity
         return best_state
 
+    def _resolve_condition_metric_value(
+        self,
+        metric_id: str,
+        signal_biomarkers: Dict[str, float],
+        signal_derived: Dict[str, float],
+    ) -> Optional[float]:
+        if metric_id in signal_biomarkers:
+            return self._as_float(signal_biomarkers[metric_id])
+        if metric_id in signal_derived:
+            return self._as_float(signal_derived[metric_id])
+        return None
+
+    def _evaluate_single_condition(
+        self,
+        condition: Dict[str, Any],
+        signal_biomarkers: Dict[str, float],
+        signal_derived: Dict[str, float],
+    ) -> bool:
+        metric_id = str(condition.get("metric_id", "")).strip()
+        operator = str(condition.get("operator", "")).strip()
+        compare_value = self._as_float(condition.get("value"))
+        if not metric_id or operator not in {"<", "<=", ">", ">=", "=="} or compare_value is None:
+            raise ValueError(f"Unsupported override condition shape: {condition}")
+
+        observed = self._resolve_condition_metric_value(
+            metric_id=metric_id,
+            signal_biomarkers=signal_biomarkers,
+            signal_derived=signal_derived,
+        )
+        if observed is None:
+            return False
+
+        if operator == "<":
+            return observed < compare_value
+        if operator == "<=":
+            return observed <= compare_value
+        if operator == ">":
+            return observed > compare_value
+        if operator == ">=":
+            return observed >= compare_value
+        return observed == compare_value
+
+    def _evaluate_override_rules(
+        self,
+        override_rules: Any,
+        threshold_state: str,
+        signal_biomarkers: Dict[str, float],
+        signal_derived: Dict[str, float],
+    ) -> str:
+        if not isinstance(override_rules, list):
+            raise ValueError(f"Unsupported override_rules shape: {override_rules}")
+
+        best_state = threshold_state
+        best_rank = self._STATE_RANK.get(threshold_state, -1)
+        for rule in override_rules:
+            if not isinstance(rule, dict):
+                raise ValueError(f"Unsupported override rule shape: {rule}")
+            _rule_id = str(rule.get("rule_id", "")).strip()
+            resulting_state = str(rule.get("resulting_state", "")).strip()
+            conditions = rule.get("conditions")
+            if not _rule_id or resulting_state not in self._STATE_RANK or not isinstance(conditions, list) or not conditions:
+                raise ValueError(f"Unsupported override rule shape: {rule}")
+
+            any_of_results: List[bool] = []
+            all_of_results: List[bool] = []
+            for condition in conditions:
+                if not isinstance(condition, dict):
+                    raise ValueError(f"Unsupported override condition shape: {condition}")
+                condition_type = str(condition.get("condition_type", "")).strip()
+                if condition_type not in {"any_of", "all_of"}:
+                    raise ValueError(f"Unsupported override condition_type: {condition}")
+                condition_result = self._evaluate_single_condition(
+                    condition=condition,
+                    signal_biomarkers=signal_biomarkers,
+                    signal_derived=signal_derived,
+                )
+                if condition_type == "any_of":
+                    any_of_results.append(condition_result)
+                else:
+                    all_of_results.append(condition_result)
+
+            all_of_ok = all(all_of_results) if all_of_results else True
+            any_of_ok = any(any_of_results) if any_of_results else True
+            fires = all_of_ok and any_of_ok
+            if not fires:
+                continue
+
+            rank = self._STATE_RANK[resulting_state]
+            # Deterministic precedence:
+            # - higher rank always wins
+            # - on same rank, later rule in YAML order wins
+            if rank >= best_rank:
+                best_rank = rank
+                best_state = resulting_state
+
+        return best_state
+
     def _lab_normal_but_flagged(
         self,
         primary_metric: str,
@@ -180,6 +277,12 @@ class SignalEvaluator:
             signal_state = self._evaluate_state(thresholds, primary_value)
             if signal_state is None:
                 continue
+            signal_state = self._evaluate_override_rules(
+                override_rules=signal.get("override_rules", []),
+                threshold_state=signal_state,
+                signal_biomarkers=signal_biomarkers,
+                signal_derived=signal_derived,
+            )
 
             output = signal.get("output", {})
             supporting_markers = []
