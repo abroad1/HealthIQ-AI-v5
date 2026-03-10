@@ -18,8 +18,8 @@ sources:
     notes: >
       Large-scale prospective cohort; n=97,331 MASLD patients; median follow-up 13.56 years.
       High TyG-BMI (Q4 vs Q1): HR 1.35 (95% CI 1.28-1.42) for CVD; HR 1.26 for all-cause
-      mortality. HR per 1-SD increment for CVD: 1.13. Supports TyG-BMI as the research-preferred
-      primary metric — requires BMI (weight/height not yet in SSOT).
+      mortality. HR per 1-SD increment for CVD: 1.13. Supports TyG-BMI as at_risk override
+      rule; BMI is in lifestyle_registry (weight_kg/height_cm).
 
   - paper_title: "Diagnostic performance of TyG-BMI for metabolic dysfunction-associated steatotic liver disease: systematic review and meta-analysis"
     journal: "PLOS ONE"
@@ -28,8 +28,9 @@ sources:
     notes: >
       Systematic review and meta-analysis; 35 studies; n=339,087. TyG-BMI pooled AUC 0.83
       (95% CI 0.81-0.86) for MASLD diagnosis. Superior performance in females (AUC 0.88).
-      Pooled mean difference 42.72 units between MASLD and healthy groups. Confirms TyG-BMI
-      superiority for hepatic steatosis detection — blocked by missing SSOT anthropometrics.
+      Pooled mean difference 42.72 units between MASLD and healthy groups. Threshold 180.71
+      (Liu et al.) implemented as at_risk override rule; no validated optimal/suboptimal
+      TyG-BMI tiers available — tyg_index carries the full three-tier threshold set.
 
   - paper_title: "AASLD Practice Guidance: Diagnosis and Management of Nonalcoholic Fatty Liver Disease"
     journal: "Hepatology"
@@ -58,6 +59,7 @@ biomarkers:
 
 derived_metrics:
   - tyg_index
+  - tyg_bmi_index
   - ast_alt_ratio
   - fib_4
 
@@ -69,8 +71,10 @@ physiological_claim: >
   for hepatic insulin resistance with OR 2.84 per unit increase for incident NAFLD/MASLD in
   meta-analysis (n=105,365). TyG Q4 (>8.97) identifies the highest-risk population. ALT
   elevation — even within the upper half of conventional "normal" ranges — predicts incident
-  type 2 diabetes and cardiovascular disease. The research-preferred composite metric TyG-BMI
-  (AUC 0.83 for MASLD diagnosis, n=339,087) requires BMI which is not currently in the SSOT.
+  type 2 diabetes and cardiovascular disease. TyG-BMI (AUC 0.83 for MASLD diagnosis,
+  n=339,087) is in platform (tyg_bmi_index in ratio_registry); enters as an at_risk override
+  rule (≥180.71) since no validated optimal/suboptimal TyG-BMI tiers exist — tyg_index
+  carries the full three-tier threshold set.
   MASLD is defined by hepatic steatosis plus at least one cardiometabolic risk factor; it exists
   on a spectrum from reversible steatosis to progressive fibrosis (MASH) and cirrhosis.
 
@@ -85,13 +89,10 @@ notes: >
   Unit conversions from SSOT mmol/L: glucose_mg = glucose_mmol x 18;
   triglycerides_mg = triglycerides_mmol x 88.57.
 
-  SSOT EXTENSION REQUIRED: weight and height are not in the SSOT biomarker registry.
-  TyG-BMI (the research-preferred primary metric) is blocked until a separate SSOT extension
-  sprint adds weight and height. This package uses derived.tyg_index as the interim primary
-  metric with hepatic-steatosis-specific thresholds (8.21 / 8.97) from Targher et al.
-
-  FIB-4 BLOCKED: FIB-4 requires patient age which is not in the SSOT. Listed as optional
-  derived metric pending future SSOT extension.
+  PLATFORM STATUS (confirmed 2026-03-10): tyg_index, tyg_bmi_index, fib_4, ast_alt_ratio
+  all present in ratio_registry.py DERIVED_IDS. BMI is in lifestyle_registry.yaml.
+  FIB-4 inputs (ast, alt, platelets, date_of_birth) are all in SSOT; age derivable at runtime.
+  No SSOT extension required for this package.
 
   SEX-SPECIFIC ALT THRESHOLDS: AASLD recommends ALT >33 IU/L (male), >25 IU/L (female).
   The signal library schema does not support sex-specific thresholds. The conservative
@@ -118,4 +119,5 @@ research_summary: >
   Guideline anchoring: AASLD (2023) and EASL-EASD-EASO (2024) provide ALT thresholds and
   FIB-4 cut-offs for fibrosis risk stratification.
 
-  Source document: knowledge_bus/research/study_03_hepatic_metabolic_stress.md
+  Source documents: knowledge_bus/research/study_03_hepatic_metabolic_stress.md;
+  knowledge_bus/research/papers/3-Hepatic-Metabolic-Stress-Liver-Metabolism.md (REV1: 2026-03-10)

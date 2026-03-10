@@ -7,10 +7,8 @@ library:
     with hepatic-steatosis-specific thresholds from meta-analysis (n=105,365; OR 2.84 per unit).
     Primary metric is tyg_index with thresholds 8.21/8.97 — distinct from KBP-0002
     insulin resistance thresholds (8.30/8.50) which target diabetes endpoints.
-    Research-preferred primary metric is TyG-BMI (AUC 0.83 for MASLD, n=339,087) but requires
-    BMI (weight/height not in SSOT). ALT and AST/ALT override rules capture direct liver injury.
-    KBP-0001 uses ast_alt_ratio as primary metric — clinical sign-off required on which
-    design to implement. See clinical_signoff.md.
+    TyG-BMI (AUC 0.83 for MASLD, n=339,087) enters as an at_risk override rule (≥180.71).
+    ALT and AST/ALT override rules capture direct liver injury. See clinical_signoff.md.
 
 signals:
   - signal_id: "signal_hepatic_metabolic_stress"
@@ -20,13 +18,13 @@ signals:
       disease (MASLD) risk using TyG index as the primary blood-test-available surrogate for
       hepatic insulin resistance. Thresholds are anchored to hepatic steatosis endpoints
       (TyG Q4 >8.97, OR 2.84 in meta-analysis n=105,365). Override rules capture acute liver
-      injury (ALT >100 IU/L), ALD pattern (AST/ALT >2.0), and pancreatitis risk (TG >=5.6).
-      The research-preferred metric TyG-BMI is not yet computable — requires SSOT extension
-      sprint to add weight and height biomarkers. TyG-BMI should replace this signal's primary
-      metric once available.
+      injury (ALT ≥100 IU/L), ALD pattern (AST/ALT ≥2.0 AND ALT ≥33), TyG-BMI at_risk
+      (≥180.71; Liu et al. n=4,753), sex-specific ALT MASLD thresholds, and pancreatitis
+      risk (TG ≥5.6).
     system: "hepatic"
     primary_metric: "tyg_index"
     supporting_metrics:
+      - "tyg_bmi_index"
       - "ast_alt_ratio"
       - "alt"
       - "ggt"
@@ -38,6 +36,7 @@ signals:
         - "glucose"
       derived_metrics:
         - "tyg_index"
+        - "tyg_bmi_index"
         - "ast_alt_ratio"
       signals: []
     optional_dependencies:
@@ -62,14 +61,14 @@ signals:
         metric_id: "tyg_index"
         operator: "range"
         min_value: 8.21
-        max_value: 8.96
+        max_value: 8.97
         severity: "suboptimal"
         description: >
           TyG in the intermediate range associated with progressively higher MASLD risk.
           Corresponds to Q2-Q3 strata in hepatic steatosis cohort analyses.
       - threshold_id: "hepatic_stress_at_risk"
         metric_id: "tyg_index"
-        operator: ">="
+        operator: ">"
         value: 8.97
         severity: "at_risk"
         description: >
@@ -119,6 +118,46 @@ signals:
             value: 5.6
             condition_type: "any_of"
         resulting_state: "at_risk"
+      - rule_id: "tyg_bmi_at_risk"
+        description: >
+          TyG-BMI ≥ 180.71 forces at_risk. TyG-BMI adds adiposity context to insulin
+          resistance signal; threshold from Liu et al. cross-sectional study (n=4,753).
+          Malek 2025 meta-analysis (n=339,087) confirms TyG-BMI AUC 0.83 for MASLD
+          diagnosis. Evidence tier: Tier 2 (single threshold study; meta-analytic
+          diagnostic performance does not provide a specific threshold). Applies as
+          override in absence of full TyG-BMI primary tier thresholds.
+        conditions:
+          - metric_id: "tyg_bmi_index"
+            operator: ">="
+            value: 180.71
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+      - rule_id: "alt_masld_at_risk"
+        description: >
+          ALT ≥ 33 IU/L forces at_risk. AASLD 2023 male MASLD screening threshold
+          (>33 IU/L). Applied as general threshold (conservative for females); the
+          alt_masld_suboptimal_female rule covers the 25–33 zone for female users.
+          Evidence: AASLD Practice Guidance 2023 (Strong Recommendation Level 1).
+        conditions:
+          - metric_id: "alt"
+            operator: ">="
+            value: 33
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+      - rule_id: "alt_masld_suboptimal_female"
+        description: >
+          ALT ≥ 25 IU/L forces suboptimal. AASLD 2023 female MASLD screening threshold
+          (>25 IU/L). Applied conservatively to all users (any_of) — males in the 25–33
+          zone receive suboptimal rather than optimal, which is clinically defensible as
+          the paper frames this as a gradient detection signal. Schema does not support
+          sex-specific thresholds natively; this conservative approximation is documented
+          in clinical_signoff.md. Evidence: AASLD Practice Guidance 2023.
+        conditions:
+          - metric_id: "alt"
+            operator: ">="
+            value: 25
+            condition_type: "any_of"
+        resulting_state: "suboptimal"
     bundle_consumers:
       - "metabolic_health"
       - "cardiovascular_risk"
@@ -129,6 +168,7 @@ signals:
       confidence: "confidence_model_v1"
       primary_metric: "tyg_index"
       supporting_markers:
+        - "tyg_bmi_index"
         - "ast_alt_ratio"
         - "alt"
         - "ggt"

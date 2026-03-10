@@ -153,24 +153,24 @@ AASLD/EASL thresholds: FIB-4 < 1.30 rules out advanced fibrosis (NPV >90%).
 
 ## New Derived Metrics Required
 
-| Metric | Formula | Status | Blocker |
-|--------|---------|--------|---------|
-| `derived.tyg_index` | ln((TG_mg × Glucose_mg) / 2) | NOT in ratio_registry.py | Required for KB-S9 |
-| `derived.tyg_bmi_index` | TyG × BMI (kg/m²) | NOT in ratio_registry.py | BMI available in lifestyle_registry.yaml — implement in KB-S9 |
-| `derived.fib_4` | (age × AST) / (platelets × √ALT) | NOT in ratio_registry.py | age derivable from date_of_birth in questionnaire.json |
-| `derived.ast_alt_ratio` | AST / ALT | Already in ratio_registry.py | None |
+| Metric | Formula | Status | Notes |
+|--------|---------|--------|-------|
+| `derived.tyg_index` | ln((TG_mg × Glucose_mg) / 2) | ✓ IN PLATFORM | Confirmed in ratio_registry.py DERIVED_IDS (2026-03-10) |
+| `derived.tyg_bmi_index` | TyG × BMI (kg/m²) | ✓ IN PLATFORM | Confirmed in ratio_registry.py DERIVED_IDS (2026-03-10); BMI in lifestyle_registry |
+| `derived.fib_4` | (age × AST) / (platelets × √ALT) | ✓ IN PLATFORM | Confirmed in ratio_registry.py DERIVED_IDS (2026-03-10); age derivable from date_of_birth |
+| `derived.ast_alt_ratio` | AST / ALT | ✓ IN PLATFORM | Confirmed in ratio_registry.py DERIVED_IDS |
 
-Note: `derived.tyg_index` is also required by KBP-0002 (insulin resistance). KB-S9 should
-implement it once for both signals.
+Note: All four derived metrics required by this package are confirmed in the platform.
+No SSOT extension sprint required for these metrics.
 
 ---
 
 ## Known Limitations
 
-1. **TyG-BMI upgrade pending KB-S9 decision.** `weight_kg`, `height_cm`, and `bmi` are
-   confirmed available in `lifestyle_registry.yaml`. TyG-BMI is computable — see Decision 1
-   above for the upgrade decision. Until upgraded, TyG alone may underestimate risk in lean
-   individuals (~7% of MASLD cases).
+1. **TyG-BMI at_risk override implemented.** `tyg_bmi_index` is confirmed in platform
+   (ratio_registry.py). Threshold 180.71 from Liu et al. (n=4,753) implemented as override
+   rule. No validated optimal/suboptimal TyG-BMI tiers exist; tyg_index carries the full
+   three-tier structure. Lean MASLD (~7% of cases) is partially addressed by the override.
 
 2. **Sex-specific ALT thresholds not modelled.** AASLD recommends different cut-offs for
    males and females. This signal applies sex-independent TyG thresholds. The female-specific

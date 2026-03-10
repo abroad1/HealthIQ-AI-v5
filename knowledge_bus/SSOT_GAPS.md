@@ -55,6 +55,7 @@ Tracked during batch ingestion. All items here require a dedicated HIGH risk spr
 
 | Package | Status | Validator result | SSOT gaps logged |
 |---------|--------|-----------------|-----------------|
+| KBP-0004 pkg_hepatic_metabolic_stress | Updated | manifest ✓ signal ✓ research ✓ (full PASS) | None — all derived metrics confirmed in platform (2026-03-10 correction) |
 | KBP-0006 pkg_ckd_risk | Committed | manifest ✓ signal ✓ research ✗ (2 missing SSOT entries) | albumin_urine, creatinine_urine, uacr, egfr |
 | KBP-0007 pkg_brain_metabolic_resilience | Committed | manifest ✓ signal ✓ research ✓ (full PASS) | ghr_index, pulse_pressure (no new biomarkers — lifestyle_registry inputs already registered) |
 | KBP-0008 pkg_mitochondrial_efficiency | Committed | manifest ✓ signal ✓ research ✗ (1 missing SSOT entry) | lactate (blocking); acetylcarnitine_c2, tetradecanoylcarnitine_c14 (optional) |
