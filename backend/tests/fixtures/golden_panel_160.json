@@ -30,14 +30,14 @@
       "unit": "U/L",
       "value": 5.95
     },
-    "anion_gap": {
+    "ast": {
       "reference_range": {
-        "max": 100.0,
-        "min": 0.0,
+        "max": 35.0,
+        "min": 7.0,
         "source": "lab",
-        "unit": "mg/dL"
+        "unit": "U/L"
       },
-      "unit": "mg/dL",
+      "unit": "U/L",
       "value": 25.0
     },
     "apoa1": {
@@ -637,5 +637,8 @@
     "age": 41,
     "gender": "female",
     "user_id": "00000000-0000-0000-0000-000000000160"
+  },
+  "questionnaire_data": {
+    "date_of_birth": "1990-01-01"
   }
 }

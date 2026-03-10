@@ -347,6 +347,7 @@ def run_golden_panel(
         payload["user"],
         assume_canonical=True,
         lifestyle_inputs=lifestyle_inputs,
+        questionnaire_data=payload.get("questionnaire_data"),
     )
     dto_dump = dto.model_dump() if hasattr(dto, "model_dump") else dict(dto)
 

@@ -3,6 +3,7 @@ v5.3 Sprint 6 - Unit tests for GoldenPanelRunner_v1.
 """
 
 import json
+import uuid
 from datetime import date
 from pathlib import Path
 
@@ -179,6 +180,10 @@ def test_golden_panel_runner_writes_snapshot_pack_with_required_stamps(tmp_path)
     assert "linked_snapshot_ids" in replay
     assert isinstance(replay["linked_snapshot_ids"], list)
 
+    analysis = _load_json(analysis_path)
+    analysis_derived = (analysis.get("derived_markers") or {}).get("derived", {})
+    assert "fib_4" in analysis_derived
+
     insight = _load_json(insight_path)
     assert isinstance(insight.get("conflict_set", []), list)
     assert isinstance(insight.get("dominance_edges", []), list)
@@ -189,6 +194,13 @@ def test_golden_panel_runner_writes_snapshot_pack_with_required_stamps(tmp_path)
     assert insight.get("primary_driver_system_id")
     assert isinstance(insight.get("influence_order", []), list)
     assert len(insight.get("influence_order", [])) > 0
+    assert "fib_4" in (insight.get("derived_markers", {}) or {}).get("derived", {})
+    assert isinstance(insight.get("signal_results", []), list)
+    assert len(insight.get("signal_results", [])) > 0
+    assert insight.get("signal_registry_version")
+    assert insight.get("signal_registry_hash")
+    signal_map = {row["signal_id"]: row["signal_state"] for row in insight.get("signal_results", [])}
+    assert signal_map.get("signal_insulin_resistance") == "at_risk"
 
     explainability = _load_json(explainability_path)
     assert explainability.get("arbitration_decisions", {}).get("primary_driver_system_id")
@@ -488,7 +500,9 @@ def test_golden_panel_insight_graph_exposes_signal_fields(tmp_path):
     assert isinstance(insight.get("signal_results", []), list)
 
 
-def test_golden_panel_signal_fields_are_deterministic_across_runs(tmp_path):
+def test_golden_panel_signal_fields_are_deterministic_across_runs(tmp_path, monkeypatch):
+    fixed_analysis_id = uuid.UUID("00000000-0000-0000-0000-000000000160")
+    monkeypatch.setattr(uuid, "uuid4", lambda: fixed_analysis_id)
     fixture = Path(__file__).parent.parent / "fixtures" / "golden_panel_160.json"
     run_a, _ = run_golden_panel(
         fixture_path=fixture,
@@ -507,3 +521,6 @@ def test_golden_panel_signal_fields_are_deterministic_across_runs(tmp_path):
     assert insight_a.get("signal_registry_version") == insight_b.get("signal_registry_version")
     assert insight_a.get("signal_registry_hash") == insight_b.get("signal_registry_hash")
     assert insight_a.get("signal_results", []) == insight_b.get("signal_results", [])
+    replay_a = _load_json(run_a / "replay_manifest.json")
+    replay_b = _load_json(run_b / "replay_manifest.json")
+    assert replay_a["schema_hashes"]["insight_graph_hash"] == replay_b["schema_hashes"]["insight_graph_hash"]
