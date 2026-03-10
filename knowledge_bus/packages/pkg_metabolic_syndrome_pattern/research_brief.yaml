@@ -1,0 +1,151 @@
+research_domain: "metabolic"
+
+sources:
+  - paper_title: "Harmonizing the metabolic syndrome: a joint interim statement of the IDF Task Force on Epidemiology and Prevention; NHLBI; AHA; World Heart Federation; IAS; and IASO"
+    journal: "Circulation"
+    year: 2009
+    doi: "10.1161/CIRCULATIONAHA.109.192644"
+    notes: >
+      Tier 2 — primary definition document. Establishes the harmonised ≥3 of 5
+      criteria framework. Provides population-specific waist circumference thresholds
+      (European, South/East Asian, Sub-Saharan African, Eastern Mediterranean/Middle
+      Eastern) and sex-specific HDL thresholds. Medication-adjusted criteria defined:
+      antihypertensive treatment meets BP criterion; fibrate/niacin meets TG criterion;
+      antidiabetic treatment meets glucose criterion.
+
+  - paper_title: "The metabolic syndrome and cardiovascular risk: a systematic review and meta-analysis"
+    journal: "Journal of the American College of Cardiology"
+    year: 2010
+    doi: "10.1016/j.jacc.2010.05.034"
+    notes: >
+      Tier 1 — primary risk quantification. Mottillo et al.; n=951,083 across 87
+      prospective studies. MetS associated with RR 2.35 for CVD events, RR 2.40
+      for CVD mortality, and ~5× T2DM incidence. Largest evidence base confirming
+      clinical significance of ≥3 component threshold.
+
+  - paper_title: "Metabolic syndrome and risk of incident cardiovascular events and death: a systematic review and meta-analysis of longitudinal studies"
+    journal: "Journal of the American College of Cardiology"
+    year: 2007
+    doi: "10.1016/j.jacc.2006.10.068"
+    notes: >
+      Tier 1 — CVD risk meta-analysis. Gami et al.; n=172,573 across 37 prospective
+      studies. RR 1.78 for incident CVD in MetS-positive individuals. Also provides
+      intermediate risk data at 2 components — anchors the platform's suboptimal tier
+      (2 components = pre-MetS elevated risk, HealthIQ extension beyond guideline binary).
+
+  - paper_title: "The metabolic syndrome as predictor of type 2 diabetes: the San Antonio Heart Study"
+    journal: "Diabetes Care"
+    year: 2003
+    doi: "10.2337/diacare.26.11.3153"
+    notes: >
+      Tier 1 — T2DM incidence prospective cohort. Lorenzo et al.; n=2,902; 7–8 year
+      follow-up. MetS (ATP III ≥3) predicted T2DM with OR 5.17 in Mexican Americans
+      and OR 3.45 in non-Hispanic whites. Confirms ~5× T2DM risk at ≥3 components.
+
+  - paper_title: "Use of metabolic markers to identify overweight individuals who are insulin resistant"
+    journal: "Annals of Internal Medicine"
+    year: 2003
+    doi: "10.7326/0003-4819-139-10-200311180-00007"
+    notes: >
+      Tier 2 — TG/HDL ratio insulin resistance surrogate. McLaughlin et al.; n=258;
+      euglycaemic clamp validation. TG/HDL ≥3.0 mg/dL (= 1.31 mmol/L by correct
+      unit conversion × 0.437) identifies insulin resistance with AUROC 0.75.
+      Note: source paper's stated "0.87 mmol/L equivalent" is incorrect — correct
+      conversion is 1.31 mmol/L. Li et al. 2008 direct mmol/L thresholds (0.87/1.74)
+      used in package instead. Non-Hispanic white population only.
+
+  - paper_title: "Plasma triglyceride/HDL-cholesterol ratio, insulin resistance, and cardiometabolic risk"
+    journal: "Diabetes/Metabolism Research and Reviews"
+    year: 2008
+    doi: "10.1002/dmrr.877"
+    notes: >
+      Tier 2 — extended TG/HDL validation. Li et al.; n=1,138; NHANES population
+      (SI units). Direct mmol/L thresholds: optimal < 0.87 mmol/L ratio, at_risk
+      ≥ 1.74 mmol/L ratio. These are the PLATFORM CANONICAL values for the tg_hdl_ratio
+      supporting sub-signal in this package. Different from KBP-0002 thresholds
+      (Translation Rule 2: threshold belongs to the signal).
+
+  - paper_title: "Diagnosis and Management of the Metabolic Syndrome (AHA/NHLBI Scientific Statement)"
+    journal: "Circulation"
+    year: 2005
+    doi: "10.1161/CIRCULATIONAHA.105.169404"
+    notes: >
+      Tier 2 — ATP III update; foundational guideline for MetS clinical management
+      in American populations. Component thresholds consistent with harmonised 2009 definition.
+
+biomarkers:
+  - triglycerides
+  - hdl_cholesterol
+  - glucose
+
+derived_metrics:
+  - mets_component_count
+  - mets_bp_flag
+  - mets_waist_flag
+  - tg_hdl_ratio
+
+physiological_claim: >
+  Metabolic syndrome represents the simultaneous clustering of five cardiometabolic
+  risk factors — elevated triglycerides, reduced HDL cholesterol, impaired fasting
+  glucose, elevated blood pressure, and central adiposity — driven by shared upstream
+  pathophysiology centred on insulin resistance, visceral adiposity, and chronic
+  low-grade inflammation. The five MetS criteria are phenotypic read-outs of the same
+  dysfunction: visceral fat releases excess free fatty acids and pro-inflammatory
+  adipokines, creating hepatic insulin resistance (↑ VLDL-TG, ↓ HDL), skeletal muscle
+  insulin resistance (↑ glucose), and sympathetic/RAAS activation (↑ BP). Component
+  clustering is additive to multiplicative: each additional abnormal component
+  incrementally increases cardiometabolic risk. ≥3 components confers ~2× CVD risk
+  and ~5× T2DM incidence risk (Mottillo 2010; Lorenzo 2003).
+
+evidence_strength: "strong"
+
+notes: >
+  ARCHITECTURE PREREQUISITES — signal cannot activate until:
+  1. mets_component_count: complex derived metric (not ratio_registry). Requires
+     multi-registry inputs (blood panel + lifestyle_registry + questionnaire), sex-specific
+     HDL threshold lookup, ethnicity × sex waist threshold lookup table, and optional
+     medication flag inputs. New computation module required.
+  2. mets_bp_flag: binary flag from lifestyle_registry (systolic_bp ≥130 OR diastolic_bp ≥85).
+     Simpler than mets_component_count; requires lifestyle_registry integration.
+  3. mets_waist_flag: binary flag requiring ethnicity × sex lookup table. Requires
+     controlled vocabulary mapping for questionnaire ethnicity field → IDF categories.
+
+  QUESTIONNAIRE SSOT GAPS:
+  - antihypertensive_medication (boolean): not in long_term_medications options.
+    Proxy available: chronic_conditions includes "High blood pressure" (diagnosis,
+    not medication status — slightly more conservative than guideline).
+  - fibrate_or_niacin (boolean): not in long_term_medications options.
+  - antidiabetic_medication (boolean): not in long_term_medications options.
+    Proxy available: chronic_conditions includes "Diabetes Type 1/2".
+
+  TG/HDL RATIO CANONICAL RESOLUTION:
+  Source paper incorrectly equates 3.0 mg/dL (McLaughlin 2003) = 0.87 mmol/L.
+  Correct conversion: 3.0 × 0.437 = 1.31 mmol/L. The 0.87 and 1.74 mmol/L
+  thresholds are direct SI values from Li et al. 2008 (NHANES) — these are
+  used in the package as they are in platform canonical units.
+
+  EVIDENCE STRENGTH — strong:
+  Tier 1 meta-analytic evidence (Mottillo 2010, n=951,083; Gami 2007, n=172,573)
+  for the ≥3 component threshold. Harmonised guideline (Alberti 2009) provides
+  Tier 2 component cut-offs derived from Tier 1 prospective data. Suboptimal tier
+  (2 components) is a HealthIQ extension — evidence-anchored but not guideline-defined.
+
+  CAUTIONARY NOTE (Kahn 2005):
+  MetS as a construct is criticised — risk prediction not superior to individual
+  components summed; unclear whether MetS is a true syndrome. The component count
+  approach is retained as a practical clinical communication tool despite this critique.
+
+  Source document: knowledge_bus/research/papers/5-Metabolic-Syndrome-Pattern-Detection-REV1.md
+
+research_summary: >
+  Signal detects metabolic syndrome using the harmonised 2009 IDF/NHLBI/AHA definition
+  (≥3 of 5 components). Primary metric mets_component_count requires new computation
+  module integrating blood panel, lifestyle_registry, and questionnaire SSOT. Tier 1
+  evidence: Mottillo et al. 2010 (n=951,083) confirms ~2× CVD risk and ~5× T2DM risk
+  at ≥3 components. Gami et al. 2007 (n=172,573) anchors intermediate risk at 2
+  components (platform suboptimal extension). Component thresholds from Alberti et al.
+  2009 harmonised guideline, all confirmed in SSOT canonical units. TG/HDL supporting
+  sub-signal uses Li et al. 2008 direct mmol/L thresholds (0.87/1.74). Waist thresholds
+  are ethnicity × sex stratified (6 population groups). Medication-adjusted criteria
+  require questionnaire SSOT expansion. Cautionary: Kahn 2005 critique acknowledged;
+  signal framed as pattern detection for risk communication, not diagnostic classification.

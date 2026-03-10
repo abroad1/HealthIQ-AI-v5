@@ -1,0 +1,140 @@
+library:
+  schema_version: "1.0.0"
+  package_id: "KBP-0009"
+  library_name: "Metabolic Syndrome Pattern Detection Signal Library"
+  description: >
+    Signal library for metabolic syndrome pattern detection using the harmonised 2009
+    IDF/NHLBI/AHA definition. Primary metric mets_component_count (integer 0–5) encodes
+    the count of abnormal components — elevated TG, reduced HDL, elevated fasting glucose,
+    elevated BP, and central adiposity. Each component is scored 1 (criterion met) or 0.
+    Signal tier is derived from the component count (≤1 optimal, =2 suboptimal, ≥3 at_risk).
+    tg_hdl_ratio exposed as supporting sub-signal with independent thresholds (Li 2008,
+    direct mmol/L: <0.87 optimal, ≥1.74 at_risk). All threshold values in confirmed SSOT
+    canonical units. NOTE: signal pending architecture implementation of mets_component_count,
+    mets_bp_flag, and mets_waist_flag — see clinical_signoff.md for full details.
+
+signals:
+  - signal_id: "signal_metabolic_syndrome_pattern"
+    name: "Metabolic Syndrome Pattern"
+    description: >
+      Detects concurrent clustering of cardiometabolic risk factors using the harmonised
+      2009 IDF/NHLBI/AHA definition. Each of the 5 criteria (elevated TG, reduced HDL,
+      elevated fasting glucose, elevated BP, central adiposity) contributes one point to
+      mets_component_count. ≥3 components = metabolic syndrome: ~2× CVD risk and ~5×
+      T2DM incidence risk (Mottillo 2010; Lorenzo 2003). 2-component clustering is a
+      HealthIQ platform extension (suboptimal tier) anchored in Gami 2007 intermediate
+      risk data; UX must label this as pre-MetS pattern, not formal metabolic syndrome.
+      Signal is prognostic — used for risk communication and lifestyle intervention
+      guidance. Cautionary evidence (Kahn 2005): component count alone may not exceed
+      prediction from individual components; framed as holistic pattern signal.
+    system: "metabolic"
+    primary_metric: "mets_component_count"
+    supporting_metrics:
+      - "tg_hdl_ratio"
+      - "mets_bp_flag"
+      - "mets_waist_flag"
+    dependencies:
+      biomarkers:
+        - "triglycerides"
+        - "hdl_cholesterol"
+        - "glucose"
+      derived_metrics:
+        - "mets_component_count"
+        - "mets_bp_flag"
+        - "mets_waist_flag"
+        - "tg_hdl_ratio"
+      signals: []
+    optional_dependencies:
+      biomarkers:
+        - "insulin"
+        - "hba1c"
+        - "crp"
+        - "alt"
+        - "urate"
+      derived_metrics:
+        - "homa_ir"
+        - "non_hdl_cholesterol"
+      signals: []
+    thresholds:
+      - threshold_id: "mets_optimal"
+        metric_id: "mets_component_count"
+        operator: "<"
+        value: 2
+        severity: "optimal"
+        description: >
+          mets_component_count 0 or 1 — no metabolic syndrome; background cardiometabolic
+          risk. Baseline CVD risk (reference group, Mottillo 2010). Evidence: Alberti et
+          al. 2009 (no MetS definition); Mottillo 2010 (baseline risk reference).
+
+      - threshold_id: "mets_suboptimal"
+        metric_id: "mets_component_count"
+        operator: "range"
+        min_value: 2
+        max_value: 2
+        severity: "suboptimal"
+        description: >
+          mets_component_count = 2 — pre-MetS clustering. Two components co-occurring
+          suggests shared upstream insulin resistance pathophysiology. Intermediate CVD
+          risk elevation above single-component baseline. HealthIQ platform extension —
+          not a formal guideline tier. UX: "high-risk pattern emerging; not yet full
+          metabolic syndrome." Evidence: Gami et al. 2007 (intermediate risk at 2
+          components; n=172,573).
+
+      - threshold_id: "mets_at_risk"
+        metric_id: "mets_component_count"
+        operator: ">="
+        value: 3
+        severity: "at_risk"
+        description: >
+          mets_component_count ≥ 3 — metabolic syndrome present. Harmonised 2009
+          IDF/NHLBI/AHA definition met. Associated with ~2× CVD risk (RR 2.35, 95% CI
+          2.02–2.73) and ~5× T2DM incidence risk. Evidence: Alberti et al. 2009
+          (definition); Mottillo et al. 2010 (n=951,083); Lorenzo et al. 2003
+          (OR 3.45–5.17 for T2DM).
+
+    activation_logic: "deterministic_threshold"
+    override_rules:
+      - rule_id: "hypertriglyceridemia_pancreatitis"
+        description: >
+          Triglycerides ≥ 5.6 mmol/L (500 mg/dL) forces at_risk with supplementary
+          pancreatitis alert. This level carries acute pancreatitis risk and requires
+          urgent clinical attention independent of MetS component count.
+          Evidence: ESC/EAS 2019 dyslipidaemia guidelines.
+        conditions:
+          - metric_id: "triglycerides"
+            operator: ">="
+            value: 5.6
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+
+      - rule_id: "confirmed_t2d_glucose_criterion"
+        description: >
+          chronic_conditions includes type_2_diabetes or prediabetes — glucose component
+          is automatically criterion-met. Diagnostic certainty supersedes measured fasting
+          glucose threshold. Forces at least 1 component scored, which combined with any 2
+          other criteria meets the ≥3 threshold. Note: this rule functions as a
+          component-scoring adjustment, not a direct state override — implementation must
+          propagate the component-met signal into mets_component_count computation.
+          Evidence: Alberti et al. 2009; clinical diagnostic certainty.
+        conditions:
+          - metric_id: "type_2_diabetes_flag"
+            operator: "="
+            value: 1
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+
+    bundle_consumers:
+      - "metabolic_health"
+      - "cardiovascular_risk"
+      - "biological_age"
+      - "vascular_age"
+      - "insulin_resistance_index"
+    output:
+      signal_value: "mets_component_count"
+      signal_state: "optimal"
+      confidence: "confidence_model_v1"
+      primary_metric: "mets_component_count"
+      supporting_markers:
+        - "tg_hdl_ratio"
+        - "mets_bp_flag"
+        - "mets_waist_flag"
