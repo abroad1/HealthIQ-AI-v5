@@ -1,0 +1,147 @@
+library:
+  schema_version: "1.0.0"
+  package_id: "KBP-0011"
+  library_name: "Metabolic-Driven Vascular Ageing Signal Library"
+  description: >
+    Evidence-anchored signal library for Metabolic-Driven Vascular Ageing (MDVA) using
+    AIP (log10(TG_mmol/HDL_mmol)) as the primary metric with Niroumand 2015 thresholds
+    (< 0.11 / 0.11–0.21 / > 0.21). AIP = log10(tg_hdl_ratio) — standard sprint wrapper
+    on existing tg_hdl_ratio. Override rules for arterial stiffness (pulse_pressure) and
+    synergistic glycation risk (AIP > 0.21 AND glucose > 7.0). Evidence tier: moderate
+    (cross-sectional primary source; Persian population). See clinical_signoff.md.
+
+signals:
+  - signal_id: "signal_metabolic_vascular_ageing"
+    name: "Metabolic-Driven Vascular Ageing"
+    description: >
+      Detects accelerated arterial wall ageing driven by atherogenic dyslipidaemia and
+      glycative stress. AIP = log10(TG_mmol/HDL_mmol) — the strongest metabolic
+      predictor of arterial stiffness and coronary artery calcification in cross-sectional
+      analysis (Niroumand 2015; n=4,215). AIP > 0.21 indicates small dense LDL
+      predominance with high sub-endothelial penetration potential, triggering a
+      chronic oxidative-calcification cycle. Override rules capture: arterial stiffness
+      via pulse_pressure (> 60 mmHg at_risk; 50–60 suboptimal) and synergistic risk
+      when atherogenic dyslipidaemia coincides with overt hyperglycaemia (glucose > 7.0).
+      Identifies subclinical Early Vascular Ageing (EVA) independently of 10-year risk
+      scores anchored to chronological age.
+    system: "vascular"
+    primary_metric: "aip"
+    supporting_metrics:
+      - "pulse_pressure"
+      - "glucose"
+    dependencies:
+      biomarkers:
+        - "triglycerides"
+        - "hdl_cholesterol"
+        - "glucose"
+      derived_metrics:
+        - "aip"
+      signals: []
+    optional_dependencies:
+      biomarkers:
+        - "hba1c"
+      derived_metrics:
+        - "pulse_pressure"
+        - "uacr"
+      signals: []
+    thresholds:
+      - threshold_id: "mdva_optimal"
+        metric_id: "aip"
+        operator: "<"
+        value: 0.11
+        severity: "optimal"
+        description: >
+          AIP below 0.11 — large buoyant LDL predominant. Low atherogenic particle
+          penetration potential. Associated with low metabolic-driven vascular risk.
+          Corresponds to log10(TG_mmol/HDL_mmol) < 0.11, i.e., TG/HDL ratio <
+          approximately 1.29 in mmol/L units. Evidence: Niroumand et al. 2015 (n=4,215).
+      - threshold_id: "mdva_suboptimal"
+        metric_id: "aip"
+        operator: "range"
+        min_value: 0.11
+        max_value: 0.21
+        severity: "suboptimal"
+        description: >
+          AIP 0.11–0.21 — borderline atherogenic particle distribution. Increasing
+          proportion of small dense LDL. Subclinical vascular ageing risk; warrants
+          monitoring of metabolic drivers (TG, HDL, glycaemic control).
+          Evidence: Niroumand et al. 2015 (n=4,215).
+      - threshold_id: "mdva_at_risk"
+        metric_id: "aip"
+        operator: ">"
+        value: 0.21
+        severity: "at_risk"
+        description: >
+          AIP > 0.21 — small dense LDL predominant. High sub-endothelial penetration
+          potential; associated with arterial stiffness and coronary artery calcification.
+          Corresponds to TG/HDL ratio > approximately 1.62 in mmol/L units. AIP is
+          the strongest metabolic predictor of arterial stiffness in this cross-sectional
+          cohort (Niroumand 2015). Note: compound risk is higher when glucose > 7.0
+          mmol/L co-occurs (see synergistic_glycation override).
+    activation_logic: "deterministic_threshold"
+    override_rules:
+      - rule_id: "pulse_pressure_at_risk"
+        description: >
+          Pulse pressure > 60 mmHg forces at_risk. Elevated pulse pressure is the
+          haemodynamic signature of arterial stiffening: as walls stiffen, systolic
+          pressure rises and diastolic falls, widening pulse pressure. PP > 60 mmHg
+          indicates established structural arterial ageing beyond metabolic biomarker
+          prediction alone. Evidence: Framingham Heart Study (n=5,000+; 30yr follow-up).
+          NOTE: pulse_pressure not yet in platform — requires standard sprint
+          (systolic_bp − diastolic_bp; both in lifestyle_registry.yaml).
+        conditions:
+          - metric_id: "pulse_pressure"
+            operator: ">"
+            value: 60
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+      - rule_id: "pulse_pressure_suboptimal"
+        description: >
+          Pulse pressure 50–60 mmHg forces suboptimal. Gray zone between normal
+          arterial compliance (< 50 mmHg) and established stiffness (> 60 mmHg).
+          Consistent with early-stage arterial remodelling that may not yet register
+          on metabolic biomarkers. Evidence: Framingham threshold context; standard
+          hypertension clinical practice.
+        conditions:
+          - metric_id: "pulse_pressure"
+            operator: ">="
+            value: 50
+            condition_type: "all_of"
+          - metric_id: "pulse_pressure"
+            operator: "<="
+            value: 60
+            condition_type: "all_of"
+        resulting_state: "suboptimal"
+      - rule_id: "synergistic_glycation"
+        description: >
+          AIP > 0.21 AND glucose > 7.0 mmol/L forces at_risk with synergistic
+          annotation. Glucose > 7.0 mmol/L (fasting diabetes diagnostic threshold)
+          indicates active glycative stress driving AGE cross-linking of vascular
+          collagen. Combined with atherogenic dyslipidaemia (AIP > 0.21), this
+          represents the dual-pathway of MDVA: structural glycation plus lipid
+          sub-endothelial infiltration. State is at_risk (already triggered by AIP
+          threshold); this rule provides the compound mechanism annotation for
+          downstream runtime output flagging. Evidence: Niroumand 2015; EVA framework
+          (Nilsson 2014).
+        conditions:
+          - metric_id: "aip"
+            operator: ">"
+            value: 0.21
+            condition_type: "all_of"
+          - metric_id: "glucose"
+            operator: ">"
+            value: 7.0
+            condition_type: "all_of"
+        resulting_state: "at_risk"
+    bundle_consumers:
+      - "vascular_age"
+      - "cardiovascular_risk"
+      - "biological_age"
+    output:
+      signal_value: "aip"
+      signal_state: "at_risk"
+      confidence: "confidence_model_v1"
+      primary_metric: "aip"
+      supporting_markers:
+        - "pulse_pressure"
+        - "glucose"

@@ -33,6 +33,7 @@ Tracked during batch ingestion. All items here require a dedicated HIGH risk spr
 | `egfr` | CKD-EPI 2021 (without race coefficient) | KBP-0006 (pkg_ckd_risk) | `142 × min(scr/κ,1)^α × max(scr/κ,1)^-1.200 × 0.9938^age`; scr = creatinine_umol_l ÷ 88.4; κ=0.7(F)/0.9(M); α=-0.241(F)/-0.302(M); age from `date_of_birth`; sex from `biological_sex` |
 | `ghr_index` | `glucose_mmol_l / hdl_cholesterol_mmol_l` | KBP-0007 (pkg_brain_metabolic_resilience) | mmol/L ratio; canonical thresholds: < 5.37 optimal, > 8.59 at_risk (converted from Farnier 2021 mg/dL values × 2.146) |
 | `pulse_pressure` | `systolic_bp - diastolic_bp` | KBP-0007 (pkg_brain_metabolic_resilience) | mmHg; inputs from lifestyle_registry (no new SSOT biomarker entries needed); thresholds: < 45 optimal, > 60 at_risk |
+| `aip` | `log10(tg_hdl_ratio)` = `log10(TG_mmol/HDL_mmol)` | KBP-0011 (pkg_metabolic_vascular_ageing) | STANDARD SPRINT — log10 wrapper on existing tg_hdl_ratio; use log10 NOT ln; thresholds 0.11/0.21 on mmol/L basis |
 | `mets_ir` | `ln[(2×FBG_mg) + TG_mg] × BMI / ln(HDL_mg)` | KBP-0010 (pkg_metabolic_inflammation) | STANDARD SPRINT — same BMI integration pattern as tyg_bmi_index; inputs: glucose, triglycerides, hdl_cholesterol (biomarkers.yaml), bmi (lifestyle_registry) |
 | `mets_component_count` | COUNT of 5 MetS criteria met (0–5) | KBP-0009 (pkg_metabolic_syndrome_pattern) | ARCHITECTURE GAP — multi-registry computation; requires new module in backend/core/analytics/ (HIGH risk); sex-specific HDL + ethnicity waist lookup table |
 | `mets_bp_flag` | `(systolic_bp >= 130 OR diastolic_bp >= 85) → 1, else 0` | KBP-0009 (pkg_metabolic_syndrome_pattern) | Binary flag from lifestyle_registry inputs; simpler than mets_component_count |
@@ -62,6 +63,7 @@ Tracked during batch ingestion. All items here require a dedicated HIGH risk spr
 | KBP-0008 pkg_mitochondrial_efficiency | Committed | manifest ✓ signal ✓ research ✗ (1 missing SSOT entry) | lactate (blocking); acetylcarnitine_c2, tetradecanoylcarnitine_c14 (optional) |
 | KBP-0009 pkg_metabolic_syndrome_pattern | Committed | manifest ✓ signal ✓ research ✓ (full PASS) | mets_component_count, mets_bp_flag, mets_waist_flag (ARCHITECTURE GAP — HIGH risk sprint); questionnaire long_term_medications expansion |
 | KBP-0010 pkg_metabolic_inflammation | Committed | manifest ✓ signal ✓ research ✓ (full PASS) | mets_ir (standard sprint — ratio_registry extension); nlr, sii confirmed in platform |
+| KBP-0011 pkg_metabolic_vascular_ageing | Committed | manifest ✓ signal ✓ research ✓ (full PASS) | aip (standard sprint — log10 wrapper on tg_hdl_ratio); pulse_pressure already tracked (KBP-0007) |
 
 ---
 

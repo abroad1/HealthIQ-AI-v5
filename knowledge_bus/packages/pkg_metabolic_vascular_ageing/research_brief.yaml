@@ -1,0 +1,110 @@
+research_domain: "vascular"
+
+sources:
+  - paper_title: "The Atherogenic Index of Plasma (AIP): A potent predictor of cardiovascular risk"
+    journal: "BMC Cardiovascular Disorders"
+    year: 2015
+    doi: "10.1186/s12872-015-0117-x"
+    notes: >
+      Prospective cross-sectional analysis; n=4,215. AIP = log10(TG_mmol/HDL_mmol)
+      identified as the strongest metabolic predictor of arterial stiffness and coronary
+      artery calcification. Thresholds: AIP < 0.11 optimal, 0.11–0.21 suboptimal,
+      > 0.21 at_risk. Limitation: Persian population — multi-ethnic validation required.
+      Evidence tier: Tier 2 (cross-sectional; prospective endpoint validation absent).
+      These are the primary threshold source for this package.
+
+  - paper_title: "Early Vascular Ageing (EVA): Definition and Clinical Queries"
+    journal: "Journal of Hypertension"
+    year: 2014
+    doi: "10.1097/HJH.0000000000000060"
+    notes: >
+      Expert consensus / review of longitudinal cohorts; up to 20 years follow-up.
+      Defines Early Vascular Ageing (EVA) as mismatch between chronological age and
+      biological vascular stiffness driven by glucose/lipid excess. Establishes the
+      conceptual framework for MDVA signal design. No specific blood threshold
+      derived — threshold evidence inconclusive for EVA alone.
+
+  - paper_title: "Pulse Pressure and Risk of Cardiovascular Disease in the Framingham Study"
+    journal: "Archives of Internal Medicine"
+    year: 1999
+    notes: >
+      Framingham Heart Study; n=5,000+; follow-up up to 30 years. Validates pulse
+      pressure as a structural marker of arterial stiffness independent of mean
+      arterial pressure. Pulse pressure > 60 mmHg associated with excess CVD risk
+      at population scale. Basis for pulse_pressure override rule thresholds.
+
+biomarkers:
+  - triglycerides
+  - hdl_cholesterol
+  - glucose
+
+derived_metrics:
+  - aip
+  - pulse_pressure
+
+physiological_claim: >
+  Metabolic-Driven Vascular Ageing (MDVA) is the accelerated structural and functional
+  degradation of the arterial wall caused by chronic metabolic dysregulation. High
+  circulating glucose and insulin drive the formation of Advanced Glycation End-products
+  (AGEs) that cross-link vascular collagen, increasing arterial rigidity. A high AIP
+  indicates predominance of small dense LDL particles, which more easily penetrate
+  the sub-endothelial space, triggering a chronic oxidative-calcification cycle that
+  mirrors biological ageing at an accelerated rate. Pulse pressure — the difference
+  between systolic and diastolic blood pressure — is the haemodynamic manifestation of
+  this stiffening: as arteries stiffen, systolic pressure rises and diastolic pressure
+  falls, widening the pulse pressure. AIP is the strongest metabolic predictor of
+  arterial stiffness and coronary artery calcification in cross-sectional analysis
+  (Niroumand 2015; n=4,215). The synergistic effect of AIP > 0.21 and fasting glucose
+  > 7.0 mmol/L compounds arterial risk via simultaneous atherogenic dyslipidaemia and
+  glycative stress.
+
+evidence_strength: "moderate"
+
+notes: >
+  AIP FORMULA: AIP = log10(TG_mmol/HDL_mmol) = log10(tg_hdl_ratio). Since tg_hdl_ratio
+  is already in ratio_registry.py DERIVED_IDS, AIP implementation is a single log10
+  wrapper — standard sprint item. Use log10, NOT natural log (ln).
+
+  UNIT SENSITIVITY: AIP numerical value differs between mmol/L and mg/dL contexts
+  (conversion factor ~2.29 due to TG×88.57/HDL×38.67). Thresholds 0.11/0.21 are
+  anchored to mmol/L convention. Do NOT apply these thresholds to mg/dL-computed AIP.
+  Clinical sign-off required to formally confirm mmol/L basis of Niroumand 2015.
+
+  SSOT GAPS: aip (standard sprint — log10 wrapper on tg_hdl_ratio); pulse_pressure
+  (standard sprint — already tracked in SSOT_GAPS.md from KBP-0007; same threshold
+  conflict issue as KBP-0007).
+
+  LIFESTYLE REGISTRY INPUTS: systolic_bp and diastolic_bp are inputs for pulse_pressure
+  computation; both in lifestyle_registry.yaml. Not blood biomarkers — excluded from
+  biomarkers[] above.
+
+  PULSE_PRESSURE THRESHOLD DELTA WITH KBP-0007: KBP-0007 uses pulse_pressure < 45
+  optimal; this package uses < 50 optimal. Both use > 60 at_risk. Delta requires
+  clinical sign-off resolution before KB-S9 implementation.
+
+  EVIDENCE QUALITY NOTE: Primary threshold source (Niroumand 2015) is cross-sectional
+  and Persian-population-specific. Prospective endpoint validation in diverse populations
+  is absent. AIP thresholds 0.11/0.21 are widely used in lipidology literature but
+  carry Tier 2 evidence. This informs evidence_strength: "moderate".
+
+  EVA AGE FLAG: Clinical narrative for runtime — when derived_age < 30 AND
+  pulse_pressure > 60, flag as Early Vascular Ageing (EVA). Age not in SSOT schema;
+  derivable from date_of_birth in questionnaire.json at KB-S9 runtime.
+
+  OPTIONAL BIOMARKERS: hba1c (long-term glycative stress; in SSOT); uacr (optional
+  derived; tracked as SSOT gap from KBP-0006).
+
+research_summary: >
+  Signal type: metabolic-driven arterial ageing (MDVA). Primary metric AIP integrates
+  triglycerides and HDL-C as a log-ratio proxy for LDL particle size and atherogenic
+  potential.
+
+  Primary evidence: Niroumand et al. 2015 (BMC Cardiovascular Disorders; cross-sectional;
+  n=4,215) — AIP strongest predictor of arterial stiffness and CAC. Thresholds 0.11/0.21.
+
+  Framework: Nilsson et al. 2014 (Journal of Hypertension; expert consensus) — EVA
+  conceptual definition. Framingham Study 1999 (n=5,000+; 30yr) — pulse pressure
+  validation as structural stiffness marker.
+
+  Source document: knowledge_bus/research/papers/7-Cardiovascular-Metabolic-Risk.md
+  (REV1: 2026-03-10)

@@ -1,0 +1,15 @@
+package_id: "pkg_metabolic_vascular_ageing"
+package_version: "1.0.0"
+description: >
+  KBP-0011 — Metabolic-Driven Vascular Ageing (MDVA). Evidence-anchored signal package
+  using AIP (Atherogenic Index of Plasma = log10(TG_mmol/HDL_mmol)) as the primary metric
+  with Niroumand 2015 thresholds (< 0.11 / 0.11–0.21 / > 0.21). Captures accelerated
+  arterial wall ageing driven by atherogenic dyslipidaemia and glycative stress. Override
+  rules for pulse_pressure arterial stiffness and synergistic glycation risk. Both AIP and
+  pulse_pressure are SSOT gaps requiring standard sprint. See clinical_signoff.md.
+research_brief: "research_brief.yaml"
+signal_library: "signal_library.yaml"
+author: "Claude Translation Engine — Research-to-Knowledge Translation Specification v1"
+created_at: "2026-03-10"
+source_document: "knowledge_bus/research/papers/7-Cardiovascular-Metabolic-Risk.md"
+translation_mode: "creation"
