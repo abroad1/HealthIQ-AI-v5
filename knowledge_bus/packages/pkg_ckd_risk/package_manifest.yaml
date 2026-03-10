@@ -1,0 +1,15 @@
+package_id: "pkg_ckd_risk"
+package_version: "1.0.0"
+description: >
+  KBP-0006 — CKD Risk Detection (signal_ckd_risk).
+  Creation package: defines signal_ckd_risk using the standard renal function panel
+  (uACR, eGFR, urea, creatinine). Thresholds anchored to KDIGO 2024 clinical practice
+  guidelines. uACR is the primary metric; eGFR enters as override rules.
+  urea_creatinine_ratio overrides distinguish pre-renal, intrinsic renal, GI bleed,
+  and liver disease patterns. All threshold values are in confirmed SSOT canonical units.
+research_brief: "research_brief.yaml"
+signal_library: "signal_library.yaml"
+author: "Claude Translation Engine — Research-to-Knowledge Translation Specification v1"
+created_at: "2026-03-10"
+source_document: "knowledge_bus/research/papers/8-Kidney-CKD-Risk-REV1.md"
+translation_mode: "creation"

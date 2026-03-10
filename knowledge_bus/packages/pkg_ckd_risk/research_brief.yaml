@@ -1,0 +1,134 @@
+research_domain: "renal"
+
+sources:
+  - paper_title: "KDIGO Clinical Practice Guideline for CKD Evaluation and Management"
+    journal: "KDIGO Clinical Practice Guideline"
+    year: 2024
+    doi: "N/A (guideline)"
+    notes: >
+      Tier 1 — primary threshold authority. CKD defined as eGFR <60 mL/min/1.73 m²
+      OR albuminuria (uACR ≥30 mg/g) persisting >3 months. uACR <30 mg/g optimal;
+      30–300 mg/g microalbuminuria (suboptimal); ≥300 mg/g macroalbuminuria (at_risk).
+      eGFR ≥60 optimal; 45–59 suboptimal (G3a); <45 at_risk (G3b and below).
+      Explicitly states eGFR 60–89 without concurrent albuminuria is not diagnostic
+      of CKD — must not be flagged as suboptimal in isolation.
+
+  - paper_title: "UK eGFR Guide / CKD Staging"
+    journal: "UK Kidney Association"
+    year: 2023
+    doi: "https://www.ukkidney.org/health-professionals/information-resources/uk-eckd-guide/ckd-staging"
+    notes: >
+      Tier 2 — national UK guideline. Consistent with KDIGO staging. Explicitly confirms
+      eGFR 60–89 (G2) is not CKD unless accompanied by albuminuria, haematuria, or
+      structural kidney abnormality. CKD-EPI 2021 (without race coefficient) recommended
+      for eGFR calculation in the UK.
+
+  - paper_title: "Blood Urea Nitrogen (BUN) to Creatinine Ratio"
+    journal: "NCBI StatPearls NBK507821"
+    year: 2023
+    doi: "https://www.ncbi.nlm.nih.gov/books/NBK507821/"
+    notes: >
+      Tier 2 — evidence-based clinical review. Confirms BUN/creatinine ratio thresholds:
+      intrinsic renal 10–20:1, pre-renal >20:1, GI bleed >30:1, liver disease/low
+      production <10:1 (all US units mg/dL). Canonical platform equivalents resolved:
+      0.040 / 0.081 / 0.121 (urea mmol/L ÷ creatinine µmol/L). Conversion factor 247.6.
+
+  - paper_title: "Urea Nitrogen, Serum"
+    journal: "University of Rochester Medical Centre (URMC) Encyclopedia"
+    year: 2024
+    doi: "N/A"
+    notes: >
+      Tier 2 — clinical reference. Consistent with NCBI ratio thresholds.
+      Confirms pre-renal (>20:1 US) and GI bleed (>30:1 US) interpretations.
+
+  - paper_title: "Assessment of Metabolomic and Proteomic Biomarkers in Detection and Prognosis of Progression of Renal Function in Chronic Kidney Disease"
+    journal: "PLOS ONE"
+    year: 2014
+    doi: "10.1371/journal.pone.0096955"
+    notes: >
+      Tier 1 — prospective cohort (n=49; follow-up 2.8 years). Plasma metabolites
+      correlated strongly with eGFR at baseline (ρ = −0.80) and follow-up (ρ = −0.60).
+      Supports metabolomics as future adjunct markers; no implementable thresholds derived.
+      Included as context for future signal_kidney_metabolic_stress development.
+
+  - paper_title: "Biomarkers in CKD"
+    journal: "International Journal of Molecular Sciences"
+    year: 2022
+    doi: "10.3390/ijms23084444"
+    notes: >
+      Tier 2 — systematic review context. Cautionary: creatinine rises only after >50%
+      nephron loss; cystatin C confounded by inflammation, thyroid disease, steroids;
+      NGAL false-positive in sepsis and malignancy; eGFR falsely elevated in early
+      diabetes (hyperfiltration). Emphasises multi-marker necessity.
+
+biomarkers:
+  - creatinine
+  - urea
+  - albumin_urine
+  - creatinine_urine
+
+derived_metrics:
+  - uacr
+  - egfr
+  - urea_creatinine_ratio
+
+physiological_claim: >
+  The standard renal function panel (uACR, eGFR, urea, creatinine) detects early and
+  established chronic kidney disease before symptoms emerge. uACR is the earliest
+  detectable marker of glomerular stress — albumin leaks into urine before eGFR
+  falls, making it the primary signal metric. KDIGO 2024 defines CKD as uACR ≥30 mg/g
+  OR eGFR <60 mL/min/1.73 m² persisting >3 months, validated against hard outcomes
+  including ESRD, CKD progression, and cardiovascular events. The urea-to-creatinine
+  ratio (platform canonical: urea mmol/L ÷ creatinine µmol/L; normal 0.040–0.081)
+  provides differential diagnosis between intrinsic renal disease, pre-renal
+  azotaemia, GI bleed, and liver disease — enabling the signal to distinguish
+  true kidney dysfunction from confounding conditions.
+
+evidence_strength: "strong"
+
+notes: >
+  CREATION PACKAGE for signal_ckd_risk.
+
+  IMPLEMENTATION PREREQUISITES — signal cannot activate until:
+  1. uacr: not currently in ratio_registry.py DERIVED_IDS; requires implementation
+     sprint. albumin_urine and creatinine_urine are urine biomarkers — confirm SSOT
+     addition required.
+  2. egfr: not currently in ratio_registry.py DERIVED_IDS; requires implementation
+     sprint. CKD-EPI 2021 formula (sex-specific coefficients; creatinine µmol/L input
+     converted to mg/dL via ÷ 88.4; age from date_of_birth; sex from biological_sex).
+
+  RESOLVED — urea_creatinine_ratio canonical thresholds:
+  Platform computes urea (mmol/L) ÷ creatinine (µmol/L). US-unit thresholds (10/20/30:1)
+  converted using factor 247.6. Canonical values: <0.040 liver/low-production;
+  0.040–0.081 normal/intrinsic; >0.081 pre-renal; >0.121 GI bleed. Verified against
+  normal reference example (urea 5.0 mmol/L ÷ creatinine 88 µmol/L = 0.057 ✓).
+
+  eGFR 60–89 without albuminuria must NOT be flagged as suboptimal per KDIGO 2024
+  and UKKIDNEY 2023. This is handled by signal design: eGFR 60–89 appears in no
+  threshold or override that would independently trigger suboptimal.
+
+  Diabetic hyperfiltration: early diabetes can produce eGFR >90 masking early
+  nephropathy. uACR is the more reliable indicator in known diabetic patients.
+
+  Future signal: signal_kidney_metabolic_stress is parked pending prospective
+  metabolomics outcome data (TMAO, myo-inositol, pyruvate — AUC >0.7 but no
+  hard outcome thresholds available as of 2026).
+
+  Excluded populations: acute illness, known liver disease, pregnancy, extremes
+  of muscle mass, children and adolescents.
+
+research_summary: >
+  Primary evidence: KDIGO 2024 clinical practice guideline (Tier 1) provides all
+  implementable threshold values for uACR and eGFR, validated against ESRD and
+  CKD progression outcomes. UK Kidney Association 2023 (Tier 2) confirms eGFR
+  60–89 context dependency for UK clinical practice.
+
+  Ratio thresholds: NCBI StatPearls NBK507821 and URMC clinical reference (both
+  Tier 2) confirm BUN/creatinine ratio differential diagnostic thresholds (10/20/30:1
+  US units). Canonical platform equivalents derived and verified.
+
+  Cautionary: improving proteinuria or eGFR does not consistently reduce ESRD or
+  mortality across all trial populations. Signal must be communicated as a risk
+  indicator, not a standalone therapeutic target.
+
+  Source document: knowledge_bus/research/papers/8-Kidney-CKD-Risk-REV1.md

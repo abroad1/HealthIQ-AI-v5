@@ -1,0 +1,180 @@
+library:
+  schema_version: "1.0.0"
+  package_id: "KBP-0006"
+  library_name: "CKD Risk Detection Signal Library"
+  description: >
+    Signal library for CKD risk detection using the standard renal function panel.
+    uACR is the primary metric (earliest glomerular stress marker). eGFR enters as
+    override rules. urea_creatinine_ratio overrides distinguish intrinsic renal,
+    pre-renal, GI bleed, and liver disease patterns. All threshold values are in
+    confirmed SSOT canonical units (urea mmol/L, creatinine µmol/L, uacr mg/g,
+    egfr mL/min/1.73 m²). Evidence base documented in research_brief.yaml.
+    NOTE: signal is pending implementation of uacr and egfr derived metrics —
+    see clinical_signoff.md.
+
+signals:
+  - signal_id: "signal_ckd_risk"
+    name: "CKD Risk"
+    description: >
+      Detects early and established chronic kidney disease using the standard renal
+      function panel. Primary metric is uACR (urinary albumin-to-creatinine ratio),
+      the earliest sign of glomerular damage. eGFR (estimated glomerular filtration
+      rate) is the gold-standard filtration marker and enters as override rules.
+      urea_creatinine_ratio overrides enable differential diagnosis between intrinsic
+      renal dysfunction and confounding conditions (pre-renal azotaemia, GI bleed,
+      liver disease). Thresholds anchored to KDIGO 2024 and UKKIDNEY 2023 guidelines,
+      validated against ESRD and CKD progression outcomes.
+    system: "renal"
+    primary_metric: "uacr"
+    supporting_metrics:
+      - "egfr"
+      - "urea_creatinine_ratio"
+    dependencies:
+      biomarkers:
+        - "creatinine"
+        - "urea"
+        - "albumin_urine"
+        - "creatinine_urine"
+      derived_metrics:
+        - "uacr"
+        - "egfr"
+        - "urea_creatinine_ratio"
+      signals: []
+    optional_dependencies:
+      biomarkers:
+        - "cystatin_c"
+        - "ngal_urine"
+        - "tmao"
+      derived_metrics: []
+      signals: []
+    thresholds:
+      - threshold_id: "ckd_risk_optimal"
+        metric_id: "uacr"
+        operator: "<"
+        value: 30
+        severity: "optimal"
+        description: >
+          uACR below 30 mg/g — no albuminuria detected. Normal glomerular filtration
+          barrier integrity. KDIGO 2024: A1 category (normal to mildly increased).
+      - threshold_id: "ckd_risk_suboptimal"
+        metric_id: "uacr"
+        operator: "range"
+        min_value: 30
+        max_value: 299
+        severity: "suboptimal"
+        description: >
+          uACR 30–299 mg/g — microalbuminuria. Early glomerular stress; protein
+          leakage indicates barrier damage. KDIGO 2024: A2 category (moderately
+          increased). Independently indicates CKD at any eGFR level.
+      - threshold_id: "ckd_risk_at_risk"
+        metric_id: "uacr"
+        operator: ">="
+        value: 300
+        severity: "at_risk"
+        description: >
+          uACR ≥300 mg/g — macroalbuminuria / overt proteinuria. Significant
+          glomerular damage. KDIGO 2024: A3 category (severely increased).
+          Associated with rapid CKD progression and elevated cardiovascular risk.
+    activation_logic: "deterministic_threshold"
+    override_rules:
+      - rule_id: "egfr_severe_risk"
+        description: >
+          eGFR below 45 mL/min/1.73 m² forces at_risk regardless of uACR.
+          KDIGO G3b and below: significant loss of kidney function. At this level
+          CKD is established and progression risk is high.
+        conditions:
+          - metric_id: "egfr"
+            operator: "<"
+            value: 45
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+
+      - rule_id: "egfr_moderate_risk"
+        description: >
+          eGFR 45–59 mL/min/1.73 m² forces suboptimal regardless of uACR.
+          KDIGO G3a: mildly to moderately decreased kidney function. Both conditions
+          must be simultaneously true (all_of) to define the 45–59 range precisely.
+        conditions:
+          - metric_id: "egfr"
+            operator: ">="
+            value: 45
+            condition_type: "all_of"
+          - metric_id: "egfr"
+            operator: "<"
+            value: 60
+            condition_type: "all_of"
+        resulting_state: "suboptimal"
+
+      - rule_id: "gi_bleed_flag"
+        description: >
+          urea_creatinine_ratio above 0.121 (platform canonical; equivalent to
+          BUN/creatinine >30:1 US units) forces at_risk. Ratio this high indicates
+          excess urea production from blood protein digestion — upper GI bleed —
+          rather than kidney dysfunction. Requires urgent clinical review.
+          Evidence: NCBI NBK507821; URMC.
+        conditions:
+          - metric_id: "urea_creatinine_ratio"
+            operator: ">"
+            value: 0.121
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+
+      - rule_id: "pre_renal_flag"
+        description: >
+          urea_creatinine_ratio above 0.081 (platform canonical; equivalent to
+          BUN/creatinine >20:1 US units) forces suboptimal. Elevated ratio with
+          disproportionately high urea suggests reduced renal perfusion (dehydration,
+          heart failure) rather than primary kidney disease. Kidneys may be intact
+          but under-perfused. Evidence: NCBI NBK507821; URMC; Liv Hospital.
+        conditions:
+          - metric_id: "urea_creatinine_ratio"
+            operator: ">"
+            value: 0.081
+            condition_type: "any_of"
+        resulting_state: "suboptimal"
+
+      - rule_id: "liver_disease_flag"
+        description: >
+          urea_creatinine_ratio below 0.040 (platform canonical; equivalent to
+          BUN/creatinine <10:1 US units) forces suboptimal. Low ratio indicates
+          impaired urea production — liver disease, malnutrition, or very low
+          protein intake — rather than kidney dysfunction. Creatinine may also be
+          low due to muscle wasting. Evidence: URMC; Levels.com; MedicineNet.
+        conditions:
+          - metric_id: "urea_creatinine_ratio"
+            operator: "<"
+            value: 0.040
+            condition_type: "any_of"
+        resulting_state: "suboptimal"
+
+      - rule_id: "critical_value"
+        description: >
+          Critically elevated urea (>35.7 mmol/L; equivalent to BUN >100 mg/dL)
+          OR critically elevated creatinine (>354 µmol/L; equivalent to >4.0 mg/dL)
+          forces at_risk with immediate clinical referral flag. Either condition
+          alone is sufficient (any_of). Evidence: Peterborough City Hospital
+          Pathology critical value standards; KDIGO.
+        conditions:
+          - metric_id: "urea"
+            operator: ">"
+            value: 35.7
+            condition_type: "any_of"
+          - metric_id: "creatinine"
+            operator: ">"
+            value: 354
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+
+    bundle_consumers:
+      - "metabolic_health"
+      - "cardiovascular_risk"
+      - "biological_age"
+      - "vascular_age"
+    output:
+      signal_value: "uacr"
+      signal_state: "optimal"
+      confidence: "confidence_model_v1"
+      primary_metric: "uacr"
+      supporting_markers:
+        - "egfr"
+        - "urea_creatinine_ratio"
