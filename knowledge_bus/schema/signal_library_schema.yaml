@@ -96,7 +96,6 @@ signal_field_rules:
     type: string
     allowed:
       - deterministic_threshold
-      - deterministic_override
       - lab_range_exceeded
   activation_config:
     type: map

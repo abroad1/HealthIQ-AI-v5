@@ -6,6 +6,12 @@ from pathlib import Path
 
 import pytest
 
+from core.contracts.signal_contract import (
+    ACTIVATION_MODE_LAB_RANGE,
+    ACTIVATION_MODE_THRESHOLD,
+    ALLOWED_SIGNAL_STATES,
+    STATE_RANK,
+)
 from core.analytics.signal_evaluator import SignalEvaluator, SignalRegistry
 
 
@@ -530,3 +536,74 @@ def test_corrected_homocysteine_signal_override_escalates_to_at_risk():
     )
     assert len(out) == 1
     assert out[0].signal_state == "at_risk"
+
+
+def test_signal_evaluator_uses_shared_state_rank_constant():
+    assert SignalEvaluator._STATE_RANK == STATE_RANK
+
+
+def test_shared_contract_state_rank_is_ordered():
+    assert STATE_RANK["optimal"] < STATE_RANK["suboptimal"] < STATE_RANK["at_risk"]
+
+
+def test_deterministic_threshold_activation_uses_threshold_path():
+    class _ThresholdPathRegistry:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_threshold_path",
+                    "system": "metabolic",
+                    "primary_metric": "glucose",
+                    "activation_logic": ACTIVATION_MODE_THRESHOLD,
+                    "thresholds": [{"severity": "at_risk", "operator": ">", "value": 100.0}],
+                    "override_rules": [],
+                    "output": {"supporting_markers": []},
+                }
+            ]
+
+    evaluator = SignalEvaluator(_ThresholdPathRegistry())
+    # Value is above threshold but still within lab range; threshold path must still activate.
+    out = evaluator.evaluate_all(
+        signal_biomarkers={"glucose": 110.0},
+        signal_derived={},
+        lab_ranges={"glucose": {"min": 70.0, "max": 200.0}},
+    )
+    assert len(out) == 1
+    assert out[0].signal_state == "at_risk"
+
+
+def test_lab_range_activation_uses_lab_range_path():
+    class _LabRangePathRegistry:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_lab_range_path",
+                    "system": "metabolic",
+                    "primary_metric": "glucose",
+                    "activation_logic": ACTIVATION_MODE_LAB_RANGE,
+                    "activation_config": {
+                        "upper_bound_state": "suboptimal",
+                        "enable_lower_bound": False,
+                        "lower_bound_state": "suboptimal",
+                    },
+                    # If threshold path were used, this would not activate.
+                    "thresholds": [{"severity": "at_risk", "operator": ">", "value": 9999.0}],
+                    "override_rules": [],
+                    "output": {"supporting_markers": []},
+                }
+            ]
+
+    evaluator = SignalEvaluator(_LabRangePathRegistry())
+    out = evaluator.evaluate_all(
+        signal_biomarkers={"glucose": 150.0},
+        signal_derived={},
+        lab_ranges={"glucose": {"min": 70.0, "max": 100.0}},
+    )
+    assert len(out) == 1
+    assert out[0].signal_state == "suboptimal"
+
+
+def test_shared_contract_state_keys_match_allowed_states():
+    assert set(STATE_RANK.keys()) == set(ALLOWED_SIGNAL_STATES)
