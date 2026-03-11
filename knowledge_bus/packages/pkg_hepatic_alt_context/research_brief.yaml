@@ -1,0 +1,24 @@
+research_domain: "hepatic"
+sources:
+  - paper_title: "ACG clinical guideline: evaluation of abnormal liver chemistries"
+    journal: "The American Journal of Gastroenterology"
+    year: 2017
+    doi: "10.1038/ajg.2017.30"
+  - paper_title: "AASLD practice guidance on noninvasive assessment of liver disease"
+    journal: "Hepatology"
+    year: 2023
+    doi: "10.1097/HEP.0000000000000328"
+biomarkers:
+  - alt
+  - ast
+  - ggt
+  - alp
+  - bilirubin
+derived_metrics: []
+physiological_claim: >
+  ALT above lab range with concordant hepatic chemistry abnormalities supports stronger
+  hepatic stress context.
+evidence_strength: "moderate"
+research_summary: >
+  ALT serves as the primary lab-range trigger while ast, ggt, alp, and bilirubin provide
+  deterministic escalation context for hepatic stress interpretation.

@@ -1,0 +1,86 @@
+library:
+  package_id: "KBP-0022"
+  schema_version: "1.0.0"
+  package_version: "1.0.0"
+  library_name: "CRP Inflammation Context Signal Library"
+  description: >
+    Investigation signal library for CRP-led inflammatory context.
+signals:
+  - signal_id: "signal_inflammation_crp_context"
+    name: "Inflammation CRP Context"
+    description: >
+      Detects CRP above lab range and escalates when supporting inflammatory markers
+      suggest broader inflammatory activation.
+    system: "inflammatory"
+    primary_metric: "crp"
+    supporting_metrics:
+      - neutrophils
+      - lymphocytes
+      - nlr
+    dependencies:
+      biomarkers:
+        - crp
+        - neutrophils
+        - lymphocytes
+        - nlr
+      derived_metrics: []
+      signals: []
+    optional_dependencies:
+      biomarkers: []
+      derived_metrics: []
+      signals: []
+    thresholds:
+      - threshold_id: "signal_inflammation_crp_context_lab_range_activation_placeholder"
+        metric_id: "crp"
+        operator: ">="
+        value: 9999.0
+        severity: "at_risk"
+        description: >
+          Validator-compatibility placeholder. Runtime activation is controlled by
+          activation_logic=lab_range_exceeded and lab reference ranges.
+    activation_logic: "lab_range_exceeded"
+    activation_config:
+      upper_bound_state: "suboptimal"
+      enable_lower_bound: false
+      lower_bound_state: "suboptimal"
+    override_rules:
+      - rule_id: "inflammation_cellular_pattern"
+        description: >
+          Escalate when CRP elevation coexists with high neutrophils, low lymphocytes, or high NLR.
+        conditions:
+          - metric_id: "neutrophils"
+            operator: ">"
+            value: 7.0
+            condition_type: "any_of"
+          - metric_id: "lymphocytes"
+            operator: "<"
+            value: 1.0
+            condition_type: "any_of"
+          - metric_id: "nlr"
+            operator: ">"
+            value: 3.0
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+    output:
+      signal_value: "crp"
+      signal_state: "at_risk"
+      confidence: "confidence_model_v1"
+      primary_metric: "crp"
+      supporting_markers:
+        - neutrophils
+        - lymphocytes
+        - nlr
+    explanation:
+      mechanism: >
+        CRP elevation reflects acute phase signaling; cellular markers contextualize
+        innate-adaptive inflammatory balance.
+      biological_pathway: >
+        Hepatic acute-phase response with leukocyte pattern shift.
+      interpretation: >
+        Isolated CRP elevation is suboptimal; concordant cellular pattern escalates to at_risk.
+      implications: >
+        Persistent at_risk pattern suggests higher inflammatory burden.
+      supporting_marker_roles:
+        neutrophils: "Innate inflammatory activation marker."
+        lymphocytes: "Adaptive suppression context marker."
+        nlr: "Composite inflammatory burden marker."

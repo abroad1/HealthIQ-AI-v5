@@ -1,0 +1,23 @@
+research_domain: "hematologic"
+sources:
+  - paper_title: "Vitamin B12 deficiency"
+    journal: "BMJ"
+    year: 2014
+    doi: "10.1136/bmj.g5226"
+  - paper_title: "Diagnosis, treatment and long-term management of vitamin B12 deficiency"
+    journal: "British Journal of Haematology"
+    year: 2014
+    doi: "10.1111/bjh.12959"
+biomarkers:
+  - vitamin_b12
+  - mcv
+  - folate
+  - hemoglobin
+derived_metrics: []
+physiological_claim: >
+  Vitamin B12 below lab range with concordant macrocytic and nutritional context markers
+  supports deficiency context and increased hematologic-neurometabolic risk.
+evidence_strength: "moderate"
+research_summary: >
+  B12 is the lab-range primary trigger and mcv, folate, and hemoglobin provide deterministic
+  escalation context when deficiency pattern becomes clinically stronger.

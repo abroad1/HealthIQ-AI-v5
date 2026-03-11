@@ -3,8 +3,11 @@ Unit tests for deterministic signal registry and evaluator.
 """
 
 from pathlib import Path
+import subprocess
+import sys
 
 import pytest
+import yaml
 
 from core.contracts.signal_contract import (
     ACTIVATION_MODE_LAB_RANGE,
@@ -607,3 +610,154 @@ def test_lab_range_activation_uses_lab_range_path():
 
 def test_shared_contract_state_keys_match_allowed_states():
     assert set(STATE_RANK.keys()) == set(ALLOWED_SIGNAL_STATES)
+
+
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+_KB_S22_PACKAGE_DIRS = [
+    "pkg_iron_deficiency_context",
+    "pkg_iron_overload_context",
+    "pkg_b12_deficiency_context",
+    "pkg_inflammation_crp_context",
+    "pkg_hepatic_alt_context",
+    "pkg_glucose_dysregulation_hba1c_context",
+    "pkg_thyroid_tsh_context",
+]
+_KB_S22_SIGNAL_CASES = {
+    "signal_iron_deficiency_context": {
+        "baseline_biomarkers": {
+            "ferritin": 10.0,
+            "hemoglobin": 130.0,
+            "hematocrit": 0.42,
+            "mcv": 86.0,
+            "mch": 29.0,
+            "rdw_cv": 13.0,
+            "iron": 15.0,
+            "transferrin": 3.0,
+        },
+        "baseline_ranges": {"ferritin": {"min": 30.0, "max": 300.0}},
+        "escalation_biomarkers": {
+            "ferritin": 10.0,
+            "hemoglobin": 110.0,
+            "hematocrit": 0.35,
+            "mcv": 86.0,
+            "mch": 27.0,
+            "rdw_cv": 13.5,
+            "iron": 15.0,
+            "transferrin": 3.0,
+        },
+        "escalation_ranges": {"ferritin": {"min": 30.0, "max": 300.0}},
+    },
+    "signal_iron_overload_context": {
+        "baseline_biomarkers": {"ferritin": 450.0, "iron": 25.0, "alt": 30.0, "ast": 28.0},
+        "baseline_ranges": {"ferritin": {"min": 30.0, "max": 300.0}},
+        "escalation_biomarkers": {"ferritin": 450.0, "iron": 40.0, "alt": 30.0, "ast": 28.0},
+        "escalation_ranges": {"ferritin": {"min": 30.0, "max": 300.0}},
+    },
+    "signal_b12_deficiency_context": {
+        "baseline_biomarkers": {"vitamin_b12": 150.0, "mcv": 90.0, "folate": 10.0, "hemoglobin": 130.0},
+        "baseline_ranges": {"vitamin_b12": {"min": 200.0, "max": 900.0}},
+        "escalation_biomarkers": {"vitamin_b12": 150.0, "mcv": 100.0, "folate": 10.0, "hemoglobin": 130.0},
+        "escalation_ranges": {"vitamin_b12": {"min": 200.0, "max": 900.0}},
+    },
+    "signal_inflammation_crp_context": {
+        "baseline_biomarkers": {"crp": 6.0, "neutrophils": 5.0, "lymphocytes": 1.5, "nlr": 2.0},
+        "baseline_ranges": {"crp": {"min": 0.0, "max": 3.0}},
+        "escalation_biomarkers": {"crp": 6.0, "neutrophils": 5.0, "lymphocytes": 1.5, "nlr": 4.0},
+        "escalation_ranges": {"crp": {"min": 0.0, "max": 3.0}},
+    },
+    "signal_hepatic_alt_context": {
+        "baseline_biomarkers": {"alt": 70.0, "ast": 28.0, "ggt": 35.0, "alp": 100.0, "bilirubin": 12.0},
+        "baseline_ranges": {"alt": {"min": 0.0, "max": 40.0}},
+        "escalation_biomarkers": {"alt": 70.0, "ast": 28.0, "ggt": 85.0, "alp": 100.0, "bilirubin": 12.0},
+        "escalation_ranges": {"alt": {"min": 0.0, "max": 40.0}},
+    },
+    "signal_glucose_dysregulation_hba1c_context": {
+        "baseline_biomarkers": {"hba1c": 6.2, "glucose": 5.5, "triglycerides": 1.2, "insulin": 8.0},
+        "baseline_ranges": {"hba1c": {"min": 4.0, "max": 5.6}},
+        "escalation_biomarkers": {"hba1c": 6.2, "glucose": 6.5, "triglycerides": 1.2, "insulin": 8.0},
+        "escalation_ranges": {"hba1c": {"min": 4.0, "max": 5.6}},
+    },
+    "signal_thyroid_tsh_context": {
+        "baseline_biomarkers": {"tsh": 6.0, "free_t4": 16.0, "free_t3": 4.5},
+        "baseline_ranges": {"tsh": {"min": 0.4, "max": 4.5}},
+        "escalation_biomarkers": {"tsh": 6.0, "free_t4": 25.0, "free_t3": 4.5},
+        "escalation_ranges": {"tsh": {"min": 0.4, "max": 4.5}},
+    },
+}
+
+
+def _load_signal_definition(signal_id: str) -> dict:
+    registry = SignalRegistry()
+    for signal in registry.get_all_signals():
+        if signal.get("signal_id") == signal_id:
+            return dict(signal)
+    raise AssertionError(f"Signal not found in registry: {signal_id}")
+
+
+def _single_signal_evaluator(signal_id: str) -> SignalEvaluator:
+    signal = _load_signal_definition(signal_id)
+
+    class _SingleSignalRegistry:
+        @staticmethod
+        def get_all_signals():
+            return [signal]
+
+    return SignalEvaluator(_SingleSignalRegistry())
+
+
+@pytest.mark.parametrize("package_dir", _KB_S22_PACKAGE_DIRS)
+def test_kbs22_packages_validate_with_no_errors(package_dir: str):
+    cmd = [
+        sys.executable,
+        str(_REPO_ROOT / "backend" / "scripts" / "validate_knowledge_package.py"),
+        "--package-dir",
+        str(_REPO_ROOT / "knowledge_bus" / "packages" / package_dir),
+    ]
+    proc = subprocess.run(cmd, cwd=str(_REPO_ROOT), capture_output=True, text=True, check=False)
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert "signal_validation: PASS" in proc.stdout
+
+
+def test_kbs22_signal_libraries_parse_and_use_lab_range_activation():
+    for package_dir in _KB_S22_PACKAGE_DIRS:
+        signal_library_path = _REPO_ROOT / "knowledge_bus" / "packages" / package_dir / "signal_library.yaml"
+        payload = yaml.safe_load(signal_library_path.read_text(encoding="utf-8")) or {}
+        signals = payload.get("signals", [])
+        assert isinstance(signals, list) and signals, f"No signals in {signal_library_path}"
+        for signal in signals:
+            assert signal.get("activation_logic") == ACTIVATION_MODE_LAB_RANGE
+
+
+@pytest.mark.parametrize("signal_id", sorted(_KB_S22_SIGNAL_CASES.keys()))
+def test_kbs22_new_signals_evaluate_without_error(signal_id: str):
+    evaluator = _single_signal_evaluator(signal_id)
+    case = _KB_S22_SIGNAL_CASES[signal_id]
+    out = evaluator.evaluate_all(
+        signal_biomarkers=case["baseline_biomarkers"],
+        signal_derived={},
+        lab_ranges=case["baseline_ranges"],
+    )
+    assert len(out) == 1
+    assert out[0].signal_id == signal_id
+
+
+@pytest.mark.parametrize("signal_id", sorted(_KB_S22_SIGNAL_CASES.keys()))
+def test_kbs22_new_signals_trigger_suboptimal_then_escalate_to_at_risk(signal_id: str):
+    evaluator = _single_signal_evaluator(signal_id)
+    case = _KB_S22_SIGNAL_CASES[signal_id]
+
+    baseline = evaluator.evaluate_all(
+        signal_biomarkers=case["baseline_biomarkers"],
+        signal_derived={},
+        lab_ranges=case["baseline_ranges"],
+    )
+    assert len(baseline) == 1
+    assert baseline[0].signal_state == "suboptimal"
+
+    escalated = evaluator.evaluate_all(
+        signal_biomarkers=case["escalation_biomarkers"],
+        signal_derived={},
+        lab_ranges=case["escalation_ranges"],
+    )
+    assert len(escalated) == 1
+    assert escalated[0].signal_state == "at_risk"

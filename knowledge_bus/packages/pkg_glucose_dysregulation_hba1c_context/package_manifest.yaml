@@ -1,0 +1,10 @@
+package_id: "pkg_glucose_dysregulation_hba1c_context"
+package_version: "1.0.0"
+description: >
+  Investigation signal package for HbA1c-led glucose dysregulation context.
+research_brief: "research_brief.yaml"
+signal_library: "signal_library.yaml"
+author: "HealthIQ Architecture Team"
+created_at: "2026-03-11"
+source_document: "docs/architecture/HealthIQ_Investigation_Layer.md"
+translation_mode: "creation"

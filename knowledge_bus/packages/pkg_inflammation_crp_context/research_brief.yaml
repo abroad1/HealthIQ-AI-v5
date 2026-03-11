@@ -1,0 +1,23 @@
+research_domain: "inflammatory"
+sources:
+  - paper_title: "C-reactive protein and cardiovascular disease"
+    journal: "The New England Journal of Medicine"
+    year: 2004
+    doi: "10.1056/NEJMra042181"
+  - paper_title: "Neutrophil to lymphocyte ratio and clinical outcomes"
+    journal: "The American Journal of Medicine"
+    year: 2012
+    doi: "10.1016/j.amjmed.2011.10.021"
+biomarkers:
+  - crp
+  - neutrophils
+  - lymphocytes
+  - nlr
+derived_metrics: []
+physiological_claim: >
+  CRP above lab range with concordant innate/adaptive inflammatory shifts supports
+  a stronger systemic inflammatory context.
+evidence_strength: "moderate"
+research_summary: >
+  CRP is used as the primary trigger and neutrophils, lymphocytes, and nlr provide
+  deterministic escalation context.

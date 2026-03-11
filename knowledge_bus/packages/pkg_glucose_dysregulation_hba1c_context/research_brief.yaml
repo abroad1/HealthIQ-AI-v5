@@ -1,0 +1,22 @@
+research_domain: "metabolic"
+sources:
+  - paper_title: "Standards of Care in Diabetes"
+    journal: "Diabetes Care"
+    year: 2026
+    doi: "10.2337/dc26-Sint"
+  - paper_title: "HbA1c and risk of diabetes complications"
+    journal: "The New England Journal of Medicine"
+    year: 2010
+    doi: "10.1056/NEJMoa1008864"
+biomarkers:
+  - hba1c
+  - glucose
+  - triglycerides
+  - insulin
+derived_metrics: []
+physiological_claim: >
+  HbA1c above lab range with concomitant glycemic and lipid stress markers supports a stronger
+  dysglycemia context.
+evidence_strength: "moderate"
+research_summary: >
+  HbA1c is the primary trigger and glucose plus triglycerides are deterministic escalation markers.

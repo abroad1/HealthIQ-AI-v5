@@ -1,0 +1,22 @@
+research_domain: "hormonal"
+sources:
+  - paper_title: "Guidelines for the treatment of hypothyroidism"
+    journal: "Thyroid"
+    year: 2014
+    doi: "10.1089/thy.2014.0028"
+  - paper_title: "2016 ATA guidelines for diagnosis and management of hyperthyroidism"
+    journal: "Thyroid"
+    year: 2016
+    doi: "10.1089/thy.2016.0229"
+biomarkers:
+  - tsh
+  - free_t4
+  - free_t3
+derived_metrics: []
+physiological_claim: >
+  TSH outside lab range in either direction with free thyroid hormone disturbance supports
+  stronger thyroid dysfunction context.
+evidence_strength: "moderate"
+research_summary: >
+  TSH is used bidirectionally for lab-range activation while free_t4 and free_t3 provide
+  deterministic escalation context.

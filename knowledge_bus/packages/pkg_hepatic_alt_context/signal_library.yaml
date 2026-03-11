@@ -1,0 +1,79 @@
+library:
+  package_id: "KBP-0023"
+  schema_version: "1.0.0"
+  package_version: "1.0.0"
+  library_name: "Hepatic ALT Context Signal Library"
+  description: >
+    Investigation signal library for ALT-led hepatic stress context.
+signals:
+  - signal_id: "signal_hepatic_alt_context"
+    name: "Hepatic ALT Context"
+    description: >
+      Detects ALT above lab range and escalates when additional hepatic stress markers
+      are concurrently elevated.
+    system: "hepatic"
+    primary_metric: "alt"
+    supporting_metrics:
+      - ast
+      - ggt
+      - alp
+      - bilirubin
+    dependencies:
+      biomarkers:
+        - alt
+        - ast
+        - ggt
+        - alp
+        - bilirubin
+      derived_metrics: []
+      signals: []
+    optional_dependencies:
+      biomarkers: []
+      derived_metrics: []
+      signals: []
+    thresholds:
+      - threshold_id: "signal_hepatic_alt_context_lab_range_activation_placeholder"
+        metric_id: "alt"
+        operator: ">="
+        value: 9999.0
+        severity: "at_risk"
+        description: >
+          Validator-compatibility placeholder. Runtime activation is controlled by
+          activation_logic=lab_range_exceeded and lab reference ranges.
+    activation_logic: "lab_range_exceeded"
+    activation_config:
+      upper_bound_state: "suboptimal"
+      enable_lower_bound: false
+      lower_bound_state: "suboptimal"
+    override_rules:
+      - rule_id: "hepatic_multimarker_pattern"
+        description: >
+          Escalate when ALT elevation coexists with other hepatic chemistry elevation.
+        conditions:
+          - metric_id: "ast"
+            operator: ">"
+            value: 45.0
+            condition_type: "any_of"
+          - metric_id: "ggt"
+            operator: ">"
+            value: 60.0
+            condition_type: "any_of"
+          - metric_id: "alp"
+            operator: ">"
+            value: 130.0
+            condition_type: "any_of"
+          - metric_id: "bilirubin"
+            operator: ">"
+            value: 20.0
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+    output:
+      signal_value: "alt"
+      signal_state: "at_risk"
+      confidence: "confidence_model_v1"
+      primary_metric: "alt"
+      supporting_markers:
+        - ast
+        - ggt
+        - alp
+        - bilirubin

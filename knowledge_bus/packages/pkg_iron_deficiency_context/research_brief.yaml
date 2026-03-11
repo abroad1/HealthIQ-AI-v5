@@ -1,0 +1,27 @@
+research_domain: "hematologic"
+sources:
+  - paper_title: "Iron deficiency without anaemia: a diagnosis that matters"
+    journal: "Clinical Medicine"
+    year: 2021
+    doi: "10.7861/clinmed.2021-0512"
+  - paper_title: "Serum ferritin as an indicator of iron status"
+    journal: "Clinical Chemistry"
+    year: 2001
+    doi: "10.1093/clinchem/47.5.783"
+biomarkers:
+  - ferritin
+  - hemoglobin
+  - hematocrit
+  - mcv
+  - mch
+  - rdw_cv
+  - iron
+  - transferrin
+derived_metrics: []
+physiological_claim: >
+  Low ferritin outside lab range with concordant red-cell and iron-transport markers
+  supports iron deficiency context and increased risk of functional hematologic compromise.
+evidence_strength: "moderate"
+research_summary: >
+  Ferritin is used as the primary lab-range trigger and red-cell morphology plus iron transport
+  markers provide deterministic escalation context.
