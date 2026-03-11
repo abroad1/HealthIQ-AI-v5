@@ -326,118 +326,207 @@ def test_lab_normal_but_flagged_recomputed_after_override_paths():
     assert no_ranges[0].lab_normal_but_flagged is False
 
 
-def test_lab_range_activation_above_lab_max_triggers_signal():
-    class _LabRangeRegistry:
+def test_threshold_operator_greater_than_activates_deterministically():
+    class _UpperOnlyRegistry:
         @staticmethod
         def get_all_signals():
             return [
                 {
-                    "signal_id": "signal_hcy_lab_range",
-                    "system": "vascular",
-                    "primary_metric": "homocysteine",
-                    "activation_logic": "lab_range_exceeded",
-                    "activation_config": {
-                        "upper_bound_state": "at_risk",
-                        "enable_lower_bound": False,
-                    },
+                    "signal_id": "signal_upper_only",
+                    "system": "metabolic",
+                    "primary_metric": "glucose",
+                    "thresholds": [{"severity": "at_risk", "operator": ">", "value": 100.0}],
+                    "override_rules": [],
+                    "output": {"supporting_markers": []},
+                }
+            ]
+
+    evaluator = SignalEvaluator(_UpperOnlyRegistry())
+    out_a = evaluator.evaluate_all(
+        signal_biomarkers={"glucose": 101.0},
+        signal_derived={},
+        lab_ranges={},
+    )
+    out_b = evaluator.evaluate_all(
+        signal_biomarkers={"glucose": 101.0},
+        signal_derived={},
+        lab_ranges={},
+    )
+    assert len(out_a) == 1
+    assert out_a[0].signal_state == "at_risk"
+    assert [r.model_dump() for r in out_a] == [r.model_dump() for r in out_b]
+
+
+def test_threshold_operator_less_than_activates_deterministically():
+    class _LowerOnlyRegistry:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_lower_only",
+                    "system": "metabolic",
+                    "primary_metric": "glucose",
+                    "thresholds": [{"severity": "suboptimal", "operator": "<", "value": 70.0}],
+                    "override_rules": [],
+                    "output": {"supporting_markers": []},
+                }
+            ]
+
+    evaluator = SignalEvaluator(_LowerOnlyRegistry())
+    out_a = evaluator.evaluate_all(
+        signal_biomarkers={"glucose": 65.0},
+        signal_derived={},
+        lab_ranges={},
+    )
+    out_b = evaluator.evaluate_all(
+        signal_biomarkers={"glucose": 65.0},
+        signal_derived={},
+        lab_ranges={},
+    )
+    assert len(out_a) == 1
+    assert out_a[0].signal_state == "suboptimal"
+    assert [r.model_dump() for r in out_a] == [r.model_dump() for r in out_b]
+
+
+def test_threshold_bidirectional_sides_activate_independently():
+    class _BidirectionalRegistry:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_bidirectional",
+                    "system": "metabolic",
+                    "primary_metric": "glucose",
                     "thresholds": [
-                        {"severity": "at_risk", "operator": ">=", "value": 9999.0}
+                        {"severity": "suboptimal", "operator": "<", "value": 70.0},
+                        {"severity": "at_risk", "operator": ">", "value": 100.0},
                     ],
                     "override_rules": [],
                     "output": {"supporting_markers": []},
                 }
             ]
 
-    evaluator = SignalEvaluator(_LabRangeRegistry())
-    results = evaluator.evaluate_all(
-        signal_biomarkers={"homocysteine": 15.0},
+    evaluator = SignalEvaluator(_BidirectionalRegistry())
+    low_out = evaluator.evaluate_all(
+        signal_biomarkers={"glucose": 65.0},
         signal_derived={},
-        lab_ranges={"homocysteine": {"min": 4.0, "max": 14.0}},
+        lab_ranges={},
     )
-    repeat = evaluator.evaluate_all(
-        signal_biomarkers={"homocysteine": 15.0},
+    high_out = evaluator.evaluate_all(
+        signal_biomarkers={"glucose": 105.0},
         signal_derived={},
-        lab_ranges={"homocysteine": {"min": 4.0, "max": 14.0}},
+        lab_ranges={},
     )
-    assert len(results) == 1
-    assert results[0].signal_id == "signal_hcy_lab_range"
-    assert results[0].signal_state == "at_risk"
-    assert [r.model_dump() for r in results] == [r.model_dump() for r in repeat]
+    assert len(low_out) == 1
+    assert low_out[0].signal_state == "suboptimal"
+    assert len(high_out) == 1
+    assert high_out[0].signal_state == "at_risk"
 
 
-def test_lab_range_activation_missing_lab_range_is_deterministic_no_activation():
-    class _LabRangeRegistry:
+def test_threshold_bidirectional_within_range_does_not_activate():
+    class _BidirectionalRegistry:
         @staticmethod
         def get_all_signals():
             return [
                 {
-                    "signal_id": "signal_hcy_lab_range",
-                    "system": "vascular",
-                    "primary_metric": "homocysteine",
-                    "activation_logic": "lab_range_exceeded",
-                    "activation_config": {
-                        "upper_bound_state": "at_risk",
-                        "enable_lower_bound": False,
-                    },
+                    "signal_id": "signal_bidirectional",
+                    "system": "metabolic",
+                    "primary_metric": "glucose",
                     "thresholds": [
-                        {"severity": "at_risk", "operator": ">=", "value": 9999.0}
+                        {"severity": "suboptimal", "operator": "<", "value": 70.0},
+                        {"severity": "at_risk", "operator": ">", "value": 100.0},
                     ],
                     "override_rules": [],
                     "output": {"supporting_markers": []},
                 }
             ]
 
-    evaluator = SignalEvaluator(_LabRangeRegistry())
-    first = evaluator.evaluate_all(
-        signal_biomarkers={"homocysteine": 15.0},
+    evaluator = SignalEvaluator(_BidirectionalRegistry())
+    within = evaluator.evaluate_all(
+        signal_biomarkers={"glucose": 85.0},
         signal_derived={},
         lab_ranges={},
     )
-    second = evaluator.evaluate_all(
-        signal_biomarkers={"homocysteine": 15.0},
-        signal_derived={},
-        lab_ranges={},
-    )
-    assert first == []
-    assert second == []
+    assert within == []
 
 
-def test_lab_range_activation_override_rules_layer_deterministically():
-    class _LabRangeOverrideRegistry:
+def test_corrected_homocysteine_signal_bare_lab_exceedance_is_suboptimal():
+    class _HomocysteineCorrectedRegistry:
         @staticmethod
         def get_all_signals():
             return [
                 {
-                    "signal_id": "signal_hcy_lab_range_override",
+                    "signal_id": "signal_homocysteine_elevation_context",
                     "system": "vascular",
                     "primary_metric": "homocysteine",
                     "activation_logic": "lab_range_exceeded",
                     "activation_config": {
                         "upper_bound_state": "suboptimal",
-                        "enable_lower_bound": True,
+                        "enable_lower_bound": False,
                         "lower_bound_state": "suboptimal",
                     },
-                    "thresholds": [
-                        {"severity": "suboptimal", "operator": ">=", "value": 9999.0}
-                    ],
+                    "thresholds": [{"severity": "at_risk", "operator": ">=", "value": 9999.0}],
                     "override_rules": [
                         {
-                            "rule_id": "hcy_crp_escalation",
+                            "rule_id": "hcy_context_b_vitamin_or_transport_deficit",
                             "conditions": [
-                                {"metric_id": "crp", "operator": ">=", "value": 3.0, "condition_type": "any_of"}
+                                {"metric_id": "vitamin_b12", "operator": "<", "value": 350.0, "condition_type": "any_of"},
+                                {"metric_id": "folate", "operator": "<", "value": 7.0, "condition_type": "any_of"},
+                                {"metric_id": "transferrin", "operator": "<", "value": 2.0, "condition_type": "any_of"},
                             ],
                             "resulting_state": "at_risk",
                         }
                     ],
-                    "output": {"supporting_markers": []},
+                    "output": {"supporting_markers": ["vitamin_b12", "folate", "transferrin", "mcv", "crp"]},
                 }
             ]
 
-    evaluator = SignalEvaluator(_LabRangeOverrideRegistry())
-    results = evaluator.evaluate_all(
-        signal_biomarkers={"homocysteine": 15.0, "crp": 4.0},
+    evaluator = SignalEvaluator(_HomocysteineCorrectedRegistry())
+    out = evaluator.evaluate_all(
+        signal_biomarkers={"homocysteine": 15.0, "vitamin_b12": 420.0, "folate": 10.0, "transferrin": 2.5, "crp": 1.0},
         signal_derived={},
         lab_ranges={"homocysteine": {"min": 4.0, "max": 14.0}},
     )
-    assert len(results) == 1
-    assert results[0].signal_state == "at_risk"
+    assert len(out) == 1
+    assert out[0].signal_state == "suboptimal"
+
+
+def test_corrected_homocysteine_signal_override_escalates_to_at_risk():
+    class _HomocysteineCorrectedRegistry:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_homocysteine_elevation_context",
+                    "system": "vascular",
+                    "primary_metric": "homocysteine",
+                    "activation_logic": "lab_range_exceeded",
+                    "activation_config": {
+                        "upper_bound_state": "suboptimal",
+                        "enable_lower_bound": False,
+                        "lower_bound_state": "suboptimal",
+                    },
+                    "thresholds": [{"severity": "at_risk", "operator": ">=", "value": 9999.0}],
+                    "override_rules": [
+                        {
+                            "rule_id": "hcy_context_b_vitamin_or_transport_deficit",
+                            "conditions": [
+                                {"metric_id": "vitamin_b12", "operator": "<", "value": 350.0, "condition_type": "any_of"},
+                                {"metric_id": "folate", "operator": "<", "value": 7.0, "condition_type": "any_of"},
+                                {"metric_id": "transferrin", "operator": "<", "value": 2.0, "condition_type": "any_of"},
+                            ],
+                            "resulting_state": "at_risk",
+                        }
+                    ],
+                    "output": {"supporting_markers": ["vitamin_b12", "folate", "transferrin", "mcv", "crp"]},
+                }
+            ]
+
+    evaluator = SignalEvaluator(_HomocysteineCorrectedRegistry())
+    out = evaluator.evaluate_all(
+        signal_biomarkers={"homocysteine": 15.0, "vitamin_b12": 300.0, "folate": 10.0, "transferrin": 2.5, "crp": 1.0},
+        signal_derived={},
+        lab_ranges={"homocysteine": {"min": 4.0, "max": 14.0}},
+    )
+    assert len(out) == 1
+    assert out[0].signal_state == "at_risk"

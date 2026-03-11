@@ -45,7 +45,7 @@ signals:
           activation_logic=lab_range_exceeded and lab reference ranges.
     activation_logic: "lab_range_exceeded"
     activation_config:
-      upper_bound_state: "at_risk"
+      upper_bound_state: "suboptimal"
       enable_lower_bound: false
       lower_bound_state: "suboptimal"
     override_rules:
