@@ -1,0 +1,77 @@
+library:
+  package_id: "KBP-0021"
+  schema_version: "1.0.0"
+  package_version: "1.0.0"
+  library_name: "B12 Deficiency Context Signal Library"
+  description: >
+    Investigation signal library for vitamin B12 low-context interpretation.
+signals:
+  - signal_id: "signal_b12_deficiency_context"
+    name: "B12 Deficiency Context"
+    description: >
+      Detects vitamin B12 below lab range and escalates when macrocytic and nutritional
+      context markers support stronger deficiency patterning.
+    system: "hematologic"
+    primary_metric: "vitamin_b12"
+    supporting_metrics:
+      - mcv
+      - folate
+      - hemoglobin
+    dependencies:
+      biomarkers:
+        - vitamin_b12
+        - mcv
+        - folate
+        - hemoglobin
+      derived_metrics: []
+      signals: []
+    optional_dependencies:
+      biomarkers: []
+      derived_metrics: []
+      signals: []
+    thresholds:
+      - threshold_id: "signal_b12_deficiency_context_lab_range_activation_placeholder"
+        metric_id: "vitamin_b12"
+        operator: ">="
+        value: 9999.0
+        severity: "at_risk"
+        description: >
+          Validator-compatibility placeholder. Runtime activation is controlled by
+          activation_logic=lab_range_exceeded and lab reference ranges.
+    activation_logic: "lab_range_exceeded"
+    activation_config:
+      upper_bound_state: "suboptimal"
+      enable_lower_bound: true
+      lower_bound_state: "suboptimal"
+    override_rules:
+      - rule_id: "b12_macrocytic_pattern"
+        description: >
+          Escalate when B12 deficiency coexists with macrocytic pattern or low folate.
+        conditions:
+          - metric_id: "mcv"
+            operator: ">"
+            value: 96.0
+            condition_type: "any_of"
+          - metric_id: "folate"
+            operator: "<"
+            value: 7.0
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+      - rule_id: "b12_anemia_pattern"
+        description: >
+          Escalate when B12 deficiency coexists with low hemoglobin.
+        conditions:
+          - metric_id: "hemoglobin"
+            operator: "<"
+            value: 120.0
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+    output:
+      signal_value: "vitamin_b12"
+      signal_state: "at_risk"
+      confidence: "confidence_model_v1"
+      primary_metric: "vitamin_b12"
+      supporting_markers:
+        - mcv
+        - folate
+        - hemoglobin

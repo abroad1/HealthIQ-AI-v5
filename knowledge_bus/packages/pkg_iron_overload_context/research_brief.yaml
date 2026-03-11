@@ -1,0 +1,23 @@
+research_domain: "hepatic"
+sources:
+  - paper_title: "Hyperferritinemia—A Clinical Overview"
+    journal: "Journal of Clinical Medicine"
+    year: 2021
+    doi: "10.3390/jcm10092008"
+  - paper_title: "Diagnosis and management of hereditary hemochromatosis"
+    journal: "Hepatology"
+    year: 2011
+    doi: "10.1002/hep.24330"
+biomarkers:
+  - ferritin
+  - iron
+  - alt
+  - ast
+derived_metrics: []
+physiological_claim: >
+  Ferritin above lab range with concordant iron and hepatic stress markers supports iron
+  overload context and higher risk of metabolic-hepatic burden.
+evidence_strength: "moderate"
+research_summary: >
+  Ferritin serves as a primary trigger and iron plus hepatic enzymes provide conservative
+  deterministic escalation context for overload interpretation.

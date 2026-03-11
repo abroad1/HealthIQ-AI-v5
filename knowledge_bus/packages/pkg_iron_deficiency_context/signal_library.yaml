@@ -1,0 +1,111 @@
+library:
+  package_id: "KBP-0019"
+  schema_version: "1.0.0"
+  package_version: "1.0.0"
+  library_name: "Iron Deficiency Context Signal Library"
+  description: >
+    Investigation signal library for ferritin-low lab-range deficiency context.
+signals:
+  - signal_id: "signal_iron_deficiency_context"
+    name: "Iron Deficiency Context"
+    description: >
+      Detects low ferritin relative to lab range and escalates when hematologic and transport
+      markers support iron deficiency context.
+    system: "hematologic"
+    primary_metric: "ferritin"
+    supporting_metrics:
+      - hemoglobin
+      - hematocrit
+      - mcv
+      - mch
+      - rdw_cv
+      - iron
+      - transferrin
+    dependencies:
+      biomarkers:
+        - ferritin
+        - hemoglobin
+        - hematocrit
+        - mcv
+        - mch
+        - rdw_cv
+        - iron
+        - transferrin
+      derived_metrics: []
+      signals: []
+    optional_dependencies:
+      biomarkers: []
+      derived_metrics: []
+      signals: []
+    thresholds:
+      - threshold_id: "signal_iron_deficiency_context_lab_range_activation_placeholder"
+        metric_id: "ferritin"
+        operator: ">="
+        value: 9999.0
+        severity: "at_risk"
+        description: >
+          Validator-compatibility placeholder. Runtime activation is controlled by
+          activation_logic=lab_range_exceeded and lab reference ranges.
+    activation_logic: "lab_range_exceeded"
+    activation_config:
+      upper_bound_state: "suboptimal"
+      enable_lower_bound: true
+      lower_bound_state: "suboptimal"
+    override_rules:
+      - rule_id: "iron_deficiency_hematology_pattern"
+        description: >
+          Escalate when low ferritin coexists with anemia-compatible red cell changes.
+        conditions:
+          - metric_id: "hemoglobin"
+            operator: "<"
+            value: 120.0
+            condition_type: "any_of"
+          - metric_id: "mcv"
+            operator: "<"
+            value: 80.0
+            condition_type: "any_of"
+          - metric_id: "rdw_cv"
+            operator: ">"
+            value: 14.5
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+      - rule_id: "iron_deficiency_transport_pattern"
+        description: >
+          Escalate when low ferritin coexists with low serum iron or high transferrin.
+        conditions:
+          - metric_id: "iron"
+            operator: "<"
+            value: 10.0
+            condition_type: "any_of"
+          - metric_id: "transferrin"
+            operator: ">"
+            value: 3.6
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+    output:
+      signal_value: "ferritin"
+      signal_state: "at_risk"
+      confidence: "confidence_model_v1"
+      primary_metric: "ferritin"
+      supporting_markers:
+        - hemoglobin
+        - hematocrit
+        - mcv
+        - mch
+        - rdw_cv
+        - iron
+        - transferrin
+    explanation:
+      mechanism: >
+        Ferritin depletion indicates reduced iron stores, and red-cell changes provide context
+        for evolving iron-restricted erythropoiesis.
+      biological_pathway: >
+        Iron storage and erythropoiesis coupling through marrow iron availability.
+      interpretation: >
+        Suboptimal represents isolated low ferritin; at_risk indicates concordant deficiency pattern.
+      implications: >
+        Persistent pattern may reflect iron deficiency requiring clinical confirmation.
+      supporting_marker_roles:
+        hemoglobin: "Anemia burden marker."
+        mcv: "Microcytosis context marker."
+        rdw_cv: "Anisocytosis context marker."

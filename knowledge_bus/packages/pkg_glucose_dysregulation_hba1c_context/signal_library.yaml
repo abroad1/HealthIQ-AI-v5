@@ -1,0 +1,81 @@
+library:
+  package_id: "KBP-0024"
+  schema_version: "1.0.0"
+  package_version: "1.0.0"
+  library_name: "HbA1c Glucose Dysregulation Context Signal Library"
+  description: >
+    Investigation signal library for HbA1c-led glycemic dysregulation context.
+signals:
+  - signal_id: "signal_glucose_dysregulation_hba1c_context"
+    name: "Glucose Dysregulation HbA1c Context"
+    description: >
+      Detects HbA1c above lab range and escalates when glucose or triglycerides support
+      stronger metabolic dysregulation.
+    system: "metabolic"
+    primary_metric: "hba1c"
+    supporting_metrics:
+      - glucose
+      - triglycerides
+      - insulin
+    dependencies:
+      biomarkers:
+        - hba1c
+        - glucose
+        - triglycerides
+        - insulin
+      derived_metrics: []
+      signals: []
+    optional_dependencies:
+      biomarkers: []
+      derived_metrics: []
+      signals: []
+    thresholds:
+      - threshold_id: "signal_glucose_dysregulation_hba1c_context_lab_range_activation_placeholder"
+        metric_id: "hba1c"
+        operator: ">="
+        value: 9999.0
+        severity: "at_risk"
+        description: >
+          Validator-compatibility placeholder. Runtime activation is controlled by
+          activation_logic=lab_range_exceeded and lab reference ranges.
+    activation_logic: "lab_range_exceeded"
+    activation_config:
+      upper_bound_state: "suboptimal"
+      enable_lower_bound: false
+      lower_bound_state: "suboptimal"
+    override_rules:
+      - rule_id: "hba1c_glycemic_pattern"
+        description: >
+          Escalate when elevated HbA1c coexists with high glucose or high triglycerides.
+        conditions:
+          - metric_id: "glucose"
+            operator: ">"
+            value: 6.0
+            condition_type: "any_of"
+          - metric_id: "triglycerides"
+            operator: ">"
+            value: 1.7
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+    output:
+      signal_value: "hba1c"
+      signal_state: "at_risk"
+      confidence: "confidence_model_v1"
+      primary_metric: "hba1c"
+      supporting_markers:
+        - glucose
+        - triglycerides
+        - insulin
+    explanation:
+      mechanism: >
+        HbA1c integrates chronic glycemic exposure; concurrent fasting glucose and triglycerides
+        contextualize current dysmetabolic burden.
+      biological_pathway: >
+        Glucose homeostasis and hepatic lipid-glucose coupling.
+      interpretation: >
+        Isolated HbA1c elevation is suboptimal; concordant metabolic markers escalate to at_risk.
+      implications: >
+        Sustained at_risk pattern may indicate progressive insulin-resistant dysglycemia.
+      supporting_marker_roles:
+        glucose: "Immediate glycemic context marker."
+        triglycerides: "Metabolic lipotoxicity context marker."
