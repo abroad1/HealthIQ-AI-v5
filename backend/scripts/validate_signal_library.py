@@ -17,6 +17,18 @@ from typing import Any
 
 import yaml
 
+ROOT = Path(__file__).resolve().parents[2]
+BACKEND_ROOT = ROOT / "backend"
+if str(BACKEND_ROOT) not in sys.path:
+    sys.path.insert(0, str(BACKEND_ROOT))
+
+from core.contracts.signal_contract import (
+    ACTIVATION_MODE_LAB_RANGE,
+    ALLOWED_ACTIVATION_MODES,
+    ALLOWED_THRESHOLD_OPERATORS,
+    STATE_RANK,
+)
+
 
 CATEGORY_ORDER = [
     "yaml load",
@@ -377,21 +389,20 @@ def validate_thresholds(schema: dict[str, Any], signals: list[dict[str, Any]], s
         state.add_error("thresholds", "schema.threshold_field_rules must be a map")
         threshold_rules = {}
 
-    operator_rule = threshold_rules.get("operator")
-    allowed_operators = []
-    if isinstance(operator_rule, dict) and isinstance(operator_rule.get("allowed"), list):
-        allowed_operators = operator_rule["allowed"]
-    else:
-        state.add_error("thresholds", "schema.threshold_field_rules.operator.allowed must be a list")
+    allowed_operators = sorted(ALLOWED_THRESHOLD_OPERATORS)
 
     for signal_idx, signal in enumerate(signals):
+        activation_logic = str(signal.get("activation_logic", "")).strip()
+        is_lab_range_mode = activation_logic == ACTIVATION_MODE_LAB_RANGE
         thresholds = signal.get("thresholds")
         label = f"signals[{signal_idx}].thresholds"
         if not isinstance(thresholds, list):
-            state.add_error("thresholds", f"{label} must be a list")
+            if not is_lab_range_mode:
+                state.add_error("thresholds", f"{label} must be a list")
             continue
         if len(thresholds) == 0:
-            state.add_error("thresholds", f"{label} must contain at least one threshold")
+            if not is_lab_range_mode:
+                state.add_error("thresholds", f"{label} must contain at least one threshold")
 
         for threshold_idx, threshold in enumerate(thresholds):
             threshold_label = f"{label}[{threshold_idx}]"
@@ -412,6 +423,13 @@ def validate_thresholds(schema: dict[str, Any], signals: list[dict[str, Any]], s
                 state.add_error(
                     "thresholds",
                     f"{threshold_label}.operator '{operator}' is not in allowed operators {allowed_operators}",
+                )
+
+            severity = str(threshold.get("severity", "")).strip()
+            if severity not in STATE_RANK:
+                state.add_error(
+                    "thresholds",
+                    f"{threshold_label}.severity '{severity}' is not in allowed states {sorted(STATE_RANK.keys())}",
                 )
 
             if operator == "range":
@@ -566,14 +584,8 @@ def validate_activation_logic(schema: dict[str, Any], signals: list[dict[str, An
     signal_rules = schema.get("signal_field_rules")
     forbidden_patterns = schema.get("forbidden_patterns")
 
-    allowed_values: list[str] = []
-    if isinstance(signal_rules, dict):
-        activation_rule = signal_rules.get("activation_logic")
-        if isinstance(activation_rule, dict) and isinstance(activation_rule.get("allowed"), list):
-            allowed_values = activation_rule["allowed"]
-        else:
-            state.add_error("activation logic", "schema.signal_field_rules.activation_logic.allowed must be a list")
-    else:
+    allowed_values = sorted(ALLOWED_ACTIVATION_MODES)
+    if not isinstance(signal_rules, dict):
         state.add_error("activation logic", "schema.signal_field_rules must be a map")
 
     explicit_forbidden: list[str] = []

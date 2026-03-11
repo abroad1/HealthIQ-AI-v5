@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional
 
 import yaml
 
+from core.contracts.signal_contract import STATE_RANK as _STATE_RANK_IMPORT
 from core.models.signal import SignalResult
 
 
@@ -74,11 +75,7 @@ class SignalRegistry:
 class SignalEvaluator:
     """Evaluate repository-defined signals from raw biomarker + derived values."""
 
-    _STATE_RANK = {
-        "optimal": 0,
-        "suboptimal": 1,
-        "at_risk": 2,
-    }
+    _STATE_RANK = _STATE_RANK_IMPORT
 
     def __init__(self, registry: SignalRegistry) -> None:
         self.registry = registry
