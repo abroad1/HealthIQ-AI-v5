@@ -1,0 +1,16 @@
+{
+  "biomarkers": {
+    "example_biomarker": {
+      "value": 0,
+      "unit": "unit_here",
+      "reference_range": {
+        "min": 0,
+        "max": 0,
+        "unit": "unit_here"
+      }
+    }
+  },
+  "questionnaire_data": {
+    "date_of_birth": "1990-01-01"
+  }
+}
