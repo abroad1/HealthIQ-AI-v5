@@ -2,9 +2,11 @@
 Unit tests for deterministic signal registry and evaluator.
 """
 
+import json
 from pathlib import Path
 import subprocess
 import sys
+from uuid import uuid4
 
 import pytest
 import yaml
@@ -16,6 +18,7 @@ from core.contracts.signal_contract import (
     STATE_RANK,
 )
 from core.analytics.signal_evaluator import SignalEvaluator, SignalRegistry
+from tools.run_golden_panel import run_golden_panel
 
 
 def _write_signal_library(
@@ -685,6 +688,56 @@ _KB_S22_SIGNAL_CASES = {
     },
 }
 
+_KB_S22_SIGNAL_NO_TRIGGER_CASES = {
+    "signal_iron_deficiency_context": {
+        "biomarkers": {
+            "ferritin": 80.0,
+            "hemoglobin": 100.0,
+            "hematocrit": 0.34,
+            "mcv": 76.0,
+            "mch": 25.0,
+            "rdw_cv": 15.0,
+            "iron": 8.0,
+            "transferrin": 4.0,
+        },
+        "ranges": {"ferritin": {"min": 30.0, "max": 300.0}},
+    },
+    "signal_iron_overload_context": {
+        "biomarkers": {"ferritin": 200.0, "iron": 45.0, "alt": 70.0, "ast": 55.0},
+        "ranges": {"ferritin": {"min": 30.0, "max": 300.0}},
+    },
+    "signal_b12_deficiency_context": {
+        "biomarkers": {"vitamin_b12": 450.0, "mcv": 102.0, "folate": 5.0, "hemoglobin": 110.0},
+        "ranges": {"vitamin_b12": {"min": 200.0, "max": 900.0}},
+    },
+    "signal_inflammation_crp_context": {
+        "biomarkers": {"crp": 2.0, "neutrophils": 8.0, "lymphocytes": 0.8, "nlr": 5.0},
+        "ranges": {"crp": {"min": 0.0, "max": 3.0}},
+    },
+    "signal_hepatic_alt_context": {
+        "biomarkers": {"alt": 30.0, "ast": 55.0, "ggt": 90.0, "alp": 150.0, "bilirubin": 22.0},
+        "ranges": {"alt": {"min": 0.0, "max": 40.0}},
+    },
+    "signal_glucose_dysregulation_hba1c_context": {
+        "biomarkers": {"hba1c": 5.2, "glucose": 6.8, "triglycerides": 2.0, "insulin": 12.0},
+        "ranges": {"hba1c": {"min": 4.0, "max": 5.6}},
+    },
+    "signal_thyroid_tsh_context": {
+        "biomarkers": {"tsh": 2.0, "free_t4": 26.0, "free_t3": 7.5},
+        "ranges": {"tsh": {"min": 0.4, "max": 4.5}},
+    },
+}
+
+_KB_S22_PACKAGE_PATHS = [
+    _REPO_ROOT / "knowledge_bus" / "packages" / "pkg_iron_deficiency_context",
+    _REPO_ROOT / "knowledge_bus" / "packages" / "pkg_iron_overload_context",
+    _REPO_ROOT / "knowledge_bus" / "packages" / "pkg_b12_deficiency_context",
+    _REPO_ROOT / "knowledge_bus" / "packages" / "pkg_inflammation_crp_context",
+    _REPO_ROOT / "knowledge_bus" / "packages" / "pkg_hepatic_alt_context",
+    _REPO_ROOT / "knowledge_bus" / "packages" / "pkg_glucose_dysregulation_hba1c_context",
+    _REPO_ROOT / "knowledge_bus" / "packages" / "pkg_thyroid_tsh_context",
+]
+
 
 def _load_signal_definition(signal_id: str) -> dict:
     registry = SignalRegistry()
@@ -761,3 +814,151 @@ def test_kbs22_new_signals_trigger_suboptimal_then_escalate_to_at_risk(signal_id
     )
     assert len(escalated) == 1
     assert escalated[0].signal_state == "at_risk"
+    # Escalation-only invariant
+    assert STATE_RANK[escalated[0].signal_state] >= STATE_RANK[baseline[0].signal_state]
+
+
+@pytest.mark.parametrize("signal_id", sorted(_KB_S22_SIGNAL_NO_TRIGGER_CASES.keys()))
+def test_kbs23_investigation_signals_do_not_trigger_when_primary_in_range(signal_id: str):
+    evaluator = _single_signal_evaluator(signal_id)
+    case = _KB_S22_SIGNAL_NO_TRIGGER_CASES[signal_id]
+    out = evaluator.evaluate_all(
+        signal_biomarkers=case["biomarkers"],
+        signal_derived={},
+        lab_ranges=case["ranges"],
+    )
+    assert out == []
+
+
+def test_kbs23_tsh_lab_range_directionality_low_and_high_trigger_suboptimal():
+    evaluator = _single_signal_evaluator("signal_thyroid_tsh_context")
+    lab_range = {"tsh": {"min": 0.4, "max": 4.5}}
+
+    low_out = evaluator.evaluate_all(
+        signal_biomarkers={"tsh": 0.2, "free_t4": 16.0, "free_t3": 4.5},
+        signal_derived={},
+        lab_ranges=lab_range,
+    )
+    high_out = evaluator.evaluate_all(
+        signal_biomarkers={"tsh": 6.0, "free_t4": 16.0, "free_t3": 4.5},
+        signal_derived={},
+        lab_ranges=lab_range,
+    )
+    assert len(low_out) == 1 and low_out[0].signal_state == "suboptimal"
+    assert len(high_out) == 1 and high_out[0].signal_state == "suboptimal"
+
+
+def _normalise_panel_fixture_for_golden_runner(panel_payload: dict) -> dict:
+    """
+    Adapt legacy panel fixture variants into golden-runner input contract.
+    Leaves canonical fixtures unchanged.
+    """
+    payload = dict(panel_payload)
+    biomarkers = payload.get("biomarkers")
+
+    # Legacy panels store biomarkers as list[{name,value,unit,...}]
+    if isinstance(biomarkers, list):
+        mapped = {}
+        for row in biomarkers:
+            if not isinstance(row, dict):
+                continue
+            name = str(row.get("name", "")).strip()
+            if not name:
+                continue
+            mapped[name] = {
+                "value": row.get("value"),
+                "unit": row.get("unit", ""),
+                "reference_range": row.get("reference_range"),
+            }
+        payload["biomarkers"] = mapped
+
+    # Keep user shape compatible with orchestrator paths used by golden runner.
+    user = payload.get("user")
+    if not isinstance(user, dict):
+        user = {}
+    if "gender" not in user:
+        if isinstance(user.get("biological_sex"), str):
+            user["gender"] = user["biological_sex"]
+        else:
+            user["gender"] = "female"
+    user.setdefault("age", 40)
+    user.setdefault("user_id", str(uuid4()))
+    payload["user"] = user
+    return payload
+
+
+def test_kbs23_catalogue_panel_harness_runs_all_panel_fixtures(tmp_path):
+    panel_root = _REPO_ROOT / "backend" / "tests" / "fixtures" / "panels"
+    panel_paths = sorted(panel_root.glob("*.json"))
+    assert panel_paths, "No panel fixtures found in backend/tests/fixtures/panels"
+
+    for panel_path in panel_paths:
+        raw_payload = json.loads(panel_path.read_text(encoding="utf-8"))
+        fixture_payload = _normalise_panel_fixture_for_golden_runner(raw_payload)
+        prepared_fixture = tmp_path / f"{panel_path.stem}_golden_compatible.json"
+        prepared_fixture.write_text(
+            json.dumps(fixture_payload, indent=2, sort_keys=True),
+            encoding="utf-8",
+        )
+        run_dir, analysis_result = run_golden_panel(
+            fixture_path=prepared_fixture,
+            output_root=tmp_path,
+            run_id=f"kb-s23-{panel_path.stem}",
+            write_narrative=False,
+        )
+
+        assert run_dir.exists()
+        assert isinstance(analysis_result, dict)
+        assert analysis_result
+        meta = analysis_result.get("meta", {})
+        ig = meta.get("insight_graph", {}) if isinstance(meta, dict) else {}
+        assert isinstance(ig.get("signal_results"), list)
+
+
+def _collect_metric_ids_from_signal_library(path: Path) -> set[str]:
+    payload = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    metric_ids: set[str] = set()
+    for signal in payload.get("signals", []):
+        if not isinstance(signal, dict):
+            continue
+        primary = signal.get("primary_metric")
+        if isinstance(primary, str) and primary.strip():
+            metric_ids.add(primary)
+        for sm in signal.get("supporting_metrics", []):
+            if isinstance(sm, str) and sm.strip():
+                metric_ids.add(sm)
+        deps = signal.get("dependencies", {})
+        if isinstance(deps, dict):
+            for bm in deps.get("biomarkers", []):
+                if isinstance(bm, str) and bm.strip():
+                    metric_ids.add(bm)
+        for rule in signal.get("override_rules", []):
+            if not isinstance(rule, dict):
+                continue
+            for cond in rule.get("conditions", []):
+                if not isinstance(cond, dict):
+                    continue
+                metric_id = cond.get("metric_id")
+                if isinstance(metric_id, str) and metric_id.strip():
+                    metric_ids.add(metric_id)
+    return metric_ids
+
+
+def test_kbs23_kbs22_investigation_metric_ids_are_ssot_canonical():
+    ssot_path = _REPO_ROOT / "backend" / "ssot" / "biomarkers.yaml"
+    ssot_payload = yaml.safe_load(ssot_path.read_text(encoding="utf-8")) or {}
+    canonical_keys = set((ssot_payload.get("biomarkers") or {}).keys())
+    assert canonical_keys, "Failed to load canonical biomarker keys from SSOT"
+
+    unknown_by_package = {}
+    for package_path in _KB_S22_PACKAGE_PATHS:
+        signal_library_path = package_path / "signal_library.yaml"
+        metric_ids = _collect_metric_ids_from_signal_library(signal_library_path)
+        unknown = sorted(metric_ids - canonical_keys)
+        if unknown:
+            unknown_by_package[str(package_path)] = unknown
+
+    assert not unknown_by_package, (
+        "Unknown metric_id values found in KB-S22 investigation packages: "
+        f"{unknown_by_package}"
+    )
