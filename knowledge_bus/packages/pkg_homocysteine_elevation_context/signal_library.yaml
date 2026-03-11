@@ -1,0 +1,108 @@
+library:
+  package_id: "KBP-0018"
+  schema_version: "1.0.0"
+  package_version: "1.0.0"
+  library_name: "Homocysteine Elevation Context Signal Library"
+  description: >
+    Investigation-layer pilot signal library for deterministic homocysteine context interpretation.
+    Adds structured explanation metadata carriage without changing evaluator detection semantics.
+signals:
+  - signal_id: "signal_homocysteine_elevation_context"
+    name: "Homocysteine Elevation Context"
+    description: >
+      Detects elevated homocysteine and carries deterministic contextual explanation metadata
+      spanning methylation, nutrient transport, and inflammatory context markers.
+    system: "vascular"
+    primary_metric: "homocysteine"
+    supporting_metrics:
+      - vitamin_b12
+      - folate
+      - transferrin
+      - mcv
+      - crp
+    dependencies:
+      biomarkers:
+        - homocysteine
+      derived_metrics: []
+      signals: []
+    optional_dependencies:
+      biomarkers:
+        - vitamin_b12
+        - folate
+        - transferrin
+        - mcv
+        - crp
+      derived_metrics: []
+      signals: []
+    thresholds:
+      - threshold_id: "hcy_optimal"
+        metric_id: "homocysteine"
+        operator: "<"
+        value: 10.0
+        severity: "optimal"
+      - threshold_id: "hcy_suboptimal"
+        metric_id: "homocysteine"
+        operator: "range"
+        min_value: 10.0
+        max_value: 13.9
+        severity: "suboptimal"
+      - threshold_id: "hcy_at_risk"
+        metric_id: "homocysteine"
+        operator: ">="
+        value: 14.0
+        severity: "at_risk"
+    activation_logic: "deterministic_threshold"
+    override_rules:
+      - rule_id: "hcy_context_b_vitamin_or_transport_deficit"
+        description: >
+          Escalate suboptimal homocysteine when low B-vitamin or transport context is present.
+        conditions:
+          - metric_id: "vitamin_b12"
+            operator: "<"
+            value: 350.0
+            condition_type: "any_of"
+          - metric_id: "folate"
+            operator: "<"
+            value: 7.0
+            condition_type: "any_of"
+          - metric_id: "transferrin"
+            operator: "<"
+            value: 2.0
+            condition_type: "any_of"
+        resulting_state: "at_risk"
+      - rule_id: "hcy_context_inflammatory_escalation"
+        description: >
+          Escalate suboptimal homocysteine when inflammatory context is concurrently elevated.
+        conditions:
+          - metric_id: "crp"
+            operator: ">="
+            value: 3.0
+            condition_type: "all_of"
+        resulting_state: "at_risk"
+    output:
+      signal_value: "homocysteine"
+      signal_state: "at_risk"
+      confidence: 0.78
+      primary_metric: "homocysteine"
+      supporting_markers:
+        - vitamin_b12
+        - folate
+        - transferrin
+        - mcv
+        - crp
+    explanation:
+      mechanism: >
+        Elevated homocysteine suggests one-carbon metabolism stress and impaired remethylation context.
+      biological_pathway: >
+        Methionine cycle remethylation and transsulfuration dynamics, with vascular endothelial exposure.
+      interpretation: >
+        Homocysteine elevation is interpreted with nutrient and inflammatory context to improve
+        mechanistic investigation framing while preserving deterministic detection semantics.
+      implications: >
+        Persistent elevation with contextual deficits may indicate increased endothelial stress burden.
+      supporting_marker_roles:
+        vitamin_b12: "Cofactor support for remethylation of homocysteine."
+        folate: "Methyl donor support in one-carbon metabolism."
+        transferrin: "Nutrient transport context proxy."
+        mcv: "Cell-size context that can reflect macrocytic nutrient deficiency patterns."
+        crp: "Inflammatory context marker for endothelial stress interpretation."

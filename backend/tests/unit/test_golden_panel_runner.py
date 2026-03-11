@@ -10,6 +10,7 @@ from pathlib import Path
 import pytest
 import yaml
 from core.analytics.ratio_registry import DERIVED_IDS
+from core.models.signal import SignalResult
 from core.canonical.normalize import normalize_biomarkers_with_metadata
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 from core.units.registry import UNIT_REGISTRY_VERSION, apply_unit_normalisation
@@ -498,6 +499,56 @@ def test_golden_panel_insight_graph_exposes_signal_fields(tmp_path):
     assert "signal_registry_version" in insight
     assert "signal_registry_hash" in insight
     assert isinstance(insight.get("signal_results", []), list)
+
+
+def test_golden_panel_signal_results_carry_explanation_metadata(tmp_path, monkeypatch):
+    fixture = Path(__file__).parent.parent / "fixtures" / "golden_panel_160.json"
+
+    def _stub_evaluate_all(self, signal_biomarkers, signal_derived, lab_ranges):
+        return [
+            SignalResult(
+                signal_id="signal_homocysteine_elevation_context",
+                system="vascular",
+                signal_state="suboptimal",
+                signal_value=12.4,
+                confidence=None,
+                primary_metric="homocysteine",
+                supporting_markers=["vitamin_b12", "folate", "transferrin", "mcv", "crp"],
+                explanation={
+                    "mechanism": "Homocysteine elevation may reflect methylation strain.",
+                    "biological_pathway": "One-carbon metabolism and remethylation.",
+                    "interpretation": "Context suggests B-vitamin and transport interactions.",
+                    "implications": "Potential endothelial stress if persistent.",
+                    "supporting_marker_roles": {
+                        "vitamin_b12": "Cofactor for remethylation.",
+                        "folate": "Methyl donor support.",
+                        "transferrin": "Nutrient transport context.",
+                        "mcv": "Macrocytic context marker.",
+                        "crp": "Inflammatory context marker.",
+                    },
+                },
+            )
+        ]
+
+    monkeypatch.setattr("core.analytics.signal_evaluator.SignalEvaluator.evaluate_all", _stub_evaluate_all)
+    run_dir, _ = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path,
+        run_id="unit-golden-signal-explanation",
+        write_narrative=False,
+    )
+    insight = _load_json(run_dir / "insight_graph.json")
+    row = next(
+        (
+            item
+            for item in insight.get("signal_results", [])
+            if item.get("signal_id") == "signal_homocysteine_elevation_context"
+        ),
+        None,
+    )
+    assert isinstance(row, dict)
+    assert isinstance(row.get("explanation"), dict)
+    assert "mechanism" in row["explanation"]
 
 
 def test_golden_panel_signal_fields_are_deterministic_across_runs(tmp_path, monkeypatch):

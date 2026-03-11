@@ -106,6 +106,10 @@ class _StubRegistry:
                     }
                 ],
                 "output": {"supporting_markers": ["insulin", "glucose"]},
+                "explanation": {
+                    "mechanism": "TyG elevation suggests insulin signalling strain.",
+                    "interpretation": "Metabolic dysregulation context.",
+                },
             },
             {
                 "signal_id": "signal_beta",
@@ -149,6 +153,10 @@ def test_override_rule_any_of_not_met_preserves_threshold_result():
     assert by_id["signal_alpha"].signal_state == "suboptimal"
     assert by_id["signal_alpha"].confidence is None
     assert by_id["signal_alpha"].supporting_markers == ["insulin", "glucose"]
+    assert by_id["signal_alpha"].explanation == {
+        "mechanism": "TyG elevation suggests insulin signalling strain.",
+        "interpretation": "Metabolic dysregulation context.",
+    }
 
 
 def test_override_rule_all_of_requires_all_conditions_true():
