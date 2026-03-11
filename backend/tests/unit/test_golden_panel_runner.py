@@ -10,6 +10,7 @@ from pathlib import Path
 import pytest
 import yaml
 from core.analytics.ratio_registry import DERIVED_IDS
+from core.analytics.signal_evaluator import SignalRegistry
 from core.models.signal import SignalResult
 from core.canonical.normalize import normalize_biomarkers_with_metadata
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
@@ -575,3 +576,111 @@ def test_golden_panel_signal_fields_are_deterministic_across_runs(tmp_path, monk
     replay_a = _load_json(run_a / "replay_manifest.json")
     replay_b = _load_json(run_b / "replay_manifest.json")
     assert replay_a["schema_hashes"]["insight_graph_hash"] == replay_b["schema_hashes"]["insight_graph_hash"]
+
+
+def test_golden_panel_lab_range_activation_signal_appears_in_signal_results(tmp_path, monkeypatch):
+    fixture_path = tmp_path / "lab-range-panel.json"
+    fixture_path.write_text(
+        json.dumps(
+            {
+                "biomarkers": {
+                    "homocysteine": {
+                        "value": 16.0,
+                        "unit": "umol/L",
+                        "reference_range": {"min": 4.0, "max": 14.0, "unit": "umol/L", "source": "lab"},
+                    }
+                },
+                "user": {"age": 58, "biological_sex": "female"},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    original_get_all = SignalRegistry.get_all_signals
+
+    def _lab_range_signals(self):
+        signals = original_get_all(self)
+        signals.append(
+            {
+                "signal_id": "signal_hcy_lab_range_test",
+                "system": "vascular",
+                "primary_metric": "homocysteine",
+                "activation_logic": "lab_range_exceeded",
+                "activation_config": {
+                    "upper_bound_state": "at_risk",
+                    "enable_lower_bound": False,
+                },
+                "thresholds": [{"severity": "at_risk", "operator": ">=", "value": 9999.0}],
+                "override_rules": [],
+                "output": {"supporting_markers": []},
+            }
+        )
+        return signals
+
+    monkeypatch.setattr("core.analytics.signal_evaluator.SignalRegistry.get_all_signals", _lab_range_signals)
+    run_dir, _ = run_golden_panel(
+        fixture_path=fixture_path,
+        output_root=tmp_path,
+        run_id="unit-golden-lab-range-signal",
+        write_narrative=False,
+    )
+    insight = _load_json(run_dir / "insight_graph.json")
+    signal_map = {row["signal_id"]: row["signal_state"] for row in insight.get("signal_results", [])}
+    assert signal_map.get("signal_hcy_lab_range_test") == "at_risk"
+
+
+def test_golden_panel_lab_range_activation_signal_is_deterministic_across_runs(tmp_path, monkeypatch):
+    fixture_path = tmp_path / "lab-range-panel-det.json"
+    fixture_path.write_text(
+        json.dumps(
+            {
+                "biomarkers": {
+                    "homocysteine": {
+                        "value": 16.0,
+                        "unit": "umol/L",
+                        "reference_range": {"min": 4.0, "max": 14.0, "unit": "umol/L", "source": "lab"},
+                    }
+                },
+                "user": {"age": 58, "biological_sex": "female"},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    original_get_all = SignalRegistry.get_all_signals
+
+    def _lab_range_signals(self):
+        signals = original_get_all(self)
+        signals.append(
+            {
+                "signal_id": "signal_hcy_lab_range_test",
+                "system": "vascular",
+                "primary_metric": "homocysteine",
+                "activation_logic": "lab_range_exceeded",
+                "activation_config": {
+                    "upper_bound_state": "at_risk",
+                    "enable_lower_bound": False,
+                },
+                "thresholds": [{"severity": "at_risk", "operator": ">=", "value": 9999.0}],
+                "override_rules": [],
+                "output": {"supporting_markers": []},
+            }
+        )
+        return signals
+
+    monkeypatch.setattr("core.analytics.signal_evaluator.SignalRegistry.get_all_signals", _lab_range_signals)
+    run_a, _ = run_golden_panel(
+        fixture_path=fixture_path,
+        output_root=tmp_path / "a",
+        run_id="unit-golden-lab-range-a",
+        write_narrative=False,
+    )
+    run_b, _ = run_golden_panel(
+        fixture_path=fixture_path,
+        output_root=tmp_path / "b",
+        run_id="unit-golden-lab-range-b",
+        write_narrative=False,
+    )
+    insight_a = _load_json(run_a / "insight_graph.json")
+    insight_b = _load_json(run_b / "insight_graph.json")
+    assert insight_a.get("signal_results", []) == insight_b.get("signal_results", [])

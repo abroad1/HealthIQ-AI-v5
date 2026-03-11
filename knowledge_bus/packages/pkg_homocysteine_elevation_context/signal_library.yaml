@@ -35,23 +35,19 @@ signals:
       derived_metrics: []
       signals: []
     thresholds:
-      - threshold_id: "hcy_optimal"
-        metric_id: "homocysteine"
-        operator: "<"
-        value: 10.0
-        severity: "optimal"
-      - threshold_id: "hcy_suboptimal"
-        metric_id: "homocysteine"
-        operator: "range"
-        min_value: 10.0
-        max_value: 13.9
-        severity: "suboptimal"
-      - threshold_id: "hcy_at_risk"
+      - threshold_id: "hcy_lab_range_activation_placeholder"
         metric_id: "homocysteine"
         operator: ">="
-        value: 14.0
+        value: 9999.0
         severity: "at_risk"
-    activation_logic: "deterministic_threshold"
+        description: >
+          Validator-compatibility placeholder. Runtime activation is controlled by
+          activation_logic=lab_range_exceeded and lab reference ranges.
+    activation_logic: "lab_range_exceeded"
+    activation_config:
+      upper_bound_state: "at_risk"
+      enable_lower_bound: false
+      lower_bound_state: "suboptimal"
     override_rules:
       - rule_id: "hcy_context_b_vitamin_or_transport_deficit"
         description: >
