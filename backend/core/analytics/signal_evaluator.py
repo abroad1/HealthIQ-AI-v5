@@ -140,6 +140,40 @@ class SignalEvaluator:
                 best_state = severity
         return best_state
 
+    def _evaluate_lab_range_activation_state(
+        self,
+        signal: Dict[str, Any],
+        primary_metric: str,
+        primary_value: float,
+        lab_ranges: Dict[str, dict],
+    ) -> Optional[str]:
+        ref = (lab_ranges or {}).get(primary_metric)
+        if not isinstance(ref, dict):
+            return None
+        low = self._as_float(ref.get("min"))
+        high = self._as_float(ref.get("max"))
+        if low is None or high is None:
+            return None
+
+        activation_cfg = signal.get("activation_config", {})
+        if not isinstance(activation_cfg, dict):
+            activation_cfg = {}
+        upper_bound_state = str(activation_cfg.get("upper_bound_state", "at_risk")).strip()
+        if upper_bound_state not in self._STATE_RANK:
+            upper_bound_state = "at_risk"
+
+        if primary_value > high:
+            return upper_bound_state
+
+        lower_bound_enabled = bool(activation_cfg.get("enable_lower_bound", False))
+        lower_bound_state = str(activation_cfg.get("lower_bound_state", "at_risk")).strip()
+        if lower_bound_state not in self._STATE_RANK:
+            lower_bound_state = "at_risk"
+        if lower_bound_enabled and primary_value < low:
+            return lower_bound_state
+
+        return None
+
     def _resolve_condition_metric_value(
         self,
         metric_id: str,
@@ -271,12 +305,23 @@ class SignalEvaluator:
             if primary_value is None:
                 continue
 
-            thresholds = signal.get("thresholds")
-            if not isinstance(thresholds, list):
-                continue
-            signal_state = self._evaluate_state(thresholds, primary_value)
-            if signal_state is None:
-                continue
+            activation_logic = str(signal.get("activation_logic", "deterministic_threshold")).strip()
+            if activation_logic == "lab_range_exceeded":
+                signal_state = self._evaluate_lab_range_activation_state(
+                    signal=signal,
+                    primary_metric=primary_metric,
+                    primary_value=primary_value,
+                    lab_ranges=lab_ranges or {},
+                )
+                if signal_state is None:
+                    continue
+            else:
+                thresholds = signal.get("thresholds")
+                if not isinstance(thresholds, list):
+                    continue
+                signal_state = self._evaluate_state(thresholds, primary_value)
+                if signal_state is None:
+                    continue
             signal_state = self._evaluate_override_rules(
                 override_rules=signal.get("override_rules", []),
                 threshold_state=signal_state,

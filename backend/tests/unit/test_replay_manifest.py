@@ -544,3 +544,101 @@ def test_signal_explanation_field_change_changes_replay_insight_graph_hash():
         insight_graph=ig_changed,
     )
     assert m_base.schema_hashes.get("insight_graph_hash") != m_changed.schema_hashes.get("insight_graph_hash")
+
+
+def test_lab_range_activation_signal_is_deterministic_in_replay_hash():
+    signal_row = {
+        "signal_id": "signal_hcy_lab_range",
+        "signal_state": "at_risk",
+        "activation_logic": "lab_range_exceeded",
+        "primary_metric": "homocysteine",
+        "signal_value": 16.0,
+        "lab_reference_range": {"min": 4.0, "max": 14.0, "unit": "umol/L"},
+    }
+    ig_a = InsightGraphV1(
+        graph_version="1.0.0",
+        analysis_id="sig-lab-a",
+        biomarker_nodes=[BiomarkerNode(biomarker_id="homocysteine", status="elevated")],
+        signal_registry_version="sigver-lab-1",
+        signal_registry_hash="sighash-lab-1",
+        signal_results=[signal_row],
+        edges=[],
+    )
+    ig_b = InsightGraphV1(
+        graph_version="1.0.0",
+        analysis_id="sig-lab-a",
+        biomarker_nodes=[BiomarkerNode(biomarker_id="homocysteine", status="elevated")],
+        signal_registry_version="sigver-lab-1",
+        signal_registry_hash="sighash-lab-1",
+        signal_results=[signal_row],
+        edges=[],
+    )
+    m1 = build_replay_manifest_v1(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        insight_graph=ig_a,
+    )
+    m2 = build_replay_manifest_v1(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        insight_graph=ig_b,
+    )
+    assert m1.schema_hashes.get("insight_graph_hash") == m2.schema_hashes.get("insight_graph_hash")
+
+
+def test_lab_range_difference_changes_signal_results_and_replay_hash():
+    ig_low_range = InsightGraphV1(
+        graph_version="1.0.0",
+        analysis_id="sig-lab-b",
+        biomarker_nodes=[BiomarkerNode(biomarker_id="homocysteine", status="elevated")],
+        signal_registry_version="sigver-lab-2",
+        signal_registry_hash="sighash-lab-2",
+        signal_results=[
+            {
+                "signal_id": "signal_hcy_lab_range",
+                "signal_state": "at_risk",
+                "activation_logic": "lab_range_exceeded",
+                "primary_metric": "homocysteine",
+                "signal_value": 16.0,
+                "lab_reference_range": {"min": 4.0, "max": 14.0, "unit": "umol/L"},
+            }
+        ],
+        edges=[],
+    )
+    ig_high_range = InsightGraphV1(
+        graph_version="1.0.0",
+        analysis_id="sig-lab-b",
+        biomarker_nodes=[BiomarkerNode(biomarker_id="homocysteine", status="normal")],
+        signal_registry_version="sigver-lab-2",
+        signal_registry_hash="sighash-lab-2",
+        signal_results=[
+            {
+                "signal_id": "signal_hcy_lab_range",
+                "signal_state": "suboptimal",
+                "activation_logic": "lab_range_exceeded",
+                "primary_metric": "homocysteine",
+                "signal_value": 16.0,
+                "lab_reference_range": {"min": 4.0, "max": 18.0, "unit": "umol/L"},
+            }
+        ],
+        edges=[],
+    )
+    m_low = build_replay_manifest_v1(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        insight_graph=ig_low_range,
+    )
+    m_high = build_replay_manifest_v1(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        insight_graph=ig_high_range,
+    )
+    assert m_low.schema_hashes.get("insight_graph_hash") != m_high.schema_hashes.get("insight_graph_hash")

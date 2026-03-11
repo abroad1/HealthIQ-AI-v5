@@ -324,3 +324,120 @@ def test_lab_normal_but_flagged_recomputed_after_override_paths():
     )
     assert no_ranges[0].signal_state == "at_risk"
     assert no_ranges[0].lab_normal_but_flagged is False
+
+
+def test_lab_range_activation_above_lab_max_triggers_signal():
+    class _LabRangeRegistry:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_hcy_lab_range",
+                    "system": "vascular",
+                    "primary_metric": "homocysteine",
+                    "activation_logic": "lab_range_exceeded",
+                    "activation_config": {
+                        "upper_bound_state": "at_risk",
+                        "enable_lower_bound": False,
+                    },
+                    "thresholds": [
+                        {"severity": "at_risk", "operator": ">=", "value": 9999.0}
+                    ],
+                    "override_rules": [],
+                    "output": {"supporting_markers": []},
+                }
+            ]
+
+    evaluator = SignalEvaluator(_LabRangeRegistry())
+    results = evaluator.evaluate_all(
+        signal_biomarkers={"homocysteine": 15.0},
+        signal_derived={},
+        lab_ranges={"homocysteine": {"min": 4.0, "max": 14.0}},
+    )
+    repeat = evaluator.evaluate_all(
+        signal_biomarkers={"homocysteine": 15.0},
+        signal_derived={},
+        lab_ranges={"homocysteine": {"min": 4.0, "max": 14.0}},
+    )
+    assert len(results) == 1
+    assert results[0].signal_id == "signal_hcy_lab_range"
+    assert results[0].signal_state == "at_risk"
+    assert [r.model_dump() for r in results] == [r.model_dump() for r in repeat]
+
+
+def test_lab_range_activation_missing_lab_range_is_deterministic_no_activation():
+    class _LabRangeRegistry:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_hcy_lab_range",
+                    "system": "vascular",
+                    "primary_metric": "homocysteine",
+                    "activation_logic": "lab_range_exceeded",
+                    "activation_config": {
+                        "upper_bound_state": "at_risk",
+                        "enable_lower_bound": False,
+                    },
+                    "thresholds": [
+                        {"severity": "at_risk", "operator": ">=", "value": 9999.0}
+                    ],
+                    "override_rules": [],
+                    "output": {"supporting_markers": []},
+                }
+            ]
+
+    evaluator = SignalEvaluator(_LabRangeRegistry())
+    first = evaluator.evaluate_all(
+        signal_biomarkers={"homocysteine": 15.0},
+        signal_derived={},
+        lab_ranges={},
+    )
+    second = evaluator.evaluate_all(
+        signal_biomarkers={"homocysteine": 15.0},
+        signal_derived={},
+        lab_ranges={},
+    )
+    assert first == []
+    assert second == []
+
+
+def test_lab_range_activation_override_rules_layer_deterministically():
+    class _LabRangeOverrideRegistry:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_hcy_lab_range_override",
+                    "system": "vascular",
+                    "primary_metric": "homocysteine",
+                    "activation_logic": "lab_range_exceeded",
+                    "activation_config": {
+                        "upper_bound_state": "suboptimal",
+                        "enable_lower_bound": True,
+                        "lower_bound_state": "suboptimal",
+                    },
+                    "thresholds": [
+                        {"severity": "suboptimal", "operator": ">=", "value": 9999.0}
+                    ],
+                    "override_rules": [
+                        {
+                            "rule_id": "hcy_crp_escalation",
+                            "conditions": [
+                                {"metric_id": "crp", "operator": ">=", "value": 3.0, "condition_type": "any_of"}
+                            ],
+                            "resulting_state": "at_risk",
+                        }
+                    ],
+                    "output": {"supporting_markers": []},
+                }
+            ]
+
+    evaluator = SignalEvaluator(_LabRangeOverrideRegistry())
+    results = evaluator.evaluate_all(
+        signal_biomarkers={"homocysteine": 15.0, "crp": 4.0},
+        signal_derived={},
+        lab_ranges={"homocysteine": {"min": 4.0, "max": 14.0}},
+    )
+    assert len(results) == 1
+    assert results[0].signal_state == "at_risk"

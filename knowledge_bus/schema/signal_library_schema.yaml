@@ -91,12 +91,20 @@ signal_field_rules:
       - signals
   thresholds:
     type: list
-    min_items: 1
+    min_items: 0
   activation_logic:
     type: string
     allowed:
       - deterministic_threshold
       - deterministic_override
+      - lab_range_exceeded
+  activation_config:
+    type: map
+    required: false
+    required_fields:
+      - upper_bound_state
+      - enable_lower_bound
+      - lower_bound_state
   override_rules:
     type: list
     required: false
@@ -269,6 +277,7 @@ policy_rules:
   no_fallback_logic: true
   no_raw_biomarker_arithmetic: true
   no_duplicate_signal_ids: true
+  lab_range_activation_allowed: true
 
 ssot_alignment_rules:
   biomarker_dependencies_must_exist_in_canonical_registry: true
