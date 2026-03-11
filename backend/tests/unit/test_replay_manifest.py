@@ -401,6 +401,61 @@ def test_signal_fields_are_visible_in_replay_hash_stability():
     assert m1.schema_hashes.get("insight_graph_hash") == m2.schema_hashes.get("insight_graph_hash")
 
 
+def test_signal_explanation_fields_are_visible_in_replay_hash_stability():
+    ig_a = InsightGraphV1(
+        graph_version="1.0.0",
+        analysis_id="sig-exp-a",
+        biomarker_nodes=[BiomarkerNode(biomarker_id="x", status="normal")],
+        signal_registry_version="sigver1",
+        signal_registry_hash="sighash1",
+        signal_results=[
+            {
+                "signal_id": "signal_homocysteine_elevation_context",
+                "signal_state": "suboptimal",
+                "explanation": {
+                    "mechanism": "Homocysteine elevation may reflect methylation strain.",
+                    "implications": "Potential endothelial stress if persistent.",
+                },
+            }
+        ],
+        edges=[],
+    )
+    ig_b = InsightGraphV1(
+        graph_version="1.0.0",
+        analysis_id="sig-exp-a",
+        biomarker_nodes=[BiomarkerNode(biomarker_id="x", status="normal")],
+        signal_registry_version="sigver1",
+        signal_registry_hash="sighash1",
+        signal_results=[
+            {
+                "signal_id": "signal_homocysteine_elevation_context",
+                "signal_state": "suboptimal",
+                "explanation": {
+                    "mechanism": "Homocysteine elevation may reflect methylation strain.",
+                    "implications": "Potential endothelial stress if persistent.",
+                },
+            }
+        ],
+        edges=[],
+    )
+    m1 = build_replay_manifest_v1(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        insight_graph=ig_a,
+    )
+    m2 = build_replay_manifest_v1(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        insight_graph=ig_b,
+    )
+    assert m1.schema_hashes.get("insight_graph_hash")
+    assert m1.schema_hashes.get("insight_graph_hash") == m2.schema_hashes.get("insight_graph_hash")
+
+
 def test_signal_field_change_changes_replay_insight_graph_hash():
     ig_base = InsightGraphV1(
         graph_version="1.0.0",
@@ -418,6 +473,60 @@ def test_signal_field_change_changes_replay_insight_graph_hash():
         signal_registry_version="sigver2",
         signal_registry_hash="sighash2",
         signal_results=[{"signal_id": "signal_alpha", "signal_state": "at_risk"}],
+        edges=[],
+    )
+    m_base = build_replay_manifest_v1(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        insight_graph=ig_base,
+    )
+    m_changed = build_replay_manifest_v1(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        insight_graph=ig_changed,
+    )
+    assert m_base.schema_hashes.get("insight_graph_hash") != m_changed.schema_hashes.get("insight_graph_hash")
+
+
+def test_signal_explanation_field_change_changes_replay_insight_graph_hash():
+    ig_base = InsightGraphV1(
+        graph_version="1.0.0",
+        analysis_id="sig-exp-b",
+        biomarker_nodes=[BiomarkerNode(biomarker_id="x", status="normal")],
+        signal_registry_version="sigver1",
+        signal_registry_hash="sighash1",
+        signal_results=[
+            {
+                "signal_id": "signal_homocysteine_elevation_context",
+                "signal_state": "suboptimal",
+                "explanation": {
+                    "mechanism": "Homocysteine elevation may reflect methylation strain.",
+                    "implications": "Potential endothelial stress if persistent.",
+                },
+            }
+        ],
+        edges=[],
+    )
+    ig_changed = InsightGraphV1(
+        graph_version="1.0.0",
+        analysis_id="sig-exp-b",
+        biomarker_nodes=[BiomarkerNode(biomarker_id="x", status="normal")],
+        signal_registry_version="sigver1",
+        signal_registry_hash="sighash1",
+        signal_results=[
+            {
+                "signal_id": "signal_homocysteine_elevation_context",
+                "signal_state": "suboptimal",
+                "explanation": {
+                    "mechanism": "Homocysteine elevation with stronger transport deficit context.",
+                    "implications": "Potential endothelial stress if persistent.",
+                },
+            }
+        ],
         edges=[],
     )
     m_base = build_replay_manifest_v1(

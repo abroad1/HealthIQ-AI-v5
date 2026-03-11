@@ -288,6 +288,9 @@ class SignalEvaluator:
             supporting_markers = []
             if isinstance(output, dict) and isinstance(output.get("supporting_markers"), list):
                 supporting_markers = [str(x) for x in output["supporting_markers"] if str(x).strip()]
+            explanation = signal.get("explanation")
+            if not isinstance(explanation, dict):
+                explanation = None
 
             result = SignalResult(
                 signal_id=str(signal.get("signal_id", "")).strip(),
@@ -303,6 +306,7 @@ class SignalEvaluator:
                     lab_ranges=lab_ranges or {},
                 ),
                 supporting_markers=supporting_markers,
+                explanation=explanation,
             )
             results.append(result)
 

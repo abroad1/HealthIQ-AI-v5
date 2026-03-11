@@ -1,0 +1,26 @@
+research_domain: "vascular"
+sources:
+  - paper_title: "Homocysteine and cardiovascular disease: evidence on endothelial dysfunction and vascular risk"
+    journal: "Clinical Chemistry and Laboratory Medicine"
+    year: 2020
+    doi: "10.1515/cclm-2019-1028"
+  - paper_title: "B-vitamins and one-carbon metabolism in homocysteine regulation"
+    journal: "Nutrients"
+    year: 2019
+    doi: "10.3390/nu11020368"
+biomarkers:
+  - homocysteine
+  - vitamin_b12
+  - folate
+  - transferrin
+  - mcv
+  - crp
+derived_metrics: []
+physiological_claim: >
+  Elevated homocysteine can reflect impaired one-carbon metabolism with B-vitamin insufficiency
+  context and may indicate endothelial stress risk, with interpretation strengthened by related
+  nutrient-transport and inflammatory markers.
+evidence_strength: "moderate"
+research_summary: >
+  This pilot anchors on homocysteine elevation and uses deterministic contextual markers
+  (vitamin_b12, folate, transferrin, mcv, crp) to provide structured investigation metadata.
