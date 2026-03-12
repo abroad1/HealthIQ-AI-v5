@@ -1,0 +1,9 @@
+package_id: pkg_s24_hba1c_high_glycaemia
+package_version: 1.0.0
+description: KB-S24 translated package from inv_hba1c_high_glycaemia_v1.yaml.
+research_brief: research_brief.yaml
+signal_library: signal_library.yaml
+author: HealthIQ Architecture Team
+created_at: '2026-03-12'
+source_document: knowledge_bus/research/investigation_specs/inv_hba1c_high_glycaemia_v1.yaml
+translation_mode: creation

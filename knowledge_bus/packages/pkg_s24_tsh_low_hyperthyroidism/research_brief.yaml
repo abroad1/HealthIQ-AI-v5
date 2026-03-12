@@ -1,0 +1,17 @@
+research_domain: hormonal
+sources:
+- paper_title: 2016 American Thyroid Association Guidelines for Diagnosis and Management
+    of Hyperthyroidism
+  journal: Thyroid
+  year: 2016
+biomarkers:
+- tsh
+- free_t4
+- free_t3
+- bilirubin
+derived_metrics: []
+physiological_claim: The pituitary is exquisitely sensitive to circulating thyroid
+  hormones. Low TSH is the most sensitive screen for thyroid hormone excess.
+evidence_strength: strong
+research_summary: A TSH level <0.1 mIU/L is associated with increased risks of atrial
+  fibrillation and bone loss.

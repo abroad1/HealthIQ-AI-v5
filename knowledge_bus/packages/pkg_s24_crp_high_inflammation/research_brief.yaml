@@ -1,0 +1,20 @@
+research_domain: inflammatory
+sources:
+- paper_title: 'Sepsis: recognition, diagnosis and early management'
+  journal: NICE Guideline
+  year: 2016
+- paper_title: 'C reactive protein: a target for therapy and a surrogate marker'
+  journal: BMJ
+  year: 2020
+biomarkers:
+- crp
+- white_blood_cells
+- neutrophils
+- albumin
+- ferritin
+derived_metrics: []
+physiological_claim: CRP is synthesized by hepatocytes under the influence of cytokines.
+  Its short half-life (~19h) makes it a dynamic marker of the inflammatory state.
+evidence_strength: strong
+research_summary: A value of >100 mg/L is a common clinical threshold for significant
+  bacterial infection or major systemic illness.

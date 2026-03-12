@@ -738,6 +738,82 @@ _KB_S22_PACKAGE_PATHS = [
     _REPO_ROOT / "knowledge_bus" / "packages" / "pkg_thyroid_tsh_context",
 ]
 
+_KB_S24_PACKAGE_DIRS = [
+    "pkg_s24_alt_high_hepatocellular_injury",
+    "pkg_s24_creatinine_high_renal",
+    "pkg_s24_crp_high_inflammation",
+    "pkg_s24_ferritin_high_overload",
+    "pkg_s24_ferritin_low_iron_deficiency",
+    "pkg_s24_hba1c_high_glycaemia",
+    "pkg_s24_ldl_high_dyslipidaemia",
+    "pkg_s24_triglycerides_high_metabolic",
+    "pkg_s24_tsh_high_hypothyroidism",
+    "pkg_s24_tsh_low_hyperthyroidism",
+]
+
+_KB_S24_SIGNAL_CASES = {
+    "signal_alt_high": {
+        "no_trigger_biomarkers": {"alt": 30.0, "bilirubin": 12.0, "alp": 100.0},
+        "baseline_biomarkers": {"alt": 70.0, "bilirubin": 12.0, "alp": 100.0},
+        "escalation_biomarkers": {"alt": 70.0, "bilirubin": 25.0, "alp": 100.0},
+        "lab_ranges": {"alt": {"min": 0.0, "max": 40.0}},
+    },
+    "signal_creatinine_high": {
+        "no_trigger_biomarkers": {"creatinine": 90.0, "egfr": 90.0, "potassium": 4.5},
+        "baseline_biomarkers": {"creatinine": 140.0, "egfr": 90.0, "potassium": 4.5},
+        "escalation_biomarkers": {"creatinine": 140.0, "egfr": 90.0, "potassium": 5.8},
+        "lab_ranges": {"creatinine": {"min": 50.0, "max": 110.0}},
+    },
+    "signal_crp_high": {
+        "no_trigger_biomarkers": {"crp": 2.0, "white_blood_cells": 7.0, "neutrophils": 4.0, "albumin": 42.0},
+        "baseline_biomarkers": {"crp": 6.0, "white_blood_cells": 7.0, "neutrophils": 4.0, "albumin": 42.0},
+        "escalation_biomarkers": {"crp": 6.0, "white_blood_cells": 13.0, "neutrophils": 8.0, "albumin": 42.0},
+        "lab_ranges": {"crp": {"min": 0.0, "max": 3.0}},
+    },
+    "signal_ferritin_high": {
+        "no_trigger_biomarkers": {"ferritin": 200.0},
+        "baseline_biomarkers": {"ferritin": 450.0},
+        "escalation_biomarkers": {"ferritin": 1200.0},
+        "lab_ranges": {"ferritin": {"min": 30.0, "max": 300.0}},
+    },
+    "signal_ferritin_low": {
+        "no_trigger_biomarkers": {"ferritin": 80.0, "hemoglobin": 130.0, "mcv": 90.0},
+        "baseline_biomarkers": {"ferritin": 20.0, "hemoglobin": 130.0, "mcv": 90.0},
+        "escalation_biomarkers": {"ferritin": 20.0, "hemoglobin": 110.0, "mcv": 90.0},
+        "lab_ranges": {"ferritin": {"min": 30.0, "max": 300.0}},
+    },
+    "signal_hba1c_high": {
+        "no_trigger_biomarkers": {"hba1c": 5.2, "triglycerides": 1.2, "hdl_cholesterol": 1.3},
+        "baseline_biomarkers": {"hba1c": 6.2, "triglycerides": 1.2, "hdl_cholesterol": 1.3},
+        "escalation_biomarkers": {"hba1c": 6.2, "triglycerides": 2.2, "hdl_cholesterol": 0.8},
+        "lab_ranges": {"hba1c": {"min": 4.0, "max": 5.6}},
+    },
+    "signal_ldl_cholesterol_high": {
+        "no_trigger_biomarkers": {"ldl_cholesterol": 2.5, "non_hdl_cholesterol": 4.0},
+        "baseline_biomarkers": {"ldl_cholesterol": 4.5, "non_hdl_cholesterol": 4.0},
+        "escalation_biomarkers": {"ldl_cholesterol": 5.2, "non_hdl_cholesterol": 4.0},
+        "lab_ranges": {"ldl_cholesterol": {"min": 0.0, "max": 3.0}},
+    },
+    "signal_triglycerides_high": {
+        "no_trigger_biomarkers": {"triglycerides": 1.2, "hba1c": 30.0},
+        "baseline_biomarkers": {"triglycerides": 3.0, "hba1c": 30.0},
+        "escalation_biomarkers": {"triglycerides": 11.0, "hba1c": 30.0},
+        "lab_ranges": {"triglycerides": {"min": 0.0, "max": 1.7}},
+    },
+    "signal_tsh_high": {
+        "no_trigger_biomarkers": {"tsh": 2.0, "free_t4": 16.0},
+        "baseline_biomarkers": {"tsh": 6.0, "free_t4": 16.0},
+        "escalation_biomarkers": {"tsh": 11.0, "free_t4": 16.0},
+        "lab_ranges": {"tsh": {"min": 0.4, "max": 4.5}},
+    },
+    "signal_tsh_low": {
+        "no_trigger_biomarkers": {"tsh": 2.0, "free_t4": 16.0, "free_t3": 5.0},
+        "baseline_biomarkers": {"tsh": 0.2, "free_t4": 16.0, "free_t3": 5.0},
+        "escalation_biomarkers": {"tsh": 0.2, "free_t4": 24.0, "free_t3": 5.0},
+        "lab_ranges": {"tsh": {"min": 0.4, "max": 4.5}},
+    },
+}
+
 
 def _load_signal_definition(signal_id: str) -> dict:
     registry = SignalRegistry()
@@ -962,3 +1038,74 @@ def test_kbs23_kbs22_investigation_metric_ids_are_ssot_canonical():
         "Unknown metric_id values found in KB-S22 investigation packages: "
         f"{unknown_by_package}"
     )
+
+
+def _kbs24_signal_specs() -> list[tuple[str, dict]]:
+    specs: list[tuple[str, dict]] = []
+    for package_dir in _KB_S24_PACKAGE_DIRS:
+        signal_library_path = _REPO_ROOT / "knowledge_bus" / "packages" / package_dir / "signal_library.yaml"
+        payload = yaml.safe_load(signal_library_path.read_text(encoding="utf-8")) or {}
+        signals = payload.get("signals", [])
+        assert isinstance(signals, list) and len(signals) == 1
+        signal = dict(signals[0])
+        specs.append((signal["signal_id"], signal))
+    return specs
+
+
+@pytest.mark.parametrize("package_dir", _KB_S24_PACKAGE_DIRS)
+def test_kbs24_packages_validate_with_no_errors(package_dir: str):
+    cmd = [
+        sys.executable,
+        str(_REPO_ROOT / "backend" / "scripts" / "validate_knowledge_package.py"),
+        "--package-dir",
+        str(_REPO_ROOT / "knowledge_bus" / "packages" / package_dir),
+    ]
+    proc = subprocess.run(cmd, cwd=str(_REPO_ROOT), capture_output=True, text=True, check=False)
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert "signal_validation: PASS" in proc.stdout
+
+
+def test_kbs24_signal_libraries_parse_and_use_lab_range_activation():
+    for package_dir in _KB_S24_PACKAGE_DIRS:
+        signal_library_path = _REPO_ROOT / "knowledge_bus" / "packages" / package_dir / "signal_library.yaml"
+        payload = yaml.safe_load(signal_library_path.read_text(encoding="utf-8")) or {}
+        signals = payload.get("signals", [])
+        assert isinstance(signals, list) and signals, f"No signals in {signal_library_path}"
+        for signal in signals:
+            assert signal.get("activation_logic") == ACTIVATION_MODE_LAB_RANGE
+
+
+@pytest.mark.parametrize("signal_id", sorted(_KB_S24_SIGNAL_CASES.keys()))
+def test_kbs24_signals_no_trigger_when_primary_in_range(signal_id: str):
+    evaluator = _single_signal_evaluator(signal_id)
+    case = _KB_S24_SIGNAL_CASES[signal_id]
+
+    out = evaluator.evaluate_all(
+        signal_biomarkers=case["no_trigger_biomarkers"],
+        signal_derived={},
+        lab_ranges=case["lab_ranges"],
+    )
+    assert out == []
+
+
+@pytest.mark.parametrize("signal_id", sorted(_KB_S24_SIGNAL_CASES.keys()))
+def test_kbs24_signals_trigger_suboptimal_then_escalate(signal_id: str):
+    evaluator = _single_signal_evaluator(signal_id)
+    case = _KB_S24_SIGNAL_CASES[signal_id]
+
+    baseline = evaluator.evaluate_all(
+        signal_biomarkers=case["baseline_biomarkers"],
+        signal_derived={},
+        lab_ranges=case["lab_ranges"],
+    )
+    assert len(baseline) == 1
+    assert baseline[0].signal_state == "suboptimal"
+
+    escalated = evaluator.evaluate_all(
+        signal_biomarkers=case["escalation_biomarkers"],
+        signal_derived={},
+        lab_ranges=case["lab_ranges"],
+    )
+    assert len(escalated) == 1
+    assert escalated[0].signal_state == "at_risk"
+    assert STATE_RANK[escalated[0].signal_state] >= STATE_RANK[baseline[0].signal_state]

@@ -1,0 +1,21 @@
+research_domain: lipids
+sources:
+- paper_title: ESC/EAS Guidelines for the management of dyslipidaemias
+  journal: European Heart Journal
+  year: 2019
+- paper_title: 'Familial hypercholesterolaemia: identification and management'
+  journal: NICE Guideline
+  year: 2019
+biomarkers:
+- ldl_cholesterol
+- non_hdl_cholesterol
+- apob
+- hdl_cholesterol
+- triglycerides
+- lipoprotein_a
+derived_metrics: []
+physiological_claim: LDL particles infiltrate the arterial intima, undergo oxidation,
+  and trigger the inflammatory cascade of plaque formation.
+evidence_strength: strong
+research_summary: 4.9 mmol/L (190 mg/dL) is the clinical trigger for assessing Familial
+  Hypercholesterolemia in adults.

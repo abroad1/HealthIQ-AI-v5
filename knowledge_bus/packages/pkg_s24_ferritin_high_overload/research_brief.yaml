@@ -1,0 +1,17 @@
+research_domain: hematologic
+sources:
+- paper_title: Diagnosis and management of genetic haemochromatosis
+  journal: British Journal of Haematology
+  year: 2022
+biomarkers:
+- ferritin
+- crp
+- alt
+- iron
+derived_metrics: []
+physiological_claim: Ferritin is an intracellular storage protein. High levels reflect
+  either massive stores, cellular leak (lysis), or increased synthesis via inflammatory
+  cytokines.
+evidence_strength: moderate
+research_summary: A ferritin >1000 ug/L is a known threshold where the risk of liver
+  cirrhosis increases in genetic haemochromatosis.

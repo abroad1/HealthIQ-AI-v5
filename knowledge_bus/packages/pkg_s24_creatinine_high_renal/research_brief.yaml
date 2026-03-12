@@ -1,0 +1,16 @@
+research_domain: renal
+sources:
+- paper_title: 'Chronic kidney disease: assessment and management'
+  journal: NICE Guideline
+  year: 2021
+biomarkers:
+- creatinine
+- egfr
+- urea
+- potassium
+derived_metrics: []
+physiological_claim: Creatinine is filtered freely by the glomerulus. As the filtration
+  rate drops, serum levels rise.
+evidence_strength: strong
+research_summary: eGFR < 60 is the international threshold for defining chronic kidney
+  disease.

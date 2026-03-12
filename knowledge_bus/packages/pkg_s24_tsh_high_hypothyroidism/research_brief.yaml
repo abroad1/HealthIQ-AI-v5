@@ -1,0 +1,20 @@
+research_domain: hormonal
+sources:
+- paper_title: 'Thyroid disease: assessment and management'
+  journal: NICE Guideline
+  year: 2019
+- paper_title: 'ETA Guideline: Management of Subclinical Hypothyroidism'
+  journal: European Thyroid Journal
+  year: 2013
+biomarkers:
+- tsh
+- free_t4
+- free_t3
+- ldl_cholesterol
+- creatine_kinase
+derived_metrics: []
+physiological_claim: TSH is released by the anterior pituitary. It exhibits a log-linear
+  relationship with FT4, meaning small changes in T4 cause large changes in TSH.
+evidence_strength: strong
+research_summary: A TSH > 10 mIU/L is a widely accepted threshold for initiating treatment
+  in subclinical hypothyroidism to prevent cardiovascular complications.

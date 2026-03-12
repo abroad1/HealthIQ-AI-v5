@@ -1,0 +1,90 @@
+library:
+  package_id: KBP-2401
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_alt_high Investigation Library
+  description: Investigation signal library translated from inv_alt_high_hepatocellular_injury_v1.yaml.
+signals:
+- signal_id: signal_alt_high
+  name: Alt High
+  description: Alanine Aminotransferase is found predominantly in the liver. Its release
+    into the blood is a highly specific indicator of hepatocellular injury.
+  system: hepatic
+  primary_metric: alt
+  supporting_metrics: &id001
+  - ast
+  - ggt
+  - alp
+  - bilirubin
+  - albumin
+  dependencies:
+    biomarkers:
+    - alt
+    - ast
+    - ggt
+    - alp
+    - bilirubin
+    - albumin
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_alt_high_lab_range_activation_placeholder
+    metric_id: alt
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_alt_hepatocellular_severity
+    description: Escalate if ALT is >3x the upper limit of normal (ULN).
+    conditions:
+    - metric_id: alt
+      operator: '>'
+      value: 120.0
+      condition_type: all_of
+    resulting_state: at_risk
+  - rule_id: or_alt_impaired_function
+    description: Escalate if high ALT is accompanied by high bilirubin (Hy's Law risk).
+    conditions:
+    - metric_id: bilirubin
+      operator: '>'
+      value: 20.0
+      condition_type: all_of
+    resulting_state: at_risk
+  - rule_id: or_alt_mixed_cholestatic
+    description: Escalate if ALT and ALP are both significantly elevated.
+    conditions:
+    - metric_id: alp
+      operator: '>'
+      value: 130.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: alt
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: alt
+    supporting_markers: *id001
+  explanation:
+    mechanism: ALT catalyzes the transfer of an amino group from alanine to alpha-ketoglutarate.
+      It is released upon hepatocyte necrosis or inflammation.
+    biological_pathway: Hepatocellular integrity is lost, allowing cytosolic contents
+      to enter the systemic circulation.
+    interpretation: A rising ALT is a sensitive marker of liver 'stress.' When paired
+      with high Bilirubin, it suggests a loss of liver function.
+    implications: Requires assessment for NAFLD, viral hepatitis, alcohol-related
+      liver disease, or drug-induced injury.
+    supporting_marker_roles:
+      ast: Used to calculate the AST/ALT ratio to differentiate causes (e.g., alcohol
+        vs NAFLD).
+      ggt: Confirms that the enzyme elevation is of hepatic origin.

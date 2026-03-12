@@ -1,0 +1,93 @@
+entries:
+- spec_file: inv_albumin_low_nutritional.yaml
+  status: pending
+- spec_file: inv_alp_high_bone_biliary.yaml
+  status: pending
+- spec_file: inv_alt_high_hepatocellular_injury_v1.yaml
+  status: tested
+  package_id: pkg_s24_alt_high_hepatocellular_injury
+  notes: KB-S24 selected tranche (lexicographic _v1 selection). Package triad created,
+    validators/tests passing.
+- spec_file: inv_calcium_high_endocrine.yaml
+  status: pending
+- spec_file: inv_creatinine_high_renal_v1.yaml
+  status: tested
+  package_id: pkg_s24_creatinine_high_renal
+  notes: KB-S24 selected tranche (lexicographic _v1 selection). Package triad created,
+    validators/tests passing.
+- spec_file: inv_crp_high_inflammation_v1.yaml
+  status: tested
+  package_id: pkg_s24_crp_high_inflammation
+  notes: KB-S24 selected tranche (lexicographic _v1 selection). Package triad created,
+    validators/tests passing.
+- spec_file: inv_ferritin_high_overload_v1.yaml
+  status: tested
+  package_id: pkg_s24_ferritin_high_overload
+  notes: KB-S24 selected tranche (lexicographic _v1 selection). Package triad created,
+    validators/tests passing.
+- spec_file: inv_ferritin_spec_v1.yaml
+  status: tested
+  package_id: pkg_s24_ferritin_low_iron_deficiency
+  notes: KB-S24 selected tranche (lexicographic _v1 selection). Package triad created,
+    validators/tests passing.
+- spec_file: inv_folate_low_deficiency.yaml
+  status: pending
+- spec_file: inv_ggt_high_hepatic.yaml
+  status: pending
+- spec_file: inv_hba1c_high_glycaemia_v1.yaml
+  status: tested
+  package_id: pkg_s24_hba1c_high_glycaemia
+  notes: KB-S24 selected tranche (lexicographic _v1 selection). Package triad created,
+    validators/tests passing.
+- spec_file: inv_hdl_high_cardiovascular.yaml
+  status: pending
+- spec_file: inv_hdl_low_cardiovascular.yaml
+  status: pending
+- spec_file: inv_hgb_low_anemia.yaml
+  status: pending
+- spec_file: inv_homocysteine_high_metabolic.yaml
+  status: pending
+- spec_file: inv_ldl_high_dyslipidaemia_v1.yaml
+  status: tested
+  package_id: pkg_s24_ldl_high_dyslipidaemia
+  notes: KB-S24 selected tranche (lexicographic _v1 selection). Package triad created,
+    validators/tests passing.
+- spec_file: inv_lym_high_lymphocytosis.yaml
+  status: pending
+- spec_file: inv_mcv_high_macrocytosis.yaml
+  status: pending
+- spec_file: inv_neutrophils_high_neutrophilia.yaml
+  status: pending
+- spec_file: inv_neutrophils_low_neutropenia.yaml
+  status: pending
+- spec_file: inv_plt_high_thrombocytosis.yaml
+  status: pending
+- spec_file: inv_plt_low_thrombocytopenia.yaml
+  status: pending
+- spec_file: inv_triglycerides_high_metabolic_v1.yaml
+  status: tested
+  package_id: pkg_s24_triglycerides_high_metabolic
+  notes: KB-S24 selected tranche (lexicographic _v1 selection). Package triad created,
+    validators/tests passing.
+- spec_file: inv_tsh_high_hypothyroidism_v1.yaml
+  status: tested
+  package_id: pkg_s24_tsh_high_hypothyroidism
+  notes: KB-S24 selected tranche (lexicographic _v1 selection). Package triad created,
+    validators/tests passing.
+- spec_file: inv_tsh_low_hyperthyroidism_v1.yaml
+  status: tested
+  package_id: pkg_s24_tsh_low_hyperthyroidism
+  notes: KB-S24 selected tranche (lexicographic _v1 selection). Package triad created,
+    validators/tests passing.
+- spec_file: inv_urea_high_renal.yaml
+  status: pending
+- spec_file: inv_uric_acid_high_metabolic.yaml
+  status: pending
+- spec_file: inv_vitamin_b12_spec_v1.yaml
+  status: pending
+- spec_file: inv_vitamin_d_low_deficiency_v1.yaml
+  status: pending
+- spec_file: inv_wbc_high_leukocytosis.yaml
+  status: pending
+- spec_file: inv_wbc_low_leukopenia.yaml
+  status: pending

@@ -1,0 +1,78 @@
+library:
+  package_id: KBP-2408
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_triglycerides_high Investigation Library
+  description: Investigation signal library translated from inv_triglycerides_high_metabolic_v1.yaml.
+signals:
+- signal_id: signal_triglycerides_high
+  name: Triglycerides High
+  description: Triglycerides are the main form of stored energy. Elevated levels reflect
+    impaired lipid metabolism and increase the risk of pancreatitis and ASCVD.
+  system: metabolic
+  primary_metric: triglycerides
+  supporting_metrics: &id001
+  - hba1c
+  - hdl_cholesterol
+  - alt
+  dependencies:
+    biomarkers:
+    - triglycerides
+    - hba1c
+    - hdl_cholesterol
+    - alt
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_triglycerides_high_lab_range_activation_placeholder
+    metric_id: triglycerides
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_tg_pancreatitis_risk
+    description: Escalate for severe hypertriglyceridemia (>10 mmol/L) due to acute
+      pancreatitis risk.
+    conditions:
+    - metric_id: triglycerides
+      operator: '>'
+      value: 10.0
+      condition_type: all_of
+    resulting_state: at_risk
+  - rule_id: or_tg_metabolic_dysfunction
+    description: Escalate if high TG is paired with high HbA1c (Type 2 Diabetes/Insulin
+      Resistance).
+    conditions:
+    - metric_id: hba1c
+      operator: '>='
+      value: 48.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: triglycerides
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: triglycerides
+    supporting_markers: *id001
+  explanation:
+    mechanism: Triglycerides are hydrolyzed by lipoprotein lipase (LPL). Deficiency
+      or overload of this system leads to accumulation.
+    biological_pathway: Liver-derived VLDL and intestine-derived chylomicrons are
+      the primary carriers.
+    interpretation: Reflects dietary fat intake, alcohol use, and metabolic health.
+      Severely high levels are a medical emergency.
+    implications: Risk of cardiovascular events and acute pancreatitis.
+    supporting_marker_roles:
+      hba1c: Identifies if diabetes is the primary driver of the lipid abnormality.
+      hdl_cholesterol: Helps define the atherogenic risk profile.

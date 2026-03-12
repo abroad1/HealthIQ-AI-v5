@@ -1,0 +1,94 @@
+library:
+  package_id: KBP-2403
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_crp_high Investigation Library
+  description: Investigation signal library translated from inv_crp_high_inflammation_v1.yaml.
+signals:
+- signal_id: signal_crp_high
+  name: Crp High
+  description: C-Reactive Protein is an acute-phase reactant synthesized by the liver
+    in response to IL-6. It is a highly sensitive but non-specific marker of systemic
+    inflammation.
+  system: inflammatory
+  primary_metric: crp
+  supporting_metrics: &id001
+  - white_blood_cells
+  - neutrophils
+  - albumin
+  - ferritin
+  dependencies:
+    biomarkers:
+    - crp
+    - white_blood_cells
+    - neutrophils
+    - albumin
+    - ferritin
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_crp_high_lab_range_activation_placeholder
+    metric_id: crp
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_crp_acute_infection_pattern
+    description: Escalate if high CRP is accompanied by leukocytosis and neutrophilia.
+    conditions:
+    - metric_id: white_blood_cells
+      operator: '>'
+      value: 11.0
+      condition_type: all_of
+    - metric_id: neutrophils
+      operator: '>'
+      value: 7.5
+      condition_type: all_of
+    resulting_state: at_risk
+  - rule_id: or_crp_severe_inflammation
+    description: Escalate for profound systemic inflammation (CRP >100 mg/L).
+    conditions:
+    - metric_id: crp
+      operator: '>'
+      value: 100.0
+      condition_type: all_of
+    resulting_state: at_risk
+  - rule_id: or_crp_chronic_stress_pattern
+    description: Escalate if high CRP is accompanied by low albumin (negative acute
+      phase response).
+    conditions:
+    - metric_id: albumin
+      operator: <
+      value: 35.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: crp
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: crp
+    supporting_markers: *id001
+  explanation:
+    mechanism: CRP binds to phosphocholine expressed on the surface of dead or dying
+      cells and some bacteria, activating the complement system.
+    biological_pathway: Stimulated by IL-6, IL-1, and TNF-alpha during the innate
+      immune response.
+    interpretation: Elevated CRP indicates the presence of inflammation but does not
+      localize the source. Patterns with WBC help differentiate infection from other
+      causes.
+    implications: Persistent high CRP requires investigation for occult infection,
+      malignancy, or autoimmune disease.
+    supporting_marker_roles:
+      white_blood_cells: Confirms an active white cell response.
+      albumin: Reflects the severity and duration of the inflammatory insult.

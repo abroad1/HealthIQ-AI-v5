@@ -1,0 +1,21 @@
+research_domain: hepatic
+sources:
+- paper_title: 'ACG Clinical Guideline: Evaluation of Abnormal Liver Chemistries'
+  journal: American Journal of Gastroenterology
+  year: 2017
+- paper_title: 'Guidance for Industry: Drug-Induced Liver Injury'
+  journal: FDA
+  year: 2009
+biomarkers:
+- alt
+- ast
+- ggt
+- alp
+- bilirubin
+- albumin
+derived_metrics: []
+physiological_claim: ALT is a cytosolic enzyme. Damage to the hepatocyte membrane
+  causes the enzyme to leak into the bloodstream.
+evidence_strength: strong
+research_summary: Numeric threshold of 120 U/L for escalation assumes a typical ULN
+  of ~40 U/L (3x ULN is a standard clinical threshold for investigation).

@@ -1,0 +1,18 @@
+research_domain: lipids
+sources:
+- paper_title: 'Hypertriglyceridemia Management: An Endocrine Society Clinical Practice
+    Guideline'
+  journal: JCEM
+  year: 2020
+biomarkers:
+- triglycerides
+- hba1c
+- hdl_cholesterol
+- alt
+derived_metrics: []
+physiological_claim: Excess triglycerides are transported in VLDL and chylomicrons.
+  Very high levels lead to chylomicronemia, which can cause capillary plugging in
+  the pancreas.
+evidence_strength: strong
+research_summary: A threshold of 10 mmol/L (~885 mg/dL) is the critical point for
+  increased risk of acute pancreatitis.

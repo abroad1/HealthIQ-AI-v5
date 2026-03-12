@@ -1,0 +1,80 @@
+library:
+  package_id: KBP-2410
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_tsh_low Investigation Library
+  description: Investigation signal library translated from inv_tsh_low_hyperthyroidism_v1.yaml.
+signals:
+- signal_id: signal_tsh_low
+  name: Tsh Low
+  description: A low TSH is the hallmark of hyperthyroidism, as excess thyroid hormone
+    suppresses pituitary TSH production via negative feedback.
+  system: hormonal
+  primary_metric: tsh
+  supporting_metrics: &id001
+  - free_t4
+  - free_t3
+  - bilirubin
+  dependencies:
+    biomarkers:
+    - tsh
+    - free_t4
+    - free_t3
+    - bilirubin
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_tsh_low_lab_range_activation_placeholder
+    metric_id: tsh
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_tsh_overt_thyrotoxicosis
+    description: Escalate if low TSH is accompanied by high Free T4 or Free T3 (Overt
+      Hyperthyroidism).
+    conditions:
+    - metric_id: free_t4
+      operator: '>'
+      value: 22.0
+      condition_type: any_of
+    - metric_id: free_t3
+      operator: '>'
+      value: 6.8
+      condition_type: any_of
+    resulting_state: at_risk
+  - rule_id: or_tsh_profound_suppression
+    description: Escalate if TSH is profoundly suppressed (<0.1 mIU/L), regardless
+      of T4/T3.
+    conditions:
+    - metric_id: tsh
+      operator: <
+      value: 0.1
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: tsh
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: tsh
+    supporting_markers: *id001
+  explanation:
+    mechanism: Excessive T4/T3 inhibits the production of TRH from the hypothalamus
+      and TSH from the pituitary.
+    biological_pathway: Negative feedback loop of the HPT axis.
+    interpretation: Low TSH requires immediate checking of FT4 and FT3 to determine
+      the degree of thyrotoxicosis.
+    implications: Risk of tachycardia, weight loss, anxiety, and in severe cases,
+      'thyroid storm'.
+    supporting_marker_roles: {}

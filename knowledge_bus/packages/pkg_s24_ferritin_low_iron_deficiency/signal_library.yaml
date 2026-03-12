@@ -1,0 +1,96 @@
+library:
+  package_id: KBP-2405
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_ferritin_low Investigation Library
+  description: Investigation signal library translated from inv_ferritin_spec_v1.yaml.
+signals:
+- signal_id: signal_ferritin_low
+  name: Ferritin Low
+  description: Ferritin is the primary storage protein for iron. A low level is the
+    most specific biochemical indicator of depleted iron stores before the onset of
+    anemia.
+  system: hematologic
+  primary_metric: ferritin
+  supporting_metrics: &id001
+  - hemoglobin
+  - mcv
+  - mch
+  - iron
+  - transferrin
+  - crp
+  dependencies:
+    biomarkers:
+    - ferritin
+    - hemoglobin
+    - mcv
+    - mch
+    - iron
+    - transferrin
+    - crp
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_ferritin_low_lab_range_activation_placeholder
+    metric_id: ferritin
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_ferritin_ida_progression
+    description: Escalate if low ferritin is accompanied by low hemoglobin (anemia).
+    conditions:
+    - metric_id: hemoglobin
+      operator: <
+      value: 120.0
+      condition_type: all_of
+    resulting_state: at_risk
+  - rule_id: or_ferritin_microcytosis
+    description: Escalate if low ferritin is accompanied by microcytosis (low MCV).
+    conditions:
+    - metric_id: mcv
+      operator: <
+      value: 80.0
+      condition_type: all_of
+    resulting_state: at_risk
+  - rule_id: or_ferritin_severe_depletion
+    description: Escalate if ferritin is profoundly low (<15 ug/L) regardless of other
+      markers.
+    conditions:
+    - metric_id: ferritin
+      operator: <
+      value: 15.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: ferritin
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: ferritin
+    supporting_markers: *id001
+  explanation:
+    mechanism: Ferritin provides controlled intracellular iron storage. Low values
+      indicate depleted reserves, commonly from blood loss, reduced intake, or impaired
+      absorption.
+    biological_pathway: Iron is absorbed in the duodenum, transported by transferrin,
+      used for erythropoiesis, and stored as ferritin in liver and reticuloendothelial
+      cells.
+    interpretation: Low ferritin indicates iron depletion. If accompanied by low hemoglobin
+      or low MCV, this supports progression toward iron deficiency anemia.
+    implications: Requires evaluation of cause (for example GI blood loss, menstrual
+      blood loss, diet, malabsorption) and often iron repletion with follow-up.
+    supporting_marker_roles:
+      hemoglobin: Indicates progression from depletion to functional anemia.
+      mcv: Supports a microcytic pattern consistent with iron-restricted erythropoiesis.
+      crp: Provides inflammatory context for ferritin interpretation.

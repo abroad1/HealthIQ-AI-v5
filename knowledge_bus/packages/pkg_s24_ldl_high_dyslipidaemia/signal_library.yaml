@@ -1,0 +1,85 @@
+library:
+  package_id: KBP-2407
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_ldl_cholesterol_high Investigation Library
+  description: Investigation signal library translated from inv_ldl_high_dyslipidaemia_v1.yaml.
+signals:
+- signal_id: signal_ldl_cholesterol_high
+  name: Ldl Cholesterol High
+  description: Low-Density Lipoprotein is the primary carrier of cholesterol to peripheral
+    tissues. Elevated levels are directly causal in the development of atherosclerotic
+    cardiovascular disease (ASCVD).
+  system: lipid_transport
+  primary_metric: ldl_cholesterol
+  supporting_metrics: &id001
+  - non_hdl_cholesterol
+  - apob
+  - hdl_cholesterol
+  - triglycerides
+  - lipoprotein_a
+  dependencies:
+    biomarkers:
+    - ldl_cholesterol
+    - non_hdl_cholesterol
+    - apob
+    - hdl_cholesterol
+    - triglycerides
+    - lipoprotein_a
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_ldl_cholesterol_high_lab_range_activation_placeholder
+    metric_id: ldl_cholesterol
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_ldl_familial_threshold
+    description: Escalate for very high LDL (>4.9 mmol/L) suggesting potential Familial
+      Hypercholesterolemia.
+    conditions:
+    - metric_id: ldl_cholesterol
+      operator: '>'
+      value: 4.9
+      condition_type: all_of
+    resulting_state: at_risk
+  - rule_id: or_ldl_high_non_hdl_discordance
+    description: Escalate if non-HDL is also significantly elevated (>5.5 mmol/L).
+    conditions:
+    - metric_id: non_hdl_cholesterol
+      operator: '>'
+      value: 5.5
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: ldl_cholesterol
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: ldl_cholesterol
+    supporting_markers: *id001
+  explanation:
+    mechanism: LDL carries cholesterol from the liver to cells. When in excess, it
+      deposits in arterial walls.
+    biological_pathway: Reverse cholesterol transport is overwhelmed by the influx
+      of LDL-C into the vascular endothelium.
+    interpretation: Primary driver of cardiovascular risk. Interpretation should be
+      framed by the patient's overall QRISK/Framingham score.
+    implications: High levels indicate a need for dietary modification or statin therapy
+      to lower ASCVD risk.
+    supporting_marker_roles:
+      non_hdl_cholesterol: Provides a more comprehensive view of atherogenic risk
+        than LDL alone.
+      triglycerides: High levels often shift LDL particles toward the smaller, more
+        dangerous dense form.
