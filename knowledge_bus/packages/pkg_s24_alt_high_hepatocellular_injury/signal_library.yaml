@@ -84,7 +84,7 @@ signals:
       with high Bilirubin, it suggests a loss of liver function.
     implications: Requires assessment for NAFLD, viral hepatitis, alcohol-related
       liver disease, or drug-induced injury.
-    supporting_marker_roles:
-      ast: Used to calculate the AST/ALT ratio to differentiate causes (e.g., alcohol
-        vs NAFLD).
-      ggt: Confirms that the enzyme elevation is of hepatic origin.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including ast (Used to calculate the AST/ALT ratio to differentiate
+      causes (e.g., alcohol vs NAFLD).); ggt (Confirms that the enzyme elevation is
+      of hepatic origin.).

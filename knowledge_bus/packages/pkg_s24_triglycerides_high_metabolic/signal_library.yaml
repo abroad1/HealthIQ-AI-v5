@@ -73,6 +73,6 @@ signals:
     interpretation: Reflects dietary fat intake, alcohol use, and metabolic health.
       Severely high levels are a medical emergency.
     implications: Risk of cardiovascular events and acute pancreatitis.
-    supporting_marker_roles:
-      hba1c: Identifies if diabetes is the primary driver of the lipid abnormality.
-      hdl_cholesterol: Helps define the atherogenic risk profile.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including hba1c (Identifies if diabetes is the primary driver of the
+      lipid abnormality.); hdl_cholesterol (Helps define the atherogenic risk profile.).

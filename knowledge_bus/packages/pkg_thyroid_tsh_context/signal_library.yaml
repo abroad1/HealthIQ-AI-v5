@@ -1,78 +1,99 @@
 library:
-  package_id: "KBP-0025"
-  schema_version: "1.0.0"
-  package_version: "1.0.0"
-  library_name: "TSH Thyroid Context Signal Library"
-  description: >
-    Investigation signal library for bidirectional TSH lab-range thyroid context.
+  package_id: KBP-0025
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: TSH Thyroid Context Signal Library
+  description: 'Investigation signal library for bidirectional TSH lab-range thyroid
+    context.
+
+    '
 signals:
-  - signal_id: "signal_thyroid_tsh_context"
-    name: "Thyroid TSH Context"
-    description: >
-      Detects TSH outside lab range in either direction and escalates when free thyroid
-      hormone markers show stronger abnormality context.
-    system: "hormonal"
-    primary_metric: "tsh"
-    supporting_metrics:
-      - free_t4
-      - free_t3
-    dependencies:
-      biomarkers:
-        - tsh
-        - free_t4
-        - free_t3
-      derived_metrics: []
-      signals: []
-    optional_dependencies:
-      biomarkers: []
-      derived_metrics: []
-      signals: []
-    thresholds:
-      - threshold_id: "signal_thyroid_tsh_context_lab_range_activation_placeholder"
-        metric_id: "tsh"
-        operator: ">="
-        value: 9999.0
-        severity: "at_risk"
-        description: >
-          Validator-compatibility placeholder. Runtime activation is controlled by
-          activation_logic=lab_range_exceeded and lab reference ranges.
-    activation_logic: "lab_range_exceeded"
-    activation_config:
-      upper_bound_state: "suboptimal"
-      enable_lower_bound: true
-      lower_bound_state: "suboptimal"
-    override_rules:
-      - rule_id: "thyroid_free_t4_abnormal"
-        description: >
-          Escalate when TSH abnormality coexists with strongly abnormal free T4.
-        conditions:
-          - metric_id: "free_t4"
-            operator: "<"
-            value: 10.0
-            condition_type: "any_of"
-          - metric_id: "free_t4"
-            operator: ">"
-            value: 24.0
-            condition_type: "any_of"
-        resulting_state: "at_risk"
-      - rule_id: "thyroid_free_t3_abnormal"
-        description: >
-          Escalate when TSH abnormality coexists with strongly abnormal free T3.
-        conditions:
-          - metric_id: "free_t3"
-            operator: "<"
-            value: 3.0
-            condition_type: "any_of"
-          - metric_id: "free_t3"
-            operator: ">"
-            value: 7.0
-            condition_type: "any_of"
-        resulting_state: "at_risk"
-    output:
-      signal_value: "tsh"
-      signal_state: "at_risk"
-      confidence: "confidence_model_v1"
-      primary_metric: "tsh"
-      supporting_markers:
-        - free_t4
-        - free_t3
+- signal_id: signal_thyroid_tsh_context
+  name: Thyroid TSH Context
+  description: 'Detects TSH outside lab range in either direction and escalates when
+    free thyroid hormone markers show stronger abnormality context.
+
+    '
+  system: hormonal
+  primary_metric: tsh
+  supporting_metrics:
+  - free_t4
+  - free_t3
+  dependencies:
+    biomarkers:
+    - tsh
+    - free_t4
+    - free_t3
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_thyroid_tsh_context_lab_range_activation_placeholder
+    metric_id: tsh
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: 'Validator-compatibility placeholder. Runtime activation is controlled
+      by activation_logic=lab_range_exceeded and lab reference ranges.
+
+      '
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: thyroid_free_t4_abnormal
+    description: 'Escalate when TSH abnormality coexists with strongly abnormal free
+      T4.
+
+      '
+    conditions:
+    - metric_id: free_t4
+      operator: <
+      value: 10.0
+      condition_type: any_of
+    - metric_id: free_t4
+      operator: '>'
+      value: 24.0
+      condition_type: any_of
+    resulting_state: at_risk
+  - rule_id: thyroid_free_t3_abnormal
+    description: 'Escalate when TSH abnormality coexists with strongly abnormal free
+      T3.
+
+      '
+    conditions:
+    - metric_id: free_t3
+      operator: <
+      value: 3.0
+      condition_type: any_of
+    - metric_id: free_t3
+      operator: '>'
+      value: 7.0
+      condition_type: any_of
+    resulting_state: at_risk
+  output:
+    signal_value: tsh
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: tsh
+    supporting_markers:
+    - free_t4
+    - free_t3
+  explanation:
+    mechanism: This signal captures deterministic investigation context around tsh
+      patterns, using the primary marker as the anchor for baseline activation.
+    biological_pathway: Biological plausibility is represented through pathway-consistent
+      supporting markers that move in expected directions when tsh dysregulation is
+      present.
+    interpretation: A suboptimal state indicates lab-range deviation in tsh, while
+      at_risk indicates concordant escalation markers consistent with a higher-confidence
+      pattern.
+    implications: This pattern can indicate broader system stress and supports earlier
+      risk stratification, follow-up review, and context-aware clinical interpretation.
+    supporting_marker_roles: Escalation context is inferred from supporting markers
+      that corroborate pattern severity, including free_t4, free_t3.

@@ -67,5 +67,5 @@ signals:
       High saturation is the 'at_risk' smoking gun.
     implications: May require genetic testing for HFE or venesection (blood-letting)
       if true overload is confirmed.
-    supporting_marker_roles:
-      crp: Identifies if elevation is a reactive acute-phase response.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including crp (Identifies if elevation is a reactive acute-phase response.).
