@@ -90,7 +90,7 @@ signals:
       or low MCV, this supports progression toward iron deficiency anemia.
     implications: Requires evaluation of cause (for example GI blood loss, menstrual
       blood loss, diet, malabsorption) and often iron repletion with follow-up.
-    supporting_marker_roles:
-      hemoglobin: Indicates progression from depletion to functional anemia.
-      mcv: Supports a microcytic pattern consistent with iron-restricted erythropoiesis.
-      crp: Provides inflammatory context for ferritin interpretation.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including hemoglobin (Indicates progression from depletion to functional
+      anemia.); mcv (Supports a microcytic pattern consistent with iron-restricted
+      erythropoiesis.); crp (Provides inflammatory context for ferritin interpretation.).

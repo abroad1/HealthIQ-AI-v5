@@ -89,6 +89,6 @@ signals:
       causes.
     implications: Persistent high CRP requires investigation for occult infection,
       malignancy, or autoimmune disease.
-    supporting_marker_roles:
-      white_blood_cells: Confirms an active white cell response.
-      albumin: Reflects the severity and duration of the inflammatory insult.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including white_blood_cells (Confirms an active white cell response.);
+      albumin (Reflects the severity and duration of the inflammatory insult.).

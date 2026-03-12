@@ -82,6 +82,7 @@ signals:
       with lipids help assess overall cardiometabolic risk.
     implications: Increased risk of retinopathy, neuropathy, and cardiovascular disease.
       Requires lifestyle intervention or pharmacological management.
-    supporting_marker_roles:
-      triglycerides: Identifies concurrent dyslipidaemia common in insulin resistance.
-      glucose: Provides acute confirmation of the hyperglycaemic state.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including triglycerides (Identifies concurrent dyslipidaemia common
+      in insulin resistance.); glucose (Provides acute confirmation of the hyperglycaemic
+      state.).

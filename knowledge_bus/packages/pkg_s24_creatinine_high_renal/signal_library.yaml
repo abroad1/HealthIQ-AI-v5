@@ -72,4 +72,5 @@ signals:
       suggests either Acute Kidney Injury (AKI) or Chronic Kidney Disease (CKD).
     implications: Requires blood pressure monitoring, medication review (nephrotoxins),
       and urine protein check.
-    supporting_marker_roles: {}
+    supporting_marker_roles: Escalation context is inferred from supporting markers
+      that corroborate pattern severity, including egfr, urea, potassium.

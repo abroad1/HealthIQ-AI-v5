@@ -78,8 +78,7 @@ signals:
       framed by the patient's overall QRISK/Framingham score.
     implications: High levels indicate a need for dietary modification or statin therapy
       to lower ASCVD risk.
-    supporting_marker_roles:
-      non_hdl_cholesterol: Provides a more comprehensive view of atherogenic risk
-        than LDL alone.
-      triglycerides: High levels often shift LDL particles toward the smaller, more
-        dangerous dense form.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including non_hdl_cholesterol (Provides a more comprehensive view
+      of atherogenic risk than LDL alone.); triglycerides (High levels often shift
+      LDL particles toward the smaller, more dangerous dense form.).

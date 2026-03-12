@@ -76,5 +76,5 @@ signals:
       if T4 is low, it is 'overt'.
     implications: Common symptoms include fatigue, weight gain, cold intolerance,
       and bradycardia.
-    supporting_marker_roles:
-      free_t4: Determines if the hypothyroidism is overt or subclinical.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including free_t4 (Determines if the hypothyroidism is overt or subclinical.).

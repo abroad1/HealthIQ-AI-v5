@@ -77,4 +77,5 @@ signals:
       the degree of thyrotoxicosis.
     implications: Risk of tachycardia, weight loss, anxiety, and in severe cases,
       'thyroid storm'.
-    supporting_marker_roles: {}
+    supporting_marker_roles: Escalation context is inferred from supporting markers
+      that corroborate pattern severity, including free_t4, free_t3, bilirubin.
