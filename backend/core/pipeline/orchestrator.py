@@ -849,10 +849,17 @@ class AnalysisOrchestrator:
                     if ref_range and isinstance(ref_range, dict):
                         min_val = ref_range.get('min')
                         max_val = ref_range.get('max')
-                        if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)):
+                        has_min = isinstance(min_val, (int, float))
+                        has_max = isinstance(max_val, (int, float))
+                        if has_min and has_max and float(min_val) >= float(max_val):
+                            logger.warning(
+                                f"[Orchestrator] Invalid input reference range for {biomarker_name}: "
+                                f"min={min_val}, max={max_val}"
+                            )
+                        elif has_min or has_max:
                             input_reference_ranges[biomarker_name] = {
-                                'min': float(min_val),
-                                'max': float(max_val),
+                                'min': float(min_val) if has_min else None,
+                                'max': float(max_val) if has_max else None,
                                 'unit': ref_range.get('unit', ''),
                                 'source': ref_range.get('source', 'lab')
                             }
@@ -889,6 +896,11 @@ class AnalysisOrchestrator:
                     and isinstance(max_val, (int, float))
                     and float(min_val) < float(max_val)
                 )
+
+            def _has_any_numeric_bound(ref: Any) -> bool:
+                if not isinstance(ref, dict):
+                    return False
+                return isinstance(ref.get("min"), (int, float)) or isinstance(ref.get("max"), (int, float))
 
             def _is_valid_lab_range(ref: Any) -> bool:
                 if not _has_valid_numeric_bounds(ref):
@@ -1516,14 +1528,22 @@ class AnalysisOrchestrator:
                     # Priority 1: Check input reference ranges
                     if input_reference_ranges and biomarker_name in input_reference_ranges:
                         input_range = input_reference_ranges[biomarker_name]
-                        if isinstance(input_range, dict) and input_range.get('min') is not None and input_range.get('max') is not None:
-                            reference_range_dict = {
-                                'min': input_range.get('min'),
-                                'max': input_range.get('max'),
-                                'unit': input_range.get('unit', unit),
-                                'source': input_range.get('source', 'lab')
-                            }
-                            logger.debug(f"[DTO Builder] Using input reference range for {biomarker_name}: {reference_range_dict}")
+                        if isinstance(input_range, dict):
+                            min_val = input_range.get('min')
+                            max_val = input_range.get('max')
+                            has_min = isinstance(min_val, (int, float))
+                            has_max = isinstance(max_val, (int, float))
+                            if has_min and has_max and float(min_val) >= float(max_val):
+                                has_min = False
+                                has_max = False
+                            if has_min or has_max:
+                                reference_range_dict = {
+                                    'min': float(min_val) if has_min else None,
+                                    'max': float(max_val) if has_max else None,
+                                    'unit': input_range.get('unit', unit),
+                                    'source': input_range.get('source', 'lab')
+                                }
+                                logger.debug(f"[DTO Builder] Using input reference range for {biomarker_name}: {reference_range_dict}")
                     
                     # Use HAS v1 primitive for status (single source of truth)
                     if reference_range_dict and reference_range_dict.get('min') is not None and reference_range_dict.get('max') is not None:
@@ -1547,7 +1567,10 @@ class AnalysisOrchestrator:
                         or status == "unknown"
                         or not _has_valid_numeric_bounds(reference_range_dict)
                     ):
-                        interpretation = "Not scored - no reference range available"
+                        if _has_any_numeric_bound(reference_range_dict):
+                            interpretation = "Not scored - insufficient numeric bounds for scoring"
+                        else:
+                            interpretation = "Not scored - no reference range available"
 
                     biomarker_dtos.append(BiomarkerScoreDTO(
                         biomarker_name=biomarker_name,
@@ -1616,19 +1639,21 @@ class AnalysisOrchestrator:
                         if isinstance(input_range, dict):
                             min_val = input_range.get('min')
                             max_val = input_range.get('max')
-                            # Validate that min and max are numeric and valid
-                            if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)) and min_val < max_val:
+                            has_min = isinstance(min_val, (int, float))
+                            has_max = isinstance(max_val, (int, float))
+                            if has_min and has_max and float(min_val) >= float(max_val):
+                                has_min = False
+                                has_max = False
+                            if has_min or has_max:
                                 # Use unit from lab range if available, otherwise use extracted unit
                                 range_unit = input_range.get('unit', '') or unit
                                 reference_range_dict = {
-                                    'min': float(min_val),
-                                    'max': float(max_val),
+                                    'min': float(min_val) if has_min else None,
+                                    'max': float(max_val) if has_max else None,
                                     'unit': range_unit,
                                     'source': input_range.get('source', 'lab')
                                 }
                                 logger.debug(f"[Unscored] Using lab reference range for {biomarker_name}: {reference_range_dict}")
-                            else:
-                                logger.warning(f"[Unscored] Invalid min/max in input_reference_ranges for {biomarker_name}: min={min_val}, max={max_val}")
                     
                     # If both failed, use fallback structure
                     if reference_range_dict is None:
@@ -1675,6 +1700,8 @@ class AnalysisOrchestrator:
                             interpretation = "Scored using lab reference range"
                         else:
                             interpretation = "Scored using reference range"
+                    elif _has_any_numeric_bound(reference_range_dict):
+                        interpretation = "Not scored - insufficient numeric bounds for scoring"
                     elif biomarker_name in policy_bounds_rejected_reason:
                         interpretation = "Not scored - no compatible policy bounds"
                         if range_source is None:
