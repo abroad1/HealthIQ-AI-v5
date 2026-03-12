@@ -82,6 +82,7 @@ class BiomarkerNormalizer:
                 numeric_value = value
                 unit = self._get_unit_for_biomarker(canonical_key)
                 reference_range = None
+                reference_profile = None
                 
                 # Handle dict format like {"value": 95, "unit": "mg/dL", "reference_range": {...}}
                 if isinstance(value, dict) and "value" in value:
@@ -103,6 +104,11 @@ class BiomarkerNormalizer:
                                     "unit": ref_range.get("unit", unit),
                                     "source": ref_range.get("source", "lab")
                                 }
+                    # Preserve optional reference_profile as lab-sovereign metadata.
+                    if "reference_profile" in value and isinstance(value["reference_profile"], dict):
+                        reference_profile = dict(value["reference_profile"])
+                    elif "referenceProfile" in value and isinstance(value["referenceProfile"], dict):
+                        reference_profile = dict(value["referenceProfile"])
                     # Also check for camelCase variant
                     elif "referenceRange" in value:
                         ref_range = value["referenceRange"]
@@ -142,6 +148,7 @@ class BiomarkerNormalizer:
                         value=numeric_value,
                         unit=unit,
                         reference_range=reference_range,
+                        reference_profile=reference_profile,
                         **extra
                     )
         
@@ -240,6 +247,8 @@ def normalize_biomarkers_with_metadata(raw_biomarkers: Dict[str, Any]) -> Dict[s
             "unit": biomarker_value.unit,
             "reference_range": biomarker_value.reference_range
         }
+        if biomarker_value.reference_profile is not None:
+            result[name]["reference_profile"] = biomarker_value.reference_profile
         if biomarker_value.timestamp:
             result[name]["timestamp"] = biomarker_value.timestamp
     

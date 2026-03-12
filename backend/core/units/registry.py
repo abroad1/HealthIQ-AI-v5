@@ -373,6 +373,10 @@ def apply_unit_normalisation(
             "confidence_downgrade_unit_assumed": confidence_downgrade_unit_assumed,
             "reference_unit_assumed": reference_unit_assumed,
         }
+        if "reference_profile" in data and isinstance(data.get("reference_profile"), dict):
+            out["reference_profile"] = dict(data["reference_profile"])
+        elif "referenceProfile" in data and isinstance(data.get("referenceProfile"), dict):
+            out["reference_profile"] = dict(data["referenceProfile"])
         if isinstance(value, (int, float)) and val_converted != float(value):
             out["original_value"] = float(value)
         for k in ("timestamp",):

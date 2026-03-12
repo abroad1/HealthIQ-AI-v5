@@ -32,6 +32,10 @@ class BiomarkerValue(BaseModel):
         default=None, 
         description="Reference range with min, max, unit, and source"
     )
+    reference_profile: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Optional lab reference profile (bands, effective date, note)"
+    )
     # Unit audit fields (Sprint 1 - Unit Registry)
     original_unit: Optional[str] = Field(default=None, description="Original unit before conversion")
     original_value: Optional[float] = Field(default=None, description="Original value before conversion")

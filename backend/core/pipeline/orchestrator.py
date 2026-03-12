@@ -841,6 +841,7 @@ class AnalysisOrchestrator:
             logger.info("Step 1: Converting biomarkers for scoring")
             simple_biomarkers = {}
             input_reference_ranges = {}  # Preserve reference ranges from input
+            input_reference_profiles: Dict[str, Dict[str, Any]] = {}
             for biomarker_name, biomarker_data in filtered_biomarkers.items():
                 if isinstance(biomarker_data, dict):
                     simple_biomarkers[biomarker_name] = biomarker_data.get('value', biomarker_data.get('measurement', 0))
@@ -864,6 +865,9 @@ class AnalysisOrchestrator:
                                 'source': ref_range.get('source', 'lab')
                             }
                             logger.debug(f"[Orchestrator] Preserved input reference range for {biomarker_name}: {input_reference_ranges[biomarker_name]}")
+                    ref_profile = biomarker_data.get("reference_profile") or biomarker_data.get("referenceProfile")
+                    if isinstance(ref_profile, dict):
+                        input_reference_profiles[biomarker_name] = dict(ref_profile)
                 else:
                     simple_biomarkers[biomarker_name] = biomarker_data
 
@@ -906,6 +910,66 @@ class AnalysisOrchestrator:
                 if not _has_valid_numeric_bounds(ref):
                     return False
                 return str(ref.get("source", "")).strip().lower() == "lab"
+
+            def _classify_lab_band(
+                biomarker_name: str,
+                numeric_value: Any,
+                biomarker_unit: str,
+                reference_profile: Any,
+            ) -> Optional[str]:
+                if not isinstance(reference_profile, dict):
+                    return None
+                bands = reference_profile.get("bands")
+                if not isinstance(bands, list) or not bands:
+                    return None
+                if not isinstance(numeric_value, (int, float)):
+                    return None
+
+                matched_labels: List[str] = []
+                for band in bands:
+                    if not isinstance(band, dict):
+                        logger.warning("[BandClassifier] Malformed band for %s: non-dict entry", biomarker_name)
+                        return None
+                    label = str(band.get("label", "")).strip()
+                    band_unit = str(band.get("unit", "")).strip()
+                    if not label or not band_unit:
+                        logger.warning("[BandClassifier] Malformed band for %s: missing label/unit", biomarker_name)
+                        return None
+                    if str(biomarker_unit or "").strip() and band_unit != str(biomarker_unit).strip():
+                        logger.warning(
+                            "[BandClassifier] Unit mismatch for %s band '%s': band_unit=%s biomarker_unit=%s (classification still attempted)",
+                            biomarker_name,
+                            label,
+                            band_unit,
+                            biomarker_unit,
+                        )
+
+                    min_val = band.get("min")
+                    max_val = band.get("max")
+                    has_min = isinstance(min_val, (int, float))
+                    has_max = isinstance(max_val, (int, float))
+                    if not has_min and not has_max:
+                        logger.warning("[BandClassifier] Malformed band for %s: no numeric bounds", biomarker_name)
+                        return None
+                    if has_min and has_max and float(min_val) >= float(max_val):
+                        logger.warning("[BandClassifier] Malformed band for %s: min>=max", biomarker_name)
+                        return None
+
+                    in_lower = (not has_min) or (float(numeric_value) >= float(min_val))
+                    in_upper = (not has_max) or (float(numeric_value) < float(max_val))
+                    if in_lower and in_upper:
+                        matched_labels.append(label)
+
+                if len(matched_labels) == 1:
+                    return matched_labels[0]
+                if len(matched_labels) > 1:
+                    logger.warning(
+                        "[BandClassifier] Overlapping bands for %s value=%s matched=%s",
+                        biomarker_name,
+                        numeric_value,
+                        matched_labels,
+                    )
+                return None
 
             def _policy_bounds_for_ratio(rid: str, expected_unit: str) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
                 bounds = DERIVED_RATIO_POLICY_BOUNDS.get(rid)
@@ -1524,6 +1588,7 @@ class AnalysisOrchestrator:
                     # Get reference range from input_reference_ranges only.
                     # Lab-Range Sovereignty: no SSOT fallback for scoring/display status paths.
                     reference_range_dict = None
+                    reference_profile_dict = None
                     
                     # Priority 1: Check input reference ranges
                     if input_reference_ranges and biomarker_name in input_reference_ranges:
@@ -1544,6 +1609,10 @@ class AnalysisOrchestrator:
                                     'source': input_range.get('source', 'lab')
                                 }
                                 logger.debug(f"[DTO Builder] Using input reference range for {biomarker_name}: {reference_range_dict}")
+                    if input_reference_profiles and biomarker_name in input_reference_profiles:
+                        profile = input_reference_profiles[biomarker_name]
+                        if isinstance(profile, dict):
+                            reference_profile_dict = dict(profile)
                     
                     # Use HAS v1 primitive for status (single source of truth)
                     if reference_range_dict and reference_range_dict.get('min') is not None and reference_range_dict.get('max') is not None:
@@ -1572,6 +1641,13 @@ class AnalysisOrchestrator:
                         else:
                             interpretation = "Not scored - no reference range available"
 
+                    lab_band_label = _classify_lab_band(
+                        biomarker_name=biomarker_name,
+                        numeric_value=value,
+                        biomarker_unit=unit,
+                        reference_profile=reference_profile_dict,
+                    )
+
                     biomarker_dtos.append(BiomarkerScoreDTO(
                         biomarker_name=biomarker_name,
                         value=value,
@@ -1581,6 +1657,8 @@ class AnalysisOrchestrator:
                         status=status,
                         range_source=range_source,
                         reference_range=reference_range_dict,
+                        reference_profile=reference_profile_dict,
+                        lab_band_label=lab_band_label,
                         interpretation=interpretation
                     ))
             
@@ -1632,6 +1710,11 @@ class AnalysisOrchestrator:
                     # Get reference range from input_reference_ranges only.
                     # Lab-Range Sovereignty: no SSOT fallback for scoring/display status paths.
                     reference_range_dict = None
+                    reference_profile_dict = None
+                    if input_reference_profiles and biomarker_name in input_reference_profiles:
+                        profile = input_reference_profiles[biomarker_name]
+                        if isinstance(profile, dict):
+                            reference_profile_dict = dict(profile)
                     
                     # Priority 1: ALWAYS use input_reference_ranges if present (lab range takes precedence)
                     if input_reference_ranges and biomarker_name in input_reference_ranges:
@@ -1706,6 +1789,13 @@ class AnalysisOrchestrator:
                         interpretation = "Not scored - no compatible policy bounds"
                         if range_source is None:
                             range_source = "policy"
+
+                    lab_band_label = _classify_lab_band(
+                        biomarker_name=biomarker_name,
+                        numeric_value=value,
+                        biomarker_unit=unit,
+                        reference_profile=reference_profile_dict,
+                    )
                     
                     biomarker_dtos.append(BiomarkerScoreDTO(
                         biomarker_name=biomarker_name,
@@ -1716,6 +1806,8 @@ class AnalysisOrchestrator:
                         status=status,
                         range_source=range_source,
                         reference_range=reference_range_dict,
+                        reference_profile=reference_profile_dict,
+                        lab_band_label=lab_band_label,
                         interpretation=interpretation,
                     ))
             logger.info(f"Total biomarkers in DTO: {len(biomarker_dtos)}")
@@ -1752,6 +1844,7 @@ class AnalysisOrchestrator:
             logger.info("Step 9: Creating final analysis DTO")
             meta = dict(criticality_result) if criticality_result else {}
             meta["derived_ratios"] = derived_ratios_meta
+            meta["reference_profiles"] = dict(input_reference_profiles)
             try:
                 meta.update(get_cluster_schema_version_stamp())
             except (FileNotFoundError, ValueError):

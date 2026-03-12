@@ -31,6 +31,14 @@ class BiomarkerScore(BaseModel):
         default=None, 
         description="Reference range information"
     )
+    reference_profile: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Optional lab reference profile (bands, effective date, note)"
+    )
+    lab_band_label: Optional[str] = Field(
+        default=None,
+        description="Band label matched from reference_profile.bands when deterministically classifiable"
+    )
     interpretation: str = Field(default="", description="Clinical interpretation")
 
 
