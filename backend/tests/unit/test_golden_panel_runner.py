@@ -378,6 +378,68 @@ def test_primary_markers_never_use_policy_or_ssot_ranges():
     assert row.reference_range is None
 
 
+def test_one_sided_lab_ranges_are_preserved_in_output_dto(tmp_path):
+    fixture_path = tmp_path / "one-sided-lab-ranges.json"
+    fixture_payload = {
+        "biomarkers": {
+            "hba1c": {
+                "value": 26.0,
+                "unit": "mmol/mol",
+                "reference_range": {"min": None, "max": 39.0, "unit": "mmol/mol", "source": "lab"},
+            },
+            "ldl_cholesterol": {
+                "value": 2.75,
+                "unit": "mmol/L",
+                "reference_range": {"min": None, "max": 2.59, "unit": "mmol/L", "source": "lab"},
+            },
+            "hdl_cholesterol": {
+                "value": 2.22,
+                "unit": "mmol/L",
+                "reference_range": {"min": 1.55, "max": None, "unit": "mmol/L", "source": "lab"},
+            },
+            "triglycerides": {
+                "value": 0.68,
+                "unit": "mmol/L",
+                "reference_range": {"min": None, "max": 1.7, "unit": "mmol/L", "source": "lab"},
+            },
+            "total_cholesterol": {
+                "value": 5.26,
+                "unit": "mmol/L",
+                "reference_range": {"min": 0.0, "max": 5.18, "unit": "mmol/L", "source": "lab"},
+            },
+        },
+        "user": {"age": 58, "biological_sex": "male"},
+    }
+    fixture_path.write_text(json.dumps(fixture_payload), encoding="utf-8")
+
+    _, analysis_result = run_golden_panel(
+        fixture_path=fixture_path,
+        output_root=tmp_path,
+        run_id="unit-one-sided-ranges",
+        write_narrative=False,
+    )
+    rows = _biomarker_rows_by_name(analysis_result)
+
+    for biomarker_name in ("hba1c", "ldl_cholesterol", "hdl_cholesterol", "triglycerides"):
+        row = rows.get(biomarker_name)
+        assert isinstance(row, dict), f"Missing biomarker row for {biomarker_name}"
+        ref = row.get("reference_range")
+        assert isinstance(ref, dict), f"Expected preserved reference_range for {biomarker_name}"
+        assert ref.get("source") == "lab"
+        assert row.get("range_source") == "lab"
+        assert row.get("interpretation") != "Not scored - no reference range available"
+
+    # Regression: two-sided ranges remain carried and scoreable.
+    tc_row = rows.get("total_cholesterol")
+    assert isinstance(tc_row, dict)
+    tc_ref = tc_row.get("reference_range")
+    assert isinstance(tc_ref, dict)
+    assert tc_ref.get("min") == 0.0
+    assert tc_ref.get("max") == 5.18
+    assert tc_ref.get("source") == "lab"
+    assert tc_row.get("range_source") == "lab"
+
+
 def test_derived_ratio_uses_policy_only_when_lab_range_missing():
     prepared = _prepare_unit_normalised(
         {

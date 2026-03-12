@@ -88,26 +88,36 @@ class BiomarkerNormalizer:
                     numeric_value = value["value"]
                     if "unit" in value:
                         unit = value["unit"]
-                    # Preserve reference_range if present
+                    # Preserve reference_range if present (including one-sided lab bounds).
                     if "reference_range" in value:
                         ref_range = value["reference_range"]
-                        if isinstance(ref_range, dict) and ref_range.get("min") is not None and ref_range.get("max") is not None:
-                            reference_range = {
-                                "min": float(ref_range.get("min")),
-                                "max": float(ref_range.get("max")),
-                                "unit": ref_range.get("unit", unit),
-                                "source": ref_range.get("source", "lab")
-                            }
+                        if isinstance(ref_range, dict):
+                            min_val = ref_range.get("min")
+                            max_val = ref_range.get("max")
+                            has_min = isinstance(min_val, (int, float))
+                            has_max = isinstance(max_val, (int, float))
+                            if has_min or has_max:
+                                reference_range = {
+                                    "min": float(min_val) if has_min else None,
+                                    "max": float(max_val) if has_max else None,
+                                    "unit": ref_range.get("unit", unit),
+                                    "source": ref_range.get("source", "lab")
+                                }
                     # Also check for camelCase variant
                     elif "referenceRange" in value:
                         ref_range = value["referenceRange"]
-                        if isinstance(ref_range, dict) and ref_range.get("min") is not None and ref_range.get("max") is not None:
-                            reference_range = {
-                                "min": float(ref_range.get("min")),
-                                "max": float(ref_range.get("max")),
-                                "unit": ref_range.get("unit", unit),
-                                "source": ref_range.get("source", "lab")
-                            }
+                        if isinstance(ref_range, dict):
+                            min_val = ref_range.get("min")
+                            max_val = ref_range.get("max")
+                            has_min = isinstance(min_val, (int, float))
+                            has_max = isinstance(max_val, (int, float))
+                            if has_min or has_max:
+                                reference_range = {
+                                    "min": float(min_val) if has_min else None,
+                                    "max": float(max_val) if has_max else None,
+                                    "unit": ref_range.get("unit", unit),
+                                    "source": ref_range.get("source", "lab")
+                                }
                 
                 # Build BiomarkerValue; pass unit audit fields if present (from apply_unit_normalisation)
                 extra = {}

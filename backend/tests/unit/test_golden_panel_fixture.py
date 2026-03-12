@@ -20,3 +20,31 @@ def test_golden_panel_fixture_contains_expected_size_and_shape():
     assert "value" in sample
     assert "unit" in sample
     assert "reference_range" in sample
+
+
+def test_normalize_preserves_one_sided_reference_ranges():
+    payload = {
+        "ldl_cholesterol": {
+            "value": 2.75,
+            "unit": "mmol/L",
+            "reference_range": {"min": None, "max": 2.59, "unit": "mmol/L", "source": "lab"},
+        },
+        "hdl_cholesterol": {
+            "value": 2.22,
+            "unit": "mmol/L",
+            "reference_range": {"min": 1.55, "max": None, "unit": "mmol/L", "source": "lab"},
+        },
+    }
+    out = normalize_biomarkers_with_metadata(payload)
+    ldl = out["ldl_cholesterol"]["reference_range"]
+    hdl = out["hdl_cholesterol"]["reference_range"]
+
+    assert isinstance(ldl, dict)
+    assert ldl["min"] is None
+    assert ldl["max"] == 2.59
+    assert ldl["source"] == "lab"
+
+    assert isinstance(hdl, dict)
+    assert hdl["min"] == 1.55
+    assert hdl["max"] is None
+    assert hdl["source"] == "lab"
