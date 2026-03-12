@@ -1,0 +1,87 @@
+library:
+  package_id: KBP-2406
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_hba1c_high Investigation Library
+  description: Investigation signal library translated from inv_hba1c_high_glycaemia_v1.yaml.
+signals:
+- signal_id: signal_hba1c_high
+  name: Hba1C High
+  description: "HbA1c reflects average plasma glucose over the previous 8\u201312\
+    \ weeks. It is the gold standard for diagnosing and monitoring diabetes mellitus\
+    \ and pre-diabetes."
+  system: metabolic
+  primary_metric: hba1c
+  supporting_metrics: &id001
+  - glucose
+  - triglycerides
+  - hdl_cholesterol
+  - alt
+  dependencies:
+    biomarkers:
+    - hba1c
+    - glucose
+    - triglycerides
+    - hdl_cholesterol
+    - alt
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_hba1c_high_lab_range_activation_placeholder
+    metric_id: hba1c
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_hba1c_diagnostic_diabetes
+    description: Escalate if HbA1c meets the WHO diagnostic threshold for Diabetes
+      (>= 48 mmol/mol).
+    conditions:
+    - metric_id: hba1c
+      operator: '>='
+      value: 48.0
+      condition_type: all_of
+    resulting_state: at_risk
+  - rule_id: or_hba1c_metabolic_syndrome
+    description: Escalate if high HbA1c is accompanied by high triglycerides and low
+      HDL (Metabolic Syndrome pattern).
+    conditions:
+    - metric_id: triglycerides
+      operator: '>'
+      value: 1.7
+      condition_type: all_of
+    - metric_id: hdl_cholesterol
+      operator: <
+      value: 1.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: hba1c
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: hba1c
+    supporting_markers: *id001
+  explanation:
+    mechanism: Glucose molecules in the blood attach to haemoglobin. The percentage
+      of glycated haemoglobin remains stable for the life of the red blood cell (~120
+      days).
+    biological_pathway: Persistent hyperglycaemia leads to increased Advanced Glycation
+      End-products (AGEs), contributing to microvascular and macrovascular damage.
+    interpretation: Higher levels indicate poorer long-term glycaemic control. Patterns
+      with lipids help assess overall cardiometabolic risk.
+    implications: Increased risk of retinopathy, neuropathy, and cardiovascular disease.
+      Requires lifestyle intervention or pharmacological management.
+    supporting_marker_roles:
+      triglycerides: Identifies concurrent dyslipidaemia common in insulin resistance.
+      glucose: Provides acute confirmation of the hyperglycaemic state.

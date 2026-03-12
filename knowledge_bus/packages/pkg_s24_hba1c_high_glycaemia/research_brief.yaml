@@ -1,0 +1,20 @@
+research_domain: metabolic
+sources:
+- paper_title: Use of Glycated Haemoglobin (HbA1c) in the Diagnosis of Diabetes Mellitus
+  journal: World Health Organization
+  year: 2011
+- paper_title: 'Type 2 diabetes in adults: management'
+  journal: NICE Guideline
+  year: 2015
+biomarkers:
+- hba1c
+- glucose
+- triglycerides
+- hdl_cholesterol
+- alt
+derived_metrics: []
+physiological_claim: HbA1c is formed through the non-enzymatic glycation of the N-terminal
+  valine of the beta chain of haemoglobin A.
+evidence_strength: strong
+research_summary: A threshold of 48 mmol/mol (6.5%) is the international consensus
+  for the diagnosis of diabetes.

@@ -1,0 +1,75 @@
+library:
+  package_id: KBP-2402
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_creatinine_high Investigation Library
+  description: Investigation signal library translated from inv_creatinine_high_renal_v1.yaml.
+signals:
+- signal_id: signal_creatinine_high
+  name: Creatinine High
+  description: Creatinine is a waste product of muscle metabolism excreted by the
+    kidneys. It is the primary surrogate for Glomerular Filtration Rate (GFR).
+  system: renal
+  primary_metric: creatinine
+  supporting_metrics: &id001
+  - egfr
+  - urea
+  - potassium
+  dependencies:
+    biomarkers:
+    - creatinine
+    - egfr
+    - urea
+    - potassium
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_creatinine_high_lab_range_activation_placeholder
+    metric_id: creatinine
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_renal_ckd_stage_3
+    description: Escalate if eGFR drops below 60 mL/min/1.73m2 (CKD Stage 3+).
+    conditions:
+    - metric_id: egfr
+      operator: <
+      value: 60.0
+      condition_type: all_of
+    resulting_state: at_risk
+  - rule_id: or_renal_acute_imbalance
+    description: Escalate if high creatinine is paired with high potassium (risk of
+      arrhythmia).
+    conditions:
+    - metric_id: potassium
+      operator: '>'
+      value: 5.2
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: creatinine
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: creatinine
+    supporting_markers: *id001
+  explanation:
+    mechanism: Reflects the balance between creatinine production (muscle) and excretion
+      (kidney).
+    biological_pathway: Filtered by glomeruli and minimally secreted by tubules.
+    interpretation: A rising creatinine requires checking eGFR. If eGFR is low, it
+      suggests either Acute Kidney Injury (AKI) or Chronic Kidney Disease (CKD).
+    implications: Requires blood pressure monitoring, medication review (nephrotoxins),
+      and urine protein check.
+    supporting_marker_roles: {}

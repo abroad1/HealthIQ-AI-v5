@@ -1,0 +1,71 @@
+library:
+  package_id: KBP-2404
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_ferritin_high Investigation Library
+  description: Investigation signal library translated from inv_ferritin_high_overload_v1.yaml.
+signals:
+- signal_id: signal_ferritin_high
+  name: Ferritin High
+  description: High ferritin can indicate iron overload (haemochromatosis), but it
+    is also a prominent acute-phase reactant that rises significantly during inflammation
+    or liver cell death.
+  system: hematologic
+  primary_metric: ferritin
+  supporting_metrics: &id001
+  - crp
+  - alt
+  - iron
+  dependencies:
+    biomarkers:
+    - ferritin
+    - crp
+    - alt
+    - iron
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_ferritin_high_lab_range_activation_placeholder
+    metric_id: ferritin
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_ferritin_extreme_elevation
+    description: Escalate for extreme ferritin levels (>1000 ug/L) which carry higher
+      specificity for pathology.
+    conditions:
+    - metric_id: ferritin
+      operator: '>'
+      value: 1000.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: ferritin
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: ferritin
+    supporting_markers: *id001
+  explanation:
+    mechanism: Elevated ferritin results from either hereditary iron loading (HFE
+      gene mutations) or reactive states like 'metabolic syndrome-associated iron
+      overload'.
+    biological_pathway: Driven by hepcidin dysregulation or inflammatory cytokine
+      (IL-6) stimulation of the ferritin promoter.
+    interpretation: Interpretation requires 'de-biasing' for inflammation using CRP.
+      High saturation is the 'at_risk' smoking gun.
+    implications: May require genetic testing for HFE or venesection (blood-letting)
+      if true overload is confirmed.
+    supporting_marker_roles:
+      crp: Identifies if elevation is a reactive acute-phase response.

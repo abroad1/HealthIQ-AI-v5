@@ -1,0 +1,80 @@
+library:
+  package_id: KBP-2409
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_tsh_high Investigation Library
+  description: Investigation signal library translated from inv_tsh_high_hypothyroidism_v1.yaml.
+signals:
+- signal_id: signal_tsh_high
+  name: Tsh High
+  description: Thyroid Stimulating Hormone is the most sensitive marker for thyroid
+    status. It rises in response to even minor drops in circulating thyroid hormones
+    (negative feedback).
+  system: hormonal
+  primary_metric: tsh
+  supporting_metrics: &id001
+  - free_t4
+  - free_t3
+  - ldl_cholesterol
+  - creatine_kinase
+  dependencies:
+    biomarkers:
+    - tsh
+    - free_t4
+    - free_t3
+    - ldl_cholesterol
+    - creatine_kinase
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_tsh_high_lab_range_activation_placeholder
+    metric_id: tsh
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_tsh_overt_hypothyroidism
+    description: Escalate if high TSH is accompanied by low Free T4 (Overt Hypothyroidism).
+    conditions:
+    - metric_id: free_t4
+      operator: <
+      value: 12.0
+      condition_type: all_of
+    resulting_state: at_risk
+  - rule_id: or_tsh_severe_elevation
+    description: Escalate if TSH is > 10 mIU/L, regardless of T4 (high risk of progression).
+    conditions:
+    - metric_id: tsh
+      operator: '>'
+      value: 10.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: tsh
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: tsh
+    supporting_markers: *id001
+  explanation:
+    mechanism: Thyrotropin-releasing hormone (TRH) from the hypothalamus stimulates
+      TSH production. TSH then stimulates the thyroid gland to produce T4 and T3.
+    biological_pathway: The Hypothalamic-Pituitary-Thyroid (HPT) axis regulates the
+      basal metabolic rate of almost all tissues.
+    interpretation: An elevated TSH indicates that the pituitary is working harder
+      to stimulate a sluggish thyroid. If T4 is still normal, it is 'subclinical';
+      if T4 is low, it is 'overt'.
+    implications: Common symptoms include fatigue, weight gain, cold intolerance,
+      and bradycardia.
+    supporting_marker_roles:
+      free_t4: Determines if the hypothyroidism is overt or subclinical.

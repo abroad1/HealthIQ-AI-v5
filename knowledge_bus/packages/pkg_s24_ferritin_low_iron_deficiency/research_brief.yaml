@@ -1,0 +1,25 @@
+research_domain: hematologic
+sources:
+- paper_title: 'Iron deficiency anaemia: assessment and management'
+  journal: NICE Guideline
+  year: 2019
+- paper_title: Guidelines for the management of iron deficiency
+  journal: British Journal of Haematology
+  year: 2021
+- paper_title: WHO guideline on use of ferritin concentrations to assess iron status
+  journal: World Health Organization
+  year: 2020
+biomarkers:
+- ferritin
+- hemoglobin
+- mcv
+- mch
+- iron
+- transferrin
+- crp
+derived_metrics: []
+physiological_claim: Ferritin reflects total body iron stores. Depletion (low ferritin)
+  precedes changes in red cell morphology and hemoglobin concentration.
+evidence_strength: consensus
+research_summary: A threshold of <15 ug/L is used for escalation as it is the WHO-defined
+  cutoff for exhausted iron stores in adults.
