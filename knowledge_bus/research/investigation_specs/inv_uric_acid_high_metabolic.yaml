@@ -1,0 +1,63 @@
+spec_id: inv_uric_acid_high_metabolic
+signal_id: signal_urate_high
+research_domain: metabolic
+primary_marker:
+  biomarker_id: urate
+  rationale: Uric acid is the end product of purine metabolism. High levels (hyperuricaemia)
+    lead to gout and are associated with hypertension and renal disease.
+  signal_system: metabolic
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: creatinine
+  expected_direction: high
+  role: mechanism_marker
+  availability: common
+  rationale: Reduced renal function leads to decreased uric acid excretion.
+- biomarker_id: triglycerides
+  expected_direction: high
+  role: corroborator
+  availability: common
+  rationale: Hyperuricaemia is frequently part of the metabolic syndrome cluster.
+override_rules:
+- rule_id: or_uric_acid_renal_risk
+  resulting_state: at_risk
+  description: Escalate if high uric acid is accompanied by impaired eGFR.
+  conditions:
+  - metric_id: egfr
+    operator: <
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 60
+  source_refs:
+  - source_ref_4
+confounders:
+- confounder: High Purine Diet
+  effect: interpretation_shift
+  mitigation_note: Red meat, seafood, and beer significantly increase uric acid levels.
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_ref_4
+    paper_title: Uric acid and renal disease
+    journal: Nature Reviews Nephrology
+    year: 2018
+  physiological_claim: Uric acid crystals precipitate in joints and renal tubules
+    when levels exceed solubility limits.
+  threshold_notes: Solubility limit is typically ~360 umol/L (6 mg/dL).
+narrative:
+  mechanism: Purine breakdown via xanthine oxidase.
+  biological_pathway: Purine catabolism.
+  interpretation: Indicator of metabolic health and risk of gouty arthritis.
+  implications: High risk of painful flares (gout) and potential kidney stones.
+  supporting_marker_roles:
+    creatinine: Indicates if high levels are due to poor kidney clearance.

@@ -1,0 +1,71 @@
+spec_id: inv_mcv_high_macrocytosis
+signal_id: signal_mcv_high
+research_domain: hematologic
+primary_marker:
+  biomarker_id: mcv
+  rationale: Mean Corpuscular Volume reflects red cell size. High MCV is a sensitive
+    indicator of B12/Folate deficiency or marrow stress.
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: vitamin_b12
+  expected_direction: low
+  role: mechanism_marker
+  availability: common
+  rationale: Common cause of megaloblastic macrocytosis.
+- biomarker_id: folate
+  expected_direction: low
+  role: mechanism_marker
+  availability: common
+  rationale: Common cause of megaloblastic macrocytosis.
+- biomarker_id: ggt
+  expected_direction: high
+  role: differential_marker
+  availability: common
+  rationale: Suggests alcohol-induced macrocytosis.
+override_rules:
+- rule_id: or_mcv_severe_macrocytosis
+  resulting_state: at_risk
+  description: Escalate for MCV > 110 fL (High risk of megaloblastic anemia or MDS).
+  conditions:
+  - metric_id: mcv
+    operator: '>'
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 110
+  source_refs:
+  - source_bsh_2023
+confounders:
+- confounder: Alcohol Use
+  effect: interpretation_shift
+  mitigation_note: Chronic alcohol exposure can raise MCV independent of B12 or folate depletion.
+- confounder: Reticulocytosis
+  effect: interpretation_shift
+  mitigation_note: Increased reticulocytes can elevate MCV transiently after blood loss or hemolysis.
+evidence:
+  evidence_strength: moderate
+  sources:
+  - source_id: source_bsh_2023
+    paper_title: Guideline for the diagnosis and treatment of cobalamin and folate disorders
+    journal: British Journal of Haematology
+    year: 2023
+  physiological_claim: Macrocytosis reflects disrupted DNA synthesis or altered membrane biology in erythroid precursors.
+  threshold_notes: Numeric escalation threshold >110 fL is used as a high-severity morphology trigger.
+narrative:
+  mechanism: MCV rises when erythrocytes are larger due to ineffective maturation or altered membrane composition.
+  biological_pathway: Erythropoiesis and nucleotide synthesis pathways in bone marrow.
+  interpretation: High MCV is a morphology-led investigation trigger requiring nutritional, hepatic, and alcohol-context evaluation.
+  implications: Persistent macrocytosis warrants investigation for megaloblastic anemia, alcohol-related change, thyroid dysfunction, or marrow disorder.
+  supporting_marker_roles:
+    vitamin_b12: Assesses cobalamin-dependent megaloblastic mechanism.
+    folate: Assesses folate-dependent megaloblastic mechanism.
+    ggt: Provides alcohol/hepatic context for differential interpretation.

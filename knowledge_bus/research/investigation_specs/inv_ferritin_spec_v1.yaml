@@ -1,0 +1,134 @@
+spec_id: inv_ferritin_low_iron_deficiency
+signal_id: signal_ferritin_low
+research_domain: hematologic
+primary_marker:
+  biomarker_id: ferritin
+  rationale: Ferritin is the primary storage protein for iron. A low level is the
+    most specific biochemical indicator of depleted iron stores before the onset of
+    anemia.
+  signal_system: hematologic
+trigger_direction: low
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: hemoglobin
+  expected_direction: low
+  role: severity_marker
+  availability: common
+  rationale: Decrease indicates progression from iron depletion to iron deficiency
+    anemia (IDA).
+- biomarker_id: mcv
+  expected_direction: low
+  role: mechanism_marker
+  availability: common
+  rationale: Microcytosis supports iron deficiency as the cause of low ferritin.
+- biomarker_id: mch
+  expected_direction: low
+  role: mechanism_marker
+  availability: common
+  rationale: Hypochromia is a characteristic morphological change in iron deficiency.
+- biomarker_id: iron
+  expected_direction: low
+  role: corroborator
+  availability: common
+  rationale: Low serum iron confirms low circulating iron levels.
+- biomarker_id: transferrin
+  expected_direction: high
+  role: mechanism_marker
+  availability: optional
+  rationale: Transferrin can rise as a compensatory response during iron depletion.
+- biomarker_id: crp
+  expected_direction: high
+  role: differential_marker
+  availability: common
+  rationale: Elevated CRP can raise ferritin in inflammation; low ferritin despite
+    high CRP is highly significant.
+override_rules:
+- rule_id: or_ferritin_ida_progression
+  resulting_state: at_risk
+  description: Escalate if low ferritin is accompanied by low hemoglobin (anemia).
+  conditions:
+  - metric_id: hemoglobin
+    operator: <
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: below_min
+  source_refs:
+  - source_nice_ng151
+- rule_id: or_ferritin_microcytosis
+  resulting_state: at_risk
+  description: Escalate if low ferritin is accompanied by microcytosis (low MCV).
+  conditions:
+  - metric_id: mcv
+    operator: <
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: below_min
+  source_refs:
+  - source_bsh_2021
+- rule_id: or_ferritin_severe_depletion
+  resulting_state: at_risk
+  description: Escalate if ferritin is profoundly low (<15 ug/L) regardless of other
+    markers.
+  conditions:
+  - metric_id: ferritin
+    operator: <
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 15
+  source_refs:
+  - source_who_2020
+confounders:
+- confounder: Acute Phase Response
+  effect: false_negative_risk
+  mitigation_note: Ferritin is an acute-phase reactant. If CRP is elevated, a normal
+    ferritin may mask iron deficiency.
+- confounder: Liver Disease
+  effect: false_negative_risk
+  mitigation_note: Hepatocyte damage can release ferritin, potentially masking underlying
+    deficiency.
+- confounder: Pregnancy
+  effect: interpretation_shift
+  mitigation_note: Plasma volume expansion lowers ferritin in pregnancy; deficiency
+    cutoffs may require trimester-aware interpretation.
+evidence:
+  evidence_strength: consensus
+  sources:
+  - source_id: source_nice_ng151
+    paper_title: 'Iron deficiency anaemia: assessment and management'
+    journal: NICE Guideline
+    year: 2019
+  - source_id: source_bsh_2021
+    paper_title: Guidelines for the management of iron deficiency
+    journal: British Journal of Haematology
+    year: 2021
+  - source_id: source_who_2020
+    paper_title: WHO guideline on use of ferritin concentrations to assess iron status
+    journal: World Health Organization
+    year: 2020
+  physiological_claim: Ferritin reflects total body iron stores. Depletion (low ferritin)
+    precedes changes in red cell morphology and hemoglobin concentration.
+  threshold_notes: A threshold of <15 ug/L is used for escalation as it is the WHO-defined
+    cutoff for exhausted iron stores in adults.
+narrative:
+  mechanism: Ferritin provides controlled intracellular iron storage. Low values indicate
+    depleted reserves, commonly from blood loss, reduced intake, or impaired absorption.
+  biological_pathway: Iron is absorbed in the duodenum, transported by transferrin,
+    used for erythropoiesis, and stored as ferritin in liver and reticuloendothelial
+    cells.
+  interpretation: Low ferritin indicates iron depletion. If accompanied by low hemoglobin
+    or low MCV, this supports progression toward iron deficiency anemia.
+  implications: Requires evaluation of cause (for example GI blood loss, menstrual
+    blood loss, diet, malabsorption) and often iron repletion with follow-up.
+  supporting_marker_roles:
+    hemoglobin: Indicates progression from depletion to functional anemia.
+    mcv: Supports a microcytic pattern consistent with iron-restricted erythropoiesis.
+    crp: Provides inflammatory context for ferritin interpretation.

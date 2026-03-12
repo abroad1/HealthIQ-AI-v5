@@ -1,0 +1,116 @@
+spec_id: inv_ldl_high_dyslipidaemia
+signal_id: signal_ldl_cholesterol_high
+research_domain: lipids
+primary_marker:
+  biomarker_id: ldl_cholesterol
+  rationale: Low-Density Lipoprotein is the primary carrier of cholesterol to peripheral
+    tissues. Elevated levels are directly causal in the development of atherosclerotic
+    cardiovascular disease (ASCVD).
+  signal_system: lipid_transport
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: non_hdl_cholesterol
+  expected_direction: high
+  role: severity_marker
+  availability: common
+  rationale: Calculated as Total Cholesterol minus HDL; reflects the full burden of
+    atherogenic lipoproteins.
+- biomarker_id: apob
+  expected_direction: high
+  role: mechanism_marker
+  availability: optional
+  rationale: Measures the total number of atherogenic particles; more predictive than
+    LDL-C in metabolic syndrome.
+- biomarker_id: hdl_cholesterol
+  expected_direction: low
+  role: corroborator
+  availability: common
+  rationale: Low HDL in the presence of high LDL increases the total cardiovascular
+    risk profile.
+- biomarker_id: triglycerides
+  expected_direction: high
+  role: mechanism_marker
+  availability: common
+  rationale: Associated with small dense LDL particles which are more atherogenic.
+- biomarker_id: lipoprotein_a
+  expected_direction: high
+  role: severity_marker
+  availability: optional
+  rationale: Genetically determined independent risk factor for ASCVD; amplifies the
+    risk of high LDL.
+override_rules:
+- rule_id: or_ldl_familial_threshold
+  resulting_state: at_risk
+  description: Escalate for very high LDL (>4.9 mmol/L) suggesting potential Familial
+    Hypercholesterolemia.
+  conditions:
+  - metric_id: ldl_cholesterol
+    operator: '>'
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 4.9
+  source_refs:
+  - source_nice_cg71
+- rule_id: or_ldl_high_non_hdl_discordance
+  resulting_state: at_risk
+  description: Escalate if non-HDL is also significantly elevated (>5.5 mmol/L).
+  conditions:
+  - metric_id: non_hdl_cholesterol
+    operator: '>'
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 5.5
+  source_refs:
+  - source_esc_eas_2019
+confounders:
+- confounder: Hypothyroidism
+  effect: interpretation_shift
+  mitigation_note: Low thyroid function reduces LDL receptor activity, leading to
+    secondary hypercholesterolemia.
+- confounder: Pregnancy
+  effect: interpretation_shift
+  mitigation_note: Cholesterol levels naturally rise significantly during pregnancy
+    to support foetal development.
+- confounder: Acute Illness
+  effect: false_negative_risk
+  mitigation_note: LDL levels can drop acutely during major infection or post-MI,
+    masking baseline levels.
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_esc_eas_2019
+    paper_title: ESC/EAS Guidelines for the management of dyslipidaemias
+    journal: European Heart Journal
+    year: 2019
+  - source_id: source_nice_cg71
+    paper_title: 'Familial hypercholesterolaemia: identification and management'
+    journal: NICE Guideline
+    year: 2019
+  physiological_claim: LDL particles infiltrate the arterial intima, undergo oxidation,
+    and trigger the inflammatory cascade of plaque formation.
+  threshold_notes: 4.9 mmol/L (190 mg/dL) is the clinical trigger for assessing Familial
+    Hypercholesterolemia in adults.
+narrative:
+  mechanism: LDL carries cholesterol from the liver to cells. When in excess, it deposits
+    in arterial walls.
+  biological_pathway: Reverse cholesterol transport is overwhelmed by the influx of
+    LDL-C into the vascular endothelium.
+  interpretation: Primary driver of cardiovascular risk. Interpretation should be
+    framed by the patient's overall QRISK/Framingham score.
+  implications: High levels indicate a need for dietary modification or statin therapy
+    to lower ASCVD risk.
+  supporting_marker_roles:
+    non_hdl_cholesterol: Provides a more comprehensive view of atherogenic risk than
+      LDL alone.
+    triglycerides: High levels often shift LDL particles toward the smaller, more
+      dangerous dense form.

@@ -1,0 +1,72 @@
+spec_id: inv_calcium_high_endocrine
+signal_id: signal_calcium_high
+research_domain: hormonal
+primary_marker:
+  biomarker_id: calcium
+  rationale: Serum calcium is strictly regulated. High levels (hypercalcaemia) are
+    often due to hyperparathyroidism or malignancy and require urgent investigation.
+  signal_system: hormonal
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: albumin
+  expected_direction: any
+  role: corroborator
+  availability: common
+  rationale: Used to calculate 'Adjusted Calcium' as calcium is protein-bound.
+- biomarker_id: vitamin_d
+  expected_direction: high
+  role: differential_marker
+  availability: common
+  rationale: Extreme Vitamin D intake can cause hypercalcaemia.
+- biomarker_id: creatinine
+  expected_direction: high
+  role: differential_marker
+  availability: common
+  rationale: Reduced renal clearance can contribute to calcium dysregulation and increases renal complication risk.
+override_rules:
+- rule_id: or_calcium_severe_hypercalcemia
+  resulting_state: at_risk
+  description: Escalate for profound hypercalcaemia (>3.0 mmol/L) due to risk of cardiac
+    arrhythmia.
+  conditions:
+  - metric_id: calcium
+    operator: '>'
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 3.0
+  source_refs:
+  - source_ref_10
+confounders:
+- confounder: Thiazide Diuretics
+  effect: interpretation_shift
+  mitigation_note: Commonly used for BP; these reduce renal calcium excretion, raising
+    serum levels.
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_ref_10
+    paper_title: Management of Hypercalcaemia
+    journal: BMJ
+    year: 2018
+  physiological_claim: Calcium regulates neuromuscular excitability and cardiac conduction.
+  threshold_notes: 3.0 mmol/L is a standard threshold for severe, potentially urgent
+    hypercalcaemia.
+narrative:
+  mechanism: Bone resorption, intestinal absorption, and renal reabsorption.
+  biological_pathway: Calcium-sensing receptor and PTH axis.
+  interpretation: An 'always investigate' marker when high.
+  implications: Risk of kidney stones, bone pain, and cardiac issues.
+  supporting_marker_roles:
+    albumin: Provides correction context for total calcium interpretation.
+    vitamin_d: Supports differential assessment of vitamin D-mediated hypercalcemia.
+    creatinine: Adds renal-risk context in hypercalcemic states.

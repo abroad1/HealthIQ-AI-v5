@@ -1,0 +1,124 @@
+spec_id: inv_alt_high_hepatocellular_injury
+signal_id: signal_alt_high
+research_domain: hepatic
+primary_marker:
+  biomarker_id: alt
+  rationale: Alanine Aminotransferase is found predominantly in the liver. Its release
+    into the blood is a highly specific indicator of hepatocellular injury.
+  signal_system: hepatic
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: ast
+  expected_direction: high
+  role: corroborator
+  availability: common
+  rationale: AST is also elevated in liver injury; the AST/ALT ratio provides diagnostic
+    clues.
+- biomarker_id: ggt
+  expected_direction: high
+  role: mechanism_marker
+  availability: common
+  rationale: Elevation supports a hepatic origin of the injury and may indicate biliary
+    involvement or alcohol use.
+- biomarker_id: alp
+  expected_direction: high
+  role: mechanism_marker
+  availability: common
+  rationale: High ALP alongside ALT suggests a cholestatic or mixed pattern of liver
+    injury.
+- biomarker_id: bilirubin
+  expected_direction: high
+  role: severity_marker
+  availability: common
+  rationale: Elevation indicates impaired hepatic excretory function and higher severity
+    (jaundice).
+- biomarker_id: albumin
+  expected_direction: low
+  role: severity_marker
+  availability: common
+  rationale: Low albumin in the context of high ALT suggests chronic liver dysfunction
+    or significant acute failure.
+override_rules:
+- rule_id: or_alt_hepatocellular_severity
+  resulting_state: at_risk
+  description: Escalate if ALT is >3x the upper limit of normal (ULN).
+  conditions:
+  - metric_id: alt
+    operator: '>'
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 120
+  source_refs:
+  - source_acg_2017
+- rule_id: or_alt_impaired_function
+  resulting_state: at_risk
+  description: Escalate if high ALT is accompanied by high bilirubin (Hy's Law risk).
+  conditions:
+  - metric_id: bilirubin
+    operator: '>'
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: above_max
+  source_refs:
+  - source_fda_hys_law
+- rule_id: or_alt_mixed_cholestatic
+  resulting_state: at_risk
+  description: Escalate if ALT and ALP are both significantly elevated.
+  conditions:
+  - metric_id: alp
+    operator: '>'
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: above_max
+  source_refs:
+  - source_easl_2017
+confounders:
+- confounder: Strenuous Exercise
+  effect: false_positive_risk
+  mitigation_note: Muscle damage (rhabdomyolysis) can release ALT, though AST is usually
+    higher in these cases.
+- confounder: Statins
+  effect: interpretation_shift
+  mitigation_note: Can cause transient, asymptomatic elevations in transaminases.
+- confounder: Alcohol
+  effect: interpretation_shift
+  mitigation_note: Recent heavy consumption can cause acute spikes in ALT/AST and
+    GGT.
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_acg_2017
+    paper_title: 'ACG Clinical Guideline: Evaluation of Abnormal Liver Chemistries'
+    journal: American Journal of Gastroenterology
+    year: 2017
+  - source_id: source_fda_hys_law
+    paper_title: 'Guidance for Industry: Drug-Induced Liver Injury'
+    journal: FDA
+    year: 2009
+  physiological_claim: ALT is a cytosolic enzyme. Damage to the hepatocyte membrane
+    causes the enzyme to leak into the bloodstream.
+  threshold_notes: Numeric threshold of 120 U/L for escalation assumes a typical ULN
+    of ~40 U/L (3x ULN is a standard clinical threshold for investigation).
+narrative:
+  mechanism: ALT catalyzes the transfer of an amino group from alanine to alpha-ketoglutarate.
+    It is released upon hepatocyte necrosis or inflammation.
+  biological_pathway: Hepatocellular integrity is lost, allowing cytosolic contents
+    to enter the systemic circulation.
+  interpretation: A rising ALT is a sensitive marker of liver 'stress.' When paired
+    with high Bilirubin, it suggests a loss of liver function.
+  implications: Requires assessment for NAFLD, viral hepatitis, alcohol-related liver
+    disease, or drug-induced injury.
+  supporting_marker_roles:
+    ast: Used to calculate the AST/ALT ratio to differentiate causes (e.g., alcohol
+      vs NAFLD).
+    ggt: Confirms that the enzyme elevation is of hepatic origin.

@@ -1,0 +1,61 @@
+spec_id: inv_hdl_high_cardiovascular
+signal_id: signal_hdl_cholesterol_high
+research_domain: lipids
+primary_marker:
+  biomarker_id: hdl_cholesterol
+  rationale: Traditionally viewed as 'good' cholesterol, extremely high levels (>2.3
+    mmol/L) may paradoxicaly be associated with increased cardiovascular risk or dysfunctional
+    particles.
+  signal_system: lipid_transport
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: crp
+  expected_direction: high
+  role: mechanism_marker
+  availability: common
+  rationale: High HDL in the presence of inflammation may indicate 'pro-inflammatory'
+    dysfunctional HDL.
+override_rules:
+- rule_id: or_hdl_extreme_paradox
+  resulting_state: at_risk
+  description: Escalate for extremely high HDL levels (>2.5 mmol/L) which may be dysfunctional.
+  conditions:
+  - metric_id: hdl_cholesterol
+    operator: '>'
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 2.5
+  source_refs:
+  - source_ref_8
+confounders:
+- confounder: Alcohol
+  effect: interpretation_shift
+  mitigation_note: Regular alcohol consumption can significantly raise HDL levels.
+evidence:
+  evidence_strength: exploratory
+  sources:
+  - source_id: source_ref_8
+    paper_title: The U-shaped relationship of HDL and mortality
+    journal: European Heart Journal
+    year: 2017
+  physiological_claim: Very large HDL particles may lose their ability to promote
+    cholesterol efflux.
+  threshold_notes: "Threshold evidence inconclusive for this condition \u2014 additional\
+    \ validation required."
+narrative:
+  mechanism: HDL particle size and protein composition change at extreme concentrations.
+  biological_pathway: Reverse Cholesterol Transport.
+  interpretation: More is not always better; extreme levels may not be protective.
+  implications: May require assessment of other risk factors like ApoB or Lp(a).
+  supporting_marker_roles:
+    crp: Assesses if the high HDL is occurring in a pro-inflammatory environment.

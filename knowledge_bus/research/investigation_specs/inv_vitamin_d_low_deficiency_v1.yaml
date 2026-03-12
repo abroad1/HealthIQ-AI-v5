@@ -1,0 +1,76 @@
+spec_id: inv_vitamin_d_low_deficiency
+signal_id: signal_vitamin_d_low
+research_domain: metabolic
+primary_marker:
+  biomarker_id: vitamin_d
+  rationale: 25-hydroxyvitamin D is the best indicator of total body Vitamin D stores,
+    essential for calcium homeostasis and bone health.
+  signal_system: other
+trigger_direction: low
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: calcium
+  expected_direction: low
+  role: severity_marker
+  availability: common
+  rationale: Low Vitamin D leads to reduced intestinal calcium absorption.
+- biomarker_id: alp
+  expected_direction: high
+  role: mechanism_marker
+  availability: common
+  rationale: High ALP (bone fraction) suggests increased bone turnover or osteomalacia.
+override_rules:
+- rule_id: or_vit_d_severe_deficiency
+  resulting_state: at_risk
+  description: Escalate for profound deficiency (<25 nmol/L) associated with risk
+    of osteomalacia.
+  conditions:
+  - metric_id: vitamin_d
+    operator: <
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 25
+  source_refs:
+  - source_sacn_2016
+confounders:
+- confounder: Seasonality
+  effect: interpretation_shift
+  mitigation_note: Levels are naturally lowest in spring and highest in late summer
+    due to UV exposure.
+- confounder: Acute Phase Response
+  effect: false_positive_risk
+  mitigation_note: Vitamin D can act as a negative acute-phase reactant; levels may
+    drop during acute illness.
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_sacn_2016
+    paper_title: Vitamin D and Health
+    journal: Public Health England
+    year: 2016
+  - source_id: source_nos_2013
+    paper_title: 'Vitamin D and Bone Health: A Practical Clinical Guideline'
+    journal: National Osteoporosis Society
+    year: 2013
+  physiological_claim: Vitamin D is converted to its active form (1,25-OH) in the
+    kidneys, where it promotes calcium and phosphate absorption.
+  threshold_notes: 25 nmol/L is the UK Department of Health threshold for deficiency.
+narrative:
+  mechanism: Regulates calcium and phosphate metabolism for bone mineralization.
+  biological_pathway: Vitamin D receptor (VDR) activation in the gut increases expression
+    of calcium transport proteins.
+  interpretation: Low levels are common in higher latitudes. Severe deficiency leads
+    to rickets (children) or osteomalacia (adults).
+  implications: Requires supplementation and potential investigation of bone density
+    if chronic.
+  supporting_marker_roles:
+    calcium: Indicates the clinical severity of the absorption deficit.

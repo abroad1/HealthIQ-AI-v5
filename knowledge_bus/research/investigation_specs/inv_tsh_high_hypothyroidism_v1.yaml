@@ -1,0 +1,105 @@
+spec_id: inv_tsh_high_hypothyroidism
+signal_id: signal_tsh_high
+research_domain: hormonal
+primary_marker:
+  biomarker_id: tsh
+  rationale: Thyroid Stimulating Hormone is the most sensitive marker for thyroid
+    status. It rises in response to even minor drops in circulating thyroid hormones
+    (negative feedback).
+  signal_system: hormonal
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: free_t4
+  expected_direction: low
+  role: severity_marker
+  availability: common
+  rationale: Low FT4 alongside high TSH confirms primary hypothyroidism (overt).
+- biomarker_id: free_t3
+  expected_direction: low
+  role: severity_marker
+  availability: optional
+  rationale: T3 is the biologically active hormone; often preserved until late-stage
+    hypothyroidism.
+- biomarker_id: ldl_cholesterol
+  expected_direction: high
+  role: corroborator
+  availability: common
+  rationale: Hypothyroidism slows metabolism, frequently leading to elevated LDL cholesterol.
+- biomarker_id: creatine_kinase
+  expected_direction: high
+  role: corroborator
+  availability: optional
+  rationale: Severe hypothyroidism can cause mild elevations in CK due to muscle involvement.
+override_rules:
+- rule_id: or_tsh_overt_hypothyroidism
+  resulting_state: at_risk
+  description: Escalate if high TSH is accompanied by low Free T4 (Overt Hypothyroidism).
+  conditions:
+  - metric_id: free_t4
+    operator: <
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: below_min
+  source_refs:
+  - source_nice_ng145
+- rule_id: or_tsh_severe_elevation
+  resulting_state: at_risk
+  description: Escalate if TSH is > 10 mIU/L, regardless of T4 (high risk of progression).
+  conditions:
+  - metric_id: tsh
+    operator: '>'
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 10
+  source_refs:
+  - source_eta_2013
+confounders:
+- confounder: Recovery from Non-Thyroidal Illness
+  effect: false_positive_risk
+  mitigation_note: TSH can rise temporarily during recovery from a major systemic
+    illness ('Sick Euthyroid' recovery phase).
+- confounder: Biotin Supplementation
+  effect: interpretation_shift
+  mitigation_note: High-dose biotin can interfere with immunoassay architecture, often
+    causing falsely low TSH and falsely high T4.
+- confounder: Time of Day
+  effect: interpretation_shift
+  mitigation_note: TSH has a diurnal rhythm; peak levels occur late at night/early
+    morning.
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_nice_ng145
+    paper_title: 'Thyroid disease: assessment and management'
+    journal: NICE Guideline
+    year: 2019
+  - source_id: source_eta_2013
+    paper_title: 'ETA Guideline: Management of Subclinical Hypothyroidism'
+    journal: European Thyroid Journal
+    year: 2013
+  physiological_claim: TSH is released by the anterior pituitary. It exhibits a log-linear
+    relationship with FT4, meaning small changes in T4 cause large changes in TSH.
+  threshold_notes: A TSH > 10 mIU/L is a widely accepted threshold for initiating
+    treatment in subclinical hypothyroidism to prevent cardiovascular complications.
+narrative:
+  mechanism: Thyrotropin-releasing hormone (TRH) from the hypothalamus stimulates
+    TSH production. TSH then stimulates the thyroid gland to produce T4 and T3.
+  biological_pathway: The Hypothalamic-Pituitary-Thyroid (HPT) axis regulates the
+    basal metabolic rate of almost all tissues.
+  interpretation: An elevated TSH indicates that the pituitary is working harder to
+    stimulate a sluggish thyroid. If T4 is still normal, it is 'subclinical'; if T4
+    is low, it is 'overt'.
+  implications: Common symptoms include fatigue, weight gain, cold intolerance, and
+    bradycardia.
+  supporting_marker_roles:
+    free_t4: Determines if the hypothyroidism is overt or subclinical.

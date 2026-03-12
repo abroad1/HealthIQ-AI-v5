@@ -1,0 +1,72 @@
+spec_id: inv_albumin_low_nutritional
+signal_id: signal_albumin_low
+research_domain: metabolic
+primary_marker:
+  biomarker_id: albumin
+  rationale: Albumin is the main protein produced by the liver. It maintains oncotic
+    pressure and acts as a transport protein. Low levels indicate chronic inflammation,
+    liver disease, or malnutrition.
+  signal_system: other
+trigger_direction: low
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: crp
+  expected_direction: high
+  role: differential_marker
+  availability: common
+  rationale: If CRP is high, low albumin is likely a 'negative acute phase' response
+    to inflammation.
+- biomarker_id: alt
+  expected_direction: high
+  role: mechanism_marker
+  availability: common
+  rationale: Co-elevation suggests liver synthetic failure.
+- biomarker_id: calcium
+  expected_direction: low
+  role: corroborator
+  availability: common
+  rationale: Total calcium will appear low because albumin is its primary carrier
+    protein.
+override_rules:
+- rule_id: or_albumin_synthetic_failure
+  resulting_state: at_risk
+  description: Escalate if low albumin is paired with high Bilirubin or high ALT (Liver
+    Dysfunction).
+  conditions:
+  - metric_id: alt
+    operator: '>'
+    condition_type: any_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: above_max
+  source_refs:
+  - source_ref_6
+confounders:
+- confounder: Hydration Status
+  effect: interpretation_shift
+  mitigation_note: Over-hydration can dilute albumin, leading to falsely low readings.
+evidence:
+  evidence_strength: moderate
+  sources:
+  - source_id: source_ref_6
+    paper_title: Clinical significance of hypoalbuminemia
+    journal: Journal of Clinical Pathology
+    year: 2018
+  physiological_claim: Albumin synthesis is downregulated by pro-inflammatory cytokines
+    like TNF-alpha.
+  threshold_notes: Lab-range breach trigger.
+narrative:
+  mechanism: Synthesized in hepatocytes; half-life ~20 days.
+  biological_pathway: Protein metabolism.
+  interpretation: A general marker of health 'stability' and synthetic capacity.
+  implications: Severe low levels lead to oedema (swelling) and impaired drug transport.
+  supporting_marker_roles:
+    crp: Determines if the low albumin is due to acute stress vs. chronic malnutrition.

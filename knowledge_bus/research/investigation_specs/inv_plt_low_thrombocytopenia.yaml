@@ -1,0 +1,65 @@
+spec_id: inv_plt_low_thrombocytopenia
+signal_id: signal_platelets_low
+research_domain: hematologic
+primary_marker:
+  biomarker_id: platelets
+  rationale: Platelets are central to primary hemostasis; low counts increase spontaneous and procedural bleeding risk.
+  signal_system: hematologic
+trigger_direction: low
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: hemoglobin
+  expected_direction: low
+  role: differential_marker
+  availability: common
+  rationale: Coexisting anemia increases concern for bleeding or marrow pathology.
+- biomarker_id: white_blood_cells
+  expected_direction: low
+  role: differential_marker
+  availability: common
+  rationale: Combined cytopenias suggest marrow suppression/failure rather than isolated platelet loss.
+override_rules:
+- rule_id: or_plt_severe_bleeding_risk
+  resulting_state: at_risk
+  description: Escalate for platelets <50 x10^9/L due to clinically significant bleeding risk.
+  conditions:
+  - metric_id: platelets
+    operator: <
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 50
+  source_refs:
+  - source_bsh_2023
+confounders:
+- confounder: EDTA Platelet Clumping
+  effect: false_positive_risk
+  mitigation_note: Pseudothrombocytopenia from in-vitro clumping can artifactually reduce automated platelet counts.
+- confounder: Recent Viral Illness
+  effect: interpretation_shift
+  mitigation_note: Transient post-viral thrombocytopenia may resolve spontaneously.
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_bsh_2023
+    paper_title: Guideline for the investigation and management of adult thrombocytopenia
+    journal: British Journal of Haematology
+    year: 2023
+  physiological_claim: Thrombocytopenia increases bleeding risk in a non-linear manner as platelet count declines.
+  threshold_notes: Numeric escalation threshold <50 x10^9/L is used for higher immediate bleeding risk.
+narrative:
+  mechanism: Low platelet count arises from reduced marrow production, increased peripheral destruction, or sequestration.
+  biological_pathway: Megakaryopoiesis and platelet-mediated primary hemostasis.
+  interpretation: Isolated mild thrombocytopenia may be chronic/benign, but deeper reductions or co-cytopenias increase urgency.
+  implications: Severe thrombocytopenia can cause mucosal bleeding, petechiae, and procedure-related hemorrhage risk.
+  supporting_marker_roles:
+    hemoglobin: Adds bleeding/marrow context when co-reduced.
+    white_blood_cells: Adds marrow-suppression context when co-reduced.

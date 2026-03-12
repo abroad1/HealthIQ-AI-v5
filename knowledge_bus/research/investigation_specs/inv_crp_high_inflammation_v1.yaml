@@ -1,0 +1,123 @@
+spec_id: inv_crp_high_inflammation
+signal_id: signal_crp_high
+research_domain: inflammatory
+primary_marker:
+  biomarker_id: crp
+  rationale: C-Reactive Protein is an acute-phase reactant synthesized by the liver
+    in response to IL-6. It is a highly sensitive but non-specific marker of systemic
+    inflammation.
+  signal_system: inflammatory
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: white_blood_cells
+  expected_direction: high
+  role: corroborator
+  availability: common
+  rationale: Leukocytosis supports an active immune response, often associated with
+    infection.
+- biomarker_id: neutrophils
+  expected_direction: high
+  role: mechanism_marker
+  availability: common
+  rationale: Neutrophilia specifically points toward bacterial infection or acute
+    tissue injury.
+- biomarker_id: albumin
+  expected_direction: low
+  role: severity_marker
+  availability: common
+  rationale: Albumin is a negative acute-phase reactant; low levels alongside high
+    CRP indicate significant systemic stress.
+- biomarker_id: ferritin
+  expected_direction: high
+  role: corroborator
+  availability: common
+  rationale: Ferritin acts as an acute-phase reactant and often rises alongside CRP.
+override_rules:
+- rule_id: or_crp_acute_infection_pattern
+  resulting_state: at_risk
+  description: Escalate if high CRP is accompanied by leukocytosis and neutrophilia.
+  conditions:
+  - metric_id: white_blood_cells
+    operator: '>'
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: above_max
+  - metric_id: neutrophils
+    operator: '>'
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: above_max
+  source_refs:
+  - source_nice_ng51
+- rule_id: or_crp_severe_inflammation
+  resulting_state: at_risk
+  description: Escalate for profound systemic inflammation (CRP >100 mg/L).
+  conditions:
+  - metric_id: crp
+    operator: '>'
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 100
+  source_refs:
+  - source_bmj_crp_2020
+- rule_id: or_crp_chronic_stress_pattern
+  resulting_state: at_risk
+  description: Escalate if high CRP is accompanied by low albumin (negative acute
+    phase response).
+  conditions:
+  - metric_id: albumin
+    operator: <
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: below_min
+  source_refs:
+  - source_clin_chem_2019
+confounders:
+- confounder: Minor Trauma/Exertion
+  effect: false_positive_risk
+  mitigation_note: Strenuous exercise or minor injury can cause transient CRP elevations.
+- confounder: Oral Contraceptives
+  effect: interpretation_shift
+  mitigation_note: Estrogen-containing medications can cause mild baseline CRP elevations.
+- confounder: Obesity
+  effect: interpretation_shift
+  mitigation_note: Adipose tissue produces IL-6, leading to chronically slightly elevated
+    CRP (low-grade inflammation).
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_nice_ng51
+    paper_title: 'Sepsis: recognition, diagnosis and early management'
+    journal: NICE Guideline
+    year: 2016
+  - source_id: source_bmj_crp_2020
+    paper_title: 'C reactive protein: a target for therapy and a surrogate marker'
+    journal: BMJ
+    year: 2020
+  physiological_claim: CRP is synthesized by hepatocytes under the influence of cytokines.
+    Its short half-life (~19h) makes it a dynamic marker of the inflammatory state.
+  threshold_notes: A value of >100 mg/L is a common clinical threshold for significant
+    bacterial infection or major systemic illness.
+narrative:
+  mechanism: CRP binds to phosphocholine expressed on the surface of dead or dying
+    cells and some bacteria, activating the complement system.
+  biological_pathway: Stimulated by IL-6, IL-1, and TNF-alpha during the innate immune
+    response.
+  interpretation: Elevated CRP indicates the presence of inflammation but does not
+    localize the source. Patterns with WBC help differentiate infection from other
+    causes.
+  implications: Persistent high CRP requires investigation for occult infection, malignancy,
+    or autoimmune disease.
+  supporting_marker_roles:
+    white_blood_cells: Confirms an active white cell response.
+    albumin: Reflects the severity and duration of the inflammatory insult.

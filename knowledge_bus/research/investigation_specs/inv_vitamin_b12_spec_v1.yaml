@@ -1,0 +1,117 @@
+spec_id: inv_b12_low_deficiency
+signal_id: signal_vitamin_b12_low
+research_domain: hematologic
+primary_marker:
+  biomarker_id: vitamin_b12
+  rationale: Total B12 is the standard first-line test for assessing cobalamin status,
+    required for DNA synthesis and neurologic function.
+  signal_system: metabolic
+trigger_direction: low
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: folate
+  expected_direction: low
+  role: corroborator
+  availability: common
+  rationale: B12 and folate are coupled in one-carbon metabolism, and dual deficiency
+    is common.
+- biomarker_id: mcv
+  expected_direction: high
+  role: mechanism_marker
+  availability: common
+  rationale: Macrocytosis is a characteristic morphologic signal in megaloblastic
+    anemia.
+- biomarker_id: hemoglobin
+  expected_direction: low
+  role: severity_marker
+  availability: common
+  rationale: Anemia indicates more advanced deficiency affecting erythropoiesis.
+- biomarker_id: active_b12
+  expected_direction: low
+  role: mechanism_marker
+  availability: optional
+  rationale: Active B12 (holotranscobalamin) reflects the biologically available fraction.
+- biomarker_id: homocysteine
+  expected_direction: high
+  role: mechanism_marker
+  availability: optional
+  rationale: Homocysteine rises when B12-dependent remethylation is impaired.
+override_rules:
+- rule_id: or_b12_macrocytosis
+  resulting_state: at_risk
+  description: Escalate if low B12 is accompanied by macrocytosis (high MCV).
+  conditions:
+  - metric_id: mcv
+    operator: '>'
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: above_max
+  source_refs:
+  - source_bsh_2023
+- rule_id: or_b12_functional_deficit
+  resulting_state: at_risk
+  description: Escalate if low active B12 or high homocysteine supports functional
+    deficiency.
+  conditions:
+  - metric_id: active_b12
+    operator: <
+    condition_type: any_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: below_min
+  - metric_id: homocysteine
+    operator: '>'
+    condition_type: any_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: above_max
+  source_refs:
+  - source_bsh_2023
+confounders:
+- confounder: Oral Contraceptive Pill
+  effect: false_positive_risk
+  mitigation_note: OCP use can lower total B12 without equivalent tissue-level deficiency.
+- confounder: Pregnancy
+  effect: false_positive_risk
+  mitigation_note: Serum B12 often falls during pregnancy because of hemodilution
+    and increased demand.
+- confounder: Metformin
+  effect: interpretation_shift
+  mitigation_note: Long-term metformin use is associated with B12 malabsorption and
+    higher deficiency risk.
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_bsh_2023
+    paper_title: Guideline for the diagnosis and treatment of cobalamin and folate
+      disorders
+    journal: British Journal of Haematology
+    year: 2023
+  - source_id: source_nice_ng239
+    paper_title: 'Vitamin B12 deficiency in over 16s: diagnosis and management'
+    journal: NICE Guideline
+    year: 2024
+  physiological_claim: B12 is a cofactor for methionine synthase and L-methylmalonyl-CoA
+    mutase. Deficiency impairs DNA synthesis and neurologic maintenance.
+  threshold_notes: "Threshold evidence inconclusive for this condition \u2014 additional\
+    \ validation required. Lab-range breach is the primary trigger."
+narrative:
+  mechanism: Vitamin B12 is required for one-carbon transfer reactions and mitochondrial
+    metabolism; deficiency disrupts hematopoiesis and neurologic function.
+  biological_pathway: B12 deficiency impairs methionine synthase activity and disrupts
+    folate-dependent nucleotide synthesis, producing megaloblastic changes.
+  interpretation: Low serum B12 suggests dietary insufficiency, malabsorption, medication
+    effect, or increased physiologic demand depending on context.
+  implications: Untreated deficiency can cause progressive anemia and neurologic injury,
+    including potentially irreversible neurocognitive and spinal cord effects.
+  supporting_marker_roles:
+    mcv: Supports megaloblastic transformation pattern.
+    active_b12: Provides functional confirmation of biologically available cobalamin.
+    folate: Provides pathway context for one-carbon metabolism interactions.

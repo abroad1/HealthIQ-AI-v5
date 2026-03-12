@@ -1,0 +1,71 @@
+spec_id: inv_ggt_high_hepatic
+signal_id: signal_ggt_high
+research_domain: hepatic
+primary_marker:
+  biomarker_id: ggt
+  rationale: Gamma-Glutamyl Transferase is a sensitive marker of hepatobiliary stress
+    and oxidative stress. It is often the first liver enzyme to rise in alcohol use
+    or NAFLD.
+  signal_system: hepatic
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: alt
+  expected_direction: high
+  role: corroborator
+  availability: common
+  rationale: Concurrent elevation confirms hepatocellular injury.
+- biomarker_id: alp
+  expected_direction: high
+  role: mechanism_marker
+  availability: common
+  rationale: High GGT + high ALP strongly suggests cholestasis (bile duct issues).
+- biomarker_id: mcv
+  expected_direction: high
+  role: differential_marker
+  availability: common
+  rationale: Macrocytosis alongside high GGT suggests chronic alcohol consumption.
+override_rules:
+- rule_id: or_ggt_cholestatic_pattern
+  resulting_state: at_risk
+  description: Escalate if GGT and ALP are both above the upper limit.
+  conditions:
+  - metric_id: alp
+    operator: '>'
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: above_max
+  source_refs:
+  - source_ref_3
+confounders:
+- confounder: Enzyme Inducing Drugs
+  effect: false_positive_risk
+  mitigation_note: Drugs like phenytoin can induce GGT synthesis without liver damage.
+evidence:
+  evidence_strength: moderate
+  sources:
+  - source_id: source_ref_3
+    paper_title: Clinical Utility of GGT
+    journal: Liver International
+    year: 2020
+  physiological_claim: GGT is involved in the metabolism of glutathione and the transport
+    of amino acids across cell membranes.
+  threshold_notes: Lab-range breach trigger.
+narrative:
+  mechanism: Released from the cell membrane of hepatocytes and biliary epithelial
+    cells.
+  biological_pathway: Glutathione metabolism.
+  interpretation: Sensitive for liver stress; used to confirm hepatic origin of high
+    ALP.
+  implications: Possible fatty liver, alcohol consumption, or biliary obstruction.
+  supporting_marker_roles:
+    alp: Differentiates between general liver stress and bile duct obstruction.

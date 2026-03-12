@@ -1,0 +1,66 @@
+spec_id: inv_wbc_high_leukocytosis
+signal_id: signal_wbc_high
+research_domain: hematologic
+primary_marker:
+  biomarker_id: white_blood_cells
+  rationale: Total White Blood Cell count is a global marker of immune activation.
+  signal_system: hematologic
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: neutrophils
+  expected_direction: high
+  role: mechanism_marker
+  availability: common
+  rationale: Specific elevation in neutrophils points toward bacterial causes.
+- biomarker_id: lymphocytes
+  expected_direction: high
+  role: mechanism_marker
+  availability: common
+  rationale: Specific elevation in lymphocytes points toward viral causes.
+override_rules:
+- rule_id: or_wbc_extreme_leukocytosis
+  resulting_state: at_risk
+  description: Escalate for massive elevation (>50 x10^9/L) potentially suggesting
+    leukemoid reaction or leukemia.
+  conditions:
+  - metric_id: white_blood_cells
+    operator: '>'
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 50
+  source_refs:
+  - source_bsh_2024
+confounders:
+- confounder: Corticosteroids
+  effect: false_positive_risk
+  mitigation_note: Steroid therapy can demarginate leukocytes and raise circulating counts without infection.
+- confounder: Acute Physiologic Stress
+  effect: interpretation_shift
+  mitigation_note: Surgery, trauma, or intense exertion can transiently elevate white cell counts.
+evidence:
+  evidence_strength: moderate
+  sources:
+  - source_id: source_bsh_2024
+    paper_title: Guideline for the investigation of leukocytosis
+    journal: British Journal of Haematology
+    year: 2024
+  physiological_claim: Leukocytosis reflects increased marrow output or redistribution of circulating leukocytes in response to inflammatory signaling.
+  threshold_notes: Numeric escalation threshold >50 x10^9/L is used for extreme leukocytosis risk stratification.
+narrative:
+  mechanism: White-cell counts rise through cytokine-driven granulopoiesis and cell demargination.
+  biological_pathway: Innate/adaptive immune activation and bone-marrow leukopoiesis.
+  interpretation: Elevated white blood cells indicate inflammatory drive but require subtype patterning for likely cause.
+  implications: Persistent or extreme elevation warrants urgent exclusion of severe infection, leukemoid reaction, or hematologic malignancy.
+  supporting_marker_roles:
+    neutrophils: Helps identify likely bacterial/inflammatory neutrophil-predominant pattern.
+    lymphocytes: Helps identify viral or lymphoproliferative pattern.
