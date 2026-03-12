@@ -440,6 +440,105 @@ def test_one_sided_lab_ranges_are_preserved_in_output_dto(tmp_path):
     assert tc_row.get("range_source") == "lab"
 
 
+def test_ab_profile_fixture_pass_through_and_hba1c_band_label(tmp_path):
+    fixture = Path(__file__).parent.parent / "fixtures" / "panels" / "ab_full_panel_with_profiles.json"
+    _, analysis_result = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path,
+        run_id="unit-ab-profiles-pass-through",
+        write_narrative=False,
+    )
+    rows = _biomarker_rows_by_name(analysis_result)
+
+    hba1c = rows.get("hba1c")
+    assert isinstance(hba1c, dict)
+    profile = hba1c.get("reference_profile")
+    assert isinstance(profile, dict)
+    assert profile.get("source") == "lab"
+    assert profile.get("effective_from") == "2024-09-11"
+    assert "bands" in profile and isinstance(profile["bands"], list)
+    assert hba1c.get("lab_band_label") == "Normal"
+
+    # KB-S26 regression: one-sided range still preserved on output rows.
+    ldl = rows.get("ldl_cholesterol")
+    assert isinstance(ldl, dict)
+    ldl_ref = ldl.get("reference_range")
+    assert isinstance(ldl_ref, dict)
+    assert ldl_ref.get("min") is None
+    assert ldl_ref.get("max") == 2.59
+    assert ldl_ref.get("source") == "lab"
+
+
+def test_band_classifier_sets_middle_band_label_from_profile(tmp_path):
+    fixture_path = tmp_path / "middle-band-profile.json"
+    fixture_payload = {
+        "biomarkers": {
+            "hba1c": {
+                "value": 42.0,
+                "unit": "mmol/mol",
+                "reference_range": {"min": None, "max": 39.0, "unit": "mmol/mol", "source": "lab"},
+                "reference_profile": {
+                    "source": "lab",
+                    "effective_from": "2024-09-11",
+                    "note": "Band test fixture",
+                    "bands": [
+                        {"label": "Normal", "min": None, "max": 39.0, "unit": "mmol/mol"},
+                        {"label": "Prediabetes", "min": 39.0, "max": 48.0, "unit": "mmol/mol"},
+                        {"label": "Diabetic", "min": 48.0, "max": None, "unit": "mmol/mol"},
+                    ],
+                },
+            },
+        },
+        "user": {"age": 58, "biological_sex": "male"},
+    }
+    fixture_path.write_text(json.dumps(fixture_payload), encoding="utf-8")
+
+    _, analysis_result = run_golden_panel(
+        fixture_path=fixture_path,
+        output_root=tmp_path,
+        run_id="unit-band-middle",
+        write_narrative=False,
+    )
+    row = _biomarker_rows_by_name(analysis_result).get("hba1c")
+    assert isinstance(row, dict)
+    assert row.get("lab_band_label") == "Prediabetes"
+
+
+def test_malformed_bands_yield_null_label_without_pipeline_crash(tmp_path):
+    fixture_path = tmp_path / "malformed-band-profile.json"
+    fixture_payload = {
+        "biomarkers": {
+            "hba1c": {
+                "value": 42.0,
+                "unit": "mmol/mol",
+                "reference_range": {"min": None, "max": 39.0, "unit": "mmol/mol", "source": "lab"},
+                "reference_profile": {
+                    "source": "lab",
+                    "effective_from": "2024-09-11",
+                    "note": "Malformed overlap fixture",
+                    "bands": [
+                        {"label": "BandA", "min": 30.0, "max": 50.0, "unit": "mmol/mol"},
+                        {"label": "BandB", "min": 40.0, "max": 60.0},
+                    ],
+                },
+            },
+        },
+        "user": {"age": 58, "biological_sex": "male"},
+    }
+    fixture_path.write_text(json.dumps(fixture_payload), encoding="utf-8")
+
+    _, analysis_result = run_golden_panel(
+        fixture_path=fixture_path,
+        output_root=tmp_path,
+        run_id="unit-band-malformed",
+        write_narrative=False,
+    )
+    row = _biomarker_rows_by_name(analysis_result).get("hba1c")
+    assert isinstance(row, dict)
+    assert isinstance(row.get("reference_profile"), dict)
+    assert row.get("lab_band_label") is None
+
+
 def test_derived_ratio_uses_policy_only_when_lab_range_missing():
     prepared = _prepare_unit_normalised(
         {

@@ -48,3 +48,29 @@ def test_normalize_preserves_one_sided_reference_ranges():
     assert hdl["min"] == 1.55
     assert hdl["max"] is None
     assert hdl["source"] == "lab"
+
+
+def test_normalize_preserves_reference_profile_payload():
+    payload = {
+        "hba1c": {
+            "value": 26.0,
+            "unit": "mmol/mol",
+            "reference_range": {"min": None, "max": 39.0, "unit": "mmol/mol", "source": "lab"},
+            "reference_profile": {
+                "source": "lab",
+                "effective_from": "2024-09-11",
+                "note": "Please note new reference range in effect from 11/09/2024",
+                "bands": [
+                    {"label": "Normal", "min": None, "max": 39.0, "unit": "mmol/mol"},
+                    {"label": "Prediabetes", "min": 39.0, "max": 48.0, "unit": "mmol/mol"},
+                    {"label": "Diabetic", "min": 48.0, "max": None, "unit": "mmol/mol"},
+                ],
+            },
+        },
+    }
+    out = normalize_biomarkers_with_metadata(payload)
+    prof = out["hba1c"].get("reference_profile")
+    assert isinstance(prof, dict)
+    assert prof.get("effective_from") == "2024-09-11"
+    assert isinstance(prof.get("bands"), list)
+    assert prof["bands"][0]["label"] == "Normal"
