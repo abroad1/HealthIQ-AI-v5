@@ -1,0 +1,83 @@
+spec_id: inv_ferritin_high_overload
+signal_id: signal_ferritin_high
+research_domain: hematologic
+primary_marker:
+  biomarker_id: ferritin
+  rationale: High ferritin can indicate iron overload (haemochromatosis), but it is
+    also a prominent acute-phase reactant that rises significantly during inflammation
+    or liver cell death.
+  signal_system: hematologic
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: crp
+  expected_direction: high
+  role: differential_marker
+  availability: common
+  rationale: If CRP is high, ferritin elevation is likely reactive (inflammation)
+    rather than true iron overload.
+- biomarker_id: alt
+  expected_direction: high
+  role: differential_marker
+  availability: common
+  rationale: Liver damage releases stored ferritin; high ALT suggests a hepatic source
+    for the elevation.
+- biomarker_id: iron
+  expected_direction: high
+  role: corroborator
+  availability: common
+  rationale: High serum iron supports a state of systemic iron excess.
+override_rules:
+- rule_id: or_ferritin_extreme_elevation
+  resulting_state: at_risk
+  description: Escalate for extreme ferritin levels (>1000 ug/L) which carry higher
+    specificity for pathology.
+  conditions:
+  - metric_id: ferritin
+    operator: '>'
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 1000
+  source_refs:
+  - source_hemochromatosis_uk
+confounders:
+- confounder: Alcohol Consumption
+  effect: false_positive_risk
+  mitigation_note: Heavy alcohol use can significantly elevate ferritin via induction
+    and mild liver injury.
+- confounder: Acute Infection
+  effect: false_positive_risk
+  mitigation_note: Ferritin can triple or quadruple during acute infection, acting
+    as an acute-phase reactant.
+evidence:
+  evidence_strength: moderate
+  sources:
+  - source_id: source_bsh_2022
+    paper_title: Diagnosis and management of genetic haemochromatosis
+    journal: British Journal of Haematology
+    year: 2022
+  physiological_claim: Ferritin is an intracellular storage protein. High levels reflect
+    either massive stores, cellular leak (lysis), or increased synthesis via inflammatory
+    cytokines.
+  threshold_notes: A ferritin >1000 ug/L is a known threshold where the risk of liver
+    cirrhosis increases in genetic haemochromatosis.
+narrative:
+  mechanism: Elevated ferritin results from either hereditary iron loading (HFE gene
+    mutations) or reactive states like 'metabolic syndrome-associated iron overload'.
+  biological_pathway: Driven by hepcidin dysregulation or inflammatory cytokine (IL-6)
+    stimulation of the ferritin promoter.
+  interpretation: Interpretation requires 'de-biasing' for inflammation using CRP.
+    High saturation is the 'at_risk' smoking gun.
+  implications: May require genetic testing for HFE or venesection (blood-letting)
+    if true overload is confirmed.
+  supporting_marker_roles:
+    crp: Identifies if elevation is a reactive acute-phase response.

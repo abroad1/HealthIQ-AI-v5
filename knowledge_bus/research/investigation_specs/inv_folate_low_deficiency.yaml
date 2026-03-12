@@ -1,0 +1,70 @@
+spec_id: inv_folate_low_deficiency
+signal_id: signal_folate_low
+research_domain: hematologic
+primary_marker:
+  biomarker_id: folate
+  rationale: Serum folate reflects recent dietary intake. It is essential for DNA
+    synthesis and red blood cell maturation.
+  signal_system: hematologic
+trigger_direction: low
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: vitamin_b12
+  expected_direction: low
+  role: corroborator
+  availability: common
+  rationale: B12 and Folate deficiencies often co-occur.
+- biomarker_id: mcv
+  expected_direction: high
+  role: mechanism_marker
+  availability: common
+  rationale: Macrocytosis is the morphological hallmark of megaloblastic anemia caused
+    by folate deficiency.
+- biomarker_id: homocysteine
+  expected_direction: high
+  role: severity_marker
+  availability: optional
+  rationale: Homocysteine rises when folate is insufficient for its remethylation.
+override_rules:
+- rule_id: or_folate_megaloblastic_risk
+  resulting_state: at_risk
+  description: Escalate if low folate is accompanied by macrocytosis (High MCV).
+  conditions:
+  - metric_id: mcv
+    operator: '>'
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: above_max
+  source_refs:
+  - source_ref_5
+confounders:
+- confounder: Recent Meal
+  effect: false_negative_risk
+  mitigation_note: A single folate-rich meal can temporarily normalize serum folate
+    despite tissue deficiency.
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_ref_5
+    paper_title: Folate deficiency guidelines
+    journal: BSH
+    year: 2023
+  physiological_claim: Folate is required for thymidylate synthesis; its absence leads
+    to 'ineffective erythropoiesis'.
+  threshold_notes: Lab range trigger.
+narrative:
+  mechanism: Folate derivatives act as one-carbon donors.
+  biological_pathway: Nucleotide synthesis.
+  interpretation: Low folate indicates dietary lack or malabsorption.
+  implications: Risk of anemia and, in pregnancy, neural tube defects.
+  supporting_marker_roles:
+    homocysteine: Functional marker of folate depletion at the cellular level.

@@ -1,0 +1,118 @@
+spec_id: inv_hba1c_high_glycaemia
+signal_id: signal_hba1c_high
+research_domain: metabolic
+primary_marker:
+  biomarker_id: hba1c
+  rationale: "HbA1c reflects average plasma glucose over the previous 8\u201312 weeks.\
+    \ It is the gold standard for diagnosing and monitoring diabetes mellitus and\
+    \ pre-diabetes."
+  signal_system: metabolic
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: glucose
+  expected_direction: high
+  role: corroborator
+  availability: common
+  rationale: Elevated fasting glucose provides point-in-time confirmation of impaired
+    glycaemic regulation.
+- biomarker_id: triglycerides
+  expected_direction: high
+  role: mechanism_marker
+  availability: common
+  rationale: Hypertriglyceridemia is frequently associated with insulin resistance
+    and metabolic syndrome.
+- biomarker_id: hdl_cholesterol
+  expected_direction: low
+  role: mechanism_marker
+  availability: common
+  rationale: Low HDL is a core component of the metabolic triad alongside high HbA1c
+    and triglycerides.
+- biomarker_id: alt
+  expected_direction: high
+  role: mechanism_marker
+  availability: common
+  rationale: Elevated ALT may indicate Non-Alcoholic Fatty Liver Disease (NAFLD),
+    which is strongly linked to insulin resistance.
+override_rules:
+- rule_id: or_hba1c_diagnostic_diabetes
+  resulting_state: at_risk
+  description: Escalate if HbA1c meets the WHO diagnostic threshold for Diabetes (>=
+    48 mmol/mol).
+  conditions:
+  - metric_id: hba1c
+    operator: '>='
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 48
+  source_refs:
+  - source_who_2011
+  - source_nice_ng28
+- rule_id: or_hba1c_metabolic_syndrome
+  resulting_state: at_risk
+  description: Escalate if high HbA1c is accompanied by high triglycerides and low
+    HDL (Metabolic Syndrome pattern).
+  conditions:
+  - metric_id: triglycerides
+    operator: '>'
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: above_max
+  - metric_id: hdl_cholesterol
+    operator: <
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: below_min
+  source_refs:
+  - source_idf_2006
+confounders:
+- confounder: Haemoglobinopathies
+  effect: interpretation_shift
+  mitigation_note: Variants like HbS or HbC can interfere with some HbA1c assays,
+    leading to inaccurate results.
+- confounder: Iron Deficiency Anemia
+  effect: false_positive_risk
+  mitigation_note: Iron deficiency can falsely elevate HbA1c levels due to changes
+    in red cell lifespan.
+- confounder: Shortened RBC Lifespan
+  effect: false_negative_risk
+  mitigation_note: Conditions like haemolytic anemia or recent blood loss artificially
+    lower HbA1c by reducing glucose exposure time.
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_who_2011
+    paper_title: Use of Glycated Haemoglobin (HbA1c) in the Diagnosis of Diabetes
+      Mellitus
+    journal: World Health Organization
+    year: 2011
+  - source_id: source_nice_ng28
+    paper_title: 'Type 2 diabetes in adults: management'
+    journal: NICE Guideline
+    year: 2015
+  physiological_claim: HbA1c is formed through the non-enzymatic glycation of the
+    N-terminal valine of the beta chain of haemoglobin A.
+  threshold_notes: A threshold of 48 mmol/mol (6.5%) is the international consensus
+    for the diagnosis of diabetes.
+narrative:
+  mechanism: Glucose molecules in the blood attach to haemoglobin. The percentage
+    of glycated haemoglobin remains stable for the life of the red blood cell (~120
+    days).
+  biological_pathway: Persistent hyperglycaemia leads to increased Advanced Glycation
+    End-products (AGEs), contributing to microvascular and macrovascular damage.
+  interpretation: Higher levels indicate poorer long-term glycaemic control. Patterns
+    with lipids help assess overall cardiometabolic risk.
+  implications: Increased risk of retinopathy, neuropathy, and cardiovascular disease.
+    Requires lifestyle intervention or pharmacological management.
+  supporting_marker_roles:
+    triglycerides: Identifies concurrent dyslipidaemia common in insulin resistance.
+    glucose: Provides acute confirmation of the hyperglycaemic state.

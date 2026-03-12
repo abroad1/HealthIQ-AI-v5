@@ -1,0 +1,64 @@
+spec_id: inv_hdl_low_cardiovascular
+signal_id: signal_hdl_cholesterol_low
+research_domain: lipids
+primary_marker:
+  biomarker_id: hdl_cholesterol
+  rationale: High-Density Lipoprotein mediates reverse cholesterol transport. Low
+    levels are a powerful predictor of ASCVD risk, particularly in metabolic syndrome.
+  signal_system: lipid_transport
+trigger_direction: low
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: triglycerides
+  expected_direction: high
+  role: mechanism_marker
+  availability: common
+  rationale: Inverse relationship; high TGs often drive low HDL via CETP activity.
+- biomarker_id: hba1c
+  expected_direction: high
+  role: corroborator
+  availability: common
+  rationale: Low HDL is frequently observed in insulin resistance.
+override_rules:
+- rule_id: or_hdl_metabolic_syndrome
+  resulting_state: at_risk
+  description: Escalate if low HDL is paired with high Triglycerides.
+  conditions:
+  - metric_id: triglycerides
+    operator: '>'
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: above_max
+  source_refs:
+  - source_ref_2
+confounders:
+- confounder: Smoking
+  effect: interpretation_shift
+  mitigation_note: Smoking directly lowers HDL levels.
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_ref_2
+    paper_title: HDL Cholesterol and Cardiovascular Risk
+    journal: Circulation
+    year: 2019
+  physiological_claim: HDL facilitates the removal of cholesterol from foam cells
+    in the arterial wall.
+  threshold_notes: "Threshold evidence inconclusive for this condition \u2014 additional\
+    \ validation required."
+narrative:
+  mechanism: HDL particles scavenge excess cholesterol and return it to the liver.
+  biological_pathway: Reverse Cholesterol Transport.
+  interpretation: Low levels suggest a reduced capacity to clear arterial cholesterol.
+  implications: Increased risk of coronary artery disease.
+  supporting_marker_roles:
+    triglycerides: Confirms the atherogenic lipid triad.

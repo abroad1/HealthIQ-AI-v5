@@ -1,0 +1,97 @@
+spec_id: inv_tsh_low_hyperthyroidism
+signal_id: signal_tsh_low
+research_domain: hormonal
+primary_marker:
+  biomarker_id: tsh
+  rationale: A low TSH is the hallmark of hyperthyroidism, as excess thyroid hormone
+    suppresses pituitary TSH production via negative feedback.
+  signal_system: hormonal
+trigger_direction: low
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: free_t4
+  expected_direction: high
+  role: severity_marker
+  availability: common
+  rationale: High FT4 alongside low TSH confirms overt hyperthyroidism.
+- biomarker_id: free_t3
+  expected_direction: high
+  role: severity_marker
+  availability: optional
+  rationale: T3-toxicosis is possible where T4 is normal but T3 is elevated.
+- biomarker_id: bilirubin
+  expected_direction: high
+  role: corroborator
+  availability: common
+  rationale: Thyrotoxicosis can occasionally cause mild cholestatic liver enzyme abnormalities.
+override_rules:
+- rule_id: or_tsh_overt_thyrotoxicosis
+  resulting_state: at_risk
+  description: Escalate if low TSH is accompanied by high Free T4 or Free T3 (Overt
+    Hyperthyroidism).
+  conditions:
+  - metric_id: free_t4
+    operator: '>'
+    condition_type: any_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: above_max
+  - metric_id: free_t3
+    operator: '>'
+    condition_type: any_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: above_max
+  source_refs:
+  - source_ata_2016
+- rule_id: or_tsh_profound_suppression
+  resulting_state: at_risk
+  description: Escalate if TSH is profoundly suppressed (<0.1 mIU/L), regardless of
+    T4/T3.
+  conditions:
+  - metric_id: tsh
+    operator: <
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 0.1
+  source_refs:
+  - source_nice_ng145
+confounders:
+- confounder: Glucocorticoids
+  effect: false_positive_risk
+  mitigation_note: High-dose steroids can transiently suppress TSH without true hyperthyroidism.
+- confounder: Pregnancy (1st Trimester)
+  effect: interpretation_shift
+  mitigation_note: High levels of hCG (which shares a subunit with TSH) can mildly
+    suppress TSH levels.
+- confounder: Biotin Supplementation
+  effect: interpretation_shift
+  mitigation_note: Can cause 'pseudo-hyperthyroidism' lab patterns (low TSH, high
+    T4/T3).
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_ata_2016
+    paper_title: 2016 American Thyroid Association Guidelines for Diagnosis and Management
+      of Hyperthyroidism
+    journal: Thyroid
+    year: 2016
+  physiological_claim: The pituitary is exquisitely sensitive to circulating thyroid
+    hormones. Low TSH is the most sensitive screen for thyroid hormone excess.
+  threshold_notes: A TSH level <0.1 mIU/L is associated with increased risks of atrial
+    fibrillation and bone loss.
+narrative:
+  mechanism: Excessive T4/T3 inhibits the production of TRH from the hypothalamus
+    and TSH from the pituitary.
+  biological_pathway: Negative feedback loop of the HPT axis.
+  interpretation: Low TSH requires immediate checking of FT4 and FT3 to determine
+    the degree of thyrotoxicosis.
+  implications: Risk of tachycardia, weight loss, anxiety, and in severe cases, 'thyroid
+    storm'.
