@@ -1,0 +1,114 @@
+{
+  "biomarkers": {
+    "tgab": {
+      "value": 1.0,
+      "unit": "kU/L",
+      "reference_range": {
+        "min": null,
+        "max": 4.5,
+        "unit": "kU/L",
+        "source": "lab"
+      },
+      "reference_profile": {
+        "source": "lab",
+        "bands": [
+          {
+            "label": "Negative",
+            "min": null,
+            "max": 4.5,
+            "unit": "kU/L"
+          },
+          {
+            "label": "Positive",
+            "min": 4.5,
+            "max": null,
+            "unit": "kU/L"
+          }
+        ]
+      }
+    },
+    "oestradiol": {
+      "value": 85.65,
+      "unit": "pmol/L",
+      "reference_range": {
+        "min": 0.0,
+        "max": 146.1,
+        "unit": "pmol/L",
+        "source": "lab"
+      },
+      "reference_profile": {
+        "source": "lab",
+        "effective_from": "2024-08-27",
+        "note": "Please note new reference ranges commencing 27/08/2024",
+        "bands": [
+          {
+            "label": "Males",
+            "min": 0.0,
+            "max": 146.1,
+            "unit": "pmol/L"
+          }
+        ]
+      }
+    },
+    "folate": {
+      "value": 7.69,
+      "unit": "ug/L",
+      "reference_range": {
+        "min": 5.38,
+        "max": null,
+        "unit": "ug/L",
+        "source": "lab"
+      },
+      "reference_profile": {
+        "source": "lab",
+        "bands": [
+          {
+            "label": "Deficient",
+            "min": 0.35,
+            "max": 3.37,
+            "unit": "ug/L"
+          },
+          {
+            "label": "Intermediate",
+            "min": 3.38,
+            "max": 5.38,
+            "unit": "ug/L"
+          },
+          {
+            "label": "Normal",
+            "min": 5.38,
+            "max": null,
+            "unit": "ug/L"
+          }
+        ]
+      }
+    },
+    "prolactin": {
+      "value": 166.19,
+      "unit": "mIU/L",
+      "reference_range": {
+        "min": 45.0,
+        "max": 375.0,
+        "unit": "mIU/L",
+        "source": "lab"
+      },
+      "reference_profile": {
+        "source": "lab",
+        "effective_from": "2024-09-11",
+        "note": "Please note reference range and unit change commencing 11/09/2024",
+        "bands": [
+          {
+            "label": "Males",
+            "min": 45.0,
+            "max": 375.0,
+            "unit": "mIU/L"
+          }
+        ]
+      }
+    }
+  },
+  "user": {
+    "age": 58,
+    "biological_sex": "male"
+  }
+}
