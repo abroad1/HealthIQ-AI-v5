@@ -1,0 +1,65 @@
+spec_id: inv_hgb_low_anemia
+signal_id: signal_hemoglobin_low
+research_domain: hematologic
+primary_marker:
+  biomarker_id: hemoglobin
+  rationale: Hemoglobin is the oxygen-carrying pigment in blood, and low concentrations define anemia.
+  signal_system: hematologic
+trigger_direction: low
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: mcv
+  expected_direction: either
+  role: mechanism_marker
+  availability: common
+  rationale: Classifies anemia pattern as microcytic, normocytic, or macrocytic.
+- biomarker_id: rdw_cv
+  expected_direction: high
+  role: mechanism_marker
+  availability: common
+  rationale: Elevated RDW-CV supports anisocytosis and can indicate mixed or evolving deficiency states.
+override_rules:
+- rule_id: or_hgb_severe_anemia
+  resulting_state: at_risk
+  description: Escalate for profound anemia (<80 g/L) because of higher risk of symptomatic tissue hypoxia.
+  conditions:
+  - metric_id: hemoglobin
+    operator: <
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 80
+  source_refs:
+  - source_nice_ng24
+confounders:
+- confounder: Dehydration
+  effect: interpretation_shift
+  mitigation_note: Hemoconcentration can mask true anemia by transiently increasing measured hemoglobin.
+- confounder: Recent Bleeding
+  effect: false_negative_risk
+  mitigation_note: Acute blood loss may initially show near-normal hemoglobin before plasma equilibration.
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_nice_ng24
+    paper_title: Blood transfusion
+    journal: NICE Guideline
+    year: 2015
+  physiological_claim: Low hemoglobin reflects reduced oxygen-carrying capacity and is associated with increased clinical risk as severity deepens.
+  threshold_notes: Numeric escalation threshold 80 g/L is used for severe-risk flagging in this investigation context.
+narrative:
+  mechanism: Hemoglobin concentration reflects erythropoietic output, iron availability, and red-cell survival.
+  biological_pathway: Erythropoiesis and oxygen transport in circulating red blood cells.
+  interpretation: Low hemoglobin indicates anemia and requires morphology/context markers to guide likely etiology.
+  implications: More severe reductions increase risk of fatigue, dyspnea, syncope, and end-organ hypoxia.
+  supporting_marker_roles:
+    mcv: Distinguishes likely anemia subtype.
+    rdw_cv: Adds pattern context for mixed or evolving deficiency states.

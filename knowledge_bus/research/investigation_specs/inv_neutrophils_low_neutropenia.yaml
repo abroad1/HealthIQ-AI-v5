@@ -1,0 +1,91 @@
+spec_id: inv_neutrophils_low_neutropenia
+signal_id: signal_neutrophils_low
+research_domain: hematologic
+primary_marker:
+  biomarker_id: neutrophils
+  rationale: Low neutrophil counts (neutropenia) significantly increase the risk of
+    life-threatening bacterial and fungal infections.
+  signal_system: hematologic
+trigger_direction: low
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: white_blood_cells
+  expected_direction: low
+  role: corroborator
+  availability: common
+  rationale: Total leukopenia confirms a broad reduction in white cell production.
+- biomarker_id: hemoglobin
+  expected_direction: low
+  role: differential_marker
+  availability: common
+  rationale: If low neutrophils are paired with low Hb, it suggests broader bone marrow
+    suppression (e.g., aplastic anemia or malignancy).
+- biomarker_id: platelets
+  expected_direction: low
+  role: differential_marker
+  availability: common
+  rationale: Thrombocytopenia alongside neutropenia is a high-risk 'bicytopenia' requiring
+    urgent review.
+override_rules:
+- rule_id: or_neu_severe_infection_risk
+  resulting_state: at_risk
+  description: Escalate for severe neutropenia (<1.0 x10^9/L) due to high risk of
+    sepsis.
+  conditions:
+  - metric_id: neutrophils
+    operator: <
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 1.0
+  source_refs:
+  - source_nice_cg151
+- rule_id: or_neu_bone_marrow_failure
+  resulting_state: at_risk
+  description: Escalate if neutropenia is paired with low platelets (potential marrow
+    suppression).
+  conditions:
+  - metric_id: platelets
+    operator: <
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: below_min
+  source_refs:
+  - source_bsh_2023
+confounders:
+- confounder: Benign Ethnic Neutropenia
+  effect: interpretation_shift
+  mitigation_note: Individuals of African or Middle Eastern descent often have naturally
+    lower neutrophil counts without increased infection risk.
+- confounder: Viral Infection
+  effect: false_positive_risk
+  mitigation_note: Common viruses (like the flu) can cause a transient, self-limiting
+    drop in neutrophils.
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_nice_cg151
+    paper_title: 'Neutropenic sepsis: prevention and management in people with cancer'
+    journal: NICE Guideline
+    year: 2012
+  physiological_claim: The risk of opportunistic infection rises exponentially as
+    the absolute neutrophil count (ANC) falls below 1.0.
+  threshold_notes: 1.0 x10^9/L is the standard threshold for 'moderate' neutropenia
+    in the UK; <0.5 is 'severe'.
+narrative:
+  mechanism: Decreased production in the bone marrow or increased peripheral destruction/sequestration.
+  biological_pathway: Myelopoiesis / Immune surveillance.
+  interpretation: Indicates a compromised ability to defend against bacterial invasion.
+  implications: Requires urgent clinical review if the patient is febrile (fever);
+    otherwise requires investigation for autoimmune or marrow-related causes.
+  supporting_marker_roles:
+    white_blood_cells: Confirms broader leukocyte suppression pattern.
+    platelets: Adds bicytopenia context for marrow suppression concern.

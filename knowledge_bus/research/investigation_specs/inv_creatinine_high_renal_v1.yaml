@@ -1,0 +1,91 @@
+spec_id: inv_creatinine_high_renal
+signal_id: signal_creatinine_high
+research_domain: renal
+primary_marker:
+  biomarker_id: creatinine
+  rationale: Creatinine is a waste product of muscle metabolism excreted by the kidneys.
+    It is the primary surrogate for Glomerular Filtration Rate (GFR).
+  signal_system: renal
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: egfr
+  expected_direction: low
+  role: severity_marker
+  availability: common
+  rationale: The primary clinical measure of renal function derived from creatinine.
+- biomarker_id: urea
+  expected_direction: high
+  role: corroborator
+  availability: common
+  rationale: Also rises in renal failure, but more sensitive to hydration status.
+- biomarker_id: potassium
+  expected_direction: high
+  role: severity_marker
+  availability: common
+  rationale: Hyperkalemia is a dangerous complication of decreased renal excretion.
+override_rules:
+- rule_id: or_renal_ckd_stage_3
+  resulting_state: at_risk
+  description: Escalate if eGFR drops below 60 mL/min/1.73m2 (CKD Stage 3+).
+  conditions:
+  - metric_id: egfr
+    operator: <
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 60
+  source_refs:
+  - source_nice_ng203
+- rule_id: or_renal_acute_imbalance
+  resulting_state: at_risk
+  description: Escalate if high creatinine is paired with high potassium (risk of
+    arrhythmia).
+  conditions:
+  - metric_id: potassium
+    operator: '>'
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: above_max
+  source_refs:
+  - source_nice_ng203
+confounders:
+- confounder: High Muscle Mass
+  effect: false_positive_risk
+  mitigation_note: Bodybuilders or athletes naturally have higher creatinine levels
+    without renal disease.
+- confounder: Creatine Supplementation
+  effect: false_positive_risk
+  mitigation_note: Directly increases serum creatinine levels, potentially leading
+    to a falsely low eGFR.
+- confounder: Dehydration
+  effect: interpretation_shift
+  mitigation_note: 'Pre-renal azotemia: Creatinine rises because of low perfusion
+    rather than intrinsic kidney damage.'
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_nice_ng203
+    paper_title: 'Chronic kidney disease: assessment and management'
+    journal: NICE Guideline
+    year: 2021
+  physiological_claim: Creatinine is filtered freely by the glomerulus. As the filtration
+    rate drops, serum levels rise.
+  threshold_notes: eGFR < 60 is the international threshold for defining chronic kidney
+    disease.
+narrative:
+  mechanism: Reflects the balance between creatinine production (muscle) and excretion
+    (kidney).
+  biological_pathway: Filtered by glomeruli and minimally secreted by tubules.
+  interpretation: A rising creatinine requires checking eGFR. If eGFR is low, it suggests
+    either Acute Kidney Injury (AKI) or Chronic Kidney Disease (CKD).
+  implications: Requires blood pressure monitoring, medication review (nephrotoxins),
+    and urine protein check.

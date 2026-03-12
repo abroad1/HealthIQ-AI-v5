@@ -1,0 +1,66 @@
+spec_id: inv_lym_high_lymphocytosis
+signal_id: signal_lymphocytes_high
+research_domain: hematologic
+primary_marker:
+  biomarker_id: lymphocytes
+  rationale: Lymphocytosis reflects expansion of adaptive immune cells and is commonly associated with viral infection or chronic lymphoproliferative disease.
+  signal_system: hematologic
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: white_blood_cells
+  expected_direction: high
+  role: corroborator
+  availability: common
+  rationale: Global leukocytosis supports sustained expansion of circulating lymphoid cells.
+- biomarker_id: crp
+  expected_direction: either
+  role: differential_marker
+  availability: common
+  rationale: Inflammatory context helps separate reactive acute processes from indolent lymphoproliferative patterns.
+override_rules:
+- rule_id: or_lym_persistent_cll_risk
+  resulting_state: at_risk
+  description: Escalate for high absolute lymphocyte count (>5.0 x10^9/L) in adults
+    over 60.
+  conditions:
+  - metric_id: lymphocytes
+    operator: '>'
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 5.0
+  source_refs:
+  - source_bsh_2022
+confounders:
+- confounder: Recent Viral Infection
+  effect: interpretation_shift
+  mitigation_note: Post-viral lymphocytosis may be transient and resolve without hematologic disease.
+- confounder: Smoking
+  effect: interpretation_shift
+  mitigation_note: Chronic smoking can mildly elevate lymphocyte counts.
+evidence:
+  evidence_strength: moderate
+  sources:
+  - source_id: source_bsh_2022
+    paper_title: Guideline for the investigation of lymphocytosis
+    journal: British Journal of Haematology
+    year: 2022
+  physiological_claim: Persistent clonal lymphocyte expansion can indicate early chronic lymphocytic leukemia in appropriate clinical context.
+  threshold_notes: Numeric threshold >5.0 x10^9/L is used as escalation trigger for persistent adult lymphocytosis.
+narrative:
+  mechanism: Lymphocyte counts rise through antigen-driven proliferation or clonal expansion.
+  biological_pathway: Adaptive immune-cell proliferation and trafficking.
+  interpretation: High lymphocytes are often reactive, but sustained elevation in older adults may indicate lymphoproliferative disease.
+  implications: Persistent unexplained lymphocytosis may require repeat FBC, blood film, and flow cytometry.
+  supporting_marker_roles:
+    white_blood_cells: Indicates overall magnitude of leukocyte expansion.
+    crp: Provides reactive-inflammatory context for differential interpretation.

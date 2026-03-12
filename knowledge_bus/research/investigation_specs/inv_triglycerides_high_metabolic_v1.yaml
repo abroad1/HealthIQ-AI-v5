@@ -1,0 +1,97 @@
+spec_id: inv_triglycerides_high_metabolic
+signal_id: signal_triglycerides_high
+research_domain: lipids
+primary_marker:
+  biomarker_id: triglycerides
+  rationale: Triglycerides are the main form of stored energy. Elevated levels reflect
+    impaired lipid metabolism and increase the risk of pancreatitis and ASCVD.
+  signal_system: metabolic
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: hba1c
+  expected_direction: high
+  role: corroborator
+  availability: common
+  rationale: Hypertriglyceridemia is a hallmark of poor glycaemic control and insulin
+    resistance.
+- biomarker_id: hdl_cholesterol
+  expected_direction: low
+  role: mechanism_marker
+  availability: common
+  rationale: The 'atherogenic dyslipidaemia' triad consists of high TG and low HDL.
+- biomarker_id: alt
+  expected_direction: high
+  role: corroborator
+  availability: common
+  rationale: Commonly elevated in Fatty Liver (NAFLD) which drives TG production.
+override_rules:
+- rule_id: or_tg_pancreatitis_risk
+  resulting_state: at_risk
+  description: Escalate for severe hypertriglyceridemia (>10 mmol/L) due to acute
+    pancreatitis risk.
+  conditions:
+  - metric_id: triglycerides
+    operator: '>'
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 10
+  source_refs:
+  - source_endo_soc_2020
+- rule_id: or_tg_metabolic_dysfunction
+  resulting_state: at_risk
+  description: Escalate if high TG is paired with high HbA1c (Type 2 Diabetes/Insulin
+    Resistance).
+  conditions:
+  - metric_id: hba1c
+    operator: '>='
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 48
+  source_refs:
+  - source_nice_ng28
+confounders:
+- confounder: Non-Fasting State
+  effect: false_positive_risk
+  mitigation_note: Triglycerides are highly sensitive to recent fat intake; non-fasting
+    samples can be significantly higher.
+- confounder: Alcohol
+  effect: false_positive_risk
+  mitigation_note: Acute alcohol intake stimulates VLDL production, temporarily spiking
+    TG levels.
+- confounder: Medications
+  effect: interpretation_shift
+  mitigation_note: Estrogens, glucocorticoids, and retinoids can elevate triglycerides.
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_endo_soc_2020
+    paper_title: 'Hypertriglyceridemia Management: An Endocrine Society Clinical Practice
+      Guideline'
+    journal: JCEM
+    year: 2020
+  physiological_claim: Excess triglycerides are transported in VLDL and chylomicrons.
+    Very high levels lead to chylomicronemia, which can cause capillary plugging in
+    the pancreas.
+  threshold_notes: A threshold of 10 mmol/L (~885 mg/dL) is the critical point for
+    increased risk of acute pancreatitis.
+narrative:
+  mechanism: Triglycerides are hydrolyzed by lipoprotein lipase (LPL). Deficiency
+    or overload of this system leads to accumulation.
+  biological_pathway: Liver-derived VLDL and intestine-derived chylomicrons are the
+    primary carriers.
+  interpretation: Reflects dietary fat intake, alcohol use, and metabolic health.
+    Severely high levels are a medical emergency.
+  implications: Risk of cardiovascular events and acute pancreatitis.
+  supporting_marker_roles:
+    hba1c: Identifies if diabetes is the primary driver of the lipid abnormality.
+    hdl_cholesterol: Helps define the atherogenic risk profile.

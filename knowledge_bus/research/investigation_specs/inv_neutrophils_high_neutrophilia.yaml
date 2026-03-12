@@ -1,0 +1,80 @@
+spec_id: inv_neutrophils_high_neutrophilia
+signal_id: signal_neutrophils_high
+research_domain: hematologic
+primary_marker:
+  biomarker_id: neutrophils
+  rationale: Neutrophils are the primary mediators of the innate immune response.
+    High counts usually reflect an acute response to bacterial infection, tissue injury,
+    or systemic inflammation.
+  signal_system: hematologic
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: crp
+  expected_direction: high
+  role: corroborator
+  availability: common
+  rationale: High CRP alongside neutrophilia strongly supports an active inflammatory
+    or infectious process.
+- biomarker_id: white_blood_cells
+  expected_direction: high
+  role: corroborator
+  availability: common
+  rationale: Total white cell count elevation (leukocytosis) confirms the scale of
+    the immune response.
+override_rules:
+- rule_id: or_neu_acute_infection_pattern
+  resulting_state: at_risk
+  description: Escalate if neutrophilia is paired with significantly high CRP (>50
+    mg/L).
+  conditions:
+  - metric_id: crp
+    operator: '>'
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 50
+  source_refs:
+  - source_bsh_2024
+confounders:
+- confounder: Smoking
+  effect: interpretation_shift
+  mitigation_note: Chronic smokers often have a slightly higher baseline neutrophil
+    count.
+- confounder: Cortisosteroids
+  effect: false_positive_risk
+  mitigation_note: Steroid medication causes 'demargination,' artificially increasing
+    the circulating neutrophil count.
+- confounder: Acute Stress/Exercise
+  effect: interpretation_shift
+  mitigation_note: Physical stress or intense exercise can cause a transient spike
+    in neutrophils.
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_bsh_2024
+    paper_title: Guideline for the investigation of neutrophilia
+    journal: British Journal of Haematology
+    year: 2024
+  physiological_claim: Neutrophils are recruited from the bone marrow storage pool
+    and marginal pool in response to chemoattractants (e.g., IL-8).
+  threshold_notes: Lab-range breach trigger.
+narrative:
+  mechanism: Rapid mobilization from the bone marrow to fight bacterial pathogens
+    or clear necrotic tissue.
+  biological_pathway: Innate immunity / Myelopoiesis.
+  interpretation: Primary indicator of acute bacterial infection or sterile tissue
+    damage (e.g., myocardial infarction).
+  implications: Persistent neutrophilia without an obvious cause requires investigation
+    for chronic myeloid leukaemia or occult inflammation.
+  supporting_marker_roles:
+    crp: Supports active inflammatory or infectious context.
+    white_blood_cells: Confirms broader leukocytosis pattern.

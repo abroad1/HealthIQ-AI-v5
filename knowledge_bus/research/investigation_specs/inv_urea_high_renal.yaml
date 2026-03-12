@@ -1,0 +1,69 @@
+spec_id: inv_urea_high_renal
+signal_id: signal_urea_high
+research_domain: renal
+primary_marker:
+  biomarker_id: urea
+  rationale: Urea is the nitrogenous waste product of protein metabolism. It rises
+    in renal failure but is more sensitive to hydration and protein intake than creatinine.
+  signal_system: renal
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: creatinine
+  expected_direction: high
+  role: corroborator
+  availability: common
+  rationale: If both are high, intrinsic renal disease is more likely.
+- biomarker_id: hemoglobin
+  expected_direction: low
+  role: differential_marker
+  availability: common
+  rationale: An isolated high urea with low Hb can suggest an upper GI bleed (protein
+    load from blood).
+override_rules:
+- rule_id: or_urea_intrinsic_renal
+  resulting_state: at_risk
+  description: Escalate if high urea is paired with high creatinine (CKD/AKI pattern).
+  conditions:
+  - metric_id: creatinine
+    operator: '>'
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: above_max
+  source_refs:
+  - source_ref_9
+confounders:
+- confounder: High Protein Diet
+  effect: false_positive_risk
+  mitigation_note: Excessive protein intake (or supplements) increases urea production.
+- confounder: Dehydration
+  effect: interpretation_shift
+  mitigation_note: Dehydration causes urea to rise faster and higher than creatinine
+    (BUN:Cr ratio).
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_ref_9
+    paper_title: Renal Function Tests
+    journal: Clinical Biochemistry
+    year: 2019
+  physiological_claim: Urea is filtered by the glomerulus and partially reabsorbed
+    in the tubules, especially in states of low flow (dehydration).
+  threshold_notes: Lab-range breach trigger.
+narrative:
+  mechanism: Synthesized in the liver via the Urea Cycle.
+  biological_pathway: Protein catabolism.
+  interpretation: A marker of both renal function and metabolic/hydration state.
+  implications: High levels (uraemia) can cause nausea, fatigue, and confusion.
+  supporting_marker_roles:
+    creatinine: Crucial for determining if the cause is the kidney itself or simple
+      dehydration.

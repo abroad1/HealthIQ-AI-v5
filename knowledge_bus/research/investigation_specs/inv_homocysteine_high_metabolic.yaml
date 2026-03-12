@@ -1,0 +1,79 @@
+spec_id: inv_homocysteine_high_metabolic
+signal_id: signal_homocysteine_high
+research_domain: metabolic
+primary_marker:
+  biomarker_id: homocysteine
+  rationale: Homocysteine is a non-protein amino acid. Elevated levels (hyperhomocysteinemia)
+    are a sensitive marker for B-vitamin deficiencies and an independent risk factor
+    for vascular injury and cognitive decline.
+  signal_system: vascular
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: vitamin_b12
+  expected_direction: low
+  role: mechanism_marker
+  availability: common
+  rationale: B12 is a required cofactor for the remethylation of homocysteine to methionine.
+- biomarker_id: folate
+  expected_direction: low
+  role: mechanism_marker
+  availability: common
+  rationale: Folate (as 5-MTHF) provides the methyl group necessary for homocysteine
+    breakdown.
+- biomarker_id: creatinine
+  expected_direction: high
+  role: differential_marker
+  availability: common
+  rationale: Renal impairment is a leading cause of elevated homocysteine due to reduced
+    clearance.
+override_rules:
+- rule_id: or_hcy_triple_deficiency
+  resulting_state: at_risk
+  description: Escalate if high homocysteine is accompanied by low B12 and low Folate.
+  conditions:
+  - metric_id: vitamin_b12
+    operator: <
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: below_min
+  - metric_id: folate
+    operator: <
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: below_min
+  source_refs:
+  - source_ref_1
+confounders:
+- confounder: Coffee Consumption
+  effect: interpretation_shift
+  mitigation_note: Heavy coffee intake is associated with transient increases in homocysteine.
+evidence:
+  evidence_strength: strong
+  sources:
+  - source_id: source_ref_1
+    paper_title: Homocysteine and cardiovascular disease
+    journal: Journal of Internal Medicine
+    year: 2017
+  physiological_claim: Excess homocysteine promotes oxidative stress, endothelial
+    dysfunction, and thrombogenesis.
+  threshold_notes: Lab-range breach is the trigger; >15 umol/L is often cited as a
+    vascular risk threshold.
+narrative:
+  mechanism: Homocysteine lies at the junction of the remethylation and transsulfuration
+    pathways.
+  biological_pathway: The Methionine-Homocysteine cycle (One-carbon metabolism).
+  interpretation: Reflects methylation capacity and B-vitamin status.
+  implications: Associated with increased risk of stroke and dementia.
+  supporting_marker_roles:
+    vitamin_b12: Indicates a likely remethylation failure.
+    folate: Indicates likely methyl-donor insufficiency within one-carbon metabolism.

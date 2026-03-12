@@ -1,0 +1,75 @@
+spec_id: inv_wbc_low_leukopenia
+signal_id: signal_wbc_low
+research_domain: hematologic
+primary_marker:
+  biomarker_id: white_blood_cells
+  rationale: Low white blood cell count suggests reduced immune reserve or marrow suppression.
+  signal_system: hematologic
+trigger_direction: low
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: neutrophils
+  expected_direction: low
+  role: severity_marker
+  availability: common
+  rationale: Infection risk in leukopenia is primarily determined by neutrophil depth.
+- biomarker_id: hemoglobin
+  expected_direction: low
+  role: differential_marker
+  availability: common
+  rationale: Coexisting anemia suggests broader marrow suppression rather than isolated leukocyte variation.
+- biomarker_id: platelets
+  expected_direction: low
+  role: differential_marker
+  availability: common
+  rationale: Combined leukopenia and thrombocytopenia increases concern for marrow pathology.
+override_rules:
+- rule_id: or_wbc_pancytopenia_risk
+  resulting_state: at_risk
+  description: Escalate if low white blood cells are accompanied by low hemoglobin and low platelets.
+  conditions:
+  - metric_id: hemoglobin
+    operator: <
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: below_min
+  - metric_id: platelets
+    operator: <
+    condition_type: all_of
+    comparator_type: lab_range_boundary
+    lab_range_boundary: below_min
+  source_refs:
+  - source_bsh_2023
+confounders:
+- confounder: Transient Viral Illness
+  effect: interpretation_shift
+  mitigation_note: Temporary leukopenia can occur during common viral infections and may self-resolve.
+- confounder: Medication Effect
+  effect: false_positive_risk
+  mitigation_note: Immunosuppressants and selected antimicrobials may suppress white-cell production.
+evidence:
+  evidence_strength: moderate
+  sources:
+  - source_id: source_bsh_2023
+    paper_title: Guideline for investigation of cytopenias in adults
+    journal: British Journal of Haematology
+    year: 2023
+  physiological_claim: Leukopenia reflects reduced production, increased destruction, or sequestration of leukocytes.
+  threshold_notes: Lab-range breach is the baseline trigger; multi-lineage cytopenia pattern is used for escalation.
+narrative:
+  mechanism: White-cell reduction arises from marrow suppression/failure or peripheral consumption.
+  biological_pathway: Hematopoiesis and immune-cell homeostasis.
+  interpretation: Low white blood cells require subtype and co-lineage context to define urgency and cause.
+  implications: Persistent leukopenia can increase infection risk and may warrant urgent hematology evaluation.
+  supporting_marker_roles:
+    neutrophils: Defines immediate infection susceptibility.
+    hemoglobin: Adds marrow-failure differential context.

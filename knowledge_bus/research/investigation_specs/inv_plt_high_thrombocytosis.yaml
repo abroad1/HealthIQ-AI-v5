@@ -1,0 +1,62 @@
+spec_id: inv_plt_high_thrombocytosis
+signal_id: signal_platelets_high
+research_domain: hematologic
+primary_marker:
+  biomarker_id: platelets
+  rationale: Elevated platelet count can reflect reactive inflammation/iron deficiency or a primary myeloproliferative process.
+  signal_system: hematologic
+trigger_direction: high
+activation:
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+states:
+  baseline_state: suboptimal
+  escalation_state: at_risk
+supporting_markers:
+- biomarker_id: crp
+  expected_direction: high
+  role: differential_marker
+  availability: common
+  rationale: Elevated CRP favors reactive thrombocytosis due to inflammatory drive.
+- biomarker_id: ferritin
+  expected_direction: low
+  role: differential_marker
+  availability: common
+  rationale: Iron deficiency is a common cause of secondary thrombocytosis.
+override_rules:
+- rule_id: or_plt_extreme_thrombocytosis
+  resulting_state: at_risk
+  description: Escalate for extreme thrombocytosis (>1000 x10^9/L), which carries thrombotic and hemorrhagic risk.
+  conditions:
+  - metric_id: platelets
+    operator: ">"
+    condition_type: all_of
+    comparator_type: numeric_value
+    numeric_value: 1000
+  source_refs:
+  - source_bsh_2019
+confounders:
+- confounder: Recent Surgery or Tissue Injury
+  effect: interpretation_shift
+  mitigation_note: Reactive thrombocytosis can occur transiently after surgery, trauma, or major inflammatory stress.
+evidence:
+  evidence_strength: moderate
+  sources:
+  - source_id: source_bsh_2019
+    paper_title: Investigation and management of thrombocytosis
+    journal: British Journal of Haematology
+    year: 2019
+  physiological_claim: Thrombocytosis can be cytokine-driven (reactive) or clonal (myeloproliferative), with risk increasing at extreme counts.
+  threshold_notes: Numeric threshold >1000 x10^9/L is used as an escalation marker for extreme-risk pattern.
+narrative:
+  mechanism: Platelet overproduction arises through IL-6 mediated thrombopoietic signaling or clonal marrow activation.
+  biological_pathway: Megakaryocyte proliferation and thrombopoietin signaling.
+  interpretation: Elevated platelets require differentiation between secondary/reactive causes and clonal disorders.
+  implications: Marked or persistent thrombocytosis may increase thrombotic complications and require hematology workup.
+  supporting_marker_roles:
+    crp: Supports reactive-inflammatory etiology.
+    ferritin: Supports iron-deficiency-driven reactive etiology.
