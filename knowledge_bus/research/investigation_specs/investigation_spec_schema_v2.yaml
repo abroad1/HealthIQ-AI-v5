@@ -1,0 +1,361 @@
+schema_name: "HealthIQ Investigation Spec Schema"
+schema_version: "2.0.0"
+status: "DRAFT"
+description: >
+  Versioned research output schema for deterministic investigation signal translation.
+  v2 aligns research artifacts with runtime/package contracts to reduce translator drift
+  and to support deterministic test generation.
+
+root_required_fields:
+  - spec_id
+  - signal_id
+  - research_domain
+  - primary_marker
+  - trigger_direction
+  - activation
+  - states
+  - supporting_markers
+  - override_rules
+  - evidence
+  - narrative
+
+field_rules:
+
+  spec_id:
+    type: string
+    pattern: "^inv_[a-z0-9_]+$"
+    description: "Stable ID for this investigation spec."
+
+  signal_id:
+    type: string
+    pattern: "^signal_[a-z0-9_]+$"
+    description: "Target runtime signal identifier."
+
+  research_domain:
+    type: string
+    min_length: 1
+    description: "Domain tag for grouping (lipids, renal, thyroid, hepatic, cbc, etc.)."
+
+  primary_marker:
+    type: object
+    required_fields:
+      - biomarker_id
+      - rationale
+    field_rules:
+      biomarker_id:
+        type: string
+        pattern: "^[a-z0-9_]+$"
+        description: "Canonical biomarker ID from SSOT."
+      rationale:
+        type: string
+        min_length: 10
+        description: "What this marker represents and why it is the trigger."
+      signal_system:
+        type: string
+        required: false
+        allowed:
+          - metabolic
+          - lipid_transport
+          - hepatic
+          - inflammatory
+          - renal
+          - vascular
+          - hematologic
+          - hormonal
+          - mitochondrial
+          - other
+        description: "Optional downstream signal system hint."
+
+  trigger_direction:
+    type: string
+    allowed:
+      - high
+      - low
+      - both
+    description: >
+      Direction of lab-range breach that triggers baseline activation.
+      Use 'both' only when both directions are intentionally modeled.
+
+  activation:
+    type: object
+    required_fields:
+      - activation_logic
+      - activation_config
+    field_rules:
+      activation_logic:
+        type: string
+        allowed:
+          - lab_range_exceeded
+          - deterministic_threshold
+        description: >
+          Must align with shared signal contract values. Investigation signals generally
+          use lab_range_exceeded.
+      activation_config:
+        type: object
+        required_fields:
+          - enable_upper_bound
+          - upper_bound_state
+          - enable_lower_bound
+          - lower_bound_state
+        field_rules:
+          enable_upper_bound:
+            type: boolean
+          upper_bound_state:
+            type: string
+            allowed: [suboptimal]
+          enable_lower_bound:
+            type: boolean
+          lower_bound_state:
+            type: string
+            allowed: [suboptimal]
+
+  states:
+    type: object
+    required_fields:
+      - baseline_state
+      - escalation_state
+    field_rules:
+      baseline_state:
+        type: string
+        allowed: [suboptimal]
+      escalation_state:
+        type: string
+        allowed: [at_risk]
+
+  supporting_markers:
+    type: list
+    min_items: 1
+    max_items: 15
+    item_type: object
+    required_fields:
+      - biomarker_id
+      - expected_direction
+      - role
+      - availability
+      - rationale
+    field_rules:
+      biomarker_id:
+        type: string
+        pattern: "^[a-z0-9_]+$"
+      expected_direction:
+        type: string
+        allowed: [high, low, either]
+      role:
+        type: string
+        allowed:
+          - corroborator
+          - mechanism_marker
+          - severity_marker
+          - differential_marker
+          - exclusion_marker
+      availability:
+        type: string
+        allowed: [common, optional]
+      rationale:
+        type: string
+        min_length: 10
+
+  override_rules:
+    type: list
+    min_items: 1
+    max_items: 10
+    description: >
+      Deterministic escalation rules. All rules must only escalate from baseline_state
+      to at_risk. No downgrades.
+    item_type: object
+    required_fields:
+      - rule_id
+      - resulting_state
+      - description
+      - conditions
+      - source_refs
+    field_rules:
+      rule_id:
+        type: string
+        pattern: "^or_[a-z0-9_]+$"
+      resulting_state:
+        type: string
+        allowed: [at_risk]
+      description:
+        type: string
+        min_length: 10
+      conditions:
+        type: list
+        min_items: 1
+        max_items: 8
+        item_type: object
+        required_fields:
+          - metric_id
+          - operator
+          - condition_type
+          - comparator_type
+        field_rules:
+          metric_id:
+            type: string
+            pattern: "^[a-z0-9_]+$"
+          operator:
+            type: string
+            allowed: [">", ">=", "<", "<=", "=="]
+          condition_type:
+            type: string
+            allowed: [any_of, all_of]
+          comparator_type:
+            type: string
+            allowed: [lab_range_boundary, numeric_value, presence]
+            description: >
+              Runtime-ready comparator mode. Exactly one mode should be used for each
+              condition and only mode-specific fields below should be populated.
+          boundary:
+            type: string
+            required_if:
+              comparator_type: "lab_range_boundary"
+            allowed: [above_max, below_min, out_of_range]
+            description: >
+              Boundary selector for lab_range_boundary mode.
+          numeric_value:
+            type: number
+            required_if:
+              comparator_type: "numeric_value"
+            description: "Literal numeric threshold for numeric_value mode."
+          presence_value:
+            type: string
+            required_if:
+              comparator_type: "presence"
+            allowed: [present]
+            description: "Presence mode only; use value 'present'."
+      source_refs:
+        type: list
+        min_items: 1
+        item_pattern: "^source_[a-z0-9_]+$"
+
+  confounders:
+    type: list
+    min_items: 0
+    max_items: 12
+    item_type: object
+    required_fields:
+      - confounder
+      - effect
+      - mitigation_note
+    field_rules:
+      confounder:
+        type: string
+        min_length: 3
+      effect:
+        type: string
+        allowed: [false_positive_risk, false_negative_risk, interpretation_shift]
+      mitigation_note:
+        type: string
+        min_length: 10
+
+  evidence:
+    type: object
+    required_fields:
+      - evidence_strength
+      - sources
+      - physiological_claim
+      - threshold_notes
+    field_rules:
+      evidence_strength:
+        type: string
+        allowed: [exploratory, moderate, strong, consensus]
+      sources:
+        type: list
+        min_items: 1
+        item_type: object
+        required_fields: [source_id, paper_title, journal, year]
+        field_rules:
+          source_id:
+            type: string
+            pattern: "^source_[a-z0-9_]+$"
+          paper_title: {type: string, min_length: 1}
+          journal: {type: string, min_length: 1}
+          year: {type: number, min: 1900, max: 2100}
+          doi: {type: string, required: false}
+          url: {type: string, required: false}
+      physiological_claim:
+        type: string
+        min_length: 10
+      threshold_notes:
+        type: string
+        description: >
+          If numeric thresholds are used in override_rules, justify and cite here.
+          Otherwise state that lab-range breach is the trigger and overrides use
+          lab-range/presence conditions.
+
+  narrative:
+    type: object
+    required_fields:
+      - mechanism
+      - biological_pathway
+      - interpretation
+      - implications
+      - supporting_marker_roles
+    field_rules:
+      mechanism:
+        type: string
+        min_length: 20
+      interpretation:
+        type: string
+        min_length: 20
+      biological_pathway:
+        type: string
+        min_length: 20
+      implications:
+        type: string
+        min_length: 20
+      supporting_marker_roles:
+        type: string
+        min_length: 20
+        description: >
+          Single runtime-authoritative prose field for explanation payload translation.
+          This is the only authoritative source for package explanation.supporting_marker_roles.
+      supporting_marker_roles_map:
+        type: object
+        required: false
+        description: >
+          OPTIONAL documentation-only helper map. Non-runtime authoritative.
+          Must NOT be translated into package outputs and must NOT be used to generate
+          explanation payload fields.
+
+  test_vectors:
+    type: object
+    required: false
+    description: >
+      Optional deterministic test seeds for automated no-trigger, baseline, and escalation
+      test generation.
+    required_fields:
+      - no_trigger_case
+      - baseline_case
+      - escalation_case
+    field_rules:
+      no_trigger_case:
+        type: object
+        required_fields: [biomarkers, lab_ranges]
+        field_rules:
+          biomarkers:
+            type: object
+            value_type: number
+          lab_ranges:
+            type: object
+            description: "Map metric_id -> {min,max} numeric range object."
+      baseline_case:
+        type: object
+        required_fields: [biomarkers, lab_ranges]
+        field_rules:
+          biomarkers:
+            type: object
+            value_type: number
+          lab_ranges:
+            type: object
+            description: "Map metric_id -> {min,max} numeric range object."
+      escalation_case:
+        type: object
+        required_fields: [biomarkers, lab_ranges]
+        field_rules:
+          biomarkers:
+            type: object
+            value_type: number
+          lab_ranges:
+            type: object
+            description: "Map metric_id -> {min,max} numeric range object."
