@@ -146,3 +146,45 @@ def test_builder_preserves_signal_results_with_additive_interaction_outputs():
     assert isinstance(graph.interaction_graph, dict)
     assert isinstance(graph.interaction_chains, list)
     assert isinstance(graph.interaction_summary, list)
+
+
+def test_builder_interaction_outputs_match_deterministic_snapshot():
+    payload = [
+        {"signal_id": "signal_tsh_high", "signal_state": "at_risk", "confidence": 0.78},
+        {"signal_id": "signal_ldl_cholesterol_high", "signal_state": "suboptimal", "confidence": 0.81},
+        {"signal_id": "signal_hba1c_high", "signal_state": "suboptimal", "confidence": 0.66},
+    ]
+    graph_one = build_insight_graph_v1(
+        analysis_id="sig-snapshot-1",
+        scoring_result={},
+        clustering_result={},
+        signal_registry_version="reg-snap",
+        signal_registry_hash="hash-snap",
+        signal_results=payload,
+    )
+    graph_two = build_insight_graph_v1(
+        analysis_id="sig-snapshot-2",
+        scoring_result={},
+        clustering_result={},
+        signal_registry_version="reg-snap",
+        signal_registry_hash="hash-snap",
+        signal_results=payload,
+    )
+
+    expected_chains = [["signal_tsh_high", "signal_ldl_cholesterol_high", "signal_hba1c_high"]]
+    expected_summary = [
+        {
+            "chain_id": "chain_001",
+            "priority_rank": 1,
+            "signals_involved": ["signal_tsh_high", "signal_ldl_cholesterol_high", "signal_hba1c_high"],
+            "chain_summary_text": "signal_tsh_high -> signal_ldl_cholesterol_high -> signal_hba1c_high (edge evidence: strong, moderate)",
+            "confidence": 0.66,
+        }
+    ]
+
+    assert graph_one.signal_results == payload
+    assert graph_two.signal_results == payload
+    assert graph_one.interaction_chains == expected_chains
+    assert graph_two.interaction_chains == expected_chains
+    assert graph_one.interaction_summary == expected_summary
+    assert graph_two.interaction_summary == expected_summary

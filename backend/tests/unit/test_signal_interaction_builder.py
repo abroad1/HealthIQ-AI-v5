@@ -1,3 +1,5 @@
+import copy
+
 from core.analytics.signal_interaction_builder import build_signal_interactions_v1
 
 
@@ -100,3 +102,29 @@ def test_chain_confidence_uses_minimum_signal_confidence():
     output = build_signal_interactions_v1(signal_results=signal_results, map_payload=_map_payload())
     assert output["interaction_chains"] == [["signal_a", "signal_b", "signal_c", "signal_d"]]
     assert output["interaction_summary"][0]["confidence"] == 0.55
+
+
+def test_edge_isolation_outputs_unchanged_when_absent_edge_added():
+    signal_results = [
+        {"signal_id": "signal_a", "signal_state": "suboptimal", "confidence": 0.9},
+        {"signal_id": "signal_b", "signal_state": "at_risk", "confidence": 0.8},
+        {"signal_id": "signal_c", "signal_state": "suboptimal", "confidence": 0.7},
+        {"signal_id": "signal_d", "signal_state": "suboptimal", "confidence": 0.6},
+    ]
+
+    base_map = _map_payload()
+    expanded_map = copy.deepcopy(base_map)
+    expanded_map["nodes"].extend([{"signal_id": "signal_absent_u"}, {"signal_id": "signal_absent_v"}])
+    expanded_map["edges"].append(
+        {
+            "from_signal": "signal_absent_u",
+            "to_signal": "signal_absent_v",
+            "relationship_type": "driver",
+            "evidence_strength": "moderate",
+            "rationale": "Absent edge is added only to prove isolation for unrelated signals.",
+        }
+    )
+
+    out_base = build_signal_interactions_v1(signal_results=signal_results, map_payload=base_map)
+    out_expanded = build_signal_interactions_v1(signal_results=signal_results, map_payload=expanded_map)
+    assert out_base == out_expanded

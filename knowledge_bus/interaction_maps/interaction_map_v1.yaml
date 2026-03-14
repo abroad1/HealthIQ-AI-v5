@@ -1,16 +1,21 @@
-# Interaction map v1 covers only locked KB-S28 macro pathways.
-# Omitted intentionally in v1: alternate vascular endpoints and additional thyroid/lipid branches.
-# They are deferred until dedicated package signals are standardized and validated.
+# Interaction map v1.1 keeps the v1 runtime contract and expands edges only within approved pathways.
 map_version: "v1"
+map_revision: "1.1.0"
 
 nodes:
   - signal_id: signal_hba1c_high
     system: metabolic
+  - signal_id: signal_triglycerides_high
+    system: metabolic
   - signal_id: signal_ggt_high
+    system: hepatic
+  - signal_id: signal_alt_high
     system: hepatic
   - signal_id: signal_crp_high
     system: inflammatory
   - signal_id: signal_homocysteine_high
+    system: vascular
+  - signal_id: signal_homocysteine_elevation_context
     system: vascular
   - signal_id: signal_ferritin_low
     system: hematologic
@@ -20,16 +25,37 @@ nodes:
     system: other
   - signal_id: signal_tsh_high
     system: hormonal
+  - signal_id: signal_tsh_low
+    system: hormonal
+  - signal_id: signal_thyroid_tsh_context
+    system: hormonal
   - signal_id: signal_ldl_cholesterol_high
+    system: lipid_transport
+  - signal_id: signal_hdl_cholesterol_low
     system: lipid_transport
 
 edges:
   # Pathway 1: metabolic -> hepatic -> inflammatory -> vascular
+  - from_signal: signal_triglycerides_high
+    to_signal: signal_ggt_high
+    relationship_type: consequence
+    evidence_strength: moderate
+    rationale: Elevated triglyceride burden often tracks hepatic lipid-processing strain, aligning metabolic dysregulation with hepatic stress signaling.
   - from_signal: signal_hba1c_high
     to_signal: signal_ggt_high
     relationship_type: driver
     evidence_strength: strong
     rationale: Elevated glycaemic burden is frequently accompanied by hepatic metabolic stress, linking dysglycaemia to hepatocellular strain.
+  - from_signal: signal_hba1c_high
+    to_signal: signal_alt_high
+    relationship_type: consequence
+    evidence_strength: moderate
+    rationale: Chronic glucose dysregulation frequently co-occurs with hepatocellular stress signals, including ALT elevation in metabolic contexts.
+  - from_signal: signal_alt_high
+    to_signal: signal_crp_high
+    relationship_type: co_occurrence
+    evidence_strength: moderate
+    rationale: Hepatocellular injury and systemic inflammatory signaling often co-present, supporting ALT-to-CRP linkage in a deterministic chain.
   - from_signal: signal_ggt_high
     to_signal: signal_crp_high
     relationship_type: consequence
@@ -40,6 +66,11 @@ edges:
     relationship_type: driver
     evidence_strength: moderate
     rationale: Inflammatory states can amplify vascular risk signalling, where homocysteine elevation often appears within the same adverse context.
+  - from_signal: signal_crp_high
+    to_signal: signal_homocysteine_elevation_context
+    relationship_type: co_occurrence
+    evidence_strength: exploratory
+    rationale: Higher inflammatory burden can contextualize homocysteine risk interpretation and reinforce vascular stress pattern detection.
 
   # Pathway 2: iron -> hematologic with inflammatory modulation
   - from_signal: signal_ferritin_low
@@ -52,6 +83,11 @@ edges:
     relationship_type: co_occurrence
     evidence_strength: strong
     rationale: Erythrocyte morphology shifts can emerge alongside anemia severity, linking low hemoglobin with abnormal corpuscular-volume context.
+  - from_signal: signal_ferritin_low
+    to_signal: signal_mcv_high
+    relationship_type: consequence
+    evidence_strength: moderate
+    rationale: Iron-restricted erythropoiesis can alter red-cell morphology trajectories, supporting ferritin-low progression toward MCV abnormalities.
   - from_signal: signal_crp_high
     to_signal: signal_ferritin_low
     relationship_type: co_occurrence
@@ -59,11 +95,26 @@ edges:
     rationale: Inflammatory burden can modulate iron biology and interpretation, so CRP-high may contextualize ferritin-low hematologic patterns.
 
   # Pathway 3: thyroid -> lipid -> metabolic
+  - from_signal: signal_thyroid_tsh_context
+    to_signal: signal_ldl_cholesterol_high
+    relationship_type: driver
+    evidence_strength: moderate
+    rationale: Thyroid-context disturbance often informs impaired lipid handling patterns, supporting LDL elevation as a linked downstream signal.
   - from_signal: signal_tsh_high
     to_signal: signal_ldl_cholesterol_high
     relationship_type: driver
     evidence_strength: strong
     rationale: Hypothyroid-pattern signalling commonly associates with reduced lipid clearance and downstream LDL-cholesterol elevation.
+  - from_signal: signal_tsh_high
+    to_signal: signal_hdl_cholesterol_low
+    relationship_type: consequence
+    evidence_strength: moderate
+    rationale: Thyroid slowing can accompany an adverse lipid signature, including lower HDL-cholesterol in cardiometabolic risk contexts.
+  - from_signal: signal_hdl_cholesterol_low
+    to_signal: signal_hba1c_high
+    relationship_type: co_occurrence
+    evidence_strength: moderate
+    rationale: Low HDL and glycaemic dysregulation frequently cluster in insulin-resistant physiology, supporting lipid-to-metabolic chain continuity.
   - from_signal: signal_ldl_cholesterol_high
     to_signal: signal_hba1c_high
     relationship_type: co_occurrence
