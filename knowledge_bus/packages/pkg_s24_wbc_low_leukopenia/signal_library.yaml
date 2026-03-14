@@ -1,0 +1,73 @@
+library:
+  package_id: KBP-2431
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_wbc_low Investigation Library
+  description: Investigation signal library translated from inv_wbc_low_leukopenia.yaml.
+signals:
+- signal_id: signal_wbc_low
+  name: WBC LOW
+  description: Low white blood cell count suggests reduced immune reserve or marrow
+    suppression.
+  system: hematologic
+  primary_metric: white_blood_cells
+  supporting_metrics: &id001
+  - neutrophils
+  - hemoglobin
+  - platelets
+  dependencies:
+    biomarkers:
+    - white_blood_cells
+    - neutrophils
+    - hemoglobin
+    - platelets
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_wbc_low_lab_range_activation_placeholder
+    metric_id: white_blood_cells
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_wbc_pancytopenia_risk
+    description: Escalate if low white blood cells are accompanied by low hemoglobin
+      and low platelets.
+    conditions:
+    - metric_id: hemoglobin
+      operator: <
+      value: 120.0
+      condition_type: all_of
+    - metric_id: platelets
+      operator: <
+      value: 150.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: white_blood_cells
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: white_blood_cells
+    supporting_markers: *id001
+  explanation:
+    mechanism: White-cell reduction arises from marrow suppression/failure or peripheral
+      consumption.
+    biological_pathway: Hematopoiesis and immune-cell homeostasis.
+    interpretation: Low white blood cells require subtype and co-lineage context to
+      define urgency and cause.
+    implications: Persistent leukopenia can increase infection risk and may warrant
+      urgent hematology evaluation.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including neutrophils (Defines immediate infection susceptibility.);
+      hemoglobin (Adds marrow-failure differential context.).

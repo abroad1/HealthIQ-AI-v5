@@ -1,0 +1,69 @@
+library:
+  package_id: KBP-2421
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_mcv_high Investigation Library
+  description: Investigation signal library translated from inv_mcv_high_macrocytosis.yaml.
+signals:
+- signal_id: signal_mcv_high
+  name: MCV High
+  description: Mean Corpuscular Volume reflects red cell size. High MCV is a sensitive
+    indicator of B12/Folate deficiency or marrow stress.
+  system: other
+  primary_metric: mcv
+  supporting_metrics: &id001
+  - vitamin_b12
+  - folate
+  - ggt
+  dependencies:
+    biomarkers:
+    - mcv
+    - vitamin_b12
+    - folate
+    - ggt
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_mcv_high_lab_range_activation_placeholder
+    metric_id: mcv
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_mcv_severe_macrocytosis
+    description: Escalate for MCV > 110 fL (High risk of megaloblastic anemia or MDS).
+    conditions:
+    - metric_id: mcv
+      operator: '>'
+      value: 110.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: mcv
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: mcv
+    supporting_markers: *id001
+  explanation:
+    mechanism: MCV rises when erythrocytes are larger due to ineffective maturation
+      or altered membrane composition.
+    biological_pathway: Erythropoiesis and nucleotide synthesis pathways in bone marrow.
+    interpretation: High MCV is a morphology-led investigation trigger requiring nutritional,
+      hepatic, and alcohol-context evaluation.
+    implications: Persistent macrocytosis warrants investigation for megaloblastic
+      anemia, alcohol-related change, thyroid dysfunction, or marrow disorder.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including vitamin_b12 (Assesses cobalamin-dependent megaloblastic
+      mechanism.); folate (Assesses folate-dependent megaloblastic mechanism.); ggt
+      (Provides alcohol/hepatic context for differential interpretation.).

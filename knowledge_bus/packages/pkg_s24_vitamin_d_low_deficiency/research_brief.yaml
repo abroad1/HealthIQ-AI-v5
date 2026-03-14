@@ -1,0 +1,17 @@
+research_domain: metabolic
+sources:
+- paper_title: Vitamin D and Health
+  journal: Public Health England
+  year: 2016
+- paper_title: 'Vitamin D and Bone Health: A Practical Clinical Guideline'
+  journal: National Osteoporosis Society
+  year: 2013
+biomarkers:
+- vitamin_d
+- calcium
+- alp
+derived_metrics: []
+physiological_claim: Vitamin D is converted to its active form (1,25-OH) in the kidneys,
+  where it promotes calcium and phosphate absorption.
+evidence_strength: strong
+research_summary: 25 nmol/L is the UK Department of Health threshold for deficiency.

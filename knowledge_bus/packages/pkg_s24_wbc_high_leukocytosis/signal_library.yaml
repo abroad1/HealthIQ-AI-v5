@@ -1,0 +1,67 @@
+library:
+  package_id: KBP-2430
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_wbc_high Investigation Library
+  description: Investigation signal library translated from inv_wbc_high_leukocytosis.yaml.
+signals:
+- signal_id: signal_wbc_high
+  name: WBC High
+  description: Total White Blood Cell count is a global marker of immune activation.
+  system: hematologic
+  primary_metric: white_blood_cells
+  supporting_metrics: &id001
+  - neutrophils
+  - lymphocytes
+  dependencies:
+    biomarkers:
+    - white_blood_cells
+    - neutrophils
+    - lymphocytes
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_wbc_high_lab_range_activation_placeholder
+    metric_id: white_blood_cells
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_wbc_extreme_leukocytosis
+    description: Escalate for massive elevation (>50 x10^9/L) potentially suggesting
+      leukemoid reaction or leukemia.
+    conditions:
+    - metric_id: white_blood_cells
+      operator: '>'
+      value: 50.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: white_blood_cells
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: white_blood_cells
+    supporting_markers: *id001
+  explanation:
+    mechanism: White-cell counts rise through cytokine-driven granulopoiesis and cell
+      demargination.
+    biological_pathway: Innate/adaptive immune activation and bone-marrow leukopoiesis.
+    interpretation: Elevated white blood cells indicate inflammatory drive but require
+      subtype patterning for likely cause.
+    implications: Persistent or extreme elevation warrants urgent exclusion of severe
+      infection, leukemoid reaction, or hematologic malignancy.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including neutrophils (Helps identify likely bacterial/inflammatory
+      neutrophil-predominant pattern.); lymphocytes (Helps identify viral or lymphoproliferative
+      pattern.).

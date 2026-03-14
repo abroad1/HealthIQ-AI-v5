@@ -1,0 +1,87 @@
+library:
+  package_id: KBP-2428
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_vitamin_b12_low Investigation Library
+  description: Investigation signal library translated from inv_vitamin_b12_spec_v1.yaml.
+signals:
+- signal_id: signal_vitamin_b12_low
+  name: Vitamin B12 LOW
+  description: Total B12 is the standard first-line test for assessing cobalamin status,
+    required for DNA synthesis and neurologic function.
+  system: metabolic
+  primary_metric: vitamin_b12
+  supporting_metrics: &id001
+  - folate
+  - mcv
+  - hemoglobin
+  - active_b12
+  - homocysteine
+  dependencies:
+    biomarkers:
+    - vitamin_b12
+    - folate
+    - mcv
+    - hemoglobin
+    - active_b12
+    - homocysteine
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_vitamin_b12_low_lab_range_activation_placeholder
+    metric_id: vitamin_b12
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_b12_macrocytosis
+    description: Escalate if low B12 is accompanied by macrocytosis (high MCV).
+    conditions:
+    - metric_id: mcv
+      operator: '>'
+      value: 96.0
+      condition_type: all_of
+    resulting_state: at_risk
+  - rule_id: or_b12_functional_deficit
+    description: Escalate if low active B12 or high homocysteine supports functional
+      deficiency.
+    conditions:
+    - metric_id: active_b12
+      operator: <
+      value: 35.0
+      condition_type: any_of
+    - metric_id: homocysteine
+      operator: '>'
+      value: 15.0
+      condition_type: any_of
+    resulting_state: at_risk
+  output:
+    signal_value: vitamin_b12
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: vitamin_b12
+    supporting_markers: *id001
+  explanation:
+    mechanism: Vitamin B12 is required for one-carbon transfer reactions and mitochondrial
+      metabolism; deficiency disrupts hematopoiesis and neurologic function.
+    biological_pathway: B12 deficiency impairs methionine synthase activity and disrupts
+      folate-dependent nucleotide synthesis, producing megaloblastic changes.
+    interpretation: Low serum B12 suggests dietary insufficiency, malabsorption, medication
+      effect, or increased physiologic demand depending on context.
+    implications: Untreated deficiency can cause progressive anemia and neurologic
+      injury, including potentially irreversible neurocognitive and spinal cord effects.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including mcv (Supports megaloblastic transformation pattern.); active_b12
+      (Provides functional confirmation of biologically available cobalamin.); folate
+      (Provides pathway context for one-carbon metabolism interactions.).

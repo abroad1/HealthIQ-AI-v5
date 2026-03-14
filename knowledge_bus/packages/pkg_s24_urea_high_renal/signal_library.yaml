@@ -1,0 +1,63 @@
+library:
+  package_id: KBP-2426
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_urea_high Investigation Library
+  description: Investigation signal library translated from inv_urea_high_renal.yaml.
+signals:
+- signal_id: signal_urea_high
+  name: Urea High
+  description: Urea is the nitrogenous waste product of protein metabolism. It rises
+    in renal failure but is more sensitive to hydration and protein intake than creatinine.
+  system: renal
+  primary_metric: urea
+  supporting_metrics: &id001
+  - creatinine
+  - hemoglobin
+  dependencies:
+    biomarkers:
+    - urea
+    - creatinine
+    - hemoglobin
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_urea_high_lab_range_activation_placeholder
+    metric_id: urea
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_urea_intrinsic_renal
+    description: Escalate if high urea is paired with high creatinine (CKD/AKI pattern).
+    conditions:
+    - metric_id: creatinine
+      operator: '>'
+      value: 110.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: urea
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: urea
+    supporting_markers: *id001
+  explanation:
+    mechanism: Synthesized in the liver via the Urea Cycle.
+    biological_pathway: Protein catabolism. This context supports deterministic interpretation.
+    interpretation: A marker of both renal function and metabolic/hydration state.
+    implications: High levels (uraemia) can cause nausea, fatigue, and confusion.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including creatinine (Crucial for determining if the cause is the
+      kidney itself or simple dehydration.).

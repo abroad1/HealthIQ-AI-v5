@@ -36,6 +36,17 @@ _KB_S25_PACKAGE_DIRS = [
     "pkg_s24_hgb_low_anemia",
     "pkg_s24_homocysteine_high_metabolic",
     "pkg_s24_lym_high_lymphocytosis",
+    "pkg_s24_mcv_high_macrocytosis",
+    "pkg_s24_neutrophils_high_neutrophilia",
+    "pkg_s24_neutrophils_low_neutropenia",
+    "pkg_s24_plt_high_thrombocytosis",
+    "pkg_s24_plt_low_thrombocytopenia",
+    "pkg_s24_urea_high_renal",
+    "pkg_s24_urate_high_metabolic",
+    "pkg_s24_vitamin_b12_low_deficiency",
+    "pkg_s24_vitamin_d_low_deficiency",
+    "pkg_s24_wbc_high_leukocytosis",
+    "pkg_s24_wbc_low_leukopenia",
 ]
 _EXPLANATION_KEYS = [
     "mechanism",
