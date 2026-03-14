@@ -2,6 +2,8 @@ from pathlib import Path
 
 from tools.run_golden_panel import run_golden_panel
 
+# reference_profile.effective_from is the lab reference range effective-from date (i.e., when the lab's reference ranges changed). It is NOT the test/sample/report date. Test/sample/report dates are panel-level metadata.
+#
 # Canonical ID mapping used:
 # TgAb (Venous) -> tgab
 # Oestradiol (Venous) -> oestradiol
@@ -85,4 +87,3 @@ def test_lab_reference_profile_micro_pass_through_and_band_labels(tmp_path):
         # Guard against regressions where ranges disappear while profiles exist.
         assert isinstance(row.get("reference_range"), dict)
         assert row.get("range_source") == "lab"
-
