@@ -183,6 +183,9 @@ class InsightGraphV1(BaseModel):
     signal_registry_version: Optional[str] = Field(default=None)
     signal_registry_hash: Optional[str] = Field(default=None)
     signal_results: List[Dict[str, Any]] = Field(default_factory=list)
+    interaction_graph: Optional[Dict[str, Any]] = Field(default=None)
+    interaction_chains: Optional[List[List[str]]] = Field(default=None)
+    interaction_summary: Optional[List[Dict[str, Any]]] = Field(default=None)
 
     # Sprint 10: Relationship detections (safe status/score-derived, no raw values)
     relationships: List[RelationshipDetection] = Field(default_factory=list)
