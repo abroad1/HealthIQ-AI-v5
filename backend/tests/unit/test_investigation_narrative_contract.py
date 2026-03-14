@@ -26,6 +26,16 @@ _KB_S25_PACKAGE_DIRS = [
     "pkg_s24_triglycerides_high_metabolic",
     "pkg_s24_tsh_high_hypothyroidism",
     "pkg_s24_tsh_low_hyperthyroidism",
+    "pkg_s24_albumin_low_nutritional",
+    "pkg_s24_alp_high_bone_biliary",
+    "pkg_s24_calcium_high_endocrine",
+    "pkg_s24_folate_low_deficiency",
+    "pkg_s24_ggt_high_hepatic",
+    "pkg_s24_hdl_high_cardiovascular",
+    "pkg_s24_hdl_low_cardiovascular",
+    "pkg_s24_hgb_low_anemia",
+    "pkg_s24_homocysteine_high_metabolic",
+    "pkg_s24_lym_high_lymphocytosis",
 ]
 _EXPLANATION_KEYS = [
     "mechanism",

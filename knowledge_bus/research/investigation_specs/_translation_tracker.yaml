@@ -1,15 +1,21 @@
 entries:
 - spec_file: inv_albumin_low_nutritional.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_albumin_low_nutritional
+  notes: KB-S24 tranche 2 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_alp_high_bone_biliary.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_alp_high_bone_biliary
+  notes: KB-S24 tranche 2 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_alt_high_hepatocellular_injury_v1.yaml
   status: tested
   package_id: pkg_s24_alt_high_hepatocellular_injury
   notes: KB-S24 selected tranche (lexicographic _v1 selection). Package triad created,
     validators/tests passing.
 - spec_file: inv_calcium_high_endocrine.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_calcium_high_endocrine
+  notes: KB-S24 tranche 2 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_creatinine_high_renal_v1.yaml
   status: tested
   package_id: pkg_s24_creatinine_high_renal
@@ -31,29 +37,43 @@ entries:
   notes: KB-S24 selected tranche (lexicographic _v1 selection). Package triad created,
     validators/tests passing.
 - spec_file: inv_folate_low_deficiency.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_folate_low_deficiency
+  notes: KB-S24 tranche 2 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_ggt_high_hepatic.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_ggt_high_hepatic
+  notes: KB-S24 tranche 2 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_hba1c_high_glycaemia_v1.yaml
   status: tested
   package_id: pkg_s24_hba1c_high_glycaemia
   notes: KB-S24 selected tranche (lexicographic _v1 selection). Package triad created,
     validators/tests passing.
 - spec_file: inv_hdl_high_cardiovascular.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_hdl_high_cardiovascular
+  notes: KB-S24 tranche 2 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_hdl_low_cardiovascular.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_hdl_low_cardiovascular
+  notes: KB-S24 tranche 2 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_hgb_low_anemia.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_hgb_low_anemia
+  notes: KB-S24 tranche 2 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_homocysteine_high_metabolic.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_homocysteine_high_metabolic
+  notes: KB-S24 tranche 2 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_ldl_high_dyslipidaemia_v1.yaml
   status: tested
   package_id: pkg_s24_ldl_high_dyslipidaemia
   notes: KB-S24 selected tranche (lexicographic _v1 selection). Package triad created,
     validators/tests passing.
 - spec_file: inv_lym_high_lymphocytosis.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_lym_high_lymphocytosis
+  notes: KB-S24 tranche 2 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_mcv_high_macrocytosis.yaml
   status: pending
 - spec_file: inv_neutrophils_high_neutrophilia.yaml

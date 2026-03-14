@@ -1,0 +1,15 @@
+research_domain: hematologic
+sources:
+- paper_title: Blood transfusion
+  journal: NICE Guideline
+  year: 2015
+biomarkers:
+- hemoglobin
+- mcv
+- rdw_cv
+derived_metrics: []
+physiological_claim: Low hemoglobin reflects reduced oxygen-carrying capacity and
+  is associated with increased clinical risk as severity deepens.
+evidence_strength: strong
+research_summary: Numeric escalation threshold 80 g/L is used for severe-risk flagging
+  in this investigation context.

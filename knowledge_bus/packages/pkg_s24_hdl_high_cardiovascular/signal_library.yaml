@@ -1,0 +1,63 @@
+library:
+  package_id: KBP-2416
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_hdl_cholesterol_high Investigation Library
+  description: Investigation signal library translated from inv_hdl_high_cardiovascular.yaml.
+signals:
+- signal_id: signal_hdl_cholesterol_high
+  name: HDL Cholesterol High
+  description: Traditionally viewed as 'good' cholesterol, extremely high levels (>2.3
+    mmol/L) may paradoxicaly be associated with increased cardiovascular risk or dysfunctional
+    particles.
+  system: lipid_transport
+  primary_metric: hdl_cholesterol
+  supporting_metrics: &id001
+  - crp
+  dependencies:
+    biomarkers:
+    - hdl_cholesterol
+    - crp
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_hdl_cholesterol_high_lab_range_activation_placeholder
+    metric_id: hdl_cholesterol
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_hdl_extreme_paradox
+    description: Escalate for extremely high HDL levels (>2.5 mmol/L) which may be
+      dysfunctional.
+    conditions:
+    - metric_id: hdl_cholesterol
+      operator: '>'
+      value: 2.5
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: hdl_cholesterol
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: hdl_cholesterol
+    supporting_markers: *id001
+  explanation:
+    mechanism: HDL particle size and protein composition change at extreme concentrations.
+    biological_pathway: Reverse Cholesterol Transport.
+    interpretation: More is not always better; extreme levels may not be protective.
+    implications: May require assessment of other risk factors like ApoB or Lp(a).
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including crp (Assesses if the high HDL is occurring in a pro-inflammatory
+      environment.).

@@ -1,0 +1,67 @@
+library:
+  package_id: KBP-2411
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_albumin_low Investigation Library
+  description: Investigation signal library translated from inv_albumin_low_nutritional.yaml.
+signals:
+- signal_id: signal_albumin_low
+  name: Albumin LOW
+  description: Albumin is the main protein produced by the liver. It maintains oncotic
+    pressure and acts as a transport protein. Low levels indicate chronic inflammation,
+    liver disease, or malnutrition.
+  system: other
+  primary_metric: albumin
+  supporting_metrics: &id001
+  - crp
+  - alt
+  - calcium
+  dependencies:
+    biomarkers:
+    - albumin
+    - crp
+    - alt
+    - calcium
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_albumin_low_lab_range_activation_placeholder
+    metric_id: albumin
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_albumin_synthetic_failure
+    description: Escalate if low albumin is paired with high Bilirubin or high ALT
+      (Liver Dysfunction).
+    conditions:
+    - metric_id: alt
+      operator: '>'
+      value: 40.0
+      condition_type: any_of
+    resulting_state: at_risk
+  output:
+    signal_value: albumin
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: albumin
+    supporting_markers: *id001
+  explanation:
+    mechanism: Synthesized in hepatocytes; half-life ~20 days.
+    biological_pathway: Protein metabolism. This context supports deterministic interpretation.
+    interpretation: A general marker of health 'stability' and synthetic capacity.
+    implications: Severe low levels lead to oedema (swelling) and impaired drug transport.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including crp (Determines if the low albumin is due to acute stress
+      vs. chronic malnutrition.).

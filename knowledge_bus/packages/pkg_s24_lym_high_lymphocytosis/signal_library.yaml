@@ -1,0 +1,67 @@
+library:
+  package_id: KBP-2420
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_lymphocytes_high Investigation Library
+  description: Investigation signal library translated from inv_lym_high_lymphocytosis.yaml.
+signals:
+- signal_id: signal_lymphocytes_high
+  name: Lymphocytes High
+  description: Lymphocytosis reflects expansion of adaptive immune cells and is commonly
+    associated with viral infection or chronic lymphoproliferative disease.
+  system: hematologic
+  primary_metric: lymphocytes
+  supporting_metrics: &id001
+  - white_blood_cells
+  - crp
+  dependencies:
+    biomarkers:
+    - lymphocytes
+    - white_blood_cells
+    - crp
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_lymphocytes_high_lab_range_activation_placeholder
+    metric_id: lymphocytes
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_lym_persistent_cll_risk
+    description: Escalate for high absolute lymphocyte count (>5.0 x10^9/L) in adults
+      over 60.
+    conditions:
+    - metric_id: lymphocytes
+      operator: '>'
+      value: 5.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: lymphocytes
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: lymphocytes
+    supporting_markers: *id001
+  explanation:
+    mechanism: Lymphocyte counts rise through antigen-driven proliferation or clonal
+      expansion.
+    biological_pathway: Adaptive immune-cell proliferation and trafficking.
+    interpretation: High lymphocytes are often reactive, but sustained elevation in
+      older adults may indicate lymphoproliferative disease.
+    implications: Persistent unexplained lymphocytosis may require repeat FBC, blood
+      film, and flow cytometry.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including white_blood_cells (Indicates overall magnitude of leukocyte
+      expansion.); crp (Provides reactive-inflammatory context for differential interpretation.).

@@ -1,0 +1,16 @@
+research_domain: metabolic
+sources:
+- paper_title: Homocysteine and cardiovascular disease
+  journal: Journal of Internal Medicine
+  year: 2017
+biomarkers:
+- homocysteine
+- vitamin_b12
+- folate
+- creatinine
+derived_metrics: []
+physiological_claim: Excess homocysteine promotes oxidative stress, endothelial dysfunction,
+  and thrombogenesis.
+evidence_strength: strong
+research_summary: Lab-range breach is the trigger; >15 umol/L is often cited as a
+  vascular risk threshold.

@@ -1,0 +1,15 @@
+research_domain: metabolic
+sources:
+- paper_title: Clinical significance of hypoalbuminemia
+  journal: Journal of Clinical Pathology
+  year: 2018
+biomarkers:
+- albumin
+- crp
+- alt
+- calcium
+derived_metrics: []
+physiological_claim: Albumin synthesis is downregulated by pro-inflammatory cytokines
+  like TNF-alpha.
+evidence_strength: moderate
+research_summary: Lab-range breach trigger.

@@ -1,0 +1,15 @@
+research_domain: hematologic
+sources:
+- paper_title: Folate deficiency guidelines
+  journal: BSH
+  year: 2023
+biomarkers:
+- folate
+- vitamin_b12
+- mcv
+- homocysteine
+derived_metrics: []
+physiological_claim: Folate is required for thymidylate synthesis; its absence leads
+  to 'ineffective erythropoiesis'.
+evidence_strength: strong
+research_summary: Lab range trigger. This context supports deterministic interpretation.

@@ -1,0 +1,15 @@
+research_domain: lipids
+sources:
+- paper_title: HDL Cholesterol and Cardiovascular Risk
+  journal: Circulation
+  year: 2019
+biomarkers:
+- hdl_cholesterol
+- triglycerides
+- hba1c
+derived_metrics: []
+physiological_claim: HDL facilitates the removal of cholesterol from foam cells in
+  the arterial wall.
+evidence_strength: strong
+research_summary: "Threshold evidence inconclusive for this condition \u2014 additional\
+  \ validation required."

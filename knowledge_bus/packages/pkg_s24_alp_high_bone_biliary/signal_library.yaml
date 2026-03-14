@@ -1,0 +1,70 @@
+library:
+  package_id: KBP-2412
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_alp_high Investigation Library
+  description: Investigation signal library translated from inv_alp_high_bone_biliary.yaml.
+signals:
+- signal_id: signal_alp_high
+  name: ALP High
+  description: Alkaline Phosphatase is found in liver and bone. High levels indicate
+    either biliary obstruction or increased bone turnover.
+  system: hepatic
+  primary_metric: alp
+  supporting_metrics: &id001
+  - ggt
+  - bilirubin
+  - calcium
+  dependencies:
+    biomarkers:
+    - alp
+    - ggt
+    - bilirubin
+    - calcium
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_alp_high_lab_range_activation_placeholder
+    metric_id: alp
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_alp_biliary_obstruction
+    description: Escalate if high ALP is accompanied by high GGT and high Bilirubin.
+    conditions:
+    - metric_id: ggt
+      operator: '>'
+      value: 55.0
+      condition_type: all_of
+    - metric_id: bilirubin
+      operator: '>'
+      value: 20.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: alp
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: alp
+    supporting_markers: *id001
+  explanation:
+    mechanism: Enzymatic cleavage of phosphate groups at alkaline pH.
+    biological_pathway: Biliary excretion and bone mineralization.
+    interpretation: Requires GGT 'de-biasing' to determine the tissue of origin.
+    implications: Possible gallstones, primary biliary cholangitis, or Vitamin D deficiency
+      (bone source).
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including ggt (The definitive discriminator between liver and bone
+      sources.).

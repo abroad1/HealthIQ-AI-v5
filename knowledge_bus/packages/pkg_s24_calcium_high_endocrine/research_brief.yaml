@@ -1,0 +1,15 @@
+research_domain: hormonal
+sources:
+- paper_title: Management of Hypercalcaemia
+  journal: BMJ
+  year: 2018
+biomarkers:
+- calcium
+- albumin
+- vitamin_d
+- creatinine
+derived_metrics: []
+physiological_claim: Calcium regulates neuromuscular excitability and cardiac conduction.
+evidence_strength: strong
+research_summary: 3.0 mmol/L is a standard threshold for severe, potentially urgent
+  hypercalcaemia.

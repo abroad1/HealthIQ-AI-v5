@@ -1,0 +1,65 @@
+library:
+  package_id: KBP-2414
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_folate_low Investigation Library
+  description: Investigation signal library translated from inv_folate_low_deficiency.yaml.
+signals:
+- signal_id: signal_folate_low
+  name: Folate LOW
+  description: Serum folate reflects recent dietary intake. It is essential for DNA
+    synthesis and red blood cell maturation.
+  system: hematologic
+  primary_metric: folate
+  supporting_metrics: &id001
+  - vitamin_b12
+  - mcv
+  - homocysteine
+  dependencies:
+    biomarkers:
+    - folate
+    - vitamin_b12
+    - mcv
+    - homocysteine
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_folate_low_lab_range_activation_placeholder
+    metric_id: folate
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_folate_megaloblastic_risk
+    description: Escalate if low folate is accompanied by macrocytosis (High MCV).
+    conditions:
+    - metric_id: mcv
+      operator: '>'
+      value: 96.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: folate
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: folate
+    supporting_markers: *id001
+  explanation:
+    mechanism: Folate derivatives act as one-carbon donors.
+    biological_pathway: Nucleotide synthesis.
+    interpretation: Low folate indicates dietary lack or malabsorption.
+    implications: Risk of anemia and, in pregnancy, neural tube defects.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including homocysteine (Functional marker of folate depletion at the
+      cellular level.).

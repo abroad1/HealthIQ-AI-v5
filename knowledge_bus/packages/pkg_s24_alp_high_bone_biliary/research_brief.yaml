@@ -1,0 +1,15 @@
+research_domain: hepatic
+sources:
+- paper_title: Evaluation of abnormal ALP
+  journal: BMJ
+  year: 2021
+biomarkers:
+- alp
+- ggt
+- bilirubin
+- calcium
+derived_metrics: []
+physiological_claim: ALP is localized to the canalicular membrane of hepatocytes and
+  the osteoblasts of bone.
+evidence_strength: strong
+research_summary: Lab-range breach trigger.

@@ -1,0 +1,15 @@
+research_domain: hepatic
+sources:
+- paper_title: Clinical Utility of GGT
+  journal: Liver International
+  year: 2020
+biomarkers:
+- ggt
+- alt
+- alp
+- mcv
+derived_metrics: []
+physiological_claim: GGT is involved in the metabolism of glutathione and the transport
+  of amino acids across cell membranes.
+evidence_strength: moderate
+research_summary: Lab-range breach trigger.
