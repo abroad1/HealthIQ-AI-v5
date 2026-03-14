@@ -126,3 +126,23 @@ def test_builder_defaults_signal_results_to_empty_list():
     assert graph.signal_registry_version is None
     assert graph.signal_registry_hash is None
     assert graph.signal_results == []
+
+
+def test_builder_preserves_signal_results_with_additive_interaction_outputs():
+    payload = [
+        {"signal_id": "signal_hba1c_high", "signal_state": "suboptimal"},
+        {"signal_id": "signal_ggt_high", "signal_state": "at_risk"},
+        {"signal_id": "signal_crp_high", "signal_state": "suboptimal"},
+    ]
+    graph = build_insight_graph_v1(
+        analysis_id="sig-3",
+        scoring_result={},
+        clustering_result={},
+        signal_registry_version="reg-v1",
+        signal_registry_hash="hash-v1",
+        signal_results=payload,
+    )
+    assert graph.signal_results == payload
+    assert isinstance(graph.interaction_graph, dict)
+    assert isinstance(graph.interaction_chains, list)
+    assert isinstance(graph.interaction_summary, list)

@@ -1,0 +1,71 @@
+# Interaction map v1 covers only locked KB-S28 macro pathways.
+# Omitted intentionally in v1: alternate vascular endpoints and additional thyroid/lipid branches.
+# They are deferred until dedicated package signals are standardized and validated.
+map_version: "v1"
+
+nodes:
+  - signal_id: signal_hba1c_high
+    system: metabolic
+  - signal_id: signal_ggt_high
+    system: hepatic
+  - signal_id: signal_crp_high
+    system: inflammatory
+  - signal_id: signal_homocysteine_high
+    system: vascular
+  - signal_id: signal_ferritin_low
+    system: hematologic
+  - signal_id: signal_hemoglobin_low
+    system: hematologic
+  - signal_id: signal_mcv_high
+    system: other
+  - signal_id: signal_tsh_high
+    system: hormonal
+  - signal_id: signal_ldl_cholesterol_high
+    system: lipid_transport
+
+edges:
+  # Pathway 1: metabolic -> hepatic -> inflammatory -> vascular
+  - from_signal: signal_hba1c_high
+    to_signal: signal_ggt_high
+    relationship_type: driver
+    evidence_strength: strong
+    rationale: Elevated glycaemic burden is frequently accompanied by hepatic metabolic stress, linking dysglycaemia to hepatocellular strain.
+  - from_signal: signal_ggt_high
+    to_signal: signal_crp_high
+    relationship_type: consequence
+    evidence_strength: moderate
+    rationale: Hepatic stress and oxidative burden commonly co-occur with heightened inflammatory activity reflected by CRP elevation.
+  - from_signal: signal_crp_high
+    to_signal: signal_homocysteine_high
+    relationship_type: driver
+    evidence_strength: moderate
+    rationale: Inflammatory states can amplify vascular risk signalling, where homocysteine elevation often appears within the same adverse context.
+
+  # Pathway 2: iron -> hematologic with inflammatory modulation
+  - from_signal: signal_ferritin_low
+    to_signal: signal_hemoglobin_low
+    relationship_type: driver
+    evidence_strength: consensus
+    rationale: Iron store depletion precedes and drives anemia progression, making ferritin-low to hemoglobin-low a canonical hematologic cascade.
+  - from_signal: signal_hemoglobin_low
+    to_signal: signal_mcv_high
+    relationship_type: co_occurrence
+    evidence_strength: strong
+    rationale: Erythrocyte morphology shifts can emerge alongside anemia severity, linking low hemoglobin with abnormal corpuscular-volume context.
+  - from_signal: signal_crp_high
+    to_signal: signal_ferritin_low
+    relationship_type: co_occurrence
+    evidence_strength: exploratory
+    rationale: Inflammatory burden can modulate iron biology and interpretation, so CRP-high may contextualize ferritin-low hematologic patterns.
+
+  # Pathway 3: thyroid -> lipid -> metabolic
+  - from_signal: signal_tsh_high
+    to_signal: signal_ldl_cholesterol_high
+    relationship_type: driver
+    evidence_strength: strong
+    rationale: Hypothyroid-pattern signalling commonly associates with reduced lipid clearance and downstream LDL-cholesterol elevation.
+  - from_signal: signal_ldl_cholesterol_high
+    to_signal: signal_hba1c_high
+    relationship_type: co_occurrence
+    evidence_strength: moderate
+    rationale: Atherogenic dyslipidaemia frequently clusters with impaired glucose regulation, supporting a linked cardiometabolic interaction chain.

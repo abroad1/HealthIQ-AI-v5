@@ -26,6 +26,7 @@ from core.analytics.relationship_registry import (
     load_relationship_registry,
 )
 from core.analytics.biomarker_context_builder import build_biomarker_context_v1
+from core.analytics.signal_interaction_builder import build_signal_interactions_v1
 
 
 def _as_float(value: Any) -> Optional[float]:
@@ -399,6 +400,7 @@ def build_insight_graph_v1(
         filtered_biomarkers=filtered_biomarkers,
         derived_ratios_meta=derived_ratios_meta,
     )
+    interaction_outputs = build_signal_interactions_v1(signal_results=signal_results)
 
     return InsightGraphV1(
         graph_version=INSIGHTGRAPH_V1_VERSION,
@@ -418,6 +420,9 @@ def build_insight_graph_v1(
         signal_registry_version=signal_registry_version,
         signal_registry_hash=signal_registry_hash,
         signal_results=signal_results if signal_results is not None else [],
+        interaction_graph=interaction_outputs["interaction_graph"],
+        interaction_chains=interaction_outputs["interaction_chains"],
+        interaction_summary=interaction_outputs["interaction_summary"],
         relationships=relationship_detections,
         biomarker_context_version=context_stamp.biomarker_context_version,
         biomarker_context_hash=context_stamp.biomarker_context_hash,
