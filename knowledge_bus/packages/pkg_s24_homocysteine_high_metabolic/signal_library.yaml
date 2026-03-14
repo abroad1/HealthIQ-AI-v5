@@ -1,0 +1,71 @@
+library:
+  package_id: KBP-2419
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_homocysteine_high Investigation Library
+  description: Investigation signal library translated from inv_homocysteine_high_metabolic.yaml.
+signals:
+- signal_id: signal_homocysteine_high
+  name: Homocysteine High
+  description: Homocysteine is a non-protein amino acid. Elevated levels (hyperhomocysteinemia)
+    are a sensitive marker for B-vitamin deficiencies and an independent risk factor
+    for vascular injury and cognitive decline.
+  system: vascular
+  primary_metric: homocysteine
+  supporting_metrics: &id001
+  - vitamin_b12
+  - folate
+  - creatinine
+  dependencies:
+    biomarkers:
+    - homocysteine
+    - vitamin_b12
+    - folate
+    - creatinine
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_homocysteine_high_lab_range_activation_placeholder
+    metric_id: homocysteine
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_hcy_triple_deficiency
+    description: Escalate if high homocysteine is accompanied by low B12 and low Folate.
+    conditions:
+    - metric_id: vitamin_b12
+      operator: <
+      value: 200.0
+      condition_type: all_of
+    - metric_id: folate
+      operator: <
+      value: 7.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: homocysteine
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: homocysteine
+    supporting_markers: *id001
+  explanation:
+    mechanism: Homocysteine lies at the junction of the remethylation and transsulfuration
+      pathways.
+    biological_pathway: The Methionine-Homocysteine cycle (One-carbon metabolism).
+    interpretation: Reflects methylation capacity and B-vitamin status.
+    implications: Associated with increased risk of stroke and dementia.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including vitamin_b12 (Indicates a likely remethylation failure.);
+      folate (Indicates likely methyl-donor insufficiency within one-carbon metabolism.).

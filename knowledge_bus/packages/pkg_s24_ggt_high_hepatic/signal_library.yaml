@@ -1,0 +1,68 @@
+library:
+  package_id: KBP-2415
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_ggt_high Investigation Library
+  description: Investigation signal library translated from inv_ggt_high_hepatic.yaml.
+signals:
+- signal_id: signal_ggt_high
+  name: GGT High
+  description: Gamma-Glutamyl Transferase is a sensitive marker of hepatobiliary stress
+    and oxidative stress. It is often the first liver enzyme to rise in alcohol use
+    or NAFLD.
+  system: hepatic
+  primary_metric: ggt
+  supporting_metrics: &id001
+  - alt
+  - alp
+  - mcv
+  dependencies:
+    biomarkers:
+    - ggt
+    - alt
+    - alp
+    - mcv
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_ggt_high_lab_range_activation_placeholder
+    metric_id: ggt
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_ggt_cholestatic_pattern
+    description: Escalate if GGT and ALP are both above the upper limit.
+    conditions:
+    - metric_id: alp
+      operator: '>'
+      value: 130.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: ggt
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: ggt
+    supporting_markers: *id001
+  explanation:
+    mechanism: Released from the cell membrane of hepatocytes and biliary epithelial
+      cells.
+    biological_pathway: Glutathione metabolism.
+    interpretation: Sensitive for liver stress; used to confirm hepatic origin of
+      high ALP.
+    implications: Possible fatty liver, alcohol consumption, or biliary obstruction.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including alp (Differentiates between general liver stress and bile
+      duct obstruction.).

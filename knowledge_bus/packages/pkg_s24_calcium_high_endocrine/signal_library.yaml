@@ -1,0 +1,67 @@
+library:
+  package_id: KBP-2413
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_calcium_high Investigation Library
+  description: Investigation signal library translated from inv_calcium_high_endocrine.yaml.
+signals:
+- signal_id: signal_calcium_high
+  name: Calcium High
+  description: Serum calcium is strictly regulated. High levels (hypercalcaemia) are
+    often due to hyperparathyroidism or malignancy and require urgent investigation.
+  system: hormonal
+  primary_metric: calcium
+  supporting_metrics: &id001
+  - albumin
+  - vitamin_d
+  - creatinine
+  dependencies:
+    biomarkers:
+    - calcium
+    - albumin
+    - vitamin_d
+    - creatinine
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_calcium_high_lab_range_activation_placeholder
+    metric_id: calcium
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_calcium_severe_hypercalcemia
+    description: Escalate for profound hypercalcaemia (>3.0 mmol/L) due to risk of
+      cardiac arrhythmia.
+    conditions:
+    - metric_id: calcium
+      operator: '>'
+      value: 3.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: calcium
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: calcium
+    supporting_markers: *id001
+  explanation:
+    mechanism: Bone resorption, intestinal absorption, and renal reabsorption.
+    biological_pathway: Calcium-sensing receptor and PTH axis.
+    interpretation: An 'always investigate' marker when high.
+    implications: Risk of kidney stones, bone pain, and cardiac issues.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including albumin (Provides correction context for total calcium interpretation.);
+      vitamin_d (Supports differential assessment of vitamin D-mediated hypercalcemia.);
+      creatinine (Adds renal-risk context in hypercalcemic states.).

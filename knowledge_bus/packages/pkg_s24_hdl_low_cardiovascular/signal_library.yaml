@@ -1,0 +1,62 @@
+library:
+  package_id: KBP-2417
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_hdl_cholesterol_low Investigation Library
+  description: Investigation signal library translated from inv_hdl_low_cardiovascular.yaml.
+signals:
+- signal_id: signal_hdl_cholesterol_low
+  name: HDL Cholesterol LOW
+  description: High-Density Lipoprotein mediates reverse cholesterol transport. Low
+    levels are a powerful predictor of ASCVD risk, particularly in metabolic syndrome.
+  system: lipid_transport
+  primary_metric: hdl_cholesterol
+  supporting_metrics: &id001
+  - triglycerides
+  - hba1c
+  dependencies:
+    biomarkers:
+    - hdl_cholesterol
+    - triglycerides
+    - hba1c
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_hdl_cholesterol_low_lab_range_activation_placeholder
+    metric_id: hdl_cholesterol
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_hdl_metabolic_syndrome
+    description: Escalate if low HDL is paired with high Triglycerides.
+    conditions:
+    - metric_id: triglycerides
+      operator: '>'
+      value: 1.7
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: hdl_cholesterol
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: hdl_cholesterol
+    supporting_markers: *id001
+  explanation:
+    mechanism: HDL particles scavenge excess cholesterol and return it to the liver.
+    biological_pathway: Reverse Cholesterol Transport.
+    interpretation: Low levels suggest a reduced capacity to clear arterial cholesterol.
+    implications: Increased risk of coronary artery disease.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including triglycerides (Confirms the atherogenic lipid triad.).

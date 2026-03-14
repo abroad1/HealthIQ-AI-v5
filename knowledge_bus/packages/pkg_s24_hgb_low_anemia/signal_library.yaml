@@ -1,0 +1,68 @@
+library:
+  package_id: KBP-2418
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_hemoglobin_low Investigation Library
+  description: Investigation signal library translated from inv_hgb_low_anemia.yaml.
+signals:
+- signal_id: signal_hemoglobin_low
+  name: Hemoglobin LOW
+  description: Hemoglobin is the oxygen-carrying pigment in blood, and low concentrations
+    define anemia.
+  system: hematologic
+  primary_metric: hemoglobin
+  supporting_metrics: &id001
+  - mcv
+  - rdw_cv
+  dependencies:
+    biomarkers:
+    - hemoglobin
+    - mcv
+    - rdw_cv
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_hemoglobin_low_lab_range_activation_placeholder
+    metric_id: hemoglobin
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_hgb_severe_anemia
+    description: Escalate for profound anemia (<80 g/L) because of higher risk of
+      symptomatic tissue hypoxia.
+    conditions:
+    - metric_id: hemoglobin
+      operator: <
+      value: 80.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: hemoglobin
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: hemoglobin
+    supporting_markers: *id001
+  explanation:
+    mechanism: Hemoglobin concentration reflects erythropoietic output, iron availability,
+      and red-cell survival.
+    biological_pathway: Erythropoiesis and oxygen transport in circulating red blood
+      cells.
+    interpretation: Low hemoglobin indicates anemia and requires morphology/context
+      markers to guide likely etiology.
+    implications: More severe reductions increase risk of fatigue, dyspnea, syncope,
+      and end-organ hypoxia.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including mcv (Distinguishes likely anemia subtype.); rdw_cv (Adds
+      pattern context for mixed or evolving deficiency states.).

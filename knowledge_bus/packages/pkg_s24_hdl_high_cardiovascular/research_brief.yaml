@@ -1,0 +1,14 @@
+research_domain: lipids
+sources:
+- paper_title: The U-shaped relationship of HDL and mortality
+  journal: European Heart Journal
+  year: 2017
+biomarkers:
+- hdl_cholesterol
+- crp
+derived_metrics: []
+physiological_claim: Very large HDL particles may lose their ability to promote cholesterol
+  efflux.
+evidence_strength: exploratory
+research_summary: "Threshold evidence inconclusive for this condition \u2014 additional\
+  \ validation required."
