@@ -11,6 +11,7 @@ from typing import Any, Dict, List, Optional
 import yaml
 
 from core.contracts.signal_contract import STATE_RANK as _STATE_RANK_IMPORT
+from core.analytics.signal_confidence_builder import calculate_signal_confidence
 from core.models.signal import SignalResult
 
 
@@ -219,12 +220,13 @@ class SignalEvaluator:
         threshold_state: str,
         signal_biomarkers: Dict[str, float],
         signal_derived: Dict[str, float],
-    ) -> str:
+    ) -> tuple[str, Optional[int]]:
         if not isinstance(override_rules, list):
             raise ValueError(f"Unsupported override_rules shape: {override_rules}")
 
         best_state = threshold_state
         best_rank = self._STATE_RANK.get(threshold_state, -1)
+        best_satisfied_count: Optional[int] = None
         for rule in override_rules:
             if not isinstance(rule, dict):
                 raise ValueError(f"Unsupported override rule shape: {rule}")
@@ -236,6 +238,7 @@ class SignalEvaluator:
 
             any_of_results: List[bool] = []
             all_of_results: List[bool] = []
+            satisfied_count = 0
             for condition in conditions:
                 if not isinstance(condition, dict):
                     raise ValueError(f"Unsupported override condition shape: {condition}")
@@ -251,6 +254,8 @@ class SignalEvaluator:
                     any_of_results.append(condition_result)
                 else:
                     all_of_results.append(condition_result)
+                if condition_result:
+                    satisfied_count += 1
 
             all_of_ok = all(all_of_results) if all_of_results else True
             any_of_ok = any(any_of_results) if any_of_results else True
@@ -265,8 +270,9 @@ class SignalEvaluator:
             if rank >= best_rank:
                 best_rank = rank
                 best_state = resulting_state
+                best_satisfied_count = satisfied_count
 
-        return best_state
+        return best_state, best_satisfied_count
 
     def _lab_normal_but_flagged(
         self,
@@ -291,14 +297,18 @@ class SignalEvaluator:
         signal_biomarkers: Dict[str, float],
         signal_derived: Dict[str, float],
         lab_ranges: Dict[str, dict],
+        reference_profiles: Optional[Dict[str, dict]] = None,
     ) -> List[SignalResult]:
         results: List[SignalResult] = []
+        reference_profiles = reference_profiles or {}
+        available_metric_ids = set(signal_biomarkers.keys()) | set(signal_derived.keys())
         for signal in self.registry.get_all_signals():
             primary_metric = str(signal.get("primary_metric", "")).strip()
             if not primary_metric:
                 continue
 
             primary_value = self._resolve_primary_value(primary_metric, signal_biomarkers, signal_derived)
+            primary_metric_present = primary_value is not None
             if primary_value is None:
                 continue
 
@@ -319,7 +329,7 @@ class SignalEvaluator:
                 signal_state = self._evaluate_state(thresholds, primary_value)
                 if signal_state is None:
                     continue
-            signal_state = self._evaluate_override_rules(
+            signal_state, override_satisfied_count = self._evaluate_override_rules(
                 override_rules=signal.get("override_rules", []),
                 threshold_state=signal_state,
                 signal_biomarkers=signal_biomarkers,
@@ -333,13 +343,24 @@ class SignalEvaluator:
             explanation = signal.get("explanation")
             if not isinstance(explanation, dict):
                 explanation = None
+            confidence, confidence_reasons = calculate_signal_confidence(
+                primary_metric=primary_metric,
+                primary_metric_present=primary_metric_present,
+                supporting_markers=supporting_markers,
+                available_metrics=available_metric_ids,
+                signal_state=signal_state,
+                lab_ranges=lab_ranges or {},
+                reference_profiles=reference_profiles,
+                override_satisfied_count=override_satisfied_count,
+            )
 
             result = SignalResult(
                 signal_id=str(signal.get("signal_id", "")).strip(),
                 system=str(signal.get("system", "")).strip(),
                 signal_state=signal_state,
                 signal_value=primary_value,
-                confidence=None,
+                confidence=confidence,
+                confidence_reasons=confidence_reasons,
                 primary_metric=primary_metric,
                 lab_normal_but_flagged=self._lab_normal_but_flagged(
                     primary_metric=primary_metric,

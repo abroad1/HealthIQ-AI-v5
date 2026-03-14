@@ -47,10 +47,10 @@ def _map_payload():
 
 def test_interaction_chains_are_deterministic_and_ranked():
     signal_results = [
-        {"signal_id": "signal_a", "signal_state": "suboptimal"},
-        {"signal_id": "signal_b", "signal_state": "at_risk"},
-        {"signal_id": "signal_c", "signal_state": "suboptimal"},
-        {"signal_id": "signal_d", "signal_state": "suboptimal"},
+        {"signal_id": "signal_a", "signal_state": "suboptimal", "confidence": 0.9},
+        {"signal_id": "signal_b", "signal_state": "at_risk", "confidence": 0.8},
+        {"signal_id": "signal_c", "signal_state": "suboptimal", "confidence": 0.7},
+        {"signal_id": "signal_d", "signal_state": "suboptimal", "confidence": 0.6},
     ]
     out_one = build_signal_interactions_v1(signal_results=signal_results, map_payload=_map_payload())
     out_two = build_signal_interactions_v1(signal_results=signal_results, map_payload=_map_payload())
@@ -61,14 +61,15 @@ def test_interaction_chains_are_deterministic_and_ranked():
     assert out_one["interaction_chains"] == [["signal_a", "signal_b", "signal_c", "signal_d"]]
     assert out_one["interaction_summary"][0]["priority_rank"] == 1
     assert out_one["interaction_summary"][0]["signals_involved"] == ["signal_a", "signal_b", "signal_c", "signal_d"]
+    assert out_one["interaction_summary"][0]["confidence"] == 0.6
 
 
 def test_edge_isolation_for_absent_signals():
     signal_results = [
-        {"signal_id": "signal_a", "signal_state": "suboptimal"},
-        {"signal_id": "signal_b", "signal_state": "suboptimal"},
-        {"signal_id": "signal_c", "signal_state": "suboptimal"},
-        {"signal_id": "signal_d", "signal_state": "suboptimal"},
+        {"signal_id": "signal_a", "signal_state": "suboptimal", "confidence": 0.91},
+        {"signal_id": "signal_b", "signal_state": "suboptimal", "confidence": 0.82},
+        {"signal_id": "signal_c", "signal_state": "suboptimal", "confidence": 0.73},
+        {"signal_id": "signal_d", "signal_state": "suboptimal", "confidence": 0.64},
     ]
     output = build_signal_interactions_v1(signal_results=signal_results, map_payload=_map_payload())
     edges = output["interaction_graph"]["edges"]
@@ -79,11 +80,23 @@ def test_edge_isolation_for_absent_signals():
 
 def test_empty_when_no_mapped_edges_present():
     signal_results = [
-        {"signal_id": "signal_a", "signal_state": "suboptimal"},
-        {"signal_id": "signal_d", "signal_state": "at_risk"},
+        {"signal_id": "signal_a", "signal_state": "suboptimal", "confidence": 0.7},
+        {"signal_id": "signal_d", "signal_state": "at_risk", "confidence": 0.4},
     ]
     output = build_signal_interactions_v1(signal_results=signal_results, map_payload=_map_payload())
     assert output["interaction_graph"]["nodes"] == ["signal_a", "signal_d"]
     assert output["interaction_graph"]["edges"] == []
     assert output["interaction_chains"] == []
     assert output["interaction_summary"] == []
+
+
+def test_chain_confidence_uses_minimum_signal_confidence():
+    signal_results = [
+        {"signal_id": "signal_a", "signal_state": "suboptimal", "confidence": 0.92},
+        {"signal_id": "signal_b", "signal_state": "at_risk", "confidence": 0.55},
+        {"signal_id": "signal_c", "signal_state": "suboptimal", "confidence": 0.88},
+        {"signal_id": "signal_d", "signal_state": "suboptimal", "confidence": 0.77},
+    ]
+    output = build_signal_interactions_v1(signal_results=signal_results, map_payload=_map_payload())
+    assert output["interaction_chains"] == [["signal_a", "signal_b", "signal_c", "signal_d"]]
+    assert output["interaction_summary"][0]["confidence"] == 0.55
