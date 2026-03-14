@@ -17,6 +17,7 @@ from core.contracts.signal_contract import (
     ALLOWED_SIGNAL_STATES,
     STATE_RANK,
 )
+from core.analytics.signal_confidence_builder import ALLOWED_CONFIDENCE_REASONS, calculate_signal_confidence
 from core.analytics.signal_evaluator import SignalEvaluator, SignalRegistry
 from tools.run_golden_panel import run_golden_panel
 
@@ -163,7 +164,8 @@ def test_override_rule_any_of_not_met_preserves_threshold_result():
     )
     by_id = {r.signal_id: r for r in results}
     assert by_id["signal_alpha"].signal_state == "suboptimal"
-    assert by_id["signal_alpha"].confidence is None
+    assert isinstance(by_id["signal_alpha"].confidence, float)
+    assert by_id["signal_alpha"].confidence_reasons
     assert by_id["signal_alpha"].supporting_markers == ["insulin", "glucose"]
     assert by_id["signal_alpha"].explanation == {
         "mechanism": "TyG elevation suggests insulin signalling strain.",
@@ -367,6 +369,60 @@ def test_threshold_operator_greater_than_activates_deterministically():
     assert len(out_a) == 1
     assert out_a[0].signal_state == "at_risk"
     assert [r.model_dump() for r in out_a] == [r.model_dump() for r in out_b]
+
+
+def test_signal_confidence_reasons_use_closed_vocabulary():
+    evaluator = SignalEvaluator(_StubRegistry())
+    results = evaluator.evaluate_all(
+        signal_biomarkers={"crp": 3.2, "insulin": 16.0, "glucose": 6.1},
+        signal_derived={"tyg_index": 8.9},
+        lab_ranges={"tyg_index": {"min": 8.0, "max": 9.0}, "crp": {"min": 0.0, "max": 3.0}},
+    )
+    assert results
+    for result in results:
+        assert result.confidence is not None
+        assert 0.0 <= result.confidence <= 1.0
+        reasons = result.confidence_reasons or []
+        assert reasons
+        assert set(reasons).issubset(ALLOWED_CONFIDENCE_REASONS)
+
+
+def test_signal_confidence_is_deterministic_for_same_input():
+    evaluator = SignalEvaluator(_StubRegistry())
+    first = evaluator.evaluate_all(
+        signal_biomarkers={"crp": 3.2, "insulin": 16.0, "glucose": 6.1},
+        signal_derived={"tyg_index": 8.9},
+        lab_ranges={"tyg_index": {"min": 8.0, "max": 9.0}, "crp": {"min": 0.0, "max": 3.0}},
+    )
+    second = evaluator.evaluate_all(
+        signal_biomarkers={"crp": 3.2, "insulin": 16.0, "glucose": 6.1},
+        signal_derived={"tyg_index": 8.9},
+        lab_ranges={"tyg_index": {"min": 8.0, "max": 9.0}, "crp": {"min": 0.0, "max": 3.0}},
+    )
+    assert [item.model_dump() for item in first] == [item.model_dump() for item in second]
+
+
+def test_primary_metric_absence_penalty_materially_reduces_confidence():
+    base_kwargs = dict(
+        primary_metric="glucose",
+        supporting_markers=["insulin", "hba1c"],
+        available_metrics={"glucose", "insulin", "hba1c"},
+        signal_state="suboptimal",
+        lab_ranges={"glucose": {"min": 4.0, "max": 6.0}},
+        reference_profiles={},
+        override_satisfied_count=None,
+    )
+    present_confidence, present_reasons = calculate_signal_confidence(
+        primary_metric_present=True,
+        **base_kwargs,
+    )
+    absent_confidence, absent_reasons = calculate_signal_confidence(
+        primary_metric_present=False,
+        **base_kwargs,
+    )
+    assert "PRIMARY_METRIC_PRESENT" in present_reasons
+    assert "PRIMARY_METRIC_ABSENT" in absent_reasons
+    assert absent_confidence < present_confidence
 
 
 def test_threshold_operator_less_than_activates_deterministically():

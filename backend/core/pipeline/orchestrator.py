@@ -1066,6 +1066,7 @@ class AnalysisOrchestrator:
                 signal_biomarkers,
                 signal_derived,
                 lab_ranges=input_reference_ranges,
+                reference_profiles=input_reference_profiles,
             )
             signal_results_serialized = [r.model_dump() for r in signal_results_raw]
 

@@ -142,6 +142,18 @@ def build_signal_interactions_v1(
         and isinstance(r.get("signal_id"), str)
         and r.get("signal_state") in _VALID_SIGNAL_STATES
     }
+    confidence_by_signal: Dict[str, float] = {}
+    for row in signal_results:
+        if not isinstance(row, dict):
+            continue
+        sid = row.get("signal_id")
+        if not isinstance(sid, str):
+            continue
+        confidence_value = row.get("confidence")
+        if isinstance(confidence_value, (int, float)):
+            confidence_by_signal[sid] = float(confidence_value)
+        else:
+            confidence_by_signal[sid] = 0.0
     present_ids = sorted(sid for sid in fired.keys() if sid in node_ids)
 
     present_set = set(present_ids)
@@ -203,12 +215,14 @@ def build_signal_interactions_v1(
         chain_edges = [edge_lookup[(path[i], path[i + 1])] for i in range(len(path) - 1)]
         chain_text = " -> ".join(path)
         evidence_text = ", ".join(edge["evidence_strength"] for edge in chain_edges)
+        chain_confidence = min(confidence_by_signal.get(signal_id, 0.0) for signal_id in path)
         interaction_summary.append(
             {
                 "chain_id": f"chain_{idx:03d}",
                 "priority_rank": idx,
                 "signals_involved": list(path),
                 "chain_summary_text": f"{chain_text} (edge evidence: {evidence_text})",
+                "confidence": round(chain_confidence, 4),
             }
         )
 

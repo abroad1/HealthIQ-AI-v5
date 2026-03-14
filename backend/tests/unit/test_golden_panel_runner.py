@@ -666,7 +666,7 @@ def test_golden_panel_insight_graph_exposes_signal_fields(tmp_path):
 def test_golden_panel_signal_results_carry_explanation_metadata(tmp_path, monkeypatch):
     fixture = Path(__file__).parent.parent / "fixtures" / "golden_panel_160.json"
 
-    def _stub_evaluate_all(self, signal_biomarkers, signal_derived, lab_ranges):
+    def _stub_evaluate_all(self, signal_biomarkers, signal_derived, lab_ranges, reference_profiles=None):
         return [
             SignalResult(
                 signal_id="signal_homocysteine_elevation_context",
