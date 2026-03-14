@@ -22,6 +22,11 @@ primary biomarker is abnormal by LAB reference range, then escalate severity onl
 marker patterns (override rules). The coding team will not invent biology. Your output is the
 biological logic source of truth.
 
+TARGET_SCHEMA_VERSION: v2
+Use investigation_spec_schema_v2.yaml for all new outputs by default.
+Schema v1 is legacy and should be used only when explicitly requested.
+Do not mix v1 and v2 field conventions in one output.
+
 IMPORTANT PLATFORM CONSTRAINTS (DO NOT VIOLATE)
 1. Primary trigger is lab-range abnormality (high or low) for the primary marker.
    Do NOT invent numeric cutoffs unless explicitly supported by evidence and labelled as such.
@@ -57,11 +62,18 @@ For EACH primary marker, produce an “Investigation Signal Spec” that include
   • if a threshold is proposed, cite it and justify population/assay context
   • otherwise, keep it qualitative and use lab-range breach as trigger only.
 
+OVERRIDE CONDITION SHAPE (SCHEMA V2 - MUST MATCH EXACTLY)
+- lab boundary mode: use comparator_type: lab_range_boundary and boundary in {above_max, below_min, out_of_range}
+- numeric mode: use comparator_type: numeric_value and numeric_value: <number>
+- presence mode: use comparator_type: presence and presence_value: present
+- Do not emit v1-style condition fields that are not in schema v2.
+
 OUTPUT RULES
 - Populate the provided schema EXACTLY (field names, nesting, types).
 - If the schema includes IDs, use snake_case.
-- If you cannot map a proposed biomarker to an exact canonical ID, output the best candidate
-  name AND set a field `canonical_id_confidence` (high/medium/low) and explain why.
+- Use canonical biomarker IDs in biomarker_id fields.
+- If uncertain, select the best canonical candidate and explain uncertainty only within
+  existing schema v2 text fields (for example evidence or narrative notes).
 - Do not add extra fields not present in the schema unless the schema explicitly permits it.
 - No prose outside the schema output.
 
@@ -71,6 +83,10 @@ If the schema includes narrative/explanation fields, populate them with:
 - What patterns typically co-occur
 - What follow-up questions/tests are clinically typical
 Keep it factual and non-alarmist.
+In schema v2:
+- narrative.supporting_marker_roles MUST be string prose and meet schema minimum length.
+- narrative.supporting_marker_roles_map is OPTIONAL, documentation-only, non-runtime authoritative.
+- supporting_marker_roles_map must NOT be used to generate package outputs or explanation payloads.
 
 INPUTS START BELOW.
 ```
@@ -99,7 +115,7 @@ INPUTS START BELOW.
 
 ### Output schema to populate (must follow exactly)
 
-See the separate file "investigation_spec_schema_v1.yaml"
+See the separate file "investigation_spec_schema_v2.yaml"
 
 ```
 
