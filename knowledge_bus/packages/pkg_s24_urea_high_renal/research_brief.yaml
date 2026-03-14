@@ -1,0 +1,14 @@
+research_domain: renal
+sources:
+- paper_title: Renal Function Tests
+  journal: Clinical Biochemistry
+  year: 2019
+biomarkers:
+- urea
+- creatinine
+- hemoglobin
+derived_metrics: []
+physiological_claim: Urea is filtered by the glomerulus and partially reabsorbed in
+  the tubules, especially in states of low flow (dehydration).
+evidence_strength: strong
+research_summary: Lab-range breach trigger.

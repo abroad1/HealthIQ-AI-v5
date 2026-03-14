@@ -1,0 +1,15 @@
+research_domain: hematologic
+sources:
+- paper_title: Investigation and management of thrombocytosis
+  journal: British Journal of Haematology
+  year: 2019
+biomarkers:
+- platelets
+- crp
+- ferritin
+derived_metrics: []
+physiological_claim: Thrombocytosis can be cytokine-driven (reactive) or clonal (myeloproliferative),
+  with risk increasing at extreme counts.
+evidence_strength: moderate
+research_summary: Numeric threshold >1000 x10^9/L is used as an escalation marker
+  for extreme-risk pattern.

@@ -1,0 +1,68 @@
+library:
+  package_id: KBP-2422
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_neutrophils_high Investigation Library
+  description: Investigation signal library translated from inv_neutrophils_high_neutrophilia.yaml.
+signals:
+- signal_id: signal_neutrophils_high
+  name: Neutrophils High
+  description: Neutrophils are the primary mediators of the innate immune response.
+    High counts usually reflect an acute response to bacterial infection, tissue injury,
+    or systemic inflammation.
+  system: hematologic
+  primary_metric: neutrophils
+  supporting_metrics: &id001
+  - crp
+  - white_blood_cells
+  dependencies:
+    biomarkers:
+    - neutrophils
+    - crp
+    - white_blood_cells
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_neutrophils_high_lab_range_activation_placeholder
+    metric_id: neutrophils
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_neu_acute_infection_pattern
+    description: Escalate if neutrophilia is paired with significantly high CRP (>50
+      mg/L).
+    conditions:
+    - metric_id: crp
+      operator: '>'
+      value: 50.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: neutrophils
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: neutrophils
+    supporting_markers: *id001
+  explanation:
+    mechanism: Rapid mobilization from the bone marrow to fight bacterial pathogens
+      or clear necrotic tissue.
+    biological_pathway: Innate immunity / Myelopoiesis.
+    interpretation: Primary indicator of acute bacterial infection or sterile tissue
+      damage (e.g., myocardial infarction).
+    implications: Persistent neutrophilia without an obvious cause requires investigation
+      for chronic myeloid leukaemia or occult inflammation.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including crp (Supports active inflammatory or infectious context.);
+      white_blood_cells (Confirms broader leukocytosis pattern.).

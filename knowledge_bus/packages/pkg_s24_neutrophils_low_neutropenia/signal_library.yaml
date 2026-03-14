@@ -1,0 +1,76 @@
+library:
+  package_id: KBP-2423
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_neutrophils_low Investigation Library
+  description: Investigation signal library translated from inv_neutrophils_low_neutropenia.yaml.
+signals:
+- signal_id: signal_neutrophils_low
+  name: Neutrophils LOW
+  description: Low neutrophil counts (neutropenia) significantly increase the risk
+    of life-threatening bacterial and fungal infections.
+  system: hematologic
+  primary_metric: neutrophils
+  supporting_metrics: &id001
+  - white_blood_cells
+  - hemoglobin
+  - platelets
+  dependencies:
+    biomarkers:
+    - neutrophils
+    - white_blood_cells
+    - hemoglobin
+    - platelets
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_neutrophils_low_lab_range_activation_placeholder
+    metric_id: neutrophils
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_neu_severe_infection_risk
+    description: Escalate for severe neutropenia (<1.0 x10^9/L) due to high risk of
+      sepsis.
+    conditions:
+    - metric_id: neutrophils
+      operator: <
+      value: 1.0
+      condition_type: all_of
+    resulting_state: at_risk
+  - rule_id: or_neu_bone_marrow_failure
+    description: Escalate if neutropenia is paired with low platelets (potential marrow
+      suppression).
+    conditions:
+    - metric_id: platelets
+      operator: <
+      value: 150.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: neutrophils
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: neutrophils
+    supporting_markers: *id001
+  explanation:
+    mechanism: Decreased production in the bone marrow or increased peripheral destruction/sequestration.
+    biological_pathway: Myelopoiesis / Immune surveillance.
+    interpretation: Indicates a compromised ability to defend against bacterial invasion.
+    implications: Requires urgent clinical review if the patient is febrile (fever);
+      otherwise requires investigation for autoimmune or marrow-related causes.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including white_blood_cells (Confirms broader leukocyte suppression
+      pattern.); platelets (Adds bicytopenia context for marrow suppression concern.).

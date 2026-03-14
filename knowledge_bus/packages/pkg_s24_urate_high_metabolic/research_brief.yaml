@@ -1,0 +1,14 @@
+research_domain: metabolic
+sources:
+- paper_title: Uric acid and renal disease
+  journal: Nature Reviews Nephrology
+  year: 2018
+biomarkers:
+- urate
+- creatinine
+- triglycerides
+derived_metrics: []
+physiological_claim: Uric acid crystals precipitate in joints and renal tubules when
+  levels exceed solubility limits.
+evidence_strength: strong
+research_summary: Solubility limit is typically ~360 umol/L (6 mg/dL).

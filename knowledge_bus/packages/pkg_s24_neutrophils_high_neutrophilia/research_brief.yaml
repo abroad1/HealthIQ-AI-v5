@@ -1,0 +1,14 @@
+research_domain: hematologic
+sources:
+- paper_title: Guideline for the investigation of neutrophilia
+  journal: British Journal of Haematology
+  year: 2024
+biomarkers:
+- neutrophils
+- crp
+- white_blood_cells
+derived_metrics: []
+physiological_claim: Neutrophils are recruited from the bone marrow storage pool and
+  marginal pool in response to chemoattractants (e.g., IL-8).
+evidence_strength: strong
+research_summary: Lab-range breach trigger.

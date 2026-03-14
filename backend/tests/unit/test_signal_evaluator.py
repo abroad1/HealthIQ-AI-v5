@@ -756,9 +756,20 @@ _KB_S24_PACKAGE_DIRS = [
     "pkg_s24_homocysteine_high_metabolic",
     "pkg_s24_ldl_high_dyslipidaemia",
     "pkg_s24_lym_high_lymphocytosis",
+    "pkg_s24_mcv_high_macrocytosis",
+    "pkg_s24_neutrophils_high_neutrophilia",
+    "pkg_s24_neutrophils_low_neutropenia",
+    "pkg_s24_plt_high_thrombocytosis",
+    "pkg_s24_plt_low_thrombocytopenia",
     "pkg_s24_triglycerides_high_metabolic",
     "pkg_s24_tsh_high_hypothyroidism",
     "pkg_s24_tsh_low_hyperthyroidism",
+    "pkg_s24_urea_high_renal",
+    "pkg_s24_urate_high_metabolic",
+    "pkg_s24_vitamin_b12_low_deficiency",
+    "pkg_s24_vitamin_d_low_deficiency",
+    "pkg_s24_wbc_high_leukocytosis",
+    "pkg_s24_wbc_low_leukopenia",
 ]
 
 _KB_S24_SIGNAL_CASES = {
@@ -864,6 +875,36 @@ _KB_S24_SIGNAL_CASES = {
         "escalation_biomarkers": {"lymphocytes": 5.5, "white_blood_cells": 7.0, "crp": 2.0},
         "lab_ranges": {"lymphocytes": {"min": 1.0, "max": 4.0}},
     },
+    "signal_mcv_high": {
+        "no_trigger_biomarkers": {"mcv": 92.0, "vitamin_b12": 140.0, "folate": 4.0, "ggt": 90.0},
+        "baseline_biomarkers": {"mcv": 100.0, "vitamin_b12": 300.0, "folate": 10.0, "ggt": 30.0},
+        "escalation_biomarkers": {"mcv": 112.0, "vitamin_b12": 300.0, "folate": 10.0, "ggt": 30.0},
+        "lab_ranges": {"mcv": {"min": 80.0, "max": 96.0}},
+    },
+    "signal_neutrophils_high": {
+        "no_trigger_biomarkers": {"neutrophils": 5.0, "crp": 100.0, "white_blood_cells": 12.0},
+        "baseline_biomarkers": {"neutrophils": 9.0, "crp": 20.0, "white_blood_cells": 12.0},
+        "escalation_biomarkers": {"neutrophils": 9.0, "crp": 60.0, "white_blood_cells": 12.0},
+        "lab_ranges": {"neutrophils": {"min": 2.0, "max": 7.5}},
+    },
+    "signal_neutrophils_low": {
+        "no_trigger_biomarkers": {"neutrophils": 3.0, "white_blood_cells": 3.0, "hemoglobin": 100.0, "platelets": 100.0},
+        "baseline_biomarkers": {"neutrophils": 1.5, "white_blood_cells": 5.0, "hemoglobin": 130.0, "platelets": 220.0},
+        "escalation_biomarkers": {"neutrophils": 0.8, "white_blood_cells": 5.0, "hemoglobin": 130.0, "platelets": 220.0},
+        "lab_ranges": {"neutrophils": {"min": 2.0, "max": 7.5}},
+    },
+    "signal_platelets_high": {
+        "no_trigger_biomarkers": {"platelets": 300.0, "crp": 50.0, "ferritin": 10.0},
+        "baseline_biomarkers": {"platelets": 600.0, "crp": 5.0, "ferritin": 120.0},
+        "escalation_biomarkers": {"platelets": 1100.0, "crp": 5.0, "ferritin": 120.0},
+        "lab_ranges": {"platelets": {"min": 150.0, "max": 450.0}},
+    },
+    "signal_platelets_low": {
+        "no_trigger_biomarkers": {"platelets": 220.0, "hemoglobin": 90.0, "white_blood_cells": 3.0},
+        "baseline_biomarkers": {"platelets": 120.0, "hemoglobin": 130.0, "white_blood_cells": 6.0},
+        "escalation_biomarkers": {"platelets": 40.0, "hemoglobin": 130.0, "white_blood_cells": 6.0},
+        "lab_ranges": {"platelets": {"min": 150.0, "max": 450.0}},
+    },
     "signal_triglycerides_high": {
         "no_trigger_biomarkers": {"triglycerides": 1.2, "hba1c": 30.0},
         "baseline_biomarkers": {"triglycerides": 3.0, "hba1c": 30.0},
@@ -881,6 +922,42 @@ _KB_S24_SIGNAL_CASES = {
         "baseline_biomarkers": {"tsh": 0.2, "free_t4": 16.0, "free_t3": 5.0},
         "escalation_biomarkers": {"tsh": 0.2, "free_t4": 24.0, "free_t3": 5.0},
         "lab_ranges": {"tsh": {"min": 0.4, "max": 4.5}},
+    },
+    "signal_urea_high": {
+        "no_trigger_biomarkers": {"urea": 6.0, "creatinine": 160.0, "hemoglobin": 95.0},
+        "baseline_biomarkers": {"urea": 10.0, "creatinine": 90.0, "hemoglobin": 130.0},
+        "escalation_biomarkers": {"urea": 10.0, "creatinine": 140.0, "hemoglobin": 130.0},
+        "lab_ranges": {"urea": {"min": 2.5, "max": 7.8}},
+    },
+    "signal_urate_high": {
+        "no_trigger_biomarkers": {"urate": 300.0, "creatinine": 130.0, "triglycerides": 2.0, "egfr": 50.0},
+        "baseline_biomarkers": {"urate": 500.0, "creatinine": 90.0, "triglycerides": 2.0, "egfr": 90.0},
+        "escalation_biomarkers": {"urate": 500.0, "creatinine": 90.0, "triglycerides": 2.0, "egfr": 50.0},
+        "lab_ranges": {"urate": {"min": 150.0, "max": 420.0}},
+    },
+    "signal_vitamin_b12_low": {
+        "no_trigger_biomarkers": {"vitamin_b12": 300.0, "folate": 6.0, "mcv": 102.0, "active_b12": 20.0, "homocysteine": 20.0},
+        "baseline_biomarkers": {"vitamin_b12": 150.0, "folate": 10.0, "mcv": 90.0, "active_b12": 60.0, "homocysteine": 10.0},
+        "escalation_biomarkers": {"vitamin_b12": 150.0, "folate": 10.0, "mcv": 90.0, "active_b12": 20.0, "homocysteine": 10.0},
+        "lab_ranges": {"vitamin_b12": {"min": 200.0, "max": 900.0}},
+    },
+    "signal_vitamin_d_low": {
+        "no_trigger_biomarkers": {"vitamin_d": 80.0, "calcium": 2.1, "alp": 150.0},
+        "baseline_biomarkers": {"vitamin_d": 40.0, "calcium": 2.3, "alp": 100.0},
+        "escalation_biomarkers": {"vitamin_d": 20.0, "calcium": 2.3, "alp": 100.0},
+        "lab_ranges": {"vitamin_d": {"min": 50.0, "max": 150.0}},
+    },
+    "signal_wbc_high": {
+        "no_trigger_biomarkers": {"white_blood_cells": 8.0, "neutrophils": 10.0, "lymphocytes": 5.0},
+        "baseline_biomarkers": {"white_blood_cells": 15.0, "neutrophils": 8.0, "lymphocytes": 2.0},
+        "escalation_biomarkers": {"white_blood_cells": 55.0, "neutrophils": 8.0, "lymphocytes": 2.0},
+        "lab_ranges": {"white_blood_cells": {"min": 4.0, "max": 11.0}},
+    },
+    "signal_wbc_low": {
+        "no_trigger_biomarkers": {"white_blood_cells": 6.0, "neutrophils": 1.0, "hemoglobin": 100.0, "platelets": 100.0},
+        "baseline_biomarkers": {"white_blood_cells": 3.0, "neutrophils": 2.5, "hemoglobin": 130.0, "platelets": 220.0},
+        "escalation_biomarkers": {"white_blood_cells": 3.0, "neutrophils": 2.5, "hemoglobin": 100.0, "platelets": 120.0},
+        "lab_ranges": {"white_blood_cells": {"min": 4.0, "max": 11.0}},
     },
 }
 

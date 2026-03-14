@@ -1,0 +1,16 @@
+research_domain: hematologic
+sources:
+- paper_title: Guideline for investigation of cytopenias in adults
+  journal: British Journal of Haematology
+  year: 2023
+biomarkers:
+- white_blood_cells
+- neutrophils
+- hemoglobin
+- platelets
+derived_metrics: []
+physiological_claim: Leukopenia reflects reduced production, increased destruction,
+  or sequestration of leukocytes.
+evidence_strength: moderate
+research_summary: Lab-range breach is the baseline trigger; multi-lineage cytopenia
+  pattern is used for escalation.

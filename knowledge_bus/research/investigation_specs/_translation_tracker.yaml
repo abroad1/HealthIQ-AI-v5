@@ -75,15 +75,25 @@ entries:
   package_id: pkg_s24_lym_high_lymphocytosis
   notes: KB-S24 tranche 2 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_mcv_high_macrocytosis.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_mcv_high_macrocytosis
+  notes: KB-S24 tranche 3 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_neutrophils_high_neutrophilia.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_neutrophils_high_neutrophilia
+  notes: KB-S24 tranche 3 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_neutrophils_low_neutropenia.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_neutrophils_low_neutropenia
+  notes: KB-S24 tranche 3 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_plt_high_thrombocytosis.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_plt_high_thrombocytosis
+  notes: KB-S24 tranche 3 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_plt_low_thrombocytopenia.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_plt_low_thrombocytopenia
+  notes: KB-S24 tranche 3 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_triglycerides_high_metabolic_v1.yaml
   status: tested
   package_id: pkg_s24_triglycerides_high_metabolic
@@ -100,14 +110,26 @@ entries:
   notes: KB-S24 selected tranche (lexicographic _v1 selection). Package triad created,
     validators/tests passing.
 - spec_file: inv_urea_high_renal.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_urea_high_renal
+  notes: KB-S24 tranche 3 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_uric_acid_high_metabolic.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_urate_high_metabolic
+  notes: KB-S24 tranche 3 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_vitamin_b12_spec_v1.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_vitamin_b12_low_deficiency
+  notes: KB-S24 tranche 3 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_vitamin_d_low_deficiency_v1.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_vitamin_d_low_deficiency
+  notes: KB-S24 tranche 3 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_wbc_high_leukocytosis.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_wbc_high_leukocytosis
+  notes: KB-S24 tranche 3 package translated, validators passing, and deterministic tests passing.
 - spec_file: inv_wbc_low_leukopenia.yaml
-  status: pending
+  status: tested
+  package_id: pkg_s24_wbc_low_leukopenia
+  notes: KB-S24 tranche 3 package translated, validators passing, and deterministic tests passing.

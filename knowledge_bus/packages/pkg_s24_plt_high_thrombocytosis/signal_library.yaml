@@ -1,0 +1,67 @@
+library:
+  package_id: KBP-2424
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_platelets_high Investigation Library
+  description: Investigation signal library translated from inv_plt_high_thrombocytosis.yaml.
+signals:
+- signal_id: signal_platelets_high
+  name: Platelets High
+  description: Elevated platelet count can reflect reactive inflammation/iron deficiency
+    or a primary myeloproliferative process.
+  system: hematologic
+  primary_metric: platelets
+  supporting_metrics: &id001
+  - crp
+  - ferritin
+  dependencies:
+    biomarkers:
+    - platelets
+    - crp
+    - ferritin
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_platelets_high_lab_range_activation_placeholder
+    metric_id: platelets
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_plt_extreme_thrombocytosis
+    description: Escalate for extreme thrombocytosis (>1000 x10^9/L), which carries
+      thrombotic and hemorrhagic risk.
+    conditions:
+    - metric_id: platelets
+      operator: '>'
+      value: 1000.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: platelets
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: platelets
+    supporting_markers: *id001
+  explanation:
+    mechanism: Platelet overproduction arises through IL-6 mediated thrombopoietic
+      signaling or clonal marrow activation.
+    biological_pathway: Megakaryocyte proliferation and thrombopoietin signaling.
+    interpretation: Elevated platelets require differentiation between secondary/reactive
+      causes and clonal disorders.
+    implications: Marked or persistent thrombocytosis may increase thrombotic complications
+      and require hematology workup.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including crp (Supports reactive-inflammatory etiology.); ferritin
+      (Supports iron-deficiency-driven reactive etiology.).

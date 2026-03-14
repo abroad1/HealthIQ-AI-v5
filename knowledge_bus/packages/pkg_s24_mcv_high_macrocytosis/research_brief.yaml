@@ -1,0 +1,16 @@
+research_domain: hematologic
+sources:
+- paper_title: Guideline for the diagnosis and treatment of cobalamin and folate disorders
+  journal: British Journal of Haematology
+  year: 2023
+biomarkers:
+- mcv
+- vitamin_b12
+- folate
+- ggt
+derived_metrics: []
+physiological_claim: Macrocytosis reflects disrupted DNA synthesis or altered membrane
+  biology in erythroid precursors.
+evidence_strength: moderate
+research_summary: Numeric escalation threshold >110 fL is used as a high-severity
+  morphology trigger.

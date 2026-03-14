@@ -1,0 +1,16 @@
+research_domain: hematologic
+sources:
+- paper_title: 'Neutropenic sepsis: prevention and management in people with cancer'
+  journal: NICE Guideline
+  year: 2012
+biomarkers:
+- neutrophils
+- white_blood_cells
+- hemoglobin
+- platelets
+derived_metrics: []
+physiological_claim: The risk of opportunistic infection rises exponentially as the
+  absolute neutrophil count (ANC) falls below 1.0.
+evidence_strength: strong
+research_summary: 1.0 x10^9/L is the standard threshold for 'moderate' neutropenia
+  in the UK; <0.5 is 'severe'.

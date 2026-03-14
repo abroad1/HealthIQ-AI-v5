@@ -1,0 +1,21 @@
+research_domain: hematologic
+sources:
+- paper_title: Guideline for the diagnosis and treatment of cobalamin and folate disorders
+  journal: British Journal of Haematology
+  year: 2023
+- paper_title: 'Vitamin B12 deficiency in over 16s: diagnosis and management'
+  journal: NICE Guideline
+  year: 2024
+biomarkers:
+- vitamin_b12
+- folate
+- mcv
+- hemoglobin
+- active_b12
+- homocysteine
+derived_metrics: []
+physiological_claim: B12 is a cofactor for methionine synthase and L-methylmalonyl-CoA
+  mutase. Deficiency impairs DNA synthesis and neurologic maintenance.
+evidence_strength: strong
+research_summary: "Threshold evidence inconclusive for this condition \u2014 additional\
+  \ validation required. Lab-range breach is the primary trigger."

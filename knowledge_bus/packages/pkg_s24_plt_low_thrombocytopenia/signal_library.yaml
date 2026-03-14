@@ -1,0 +1,67 @@
+library:
+  package_id: KBP-2425
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_platelets_low Investigation Library
+  description: Investigation signal library translated from inv_plt_low_thrombocytopenia.yaml.
+signals:
+- signal_id: signal_platelets_low
+  name: Platelets LOW
+  description: Platelets are central to primary hemostasis; low counts increase spontaneous
+    and procedural bleeding risk.
+  system: hematologic
+  primary_metric: platelets
+  supporting_metrics: &id001
+  - hemoglobin
+  - white_blood_cells
+  dependencies:
+    biomarkers:
+    - platelets
+    - hemoglobin
+    - white_blood_cells
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_platelets_low_lab_range_activation_placeholder
+    metric_id: platelets
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_plt_severe_bleeding_risk
+    description: Escalate for platelets <50 x10^9/L due to clinically significant
+      bleeding risk.
+    conditions:
+    - metric_id: platelets
+      operator: <
+      value: 50.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: platelets
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: platelets
+    supporting_markers: *id001
+  explanation:
+    mechanism: Low platelet count arises from reduced marrow production, increased
+      peripheral destruction, or sequestration.
+    biological_pathway: Megakaryopoiesis and platelet-mediated primary hemostasis.
+    interpretation: Isolated mild thrombocytopenia may be chronic/benign, but deeper
+      reductions or co-cytopenias increase urgency.
+    implications: Severe thrombocytopenia can cause mucosal bleeding, petechiae, and
+      procedure-related hemorrhage risk.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including hemoglobin (Adds bleeding/marrow context when co-reduced.);
+      white_blood_cells (Adds marrow-suppression context when co-reduced.).

@@ -1,0 +1,67 @@
+library:
+  package_id: KBP-2429
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: signal_vitamin_d_low Investigation Library
+  description: Investigation signal library translated from inv_vitamin_d_low_deficiency_v1.yaml.
+signals:
+- signal_id: signal_vitamin_d_low
+  name: Vitamin D LOW
+  description: 25-hydroxyvitamin D is the best indicator of total body Vitamin D stores,
+    essential for calcium homeostasis and bone health.
+  system: other
+  primary_metric: vitamin_d
+  supporting_metrics: &id001
+  - calcium
+  - alp
+  dependencies:
+    biomarkers:
+    - vitamin_d
+    - calcium
+    - alp
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_vitamin_d_low_lab_range_activation_placeholder
+    metric_id: vitamin_d
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator-compatibility placeholder; runtime activation is lab-range
+      driven.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_vit_d_severe_deficiency
+    description: Escalate for profound deficiency (<25 nmol/L) associated with risk
+      of osteomalacia.
+    conditions:
+    - metric_id: vitamin_d
+      operator: <
+      value: 25.0
+      condition_type: all_of
+    resulting_state: at_risk
+  output:
+    signal_value: vitamin_d
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: vitamin_d
+    supporting_markers: *id001
+  explanation:
+    mechanism: Regulates calcium and phosphate metabolism for bone mineralization.
+    biological_pathway: Vitamin D receptor (VDR) activation in the gut increases expression
+      of calcium transport proteins.
+    interpretation: Low levels are common in higher latitudes. Severe deficiency leads
+      to rickets (children) or osteomalacia (adults).
+    implications: Requires supplementation and potential investigation of bone density
+      if chronic.
+    supporting_marker_roles: Escalation context is supported by correlated marker
+      patterns, including calcium (Indicates the clinical severity of the absorption
+      deficit.).
