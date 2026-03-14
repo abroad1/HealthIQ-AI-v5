@@ -32,6 +32,8 @@ IMPORTANT PLATFORM CONSTRAINTS (DO NOT VIOLATE)
 5. You must provide citations for key claims (prefer systematic reviews, guidelines, large cohorts,
    or authoritative clinical references). Keep citations short (author/year/journal or guideline body/year).
 
+reference_profile.effective_from is the lab reference range effective-from date (i.e., when the lab's reference ranges changed). It is NOT the test/sample/report date. Test/sample/report dates are panel-level metadata.
+
 TASK
 You will receive:
 A. a list of PRIMARY MARKERS (each may include whether we care about HIGH, LOW, or BOTH),
