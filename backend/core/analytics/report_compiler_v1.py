@@ -17,6 +17,7 @@ from core.contracts.report_v1 import (
     ReportTopFindingV1,
     ReportV1,
 )
+from core.analytics.root_cause_compiler_v1 import compile_root_cause_v1
 
 
 _STATE_RANK = {"at_risk": 4, "suboptimal": 3, "optimal": 2, "unknown": 1}
@@ -55,6 +56,8 @@ def compile_report_v1(
     interventions_v1: Optional[List[Dict[str, Any]]],
     signal_registry_version: Optional[str],
     signal_registry_hash_sha256: Optional[str],
+    biomarker_context: Optional[Dict[str, Any]] = None,
+    input_reference_ranges: Optional[Dict[str, Any]] = None,
     interaction_map_revision: Optional[str] = None,
     safety_contract_version: Optional[str] = None,
     generated_at: Optional[str] = None,
@@ -62,6 +65,8 @@ def compile_report_v1(
     signal_results = [row for row in (signal_results or []) if isinstance(row, dict)]
     interaction_summary = [row for row in (interaction_summary or []) if isinstance(row, dict)]
     interventions_v1 = [row for row in (interventions_v1 or []) if isinstance(row, dict)]
+    biomarker_context = biomarker_context or {}
+    input_reference_ranges = input_reference_ranges or {}
 
     signal_system = {
         str(row.get("signal_id", "")).strip(): str(row.get("system", "")).strip()
@@ -144,6 +149,11 @@ def compile_report_v1(
         safety_contract_version=str(safety_contract_version or _load_safety_contract_version()),
         generated_at=str(generated_at or ""),
     )
+    root_cause_v1 = compile_root_cause_v1(
+        signal_results=signal_results,
+        biomarker_context=biomarker_context,
+        input_reference_ranges=input_reference_ranges,
+    )
 
     return ReportV1(
         report_version="v1",
@@ -151,4 +161,5 @@ def compile_report_v1(
         top_chains=top_chains,
         actions=actions,
         meta=meta,
+        root_cause_v1=root_cause_v1,
     )
