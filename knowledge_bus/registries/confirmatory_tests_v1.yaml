@@ -4,6 +4,7 @@ updated_at: "2026-03-15"
 notes:
   - "Registry provides deterministic lookup for root_cause_v1 confirmatory_tests.test_id."
   - "Framing must remain non-directive (consider discussing / consider including in next panel)."
+  - "Suppression semantics: non-repeat tests are suppressed when all maps_to_biomarkers are already present in panel context."
 
 tests:
   - test_id: "test_serum_vitamin_b12_v1"
@@ -11,6 +12,9 @@ tests:
     specimen: "blood"
     safety_class: "monitoring"
     rationale_template: "Consider including serum vitamin B12 in your next panel to clarify B12 status."
+    maps_to_biomarkers:
+      - "vitamin_b12"
+    is_repeat_test: false
     related_signals:
       - "signal_homocysteine_elevation_context"
 
@@ -19,6 +23,9 @@ tests:
     specimen: "blood"
     safety_class: "monitoring"
     rationale_template: "Consider including serum folate in your next panel to clarify folate status."
+    maps_to_biomarkers:
+      - "folate"
+    is_repeat_test: false
     related_signals:
       - "signal_homocysteine_elevation_context"
 
@@ -27,6 +34,9 @@ tests:
     specimen: "blood"
     safety_class: "monitoring"
     rationale_template: "Consider including active B12 (holotranscobalamin) to assess functional B12 availability."
+    maps_to_biomarkers:
+      - "active_b12"
+    is_repeat_test: false
     related_signals:
       - "signal_homocysteine_elevation_context"
 
@@ -35,6 +45,9 @@ tests:
     specimen: "blood"
     safety_class: "monitoring"
     rationale_template: "Consider discussing methylmalonic acid (MMA) testing with your clinician to evaluate functional B12 deficiency."
+    maps_to_biomarkers:
+      - "methylmalonic_acid"
+    is_repeat_test: false
     related_signals:
       - "signal_homocysteine_elevation_context"
 
@@ -43,6 +56,9 @@ tests:
     specimen: "blood"
     safety_class: "monitoring"
     rationale_template: "Consider repeating homocysteine in 8–12 weeks to confirm persistence and track change over time."
+    maps_to_biomarkers:
+      - "homocysteine"
+    is_repeat_test: true
     related_signals:
       - "signal_homocysteine_high"
       - "signal_homocysteine_elevation_context"
@@ -52,6 +68,12 @@ tests:
     specimen: "blood"
     safety_class: "monitoring"
     rationale_template: "Consider including a full blood count with indices (e.g., MCV) to add context for nutritional or marrow patterns."
+    maps_to_biomarkers:
+      - "mcv"
+      - "hemoglobin"
+      - "rdw_cv"
+      - "hematocrit"
+    is_repeat_test: false
     related_signals:
       - "signal_mcv_high"
       - "signal_homocysteine_elevation_context"
@@ -61,6 +83,9 @@ tests:
     specimen: "blood"
     safety_class: "monitoring"
     rationale_template: "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated."
+    maps_to_biomarkers:
+      - "crp"
+    is_repeat_test: true
     related_signals:
       - "signal_systemic_inflammation"
       - "signal_vascular_inflammatory_stress"
@@ -70,6 +95,10 @@ tests:
     specimen: "blood"
     safety_class: "monitoring"
     rationale_template: "Consider including creatinine with eGFR to add renal clearance context for metabolite markers."
+    maps_to_biomarkers:
+      - "creatinine"
+      - "egfr"
+    is_repeat_test: false
     related_signals:
       - "signal_renal_metabolic_stress"
       - "signal_homocysteine_elevation_context"
@@ -79,6 +108,10 @@ tests:
     specimen: "blood"
     safety_class: "monitoring"
     rationale_template: "Consider including TSH with Free T4 to assess thyroid context when interpreting lipid or fatigue-related patterns."
+    maps_to_biomarkers:
+      - "tsh"
+      - "free_t4"
+    is_repeat_test: false
     related_signals:
       - "signal_thyroid_tsh_context"
 
@@ -87,6 +120,11 @@ tests:
     specimen: "blood"
     safety_class: "monitoring"
     rationale_template: "Consider including liver enzymes (GGT/ALT/AST) to add hepatic context that can influence lipid and inflammation patterns."
+    maps_to_biomarkers:
+      - "ggt"
+      - "alt"
+      - "ast"
+    is_repeat_test: false
     related_signals:
       - "signal_hepatic_alt_context"
       - "signal_systemic_inflammation"
