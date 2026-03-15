@@ -22,6 +22,7 @@ from core.contracts.arbitration_v1 import (
     DominanceEdge,
     CausalEdge,
 )
+from core.contracts.report_v1 import ReportV1
 
 if TYPE_CHECKING:
     from core.contracts.confidence_model_v1 import ConfidenceModelV1
@@ -183,6 +184,7 @@ class InsightGraphV1(BaseModel):
     signal_registry_version: Optional[str] = Field(default=None)
     signal_registry_hash: Optional[str] = Field(default=None)
     signal_results: List[Dict[str, Any]] = Field(default_factory=list)
+    report_v1: Optional[ReportV1] = Field(default=None)
     interventions_v1: Optional[List[Dict[str, Any]]] = Field(default=None)
     interaction_graph: Optional[Dict[str, Any]] = Field(default=None)
     interaction_chains: Optional[List[List[str]]] = Field(default=None)

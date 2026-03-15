@@ -101,17 +101,21 @@ def test_relationship_registry_load_error_soft_fails_in_fixture_mode(monkeypatch
 
 
 def test_builder_carries_signal_registry_and_results_fields():
+    sha = "a" * 64
     graph = build_insight_graph_v1(
         analysis_id="sig-1",
         scoring_result={},
         clustering_result={},
         signal_registry_version="abc123def456",
         signal_registry_hash="abc123def456",
+        signal_registry_hash_sha256=sha,
         signal_results=[{"signal_id": "signal_alpha", "signal_state": "suboptimal"}],
     )
     assert graph.signal_registry_version == "abc123def456"
     assert graph.signal_registry_hash == "abc123def456"
     assert graph.signal_results == [{"signal_id": "signal_alpha", "signal_state": "suboptimal"}]
+    assert graph.report_v1 is not None
+    assert graph.report_v1.meta.signal_registry_hash_sha256 == sha
 
 
 def test_builder_defaults_signal_results_to_empty_list():
@@ -121,6 +125,7 @@ def test_builder_defaults_signal_results_to_empty_list():
         clustering_result={},
         signal_registry_version=None,
         signal_registry_hash=None,
+        signal_registry_hash_sha256=None,
         signal_results=None,
     )
     assert graph.signal_registry_version is None
@@ -146,6 +151,8 @@ def test_builder_preserves_signal_results_with_additive_interaction_outputs():
     assert isinstance(graph.interaction_graph, dict)
     assert isinstance(graph.interaction_chains, list)
     assert isinstance(graph.interaction_summary, list)
+    assert graph.report_v1 is not None
+    assert graph.report_v1.report_version == "v1"
 
 
 def test_builder_interaction_outputs_match_deterministic_snapshot():

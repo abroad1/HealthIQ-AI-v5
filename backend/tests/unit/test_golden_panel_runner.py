@@ -845,3 +845,41 @@ def test_golden_panel_lab_range_activation_signal_is_deterministic_across_runs(t
     insight_a = _load_json(run_a / "insight_graph.json")
     insight_b = _load_json(run_b / "insight_graph.json")
     assert insight_a.get("signal_results", []) == insight_b.get("signal_results", [])
+
+
+@pytest.mark.parametrize(
+    "fixture_name",
+    [
+        "ab_full_panel_with_ranges.json",
+        "vr_full_panel_with_ranges.json",
+    ],
+)
+def test_report_v1_present_and_stable_for_ab_vr_panels(tmp_path, fixture_name):
+    fixture = Path(__file__).parent.parent / "fixtures" / "panels" / fixture_name
+    run_a, _ = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path / "a",
+        run_id=f"unit-report-v1-{fixture.stem}-a",
+        write_narrative=False,
+    )
+    run_b, _ = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path / "b",
+        run_id=f"unit-report-v1-{fixture.stem}-b",
+        write_narrative=False,
+    )
+
+    report_a = (_load_json(run_a / "insight_graph.json") or {}).get("report_v1", {})
+    report_b = (_load_json(run_b / "insight_graph.json") or {}).get("report_v1", {})
+    assert isinstance(report_a, dict) and report_a
+    assert isinstance(report_b, dict) and report_b
+
+    # generated_at is expected to differ between runs; everything else is deterministic.
+    meta_a = dict(report_a.get("meta", {}) or {})
+    meta_b = dict(report_b.get("meta", {}) or {})
+    meta_a.pop("generated_at", None)
+    meta_b.pop("generated_at", None)
+    report_a["meta"] = meta_a
+    report_b["meta"] = meta_b
+
+    assert report_a == report_b
