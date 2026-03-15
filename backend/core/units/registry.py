@@ -77,6 +77,16 @@ _STRICT_CONVERSION_BIOMARKERS = frozenset().union(
     _VITAMIN_D_BIOMARKERS,
 )
 
+_UMOL_EQUIVALENTS = frozenset({"µmol/L", "umol/L", "uMol/L"})
+
+
+def _units_equivalent(from_unit: str, to_unit: str) -> bool:
+    from_u = (from_unit or "").strip()
+    to_u = (to_unit or "").strip()
+    if from_u == to_u:
+        return True
+    return from_u in _UMOL_EQUIVALENTS and to_u in _UMOL_EQUIVALENTS
+
 
 class UnitRegistry:
     """Hard-typed unit registry with biomarker-specific conversion matrix."""
@@ -138,7 +148,7 @@ class UnitRegistry:
     ) -> Optional[float]:
         from_u = (from_unit or "").strip()
         to_u = (to_unit or "").strip()
-        if from_u == to_u:
+        if _units_equivalent(from_u, to_u):
             return 1.0
         data = self._load_units()
         convs = data.get("units", {}).get("conversions", {})
@@ -201,6 +211,8 @@ class UnitRegistry:
                 expected_base_unit=base_unit,
             )
         if from_u == base_unit:
+            return float(value), base_unit
+        if _units_equivalent(from_u, base_unit):
             return float(value), base_unit
         factor = self._get_conversion_factor(biomarker_id, from_u, base_unit)
         if factor is None:
