@@ -103,3 +103,55 @@ def test_root_cause_v1_text_fields_respect_safety_denylist(tmp_path):
     lowered = "\n".join(text_fields).lower()
     for phrase in denylist:
         assert phrase not in lowered
+
+
+def test_confirmatory_test_suppression_and_repeat_behavior_for_ab_panel(tmp_path):
+    fixture = Path(__file__).parent.parent / "fixtures" / "panels" / "ab_full_panel_with_ranges.json"
+    run_dir, _ = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path / "suppression",
+        run_id="unit-root-cause-suppression-ab",
+        write_narrative=False,
+    )
+    insight = _load_json(run_dir / "insight_graph.json") or {}
+    findings = (((insight.get("report_v1") or {}).get("root_cause_v1") or {}).get("findings") or [])
+    assert len(findings) == 1
+    hypotheses = findings[0].get("hypotheses", [])
+    by_id = {str(h.get("hypothesis_id", "")).strip(): h for h in hypotheses if isinstance(h, dict)}
+    b12 = by_id.get("hcy_b12_pattern_v1")
+    assert isinstance(b12, dict)
+    tests = {str(t.get("test_id", "")).strip() for t in (b12.get("confirmatory_tests") or []) if isinstance(t, dict)}
+
+    # Present in AB panel -> should be suppressed.
+    assert "test_serum_vitamin_b12_v1" not in tests
+    assert "test_holotranscobalamin_active_b12_v1" not in tests
+    # Absent in AB panel -> should remain.
+    assert "test_methylmalonic_acid_v1" in tests
+    # Repeat tests should not be suppressed.
+    folate = by_id.get("hcy_folate_pattern_v1")
+    assert isinstance(folate, dict)
+    folate_tests = {
+        str(t.get("test_id", "")).strip()
+        for t in (folate.get("confirmatory_tests") or [])
+        if isinstance(t, dict)
+    }
+    assert "test_homocysteine_repeat_v1" in folate_tests
+
+
+def test_confirmatory_test_suppression_output_is_deterministic_for_ab_panel(tmp_path):
+    fixture = Path(__file__).parent.parent / "fixtures" / "panels" / "ab_full_panel_with_ranges.json"
+    run_a, _ = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path / "det-a",
+        run_id="unit-root-cause-suppression-det-a",
+        write_narrative=False,
+    )
+    run_b, _ = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path / "det-b",
+        run_id="unit-root-cause-suppression-det-b",
+        write_narrative=False,
+    )
+    root_a = ((_load_json(run_a / "insight_graph.json") or {}).get("report_v1") or {}).get("root_cause_v1")
+    root_b = ((_load_json(run_b / "insight_graph.json") or {}).get("report_v1") or {}).get("root_cause_v1")
+    assert root_a == root_b

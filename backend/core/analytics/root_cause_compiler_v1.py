@@ -288,6 +288,14 @@ def compile_root_cause_v1(
                     f"Unknown confirmatory test_id={tid!r} referenced by hypothesis_id={hypothesis.get('hypothesis_id')!r}"
                 )
             test_row = tests_by_id[tid]
+            mapped_biomarkers = [
+                str(x).strip()
+                for x in (test_row.get("maps_to_biomarkers") or [])
+                if str(x).strip()
+            ]
+            is_repeat_test = bool(test_row.get("is_repeat_test", False))
+            if not is_repeat_test and mapped_biomarkers and all(m in marker_present for m in mapped_biomarkers):
+                continue
             confirmatory_tests.append(
                 RootCauseConfirmatoryTestV1(
                     test_id=tid,
