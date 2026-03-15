@@ -1,0 +1,52 @@
+schema_version: "1.0.1"
+contract_version: "1.0.1"
+
+allowed_safety_classes:
+  - lifestyle
+  - monitoring
+  - clinician_referral
+
+allowed_evidence_strength:
+  - moderate
+  - strong
+  - consensus
+
+minimum_evidence_strength: moderate
+
+selection_ordering:
+  - chain_confidence desc
+  - signal_confidence desc
+  - evidence_strength_ordinal desc
+  - intervention_id asc
+
+text_limits:
+  title_max_chars: 80
+  body_max_sentences: 3
+  why_this_matters_max_chars: 200
+
+confidence_threshold: 0.40
+max_interventions_per_report: 5
+max_interventions_per_system: 2
+
+low_confidence_clause: "Some markers needed to fully assess this signal are missing from your panel."
+low_confidence_monitoring_fallback: "Insufficient data to generate reliable recommendations. Retest recommended in 8–12 weeks with a complete panel."
+
+denylist_phrases:
+  - "take medication"
+  - "take this drug"
+  - "take the pill"
+  - "take a supplement"
+  - "this will treat"
+  - "we can treat"
+  - "prescribe"
+  - "prescription"
+  - "dose"
+  - "dosage"
+  - "diagnose"
+  - "diagnosis confirmed"
+  - "start medication"
+  - "stop medication"
+  - "brand"
+  - "buy now"
+  - "supplement"
+  - "reverse"
