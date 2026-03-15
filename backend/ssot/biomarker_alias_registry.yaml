@@ -703,6 +703,10 @@ urate:
   - Uric Acid
   - Uric Acid (Venous)
   - Uric Acid - venous
+uric_acid:
+  canonical_id: urate
+  aliases:
+  - uric_acid
 urea:
   canonical_id: urea
   aliases:
