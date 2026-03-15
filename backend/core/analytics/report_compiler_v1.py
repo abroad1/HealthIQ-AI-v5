@@ -142,7 +142,7 @@ def compile_report_v1(
         signal_registry_hash_sha256=str(signal_registry_hash_sha256 or ""),
         interaction_map_revision=str(interaction_map_revision or _load_map_revision()),
         safety_contract_version=str(safety_contract_version or _load_safety_contract_version()),
-        generated_at=str(generated_at or "1970-01-01T00:00:00+00:00"),
+        generated_at=str(generated_at or ""),
     )
 
     return ReportV1(

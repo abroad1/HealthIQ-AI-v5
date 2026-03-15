@@ -6,7 +6,7 @@ import hashlib
 import json
 import os
 import subprocess
-from datetime import date
+from datetime import UTC, date, datetime
 from typing import Dict, Any, List, Mapping, Optional, Tuple
 
 # Reserved key for unit-normalisation invariant (Sprint 5). Set by callers after apply_unit_normalisation.
@@ -100,6 +100,23 @@ class AnalysisOrchestrator:
         self.insight_synthesizer = InsightSynthesizer(allow_llm=allow_llm)
         self.signal_registry = SignalRegistry()
         self.signal_evaluator = SignalEvaluator(self.signal_registry)
+        self._signal_registry_hash_sha256_cache: Optional[str] = None
+
+    @staticmethod
+    def _utc_now_iso() -> str:
+        return datetime.now(UTC).isoformat().replace("+00:00", "Z")
+
+    def _get_signal_registry_hash_sha256(self) -> Optional[str]:
+        if self._signal_registry_hash_sha256_cache is not None:
+            return self._signal_registry_hash_sha256_cache
+        signals = self.signal_registry.get_all_signals()
+        if not signals:
+            self._signal_registry_hash_sha256_cache = None
+            return None
+        self._signal_registry_hash_sha256_cache = hashlib.sha256(
+            json.dumps(signals, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        return self._signal_registry_hash_sha256_cache
     
     def create_analysis_context(
         self,
@@ -642,13 +659,8 @@ class AnalysisOrchestrator:
             unit_normalisation_meta=None,
             signal_registry_version=self.signal_registry.version,
             signal_registry_hash=self.signal_registry.package_hash,
-            signal_registry_hash_sha256=hashlib.sha256(
-                json.dumps(
-                    self.signal_registry.get_all_signals(),
-                    sort_keys=True,
-                    separators=(",", ":"),
-                ).encode("utf-8")
-            ).hexdigest(),
+            signal_registry_hash_sha256=self._get_signal_registry_hash_sha256(),
+            report_generated_at=self._utc_now_iso(),
             signal_results=[],
         )
 
@@ -1079,13 +1091,8 @@ class AnalysisOrchestrator:
                 reference_profiles=input_reference_profiles,
             )
             signal_results_serialized = [r.model_dump() for r in signal_results_raw]
-            signal_registry_hash_sha256 = hashlib.sha256(
-                json.dumps(
-                    self.signal_registry.get_all_signals(),
-                    sort_keys=True,
-                    separators=(",", ":"),
-                ).encode("utf-8")
-            ).hexdigest()
+            signal_registry_hash_sha256 = self._get_signal_registry_hash_sha256()
+            report_generated_at = self._utc_now_iso()
 
             # Step 2: Score biomarkers using the scoring engine with input reference ranges
             logger.info("Step 2: Scoring biomarkers")
@@ -1136,6 +1143,7 @@ class AnalysisOrchestrator:
                 signal_registry_version=self.signal_registry.version,
                 signal_registry_hash=self.signal_registry.package_hash,
                 signal_registry_hash_sha256=signal_registry_hash_sha256,
+                report_generated_at=report_generated_at,
                 signal_results=signal_results_serialized,
             )
 

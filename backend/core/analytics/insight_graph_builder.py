@@ -205,6 +205,7 @@ def build_insight_graph_v1(
     signal_registry_version: Optional[str] = None,
     signal_registry_hash: Optional[str] = None,
     signal_registry_hash_sha256: Optional[str] = None,
+    report_generated_at: Optional[str] = None,
     signal_results: Optional[List[Dict[str, Any]]] = None,
 ) -> InsightGraphV1:
     """
@@ -415,6 +416,7 @@ def build_insight_graph_v1(
         interventions_v1=interventions_v1,
         signal_registry_version=signal_registry_version,
         signal_registry_hash_sha256=signal_registry_hash_sha256,
+        generated_at=report_generated_at,
     )
 
     return InsightGraphV1(

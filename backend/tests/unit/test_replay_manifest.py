@@ -642,3 +642,56 @@ def test_lab_range_difference_changes_signal_results_and_replay_hash():
         insight_graph=ig_high_range,
     )
     assert m_low.schema_hashes.get("insight_graph_hash") != m_high.schema_hashes.get("insight_graph_hash")
+
+
+def test_report_generated_at_is_ignored_in_replay_insight_graph_hash():
+    base_report = {
+        "report_version": "v1",
+        "top_findings": [],
+        "top_chains": [],
+        "actions": {"interventions": [], "clinician_referrals": [], "monitoring": []},
+        "meta": {
+            "signal_registry_version": "sig-v",
+            "signal_registry_hash_sha256": "a" * 64,
+            "interaction_map_revision": "1.1.0",
+            "safety_contract_version": "1.0.1",
+            "generated_at": "2026-03-15T10:00:00Z",
+        },
+    }
+    changed_report = dict(base_report)
+    changed_report["meta"] = dict(base_report["meta"])
+    changed_report["meta"]["generated_at"] = "2026-03-15T10:00:05Z"
+
+    ig_a = InsightGraphV1(
+        graph_version="1.0.0",
+        analysis_id="rep-hash-a",
+        biomarker_nodes=[BiomarkerNode(biomarker_id="glucose", status="normal")],
+        signal_registry_version="sig-v",
+        signal_registry_hash="sig-hash",
+        report_v1=base_report,
+        edges=[],
+    )
+    ig_b = InsightGraphV1(
+        graph_version="1.0.0",
+        analysis_id="rep-hash-a",
+        biomarker_nodes=[BiomarkerNode(biomarker_id="glucose", status="normal")],
+        signal_registry_version="sig-v",
+        signal_registry_hash="sig-hash",
+        report_v1=changed_report,
+        edges=[],
+    )
+    m_a = build_replay_manifest_v1(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        insight_graph=ig_a,
+    )
+    m_b = build_replay_manifest_v1(
+        unit_registry_version="1.0",
+        ratio_registry_version="1.1.0",
+        cluster_schema_version="1.0.0",
+        cluster_schema_hash="x",
+        insight_graph=ig_b,
+    )
+    assert m_a.schema_hashes.get("insight_graph_hash") == m_b.schema_hashes.get("insight_graph_hash")
