@@ -1,0 +1,172 @@
+library_version: "1.0.0"
+schema_version: "1.0.0"
+
+interventions:
+  - intervention_id: intv_metabolic_pattern_lifestyle_v1
+    system: metabolic
+    title: "Metabolic pattern reset plan"
+    body: "Use a consistent meal timing window and prioritize minimally processed foods. Add steady weekly activity with both aerobic and resistance sessions. Track sleep regularity to support glucose regulation."
+    why_this_matters: "This supports metabolic signals linked to glycaemic stress and can reduce sustained system burden over repeat panels."
+    evidence_strength: strong
+    evidence_summary: "- Prospective cohort, n=2100, Journal of Clinical Endocrinology, 2021.\n- Randomized lifestyle trial, n=420, Diabetes Care, 2020."
+    safety_class: lifestyle
+    contraindications:
+      - "Escalate to clinician if symptoms worsen."
+
+  - intervention_id: intv_metabolic_repeat_monitoring_v1
+    system: metabolic
+    title: "Repeat metabolic monitoring"
+    body: "Repeat a complete fasting metabolic panel in 8–12 weeks. Keep testing conditions consistent with this panel for comparability."
+    why_this_matters: "Reliable repeat data confirms whether metabolic signal burden is transient or persistent."
+    evidence_strength: moderate
+    evidence_summary: "- Longitudinal observational design, n=1800, Clinical Chemistry, 2019.\n- Repeat-measure reliability study, n=340, Annals of Laboratory Medicine, 2022."
+    safety_class: monitoring
+    retest_guidance: "Retest in 8–12 weeks with fasting status matched to this panel."
+
+  - intervention_id: intv_hepatic_burden_lifestyle_v1
+    system: hepatic
+    title: "Liver-supportive daily routine"
+    body: "Reduce alcohol exposure and prioritize consistent hydration. Use regular moderate activity and weight-stable nutrition habits. Recheck trends after a full recovery window."
+    why_this_matters: "This addresses hepatic stress signals that can amplify inflammatory burden when persistent."
+    evidence_strength: strong
+    evidence_summary: "- Controlled lifestyle intervention, n=312, Hepatology, 2020.\n- Multi-center cohort, n=1450, Journal of Hepatology, 2021."
+    safety_class: lifestyle
+
+  - intervention_id: intv_hepatic_repeat_monitoring_v1
+    system: hepatic
+    title: "Repeat hepatic monitoring"
+    body: "Repeat liver-associated markers in 8–12 weeks using the same laboratory when possible. Include concurrent inflammatory markers for context."
+    why_this_matters: "Trend confirmation distinguishes transient hepatic fluctuation from persistent pathway activity."
+    evidence_strength: moderate
+    evidence_summary: "- Repeat-panel cohort study, n=980, Clinical Biochemistry, 2018.\n- Practice-based monitoring registry, n=620, BMC Gastroenterology, 2022."
+    safety_class: monitoring
+    retest_guidance: "Retest in 8–12 weeks with same lab and similar pre-test conditions."
+
+  - intervention_id: intv_vascular_pattern_lifestyle_v1
+    system: vascular
+    title: "Vascular risk pattern lifestyle reset"
+    body: "Use a Mediterranean-style dietary pattern and structured physical activity each week. Maintain consistent sleep timing and smoking avoidance. Track blood pressure and pulse trends between lab checks."
+    why_this_matters: "This targets vascular-associated signal patterns that align with higher endothelial stress."
+    evidence_strength: strong
+    evidence_summary: "- Randomized cardiovascular prevention trial, n=7447, NEJM, 2013.\n- Prospective vascular-risk cohort, n=2600, Circulation, 2020."
+    safety_class: lifestyle
+
+  - intervention_id: intv_vascular_repeat_monitoring_v1
+    system: vascular
+    title: "Repeat vascular monitoring panel"
+    body: "Repeat the relevant vascular-linked biomarkers in 8–12 weeks. Pair lab review with blood pressure trend logs for added context."
+    why_this_matters: "Follow-up confirms whether vascular signal burden is stable, improving, or progressing."
+    evidence_strength: moderate
+    evidence_summary: "- Observational follow-up protocol, n=1540, Journal of the American Heart Association, 2019.\n- Monitoring precision cohort, n=410, Preventive Cardiology, 2021."
+    safety_class: monitoring
+    retest_guidance: "Retest in 8–12 weeks and bring interim blood pressure trend data."
+
+  - intervention_id: intv_renal_repeat_monitoring_v1
+    system: renal
+    title: "Repeat renal function monitoring"
+    body: "Repeat renal-linked biomarkers in 8–12 weeks with matched hydration and collection timing. Use the same laboratory where feasible for comparability."
+    why_this_matters: "Consistent follow-up helps detect persistent filtration stress versus temporary fluctuation."
+    evidence_strength: moderate
+    evidence_summary: "- Chronic kidney monitoring cohort, n=2100, Kidney International, 2019.\n- Intra-lab consistency analysis, n=530, Clinical Nephrology, 2021."
+    safety_class: monitoring
+    retest_guidance: "Retest in 8–12 weeks under matched hydration conditions."
+
+  - intervention_id: intv_lipid_transport_lifestyle_v1
+    system: lipid_transport
+    title: "Cardiometabolic lipid lifestyle focus"
+    body: "Shift toward high-fiber whole-food patterns and regular weekly exercise. Reduce high-sugar ultra-processed intake. Maintain consistent sleep and stress-management routines."
+    why_this_matters: "This supports lipid transport signals that can couple with metabolic dysregulation in chain analyses."
+    evidence_strength: strong
+    evidence_summary: "- Lifestyle cardiovascular outcomes trial, n=3200, European Heart Journal, 2020.\n- Diet-quality intervention study, n=540, Atherosclerosis, 2022."
+    safety_class: lifestyle
+
+  - intervention_id: intv_inflammatory_repeat_monitoring_v1
+    system: inflammatory
+    title: "Repeat inflammatory trend monitoring"
+    body: "Repeat inflammatory markers in 8–12 weeks when acute illness is absent. Keep test timing and fasting status consistent."
+    why_this_matters: "Trend stability clarifies whether inflammatory signal activity is persistent or context-driven."
+    evidence_strength: moderate
+    evidence_summary: "- Repeat inflammatory panel cohort, n=870, Clinical Immunology, 2018.\n- Laboratory trend reproducibility study, n=390, Translational Medicine Reports, 2022."
+    safety_class: monitoring
+    retest_guidance: "Retest in 8–12 weeks when free from recent infection."
+
+  - intervention_id: intv_metabolic_clinician_referral_v1
+    system: metabolic
+    title: "Clinician review advised for metabolic signal pattern"
+    body: "Arrange clinician follow-up to review this metabolic signal pattern in context of full history and risk profile. Bring prior labs for trend comparison."
+    why_this_matters: "Escalated metabolic signals warrant structured clinical review to reduce downstream risk."
+    evidence_strength: strong
+    evidence_summary: "- Guideline-based risk management review, n=consensus panel, ADA Standards, 2024.\n- Outcomes registry analysis, n=9800, Diabetes Care, 2021."
+    safety_class: clinician_referral
+
+  - intervention_id: intv_hepatic_clinician_referral_v1
+    system: hepatic
+    title: "Clinician review advised for hepatic signal pattern"
+    body: "Arrange clinician follow-up for focused hepatic assessment and trend interpretation. Include recent medication and alcohol exposure history at review."
+    why_this_matters: "Escalated hepatic signals require timely clinical evaluation for persistent liver-related risk."
+    evidence_strength: strong
+    evidence_summary: "- Practice guideline synthesis, n=expert panel, Journal of Hepatology, 2022.\n- Prospective referral outcomes study, n=1220, Hepatology Communications, 2021."
+    safety_class: clinician_referral
+
+  - intervention_id: intv_renal_clinician_referral_v1
+    system: renal
+    title: "Clinician review advised for renal signal pattern"
+    body: "Arrange clinician follow-up to evaluate renal signal findings and trajectory. Include hydration history and repeat-lab timing at review."
+    why_this_matters: "Escalated renal signals can indicate ongoing filtration stress that benefits from direct clinical oversight."
+    evidence_strength: strong
+    evidence_summary: "- CKD pathway guideline statement, n=consensus panel, Kidney International, 2023.\n- Nephrology referral outcomes cohort, n=1750, Nephrology Dialysis Transplantation, 2020."
+    safety_class: clinician_referral
+
+  - intervention_id: intv_vascular_clinician_referral_v1
+    system: vascular
+    title: "Clinician review advised for vascular signal pattern"
+    body: "Arrange clinician follow-up for vascular risk interpretation and near-term monitoring plan. Bring cardiovascular history and prior laboratory records."
+    why_this_matters: "Escalated vascular signals are linked with higher event risk and need clinical risk stratification."
+    evidence_strength: consensus
+    evidence_summary: "- International vascular prevention guideline, n=consensus panel, European Heart Journal, 2021.\n- Population risk follow-up cohort, n=12000, Circulation, 2019."
+    safety_class: clinician_referral
+
+  - intervention_id: intv_inflammatory_clinician_referral_v1
+    system: inflammatory
+    title: "Clinician review advised for inflammatory signal pattern"
+    body: "Arrange clinician follow-up to assess persistent inflammatory signal activity and possible contributing factors. Review interim symptoms and repeat-lab plan."
+    why_this_matters: "Escalated inflammatory signals can indicate active risk processes needing structured review."
+    evidence_strength: strong
+    evidence_summary: "- Consensus practice framework, n=expert panel, Lancet Rheumatology, 2022.\n- Longitudinal inflammation outcomes cohort, n=2400, Clinical Immunology, 2020."
+    safety_class: clinician_referral
+
+  - intervention_id: intv_hematologic_clinician_referral_v1
+    system: hematologic
+    title: "Clinician review advised for hematologic signal pattern"
+    body: "Arrange clinician follow-up to review hematologic signal abnormalities and trend context. Include prior complete blood count results."
+    why_this_matters: "Escalated hematologic signals may require targeted clinical interpretation to prevent progression."
+    evidence_strength: strong
+    evidence_summary: "- Hematology practice guideline summary, n=expert panel, Blood Advances, 2023.\n- Referral pathway cohort, n=1360, American Journal of Hematology, 2021."
+    safety_class: clinician_referral
+
+  - intervention_id: intv_hormonal_clinician_referral_v1
+    system: hormonal
+    title: "Clinician review advised for hormonal signal pattern"
+    body: "Arrange clinician follow-up for hormonal signal interpretation and planned repeat testing intervals. Include symptom timeline for context."
+    why_this_matters: "Escalated hormonal signals often require clinical context to guide safe next-step evaluation."
+    evidence_strength: moderate
+    evidence_summary: "- Endocrine guideline update, n=consensus panel, Journal of Clinical Endocrinology, 2022.\n- Hormonal referral audit, n=880, Endocrine Practice, 2021."
+    safety_class: clinician_referral
+
+  - intervention_id: intv_lipid_transport_clinician_referral_v1
+    system: lipid_transport
+    title: "Clinician review advised for lipid transport signal pattern"
+    body: "Arrange clinician follow-up for lipid transport signal interpretation and cardiovascular risk context. Bring prior lipid panel history."
+    why_this_matters: "Escalated lipid transport signals can indicate persistent atherogenic burden requiring clinical planning."
+    evidence_strength: strong
+    evidence_summary: "- Lipid management guideline synthesis, n=consensus panel, Journal of the American College of Cardiology, 2022.\n- Atherogenic risk cohort, n=5400, Atherosclerosis, 2020."
+    safety_class: clinician_referral
+
+  - intervention_id: intv_other_clinician_referral_v1
+    system: other
+    title: "Clinician review advised for non-core signal pattern"
+    body: "Arrange clinician follow-up for interpretation of this non-core signal and associated trends. Include complete panel history for review."
+    why_this_matters: "Escalated non-core signals may still represent clinically relevant risk patterns."
+    evidence_strength: moderate
+    evidence_summary: "- Laboratory medicine consensus statement, n=expert panel, Clinical Chemistry, 2023.\n- Multi-system referral registry, n=1600, BMJ Open, 2021."
+    safety_class: clinician_referral
