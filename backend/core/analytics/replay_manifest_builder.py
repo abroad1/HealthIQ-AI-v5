@@ -30,6 +30,21 @@ def _fixture_mode_enabled() -> bool:
     return mode in {"fixture", "fixtures"}
 
 
+def _normalise_for_replay_hash(obj: Any) -> Any:
+    """
+    Remove runtime-volatile fields that are explicitly non-deterministic.
+    """
+    if not isinstance(obj, dict):
+        return obj
+    payload = json.loads(json.dumps(obj))
+    report = payload.get("report_v1")
+    if isinstance(report, dict):
+        meta = report.get("meta")
+        if isinstance(meta, dict):
+            meta.pop("generated_at", None)
+    return payload
+
+
 def build_replay_manifest_v1(
     unit_registry_version: str,
     ratio_registry_version: str,
@@ -135,7 +150,7 @@ def build_replay_manifest_v1(
         try:
             dump = insight_graph.model_dump() if hasattr(insight_graph, "model_dump") else insight_graph
             ig_version = str(dump.get("graph_version", ""))
-            ig_hash = _canonical_json_hash(dump)
+            ig_hash = _canonical_json_hash(_normalise_for_replay_hash(dump))
             if not relationship_registry_version:
                 relationship_registry_version = str(dump.get("relationship_registry_version", ""))
             if not relationship_registry_hash:

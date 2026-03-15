@@ -4,7 +4,7 @@ v5.3 Sprint 6 - Unit tests for GoldenPanelRunner_v1.
 
 import json
 import uuid
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 import pytest
@@ -873,6 +873,14 @@ def test_report_v1_present_and_stable_for_ab_vr_panels(tmp_path, fixture_name):
     report_b = (_load_json(run_b / "insight_graph.json") or {}).get("report_v1", {})
     assert isinstance(report_a, dict) and report_a
     assert isinstance(report_b, dict) and report_b
+    generated_a = str((report_a.get("meta") or {}).get("generated_at", "")).strip()
+    generated_b = str((report_b.get("meta") or {}).get("generated_at", "")).strip()
+    assert generated_a
+    assert generated_b
+    assert generated_a.endswith("Z")
+    assert generated_b.endswith("Z")
+    datetime.fromisoformat(generated_a.replace("Z", "+00:00"))
+    datetime.fromisoformat(generated_b.replace("Z", "+00:00"))
 
     # generated_at is expected to differ between runs; everything else is deterministic.
     meta_a = dict(report_a.get("meta", {}) or {})
