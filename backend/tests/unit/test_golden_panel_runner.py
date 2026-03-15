@@ -4,11 +4,13 @@ v5.3 Sprint 6 - Unit tests for GoldenPanelRunner_v1.
 
 import json
 import uuid
+import copy
 from datetime import date, datetime
 from pathlib import Path
 
 import pytest
 import yaml
+from core.analytics import signal_interaction_builder as interaction_builder_module
 from core.analytics.ratio_registry import DERIVED_IDS
 from core.analytics.signal_evaluator import SignalRegistry
 from core.models.signal import SignalResult
@@ -891,3 +893,92 @@ def test_report_v1_present_and_stable_for_ab_vr_panels(tmp_path, fixture_name):
     report_b["meta"] = meta_b
 
     assert report_a == report_b
+
+
+@pytest.mark.parametrize(
+    "fixture_name",
+    [
+        "ab_full_panel_with_ranges.json",
+        "vr_full_panel_with_ranges.json",
+    ],
+)
+def test_ab_vr_interaction_chains_include_homocysteine_context_and_confidence_floor(tmp_path, fixture_name):
+    fixture = Path(__file__).parent.parent / "fixtures" / "panels" / fixture_name
+    run_dir, _ = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path / fixture.stem,
+        run_id=f"unit-ab-vr-chain-{fixture.stem}",
+        write_narrative=False,
+    )
+    insight = _load_json(run_dir / "insight_graph.json") or {}
+    chains = insight.get("interaction_chains", []) or []
+    summary = insight.get("interaction_summary", []) or []
+    signal_results = insight.get("signal_results", []) or []
+
+    assert len(chains) >= 2
+    assert any("signal_homocysteine_elevation_context" in chain for chain in chains)
+    assert any(float(row.get("confidence", 0.0)) >= 0.40 for row in summary if isinstance(row, dict))
+    assert any(
+        isinstance(row, dict) and row.get("signal_id") == "signal_homocysteine_elevation_context"
+        for row in signal_results
+    )
+
+
+def test_interaction_edge_isolation_unrelated_fixture_unchanged(tmp_path, monkeypatch):
+    fixture = Path(__file__).parent.parent / "fixtures" / "golden_panel_160.json"
+
+    map_payload_current = interaction_builder_module.load_interaction_map_v1()
+    map_payload_legacy = copy.deepcopy(map_payload_current)
+    map_payload_legacy["nodes"] = [
+        node
+        for node in map_payload_legacy.get("nodes", [])
+        if isinstance(node, dict) and str(node.get("signal_id", "")).strip() != "signal_systemic_inflammation"
+    ]
+    map_payload_legacy["edges"] = [
+        edge
+        for edge in map_payload_legacy.get("edges", [])
+        if not (
+            isinstance(edge, dict)
+            and (
+                (
+                    str(edge.get("from_signal", "")).strip() == "signal_homocysteine_high"
+                    and str(edge.get("to_signal", "")).strip() == "signal_homocysteine_elevation_context"
+                )
+                or (
+                    str(edge.get("from_signal", "")).strip() == "signal_systemic_inflammation"
+                    and str(edge.get("to_signal", "")).strip() == "signal_homocysteine_elevation_context"
+                )
+            )
+        )
+    ]
+
+    monkeypatch.setattr(
+        interaction_builder_module,
+        "load_interaction_map_v1",
+        lambda map_path=None: map_payload_legacy,
+    )
+    run_legacy, _ = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path / "legacy",
+        run_id="unit-interaction-isolation-legacy",
+        write_narrative=False,
+    )
+
+    monkeypatch.setattr(
+        interaction_builder_module,
+        "load_interaction_map_v1",
+        lambda map_path=None: map_payload_current,
+    )
+    run_current, _ = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path / "current",
+        run_id="unit-interaction-isolation-current",
+        write_narrative=False,
+    )
+
+    insight_legacy = _load_json(run_legacy / "insight_graph.json") or {}
+    insight_current = _load_json(run_current / "insight_graph.json") or {}
+    assert insight_legacy.get("interaction_graph", {}) == insight_current.get("interaction_graph", {})
+    assert insight_legacy.get("interaction_chains", []) == insight_current.get("interaction_chains", [])
+    assert insight_legacy.get("interaction_summary", []) == insight_current.get("interaction_summary", [])
+    assert insight_legacy.get("signal_results", []) == insight_current.get("signal_results", [])

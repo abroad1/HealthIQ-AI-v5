@@ -1,6 +1,6 @@
 # Interaction map v1.1 keeps the v1 runtime contract and expands edges only within approved pathways.
 map_version: "v1"
-map_revision: "1.1.0"
+map_revision: "1.1.1"
 
 nodes:
   - signal_id: signal_hba1c_high
@@ -12,6 +12,8 @@ nodes:
   - signal_id: signal_alt_high
     system: hepatic
   - signal_id: signal_crp_high
+    system: inflammatory
+  - signal_id: signal_systemic_inflammation
     system: inflammatory
   - signal_id: signal_homocysteine_high
     system: vascular
@@ -71,6 +73,16 @@ edges:
     relationship_type: co_occurrence
     evidence_strength: exploratory
     rationale: Higher inflammatory burden can contextualize homocysteine risk interpretation and reinforce vascular stress pattern detection.
+  - from_signal: signal_homocysteine_high
+    to_signal: signal_homocysteine_elevation_context
+    relationship_type: co_occurrence
+    evidence_strength: strong
+    rationale: Both signals are homocysteine manifestations where one is threshold-based and the other is a context wrapper on the same primary metric.
+  - from_signal: signal_systemic_inflammation
+    to_signal: signal_homocysteine_elevation_context
+    relationship_type: co_occurrence
+    evidence_strength: exploratory
+    rationale: Inflammation context can co-occur with vascular homocysteine interpretation patterns in AB and VR synthesis panels.
 
   # Pathway 2: iron -> hematologic with inflammatory modulation
   - from_signal: signal_ferritin_low
