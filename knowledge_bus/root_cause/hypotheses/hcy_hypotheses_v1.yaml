@@ -1,0 +1,174 @@
+schema_version: "v1"
+asset_id: "hcy_hypotheses_v1"
+updated_at: "2026-03-15"
+primary_signal_id: "signal_homocysteine_elevation_context"
+primary_metric: "homocysteine"
+notes:
+  - "This asset is KB-native v1 for deterministic root-cause hypothesis compilation."
+  - "No diagnosis or prescribing. No supplements. No brand/program names."
+  - "All confirmatory_tests must reference knowledge_bus/registries/confirmatory_tests_v1.yaml."
+
+hypotheses:
+  - hypothesis_id: "hcy_b12_pattern_v1"
+    title: "B12-associated pattern"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Homocysteine is elevated with a pattern that can be consistent with reduced B12-related methylation capacity."
+    required_markers:
+      - "vitamin_b12"
+    confirmatory_markers:
+      - "active_b12"
+      - "mcv"
+    differentiator_markers:
+      - "folate"
+    evidence_for_rules:
+      - rule_id: "b12_low_or_borderline"
+        markers_any:
+          - "vitamin_b12"
+          - "active_b12"
+        direction: "low_or_borderline"
+        evidence_for_item: "B12-related marker(s) are low or borderline, which can reduce homocysteine remethylation."
+        marker_refs:
+          - "vitamin_b12"
+          - "active_b12"
+      - rule_id: "macrocytosis_support"
+        markers_any:
+          - "mcv"
+        direction: "high"
+        evidence_for_item: "MCV is elevated, which can be consistent with a megaloblastic nutrient pattern in context."
+        marker_refs:
+          - "mcv"
+    evidence_against_rules:
+      - rule_id: "b12_clearly_normal"
+        markers_all:
+          - "vitamin_b12"
+        direction: "clearly_normal"
+        evidence_against_item: "B12 appears clearly within range, which makes a B12-driven pattern less likely on this panel alone."
+        marker_refs:
+          - "vitamin_b12"
+    missing_data_markers:
+      - marker_id: "active_b12"
+        reason: "Active B12 adds functional context when serum B12 is borderline."
+      - marker_id: "methylmalonic_acid"
+        reason: "MMA can help evaluate functional B12 deficiency when homocysteine is elevated."
+    confirmatory_tests:
+      - "test_serum_vitamin_b12_v1"
+      - "test_holotranscobalamin_active_b12_v1"
+      - "test_methylmalonic_acid_v1"
+      - "test_full_blood_count_indices_v1"
+
+  - hypothesis_id: "hcy_folate_pattern_v1"
+    title: "Folate-associated pattern"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Homocysteine is elevated with a pattern that can be consistent with reduced folate availability for one-carbon metabolism."
+    required_markers:
+      - "folate"
+    confirmatory_markers:
+      - "mcv"
+    differentiator_markers:
+      - "vitamin_b12"
+    evidence_for_rules:
+      - rule_id: "folate_low_or_borderline"
+        markers_all:
+          - "folate"
+        direction: "low_or_borderline"
+        evidence_for_item: "Folate is low or borderline, which can impair methyl donor availability for homocysteine remethylation."
+        marker_refs:
+          - "folate"
+      - rule_id: "macrocytosis_support"
+        markers_any:
+          - "mcv"
+        direction: "high"
+        evidence_for_item: "MCV is elevated, which can align with folate-related red cell maturation patterns in context."
+        marker_refs:
+          - "mcv"
+    evidence_against_rules:
+      - rule_id: "folate_clearly_normal"
+        markers_all:
+          - "folate"
+        direction: "clearly_normal"
+        evidence_against_item: "Folate appears clearly within range, which makes a folate-driven pattern less likely on this panel alone."
+        marker_refs:
+          - "folate"
+    missing_data_markers:
+      - marker_id: "folate"
+        reason: "Folate is required to evaluate folate-related mechanisms."
+    confirmatory_tests:
+      - "test_serum_folate_v1"
+      - "test_full_blood_count_indices_v1"
+      - "test_homocysteine_repeat_v1"
+
+  - hypothesis_id: "hcy_inflammation_context_v1"
+    title: "Inflammatory context pattern"
+    safety_class: "monitoring"
+    evidence_strength: "exploratory"
+    summary_template: "Homocysteine is elevated with inflammatory context signals that may be relevant to vascular stress interpretation."
+    required_markers:
+      - "crp"
+    confirmatory_markers:
+      - "nlr"
+      - "sii"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "crp_context_present"
+        markers_all:
+          - "crp"
+        direction: "flagged_or_high"
+        evidence_for_item: "Inflammation context is present (CRP pattern), which may co-occur with vascular stress interpretation."
+        marker_refs:
+          - "crp"
+      - rule_id: "systemic_inflammation_signal"
+        signals_any:
+          - "signal_systemic_inflammation"
+        direction: "fired"
+        evidence_for_item: "A systemic inflammation signal fired, indicating inflammatory context on this panel."
+        marker_refs:
+          - "crp"
+    evidence_against_rules: []
+    missing_data_markers:
+      - marker_id: "crp"
+        reason: "CRP supports inflammation context interpretation."
+    confirmatory_tests:
+      - "test_crp_repeat_v1"
+      - "test_homocysteine_repeat_v1"
+
+  - hypothesis_id: "hcy_renal_clearance_context_v1"
+    title: "Renal clearance context pattern"
+    safety_class: "monitoring"
+    evidence_strength: "exploratory"
+    summary_template: "Homocysteine is elevated and renal clearance context may be relevant when interpreting metabolite accumulation patterns."
+    required_markers:
+      - "creatinine"
+    confirmatory_markers:
+      - "urea"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "creatinine_abnormal_or_missing"
+        markers_any:
+          - "creatinine"
+        direction: "high_or_missing"
+        evidence_for_item: "Creatinine is elevated or unavailable, so renal clearance context cannot be excluded from interpretation."
+        marker_refs:
+          - "creatinine"
+      - rule_id: "renal_stress_signal"
+        signals_any:
+          - "signal_renal_metabolic_stress"
+        direction: "fired"
+        evidence_for_item: "A renal metabolic stress signal fired, which adds renal context to homocysteine interpretation."
+        marker_refs:
+          - "creatinine"
+    evidence_against_rules:
+      - rule_id: "creatinine_clearly_normal"
+        markers_all:
+          - "creatinine"
+        direction: "clearly_normal"
+        evidence_against_item: "Creatinine appears within range, which reduces evidence for a renal clearance contribution on this panel alone."
+        marker_refs:
+          - "creatinine"
+    missing_data_markers:
+      - marker_id: "egfr"
+        reason: "eGFR adds clearance context beyond creatinine alone."
+    confirmatory_tests:
+      - "test_egfr_creatinine_v1"
+      - "test_homocysteine_repeat_v1"

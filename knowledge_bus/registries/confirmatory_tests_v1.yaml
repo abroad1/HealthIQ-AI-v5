@@ -1,0 +1,92 @@
+schema_version: "v1"
+registry_id: "confirmatory_tests_v1"
+updated_at: "2026-03-15"
+notes:
+  - "Registry provides deterministic lookup for root_cause_v1 confirmatory_tests.test_id."
+  - "Framing must remain non-directive (consider discussing / consider including in next panel)."
+
+tests:
+  - test_id: "test_serum_vitamin_b12_v1"
+    display_name: "Serum vitamin B12"
+    specimen: "blood"
+    safety_class: "monitoring"
+    rationale_template: "Consider including serum vitamin B12 in your next panel to clarify B12 status."
+    related_signals:
+      - "signal_homocysteine_elevation_context"
+
+  - test_id: "test_serum_folate_v1"
+    display_name: "Serum folate"
+    specimen: "blood"
+    safety_class: "monitoring"
+    rationale_template: "Consider including serum folate in your next panel to clarify folate status."
+    related_signals:
+      - "signal_homocysteine_elevation_context"
+
+  - test_id: "test_holotranscobalamin_active_b12_v1"
+    display_name: "Active B12 (holotranscobalamin)"
+    specimen: "blood"
+    safety_class: "monitoring"
+    rationale_template: "Consider including active B12 (holotranscobalamin) to assess functional B12 availability."
+    related_signals:
+      - "signal_homocysteine_elevation_context"
+
+  - test_id: "test_methylmalonic_acid_v1"
+    display_name: "Methylmalonic acid (MMA)"
+    specimen: "blood"
+    safety_class: "monitoring"
+    rationale_template: "Consider discussing methylmalonic acid (MMA) testing with your clinician to evaluate functional B12 deficiency."
+    related_signals:
+      - "signal_homocysteine_elevation_context"
+
+  - test_id: "test_homocysteine_repeat_v1"
+    display_name: "Repeat homocysteine"
+    specimen: "blood"
+    safety_class: "monitoring"
+    rationale_template: "Consider repeating homocysteine in 8–12 weeks to confirm persistence and track change over time."
+    related_signals:
+      - "signal_homocysteine_high"
+      - "signal_homocysteine_elevation_context"
+
+  - test_id: "test_full_blood_count_indices_v1"
+    display_name: "Full blood count (MCV/haemoglobin/RDW)"
+    specimen: "blood"
+    safety_class: "monitoring"
+    rationale_template: "Consider including a full blood count with indices (e.g., MCV) to add context for nutritional or marrow patterns."
+    related_signals:
+      - "signal_mcv_high"
+      - "signal_homocysteine_elevation_context"
+
+  - test_id: "test_crp_repeat_v1"
+    display_name: "Repeat CRP"
+    specimen: "blood"
+    safety_class: "monitoring"
+    rationale_template: "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated."
+    related_signals:
+      - "signal_systemic_inflammation"
+      - "signal_vascular_inflammatory_stress"
+
+  - test_id: "test_egfr_creatinine_v1"
+    display_name: "Creatinine with eGFR"
+    specimen: "blood"
+    safety_class: "monitoring"
+    rationale_template: "Consider including creatinine with eGFR to add renal clearance context for metabolite markers."
+    related_signals:
+      - "signal_renal_metabolic_stress"
+      - "signal_homocysteine_elevation_context"
+
+  - test_id: "test_thyroid_tsh_ft4_v1"
+    display_name: "TSH with Free T4"
+    specimen: "blood"
+    safety_class: "monitoring"
+    rationale_template: "Consider including TSH with Free T4 to assess thyroid context when interpreting lipid or fatigue-related patterns."
+    related_signals:
+      - "signal_thyroid_tsh_context"
+
+  - test_id: "test_liver_ggt_alt_ast_v1"
+    display_name: "Liver enzymes (GGT/ALT/AST)"
+    specimen: "blood"
+    safety_class: "monitoring"
+    rationale_template: "Consider including liver enzymes (GGT/ALT/AST) to add hepatic context that can influence lipid and inflammation patterns."
+    related_signals:
+      - "signal_hepatic_alt_context"
+      - "signal_systemic_inflammation"
