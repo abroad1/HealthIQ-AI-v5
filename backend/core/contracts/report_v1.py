@@ -8,6 +8,8 @@ from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from core.contracts.root_cause_v1 import RootCauseV1
+
 
 class ReportTopFindingV1(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -77,3 +79,4 @@ class ReportV1(BaseModel):
     top_chains: List[ReportTopChainV1] = Field(default_factory=list)
     actions: ReportActionsV1
     meta: ReportMetaV1
+    root_cause_v1: Optional[RootCauseV1] = None

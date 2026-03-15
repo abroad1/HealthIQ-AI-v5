@@ -416,6 +416,8 @@ def build_insight_graph_v1(
         interventions_v1=interventions_v1,
         signal_registry_version=signal_registry_version,
         signal_registry_hash_sha256=signal_registry_hash_sha256,
+        biomarker_context=filtered_biomarkers,
+        input_reference_ranges=input_reference_ranges,
         generated_at=report_generated_at,
     )
 
