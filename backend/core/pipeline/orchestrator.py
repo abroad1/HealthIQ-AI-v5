@@ -640,6 +640,16 @@ class AnalysisOrchestrator:
             context=context,
             lab_origin=None,
             unit_normalisation_meta=None,
+            signal_registry_version=self.signal_registry.version,
+            signal_registry_hash=self.signal_registry.package_hash,
+            signal_registry_hash_sha256=hashlib.sha256(
+                json.dumps(
+                    self.signal_registry.get_all_signals(),
+                    sort_keys=True,
+                    separators=(",", ":"),
+                ).encode("utf-8")
+            ).hexdigest(),
+            signal_results=[],
         )
 
         # Synthesize insights (LLM receives only InsightGraph)
@@ -1069,6 +1079,13 @@ class AnalysisOrchestrator:
                 reference_profiles=input_reference_profiles,
             )
             signal_results_serialized = [r.model_dump() for r in signal_results_raw]
+            signal_registry_hash_sha256 = hashlib.sha256(
+                json.dumps(
+                    self.signal_registry.get_all_signals(),
+                    sort_keys=True,
+                    separators=(",", ":"),
+                ).encode("utf-8")
+            ).hexdigest()
 
             # Step 2: Score biomarkers using the scoring engine with input reference ranges
             logger.info("Step 2: Scoring biomarkers")
@@ -1118,6 +1135,7 @@ class AnalysisOrchestrator:
                 unit_normalisation_meta=unit_meta,
                 signal_registry_version=self.signal_registry.version,
                 signal_registry_hash=self.signal_registry.package_hash,
+                signal_registry_hash_sha256=signal_registry_hash_sha256,
                 signal_results=signal_results_serialized,
             )
 

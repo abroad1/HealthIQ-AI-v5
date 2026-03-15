@@ -27,6 +27,7 @@ from core.analytics.relationship_registry import (
 )
 from core.analytics.biomarker_context_builder import build_biomarker_context_v1
 from core.analytics.intervention_selector_v1 import select_interventions_v1
+from core.analytics.report_compiler_v1 import compile_report_v1
 from core.analytics.signal_interaction_builder import build_signal_interactions_v1
 
 
@@ -203,6 +204,7 @@ def build_insight_graph_v1(
     unit_normalisation_meta: Optional[Dict[str, Any]] = None,
     signal_registry_version: Optional[str] = None,
     signal_registry_hash: Optional[str] = None,
+    signal_registry_hash_sha256: Optional[str] = None,
     signal_results: Optional[List[Dict[str, Any]]] = None,
 ) -> InsightGraphV1:
     """
@@ -407,6 +409,13 @@ def build_insight_graph_v1(
         interaction_summary=interaction_outputs["interaction_summary"],
         interaction_chains=interaction_outputs["interaction_chains"],
     )
+    report_v1 = compile_report_v1(
+        signal_results=signal_results if signal_results is not None else [],
+        interaction_summary=interaction_outputs["interaction_summary"],
+        interventions_v1=interventions_v1,
+        signal_registry_version=signal_registry_version,
+        signal_registry_hash_sha256=signal_registry_hash_sha256,
+    )
 
     return InsightGraphV1(
         graph_version=INSIGHTGRAPH_V1_VERSION,
@@ -426,6 +435,7 @@ def build_insight_graph_v1(
         signal_registry_version=signal_registry_version,
         signal_registry_hash=signal_registry_hash,
         signal_results=signal_results if signal_results is not None else [],
+        report_v1=report_v1,
         interventions_v1=interventions_v1,
         interaction_graph=interaction_outputs["interaction_graph"],
         interaction_chains=interaction_outputs["interaction_chains"],
