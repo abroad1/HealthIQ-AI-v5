@@ -150,7 +150,7 @@ class SignalEvaluator:
             return None
         low = self._as_float(ref.get("min"))
         high = self._as_float(ref.get("max"))
-        if low is None or high is None:
+        if low is None and high is None:
             return None
 
         activation_cfg = signal.get("activation_config", {})
@@ -160,14 +160,14 @@ class SignalEvaluator:
         if upper_bound_state not in self._STATE_RANK:
             upper_bound_state = "at_risk"
 
-        if primary_value > high:
+        if high is not None and primary_value > high:
             return upper_bound_state
 
         lower_bound_enabled = bool(activation_cfg.get("enable_lower_bound", False))
         lower_bound_state = str(activation_cfg.get("lower_bound_state", "at_risk")).strip()
         if lower_bound_state not in self._STATE_RANK:
             lower_bound_state = "at_risk"
-        if lower_bound_enabled and primary_value < low:
+        if lower_bound_enabled and low is not None and primary_value < low:
             return lower_bound_state
 
         return None
