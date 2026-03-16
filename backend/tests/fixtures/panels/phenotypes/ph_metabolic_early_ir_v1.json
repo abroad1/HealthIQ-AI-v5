@@ -1,0 +1,9 @@
+{
+  "panel_id": "ph_metabolic_early_ir_v1",
+  "user": { "age": 42, "sex": "female" },
+  "biomarkers": {
+    "non_hdl_cholesterol": { "value": 4.8, "unit": "mmol/L", "reference_range": { "min": 0.0, "max": 3.37, "unit": "mmol/L", "source": "lab" } },
+    "triglycerides": { "value": 2.4, "unit": "mmol/L", "reference_range": { "min": 0.0, "max": 1.7, "unit": "mmol/L", "source": "lab" } },
+    "hdl_cholesterol": { "value": 0.9, "unit": "mmol/L", "reference_range": { "min": 1.0, "max": null, "unit": "mmol/L", "source": "lab" } }
+  }
+}

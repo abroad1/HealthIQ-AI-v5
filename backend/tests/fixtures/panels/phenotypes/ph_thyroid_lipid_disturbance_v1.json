@@ -1,0 +1,9 @@
+{
+  "panel_id": "ph_thyroid_lipid_disturbance_v1",
+  "user": { "age": 50, "sex": "female" },
+  "biomarkers": {
+    "tsh": { "value": 6.5, "unit": "mIU/L", "reference_range": { "min": 0.4, "max": 4.5, "unit": "mIU/L", "source": "lab" } },
+    "total_cholesterol": { "value": 6.2, "unit": "mmol/L", "reference_range": { "min": 0.0, "max": 5.18, "unit": "mmol/L", "source": "lab" } },
+    "ldl_cholesterol": { "value": 4.2, "unit": "mmol/L", "reference_range": { "min": 0.0, "max": 2.59, "unit": "mmol/L", "source": "lab" } }
+  }
+}
