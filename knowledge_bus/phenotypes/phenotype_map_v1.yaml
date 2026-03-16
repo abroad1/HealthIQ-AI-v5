@@ -1,0 +1,145 @@
+schema_version: "v1"
+
+phenotypes:
+  - phenotype_id: "ph_vascular_hcy_inflammation_v1"
+    name: "Vascular homocysteine inflammation pattern"
+    description: "Homocysteine elevation with inflammatory context and vascular stress signals. This phenotype supports chain-aware synthesis when homocysteine context and inflammatory burden co-occur."
+    systems_involved:
+      - "vascular"
+      - "inflammatory"
+      - "metabolic"
+    required_signals:
+      - "signal_homocysteine_elevation_context"
+      - "signal_homocysteine_high"
+      - "signal_systemic_inflammation"
+    optional_signals:
+      - "signal_crp_high"
+      - "signal_mcv_high"
+    required_edges:
+      - from_signal_id: "signal_homocysteine_high"
+        to_signal_id: "signal_homocysteine_elevation_context"
+        relationship_type: "co_occurrence"
+        evidence_strength: "strong"
+        evidence_basis:
+          type: "research_package"
+          ref: "KB-S30d-stage2-hcy-context-link"
+        requires_research_promotion: false
+      - from_signal_id: "signal_systemic_inflammation"
+        to_signal_id: "signal_homocysteine_elevation_context"
+        relationship_type: "co_occurrence"
+        evidence_strength: "exploratory"
+        evidence_basis:
+          type: "rationale_md"
+          ref: "knowledge_bus/phenotypes/rationales/ph_vascular_hcy_inflammation_edge_inflammation_to_hcy_context.md"
+        requires_research_promotion: true
+    synthetic_fixture_refs:
+      - "ph_vascular_hcy_inflammation_v1.json"
+    chain_expectations:
+      status: "enforced"
+      min_chain_confidence: 0.40
+      must_include_any_signal:
+        - "signal_homocysteine_elevation_context"
+    evidence_notes: "Anchors the current homocysteine synthesis pathway and tracks an exploratory inflammation coupling pending research-package promotion."
+
+  - phenotype_id: "ph_renal_stress_v1"
+    name: "Renal stress pattern"
+    description: "Creatinine, urea, and urate high-signal constellation suggesting renal-metabolic stress context. Chain enforcement remains pending while map evidence matures."
+    systems_involved:
+      - "renal"
+      - "metabolic"
+    required_signals:
+      - "signal_creatinine_high"
+      - "signal_urea_high"
+      - "signal_urate_high"
+    optional_signals: []
+    required_edges:
+      - from_signal_id: "signal_creatinine_high"
+        to_signal_id: "signal_urea_high"
+        relationship_type: "co_occurrence"
+        evidence_strength: "moderate"
+        evidence_basis:
+          type: "rationale_md"
+          ref: "knowledge_bus/phenotypes/rationales/ph_renal_stress_edge_creatinine_to_urea.md"
+        requires_research_promotion: true
+    synthetic_fixture_refs:
+      - "ph_renal_stress_v1.json"
+    chain_expectations:
+      status: "pending"
+    evidence_notes: "Records the renal edge hypothesis for formal evidence promotion without altering current interaction map behavior."
+
+  - phenotype_id: "ph_metabolic_early_ir_v1"
+    name: "Early insulin resistance dyslipidaemia pattern"
+    description: "Atherogenic lipid transport dysfunction phenotype with triglyceride-rich and low HDL context. Used for governed edge backlog until promoted evidence is available."
+    systems_involved:
+      - "metabolic"
+      - "cardiovascular"
+    required_signals:
+      - "signal_lipid_transport_dysfunction"
+      - "signal_triglycerides_high"
+      - "signal_hdl_cholesterol_low"
+    optional_signals: []
+    required_edges:
+      - from_signal_id: "signal_triglycerides_high"
+        to_signal_id: "signal_lipid_transport_dysfunction"
+        relationship_type: "driver"
+        evidence_strength: "exploratory"
+        evidence_basis:
+          type: "rationale_md"
+          ref: "knowledge_bus/phenotypes/rationales/ph_metabolic_early_ir_edge_tg_to_lipid_transport.md"
+        requires_research_promotion: true
+    synthetic_fixture_refs:
+      - "ph_metabolic_early_ir_v1.json"
+    chain_expectations:
+      status: "pending"
+    evidence_notes: "Provides governance placeholder for map expansion in metabolic-lipid pathways while preserving current runtime logic."
+
+  - phenotype_id: "ph_thyroid_lipid_disturbance_v1"
+    name: "Thyroid-lipid disturbance pattern"
+    description: "Thyroid context with lipid disturbance features where TSH context and LDL elevation may co-occur. Maintained as pending until evidence is promoted."
+    systems_involved:
+      - "hormonal"
+      - "cardiovascular"
+    required_signals:
+      - "signal_thyroid_tsh_context"
+      - "signal_ldl_cholesterol_high"
+    optional_signals: []
+    required_edges:
+      - from_signal_id: "signal_thyroid_tsh_context"
+        to_signal_id: "signal_ldl_cholesterol_high"
+        relationship_type: "co_occurrence"
+        evidence_strength: "exploratory"
+        evidence_basis:
+          type: "rationale_md"
+          ref: "knowledge_bus/phenotypes/rationales/ph_thyroid_lipid_disturbance_edge_tsh_to_ldl.md"
+        requires_research_promotion: true
+    synthetic_fixture_refs:
+      - "ph_thyroid_lipid_disturbance_v1.json"
+    chain_expectations:
+      status: "pending"
+    evidence_notes: "Captures a clinically plausible thyroid-lipid link for formal review before interaction-map promotion."
+
+  - phenotype_id: "ph_iron_deficiency_inflammation_v1"
+    name: "Iron deficiency with inflammation pattern"
+    description: "Iron deficiency context with concurrent inflammatory stress indicators. Defines governance for future edge authoring between iron and inflammation signals."
+    systems_involved:
+      - "hematologic"
+      - "inflammatory"
+      - "nutritional"
+    required_signals:
+      - "signal_iron_deficiency_context"
+      - "signal_crp_high"
+    optional_signals: []
+    required_edges:
+      - from_signal_id: "signal_crp_high"
+        to_signal_id: "signal_iron_deficiency_context"
+        relationship_type: "co_occurrence"
+        evidence_strength: "moderate"
+        evidence_basis:
+          type: "rationale_md"
+          ref: "knowledge_bus/phenotypes/rationales/ph_iron_deficiency_inflammation_edge_crp_to_iron_deficiency.md"
+        requires_research_promotion: true
+    synthetic_fixture_refs:
+      - "ph_iron_deficiency_inflammation_v1.json"
+    chain_expectations:
+      status: "pending"
+    evidence_notes: "Documents inflammation-iron coupling as a governed placeholder pending research-package backing."
