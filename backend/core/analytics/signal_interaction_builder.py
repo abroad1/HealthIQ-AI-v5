@@ -25,6 +25,15 @@ _EVIDENCE_RANK = {
 _MAX_CHAIN_LENGTH = 5
 
 
+def _median(values: List[float]) -> float:
+    ordered = sorted(values)
+    count = len(ordered)
+    mid = count // 2
+    if count % 2 == 1:
+        return ordered[mid]
+    return (ordered[mid - 1] + ordered[mid]) / 2.0
+
+
 def _repo_root() -> Path:
     return Path(__file__).resolve().parents[3]
 
@@ -142,7 +151,7 @@ def build_signal_interactions_v1(
         and isinstance(r.get("signal_id"), str)
         and r.get("signal_state") in _VALID_SIGNAL_STATES
     }
-    confidence_by_signal: Dict[str, float] = {}
+    confidence_by_signal: Dict[str, Optional[float]] = {}
     for row in signal_results:
         if not isinstance(row, dict):
             continue
@@ -153,7 +162,7 @@ def build_signal_interactions_v1(
         if isinstance(confidence_value, (int, float)):
             confidence_by_signal[sid] = float(confidence_value)
         else:
-            confidence_by_signal[sid] = 0.0
+            confidence_by_signal[sid] = None
     present_ids = sorted(sid for sid in fired.keys() if sid in node_ids)
 
     present_set = set(present_ids)
@@ -215,7 +224,16 @@ def build_signal_interactions_v1(
         chain_edges = [edge_lookup[(path[i], path[i + 1])] for i in range(len(path) - 1)]
         chain_text = " -> ".join(path)
         evidence_text = ", ".join(edge["evidence_strength"] for edge in chain_edges)
-        chain_confidence = min(confidence_by_signal.get(signal_id, 0.0) for signal_id in path)
+        chain_confidence_values: List[float] = []
+        for signal_id in path:
+            confidence = confidence_by_signal.get(signal_id)
+            if not isinstance(confidence, (int, float)):
+                raise ValueError(
+                    f"Missing signal confidence for {signal_id}. "
+                    "KB-S29 confidence must be present for all signals before chain confidence can be computed."
+                )
+            chain_confidence_values.append(float(confidence))
+        chain_confidence = _median(chain_confidence_values)
         interaction_summary.append(
             {
                 "chain_id": f"chain_{idx:03d}",
@@ -223,6 +241,7 @@ def build_signal_interactions_v1(
                 "signals_involved": list(path),
                 "chain_summary_text": f"{chain_text} (edge evidence: {evidence_text})",
                 "confidence": round(chain_confidence, 4),
+                "chain_confidence": round(chain_confidence, 4),
             }
         )
 

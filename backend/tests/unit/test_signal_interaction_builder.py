@@ -63,7 +63,8 @@ def test_interaction_chains_are_deterministic_and_ranked():
     assert out_one["interaction_chains"] == [["signal_a", "signal_b", "signal_c", "signal_d"]]
     assert out_one["interaction_summary"][0]["priority_rank"] == 1
     assert out_one["interaction_summary"][0]["signals_involved"] == ["signal_a", "signal_b", "signal_c", "signal_d"]
-    assert out_one["interaction_summary"][0]["confidence"] == 0.6
+    assert out_one["interaction_summary"][0]["confidence"] == 0.75
+    assert out_one["interaction_summary"][0]["chain_confidence"] == 0.75
 
 
 def test_edge_isolation_for_absent_signals():
@@ -92,16 +93,100 @@ def test_empty_when_no_mapped_edges_present():
     assert output["interaction_summary"] == []
 
 
-def test_chain_confidence_uses_minimum_signal_confidence():
+def test_chain_confidence_uses_median_signal_confidence_for_odd_count():
     signal_results = [
-        {"signal_id": "signal_a", "signal_state": "suboptimal", "confidence": 0.92},
-        {"signal_id": "signal_b", "signal_state": "at_risk", "confidence": 0.55},
-        {"signal_id": "signal_c", "signal_state": "suboptimal", "confidence": 0.88},
-        {"signal_id": "signal_d", "signal_state": "suboptimal", "confidence": 0.77},
+        {"signal_id": "signal_a", "signal_state": "suboptimal", "confidence": 0.95},
+        {"signal_id": "signal_b", "signal_state": "at_risk", "confidence": 0.90},
+        {"signal_id": "signal_c", "signal_state": "suboptimal", "confidence": 0.30},
     ]
-    output = build_signal_interactions_v1(signal_results=signal_results, map_payload=_map_payload())
-    assert output["interaction_chains"] == [["signal_a", "signal_b", "signal_c", "signal_d"]]
-    assert output["interaction_summary"][0]["confidence"] == 0.55
+    map_payload = {
+        "map_version": "v1",
+        "nodes": [
+            {"signal_id": "signal_a"},
+            {"signal_id": "signal_b"},
+            {"signal_id": "signal_c"},
+        ],
+        "edges": [
+            {
+                "from_signal": "signal_a",
+                "to_signal": "signal_b",
+                "relationship_type": "driver",
+                "evidence_strength": "strong",
+                "rationale": "A deterministically drives B in this odd-count chain case.",
+            },
+            {
+                "from_signal": "signal_b",
+                "to_signal": "signal_c",
+                "relationship_type": "consequence",
+                "evidence_strength": "moderate",
+                "rationale": "B deterministically leads to C in this odd-count chain case.",
+            },
+        ],
+    }
+    output = build_signal_interactions_v1(signal_results=signal_results, map_payload=map_payload)
+    assert output["interaction_chains"] == [["signal_a", "signal_b", "signal_c"]]
+    assert output["interaction_summary"][0]["confidence"] == 0.9
+    assert output["interaction_summary"][0]["chain_confidence"] == 0.9
+
+
+def test_chain_confidence_uses_median_signal_confidence_for_even_count():
+    signal_results = [
+        {"signal_id": "signal_a", "signal_state": "suboptimal", "confidence": 0.90},
+        {"signal_id": "signal_b", "signal_state": "at_risk", "confidence": 0.30},
+    ]
+    map_payload = {
+        "map_version": "v1",
+        "nodes": [
+            {"signal_id": "signal_a"},
+            {"signal_id": "signal_b"},
+        ],
+        "edges": [
+            {
+                "from_signal": "signal_a",
+                "to_signal": "signal_b",
+                "relationship_type": "driver",
+                "evidence_strength": "strong",
+                "rationale": "A deterministically drives B in this even-count chain case.",
+            }
+        ],
+    }
+    output = build_signal_interactions_v1(signal_results=signal_results, map_payload=map_payload)
+    assert output["interaction_chains"] == [["signal_a", "signal_b"]]
+    assert output["interaction_summary"][0]["confidence"] == 0.6
+    assert output["interaction_summary"][0]["chain_confidence"] == 0.6
+
+
+def test_chain_confidence_stop_when_signal_confidence_missing():
+    signal_results = [
+        {"signal_id": "signal_a", "signal_state": "suboptimal", "confidence": 0.9},
+        {"signal_id": "signal_b", "signal_state": "at_risk", "confidence": None},
+    ]
+    map_payload = {
+        "map_version": "v1",
+        "nodes": [
+            {"signal_id": "signal_a"},
+            {"signal_id": "signal_b"},
+        ],
+        "edges": [
+            {
+                "from_signal": "signal_a",
+                "to_signal": "signal_b",
+                "relationship_type": "driver",
+                "evidence_strength": "strong",
+                "rationale": "A deterministically drives B in missing-confidence stop case.",
+            }
+        ],
+    }
+    try:
+        build_signal_interactions_v1(signal_results=signal_results, map_payload=map_payload)
+        raised = False
+    except ValueError as exc:
+        raised = True
+        assert (
+            str(exc)
+            == "Missing signal confidence for signal_b. KB-S29 confidence must be present for all signals before chain confidence can be computed."
+        )
+    assert raised
 
 
 def test_edge_isolation_outputs_unchanged_when_absent_edge_added():

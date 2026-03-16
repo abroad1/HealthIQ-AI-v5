@@ -135,9 +135,9 @@ def test_builder_defaults_signal_results_to_empty_list():
 
 def test_builder_preserves_signal_results_with_additive_interaction_outputs():
     payload = [
-        {"signal_id": "signal_hba1c_high", "signal_state": "suboptimal"},
-        {"signal_id": "signal_ggt_high", "signal_state": "at_risk"},
-        {"signal_id": "signal_crp_high", "signal_state": "suboptimal"},
+        {"signal_id": "signal_hba1c_high", "signal_state": "suboptimal", "confidence": 0.66},
+        {"signal_id": "signal_ggt_high", "signal_state": "at_risk", "confidence": 0.74},
+        {"signal_id": "signal_crp_high", "signal_state": "suboptimal", "confidence": 0.55},
     ]
     graph = build_insight_graph_v1(
         analysis_id="sig-3",
@@ -185,7 +185,8 @@ def test_builder_interaction_outputs_match_deterministic_snapshot():
             "priority_rank": 1,
             "signals_involved": ["signal_tsh_high", "signal_ldl_cholesterol_high", "signal_hba1c_high"],
             "chain_summary_text": "signal_tsh_high -> signal_ldl_cholesterol_high -> signal_hba1c_high (edge evidence: strong, moderate)",
-            "confidence": 0.66,
+            "confidence": 0.78,
+            "chain_confidence": 0.78,
         }
     ]
 
