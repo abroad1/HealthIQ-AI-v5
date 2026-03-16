@@ -1,0 +1,105 @@
+schema_version: "v1"
+suite_id: "phenotype_suite_v1"
+updated_at: "2026-03-15"
+notes:
+  - "Expectations are clinically declared first; engine output must not be copied back into expectations."
+  - "Chain coverage is enforced only for homocysteine phenotype in v1; other phenotypes are marked pending until interaction map coverage exists."
+
+phenotypes:
+  - phenotype_id: "ph_vascular_hcy_inflammation_v1"
+    chain_coverage_status: "enforced"
+    clinical_intent: "Homocysteine elevation with inflammatory context; should produce vascular chain and root-cause hypotheses."
+    fixture_filename: "ph_vascular_hcy_inflammation_v1.json"
+    expected_signals:
+      must_fire:
+        - "signal_homocysteine_elevation_context"
+      must_not_fire: []
+    expected_chains:
+      must_exist: true
+      min_count: 1
+      min_chain_confidence: 0.40
+      must_include_any_signal:
+        - "signal_homocysteine_elevation_context"
+      optional_expected_sequences: []
+    expected_root_cause:
+      must_exist: true
+      min_hypothesis_count: 3
+      applies_to_signal_id: "signal_homocysteine_elevation_context"
+
+  - phenotype_id: "ph_renal_stress_v1"
+    chain_coverage_status: "pending"
+    clinical_intent: "Renal stress context with elevated creatinine/urea; asserts signal firing now; chain enforcement pending interaction mapping."
+    fixture_filename: "ph_renal_stress_v1.json"
+    expected_signals:
+      must_fire:
+        - "signal_creatinine_high"
+        - "signal_urea_high"
+        - "signal_urate_high"
+      must_not_fire: []
+    expected_chains:
+      must_exist: false
+      min_count: 0
+      min_chain_confidence: 0.0
+      must_include_any_signal: []
+      optional_expected_sequences: []
+    expected_root_cause:
+      must_exist: false
+      min_hypothesis_count: 0
+      applies_to_signal_id: ""
+
+  - phenotype_id: "ph_metabolic_early_ir_v1"
+    chain_coverage_status: "pending"
+    clinical_intent: "Atherogenic dyslipidaemia pattern; asserts lipid transport dysfunction signal firing now; chain enforcement pending interaction mapping."
+    fixture_filename: "ph_metabolic_early_ir_v1.json"
+    expected_signals:
+      must_fire:
+        - "signal_lipid_transport_dysfunction"
+      must_not_fire: []
+    expected_chains:
+      must_exist: false
+      min_count: 0
+      min_chain_confidence: 0.0
+      must_include_any_signal: []
+      optional_expected_sequences: []
+    expected_root_cause:
+      must_exist: false
+      min_hypothesis_count: 0
+      applies_to_signal_id: ""
+
+  - phenotype_id: "ph_thyroid_lipid_disturbance_v1"
+    chain_coverage_status: "pending"
+    clinical_intent: "Thyroid dysfunction with dyslipidaemia; asserts thyroid signal firing now; chain enforcement pending interaction mapping."
+    fixture_filename: "ph_thyroid_lipid_disturbance_v1.json"
+    expected_signals:
+      must_fire:
+        - "signal_thyroid_tsh_context"
+      must_not_fire: []
+    expected_chains:
+      must_exist: false
+      min_count: 0
+      min_chain_confidence: 0.0
+      must_include_any_signal: []
+      optional_expected_sequences: []
+    expected_root_cause:
+      must_exist: false
+      min_hypothesis_count: 0
+      applies_to_signal_id: ""
+
+  - phenotype_id: "ph_iron_deficiency_inflammation_v1"
+    chain_coverage_status: "pending"
+    clinical_intent: "Iron deficiency with inflammation; asserts iron deficiency context signal firing now; chain enforcement pending interaction mapping."
+    fixture_filename: "ph_iron_deficiency_inflammation_v1.json"
+    expected_signals:
+      must_fire:
+        - "signal_iron_deficiency_context"
+      must_not_fire: []
+    expected_chains:
+      must_exist: false
+      min_count: 0
+      min_chain_confidence: 0.0
+      must_include_any_signal: []
+      optional_expected_sequences: []
+    expected_root_cause:
+      must_exist: false
+      min_hypothesis_count: 0
+      applies_to_signal_id: ""

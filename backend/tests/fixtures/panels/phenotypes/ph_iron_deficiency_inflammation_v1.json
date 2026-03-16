@@ -1,0 +1,10 @@
+{
+  "panel_id": "ph_iron_deficiency_inflammation_v1",
+  "user": { "age": 35, "sex": "female" },
+  "biomarkers": {
+    "ferritin": { "value": 10, "unit": "ug/L", "reference_range": { "min": 30.0, "max": 400.0, "unit": "ug/L", "source": "lab" } },
+    "iron": { "value": 6.0, "unit": "umol/L", "reference_range": { "min": 10.0, "max": 30.0, "unit": "umol/L", "source": "lab" } },
+    "crp": { "value": 4.0, "unit": "mg/L", "reference_range": { "min": 0.0, "max": 2.0, "unit": "mg/L", "source": "lab" } },
+    "hemoglobin": { "value": 112, "unit": "g/L", "reference_range": { "min": 120.0, "max": 180.0, "unit": "g/L", "source": "lab" } }
+  }
+}
