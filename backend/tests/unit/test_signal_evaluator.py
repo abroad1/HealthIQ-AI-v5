@@ -667,6 +667,180 @@ def test_lab_range_activation_uses_lab_range_path():
     assert out[0].signal_state == "suboptimal"
 
 
+def test_lab_range_exceeded_upper_only_real_hcy_signal_triggers():
+    evaluator = _single_signal_evaluator("signal_homocysteine_elevation_context")
+    out = evaluator.evaluate_all(
+        signal_biomarkers={
+            "homocysteine": 16.2,
+            "vitamin_b12": 420.0,
+            "folate": 6.0,
+            "mcv": 101.0,
+            "crp": 3.2,
+            "creatinine": 78.0,
+        },
+        signal_derived={},
+        lab_ranges={
+            "homocysteine": {
+                "min": None,
+                "max": 15.0,
+                "unit": "umol/L",
+                "source": "lab",
+            }
+        },
+    )
+    by_id = {row.signal_id: row for row in out}
+    assert "signal_homocysteine_elevation_context" in by_id
+
+
+def test_lab_range_exceeded_lower_only_range_triggers_when_enabled():
+    class _LowerOnlyLabRangeRegistry:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_lower_bound_context",
+                    "system": "metabolic",
+                    "primary_metric": "glucose",
+                    "activation_logic": ACTIVATION_MODE_LAB_RANGE,
+                    "activation_config": {
+                        "upper_bound_state": "at_risk",
+                        "enable_lower_bound": True,
+                        "lower_bound_state": "suboptimal",
+                    },
+                    "thresholds": [{"severity": "at_risk", "operator": ">", "value": 9999.0}],
+                    "override_rules": [],
+                    "output": {"supporting_markers": []},
+                }
+            ]
+
+    evaluator = SignalEvaluator(_LowerOnlyLabRangeRegistry())
+    out = evaluator.evaluate_all(
+        signal_biomarkers={"glucose": 65.0},
+        signal_derived={},
+        lab_ranges={"glucose": {"min": 70.0, "max": None}},
+    )
+    assert len(out) == 1
+    assert out[0].signal_id == "signal_lower_bound_context"
+    assert out[0].signal_state == "suboptimal"
+
+
+def test_lab_range_exceeded_both_bounds_behavior_unchanged():
+    class _BothBoundsRegistry:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_both_bounds_context",
+                    "system": "metabolic",
+                    "primary_metric": "glucose",
+                    "activation_logic": ACTIVATION_MODE_LAB_RANGE,
+                    "activation_config": {
+                        "upper_bound_state": "suboptimal",
+                        "enable_lower_bound": True,
+                        "lower_bound_state": "suboptimal",
+                    },
+                    "thresholds": [{"severity": "at_risk", "operator": ">", "value": 9999.0}],
+                    "override_rules": [],
+                    "output": {"supporting_markers": []},
+                }
+            ]
+
+    evaluator = SignalEvaluator(_BothBoundsRegistry())
+    out = evaluator.evaluate_all(
+        signal_biomarkers={"glucose": 150.0},
+        signal_derived={},
+        lab_ranges={"glucose": {"min": 70.0, "max": 100.0}},
+    )
+    assert len(out) == 1
+    assert out[0].signal_id == "signal_both_bounds_context"
+    assert out[0].signal_state == "suboptimal"
+
+
+def test_lab_range_exceeded_neither_bounds_remains_non_activating():
+    class _NoBoundsRegistry:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_no_bounds_context",
+                    "system": "metabolic",
+                    "primary_metric": "glucose",
+                    "activation_logic": ACTIVATION_MODE_LAB_RANGE,
+                    "activation_config": {
+                        "upper_bound_state": "suboptimal",
+                        "enable_lower_bound": True,
+                        "lower_bound_state": "suboptimal",
+                    },
+                    "thresholds": [{"severity": "at_risk", "operator": ">", "value": 9999.0}],
+                    "override_rules": [],
+                    "output": {"supporting_markers": []},
+                }
+            ]
+
+    evaluator = SignalEvaluator(_NoBoundsRegistry())
+    out = evaluator.evaluate_all(
+        signal_biomarkers={"glucose": 150.0},
+        signal_derived={},
+        lab_ranges={"glucose": {"min": None, "max": None}},
+    )
+    assert out == []
+
+
+def test_pipeline_hcy_upper_only_lab_range_emits_context_signal(tmp_path):
+    fixture = {
+        "panel_id": "ph_vascular_hcy_inflammation_v1",
+        "user": {"user_id": str(uuid4()), "age": 45, "gender": "male"},
+        "biomarkers": {
+            "homocysteine": {
+                "value": 16.2,
+                "unit": "umol/L",
+                "reference_range": {"min": None, "max": 15.0, "unit": "umol/L", "source": "lab"},
+            },
+            "crp": {
+                "value": 3.2,
+                "unit": "mg/L",
+                "reference_range": {"min": 0.0, "max": 2.0, "unit": "mg/L", "source": "lab"},
+            },
+            "vitamin_b12": {
+                "value": 420.0,
+                "unit": "ng/L",
+                "reference_range": {"min": 200.0, "max": 900.0, "unit": "ng/L", "source": "lab"},
+            },
+            "folate": {
+                "value": 6.0,
+                "unit": "ug/L",
+                "reference_range": {"min": 3.4, "max": None, "unit": "ug/L", "source": "lab"},
+            },
+            "mcv": {
+                "value": 101.0,
+                "unit": "fL",
+                "reference_range": {"min": 80.0, "max": 100.0, "unit": "fL", "source": "lab"},
+            },
+            "creatinine": {
+                "value": 78.0,
+                "unit": "umol/L",
+                "reference_range": {"min": 60.0, "max": 110.0, "unit": "umol/L", "source": "lab"},
+            },
+        },
+    }
+    fixture_path = tmp_path / "ph_vascular_hcy_inflammation_v1.json"
+    fixture_path.write_text(json.dumps(fixture), encoding="utf-8")
+
+    run_dir, _ = run_golden_panel(
+        fixture_path=fixture_path,
+        output_root=tmp_path / "out",
+        run_id="unit-kbs34d-ph-v1",
+        write_narrative=False,
+    )
+    insight = json.loads((run_dir / "insight_graph.json").read_text(encoding="utf-8"))
+    signal_ids = [
+        str(row.get("signal_id", "")).strip()
+        for row in (insight.get("signal_results", []) or [])
+        if isinstance(row, dict)
+    ]
+    assert "signal_homocysteine_elevation_context" in signal_ids
+
+
 def test_shared_contract_state_keys_match_allowed_states():
     assert set(STATE_RANK.keys()) == set(ALLOWED_SIGNAL_STATES)
 
