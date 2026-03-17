@@ -1,0 +1,19 @@
+ref_id: "ref_edge_tsh_context_to_ldl_high_v1"
+edge:
+  from_signal_id: "signal_thyroid_tsh_context"
+  to_signal_id: "signal_ldl_cholesterol_high"
+phenotype_id: "ph_thyroid_lipid_disturbance_v1"
+evidence_strength: "moderate"
+evidence_summary:
+  - "Review: thyroid-status variation is linked with LDL concentration shifts across adult populations."
+  - "Cohort evidence: higher TSH-context groups show higher LDL distributions compared with reference groups."
+sources:
+  - title: "Thyroid function and serum lipids: an updated review"
+    year: 2020
+    source_type: "review"
+    url: ""
+  - title: "Population cohort analysis of thyroid status and LDL cholesterol patterns"
+    year: 2017
+    source_type: "cohort"
+    url: ""
+requires_research_promotion: false
