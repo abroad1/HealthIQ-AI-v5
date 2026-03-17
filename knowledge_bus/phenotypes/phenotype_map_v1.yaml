@@ -29,9 +29,9 @@ phenotypes:
         relationship_type: "co_occurrence"
         evidence_strength: "exploratory"
         evidence_basis:
-          type: "rationale_md"
-          ref: "knowledge_bus/phenotypes/rationales/ph_vascular_hcy_inflammation_edge_inflammation_to_hcy_context.md"
-        requires_research_promotion: true
+          type: "research_package"
+          ref: "knowledge_bus/phenotypes/research_refs/ref_edge_inflammation_to_hcy_context_v1.yaml"
+        requires_research_promotion: false
       - from_signal_id: "signal_crp_high"
         to_signal_id: "signal_homocysteine_high"
         relationship_type: "driver"
@@ -183,9 +183,9 @@ phenotypes:
         relationship_type: "co_occurrence"
         evidence_strength: "exploratory"
         evidence_basis:
-          type: "rationale_md"
-          ref: "knowledge_bus/phenotypes/rationales/ph_thyroid_lipid_disturbance_edge_tsh_to_ldl.md"
-        requires_research_promotion: true
+          type: "research_package"
+          ref: "knowledge_bus/phenotypes/research_refs/ref_edge_tsh_context_to_ldl_high_v1.yaml"
+        requires_research_promotion: false
       - from_signal_id: "signal_tsh_high"
         to_signal_id: "signal_ldl_cholesterol_high"
         relationship_type: "driver"
