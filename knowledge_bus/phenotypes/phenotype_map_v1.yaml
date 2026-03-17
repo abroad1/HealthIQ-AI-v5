@@ -32,6 +32,23 @@ phenotypes:
           type: "rationale_md"
           ref: "knowledge_bus/phenotypes/rationales/ph_vascular_hcy_inflammation_edge_inflammation_to_hcy_context.md"
         requires_research_promotion: true
+      - from_signal_id: "signal_crp_high"
+        to_signal_id: "signal_homocysteine_high"
+        relationship_type: "driver"
+        evidence_strength: "exploratory"
+        # NOTE: candidate for promotion to moderate/strong once research package exists
+        evidence_basis:
+          type: "guideline"
+          ref: "KB-S37-coverage-expansion-v1"
+        requires_research_promotion: false
+      - from_signal_id: "signal_crp_high"
+        to_signal_id: "signal_homocysteine_elevation_context"
+        relationship_type: "co_occurrence"
+        evidence_strength: "exploratory"
+        evidence_basis:
+          type: "guideline"
+          ref: "KB-S37-coverage-expansion-v1"
+        requires_research_promotion: false
     synthetic_fixture_refs:
       - "ph_vascular_hcy_inflammation_v1.json"
     chain_expectations:
@@ -87,6 +104,63 @@ phenotypes:
           type: "rationale_md"
           ref: "knowledge_bus/phenotypes/rationales/ph_metabolic_early_ir_edge_tg_to_lipid_transport.md"
         requires_research_promotion: true
+      - from_signal_id: "signal_triglycerides_high"
+        to_signal_id: "signal_ggt_high"
+        relationship_type: "consequence"
+        evidence_strength: "exploratory"
+        evidence_basis:
+          type: "guideline"
+          ref: "KB-S37-coverage-expansion-v1"
+        requires_research_promotion: false
+      - from_signal_id: "signal_hba1c_high"
+        to_signal_id: "signal_ggt_high"
+        relationship_type: "driver"
+        evidence_strength: "exploratory"
+        # NOTE: candidate for promotion to moderate/strong once research package exists
+        evidence_basis:
+          type: "guideline"
+          ref: "KB-S37-coverage-expansion-v1"
+        requires_research_promotion: false
+      - from_signal_id: "signal_hba1c_high"
+        to_signal_id: "signal_alt_high"
+        relationship_type: "consequence"
+        evidence_strength: "exploratory"
+        evidence_basis:
+          type: "guideline"
+          ref: "KB-S37-coverage-expansion-v1"
+        requires_research_promotion: false
+      - from_signal_id: "signal_alt_high"
+        to_signal_id: "signal_crp_high"
+        relationship_type: "co_occurrence"
+        evidence_strength: "exploratory"
+        evidence_basis:
+          type: "guideline"
+          ref: "KB-S37-coverage-expansion-v1"
+        requires_research_promotion: false
+      - from_signal_id: "signal_ggt_high"
+        to_signal_id: "signal_crp_high"
+        relationship_type: "consequence"
+        evidence_strength: "exploratory"
+        evidence_basis:
+          type: "guideline"
+          ref: "KB-S37-coverage-expansion-v1"
+        requires_research_promotion: false
+      - from_signal_id: "signal_hdl_cholesterol_low"
+        to_signal_id: "signal_hba1c_high"
+        relationship_type: "co_occurrence"
+        evidence_strength: "exploratory"
+        evidence_basis:
+          type: "guideline"
+          ref: "KB-S37-coverage-expansion-v1"
+        requires_research_promotion: false
+      - from_signal_id: "signal_ldl_cholesterol_high"
+        to_signal_id: "signal_hba1c_high"
+        relationship_type: "co_occurrence"
+        evidence_strength: "exploratory"
+        evidence_basis:
+          type: "guideline"
+          ref: "KB-S37-coverage-expansion-v1"
+        requires_research_promotion: false
     synthetic_fixture_refs:
       - "ph_metabolic_early_ir_v1.json"
     chain_expectations:
@@ -112,6 +186,23 @@ phenotypes:
           type: "rationale_md"
           ref: "knowledge_bus/phenotypes/rationales/ph_thyroid_lipid_disturbance_edge_tsh_to_ldl.md"
         requires_research_promotion: true
+      - from_signal_id: "signal_tsh_high"
+        to_signal_id: "signal_ldl_cholesterol_high"
+        relationship_type: "driver"
+        evidence_strength: "exploratory"
+        # NOTE: candidate for promotion to moderate/strong once research package exists
+        evidence_basis:
+          type: "guideline"
+          ref: "KB-S37-coverage-expansion-v1"
+        requires_research_promotion: false
+      - from_signal_id: "signal_tsh_high"
+        to_signal_id: "signal_hdl_cholesterol_low"
+        relationship_type: "consequence"
+        evidence_strength: "exploratory"
+        evidence_basis:
+          type: "guideline"
+          ref: "KB-S37-coverage-expansion-v1"
+        requires_research_promotion: false
     synthetic_fixture_refs:
       - "ph_thyroid_lipid_disturbance_v1.json"
     chain_expectations:
@@ -138,6 +229,39 @@ phenotypes:
           type: "rationale_md"
           ref: "knowledge_bus/phenotypes/rationales/ph_iron_deficiency_inflammation_edge_crp_to_iron_deficiency.md"
         requires_research_promotion: true
+      - from_signal_id: "signal_ferritin_low"
+        to_signal_id: "signal_hemoglobin_low"
+        relationship_type: "driver"
+        evidence_strength: "exploratory"
+        # NOTE: candidate for promotion to moderate/strong once research package exists
+        evidence_basis:
+          type: "guideline"
+          ref: "KB-S37-coverage-expansion-v1"
+        requires_research_promotion: false
+      - from_signal_id: "signal_hemoglobin_low"
+        to_signal_id: "signal_mcv_high"
+        relationship_type: "co_occurrence"
+        evidence_strength: "exploratory"
+        evidence_basis:
+          type: "guideline"
+          ref: "KB-S37-coverage-expansion-v1"
+        requires_research_promotion: false
+      - from_signal_id: "signal_ferritin_low"
+        to_signal_id: "signal_mcv_high"
+        relationship_type: "consequence"
+        evidence_strength: "exploratory"
+        evidence_basis:
+          type: "guideline"
+          ref: "KB-S37-coverage-expansion-v1"
+        requires_research_promotion: false
+      - from_signal_id: "signal_crp_high"
+        to_signal_id: "signal_ferritin_low"
+        relationship_type: "co_occurrence"
+        evidence_strength: "exploratory"
+        evidence_basis:
+          type: "guideline"
+          ref: "KB-S37-coverage-expansion-v1"
+        requires_research_promotion: false
     synthetic_fixture_refs:
       - "ph_iron_deficiency_inflammation_v1.json"
     chain_expectations:
