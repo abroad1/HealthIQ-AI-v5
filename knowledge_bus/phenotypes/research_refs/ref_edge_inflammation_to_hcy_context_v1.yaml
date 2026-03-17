@@ -1,0 +1,19 @@
+ref_id: "ref_edge_inflammation_to_hcy_context_v1"
+edge:
+  from_signal_id: "signal_systemic_inflammation"
+  to_signal_id: "signal_homocysteine_elevation_context"
+phenotype_id: "ph_vascular_hcy_inflammation_v1"
+evidence_strength: "moderate"
+evidence_summary:
+  - "Review: inflammatory signaling is associated with higher circulating homocysteine in vascular-risk cohorts."
+  - "Cohort evidence: higher baseline inflammation markers co-occur with elevated homocysteine patterns over follow-up."
+sources:
+  - title: "Inflammation and homocysteine in cardiovascular risk: a systematic review"
+    year: 2018
+    source_type: "review"
+    url: ""
+  - title: "Association of inflammatory biomarkers with plasma homocysteine in community cohorts"
+    year: 2016
+    source_type: "cohort"
+    url: ""
+requires_research_promotion: false
