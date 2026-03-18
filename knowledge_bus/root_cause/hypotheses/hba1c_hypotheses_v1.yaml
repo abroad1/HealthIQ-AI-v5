@@ -1,0 +1,95 @@
+schema_version: "v1"
+asset_id: "hba1c_hypotheses_v1"
+updated_at: "2026-03-18"
+primary_signal_id: "signal_hba1c_high"
+primary_metric: "hba1c"
+notes:
+  - "KB-S33b governed root-cause asset for deterministic HbA1c context."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+  - "All confirmatory_tests must reference knowledge_bus/registries/confirmatory_tests_v1.yaml."
+
+hypotheses:
+  - hypothesis_id: "hba1c_glycaemic_exposure_pattern_v1"
+    title: "Persistent glycaemic exposure pattern"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "HbA1c is elevated with a pattern that can be consistent with sustained glycaemic exposure over recent months."
+    required_markers:
+      - "hba1c"
+    confirmatory_markers:
+      - "glucose"
+    differentiator_markers:
+      - "triglycerides"
+      - "hdl_cholesterol"
+    evidence_for_rules:
+      - rule_id: "hba1c_high_or_flagged"
+        markers_all:
+          - "hba1c"
+        direction: "flagged_or_high"
+        evidence_for_item: "HbA1c is elevated relative to range, supporting persistent glycaemic exposure context."
+        marker_refs:
+          - "hba1c"
+      - rule_id: "glucose_support"
+        markers_any:
+          - "glucose"
+        direction: "high"
+        evidence_for_item: "Glucose is elevated, which supports ongoing glycaemic burden in context."
+        marker_refs:
+          - "glucose"
+    evidence_against_rules:
+      - rule_id: "hba1c_clearly_normal"
+        markers_all:
+          - "hba1c"
+        direction: "clearly_normal"
+        evidence_against_item: "HbA1c appears clearly within range, which reduces support for a persistent glycaemic exposure pattern."
+        marker_refs:
+          - "hba1c"
+    missing_data_markers:
+      - marker_id: "hba1c"
+        reason: "HbA1c is required to anchor this pattern."
+      - marker_id: "glucose"
+        reason: "Glucose adds near-term glycaemic context to complement HbA1c."
+    confirmatory_tests:
+      - "test_hba1c_repeat_v1"
+
+  - hypothesis_id: "hba1c_lipid_coupling_context_v1"
+    title: "Glycaemic-lipid coupling context"
+    safety_class: "monitoring"
+    evidence_strength: "exploratory"
+    summary_template: "HbA1c is elevated with lipid marker context that may co-occur in broader metabolic stress patterns."
+    required_markers:
+      - "hba1c"
+    confirmatory_markers:
+      - "triglycerides"
+      - "hdl_cholesterol"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "hba1c_signal_fired"
+        signals_any:
+          - "signal_hba1c_high"
+        direction: "fired"
+        evidence_for_item: "A high HbA1c signal fired, indicating elevated glycaemic context on this panel."
+        marker_refs:
+          - "hba1c"
+      - rule_id: "triglyceride_high_support"
+        markers_any:
+          - "triglycerides"
+        direction: "high"
+        evidence_for_item: "Triglycerides are elevated, which can align with metabolic coupling context."
+        marker_refs:
+          - "triglycerides"
+      - rule_id: "hdl_low_support"
+        markers_any:
+          - "hdl_cholesterol"
+        direction: "low_or_borderline"
+        evidence_for_item: "HDL appears low or borderline, which can align with glycaemic-lipid patterning in context."
+        marker_refs:
+          - "hdl_cholesterol"
+    evidence_against_rules: []
+    missing_data_markers:
+      - marker_id: "triglycerides"
+        reason: "Triglycerides support interpretation of glycaemic-lipid context."
+      - marker_id: "hdl_cholesterol"
+        reason: "HDL contributes directionality for lipid-coupling interpretation."
+    confirmatory_tests:
+      - "test_hba1c_repeat_v1"
