@@ -4,11 +4,20 @@ from pathlib import Path
 import pytest
 import yaml
 
+from core.analytics.root_cause_compiler_v1 import compile_root_cause_v1
 from tools.run_golden_panel import run_golden_panel
 
 
 def _load_json(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _finding_by_signal(root_cause: dict, signal_id: str):
+    findings = root_cause.get("findings", []) if isinstance(root_cause, dict) else []
+    for finding in findings:
+        if isinstance(finding, dict) and str(finding.get("signal_id", "")).strip() == signal_id:
+            return finding
+    return None
 
 
 @pytest.mark.parametrize(
@@ -44,9 +53,8 @@ def test_root_cause_v1_present_for_homocysteine_and_non_regression(tmp_path, fix
     assert isinstance(root_b, dict)
     assert root_a.get("version") == "v1"
     assert root_b.get("version") == "v1"
-    findings = root_a.get("findings", [])
-    assert len(findings) == 1
-    finding = findings[0]
+    finding = _finding_by_signal(root_a, "signal_homocysteine_elevation_context")
+    assert isinstance(finding, dict)
     assert finding.get("signal_id") == "signal_homocysteine_elevation_context"
     hypotheses = finding.get("hypotheses", [])
     assert len(hypotheses) >= 3
@@ -155,3 +163,153 @@ def test_confirmatory_test_suppression_output_is_deterministic_for_ab_panel(tmp_
     root_a = ((_load_json(run_a / "insight_graph.json") or {}).get("report_v1") or {}).get("root_cause_v1")
     root_b = ((_load_json(run_b / "insight_graph.json") or {}).get("report_v1") or {}).get("root_cause_v1")
     assert root_a == root_b
+
+
+def test_root_cause_v1_hba1c_hypotheses_emit_for_hba1c_signal():
+    root = compile_root_cause_v1(
+        signal_results=[
+            {
+                "signal_id": "signal_hba1c_high",
+                "signal_state": "at_risk",
+                "confidence": 0.81,
+                "primary_metric": "hba1c",
+            }
+        ],
+        biomarker_context={
+            "hba1c": {"value": 49.0},
+            "glucose": {"value": 7.2},
+            "triglycerides": {"value": 2.1},
+            "hdl_cholesterol": {"value": 0.9},
+        },
+        input_reference_ranges={
+            "hba1c": {"min": 20.0, "max": 42.0},
+            "glucose": {"min": 3.9, "max": 5.5},
+            "triglycerides": {"min": 0.4, "max": 1.7},
+            "hdl_cholesterol": {"min": 1.0, "max": 3.0},
+        },
+    )
+    dump = root.model_dump() if root is not None else {}
+    finding = _finding_by_signal(dump, "signal_hba1c_high")
+    assert isinstance(finding, dict)
+    hypothesis_ids = {
+        str(h.get("hypothesis_id", "")).strip()
+        for h in (finding.get("hypotheses") or [])
+        if isinstance(h, dict)
+    }
+    assert "hba1c_glycaemic_exposure_pattern_v1" in hypothesis_ids
+    assert "hba1c_lipid_coupling_context_v1" in hypothesis_ids
+
+
+def test_root_cause_v1_alt_hypotheses_emit_for_alt_signal():
+    root = compile_root_cause_v1(
+        signal_results=[
+            {
+                "signal_id": "signal_hepatic_alt_context",
+                "signal_state": "at_risk",
+                "confidence": 0.74,
+                "primary_metric": "alt",
+            }
+        ],
+        biomarker_context={
+            "alt": {"value": 95.0},
+            "ast": {"value": 62.0},
+            "ggt": {"value": 71.0},
+            "crp": {"value": 4.0},
+        },
+        input_reference_ranges={
+            "alt": {"min": 10.0, "max": 45.0},
+            "ast": {"min": 10.0, "max": 40.0},
+            "ggt": {"min": 10.0, "max": 55.0},
+            "crp": {"min": 0.0, "max": 3.0},
+        },
+    )
+    dump = root.model_dump() if root is not None else {}
+    finding = _finding_by_signal(dump, "signal_hepatic_alt_context")
+    assert isinstance(finding, dict)
+    hypothesis_ids = {
+        str(h.get("hypothesis_id", "")).strip()
+        for h in (finding.get("hypotheses") or [])
+        if isinstance(h, dict)
+    }
+    assert "alt_hepatic_cell_stress_pattern_v1" in hypothesis_ids
+    assert "alt_inflammatory_coupling_context_v1" in hypothesis_ids
+
+
+def test_root_cause_v1_tsh_hypotheses_emit_for_tsh_signal():
+    root = compile_root_cause_v1(
+        signal_results=[
+            {
+                "signal_id": "signal_thyroid_tsh_context",
+                "signal_state": "suboptimal",
+                "confidence": 0.69,
+                "primary_metric": "tsh",
+            },
+            {
+                "signal_id": "signal_tsh_high",
+                "signal_state": "at_risk",
+                "confidence": 0.73,
+                "primary_metric": "tsh",
+            },
+        ],
+        biomarker_context={
+            "tsh": {"value": 6.8},
+            "free_t4": {"value": 10.5},
+            "free_t3": {"value": 3.2},
+            "ldl_cholesterol": {"value": 4.4},
+        },
+        input_reference_ranges={
+            "tsh": {"min": 0.4, "max": 4.5},
+            "free_t4": {"min": 12.0, "max": 22.0},
+            "free_t3": {"min": 3.1, "max": 6.8},
+            "ldl_cholesterol": {"min": 1.0, "max": 3.0},
+        },
+    )
+    dump = root.model_dump() if root is not None else {}
+    finding = _finding_by_signal(dump, "signal_thyroid_tsh_context")
+    assert isinstance(finding, dict)
+    hypothesis_ids = {
+        str(h.get("hypothesis_id", "")).strip()
+        for h in (finding.get("hypotheses") or [])
+        if isinstance(h, dict)
+    }
+    assert "tsh_axis_regulation_pattern_v1" in hypothesis_ids
+    assert "tsh_metabolic_coupling_context_v1" in hypothesis_ids
+
+
+def test_root_cause_v1_suppresses_non_repeat_confirmatory_tests_when_present():
+    root = compile_root_cause_v1(
+        signal_results=[
+            {
+                "signal_id": "signal_hepatic_alt_context",
+                "signal_state": "suboptimal",
+                "confidence": 0.61,
+                "primary_metric": "alt",
+            }
+        ],
+        biomarker_context={
+            "alt": {"value": 65.0},
+            "ast": {"value": 54.0},
+            "ggt": {"value": 69.0},
+        },
+        input_reference_ranges={
+            "alt": {"min": 10.0, "max": 45.0},
+            "ast": {"min": 10.0, "max": 40.0},
+            "ggt": {"min": 10.0, "max": 55.0},
+        },
+    )
+    dump = root.model_dump() if root is not None else {}
+    finding = _finding_by_signal(dump, "signal_hepatic_alt_context")
+    assert isinstance(finding, dict)
+    by_id = {
+        str(h.get("hypothesis_id", "")).strip(): h
+        for h in (finding.get("hypotheses") or [])
+        if isinstance(h, dict)
+    }
+    alt_hypothesis = by_id.get("alt_hepatic_cell_stress_pattern_v1")
+    assert isinstance(alt_hypothesis, dict)
+    confirmatory_test_ids = {
+        str(t.get("test_id", "")).strip()
+        for t in (alt_hypothesis.get("confirmatory_tests") or [])
+        if isinstance(t, dict)
+    }
+    assert "test_liver_ggt_alt_ast_v1" not in confirmatory_test_ids

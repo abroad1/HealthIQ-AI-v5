@@ -103,6 +103,17 @@ tests:
       - "signal_renal_metabolic_stress"
       - "signal_homocysteine_elevation_context"
 
+  - test_id: "test_hba1c_repeat_v1"
+    display_name: "Repeat HbA1c"
+    specimen: "blood"
+    safety_class: "monitoring"
+    rationale_template: "Consider repeating HbA1c in 8–12 weeks to confirm persistence and monitor trend."
+    maps_to_biomarkers:
+      - "hba1c"
+    is_repeat_test: true
+    related_signals:
+      - "signal_hba1c_high"
+
   - test_id: "test_thyroid_tsh_ft4_v1"
     display_name: "TSH with Free T4"
     specimen: "blood"

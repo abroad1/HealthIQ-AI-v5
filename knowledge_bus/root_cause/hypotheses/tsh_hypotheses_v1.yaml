@@ -1,0 +1,84 @@
+schema_version: "v1"
+asset_id: "tsh_hypotheses_v1"
+updated_at: "2026-03-18"
+primary_signal_id: "signal_thyroid_tsh_context"
+primary_metric: "tsh"
+notes:
+  - "KB-S33b governed root-cause asset for deterministic TSH context."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+  - "All confirmatory_tests must reference knowledge_bus/registries/confirmatory_tests_v1.yaml."
+
+hypotheses:
+  - hypothesis_id: "tsh_axis_regulation_pattern_v1"
+    title: "Thyroid-axis regulation pattern"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "TSH is outside range with thyroid hormone context that can be consistent with altered thyroid-axis regulation."
+    required_markers:
+      - "tsh"
+    confirmatory_markers:
+      - "free_t4"
+      - "free_t3"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "tsh_high_or_flagged"
+        markers_all:
+          - "tsh"
+        direction: "flagged_or_high"
+        evidence_for_item: "TSH is elevated relative to range, supporting thyroid-axis context."
+        marker_refs:
+          - "tsh"
+      - rule_id: "thyroid_context_signal"
+        signals_any:
+          - "signal_thyroid_tsh_context"
+        direction: "fired"
+        evidence_for_item: "A thyroid TSH context signal fired, indicating thyroid-axis context on this panel."
+        marker_refs:
+          - "tsh"
+    evidence_against_rules:
+      - rule_id: "tsh_clearly_normal"
+        markers_all:
+          - "tsh"
+        direction: "clearly_normal"
+        evidence_against_item: "TSH appears clearly within range, which reduces support for a thyroid-axis pattern."
+        marker_refs:
+          - "tsh"
+    missing_data_markers:
+      - marker_id: "free_t4"
+        reason: "Free T4 adds thyroid hormone context alongside TSH."
+      - marker_id: "free_t3"
+        reason: "Free T3 can refine thyroid-axis context interpretation."
+    confirmatory_tests:
+      - "test_thyroid_tsh_ft4_v1"
+
+  - hypothesis_id: "tsh_metabolic_coupling_context_v1"
+    title: "Thyroid-metabolic coupling context"
+    safety_class: "monitoring"
+    evidence_strength: "exploratory"
+    summary_template: "TSH context is present with lipid marker shifts that may co-occur in broader endocrine-metabolic patterns."
+    required_markers:
+      - "tsh"
+    confirmatory_markers:
+      - "ldl_cholesterol"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "ldl_high_support"
+        markers_any:
+          - "ldl_cholesterol"
+        direction: "high"
+        evidence_for_item: "LDL cholesterol is elevated, which can align with thyroid-related metabolic context."
+        marker_refs:
+          - "ldl_cholesterol"
+      - rule_id: "tsh_high_signal"
+        signals_any:
+          - "signal_tsh_high"
+        direction: "fired"
+        evidence_for_item: "A high TSH signal fired, reinforcing thyroid context for this finding."
+        marker_refs:
+          - "tsh"
+    evidence_against_rules: []
+    missing_data_markers:
+      - marker_id: "ldl_cholesterol"
+        reason: "LDL cholesterol can add metabolic context for thyroid-axis pattern review."
+    confirmatory_tests:
+      - "test_thyroid_tsh_ft4_v1"
