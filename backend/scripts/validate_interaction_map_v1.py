@@ -85,33 +85,34 @@ def validate_interaction_map_v1(
     interaction_map_path: Path | None = None,
     phenotype_map_path: Path | None = None,
     packages_root: Path | None = None,
-) -> Tuple[bool, List[str], List[str], bool]:
+) -> Tuple[bool, List[str], List[str], bool, List[Tuple[str, str]]]:
     interaction_map_path = interaction_map_path or DEFAULT_INTERACTION_MAP_PATH
     phenotype_map_path = phenotype_map_path or DEFAULT_PHENOTYPE_MAP_PATH
     packages_root = packages_root or DEFAULT_PACKAGES_ROOT
 
     errors: List[str] = []
     warnings: List[str] = []
+    uncovered_edges: Set[Tuple[str, str]] = set()
 
     if not interaction_map_path.exists():
-        return False, [f"ERROR interaction_map_v1: interaction map file not found path={interaction_map_path}"], warnings, False
+        return False, [f"ERROR interaction_map_v1: interaction map file not found path={interaction_map_path}"], warnings, False, []
     if not phenotype_map_path.exists():
-        return False, [f"ERROR interaction_map_v1: phenotype map file not found path={phenotype_map_path}"], warnings, False
+        return False, [f"ERROR interaction_map_v1: phenotype map file not found path={phenotype_map_path}"], warnings, False, []
 
     try:
         interaction_payload = _load_yaml(interaction_map_path)
     except Exception as exc:
-        return False, [f"ERROR interaction_map_v1: failed to parse interaction map: {exc}"], warnings, False
+        return False, [f"ERROR interaction_map_v1: failed to parse interaction map: {exc}"], warnings, False, []
     try:
         phenotype_payload = _load_yaml(phenotype_map_path)
     except Exception as exc:
-        return False, [f"ERROR interaction_map_v1: failed to parse phenotype map: {exc}"], warnings, False
+        return False, [f"ERROR interaction_map_v1: failed to parse phenotype map: {exc}"], warnings, False, []
 
     known_signal_ids = _collect_known_signal_ids(packages_root)
     allowed_edges, rationale_by_edge = _build_allowed_edges(phenotype_payload)
 
     if not allowed_edges:
-        return False, [STOP_EMPTY_ALLOWED], warnings, True
+        return False, [STOP_EMPTY_ALLOWED], warnings, True, []
 
     interaction_edges = interaction_payload.get("edges", []) or []
     edge_signal_set: Set[str] = set()
@@ -126,18 +127,24 @@ def validate_interaction_map_v1(
         if to_signal:
             edge_signal_set.add(to_signal)
 
+        edge_has_orphan = False
         if from_signal not in known_signal_ids:
+            edge_has_orphan = True
             errors.append(
                 f"ERROR interaction_map_v1: orphaned_edge signal_id={from_signal} edge={edge_repr}"
             )
         if to_signal not in known_signal_ids:
+            edge_has_orphan = True
             errors.append(
                 f"ERROR interaction_map_v1: orphaned_edge signal_id={to_signal} edge={edge_repr}"
             )
-        if from_signal and to_signal and (from_signal, to_signal) not in allowed_edges:
-            warnings.append(
-                f"WARN interaction_map_v1: edge_not_covered_by_any_phenotype edge={edge_repr}"
-            )
+        if (
+            not edge_has_orphan
+            and from_signal
+            and to_signal
+            and (from_signal, to_signal) not in allowed_edges
+        ):
+            uncovered_edges.add((from_signal, to_signal))
         for phenotype_id, ref in rationale_by_edge.get((from_signal, to_signal), []):
             warnings.append(
                 "WARN interaction_map_v1: edge_requires_research_promotion "
@@ -160,7 +167,9 @@ def validate_interaction_map_v1(
                     f"signal_id={signal_id}"
                 )
 
-    return len(errors) == 0, errors, warnings, False
+    if uncovered_edges:
+        return False, errors, warnings, False, sorted(uncovered_edges, key=lambda row: (row[0], row[1]))
+    return len(errors) == 0, errors, warnings, False, []
 
 
 def parse_args(argv: List[str]) -> argparse.Namespace:
@@ -182,11 +191,17 @@ def main(argv: List[str] | None = None) -> int:
     phenotype_map_path = _resolve_path(str(args.phenotype_map), DEFAULT_PHENOTYPE_MAP_PATH)
     packages_root = _resolve_path(str(args.packages_root), DEFAULT_PACKAGES_ROOT)
 
-    is_valid, errors, warnings, _ = validate_interaction_map_v1(
+    is_valid, errors, warnings, _, uncovered_edges = validate_interaction_map_v1(
         interaction_map_path=interaction_map_path,
         phenotype_map_path=phenotype_map_path,
         packages_root=packages_root,
     )
+    if uncovered_edges:
+        print("interaction_map_v1: FAIL")
+        print(f"  edge_not_covered_by_any_phenotype: {len(uncovered_edges)} edges")
+        for from_signal, to_signal in uncovered_edges:
+            print(f"  edge={from_signal}->{to_signal}")
+        return 1
     for warning in warnings:
         print(warning)
     if not is_valid:
