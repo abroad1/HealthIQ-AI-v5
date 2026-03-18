@@ -1,0 +1,87 @@
+schema_version: "v1"
+asset_id: "alt_hypotheses_v1"
+updated_at: "2026-03-18"
+primary_signal_id: "signal_hepatic_alt_context"
+primary_metric: "alt"
+notes:
+  - "KB-S33b governed root-cause asset for deterministic ALT context."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+  - "All confirmatory_tests must reference knowledge_bus/registries/confirmatory_tests_v1.yaml."
+
+hypotheses:
+  - hypothesis_id: "alt_hepatic_cell_stress_pattern_v1"
+    title: "Hepatic cell stress pattern"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "ALT is elevated with supporting hepatic chemistry context that can be consistent with hepatocellular stress."
+    required_markers:
+      - "alt"
+    confirmatory_markers:
+      - "ast"
+      - "ggt"
+    differentiator_markers:
+      - "bilirubin"
+      - "alp"
+    evidence_for_rules:
+      - rule_id: "alt_high_or_flagged"
+        markers_all:
+          - "alt"
+        direction: "flagged_or_high"
+        evidence_for_item: "ALT is elevated relative to range, supporting hepatic stress context."
+        marker_refs:
+          - "alt"
+      - rule_id: "hepatic_context_signal"
+        signals_any:
+          - "signal_hepatic_alt_context"
+        direction: "fired"
+        evidence_for_item: "A hepatic ALT context signal fired, indicating structured hepatic context on this panel."
+        marker_refs:
+          - "alt"
+    evidence_against_rules:
+      - rule_id: "alt_clearly_normal"
+        markers_all:
+          - "alt"
+        direction: "clearly_normal"
+        evidence_against_item: "ALT appears clearly within range, which reduces support for a hepatic stress pattern."
+        marker_refs:
+          - "alt"
+    missing_data_markers:
+      - marker_id: "ast"
+        reason: "AST helps characterize hepatic enzyme context alongside ALT."
+      - marker_id: "ggt"
+        reason: "GGT helps contextualize liver-related enzyme patterns."
+    confirmatory_tests:
+      - "test_liver_ggt_alt_ast_v1"
+
+  - hypothesis_id: "alt_inflammatory_coupling_context_v1"
+    title: "Hepatic-inflammatory coupling context"
+    safety_class: "monitoring"
+    evidence_strength: "exploratory"
+    summary_template: "ALT is elevated with inflammatory context markers that may co-occur in multi-system stress patterns."
+    required_markers:
+      - "alt"
+    confirmatory_markers:
+      - "crp"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "crp_high_support"
+        markers_any:
+          - "crp"
+        direction: "high"
+        evidence_for_item: "CRP is elevated, which can align with inflammatory context alongside hepatic marker shifts."
+        marker_refs:
+          - "crp"
+      - rule_id: "systemic_inflammation_signal"
+        signals_any:
+          - "signal_systemic_inflammation"
+        direction: "fired"
+        evidence_for_item: "A systemic inflammation signal fired, adding inflammatory context to hepatic interpretation."
+        marker_refs:
+          - "crp"
+    evidence_against_rules: []
+    missing_data_markers:
+      - marker_id: "crp"
+        reason: "CRP helps assess whether inflammatory context coexists with ALT changes."
+    confirmatory_tests:
+      - "test_liver_ggt_alt_ast_v1"
+      - "test_crp_repeat_v1"

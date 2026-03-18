@@ -17,13 +17,16 @@ def _repo_root() -> Path:
     return Path(__file__).resolve().parents[3]
 
 
-def _hypothesis_path() -> Path:
-    return _repo_root() / "knowledge_bus" / "root_cause" / "hypotheses" / "hcy_hypotheses_v1.yaml"
+def _hypotheses_root() -> Path:
+    return _repo_root() / "knowledge_bus" / "root_cause" / "hypotheses"
 
 
-@lru_cache(maxsize=1)
-def load_hcy_hypotheses_v1() -> Dict[str, Any]:
-    path = _hypothesis_path()
+def _hypothesis_path(asset_filename: str) -> Path:
+    return _hypotheses_root() / asset_filename
+
+
+def _load_hypotheses_asset(asset_filename: str) -> Dict[str, Any]:
+    path = _hypothesis_path(asset_filename)
     if not path.exists():
         raise FileNotFoundError(f"Root-cause hypotheses asset not found: {path}")
     payload = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
@@ -58,3 +61,24 @@ def load_hcy_hypotheses_v1() -> Dict[str, Any]:
         validated.append(row)
 
     return {"path": str(path), "payload": payload, "hypotheses": validated}
+
+
+@lru_cache(maxsize=8)
+def load_root_cause_hypotheses_asset_v1(asset_filename: str) -> Dict[str, Any]:
+    return _load_hypotheses_asset(asset_filename)
+
+
+def load_hcy_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("hcy_hypotheses_v1.yaml")
+
+
+def load_hba1c_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("hba1c_hypotheses_v1.yaml")
+
+
+def load_alt_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("alt_hypotheses_v1.yaml")
+
+
+def load_tsh_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("tsh_hypotheses_v1.yaml")
