@@ -198,9 +198,9 @@ def main(argv: List[str] | None = None) -> int:
     )
     if uncovered_edges:
         print("interaction_map_v1: FAIL")
-        print(f"  edge_not_covered_by_any_phenotype: {len(uncovered_edges)} edges")
+        print(f"edge_not_covered_by_any_phenotype: {len(uncovered_edges)} edges")
         for from_signal, to_signal in uncovered_edges:
-            print(f"  edge={from_signal}->{to_signal}")
+            print(f"edge={from_signal}->{to_signal}")
         return 1
     for warning in warnings:
         print(warning)
