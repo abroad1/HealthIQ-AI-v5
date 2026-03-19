@@ -267,3 +267,84 @@ phenotypes:
     chain_expectations:
       status: "pending"
     evidence_notes: "Documents inflammation-iron coupling as a governed placeholder pending research-package backing."
+
+  - phenotype_id: "ph_hba1c_metabolic_stress_v1"
+    name: "HbA1c metabolic stress pattern"
+    description: "Elevated HbA1c with dyslipidaemic and hepatic context markers used to strengthen synthetic WHY-layer regression coverage."
+    systems_involved:
+      - "metabolic"
+      - "hepatic"
+      - "cardiovascular"
+    required_signals:
+      - "signal_hba1c_high"
+    optional_signals:
+      - "signal_lipid_transport_dysfunction"
+      - "signal_hepatic_alt_context"
+    required_edges:
+      - from_signal_id: "signal_hba1c_high"
+        to_signal_id: "signal_alt_high"
+        relationship_type: "consequence"
+        evidence_strength: "exploratory"
+        evidence_basis:
+          type: "guideline"
+          ref: "KB-S43-phenotype-suite-expansion-v1-1"
+        requires_research_promotion: false
+    synthetic_fixture_refs:
+      - "ph_hba1c_metabolic_stress_v1.json"
+    chain_expectations:
+      status: "pending"
+    evidence_notes: "Synthetic harness coverage phenotype for HbA1c-centred WHY-layer behaviour."
+
+  - phenotype_id: "ph_hepatic_alt_inflammatory_v1"
+    name: "Hepatic ALT inflammatory pattern"
+    description: "ALT-led hepatic stress with inflammatory context, intended for deterministic synthetic phenotype suite coverage."
+    systems_involved:
+      - "hepatic"
+      - "inflammatory"
+      - "metabolic"
+    required_signals:
+      - "signal_hepatic_alt_context"
+    optional_signals:
+      - "signal_alt_high"
+      - "signal_systemic_inflammation"
+    required_edges:
+      - from_signal_id: "signal_alt_high"
+        to_signal_id: "signal_systemic_inflammation"
+        relationship_type: "co_occurrence"
+        evidence_strength: "exploratory"
+        evidence_basis:
+          type: "guideline"
+          ref: "KB-S43-phenotype-suite-expansion-v1-1"
+        requires_research_promotion: false
+    synthetic_fixture_refs:
+      - "ph_hepatic_alt_inflammatory_v1.json"
+    chain_expectations:
+      status: "pending"
+    evidence_notes: "Synthetic harness coverage phenotype for ALT-centred WHY-layer behaviour."
+
+  - phenotype_id: "ph_tsh_axis_metabolic_v1"
+    name: "TSH axis metabolic context pattern"
+    description: "TSH-axis dysregulation with lipid context to reinforce synthetic suite coverage for thyroid WHY-layer scenarios."
+    systems_involved:
+      - "hormonal"
+      - "metabolic"
+      - "cardiovascular"
+    required_signals:
+      - "signal_thyroid_tsh_context"
+    optional_signals:
+      - "signal_tsh_high"
+      - "signal_ldl_cholesterol_high"
+    required_edges:
+      - from_signal_id: "signal_tsh_high"
+        to_signal_id: "signal_thyroid_tsh_context"
+        relationship_type: "co_occurrence"
+        evidence_strength: "exploratory"
+        evidence_basis:
+          type: "guideline"
+          ref: "KB-S43-phenotype-suite-expansion-v1-1"
+        requires_research_promotion: false
+    synthetic_fixture_refs:
+      - "ph_tsh_axis_metabolic_v1.json"
+    chain_expectations:
+      status: "pending"
+    evidence_notes: "Synthetic harness coverage phenotype for TSH-centred WHY-layer behaviour."

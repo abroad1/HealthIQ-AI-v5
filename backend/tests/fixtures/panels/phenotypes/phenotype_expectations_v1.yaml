@@ -103,3 +103,60 @@ phenotypes:
       must_exist: false
       min_hypothesis_count: 0
       applies_to_signal_id: ""
+
+  - phenotype_id: "ph_hba1c_metabolic_stress_v1"
+    chain_coverage_status: "pending"
+    clinical_intent: "HbA1c-led metabolic stress context should fire HbA1c signal and emit governed HbA1c root-cause hypotheses."
+    fixture_filename: "ph_hba1c_metabolic_stress_v1.json"
+    expected_signals:
+      must_fire:
+        - "signal_hba1c_high"
+      must_not_fire: []
+    expected_chains:
+      must_exist: false
+      min_count: 0
+      min_chain_confidence: 0.0
+      must_include_any_signal: []
+      optional_expected_sequences: []
+    expected_root_cause:
+      must_exist: true
+      min_hypothesis_count: 2
+      applies_to_signal_id: "signal_hba1c_high"
+
+  - phenotype_id: "ph_hepatic_alt_inflammatory_v1"
+    chain_coverage_status: "pending"
+    clinical_intent: "ALT-led hepatic-inflammatory context should fire hepatic ALT context signal and emit governed ALT root-cause hypotheses."
+    fixture_filename: "ph_hepatic_alt_inflammatory_v1.json"
+    expected_signals:
+      must_fire:
+        - "signal_hepatic_alt_context"
+      must_not_fire: []
+    expected_chains:
+      must_exist: false
+      min_count: 0
+      min_chain_confidence: 0.0
+      must_include_any_signal: []
+      optional_expected_sequences: []
+    expected_root_cause:
+      must_exist: true
+      min_hypothesis_count: 2
+      applies_to_signal_id: "signal_hepatic_alt_context"
+
+  - phenotype_id: "ph_tsh_axis_metabolic_v1"
+    chain_coverage_status: "pending"
+    clinical_intent: "TSH-axis dysregulation context should fire thyroid TSH context signal and emit governed TSH root-cause hypotheses."
+    fixture_filename: "ph_tsh_axis_metabolic_v1.json"
+    expected_signals:
+      must_fire:
+        - "signal_thyroid_tsh_context"
+      must_not_fire: []
+    expected_chains:
+      must_exist: false
+      min_count: 0
+      min_chain_confidence: 0.0
+      must_include_any_signal: []
+      optional_expected_sequences: []
+    expected_root_cause:
+      must_exist: true
+      min_hypothesis_count: 2
+      applies_to_signal_id: "signal_thyroid_tsh_context"
