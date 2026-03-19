@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
 Orchestrate Knowledge Bus package validation.
+
+This is the canonical package promotion validator authority for Knowledge Bus.
 """
 
 from __future__ import annotations
@@ -35,6 +37,21 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         "--package-dir",
         required=True,
         help="Path to a package directory containing research_brief.yaml and signal_library.yaml.",
+    )
+    parser.add_argument(
+        "--require-behavioural-impact",
+        action="store_true",
+        help="Require behavioural_impact in package_manifest.yaml during validation.",
+    )
+    parser.add_argument(
+        "--require-engine-compatibility",
+        action="store_true",
+        help="Require engine_compatibility in package_manifest.yaml during validation.",
+    )
+    parser.add_argument(
+        "--authoritative-engine-compatibility",
+        default="",
+        help="Authoritative engine_compatibility value to enforce in manifest validation.",
     )
     return parser.parse_args(argv)
 
@@ -94,6 +111,17 @@ def main(argv: list[str] | None = None) -> int:
             str(manifest_path),
             "--audit-path",
             str(MANIFEST_AUDIT_PATH),
+            *(["--require-behavioural-impact"] if args.require_behavioural_impact else []),
+            *(["--require-engine-compatibility"] if args.require_engine_compatibility else []),
+            *(
+                [
+                    "--authoritative-engine-compatibility",
+                    args.authoritative_engine_compatibility,
+                ]
+                if isinstance(args.authoritative_engine_compatibility, str)
+                and args.authoritative_engine_compatibility.strip()
+                else []
+            ),
         ]
     )
     manifest_status = "PASS" if manifest_exit == 0 else "FAIL"
