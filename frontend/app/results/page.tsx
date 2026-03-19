@@ -21,6 +21,7 @@ import { useClusterStore } from '../state/clusterStore';
 import { InsightsPanel } from '@/components/insights/InsightsPanel';
 import BiomarkerDials from '@/components/biomarkers/BiomarkerDials';
 import ClusterSummary from '@/components/clusters/ClusterSummary';
+import ClinicianReportRenderer from '@/components/results/ClinicianReportRenderer';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAnalysisResult } from '../queries/analysisResult';
 
@@ -66,6 +67,7 @@ export default function ResultsPage() {
   const insights = currentAnalysis?.insights ?? [];
   const biomarkers = currentAnalysis?.biomarkers ?? [];
   const clusters = currentAnalysis?.clusters ?? [];
+  const clinicianReport = currentAnalysis?.clinician_report_v1;
   const { created_at, completed_at } = currentAnalysis || {};
   
   // Sync analysis_id from URL to store
@@ -286,7 +288,7 @@ export default function ResultsPage() {
 
         {/* Main Content Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-5 mb-8">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
               Overview
@@ -302,6 +304,10 @@ export default function ResultsPage() {
             <TabsTrigger value="insights" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
               AI Insights
+            </TabsTrigger>
+            <TabsTrigger value="clinician" className="flex items-center gap-2">
+              <CheckCircle className="h-4 w-4" />
+              Clinician Report
             </TabsTrigger>
           </TabsList>
 
@@ -469,6 +475,10 @@ export default function ResultsPage() {
                 </CardContent>
               </Card>
             )}
+          </TabsContent>
+
+          <TabsContent value="clinician" className="space-y-6">
+            <ClinicianReportRenderer report={clinicianReport} />
           </TabsContent>
         </Tabs>
 

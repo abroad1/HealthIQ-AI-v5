@@ -79,6 +79,70 @@ export interface Cluster {
   score?: number;
 }
 
+export interface ClinicianEvidenceItem {
+  item: string;
+  marker_refs: string[];
+}
+
+export interface ClinicianMissingDataItem {
+  marker_id: string;
+  reason: string;
+}
+
+export interface ClinicianConfirmatoryTestItem {
+  test_id: string;
+  display_name: string;
+  rationale: string;
+}
+
+export interface ClinicianHypothesisV1 {
+  hypothesis_id: string;
+  title: string;
+  summary: string;
+  hypothesis_confidence: number;
+  ranking_rationale: string;
+  evidence_for: ClinicianEvidenceItem[];
+  evidence_against: ClinicianEvidenceItem[];
+  missing_data: ClinicianMissingDataItem[];
+  confirmatory_tests: ClinicianConfirmatoryTestItem[];
+  safety_class: 'monitoring' | 'clinician_referral' | 'lifestyle';
+}
+
+export interface ClinicianRootCauseFindingV1 {
+  signal_id: string;
+  signal_state: string;
+  signal_confidence: number;
+  primary_metric: string;
+  hypotheses: ClinicianHypothesisV1[];
+}
+
+export interface ClinicianReportV1 {
+  header: {
+    report_version: 'v1';
+    disclaimer_top: string;
+    footer_line: string;
+  };
+  data_quality: {
+    panel_completeness_present: number;
+    panel_completeness_expected: number;
+    lab_range_quality_by_primary_metric: string[];
+    confidence_caveat: string;
+    data_quality_passed: boolean;
+  };
+  sections: {
+    page1: {
+      primary_concern: string;
+      key_findings: string[];
+      chains: string[];
+      top_hypothesis_line: string;
+      confidence_and_missing_data: string;
+    };
+    root_cause: ClinicianRootCauseFindingV1 | null;
+    confirmatory_tests: ClinicianConfirmatoryTestItem[];
+  };
+  suppressed_confirmatory_tests: string[];
+}
+
 export interface AnalysisResult {
   analysis_id: string;
   biomarkers: BiomarkerResult[];
@@ -92,6 +156,7 @@ export interface AnalysisResult {
   risk_assessment?: Record<string, any>;
   recommendations?: string[];
   meta?: Record<string, any>;
+  clinician_report_v1?: ClinicianReportV1 | null;
 }
 
 
