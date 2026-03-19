@@ -41,46 +41,103 @@ def as_dict(value: Any, label: str, errors: list[str]) -> dict[str, Any]:
     return value
 
 
+def _as_field_rules(raw: Any, label: str, errors: list[str]) -> dict[str, dict[str, Any]]:
+    if raw is None:
+        return {}
+    if not isinstance(raw, dict):
+        errors.append(f"{label} must be a map")
+        return {}
+    normalised: dict[str, dict[str, Any]] = {}
+    for field_name, rule in raw.items():
+        if not isinstance(field_name, str) or not field_name.strip():
+            errors.append(f"{label} contains an invalid field name")
+            continue
+        if not isinstance(rule, dict):
+            errors.append(f"schema rule for {field_name} in {label} must be a map")
+            continue
+        normalised[field_name] = rule
+    return normalised
+
+
+def _validate_field_rule(
+    field_name: str,
+    value: Any,
+    rule: dict[str, Any],
+    errors: list[str],
+) -> None:
+    expected_type = rule.get("type")
+    if expected_type == "string":
+        if not isinstance(value, str):
+            errors.append(f"{field_name} must be a string")
+            return
+    elif expected_type is not None:
+        errors.append(f"Unsupported type rule for {field_name}: {expected_type}")
+        return
+
+    enum_values = rule.get("enum")
+    if enum_values is not None:
+        if not isinstance(enum_values, list) or not all(isinstance(x, str) for x in enum_values):
+            errors.append(f"schema enum rule for {field_name} must be a list[string]")
+        elif isinstance(value, str) and value not in enum_values:
+            errors.append(
+                f"{field_name} '{value}' is not one of allowed values {enum_values}"
+            )
+
+    pattern = rule.get("pattern")
+    if isinstance(pattern, str) and isinstance(value, str):
+        if re.fullmatch(pattern, value) is None:
+            errors.append(f"{field_name} '{value}' does not match pattern '{pattern}'")
+
+
 def validate_manifest(
     manifest: dict[str, Any],
     schema: dict[str, Any],
     manifest_path: Path,
     errors: list[str],
+    *,
+    require_behavioural_impact: bool,
+    require_engine_compatibility: bool,
+    authoritative_engine_compatibility: str | None,
 ) -> None:
     required_fields = schema.get("required_fields")
     if not isinstance(required_fields, list):
         errors.append("schema.required_fields must be a list")
         return
 
-    field_rules = schema.get("field_rules")
-    if not isinstance(field_rules, dict):
-        errors.append("schema.field_rules must be a map")
-        return
+    field_rules = _as_field_rules(schema.get("field_rules"), "schema.field_rules", errors)
+    optional_field_rules = _as_field_rules(
+        schema.get("optional_fields"), "schema.optional_fields", errors
+    )
+    merged_field_rules = dict(field_rules)
+    for field_name, rule in optional_field_rules.items():
+        merged_field_rules.setdefault(field_name, rule)
 
     for field_name in required_fields:
         if field_name not in manifest:
             errors.append(f"Missing required field: {field_name}")
 
-    for field_name, rule in field_rules.items():
+    if require_behavioural_impact:
+        value = manifest.get("behavioural_impact")
+        if not isinstance(value, str) or not value.strip():
+            errors.append("Missing required field: behavioural_impact")
+    if require_engine_compatibility:
+        value = manifest.get("engine_compatibility")
+        if not isinstance(value, str) or not value.strip():
+            errors.append("Missing required field: engine_compatibility")
+
+    for field_name, rule in merged_field_rules.items():
         if field_name not in manifest:
             continue
-        if not isinstance(rule, dict):
-            errors.append(f"schema rule for {field_name} must be a map")
-            continue
         value = manifest[field_name]
-        expected_type = rule.get("type")
-        if expected_type == "string":
-            if not isinstance(value, str):
-                errors.append(f"{field_name} must be a string")
-                continue
-        elif expected_type is not None:
-            errors.append(f"Unsupported type rule for {field_name}: {expected_type}")
-            continue
+        _validate_field_rule(field_name, value, rule, errors)
 
-        pattern = rule.get("pattern")
-        if isinstance(pattern, str) and isinstance(value, str):
-            if re.fullmatch(pattern, value) is None:
-                errors.append(f"{field_name} '{value}' does not match pattern '{pattern}'")
+    if authoritative_engine_compatibility:
+        value = manifest.get("engine_compatibility")
+        if isinstance(value, str) and value.strip() and value != authoritative_engine_compatibility:
+            errors.append(
+                "engine_compatibility must match authoritative value "
+                f"'{authoritative_engine_compatibility}'"
+            )
 
     for link_field in ("research_brief", "signal_library"):
         value = manifest.get(link_field)
@@ -129,6 +186,21 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         default=str(DEFAULT_AUDIT_PATH),
         help="Path for audit markdown output.",
     )
+    parser.add_argument(
+        "--require-behavioural-impact",
+        action="store_true",
+        help="Require behavioural_impact field in manifest.",
+    )
+    parser.add_argument(
+        "--require-engine-compatibility",
+        action="store_true",
+        help="Require engine_compatibility field in manifest.",
+    )
+    parser.add_argument(
+        "--authoritative-engine-compatibility",
+        default="",
+        help="Authoritative engine_compatibility value to enforce when present.",
+    )
     return parser.parse_args(argv)
 
 
@@ -150,7 +222,26 @@ def main(argv: list[str] | None = None) -> int:
         manifest = as_dict(manifest_obj, "manifest", errors)
         schema = as_dict(schema_obj, "schema", errors)
         if not errors:
-            validate_manifest(manifest, schema, manifest_path.resolve(), errors)
+            forward_requirements = schema.get("forward_requirements")
+            if (
+                not args.authoritative_engine_compatibility
+                and isinstance(forward_requirements, dict)
+                and isinstance(forward_requirements.get("engine_compatibility"), dict)
+            ):
+                maybe_authoritative = forward_requirements["engine_compatibility"].get("authoritative_value")
+                if isinstance(maybe_authoritative, str):
+                    args.authoritative_engine_compatibility = maybe_authoritative
+            validate_manifest(
+                manifest,
+                schema,
+                manifest_path.resolve(),
+                errors,
+                require_behavioural_impact=args.require_behavioural_impact,
+                require_engine_compatibility=args.require_engine_compatibility,
+                authoritative_engine_compatibility=(
+                    args.authoritative_engine_compatibility.strip() or None
+                ),
+            )
 
     status = "FAIL" if errors else "PASS"
     write_audit(audit_path, status, errors)

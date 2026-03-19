@@ -38,3 +38,21 @@ optional_fields:
 
   created_at:
     type: string
+
+  behavioural_impact:
+    type: string
+    enum:
+      - NONE
+      - LOW
+      - HIGH
+
+  engine_compatibility:
+    type: string
+    pattern: "^v[0-9]+\\.x$"
+
+forward_requirements:
+  behavioural_impact:
+    required_for_new_packages: true
+  engine_compatibility:
+    required_for_new_packages: false
+    authoritative_value: "v5.x"
