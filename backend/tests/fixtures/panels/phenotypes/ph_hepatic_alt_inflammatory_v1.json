@@ -1,0 +1,10 @@
+{
+  "panel_id": "ph_hepatic_alt_inflammatory_v1",
+  "user": { "age": 49, "sex": "male" },
+  "biomarkers": {
+    "alt": { "value": 96.0, "unit": "U/L", "reference_range": { "min": 0.0, "max": 45.0, "unit": "U/L", "source": "lab" } },
+    "ast": { "value": 62.0, "unit": "U/L", "reference_range": { "min": 0.0, "max": 40.0, "unit": "U/L", "source": "lab" } },
+    "ggt": { "value": 86.0, "unit": "U/L", "reference_range": { "min": 0.0, "max": 55.0, "unit": "U/L", "source": "lab" } },
+    "crp": { "value": 5.4, "unit": "mg/L", "reference_range": { "min": 0.0, "max": 3.0, "unit": "mg/L", "source": "lab" } }
+  }
+}
