@@ -112,6 +112,7 @@ export class AnalysisService {
         recommendations: result.recommendations || [],
         overall_score: result.overall_score,
         meta: result.meta || {},
+        clinician_report_v1: result.clinician_report_v1 ?? null,
         created_at: result.created_at,
         status: 'completed'
       };

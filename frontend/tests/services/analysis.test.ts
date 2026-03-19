@@ -137,6 +137,7 @@ describe('AnalysisService', () => {
           confidence_score: 0.9,
           processing_metadata: { test: 'data' }
         },
+        clinician_report_v1: null,
         created_at: '2024-01-01T00:00:00Z'
         }
       });
