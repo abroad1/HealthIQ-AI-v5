@@ -1,7 +1,7 @@
 # ADR-007 — Clinician Summary Report (Patient-Delivered GP Document)
 
 ## Status
-Proposed (v1)
+Accepted (v1)
 
 ## Context
 HealthIQ ingests commercial laboratory blood panels and produces deterministic analytical outputs:
@@ -14,6 +14,11 @@ Users commonly bring complex panels to time-constrained GP consultations. The GP
 
 ## Decision
 We will produce a Clinician Summary Report (CSR) as a GP-facing document that arrives via the patient.
+
+Authority resolution for runtime ownership:
+- CSR / `ClinicianReportV1` assembly belongs to the backend runtime path.
+- The frontend is renderer-only and consumes governed contract output.
+- Frontend must not own selection logic, suppression logic, section assembly logic, or clinician-language generation.
 
 This CSR is:
 - a deterministic renderer of existing pipeline outputs
