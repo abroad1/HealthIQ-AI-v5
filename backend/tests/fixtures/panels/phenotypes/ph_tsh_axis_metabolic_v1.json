@@ -1,0 +1,10 @@
+{
+  "panel_id": "ph_tsh_axis_metabolic_v1",
+  "user": { "age": 53, "sex": "female" },
+  "biomarkers": {
+    "tsh": { "value": 7.1, "unit": "mIU/L", "reference_range": { "min": 0.4, "max": 4.5, "unit": "mIU/L", "source": "lab" } },
+    "free_t4": { "value": 10.8, "unit": "pmol/L", "reference_range": { "min": 12.0, "max": 22.0, "unit": "pmol/L", "source": "lab" } },
+    "free_t3": { "value": 3.0, "unit": "pmol/L", "reference_range": { "min": 3.1, "max": 6.8, "unit": "pmol/L", "source": "lab" } },
+    "ldl_cholesterol": { "value": 4.3, "unit": "mmol/L", "reference_range": { "min": 0.0, "max": 2.59, "unit": "mmol/L", "source": "lab" } }
+  }
+}
