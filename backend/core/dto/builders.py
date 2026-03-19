@@ -5,6 +5,7 @@ DTO builders - transform internal objects into frontend-safe dictionaries.
 from typing import Dict, Any, List
 from datetime import datetime, UTC
 
+from core.analytics.report_compiler_v1 import compile_clinician_report_v1
 from core.models.biomarker import BiomarkerCluster, BiomarkerInsight
 from core.models.results import AnalysisResult, AnalysisSummary, BiomarkerScore
 from core.models.insight import Insight, InsightSynthesisResult
@@ -21,6 +22,16 @@ def build_analysis_result_dto(result: Dict[str, Any]) -> Dict[str, Any]:
         Frontend-safe dictionary
     """
     print("[TRACE] DTO biomarkers in result:", len(result.get("biomarkers", [])))
+    meta = result.get("meta", {})
+    meta = meta if isinstance(meta, dict) else {}
+    insight_graph = meta.get("insight_graph", {})
+    insight_graph = insight_graph if isinstance(insight_graph, dict) else {}
+    report_v1 = insight_graph.get("report_v1", {})
+    clinician_report = compile_clinician_report_v1(
+        report_v1_payload=report_v1 if isinstance(report_v1, dict) else {},
+        biomarker_rows=result.get("biomarkers", []) if isinstance(result.get("biomarkers"), list) else [],
+    )
+
     return {
         "analysis_id": result.get("analysis_id", ""),
         "biomarkers": result.get("biomarkers", []),
@@ -36,7 +47,10 @@ def build_analysis_result_dto(result: Dict[str, Any]) -> Dict[str, Any]:
         "recommendations": result.get("recommendations", []),
         "result_version": result.get("result_version", "1.0.0"),
         "derived_markers": result.get("derived_markers"),
-        "meta": result.get("meta", {}),
+        "meta": meta,
+        "clinician_report_v1": (
+            clinician_report.model_dump() if clinician_report is not None else None
+        ),
         "replay_manifest": result.get("replay_manifest"),
     }
 
