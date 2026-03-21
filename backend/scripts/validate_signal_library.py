@@ -48,6 +48,14 @@ _OVERRIDE_COMPARATOR_NUMERIC = "numeric_value"
 _OVERRIDE_BOUNDARY_CANONICAL = frozenset({"lower", "upper", "out_of_range", "below_min", "above_max"})
 _OVERRIDE_OPERATORS = frozenset({"<", "<=", ">", ">=", "=="})
 
+# library.schema_version value that enables structured supporting_metrics, trigger_direction, override source_refs
+SIGNAL_CONTRACT_V2 = "2.0.0"
+
+_TRIGGER_DIRECTIONS = frozenset({"high", "low", "bidirectional", "context_dependent"})
+_SUPPORTING_EXPECTED_DIRECTIONS = frozenset({"high", "low", "any"})
+_SUPPORTING_ROLES = frozenset({"mechanism_marker", "severity_marker", "contextual_marker"})
+_SUPPORTING_AVAILABILITY = frozenset({"common", "specialist"})
+
 
 @dataclass
 class ValidationState:
@@ -80,6 +88,90 @@ def empty_primary_metric_summary() -> dict[str, int]:
         "thresholds_using_non_primary_non_override_metrics": 0,
         "duplicate_primary_metric_warnings": 0,
     }
+
+
+def _extract_source_ids_from_brief(brief: Any) -> frozenset[str]:
+    out: set[str] = set()
+    if not isinstance(brief, dict):
+        return frozenset()
+    for src in brief.get("sources") or []:
+        if isinstance(src, dict):
+            sid = src.get("source_id")
+            if isinstance(sid, str) and sid.strip():
+                out.add(sid.strip())
+    return frozenset(out)
+
+
+def validate_signal_contract_v2(signals: list[dict[str, Any]], state: ValidationState) -> None:
+    """Enforce structured supporting_metrics, trigger_direction, output.supporting_markers alignment."""
+    for idx, signal in enumerate(signals):
+        if not isinstance(signal, dict):
+            continue
+        label = f"signals[{idx}]"
+        td = signal.get("trigger_direction")
+        if td not in _TRIGGER_DIRECTIONS:
+            state.add_error(
+                "signal identity",
+                f"{label}.trigger_direction must be one of {sorted(_TRIGGER_DIRECTIONS)} for contract 2.0.0",
+            )
+
+        sm = signal.get("supporting_metrics")
+        extracted: list[str] = []
+        if not isinstance(sm, list) or not sm:
+            state.add_error(
+                "signal identity",
+                f"{label}.supporting_metrics must be a non-empty list of objects for contract 2.0.0",
+            )
+        else:
+            for j, row in enumerate(sm):
+                sm_label = f"{label}.supporting_metrics[{j}]"
+                if not isinstance(row, dict):
+                    state.add_error("signal identity", f"{sm_label} must be a map")
+                    continue
+                bid = row.get("biomarker_id")
+                if not isinstance(bid, str) or not bid.strip():
+                    state.add_error("signal identity", f"{sm_label}.biomarker_id must be a non-empty string")
+                else:
+                    extracted.append(bid.strip())
+
+                ed = row.get("expected_direction")
+                if ed not in _SUPPORTING_EXPECTED_DIRECTIONS:
+                    state.add_error(
+                        "signal identity",
+                        f"{sm_label}.expected_direction must be one of {sorted(_SUPPORTING_EXPECTED_DIRECTIONS)}",
+                    )
+                role = row.get("role")
+                if role not in _SUPPORTING_ROLES:
+                    state.add_error(
+                        "signal identity",
+                        f"{sm_label}.role must be one of {sorted(_SUPPORTING_ROLES)}",
+                    )
+                av = row.get("availability")
+                if av not in _SUPPORTING_AVAILABILITY:
+                    state.add_error(
+                        "signal identity",
+                        f"{sm_label}.availability must be one of {sorted(_SUPPORTING_AVAILABILITY)}",
+                    )
+                rat = row.get("rationale")
+                if not isinstance(rat, str) or len(rat.strip()) < 10:
+                    state.add_error(
+                        "signal identity",
+                        f"{sm_label}.rationale must be a string of at least 10 characters",
+                    )
+
+        output = signal.get("output")
+        if isinstance(output, dict):
+            om = output.get("supporting_markers")
+            if not isinstance(om, list):
+                state.add_error(
+                    "signal identity",
+                    f"{label}.output.supporting_markers must be a list for contract 2.0.0",
+                )
+            elif extracted and om != extracted:
+                state.add_error(
+                    "signal identity",
+                    f"{label}.output.supporting_markers must match supporting_metrics biomarker_id order exactly",
+                )
 
 
 def utc_now_iso() -> str:
@@ -476,7 +568,14 @@ def validate_thresholds(schema: dict[str, Any], signals: list[dict[str, Any]], s
                     )
 
 
-def validate_override_rules(schema: dict[str, Any], signals: list[dict[str, Any]], state: ValidationState) -> None:
+def validate_override_rules(
+    schema: dict[str, Any],
+    signals: list[dict[str, Any]],
+    state: ValidationState,
+    *,
+    contract_version: str = "1.0.0",
+    source_ids_in_brief: frozenset[str] | None = None,
+) -> None:
     """
     Governed validation for override_rules / override conditions (dual-mode contract).
     Schema YAML documents field rules; this function enforces conditional required fields.
@@ -593,6 +692,27 @@ def validate_override_rules(schema: dict[str, Any], signals: list[dict[str, Any]
                             f"{cond_label}.boundary must not be present for numeric override conditions",
                         )
 
+            if contract_version == SIGNAL_CONTRACT_V2:
+                refs = rule.get("source_refs")
+                if not isinstance(refs, list) or len(refs) == 0:
+                    state.add_error(
+                        "override rules",
+                        f"{rule_label}.source_refs must be a non-empty list for contract 2.0.0",
+                    )
+                else:
+                    for ri, ref in enumerate(refs):
+                        if not isinstance(ref, str) or not ref.strip():
+                            state.add_error(
+                                "override rules",
+                                f"{rule_label}.source_refs[{ri}] must be a non-empty string",
+                            )
+                        elif source_ids_in_brief is not None and ref.strip() not in source_ids_in_brief:
+                            state.add_error(
+                                "override rules",
+                                f"{rule_label}.source_refs[{ri}] '{ref.strip()}' "
+                                "does not match any research_brief.sources[].source_id",
+                            )
+
 
 def _extract_override_metric_ids(signal: dict[str, Any]) -> set[str]:
     metric_ids: set[str] = set()
@@ -618,6 +738,7 @@ def _extract_override_metric_ids(signal: dict[str, Any]) -> set[str]:
 def validate_primary_metric_contract(
     signals: list[dict[str, Any]],
     state: ValidationState,
+    contract_ver: str = "1.0.0",
 ) -> dict[str, int]:
     summary = empty_primary_metric_summary()
     primary_metric_to_signals: dict[str, list[str]] = defaultdict(list)
@@ -651,6 +772,13 @@ def validate_primary_metric_contract(
             supporting_metrics = signal.get("supporting_metrics")
             if not isinstance(supporting_metrics, list):
                 state.add_error("signal identity", f"{signal_label}.supporting_metrics must be a list")
+            elif contract_ver != SIGNAL_CONTRACT_V2:
+                for sm_idx, item in enumerate(supporting_metrics):
+                    if not isinstance(item, str):
+                        state.add_error(
+                            "signal identity",
+                            f"{signal_label}.supporting_metrics[{sm_idx}] must be a string for contract 1.0.0",
+                        )
 
         dependencies = signal.get("dependencies")
         declared_dependencies: set[str] = set()
@@ -933,7 +1061,12 @@ def write_knowledge_status(
         handle.write("\n")
 
 
-def validate_signal_library(schema_path: Path, library_path: Path, output_dir: Path) -> int:
+def validate_signal_library(
+    schema_path: Path,
+    library_path: Path,
+    output_dir: Path,
+    research_brief_path: Path | None = None,
+) -> int:
     state = ValidationState()
     primary_metric_summary = empty_primary_metric_summary()
 
@@ -980,11 +1113,42 @@ def validate_signal_library(schema_path: Path, library_path: Path, output_dir: P
     validate_root_structure(schema_obj, library_obj, state)
     validate_metadata(schema_obj, library_obj, state)
 
+    library_meta_pre = library_obj.get("library")
+    contract_ver = "1.0.0"
+    if isinstance(library_meta_pre, dict) and isinstance(library_meta_pre.get("schema_version"), str):
+        contract_ver = library_meta_pre["schema_version"].strip()
+
+    source_ids_in_brief: frozenset[str] | None = None
+    if contract_ver == SIGNAL_CONTRACT_V2:
+        if research_brief_path is None:
+            state.add_error(
+                "metadata",
+                "library.schema_version 2.0.0 requires --research-brief for cross-artifact validation",
+            )
+        elif not research_brief_path.is_file():
+            state.add_error("metadata", f"research_brief path not found: {research_brief_path}")
+        else:
+            try:
+                rb_raw = yaml.safe_load(research_brief_path.read_text(encoding="utf-8"))
+            except (OSError, yaml.YAMLError) as exc:
+                state.add_error("metadata", f"research_brief could not be read: {exc}")
+                rb_raw = None
+            if isinstance(rb_raw, dict):
+                source_ids_in_brief = _extract_source_ids_from_brief(rb_raw)
+
     signals = validate_signal_identity(schema_obj, library_obj, state)
+    if contract_ver == SIGNAL_CONTRACT_V2:
+        validate_signal_contract_v2(signals, state)
     validate_dependencies(schema_obj, signals, state)
     validate_thresholds(schema_obj, signals, state)
-    validate_override_rules(schema_obj, signals, state)
-    primary_metric_summary = validate_primary_metric_contract(signals, state)
+    validate_override_rules(
+        schema_obj,
+        signals,
+        state,
+        contract_version=contract_ver,
+        source_ids_in_brief=source_ids_in_brief,
+    )
+    primary_metric_summary = validate_primary_metric_contract(signals, state, contract_ver)
     validate_activation_logic(schema_obj, signals, state)
     validate_forbidden_fields(schema_obj, signals, state)
 
@@ -1037,6 +1201,11 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         required=True,
         help="Directory where architecture_audit.md and knowledge_status.json will be written.",
     )
+    parser.add_argument(
+        "--research-brief",
+        default="",
+        help="Path to research_brief.yaml (required when signal library uses library.schema_version 2.0.0).",
+    )
     return parser.parse_args(argv)
 
 
@@ -1045,11 +1214,13 @@ def main(argv: list[str] | None = None) -> int:
     library_path = Path(args.library)
     schema_path = Path(args.schema)
     output_dir = Path(args.output_dir)
+    research_brief_path = Path(args.research_brief) if str(args.research_brief).strip() else None
 
     return validate_signal_library(
         schema_path=schema_path,
         library_path=library_path,
         output_dir=output_dir,
+        research_brief_path=research_brief_path,
     )
 
 
