@@ -1,0 +1,14 @@
+research_domain: lipids
+sources:
+- source_id: source_esc_lipids_2019
+  paper_title: ESC/EAS Guidelines for the management of dyslipidaemias
+  journal: European Heart Journal
+  year: 2019
+biomarkers:
+- apoa1
+- apob
+physiological_claim: ApoA1 is required for the structural integrity of HDL and activation of LCAT enzyme.
+evidence_strength: strong
+research_summary: Lab-range breach is the trigger and overrides use lab-range/presence conditions.
+derived_metrics:
+- apob_apoa1_ratio

@@ -1,0 +1,82 @@
+library:
+  package_id: KBP-2501
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S45d ApoA1 Investigation Signal Library
+  description: 'Regenerated from investigation-spec-collection-batch1-10.json. KB-S45d regenerated package: ApoA1 low cardio
+    risk (inv_apoa1_low, batch-1).'
+signals:
+- signal_id: signal_apoa1_cardio_risk
+  name: ApoA1 low cardiovascular context
+  description: 'Apolipoprotein A1 is the principal protein of HDL particles; lower levels reduce reverse cholesterol transport
+    capacity and associate with higher vascular risk.
+
+    '
+  system: lipid_transport
+  primary_metric: apoa1
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: apob_apoa1_ratio
+    expected_direction: high
+    role: severity_marker
+    availability: common
+    rationale: A high ratio indicates a significant imbalance between pro-atherogenic and anti-atherogenic particles.
+  dependencies:
+    biomarkers:
+    - apoa1
+    - apob
+    derived_metrics:
+    - apob_apoa1_ratio
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_apoa1_lab_range_activation_placeholder
+    metric_id: apoa1
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_apoa1_high_ratio
+    description: Escalate if low ApoA1 is coupled with ApoB-to-ApoA1 ratio above the lab upper bound.
+    conditions:
+    - metric_id: apob_apoa1_ratio
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    resulting_state: at_risk
+    source_refs:
+    - source_esc_lipids_2019
+  output:
+    signal_value: apoa1
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: apoa1
+    supporting_markers:
+    - apob_apoa1_ratio
+  explanation:
+    mechanism: 'ApoA1 stabilizes HDL structure and participates in cholesterol efflux pathways from peripheral tissues.
+
+      '
+    biological_pathway: 'Reverse cholesterol transport moves cholesterol toward the liver for clearance and redistribution.
+
+      '
+    interpretation: 'Low ApoA1 indicates reduced HDL particle protein mass relative to the expected laboratory range for the
+      assay context.
+
+      '
+    implications: 'Atherogenic balance worsens when ApoB-bearing particle burden is high relative to ApoA1-bearing HDL capacity.
+
+      '
+    supporting_marker_roles: 'The ApoB-to-ApoA1 ratio contextualizes whether low ApoA1 reflects an adverse pro-atherogenic
+      particle balance.
+
+      '
