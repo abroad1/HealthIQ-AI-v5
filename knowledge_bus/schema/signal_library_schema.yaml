@@ -1,5 +1,5 @@
 schema_name: "HealthIQ Signal Library Schema"
-schema_version: "1.1.0"
+schema_version: "1.2.0"
 status: "LOCKED"
 description: >
   Deterministic architecture contract for Knowledge Bus signal_library.yaml.
@@ -11,7 +11,8 @@ description: >
   - "1.0.0" — legacy: flat string list for supporting_metrics; override_rules may omit source_refs.
   - "2.0.0" — research-fidelity: structured supporting_metrics objects, required trigger_direction,
     required override_rules.source_refs resolving to research_brief sources (validated by
-    validate_signal_library.py when --research-brief is supplied).
+    validate_signal_library.py when --research-brief is supplied). Role/availability enums include
+    corroborator and optional from schema file version 1.2.0 onward.
 
 root_required_fields:
   - library
@@ -149,11 +150,13 @@ supporting_metric_object_field_rules:
       - mechanism_marker
       - severity_marker
       - contextual_marker
+      - corroborator
   availability:
     type: string
     allowed:
       - common
       - specialist
+      - optional
   rationale:
     type: string
     min_length: 10
