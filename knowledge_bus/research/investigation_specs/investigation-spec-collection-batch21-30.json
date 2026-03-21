@@ -1,0 +1,737 @@
+[
+  {
+    "spec_id": "inv_fsh_high",
+    "signal_id": "signal_hypogonadism_primary_fsh",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "fsh",
+      "rationale": "Follicle Stimulating Hormone (FSH) is a pituitary gonadotropin. High levels indicate a loss of negative feedback from the gonads.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "lh",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "LH typically rises alongside FSH in primary gonadal failure due to shared pituitary regulation."
+      },
+      {
+        "biomarker_id": "testosterone",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Low testosterone confirms that the high FSH is a compensatory response to primary testicular failure."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_primary_hypogonadism_male",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high FSH is accompanied by low testosterone, indicating overt primary testicular failure.",
+        "conditions": [
+          {
+            "metric_id": "testosterone",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": ["source_bhasin_2018"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_bhasin_2018",
+          "paper_title": "Testosterone Therapy in Men With Hypogonadism: An Endocrine Society Clinical Practice Guideline",
+          "journal": "JCEM",
+          "year": 2018
+        }
+      ],
+      "physiological_claim": "Elevated gonadotropins in the setting of low gonadal steroids define primary hypogonadism.",
+      "threshold_notes": "Escalation is triggered by a lab-range breach of testosterone in the context of high FSH."
+    },
+    "narrative": {
+      "mechanism": "FSH secretion increases when the pituitary detects insufficient inhibin and sex steroids from the gonads.",
+      "biological_pathway": "Hypothalamic-Pituitary-Gonadal (HPG) axis negative feedback loop failure.",
+      "interpretation": "High FSH suggests primary gonadal failure, menopause, or premature ovarian insufficiency.",
+      "implications": "Reduced reproductive capacity and potential systemic symptoms of sex hormone deficiency.",
+      "supporting_marker_roles": "LH and Testosterone provide the necessary context to confirm a primary rather than secondary pituitary etiology."
+    }
+  },
+  {
+    "spec_id": "inv_globulin_high",
+    "signal_id": "signal_hypergammaglobulinemia",
+    "research_domain": "hepatic",
+    "primary_marker": {
+      "biomarker_id": "globulin",
+      "rationale": "Globulins represent the non-albumin protein fraction. Elevation often indicates chronic inflammation or liver disease.",
+      "signal_system": "inflammatory"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "albumin",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "A low albumin-to-globulin ratio is a classic indicator of chronic inflammatory or hepatic conditions."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_chronic_inflammatory_state",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high globulin is paired with low albumin, suggesting chronic systemic inflammation or liver dysfunction.",
+        "conditions": [
+          {
+            "metric_id": "albumin",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": ["source_busher_1990"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_busher_1990",
+          "paper_title": "Serum Albumin and Globulin",
+          "journal": "Clinical Methods",
+          "year": 1990
+        }
+      ],
+      "physiological_claim": "Globulin elevation usually reflects increased immunoglobulins or acute-phase protein synthesis.",
+      "threshold_notes": "Escalation uses lab-boundary logic for the albumin-to-globulin ratio surrogate."
+    },
+    "narrative": {
+      "mechanism": "Globulins rise due to polyclonal immune activation or increased production of transport and acute-phase proteins.",
+      "biological_pathway": "Systemic humoral immune response and hepatic protein synthesis regulation.",
+      "interpretation": "High globulin suggests chronic infection, autoimmune disease, or potential plasma cell dyscrasias.",
+      "implications": "Indicates active systemic immune recruitment or impaired clearance of circulating antigens.",
+      "supporting_marker_roles": "Albumin serves to evaluate the overall protein balance and liver synthetic capacity context."
+    }
+  },
+  {
+    "spec_id": "inv_hba1c_pct_high",
+    "signal_id": "signal_dysglycemia_hba1c",
+    "research_domain": "metabolic",
+    "primary_marker": {
+      "biomarker_id": "hba1c_pct",
+      "rationale": "HbA1c reflects average blood glucose over the preceding 2-3 months via hemoglobin glycation.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "glucose",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "High serum glucose provides immediate confirmation of current hyperglycemic state."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_diabetes_diagnostic_threshold",
+        "resulting_state": "at_risk",
+        "description": "Escalate if HbA1c meets or exceeds the standard diagnostic threshold of 6.5 percent for diabetes.",
+        "conditions": [
+          {
+            "metric_id": "hba1c_pct",
+            "operator": ">=",
+            "condition_type": "all_of",
+            "comparator_type": "numeric_value",
+            "numeric_value": 6.5
+          }
+        ],
+        "source_refs": ["source_ada_2024"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_ada_2024",
+          "paper_title": "Standards of Care in Diabetes—2024",
+          "journal": "Diabetes Care",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Glycation of hemoglobin A1c occurs at a rate directly proportional to the plasma glucose concentration.",
+      "threshold_notes": "Escalation follows the globally accepted 6.5 percent numeric diagnostic threshold for diabetes mellitus."
+    },
+    "narrative": {
+      "mechanism": "Glucose non-enzymatically binds to hemoglobin A over the 120-day lifespan of the red blood cell.",
+      "biological_pathway": "Long-term glucose homeostasis and metabolic glycation of structural proteins.",
+      "interpretation": "High HbA1c identifies prediabetes or diabetes mellitus depending on the severity of elevation.",
+      "implications": "Elevated risk for chronic microvascular and macrovascular complications due to glycotoxicity.",
+      "supporting_marker_roles": "Glucose serves as an immediate point-in-time cross-reference for current metabolic glycemic control."
+    }
+  },
+  {
+    "spec_id": "inv_hematocrit_high",
+    "signal_id": "signal_erythrocytosis_hct",
+    "research_domain": "cbc",
+    "primary_marker": {
+      "biomarker_id": "hematocrit",
+      "rationale": "Hematocrit measures the volume percentage of red blood cells in blood. Elevation indicates erythrocytosis or dehydration.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "hemoglobin",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "High hemoglobin confirms an increase in total oxygen-carrying capacity consistent with polycythemia."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_polycythemia_suspicion",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high hematocrit is accompanied by hemoglobin above the reference range, suggesting true erythrocytosis.",
+        "conditions": [
+          {
+            "metric_id": "hemoglobin",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_arber_2016"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_arber_2016",
+          "paper_title": "The 2016 revision to the World Health Organization classification of myeloid neoplasms",
+          "journal": "Blood",
+          "year": 2016
+        }
+      ],
+      "physiological_claim": "Increased red cell mass can be primary (clonal) or secondary (hypoxia/dehydration).",
+      "threshold_notes": "Escalation uses lab-boundary logic to identify absolute increases in red cell indices."
+    },
+    "narrative": {
+      "mechanism": "Increased erythrocyte production or reduced plasma volume (relative) increases the cellular fraction of blood.",
+      "biological_pathway": "Erythropoiesis regulation by erythropoietin or autonomous bone marrow production.",
+      "interpretation": "High hematocrit suggests polycythemia vera, chronic hypoxia, or simple hemoconcentration due to dehydration.",
+      "implications": "Increased blood viscosity may lead to hypercoagulability and increased thrombotic risk.",
+      "supporting_marker_roles": "Hemoglobin provides verification that the increase is due to red cell mass rather than isolated plasma loss."
+    }
+  },
+  {
+    "spec_id": "inv_iron_low",
+    "signal_id": "signal_iron_deficiency_iron",
+    "research_domain": "metabolic",
+    "primary_marker": {
+      "biomarker_id": "iron",
+      "rationale": "Serum iron measures circulating iron bound to transferrin. Low levels suggest depletion of iron availability.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "ferritin",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Low ferritin is the most specific indicator of depleted total body iron stores."
+      },
+      {
+        "biomarker_id": "hemoglobin",
+        "expected_direction": "low",
+        "role": "severity_marker",
+        "availability": "common",
+        "rationale": "Low hemoglobin identifies progression from iron depletion to clinical iron deficiency anemia."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_iron_deficiency_stores",
+        "resulting_state": "at_risk",
+        "description": "Escalate if low serum iron is paired with low ferritin, confirming depleted iron stores.",
+        "conditions": [
+          {
+            "metric_id": "ferritin",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": ["source_nice_iron_2021"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_nice_iron_2021",
+          "paper_title": "Anaemia - iron deficiency",
+          "journal": "NICE CKS",
+          "year": 2021
+        }
+      ],
+      "physiological_claim": "Iron deficiency occurs in stages, beginning with store depletion and ending with microcytic anemia.",
+      "threshold_notes": "Escalation follows lab-boundary logic for storage markers (ferritin) to confirm deficiency."
+    },
+    "narrative": {
+      "mechanism": "Iron levels fall when dietary intake or absorption cannot compensate for physiological or pathological losses.",
+      "biological_pathway": "Iron homeostasis involving absorption, storage (ferritin), and transport (transferrin).",
+      "interpretation": "Low serum iron often indicates iron deficiency, though it can be low during acute inflammation.",
+      "implications": "Potential for impaired erythropoiesis, fatigue, and cognitive dysfunction if storage is depleted.",
+      "supporting_marker_roles": "Ferritin confirms storage status, while Hemoglobin determines the hematological impact of the deficiency."
+    }
+  },
+  {
+    "spec_id": "inv_lh_high",
+    "signal_id": "signal_hypogonadism_primary_lh",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "lh",
+      "rationale": "Luteinizing Hormone (LH) is a pituitary gonadotropin. High levels indicate failure of gonadal feedback.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "fsh",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "LH and FSH usually elevate together in the setting of primary gonadal insufficiency."
+      },
+      {
+        "biomarker_id": "testosterone",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Low testosterone confirms the HPG axis is attempting to stimulate failing Leydig cells."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_lh_compensated_hypogonadism",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high LH is accompanied by low testosterone, signifying overt primary hypogonadism.",
+        "conditions": [
+          {
+            "metric_id": "testosterone",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": ["source_bhasin_2018"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_bhasin_2018",
+          "paper_title": "Testosterone Therapy in Men With Hypogonadism: An Endocrine Society Clinical Practice Guideline",
+          "journal": "JCEM",
+          "year": 2018
+        }
+      ],
+      "physiological_claim": "LH elevation is a compensatory pituitary response to low circulating gonadal steroids.",
+      "threshold_notes": "Escalation follows lab-boundary breach for sex steroids in the presence of high LH."
+    },
+    "narrative": {
+      "mechanism": "LH secretion increases when negative feedback from testosterone (males) or estrogen (females) is lost.",
+      "biological_pathway": "Hypothalamic-Pituitary-Gonadal (HPG) regulatory feedback axis.",
+      "interpretation": "High LH suggests primary testicular or ovarian failure, or menopause transition.",
+      "implications": "Likely systemic sex hormone deficiency requiring further clinical correlation for symptoms.",
+      "supporting_marker_roles": "FSH and Testosterone verify the axis status and confirm the primary nature of the failure."
+    }
+  },
+  {
+    "spec_id": "inv_lipoprotein_a_high",
+    "signal_id": "signal_cardiovascular_risk_lpa",
+    "research_domain": "lipids",
+    "primary_marker": {
+      "biomarker_id": "lipoprotein_a",
+      "rationale": "Lipoprotein(a) is an LDL-like particle with an added apolipoprotein(a) moiety. It is a genetically determined risk factor.",
+      "signal_system": "lipid_transport"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "ldl_cholesterol",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "High LDL increases the total atherogenic burden in patients with elevated Lp(a)."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_high_risk_lpa_threshold",
+        "resulting_state": "at_risk",
+        "description": "Escalate if Lipoprotein(a) exceeds 125 nmol/L, the threshold for high cardiovascular risk.",
+        "conditions": [
+          {
+            "metric_id": "lipoprotein_a",
+            "operator": ">=",
+            "condition_type": "all_of",
+            "comparator_type": "numeric_value",
+            "numeric_value": 125
+          }
+        ],
+        "source_refs": ["source_eas_2022"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_eas_2022",
+          "paper_title": "Lipoprotein(a) in atherosclerotic cardiovascular disease and aortic stenosis: a European Atherosclerosis Society consensus statement",
+          "journal": "European Heart Journal",
+          "year": 2022
+        }
+      ],
+      "physiological_claim": "Lp(a) is both pro-atherogenic and pro-thrombotic, contributing independently to cardiovascular risk.",
+      "threshold_notes": "Escalation uses the 125 nmol/L numeric threshold recognized by the EAS consensus."
+    },
+    "narrative": {
+      "mechanism": "Lp(a) contains apolipoprotein(a), which has homology with plasminogen, potentially inhibiting fibrinolysis.",
+      "biological_pathway": "Genetic regulation of LPA gene expression and particle assembly.",
+      "interpretation": "Elevated Lp(a) indicates an inherited, increased risk for premature cardiovascular disease.",
+      "implications": "Enhanced risk for myocardial infarction, stroke, and calcific aortic valve stenosis.",
+      "supporting_marker_roles": "LDL cholesterol provides a measure of the concurrent atherogenic particle burden that is therapeutically modifiable."
+    }
+  },
+  {
+    "spec_id": "inv_lymphocyte_pct_high",
+    "signal_id": "signal_lymphocytosis_relative",
+    "research_domain": "cbc",
+    "primary_marker": {
+      "biomarker_id": "lymphocyte_pct",
+      "rationale": "Percentage of lymphocytes in the differential. Elevation suggests a relative increase in immune response.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "lymphocytes_abs",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "The absolute count determines if the percentage rise reflects a true expansion of lymphocytes."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_absolute_lymphocytosis_verification",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high lymphocyte percentage is verified by an absolute lymphocyte count above the lab max.",
+        "conditions": [
+          {
+            "metric_id": "lymphocytes_abs",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_george_2015"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_george_2015",
+          "paper_title": "Differential Diagnosis of Lymphocytosis",
+          "journal": "American Family Physician",
+          "year": 2015
+        }
+      ],
+      "physiological_claim": "Relative lymphocytosis may occur without absolute lymphocytosis if other cell lines are depressed.",
+      "threshold_notes": "Escalation requires an absolute count breach to confirm significant clinical lymphocytosis."
+    },
+    "narrative": {
+      "mechanism": "The immune system increases lymphocyte proportions typically in response to viral triggers or chronic stress.",
+      "biological_pathway": "Lymphopoiesis and clonal expansion of T or B cell populations.",
+      "interpretation": "High lymphocyte percentage suggests viral infection, recovery from acute stress, or chronic inflammation.",
+      "implications": "Possible active immune response to a pathogen or underlying lymphoproliferative disorder.",
+      "supporting_marker_roles": "Absolute lymphocytes provide the necessary volume metric to assess the severity of the lymphocytosis."
+    }
+  },
+  {
+    "spec_id": "inv_lymphocytes_abs_high",
+    "signal_id": "signal_lymphocytosis_absolute",
+    "research_domain": "cbc",
+    "primary_marker": {
+      "biomarker_id": "lymphocytes_abs",
+      "rationale": "Absolute lymphocyte count. Persistent high levels are significant for infection or malignancy.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "white_blood_cells",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "General leukocytosis confirms a broad immune or marrow-driven increase in cell counts."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_lymphocytosis_threshold_escalation",
+        "resulting_state": "at_risk",
+        "description": "Escalate if absolute lymphocytes exceed 5.0 x 10^9/L, a threshold common for clinical workup suspicion.",
+        "conditions": [
+          {
+            "metric_id": "lymphocytes_abs",
+            "operator": ">=",
+            "condition_type": "all_of",
+            "comparator_type": "numeric_value",
+            "numeric_value": 5.0
+          }
+        ],
+        "source_refs": ["source_hallek_2018"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_hallek_2018",
+          "paper_title": "iwCLL guidelines for diagnosis, indications for treatment, response assessment, and supportive management of CLL",
+          "journal": "Blood",
+          "year": 2018
+        }
+      ],
+      "physiological_claim": "Absolute lymphocytosis over 5.0 x 10^9/L for 3 months warrants evaluation for CLL.",
+      "threshold_notes": "Escalation uses the 5.0 numeric threshold for screening clonal lymphocytosis."
+    },
+    "narrative": {
+      "mechanism": "Increased proliferation of lymphocytes occurs during acute viral infection or monoclonal neoplastic expansion.",
+      "biological_pathway": "Humoral and cellular immune response regulation pathways.",
+      "interpretation": "High absolute lymphocytes suggest acute viral syndrome (e.g., EBV) or chronic lymphocytic leukemia.",
+      "implications": "Ongoing inflammation or malignancy requires correlation with clinical history and age.",
+      "supporting_marker_roles": "Total white blood cell count helps determine if the lymphocytosis is isolated or part of a global leukocytosis."
+    }
+  },
+  {
+    "spec_id": "inv_magnesium_low",
+    "signal_id": "signal_hypomagnesemia",
+    "research_domain": "metabolic",
+    "primary_marker": {
+      "biomarker_id": "magnesium",
+      "rationale": "Serum magnesium measures circulating magnesium levels. Low levels reflect systemic depletion or intracellular shift.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "potassium",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Hypomagnesemia often leads to refractory hypokalemia due to renal potassium wasting."
+      },
+      {
+        "biomarker_id": "calcium",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Low magnesium impairs PTH secretion and action, potentially causing secondary hypocalcemia."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_magnesium_electrolyte_dysregulation",
+        "resulting_state": "at_risk",
+        "description": "Escalate if low magnesium is accompanied by low potassium or low calcium, indicating systemic electrolyte impact.",
+        "conditions": [
+          {
+            "metric_id": "potassium",
+            "operator": "<",
+            "condition_type": "any_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          },
+          {
+            "metric_id": "calcium",
+            "operator": "<",
+            "condition_type": "any_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": ["source_touyz_2004"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_touyz_2004",
+          "paper_title": "Magnesium in clinical medicine",
+          "journal": "Front Biosci",
+          "year": 2004
+        }
+      ],
+      "physiological_claim": "Magnesium deficiency is frequently associated with concurrent calcium and potassium abnormalities.",
+      "threshold_notes": "Escalation follows lab-boundary breach for comorbid electrolytes (potassium or calcium)."
+    },
+    "narrative": {
+      "mechanism": "Low magnesium results from inadequate intake, malabsorption, or increased renal/gastrointestinal losses.",
+      "biological_pathway": "Electrolyte transport regulation and parathyroid hormone signaling pathways.",
+      "interpretation": "Hypomagnesemia can be clinically silent but often drives other electrolyte disturbances.",
+      "implications": "Risk of cardiac arrhythmias, muscle weakness, and neurological hyperexcitability.",
+      "supporting_marker_roles": "Potassium and Calcium track the clinical consequences of magnesium-driven transport and signaling failure."
+    }
+  }
+]

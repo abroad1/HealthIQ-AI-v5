@@ -1,0 +1,469 @@
+[
+  {
+    "spec_id": "inv_tgab_high",
+    "signal_id": "signal_thyroid_autoimmunity_tgab",
+    "research_domain": "thyroid",
+    "primary_marker": {
+      "biomarker_id": "tgab",
+      "rationale": "Thyroglobulin antibodies (TgAb) are markers of autoimmune thyroid disease. Their presence increases the risk of thyroid dysfunction and can interfere with thyroglobulin monitoring.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "tsh",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Elevated TSH in the presence of TgAb indicates that autoimmune activity is causing primary thyroid failure."
+      },
+      {
+        "biomarker_id": "tpo_ab",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "Dual positivity for TPO antibodies and TgAb significantly increases the probability of Hashimoto's thyroiditis."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_tgab_thyroid_failure",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high TgAb is accompanied by elevated TSH, indicating clinical or subclinical hypothyroidism.",
+        "conditions": [
+          {
+            "metric_id": "tsh",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_ata_thyroiditis_2017"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_ata_thyroiditis_2017",
+          "paper_title": "Guidelines of the American Thyroid Association for the Diagnosis and Management of Thyroid Disease During Pregnancy and the Postpartum",
+          "journal": "Thyroid",
+          "year": 2017
+        }
+      ],
+      "physiological_claim": "The presence of thyroid antibodies is the strongest predictor of progression to overt hypothyroidism.",
+      "threshold_notes": "Escalation is triggered by a lab-range breach of TSH in the context of positive TgAb."
+    },
+    "narrative": {
+      "mechanism": "TgAb are autoantibodies directed against thyroglobulin, a protein essential for thyroid hormone synthesis.",
+      "biological_pathway": "Autoimmune-mediated destruction of thyroid follicular cells and chronic inflammation.",
+      "interpretation": "Positive TgAb suggests an autoimmune etiology for thyroid dysfunction, such as Hashimoto's or Graves' disease.",
+      "implications": "Increased risk of future thyroid failure and potential interference with thyroid cancer recurrence monitoring.",
+      "supporting_marker_roles": "TSH identifies functional impact, while TPO antibodies corroborate the systemic autoimmune thyroid status."
+    }
+  },
+  {
+    "spec_id": "inv_total_cholesterol_high",
+    "signal_id": "signal_hypercholesterolaemia",
+    "research_domain": "lipids",
+    "primary_marker": {
+      "biomarker_id": "total_cholesterol",
+      "rationale": "Total cholesterol measures the sum of all cholesterol fractions. High levels are a broad indicator of potentially elevated atherogenic burden.",
+      "signal_system": "lipid_transport"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "tc_hdl_ratio",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "A high TC:HDL ratio indicates an unfavorable balance between atherogenic and protective particles."
+      },
+      {
+        "biomarker_id": "non_hdl_cholesterol",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "Non-HDL cholesterol provides a more specific measure of all pro-atherogenic lipoproteins."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_cholesterol_high_ratio",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high total cholesterol is accompanied by a TC:HDL ratio above the lab reference range.",
+        "conditions": [
+          {
+            "metric_id": "tc_hdl_ratio",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_nice_lipid_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_nice_lipid_2023",
+          "paper_title": "Cardiovascular disease: risk assessment and reduction, including lipid-modifying therapy",
+          "journal": "NICE Guideline NG238",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "Total cholesterol alone is non-specific; ratios and specific fractions (non-HDL) provide better risk stratification.",
+      "threshold_notes": "Escalation uses lab-boundary logic for the TC:HDL ratio to identify high-risk phenotypes."
+    },
+    "narrative": {
+      "mechanism": "Cholesterol is transported in various lipoproteins; excess levels can lead to subendothelial accumulation and atherosclerosis.",
+      "biological_pathway": "Systemic lipid transport, endogenous synthesis, and hepatic clearance pathways.",
+      "interpretation": "High total cholesterol warrants a breakdown into fractions to determine true cardiovascular risk.",
+      "implications": "Elevated risk for plaque development and subsequent major adverse cardiovascular events (MACE).",
+      "supporting_marker_roles": "TC:HDL ratio and Non-HDL cholesterol clarify whether the high total is driven by atherogenic particles."
+    }
+  },
+  {
+    "spec_id": "inv_total_protein_high",
+    "signal_id": "signal_hyperproteinaemia",
+    "research_domain": "metabolic",
+    "primary_marker": {
+      "biomarker_id": "total_protein",
+      "rationale": "Total protein measures the sum of albumin and globulins. High levels can indicate dehydration or abnormal protein production.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "globulin",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "High globulins in the context of high total protein suggest chronic inflammation or plasma cell disorders."
+      },
+      {
+        "biomarker_id": "albumin",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Isolated high albumin typically indicates dehydration rather than a pathological protein surge."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_protein_globulin_surge",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high total protein is driven by an absolute elevation in globulins.",
+        "conditions": [
+          {
+            "metric_id": "globulin",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_busher_1990"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_busher_1990",
+          "paper_title": "Serum Albumin and Globulin",
+          "journal": "Clinical Methods",
+          "year": 1990
+        }
+      ],
+      "physiological_claim": "The combination of high total protein and high globulin requires exclusion of multiple myeloma and chronic infections.",
+      "threshold_notes": "Escalation follows lab-boundary breach for globulin to differentiate dehydration from inflammatory surge."
+    },
+    "narrative": {
+      "mechanism": "Total protein increases due to hemoconcentration (loss of water) or a true increase in circulating protein fractions.",
+      "biological_pathway": "Fluid balance and hepatic/plasma cell protein synthesis regulation.",
+      "interpretation": "High results suggest dehydration or an underlying inflammatory/proliferative process.",
+      "implications": "Potential for hyperviscosity or systemic inflammatory damage if globulin fractions are monoclonal.",
+      "supporting_marker_roles": "Globulin identifies pathological protein excess, while Albumin helps identify simple dehydration patterns."
+    }
+  },
+  {
+    "spec_id": "inv_tpo_ab_high",
+    "signal_id": "signal_thyroid_autoimmunity_tpo",
+    "research_domain": "thyroid",
+    "primary_marker": {
+      "biomarker_id": "tpo_ab",
+      "rationale": "Thyroid Peroxidase antibodies (TPOAb) are highly sensitive markers for Hashimoto's thyroiditis and risk of thyroid failure.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "tsh",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "High TSH confirms that the presence of TPO antibodies is resulting in clinical thyroid failure."
+      },
+      {
+        "biomarker_id": "free_t4",
+        "expected_direction": "low",
+        "role": "severity_marker",
+        "availability": "common",
+        "rationale": "Low Free T4 in the setting of high TPOAb confirms overt autoimmune hypothyroidism."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_tpo_subclinical_failure",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high TPOAb is paired with an elevated TSH, confirming subclinical or overt hypothyroidism.",
+        "conditions": [
+          {
+            "metric_id": "tsh",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_btf_hashimoto_2022"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_btf_hashimoto_2022",
+          "paper_title": "Hashimoto’s thyroiditis: Information for patients",
+          "journal": "British Thyroid Foundation",
+          "year": 2022
+        }
+      ],
+      "physiological_claim": "TPO antibodies are found in 90-95% of Hashimoto's patients and predict future development of hypothyroidism.",
+      "threshold_notes": "Escalation follows lab-boundary logic for TSH to identify the functional stage of thyroid disease."
+    },
+    "narrative": {
+      "mechanism": "Autoantibodies attack the TPO enzyme, which is critical for the oxidation of iodide and hormone synthesis.",
+      "biological_pathway": "Humoral autoimmune response causing lymphocytic infiltration and follicular destruction.",
+      "interpretation": "High levels confirm an autoimmune cause for thyroid dysfunction or a significant risk for its development.",
+      "implications": "Strong likelihood of developing primary hypothyroidism; also relevant for pregnancy outcomes.",
+      "supporting_marker_roles": "TSH and Free T4 assess the current level of thyroid compensation or failure."
+    }
+  },
+  {
+    "spec_id": "inv_transferrin_high",
+    "signal_id": "signal_iron_deficiency_transferrin",
+    "research_domain": "metabolic",
+    "primary_marker": {
+      "biomarker_id": "transferrin",
+      "rationale": "Transferrin is the primary iron transport protein. High levels (high TIBC) are a characteristic compensatory response to iron deficiency.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "ferritin",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Low ferritin confirms that the high transferrin is a compensatory response to depleted iron stores."
+      },
+      {
+        "biomarker_id": "iron",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "Low serum iron in the setting of high transferrin reduces transferrin saturation."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_transferrin_iron_depletion",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high transferrin is accompanied by low ferritin, confirming true iron deficiency status.",
+        "conditions": [
+          {
+            "metric_id": "ferritin",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_nice_iron_2021"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_nice_iron_2021",
+          "paper_title": "Anaemia - iron deficiency",
+          "journal": "NICE CKS",
+          "year": 2021
+        }
+      ],
+      "physiological_claim": "The liver increases transferrin production when iron stores are low to maximize iron transport capacity.",
+      "threshold_notes": "Escalation follows lab-boundary logic for ferritin to confirm the iron storage deficit."
+    },
+    "narrative": {
+      "mechanism": "Hepatic synthesis of transferrin is upregulated by low intracellular iron levels to enhance systemic scavenging.",
+      "biological_pathway": "Iron homeostasis, transport, and hepatic protein synthesis regulation.",
+      "interpretation": "High transferrin suggests iron deficiency, though it can be elevated in pregnancy or by oral contraceptives.",
+      "implications": "Progressive depletion of iron needed for erythropoiesis and other cellular metabolic functions.",
+      "supporting_marker_roles": "Ferritin and Iron provide the necessary context to assess total body iron availability."
+    }
+  },
+  {
+    "spec_id": "inv_zinc_low",
+    "signal_id": "signal_zinc_deficiency",
+    "research_domain": "metabolic",
+    "primary_marker": {
+      "biomarker_id": "zinc",
+      "rationale": "Zinc is a critical trace element for enzyme function and immunity. Low serum levels reflect depletion of the biologically available pool.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "alp",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Alkaline phosphatase (ALP) is a zinc-dependent enzyme; its low activity supports functional zinc deficiency."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_zinc_functional_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate if low serum zinc is accompanied by low ALP activity, suggesting intracellular impact.",
+        "conditions": [
+          {
+            "metric_id": "alp",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_king_zinc_2011"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_king_zinc_2011",
+          "paper_title": "Zinc homeostasis and the assessment of zinc status",
+          "journal": "The American Journal of Clinical Nutrition",
+          "year": 2011
+        }
+      ],
+      "physiological_claim": "Serum zinc has poor sensitivity but high specificity for severe deficiency when coupled with enzymatic markers like ALP.",
+      "threshold_notes": "Escalation uses lab-boundary logic for ALP as a surrogate for functional zinc status."
+    },
+    "narrative": {
+      "mechanism": "Zinc depletion leads to reduced structural integrity and catalytic activity of over 300 metalloenzymes.",
+      "biological_pathway": "Trace mineral transport, cellular uptake, and enzymatic cofactor regulation.",
+      "interpretation": "Low levels suggest dietary deficiency or malabsorption; however, results can be confounded by inflammation.",
+      "implications": "Impaired immune function, poor wound healing, and potential effects on skin and neurological health.",
+      "supporting_marker_roles": "ALP activity serves as a functional indicator of systemic zinc availability at the enzymatic level."
+    }
+  }
+]

@@ -1,0 +1,716 @@
+[
+  {
+    "spec_id": "inv_creatine_kinase_high",
+    "signal_id": "signal_muscle_injury",
+    "research_domain": "metabolic",
+    "primary_marker": {
+      "biomarker_id": "creatine_kinase",
+      "rationale": "Creatine kinase (CK) is an enzyme found in the heart, brain, and skeletal muscle. Large amounts of CK are released into the blood when there is muscle damage.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+  "states": {
+    "baseline_state": "suboptimal",
+    "escalation_state": "at_risk"
+  },
+  "supporting_markers": [
+    {
+      "biomarker_id": "ast",
+      "expected_direction": "high",
+      "role": "corroborator",
+      "availability": "common",
+      "rationale": "AST is present in muscle tissue; its elevation alongside CK supports a myogenic source of enzyme release."
+    },
+    {
+      "biomarker_id": "creatinine",
+      "expected_direction": "high",
+      "role": "severity_marker",
+      "availability": "common",
+      "rationale": "Elevated creatinine in the context of high CK suggests potential renal stress or rhabdomyolysis-induced injury."
+    }
+  ],
+  "override_rules": [
+    {
+      "rule_id": "or_ck_renal_risk",
+      "resulting_state": "at_risk",
+      "description": "Escalate if high CK is accompanied by acute renal markers, suggesting potential systemic complications.",
+      "conditions": [
+        {
+          "metric_id": "creatinine",
+          "operator": ">",
+          "condition_type": "all_of",
+          "comparator_type": "lab_range_boundary",
+          "boundary": "above_max"
+        }
+      ],
+      "source_refs": ["source_melli_2005"]
+    }
+  ],
+  "evidence": {
+    "evidence_strength": "strong",
+    "sources": [
+      {
+        "source_id": "source_melli_2005",
+        "paper_title": "Rhabdomyolysis: an evaluation of 475 hospitalized patients",
+        "journal": "Medicine (Baltimore)",
+        "year": 2005
+      }
+    ],
+    "physiological_claim": "CK is a highly sensitive marker of muscle sarcolemma integrity loss.",
+    "threshold_notes": "Escalation uses lab-boundary logic for creatinine to identify potential acute kidney injury secondary to myoglobinuria."
+  },
+  "narrative": {
+    "mechanism": "Muscle cell necrosis leads to the leakage of intracellular enzymes like creatine kinase into the systemic circulation.",
+    "biological_pathway": "Muscle fiber breakdown and systemic enzymatic release following physical or chemical injury.",
+    "interpretation": "Elevated CK is indicative of skeletal muscle injury, intense exercise, or rarely, myocardial damage.",
+    "implications": "Severe elevations carry a risk of myoglobinuria-induced acute kidney injury, necessitating monitoring of renal function.",
+    "supporting_marker_roles": "AST corroborates the muscle source, while creatinine is used to monitor for secondary renal impairment."
+  }
+},
+{
+  "spec_id": "inv_dhea_high",
+  "signal_id": "signal_adrenal_androgen_excess",
+  "research_domain": "hormonal",
+  "primary_marker": {
+    "biomarker_id": "dhea",
+    "rationale": "Dehydroepiandrosterone (DHEA) is a precursor steroid produced primarily by the adrenal cortex. High levels indicate adrenal androgen overproduction.",
+    "signal_system": "hormonal"
+  },
+  "trigger_direction": "high",
+  "activation": {
+    "activation_logic": "lab_range_exceeded",
+    "activation_config": {
+      "enable_upper_bound": true,
+      "upper_bound_state": "suboptimal",
+      "enable_lower_bound": false,
+      "lower_bound_state": "suboptimal"
+    }
+  },
+  "states": {
+    "baseline_state": "suboptimal",
+    "escalation_state": "at_risk"
+  },
+  "supporting_markers": [
+    {
+      "biomarker_id": "testosterone",
+      "expected_direction": "high",
+      "role": "mechanism_marker",
+      "availability": "common",
+      "rationale": "DHEA is a precursor to testosterone; elevated DHEA often drives peripheral androgenic conversion."
+    }
+  ],
+  "override_rules": [
+    {
+      "rule_id": "or_dhea_androgen_surge",
+      "resulting_state": "at_risk",
+      "description": "Escalate if high DHEA is associated with elevated total testosterone, indicating significant androgenic impact.",
+      "conditions": [
+        {
+          "metric_id": "testosterone",
+          "operator": ">",
+          "condition_type": "all_of",
+          "comparator_type": "lab_range_boundary",
+          "boundary": "above_max"
+        }
+      ],
+      "source_refs": ["source_azziz_2004"]
+    }
+  ],
+  "evidence": {
+    "evidence_strength": "moderate",
+    "sources": [
+      {
+        "source_id": "source_azziz_2004",
+        "paper_title": "The prevalence and features of the polycystic ovary syndrome",
+        "journal": "The Journal of Clinical Endocrinology & Metabolism",
+        "year": 2004
+      }
+    ],
+    "physiological_claim": "DHEA serves as a primary biomarker for adrenal androgenic output and HPA axis activity.",
+    "threshold_notes": "Threshold evidence inconclusive for this condition — additional validation required. Escalation uses lab-boundary logic."
+  },
+  "narrative": {
+    "mechanism": "Overactivity of the adrenal zona reticularis leads to increased synthesis of DHEA and its sulfate form.",
+    "biological_pathway": "Adrenal steroidogenesis pathway involving the conversion of cholesterol to androgen precursors.",
+    "interpretation": "High DHEA may suggest adrenal hyperplasia, PCOS involvement, or response to chronic physiological stress.",
+    "implications": "May lead to symptoms of androgen excess such as hirsutism, acne, or menstrual irregularities in females.",
+    "supporting_marker_roles": "Testosterone elevation acts as a marker for the metabolic downstream conversion of adrenal precursors."
+  }
+},
+{
+  "spec_id": "inv_egfr_low",
+  "signal_id": "signal_renal_impairment",
+  "research_domain": "renal",
+  "primary_marker": {
+    "biomarker_id": "egfr",
+    "rationale": "Estimated Glomerular Filtration Rate (eGFR) is the primary measure of kidney function. Low eGFR indicates reduced filtration capacity.",
+    "signal_system": "renal"
+  },
+  "trigger_direction": "low",
+  "activation": {
+    "activation_logic": "lab_range_exceeded",
+    "activation_config": {
+      "enable_upper_bound": false,
+      "upper_bound_state": "suboptimal",
+      "enable_lower_bound": true,
+      "lower_bound_state": "suboptimal"
+    }
+  },
+  "states": {
+    "baseline_state": "suboptimal",
+    "escalation_state": "at_risk"
+  },
+  "supporting_markers": [
+    {
+      "biomarker_id": "creatinine",
+      "expected_direction": "high",
+      "role": "corroborator",
+      "availability": "common",
+      "rationale": "Serum creatinine elevation typically precedes or accompanies a drop in calculated eGFR."
+    },
+    {
+      "biomarker_id": "urea",
+      "expected_direction": "high",
+      "role": "severity_marker",
+      "availability": "common",
+      "rationale": "Elevated urea alongside low eGFR suggests reduced clearance of nitrogenous waste products."
+    }
+  ],
+  "override_rules": [
+    {
+      "rule_id": "or_chronic_kidney_disease_stage",
+      "resulting_state": "at_risk",
+      "description": "Escalate when eGFR falls below the clinical threshold of 60, signifying stage 3 chronic kidney disease or worse.",
+      "conditions": [
+        {
+          "metric_id": "egfr",
+          "operator": "<",
+          "condition_type": "all_of",
+          "comparator_type": "numeric_value",
+          "numeric_value": 60
+        }
+      ],
+      "source_refs": ["source_kdigo_2012"]
+    }
+  ],
+  "evidence": {
+    "evidence_strength": "strong",
+    "sources": [
+      {
+        "source_id": "source_kdigo_2012",
+        "paper_title": "KDIGO 2012 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease",
+        "journal": "Kidney International Supplements",
+        "year": 2013
+      }
+    ],
+    "physiological_claim": "eGFR below 60 mL/min/1.73m2 for more than 3 months is diagnostic for chronic kidney disease.",
+    "threshold_notes": "Escalation uses the clinical numeric threshold of 60 based on KDIGO guidelines."
+  },
+  "narrative": {
+    "mechanism": "Reduction in the number of functioning nephrons or decreased glomerular pressure leads to a decline in filtration rate.",
+    "biological_pathway": "Renal filtration and clearance of metabolic waste products from the blood.",
+    "interpretation": "A low eGFR indicates impaired kidney function, which can be acute or chronic depending on duration.",
+    "implications": "Increased risk of cardiovascular disease, anemia, and progression to end-stage renal disease.",
+    "supporting_marker_roles": "Creatinine and urea provide corroboration of waste retention due to reduced filtration surface area."
+  }
+},
+{
+  "spec_id": "inv_eosinophil_pct_high",
+  "signal_id": "signal_eosinophilia_pct",
+  "research_domain": "cbc",
+  "primary_marker": {
+    "biomarker_id": "eosinophil_pct",
+    "rationale": "Percentage of eosinophils in the white blood cell count. High levels (eosinophilia) often reflect allergic or parasitic responses.",
+    "signal_system": "hematologic"
+  },
+  "trigger_direction": "high",
+  "activation": {
+    "activation_logic": "lab_range_exceeded",
+    "activation_config": {
+      "enable_upper_bound": true,
+      "upper_bound_state": "suboptimal",
+      "enable_lower_bound": false,
+      "lower_bound_state": "suboptimal"
+    }
+  },
+  "states": {
+    "baseline_state": "suboptimal",
+    "escalation_state": "at_risk"
+  },
+  "supporting_markers": [
+    {
+      "biomarker_id": "eosinophils_abs",
+      "expected_direction": "high",
+      "role": "corroborator",
+      "availability": "common",
+      "rationale": "The absolute count determines whether the percentage elevation represents a true expansion of the eosinophil population."
+    }
+  ],
+  "override_rules": [
+    {
+      "rule_id": "or_confirmed_absolute_eosinophilia",
+      "resulting_state": "at_risk",
+      "description": "Escalate if the absolute eosinophil count is also high, indicating a clinically significant eosinophilia.",
+      "conditions": [
+        {
+          "metric_id": "eosinophils_abs",
+          "operator": ">",
+          "condition_type": "all_of",
+          "comparator_type": "lab_range_boundary",
+          "boundary": "above_max"
+        }
+      ],
+      "source_refs": ["source_rothenberg_1998"]
+    }
+  ],
+  "evidence": {
+    "evidence_strength": "strong",
+    "sources": [
+      {
+        "source_id": "source_rothenberg_1998",
+        "paper_title": "Eosinophilia",
+        "journal": "New England Journal of Medicine",
+        "year": 1998
+      }
+    ],
+    "physiological_claim": "Eosinophilia is defined by the absolute count; percentage is a secondary screening metric.",
+    "threshold_notes": "Escalation uses lab-boundary logic for the absolute eosinophil count."
+  },
+  "narrative": {
+    "mechanism": "Th2-driven immune responses lead to the recruitment and activation of eosinophils in peripheral blood.",
+    "biological_pathway": "Granulocyte production and inflammatory response to allergens or parasites.",
+    "interpretation": "Elevation suggests an underlying Type I hypersensitivity or response to helminthic infection.",
+    "implications": "May be associated with asthma, atopic dermatitis, or drug hypersensitivity reactions.",
+    "supporting_marker_roles": "Absolute eosinophil count is the authoritative marker to confirm the significance of the percentage shift."
+  }
+},
+{
+  "spec_id": "inv_eosinophils_abs_high",
+  "signal_id": "signal_eosinophilia_abs",
+  "research_domain": "cbc",
+  "primary_marker": {
+    "biomarker_id": "eosinophils_abs",
+    "rationale": "Absolute eosinophil count. Persistent elevation can indicate chronic inflammation, malignancy, or severe allergic states.",
+    "signal_system": "hematologic"
+  },
+  "trigger_direction": "high",
+  "activation": {
+    "activation_logic": "lab_range_exceeded",
+    "activation_config": {
+      "enable_upper_bound": true,
+      "upper_bound_state": "suboptimal",
+      "enable_lower_bound": false,
+      "lower_bound_state": "suboptimal"
+    }
+  },
+  "states": {
+    "baseline_state": "suboptimal",
+    "escalation_state": "at_risk"
+  },
+  "supporting_markers": [
+    {
+      "biomarker_id": "white_blood_cells",
+      "expected_direction": "high",
+      "role": "corroborator",
+      "availability": "common",
+      "rationale": "Co-elevation of total white blood cells suggests a broad-based immune or myeloproliferative response."
+    }
+  ],
+  "override_rules": [
+    {
+      "rule_id": "or_hypereosinophilia_threshold",
+      "resulting_state": "at_risk",
+      "description": "Escalate if absolute eosinophils exceed 1.5 x 10^9/L, a threshold for hypereosinophilic syndrome risk.",
+      "conditions": [
+        {
+          "metric_id": "eosinophils_abs",
+          "operator": ">",
+          "condition_type": "all_of",
+          "comparator_type": "numeric_value",
+          "numeric_value": 1.5
+        }
+      ],
+      "source_refs": ["source_shomali_2017"]
+    }
+  ],
+  "evidence": {
+    "evidence_strength": "strong",
+    "sources": [
+      {
+        "source_id": "source_shomali_2017",
+        "paper_title": "Hypereosinophilic syndrome: 2017 update on diagnosis, risk stratification, and management",
+        "journal": "American Journal of Hematology",
+        "year": 2017
+      }
+    ],
+    "physiological_claim": "Hypereosinophilia is clinically defined as absolute eosinophil count > 1.5 x 10^9/L.",
+    "threshold_notes": "Escalation uses the clinical numeric threshold of 1.5 for hypereosinophilia."
+  },
+  "narrative": {
+    "mechanism": "Excessive IL-5 production or clonal myeloid disorders drive the expansion of the eosinophilic lineage.",
+    "biological_pathway": "Myeloid differentiation and cytokine-mediated granulocyte expansion.",
+    "interpretation": "High absolute counts require exclusion of reactive causes before considering clonal disorders.",
+    "implications": "Risk of end-organ damage, particularly to the heart, lungs, and skin, due to eosinophil infiltration.",
+    "supporting_marker_roles": "Total white blood cell count helps evaluate whether the eosinophilia is part of a generalized leukocytosis."
+  }
+},
+{
+  "spec_id": "inv_fai_high",
+  "signal_id": "signal_bioavailable_androgen_excess",
+  "research_domain": "hormonal",
+  "primary_marker": {
+    "biomarker_id": "fai",
+    "rationale": "Free Androgen Index (FAI) is a calculated ratio of total testosterone to SHBG. High FAI reflects higher bioavailable testosterone.",
+    "signal_system": "hormonal"
+  },
+  "trigger_direction": "high",
+  "activation": {
+    "activation_logic": "lab_range_exceeded",
+    "activation_config": {
+      "enable_upper_bound": true,
+      "upper_bound_state": "suboptimal",
+      "enable_lower_bound": false,
+      "lower_bound_state": "suboptimal"
+    }
+  },
+  "states": {
+    "baseline_state": "suboptimal",
+    "escalation_state": "at_risk"
+  },
+  "supporting_markers": [
+    {
+      "biomarker_id": "shbg",
+      "expected_direction": "low",
+      "role": "mechanism_marker",
+      "availability": "common",
+      "rationale": "Low SHBG increases the fraction of free, biologically active testosterone, driving up the FAI."
+    }
+  ],
+  "override_rules": [
+    {
+      "rule_id": "or_fai_low_shbg_escalation",
+      "resulting_state": "at_risk",
+      "description": "Escalate if high FAI is driven by suppressed SHBG, a common pattern in insulin resistance and PCOS.",
+      "conditions": [
+        {
+          "metric_id": "shbg",
+          "operator": "<",
+          "condition_type": "all_of",
+          "comparator_type": "lab_range_boundary",
+          "boundary": "below_min"
+        }
+      ],
+      "source_refs": ["source_teede_2018"]
+    }
+  ],
+  "evidence": {
+    "evidence_strength": "strong",
+    "sources": [
+      {
+        "source_id": "source_teede_2018",
+        "paper_title": "Recommendations from the international evidence-based guideline for the assessment and management of polycystic ovary syndrome",
+        "journal": "Clinical Endocrinology",
+        "year": 2018
+      }
+    ],
+    "physiological_claim": "FAI is a sensitive indicator of hyperandrogenism, especially in women with normal total testosterone but low SHBG.",
+    "threshold_notes": "Escalation uses lab-boundary logic for SHBG to identify clinical phenotypes of androgen excess."
+  },
+  "narrative": {
+    "mechanism": "A decrease in SHBG production or increase in total testosterone increases the non-protein-bound androgen fraction.",
+    "biological_pathway": "Androgen transport and bioavailability regulated by liver-produced SHBG.",
+    "interpretation": "High FAI is a clinical marker for hyperandrogenemia, frequently seen in metabolic syndrome and PCOS.",
+    "implications": "Increased androgenic tissue impact leading to hirsutism, ovulatory dysfunction, and metabolic risks.",
+    "supporting_marker_roles": "SHBG identifies whether the high FAI is due to transport protein deficiency vs. primary androgen overproduction."
+  }
+},
+{
+  "spec_id": "inv_free_t3_high",
+  "signal_id": "signal_thyrotoxicosis_active",
+  "research_domain": "thyroid",
+  "primary_marker": {
+    "biomarker_id": "free_t3",
+    "rationale": "Free T3 is the biologically active thyroid hormone. High levels indicate hyperthyroidism or thyrotoxicosis.",
+    "signal_system": "hormonal"
+  },
+  "trigger_direction": "high",
+  "activation": {
+    "activation_logic": "lab_range_exceeded",
+    "activation_config": {
+      "enable_upper_bound": true,
+      "upper_bound_state": "suboptimal",
+      "enable_lower_bound": false,
+      "lower_bound_state": "suboptimal"
+    }
+  },
+  "states": {
+    "baseline_state": "suboptimal",
+    "escalation_state": "at_risk"
+  },
+  "supporting_markers": [
+    {
+      "biomarker_id": "tsh",
+      "expected_direction": "low",
+      "role": "mechanism_marker",
+      "availability": "common",
+      "rationale": "Suppressed TSH is the primary diagnostic requirement for confirming clinical hyperthyroidism."
+    }
+  ],
+  "override_rules": [
+    {
+      "rule_id": "or_confirmed_hyperthyroid_state",
+      "resulting_state": "at_risk",
+      "description": "Escalate if high Free T3 is accompanied by suppressed TSH, confirming overt hyperthyroidism.",
+      "conditions": [
+        {
+          "metric_id": "tsh",
+          "operator": "<",
+          "condition_type": "all_of",
+          "comparator_type": "lab_range_boundary",
+          "boundary": "below_min"
+        }
+      ],
+      "source_refs": ["source_ross_2016"]
+    }
+  ],
+  "evidence": {
+    "evidence_strength": "strong",
+    "sources": [
+      {
+        "source_id": "source_ross_2016",
+        "paper_title": "2016 American Thyroid Association Guidelines for Diagnosis and Management of Hyperthyroidism",
+        "journal": "Thyroid",
+        "year": 2016
+      }
+    ],
+    "physiological_claim": "The combination of elevated thyroid hormones and suppressed TSH defines overt thyrotoxicosis.",
+    "threshold_notes": "Escalation uses lab-boundary logic for TSH to confirm HPT axis feedback disruption."
+  },
+  "narrative": {
+    "mechanism": "Excess thyroid hormone secretion from the thyroid gland increases metabolic rate and sympathetic activity.",
+    "biological_pathway": "Hypothalamic-Pituitary-Thyroid (HPT) axis feedback loop.",
+    "interpretation": "High Free T3 suggests Graves' disease, toxic multinodular goiter, or exogenous hormone intake.",
+    "implications": "Risk of tachycardia, atrial fibrillation, bone loss, and severe anxiety if left untreated.",
+    "supporting_marker_roles": "TSH acts as the regulatory anchor to distinguish primary thyroid disease from other causes."
+  }
+},
+{
+  "spec_id": "inv_free_t4_high",
+  "signal_id": "signal_hyperthyroxinemia",
+  "research_domain": "thyroid",
+  "primary_marker": {
+    "biomarker_id": "free_t4",
+    "rationale": "Free T4 is the pro-hormone form of thyroid hormone. High levels are a hallmark of primary hyperthyroidism.",
+    "signal_system": "hormonal"
+  },
+  "trigger_direction": "high",
+  "activation": {
+    "activation_logic": "lab_range_exceeded",
+    "activation_config": {
+      "enable_upper_bound": true,
+      "upper_bound_state": "suboptimal",
+      "enable_lower_bound": false,
+      "lower_bound_state": "suboptimal"
+    }
+  },
+  "states": {
+    "baseline_state": "suboptimal",
+    "escalation_state": "at_risk"
+  },
+  "supporting_markers": [
+    {
+      "biomarker_id": "tsh",
+      "expected_direction": "low",
+      "role": "mechanism_marker",
+      "availability": "common",
+      "rationale": "Suppressed TSH in the presence of high Free T4 indicates primary hyperthyroid pathophysiology."
+    }
+  ],
+  "override_rules": [
+    {
+      "rule_id": "or_overt_thyrotoxicosis_confirm",
+      "resulting_state": "at_risk",
+      "description": "Escalate if high Free T4 is accompanied by low TSH, indicating clinical thyrotoxicosis.",
+      "conditions": [
+        {
+          "metric_id": "tsh",
+          "operator": "<",
+          "condition_type": "all_of",
+          "comparator_type": "lab_range_boundary",
+          "boundary": "below_min"
+        }
+      ],
+      "source_refs": ["source_ross_2016"]
+    }
+  ],
+  "evidence": {
+    "evidence_strength": "strong",
+    "sources": [
+      {
+        "source_id": "source_ross_2016",
+        "paper_title": "2016 American Thyroid Association Guidelines for Diagnosis and Management of Hyperthyroidism",
+        "journal": "Thyroid",
+        "year": 2016
+      }
+    ],
+    "physiological_claim": "Free T4 elevation is a standard diagnostic criterion for overt primary hyperthyroidism.",
+    "threshold_notes": "Escalation follows standard lab-boundary logic for TSH suppression."
+  },
+  "narrative": {
+    "mechanism": "Hypersecretion of thyroxine (T4) by the thyroid gland leads to increased peripheral conversion to active T3.",
+    "biological_pathway": "Thyroid hormone synthesis and secretion regulated by TSH.",
+    "interpretation": "Elevated Free T4 suggests overactivity of the thyroid gland or acute thyroiditis (leakage).",
+    "implications": "Sustained high levels can lead to weight loss, tremors, heat intolerance, and cardiovascular strain.",
+    "supporting_marker_roles": "TSH provides the necessary regulatory context to localize the pathology to the thyroid gland."
+  }
+},
+{
+  "spec_id": "inv_free_testosterone_high",
+  "signal_id": "signal_free_androgen_excess",
+  "research_domain": "hormonal",
+  "primary_marker": {
+    "biomarker_id": "free_testosterone",
+    "rationale": "Free testosterone is the fraction of hormone not bound to SHBG or albumin. It represents the biologically active androgen pool.",
+    "signal_system": "hormonal"
+  },
+  "trigger_direction": "high",
+  "activation": {
+    "activation_logic": "lab_range_exceeded",
+    "activation_config": {
+      "enable_upper_bound": true,
+      "upper_bound_state": "suboptimal",
+      "enable_lower_bound": false,
+      "lower_bound_state": "suboptimal"
+    }
+  },
+  "states": {
+    "baseline_state": "suboptimal",
+    "escalation_state": "at_risk"
+  },
+  "supporting_markers": [
+    {
+      "biomarker_id": "shbg",
+      "expected_direction": "low",
+      "role": "mechanism_marker",
+      "availability": "common",
+      "rationale": "Low SHBG is a primary driver for an increased free testosterone fraction."
+    }
+  ],
+  "override_rules": [
+    {
+      "rule_id": "or_free_androgen_overload",
+      "resulting_state": "at_risk",
+      "description": "Escalate if high free testosterone is paired with low SHBG, indicating metabolic-driven androgen excess.",
+      "conditions": [
+        {
+          "metric_id": "shbg",
+          "operator": "<",
+          "condition_type": "all_of",
+          "comparator_type": "lab_range_boundary",
+          "boundary": "below_min"
+        }
+      ],
+      "source_refs": ["source_rosner_2007"]
+    }
+  ],
+  "evidence": {
+    "evidence_strength": "strong",
+    "sources": [
+      {
+        "source_id": "source_rosner_2007",
+        "paper_title": "Position statement: Utility, limitations, and accessories in the measurement of testosterone",
+        "journal": "The Journal of Clinical Endocrinology & Metabolism",
+        "year": 2007
+      }
+    ],
+    "physiological_claim": "Free testosterone reflects androgenic activity more accurately than total testosterone in states of altered SHBG.",
+    "threshold_notes": "Escalation uses lab-boundary logic for SHBG to identify metabolic hyperandrogenism."
+  },
+  "narrative": {
+    "mechanism": "Increased production or decreased protein binding increases the availability of testosterone for tissue uptake.",
+    "biological_pathway": "Androgen receptor signaling and steroid hormone transport.",
+    "interpretation": "High free testosterone is often a more sensitive marker for clinical androgen excess than total testosterone.",
+    "implications": "May manifest as hirsutism, acne, and androgenic alopecia, alongside increased metabolic risk.",
+    "supporting_marker_roles": "SHBG helps distinguish between transport-driven vs. production-driven high free hormone levels."
+  }
+},
+{
+  "spec_id": "inv_free_testosterone_pct_high",
+  "signal_id": "signal_free_fraction_excess",
+  "research_domain": "hormonal",
+  "primary_marker": {
+    "biomarker_id": "free_testosterone_pct",
+    "rationale": "The percentage of testosterone that is not bound to proteins. It indicates the efficiency of hormone transport.",
+    "signal_system": "hormonal"
+  },
+  "trigger_direction": "high",
+  "activation": {
+    "activation_logic": "lab_range_exceeded",
+    "activation_config": {
+      "enable_upper_bound": true,
+      "upper_bound_state": "suboptimal",
+      "enable_lower_bound": false,
+      "lower_bound_state": "suboptimal"
+    }
+  },
+  "states": {
+    "baseline_state": "suboptimal",
+    "escalation_state": "at_risk"
+  },
+  "supporting_markers": [
+    {
+      "biomarker_id": "shbg",
+      "expected_direction": "low",
+      "role": "mechanism_marker",
+      "availability": "common",
+      "rationale": "The free percentage is mathematically and physiologically inversely related to the concentration of SHBG."
+    }
+  ],
+  "override_rules": [
+    {
+      "rule_id": "or_low_transport_protein_driver",
+      "resulting_state": "at_risk",
+      "description": "Escalate if high free percentage is caused by abnormally low SHBG levels.",
+      "conditions": [
+        {
+          "metric_id": "shbg",
+          "operator": "<",
+          "condition_type": "all_of",
+          "comparator_type": "lab_range_boundary",
+          "boundary": "below_min"
+        }
+      ],
+      "source_refs": ["source_rosner_2007"]
+    }
+  ],
+  "evidence": {
+    "evidence_strength": "moderate",
+    "sources": [
+      {
+        "source_id": "source_rosner_2007",
+        "paper_title": "Position statement: Utility, limitations, and accessories in the measurement of testosterone",
+        "journal": "The Journal of Clinical Endocrinology & Metabolism",
+        "year": 2007
+      }
+    ],
+    "physiological_claim": "The free fraction of testosterone increases when SHBG levels decline, regardless of total hormone output.",
+    "threshold_notes": "Escalation uses lab-boundary logic for SHBG to identify transport disruptions."
+  },
+  "narrative": {
+    "mechanism": "Decreased synthesis of steroid-binding proteins in the liver increases the proportional availability of steroid hormones.",
+    "biological_pathway": "Hormone-protein binding equilibrium and metabolic clearance.",
+    "interpretation": "A high free percentage typically reflects a reduction in SHBG rather than a primary androgen increase.",
+    "implications": "Enhanced tissue exposure to testosterone, which can cause clinical androgenization symptoms.",
+    "supporting_marker_roles": "SHBG provides the metabolic explanation for the shift in hormone binding percentages."
+  }
+}
+]

@@ -1,0 +1,751 @@
+[
+  {
+    "spec_id": "inv_active_b12_low",
+    "signal_id": "signal_active_b12_deficiency",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "active_b12",
+      "rationale": "Active B12 (holotranscobalamin) is the biologically available fraction of Vitamin B12. Low levels are an early indicator of depletion before clinical symptoms or macrocytosis appear.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "homocysteine",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "B12 is a cofactor for homocysteine conversion; elevation suggests functional deficiency at the cellular level."
+      },
+      {
+        "biomarker_id": "mcv",
+        "expected_direction": "high",
+        "role": "severity_marker",
+        "availability": "common",
+        "rationale": "Macrocytosis is a classic, though often late-stage, sign of B12 deficiency anemia requiring attention."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_b12_functional_deficit",
+        "resulting_state": "at_risk",
+        "description": "Escalate if low active B12 is accompanied by elevated homocysteine, indicating metabolic impact.",
+        "conditions": [
+          {
+            "metric_id": "homocysteine",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_nice_b12_2024"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_nice_b12_2024",
+          "paper_title": "Vitamin B12 deficiency in over 16s: diagnosis and management",
+          "journal": "NICE Guideline [NG239]",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Low holotranscobalamin indicates inadequate B12 for cellular uptake and metabolic processes.",
+      "threshold_notes": "Lab-range breach is the trigger and overrides use lab-range/presence conditions."
+    },
+    "narrative": {
+      "mechanism": "B12 is essential for DNA synthesis. Active B12 measures the fraction bound to transcobalamin for delivery to tissues.",
+      "biological_pathway": "Cofactor in the methionine synthase and methylmalonyl-CoA mutase reactions.",
+      "interpretation": "Low levels suggest depletion of B12 stores which may precede clinical symptoms or macrocytic anemia.",
+      "implications": "Potential for megaloblastic anemia and irreversible neurological damage if B12 deficiency is not treated.",
+      "supporting_marker_roles": "Homocysteine serves as a functional marker, while MCV and Hemoglobin assess secondary hematologic impact."
+    }
+  },
+  {
+    "spec_id": "inv_apoa1_low",
+    "signal_id": "signal_apoa1_cardio_risk",
+    "research_domain": "lipids",
+    "primary_marker": {
+      "biomarker_id": "apoa1",
+      "rationale": "Apolipoprotein A1 is the primary protein component of HDL. Low levels reduce reverse cholesterol transport capacity.",
+      "signal_system": "lipid_transport"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "apob_apoa1_ratio",
+        "expected_direction": "high",
+        "role": "severity_marker",
+        "availability": "common",
+        "rationale": "A high ratio indicates a significant imbalance between pro-atherogenic and anti-atherogenic particles."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_apoa1_high_ratio",
+        "resulting_state": "at_risk",
+        "description": "Escalate if low ApoA1 is coupled with a high ApoB/ApoA1 ratio.",
+        "conditions": [
+          {
+            "metric_id": "apob_apoa1_ratio",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_esc_lipids_2019"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_esc_lipids_2019",
+          "paper_title": "ESC/EAS Guidelines for the management of dyslipidaemias",
+          "journal": "European Heart Journal",
+          "year": 2019
+        }
+      ],
+      "physiological_claim": "ApoA1 is required for the structural integrity of HDL and activation of LCAT enzyme.",
+      "threshold_notes": "Lab-range breach is the trigger and overrides use lab-range/presence conditions."
+    },
+    "narrative": {
+      "mechanism": "ApoA1 facilitates the efflux of cholesterol from tissues back to the liver for eventual excretion.",
+      "biological_pathway": "Part of the Reverse Cholesterol Transport (RCT) metabolic pathway.",
+      "interpretation": "Low ApoA1 is a significant independent risk factor for atherosclerotic cardiovascular disease.",
+      "implications": "Increased risk of atherosclerosis development and overall cardiovascular events in the long term.",
+      "supporting_marker_roles": "The ApoB/ApoA1 ratio is used to assess the overall atherogenic balance of the lipid profile."
+    }
+  },
+  {
+    "spec_id": "inv_apob_high",
+    "signal_id": "signal_apob_atherogenic",
+    "research_domain": "lipids",
+    "primary_marker": {
+      "biomarker_id": "apob",
+      "rationale": "Apolipoprotein B represents the total count of pro-atherogenic particles including LDL, VLDL, and IDL.",
+      "signal_system": "lipid_transport"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "ldl_cholesterol",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "LDL is the primary contributor to total ApoB particle count in the majority of patients."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_apob_ldl_concordance",
+        "resulting_state": "at_risk",
+        "description": "Escalate if both ApoB and LDL are elevated, indicating high total atherogenic burden.",
+        "conditions": [
+          {
+            "metric_id": "ldl_cholesterol",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_sniderman_2019"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_sniderman_2019",
+          "paper_title": "Apolipoprotein B Particles and Cardiovascular Disease",
+          "journal": "JAMA",
+          "year": 2019
+        }
+      ],
+      "physiological_claim": "Each atherogenic particle contains exactly one molecule of ApoB, making it a proxy for particle count.",
+      "threshold_notes": "Lab-range breach is the trigger and overrides use lab-range/presence conditions."
+    },
+    "narrative": {
+      "mechanism": "ApoB particles can become trapped in the arterial wall, initiating the formation of atherosclerotic plaque.",
+      "biological_pathway": "Atherogenesis via subendothelial lipoprotein retention and subsequent oxidation.",
+      "interpretation": "High ApoB indicates a high number of particles capable of causing atherosclerosis and arterial damage.",
+      "implications": "Elevated risk for myocardial infarction, stroke, and other major cardiovascular vascular events.",
+      "supporting_marker_roles": "LDL cholesterol helps define the specific phenotypic breakdown of pro-atherogenic particles."
+    }
+  },
+  {
+    "spec_id": "inv_apob_apoa1_ratio_high",
+    "signal_id": "signal_lipid_imbalance",
+    "research_domain": "lipids",
+    "primary_marker": {
+      "biomarker_id": "apob_apoa1_ratio",
+      "rationale": "The ratio of pro-atherogenic (ApoB) to anti-atherogenic (ApoA1) particles in the systemic circulation.",
+      "signal_system": "lipid_transport"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "severity_marker",
+        "availability": "optional",
+        "rationale": "Systemic inflammation (CRP) acts synergistically with lipid imbalance to increase total vascular risk."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_ratio_plus_inflammation",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high ratio is paired with systemic inflammation (high CRP).",
+        "conditions": [
+          {
+            "metric_id": "crp",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_interheart_2004"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_interheart_2004",
+          "paper_title": "Effect of potentially modifiable risk factors associated with myocardial infarction",
+          "journal": "The Lancet",
+          "year": 2004
+        }
+      ],
+      "physiological_claim": "The ApoB/ApoA1 ratio is a more powerful predictor of MI across diverse global populations.",
+      "threshold_notes": "Lab-range breach is the trigger and overrides use lab-range/presence conditions."
+    },
+    "narrative": {
+      "mechanism": "Represents the balance of cholesterol being delivered to vs. removed from peripheral vascular tissues.",
+      "biological_pathway": "Overall balance of systemic lipoprotein metabolism and clearance.",
+      "interpretation": "A high ratio suggests a highly atherogenic profile and poor reverse cholesterol transport efficiency.",
+      "implications": "Significantly increased risk for coronary artery disease and clinical cardiovascular outcomes.",
+      "supporting_marker_roles": "CRP identifies the presence of inflammatory risk that exacerbates the underlying lipid status."
+    }
+  },
+  {
+    "spec_id": "inv_basophil_pct_high",
+    "signal_id": "signal_basophilia_pct",
+    "research_domain": "cbc",
+    "primary_marker": {
+      "biomarker_id": "basophil_pct",
+      "rationale": "Percentage of basophils in the differential. Elevation can indicate allergy or marrow stress.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "basophils_abs",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "Absolute count is required to determine if the percentage reflects a true cellular increase."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_absolute_basophilia_confirm",
+        "resulting_state": "at_risk",
+        "description": "Escalate if the absolute basophil count is also elevated beyond the lab range.",
+        "conditions": [
+          {
+            "metric_id": "basophils_abs",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_valent_2017"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_valent_2017",
+          "paper_title": "Diagnosis and treatment of basophilia and isolated basophilia",
+          "journal": "Expert Review of Hematology",
+          "year": 2017
+        }
+      ],
+      "physiological_claim": "True basophilia is rare and often associated with myeloproliferative neoplasms or inflammation.",
+      "threshold_notes": "Lab-range breach is the trigger and overrides use lab-range/presence conditions."
+    },
+    "narrative": {
+      "mechanism": "Basophils release histamine and heparin; their expansion typically mirrors allergic or clonal activity.",
+      "biological_pathway": "Myeloid lineage differentiation within the hematopoietic bone marrow.",
+      "interpretation": "High basophil percentage requires verification via absolute count to rule out statistical artifact.",
+      "implications": "Possible myeloproliferative disorder or a chronic inflammatory and allergic state.",
+      "supporting_marker_roles": "Absolute basophil count serves as the primary verification of clinical cellular significance."
+    }
+  },
+  {
+    "spec_id": "inv_basophils_abs_high",
+    "signal_id": "signal_basophilia_abs",
+    "research_domain": "cbc",
+    "primary_marker": {
+      "biomarker_id": "basophils_abs",
+      "rationale": "Absolute basophil count. Elevation is a rare finding that necessitates thorough marrow investigation.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "platelets",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Simultaneous thrombocytosis suggests a clonal myeloproliferative bone marrow process."
+      },
+      {
+        "biomarker_id": "white_blood_cells",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "General leukocytosis supports a broader marrow expansion characteristic of clonal neoplasms."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_myeloproliferative_marker",
+        "resulting_state": "at_risk",
+        "description": "Escalate if absolute basophilia occurs with high platelets or total WBC counts.",
+        "conditions": [
+          {
+            "metric_id": "platelets",
+            "operator": ">",
+            "condition_type": "any_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          },
+          {
+            "metric_id": "white_blood_cells",
+            "operator": ">",
+            "condition_type": "any_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_who_myeloid_2022"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_who_myeloid_2022",
+          "paper_title": "The 5th edition of the World Health Organization Classification",
+          "journal": "Leukemia",
+          "year": 2022
+        }
+      ],
+      "physiological_claim": "Basophilia is a hallmark and often a diagnostic criterion for CML and related marrow disorders.",
+      "threshold_notes": "Lab-range breach is the trigger and overrides use lab-range/presence conditions."
+    },
+    "narrative": {
+      "mechanism": "Basophils are clonal markers in many blood cancers; their presence indicates altered marrow regulation.",
+      "biological_pathway": "Clonal myeloid proliferation within the hematopoietic system.",
+      "interpretation": "Absolute basophilia is highly specific for marrow-related pathology and neoplastic processes.",
+      "implications": "High suspicion for Chronic Myeloid Leukemia or other serious myeloproliferative disorders.",
+      "supporting_marker_roles": "Platelets and white blood cell count act as indicators of multi-lineage bone marrow involvement."
+    }
+  },
+  {
+    "spec_id": "inv_bilirubin_high",
+    "signal_id": "signal_hyperbilirubinemia",
+    "research_domain": "hepatic",
+    "primary_marker": {
+      "biomarker_id": "bilirubin",
+      "rationale": "Total bilirubin levels. Elevation indicates dysfunction in hepatic processing or biliary excretion.",
+      "signal_system": "hepatic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "alt",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "ALT elevation suggests hepatocellular injury as the underlying driver of hyperbilirubinemia."
+      },
+      {
+        "biomarker_id": "alp",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "ALP elevation suggests cholestasis or mechanical obstruction of the biliary tree."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_liver_injury_pattern",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high bilirubin is accompanied by abnormal ALT or ALP levels.",
+        "conditions": [
+          {
+            "metric_id": "alt",
+            "operator": ">",
+            "condition_type": "any_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          },
+          {
+            "metric_id": "alp",
+            "operator": ">",
+            "condition_type": "any_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_acg_liver_2017"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_acg_liver_2017",
+          "paper_title": "ACG Clinical Guideline: Evaluation of Abnormal Liver Tests",
+          "journal": "Am J Gastroenterol",
+          "year": 2017
+        }
+      ],
+      "physiological_claim": "Bilirubin rises during acute liver injury, cholestasis, or inherited conjugation defects.",
+      "threshold_notes": "Lab-range breach is the trigger and overrides use lab-range/presence conditions."
+    },
+    "narrative": {
+      "mechanism": "Bilirubin is the final product of heme catabolism, conjugated in the liver and excreted in bile.",
+      "biological_pathway": "Biliary clearance and heme metabolic catabolism pathways.",
+      "interpretation": "High bilirubin with normal liver enzymes is often indicative of benign Gilbert syndrome.",
+      "implications": "Visible clinical jaundice and potential underlying liver or gallbladder pathology.",
+      "supporting_marker_roles": "ALT and ALP differentiate between direct hepatocellular damage and bile flow obstruction."
+    }
+  },
+  {
+    "spec_id": "inv_chloride_high",
+    "signal_id": "signal_hyperchloremia",
+    "research_domain": "renal",
+    "primary_marker": {
+      "biomarker_id": "chloride",
+      "rationale": "Major extracellular anion. High levels reflect dehydration or specific acid-base disturbances.",
+      "signal_system": "renal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "sodium",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Low sodium with high chloride can indicate a broader electrolyte and hydration disturbance."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_acidosis_pattern",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high chloride is paired with low sodium levels.",
+        "conditions": [
+          {
+            "metric_id": "sodium",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": ["source_berend_2014"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_berend_2014",
+          "paper_title": "Physiological Approach to Assessment of Acid-Base Disturbances",
+          "journal": "NEJM",
+          "year": 2014
+        }
+      ],
+      "physiological_claim": "Chloride levels are tightly regulated by the kidneys to maintain electrical neutrality.",
+      "threshold_notes": "Lab-range breach is the trigger and overrides use lab-range/presence conditions."
+    },
+    "narrative": {
+      "mechanism": "Chloride moves with sodium to maintain balance; its elevation can also compensate for bicarbonate loss.",
+      "biological_pathway": "Renal electrolyte handling and acid-base systemic homeostasis.",
+      "interpretation": "Hyperchloremia is often seen in over-resuscitation with saline or significant dehydration.",
+      "implications": "Risk of metabolic acidosis and impaired renal metabolic function if chronic.",
+      "supporting_marker_roles": "Sodium helps identify clinically significant electrolyte disturbance alongside high chloride."
+    }
+  },
+  {
+    "spec_id": "inv_corrected_calcium_high",
+    "signal_id": "signal_hypercalcemia",
+    "research_domain": "metabolic",
+    "primary_marker": {
+      "biomarker_id": "corrected_calcium",
+      "rationale": "Calcium adjusted for albumin. Elevation is a significant finding requiring etiology workup.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "vitamin_d",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "optional",
+        "rationale": "High Vitamin D can support a vitamin D-mediated hypercalcemia mechanism."
+      },
+      {
+        "biomarker_id": "creatinine",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "High creatinine provides renal-context risk when corrected calcium is elevated."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_hyperparathyroid_confirm",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high corrected calcium is found alongside high Vitamin D levels.",
+        "conditions": [
+          {
+            "metric_id": "vitamin_d",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_bilezikian_2022"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_bilezikian_2022",
+          "paper_title": "Management of Primary Hyperparathyroidism",
+          "journal": "JCEM",
+          "year": 2022
+        }
+      ],
+      "physiological_claim": "High corrected calcium with elevated Vitamin D can indicate a vitamin D-mediated hypercalcemic state.",
+      "threshold_notes": "Lab-range breach is the trigger and overrides use lab-range/presence conditions."
+    },
+    "narrative": {
+      "mechanism": "Calcium is strictly regulated by parathyroid glands; its elevation implies regulatory failure or resorption.",
+      "biological_pathway": "The PTH and Vitamin D metabolic signaling axes.",
+      "interpretation": "Hypercalcemia can be benign or indicate serious underlying disease like malignancy or hyperparathyroidism.",
+      "implications": "Potential for renal calculi, cardiac arrhythmias, and increased skeletal fragility.",
+      "supporting_marker_roles": "Vitamin D and creatinine add mechanism and renal-risk context when corrected calcium is elevated."
+    }
+  },
+  {
+    "spec_id": "inv_cortisol_high",
+    "signal_id": "signal_hypercortisolism",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "cortisol",
+      "rationale": "Morning cortisol level. High values can indicate clinical hypercortisolism or significant stress.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "potassium",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Severe cortisol excess can exert mineralocorticoid effects, leading to clinical hypokalemia."
+      },
+      {
+        "biomarker_id": "hba1c",
+        "expected_direction": "high",
+        "role": "severity_marker",
+        "availability": "common",
+        "rationale": "Cortisol is a counter-regulatory hormone that increases blood glucose levels over sustained periods."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_electrolyte_impact",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high cortisol is associated with low potassium levels.",
+        "conditions": [
+          {
+            "metric_id": "potassium",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": ["source_endocrine_cushing_2015"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_endocrine_cushing_2015",
+          "paper_title": "Treatment of Cushing's Syndrome: Clinical Practice Guideline",
+          "journal": "JCEM",
+          "year": 2015
+        }
+      ],
+      "physiological_claim": "Morning cortisol is sensitive for Cushing's but has high false-positive rates due to acute stress.",
+      "threshold_notes": "Lab-range breach is the trigger and overrides use lab-range/presence conditions."
+    },
+    "narrative": {
+      "mechanism": "Cortisol is the body primary glucocorticoid, regulating systemic metabolism and immune response.",
+      "biological_pathway": "The Hypothalamic-Pituitary-Adrenal (HPA) metabolic axis.",
+      "interpretation": "High results must be confirmed with clinical dynamic testing like dexamethasone suppression.",
+      "implications": "Chronic excess leads to hypertension, central obesity, and hyperglycemia/diabetes.",
+      "supporting_marker_roles": "Potassium and HbA1c track the clinical metabolic sequelae of sustained glucocorticoid excess."
+    }
+  }
+]
