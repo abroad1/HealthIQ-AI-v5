@@ -173,6 +173,264 @@ def test_override_rule_any_of_not_met_preserves_threshold_result():
     }
 
 
+def test_kb_s45a_lab_range_boundary_override_lower_triggers_against_lab_authority():
+    """Canonical regression: lab_range_boundary + boundary lower uses lab_ranges[metric_id].min."""
+
+    class _LabBoundaryRegistry:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_kb_s45a_lower",
+                    "system": "hormonal",
+                    "primary_metric": "tsh",
+                    "supporting_metrics": [],
+                    "activation_logic": ACTIVATION_MODE_LAB_RANGE,
+                    "activation_config": {
+                        "upper_bound_state": "suboptimal",
+                        "enable_lower_bound": True,
+                        "lower_bound_state": "suboptimal",
+                    },
+                    "thresholds": [{"severity": "at_risk", "operator": ">=", "value": 9999.0}],
+                    "override_rules": [
+                        {
+                            "rule_id": "or_ft4_below_lab_min",
+                            "description": "Escalate when Free T4 is below reference min.",
+                            "conditions": [
+                                {
+                                    "metric_id": "free_t4",
+                                    "condition_type": "all_of",
+                                    "comparator_type": "lab_range_boundary",
+                                    "boundary": "lower",
+                                }
+                            ],
+                            "resulting_state": "at_risk",
+                        }
+                    ],
+                    "output": {"supporting_markers": []},
+                }
+            ]
+
+    evaluator = SignalEvaluator(_LabBoundaryRegistry())
+    out = evaluator.evaluate_all(
+        signal_biomarkers={"tsh": 0.2, "free_t4": 8.0},
+        signal_derived={},
+        lab_ranges={
+            "tsh": {"min": 0.4, "max": 4.5},
+            "free_t4": {"min": 12.0, "max": 22.0},
+        },
+    )
+    assert len(out) == 1
+    assert out[0].signal_state == "at_risk"
+
+
+def test_kb_s45a_lab_range_boundary_override_upper_triggers_against_lab_authority():
+    """Canonical regression: lab_range_boundary + boundary upper uses lab_ranges[metric_id].max."""
+
+    class _LabBoundaryRegistry:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_kb_s45a_upper",
+                    "system": "metabolic",
+                    "primary_metric": "glucose",
+                    "supporting_metrics": [],
+                    "thresholds": [{"severity": "suboptimal", "operator": "range", "min_value": 70, "max_value": 99}],
+                    "override_rules": [
+                        {
+                            "rule_id": "or_crp_above_lab_max",
+                            "description": "Escalate when CRP is above lab max.",
+                            "conditions": [
+                                {
+                                    "metric_id": "crp",
+                                    "condition_type": "any_of",
+                                    "comparator_type": "lab_range_boundary",
+                                    "boundary": "upper",
+                                }
+                            ],
+                            "resulting_state": "at_risk",
+                        }
+                    ],
+                    "output": {"supporting_markers": []},
+                }
+            ]
+
+    evaluator = SignalEvaluator(_LabBoundaryRegistry())
+    out = evaluator.evaluate_all(
+        signal_biomarkers={"glucose": 85.0, "crp": 5.0},
+        signal_derived={},
+        lab_ranges={"glucose": {"min": 70.0, "max": 99.0}, "crp": {"min": 0.0, "max": 3.0}},
+    )
+    assert len(out) == 1
+    assert out[0].signal_state == "at_risk"
+
+
+def test_kb_s45a_lab_range_boundary_override_below_min_alias_matches_lower():
+    class _Reg:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_alias",
+                    "system": "metabolic",
+                    "primary_metric": "glucose",
+                    "supporting_metrics": [],
+                    "thresholds": [{"severity": "suboptimal", "operator": "range", "min_value": 70, "max_value": 99}],
+                    "override_rules": [
+                        {
+                            "rule_id": "r1",
+                            "description": "d",
+                            "conditions": [
+                                {
+                                    "metric_id": "x",
+                                    "condition_type": "any_of",
+                                    "comparator_type": "lab_range_boundary",
+                                    "boundary": "below_min",
+                                }
+                            ],
+                            "resulting_state": "at_risk",
+                        }
+                    ],
+                    "output": {"supporting_markers": []},
+                }
+            ]
+
+    ev = SignalEvaluator(_Reg())
+    out = ev.evaluate_all(
+        signal_biomarkers={"glucose": 80.0, "x": 1.0},
+        signal_derived={},
+        lab_ranges={"glucose": {"min": 70, "max": 99}, "x": {"min": 5.0, "max": 10.0}},
+    )
+    assert out[0].signal_state == "at_risk"
+
+
+def test_kb_s45a_lab_range_boundary_out_of_range_either_side():
+    class _Reg:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_oor",
+                    "system": "metabolic",
+                    "primary_metric": "glucose",
+                    "supporting_metrics": [],
+                    "thresholds": [{"severity": "suboptimal", "operator": "range", "min_value": 70, "max_value": 99}],
+                    "override_rules": [
+                        {
+                            "rule_id": "r_oor",
+                            "description": "d",
+                            "conditions": [
+                                {
+                                    "metric_id": "z",
+                                    "condition_type": "any_of",
+                                    "comparator_type": "lab_range_boundary",
+                                    "boundary": "out_of_range",
+                                }
+                            ],
+                            "resulting_state": "at_risk",
+                        }
+                    ],
+                    "output": {"supporting_markers": []},
+                }
+            ]
+
+    ev = SignalEvaluator(_Reg())
+    low = ev.evaluate_all(
+        signal_biomarkers={"glucose": 80.0, "z": 1.0},
+        signal_derived={},
+        lab_ranges={"glucose": {"min": 70, "max": 99}, "z": {"min": 5.0, "max": 10.0}},
+    )
+    high = ev.evaluate_all(
+        signal_biomarkers={"glucose": 80.0, "z": 12.0},
+        signal_derived={},
+        lab_ranges={"glucose": {"min": 70, "max": 99}, "z": {"min": 5.0, "max": 10.0}},
+    )
+    assert low[0].signal_state == "at_risk"
+    assert high[0].signal_state == "at_risk"
+
+
+def test_kb_s45a_numeric_override_explicit_numeric_value_matches_legacy():
+    class _Reg:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_num",
+                    "system": "metabolic",
+                    "primary_metric": "glucose",
+                    "supporting_metrics": [],
+                    "thresholds": [{"severity": "suboptimal", "operator": "range", "min_value": 70, "max_value": 99}],
+                    "override_rules": [
+                        {
+                            "rule_id": "rnum",
+                            "description": "d",
+                            "conditions": [
+                                {
+                                    "metric_id": "crp",
+                                    "operator": ">=",
+                                    "value": 3.0,
+                                    "condition_type": "any_of",
+                                    "comparator_type": "numeric_value",
+                                }
+                            ],
+                            "resulting_state": "at_risk",
+                        }
+                    ],
+                    "output": {"supporting_markers": []},
+                }
+            ]
+
+    ev = SignalEvaluator(_Reg())
+    out = ev.evaluate_all(
+        signal_biomarkers={"glucose": 85.0, "crp": 3.5},
+        signal_derived={},
+        lab_ranges={},
+    )
+    assert out[0].signal_state == "at_risk"
+
+
+def test_kb_s45a_lab_boundary_override_evaluation_is_deterministic():
+    class _Reg:
+        @staticmethod
+        def get_all_signals():
+            return [
+                {
+                    "signal_id": "signal_det",
+                    "system": "metabolic",
+                    "primary_metric": "glucose",
+                    "supporting_metrics": [],
+                    "thresholds": [{"severity": "suboptimal", "operator": "range", "min_value": 70, "max_value": 99}],
+                    "override_rules": [
+                        {
+                            "rule_id": "r1",
+                            "description": "d",
+                            "conditions": [
+                                {
+                                    "metric_id": "crp",
+                                    "condition_type": "any_of",
+                                    "comparator_type": "lab_range_boundary",
+                                    "boundary": "upper",
+                                }
+                            ],
+                            "resulting_state": "at_risk",
+                        }
+                    ],
+                    "output": {"supporting_markers": []},
+                }
+            ]
+
+    ev = SignalEvaluator(_Reg())
+    kwargs = dict(
+        signal_biomarkers={"glucose": 85.0, "crp": 5.0},
+        signal_derived={},
+        lab_ranges={"glucose": {"min": 70.0, "max": 99.0}, "crp": {"min": 0.0, "max": 3.0}},
+    )
+    a = ev.evaluate_all(**kwargs)
+    b = ev.evaluate_all(**kwargs)
+    assert [r.model_dump() for r in a] == [r.model_dump() for r in b]
+
+
 def test_override_rule_all_of_requires_all_conditions_true():
     class _AllOfRegistry:
         @staticmethod
