@@ -184,16 +184,91 @@ class SignalEvaluator:
             return self._as_float(signal_derived[metric_id])
         return None
 
+    @staticmethod
+    def _normalize_override_boundary(raw: Any) -> str:
+        """Map governed boundary tokens (and ingestion aliases) to canonical modes."""
+        if not isinstance(raw, str):
+            return ""
+        token = raw.strip().lower().replace("-", "_")
+        if token in {"lower", "below_min"}:
+            return "lower"
+        if token in {"upper", "above_max"}:
+            return "upper"
+        if token == "out_of_range":
+            return "out_of_range"
+        return ""
+
+    def _evaluate_lab_range_boundary_condition(
+        self,
+        boundary_mode: str,
+        observed: float,
+        lab_ranges: Dict[str, dict],
+        metric_id: str,
+    ) -> bool:
+        """
+        Evaluate lab-range-boundary semantics against authoritative lab_ranges[metric_id].
+        Uses min/max from the reference dict; missing bounds fail closed (False).
+        """
+        ref = (lab_ranges or {}).get(metric_id)
+        if not isinstance(ref, dict):
+            return False
+        low = self._as_float(ref.get("min"))
+        high = self._as_float(ref.get("max"))
+        if boundary_mode == "lower":
+            if low is None:
+                return False
+            return observed < low
+        if boundary_mode == "upper":
+            if high is None:
+                return False
+            return observed > high
+        if boundary_mode == "out_of_range":
+            below = low is not None and observed < low
+            above = high is not None and observed > high
+            return below or above
+        return False
+
     def _evaluate_single_condition(
         self,
         condition: Dict[str, Any],
         signal_biomarkers: Dict[str, float],
         signal_derived: Dict[str, float],
+        lab_ranges: Dict[str, dict],
     ) -> bool:
         metric_id = str(condition.get("metric_id", "")).strip()
+        if not metric_id:
+            raise ValueError(f"Unsupported override condition shape: {condition}")
+
+        comp_raw = condition.get("comparator_type")
+        comp = str(comp_raw).strip() if comp_raw is not None else ""
+
+        if comp == "lab_range_boundary":
+            boundary_mode = self._normalize_override_boundary(condition.get("boundary"))
+            if not boundary_mode:
+                raise ValueError(f"Unsupported override condition boundary for lab_range_boundary: {condition}")
+            if "value" in condition:
+                raise ValueError(f"lab_range_boundary override must not include value: {condition}")
+
+            observed = self._resolve_condition_metric_value(
+                metric_id=metric_id,
+                signal_biomarkers=signal_biomarkers,
+                signal_derived=signal_derived,
+            )
+            if observed is None:
+                return False
+            return self._evaluate_lab_range_boundary_condition(
+                boundary_mode=boundary_mode,
+                observed=observed,
+                lab_ranges=lab_ranges or {},
+                metric_id=metric_id,
+            )
+
+        # Legacy numeric (comparator absent) or explicit numeric_value
         operator = str(condition.get("operator", "")).strip()
         compare_value = self._as_float(condition.get("value"))
-        if not metric_id or operator not in {"<", "<=", ">", ">=", "=="} or compare_value is None:
+        if comp not in ("", "numeric_value"):
+            raise ValueError(f"Unsupported override comparator_type: {condition}")
+        if operator not in {"<", "<=", ">", ">=", "=="} or compare_value is None:
             raise ValueError(f"Unsupported override condition shape: {condition}")
 
         observed = self._resolve_condition_metric_value(
@@ -220,6 +295,7 @@ class SignalEvaluator:
         threshold_state: str,
         signal_biomarkers: Dict[str, float],
         signal_derived: Dict[str, float],
+        lab_ranges: Dict[str, dict],
     ) -> tuple[str, Optional[int]]:
         if not isinstance(override_rules, list):
             raise ValueError(f"Unsupported override_rules shape: {override_rules}")
@@ -249,6 +325,7 @@ class SignalEvaluator:
                     condition=condition,
                     signal_biomarkers=signal_biomarkers,
                     signal_derived=signal_derived,
+                    lab_ranges=lab_ranges,
                 )
                 if condition_type == "any_of":
                     any_of_results.append(condition_result)
@@ -334,6 +411,7 @@ class SignalEvaluator:
                 threshold_state=signal_state,
                 signal_biomarkers=signal_biomarkers,
                 signal_derived=signal_derived,
+                lab_ranges=lab_ranges or {},
             )
 
             output = signal.get("output", {})

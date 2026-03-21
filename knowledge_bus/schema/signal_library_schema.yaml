@@ -201,26 +201,52 @@ override_rule_field_rules:
       - at_risk
       - critical
 
+# Dual-mode override conditions (enforced by validate_signal_library.py):
+# - Legacy numeric: comparator_type absent (or explicit numeric_value) → operator + value required
+# - Lab-range boundary: comparator_type == lab_range_boundary → boundary required; value forbidden
 override_condition_required_fields:
   - metric_id
-  - operator
-  - value
   - condition_type
 
 override_condition_field_rules:
   metric_id:
     type: string
     min_length: 1
+  comparator_type:
+    type: string
+    required: false
+    allowed:
+      - lab_range_boundary
+      - numeric_value
+    description: >
+      When absent, legacy numeric comparison (operator + value) is used.
+      lab_range_boundary compares the observed metric to authoritative lab min/max at runtime.
+  boundary:
+    type: string
+    required: false
+    allowed:
+      - lower
+      - upper
+      - out_of_range
+      - below_min
+      - above_max
+    description: >
+      Required when comparator_type is lab_range_boundary. Canonical names are lower|upper|out_of_range;
+      below_min and above_max are governed aliases for ingestion alignment.
   operator:
     type: string
+    required: false
     allowed:
       - "<"
       - "<="
       - ">"
       - ">="
       - "=="
+    description: Required for legacy numeric override conditions; ignored for lab_range_boundary.
   value:
     type: number
+    required: false
+    description: Required for legacy numeric override conditions; forbidden for lab_range_boundary.
   condition_type:
     type: string
     allowed:
