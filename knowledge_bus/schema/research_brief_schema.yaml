@@ -1,11 +1,14 @@
 schema_name: "HealthIQ Research Brief Schema"
-schema_version: "1.0.0"
+schema_version: "1.1.0"
 status: "LOCKED"
 
 description: >
   Deterministic schema for research_brief.yaml.
   Defines the clinical evidence structure required before signal
   architecture may be designed or promoted in the Knowledge Bus.
+
+  Optional source_id on each sources[] entry enables cross-reference from signal_library
+  override_rules.source_refs when library.schema_version is 2.0.0 (enforced by validators).
 
 root_required_fields:
   - research_domain
@@ -33,6 +36,13 @@ source_required_fields:
   - year
 
 source_field_rules:
+
+  source_id:
+    type: string
+    required: false
+    pattern: '^source_[a-z0-9_]+$'
+    description: >
+      Stable citation key for cross-linking override_rules.source_refs in signal_library (contract 2.0.0).
 
   paper_title:
     type: string

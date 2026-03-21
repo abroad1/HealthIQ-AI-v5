@@ -13,8 +13,11 @@ import subprocess
 import sys
 from pathlib import Path
 
+import yaml
+
 
 ROOT = Path(__file__).resolve().parents[2]
+SIGNAL_CONTRACT_V2 = "2.0.0"
 ARTIFACTS_DIR = ROOT / "backend" / "artifacts"
 MANIFEST_AUDIT_PATH = ARTIFACTS_DIR / "package_manifest_audit.md"
 RESEARCH_AUDIT_PATH = ARTIFACTS_DIR / "research_audit.md"
@@ -27,6 +30,21 @@ BIOMARKER_REGISTRY_PATH = ROOT / "backend" / "ssot" / "biomarkers.yaml"
 MANIFEST_VALIDATOR = ROOT / "backend" / "scripts" / "validate_package_manifest.py"
 RESEARCH_VALIDATOR = ROOT / "backend" / "scripts" / "validate_research_brief.py"
 SIGNAL_VALIDATOR = ROOT / "backend" / "scripts" / "validate_signal_library.py"
+
+
+def _signal_library_contract_version(package_dir: Path) -> str:
+    """Read library.schema_version from signal_library.yaml (defaults to 1.0.0)."""
+    path = package_dir / "signal_library.yaml"
+    try:
+        payload = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError):
+        return "1.0.0"
+    if not isinstance(payload, dict):
+        return "1.0.0"
+    lib = payload.get("library")
+    if isinstance(lib, dict) and isinstance(lib.get("schema_version"), str):
+        return lib["schema_version"].strip()
+    return "1.0.0"
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
@@ -126,34 +144,40 @@ def main(argv: list[str] | None = None) -> int:
     )
     manifest_status = "PASS" if manifest_exit == 0 else "FAIL"
 
-    research_exit = run_validator(
-        [
-            sys.executable,
-            str(RESEARCH_VALIDATOR),
-            "--brief",
-            str(research_brief_path),
-            "--schema",
-            str(RESEARCH_SCHEMA_PATH),
-            "--biomarkers-registry",
-            str(BIOMARKER_REGISTRY_PATH),
-            "--audit-path",
-            str(RESEARCH_AUDIT_PATH),
-        ]
-    )
+    lib_contract = _signal_library_contract_version(package_dir)
+
+    research_cmd = [
+        sys.executable,
+        str(RESEARCH_VALIDATOR),
+        "--brief",
+        str(research_brief_path),
+        "--schema",
+        str(RESEARCH_SCHEMA_PATH),
+        "--biomarkers-registry",
+        str(BIOMARKER_REGISTRY_PATH),
+        "--audit-path",
+        str(RESEARCH_AUDIT_PATH),
+    ]
+    if lib_contract == SIGNAL_CONTRACT_V2:
+        research_cmd.append("--research-fidelity")
+
+    research_exit = run_validator(research_cmd)
     research_status = "PASS" if research_exit == 0 else "FAIL"
 
-    signal_exit = run_validator(
-        [
-            sys.executable,
-            str(SIGNAL_VALIDATOR),
-            "--library",
-            str(signal_library_path),
-            "--schema",
-            str(SIGNAL_SCHEMA_PATH),
-            "--output-dir",
-            str(ARTIFACTS_DIR),
-        ]
-    )
+    signal_cmd = [
+        sys.executable,
+        str(SIGNAL_VALIDATOR),
+        "--library",
+        str(signal_library_path),
+        "--schema",
+        str(SIGNAL_SCHEMA_PATH),
+        "--output-dir",
+        str(ARTIFACTS_DIR),
+    ]
+    if lib_contract == SIGNAL_CONTRACT_V2:
+        signal_cmd.extend(["--research-brief", str(research_brief_path)])
+
+    signal_exit = run_validator(signal_cmd)
     signal_status = "PASS" if signal_exit == 0 else "FAIL"
 
     write_aggregated_status(manifest_status, research_status, signal_status)

@@ -21,7 +21,15 @@ DEFAULT_AUDIT_PATH = ROOT / "backend" / "artifacts" / "research_audit.md"
 
 BIOMARKER_PATTERN = re.compile(r"^[a-z0-9_]+$")
 DERIVED_METRIC_PATTERN = re.compile(r"^[a-z0-9_]+$")
+SOURCE_ID_PATTERN = re.compile(r"^source_[a-z0-9_]+$")
 ALLOWED_EVIDENCE_STRENGTH = {"exploratory", "moderate", "strong", "consensus"}
+
+_PLACEHOLDER_JOURNALS = frozenset({"healthiq knowledge bus"})
+_PLACEHOLDER_TITLE_SUBSTRINGS = (
+    "kb-s45b investigation signal brief",
+    "kb-s45 investigation signal brief",
+)
+_PROCESS_CLAIM_PREFIX = "investigation signal for"
 
 
 def load_yaml(path: Path, label: str) -> tuple[Any | None, list[str]]:
@@ -98,6 +106,56 @@ def validate_sources(brief: dict[str, Any], errors: list[str]) -> None:
             errors.append(f"{prefix}.doi must be a string when provided")
         if "url" in source and source["url"] is not None and not isinstance(source["url"], str):
             errors.append(f"{prefix}.url must be a string when provided")
+
+        if "source_id" in source and source["source_id"] is not None:
+            sid = source.get("source_id")
+            if not isinstance(sid, str) or not sid.strip():
+                errors.append(f"{prefix}.source_id must be a non-empty string when provided")
+            elif SOURCE_ID_PATTERN.fullmatch(sid.strip()) is None:
+                errors.append(f"{prefix}.source_id must match ^source_[a-z0-9_]+$")
+
+
+def validate_research_fidelity_contract(brief: dict[str, Any], errors: list[str]) -> None:
+    """
+    Deterministic minimum-fidelity checks for investigation-ingestion research briefs
+    (enabled via --research-fidelity). Not NLP — pattern and presence rules only.
+    """
+    sources = brief.get("sources")
+    if not isinstance(sources, list) or not sources:
+        return
+
+    for idx, source in enumerate(sources):
+        if not isinstance(source, dict):
+            continue
+        prefix = f"sources[{idx}]"
+        sid = source.get("source_id")
+        if not isinstance(sid, str) or not sid.strip():
+            errors.append(f"{prefix}.source_id is required under research-fidelity contract")
+        elif SOURCE_ID_PATTERN.fullmatch(sid.strip()) is None:
+            errors.append(f"{prefix}.source_id must match ^source_[a-z0-9_]+$")
+
+        journal = str(source.get("journal", "")).strip().lower()
+        if journal in _PLACEHOLDER_JOURNALS:
+            errors.append(f"{prefix}.journal appears to be an internal placeholder")
+
+        title = str(source.get("paper_title", "")).strip().lower()
+        for frag in _PLACEHOLDER_TITLE_SUBSTRINGS:
+            if frag in title:
+                errors.append(f"{prefix}.paper_title appears to be a placeholder stub")
+                break
+
+    claim = brief.get("physiological_claim")
+    if isinstance(claim, str):
+        lowered = claim.strip().lower()
+        if lowered.startswith(_PROCESS_CLAIM_PREFIX):
+            errors.append(
+                "physiological_claim appears to be process boilerplate; "
+                "use the biological claim from source evidence"
+            )
+
+    rs = brief.get("research_summary")
+    if not isinstance(rs, str) or not rs.strip():
+        errors.append("research_summary is required and must be non-empty under research-fidelity contract")
 
 
 def extract_registry_keys(registry: dict[str, Any], errors: list[str]) -> set[str]:
@@ -233,6 +291,14 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         default=str(DEFAULT_AUDIT_PATH),
         help="Audit output path. Default: backend/artifacts/research_audit.md",
     )
+    parser.add_argument(
+        "--research-fidelity",
+        action="store_true",
+        help=(
+            "Enforce investigation-ingestion minimum research fidelity "
+            "(source_id, non-placeholder sources, physiological_claim, research_summary)."
+        ),
+    )
     return parser.parse_args(argv)
 
 
@@ -269,6 +335,8 @@ def main(argv: list[str] | None = None) -> int:
             validated_biomarkers = validate_biomarkers(brief, registry_keys, errors)
             validated_metrics = validate_derived_metrics(brief, errors)
             validate_evidence_strength(brief, errors)
+            if getattr(args, "research_fidelity", False):
+                validate_research_fidelity_contract(brief, errors)
 
     status = "FAIL" if errors else "PASS"
     write_audit(
