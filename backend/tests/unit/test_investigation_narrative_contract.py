@@ -47,7 +47,16 @@ _KB_S25_PACKAGE_DIRS = [
     "pkg_s24_vitamin_d_low_deficiency",
     "pkg_s24_wbc_high_leukocytosis",
     "pkg_s24_wbc_low_leukopenia",
-    "pkg_kb_s45_batch1_investigation_signals",
+    "pkg_kb45_active_b12_low_deficiency",
+    "pkg_kb45_apoa1_low_cardio_risk",
+    "pkg_kb45_apob_high_atherogenic",
+    "pkg_kb45_apob_apoa1_ratio_high_imbalance",
+    "pkg_kb45_basophil_pct_high_basophilia",
+    "pkg_kb45_basophils_abs_high_basophilia",
+    "pkg_kb45_bilirubin_high_hyperbilirubinemia",
+    "pkg_kb45_chloride_high_hyperchloremia",
+    "pkg_kb45_corrected_calcium_high_hypercalcemia",
+    "pkg_kb45_cortisol_high_hypercortisolism",
 ]
 _EXPLANATION_KEYS = [
     "mechanism",

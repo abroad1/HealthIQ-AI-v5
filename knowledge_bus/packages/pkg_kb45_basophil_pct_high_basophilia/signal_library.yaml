@@ -1,0 +1,83 @@
+library:
+  package_id: KBP-2504
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S45d Basophil Percentage Investigation Signal Library
+  description: 'Regenerated from investigation-spec-collection-batch1-10.json. KB-S45d regenerated package: basophil percentage
+    high (inv_basophil_pct_high, batch-1).'
+signals:
+- signal_id: signal_basophilia_pct
+  name: Basophil percentage elevation
+  description: 'Basophil fraction in the leukocyte differential; elevation can reflect allergic activation or marrow-related
+    expansion depending on absolute counts.
+
+    '
+  system: hematologic
+  primary_metric: basophil_pct
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: basophils_abs
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Absolute count is required to determine if the percentage reflects a true cellular increase.
+  dependencies:
+    biomarkers:
+    - basophil_pct
+    - basophils_abs
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_basophil_pct_lab_range_activation_placeholder
+    metric_id: basophil_pct
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_absolute_basophilia_confirm
+    description: Escalate if absolute basophil count is also above its laboratory upper bound.
+    conditions:
+    - metric_id: basophils_abs
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    resulting_state: at_risk
+    source_refs:
+    - source_valent_2017
+  output:
+    signal_value: basophil_pct
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: basophil_pct
+    supporting_markers:
+    - basophils_abs
+  explanation:
+    mechanism: 'Basophils release histamine and other mediators; differential shifts can be relative or reflect true cellular
+      expansion.
+
+      '
+    biological_pathway: 'Myeloid lineage output from marrow sets circulating basophil mass and fraction.
+
+      '
+    interpretation: 'A high basophil percentage requires absolute count context to distinguish statistical effects from true
+      basophilia.
+
+      '
+    implications: 'Sustained basophilia raises concern for marrow disorders and chronic allergic or inflammatory states depending
+      on context.
+
+      '
+    supporting_marker_roles: 'Absolute basophil count confirms whether the fraction change represents a real increase in circulating
+      basophils.
+
+      '

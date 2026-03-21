@@ -1,3 +1,4 @@
+# Frozen KB-S45 batch-1 signal library (legacy 1.0.0) retained for KB-S45d regeneration tooling.
 library:
   package_id: KBP-2432
   schema_version: 1.0.0

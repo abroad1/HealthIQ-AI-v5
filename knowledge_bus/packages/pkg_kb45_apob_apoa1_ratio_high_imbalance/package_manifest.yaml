@@ -1,0 +1,11 @@
+package_id: pkg_kb45_apob_apoa1_ratio_high_imbalance
+package_version: 1.0.0
+description: >
+  KB-S45d regenerated package: ApoB/ApoA1 ratio imbalance (inv_apob_apoa1_ratio_high, batch-1).
+research_brief: research_brief.yaml
+signal_library: signal_library.yaml
+author: HealthIQ Knowledge Bus — KB-S45d
+created_at: "2026-03-21"
+source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+translation_mode: regeneration
+behavioural_impact: NONE

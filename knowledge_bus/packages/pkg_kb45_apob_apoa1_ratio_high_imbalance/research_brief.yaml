@@ -1,0 +1,15 @@
+research_domain: lipids
+sources:
+- source_id: source_interheart_2004
+  paper_title: Effect of potentially modifiable risk factors associated with myocardial infarction
+  journal: The Lancet
+  year: 2004
+biomarkers:
+- apoa1
+- apob
+- crp
+physiological_claim: The ApoB/ApoA1 ratio is a more powerful predictor of MI across diverse global populations.
+evidence_strength: strong
+research_summary: Lab-range breach is the trigger and overrides use lab-range/presence conditions.
+derived_metrics:
+- apob_apoa1_ratio

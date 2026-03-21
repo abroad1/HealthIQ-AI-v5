@@ -1,0 +1,13 @@
+research_domain: hematologic
+sources:
+- source_id: source_nice_b12_2024
+  paper_title: 'Vitamin B12 deficiency in over 16s: diagnosis and management'
+  journal: NICE Guideline [NG239]
+  year: 2024
+biomarkers:
+- active_b12
+- homocysteine
+- mcv
+physiological_claim: Low holotranscobalamin indicates inadequate B12 for cellular uptake and metabolic processes.
+evidence_strength: strong
+research_summary: Lab-range breach is the trigger and overrides use lab-range/presence conditions.
