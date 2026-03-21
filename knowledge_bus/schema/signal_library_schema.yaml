@@ -1,11 +1,17 @@
 schema_name: "HealthIQ Signal Library Schema"
-schema_version: "1.0.0"
+schema_version: "1.1.0"
 status: "LOCKED"
 description: >
   Deterministic architecture contract for Knowledge Bus signal_library.yaml.
   Defines the allowed structure for physiological signal declarations that may
   be promoted to implementation. This schema is enforced by
   validate_signal_library.py.
+
+  Contract versions (library.schema_version):
+  - "1.0.0" — legacy: flat string list for supporting_metrics; override_rules may omit source_refs.
+  - "2.0.0" — research-fidelity: structured supporting_metrics objects, required trigger_direction,
+    required override_rules.source_refs resolving to research_brief sources (validated by
+    validate_signal_library.py when --research-brief is supplied).
 
 root_required_fields:
   - library
@@ -116,6 +122,41 @@ signal_field_rules:
       - signal_value
       - signal_state
       - confidence
+  trigger_direction:
+    type: string
+    required: false
+    allowed:
+      - high
+      - low
+      - bidirectional
+      - context_dependent
+    description: >
+      Required when library.schema_version is 2.0.0. Explicit governed trigger direction for investigation signals.
+
+supporting_metric_object_field_rules:
+  biomarker_id:
+    type: string
+    min_length: 1
+  expected_direction:
+    type: string
+    allowed:
+      - high
+      - low
+      - any
+  role:
+    type: string
+    allowed:
+      - mechanism_marker
+      - severity_marker
+      - contextual_marker
+  availability:
+    type: string
+    allowed:
+      - common
+      - specialist
+  rationale:
+    type: string
+    min_length: 10
 
 dependency_map_rules:
   biomarkers:
@@ -200,6 +241,13 @@ override_rule_field_rules:
       - suboptimal
       - at_risk
       - critical
+  source_refs:
+    type: list
+    required: false
+    min_items: 1
+    description: >
+      When library.schema_version is 2.0.0, required non-empty; each entry must match a source_id
+      declared in the package research_brief.yaml sources list.
 
 # Dual-mode override conditions (enforced by validate_signal_library.py):
 # - Legacy numeric: comparator_type absent (or explicit numeric_value) → operator + value required
