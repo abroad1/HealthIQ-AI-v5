@@ -1,0 +1,13 @@
+research_domain: hormonal
+sources:
+- source_id: source_endocrine_cushing_2015
+  paper_title: 'Treatment of Cushing''s Syndrome: Clinical Practice Guideline'
+  journal: JCEM
+  year: 2015
+biomarkers:
+- cortisol
+- hba1c
+- potassium
+physiological_claim: Morning cortisol is sensitive for Cushing's but has high false-positive rates due to acute stress.
+evidence_strength: moderate
+research_summary: Lab-range breach is the trigger and overrides use lab-range/presence conditions.

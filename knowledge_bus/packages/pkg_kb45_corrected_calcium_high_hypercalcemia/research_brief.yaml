@@ -1,0 +1,13 @@
+research_domain: metabolic
+sources:
+- source_id: source_bilezikian_2022
+  paper_title: Management of Primary Hyperparathyroidism
+  journal: JCEM
+  year: 2022
+biomarkers:
+- corrected_calcium
+- creatinine
+- vitamin_d
+physiological_claim: High corrected calcium with elevated Vitamin D can indicate a vitamin D-mediated hypercalcemic state.
+evidence_strength: strong
+research_summary: Lab-range breach is the trigger and overrides use lab-range/presence conditions.

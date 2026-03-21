@@ -1,9 +1,12 @@
 """
-KB-S45 batch-1 ingestion: package validation, determinism, and signal evaluation smoke tests.
+KB-S45 batch-1 ingestion: evaluator smoke tests against KB-S45d individual packages.
+
+Validation of all ten hardened packages lives in test_kb_s45d_batch1_packages.py.
 """
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import subprocess
 import sys
@@ -14,7 +17,6 @@ import yaml
 from core.analytics.signal_evaluator import SignalEvaluator
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
-_PACKAGE_DIR = _REPO_ROOT / "knowledge_bus" / "packages" / "pkg_kb_s45_batch1_investigation_signals"
 _VALIDATE_SCRIPT = _REPO_ROOT / "backend" / "scripts" / "validate_knowledge_package.py"
 _SOURCE_SPEC = (
     _REPO_ROOT
@@ -25,20 +27,15 @@ _SOURCE_SPEC = (
 )
 _STATUS_PATH = _REPO_ROOT / "backend" / "artifacts" / "knowledge_status.json"
 
-_EXPECTED_SIGNAL_IDS = frozenset(
-    {
-        "signal_active_b12_deficiency",
-        "signal_apoa1_cardio_risk",
-        "signal_apob_atherogenic",
-        "signal_lipid_imbalance",
-        "signal_basophilia_pct",
-        "signal_basophilia_abs",
-        "signal_hyperbilirubinemia",
-        "signal_hyperchloremia",
-        "signal_hypercalcemia",
-        "signal_hypercortisolism",
-    }
-)
+_KB_S45D_PATH = Path(__file__).resolve().parent / "test_kb_s45d_batch1_packages.py"
+_spec = importlib.util.spec_from_file_location("test_kb_s45d_batch1_packages", _KB_S45D_PATH)
+assert _spec and _spec.loader
+_kb_s45d = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_kb_s45d)
+
+KB_S45D_PACKAGE_DIRS = _kb_s45d.KB_S45D_PACKAGE_DIRS
+SIGNAL_ID_TO_PACKAGE_DIR = _kb_s45d.SIGNAL_ID_TO_PACKAGE_DIR
+_EXPECTED_SIGNAL_IDS = _kb_s45d.EXPECTED_SIGNAL_IDS
 
 
 def test_kb_s45_batch1_source_json_is_valid_and_matches_expected_ids():
@@ -48,13 +45,13 @@ def test_kb_s45_batch1_source_json_is_valid_and_matches_expected_ids():
     assert ids == _EXPECTED_SIGNAL_IDS
 
 
-def test_kb_s45_batch1_package_validates_cleanly():
+def test_kb_s45_batch1_representative_package_validates_cleanly():
     proc = subprocess.run(
         [
             sys.executable,
             str(_VALIDATE_SCRIPT),
             "--package-dir",
-            str(_PACKAGE_DIR),
+            str(_REPO_ROOT / "knowledge_bus" / "packages" / KB_S45D_PACKAGE_DIRS[0]),
         ],
         cwd=str(_REPO_ROOT),
         capture_output=True,
@@ -70,7 +67,7 @@ def test_kb_s45_validate_knowledge_package_status_is_deterministic():
         sys.executable,
         str(_VALIDATE_SCRIPT),
         "--package-dir",
-        str(_PACKAGE_DIR),
+        str(_REPO_ROOT / "knowledge_bus" / "packages" / KB_S45D_PACKAGE_DIRS[0]),
     ]
     subprocess.run(cmd, cwd=str(_REPO_ROOT), capture_output=True, text=True, check=True)
     a = json.loads(_STATUS_PATH.read_text(encoding="utf-8"))
@@ -79,15 +76,9 @@ def test_kb_s45_validate_knowledge_package_status_is_deterministic():
     assert a == b
 
 
-def test_kb_s45_signal_library_lists_all_batch1_signals():
-    lib_path = _PACKAGE_DIR / "signal_library.yaml"
-    payload = yaml.safe_load(lib_path.read_text(encoding="utf-8")) or {}
-    found = {s.get("signal_id") for s in payload.get("signals", []) if isinstance(s, dict)}
-    assert found == _EXPECTED_SIGNAL_IDS
-
-
 def _load_one_signal(signal_id: str) -> dict:
-    lib_path = _PACKAGE_DIR / "signal_library.yaml"
+    dirname = SIGNAL_ID_TO_PACKAGE_DIR[signal_id]
+    lib_path = _REPO_ROOT / "knowledge_bus" / "packages" / dirname / "signal_library.yaml"
     payload = yaml.safe_load(lib_path.read_text(encoding="utf-8")) or {}
     for s in payload.get("signals", []):
         if isinstance(s, dict) and s.get("signal_id") == signal_id:

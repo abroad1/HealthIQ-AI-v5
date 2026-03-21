@@ -1,0 +1,13 @@
+research_domain: cbc
+sources:
+- source_id: source_who_myeloid_2022
+  paper_title: The 5th edition of the World Health Organization Classification
+  journal: Leukemia
+  year: 2022
+biomarkers:
+- basophils_abs
+- platelets
+- white_blood_cells
+physiological_claim: Basophilia is a hallmark and often a diagnostic criterion for CML and related marrow disorders.
+evidence_strength: strong
+research_summary: Lab-range breach is the trigger and overrides use lab-range/presence conditions.
