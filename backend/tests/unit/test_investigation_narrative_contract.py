@@ -47,6 +47,7 @@ _KB_S25_PACKAGE_DIRS = [
     "pkg_s24_vitamin_d_low_deficiency",
     "pkg_s24_wbc_high_leukocytosis",
     "pkg_s24_wbc_low_leukopenia",
+    "pkg_kb_s45_batch1_investigation_signals",
 ]
 _EXPLANATION_KEYS = [
     "mechanism",
