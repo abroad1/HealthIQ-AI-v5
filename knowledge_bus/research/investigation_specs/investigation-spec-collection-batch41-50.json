@@ -1,0 +1,751 @@
+[
+  {
+    "spec_id": "inv_potassium_high",
+    "signal_id": "signal_hyperkalaemia",
+    "research_domain": "metabolic",
+    "primary_marker": {
+      "biomarker_id": "potassium",
+      "rationale": "Potassium is the primary intracellular cation. Elevated levels (hyperkalaemia) are clinically critical due to the risk of cardiac arrhythmias and neuromuscular dysfunction.",
+      "signal_system": "renal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "creatinine",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Impaired renal clearance is the most common cause of sustained potassium elevation."
+      },
+      {
+        "biomarker_id": "egfr",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "A decline in GFR directly reduces the kidneys' capacity to excrete potassium."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_potassium_renal_failure",
+        "resulting_state": "at_risk",
+        "description": "Escalate if hyperkalaemia is accompanied by clinical renal impairment (low eGFR).",
+        "conditions": [
+          {
+            "metric_id": "egfr",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "numeric_value",
+            "numeric_value": 45
+          }
+        ],
+        "source_refs": ["source_mount_2014"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_mount_2014",
+          "paper_title": "Clinical manifestations and treatment of hyperkalemia",
+          "journal": "Clinical Journal of the American Society of Nephrology",
+          "year": 2014
+        }
+      ],
+      "physiological_claim": "Hyperkalaemia risk is exponentially increased when renal clearance falls below 45 mL/min/1.73m2.",
+      "threshold_notes": "Escalation uses the 45 numeric threshold for eGFR to identify moderate-to-severe renal risk."
+    },
+    "narrative": {
+      "mechanism": "Potassium levels are maintained by renal excretion; dysfunction leads to accumulation and altered cardiac membrane potentials.",
+      "biological_pathway": "Renal tubular secretion and sodium-potassium exchange mechanisms.",
+      "interpretation": "High potassium requires immediate context of renal function and potential medication confounders (e.g., ACE inhibitors).",
+      "implications": "Potential for life-threatening cardiac conduction disturbances and muscle paralysis.",
+      "supporting_marker_roles": "Creatinine and eGFR are used to determine if the elevation is driven by impaired renal excretion."
+    }
+  },
+  {
+    "spec_id": "inv_prolactin_high",
+    "signal_id": "signal_hyperprolactinaemia",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "prolactin",
+      "rationale": "Prolactin is a pituitary hormone. Elevation can indicate a prolactinoma, but frequently results from stress or primary hypothyroidism.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "tsh",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Primary hypothyroidism causes TRH elevation, which acts as a prolactin-releasing factor."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_prolactin_extreme_elevation",
+        "resulting_state": "at_risk",
+        "description": "Escalate if prolactin levels are severely elevated, increasing the likelihood of an adenoma.",
+        "conditions": [
+          {
+            "metric_id": "prolactin",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "numeric_value",
+            "numeric_value": 2000
+          }
+        ],
+        "source_refs": ["source_melmed_2011"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_melmed_2011",
+          "paper_title": "Diagnosis and Treatment of Hyperprolactinemia: An Endocrine Society Clinical Practice Guideline",
+          "journal": "Journal of Clinical Endocrinology & Metabolism",
+          "year": 2011
+        }
+      ],
+      "physiological_claim": "Severe hyperprolactinemia (>2000 mIU/L) is highly suggestive of a pituitary macroprolactinoma.",
+      "threshold_notes": "Escalation uses the 2000 mIU/L numeric threshold based on standard Endocrine Society guidelines."
+    },
+    "narrative": {
+      "mechanism": "Prolactin is regulated by inhibitory dopaminergic pathways; loss of inhibition or hypothalamic stimulation leads to excess.",
+      "biological_pathway": "Hypothalamic-pituitary-prolactin axis regulation.",
+      "interpretation": "Mild elevations are often functional (stress, exercise), while sustained high levels suggest organic pathology.",
+      "implications": "May result in galactorrhea, infertility, and secondary hypogonadism due to GnRH suppression.",
+      "supporting_marker_roles": "TSH is critical to exclude primary hypothyroidism as the driver of secondary prolactin elevation."
+    }
+  },
+  {
+    "spec_id": "inv_rbc_low",
+    "signal_id": "signal_anaemia_rbc",
+    "research_domain": "cbc",
+    "primary_marker": {
+      "biomarker_id": "rbc",
+      "rationale": "Red blood cell count (RBC) is a fundamental metric for oxygen delivery capacity. Low levels define the state of anaemia.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "hemoglobin",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "Hemoglobin levels provide the definitive assessment of the anaemia's severity."
+      },
+      {
+        "biomarker_id": "ferritin",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Iron deficiency is the leading cause of reduced red blood cell production."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_rbc_severe_anaemia",
+        "resulting_state": "at_risk",
+        "description": "Escalate if low RBC is accompanied by low hemoglobin, confirming clinical anaemia.",
+        "conditions": [
+          {
+            "metric_id": "hemoglobin",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": ["source_who_anaemia_2011"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_who_anaemia_2011",
+          "paper_title": "Haemoglobin concentrations for the diagnosis of anaemia and assessment of severity",
+          "journal": "World Health Organization",
+          "year": 2011
+        }
+      ],
+      "physiological_claim": "Anaemia is defined by the WHO as a hemoglobin concentration below established thresholds for age and sex.",
+      "threshold_notes": "Escalation uses the lab's lower reference boundary for hemoglobin to confirm the clinical risk."
+    },
+    "narrative": {
+      "mechanism": "Low RBC results from blood loss, increased destruction, or decreased bone marrow production.",
+      "biological_pathway": "Erythropoiesis in response to erythropoietin stimulation.",
+      "interpretation": "A low RBC count indicates a deficit in the oxygen-carrying capacity of the blood.",
+      "implications": "Fatigue, shortness of breath, and potential tissue hypoxia if the deficit is severe.",
+      "supporting_marker_roles": "Hemoglobin provides severity assessment, while Ferritin helps identify potential iron-restricted production."
+    }
+  },
+  {
+    "spec_id": "inv_rdw_cv_high",
+    "signal_id": "signal_anisocytosis_cv",
+    "research_domain": "cbc",
+    "primary_marker": {
+      "biomarker_id": "rdw_cv",
+      "rationale": "RDW-CV measures the variation in red blood cell volume. A high value (anisocytosis) is often the first sign of nutrient deficiency.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "mcv",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "High RDW with low MCV is strongly indicative of early iron deficiency anaemia."
+      },
+      {
+        "biomarker_id": "ferritin",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Low ferritin confirms that the cell size variation is driven by iron depletion."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_anisocytosis_iron_deficiency",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high RDW-CV is paired with microcytosis (low MCV), suggesting iron deficiency.",
+        "conditions": [
+          {
+            "metric_id": "mcv",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": ["source_aslinia_2006"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_aslinia_2006",
+          "paper_title": "Megaloblastic Anemia and Other Causes of Macrocytosis",
+          "journal": "Clinical Medicine & Research",
+          "year": 2006
+        }
+      ],
+      "physiological_claim": "RDW is highly sensitive for the early stages of iron deficiency, rising before hemoglobin falls.",
+      "threshold_notes": "Escalation uses the lab boundary for MCV to identify the morphological pattern of the anisocytosis."
+    },
+    "narrative": {
+      "mechanism": "Nutrient deficiencies cause the marrow to produce cells of varying sizes, leading to a wider volume distribution.",
+      "biological_pathway": "Reticulocyte maturation and iron-restricted erythropoiesis.",
+      "interpretation": "High RDW indicates that the red cell population is non-homogeneous, requiring etiology investigation.",
+      "implications": "Predictive of developing iron, B12, or folate deficiency anaemia.",
+      "supporting_marker_roles": "MCV and Ferritin help differentiate between iron deficiency and early megaloblastic patterns."
+    }
+  },
+  {
+    "spec_id": "inv_rdw_sd_high",
+    "signal_id": "signal_anisocytosis_sd",
+    "research_domain": "cbc",
+    "primary_marker": {
+      "biomarker_id": "rdw_sd",
+      "rationale": "RDW-SD is an absolute measure of red cell volume distribution width, often more sensitive to small populations of macrocytes.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "mcv",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "A high RDW-SD with high MCV suggests megaloblastic anaemia (B12/Folate deficiency)."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_rdw_sd_macrocytic_pattern",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high RDW-SD is associated with macrocytosis (high MCV).",
+        "conditions": [
+          {
+            "metric_id": "mcv",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_butarello_2016"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_butarello_2016",
+          "paper_title": "Laboratory diagnosis of anemia: are the old and new red cell indices useful in differentiation?",
+          "journal": "International Journal of Laboratory Hematology",
+          "year": 2016
+        }
+      ],
+      "physiological_claim": "RDW-SD provides a direct measurement of the distribution width at the 20% level, independent of MCV.",
+      "threshold_notes": "Escalation is triggered by a lab boundary breach for MCV to categorize the anisocytosis."
+    },
+    "narrative": {
+      "mechanism": "RDW-SD reflects the absolute spread of cell volumes; elevation indicates significant heterogeneity in size.",
+      "biological_pathway": "Bone marrow response to varied nutrient availability or increased erythrocyte turnover.",
+      "interpretation": "Elevation warrants a check for early macrocytosis or dual-deficiency states (iron and B12).",
+      "implications": "Suggests a disruption in the stability of red blood cell production size regulation.",
+      "supporting_marker_roles": "MCV is used to clarify whether the size variation is shifting towards microcytosis or macrocytosis."
+    }
+  },
+  {
+    "spec_id": "inv_shbg_low",
+    "signal_id": "signal_metabolic_androgen_risk",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "shbg",
+      "rationale": "SHBG is a transport protein. Low levels are a powerful surrogate marker for insulin resistance and metabolic syndrome.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "hba1c_pct",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Hyperinsulinaemia suppresses hepatic SHBG production; elevated HbA1c confirms the metabolic link."
+      },
+      {
+        "biomarker_id": "triglycerides",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Low SHBG is strongly correlated with atherogenic dyslipidaemia and fatty liver."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_shbg_metabolic_syndrome",
+        "resulting_state": "at_risk",
+        "description": "Escalate if low SHBG is found alongside dysregulated glycaemic control (high HbA1c).",
+        "conditions": [
+          {
+            "metric_id": "hba1c_pct",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_wallace_2013"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_wallace_2013",
+          "paper_title": "Sex hormone-binding globulin and insulin resistance, type 2 diabetes and the metabolic syndrome",
+          "journal": "Clinical Endocrinology",
+          "year": 2013
+        }
+      ],
+      "physiological_claim": "Hepatic SHBG synthesis is downregulated by insulin, making it a sensitive marker for systemic insulin resistance.",
+      "threshold_notes": "Escalation follows a lab-range breach for HbA1c to identify metabolic risk."
+    },
+    "narrative": {
+      "mechanism": "Insulin inhibits hepatic production of SHBG; therefore, low levels reflect the metabolic burden on the liver.",
+      "biological_pathway": "Hepatic protein synthesis regulation by glucose and insulin signaling.",
+      "interpretation": "Low SHBG increases bioavailable sex steroids and serves as an early warning for Type 2 Diabetes risk.",
+      "implications": "Increased cardiovascular risk and potential androgenization in females (PCOS).",
+      "supporting_marker_roles": "HbA1c and Triglycerides provide the metabolic corroboration of insulin-driven suppression."
+    }
+  },
+  {
+    "spec_id": "inv_sodium_low",
+    "signal_id": "signal_hyponatraemia",
+    "research_domain": "renal",
+    "primary_marker": {
+      "biomarker_id": "sodium",
+      "rationale": "Sodium is the major extracellular cation. Low levels (hyponatraemia) indicate an imbalance of water relative to sodium.",
+      "signal_system": "renal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "urea",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Low urea alongside low sodium can suggest syndrome of inappropriate antidiuretic hormone (SIADH)."
+      },
+      {
+        "biomarker_id": "glucose",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "availability": "common",
+        "rationale": "High glucose causes an osmotic shift of water, potentially causing 'pseudohyponatraemia'."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_sodium_hyperglycaemic_impact",
+        "resulting_state": "at_risk",
+        "description": "Escalate if hyponatraemia occurs with severe hyperglycaemia, indicating high osmotic risk.",
+        "conditions": [
+          {
+            "metric_id": "glucose",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "numeric_value",
+            "numeric_value": 20
+          }
+        ],
+        "source_refs": ["source_spasovski_2014"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_spasovski_2014",
+          "paper_title": "Clinical practice guideline on diagnosis and treatment of hyponatraemia",
+          "journal": "European Journal of Endocrinology",
+          "year": 2014
+        }
+      ],
+      "physiological_claim": "Sodium should be corrected for glucose; levels > 20 mmol/L (~360 mg/dL) require evaluation for hyperosmolar risk.",
+      "threshold_notes": "Escalation uses the 20 mmol/L numeric threshold for glucose to identify hyperosmolar states."
+    },
+    "narrative": {
+      "mechanism": "Hyponatraemia is typically a result of excess water retention or, less commonly, sodium loss.",
+      "biological_pathway": "Arginine vasopressin (AVP) regulation and renal free water clearance.",
+      "interpretation": "Requires assessment of volume status (euvolaemic, hypervolaemic, or hypovolaemic) to determine cause.",
+      "implications": "Potential for cerebral oedema and neurological impairment if the drop is acute or severe.",
+      "supporting_marker_roles": "Urea and Glucose are used to differentiate between SIADH, pseudohyponatraemia, and volume depletion."
+    }
+  },
+  {
+    "spec_id": "inv_tc_hdl_ratio_high",
+    "signal_id": "signal_lipid_ratio_risk",
+    "research_domain": "lipids",
+    "primary_marker": {
+      "biomarker_id": "tc_hdl_ratio",
+      "rationale": "The Total Cholesterol to HDL ratio is a classic predictor of cardiovascular disease, reflecting the balance of lipid delivery and removal.",
+      "signal_system": "lipid_transport"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "non_hdl_cholesterol",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "Non-HDL cholesterol provides the absolute concentration of all atherogenic particles."
+      },
+      {
+        "biomarker_id": "apob",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "ApoB confirms the high particle count underlying a poor lipid ratio."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_lipid_ratio_high_burden",
+        "resulting_state": "at_risk",
+        "description": "Escalate if the ratio is high and non-HDL cholesterol is also significantly elevated.",
+        "conditions": [
+          {
+            "metric_id": "non_hdl_cholesterol",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_qrish3_2017"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_qrish3_2017",
+          "paper_title": "Development and validation of QRESEARCH cardiovascular risk prediction algorithms (QRISK3)",
+          "journal": "BMJ",
+          "year": 2017
+        }
+      ],
+      "physiological_claim": "The TC:HDL ratio is an integral component of validated cardiovascular risk scores like QRISK3.",
+      "threshold_notes": "Escalation uses the lab-range boundary for non-HDL to identify high-burden atherogenic states."
+    },
+    "narrative": {
+      "mechanism": "A high ratio indicates that the amount of pro-atherogenic cholesterol significantly outweighs the protective fraction.",
+      "biological_pathway": "Systemic lipid transport and reverse cholesterol transport efficiency.",
+      "interpretation": "Indicates a profile prone to plaque deposition and arterial endothelial damage.",
+      "implications": "Increased 10-year risk of myocardial infarction and stroke.",
+      "supporting_marker_roles": "Non-HDL and ApoB provide the absolute metrics of the atherogenic particles reflected in the ratio."
+    }
+  },
+  {
+    "spec_id": "inv_testosterone_low",
+    "signal_id": "signal_hypogonadism_total",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "testosterone",
+      "rationale": "Total testosterone is the primary male sex hormone. Low levels (hypogonadism) affect mood, libido, and metabolic health.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "lh",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "High LH confirms that the low testosterone is due to primary testicular failure."
+      },
+      {
+        "biomarker_id": "shbg",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "High SHBG further reduces the free testosterone fraction, exacerbating the deficiency."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_testosterone_primary_failure",
+        "resulting_state": "at_risk",
+        "description": "Escalate if total testosterone is low and LH is high (primary hypogonadism).",
+        "conditions": [
+          {
+            "metric_id": "lh",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_bhasin_2018"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_bhasin_2018",
+          "paper_title": "Testosterone Therapy in Men With Hypogonadism: An Endocrine Society Clinical Practice Guideline",
+          "journal": "Journal of Clinical Endocrinology & Metabolism",
+          "year": 2018
+        }
+      ],
+      "physiological_claim": "Clinical hypogonadism is defined by low testosterone in the presence of consistent clinical symptoms.",
+      "threshold_notes": "Escalation uses the lab boundary for LH to identify a primary gonadal failure pattern."
+    },
+    "narrative": {
+      "mechanism": "Production in Leydig cells falls, leading to a loss of negative feedback to the pituitary.",
+      "biological_pathway": "Hypothalamic-Pituitary-Gonadal (HPG) axis feedback signaling.",
+      "interpretation": "Low total testosterone requires confirmation with a second sample and LH context to localize the pathology.",
+      "implications": "Reduced bone density, loss of muscle mass, decreased libido, and metabolic dysfunction.",
+      "supporting_marker_roles": "LH is critical to differentiate between primary (testicular) and secondary (pituitary) failure."
+    }
+  },
+  {
+    "spec_id": "inv_testosterone_free_testosterone_ratio_high",
+    "signal_id": "signal_testosterone_binding_ratio",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "testosterone_free_testosterone_ratio",
+      "rationale": "This ratio indicates how much of the total testosterone is potentially sequestered by binding proteins like SHBG.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "shbg",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "A high ratio is typically driven by elevated SHBG, which binds testosterone with high affinity."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_testosterone_high_shbg_binding",
+        "resulting_state": "at_risk",
+        "description": "Escalate if the ratio is high and SHBG is also above the reference range.",
+        "conditions": [
+          {
+            "metric_id": "shbg",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_rosner_2007"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_rosner_2007",
+          "paper_title": "Position statement: Utility, limitations, and accessories in the measurement of testosterone",
+          "journal": "Journal of Clinical Endocrinology & Metabolism",
+          "year": 2007
+        }
+      ],
+      "physiological_claim": "The ratio of total to free testosterone is directly influenced by the concentration of circulating transport proteins.",
+      "threshold_notes": "Escalation uses the lab boundary for SHBG to identify transport-protein-driven sequestration."
+    },
+    "narrative": {
+      "mechanism": "High binding protein levels (SHBG) shift the equilibrium, leaving a smaller percentage of testosterone in the bioactive free form.",
+      "biological_pathway": "Steroid hormone-protein binding equilibrium dynamics.",
+      "interpretation": "A high ratio suggests that even a 'normal' total testosterone might hide a functional free deficiency.",
+      "implications": "Symptoms of androgen deficiency despite total testosterone appearing within reference ranges.",
+      "supporting_marker_roles": "SHBG identifies the physiological cause for the observed high ratio of bound to free hormone."
+    }
+  }
+]

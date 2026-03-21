@@ -1,0 +1,745 @@
+[
+  {
+    "spec_id": "inv_mch_low",
+    "signal_id": "signal_hypochromic_erythropoiesis",
+    "research_domain": "cbc",
+    "primary_marker": {
+      "biomarker_id": "mch",
+      "rationale": "Mean Corpuscular Hemoglobin (MCH) measures the average amount of hemoglobin in a red blood cell. Low levels indicate hypochromic cells, typical of iron deficiency.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "ferritin",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Low ferritin confirms that hypochromic cells are due to exhausted iron stores."
+      },
+      {
+        "biomarker_id": "mcv",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "Low MCV alongside low MCH defines the microcytic hypochromic pattern."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_mch_iron_deficiency",
+        "resulting_state": "at_risk",
+        "description": "Escalate if low MCH is accompanied by low ferritin, confirming iron deficiency anemia potential.",
+        "conditions": [
+          {
+            "metric_id": "ferritin",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": ["source_pfeffer_2021"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_pfeffer_2021",
+          "paper_title": "Common Hematologic Problems in Primary Care",
+          "journal": "American Family Physician",
+          "year": 2021
+        }
+      ],
+      "physiological_claim": "MCH is highly sensitive to reduced hemoglobin synthesis due to iron restricted erythropoiesis.",
+      "threshold_notes": "Triggered by lab-range breach; escalation requires low ferritin storage verification."
+    },
+    "narrative": {
+      "mechanism": "Decreased hemoglobin synthesis leads to smaller, paler red blood cells with lower individual hemoglobin content.",
+      "biological_pathway": "Heme biosynthesis and iron-regulated erythropoiesis in bone marrow.",
+      "interpretation": "Low MCH is an early indicator of developing iron deficiency anemia or thalassemia.",
+      "implications": "Reduced oxygen-carrying capacity per cell may lead to clinical symptoms of fatigue and dyspnea.",
+      "supporting_marker_roles": "Ferritin and MCV are used to distinguish iron deficiency from other microcytic pathologies like thalassemia."
+    }
+  },
+  {
+    "spec_id": "inv_mchc_low",
+    "signal_id": "signal_reduced_hemoglobin_concentration",
+    "research_domain": "cbc",
+    "primary_marker": {
+      "biomarker_id": "mchc",
+      "rationale": "Mean Corpuscular Hemoglobin Concentration (MCHC) measures the concentration of hemoglobin in a given volume of red blood cells.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "iron",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Low serum iron suggests impaired hemoglobinization of erythrocytes."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_mchc_hypochromic_anemia",
+        "resulting_state": "at_risk",
+        "description": "Escalate if low MCHC is paired with low serum iron, indicating clinically significant hypochromia.",
+        "conditions": [
+          {
+            "metric_id": "iron",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": ["source_kaushansky_2021"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_kaushansky_2021",
+          "paper_title": "Williams Hematology, 10th Edition",
+          "journal": "McGraw Hill",
+          "year": 2021
+        }
+      ],
+      "physiological_claim": "MCHC reflects the concentration of hemoglobin and is the last index to drop in iron deficiency.",
+      "threshold_notes": "Triggered by lab-range breach; escalation uses lab-boundary logic for serum iron."
+    },
+    "narrative": {
+      "mechanism": "MCHC decreases only when hemoglobin synthesis is severely limited relative to the total red cell volume.",
+      "biological_pathway": "Erythrocyte maturation and hemoglobin loading in the reticulocyte phase.",
+      "interpretation": "Low MCHC is highly specific for chronic iron deficiency or severe sideroblastic anemias.",
+      "implications": "Suggests a profound state of iron depletion or impaired iron utilization for heme synthesis.",
+      "supporting_marker_roles": "Serum iron provides the metabolic context to confirm the primary cause of reduced hemoglobin density."
+    }
+  },
+  {
+    "spec_id": "inv_monocyte_pct_high",
+    "signal_id": "signal_relative_monocytosis",
+    "research_domain": "cbc",
+    "primary_marker": {
+      "biomarker_id": "monocyte_pct",
+      "rationale": "Percentage of monocytes in the white blood cell differential. Elevation indicates a relative increase in the monocytic lineage.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "monocytes_abs",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "Absolute count determines if the percentage rise reflects a true expansion of circulating monocytes."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_monocyte_abs_verification",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high monocyte percentage is verified by an absolute monocyte count above the lab max.",
+        "conditions": [
+          {
+            "metric_id": "monocytes_abs",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_hoffman_2022"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_hoffman_2022",
+          "paper_title": "Hematology: Basic Principles and Practice",
+          "journal": "Elsevier",
+          "year": 2022
+        }
+      ],
+      "physiological_claim": "Relative monocytosis is common during recovery from acute infections or in neutropenic states.",
+      "threshold_notes": "Triggered by lab-range breach; absolute count verification is necessary for risk escalation."
+    },
+    "narrative": {
+      "mechanism": "The immune system shifts cell proportions toward monocytes in response to chronic inflammation or viral recovery.",
+      "biological_pathway": "Myelomonocytic lineage differentiation in the bone marrow.",
+      "interpretation": "A relative increase suggests the body is recruiting macrophages to clear debris or resolve inflammation.",
+      "implications": "May indicate recovery from acute infection or an underlying chronic inflammatory process.",
+      "supporting_marker_roles": "Absolute monocyte counts are required to distinguish between true monocytosis and relative shifts."
+    }
+  },
+  {
+    "spec_id": "inv_monocytes_abs_high",
+    "signal_id": "signal_absolute_monocytosis",
+    "research_domain": "cbc",
+    "primary_marker": {
+      "biomarker_id": "monocytes_abs",
+      "rationale": "Absolute monocyte count. Persistent elevation is a clinical sign of chronic inflammation, infection, or malignancy.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "white_blood_cells",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "General leukocytosis suggests a systemic bone marrow response or inflammatory state."
+      },
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "High hsCRP supports the presence of active systemic inflammation as a cause for monocytosis."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_monocyte_inflammatory_risk",
+        "resulting_state": "at_risk",
+        "description": "Escalate if absolute monocytosis is accompanied by high systemic inflammatory markers.",
+        "conditions": [
+          {
+            "metric_id": "crp",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_valent_2021"]
+      },
+      {
+        "rule_id": "or_monocyte_count_threshold",
+        "resulting_state": "at_risk",
+        "description": "Escalate if absolute monocyte count exceeds 1.0 x 10^9/L, a clinical threshold for specialist review.",
+        "conditions": [
+          {
+            "metric_id": "monocytes_abs",
+            "operator": ">=",
+            "condition_type": "all_of",
+            "comparator_type": "numeric_value",
+            "numeric_value": 1.0
+          }
+        ],
+        "source_refs": ["source_valent_2021"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_valent_2021",
+          "paper_title": "Diagnosis and treatment of monocytosis and monocyte-related disorders",
+          "journal": "Expert Review of Hematology",
+          "year": 2021
+        }
+      ],
+      "physiological_claim": "Persistent absolute monocytosis (>1.0 x 10^9/L) requires exclusion of chronic myelomonocytic leukemia.",
+      "threshold_notes": "Escalation uses the 1.0 x 10^9/L numeric threshold for chronic monocytic neoplasm screening."
+    },
+    "narrative": {
+      "mechanism": "Monocytes are recruited from the marrow in response to cytokines like M-CSF during chronic inflammation or neoplasia.",
+      "biological_pathway": "Inflammatory cytokine signaling and myeloid hyperplasia.",
+      "interpretation": "High absolute monocyte counts suggest chronic infection (e.g., TB), autoimmune disease, or myeloid neoplasm.",
+      "implications": "Requires clinical workup to rule out chronic myelomonocytic leukemia or underlying occult infection.",
+      "supporting_marker_roles": "White blood cell counts and hsCRP help define the reactive versus potentially clonal nature of monocytosis."
+    }
+  },
+  {
+    "spec_id": "inv_mpv_high",
+    "signal_id": "signal_increased_platelet_turnover",
+    "research_domain": "cbc",
+    "primary_marker": {
+      "biomarker_id": "mpv",
+      "rationale": "Mean Platelet Volume (MPV) measures the average size of platelets. High MPV indicates younger, larger platelets.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "platelets",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Low platelets with high MPV suggests peripheral destruction with active bone marrow compensation."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_mpv_consumptive_risk",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high MPV is paired with low platelet count, suggesting a consumptive or destructive process.",
+        "conditions": [
+          {
+            "metric_id": "platelets",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": ["source_pogorzelska_2020"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_pogorzelska_2020",
+          "paper_title": "Mean platelet volume (MPV): new perspectives for an old marker",
+          "journal": "Cerebrovascular Diseases",
+          "year": 2020
+        }
+      ],
+      "physiological_claim": "Larger platelets are more enzymatically active and indicate increased thrombopoietin-driven turnover.",
+      "threshold_notes": "Triggered by lab-range breach; escalation relies on concurrent thrombocytopenia logic."
+    },
+    "narrative": {
+      "mechanism": "Increased demand for platelets causes the bone marrow to release immature megakaryocyte fragments which are larger.",
+      "biological_pathway": "Thrombopoiesis and megakaryocyte fragmentation regulation.",
+      "interpretation": "High MPV suggests compensated platelet destruction or an active inflammatory state with platelet activation.",
+      "implications": "May indicate increased risk of thrombosis due to the higher prothrombotic potential of large platelets.",
+      "supporting_marker_roles": "The platelet count is critical to differentiate between reactive production and consumptive destruction."
+    }
+  },
+  {
+    "spec_id": "inv_neutrophil_pct_high",
+    "signal_id": "signal_relative_neutrophilia",
+    "research_domain": "cbc",
+    "primary_marker": {
+      "biomarker_id": "neutrophil_pct",
+      "rationale": "Percentage of neutrophils in the differential. High levels indicate a relative shift toward acute inflammatory cells.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "neutrophils_abs",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "Absolute count determines if the percentage rise reflects a true increase in neutrophil numbers."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_neutrophil_abs_verification",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high neutrophil percentage is verified by an absolute neutrophil count above the lab max.",
+        "conditions": [
+          {
+            "metric_id": "neutrophils_abs",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_hoffman_2022"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_hoffman_2022",
+          "paper_title": "Hematology: Basic Principles and Practice",
+          "journal": "Elsevier",
+          "year": 2022
+        }
+      ],
+      "physiological_claim": "The neutrophil percentage often rises as a result of corticosteroid release or acute stress response.",
+      "threshold_notes": "Triggered by lab-range breach; absolute count verification is necessary for clinical escalation."
+    },
+    "narrative": {
+      "mechanism": "Marginalized neutrophils are released into the central circulation in response to acute stress or bacterial stimuli.",
+      "biological_pathway": "Acute phase immune response and leukocyte demargination.",
+      "interpretation": "A relative increase suggests an early or localized response to bacterial infection or physical stress.",
+      "implications": "May indicate an impending or current acute infection requiring further investigation.",
+      "supporting_marker_roles": "Absolute neutrophil counts are required to confirm true neutrophilia versus relative lymphocyte depletion."
+    }
+  },
+  {
+    "spec_id": "inv_neutrophils_abs_high",
+    "signal_id": "signal_absolute_neutrophilia",
+    "research_domain": "cbc",
+    "primary_marker": {
+      "biomarker_id": "neutrophils_abs",
+      "rationale": "Absolute neutrophil count. High levels are a hallmark of acute bacterial infection or systemic inflammation.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "white_blood_cells",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "Leukocytosis with neutrophilia strongly suggests an active marrow response to infection."
+      },
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "High hsCRP confirms that neutrophilia is part of a systemic acute phase response."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_neutrophilia_inflammatory_surge",
+        "resulting_state": "at_risk",
+        "description": "Escalate if absolute neutrophilia is accompanied by high systemic inflammation (hsCRP).",
+        "conditions": [
+          {
+            "metric_id": "crp",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_nice_crp_2022"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_nice_crp_2022",
+          "paper_title": "C-reactive protein testing in primary care",
+          "journal": "NICE Medtech innovation briefing",
+          "year": 2022
+        }
+      ],
+      "physiological_claim": "Neutrophils are the primary responders to bacterial pathogens and rise within hours of tissue injury.",
+      "threshold_notes": "Triggered by lab-range breach; escalation relies on concurrent inflammatory marker elevation."
+    },
+    "narrative": {
+      "mechanism": "Neutrophils are rapidly mobilized from the bone marrow storage pool by G-CSF during infection or injury.",
+      "biological_pathway": "Granulocyte mobilization and acute-phase protein regulation.",
+      "interpretation": "High absolute counts suggest acute bacterial infection, myocardial infarction, or severe physical stress.",
+      "implications": "Requires assessment for signs of acute infection or occult tissue necrosis/inflammation.",
+      "supporting_marker_roles": "Total white blood cell count and hsCRP help determine the severity and source of the inflammatory stimulus."
+    }
+  },
+  {
+    "spec_id": "inv_non_hdl_cholesterol_high",
+    "signal_id": "signal_atherogenic_lipid_burden",
+    "research_domain": "lipids",
+    "primary_marker": {
+      "biomarker_id": "non_hdl_cholesterol",
+      "rationale": "Non-HDL cholesterol (Total Cholesterol minus HDL) represents the total amount of cholesterol in all atherogenic particles.",
+      "signal_system": "lipid_transport"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "apob",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "ApoB measures the number of atherogenic particles, providing a definitive count of the non-HDL burden."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_non_hdl_very_high_threshold",
+        "resulting_state": "at_risk",
+        "description": "Escalate if non-HDL cholesterol exceeds 4.9 mmol/L, a threshold for very high cardiovascular risk.",
+        "conditions": [
+          {
+            "metric_id": "non_hdl_cholesterol",
+            "operator": ">=",
+            "condition_type": "all_of",
+            "comparator_type": "numeric_value",
+            "numeric_value": 4.9
+          }
+        ],
+        "source_refs": ["source_esc_lipids_2019"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_esc_lipids_2019",
+          "paper_title": "2019 ESC/EAS Guidelines for the management of dyslipidaemias",
+          "journal": "European Heart Journal",
+          "year": 2019
+        }
+      ],
+      "physiological_claim": "Non-HDL is a better predictor of cardiovascular risk than LDL alone, especially in patients with high triglycerides.",
+      "threshold_notes": "Escalation uses the 4.9 mmol/L numeric threshold for very high risk as per ESC guidelines."
+    },
+    "narrative": {
+      "mechanism": "Non-HDL includes LDL, VLDL, IDL, and Lp(a); all contain ApoB and contribute to subendothelial plaque formation.",
+      "biological_pathway": "Exogenous and endogenous lipid transport and atherogenic lipoprotein retention.",
+      "interpretation": "High non-HDL suggests a significant cumulative risk of atherosclerotic disease progression.",
+      "implications": "Strong independent risk factor for coronary heart disease, even when LDL is seemingly controlled.",
+      "supporting_marker_roles": "ApoB provides a direct count of the particles that carry the measured non-HDL cholesterol."
+    }
+  },
+  {
+    "spec_id": "inv_oestradiol_low",
+    "signal_id": "signal_estrogen_deficiency",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "oestradiol",
+      "rationale": "Oestradiol (E2) is the primary estrogen. Low levels can indicate ovarian failure or menopause.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "fsh",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "High FSH indicates the pituitary is attempting to stimulate failing ovaries, confirming primary estrogen deficiency."
+      },
+      {
+        "biomarker_id": "lh",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "availability": "common",
+        "rationale": "LH typically rises alongside FSH in states of primary ovarian insufficiency."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_ovarian_failure_confirm",
+        "resulting_state": "at_risk",
+        "description": "Escalate if low oestradiol is paired with high FSH, suggesting clinical menopause or ovarian failure.",
+        "conditions": [
+          {
+            "metric_id": "fsh",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": ["source_nice_menopause_2015"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_nice_menopause_2015",
+          "paper_title": "Menopause: diagnosis and management",
+          "journal": "NICE Guideline NG23",
+          "year": 2015
+        }
+      ],
+      "physiological_claim": "The combination of low oestradiol and elevated FSH is diagnostic for primary ovarian insufficiency or menopause.",
+      "threshold_notes": "Triggered by lab-range breach; escalation requires high FSH to confirm HPG axis disruption."
+    },
+    "narrative": {
+      "mechanism": "Loss of negative feedback from oestradiol and inhibin leads to increased pituitary secretion of FSH and LH.",
+      "biological_pathway": "Hypothalamic-Pituitary-Gonadal (HPG) axis feedback and follicular depletion.",
+      "interpretation": "Low oestradiol indicates diminished ovarian reserve, menopause, or hypothalamic-pituitary suppression.",
+      "implications": "May lead to symptoms such as hot flashes, night sweats, and long-term risk of osteoporosis.",
+      "supporting_marker_roles": "FSH and LH are critical to distinguish primary (ovarian) from secondary (central) estrogen deficiency."
+    }
+  },
+  {
+    "spec_id": "inv_pdw_high",
+    "signal_id": "signal_platelet_size_variability",
+    "research_domain": "cbc",
+    "primary_marker": {
+      "biomarker_id": "pdw",
+      "rationale": "Platelet Distribution Width (PDW) measures the variation in platelet size. High PDW indicates significant anisocytosis.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "platelets",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "availability": "common",
+        "rationale": "Low platelets with high PDW often reflects peripheral destruction and compensatory release of varied-size platelets."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_pdw_thrombocytic_stress",
+        "resulting_state": "at_risk",
+        "description": "Escalate if high PDW is associated with low total platelets, indicating consumptive stress.",
+        "conditions": [
+          {
+            "metric_id": "platelets",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": ["source_kaushansky_2021"]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_kaushansky_2021",
+          "paper_title": "Williams Hematology, 10th Edition",
+          "journal": "McGraw Hill",
+          "year": 2021
+        }
+      ],
+      "physiological_claim": "PDW is a measure of platelet heterogeneity and increases during active platelet production.",
+      "threshold_notes": "Triggered by lab-range breach; escalation uses lab-boundary logic for total platelet count."
+    },
+    "narrative": {
+      "mechanism": "Variability in platelet size increases when the marrow is under stress to produce new platelets quickly.",
+      "biological_pathway": "Megakaryocyte maturation and cytoplasmic fragmentation dynamics.",
+      "interpretation": "High PDW suggests a state of activated coagulation or compensatory response to peripheral platelet loss.",
+      "implications": "May indicate an underlying inflammatory state or risk of thrombotic complications.",
+      "supporting_marker_roles": "The platelet count helps evaluate if the size variability is a normal marrow response to low counts."
+    }
+  }
+]
