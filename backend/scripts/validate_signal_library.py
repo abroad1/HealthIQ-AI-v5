@@ -37,10 +37,16 @@ CATEGORY_ORDER = [
     "signal identity",
     "dependencies",
     "thresholds",
+    "override rules",
     "activation logic",
     "forbidden fields",
     "cycle detection",
 ]
+
+_OVERRIDE_COMPARATOR_LAB = "lab_range_boundary"
+_OVERRIDE_COMPARATOR_NUMERIC = "numeric_value"
+_OVERRIDE_BOUNDARY_CANONICAL = frozenset({"lower", "upper", "out_of_range", "below_min", "above_max"})
+_OVERRIDE_OPERATORS = frozenset({"<", "<=", ">", ">=", "=="})
 
 
 @dataclass
@@ -470,6 +476,124 @@ def validate_thresholds(schema: dict[str, Any], signals: list[dict[str, Any]], s
                     )
 
 
+def validate_override_rules(schema: dict[str, Any], signals: list[dict[str, Any]], state: ValidationState) -> None:
+    """
+    Governed validation for override_rules / override conditions (dual-mode contract).
+    Schema YAML documents field rules; this function enforces conditional required fields.
+    """
+    _ = schema  # reserved for future schema-driven rule expansion
+
+    for signal_idx, signal in enumerate(signals):
+        if not isinstance(signal, dict):
+            continue
+        override_rules = signal.get("override_rules")
+        if override_rules is None:
+            continue
+        signal_label = f"signals[{signal_idx}]"
+        if not isinstance(override_rules, list):
+            state.add_error("override rules", f"{signal_label}.override_rules must be a list")
+            continue
+
+        for rule_idx, rule in enumerate(override_rules):
+            rule_label = f"{signal_label}.override_rules[{rule_idx}]"
+            if not isinstance(rule, dict):
+                state.add_error("override rules", f"{rule_label} must be a map")
+                continue
+
+            for req in ("rule_id", "description", "resulting_state"):
+                if req not in rule:
+                    state.add_error("override rules", f"{rule_label}.{req} is required")
+            rid = rule.get("rule_id")
+            if isinstance(rid, str) and rid.strip() and re.fullmatch(r"^[a-z0-9_]+$", rid.strip()) is None:
+                state.add_error("override rules", f"{rule_label}.rule_id must match '^[a-z0-9_]+$'")
+            rs = str(rule.get("resulting_state", "")).strip()
+            if rs and rs not in STATE_RANK:
+                state.add_error(
+                    "override rules",
+                    f"{rule_label}.resulting_state must be one of {sorted(STATE_RANK.keys())}",
+                )
+
+            conditions = rule.get("conditions")
+            if not isinstance(conditions, list) or not conditions:
+                state.add_error("override rules", f"{rule_label}.conditions must be a non-empty list")
+                continue
+
+            for cond_idx, condition in enumerate(conditions):
+                cond_label = f"{rule_label}.conditions[{cond_idx}]"
+                if not isinstance(condition, dict):
+                    state.add_error("override rules", f"{cond_label} must be a map")
+                    continue
+
+                metric_id = condition.get("metric_id")
+                if not isinstance(metric_id, str) or not metric_id.strip():
+                    state.add_error("override rules", f"{cond_label}.metric_id must be a non-empty string")
+
+                ct = condition.get("condition_type")
+                if ct not in ("any_of", "all_of"):
+                    state.add_error(
+                        "override rules",
+                        f"{cond_label}.condition_type must be one of any_of, all_of",
+                    )
+
+                comp_raw = condition.get("comparator_type")
+                comp = str(comp_raw).strip() if comp_raw is not None else ""
+
+                if comp and comp not in {_OVERRIDE_COMPARATOR_LAB, _OVERRIDE_COMPARATOR_NUMERIC}:
+                    state.add_error(
+                        "override rules",
+                        f"{cond_label}.comparator_type '{comp}' is not allowed "
+                        f"(use '{_OVERRIDE_COMPARATOR_LAB}' or '{_OVERRIDE_COMPARATOR_NUMERIC}', or omit for legacy numeric)",
+                    )
+                    continue
+
+                is_lab = comp == _OVERRIDE_COMPARATOR_LAB
+
+                if is_lab:
+                    boundary = condition.get("boundary")
+                    if not isinstance(boundary, str) or not boundary.strip():
+                        state.add_error(
+                            "override rules",
+                            f"{cond_label}.boundary is required when comparator_type is {_OVERRIDE_COMPARATOR_LAB}",
+                        )
+                    elif str(boundary).strip() not in _OVERRIDE_BOUNDARY_CANONICAL:
+                        state.add_error(
+                            "override rules",
+                            f"{cond_label}.boundary '{boundary}' is not in allowed boundary set",
+                        )
+                    if "value" in condition:
+                        state.add_error(
+                            "override rules",
+                            f"{cond_label}.value must not be present for {_OVERRIDE_COMPARATOR_LAB} conditions",
+                        )
+                else:
+                    # Legacy (comparator absent) or explicit numeric_value: operator + value required
+                    op = condition.get("operator")
+                    if not isinstance(op, str) or op.strip() not in _OVERRIDE_OPERATORS:
+                        state.add_error(
+                            "override rules",
+                            f"{cond_label}.operator must be one of {sorted(_OVERRIDE_OPERATORS)} for numeric override conditions",
+                        )
+                    if "value" not in condition:
+                        state.add_error(
+                            "override rules",
+                            f"{cond_label}.value is required for numeric override conditions",
+                        )
+                    elif not check_type(
+                        condition.get("value"),
+                        "number",
+                        "override rules",
+                        f"{cond_label}.value",
+                        state,
+                    ):
+                        pass
+                    boundary_present = condition.get("boundary")
+                    if boundary_present is not None:
+                        state.add_error(
+                            "override rules",
+                            f"{cond_label}.boundary must not be present for numeric override conditions",
+                        )
+
+
 def _extract_override_metric_ids(signal: dict[str, Any]) -> set[str]:
     metric_ids: set[str] = set()
     override_rules = signal.get("override_rules")
@@ -859,6 +983,7 @@ def validate_signal_library(schema_path: Path, library_path: Path, output_dir: P
     signals = validate_signal_identity(schema_obj, library_obj, state)
     validate_dependencies(schema_obj, signals, state)
     validate_thresholds(schema_obj, signals, state)
+    validate_override_rules(schema_obj, signals, state)
     primary_metric_summary = validate_primary_metric_contract(signals, state)
     validate_activation_logic(schema_obj, signals, state)
     validate_forbidden_fields(schema_obj, signals, state)
