@@ -1,0 +1,89 @@
+library:
+  package_id: KBP-2500
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S45d Active B12 Investigation Signal Library
+  description: 'Regenerated from investigation-spec-collection-batch1-10.json. KB-S45d regenerated package: active B12 low
+    (inv_active_b12_low, batch-1).'
+signals:
+- signal_id: signal_active_b12_deficiency
+  name: Active B12 deficiency context
+  description: 'Active B12 (holotranscobalamin) reflects the biologically available fraction of vitamin B12. Low levels indicate
+    depletion before macrocytosis or overt symptoms.
+
+    '
+  system: hematologic
+  primary_metric: active_b12
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: homocysteine
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: B12 is a cofactor for homocysteine conversion; elevation suggests functional deficiency at the cellular level.
+  - biomarker_id: mcv
+    expected_direction: high
+    role: severity_marker
+    availability: common
+    rationale: Macrocytosis is a classic, though often late-stage, sign of B12 deficiency anemia requiring attention.
+  dependencies:
+    biomarkers:
+    - active_b12
+    - homocysteine
+    - mcv
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_active_b12_lab_range_activation_placeholder
+    metric_id: active_b12
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_b12_functional_deficit
+    description: Escalate if low active B12 is accompanied by homocysteine above the lab upper bound.
+    conditions:
+    - metric_id: homocysteine
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    resulting_state: at_risk
+    source_refs:
+    - source_nice_b12_2024
+  output:
+    signal_value: active_b12
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: active_b12
+    supporting_markers:
+    - homocysteine
+    - mcv
+  explanation:
+    mechanism: 'B12 is a required cofactor for DNA synthesis; holotranscobalamin reflects cobalamin available for tissue uptake.
+
+      '
+    biological_pathway: 'One-carbon metabolism links B12 status to homocysteine handling and erythroid precursor maturation.
+
+      '
+    interpretation: 'Low holotranscobalamin suggests inadequate B12 for cellular uptake relative to the laboratory reference
+      interval.
+
+      '
+    implications: 'Untreated deficiency can progress to megaloblastic change and neurologic injury; homocysteine elevation
+      supports functional deficit at the cellular level.
+
+      '
+    supporting_marker_roles: 'Homocysteine acts as a functional marker; MCV captures later-stage hematologic expression when
+      present.
+
+      '

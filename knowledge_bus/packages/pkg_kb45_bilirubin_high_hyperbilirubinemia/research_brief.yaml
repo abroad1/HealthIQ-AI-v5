@@ -1,0 +1,13 @@
+research_domain: hepatic
+sources:
+- source_id: source_acg_liver_2017
+  paper_title: 'ACG Clinical Guideline: Evaluation of Abnormal Liver Tests'
+  journal: Am J Gastroenterol
+  year: 2017
+biomarkers:
+- alp
+- alt
+- bilirubin
+physiological_claim: Bilirubin rises during acute liver injury, cholestasis, or inherited conjugation defects.
+evidence_strength: strong
+research_summary: Lab-range breach is the trigger and overrides use lab-range/presence conditions.

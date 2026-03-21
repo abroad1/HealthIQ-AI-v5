@@ -1,0 +1,80 @@
+library:
+  package_id: KBP-2507
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S45d Chloride Investigation Signal Library
+  description: 'Regenerated from investigation-spec-collection-batch1-10.json. KB-S45d regenerated package: chloride high
+    / hyperchloremia (inv_chloride_high, batch-1).'
+signals:
+- signal_id: signal_hyperchloremia
+  name: Hyperchloremia
+  description: 'Chloride is the principal extracellular anion; elevation often tracks sodium and water balance and acid-base
+    compensation.
+
+    '
+  system: renal
+  primary_metric: chloride
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: sodium
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Low sodium with high chloride can indicate a broader electrolyte and hydration disturbance.
+  dependencies:
+    biomarkers:
+    - chloride
+    - sodium
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_chloride_lab_range_activation_placeholder
+    metric_id: chloride
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_acidosis_pattern
+    description: Escalate if chloride is high while sodium is below the laboratory lower bound.
+    conditions:
+    - metric_id: sodium
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    resulting_state: at_risk
+    source_refs:
+    - source_berend_2014
+  output:
+    signal_value: chloride
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: chloride
+    supporting_markers:
+    - sodium
+  explanation:
+    mechanism: 'Chloride shifts with sodium to preserve electroneutrality and participates in renal acid-base regulation.
+
+      '
+    biological_pathway: 'Tubular handling of chloride couples to bicarbonate handling during metabolic compensation.
+
+      '
+    interpretation: 'Isolated chloride elevation should be read with sodium and bicarbonate context to classify disturbance.
+
+      '
+    implications: 'Concurrent hyponatremia with hyperchloremia can indicate specific saline or renal water handling patterns.
+
+      '
+    supporting_marker_roles: 'Sodium anchors whether chloride changes reflect broader electrolyte disturbance versus isolated
+      analytic variation.
+
+      '

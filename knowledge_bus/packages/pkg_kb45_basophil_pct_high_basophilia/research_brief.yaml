@@ -1,0 +1,12 @@
+research_domain: cbc
+sources:
+- source_id: source_valent_2017
+  paper_title: Diagnosis and treatment of basophilia and isolated basophilia
+  journal: Expert Review of Hematology
+  year: 2017
+biomarkers:
+- basophil_pct
+- basophils_abs
+physiological_claim: True basophilia is rare and often associated with myeloproliferative neoplasms or inflammation.
+evidence_strength: moderate
+research_summary: Lab-range breach is the trigger and overrides use lab-range/presence conditions.

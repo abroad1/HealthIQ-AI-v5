@@ -1,0 +1,12 @@
+research_domain: lipids
+sources:
+- source_id: source_sniderman_2019
+  paper_title: Apolipoprotein B Particles and Cardiovascular Disease
+  journal: JAMA
+  year: 2019
+biomarkers:
+- apob
+- ldl_cholesterol
+physiological_claim: Each atherogenic particle contains exactly one molecule of ApoB, making it a proxy for particle count.
+evidence_strength: strong
+research_summary: Lab-range breach is the trigger and overrides use lab-range/presence conditions.

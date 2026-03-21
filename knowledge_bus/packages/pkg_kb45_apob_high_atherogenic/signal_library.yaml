@@ -1,0 +1,84 @@
+library:
+  package_id: KBP-2502
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S45d ApoB Investigation Signal Library
+  description: 'Regenerated from investigation-spec-collection-batch1-10.json. KB-S45d regenerated package: ApoB high atherogenic
+    (inv_apob_high, batch-1).'
+signals:
+- signal_id: signal_apob_atherogenic
+  name: ApoB atherogenic burden
+  description: 'Apolipoprotein B counts atherogenic lipoprotein particles including LDL, VLDL, and IDL; higher levels indicate
+    greater particle number and retained risk.
+
+    '
+  system: lipid_transport
+  primary_metric: apob
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: ldl_cholesterol
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: LDL is the primary contributor to total ApoB particle count in the majority of patients.
+  dependencies:
+    biomarkers:
+    - apob
+    - ldl_cholesterol
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_apob_lab_range_activation_placeholder
+    metric_id: apob
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_apob_ldl_concordance
+    description: Escalate if ApoB and LDL are both above their laboratory upper bounds.
+    conditions:
+    - metric_id: ldl_cholesterol
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    resulting_state: at_risk
+    source_refs:
+    - source_sniderman_2019
+  output:
+    signal_value: apob
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: apob
+    supporting_markers:
+    - ldl_cholesterol
+  explanation:
+    mechanism: 'Each atherogenic lipoprotein particle carries one ApoB molecule, so ApoB tracks total particle number more
+      directly than cholesterol content alone.
+
+      '
+    biological_pathway: 'Hepatic and intestinal lipoprotein production and clearance set circulating ApoB particle load over
+      time.
+
+      '
+    interpretation: 'Elevated ApoB indicates excess pro-atherogenic particle concentration relative to the assay reference
+      interval.
+
+      '
+    implications: 'Concordant LDL elevation strengthens interpretation of higher total atherogenic burden rather than discordant
+      remodeling alone.
+
+      '
+    supporting_marker_roles: 'LDL cholesterol helps describe how much of the ApoB signal is carried in classic LDL-range particles
+      versus broader particle pools.
+
+      '
