@@ -1,9 +1,9 @@
 # AUTOMATION BUS SOP v1.3
 ## Intelligence Governance Edition
 
-**Status:** LOCKED  
-**Authority:** Control-Plane + Intelligence Governance  
-**Supersedes:** v1.2  
+**Status:** LOCKED
+**Authority:** Control-Plane + Intelligence Governance
+**Supersedes:** v1.2
 
 ---
 
@@ -264,15 +264,36 @@ Schema:
 
 Execution is blocked unless `status == HARDENED`.
 
+### Standard Hardening Invocation
+
+Every hardening request must use this exact phrase:
+
+> **harden work_id: [ID] — verify source content and produce evidence checklist**
+
+The phrase `verify source content and produce evidence checklist` is mandatory. It is not optional flavour — it is the trigger for Stage 2C compliance. If Claude receives a hardening request without this phrase, Claude must append it before proceeding and note it was missing.
+
 ---
 
 ## Stage 2A — Authority Verification During Hardening
 
-Claude must also verify during hardening:
+Claude must verify during hardening:
 
-* Authoritative file paths declared in Stage 1A exist in the repository
+* Authoritative file paths declared in Stage 1A **exist in the repository** — confirmed by reading the file, not by inference
 * No duplicate authority sources are detectable within the prompt scope
 * The prompt’s stated authority assumptions match the actual repo state
+
+**File existence is not sufficient. Claude must read the content of every source file the sprint will operate on.**
+
+For ingestion sprints, Claude must read:
+1. The actual source batch or spec file — extracting representative entries
+2. The schema contract file — identifying every accepted field type and comparator
+3. The runtime evaluator — confirming it handles every field type present in the source
+
+Every field type in the source must be cross-referenced against both the schema and the runtime. Schema and runtime can diverge. Both must be checked independently.
+
+If any field in the source cannot be cleanly mapped to a current schema field and a current runtime handler without introducing an assumption, Claude must set `status: BLOCKED` and report the exact mismatch.
+
+**Claiming prior task results without an artifact is prohibited.** If a preflight or compatibility check is referenced as "already confirmed," Claude must verify whether that task produced a written artifact. If no artifact exists, Claude must independently re-verify the specific claims by reading the source files. Claude must state explicitly in the hardening JSON whether findings are artifact-backed or independently re-verified.
 
 This is a repo-reality check, distinct from GPT’s Stage 1A architectural check.
 
@@ -287,6 +308,66 @@ For BEHAVIOUR or MIXED work, Claude must ensure:
 * No hidden scope creep exists
 * STOP conditions protect behavioural correctness
 * Determinism risks are explicitly surfaced
+
+---
+
+## Stage 2C — Mandatory Hardening Evidence Table
+
+**This stage is mandatory for every sprint. It is not optional and cannot be skipped.**
+
+Claude must produce a hardening evidence checklist as part of every hardening output. This checklist is separate from the hardening JSON and must appear in Claude’s response to the user so that the human or GPT can verify it without opening the JSON file.
+
+### Required checklist format
+
+```
+## Hardening Evidence Checklist — [work_id]
+
+### Front Matter
+| Field         | Value                        | Status |
+|---------------|------------------------------|--------|
+| work_id       | ...                          | PASS   |
+| branch        | ...                          | PASS   |
+| risk_level    | ...                          | PASS   |
+| execution_model | ...                        | PASS   |
+| change_type   | ...                          | PASS   |
+
+### Authority Paths — File Existence + Content Read
+| File | Exists | Content Read | Key Finding | Status |
+|------|--------|--------------|-------------|--------|
+| [path] | YES | YES — [what was read and what line/field confirmed the claim] | ... | PASS/BLOCKED |
+
+### Source File Cross-Reference (ingestion sprints)
+| Source Field | Schema Accepts | Runtime Handles | Status |
+|--------------|---------------|-----------------|--------|
+| [field_name] | YES — [schema file line N] | YES — [evaluator file line N] | PASS/BLOCKED |
+
+### Prior Task Findings
+| Claimed Finding | Artifact Exists | Independently Re-verified | Status |
+|-----------------|-----------------|--------------------------|--------|
+| [claim] | YES/NO | YES/NO — [evidence] | PASS/BLOCKED |
+
+### Forbidden Files
+| File | Required by Sprint? | Status |
+|------|---------------------|--------|
+| backend/core/analytics/ | NO | PASS |
+| [other forbidden paths] | NO | PASS |
+
+### Overall Hardening Verdict
+[ ] HARDENED — all checks pass, citations present, no blockers found
+[ ] BLOCKED — [exact blocker stated]
+```
+
+### Enforcement rule
+
+**If any row in the evidence checklist contains no file path and line number citation, the hardening is incomplete.**
+
+The human or GPT reviewer must reject the hardening and request a redo if:
+* Any authority path claim has no file+line citation
+* Any source field cross-reference row is missing
+* The "Content Read" column shows NO for any source file
+* The "Prior Task Findings" section is absent when a prior task is referenced in the prompt
+
+A hardening JSON that says `"CONFIRMED"` with no evidence is not a completed hardening. It is a placeholder.
 
 ---
 
@@ -626,6 +707,10 @@ The following rules cannot be violated:
 * No modification of control-plane scripts without HIGH classification
 * No introduction of fallback parsers
 * No creation of duplicate SSOT authority sources
+* No hardening without a Stage 2C evidence checklist — file existence alone is not hardening
+* No "CONFIRMED" claim in a hardening JSON without a cited file path and line number
+* No inheritance of prior task findings without an artifact or independent re-verification
+* No source file treated as compatible without its content having been read and cross-referenced against schema and runtime
 
 ---
 
@@ -655,7 +740,7 @@ The system guarantees integrity.
 ---
 
 **Version:** v1.3
-**Edition:** Intelligence Governance Edition
+**Edition:** Intelligence Governance Edition — Hardening Evidence Standard
 **Status:** LOCKED
 
 ```
