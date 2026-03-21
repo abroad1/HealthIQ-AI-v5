@@ -1,0 +1,659 @@
+library:
+  package_id: KBP-2432
+  schema_version: 1.0.0
+  package_version: 1.0.0
+  library_name: KB-S45 Batch 1 Investigation Signal Library
+  description: >
+    Translated from investigation-spec-collection-batch1-10.json. Ten biomarker
+    investigation signals with lab-range activation and lab_range_boundary override
+    semantics (KB-S45a). Primary activation is reference-range driven; thresholds
+    entries are validator placeholders only.
+
+signals:
+- signal_id: signal_active_b12_deficiency
+  name: Active B12 deficiency context
+  description: >
+    Active B12 (holotranscobalamin) reflects the biologically available fraction of
+    vitamin B12. Low levels indicate depletion before macrocytosis or overt symptoms.
+  system: hematologic
+  primary_metric: active_b12
+  supporting_metrics: &sup_active_b12
+  - homocysteine
+  - mcv
+  dependencies:
+    biomarkers:
+    - active_b12
+    - homocysteine
+    - mcv
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_active_b12_lab_range_activation_placeholder
+    metric_id: active_b12
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_b12_functional_deficit
+    description: Escalate if low active B12 is accompanied by homocysteine above the lab upper bound.
+    conditions:
+    - metric_id: homocysteine
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    resulting_state: at_risk
+  output:
+    signal_value: active_b12
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: active_b12
+    supporting_markers: *sup_active_b12
+  explanation:
+    mechanism: >
+      B12 is a required cofactor for DNA synthesis; holotranscobalamin reflects cobalamin
+      available for tissue uptake.
+    biological_pathway: >
+      One-carbon metabolism links B12 status to homocysteine handling and erythroid
+      precursor maturation.
+    interpretation: >
+      Low holotranscobalamin suggests inadequate B12 for cellular uptake relative to
+      the laboratory reference interval.
+    implications: >
+      Untreated deficiency can progress to megaloblastic change and neurologic injury;
+      homocysteine elevation supports functional deficit at the cellular level.
+    supporting_marker_roles: >
+      Homocysteine acts as a functional marker; MCV captures later-stage hematologic
+      expression when present.
+
+- signal_id: signal_apoa1_cardio_risk
+  name: ApoA1 low cardiovascular context
+  description: >
+    Apolipoprotein A1 is the principal protein of HDL particles; lower levels reduce
+    reverse cholesterol transport capacity and associate with higher vascular risk.
+  system: lipid_transport
+  primary_metric: apoa1
+  supporting_metrics: &sup_apoa1
+  - apob_apoa1_ratio
+  dependencies:
+    biomarkers:
+    - apoa1
+    - apob
+    derived_metrics:
+    - apob_apoa1_ratio
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_apoa1_lab_range_activation_placeholder
+    metric_id: apoa1
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_apoa1_high_ratio
+    description: Escalate if low ApoA1 is coupled with ApoB-to-ApoA1 ratio above the lab upper bound.
+    conditions:
+    - metric_id: apob_apoa1_ratio
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    resulting_state: at_risk
+  output:
+    signal_value: apoa1
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: apoa1
+    supporting_markers: *sup_apoa1
+  explanation:
+    mechanism: >
+      ApoA1 stabilizes HDL structure and participates in cholesterol efflux pathways
+      from peripheral tissues.
+    biological_pathway: >
+      Reverse cholesterol transport moves cholesterol toward the liver for clearance
+      and redistribution.
+    interpretation: >
+      Low ApoA1 indicates reduced HDL particle protein mass relative to the expected
+      laboratory range for the assay context.
+    implications: >
+      Atherogenic balance worsens when ApoB-bearing particle burden is high relative
+      to ApoA1-bearing HDL capacity.
+    supporting_marker_roles: >
+      The ApoB-to-ApoA1 ratio contextualizes whether low ApoA1 reflects an adverse
+      pro-atherogenic particle balance.
+
+- signal_id: signal_apob_atherogenic
+  name: ApoB atherogenic burden
+  description: >
+    Apolipoprotein B counts atherogenic lipoprotein particles including LDL, VLDL, and
+    IDL; higher levels indicate greater particle number and retained risk.
+  system: lipid_transport
+  primary_metric: apob
+  supporting_metrics: &sup_apob
+  - ldl_cholesterol
+  dependencies:
+    biomarkers:
+    - apob
+    - ldl_cholesterol
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_apob_lab_range_activation_placeholder
+    metric_id: apob
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_apob_ldl_concordance
+    description: Escalate if ApoB and LDL are both above their laboratory upper bounds.
+    conditions:
+    - metric_id: ldl_cholesterol
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    resulting_state: at_risk
+  output:
+    signal_value: apob
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: apob
+    supporting_markers: *sup_apob
+  explanation:
+    mechanism: >
+      Each atherogenic lipoprotein particle carries one ApoB molecule, so ApoB tracks
+      total particle number more directly than cholesterol content alone.
+    biological_pathway: >
+      Hepatic and intestinal lipoprotein production and clearance set circulating ApoB
+      particle load over time.
+    interpretation: >
+      Elevated ApoB indicates excess pro-atherogenic particle concentration relative
+      to the assay reference interval.
+    implications: >
+      Concordant LDL elevation strengthens interpretation of higher total atherogenic
+      burden rather than discordant remodeling alone.
+    supporting_marker_roles: >
+      LDL cholesterol helps describe how much of the ApoB signal is carried in classic
+      LDL-range particles versus broader particle pools.
+
+- signal_id: signal_lipid_imbalance
+  name: ApoB-to-ApoA1 ratio imbalance
+  description: >
+    The ApoB-to-ApoA1 ratio contrasts pro-atherogenic particle load with HDL-related
+    anti-atherogenic capacity in circulation.
+  system: lipid_transport
+  primary_metric: apob_apoa1_ratio
+  supporting_metrics: &sup_ratio
+  - crp
+  dependencies:
+    biomarkers:
+    - crp
+    - apob
+    - apoa1
+    derived_metrics:
+    - apob_apoa1_ratio
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_apob_apoa1_ratio_lab_range_activation_placeholder
+    metric_id: apob_apoa1_ratio
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_ratio_plus_inflammation
+    description: Escalate if the ratio is high alongside CRP above the laboratory upper bound.
+    conditions:
+    - metric_id: crp
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    resulting_state: at_risk
+  output:
+    signal_value: apob_apoa1_ratio
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: apob_apoa1_ratio
+    supporting_markers: *sup_ratio
+  explanation:
+    mechanism: >
+      The ratio integrates particle number risk (ApoB) against reverse transport
+      capacity (ApoA1-linked HDL).
+    biological_pathway: >
+      Lipoprotein metabolism couples hepatic production, peripheral exchange, and
+      inflammatory states that modify particle composition.
+    interpretation: >
+      A higher ratio suggests atherogenic dominance relative to protective transport
+      capacity for the measured assay context.
+    implications: >
+      Systemic inflammation can amplify vascular risk when combined with an adverse
+      lipoprotein balance.
+    supporting_marker_roles: >
+      CRP marks inflammatory stress that can synergize with lipid imbalance to raise
+      overall risk concern.
+
+- signal_id: signal_basophilia_pct
+  name: Basophil percentage elevation
+  description: >
+    Basophil fraction in the leukocyte differential; elevation can reflect allergic
+    activation or marrow-related expansion depending on absolute counts.
+  system: hematologic
+  primary_metric: basophil_pct
+  supporting_metrics: &sup_basopct
+  - basophils_abs
+  dependencies:
+    biomarkers:
+    - basophil_pct
+    - basophils_abs
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_basophil_pct_lab_range_activation_placeholder
+    metric_id: basophil_pct
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_absolute_basophilia_confirm
+    description: Escalate if absolute basophil count is also above its laboratory upper bound.
+    conditions:
+    - metric_id: basophils_abs
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    resulting_state: at_risk
+  output:
+    signal_value: basophil_pct
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: basophil_pct
+    supporting_markers: *sup_basopct
+  explanation:
+    mechanism: >
+      Basophils release histamine and other mediators; differential shifts can be
+      relative or reflect true cellular expansion.
+    biological_pathway: >
+      Myeloid lineage output from marrow sets circulating basophil mass and fraction.
+    interpretation: >
+      A high basophil percentage requires absolute count context to distinguish
+      statistical effects from true basophilia.
+    implications: >
+      Sustained basophilia raises concern for marrow disorders and chronic allergic
+      or inflammatory states depending on context.
+    supporting_marker_roles: >
+      Absolute basophil count confirms whether the fraction change represents a real
+      increase in circulating basophils.
+
+- signal_id: signal_basophilia_abs
+  name: Absolute basophilia
+  description: >
+    Absolute basophil count is a specific marker of basophil mass; elevation is uncommon
+    and warrants structured marrow and inflammatory evaluation.
+  system: hematologic
+  primary_metric: basophils_abs
+  supporting_metrics: &sup_basophabs
+  - platelets
+  - white_blood_cells
+  dependencies:
+    biomarkers:
+    - basophils_abs
+    - platelets
+    - white_blood_cells
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_basophils_abs_lab_range_activation_placeholder
+    metric_id: basophils_abs
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_myeloproliferative_marker
+    description: Escalate if platelets or total white cells are above their laboratory upper bounds.
+    conditions:
+    - metric_id: platelets
+      condition_type: any_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    - metric_id: white_blood_cells
+      condition_type: any_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    resulting_state: at_risk
+  output:
+    signal_value: basophils_abs
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: basophils_abs
+    supporting_markers: *sup_basophabs
+  explanation:
+    mechanism: >
+      Basophilia can accompany clonal myeloid expansion where multiple lineages rise
+      together.
+    biological_pathway: >
+      Bone marrow output links basophil counts to platelet and leukocyte production in
+      proliferative disorders.
+    interpretation: >
+      True absolute basophilia is a focused clue toward marrow pathology when sustained.
+    implications: >
+      Concurrent thrombocytosis or leukocytosis increases concern for multi-lineage
+      myeloproliferation.
+    supporting_marker_roles: >
+      Platelets and total white blood cells indicate whether basophilia sits within an
+      isolated pattern or broader marrow stress.
+
+- signal_id: signal_hyperbilirubinemia
+  name: Hyperbilirubinemia
+  description: >
+    Total bilirubin elevation reflects hepatocellular dysfunction, cholestasis, or
+    pre-hepatic hemolysis depending on the overall liver panel pattern.
+  system: hepatic
+  primary_metric: bilirubin
+  supporting_metrics: &sup_bili
+  - alt
+  - alp
+  dependencies:
+    biomarkers:
+    - bilirubin
+    - alt
+    - alp
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_bilirubin_lab_range_activation_placeholder
+    metric_id: bilirubin
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_liver_injury_pattern
+    description: Escalate if ALT or ALP is above the laboratory upper bound alongside high bilirubin.
+    conditions:
+    - metric_id: alt
+      condition_type: any_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    - metric_id: alp
+      condition_type: any_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    resulting_state: at_risk
+  output:
+    signal_value: bilirubin
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: bilirubin
+    supporting_markers: *sup_bili
+  explanation:
+    mechanism: >
+      Bilirubin accumulates when hepatic uptake, conjugation, or biliary excretion is
+      impaired, or when hemolysis increases production.
+    biological_pathway: >
+      Hepatocyte injury and cholestasis change transaminase and alkaline phosphatase
+      patterns alongside pigment levels.
+    interpretation: >
+      Elevated bilirubin with discordant enzyme patterns points toward different
+      anatomic levels of liver and biliary disease.
+    implications: >
+      Combined hepatocellular and cholestatic enzyme abnormalities raise urgency for
+      structured hepatobiliary evaluation.
+    supporting_marker_roles: >
+      ALT emphasizes cytosolic injury while ALP highlights bile flow limitation when
+      elevated relative to reference.
+
+- signal_id: signal_hyperchloremia
+  name: Hyperchloremia
+  description: >
+    Chloride is the principal extracellular anion; elevation often tracks sodium and
+    water balance and acid-base compensation.
+  system: renal
+  primary_metric: chloride
+  supporting_metrics: &sup_chloride
+  - sodium
+  dependencies:
+    biomarkers:
+    - chloride
+    - sodium
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_chloride_lab_range_activation_placeholder
+    metric_id: chloride
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_acidosis_pattern
+    description: Escalate if chloride is high while sodium is below the laboratory lower bound.
+    conditions:
+    - metric_id: sodium
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    resulting_state: at_risk
+  output:
+    signal_value: chloride
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: chloride
+    supporting_markers: *sup_chloride
+  explanation:
+    mechanism: >
+      Chloride shifts with sodium to preserve electroneutrality and participates in
+      renal acid-base regulation.
+    biological_pathway: >
+      Tubular handling of chloride couples to bicarbonate handling during metabolic
+      compensation.
+    interpretation: >
+      Isolated chloride elevation should be read with sodium and bicarbonate context
+      to classify disturbance.
+    implications: >
+      Concurrent hyponatremia with hyperchloremia can indicate specific saline or
+      renal water handling patterns.
+    supporting_marker_roles: >
+      Sodium anchors whether chloride changes reflect broader electrolyte disturbance
+      versus isolated analytic variation.
+
+- signal_id: signal_hypercalcemia
+  name: Hypercalcemia (corrected calcium)
+  description: >
+    Albumin-corrected calcium highlights physiologic calcium exposure; elevation
+    warrants evaluation for parathyroid, vitamin D, and malignancy-related mechanisms.
+  system: metabolic
+  primary_metric: corrected_calcium
+  supporting_metrics: &sup_calcium
+  - vitamin_d
+  - creatinine
+  dependencies:
+    biomarkers:
+    - corrected_calcium
+    - vitamin_d
+    - creatinine
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_corrected_calcium_lab_range_activation_placeholder
+    metric_id: corrected_calcium
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_hyperparathyroid_confirm
+    description: Escalate if corrected calcium is high alongside vitamin D above the laboratory upper bound.
+    conditions:
+    - metric_id: vitamin_d
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    resulting_state: at_risk
+  output:
+    signal_value: corrected_calcium
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: corrected_calcium
+    supporting_markers: *sup_calcium
+  explanation:
+    mechanism: >
+      Parathyroid hormone and vitamin D tightly regulate calcium flux between bone,
+      kidney, and intestine.
+    biological_pathway: >
+      Vitamin D availability shifts intestinal calcium absorption and interacts with
+      PTH-driven bone resorption.
+    interpretation: >
+      Elevated corrected calcium with high vitamin D suggests vitamin-D-mediated
+      hypercalcemia as one plausible mechanism among several.
+    implications: >
+      Renal function contextualizes nephrocalcinuria risk when calcium is sustained
+      above the reference interval.
+    supporting_marker_roles: >
+      Creatinine adds renal excretion context for calcium and vitamin D handling.
+
+- signal_id: signal_hypercortisolism
+  name: Morning cortisol elevation context
+  description: >
+    Morning cortisol reflects HPA axis tone; high values can indicate sustained
+    glucocorticoid excess or acute stress and require confirmatory testing in clinic.
+  system: hormonal
+  primary_metric: cortisol
+  supporting_metrics: &sup_cortisol
+  - potassium
+  - hba1c
+  dependencies:
+    biomarkers:
+    - cortisol
+    - potassium
+    - hba1c
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_cortisol_lab_range_activation_placeholder
+    metric_id: cortisol
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_electrolyte_impact
+    description: Escalate if cortisol is high while potassium is below the laboratory lower bound.
+    conditions:
+    - metric_id: potassium
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    resulting_state: at_risk
+  output:
+    signal_value: cortisol
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: cortisol
+    supporting_markers: *sup_cortisol
+  explanation:
+    mechanism: >
+      Cortisol influences gluconeogenesis, vascular tone, and mineralocorticoid-like
+      effects at high sustained exposure.
+    biological_pathway: >
+      The hypothalamic-pituitary-adrenal axis sets diurnal cortisol rhythm and stress
+      responsiveness.
+    interpretation: >
+      Isolated morning elevations are nonspecific; metabolic corroboration increases
+      clinical concern for sustained excess.
+    implications: >
+      Hypokalemia with hypercortisolism can reflect mineralocorticoid activity or
+      renal losses in severe states.
+    supporting_marker_roles: >
+      Hemoglobin A1c tracks longer-term glycemic stress that can accompany chronic
+      glucocorticoid excess.
