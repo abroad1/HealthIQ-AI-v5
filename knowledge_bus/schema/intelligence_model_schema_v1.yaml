@@ -4,7 +4,7 @@
 
 schema_name: "HealthIQ Intelligence Model (Target Schema v1)"
 schema_version: "1.0.0"
-status: "DRAFT"
+status: "LOCKED"
 
 description: >
   Governed reasoning contract for Knowledge Bus packages opting into target-schema v1.
