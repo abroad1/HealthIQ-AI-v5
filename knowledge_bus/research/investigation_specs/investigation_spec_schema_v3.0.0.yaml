@@ -1,0 +1,341 @@
+# HealthIQ Investigation Spec Schema v3.0.0
+# Successor to investigation_spec_schema_v2.yaml — do not mutate v2 in place.
+# Authority: docs/architecture/HealthIQ_Intelligence_Model_Design_Second_Pass.md
+# Alignment: knowledge_bus/schema/intelligence_model_schema_v1.yaml (reasoning primitives)
+#
+# Backward compatibility:
+# - v2.x investigation YAML/JSON artifacts without investigation_spec_contract_version remain governed by v2.
+# - New LLM research output MUST set investigation_spec_contract_version: "3.0.0" and satisfy this schema.
+# Enforced by: backend/scripts/validate_investigation_spec.py
+
+schema_name: "HealthIQ Investigation Spec Schema"
+schema_version: "3.0.0"
+status: "DRAFT"
+predecessor_schema_file: "investigation_spec_schema_v2.yaml"
+
+description: >
+  Upstream research contract aligned to the locked intelligence-model direction: structured
+  multi-hypothesis reasoning, explicit differential and contradiction capture, and
+  supporting-marker relationship_kind (not role alone). Narrative remains for prose-only homes
+  where appropriate; ranked hypotheses and confirmatory tests are first-class.
+
+root_required_fields:
+  - investigation_spec_contract_version
+  - spec_id
+  - signal_id
+  - research_domain
+  - primary_marker
+  - trigger_direction
+  - activation
+  - states
+  - supporting_markers
+  - hypotheses
+  - hypothesis_ranking
+  - confirmatory_tests
+  - override_rules
+  - evidence
+  - narrative
+
+investigation_spec_contract_version:
+  type: string
+  allowed: ["3.0.0"]
+
+field_rules:
+
+  spec_id:
+    type: string
+    pattern: "^inv_[a-z0-9_]+$"
+
+  signal_id:
+    type: string
+    pattern: "^signal_[a-z0-9_]+$"
+
+  research_domain:
+    type: string
+    min_length: 1
+
+  primary_marker:
+    type: object
+    required_fields:
+      - biomarker_id
+      - rationale
+    field_rules:
+      biomarker_id:
+        type: string
+        pattern: "^[a-z0-9_]+$"
+      rationale:
+        type: string
+        min_length: 10
+      signal_system:
+        type: string
+        required: false
+        allowed:
+          - metabolic
+          - lipid_transport
+          - hepatic
+          - inflammatory
+          - renal
+          - vascular
+          - hematologic
+          - hormonal
+          - mitochondrial
+          - other
+
+  trigger_direction:
+    type: string
+    allowed: [high, low, both]
+
+  activation:
+    type: object
+    required_fields:
+      - activation_logic
+      - activation_config
+    field_rules:
+      activation_logic:
+        type: string
+        allowed: [lab_range_exceeded, deterministic_threshold]
+      activation_config:
+        type: object
+        required_fields:
+          - enable_upper_bound
+          - upper_bound_state
+          - enable_lower_bound
+          - lower_bound_state
+        field_rules:
+          enable_upper_bound: { type: boolean }
+          upper_bound_state: { type: string, allowed: [suboptimal] }
+          enable_lower_bound: { type: boolean }
+          lower_bound_state: { type: string, allowed: [suboptimal] }
+
+  states:
+    type: object
+    required_fields:
+      - baseline_state
+      - escalation_state
+    field_rules:
+      baseline_state: { type: string, allowed: [suboptimal] }
+      escalation_state: { type: string, allowed: [at_risk] }
+
+  supporting_markers:
+    type: list
+    min_items: 1
+    max_items: 15
+    item_type: object
+    required_fields:
+      - biomarker_id
+      - expected_direction
+      - role
+      - relationship_kind
+      - availability
+      - rationale
+    field_rules:
+      biomarker_id:
+        type: string
+        pattern: "^[a-z0-9_]+$"
+      expected_direction:
+        type: string
+        allowed: [high, low, either, any]
+      role:
+        type: string
+        allowed:
+          - corroborator
+          - mechanism_marker
+          - contextual_marker
+          - severity_marker
+          - differential_marker
+          - exclusion_marker
+      relationship_kind:
+        type: string
+        allowed: [mechanism, corroboration, severity, differential, exclusion]
+      availability:
+        type: string
+        allowed: [common, specialist, optional]
+      rationale:
+        type: string
+        min_length: 10
+
+  relationship_kind_role_alignment:
+    mechanism: [mechanism_marker, contextual_marker]
+    corroboration: [corroborator]
+    severity: [severity_marker]
+    differential: [differential_marker]
+    exclusion: [exclusion_marker]
+
+  hypotheses:
+    type: list
+    min_items: 2
+    max_items: 12
+    item_type: object
+    required_fields:
+      - hypothesis_id
+      - rank
+      - physiological_claim
+      - evidence_strength
+      - caveats
+      - missing_data
+      - supporting_marker_refs
+      - contradiction_markers
+    field_rules:
+      hypothesis_id:
+        type: string
+        pattern: "^hyp_[a-z0-9_]+$"
+      rank:
+        type: integer
+        min: 1
+      physiological_claim:
+        type: string
+        min_length: 10
+      evidence_strength:
+        type: string
+        allowed: [exploratory, moderate, strong, consensus]
+      caveats:
+        type: list
+        min_items: 1
+        item_type: string
+        item_min_length: 3
+      missing_data:
+        type: object
+        required_fields: [policy]
+        field_rules:
+          policy:
+            type: string
+            min_length: 3
+      supporting_marker_refs:
+        type: list
+        min_items: 1
+        item_pattern: "^[a-z0-9_]+$"
+      contradiction_markers:
+        type: list
+        min_items: 0
+        max_items: 8
+        item_type: object
+        required_fields:
+          - contradiction_id
+          - marker_reference
+          - contradiction_rationale
+          - contradiction_strength
+        field_rules:
+          contradiction_id:
+            type: string
+            pattern: "^ctr_[a-z0-9_]+$"
+          marker_reference:
+            type: string
+            min_length: 1
+          contradiction_rationale:
+            type: string
+            min_length: 10
+          contradiction_strength:
+            type: string
+            allowed: [weak, moderate, strong]
+
+  hypothesis_ranking:
+    type: object
+    required_fields: [ordered_hypothesis_ids]
+    field_rules:
+      ordered_hypothesis_ids:
+        type: list
+        min_items: 2
+        item_pattern: "^hyp_[a-z0-9_]+$"
+
+  confirmatory_tests:
+    type: list
+    min_items: 1
+    max_items: 20
+    item_type: object
+    required_fields: [test_id, rationale]
+    field_rules:
+      test_id:
+        type: string
+        pattern: "^ct_[a-z0-9_]+$"
+      rationale:
+        type: string
+        min_length: 10
+
+  override_rules:
+    type: list
+    min_items: 1
+    max_items: 10
+    item_type: object
+    required_fields:
+      - rule_id
+      - resulting_state
+      - description
+      - conditions
+      - source_refs
+    field_rules:
+      rule_id:
+        type: string
+        pattern: "^or_[a-z0-9_]+$"
+      resulting_state:
+        type: string
+        allowed: [at_risk]
+      description:
+        type: string
+        min_length: 10
+      conditions:
+        type: list
+        min_items: 1
+        max_items: 8
+      source_refs:
+        type: list
+        min_items: 1
+        item_pattern: "^source_[a-z0-9_]+$"
+
+  evidence:
+    type: object
+    required_fields:
+      - evidence_strength
+      - sources
+      - physiological_claim
+      - threshold_notes
+    field_rules:
+      evidence_strength:
+        type: string
+        allowed: [exploratory, moderate, strong, consensus]
+      sources:
+        type: list
+        min_items: 1
+      physiological_claim:
+        type: string
+        min_length: 10
+      threshold_notes:
+        type: string
+
+  narrative:
+    type: object
+    required_fields:
+      - mechanism
+      - biological_pathway
+      - interpretation
+      - implications
+      - supporting_marker_roles
+    field_rules:
+      mechanism: { type: string, min_length: 20 }
+      biological_pathway: { type: string, min_length: 20 }
+      interpretation: { type: string, min_length: 20 }
+      implications: { type: string, min_length: 20 }
+      supporting_marker_roles:
+        type: string
+        min_length: 20
+      supporting_marker_roles_map:
+        type: object
+        required: false
+
+  confounders:
+    type: list
+    required: false
+    max_items: 12
+
+  test_vectors:
+    type: object
+    required: false
+
+  future_authoring_hooks:
+    type: object
+    required: false
+    description: >
+      Optional nullable bucket-2 style placeholders for forward ingestion (medication effects,
+      pathway membership, etc.). Keys may be null; do not use for runtime package output until governed.
+
+validator_output_contract:
+  audit_file: investigation_spec_audit.md
