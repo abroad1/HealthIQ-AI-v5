@@ -60,16 +60,16 @@ All Knowledge Bus artefacts are stored under:
 
 ```text
 knowledge_bus/
-````
-
-### Directory Structure
-
-```text
-knowledge_bus/
   schema/
     signal_library_schema.yaml
     research_brief_schema.yaml
     package_manifest_schema.yaml
+    intelligence_model_schema_v1.yaml
+
+  research/
+    investigation_specs/
+      investigation_spec_schema_v2.yaml
+      investigation_spec_schema_v3.0.0.yaml
 
   current/
     active_package.json
@@ -96,6 +96,19 @@ Each package contains:
 * `research_brief.yaml`
 * `signal_library.yaml`
 * `package_manifest.yaml`
+
+### Optional — intelligence model (opt-in contract)
+
+When a package opts into the **locked** target intelligence model, the manifest may reference an additional artifact:
+
+* `intelligence_model.yaml` (or another filename) via `package_manifest.yaml` → `intelligence_model: <relative path>`
+
+Governance rules:
+
+* Opt-in is **explicit**: if `intelligence_model` is **absent** from the manifest, the package is validated under the **legacy** three-file contract only (`intelligence_validation: SKIP` in aggregated status).
+* If `intelligence_model` is **present**, the path MUST resolve to a file that satisfies `knowledge_bus/schema/intelligence_model_schema_v1.yaml` (status **LOCKED**). The orchestrator runs `backend/scripts/validate_intelligence_model.py` as part of `validate_knowledge_package.py`.
+* Aggregated `backend/artifacts/knowledge_status.json` includes `intelligence_validation`: `PASS`, `SKIP`, or `FAIL`. Promotion requires `PASS` on all non-skipped validators; `SKIP` is **not** a failure.
+* This does **not** replace `signal_library.yaml`; it layers a governed **reasoning** contract for packages that choose it.
 
 ### Optional
 
@@ -343,6 +356,7 @@ The following fields may exist and are permitted:
 * `created_at`
 * `source_document`
 * `translation_mode`
+* `intelligence_model` — optional relative path to `intelligence_model.yaml` (target schema v1). When set, triggers intelligence-model validation during package validation (see §4).
 
 These are allowed and do not affect compliance.
 
@@ -367,6 +381,19 @@ backend/scripts/validate_signal_library.py
 ```
 
 is treated as a supporting or legacy validator and is not the authoritative package-promotion mechanism.
+
+### Upstream investigation specs (research authoring)
+
+For YAML/JSON investigation signal specs under `knowledge_bus/research/investigation_specs/`:
+
+```text
+backend/scripts/validate_investigation_spec.py
+```
+
+* **v2 legacy**: specs **without** `investigation_spec_contract_version` (or with `2.0.0`) are checked against structural v2 rules.
+* **v3 (new output)**: specs with `investigation_spec_contract_version: "3.0.0"` MUST conform to `investigation_spec_schema_v3.0.0.yaml` (multi-hypothesis, `relationship_kind` on supporting markers, hypothesis-level contradictions, confirmatory tests). See `MIGRATION_NOTES.md` in that directory.
+
+This validator is **not** invoked automatically by `validate_knowledge_package.py`; run it when authoring or reviewing upstream investigation artifacts.
 
 ---
 
@@ -592,5 +619,3 @@ Together they ensure:
 **Version:** v1.3 (Operationally Aligned — Final)
 **Status:** Approved for Use with Explicit Constraints
 
-```
-```
