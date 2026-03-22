@@ -1,6 +1,6 @@
 """
-KB-S45c / KB-S45c1: signal_library 2.0.0 + research_brief fidelity contract enforcement;
-supporting-metric role/availability enum extensions (corroborator, optional).
+KB-S45c / KB-S45c1 / KB-S46a: signal_library 2.0.0 + research_brief fidelity contract enforcement;
+supporting-metric role/availability enum extensions (corroborator, optional, differential_marker).
 """
 
 from __future__ import annotations
@@ -342,4 +342,11 @@ def test_kb_s45c1_contextual_marker_and_specialist_still_accepted(tmp_path: Path
     brief_path = tmp_path / "research_brief.yaml"
     brief_path.write_text(_minimal_v2_brief(), encoding="utf-8")
     lib = _v2_library_with_supporting_role_and_availability("contextual_marker", "specialist")
+    assert _run_signal_validate(tmp_path, lib, research_brief_path=brief_path) == 0
+
+
+def test_kb_s46a_differential_marker_accepted(tmp_path: Path):
+    brief_path = tmp_path / "research_brief.yaml"
+    brief_path.write_text(_minimal_v2_brief(), encoding="utf-8")
+    lib = _v2_library_with_supporting_role_and_availability("differential_marker", "common")
     assert _run_signal_validate(tmp_path, lib, research_brief_path=brief_path) == 0

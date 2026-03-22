@@ -54,7 +54,13 @@ SIGNAL_CONTRACT_V2 = "2.0.0"
 _TRIGGER_DIRECTIONS = frozenset({"high", "low", "bidirectional", "context_dependent"})
 _SUPPORTING_EXPECTED_DIRECTIONS = frozenset({"high", "low", "any"})
 _SUPPORTING_ROLES = frozenset(
-    {"mechanism_marker", "severity_marker", "contextual_marker", "corroborator"}
+    {
+        "mechanism_marker",
+        "severity_marker",
+        "contextual_marker",
+        "corroborator",
+        "differential_marker",
+    }
 )
 _SUPPORTING_AVAILABILITY = frozenset({"common", "specialist", "optional"})
 
