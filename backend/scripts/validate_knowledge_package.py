@@ -30,6 +30,8 @@ BIOMARKER_REGISTRY_PATH = ROOT / "backend" / "ssot" / "biomarkers.yaml"
 MANIFEST_VALIDATOR = ROOT / "backend" / "scripts" / "validate_package_manifest.py"
 RESEARCH_VALIDATOR = ROOT / "backend" / "scripts" / "validate_research_brief.py"
 SIGNAL_VALIDATOR = ROOT / "backend" / "scripts" / "validate_signal_library.py"
+INTELLIGENCE_VALIDATOR = ROOT / "backend" / "scripts" / "validate_intelligence_model.py"
+INTELLIGENCE_SCHEMA_PATH = ROOT / "knowledge_bus" / "schema" / "intelligence_model_schema_v1.yaml"
 
 
 def _signal_library_contract_version(package_dir: Path) -> str:
@@ -78,16 +80,19 @@ def write_aggregated_status(
     manifest_status: str,
     research_status: str,
     signal_status: str,
+    intelligence_status: str,
 ) -> None:
     ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
     payload = {
         "manifest_validation": manifest_status,
         "research_validation": research_status,
         "signal_validation": signal_status,
+        "intelligence_validation": intelligence_status,
         "ready_for_implementation": (
             manifest_status == "PASS"
             and research_status == "PASS"
             and signal_status == "PASS"
+            and intelligence_status in ("PASS", "SKIP")
         ),
     }
     AGGREGATED_STATUS_PATH.write_text(
@@ -180,14 +185,39 @@ def main(argv: list[str] | None = None) -> int:
     signal_exit = run_validator(signal_cmd)
     signal_status = "PASS" if signal_exit == 0 else "FAIL"
 
-    write_aggregated_status(manifest_status, research_status, signal_status)
+    intelligence_status = "SKIP"
+    try:
+        manifest_payload = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError):
+        manifest_payload = {}
+    im_rel = manifest_payload.get("intelligence_model") if isinstance(manifest_payload, dict) else None
+    if isinstance(im_rel, str) and im_rel.strip():
+        im_path = (package_dir / im_rel.strip()).resolve()
+        intelligence_exit = run_validator(
+            [
+                sys.executable,
+                str(INTELLIGENCE_VALIDATOR),
+                "--model",
+                str(im_path),
+                "--schema",
+                str(INTELLIGENCE_SCHEMA_PATH),
+                "--audit-path",
+                str(ARTIFACTS_DIR / "intelligence_model_audit.md"),
+            ]
+        )
+        intelligence_status = "PASS" if intelligence_exit == 0 else "FAIL"
+    else:
+        intelligence_exit = 0
+
+    write_aggregated_status(manifest_status, research_status, signal_status, intelligence_status)
 
     print(f"manifest_validation: {manifest_status}")
     print(f"research_validation: {research_status}")
     print(f"signal_validation: {signal_status}")
+    print(f"intelligence_validation: {intelligence_status}")
     print(
         "ready_for_implementation: "
-        f"{manifest_status == 'PASS' and research_status == 'PASS' and signal_status == 'PASS'}"
+        f"{manifest_status == 'PASS' and research_status == 'PASS' and signal_status == 'PASS' and intelligence_status in ('PASS', 'SKIP')}"
     )
     print(f"manifest_audit_path: {MANIFEST_AUDIT_PATH}")
     print(f"research_audit_path: {RESEARCH_AUDIT_PATH}")
@@ -196,7 +226,10 @@ def main(argv: list[str] | None = None) -> int:
 
     return (
         0
-        if manifest_status == "PASS" and research_status == "PASS" and signal_status == "PASS"
+        if manifest_status == "PASS"
+        and research_status == "PASS"
+        and signal_status == "PASS"
+        and intelligence_status in ("PASS", "SKIP")
         else 1
     )
 
