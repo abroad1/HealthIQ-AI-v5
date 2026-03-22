@@ -1,0 +1,31 @@
+# Skeleton alias map — KB-S48a (expand in later sprints; do not guess unknowns)
+alias_map_schema_version: "1.0.0"
+registry_id: intervention_effects_registry_v1
+
+# Canonical IDs this map may target (integrity check in validator)
+allowed_target_class_ids:
+  - lipid_lowering_statin
+  - systemic_glucocorticoid
+  - thyroid_hormone_replacement
+  - raas_inhibitor
+  - thiazide_or_loop_diuretic
+  - biguanide_metformin
+  - ppi_long_term_high_dose
+  - sex_hormone_therapy
+
+# Normalized lowercase keys; no fuzzy matching in validator — exact lookup contract.
+aliases:
+  - alias_normalized: atorvastatin
+    intervention_class_id: lipid_lowering_statin
+  - alias_normalized: simvastatin
+    intervention_class_id: lipid_lowering_statin
+  - alias_normalized: prednisolone
+    intervention_class_id: systemic_glucocorticoid
+  - alias_normalized: levothyroxine
+    intervention_class_id: thyroid_hormone_replacement
+  - alias_normalized: ramipril
+    intervention_class_id: raas_inhibitor
+  - alias_normalized: metformin
+    intervention_class_id: biguanide_metformin
+  - alias_normalized: omeprazole
+    intervention_class_id: ppi_long_term_high_dose
