@@ -1,0 +1,73 @@
+# Test fixture — valid target intelligence model v1 (KB-S47a)
+schema_version: "1.0.0"
+package_id: pkg_fixture_target_schema_v1
+signals:
+  - signal_id: signal_hyperchloremia
+    trigger_direction: high
+    primary_biomarker: chloride
+    hypotheses:
+      - hypothesis_id: hyp_renal_acid_base
+        rank: 1
+        physiological_claim: >
+          Chloride shifts with sodium and bicarbonate during renal handling of acid-base and volume status.
+        evidence_strength: moderate
+        caveats:
+          - Requires concurrent electrolyte panel for interpretation.
+        missing_data:
+          policy: explicit_unknown_allowed
+        supporting_markers:
+          - biomarker_id: sodium
+            expected_direction: low
+            role: mechanism_marker
+            relationship_kind: mechanism
+            availability: common
+            rationale: Low sodium with high chloride can indicate a broader electrolyte disturbance.
+        contradiction_markers: []
+      - hypothesis_id: hyp_concentration_effect
+        rank: 2
+        physiological_claim: >
+          Plasma water deficit can raise electrolytes including chloride without a specific acid-base diagnosis.
+        evidence_strength: exploratory
+        caveats:
+          - May overlap with renal mechanisms in practice.
+        missing_data:
+          policy: explicit_unknown_allowed
+        supporting_markers:
+          - biomarker_id: sodium
+            expected_direction: high
+            role: differential_marker
+            relationship_kind: differential
+            availability: common
+            rationale: Sodium direction and magnitude help differentiate concentration effects from anion patterns.
+        contradiction_markers: []
+    hypothesis_ranking:
+      ordered_hypothesis_ids:
+        - hyp_renal_acid_base
+        - hyp_concentration_effect
+    provenance:
+      evidence_source_ids:
+        - source_berend_2014
+      rule_provenance_refs: []
+    longitudinal_minimum:
+      stable_identity_key: null
+      snapshot_timestamp: null
+      signal_state_snapshot: null
+    future_bucket2_homes:
+      supporting_marker_rationale_extended: null
+      mechanism_relationships: null
+      evidence_source_list: null
+      rule_level_provenance: null
+      threshold_notes: null
+      medication_effects: null
+      context_interpretation_rules: null
+      pathway_membership: null
+      phenotype_relationships: null
+      longitudinal_identity: null
+      trend_trajectory: null
+      delta_significance: null
+      intervention_tracking: null
+      phenotype_movement_over_time: null
+      rich_provenance_metadata: null
+    confirmatory_tests:
+      - test_id: repeat_electrolytes_bicarbonate
+        rationale: Repeat panel with bicarbonate clarifies acid-base classification.

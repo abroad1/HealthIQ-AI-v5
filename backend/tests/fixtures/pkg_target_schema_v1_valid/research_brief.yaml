@@ -1,0 +1,12 @@
+research_domain: renal
+sources:
+- source_id: source_berend_2014
+  paper_title: Physiological Approach to Assessment of Acid-Base Disturbances
+  journal: NEJM
+  year: 2014
+biomarkers:
+- chloride
+- sodium
+physiological_claim: Chloride levels are tightly regulated by the kidneys to maintain electrical neutrality.
+evidence_strength: moderate
+research_summary: Lab-range breach is the trigger and overrides use lab-range/presence conditions.

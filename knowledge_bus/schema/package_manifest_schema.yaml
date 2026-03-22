@@ -30,6 +30,12 @@ field_rules:
 
 optional_fields:
 
+  intelligence_model:
+    type: string
+    description: >
+      Optional relative path to intelligence_model.yaml (target schema v1).
+      When present, validate_intelligence_model.py is run by validate_knowledge_package.py.
+
   description:
     type: string
 
