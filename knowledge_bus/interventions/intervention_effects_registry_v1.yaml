@@ -1,0 +1,201 @@
+# HealthIQ Intervention-Effects Registry v1 (KB-S48a)
+# Class-level reference only. Phase-1: interpretive effects — no threshold/signal mutation.
+registry_schema_version: "1.0.0"
+registry_id: intervention_effects_registry_v1
+status: LOCKED
+
+intervention_classes:
+
+  - intervention_class_id: lipid_lowering_statin
+    class_display_name: Lipid-lowering statins (HMG-CoA reductase inhibitor class)
+    intervention_type: medication_class
+    interpretation_effects:
+      - effect_type: expected_biomarker_effect
+        biomarker_ids: [ldl_cholesterol, non_hdl_cholesterol, apob]
+        expected_direction: lower
+      - effect_type: monitoring_relevance
+        biomarker_ids: [alt, ast, creatine_kinase]
+        expected_direction: variable
+        monitoring_relevance: "Hepatic transaminases and CK may warrant monitoring; rises prompt clinical review per guidelines."
+      - effect_type: caveat_only
+        biomarker_ids: [hdl_cholesterol]
+        expected_direction: variable
+        monitoring_relevance: "HDL response is heterogeneous; not used as a sole success metric for statin therapy."
+    onset_lag: "lipid_lowering_often_apparent_within_weeks"
+    persistence: "effects_ongoing_while_therapy_continues"
+    cessation_effect:
+      reversible: true
+      description: "LDL-C, non-HDL-C, and apoB typically rise toward pretreatment baseline after discontinuation; timing varies by patient and dose."
+    evidence_strength: strong
+    physiological_rationale: >
+      Statins inhibit hepatic cholesterol synthesis, up-regulate LDL receptors, and reduce atherogenic particle burden (apoB-containing lipoproteins).
+    evidence_sources:
+      - citation_type: guideline
+        citation: "ACC/AHA and ESC/EAS class guidance on statin LDL lowering (class effect, not product-specific)."
+
+  - intervention_class_id: systemic_glucocorticoid
+    class_display_name: Systemic glucocorticoids (class-level)
+    intervention_type: medication_class
+    interpretation_effects:
+      - effect_type: expected_biomarker_effect
+        biomarker_ids: [glucose, hba1c]
+        expected_direction: raise
+      - effect_type: interpretation_confounder
+        biomarker_ids: [neutrophils, white_blood_cells]
+        expected_direction: raise
+      - effect_type: expected_biomarker_effect
+        biomarker_ids: [triglycerides]
+        expected_direction: raise
+    onset_lag: "metabolic_and_leukocyte_effects_may_be_days_to_weeks"
+    persistence: "while_exposure_continues"
+    cessation_effect:
+      reversible: true
+      description: "Glucocorticoid-associated hyperglycaemia and leukocytosis typically improve after dose reduction or cessation; recovery timeline varies."
+    evidence_strength: strong
+    physiological_rationale: >
+      Glucocorticoids promote gluconeogenesis, insulin resistance, and demargination of neutrophils, shifting glucose and CBC patterns.
+    evidence_sources:
+      - citation_type: review
+        citation: "Endocrine and haematology reviews on glucocorticoid metabolic and leukocyte effects (class-level)."
+
+  - intervention_class_id: thyroid_hormone_replacement
+    class_display_name: Thyroid hormone replacement (levothyroxine / class-level)
+    intervention_type: medication_class
+    interpretation_effects:
+      - effect_type: expected_biomarker_effect
+        biomarker_ids: [tsh, free_t4, free_t3]
+        expected_direction: mixed
+      - effect_type: interpretation_confounder
+        biomarker_ids: [ldl_cholesterol, triglycerides]
+        expected_direction: variable
+    onset_lag: "weeks_for_stable_tsh_on_replacement"
+    persistence: "ongoing_while_adequately_replaced"
+    cessation_effect:
+      reversible: true
+      description: "Biochemical hypothyroid pattern may recur after cessation; lipids may shift toward pretreatment tendency."
+    evidence_strength: strong
+    physiological_rationale: >
+      Exogenous thyroid hormone suppresses TSH and normalises free T4/T3 when dosed appropriately; lipids often improve in overt hypothyroidism.
+    evidence_sources:
+      - citation_type: guideline
+        citation: "ATA/European thyroid association guidance on levothyroxine monitoring (class-level concepts)."
+
+  - intervention_class_id: raas_inhibitor
+    class_display_name: RAAS inhibitors (ACE inhibitor / ARB class-level)
+    intervention_type: medication_class
+    interpretation_effects:
+      - effect_type: expected_biomarker_effect
+        biomarker_ids: [creatinine, potassium]
+        expected_direction: variable
+      - effect_type: monitoring_relevance
+        biomarker_ids: [egfr, sodium]
+        expected_direction: context_dependent
+        monitoring_relevance: "Creatinine and K+ monitored after initiation or dose change; hyperkalaemia risk context-dependent."
+    onset_lag: "renal_and_electrolyte_changes_days_to_weeks"
+    persistence: "while_therapy_continues"
+    cessation_effect:
+      reversible: true
+      description: "Creatinine and potassium often move toward baseline after discontinuation; ACEi/ARB-associated functional changes may reverse."
+    evidence_strength: strong
+    physiological_rationale: >
+      RAAS blockade reduces efferent arteriolar tone and can alter filtration and potassium handling; effects are class-level patterns, not brand-specific.
+    evidence_sources:
+      - citation_type: guideline
+        citation: "Kidney and cardiovascular guideline summaries on ACEi/ARB initiation monitoring (class-level)."
+
+  - intervention_class_id: thiazide_or_loop_diuretic
+    class_display_name: Thiazide or loop diuretics (class-level)
+    intervention_type: medication_class
+    interpretation_effects:
+      - effect_type: expected_biomarker_effect
+        biomarker_ids: [sodium, potassium, urate]
+        expected_direction: mixed
+      - effect_type: interpretation_confounder
+        biomarker_ids: [creatinine, urea]
+        expected_direction: variable
+    onset_lag: "electrolyte_shifts_hours_to_days"
+    persistence: "while_diuretic_exposure_continues"
+    cessation_effect:
+      reversible: true
+      description: "Electrolyte and urate patterns often normalise after cessation; renal indices may shift with volume status."
+    evidence_strength: strong
+    physiological_rationale: >
+      Diuretics alter volume status and renal electrolyte handling; class-level effects include kaliuresis or hyperkalaemia risk depending on agent and context.
+    evidence_sources:
+      - citation_type: review
+        citation: "Nephrology references on thiazide and loop diuretic electrolyte and urate effects (class-level)."
+
+  - intervention_class_id: biguanide_metformin
+    class_display_name: Biguanide (metformin class-level)
+    intervention_type: medication_class
+    interpretation_effects:
+      - effect_type: expected_biomarker_effect
+        biomarker_ids: [glucose, hba1c]
+        expected_direction: lower
+      - effect_type: expected_biomarker_effect
+        biomarker_ids: [vitamin_b12, active_b12]
+        expected_direction: lower
+      - effect_type: caveat_only
+        biomarker_ids: [ldl_cholesterol]
+        expected_direction: variable
+        monitoring_relevance: "LDL changes are not the primary metformin success metric; interpret lipids in full context."
+    onset_lag: "glycaemic_effects_weeks"
+    persistence: "while_therapy_continues"
+    cessation_effect:
+      reversible: true
+      description: "Glycaemic markers may rise after cessation; B12-related indices may recover slowly if deficiency was present."
+    evidence_strength: strong
+    physiological_rationale: >
+      Metformin reduces hepatic glucose output and improves insulin sensitivity; long-term use associates with lower B12 absorption in some patients.
+    evidence_sources:
+      - citation_type: guideline
+        citation: "Diabetes society guidance on metformin and B12 monitoring (class-level)."
+
+  - intervention_class_id: ppi_long_term_high_dose
+    class_display_name: Proton-pump inhibitor long-term / high-dose (class-level)
+    intervention_type: medication_class
+    interpretation_effects:
+      - effect_type: expected_biomarker_effect
+        biomarker_ids: [vitamin_b12, active_b12]
+        expected_direction: lower
+      - effect_type: expected_biomarker_effect
+        biomarker_ids: [magnesium]
+        expected_direction: lower
+      - effect_type: monitoring_relevance
+        biomarker_ids: [calcium]
+        expected_direction: context_dependent
+        monitoring_relevance: "Severe hypomagnesaemia can disturb PTH/calcium context; monitor when clinically indicated."
+    onset_lag: "micronutrient_effects_months_with_prolonged_use"
+    persistence: "while_exposure_continues"
+    cessation_effect:
+      reversible: true
+      description: "B12 and magnesium-related abnormalities may improve after cessation; repletion may still be required independently."
+    evidence_strength: moderate
+    physiological_rationale: >
+      Chronic acid suppression can impair micronutrient absorption; class-level association with B12 and magnesium lowering is recognised in long-term use.
+    evidence_sources:
+      - citation_type: review
+        citation: "Gastroenterology reviews on long-term PPI micronutrient effects (class-level)."
+
+  - intervention_class_id: sex_hormone_therapy
+    class_display_name: Sex hormone therapy (oestrogen/progestin/androgen pathways, class-level)
+    intervention_type: hormone_therapy_class
+    interpretation_effects:
+      - effect_type: interpretation_confounder
+        biomarker_ids: [shbg, triglycerides, hdl_cholesterol]
+        expected_direction: variable
+      - effect_type: caveat_only
+        biomarker_ids: [testosterone, oestradiol]
+        expected_direction: variable
+        monitoring_relevance: "Interpret sex steroids with timing, route, and formulation context; class-level patterns vary."
+    onset_lag: "weeks_to_months_for_steady_state"
+    persistence: "while_therapy_continues"
+    cessation_effect:
+      reversible: true
+      description: "Hormone-dependent lipid and binding-protein patterns may shift after cessation; timelines depend on agent and route."
+    evidence_strength: moderate
+    physiological_rationale: >
+      Exogenous sex hormones alter hepatic SHBG production and lipid transport; effects are pathway-level, not brand-specific.
+    evidence_sources:
+      - citation_type: review
+        citation: "Endocrine literature on hormonal therapy effects on SHBG and lipids (class-level concepts)."

@@ -1,0 +1,23 @@
+# Intervention class alias map — Schema v1
+# Maps normalized user-entered strings to canonical intervention_class_id values.
+# Unknown strings must NOT invent rich classes; resolve outside this map or omit.
+
+schema_name: "HealthIQ Intervention Class Alias Map"
+schema_version: "1.0.0"
+status: "LOCKED"
+
+root_required_fields:
+  - alias_map_schema_version
+  - registry_id
+  - allowed_target_class_ids
+  - aliases
+
+alias_map_schema_version:
+  allowed: ["1.0.0"]
+
+aliases_item_required_fields:
+  - alias_normalized
+  - intervention_class_id
+
+validator_output_contract:
+  audit_file: intervention_class_alias_map_audit.md
