@@ -1,0 +1,85 @@
+# HealthIQ Intervention-Effects Registry — Schema v1
+# KB-S48a — class-level canonical effects only; not a drug library.
+# Validator: backend/scripts/validate_intervention_effects_registry.py
+
+schema_name: "HealthIQ Intervention-Effects Registry"
+schema_version: "1.0.0"
+status: "LOCKED"
+
+description: >
+  Canonical reference data for how broad intervention *classes* (not brands) plausibly
+  affect interpretation of biomarkers. Phase-1 boundary: interpretive relevance only —
+  no threshold modification, signal firing overrides, or runtime mutation rules.
+
+root_required_fields:
+  - registry_schema_version
+  - registry_id
+  - intervention_classes
+
+registry_schema_version:
+  allowed: ["1.0.0"]
+
+registry_id:
+  pattern: "^[a-z0-9_]+$"
+
+intervention_type_allowed:
+  - medication_class
+  - hormone_therapy_class
+  - other_class
+
+effect_type_allowed:
+  - interpretation_confounder
+  - expected_biomarker_effect
+  - monitoring_relevance
+  - caveat_only
+
+expected_direction_allowed:
+  - lower
+  - raise
+  - variable
+  - mixed
+  - context_dependent
+
+evidence_strength_allowed:
+  - exploratory
+  - moderate
+  - strong
+  - consensus
+
+# Keys that must NEVER appear anywhere in a registry document (phase-1 enforcement).
+forbidden_key_fragments:
+  - threshold
+  - override_signal
+  - signal_state_mutation
+  - activation_override
+  - lab_range_modify
+  - firing_rule
+  - deterministic_threshold_change
+
+intervention_class_required_fields:
+  - intervention_class_id
+  - class_display_name
+  - intervention_type
+  - interpretation_effects
+  - onset_lag
+  - cessation_effect
+  - evidence_strength
+  - physiological_rationale
+  - evidence_sources
+
+cessation_effect_required_fields:
+  - description
+  - reversible
+
+evidence_source_item_required_fields:
+  - citation_type
+  - citation
+
+citation_type_allowed:
+  - guideline
+  - review
+  - primary_literature
+  - internal_summary
+
+validator_output_contract:
+  audit_file: intervention_effects_registry_audit.md
