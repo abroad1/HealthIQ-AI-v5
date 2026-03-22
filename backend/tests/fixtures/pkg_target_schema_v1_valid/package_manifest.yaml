@@ -1,0 +1,9 @@
+package_id: pkg_fixture_target_schema_v1
+package_version: 1.0.0
+description: Fixture package for KB-S47a target intelligence schema v1 validation.
+research_brief: research_brief.yaml
+signal_library: signal_library.yaml
+intelligence_model: intelligence_model.yaml
+author: HealthIQ Test Fixture
+created_at: "2026-03-22"
+behavioural_impact: NONE

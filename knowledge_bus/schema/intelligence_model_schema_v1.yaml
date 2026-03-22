@@ -1,0 +1,141 @@
+# HealthIQ Intelligence Model — Target Schema v1
+# Authority: docs/architecture/HealthIQ_Intelligence_Model_Design_Second_Pass.md
+# Enforced by: backend/scripts/validate_intelligence_model.py
+
+schema_name: "HealthIQ Intelligence Model (Target Schema v1)"
+schema_version: "1.0.0"
+status: "DRAFT"
+
+description: >
+  Governed reasoning contract for Knowledge Bus packages opting into target-schema v1.
+  This schema is broader than typical v1 population: bucket-2 primitives have explicit
+  nullable homes to allow additive growth without redesign.
+
+  Opt-in: package_manifest.yaml may reference intelligence_model: <filename>.
+  Legacy packages without this field are unchanged.
+
+root_required_fields:
+  - schema_version
+  - package_id
+  - signals
+
+root_required_schema_version: "1.0.0"
+
+forbidden_root_keys:
+  - rendering
+  - presentation
+  - display
+  - report_layout
+  - ui_hints
+
+signal_required_fields:
+  - signal_id
+  - trigger_direction
+  - primary_biomarker
+  - hypotheses
+  - provenance
+  - longitudinal_minimum
+  - future_bucket2_homes
+
+trigger_direction_allowed:
+  - high
+  - low
+  - bidirectional
+  - context_dependent
+
+hypothesis_required_fields:
+  - hypothesis_id
+  - rank
+  - physiological_claim
+  - evidence_strength
+  - caveats
+  - missing_data
+  - supporting_markers
+  - contradiction_markers
+
+evidence_strength_allowed:
+  - exploratory
+  - moderate
+  - strong
+  - consensus
+
+supporting_marker_required_fields:
+  - biomarker_id
+  - expected_direction
+  - role
+  - relationship_kind
+  - availability
+
+relationship_kind_allowed:
+  - mechanism
+  - corroboration
+  - severity
+  - differential
+
+role_allowed:
+  - mechanism_marker
+  - severity_marker
+  - contextual_marker
+  - corroborator
+  - differential_marker
+
+expected_direction_allowed:
+  - high
+  - low
+  - any
+
+availability_allowed:
+  - common
+  - specialist
+  - optional
+
+contradiction_marker_required_fields:
+  - contradiction_id
+  - marker_reference
+  - contradiction_rationale
+  - contradiction_strength
+
+contradiction_strength_allowed:
+  - weak
+  - moderate
+  - strong
+
+relationship_kind_role_alignment:
+  mechanism:
+    - mechanism_marker
+    - contextual_marker
+  corroboration:
+    - corroborator
+  severity:
+    - severity_marker
+  differential:
+    - differential_marker
+
+provenance_required_fields:
+  - evidence_source_ids
+  - rule_provenance_refs
+
+longitudinal_minimum_required_fields:
+  - stable_identity_key
+  - snapshot_timestamp
+  - signal_state_snapshot
+
+future_bucket2_homes_required_keys:
+  - supporting_marker_rationale_extended
+  - mechanism_relationships
+  - evidence_source_list
+  - rule_level_provenance
+  - threshold_notes
+  - medication_effects
+  - context_interpretation_rules
+  - pathway_membership
+  - phenotype_relationships
+  - longitudinal_identity
+  - trend_trajectory
+  - delta_significance
+  - intervention_tracking
+  - phenotype_movement_over_time
+  - rich_provenance_metadata
+
+validator_output_contract:
+  audit_file: intelligence_model_audit.md

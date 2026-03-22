@@ -149,6 +149,15 @@ def validate_manifest(
         if not resolved_path.exists() or not resolved_path.is_file():
             errors.append(f"Referenced file not found for {link_field}: {resolved_path}")
 
+    im = manifest.get("intelligence_model")
+    if im is not None:
+        if not isinstance(im, str) or not im.strip():
+            errors.append("intelligence_model must be a non-empty string when present")
+        else:
+            resolved_im = (manifest_path.parent / im.strip()).resolve()
+            if not resolved_im.exists() or not resolved_im.is_file():
+                errors.append(f"Referenced file not found for intelligence_model: {resolved_im}")
+
 
 def write_audit(audit_path: Path, status: str, errors: list[str]) -> None:
     audit_path.parent.mkdir(parents=True, exist_ok=True)
