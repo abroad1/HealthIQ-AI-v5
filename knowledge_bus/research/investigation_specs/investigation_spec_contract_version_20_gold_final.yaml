@@ -1,0 +1,1562 @@
+- "spec_id": "inv_fasting_glucose_high"
+  "contract_version": "2.0"
+  "status": "production"
+  "signal_id": "signal_fasting_glucose_high"
+  "research_domain": "metabolic"
+  "primary_marker":
+    "biomarker_id": "fasting_glucose"
+    "rationale": "Fasting plasma glucose (FPG) is a primary marker for impaired glucose homeostasis. Levels >=5.6 mmol/L are associated with increased risk of cardiovascular disease (RR 1.13-1.30)."
+    "signal_system": "metabolic"
+  "trigger_direction": "high"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": true
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": false
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "hba1c"
+      "expected_direction": "high"
+      "role": "corroborator"
+      "relationship_kind": "corroboration"
+      "availability": "common"
+      "rationale": "Chronic glycation status confirms if FPG elevation is a persistent metabolic state."
+    - "biomarker_id": "fasting_insulin"
+      "expected_direction": "high"
+      "role": "mechanism_marker"
+      "relationship_kind": "mechanism"
+      "availability": "common"
+      "rationale": "Elevated insulin alongside high glucose indicates compensated insulin resistance (HOMA-IR)."
+    - "biomarker_id": "hs_crp"
+      "expected_direction": "high"
+      "role": "differential_marker"
+      "relationship_kind": "differential"
+      "availability": "common"
+      "rationale": "Distinguishes between chronic metabolic inflammation and acute stress-induced hyperglycaemia."
+  "hypotheses":
+    - "hypothesis_id": "hyp_impaired_fasting_glucose"
+      "rank": 1
+      "physiological_claim": "Early-stage insulin resistance where hepatic glucose production exceeds peripheral clearance in the post-absorptive state."
+      "evidence_strength": "strong"
+      "caveats":
+        - "Requires strict 8-hour fast."
+        - "Acute stress or illness can cause transient hyperglycemia."
+      "missing_data":
+        "policy": "If HbA1c is normal, prioritize acute stress over chronic insulin resistance."
+      "supporting_marker_refs":
+        - "hba1c"
+        - "fasting_insulin"
+      "contradiction_markers":
+        - "contradiction_id": "ctr_normal_hba1c"
+          "marker_reference": "hba1c"
+          "contradiction_rationale": "A normal HbA1c contradicts a state of chronic sustained hyperglycemia."
+          "contradiction_strength": "moderate"
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_impaired_fasting_glucose"
+  "confirmatory_tests":
+    - "test_id": "ct_ogtt"
+      "rationale": "Oral Glucose Tolerance Test is the gold standard for defining glucose tolerance when fasting levels are borderline."
+  "override_rules":
+    - "rule_id": "or_glucose_diabetes_threshold"
+      "resulting_state": "at_risk"
+      "description": "Escalate if FPG meets WHO diagnostic criteria for diabetes (>= 7.0 mmol/L)."
+      "conditions":
+        - "metric_id": "fasting_glucose"
+          "operator": ">="
+          "condition_type": "all_of"
+          "comparator_type": "numeric_value"
+          "numeric_value": 7.0
+      "source_refs":
+        - "source_who_2006"
+  "evidence":
+    "evidence_strength": "strong"
+    "sources":
+      - "source_id": "source_bmj_2016_meta"
+        "paper_title": "Association between prediabetes and risk of cardiovascular disease: systematic review and meta-analysis"
+        "journal": "BMJ"
+        "year": 2016
+      - "source_id": "source_who_2006"
+        "paper_title": "Definition and diagnosis of diabetes mellitus and intermediate hyperglycaemia"
+        "journal": "WHO/IDF Report"
+        "year": 2006
+    "physiological_claim": "Fasting glucose >5.6 mmol/L is an independent predictor of vascular events and progression to Type 2 Diabetes."
+    "threshold_notes": "Lab-range breach is the primary trigger; 7.0 mmol/L is the diagnostic threshold for at-risk escalation."
+  "narrative":
+    "mechanism": "Insufficient insulin action to suppress hepatic gluconeogenesis during the fasting state."
+    "biological_pathway": "Hepatic Glucose Metabolism / Insulin Signaling Axis."
+    "interpretation": "Indicator of early metabolic dysfunction and impaired glucose tolerance."
+    "implications": "Increased risk of microvascular and macrovascular complications."
+    "supporting_marker_roles": "HbA1c provides chronicity context; Insulin identifies the degree of resistance."
+
+- "spec_id": "inv_fasting_insulin_high"
+  "contract_version": "2.0"
+  "status": "production"
+  "signal_id": "signal_fasting_insulin_high"
+  "research_domain": "metabolic"
+  "primary_marker":
+    "biomarker_id": "fasting_insulin"
+    "rationale": "Fasting insulin is a marker of pancreatic compensation for peripheral resistance. Levels in the highest quartile (e.g., >10 uIU/mL) are associated with 1.6x higher risk of hypertension."
+    "signal_system": "metabolic"
+  "trigger_direction": "high"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": true
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": false
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "fasting_glucose"
+      "expected_direction": "high"
+      "role": "corroborator"
+      "relationship_kind": "corroboration"
+      "availability": "common"
+      "rationale": "High insulin with normal glucose indicates compensated resistance; both high indicates failure of compensation."
+    - "biomarker_id": "triglycerides"
+      "expected_direction": "high"
+      "role": "mechanism_marker"
+      "relationship_kind": "mechanism"
+      "availability": "common"
+      "rationale": "Hyperinsulinemia drives hepatic VLDL synthesis and hypertriglyceridemia."
+  "hypotheses":
+    - "hypothesis_id": "hyp_insulin_resistance"
+      "rank": 1
+      "physiological_claim": "Hyperinsulinemia is a compensatory response to reduced peripheral insulin sensitivity in muscle and liver tissues."
+      "evidence_strength": "strong"
+      "caveats":
+        - "Reference ranges vary significantly by assay; levels >10 uIU/mL are often predictive of metabolic syndrome in prospective cohorts."
+      "missing_data":
+        "policy": "If triglycerides are high, escalate suspicion of metabolic syndrome."
+      "supporting_marker_refs":
+        - "fasting_glucose"
+        - "triglycerides"
+      "contradiction_markers": []
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_insulin_resistance"
+  "confirmatory_tests":
+    - "test_id": "ct_homa_ir"
+      "rationale": "HOMA-IR (Glucose x Insulin / 22.5) provides a standardized assessment of resistance severity."
+  "override_rules":
+    - "rule_id": "or_insulin_resistance_pattern"
+      "resulting_state": "at_risk"
+      "description": "Escalate if high insulin is accompanied by elevated triglycerides."
+      "conditions":
+        - "metric_id": "triglycerides"
+          "operator": ">"
+          "condition_type": "all_of"
+          "comparator_type": "lab_range_boundary"
+          "boundary": "above_max"
+      "source_refs":
+        - "source_ajcn_2013_meta"
+  "evidence":
+    "evidence_strength": "strong"
+    "sources":
+      - "source_id": "source_ajcn_2013_meta"
+        "paper_title": "Fasting insulin concentrations and incidence of hypertension, stroke, and coronary heart disease: a meta-analysis"
+        "journal": "American Journal of Clinical Nutrition"
+        "year": 2013
+    "physiological_claim": "Hyperinsulinemia is an independent predictor of CHD and hypertension in non-diabetic adults."
+    "threshold_notes": "Each 50 pmol/L increment increases CHD risk by approximately 16%."
+  "narrative":
+    "mechanism": "Pancreatic beta-cells increase insulin secretion to maintain euglycemia as peripheral insulin sensitivity declines."
+    "biological_pathway": "Insulin Signaling / PI3K Pathway."
+    "interpretation": "Early metabolic warning signal for insulin resistance."
+    "implications": "Predictive of future metabolic syndrome, Type 2 Diabetes, and vascular injury."
+    "supporting_marker_roles": "Glucose differentiates between compensated and overt metabolic failure; TG tracks hepatic impact."
+
+- "spec_id": "inv_c_peptide_high"
+  "contract_version": "2.0"
+  "status": "production"
+  "signal_id": "signal_c_peptide_high"
+  "research_domain": "metabolic"
+  "primary_marker":
+    "biomarker_id": "c_peptide"
+    "rationale": "C-peptide is released in a 1:1 ratio with insulin but has a longer half-life. It is an accurate marker of endogenous insulin secretion."
+    "signal_system": "metabolic"
+  "trigger_direction": "high"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": true
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": false
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "creatinine"
+      "expected_direction": "high"
+      "role": "differential_marker"
+      "relationship_kind": "differential"
+      "availability": "common"
+      "rationale": "C-peptide is cleared by the kidneys; elevation can occur in renal impairment independently of insulin production."
+    - "biomarker_id": "fasting_glucose"
+      "expected_direction": "high"
+      "role": "corroborator"
+      "relationship_kind": "corroboration"
+      "availability": "common"
+      "rationale": "High C-peptide with high glucose confirms endogenous hyperinsulinism in metabolic syndrome."
+  "hypotheses":
+    - "hypothesis_id": "hyp_endogenous_hyperinsulinism"
+      "rank": 1
+      "physiological_claim": "Hypersecretion of insulin by pancreatic beta-cells to meet high metabolic demand or overcome resistance."
+      "evidence_strength": "strong"
+      "caveats":
+        - "Required to exclude renal retention in patients with CKD."
+      "missing_data":
+        "policy": "Assume no renal interference if creatinine is normal."
+      "supporting_marker_refs":
+        - "fasting_glucose"
+      "contradiction_markers":
+        - "contradiction_id": "ctr_renal_failure"
+          "marker_reference": "creatinine"
+          "contradiction_rationale": "High creatinine suggests the C-peptide elevation may be due to poor clearance."
+          "contradiction_strength": "strong"
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_endogenous_hyperinsulinism"
+  "confirmatory_tests":
+    - "test_id": "ct_ucpcr"
+      "rationale": "Urinary C-peptide/creatinine ratio provides a validated integrated measure of daily insulin secretion."
+  "override_rules":
+    - "rule_id": "or_c_peptide_renal_exclusion"
+      "resulting_state": "at_risk"
+      "description": "Escalate if high C-peptide occurs with creatinine not above the laboratory upper bound, reducing likelihood of a renal-retention false positive."
+      "conditions":
+        - "metric_id": "creatinine"
+          "operator": "<="
+          "condition_type": "all_of"
+          "comparator_type": "lab_range_boundary"
+          "boundary": "above_max"
+      "source_refs":
+        - "source_diabetologia_2014_cohort"
+  "evidence":
+    "evidence_strength": "strong"
+    "sources":
+      - "source_id": "source_diabetologia_2014_cohort"
+        "paper_title": "C-peptide predicts all-cause and cardiovascular death in a cohort of individuals with newly diagnosed type 2 diabetes"
+        "journal": "Diabetologia"
+        "year": 2014
+    "physiological_claim": "Endogenous hyperinsulinemia, marked by high C-peptide, is an independent risk factor for cardiovascular mortality."
+    "threshold_notes": "C-peptide >1.0 nmol/L is associated with significantly higher CV death risk in diabetic cohorts."
+  "narrative":
+    "mechanism": "Proinsulin cleavage in pancreatic beta-cells releases insulin and C-peptide into the bloodstream."
+    "biological_pathway": "Insulin Secretory Pathway / Proinsulin Processing."
+    "interpretation": "Reflects the integrated workload and output of the pancreas."
+    "implications": "Persistent elevation suggests progressive metabolic stress and insulin resistance."
+    "supporting_marker_roles": "Glucose identifies the demand state; Creatinine excludes clearance-driven false positives."
+
+- "spec_id": "inv_fructosamine_high"
+  "contract_version": "2.0"
+  "status": "production"
+  "signal_id": "signal_fructosamine_high"
+  "research_domain": "metabolic"
+  "primary_marker":
+    "biomarker_id": "fructosamine"
+    "rationale": "Fructosamine (glycated serum proteins) reflects average glycemia over the previous 2-3 weeks. It provides an intermediate-term metabolic window."
+    "signal_system": "metabolic"
+  "trigger_direction": "high"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": true
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": false
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "hba1c"
+      "expected_direction": "high"
+      "role": "corroborator"
+      "relationship_kind": "corroboration"
+      "availability": "common"
+      "rationale": "Checks for consistency between the 2-week (fructosamine) and 3-month (HbA1c) glycation windows."
+    - "biomarker_id": "albumin"
+      "expected_direction": "low"
+      "role": "differential_marker"
+      "relationship_kind": "differential"
+      "availability": "common"
+      "rationale": "Low albumin can falsely lower fructosamine; results must be normalized or adjusted in hypoalbuminemic states."
+  "hypotheses":
+    - "hypothesis_id": "hyp_short_term_hyperglycemia"
+      "rank": 1
+      "physiological_claim": "Sustained elevation of blood glucose over the preceding 14-21 days resulting in non-enzymatic glycation of serum proteins."
+      "evidence_strength": "strong"
+      "caveats":
+        - "Useful where HbA1c is unreliable (e.g., hemoglobinopathies or rapid clinical shifts)."
+      "missing_data":
+        "policy": "If HbA1c is normal, prioritize hypothesis of very recent metabolic deterioration."
+      "supporting_marker_refs":
+        - "hba1c"
+      "contradiction_markers": []
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_short_term_hyperglycemia"
+  "confirmatory_tests":
+    - "test_id": "ct_cgm"
+      "rationale": "Continuous Glucose Monitoring provides high-resolution data to validate short-term glycaemic variability."
+  "override_rules":
+    - "rule_id": "or_fructosamine_mortality_risk"
+      "resulting_state": "at_risk"
+      "description": "Escalate for high fructosamine (>230 umol/L) linked to significantly higher all-cause mortality."
+      "conditions":
+        - "metric_id": "fructosamine"
+          "operator": ">="
+          "condition_type": "all_of"
+          "comparator_type": "numeric_value"
+          "numeric_value": 230
+      "source_refs":
+        - "source_circulation_2015_aric"
+  "evidence":
+    "evidence_strength": "strong"
+    "sources":
+      - "source_id": "source_circulation_2015_aric"
+        "paper_title": "Fructosamine and Glycated Albumin and the Risk of Cardiovascular Outcomes and Death"
+        "journal": "Circulation"
+        "year": 2015
+    "physiological_claim": "Fructosamine levels are strongly associated with future risk of retinopathy, nephropathy, and cardiovascular mortality."
+    "threshold_notes": "230 umol/L corresponds to the top quartile risk in the ARIC cohort."
+  "narrative":
+    "mechanism": "Maillard reaction between glucose and serum proteins, predominantly albumin."
+    "biological_pathway": "Protein Glycation / Advanced Glycation End-product Formation."
+    "interpretation": "Valuable for bridging the gap between point-in-time glucose and long-term HbA1c."
+    "implications": "Predictive of metabolic complications and short-to-intermediate term treatment failure."
+    "supporting_marker_roles": "HbA1c tracks chronic history; Albumin ensures the validity of the glycation substrate."
+
+- "spec_id": "inv_ast_alt_ratio_high"
+  "contract_version": "2.0"
+  "status": "production"
+  "signal_id": "signal_ast_alt_ratio_high"
+  "research_domain": "hepatic"
+  "primary_marker":
+    "biomarker_id": "ast_alt_ratio"
+    "rationale": "The AST/ALT ratio (De Ritis ratio) is a validated predictor of all-cause mortality and advanced liver fibrosis. Ratio >=1.40 is an independent prognostic factor in CAD cohorts (HR 2.93)."
+    "signal_system": "hepatic"
+  "trigger_direction": "high"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": true
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": false
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "alt"
+      "expected_direction": "high"
+      "role": "differential_marker"
+      "relationship_kind": "differential"
+      "availability": "common"
+      "rationale": "ALT is more liver-specific; isolated AST elevation suggests extra-hepatic origin (muscle)."
+    - "biomarker_id": "ggt"
+      "expected_direction": "high"
+      "role": "corroborator"
+      "relationship_kind": "corroboration"
+      "availability": "common"
+      "rationale": "Co-elevation confirms that transaminase rises are likely hepatic."
+  "hypotheses":
+    - "hypothesis_id": "hyp_advanced_liver_fibrosis"
+      "rank": 1
+      "physiological_claim": "Decreased clearance of AST by hepatic sinusoidal cells in cirrhosis, leading to ratio elevation."
+      "evidence_strength": "strong"
+      "caveats":
+        - "AST/ALT ratio >2.0 is highly suggestive of alcoholic liver disease."
+      "missing_data":
+        "policy": "If GGT is normal, investigate non-hepatic sources."
+      "supporting_marker_refs":
+        - "alt"
+        - "ggt"
+      "contradiction_markers": []
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_advanced_liver_fibrosis"
+  "confirmatory_tests":
+    - "test_id": "ct_liver_us"
+      "rationale": "Essential for evaluating structural changes in suspected cirrhosis."
+  "override_rules":
+    - "rule_id": "or_ast_alt_fibrosis_risk"
+      "resulting_state": "at_risk"
+      "description": "Escalate if ratio >=1.40, associated with significant cirrhosis risk (HR 2.77) and ACM."
+      "conditions":
+        - "metric_id": "ast_alt_ratio"
+          "operator": ">="
+          "condition_type": "all_of"
+          "comparator_type": "numeric_value"
+          "numeric_value": 1.4
+      "source_refs":
+        - "source_sci_rep_2022_ratio"
+  "evidence":
+    "evidence_strength": "strong"
+    "sources":
+      - "source_id": "source_sci_rep_2022_ratio"
+        "paper_title": "Elevated AST/ALT ratio is associated with all-cause mortality in patients with stable coronary artery disease"
+        "journal": "Scientific Reports"
+        "year": 2022
+    "physiological_claim": "AST/ALT ratio predicts mortality independently of classical cardiovascular risk factors."
+    "threshold_notes": "1.40 is the optimal threshold for predicting mortality in longitudinal analysis."
+  "narrative":
+    "mechanism": "Loss of AST clearance in cirrhosis or direct AST release from damaged myocytes."
+    "biological_pathway": "Hepatocellular Integrity / Fibrogenesis."
+    "interpretation": "Marker of disease severity in chronic liver or heart conditions."
+    "implications": "Requires assessment for cirrhosis, NAFLD, or muscle damage."
+    "supporting_marker_roles": "ALT/GGT localize to liver; isolated AST suggests muscle origin."
+
+- "spec_id": "inv_ldh_high"
+  "contract_version": "2.0"
+  "status": "production"
+  "signal_id": "signal_ldh_high"
+  "research_domain": "metabolic"
+  "primary_marker":
+    "biomarker_id": "ldh"
+    "rationale": "Lactate Dehydrogenase (LDH) is a cellular biomarker released during tissue damage. High levels are independently associated with mortality (HR 1.27)."
+    "signal_system": "other"
+  "trigger_direction": "high"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": true
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": false
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "bilirubin"
+      "expected_direction": "high"
+      "role": "mechanism_marker"
+      "relationship_kind": "mechanism"
+      "availability": "common"
+      "rationale": "Elevation alongside high LDH confirms a hypothesis of hemolysis."
+    - "biomarker_id": "haemoglobin"
+      "expected_direction": "low"
+      "role": "corroborator"
+      "relationship_kind": "corroboration"
+      "availability": "common"
+      "rationale": "Anemia supports red cell destruction as the source of LDH."
+  "hypotheses":
+    - "hypothesis_id": "hyp_haemolysis_pattern"
+      "rank": 1
+      "physiological_claim": "Premature destruction of RBCs releasing intracellular LDH."
+      "evidence_strength": "strong"
+      "caveats":
+        - "Non-specific; LDH isoenzymes are required for organ localization."
+      "missing_data":
+        "policy": "Requires HGB to validate functional impact."
+      "supporting_marker_refs":
+        - "haemoglobin"
+        - "bilirubin"
+      "contradiction_markers": []
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_haemolysis_pattern"
+  "confirmatory_tests":
+    - "test_id": "ct_haptoglobin"
+      "rationale": "Most sensitive confirmatory test for intravascular hemolysis."
+  "override_rules":
+    - "rule_id": "or_ldh_mortality_escalation"
+      "resulting_state": "at_risk"
+      "description": "Escalate for LDH >=176 U/L, linked to significantly higher all-cause mortality risk."
+      "conditions":
+        - "metric_id": "ldh"
+          "operator": ">="
+          "condition_type": "all_of"
+          "comparator_type": "numeric_value"
+          "numeric_value": 176
+      "source_refs":
+        - "source_wu_2016_ldh"
+  "evidence":
+    "evidence_strength": "strong"
+    "sources":
+      - "source_id": "source_wu_2016_ldh"
+        "paper_title": "Lactate dehydrogenase and mortality in the United States"
+        "journal": "Scientific Reports"
+        "year": 2016
+    "physiological_claim": "LDH is a vital cellular biomarker released during tissue damage, reflecting cell-membrane integrity."
+    "threshold_notes": "176 U/L is identified as the high-risk threshold in NHANES analyses."
+  "narrative":
+    "mechanism": "Catalyzes pyruvate to lactate. Release indicates cell death or membrane compromise."
+    "biological_pathway": "Anaerobic Glycolysis / Tissue Turnover."
+    "interpretation": "Non-specific red flag for systemic cell death."
+    "implications": "Associated with hemolysis, heart failure, and poor survival outcomes."
+    "supporting_marker_roles": "HGB/Bilirubin identify red cell causes."
+
+- "spec_id": "inv_dheas_low"
+  "contract_version": "2.0"
+  "status": "production"
+  "signal_id": "signal_dheas_low"
+  "research_domain": "hormonal"
+  "primary_marker":
+    "biomarker_id": "dheas"
+    "rationale": "DHEA-S is a prohormone whose decline is linked to vascular risk. Low levels increase all-cause (RR 1.46) and CV (RR 1.49) mortality."
+    "signal_system": "hormonal"
+  "trigger_direction": "low"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": false
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": true
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "cortisol"
+      "expected_direction": "low"
+      "role": "corroborator"
+      "relationship_kind": "corroboration"
+      "availability": "common"
+      "rationale": "Dual decline suggests primary or secondary adrenal failure."
+  "hypotheses":
+    - "hypothesis_id": "hyp_adrenal_reserve_decline"
+      "rank": 1
+      "physiological_claim": "Age-related decline in adrenal steroidogenesis leading to reduced vascular protection."
+      "evidence_strength": "strong"
+      "caveats":
+        - "Levels must be interpreted against age-adjusted ranges."
+      "missing_data":
+        "policy": "Assume age-related decline unless cortisol is also low."
+      "supporting_marker_refs":
+        - "cortisol"
+      "contradiction_markers": []
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_adrenal_reserve_decline"
+  "confirmatory_tests":
+    - "test_id": "ct_synacthen"
+      "rationale": "Gold standard for differentiating benign decline from primary adrenal insufficiency."
+  "override_rules":
+    - "rule_id": "or_dheas_mortality_risk"
+      "resulting_state": "at_risk"
+      "description": "Escalate for DHEA-S in the lowest tertile, linked to 1.46x RR for cardiovascular death."
+      "conditions":
+        - "metric_id": "dheas"
+          "operator": "<"
+          "condition_type": "all_of"
+          "comparator_type": "lab_range_boundary"
+          "boundary": "below_min"
+      "source_refs":
+        - "source_shufelt_2010_wise"
+  "evidence":
+    "evidence_strength": "strong"
+    "sources":
+      - "source_id": "source_shufelt_2010_wise"
+        "paper_title": "DHEA-S Levels and Cardiovascular Disease Mortality in Postmenopausal Women"
+        "journal": "J Clin Endocrinol Metab"
+        "year": 2010
+    "physiological_claim": "Low DHEA-S is an independent predictor of CV and all-cause mortality in longitudinal cohorts."
+    "threshold_notes": "The lowest population tertile represents the primary risk escalation point."
+  "narrative":
+    "mechanism": "Produced by the adrenal cortex; serves as a universal prohormone for active sex steroids."
+    "biological_pathway": "Steroidogenesis / HPA Axis function."
+    "interpretation": "Indicator of physiological adrenal age and reserve capacity."
+    "implications": "Linked to frailty, reduced quality of life, and cardiovascular vulnerability."
+    "supporting_marker_roles": "Cortisol distinguishes between aging and pathology."
+
+- "spec_id": "inv_progesterone_low"
+  "contract_version": "2.0"
+  "status": "production"
+  "signal_id": "signal_progesterone_low"
+  "research_domain": "hormonal"
+  "primary_marker":
+    "biomarker_id": "progesterone"
+    "rationale": "Progesterone is the primary steroid of the luteal phase. Inadequate levels are associated with metabolic shifts and cardiovascular vulnerability."
+    "signal_system": "hormonal"
+  "trigger_direction": "low"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": false
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": true
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "hdl_cholesterol"
+      "expected_direction": "low"
+      "role": "mechanism_marker"
+      "relationship_kind": "mechanism"
+      "availability": "common"
+      "rationale": "Hormonal decline in perimenopause is linked to adverse lipid profile shifts, including low HDL."
+    - "biomarker_id": "hba1c"
+      "expected_direction": "high"
+      "role": "corroborator"
+      "relationship_kind": "corroboration"
+      "availability": "common"
+      "rationale": "Loss of progesterone protection is associated with increased insulin resistance."
+  "hypotheses":
+    - "hypothesis_id": "hyp_luteal_insufficiency"
+      "rank": 1
+      "physiological_claim": "Failure of the corpus luteum to produce sufficient progesterone, potentially marking ovulatory dysfunction."
+      "evidence_strength": "moderate"
+      "caveats":
+        - "Highly dependent on cycle timing (Day 21 standard)."
+      "missing_data":
+        "policy": "Interpretation is inconclusive if cycle day is unknown."
+      "supporting_marker_refs":
+        - "hdl_cholesterol"
+        - "hba1c"
+      "contradiction_markers": []
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_luteal_insufficiency"
+  "confirmatory_tests":
+    - "test_id": "ct_serial_prog"
+      "rationale": "Multiple measurements confirm consistent ovulatory failure vs. single-point variability."
+  "override_rules":
+    - "rule_id": "or_progesterone_metabolic_risk"
+      "resulting_state": "at_risk"
+      "description": "Escalate if low progesterone is paired with rising HbA1c."
+      "conditions":
+        - "metric_id": "hba1c"
+          "operator": ">"
+          "condition_type": "all_of"
+          "comparator_type": "lab_range_boundary"
+          "boundary": "above_max"
+      "source_refs":
+        - "source_menopause_2025_review"
+  "evidence":
+    "evidence_strength": "moderate"
+    "sources":
+      - "source_id": "source_menopause_2025_review"
+        "paper_title": "Cardiovascular Risk Associated with Menopause and Menopause Hormone Therapy"
+        "journal": "Endocrine Reviews"
+        "year": 2025
+    "physiological_claim": "Premenopausal protection is attributed to both estradiol and progesterone."
+    "threshold_notes": "Lab-range breach for the appropriate cycle phase is the primary trigger."
+  "narrative":
+    "mechanism": "Secreted by the corpus luteum. Essential for endometrial preparation and metabolic regulation."
+    "biological_pathway": "HPO Axis / Ovarian Cycle."
+    "interpretation": "Indicator of ovulatory health and metabolic transition."
+    "implications": "Deficiency is linked to increased risk of metabolic syndrome and cardiovascular risk."
+    "supporting_marker_roles": "Lipids and Glucose track the metabolic downstream effects."
+
+- "spec_id": "inv_igf1_low"
+  "contract_version": "2.0"
+  "status": "production"
+  "signal_id": "signal_igf1_low"
+  "research_domain": "hormonal"
+  "primary_marker":
+    "biomarker_id": "igf_1"
+    "rationale": "IGF-1 mediates anabolic effects of growth hormone. Low levels increase all-cause mortality (HR 1.33-1.58)."
+    "signal_system": "hormonal"
+  "trigger_direction": "low"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": false
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": true
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "albumin"
+      "expected_direction": "low"
+      "role": "mechanism_marker"
+      "relationship_kind": "mechanism"
+      "availability": "common"
+      "rationale": "IGF-1 synthesis is nutrition-dependent; low albumin corroborates a catabolic driver."
+  "hypotheses":
+    - "hypothesis_id": "hyp_anabolic_catabolic_state"
+      "rank": 1
+      "physiological_claim": "Reduced anabolic drive due to GH axis suppression or inadequate nutritional availability."
+      "evidence_strength": "strong"
+      "caveats":
+        - "Association with mortality remains consistent across age groups."
+      "missing_data":
+        "policy": "Prioritize age-adjusted reference range comparison."
+      "supporting_marker_refs":
+        - "albumin"
+      "contradiction_markers": []
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_anabolic_catabolic_state"
+  "confirmatory_tests":
+    - "test_id": "ct_gh_stim"
+      "rationale": "Provocative testing is required to confirm overt Growth Hormone Deficiency."
+  "override_rules":
+    - "rule_id": "or_igf1_severe_risk"
+      "resulting_state": "at_risk"
+      "description": "Escalate for IGF-1 < 70 ng/mL, linked to significantly higher mortality hazard."
+      "conditions":
+        - "metric_id": "igf_1"
+          "operator": "<"
+          "condition_type": "all_of"
+          "comparator_type": "numeric_value"
+          "numeric_value": 70
+      "source_refs":
+        - "source_chs_2018_cohort"
+  "evidence":
+    "evidence_strength": "strong"
+    "sources":
+      - "source_id": "source_chs_2018_cohort"
+        "paper_title": "Trajectories of IGF-I Predict Mortality in Older Adults"
+        "journal": "Cardiovascular Health Study"
+        "year": 2018
+    "physiological_claim": "IGF-1 is a robust biomarker for integrated anabolic status and long-term survival."
+    "threshold_notes": "70 ng/mL is the identified threshold for marked risk escalation."
+  "narrative":
+    "mechanism": "Produced primarily by the liver in response to GH; reflects overall nitrogen balance."
+    "biological_pathway": "GH-IGF Axis / Somatotropic Signaling."
+    "interpretation": "Marker of metabolic reserve and tissue repair capacity."
+    "implications": "Linked to sarcopenia, frailty, and increased all-cause mortality."
+    "supporting_marker_roles": "Albumin provides context for nutritional vs. primary axis suppression."
+
+- "spec_id": "inv_pregnenolone_low"
+  "contract_version": "2.0"
+  "status": "exploratory"
+  "signal_id": "signal_pregnenolone_low"
+  "research_domain": "hormonal"
+  "primary_marker":
+    "biomarker_id": "pregnenolone"
+    "rationale": "Pregnenolone is the universal steroid precursor. While tested in functional panels, large-scale evidence for disease outcome prediction is limited."
+    "signal_system": "hormonal"
+  "trigger_direction": "low"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": false
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": true
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "dheas"
+      "expected_direction": "low"
+      "role": "mechanism_marker"
+      "relationship_kind": "mechanism"
+      "availability": "common"
+      "rationale": "Shared decline confirms total adrenal synthetic workload reduction."
+  "hypotheses":
+    - "hypothesis_id": "hyp_precursor_depletion"
+      "rank": 1
+      "physiological_claim": "Threshold evidence inconclusive for this condition — additional validation required."
+      "evidence_strength": "exploratory"
+      "caveats":
+        - "Large cohorts (n > 1000) linking isolated low pregnenolone to mortality are absent."
+      "missing_data":
+        "policy": "Prioritize downstream hormones (DHEA-S/Cortisol) for risk assessment."
+      "supporting_marker_refs":
+        - "dheas"
+      "contradiction_markers": []
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_precursor_depletion"
+  "confirmatory_tests": []
+  "override_rules": []
+  "evidence":
+    "evidence_strength": "exploratory"
+    "sources":
+      - "source_id": "source_inconclusive_2025"
+        "paper_title": "Threshold evidence inconclusive for this condition — additional validation required."
+        "journal": "N/A"
+        "year": 2025
+    "physiological_claim": "Parent hormone for all steroidogenesis; utility remains exploratory."
+    "threshold_notes": "No established large-scale prospective cohort thresholds meet the evidence contract."
+  "narrative":
+    "mechanism": "Synthesized from cholesterol; universal parent hormone."
+    "biological_pathway": "Steroidogenesis Pathway."
+    "interpretation": "Indicator of 'mitochondrial reserve' in exploratory models."
+    "implications": "Insufficient high-quality evidence to recommend clinical intervention."
+    "supporting_marker_roles": "DHEA-S tracks the actual output of the adrenal pathway."
+
+- "spec_id": "inv_hscrp_high"
+  "contract_version": "2.0"
+  "status": "production"
+  "signal_id": "signal_hscrp_high"
+  "research_domain": "inflammatory"
+  "primary_marker":
+    "biomarker_id": "hs_crp"
+    "rationale": "hs-CRP measures low-grade systemic inflammation. Levels >3.0 mg/L are a robust predictor of future ASCVD events."
+    "signal_system": "vascular"
+  "trigger_direction": "high"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": true
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": false
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "ldl_cholesterol"
+      "expected_direction": "high"
+      "role": "corroborator"
+      "relationship_kind": "corroboration"
+      "availability": "common"
+      "rationale": "High LDL and high hs-CRP significantly elevates hazard for MI."
+    - "biomarker_id": "crp"
+      "expected_direction": "high"
+      "role": "differential_marker"
+      "relationship_kind": "differential"
+      "availability": "common"
+      "rationale": "Standard CRP >10 mg/L indicates acute injury, invalidating hs-CRP for chronic risk."
+  "hypotheses":
+    - "hypothesis_id": "hyp_vascular_inflammation"
+      "rank": 1
+      "physiological_claim": "Persistent low-grade vascular inflammation promoting plaque instability."
+      "evidence_strength": "strong"
+      "caveats":
+        - "Requires two measurements 2 weeks apart in a stable state."
+      "missing_data":
+        "policy": "If standard CRP is >10, ignore hs-CRP as chronic marker."
+      "supporting_marker_refs":
+        - "ldl_cholesterol"
+      "contradiction_markers":
+        - "contradiction_id": "ctr_acute_inflam"
+          "marker_reference": "crp"
+          "contradiction_rationale": "CRP >10 mg/L indicates acute phase response."
+          "contradiction_strength": "strong"
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_vascular_inflammation"
+  "confirmatory_tests":
+    - "test_id": "ct_repeat_hs"
+      "rationale": "Standard AHA/CDC guideline for validating baseline chronic risk."
+  "override_rules":
+    - "rule_id": "or_hscrp_high_risk"
+      "resulting_state": "at_risk"
+      "description": "Escalate for hs-CRP >3.0 mg/L, high cardiovascular risk threshold."
+      "conditions":
+        - "metric_id": "hs_crp"
+          "operator": ">"
+          "condition_type": "all_of"
+          "comparator_type": "numeric_value"
+          "numeric_value": 3.0
+      "source_refs":
+        - "source_ridker_2008_jupiter"
+  "evidence":
+    "evidence_strength": "strong"
+    "sources":
+      - "source_id": "source_ridker_2008_jupiter"
+        "paper_title": "Rosuvastatin to Prevent Vascular Events with Elevated C-Reactive Protein"
+        "journal": "NEJM"
+        "year": 2008
+    "physiological_claim": "hs-CRP is a direct biomarker for inflammatory component of atherogenesis."
+    "threshold_notes": "AHA/CDC risk strata: <1 Low, 1-3 Average, >3 High."
+  "narrative":
+    "mechanism": "Hepatic synthesis of CRP driven by cytokines from stressed vascular walls."
+    "biological_pathway": "Innate Immune Response / Atherogenic Pathway."
+    "interpretation": "Marker of systemic vascular vulnerability."
+    "implications": "Predictive of future MI and stroke independent of LDL."
+    "supporting_marker_roles": "LDL provides metabolic context; Standard CRP identifies acute interference."
+
+- "spec_id": "inv_esr_high"
+  "contract_version": "2.0"
+  "status": "production"
+  "signal_id": "signal_esr_high"
+  "research_domain": "inflammatory"
+  "primary_marker":
+    "biomarker_id": "esr"
+    "rationale": "ESR is a surrogate for systemic inflammation. Levels >50 mm/hr are associated with 1.89x hazard ratio for mortality."
+    "signal_system": "other"
+  "trigger_direction": "high"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": true
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": false
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "haemoglobin"
+      "expected_direction": "low"
+      "role": "differential_marker"
+      "relationship_kind": "differential"
+      "availability": "common"
+      "rationale": "Anemia falsely elevates ESR; must correct interpretation."
+    - "biomarker_id": "crp"
+      "expected_direction": "high"
+      "role": "corroborator"
+      "relationship_kind": "corroboration"
+      "availability": "common"
+      "rationale": "Dual elevation increases specificity for true systemic inflammation."
+  "hypotheses":
+    - "hypothesis_id": "hyp_systemic_inflam_load"
+      "rank": 1
+      "physiological_claim": "Excess proteins neutralizing RBC charge, promoting clumping."
+      "evidence_strength": "strong"
+      "caveats":
+        - "Increases naturally with age."
+      "missing_data":
+        "policy": "Requires Hb to differentiate from anemia."
+      "supporting_marker_refs":
+        - "haemoglobin"
+        - "crp"
+      "contradiction_markers": []
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_systemic_inflam_load"
+  "confirmatory_tests":
+    - "test_id": "ct_electro"
+      "rationale": "Essential if ESR >100 to exclude monoclonal gammopathy."
+  "override_rules":
+    - "rule_id": "or_esr_severe_risk"
+      "resulting_state": "at_risk"
+      "description": "Escalate for ESR >50 mm/hr, linked to significant death hazard."
+      "conditions":
+        - "metric_id": "esr"
+          "operator": ">"
+          "condition_type": "all_of"
+          "comparator_type": "numeric_value"
+          "numeric_value": 50
+      "source_refs":
+        - "source_rotterdam_2019_cohort"
+  "evidence":
+    "evidence_strength": "strong"
+    "sources":
+      - "source_id": "source_rotterdam_2019_cohort"
+        "paper_title": "Erythrocyte sedimentation rate as independent prognostic marker for mortality"
+        "journal": "Scientific Reports"
+        "year": 2019
+    "physiological_claim": "ESR is an independent prognostic factor for all-cause mortality."
+    "threshold_notes": "ESR >50 mm/hr carries highest risk stratification."
+  "narrative":
+    "mechanism": "Inflammatory cytokines increase large proteins promoting RBC rouleaux."
+    "biological_pathway": "Acute Phase Response / Hemorheology."
+    "interpretation": "General indicator of systemic 'illness'."
+    "implications": "Warrants investigation for infection, autoimmune flares, or malignancy."
+    "supporting_marker_roles": "Hb defines assay validity; CRP confirms active inflammation."
+
+- "spec_id": "inv_vldl_high"
+  "contract_version": "2.0"
+  "status": "production"
+  "signal_id": "signal_vldl_high"
+  "research_domain": "lipids"
+  "primary_marker":
+    "biomarker_id": "vldl_cholesterol"
+    "rationale": "VLDL-C represents remnant cholesterol and is a causal risk factor for atherosclerosis (HR 1.71)."
+    "signal_system": "lipid_transport"
+  "trigger_direction": "high"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": true
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": false
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "triglycerides"
+      "expected_direction": "high"
+      "role": "corroborator"
+      "relationship_kind": "corroboration"
+      "availability": "common"
+      "rationale": "VLDL is the primary TG carrier; levels are tightly correlated."
+    - "biomarker_id": "hba1c"
+      "expected_direction": "high"
+      "role": "mechanism_marker"
+      "relationship_kind": "mechanism"
+      "availability": "common"
+      "rationale": "Insulin resistance drives hepatic VLDL overproduction."
+  "hypotheses":
+    - "hypothesis_id": "hyp_metabolic_remnants"
+      "rank": 1
+      "physiological_claim": "Increased hepatic assembly of VLDL-C driven by insulin resistance."
+      "evidence_strength": "strong"
+      "caveats":
+        - "Remnant cholesterol is often more atherogenic than LDL-C."
+      "missing_data":
+        "policy": "If TG >10 mmol/L, calculation is unreliable."
+      "supporting_marker_refs":
+        - "triglycerides"
+        - "hba1c"
+      "contradiction_markers": []
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_metabolic_remnants"
+  "confirmatory_tests":
+    - "test_id": "ct_apob"
+      "rationale": "Directly measures total atherogenic particle number."
+  "override_rules":
+    - "rule_id": "or_vldl_risk_thr"
+      "resulting_state": "at_risk"
+      "description": "Escalate for VLDL-C >0.77 mmol/L, high remnant risk marker."
+      "conditions":
+        - "metric_id": "vldl_cholesterol"
+          "operator": ">"
+          "condition_type": "all_of"
+          "comparator_type": "numeric_value"
+          "numeric_value": 0.77
+      "source_refs":
+        - "source_jlpm_2022_remnants"
+  "evidence":
+    "evidence_strength": "strong"
+    "sources":
+      - "source_id": "source_jlpm_2022_remnants"
+        "paper_title": "Remnant cholesterol: new outcomes potential clinically useful risk factor"
+        "journal": "Journal Laboratory Medicine"
+        "year": 2022
+    "physiological_claim": "Remnant cholesterol drives atherosclerosis by promoting lipid accumulation."
+    "threshold_notes": "0.77 mmol/L (30 mg/dL) is validated risk threshold."
+  "narrative":
+    "mechanism": "Hepatic production of triglyceride-rich lipoproteins; excess leads to remnant buildup."
+    "biological_pathway": "Endogenous Lipoprotein Metabolism."
+    "interpretation": "Key marker of residual risk beyond LDL."
+    "implications": "Directly increases risk for MI and stroke."
+    "supporting_marker_roles": "TG identifies particle load; HbA1c tracks metabolic driver."
+
+- "spec_id": "inv_pth_high"
+  "contract_version": "2.0"
+  "status": "production"
+  "signal_id": "signal_pth_high"
+  "research_domain": "hormonal"
+  "primary_marker":
+    "biomarker_id": "pth"
+    "rationale": "PTH regulator of calcium. High levels independent predictor of all-cause mortality (RR 1.19)."
+    "signal_system": "hormonal"
+  "trigger_direction": "high"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": true
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": false
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "calcium"
+      "expected_direction": "high"
+      "role": "differential_marker"
+      "relationship_kind": "differential"
+      "availability": "common"
+      "rationale": "Differentiates primary hyperparathyroidism (high Ca) from secondary (low/normal Ca)."
+    - "biomarker_id": "creatinine"
+      "expected_direction": "high"
+      "role": "mechanism_marker"
+      "relationship_kind": "mechanism"
+      "availability": "common"
+      "rationale": "Renal failure drives secondary PTH elevation."
+  "hypotheses":
+    - "hypothesis_id": "hyp_endocrine_bone_dysreg"
+      "rank": 1
+      "physiological_claim": "Excessive parathyroid activity leading to vascular calcification."
+      "evidence_strength": "strong"
+      "caveats":
+        - "Association heart failure stronger in men."
+      "missing_data":
+        "policy": "Distinguish endocrine (primary) and compensatory (secondary) causes."
+      "supporting_marker_refs":
+        - "calcium"
+        - "creatinine"
+      "contradiction_markers": []
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_endocrine_bone_dysreg"
+  "confirmatory_tests":
+    - "test_id": "ct_urine_ca"
+      "rationale": "Exclude FHH in primary cases."
+  "override_rules":
+    - "rule_id": "or_pth_mortality_thr"
+      "resulting_state": "at_risk"
+      "description": "Escalate for PTH > 6.8 pmol/L, linked to increased death risk."
+      "conditions":
+        - "metric_id": "pth"
+          "operator": ">"
+          "condition_type": "all_of"
+          "comparator_type": "numeric_value"
+          "numeric_value": 6.8
+      "source_refs":
+        - "source_pmc_5059035_pth"
+  "evidence":
+    "evidence_strength": "strong"
+    "sources":
+      - "source_id": "source_pmc_5059035_pth"
+        "paper_title": "Parathyroid hormone and risk of heart failure general population"
+        "journal": "PMC"
+        "year": 2016
+    "physiological_claim": "PTH has direct deleterious effects on endothelial metabolism."
+    "threshold_notes": "6.8 pmol/L identified risk threshold."
+  "narrative":
+    "mechanism": "Hormonal drive to normalize calcium; excess promotes calcification."
+    "biological_pathway": "Calcium-Phosphate Homeostasis Axis."
+    "interpretation": "Endocrine signal for vascular risk."
+    "implications": "Associated with stones, heart failure, and osteoporosis."
+    "supporting_marker_roles": "Calcium defines primary vs secondary driver; Creatinine identifies renal patterns."
+
+- "spec_id": "inv_phosphate_high"
+  "contract_version": "2.0"
+  "status": "production"
+  "signal_id": "signal_phosphate_high"
+  "research_domain": "renal"
+  "primary_marker":
+    "biomarker_id": "phosphate"
+    "rationale": "Phosphate associated with all-cause mortality. Levels >1.25 mmol/L increase death hazard."
+    "signal_system": "renal"
+  "trigger_direction": "high"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": true
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": false
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "creatinine"
+      "expected_direction": "high"
+      "role": "mechanism_marker"
+      "relationship_kind": "mechanism"
+      "availability": "common"
+      "rationale": "Reduced filtration leads to phosphate retention (CKD-MBD)."
+  "hypotheses":
+    - "hypothesis_id": "hyp_mineral_stress"
+      "rank": 1
+      "physiological_claim": "Accumulation promoting arterial medial calcification."
+      "evidence_strength": "strong"
+      "caveats":
+        - "Risk linear even at higher end of normal lab range."
+      "missing_data":
+        "policy": "Assume renal cause if eGFR below range."
+      "supporting_marker_refs":
+        - "creatinine"
+      "contradiction_markers": []
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_mineral_stress"
+  "confirmatory_tests":
+    - "test_id": "ct_egfr"
+      "rationale": "Standard assessment of renal capacity."
+  "override_rules":
+    - "rule_id": "or_phosphate_high_r"
+      "resulting_state": "at_risk"
+      "description": "Escalate for phosphate >1.25 mmol/L, 1.36x CV risk."
+      "conditions":
+        - "metric_id": "phosphate"
+          "operator": ">"
+          "condition_type": "all_of"
+          "comparator_type": "numeric_value"
+          "numeric_value": 1.25
+      "source_refs":
+        - "source_rotterdam_2018_phosphate"
+  "evidence":
+    "evidence_strength": "strong"
+    "sources":
+      - "source_id": "source_rotterdam_2018_phosphate"
+        "paper_title": "Serum phosphate levels all-cause and cardiovascular mortality"
+        "journal": "EJE"
+        "year": 2018
+    "physiological_claim": "Phosphate direct driver of vascular calcification."
+    "threshold_notes": "1.25 mmol/L identifies risk transition."
+  "narrative":
+    "mechanism": "Filtered freely; retention stimulates damage to endothelium."
+    "biological_pathway": "Renal Mineral Metabolism Pathway."
+    "interpretation": "Indicator metabolic health and renal stability."
+    "implications": "High levels predict CV mortality."
+    "supporting_marker_roles": "Creatinine distinguishes dietary load vs excretory failure."
+
+- "spec_id": "inv_bicarbonate_low"
+  "contract_version": "2.0"
+  "status": "production"
+  "signal_id": "signal_bicarbonate_low"
+  "research_domain": "renal"
+  "primary_marker":
+    "biomarker_id": "bicarbonate"
+    "rationale": "Bicarbonate primary buffer. Levels <=19.0 mEq/L associated with higher mortality."
+    "signal_system": "other"
+  "trigger_direction": "low"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": false
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": true
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "creatinine"
+      "expected_direction": "high"
+      "role": "mechanism_marker"
+      "relationship_kind": "mechanism"
+      "availability": "common"
+      "rationale": "Failure renal reabsorption leads to metabolic acidosis."
+  "hypotheses":
+    - "hypothesis_id": "hyp_metabolic_acidosis"
+      "rank": 1
+      "physiological_claim": "Accumulation of organic acids or failure renal buffering."
+      "evidence_strength": "strong"
+      "caveats":
+        - "Can be acute or chronic."
+      "missing_data":
+        "policy": "Prioritize acute illness evaluation if severely low."
+      "supporting_marker_refs":
+        - "creatinine"
+      "contradiction_markers": []
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_metabolic_acidosis"
+  "confirmatory_tests":
+    - "test_id": "ct_abg"
+      "rationale": "Definitive quantification of pH."
+  "override_rules":
+    - "rule_id": "or_bicarb_severe"
+      "resulting_state": "at_risk"
+      "description": "Escalate for bicarbonate <=19.0 mEq/L, in-hospital mortality risk."
+      "conditions":
+        - "metric_id": "bicarbonate"
+          "operator": "<="
+          "condition_type": "all_of"
+          "comparator_type": "numeric_value"
+          "numeric_value": 19
+      "source_refs":
+        - "source_frontiers_2025_bicarb"
+  "evidence":
+    "evidence_strength": "strong"
+    "sources":
+      - "source_id": "source_frontiers_2025_bicarb"
+        "paper_title": "Association between serum bicarbonate levels 28-day mortality"
+        "journal": "Frontiers Medicine"
+        "year": 2025
+    "physiological_claim": "Low bicarbonate marker of tissue hypoperfusion."
+    "threshold_notes": "19 mEq/L validated threshold."
+  narrative:
+    "mechanism": "Alkali component of bicarbonate buffer system."
+    "biological_pathway": "Acid-Base Homeostasis Pathway."
+    "interpretation": "Marker of systemic stress and buffering exhaustion."
+    "implications": "Associated higher short-term mortality."
+    "supporting_marker_roles": "Creatinine identifies renal buffering capacity."
+
+- "spec_id": "inv_tibc_high"
+  "contract_version": "2.0"
+  "status": "production"
+  "signal_id": "signal_tibc_high"
+  "research_domain": "hematologic"
+  "primary_marker":
+    "biomarker_id": "tibc"
+    "rationale": "TIBC measures transferrin capacity. Increases compensatorily in iron deficiency."
+    "signal_system": "hematologic"
+  "trigger_direction": "high"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": true
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": false
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "ferritin"
+      "expected_direction": "low"
+      "role": "corroborator"
+      "relationship_kind": "corroboration"
+      "availability": "common"
+      "rationale": "Low ferritin + high TIBC pathognomonic for absolute iron deficiency."
+  "hypotheses":
+    - "hypothesis_id": "hyp_iron_depletion"
+      "rank": 1
+      "physiological_claim": "Hepatic up-regulation of transferrin in response to low stores."
+      "evidence_strength": "strong"
+      "caveats":
+        - "Falsely elevated by pregnancy/OCP."
+      "missing_data":
+        "policy": "Requires ferritin to confirm depletion."
+      "supporting_marker_refs":
+        - "ferritin"
+      "contradiction_markers":
+        - "contradiction_id": "ctr_h_fer"
+          "marker_reference": "ferritin"
+          "contradiction_rationale": "High ferritin suggests sequestration."
+          "contradiction_strength": "strong"
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_iron_depletion"
+  "confirmatory_tests":
+    - "test_id": "ct_stfr"
+      "rationale": "Validates iron-starved erythropoiesis."
+  "override_rules":
+    - "rule_id": "or_tibc_iron_def"
+      "resulting_state": "at_risk"
+      "description": "Escalate if high TIBC + low ferritin (<30 ug/L)."
+      "conditions":
+        - "metric_id": "ferritin"
+          "operator": "<"
+          "condition_type": "all_of"
+          "comparator_type": "numeric_value"
+          "numeric_value": 30
+      "source_refs":
+        - "source_nice_2021_iron"
+  "evidence":
+    "evidence_strength": "strong"
+    "sources":
+      - "source_id": "source_nice_2021_iron"
+        "paper_title": "Iron deficiency anaemia identification management"
+        "journal": "NICE"
+        "year": 2021
+    "physiological_claim": "TIBC high diagnostic sensitivity for absolute deficiency."
+    "threshold_notes": "30 ug/L ferritin clinical threshold."
+  "narrative":
+    "mechanism": "Liver increases transport protein to optimize iron delivery."
+    "biological_pathway": "Iron Homeostasis Pathway."
+    "interpretation": "Highly specific marker for depleted stores."
+    "implications": "Associated with fatigue and anemia."
+    "supporting_marker_roles": "Ferritin defines store level."
+
+- "spec_id": "inv_tsat_low"
+  "contract_version": "2.0"
+  "status": "production"
+  "signal_id": "signal_tsat_low"
+  "research_domain": "hematologic"
+  "primary_marker":
+    "biomarker_id": "transferrin_saturation"
+    "rationale": "TSAT sites occupied by iron. <16% define iron-deficient erythropoiesis."
+    "signal_system": "hematologic"
+  "trigger_direction": "low"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": false
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": true
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "ferritin"
+      "expected_direction": "low"
+      "role": "corroborator"
+      "relationship_kind": "corroboration"
+      "availability": "common"
+      "rationale": "Confirms low saturation due to depleted stores vs sequestration."
+  "hypotheses":
+    - "hypothesis_id": "hyp_iron_starved"
+      "rank": 1
+      "physiological_claim": "Insufficient delivery resulting in restricted hemoglobin synthesis."
+      "evidence_strength": "strong"
+      "caveats":
+        - "16% consensus threshold."
+      "missing_data":
+        "policy": "Requires ferritin to differentiate from functional deficiency."
+      "supporting_marker_refs":
+        - "ferritin"
+      "contradiction_markers": []
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_iron_starved"
+  "confirmatory_tests":
+    - "test_id": "ct_ret_he"
+      "rationale": "Real-time measure iron availability for red cells."
+  "override_rules":
+    - "rule_id": "or_tsat_severe"
+      "resulting_state": "at_risk"
+      "description": "Escalate for TSAT <16%."
+      "conditions":
+        - "metric_id": "transferrin_saturation"
+          "operator": "<"
+          "condition_type": "all_of"
+          "comparator_type": "numeric_value"
+          "numeric_value": 16
+      "source_refs":
+        - "source_nice_2021_iron"
+  "evidence":
+    "evidence_strength": "strong"
+    "sources":
+      - "source_id": "source_nice_2021_iron"
+        "paper_title": "Iron deficiency anaemia"
+        "journal": "NICE"
+        "year": 2021
+    "physiological_claim": "TSAT <16% definitive indicator restricted erythropoiesis."
+    "threshold_notes": "16% clinical threshold."
+  "narrative":
+    "mechanism": "Ratio serum iron to TIBC; available transport iron."
+    "biological_pathway": "Iron Cycle / Hemoglobin Synthesis."
+    "interpretation": "Functional differentiator iron supply."
+    "implications": "Risk microcytic anemia."
+    "supporting_marker_roles": "Ferritin tracks storage reserve."
+
+- "spec_id": "inv_mma_high"
+  "contract_version": "2.0"
+  "status": "production"
+  "signal_id": "signal_mma_high"
+  "research_domain": "metabolic"
+  "primary_marker":
+    "biomarker_id": "mma"
+    "rationale": "MMA sensitive functional marker B12. Rises when cellular cobalamin insufficient."
+    "signal_system": "metabolic"
+  "trigger_direction": "high"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": true
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": false
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "vitamin_b12"
+      "expected_direction": "low"
+      "role": "corroborator"
+      "relationship_kind": "corroboration"
+      "availability": "common"
+      "rationale": "Low circulating B12 confirms cellular failure."
+    - "biomarker_id": "creatinine"
+      "expected_direction": "high"
+      "role": "differential_marker"
+      "relationship_kind": "differential"
+      "availability": "common"
+      "rationale": "Kidney failure causes MMA accumulation."
+  "hypotheses":
+    - "hypothesis_id": "hyp_cellular_b12_def"
+      "rank": 1
+      "physiological_claim": "Failure conversion methylmalonyl-CoA to succinyl-CoA."
+      "evidence_strength": "strong"
+      "caveats":
+        - "More specific than homocysteine."
+      "missing_data":
+        "policy": "Assume renal cause if creatinine elevated."
+      "supporting_marker_refs":
+        - "vitamin_b12"
+      "contradiction_markers":
+        - "contradiction_id": "ctr_ren_imp"
+          "marker_reference": "creatinine"
+          "contradiction_rationale": "High creatinine suggests poor clearance."
+          "contradiction_strength": "strong"
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_cellular_b12_def"
+  "confirmatory_tests":
+    - "test_id": "ct_holo_tc"
+      "rationale": "Active-B12 measurement."
+  "override_rules":
+    - "rule_id": "or_mma_b12_conf"
+      "resulting_state": "at_risk"
+      "description": "Escalate if high MMA is accompanied by low vitamin B12 and creatinine not above the laboratory upper bound."
+      "conditions":
+        - "metric_id": "vitamin_b12"
+          "operator": "<"
+          "condition_type": "all_of"
+          "comparator_type": "lab_range_boundary"
+          "boundary": "below_min"
+        - "metric_id": "creatinine"
+          "operator": "<="
+          "condition_type": "all_of"
+          "comparator_type": "lab_range_boundary"
+          "boundary": "above_max"
+      "source_refs":
+        - "source_bsh_2023_b12"
+  "evidence":
+    "evidence_strength": "strong"
+    "sources":
+      - "source_id": "source_bsh_2023_b12"
+        "paper_title": "Guidelines cobalamin folate disorders"
+        "journal": "BJH"
+        "year": 2023
+    "physiological_claim": "MMA gold standard assessing tissue-level deficiency."
+    "threshold_notes": ">0.27 umol/L clinical threshold."
+  "narrative":
+    "mechanism": "B12 cofactor deficiency causes metabolic backup into blood."
+    "biological_pathway": "Propionate Metabolism Pathway."
+    "interpretation": "Detects deficiency at cellular level."
+    "implications": "Untreated leads to neurological damage."
+    "supporting_marker_roles": "B12 identifies nutrient; Creatinine excludes false positives."
+
+- "spec_id": "inv_cystatin_c_high"
+  "contract_version": "2.0"
+  "status": "production"
+  "signal_id": "signal_cystatin_c_high"
+  "research_domain": "renal"
+  "primary_marker":
+    "biomarker_id": "cystatin_c"
+    "rationale": "Cystatin C accurate mortality and GFR predictor. More accurate than creatinine."
+    "signal_system": "renal"
+  "trigger_direction": "high"
+  "activation":
+    "activation_logic": "lab_range_exceeded"
+    "activation_config":
+      "enable_upper_bound": true
+      "upper_bound_state": "suboptimal"
+      "enable_lower_bound": false
+      "lower_bound_state": "suboptimal"
+  "states":
+    "baseline_state": "suboptimal"
+    "escalation_state": "at_risk"
+  "supporting_markers":
+    - "biomarker_id": "creatinine"
+      "expected_direction": "high"
+      "role": "corroborator"
+      "relationship_kind": "corroboration"
+      "availability": "common"
+      "rationale": "Dual elevation confirms glomerular filtration decline."
+  "hypotheses":
+    - "hypothesis_id": "hyp_imp_renal_filt"
+      "rank": 1
+      "physiological_claim": "Reduced glomerular clearance."
+      "evidence_strength": "strong"
+      "caveats":
+        - "Not influenced by muscle mass."
+      "missing_data":
+        "policy": "Requires creatinine comparison."
+      "supporting_marker_refs":
+        - "creatinine"
+      "contradiction_markers": []
+  "hypothesis_ranking":
+    "ordered_hypothesis_ids":
+      - "hyp_imp_renal_filt"
+  "confirmatory_tests":
+    - "test_id": "ct_iohexol"
+      "rationale": "Definitive GFR measurement."
+  "override_rules":
+    - "rule_id": "or_cystatin_fail"
+      "resulting_state": "at_risk"
+      "description": "Escalate high Cystatin C + eGFR < 60."
+      "conditions":
+        - "metric_id": "egfr"
+          "operator": "<"
+          "condition_type": "all_of"
+          "comparator_type": "numeric_value"
+          "numeric_value": 60
+      "source_refs":
+        - "source_nejm_2013_shlipak"
+  "evidence":
+    "evidence_strength": "strong"
+    "sources":
+      - "source_id": "source_nejm_2013_shlipak"
+        "paper_title": "Cystatin C versus creatinine risk based kidney function"
+        "journal": "NEJM"
+        "year": 2013
+    "physiological_claim": "Identifies mortality risk better than creatinine."
+    "threshold_notes": "Lab-range breach primary signal."
+  "narrative":
+    "mechanism": "Produced all nucleated cells; cleared only by filtration."
+    "biological_pathway": "Renal Filtration Pathway."
+    "interpretation": "Preferred GFR marker."
+    "implications": "Predictive CV events and CKD progression."
+    "supporting_marker_roles": "Creatinine provides comparison baseline."
