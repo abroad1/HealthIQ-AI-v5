@@ -10,10 +10,18 @@ root_required_fields:
   - alias_map_schema_version
   - registry_id
   - allowed_target_class_ids
+  - unknown_name_handling
   - aliases
 
 alias_map_schema_version:
   allowed: ["1.0.0"]
+
+# KB-S48c: governed rule for strings not present in aliases — no fallback class ID.
+unknown_name_handling_required_keys:
+  - resolution
+
+unknown_name_resolution_allowed:
+  - unmapped
 
 aliases_item_required_fields:
   - alias_normalized

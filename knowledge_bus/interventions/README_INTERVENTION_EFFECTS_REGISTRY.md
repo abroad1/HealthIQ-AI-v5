@@ -6,7 +6,11 @@
 **Artifacts**
 
 - `intervention_effects_registry_v1.yaml` — canonical registry (8 approved class IDs).
-- `intervention_class_alias_map_v1.yaml` — optional normalized alias → class map (skeleton; expand later).
+- `intervention_class_alias_map_v1.yaml` — governed normalized alias → class map (KB-S48c populated).
+
+**Unknown user-entered names (KB-S48c)**
+
+The alias map includes `unknown_name_handling.resolution: unmapped`. Strings not listed under `aliases` must resolve to **no** canonical class ID at preprocessing time — no fuzzy or heuristic mapping into the eight classes. Use `core.knowledge.intervention_alias_resolution` for deterministic lookup.
 
 **Validation**
 

@@ -1,8 +1,8 @@
-# Skeleton alias map — KB-S48a (expand in later sprints; do not guess unknowns)
+# Governed alias map — KB-S48a foundation, KB-S48c population + unknown handling
+# Normalized lowercase keys; exact lookup only (no fuzzy / LLM guessing).
 alias_map_schema_version: "1.0.0"
 registry_id: intervention_effects_registry_v1
 
-# Canonical IDs this map may target (integrity check in validator)
 allowed_target_class_ids:
   - lipid_lowering_statin
   - systemic_glucocorticoid
@@ -13,19 +13,153 @@ allowed_target_class_ids:
   - ppi_long_term_high_dose
   - sex_hormone_therapy
 
-# Normalized lowercase keys; no fuzzy matching in validator — exact lookup contract.
+# KB-S48c: inputs not listed under aliases resolve to no class — consumers must not invent IDs.
+unknown_name_handling:
+  resolution: unmapped
+
 aliases:
+  # --- lipid_lowering_statin ---
   - alias_normalized: atorvastatin
+    intervention_class_id: lipid_lowering_statin
+  - alias_normalized: crestor
+    intervention_class_id: lipid_lowering_statin
+  - alias_normalized: fluvastatin
+    intervention_class_id: lipid_lowering_statin
+  - alias_normalized: lescol
+    intervention_class_id: lipid_lowering_statin
+  - alias_normalized: lipitor
+    intervention_class_id: lipid_lowering_statin
+  - alias_normalized: lovastatin
+    intervention_class_id: lipid_lowering_statin
+  - alias_normalized: pitavastatin
+    intervention_class_id: lipid_lowering_statin
+  - alias_normalized: pravastatin
+    intervention_class_id: lipid_lowering_statin
+  - alias_normalized: rosuvastatin
     intervention_class_id: lipid_lowering_statin
   - alias_normalized: simvastatin
     intervention_class_id: lipid_lowering_statin
+  - alias_normalized: zocor
+    intervention_class_id: lipid_lowering_statin
+
+  # --- systemic_glucocorticoid ---
+  - alias_normalized: cortisone
+    intervention_class_id: systemic_glucocorticoid
+  - alias_normalized: dexamethasone
+    intervention_class_id: systemic_glucocorticoid
+  - alias_normalized: hydrocortisone
+    intervention_class_id: systemic_glucocorticoid
+  - alias_normalized: methylprednisolone
+    intervention_class_id: systemic_glucocorticoid
   - alias_normalized: prednisolone
     intervention_class_id: systemic_glucocorticoid
+  - alias_normalized: prednisone
+    intervention_class_id: systemic_glucocorticoid
+
+  # --- thyroid_hormone_replacement ---
+  - alias_normalized: eltroxin
+    intervention_class_id: thyroid_hormone_replacement
   - alias_normalized: levothyroxine
     intervention_class_id: thyroid_hormone_replacement
+  - alias_normalized: levoxyl
+    intervention_class_id: thyroid_hormone_replacement
+  - alias_normalized: liothyronine
+    intervention_class_id: thyroid_hormone_replacement
+  - alias_normalized: synthroid
+    intervention_class_id: thyroid_hormone_replacement
+  - alias_normalized: thyroxine
+    intervention_class_id: thyroid_hormone_replacement
+
+  # --- raas_inhibitor ---
+  - alias_normalized: azilsartan
+    intervention_class_id: raas_inhibitor
+  - alias_normalized: candesartan
+    intervention_class_id: raas_inhibitor
+  - alias_normalized: captopril
+    intervention_class_id: raas_inhibitor
+  - alias_normalized: enalapril
+    intervention_class_id: raas_inhibitor
+  - alias_normalized: irbesartan
+    intervention_class_id: raas_inhibitor
+  - alias_normalized: lisinopril
+    intervention_class_id: raas_inhibitor
+  - alias_normalized: losartan
+    intervention_class_id: raas_inhibitor
+  - alias_normalized: olmesartan
+    intervention_class_id: raas_inhibitor
+  - alias_normalized: perindopril
+    intervention_class_id: raas_inhibitor
   - alias_normalized: ramipril
     intervention_class_id: raas_inhibitor
+  - alias_normalized: telmisartan
+    intervention_class_id: raas_inhibitor
+  - alias_normalized: valsartan
+    intervention_class_id: raas_inhibitor
+
+  # --- thiazide_or_loop_diuretic ---
+  - alias_normalized: bendroflumethiazide
+    intervention_class_id: thiazide_or_loop_diuretic
+  - alias_normalized: bumetanide
+    intervention_class_id: thiazide_or_loop_diuretic
+  - alias_normalized: chlortalidone
+    intervention_class_id: thiazide_or_loop_diuretic
+  - alias_normalized: chlorthalidone
+    intervention_class_id: thiazide_or_loop_diuretic
+  - alias_normalized: furosemide
+    intervention_class_id: thiazide_or_loop_diuretic
+  - alias_normalized: hctz
+    intervention_class_id: thiazide_or_loop_diuretic
+  - alias_normalized: hydrochlorothiazide
+    intervention_class_id: thiazide_or_loop_diuretic
+  - alias_normalized: indapamide
+    intervention_class_id: thiazide_or_loop_diuretic
+  - alias_normalized: torasemide
+    intervention_class_id: thiazide_or_loop_diuretic
+
+  # --- biguanide_metformin ---
+  - alias_normalized: glucophage
+    intervention_class_id: biguanide_metformin
   - alias_normalized: metformin
     intervention_class_id: biguanide_metformin
+
+  # --- ppi_long_term_high_dose ---
+  - alias_normalized: dexlansoprazole
+    intervention_class_id: ppi_long_term_high_dose
+  - alias_normalized: esomeprazole
+    intervention_class_id: ppi_long_term_high_dose
+  - alias_normalized: lansoprazole
+    intervention_class_id: ppi_long_term_high_dose
+  - alias_normalized: nexium
+    intervention_class_id: ppi_long_term_high_dose
   - alias_normalized: omeprazole
     intervention_class_id: ppi_long_term_high_dose
+  - alias_normalized: pantoprazole
+    intervention_class_id: ppi_long_term_high_dose
+  - alias_normalized: rabeprazole
+    intervention_class_id: ppi_long_term_high_dose
+
+  # --- sex_hormone_therapy ---
+  - alias_normalized: estradiol
+    intervention_class_id: sex_hormone_therapy
+  - alias_normalized: estradiol_patch
+    intervention_class_id: sex_hormone_therapy
+  - alias_normalized: estrogen
+    intervention_class_id: sex_hormone_therapy
+  - alias_normalized: hrt
+    intervention_class_id: sex_hormone_therapy
+  - alias_normalized: hormone_replacement_therapy
+    intervention_class_id: sex_hormone_therapy
+  - alias_normalized: medroxyprogesterone
+    intervention_class_id: sex_hormone_therapy
+  - alias_normalized: norethisterone
+    intervention_class_id: sex_hormone_therapy
+  - alias_normalized: oestradiol
+    intervention_class_id: sex_hormone_therapy
+  - alias_normalized: oestrogen
+    intervention_class_id: sex_hormone_therapy
+  - alias_normalized: progesterone
+    intervention_class_id: sex_hormone_therapy
+  - alias_normalized: testosterone
+    intervention_class_id: sex_hormone_therapy
+  - alias_normalized: testosterone_gel
+    intervention_class_id: sex_hormone_therapy
