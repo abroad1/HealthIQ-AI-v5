@@ -2,7 +2,84 @@
 
 ## Review Status
 
-**Status: PENDING REVIEW**
+**Status: KB-S45e RESOLVED — Bounded KB-S46 WHY expansion approved; threshold model governed**
+
+> **Precedence (KB-S45e):** This status and the **KB-S45e Governance Resolution** section supersede the
+> generic “pending reviewer” boilerplate below **for the bounded KB-S46 scope** and for
+> **threshold governance** decisions (Decisions 1–4) stated here. The checklist and template
+> at the end of this file remain as **historical record** and for optional future named review.
+
+---
+
+## KB-S45e Governance Resolution
+
+**Resolution date:** 2026-03-24 (UTC)  
+**Sprint:** KB-S45e — Clinical sign-off and threshold resolution (insulin resistance + systemic inflammation)  
+**Authority basis:** Knowledge Bus package governance; resolves KB-S46 hardening blockers B-1/B-2
+on sign-off ambiguity and systemic inflammation threshold authority.
+
+### Outcome for `pkg_chronic_inflammation` (KBP-0005)
+
+**Sign-off status:** **APPROVED for bounded KB-S46 WHY expansion** (see scope below).
+
+**Backend/core gate — clarified and lifted for bounded scope:** The prior absolute wording
+(“no code may be committed to `backend/core/` without a completed sign-off”) is **superseded
+for**:
+
+- Read-only **root-cause hypothesis** loading and `_ROOT_CAUSE_TARGETS` registration for
+  `signal_systemic_inflammation`, using governed YAML under `knowledge_bus/root_cause/`,
+  mirroring the insulin resistance KB-S46 pattern.
+
+**The gate remains in force** for: changing **hs-CRP threshold values**, **override rules**,
+or **signal evaluator** behaviour for this signal without a new governed amendment.
+
+### Systemic inflammation — governed threshold model (KB-S45e decision)
+
+**Chosen model:** **KBP-0005 / `pkg_chronic_inflammation`** hs-CRP tiers for
+`signal_systemic_inflammation`:
+
+| Tier | hs-CRP (mg/L) | Rationale (governed) |
+|------|----------------|----------------------|
+| optimal | &lt; 1.0 | ACC/AHA 2025 low-risk tier |
+| suboptimal | 1.0 – &lt; 2.0 | Subclinical metabolic stress; approaches RIR |
+| at_risk | ≥ 2.0 | Primary **residual inflammatory risk (RIR)** boundary per JUPITER / A-to-Z / ACC-AHA 2025 |
+| Acute override | ≥ 10.0 → at_risk + repeat context | ACC/AHA stability / acute inflammation distinction |
+
+**Decision 1 (KBP-0001 vs KBP-0005): RESOLVED — Adopt KBP-0005.**  
+KBP-0001’s 3.0 / 10.0 mg/L bands for the **same signal_id** are **not** the governed
+interpretation for chronic metabolic inflammation: they would classify CRP = 2.5 mg/L as
+“optimal”, which contradicts the RIR evidence summarized in this package. Where both
+packages contribute `signal_systemic_inflammation`, registry load order implies the
+**KBP-0005** definition is the effective one; **KB-S45e makes that implicit fact explicit
+and mandatory** for KB-S46 and downstream work.
+
+**Decision 2 (primary at-risk boundary): CONFIRMED — 2.0 mg/L** (already recorded in this
+document; unchanged by KB-S45e).
+
+**Decision 3 (NLR): RESOLVED — Supporting context only.**  
+No compound tier logic (NLR cannot escalate tier when CRP is optimal). **Known limitation**
+documented; future schema work is out of scope for KB-S45e.
+
+**Decision 4 (SII): RESOLVED — Metric available; signal-tier rule deferred.**  
+As of repository state at KB-S45e, **`derived.sii`** is **implemented** in
+`backend/core/analytics/ratio_registry.py` (inputs: platelets, neutrophils, lymphocytes).
+SII remains an **optional supporting marker** in this signal library; **no SII-based tier
+or firing rule** is authorized in phase 1. Any future co-primary logic requires a separate
+governed sprint.
+
+### Explicitly approved bounded work for KB-S46
+
+1. Create governed hypothesis content for systemic inflammation, e.g.  
+   `knowledge_bus/root_cause/hypotheses/chronic_inflammation_hypotheses_v1.yaml` (or equivalent).
+2. Extend `load_root_cause_hypotheses.py` with a loader.
+3. Add `_ROOT_CAUSE_TARGETS` entry in `root_cause_compiler_v1.py` for the chronic inflammation
+   signal target.
+
+---
+
+## Legacy review gate (superseded for KB-S46 WHY scope)
+
+**Status note (template): PENDING REVIEW — full clinical reviewer**
 
 This document must be completed by a named clinical reviewer and committed before this package
 may be promoted to Layer B implementation. No code may be committed to `backend/core/` without
@@ -30,6 +107,9 @@ a completed sign-off.
 
 ### Decision 1 — KBP-0001 Threshold Delta
 
+**KB-S45e resolution:** **Adopt KBP-0005** as the sole governed threshold model for
+`signal_systemic_inflammation` (see the **KB-S45e Governance Resolution** section). Decision 1 is **closed**.
+
 KBP-0001 contains `signal_systemic_inflammation` with a **materially different design**:
 
 | Aspect | KBP-0001 | KBP-0005 |
@@ -50,10 +130,10 @@ The KBP-0001 design would classify a patient with CRP = 2.5 mg/L (elevated resid
 inflammatory risk) as "optimal". The KBP-0005 design correctly classifies this as
 "suboptimal".
 
-**Decision required:**
-- [ ] Adopt KBP-0005 thresholds — replace KBP-0001 design at implementation
-- [ ] Investigate KBP-0001 threshold origin — confirm whether 3.0/10.0 was intentional
-- [ ] Defer pending further clinical review
+**Decision required (historical checklist — Decision 1 resolved by KB-S45e):**
+- [x] Adopt KBP-0005 thresholds — replace KBP-0001 design at implementation **(KB-S45e)**
+- [ ] Investigate KBP-0001 threshold origin — confirm whether 3.0/10.0 was intentional *(superseded — KBP-0005 governs)*
+- [ ] Defer pending further clinical review *(superseded — KBP-0005 governs)*
 
 ---
 
@@ -93,10 +173,10 @@ diabetic retinopathy) may represent undetected inflammatory risk that hs-CRP alo
 **Design gap:** The current schema cannot express compound logic (e.g., "if NLR >1.67,
 escalate from optimal to suboptimal even if CRP <1.0").
 
-**Decision required:**
-- [ ] Retain current design — NLR as supporting context only; document threshold gap as a known limitation
-- [ ] Request schema enhancement to support compound primary/secondary threshold logic
-- [ ] Implement NLR as a co-primary with its own override rule (NLR ≥2.45 → at_risk)
+**Decision required (historical checklist — Decision 3 resolved by KB-S45e):**
+- [x] Retain current design — NLR as supporting context only; document threshold gap as a known limitation **(KB-S45e)**
+- [ ] Request schema enhancement to support compound primary/secondary threshold logic *(out of scope for KB-S45e)*
+- [ ] Implement NLR as a co-primary with its own override rule (NLR ≥2.45 → at_risk) *(not approved)*
 
 ---
 
@@ -109,16 +189,17 @@ All three input biomarkers are confirmed in `backend/ssot/biomarkers.yaml`:
 - `neutrophils` ✓ (or `neutrophils_abs`)
 - `lymphocytes` ✓ (or `lymphocytes_abs`)
 
-SII is currently listed as an optional derived metric in the signal library.
-It is **not implemented** in `ratio_registry.py`.
+SII is listed as an optional derived metric in the signal library.
+**KB-S45e:** `derived.sii` **is implemented** in `ratio_registry.py`; it remains **optional
+supporting context** only — no signal-tier binding in v1.
 
 Evidence: meta-analysis n=85,796 — SII predicts diabetic nephropathy (OR 1.94),
 retinopathy (SMD 2.70), CVD mortality (OR 1.55) — superior to NLR alone.
 
-**Decision required:**
-- [ ] Implement `derived.sii` in `ratio_registry.py` during KB-S9 — high clinical value
-- [ ] Deprioritise SII — NLR coverage is sufficient for current scope
-- [ ] Document age-stratified NLR interpretation as a KB-S9 engineering note (adult 1.67 cutoff; elderly >75 reference range shifts to 0.89–8.80)
+**Decision required (historical checklist — Decision 4 resolved by KB-S45e):**
+- [x] Implement `derived.sii` in `ratio_registry.py` during KB-S9 — **DONE in repo as of KB-S45e verification**
+- [ ] Deprioritise SII — NLR coverage is sufficient for current scope *(superseded — SII exists; optional use)*
+- [ ] Document age-stratified NLR interpretation as a KB-S9 engineering note (adult 1.67 cutoff; elderly >75 reference range shifts to 0.89–8.80) *(deferred — not KB-S45e)*
 
 ---
 
@@ -192,10 +273,10 @@ Note: `monocytes_abs` biomarker is confirmed in `biomarkers.yaml` for SIRI compu
 
 ## Known Limitations
 
-1. **Threshold delta with KBP-0001.** KBP-0001 uses 3.0/10.0 mg/L for systemic inflammation.
-   KBP-0005 uses 1.0/3.0 mg/L per ACC/AHA 2025. The designs are mutually exclusive —
-   both cannot be active simultaneously for `signal_systemic_inflammation`. Clinical sign-off
-   Decision 1 must resolve this before KB-S9.
+1. **Threshold delta with KBP-0001.** **KB-S45e:** Governed model is **KBP-0005** (hs-CRP
+   optimal &lt;1.0 / suboptimal 1.0–&lt;2.0 / at_risk ≥2.0 mg/L plus acute ≥10 override).
+   KBP-0001’s 3.0/10.0 bands for the same signal_id are **not** authoritative for chronic
+   metabolic interpretation.
 
 2. **Residual inflammatory risk (RIR) not expressible in current schema.** The 2.0 mg/L
    threshold applies specifically to patients on statins with controlled LDL-C. The signal
@@ -239,12 +320,12 @@ Note: `monocytes_abs` biomarker is confirmed in `biomarkers.yaml` for SIRI compu
 
 **Review date:** [PENDING]
 
-### Decision checklist (all four required)
+### Decision checklist (template — KB-S45e resolved Decisions 1–4 in the **KB-S45e Governance Resolution** section)
 
-- [ ] **Decision 1** — KBP-0001 threshold delta resolution (1.0/3.0 vs 3.0/10.0 mg/L)
-- [ ] **Decision 2** — Primary at-risk boundary: 2.0 mg/L (RIR) vs 3.0 mg/L (ACC/AHA high-risk)
-- [ ] **Decision 3** — NLR: supporting context only vs compound override logic
-- [ ] **Decision 4** — SII implementation in KB-S9 (priority vs deprioritise)
+- [x] **Decision 1** — Adopt KBP-0005; KBP-0001 superseded for this signal **(KB-S45e)**
+- [x] **Decision 2** — Primary at-risk boundary **2.0 mg/L** **(confirmed; KB-S45e)**
+- [x] **Decision 3** — NLR: **supporting context only** **(KB-S45e)**
+- [x] **Decision 4** — SII: **implemented in ratio_registry**; optional supporting only **(KB-S45e)**
 
 ### Threshold acceptance
 
