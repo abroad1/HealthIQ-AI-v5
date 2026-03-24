@@ -15,6 +15,11 @@ python backend/scripts/validate_user_intervention_exposure.py --document path/to
 - `canonical_class.link_status: mapped` requires `intervention_class_id` to be one of the eight KB-S48a class IDs.
 - `canonical_class.link_status: unmapped` requires `intervention_class_id: null` — no guessing; resolve later via alias map / review.
 
+**Enums (v1)**
+
+- `intervention_type`: `medication`, `supplement`, `lifestyle`, `behavioural`, `clinical`
+- `provenance.confidence`: `confirmed`, `estimated`, `unknown`
+
 **Timeline**
 
 Use ISO **YYYY-MM-DD** for `effective_from_date` and optional `effective_to_date`. If `is_ongoing` is true, `effective_to_date` must be null.

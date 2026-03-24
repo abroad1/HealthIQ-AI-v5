@@ -14,7 +14,7 @@ intervention_records:
       change_event_type: started
     provenance:
       source_type: user_reported
-      confidence: moderate
+      confidence: estimated
       notes: Started after HbA1c discussion.
     exposure_detail:
       dose_description: "500 mg"
@@ -23,7 +23,7 @@ intervention_records:
       intensity_description: null
 
   - intervention_record_id: rec_unknown_supplement_002
-    intervention_type: non_medication
+    intervention_type: supplement
     entered_label: Herbal product (unrecognized name)
     canonical_class:
       link_status: unmapped
@@ -35,7 +35,7 @@ intervention_records:
       change_event_type: stopped
     provenance:
       source_type: user_reported
-      confidence: low
+      confidence: unknown
     exposure_detail: null
 
   - intervention_record_id: rec_lisinopril_003
@@ -51,4 +51,4 @@ intervention_records:
       change_event_type: changed
     provenance:
       source_type: clinician_prescribed
-      confidence: high
+      confidence: confirmed

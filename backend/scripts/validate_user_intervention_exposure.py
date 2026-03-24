@@ -16,23 +16,44 @@ from typing import Any
 
 import yaml
 
-_BACKEND_ROOT = Path(__file__).resolve().parents[1]
-if str(_BACKEND_ROOT) not in sys.path:
-    sys.path.insert(0, str(_BACKEND_ROOT))
-
-from scripts.validate_intervention_effects_registry import APPROVED_CLASS_IDS, FORBIDDEN_KEY_FRAGMENTS
-
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_SCHEMA_PATH = ROOT / "knowledge_bus" / "schema" / "user_intervention_exposure_schema_v1.yaml"
 DEFAULT_AUDIT_PATH = ROOT / "backend" / "artifacts" / "user_intervention_exposure_audit.md"
 
 SCHEMA_VERSION = "1.0.0"
 
-_INTERVENTION_TYPES = frozenset({"medication", "non_medication", "other"})
+# Must match KB-S48a registry class IDs (drift-checked in unit tests vs registry artifact).
+APPROVED_INTERVENTION_CLASS_IDS = frozenset(
+    {
+        "lipid_lowering_statin",
+        "systemic_glucocorticoid",
+        "thyroid_hormone_replacement",
+        "raas_inhibitor",
+        "thiazide_or_loop_diuretic",
+        "biguanide_metformin",
+        "ppi_long_term_high_dose",
+        "sex_hormone_therapy",
+    }
+)
+
+# Aligned with intervention_effects_registry_schema_v1 forbidden_key_fragments (test-checked).
+FORBIDDEN_KEY_FRAGMENTS = (
+    "threshold",
+    "override_signal",
+    "signal_state_mutation",
+    "activation_override",
+    "lab_range_modify",
+    "firing_rule",
+    "deterministic_threshold_change",
+)
+
+_INTERVENTION_TYPES = frozenset(
+    {"medication", "supplement", "lifestyle", "behavioural", "clinical"}
+)
 _LINK_STATUS = frozenset({"mapped", "unmapped"})
 _CHANGE_EVENTS = frozenset({"started", "stopped", "changed"})
 _SOURCE_TYPES = frozenset({"user_reported", "clinician_prescribed", "inferred"})
-_CONFIDENCE = frozenset({"low", "moderate", "high"})
+_CONFIDENCE = frozenset({"confirmed", "estimated", "unknown"})
 
 _DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
@@ -131,10 +152,10 @@ def _validate_record(row: dict[str, Any], lab: str, errors: list[str]) -> None:
             if "intervention_class_id" not in cc:
                 errors.append(f"{lab}.canonical_class.intervention_class_id is required when mapped")
             cid = cc.get("intervention_class_id")
-            if not isinstance(cid, str) or cid not in APPROVED_CLASS_IDS:
+            if not isinstance(cid, str) or cid not in APPROVED_INTERVENTION_CLASS_IDS:
                 errors.append(
                     f"{lab}.canonical_class.intervention_class_id must be one of "
-                    f"{sorted(APPROVED_CLASS_IDS)} when link_status is mapped"
+                    f"{sorted(APPROVED_INTERVENTION_CLASS_IDS)} when link_status is mapped"
                 )
             extra = frozenset(cc.keys()) - frozenset({"link_status", "intervention_class_id"})
             if extra:

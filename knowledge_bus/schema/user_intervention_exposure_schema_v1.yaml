@@ -7,8 +7,9 @@ schema_version: "1.0.0"
 status: "LOCKED"
 
 description: >
-  Timeline-aware user intervention or exposure rows (medications, supplements, procedures,
-  lifestyle exposures, etc.). Canonical class linkage uses the same eight intervention_class_id
+  Timeline-aware user intervention or exposure rows. intervention_type distinguishes
+  medication, supplement, lifestyle, behavioural, and clinical contexts without separate
+  storage systems. Canonical class linkage uses the same eight intervention_class_id
   values as KB-S48a when link_status is mapped; unmapped rows must not invent a class ID.
 
 root_required_fields:
@@ -28,8 +29,10 @@ record_required_fields:
 
 intervention_type_allowed:
   - medication
-  - non_medication
-  - other
+  - supplement
+  - lifestyle
+  - behavioural
+  - clinical
 
 canonical_class_required_fields:
   - link_status
@@ -59,9 +62,9 @@ source_type_allowed:
   - inferred
 
 confidence_allowed:
-  - low
-  - moderate
-  - high
+  - confirmed
+  - estimated
+  - unknown
 
 # Optional free-text home; omit key or set null — no other ad-hoc string fields on the record.
 optional_record_string_fields:

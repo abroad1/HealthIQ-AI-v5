@@ -6,8 +6,9 @@ from pathlib import Path
 
 import yaml
 
-from scripts.validate_intervention_effects_registry import APPROVED_CLASS_IDS, FORBIDDEN_KEY_FRAGMENTS
+from scripts.validate_intervention_effects_registry import APPROVED_CLASS_IDS as REGISTRY_APPROVED_CLASS_IDS
 from scripts.validate_user_intervention_exposure import (
+    APPROVED_INTERVENTION_CLASS_IDS,
     SCHEMA_VERSION,
     main,
     validate_user_intervention_exposure_document,
@@ -16,6 +17,7 @@ from scripts.validate_user_intervention_exposure import (
 ROOT = Path(__file__).resolve().parents[3]
 FIXTURE_VALID = ROOT / "backend" / "tests" / "fixtures" / "user_intervention_exposure" / "valid_record_set.yaml"
 SCHEMA_PATH = ROOT / "knowledge_bus" / "schema" / "user_intervention_exposure_schema_v1.yaml"
+REGISTRY_SCHEMA_PATH = ROOT / "knowledge_bus" / "schema" / "intervention_effects_registry_schema_v1.yaml"
 
 
 def _base_doc() -> dict:
@@ -33,7 +35,7 @@ def _base_doc() -> dict:
                     "is_ongoing": True,
                     "change_event_type": "started",
                 },
-                "provenance": {"source_type": "user_reported", "confidence": "moderate"},
+                "provenance": {"source_type": "user_reported", "confidence": "estimated"},
             }
         ],
     }
@@ -80,12 +82,30 @@ def test_invalid_confidence_enum_fails() -> None:
     assert errors
 
 
+def test_invalid_confidence_legacy_moderate_rejected() -> None:
+    doc = _base_doc()
+    doc["intervention_records"][0]["provenance"]["confidence"] = "moderate"
+    errors: list[str] = []
+    validate_user_intervention_exposure_document(doc, errors)
+    assert errors
+    assert any("confidence" in e for e in errors)
+
+
 def test_invalid_intervention_type_fails() -> None:
     doc = _base_doc()
     doc["intervention_records"][0]["intervention_type"] = "prescription_only"
     errors: list[str] = []
     validate_user_intervention_exposure_document(doc, errors)
     assert errors
+
+
+def test_invalid_intervention_type_legacy_non_medication_rejected() -> None:
+    doc = _base_doc()
+    doc["intervention_records"][0]["intervention_type"] = "non_medication"
+    errors: list[str] = []
+    validate_user_intervention_exposure_document(doc, errors)
+    assert errors
+    assert any("intervention_type" in e for e in errors)
 
 
 def test_mapped_invalid_class_id_fails() -> None:
@@ -142,11 +162,15 @@ def test_duplicate_record_id_fails() -> None:
     assert any("duplicate" in e for e in errors)
 
 
-def test_schema_forbidden_fragments_match_registry() -> None:
-    sdoc = yaml.safe_load(SCHEMA_PATH.read_text(encoding="utf-8"))
-    assert frozenset(sdoc["forbidden_key_fragments"]) == frozenset(FORBIDDEN_KEY_FRAGMENTS)
+def test_schema_forbidden_fragments_match_registry_schema() -> None:
+    user_doc = yaml.safe_load(SCHEMA_PATH.read_text(encoding="utf-8"))
+    reg_doc = yaml.safe_load(REGISTRY_SCHEMA_PATH.read_text(encoding="utf-8"))
+    assert frozenset(user_doc["forbidden_key_fragments"]) == frozenset(
+        reg_doc["forbidden_key_fragments"]
+    )
 
 
-def test_approved_class_set_alignment() -> None:
-    """Mapped rows use the same eight IDs as the intervention-effects registry."""
-    assert len(APPROVED_CLASS_IDS) == 8
+def test_approved_intervention_class_ids_match_registry_validator() -> None:
+    """Drift guard: mapped-class allowlist stays aligned with KB-S48a registry validator."""
+    assert APPROVED_INTERVENTION_CLASS_IDS == REGISTRY_APPROVED_CLASS_IDS
+    assert len(APPROVED_INTERVENTION_CLASS_IDS) == 8
