@@ -15,7 +15,8 @@ description: >
   Legacy packages without this field are unchanged.
 
   KB-S48b (additive, same schema_version 1.0.0): each hypothesis may optionally include
-  intervention_references — a list of minimal links to KB-S48a intervention class IDs.
+  intervention_references — a non-empty list of minimal links to KB-S48a intervention class IDs.
+  If there are no links, omit the field; an empty list is invalid.
   Omission remains valid for all existing packages.
 
 root_required_fields:
@@ -57,7 +58,7 @@ hypothesis_required_fields:
   - supporting_markers
   - contradiction_markers
 
-# Optional per hypothesis (KB-S48b). When present, must be a list of objects; each object
+# Optional per hypothesis (KB-S48b). When present, must be a non-empty list of objects; each object
 # must contain only the two keys below (no additional keys — prevents smuggling structure).
 hypothesis_optional_fields:
   - intervention_references
