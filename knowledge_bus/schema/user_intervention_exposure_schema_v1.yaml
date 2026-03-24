@@ -1,0 +1,87 @@
+# User intervention / exposure record set — Schema v1 (KB-S48d)
+# User-state layer: separate from Knowledge Bus packages and intervention-effects registry.
+# Enforced by: backend/scripts/validate_user_intervention_exposure.py
+
+schema_name: "HealthIQ User Intervention / Exposure Record Set"
+schema_version: "1.0.0"
+status: "LOCKED"
+
+description: >
+  Timeline-aware user intervention or exposure rows (medications, supplements, procedures,
+  lifestyle exposures, etc.). Canonical class linkage uses the same eight intervention_class_id
+  values as KB-S48a when link_status is mapped; unmapped rows must not invent a class ID.
+
+root_required_fields:
+  - schema_version
+  - intervention_records
+
+root_schema_version_allowed:
+  - "1.0.0"
+
+record_required_fields:
+  - intervention_record_id
+  - intervention_type
+  - entered_label
+  - canonical_class
+  - timeline
+  - provenance
+
+intervention_type_allowed:
+  - medication
+  - non_medication
+  - other
+
+canonical_class_required_fields:
+  - link_status
+
+link_status_allowed:
+  - mapped
+  - unmapped
+
+timeline_required_fields:
+  - effective_from_date
+  - effective_to_date
+  - is_ongoing
+  - change_event_type
+
+change_event_type_allowed:
+  - started
+  - stopped
+  - changed
+
+provenance_required_fields:
+  - source_type
+  - confidence
+
+source_type_allowed:
+  - user_reported
+  - clinician_prescribed
+  - inferred
+
+confidence_allowed:
+  - low
+  - moderate
+  - high
+
+# Optional free-text home; omit key or set null — no other ad-hoc string fields on the record.
+optional_record_string_fields:
+  - notes
+
+exposure_detail_optional_string_fields:
+  - dose_description
+  - frequency_description
+  - route_description
+  - intensity_description
+
+# Keys that must not appear anywhere in the document (phase-1 alignment with intervention registry).
+forbidden_key_fragments:
+  - threshold
+  - override_signal
+  - signal_state_mutation
+  - activation_override
+  - lab_range_modify
+  - firing_rule
+  - deterministic_threshold_change
+
+validator_output_contract:
+  audit_file: user_intervention_exposure_audit.md

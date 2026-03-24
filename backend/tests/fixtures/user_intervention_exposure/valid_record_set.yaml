@@ -1,0 +1,54 @@
+# Fixture — valid user intervention / exposure record set (KB-S48d)
+schema_version: "1.0.0"
+intervention_records:
+  - intervention_record_id: rec_metformin_001
+    intervention_type: medication
+    entered_label: Metformin 500mg twice daily
+    canonical_class:
+      link_status: mapped
+      intervention_class_id: biguanide_metformin
+    timeline:
+      effective_from_date: "2023-06-01"
+      effective_to_date: null
+      is_ongoing: true
+      change_event_type: started
+    provenance:
+      source_type: user_reported
+      confidence: moderate
+      notes: Started after HbA1c discussion.
+    exposure_detail:
+      dose_description: "500 mg"
+      frequency_description: twice daily
+      route_description: oral
+      intensity_description: null
+
+  - intervention_record_id: rec_unknown_supplement_002
+    intervention_type: non_medication
+    entered_label: Herbal product (unrecognized name)
+    canonical_class:
+      link_status: unmapped
+      intervention_class_id: null
+    timeline:
+      effective_from_date: "2024-01-10"
+      effective_to_date: "2024-03-01"
+      is_ongoing: false
+      change_event_type: stopped
+    provenance:
+      source_type: user_reported
+      confidence: low
+    exposure_detail: null
+
+  - intervention_record_id: rec_lisinopril_003
+    intervention_type: medication
+    entered_label: Lisinopril
+    canonical_class:
+      link_status: mapped
+      intervention_class_id: raas_inhibitor
+    timeline:
+      effective_from_date: "2022-11-15"
+      effective_to_date: null
+      is_ongoing: true
+      change_event_type: changed
+    provenance:
+      source_type: clinician_prescribed
+      confidence: high
