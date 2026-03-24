@@ -113,6 +113,12 @@ def _validate_hypothesis_intervention_references(
     if not isinstance(refs, list):
         errors.append(f"{hp}.intervention_references must be a list when present")
         return
+    if len(refs) < 1:
+        errors.append(
+            f"{hp}.intervention_references must contain at least one entry when present "
+            "(omit the field if there are no links)"
+        )
+        return
 
     allowed_keys = _intervention_ref_allowed_keyset(schema_doc)
     class_ids = _intervention_class_ids(schema_doc)

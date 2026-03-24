@@ -394,12 +394,15 @@ def test_intelligence_intervention_references_valid(tmp_path):
     assert proc.returncode == 0, proc.stdout + proc.stderr
 
 
-def test_intelligence_intervention_references_empty_list_valid(tmp_path):
+def test_intelligence_intervention_references_empty_list_rejected(tmp_path):
     doc = _base_intelligence_with_hypotheses(h1_extra={"intervention_references": []})
-    p = tmp_path / "model.yaml"
+    p = tmp_path / "bad.yaml"
     p.write_text(yaml.safe_dump(doc), encoding="utf-8")
     proc = _run_intel(p, audit_path=tmp_path / "audit.md")
-    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert proc.returncode == 1
+    out = proc.stdout + proc.stderr
+    assert "at least one entry" in out
+    assert "omit the field" in out
 
 
 def test_intelligence_intervention_references_invalid_relation_type(tmp_path):
