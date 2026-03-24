@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """
-Validate intervention-effects registry and optional alias map (KB-S48a).
+Validate intervention-effects registry and optional alias map (KB-S48a / KB-S48c).
 
 Phase-1 boundary (deterministic): registry documents must not encode threshold/signal
 mutation logic — enforced via forbidden key-fragment scan on all mapping keys.
+
+Alias map (KB-S48c): requires unknown_name_handling.resolution == unmapped — no fallback class
+for unknown user-entered strings.
 """
 
 from __future__ import annotations
@@ -22,6 +25,7 @@ DEFAULT_AUDIT = ROOT / "backend" / "artifacts" / "intervention_effects_registry_
 
 REGISTRY_SCHEMA_VERSION = "1.0.0"
 ALIAS_SCHEMA_VERSION = "1.0.0"
+UNKNOWN_NAME_RESOLUTION = "unmapped"
 
 APPROVED_CLASS_IDS = frozenset(
     {
@@ -192,11 +196,32 @@ def _validate_registry(doc: dict[str, Any], errors: list[str]) -> None:
             errors.append(f"unexpected class ids: {sorted(extra)}")
 
 
+def _validate_unknown_name_handling(doc: dict[str, Any], errors: list[str]) -> None:
+    unh = doc.get("unknown_name_handling")
+    if not isinstance(unh, dict):
+        errors.append("unknown_name_handling must be a map")
+        return
+    got = frozenset(unh.keys())
+    if got != frozenset({"resolution"}):
+        errors.append(
+            "unknown_name_handling must contain exactly key 'resolution' "
+            f"(found {sorted(got)})"
+        )
+    res = unh.get("resolution")
+    if res != UNKNOWN_NAME_RESOLUTION:
+        errors.append(
+            f"unknown_name_handling.resolution must be '{UNKNOWN_NAME_RESOLUTION}' "
+            f"(got {res!r}); unknown strings must not map to a canonical class_id"
+        )
+
+
 def _validate_aliases(doc: dict[str, Any], errors: list[str]) -> None:
     if doc.get("alias_map_schema_version") != ALIAS_SCHEMA_VERSION:
         errors.append(f"alias_map_schema_version must be '{ALIAS_SCHEMA_VERSION}'")
     if doc.get("registry_id") != "intervention_effects_registry_v1":
         errors.append("alias map registry_id must match intervention_effects_registry_v1")
+
+    _validate_unknown_name_handling(doc, errors)
 
     allowed = doc.get("allowed_target_class_ids")
     if not isinstance(allowed, list) or set(allowed) != APPROVED_CLASS_IDS:
