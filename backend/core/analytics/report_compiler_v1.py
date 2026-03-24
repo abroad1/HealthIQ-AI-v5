@@ -29,6 +29,7 @@ from core.contracts.clinician_report_v1 import (
     Page1SummaryBlockV1,
     RootCauseFindingV1,
 )
+from core.analytics.intervention_annotation_compiler_v1 import build_intervention_annotations_v1
 from core.analytics.root_cause_compiler_v1 import compile_root_cause_v1
 from core.knowledge.load_confirmatory_tests_registry import load_confirmatory_tests_registry_v1
 
@@ -418,6 +419,7 @@ def compile_report_v1(
     interaction_map_revision: Optional[str] = None,
     safety_contract_version: Optional[str] = None,
     generated_at: Optional[str] = None,
+    user_intervention_document: Optional[Dict[str, Any]] = None,
 ) -> ReportV1:
     signal_results = [row for row in (signal_results or []) if isinstance(row, dict)]
     interaction_summary = [row for row in (interaction_summary or []) if isinstance(row, dict)]
@@ -511,6 +513,7 @@ def compile_report_v1(
         biomarker_context=biomarker_context,
         input_reference_ranges=input_reference_ranges,
     )
+    intervention_annotations_v1 = build_intervention_annotations_v1(user_intervention_document)
 
     return ReportV1(
         report_version="v1",
@@ -519,4 +522,5 @@ def compile_report_v1(
         actions=actions,
         meta=meta,
         root_cause_v1=root_cause_v1,
+        intervention_annotations_v1=intervention_annotations_v1,
     )
