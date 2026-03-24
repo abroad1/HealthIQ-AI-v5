@@ -23,6 +23,10 @@ signals:
             availability: common
             rationale: Low sodium with high chloride can indicate a broader electrolyte disturbance.
         contradiction_markers: []
+        # KB-S48b — optional link to intervention-effects registry (class ID + relation only)
+        intervention_references:
+          - intervention_class_id: thiazide_or_loop_diuretic
+            relation_type: interpretation_confounder
       - hypothesis_id: hyp_concentration_effect
         rank: 2
         physiological_claim: >

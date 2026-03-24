@@ -312,3 +312,177 @@ def test_aggregated_status_includes_intelligence_field():
     status_path = REPO_ROOT / "backend" / "artifacts" / "knowledge_status.json"
     data = json.loads(status_path.read_text(encoding="utf-8"))
     assert data.get("intelligence_validation") == "PASS"
+
+
+def _base_intelligence_with_hypotheses(h1_extra: dict | None = None, h2_extra: dict | None = None):
+    b2 = {k: None for k in _bucket2_keys()}
+    h1 = {
+        "hypothesis_id": "h1",
+        "rank": 1,
+        "physiological_claim": "claim one text here",
+        "evidence_strength": "strong",
+        "caveats": ["c"],
+        "missing_data": {"policy": "p"},
+        "supporting_markers": [
+            {
+                "biomarker_id": "a",
+                "expected_direction": "high",
+                "role": "differential_marker",
+                "relationship_kind": "differential",
+                "availability": "common",
+            }
+        ],
+        "contradiction_markers": [],
+    }
+    h2 = {
+        "hypothesis_id": "h2",
+        "rank": 2,
+        "physiological_claim": "claim two text here",
+        "evidence_strength": "moderate",
+        "caveats": ["c"],
+        "missing_data": {"policy": "p"},
+        "supporting_markers": [
+            {
+                "biomarker_id": "b",
+                "expected_direction": "low",
+                "role": "mechanism_marker",
+                "relationship_kind": "mechanism",
+                "availability": "common",
+            }
+        ],
+        "contradiction_markers": [],
+    }
+    if h1_extra:
+        h1.update(h1_extra)
+    if h2_extra:
+        h2.update(h2_extra)
+    return {
+        "schema_version": "1.0.0",
+        "package_id": "pkg_intervention_link_test",
+        "signals": [
+            {
+                "signal_id": "signal_x",
+                "trigger_direction": "high",
+                "primary_biomarker": "x",
+                "hypotheses": [h1, h2],
+                "provenance": {"evidence_source_ids": [], "rule_provenance_refs": []},
+                "longitudinal_minimum": {
+                    "stable_identity_key": None,
+                    "snapshot_timestamp": None,
+                    "signal_state_snapshot": None,
+                },
+                "future_bucket2_homes": b2,
+            }
+        ],
+    }
+
+
+def test_intelligence_intervention_references_valid(tmp_path):
+    doc = _base_intelligence_with_hypotheses(
+        h1_extra={
+            "intervention_references": [
+                {
+                    "intervention_class_id": "raas_inhibitor",
+                    "relation_type": "monitoring_relevance",
+                }
+            ]
+        }
+    )
+    p = tmp_path / "model.yaml"
+    p.write_text(yaml.safe_dump(doc), encoding="utf-8")
+    proc = _run_intel(p, audit_path=tmp_path / "audit.md")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+
+
+def test_intelligence_intervention_references_empty_list_valid(tmp_path):
+    doc = _base_intelligence_with_hypotheses(h1_extra={"intervention_references": []})
+    p = tmp_path / "model.yaml"
+    p.write_text(yaml.safe_dump(doc), encoding="utf-8")
+    proc = _run_intel(p, audit_path=tmp_path / "audit.md")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+
+
+def test_intelligence_intervention_references_invalid_relation_type(tmp_path):
+    doc = _base_intelligence_with_hypotheses(
+        h1_extra={
+            "intervention_references": [
+                {"intervention_class_id": "raas_inhibitor", "relation_type": "not_allowed_enum"}
+            ]
+        }
+    )
+    p = tmp_path / "bad.yaml"
+    p.write_text(yaml.safe_dump(doc), encoding="utf-8")
+    proc = _run_intel(p, audit_path=tmp_path / "audit.md")
+    assert proc.returncode == 1
+    assert "relation_type" in proc.stdout + proc.stderr
+
+
+def test_intelligence_intervention_references_unknown_class_id(tmp_path):
+    doc = _base_intelligence_with_hypotheses(
+        h1_extra={
+            "intervention_references": [
+                {
+                    "intervention_class_id": "made_up_drug_class",
+                    "relation_type": "caveat_only",
+                }
+            ]
+        }
+    )
+    p = tmp_path / "bad.yaml"
+    p.write_text(yaml.safe_dump(doc), encoding="utf-8")
+    proc = _run_intel(p, audit_path=tmp_path / "audit.md")
+    assert proc.returncode == 1
+    assert "intervention_class_id" in proc.stdout + proc.stderr
+
+
+def test_intelligence_intervention_references_extra_key_rejected(tmp_path):
+    doc = _base_intelligence_with_hypotheses(
+        h1_extra={
+            "intervention_references": [
+                {
+                    "intervention_class_id": "raas_inhibitor",
+                    "relation_type": "expected_biomarker_effect",
+                    "threshold_hint": "no",
+                }
+            ]
+        }
+    )
+    p = tmp_path / "bad.yaml"
+    p.write_text(yaml.safe_dump(doc), encoding="utf-8")
+    proc = _run_intel(p, audit_path=tmp_path / "audit.md")
+    assert proc.returncode == 1
+    out = proc.stdout + proc.stderr
+    assert "exactly keys" in out or "forbidden fragment" in out
+
+
+def test_intelligence_intervention_references_must_be_list(tmp_path):
+    doc = _base_intelligence_with_hypotheses(
+        h1_extra={
+            "intervention_references": {
+                "intervention_class_id": "raas_inhibitor",
+                "relation_type": "caveat_only",
+            }
+        }
+    )
+    p = tmp_path / "bad.yaml"
+    p.write_text(yaml.safe_dump(doc), encoding="utf-8")
+    proc = _run_intel(p, audit_path=tmp_path / "audit.md")
+    assert proc.returncode == 1
+    assert "intervention_references must be a list" in proc.stdout + proc.stderr
+
+
+def test_intelligence_schema_intervention_class_ids_match_registry():
+    from scripts.validate_intervention_effects_registry import APPROVED_CLASS_IDS
+
+    sdoc = yaml.safe_load(INTEL_SCHEMA.read_text(encoding="utf-8"))
+    listed = frozenset(sdoc.get("intervention_class_id_allowed") or [])
+    assert listed == APPROVED_CLASS_IDS
+
+
+def test_intelligence_schema_intervention_ref_forbidden_frags_match_registry_schema():
+    intel_doc = yaml.safe_load(INTEL_SCHEMA.read_text(encoding="utf-8"))
+    reg_schema = REPO_ROOT / "knowledge_bus" / "schema" / "intervention_effects_registry_schema_v1.yaml"
+    reg_doc = yaml.safe_load(reg_schema.read_text(encoding="utf-8"))
+    a = frozenset(intel_doc.get("forbidden_intervention_reference_key_fragments") or [])
+    b = frozenset(reg_doc.get("forbidden_key_fragments") or [])
+    assert a == b
