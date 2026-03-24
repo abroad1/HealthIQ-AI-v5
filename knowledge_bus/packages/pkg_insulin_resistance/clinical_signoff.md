@@ -2,7 +2,67 @@
 
 ## Review Status
 
-**Status: PENDING REVIEW**
+**Status: KB-S45e RESOLVED — Bounded KB-S46 WHY expansion approved**
+
+> **Precedence (KB-S45e):** This status supersedes the generic “pending reviewer” boilerplate
+> below **for the bounded KB-S46 scope** described in the **KB-S45e Governance Resolution** section.
+> Full named clinical sign-off and Layer B promotion may still be completed later; the
+> checklist and template at the end of this file remain as **historical record** and for
+> any future comprehensive review. They do **not** block the governed KB-S46 work item.
+
+---
+
+## KB-S45e Governance Resolution
+
+**Resolution date:** 2026-03-24 (UTC)  
+**Sprint:** KB-S45e — Clinical sign-off and threshold resolution (insulin resistance + systemic inflammation)  
+**Authority basis:** Knowledge Bus package governance; amendment adds explicit execution authority
+without deleting prior translation evidence.
+
+### Outcome for `pkg_insulin_resistance` (KBP-0002)
+
+**Sign-off status:** **APPROVED for bounded KB-S46 WHY expansion** (see scope below).
+
+**Ambiguity removed:** The original gate text referred to **no code implementing derived
+metrics or signal logic** from this package in `backend/core/` without completed sign-off.
+KB-S45e clarifies that this gate applies to **signal evaluation / derived-metric implementation**
+sourced from the package, **not** to:
+
+- Authoring governed **root-cause hypothesis YAML** under `knowledge_bus/root_cause/`
+- Adding **read-only loaders** in `backend/core/knowledge/load_root_cause_hypotheses.py`
+  for those YAML assets
+- Registering a **read-only** `_ROOT_CAUSE_TARGETS` entry in `root_cause_compiler_v1.py`
+  that loads the above hypotheses for display/WHY — **without changing TyG thresholds,
+  signal firing, or evaluator logic**
+
+### Explicitly approved bounded work for KB-S46
+
+The following **KB-S46** deliverables are **governance-approved** under KBP-0002 evidence
+as documented in this file (TyG 8.30 / 8.50 and prediabetes overrides unchanged):
+
+1. Create governed hypothesis content, e.g.  
+   `knowledge_bus/root_cause/hypotheses/insulin_resistance_hypotheses_v1.yaml` (or equivalent
+   governed path).
+2. Extend `load_root_cause_hypotheses.py` with a loader for that file.
+3. Add a `_ROOT_CAUSE_TARGETS` entry in `root_cause_compiler_v1.py` for the insulin
+   resistance signal target, consistent with existing compiler patterns.
+
+**Not approved by KB-S45e:** Any change to TyG thresholds, prediabetes overrides, or signal
+evaluator behaviour beyond what a separate sprint and sign-off specify.
+
+### Threshold stance
+
+No amendment to numeric thresholds: KBP-0002 **confirms** KBP-0001-aligned TyG and
+prediabetes boundaries as cited in the evidence tables below.
+
+---
+
+## Legacy review gate (superseded for KB-S46 WHY scope)
+
+The following applied before KB-S45e and remains for **full Layer B / implementation**
+reviews outside the bounded WHY expansion:
+
+**Status note (template): PENDING REVIEW — full clinical reviewer**
 
 This document must be completed by a named clinical reviewer and committed before this package
 may be promoted to Layer B implementation (KB-S9). No code implementing derived metrics or
