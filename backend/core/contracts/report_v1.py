@@ -8,6 +8,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from core.contracts.intervention_annotation_v1 import InterventionAnnotationsV1
 from core.contracts.root_cause_v1 import RootCauseV1
 
 
@@ -80,3 +81,4 @@ class ReportV1(BaseModel):
     actions: ReportActionsV1
     meta: ReportMetaV1
     root_cause_v1: Optional[RootCauseV1] = None
+    intervention_annotations_v1: Optional[InterventionAnnotationsV1] = None
