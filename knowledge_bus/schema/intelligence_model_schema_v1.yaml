@@ -14,6 +14,10 @@ description: >
   Opt-in: package_manifest.yaml may reference intelligence_model: <filename>.
   Legacy packages without this field are unchanged.
 
+  KB-S48b (additive, same schema_version 1.0.0): each hypothesis may optionally include
+  intervention_references — a list of minimal links to KB-S48a intervention class IDs.
+  Omission remains valid for all existing packages.
+
 root_required_fields:
   - schema_version
   - package_id
@@ -52,6 +56,42 @@ hypothesis_required_fields:
   - missing_data
   - supporting_markers
   - contradiction_markers
+
+# Optional per hypothesis (KB-S48b). When present, must be a list of objects; each object
+# must contain only the two keys below (no additional keys — prevents smuggling structure).
+hypothesis_optional_fields:
+  - intervention_references
+
+intervention_reference_allowed_keys:
+  - intervention_class_id
+  - relation_type
+
+intervention_class_id_allowed:
+  - lipid_lowering_statin
+  - systemic_glucocorticoid
+  - thyroid_hormone_replacement
+  - raas_inhibitor
+  - thiazide_or_loop_diuretic
+  - biguanide_metformin
+  - ppi_long_term_high_dose
+  - sex_hormone_therapy
+
+intervention_relation_type_allowed:
+  - interpretation_confounder
+  - expected_biomarker_effect
+  - monitoring_relevance
+  - caveat_only
+
+# If intervention reference objects ever become nested maps, keys must not match these fragments
+# (phase-1 boundary — aligned with intervention-effects registry validator).
+forbidden_intervention_reference_key_fragments:
+  - threshold
+  - override_signal
+  - signal_state_mutation
+  - activation_override
+  - lab_range_modify
+  - firing_rule
+  - deterministic_threshold_change
 
 evidence_strength_allowed:
   - exploratory

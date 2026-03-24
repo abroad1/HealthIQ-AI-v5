@@ -41,6 +41,114 @@ _AVAILABILITY = frozenset({"common", "specialist", "optional"})
 _EVIDENCE_STRENGTH = frozenset({"exploratory", "moderate", "strong", "consensus"})
 _CONTRA_STRENGTH = frozenset({"weak", "moderate", "strong"})
 
+_FALLBACK_INTERVENTION_CLASS_IDS = frozenset(
+    {
+        "lipid_lowering_statin",
+        "systemic_glucocorticoid",
+        "thyroid_hormone_replacement",
+        "raas_inhibitor",
+        "thiazide_or_loop_diuretic",
+        "biguanide_metformin",
+        "ppi_long_term_high_dose",
+        "sex_hormone_therapy",
+    }
+)
+_FALLBACK_INTERVENTION_RELATION_TYPES = frozenset(
+    {
+        "interpretation_confounder",
+        "expected_biomarker_effect",
+        "monitoring_relevance",
+        "caveat_only",
+    }
+)
+_FALLBACK_INTERVENTION_REF_KEY_FRAGMENTS = (
+    "threshold",
+    "override_signal",
+    "signal_state_mutation",
+    "activation_override",
+    "lab_range_modify",
+    "firing_rule",
+    "deterministic_threshold_change",
+)
+
+
+def _intervention_class_ids(schema_doc: dict[str, Any]) -> frozenset[str]:
+    raw = schema_doc.get("intervention_class_id_allowed")
+    if isinstance(raw, list) and raw:
+        return frozenset(str(x) for x in raw)
+    return _FALLBACK_INTERVENTION_CLASS_IDS
+
+
+def _intervention_relation_types(schema_doc: dict[str, Any]) -> frozenset[str]:
+    raw = schema_doc.get("intervention_relation_type_allowed")
+    if isinstance(raw, list) and raw:
+        return frozenset(str(x) for x in raw)
+    return _FALLBACK_INTERVENTION_RELATION_TYPES
+
+
+def _intervention_ref_allowed_keyset(schema_doc: dict[str, Any]) -> frozenset[str]:
+    raw = schema_doc.get("intervention_reference_allowed_keys")
+    if isinstance(raw, list) and raw:
+        return frozenset(str(x) for x in raw)
+    return frozenset({"intervention_class_id", "relation_type"})
+
+
+def _intervention_ref_forbidden_frags(schema_doc: dict[str, Any]) -> tuple[str, ...]:
+    raw = schema_doc.get("forbidden_intervention_reference_key_fragments")
+    if isinstance(raw, list) and raw:
+        return tuple(str(x) for x in raw)
+    return _FALLBACK_INTERVENTION_REF_KEY_FRAGMENTS
+
+
+def _validate_hypothesis_intervention_references(
+    hyp: dict[str, Any],
+    hp: str,
+    *,
+    schema_doc: dict[str, Any],
+    errors: list[str],
+) -> None:
+    refs = hyp.get("intervention_references")
+    if refs is None:
+        return
+    if not isinstance(refs, list):
+        errors.append(f"{hp}.intervention_references must be a list when present")
+        return
+
+    allowed_keys = _intervention_ref_allowed_keyset(schema_doc)
+    class_ids = _intervention_class_ids(schema_doc)
+    rel_types = _intervention_relation_types(schema_doc)
+    frags = _intervention_ref_forbidden_frags(schema_doc)
+
+    for ri, item in enumerate(refs):
+        rp = f"{hp}.intervention_references[{ri}]"
+        if not isinstance(item, dict):
+            errors.append(f"{rp} must be a map")
+            continue
+        got_keys = frozenset(item.keys())
+        if got_keys != allowed_keys:
+            errors.append(
+                f"{rp} must contain exactly keys {sorted(allowed_keys)} (found {sorted(got_keys)})"
+            )
+            continue
+        for key in item:
+            low = key.lower()
+            for frag in frags:
+                if frag in low:
+                    errors.append(
+                        f"{rp}: key '{key}' contains forbidden fragment '{frag}' "
+                        "(intervention link must not encode threshold/signal mutation)"
+                    )
+        cid = item.get("intervention_class_id")
+        if not isinstance(cid, str) or cid not in class_ids:
+            errors.append(
+                f"{rp}.intervention_class_id must be one of {sorted(class_ids)}"
+            )
+        rt = item.get("relation_type")
+        if not isinstance(rt, str) or rt not in rel_types:
+            errors.append(
+                f"{rp}.relation_type must be one of {sorted(rel_types)}"
+            )
+
 
 def _load_yaml(path: Path) -> tuple[Any | None, list[str]]:
     errors: list[str] = []
@@ -265,6 +373,10 @@ def validate_intelligence_model(
                         errors.append(
                             f"{cml}.contradiction_strength must be one of {sorted(_CONTRA_STRENGTH)}"
                         )
+
+            _validate_hypothesis_intervention_references(
+                hyp, hp, schema_doc=schema_doc, errors=errors
+            )
 
         if hypo_ids and len(hypo_ids) != len(set(hypo_ids)):
             errors.append(f"{prefix}: duplicate hypothesis_id values")
