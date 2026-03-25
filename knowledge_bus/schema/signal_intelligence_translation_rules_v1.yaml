@@ -1,0 +1,162 @@
+# Signal Intelligence Translation Rules v1
+# Authority: KB-S47d / ADR-008
+# Implemented by: backend/core/knowledge/investigation_spec_to_promoted_signal.py
+#
+# Defines what is translated, how, and what is explicitly excluded when reducing
+# an investigation spec v3 document to a promoted signal-intelligence v1 document.
+
+schema_name: "HealthIQ Signal Intelligence Translation Rules"
+schema_version: "1.0.0"
+status: "LOCKED"
+
+description: >
+  Deterministic translation contract for reducing investigation_spec (v3.0.0) to
+  promoted_signal_intelligence (v1.0.0). One investigation spec maps to exactly one
+  entry in signals[]. The promoted contract is a signal-layer reduction only:
+  hypothesis reasoning, narrative, and ranking are explicitly excluded and remain in
+  adjacent hypothesis assets that reference owning signal_id.
+
+source_contract:
+  schema_file: "investigation_spec_schema_v3.0.0.yaml"
+  contract_version_field: "investigation_spec_contract_version"
+  required_contract_version: "3.0.0"
+  reference_example: "investigation_spec_contract_version_20_gold_final-v3.yaml"
+
+target_contract:
+  schema_file: "promoted_signal_intelligence_schema_v1.yaml"
+  contract_version_field: "promoted_signal_intelligence_contract_version"
+  required_contract_version: "1.0.0"
+
+# Direct copy — field content unchanged, target path shown
+direct_translation:
+  - source: signal_id
+    target: signals[].signal_id
+    rule: copy directly
+
+  - source: research_domain
+    target: signals[].research_domain
+    rule: copy directly
+
+  - source: primary_marker.biomarker_id
+    target: signals[].primary_metric.biomarker_id
+    rule: copy directly; must be non-empty
+
+  - source: primary_marker.rationale
+    target: signals[].primary_metric.rationale
+    rule: copy directly; must be non-empty
+
+  - source: primary_marker.signal_system
+    target: signals[].signal_system
+    rule: copy if present and non-empty; default to "other" if absent or empty
+
+  - source: trigger_direction
+    target: signals[].trigger_direction
+    rule: copy directly; must be one of high, low, both
+
+  - source: activation
+    target: signals[].activation
+    rule: copy entire object (activation_logic + activation_config)
+
+  - source: states
+    target: signals[].states
+    rule: copy entire object (baseline_state + escalation_state)
+
+  - source: supporting_markers
+    target: signals[].supporting_markers
+    rule: >
+      Copy list directly. Each item retains biomarker_id, expected_direction, role,
+      relationship_kind, availability, and rationale unchanged. The relationship_kind
+      field is present in the v3 gold final and must be preserved in the promoted contract.
+      At least one entry must carry relationship_kind == "differential".
+
+  - source: override_rules
+    target: signals[].override_rules
+    rule: copy list directly including all conditions and source_refs
+
+  - source: evidence.evidence_strength
+    target: signals[].evidence.evidence_strength AND signals[].confidence.evidence_strength
+    rule: >
+      Copy to both targets. confidence.evidence_strength must equal
+      evidence.evidence_strength (validator-enforced).
+
+  - source: evidence.physiological_claim
+    target: signals[].evidence.physiological_claim
+    rule: copy directly; min_length 10
+
+  - source: evidence.threshold_notes
+    target: signals[].evidence.threshold_notes
+    rule: copy if present; default to empty string if absent
+
+  - source: evidence.sources
+    target: signals[].evidence.sources
+    rule: copy list if present; omit key if absent
+
+# Derived — assembled from multiple source fields or with transformation
+translated_with_derivation:
+  - target: signals[].contradiction_markers
+    source_origin: hypotheses[*].contradiction_markers
+    rule: >
+      Aggregate contradiction_markers from ALL ranked hypotheses.
+      Deduplicate by contradiction_id (first occurrence by hypothesis rank wins).
+      Result is a flat signal-level list — hypotheses are NOT copied to the output.
+      An empty list is valid when no hypotheses carry contradiction_markers.
+
+  - target: signals[].missing_data.policies
+    source_origin: hypotheses[*].missing_data.policy
+    rule: >
+      Collect the string value of missing_data.policy from each hypothesis.
+      Deduplicate by string equality. Sort alphabetically.
+      Default to ["explicit_unknown_allowed"] when the collected set is empty.
+      This is a signal-level summary; per-hypothesis nuance lives in hypothesis assets.
+
+  - target: signals[].confirmatory_test_refs
+    source_origin: confirmatory_tests
+    rule: >
+      Map confirmatory_tests[] items to {test_id, rationale} objects.
+      Each test_id must start with ct_. Rationale min_length 10.
+      This is a reference list at signal level, not hypothesis-specific reasoning.
+
+# Explicitly NOT translated — these fields belong outside the promoted signal contract
+explicit_non_translation:
+  - source_field: hypotheses
+    boundary_reason: >
+      Hypothesis reasoning belongs in adjacent hypothesis assets.
+      Hypothesis assets reference owning signal_id as their primary authoritative link.
+      The promoted signal contract must not embed hypotheses.
+
+  - source_field: hypothesis_ranking
+    boundary_reason: >
+      Hypothesis ranking belongs in the WHY layer. Ranking authority stays
+      with hypothesis assets, not the promoted signal contract.
+
+  - source_field: narrative
+    boundary_reason: >
+      Narrative prose (mechanism, biological_pathway, interpretation, implications,
+      supporting_marker_roles) is outside promoted reasoning authority. It must not
+      appear in the promoted signal contract.
+
+  - source_field: confounders
+    boundary_reason: >
+      Optional upstream field. Not promoted to signal contract in v1.
+      May be addressed in a future boundary extension sprint.
+
+  - source_field: future_authoring_hooks
+    boundary_reason: >
+      Upstream bucket-2 placeholder. Not promoted.
+
+  - source_field: test_vectors
+    boundary_reason: >
+      Upstream test vectors are not part of the promoted contract shape.
+
+# Translation metadata written to the output root map
+translation_provenance_block:
+  target: translation
+  fields:
+    - source: "investigation_spec_v3" (literal)
+    - investigation_spec_contract_version: from source contract_version field
+    - investigation_spec_id: from spec_id
+    - signal_id: from signal_id
+  rule: >
+    The translation block is written at root level for traceability.
+    It must not be interpreted as governed contract content.
+    Validators must not reject documents that include this block.

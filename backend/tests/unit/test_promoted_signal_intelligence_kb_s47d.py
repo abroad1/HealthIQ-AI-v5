@@ -18,7 +18,9 @@ from core.knowledge.load_promoted_signal_intelligence import (
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 VALIDATE_PROMOTED = REPO_ROOT / "backend" / "scripts" / "validate_promoted_signal_intelligence.py"
+VALIDATE_PACKAGE = REPO_ROOT / "backend" / "scripts" / "validate_knowledge_package.py"
 PROMOTED_SCHEMA = REPO_ROOT / "knowledge_bus" / "schema" / "promoted_signal_intelligence_schema_v1.yaml"
+FIXTURE_VALID = REPO_ROOT / "backend" / "tests" / "fixtures" / "pkg_promoted_signal_v1_valid"
 
 
 def _minimal_investigation_spec_v3() -> dict:
@@ -204,3 +206,103 @@ def test_load_promoted_signal_intelligence_for_package_optional(tmp_path: Path) 
     loaded = load_promoted_signal_intelligence_for_package(pkg)
     assert isinstance(loaded, dict)
     assert loaded.get("package_id") == "pkg_tmp"
+
+
+# ---------------------------------------------------------------------------
+# Committed fixture — end-to-end (M-2)
+# ---------------------------------------------------------------------------
+
+
+def _run_package(path: Path) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        [sys.executable, str(VALIDATE_PACKAGE), "--package-dir", str(path)],
+        cwd=str(REPO_ROOT),
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+
+def _run_promoted_validator(model_path: Path, audit_path: Path) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        [
+            sys.executable,
+            str(VALIDATE_PROMOTED),
+            "--model", str(model_path),
+            "--schema", str(PROMOTED_SCHEMA),
+            "--audit-path", str(audit_path),
+        ],
+        cwd=str(REPO_ROOT),
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+
+def test_fixture_valid_package_passes_end_to_end() -> None:
+    proc = _run_package(FIXTURE_VALID)
+    assert proc.returncode == 0, proc.stderr + proc.stdout
+    assert "promoted_signal_intelligence_validation: PASS" in proc.stdout
+
+
+def test_forbidden_key_hypotheses_rejected(tmp_path: Path) -> None:
+    bad = yaml.safe_load(
+        (FIXTURE_VALID / "promoted_signal_intelligence.yaml").read_text(encoding="utf-8")
+    )
+    bad["hypotheses"] = [{"hypothesis_id": "hyp_smuggled"}]
+    model_path = tmp_path / "psi.yaml"
+    model_path.write_text(yaml.safe_dump(bad, sort_keys=False), encoding="utf-8")
+    proc = _run_promoted_validator(model_path, tmp_path / "audit.md")
+    assert proc.returncode != 0
+
+
+def test_forbidden_key_hypothesis_ranking_rejected(tmp_path: Path) -> None:
+    bad = yaml.safe_load(
+        (FIXTURE_VALID / "promoted_signal_intelligence.yaml").read_text(encoding="utf-8")
+    )
+    bad["hypothesis_ranking"] = {"ordered_hypothesis_ids": ["hyp_x"]}
+    model_path = tmp_path / "psi.yaml"
+    model_path.write_text(yaml.safe_dump(bad, sort_keys=False), encoding="utf-8")
+    proc = _run_promoted_validator(model_path, tmp_path / "audit.md")
+    assert proc.returncode != 0
+
+
+def test_forbidden_key_narrative_rejected(tmp_path: Path) -> None:
+    bad = yaml.safe_load(
+        (FIXTURE_VALID / "promoted_signal_intelligence.yaml").read_text(encoding="utf-8")
+    )
+    bad["narrative"] = {"mechanism": "smuggled narrative"}
+    model_path = tmp_path / "psi.yaml"
+    model_path.write_text(yaml.safe_dump(bad, sort_keys=False), encoding="utf-8")
+    proc = _run_promoted_validator(model_path, tmp_path / "audit.md")
+    assert proc.returncode != 0
+
+
+def test_relationship_kind_role_misalignment_rejected(tmp_path: Path) -> None:
+    bad = yaml.safe_load(
+        (FIXTURE_VALID / "promoted_signal_intelligence.yaml").read_text(encoding="utf-8")
+    )
+    # corroboration kind requires corroborator role — pair it with mechanism_marker instead
+    bad["signals"][0]["supporting_markers"][0]["relationship_kind"] = "corroboration"
+    bad["signals"][0]["supporting_markers"][0]["role"] = "mechanism_marker"
+    model_path = tmp_path / "psi.yaml"
+    model_path.write_text(yaml.safe_dump(bad, sort_keys=False), encoding="utf-8")
+    proc = _run_promoted_validator(model_path, tmp_path / "audit.md")
+    assert proc.returncode != 0
+
+
+def test_legacy_package_without_field_skips(tmp_path: Path) -> None:
+    pkg = tmp_path / "pkg_legacy"
+    pkg.mkdir()
+    (pkg / "package_manifest.yaml").write_text(
+        "package_id: pkg_legacy_test\npackage_version: 1.0.0\n"
+        "research_brief: research_brief.yaml\nsignal_library: signal_library.yaml\n"
+        "behavioural_impact: NONE\n",
+        encoding="utf-8",
+    )
+    # copy minimal research_brief and signal_library from valid fixture
+    import shutil
+    shutil.copy(FIXTURE_VALID / "research_brief.yaml", pkg / "research_brief.yaml")
+    shutil.copy(FIXTURE_VALID / "signal_library.yaml", pkg / "signal_library.yaml")
+    proc = _run_package(pkg)
+    assert "promoted_signal_intelligence_validation: SKIP" in proc.stdout

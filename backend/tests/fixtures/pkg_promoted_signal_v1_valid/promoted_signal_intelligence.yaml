@@ -1,0 +1,64 @@
+promoted_signal_intelligence_contract_version: "1.0.0"
+schema_version: "1.0.0"
+package_id: pkg_fixture_promoted_signal_v1
+
+signals:
+  - signal_id: signal_fixture_psi_alt_high
+    research_domain: hepatic
+    signal_system: hepatic
+    primary_metric:
+      biomarker_id: alt
+      rationale: ALT is the primary marker of hepatocellular injury; elevation above lab range triggers this signal.
+    trigger_direction: high
+    activation:
+      activation_logic: lab_range_exceeded
+      activation_config:
+        enable_upper_bound: true
+        upper_bound_state: suboptimal
+        enable_lower_bound: false
+        lower_bound_state: suboptimal
+    states:
+      baseline_state: suboptimal
+      escalation_state: at_risk
+    supporting_markers:
+      - biomarker_id: ast
+        expected_direction: high
+        role: corroborator
+        relationship_kind: corroboration
+        availability: common
+        rationale: Concurrent AST elevation corroborates hepatocellular injury and excludes isolated ALT artefact.
+      - biomarker_id: ggt
+        expected_direction: high
+        role: differential_marker
+        relationship_kind: differential
+        availability: common
+        rationale: Disproportionate GGT elevation differentiates cholestatic from pure hepatocellular injury patterns.
+    contradiction_markers:
+      - contradiction_id: ctr_ast_low_isolated_alt
+        marker_reference: ast
+        contradiction_rationale: Low AST with elevated ALT may indicate isolated muscle source rather than hepatocellular injury.
+        contradiction_strength: moderate
+    missing_data:
+      policies:
+        - If AST is missing, do not use AST-to-ALT ratio; rely on GGT direction for differential context.
+    confidence:
+      evidence_strength: moderate
+    evidence:
+      evidence_strength: moderate
+      physiological_claim: Elevated ALT above lab range indicates hepatocellular membrane disruption and cytosolic enzyme leak.
+      threshold_notes: Lab-range breach is the activation trigger; numeric escalation threshold governed by override rule.
+    confirmatory_test_refs:
+      - test_id: ct_repeat_lfts_72h
+        rationale: Repeat liver function tests at 72 hours confirm persistence and rule out transient elevation.
+    override_rules:
+      - rule_id: or_alt_escalation
+        resulting_state: at_risk
+        description: Escalate when ALT exceeds three times the upper bound of the laboratory reference range.
+        conditions:
+          - metric_id: alt
+            operator: ">="
+            condition_type: all_of
+            comparator_type: numeric_value
+            numeric_value: 120.0
+        source_refs:
+          - source_fixture_study
