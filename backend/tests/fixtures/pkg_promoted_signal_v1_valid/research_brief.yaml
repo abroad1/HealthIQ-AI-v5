@@ -1,0 +1,13 @@
+research_domain: hepatic
+sources:
+  - source_id: source_fixture_study
+    paper_title: Fixture study for promoted signal intelligence v1 validation
+    journal: Test Fixture Journal
+    year: 2024
+biomarkers:
+  - alt
+  - ast
+  - ggt
+physiological_claim: Elevated ALT is a governed signal-intelligence fixture for promoted contract validator testing.
+evidence_strength: moderate
+research_summary: Fixture research brief for KB-S47d promoted signal contract validation.
