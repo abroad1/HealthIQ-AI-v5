@@ -32,6 +32,8 @@ RESEARCH_VALIDATOR = ROOT / "backend" / "scripts" / "validate_research_brief.py"
 SIGNAL_VALIDATOR = ROOT / "backend" / "scripts" / "validate_signal_library.py"
 INTELLIGENCE_VALIDATOR = ROOT / "backend" / "scripts" / "validate_intelligence_model.py"
 INTELLIGENCE_SCHEMA_PATH = ROOT / "knowledge_bus" / "schema" / "intelligence_model_schema_v1.yaml"
+PROMOTED_SIGNAL_VALIDATOR = ROOT / "backend" / "scripts" / "validate_promoted_signal_intelligence.py"
+PROMOTED_SIGNAL_SCHEMA_PATH = ROOT / "knowledge_bus" / "schema" / "promoted_signal_intelligence_schema_v1.yaml"
 
 
 def _signal_library_contract_version(package_dir: Path) -> str:
@@ -81,6 +83,7 @@ def write_aggregated_status(
     research_status: str,
     signal_status: str,
     intelligence_status: str,
+    promoted_signal_intelligence_status: str,
 ) -> None:
     ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
     payload = {
@@ -88,11 +91,13 @@ def write_aggregated_status(
         "research_validation": research_status,
         "signal_validation": signal_status,
         "intelligence_validation": intelligence_status,
+        "promoted_signal_intelligence_validation": promoted_signal_intelligence_status,
         "ready_for_implementation": (
             manifest_status == "PASS"
             and research_status == "PASS"
             and signal_status == "PASS"
             and intelligence_status in ("PASS", "SKIP")
+            and promoted_signal_intelligence_status in ("PASS", "SKIP")
         ),
     }
     AGGREGATED_STATUS_PATH.write_text(
@@ -209,15 +214,42 @@ def main(argv: list[str] | None = None) -> int:
     else:
         intelligence_exit = 0
 
-    write_aggregated_status(manifest_status, research_status, signal_status, intelligence_status)
+    promoted_status = "SKIP"
+    psi_rel = manifest_payload.get("promoted_signal_intelligence") if isinstance(manifest_payload, dict) else None
+    if isinstance(psi_rel, str) and psi_rel.strip():
+        psi_path = (package_dir / psi_rel.strip()).resolve()
+        promoted_exit = run_validator(
+            [
+                sys.executable,
+                str(PROMOTED_SIGNAL_VALIDATOR),
+                "--model",
+                str(psi_path),
+                "--schema",
+                str(PROMOTED_SIGNAL_SCHEMA_PATH),
+                "--audit-path",
+                str(ARTIFACTS_DIR / "promoted_signal_intelligence_audit.md"),
+            ]
+        )
+        promoted_status = "PASS" if promoted_exit == 0 else "FAIL"
+    else:
+        promoted_exit = 0
+
+    write_aggregated_status(
+        manifest_status,
+        research_status,
+        signal_status,
+        intelligence_status,
+        promoted_status,
+    )
 
     print(f"manifest_validation: {manifest_status}")
     print(f"research_validation: {research_status}")
     print(f"signal_validation: {signal_status}")
     print(f"intelligence_validation: {intelligence_status}")
+    print(f"promoted_signal_intelligence_validation: {promoted_status}")
     print(
         "ready_for_implementation: "
-        f"{manifest_status == 'PASS' and research_status == 'PASS' and signal_status == 'PASS' and intelligence_status in ('PASS', 'SKIP')}"
+        f"{manifest_status == 'PASS' and research_status == 'PASS' and signal_status == 'PASS' and intelligence_status in ('PASS', 'SKIP') and promoted_status in ('PASS', 'SKIP')}"
     )
     print(f"manifest_audit_path: {MANIFEST_AUDIT_PATH}")
     print(f"research_audit_path: {RESEARCH_AUDIT_PATH}")
@@ -230,6 +262,7 @@ def main(argv: list[str] | None = None) -> int:
         and research_status == "PASS"
         and signal_status == "PASS"
         and intelligence_status in ("PASS", "SKIP")
+        and promoted_status in ("PASS", "SKIP")
         else 1
     )
 
