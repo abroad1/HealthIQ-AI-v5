@@ -36,6 +36,13 @@ optional_fields:
       Optional relative path to intelligence_model.yaml (target schema v1).
       When present, validate_intelligence_model.py is run by validate_knowledge_package.py.
 
+  promoted_signal_intelligence:
+    type: string
+    description: >
+      Optional relative path to promoted_signal_intelligence.yaml (KB-S47d contract v1).
+      When present, validate_promoted_signal_intelligence.py is run by validate_knowledge_package.py.
+      Legacy packages omit this field and remain on the three-file contract only.
+
   description:
     type: string
 
