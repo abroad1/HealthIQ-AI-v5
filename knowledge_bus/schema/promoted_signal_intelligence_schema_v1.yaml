@@ -1,0 +1,163 @@
+# HealthIQ Promoted Signal Intelligence — Contract v1
+# Authority: KB-S47d (architecture decision + validator foundation)
+# Enforced by: backend/scripts/validate_promoted_signal_intelligence.py
+#
+# This contract is a deterministic reduction of investigation_spec v3.0.0 signal-layer
+# primitives. It MUST NOT embed hypotheses, hypothesis ranking, or narrative prose.
+# Adjacent hypothesis assets link TO signals via owning signal_id (see ADR-008).
+
+schema_name: "HealthIQ Promoted Signal Intelligence"
+schema_version: "1.0.0"
+status: "LOCKED"
+
+description: >
+  Governed signal-intelligence shape for promoted Knowledge Bus packages.
+  Opt-in via package_manifest.yaml: promoted_signal_intelligence: <relative path>.
+  Packages without this field remain on the legacy three-file contract only.
+
+root_required_fields:
+  - promoted_signal_intelligence_contract_version
+  - schema_version
+  - package_id
+  - signals
+
+root_required_contract_version: "1.0.0"
+root_required_schema_version: "1.0.0"
+
+forbidden_root_keys:
+  - hypotheses
+  - hypothesis_ranking
+  - narrative
+  - rendering
+  - presentation
+  - display
+  - report_layout
+  - ui_hints
+
+signal_required_fields:
+  - signal_id
+  - research_domain
+  - signal_system
+  - primary_metric
+  - trigger_direction
+  - activation
+  - states
+  - supporting_markers
+  - contradiction_markers
+  - missing_data
+  - confidence
+  - override_rules
+  - evidence
+  - confirmatory_test_refs
+
+trigger_direction_allowed:
+  - high
+  - low
+  - both
+
+signal_system_allowed:
+  - metabolic
+  - lipid_transport
+  - hepatic
+  - inflammatory
+  - renal
+  - vascular
+  - hematologic
+  - hormonal
+  - mitochondrial
+  - other
+
+primary_metric_required_fields:
+  - biomarker_id
+  - rationale
+
+supporting_marker_required_fields:
+  - biomarker_id
+  - expected_direction
+  - role
+  - relationship_kind
+  - availability
+  - rationale
+
+expected_direction_allowed:
+  - high
+  - low
+  - either
+  - any
+
+relationship_kind_allowed:
+  - mechanism
+  - corroboration
+  - severity
+  - differential
+  - exclusion
+
+role_allowed:
+  - mechanism_marker
+  - severity_marker
+  - contextual_marker
+  - corroborator
+  - differential_marker
+  - exclusion_marker
+
+availability_allowed:
+  - common
+  - specialist
+  - optional
+
+relationship_kind_role_alignment:
+  mechanism:
+    - mechanism_marker
+    - contextual_marker
+  corroboration:
+    - corroborator
+  severity:
+    - severity_marker
+  differential:
+    - differential_marker
+  exclusion:
+    - exclusion_marker
+
+contradiction_marker_required_fields:
+  - contradiction_id
+  - marker_reference
+  - contradiction_rationale
+  - contradiction_strength
+
+contradiction_strength_allowed:
+  - weak
+  - moderate
+  - strong
+
+missing_data_required_fields:
+  - policies
+
+confidence_required_fields:
+  - evidence_strength
+
+evidence_strength_allowed:
+  - exploratory
+  - moderate
+  - strong
+  - consensus
+
+evidence_required_fields:
+  - evidence_strength
+  - physiological_claim
+  - threshold_notes
+
+confirmatory_test_ref_required_fields:
+  - test_id
+  - rationale
+
+# Bucket-2 / forward homes — nullable object; keys may be null
+optional_signal_bucket2_keys:
+  - supporting_marker_rationale_extended
+  - evidence_sources
+  - cross_signal_refs
+  - phenotype_refs
+  - context_sensitivity_refs
+  - intervention_sensitivity_refs
+
+validator_output_contract:
+  audit_file: promoted_signal_intelligence_audit.md
