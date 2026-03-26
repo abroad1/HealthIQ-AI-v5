@@ -1,0 +1,140 @@
+schema_version: "v1"
+asset_id: "insulin_resistance_hypotheses_v1"
+updated_at: "2026-03-26"
+primary_signal_id: "signal_insulin_resistance"
+primary_metric: "tyg_index"
+notes:
+  - "KB-S46 governed root-cause asset for deterministic insulin-resistance (TyG) context."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+  - "All confirmatory_tests must reference knowledge_bus/registries/confirmatory_tests_v1.yaml."
+
+hypotheses:
+  - hypothesis_id: "ir_tyg_metabolic_resistance_pattern_v1"
+    title: "TyG-index metabolic resistance pattern"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "TyG-index context is elevated with lipid–glucose coupling that aligns with structured insulin-resistance phenotyping on this panel."
+    required_markers:
+      - "glucose"
+      - "triglycerides"
+    confirmatory_markers:
+      - "tyg_index"
+    differentiator_markers:
+      - "hdl_cholesterol"
+    evidence_for_rules:
+      - rule_id: "ir_signal_fired"
+        signals_any:
+          - "signal_insulin_resistance"
+        direction: "fired"
+        evidence_for_item: "An insulin-resistance signal fired, anchoring TyG-related metabolic context."
+        marker_refs:
+          - "glucose"
+          - "triglycerides"
+      - rule_id: "triglyceride_high_support"
+        markers_any:
+          - "triglycerides"
+        direction: "high"
+        evidence_for_item: "Triglycerides are elevated, supporting hepatic VLDL output patterns that often co-occur with insulin resistance."
+        marker_refs:
+          - "triglycerides"
+      - rule_id: "glucose_high_support"
+        markers_any:
+          - "glucose"
+        direction: "high"
+        evidence_for_item: "Glucose is elevated, supporting glycaemic stress alongside TyG-related resistance context."
+        marker_refs:
+          - "glucose"
+    evidence_against_rules:
+      - rule_id: "triglyceride_clearly_normal"
+        markers_all:
+          - "triglycerides"
+        direction: "clearly_normal"
+        evidence_against_item: "Triglycerides appear clearly within range, which weakens a classic TyG-heavy resistance pattern in isolation."
+        marker_refs:
+          - "triglycerides"
+    missing_data_markers:
+      - marker_id: "insulin"
+        reason: "Fasting insulin refines pancreatic compensation when available."
+      - marker_id: "hba1c"
+        reason: "HbA1c adds longer-window glycaemic context beyond spot glucose."
+    confirmatory_tests:
+      - "test_ty_g_component_markers_panel_v1"
+      - "test_fasting_glucose_insulin_context_v1"
+
+  - hypothesis_id: "ir_dysglycaemia_coupling_context_v1"
+    title: "Dysglycaemia coupling context"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Insulin-resistance context co-occurs with dysglycaemia markers that increase clinical priority for structured metabolic follow-up."
+    required_markers:
+      - "glucose"
+      - "triglycerides"
+    confirmatory_markers:
+      - "hba1c"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "hba1c_high_support"
+        markers_any:
+          - "hba1c"
+        direction: "high"
+        evidence_for_item: "HbA1c is elevated, supporting sustained glycaemic burden alongside resistance context."
+        marker_refs:
+          - "hba1c"
+      - rule_id: "glucose_high_dysglycaemia"
+        markers_any:
+          - "glucose"
+        direction: "high"
+        evidence_for_item: "Glucose is elevated, supporting near-term dysglycaemia that often tracks with insulin resistance."
+        marker_refs:
+          - "glucose"
+    evidence_against_rules:
+      - rule_id: "hba1c_clearly_normal"
+        markers_all:
+          - "hba1c"
+        direction: "clearly_normal"
+        evidence_against_item: "HbA1c appears clearly within range, which reduces support for a sustained dysglycaemia coupling pattern."
+        marker_refs:
+          - "hba1c"
+    missing_data_markers:
+      - marker_id: "hba1c"
+        reason: "HbA1c distinguishes chronic exposure from isolated fasting glucose shifts."
+    confirmatory_tests:
+      - "test_hba1c_repeat_v1"
+      - "test_ty_g_component_markers_panel_v1"
+
+  - hypothesis_id: "ir_hepatic_metabolic_coupling_v1"
+    title: "Hepatic–metabolic coupling context"
+    safety_class: "monitoring"
+    evidence_strength: "exploratory"
+    summary_template: "TyG-related resistance context appears alongside hepatic enzyme signals that can co-occur in metabolic–hepatic overlap patterns."
+    required_markers:
+      - "glucose"
+      - "triglycerides"
+    confirmatory_markers:
+      - "ggt"
+      - "alt"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "ggt_high_support"
+        markers_any:
+          - "ggt"
+        direction: "high"
+        evidence_for_item: "GGT is elevated, which can align with hepatic stress overlapping insulin-resistance phenotypes."
+        marker_refs:
+          - "ggt"
+      - rule_id: "alt_high_support"
+        markers_any:
+          - "alt"
+        direction: "high"
+        evidence_for_item: "ALT is elevated, supporting hepatocellular context that may parallel metabolic overload patterns."
+        marker_refs:
+          - "alt"
+    evidence_against_rules: []
+    missing_data_markers:
+      - marker_id: "ggt"
+        reason: "GGT refines hepatic contribution when triglycerides and TyG context are elevated."
+      - marker_id: "alt"
+        reason: "ALT helps separate hepatocellular patterning from isolated lipid shifts."
+    confirmatory_tests:
+      - "test_liver_ggt_alt_ast_v1"
+      - "test_ty_g_component_markers_panel_v1"

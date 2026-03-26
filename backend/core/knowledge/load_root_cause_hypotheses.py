@@ -82,3 +82,11 @@ def load_alt_hypotheses_v1() -> Dict[str, Any]:
 
 def load_tsh_hypotheses_v1() -> Dict[str, Any]:
     return load_root_cause_hypotheses_asset_v1("tsh_hypotheses_v1.yaml")
+
+
+def load_insulin_resistance_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("insulin_resistance_hypotheses_v1.yaml")
+
+
+def load_systemic_inflammation_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("systemic_inflammation_hypotheses_v1.yaml")
