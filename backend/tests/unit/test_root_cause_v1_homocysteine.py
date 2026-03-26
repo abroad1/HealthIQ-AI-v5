@@ -65,7 +65,7 @@ def test_root_cause_v1_present_for_homocysteine_and_non_regression(tmp_path, fix
     assert report_a.get("actions", {}).get("interventions", []) == report_b.get("actions", {}).get("interventions", [])
 
 
-def test_root_cause_v1_omitted_when_homocysteine_context_absent(tmp_path):
+def test_root_cause_v1_homocysteine_finding_absent_when_context_signal_not_fired(tmp_path):
     fixture = Path(__file__).parent.parent / "fixtures" / "golden_panel_160.json"
     run_dir, _ = run_golden_panel(
         fixture_path=fixture,
@@ -74,8 +74,12 @@ def test_root_cause_v1_omitted_when_homocysteine_context_absent(tmp_path):
         write_narrative=False,
     )
     report = (_load_json(run_dir / "insight_graph.json") or {}).get("report_v1", {})
-    root_cause = report.get("root_cause_v1", None)
-    assert root_cause is None
+    root_cause = report.get("root_cause_v1") or {}
+    findings = root_cause.get("findings") or []
+    hcy_finding = _finding_by_signal(root_cause, "signal_homocysteine_elevation_context")
+    assert hcy_finding is None
+    # Other governed targets (e.g. systemic inflammation) may still emit findings on this panel.
+    assert isinstance(findings, list)
 
 
 def test_root_cause_v1_text_fields_respect_safety_denylist(tmp_path):
@@ -122,9 +126,11 @@ def test_confirmatory_test_suppression_and_repeat_behavior_for_ab_panel(tmp_path
         write_narrative=False,
     )
     insight = _load_json(run_dir / "insight_graph.json") or {}
-    findings = (((insight.get("report_v1") or {}).get("root_cause_v1") or {}).get("findings") or [])
-    assert len(findings) == 1
-    hypotheses = findings[0].get("hypotheses", [])
+    root_cause = (insight.get("report_v1") or {}).get("root_cause_v1") or {}
+    findings = root_cause.get("findings") or []
+    hcy_finding = _finding_by_signal(root_cause, "signal_homocysteine_elevation_context")
+    assert isinstance(hcy_finding, dict)
+    hypotheses = hcy_finding.get("hypotheses", [])
     by_id = {str(h.get("hypothesis_id", "")).strip(): h for h in hypotheses if isinstance(h, dict)}
     b12 = by_id.get("hcy_b12_pattern_v1")
     assert isinstance(b12, dict)
@@ -313,3 +319,110 @@ def test_root_cause_v1_suppresses_non_repeat_confirmatory_tests_when_present():
         if isinstance(t, dict)
     }
     assert "test_liver_ggt_alt_ast_v1" not in confirmatory_test_ids
+
+
+def test_root_cause_v1_insulin_resistance_hypotheses_emit_kb_s46():
+    root = compile_root_cause_v1(
+        signal_results=[
+            {
+                "signal_id": "signal_insulin_resistance",
+                "signal_state": "at_risk",
+                "confidence": 0.84,
+                "primary_metric": "tyg_index",
+            }
+        ],
+        biomarker_context={
+            "glucose": {"value": 6.1},
+            "triglycerides": {"value": 2.4},
+            "tyg_index": {"value": 8.72},
+            "hdl_cholesterol": {"value": 0.95},
+            "hba1c": {"value": 44.0},
+        },
+        input_reference_ranges={
+            "glucose": {"min": 3.9, "max": 5.5},
+            "triglycerides": {"min": 0.4, "max": 1.7},
+            "tyg_index": {"min": 4.0, "max": 8.2},
+            "hdl_cholesterol": {"min": 1.0, "max": 3.0},
+            "hba1c": {"min": 20.0, "max": 42.0},
+        },
+    )
+    dump = root.model_dump() if root is not None else {}
+    finding = _finding_by_signal(dump, "signal_insulin_resistance")
+    assert isinstance(finding, dict)
+    hypothesis_ids = {
+        str(h.get("hypothesis_id", "")).strip()
+        for h in (finding.get("hypotheses") or [])
+        if isinstance(h, dict)
+    }
+    assert "ir_tyg_metabolic_resistance_pattern_v1" in hypothesis_ids
+    assert "ir_dysglycaemia_coupling_context_v1" in hypothesis_ids
+    assert "ir_hepatic_metabolic_coupling_v1" in hypothesis_ids
+
+
+def test_root_cause_v1_systemic_inflammation_hypotheses_emit_kb_s46():
+    root = compile_root_cause_v1(
+        signal_results=[
+            {
+                "signal_id": "signal_systemic_inflammation",
+                "signal_state": "at_risk",
+                "confidence": 0.83,
+                "primary_metric": "crp",
+            }
+        ],
+        biomarker_context={
+            "crp": {"value": 3.8},
+            "glucose": {"value": 5.9},
+            "triglycerides": {"value": 2.0},
+            "alt": {"value": 52.0},
+            "ggt": {"value": 62.0},
+        },
+        input_reference_ranges={
+            "crp": {"min": 0.0, "max": 3.0},
+            "glucose": {"min": 3.9, "max": 5.5},
+            "triglycerides": {"min": 0.4, "max": 1.7},
+            "alt": {"min": 10.0, "max": 45.0},
+            "ggt": {"min": 10.0, "max": 55.0},
+        },
+    )
+    dump = root.model_dump() if root is not None else {}
+    finding = _finding_by_signal(dump, "signal_systemic_inflammation")
+    assert isinstance(finding, dict)
+    hypothesis_ids = {
+        str(h.get("hypothesis_id", "")).strip()
+        for h in (finding.get("hypotheses") or [])
+        if isinstance(h, dict)
+    }
+    assert "infl_persistent_low_grade_burden_v1" in hypothesis_ids
+    assert "infl_metabolic_companion_context_v1" in hypothesis_ids
+    assert "infl_hepatic_coupling_context_v1" in hypothesis_ids
+
+
+def test_root_cause_v1_hba1c_only_finding_unchanged_kb_s46_regression():
+    """Untouched signals must not gain extra findings when only hba1c fires."""
+    root = compile_root_cause_v1(
+        signal_results=[
+            {
+                "signal_id": "signal_hba1c_high",
+                "signal_state": "at_risk",
+                "confidence": 0.81,
+                "primary_metric": "hba1c",
+            }
+        ],
+        biomarker_context={
+            "hba1c": {"value": 49.0},
+            "glucose": {"value": 7.2},
+            "triglycerides": {"value": 2.1},
+            "hdl_cholesterol": {"value": 0.9},
+        },
+        input_reference_ranges={
+            "hba1c": {"min": 20.0, "max": 42.0},
+            "glucose": {"min": 3.9, "max": 5.5},
+            "triglycerides": {"min": 0.4, "max": 1.7},
+            "hdl_cholesterol": {"min": 1.0, "max": 3.0},
+        },
+    )
+    dump = root.model_dump() if root is not None else {}
+    assert len(dump.get("findings") or []) == 1
+    assert _finding_by_signal(dump, "signal_hba1c_high") is not None
+    assert _finding_by_signal(dump, "signal_insulin_resistance") is None
+    assert _finding_by_signal(dump, "signal_systemic_inflammation") is None

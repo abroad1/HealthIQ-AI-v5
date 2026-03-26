@@ -1,6 +1,6 @@
 schema_version: "v1"
 registry_id: "confirmatory_tests_v1"
-updated_at: "2026-03-15"
+updated_at: "2026-03-26"
 notes:
   - "Registry provides deterministic lookup for root_cause_v1 confirmatory_tests.test_id."
   - "Framing must remain non-directive (consider discussing / consider including in next panel)."
@@ -139,3 +139,28 @@ tests:
     related_signals:
       - "signal_hepatic_alt_context"
       - "signal_systemic_inflammation"
+      - "signal_insulin_resistance"
+
+  - test_id: "test_fasting_glucose_insulin_context_v1"
+    display_name: "Fasting glucose with insulin"
+    specimen: "blood"
+    safety_class: "monitoring"
+    rationale_template: "Consider including fasting glucose with insulin on a consistent panel to clarify pancreatic compensation and peripheral sensitivity context."
+    maps_to_biomarkers:
+      - "glucose"
+      - "insulin"
+    is_repeat_test: false
+    related_signals:
+      - "signal_insulin_resistance"
+
+  - test_id: "test_ty_g_component_markers_panel_v1"
+    display_name: "Triglyceride and glucose (TyG-related markers)"
+    specimen: "blood"
+    safety_class: "monitoring"
+    rationale_template: "Consider repeating triglycerides and glucose with consistent methodology to track TyG-related metabolic trend over time."
+    maps_to_biomarkers:
+      - "triglycerides"
+      - "glucose"
+    is_repeat_test: true
+    related_signals:
+      - "signal_insulin_resistance"

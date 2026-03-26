@@ -1,0 +1,125 @@
+schema_version: "v1"
+asset_id: "systemic_inflammation_hypotheses_v1"
+updated_at: "2026-03-26"
+primary_signal_id: "signal_systemic_inflammation"
+primary_metric: "crp"
+notes:
+  - "KB-S46 governed root-cause asset for deterministic chronic systemic inflammation (hs-CRP) context."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+  - "All confirmatory_tests must reference knowledge_bus/registries/confirmatory_tests_v1.yaml."
+
+hypotheses:
+  - hypothesis_id: "infl_persistent_low_grade_burden_v1"
+    title: "Persistent low-grade inflammatory burden"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "hs-CRP is elevated with a pattern consistent with chronic low-grade systemic inflammation on this structured panel."
+    required_markers:
+      - "crp"
+    confirmatory_markers:
+      - "neutrophils"
+      - "lymphocytes"
+    differentiator_markers:
+      - "white_blood_cells"
+    evidence_for_rules:
+      - rule_id: "inflammation_signal_fired"
+        signals_any:
+          - "signal_systemic_inflammation"
+        direction: "fired"
+        evidence_for_item: "A systemic inflammation signal fired, anchoring hs-CRP elevation in governed chronic-risk framing."
+        marker_refs:
+          - "crp"
+      - rule_id: "crp_high_support"
+        markers_all:
+          - "crp"
+        direction: "high"
+        evidence_for_item: "CRP is elevated relative to range, supporting an active inflammatory marker burden."
+        marker_refs:
+          - "crp"
+    evidence_against_rules:
+      - rule_id: "crp_clearly_normal"
+        markers_all:
+          - "crp"
+        direction: "clearly_normal"
+        evidence_against_item: "CRP appears clearly within range, which argues against a persistent inflammatory burden pattern."
+        marker_refs:
+          - "crp"
+    missing_data_markers:
+      - marker_id: "neutrophils"
+        reason: "Neutrophils help interpret cellular inflammatory patterns alongside CRP."
+      - marker_id: "lymphocytes"
+        reason: "Lymphocytes help contextualize differential white-cell patterns with CRP."
+    confirmatory_tests:
+      - "test_crp_repeat_v1"
+      - "test_full_blood_count_indices_v1"
+
+  - hypothesis_id: "infl_metabolic_companion_context_v1"
+    title: "Metabolic companion inflammation context"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Systemic inflammation marker elevation co-occurs with metabolic markers that often accompany meta-inflammatory stress patterns."
+    required_markers:
+      - "crp"
+    confirmatory_markers:
+      - "triglycerides"
+      - "glucose"
+    differentiator_markers:
+      - "hdl_cholesterol"
+    evidence_for_rules:
+      - rule_id: "triglyceride_high_with_inflammation"
+        markers_any:
+          - "triglycerides"
+        direction: "high"
+        evidence_for_item: "Triglycerides are elevated, which can align with metabolic stress overlapping chronic inflammation."
+        marker_refs:
+          - "triglycerides"
+      - rule_id: "glucose_high_with_inflammation"
+        markers_any:
+          - "glucose"
+        direction: "high"
+        evidence_for_item: "Glucose is elevated, supporting glycaemic stress that can track with inflammatory marker elevation."
+        marker_refs:
+          - "glucose"
+    evidence_against_rules: []
+    missing_data_markers:
+      - marker_id: "hba1c"
+        reason: "HbA1c adds longer-window glycaemic context when CRP is elevated."
+    confirmatory_tests:
+      - "test_hba1c_repeat_v1"
+      - "test_crp_repeat_v1"
+
+  - hypothesis_id: "infl_hepatic_coupling_context_v1"
+    title: "Hepatic coupling inflammation context"
+    safety_class: "monitoring"
+    evidence_strength: "exploratory"
+    summary_template: "CRP elevation appears alongside hepatic enzyme context that may reflect hepatic–inflammatory overlap rather than isolated acute-phase noise."
+    required_markers:
+      - "crp"
+    confirmatory_markers:
+      - "alt"
+      - "ggt"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "alt_high_with_crp"
+        markers_any:
+          - "alt"
+        direction: "high"
+        evidence_for_item: "ALT is elevated alongside CRP, supporting hepatic-inflammatory coupling context."
+        marker_refs:
+          - "alt"
+      - rule_id: "ggt_high_with_crp"
+        markers_any:
+          - "ggt"
+        direction: "high"
+        evidence_for_item: "GGT is elevated alongside CRP, which can align with hepatic stress overlapping systemic inflammation."
+        marker_refs:
+          - "ggt"
+    evidence_against_rules: []
+    missing_data_markers:
+      - marker_id: "alt"
+        reason: "ALT refines hepatocellular contribution when CRP is elevated."
+      - marker_id: "ggt"
+        reason: "GGT adds cholestatic and metabolic hepatic context with elevated CRP."
+    confirmatory_tests:
+      - "test_liver_ggt_alt_ast_v1"
+      - "test_crp_repeat_v1"
