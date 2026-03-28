@@ -179,8 +179,17 @@ dhea:
   - DHEA
   - DHEA (Venous)
   - DHEA - venous
-  - DHEA-S
   - Dehydroepiandrosterone
+dhea_s:
+  canonical_id: dhea_s
+  aliases:
+  - DHEA-S
+  - DHEA-S (Venous)
+  - DHEA-S - venous
+  - DHEAS
+  - Dehydroepiandrosterone sulfate
+  - dehydroepiandrosterone_sulfate
+  - dheas
 egfr:
   canonical_id: egfr
   aliases:

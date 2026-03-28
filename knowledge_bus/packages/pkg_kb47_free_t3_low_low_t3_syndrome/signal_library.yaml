@@ -1,0 +1,85 @@
+library:
+  package_id: KBP-4713
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S47 Free T3 Low signal library
+  description: Translated from inv_free_t3_low_low_t3_syndrome (Batch_2_Pass_3_Rev1.json).
+signals:
+- signal_id: signal_free_t3_low
+  name: Free T3 Low
+  description: Free T3 is the biologically active thyroid hormone fraction, but isolated
+    low values commonly reflect systemic illness or altered peripheral conversion
+    rather than primary thyroid disease.
+  system: hormonal
+  primary_metric: free_t3
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: free_t4
+    expected_direction: any
+    role: differential_marker
+    availability: common
+    rationale: Free T4 helps distinguish isolated low T3 states from broader thyroid
+      hormone deficiency.
+  - biomarker_id: tsh
+    expected_direction: any
+    role: differential_marker
+    availability: common
+    rationale: TSH context is essential for separating low T3 syndrome from primary
+      thyroid failure.
+  dependencies:
+    biomarkers:
+    - free_t3
+    - free_t4
+    - tsh
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: free_t3_low_lab_range_activation_placeholder
+    metric_id: free_t3
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_free_t3_low_with_free_t4_low
+    resulting_state: at_risk
+    description: Escalate when low free T3 coincides with low free T4, as this is
+      less consistent with isolated low T3 syndrome and more concerning for broader
+      thyroid hormone deficiency or severe systemic illness.
+    conditions:
+    - metric_id: free_t4
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_low_t3_review_2016
+  output:
+    signal_value: free_t3
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: free_t3
+    supporting_markers:
+    - free_t4
+    - tsh
+  explanation:
+    mechanism: Free T3 can fall when peripheral conversion of T4 to T3 is reduced
+      during systemic stress, inflammation, or illness.
+    biological_pathway: Peripheral deiodination and adaptive thyroid hormone metabolism
+      during illness.
+    interpretation: An isolated low free T3 is more consistent with a contextual low
+      T3 syndrome than primary thyroid failure in many clinical settings, though the
+      broader thyroid panel is needed to confirm this interpretation.
+    implications: The key question is whether the pattern normalizes with recovery
+      or whether the broader thyroid panel indicates genuine thyroid hormone deficiency.
+    supporting_marker_roles: Free T4 and TSH are mainly differential markers that
+      help separate contextual low T3 states from primary thyroid disease.

@@ -1,0 +1,94 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb47_free_t3_low_low_t3_syndrome
+translation:
+  source: investigation_spec_v3
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_free_t3_low_low_t3_syndrome
+  signal_id: signal_free_t3_low
+signals:
+- signal_id: signal_free_t3_low
+  research_domain: thyroid
+  signal_system: hormonal
+  primary_metric:
+    biomarker_id: free_t3
+    rationale: Free T3 is the biologically active thyroid hormone fraction, but isolated
+      low values commonly reflect systemic illness or altered peripheral conversion
+      rather than primary thyroid disease.
+  trigger_direction: low
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: false
+      upper_bound_state: suboptimal
+      enable_lower_bound: true
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: free_t4
+    expected_direction: either
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Free T4 helps distinguish isolated low T3 states from broader thyroid
+      hormone deficiency.
+  - biomarker_id: tsh
+    expected_direction: either
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: TSH context is essential for separating low T3 syndrome from primary
+      thyroid failure.
+  contradiction_markers:
+  - contradiction_id: ctr_primary_hypothyroid_pattern
+    marker_reference: tsh
+    contradiction_rationale: A clearly elevated TSH with low free T4 shifts interpretation
+      toward primary thyroid hormone deficiency rather than isolated low T3 syndrome.
+    contradiction_strength: strong
+  - contradiction_id: ctr_elevated_tsh_redirects_from_conversion_deficit
+    marker_reference: tsh
+    contradiction_rationale: A clearly elevated TSH redirects interpretation away
+      from isolated peripheral T4-to-T3 conversion deficit and toward primary thyroid
+      hormone deficiency requiring a different clinical approach.
+    contradiction_strength: strong
+  missing_data:
+    policies:
+    - Do not infer a thyroid diagnosis from isolated low free T3 without the broader
+      thyroid and clinical context.
+    - Review illness severity, nutritional state, and full thyroid panel before attributing
+      low free T3 to intrinsic thyroid disease.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_free_t3_low_with_free_t4_low
+    resulting_state: at_risk
+    description: Escalate when low free T3 coincides with low free T4, as this is
+      less consistent with isolated low T3 syndrome and more concerning for broader
+      thyroid hormone deficiency or severe systemic illness.
+    conditions:
+    - metric_id: free_t4
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_low_t3_review_2016
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: Low T3 patterns are common in systemic illness and reflect
+      altered thyroid hormone metabolism rather than primary thyroid disease in many
+      cases.
+    threshold_notes: Free T3 interpretation should remain contextual and should not
+      be used alone to diagnose hypothyroidism.
+    sources:
+    - source_id: source_low_t3_review_2016
+      paper_title: 'Abnormalities of Thyroid Hormone Metabolism during Systemic Illness:
+        The Low T3 Syndrome in Different Clinical Settings'
+      journal: International Journal of Endocrinology
+      year: 2016
+  confirmatory_test_refs:
+  - test_id: ct_repeat_thyroid_panel_after_recovery
+    rationale: Repeating the thyroid panel after recovery or stabilization helps determine
+      whether low free T3 is transient and illness-related.

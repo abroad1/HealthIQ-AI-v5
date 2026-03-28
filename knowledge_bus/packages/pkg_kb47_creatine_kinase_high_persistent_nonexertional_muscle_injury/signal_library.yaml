@@ -1,0 +1,87 @@
+library:
+  package_id: KBP-4701
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S47 Creatine Kinase High signal library
+  description: Translated from inv_creatine_kinase_high_persistent_nonexertional_muscle_injury
+    (Batch_2_Pass_3_Rev1.json).
+signals:
+- signal_id: signal_creatine_kinase_high
+  name: Creatine Kinase High
+  description: Persistently raised creatine kinase can support a clinically meaningful
+    muscle injury or myopathic context when corroborating features are present.
+  system: mitochondrial
+  primary_metric: creatine_kinase
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: aldolase
+    expected_direction: high
+    role: corroborator
+    availability: specialist
+    rationale: Aldolase elevation strengthens the interpretation that persistent CK
+      elevation is coming from ongoing skeletal-muscle injury rather than isolated
+      laboratory noise.
+  - biomarker_id: tsh
+    expected_direction: any
+    role: differential_marker
+    availability: common
+    rationale: TSH helps distinguish inflammatory or drug-related myopathic frames
+      from endocrine explanations such as thyroid dysfunction, which can also elevate
+      CK.
+  dependencies:
+    biomarkers:
+    - creatine_kinase
+    - aldolase
+    - tsh
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: creatine_kinase_high_lab_range_activation_placeholder
+    metric_id: creatine_kinase
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_ck_high_with_aldolase_high
+    resulting_state: at_risk
+    description: Escalate when high CK coincides with high aldolase, as this is more
+      consistent with an active skeletal muscle injury pattern.
+    conditions:
+    - metric_id: aldolase
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_ck_review_2016
+  output:
+    signal_value: creatine_kinase
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: creatine_kinase
+    supporting_markers:
+    - aldolase
+    - tsh
+  explanation:
+    mechanism: Sustained CK release suggests ongoing muscle membrane injury rather
+      than a brief post-exertional leak.
+    biological_pathway: Ongoing skeletal muscle fiber injury with continued cytosolic
+      enzyme release into the blood.
+    interpretation: This pattern is more concerning than a one-off exercise-related
+      CK rise but still requires careful differentiation among inflammatory, endocrine,
+      and exposure-related causes.
+    implications: Repeat measurement, exposure review, and targeted neuromuscular
+      assessment are usually needed before assigning a durable disease label.
+    supporting_marker_roles: Aldolase corroborates persistent skeletal-muscle injury,
+      while TSH is the differential marker that helps separate inflammatory or toxic
+      myopathic frames from endocrine CK elevation.

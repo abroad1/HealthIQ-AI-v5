@@ -1,0 +1,83 @@
+library:
+  package_id: KBP-4714
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S47 Free T4 High signal library
+  description: Translated from inv_free_t4_high_thyrotoxicosis_context (Batch_2_Pass_3_Rev1.json).
+signals:
+- signal_id: signal_free_t4_high
+  name: Free T4 High
+  description: High free T4 supports excess circulating thyroxine and is a key laboratory
+    signal of thyrotoxic physiology when interpreted with TSH.
+  system: hormonal
+  primary_metric: free_t4
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: free_t3
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: High free T3 corroborates that elevated free T4 is part of a broader
+      thyrotoxic hormone pattern rather than an isolated single-analyte anomaly.
+  - biomarker_id: tsh
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: TSH is the key differential marker that distinguishes primary thyrotoxic
+      physiology from discordant assay, central, or medication-related patterns.
+  dependencies:
+    biomarkers:
+    - free_t4
+    - free_t3
+    - tsh
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: free_t4_high_lab_range_activation_placeholder
+    metric_id: free_t4
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_free_t4_high_with_tsh_low
+    resulting_state: at_risk
+    description: Escalate when high free T4 coincides with low TSH, as this more strongly
+      supports thyrotoxic physiology.
+    conditions:
+    - metric_id: tsh
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_ata_hyperthyroidism_2016
+  output:
+    signal_value: free_t4
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: free_t4
+    supporting_markers:
+    - free_t3
+    - tsh
+  explanation:
+    mechanism: Free T4 rises when thyroxine production, release, or administration
+      exceeds physiologic requirements.
+    biological_pathway: Thyroid hormone secretion and pituitary negative feedback
+      regulation.
+    interpretation: This pattern supports excess thyroid hormone availability, particularly
+      when TSH is concurrently suppressed.
+    implications: The next task is to identify cause and consistency rather than to
+      infer severity purely from the free T4 value.
+    supporting_marker_roles: Free T3 corroborates a broader thyrotoxic hormone pattern,
+      while TSH is the critical differential marker separating primary thyrotoxicosis
+      from discordant alternatives.

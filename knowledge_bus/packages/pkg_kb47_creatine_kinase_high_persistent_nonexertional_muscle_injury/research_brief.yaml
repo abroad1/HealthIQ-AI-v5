@@ -1,0 +1,18 @@
+research_domain: musculoskeletal
+sources:
+- source_id: source_ck_review_2016
+  paper_title: Approach to asymptomatic creatine kinase elevation
+  journal: Cleveland Clinic Journal of Medicine
+  year: 2016
+biomarkers:
+- aldolase
+- creatine_kinase
+- tsh
+derived_metrics: []
+physiological_claim: Persistent CK elevation increases the likelihood of clinically
+  meaningful muscle pathology or exposure-related myotoxicity compared with a single
+  transient rise.
+evidence_strength: moderate
+research_summary: No single universal CK threshold reliably separates benign from
+  pathologic muscle injury across all populations, so persistence and corroboration
+  remain central.

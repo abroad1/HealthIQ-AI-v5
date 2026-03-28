@@ -1,0 +1,17 @@
+research_domain: thyroid
+sources:
+- source_id: source_ata_hyperthyroidism_2016
+  paper_title: 2016 American Thyroid Association Guidelines for Diagnosis and Management
+    of Hyperthyroidism and Other Causes of Thyrotoxicosis
+  journal: Thyroid
+  year: 2016
+biomarkers:
+- free_t3
+- free_t4
+- tsh
+derived_metrics: []
+physiological_claim: High free T4 with suppressed TSH is a standard biochemical pattern
+  of thyrotoxicosis.
+evidence_strength: consensus
+research_summary: Hormone-pattern interpretation should remain laboratory anchored
+  and should not assume severity from free T4 magnitude alone.

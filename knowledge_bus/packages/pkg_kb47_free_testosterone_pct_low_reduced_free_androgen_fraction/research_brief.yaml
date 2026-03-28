@@ -1,0 +1,17 @@
+research_domain: hormonal
+sources:
+- source_id: source_testosterone_guideline_2018
+  paper_title: 'Testosterone Therapy in Men With Hypogonadism: An Endocrine Society
+    Clinical Practice Guideline'
+  journal: Journal of Clinical Endocrinology and Metabolism
+  year: 2018
+biomarkers:
+- free_testosterone
+- free_testosterone_pct
+- shbg
+derived_metrics: []
+physiological_claim: Free testosterone interpretation depends on the interaction between
+  testosterone concentration and SHBG, not on the percentage metric alone.
+evidence_strength: moderate
+research_summary: Percentage-based androgen metrics should remain assay-aware and
+  laboratory anchored and should not be used as universal stand-alone diagnostic cutoffs.

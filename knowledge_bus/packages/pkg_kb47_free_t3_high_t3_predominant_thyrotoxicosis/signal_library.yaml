@@ -1,0 +1,83 @@
+library:
+  package_id: KBP-4712
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S47 Free T3 High signal library
+  description: Translated from inv_free_t3_high_t3_predominant_thyrotoxicosis (Batch_2_Pass_3_Rev1.json).
+signals:
+- signal_id: signal_free_t3_high
+  name: Free T3 High
+  description: High free T3 supports increased thyroid hormone activity and can be
+    particularly informative in T3-predominant thyrotoxic states.
+  system: hormonal
+  primary_metric: free_t3
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: tsh
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Suppressed TSH strongly corroborates biologically significant thyroid
+      hormone excess.
+  - biomarker_id: free_t4
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Free T4 helps distinguish T3-predominant thyrotoxicosis from broader
+      thyrotoxic patterns.
+  dependencies:
+    biomarkers:
+    - free_t3
+    - tsh
+    - free_t4
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: free_t3_high_lab_range_activation_placeholder
+    metric_id: free_t3
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_free_t3_high_with_tsh_low
+    resulting_state: at_risk
+    description: Escalate when high free T3 coincides with low TSH, as this more strongly
+      supports biologically significant thyrotoxicosis.
+    conditions:
+    - metric_id: tsh
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_ata_hyperthyroidism_2016
+  output:
+    signal_value: free_t3
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: free_t3
+    supporting_markers:
+    - tsh
+    - free_t4
+  explanation:
+    mechanism: Free T3 rises when thyroid hormone production or release is excessive
+      and biologically active hormone availability is increased.
+    biological_pathway: Thyroid hormone synthesis, secretion, and pituitary feedback
+      suppression.
+    interpretation: This pattern supports thyrotoxic hormone excess and is especially
+      relevant when TSH is suppressed.
+    implications: Further investigation should focus on identifying cause and persistence
+      rather than on re-establishing the biochemical pattern once it is consistent
+      across the thyroid panel.
+    supporting_marker_roles: TSH corroborates biological hormone excess, while free
+      T4 helps determine whether the pattern is T3-predominant or broader.

@@ -1,0 +1,16 @@
+research_domain: hormonal
+sources:
+- source_id: source_hyperandrogenism_review_2021
+  paper_title: Practical Approach to Hyperandrogenism in Women
+  journal: Medical Clinics of North America
+  year: 2021
+biomarkers:
+- dhea
+- dhea_s
+- testosterone
+derived_metrics: []
+physiological_claim: High DHEA can support a hyperandrogenic context, but isolated
+  values do not by themselves establish source or etiology.
+evidence_strength: moderate
+research_summary: Universal disease-defining DHEA thresholds are not established;
+  interpretation should remain laboratory and phenotype anchored.

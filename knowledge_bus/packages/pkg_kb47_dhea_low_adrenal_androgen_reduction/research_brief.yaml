@@ -1,0 +1,18 @@
+research_domain: hormonal
+sources:
+- source_id: source_pai_guideline_2016
+  paper_title: 'Diagnosis and Treatment of Primary Adrenal Insufficiency: An Endocrine
+    Society Clinical Practice Guideline'
+  journal: Journal of Clinical Endocrinology and Metabolism
+  year: 2016
+biomarkers:
+- acth
+- cortisol
+- dhea
+derived_metrics: []
+physiological_claim: Low adrenal androgen levels can accompany adrenal insufficiency,
+  but DHEA is supportive rather than stand-alone diagnostic.
+evidence_strength: moderate
+research_summary: Interpretation should remain lab-range anchored; robust universal
+  DHEA thresholds for disease classification are not established across assays and
+  populations.
