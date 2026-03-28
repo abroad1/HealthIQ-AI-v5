@@ -1,6 +1,0 @@
-# Investigation Spec Audit
-
-validation_status: FAIL
-
-errors:
-- v3: at least one supporting_markers[].relationship_kind must be 'differential'

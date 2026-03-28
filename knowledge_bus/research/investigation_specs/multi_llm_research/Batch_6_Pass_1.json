@@ -1,0 +1,3794 @@
+[
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_chloride_high_hyperchloremic_metabolic_acidosis",
+    "signal_id": "signal_chloride_high",
+    "research_domain": "renal",
+    "primary_marker": {
+      "biomarker_id": "chloride",
+      "rationale": "Chloride is a major extracellular anion that is most informative when interpreted with sodium, bicarbonate, and acid-base context.",
+      "signal_system": "renal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "bicarbonate",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low bicarbonate supports an acid-base shift in which chloride rises as bicarbonate falls."
+      },
+      {
+        "biomarker_id": "anion_gap",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "A normal or non-elevated anion gap helps distinguish hyperchloremic acidosis from high-anion-gap acidosis."
+      },
+      {
+        "biomarker_id": "sodium",
+        "expected_direction": "high",
+        "role": "contextual_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Concurrent sodium elevation can suggest concentration effects or saline-related hypertonicity that modify chloride interpretation."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_hyperchloremic_acid_base_shift",
+        "rank": 1,
+        "physiological_claim": "High chloride with low bicarbonate may reflect hyperchloremic metabolic acidosis caused by gastrointestinal bicarbonate loss, renal tubular dysfunction, or chloride-rich fluid exposure.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Interpretation is weaker if bicarbonate is unavailable or if a mixed acid-base disorder is suspected."
+        ],
+        "missing_data": {
+          "policy": "Review bicarbonate, anion gap, renal function, and recent fluid therapy before prioritising this explanation."
+        },
+        "supporting_marker_refs": [
+          "bicarbonate",
+          "anion_gap"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_anion_gap",
+            "marker_reference": "anion_gap",
+            "contradiction_rationale": "An elevated anion gap redirects interpretation toward high-anion-gap acidosis rather than a primary hyperchloremic pattern.",
+            "contradiction_strength": "strong"
+          },
+          {
+            "contradiction_id": "ctr_high_bicarbonate",
+            "marker_reference": "bicarbonate",
+            "contradiction_rationale": "A high bicarbonate level weakens a metabolic acidosis explanation and suggests alkalosis or compensation should be considered.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_concentration_or_saline_effect",
+        "rank": 2,
+        "physiological_claim": "High chloride may also reflect saline administration or hemoconcentration rather than intrinsic acid retention, particularly when sodium is also high and bicarbonate reduction is limited.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This explanation is more contextual and depends on clinical history and fluid exposure."
+        ],
+        "missing_data": {
+          "policy": "Review recent intravenous fluid use and concentration markers before inferring a primary renal acid-base disorder."
+        },
+        "supporting_marker_refs": [
+          "sodium",
+          "bicarbonate"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_bicarbonate_chloride",
+            "marker_reference": "bicarbonate",
+            "contradiction_rationale": "A clearly low bicarbonate level strengthens a true hyperchloremic acid-base disturbance over a simple concentration effect.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_hyperchloremic_acid_base_shift",
+        "hyp_concentration_or_saline_effect"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_blood_gas",
+        "rationale": "Blood gas testing helps confirm the presence and direction of the acid-base disturbance."
+      },
+      {
+        "test_id": "ct_urine_electrolytes",
+        "rationale": "Urine electrolytes can help distinguish renal from gastrointestinal causes of hyperchloremic acidosis."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_chloride_high_with_low_bicarbonate",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high chloride coincides with low bicarbonate because this is more consistent with a clinically meaningful hyperchloremic acid-base disturbance than an isolated chloride rise.",
+        "conditions": [
+          {
+            "metric_id": "bicarbonate",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_chloride_acid_base_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_chloride_acid_base_review",
+          "paper_title": "Acid-base disorders and hyperchloremic metabolic acidosis review",
+          "journal": "Merck Manual and nephrology review literature",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "High chloride commonly reflects a hyperchloremic acid-base pattern when accompanied by low bicarbonate and a normal anion-gap context.",
+      "threshold_notes": "Interpretation is usually directional and context-dependent rather than driven by a single universal threshold beyond the laboratory range."
+    },
+    "narrative": {
+      "mechanism": "Chloride contributes to electroneutrality and shifts with bicarbonate in non-anion-gap acid-base disturbances.",
+      "biological_pathway": "Renal tubular handling, gastrointestinal bicarbonate loss, and chloride-rich fluid exposure can all raise chloride relative to bicarbonate.",
+      "interpretation": "High chloride is most often a contextual electrolyte finding that supports non-anion-gap metabolic acidosis rather than a stand-alone diagnosis.",
+      "implications": "This pattern may justify acid-base review, medication and infusion review, and assessment for gastrointestinal or renal bicarbonate loss.",
+      "supporting_marker_roles": "Bicarbonate provides mechanism context, sodium helps assess concentration effects, and anion_gap helps distinguish hyperchloremic from high-gap acidosis."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_chloride_low_chloride_depletion_metabolic_alkalosis",
+    "signal_id": "signal_chloride_low",
+    "research_domain": "renal",
+    "primary_marker": {
+      "biomarker_id": "chloride",
+      "rationale": "Chloride is a major extracellular anion and low values are often most informative in volume and acid-base interpretation.",
+      "signal_system": "renal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "bicarbonate",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "High bicarbonate supports a metabolic alkalosis pattern in which chloride is relatively depleted."
+      },
+      {
+        "biomarker_id": "potassium",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low potassium commonly accompanies chloride depletion from vomiting or diuretic use and supports the overall pattern."
+      },
+      {
+        "biomarker_id": "sodium",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low sodium can support broader volume depletion, whereas preserved sodium with low chloride may suggest a different context."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_chloride_depletion_alkalosis",
+        "rank": 1,
+        "physiological_claim": "Low chloride with high bicarbonate may reflect chloride-responsive metabolic alkalosis due to vomiting, nasogastric loss, or diuretic exposure.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Clinical history remains important because chloride alone does not identify the cause of alkalosis."
+        ],
+        "missing_data": {
+          "policy": "Review bicarbonate, potassium, and fluid-loss history before prioritising chloride depletion alkalosis."
+        },
+        "supporting_marker_refs": [
+          "bicarbonate",
+          "potassium"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_bicarbonate",
+            "marker_reference": "bicarbonate",
+            "contradiction_rationale": "A low bicarbonate level contradicts metabolic alkalosis and suggests an alternative acid-base disorder.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_dilutional_or_mixed_electrolyte_shift",
+        "rank": 2,
+        "physiological_claim": "Low chloride may also occur in dilutional or mixed electrolyte states in which chloride falls alongside other extracellular solutes without a dominant alkalosis mechanism.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This interpretation is less specific and should not be preferred when bicarbonate is clearly elevated."
+        ],
+        "missing_data": {
+          "policy": "Review sodium and osmolality context before inferring a primary chloride depletion state."
+        },
+        "supporting_marker_refs": [
+          "sodium",
+          "bicarbonate"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_bicarbonate_lowchlor",
+            "marker_reference": "bicarbonate",
+            "contradiction_rationale": "A clearly elevated bicarbonate level shifts interpretation back toward chloride-responsive alkalosis.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_chloride_depletion_alkalosis",
+        "hyp_dilutional_or_mixed_electrolyte_shift"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_urine_chloride",
+        "rationale": "Urine chloride helps distinguish chloride-responsive alkalosis from chloride-resistant causes."
+      },
+      {
+        "test_id": "ct_blood_gas",
+        "rationale": "Blood gas testing helps confirm metabolic alkalosis and assess compensatory change."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_chloride_low_with_high_bicarbonate",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low chloride coincides with high bicarbonate because the combination is more consistent with clinically significant chloride depletion alkalosis.",
+        "conditions": [
+          {
+            "metric_id": "bicarbonate",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_chloride_alkalosis_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_chloride_alkalosis_review",
+          "paper_title": "Metabolic alkalosis and chloride depletion review",
+          "journal": "Merck Manual and nephrology review literature",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "Low chloride commonly supports chloride depletion and metabolic alkalosis when bicarbonate is elevated and volume loss is plausible.",
+      "threshold_notes": "Interpretation should remain laboratory-range anchored and integrated with bicarbonate and sodium rather than a fixed universal cut-off."
+    },
+    "narrative": {
+      "mechanism": "Chloride depletion can sustain metabolic alkalosis by limiting renal bicarbonate excretion and reflecting gastric or diuretic losses.",
+      "biological_pathway": "Gastrointestinal acid loss, diuretic exposure, and contraction alkalosis are common pathways linking low chloride to elevated bicarbonate.",
+      "interpretation": "Low chloride is usually a contextual finding that supports chloride-responsive alkalosis rather than a stand-alone disease signal.",
+      "implications": "This pattern may justify review of vomiting, diuretic exposure, volume status, and broader electrolyte disturbance.",
+      "supporting_marker_roles": "Bicarbonate supports the alkalosis mechanism, sodium helps assess volume-contraction context, and potassium helps gauge associated depletion."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_corrected_calcium_high_pth_mediated_hypercalcemia",
+    "signal_id": "signal_corrected_calcium_high",
+    "research_domain": "renal",
+    "primary_marker": {
+      "biomarker_id": "corrected_calcium",
+      "rationale": "Corrected calcium adjusts total calcium for albumin and helps identify clinically relevant hypercalcemia when ionized calcium is unavailable.",
+      "signal_system": "renal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "pth",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Non-suppressed or elevated parathyroid hormone supports a PTH-mediated cause of hypercalcemia."
+      },
+      {
+        "biomarker_id": "phosphate",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low phosphate can support a PTH-mediated physiology in primary hyperparathyroidism."
+      },
+      {
+        "biomarker_id": "creatinine",
+        "expected_direction": "high",
+        "role": "severity_marker",
+        "relationship_kind": "severity",
+        "availability": "common",
+        "rationale": "Renal impairment can increase the clinical significance of hypercalcemia and its complications."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_primary_hyperparathyroid_state",
+        "rank": 1,
+        "physiological_claim": "High corrected calcium with non-suppressed or elevated parathyroid hormone is consistent with a PTH-mediated hypercalcemic state, commonly primary hyperparathyroidism.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "PTH should be interpreted with assay context and alongside renal function and vitamin D status."
+        ],
+        "missing_data": {
+          "policy": "Measure intact PTH and review phosphate and renal function before assigning a PTH-mediated interpretation."
+        },
+        "supporting_marker_refs": [
+          "pth",
+          "phosphate"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_suppressed_pth",
+            "marker_reference": "pth",
+            "contradiction_rationale": "A suppressed parathyroid hormone level weakens a PTH-mediated explanation and redirects evaluation toward non-PTH causes.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_nonparathyroid_hypercalcemia_context",
+        "rank": 2,
+        "physiological_claim": "High corrected calcium can also occur in non-parathyroid states, but this becomes less likely when parathyroid hormone is not suppressed.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "This is a differential frame rather than a preferred explanation when PTH is clearly elevated."
+        ],
+        "missing_data": {
+          "policy": "If PTH is unavailable, avoid assuming primary hyperparathyroidism from calcium alone."
+        },
+        "supporting_marker_refs": [
+          "pth",
+          "creatinine"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_pth",
+            "marker_reference": "pth",
+            "contradiction_rationale": "A high or non-suppressed parathyroid hormone level argues against most non-PTH-mediated causes.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_primary_hyperparathyroid_state",
+        "hyp_nonparathyroid_hypercalcemia_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_intact_pth",
+        "rationale": "Intact parathyroid hormone testing is central to differentiating PTH-mediated from non-PTH-mediated hypercalcemia."
+      },
+      {
+        "test_id": "ct_ionized_calcium",
+        "rationale": "Ionized calcium helps confirm clinically meaningful hypercalcemia when total calcium interpretation is uncertain."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_corrected_calcium_high_with_high_pth",
+        "resulting_state": "at_risk",
+        "description": "Escalate when corrected calcium is high and parathyroid hormone is not suppressed because this pattern is more consistent with PTH-mediated hypercalcemia.",
+        "conditions": [
+          {
+            "metric_id": "pth",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_hypercalcemia_pth_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_hypercalcemia_pth_review",
+          "paper_title": "Hypercalcemia evaluation with PTH-based differential",
+          "journal": "Merck Manual and endocrine review literature",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "Corrected calcium above range commonly reflects hypercalcemia, and concurrent parathyroid hormone status helps distinguish PTH-mediated from non-PTH-mediated causes.",
+      "threshold_notes": "Corrected calcium interpretation should remain lab-range anchored and confirmed with repeat or ionized calcium testing when needed."
+    },
+    "narrative": {
+      "mechanism": "Hypercalcemia develops through increased bone resorption, increased gastrointestinal absorption, reduced renal excretion, or malignancy-related calcium mobilisation.",
+      "biological_pathway": "Parathyroid hormone is a key discriminator between primary hyperparathyroidism and suppressed-PTH hypercalcemia states.",
+      "interpretation": "High corrected calcium is a clinically meaningful electrolyte abnormality that usually requires cause-focused evaluation rather than isolated trend observation.",
+      "implications": "This pattern may justify repeat confirmation, PTH testing, renal review, and assessment for symptoms or malignancy where appropriate.",
+      "supporting_marker_roles": "PTH provides the main differential split, phosphate helps with mechanism context, and creatinine helps assess renal impact."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_corrected_calcium_high_malignancy_mediated_hypercalcemia",
+    "signal_id": "signal_corrected_calcium_high",
+    "research_domain": "renal",
+    "primary_marker": {
+      "biomarker_id": "corrected_calcium",
+      "rationale": "Corrected calcium helps identify hypercalcemia, and marked elevation with suppressed PTH raises concern for non-parathyroid causes including malignancy.",
+      "signal_system": "renal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "pth",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Suppressed parathyroid hormone supports a non-PTH-mediated cause of hypercalcemia."
+      },
+      {
+        "biomarker_id": "phosphate",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Higher phosphate can be seen in some non-PTH hypercalcemia states and contrasts with typical primary hyperparathyroidism."
+      },
+      {
+        "biomarker_id": "creatinine",
+        "expected_direction": "high",
+        "role": "severity_marker",
+        "relationship_kind": "severity",
+        "availability": "common",
+        "rationale": "Renal dysfunction increases the clinical significance of hypercalcemia and may accompany severe disease."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_malignancy_related_hypercalcemia",
+        "rank": 1,
+        "physiological_claim": "High corrected calcium with suppressed parathyroid hormone is consistent with malignancy-related hypercalcemia or another non-PTH-mediated hypercalcemic process.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Malignancy is important to consider, but suppressed PTH is not specific for cancer and requires further evaluation."
+        ],
+        "missing_data": {
+          "policy": "Measure parathyroid hormone promptly and review clinical context, phosphate, renal function, and possible malignancy features."
+        },
+        "supporting_marker_refs": [
+          "pth",
+          "creatinine"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_pth_malignancy",
+            "marker_reference": "pth",
+            "contradiction_rationale": "A non-suppressed or elevated parathyroid hormone level weakens a malignancy-mediated interpretation and shifts the differential toward PTH-mediated hypercalcemia.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_other_nonpth_hypercalcemia",
+        "rank": 2,
+        "physiological_claim": "Suppressed-PTH hypercalcemia can also reflect vitamin D-mediated, granulomatous, medication-related, or immobilisation-associated causes rather than malignancy alone.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Additional testing is needed because calcium and PTH alone do not establish the exact non-PTH mechanism."
+        ],
+        "missing_data": {
+          "policy": "Consider vitamin D metabolites, medication history, and inflammatory or granulomatous context when malignancy is not otherwise evident."
+        },
+        "supporting_marker_refs": [
+          "pth",
+          "phosphate"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_elevated_pth_nonpth",
+            "marker_reference": "pth",
+            "contradiction_rationale": "An elevated or non-suppressed parathyroid hormone level contradicts a suppressed-PTH hypercalcemia mechanism.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_malignancy_related_hypercalcemia",
+        "hyp_other_nonpth_hypercalcemia"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_intact_pth",
+        "rationale": "Intact parathyroid hormone testing is essential to establish a suppressed-PTH hypercalcemia pattern."
+      },
+      {
+        "test_id": "ct_pthrp_or_malignancy_workup",
+        "rationale": "PTHrP testing or malignancy-focused evaluation can help clarify whether the hypercalcemia is cancer-related."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_corrected_calcium_high_with_low_pth",
+        "resulting_state": "at_risk",
+        "description": "Escalate when corrected calcium is high and parathyroid hormone is suppressed because this combination is more concerning for clinically significant non-PTH hypercalcemia.",
+        "conditions": [
+          {
+            "metric_id": "pth",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_hypercalcemia_malignancy_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_hypercalcemia_malignancy_review",
+          "paper_title": "Evaluation of non-PTH-mediated hypercalcemia",
+          "journal": "Merck Manual and endocrine review literature",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "High corrected calcium with suppressed parathyroid hormone can reflect malignancy-mediated hypercalcemia or another non-PTH hypercalcemic process.",
+      "threshold_notes": "Severity and clinical urgency increase with higher calcium values, but laboratory-range breach remains the deterministic trigger here."
+    },
+    "narrative": {
+      "mechanism": "Malignancy can raise calcium through PTHrP secretion, osteolytic bone disease, or excess calcitriol production depending on tumour type.",
+      "biological_pathway": "Suppressed endogenous PTH is a key differential feature in most malignancy-related hypercalcemia states.",
+      "interpretation": "High corrected calcium in a suppressed-PTH context should be treated as potentially significant even before the exact mechanism is defined.",
+      "implications": "This pattern may justify urgent confirmatory testing and broader evaluation for malignancy or other non-PTH causes.",
+      "supporting_marker_roles": "PTH provides the main differential, phosphate can support mechanism context, and creatinine reflects clinical impact."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_corrected_calcium_low_hypoparathyroid_state",
+    "signal_id": "signal_corrected_calcium_low",
+    "research_domain": "renal",
+    "primary_marker": {
+      "biomarker_id": "corrected_calcium",
+      "rationale": "Corrected calcium below range suggests hypocalcemia and should be interpreted with parathyroid hormone, magnesium, phosphate, and renal context.",
+      "signal_system": "renal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "pth",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Low or inappropriately normal PTH supports a hypoparathyroid interpretation in hypocalcemia."
+      },
+      {
+        "biomarker_id": "phosphate",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Higher phosphate supports reduced PTH effect in many hypoparathyroid states."
+      },
+      {
+        "biomarker_id": "magnesium",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low magnesium can contribute to impaired PTH secretion or resistance and modifies interpretation."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_hypoparathyroid_mechanism",
+        "rank": 1,
+        "physiological_claim": "Low corrected calcium with low or inappropriately normal parathyroid hormone may reflect hypoparathyroidism or impaired parathyroid reserve.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Magnesium deficiency can mimic or contribute to this pattern and should be reviewed before assuming fixed gland failure."
+        ],
+        "missing_data": {
+          "policy": "Measure intact PTH and magnesium and review phosphate before prioritising a hypoparathyroid explanation."
+        },
+        "supporting_marker_refs": [
+          "pth",
+          "phosphate",
+          "magnesium"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_pth_hypocalcemia",
+            "marker_reference": "pth",
+            "contradiction_rationale": "An elevated parathyroid hormone level weakens a primary hypoparathyroid interpretation and suggests secondary hyperparathyroid physiology instead.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_magnesium_related_pth_impairment",
+        "rank": 2,
+        "physiological_claim": "Low corrected calcium may also reflect magnesium-related impairment of parathyroid hormone secretion or action rather than fixed hypoparathyroidism.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This is less likely when magnesium is normal and phosphate is strongly suggestive of persistent hypoparathyroid physiology."
+        ],
+        "missing_data": {
+          "policy": "Check magnesium before concluding that low calcium with non-elevated PTH represents permanent hypoparathyroidism."
+        },
+        "supporting_marker_refs": [
+          "magnesium",
+          "pth"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_magnesium",
+            "marker_reference": "magnesium",
+            "contradiction_rationale": "A normal magnesium level weakens magnesium-mediated suppression as the main explanation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_hypoparathyroid_mechanism",
+        "hyp_magnesium_related_pth_impairment"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_intact_pth",
+        "rationale": "Intact parathyroid hormone testing helps distinguish hypoparathyroid from secondary hyperparathyroid hypocalcemia."
+      },
+      {
+        "test_id": "ct_ionized_calcium",
+        "rationale": "Ionized calcium confirms biologically active hypocalcemia when corrected calcium interpretation is uncertain."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_corrected_calcium_low_with_low_pth",
+        "resulting_state": "at_risk",
+        "description": "Escalate when corrected calcium is low and parathyroid hormone is low because this combination is more consistent with clinically important hypoparathyroid physiology.",
+        "conditions": [
+          {
+            "metric_id": "pth",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_hypocalcemia_pth_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_hypocalcemia_pth_review",
+          "paper_title": "Hypocalcemia evaluation with parathyroid hormone differential",
+          "journal": "Merck Manual and endocrine review literature",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "Low corrected calcium with low or inappropriately normal parathyroid hormone is consistent with a hypoparathyroid or impaired PTH-response state.",
+      "threshold_notes": "Interpretation is usually laboratory-range anchored and should be confirmed with ionized calcium where uncertainty persists."
+    },
+    "narrative": {
+      "mechanism": "Hypocalcemia can arise from impaired PTH secretion, impaired PTH action, vitamin D deficiency, renal dysfunction, magnesium disturbance, or calcium precipitation states.",
+      "biological_pathway": "PTH and phosphate provide a key mechanistic split within hypocalcemia evaluation.",
+      "interpretation": "Low corrected calcium is clinically relevant and may merit escalation when accompanied by an abnormal PTH-response pattern.",
+      "implications": "This pattern may justify ionized calcium confirmation and directed evaluation of PTH, phosphate, magnesium, and vitamin D status.",
+      "supporting_marker_roles": "PTH is the principal differential marker, phosphate supports mechanism context, and magnesium helps identify reversible impairment of PTH secretion or action."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_corrected_calcium_low_secondary_hyperparathyroid_context",
+    "signal_id": "signal_corrected_calcium_low",
+    "research_domain": "renal",
+    "primary_marker": {
+      "biomarker_id": "corrected_calcium",
+      "rationale": "Low corrected calcium often requires interpretation alongside parathyroid hormone and vitamin D\u2013renal axis markers.",
+      "signal_system": "renal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "pth",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Elevated PTH supports a compensatory rather than hypoparathyroid response to low calcium."
+      },
+      {
+        "biomarker_id": "creatinine",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Renal impairment supports chronic kidney disease mineral disturbance as a cause of hypocalcemia."
+      },
+      {
+        "biomarker_id": "phosphate",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Higher phosphate supports reduced renal phosphate clearance and CKD-related mineral dysregulation."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_secondary_hyperparathyroid_ckd_context",
+        "rank": 1,
+        "physiological_claim": "Low corrected calcium with elevated parathyroid hormone and renal impairment may reflect secondary hyperparathyroid physiology in chronic kidney disease mineral disturbance.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "CKD-related interpretation is weaker if renal function is normal or phosphate is not supportive."
+        ],
+        "missing_data": {
+          "policy": "Review creatinine, phosphate, and vitamin D status before attributing low calcium to CKD mineral dysregulation."
+        },
+        "supporting_marker_refs": [
+          "pth",
+          "creatinine",
+          "phosphate"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_pth_secondary",
+            "marker_reference": "pth",
+            "contradiction_rationale": "A low parathyroid hormone level contradicts a secondary hyperparathyroid response and suggests an alternative mechanism.",
+            "contradiction_strength": "strong"
+          },
+          {
+            "contradiction_id": "ctr_normal_creatinine_ckd",
+            "marker_reference": "creatinine",
+            "contradiction_rationale": "Normal renal function weakens chronic kidney disease as the main explanation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_vitamin_d_related_hypocalcemia",
+        "rank": 2,
+        "physiological_claim": "Low corrected calcium with elevated parathyroid hormone may also reflect reduced vitamin D availability or effect, even without advanced renal dysfunction.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "The biochemical pattern overlaps with other causes of secondary hyperparathyroidism and requires vitamin D assessment."
+        ],
+        "missing_data": {
+          "policy": "Measure vitamin D status before concluding whether secondary hyperparathyroidism is renal or nutritional in origin."
+        },
+        "supporting_marker_refs": [
+          "pth",
+          "phosphate"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_pth_vitd",
+            "marker_reference": "pth",
+            "contradiction_rationale": "A low or inappropriately normal parathyroid hormone level weakens a vitamin D\u2013related secondary hyperparathyroid explanation.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_secondary_hyperparathyroid_ckd_context",
+        "hyp_vitamin_d_related_hypocalcemia"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_intact_pth",
+        "rationale": "Parathyroid hormone testing helps establish whether the response to hypocalcemia is appropriately compensatory."
+      },
+      {
+        "test_id": "ct_25oh_vitamin_d",
+        "rationale": "Vitamin D testing helps distinguish nutritional or absorptive causes from other hypocalcemic mechanisms."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_corrected_calcium_low_with_high_pth",
+        "resulting_state": "at_risk",
+        "description": "Escalate when corrected calcium is low and parathyroid hormone is elevated because this combination suggests an active chronic calcium-regulatory disturbance.",
+        "conditions": [
+          {
+            "metric_id": "pth",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_hypocalcemia_secondary_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_hypocalcemia_secondary_review",
+          "paper_title": "Hypocalcemia from vitamin D deficiency and chronic kidney disease mineral disturbance",
+          "journal": "Merck Manual and endocrine review literature",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "Low corrected calcium with elevated parathyroid hormone commonly reflects secondary hyperparathyroid physiology, often from vitamin D deficiency or chronic kidney disease mineral disturbance.",
+      "threshold_notes": "The deterministic trigger remains laboratory-range breach, while cause assignment depends on accompanying biochemical context."
+    },
+    "narrative": {
+      "mechanism": "Reduced vitamin D activity or impaired renal calcitriol generation lowers intestinal calcium absorption and drives compensatory PTH elevation.",
+      "biological_pathway": "Secondary hyperparathyroidism is a common adaptive pathway in chronic hypocalcemic states.",
+      "interpretation": "Low corrected calcium with compensatory PTH elevation is more consistent with a chronic calcium-regulatory disturbance than isolated assay noise.",
+      "implications": "This pattern may justify vitamin D and renal review rather than immediate attribution to primary parathyroid failure.",
+      "supporting_marker_roles": "PTH provides the main differential, phosphate helps separate CKD-type mineral disturbance from simple vitamin D deficiency, and creatinine supports renal context."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_cortisol_low_adrenal_insufficiency",
+    "signal_id": "signal_cortisol_low",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "cortisol",
+      "rationale": "Serum cortisol is a context-sensitive adrenal marker whose interpretation depends on timing, illness state, and exogenous glucocorticoid exposure.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "acth",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "High ACTH supports primary adrenal insufficiency in the setting of low cortisol."
+      },
+      {
+        "biomarker_id": "sodium",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Hyponatremia commonly accompanies clinically relevant cortisol deficiency, especially in primary adrenal insufficiency."
+      },
+      {
+        "biomarker_id": "eosinophils_abs",
+        "expected_direction": "high",
+        "role": "contextual_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Eosinophilia can be seen in adrenal insufficiency and provides supportive context rather than diagnosis."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_primary_or_secondary_adrenal_insufficiency",
+        "rank": 1,
+        "physiological_claim": "Low cortisol in an appropriately timed or clinically suspicious context may reflect adrenal insufficiency and should be confirmed with dynamic endocrine testing.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Random cortisol values are difficult to interpret and should not be treated as diagnostic in isolation."
+        ],
+        "missing_data": {
+          "policy": "Confirm sample timing, illness context, and exogenous steroid exposure before prioritising adrenal insufficiency."
+        },
+        "supporting_marker_refs": [
+          "acth",
+          "sodium",
+          "eosinophils_abs"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_acth_required_split",
+            "marker_reference": "acth",
+            "contradiction_rationale": "A low ACTH level does not exclude adrenal insufficiency, but it weakens a primary adrenal failure interpretation and redirects the differential toward central suppression.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_exogenous_or_central_hpa_suppression",
+        "rank": 2,
+        "physiological_claim": "Low cortisol may also reflect hypothalamic-pituitary-adrenal suppression from exogenous glucocorticoids or central pituitary-hypothalamic disease.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Medication history is essential because biochemical patterns can overlap with endogenous central adrenal insufficiency."
+        ],
+        "missing_data": {
+          "policy": "Review glucocorticoid exposure and ACTH before concluding that low cortisol reflects intrinsic adrenal failure."
+        },
+        "supporting_marker_refs": [
+          "acth",
+          "sodium"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_acth_central",
+            "marker_reference": "acth",
+            "contradiction_rationale": "A clearly elevated ACTH level weakens exogenous or central suppression as the main explanation and supports primary adrenal failure.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_primary_or_secondary_adrenal_insufficiency",
+        "hyp_exogenous_or_central_hpa_suppression"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_acth_stimulation_test",
+        "rationale": "ACTH stimulation testing is the main confirmatory test for suspected adrenal insufficiency when clinically appropriate."
+      },
+      {
+        "test_id": "ct_plasma_acth",
+        "rationale": "Plasma ACTH helps distinguish primary adrenal failure from central or glucocorticoid-related suppression."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_cortisol_low_with_low_sodium",
+        "resulting_state": "at_risk",
+        "description": "Escalate when cortisol is low and sodium is also low because the combination increases concern for clinically relevant adrenal insufficiency.",
+        "conditions": [
+          {
+            "metric_id": "sodium",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_adrenal_insufficiency_guideline"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_adrenal_insufficiency_guideline",
+          "paper_title": "Primary and glucocorticoid-induced adrenal insufficiency guideline evidence",
+          "journal": "Endocrine Society and ESE guidelines",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Low cortisol, especially in an appropriate morning sample or acutely unwell context, may support adrenal insufficiency and warrants confirmation.",
+      "threshold_notes": "No single universal threshold is encoded here because cortisol interpretation depends on assay and sampling context; the laboratory abnormality provides the trigger."
+    },
+    "narrative": {
+      "mechanism": "Cortisol deficiency may result from primary adrenal failure, secondary pituitary disease, or glucocorticoid-induced hypothalamic-pituitary-adrenal suppression.",
+      "biological_pathway": "ACTH and sodium together help separate primary adrenal insufficiency from other low-cortisol states.",
+      "interpretation": "Low cortisol is potentially significant, but context is critical because random values can mislead outside appropriate sampling conditions.",
+      "implications": "This pattern may justify urgent confirmation when symptoms or illness severity make adrenal insufficiency plausible.",
+      "supporting_marker_roles": "ACTH is the main differential marker, sodium corroborates mineralocorticoid-related physiology, and eosinophils can provide supportive context."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_cortisol_high_hypercortisolism",
+    "signal_id": "signal_cortisol_high",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "cortisol",
+      "rationale": "Serum cortisol above range is context-sensitive and should be interpreted cautiously because stress, illness, and sampling conditions can influence values.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "acth",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "High ACTH supports ACTH-dependent hypercortisolism if true endogenous cortisol excess is confirmed."
+      },
+      {
+        "biomarker_id": "hba1c",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Higher HbA1c can support chronic glucocorticoid-related metabolic effect rather than an isolated transient cortisol rise."
+      },
+      {
+        "biomarker_id": "neutrophils_abs",
+        "expected_direction": "high",
+        "role": "contextual_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Neutrophilia can occur with glucocorticoid exposure or stress and provides supportive context."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_endogenous_hypercortisolism",
+        "rank": 1,
+        "physiological_claim": "Repeatedly high cortisol in an appropriate sampling and clinical context may reflect endogenous hypercortisolism and warrants formal confirmatory testing rather than diagnosis from serum cortisol alone.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Single serum cortisol measurements are not sufficient to diagnose Cushing syndrome."
+        ],
+        "missing_data": {
+          "policy": "Review sampling time, exogenous steroid exposure, and use recommended confirmatory tests before prioritising endogenous hypercortisolism."
+        },
+        "supporting_marker_refs": [
+          "acth",
+          "hba1c"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_acth_hypercort",
+            "marker_reference": "acth",
+            "contradiction_rationale": "A low ACTH level does not exclude hypercortisolism but weakens an ACTH-dependent explanation and redirects the differential toward adrenal or exogenous causes.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_physiologic_stress_elevation",
+        "rank": 2,
+        "physiological_claim": "High cortisol may also reflect acute stress, illness, pain, or sampling-related variation rather than sustained pathologic hypercortisolism.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "This explanation becomes less convincing if there is a stable outpatient pattern of repeated elevation with chronic glucocorticoid features."
+        ],
+        "missing_data": {
+          "policy": "Assess illness severity, recent procedures, and medication exposure before inferring chronic cortisol excess."
+        },
+        "supporting_marker_refs": [
+          "neutrophils_abs",
+          "hba1c"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_hba1c_chronic_effect",
+            "marker_reference": "hba1c",
+            "contradiction_rationale": "A high HbA1c may support a more chronic glucocorticoid effect and weakens a purely transient stress explanation.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_endogenous_hypercortisolism",
+        "hyp_physiologic_stress_elevation"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_late_night_salivary_cortisol_or_dexamethasone_suppression",
+        "rationale": "Recommended confirmatory testing is needed because serum cortisol alone is not sufficient for diagnosing hypercortisolism."
+      },
+      {
+        "test_id": "ct_plasma_acth",
+        "rationale": "ACTH helps classify confirmed hypercortisolism as ACTH-dependent or ACTH-independent."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_cortisol_high_with_high_hba1c",
+        "resulting_state": "at_risk",
+        "description": "Escalate when cortisol is high and HbA1c is also high because the combination may support a more chronic glucocorticoid effect rather than an isolated transient rise.",
+        "conditions": [
+          {
+            "metric_id": "hba1c",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_cushing_guideline"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_cushing_guideline",
+          "paper_title": "Diagnosis of Cushing syndrome and interpretation of cortisol excess",
+          "journal": "Endocrine Society guideline literature",
+          "year": 2008
+        }
+      ],
+      "physiological_claim": "Persistently high cortisol in the right clinical context may support hypercortisolism, but single serum results are not a preferred stand-alone diagnostic test for Cushing syndrome.",
+      "threshold_notes": "This object remains laboratory-range triggered and does not encode diagnostic cut-offs for Cushing syndrome."
+    },
+    "narrative": {
+      "mechanism": "Cortisol excess may arise from pituitary, adrenal, ectopic, or iatrogenic glucocorticoid exposure, while acute illness can produce transient physiologic elevation.",
+      "biological_pathway": "ACTH helps separate ACTH-dependent from ACTH-independent physiology once true cortisol excess is suspected.",
+      "interpretation": "High cortisol is best treated as a contextual hormonal flag rather than a definitive diagnosis from a single measurement.",
+      "implications": "This pattern may justify formal hypercortisolism testing if the sample timing and clinical context make persistent excess plausible.",
+      "supporting_marker_roles": "ACTH provides differential structure, glucose can corroborate glucocorticoid effect, and neutrophils can reflect stress-related leukocyte redistribution."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_folate_low_folate_deficiency",
+    "signal_id": "signal_folate_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "folate",
+      "rationale": "Folate is required for one-carbon transfer reactions and DNA synthesis, and low values are most clinically relevant in hematinic and homocysteine interpretation.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "mcv",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Macrocytosis supports megaloblastic erythropoiesis in clinically relevant folate deficiency."
+      },
+      {
+        "biomarker_id": "homocysteine",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Elevated homocysteine is a functional consequence of folate deficiency and supports biological relevance."
+      },
+      {
+        "biomarker_id": "active_b12",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low active B12 suggests combined or alternative B12-related deficiency rather than isolated folate deficiency."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_folate_deficient_megaloblastic_state",
+        "rank": 1,
+        "physiological_claim": "Low folate may reflect clinically relevant folate deficiency, particularly when macrocytosis or hyperhomocysteinemia is also present.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Serum folate can vary with recent intake and should be interpreted with hematologic context."
+        ],
+        "missing_data": {
+          "policy": "Review MCV, homocysteine, and B12-related markers before concluding that low folate is the primary hematinic abnormality."
+        },
+        "supporting_marker_refs": [
+          "mcv",
+          "homocysteine"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_active_b12_folate",
+            "marker_reference": "active_b12",
+            "contradiction_rationale": "Low active B12 weakens an isolated folate-deficiency interpretation and raises concern for combined or alternative B12-related deficiency.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_combined_hematinic_deficiency_context",
+        "rank": 2,
+        "physiological_claim": "Low folate may sit within a broader combined hematinic deficiency pattern rather than representing isolated folate deficiency alone.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "B12 deficiency can overlap clinically and should not be missed because management implications differ."
+        ],
+        "missing_data": {
+          "policy": "Check active B12 or methylmalonic-acid-type context where available before assigning isolated folate deficiency."
+        },
+        "supporting_marker_refs": [
+          "active_b12",
+          "mcv",
+          "homocysteine"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_active_b12",
+            "marker_reference": "active_b12",
+            "contradiction_rationale": "Normal active B12 makes a combined B12-folate deficiency explanation less likely.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_folate_deficient_megaloblastic_state",
+        "hyp_combined_hematinic_deficiency_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_folate_and_b12_assessment",
+        "rationale": "Repeat folate with parallel B12 assessment helps distinguish isolated from combined hematinic deficiency."
+      },
+      {
+        "test_id": "ct_homocysteine",
+        "rationale": "Homocysteine can support the functional relevance of low folate when interpretation is uncertain."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_folate_low_with_high_homocysteine",
+        "resulting_state": "at_risk",
+        "description": "Escalate when folate is low and homocysteine is high because this combination supports biologically relevant folate deficiency rather than an isolated low serum value.",
+        "conditions": [
+          {
+            "metric_id": "homocysteine",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_folate_deficiency_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_folate_deficiency_review",
+          "paper_title": "Folate deficiency, macrocytosis, and homocysteine review",
+          "journal": "NCBI StatPearls and hematology review literature",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "Low folate commonly reflects folate deficiency and may support megaloblastic erythropoiesis or hyperhomocysteinemia when corroborating markers are present.",
+      "threshold_notes": "Interpretation should remain lab-range anchored and integrated with B12-related markers because isolated folate values can be misleading."
+    },
+    "narrative": {
+      "mechanism": "Folate deficiency impairs thymidylate synthesis, leading to ineffective erythropoiesis and increased homocysteine.",
+      "biological_pathway": "Macrocytosis and homocysteine help corroborate functional folate deficiency, while B12-related markers help separate overlapping hematinic disorders.",
+      "interpretation": "Low folate is clinically meaningful but should not be interpreted without checking whether B12 deficiency is also present.",
+      "implications": "This pattern may justify hematinic evaluation and correction of reversible nutritional or absorptive causes.",
+      "supporting_marker_roles": "MCV corroborates megaloblastic change, homocysteine supports functional consequence, and active_b12 helps distinguish isolated folate deficiency from combined deficiency."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_folate_high_supplementation_or_excess_exposure",
+    "signal_id": "signal_folate_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "folate",
+      "rationale": "High folate is usually contextual and often reflects supplementation, fortification, or increased recent intake rather than disease on its own.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "active_b12",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low active B12 raises concern that high folate may coexist with unresolved B12 deficiency rather than simply indicating adequate hematinic status."
+      },
+      {
+        "biomarker_id": "mcv",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Persistent macrocytosis despite high folate suggests that folate sufficiency alone is not resolving the hematologic pattern."
+      },
+      {
+        "biomarker_id": "homocysteine",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Persistently high homocysteine despite high folate suggests another functional limitation, including B12 deficiency or renal impairment."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_high_folate_from_intake_or_supplementation",
+        "rank": 1,
+        "physiological_claim": "High folate most commonly reflects supplementation, fortification, or recent dietary exposure rather than intrinsic pathology.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Serum folate is sensitive to recent intake and may not reflect long-term stores on its own."
+        ],
+        "missing_data": {
+          "policy": "Review supplement use before attributing high folate to disease-related processes."
+        },
+        "supporting_marker_refs": [
+          "active_b12",
+          "homocysteine"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_homocysteine_folatehigh",
+            "marker_reference": "homocysteine",
+            "contradiction_rationale": "A high homocysteine level weakens the assumption that high folate reflects functionally adequate methylation status.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_high_folate_with_unresolved_b12_issue",
+        "rank": 2,
+        "physiological_claim": "High folate with low active B12 or persistent macrocytosis may indicate that folate exposure is coexisting with an unresolved B12-related problem rather than resolving it.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This is an interpretation frame, not proof that folate is causing harm."
+        ],
+        "missing_data": {
+          "policy": "Check B12-related markers before treating high folate as reassuring in the presence of macrocytosis or neurologic concern."
+        },
+        "supporting_marker_refs": [
+          "active_b12",
+          "mcv",
+          "homocysteine"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_active_b12_folatehigh",
+            "marker_reference": "active_b12",
+            "contradiction_rationale": "Normal active B12 weakens a concurrent unresolved B12 deficiency explanation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_high_folate_from_intake_or_supplementation",
+        "hyp_high_folate_with_unresolved_b12_issue"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_b12_status_assessment",
+        "rationale": "Parallel B12 assessment helps interpret whether high folate is simply exposure-related or potentially masking a concurrent deficiency context."
+      },
+      {
+        "test_id": "ct_repeat_folate_with_supplement_review",
+        "rationale": "Repeat testing after reviewing supplement use can clarify whether elevation is exposure-related."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_folate_high_with_low_active_b12",
+        "resulting_state": "at_risk",
+        "description": "Escalate when folate is high and active B12 is low because the combination makes a purely reassuring high-folate interpretation less appropriate.",
+        "conditions": [
+          {
+            "metric_id": "active_b12",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_folate_b12_interaction_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_folate_b12_interaction_review",
+          "paper_title": "Folate status in relation to B12 deficiency and anemia",
+          "journal": "Am J Clin Nutr and review literature",
+          "year": 2007
+        }
+      ],
+      "physiological_claim": "High folate most commonly reflects increased intake or supplementation, but interpretation should remain cautious when B12 status is uncertain.",
+      "threshold_notes": "No disease-specific escalation threshold is encoded beyond the laboratory upper range."
+    },
+    "narrative": {
+      "mechanism": "Serum folate rises readily with recent intake and may not reflect long-term tissue excess or direct pathology.",
+      "biological_pathway": "B12-related markers remain important because high folate can complicate interpretation in unresolved B12 deficiency states.",
+      "interpretation": "High folate is usually a contextual nutritional finding rather than a direct disease signal.",
+      "implications": "This pattern may justify review of supplementation and B12 status rather than disease-focused escalation in isolation.",
+      "supporting_marker_roles": "Active B12 is the key differential marker, MCV helps assess unresolved megaloblastic change, and homocysteine helps gauge whether folate excess is biologically reassuring or not."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_ggt_high_hepatobiliary_cholestatic_context",
+    "signal_id": "signal_ggt_high",
+    "research_domain": "hepatic",
+    "primary_marker": {
+      "biomarker_id": "ggt",
+      "rationale": "GGT is a hepatobiliary enzyme whose elevation is most informative when interpreted alongside ALP and broader liver context.",
+      "signal_system": "hepatic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "alp",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Elevated ALP alongside GGT supports a hepatobiliary or cholestatic source rather than isolated enzyme induction alone."
+      },
+      {
+        "biomarker_id": "bilirubin",
+        "expected_direction": "high",
+        "role": "severity_marker",
+        "relationship_kind": "severity",
+        "availability": "common",
+        "rationale": "Concurrent bilirubin elevation can indicate greater cholestatic significance or more clinically important biliary obstruction."
+      },
+      {
+        "biomarker_id": "alt",
+        "expected_direction": "high",
+        "role": "contextual_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "ALT helps show whether the overall pattern is mixed hepatocellular-cholestatic rather than predominantly cholestatic."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_cholestatic_hepatobiliary_pattern",
+        "rank": 1,
+        "physiological_claim": "High GGT with elevated ALP is consistent with a hepatobiliary or cholestatic enzyme pattern and supports hepatic origin of the abnormality.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "This pattern is supportive, not disease-specific, and does not by itself identify the exact biliary cause."
+        ],
+        "missing_data": {
+          "policy": "Review ALP, bilirubin, symptoms, and imaging context before assigning a cholestatic interpretation."
+        },
+        "supporting_marker_refs": [
+          "alp",
+          "bilirubin",
+          "alt"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_alp_ggt",
+            "marker_reference": "alp",
+            "contradiction_rationale": "A normal ALP weakens a cholestatic interpretation and makes isolated enzyme induction or metabolic context more plausible.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_mixed_liver_injury_pattern",
+        "rank": 2,
+        "physiological_claim": "High GGT may also occur in a mixed liver injury pattern when hepatocellular enzymes are elevated, rather than in isolated cholestasis alone.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Further interpretation depends on the relative prominence of ALT, ALP, and bilirubin."
+        ],
+        "missing_data": {
+          "policy": "Assess the full liver enzyme pattern rather than using GGT alone to label the process."
+        },
+        "supporting_marker_refs": [
+          "alt",
+          "alp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_alt_ggt",
+            "marker_reference": "alt",
+            "contradiction_rationale": "A normal ALT weakens a mixed hepatocellular pattern and supports a more isolated cholestatic or induction-based interpretation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_cholestatic_hepatobiliary_pattern",
+        "hyp_mixed_liver_injury_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_liver_ultrasound",
+        "rationale": "Imaging may help clarify biliary obstruction or cholestatic structural disease when the biochemical pattern is supportive."
+      },
+      {
+        "test_id": "ct_repeat_liver_panel",
+        "rationale": "Repeat liver panel helps confirm persistence and pattern evolution across ALP, ALT, and bilirubin."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_ggt_high_with_high_alp",
+        "resulting_state": "at_risk",
+        "description": "Escalate when GGT and ALP are both high because the combination more strongly supports a clinically relevant hepatobiliary pattern than isolated GGT elevation.",
+        "conditions": [
+          {
+            "metric_id": "alp",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_ggt_cholestasis_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_ggt_cholestasis_review",
+          "paper_title": "Gamma-glutamyl transferase in cholestatic and hepatobiliary patterns",
+          "journal": "Review literature and clinical reference sources",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "High GGT commonly supports a hepatobiliary or cholestatic source of liver enzyme abnormality, particularly when ALP is also elevated.",
+      "threshold_notes": "The deterministic trigger is the laboratory abnormality; disease-specific diagnosis depends on the liver-pattern context."
+    },
+    "narrative": {
+      "mechanism": "GGT rises with biliary epithelial and hepatocyte enzyme induction and is often used to support hepatic origin of alkaline phosphatase elevation.",
+      "biological_pathway": "Concurrent ALP elevation is a key differential feature when cholestatic or obstructive patterns are suspected.",
+      "interpretation": "High GGT is non-specific but clinically useful as a contextual liver-pattern marker.",
+      "implications": "This pattern may justify liver-pattern evaluation rather than interpretation of GGT in isolation.",
+      "supporting_marker_roles": "ALP provides the main differential, bilirubin supports cholestatic severity, and ALT helps distinguish hepatocellular from predominantly cholestatic patterns."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_ggt_high_alcohol_or_enzyme_induction_context",
+    "signal_id": "signal_ggt_high",
+    "research_domain": "hepatic",
+    "primary_marker": {
+      "biomarker_id": "ggt",
+      "rationale": "GGT is inducible by alcohol and some medications, so isolated elevation often requires context rather than direct disease attribution.",
+      "signal_system": "hepatic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "alp",
+        "expected_direction": "any",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Normal ALP weakens a cholestatic explanation and makes isolated enzyme induction relatively more plausible."
+      },
+      {
+        "biomarker_id": "mcv",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Higher MCV can support a chronic alcohol-related biochemical context, although it is not specific."
+      },
+      {
+        "biomarker_id": "alt",
+        "expected_direction": "high",
+        "role": "contextual_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "ALT helps assess whether there is concurrent hepatocellular injury rather than isolated GGT induction."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_enzyme_induction_or_alcohol_context",
+        "rank": 1,
+        "physiological_claim": "Isolated or disproportionate GGT elevation may reflect alcohol-related or medication-related enzyme induction, especially when ALP is not elevated.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "GGT lacks specificity and should not be used alone to infer alcohol exposure or liver disease severity."
+        ],
+        "missing_data": {
+          "policy": "Review alcohol intake, medication exposure, and the full liver enzyme pattern before prioritising enzyme induction."
+        },
+        "supporting_marker_refs": [
+          "alp",
+          "mcv",
+          "alt"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_alp_induction",
+            "marker_reference": "alp",
+            "contradiction_rationale": "An elevated ALP weakens a simple induction explanation and raises the likelihood of a hepatobiliary pattern.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_metabolic_liver_context",
+        "rank": 2,
+        "physiological_claim": "High GGT may also reflect metabolic liver stress rather than alcohol-related induction, particularly when other metabolic or hepatic markers are abnormal.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This interpretation is contextual and not specific to steatotic liver disease from GGT alone."
+        ],
+        "missing_data": {
+          "policy": "Consider adiposity and metabolic markers where available before attributing high GGT mainly to alcohol or drugs."
+        },
+        "supporting_marker_refs": [
+          "alt",
+          "alp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_alt_metabolic",
+            "marker_reference": "alt",
+            "contradiction_rationale": "A normal ALT weakens a concurrent metabolic hepatocellular stress interpretation.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_enzyme_induction_or_alcohol_context",
+        "hyp_metabolic_liver_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_liver_panel_after_exposure_review",
+        "rationale": "Repeat testing after alcohol and medication review can help determine whether GGT elevation is persistent or exposure-related."
+      },
+      {
+        "test_id": "ct_liver_ultrasound_if_persistent",
+        "rationale": "Persistent unexplained elevation may justify imaging for steatotic or structural liver disease."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_ggt_high_with_high_mcv",
+        "resulting_state": "at_risk",
+        "description": "Escalate when GGT is high and MCV is also high because the combination can support a more persistent exposure-related or chronic liver-stress context than an isolated GGT rise.",
+        "conditions": [
+          {
+            "metric_id": "mcv",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_ggt_induction_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_ggt_induction_review",
+          "paper_title": "Gamma-glutamyl transferase as an inducible liver enzyme",
+          "journal": "Review literature and clinical reference sources",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "High GGT with limited cholestatic corroboration may reflect alcohol-related or medication-related enzyme induction.",
+      "threshold_notes": "No alcohol-specific threshold is encoded here; the trigger remains the laboratory abnormality."
+    },
+    "narrative": {
+      "mechanism": "GGT can rise through microsomal enzyme induction as well as hepatobiliary injury.",
+      "biological_pathway": "A normal ALP helps distinguish isolated induction from a stronger cholestatic pattern.",
+      "interpretation": "High GGT is non-specific and should not be treated as a stand-alone alcohol biomarker.",
+      "implications": "This pattern may justify review of alcohol exposure and medications before assuming structural liver disease.",
+      "supporting_marker_roles": "ALP is the key differential, ALT provides liver-pattern context, and MCV can offer supportive context in chronic alcohol-related biochemical patterns."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_hba1c_high_diabetes_range_hyperglycemia",
+    "signal_id": "signal_hba1c_high",
+    "research_domain": "metabolic",
+    "primary_marker": {
+      "biomarker_id": "hba1c",
+      "rationale": "HbA1c reflects average glycaemic exposure over the prior two to three months, but accuracy depends on normal red-cell lifespan and assay validity.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "glucose",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High glucose supports that elevated HbA1c reflects genuine chronic hyperglycaemia rather than isolated assay distortion."
+      },
+      {
+        "biomarker_id": "triglycerides",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "High triglycerides can support an insulin-resistance and dysmetabolic context accompanying elevated HbA1c."
+      },
+      {
+        "biomarker_id": "hgb",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low hemoglobin raises the possibility that altered red-cell turnover may modify HbA1c interpretation."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_chronic_diabetes_range_hyperglycemia",
+        "rank": 1,
+        "physiological_claim": "High HbA1c commonly reflects sustained hyperglycaemia consistent with diabetes-range dysglycaemia when red-cell lifespan is not substantially altered.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Confirmation may be needed if there is discordance with glucose or conditions affecting erythrocyte survival."
+        ],
+        "missing_data": {
+          "policy": "Review fasting glucose and red-cell indices before assuming HbA1c elevation fully reflects glycaemic burden."
+        },
+        "supporting_marker_refs": [
+          "glucose",
+          "triglycerides",
+          "hgb"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_hgb_hba1c",
+            "marker_reference": "hgb",
+            "contradiction_rationale": "Low hemoglobin or significant anaemia can weaken confidence that HbA1c accurately represents chronic glycaemia.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_insulin_resistance_predominant_dysglycemia",
+        "rank": 2,
+        "physiological_claim": "High HbA1c may arise in an insulin-resistance context before or alongside overt diabetes, particularly when other metabolic abnormalities are present.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "HbA1c alone does not distinguish the specific type of dysglycaemia or diabetes."
+        ],
+        "missing_data": {
+          "policy": "Assess fasting glucose, triglycerides, and clinical context before assigning a predominant insulin-resistance frame."
+        },
+        "supporting_marker_refs": [
+          "triglycerides",
+          "glucose"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_glucose_hba1c",
+            "marker_reference": "glucose",
+            "contradiction_rationale": "Normal glucose in a discordant pattern should prompt consideration of assay or red-cell factors before assuming straightforward chronic dysglycaemia.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_chronic_diabetes_range_hyperglycemia",
+        "hyp_insulin_resistance_predominant_dysglycemia"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_hba1c_or_fasting_glucose",
+        "rationale": "Repeat HbA1c or fasting glucose testing helps confirm chronic dysglycaemia in line with guideline practice."
+      },
+      {
+        "test_id": "ct_oral_glucose_tolerance_if_discordant",
+        "rationale": "Glucose-based testing may help when HbA1c is discordant with the clinical picture or red-cell factors are suspected."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_hba1c_high_with_high_glucose",
+        "resulting_state": "at_risk",
+        "description": "Escalate when HbA1c is high and glucose is also high because concordant glycaemic markers strengthen a true chronic hyperglycaemia interpretation.",
+        "conditions": [
+          {
+            "metric_id": "glucose",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_hba1c_guideline"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_hba1c_guideline",
+          "paper_title": "HbA1c use in diabetes diagnosis and chronic glycaemic assessment",
+          "journal": "NICE and diabetes guideline literature",
+          "year": 2026
+        }
+      ],
+      "physiological_claim": "High HbA1c is a core marker of chronic hyperglycaemia and supports diabetes-range dysglycaemia when red-cell turnover artefact is not the better explanation.",
+      "threshold_notes": "Diagnostic thresholds exist in guidelines, but this object remains activated by laboratory abnormality rather than encoding a universal numeric cut-off here."
+    },
+    "narrative": {
+      "mechanism": "Glycation of haemoglobin increases with sustained glucose exposure over the erythrocyte lifespan.",
+      "biological_pathway": "Fasting glucose and triglyceride-type metabolic context can corroborate chronic dysglycaemia, while anaemia-related markers help judge measurement reliability.",
+      "interpretation": "High HbA1c is clinically meaningful and often actionable when concordant with the broader metabolic picture.",
+      "implications": "This pattern may justify formal diabetes evaluation and confirmation according to guideline-based practice.",
+      "supporting_marker_roles": "Glucose corroborates chronic dysglycaemia, triglycerides support insulin-resistance context, and hemoglobin helps identify measurement distortion from altered red-cell biology."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_hba1c_low_shortened_erythrocyte_lifespan_context",
+    "signal_id": "signal_hba1c_low",
+    "research_domain": "metabolic",
+    "primary_marker": {
+      "biomarker_id": "hba1c",
+      "rationale": "Low HbA1c is often a contextual finding and may reflect reduced glycaemic exposure or a falsely low result from shortened erythrocyte lifespan.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "glucose",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "High glucose with low HbA1c suggests that HbA1c may be underestimating glycaemic exposure."
+      },
+      {
+        "biomarker_id": "hgb",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low hemoglobin can support altered red-cell turnover that reduces HbA1c reliability."
+      },
+      {
+        "biomarker_id": "mcv",
+        "expected_direction": "high",
+        "role": "contextual_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Macrocytosis can support abnormal erythropoiesis and may modify HbA1c interpretation."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_falsely_low_hba1c_from_red_cell_turnover",
+        "rank": 1,
+        "physiological_claim": "Low HbA1c may reflect shortened erythrocyte lifespan or altered red-cell turnover rather than genuinely low glycaemic exposure, especially when glucose is not concordantly low.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This explanation is most relevant when there is discordance with glucose or red-cell abnormalities."
+        ],
+        "missing_data": {
+          "policy": "Review glucose, hemoglobin, and red-cell indices before treating a low HbA1c as reassuring."
+        },
+        "supporting_marker_refs": [
+          "glucose",
+          "hgb",
+          "mcv"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_glucose_hba1clow",
+            "marker_reference": "glucose",
+            "contradiction_rationale": "A low glucose level supports that HbA1c may genuinely reflect low glycaemic exposure rather than red-cell artefact.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_true_low_glycemic_exposure",
+        "rank": 2,
+        "physiological_claim": "Low HbA1c may also reflect genuinely low average glycaemic exposure when glucose results and red-cell indices are concordant.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This frame is less secure if anaemia, hemolysis, or recent blood loss are present."
+        ],
+        "missing_data": {
+          "policy": "Check for anemia and glucose concordance before concluding that low HbA1c is wholly physiological."
+        },
+        "supporting_marker_refs": [
+          "glucose",
+          "hgb"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_glucose_hba1clow",
+            "marker_reference": "glucose",
+            "contradiction_rationale": "A high glucose level contradicts a simply low-glycaemia interpretation and suggests HbA1c underestimation.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_falsely_low_hba1c_from_red_cell_turnover",
+        "hyp_true_low_glycemic_exposure"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_glucose_based_assessment",
+        "rationale": "Glucose-based testing is useful when HbA1c appears discordantly low."
+      },
+      {
+        "test_id": "ct_complete_blood_count_review",
+        "rationale": "Blood-count review helps assess whether altered erythrocyte biology may be distorting HbA1c."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_hba1c_low_with_high_glucose",
+        "resulting_state": "at_risk",
+        "description": "Escalate when HbA1c is low but glucose is high because this discordance raises concern that HbA1c is underestimating glycaemic exposure.",
+        "conditions": [
+          {
+            "metric_id": "glucose",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_hba1c_guideline"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_hba1c_guideline",
+          "paper_title": "HbA1c use in diabetes diagnosis and chronic glycaemic assessment",
+          "journal": "NICE and diabetes guideline literature",
+          "year": 2026
+        }
+      ],
+      "physiological_claim": "Low HbA1c can underestimate glycaemic exposure when red-cell turnover is increased, particularly if the result is discordant with glucose or anemia context.",
+      "threshold_notes": "No universal disease threshold is encoded for low HbA1c; interpretation depends on discordance and red-cell biology."
+    },
+    "narrative": {
+      "mechanism": "HbA1c falls when average glucose is low, but it can also fall spuriously if erythrocytes are removed from circulation earlier than usual.",
+      "biological_pathway": "Hemoglobin and MCV help evaluate red-cell biology, while glucose provides differential context against falsely reassuring HbA1c values.",
+      "interpretation": "Low HbA1c is often not pathological on its own, but it can be misleading if it masks underlying dysglycaemia.",
+      "implications": "This pattern may justify glucose-based assessment when HbA1c appears discordant with the broader clinical picture.",
+      "supporting_marker_roles": "Glucose is the key differential marker, hemoglobin provides red-cell context, and MCV can support an altered erythropoietic state."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_hgb_low_iron_deficiency_or_blood_loss_anemia",
+    "signal_id": "signal_hgb_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "hgb",
+      "rationale": "Hemoglobin reflects circulating oxygen-carrying capacity and low values indicate anemia, not a specific cause by themselves.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "mcv",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low MCV supports microcytic anemia and helps distinguish iron deficiency or thalassemia-type patterns from macrocytic or normocytic causes."
+      },
+      {
+        "biomarker_id": "ferritin",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low ferritin strongly supports iron deficiency as a cause of low hemoglobin."
+      },
+      {
+        "biomarker_id": "reticulocytes",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "specialist",
+        "rationale": "Raised reticulocytes suggest compensatory marrow response to blood loss or hemolysis rather than production failure."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_iron_deficiency_or_blood_loss_anemia",
+        "rank": 1,
+        "physiological_claim": "Low hemoglobin with low MCV and low ferritin is consistent with iron deficiency anemia, often related to chronic blood loss or inadequate iron availability.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Ferritin can be misleading in inflammation and should be interpreted with broader context when necessary."
+        ],
+        "missing_data": {
+          "policy": "Review MCV and iron studies before assigning iron deficiency as the leading explanation."
+        },
+        "supporting_marker_refs": [
+          "mcv",
+          "ferritin",
+          "reticulocytes"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_mcv_hgb",
+            "marker_reference": "mcv",
+            "contradiction_rationale": "A high MCV weakens iron deficiency as the main explanation and redirects the differential toward macrocytic causes.",
+            "contradiction_strength": "strong"
+          },
+          {
+            "contradiction_id": "ctr_normal_or_high_ferritin_hgb",
+            "marker_reference": "ferritin",
+            "contradiction_rationale": "A normal or high ferritin weakens uncomplicated iron deficiency, particularly if inflammation is not present.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_increased_loss_or_hemolytic_response",
+        "rank": 2,
+        "physiological_claim": "Low hemoglobin with a raised reticulocyte response may indicate blood loss or hemolysis rather than primary marrow underproduction.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Reticulocyte interpretation requires timing context and may be blunted if nutrient deficiency coexists."
+        ],
+        "missing_data": {
+          "policy": "Review reticulocyte response before labelling low hemoglobin as a pure production defect."
+        },
+        "supporting_marker_refs": [
+          "reticulocytes",
+          "mcv"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_reticulocytes_hgb",
+            "marker_reference": "reticulocytes",
+            "contradiction_rationale": "A low reticulocyte count weakens a blood-loss or hemolytic response and supports underproduction instead.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_iron_deficiency_or_blood_loss_anemia",
+        "hyp_increased_loss_or_hemolytic_response"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_iron_studies",
+        "rationale": "Iron studies help confirm or refute iron deficiency as the basis of anemia."
+      },
+      {
+        "test_id": "ct_reticulocyte_count",
+        "rationale": "Reticulocyte count helps distinguish production failure from increased loss or destruction."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_hgb_low_with_low_ferritin",
+        "resulting_state": "at_risk",
+        "description": "Escalate when hemoglobin is low and ferritin is also low because the combination strongly supports clinically relevant iron deficiency anemia.",
+        "conditions": [
+          {
+            "metric_id": "ferritin",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_anemia_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_anemia_review",
+          "paper_title": "General anemia evaluation and iron-deficiency differentiation",
+          "journal": "NHLBI and hematology review literature",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "Low hemoglobin commonly reflects anemia due to iron deficiency, blood loss, chronic disease, renal disease, hemolysis, or marrow disorders, with indices needed for cause separation.",
+      "threshold_notes": "This object is triggered by laboratory abnormality and does not encode sex-specific anemia thresholds beyond the laboratory range."
+    },
+    "narrative": {
+      "mechanism": "Anemia develops when red-cell production is reduced, red-cell loss increases, or destruction exceeds replacement.",
+      "biological_pathway": "MCV, ferritin, and reticulocyte context are central to differentiating production failure from blood loss or hemolysis.",
+      "interpretation": "Low hemoglobin is clinically meaningful and typically warrants cause-focused interpretation rather than isolated monitoring alone.",
+      "implications": "This pattern may justify structured anemia workup based on red-cell indices and iron studies.",
+      "supporting_marker_roles": "MCV provides the main differential split, ferritin corroborates iron deficiency, and reticulocytes help distinguish production failure from increased loss."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_hgb_low_normocytic_underproduction_context",
+    "signal_id": "signal_hgb_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "hgb",
+      "rationale": "Low hemoglobin with non-microcytic indices often requires evaluation for chronic disease, kidney disease, marrow suppression, or mixed deficiency.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "mcv",
+        "expected_direction": "any",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "MCV helps distinguish non-microcytic underproduction patterns from classic microcytic iron-deficiency anemia."
+      },
+      {
+        "biomarker_id": "creatinine",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "High creatinine supports kidney-related erythropoietin deficiency as a contributor to low hemoglobin."
+      },
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Elevated CRP can support anemia of inflammation or chronic disease context."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_ckd_or_chronic_disease_anemia",
+        "rank": 1,
+        "physiological_claim": "Low hemoglobin with impaired renal function or inflammatory context may reflect underproduction anemia related to chronic kidney disease or chronic inflammatory disease.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "This interpretation is less secure without iron studies because mixed anemia is common."
+        ],
+        "missing_data": {
+          "policy": "Review creatinine, inflammatory markers, and iron studies before concluding chronic-disease or renal anemia."
+        },
+        "supporting_marker_refs": [
+          "creatinine",
+          "crp",
+          "mcv"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_mcv_normocytic",
+            "marker_reference": "mcv",
+            "contradiction_rationale": "A low MCV weakens a straightforward normocytic underproduction frame and raises iron deficiency or thalassemia-type causes.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_mixed_or_marow_underproduction_context",
+        "rank": 2,
+        "physiological_claim": "Low hemoglobin without clear microcytosis may also reflect mixed deficiency or marrow underproduction rather than isolated renal or inflammatory anemia.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This is a broader differential frame and typically needs more specific follow-up testing."
+        ],
+        "missing_data": {
+          "policy": "If creatinine and CRP are not explanatory, broaden the differential to marrow and mixed-deficiency causes."
+        },
+        "supporting_marker_refs": [
+          "mcv",
+          "creatinine",
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_creatinine_ckdframe",
+            "marker_reference": "creatinine",
+            "contradiction_rationale": "Marked renal impairment strengthens a kidney-related underproduction interpretation and weakens the need to prioritise broader marrow causes first.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_ckd_or_chronic_disease_anemia",
+        "hyp_mixed_or_marow_underproduction_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_iron_studies",
+        "rationale": "Iron studies help determine whether low hemoglobin is purely underproduction related or mixed with iron deficiency."
+      },
+      {
+        "test_id": "ct_reticulocyte_count",
+        "rationale": "Reticulocyte count helps confirm reduced marrow output when underproduction anemia is suspected."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_hgb_low_with_high_creatinine",
+        "resulting_state": "at_risk",
+        "description": "Escalate when hemoglobin is low and creatinine is high because the combination supports clinically relevant renal underproduction anemia context.",
+        "conditions": [
+          {
+            "metric_id": "creatinine",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_anemia_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_anemia_review",
+          "paper_title": "General anemia evaluation and iron-deficiency differentiation",
+          "journal": "NHLBI and hematology review literature",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "Low hemoglobin with non-low MCV and impaired renal or inflammatory context may reflect underproduction anemia rather than iron-deficient microcytosis.",
+      "threshold_notes": "The deterministic trigger is the laboratory abnormality; cause assignment depends on index and context markers."
+    },
+    "narrative": {
+      "mechanism": "Underproduction anemia may result from inflammation, erythropoietin deficiency, marrow disease, or mixed nutritional disturbance.",
+      "biological_pathway": "MCV helps exclude microcytic iron deficiency, while creatinine and CRP-type markers help contextualise chronic disease or renal anemia.",
+      "interpretation": "Low hemoglobin in this pattern supports structured evaluation for chronic disease or renal underproduction mechanisms.",
+      "implications": "This pattern may justify renal and inflammatory assessment before assuming blood loss or hemolysis.",
+      "supporting_marker_roles": "MCV is the key differential marker, creatinine provides mechanism context for renal anemia, and crp corroborates inflammatory underproduction."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_hgb_high_erythrocytosis_or_hypoxic_drive",
+    "signal_id": "signal_hgb_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "hgb",
+      "rationale": "High hemoglobin may reflect true erythrocytosis or relative hemoconcentration, and cause separation requires red-cell mass context and oxygenation clues.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "erythropoietin",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "High erythropoietin supports secondary erythrocytosis rather than a primary marrow cause."
+      },
+      {
+        "biomarker_id": "hematocrit",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High hematocrit supports that the hemoglobin rise is persistent and clinically relevant rather than a trivial fluctuation."
+      },
+      {
+        "biomarker_id": "albumin",
+        "expected_direction": "high",
+        "role": "contextual_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "High albumin can support relative hemoconcentration rather than a true increase in red-cell mass."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_secondary_erythrocytosis_hypoxic_drive",
+        "rank": 1,
+        "physiological_claim": "High hemoglobin with elevated erythropoietin may reflect secondary erythrocytosis rather than a primary marrow process.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "This pattern does not identify the specific source of hypoxia or erythropoietin drive without further evaluation."
+        ],
+        "missing_data": {
+          "policy": "Review erythropoietin context and repeat testing before assigning a primary marrow explanation."
+        },
+        "supporting_marker_refs": [
+          "erythropoietin",
+          "hematocrit",
+          "albumin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_erythropoietin_hgbhigh",
+            "marker_reference": "erythropoietin",
+            "contradiction_rationale": "A low erythropoietin level weakens secondary erythrocytosis and raises concern for a primary marrow cause.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_relative_hemoconcentration",
+        "rank": 2,
+        "physiological_claim": "High hemoglobin may also reflect reduced plasma volume or hemoconcentration rather than true erythrocytosis, particularly if concentration markers are also raised.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Persistence on repeat testing is important because transient dehydration can mimic erythrocytosis."
+        ],
+        "missing_data": {
+          "policy": "Consider hydration status and repeat testing before concluding that red-cell mass is truly increased."
+        },
+        "supporting_marker_refs": [
+          "albumin",
+          "hematocrit",
+          "erythropoietin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_erythropoietin_hgbhigh",
+            "marker_reference": "erythropoietin",
+            "contradiction_rationale": "A high erythropoietin level weakens a simple hemoconcentration explanation and supports secondary erythrocytosis.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_secondary_erythrocytosis_hypoxic_drive",
+        "hyp_relative_hemoconcentration"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_full_blood_count",
+        "rationale": "Repeat testing helps distinguish persistent erythrocytosis from transient hemoconcentration."
+      },
+      {
+        "test_id": "ct_erythropoietin_assessment",
+        "rationale": "Erythropoietin testing helps separate secondary erythrocytosis from other causes."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_hgb_high_with_high_erythropoietin",
+        "resulting_state": "at_risk",
+        "description": "Escalate when hemoglobin is high and erythropoietin is also high because the combination supports clinically relevant secondary erythrocytosis.",
+        "conditions": [
+          {
+            "metric_id": "erythropoietin",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_erythrocytosis_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_erythrocytosis_review",
+          "paper_title": "Evaluation of erythrocytosis and secondary hypoxic drive",
+          "journal": "Hematology review literature",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "High hemoglobin can reflect absolute erythrocytosis driven by hypoxia or myeloproliferative disease, or relative elevation from reduced plasma volume.",
+      "threshold_notes": "No universal disease-specific numeric threshold is encoded here beyond laboratory abnormality."
+    },
+    "narrative": {
+      "mechanism": "Hemoglobin rises when red-cell mass increases or plasma volume contracts.",
+      "biological_pathway": "Erythropoietin and oxygen-saturation context help distinguish secondary hypoxic drive from primary marrow causes, while albumin can support hemoconcentration.",
+      "interpretation": "High hemoglobin is clinically relevant and may require thrombotic-risk-aware evaluation if persistent.",
+      "implications": "This pattern may justify confirmation and differentiation between true and relative erythrocytosis.",
+      "supporting_marker_roles": "Erythropoietin provides the main differential structure, hematocrit corroborates red-cell concentration, and albumin supports hemoconcentration context."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_homocysteine_high_b_vitamin_related_methylation_impairment",
+    "signal_id": "signal_homocysteine_high",
+    "research_domain": "metabolic",
+    "primary_marker": {
+      "biomarker_id": "homocysteine",
+      "rationale": "Homocysteine is a methylation-pathway intermediate and rises most commonly with folate, B12, or B6 insufficiency, renal impairment, or genetic pathway variation.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "folate",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low folate supports impaired remethylation as a common cause of elevated homocysteine."
+      },
+      {
+        "biomarker_id": "active_b12",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low active B12 supports an alternative or combined cobalamin-related cause of hyperhomocysteinemia."
+      },
+      {
+        "biomarker_id": "mcv",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Macrocytosis supports a clinically relevant hematinic consequence of impaired one-carbon metabolism."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_folate_related_hyperhomocysteinemia",
+        "rank": 1,
+        "physiological_claim": "High homocysteine may reflect folate-related impairment of remethylation, particularly when folate is low and macrocytic change is present.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Homocysteine is not specific for folate deficiency and can rise in several other contexts."
+        ],
+        "missing_data": {
+          "policy": "Review folate and B12 markers together before attributing elevated homocysteine to folate alone."
+        },
+        "supporting_marker_refs": [
+          "folate",
+          "mcv",
+          "active_b12"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_folate_hcy",
+            "marker_reference": "folate",
+            "contradiction_rationale": "Normal folate weakens folate deficiency as the leading explanation for elevated homocysteine.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_b12_related_or_combined_methylation_impairment",
+        "rank": 2,
+        "physiological_claim": "High homocysteine may also reflect cobalamin deficiency or combined B-vitamin insufficiency, especially when active B12 is low.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Additional markers such as methylmalonic acid may be needed where B12-specific confirmation is important."
+        ],
+        "missing_data": {
+          "policy": "Assess active B12 before assuming folate deficiency is the sole explanation."
+        },
+        "supporting_marker_refs": [
+          "active_b12",
+          "folate",
+          "mcv"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_active_b12_hcy",
+            "marker_reference": "active_b12",
+            "contradiction_rationale": "Normal active B12 weakens a primary cobalamin-deficiency explanation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_folate_related_hyperhomocysteinemia",
+        "hyp_b12_related_or_combined_methylation_impairment"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_b12_and_folate_panel",
+        "rationale": "Parallel B12 and folate testing helps distinguish the most likely remethylation defect."
+      },
+      {
+        "test_id": "ct_methylmalonic_acid",
+        "rationale": "Methylmalonic acid can help clarify whether cobalamin deficiency is contributing to elevated homocysteine."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_homocysteine_high_with_low_active_b12",
+        "resulting_state": "at_risk",
+        "description": "Escalate when homocysteine is high and active B12 is low because the combination supports a clinically relevant cobalamin-related methylation defect.",
+        "conditions": [
+          {
+            "metric_id": "active_b12",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_homocysteine_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_homocysteine_review",
+          "paper_title": "Homocysteine in folate and cobalamin deficiency",
+          "journal": "Nutrition and hematology review literature",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "High homocysteine commonly reflects impaired remethylation or transsulfuration, most often in a B-vitamin deficiency context.",
+      "threshold_notes": "Interpretation should remain lab-range anchored and integrated with B12, folate, and renal context."
+    },
+    "narrative": {
+      "mechanism": "Homocysteine rises when one-carbon metabolism is limited or when renal clearance is reduced.",
+      "biological_pathway": "Folate and active B12 provide the main mechanistic context, while MCV can support clinically relevant megaloblastic consequence.",
+      "interpretation": "High homocysteine is biologically informative but not disease-specific on its own.",
+      "implications": "This pattern may justify hematinic and renal review rather than isolated cardiovascular interpretation from homocysteine alone.",
+      "supporting_marker_roles": "Folate and active B12 are core mechanism markers, while MCV helps corroborate whether the disturbance has hematologic expression."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_homocysteine_high_renal_clearance_reduction",
+    "signal_id": "signal_homocysteine_high",
+    "research_domain": "renal",
+    "primary_marker": {
+      "biomarker_id": "homocysteine",
+      "rationale": "Homocysteine is partly cleared by the kidney, so elevation can reflect renal impairment even without a primary hematinic defect.",
+      "signal_system": "renal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "creatinine",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Impaired renal function supports reduced homocysteine clearance as a contributor to elevation."
+      },
+      {
+        "biomarker_id": "folate",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low folate supports a competing or combined nutritional explanation rather than pure renal accumulation."
+      },
+      {
+        "biomarker_id": "active_b12",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low active B12 suggests overlapping methylation impairment that may coexist with renal causes."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_renal_hyperhomocysteinemia",
+        "rank": 1,
+        "physiological_claim": "High homocysteine with impaired renal function may reflect reduced renal clearance or metabolism rather than isolated vitamin deficiency.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Renal and nutritional mechanisms commonly overlap, so a single-cause interpretation can be misleading."
+        ],
+        "missing_data": {
+          "policy": "Review creatinine, folate, and B12 markers together before attributing homocysteine elevation solely to diet-related deficiency."
+        },
+        "supporting_marker_refs": [
+          "creatinine",
+          "folate",
+          "active_b12"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_creatinine_hcy",
+            "marker_reference": "creatinine",
+            "contradiction_rationale": "Normal renal function weakens reduced renal clearance as the main explanation for elevated homocysteine.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_combined_renal_and_hematinic_context",
+        "rank": 2,
+        "physiological_claim": "High homocysteine may arise from combined renal impairment and hematinic insufficiency, especially when creatinine and B-vitamin markers are both abnormal.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "This frame should not be used to imply that either component alone has been fully established."
+        ],
+        "missing_data": {
+          "policy": "Where creatinine and B-vitamin markers are both abnormal, avoid forcing a single-cause interpretation."
+        },
+        "supporting_marker_refs": [
+          "creatinine",
+          "folate",
+          "active_b12"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_folate_normal_b12_hcy",
+            "marker_reference": "folate",
+            "contradiction_rationale": "Normal folate weakens a combined folate-related component, although it does not exclude renal contribution.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_renal_hyperhomocysteinemia",
+        "hyp_combined_renal_and_hematinic_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_renal_function_panel",
+        "rationale": "Renal function testing helps establish whether impaired clearance is a plausible explanation for high homocysteine."
+      },
+      {
+        "test_id": "ct_b12_and_folate_panel",
+        "rationale": "B-vitamin assessment helps identify overlapping methylation defects in renal hyperhomocysteinemia."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_homocysteine_high_with_high_creatinine",
+        "resulting_state": "at_risk",
+        "description": "Escalate when homocysteine is high and creatinine is high because the combination supports a clinically relevant renal contribution to the elevation.",
+        "conditions": [
+          {
+            "metric_id": "creatinine",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_homocysteine_renal_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_homocysteine_renal_review",
+          "paper_title": "Homocysteine elevation in renal impairment",
+          "journal": "Nephrology and nutrition review literature",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "High homocysteine may reflect reduced renal clearance or altered renal metabolism, particularly when renal function is impaired.",
+      "threshold_notes": "The trigger remains laboratory abnormality rather than a universal numeric threshold for vascular risk."
+    },
+    "narrative": {
+      "mechanism": "Homocysteine accumulates when renal filtration and metabolic handling are reduced.",
+      "biological_pathway": "Creatinine helps distinguish renal accumulation from a primarily folate- or B12-driven methylation defect.",
+      "interpretation": "High homocysteine in renal impairment is a contextual biochemical consequence and should not be over-interpreted as a vitamin deficiency by default.",
+      "implications": "This pattern may justify renal interpretation before assuming primary nutritional deficiency.",
+      "supporting_marker_roles": "Creatinine is the key mechanism marker, folate helps as a differential, and active B12 helps separate overlapping methylation deficiency."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_lym_low_lymphopenia_stress_or_immunosuppression",
+    "signal_id": "signal_lym_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "lym",
+      "rationale": "Absolute lymphocyte count is a core white-cell parameter and low values indicate lymphopenia rather than a specific diagnosis.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "neutrophils_abs",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Neutrophilia with lymphopenia supports a stress or glucocorticoid redistribution pattern."
+      },
+      {
+        "biomarker_id": "cortisol",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "High cortisol supports a stress-related or glucocorticoid-related mechanism rather than primary lymphoid failure."
+      },
+      {
+        "biomarker_id": "wbc_total",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low total white cell count suggests a broader leukopenic process rather than isolated redistribution alone."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_stress_glucocorticoid_lymphopenia",
+        "rank": 1,
+        "physiological_claim": "Low lymphocyte count with neutrophilia or high cortisol may reflect stress-related or glucocorticoid-related lymphocyte redistribution.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "This explanation is often transient and should not be assumed if lymphopenia is persistent or isolated."
+        ],
+        "missing_data": {
+          "policy": "Review recent illness, steroid exposure, neutrophils, and cortisol before assigning a stress-related explanation."
+        },
+        "supporting_marker_refs": [
+          "neutrophils_abs",
+          "cortisol",
+          "wbc_total"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_cortisol_lym",
+            "marker_reference": "cortisol",
+            "contradiction_rationale": "Low cortisol weakens a glucocorticoid-mediated redistribution explanation.",
+            "contradiction_strength": "moderate"
+          },
+          {
+            "contradiction_id": "ctr_low_neutrophils_lym",
+            "marker_reference": "neutrophils_abs",
+            "contradiction_rationale": "Low neutrophils weaken a classic stress leukogram interpretation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_broader_immune_or_marrow_suppression",
+        "rank": 2,
+        "physiological_claim": "Persistent low lymphocytes with broader leukopenia may reflect immune suppression, marrow underproduction, or chronic systemic disease rather than transient redistribution alone.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "This is a broader interpretation frame and requires persistence or additional cytopenic context."
+        ],
+        "missing_data": {
+          "policy": "Review total white-cell count and repeat testing before concluding that lymphopenia reflects a chronic suppressive process."
+        },
+        "supporting_marker_refs": [
+          "wbc_total",
+          "neutrophils_abs"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_neutrophils_stress",
+            "marker_reference": "neutrophils_abs",
+            "contradiction_rationale": "Marked neutrophilia supports redistribution and weakens a primary marrow-suppression frame.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_stress_glucocorticoid_lymphopenia",
+        "hyp_broader_immune_or_marrow_suppression"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_complete_blood_count",
+        "rationale": "Repeat blood count helps determine whether lymphopenia is transient or persistent."
+      },
+      {
+        "test_id": "ct_immune_and_infection_workup_if_persistent",
+        "rationale": "Persistent unexplained lymphopenia may warrant immune and infection-focused evaluation."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_lym_low_with_low_wbc_total",
+        "resulting_state": "at_risk",
+        "description": "Escalate when lymphocytes are low and total white count is also low because the combination is more consistent with a broader leukopenic process than isolated redistribution.",
+        "conditions": [
+          {
+            "metric_id": "wbc_total",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_lymphopenia_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_lymphopenia_review",
+          "paper_title": "Lymphopenia mechanisms and evaluation",
+          "journal": "Review literature",
+          "year": 2021
+        }
+      ],
+      "physiological_claim": "Low lymphocyte count commonly reflects acute stress, glucocorticoid effect, infection, systemic illness, malnutrition, or immune suppression.",
+      "threshold_notes": "No disease-specific absolute-count threshold is encoded here beyond the laboratory range."
+    },
+    "narrative": {
+      "mechanism": "Lymphopenia can occur through redistribution, reduced production, increased destruction, or treatment-related immunosuppression.",
+      "biological_pathway": "Neutrophils and cortisol can support a stress-glucocorticoid redistribution frame, while total white-cell context helps distinguish isolated from broader marrow suppression.",
+      "interpretation": "Low lymphocytes are clinically contextual and become more significant when persistent or part of a broader cytopenic pattern.",
+      "implications": "This pattern may justify repeat testing and review for steroid exposure, infection, nutrition, or immune suppression.",
+      "supporting_marker_roles": "Neutrophils provide mechanism context for stress leukogram, cortisol helps with glucocorticoid-related redistribution, and wbc_total helps assess broader marrow or systemic suppression."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_lym_high_reactive_or_lymphoproliferative_lymphocytosis",
+    "signal_id": "signal_lym_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "lym",
+      "rationale": "Absolute lymphocyte count elevation indicates lymphocytosis and may be reactive or clonal depending on persistence and accompanying blood-count features.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Elevated CRP supports a reactive inflammatory or infectious context rather than clonal lymphocytosis."
+      },
+      {
+        "biomarker_id": "wbc_total",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High total white count supports that lymphocytosis is part of a broader leukocytic abnormality."
+      },
+      {
+        "biomarker_id": "hgb",
+        "expected_direction": "low",
+        "role": "contextual_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Concurrent anemia can raise concern for broader marrow or clonal hematologic involvement when lymphocytosis is persistent."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_reactive_lymphocytosis",
+        "rank": 1,
+        "physiological_claim": "High lymphocyte count may reflect a reactive process such as viral infection or inflammatory immune activation, particularly when inflammatory context is present.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Reactive and clonal lymphocytosis can overlap on a single result, so persistence matters."
+        ],
+        "missing_data": {
+          "policy": "Review CRP, symptoms, and repeat counts before assigning a reactive explanation with confidence."
+        },
+        "supporting_marker_refs": [
+          "crp",
+          "wbc_total",
+          "hgb"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_crp_lym",
+            "marker_reference": "crp",
+            "contradiction_rationale": "Normal CRP weakens an inflammatory reactive explanation, though it does not exclude viral or non-inflammatory causes.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_persistent_lymphoproliferative_context",
+        "rank": 2,
+        "physiological_claim": "High lymphocyte count may also indicate a lymphoproliferative process if the elevation is persistent or accompanied by additional hematologic abnormalities.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "A single elevated count is not sufficient to diagnose clonal disease."
+        ],
+        "missing_data": {
+          "policy": "Repeat testing and blood-film or flow-cytometric context are needed before prioritising a lymphoproliferative interpretation."
+        },
+        "supporting_marker_refs": [
+          "wbc_total",
+          "hgb"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_crp_reactive",
+            "marker_reference": "crp",
+            "contradiction_rationale": "An elevated CRP supports a reactive context and weakens the need to prioritise clonal disease first on a single result.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_reactive_lymphocytosis",
+        "hyp_persistent_lymphoproliferative_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_complete_blood_count",
+        "rationale": "Repeat blood count helps determine persistence, which is central to lymphocytosis interpretation."
+      },
+      {
+        "test_id": "ct_peripheral_blood_film_or_flow_cytometry_if_persistent",
+        "rationale": "Persistent unexplained lymphocytosis may warrant blood-film review or flow cytometry."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_lym_high_with_low_hgb",
+        "resulting_state": "at_risk",
+        "description": "Escalate when lymphocytes are high and hemoglobin is low because the combination can support a more significant hematologic context than isolated reactive lymphocytosis.",
+        "conditions": [
+          {
+            "metric_id": "hgb",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_lymphocytosis_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_lymphocytosis_review",
+          "paper_title": "Adult lymphocytosis evaluation and differential",
+          "journal": "Review literature",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "High lymphocyte count may reflect reactive lymphocytosis, but persistent or marked elevation can support a lymphoproliferative process.",
+      "threshold_notes": "This object is laboratory-range triggered and does not encode specialist absolute-count or duration thresholds."
+    },
+    "narrative": {
+      "mechanism": "Lymphocytosis can arise from antigen-driven immune activation, transient stress states, or clonal lymphoid expansion.",
+      "biological_pathway": "WBC total and smear-type assessment help distinguish broad leukocytosis from isolated reactive change, while CRP can support inflammatory reactivity.",
+      "interpretation": "High lymphocytes are clinically contextual; persistence materially changes the differential.",
+      "implications": "This pattern may justify repeat testing and, if persistent, peripheral smear or flow-cytometric evaluation.",
+      "supporting_marker_roles": "WBC total corroborates leukocytic burden, CRP supports reactive inflammatory context, and hgb helps identify broader marrow disruption that may accompany clonal disease."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_mcv_high_megaloblastic_macrocytosis",
+    "signal_id": "signal_mcv_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "mcv",
+      "rationale": "MCV reflects average erythrocyte size and high values indicate macrocytosis, not a specific diagnosis by themselves.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "folate",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low folate supports megaloblastic macrocytosis from impaired DNA synthesis."
+      },
+      {
+        "biomarker_id": "active_b12",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low active B12 supports a cobalamin-related megaloblastic contribution."
+      },
+      {
+        "biomarker_id": "ggt",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "High GGT supports an alcohol-related or hepatic non-megaloblastic alternative to hematinic deficiency."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_megaloblastic_macrocytosis",
+        "rank": 1,
+        "physiological_claim": "High MCV with low folate or low active B12 is consistent with megaloblastic macrocytosis from impaired DNA synthesis.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Macrocytosis can occur without anemia and does not by itself distinguish folate from B12 deficiency."
+        ],
+        "missing_data": {
+          "policy": "Review folate and active B12 together before assigning a megaloblastic cause."
+        },
+        "supporting_marker_refs": [
+          "folate",
+          "active_b12",
+          "ggt"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_ggt_mcv",
+            "marker_reference": "ggt",
+            "contradiction_rationale": "A high GGT weakens a purely megaloblastic interpretation and raises alcohol-related or hepatic macrocytosis as an alternative.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_combined_or_b12_predominant_macrocytosis",
+        "rank": 2,
+        "physiological_claim": "High MCV may also reflect a cobalamin-predominant or combined hematinic deficiency pattern rather than isolated folate deficiency alone.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Additional functional markers may be needed where the B12 distinction matters clinically."
+        ],
+        "missing_data": {
+          "policy": "Do not assume folate deficiency is sole cause if active B12 is low or borderline."
+        },
+        "supporting_marker_refs": [
+          "active_b12",
+          "folate"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_active_b12_mcv",
+            "marker_reference": "active_b12",
+            "contradiction_rationale": "Normal active B12 weakens a cobalamin-predominant explanation for macrocytosis.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_megaloblastic_macrocytosis",
+        "hyp_combined_or_b12_predominant_macrocytosis"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_b12_and_folate_panel",
+        "rationale": "Parallel hematinic testing helps distinguish the cause of macrocytosis."
+      },
+      {
+        "test_id": "ct_peripheral_blood_film",
+        "rationale": "Blood-film review can help identify megaloblastic change and other macrocytic patterns."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_mcv_high_with_low_active_b12",
+        "resulting_state": "at_risk",
+        "description": "Escalate when MCV is high and active B12 is low because the combination supports clinically relevant megaloblastic macrocytosis rather than isolated macrocytosis of uncertain cause.",
+        "conditions": [
+          {
+            "metric_id": "active_b12",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_macrocytosis_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_macrocytosis_review",
+          "paper_title": "Macrocytosis evaluation and megaloblastic versus non-megaloblastic causes",
+          "journal": "Hematology review literature",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "High MCV commonly reflects macrocytosis from B12 or folate deficiency, alcohol-related change, liver disease, hypothyroidism, reticulocytosis, or marrow disorders.",
+      "threshold_notes": "The deterministic trigger is the laboratory abnormality; cause assignment depends on accompanying hematinic and liver markers."
+    },
+    "narrative": {
+      "mechanism": "Macrocytosis arises from impaired DNA synthesis, altered membrane composition, reticulocytosis, or marrow dysplasia.",
+      "biological_pathway": "Folate and active B12 help identify megaloblastic causes, while GGT or liver enzymes help distinguish non-megaloblastic hepatic or alcohol-related macrocytosis.",
+      "interpretation": "High MCV is clinically useful because it narrows anemia interpretation even when hemoglobin remains normal.",
+      "implications": "This pattern may justify hematinic and liver review before assuming marrow disease.",
+      "supporting_marker_roles": "Folate and active B12 are the main mechanism markers, while GGT helps as a differential for non-megaloblastic macrocytosis."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_mcv_high_nonmegaloblastic_macrocytosis",
+    "signal_id": "signal_mcv_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "mcv",
+      "rationale": "High MCV can occur in non-megaloblastic states and should not automatically be equated with folate or B12 deficiency.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "ggt",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "High GGT supports alcohol-related or hepatic macrocytosis as an alternative to megaloblastic deficiency."
+      },
+      {
+        "biomarker_id": "alt",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Elevated ALT can support concurrent hepatocellular injury or steatotic liver context."
+      },
+      {
+        "biomarker_id": "folate",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low folate supports a competing megaloblastic explanation and weakens a purely non-megaloblastic interpretation."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_alcohol_or_hepatic_macrocytosis",
+        "rank": 1,
+        "physiological_claim": "High MCV with elevated GGT or liver enzymes may reflect alcohol-related or hepatic non-megaloblastic macrocytosis.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "This interpretation remains non-specific and does not identify the exact hepatic diagnosis."
+        ],
+        "missing_data": {
+          "policy": "Review liver enzymes, alcohol exposure, and hematinic markers before assigning a non-megaloblastic explanation."
+        },
+        "supporting_marker_refs": [
+          "ggt",
+          "alt",
+          "folate"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_folate_mcv_nonmeg",
+            "marker_reference": "folate",
+            "contradiction_rationale": "Low folate weakens a purely non-megaloblastic interpretation and raises a megaloblastic contribution.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_other_nonmegaloblastic_macrocytosis",
+        "rank": 2,
+        "physiological_claim": "High MCV may also reflect other non-megaloblastic causes such as reticulocytosis, hypothyroidism, or marrow disorders when hematinic deficiency is not supported.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "This is a broader differential frame and typically requires additional testing beyond routine chemistry."
+        ],
+        "missing_data": {
+          "policy": "If liver and hematinic markers are not explanatory, broaden the differential rather than forcing an alcohol-related interpretation."
+        },
+        "supporting_marker_refs": [
+          "ggt",
+          "folate"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_ggt_specificity",
+            "marker_reference": "ggt",
+            "contradiction_rationale": "A high GGT supports hepatic or alcohol-related context and weakens the need to prioritise other non-megaloblastic causes first.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_alcohol_or_hepatic_macrocytosis",
+        "hyp_other_nonmegaloblastic_macrocytosis"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_liver_panel_review",
+        "rationale": "Liver-pattern review helps clarify whether macrocytosis sits within a hepatic or alcohol-related context."
+      },
+      {
+        "test_id": "ct_b12_and_folate_panel",
+        "rationale": "Hematinic testing helps exclude a megaloblastic cause before non-megaloblastic frames are prioritised."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_mcv_high_with_high_ggt",
+        "resulting_state": "at_risk",
+        "description": "Escalate when MCV is high and GGT is also high because the combination supports a persistent non-megaloblastic hepatic or alcohol-related context.",
+        "conditions": [
+          {
+            "metric_id": "ggt",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_macrocytosis_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_macrocytosis_review",
+          "paper_title": "Macrocytosis evaluation and megaloblastic versus non-megaloblastic causes",
+          "journal": "Hematology review literature",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "High MCV with liver-enzyme or alcohol-related context may reflect non-megaloblastic macrocytosis rather than hematinic deficiency.",
+      "threshold_notes": "The trigger remains the laboratory abnormality rather than a disease-specific numeric threshold."
+    },
+    "narrative": {
+      "mechanism": "Alcohol exposure, liver disease, reticulocytosis, hypothyroidism, and marrow disorders can produce macrocytosis without classic megaloblastic change.",
+      "biological_pathway": "GGT and ALT help provide hepatic or alcohol-related context, while normal hematinic markers weaken megaloblastic explanations.",
+      "interpretation": "High MCV in this pattern is a useful differential clue rather than a diagnosis on its own.",
+      "implications": "This pattern may justify liver and exposure review before pursuing isolated folate-only explanations.",
+      "supporting_marker_roles": "GGT is the key differential marker, ALT corroborates liver context, and folate helps exclude megaloblastic deficiency."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_mcv_low_microcytosis_iron_deficiency",
+    "signal_id": "signal_mcv_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "mcv",
+      "rationale": "Low MCV indicates microcytosis and is most informative when interpreted with hemoglobin and iron-status markers.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "ferritin",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low ferritin supports iron deficiency as the cause of microcytosis."
+      },
+      {
+        "biomarker_id": "hgb",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low hemoglobin supports that microcytosis is part of clinically relevant anemia rather than an isolated index change."
+      },
+      {
+        "biomarker_id": "rbc_count",
+        "expected_direction": "high",
+        "role": "contextual_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "A relatively high RBC count with microcytosis can support thalassemia-trait physiology rather than iron deficiency."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_iron_deficient_microcytosis",
+        "rank": 1,
+        "physiological_claim": "Low MCV with low ferritin is consistent with iron-deficient microcytosis, often before or during overt iron deficiency anemia.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Ferritin can be confounded by inflammation and may need contextual interpretation."
+        ],
+        "missing_data": {
+          "policy": "Review ferritin before concluding that microcytosis is due to iron deficiency."
+        },
+        "supporting_marker_refs": [
+          "ferritin",
+          "hgb",
+          "rbc_count"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_or_high_ferritin_mcvlow",
+            "marker_reference": "ferritin",
+            "contradiction_rationale": "Normal or high ferritin weakens uncomplicated iron-deficient microcytosis.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_thalassemia_trait_pattern",
+        "rank": 2,
+        "physiological_claim": "Low MCV with preserved or relatively high RBC count may reflect a thalassemia-trait pattern rather than iron deficiency.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "This remains a pattern-based interpretation until iron deficiency is excluded and hemoglobinopathy testing is considered."
+        ],
+        "missing_data": {
+          "policy": "Use ferritin and RBC count together before prioritising a thalassemia-trait explanation."
+        },
+        "supporting_marker_refs": [
+          "rbc_count",
+          "ferritin",
+          "hgb"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_ferritin_mcvlow",
+            "marker_reference": "ferritin",
+            "contradiction_rationale": "Low ferritin weakens a primary thalassemia-trait interpretation and supports iron deficiency instead.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_iron_deficient_microcytosis",
+        "hyp_thalassemia_trait_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_iron_studies",
+        "rationale": "Iron studies are central to distinguishing iron deficiency from other causes of microcytosis."
+      },
+      {
+        "test_id": "ct_hemoglobinopathy_testing_if_needed",
+        "rationale": "Hemoglobinopathy testing may be appropriate when microcytosis persists without iron deficiency."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_mcv_low_with_low_ferritin",
+        "resulting_state": "at_risk",
+        "description": "Escalate when MCV is low and ferritin is low because the combination strongly supports clinically relevant iron-deficient microcytosis.",
+        "conditions": [
+          {
+            "metric_id": "ferritin",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_microcytosis_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_microcytosis_review",
+          "paper_title": "Microcytosis and macrocytosis differentiation in anemia workup",
+          "journal": "Hematology review literature",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "Low MCV commonly reflects microcytosis from iron deficiency or thalassemia-trait patterns, with iron studies providing the key differential.",
+      "threshold_notes": "This object is laboratory-range triggered and does not encode disease-specific microcytosis thresholds beyond the reference range."
+    },
+    "narrative": {
+      "mechanism": "Microcytosis develops when hemoglobin synthesis is reduced, most often from iron restriction or inherited globin synthesis disorders.",
+      "biological_pathway": "Ferritin provides the main differential split, while hemoglobin supports clinical significance of the microcytic pattern.",
+      "interpretation": "Low MCV is clinically useful because it narrows anemia interpretation even before the cause is confirmed.",
+      "implications": "This pattern may justify iron studies and structured anemia differentiation.",
+      "supporting_marker_roles": "Ferritin is the key differential marker, hemoglobin corroborates clinical impact, and RBC_count helps separate iron deficiency from thalassemia-type microcytosis."
+    }
+  }
+]
