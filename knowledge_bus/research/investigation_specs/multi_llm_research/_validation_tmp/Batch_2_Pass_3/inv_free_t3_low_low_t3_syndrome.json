@@ -1,0 +1,136 @@
+{
+  "investigation_spec_contract_version": "3.0.0",
+  "spec_id": "inv_free_t3_low_low_t3_syndrome",
+  "signal_id": "signal_free_t3_low",
+  "research_domain": "thyroid",
+  "primary_marker": {
+    "biomarker_id": "free_t3",
+    "rationale": "Free T3 is the biologically active thyroid hormone fraction, but isolated low values commonly reflect systemic illness or altered peripheral conversion rather than primary thyroid disease.",
+    "signal_system": "hormonal"
+  },
+  "trigger_direction": "low",
+  "activation": {
+    "activation_logic": "lab_range_exceeded",
+    "activation_config": {
+      "enable_upper_bound": false,
+      "upper_bound_state": "suboptimal",
+      "enable_lower_bound": true,
+      "lower_bound_state": "suboptimal"
+    }
+  },
+  "states": {
+    "baseline_state": "suboptimal",
+    "escalation_state": "at_risk"
+  },
+  "supporting_markers": [
+    {
+      "biomarker_id": "free_t4",
+      "expected_direction": "either",
+      "role": "differential_marker",
+      "relationship_kind": "differential",
+      "availability": "common",
+      "rationale": "Free T4 helps distinguish isolated low T3 states from broader thyroid hormone deficiency."
+    },
+    {
+      "biomarker_id": "tsh",
+      "expected_direction": "either",
+      "role": "differential_marker",
+      "relationship_kind": "differential",
+      "availability": "common",
+      "rationale": "TSH context is essential for separating low T3 syndrome from primary thyroid failure."
+    }
+  ],
+  "hypotheses": [
+    {
+      "hypothesis_id": "hyp_nonthyroidal_illness_pattern",
+      "rank": 1,
+      "physiological_claim": "Low free T3 may reflect a non-thyroidal illness pattern with altered peripheral thyroid hormone metabolism rather than primary thyroid gland failure.",
+      "evidence_strength": "moderate",
+      "caveats": [
+        "This interpretation is strongest when illness or physiologic stress is present and TSH is not clearly consistent with primary hypothyroidism."
+      ],
+      "missing_data": {
+        "policy": "Review illness severity, nutritional state, and full thyroid panel before attributing low free T3 to intrinsic thyroid disease."
+      },
+      "supporting_marker_refs": [
+        "free_t4",
+        "tsh"
+      ],
+      "contradiction_markers": [
+        {
+          "contradiction_id": "ctr_primary_hypothyroid_pattern",
+          "marker_reference": "tsh",
+          "contradiction_rationale": "A clearly elevated TSH with low free T4 shifts interpretation toward primary thyroid hormone deficiency rather than isolated low T3 syndrome.",
+          "contradiction_strength": "strong"
+        }
+      ]
+    },
+    {
+      "hypothesis_id": "hyp_reduced_t4_to_t3_conversion",
+      "rank": 2,
+      "physiological_claim": "Low free T3 may reflect reduced peripheral conversion of T4 to T3 in systemic stress or catabolic states.",
+      "evidence_strength": "moderate",
+      "caveats": [
+        "Reduced conversion is mechanistically plausible but remains a contextual rather than disease-specific interpretation."
+      ],
+      "missing_data": {
+        "policy": "Do not infer a thyroid diagnosis from isolated low free T3 without the broader thyroid and clinical context."
+      },
+      "supporting_marker_refs": [
+        "free_t4"
+      ],
+      "contradiction_markers": []
+    }
+  ],
+  "hypothesis_ranking": {
+    "ordered_hypothesis_ids": [
+      "hyp_nonthyroidal_illness_pattern",
+      "hyp_reduced_t4_to_t3_conversion"
+    ]
+  },
+  "confirmatory_tests": [
+    {
+      "test_id": "ct_repeat_thyroid_panel_after_recovery",
+      "rationale": "Repeating the thyroid panel after recovery or stabilization helps determine whether low free T3 is transient and illness-related."
+    }
+  ],
+  "override_rules": [
+    {
+      "rule_id": "or_free_t3_low_with_free_t4_low",
+      "resulting_state": "at_risk",
+      "description": "Escalate when low free T3 coincides with low free T4, as this is less consistent with isolated low T3 syndrome and more concerning for broader thyroid hormone deficiency or severe systemic illness.",
+      "conditions": [
+        {
+          "metric_id": "free_t4",
+          "operator": "<",
+          "condition_type": "all_of",
+          "comparator_type": "lab_range_boundary",
+          "boundary": "below_min"
+        }
+      ],
+      "source_refs": [
+        "source_low_t3_review_2016"
+      ]
+    }
+  ],
+  "evidence": {
+    "evidence_strength": "moderate",
+    "sources": [
+      {
+        "source_id": "source_low_t3_review_2016",
+        "paper_title": "Abnormalities of Thyroid Hormone Metabolism during Systemic Illness: The Low T3 Syndrome in Different Clinical Settings",
+        "journal": "International Journal of Endocrinology",
+        "year": 2016
+      }
+    ],
+    "physiological_claim": "Low T3 patterns are common in systemic illness and reflect altered thyroid hormone metabolism rather than primary thyroid disease in many cases.",
+    "threshold_notes": "Free T3 interpretation should remain contextual and should not be used alone to diagnose hypothyroidism."
+  },
+  "narrative": {
+    "mechanism": "Free T3 can fall when peripheral conversion of T4 to T3 is reduced during systemic stress, inflammation, or illness.",
+    "biological_pathway": "Peripheral deiodination and adaptive thyroid hormone metabolism during illness.",
+    "interpretation": "An isolated low free T3 is more consistent with a contextual low T3 syndrome than primary thyroid failure in many clinical settings, but the broader thyroid panel is needed to confirm.",
+    "implications": "The key question is whether the pattern normalizes with recovery or whether the broader thyroid panel indicates genuine thyroid hormone deficiency.",
+    "supporting_marker_roles": "Free T4 and TSH are mainly differential markers that help separate contextual low T3 states from primary thyroid disease."
+  }
+}

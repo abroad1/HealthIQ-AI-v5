@@ -1,0 +1,143 @@
+{
+  "investigation_spec_contract_version": "3.0.0",
+  "spec_id": "inv_eosinophil_pct_high_systemic_or_parasitic_eosinophilia",
+  "signal_id": "signal_eosinophil_pct_high",
+  "research_domain": "immunologic",
+  "primary_marker": {
+    "biomarker_id": "eosinophil_pct",
+    "rationale": "Marked eosinophil percentage elevation can signal broader eosinophilic disease processes, but percentage alone is insufficient for attribution.",
+    "signal_system": "inflammatory"
+  },
+  "trigger_direction": "high",
+  "activation": {
+    "activation_logic": "lab_range_exceeded",
+    "activation_config": {
+      "enable_upper_bound": true,
+      "upper_bound_state": "suboptimal",
+      "enable_lower_bound": false,
+      "lower_bound_state": "suboptimal"
+    }
+  },
+  "states": {
+    "baseline_state": "suboptimal",
+    "escalation_state": "at_risk"
+  },
+  "supporting_markers": [
+    {
+      "biomarker_id": "eosinophils_abs",
+      "expected_direction": "high",
+      "role": "corroborator",
+      "relationship_kind": "corroboration",
+      "availability": "common",
+      "rationale": "Absolute eosinophils are needed to confirm that a high percentage reflects meaningful eosinophilia."
+    },
+    {
+      "biomarker_id": "crp",
+      "expected_direction": "high",
+      "role": "contextual_marker",
+      "relationship_kind": "mechanism",
+      "availability": "common",
+      "rationale": "Inflammatory markers can support a broader systemic process when eosinophilia is clinically significant."
+    }
+  ],
+  "hypotheses": [
+    {
+      "hypothesis_id": "hyp_secondary_eosinophilic_process",
+      "rank": 1,
+      "physiological_claim": "High eosinophil percentage may reflect a secondary eosinophilic process such as drug reaction, parasitic infection, or tissue eosinophilic disease when confirmed on absolute count.",
+      "evidence_strength": "moderate",
+      "caveats": [
+        "Biochemical eosinophilia is etiologically non-specific and must be integrated with exposure and travel history."
+      ],
+      "missing_data": {
+        "policy": "Review medications, allergic history, travel, and infection exposure before prioritising systemic disease mechanisms."
+      },
+      "supporting_marker_refs": [
+        "eosinophils_abs",
+        "crp"
+      ],
+      "contradiction_markers": [
+        {
+          "contradiction_id": "ctr_normal_absolute_eosinophils_weakens_secondary",
+          "marker_reference": "eosinophils_abs",
+          "contradiction_rationale": "A normal absolute eosinophil count weakens a secondary eosinophilic process interpretation based on percentage elevation alone, as true secondary eosinophilia should be reflected in the absolute count.",
+          "contradiction_strength": "strong"
+        }
+      ]
+    },
+    {
+      "hypothesis_id": "hyp_broader_systemic_eosinophilic_evaluation_needed",
+      "rank": 2,
+      "physiological_claim": "Persistently high eosinophil percentage may justify broader systemic eosinophilic evaluation if confirmed by absolute eosinophilia and compatible symptoms.",
+      "evidence_strength": "moderate",
+      "caveats": [
+        "Percentage elevation alone should not be treated as evidence of hypereosinophilic syndrome."
+      ],
+      "missing_data": {
+        "policy": "Confirm persistence and absolute eosinophilia before moving from reactive differential diagnoses to rare eosinophilic syndromes."
+      },
+      "supporting_marker_refs": [
+        "eosinophils_abs"
+      ],
+      "contradiction_markers": [
+        {
+          "contradiction_id": "ctr_normal_absolute_count",
+          "marker_reference": "eosinophils_abs",
+          "contradiction_rationale": "A normal absolute eosinophil count weakens a systemic eosinophilia interpretation from percentage elevation alone.",
+          "contradiction_strength": "strong"
+        }
+      ]
+    }
+  ],
+  "hypothesis_ranking": {
+    "ordered_hypothesis_ids": [
+      "hyp_secondary_eosinophilic_process",
+      "hyp_broader_systemic_eosinophilic_evaluation_needed"
+    ]
+  },
+  "confirmatory_tests": [
+    {
+      "test_id": "ct_absolute_eosinophils_with_targeted_secondary_workup",
+      "rationale": "Absolute eosinophil confirmation with targeted secondary-cause evaluation helps distinguish reactive eosinophilia from broader systemic disease."
+    }
+  ],
+  "override_rules": [
+    {
+      "rule_id": "or_eosinophil_pct_high_with_crp_high",
+      "resulting_state": "at_risk",
+      "description": "Escalate when high eosinophil percentage coincides with high CRP, as this supports a more active systemic inflammatory context.",
+      "conditions": [
+        {
+          "metric_id": "crp",
+          "operator": ">",
+          "condition_type": "all_of",
+          "comparator_type": "lab_range_boundary",
+          "boundary": "above_max"
+        }
+      ],
+      "source_refs": [
+        "source_eosinophilia_review_2020"
+      ]
+    }
+  ],
+  "evidence": {
+    "evidence_strength": "moderate",
+    "sources": [
+      {
+        "source_id": "source_eosinophilia_review_2020",
+        "paper_title": "Approach to the patient with eosinophilia",
+        "journal": "Medical Clinics of North America",
+        "year": 2020
+      }
+    ],
+    "physiological_claim": "Confirmed eosinophilia has a broad differential that includes allergic, drug-related, parasitic, and systemic eosinophilic disorders.",
+    "threshold_notes": "Percentage elevation should be interpreted cautiously until absolute eosinophilia and persistence are established."
+  },
+  "narrative": {
+    "mechanism": "Sustained eosinophilic expansion can occur in response to allergic, infectious, drug-related, or clonal immune stimuli.",
+    "biological_pathway": "Eosinophil production, recruitment, and activation within reactive and systemic eosinophilic inflammatory pathways.",
+    "interpretation": "A raised eosinophil percentage can justify broader review only when true eosinophilia is confirmed and the clinical pattern supports it.",
+    "implications": "The next step is usually focused confirmation and secondary-cause review rather than immediate assignment of a rare eosinophilic syndrome.",
+    "supporting_marker_roles": "Absolute eosinophils confirm true eosinophilia, while CRP supports a broader systemic inflammatory context."
+  }
+}

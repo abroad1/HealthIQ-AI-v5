@@ -1,0 +1,144 @@
+{
+  "investigation_spec_contract_version": "3.0.0",
+  "spec_id": "inv_creatine_kinase_high_exertional_muscle_injury",
+  "signal_id": "signal_creatine_kinase_high",
+  "research_domain": "musculoskeletal",
+  "primary_marker": {
+    "biomarker_id": "creatine_kinase",
+    "rationale": "Creatine kinase rises with skeletal muscle membrane disruption but requires contextual interpretation because exercise and non-neuromuscular factors can cause transient elevation.",
+    "signal_system": "mitochondrial"
+  },
+  "trigger_direction": "high",
+  "activation": {
+    "activation_logic": "lab_range_exceeded",
+    "activation_config": {
+      "enable_upper_bound": true,
+      "upper_bound_state": "suboptimal",
+      "enable_lower_bound": false,
+      "lower_bound_state": "suboptimal"
+    }
+  },
+  "states": {
+    "baseline_state": "suboptimal",
+    "escalation_state": "at_risk"
+  },
+  "supporting_markers": [
+    {
+      "biomarker_id": "ast",
+      "expected_direction": "high",
+      "role": "corroborator",
+      "relationship_kind": "corroboration",
+      "availability": "common",
+      "rationale": "Mild concurrent AST elevation supports a skeletal-muscle source of enzyme release when the hepatic picture is otherwise unconvincing."
+    },
+    {
+      "biomarker_id": "troponin",
+      "expected_direction": "high",
+      "role": "differential_marker",
+      "relationship_kind": "differential",
+      "availability": "common",
+      "rationale": "Troponin helps distinguish isolated skeletal-muscle CK release from a cardiac-injury pattern that should not be grouped into the same frame."
+    }
+  ],
+  "hypotheses": [
+    {
+      "hypothesis_id": "hyp_recent_exertional_release",
+      "rank": 1,
+      "physiological_claim": "High CK may reflect recent exertional or mechanical skeletal muscle injury, particularly when the elevation is transient and other muscle-associated enzymes are also mildly raised.",
+      "evidence_strength": "moderate",
+      "caveats": [
+        "Recent vigorous exercise, trauma, injections, or seizures should be reviewed before inferring intrinsic muscle disease."
+      ],
+      "missing_data": {
+        "policy": "Repeat CK after a period without strenuous exercise and review recent physical stressors before escalating interpretation."
+      },
+      "supporting_marker_refs": [
+        "ast",
+        "troponin"
+      ],
+      "contradiction_markers": [
+        {
+          "contradiction_id": "ctr_cardiac_pattern",
+          "marker_reference": "troponin",
+          "contradiction_rationale": "Troponin elevation shifts concern away from isolated skeletal muscle release and toward cardiac injury assessment.",
+          "contradiction_strength": "strong"
+        }
+      ]
+    },
+    {
+      "hypothesis_id": "hyp_transient_nonneuromuscular_ckemia",
+      "rank": 2,
+      "physiological_claim": "High CK may represent a transient non-neuromuscular CK elevation rather than a primary myopathic process when symptoms and repeat abnormalities are absent.",
+      "evidence_strength": "moderate",
+      "caveats": [
+        "A single isolated CK elevation has limited specificity for chronic muscle disease."
+      ],
+      "missing_data": {
+        "policy": "Confirm persistence on repeat testing and review medications, endocrine status, alcohol use, and recent exertion before assigning a chronic disease frame."
+      },
+      "supporting_marker_refs": [
+        "ast",
+        "troponin"
+      ],
+      "contradiction_markers": [
+        {
+          "contradiction_id": "ctr_persistent_inflammatory_markers",
+          "marker_reference": "crp",
+          "contradiction_rationale": "Inflammatory marker elevation can increase concern for a more sustained inflammatory or systemic process rather than a purely transient exertional rise.",
+          "contradiction_strength": "moderate"
+        }
+      ]
+    }
+  ],
+  "hypothesis_ranking": {
+    "ordered_hypothesis_ids": [
+      "hyp_recent_exertional_release",
+      "hyp_transient_nonneuromuscular_ckemia"
+    ]
+  },
+  "confirmatory_tests": [
+    {
+      "test_id": "ct_repeat_ck_after_rest",
+      "rationale": "Repeating CK after a short period of exercise avoidance helps distinguish transient exertional release from persistent non-exertional CK elevation."
+    }
+  ],
+  "override_rules": [
+    {
+      "rule_id": "or_ck_high_with_ast_high",
+      "resulting_state": "at_risk",
+      "description": "Escalate when high CK coincides with high AST, as this more strongly supports active tissue injury than an isolated CK rise.",
+      "conditions": [
+        {
+          "metric_id": "ast",
+          "operator": ">",
+          "condition_type": "all_of",
+          "comparator_type": "lab_range_boundary",
+          "boundary": "above_max"
+        }
+      ],
+      "source_refs": [
+        "source_ck_review_2016"
+      ]
+    }
+  ],
+  "evidence": {
+    "evidence_strength": "moderate",
+    "sources": [
+      {
+        "source_id": "source_ck_review_2016",
+        "paper_title": "Approach to asymptomatic creatine kinase elevation",
+        "journal": "Cleveland Clinic Journal of Medicine",
+        "year": 2016
+      }
+    ],
+    "physiological_claim": "CK elevation is common after exercise and other non-neuromuscular stressors, so persistence and context matter before inferring primary muscle disease.",
+    "threshold_notes": "Condition-specific escalation thresholds are not robustly uniform across populations; interpretation should remain lab-range anchored and contextual."
+  },
+  "narrative": {
+    "mechanism": "CK is released from damaged skeletal muscle fibers and can rise transiently after exertion, trauma, or other mechanical muscle stress.",
+    "biological_pathway": "Skeletal muscle membrane injury and intracellular enzyme release into the circulation.",
+    "interpretation": "An isolated high CK is more consistent with recent muscle stress than with a chronic myopathic process, particularly when the elevation is transient and context is benign.",
+    "implications": "Repeat testing after rest and review of exertional and medication history usually help determine whether the abnormality is transient or persistent.",
+    "supporting_marker_roles": "AST corroborates a muscle-source enzyme leak, while troponin functions as the key differential marker separating exertional skeletal-muscle release from cardiac injury."
+  }
+}

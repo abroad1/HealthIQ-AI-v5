@@ -1,0 +1,135 @@
+{
+  "investigation_spec_contract_version": "3.0.0",
+  "spec_id": "inv_hscrp_high_chronic_low_grade_inflammation",
+  "signal_id": "signal_hscrp_high",
+  "research_domain": "inflammatory",
+  "primary_marker": {
+    "biomarker_id": "hs_crp",
+    "rationale": "hs-CRP reflects low-grade systemic inflammation and can support chronic inflammatory risk interpretation when acute inflammation is less likely.",
+    "signal_system": "vascular"
+  },
+  "trigger_direction": "high",
+  "activation": {
+    "activation_logic": "lab_range_exceeded",
+    "activation_config": {
+      "enable_upper_bound": true,
+      "upper_bound_state": "suboptimal",
+      "enable_lower_bound": false,
+      "lower_bound_state": "suboptimal"
+    }
+  },
+  "states": {
+    "baseline_state": "suboptimal",
+    "escalation_state": "at_risk"
+  },
+  "supporting_markers": [
+    {
+      "biomarker_id": "crp",
+      "expected_direction": "high",
+      "role": "differential_marker",
+      "relationship_kind": "differential",
+      "availability": "common",
+      "rationale": "Standard CRP helps distinguish acute-phase inflammation from a more stable low-grade inflammatory pattern."
+    },
+    {
+      "biomarker_id": "ldl_cholesterol",
+      "expected_direction": "high",
+      "role": "corroborator",
+      "relationship_kind": "corroboration",
+      "availability": "common",
+      "rationale": "Concurrent LDL elevation can support a broader cardiometabolic risk context rather than an isolated inflammatory finding."
+    }
+  ],
+  "hypotheses": [
+    {
+      "hypothesis_id": "hyp_vascular_low_grade_inflammation",
+      "rank": 1,
+      "physiological_claim": "Persistently elevated hs-CRP may reflect low-grade vascular or cardiometabolic inflammation when acute inflammatory causes are less likely.",
+      "evidence_strength": "strong",
+      "caveats": [
+        "Interpretation is stronger when repeat testing confirms persistence in a clinically stable state."
+      ],
+      "missing_data": {
+        "policy": "If standard CRP or recent illness history is unavailable, interpret hs-CRP cautiously and avoid assuming chronicity."
+      },
+      "supporting_marker_refs": [
+        "ldl_cholesterol"
+      ],
+      "contradiction_markers": [
+        {
+          "contradiction_id": "ctr_acute_inflammation",
+          "marker_reference": "crp",
+          "contradiction_rationale": "Markedly elevated standard CRP is more consistent with acute inflammation and weakens a chronic low-grade interpretation.",
+          "contradiction_strength": "strong"
+        }
+      ]
+    },
+    {
+      "hypothesis_id": "hyp_chronic_metabolic_stress",
+      "rank": 2,
+      "physiological_claim": "Elevated hs-CRP may reflect low-grade inflammation associated with adiposity, insulin resistance, smoking, or related chronic metabolic stressors.",
+      "evidence_strength": "strong",
+      "caveats": [
+        "This pattern is non-specific and should not be treated as vascular-specific without supporting context."
+      ],
+      "missing_data": {
+        "policy": "Review smoking status, adiposity measures, and metabolic context before prioritising a vascular interpretation."
+      },
+      "supporting_marker_refs": [
+        "ldl_cholesterol"
+      ],
+      "contradiction_markers": []
+    }
+  ],
+  "hypothesis_ranking": {
+    "ordered_hypothesis_ids": [
+      "hyp_vascular_low_grade_inflammation",
+      "hyp_chronic_metabolic_stress"
+    ]
+  },
+  "confirmatory_tests": [
+    {
+      "test_id": "ct_repeat_hscrp",
+      "rationale": "Repeat hs-CRP in a clinically stable state helps distinguish persistent low-grade inflammation from transient elevation."
+    }
+  ],
+  "override_rules": [
+    {
+      "rule_id": "or_hscrp_persistent_high_with_cardiometabolic_context",
+      "resulting_state": "at_risk",
+      "description": "Escalate when hs-CRP is high and corroborating cardiometabolic context is present, provided acute inflammation is not the more likely explanation.",
+      "conditions": [
+        {
+          "metric_id": "ldl_cholesterol",
+          "operator": ">",
+          "condition_type": "all_of",
+          "comparator_type": "lab_range_boundary",
+          "boundary": "above_max"
+        }
+      ],
+      "source_refs": [
+        "source_hscrp_guideline_context"
+      ]
+    }
+  ],
+  "evidence": {
+    "evidence_strength": "strong",
+    "sources": [
+      {
+        "source_id": "source_hscrp_guideline_context",
+        "paper_title": "Guideline and cohort evidence supporting hs-CRP as a chronic inflammatory risk marker",
+        "journal": "Guideline and cohort literature",
+        "year": 2023
+      }
+    ],
+    "physiological_claim": "hs-CRP is a useful marker of low-grade systemic inflammation when interpreted outside acute inflammatory states.",
+    "threshold_notes": "Threshold interpretation should reflect assay context and chronic-risk literature; acute-phase elevations should not be treated as equivalent to stable low-grade risk."
+  },
+  "narrative": {
+    "mechanism": "hs-CRP is produced in response to inflammatory cytokine signalling and reflects systemic inflammatory activity rather than a single organ-specific process.",
+    "biological_pathway": "Innate inflammatory signalling, hepatic acute-phase response, and vascular inflammatory risk pathways.",
+    "interpretation": "High hs-CRP can support interpretation of chronic inflammatory or cardiometabolic risk when acute inflammation has been reasonably excluded.",
+    "implications": "This pattern may justify repeat testing and broader cardiometabolic risk review rather than immediate disease-specific conclusions.",
+    "supporting_marker_roles": "Standard CRP helps exclude acute inflammation; LDL cholesterol provides corroborating cardiometabolic context."
+  }
+}

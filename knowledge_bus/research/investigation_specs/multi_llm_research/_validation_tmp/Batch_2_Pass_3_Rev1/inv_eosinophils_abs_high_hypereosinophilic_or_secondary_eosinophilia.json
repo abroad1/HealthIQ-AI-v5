@@ -1,0 +1,142 @@
+{
+  "investigation_spec_contract_version": "3.0.0",
+  "spec_id": "inv_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia",
+  "signal_id": "signal_eosinophils_abs_high",
+  "research_domain": "immunologic",
+  "primary_marker": {
+    "biomarker_id": "eosinophils_abs",
+    "rationale": "Absolute eosinophilia can support clinically significant eosinophilic disease evaluation when persistent or organ-related features are present.",
+    "signal_system": "inflammatory"
+  },
+  "trigger_direction": "high",
+  "activation": {
+    "activation_logic": "lab_range_exceeded",
+    "activation_config": {
+      "enable_upper_bound": true,
+      "upper_bound_state": "suboptimal",
+      "enable_lower_bound": false,
+      "lower_bound_state": "suboptimal"
+    }
+  },
+  "states": {
+    "baseline_state": "suboptimal",
+    "escalation_state": "at_risk"
+  },
+  "supporting_markers": [
+    {
+      "biomarker_id": "tryptase",
+      "expected_direction": "high",
+      "role": "differential_marker",
+      "relationship_kind": "differential",
+      "availability": "specialist",
+      "rationale": "Tryptase can help identify a clonal or myeloid-associated eosinophilic process in selected cases."
+    },
+    {
+      "biomarker_id": "crp",
+      "expected_direction": "high",
+      "role": "contextual_marker",
+      "relationship_kind": "mechanism",
+      "availability": "common",
+      "rationale": "Inflammatory marker elevation can support a more active systemic disease context when eosinophilia is persistent."
+    }
+  ],
+  "hypotheses": [
+    {
+      "hypothesis_id": "hyp_persistent_secondary_eosinophilia",
+      "rank": 1,
+      "physiological_claim": "High absolute eosinophils may reflect a persistent secondary eosinophilic process related to allergic, drug-related, infectious, or autoimmune drivers.",
+      "evidence_strength": "moderate",
+      "caveats": [
+        "Secondary causes are more common than primary hypereosinophilic syndromes."
+      ],
+      "missing_data": {
+        "policy": "Exclude common secondary causes before prioritising clonal or idiopathic eosinophilic syndromes."
+      },
+      "supporting_marker_refs": [
+        "crp"
+      ],
+      "contradiction_markers": [
+        {
+          "contradiction_id": "ctr_elevated_tryptase_redirects_to_clonal",
+          "marker_reference": "tryptase",
+          "contradiction_rationale": "An elevated tryptase redirects interpretation away from a purely secondary eosinophilic process and toward a clonal or primary eosinophilic disorder that warrants specialist evaluation.",
+          "contradiction_strength": "strong"
+        }
+      ]
+    },
+    {
+      "hypothesis_id": "hyp_clonal_or_hypereosinophilic_syndrome_context",
+      "rank": 2,
+      "physiological_claim": "Persistent marked absolute eosinophilia may justify evaluation for hypereosinophilic or clonal eosinophilic syndromes when secondary causes are not evident.",
+      "evidence_strength": "moderate",
+      "caveats": [
+        "This interpretation should remain cautious until persistence, organ involvement, and secondary-cause exclusion are established."
+      ],
+      "missing_data": {
+        "policy": "Review persistence, symptoms, organ involvement, and specialist hematologic markers before assigning a rare eosinophilic syndrome frame."
+      },
+      "supporting_marker_refs": [
+        "tryptase"
+      ],
+      "contradiction_markers": [
+        {
+          "contradiction_id": "ctr_normal_tryptase_weakens_clonal_syndrome",
+          "marker_reference": "tryptase",
+          "contradiction_rationale": "A normal tryptase weakens a clonal or hypereosinophilic syndrome interpretation and makes a reactive secondary cause more probable, reducing the urgency for specialist clonal workup.",
+          "contradiction_strength": "moderate"
+        }
+      ]
+    }
+  ],
+  "hypothesis_ranking": {
+    "ordered_hypothesis_ids": [
+      "hyp_persistent_secondary_eosinophilia",
+      "hyp_clonal_or_hypereosinophilic_syndrome_context"
+    ]
+  },
+  "confirmatory_tests": [
+    {
+      "test_id": "ct_persistent_eosinophilia_workup",
+      "rationale": "Persistence-focused eosinophilia workup helps distinguish common secondary causes from rare hypereosinophilic syndromes."
+    }
+  ],
+  "override_rules": [
+    {
+      "rule_id": "or_eosinophils_abs_high_with_tryptase_high",
+      "resulting_state": "at_risk",
+      "description": "Escalate when high absolute eosinophils coincide with high tryptase, as this can support a myeloid or clonal eosinophilic context.",
+      "conditions": [
+        {
+          "metric_id": "tryptase",
+          "operator": ">",
+          "condition_type": "all_of",
+          "comparator_type": "lab_range_boundary",
+          "boundary": "above_max"
+        }
+      ],
+      "source_refs": [
+        "source_eosinophilia_review_2020"
+      ]
+    }
+  ],
+  "evidence": {
+    "evidence_strength": "moderate",
+    "sources": [
+      {
+        "source_id": "source_eosinophilia_review_2020",
+        "paper_title": "Approach to the patient with eosinophilia",
+        "journal": "Medical Clinics of North America",
+        "year": 2020
+      }
+    ],
+    "physiological_claim": "Persistent absolute eosinophilia can justify structured evaluation because the differential includes both common secondary causes and rarer clonal eosinophilic syndromes.",
+    "threshold_notes": "Interpretation should emphasize persistence and organ context rather than assign rare syndrome labels from a single isolated result."
+  },
+  "narrative": {
+    "mechanism": "Persistent eosinophilia can result from chronic immune stimulation, tissue eosinophilic disease, or rarely clonal hematologic drivers.",
+    "biological_pathway": "Sustained eosinophil production and survival across reactive and clonal eosinophilic pathways.",
+    "interpretation": "This pattern is compatible with several disease classes and should prompt structured differential review rather than premature labeling.",
+    "implications": "The main distinction is between common secondary causes and the smaller subset that needs specialist eosinophilic syndrome assessment.",
+    "supporting_marker_roles": "CRP supports systemic inflammatory context, while tryptase can help flag a possible clonal eosinophilic process."
+  }
+}

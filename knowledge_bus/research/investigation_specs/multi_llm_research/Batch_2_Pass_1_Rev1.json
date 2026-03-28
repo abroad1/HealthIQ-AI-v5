@@ -1,0 +1,2755 @@
+[
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_creatine_kinase_high_exertional_muscle_injury",
+    "signal_id": "signal_creatine_kinase_high",
+    "research_domain": "musculoskeletal",
+    "primary_marker": {
+      "biomarker_id": "creatine_kinase",
+      "rationale": "Creatine kinase rises with skeletal muscle membrane disruption but requires contextual interpretation because exercise and non-neuromuscular factors can cause transient elevation.",
+      "signal_system": "mitochondrial"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "ast",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Mild concurrent AST elevation supports a skeletal-muscle source of enzyme release when the hepatic picture is otherwise unconvincing."
+      },
+      {
+        "biomarker_id": "troponin",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Troponin helps distinguish isolated skeletal-muscle CK release from a cardiac-injury pattern that should not be grouped into the same frame."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_recent_exertional_release",
+        "rank": 1,
+        "physiological_claim": "High CK may reflect recent exertional or mechanical skeletal muscle injury, particularly when the elevation is transient and other muscle-associated enzymes are also mildly raised.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Recent vigorous exercise, trauma, injections, or seizures should be reviewed before inferring intrinsic muscle disease."
+        ],
+        "missing_data": {
+          "policy": "Repeat CK after a period without strenuous exercise and review recent physical stressors before escalating interpretation."
+        },
+        "supporting_marker_refs": [
+          "ast",
+          "troponin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_cardiac_pattern",
+            "marker_reference": "troponin",
+            "contradiction_rationale": "Troponin elevation shifts concern away from isolated skeletal muscle release and toward cardiac injury assessment.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_transient_nonneuromuscular_ckemia",
+        "rank": 2,
+        "physiological_claim": "High CK may represent a transient non-neuromuscular CK elevation rather than a primary myopathic process when symptoms and repeat abnormalities are absent.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "A single isolated CK elevation has limited specificity for chronic muscle disease."
+        ],
+        "missing_data": {
+          "policy": "Confirm persistence on repeat testing and review medications, endocrine status, alcohol use, and recent exertion before assigning a chronic disease frame."
+        },
+        "supporting_marker_refs": [
+          "ast",
+          "troponin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_persistent_inflammatory_markers",
+            "marker_reference": "crp",
+            "contradiction_rationale": "Inflammatory marker elevation can increase concern for a more sustained inflammatory or systemic process rather than a purely transient exertional rise.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_recent_exertional_release",
+        "hyp_transient_nonneuromuscular_ckemia"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_ck_after_rest",
+        "rationale": "Repeating CK after a short period of exercise avoidance helps distinguish transient exertional release from persistent non-exertional CK elevation."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_ck_high_with_ast_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high CK coincides with high AST, as this more strongly supports active tissue injury than an isolated CK rise.",
+        "conditions": [
+          {
+            "metric_id": "ast",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_ck_review_2016"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_ck_review_2016",
+          "paper_title": "Approach to asymptomatic creatine kinase elevation",
+          "journal": "Cleveland Clinic Journal of Medicine",
+          "year": 2016
+        }
+      ],
+      "physiological_claim": "CK elevation is common after exercise and other non-neuromuscular stressors, so persistence and context matter before inferring primary muscle disease.",
+      "threshold_notes": "Condition-specific escalation thresholds are not robustly uniform across populations; interpretation should remain lab-range anchored and contextual."
+    },
+    "narrative": {
+      "mechanism": "CK is released from damaged skeletal muscle fibers and can rise transiently after exertion, trauma, or other mechanical muscle stress.",
+      "biological_pathway": "Skeletal muscle membrane injury and intracellular enzyme release into the circulation.",
+      "interpretation": "An isolated high CK commonly supports recent muscle stress more than a definitive chronic myopathic diagnosis.",
+      "implications": "Repeat testing after rest and review of exertional and medication history usually help determine whether the abnormality is transient or persistent.",
+      "supporting_marker_roles": "AST corroborates a muscle-source enzyme leak, while troponin functions as the key differential marker separating exertional skeletal-muscle release from cardiac injury."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_creatine_kinase_high_persistent_nonexertional_muscle_injury",
+    "signal_id": "signal_creatine_kinase_high",
+    "research_domain": "musculoskeletal",
+    "primary_marker": {
+      "biomarker_id": "creatine_kinase",
+      "rationale": "Persistently raised creatine kinase can support a clinically meaningful muscle injury or myopathic context when corroborating features are present.",
+      "signal_system": "mitochondrial"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "aldolase",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "specialist",
+        "rationale": "Aldolase elevation strengthens the interpretation that persistent CK elevation is coming from ongoing skeletal-muscle injury rather than isolated laboratory noise."
+      },
+      {
+        "biomarker_id": "tsh",
+        "expected_direction": "either",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "TSH helps distinguish inflammatory or drug-related myopathic frames from endocrine explanations such as thyroid dysfunction, which can also elevate CK."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_inflammatory_or_necrotic_myopathy",
+        "rank": 1,
+        "physiological_claim": "Persistently high CK may reflect an inflammatory or necrotic muscle injury process when corroborating laboratory or clinical features are present.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "CK alone is not specific for inflammatory myopathy and should not be interpreted independently of symptoms and other investigations."
+        ],
+        "missing_data": {
+          "policy": "Review weakness pattern, medication exposure, and repeat CK trajectory before prioritising a primary myopathic process."
+        },
+        "supporting_marker_refs": [
+          "aldolase",
+          "tsh"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_exertional_resolution",
+            "marker_reference": "creatine_kinase",
+            "contradiction_rationale": "Rapid normalization on repeat testing after rest weakens a persistent myopathic interpretation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_drug_or_toxin_related_myotoxicity",
+        "rank": 2,
+        "physiological_claim": "High CK may reflect medication-related or toxin-related myotoxicity, particularly when there is a relevant exposure history and persistent enzyme elevation.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Exposure history is essential because the biochemical pattern is not specific for any single drug class."
+        ],
+        "missing_data": {
+          "policy": "Review statins, antipsychotics, stimulants, supplements, alcohol, and recent toxin exposures before assigning idiopathic muscle disease."
+        },
+        "supporting_marker_refs": [
+          "aldolase",
+          "tsh"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_thyroid_explanation",
+            "marker_reference": "tsh",
+            "contradiction_rationale": "Marked thyroid dysfunction can provide a non-drug alternative explanation for CK elevation and should be assessed before narrowing to drug toxicity.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_inflammatory_or_necrotic_myopathy",
+        "hyp_drug_or_toxin_related_myotoxicity"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_ck_with_medication_and_tsh_review",
+        "rationale": "Repeat CK together with targeted medication-exposure review and thyroid testing helps separate persistent inflammatory or toxic myopathy from endocrine or transient explanations."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_ck_high_with_aldolase_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high CK coincides with high aldolase, as this is more consistent with an active skeletal muscle injury pattern.",
+        "conditions": [
+          {
+            "metric_id": "aldolase",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_ck_review_2016"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_ck_review_2016",
+          "paper_title": "Approach to asymptomatic creatine kinase elevation",
+          "journal": "Cleveland Clinic Journal of Medicine",
+          "year": 2016
+        }
+      ],
+      "physiological_claim": "Persistent CK elevation increases the likelihood of clinically meaningful muscle pathology or exposure-related myotoxicity compared with a single transient rise.",
+      "threshold_notes": "No single universal CK threshold reliably separates benign from pathologic muscle injury across all populations, so persistence and corroboration remain central."
+    },
+    "narrative": {
+      "mechanism": "Sustained CK release suggests ongoing muscle membrane injury rather than a brief post-exertional leak.",
+      "biological_pathway": "Ongoing skeletal muscle fiber injury with continued cytosolic enzyme release into the blood.",
+      "interpretation": "This pattern is more concerning than a one-off exercise-related CK rise but still requires careful differentiation among inflammatory, endocrine, and exposure-related causes.",
+      "implications": "Repeat measurement, exposure review, and targeted neuromuscular assessment are usually needed before assigning a durable disease label.",
+      "supporting_marker_roles": "Aldolase corroborates persistent skeletal-muscle injury, while TSH is the differential marker that helps separate inflammatory or toxic myopathic frames from endocrine CK elevation."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_dhea_low_adrenal_androgen_reduction",
+    "signal_id": "signal_dhea_low",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "dhea",
+      "rationale": "DHEA is an adrenal androgen precursor whose low levels can support reduced adrenal androgen output but are not diagnostic in isolation.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "cortisol",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low cortisol can support broader adrenal steroidogenic impairment when DHEA is low."
+      },
+      {
+        "biomarker_id": "acth",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "ACTH helps distinguish primary adrenal failure from secondary or non-adrenal explanations for low adrenal androgen output."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_reduced_adrenal_androgen_output",
+        "rank": 1,
+        "physiological_claim": "Low DHEA may reflect reduced adrenal androgen production, particularly when other adrenal steroid markers are also reduced.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Isolated DHEA reduction is not sufficient to diagnose adrenal insufficiency."
+        ],
+        "missing_data": {
+          "policy": "Review cortisol-axis data before inferring clinically significant adrenal dysfunction from DHEA alone."
+        },
+        "supporting_marker_refs": [
+          "cortisol",
+          "acth"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_preserved_cortisol_axis",
+            "marker_reference": "cortisol",
+            "contradiction_rationale": "A clearly preserved cortisol axis weakens a broad adrenal insufficiency interpretation from low DHEA alone.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_age_or_context_related_androgen_decline",
+        "rank": 2,
+        "physiological_claim": "Low DHEA may reflect age-related or context-related reduction in adrenal androgen availability rather than overt adrenal disease.",
+        "evidence_strength": "exploratory",
+        "caveats": [
+          "Interpretation depends on age, sex, assay context, and accompanying symptoms."
+        ],
+        "missing_data": {
+          "policy": "Review age, sex, symptoms, medication exposure, and DHEA-S or other steroid context before escalating the finding."
+        },
+        "supporting_marker_refs": [
+          "cortisol"
+        ],
+        "contradiction_markers": []
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_reduced_adrenal_androgen_output",
+        "hyp_age_or_context_related_androgen_decline"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_morning_cortisol_with_acth_context",
+        "rationale": "Morning cortisol with ACTH context helps determine whether low DHEA sits within a broader adrenal steroid deficiency pattern."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_dhea_low_with_cortisol_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low DHEA coincides with low cortisol, as this more strongly supports broader adrenal steroidogenic reduction.",
+        "conditions": [
+          {
+            "metric_id": "cortisol",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_pai_guideline_2016"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_pai_guideline_2016",
+          "paper_title": "Diagnosis and Treatment of Primary Adrenal Insufficiency: An Endocrine Society Clinical Practice Guideline",
+          "journal": "Journal of Clinical Endocrinology and Metabolism",
+          "year": 2016
+        }
+      ],
+      "physiological_claim": "Low adrenal androgen levels can accompany adrenal insufficiency, but DHEA is supportive rather than stand-alone diagnostic.",
+      "threshold_notes": "Interpretation should remain lab-range anchored; robust universal DHEA thresholds for disease classification are not established across assays and populations."
+    },
+    "narrative": {
+      "mechanism": "DHEA is produced mainly by the adrenal cortex and can fall when adrenal steroidogenic output is reduced.",
+      "biological_pathway": "Adrenal steroidogenesis and peripheral androgen precursor availability.",
+      "interpretation": "Low DHEA is best treated as a contextual hormonal finding that can support reduced adrenal androgen output but should not be used alone to diagnose adrenal insufficiency.",
+      "implications": "Broader adrenal-axis review is more informative than isolated DHEA interpretation when this abnormality appears clinically relevant.",
+      "supporting_marker_roles": "Cortisol supports a broader adrenal output frame, while ACTH helps distinguish primary from secondary axis patterns."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_dhea_high_androgen_excess_context",
+    "signal_id": "signal_dhea_high",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "dhea",
+      "rationale": "DHEA is an androgen precursor and high levels can support an adrenal or broader hyperandrogenic context, but isolated interpretation is assay-sensitive and non-specific.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "total_testosterone",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent testosterone elevation corroborates that high DHEA is sitting within a broader biochemical hyperandrogenism pattern."
+      },
+      {
+        "biomarker_id": "dhea_s",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "DHEA-S helps distinguish a persistent adrenal-weighted androgen source from isolated or assay-sensitive DHEA variation."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_biochemical_hyperandrogenism",
+        "rank": 1,
+        "physiological_claim": "High DHEA may support a biochemical hyperandrogenism context when accompanied by other androgen abnormalities.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "DHEA alone is not specific for the underlying source of androgen excess."
+        ],
+        "missing_data": {
+          "policy": "Review testosterone, SHBG, menstrual or reproductive context, and adrenal-source markers before inferring a specific cause."
+        },
+        "supporting_marker_refs": [
+          "total_testosterone",
+          "dhea_s"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_isolated_dhea_variation",
+            "marker_reference": "total_testosterone",
+            "contradiction_rationale": "A normal broader androgen profile weakens a strong hyperandrogenic interpretation from isolated DHEA elevation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_adrenal_androgen_source",
+        "rank": 2,
+        "physiological_claim": "High DHEA may indicate an adrenal-weighted source of androgen excess rather than an isolated gonadal explanation.",
+        "evidence_strength": "exploratory",
+        "caveats": [
+          "Source attribution is stronger with DHEA-S and formal adrenal evaluation than with DHEA alone."
+        ],
+        "missing_data": {
+          "policy": "Prioritise DHEA-S, clinical severity, and imaging-directed assessment only when biochemical and clinical context justify it."
+        },
+        "supporting_marker_refs": [
+          "dhea_s"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_dhea_s",
+            "marker_reference": "dhea_s",
+            "contradiction_rationale": "A normal DHEA-S weakens a strong adrenal-source interpretation from isolated DHEA elevation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_biochemical_hyperandrogenism",
+        "hyp_adrenal_androgen_source"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_androgen_panel_with_dhea_s",
+        "rationale": "Repeating androgen testing with DHEA-S helps determine whether high DHEA represents a reproducible adrenal-weighted androgen excess pattern rather than isolated assay variation."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_dhea_high_with_testosterone_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high DHEA coincides with high total testosterone, as this more strongly supports a broader biochemical hyperandrogenism pattern.",
+        "conditions": [
+          {
+            "metric_id": "total_testosterone",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_hyperandrogenism_review_2021"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_hyperandrogenism_review_2021",
+          "paper_title": "Practical Approach to Hyperandrogenism in Women",
+          "journal": "Medical Clinics of North America",
+          "year": 2021
+        }
+      ],
+      "physiological_claim": "High DHEA can support a hyperandrogenic context, but isolated values do not by themselves establish source or etiology.",
+      "threshold_notes": "Universal disease-defining DHEA thresholds are not established; interpretation should remain laboratory and phenotype anchored."
+    },
+    "narrative": {
+      "mechanism": "DHEA is an androgen precursor that can rise in states of increased adrenal or broader steroidogenic androgen production.",
+      "biological_pathway": "Adrenal and peripheral androgen precursor synthesis and downstream androgen metabolism.",
+      "interpretation": "This is best read as supportive evidence of androgen excess context rather than a stand-alone source-defining marker.",
+      "implications": "Further androgen profiling is usually more informative than relying on an isolated DHEA result.",
+      "supporting_marker_roles": "Total testosterone corroborates broader hyperandrogenism, while DHEA-S is the key differential marker for deciding whether the excess appears adrenal-weighted."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_egfr_low_chronic_kidney_function_reduction",
+    "signal_id": "signal_egfr_low",
+    "research_domain": "renal",
+    "primary_marker": {
+      "biomarker_id": "egfr",
+      "rationale": "Estimated glomerular filtration rate is a core marker of kidney function and persistent reduction supports clinically relevant filtration impairment.",
+      "signal_system": "renal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "uacr",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Albuminuria corroborates that reduced eGFR is part of a clinically meaningful chronic kidney disease risk pattern rather than an isolated filtration estimate change."
+      },
+      {
+        "biomarker_id": "cystatin_c",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Cystatin C helps distinguish true filtration impairment from creatinine-driven distortion of eGFR in people where muscle mass or creatinine generation may mislead."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_chronic_filtration_reduction",
+        "rank": 1,
+        "physiological_claim": "Low eGFR may reflect chronic reduction in kidney filtration capacity, particularly when the abnormality is persistent or accompanied by albuminuria.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Chronicity should be established before assigning chronic kidney disease on a single eGFR value alone."
+        ],
+        "missing_data": {
+          "policy": "Confirm duration, repeat values, and albuminuria status before concluding chronic kidney disease."
+        },
+        "supporting_marker_refs": [
+          "uacr",
+          "cystatin_c"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_nonpersistent_change",
+            "marker_reference": "egfr",
+            "contradiction_rationale": "A nonpersistent eGFR reduction weakens a chronic kidney disease interpretation.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_kidney_risk_with_albuminuria",
+        "rank": 2,
+        "physiological_claim": "Low eGFR with albuminuria may indicate a higher kidney risk context than reduced eGFR alone.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Albuminuria materially changes risk interpretation and should be assessed rather than inferred."
+        ],
+        "missing_data": {
+          "policy": "If albuminuria data are unavailable, avoid overgrading kidney risk from eGFR alone."
+        },
+        "supporting_marker_refs": [
+          "uacr",
+          "cystatin_c"
+        ],
+        "contradiction_markers": []
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_chronic_filtration_reduction",
+        "hyp_kidney_risk_with_albuminuria"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_egfr_with_uacr_and_cystatin_c",
+        "rationale": "Repeat eGFR with urine albumin and, where needed, cystatin C improves discrimination between true chronic filtration loss and creatinine-related estimation error."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_egfr_low_with_uacr_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low eGFR coincides with high UACR, as this more strongly supports clinically meaningful kidney disease risk.",
+        "conditions": [
+          {
+            "metric_id": "uacr",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_kdigo_ckd_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_kdigo_ckd_2024",
+          "paper_title": "KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease",
+          "journal": "Kidney International",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Persistent reduction in eGFR is central to chronic kidney disease evaluation and gains clinical weight when albuminuria is also present.",
+      "threshold_notes": "Interpretation should follow lab-reported eGFR and chronicity principles; a single low value should not automatically be treated as established chronic kidney disease."
+    },
+    "narrative": {
+      "mechanism": "eGFR estimates filtration capacity and falls when kidney clearance is reduced or when hemodynamic changes transiently lower filtration.",
+      "biological_pathway": "Glomerular filtration and kidney functional reserve.",
+      "interpretation": "A low eGFR is clinically important but becomes much more informative when repeated and paired with albuminuria assessment.",
+      "implications": "Repeat testing and UACR assessment are usually needed before deciding whether the pattern reflects chronic disease, transient change, or altered risk severity.",
+      "supporting_marker_roles": "UACR corroborates chronic kidney injury risk, while cystatin C is the differential marker that helps separate true low filtration from creatinine-related distortion."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_egfr_low_hemodynamic_filtration_drop",
+    "signal_id": "signal_egfr_low",
+    "research_domain": "renal",
+    "primary_marker": {
+      "biomarker_id": "egfr",
+      "rationale": "Low eGFR can reflect acute or hemodynamic reduction in filtration as well as chronic kidney disease, so trajectory matters.",
+      "signal_system": "renal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "creatinine",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Creatinine rise supports a real change in kidney filtration estimate rather than random variation."
+      },
+      {
+        "biomarker_id": "cystatin_c",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Cystatin C can help assess whether a creatinine-based eGFR reduction is biologically corroborated."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_hemodynamic_filtration_drop",
+        "rank": 1,
+        "physiological_claim": "Low eGFR may reflect a hemodynamic fall in filtration rather than fixed structural kidney disease, particularly when the change is recent.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Volume status, medication timing, and recent illness can materially affect interpretation."
+        ],
+        "missing_data": {
+          "policy": "Review recent medications, intercurrent illness, and prior kidney function trajectory before inferring structural kidney disease."
+        },
+        "supporting_marker_refs": [
+          "creatinine",
+          "cystatin_c"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_albuminuria_supports_ckd",
+            "marker_reference": "uacr",
+            "contradiction_rationale": "Concurrent albuminuria makes a chronic kidney disease frame more plausible than a purely hemodynamic change.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_acute_kidney_stress_context",
+        "rank": 2,
+        "physiological_claim": "Low eGFR may indicate an acute kidney stress context when accompanied by recent creatinine change and clinical instability.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Acute kidney injury classification requires temporal and clinical context beyond a single eGFR estimate."
+        ],
+        "missing_data": {
+          "policy": "Compare with prior kidney function and assess recent volume, illness, and nephrotoxin exposures before assigning an acute injury frame."
+        },
+        "supporting_marker_refs": [
+          "creatinine"
+        ],
+        "contradiction_markers": []
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_hemodynamic_filtration_drop",
+        "hyp_acute_kidney_stress_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_creatinine_egfr_trajectory",
+        "rationale": "Short-interval repeat kidney function testing helps distinguish transient hemodynamic change from persistent renal impairment."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_egfr_low_with_cystatin_c_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low eGFR coincides with high cystatin C, as this provides independent support for a true reduction in kidney filtration.",
+        "conditions": [
+          {
+            "metric_id": "cystatin_c",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_kdigo_ckd_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_kdigo_ckd_2024",
+          "paper_title": "KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease",
+          "journal": "Kidney International",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Changes in eGFR should be interpreted in clinical and temporal context because recent medication, illness, or hemodynamic shifts can alter filtration estimates.",
+      "threshold_notes": "Trajectory is more informative than an isolated low eGFR result when distinguishing transient from persistent kidney dysfunction."
+    },
+    "narrative": {
+      "mechanism": "eGFR falls when effective filtration drops, whether from structural disease or acute hemodynamic stress.",
+      "biological_pathway": "Dynamic regulation of glomerular perfusion and filtration.",
+      "interpretation": "A low eGFR does not automatically imply fixed chronic kidney damage and should be read against recent trajectory and albuminuria context.",
+      "implications": "Repeat testing and clarification of recent illness or nephrotoxic exposure are often needed before settling on a chronic disease interpretation.",
+      "supporting_marker_roles": "Creatinine corroborates the filtration estimate, while cystatin C can help distinguish a true reduction from creatinine-related distortion."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_eosinophil_pct_high_reactive_atopic_eosinophilia",
+    "signal_id": "signal_eosinophil_pct_high",
+    "research_domain": "immunologic",
+    "primary_marker": {
+      "biomarker_id": "eosinophil_pct",
+      "rationale": "Eosinophil percentage can support eosinophilic immune activation but should be interpreted with the absolute eosinophil count and total leukocyte context.",
+      "signal_system": "inflammatory"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "eosinophils_abs",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Absolute eosinophils determine whether a high eosinophil percentage reflects true eosinophilia or only a relative shift in the leukocyte differential."
+      },
+      {
+        "biomarker_id": "total_ige",
+        "expected_direction": "high",
+        "role": "contextual_marker",
+        "relationship_kind": "mechanism",
+        "availability": "optional",
+        "rationale": "Elevated IgE supports an atopic or allergic immune context once true eosinophilia has been confirmed."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_atopic_or_allergic_eosinophilia",
+        "rank": 1,
+        "physiological_claim": "High eosinophil percentage may reflect reactive eosinophilic activation in allergic or atopic disease, especially when absolute eosinophils are also raised.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Percentage-based eosinophilia is less specific than absolute eosinophilia and can be distorted by other leukocyte shifts."
+        ],
+        "missing_data": {
+          "policy": "Confirm with the absolute eosinophil count and review clinical allergy or atopy context before drawing stronger conclusions."
+        },
+        "supporting_marker_refs": [
+          "eosinophils_abs",
+          "total_ige"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_relative_only_pattern",
+            "marker_reference": "eosinophils_abs",
+            "contradiction_rationale": "A normal absolute eosinophil count weakens a true eosinophilia interpretation and may indicate a relative differential shift instead.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_mild_reactive_immune_activation",
+        "rank": 2,
+        "physiological_claim": "High eosinophil percentage may represent mild reactive immune activation without indicating a severe eosinophilic syndrome.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Clinical significance depends on persistence, symptoms, and the absolute eosinophil count."
+        ],
+        "missing_data": {
+          "policy": "Repeat the differential and review medication, infection, and atopic history before escalating beyond a reactive frame."
+        },
+        "supporting_marker_refs": [
+          "eosinophils_abs",
+          "total_ige"
+        ],
+        "contradiction_markers": []
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_atopic_or_allergic_eosinophilia",
+        "hyp_mild_reactive_immune_activation"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_cbc_with_absolute_eosinophils",
+        "rationale": "Repeating the CBC with confirmation of the absolute eosinophil count helps distinguish true eosinophilia from a relative differential change."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_eosinophil_pct_high_with_abs_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high eosinophil percentage coincides with high absolute eosinophils, as this confirms a true eosinophilic pattern rather than a relative shift.",
+        "conditions": [
+          {
+            "metric_id": "eosinophils_abs",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_eosinophilia_review_2020"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_eosinophilia_review_2020",
+          "paper_title": "Approach to the patient with eosinophilia",
+          "journal": "Medical Clinics of North America",
+          "year": 2020
+        }
+      ],
+      "physiological_claim": "Eosinophilia commonly arises in reactive allergic and atopic conditions, but differential-count interpretation should prioritize the absolute eosinophil count.",
+      "threshold_notes": "Percentage-based eosinophil abnormalities are best interpreted with the absolute count rather than as stand-alone severity markers."
+    },
+    "narrative": {
+      "mechanism": "Eosinophils expand in response to type 2 immune signaling and allergic or parasitic stimuli, but percentage values are influenced by the wider leukocyte differential.",
+      "biological_pathway": "Type 2 immune activation and eosinophil recruitment within allergic and related inflammatory pathways.",
+      "interpretation": "A high eosinophil percentage is supportive of eosinophilic activation but should not be overread without the absolute eosinophil count.",
+      "implications": "Confirmation with the absolute eosinophil count and clinical context usually determines whether the pattern is mild and reactive or warrants broader evaluation.",
+      "supporting_marker_roles": "Absolute eosinophils are the crucial differential marker separating true eosinophilia from a relative percentage shift, while total IgE supports an atopic immune context."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_eosinophil_pct_high_secondary_or_systemic_eosinophilia",
+    "signal_id": "signal_eosinophil_pct_high",
+    "research_domain": "immunologic",
+    "primary_marker": {
+      "biomarker_id": "eosinophil_pct",
+      "rationale": "Marked eosinophil percentage elevation can signal broader eosinophilic disease processes, but percentage alone is insufficient for attribution.",
+      "signal_system": "inflammatory"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "eosinophils_abs",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Absolute eosinophils are required to distinguish clinically meaningful eosinophilia from a percentage-only differential shift."
+      },
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "contextual_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "CRP can support a broader active inflammatory context once true eosinophilia has been confirmed."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_secondary_eosinophilic_process",
+        "rank": 1,
+        "physiological_claim": "High eosinophil percentage may reflect a secondary eosinophilic process such as drug reaction, parasitic infection, or tissue eosinophilic disease when confirmed on absolute count.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Biochemical eosinophilia is etiologically non-specific and must be integrated with exposure and travel history."
+        ],
+        "missing_data": {
+          "policy": "Review medications, allergic history, travel, and infection exposure before prioritising systemic disease mechanisms."
+        },
+        "supporting_marker_refs": [
+          "eosinophils_abs",
+          "crp"
+        ],
+        "contradiction_markers": []
+      },
+      {
+        "hypothesis_id": "hyp_broader_systemic_eosinophilic_evaluation_needed",
+        "rank": 2,
+        "physiological_claim": "Persistently high eosinophil percentage may justify broader systemic eosinophilic evaluation if confirmed by absolute eosinophilia and compatible symptoms.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Percentage elevation alone should not be treated as evidence of hypereosinophilic syndrome."
+        ],
+        "missing_data": {
+          "policy": "Confirm persistence and absolute eosinophilia before moving from reactive differential diagnoses to rare eosinophilic syndromes."
+        },
+        "supporting_marker_refs": [
+          "eosinophils_abs",
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_absolute_count",
+            "marker_reference": "eosinophils_abs",
+            "contradiction_rationale": "A normal absolute eosinophil count weakens a systemic eosinophilia interpretation from percentage elevation alone.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_secondary_eosinophilic_process",
+        "hyp_broader_systemic_eosinophilic_evaluation_needed"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_absolute_eosinophils_with_targeted_secondary_workup",
+        "rationale": "Absolute eosinophil confirmation with targeted secondary-cause evaluation helps distinguish reactive eosinophilia from broader systemic disease."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_eosinophil_pct_high_with_crp_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high eosinophil percentage coincides with high CRP, as this supports a more active systemic inflammatory context.",
+        "conditions": [
+          {
+            "metric_id": "crp",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_eosinophilia_review_2020"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_eosinophilia_review_2020",
+          "paper_title": "Approach to the patient with eosinophilia",
+          "journal": "Medical Clinics of North America",
+          "year": 2020
+        }
+      ],
+      "physiological_claim": "Confirmed eosinophilia has a broad differential that includes allergic, drug-related, parasitic, and systemic eosinophilic disorders.",
+      "threshold_notes": "Percentage elevation should be interpreted cautiously until absolute eosinophilia and persistence are established."
+    },
+    "narrative": {
+      "mechanism": "Sustained eosinophilic expansion can occur in response to allergic, infectious, drug-related, or clonal immune stimuli.",
+      "biological_pathway": "Eosinophil production, recruitment, and activation within reactive and systemic eosinophilic inflammatory pathways.",
+      "interpretation": "A raised eosinophil percentage can justify broader review only when true eosinophilia is confirmed and the clinical pattern supports it.",
+      "implications": "The next step is usually focused confirmation and secondary-cause review rather than immediate assignment of a rare eosinophilic syndrome.",
+      "supporting_marker_roles": "Absolute eosinophils are the core differential marker that determines whether the percentage abnormality is real, while CRP supports a broader systemic inflammatory frame."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_eosinophils_abs_high_reactive_eosinophilic_inflammation",
+    "signal_id": "signal_eosinophils_abs_high",
+    "research_domain": "immunologic",
+    "primary_marker": {
+      "biomarker_id": "eosinophils_abs",
+      "rationale": "Absolute eosinophil count is the preferred laboratory measure for confirming true eosinophilia and is more informative than eosinophil percentage alone.",
+      "signal_system": "inflammatory"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "total_ige",
+        "expected_direction": "high",
+        "role": "contextual_marker",
+        "relationship_kind": "mechanism",
+        "availability": "optional",
+        "rationale": "High IgE supports an atopic or allergic mechanism for true eosinophilic expansion."
+      },
+      {
+        "biomarker_id": "tryptase",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Tryptase helps distinguish common reactive eosinophilia from a clonal or myeloid-associated eosinophilic process."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_true_reactive_eosinophilia",
+        "rank": 1,
+        "physiological_claim": "High absolute eosinophils commonly reflect true reactive eosinophilic inflammation in allergic, atopic, or secondary inflammatory states.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Absolute eosinophilia confirms eosinophilic expansion but remains etiologically broad."
+        ],
+        "missing_data": {
+          "policy": "Review atopy, asthma, sinus disease, medications, and travel or infection exposure before narrowing the differential."
+        },
+        "supporting_marker_refs": [
+          "total_ige",
+          "tryptase"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_tryptase_nonreactive",
+            "marker_reference": "tryptase",
+            "contradiction_rationale": "Elevated tryptase weakens a straightforward reactive-atopic interpretation and raises concern for a clonal or myeloid-associated eosinophilic process.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_tissue_eosinophilic_disease_context",
+        "rank": 2,
+        "physiological_claim": "High absolute eosinophils may support a tissue eosinophilic disease context when compatible organ symptoms are present.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Blood eosinophilia does not define organ involvement by itself."
+        ],
+        "missing_data": {
+          "policy": "Integrate organ-specific symptoms and, where relevant, targeted tissue or imaging evaluation before assigning tissue eosinophilic disease."
+        },
+        "supporting_marker_refs": [
+          "total_ige",
+          "tryptase"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_transient_single_measurement",
+            "marker_reference": "eosinophils_abs",
+            "contradiction_rationale": "A transient isolated eosinophil rise weakens persistent eosinophilic disease framing.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_true_reactive_eosinophilia",
+        "hyp_tissue_eosinophilic_disease_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_absolute_eosinophils_with_ige_or_tryptase_context",
+        "rationale": "Repeating the absolute eosinophil count with targeted allergic and clonal-context testing helps distinguish common reactive eosinophilia from persistent non-reactive disease."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_eosinophils_abs_high_with_ige_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high absolute eosinophils coincide with high total IgE, as this more strongly supports a type 2 or atopic eosinophilic context.",
+        "conditions": [
+          {
+            "metric_id": "total_ige",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_eosinophilia_review_2020"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_eosinophilia_review_2020",
+          "paper_title": "Approach to the patient with eosinophilia",
+          "journal": "Medical Clinics of North America",
+          "year": 2020
+        }
+      ],
+      "physiological_claim": "Absolute eosinophilia is the preferred laboratory basis for confirming true eosinophilic expansion and framing further differential diagnosis.",
+      "threshold_notes": "Absolute count is more clinically informative than percentage alone; attribution still depends on persistence and clinical context."
+    },
+    "narrative": {
+      "mechanism": "Absolute eosinophilia reflects increased eosinophil production, survival, or recruitment under immune stimulation.",
+      "biological_pathway": "Bone marrow eosinophilopoiesis and peripheral eosinophil activation within type 2 and related immune pathways.",
+      "interpretation": "This is a true eosinophilic finding and generally deserves more weight than an isolated eosinophil percentage change.",
+      "implications": "The main task is to determine whether the pattern is reactive and common or part of a more persistent eosinophilic disease process.",
+      "supporting_marker_roles": "Total IgE supports an atopic mechanism, while tryptase is the differential marker that helps separate common reactive eosinophilia from clonal eosinophilic disease."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia",
+    "signal_id": "signal_eosinophils_abs_high",
+    "research_domain": "immunologic",
+    "primary_marker": {
+      "biomarker_id": "eosinophils_abs",
+      "rationale": "Absolute eosinophilia can support clinically significant eosinophilic disease evaluation when persistent or organ-related features are present.",
+      "signal_system": "inflammatory"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "tryptase",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Tryptase can help identify a clonal or myeloid-associated eosinophilic process in selected cases."
+      },
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "contextual_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Inflammatory marker elevation can support a more active systemic disease context when eosinophilia is persistent."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_persistent_secondary_eosinophilia",
+        "rank": 1,
+        "physiological_claim": "High absolute eosinophils may reflect a persistent secondary eosinophilic process related to allergic, drug-related, infectious, or autoimmune drivers.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Secondary causes are more common than primary hypereosinophilic syndromes."
+        ],
+        "missing_data": {
+          "policy": "Exclude common secondary causes before prioritising clonal or idiopathic eosinophilic syndromes."
+        },
+        "supporting_marker_refs": [
+          "crp"
+        ],
+        "contradiction_markers": []
+      },
+      {
+        "hypothesis_id": "hyp_clonal_or_hypereosinophilic_syndrome_context",
+        "rank": 2,
+        "physiological_claim": "Persistent marked absolute eosinophilia may justify evaluation for hypereosinophilic or clonal eosinophilic syndromes when secondary causes are not evident.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This interpretation should remain cautious until persistence, organ involvement, and secondary-cause exclusion are established."
+        ],
+        "missing_data": {
+          "policy": "Review persistence, symptoms, organ involvement, and specialist hematologic markers before assigning a rare eosinophilic syndrome frame."
+        },
+        "supporting_marker_refs": [
+          "tryptase"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_resolved_secondary_trigger",
+            "marker_reference": "eosinophils_abs",
+            "contradiction_rationale": "Rapid normalization after removal of a secondary trigger weakens a clonal or persistent hypereosinophilic interpretation.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_persistent_secondary_eosinophilia",
+        "hyp_clonal_or_hypereosinophilic_syndrome_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_persistent_eosinophilia_workup",
+        "rationale": "Persistence-focused eosinophilia workup helps distinguish common secondary causes from rare hypereosinophilic syndromes."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_eosinophils_abs_high_with_tryptase_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high absolute eosinophils coincide with high tryptase, as this can support a myeloid or clonal eosinophilic context.",
+        "conditions": [
+          {
+            "metric_id": "tryptase",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_eosinophilia_review_2020"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_eosinophilia_review_2020",
+          "paper_title": "Approach to the patient with eosinophilia",
+          "journal": "Medical Clinics of North America",
+          "year": 2020
+        }
+      ],
+      "physiological_claim": "Persistent absolute eosinophilia warrants structured evaluation because the differential includes both common secondary causes and rarer clonal eosinophilic syndromes.",
+      "threshold_notes": "Interpretation should emphasize persistence and organ context rather than assign rare syndrome labels from a single isolated result."
+    },
+    "narrative": {
+      "mechanism": "Persistent eosinophilia can result from chronic immune stimulation, tissue eosinophilic disease, or rarely clonal hematologic drivers.",
+      "biological_pathway": "Sustained eosinophil production and survival across reactive and clonal eosinophilic pathways.",
+      "interpretation": "This pattern is compatible with several disease classes and should prompt structured differential review rather than premature labeling.",
+      "implications": "The main distinction is between common secondary causes and the smaller subset that needs specialist eosinophilic syndrome assessment.",
+      "supporting_marker_roles": "CRP supports systemic inflammatory context, while tryptase can help flag a possible clonal eosinophilic process."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_fai_high_biochemical_hyperandrogenism",
+    "signal_id": "signal_fai_high",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "fai",
+      "rationale": "Free androgen index estimates androgen bioavailability from total testosterone and SHBG and can support biochemical hyperandrogenism when assay context is appropriate.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "total_testosterone",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Raised total testosterone corroborates that the high FAI is tracking with a genuine hyperandrogenic biochemical pattern."
+      },
+      {
+        "biomarker_id": "dhea_s",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "DHEA-S helps distinguish adrenal-weighted hyperandrogenism from a low-SHBG-driven FAI rise without clear adrenal contribution."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_biochemical_hyperandrogenism",
+        "rank": 1,
+        "physiological_claim": "High FAI may support biochemical hyperandrogenism, particularly when total testosterone is high or SHBG is low in a compatible clinical context.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "FAI is a calculated index and assay method materially affects interpretability."
+        ],
+        "missing_data": {
+          "policy": "Review total testosterone assay quality, SHBG, and phenotype before inferring clinically significant androgen excess."
+        },
+        "supporting_marker_refs": [
+          "total_testosterone",
+          "dhea_s"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_reference_androgen_profile",
+            "marker_reference": "total_testosterone",
+            "contradiction_rationale": "A normal broader androgen profile weakens strong attribution of clinically meaningful androgen excess to an isolated FAI rise.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_low_shbg_amplified_androgen_fraction",
+        "rank": 2,
+        "physiological_claim": "High FAI may reflect low SHBG-mediated amplification of apparent free androgen fraction rather than markedly increased androgen production alone.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Obesity, insulin resistance, and related metabolic states can lower SHBG and influence interpretation."
+        ],
+        "missing_data": {
+          "policy": "Assess SHBG drivers and metabolic context before prioritising intrinsic androgen overproduction."
+        },
+        "supporting_marker_refs": [
+          "dhea_s"
+        ],
+        "contradiction_markers": []
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_biochemical_hyperandrogenism",
+        "hyp_low_shbg_amplified_androgen_fraction"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_androgen_panel_with_shbg_and_dhea_s",
+        "rationale": "Repeat androgen testing with SHBG and DHEA-S helps determine whether high FAI reflects true hyperandrogenism, adrenal contribution, or primarily low-SHBG amplification."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_fai_high_with_testosterone_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high FAI coincides with high total testosterone, as this more strongly supports true biochemical hyperandrogenism.",
+        "conditions": [
+          {
+            "metric_id": "total_testosterone",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_pcos_guideline_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_pcos_guideline_2023",
+          "paper_title": "Recommendations from the 2023 International Evidence-based Guideline for the Assessment and Management of Polycystic Ovary Syndrome",
+          "journal": "European Journal of Endocrinology",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "FAI can support assessment of biochemical hyperandrogenism when calculated and interpreted appropriately alongside testosterone and SHBG.",
+      "threshold_notes": "Interpretation should remain assay-aware and lab-range anchored because calculation methods and SHBG variation materially affect meaning."
+    },
+    "narrative": {
+      "mechanism": "FAI increases when total testosterone rises, SHBG falls, or both occur together.",
+      "biological_pathway": "Androgen production, binding to SHBG, and calculated bioavailable androgen fraction.",
+      "interpretation": "A high FAI supports biochemical androgen excess context but requires SHBG and assay-aware interpretation.",
+      "implications": "The key distinction is between true androgen overproduction and low-SHBG amplification of calculated free androgen availability.",
+      "supporting_marker_roles": "Total testosterone corroborates hyperandrogenism, while DHEA-S is the differential marker that helps separate adrenal-weighted androgen excess from low-SHBG amplification."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_fai_low_reduced_free_androgen_availability",
+    "signal_id": "signal_fai_low",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "fai",
+      "rationale": "A low free androgen index can support reduced bioavailable androgen exposure but should be interpreted with sex, age, SHBG, and assay context.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "total_testosterone",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low total testosterone corroborates that a low FAI may reflect reduced overall androgen supply rather than isolated calculation noise."
+      },
+      {
+        "biomarker_id": "free_testosterone",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Measured free testosterone helps distinguish a clinically meaningful low-androgen state from an FAI reduction driven mainly by SHBG distortion."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_reduced_bioavailable_androgen_state",
+        "rank": 1,
+        "physiological_claim": "Low FAI may reflect reduced bioavailable androgen exposure when total testosterone is low or SHBG is elevated.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Clinical relevance depends on sex, age, symptoms, and assay method."
+        ],
+        "missing_data": {
+          "policy": "Interpret with SHBG and total testosterone rather than relying on FAI alone."
+        },
+        "supporting_marker_refs": [
+          "total_testosterone",
+          "free_testosterone"
+        ],
+        "contradiction_markers": []
+      },
+      {
+        "hypothesis_id": "hyp_shbg_driven_reduction_in_free_fraction",
+        "rank": 2,
+        "physiological_claim": "Low FAI may be disproportionately driven by elevated SHBG rather than marked suppression of androgen production.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Binding-protein effects can shift the calculated index without indicating primary gonadal failure by themselves."
+        ],
+        "missing_data": {
+          "policy": "Assess SHBG drivers and repeat the androgen profile if the clinical picture and calculated index are discordant."
+        },
+        "supporting_marker_refs": [
+          "free_testosterone"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_preserved_free_testosterone",
+            "marker_reference": "free_testosterone",
+            "contradiction_rationale": "A preserved measured free testosterone weakens a strong interpretation of biologically important androgen deficiency from low FAI alone.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_reduced_bioavailable_androgen_state",
+        "hyp_shbg_driven_reduction_in_free_fraction"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_fai_with_total_and_measured_free_testosterone",
+        "rationale": "Reassessing total and measured free testosterone helps determine whether low FAI reflects real androgen underexposure or a calculation artifact driven by binding-protein context."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_fai_low_with_shbg_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low FAI coincides with high SHBG, as this more strongly supports a true reduction in calculated free androgen availability.",
+        "conditions": [
+          {
+            "metric_id": "shbg",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_testosterone_guideline_2018"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_testosterone_guideline_2018",
+          "paper_title": "Testosterone Therapy in Men With Hypogonadism: An Endocrine Society Clinical Practice Guideline",
+          "journal": "Journal of Clinical Endocrinology and Metabolism",
+          "year": 2018
+        }
+      ],
+      "physiological_claim": "Calculated androgen bioavailability depends on both total testosterone and SHBG, so isolated index abnormalities require contextual interpretation.",
+      "threshold_notes": "Interpretation should remain laboratory-specific and should not assume universal diagnostic thresholds for FAI across populations."
+    },
+    "narrative": {
+      "mechanism": "FAI falls when total testosterone drops, SHBG rises, or both occur together.",
+      "biological_pathway": "Androgen production, circulating binding to SHBG, and calculated free androgen availability.",
+      "interpretation": "A low FAI can support reduced androgen availability but is not sufficient on its own to define gonadal failure or clinically significant androgen deficiency.",
+      "implications": "The next step is to determine whether the index is being driven mainly by low androgen production or by altered SHBG.",
+      "supporting_marker_roles": "Total testosterone corroborates reduced androgen supply, while measured free testosterone is the differential marker that separates true low bioavailable androgen exposure from SHBG-driven FAI distortion."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_free_t3_low_low_t3_syndrome",
+    "signal_id": "signal_free_t3_low",
+    "research_domain": "thyroid",
+    "primary_marker": {
+      "biomarker_id": "free_t3",
+      "rationale": "Free T3 is the biologically active thyroid hormone fraction, but isolated low values commonly reflect systemic illness or altered peripheral conversion rather than primary thyroid disease.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "free_t4",
+        "expected_direction": "either",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Free T4 helps distinguish isolated low T3 states from broader thyroid hormone deficiency."
+      },
+      {
+        "biomarker_id": "tsh",
+        "expected_direction": "either",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "TSH context is essential for separating low T3 syndrome from primary thyroid failure."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_nonthyroidal_illness_pattern",
+        "rank": 1,
+        "physiological_claim": "Low free T3 may reflect a non-thyroidal illness pattern with altered peripheral thyroid hormone metabolism rather than primary thyroid gland failure.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This interpretation is strongest when illness or physiologic stress is present and TSH is not clearly consistent with primary hypothyroidism."
+        ],
+        "missing_data": {
+          "policy": "Review illness severity, nutritional state, and full thyroid panel before attributing low free T3 to intrinsic thyroid disease."
+        },
+        "supporting_marker_refs": [
+          "free_t4",
+          "tsh"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_primary_hypothyroid_pattern",
+            "marker_reference": "tsh",
+            "contradiction_rationale": "A clearly elevated TSH with low free T4 shifts interpretation toward primary thyroid hormone deficiency rather than isolated low T3 syndrome.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_reduced_t4_to_t3_conversion",
+        "rank": 2,
+        "physiological_claim": "Low free T3 may reflect reduced peripheral conversion of T4 to T3 in systemic stress or catabolic states.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Reduced conversion is mechanistically plausible but remains a contextual rather than disease-specific interpretation."
+        ],
+        "missing_data": {
+          "policy": "Do not infer a thyroid diagnosis from isolated low free T3 without the broader thyroid and clinical context."
+        },
+        "supporting_marker_refs": [
+          "free_t4"
+        ],
+        "contradiction_markers": []
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_nonthyroidal_illness_pattern",
+        "hyp_reduced_t4_to_t3_conversion"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_thyroid_panel_after_recovery",
+        "rationale": "Repeating the thyroid panel after recovery or stabilization helps determine whether low free T3 is transient and illness-related."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_free_t3_low_with_free_t4_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low free T3 coincides with low free T4, as this is less consistent with isolated low T3 syndrome and more concerning for broader thyroid hormone deficiency or severe systemic illness.",
+        "conditions": [
+          {
+            "metric_id": "free_t4",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_low_t3_review_2016"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_low_t3_review_2016",
+          "paper_title": "Abnormalities of Thyroid Hormone Metabolism during Systemic Illness: The Low T3 Syndrome in Different Clinical Settings",
+          "journal": "International Journal of Endocrinology",
+          "year": 2016
+        }
+      ],
+      "physiological_claim": "Low T3 patterns are common in systemic illness and reflect altered thyroid hormone metabolism rather than primary thyroid disease in many cases.",
+      "threshold_notes": "Free T3 interpretation should remain contextual and should not be used alone to diagnose hypothyroidism."
+    },
+    "narrative": {
+      "mechanism": "Free T3 can fall when peripheral conversion of T4 to T3 is reduced during systemic stress, inflammation, or illness.",
+      "biological_pathway": "Peripheral deiodination and adaptive thyroid hormone metabolism during illness.",
+      "interpretation": "An isolated low free T3 often supports a contextual low T3 syndrome more than primary thyroid failure.",
+      "implications": "The key question is whether the pattern normalizes with recovery or whether the broader thyroid panel indicates genuine thyroid hormone deficiency.",
+      "supporting_marker_roles": "Free T4 and TSH are mainly differential markers that help separate contextual low T3 states from primary thyroid disease."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_free_t3_high_t3_predominant_thyrotoxicosis",
+    "signal_id": "signal_free_t3_high",
+    "research_domain": "thyroid",
+    "primary_marker": {
+      "biomarker_id": "free_t3",
+      "rationale": "High free T3 supports increased thyroid hormone activity and can be particularly informative in T3-predominant thyrotoxic states.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "tsh",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Suppressed TSH strongly corroborates biologically significant thyroid hormone excess."
+      },
+      {
+        "biomarker_id": "free_t4",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Free T4 helps distinguish T3-predominant thyrotoxicosis from broader thyrotoxic patterns."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_t3_predominant_thyrotoxicosis",
+        "rank": 1,
+        "physiological_claim": "High free T3 may reflect T3-predominant thyrotoxicosis, particularly when TSH is suppressed.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Etiology still requires differential diagnosis and should not be inferred from hormone levels alone."
+        ],
+        "missing_data": {
+          "policy": "Use TSH and broader thyroid context before assigning a specific thyrotoxic cause."
+        },
+        "supporting_marker_refs": [
+          "tsh",
+          "free_t4"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_nonsuppressed_tsh",
+            "marker_reference": "tsh",
+            "contradiction_rationale": "A non-suppressed TSH weakens a straightforward thyrotoxicosis interpretation and should prompt assay or alternative-context review.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_early_or_partial_hyperthyroid_pattern",
+        "rank": 2,
+        "physiological_claim": "High free T3 may represent an early or partial hyperthyroid biochemical pattern before free T4 is clearly elevated.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This interpretation remains biochemical and does not establish cause or chronicity."
+        ],
+        "missing_data": {
+          "policy": "Repeat the thyroid panel and assess antibodies or imaging only where clinically indicated."
+        },
+        "supporting_marker_refs": [
+          "tsh"
+        ],
+        "contradiction_markers": []
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_t3_predominant_thyrotoxicosis",
+        "hyp_early_or_partial_hyperthyroid_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_thyroid_panel_with_tsh",
+        "rationale": "Repeat thyroid testing with TSH helps confirm a true thyrotoxic hormone pattern and its biochemical consistency."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_free_t3_high_with_tsh_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high free T3 coincides with low TSH, as this more strongly supports biologically significant thyrotoxicosis.",
+        "conditions": [
+          {
+            "metric_id": "tsh",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_ata_hyperthyroidism_2016"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_ata_hyperthyroidism_2016",
+          "paper_title": "2016 American Thyroid Association Guidelines for Diagnosis and Management of Hyperthyroidism and Other Causes of Thyrotoxicosis",
+          "journal": "Thyroid",
+          "year": 2016
+        }
+      ],
+      "physiological_claim": "High T3 with suppressed TSH is a recognized biochemical pattern of thyrotoxicosis and may occur with T3 predominance.",
+      "threshold_notes": "Interpretation should be based on laboratory abnormality and hormonal patterning rather than assumed universal severity cutoffs."
+    },
+    "narrative": {
+      "mechanism": "Free T3 rises when thyroid hormone production or release is excessive and biologically active hormone availability is increased.",
+      "biological_pathway": "Thyroid hormone synthesis, secretion, and pituitary feedback suppression.",
+      "interpretation": "This pattern supports thyrotoxic hormone excess and is especially relevant when TSH is suppressed.",
+      "implications": "Further work should focus on cause and persistence, not on re-proving whether a thyrotoxic biochemical state is present.",
+      "supporting_marker_roles": "TSH corroborates biological hormone excess, while free T4 helps determine whether the pattern is T3-predominant or broader."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_free_t4_low_thyroid_hormone_deficiency",
+    "signal_id": "signal_free_t4_low",
+    "research_domain": "thyroid",
+    "primary_marker": {
+      "biomarker_id": "free_t4",
+      "rationale": "Free T4 directly reflects circulating thyroxine availability and low values are central to thyroid hormone deficiency assessment.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "tsh",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "TSH is the key differential marker for distinguishing primary hypothyroid physiology from central or contextual patterns."
+      },
+      {
+        "biomarker_id": "free_t3",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low free T3 can corroborate broader thyroid hormone deficiency when free T4 is low."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_primary_or_central_thyroid_hormone_deficiency",
+        "rank": 1,
+        "physiological_claim": "Low free T4 may reflect clinically meaningful thyroid hormone deficiency, with TSH determining whether primary or central patterns are more plausible.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Etiologic classification requires TSH and clinical context and should not be inferred from free T4 alone."
+        ],
+        "missing_data": {
+          "policy": "Interpret low free T4 with TSH before assigning primary versus central thyroid disease."
+        },
+        "supporting_marker_refs": [
+          "tsh",
+          "free_t3"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_nonthyroidal_illness_context",
+            "marker_reference": "tsh",
+            "contradiction_rationale": "A low or normal TSH in severe illness may reflect non-thyroidal illness rather than uncomplicated primary hypothyroidism.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_broader_hypothyroid_biochemical_pattern",
+        "rank": 2,
+        "physiological_claim": "Low free T4 with low free T3 may indicate a broader hypothyroid biochemical pattern rather than an isolated thyroid test fluctuation.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This remains a biochemical interpretation and does not establish symptom severity."
+        ],
+        "missing_data": {
+          "policy": "Confirm the panel and interpret alongside TSH rather than using free T4 alone to infer severity."
+        },
+        "supporting_marker_refs": [
+          "free_t3"
+        ],
+        "contradiction_markers": []
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_primary_or_central_thyroid_hormone_deficiency",
+        "hyp_broader_hypothyroid_biochemical_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_free_t4_with_tsh",
+        "rationale": "Repeat free T4 with TSH helps confirm biochemical thyroid hormone deficiency and improve pattern classification."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_free_t4_low_with_tsh_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low free T4 coincides with high TSH, as this more strongly supports primary thyroid hormone deficiency.",
+        "conditions": [
+          {
+            "metric_id": "tsh",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_hypothyroidism_guideline_2014"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_hypothyroidism_guideline_2014",
+          "paper_title": "Guidelines for the Treatment of Hypothyroidism: Prepared by the American Thyroid Association Task Force on Thyroid Hormone Replacement",
+          "journal": "Thyroid",
+          "year": 2014
+        }
+      ],
+      "physiological_claim": "Low free T4 is a central laboratory feature of thyroid hormone deficiency and must be interpreted with TSH to classify the pattern accurately.",
+      "threshold_notes": "Free T4 should be interpreted using laboratory reference intervals and in combination with TSH rather than through ungoverned severity cutoffs."
+    },
+    "narrative": {
+      "mechanism": "Free T4 falls when thyroid hormone production, release, or central stimulation is inadequate relative to physiologic needs.",
+      "biological_pathway": "Thyroid hormone synthesis and hypothalamic-pituitary-thyroid axis regulation.",
+      "interpretation": "A low free T4 is a meaningful thyroid deficiency signal, but the TSH response determines whether the pattern is primary or more central or contextual.",
+      "implications": "The most important next step is correct pattern classification rather than overinterpreting a single low free T4 result in isolation.",
+      "supporting_marker_roles": "TSH is the key differential marker for pattern classification, while free T3 corroborates a broader low-thyroid-hormone state."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_free_t4_high_thyrotoxicosis_context",
+    "signal_id": "signal_free_t4_high",
+    "research_domain": "thyroid",
+    "primary_marker": {
+      "biomarker_id": "free_t4",
+      "rationale": "High free T4 supports excess circulating thyroxine and is a key laboratory signal of thyrotoxic physiology when interpreted with TSH.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "free_t3",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High free T3 corroborates that elevated free T4 is part of a broader thyrotoxic hormone pattern rather than an isolated single-analyte anomaly."
+      },
+      {
+        "biomarker_id": "tsh",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "TSH is the key differential marker that distinguishes primary thyrotoxic physiology from discordant assay, central, or medication-related patterns."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_thyrotoxic_hormone_excess",
+        "rank": 1,
+        "physiological_claim": "High free T4 may reflect thyrotoxic hormone excess, especially when TSH is suppressed.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "The hormone pattern does not by itself determine the specific etiology of thyrotoxicosis."
+        ],
+        "missing_data": {
+          "policy": "Interpret high free T4 with TSH and broader thyroid context before assigning a cause."
+        },
+        "supporting_marker_refs": [
+          "free_t3",
+          "tsh"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_nonsuppressed_tsh_high_ft4",
+            "marker_reference": "tsh",
+            "contradiction_rationale": "A non-suppressed TSH should prompt review for assay interference, central causes, or discordant physiology rather than simple primary thyrotoxicosis.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_exogenous_or_contextual_thyroxine_excess",
+        "rank": 2,
+        "physiological_claim": "High free T4 may reflect exogenous or contextual thyroxine excess rather than autonomous thyroid overproduction in some settings.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Medication and assay context can materially affect interpretation."
+        ],
+        "missing_data": {
+          "policy": "Review thyroid medication use and assay context where the biochemical pattern and phenotype do not align."
+        },
+        "supporting_marker_refs": [
+          "tsh"
+        ],
+        "contradiction_markers": []
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_thyrotoxic_hormone_excess",
+        "hyp_exogenous_or_contextual_thyroxine_excess"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_free_t4_with_tsh",
+        "rationale": "Repeat free T4 with TSH helps confirm a true thyrotoxic biochemical pattern and identify discordant results that need broader review."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_free_t4_high_with_tsh_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high free T4 coincides with low TSH, as this more strongly supports thyrotoxic physiology.",
+        "conditions": [
+          {
+            "metric_id": "tsh",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_ata_hyperthyroidism_2016"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_ata_hyperthyroidism_2016",
+          "paper_title": "2016 American Thyroid Association Guidelines for Diagnosis and Management of Hyperthyroidism and Other Causes of Thyrotoxicosis",
+          "journal": "Thyroid",
+          "year": 2016
+        }
+      ],
+      "physiological_claim": "High free T4 with suppressed TSH is a standard biochemical pattern of thyrotoxicosis.",
+      "threshold_notes": "Hormone-pattern interpretation should remain laboratory anchored and should not assume severity from free T4 magnitude alone."
+    },
+    "narrative": {
+      "mechanism": "Free T4 rises when thyroxine production, release, or administration exceeds physiologic requirements.",
+      "biological_pathway": "Thyroid hormone secretion and pituitary negative feedback regulation.",
+      "interpretation": "This pattern supports excess thyroid hormone availability, particularly when TSH is concurrently suppressed.",
+      "implications": "The next task is to identify cause and consistency rather than to infer severity purely from the free T4 value.",
+      "supporting_marker_roles": "Free T3 corroborates a broader thyrotoxic hormone pattern, while TSH is the critical differential marker separating primary thyrotoxicosis from discordant alternatives."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_free_testosterone_low_androgen_deficiency_context",
+    "signal_id": "signal_free_testosterone_low",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "free_testosterone",
+      "rationale": "Free testosterone reflects the unbound biologically active fraction of testosterone and low values can support clinically relevant androgen deficiency when measured and interpreted appropriately.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "total_testosterone",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low total testosterone corroborates that low free testosterone may reflect reduced androgen availability rather than isolated assay variation."
+      },
+      {
+        "biomarker_id": "lh",
+        "expected_direction": "either",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "LH helps distinguish primary gonadal failure from central or binding-related explanations when free testosterone is low."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_biochemical_androgen_deficiency",
+        "rank": 1,
+        "physiological_claim": "Low free testosterone may support biochemical androgen deficiency when the result is reproducible and aligns with the broader androgen profile.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Clinical diagnosis should not be made from a single isolated value without symptoms and repeat confirmation."
+        ],
+        "missing_data": {
+          "policy": "Confirm morning repeat testing and review symptoms, total testosterone, and SHBG before concluding clinically meaningful androgen deficiency."
+        },
+        "supporting_marker_refs": [
+          "total_testosterone",
+          "lh"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_preserved_total_testosterone",
+            "marker_reference": "total_testosterone",
+            "contradiction_rationale": "A preserved total testosterone can indicate that altered SHBG or assay context is driving the low free testosterone result.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_shbg_related_reduction_in_free_fraction",
+        "rank": 2,
+        "physiological_claim": "Low free testosterone may be driven by elevated SHBG reducing the unbound androgen fraction rather than severe suppression of testosterone production alone.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Binding-protein effects can materially change free testosterone interpretation."
+        ],
+        "missing_data": {
+          "policy": "Assess SHBG and repeat testing before attributing low free testosterone to primary gonadal failure."
+        },
+        "supporting_marker_refs": [
+          "lh"
+        ],
+        "contradiction_markers": []
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_biochemical_androgen_deficiency",
+        "hyp_shbg_related_reduction_in_free_fraction"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_morning_testosterone_panel_with_lh",
+        "rationale": "Repeat morning androgen testing with LH helps confirm whether low free testosterone reflects reproducible androgen deficiency and improves primary-versus-central pattern classification."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_free_testosterone_low_with_total_testosterone_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low free testosterone coincides with low total testosterone, as this more strongly supports a true low-androgen state.",
+        "conditions": [
+          {
+            "metric_id": "total_testosterone",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_testosterone_guideline_2018"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_testosterone_guideline_2018",
+          "paper_title": "Testosterone Therapy in Men With Hypogonadism: An Endocrine Society Clinical Practice Guideline",
+          "journal": "Journal of Clinical Endocrinology and Metabolism",
+          "year": 2018
+        }
+      ],
+      "physiological_claim": "Low free testosterone can support androgen deficiency, but diagnosis requires appropriate measurement, repeat confirmation, and clinical correlation.",
+      "threshold_notes": "Laboratory-specific reference ranges and assay method matter; interpretation should not rely on a single uncontextualized low result."
+    },
+    "narrative": {
+      "mechanism": "Free testosterone falls when testosterone production is reduced, SHBG is elevated, or both occur together.",
+      "biological_pathway": "Testicular or ovarian androgen production, SHBG binding, and circulating bioavailable androgen fraction.",
+      "interpretation": "A low free testosterone result is meaningful when reproducible and aligned with the wider androgen profile, but isolated results can be misleading.",
+      "implications": "Repeat morning testing with SHBG and total testosterone usually determines whether the pattern reflects true androgen deficiency or altered binding context.",
+      "supporting_marker_roles": "Total testosterone corroborates reduced androgen supply, while LH is the differential marker used to separate primary gonadal failure from central or binding-related explanations."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_free_testosterone_high_androgen_excess_context",
+    "signal_id": "signal_free_testosterone_high",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "free_testosterone",
+      "rationale": "High free testosterone supports increased bioavailable androgen exposure and is a core biochemical marker of androgen excess when assay quality is adequate.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "total_testosterone",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Raised total testosterone corroborates that high free testosterone reflects a genuine androgen-excess biochemical pattern."
+      },
+      {
+        "biomarker_id": "dhea_s",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "DHEA-S helps distinguish adrenal-weighted androgen excess from low-SHBG-mediated amplification of the free testosterone result."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_biochemical_androgen_excess",
+        "rank": 1,
+        "physiological_claim": "High free testosterone may support biochemical androgen excess, particularly when corroborated by high total testosterone or low SHBG.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "The biochemical pattern does not by itself specify the source of androgen excess."
+        ],
+        "missing_data": {
+          "policy": "Review total testosterone, SHBG, menstrual or reproductive context, and adrenal-source markers before inferring etiology."
+        },
+        "supporting_marker_refs": [
+          "total_testosterone",
+          "dhea_s"
+        ],
+        "contradiction_markers": []
+      },
+      {
+        "hypothesis_id": "hyp_shbg_reduction_amplifying_free_androgen",
+        "rank": 2,
+        "physiological_claim": "High free testosterone may be disproportionately amplified by low SHBG even when total testosterone elevation is less marked.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Low SHBG can materially influence calculated or measured free testosterone interpretation."
+        ],
+        "missing_data": {
+          "policy": "Assess metabolic context and SHBG before attributing the pattern solely to marked androgen overproduction."
+        },
+        "supporting_marker_refs": [
+          "dhea_s"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_total_testosterone",
+            "marker_reference": "total_testosterone",
+            "contradiction_rationale": "A normal total testosterone suggests that altered binding protein context may be contributing materially to the free testosterone result.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_biochemical_androgen_excess",
+        "hyp_shbg_reduction_amplifying_free_androgen"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_androgen_profile_with_dhea_s",
+        "rationale": "Repeat androgen testing with DHEA-S helps determine whether high free testosterone reflects reproducible androgen excess with adrenal contribution or primarily altered binding context."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_free_testosterone_high_with_total_testosterone_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high free testosterone coincides with high total testosterone, as this more strongly supports true biochemical androgen excess.",
+        "conditions": [
+          {
+            "metric_id": "total_testosterone",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_pcos_guideline_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_pcos_guideline_2023",
+          "paper_title": "Recommendations from the 2023 International Evidence-based Guideline for the Assessment and Management of Polycystic Ovary Syndrome",
+          "journal": "European Journal of Endocrinology",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "Free testosterone is a clinically relevant biochemical marker of androgen excess when measured or calculated using appropriate methods.",
+      "threshold_notes": "Interpretation should remain assay-aware and laboratory anchored, especially when SHBG is abnormal."
+    },
+    "narrative": {
+      "mechanism": "Free testosterone rises when androgen production increases, SHBG falls, or both occur together.",
+      "biological_pathway": "Androgen synthesis, SHBG binding, and circulating bioavailable androgen exposure.",
+      "interpretation": "This pattern supports biochemical androgen excess but still requires source and context clarification.",
+      "implications": "The main interpretive task is to distinguish true androgen overproduction from low-SHBG amplification of free androgen exposure.",
+      "supporting_marker_roles": "Total testosterone corroborates androgen excess, while DHEA-S is the differential marker that helps separate adrenal-weighted excess from low-SHBG amplification."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_free_testosterone_pct_low_shbg_mediated_reduced_free_androgen_fraction",
+    "signal_id": "signal_free_testosterone_pct_low",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "free_testosterone_pct",
+      "rationale": "Free testosterone percentage reflects the proportion of circulating testosterone that is unbound or bioavailable and can fall when SHBG is elevated or androgen production is reduced.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "shbg",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "High SHBG can directly reduce the proportion of circulating testosterone that remains bioavailable."
+      },
+      {
+        "biomarker_id": "free_testosterone",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Measured free testosterone helps distinguish a clinically important low bioavailable androgen state from a percentage-only shift driven by binding arithmetic."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_high_shbg_reducing_free_fraction",
+        "rank": 1,
+        "physiological_claim": "Low free testosterone percentage may primarily reflect SHBG-mediated reduction in the unbound testosterone fraction.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This is a binding-protein interpretation and should not be treated as a stand-alone gonadal diagnosis."
+        ],
+        "missing_data": {
+          "policy": "Review SHBG and total testosterone together before inferring biologically meaningful androgen deficiency."
+        },
+        "supporting_marker_refs": [
+          "shbg",
+          "free_testosterone"
+        ],
+        "contradiction_markers": []
+      },
+      {
+        "hypothesis_id": "hyp_reduced_bioavailable_androgen_exposure",
+        "rank": 2,
+        "physiological_claim": "Low free testosterone percentage may support reduced bioavailable androgen exposure when the broader androgen profile is also low.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "The clinical importance of percentage-based measures depends on assay method and surrounding androgen data."
+        ],
+        "missing_data": {
+          "policy": "Use repeat androgen testing and SHBG context before drawing stronger conclusions from the percentage alone."
+        },
+        "supporting_marker_refs": [
+          "free_testosterone"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_preserved_free_testosterone_absolute",
+            "marker_reference": "free_testosterone",
+            "contradiction_rationale": "A preserved absolute free testosterone weakens a strong biological-deficiency interpretation from the percentage metric alone.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_high_shbg_reducing_free_fraction",
+        "hyp_reduced_bioavailable_androgen_exposure"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_free_fraction_with_measured_free_testosterone",
+        "rationale": "Repeating the free-fraction assessment with measured free testosterone helps determine whether the percentage abnormality reflects true androgen underexposure or only binding-related arithmetic distortion."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_free_testosterone_pct_low_with_shbg_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low free testosterone percentage coincides with high SHBG, as this more strongly supports a binding-mediated reduction in free androgen fraction.",
+        "conditions": [
+          {
+            "metric_id": "shbg",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_testosterone_guideline_2018"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_testosterone_guideline_2018",
+          "paper_title": "Testosterone Therapy in Men With Hypogonadism: An Endocrine Society Clinical Practice Guideline",
+          "journal": "Journal of Clinical Endocrinology and Metabolism",
+          "year": 2018
+        }
+      ],
+      "physiological_claim": "Free testosterone interpretation depends on the interaction between testosterone concentration and SHBG, not on the percentage metric alone.",
+      "threshold_notes": "Percentage-based androgen metrics should remain assay-aware and laboratory anchored and should not be used as universal stand-alone diagnostic cutoffs."
+    },
+    "narrative": {
+      "mechanism": "The free testosterone percentage falls when a greater share of circulating testosterone is bound to SHBG or when overall androgen supply is reduced.",
+      "biological_pathway": "Hormone-binding protein regulation and the circulating proportion of bioavailable testosterone.",
+      "interpretation": "A low free testosterone percentage is most useful for identifying binding-related distortion or reduced bioavailable androgen fraction, not for assigning etiology on its own.",
+      "implications": "Interpretation should focus on SHBG and the wider androgen panel rather than on the percentage in isolation.",
+      "supporting_marker_roles": "SHBG explains the binding mechanism, while measured free testosterone is the differential marker that separates a meaningful low bioavailable androgen state from a percentage-only shift."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_free_testosterone_pct_high_low_shbg_mediated_high_free_androgen_fraction",
+    "signal_id": "signal_free_testosterone_pct_high",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "free_testosterone_pct",
+      "rationale": "A high free testosterone percentage suggests that a larger proportion of circulating testosterone is bioavailable, often because SHBG is reduced or androgen production is increased.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "shbg",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low SHBG can materially increase the proportion of circulating testosterone that remains bioavailable."
+      },
+      {
+        "biomarker_id": "free_testosterone",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Measured free testosterone helps distinguish true increased bioavailable androgen exposure from a percentage-only shift driven mainly by low SHBG."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_low_shbg_increasing_free_fraction",
+        "rank": 1,
+        "physiological_claim": "High free testosterone percentage may primarily reflect reduced SHBG increasing the circulating free androgen fraction.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This does not by itself establish a specific endocrine disorder."
+        ],
+        "missing_data": {
+          "policy": "Review SHBG and broader metabolic context before attributing the pattern to severe androgen overproduction."
+        },
+        "supporting_marker_refs": [
+          "shbg",
+          "free_testosterone"
+        ],
+        "contradiction_markers": []
+      },
+      {
+        "hypothesis_id": "hyp_increased_bioavailable_androgen_exposure",
+        "rank": 2,
+        "physiological_claim": "High free testosterone percentage may support increased bioavailable androgen exposure when the broader androgen profile is also elevated.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Percentage-based androgen measures should be interpreted with assay and binding-protein awareness."
+        ],
+        "missing_data": {
+          "policy": "Use total testosterone, SHBG, and clinical context before inferring a defined androgen-excess disorder."
+        },
+        "supporting_marker_refs": [
+          "free_testosterone"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_free_testosterone_absolute",
+            "marker_reference": "free_testosterone",
+            "contradiction_rationale": "A normal absolute free testosterone weakens a strong interpretation of biologically important androgen excess from the percentage metric alone.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_low_shbg_increasing_free_fraction",
+        "hyp_increased_bioavailable_androgen_exposure"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_free_fraction_with_measured_free_testosterone",
+        "rationale": "Repeating the free-fraction assessment with measured free testosterone helps determine whether the percentage abnormality reflects true increased bioavailable androgen exposure or only low-SHBG arithmetic distortion."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_free_testosterone_pct_high_with_shbg_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high free testosterone percentage coincides with low SHBG, as this more strongly supports a binding-mediated increase in free androgen fraction.",
+        "conditions": [
+          {
+            "metric_id": "shbg",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_pcos_guideline_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_pcos_guideline_2023",
+          "paper_title": "Recommendations from the 2023 International Evidence-based Guideline for the Assessment and Management of Polycystic Ovary Syndrome",
+          "journal": "European Journal of Endocrinology",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "Bioavailable androgen exposure depends strongly on SHBG and should be interpreted with the broader androgen profile rather than from a percentage metric alone.",
+      "threshold_notes": "High free testosterone percentage should remain laboratory and assay anchored and is not a stand-alone disease threshold."
+    },
+    "narrative": {
+      "mechanism": "The free testosterone percentage rises when SHBG falls or when androgen production is increased sufficiently to expand the unbound fraction.",
+      "biological_pathway": "Binding-protein regulation and circulating bioavailable androgen distribution.",
+      "interpretation": "A high free testosterone percentage supports increased free androgen exposure but needs SHBG-aware interpretation.",
+      "implications": "The key distinction is whether the pattern is mainly binding-protein driven or part of a broader androgen excess state.",
+      "supporting_marker_roles": "Low SHBG explains the binding mechanism, while measured free testosterone is the differential marker that separates true increased bioavailable androgen exposure from a percentage-only shift."
+    }
+  }
+]

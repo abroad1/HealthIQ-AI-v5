@@ -1,0 +1,143 @@
+{
+  "investigation_spec_contract_version": "3.0.0",
+  "spec_id": "inv_fai_low_reduced_free_androgen_availability",
+  "signal_id": "signal_fai_low",
+  "research_domain": "hormonal",
+  "primary_marker": {
+    "biomarker_id": "fai",
+    "rationale": "A low free androgen index can support reduced bioavailable androgen exposure but should be interpreted with sex, age, SHBG, and assay context.",
+    "signal_system": "hormonal"
+  },
+  "trigger_direction": "low",
+  "activation": {
+    "activation_logic": "lab_range_exceeded",
+    "activation_config": {
+      "enable_upper_bound": false,
+      "upper_bound_state": "suboptimal",
+      "enable_lower_bound": true,
+      "lower_bound_state": "suboptimal"
+    }
+  },
+  "states": {
+    "baseline_state": "suboptimal",
+    "escalation_state": "at_risk"
+  },
+  "supporting_markers": [
+    {
+      "biomarker_id": "total_testosterone",
+      "expected_direction": "low",
+      "role": "corroborator",
+      "relationship_kind": "corroboration",
+      "availability": "common",
+      "rationale": "Low total testosterone can corroborate a reduced androgen availability pattern."
+    },
+    {
+      "biomarker_id": "shbg",
+      "expected_direction": "high",
+      "role": "mechanism_marker",
+      "relationship_kind": "mechanism",
+      "availability": "common",
+      "rationale": "High SHBG can reduce calculated free androgen availability even when total testosterone is less abnormal."
+    }
+  ],
+  "hypotheses": [
+    {
+      "hypothesis_id": "hyp_reduced_bioavailable_androgen_state",
+      "rank": 1,
+      "physiological_claim": "Low FAI may reflect reduced bioavailable androgen exposure when total testosterone is low or SHBG is elevated.",
+      "evidence_strength": "moderate",
+      "caveats": [
+        "Clinical relevance depends on sex, age, symptoms, and assay method."
+      ],
+      "missing_data": {
+        "policy": "Interpret with SHBG and total testosterone rather than relying on FAI alone."
+      },
+      "supporting_marker_refs": [
+        "total_testosterone",
+        "shbg"
+      ],
+      "contradiction_markers": [
+        {
+          "contradiction_id": "ctr_preserved_total_testosterone",
+          "marker_reference": "total_testosterone",
+          "contradiction_rationale": "A preserved total testosterone alongside elevated SHBG suggests that low FAI reflects binding-protein distortion rather than primary androgen deficiency, weakening a true hypogonadal interpretation.",
+          "contradiction_strength": "moderate"
+        }
+      ]
+    },
+    {
+      "hypothesis_id": "hyp_shbg_driven_reduction_in_free_fraction",
+      "rank": 2,
+      "physiological_claim": "Low FAI may be disproportionately driven by elevated SHBG rather than marked suppression of androgen production.",
+      "evidence_strength": "moderate",
+      "caveats": [
+        "Binding-protein effects can shift the calculated index without indicating primary gonadal failure by themselves."
+      ],
+      "missing_data": {
+        "policy": "Assess SHBG drivers and repeat the androgen profile if the clinical picture and calculated index are discordant."
+      },
+      "supporting_marker_refs": [
+        "shbg"
+      ],
+      "contradiction_markers": [
+        {
+          "contradiction_id": "ctr_preserved_free_testosterone",
+          "marker_reference": "free_testosterone",
+          "contradiction_rationale": "A preserved measured free testosterone weakens a strong interpretation of biologically important androgen deficiency from low FAI alone.",
+          "contradiction_strength": "moderate"
+        }
+      ]
+    }
+  ],
+  "hypothesis_ranking": {
+    "ordered_hypothesis_ids": [
+      "hyp_reduced_bioavailable_androgen_state",
+      "hyp_shbg_driven_reduction_in_free_fraction"
+    ]
+  },
+  "confirmatory_tests": [
+    {
+      "test_id": "ct_repeat_fai_with_total_testosterone_and_shbg",
+      "rationale": "Reassessing total testosterone and SHBG helps determine whether low FAI reflects true androgen deficiency or altered binding-protein context."
+    }
+  ],
+  "override_rules": [
+    {
+      "rule_id": "or_fai_low_with_shbg_high",
+      "resulting_state": "at_risk",
+      "description": "Escalate when low FAI coincides with high SHBG, as this more strongly supports a true reduction in calculated free androgen availability.",
+      "conditions": [
+        {
+          "metric_id": "shbg",
+          "operator": ">",
+          "condition_type": "all_of",
+          "comparator_type": "lab_range_boundary",
+          "boundary": "above_max"
+        }
+      ],
+      "source_refs": [
+        "source_testosterone_guideline_2018"
+      ]
+    }
+  ],
+  "evidence": {
+    "evidence_strength": "moderate",
+    "sources": [
+      {
+        "source_id": "source_testosterone_guideline_2018",
+        "paper_title": "Testosterone Therapy in Men With Hypogonadism: An Endocrine Society Clinical Practice Guideline",
+        "journal": "Journal of Clinical Endocrinology and Metabolism",
+        "year": 2018
+      }
+    ],
+    "physiological_claim": "Calculated androgen bioavailability depends on both total testosterone and SHBG, so isolated index abnormalities require contextual interpretation.",
+    "threshold_notes": "Interpretation should remain laboratory-specific and should not assume universal diagnostic thresholds for FAI across populations."
+  },
+  "narrative": {
+    "mechanism": "FAI falls when total testosterone drops, SHBG rises, or both occur together.",
+    "biological_pathway": "Androgen production, circulating binding to SHBG, and calculated free androgen availability.",
+    "interpretation": "A low FAI can support reduced androgen availability but is not sufficient on its own to define gonadal failure or clinically significant androgen deficiency.",
+    "implications": "The next step is to determine whether the index is being driven mainly by low androgen production or by altered SHBG.",
+    "supporting_marker_roles": "Total testosterone corroborates low androgen production, while SHBG explains binding-related distortion of the calculated free fraction."
+  }
+}

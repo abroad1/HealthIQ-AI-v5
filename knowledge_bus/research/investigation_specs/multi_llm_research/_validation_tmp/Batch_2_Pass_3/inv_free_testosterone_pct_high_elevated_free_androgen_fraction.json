@@ -1,0 +1,143 @@
+{
+  "investigation_spec_contract_version": "3.0.0",
+  "spec_id": "inv_free_testosterone_pct_high_elevated_free_androgen_fraction",
+  "signal_id": "signal_free_testosterone_pct_high",
+  "research_domain": "hormonal",
+  "primary_marker": {
+    "biomarker_id": "free_testosterone_pct",
+    "rationale": "A high free testosterone percentage suggests that a larger proportion of circulating testosterone is bioavailable, often because SHBG is reduced or androgen production is increased.",
+    "signal_system": "hormonal"
+  },
+  "trigger_direction": "high",
+  "activation": {
+    "activation_logic": "lab_range_exceeded",
+    "activation_config": {
+      "enable_upper_bound": true,
+      "upper_bound_state": "suboptimal",
+      "enable_lower_bound": false,
+      "lower_bound_state": "suboptimal"
+    }
+  },
+  "states": {
+    "baseline_state": "suboptimal",
+    "escalation_state": "at_risk"
+  },
+  "supporting_markers": [
+    {
+      "biomarker_id": "shbg",
+      "expected_direction": "low",
+      "role": "mechanism_marker",
+      "relationship_kind": "mechanism",
+      "availability": "common",
+      "rationale": "Low SHBG can materially increase the percentage of testosterone that is free or bioavailable."
+    },
+    {
+      "biomarker_id": "total_testosterone",
+      "expected_direction": "high",
+      "role": "corroborator",
+      "relationship_kind": "corroboration",
+      "availability": "common",
+      "rationale": "High total testosterone can corroborate a broader androgen excess pattern when the free percentage is also elevated."
+    }
+  ],
+  "hypotheses": [
+    {
+      "hypothesis_id": "hyp_low_shbg_increasing_free_fraction",
+      "rank": 1,
+      "physiological_claim": "High free testosterone percentage may primarily reflect reduced SHBG increasing the circulating free androgen fraction.",
+      "evidence_strength": "moderate",
+      "caveats": [
+        "This does not by itself establish a specific endocrine disorder."
+      ],
+      "missing_data": {
+        "policy": "Review SHBG and broader metabolic context before attributing the pattern to severe androgen overproduction."
+      },
+      "supporting_marker_refs": [
+        "shbg",
+        "total_testosterone"
+      ],
+      "contradiction_markers": [
+        {
+          "contradiction_id": "ctr_normal_or_high_shbg_weakens_binding_frame",
+          "marker_reference": "shbg",
+          "contradiction_rationale": "A normal or elevated SHBG directly weakens an SHBG-reduction explanation for high free testosterone percentage, redirecting interpretation toward possible increased androgen production rather than a binding-protein mechanism.",
+          "contradiction_strength": "strong"
+        }
+      ]
+    },
+    {
+      "hypothesis_id": "hyp_increased_bioavailable_androgen_exposure",
+      "rank": 2,
+      "physiological_claim": "High free testosterone percentage may support increased bioavailable androgen exposure when the broader androgen profile is also elevated.",
+      "evidence_strength": "moderate",
+      "caveats": [
+        "Percentage-based androgen measures should be interpreted with assay and binding-protein awareness."
+      ],
+      "missing_data": {
+        "policy": "Use total testosterone, SHBG, and clinical context before inferring a defined androgen-excess disorder."
+      },
+      "supporting_marker_refs": [
+        "total_testosterone"
+      ],
+      "contradiction_markers": [
+        {
+          "contradiction_id": "ctr_normal_free_testosterone_absolute",
+          "marker_reference": "free_testosterone",
+          "contradiction_rationale": "A normal absolute free testosterone weakens a strong interpretation of biologically important androgen excess from the percentage metric alone.",
+          "contradiction_strength": "moderate"
+        }
+      ]
+    }
+  ],
+  "hypothesis_ranking": {
+    "ordered_hypothesis_ids": [
+      "hyp_low_shbg_increasing_free_fraction",
+      "hyp_increased_bioavailable_androgen_exposure"
+    ]
+  },
+  "confirmatory_tests": [
+    {
+      "test_id": "ct_repeat_free_fraction_androgen_profile",
+      "rationale": "Reassessment with SHBG and the broader androgen panel helps determine whether high free testosterone percentage reflects low-SHBG binding effects or true androgen excess."
+    }
+  ],
+  "override_rules": [
+    {
+      "rule_id": "or_free_testosterone_pct_high_with_shbg_low",
+      "resulting_state": "at_risk",
+      "description": "Escalate when high free testosterone percentage coincides with low SHBG, as this more strongly supports a binding-mediated increase in free androgen fraction.",
+      "conditions": [
+        {
+          "metric_id": "shbg",
+          "operator": "<",
+          "condition_type": "all_of",
+          "comparator_type": "lab_range_boundary",
+          "boundary": "below_min"
+        }
+      ],
+      "source_refs": [
+        "source_pcos_guideline_2023"
+      ]
+    }
+  ],
+  "evidence": {
+    "evidence_strength": "moderate",
+    "sources": [
+      {
+        "source_id": "source_pcos_guideline_2023",
+        "paper_title": "Recommendations from the 2023 International Evidence-based Guideline for the Assessment and Management of Polycystic Ovary Syndrome",
+        "journal": "European Journal of Endocrinology",
+        "year": 2023
+      }
+    ],
+    "physiological_claim": "Bioavailable androgen exposure depends strongly on SHBG and should be interpreted with the broader androgen profile rather than from a percentage metric alone.",
+    "threshold_notes": "High free testosterone percentage should remain laboratory and assay anchored and is not a stand-alone disease threshold."
+  },
+  "narrative": {
+    "mechanism": "The free testosterone percentage rises when SHBG falls or when androgen production is increased sufficiently to expand the unbound fraction.",
+    "biological_pathway": "Binding-protein regulation and circulating bioavailable androgen distribution.",
+    "interpretation": "A high free testosterone percentage can indicate increased free androgen exposure but requires SHBG-aware interpretation and should not be read as a stand-alone indicator of androgen excess.",
+    "implications": "The key distinction is whether the pattern is mainly binding-protein driven or part of a broader androgen excess state.",
+    "supporting_marker_roles": "Low SHBG explains a binding-mediated rise in free androgen fraction, while total testosterone corroborates broader androgen excess."
+  }
+}
