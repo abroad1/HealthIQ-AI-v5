@@ -7,10 +7,14 @@
 # - v2.x investigation YAML/JSON artifacts without investigation_spec_contract_version remain governed by v2.
 # - New LLM research output MUST set investigation_spec_contract_version: "3.0.0" and satisfy this schema.
 # Enforced by: backend/scripts/validate_investigation_spec.py
+#
+# Lock rationale (v3.0.0): contract is in active use across gold fixtures and batch JSON;
+# trigger_direction uses the same vocabulary as signal_library schema 2.0.0 (high / low /
+# bidirectional / context_dependent), not legacy "both".
 
 schema_name: "HealthIQ Investigation Spec Schema"
 schema_version: "3.0.0"
-status: "DRAFT"
+status: "LOCKED"
 predecessor_schema_file: "investigation_spec_schema_v2.yaml"
 
 description: >
@@ -83,7 +87,7 @@ field_rules:
 
   trigger_direction:
     type: string
-    allowed: [high, low, both]
+    allowed: [high, low, bidirectional, context_dependent]
 
   activation:
     type: object

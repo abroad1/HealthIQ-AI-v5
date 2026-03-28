@@ -25,7 +25,8 @@ DEFAULT_AUDIT_PATH = ROOT / "backend" / "artifacts" / "investigation_spec_audit.
 _V3_CONTRACT = "3.0.0"
 _V2_CONTRACT = "2.0.0"
 
-_TRIGGERS = frozenset({"high", "low", "both"})
+# Investigation v3 trigger vocabulary — aligned with signal_library 2.0.0 (not legacy "both").
+_V3_TRIGGER_DIRECTION = frozenset({"high", "low", "bidirectional", "context_dependent"})
 _EXPECTED = frozenset({"high", "low", "either", "any"})
 _ROLES_V3 = frozenset(
     {
@@ -174,6 +175,12 @@ def _validate_v3(doc: dict[str, Any], errors: list[str]) -> None:
     missing = _V3_REQUIRED_ROOT - doc.keys()
     if missing:
         errors.append(f"v3: missing required root keys: {sorted(missing)}")
+
+    td_root = doc.get("trigger_direction")
+    if td_root not in _V3_TRIGGER_DIRECTION:
+        errors.append(
+            f"v3: trigger_direction must be one of {sorted(_V3_TRIGGER_DIRECTION)}"
+        )
 
     sm = doc.get("supporting_markers")
     biomarker_ids: set[str] = set()
