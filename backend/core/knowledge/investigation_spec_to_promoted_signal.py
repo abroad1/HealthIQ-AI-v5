@@ -152,8 +152,14 @@ def _translate_single_spec_to_signal(inv: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("research_domain required")
 
     td = inv.get("trigger_direction")
-    if td not in ("high", "low", "both"):
-        raise ValueError("trigger_direction must be high, low, or both")
+    if td not in ("high", "low", "bidirectional", "context_dependent"):
+        raise ValueError(
+            "trigger_direction must be high, low, bidirectional, or context_dependent"
+        )
+    # Promoted signal intelligence v1 retains high | low | both; dual-edge v3 values map to both.
+    promoted_td = (
+        "both" if td in ("bidirectional", "context_dependent") else str(td)
+    )
 
     return {
         "signal_id": sig_id,
@@ -163,7 +169,7 @@ def _translate_single_spec_to_signal(inv: dict[str, Any]) -> dict[str, Any]:
             "biomarker_id": biomarker_id.strip(),
             "rationale": rationale,
         },
-        "trigger_direction": td,
+        "trigger_direction": promoted_td,
         "activation": copy.deepcopy(inv.get("activation")),
         "states": copy.deepcopy(inv.get("states")),
         "supporting_markers": supporting_markers,
