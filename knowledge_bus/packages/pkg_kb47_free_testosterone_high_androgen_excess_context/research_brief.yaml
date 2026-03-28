@@ -1,0 +1,17 @@
+research_domain: hormonal
+sources:
+- source_id: source_pcos_guideline_2023
+  paper_title: Recommendations from the 2023 International Evidence-based Guideline
+    for the Assessment and Management of Polycystic Ovary Syndrome
+  journal: European Journal of Endocrinology
+  year: 2023
+biomarkers:
+- dhea
+- free_testosterone
+- testosterone
+derived_metrics: []
+physiological_claim: Free testosterone is a clinically relevant biochemical marker
+  of androgen excess when measured or calculated using appropriate methods.
+evidence_strength: moderate
+research_summary: Interpretation should remain assay-aware and laboratory anchored,
+  especially when SHBG is abnormal.

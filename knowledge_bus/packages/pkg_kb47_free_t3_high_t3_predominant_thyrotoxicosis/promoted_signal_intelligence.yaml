@@ -1,0 +1,91 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
+translation:
+  source: investigation_spec_v3
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_free_t3_high_t3_predominant_thyrotoxicosis
+  signal_id: signal_free_t3_high
+signals:
+- signal_id: signal_free_t3_high
+  research_domain: thyroid
+  signal_system: hormonal
+  primary_metric:
+    biomarker_id: free_t3
+    rationale: High free T3 supports increased thyroid hormone activity and can be
+      particularly informative in T3-predominant thyrotoxic states.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: tsh
+    expected_direction: low
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Suppressed TSH strongly corroborates biologically significant thyroid
+      hormone excess.
+  - biomarker_id: free_t4
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Free T4 helps distinguish T3-predominant thyrotoxicosis from broader
+      thyrotoxic patterns.
+  contradiction_markers:
+  - contradiction_id: ctr_nonsuppressed_tsh
+    marker_reference: tsh
+    contradiction_rationale: A non-suppressed TSH weakens a straightforward thyrotoxicosis
+      interpretation and should prompt assay or alternative-context review.
+    contradiction_strength: strong
+  - contradiction_id: ctr_elevated_free_t4_challenges_early_partial
+    marker_reference: free_t4
+    contradiction_rationale: A concurrent clearly elevated free T4 challenges an early
+      or partial hyperthyroid interpretation, as co-elevation of both T3 and T4 with
+      suppressed TSH is more consistent with overt thyrotoxicosis than a partial or
+      early biochemical pattern.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Repeat the thyroid panel and assess antibodies or imaging only where clinically
+      indicated.
+    - Use TSH and broader thyroid context before assigning a specific thyrotoxic cause.
+  confidence:
+    evidence_strength: consensus
+  override_rules:
+  - rule_id: or_free_t3_high_with_tsh_low
+    resulting_state: at_risk
+    description: Escalate when high free T3 coincides with low TSH, as this more strongly
+      supports biologically significant thyrotoxicosis.
+    conditions:
+    - metric_id: tsh
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_ata_hyperthyroidism_2016
+  evidence:
+    evidence_strength: consensus
+    physiological_claim: High T3 with suppressed TSH is a recognized biochemical pattern
+      of thyrotoxicosis and may occur with T3 predominance.
+    threshold_notes: Interpretation should be based on laboratory abnormality and
+      hormonal patterning rather than assumed universal severity cutoffs.
+    sources:
+    - source_id: source_ata_hyperthyroidism_2016
+      paper_title: 2016 American Thyroid Association Guidelines for Diagnosis and
+        Management of Hyperthyroidism and Other Causes of Thyrotoxicosis
+      journal: Thyroid
+      year: 2016
+  confirmatory_test_refs:
+  - test_id: ct_repeat_thyroid_panel_with_tsh
+    rationale: Repeat thyroid testing with TSH helps confirm a true thyrotoxic hormone
+      pattern and its biochemical consistency.

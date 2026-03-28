@@ -1,0 +1,95 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb47_free_testosterone_low_androgen_deficiency_context
+translation:
+  source: investigation_spec_v3
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_free_testosterone_low_androgen_deficiency_context
+  signal_id: signal_free_testosterone_low
+signals:
+- signal_id: signal_free_testosterone_low
+  research_domain: hormonal
+  signal_system: hormonal
+  primary_metric:
+    biomarker_id: free_testosterone
+    rationale: Free testosterone reflects the unbound biologically active fraction
+      of testosterone and low values can support clinically relevant androgen deficiency
+      when measured and interpreted appropriately.
+  trigger_direction: low
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: false
+      upper_bound_state: suboptimal
+      enable_lower_bound: true
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: testosterone
+    expected_direction: low
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Low total testosterone corroborates that low free testosterone may
+      reflect reduced androgen availability rather than isolated assay variation.
+  - biomarker_id: lh
+    expected_direction: either
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: LH helps distinguish primary gonadal failure from central or binding-related
+      explanations when free testosterone is low.
+  contradiction_markers:
+  - contradiction_id: ctr_preserved_total_testosterone
+    marker_reference: testosterone
+    contradiction_rationale: A preserved total testosterone can indicate that altered
+      SHBG or assay context is driving the low free testosterone result.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_low_lh_challenges_shbg_binding_frame
+    marker_reference: lh
+    contradiction_rationale: A clearly low LH challenges a binding-protein driven
+      explanation for low free testosterone and redirects interpretation toward central
+      or secondary gonadal suppression, where SHBG alone would not account for the
+      pattern.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Assess SHBG and repeat testing before attributing low free testosterone to primary
+      gonadal failure.
+    - Confirm morning repeat testing and review symptoms, total testosterone, and
+      SHBG before concluding clinically meaningful androgen deficiency.
+  confidence:
+    evidence_strength: consensus
+  override_rules:
+  - rule_id: or_free_testosterone_low_with_total_testosterone_low
+    resulting_state: at_risk
+    description: Escalate when low free testosterone coincides with low total testosterone,
+      as this more strongly supports a true low-androgen state.
+    conditions:
+    - metric_id: testosterone
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_testosterone_guideline_2018
+  evidence:
+    evidence_strength: consensus
+    physiological_claim: Low free testosterone can support androgen deficiency, but
+      diagnosis requires appropriate measurement, repeat confirmation, and clinical
+      correlation.
+    threshold_notes: Laboratory-specific reference ranges and assay method matter;
+      interpretation should not rely on a single uncontextualized low result.
+    sources:
+    - source_id: source_testosterone_guideline_2018
+      paper_title: 'Testosterone Therapy in Men With Hypogonadism: An Endocrine Society
+        Clinical Practice Guideline'
+      journal: Journal of Clinical Endocrinology and Metabolism
+      year: 2018
+  confirmatory_test_refs:
+  - test_id: ct_repeat_morning_testosterone_panel_with_lh
+    rationale: Repeat morning androgen testing with LH helps confirm whether low free
+      testosterone reflects reproducible androgen deficiency and improves primary-versus-central
+      pattern classification.
