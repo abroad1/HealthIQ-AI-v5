@@ -447,7 +447,7 @@ research_domain: "metabolic"
 primary_marker:
   biomarker_id: "ldh"
   rationale: "Lactate Dehydrogenase is a cellular biomarker released during tissue damage."
-  signal_system: "other"
+  signal_system: "metabolic"
 trigger_direction: "high"
 activation:
   activation_logic: "lab_range_exceeded"
@@ -955,7 +955,7 @@ research_domain: "inflammatory"
 primary_marker:
   biomarker_id: "esr"
   rationale: "ESR is a surrogate for systemic inflammation burden."
-  signal_system: "other"
+  signal_system: "inflammatory"
 trigger_direction: "high"
 activation:
   activation_logic: "lab_range_exceeded"
@@ -1291,7 +1291,7 @@ research_domain: "renal"
 primary_marker:
   biomarker_id: "bicarbonate"
   rationale: "Bicarbonate is the primary buffer; low levels suggest acidosis."
-  signal_system: "other"
+  signal_system: "renal"
 trigger_direction: "low"
 activation:
   activation_logic: "lab_range_exceeded"

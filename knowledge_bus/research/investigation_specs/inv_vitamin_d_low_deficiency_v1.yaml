@@ -5,7 +5,7 @@ primary_marker:
   biomarker_id: vitamin_d
   rationale: 25-hydroxyvitamin D is the best indicator of total body Vitamin D stores,
     essential for calcium homeostasis and bone health.
-  signal_system: other
+  signal_system: nutritional
 trigger_direction: low
 activation:
   activation_logic: lab_range_exceeded

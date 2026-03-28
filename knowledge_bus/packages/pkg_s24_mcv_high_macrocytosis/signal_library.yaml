@@ -9,7 +9,7 @@ signals:
   name: MCV High
   description: Mean Corpuscular Volume reflects red cell size. High MCV is a sensitive
     indicator of B12/Folate deficiency or marrow stress.
-  system: other
+  system: hematologic
   primary_metric: mcv
   supporting_metrics: &id001
   - vitamin_b12

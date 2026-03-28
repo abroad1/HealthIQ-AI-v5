@@ -63,6 +63,7 @@ field_rules:
     required_fields:
       - biomarker_id
       - rationale
+      - signal_system
     field_rules:
       biomarker_id:
         type: string
@@ -72,7 +73,7 @@ field_rules:
         min_length: 10
       signal_system:
         type: string
-        required: false
+        required: true
         allowed:
           - metabolic
           - lipid_transport
@@ -83,6 +84,10 @@ field_rules:
           - hematologic
           - hormonal
           - mitochondrial
+          - endocrine
+          - bone
+          - mineral
+          - nutritional
           - other
 
   trigger_direction:

@@ -77,6 +77,10 @@ signal_field_rules:
       - hematologic
       - hormonal
       - mitochondrial
+      - endocrine
+      - bone
+      - mineral
+      - nutritional
       - other
   primary_metric:
     type: string

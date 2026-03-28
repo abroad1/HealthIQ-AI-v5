@@ -71,6 +71,10 @@ signal_system_allowed:
   - hematologic
   - hormonal
   - mitochondrial
+  - endocrine
+  - bone
+  - mineral
+  - nutritional
   - other
 
 primary_metric_required_fields:
