@@ -25,7 +25,7 @@ DEFAULT_AUDIT_PATH = ROOT / "backend" / "artifacts" / "investigation_spec_audit.
 _V3_CONTRACT = "3.0.0"
 _V2_CONTRACT = "2.0.0"
 
-_TRIGGERS = frozenset({"high", "low", "both"})
+_TRIGGERS = frozenset({"high", "low", "bidirectional", "context_dependent"})
 _EXPECTED = frozenset({"high", "low", "either", "any"})
 _ROLES_V3 = frozenset(
     {

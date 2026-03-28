@@ -10,7 +10,7 @@
 
 schema_name: "HealthIQ Investigation Spec Schema"
 schema_version: "3.0.0"
-status: "DRAFT"
+status: "LOCKED"
 predecessor_schema_file: "investigation_spec_schema_v2.yaml"
 
 description: >
@@ -83,7 +83,7 @@ field_rules:
 
   trigger_direction:
     type: string
-    allowed: [high, low, both]
+    allowed: [high, low, bidirectional, context_dependent]
 
   activation:
     type: object

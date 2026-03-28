@@ -463,6 +463,7 @@ Promotion is allowed only if:
 * the canonical validator returns PASS
 * the research brief is valid
 * the signal library is valid
+* where the package opts into the intelligence model contract, `intelligence_validation` is `PASS` or `SKIP` — a `FAIL` result blocks promotion
 * the interim promotion process in §5 is followed where lifecycle control is unavailable
 
 No package may be treated as promoted merely because it exists in the package store.
