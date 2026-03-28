@@ -1,0 +1,4050 @@
+[
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_fsh_high_primary_gonadal_failure",
+    "signal_id": "signal_fsh_high",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "fsh",
+      "rationale": "High FSH usually reflects reduced gonadal negative feedback and is most informative when interpreted with sex steroids and related gonadotropins.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "estradiol",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low estradiol supports ovarian insufficiency when FSH is raised in an appropriate female reproductive context."
+      },
+      {
+        "biomarker_id": "lh",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Concurrent LH elevation supports loss of gonadal negative feedback across the reproductive axis."
+      },
+      {
+        "biomarker_id": "prolactin",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "High prolactin would favor central suppression or mixed pituitary dysfunction rather than isolated primary gonadal failure."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_primary_ovarian_insufficiency",
+        "rank": 1,
+        "physiological_claim": "High FSH may reflect primary ovarian insufficiency or menopausal-range ovarian failure when estradiol is low and the pattern is persistent.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Interpretation depends on age, symptoms, cycle status, and repeat confirmation where uncertainty remains."
+        ],
+        "missing_data": {
+          "policy": "Review age, menstrual history, estradiol, and repeat gonadotropins before assigning durable ovarian failure."
+        },
+        "supporting_marker_refs": [
+          "estradiol",
+          "lh",
+          "prolactin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_prolactin_high",
+            "marker_reference": "prolactin",
+            "contradiction_rationale": "Marked hyperprolactinemia shifts interpretation toward central reproductive-axis suppression rather than isolated ovarian failure.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_primary_testicular_failure_context",
+        "rank": 2,
+        "physiological_claim": "High FSH may also reflect impaired spermatogenic feedback in primary testicular dysfunction when inhibin-related restraint is reduced.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This frame is more relevant in male fertility assessment and should not be overgeneralized from a single result."
+        ],
+        "missing_data": {
+          "policy": "Use sex-specific context, testosterone, and semen or inhibin-linked data before favoring a primary testicular frame."
+        },
+        "supporting_marker_refs": [
+          "lh",
+          "prolactin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_testosterone_preserved",
+            "marker_reference": "testosterone",
+            "contradiction_rationale": "Preserved testosterone and absent broader gonadotropin disturbance weaken a clinically significant primary gonadal failure interpretation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_primary_ovarian_insufficiency",
+        "hyp_primary_testicular_failure_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_fsh_with_estradiol",
+        "rationale": "Repeat FSH with estradiol or other sex-steroid context helps confirm persistent loss of gonadal negative feedback."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_fsh_high_with_estradiol_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high FSH coincides with low estradiol, as this more strongly supports reduced ovarian feedback.",
+        "conditions": [
+          {
+            "metric_id": "estradiol",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_poi_guideline_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_poi_guideline_2024",
+          "paper_title": "Evidence-based guideline: Premature Ovarian Insufficiency",
+          "journal": "ASRM / ESHRE",
+          "year": 2024
+        },
+        {
+          "source_id": "source_endocrine_gonadotropin_2024",
+          "paper_title": "Society for Endocrinology guideline for understanding, diagnosing and treating female hypogonadism",
+          "journal": "Clinical Endocrinology",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Persistently elevated FSH is a standard biochemical feature of reduced gonadal feedback, particularly in ovarian insufficiency and menopause-related states.",
+      "threshold_notes": "Use laboratory abnormality and clinical context rather than imposing ungoverned universal cut-offs across assay platforms and sexes."
+    },
+    "narrative": {
+      "mechanism": "FSH rises when gonadal peptide and sex-steroid feedback to the pituitary is reduced.",
+      "biological_pathway": "Hypothalamic-pituitary-gonadal axis feedback regulation involving gonadotropin secretion and gonadal steroidogenesis.",
+      "interpretation": "A raised FSH is generally a feedback-loss signal rather than a stand-alone diagnosis and becomes more informative when paired with estradiol, LH, and prolactin.",
+      "implications": "The main task is to distinguish primary gonadal failure from central or transient causes of cycle disturbance.",
+      "supporting_marker_roles": "Estradiol corroborates reduced ovarian output, LH supports axis-level loss of feedback, and prolactin helps distinguish primary gonadal failure from central suppression."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_fsh_low_hypogonadotropic_suppression",
+    "signal_id": "signal_fsh_low",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "fsh",
+      "rationale": "Low FSH can indicate reduced pituitary gonadotropin output but requires sex-steroid and pituitary-context interpretation.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "lh",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low LH alongside low FSH supports a broader hypogonadotropic pattern rather than isolated assay variation."
+      },
+      {
+        "biomarker_id": "estradiol",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low estradiol or other sex steroids can reflect downstream reduced gonadotropin drive."
+      },
+      {
+        "biomarker_id": "prolactin",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "High prolactin supports hypothalamic-pituitary suppression as an alternative explanation for low FSH."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_central_hypogonadism",
+        "rank": 1,
+        "physiological_claim": "Low FSH may reflect central hypogonadotropic hypogonadism when LH is also low and downstream sex steroids are reduced.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Single measurements can be affected by cycle phase, acute illness, and sampling context."
+        ],
+        "missing_data": {
+          "policy": "Review LH, sex steroids, and pituitary context before concluding persistent central hypogonadism."
+        },
+        "supporting_marker_refs": [
+          "lh",
+          "estradiol",
+          "prolactin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_fsh_lh_divergence",
+            "marker_reference": "lh",
+            "contradiction_rationale": "A discordant or high LH weakens a straightforward central hypogonadotropic interpretation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_functional_axis_suppression",
+        "rank": 2,
+        "physiological_claim": "Low FSH may reflect functional hypothalamic or illness-related reproductive-axis suppression rather than fixed pituitary disease.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Context such as undernutrition, stress, and chronic disease matters substantially and is not captured by FSH alone."
+        ],
+        "missing_data": {
+          "policy": "Assess weight change, energy deficit, stressors, and prolactin before favoring structural pituitary disease."
+        },
+        "supporting_marker_refs": [
+          "prolactin",
+          "estradiol"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_prolactin_normal_sex_steroids_normal",
+            "marker_reference": "estradiol",
+            "contradiction_rationale": "Normal downstream sex-steroid status weakens a clinically significant suppression frame from isolated low FSH.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_central_hypogonadism",
+        "hyp_functional_axis_suppression"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_fsh_lh_pituitary_context",
+        "rationale": "Repeat FSH and LH with sex steroids and prolactin helps distinguish persistent central hypogonadism from transient suppression."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_fsh_low_with_lh_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low FSH coincides with low LH, as this more strongly supports reduced pituitary gonadotropin output.",
+        "conditions": [
+          {
+            "metric_id": "lh",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_endocrine_gonadotropin_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_endocrine_gonadotropin_2024",
+          "paper_title": "Society for Endocrinology guideline for understanding, diagnosing and treating female hypogonadism",
+          "journal": "Clinical Endocrinology",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Low FSH is more consistent with reduced hypothalamic-pituitary drive when it occurs alongside low LH and low downstream sex steroids, but single isolated values require contextual review.",
+      "threshold_notes": "Interpretation should remain context-aware and not rely on an isolated low FSH value without reproductive-axis correlation."
+    },
+    "narrative": {
+      "mechanism": "FSH falls when hypothalamic GnRH drive or pituitary gonadotroph output is reduced.",
+      "biological_pathway": "Central regulation of gonadotropin secretion within the hypothalamic-pituitary-gonadal axis.",
+      "interpretation": "Low FSH is usually a central-pattern clue and is rarely interpretable in isolation.",
+      "implications": "The key distinction is between functional suppression and persistent central gonadotropin deficiency.",
+      "supporting_marker_roles": "LH corroborates broad gonadotropin suppression, estradiol shows downstream impact, and prolactin helps identify a common pituitary-suppression differential."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_globulin_high_polyclonal_inflammatory_hypergammaglobulinemia",
+    "signal_id": "signal_globulin_high",
+    "research_domain": "immunologic",
+    "primary_marker": {
+      "biomarker_id": "globulin",
+      "rationale": "Raised calculated globulin usually reflects increased immunoglobulin burden or reduced albumin proportion and needs protein-fraction context.",
+      "signal_system": "inflammatory"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Raised CRP supports inflammatory or infectious polyclonal immune activation when globulin is high."
+      },
+      {
+        "biomarker_id": "albumin",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low albumin commonly accompanies inflammatory protein shifts and can accentuate a raised globulin fraction."
+      },
+      {
+        "biomarker_id": "serum_protein_electrophoresis",
+        "expected_direction": "either",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Serum protein electrophoresis helps distinguish a broad polyclonal rise from a monoclonal paraprotein pattern."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_polyclonal_hypergammaglobulinemia",
+        "rank": 1,
+        "physiological_claim": "High globulin may reflect polyclonal hypergammaglobulinemia in chronic inflammatory, autoimmune, infectious, or liver-related states.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Calculated globulin is a screening clue and does not identify the specific immunoglobulin fraction that is increased."
+        ],
+        "missing_data": {
+          "policy": "Use serum protein electrophoresis and inflammatory or liver context before assigning a specific cause."
+        },
+        "supporting_marker_refs": [
+          "crp",
+          "albumin",
+          "serum_protein_electrophoresis"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_monoclonal_band",
+            "marker_reference": "serum_protein_electrophoresis",
+            "contradiction_rationale": "A monoclonal pattern on electrophoresis redirects interpretation away from broad polyclonal immune activation.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_chronic_liver_or_autoimmune_protein_shift",
+        "rank": 2,
+        "physiological_claim": "High globulin may also reflect chronic liver disease or autoimmune-associated protein shifts rather than isolated infection alone.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This interpretation remains nonspecific until immunoglobulin fractions and hepatic context are known."
+        ],
+        "missing_data": {
+          "policy": "Review liver enzymes, albumin, and electrophoresis before favoring a liver- or autoimmune-weighted frame."
+        },
+        "supporting_marker_refs": [
+          "albumin",
+          "serum_protein_electrophoresis"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_crp_normal_and_m_spike",
+            "marker_reference": "crp",
+            "contradiction_rationale": "A normal inflammatory profile does not exclude chronic immune disease but weakens an acute inflammatory interpretation.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_polyclonal_hypergammaglobulinemia",
+        "hyp_chronic_liver_or_autoimmune_protein_shift"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_serum_protein_electrophoresis",
+        "rationale": "Serum protein electrophoresis helps determine whether a raised globulin fraction is polyclonal or monoclonal."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_globulin_high_with_albumin_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high globulin coincides with low albumin, as this more strongly supports a clinically meaningful protein-pattern shift.",
+        "conditions": [
+          {
+            "metric_id": "albumin",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_polyclonal_hypergammaglobulinemia_2021"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_polyclonal_hypergammaglobulinemia_2021",
+          "paper_title": "Polyclonal hypergammaglobulinaemia",
+          "journal": "The Lancet Haematology",
+          "year": 2021
+        }
+      ],
+      "physiological_claim": "Raised globulin can reflect polyclonal immunoglobulin expansion or broader protein-pattern shifts seen in chronic inflammatory, autoimmune, infectious, and liver conditions.",
+      "threshold_notes": "Calculated globulin should be treated as a contextual protein-abnormality signal, not as a disease-specific threshold marker."
+    },
+    "narrative": {
+      "mechanism": "Globulin rises when circulating immunoglobulin and other non-albumin serum proteins are increased relative to albumin.",
+      "biological_pathway": "Humoral immune activation, hepatic protein production, and albumin-globulin balance.",
+      "interpretation": "A high globulin value is usually a prompt for protein-fraction clarification rather than a specific diagnosis.",
+      "implications": "The next step is to decide whether the pattern is polyclonal, monoclonal, inflammatory, hepatic, or mixed.",
+      "supporting_marker_roles": "CRP supports inflammatory activation, albumin corroborates a shifted protein pattern, and serum protein electrophoresis provides the key differential between polyclonal and monoclonal states."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_globulin_high_monoclonal_gammopathy_signal",
+    "signal_id": "signal_globulin_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "globulin",
+      "rationale": "A markedly raised globulin fraction can indicate excess immunoglobulin production and should prompt discrimination between monoclonal and polyclonal patterns.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "total_protein",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High total protein supports that the raised globulin fraction reflects a genuine protein excess state."
+      },
+      {
+        "biomarker_id": "albumin",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low albumin may accentuate the protein gap and increase suspicion that the abnormality is clinically meaningful."
+      },
+      {
+        "biomarker_id": "serum_protein_electrophoresis",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "A monoclonal band on electrophoresis distinguishes paraproteinemia from reactive polyclonal globulin elevation."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_monoclonal_paraprotein_pattern",
+        "rank": 1,
+        "physiological_claim": "High globulin may reflect a monoclonal paraprotein pattern when the protein gap is accompanied by electrophoretic evidence of a discrete band.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "A raised globulin alone does not establish plasma-cell or lymphoplasmacytic disease."
+        ],
+        "missing_data": {
+          "policy": "Use serum protein electrophoresis and immunofixation before assigning a monoclonal disorder frame."
+        },
+        "supporting_marker_refs": [
+          "total_protein",
+          "serum_protein_electrophoresis",
+          "albumin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_polyclonal_pattern",
+            "marker_reference": "serum_protein_electrophoresis",
+            "contradiction_rationale": "A broad polyclonal pattern on electrophoresis weakens a monoclonal gammopathy interpretation.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_malignancy_screening_signal",
+        "rank": 2,
+        "physiological_claim": "High globulin may function as a screening signal for paraproteinemia that warrants hematologic clarification rather than immediate disease labeling.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Most raised globulin results are not monoclonal malignancy, so confirmatory testing is essential."
+        ],
+        "missing_data": {
+          "policy": "Do not infer myeloma or related disease from globulin alone without electrophoresis and clinical correlation."
+        },
+        "supporting_marker_refs": [
+          "serum_protein_electrophoresis",
+          "total_protein"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_crp_high",
+            "marker_reference": "crp",
+            "contradiction_rationale": "A strongly inflammatory context may favor polyclonal immune activation over a primary paraprotein explanation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_monoclonal_paraprotein_pattern",
+        "hyp_malignancy_screening_signal"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_spep_with_immunofixation",
+        "rationale": "Serum protein electrophoresis with immunofixation is the key test to confirm or refute a monoclonal globulin pattern."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_globulin_high_with_total_protein_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high globulin coincides with high total protein, as this strengthens the likelihood of a meaningful protein-excess state.",
+        "conditions": [
+          {
+            "metric_id": "total_protein",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_polyclonal_hypergammaglobulinemia_2021"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_polyclonal_hypergammaglobulinemia_2021",
+          "paper_title": "Polyclonal hypergammaglobulinaemia",
+          "journal": "The Lancet Haematology",
+          "year": 2021
+        },
+        {
+          "source_id": "source_hypogammaglobulinemia_2022",
+          "paper_title": "Practical guidance for the diagnosis and management of secondary hypogammaglobulinemia",
+          "journal": "Journal of Allergy and Clinical Immunology",
+          "year": 2022
+        }
+      ],
+      "physiological_claim": "A raised globulin fraction can be the first laboratory clue to paraproteinemia, but confirmatory protein-fraction testing is required to distinguish this from reactive polyclonal states.",
+      "threshold_notes": "Globulin magnitude alone should not be used as a disease-defining threshold for monoclonal gammopathy."
+    },
+    "narrative": {
+      "mechanism": "Monoclonal immunoglobulin excess increases the non-albumin serum protein fraction and can widen the protein gap.",
+      "biological_pathway": "Clonal plasma-cell or B-cell immunoglobulin production versus reactive polyclonal antibody expansion.",
+      "interpretation": "This is a screening frame for abnormal protein composition, not proof of a plasma-cell neoplasm.",
+      "implications": "The core decision is whether electrophoresis shows a discrete monoclonal component or a broad polyclonal increase.",
+      "supporting_marker_roles": "Total protein corroborates protein excess, albumin helps define the protein gap, and electrophoresis is the central differential test."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_globulin_low_hypogammaglobulinemia_or_protein_loss",
+    "signal_id": "signal_globulin_low",
+    "research_domain": "immunologic",
+    "primary_marker": {
+      "biomarker_id": "globulin",
+      "rationale": "Low calculated globulin can indicate reduced immunoglobulin burden or broader protein loss, but it is not specific without fractionated testing.",
+      "signal_system": "inflammatory"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "albumin",
+        "expected_direction": "either",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Albumin pattern helps distinguish isolated low globulin from generalized protein loss or synthetic failure."
+      },
+      {
+        "biomarker_id": "igg",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "specialist",
+        "rationale": "Low IgG supports a genuine hypogammaglobulinemic state when globulin is reduced."
+      },
+      {
+        "biomarker_id": "urine_protein_creatinine_ratio",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Proteinuria favors renal protein loss as an alternative explanation for low globulin rather than isolated antibody deficiency."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_hypogammaglobulinemia",
+        "rank": 1,
+        "physiological_claim": "Low globulin may reflect hypogammaglobulinemia when immunoglobulin fractions are reduced, especially in primary or secondary antibody deficiency states.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Calculated globulin is an imperfect surrogate and should not replace direct immunoglobulin measurement."
+        ],
+        "missing_data": {
+          "policy": "Measure immunoglobulins and review medication or hematologic context before assigning antibody deficiency."
+        },
+        "supporting_marker_refs": [
+          "igg",
+          "albumin",
+          "urine_protein_creatinine_ratio"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_proteinuria_high",
+            "marker_reference": "urine_protein_creatinine_ratio",
+            "contradiction_rationale": "Substantial proteinuria redirects interpretation toward renal protein loss rather than isolated immunoglobulin deficiency.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_protein_loss_or_reduced_synthesis",
+        "rank": 2,
+        "physiological_claim": "Low globulin may also arise from protein-losing states or reduced hepatic protein synthesis rather than a primary immune defect.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Albumin and liver context materially influence this interpretation."
+        ],
+        "missing_data": {
+          "policy": "Review albumin, liver enzymes, renal protein loss, and direct immunoglobulins before narrowing the cause."
+        },
+        "supporting_marker_refs": [
+          "albumin",
+          "urine_protein_creatinine_ratio"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_igg_low",
+            "marker_reference": "igg",
+            "contradiction_rationale": "Markedly low IgG makes a true hypogammaglobulinemic frame more likely than isolated synthetic underproduction.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_hypogammaglobulinemia",
+        "hyp_protein_loss_or_reduced_synthesis"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_quantitative_immunoglobulins",
+        "rationale": "Quantitative immunoglobulins clarify whether a low globulin fraction reflects true antibody deficiency or a non-immune protein disturbance."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_globulin_low_with_igg_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low globulin coincides with low IgG, as this more strongly supports a true hypogammaglobulinemic state.",
+        "conditions": [
+          {
+            "metric_id": "igg",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_hypogammaglobulinemia_2022"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_hypogammaglobulinemia_2022",
+          "paper_title": "Practical guidance for the diagnosis and management of secondary hypogammaglobulinemia",
+          "journal": "Journal of Allergy and Clinical Immunology",
+          "year": 2022
+        }
+      ],
+      "physiological_claim": "Low globulin can support reduced immunoglobulin burden, but protein loss and reduced synthesis remain important alternatives that require discrimination.",
+      "threshold_notes": "Calculated globulin should be treated as a triage marker and not as a stand-alone diagnostic threshold for immunodeficiency."
+    },
+    "narrative": {
+      "mechanism": "Globulin falls when immunoglobulin levels are reduced or when proteins are lost or underproduced.",
+      "biological_pathway": "Humoral immunoglobulin production, hepatic protein synthesis, and renal or enteric protein loss.",
+      "interpretation": "A low globulin result is best treated as a prompt for direct immunoglobulin and protein-loss assessment.",
+      "implications": "The key distinction is between antibody deficiency and non-immune protein loss or synthetic impairment.",
+      "supporting_marker_roles": "IgG corroborates true hypogammaglobulinemia, albumin helps define global protein disturbance, and urine protein assessment differentiates renal protein loss."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_hba1c_pct_high_chronic_hyperglycemia_diabetes",
+    "signal_id": "signal_hba1c_pct_high",
+    "research_domain": "metabolic",
+    "primary_marker": {
+      "biomarker_id": "hba1c_pct",
+      "rationale": "High HbA1c reflects increased hemoglobin glycation over the lifespan of circulating erythrocytes and is a core marker of chronic hyperglycemia.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "fasting_glucose",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High fasting glucose supports a true chronic glycemic abnormality when HbA1c is elevated."
+      },
+      {
+        "biomarker_id": "triglycerides",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Hypertriglyceridemia can support an insulin-resistant metabolic context associated with elevated HbA1c."
+      },
+      {
+        "biomarker_id": "hemoglobin",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Anemia or altered red-cell turnover can distort HbA1c interpretation and helps distinguish true glycemia from measurement bias."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_diabetes_range_chronic_hyperglycemia",
+        "rank": 1,
+        "physiological_claim": "High HbA1c may reflect chronic hyperglycemia in the prediabetes-to-diabetes spectrum when supported by glucose-based measures.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Diagnosis should follow accepted laboratory and clinical standards rather than HbA1c alone in discordant situations."
+        ],
+        "missing_data": {
+          "policy": "Use glucose correlation and repeat testing where results and phenotype do not align."
+        },
+        "supporting_marker_refs": [
+          "fasting_glucose",
+          "triglycerides",
+          "hemoglobin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_anemia_or_hemolysis",
+            "marker_reference": "hemoglobin",
+            "contradiction_rationale": "Low hemoglobin or abnormal erythrocyte turnover can make HbA1c less reliable as a pure glycemia marker.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_insulin_resistance_metabolic_pattern",
+        "rank": 2,
+        "physiological_claim": "High HbA1c may also support a broader insulin-resistant metabolic pattern rather than isolated fasting dysglycemia alone.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Metabolic syndrome features strengthen context but do not replace diagnostic glycemic criteria."
+        ],
+        "missing_data": {
+          "policy": "Review glucose measures, lipids, and adiposity context before overextending HbA1c into a syndrome diagnosis."
+        },
+        "supporting_marker_refs": [
+          "triglycerides",
+          "fasting_glucose",
+          "hemoglobin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_glucose_normal",
+            "marker_reference": "fasting_glucose",
+            "contradiction_rationale": "Normal glucose-based measures weaken a straightforward chronic hyperglycemia interpretation and should prompt discordance review.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_diabetes_range_chronic_hyperglycemia",
+        "hyp_insulin_resistance_metabolic_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_hba1c_with_glucose_confirmation",
+        "rationale": "Repeat HbA1c with fasting glucose or another glucose-based measure helps confirm true chronic hyperglycemia in discordant cases."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_hba1c_high_with_fasting_glucose_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high HbA1c coincides with high fasting glucose, as this more strongly supports genuine chronic hyperglycemia.",
+        "conditions": [
+          {
+            "metric_id": "fasting_glucose",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_ada_diabetes_2025"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_ada_diabetes_2025",
+          "paper_title": "Standards of Care in Diabetes—2025: Diagnosis and Classification of Diabetes",
+          "journal": "Diabetes Care",
+          "year": 2025
+        },
+        {
+          "source_id": "source_hba1c_lab_2023",
+          "paper_title": "Guidelines and recommendations for laboratory analysis in the diagnosis and management of diabetes mellitus",
+          "journal": "Diabetes Care",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "Elevated HbA1c is a guideline-supported indicator of chronic hyperglycemia and is widely used for diabetes diagnosis and risk stratification when assay conditions are appropriate.",
+      "threshold_notes": "Use laboratory-reported abnormality and recognized diagnostic standards; do not invent additional disease cut-offs beyond governed criteria."
+    },
+    "narrative": {
+      "mechanism": "HbA1c rises as hemoglobin is exposed to higher average glucose concentrations over erythrocyte lifespan.",
+      "biological_pathway": "Nonenzymatic glycation of hemoglobin during chronic glucose exposure.",
+      "interpretation": "A high HbA1c generally supports chronic dysglycemia, but red-cell disorders can affect accuracy.",
+      "implications": "The core question is whether the elevation reflects true glycemia, discordant red-cell biology, or both.",
+      "supporting_marker_roles": "Fasting glucose corroborates glycemia, triglycerides provide metabolic context, and hemoglobin helps detect red-cell conditions that can bias HbA1c."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_hba1c_pct_high_red_cell_turnover_bias_or_iron_deficiency",
+    "signal_id": "signal_hba1c_pct_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "hba1c_pct",
+      "rationale": "A high HbA1c can occasionally overstate glycemia when erythrocyte survival is prolonged or iron-restricted states are present.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "hemoglobin",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent anemia can increase suspicion that HbA1c may be biased by altered erythrocyte biology."
+      },
+      {
+        "biomarker_id": "ferritin",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low ferritin supports iron deficiency, a recognized context in which HbA1c can be discordantly higher."
+      },
+      {
+        "biomarker_id": "fasting_glucose",
+        "expected_direction": "either",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Glucose discordance helps distinguish true chronic hyperglycemia from a red-cell-mediated overestimation of HbA1c."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_iron_deficiency_related_hba1c_bias",
+        "rank": 1,
+        "physiological_claim": "High HbA1c may be disproportionately elevated in iron deficiency states relative to contemporaneous glucose values.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This does not exclude real dysglycemia and should not be used to dismiss hyperglycemia when glucose is also abnormal."
+        ],
+        "missing_data": {
+          "policy": "Review ferritin and glucose correlation before assuming the HbA1c value fully reflects average glycemia."
+        },
+        "supporting_marker_refs": [
+          "hemoglobin",
+          "ferritin",
+          "fasting_glucose"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_glucose_high",
+            "marker_reference": "fasting_glucose",
+            "contradiction_rationale": "Clearly high glucose values argue that the HbA1c elevation is not purely artifactual.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_prolonged_erythrocyte_survival_effect",
+        "rank": 2,
+        "physiological_claim": "High HbA1c may reflect prolonged erythrocyte exposure to glucose in selected red-cell states even when glycemia is less abnormal than the HbA1c suggests.",
+        "evidence_strength": "exploratory",
+        "caveats": [
+          "This frame is a discordance interpretation and should remain cautious unless corroborated by clinical and hematologic context."
+        ],
+        "missing_data": {
+          "policy": "Use alternate glucose-based measures when HbA1c and direct glycemia disagree materially."
+        },
+        "supporting_marker_refs": [
+          "fasting_glucose",
+          "hemoglobin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_ferritin_normal_glucose_high",
+            "marker_reference": "ferritin",
+            "contradiction_rationale": "Normal iron stores and concordantly high glucose weaken a red-cell-bias interpretation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_iron_deficiency_related_hba1c_bias",
+        "hyp_prolonged_erythrocyte_survival_effect"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_glucose_based_confirmation_for_hba1c_discordance",
+        "rationale": "Direct glucose-based confirmation helps distinguish true hyperglycemia from HbA1c overestimation in red-cell disorders."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_hba1c_high_with_ferritin_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high HbA1c coincides with low ferritin, as this strengthens suspicion of iron-related distortion or mixed interpretation.",
+        "conditions": [
+          {
+            "metric_id": "ferritin",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_hba1c_lab_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_hba1c_lab_2023",
+          "paper_title": "Guidelines and recommendations for laboratory analysis in the diagnosis and management of diabetes mellitus",
+          "journal": "Diabetes Care",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "HbA1c can be biased upward in some conditions that alter erythrocyte lifespan or iron status, so discordant results should be checked against direct glycemic measures.",
+      "threshold_notes": "This frame is for interpretation of discordance, not for introducing alternate HbA1c diagnostic thresholds."
+    },
+    "narrative": {
+      "mechanism": "HbA1c depends on both glycemia and erythrocyte lifespan, so prolonged exposure of red cells to glucose can raise the measured fraction.",
+      "biological_pathway": "Interaction between glucose-dependent hemoglobin glycation and erythrocyte turnover biology.",
+      "interpretation": "This is a cautionary frame for discordant HbA1c results, not a replacement for diabetes diagnostic criteria.",
+      "implications": "When HbA1c appears higher than glucose measures suggest, iron status and red-cell biology should be reviewed.",
+      "supporting_marker_roles": "Hemoglobin and ferritin support a hematologic explanation for discordance, while fasting glucose provides the essential differential against true chronic hyperglycemia."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_hba1c_pct_low_shortened_red_cell_survival_or_low_glycemia",
+    "signal_id": "signal_hba1c_pct_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "hba1c_pct",
+      "rationale": "Low HbA1c may reflect genuinely low average glycemia or shortened erythrocyte survival that limits hemoglobin glycation time.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "fasting_glucose",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low fasting glucose supports genuinely low average glycemia when HbA1c is reduced."
+      },
+      {
+        "biomarker_id": "reticulocyte_count",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "specialist",
+        "rationale": "Reticulocytosis supports increased red-cell turnover, which can lower HbA1c independently of glucose exposure."
+      },
+      {
+        "biomarker_id": "hemoglobin",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Anemia helps distinguish low HbA1c caused by altered erythrocyte biology from physiologically low glycemia."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_shortened_erythrocyte_survival",
+        "rank": 1,
+        "physiological_claim": "Low HbA1c may reflect shortened erythrocyte survival or recent blood loss or hemolysis rather than unusually low long-term glucose exposure.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This interpretation requires hematologic correlation and should not be inferred from HbA1c alone."
+        ],
+        "missing_data": {
+          "policy": "Review reticulocytes, hemoglobin, and any bleeding or hemolysis context before treating a low HbA1c as metabolically reassuring."
+        },
+        "supporting_marker_refs": [
+          "reticulocyte_count",
+          "hemoglobin",
+          "fasting_glucose"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_glucose_low",
+            "marker_reference": "fasting_glucose",
+            "contradiction_rationale": "Concordantly low glucose supports a true low-glycemia interpretation rather than isolated red-cell artifact.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_true_low_average_glycemia",
+        "rank": 2,
+        "physiological_claim": "Low HbA1c may also represent genuinely low average glycemia when direct glucose measures are similarly low and red-cell indices are otherwise unremarkable.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Clinical significance depends on treatment status, symptoms, and the broader metabolic context."
+        ],
+        "missing_data": {
+          "policy": "Correlate with glucose data and treatment exposure before concluding that low HbA1c is physiologically desirable or benign."
+        },
+        "supporting_marker_refs": [
+          "fasting_glucose",
+          "hemoglobin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_reticulocytes_high",
+            "marker_reference": "reticulocyte_count",
+            "contradiction_rationale": "High reticulocyte counts weaken a pure low-glycemia interpretation and suggest turnover-related bias.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_shortened_erythrocyte_survival",
+        "hyp_true_low_average_glycemia"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_cbc_reticulocyte_and_glucose_correlation",
+        "rationale": "CBC, reticulocyte count, and direct glucose correlation help determine whether a low HbA1c is biological or artifactual."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_hba1c_low_with_reticulocytes_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low HbA1c coincides with high reticulocytes, as this more strongly supports shortened erythrocyte survival as a source of bias.",
+        "conditions": [
+          {
+            "metric_id": "reticulocyte_count",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_hba1c_lab_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_hba1c_lab_2023",
+          "paper_title": "Guidelines and recommendations for laboratory analysis in the diagnosis and management of diabetes mellitus",
+          "journal": "Diabetes Care",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "Low HbA1c can reflect either low average glucose exposure or conditions that shorten erythrocyte lifespan and reduce cumulative hemoglobin glycation.",
+      "threshold_notes": "Interpret low HbA1c cautiously; it should not automatically be treated as a superior metabolic state without glucose and hematologic correlation."
+    },
+    "narrative": {
+      "mechanism": "HbA1c decreases when average glucose exposure is low or when red cells circulate for less time before removal.",
+      "biological_pathway": "Hemoglobin glycation kinetics interacting with erythrocyte turnover.",
+      "interpretation": "A low HbA1c is not always metabolically protective and may be misleading in turnover states.",
+      "implications": "The important distinction is between true low glycemia and abbreviated red-cell lifespan.",
+      "supporting_marker_roles": "Fasting glucose corroborates true glycemia, reticulocyte count supports turnover-related bias, and hemoglobin helps identify concurrent red-cell pathology."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_hematocrit_high_absolute_erythrocytosis",
+    "signal_id": "signal_hematocrit_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "hematocrit",
+      "rationale": "High hematocrit reflects increased red-cell fraction but needs distinction between absolute erythrocytosis and hemoconcentration.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "hemoglobin",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High hemoglobin supports that the elevated hematocrit reflects a true red-cell concentration increase."
+      },
+      {
+        "biomarker_id": "erythropoietin",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "specialist",
+        "rationale": "Low erythropoietin supports autonomous erythrocytosis such as polycythemia vera rather than a reactive hypoxic drive."
+      },
+      {
+        "biomarker_id": "jak2_v617f",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "JAK2 positivity is the key differential marker separating clonal erythrocytosis from most secondary causes."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_clonal_erythrocytosis",
+        "rank": 1,
+        "physiological_claim": "High hematocrit may reflect clonal erythrocytosis when accompanied by a JAK2-positive pattern and inappropriately low erythropoietin.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "A single raised hematocrit is insufficient to diagnose polycythemia vera without appropriate confirmatory workup."
+        ],
+        "missing_data": {
+          "policy": "Use repeat counts, JAK2 testing, and erythropoietin before assigning a clonal myeloproliferative frame."
+        },
+        "supporting_marker_refs": [
+          "hemoglobin",
+          "erythropoietin",
+          "jak2_v617f"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_erythropoietin_high",
+            "marker_reference": "erythropoietin",
+            "contradiction_rationale": "High erythropoietin shifts interpretation toward secondary erythrocytosis rather than autonomous clonal disease.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_secondary_erythrocytosis",
+        "rank": 2,
+        "physiological_claim": "High hematocrit may also reflect secondary erythrocytosis from hypoxic or erythropoietin-driven stimuli rather than a primary marrow disorder.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This frame needs clinical context and should not be inferred solely from hematocrit magnitude."
+        ],
+        "missing_data": {
+          "policy": "Review oxygenation, smoking exposure, sleep-disordered breathing, and erythropoietin before narrowing the cause."
+        },
+        "supporting_marker_refs": [
+          "hemoglobin",
+          "erythropoietin",
+          "jak2_v617f"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_jak2_positive",
+            "marker_reference": "jak2_v617f",
+            "contradiction_rationale": "JAK2 positivity weakens a simple secondary erythrocytosis interpretation.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_clonal_erythrocytosis",
+        "hyp_secondary_erythrocytosis"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_hct_with_jak2_and_erythropoietin",
+        "rationale": "Repeat hematocrit with JAK2 and erythropoietin testing helps distinguish clonal from secondary erythrocytosis."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_hematocrit_high_with_hemoglobin_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high hematocrit coincides with high hemoglobin, as this strengthens a true erythrocytosis pattern.",
+        "conditions": [
+          {
+            "metric_id": "hemoglobin",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_pv_update_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_pv_update_2023",
+          "paper_title": "Polycythemia vera: 2024 update on diagnosis, risk-stratification, and management",
+          "journal": "American Journal of Hematology",
+          "year": 2023
+        },
+        {
+          "source_id": "source_nice_polycythaemia_2024",
+          "paper_title": "Polycythaemia/Erythrocytosis - NICE CKS",
+          "journal": "NICE",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Persistently elevated hematocrit is a core feature of erythrocytosis and requires distinction between clonal and secondary causes.",
+      "threshold_notes": "Use laboratory abnormality and guideline-directed workup; do not create ungoverned diagnostic cutoffs beyond authoritative criteria."
+    },
+    "narrative": {
+      "mechanism": "Hematocrit rises when red-cell mass increases or plasma volume contracts.",
+      "biological_pathway": "Erythropoiesis, marrow clonality, erythropoietin signaling, and plasma-volume balance.",
+      "interpretation": "A raised hematocrit is a pathway-level sign of erythrocytosis but does not by itself identify cause.",
+      "implications": "The main distinction is between clonal marrow disease, secondary erythropoietin drive, and relative hemoconcentration.",
+      "supporting_marker_roles": "Hemoglobin corroborates true erythrocytosis, erythropoietin helps define mechanism, and JAK2 is the key differential test for clonal disease."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_hematocrit_high_relative_hemoconcentration",
+    "signal_id": "signal_hematocrit_high",
+    "research_domain": "vascular",
+    "primary_marker": {
+      "biomarker_id": "hematocrit",
+      "rationale": "High hematocrit may arise from reduced plasma volume without a true increase in red-cell mass.",
+      "signal_system": "vascular"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "hemoglobin",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High hemoglobin often accompanies hemoconcentration but does not distinguish relative from absolute erythrocytosis."
+      },
+      {
+        "biomarker_id": "albumin",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "A concentrated serum protein pattern can support plasma-volume contraction."
+      },
+      {
+        "biomarker_id": "erythropoietin",
+        "expected_direction": "either",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Erythropoietin helps distinguish relative hemoconcentration from secondary erythropoietin-driven erythrocytosis."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_relative_polycythemia",
+        "rank": 1,
+        "physiological_claim": "High hematocrit may reflect relative hemoconcentration when plasma volume is contracted rather than red-cell mass being truly increased.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This frame requires hydration and clinical context and should not be inferred from hematocrit alone."
+        ],
+        "missing_data": {
+          "policy": "Review albumin, urea or hydration context, and erythropoietin before concluding true erythrocytosis."
+        },
+        "supporting_marker_refs": [
+          "albumin",
+          "hemoglobin",
+          "erythropoietin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_erythropoietin_high",
+            "marker_reference": "erythropoietin",
+            "contradiction_rationale": "High erythropoietin makes a simple relative hemoconcentration interpretation less likely.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_mixed_concentration_and_erythrocytosis",
+        "rank": 2,
+        "physiological_claim": "High hematocrit may represent a mixed pattern in which plasma contraction magnifies an underlying but milder erythrocytotic tendency.",
+        "evidence_strength": "exploratory",
+        "caveats": [
+          "This interpretation should remain cautious unless repeat testing confirms persistence after volume correction."
+        ],
+        "missing_data": {
+          "policy": "Repeat hematocrit after addressing transient volume depletion before assigning a durable erythrocytosis frame."
+        },
+        "supporting_marker_refs": [
+          "albumin",
+          "erythropoietin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_albumin_weakens_concentration_component",
+            "marker_reference": "albumin",
+            "contradiction_rationale": "A normal or low albumin weakens the hemoconcentration component of a mixed erythrocytosis interpretation, as genuine plasma volume contraction typically raises albumin concentration alongside hematocrit.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_relative_polycythemia",
+        "hyp_mixed_concentration_and_erythrocytosis"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_hematocrit_after_volume_repletion",
+        "rationale": "Repeat hematocrit after correction of suspected dehydration helps separate relative hemoconcentration from persistent erythrocytosis."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_hematocrit_high_with_albumin_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high hematocrit coincides with high albumin, as this more strongly supports a concentrated plasma-volume state.",
+        "conditions": [
+          {
+            "metric_id": "albumin",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_nice_polycythaemia_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_nice_polycythaemia_2024",
+          "paper_title": "Polycythaemia/Erythrocytosis - NICE CKS",
+          "journal": "NICE",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Raised hematocrit can be relative when plasma volume is reduced, so persistence and mechanism testing are important before labeling erythrocytosis.",
+      "threshold_notes": "Use repeat testing and clinical context rather than assuming a single elevated hematocrit represents increased red-cell mass."
+    },
+    "narrative": {
+      "mechanism": "Hematocrit increases when circulating plasma volume contracts, concentrating the cellular component of blood.",
+      "biological_pathway": "Intravascular volume balance and its effect on measured packed-cell proportion.",
+      "interpretation": "A high hematocrit may be transiently concentration-related and is not always a marrow or hypoxic problem.",
+      "implications": "Repeat testing after addressing volume status is often necessary before pursuing full erythrocytosis workup.",
+      "supporting_marker_roles": "Hemoglobin corroborates the concentration pattern, albumin supports plasma contraction, and erythropoietin helps distinguish concentration from true erythropoietin-driven erythrocytosis."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_hematocrit_low_anemia_or_hemodilution",
+    "signal_id": "signal_hematocrit_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "hematocrit",
+      "rationale": "Low hematocrit generally reflects reduced red-cell mass or dilution and should be interpreted with hemoglobin and red-cell indices.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "hemoglobin",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low hemoglobin corroborates a true anemia pattern when hematocrit is reduced."
+      },
+      {
+        "biomarker_id": "mcv",
+        "expected_direction": "either",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "MCV helps classify the anemia mechanism and narrow likely causes."
+      },
+      {
+        "biomarker_id": "albumin",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low albumin may support hemodilution or broader systemic illness as an alternative or mixed explanation."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_true_anemia_pattern",
+        "rank": 1,
+        "physiological_claim": "Low hematocrit may reflect true anemia when hemoglobin is also low and red-cell indices support impaired production, loss, or destruction.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Hematocrit alone does not classify anemia mechanism or severity."
+        ],
+        "missing_data": {
+          "policy": "Use hemoglobin and red-cell indices before inferring the underlying anemia type."
+        },
+        "supporting_marker_refs": [
+          "hemoglobin",
+          "mcv",
+          "albumin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_albumin_low",
+            "marker_reference": "albumin",
+            "contradiction_rationale": "Marked hypoalbuminemia raises the possibility of hemodilution or mixed systemic illness rather than isolated red-cell underproduction.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_hemodilution_or_volume_expansion",
+        "rank": 2,
+        "physiological_claim": "Low hematocrit may also reflect hemodilution in expanded plasma-volume states rather than a primary reduction in red-cell mass.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This possibility is stronger when albumin is low or clinical volume expansion is evident."
+        ],
+        "missing_data": {
+          "policy": "Review albumin, fluid status, and other CBC indices before labeling isolated anemia from hematocrit alone."
+        },
+        "supporting_marker_refs": [
+          "albumin",
+          "hemoglobin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_mcv_abnormal",
+            "marker_reference": "mcv",
+            "contradiction_rationale": "Markedly abnormal red-cell indices strengthen a genuine anemia mechanism over simple dilution.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_true_anemia_pattern",
+        "hyp_hemodilution_or_volume_expansion"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_cbc_indices_with_reticulocyte_context",
+        "rationale": "CBC indices and reticulocyte context help determine whether low hematocrit reflects true anemia or dilution."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_hematocrit_low_with_hemoglobin_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low hematocrit coincides with low hemoglobin, as this more strongly supports a true anemia pattern.",
+        "conditions": [
+          {
+            "metric_id": "hemoglobin",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_nice_polycythaemia_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_nice_polycythaemia_2024",
+          "paper_title": "Polycythaemia/Erythrocytosis - NICE CKS",
+          "journal": "NICE",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Reduced hematocrit commonly reflects anemia but may also be influenced by plasma-volume expansion, so CBC context remains important.",
+      "threshold_notes": "Interpretation should follow laboratory abnormality and correlated CBC indices rather than hematocrit alone."
+    },
+    "narrative": {
+      "mechanism": "Hematocrit falls when red-cell mass is reduced or plasma volume expands enough to dilute the cellular fraction.",
+      "biological_pathway": "Balance between erythrocyte mass and intravascular plasma volume.",
+      "interpretation": "A low hematocrit is an entry point to anemia evaluation, not a mechanism diagnosis by itself.",
+      "implications": "The key distinction is between true anemia and dilutional lowering of the packed-cell fraction.",
+      "supporting_marker_roles": "Hemoglobin corroborates anemia, MCV helps classify mechanism, and albumin helps identify dilutional or systemic alternatives."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_iron_low_absolute_iron_deficiency",
+    "signal_id": "signal_iron_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "iron",
+      "rationale": "Low serum iron is nonspecific in isolation but can support iron deficiency when interpreted with iron stores and transport markers.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "ferritin",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low ferritin strongly supports depleted iron stores when inflammation is not obscuring interpretation."
+      },
+      {
+        "biomarker_id": "transferrin_saturation",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low transferrin saturation supports inadequate circulating iron availability."
+      },
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Inflammation helps distinguish absolute iron deficiency from inflammation-driven hypoferremia or mixed iron restriction."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_absolute_iron_deficiency",
+        "rank": 1,
+        "physiological_claim": "Low serum iron may reflect absolute iron deficiency when ferritin and transferrin saturation are also reduced.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Serum iron alone has limited specificity because it varies with inflammation and diurnal factors."
+        ],
+        "missing_data": {
+          "policy": "Interpret low iron with ferritin, transferrin saturation, and inflammatory context before concluding depleted stores."
+        },
+        "supporting_marker_refs": [
+          "ferritin",
+          "transferrin_saturation",
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_crp_high_with_ferritin_normal",
+            "marker_reference": "crp",
+            "contradiction_rationale": "Inflammation with non-low ferritin weakens a pure absolute iron-deficiency interpretation and raises iron-restriction alternatives.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_early_or_mixed_iron_restriction",
+        "rank": 2,
+        "physiological_claim": "Low serum iron may also represent early or mixed iron restriction before frank store depletion is fully apparent.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This frame should remain cautious unless ferritin and saturation patterns clearly support it."
+        ],
+        "missing_data": {
+          "policy": "Review ferritin, transferrin saturation, and red-cell indices before assigning mixed iron restriction."
+        },
+        "supporting_marker_refs": [
+          "transferrin_saturation",
+          "crp",
+          "ferritin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_ferritin_robustly_normal",
+            "marker_reference": "ferritin",
+            "contradiction_rationale": "Clearly normal or high ferritin outside inflammatory settings weakens depleted-store interpretation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_absolute_iron_deficiency",
+        "hyp_early_or_mixed_iron_restriction"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_ferritin_and_transferrin_saturation",
+        "rationale": "Ferritin and transferrin saturation are needed to determine whether low serum iron reflects depleted stores or restricted iron availability."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_iron_low_with_ferritin_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low serum iron coincides with low ferritin, as this more strongly supports depleted iron stores.",
+        "conditions": [
+          {
+            "metric_id": "ferritin",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_iron_lab_guideline_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_iron_lab_guideline_2024",
+          "paper_title": "Guidelines for the Use of Laboratory Tests for Iron Deficiency",
+          "journal": "Laboratory Medicine Guideline",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Low serum iron becomes more clinically meaningful for iron deficiency when accompanied by low ferritin and low transferrin saturation.",
+      "threshold_notes": "Serum iron should not be used alone as a disease threshold because of biological variability and inflammatory effects."
+    },
+    "narrative": {
+      "mechanism": "Circulating iron falls when body iron stores are depleted or when iron delivery into plasma is limited.",
+      "biological_pathway": "Iron storage, transferrin-mediated transport, and iron mobilization from reticuloendothelial stores.",
+      "interpretation": "Low serum iron is a contextual iron-availability signal rather than a stand-alone diagnosis of deficiency.",
+      "implications": "Ferritin, transferrin saturation, and inflammatory context determine whether the abnormality reflects absolute deficiency or restricted availability.",
+      "supporting_marker_roles": "Ferritin corroborates iron stores, transferrin saturation shows transport deficiency, and CRP provides the key differential against inflammation-driven hypoferremia."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_iron_low_functional_iron_restriction_inflammation",
+    "signal_id": "signal_iron_low",
+    "research_domain": "inflammatory",
+    "primary_marker": {
+      "biomarker_id": "iron",
+      "rationale": "Low serum iron commonly occurs in inflammation because iron is sequestered away from plasma despite variable total body stores.",
+      "signal_system": "inflammatory"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Raised CRP supports an inflammatory state capable of lowering circulating iron independently of absolute depletion."
+      },
+      {
+        "biomarker_id": "ferritin",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Normal or high ferritin in inflammatory settings supports iron sequestration rather than simple store depletion."
+      },
+      {
+        "biomarker_id": "transferrin_saturation",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low transferrin saturation helps distinguish true iron-restricted erythropoiesis from a transient isolated iron fluctuation."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_inflammation_driven_hypoferremia",
+        "rank": 1,
+        "physiological_claim": "Low serum iron may reflect inflammation-driven hypoferremia when CRP is elevated and ferritin is not low.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This frame should remain cautious in the absence of corroborating inflammatory or chronic disease context."
+        ],
+        "missing_data": {
+          "policy": "Review ferritin and inflammatory markers before labeling low iron as depleted stores."
+        },
+        "supporting_marker_refs": [
+          "crp",
+          "ferritin",
+          "transferrin_saturation"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_ferritin_low",
+            "marker_reference": "ferritin",
+            "contradiction_rationale": "Low ferritin argues against pure inflammatory sequestration and supports depleted iron stores.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_functional_iron_restriction",
+        "rank": 2,
+        "physiological_claim": "Low serum iron may represent functional iron restriction in chronic inflammatory or chronic disease states even when stored iron is not absent.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Functional restriction and absolute deficiency may coexist, so ferritin interpretation should remain contextual."
+        ],
+        "missing_data": {
+          "policy": "Consider mixed iron deficiency and inflammation when ferritin is not clearly low but saturation remains reduced."
+        },
+        "supporting_marker_refs": [
+          "transferrin_saturation",
+          "crp",
+          "ferritin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_crp_normal",
+            "marker_reference": "crp",
+            "contradiction_rationale": "Normal inflammatory markers weaken a primary inflammation-driven hypoferremia interpretation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_inflammation_driven_hypoferremia",
+        "hyp_functional_iron_restriction"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_ferritin_crp_and_transferrin_saturation",
+        "rationale": "Ferritin, CRP, and transferrin saturation help distinguish inflammation-driven iron restriction from absolute deficiency."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_iron_low_with_crp_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low serum iron coincides with high CRP, as this more strongly supports inflammation-related hypoferremia or mixed iron restriction.",
+        "conditions": [
+          {
+            "metric_id": "crp",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_iron_lab_guideline_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_iron_lab_guideline_2024",
+          "paper_title": "Guidelines for the Use of Laboratory Tests for Iron Deficiency",
+          "journal": "Laboratory Medicine Guideline",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Inflammation can lower circulating iron through sequestration and reduced availability even when total iron stores are not fully depleted.",
+      "threshold_notes": "No stand-alone serum iron cutoff should be used to define functional iron restriction without ferritin and inflammatory context."
+    },
+    "narrative": {
+      "mechanism": "Inflammatory signaling reduces iron export into plasma and promotes iron sequestration in storage compartments.",
+      "biological_pathway": "Hepcidin-mediated iron trafficking and reticuloendothelial iron retention during inflammation.",
+      "interpretation": "Low iron in an inflammatory setting does not automatically indicate depleted stores.",
+      "implications": "The important distinction is between store depletion, inflammatory sequestration, and a mixed state.",
+      "supporting_marker_roles": "CRP corroborates inflammation, ferritin supports sequestration when not low, and transferrin saturation provides the key differential against trivial transient fluctuations."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_iron_high_iron_overload_context",
+    "signal_id": "signal_iron_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "iron",
+      "rationale": "High serum iron can indicate increased circulating iron availability but requires discrimination between overload and transient release states.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "transferrin_saturation",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High transferrin saturation supports excessive circulating iron burden and strengthens concern for overload."
+      },
+      {
+        "biomarker_id": "ferritin",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "High ferritin can support increased iron stores, though it is not specific in inflammatory states."
+      },
+      {
+        "biomarker_id": "alt",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Raised ALT helps distinguish hepatocellular release or liver disease from a primary iron-loading disorder."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_iron_overload_state",
+        "rank": 1,
+        "physiological_claim": "High serum iron may reflect iron overload when transferrin saturation is elevated and ferritin supports increased iron stores.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Serum iron alone is insufficient to diagnose hereditary hemochromatosis or tissue overload."
+        ],
+        "missing_data": {
+          "policy": "Use transferrin saturation and ferritin before assigning a true iron-overload frame."
+        },
+        "supporting_marker_refs": [
+          "transferrin_saturation",
+          "ferritin",
+          "alt"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_alt_high",
+            "marker_reference": "alt",
+            "contradiction_rationale": "Prominent liver injury can release iron and weaken a primary overload interpretation based on serum iron alone.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_genetic_or_secondary_loading_context",
+        "rank": 2,
+        "physiological_claim": "High serum iron may indicate a genetic or secondary loading context such as repeated transfusion or increased absorption when saturation remains high.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Etiology should remain open until ferritin, history, and repeat testing are reviewed."
+        ],
+        "missing_data": {
+          "policy": "Assess saturation persistence, transfusion history, and liver context before assigning hereditary loading."
+        },
+        "supporting_marker_refs": [
+          "transferrin_saturation",
+          "ferritin",
+          "alt"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_ferritin_normal",
+            "marker_reference": "ferritin",
+            "contradiction_rationale": "Normal ferritin weakens a durable tissue-loading interpretation from a single high serum iron result.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_iron_overload_state",
+        "hyp_genetic_or_secondary_loading_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_transferrin_saturation_with_ferritin",
+        "rationale": "Transferrin saturation with ferritin is needed to determine whether high serum iron represents true iron loading."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_iron_high_with_transferrin_saturation_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high serum iron coincides with high transferrin saturation, as this more strongly supports a genuine iron-loading pattern.",
+        "conditions": [
+          {
+            "metric_id": "transferrin_saturation",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_iron_overload_review_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_iron_overload_review_2024",
+          "paper_title": "A Review of New Concepts in Iron Overload",
+          "journal": "Gastroenterology & Hepatology",
+          "year": 2024
+        },
+        {
+          "source_id": "source_bsh_ferritin_2024",
+          "paper_title": "Investigation and management of a raised serum ferritin",
+          "journal": "British Society for Haematology",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "High serum iron is more suggestive of iron overload when transferrin saturation is elevated and ferritin supports increased stores.",
+      "threshold_notes": "Serum iron should not be treated as a stand-alone threshold for iron overload without saturation and ferritin context."
+    },
+    "narrative": {
+      "mechanism": "Serum iron rises when plasma iron delivery exceeds normal binding and utilization patterns.",
+      "biological_pathway": "Intestinal absorption, transferrin loading, iron storage, and release from tissues into plasma.",
+      "interpretation": "A high iron result is a prompt to assess transferrin saturation and ferritin, not proof of overload by itself.",
+      "implications": "The key distinction is between true loading states and transient release from liver injury or hemolysis.",
+      "supporting_marker_roles": "Transferrin saturation corroborates iron excess, ferritin supports store burden, and ALT helps differentiate release from primary loading."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_iron_high_hepatocellular_or_hemolytic_release",
+    "signal_id": "signal_iron_high",
+    "research_domain": "hepatic",
+    "primary_marker": {
+      "biomarker_id": "iron",
+      "rationale": "High serum iron can rise transiently when iron is released from injured hepatocytes or from increased red-cell breakdown.",
+      "signal_system": "hepatic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "alt",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Raised ALT supports hepatocellular injury as a source of transient serum iron elevation."
+      },
+      {
+        "biomarker_id": "bilirubin",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "High bilirubin can support hemolytic or hepatic release contexts that increase circulating iron."
+      },
+      {
+        "biomarker_id": "transferrin_saturation",
+        "expected_direction": "either",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Transferrin saturation helps distinguish a transient release pattern from sustained iron-loading physiology."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_hepatocellular_release_pattern",
+        "rank": 1,
+        "physiological_claim": "High serum iron may reflect hepatocellular release when transaminases are elevated and the biochemical pattern suggests active liver injury.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This interpretation remains nonspecific and should not replace direct liver workup."
+        ],
+        "missing_data": {
+          "policy": "Review ALT, ferritin, and repeat iron studies before assigning true loading."
+        },
+        "supporting_marker_refs": [
+          "alt",
+          "bilirubin",
+          "transferrin_saturation"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_transferrin_saturation_persistently_high",
+            "marker_reference": "transferrin_saturation",
+            "contradiction_rationale": "Persistently high transferrin saturation favors a durable iron-loading pattern over simple transient release.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_hemolytic_release_context",
+        "rank": 2,
+        "physiological_claim": "High serum iron may also occur in hemolytic contexts where red-cell breakdown increases circulating iron availability.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This frame requires hemolysis correlation and should remain cautious if bilirubin elevation is absent."
+        ],
+        "missing_data": {
+          "policy": "Assess hemolysis markers and repeat iron studies before narrowing interpretation."
+        },
+        "supporting_marker_refs": [
+          "bilirubin",
+          "transferrin_saturation"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_alt_high_without_hemolysis",
+            "marker_reference": "alt",
+            "contradiction_rationale": "Predominant transaminitis without hemolysis features makes hepatocellular release more likely than hemolytic release.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_hepatocellular_release_pattern",
+        "hyp_hemolytic_release_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_iron_studies_with_liver_and_hemolysis_context",
+        "rationale": "Repeat iron studies with liver and hemolysis markers help distinguish transient release from sustained overload."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_iron_high_with_alt_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high serum iron coincides with high ALT, as this more strongly supports hepatocellular release or mixed liver-related interpretation.",
+        "conditions": [
+          {
+            "metric_id": "alt",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_bsh_ferritin_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_bsh_ferritin_2024",
+          "paper_title": "Investigation and management of a raised serum ferritin",
+          "journal": "British Society for Haematology",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Raised serum iron can occur in liver injury and other release states, so isolated high iron does not necessarily indicate iron overload.",
+      "threshold_notes": "Interpretation should rely on pattern recognition across liver, hemolysis, and iron-transport markers rather than a single serum iron value."
+    },
+    "narrative": {
+      "mechanism": "Circulating iron increases when intracellular iron is released during hepatocyte damage or red-cell destruction.",
+      "biological_pathway": "Tissue iron release into plasma during liver injury or hemolysis.",
+      "interpretation": "This is a transient-release frame that competes with true iron loading and needs contextual discrimination.",
+      "implications": "Repeat studies and supporting liver or hemolysis markers are needed before concluding a loading disorder.",
+      "supporting_marker_roles": "ALT corroborates liver release, bilirubin supports release mechanisms, and transferrin saturation differentiates transient release from persistent loading physiology."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_lh_high_primary_gonadal_feedback_loss",
+    "signal_id": "signal_lh_high",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "lh",
+      "rationale": "High LH generally reflects reduced gonadal negative feedback or altered gonadotropin pulsatility and must be interpreted with sex steroids and FSH.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "fsh",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent FSH elevation supports broad loss of gonadal feedback rather than an isolated LH fluctuation."
+      },
+      {
+        "biomarker_id": "estradiol",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low estradiol supports reduced ovarian feedback when LH is raised in female reproductive assessment."
+      },
+      {
+        "biomarker_id": "prolactin",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "High prolactin shifts interpretation toward central reproductive-axis disturbance rather than isolated primary feedback loss."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_primary_gonadal_failure_feedback_loss",
+        "rank": 1,
+        "physiological_claim": "High LH may reflect primary gonadal feedback loss when sex steroids are reduced and FSH is also elevated.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Cycle phase and reproductive stage materially influence LH interpretation."
+        ],
+        "missing_data": {
+          "policy": "Review FSH, sex steroids, and reproductive context before assigning a durable primary gonadal-failure frame."
+        },
+        "supporting_marker_refs": [
+          "fsh",
+          "estradiol",
+          "prolactin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_prolactin_high",
+            "marker_reference": "prolactin",
+            "contradiction_rationale": "Marked hyperprolactinemia weakens a simple primary feedback-loss interpretation and suggests central suppression or mixed pathology.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_menopausal_or_perimenopausal_axis_state",
+        "rank": 2,
+        "physiological_claim": "High LH may also reflect menopausal or perimenopausal axis adaptation rather than a disease-specific gonadal lesion.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This frame is age- and cycle-dependent and should not be generalized across sexes."
+        ],
+        "missing_data": {
+          "policy": "Use age and symptom context before interpreting elevated LH as pathological."
+        },
+        "supporting_marker_refs": [
+          "fsh",
+          "estradiol"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_estradiol_preserved",
+            "marker_reference": "estradiol",
+            "contradiction_rationale": "Preserved estradiol weakens a low-feedback interpretation and may indicate cycle-related variation instead.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_primary_gonadal_failure_feedback_loss",
+        "hyp_menopausal_or_perimenopausal_axis_state"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_lh_with_fsh_and_sex_steroids",
+        "rationale": "Repeat LH with FSH and sex-steroid context helps separate persistent feedback loss from physiological cycle variation."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_lh_high_with_fsh_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high LH coincides with high FSH, as this more strongly supports reduced gonadal negative feedback across the axis.",
+        "conditions": [
+          {
+            "metric_id": "fsh",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_endocrine_gonadotropin_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_endocrine_gonadotropin_2024",
+          "paper_title": "Society for Endocrinology guideline for understanding, diagnosing and treating female hypogonadism",
+          "journal": "Clinical Endocrinology",
+          "year": 2024
+        },
+        {
+          "source_id": "source_poi_guideline_2024",
+          "paper_title": "Evidence-based guideline: Premature Ovarian Insufficiency",
+          "journal": "ASRM / ESHRE",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Raised LH can be seen when gonadal feedback is reduced, particularly when FSH elevation and low sex steroids are also present, though reproductive stage and cycle timing must be considered.",
+      "threshold_notes": "Interpretation should remain stage- and sex-aware; isolated LH elevation should not be overread without reproductive context."
+    },
+    "narrative": {
+      "mechanism": "LH rises when gonadal steroid feedback to pituitary gonadotrophs is reduced or pulsatility shifts toward higher secretion.",
+      "biological_pathway": "Hypothalamic-pituitary-gonadal feedback signaling involving gonadotropin secretion and sex-steroid inhibition.",
+      "interpretation": "A raised LH is an axis-level clue rather than a stand-alone diagnosis.",
+      "implications": "The key distinction is between physiological reproductive-stage change and clinically meaningful gonadal feedback loss.",
+      "supporting_marker_roles": "FSH corroborates broad gonadotropin elevation, estradiol reflects downstream feedback, and prolactin helps identify central alternatives."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_lh_low_central_hypogonadotropic_pattern",
+    "signal_id": "signal_lh_low",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "lh",
+      "rationale": "Low LH can indicate reduced hypothalamic-pituitary drive and is most informative when paired with FSH and sex-steroid levels.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "fsh",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low FSH alongside low LH supports broad hypogonadotropic suppression."
+      },
+      {
+        "biomarker_id": "testosterone",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low testosterone or analogous downstream sex-steroid reduction supports reduced gonadotropin drive."
+      },
+      {
+        "biomarker_id": "prolactin",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "High prolactin is a common alternative explanation for low LH through central axis suppression."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_central_hypogonadism",
+        "rank": 1,
+        "physiological_claim": "Low LH may reflect central hypogonadotropic hypogonadism when FSH and downstream sex steroids are also reduced.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Interpretation depends on sex, reproductive stage, and sampling context."
+        ],
+        "missing_data": {
+          "policy": "Review FSH, sex steroids, and prolactin before assigning persistent central hypogonadism."
+        },
+        "supporting_marker_refs": [
+          "fsh",
+          "testosterone",
+          "prolactin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_fsh_not_low",
+            "marker_reference": "fsh",
+            "contradiction_rationale": "A non-low FSH weakens a generalized central suppression interpretation from isolated low LH.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_functional_hypothalamic_suppression",
+        "rank": 2,
+        "physiological_claim": "Low LH may also occur in functional hypothalamic suppression related to illness, stress, or energy deficit rather than fixed pituitary disease.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This frame requires clinical context and should remain cautious without corroboration."
+        ],
+        "missing_data": {
+          "policy": "Assess stress, undernutrition, and prolactin context before favoring structural pituitary pathology."
+        },
+        "supporting_marker_refs": [
+          "prolactin",
+          "fsh",
+          "testosterone"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_prolactin_normal_sex_steroids_normal",
+            "marker_reference": "testosterone",
+            "contradiction_rationale": "Preserved downstream sex steroids weaken a clinically meaningful suppression frame.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_central_hypogonadism",
+        "hyp_functional_hypothalamic_suppression"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_lh_fsh_and_prolactin",
+        "rationale": "Repeat LH and FSH with prolactin and sex-steroid correlation helps distinguish persistent central hypogonadism from functional suppression."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_lh_low_with_fsh_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low LH coincides with low FSH, as this more strongly supports reduced pituitary gonadotropin output.",
+        "conditions": [
+          {
+            "metric_id": "fsh",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_endocrine_gonadotropin_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_endocrine_gonadotropin_2024",
+          "paper_title": "Society for Endocrinology guideline for understanding, diagnosing and treating female hypogonadism",
+          "journal": "Clinical Endocrinology",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Low LH is most consistent with reduced central gonadotropin output when it occurs alongside low FSH and low downstream sex steroids.",
+      "threshold_notes": "Interpret LH in its physiological context; isolated low values should not be treated as definitive evidence of pituitary disease."
+    },
+    "narrative": {
+      "mechanism": "LH falls when GnRH pulsatility or pituitary gonadotroph secretion is reduced.",
+      "biological_pathway": "Central reproductive-axis regulation linking hypothalamic signaling to pituitary gonadotropin release.",
+      "interpretation": "A low LH result usually indicates a central-pattern issue or physiological suppression rather than a primary gonadal problem.",
+      "implications": "The main distinction is between functional hypothalamic suppression and persistent central gonadotropin deficiency.",
+      "supporting_marker_roles": "FSH corroborates broad gonadotropin suppression, testosterone reflects downstream impact, and prolactin provides a major differential explanation."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_lipoprotein_a_high_atherosclerotic_cardiovascular_risk",
+    "signal_id": "signal_lipoprotein_a_high",
+    "research_domain": "vascular",
+    "primary_marker": {
+      "biomarker_id": "lipoprotein_a",
+      "rationale": "Lipoprotein(a) is a genetically influenced apoB-containing particle associated with residual atherosclerotic cardiovascular risk.",
+      "signal_system": "vascular"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "ldl_cholesterol",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High LDL cholesterol can compound the atherogenic impact of elevated lipoprotein(a)."
+      },
+      {
+        "biomarker_id": "apob",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Raised apoB supports a broader atherogenic lipoprotein burden that interacts with lipoprotein(a)-related risk."
+      },
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Inflammatory burden helps distinguish isolated inherited Lp(a)-mediated risk from a broader inflammatory cardiovascular risk phenotype."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_inherited_residual_atherogenic_risk",
+        "rank": 1,
+        "physiological_claim": "High lipoprotein(a) may reflect inherited residual atherosclerotic cardiovascular risk, especially when other apoB-related risk factors are also present.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Lp(a) concentration is largely genetically determined and not a stand-alone diagnosis of current atherosclerotic disease."
+        ],
+        "missing_data": {
+          "policy": "Interpret with overall cardiovascular risk and apoB-related burden rather than in isolation."
+        },
+        "supporting_marker_refs": [
+          "ldl_cholesterol",
+          "apob",
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_apob_not_high",
+            "marker_reference": "apob",
+            "contradiction_rationale": "A low broader apoB burden weakens the interpretation of immediate combined atherogenic load, though it does not negate inherited Lp(a)-related risk.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_risk_enhancer_for_prevention_decisions",
+        "rank": 2,
+        "physiological_claim": "High lipoprotein(a) may act as a risk-enhancing factor that supports more intensive preventive cardiovascular assessment rather than defining a separate disease entity.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Clinical action depends on absolute cardiovascular risk rather than Lp(a) alone."
+        ],
+        "missing_data": {
+          "policy": "Review family history, apoB burden, and overall risk before escalating prevention decisions."
+        },
+        "supporting_marker_refs": [
+          "ldl_cholesterol",
+          "crp",
+          "apob"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_crp_high",
+            "marker_reference": "crp",
+            "contradiction_rationale": "A strongly inflammatory profile suggests part of the observed vascular risk may be driven by non-Lp(a) mechanisms as well.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_inherited_residual_atherogenic_risk",
+        "hyp_risk_enhancer_for_prevention_decisions"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_once_in_lifetime_lpa_contextualization",
+        "rationale": "Confirming the lipoprotein context with apoB or LDL-related risk review helps place elevated Lp(a) into prevention strategy."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_lpa_high_with_ldl_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high lipoprotein(a) coincides with high LDL cholesterol, as this more strongly supports compounded atherogenic risk.",
+        "conditions": [
+          {
+            "metric_id": "ldl_cholesterol",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_aha_lpa_2025"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_lpa_consensus_2022",
+          "paper_title": "Consensus and guidelines on lipoprotein(a): seeing the forest through the trees",
+          "journal": "European Heart Journal",
+          "year": 2022
+        },
+        {
+          "source_id": "source_aha_lpa_2025",
+          "paper_title": "Lipoprotein(a) Atherosclerotic Cardiovascular Disease and Aortic Stenosis: A Scientific Statement",
+          "journal": "Circulation: Genomic and Precision Medicine",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "Elevated lipoprotein(a) is a guideline-recognized cardiovascular risk enhancer that contributes to residual atherosclerotic risk.",
+      "threshold_notes": "Use laboratory abnormality and authoritative risk-enhancer frameworks; avoid inventing new severity categories beyond governed sources."
+    },
+    "narrative": {
+      "mechanism": "Lipoprotein(a) contributes to atherogenic and prothrombotic vascular biology through an apoB-containing particle carrying apolipoprotein(a).",
+      "biological_pathway": "Atherogenic lipoprotein trafficking, arterial retention, inflammation, and thrombosis-related signaling.",
+      "interpretation": "A high Lp(a) value is primarily a long-term inherited risk signal rather than a marker of short-term disease activity.",
+      "implications": "The practical question is how strongly the result should influence broader cardiovascular risk management.",
+      "supporting_marker_roles": "LDL cholesterol and apoB contextualize combined atherogenic burden, while CRP helps distinguish isolated inherited Lp(a) risk from broader inflammatory vascular risk."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_lipoprotein_a_high_calcific_aortic_valve_risk",
+    "signal_id": "signal_lipoprotein_a_high",
+    "research_domain": "vascular",
+    "primary_marker": {
+      "biomarker_id": "lipoprotein_a",
+      "rationale": "Elevated lipoprotein(a) is also associated with calcific aortic valve disease risk, distinct from its role in atherosclerotic risk.",
+      "signal_system": "vascular"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "ldl_cholesterol",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Elevated LDL cholesterol can coexist with Lp(a)-driven valvular and vascular risk."
+      },
+      {
+        "biomarker_id": "calcium",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Higher calcium-related mineral burden can support a calcific disease context, though it is not specific for valve disease."
+      },
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Inflammation helps distinguish generalized inflammatory cardiovascular burden from a more genetically weighted lipoprotein(a)-valve risk frame."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_calcific_aortic_valve_disease_risk",
+        "rank": 1,
+        "physiological_claim": "High lipoprotein(a) may support increased long-term risk of calcific aortic valve disease in addition to atherosclerotic risk.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "This is a risk frame and does not indicate established valvular stenosis on its own."
+        ],
+        "missing_data": {
+          "policy": "Use imaging or clinical valve assessment rather than biochemical inference if symptomatic valve disease is suspected."
+        },
+        "supporting_marker_refs": [
+          "ldl_cholesterol",
+          "calcium",
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_no_structural_valve_data",
+            "marker_reference": "calcium",
+            "contradiction_rationale": "Absence of structural valve data limits interpretation to risk framing rather than diagnosis of present valve disease.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_shared_lipoprotein_calcific_pathway",
+        "rank": 2,
+        "physiological_claim": "High lipoprotein(a) may indicate a shared pathway linking lipoprotein-driven vascular and valvular calcific biology.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This mechanistic framing should not be overstated as proof of current valve pathology."
+        ],
+        "missing_data": {
+          "policy": "Keep the interpretation at the level of risk enhancement unless structural evidence is available."
+        },
+        "supporting_marker_refs": [
+          "ldl_cholesterol",
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_inflammation_predominant",
+            "marker_reference": "crp",
+            "contradiction_rationale": "Predominant inflammatory burden suggests that not all risk is likely to be attributable to Lp(a)-weighted calcific mechanisms.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_calcific_aortic_valve_disease_risk",
+        "hyp_shared_lipoprotein_calcific_pathway"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_structural_valve_assessment_if_indicated",
+        "rationale": "Structural valve assessment is needed if symptoms or examination raise concern for actual aortic valve disease."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_lpa_high_with_ldl_high_for_valve_risk",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high lipoprotein(a) coincides with high LDL cholesterol, as this more strongly supports combined lipoprotein-related vascular and valvular risk.",
+        "conditions": [
+          {
+            "metric_id": "ldl_cholesterol",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_aha_lpa_2025"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_aha_lpa_2025",
+          "paper_title": "Lipoprotein(a) Atherosclerotic Cardiovascular Disease and Aortic Stenosis: A Scientific Statement",
+          "journal": "Circulation: Genomic and Precision Medicine",
+          "year": 2025
+        },
+        {
+          "source_id": "source_lpa_consensus_2022",
+          "paper_title": "Consensus and guidelines on lipoprotein(a): seeing the forest through the trees",
+          "journal": "European Heart Journal",
+          "year": 2022
+        }
+      ],
+      "physiological_claim": "Elevated lipoprotein(a) is associated not only with atherosclerotic disease risk but also with calcific aortic valve disease risk.",
+      "threshold_notes": "Interpretation should remain risk-focused; elevated Lp(a) should not be used as a diagnostic surrogate for established aortic stenosis."
+    },
+    "narrative": {
+      "mechanism": "Lipoprotein(a) may promote valvular calcific signaling through lipid retention and pro-inflammatory, pro-calcific effects.",
+      "biological_pathway": "Shared vascular and valvular calcific pathways influenced by apoB and apolipoprotein(a)-containing particles.",
+      "interpretation": "This frame extends the significance of high Lp(a) beyond coronary risk into valve-risk territory.",
+      "implications": "It should mainly influence risk awareness and structural follow-up when clinical features suggest valve disease.",
+      "supporting_marker_roles": "LDL cholesterol contextualizes combined lipoprotein burden, calcium provides broad calcific context, and CRP helps distinguish lipoprotein-weighted risk from generalized inflammation."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_lymphocyte_pct_high_relative_reactive_lymphocytosis",
+    "signal_id": "signal_lymphocyte_pct_high",
+    "research_domain": "immunologic",
+    "primary_marker": {
+      "biomarker_id": "lymphocyte_pct",
+      "rationale": "A high lymphocyte percentage may indicate true lymphocytosis or a relative differential shift and should be anchored to the absolute lymphocyte count.",
+      "signal_system": "inflammatory"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "lymphocytes_abs",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "A high absolute lymphocyte count confirms that the percentage rise reflects true lymphocytosis."
+      },
+      {
+        "biomarker_id": "neutrophils_abs",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Relative neutropenia can drive a higher lymphocyte percentage even without major absolute lymphocyte expansion."
+      },
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Inflammatory activation helps distinguish reactive immune shifts from chronic clonal lymphoproliferative patterns."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_reactive_relative_lymphocytosis",
+        "rank": 1,
+        "physiological_claim": "High lymphocyte percentage may reflect reactive or relative lymphocytosis, particularly when accompanied by a compatible inflammatory or viral context.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Percentage-based interpretation is less specific than the absolute lymphocyte count."
+        ],
+        "missing_data": {
+          "policy": "Check the absolute lymphocyte count before treating a high percentage as true lymphocytosis."
+        },
+        "supporting_marker_refs": [
+          "lymphocytes_abs",
+          "neutrophils_abs",
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_absolute_count_normal",
+            "marker_reference": "lymphocytes_abs",
+            "contradiction_rationale": "A normal absolute lymphocyte count weakens a true lymphocytosis interpretation and supports a relative differential shift.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_benign_differential_shift",
+        "rank": 2,
+        "physiological_claim": "High lymphocyte percentage may also represent a benign leukocyte redistribution pattern rather than clinically important lymphoid expansion.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This frame is weaker when the absolute lymphocyte count is clearly elevated or persistent."
+        ],
+        "missing_data": {
+          "policy": "Use repeat CBC and the absolute count to confirm whether the shift is transient and relative."
+        },
+        "supporting_marker_refs": [
+          "neutrophils_abs",
+          "lymphocytes_abs"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_elevated_crp_challenges_benign_shift",
+            "marker_reference": "crp",
+            "contradiction_rationale": "A markedly elevated CRP challenges a purely benign differential shift interpretation and supports a more active systemic inflammatory or infectious process as the driver of relative lymphocyte expansion.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_reactive_relative_lymphocytosis",
+        "hyp_benign_differential_shift"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_cbc_with_absolute_lymphocyte_count",
+        "rationale": "Repeat CBC with the absolute lymphocyte count helps distinguish relative percentage shift from true lymphocytosis."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_lymphocyte_pct_high_with_lymphocytes_abs_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high lymphocyte percentage coincides with high absolute lymphocytes, as this confirms a true lymphocytosis pattern.",
+        "conditions": [
+          {
+            "metric_id": "lymphocytes_abs",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_lymphocytosis_guideline_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_lymphocytosis_guideline_2024",
+          "paper_title": "Lymphocytosis Guidelines",
+          "journal": "NHS Scotland Right Decisions",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Lymphocyte percentage abnormalities should be interpreted against the absolute count because relative shifts may occur without meaningful lymphoid expansion.",
+      "threshold_notes": "Percentage alone should not be used as a stand-alone threshold for clinically important lymphocytosis."
+    },
+    "narrative": {
+      "mechanism": "Lymphocyte percentage rises when absolute lymphocytes expand or when other leukocyte populations contract relatively.",
+      "biological_pathway": "Leukocyte differential distribution during reactive immune activation or relative neutrophil suppression.",
+      "interpretation": "A high lymphocyte percentage is a differential-count clue, not a final diagnosis.",
+      "implications": "The first task is to decide whether the pattern is relative or represents true lymphocytosis.",
+      "supporting_marker_roles": "Absolute lymphocytes confirm true expansion, neutrophils help explain relative shifts, and CRP helps distinguish reactive from less obviously reactive patterns."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_lymphocyte_pct_low_relative_lymphopenic_shift",
+    "signal_id": "signal_lymphocyte_pct_low",
+    "research_domain": "immunologic",
+    "primary_marker": {
+      "biomarker_id": "lymphocyte_pct",
+      "rationale": "A low lymphocyte percentage may reflect true lymphopenia or a relative increase in other leukocyte compartments and should be interpreted with the absolute count.",
+      "signal_system": "inflammatory"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "lymphocytes_abs",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "A low absolute lymphocyte count confirms that the percentage reduction reflects true lymphopenia."
+      },
+      {
+        "biomarker_id": "neutrophils_abs",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Neutrophilia can lower lymphocyte percentage even when absolute lymphocyte numbers are less abnormal."
+      },
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Inflammatory stress helps distinguish reactive stress leukograms from chronic immune deficiency patterns."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_stress_or_inflammatory_relative_lymphopenia",
+        "rank": 1,
+        "physiological_claim": "Low lymphocyte percentage may reflect a stress or inflammatory leukogram, especially when neutrophils and CRP are elevated.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Percentage-based lymphopenia can overstate immune deficiency if the absolute lymphocyte count is preserved."
+        ],
+        "missing_data": {
+          "policy": "Check the absolute lymphocyte count before inferring true lymphopenia."
+        },
+        "supporting_marker_refs": [
+          "lymphocytes_abs",
+          "neutrophils_abs",
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_absolute_count_normal",
+            "marker_reference": "lymphocytes_abs",
+            "contradiction_rationale": "A normal absolute lymphocyte count weakens a true lymphopenia interpretation and supports a relative differential shift.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_true_lymphopenic_pattern",
+        "rank": 2,
+        "physiological_claim": "Low lymphocyte percentage may indicate true lymphopenia when the absolute lymphocyte count is also reduced.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Clinical significance depends on persistence, treatment exposure, and infection or immune context."
+        ],
+        "missing_data": {
+          "policy": "Confirm absolute lymphopenia and assess medications or acute illness before assigning immune deficit significance."
+        },
+        "supporting_marker_refs": [
+          "lymphocytes_abs",
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_neutrophilia_dominant",
+            "marker_reference": "neutrophils_abs",
+            "contradiction_rationale": "Marked neutrophilia suggests that relative leukocyte redistribution may be driving much of the percentage change.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_stress_or_inflammatory_relative_lymphopenia",
+        "hyp_true_lymphopenic_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_cbc_with_absolute_lymphocyte_count",
+        "rationale": "Repeat CBC with absolute lymphocytes helps distinguish relative percentage suppression from true lymphopenia."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_lymphocyte_pct_low_with_lymphocytes_abs_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low lymphocyte percentage coincides with low absolute lymphocytes, as this more strongly supports true lymphopenia.",
+        "conditions": [
+          {
+            "metric_id": "lymphocytes_abs",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_lymphocytosis_guideline_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_lymphocytosis_guideline_2024",
+          "paper_title": "Lymphocytosis Guidelines",
+          "journal": "NHS Scotland Right Decisions",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Lymphocyte percentage reductions often need confirmation with the absolute count because inflammatory neutrophilia can create an apparent relative lymphopenia.",
+      "threshold_notes": "Percentage-based low lymphocyte states should not be used alone to define clinically important immune deficiency."
+    },
+    "narrative": {
+      "mechanism": "Lymphocyte percentage falls when lymphocytes are truly reduced or when neutrophils expand disproportionately.",
+      "biological_pathway": "Leukocyte redistribution during inflammation, stress, glucocorticoid exposure, or immune suppression.",
+      "interpretation": "A low lymphocyte percentage is a distributional clue that needs absolute-count confirmation.",
+      "implications": "The key question is whether there is true lymphopenia or only relative suppression within the differential.",
+      "supporting_marker_roles": "Absolute lymphocytes confirm true deficit, neutrophils explain relative suppression, and CRP helps distinguish reactive inflammatory stress from chronic immune causes."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_lymphocytes_abs_high_reactive_lymphocytosis",
+    "signal_id": "signal_lymphocytes_abs_high",
+    "research_domain": "immunologic",
+    "primary_marker": {
+      "biomarker_id": "lymphocytes_abs",
+      "rationale": "A high absolute lymphocyte count indicates true lymphocytosis and requires distinction between reactive and clonal causes.",
+      "signal_system": "inflammatory"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "lymphocyte_pct",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High lymphocyte percentage corroborates that the CBC differential is lymphocyte-weighted."
+      },
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Raised CRP supports a reactive inflammatory or infectious context for absolute lymphocytosis."
+      },
+      {
+        "biomarker_id": "smudge_cells",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Peripheral smear features such as smudge cells help distinguish reactive lymphocytosis from chronic lymphoproliferative disorders."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_reactive_viral_or_postinfectious_lymphocytosis",
+        "rank": 1,
+        "physiological_claim": "High absolute lymphocytes may reflect reactive lymphocytosis in viral or postinfectious immune activation.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Persistent or marked lymphocytosis should not be assumed reactive without follow-up."
+        ],
+        "missing_data": {
+          "policy": "Review duration, CRP, symptoms, and blood-film context before concluding a benign reactive cause."
+        },
+        "supporting_marker_refs": [
+          "lymphocyte_pct",
+          "crp",
+          "smudge_cells"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_persistent_smear_abnormality",
+            "marker_reference": "smudge_cells",
+            "contradiction_rationale": "Persistent smear abnormalities weaken a simple reactive interpretation and favor clonal evaluation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_early_clonal_lymphoproliferative_signal",
+        "rank": 2,
+        "physiological_claim": "High absolute lymphocytes may also be an early signal of a clonal lymphoproliferative disorder when persistent or accompanied by characteristic smear findings.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Absolute lymphocytosis alone does not establish a hematologic malignancy."
+        ],
+        "missing_data": {
+          "policy": "Use repeat CBC and blood-film or immunophenotypic assessment before assigning a clonal disorder frame."
+        },
+        "supporting_marker_refs": [
+          "smudge_cells",
+          "lymphocyte_pct"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_crp_high_acute_context",
+            "marker_reference": "crp",
+            "contradiction_rationale": "An acute inflammatory context makes a reactive explanation more plausible and weakens immediate clonal attribution.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_reactive_viral_or_postinfectious_lymphocytosis",
+        "hyp_early_clonal_lymphoproliferative_signal"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_cbc_with_blood_film",
+        "rationale": "Repeat CBC with blood film helps distinguish transient reactive lymphocytosis from persistent clonal lymphoproliferation."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_lymphocytes_abs_high_with_lymphocyte_pct_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high absolute lymphocytes coincide with high lymphocyte percentage, as this more strongly confirms a true lymphocytosis pattern.",
+        "conditions": [
+          {
+            "metric_id": "lymphocyte_pct",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_lymphocytosis_guideline_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_lymphocytosis_guideline_2024",
+          "paper_title": "Lymphocytosis Guidelines",
+          "journal": "NHS Scotland Right Decisions",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Absolute lymphocytosis is the preferred indicator of true lymphocyte expansion and should prompt differentiation between reactive and clonal causes.",
+      "threshold_notes": "Absolute count is more informative than percentage alone, but persistence and smear or phenotype context remain essential."
+    },
+    "narrative": {
+      "mechanism": "Absolute lymphocytes rise when lymphocyte production, mobilization, or survival increases.",
+      "biological_pathway": "Adaptive immune activation or clonal lymphoid expansion within the peripheral blood compartment.",
+      "interpretation": "This represents confirmed absolute lymphocytosis, which requires contextual interpretation, particularly regarding persistence and smear or phenotype findings.",
+      "implications": "The main distinction is between transient reactive expansion and early lymphoproliferative disease.",
+      "supporting_marker_roles": "Lymphocyte percentage corroborates the differential, CRP supports reactivity, and blood-film features provide the key differential against clonal disease."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_lymphocytes_abs_low_true_lymphopenia",
+    "signal_id": "signal_lymphocytes_abs_low",
+    "research_domain": "immunologic",
+    "primary_marker": {
+      "biomarker_id": "lymphocytes_abs",
+      "rationale": "Low absolute lymphocytes indicate true lymphopenia and are generally more informative than percentage-based reductions.",
+      "signal_system": "inflammatory"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "lymphocyte_pct",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low lymphocyte percentage corroborates a lymphocyte-poor leukocyte profile."
+      },
+      {
+        "biomarker_id": "neutrophils_abs",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Neutrophilia may accompany stress or inflammatory states that contribute to lymphocyte redistribution."
+      },
+      {
+        "biomarker_id": "igg",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Low IgG supports broader immune deficiency as an alternative to isolated transient stress lymphopenia."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_acquired_stress_or_treatment_related_lymphopenia",
+        "rank": 1,
+        "physiological_claim": "Low absolute lymphocytes may reflect acquired lymphopenia related to acute stress, infection, corticosteroids, or immunosuppressive treatment.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Clinical relevance depends on persistence and cause; many cases are transient."
+        ],
+        "missing_data": {
+          "policy": "Review treatment exposure, acute illness, and repeat counts before assuming chronic immune deficit."
+        },
+        "supporting_marker_refs": [
+          "lymphocyte_pct",
+          "neutrophils_abs",
+          "igg"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_igg_low_persistent",
+            "marker_reference": "igg",
+            "contradiction_rationale": "Low IgG and persistent lymphopenia weaken a purely transient stress interpretation and suggest broader immune impairment.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_chronic_immune_deficit_pattern",
+        "rank": 2,
+        "physiological_claim": "Low absolute lymphocytes may support a chronic immune-deficit pattern when persistent and accompanied by other immune abnormalities.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "The absolute count alone does not define primary immunodeficiency."
+        ],
+        "missing_data": {
+          "policy": "Confirm persistence and review immunoglobulins, infections, and medication history before assigning chronic immune significance."
+        },
+        "supporting_marker_refs": [
+          "igg",
+          "lymphocyte_pct"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_neutrophilia_acute_context",
+            "marker_reference": "neutrophils_abs",
+            "contradiction_rationale": "Marked acute neutrophilia supports a reactive stress picture and weakens immediate chronic immune-deficit attribution.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_acquired_stress_or_treatment_related_lymphopenia",
+        "hyp_chronic_immune_deficit_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_alc_with_immunologic_context",
+        "rationale": "Repeat absolute lymphocyte count with immunologic context helps distinguish transient acquired lymphopenia from persistent immune deficit."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_lymphocytes_abs_low_with_igg_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low absolute lymphocytes coincide with low IgG, as this more strongly supports broader immune impairment rather than isolated transient redistribution.",
+        "conditions": [
+          {
+            "metric_id": "igg",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_hypogammaglobulinemia_2022"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_hypogammaglobulinemia_2022",
+          "paper_title": "Practical guidance for the diagnosis and management of secondary hypogammaglobulinemia",
+          "journal": "Journal of Allergy and Clinical Immunology",
+          "year": 2022
+        }
+      ],
+      "physiological_claim": "True lymphopenia may be transient and acquired or may indicate broader immune impairment when persistent and accompanied by other immune abnormalities.",
+      "threshold_notes": "Absolute lymphocyte count should be interpreted longitudinally and with immune context rather than as a stand-alone disease classifier."
+    },
+    "narrative": {
+      "mechanism": "Absolute lymphocytes fall when lymphocyte production, survival, or circulation is impaired or redistributed.",
+      "biological_pathway": "Immune-cell production, trafficking, and treatment- or stress-related lymphocyte depletion.",
+      "interpretation": "This is a true lymphopenia signal whose meaning depends heavily on persistence and immune context.",
+      "implications": "The main distinction is between transient acquired lymphopenia and a broader chronic immune-deficit pattern.",
+      "supporting_marker_roles": "Lymphocyte percentage corroborates the CBC pattern, neutrophils support reactive stress redistribution, and IgG provides the key differential toward broader immune deficiency."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_magnesium_low_total_body_magnesium_deficiency",
+    "signal_id": "signal_magnesium_low",
+    "research_domain": "renal",
+    "primary_marker": {
+      "biomarker_id": "magnesium",
+      "rationale": "Low serum magnesium commonly reflects magnesium deficiency, though serum levels capture only a small fraction of total body magnesium.",
+      "signal_system": "renal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "potassium",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent hypokalemia commonly accompanies clinically significant magnesium deficiency."
+      },
+      {
+        "biomarker_id": "calcium",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low calcium may reflect magnesium-related impairment of parathyroid hormone secretion or action."
+      },
+      {
+        "biomarker_id": "fractional_excretion_magnesium",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Urinary magnesium handling helps distinguish renal wasting from gastrointestinal or nutritional magnesium deficiency."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_total_body_magnesium_deficiency",
+        "rank": 1,
+        "physiological_claim": "Low magnesium may reflect true total body magnesium deficiency when associated electrolyte abnormalities or low intake or losses are present.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Serum magnesium can underestimate total body deficit and should be interpreted in context."
+        ],
+        "missing_data": {
+          "policy": "Review potassium, calcium, and clinical loss history before assuming the deficiency is mild."
+        },
+        "supporting_marker_refs": [
+          "potassium",
+          "calcium",
+          "fractional_excretion_magnesium"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_fractional_excretion_low",
+            "marker_reference": "fractional_excretion_magnesium",
+            "contradiction_rationale": "Low urinary magnesium excretion in hypomagnesemia weakens a renal-wasting explanation and favors extrarenal loss or low intake.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_refractory_electrolyte_loss_pattern",
+        "rank": 2,
+        "physiological_claim": "Low magnesium may support a refractory electrolyte-loss pattern when hypokalemia or hypocalcemia coexist and correction is difficult.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This frame is mechanistic and should not be treated as a diagnosis of cause by itself."
+        ],
+        "missing_data": {
+          "policy": "Assess concurrent electrolyte disturbances and replacement response before narrowing the etiology."
+        },
+        "supporting_marker_refs": [
+          "potassium",
+          "calcium",
+          "fractional_excretion_magnesium"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_no_associated_electrolyte_loss",
+            "marker_reference": "potassium",
+            "contradiction_rationale": "Normal potassium weakens a severe deficiency-interaction frame but does not exclude magnesium deficiency.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_total_body_magnesium_deficiency",
+        "hyp_refractory_electrolyte_loss_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_urinary_magnesium_assessment",
+        "rationale": "Urinary magnesium assessment helps distinguish renal wasting from gastrointestinal loss or low intake in hypomagnesemia."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_magnesium_low_with_potassium_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low magnesium coincides with low potassium, as this more strongly supports clinically meaningful magnesium deficiency affecting electrolyte balance.",
+        "conditions": [
+          {
+            "metric_id": "potassium",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_magnesium_core_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_magnesium_core_2024",
+          "paper_title": "Magnesium Disorders: Core Curriculum 2024",
+          "journal": "American Journal of Kidney Diseases",
+          "year": 2024
+        },
+        {
+          "source_id": "source_hypomagnesemia_guideline_2024",
+          "paper_title": "Hypomagnesaemia – a guide for GPs",
+          "journal": "NHS RUH Pathology Guideline",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Hypomagnesemia commonly reflects clinically relevant deficiency and often coexists with hypokalemia or hypocalcemia, particularly when ongoing losses are present.",
+      "threshold_notes": "Serum magnesium is an imperfect proxy for total body stores; interpretation should not rely on serum value alone to grade total-body depletion."
+    },
+    "narrative": {
+      "mechanism": "Serum magnesium falls when intake is inadequate, gastrointestinal or renal losses are increased, or intracellular shifts occur.",
+      "biological_pathway": "Magnesium homeostasis across intestinal absorption, renal reabsorption, and cellular distribution.",
+      "interpretation": "A low magnesium value usually deserves etiologic clarification because it may signify a larger total-body deficit than the serum number suggests.",
+      "implications": "The essential distinction is between renal wasting and non-renal magnesium loss or under-replacement.",
+      "supporting_marker_roles": "Potassium and calcium corroborate biologically meaningful deficiency, while urinary magnesium handling provides the key differential for mechanism."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_magnesium_low_renal_magnesium_wasting",
+    "signal_id": "signal_magnesium_low",
+    "research_domain": "renal",
+    "primary_marker": {
+      "biomarker_id": "magnesium",
+      "rationale": "Low serum magnesium with inappropriate urinary magnesium loss suggests renal wasting rather than simple extrarenal depletion.",
+      "signal_system": "renal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "fractional_excretion_magnesium",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "specialist",
+        "rationale": "A high fractional excretion of magnesium in hypomagnesemia supports renal magnesium wasting."
+      },
+      {
+        "biomarker_id": "potassium",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Hypokalemia commonly coexists with renal magnesium wasting and can become refractory until magnesium is corrected."
+      },
+      {
+        "biomarker_id": "urine_magnesium_24h",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "A high urinary magnesium excretion helps distinguish renal wasting from gastrointestinal loss or poor intake."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_renal_magnesium_wasting",
+        "rank": 1,
+        "physiological_claim": "Low magnesium may reflect renal magnesium wasting when urinary magnesium excretion remains inappropriately high during hypomagnesemia.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This frame depends on renal function and urine-measure reliability."
+        ],
+        "missing_data": {
+          "policy": "Assess urinary magnesium in the correct clinical context before concluding renal wasting."
+        },
+        "supporting_marker_refs": [
+          "fractional_excretion_magnesium",
+          "potassium",
+          "urine_magnesium_24h"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_urinary_magnesium_low",
+            "marker_reference": "urine_magnesium_24h",
+            "contradiction_rationale": "Low urinary magnesium during hypomagnesemia argues against renal wasting and favors extrarenal loss or low intake.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_medication_or_tubular_loss_context",
+        "rank": 2,
+        "physiological_claim": "Low magnesium with renal wasting may indicate medication-related or tubular-loss physiology rather than nutritional deficiency alone.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Etiology should remain open unless medication and tubular context are known."
+        ],
+        "missing_data": {
+          "policy": "Review diuretics, proton-pump inhibitors, renal function, and tubular disorders before assigning a cause."
+        },
+        "supporting_marker_refs": [
+          "fractional_excretion_magnesium",
+          "potassium",
+          "urine_magnesium_24h"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_no_urinary_loss",
+            "marker_reference": "fractional_excretion_magnesium",
+            "contradiction_rationale": "Normal or low fractional excretion weakens a renal-wasting interpretation.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_renal_magnesium_wasting",
+        "hyp_medication_or_tubular_loss_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_fractional_excretion_of_magnesium",
+        "rationale": "Fractional excretion of magnesium is the main test used to separate renal wasting from extrarenal causes of hypomagnesemia."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_magnesium_low_with_fractional_excretion_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low magnesium coincides with a high fractional excretion of magnesium, as this more strongly supports renal magnesium wasting.",
+        "conditions": [
+          {
+            "metric_id": "fractional_excretion_magnesium",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_hypomagnesemia_guideline_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_hypomagnesemia_guideline_2024",
+          "paper_title": "Hypomagnesaemia – a guide for GPs",
+          "journal": "NHS RUH Pathology Guideline",
+          "year": 2024
+        },
+        {
+          "source_id": "source_magnesium_core_2024",
+          "paper_title": "Magnesium Disorders: Core Curriculum 2024",
+          "journal": "American Journal of Kidney Diseases",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "In hypomagnesemia, persistently elevated urinary magnesium excretion supports renal wasting rather than simple extrarenal deficit.",
+      "threshold_notes": "Urinary magnesium interpretation depends on renal function and contemporaneous serum magnesium; avoid unguided cutoffs outside governed references."
+    },
+    "narrative": {
+      "mechanism": "The kidneys fail to appropriately conserve magnesium despite systemic magnesium deficiency.",
+      "biological_pathway": "Renal tubular handling of magnesium in the loop of Henle and distal nephron.",
+      "interpretation": "This pattern is mechanistically distinct from gastrointestinal loss and often changes management emphasis.",
+      "implications": "Urinary magnesium indices should be obtained when cause is unclear or replacement failure suggests ongoing renal loss.",
+      "supporting_marker_roles": "Fractional excretion corroborates renal loss, potassium reflects the associated electrolyte phenotype, and urinary magnesium differentiates renal wasting from extrarenal causes."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_magnesium_high_reduced_excretion_or_excess_load",
+    "signal_id": "signal_magnesium_high",
+    "research_domain": "renal",
+    "primary_marker": {
+      "biomarker_id": "magnesium",
+      "rationale": "High serum magnesium usually reflects reduced renal excretion, excessive magnesium load, or both.",
+      "signal_system": "renal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "creatinine",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Impaired kidney function supports reduced magnesium excretion as a cause of hypermagnesemia."
+      },
+      {
+        "biomarker_id": "calcium",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low calcium can accompany clinically significant hypermagnesemia and supports a biologically relevant disturbance."
+      },
+      {
+        "biomarker_id": "urea",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Azotemia helps distinguish renal-retention hypermagnesemia from isolated exogenous magnesium intake with preserved renal clearance."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_renal_retention_hypermagnesemia",
+        "rank": 1,
+        "physiological_claim": "High magnesium may reflect reduced renal excretion, particularly in kidney dysfunction or acute kidney injury.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Clinical significance depends on degree, symptoms, and renal context."
+        ],
+        "missing_data": {
+          "policy": "Review kidney function and exposure history before assuming isolated supplementation as the main driver."
+        },
+        "supporting_marker_refs": [
+          "creatinine",
+          "calcium",
+          "urea"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_kidney_function_preserved",
+            "marker_reference": "creatinine",
+            "contradiction_rationale": "Preserved kidney function weakens a pure renal-retention interpretation and raises concern for exogenous load.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_exogenous_magnesium_load",
+        "rank": 2,
+        "physiological_claim": "High magnesium may also result from excessive magnesium administration or intake, especially if renal clearance is impaired.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Exposure history is essential because the biochemical pattern is not specific for source."
+        ],
+        "missing_data": {
+          "policy": "Assess magnesium-containing medications, bowel preparations, or supplementation before assigning cause."
+        },
+        "supporting_marker_refs": [
+          "creatinine",
+          "urea",
+          "calcium"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_elevated_urea_challenges_exogenous_only_frame",
+            "marker_reference": "urea",
+            "contradiction_rationale": "A clearly elevated urea alongside high magnesium challenges a purely exogenous magnesium load interpretation by indicating co-existing renal excretory impairment, making retention a more plausible contributor than intake alone.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_renal_retention_hypermagnesemia",
+        "hyp_exogenous_magnesium_load"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_magnesium_with_renal_function_review",
+        "rationale": "Repeat magnesium with renal-function review helps distinguish reduced excretion from transient exogenous exposure."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_magnesium_high_with_creatinine_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high magnesium coincides with high creatinine, as this more strongly supports reduced renal excretion.",
+        "conditions": [
+          {
+            "metric_id": "creatinine",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_magnesium_core_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_magnesium_core_2024",
+          "paper_title": "Magnesium Disorders: Core Curriculum 2024",
+          "journal": "American Journal of Kidney Diseases",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Hypermagnesemia most often occurs when magnesium exposure exceeds renal excretory capacity, especially in kidney dysfunction.",
+      "threshold_notes": "Interpretation should remain laboratory and renal-context anchored; serum magnesium alone does not distinguish retention from exogenous load."
+    },
+    "narrative": {
+      "mechanism": "Serum magnesium rises when renal clearance is inadequate or magnesium intake or administration overwhelms normal excretory capacity.",
+      "biological_pathway": "Magnesium filtration and tubular excretion coupled to total-body magnesium load.",
+      "interpretation": "A high magnesium result is usually a retention-or-load problem rather than a primary endocrine disorder.",
+      "implications": "The essential distinction is between impaired renal clearance and excess exposure, often with overlap.",
+      "supporting_marker_roles": "Creatinine corroborates reduced excretion, calcium supports a biologically significant magnesium disturbance, and urea helps differentiate renal retention from isolated supplementation."
+    }
+  }
+]
