@@ -1,0 +1,128 @@
+{
+  "investigation_spec_contract_version": "3.0.0",
+  "spec_id": "inv_pregnenolone_low_steroidogenic_reduction",
+  "signal_id": "signal_pregnenolone_low",
+  "research_domain": "hormonal",
+  "primary_marker": {
+    "biomarker_id": "pregnenolone",
+    "rationale": "Pregnenolone is an upstream steroid precursor, but isolated low values require cautious and contextual interpretation.",
+    "signal_system": "hormonal"
+  },
+  "trigger_direction": "low",
+  "activation": {
+    "activation_logic": "lab_range_exceeded",
+    "activation_config": {
+      "enable_upper_bound": false,
+      "upper_bound_state": "suboptimal",
+      "enable_lower_bound": true,
+      "lower_bound_state": "suboptimal"
+    }
+  },
+  "states": {
+    "baseline_state": "suboptimal",
+    "escalation_state": "at_risk"
+  },
+  "supporting_markers": [
+    {
+      "biomarker_id": "dheas",
+      "expected_direction": "low",
+      "role": "mechanism_marker",
+      "relationship_kind": "mechanism",
+      "availability": "common",
+      "rationale": "Concurrent DHEA-S reduction can support a broader reduction in downstream steroidogenic output."
+    },
+    {
+      "biomarker_id": "total_cholesterol",
+      "expected_direction": "low",
+      "role": "differential_marker",
+      "relationship_kind": "differential",
+      "availability": "common",
+      "rationale": "Low cholesterol may indicate substrate limitation and helps distinguish reduced precursor availability from downstream synthetic inefficiency."
+    }
+  ],
+  "hypotheses": [
+    {
+      "hypothesis_id": "hyp_broad_steroidogenic_reduction",
+      "rank": 1,
+      "physiological_claim": "Low pregnenolone may reflect reduced overall steroidogenic throughput, particularly when downstream steroid markers are also low.",
+      "evidence_strength": "exploratory",
+      "caveats": [
+        "Condition-specific outcome evidence for isolated low pregnenolone remains limited."
+      ],
+      "missing_data": {
+        "policy": "Prioritise downstream steroid markers such as DHEA-S or other axis-specific hormones before drawing stronger conclusions."
+      },
+      "supporting_marker_refs": [
+        "dheas"
+      ],
+      "contradiction_markers": []
+    },
+    {
+      "hypothesis_id": "hyp_substrate_limitation",
+      "rank": 2,
+      "physiological_claim": "Low pregnenolone may be partly explained by reduced cholesterol substrate availability rather than a primary steroidogenic defect.",
+      "evidence_strength": "moderate",
+      "caveats": [
+        "Interpretation should consider nutrition, statin exposure, and broader lipid context."
+      ],
+      "missing_data": {
+        "policy": "Review cholesterol context and medication history before prioritising intrinsic steroidogenic dysfunction."
+      },
+      "supporting_marker_refs": [
+        "total_cholesterol"
+      ],
+      "contradiction_markers": []
+    }
+  ],
+  "hypothesis_ranking": {
+    "ordered_hypothesis_ids": [
+      "hyp_broad_steroidogenic_reduction",
+      "hyp_substrate_limitation"
+    ]
+  },
+  "confirmatory_tests": [
+    {
+      "test_id": "ct_comprehensive_steroid_panel",
+      "rationale": "A broader steroid panel can help determine whether low pregnenolone sits within a wider pattern of reduced downstream steroid output."
+    }
+  ],
+  "override_rules": [
+    {
+      "rule_id": "or_low_pregnenolone_with_low_dheas",
+      "resulting_state": "at_risk",
+      "description": "Escalate cautiously when low pregnenolone coincides with low DHEA-S, as this is more consistent with broader steroidogenic reduction than an isolated finding.",
+      "conditions": [
+        {
+          "metric_id": "dheas",
+          "operator": "<",
+          "condition_type": "all_of",
+          "comparator_type": "lab_range_boundary",
+          "boundary": "below_min"
+        }
+      ],
+      "source_refs": [
+        "source_pregnenolone_exploratory_review"
+      ]
+    }
+  ],
+  "evidence": {
+    "evidence_strength": "exploratory",
+    "sources": [
+      {
+        "source_id": "source_pregnenolone_exploratory_review",
+        "paper_title": "Exploratory literature on pregnenolone and steroidogenic context",
+        "journal": "Exploratory and review literature",
+        "year": 2024
+      }
+    ],
+    "physiological_claim": "Pregnenolone is an upstream steroid precursor, but isolated low values have limited direct outcome-grade evidence and should be interpreted conservatively.",
+    "threshold_notes": "No robust condition-specific threshold is established for broad clinical escalation; interpretation should remain contextual and lab-range anchored."
+  },
+  "narrative": {
+    "mechanism": "Pregnenolone is generated from cholesterol early in steroidogenesis and sits upstream of multiple downstream hormonal pathways.",
+    "biological_pathway": "Early steroidogenesis and downstream adrenal and gonadal hormone synthesis pathways.",
+    "interpretation": "Low pregnenolone is a contextual hormonal finding rather than a stand-alone diagnostic signal and should be interpreted alongside downstream steroid markers.",
+    "implications": "This pattern may justify broader hormonal review, but isolated low pregnenolone should not be treated as a definitive disease marker.",
+    "supporting_marker_roles": "DHEA-S supports broader steroidogenic output assessment; total cholesterol helps assess whether substrate limitation could explain the pattern."
+  }
+}

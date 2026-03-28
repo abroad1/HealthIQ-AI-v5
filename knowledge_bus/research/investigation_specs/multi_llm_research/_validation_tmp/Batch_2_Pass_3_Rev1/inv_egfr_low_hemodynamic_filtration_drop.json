@@ -1,0 +1,143 @@
+{
+  "investigation_spec_contract_version": "3.0.0",
+  "spec_id": "inv_egfr_low_hemodynamic_filtration_drop",
+  "signal_id": "signal_egfr_low",
+  "research_domain": "renal",
+  "primary_marker": {
+    "biomarker_id": "egfr",
+    "rationale": "Low eGFR can reflect acute or hemodynamic reduction in filtration as well as chronic kidney disease, so trajectory matters.",
+    "signal_system": "renal"
+  },
+  "trigger_direction": "low",
+  "activation": {
+    "activation_logic": "lab_range_exceeded",
+    "activation_config": {
+      "enable_upper_bound": false,
+      "upper_bound_state": "suboptimal",
+      "enable_lower_bound": true,
+      "lower_bound_state": "suboptimal"
+    }
+  },
+  "states": {
+    "baseline_state": "suboptimal",
+    "escalation_state": "at_risk"
+  },
+  "supporting_markers": [
+    {
+      "biomarker_id": "creatinine",
+      "expected_direction": "high",
+      "role": "corroborator",
+      "relationship_kind": "corroboration",
+      "availability": "common",
+      "rationale": "Creatinine rise supports a real change in kidney filtration estimate rather than random variation."
+    },
+    {
+      "biomarker_id": "cystatin_c",
+      "expected_direction": "high",
+      "role": "differential_marker",
+      "relationship_kind": "differential",
+      "availability": "specialist",
+      "rationale": "Cystatin C can help assess whether a creatinine-based eGFR reduction is biologically corroborated."
+    }
+  ],
+  "hypotheses": [
+    {
+      "hypothesis_id": "hyp_hemodynamic_filtration_drop",
+      "rank": 1,
+      "physiological_claim": "Low eGFR may reflect a hemodynamic fall in filtration rather than fixed structural kidney disease, particularly when the change is recent.",
+      "evidence_strength": "consensus",
+      "caveats": [
+        "Volume status, medication timing, and recent illness can materially affect interpretation."
+      ],
+      "missing_data": {
+        "policy": "Review recent medications, intercurrent illness, and prior kidney function trajectory before inferring structural kidney disease."
+      },
+      "supporting_marker_refs": [
+        "creatinine",
+        "cystatin_c"
+      ],
+      "contradiction_markers": [
+        {
+          "contradiction_id": "ctr_albuminuria_supports_ckd",
+          "marker_reference": "uacr",
+          "contradiction_rationale": "Concurrent albuminuria makes a chronic kidney disease frame more plausible than a purely hemodynamic change.",
+          "contradiction_strength": "strong"
+        }
+      ]
+    },
+    {
+      "hypothesis_id": "hyp_acute_kidney_stress_context",
+      "rank": 2,
+      "physiological_claim": "Low eGFR may indicate an acute kidney stress context when accompanied by recent creatinine change and clinical instability.",
+      "evidence_strength": "moderate",
+      "caveats": [
+        "Acute kidney injury classification requires temporal and clinical context beyond a single eGFR estimate."
+      ],
+      "missing_data": {
+        "policy": "Compare with prior kidney function and assess recent volume, illness, and nephrotoxin exposures before assigning an acute injury frame."
+      },
+      "supporting_marker_refs": [
+        "creatinine"
+      ],
+      "contradiction_markers": [
+        {
+          "contradiction_id": "ctr_normal_cystatin_c_weakens_acute_stress",
+          "marker_reference": "cystatin_c",
+          "contradiction_rationale": "A normal cystatin C weakens a true acute kidney stress interpretation, providing independent evidence that the creatinine-based eGFR drop may not reflect genuine acute filtration impairment.",
+          "contradiction_strength": "moderate"
+        }
+      ]
+    }
+  ],
+  "hypothesis_ranking": {
+    "ordered_hypothesis_ids": [
+      "hyp_hemodynamic_filtration_drop",
+      "hyp_acute_kidney_stress_context"
+    ]
+  },
+  "confirmatory_tests": [
+    {
+      "test_id": "ct_repeat_creatinine_egfr_trajectory",
+      "rationale": "Short-interval repeat kidney function testing helps distinguish transient hemodynamic change from persistent renal impairment."
+    }
+  ],
+  "override_rules": [
+    {
+      "rule_id": "or_egfr_low_with_cystatin_c_high",
+      "resulting_state": "at_risk",
+      "description": "Escalate when low eGFR coincides with high cystatin C, as this provides independent support for a true reduction in kidney filtration.",
+      "conditions": [
+        {
+          "metric_id": "cystatin_c",
+          "operator": ">",
+          "condition_type": "all_of",
+          "comparator_type": "lab_range_boundary",
+          "boundary": "above_max"
+        }
+      ],
+      "source_refs": [
+        "source_kdigo_ckd_2024"
+      ]
+    }
+  ],
+  "evidence": {
+    "evidence_strength": "consensus",
+    "sources": [
+      {
+        "source_id": "source_kdigo_ckd_2024",
+        "paper_title": "KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease",
+        "journal": "Kidney International",
+        "year": 2024
+      }
+    ],
+    "physiological_claim": "Changes in eGFR should be interpreted in clinical and temporal context because recent medication, illness, or hemodynamic shifts can alter filtration estimates.",
+    "threshold_notes": "Trajectory is more informative than an isolated low eGFR result when distinguishing transient from persistent kidney dysfunction."
+  },
+  "narrative": {
+    "mechanism": "eGFR falls when effective filtration drops, whether from structural disease or acute hemodynamic stress.",
+    "biological_pathway": "Dynamic regulation of glomerular perfusion and filtration.",
+    "interpretation": "A low eGFR does not automatically imply fixed chronic kidney damage and should be read against recent trajectory and albuminuria context.",
+    "implications": "Repeat testing and clarification of recent illness or nephrotoxic exposure are often needed before settling on a chronic disease interpretation.",
+    "supporting_marker_roles": "Creatinine corroborates the filtration estimate, while cystatin C can help distinguish a true reduction from creatinine-related distortion."
+  }
+}
