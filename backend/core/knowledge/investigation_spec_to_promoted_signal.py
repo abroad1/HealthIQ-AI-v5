@@ -6,6 +6,10 @@ Adjacent hypothesis assets must reference owning signal_id.
 trigger_direction is passed through unchanged (same enum as investigation v3 / KB-S47d).
 
 Authority: ADR-008, promoted_signal_intelligence_schema_v1.yaml
+
+signal_system: investigation specs (v3) must set primary_marker.signal_system explicitly
+(validate_investigation_spec.py). If absent here, ``other`` is used only as a defensive
+fallback for malformed callers — governed ingestion must not rely on it (KB-S50).
 """
 
 from __future__ import annotations

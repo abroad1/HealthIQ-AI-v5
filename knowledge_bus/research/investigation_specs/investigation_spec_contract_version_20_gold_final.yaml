@@ -423,7 +423,7 @@
   "primary_marker":
     "biomarker_id": "ldh"
     "rationale": "Lactate Dehydrogenase (LDH) is a cellular biomarker released during tissue damage. High levels are independently associated with mortality (HR 1.27)."
-    "signal_system": "other"
+    "signal_system": "metabolic"
   "trigger_direction": "high"
   "activation":
     "activation_logic": "lab_range_exceeded"
@@ -872,7 +872,7 @@
   "primary_marker":
     "biomarker_id": "esr"
     "rationale": "ESR is a surrogate for systemic inflammation. Levels >50 mm/hr are associated with 1.89x hazard ratio for mortality."
-    "signal_system": "other"
+    "signal_system": "inflammatory"
   "trigger_direction": "high"
   "activation":
     "activation_logic": "lab_range_exceeded"
@@ -1185,7 +1185,7 @@
   "primary_marker":
     "biomarker_id": "bicarbonate"
     "rationale": "Bicarbonate primary buffer. Levels <=19.0 mEq/L associated with higher mortality."
-    "signal_system": "other"
+    "signal_system": "renal"
   "trigger_direction": "low"
   "activation":
     "activation_logic": "lab_range_exceeded"

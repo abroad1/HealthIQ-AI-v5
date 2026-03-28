@@ -27,6 +27,25 @@ _V2_CONTRACT = "2.0.0"
 
 # Investigation v3 trigger vocabulary — aligned with signal_library 2.0.0 (not legacy "both").
 _V3_TRIGGER_DIRECTION = frozenset({"high", "low", "bidirectional", "context_dependent"})
+# Aligned with investigation_spec_schema_v3.0.0 + signal_library + promoted_signal_intelligence (KB-S50).
+_V3_SIGNAL_SYSTEMS = frozenset(
+    {
+        "metabolic",
+        "lipid_transport",
+        "hepatic",
+        "inflammatory",
+        "renal",
+        "vascular",
+        "hematologic",
+        "hormonal",
+        "mitochondrial",
+        "endocrine",
+        "bone",
+        "mineral",
+        "nutritional",
+        "other",
+    }
+)
 _EXPECTED = frozenset({"high", "low", "either", "any"})
 _ROLES_V3 = frozenset(
     {
@@ -181,6 +200,19 @@ def _validate_v3(doc: dict[str, Any], errors: list[str]) -> None:
         errors.append(
             f"v3: trigger_direction must be one of {sorted(_V3_TRIGGER_DIRECTION)}"
         )
+
+    pm_root = doc.get("primary_marker")
+    if not isinstance(pm_root, dict):
+        errors.append("v3: primary_marker must be a map")
+    else:
+        ss = pm_root.get("signal_system")
+        if not isinstance(ss, str) or not ss.strip():
+            errors.append("v3: primary_marker.signal_system is required (non-empty string)")
+        elif ss.strip() not in _V3_SIGNAL_SYSTEMS:
+            errors.append(
+                "v3: primary_marker.signal_system must be one of "
+                f"{sorted(_V3_SIGNAL_SYSTEMS)}"
+            )
 
     sm = doc.get("supporting_markers")
     biomarker_ids: set[str] = set()
