@@ -49,6 +49,10 @@ _SIGNAL_SYSTEMS = frozenset(
         "hematologic",
         "hormonal",
         "mitochondrial",
+        "endocrine",
+        "bone",
+        "mineral",
+        "nutritional",
         "other",
     }
 )

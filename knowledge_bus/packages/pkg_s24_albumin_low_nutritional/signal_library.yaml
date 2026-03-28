@@ -10,7 +10,7 @@ signals:
   description: Albumin is the main protein produced by the liver. It maintains oncotic
     pressure and acts as a transport protein. Low levels indicate chronic inflammation,
     liver disease, or malnutrition.
-  system: other
+  system: nutritional
   primary_metric: albumin
   supporting_metrics: &id001
   - crp

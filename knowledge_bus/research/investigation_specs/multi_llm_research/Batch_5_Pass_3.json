@@ -7,7 +7,7 @@
     "primary_marker": {
       "biomarker_id": "active_b12",
       "rationale": "Low active B12 can indicate reduced immediately bioavailable cobalamin and support early deficiency assessment when interpreted with functional markers.",
-      "signal_system": "other"
+      "signal_system": "hematologic"
     },
     "trigger_direction": "low",
     "activation": {
@@ -347,7 +347,7 @@
     "primary_marker": {
       "biomarker_id": "alp",
       "rationale": "Raised alkaline phosphatase can also arise from increased osteoblastic activity and bone remodelling rather than liver disease.",
-      "signal_system": "other"
+      "signal_system": "bone"
     },
     "trigger_direction": "high",
     "activation": {
@@ -504,7 +504,7 @@
     "primary_marker": {
       "biomarker_id": "alp",
       "rationale": "Persistently low alkaline phosphatase can indicate impaired ALP activity and may support consideration of hypophosphatasia when compatible clinical or biochemical features are present.",
-      "signal_system": "other"
+      "signal_system": "bone"
     },
     "trigger_direction": "low",
     "activation": {
@@ -659,7 +659,7 @@
     "primary_marker": {
       "biomarker_id": "alp",
       "rationale": "Low alkaline phosphatase may reflect undernutrition or trace-mineral deficiency when broader metabolic context supports reduced enzyme substrate or cofactor availability.",
-      "signal_system": "other"
+      "signal_system": "nutritional"
     },
     "trigger_direction": "low",
     "activation": {
@@ -3958,7 +3958,7 @@
     "primary_marker": {
       "biomarker_id": "calcium",
       "rationale": "High calcium commonly reflects parathyroid hormone-mediated calcium dysregulation, especially when phosphate is low or normal and the pattern is persistent.",
-      "signal_system": "other"
+      "signal_system": "endocrine"
     },
     "trigger_direction": "high",
     "activation": {
@@ -4120,7 +4120,7 @@
     "primary_marker": {
       "biomarker_id": "calcium",
       "rationale": "High calcium with suppressed parathyroid hormone suggests a non-parathyroid cause such as malignancy, vitamin D excess, or granulomatous activation.",
-      "signal_system": "other"
+      "signal_system": "metabolic"
     },
     "trigger_direction": "high",
     "activation": {
@@ -4283,7 +4283,7 @@
     "primary_marker": {
       "biomarker_id": "calcium",
       "rationale": "Low calcium commonly reflects vitamin D deficiency, magnesium deficiency, or secondary hyperparathyroid physiology rather than isolated calcium lack alone.",
-      "signal_system": "other"
+      "signal_system": "nutritional"
     },
     "trigger_direction": "low",
     "activation": {
@@ -4446,7 +4446,7 @@
     "primary_marker": {
       "biomarker_id": "calcium",
       "rationale": "Low calcium with an inappropriately low or normal parathyroid hormone level suggests hypoparathyroid physiology rather than an appropriate compensatory response.",
-      "signal_system": "other"
+      "signal_system": "endocrine"
     },
     "trigger_direction": "low",
     "activation": {

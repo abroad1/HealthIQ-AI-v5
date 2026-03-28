@@ -9,7 +9,7 @@ signals:
   name: Vitamin D LOW
   description: 25-hydroxyvitamin D is the best indicator of total body Vitamin D stores,
     essential for calcium homeostasis and bone health.
-  system: other
+  system: nutritional
   primary_metric: vitamin_d
   supporting_metrics: &id001
   - calcium

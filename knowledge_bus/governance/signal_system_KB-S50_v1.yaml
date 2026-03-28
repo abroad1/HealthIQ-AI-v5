@@ -1,0 +1,125 @@
+# KB-S50 — signal_system vocabulary and assignment governance
+# artifact_version: 1
+# generated_for_work_id: KB-S50
+
+purpose:
+  statement: >
+    signal_system is a coarse, object-level routing and grouping field for signals across
+    investigation specs, signal libraries, promoted signal intelligence, and downstream
+    reporting. It expresses the dominant clinical interpretation frame for the biomarker
+    condition encoded by that spec or signal, not total organ biology.
+  not_intended_for: >
+    It is not a full ontology of physiology, a replacement for research_domain prose,
+    or a per-biomarker static label independent of the condition object.
+
+allowed_vocabulary:
+  description: >
+    Closed enum shared across investigation_spec v3.0.0 (primary_marker.signal_system),
+    signal_library (signals[].system), and promoted_signal_intelligence (signals[].signal_system).
+  values:
+    - metabolic
+    - lipid_transport
+    - hepatic
+    - inflammatory
+    - renal
+    - vascular
+    - hematologic
+    - hormonal
+    - mitochondrial
+    - endocrine
+    - bone
+    - mineral
+    - nutritional
+    - other
+  reserved_fallback: other
+  reserved_fallback_policy: >
+    Use only when no governed category honestly fits after applying assignment rules.
+    Do not use other as a lazy substitute for mineral, bone, nutritional, or endocrine frames.
+
+assignment_policy:
+  granularity: per_biomarker_condition_object
+  rule: >
+    Choose the single category that best matches the dominant mechanism or clinical frame
+    asserted in the primary hypothesis for that spec_id / signal_id, using supporting
+    markers only to disambiguate (e.g. ALP + hepatic pattern vs bone turnover pattern).
+  examples_documented_in_migration:
+    - spec_id: inv_vitamin_d_low_vitamin_d_deficiency
+      signal_system: nutritional
+      rationale: Low 25-OH-D as substrate / intake insufficiency frame.
+    - spec_id: inv_vitamin_d_high_vitamin_d_excess_context
+      signal_system: endocrine
+      rationale: Excess physiology tied to calcium absorption and PTH suppression.
+    - spec_id: inv_magnesium_low_hypomagnesemia
+      signal_system: mineral
+    - spec_id: inv_magnesium_high_hypermagnesemia_context
+      signal_system: mineral
+    - spec_id: inv_active_b12_low_b12_depletion
+      signal_system: hematologic
+    - spec_id: inv_alp_high_high_bone_turnover_pattern
+      signal_system: bone
+    - spec_id: inv_alp_low_hypophosphatasia_pattern
+      signal_system: bone
+    - spec_id: inv_alp_low_nutrient_or_cofactor_deficiency
+      signal_system: nutritional
+    - spec_id: inv_calcium_high_primary_hyperparathyroid_pattern
+      signal_system: endocrine
+    - spec_id: inv_calcium_high_pth_independent_hypercalcemia
+      signal_system: metabolic
+      rationale: Heterogeneous non-PTH mechanisms (malignancy, vitamin D excess, etc.).
+    - spec_id: inv_calcium_low_vitamin_d_or_magnesium_related_hypocalcemia
+      signal_system: nutritional
+    - spec_id: inv_calcium_low_hypoparathyroid_pattern
+      signal_system: endocrine
+    - spec_id: inv_ldh_high
+      signal_system: metabolic
+      rationale: Non-specific cellular injury enzyme; metabolic / tissue-stress grouping.
+    - spec_id: inv_esr_high
+      signal_system: inflammatory
+    - spec_id: inv_bicarbonate_low
+      signal_system: renal
+    - spec_id: inv_albumin_low_nutritional
+      signal_system: nutritional
+    - package: pkg_s24_albumin_low_nutritional
+      field: signal_library.signals[].system
+      value: nutritional
+    - package: pkg_s24_mcv_high_macrocytosis
+      field: signal_library.signals[].system
+      value: hematologic
+    - package: pkg_s24_vitamin_d_low_deficiency
+      field: signal_library.signals[].system
+      value: nutritional
+
+enforcement:
+  investigation_spec_v3:
+    schema: knowledge_bus/research/investigation_specs/investigation_spec_schema_v3.0.0.yaml
+    validator: backend/scripts/validate_investigation_spec.py
+    rules:
+      - primary_marker.signal_system required for contract 3.0.0
+      - must be a member of allowed_vocabulary.values
+  signal_library:
+    schema: knowledge_bus/schema/signal_library_schema.yaml
+  promoted_signal_intelligence:
+    schema: knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml
+    validator: backend/scripts/validate_promoted_signal_intelligence.py
+  translation:
+    module: backend/core/knowledge/investigation_spec_to_promoted_signal.py
+    note: >
+      Defensive default to other if signal_system missing; governed paths must always
+      supply an explicit value so validation passes before promotion.
+
+stage_1c_runtime_note:
+  signal_evaluator: >
+    Emits signal_results.system from signal_library.yaml; changing system values alters
+    report summary_tokens where those signals participate in chains (report_compiler_v1).
+
+migration_kb_s50:
+  batches_updated:
+    - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_1.json
+    - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_2.json
+    - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+    - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_1.json
+    - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_2.json
+    - knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+  gold_fixtures_updated:
+    - knowledge_bus/research/investigation_specs/investigation_spec_contract_version_20_gold_final.yaml
+    - knowledge_bus/research/investigation_specs/investigation_spec_contract_version_20_gold_final-v3.yaml
