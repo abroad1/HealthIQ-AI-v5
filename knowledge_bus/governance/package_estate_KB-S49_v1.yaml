@@ -1,0 +1,1380 @@
+work_id: KB-S49
+artifact_id: package_estate_KB-S49_v1
+artifact_version: 1
+generated_date: '2026-03-28'
+packages_root: knowledge_bus/packages
+inventory_counts:
+  pkg_directories_total: 74
+  governed_packages_in_inventory: 73
+  excluded_placeholders: 1
+  governed_tier_counts:
+    legacy_thin_pre_v3_context: 12
+    partially_uplifted_research_fidelity_no_psi: 10
+    structured_translation_batch_no_psi: 31
+    v3_grade_rich_governed: 20
+stage_1c_intelligence_preflight:
+  runtime_consumers:
+  - component: backend/core/analytics/signal_evaluator.py
+    class: SignalRegistry
+    behaviour: Iterates knowledge_bus/packages/*/signal_library.yaml (sorted), excludes
+      pkg_example only. Merges signals by signal_id with lexicographic path tie-break.
+      No branch on promoted_signal_intelligence, manifest tier, or schema_version.
+  estate_tier_distinction_in_runtime: none_observed
+  deterministic_manifest_and_files_for_classification:
+  - 'package_manifest.yaml: promoted_signal_intelligence, translation_mode, source_document,
+    behavioural_impact, intelligence_model'
+  - 'signal_library.yaml: library.schema_version (defaults to 1.0.0 if absent per
+    validate_knowledge_package)'
+  - presence of promoted_signal_intelligence.yaml on disk
+  validators_reused:
+  - backend/scripts/validate_knowledge_package.py orchestrates manifest, research_brief,
+    signal_library, optional intelligence_model, optional promoted_signal_intelligence
+  if_policy_tightened_later: Runtime would need explicit gating or labelling when
+    loading packages or emitting reasoning; not in KB-S49 scope.
+classification_rulebook:
+- rule_id: CR-01
+  governed_tier: excluded_placeholder
+  criteria: package_id == pkg_example (documentation / worked example only).
+- rule_id: CR-02
+  governed_tier: v3_grade_rich_governed
+  criteria: package_id prefix pkg_kb47_ AND package_manifest lists promoted_signal_intelligence
+    AND promoted_signal_intelligence.yaml exists (repo KB-S47 batch).
+- rule_id: CR-03
+  governed_tier: partially_uplifted_research_fidelity_no_psi
+  criteria: package_id prefix pkg_kb45_ AND signal_library library.schema_version
+    == 2.0.0 AND manifest omits promoted_signal_intelligence (KB-S45 regeneration
+    batch).
+- rule_id: CR-04
+  governed_tier: structured_translation_batch_no_psi
+  criteria: package_id prefix pkg_s24_ AND translation_mode == creation AND source_document
+    references inv_*.yaml under investigation_specs (KB-S24 translation batch); no
+    promoted PSI layer.
+- rule_id: CR-05
+  governed_tier: legacy_thin_pre_v3_context
+  criteria: Not matched by CR-01..CR-04; remaining pkg_* with standard three-file
+    package shape; typically signal_contract_v1_or_default and no promoted PSI.
+- rule_id: CR-06
+  governed_tier: unknown_requires_review
+  criteria: Any pkg_* missing package_manifest.yaml OR research_brief.yaml OR signal_library.yaml
+    (integrity / incomplete tree).
+- rule_id: CR-07
+  governed_tier: integrity_mixed_form
+  criteria: 'promoted_signal_intelligence.yaml exists on disk XOR manifest promoted_signal_intelligence
+    key set (not both aligned). Current estate: none (verified 2026-03-28).'
+- rule_id: CR-08
+  governed_tier: deprecated_or_superseded
+  criteria: Reserved. No deterministic repo-only rule (e.g. explicit supersession
+    pointer in manifest) is defined in this sprint; assign only when a future manifest
+    field or registry marks replacement.
+policy_runtime_legacy_vs_v3:
+  statement_type: descriptive_and_forward_looking
+  immediately_enforceable_in_code: false
+  decision:
+  - Legacy-thin and translation-batch packages without a promoted signal intelligence
+    layer MAY continue to participate in runtime signal activation unchanged, consistent
+    with current SignalRegistry behaviour.
+  - v3-grade (KB-S47) packages with promoted_signal_intelligence are the reference
+    pattern for richest governed semantics; they coexist with thinner packages with
+    no runtime distinction today.
+  - No package-estate tier flagging or suppression is applied in backend/core in KB-S49;
+    any future gating MUST be an explicit follow-on change.
+  uplift_expectation: Thinner packages SHOULD be prioritised for uplift where clinical
+    or reasoning risk is higher; see uplift_prioritisation.
+minimum_acceptable_package_standard:
+  floor_for_current_runtime_alignment:
+  - package_manifest.yaml, research_brief.yaml, and signal_library.yaml present and
+    passing validate_knowledge_package.py under default flags (as of inventory date).
+  - signal_library.yaml parseable with signals list usable by SignalRegistry.
+  aspirational_v3_grade_target:
+  - promoted_signal_intelligence in manifest with on-disk promoted_signal_intelligence.yaml
+    validating against promoted_signal_intelligence_schema_v1.yaml
+  - Explicit translation_mode and source_document in manifest
+  - signal library on contract v2.0.0 where research fidelity is required
+  - behavioural_impact field present where mandated by manifest policy
+uplift_prioritisation_framework:
+  principles:
+  - 'First: packages covering high-impact clinical domains with thin semantics (legacy
+    context bundles) used in production-like flows.'
+  - 'Second: pkg_s24_* batch (structured but no PSI) where overlap exists with richer
+    packages or high-traffic biomarkers.'
+  - 'Third: pkg_kb45_* (already v2 research fidelity) add promoted PSI layer to reach
+    v3-grade parity.'
+  - 'Fourth: extend v3-grade coverage for new biomarkers following KB-S47 patterns.'
+  deterministic_priority_classes:
+  - rank: 1
+    class: legacy_thin_pre_v3_context
+    rationale: Widest semantic gap vs v3_grade; v1 signal contract defaults.
+  - rank: 2
+    class: structured_translation_batch_no_psi
+    rationale: Structured provenance but missing promoted reasoning layer.
+  - rank: 3
+    class: partially_uplifted_research_fidelity_no_psi
+    rationale: Closest to v3; incremental PSI promotion work.
+  - rank: 4
+    class: v3_grade_rich_governed
+    rationale: Maintain and extend pattern; not uplift-from-thin.
+validator_commands:
+  single_package: python backend/scripts/validate_knowledge_package.py --package-dir
+    knowledge_bus/packages/<package_id>
+  note: Aggregated JSON path is overwritten per run; use exit code and stdout ready_for_implementation
+    for automation.
+excluded_packages:
+- package_id: pkg_example
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: null
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: excluded_placeholder
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: null
+  validate_knowledge_package_exit_code: null
+  manifest_source_document: null
+packages:
+- package_id: pkg_b12_deficiency_context
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: legacy_thin_pre_v3_context
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: docs/architecture/HealthIQ_Investigation_Layer.md
+- package_id: pkg_chronic_inflammation
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: legacy_thin_pre_v3_context
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/study_04_chronic_inflammation.md
+- package_id: pkg_glucose_dysregulation_hba1c_context
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: legacy_thin_pre_v3_context
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: docs/architecture/HealthIQ_Investigation_Layer.md
+- package_id: pkg_hepatic_alt_context
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: legacy_thin_pre_v3_context
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: docs/architecture/HealthIQ_Investigation_Layer.md
+- package_id: pkg_hepatic_metabolic_stress
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: legacy_thin_pre_v3_context
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/study_03_hepatic_metabolic_stress.md
+- package_id: pkg_homocysteine_elevation_context
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: legacy_thin_pre_v3_context
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: docs/architecture/HealthIQ_Investigation_Layer.md
+- package_id: pkg_inflammation_crp_context
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: legacy_thin_pre_v3_context
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: docs/architecture/HealthIQ_Investigation_Layer.md
+- package_id: pkg_insulin_resistance
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: confirmation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: legacy_thin_pre_v3_context
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/study_01_insulin_resistance.md
+- package_id: pkg_iron_deficiency_context
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: legacy_thin_pre_v3_context
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: docs/architecture/HealthIQ_Investigation_Layer.md
+- package_id: pkg_iron_overload_context
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: legacy_thin_pre_v3_context
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: docs/architecture/HealthIQ_Investigation_Layer.md
+- package_id: pkg_kb45_active_b12_low_deficiency
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: regeneration
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: partially_uplifted_research_fidelity_no_psi
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+- package_id: pkg_kb45_apoa1_low_cardio_risk
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: regeneration
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: partially_uplifted_research_fidelity_no_psi
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+- package_id: pkg_kb45_apob_apoa1_ratio_high_imbalance
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: regeneration
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: partially_uplifted_research_fidelity_no_psi
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+- package_id: pkg_kb45_apob_high_atherogenic
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: regeneration
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: partially_uplifted_research_fidelity_no_psi
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+- package_id: pkg_kb45_basophil_pct_high_basophilia
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: regeneration
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: partially_uplifted_research_fidelity_no_psi
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+- package_id: pkg_kb45_basophils_abs_high_basophilia
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: regeneration
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: partially_uplifted_research_fidelity_no_psi
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+- package_id: pkg_kb45_bilirubin_high_hyperbilirubinemia
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: regeneration
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: partially_uplifted_research_fidelity_no_psi
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+- package_id: pkg_kb45_chloride_high_hyperchloremia
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: regeneration
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: partially_uplifted_research_fidelity_no_psi
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+- package_id: pkg_kb45_corrected_calcium_high_hypercalcemia
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: regeneration
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: partially_uplifted_research_fidelity_no_psi
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+- package_id: pkg_kb45_cortisol_high_hypercortisolism
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: regeneration
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: partially_uplifted_research_fidelity_no_psi
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/investigation-spec-collection-batch1-10.json
+- package_id: pkg_kb47_creatine_kinase_high_exertional_muscle_injury
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_kb47_dhea_high_androgen_excess_context
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_kb47_egfr_low_chronic_kidney_function_reduction
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_kb47_egfr_low_hemodynamic_filtration_drop
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_kb47_eosinophil_pct_high_reactive_atopic_eosinophilia
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_kb47_fai_high_biochemical_hyperandrogenism
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_kb47_fai_low_reduced_free_androgen_availability
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_kb47_free_t3_high_t3_predominant_thyrotoxicosis
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_kb47_free_t3_low_low_t3_syndrome
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_kb47_free_t4_high_thyrotoxicosis_context
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_kb47_free_t4_low_thyroid_hormone_deficiency
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_kb47_free_testosterone_high_androgen_excess_context
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_kb47_free_testosterone_low_androgen_deficiency_context
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_kb47_free_testosterone_pct_low_reduced_free_androgen_fraction
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: true
+  manifest_promoted_key: true
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: true
+  translation_mode: creation
+  signal_library_schema_version: 2.0.0
+  integrity_flag: null
+  governed_tier: v3_grade_rich_governed
+  signal_contract_tier: signal_contract_v2
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+- package_id: pkg_lipid_transport
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: null
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: legacy_thin_pre_v3_context
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: null
+- package_id: pkg_s24_albumin_low_nutritional
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_albumin_low_nutritional.yaml
+- package_id: pkg_s24_alp_high_bone_biliary
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_alp_high_bone_biliary.yaml
+- package_id: pkg_s24_alt_high_hepatocellular_injury
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_alt_high_hepatocellular_injury_v1.yaml
+- package_id: pkg_s24_calcium_high_endocrine
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_calcium_high_endocrine.yaml
+- package_id: pkg_s24_creatinine_high_renal
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_creatinine_high_renal_v1.yaml
+- package_id: pkg_s24_crp_high_inflammation
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_crp_high_inflammation_v1.yaml
+- package_id: pkg_s24_ferritin_high_overload
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_ferritin_high_overload_v1.yaml
+- package_id: pkg_s24_ferritin_low_iron_deficiency
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_ferritin_spec_v1.yaml
+- package_id: pkg_s24_folate_low_deficiency
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_folate_low_deficiency.yaml
+- package_id: pkg_s24_ggt_high_hepatic
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_ggt_high_hepatic.yaml
+- package_id: pkg_s24_hba1c_high_glycaemia
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_hba1c_high_glycaemia_v1.yaml
+- package_id: pkg_s24_hdl_high_cardiovascular
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_hdl_high_cardiovascular.yaml
+- package_id: pkg_s24_hdl_low_cardiovascular
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_hdl_low_cardiovascular.yaml
+- package_id: pkg_s24_hgb_low_anemia
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_hgb_low_anemia.yaml
+- package_id: pkg_s24_homocysteine_high_metabolic
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_homocysteine_high_metabolic.yaml
+- package_id: pkg_s24_ldl_high_dyslipidaemia
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_ldl_high_dyslipidaemia_v1.yaml
+- package_id: pkg_s24_lym_high_lymphocytosis
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_lym_high_lymphocytosis.yaml
+- package_id: pkg_s24_mcv_high_macrocytosis
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_mcv_high_macrocytosis.yaml
+- package_id: pkg_s24_neutrophils_high_neutrophilia
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_neutrophils_high_neutrophilia.yaml
+- package_id: pkg_s24_neutrophils_low_neutropenia
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_neutrophils_low_neutropenia.yaml
+- package_id: pkg_s24_plt_high_thrombocytosis
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_plt_high_thrombocytosis.yaml
+- package_id: pkg_s24_plt_low_thrombocytopenia
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_plt_low_thrombocytopenia.yaml
+- package_id: pkg_s24_triglycerides_high_metabolic
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_triglycerides_high_metabolic_v1.yaml
+- package_id: pkg_s24_tsh_high_hypothyroidism
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_tsh_high_hypothyroidism_v1.yaml
+- package_id: pkg_s24_tsh_low_hyperthyroidism
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_tsh_low_hyperthyroidism_v1.yaml
+- package_id: pkg_s24_urate_high_metabolic
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_uric_acid_high_metabolic.yaml
+- package_id: pkg_s24_urea_high_renal
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_urea_high_renal.yaml
+- package_id: pkg_s24_vitamin_b12_low_deficiency
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_vitamin_b12_spec_v1.yaml
+- package_id: pkg_s24_vitamin_d_low_deficiency
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_vitamin_d_low_deficiency_v1.yaml
+- package_id: pkg_s24_wbc_high_leukocytosis
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_wbc_high_leukocytosis.yaml
+- package_id: pkg_s24_wbc_low_leukopenia
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: structured_translation_batch_no_psi
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: knowledge_bus/research/investigation_specs/inv_wbc_low_leukopenia.yaml
+- package_id: pkg_thyroid_tsh_context
+  files:
+    package_manifest: true
+    research_brief: true
+    signal_library: true
+    promoted_signal_intelligence: false
+  manifest_promoted_key: false
+  manifest_intelligence_model: false
+  manifest_behavioural_impact: false
+  translation_mode: creation
+  signal_library_schema_version: 1.0.0
+  integrity_flag: null
+  governed_tier: legacy_thin_pre_v3_context
+  signal_contract_tier: signal_contract_v1_or_default
+  validator_ready_for_implementation: true
+  validate_knowledge_package_exit_code: 0
+  manifest_source_document: docs/architecture/HealthIQ_Investigation_Layer.md
