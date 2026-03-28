@@ -1,0 +1,16 @@
+research_domain: musculoskeletal
+sources:
+- source_id: source_ck_review_2016
+  paper_title: Approach to asymptomatic creatine kinase elevation
+  journal: Cleveland Clinic Journal of Medicine
+  year: 2016
+biomarkers:
+- ast
+- creatine_kinase
+- troponin
+derived_metrics: []
+physiological_claim: CK elevation is common after exercise and other non-neuromuscular
+  stressors, so persistence and context matter before inferring primary muscle disease.
+evidence_strength: moderate
+research_summary: Condition-specific escalation thresholds are not robustly uniform
+  across populations; interpretation should remain lab-range anchored and contextual.

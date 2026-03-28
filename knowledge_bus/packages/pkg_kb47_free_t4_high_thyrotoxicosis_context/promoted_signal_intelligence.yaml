@@ -1,0 +1,92 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb47_free_t4_high_thyrotoxicosis_context
+translation:
+  source: investigation_spec_v3
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_free_t4_high_thyrotoxicosis_context
+  signal_id: signal_free_t4_high
+signals:
+- signal_id: signal_free_t4_high
+  research_domain: thyroid
+  signal_system: hormonal
+  primary_metric:
+    biomarker_id: free_t4
+    rationale: High free T4 supports excess circulating thyroxine and is a key laboratory
+      signal of thyrotoxic physiology when interpreted with TSH.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: free_t3
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: High free T3 corroborates that elevated free T4 is part of a broader
+      thyrotoxic hormone pattern rather than an isolated single-analyte anomaly.
+  - biomarker_id: tsh
+    expected_direction: low
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: TSH is the key differential marker that distinguishes primary thyrotoxic
+      physiology from discordant assay, central, or medication-related patterns.
+  contradiction_markers:
+  - contradiction_id: ctr_nonsuppressed_tsh_high_ft4
+    marker_reference: tsh
+    contradiction_rationale: A non-suppressed TSH should prompt review for assay interference,
+      central causes, or discordant physiology rather than simple primary thyrotoxicosis.
+    contradiction_strength: strong
+  - contradiction_id: ctr_elevated_free_t3_challenges_exogenous_frame
+    marker_reference: free_t3
+    contradiction_rationale: A concurrently elevated free T3 challenges a purely exogenous
+      or contextual thyroxine excess interpretation, as exogenous T4 administration
+      typically suppresses endogenous thyroid activity and would not usually co-elevate
+      T3 to the same degree as autonomous gland overactivity.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Interpret high free T4 with TSH and broader thyroid context before assigning
+      a cause.
+    - Review thyroid medication use and assay context where the biochemical pattern
+      and phenotype do not align.
+  confidence:
+    evidence_strength: consensus
+  override_rules:
+  - rule_id: or_free_t4_high_with_tsh_low
+    resulting_state: at_risk
+    description: Escalate when high free T4 coincides with low TSH, as this more strongly
+      supports thyrotoxic physiology.
+    conditions:
+    - metric_id: tsh
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_ata_hyperthyroidism_2016
+  evidence:
+    evidence_strength: consensus
+    physiological_claim: High free T4 with suppressed TSH is a standard biochemical
+      pattern of thyrotoxicosis.
+    threshold_notes: Hormone-pattern interpretation should remain laboratory anchored
+      and should not assume severity from free T4 magnitude alone.
+    sources:
+    - source_id: source_ata_hyperthyroidism_2016
+      paper_title: 2016 American Thyroid Association Guidelines for Diagnosis and
+        Management of Hyperthyroidism and Other Causes of Thyrotoxicosis
+      journal: Thyroid
+      year: 2016
+  confirmatory_test_refs:
+  - test_id: ct_repeat_free_t4_with_tsh
+    rationale: Repeat free T4 with TSH helps confirm a true thyrotoxic biochemical
+      pattern and identify discordant results that need broader review.

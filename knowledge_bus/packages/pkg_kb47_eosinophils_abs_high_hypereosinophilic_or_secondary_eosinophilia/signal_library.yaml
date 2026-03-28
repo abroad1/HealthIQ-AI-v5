@@ -1,0 +1,83 @@
+library:
+  package_id: KBP-4708
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S47 Eosinophils Abs High signal library
+  description: Translated from inv_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+    (Batch_2_Pass_3_Rev1.json).
+signals:
+- signal_id: signal_eosinophils_abs_high
+  name: Eosinophils Abs High
+  description: Absolute eosinophilia can support clinically significant eosinophilic
+    disease evaluation when persistent or organ-related features are present.
+  system: inflammatory
+  primary_metric: eosinophils_abs
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: tryptase
+    expected_direction: high
+    role: differential_marker
+    availability: specialist
+    rationale: Tryptase can help identify a clonal or myeloid-associated eosinophilic
+      process in selected cases.
+  - biomarker_id: crp
+    expected_direction: high
+    role: contextual_marker
+    availability: common
+    rationale: Inflammatory marker elevation can support a more active systemic disease
+      context when eosinophilia is persistent.
+  dependencies:
+    biomarkers:
+    - eosinophils_abs
+    - tryptase
+    - crp
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: eosinophils_abs_high_lab_range_activation_placeholder
+    metric_id: eosinophils_abs
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_eosinophils_abs_high_with_tryptase_high
+    resulting_state: at_risk
+    description: Escalate when high absolute eosinophils coincide with high tryptase,
+      as this can support a myeloid or clonal eosinophilic context.
+    conditions:
+    - metric_id: tryptase
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_eosinophilia_review_2020
+  output:
+    signal_value: eosinophils_abs
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: eosinophils_abs
+    supporting_markers:
+    - tryptase
+    - crp
+  explanation:
+    mechanism: Persistent eosinophilia can result from chronic immune stimulation,
+      tissue eosinophilic disease, or rarely clonal hematologic drivers.
+    biological_pathway: Sustained eosinophil production and survival across reactive
+      and clonal eosinophilic pathways.
+    interpretation: This pattern is compatible with several disease classes and should
+      prompt structured differential review rather than premature labeling.
+    implications: The main distinction is between common secondary causes and the
+      smaller subset that needs specialist eosinophilic syndrome assessment.
+    supporting_marker_roles: CRP supports systemic inflammatory context, while tryptase
+      can help flag a possible clonal eosinophilic process.

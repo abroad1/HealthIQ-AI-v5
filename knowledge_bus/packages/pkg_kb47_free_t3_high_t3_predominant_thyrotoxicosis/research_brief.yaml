@@ -1,0 +1,17 @@
+research_domain: thyroid
+sources:
+- source_id: source_ata_hyperthyroidism_2016
+  paper_title: 2016 American Thyroid Association Guidelines for Diagnosis and Management
+    of Hyperthyroidism and Other Causes of Thyrotoxicosis
+  journal: Thyroid
+  year: 2016
+biomarkers:
+- free_t3
+- free_t4
+- tsh
+derived_metrics: []
+physiological_claim: High T3 with suppressed TSH is a recognized biochemical pattern
+  of thyrotoxicosis and may occur with T3 predominance.
+evidence_strength: consensus
+research_summary: Interpretation should be based on laboratory abnormality and hormonal
+  patterning rather than assumed universal severity cutoffs.

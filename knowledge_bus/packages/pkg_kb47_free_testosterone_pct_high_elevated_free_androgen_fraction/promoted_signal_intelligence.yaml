@@ -1,0 +1,96 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb47_free_testosterone_pct_high_elevated_free_androgen_fraction
+translation:
+  source: investigation_spec_v3
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_free_testosterone_pct_high_elevated_free_androgen_fraction
+  signal_id: signal_free_testosterone_pct_high
+signals:
+- signal_id: signal_free_testosterone_pct_high
+  research_domain: hormonal
+  signal_system: hormonal
+  primary_metric:
+    biomarker_id: free_testosterone_pct
+    rationale: A high free testosterone percentage suggests that a larger proportion
+      of circulating testosterone is bioavailable, often because SHBG is reduced or
+      androgen production is increased.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: shbg
+    expected_direction: low
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: Low SHBG can materially increase the proportion of circulating testosterone
+      that remains bioavailable.
+  - biomarker_id: free_testosterone
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: specialist
+    rationale: Measured free testosterone helps distinguish true increased bioavailable
+      androgen exposure from a percentage-only shift driven mainly by low SHBG.
+  contradiction_markers:
+  - contradiction_id: ctr_normal_or_high_shbg_weakens_binding_mechanism
+    marker_reference: shbg
+    contradiction_rationale: A normal or elevated SHBG directly contradicts an SHBG-reduction
+      explanation for high free testosterone percentage and redirects interpretation
+      toward possible increased androgen production as the primary driver.
+    contradiction_strength: strong
+  - contradiction_id: ctr_normal_free_testosterone_absolute
+    marker_reference: free_testosterone
+    contradiction_rationale: A normal absolute free testosterone weakens a strong
+      interpretation of biologically important androgen excess from the percentage
+      metric alone.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Review SHBG and broader metabolic context before attributing the pattern to
+      severe androgen overproduction.
+    - Use total testosterone, SHBG, and clinical context before inferring a defined
+      androgen-excess disorder.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_free_testosterone_pct_high_with_shbg_low
+    resulting_state: at_risk
+    description: Escalate when high free testosterone percentage coincides with low
+      SHBG, as this more strongly supports a binding-mediated increase in free androgen
+      fraction.
+    conditions:
+    - metric_id: shbg
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_pcos_guideline_2023
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: Bioavailable androgen exposure depends strongly on SHBG and
+      should be interpreted with the broader androgen profile rather than from a percentage
+      metric alone.
+    threshold_notes: High free testosterone percentage should remain laboratory and
+      assay anchored and is not a stand-alone disease threshold.
+    sources:
+    - source_id: source_pcos_guideline_2023
+      paper_title: Recommendations from the 2023 International Evidence-based Guideline
+        for the Assessment and Management of Polycystic Ovary Syndrome
+      journal: European Journal of Endocrinology
+      year: 2023
+  confirmatory_test_refs:
+  - test_id: ct_repeat_free_fraction_with_measured_free_testosterone
+    rationale: Repeating the free-fraction assessment with measured free testosterone
+      helps determine whether the percentage abnormality reflects true increased bioavailable
+      androgen exposure or only low-SHBG arithmetic distortion.

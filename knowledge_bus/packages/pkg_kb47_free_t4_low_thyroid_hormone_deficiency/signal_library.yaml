@@ -1,0 +1,82 @@
+library:
+  package_id: KBP-4715
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S47 Free T4 Low signal library
+  description: Translated from inv_free_t4_low_thyroid_hormone_deficiency (Batch_2_Pass_3_Rev1.json).
+signals:
+- signal_id: signal_free_t4_low
+  name: Free T4 Low
+  description: Free T4 directly reflects circulating thyroxine availability and low
+    values are central to thyroid hormone deficiency assessment.
+  system: hormonal
+  primary_metric: free_t4
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: tsh
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: TSH is the key differential marker for distinguishing primary hypothyroid
+      physiology from central or contextual patterns.
+  - biomarker_id: free_t3
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low free T3 can corroborate broader thyroid hormone deficiency when
+      free T4 is low.
+  dependencies:
+    biomarkers:
+    - free_t4
+    - tsh
+    - free_t3
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: free_t4_low_lab_range_activation_placeholder
+    metric_id: free_t4
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_free_t4_low_with_tsh_high
+    resulting_state: at_risk
+    description: Escalate when low free T4 coincides with high TSH, as this more strongly
+      supports primary thyroid hormone deficiency.
+    conditions:
+    - metric_id: tsh
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_hypothyroidism_guideline_2014
+  output:
+    signal_value: free_t4
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: free_t4
+    supporting_markers:
+    - tsh
+    - free_t3
+  explanation:
+    mechanism: Free T4 falls when thyroid hormone production, release, or central
+      stimulation is inadequate relative to physiologic needs.
+    biological_pathway: Thyroid hormone synthesis and hypothalamic-pituitary-thyroid
+      axis regulation.
+    interpretation: A low free T4 is a meaningful thyroid deficiency signal, but the
+      TSH response determines whether the pattern is primary or more central or contextual.
+    implications: The most important next step is correct pattern classification rather
+      than overinterpreting a single low free T4 result in isolation.
+    supporting_marker_roles: TSH is the key differential marker for pattern classification,
+      while free T3 corroborates a broader low-thyroid-hormone state.

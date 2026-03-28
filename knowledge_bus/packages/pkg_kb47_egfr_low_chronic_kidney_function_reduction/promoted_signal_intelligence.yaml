@@ -1,0 +1,97 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb47_egfr_low_chronic_kidney_function_reduction
+translation:
+  source: investigation_spec_v3
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_egfr_low_chronic_kidney_function_reduction
+  signal_id: signal_egfr_low
+signals:
+- signal_id: signal_egfr_low
+  research_domain: renal
+  signal_system: renal
+  primary_metric:
+    biomarker_id: egfr
+    rationale: Estimated glomerular filtration rate is a core marker of kidney function
+      and persistent reduction supports clinically relevant filtration impairment.
+  trigger_direction: low
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: false
+      upper_bound_state: suboptimal
+      enable_lower_bound: true
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: uacr
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Albuminuria corroborates that reduced eGFR is part of a clinically
+      meaningful chronic kidney disease risk pattern rather than an isolated filtration
+      estimate change.
+  - biomarker_id: cystatin_c
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: specialist
+    rationale: Cystatin C helps distinguish true filtration impairment from creatinine-driven
+      distortion of eGFR in people where muscle mass or creatinine generation may
+      mislead.
+  contradiction_markers:
+  - contradiction_id: ctr_normal_cystatin_c_weakens_true_filtration_reduction
+    marker_reference: cystatin_c
+    contradiction_rationale: A normal cystatin C weakens a true chronic filtration
+      reduction interpretation, as cystatin C provides creatinine-independent confirmation
+      of GFR impairment and its normalcy reduces confidence in a persistent structural
+      filtration deficit.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_normal_uacr_weakens_albuminuria_risk
+    marker_reference: uacr
+    contradiction_rationale: A normal UACR materially weakens the compounded kidney
+      disease risk interpretation, as this frame depends on concurrent albuminuria
+      to justify a higher CKD risk classification.
+    contradiction_strength: strong
+  missing_data:
+    policies:
+    - Confirm duration, repeat values, and albuminuria status before concluding chronic
+      kidney disease.
+    - If albuminuria data are unavailable, avoid overgrading kidney risk from eGFR
+      alone.
+  confidence:
+    evidence_strength: consensus
+  override_rules:
+  - rule_id: or_egfr_low_with_uacr_high
+    resulting_state: at_risk
+    description: Escalate when low eGFR coincides with high UACR, as this more strongly
+      supports clinically meaningful kidney disease risk.
+    conditions:
+    - metric_id: uacr
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_kdigo_ckd_2024
+  evidence:
+    evidence_strength: consensus
+    physiological_claim: Persistent reduction in eGFR is central to chronic kidney
+      disease evaluation and gains clinical weight when albuminuria is also present.
+    threshold_notes: Interpretation should follow lab-reported eGFR and chronicity
+      principles; a single low value should not automatically be treated as established
+      chronic kidney disease.
+    sources:
+    - source_id: source_kdigo_ckd_2024
+      paper_title: KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management
+        of Chronic Kidney Disease
+      journal: Kidney International
+      year: 2024
+  confirmatory_test_refs:
+  - test_id: ct_repeat_egfr_with_uacr_and_cystatin_c
+    rationale: Repeat eGFR with urine albumin and, where needed, cystatin C improves
+      discrimination between true chronic filtration loss and creatinine-related estimation
+      error.

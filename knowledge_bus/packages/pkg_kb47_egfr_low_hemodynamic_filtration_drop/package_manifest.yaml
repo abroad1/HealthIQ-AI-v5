@@ -1,0 +1,12 @@
+package_id: pkg_kb47_egfr_low_hemodynamic_filtration_drop
+package_version: 1.0.0
+description: KB-S47 Batch 2 package for inv_egfr_low_hemodynamic_filtration_drop (signal_egfr_low).
+  Biomarker IDs aligned to SSOT where governed.
+research_brief: research_brief.yaml
+signal_library: signal_library.yaml
+promoted_signal_intelligence: promoted_signal_intelligence.yaml
+author: HealthIQ Knowledge Bus — KB-S47
+created_at: '2026-03-28'
+source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_2_Pass_3_Rev1.json
+translation_mode: creation
+behavioural_impact: NONE

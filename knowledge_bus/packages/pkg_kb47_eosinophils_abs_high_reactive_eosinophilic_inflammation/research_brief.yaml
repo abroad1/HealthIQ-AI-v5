@@ -1,0 +1,16 @@
+research_domain: immunologic
+sources:
+- source_id: source_eosinophilia_review_2020
+  paper_title: Approach to the patient with eosinophilia
+  journal: Medical Clinics of North America
+  year: 2020
+biomarkers:
+- eosinophils_abs
+- total_ige
+- tryptase
+derived_metrics: []
+physiological_claim: Absolute eosinophilia is the preferred laboratory basis for confirming
+  true eosinophilic expansion and framing further differential diagnosis.
+evidence_strength: moderate
+research_summary: Absolute count is more clinically informative than percentage alone;
+  attribution still depends on persistence and clinical context.

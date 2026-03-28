@@ -1,0 +1,17 @@
+research_domain: hormonal
+sources:
+- source_id: source_pcos_guideline_2023
+  paper_title: Recommendations from the 2023 International Evidence-based Guideline
+    for the Assessment and Management of Polycystic Ovary Syndrome
+  journal: European Journal of Endocrinology
+  year: 2023
+biomarkers:
+- dhea_s
+- fai
+- testosterone
+derived_metrics: []
+physiological_claim: FAI can support assessment of biochemical hyperandrogenism when
+  calculated and interpreted appropriately alongside testosterone and SHBG.
+evidence_strength: moderate
+research_summary: Interpretation should remain assay-aware and lab-range anchored
+  because calculation methods and SHBG variation materially affect meaning.
