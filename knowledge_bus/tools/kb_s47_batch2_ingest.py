@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-KB-S47 Batch 2 — deterministic package generation from Batch_2_Pass_3_Rev1.json.
+KB-S47 / KB-S47a Batch 2 — deterministic package generation from Batch_2_Pass_3_Rev1.json.
 
-Only emits packages whose primary + supporting biomarkers exist in SSOT after
-governed ID alignment (total_testosterone→testosterone, dhea_s→dhea).
-Specs blocked by missing SSOT IDs or dhea/dhea_s collision are skipped; see sprint notes.
+Emits one KB package per investigation object when primary + supporting biomarkers exist
+in SSOT after governed ID alignment (total_testosterone→testosterone only).
+`dhea` and `dhea_s` remain distinct canonical IDs in SSOT (KB-S47a).
 
-Does not modify backend/ssot or backend/core; imports translator read-only.
+Does not modify backend/ssot or backend/core at runtime; imports translator read-only.
 """
 
 from __future__ import annotations
@@ -36,10 +36,9 @@ BATCH_PATH = (
 )
 SSOT_PATH = ROOT / "backend" / "ssot" / "biomarkers.yaml"
 
-# Deterministic naming alignment (allowed by KB-S47 prompt).
+# Deterministic naming alignment (SSOT canonical id for total testosterone).
 BIOMARKER_ID_ALIGN = {
     "total_testosterone": "testosterone",
-    "dhea_s": "dhea",
 }
 
 

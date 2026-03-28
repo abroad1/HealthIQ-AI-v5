@@ -1,5 +1,5 @@
 library:
-  package_id: KBP-4701
+  package_id: KBP-4710
   schema_version: 2.0.0
   package_version: 1.0.0
   library_name: KB-S47 Fai High signal library
@@ -19,7 +19,7 @@ signals:
     availability: common
     rationale: Raised total testosterone corroborates that the high FAI is tracking
       with a genuine hyperandrogenic biochemical pattern.
-  - biomarker_id: dhea
+  - biomarker_id: dhea_s
     expected_direction: high
     role: differential_marker
     availability: specialist
@@ -29,7 +29,7 @@ signals:
     biomarkers:
     - fai
     - testosterone
-    - dhea
+    - dhea_s
     derived_metrics: []
     signals: []
   optional_dependencies:
@@ -68,7 +68,7 @@ signals:
     primary_metric: fai
     supporting_markers:
     - testosterone
-    - dhea
+    - dhea_s
   explanation:
     mechanism: FAI increases when total testosterone rises, SHBG falls, or both occur
       together.

@@ -1,0 +1,92 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb47_egfr_low_hemodynamic_filtration_drop
+translation:
+  source: investigation_spec_v3
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_egfr_low_hemodynamic_filtration_drop
+  signal_id: signal_egfr_low
+signals:
+- signal_id: signal_egfr_low
+  research_domain: renal
+  signal_system: renal
+  primary_metric:
+    biomarker_id: egfr
+    rationale: Low eGFR can reflect acute or hemodynamic reduction in filtration as
+      well as chronic kidney disease, so trajectory matters.
+  trigger_direction: low
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: false
+      upper_bound_state: suboptimal
+      enable_lower_bound: true
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: creatinine
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Creatinine rise supports a real change in kidney filtration estimate
+      rather than random variation.
+  - biomarker_id: cystatin_c
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: specialist
+    rationale: Cystatin C can help assess whether a creatinine-based eGFR reduction
+      is biologically corroborated.
+  contradiction_markers:
+  - contradiction_id: ctr_albuminuria_supports_ckd
+    marker_reference: uacr
+    contradiction_rationale: Concurrent albuminuria makes a chronic kidney disease
+      frame more plausible than a purely hemodynamic change.
+    contradiction_strength: strong
+  - contradiction_id: ctr_normal_cystatin_c_weakens_acute_stress
+    marker_reference: cystatin_c
+    contradiction_rationale: A normal cystatin C weakens a true acute kidney stress
+      interpretation, providing independent evidence that the creatinine-based eGFR
+      drop may not reflect genuine acute filtration impairment.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Compare with prior kidney function and assess recent volume, illness, and nephrotoxin
+      exposures before assigning an acute injury frame.
+    - Review recent medications, intercurrent illness, and prior kidney function trajectory
+      before inferring structural kidney disease.
+  confidence:
+    evidence_strength: consensus
+  override_rules:
+  - rule_id: or_egfr_low_with_cystatin_c_high
+    resulting_state: at_risk
+    description: Escalate when low eGFR coincides with high cystatin C, as this provides
+      independent support for a true reduction in kidney filtration.
+    conditions:
+    - metric_id: cystatin_c
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_kdigo_ckd_2024
+  evidence:
+    evidence_strength: consensus
+    physiological_claim: Changes in eGFR should be interpreted in clinical and temporal
+      context because recent medication, illness, or hemodynamic shifts can alter
+      filtration estimates.
+    threshold_notes: Trajectory is more informative than an isolated low eGFR result
+      when distinguishing transient from persistent kidney dysfunction.
+    sources:
+    - source_id: source_kdigo_ckd_2024
+      paper_title: KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management
+        of Chronic Kidney Disease
+      journal: Kidney International
+      year: 2024
+  confirmatory_test_refs:
+  - test_id: ct_repeat_creatinine_egfr_trajectory
+    rationale: Short-interval repeat kidney function testing helps distinguish transient
+      hemodynamic change from persistent renal impairment.

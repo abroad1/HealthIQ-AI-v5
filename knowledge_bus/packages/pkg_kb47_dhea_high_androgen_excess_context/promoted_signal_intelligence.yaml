@@ -1,0 +1,91 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb47_dhea_high_androgen_excess_context
+translation:
+  source: investigation_spec_v3
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_dhea_high_androgen_excess_context
+  signal_id: signal_dhea_high
+signals:
+- signal_id: signal_dhea_high
+  research_domain: hormonal
+  signal_system: hormonal
+  primary_metric:
+    biomarker_id: dhea
+    rationale: DHEA is an androgen precursor and high levels can support an adrenal
+      or broader hyperandrogenic context, but isolated interpretation is assay-sensitive
+      and non-specific.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: testosterone
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Concurrent testosterone elevation corroborates that high DHEA is sitting
+      within a broader biochemical hyperandrogenism pattern.
+  - biomarker_id: dhea_s
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: specialist
+    rationale: DHEA-S helps distinguish a persistent adrenal-weighted androgen source
+      from isolated or assay-sensitive DHEA variation.
+  contradiction_markers:
+  - contradiction_id: ctr_isolated_dhea_variation
+    marker_reference: testosterone
+    contradiction_rationale: A normal broader androgen profile weakens a strong hyperandrogenic
+      interpretation from isolated DHEA elevation.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_normal_dhea_s
+    marker_reference: dhea_s
+    contradiction_rationale: A normal DHEA-S weakens a strong adrenal-source interpretation
+      from isolated DHEA elevation.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Prioritise DHEA-S, clinical severity, and imaging-directed assessment only when
+      biochemical and clinical context justify it.
+    - Review testosterone, SHBG, menstrual or reproductive context, and adrenal-source
+      markers before inferring a specific cause.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_dhea_high_with_testosterone_high
+    resulting_state: at_risk
+    description: Escalate when high DHEA coincides with high total testosterone, as
+      this more strongly supports a broader biochemical hyperandrogenism pattern.
+    conditions:
+    - metric_id: testosterone
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_hyperandrogenism_review_2021
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: High DHEA can support a hyperandrogenic context, but isolated
+      values do not by themselves establish source or etiology.
+    threshold_notes: Universal disease-defining DHEA thresholds are not established;
+      interpretation should remain laboratory and phenotype anchored.
+    sources:
+    - source_id: source_hyperandrogenism_review_2021
+      paper_title: Practical Approach to Hyperandrogenism in Women
+      journal: Medical Clinics of North America
+      year: 2021
+  confirmatory_test_refs:
+  - test_id: ct_repeat_androgen_panel_with_dhea_s
+    rationale: Repeating androgen testing with DHEA-S helps determine whether high
+      DHEA represents a reproducible adrenal-weighted androgen excess pattern rather
+      than isolated assay variation.

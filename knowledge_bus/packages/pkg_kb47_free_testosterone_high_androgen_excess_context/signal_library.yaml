@@ -1,5 +1,5 @@
 library:
-  package_id: KBP-4707
+  package_id: KBP-4716
   schema_version: 2.0.0
   package_version: 1.0.0
   library_name: KB-S47 Free Testosterone High signal library
@@ -21,7 +21,7 @@ signals:
     availability: common
     rationale: Raised total testosterone corroborates that high free testosterone
       reflects a genuine androgen-excess biochemical pattern.
-  - biomarker_id: dhea
+  - biomarker_id: dhea_s
     expected_direction: high
     role: differential_marker
     availability: specialist
@@ -31,7 +31,7 @@ signals:
     biomarkers:
     - free_testosterone
     - testosterone
-    - dhea
+    - dhea_s
     derived_metrics: []
     signals: []
   optional_dependencies:
@@ -70,7 +70,7 @@ signals:
     primary_metric: free_testosterone
     supporting_markers:
     - testosterone
-    - dhea
+    - dhea_s
   explanation:
     mechanism: Free testosterone rises when androgen production increases, SHBG falls,
       or both occur together.

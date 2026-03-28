@@ -34,7 +34,7 @@ signals:
     availability: common
     rationale: Raised total testosterone corroborates that the high FAI is tracking
       with a genuine hyperandrogenic biochemical pattern.
-  - biomarker_id: dhea
+  - biomarker_id: dhea_s
     expected_direction: high
     role: differential_marker
     relationship_kind: differential
@@ -48,7 +48,7 @@ signals:
       of clinically meaningful androgen excess to an isolated FAI rise.
     contradiction_strength: moderate
   - contradiction_id: ctr_elevated_dhea_s_challenges_shbg_only_frame
-    marker_reference: dhea
+    marker_reference: dhea_s
     contradiction_rationale: An elevated DHEA-S challenges a purely SHBG-mediated
       free androgen amplification interpretation by introducing a separate adrenal
       androgen production signal that suggests true biochemical androgen excess beyond

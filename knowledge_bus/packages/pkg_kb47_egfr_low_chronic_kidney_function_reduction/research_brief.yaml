@@ -1,0 +1,18 @@
+research_domain: renal
+sources:
+- source_id: source_kdigo_ckd_2024
+  paper_title: KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management
+    of Chronic Kidney Disease
+  journal: Kidney International
+  year: 2024
+biomarkers:
+- cystatin_c
+- egfr
+- uacr
+derived_metrics: []
+physiological_claim: Persistent reduction in eGFR is central to chronic kidney disease
+  evaluation and gains clinical weight when albuminuria is also present.
+evidence_strength: consensus
+research_summary: Interpretation should follow lab-reported eGFR and chronicity principles;
+  a single low value should not automatically be treated as established chronic kidney
+  disease.

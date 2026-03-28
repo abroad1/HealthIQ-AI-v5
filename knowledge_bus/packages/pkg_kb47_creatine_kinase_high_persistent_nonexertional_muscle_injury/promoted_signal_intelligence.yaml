@@ -1,0 +1,96 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb47_creatine_kinase_high_persistent_nonexertional_muscle_injury
+translation:
+  source: investigation_spec_v3
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_creatine_kinase_high_persistent_nonexertional_muscle_injury
+  signal_id: signal_creatine_kinase_high
+signals:
+- signal_id: signal_creatine_kinase_high
+  research_domain: musculoskeletal
+  signal_system: mitochondrial
+  primary_metric:
+    biomarker_id: creatine_kinase
+    rationale: Persistently raised creatine kinase can support a clinically meaningful
+      muscle injury or myopathic context when corroborating features are present.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: aldolase
+    expected_direction: high
+    role: corroborator
+    relationship_kind: corroboration
+    availability: specialist
+    rationale: Aldolase elevation strengthens the interpretation that persistent CK
+      elevation is coming from ongoing skeletal-muscle injury rather than isolated
+      laboratory noise.
+  - biomarker_id: tsh
+    expected_direction: either
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: TSH helps distinguish inflammatory or drug-related myopathic frames
+      from endocrine explanations such as thyroid dysfunction, which can also elevate
+      CK.
+  contradiction_markers:
+  - contradiction_id: ctr_normal_aldolase_weakens_necrotic_frame
+    marker_reference: aldolase
+    contradiction_rationale: A normal or non-elevated aldolase weakens an active inflammatory
+      or necrotic skeletal muscle injury interpretation, as aldolase typically rises
+      in significant ongoing myopathic processes.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_thyroid_explanation
+    marker_reference: tsh
+    contradiction_rationale: Marked thyroid dysfunction can provide a non-drug alternative
+      explanation for CK elevation and should be assessed before narrowing to drug
+      toxicity.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Review statins, antipsychotics, stimulants, supplements, alcohol, and recent
+      toxin exposures before assigning idiopathic muscle disease.
+    - Review weakness pattern, medication exposure, and repeat CK trajectory before
+      prioritising a primary myopathic process.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_ck_high_with_aldolase_high
+    resulting_state: at_risk
+    description: Escalate when high CK coincides with high aldolase, as this is more
+      consistent with an active skeletal muscle injury pattern.
+    conditions:
+    - metric_id: aldolase
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_ck_review_2016
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: Persistent CK elevation increases the likelihood of clinically
+      meaningful muscle pathology or exposure-related myotoxicity compared with a
+      single transient rise.
+    threshold_notes: No single universal CK threshold reliably separates benign from
+      pathologic muscle injury across all populations, so persistence and corroboration
+      remain central.
+    sources:
+    - source_id: source_ck_review_2016
+      paper_title: Approach to asymptomatic creatine kinase elevation
+      journal: Cleveland Clinic Journal of Medicine
+      year: 2016
+  confirmatory_test_refs:
+  - test_id: ct_repeat_ck_with_medication_and_tsh_review
+    rationale: Repeat CK together with targeted medication-exposure review and thyroid
+      testing helps separate persistent inflammatory or toxic myopathy from endocrine
+      or transient explanations.

@@ -34,7 +34,7 @@ signals:
     availability: common
     rationale: Raised total testosterone corroborates that high free testosterone
       reflects a genuine androgen-excess biochemical pattern.
-  - biomarker_id: dhea
+  - biomarker_id: dhea_s
     expected_direction: high
     role: differential_marker
     relationship_kind: differential

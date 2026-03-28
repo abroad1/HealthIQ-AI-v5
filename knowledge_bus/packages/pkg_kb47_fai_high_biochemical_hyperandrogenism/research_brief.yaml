@@ -6,7 +6,7 @@ sources:
   journal: European Journal of Endocrinology
   year: 2023
 biomarkers:
-- dhea
+- dhea_s
 - fai
 - testosterone
 derived_metrics: []

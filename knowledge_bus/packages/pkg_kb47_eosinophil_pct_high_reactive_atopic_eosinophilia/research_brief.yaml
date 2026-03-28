@@ -1,0 +1,17 @@
+research_domain: immunologic
+sources:
+- source_id: source_eosinophilia_review_2020
+  paper_title: Approach to the patient with eosinophilia
+  journal: Medical Clinics of North America
+  year: 2020
+biomarkers:
+- eosinophil_pct
+- eosinophils_abs
+- total_ige
+derived_metrics: []
+physiological_claim: Eosinophilia commonly arises in reactive allergic and atopic
+  conditions, but differential-count interpretation should prioritize the absolute
+  eosinophil count.
+evidence_strength: moderate
+research_summary: Percentage-based eosinophil abnormalities are best interpreted with
+  the absolute count rather than as stand-alone severity markers.
