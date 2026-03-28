@@ -186,13 +186,13 @@ def test_translate_rejects_wrong_investigation_contract() -> None:
 
 
 @pytest.mark.parametrize("inv_td", ("bidirectional", "context_dependent"))
-def test_translate_maps_dual_edge_v3_trigger_to_promoted_both(inv_td: str) -> None:
+def test_translate_preserves_v3_trigger_direction_in_promoted(inv_td: str) -> None:
     inv = _minimal_investigation_spec_v3()
     inv["trigger_direction"] = inv_td
     promoted = translate_investigation_spec_v3_to_promoted_signals(
         inv, package_id="pkg_fixture_promoted_signal_v1"
     )
-    assert promoted["signals"][0]["trigger_direction"] == "both"
+    assert promoted["signals"][0]["trigger_direction"] == inv_td
 
 
 def test_load_promoted_signal_intelligence_for_package_optional(tmp_path: Path) -> None:
