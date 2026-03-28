@@ -1,0 +1,88 @@
+library:
+  package_id: KBP-4706
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S47 Eosinophil Pct High signal library
+  description: Translated from inv_eosinophil_pct_high_reactive_atopic_eosinophilia
+    (Batch_2_Pass_3_Rev1.json).
+signals:
+- signal_id: signal_eosinophil_pct_high
+  name: Eosinophil Pct High
+  description: Eosinophil percentage can support eosinophilic immune activation but
+    should be interpreted with the absolute eosinophil count and total leukocyte context.
+  system: inflammatory
+  primary_metric: eosinophil_pct
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: eosinophils_abs
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Absolute eosinophils determine whether a high eosinophil percentage
+      reflects true eosinophilia or only a relative shift in the leukocyte differential.
+  - biomarker_id: total_ige
+    expected_direction: high
+    role: contextual_marker
+    availability: optional
+    rationale: Elevated IgE supports an atopic or allergic immune context once true
+      eosinophilia has been confirmed.
+  dependencies:
+    biomarkers:
+    - eosinophil_pct
+    - eosinophils_abs
+    - total_ige
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: eosinophil_pct_high_lab_range_activation_placeholder
+    metric_id: eosinophil_pct
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_eosinophil_pct_high_with_abs_high
+    resulting_state: at_risk
+    description: Escalate when high eosinophil percentage coincides with high absolute
+      eosinophils, as this confirms a true eosinophilic pattern rather than a relative
+      shift.
+    conditions:
+    - metric_id: eosinophils_abs
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_eosinophilia_review_2020
+  output:
+    signal_value: eosinophil_pct
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: eosinophil_pct
+    supporting_markers:
+    - eosinophils_abs
+    - total_ige
+  explanation:
+    mechanism: Eosinophils expand in response to type 2 immune signaling and allergic
+      or parasitic stimuli, but percentage values are influenced by the wider leukocyte
+      differential.
+    biological_pathway: Type 2 immune activation and eosinophil recruitment within
+      allergic and related inflammatory pathways.
+    interpretation: A high eosinophil percentage is supportive of eosinophilic activation
+      but should not be overread without the absolute eosinophil count.
+    implications: Confirmation with the absolute eosinophil count and clinical context
+      usually determines whether the pattern is mild and reactive or warrants broader
+      evaluation.
+    supporting_marker_roles: Absolute eosinophils are the key differential marker
+      determining whether a high eosinophil percentage reflects true eosinophilia
+      or only a relative shift in the leukocyte differential, while total IgE supports
+      an atopic immune context.

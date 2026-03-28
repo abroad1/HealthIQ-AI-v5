@@ -1,0 +1,86 @@
+library:
+  package_id: KBP-4717
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S47 Free Testosterone Low signal library
+  description: Translated from inv_free_testosterone_low_androgen_deficiency_context
+    (Batch_2_Pass_3_Rev1.json).
+signals:
+- signal_id: signal_free_testosterone_low
+  name: Free Testosterone Low
+  description: Free testosterone reflects the unbound biologically active fraction
+    of testosterone and low values can support clinically relevant androgen deficiency
+    when measured and interpreted appropriately.
+  system: hormonal
+  primary_metric: free_testosterone
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: testosterone
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low total testosterone corroborates that low free testosterone may
+      reflect reduced androgen availability rather than isolated assay variation.
+  - biomarker_id: lh
+    expected_direction: any
+    role: differential_marker
+    availability: common
+    rationale: LH helps distinguish primary gonadal failure from central or binding-related
+      explanations when free testosterone is low.
+  dependencies:
+    biomarkers:
+    - free_testosterone
+    - testosterone
+    - lh
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: free_testosterone_low_lab_range_activation_placeholder
+    metric_id: free_testosterone
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_free_testosterone_low_with_total_testosterone_low
+    resulting_state: at_risk
+    description: Escalate when low free testosterone coincides with low total testosterone,
+      as this more strongly supports a true low-androgen state.
+    conditions:
+    - metric_id: testosterone
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_testosterone_guideline_2018
+  output:
+    signal_value: free_testosterone
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: free_testosterone
+    supporting_markers:
+    - testosterone
+    - lh
+  explanation:
+    mechanism: Free testosterone falls when testosterone production is reduced, SHBG
+      is elevated, or both occur together.
+    biological_pathway: Testicular or ovarian androgen production, SHBG binding, and
+      circulating bioavailable androgen fraction.
+    interpretation: A low free testosterone result is meaningful when reproducible
+      and aligned with the wider androgen profile, but isolated results can be misleading.
+    implications: Repeat morning testing with SHBG and total testosterone usually
+      determines whether the pattern reflects true androgen deficiency or altered
+      binding context.
+    supporting_marker_roles: Total testosterone corroborates reduced androgen supply,
+      while LH is the differential marker used to separate primary gonadal failure
+      from central or binding-related explanations.

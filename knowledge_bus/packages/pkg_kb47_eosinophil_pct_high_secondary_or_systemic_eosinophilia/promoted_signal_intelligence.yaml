@@ -1,0 +1,91 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb47_eosinophil_pct_high_secondary_or_systemic_eosinophilia
+translation:
+  source: investigation_spec_v3
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_eosinophil_pct_high_secondary_or_systemic_eosinophilia
+  signal_id: signal_eosinophil_pct_high
+signals:
+- signal_id: signal_eosinophil_pct_high
+  research_domain: immunologic
+  signal_system: inflammatory
+  primary_metric:
+    biomarker_id: eosinophil_pct
+    rationale: Marked eosinophil percentage elevation can signal broader eosinophilic
+      disease processes, but percentage alone is insufficient for attribution.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: eosinophils_abs
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: common
+    rationale: Absolute eosinophils are required to distinguish clinically meaningful
+      eosinophilia from a percentage-only differential shift.
+  - biomarker_id: crp
+    expected_direction: high
+    role: contextual_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: CRP can support a broader active inflammatory context once true eosinophilia
+      has been confirmed.
+  contradiction_markers:
+  - contradiction_id: ctr_normal_abs_eosinophils_weakens_secondary
+    marker_reference: eosinophils_abs
+    contradiction_rationale: A normal absolute eosinophil count strongly weakens a
+      secondary eosinophilic process interpretation, as true secondary eosinophilia
+      should be reflected in the absolute count rather than appearing only as a percentage
+      shift.
+    contradiction_strength: strong
+  - contradiction_id: ctr_normal_absolute_count
+    marker_reference: eosinophils_abs
+    contradiction_rationale: A normal absolute eosinophil count weakens a systemic
+      eosinophilia interpretation from percentage elevation alone.
+    contradiction_strength: strong
+  missing_data:
+    policies:
+    - Confirm persistence and absolute eosinophilia before moving from reactive differential
+      diagnoses to rare eosinophilic syndromes.
+    - Review medications, allergic history, travel, and infection exposure before
+      prioritising systemic disease mechanisms.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_eosinophil_pct_high_with_crp_high
+    resulting_state: at_risk
+    description: Escalate when high eosinophil percentage coincides with high CRP,
+      as this supports a more active systemic inflammatory context.
+    conditions:
+    - metric_id: crp
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_eosinophilia_review_2020
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: Confirmed eosinophilia has a broad differential that includes
+      allergic, drug-related, parasitic, and systemic eosinophilic disorders.
+    threshold_notes: Percentage elevation should be interpreted cautiously until absolute
+      eosinophilia and persistence are established.
+    sources:
+    - source_id: source_eosinophilia_review_2020
+      paper_title: Approach to the patient with eosinophilia
+      journal: Medical Clinics of North America
+      year: 2020
+  confirmatory_test_refs:
+  - test_id: ct_absolute_eosinophils_with_targeted_secondary_workup
+    rationale: Absolute eosinophil confirmation with targeted secondary-cause evaluation
+      helps distinguish reactive eosinophilia from broader systemic disease.

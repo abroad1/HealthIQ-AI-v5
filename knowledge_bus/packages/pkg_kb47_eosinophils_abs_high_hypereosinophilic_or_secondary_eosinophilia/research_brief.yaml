@@ -1,0 +1,17 @@
+research_domain: immunologic
+sources:
+- source_id: source_eosinophilia_review_2020
+  paper_title: Approach to the patient with eosinophilia
+  journal: Medical Clinics of North America
+  year: 2020
+biomarkers:
+- crp
+- eosinophils_abs
+- tryptase
+derived_metrics: []
+physiological_claim: Persistent absolute eosinophilia can justify structured evaluation
+  because the differential includes both common secondary causes and rarer clonal
+  eosinophilic syndromes.
+evidence_strength: moderate
+research_summary: Interpretation should emphasize persistence and organ context rather
+  than assign rare syndrome labels from a single isolated result.

@@ -1,0 +1,17 @@
+research_domain: hormonal
+sources:
+- source_id: source_testosterone_guideline_2018
+  paper_title: 'Testosterone Therapy in Men With Hypogonadism: An Endocrine Society
+    Clinical Practice Guideline'
+  journal: Journal of Clinical Endocrinology and Metabolism
+  year: 2018
+biomarkers:
+- free_testosterone
+- lh
+- testosterone
+derived_metrics: []
+physiological_claim: Low free testosterone can support androgen deficiency, but diagnosis
+  requires appropriate measurement, repeat confirmation, and clinical correlation.
+evidence_strength: consensus
+research_summary: Laboratory-specific reference ranges and assay method matter; interpretation
+  should not rely on a single uncontextualized low result.

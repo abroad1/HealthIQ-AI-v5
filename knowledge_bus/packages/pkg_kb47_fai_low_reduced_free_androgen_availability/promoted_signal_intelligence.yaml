@@ -1,0 +1,98 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb47_fai_low_reduced_free_androgen_availability
+translation:
+  source: investigation_spec_v3
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_fai_low_reduced_free_androgen_availability
+  signal_id: signal_fai_low
+signals:
+- signal_id: signal_fai_low
+  research_domain: hormonal
+  signal_system: hormonal
+  primary_metric:
+    biomarker_id: fai
+    rationale: A low free androgen index can support reduced bioavailable androgen
+      exposure but should be interpreted with sex, age, SHBG, and assay context.
+  trigger_direction: low
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: false
+      upper_bound_state: suboptimal
+      enable_lower_bound: true
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: testosterone
+    expected_direction: low
+    role: corroborator
+    relationship_kind: corroboration
+    availability: common
+    rationale: Low total testosterone corroborates that a low FAI may reflect reduced
+      overall androgen supply rather than isolated calculation noise.
+  - biomarker_id: free_testosterone
+    expected_direction: low
+    role: differential_marker
+    relationship_kind: differential
+    availability: specialist
+    rationale: Measured free testosterone helps distinguish a clinically meaningful
+      low-androgen state from an FAI reduction driven mainly by SHBG distortion.
+  - biomarker_id: shbg
+    expected_direction: high
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: High SHBG directly reduces the calculated free androgen index by increasing
+      the bound fraction of total testosterone.
+  contradiction_markers:
+  - contradiction_id: ctr_preserved_free_testosterone_weakens_deficiency
+    marker_reference: free_testosterone
+    contradiction_rationale: A preserved measured free testosterone weakens a biologically
+      meaningful androgen deficiency interpretation from low FAI alone, as the calculated
+      index may underestimate actual bioavailable androgen exposure.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_preserved_free_testosterone
+    marker_reference: free_testosterone
+    contradiction_rationale: A preserved measured free testosterone weakens a strong
+      interpretation of biologically important androgen deficiency from low FAI alone.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Assess SHBG drivers and repeat the androgen profile if the clinical picture
+      and calculated index are discordant.
+    - Interpret with SHBG and total testosterone rather than relying on FAI alone.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_fai_low_with_shbg_high
+    resulting_state: at_risk
+    description: Escalate when low FAI coincides with high SHBG, as this more strongly
+      supports a true reduction in calculated free androgen availability.
+    conditions:
+    - metric_id: shbg
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_testosterone_guideline_2018
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: Calculated androgen bioavailability depends on both total
+      testosterone and SHBG, so isolated index abnormalities require contextual interpretation.
+    threshold_notes: Interpretation should remain laboratory-specific and should not
+      assume universal diagnostic thresholds for FAI across populations.
+    sources:
+    - source_id: source_testosterone_guideline_2018
+      paper_title: 'Testosterone Therapy in Men With Hypogonadism: An Endocrine Society
+        Clinical Practice Guideline'
+      journal: Journal of Clinical Endocrinology and Metabolism
+      year: 2018
+  confirmatory_test_refs:
+  - test_id: ct_repeat_fai_with_total_and_measured_free_testosterone
+    rationale: Reassessing total and measured free testosterone helps determine whether
+      low FAI reflects real androgen underexposure or a calculation artifact driven
+      by binding-protein context.

@@ -1,0 +1,17 @@
+research_domain: thyroid
+sources:
+- source_id: source_hypothyroidism_guideline_2014
+  paper_title: 'Guidelines for the Treatment of Hypothyroidism: Prepared by the American
+    Thyroid Association Task Force on Thyroid Hormone Replacement'
+  journal: Thyroid
+  year: 2014
+biomarkers:
+- free_t3
+- free_t4
+- tsh
+derived_metrics: []
+physiological_claim: Low free T4 is a central laboratory feature of thyroid hormone
+  deficiency and must be interpreted with TSH to classify the pattern accurately.
+evidence_strength: consensus
+research_summary: Free T4 should be interpreted using laboratory reference intervals
+  and in combination with TSH rather than through ungoverned severity cutoffs.
