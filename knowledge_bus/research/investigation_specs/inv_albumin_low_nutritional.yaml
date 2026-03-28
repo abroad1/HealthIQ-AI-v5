@@ -6,7 +6,7 @@ primary_marker:
   rationale: Albumin is the main protein produced by the liver. It maintains oncotic
     pressure and acts as a transport protein. Low levels indicate chronic inflammation,
     liver disease, or malnutrition.
-  signal_system: other
+  signal_system: nutritional
 trigger_direction: low
 activation:
   activation_logic: lab_range_exceeded

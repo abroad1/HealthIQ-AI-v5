@@ -2760,7 +2760,7 @@
     "primary_marker": {
       "biomarker_id": "vitamin_d",
       "rationale": "Low vitamin D most commonly reflects deficient or insufficient 25-hydroxyvitamin D status and is most clinically relevant for bone and mineral physiology.",
-      "signal_system": "other"
+      "signal_system": "nutritional"
     },
     "trigger_direction": "low",
     "activation": {
@@ -2906,7 +2906,7 @@
     "primary_marker": {
       "biomarker_id": "vitamin_d",
       "rationale": "High vitamin D usually reflects supplementation excess or over-replacement and becomes clinically important mainly when calcium balance is affected.",
-      "signal_system": "other"
+      "signal_system": "endocrine"
     },
     "trigger_direction": "high",
     "activation": {
@@ -3045,7 +3045,7 @@
     "primary_marker": {
       "biomarker_id": "magnesium",
       "rationale": "Low magnesium is a clinically relevant electrolyte abnormality that can affect neuromuscular, cardiac, and mineral-regulatory physiology.",
-      "signal_system": "other"
+      "signal_system": "mineral"
     },
     "trigger_direction": "low",
     "activation": {
@@ -3167,7 +3167,7 @@
         },
         {
           "source_id": "source_hypomagnesaemia_guideline_2024",
-          "paper_title": "Hypomagnesaemia \u2013 a guide for GPs",
+          "paper_title": "Hypomagnesaemia – a guide for GPs",
           "journal": "Royal United Hospitals Bath NHS Foundation Trust",
           "year": 2024
         }
@@ -3191,7 +3191,7 @@
     "primary_marker": {
       "biomarker_id": "magnesium",
       "rationale": "High magnesium usually reflects impaired renal excretion or exogenous magnesium load and is most clinically relevant in renal dysfunction or excessive intake contexts.",
-      "signal_system": "other"
+      "signal_system": "mineral"
     },
     "trigger_direction": "high",
     "activation": {
