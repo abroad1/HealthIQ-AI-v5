@@ -108,7 +108,7 @@ Governance rules:
 
 * Opt-in is **explicit**: if `intelligence_model` is **absent** from the manifest, the package is validated under the **legacy** three-file contract only (`intelligence_validation: SKIP` in aggregated status).
 * If `intelligence_model` is **present**, the path MUST resolve to a file that satisfies `knowledge_bus/schema/intelligence_model_schema_v1.yaml` (status **LOCKED**). The orchestrator runs `backend/scripts/validate_intelligence_model.py` as part of `validate_knowledge_package.py`.
-* Aggregated `backend/artifacts/knowledge_status.json` includes `intelligence_validation`: `PASS`, `SKIP`, or `FAIL`. Promotion requires `PASS` on all non-skipped validators; `SKIP` is **not** a failure.
+* Aggregated `backend/artifacts/knowledge_status.json` includes `intelligence_validation`: `PASS`, `SKIP`, or `FAIL`. For promotion, this field MUST be `PASS` or `SKIP`; `FAIL` blocks promotion. (`SKIP` means the manifest did not opt into `intelligence_model` and is **not** a failure.)
 * This does **not** replace `signal_library.yaml`; it layers a governed **reasoning** contract for packages that choose it.
 
 ### Optional — promoted signal intelligence (KB-S47d, opt-in)
@@ -121,7 +121,7 @@ Governance rules:
 
 * Opt-in is **explicit**: if `promoted_signal_intelligence` is **absent**, `promoted_signal_intelligence_validation: SKIP` in aggregated status.
 * If **present**, the path MUST resolve to a file that satisfies `knowledge_bus/schema/promoted_signal_intelligence_schema_v1.yaml`. The orchestrator runs `backend/scripts/validate_promoted_signal_intelligence.py` as part of `validate_knowledge_package.py`.
-* Aggregated `backend/artifacts/knowledge_status.json` includes `promoted_signal_intelligence_validation`: `PASS`, `SKIP`, or `FAIL`.
+* Aggregated `backend/artifacts/knowledge_status.json` includes `promoted_signal_intelligence_validation`: `PASS`, `SKIP`, or `FAIL`. For promotion, this field MUST be `PASS` or `SKIP`; `FAIL` blocks promotion when the manifest opts into promoted signal intelligence. (`SKIP` means the field was omitted from the manifest.)
 * Boundary and translation rules: `architecture/ADR-008-promoted-signal-intelligence-contract-v1.md`. This contract is a deterministic reduction of investigation spec v3 signal primitives; hypotheses remain in adjacent assets linked by `signal_id`.
 
 ### Optional
@@ -203,7 +203,7 @@ Promotion is only permitted if:
 
 * structural validation passes
 * no validation failures remain
-* the package is marked ready for implementation
+* the package is marked ready for implementation (aggregated `ready_for_implementation` from `validate_knowledge_package.py`, i.e. manifest / research / signal validators `PASS`, and each of `intelligence_validation` and `promoted_signal_intelligence_validation` is `PASS` or `SKIP` — never `FAIL` for an opt-in contract)
 
 #### Step 3 — Manual Promotion
 
