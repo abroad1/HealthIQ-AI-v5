@@ -3,6 +3,7 @@ Deterministic translation: investigation spec v3.0.0 → promoted signal intelli
 
 Hypotheses, hypothesis_ranking, and narrative are intentionally excluded (KB-S47d).
 Adjacent hypothesis assets must reference owning signal_id.
+trigger_direction is passed through unchanged (same enum as investigation v3 / KB-S47d).
 
 Authority: ADR-008, promoted_signal_intelligence_schema_v1.yaml
 """
@@ -156,10 +157,6 @@ def _translate_single_spec_to_signal(inv: dict[str, Any]) -> dict[str, Any]:
         raise ValueError(
             "trigger_direction must be high, low, bidirectional, or context_dependent"
         )
-    # Promoted signal intelligence v1 retains high | low | both; dual-edge v3 values map to both.
-    promoted_td = (
-        "both" if td in ("bidirectional", "context_dependent") else str(td)
-    )
 
     return {
         "signal_id": sig_id,
@@ -169,7 +166,7 @@ def _translate_single_spec_to_signal(inv: dict[str, Any]) -> dict[str, Any]:
             "biomarker_id": biomarker_id.strip(),
             "rationale": rationale,
         },
-        "trigger_direction": promoted_td,
+        "trigger_direction": td,
         "activation": copy.deepcopy(inv.get("activation")),
         "states": copy.deepcopy(inv.get("states")),
         "supporting_markers": supporting_markers,

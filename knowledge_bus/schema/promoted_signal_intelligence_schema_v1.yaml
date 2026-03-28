@@ -5,6 +5,11 @@
 # This contract is a deterministic reduction of investigation_spec v3.0.0 signal-layer
 # primitives. It MUST NOT embed hypotheses, hypothesis ranking, or narrative prose.
 # Adjacent hypothesis assets link TO signals via owning signal_id (see ADR-008).
+#
+# KB-S47d — trigger_direction matches investigation v3 / signal_library 2.0.0 vocabulary
+# (high, low, bidirectional, context_dependent). Legacy value "both" is obsolete;
+# external artifacts must replace "both" with "bidirectional" (or context_dependent)
+# before promotion — no silent translator bridge.
 
 schema_name: "HealthIQ Promoted Signal Intelligence"
 schema_version: "1.0.0"
@@ -53,7 +58,8 @@ signal_required_fields:
 trigger_direction_allowed:
   - high
   - low
-  - both
+  - bidirectional
+  - context_dependent
 
 signal_system_allowed:
   - metabolic
