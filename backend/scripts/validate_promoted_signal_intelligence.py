@@ -36,7 +36,8 @@ _FORBIDDEN_ROOT = frozenset(
 )
 _FORBIDDEN_SIGNAL_KEYS = _FORBIDDEN_ROOT | frozenset({"hypotheses", "hypothesis_ranking", "narrative"})
 
-_TRIGGERS = frozenset({"high", "low", "both"})
+# Aligned with investigation_spec v3.0.0 and promoted_signal_intelligence_schema_v1 (KB-S47d).
+_TRIGGERS = frozenset({"high", "low", "bidirectional", "context_dependent"})
 _SIGNAL_SYSTEMS = frozenset(
     {
         "metabolic",
