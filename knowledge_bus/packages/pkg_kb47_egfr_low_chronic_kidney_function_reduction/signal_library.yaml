@@ -1,0 +1,85 @@
+library:
+  package_id: KBP-4704
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S47 Egfr Low signal library
+  description: Translated from inv_egfr_low_chronic_kidney_function_reduction (Batch_2_Pass_3_Rev1.json).
+signals:
+- signal_id: signal_egfr_low
+  name: Egfr Low
+  description: Estimated glomerular filtration rate is a core marker of kidney function
+    and persistent reduction supports clinically relevant filtration impairment.
+  system: renal
+  primary_metric: egfr
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: uacr
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Albuminuria corroborates that reduced eGFR is part of a clinically
+      meaningful chronic kidney disease risk pattern rather than an isolated filtration
+      estimate change.
+  - biomarker_id: cystatin_c
+    expected_direction: high
+    role: differential_marker
+    availability: specialist
+    rationale: Cystatin C helps distinguish true filtration impairment from creatinine-driven
+      distortion of eGFR in people where muscle mass or creatinine generation may
+      mislead.
+  dependencies:
+    biomarkers:
+    - egfr
+    - uacr
+    - cystatin_c
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: egfr_low_lab_range_activation_placeholder
+    metric_id: egfr
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_egfr_low_with_uacr_high
+    resulting_state: at_risk
+    description: Escalate when low eGFR coincides with high UACR, as this more strongly
+      supports clinically meaningful kidney disease risk.
+    conditions:
+    - metric_id: uacr
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_kdigo_ckd_2024
+  output:
+    signal_value: egfr
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: egfr
+    supporting_markers:
+    - uacr
+    - cystatin_c
+  explanation:
+    mechanism: eGFR estimates filtration capacity and falls when kidney clearance
+      is reduced or when hemodynamic changes transiently lower filtration.
+    biological_pathway: Glomerular filtration and kidney functional reserve.
+    interpretation: A low eGFR is clinically important but becomes much more informative
+      when repeated and paired with albuminuria assessment.
+    implications: Repeat testing and UACR assessment are usually needed before deciding
+      whether the pattern reflects chronic disease, transient change, or altered risk
+      severity.
+    supporting_marker_roles: UACR corroborates chronic kidney injury risk, while cystatin
+      C is the differential marker that helps separate true low filtration from creatinine-related
+      distortion.

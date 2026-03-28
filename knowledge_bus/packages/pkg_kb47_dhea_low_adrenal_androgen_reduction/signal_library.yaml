@@ -1,0 +1,83 @@
+library:
+  package_id: KBP-4703
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S47 Dhea Low signal library
+  description: Translated from inv_dhea_low_adrenal_androgen_reduction (Batch_2_Pass_3_Rev1.json).
+signals:
+- signal_id: signal_dhea_low
+  name: Dhea Low
+  description: DHEA is an adrenal androgen precursor whose low levels can support
+    reduced adrenal androgen output but are not diagnostic in isolation.
+  system: hormonal
+  primary_metric: dhea
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: cortisol
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Low cortisol can support broader adrenal steroidogenic impairment when
+      DHEA is low.
+  - biomarker_id: acth
+    expected_direction: high
+    role: differential_marker
+    availability: specialist
+    rationale: ACTH helps distinguish primary adrenal failure from secondary or non-adrenal
+      explanations for low adrenal androgen output.
+  dependencies:
+    biomarkers:
+    - dhea
+    - cortisol
+    - acth
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: dhea_low_lab_range_activation_placeholder
+    metric_id: dhea
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_dhea_low_with_cortisol_low
+    resulting_state: at_risk
+    description: Escalate when low DHEA coincides with low cortisol, as this more
+      strongly supports broader adrenal steroidogenic reduction.
+    conditions:
+    - metric_id: cortisol
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_pai_guideline_2016
+  output:
+    signal_value: dhea
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: dhea
+    supporting_markers:
+    - cortisol
+    - acth
+  explanation:
+    mechanism: DHEA is produced mainly by the adrenal cortex and can fall when adrenal
+      steroidogenic output is reduced.
+    biological_pathway: Adrenal steroidogenesis and peripheral androgen precursor
+      availability.
+    interpretation: Low DHEA is best treated as a contextual hormonal finding that
+      can support reduced adrenal androgen output but should not be used alone to
+      diagnose adrenal insufficiency.
+    implications: Broader adrenal-axis review is more informative than isolated DHEA
+      interpretation when this abnormality appears clinically relevant.
+    supporting_marker_roles: Cortisol supports a broader adrenal output frame, while
+      ACTH helps distinguish primary from secondary axis patterns.

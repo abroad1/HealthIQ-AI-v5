@@ -1,0 +1,92 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb47_eosinophils_abs_high_reactive_eosinophilic_inflammation
+translation:
+  source: investigation_spec_v3
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_eosinophils_abs_high_reactive_eosinophilic_inflammation
+  signal_id: signal_eosinophils_abs_high
+signals:
+- signal_id: signal_eosinophils_abs_high
+  research_domain: immunologic
+  signal_system: inflammatory
+  primary_metric:
+    biomarker_id: eosinophils_abs
+    rationale: Absolute eosinophil count is the preferred laboratory measure for confirming
+      true eosinophilia and is more informative than eosinophil percentage alone.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: total_ige
+    expected_direction: high
+    role: contextual_marker
+    relationship_kind: mechanism
+    availability: optional
+    rationale: High IgE supports an atopic or allergic mechanism for true eosinophilic
+      expansion.
+  - biomarker_id: tryptase
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: specialist
+    rationale: Tryptase helps distinguish common reactive eosinophilia from a clonal
+      or myeloid-associated eosinophilic process.
+  contradiction_markers:
+  - contradiction_id: ctr_high_tryptase_nonreactive
+    marker_reference: tryptase
+    contradiction_rationale: Elevated tryptase weakens a straightforward reactive-atopic
+      interpretation and raises concern for a clonal or myeloid-associated eosinophilic
+      process.
+    contradiction_strength: strong
+  - contradiction_id: ctr_normal_tryptase_weakens_tissue_clonal_frame
+    marker_reference: tryptase
+    contradiction_rationale: A normal tryptase weakens a clonal mast cell or tissue
+      eosinophilic disease interpretation, reducing the likelihood that the absolute
+      eosinophilia represents a significant primary eosinophilic disorder.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Integrate organ-specific symptoms and, where relevant, targeted tissue or imaging
+      evaluation before assigning tissue eosinophilic disease.
+    - Review atopy, asthma, sinus disease, medications, and travel or infection exposure
+      before narrowing the differential.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_eosinophils_abs_high_with_ige_high
+    resulting_state: at_risk
+    description: Escalate when high absolute eosinophils coincide with high total
+      IgE, as this more strongly supports a type 2 or atopic eosinophilic context.
+    conditions:
+    - metric_id: total_ige
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_eosinophilia_review_2020
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: Absolute eosinophilia is the preferred laboratory basis for
+      confirming true eosinophilic expansion and framing further differential diagnosis.
+    threshold_notes: Absolute count is more clinically informative than percentage
+      alone; attribution still depends on persistence and clinical context.
+    sources:
+    - source_id: source_eosinophilia_review_2020
+      paper_title: Approach to the patient with eosinophilia
+      journal: Medical Clinics of North America
+      year: 2020
+  confirmatory_test_refs:
+  - test_id: ct_repeat_absolute_eosinophils_with_ige_or_tryptase_context
+    rationale: Repeating the absolute eosinophil count with targeted allergic and
+      clonal-context testing helps distinguish common reactive eosinophilia from persistent
+      non-reactive disease.

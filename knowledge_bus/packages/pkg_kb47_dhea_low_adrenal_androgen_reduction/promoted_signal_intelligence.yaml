@@ -1,0 +1,92 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb47_dhea_low_adrenal_androgen_reduction
+translation:
+  source: investigation_spec_v3
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_dhea_low_adrenal_androgen_reduction
+  signal_id: signal_dhea_low
+signals:
+- signal_id: signal_dhea_low
+  research_domain: hormonal
+  signal_system: hormonal
+  primary_metric:
+    biomarker_id: dhea
+    rationale: DHEA is an adrenal androgen precursor whose low levels can support
+      reduced adrenal androgen output but are not diagnostic in isolation.
+  trigger_direction: low
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: false
+      upper_bound_state: suboptimal
+      enable_lower_bound: true
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: cortisol
+    expected_direction: low
+    role: mechanism_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: Low cortisol can support broader adrenal steroidogenic impairment when
+      DHEA is low.
+  - biomarker_id: acth
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: specialist
+    rationale: ACTH helps distinguish primary adrenal failure from secondary or non-adrenal
+      explanations for low adrenal androgen output.
+  contradiction_markers:
+  - contradiction_id: ctr_preserved_cortisol_axis
+    marker_reference: cortisol
+    contradiction_rationale: A clearly preserved cortisol axis weakens a broad adrenal
+      insufficiency interpretation from low DHEA alone.
+    contradiction_strength: moderate
+  - contradiction_id: ctr_high_acth_redirects_from_age_context
+    marker_reference: acth
+    contradiction_rationale: A markedly elevated ACTH redirects interpretation away
+      from benign age-related androgen decline and toward a pathological primary adrenal
+      axis problem requiring further evaluation.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Review age, sex, symptoms, medication exposure, and DHEA-S or other steroid
+      context before escalating the finding.
+    - Review cortisol-axis data before inferring clinically significant adrenal dysfunction
+      from DHEA alone.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_dhea_low_with_cortisol_low
+    resulting_state: at_risk
+    description: Escalate when low DHEA coincides with low cortisol, as this more
+      strongly supports broader adrenal steroidogenic reduction.
+    conditions:
+    - metric_id: cortisol
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_pai_guideline_2016
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: Low adrenal androgen levels can accompany adrenal insufficiency,
+      but DHEA is supportive rather than stand-alone diagnostic.
+    threshold_notes: Interpretation should remain lab-range anchored; robust universal
+      DHEA thresholds for disease classification are not established across assays
+      and populations.
+    sources:
+    - source_id: source_pai_guideline_2016
+      paper_title: 'Diagnosis and Treatment of Primary Adrenal Insufficiency: An Endocrine
+        Society Clinical Practice Guideline'
+      journal: Journal of Clinical Endocrinology and Metabolism
+      year: 2016
+  confirmatory_test_refs:
+  - test_id: ct_morning_cortisol_with_acth_context
+    rationale: Morning cortisol with ACTH context helps determine whether low DHEA
+      sits within a broader adrenal steroid deficiency pattern.

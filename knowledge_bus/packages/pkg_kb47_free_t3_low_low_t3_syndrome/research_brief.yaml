@@ -1,0 +1,17 @@
+research_domain: thyroid
+sources:
+- source_id: source_low_t3_review_2016
+  paper_title: 'Abnormalities of Thyroid Hormone Metabolism during Systemic Illness:
+    The Low T3 Syndrome in Different Clinical Settings'
+  journal: International Journal of Endocrinology
+  year: 2016
+biomarkers:
+- free_t3
+- free_t4
+- tsh
+derived_metrics: []
+physiological_claim: Low T3 patterns are common in systemic illness and reflect altered
+  thyroid hormone metabolism rather than primary thyroid disease in many cases.
+evidence_strength: moderate
+research_summary: Free T3 interpretation should remain contextual and should not be
+  used alone to diagnose hypothyroidism.

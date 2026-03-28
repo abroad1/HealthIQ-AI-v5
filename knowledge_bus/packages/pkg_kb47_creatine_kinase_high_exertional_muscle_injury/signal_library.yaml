@@ -1,0 +1,85 @@
+library:
+  package_id: KBP-4700
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S47 Creatine Kinase High signal library
+  description: Translated from inv_creatine_kinase_high_exertional_muscle_injury (Batch_2_Pass_3_Rev1.json).
+signals:
+- signal_id: signal_creatine_kinase_high
+  name: Creatine Kinase High
+  description: Creatine kinase rises with skeletal muscle membrane disruption but
+    requires contextual interpretation because exercise and non-neuromuscular factors
+    can cause transient elevation.
+  system: mitochondrial
+  primary_metric: creatine_kinase
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: ast
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Mild concurrent AST elevation supports a skeletal-muscle source of
+      enzyme release when the hepatic picture is otherwise unconvincing.
+  - biomarker_id: troponin
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Troponin helps distinguish isolated skeletal-muscle CK release from
+      a cardiac-injury pattern that should not be grouped into the same frame.
+  dependencies:
+    biomarkers:
+    - creatine_kinase
+    - ast
+    - troponin
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: creatine_kinase_high_lab_range_activation_placeholder
+    metric_id: creatine_kinase
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_ck_high_with_ast_high
+    resulting_state: at_risk
+    description: Escalate when high CK coincides with high AST, as this more strongly
+      supports active tissue injury than an isolated CK rise.
+    conditions:
+    - metric_id: ast
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_ck_review_2016
+  output:
+    signal_value: creatine_kinase
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: creatine_kinase
+    supporting_markers:
+    - ast
+    - troponin
+  explanation:
+    mechanism: CK is released from damaged skeletal muscle fibers and can rise transiently
+      after exertion, trauma, or other mechanical muscle stress.
+    biological_pathway: Skeletal muscle membrane injury and intracellular enzyme release
+      into the circulation.
+    interpretation: An isolated high CK is more consistent with recent muscle stress
+      than with a chronic myopathic process, particularly when the elevation is transient
+      and context is benign.
+    implications: Repeat testing after rest and review of exertional and medication
+      history usually help determine whether the abnormality is transient or persistent.
+    supporting_marker_roles: AST corroborates a muscle-source enzyme leak, while troponin
+      functions as the key differential marker separating exertional skeletal-muscle
+      release from cardiac injury.

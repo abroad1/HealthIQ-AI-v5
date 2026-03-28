@@ -1,0 +1,87 @@
+library:
+  package_id: KBP-4718
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S47 Free Testosterone Pct High signal library
+  description: Translated from inv_free_testosterone_pct_high_elevated_free_androgen_fraction
+    (Batch_2_Pass_3_Rev1.json).
+signals:
+- signal_id: signal_free_testosterone_pct_high
+  name: Free Testosterone Pct High
+  description: A high free testosterone percentage suggests that a larger proportion
+    of circulating testosterone is bioavailable, often because SHBG is reduced or
+    androgen production is increased.
+  system: hormonal
+  primary_metric: free_testosterone_pct
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: shbg
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Low SHBG can materially increase the proportion of circulating testosterone
+      that remains bioavailable.
+  - biomarker_id: free_testosterone
+    expected_direction: high
+    role: differential_marker
+    availability: specialist
+    rationale: Measured free testosterone helps distinguish true increased bioavailable
+      androgen exposure from a percentage-only shift driven mainly by low SHBG.
+  dependencies:
+    biomarkers:
+    - free_testosterone_pct
+    - shbg
+    - free_testosterone
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: free_testosterone_pct_high_lab_range_activation_placeholder
+    metric_id: free_testosterone_pct
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_free_testosterone_pct_high_with_shbg_low
+    resulting_state: at_risk
+    description: Escalate when high free testosterone percentage coincides with low
+      SHBG, as this more strongly supports a binding-mediated increase in free androgen
+      fraction.
+    conditions:
+    - metric_id: shbg
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_pcos_guideline_2023
+  output:
+    signal_value: free_testosterone_pct
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: free_testosterone_pct
+    supporting_markers:
+    - shbg
+    - free_testosterone
+  explanation:
+    mechanism: The free testosterone percentage rises when SHBG falls or when androgen
+      production is increased sufficiently to expand the unbound fraction.
+    biological_pathway: Binding-protein regulation and circulating bioavailable androgen
+      distribution.
+    interpretation: A high free testosterone percentage can indicate increased free
+      androgen exposure but requires SHBG-aware interpretation and should not be read
+      as a stand-alone indicator of androgen excess.
+    implications: The key distinction is whether the pattern is mainly binding-protein
+      driven or part of a broader androgen excess state.
+    supporting_marker_roles: Low SHBG explains the binding mechanism, while measured
+      free testosterone is the differential marker that separates true increased bioavailable
+      androgen exposure from a percentage-only shift.

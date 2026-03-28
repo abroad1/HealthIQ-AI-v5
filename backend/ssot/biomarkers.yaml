@@ -240,6 +240,42 @@ biomarkers:
     known_modifiers:
     - training_load
     clinical_weight: 0.4
+  aldolase:
+    aliases:
+    - serum_aldolase
+    unit: U/L
+    description: Aldolase; skeletal muscle and liver enzyme supporting muscle injury assessment alongside CK
+    category: metabolic
+    data_type: numeric
+    system: metabolic
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - muscle_injury
+    - inflammatory_myopathy
+    key_risks_when_low: []
+    known_modifiers:
+    - muscle_exertion
+    clinical_weight: 0.35
+  troponin:
+    aliases:
+    - troponin_i
+    - troponin_t
+    - hs_troponin
+    unit: ng/L
+    description: Cardiac troponin (assay-specific high-sensitivity); myocardial injury marker distinct from skeletal muscle enzymes
+    category: cardiovascular
+    data_type: numeric
+    system: cardiovascular
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - myocardial_injury
+    - acute_coronary_syndrome
+    key_risks_when_low: []
+    known_modifiers:
+    - renal_function
+    clinical_weight: 0.85
   creatinine:
     aliases:
     - creat
@@ -255,6 +291,23 @@ biomarkers:
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.8
+  cystatin_c:
+    aliases:
+    - cystatin_c_serum
+    unit: mg/L
+    description: Serum cystatin C; kidney filtration marker complementary to creatinine-based eGFR
+    category: kidney
+    data_type: numeric
+    system: renal
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - reduced_gfr
+    key_risks_when_low: []
+    known_modifiers:
+    - thyroid_function
+    - muscle_mass
+    clinical_weight: 0.65
   urea:
     aliases:
     - Urea
@@ -271,6 +324,26 @@ biomarkers:
     key_risks_when_low: []
     known_modifiers: []
     clinical_weight: 0.6
+  uacr:
+    aliases:
+    - urine_albumin_creatinine_ratio
+    - acr
+    unit: mg/mmol
+    description: Urine albumin-to-creatinine ratio (UACR); albuminuria assessment paired with kidney function markers
+    category: kidney
+    data_type: numeric
+    system: renal
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - diabetic_kidney_disease
+    - chronic_kidney_disease
+    key_risks_when_low: []
+    known_modifiers:
+    - exercise
+    - uti
+    - menstrual_bleeding
+    clinical_weight: 0.75
   vitamin_d:
     aliases:
     - Vitamin D
@@ -470,6 +543,42 @@ biomarkers:
     known_modifiers:
     - stress
     clinical_weight: 0.8
+  total_ige:
+    aliases:
+    - total_immunoglobulin_e
+    - ige_total
+    unit: kU/L
+    description: Total immunoglobulin E; atopic and allergic disease context marker
+    category: immunology
+    data_type: numeric
+    system: immune
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - atopy
+    - allergic_disease
+    - parasitic_infection
+    key_risks_when_low: []
+    known_modifiers:
+    - age
+    clinical_weight: 0.45
+  tryptase:
+    aliases:
+    - serum_tryptase
+    unit: ng/mL
+    description: Serum tryptase; mast cell activation and myeloproliferative context marker alongside eosinophilia workup
+    category: immunology
+    data_type: numeric
+    system: immune
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - mast_cell_activation
+    - anaphylaxis
+    key_risks_when_low: []
+    known_modifiers:
+    - acute_allergic_event_timing
+    clinical_weight: 0.5
   free_t4:
     aliases:
     - free_thyroxine
@@ -1159,6 +1268,25 @@ biomarkers:
     - sleep
     - medication
     clinical_weight: 0.6
+  acth:
+    aliases:
+    - adrenocorticotropic_hormone
+    unit: pmol/L
+    description: Adrenocorticotropic hormone (ACTH); pituitary driver of adrenal steroidogenesis
+    category: Adrenal / Pituitary
+    data_type: numeric
+    system: hormonal
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - cushings_disease
+    - ectopic_acth
+    key_risks_when_low:
+    - primary_adrenal_insufficiency
+    known_modifiers:
+    - time_of_day
+    - stress
+    clinical_weight: 0.6
   dhea:
     unit: umol/L
     description: Dehydroepiandrosterone
@@ -1178,6 +1306,27 @@ biomarkers:
     - age
     - stress
     - chronic_illness
+    clinical_weight: 0.5
+  dhea_s:
+    aliases:
+    - dheas
+    - dhea_sulfate
+    - dehydroepiandrosterone_sulfate
+    unit: umol/L
+    description: Dehydroepiandrosterone sulfate (DHEA-S); adrenal androgen reservoir distinct from unconjugated serum DHEA
+    category: Adrenal
+    data_type: numeric
+    system: hormonal
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - adrenal_hyperandrogenism
+    - congenital_adrenal_hyperplasia
+    key_risks_when_low:
+    - adrenal_insufficiency
+    known_modifiers:
+    - age
+    - sex
     clinical_weight: 0.5
   fai:
     unit: '%'

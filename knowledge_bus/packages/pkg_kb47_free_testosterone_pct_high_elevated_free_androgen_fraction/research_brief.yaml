@@ -1,0 +1,18 @@
+research_domain: hormonal
+sources:
+- source_id: source_pcos_guideline_2023
+  paper_title: Recommendations from the 2023 International Evidence-based Guideline
+    for the Assessment and Management of Polycystic Ovary Syndrome
+  journal: European Journal of Endocrinology
+  year: 2023
+biomarkers:
+- free_testosterone
+- free_testosterone_pct
+- shbg
+derived_metrics: []
+physiological_claim: Bioavailable androgen exposure depends strongly on SHBG and should
+  be interpreted with the broader androgen profile rather than from a percentage metric
+  alone.
+evidence_strength: moderate
+research_summary: High free testosterone percentage should remain laboratory and assay
+  anchored and is not a stand-alone disease threshold.

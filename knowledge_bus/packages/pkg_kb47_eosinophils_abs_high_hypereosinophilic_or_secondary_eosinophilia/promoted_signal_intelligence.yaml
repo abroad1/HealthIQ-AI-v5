@@ -1,0 +1,92 @@
+promoted_signal_intelligence_contract_version: 1.0.0
+schema_version: 1.0.0
+package_id: pkg_kb47_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+translation:
+  source: investigation_spec_v3
+  investigation_spec_contract_version: 3.0.0
+  investigation_spec_id: inv_eosinophils_abs_high_hypereosinophilic_or_secondary_eosinophilia
+  signal_id: signal_eosinophils_abs_high
+signals:
+- signal_id: signal_eosinophils_abs_high
+  research_domain: immunologic
+  signal_system: inflammatory
+  primary_metric:
+    biomarker_id: eosinophils_abs
+    rationale: Absolute eosinophilia can support clinically significant eosinophilic
+      disease evaluation when persistent or organ-related features are present.
+  trigger_direction: high
+  activation:
+    activation_logic: lab_range_exceeded
+    activation_config:
+      enable_upper_bound: true
+      upper_bound_state: suboptimal
+      enable_lower_bound: false
+      lower_bound_state: suboptimal
+  states:
+    baseline_state: suboptimal
+    escalation_state: at_risk
+  supporting_markers:
+  - biomarker_id: tryptase
+    expected_direction: high
+    role: differential_marker
+    relationship_kind: differential
+    availability: specialist
+    rationale: Tryptase can help identify a clonal or myeloid-associated eosinophilic
+      process in selected cases.
+  - biomarker_id: crp
+    expected_direction: high
+    role: contextual_marker
+    relationship_kind: mechanism
+    availability: common
+    rationale: Inflammatory marker elevation can support a more active systemic disease
+      context when eosinophilia is persistent.
+  contradiction_markers:
+  - contradiction_id: ctr_elevated_tryptase_redirects_to_clonal
+    marker_reference: tryptase
+    contradiction_rationale: An elevated tryptase redirects interpretation away from
+      a purely secondary eosinophilic process and toward a clonal or primary eosinophilic
+      disorder that warrants specialist evaluation.
+    contradiction_strength: strong
+  - contradiction_id: ctr_normal_tryptase_weakens_clonal_syndrome
+    marker_reference: tryptase
+    contradiction_rationale: A normal tryptase weakens a clonal or hypereosinophilic
+      syndrome interpretation and makes a reactive secondary cause more probable,
+      reducing the urgency for specialist clonal workup.
+    contradiction_strength: moderate
+  missing_data:
+    policies:
+    - Exclude common secondary causes before prioritising clonal or idiopathic eosinophilic
+      syndromes.
+    - Review persistence, symptoms, organ involvement, and specialist hematologic
+      markers before assigning a rare eosinophilic syndrome frame.
+  confidence:
+    evidence_strength: moderate
+  override_rules:
+  - rule_id: or_eosinophils_abs_high_with_tryptase_high
+    resulting_state: at_risk
+    description: Escalate when high absolute eosinophils coincide with high tryptase,
+      as this can support a myeloid or clonal eosinophilic context.
+    conditions:
+    - metric_id: tryptase
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_eosinophilia_review_2020
+  evidence:
+    evidence_strength: moderate
+    physiological_claim: Persistent absolute eosinophilia can justify structured evaluation
+      because the differential includes both common secondary causes and rarer clonal
+      eosinophilic syndromes.
+    threshold_notes: Interpretation should emphasize persistence and organ context
+      rather than assign rare syndrome labels from a single isolated result.
+    sources:
+    - source_id: source_eosinophilia_review_2020
+      paper_title: Approach to the patient with eosinophilia
+      journal: Medical Clinics of North America
+      year: 2020
+  confirmatory_test_refs:
+  - test_id: ct_persistent_eosinophilia_workup
+    rationale: Persistence-focused eosinophilia workup helps distinguish common secondary
+      causes from rare hypereosinophilic syndromes.
