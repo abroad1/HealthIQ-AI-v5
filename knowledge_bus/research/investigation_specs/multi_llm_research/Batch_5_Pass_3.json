@@ -346,7 +346,7 @@
     "research_domain": "musculoskeletal",
     "primary_marker": {
       "biomarker_id": "alp",
-      "rationale": "Raised alkaline phosphatase can also arise from increased osteoblastic activity and bone remodelling rather than liver disease.",
+      "rationale": "Raised alkaline phosphatase can reflect increased osteoblastic activity and bone remodelling, but it also arises from other non-hepatic sources; companion hepatobiliary markers such as GGT help determine whether a cholestatic hepatic pattern is supported.",
       "signal_system": "bone"
     },
     "trigger_direction": "high",
@@ -393,7 +393,7 @@
       {
         "hypothesis_id": "hyp_increased_bone_turnover",
         "rank": 1,
-        "physiological_claim": "High ALP with no clear hepatic source may reflect increased bone turnover such as healing fracture, Paget-pattern activity, or other osteoblastic states.",
+        "physiological_claim": "High ALP without a supportive hepatic cholestatic pattern on GGT may reflect a non-hepatic explanation, including skeletal turnover among other causes, and must not be read as a standalone bone-specific diagnosis.",
         "evidence_strength": "strong",
         "caveats": [
           "Biochemical overlap among bone conditions is substantial, so ALP does not specify the skeletal diagnosis."
@@ -460,14 +460,14 @@
       {
         "rule_id": "or_alp_high_with_non_hepatic_pattern",
         "resulting_state": "at_risk",
-        "description": "Escalate when ALP is high and GGT does not support a hepatic source, especially if mineral markers suggest active bone remodelling.",
+        "description": "Escalate when ALP is high and GGT is not above its laboratory upper reference limit — a non-hepatic source-attribution clue that often points away from cholestasis; insufficient alone for a bone-turnover diagnosis.",
         "conditions": [
           {
             "metric_id": "ggt",
             "operator": "<=",
             "condition_type": "all_of",
             "comparator_type": "lab_range_boundary",
-            "boundary": "at_or_below_max"
+            "boundary": "not_above_max"
           }
         ],
         "source_refs": [
@@ -491,7 +491,7 @@
     "narrative": {
       "mechanism": "Skeletal ALP is produced by osteoblasts and rises during active bone formation or high-turnover remodelling states.",
       "biological_pathway": "Bone remodelling, mineralisation stress, fracture healing, and parathyroid-driven skeletal turnover can all increase circulating ALP.",
-      "interpretation": "A bone source becomes more plausible when ALP is high but GGT does not indicate a hepatobiliary origin.",
+      "interpretation": "A non-hepatic pattern becomes more plausible when ALP is high but GGT is not above its upper reference limit; this supports differential attribution and is not definitive for skeletal disease.",
       "implications": "This pattern may justify bone-focused assessment rather than liver imaging alone, especially when calcium or phosphate are also abnormal.",
       "supporting_marker_roles": "GGT differentiates hepatic from skeletal source, calcium corroborates mineral turnover context, and phosphate supports mechanistic characterisation of bone remodelling."
     }
@@ -3574,21 +3574,28 @@
       {
         "rule_id": "or_bilirubin_high_isolated_pattern",
         "resulting_state": "at_risk",
-        "description": "Escalate as a likely benign isolated bilirubin-handling pattern when bilirubin is high but liver enzymes remain within range.",
+        "description": "Escalate when total bilirubin is high, ALT and ALP are not above their upper reference limits, and haemoglobin is not below its lower reference limit — an isolated liver-enzyme-normal pattern with reduced support for overt haemolysis. Definitive benign unconjugated Gilbert-type attribution still requires fractionated bilirubin and appropriate clinical context including repeat testing.",
         "conditions": [
           {
             "metric_id": "alt",
             "operator": "<=",
             "condition_type": "all_of",
             "comparator_type": "lab_range_boundary",
-            "boundary": "at_or_below_max"
+            "boundary": "not_above_max"
           },
           {
             "metric_id": "alp",
             "operator": "<=",
             "condition_type": "all_of",
             "comparator_type": "lab_range_boundary",
-            "boundary": "at_or_below_max"
+            "boundary": "not_above_max"
+          },
+          {
+            "metric_id": "hemoglobin",
+            "operator": ">=",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "not_below_min"
           }
         ],
         "source_refs": [
@@ -3614,7 +3621,7 @@
         }
       ],
       "physiological_claim": "Mild isolated bilirubin elevation commonly reflects unconjugated hyperbilirubinaemia from Gilbert-pattern reduced conjugation rather than liver injury.",
-      "threshold_notes": "This object avoids fixed numerical cut-offs and depends on isolated laboratory elevation with otherwise normal liver enzymes."
+      "threshold_notes": "This object avoids fixed numerical cut-offs for bilirubin itself; structured escalation requires companion enzymes not above upper reference and haemoglobin not below lower reference. Predominantly unconjugated bilirubin should be confirmed before a benign inherited pattern is assumed."
     },
     "narrative": {
       "mechanism": "Reduced hepatic conjugation or handling of bilirubin can increase circulating unconjugated bilirubin without causing hepatocellular injury.",

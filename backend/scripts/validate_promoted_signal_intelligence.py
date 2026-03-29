@@ -82,7 +82,15 @@ _CONTRA_STRENGTH = frozenset({"weak", "moderate", "strong"})
 _OPERATORS = frozenset({">", ">=", "<", "<=", "=="})
 _CONDITION_TYPE = frozenset({"any_of", "all_of"})
 _COMPARATOR = frozenset({"lab_range_boundary", "numeric_value", "presence"})
-_BOUNDARIES = frozenset({"above_max", "below_min", "out_of_range"})
+_BOUNDARIES = frozenset(
+    {
+        "above_max",
+        "below_min",
+        "out_of_range",
+        "not_above_max",
+        "not_below_min",
+    }
+)
 
 
 def _load_yaml(path: Path) -> tuple[Any | None, list[str]]:

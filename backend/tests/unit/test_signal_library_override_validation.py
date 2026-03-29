@@ -174,7 +174,7 @@ def test_kb_s45a_validator_rejects_numeric_condition_without_value(tmp_path):
 
 @pytest.mark.parametrize(
     "boundary",
-    ["lower", "upper", "out_of_range", "below_min", "above_max"],
+    ["lower", "upper", "out_of_range", "below_min", "above_max", "not_above_max", "not_below_min"],
 )
 def test_kb_s45a_validator_accepts_all_governed_boundary_tokens(tmp_path, boundary: str):
     body = _minimal_signal_block(

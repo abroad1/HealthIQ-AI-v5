@@ -45,7 +45,17 @@ CATEGORY_ORDER = [
 
 _OVERRIDE_COMPARATOR_LAB = "lab_range_boundary"
 _OVERRIDE_COMPARATOR_NUMERIC = "numeric_value"
-_OVERRIDE_BOUNDARY_CANONICAL = frozenset({"lower", "upper", "out_of_range", "below_min", "above_max"})
+_OVERRIDE_BOUNDARY_CANONICAL = frozenset(
+    {
+        "lower",
+        "upper",
+        "out_of_range",
+        "below_min",
+        "above_max",
+        "not_above_max",
+        "not_below_min",
+    }
+)
 _OVERRIDE_OPERATORS = frozenset({"<", "<=", ">", ">=", "=="})
 
 # library.schema_version value that enables structured supporting_metrics, trigger_direction, override source_refs
