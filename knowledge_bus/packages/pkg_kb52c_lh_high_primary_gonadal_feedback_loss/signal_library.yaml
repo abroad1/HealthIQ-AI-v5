@@ -1,0 +1,91 @@
+library:
+  package_id: KBP-4761
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Lh High Primary Gonadal Feedback Loss
+  description: Ingested from inv_lh_high_primary_gonadal_feedback_loss (Batch_3_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_lh_high
+  name: Lh High Primary Gonadal Feedback Loss
+  description: High LH generally reflects reduced gonadal negative feedback or altered
+    gonadotropin pulsatility and must be interpreted with sex steroids and FSH.
+  system: hormonal
+  primary_metric: lh
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: fsh
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Concurrent FSH elevation supports broad loss of gonadal feedback rather
+      than an isolated LH fluctuation.
+  - biomarker_id: oestradiol
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Low estradiol supports reduced ovarian feedback when LH is raised in
+      female reproductive assessment.
+  - biomarker_id: prolactin
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: High prolactin shifts interpretation toward central reproductive-axis
+      disturbance rather than isolated primary feedback loss.
+  dependencies:
+    biomarkers:
+    - fsh
+    - lh
+    - oestradiol
+    - prolactin
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_lh_high_lab_range_activation_placeholder
+    metric_id: lh
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_lh_high_with_fsh_high
+    resulting_state: at_risk
+    description: Escalate when high LH coincides with high FSH, as this more strongly
+      supports reduced gonadal negative feedback across the axis.
+    conditions:
+    - metric_id: fsh
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_endocrine_gonadotropin_2024
+  output:
+    signal_value: lh
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: lh
+    supporting_markers:
+    - fsh
+    - oestradiol
+    - prolactin
+  explanation:
+    mechanism: LH rises when gonadal steroid feedback to pituitary gonadotrophs is
+      reduced or pulsatility shifts toward higher secretion.
+    biological_pathway: Hypothalamic-pituitary-gonadal feedback signaling involving
+      gonadotropin secretion and sex-steroid inhibition.
+    interpretation: A raised LH is an axis-level clue rather than a stand-alone diagnosis.
+    implications: The key distinction is between physiological reproductive-stage
+      change and clinically meaningful gonadal feedback loss.
+    supporting_marker_roles: FSH corroborates broad gonadotropin elevation, estradiol
+      reflects downstream feedback, and prolactin helps identify central alternatives.

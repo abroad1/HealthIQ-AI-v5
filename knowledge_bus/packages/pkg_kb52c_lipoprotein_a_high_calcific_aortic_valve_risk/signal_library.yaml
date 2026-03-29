@@ -1,0 +1,94 @@
+library:
+  package_id: KBP-4764
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Lipoprotein A High Calcific Aortic Valve Risk
+  description: Ingested from inv_lipoprotein_a_high_calcific_aortic_valve_risk (Batch_3_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_lipoprotein_a_high
+  name: Lipoprotein A High Calcific Aortic Valve Risk
+  description: Elevated lipoprotein(a) is also associated with calcific aortic valve
+    disease risk, distinct from its role in atherosclerotic risk.
+  system: vascular
+  primary_metric: lipoprotein_a
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: ldl_cholesterol
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Elevated LDL cholesterol can coexist with Lp(a)-driven valvular and
+      vascular risk.
+  - biomarker_id: calcium
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: Higher calcium-related mineral burden can support a calcific disease
+      context, though it is not specific for valve disease.
+  - biomarker_id: crp
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Inflammation helps distinguish generalized inflammatory cardiovascular
+      burden from a more genetically weighted lipoprotein(a)-valve risk frame.
+  dependencies:
+    biomarkers:
+    - calcium
+    - crp
+    - ldl_cholesterol
+    - lipoprotein_a
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_lipoprotein_a_high_lab_range_activation_placeholder
+    metric_id: lipoprotein_a
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_lpa_high_with_ldl_high_for_valve_risk
+    resulting_state: at_risk
+    description: Escalate when high lipoprotein(a) coincides with high LDL cholesterol,
+      as this more strongly supports combined lipoprotein-related vascular and valvular
+      risk.
+    conditions:
+    - metric_id: ldl_cholesterol
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_aha_lpa_2025
+  output:
+    signal_value: lipoprotein_a
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: lipoprotein_a
+    supporting_markers:
+    - ldl_cholesterol
+    - calcium
+    - crp
+  explanation:
+    mechanism: Lipoprotein(a) may promote valvular calcific signaling through lipid
+      retention and pro-inflammatory, pro-calcific effects.
+    biological_pathway: Shared vascular and valvular calcific pathways influenced
+      by apoB and apolipoprotein(a)-containing particles.
+    interpretation: This frame extends the significance of high Lp(a) beyond coronary
+      risk into valve-risk territory.
+    implications: It should mainly influence risk awareness and structural follow-up
+      when clinical features suggest valve disease.
+    supporting_marker_roles: LDL cholesterol contextualizes combined lipoprotein burden,
+      calcium provides broad calcific context, and CRP helps distinguish lipoprotein-weighted
+      risk from generalized inflammation.

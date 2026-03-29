@@ -1,0 +1,96 @@
+library:
+  package_id: KBP-4722
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Alp High Cholestatic Pattern
+  description: Ingested from inv_alp_high_cholestatic_pattern (Batch_5_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_alp_high
+  name: Alp High Cholestatic Pattern
+  description: Raised alkaline phosphatase can reflect cholestatic or infiltrative
+    hepatobiliary processes when liver-associated enzymes support a hepatic source.
+  system: hepatic
+  primary_metric: alp
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: ggt
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Raised GGT supports a hepatobiliary source for ALP elevation.
+  - biomarker_id: bilirubin
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Concurrent bilirubin elevation supports a more clinically significant
+      cholestatic pattern.
+  - biomarker_id: alt
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: ALT elevation can corroborate mixed hepatic injury.
+  dependencies:
+    biomarkers:
+    - alp
+    - alt
+    - bilirubin
+    - ggt
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_alp_high_lab_range_activation_placeholder
+    metric_id: alp
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_alp_high_with_hepatic_source_and_bilirubin
+    resulting_state: at_risk
+    description: Escalate when ALP is high with evidence of hepatobiliary source and
+      concurrent bilirubin elevation.
+    conditions:
+    - metric_id: ggt
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    - metric_id: bilirubin
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_alp_statpearls
+    - source_alp_bnssg
+  output:
+    signal_value: alp
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: alp
+    supporting_markers:
+    - ggt
+    - bilirubin
+    - alt
+  explanation:
+    mechanism: ALP rises when cholangiocytes or other hepatobiliary tissues increase
+      release during cholestasis or infiltrative injury.
+    biological_pathway: Bile duct injury, impaired bile flow, and mixed hepatocellular-cholestatic
+      liver injury can all increase circulating ALP.
+    interpretation: An isolated high ALP should not be assumed hepatic, but a concurrent
+      rise in GGT and bilirubin strengthens a cholestatic interpretation.
+    implications: This pattern may justify liver-focused evaluation and imaging, particularly
+      when bilirubin is also raised or symptoms support obstruction.
+    supporting_marker_roles: GGT provides source attribution, bilirubin indicates
+      severity, and ALT corroborates mixed liver injury.

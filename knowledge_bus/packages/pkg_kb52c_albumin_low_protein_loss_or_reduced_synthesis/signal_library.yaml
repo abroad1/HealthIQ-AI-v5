@@ -1,0 +1,93 @@
+library:
+  package_id: KBP-4721
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Albumin Low Protein Loss Or Reduced Synthesis
+  description: Ingested from inv_albumin_low_protein_loss_or_reduced_synthesis (Batch_4_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_albumin_low
+  name: Albumin Low Protein Loss Or Reduced Synthesis
+  description: Low albumin can also reflect chronic protein loss or reduced hepatic
+    synthetic reserve when corroborating features are present.
+  system: hepatic
+  primary_metric: albumin
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: alt
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: Abnormal liver enzymes can support a hepatic context when low albumin
+      raises concern for reduced synthesis.
+  - biomarker_id: uacr
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Albuminuria supports renal protein loss as a direct contributor to
+      low serum albumin.
+  - biomarker_id: crp
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: CRP helps distinguish inflammatory lowering from low albumin caused
+      mainly by chronic loss or impaired synthesis.
+  dependencies:
+    biomarkers:
+    - albumin
+    - alt
+    - crp
+    - uacr
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_albumin_low_lab_range_activation_placeholder
+    metric_id: albumin
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_albumin_low_with_uacr_high
+    resulting_state: at_risk
+    description: Escalate when low albumin coincides with high UACR, as this more
+      strongly supports clinically relevant renal protein loss.
+    conditions:
+    - metric_id: uacr
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_kdigo_ckd_2024
+  output:
+    signal_value: albumin
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: albumin
+    supporting_markers:
+    - alt
+    - uacr
+    - crp
+  explanation:
+    mechanism: Serum albumin declines when losses exceed synthesis or when hepatic
+      production becomes inadequate relative to ongoing demand.
+    biological_pathway: Protein homeostasis across hepatic synthesis, renal or gastrointestinal
+      loss, and systemic inflammatory redistribution.
+    interpretation: This is a context-setting abnormality rather than a stand-alone
+      diagnostic marker and needs corroborating renal or hepatic data.
+    implications: Renal protein quantification and broader liver synthetic assessment
+      usually determine whether loss or reduced synthesis is the dominant frame.
+    supporting_marker_roles: UACR corroborates renal loss, ALT contributes hepatic
+      context, and CRP helps separate inflammatory lowering from noninflammatory protein
+      depletion.

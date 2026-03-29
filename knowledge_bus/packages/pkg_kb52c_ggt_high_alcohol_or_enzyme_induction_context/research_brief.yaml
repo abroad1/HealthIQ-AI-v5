@@ -1,0 +1,17 @@
+research_domain: hepatic
+sources:
+- source_id: source_ggt_induction_review
+  paper_title: Gamma-glutamyl transferase as an inducible liver enzyme
+  journal: Review literature and clinical reference sources
+  year: 2025
+biomarkers:
+- alp
+- alt
+- ggt
+- mcv
+physiological_claim: High GGT with limited cholestatic corroboration may reflect alcohol-related
+  or medication-related enzyme induction.
+evidence_strength: moderate
+research_summary: KB-S52C Wave A ingestion from Batch_6_Pass_3.json; spec_id=inv_ggt_high_alcohol_or_enzyme_induction_context;
+  signal_id=signal_ggt_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

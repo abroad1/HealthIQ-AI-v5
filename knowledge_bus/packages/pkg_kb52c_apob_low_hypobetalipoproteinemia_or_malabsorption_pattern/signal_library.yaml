@@ -1,0 +1,98 @@
+library:
+  package_id: KBP-4732
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Apob Low Hypobetalipoproteinemia Or Malabsorption
+    Pattern
+  description: Ingested from inv_apob_low_hypobetalipoproteinemia_or_malabsorption_pattern
+    (Batch_5_Pass_3.json). KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_apob_low
+  name: Apob Low Hypobetalipoproteinemia Or Malabsorption Pattern
+  description: Low apoB can reflect reduced atherogenic particle production or availability
+    and may be seen in hypobetalipoproteinaemia, malabsorption, or marked nutritional
+    constraint.
+  system: lipid_transport
+  primary_metric: apob
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: ldl_cholesterol
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low LDL cholesterol usually accompanies low apoB and supports reduced
+      apoB-containing particle burden.
+  - biomarker_id: triglycerides
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low triglycerides can support broad reduction in circulating apoB-containing
+      lipoproteins.
+  - biomarker_id: alt
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Raised ALT may suggest hepatic steatosis in genetic hypobetalipoproteinaemia
+      and helps distinguish benign low-risk interpretation from inherited lipid export
+      disorders.
+  dependencies:
+    biomarkers:
+    - alt
+    - apob
+    - ldl_cholesterol
+    - triglycerides
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_apob_low_lab_range_activation_placeholder
+    metric_id: apob
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_apob_low_with_concordant_low_ldl
+    resulting_state: at_risk
+    description: Escalate for phenotype review when apoB is low with concordantly
+      low LDL-related measures rather than as an isolated laboratory anomaly.
+    conditions:
+    - metric_id: ldl_cholesterol
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_measurement_lipids
+    - source_apob_bridge
+  output:
+    signal_value: apob
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: apob
+    supporting_markers:
+    - ldl_cholesterol
+    - triglycerides
+    - alt
+  explanation:
+    mechanism: Low apoB reflects reduced concentration of LDL, VLDL, and other apoB-containing
+      particles in circulation.
+    biological_pathway: Reduced hepatic export, reduced dietary lipid availability,
+      or inherited apoB secretion disorders can all lower circulating apoB.
+    interpretation: Low apoB is often favorable from an atherosclerotic perspective,
+      but marked persistent reductions can justify phenotype review when the context
+      is unusual.
+    implications: This pattern may prompt repeat testing and selective review for
+      malabsorption or inherited low-apoB states rather than routine escalation alone.
+    supporting_marker_roles: LDL-C and triglycerides corroborate low particle burden,
+      while ALT helps differentiate simple low-risk patterns from inherited low-apoB
+      states with hepatic consequences.

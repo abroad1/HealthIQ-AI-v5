@@ -1,0 +1,94 @@
+library:
+  package_id: KBP-4766
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Lymphocyte Pct Low Relative Lymphopenic Shift
+  description: Ingested from inv_lymphocyte_pct_low_relative_lymphopenic_shift (Batch_3_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_lymphocyte_pct_low
+  name: Lymphocyte Pct Low Relative Lymphopenic Shift
+  description: A low lymphocyte percentage may reflect true lymphopenia or a relative
+    increase in other leukocyte compartments and should be interpreted with the absolute
+    count.
+  system: inflammatory
+  primary_metric: lymphocyte_pct
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: lymphocytes_abs
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: A low absolute lymphocyte count confirms that the percentage reduction
+      reflects true lymphopenia.
+  - biomarker_id: neutrophils_abs
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: Neutrophilia can lower lymphocyte percentage even when absolute lymphocyte
+      numbers are less abnormal.
+  - biomarker_id: crp
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Inflammatory stress helps distinguish reactive stress leukograms from
+      chronic immune deficiency patterns.
+  dependencies:
+    biomarkers:
+    - crp
+    - lymphocyte_pct
+    - lymphocytes_abs
+    - neutrophils_abs
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_lymphocyte_pct_low_lab_range_activation_placeholder
+    metric_id: lymphocyte_pct
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_lymphocyte_pct_low_with_lymphocytes_abs_low
+    resulting_state: at_risk
+    description: Escalate when low lymphocyte percentage coincides with low absolute
+      lymphocytes, as this more strongly supports true lymphopenia.
+    conditions:
+    - metric_id: lymphocytes_abs
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_lymphocytosis_guideline_2024
+  output:
+    signal_value: lymphocyte_pct
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: lymphocyte_pct
+    supporting_markers:
+    - lymphocytes_abs
+    - neutrophils_abs
+    - crp
+  explanation:
+    mechanism: Lymphocyte percentage falls when lymphocytes are truly reduced or when
+      neutrophils expand disproportionately.
+    biological_pathway: Leukocyte redistribution during inflammation, stress, glucocorticoid
+      exposure, or immune suppression.
+    interpretation: A low lymphocyte percentage is a distributional clue that needs
+      absolute-count confirmation.
+    implications: The key question is whether there is true lymphopenia or only relative
+      suppression within the differential.
+    supporting_marker_roles: Absolute lymphocytes confirm true deficit, neutrophils
+      explain relative suppression, and CRP helps distinguish reactive inflammatory
+      stress from chronic immune causes.

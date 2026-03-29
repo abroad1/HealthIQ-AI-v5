@@ -1,0 +1,95 @@
+library:
+  package_id: KBP-4742
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Creatinine High Reduced Glomerular Filtration
+  description: Ingested from inv_creatinine_high_reduced_glomerular_filtration (Batch_4_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_creatinine_high
+  name: Creatinine High Reduced Glomerular Filtration
+  description: High creatinine commonly reflects reduced kidney filtration but requires
+    interpretation alongside eGFR and urine findings because muscle mass and acute
+    hemodynamics also affect concentration.
+  system: renal
+  primary_metric: creatinine
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: egfr
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low eGFR supports true reduction in kidney filtration when creatinine
+      is elevated.
+  - biomarker_id: uacr
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: Albuminuria strengthens a chronic kidney disease interpretation when
+      filtration markers are abnormal.
+  - biomarker_id: cystatin_c
+    expected_direction: high
+    role: differential_marker
+    availability: specialist
+    rationale: Cystatin C helps distinguish true filtration reduction from creatinine
+      distortion related to muscle mass or assay context.
+  dependencies:
+    biomarkers:
+    - creatinine
+    - cystatin_c
+    - egfr
+    - uacr
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_creatinine_high_lab_range_activation_placeholder
+    metric_id: creatinine
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_creatinine_high_with_uacr_high
+    resulting_state: at_risk
+    description: Escalate when high creatinine coincides with high UACR, as this more
+      strongly supports clinically meaningful kidney disease.
+    conditions:
+    - metric_id: uacr
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_kdigo_ckd_2024
+  output:
+    signal_value: creatinine
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: creatinine
+    supporting_markers:
+    - egfr
+    - uacr
+    - cystatin_c
+  explanation:
+    mechanism: Serum creatinine rises when filtration falls or when creatinine generation
+      and distribution change enough to increase circulating concentration.
+    biological_pathway: Creatinine generation, glomerular filtration, tubular handling,
+      and kidney injury or chronic kidney disease pathways.
+    interpretation: This pattern supports reduced kidney filtration most strongly
+      when corroborated by eGFR and albuminuria rather than read in isolation.
+    implications: Trend confirmation and urine protein assessment usually clarify
+      whether the finding reflects persistent kidney disease or a creatinine-specific
+      confounder.
+    supporting_marker_roles: Low eGFR corroborates filtration reduction, UACR supports
+      kidney disease context, and cystatin C helps distinguish true filtration loss
+      from creatinine distortion.

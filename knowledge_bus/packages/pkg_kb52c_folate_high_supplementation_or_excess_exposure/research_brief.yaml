@@ -1,0 +1,17 @@
+research_domain: hematologic
+sources:
+- source_id: source_folate_b12_interaction_review
+  paper_title: Folate status in relation to B12 deficiency and anemia
+  journal: Am J Clin Nutr and review literature
+  year: 2007
+biomarkers:
+- active_b12
+- folate
+- homocysteine
+- mcv
+physiological_claim: High folate commonly reflects increased intake or supplementation,
+  but interpretation should remain cautious when B12 status is uncertain.
+evidence_strength: moderate
+research_summary: KB-S52C Wave A ingestion from Batch_6_Pass_3.json; spec_id=inv_folate_high_supplementation_or_excess_exposure;
+  signal_id=signal_folate_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

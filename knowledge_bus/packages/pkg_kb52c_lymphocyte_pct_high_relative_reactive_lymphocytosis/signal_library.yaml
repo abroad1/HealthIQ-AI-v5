@@ -1,0 +1,93 @@
+library:
+  package_id: KBP-4765
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Lymphocyte Pct High Relative Reactive Lymphocytosis
+  description: Ingested from inv_lymphocyte_pct_high_relative_reactive_lymphocytosis
+    (Batch_3_Pass_3.json). KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_lymphocyte_pct_high
+  name: Lymphocyte Pct High Relative Reactive Lymphocytosis
+  description: A high lymphocyte percentage may indicate true lymphocytosis or a relative
+    differential shift and should be anchored to the absolute lymphocyte count.
+  system: inflammatory
+  primary_metric: lymphocyte_pct
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: lymphocytes_abs
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: A high absolute lymphocyte count confirms that the percentage rise
+      reflects true lymphocytosis.
+  - biomarker_id: neutrophils_abs
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Relative neutropenia can drive a higher lymphocyte percentage even
+      without major absolute lymphocyte expansion.
+  - biomarker_id: crp
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Inflammatory activation helps distinguish reactive immune shifts from
+      chronic clonal lymphoproliferative patterns.
+  dependencies:
+    biomarkers:
+    - crp
+    - lymphocyte_pct
+    - lymphocytes_abs
+    - neutrophils_abs
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_lymphocyte_pct_high_lab_range_activation_placeholder
+    metric_id: lymphocyte_pct
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_lymphocyte_pct_high_with_lymphocytes_abs_high
+    resulting_state: at_risk
+    description: Escalate when high lymphocyte percentage coincides with high absolute
+      lymphocytes, as this confirms a true lymphocytosis pattern.
+    conditions:
+    - metric_id: lymphocytes_abs
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_lymphocytosis_guideline_2024
+  output:
+    signal_value: lymphocyte_pct
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: lymphocyte_pct
+    supporting_markers:
+    - lymphocytes_abs
+    - neutrophils_abs
+    - crp
+  explanation:
+    mechanism: Lymphocyte percentage rises when absolute lymphocytes expand or when
+      other leukocyte populations contract relatively.
+    biological_pathway: Leukocyte differential distribution during reactive immune
+      activation or relative neutrophil suppression.
+    interpretation: A high lymphocyte percentage is a differential-count clue, not
+      a final diagnosis.
+    implications: The first task is to decide whether the pattern is relative or represents
+      true lymphocytosis.
+    supporting_marker_roles: Absolute lymphocytes confirm true expansion, neutrophils
+      help explain relative shifts, and CRP helps distinguish reactive from less obviously
+      reactive patterns.

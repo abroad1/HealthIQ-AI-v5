@@ -1,0 +1,93 @@
+library:
+  package_id: KBP-4757
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Homocysteine High B Vitamin Related Methylation Impairment
+  description: Ingested from inv_homocysteine_high_b_vitamin_related_methylation_impairment
+    (Batch_6_Pass_3.json). KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_homocysteine_high
+  name: Homocysteine High B Vitamin Related Methylation Impairment
+  description: Homocysteine is a methylation-pathway intermediate and rises most commonly
+    with folate, B12, or B6 insufficiency, renal impairment, or genetic pathway variation.
+  system: metabolic
+  primary_metric: homocysteine
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: folate
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Low folate supports impaired remethylation as a common cause of elevated
+      homocysteine.
+  - biomarker_id: active_b12
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: Low active B12 supports an alternative or combined cobalamin-related
+      cause of hyperhomocysteinemia.
+  - biomarker_id: mcv
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Macrocytosis supports a clinically relevant hematinic consequence of
+      impaired one-carbon metabolism.
+  dependencies:
+    biomarkers:
+    - active_b12
+    - folate
+    - homocysteine
+    - mcv
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_homocysteine_high_lab_range_activation_placeholder
+    metric_id: homocysteine
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_homocysteine_high_with_low_active_b12
+    resulting_state: at_risk
+    description: Escalate when homocysteine is high and active B12 is low because
+      the combination supports a clinically relevant cobalamin-related methylation
+      defect.
+    conditions:
+    - metric_id: active_b12
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_homocysteine_review
+  output:
+    signal_value: homocysteine
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: homocysteine
+    supporting_markers:
+    - folate
+    - active_b12
+    - mcv
+  explanation:
+    mechanism: Homocysteine rises when one-carbon metabolism is limited or when renal
+      clearance is reduced.
+    biological_pathway: Folate and active B12 provide the main mechanistic context,
+      while MCV can support clinically relevant megaloblastic consequence.
+    interpretation: High homocysteine is biologically informative but not disease-specific
+      on its own.
+    implications: This pattern may justify hematinic and renal review rather than
+      isolated cardiovascular interpretation from homocysteine alone.
+    supporting_marker_roles: Folate and active B12 are core mechanism markers, while
+      MCV helps corroborate whether the disturbance has hematologic expression.

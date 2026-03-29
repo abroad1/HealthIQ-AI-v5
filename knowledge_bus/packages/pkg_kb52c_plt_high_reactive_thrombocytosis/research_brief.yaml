@@ -1,0 +1,19 @@
+research_domain: inflammatory
+sources:
+- source_id: source_thrombocytosis_review_2024
+  paper_title: Guideline and review literature on thrombocytosis, reactive causes,
+    and initial evaluation
+  journal: Guideline and review literature
+  year: 2024
+biomarkers:
+- crp
+- ferritin
+- platelets
+- white_blood_cells
+physiological_claim: Thrombocytosis is frequently reactive, especially in inflammatory
+  states or iron deficiency, and should be interpreted before assuming a primary clonal
+  disorder.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_7_Pass_3.json; spec_id=inv_plt_high_reactive_thrombocytosis;
+  signal_id=signal_plt_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

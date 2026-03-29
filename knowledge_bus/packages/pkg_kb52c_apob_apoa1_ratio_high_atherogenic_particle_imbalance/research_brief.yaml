@@ -1,0 +1,24 @@
+research_domain: lipid_transport
+sources:
+- source_id: source_apob_ratio_longterm
+  paper_title: Long-term risk of a major cardiovascular event by apoB, apoA-1, and
+    the apoB/apoA-1 ratio
+  journal: PLoS One
+  year: 2021
+- source_id: source_2016_esc
+  paper_title: 2016 European Guidelines on cardiovascular disease prevention in clinical
+    practice
+  journal: European Heart Journal
+  year: 2016
+biomarkers:
+- apoa1
+- apob
+- apob_apoa1_ratio
+- ldl_cholesterol
+physiological_claim: A high apoB/apoA1 ratio is associated with increased cardiovascular
+  risk because it captures the balance between atherogenic and protective lipoprotein-related
+  signals.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_5_Pass_3.json; spec_id=inv_apob_apoa1_ratio_high_atherogenic_particle_imbalance;
+  signal_id=signal_apob_apoa1_ratio_high; investigation_spec_contract_version=3.0.0;
+  governance=translation_contract_v3_to_package_KB-S52B_v1 / translation_remap_contract_KB-S52B_v1.

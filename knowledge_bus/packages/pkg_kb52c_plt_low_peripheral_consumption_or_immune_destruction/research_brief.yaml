@@ -1,0 +1,18 @@
+research_domain: hematologic
+sources:
+- source_id: source_thrombocytopenia_review_2024
+  paper_title: Guideline and review literature on thrombocytopenia, isolated platelet
+    reduction, and serious secondary causes
+  journal: Guideline and review literature
+  year: 2024
+biomarkers:
+- bilirubin
+- hemoglobin
+- platelets
+- white_blood_cells
+physiological_claim: Thrombocytopenia can be isolated or part of a more serious systemic
+  process, so surrounding count pattern and haemolytic context are central to interpretation.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_7_Pass_3.json; spec_id=inv_plt_low_peripheral_consumption_or_immune_destruction;
+  signal_id=signal_plt_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

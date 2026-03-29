@@ -1,0 +1,22 @@
+research_domain: hepatic
+sources:
+- source_id: source_hypoalbuminemia_review_2018
+  paper_title: 'Hypoalbuminemia: Pathogenesis and Clinical Significance'
+  journal: JPEN Journal of Parenteral and Enteral Nutrition
+  year: 2018
+- source_id: source_hypoalbuminemia_review_2024
+  paper_title: The clinical significance of hypoalbuminaemia
+  journal: Clinical Nutrition ESPEN
+  year: 2024
+biomarkers:
+- albumin
+- crp
+- hematocrit
+- uacr
+physiological_claim: Low serum albumin is commonly associated with inflammation, redistribution,
+  dilution, or protein loss and should not be interpreted as a stand-alone marker
+  of nutrition.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_4_Pass_3.json; spec_id=inv_albumin_low_inflammatory_hypoalbuminemia;
+  signal_id=signal_albumin_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

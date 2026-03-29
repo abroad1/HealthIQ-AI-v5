@@ -1,0 +1,21 @@
+research_domain: hepatic
+sources:
+- source_id: source_bilirubin_liver_review
+  paper_title: The Multifaceted Role of Bilirubin in Liver Disease
+  journal: Biomedicines
+  year: 2024
+- source_id: source_gilbert_consensus
+  paper_title: Expert Consensus on the Diagnosis and Management of Hereditary Hyperbilirubinemia
+  journal: Hepatobiliary & Pancreatic Diseases International
+  year: 2025
+biomarkers:
+- alp
+- alt
+- bilirubin
+- hemoglobin
+physiological_claim: Bilirubin elevation with abnormal liver enzymes supports impaired
+  hepatobiliary processing or excretion rather than isolated benign unconjugated hyperbilirubinaemia.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_5_Pass_3.json; spec_id=inv_bilirubin_high_hepatobiliary_excretion_impairment;
+  signal_id=signal_bilirubin_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

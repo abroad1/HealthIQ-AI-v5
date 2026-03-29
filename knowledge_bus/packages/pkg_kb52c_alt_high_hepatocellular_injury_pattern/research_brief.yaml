@@ -1,0 +1,21 @@
+research_domain: hepatic
+sources:
+- source_id: source_alt_statpearls
+  paper_title: Alanine Aminotransferase (ALT) Test
+  journal: StatPearls
+  year: 2024
+- source_id: source_lft_guide
+  paper_title: Liver function Tests in Adults - A Guide for GPs
+  journal: Royal United Hospitals Bath NHS Foundation Trust
+  year: 2022
+biomarkers:
+- alp
+- alt
+- ast
+- creatine_kinase
+physiological_claim: Raised ALT is a useful marker of hepatocellular injury but should
+  be interpreted alongside cholestatic markers and muscle-source differentials.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_5_Pass_3.json; spec_id=inv_alt_high_hepatocellular_injury_pattern;
+  signal_id=signal_alt_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

@@ -1,0 +1,94 @@
+library:
+  package_id: KBP-4723
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Alt High Hepatocellular Injury Pattern
+  description: Ingested from inv_alt_high_hepatocellular_injury_pattern (Batch_5_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_alt_high
+  name: Alt High Hepatocellular Injury Pattern
+  description: Raised ALT is most consistent with hepatocellular injury and is commonly
+    used to support liver-focused interpretation when muscle sources are less likely.
+  system: hepatic
+  primary_metric: alt
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: ast
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Concurrent AST elevation supports a hepatocellular injury pattern,
+      although it is not liver-specific.
+  - biomarker_id: alp
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Raised ALP can shift interpretation toward a mixed or cholestatic process
+      rather than predominantly hepatocellular injury.
+  - biomarker_id: creatine_kinase
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: High creatine kinase helps distinguish muscle-source transaminase release
+      from primary liver injury.
+  dependencies:
+    biomarkers:
+    - alp
+    - alt
+    - ast
+    - creatine_kinase
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_alt_high_lab_range_activation_placeholder
+    metric_id: alt
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_alt_high_with_ast_and_without_muscle_source
+    resulting_state: at_risk
+    description: Escalate when ALT is high with corroborating transaminase abnormality
+      and no strong competing muscle source.
+    conditions:
+    - metric_id: ast
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_alt_statpearls
+    - source_lft_guide
+  output:
+    signal_value: alt
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: alt
+    supporting_markers:
+    - ast
+    - alp
+    - creatine_kinase
+  explanation:
+    mechanism: ALT is released into the circulation when hepatocytes are injured or
+      inflamed.
+    biological_pathway: Hepatocyte membrane injury, inflammatory liver disease, toxic
+      exposure, ischemia, and steatotic injury can all elevate ALT.
+    interpretation: High ALT generally supports liver injury, but competing muscle
+      sources and mixed cholestatic patterns need to be excluded with companion markers.
+    implications: This pattern may justify liver-focused workup, with creatine kinase
+      and cholestatic markers used to avoid source misclassification.
+    supporting_marker_roles: AST corroborates hepatocellular injury, ALP differentiates
+      mixed cholestatic involvement, and creatine kinase helps exclude muscle-source
+      transaminase release.

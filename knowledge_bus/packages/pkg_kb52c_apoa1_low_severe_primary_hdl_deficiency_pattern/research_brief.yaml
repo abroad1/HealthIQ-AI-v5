@@ -1,0 +1,22 @@
+research_domain: lipid_transport
+sources:
+- source_id: source_apoa1_hdl_deficiency
+  paper_title: Diagnosis and treatment of high density lipoprotein deficiency
+  journal: Progress in Cardiovascular Diseases
+  year: 2016
+- source_id: source_apoa1_genetic_review
+  paper_title: Clinical presentation, laboratory values, and coronary heart disease
+    risk in marked HDL deficiency states
+  journal: Journal of Clinical Lipidology
+  year: 2008
+biomarkers:
+- apoa1
+- apob
+- hdl_cholesterol
+- triglycerides
+physiological_claim: Very low apoA1 can occur in rare primary HDL deficiency syndromes,
+  but secondary causes are more common and must be excluded.
+evidence_strength: moderate
+research_summary: KB-S52C Wave A ingestion from Batch_5_Pass_3.json; spec_id=inv_apoa1_low_severe_primary_hdl_deficiency_pattern;
+  signal_id=signal_apoa1_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

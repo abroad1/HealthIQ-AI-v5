@@ -1,0 +1,17 @@
+research_domain: metabolic
+sources:
+- source_id: source_homocysteine_review
+  paper_title: Homocysteine in folate and cobalamin deficiency
+  journal: Nutrition and hematology review literature
+  year: 2025
+biomarkers:
+- active_b12
+- folate
+- homocysteine
+- mcv
+physiological_claim: High homocysteine commonly reflects impaired remethylation or
+  transsulfuration, most often in a B-vitamin deficiency context.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_6_Pass_3.json; spec_id=inv_homocysteine_high_b_vitamin_related_methylation_impairment;
+  signal_id=signal_homocysteine_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

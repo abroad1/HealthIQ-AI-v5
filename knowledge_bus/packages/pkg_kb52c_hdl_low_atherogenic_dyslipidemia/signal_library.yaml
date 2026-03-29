@@ -1,0 +1,92 @@
+library:
+  package_id: KBP-4753
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Hdl Low Atherogenic Dyslipidemia
+  description: Ingested from inv_hdl_low_atherogenic_dyslipidemia (Batch_4_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_hdl_low
+  name: Hdl Low Atherogenic Dyslipidemia
+  description: Low HDL commonly accompanies atherogenic dyslipidemia and supports
+    increased cardiometabolic risk when interpreted with the broader lipoprotein pattern.
+  system: lipid_transport
+  primary_metric: hdl_cholesterol
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: triglycerides
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: High triglycerides commonly accompany low HDL in atherogenic dyslipidemia.
+  - biomarker_id: apob
+    expected_direction: high
+    role: corroborator
+    availability: specialist
+    rationale: Higher apoB supports increased atherogenic particle burden when HDL
+      is low.
+  - biomarker_id: ldl_cholesterol
+    expected_direction: any
+    role: differential_marker
+    availability: common
+    rationale: LDL context helps distinguish isolated low HDL from a broader mixed
+      dyslipidemic phenotype.
+  dependencies:
+    biomarkers:
+    - apob
+    - hdl_cholesterol
+    - ldl_cholesterol
+    - triglycerides
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_hdl_low_lab_range_activation_placeholder
+    metric_id: hdl_cholesterol
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_hdl_low_with_triglycerides_high
+    resulting_state: at_risk
+    description: Escalate when low HDL coincides with high triglycerides, as this
+      more strongly supports an atherogenic dyslipidemic pattern.
+    conditions:
+    - metric_id: triglycerides
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_esc_dyslipidaemia_2019
+  output:
+    signal_value: hdl_cholesterol
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: hdl_cholesterol
+    supporting_markers:
+    - triglycerides
+    - apob
+    - ldl_cholesterol
+  explanation:
+    mechanism: HDL falls in insulin-resistant and triglyceride-rich states where lipoprotein
+      exchange and catabolism alter HDL concentration.
+    biological_pathway: Reverse cholesterol transport, triglyceride-rich lipoprotein
+      metabolism, and atherogenic particle interactions.
+    interpretation: This pattern supports cardiometabolic dyslipidemia most strongly
+      when other atherogenic markers are also unfavorable.
+    implications: The next step is usually to determine whether low HDL reflects a
+      broader apoB-rich phenotype rather than treating HDL alone as the primary problem.
+    supporting_marker_roles: Triglycerides support the mechanism, apoB corroborates
+      atherogenic burden, and LDL helps differentiate isolated low HDL from broader
+      mixed dyslipidemia.

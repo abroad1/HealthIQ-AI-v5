@@ -1,0 +1,18 @@
+research_domain: metabolic
+sources:
+- source_id: source_urate_guideline_2024
+  paper_title: Guideline and review literature on hyperuricaemia, gout risk, and renal
+    urate handling
+  journal: Guideline and review literature
+  year: 2024
+biomarkers:
+- creatinine
+- crp
+- egfr
+- urate
+physiological_claim: Sustained hyperuricaemia increases gout risk, but urate also
+  rises because of impaired renal handling and other metabolic influences.
+evidence_strength: consensus
+research_summary: KB-S52C Wave A ingestion from Batch_7_Pass_3.json; spec_id=inv_urate_high_gout_crystal_deposition_risk;
+  signal_id=signal_urate_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

@@ -1,0 +1,99 @@
+library:
+  package_id: KBP-4726
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Apoa1 Low Atherogenic Hdl Deficiency
+  description: Ingested from inv_apoa1_low_atherogenic_hdl_deficiency (Batch_5_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_apoa1_low
+  name: Apoa1 Low Atherogenic Hdl Deficiency
+  description: Low apolipoprotein A1 reflects reduced major HDL apoprotein availability
+    and can support interpretation of impaired protective lipoprotein balance.
+  system: lipid_transport
+  primary_metric: apoa1
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: hdl_cholesterol
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low HDL cholesterol commonly accompanies low apoA1 and supports reduced
+      HDL particle mass.
+  - biomarker_id: triglycerides
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: High triglycerides support an insulin-resistant dyslipidaemic context
+      in which apoA1 is often reduced.
+  - biomarker_id: apob
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: High apoB shifts interpretation toward broader atherogenic particle
+      excess rather than isolated HDL-related deficiency.
+  dependencies:
+    biomarkers:
+    - apoa1
+    - apob
+    - hdl_cholesterol
+    - triglycerides
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_apoa1_low_lab_range_activation_placeholder
+    metric_id: apoa1
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_apoa1_low_with_atherogenic_context
+    resulting_state: at_risk
+    description: Escalate when apoA1 is low with a broader dyslipidaemic pattern suggestive
+      of adverse lipoprotein balance.
+    conditions:
+    - metric_id: hdl_cholesterol
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    - metric_id: triglycerides
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_apoa1_hdl_deficiency
+    - source_apob_ratio_longterm
+  output:
+    signal_value: apoa1
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: apoa1
+    supporting_markers:
+    - hdl_cholesterol
+    - triglycerides
+    - apob
+  explanation:
+    mechanism: ApoA1 is the principal protein constituent of HDL and participates
+      in reverse cholesterol transport and HDL particle function.
+    biological_pathway: Reduced apoA1 commonly accompanies low HDL states, insulin
+      resistance, and altered HDL remodelling in cardiometabolic disease.
+    interpretation: Low apoA1 usually indicates an unfavorable lipoprotein balance
+      rather than a stand-alone diagnosis.
+    implications: This pattern may justify fuller lipid-risk assessment, especially
+      when triglycerides are high or apoB is also abnormal.
+    supporting_marker_roles: HDL-C corroborates reduced HDL mass, triglycerides support
+      an insulin-resistant mechanism, and apoB differentiates isolated HDL impairment
+      from broader atherogenic particle excess.
