@@ -71,7 +71,17 @@ _CONTRA_STRENGTH = frozenset({"weak", "moderate", "strong"})
 _OPERATORS = frozenset({">", ">=", "<", "<=", "=="})
 _CONDITION_TYPE = frozenset({"any_of", "all_of"})
 _COMPARATOR = frozenset({"lab_range_boundary", "numeric_value", "presence"})
-_BOUNDARIES = frozenset({"above_max", "below_min", "out_of_range"})
+# KB-S51: not_above_max / not_below_min encode physiologically informative companion
+# normality (at or below upper ref; at or above lower ref) for narrow override use.
+_BOUNDARIES = frozenset(
+    {
+        "above_max",
+        "below_min",
+        "out_of_range",
+        "not_above_max",
+        "not_below_min",
+    }
+)
 
 _V2_REQUIRED_ROOT = frozenset(
     {

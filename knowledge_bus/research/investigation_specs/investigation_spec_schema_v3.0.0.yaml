@@ -285,6 +285,11 @@ field_rules:
         type: list
         min_items: 1
         max_items: 8
+        description: >
+          For comparator_type lab_range_boundary, governed boundary values include
+          above_max, below_min, out_of_range, not_above_max, and not_below_min (KB-S51).
+          Runtime evaluates not_above_max as observed <= lab max and not_below_min as
+          observed >= lab min; operator is not interpreted for lab_range_boundary.
       source_refs:
         type: list
         min_items: 1
