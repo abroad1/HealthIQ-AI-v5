@@ -1,0 +1,265 @@
+work_id: KB-S52B
+artifact_id: translation_contract_v3_to_package_KB-S52B_v1
+artifact_version: 1
+generated_date: '2026-03-29'
+status: APPROVED_FOR_USE
+description: >
+  Supplemental translation governance for investigation_spec v3.0.0 → Knowledge Bus
+  package-relevant artefacts. Does NOT replace the locked signal-intelligence translation
+  rules; cites them as primary authority for promoted-signal reduction.
+
+primary_authority_signal_intelligence_translation:
+  file: knowledge_bus/schema/signal_intelligence_translation_rules_v1.yaml
+  status: LOCKED
+  scope: >
+    Defines deterministic translation from investigation_spec v3 to promoted_signal_intelligence v1
+    (implemented by backend/core/knowledge/investigation_spec_to_promoted_signal.py).
+  cursor_constraint: MUST NOT be edited in KB-S52B; reference only.
+
+governed_remap_authority:
+  file: knowledge_bus/governance/translation_remap_contract_KB-S52B_v1.yaml
+  description: Single source for APPROVED/DEFERRED upstream biomarker token remaps.
+
+ingestion_consumer_requirement: >
+  Future ingestion sprints must load both YAML authorities above. Baseline package
+  assets (research_brief, signal_library) follow their own schemas; when reducing v3
+  specs to promoted signal intelligence, obey signal_intelligence_translation_rules_v1.yaml.
+  When normalising upstream biomarker_id/metric_id strings before SSOT resolution, apply
+  only APPROVED rows from translation_remap_contract_KB-S52B_v1.yaml.
+
+# KB-S52B explicit clarifications (no silent omission)
+construct_handling:
+
+  hypotheses:
+    downstream_rule: NOT_TRANSLATED_TO_PROMOTED_SIGNAL
+    authority: knowledge_bus/schema/signal_intelligence_translation_rules_v1.yaml
+    authority_section: explicit_non_translation (hypotheses)
+    note: >
+      Full hypothesis objects stay in adjacent hypothesis assets; promoted signal carries
+      derived summaries only where the locked rules specify (e.g. missing_data.policies).
+
+  hypothesis_ranking:
+    downstream_rule: NOT_TRANSLATED_TO_PROMOTED_SIGNAL
+    authority: knowledge_bus/schema/signal_intelligence_translation_rules_v1.yaml
+    authority_section: explicit_non_translation (hypothesis_ranking)
+
+  contradiction_markers:
+    downstream_rule: TRANSLATED_AGGREGATED_TO_SIGNAL
+    authority: knowledge_bus/schema/signal_intelligence_translation_rules_v1.yaml
+    authority_section: translated_with_derivation → signals[].contradiction_markers
+    kb_s52b_note: >
+      Aggregated contradiction_markers must reference marker IDs that resolve in SSOT or
+      are explicitly handled by a future translator guard. Non-analyte marker_reference values
+      (e.g. repeat_bilirubin) remain BLOCKED for naive promotion until Wave C policy lands.
+
+  confirmatory_tests:
+    downstream_rule: TRANSLATED_TO_SIGNAL_REFS
+    authority: knowledge_bus/schema/signal_intelligence_translation_rules_v1.yaml
+    authority_section: translated_with_derivation → signals[].confirmatory_test_refs
+
+  supporting_markers_top_level:
+    downstream_rule: TRANSLATED_DIRECT_COPY
+    authority: knowledge_bus/schema/signal_intelligence_translation_rules_v1.yaml
+    authority_section: direct_translation (supporting_markers)
+
+  supporting_marker_refs_within_hypotheses:
+    downstream_rule: NOT_TRANSLATED_TO_PROMOTED_SIGNAL
+    rationale: >
+      Field hypotheses[*].supporting_marker_refs is part of the hypothesis object.
+      Because hypotheses are excluded from promoted_signal_intelligence, these refs are
+      not separately promoted. Downstream hypothesis assets retain them.
+    authority: knowledge_bus/schema/signal_intelligence_translation_rules_v1.yaml
+    authority_section: explicit_non_translation (hypotheses)
+
+  narrative:
+    downstream_rule: NOT_TRANSLATED_TO_PROMOTED_SIGNAL
+    authority: knowledge_bus/schema/signal_intelligence_translation_rules_v1.yaml
+    authority_section: explicit_non_translation (narrative)
+
+non_analyte_reference_classes:
+  description: >
+    KB-S52A boundary items; ingestion must not silently treat as chemistry CBC keys.
+  classes:
+  - class_id: NA-PROCEDURE
+    examples:
+    - serum_protein_electrophoresis
+    policy: DEFERRED_PREREQUISITE
+    handling: >
+      Procedure/clinical context marker, not a standard SSOT analyte. Blocked from
+      metric-level promotion until SSOT construct class exists or narrative-only policy is approved.
+
+  - class_id: NA-GENETIC_SPECIALIST
+    examples:
+    - jak2_v617f
+    policy: DEFERRED_PREREQUISITE
+    handling: Specialist/genetic marker; SSOT expansion sprint.
+
+  - class_id: NA-MORPHOLOGY
+    examples:
+    - smudge_cells
+    policy: DEFERRED_PREREQUISITE
+    handling: Morphology flag; not in baseline analyte registry.
+
+  - class_id: NA-LOGICAL_REPEAT
+    examples:
+    - repeat_bilirubin
+    policy: DEFERRED_PREREQUISITE
+    handling: >
+      Encodes repeat-testing semantics, not an analyte. Contradiction aggregation must not
+      emit unmapped pipeline keys; translator guard or SSOT policy required.
+
+validator_interaction_kb_s52b: >
+  validate_investigation_spec.py and validate_knowledge_package.py are unchanged in KB-S52B.
+  Remap governance is verified by backend/tests/unit/test_remap_governance_kb_s52b.py.
+
+readiness_waves_spec_ids:
+  tranche: Batches_3_through_7_Pass_3
+  total_specs: 117
+  methodology: >
+    Classify each spec by collecting all biomarker_id, marker_reference, and override metric_id
+    values recursively; AliasRegistryService.resolve; unmapped set empty → Wave A; unmapped set
+    subset of approved remap upstream tokens {non_hdl, fasting_glucose, wbc_total} → Wave B;
+    else Wave C.
+  wave_a_resolver_clean_no_remap_needed:
+    count: 67
+    spec_ids:
+    - inv_albumin_low_inflammatory_hypoalbuminemia
+    - inv_albumin_low_protein_loss_or_reduced_synthesis
+    - inv_alp_high_cholestatic_pattern
+    - inv_alt_high_hepatocellular_injury_pattern
+    - inv_alt_high_metabolic_steatotic_liver_pattern
+    - inv_alt_high_muscle_source_or_exertional_pattern
+    - inv_apoa1_low_atherogenic_hdl_deficiency
+    - inv_apoa1_low_severe_primary_hdl_deficiency_pattern
+    - inv_apob_apoa1_ratio_high_atherogenic_particle_imbalance
+    - inv_apob_apoa1_ratio_high_insulin_resistance_atherogenic_dyslipidemia
+    - inv_apob_high_atherogenic_particle_excess
+    - inv_apob_high_familial_combined_hyperlipidemia_pattern
+    - inv_apob_low_hypobetalipoproteinemia_or_malabsorption_pattern
+    - inv_basophil_pct_high_myeloproliferative_signal
+    - inv_basophil_pct_high_type2_hypersensitivity_inflammation
+    - inv_basophil_pct_low_glucocorticoid_or_acute_stress_pattern
+    - inv_basophils_abs_high_myeloproliferative_signal
+    - inv_basophils_abs_high_type2_hypersensitivity_inflammation
+    - inv_basophils_abs_low_glucocorticoid_or_acute_stress_pattern
+    - inv_bilirubin_high_hepatobiliary_excretion_impairment
+    - inv_cortisol_high_hypercortisolism
+    - inv_cortisol_low_adrenal_insufficiency
+    - inv_creatinine_high_reduced_glomerular_filtration
+    - inv_creatinine_low_low_muscle_mass_or_low_generation
+    - inv_ferritin_low_iron_store_depletion
+    - inv_folate_high_supplementation_or_excess_exposure
+    - inv_folate_low_folate_deficiency
+    - inv_fsh_high_primary_gonadal_failure
+    - inv_fsh_low_hypogonadotropic_suppression
+    - inv_ggt_high_alcohol_or_enzyme_induction_context
+    - inv_ggt_high_hepatobiliary_cholestatic_context
+    - inv_hba1c_high_diabetes_range_hyperglycemia
+    - inv_hba1c_low_shortened_erythrocyte_lifespan_context
+    - inv_hdl_low_atherogenic_dyslipidemia
+    - inv_hdl_low_hypertriglyceridemic_insulin_resistance_pattern
+    - inv_hematocrit_low_anemia_or_hemodilution
+    - inv_hgb_low_normocytic_underproduction_context
+    - inv_homocysteine_high_b_vitamin_related_methylation_impairment
+    - inv_homocysteine_high_renal_clearance_reduction
+    - inv_ldl_high_atherogenic_ldl_burden
+    - inv_ldl_high_familial_hypercholesterolemia_context
+    - inv_lh_high_primary_gonadal_feedback_loss
+    - inv_lh_low_central_hypogonadotropic_pattern
+    - inv_lipoprotein_a_high_atherosclerotic_cardiovascular_risk
+    - inv_lipoprotein_a_high_calcific_aortic_valve_risk
+    - inv_lymphocyte_pct_high_relative_reactive_lymphocytosis
+    - inv_lymphocyte_pct_low_relative_lymphopenic_shift
+    - inv_magnesium_high_hypermagnesemia_context
+    - inv_magnesium_high_reduced_excretion_or_excess_load
+    - inv_magnesium_low_hypomagnesemia
+    - inv_mcv_high_megaloblastic_macrocytosis
+    - inv_mcv_high_nonmegaloblastic_macrocytosis
+    - inv_plt_high_clonal_myeloproliferative_thrombocytosis
+    - inv_plt_high_reactive_thrombocytosis
+    - inv_plt_low_marrow_suppression_pattern
+    - inv_plt_low_peripheral_consumption_or_immune_destruction
+    - inv_triglycerides_high_insulin_resistant_hypertriglyceridemia
+    - inv_tsh_high_primary_hypothyroid_pattern
+    - inv_tsh_low_thyrotoxic_pattern
+    - inv_tyg_index_high_insulin_resistance_pattern
+    - inv_urate_high_gout_crystal_deposition_risk
+    - inv_urate_low_reduced_urate_pool_or_renal_loss
+    - inv_urea_high_prerenal_volume_depletion_or_catabolic_load
+    - inv_urea_low_low_protein_or_reduced_urea_cycle_input
+    - inv_vitamin_b12_high_supplementation_or_secondary_elevation
+    - inv_vitamin_b12_low_b12_deficiency_context
+    - inv_wbc_high_possible_clonal_leukocyte_proliferation
+
+  wave_b_remap_only_subset_of_kb_s52b_approved_tokens:
+    count: 4
+    note: >
+      Eligible after deterministic application of translation_remap_contract_KB-S52B_v1.yaml
+      APPROVED remaps only (no SSOT file edits).
+    entries:
+    - spec_id: inv_hba1c_pct_high_chronic_hyperglycemia_diabetes
+      unmapped_before_remap:
+      - fasting_glucose
+    - spec_id: inv_hba1c_pct_high_red_cell_turnover_bias_or_iron_deficiency
+      unmapped_before_remap:
+      - fasting_glucose
+    - spec_id: inv_non_hdl_high_atherogenic_lipoprotein_burden
+      unmapped_before_remap:
+      - non_hdl
+    - spec_id: inv_non_hdl_low_reduced_atherogenic_lipoprotein_pool
+      unmapped_before_remap:
+      - non_hdl
+
+  wave_c_blocked_prerequisite:
+    count: 46
+    note: >
+      Remaining specs with unmapped touchpoints outside {non_hdl, fasting_glucose, wbc_total}
+      or compound blockers (e.g. lym primary plus wbc_total). Requires SSOT expansion,
+      derived metrics, non-analyte policy, or multi-token remediation per KB-S52A blocker register.
+    spec_ids:
+    - inv_active_b12_low_b12_depletion
+    - inv_alp_high_high_bone_turnover_pattern
+    - inv_alp_low_hypophosphatasia_pattern
+    - inv_alp_low_nutrient_or_cofactor_deficiency
+    - inv_bilirubin_high_gilbert_pattern
+    - inv_bilirubin_high_hemolytic_turnover_pattern
+    - inv_calcium_high_primary_hyperparathyroid_pattern
+    - inv_calcium_high_pth_independent_hypercalcemia
+    - inv_calcium_low_hypoparathyroid_pattern
+    - inv_calcium_low_vitamin_d_or_magnesium_related_hypocalcemia
+    - inv_chloride_high_hyperchloremic_metabolic_acidosis
+    - inv_chloride_low_chloride_depletion_metabolic_alkalosis
+    - inv_corrected_calcium_high_malignancy_mediated_hypercalcemia
+    - inv_corrected_calcium_high_pth_mediated_hypercalcemia
+    - inv_corrected_calcium_low_hypoparathyroid_state
+    - inv_corrected_calcium_low_secondary_hyperparathyroid_context
+    - inv_crp_high_active_inflammatory_or_infective_state
+    - inv_crp_high_residual_cardiometabolic_inflammatory_risk
+    - inv_ferritin_high_inflammatory_hyperferritinemia
+    - inv_ferritin_high_iron_overload_context
+    - inv_globulin_high_monoclonal_gammopathy_signal
+    - inv_globulin_high_polyclonal_inflammatory_hypergammaglobulinemia
+    - inv_globulin_low_hypogammaglobulinemia_or_protein_loss
+    - inv_hba1c_pct_low_shortened_red_cell_survival_or_low_glycemia
+    - inv_hematocrit_high_absolute_erythrocytosis
+    - inv_hematocrit_high_relative_hemoconcentration
+    - inv_hgb_high_erythrocytosis_or_hypoxic_drive
+    - inv_hgb_low_iron_deficiency_or_blood_loss_anemia
+    - inv_iron_high_hepatocellular_or_hemolytic_release
+    - inv_iron_high_iron_overload_context
+    - inv_iron_low_absolute_iron_deficiency
+    - inv_iron_low_functional_iron_restriction_inflammation
+    - inv_lym_high_reactive_or_lymphoproliferative_lymphocytosis
+    - inv_lym_low_lymphopenia_stress_or_immunosuppression
+    - inv_lymphocytes_abs_high_reactive_lymphocytosis
+    - inv_lymphocytes_abs_low_true_lymphopenia
+    - inv_magnesium_low_renal_magnesium_wasting
+    - inv_magnesium_low_total_body_magnesium_deficiency
+    - inv_mcv_low_microcytosis_iron_deficiency
+    - inv_neutrophils_high_acute_bacterial_inflammatory_response
+    - inv_neutrophils_low_marrow_suppression_or_drug_effect
+    - inv_triglycerides_high_severe_hypertriglyceridemia_context
+    - inv_vitamin_d_high_vitamin_d_excess_context
+    - inv_vitamin_d_low_vitamin_d_deficiency
+    - inv_wbc_high_reactive_leukocytosis
+    - inv_wbc_low_global_leukopenic_suppression

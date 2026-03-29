@@ -1,0 +1,102 @@
+work_id: KB-S52B
+artifact_id: translation_remap_contract_KB-S52B_v1
+artifact_version: 1
+generated_date: '2026-03-29'
+status: APPROVED_FOR_USE
+authority_basis:
+  preflight_audit: knowledge_bus/research/KB-S52A_PREFLIGHT_AUDIT_Batches_3-7_Pass3.md
+  prompt_hardening: automation_bus/latest_prompt_hardening.json
+  ssot_citation: backend/ssot/biomarker_alias_registry.yaml
+
+enforcement_statement: >
+  This file is the SINGLE authoritative source for governed upstream-token remaps
+  when translating Batch 3–7 Pass 3 investigation specs toward Knowledge Bus package
+  artefacts. Ingestion code (e.g. future KB-S52C/KB-S52D work) MUST apply only remaps
+  marked APPROVED below and MUST cite this path explicitly. Do not duplicate this table
+  in application code or secondary YAML. Do not add entries to biomarker_alias_registry.yaml
+  or biomarkers.yaml as part of this contract — those remain separate SSOT expansion sprints.
+
+# Approved remaps: deterministic one-to-one; upstream token is not SSOT-resolvable today;
+# downstream canonical exists in biomarker SSOT (alias registry).
+remaps:
+- upstream_token: non_hdl
+  downstream_canonical: non_hdl_cholesterol
+  status: APPROVED
+  rationale: >
+    Audit token matches registry canonical non_hdl_cholesterol (atherogenic non-HDL-C).
+    Upstream label is abbreviation drift; clinical intent is unambiguous.
+  ssot_registry_anchor: non_hdl_cholesterol
+
+- upstream_token: fasting_glucose
+  downstream_canonical: glucose
+  status: APPROVED
+  rationale: >
+    No separate fasting glucose canonical ID; serum/plasma glucose maps to glucose.
+    Upstream distinguishes context; downstream SSOT uses single analyte key.
+  ssot_registry_anchor: glucose
+
+- upstream_token: wbc_total
+  downstream_canonical: white_blood_cells
+  status: APPROVED
+  rationale: >
+    Same concept as WBC total count; common alias path maps to white_blood_cells.
+  ssot_registry_anchor: white_blood_cells
+
+# Explicitly not approved in this sprint — requires SSOT expansion or clinical disambiguation
+remaps_deferred:
+- upstream_tokens:
+  - lym
+  status: DEFERRED
+  blocker_class: ambiguous_abbreviation
+  rationale: >
+    No single SSOT target: lymphocyte_pct, lymphocytes, and lymphocytes_abs are distinct
+    concepts. Remap would silently collapse clinically material distinctions.
+  candidate_ssot_keys:
+  - lymphocyte_pct
+  - lymphocytes
+  - lymphocytes_abs
+
+- upstream_tokens:
+  - pth
+  - parathyroid_hormone
+  status: DEFERRED
+  blocker_class: missing_ssot_canonical
+  rationale: >
+    Neither token exists as canonical_id or governed alias in biomarker SSOT today.
+    Governed remap requires a dedicated SSOT expansion sprint.
+
+- upstream_tokens:
+  - pth_related_peptide
+  status: DEFERRED
+  blocker_class: missing_ssot_canonical
+  rationale: >
+    Not present in biomarker SSOT; specialist marker. Treat as SSOT expansion prerequisite.
+
+# Tokens named in KB-S52A as unmapped but NOT governed as simple remaps in this sprint.
+# These require derived-metric definitions, new construct classes, or SSOT rows — not KB-S52B remap rows.
+out_of_scope_for_remap_table:
+  note: >
+    Entries here are Wave C / prerequisite work. Do not “approve” a text remap without
+    SSOT and engine support. Kept as inventory only (non-exhaustive of all Wave C markers).
+  tokens:
+  - amylase
+  - anion_gap
+  - bicarbonate
+  - erythropoietin
+  - fractional_excretion_magnesium
+  - igg
+  - jak2_v617f
+  - mma
+  - phosphate
+  - procalcitonin
+  - rbc_count
+  - repeat_bilirubin
+  - reticulocyte_count
+  - reticulocytes
+  - serum_protein_electrophoresis
+  - smudge_cells
+  - total_b12
+  - transferrin_saturation
+  - urine_magnesium_24h
+  - urine_protein_creatinine_ratio
+  - vitamin_b6
