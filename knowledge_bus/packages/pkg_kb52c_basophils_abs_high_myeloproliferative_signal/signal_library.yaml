@@ -1,0 +1,95 @@
+library:
+  package_id: KBP-4736
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Basophils Abs High Myeloproliferative Signal
+  description: Ingested from inv_basophils_abs_high_myeloproliferative_signal (Batch_5_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_basophils_abs_high
+  name: Basophils Abs High Myeloproliferative Signal
+  description: Persistent elevation of basophil absolute values can be a hematologic
+    flag, particularly when accompanied by broader myeloid abnormalities.
+  system: hematologic
+  primary_metric: basophils_abs
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: white_blood_cells
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Leukocytosis supports a broader myeloid proliferative context rather
+      than isolated reactive basophilia.
+  - biomarker_id: neutrophils_abs
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: Concurrent neutrophilia can support myeloid expansion in myeloproliferative
+      states.
+  - biomarker_id: eosinophils_abs
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Coexistent eosinophilia may still be reactive and helps distinguish
+      allergic or parasitic patterns from more isolated myeloid expansion.
+  dependencies:
+    biomarkers:
+    - basophils_abs
+    - eosinophils_abs
+    - neutrophils_abs
+    - white_blood_cells
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_basophils_abs_high_lab_range_activation_placeholder
+    metric_id: basophils_abs
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_basophils_abs_high_with_leukocytosis
+    resulting_state: at_risk
+    description: Escalate when basophils are high together with leukocytosis, supporting
+      a broader hematologic process rather than isolated reactive change.
+    conditions:
+    - metric_id: white_blood_cells
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_basophilia_statpearls
+    - source_basophilia_criteria
+  output:
+    signal_value: basophils_abs
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: basophils_abs
+    supporting_markers:
+    - white_blood_cells
+    - neutrophils_abs
+    - eosinophils_abs
+  explanation:
+    mechanism: Clonal or broader myeloid expansion can increase circulating basophils
+      alongside other myeloid-lineage cells.
+    biological_pathway: Myeloproliferative disorders may produce persistent basophilia
+      through expanded myeloid proliferation rather than reactive immune activation
+      alone.
+    interpretation: This frame should be reserved for persistent elevation with corroborating
+      CBC abnormalities, not transient isolated changes.
+    implications: When supported by the broader blood count, the finding may justify
+      peripheral smear review and hematologic follow-up.
+    supporting_marker_roles: White cell count corroborates broader proliferation,
+      neutrophils support myeloid expansion, and eosinophils help differentiate reactive
+      immune patterns from clonal hematologic ones.

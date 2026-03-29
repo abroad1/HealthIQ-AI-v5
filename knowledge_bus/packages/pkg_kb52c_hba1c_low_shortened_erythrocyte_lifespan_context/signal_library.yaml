@@ -1,0 +1,92 @@
+library:
+  package_id: KBP-4752
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Hba1C Low Shortened Erythrocyte Lifespan Context
+  description: Ingested from inv_hba1c_low_shortened_erythrocyte_lifespan_context
+    (Batch_6_Pass_3.json). KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_hba1c_low
+  name: Hba1C Low Shortened Erythrocyte Lifespan Context
+  description: Low HbA1c is often a contextual finding and may reflect reduced glycaemic
+    exposure or a falsely low result from shortened erythrocyte lifespan.
+  system: metabolic
+  primary_metric: hba1c
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: glucose
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: High glucose with low HbA1c suggests that HbA1c may be underestimating
+      glycaemic exposure.
+  - biomarker_id: hemoglobin
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low hemoglobin can support altered red-cell turnover that reduces HbA1c
+      reliability.
+  - biomarker_id: mcv
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: Macrocytosis can support abnormal erythropoiesis and may modify HbA1c
+      interpretation.
+  dependencies:
+    biomarkers:
+    - glucose
+    - hba1c
+    - hemoglobin
+    - mcv
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_hba1c_low_lab_range_activation_placeholder
+    metric_id: hba1c
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_hba1c_low_with_high_glucose
+    resulting_state: at_risk
+    description: Escalate when HbA1c is low but glucose is high because this discordance
+      raises concern that HbA1c is underestimating glycaemic exposure.
+    conditions:
+    - metric_id: glucose
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_hba1c_guideline
+  output:
+    signal_value: hba1c
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: hba1c
+    supporting_markers:
+    - glucose
+    - hemoglobin
+    - mcv
+  explanation:
+    mechanism: HbA1c falls when average glucose is low, but it can also fall spuriously
+      if erythrocytes are removed from circulation earlier than usual.
+    biological_pathway: Hemoglobin and MCV help evaluate red-cell biology, while glucose
+      provides differential context against falsely reassuring HbA1c values.
+    interpretation: Low HbA1c is often not pathological on its own, but it can be
+      misleading if it masks underlying dysglycaemia.
+    implications: This pattern may justify glucose-based assessment when HbA1c appears
+      discordant with the broader clinical picture.
+    supporting_marker_roles: Glucose is the key differential marker, hemoglobin provides
+      red-cell context, and MCV can support an altered erythropoietic state.

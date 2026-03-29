@@ -1,0 +1,18 @@
+research_domain: immunologic
+sources:
+- source_id: source_lymphocytosis_guideline_2024
+  paper_title: Lymphocytosis Guidelines
+  journal: NHS Scotland Right Decisions
+  year: 2024
+biomarkers:
+- crp
+- lymphocyte_pct
+- lymphocytes_abs
+- neutrophils_abs
+physiological_claim: Lymphocyte percentage reductions often need confirmation with
+  the absolute count because inflammatory neutrophilia can create an apparent relative
+  lymphopenia.
+evidence_strength: moderate
+research_summary: KB-S52C Wave A ingestion from Batch_3_Pass_3.json; spec_id=inv_lymphocyte_pct_low_relative_lymphopenic_shift;
+  signal_id=signal_lymphocyte_pct_low; investigation_spec_contract_version=3.0.0;
+  governance=translation_contract_v3_to_package_KB-S52B_v1 / translation_remap_contract_KB-S52B_v1.

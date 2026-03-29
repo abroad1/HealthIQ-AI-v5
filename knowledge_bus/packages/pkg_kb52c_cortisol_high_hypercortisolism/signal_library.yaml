@@ -1,0 +1,95 @@
+library:
+  package_id: KBP-4740
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Cortisol High Hypercortisolism
+  description: Ingested from inv_cortisol_high_hypercortisolism (Batch_6_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_cortisol_high
+  name: Cortisol High Hypercortisolism
+  description: Serum cortisol above range is context-sensitive and should be interpreted
+    cautiously because stress, illness, and sampling conditions can influence values.
+  system: hormonal
+  primary_metric: cortisol
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: acth
+    expected_direction: high
+    role: differential_marker
+    availability: specialist
+    rationale: High ACTH supports ACTH-dependent hypercortisolism if true endogenous
+      cortisol excess is confirmed.
+  - biomarker_id: hba1c
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Higher HbA1c can support chronic glucocorticoid-related metabolic effect
+      rather than an isolated transient cortisol rise.
+  - biomarker_id: neutrophils_abs
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Neutrophilia can occur with glucocorticoid exposure or stress and provides
+      supportive context.
+  dependencies:
+    biomarkers:
+    - acth
+    - cortisol
+    - hba1c
+    - neutrophils_abs
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_cortisol_high_lab_range_activation_placeholder
+    metric_id: cortisol
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_cortisol_high_with_high_hba1c
+    resulting_state: at_risk
+    description: Escalate when cortisol is high and HbA1c is also high because the
+      combination may support a more chronic glucocorticoid effect rather than an
+      isolated transient rise.
+    conditions:
+    - metric_id: hba1c
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_cushing_guideline
+  output:
+    signal_value: cortisol
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: cortisol
+    supporting_markers:
+    - acth
+    - hba1c
+    - neutrophils_abs
+  explanation:
+    mechanism: Cortisol excess may arise from pituitary, adrenal, ectopic, or iatrogenic
+      glucocorticoid exposure, while acute illness can produce transient physiologic
+      elevation.
+    biological_pathway: ACTH helps separate ACTH-dependent from ACTH-independent physiology
+      once true cortisol excess is suspected.
+    interpretation: High cortisol is best treated as a contextual hormonal flag rather
+      than a definitive diagnosis from a single measurement.
+    implications: This pattern may justify formal hypercortisolism testing if the
+      sample timing and clinical context make persistent excess plausible.
+    supporting_marker_roles: ACTH provides differential structure, glucose can corroborate
+      glucocorticoid effect, and neutrophils can reflect stress-related leukocyte
+      redistribution.

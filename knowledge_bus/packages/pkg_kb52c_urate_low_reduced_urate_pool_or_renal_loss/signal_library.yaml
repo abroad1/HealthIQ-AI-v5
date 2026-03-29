@@ -1,0 +1,95 @@
+library:
+  package_id: KBP-4781
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Urate Low Reduced Urate Pool Or Renal Loss
+  description: Ingested from inv_urate_low_reduced_urate_pool_or_renal_loss (Batch_7_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_urate_low
+  name: Urate Low Reduced Urate Pool Or Renal Loss
+  description: Low urate is less common than hyperuricaemia and is usually interpreted
+    cautiously because it can reflect reduced production, medication effects, or renal
+    urate wasting.
+  system: renal
+  primary_metric: urate
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: egfr
+    expected_direction: any
+    role: differential_marker
+    availability: common
+    rationale: Kidney function context helps assess whether low urate sits within
+      altered renal handling rather than isolated reduced production.
+  - biomarker_id: urea
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: Low urea may support low protein substrate or systemic nutritional
+      context rather than a specific renal urate-wasting pattern.
+  - biomarker_id: creatinine
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Lower creatinine can accompany low muscle and purine turnover context,
+      supporting a reduced urate pool interpretation in some individuals.
+  dependencies:
+    biomarkers:
+    - creatinine
+    - egfr
+    - urate
+    - urea
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_urate_low_lab_range_activation_placeholder
+    metric_id: urate
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_urate_low_with_low_urea
+    resulting_state: at_risk
+    description: Escalate cautiously when low urate is accompanied by low urea, as
+      combined reduction may point to broader low substrate or systemic nutritional
+      context rather than an isolated serum finding.
+    conditions:
+    - metric_id: urea
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_hypouricemia_review_2024
+  output:
+    signal_value: urate
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: urate
+    supporting_markers:
+    - egfr
+    - urea
+    - creatinine
+  explanation:
+    mechanism: Serum urate falls when production is reduced, excretion is increased,
+      or pharmacologic urate lowering is present.
+    biological_pathway: Purine turnover, renal tubular urate handling, and systemic
+      nutritional influences on urate generation.
+    interpretation: Low urate is generally a contextual finding, with substrate limitation
+      usually more plausible than renal urate-wasting in routine blood data alone.
+    implications: This result usually warrants medication and nutritional review before
+      pursuing rare renal-wasting explanations.
+    supporting_marker_roles: Creatinine corroborates low-turnover context, urea helps
+      differentiate low substrate availability, and kidney function context helps
+      consider altered renal handling.

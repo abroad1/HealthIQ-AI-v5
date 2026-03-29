@@ -1,0 +1,22 @@
+research_domain: hematologic
+sources:
+- source_id: source_basophilia_statpearls
+  paper_title: Basophilia
+  journal: StatPearls
+  year: 2024
+- source_id: source_basophilia_criteria
+  paper_title: Proposed diagnostic criteria and classification of basophilic leukemias
+    and related disorders
+  journal: Leukemia
+  year: 2020
+biomarkers:
+- basophil_pct
+- eosinophils_abs
+- neutrophils_abs
+- white_blood_cells
+physiological_claim: Persistent basophilia can be a hematologic warning signal, especially
+  when it occurs with broader myeloid abnormalities.
+evidence_strength: moderate
+research_summary: KB-S52C Wave A ingestion from Batch_5_Pass_3.json; spec_id=inv_basophil_pct_high_myeloproliferative_signal;
+  signal_id=signal_basophil_pct_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

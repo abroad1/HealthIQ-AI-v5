@@ -1,0 +1,99 @@
+library:
+  package_id: KBP-4779
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Tyg Index High Insulin Resistance Pattern
+  description: Ingested from inv_tyg_index_high_insulin_resistance_pattern (Batch_7_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_tyg_index_high
+  name: Tyg Index High Insulin Resistance Pattern
+  description: The TyG index is a derived marker used as a surrogate for insulin resistance
+    and is most appropriately interpreted as a metabolic risk signal rather than a
+    stand-alone diagnosis.
+  system: metabolic
+  primary_metric: tyg_index
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: hba1c
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Higher HbA1c can corroborate adverse glycaemic-metabolic context alongside
+      an elevated TyG index.
+  - biomarker_id: triglycerides
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: The TyG index is partly driven by triglyceride concentration, so high
+      triglycerides support the lipotoxic-metabolic pathway underlying the index.
+  - biomarker_id: alt
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Raised ALT can help distinguish a more hepatometabolic pattern associated
+      with steatosis from a more general insulin-resistance signal without overt liver
+      involvement.
+  dependencies:
+    biomarkers:
+    - alt
+    - hba1c
+    - triglycerides
+    - tyg_index
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_tyg_index_high_lab_range_activation_placeholder
+    metric_id: tyg_index
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_tyg_high_with_high_hba1c
+    resulting_state: at_risk
+    description: Escalate when a high TyG index is accompanied by elevated HbA1c,
+      as combined dysglycaemic and lipotoxic signals strengthen adverse metabolic
+      interpretation.
+    conditions:
+    - metric_id: hba1c
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_tyg_review_2024
+  output:
+    signal_value: tyg_index
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: tyg_index
+    supporting_markers:
+    - hba1c
+    - triglycerides
+    - alt
+  explanation:
+    mechanism: The TyG index integrates fasting triglyceride and glucose information
+      and reflects metabolic states linked to insulin resistance and hepatic lipid
+      overflow.
+    biological_pathway: Insulin signalling impairment, hepatic VLDL overproduction,
+      glucose-triglyceride interaction, and downstream metabolically adverse energy
+      storage pathways.
+    interpretation: A high TyG index can support an insulin-resistance pattern, with
+      ALT helping separate a more hepatometabolic frame from a general metabolic signal.
+    implications: This finding may justify broader metabolic review, especially when
+      accompanied by dysglycaemia or liver-related abnormalities, but it is not a
+      stand-alone diagnosis.
+    supporting_marker_roles: HbA1c corroborates dysglycaemic metabolic burden, triglycerides
+      support the mechanistic basis of the index, and ALT helps differentiate a more
+      steatosis-linked hepatometabolic pattern.

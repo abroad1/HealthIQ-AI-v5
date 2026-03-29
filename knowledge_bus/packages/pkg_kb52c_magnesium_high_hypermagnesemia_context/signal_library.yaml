@@ -1,0 +1,94 @@
+library:
+  package_id: KBP-4767
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Magnesium High Hypermagnesemia Context
+  description: Ingested from inv_magnesium_high_hypermagnesemia_context (Batch_4_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_magnesium_high
+  name: Magnesium High Hypermagnesemia Context
+  description: High magnesium usually reflects impaired renal excretion or exogenous
+    magnesium load and is most clinically relevant in renal dysfunction or excessive
+    intake contexts.
+  system: mineral
+  primary_metric: magnesium
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: creatinine
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: High creatinine corroborates impaired renal excretion as a common explanation
+      for hypermagnesemia.
+  - biomarker_id: calcium
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Low calcium can coexist and support clinically meaningful mineral and
+      neuromuscular effects in some cases.
+  - biomarker_id: potassium
+    expected_direction: any
+    role: differential_marker
+    availability: optional
+    rationale: Potassium context can help separate broad renal electrolyte failure
+      from a more isolated magnesium-loading state.
+  dependencies:
+    biomarkers:
+    - calcium
+    - creatinine
+    - magnesium
+    - potassium
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_magnesium_high_lab_range_activation_placeholder
+    metric_id: magnesium
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_magnesium_high_with_creatinine_high
+    resulting_state: at_risk
+    description: Escalate when high magnesium coincides with high creatinine, as this
+      more strongly supports impaired renal excretion as the driver of hypermagnesemia.
+    conditions:
+    - metric_id: creatinine
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_magnesium_core_2024
+  output:
+    signal_value: magnesium
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: magnesium
+    supporting_markers:
+    - creatinine
+    - calcium
+    - potassium
+  explanation:
+    mechanism: Serum magnesium rises when filtered magnesium excretion is impaired
+      or magnesium intake exceeds excretory capacity.
+    biological_pathway: Renal magnesium handling, gastrointestinal exposure, and neuromuscular
+      and cardiovascular effects of magnesium excess.
+    interpretation: This is usually a context-dependent electrolyte abnormality and
+      becomes more concerning when kidney function is impaired.
+    implications: The main next step is to determine whether the elevation is exposure-related,
+      renally retained, or both.
+    supporting_marker_roles: Creatinine corroborates reduced excretion, calcium adds
+      physiologic context, and potassium helps differentiate isolated hypermagnesemia
+      from broader electrolyte failure.

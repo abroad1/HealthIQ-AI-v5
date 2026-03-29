@@ -1,0 +1,19 @@
+research_domain: hematologic
+sources:
+- source_id: source_macrocytosis_review
+  paper_title: Macrocytosis evaluation and megaloblastic versus non-megaloblastic
+    causes
+  journal: Hematology review literature
+  year: 2025
+biomarkers:
+- active_b12
+- folate
+- ggt
+- mcv
+physiological_claim: High MCV commonly reflects macrocytosis from B12 or folate deficiency,
+  alcohol-related change, liver disease, hypothyroidism, reticulocytosis, or marrow
+  disorders.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_6_Pass_3.json; spec_id=inv_mcv_high_megaloblastic_macrocytosis;
+  signal_id=signal_mcv_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

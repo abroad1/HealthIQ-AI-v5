@@ -1,0 +1,23 @@
+research_domain: lipid_transport
+sources:
+- source_id: source_fchl_ir
+  paper_title: Role of insulin resistance in familial combined hyperlipidemia
+  journal: Arteriosclerosis, Thrombosis, and Vascular Biology
+  year: 2005
+- source_id: source_fchl_overview
+  paper_title: 'Familial combined hyperlipidemia: An overview of the underlying molecular
+    mechanisms and therapeutic strategies'
+  journal: IUBMB Life
+  year: 2019
+biomarkers:
+- apob
+- hba1c
+- ldl_cholesterol
+- triglycerides
+physiological_claim: High apoB in a mixed lipid phenotype can support a familial combined
+  hyperlipidaemia-type frame, but secondary insulin-resistant dyslipidaemia remains
+  a major competing explanation.
+evidence_strength: moderate
+research_summary: KB-S52C Wave A ingestion from Batch_5_Pass_3.json; spec_id=inv_apob_high_familial_combined_hyperlipidemia_pattern;
+  signal_id=signal_apob_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

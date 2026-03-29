@@ -1,0 +1,95 @@
+library:
+  package_id: KBP-4746
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Folate Low Folate Deficiency
+  description: Ingested from inv_folate_low_folate_deficiency (Batch_6_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_folate_low
+  name: Folate Low Folate Deficiency
+  description: Folate is required for one-carbon transfer reactions and DNA synthesis,
+    and low values are most clinically relevant in hematinic and homocysteine interpretation.
+  system: hematologic
+  primary_metric: folate
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: mcv
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Macrocytosis supports megaloblastic erythropoiesis in clinically relevant
+      folate deficiency.
+  - biomarker_id: homocysteine
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: Elevated homocysteine is a functional consequence of folate deficiency
+      and supports biological relevance.
+  - biomarker_id: active_b12
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: Low active B12 suggests combined or alternative B12-related deficiency
+      rather than isolated folate deficiency.
+  dependencies:
+    biomarkers:
+    - active_b12
+    - folate
+    - homocysteine
+    - mcv
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_folate_low_lab_range_activation_placeholder
+    metric_id: folate
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_folate_low_with_high_homocysteine
+    resulting_state: at_risk
+    description: Escalate when folate is low and homocysteine is high because this
+      combination supports biologically relevant folate deficiency rather than an
+      isolated low serum value.
+    conditions:
+    - metric_id: homocysteine
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_folate_deficiency_review
+  output:
+    signal_value: folate
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: folate
+    supporting_markers:
+    - mcv
+    - homocysteine
+    - active_b12
+  explanation:
+    mechanism: Folate deficiency impairs thymidylate synthesis, leading to ineffective
+      erythropoiesis and increased homocysteine.
+    biological_pathway: Macrocytosis and homocysteine help corroborate functional
+      folate deficiency, while B12-related markers help separate overlapping hematinic
+      disorders.
+    interpretation: Low folate is clinically meaningful but should not be interpreted
+      without checking whether B12 deficiency is also present.
+    implications: This pattern may justify hematinic evaluation and correction of
+      reversible nutritional or absorptive causes.
+    supporting_marker_roles: MCV corroborates megaloblastic change, homocysteine supports
+      functional consequence, and active_b12 helps distinguish isolated folate deficiency
+      from combined deficiency.

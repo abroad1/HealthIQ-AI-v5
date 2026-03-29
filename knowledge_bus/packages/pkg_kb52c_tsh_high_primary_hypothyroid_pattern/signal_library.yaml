@@ -1,0 +1,93 @@
+library:
+  package_id: KBP-4777
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Tsh High Primary Hypothyroid Pattern
+  description: Ingested from inv_tsh_high_primary_hypothyroid_pattern (Batch_4_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_tsh_high
+  name: Tsh High Primary Hypothyroid Pattern
+  description: High TSH is a key marker of reduced thyroid hormone signaling at the
+    pituitary level and commonly indicates a primary hypothyroid pattern when free
+    T4 is low or low-normal.
+  system: hormonal
+  primary_metric: tsh
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: free_t4
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low free T4 strongly corroborates primary thyroid hormone deficiency
+      when TSH is high.
+  - biomarker_id: ldl_cholesterol
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: High LDL can support a metabolically relevant hypothyroid context.
+  - biomarker_id: free_t3
+    expected_direction: any
+    role: differential_marker
+    availability: common
+    rationale: Free T3 context helps distinguish early or subclinical TSH elevation
+      from broader overt hypothyroid hormone deficiency.
+  dependencies:
+    biomarkers:
+    - free_t3
+    - free_t4
+    - ldl_cholesterol
+    - tsh
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_tsh_high_lab_range_activation_placeholder
+    metric_id: tsh
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_tsh_high_with_free_t4_low
+    resulting_state: at_risk
+    description: Escalate when high TSH coincides with low free T4, as this more strongly
+      supports overt primary hypothyroid physiology.
+    conditions:
+    - metric_id: free_t4
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_ata_hyperthyroidism_2016
+  output:
+    signal_value: tsh
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: tsh
+    supporting_markers:
+    - free_t4
+    - ldl_cholesterol
+    - free_t3
+  explanation:
+    mechanism: Pituitary TSH secretion rises when thyroid hormone feedback becomes
+      insufficient for physiologic demand.
+    biological_pathway: Hypothalamic-pituitary-thyroid feedback regulation and systemic
+      consequences of reduced thyroid hormone signaling.
+    interpretation: This is a pattern-defining thyroid signal whose meaning depends
+      primarily on the accompanying free T4 result.
+    implications: The main follow-on task is to decide whether the pattern is overt
+      or subclinical and whether it is persistent.
+    supporting_marker_roles: Free T4 corroborates overt deficiency, LDL adds metabolic
+      context, and free T3 helps discriminate early TSH elevation from broader hormone
+      deficiency.

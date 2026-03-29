@@ -1,0 +1,94 @@
+library:
+  package_id: KBP-4744
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Ferritin Low Iron Store Depletion
+  description: Ingested from inv_ferritin_low_iron_store_depletion (Batch_4_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_ferritin_low
+  name: Ferritin Low Iron Store Depletion
+  description: Low ferritin is a direct indicator of depleted iron stores and is one
+    of the most useful biochemical markers of iron deficiency.
+  system: hematologic
+  primary_metric: ferritin
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: iron
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low serum iron can corroborate depleted available iron when ferritin
+      is low.
+  - biomarker_id: hemoglobin
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Low hemoglobin supports progression from iron depletion toward iron-deficiency
+      anemia.
+  - biomarker_id: crp
+    expected_direction: any
+    role: differential_marker
+    availability: optional
+    rationale: A noninflammatory context helps preserve ferritin specificity for iron
+      deficiency because ferritin rises as an acute-phase reactant.
+  dependencies:
+    biomarkers:
+    - crp
+    - ferritin
+    - hemoglobin
+    - iron
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_ferritin_low_lab_range_activation_placeholder
+    metric_id: ferritin
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_ferritin_low_with_hemoglobin_low
+    resulting_state: at_risk
+    description: Escalate when low ferritin coincides with low hemoglobin, as this
+      more strongly supports clinically significant iron-deficiency anemia rather
+      than isolated iron depletion.
+    conditions:
+    - metric_id: hemoglobin
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_bsg_iron_guideline_2021
+  output:
+    signal_value: ferritin
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: ferritin
+    supporting_markers:
+    - iron
+    - hemoglobin
+    - crp
+  explanation:
+    mechanism: Ferritin falls as stored iron becomes depleted and available reserve
+      for erythropoiesis contracts.
+    biological_pathway: Body iron storage, reticuloendothelial ferritin reserve, and
+      iron supply to erythropoiesis.
+    interpretation: This is a well-established nutrient-storage deficiency signal
+      in routine testing and gains specificity for iron depletion when interpreted
+      with inflammatory awareness.
+    implications: The key follow-on task is usually to confirm functional iron restriction
+      and determine whether the depletion has already impaired erythropoiesis.
+    supporting_marker_roles: Serum iron and hemoglobin corroborate depletion and hematologic
+      impact, while CRP helps differentiate true low stores from inflammatory distortion.

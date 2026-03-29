@@ -1,0 +1,19 @@
+research_domain: renal
+sources:
+- source_id: source_urea_review_2024
+  paper_title: Review literature on blood urea interpretation in renal impairment
+    and prerenal states
+  journal: Review literature
+  year: 2024
+biomarkers:
+- creatinine
+- egfr
+- hemoglobin
+- urea
+physiological_claim: Urea is influenced by renal function, volume status, protein
+  load, and catabolism, so interpretation depends on corroborating kidney and blood
+  indices.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_7_Pass_3.json; spec_id=inv_urea_high_prerenal_volume_depletion_or_catabolic_load;
+  signal_id=signal_urea_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

@@ -1,0 +1,19 @@
+research_domain: metabolic
+sources:
+- source_id: source_tyg_review_2024
+  paper_title: Systematic review literature on the triglyceride-glucose index as a
+    surrogate marker of insulin resistance
+  journal: Systematic review literature
+  year: 2024
+biomarkers:
+- alt
+- hba1c
+- triglycerides
+- tyg_index
+physiological_claim: The TyG index is supported as a practical surrogate marker of
+  insulin resistance and adverse metabolic risk, though it is not a definitive diagnostic
+  test.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_7_Pass_3.json; spec_id=inv_tyg_index_high_insulin_resistance_pattern;
+  signal_id=signal_tyg_index_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

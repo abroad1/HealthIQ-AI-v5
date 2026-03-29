@@ -1,0 +1,94 @@
+library:
+  package_id: KBP-4725
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Alt High Muscle Source Or Exertional Pattern
+  description: Ingested from inv_alt_high_muscle_source_or_exertional_pattern (Batch_5_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_alt_high
+  name: Alt High Muscle Source Or Exertional Pattern
+  description: Raised ALT can occasionally reflect exercise-related or myopathic enzyme
+    release when muscle markers are also abnormal and liver-specific context is weak.
+  system: mitochondrial
+  primary_metric: alt
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: creatine_kinase
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: Marked creatine kinase elevation supports skeletal muscle injury or
+      exertional release as a contributor to raised ALT.
+  - biomarker_id: ast
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: AST often rises with muscle injury and can corroborate a non-hepatic
+      source when CK is elevated.
+  - biomarker_id: ggt
+    expected_direction: any
+    role: differential_marker
+    availability: common
+    rationale: A normal GGT weakens a hepatobiliary source and supports consideration
+      of a muscle-origin transaminase pattern.
+  dependencies:
+    biomarkers:
+    - alt
+    - ast
+    - creatine_kinase
+    - ggt
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_alt_high_lab_range_activation_placeholder
+    metric_id: alt
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_alt_high_with_marked_ck
+    resulting_state: at_risk
+    description: Escalate as a possible muscle-source pattern when ALT is high and
+      creatine kinase is concurrently above the laboratory range.
+    conditions:
+    - metric_id: creatine_kinase
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_alt_statpearls
+    - source_hackney_lft
+  output:
+    signal_value: alt
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: alt
+    supporting_markers:
+    - creatine_kinase
+    - ast
+    - ggt
+  explanation:
+    mechanism: Skeletal muscle injury or heavy exertion can release aminotransferases
+      into the circulation, usually with a more prominent creatine kinase rise.
+    biological_pathway: Exercise-induced muscle membrane injury, myopathic processes,
+      and rhabdomyolysis-related leakage can contribute to circulating transaminases.
+    interpretation: A muscle-source explanation becomes more plausible when CK is
+      elevated and liver-specific context is weak, but mixed causes remain possible.
+    implications: This pattern may justify repeat testing after rest and targeted
+      muscle review before a liver-focused pathway is pursued alone.
+    supporting_marker_roles: Creatine kinase provides mechanistic support for muscle
+      release, AST corroborates a muscle injury pattern, and GGT helps differentiate
+      non-hepatic from hepatobiliary source.

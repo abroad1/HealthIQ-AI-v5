@@ -1,0 +1,94 @@
+library:
+  package_id: KBP-4727
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Apoa1 Low Severe Primary Hdl Deficiency Pattern
+  description: Ingested from inv_apoa1_low_severe_primary_hdl_deficiency_pattern (Batch_5_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_apoa1_low
+  name: Apoa1 Low Severe Primary Hdl Deficiency Pattern
+  description: Markedly low apoA1 may raise concern for severe HDL deficiency syndromes
+    or other uncommon primary lipoprotein disorders when secondary causes are not
+    evident.
+  system: lipid_transport
+  primary_metric: apoa1
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: hdl_cholesterol
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Very low HDL cholesterol supports a severe HDL-deficient phenotype
+      rather than a mild secondary reduction.
+  - biomarker_id: triglycerides
+    expected_direction: any
+    role: differential_marker
+    availability: common
+    rationale: Absence of hypertriglyceridaemia weakens a simple insulin-resistance
+      explanation and can increase suspicion for a primary HDL disorder.
+  - biomarker_id: apob
+    expected_direction: any
+    role: differential_marker
+    availability: common
+    rationale: A normal apoB can help distinguish isolated severe HDL deficiency from
+      combined atherogenic dyslipidaemia.
+  dependencies:
+    biomarkers:
+    - apoa1
+    - apob
+    - hdl_cholesterol
+    - triglycerides
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_apoa1_low_lab_range_activation_placeholder
+    metric_id: apoa1
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_apoa1_low_with_severe_hdl_pattern
+    resulting_state: at_risk
+    description: Escalate when apoA1 is low with a severe HDL-deficient pattern and
+      no strong secondary dyslipidaemic explanation.
+    conditions:
+    - metric_id: hdl_cholesterol
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_apoa1_hdl_deficiency
+  output:
+    signal_value: apoa1
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: apoa1
+    supporting_markers:
+    - hdl_cholesterol
+    - triglycerides
+    - apob
+  explanation:
+    mechanism: Primary HDL deficiency states involve profoundly reduced apoA1 production,
+      altered maturation, or impaired HDL particle handling.
+    biological_pathway: Genetic disturbances of apoA1 or related HDL pathways can
+      lead to severe HDL deficiency and altered reverse cholesterol transport.
+    interpretation: This frame should be reserved for more marked and persistent apoA1
+      reduction, not modest secondary changes.
+    implications: When the pattern is severe and persistent, specialist lipid assessment
+      may be warranted after common secondary causes are reviewed.
+    supporting_marker_roles: HDL-C corroborates the severity of HDL deficiency, while
+      triglycerides and apoB help differentiate isolated primary HDL disorders from
+      common secondary dyslipidaemia.

@@ -1,0 +1,94 @@
+library:
+  package_id: KBP-4780
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Urate High Gout Crystal Deposition Risk
+  description: Ingested from inv_urate_high_gout_crystal_deposition_risk (Batch_7_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_urate_high
+  name: Urate High Gout Crystal Deposition Risk
+  description: Raised urate is clinically relevant because sustained hyperuricaemia
+    increases the likelihood of monosodium urate crystal formation, although not everyone
+    with high urate develops gout.
+  system: metabolic
+  primary_metric: urate
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: crp
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: Raised CRP can support an active inflammatory context when hyperuricaemia
+      is clinically linked to crystal-associated inflammation.
+  - biomarker_id: egfr
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: Reduced eGFR supports renal underexcretion as a competing or contributing
+      explanation for hyperuricaemia.
+  - biomarker_id: creatinine
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Raised creatinine corroborates renal context that can contribute to
+      urate retention.
+  dependencies:
+    biomarkers:
+    - creatinine
+    - crp
+    - egfr
+    - urate
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_urate_high_lab_range_activation_placeholder
+    metric_id: urate
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_urate_high_with_low_egfr
+    resulting_state: at_risk
+    description: Escalate when hyperuricaemia is accompanied by reduced eGFR, as impaired
+      renal clearance strengthens persistence and retention-based risk.
+    conditions:
+    - metric_id: egfr
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_urate_guideline_2024
+  output:
+    signal_value: urate
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: urate
+    supporting_markers:
+    - crp
+    - egfr
+    - creatinine
+  explanation:
+    mechanism: Urate rises when production exceeds excretion or when renal handling
+      is impaired, increasing the substrate available for crystal formation.
+    biological_pathway: Purine metabolism, renal urate transport, crystal deposition
+      propensity, and inflammatory activation when crystals become clinically relevant.
+    interpretation: High urate supports either crystal-deposition risk or renal underexcretion
+      context, depending on kidney function and inflammatory correlation.
+    implications: This finding may justify renal review, lifestyle and medication
+      review, or gout-focused assessment if symptoms suggest crystal disease.
+    supporting_marker_roles: CRP supports inflammatory crystal-context interpretation,
+      eGFR differentiates renal underexcretion from other drivers, and creatinine
+      corroborates kidney-related retention.

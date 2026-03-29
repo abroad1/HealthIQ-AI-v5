@@ -1,0 +1,17 @@
+research_domain: metabolic
+sources:
+- source_id: source_esc_dyslipidaemia_2019
+  paper_title: 2019 ESC/EAS Guidelines for the management of dyslipidaemias
+  journal: European Heart Journal
+  year: 2019
+biomarkers:
+- hba1c_pct
+- hdl_cholesterol
+- ldl_cholesterol
+- triglycerides
+physiological_claim: Low HDL often travels with insulin resistance and hypertriglyceridemia
+  rather than functioning as a stand-alone lipid disorder.
+evidence_strength: moderate
+research_summary: KB-S52C Wave A ingestion from Batch_4_Pass_3.json; spec_id=inv_hdl_low_hypertriglyceridemic_insulin_resistance_pattern;
+  signal_id=signal_hdl_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

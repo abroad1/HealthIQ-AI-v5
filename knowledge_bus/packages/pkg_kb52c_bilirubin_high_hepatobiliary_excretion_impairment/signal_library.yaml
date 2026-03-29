@@ -1,0 +1,95 @@
+library:
+  package_id: KBP-4739
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Bilirubin High Hepatobiliary Excretion Impairment
+  description: Ingested from inv_bilirubin_high_hepatobiliary_excretion_impairment
+    (Batch_5_Pass_3.json). KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_bilirubin_high
+  name: Bilirubin High Hepatobiliary Excretion Impairment
+  description: Raised bilirubin with liver enzyme abnormalities can support impaired
+    hepatobiliary excretion or mixed hepatic injury rather than isolated conjugation
+    failure.
+  system: hepatic
+  primary_metric: bilirubin
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: alp
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Elevated ALP supports cholestatic or obstructive impairment of bilirubin
+      handling.
+  - biomarker_id: alt
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: ALT elevation supports hepatocellular injury contributing to impaired
+      bilirubin processing or excretion.
+  - biomarker_id: hemoglobin
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: Anaemia can indicate haemolysis as a competing source of bilirubin
+      elevation rather than hepatobiliary retention alone.
+  dependencies:
+    biomarkers:
+    - alp
+    - alt
+    - bilirubin
+    - hemoglobin
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_bilirubin_high_lab_range_activation_placeholder
+    metric_id: bilirubin
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_bilirubin_high_with_liver_test_support
+    resulting_state: at_risk
+    description: Escalate when bilirubin is high with corroborating cholestatic or
+      hepatocellular liver test abnormalities.
+    conditions:
+    - metric_id: alp
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_bilirubin_liver_review
+    - source_gilbert_consensus
+  output:
+    signal_value: bilirubin
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: bilirubin
+    supporting_markers:
+    - alp
+    - alt
+    - hemoglobin
+  explanation:
+    mechanism: Hepatocellular injury and cholestasis can both impair bilirubin uptake,
+      conjugation, or canalicular excretion.
+    biological_pathway: Obstructive, infiltrative, and mixed hepatic injury states
+      alter normal bilirubin handling and raise circulating bilirubin concentration.
+    interpretation: A bilirubin rise becomes more concerning for hepatobiliary disease
+      when ALP or ALT are also abnormal.
+    implications: This pattern may justify liver-focused evaluation and imaging rather
+      than treating the bilirubin elevation as benign or isolated.
+    supporting_marker_roles: ALP corroborates cholestatic impairment, ALT supports
+      hepatocellular contribution, and haemoglobin helps distinguish hepatobiliary
+      retention from increased bilirubin production.

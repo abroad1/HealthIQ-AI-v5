@@ -1,0 +1,19 @@
+research_domain: hematologic
+sources:
+- source_id: source_mpn_thrombocytosis_review_2024
+  paper_title: Review and guideline literature on persistent thrombocytosis and clonal
+    myeloproliferative evaluation
+  journal: Review and guideline literature
+  year: 2024
+biomarkers:
+- crp
+- ferritin
+- platelets
+- white_blood_cells
+physiological_claim: Persistent thrombocytosis warrants exclusion of common reactive
+  causes because clonal myeloproliferative disease remains an important alternative
+  explanation.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_7_Pass_3.json; spec_id=inv_plt_high_clonal_myeloproliferative_thrombocytosis;
+  signal_id=signal_plt_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

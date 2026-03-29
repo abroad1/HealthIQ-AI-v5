@@ -1,0 +1,21 @@
+research_domain: electrolyte
+sources:
+- source_id: source_magnesium_core_2024
+  paper_title: 'Magnesium Disorders: Core Curriculum 2024'
+  journal: American Journal of Kidney Diseases
+  year: 2024
+- source_id: source_hypomagnesaemia_guideline_2024
+  paper_title: Hypomagnesaemia – a guide for GPs
+  journal: Royal United Hospitals Bath NHS Foundation Trust
+  year: 2024
+biomarkers:
+- calcium
+- creatinine
+- magnesium
+- potassium
+physiological_claim: Low magnesium is clinically important because it commonly coexists
+  with other electrolyte abnormalities and can worsen their correction.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_4_Pass_3.json; spec_id=inv_magnesium_low_hypomagnesemia;
+  signal_id=signal_magnesium_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

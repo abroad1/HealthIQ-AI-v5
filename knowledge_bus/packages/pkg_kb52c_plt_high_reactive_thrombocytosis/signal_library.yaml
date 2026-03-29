@@ -1,0 +1,93 @@
+library:
+  package_id: KBP-4773
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Plt High Reactive Thrombocytosis
+  description: Ingested from inv_plt_high_reactive_thrombocytosis (Batch_7_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_plt_high
+  name: Plt High Reactive Thrombocytosis
+  description: High platelet count can reflect reactive inflammatory states, iron
+    deficiency, or myeloproliferative disease and needs contextual differential interpretation.
+  system: inflammatory
+  primary_metric: platelets
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: crp
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: Raised CRP supports inflammatory cytokine signalling as a reactive
+      driver of thrombocytosis.
+  - biomarker_id: ferritin
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: Low ferritin supports iron deficiency as an alternative reactive explanation
+      for thrombocytosis.
+  - biomarker_id: white_blood_cells
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Concurrent leukocytosis can support a broader reactive inflammatory
+      pattern rather than isolated platelet elevation.
+  dependencies:
+    biomarkers:
+    - crp
+    - ferritin
+    - platelets
+    - white_blood_cells
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_plt_high_lab_range_activation_placeholder
+    metric_id: platelets
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_plt_high_with_high_crp
+    resulting_state: at_risk
+    description: Escalate when thrombocytosis is accompanied by elevated CRP, as concurrent
+      inflammatory activation makes a sustained reactive process more plausible.
+    conditions:
+    - metric_id: crp
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_thrombocytosis_review_2024
+  output:
+    signal_value: platelets
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: platelets
+    supporting_markers:
+    - crp
+    - ferritin
+    - white_blood_cells
+  explanation:
+    mechanism: Platelet counts can rise through inflammatory cytokine signalling,
+      acute-phase thrombopoiesis, or iron-deficiency associated marrow responses.
+    biological_pathway: Thrombopoietin regulation, inflammatory cytokine activity,
+      marrow megakaryopoiesis, and iron-related hematopoietic adaptation.
+    interpretation: High platelets often represent a reactive process, with CRP and
+      ferritin helping separate inflammatory and iron-related frames.
+    implications: This pattern may justify review for inflammatory disease or iron
+      deficiency before moving to clonal thrombocytosis work-up.
+    supporting_marker_roles: CRP supports inflammation-driven thrombopoiesis, ferritin
+      differentiates iron deficiency from other reactive causes, and WBC corroborates
+      broader inflammatory activation.

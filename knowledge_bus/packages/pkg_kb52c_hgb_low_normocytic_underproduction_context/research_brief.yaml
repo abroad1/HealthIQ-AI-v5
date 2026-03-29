@@ -1,0 +1,17 @@
+research_domain: hematologic
+sources:
+- source_id: source_anemia_review
+  paper_title: General anemia evaluation and iron-deficiency differentiation
+  journal: NHLBI and hematology review literature
+  year: 2025
+biomarkers:
+- creatinine
+- crp
+- hemoglobin
+- mcv
+physiological_claim: Low hemoglobin with non-low MCV and impaired renal or inflammatory
+  context may reflect underproduction anemia rather than iron-deficient microcytosis.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_6_Pass_3.json; spec_id=inv_hgb_low_normocytic_underproduction_context;
+  signal_id=signal_hgb_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

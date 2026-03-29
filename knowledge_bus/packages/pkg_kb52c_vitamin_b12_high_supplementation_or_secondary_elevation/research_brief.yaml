@@ -1,0 +1,22 @@
+research_domain: hematologic
+sources:
+- source_id: source_nice_b12_2024
+  paper_title: 'Vitamin B12 deficiency in over 16s: diagnosis and management'
+  journal: NICE
+  year: 2024
+- source_id: source_macro_b12_2026
+  paper_title: 'Unexplained Elevated Vitamin B12: Consider Macro-B12'
+  journal: International Journal of Laboratory Hematology
+  year: 2026
+biomarkers:
+- alt
+- creatinine
+- mcv
+- vitamin_b12
+physiological_claim: High vitamin B12 is often explained by supplementation or secondary
+  disease context and should not be treated as a direct toxicity marker from concentration
+  alone.
+evidence_strength: moderate
+research_summary: KB-S52C Wave A ingestion from Batch_4_Pass_3.json; spec_id=inv_vitamin_b12_high_supplementation_or_secondary_elevation;
+  signal_id=signal_vitamin_b12_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

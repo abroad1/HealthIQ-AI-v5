@@ -1,0 +1,21 @@
+research_domain: immunologic
+sources:
+- source_id: source_basophilia_statpearls
+  paper_title: Basophilia
+  journal: StatPearls
+  year: 2024
+- source_id: source_basophils_review
+  paper_title: 'Behind the scenes with basophils: an emerging therapeutic target'
+  journal: Frontiers in Immunology
+  year: 2021
+biomarkers:
+- basophils_abs
+- eosinophils_abs
+- total_ige
+- white_blood_cells
+physiological_claim: Raised basophils can occur in allergic and type 2 inflammatory
+  states, but the finding is not specific and requires context.
+evidence_strength: moderate
+research_summary: KB-S52C Wave A ingestion from Batch_5_Pass_3.json; spec_id=inv_basophils_abs_high_type2_hypersensitivity_inflammation;
+  signal_id=signal_basophils_abs_high; investigation_spec_contract_version=3.0.0;
+  governance=translation_contract_v3_to_package_KB-S52B_v1 / translation_remap_contract_KB-S52B_v1.

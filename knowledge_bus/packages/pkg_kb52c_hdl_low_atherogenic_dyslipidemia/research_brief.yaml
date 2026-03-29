@@ -1,0 +1,17 @@
+research_domain: lipid
+sources:
+- source_id: source_esc_dyslipidaemia_2019
+  paper_title: 2019 ESC/EAS Guidelines for the management of dyslipidaemias
+  journal: European Heart Journal
+  year: 2019
+biomarkers:
+- apob
+- hdl_cholesterol
+- ldl_cholesterol
+- triglycerides
+physiological_claim: Low HDL is best interpreted as part of a wider dyslipidemic pattern
+  rather than as an isolated disease signal.
+evidence_strength: moderate
+research_summary: KB-S52C Wave A ingestion from Batch_4_Pass_3.json; spec_id=inv_hdl_low_atherogenic_dyslipidemia;
+  signal_id=signal_hdl_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

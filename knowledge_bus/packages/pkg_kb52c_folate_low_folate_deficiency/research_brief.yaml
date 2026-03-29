@@ -1,0 +1,18 @@
+research_domain: hematologic
+sources:
+- source_id: source_folate_deficiency_review
+  paper_title: Folate deficiency, macrocytosis, and homocysteine review
+  journal: NCBI StatPearls and hematology review literature
+  year: 2025
+biomarkers:
+- active_b12
+- folate
+- homocysteine
+- mcv
+physiological_claim: Low folate commonly reflects folate deficiency and may support
+  megaloblastic erythropoiesis or hyperhomocysteinemia when corroborating markers
+  are present.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_6_Pass_3.json; spec_id=inv_folate_low_folate_deficiency;
+  signal_id=signal_folate_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.
