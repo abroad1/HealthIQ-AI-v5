@@ -506,7 +506,7 @@
         "biomarker_id": "albumin",
         "expected_direction": "low",
         "role": "corroborator",
-        "relationship_kind": "mechanism",
+        "relationship_kind": "corroboration",
         "availability": "common",
         "rationale": "Low albumin can support a frailty, undernutrition, or chronic illness context when creatinine is low."
       },
@@ -977,7 +977,7 @@
       },
       {
         "biomarker_id": "crp",
-        "expected_direction": "normal",
+        "expected_direction": "any",
         "role": "differential_marker",
         "relationship_kind": "differential",
         "availability": "optional",
@@ -1284,13 +1284,13 @@
         "biomarker_id": "neutrophils_abs",
         "expected_direction": "high",
         "role": "corroborator",
-        "relationship_kind": "mechanism",
+        "relationship_kind": "corroboration",
         "availability": "common",
         "rationale": "Neutrophilia can support active inflammatory physiology when ferritin is high."
       },
       {
         "biomarker_id": "transferrin_saturation",
-        "expected_direction": "normal",
+        "expected_direction": "any",
         "role": "differential_marker",
         "relationship_kind": "differential",
         "availability": "specialist",
@@ -1443,7 +1443,7 @@
       },
       {
         "biomarker_id": "ldl",
-        "expected_direction": "normal",
+        "expected_direction": "any",
         "role": "differential_marker",
         "relationship_kind": "differential",
         "availability": "common",
@@ -1908,7 +1908,7 @@
       },
       {
         "biomarker_id": "triglycerides",
-        "expected_direction": "normal",
+        "expected_direction": "any",
         "role": "mechanism_marker",
         "relationship_kind": "mechanism",
         "availability": "optional",
@@ -2365,7 +2365,7 @@
       },
       {
         "biomarker_id": "free_t3",
-        "expected_direction": "normal",
+        "expected_direction": "any",
         "role": "differential_marker",
         "relationship_kind": "differential",
         "availability": "common",
@@ -2824,7 +2824,7 @@
       },
       {
         "biomarker_id": "mcv",
-        "expected_direction": "normal",
+        "expected_direction": "any",
         "role": "differential_marker",
         "relationship_kind": "differential",
         "availability": "optional",
@@ -3290,7 +3290,7 @@
       },
       {
         "biomarker_id": "creatinine",
-        "expected_direction": "normal",
+        "expected_direction": "any",
         "role": "differential_marker",
         "relationship_kind": "differential",
         "availability": "optional",
@@ -3450,7 +3450,7 @@
       },
       {
         "biomarker_id": "potassium",
-        "expected_direction": "normal",
+        "expected_direction": "any",
         "role": "differential_marker",
         "relationship_kind": "differential",
         "availability": "optional",
