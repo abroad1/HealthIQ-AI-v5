@@ -196,6 +196,11 @@ class SignalEvaluator:
             return "upper"
         if token == "out_of_range":
             return "out_of_range"
+        # KB-S51 — narrow companion-normality semantics (see governance artifact).
+        if token in {"not_above_max", "at_or_below_max"}:
+            return "not_above_max"
+        if token in {"not_below_min", "at_or_above_min"}:
+            return "not_below_min"
         return ""
 
     def _evaluate_lab_range_boundary_condition(
@@ -226,6 +231,14 @@ class SignalEvaluator:
             below = low is not None and observed < low
             above = high is not None and observed > high
             return below or above
+        if boundary_mode == "not_above_max":
+            if high is None:
+                return False
+            return observed <= high
+        if boundary_mode == "not_below_min":
+            if low is None:
+                return False
+            return observed >= low
         return False
 
     def _evaluate_single_condition(
