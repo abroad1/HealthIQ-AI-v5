@@ -1,0 +1,94 @@
+library:
+  package_id: KBP-4783
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Urea Low Low Protein Or Reduced Urea Cycle Input
+  description: Ingested from inv_urea_low_low_protein_or_reduced_urea_cycle_input
+    (Batch_7_Pass_3.json). KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_urea_low
+  name: Urea Low Low Protein Or Reduced Urea Cycle Input
+  description: Low urea is usually a contextual biochemical finding and may reflect
+    low protein intake, low substrate delivery, or impaired hepatic urea-cycle contribution.
+  system: nutritional
+  primary_metric: urea
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: albumin
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low albumin can corroborate poor nutritional or systemic protein status
+      when urea is low.
+  - biomarker_id: alt
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Abnormal liver enzymes can redirect interpretation toward hepatic context
+      rather than simple low protein intake.
+  - biomarker_id: creatinine
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Lower creatinine may support low muscle mass or lower substrate turnover,
+      which can accompany low urea.
+  dependencies:
+    biomarkers:
+    - albumin
+    - alt
+    - creatinine
+    - urea
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_urea_low_lab_range_activation_placeholder
+    metric_id: urea
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_urea_low_with_low_albumin
+    resulting_state: at_risk
+    description: Escalate cautiously when low urea is accompanied by low albumin,
+      as combined reduction may suggest broader nutritional or systemic protein compromise.
+    conditions:
+    - metric_id: albumin
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_low_urea_review_2024
+  output:
+    signal_value: urea
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: urea
+    supporting_markers:
+    - albumin
+    - alt
+    - creatinine
+  explanation:
+    mechanism: Urea falls when hepatic production is reduced, nitrogen substrate is
+      limited, or dilutional states lower concentration.
+    biological_pathway: Protein intake and catabolism, hepatic urea-cycle function,
+      and concentration effects from systemic fluid balance.
+    interpretation: Low urea usually favours a low-substrate or benign contextual
+      explanation, with liver-related abnormalities providing an important competing
+      frame.
+    implications: This result generally warrants nutritional and liver-context review
+      rather than immediate disease-specific conclusions.
+    supporting_marker_roles: Albumin corroborates nutritional protein status, creatinine
+      supports low-turnover context, and ALT helps differentiate hepatic contribution
+      from simple low substrate.

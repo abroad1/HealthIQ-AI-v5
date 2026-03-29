@@ -1,0 +1,23 @@
+research_domain: hormonal
+sources:
+- source_id: source_poi_guideline_2024
+  paper_title: 'Evidence-based guideline: Premature Ovarian Insufficiency'
+  journal: ASRM / ESHRE
+  year: 2024
+- source_id: source_endocrine_gonadotropin_2024
+  paper_title: Society for Endocrinology guideline for understanding, diagnosing and
+    treating female hypogonadism
+  journal: Clinical Endocrinology
+  year: 2024
+biomarkers:
+- fsh
+- lh
+- oestradiol
+- prolactin
+physiological_claim: Persistently elevated FSH is a standard biochemical feature of
+  reduced gonadal feedback, particularly in ovarian insufficiency and menopause-related
+  states.
+evidence_strength: consensus
+research_summary: KB-S52C Wave A ingestion from Batch_3_Pass_3.json; spec_id=inv_fsh_high_primary_gonadal_failure;
+  signal_id=signal_fsh_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

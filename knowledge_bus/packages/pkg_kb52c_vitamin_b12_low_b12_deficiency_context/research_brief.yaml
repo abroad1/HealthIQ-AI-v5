@@ -1,0 +1,18 @@
+research_domain: hematologic
+sources:
+- source_id: source_nice_b12_2024
+  paper_title: 'Vitamin B12 deficiency in over 16s: diagnosis and management'
+  journal: NICE
+  year: 2024
+biomarkers:
+- folate
+- hemoglobin
+- mcv
+- vitamin_b12
+physiological_claim: Low vitamin B12 is consistent with cobalamin deficiency, but
+  interpretation should account for overlapping folate deficiency, symptoms, and confirmatory
+  testing where needed.
+evidence_strength: consensus
+research_summary: KB-S52C Wave A ingestion from Batch_4_Pass_3.json; spec_id=inv_vitamin_b12_low_b12_deficiency_context;
+  signal_id=signal_vitamin_b12_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

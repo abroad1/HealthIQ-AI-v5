@@ -1,0 +1,93 @@
+library:
+  package_id: KBP-4768
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Magnesium High Reduced Excretion Or Excess Load
+  description: Ingested from inv_magnesium_high_reduced_excretion_or_excess_load (Batch_3_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_magnesium_high
+  name: Magnesium High Reduced Excretion Or Excess Load
+  description: High serum magnesium usually reflects reduced renal excretion, excessive
+    magnesium load, or both.
+  system: renal
+  primary_metric: magnesium
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: creatinine
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Impaired kidney function supports reduced magnesium excretion as a
+      cause of hypermagnesemia.
+  - biomarker_id: calcium
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Low calcium can accompany clinically significant hypermagnesemia and
+      supports a biologically relevant disturbance.
+  - biomarker_id: urea
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Azotemia helps distinguish renal-retention hypermagnesemia from isolated
+      exogenous magnesium intake with preserved renal clearance.
+  dependencies:
+    biomarkers:
+    - calcium
+    - creatinine
+    - magnesium
+    - urea
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_magnesium_high_lab_range_activation_placeholder
+    metric_id: magnesium
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_magnesium_high_with_creatinine_high
+    resulting_state: at_risk
+    description: Escalate when high magnesium coincides with high creatinine, as this
+      more strongly supports reduced renal excretion.
+    conditions:
+    - metric_id: creatinine
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_magnesium_core_2024
+  output:
+    signal_value: magnesium
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: magnesium
+    supporting_markers:
+    - creatinine
+    - calcium
+    - urea
+  explanation:
+    mechanism: Serum magnesium rises when renal clearance is inadequate or magnesium
+      intake or administration overwhelms normal excretory capacity.
+    biological_pathway: Magnesium filtration and tubular excretion coupled to total-body
+      magnesium load.
+    interpretation: A high magnesium result is usually a retention-or-load problem
+      rather than a primary endocrine disorder.
+    implications: The essential distinction is between impaired renal clearance and
+      excess exposure, often with overlap.
+    supporting_marker_roles: Creatinine corroborates reduced excretion, calcium supports
+      a biologically significant magnesium disturbance, and urea helps differentiate
+      renal retention from isolated supplementation.

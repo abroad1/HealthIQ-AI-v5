@@ -1,0 +1,17 @@
+research_domain: metabolic
+sources:
+- source_id: source_hba1c_guideline
+  paper_title: HbA1c use in diabetes diagnosis and chronic glycaemic assessment
+  journal: NICE and diabetes guideline literature
+  year: 2026
+biomarkers:
+- glucose
+- hba1c
+- hemoglobin
+- triglycerides
+physiological_claim: High HbA1c is a core marker of chronic hyperglycaemia and supports
+  diabetes-range dysglycaemia when red-cell turnover artefact is not the better explanation.
+evidence_strength: consensus
+research_summary: KB-S52C Wave A ingestion from Batch_6_Pass_3.json; spec_id=inv_hba1c_high_diabetes_range_hyperglycemia;
+  signal_id=signal_hba1c_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

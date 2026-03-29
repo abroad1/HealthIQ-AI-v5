@@ -1,0 +1,18 @@
+research_domain: hormonal
+sources:
+- source_id: source_cushing_guideline
+  paper_title: Diagnosis of Cushing syndrome and interpretation of cortisol excess
+  journal: Endocrine Society guideline literature
+  year: 2008
+biomarkers:
+- acth
+- cortisol
+- hba1c
+- neutrophils_abs
+physiological_claim: Persistently high cortisol in the right clinical context may
+  support hypercortisolism, but single serum results are not a preferred stand-alone
+  diagnostic test for Cushing syndrome.
+evidence_strength: consensus
+research_summary: KB-S52C Wave A ingestion from Batch_6_Pass_3.json; spec_id=inv_cortisol_high_hypercortisolism;
+  signal_id=signal_cortisol_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

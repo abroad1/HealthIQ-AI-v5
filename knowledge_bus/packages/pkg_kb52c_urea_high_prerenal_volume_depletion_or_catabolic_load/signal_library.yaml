@@ -1,0 +1,96 @@
+library:
+  package_id: KBP-4782
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Urea High Prerenal Volume Depletion Or Catabolic
+    Load
+  description: Ingested from inv_urea_high_prerenal_volume_depletion_or_catabolic_load
+    (Batch_7_Pass_3.json). KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_urea_high
+  name: Urea High Prerenal Volume Depletion Or Catabolic Load
+  description: Raised urea may reflect reduced renal perfusion, increased catabolic
+    load, gastrointestinal bleeding, or intrinsic kidney impairment and should not
+    be interpreted in isolation.
+  system: renal
+  primary_metric: urea
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: creatinine
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Raised creatinine corroborates impaired renal clearance or broader
+      renal context rather than an isolated urea fluctuation.
+  - biomarker_id: egfr
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Reduced eGFR supports impaired renal filtration as a mechanistic contributor
+      to high urea.
+  - biomarker_id: hemoglobin
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: Anaemia can help raise suspicion for gastrointestinal blood loss as
+      a competing explanation for elevated urea.
+  dependencies:
+    biomarkers:
+    - creatinine
+    - egfr
+    - hemoglobin
+    - urea
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_urea_high_lab_range_activation_placeholder
+    metric_id: urea
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_urea_high_with_low_egfr
+    resulting_state: at_risk
+    description: Escalate when urea is high and eGFR is reduced, as combined abnormality
+      is more consistent with significant renal filtration impairment than isolated
+      urea rise.
+    conditions:
+    - metric_id: egfr
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_urea_review_2024
+  output:
+    signal_value: urea
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: urea
+    supporting_markers:
+    - creatinine
+    - egfr
+    - hemoglobin
+  explanation:
+    mechanism: Urea rises when glomerular clearance falls or when production increases
+      because of catabolism, dehydration, or blood breakdown in the gut.
+    biological_pathway: Protein catabolism, hepatic urea cycle output, renal filtration
+      and tubular handling, and pre-renal concentration effects.
+    interpretation: High urea may indicate renal impairment or a prerenal-catabolic
+      state, with eGFR and haemoglobin helping separate those frames.
+    implications: This result may justify hydration review, renal reassessment, or
+      evaluation for catabolic and bleeding contributors depending on context.
+    supporting_marker_roles: Creatinine corroborates renal context, eGFR supports
+      filtration impairment mechanistically, and haemoglobin helps identify blood
+      loss as a competing explanation.

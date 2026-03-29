@@ -1,0 +1,93 @@
+library:
+  package_id: KBP-4774
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Plt Low Marrow Suppression Pattern
+  description: Ingested from inv_plt_low_marrow_suppression_pattern (Batch_7_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_plt_low
+  name: Plt Low Marrow Suppression Pattern
+  description: Low platelets can also reflect impaired marrow production, especially
+    when additional cell lines are reduced.
+  system: hematologic
+  primary_metric: platelets
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: white_blood_cells
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Concurrent leukopenia supports a broader marrow production problem
+      rather than isolated peripheral platelet loss.
+  - biomarker_id: hemoglobin
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Anaemia alongside thrombocytopenia supports multilineage involvement
+      compatible with marrow suppression or infiltration.
+  - biomarker_id: bilirubin
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Raised bilirubin can redirect interpretation toward haemolysis or consumption
+      rather than primary marrow suppression.
+  dependencies:
+    biomarkers:
+    - bilirubin
+    - hemoglobin
+    - platelets
+    - white_blood_cells
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_plt_low_lab_range_activation_placeholder
+    metric_id: platelets
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_plt_low_with_low_wbc
+    resulting_state: at_risk
+    description: Escalate when thrombocytopenia is accompanied by leukopenia, as combined
+      cytopenias strengthen concern for marrow-level pathology.
+    conditions:
+    - metric_id: white_blood_cells
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_thrombocytopenia_marrow_review_2024
+  output:
+    signal_value: platelets
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: platelets
+    supporting_markers:
+    - white_blood_cells
+    - hemoglobin
+    - bilirubin
+  explanation:
+    mechanism: Platelet production falls when megakaryopoiesis is impaired by marrow
+      suppression, infiltration, or treatment-related toxicity, often alongside other
+      cytopenias.
+    biological_pathway: Bone marrow hematopoiesis, megakaryocyte output, multilineage
+      progenitor suppression, and competing haemolytic-consumptive differentials.
+    interpretation: Low platelets with other cytopenias favour a marrow production
+      problem over isolated peripheral destruction, though overlap remains possible.
+    implications: This pattern may justify broader hematologic evaluation rather than
+      isolated platelet-focused follow-up alone.
+    supporting_marker_roles: WBC and haemoglobin corroborate multilineage involvement,
+      while bilirubin helps identify a competing haemolytic or consumptive frame.

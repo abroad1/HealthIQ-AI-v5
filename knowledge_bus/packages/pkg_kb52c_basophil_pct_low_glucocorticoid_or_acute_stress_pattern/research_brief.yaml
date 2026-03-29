@@ -1,0 +1,21 @@
+research_domain: immunologic
+sources:
+- source_id: source_cbc_differential
+  paper_title: Normal and Abnormal Complete Blood Count With Differential
+  journal: StatPearls
+  year: 2024
+- source_id: source_blood_components
+  paper_title: Alterations in Blood Components
+  journal: The Journal of the American Board of Family Medicine
+  year: 2020
+biomarkers:
+- basophil_pct
+- eosinophils_abs
+- neutrophils_abs
+- tsh
+physiological_claim: Basopenia is usually non-specific and is most often seen in stress,
+  glucocorticoid exposure, or other transient systemic states.
+evidence_strength: moderate
+research_summary: KB-S52C Wave A ingestion from Batch_5_Pass_3.json; spec_id=inv_basophil_pct_low_glucocorticoid_or_acute_stress_pattern;
+  signal_id=signal_basophil_pct_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

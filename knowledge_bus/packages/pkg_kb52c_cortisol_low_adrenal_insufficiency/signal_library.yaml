@@ -1,0 +1,94 @@
+library:
+  package_id: KBP-4741
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Cortisol Low Adrenal Insufficiency
+  description: Ingested from inv_cortisol_low_adrenal_insufficiency (Batch_6_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_cortisol_low
+  name: Cortisol Low Adrenal Insufficiency
+  description: Serum cortisol is a context-sensitive adrenal marker whose interpretation
+    depends on timing, illness state, and exogenous glucocorticoid exposure.
+  system: hormonal
+  primary_metric: cortisol
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: acth
+    expected_direction: high
+    role: differential_marker
+    availability: specialist
+    rationale: High ACTH supports primary adrenal insufficiency in the setting of
+      low cortisol.
+  - biomarker_id: sodium
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Hyponatremia commonly accompanies clinically relevant cortisol deficiency,
+      especially in primary adrenal insufficiency.
+  - biomarker_id: eosinophils_abs
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Eosinophilia can be seen in adrenal insufficiency and provides supportive
+      context rather than diagnosis.
+  dependencies:
+    biomarkers:
+    - acth
+    - cortisol
+    - eosinophils_abs
+    - sodium
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_cortisol_low_lab_range_activation_placeholder
+    metric_id: cortisol
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_cortisol_low_with_low_sodium
+    resulting_state: at_risk
+    description: Escalate when cortisol is low and sodium is also low because the
+      combination increases concern for clinically relevant adrenal insufficiency.
+    conditions:
+    - metric_id: sodium
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_adrenal_insufficiency_guideline
+  output:
+    signal_value: cortisol
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: cortisol
+    supporting_markers:
+    - acth
+    - sodium
+    - eosinophils_abs
+  explanation:
+    mechanism: Cortisol deficiency may result from primary adrenal failure, secondary
+      pituitary disease, or glucocorticoid-induced hypothalamic-pituitary-adrenal
+      suppression.
+    biological_pathway: ACTH and sodium together help separate primary adrenal insufficiency
+      from other low-cortisol states.
+    interpretation: Low cortisol is potentially significant, but context is critical
+      because random values can mislead outside appropriate sampling conditions.
+    implications: This pattern may justify urgent confirmation when symptoms or illness
+      severity make adrenal insufficiency plausible.
+    supporting_marker_roles: ACTH is the main differential marker, sodium corroborates
+      mineralocorticoid-related physiology, and eosinophils can provide supportive
+      context.

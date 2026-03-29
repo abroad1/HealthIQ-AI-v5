@@ -1,0 +1,93 @@
+library:
+  package_id: KBP-4745
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Folate High Supplementation Or Excess Exposure
+  description: Ingested from inv_folate_high_supplementation_or_excess_exposure (Batch_6_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_folate_high
+  name: Folate High Supplementation Or Excess Exposure
+  description: High folate is usually contextual and often reflects supplementation,
+    fortification, or increased recent intake rather than disease on its own.
+  system: hematologic
+  primary_metric: folate
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: active_b12
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: Low active B12 raises concern that high folate may coexist with unresolved
+      B12 deficiency rather than simply indicating adequate hematinic status.
+  - biomarker_id: mcv
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Persistent macrocytosis despite high folate suggests that folate sufficiency
+      alone is not resolving the hematologic pattern.
+  - biomarker_id: homocysteine
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: Persistently high homocysteine despite high folate suggests another
+      functional limitation, including B12 deficiency or renal impairment.
+  dependencies:
+    biomarkers:
+    - active_b12
+    - folate
+    - homocysteine
+    - mcv
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_folate_high_lab_range_activation_placeholder
+    metric_id: folate
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_folate_high_with_low_active_b12
+    resulting_state: at_risk
+    description: Escalate when folate is high and active B12 is low because the combination
+      makes a purely reassuring high-folate interpretation less appropriate.
+    conditions:
+    - metric_id: active_b12
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_folate_b12_interaction_review
+  output:
+    signal_value: folate
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: folate
+    supporting_markers:
+    - active_b12
+    - mcv
+    - homocysteine
+  explanation:
+    mechanism: Serum folate rises readily with recent intake and may not reflect long-term
+      tissue excess or direct pathology.
+    biological_pathway: B12-related markers remain important because high folate can
+      complicate interpretation in unresolved B12 deficiency states.
+    interpretation: High folate is usually a contextual nutritional finding rather
+      than a direct disease signal.
+    implications: This pattern may justify review of supplementation and B12 status
+      rather than disease-focused escalation in isolation.
+    supporting_marker_roles: Active B12 is the key differential marker, MCV helps
+      assess unresolved megaloblastic change, and homocysteine helps gauge whether
+      folate excess is biologically reassuring or not.

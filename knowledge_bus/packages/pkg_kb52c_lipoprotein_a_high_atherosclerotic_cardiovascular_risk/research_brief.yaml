@@ -1,0 +1,23 @@
+research_domain: vascular
+sources:
+- source_id: source_lpa_consensus_2022
+  paper_title: 'Consensus and guidelines on lipoprotein(a): seeing the forest through
+    the trees'
+  journal: European Heart Journal
+  year: 2022
+- source_id: source_aha_lpa_2025
+  paper_title: 'Lipoprotein(a) Atherosclerotic Cardiovascular Disease and Aortic Stenosis:
+    A Scientific Statement'
+  journal: 'Circulation: Genomic and Precision Medicine'
+  year: 2025
+biomarkers:
+- apob
+- crp
+- ldl_cholesterol
+- lipoprotein_a
+physiological_claim: Elevated lipoprotein(a) is a guideline-recognized cardiovascular
+  risk enhancer that contributes to residual atherosclerotic risk.
+evidence_strength: consensus
+research_summary: KB-S52C Wave A ingestion from Batch_3_Pass_3.json; spec_id=inv_lipoprotein_a_high_atherosclerotic_cardiovascular_risk;
+  signal_id=signal_lipoprotein_a_high; investigation_spec_contract_version=3.0.0;
+  governance=translation_contract_v3_to_package_KB-S52B_v1 / translation_remap_contract_KB-S52B_v1.

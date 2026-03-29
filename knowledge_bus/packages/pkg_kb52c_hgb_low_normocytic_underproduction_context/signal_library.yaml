@@ -1,0 +1,92 @@
+library:
+  package_id: KBP-4756
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Hgb Low Normocytic Underproduction Context
+  description: Ingested from inv_hgb_low_normocytic_underproduction_context (Batch_6_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_hgb_low
+  name: Hgb Low Normocytic Underproduction Context
+  description: Low hemoglobin with non-microcytic indices often requires evaluation
+    for chronic disease, kidney disease, marrow suppression, or mixed deficiency.
+  system: hematologic
+  primary_metric: hemoglobin
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: mcv
+    expected_direction: any
+    role: differential_marker
+    availability: common
+    rationale: MCV helps distinguish non-microcytic underproduction patterns from
+      classic microcytic iron-deficiency anemia.
+  - biomarker_id: creatinine
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: High creatinine supports kidney-related erythropoietin deficiency as
+      a contributor to low hemoglobin.
+  - biomarker_id: crp
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Elevated CRP can support anemia of inflammation or chronic disease
+      context.
+  dependencies:
+    biomarkers:
+    - creatinine
+    - crp
+    - hemoglobin
+    - mcv
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_hgb_low_lab_range_activation_placeholder
+    metric_id: hemoglobin
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_hgb_low_with_high_creatinine
+    resulting_state: at_risk
+    description: Escalate when hemoglobin is low and creatinine is high because the
+      combination supports clinically relevant renal underproduction anemia context.
+    conditions:
+    - metric_id: creatinine
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_anemia_review
+  output:
+    signal_value: hemoglobin
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: hemoglobin
+    supporting_markers:
+    - mcv
+    - creatinine
+    - crp
+  explanation:
+    mechanism: Underproduction anemia may result from inflammation, erythropoietin
+      deficiency, marrow disease, or mixed nutritional disturbance.
+    biological_pathway: MCV helps exclude microcytic iron deficiency, while creatinine
+      and CRP-type markers help contextualise chronic disease or renal anemia.
+    interpretation: Low hemoglobin in this pattern supports structured evaluation
+      for chronic disease or renal underproduction mechanisms.
+    implications: This pattern may justify renal and inflammatory assessment before
+      assuming blood loss or hemolysis.
+    supporting_marker_roles: MCV is the key differential marker, creatinine provides
+      mechanism context for renal anemia, and crp corroborates inflammatory underproduction.

@@ -1,0 +1,95 @@
+library:
+  package_id: KBP-4738
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Basophils Abs Low Glucocorticoid Or Acute Stress
+    Pattern
+  description: Ingested from inv_basophils_abs_low_glucocorticoid_or_acute_stress_pattern
+    (Batch_5_Pass_3.json). KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_basophils_abs_low
+  name: Basophils Abs Low Glucocorticoid Or Acute Stress Pattern
+  description: Low basophil absolute values are usually non-specific but can occur
+    in acute stress, glucocorticoid exposure, or hyperthyroid states.
+  system: inflammatory
+  primary_metric: basophils_abs
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: neutrophils_abs
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Stress leukograms often show relative or absolute neutrophilia alongside
+      basopenia.
+  - biomarker_id: eosinophils_abs
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Concurrent eosinopenia supports glucocorticoid or stress-related redistribution
+      rather than isolated basophil pathology.
+  - biomarker_id: tsh
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: Low TSH can support hyperthyroid context as a competing explanation
+      for basopenia.
+  dependencies:
+    biomarkers:
+    - basophils_abs
+    - eosinophils_abs
+    - neutrophils_abs
+    - tsh
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_basophils_abs_low_lab_range_activation_placeholder
+    metric_id: basophils_abs
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_basophils_abs_low_with_stress_pattern
+    resulting_state: at_risk
+    description: Escalate as a contextual stress-or-steroid pattern when basophils
+      are low together with eosinopenia or neutrophilia.
+    conditions:
+    - metric_id: eosinophils_abs
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_cbc_differential
+    - source_blood_components
+  output:
+    signal_value: basophils_abs
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: basophils_abs
+    supporting_markers:
+    - neutrophils_abs
+    - eosinophils_abs
+    - tsh
+  explanation:
+    mechanism: Stress hormones and glucocorticoids can redistribute basophils and
+      other leukocyte subsets within the circulation.
+    biological_pathway: Acute stress responses and steroid exposure can produce basopenia
+      with eosinopenia and neutrophil predominance.
+    interpretation: Low basophils are usually contextual rather than diagnostic and
+      should be interpreted with the rest of the differential count.
+    implications: Persistent low basophils may justify review of thyroid or medication
+      context, but isolated low values rarely indicate a primary disorder.
+    supporting_marker_roles: Neutrophils corroborate stress-leukogram context, eosinophils
+      support glucocorticoid-related redistribution, and TSH helps differentiate hyperthyroid
+      causes.

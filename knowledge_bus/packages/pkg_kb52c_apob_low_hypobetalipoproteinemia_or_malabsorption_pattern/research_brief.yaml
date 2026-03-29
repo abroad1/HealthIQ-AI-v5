@@ -1,0 +1,24 @@
+research_domain: lipid_transport
+sources:
+- source_id: source_measurement_lipids
+  paper_title: The Measurement of Lipids, Lipoproteins, Apolipoproteins, Fatty Acids,
+    and Sterols, and Next Generation Lipidomics for the Diagnosis and Treatment of
+    Lipid Disorders
+  journal: Current Cardiology Reports
+  year: 2016
+- source_id: source_apob_bridge
+  paper_title: 'Apolipoprotein B: Bridging the Gap Between Evidence and Clinical Practice'
+  journal: Circulation
+  year: 2024
+biomarkers:
+- alt
+- apob
+- ldl_cholesterol
+- triglycerides
+physiological_claim: Low apoB indicates low concentration of apoB-containing particles
+  and may reflect either benign low atherogenic burden or uncommon disorders of lipoprotein
+  production and absorption.
+evidence_strength: moderate
+research_summary: KB-S52C Wave A ingestion from Batch_5_Pass_3.json; spec_id=inv_apob_low_hypobetalipoproteinemia_or_malabsorption_pattern;
+  signal_id=signal_apob_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

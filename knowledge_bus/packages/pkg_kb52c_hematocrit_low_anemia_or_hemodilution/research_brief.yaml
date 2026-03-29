@@ -1,0 +1,17 @@
+research_domain: hematologic
+sources:
+- source_id: source_nice_polycythaemia_2024
+  paper_title: Polycythaemia/Erythrocytosis - NICE CKS
+  journal: NICE
+  year: 2024
+biomarkers:
+- albumin
+- hematocrit
+- hemoglobin
+- mcv
+physiological_claim: Reduced hematocrit commonly reflects anemia but may also be influenced
+  by plasma-volume expansion, so CBC context remains important.
+evidence_strength: consensus
+research_summary: KB-S52C Wave A ingestion from Batch_3_Pass_3.json; spec_id=inv_hematocrit_low_anemia_or_hemodilution;
+  signal_id=signal_hematocrit_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

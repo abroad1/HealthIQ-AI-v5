@@ -1,0 +1,22 @@
+research_domain: lipid_transport
+sources:
+- source_id: source_apob_bridge
+  paper_title: 'Apolipoprotein B: Bridging the Gap Between Evidence and Clinical Practice'
+  journal: Circulation
+  year: 2024
+- source_id: source_esc_2021
+  paper_title: 2021 ESC Guidelines on cardiovascular disease prevention in clinical
+    practice
+  journal: European Heart Journal
+  year: 2021
+biomarkers:
+- apob
+- ldl_cholesterol
+- non_hdl_cholesterol
+- triglycerides
+physiological_claim: High apoB reflects increased atherogenic particle number and
+  improves risk characterization, especially in discordant lipid states.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_5_Pass_3.json; spec_id=inv_apob_high_atherogenic_particle_excess;
+  signal_id=signal_apob_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

@@ -1,0 +1,92 @@
+library:
+  package_id: KBP-4784
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Vitamin B12 High Supplementation Or Secondary Elevation
+  description: Ingested from inv_vitamin_b12_high_supplementation_or_secondary_elevation
+    (Batch_4_Pass_3.json). KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_vitamin_b12_high
+  name: Vitamin B12 High Supplementation Or Secondary Elevation
+  description: High vitamin B12 usually reflects supplementation or secondary elevation
+    rather than a direct toxicity signal from the biomarker itself.
+  system: hematologic
+  primary_metric: vitamin_b12
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: alt
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: Abnormal liver markers can support hepatic release or reduced clearance
+      as a cause of high B12.
+  - biomarker_id: creatinine
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: Renal dysfunction can contribute to elevated circulating B12 concentrations.
+  - biomarker_id: mcv
+    expected_direction: any
+    role: differential_marker
+    availability: optional
+    rationale: Blood-count context can help distinguish supplementation or secondary
+      elevation from an untreated deficiency picture with ineffective hematopoiesis.
+  dependencies:
+    biomarkers:
+    - alt
+    - creatinine
+    - mcv
+    - vitamin_b12
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_vitamin_b12_high_lab_range_activation_placeholder
+    metric_id: vitamin_b12
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_b12_high_with_alt_high
+    resulting_state: at_risk
+    description: Escalate when high vitamin B12 coincides with high ALT, as this more
+      strongly supports a secondary hepatic context for the elevation.
+    conditions:
+    - metric_id: alt
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_macro_b12_2026
+  output:
+    signal_value: vitamin_b12
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: vitamin_b12
+    supporting_markers:
+    - alt
+    - creatinine
+    - mcv
+  explanation:
+    mechanism: Circulating B12 can rise with exogenous replacement, altered binding
+      proteins, liver release, or reduced renal clearance.
+    biological_pathway: Cobalamin transport proteins, hepatic storage and release,
+      renal handling, and treatment-related exposure.
+    interpretation: This is usually a contextual finding and is most useful for checking
+      replacement history and common secondary causes.
+    implications: The next step is usually to review supplements first, then consider
+      liver, kidney, or hematologic explanations if the elevation is unexplained.
+    supporting_marker_roles: ALT and creatinine provide secondary-cause context, while
+      blood-count features help differentiate benign supplementation-related elevation
+      from other systemic patterns.

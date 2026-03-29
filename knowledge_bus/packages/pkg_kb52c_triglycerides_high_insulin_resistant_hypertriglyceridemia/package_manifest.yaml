@@ -1,0 +1,12 @@
+package_id: pkg_kb52c_triglycerides_high_insulin_resistant_hypertriglyceridemia
+package_version: 1.0.0
+description: 'KB-S52C Wave A package for inv_triglycerides_high_insulin_resistant_hypertriglyceridemia
+  (signal_triglycerides_high). Source batch: Batch_4_Pass_3.json.'
+research_brief: research_brief.yaml
+signal_library: signal_library.yaml
+author: HealthIQ Knowledge Bus — KB-S52C
+created_at: '2026-03-29'
+source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_4_Pass_3.json
+translation_mode: creation
+behavioural_impact: NONE
+engine_compatibility: v5.x

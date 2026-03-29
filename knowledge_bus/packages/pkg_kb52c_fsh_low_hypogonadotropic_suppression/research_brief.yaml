@@ -1,0 +1,19 @@
+research_domain: hormonal
+sources:
+- source_id: source_endocrine_gonadotropin_2024
+  paper_title: Society for Endocrinology guideline for understanding, diagnosing and
+    treating female hypogonadism
+  journal: Clinical Endocrinology
+  year: 2024
+biomarkers:
+- fsh
+- lh
+- oestradiol
+- prolactin
+physiological_claim: Low FSH is more consistent with reduced hypothalamic-pituitary
+  drive when it occurs alongside low LH and low downstream sex steroids, but single
+  isolated values require contextual review.
+evidence_strength: moderate
+research_summary: KB-S52C Wave A ingestion from Batch_3_Pass_3.json; spec_id=inv_fsh_low_hypogonadotropic_suppression;
+  signal_id=signal_fsh_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

@@ -1,0 +1,18 @@
+research_domain: vascular
+sources:
+- source_id: source_esc_dyslipidaemia_2025
+  paper_title: 2025 Focused Update of the 2019 ESC/EAS Guidelines for the management
+    of dyslipidaemias
+  journal: Atherosclerosis
+  year: 2025
+biomarkers:
+- apob
+- ldl_cholesterol
+- triglycerides
+- tsh
+physiological_claim: Marked LDL elevation can indicate a primary hypercholesterolemia
+  context, but exclusion of secondary causes remains essential.
+evidence_strength: moderate
+research_summary: KB-S52C Wave A ingestion from Batch_4_Pass_3.json; spec_id=inv_ldl_high_familial_hypercholesterolemia_context;
+  signal_id=signal_ldl_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

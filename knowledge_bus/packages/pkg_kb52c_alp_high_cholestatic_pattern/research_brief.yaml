@@ -1,0 +1,21 @@
+research_domain: hepatic
+sources:
+- source_id: source_alp_statpearls
+  paper_title: Alkaline Phosphatase
+  journal: StatPearls
+  year: 2023
+- source_id: source_alp_bnssg
+  paper_title: Alkaline Phosphatase
+  journal: Remedy BNSSG ICB
+  year: 2024
+biomarkers:
+- alp
+- alt
+- bilirubin
+- ggt
+physiological_claim: A hepatobiliary source of elevated ALP is more likely when cholestatic
+  companion markers such as GGT and bilirubin are also abnormal.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_5_Pass_3.json; spec_id=inv_alp_high_cholestatic_pattern;
+  signal_id=signal_alp_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

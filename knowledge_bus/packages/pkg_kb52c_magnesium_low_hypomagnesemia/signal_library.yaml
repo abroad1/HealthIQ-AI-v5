@@ -1,0 +1,95 @@
+library:
+  package_id: KBP-4769
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Magnesium Low Hypomagnesemia
+  description: Ingested from inv_magnesium_low_hypomagnesemia (Batch_4_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_magnesium_low
+  name: Magnesium Low Hypomagnesemia
+  description: Low magnesium is a clinically relevant electrolyte abnormality that
+    can affect neuromuscular, cardiac, and mineral-regulatory physiology.
+  system: mineral
+  primary_metric: magnesium
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: potassium
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low potassium commonly coexists with hypomagnesemia and can support
+      clinically important electrolyte depletion.
+  - biomarker_id: calcium
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Low calcium can reflect impaired PTH secretion or response in more
+      significant magnesium deficiency.
+  - biomarker_id: creatinine
+    expected_direction: any
+    role: differential_marker
+    availability: optional
+    rationale: Kidney function helps distinguish renal wasting or treatment implications
+      from low magnesium due mainly to gastrointestinal or intake factors.
+  dependencies:
+    biomarkers:
+    - calcium
+    - creatinine
+    - magnesium
+    - potassium
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_magnesium_low_lab_range_activation_placeholder
+    metric_id: magnesium
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_magnesium_low_with_potassium_low
+    resulting_state: at_risk
+    description: Escalate when low magnesium coincides with low potassium, as this
+      more strongly supports clinically relevant electrolyte depletion rather than
+      an isolated biochemical abnormality.
+    conditions:
+    - metric_id: potassium
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_magnesium_core_2024
+  output:
+    signal_value: magnesium
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: magnesium
+    supporting_markers:
+    - potassium
+    - calcium
+    - creatinine
+  explanation:
+    mechanism: Magnesium depletion impairs membrane stability, potassium handling,
+      and calcium-regulatory physiology.
+    biological_pathway: Renal tubular handling, gastrointestinal absorption, neuromuscular
+      excitability, and PTH-dependent calcium regulation.
+    interpretation: This is a clinically relevant electrolyte abnormality rather than
+      a trivial finding, particularly when potassium or calcium are also abnormal.
+    implications: The main next step is to identify whether there are parallel electrolyte
+      disturbances and whether the likely driver is renal loss, gastrointestinal loss,
+      or medication-related.
+    supporting_marker_roles: Potassium corroborates clinically important depletion,
+      calcium supports mechanism-level mineral effects, and creatinine helps with
+      differential context around renal handling.

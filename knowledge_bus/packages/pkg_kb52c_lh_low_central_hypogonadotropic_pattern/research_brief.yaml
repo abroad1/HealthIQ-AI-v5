@@ -1,0 +1,18 @@
+research_domain: hormonal
+sources:
+- source_id: source_endocrine_gonadotropin_2024
+  paper_title: Society for Endocrinology guideline for understanding, diagnosing and
+    treating female hypogonadism
+  journal: Clinical Endocrinology
+  year: 2024
+biomarkers:
+- fsh
+- lh
+- prolactin
+- testosterone
+physiological_claim: Low LH is most consistent with reduced central gonadotropin output
+  when it occurs alongside low FSH and low downstream sex steroids.
+evidence_strength: moderate
+research_summary: KB-S52C Wave A ingestion from Batch_3_Pass_3.json; spec_id=inv_lh_low_central_hypogonadotropic_pattern;
+  signal_id=signal_lh_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

@@ -1,0 +1,17 @@
+research_domain: hepatic
+sources:
+- source_id: source_ggt_cholestasis_review
+  paper_title: Gamma-glutamyl transferase in cholestatic and hepatobiliary patterns
+  journal: Review literature and clinical reference sources
+  year: 2025
+biomarkers:
+- alp
+- alt
+- bilirubin
+- ggt
+physiological_claim: High GGT commonly supports a hepatobiliary or cholestatic source
+  of liver enzyme abnormality, particularly when ALP is also elevated.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_6_Pass_3.json; spec_id=inv_ggt_high_hepatobiliary_cholestatic_context;
+  signal_id=signal_ggt_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

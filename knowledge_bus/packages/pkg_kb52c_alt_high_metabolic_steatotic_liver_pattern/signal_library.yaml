@@ -1,0 +1,100 @@
+library:
+  package_id: KBP-4724
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Alt High Metabolic Steatotic Liver Pattern
+  description: Ingested from inv_alt_high_metabolic_steatotic_liver_pattern (Batch_5_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_alt_high
+  name: Alt High Metabolic Steatotic Liver Pattern
+  description: Raised ALT in ambulatory adults is commonly associated with metabolic
+    dysfunction-associated steatotic liver disease when metabolic risk context is
+    present.
+  system: hepatic
+  primary_metric: alt
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: triglycerides
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Raised triglycerides support an insulin-resistant metabolic context
+      that commonly accompanies steatotic liver disease.
+  - biomarker_id: hba1c
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: Elevated HbA1c supports dysglycaemic or insulin-resistant metabolic
+      stress associated with hepatic steatosis.
+  - biomarker_id: creatine_kinase
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Elevated creatine kinase redirects interpretation toward recent exertion
+      or muscle injury rather than steatotic liver disease.
+  dependencies:
+    biomarkers:
+    - alt
+    - creatine_kinase
+    - hba1c
+    - triglycerides
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_alt_high_lab_range_activation_placeholder
+    metric_id: alt
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_alt_high_with_metabolic_context
+    resulting_state: at_risk
+    description: Escalate when ALT is high with corroborating metabolic-risk markers
+      suggestive of steatotic liver stress.
+    conditions:
+    - metric_id: triglycerides
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    - metric_id: hba1c
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_lft_guide
+    - source_alt_statpearls
+  output:
+    signal_value: alt
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: alt
+    supporting_markers:
+    - triglycerides
+    - hba1c
+    - creatine_kinase
+  explanation:
+    mechanism: Insulin resistance and hepatic fat accumulation promote hepatocellular
+      stress and leakage of ALT into the circulation.
+    biological_pathway: Steatosis, lipotoxic stress, oxidative injury, and inflammatory
+      signalling can drive persistent ALT elevation in metabolic liver disease.
+    interpretation: ALT elevation with dysglycaemia or hypertriglyceridaemia supports
+      a metabolic liver context, but competing exposures should still be reviewed.
+    implications: This pattern may justify liver imaging and fibrosis assessment rather
+      than viewing ALT as an isolated biochemical fluctuation.
+    supporting_marker_roles: Triglycerides corroborate atherogenic metabolic context,
+      HbA1c supports insulin-resistant mechanism, and creatine kinase differentiates
+      muscle-source ALT release.

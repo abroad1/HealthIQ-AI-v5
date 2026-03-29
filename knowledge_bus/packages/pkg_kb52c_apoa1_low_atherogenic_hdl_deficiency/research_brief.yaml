@@ -1,0 +1,23 @@
+research_domain: lipid_transport
+sources:
+- source_id: source_apoa1_hdl_deficiency
+  paper_title: Diagnosis and treatment of high density lipoprotein deficiency
+  journal: Progress in Cardiovascular Diseases
+  year: 2016
+- source_id: source_apob_ratio_longterm
+  paper_title: Long-term risk of a major cardiovascular event by apoB, apoA-1, and
+    the apoB/apoA-1 ratio
+  journal: PLoS One
+  year: 2021
+biomarkers:
+- apoa1
+- apob
+- hdl_cholesterol
+- triglycerides
+physiological_claim: Low apoA1 is associated with a less favorable lipoprotein profile
+  and increased cardiovascular risk, especially when coupled with high triglycerides
+  or high apoB.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_5_Pass_3.json; spec_id=inv_apoa1_low_atherogenic_hdl_deficiency;
+  signal_id=signal_apoa1_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

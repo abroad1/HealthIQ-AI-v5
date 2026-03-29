@@ -1,0 +1,17 @@
+research_domain: renal
+sources:
+- source_id: source_magnesium_core_2024
+  paper_title: 'Magnesium Disorders: Core Curriculum 2024'
+  journal: American Journal of Kidney Diseases
+  year: 2024
+biomarkers:
+- calcium
+- creatinine
+- magnesium
+- urea
+physiological_claim: Hypermagnesemia most often occurs when magnesium exposure exceeds
+  renal excretory capacity, especially in kidney dysfunction.
+evidence_strength: consensus
+research_summary: KB-S52C Wave A ingestion from Batch_3_Pass_3.json; spec_id=inv_magnesium_high_reduced_excretion_or_excess_load;
+  signal_id=signal_magnesium_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

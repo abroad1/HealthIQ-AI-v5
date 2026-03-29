@@ -1,0 +1,91 @@
+library:
+  package_id: KBP-4755
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Hematocrit Low Anemia Or Hemodilution
+  description: Ingested from inv_hematocrit_low_anemia_or_hemodilution (Batch_3_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_hematocrit_low
+  name: Hematocrit Low Anemia Or Hemodilution
+  description: Low hematocrit generally reflects reduced red-cell mass or dilution
+    and should be interpreted with hemoglobin and red-cell indices.
+  system: hematologic
+  primary_metric: hematocrit
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: hemoglobin
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low hemoglobin corroborates a true anemia pattern when hematocrit is
+      reduced.
+  - biomarker_id: mcv
+    expected_direction: any
+    role: mechanism_marker
+    availability: common
+    rationale: MCV helps classify the anemia mechanism and narrow likely causes.
+  - biomarker_id: albumin
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: Low albumin may support hemodilution or broader systemic illness as
+      an alternative or mixed explanation.
+  dependencies:
+    biomarkers:
+    - albumin
+    - hematocrit
+    - hemoglobin
+    - mcv
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_hematocrit_low_lab_range_activation_placeholder
+    metric_id: hematocrit
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_hematocrit_low_with_hemoglobin_low
+    resulting_state: at_risk
+    description: Escalate when low hematocrit coincides with low hemoglobin, as this
+      more strongly supports a true anemia pattern.
+    conditions:
+    - metric_id: hemoglobin
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_nice_polycythaemia_2024
+  output:
+    signal_value: hematocrit
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: hematocrit
+    supporting_markers:
+    - hemoglobin
+    - mcv
+    - albumin
+  explanation:
+    mechanism: Hematocrit falls when red-cell mass is reduced or plasma volume expands
+      enough to dilute the cellular fraction.
+    biological_pathway: Balance between erythrocyte mass and intravascular plasma
+      volume.
+    interpretation: A low hematocrit is an entry point to anemia evaluation, not a
+      mechanism diagnosis by itself.
+    implications: The key distinction is between true anemia and dilutional lowering
+      of the packed-cell fraction.
+    supporting_marker_roles: Hemoglobin corroborates anemia, MCV helps classify mechanism,
+      and albumin helps identify dilutional or systemic alternatives.

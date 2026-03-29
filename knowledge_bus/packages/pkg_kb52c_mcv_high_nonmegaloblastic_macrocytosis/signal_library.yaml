@@ -1,0 +1,92 @@
+library:
+  package_id: KBP-4771
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Mcv High Nonmegaloblastic Macrocytosis
+  description: Ingested from inv_mcv_high_nonmegaloblastic_macrocytosis (Batch_6_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_mcv_high
+  name: Mcv High Nonmegaloblastic Macrocytosis
+  description: High MCV can occur in non-megaloblastic states and should not automatically
+    be equated with folate or B12 deficiency.
+  system: hematologic
+  primary_metric: mcv
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: ggt
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: High GGT supports alcohol-related or hepatic macrocytosis as an alternative
+      to megaloblastic deficiency.
+  - biomarker_id: alt
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Elevated ALT can support concurrent hepatocellular injury or steatotic
+      liver context.
+  - biomarker_id: folate
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: Low folate supports a competing megaloblastic explanation and weakens
+      a purely non-megaloblastic interpretation.
+  dependencies:
+    biomarkers:
+    - alt
+    - folate
+    - ggt
+    - mcv
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_mcv_high_lab_range_activation_placeholder
+    metric_id: mcv
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_mcv_high_with_high_ggt
+    resulting_state: at_risk
+    description: Escalate when MCV is high and GGT is also high because the combination
+      supports a persistent non-megaloblastic hepatic or alcohol-related context.
+    conditions:
+    - metric_id: ggt
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_macrocytosis_review
+  output:
+    signal_value: mcv
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: mcv
+    supporting_markers:
+    - ggt
+    - alt
+    - folate
+  explanation:
+    mechanism: Alcohol exposure, liver disease, reticulocytosis, hypothyroidism, and
+      marrow disorders can produce macrocytosis without classic megaloblastic change.
+    biological_pathway: GGT and ALT help provide hepatic or alcohol-related context,
+      while normal hematinic markers weaken megaloblastic explanations.
+    interpretation: High MCV in this pattern is a useful differential clue rather
+      than a diagnosis on its own.
+    implications: This pattern may justify liver and exposure review before pursuing
+      isolated folate-only explanations.
+    supporting_marker_roles: GGT is the key differential marker, ALT corroborates
+      liver context, and folate helps exclude megaloblastic deficiency.

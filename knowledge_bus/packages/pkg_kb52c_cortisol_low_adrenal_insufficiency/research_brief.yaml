@@ -1,0 +1,19 @@
+research_domain: hormonal
+sources:
+- source_id: source_adrenal_insufficiency_guideline
+  paper_title: Primary and glucocorticoid-induced adrenal insufficiency guideline
+    evidence
+  journal: Endocrine Society and ESE guidelines
+  year: 2024
+biomarkers:
+- acth
+- cortisol
+- eosinophils_abs
+- sodium
+physiological_claim: Low cortisol, especially in an appropriate morning sample or
+  acutely unwell context, may support adrenal insufficiency and should prompt confirmatory
+  testing.
+evidence_strength: consensus
+research_summary: KB-S52C Wave A ingestion from Batch_6_Pass_3.json; spec_id=inv_cortisol_low_adrenal_insufficiency;
+  signal_id=signal_cortisol_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.

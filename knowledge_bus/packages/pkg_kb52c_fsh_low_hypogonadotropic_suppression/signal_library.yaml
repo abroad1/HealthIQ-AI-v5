@@ -1,0 +1,93 @@
+library:
+  package_id: KBP-4748
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52C Wave A — Fsh Low Hypogonadotropic Suppression
+  description: Ingested from inv_fsh_low_hypogonadotropic_suppression (Batch_3_Pass_3.json).
+    KB-S52C Wave A resolver-clean tranche.
+signals:
+- signal_id: signal_fsh_low
+  name: Fsh Low Hypogonadotropic Suppression
+  description: Low FSH can indicate reduced pituitary gonadotropin output but requires
+    sex-steroid and pituitary-context interpretation.
+  system: hormonal
+  primary_metric: fsh
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: lh
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low LH alongside low FSH supports a broader hypogonadotropic pattern
+      rather than isolated assay variation.
+  - biomarker_id: oestradiol
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Low estradiol or other sex steroids can reflect downstream reduced
+      gonadotropin drive.
+  - biomarker_id: prolactin
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: High prolactin supports hypothalamic-pituitary suppression as an alternative
+      explanation for low FSH.
+  dependencies:
+    biomarkers:
+    - fsh
+    - lh
+    - oestradiol
+    - prolactin
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_fsh_low_lab_range_activation_placeholder
+    metric_id: fsh
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_fsh_low_with_lh_low
+    resulting_state: at_risk
+    description: Escalate when low FSH coincides with low LH, as this more strongly
+      supports reduced pituitary gonadotropin output.
+    conditions:
+    - metric_id: lh
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_endocrine_gonadotropin_2024
+  output:
+    signal_value: fsh
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: fsh
+    supporting_markers:
+    - lh
+    - oestradiol
+    - prolactin
+  explanation:
+    mechanism: FSH falls when hypothalamic GnRH drive or pituitary gonadotroph output
+      is reduced.
+    biological_pathway: Central regulation of gonadotropin secretion within the hypothalamic-pituitary-gonadal
+      axis.
+    interpretation: Low FSH is usually a central-pattern clue and is rarely interpretable
+      in isolation.
+    implications: The key distinction is between functional suppression and persistent
+      central gonadotropin deficiency.
+    supporting_marker_roles: LH corroborates broad gonadotropin suppression, estradiol
+      shows downstream impact, and prolactin helps identify a common pituitary-suppression
+      differential.

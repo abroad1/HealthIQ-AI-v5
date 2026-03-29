@@ -1,0 +1,23 @@
+research_domain: metabolic
+sources:
+- source_id: source_apob_ratio_longterm
+  paper_title: Long-term risk of a major cardiovascular event by apoB, apoA-1, and
+    the apoB/apoA-1 ratio
+  journal: PLoS One
+  year: 2021
+- source_id: source_ratio_predictor
+  paper_title: 'The apoB/apoA-I ratio: a strong, new risk factor for cardiovascular
+    disease and a target for lipid-lowering therapy'
+  journal: Current Opinion in Lipidology
+  year: 2006
+biomarkers:
+- apob_apoa1_ratio
+- hba1c
+- ldl_cholesterol
+- triglycerides
+physiological_claim: A high apoB/apoA1 ratio commonly occurs in insulin-resistant
+  atherogenic dyslipidaemia and is associated with adverse cardiometabolic risk.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_5_Pass_3.json; spec_id=inv_apob_apoa1_ratio_high_insulin_resistance_atherogenic_dyslipidemia;
+  signal_id=signal_apob_apoa1_ratio_high; investigation_spec_contract_version=3.0.0;
+  governance=translation_contract_v3_to_package_KB-S52B_v1 / translation_remap_contract_KB-S52B_v1.

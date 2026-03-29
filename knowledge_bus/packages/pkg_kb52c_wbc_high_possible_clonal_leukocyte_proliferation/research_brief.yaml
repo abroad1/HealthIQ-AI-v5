@@ -1,0 +1,19 @@
+research_domain: hematologic
+sources:
+- source_id: source_clonal_leukocytosis_review_2024
+  paper_title: Review literature on persistent leukocytosis and suspicion for clonal
+    hematologic causes
+  journal: Review literature
+  year: 2024
+biomarkers:
+- crp
+- neutrophils
+- platelets
+- white_blood_cells
+physiological_claim: Persistent unexplained leukocytosis warrants consideration of
+  clonal hematologic causes, particularly when accompanying cell-line abnormalities
+  are present.
+evidence_strength: strong
+research_summary: KB-S52C Wave A ingestion from Batch_7_Pass_3.json; spec_id=inv_wbc_high_possible_clonal_leukocyte_proliferation;
+  signal_id=signal_wbc_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1.
