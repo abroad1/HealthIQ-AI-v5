@@ -1,0 +1,47 @@
+# KB-S51 — narrow lab_range_boundary tokens for companion-marker normality
+# work_id: KB-S51
+
+pass_files_scope_decision: >
+  All three Batch_5 pass files (Pass_1, Pass_2, Pass_3) are updated in lockstep so
+  intermediate research artifacts stay consistent with the final candidate.
+
+contract_decision:
+  summary: >
+    The investigation spec v3 and signal-library override contracts allow two additional
+    lab_range_boundary tokens, narrowly scoped to physiologically informative companion
+    normality when the primary analyte is abnormal.
+  tokens:
+    not_above_max:
+      meaning: >
+        True when the companion metric observation is less than or equal to the
+        laboratory upper reference (max). Encodes “not elevated / not above ULN” using
+        authoritative lab_ranges for that metric_id.
+      aliases_accepted_at_runtime:
+        - at_or_below_max
+    not_below_min:
+      meaning: >
+        True when the companion metric observation is greater than or equal to the
+        laboratory lower reference (min). Encodes “not suppressed below LLN”.
+      aliases_accepted_at_runtime:
+        - at_or_above_min
+  non_goals: >
+    Not a generic “within reference band” or multi-sided normality primitive; not for
+    unconstrained “normal companion” rules. Additional tightening remains in narrative,
+    hypotheses, and confirmatory tests (e.g. fractionated bilirubin).
+
+runtime_note: >
+  comparator_type lab_range_boundary continues to ignore operator; semantics are carried
+  solely by boundary + lab_ranges min/max (backend/core/analytics/signal_evaluator.py).
+
+affected_research_objects:
+  case_1_alp_ggt:
+    spec_id: inv_alp_high_high_bone_turnover_pattern
+    treatment: >
+      Preserve override as non-hepatic / source-attribution using GGT not_above_max;
+      soften prose so it is not a standalone bone-turnover diagnostic rule.
+  case_2_bilirubin_gilbert:
+    spec_id: inv_bilirubin_high_gilbert_pattern
+    treatment: >
+      Tighten override with third condition hemoglobin not_below_min; strengthen wording
+      for unconjugated predominance and clinical confirmation via existing confirmatory_tests
+      and narrative — no new SSOT biomarkers in this sprint.
