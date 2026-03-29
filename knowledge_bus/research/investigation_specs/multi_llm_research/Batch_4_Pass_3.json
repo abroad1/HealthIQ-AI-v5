@@ -1,0 +1,3563 @@
+[
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_albumin_low_inflammatory_hypoalbuminemia",
+    "signal_id": "signal_albumin_low",
+    "research_domain": "hepatic",
+    "primary_marker": {
+      "biomarker_id": "albumin",
+      "rationale": "Low albumin is a nonspecific but clinically important marker that commonly reflects inflammation, capillary leak, or dilution rather than isolated nutritional deficiency alone.",
+      "signal_system": "hepatic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Raised CRP supports an inflammatory redistribution or acute-phase context when albumin is low."
+      },
+      {
+        "biomarker_id": "hematocrit",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low hematocrit can support dilutional physiology when albumin is reduced in fluid-expanded states."
+      },
+      {
+        "biomarker_id": "uacr",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Albuminuria helps distinguish renal protein loss from predominantly inflammatory or dilutional hypoalbuminemia."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_inflammatory_redistribution",
+        "rank": 1,
+        "physiological_claim": "Low albumin may reflect inflammatory redistribution, increased capillary permeability, or acute-phase suppression rather than isolated low protein intake.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Albumin is not a specific nutritional marker in acute or inflammatory illness."
+        ],
+        "missing_data": {
+          "policy": "Review CRP, fluid balance, and recent illness before attributing low albumin primarily to undernutrition."
+        },
+        "supporting_marker_refs": [
+          "crp",
+          "hematocrit",
+          "uacr"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_heavy_albuminuria",
+            "marker_reference": "uacr",
+            "contradiction_rationale": "Substantial albuminuria redirects interpretation toward renal protein loss rather than primarily inflammatory hypoalbuminemia.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_dilutional_hypoalbuminemia",
+        "rank": 2,
+        "physiological_claim": "Low albumin may reflect hemodilution when plasma volume expansion lowers measured concentration without equivalent loss of albumin mass.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Dilutional mechanisms are contextual and should not be inferred without volume-related clues."
+        ],
+        "missing_data": {
+          "policy": "Assess recent fluid administration, edema, sodium, and parallel dilutional changes before concluding true albumin depletion."
+        },
+        "supporting_marker_refs": [
+          "hematocrit",
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_elevated_crp_challenges_dilutional_frame",
+            "marker_reference": "crp",
+            "contradiction_rationale": "A markedly elevated CRP challenges a purely dilutional explanation for low albumin, as significant acute-phase inflammatory response drives hypoalbuminemia through redistribution mechanisms independent of volume expansion.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_inflammatory_redistribution",
+        "hyp_dilutional_hypoalbuminemia"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_albumin_with_crp_and_urine_albumin",
+        "rationale": "Repeating albumin with CRP and urine albumin assessment helps distinguish inflammatory or dilutional lowering from renal protein loss."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_albumin_low_with_crp_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low albumin coincides with high CRP, as this more strongly supports a clinically active inflammatory hypoalbuminemic state.",
+        "conditions": [
+          {
+            "metric_id": "crp",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_hypoalbuminemia_review_2018"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_hypoalbuminemia_review_2018",
+          "paper_title": "Hypoalbuminemia: Pathogenesis and Clinical Significance",
+          "journal": "JPEN Journal of Parenteral and Enteral Nutrition",
+          "year": 2018
+        },
+        {
+          "source_id": "source_hypoalbuminemia_review_2024",
+          "paper_title": "The clinical significance of hypoalbuminaemia",
+          "journal": "Clinical Nutrition ESPEN",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Low serum albumin is commonly associated with inflammation, redistribution, dilution, or protein loss and should not be interpreted as a stand-alone marker of nutrition.",
+      "threshold_notes": "Interpretation should remain laboratory anchored; disease-specific numeric albumin thresholds were not introduced here."
+    },
+    "narrative": {
+      "mechanism": "Albumin concentration falls when synthesis is suppressed, distribution shifts out of the vascular space, losses increase, or plasma volume expands.",
+      "biological_pathway": "Hepatic synthesis, intravascular oncotic balance, acute-phase response, and protein distribution across vascular and extravascular compartments.",
+      "interpretation": "This pattern is supportive of systemic illness, dilution, or loss states and should not be treated as a specific diagnosis by itself.",
+      "implications": "The next step is usually to distinguish inflammatory or dilutional lowering from renal, gastrointestinal, or hepatic causes of protein loss or reduced synthesis.",
+      "supporting_marker_roles": "CRP supports an inflammatory mechanism, hematocrit helps with dilutional context, and urine albumin helps separate renal loss from other causes."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_albumin_low_protein_loss_or_reduced_synthesis",
+    "signal_id": "signal_albumin_low",
+    "research_domain": "hepatic",
+    "primary_marker": {
+      "biomarker_id": "albumin",
+      "rationale": "Low albumin can also reflect chronic protein loss or reduced hepatic synthetic reserve when corroborating features are present.",
+      "signal_system": "hepatic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "alt",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Abnormal liver enzymes can support a hepatic context when low albumin raises concern for reduced synthesis."
+      },
+      {
+        "biomarker_id": "uacr",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Albuminuria supports renal protein loss as a direct contributor to low serum albumin."
+      },
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "CRP helps distinguish inflammatory lowering from low albumin caused mainly by chronic loss or impaired synthesis."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_renal_or_enteric_protein_loss",
+        "rank": 1,
+        "physiological_claim": "Low albumin may reflect ongoing renal or enteric protein loss when corroborating evidence of protein wasting is present.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Albumin concentration alone cannot localize the site of protein loss."
+        ],
+        "missing_data": {
+          "policy": "Review urine protein or albumin data and gastrointestinal loss context before assigning reduced synthesis as the main mechanism."
+        },
+        "supporting_marker_refs": [
+          "uacr",
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_crp_inflammatory_shift",
+            "marker_reference": "crp",
+            "contradiction_rationale": "Marked CRP elevation makes an inflammatory redistribution component more plausible and can reduce specificity for isolated protein-losing states.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_reduced_hepatic_synthesis",
+        "rank": 2,
+        "physiological_claim": "Low albumin may reflect reduced hepatic synthetic capacity in chronic liver disease when paired with a compatible liver context.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Low albumin is late and nonspecific as a hepatic marker and should be interpreted with other synthetic indicators."
+        ],
+        "missing_data": {
+          "policy": "Assess INR, bilirubin, and liver disease context before concluding reduced synthesis is the dominant mechanism."
+        },
+        "supporting_marker_refs": [
+          "alt",
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_alt_weakens_hepatic_synthesis_failure",
+            "marker_reference": "alt",
+            "contradiction_rationale": "A normal ALT reduces the likelihood of significant hepatocellular injury as the driver of reduced albumin synthesis, as clinically meaningful hepatic synthesis failure typically accompanies hepatocellular damage.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_renal_or_enteric_protein_loss",
+        "hyp_reduced_hepatic_synthesis"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_urine_protein_and_liver_synthetic_review",
+        "rationale": "Urine protein assessment and review of liver synthetic markers help distinguish protein loss from reduced hepatic synthesis."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_albumin_low_with_uacr_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low albumin coincides with high UACR, as this more strongly supports clinically relevant renal protein loss.",
+        "conditions": [
+          {
+            "metric_id": "uacr",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_kdigo_ckd_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_hypoalbuminemia_review_2018",
+          "paper_title": "Hypoalbuminemia: Pathogenesis and Clinical Significance",
+          "journal": "JPEN Journal of Parenteral and Enteral Nutrition",
+          "year": 2018
+        },
+        {
+          "source_id": "source_kdigo_ckd_2024",
+          "paper_title": "KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease",
+          "journal": "Kidney International",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Persistent hypoalbuminemia can reflect protein loss or reduced synthesis, but corroborating renal or hepatic context is needed for interpretation.",
+      "threshold_notes": "No universal causal threshold is asserted; interpretation should follow laboratory abnormality and corroborating context."
+    },
+    "narrative": {
+      "mechanism": "Serum albumin declines when losses exceed synthesis or when hepatic production becomes inadequate relative to ongoing demand.",
+      "biological_pathway": "Protein homeostasis across hepatic synthesis, renal or gastrointestinal loss, and systemic inflammatory redistribution.",
+      "interpretation": "This is a context-setting abnormality rather than a stand-alone diagnostic marker and needs corroborating renal or hepatic data.",
+      "implications": "Renal protein quantification and broader liver synthetic assessment usually determine whether loss or reduced synthesis is the dominant frame.",
+      "supporting_marker_roles": "UACR corroborates renal loss, ALT contributes hepatic context, and CRP helps separate inflammatory lowering from noninflammatory protein depletion."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_creatinine_high_reduced_glomerular_filtration",
+    "signal_id": "signal_creatinine_high",
+    "research_domain": "renal",
+    "primary_marker": {
+      "biomarker_id": "creatinine",
+      "rationale": "High creatinine commonly reflects reduced kidney filtration but requires interpretation alongside eGFR and urine findings because muscle mass and acute hemodynamics also affect concentration.",
+      "signal_system": "renal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "egfr",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low eGFR supports true reduction in kidney filtration when creatinine is elevated."
+      },
+      {
+        "biomarker_id": "uacr",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Albuminuria strengthens a chronic kidney disease interpretation when filtration markers are abnormal."
+      },
+      {
+        "biomarker_id": "cystatin_c",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Cystatin C helps distinguish true filtration reduction from creatinine distortion related to muscle mass or assay context."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_chronic_kidney_filtration_reduction",
+        "rank": 1,
+        "physiological_claim": "High creatinine may reflect reduced glomerular filtration, particularly when eGFR is low and albuminuria is present.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Creatinine-based interpretation can be distorted by muscle mass and nonrenal factors."
+        ],
+        "missing_data": {
+          "policy": "Review eGFR trend, urine albumin, and prior kidney function before concluding chronic kidney disease from a single result."
+        },
+        "supporting_marker_refs": [
+          "egfr",
+          "uacr",
+          "cystatin_c"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_cystatin_c_weakens_true_filtration_reduction",
+            "marker_reference": "cystatin_c",
+            "contradiction_rationale": "A normal cystatin C weakens a true chronic kidney filtration reduction interpretation, as cystatin C is a creatinine-independent marker of GFR and its normalcy suggests the creatinine elevation may reflect non-filtration factors.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_creatinine_based_overestimation_of_kidney_impairment",
+        "rank": 2,
+        "physiological_claim": "High creatinine may overstate kidney dysfunction when creatinine generation is increased or when creatinine-based estimation is less reliable.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This alternative is most relevant when cystatin C is not concordant with creatinine-based measures."
+        ],
+        "missing_data": {
+          "policy": "Compare creatinine with cystatin C or prior baseline when muscle mass or recent exertion may be distorting interpretation."
+        },
+        "supporting_marker_refs": [
+          "cystatin_c",
+          "egfr"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_albuminuria_supports_ckd",
+            "marker_reference": "uacr",
+            "contradiction_rationale": "Concurrent albuminuria makes a true kidney disease interpretation more plausible than isolated creatinine distortion.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_chronic_kidney_filtration_reduction",
+        "hyp_creatinine_based_overestimation_of_kidney_impairment"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_creatinine_with_egfr_and_uacr",
+        "rationale": "Repeating creatinine with eGFR and urine albumin assessment helps distinguish persistent kidney dysfunction from transient or creatinine-specific distortion."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_creatinine_high_with_uacr_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high creatinine coincides with high UACR, as this more strongly supports clinically meaningful kidney disease.",
+        "conditions": [
+          {
+            "metric_id": "uacr",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_kdigo_ckd_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_kdigo_ckd_2024",
+          "paper_title": "KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease",
+          "journal": "Kidney International",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Creatinine is a standard kidney function marker, but interpretation is stronger when paired with eGFR, albuminuria, and confirmatory filtration markers.",
+      "threshold_notes": "Interpretation should remain laboratory anchored and trend-aware; isolated creatinine thresholds were not asserted here."
+    },
+    "narrative": {
+      "mechanism": "Serum creatinine rises when filtration falls or when creatinine generation and distribution change enough to increase circulating concentration.",
+      "biological_pathway": "Creatinine generation, glomerular filtration, tubular handling, and kidney injury or chronic kidney disease pathways.",
+      "interpretation": "This pattern supports reduced kidney filtration most strongly when corroborated by eGFR and albuminuria rather than read in isolation.",
+      "implications": "Trend confirmation and urine protein assessment usually clarify whether the finding reflects persistent kidney disease or a creatinine-specific confounder.",
+      "supporting_marker_roles": "Low eGFR corroborates filtration reduction, UACR supports kidney disease context, and cystatin C helps distinguish true filtration loss from creatinine distortion."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_creatinine_low_low_muscle_mass_or_low_generation",
+    "signal_id": "signal_creatinine_low",
+    "research_domain": "metabolic",
+    "primary_marker": {
+      "biomarker_id": "creatinine",
+      "rationale": "Low creatinine commonly reflects reduced creatinine generation from low muscle mass or reduced intake rather than a primary renal disorder, though context is needed.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "egfr",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Creatinine-based eGFR may appear higher when creatinine generation is low rather than filtration being truly increased."
+      },
+      {
+        "biomarker_id": "albumin",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low albumin can support a frailty, undernutrition, or chronic illness context when creatinine is low."
+      },
+      {
+        "biomarker_id": "cystatin_c",
+        "expected_direction": "either",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Cystatin C helps distinguish low creatinine due to low generation from a genuinely preserved filtration state."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_low_muscle_mass_or_frailty",
+        "rank": 1,
+        "physiological_claim": "Low creatinine may reflect low muscle mass, frailty, or reduced creatinine generation rather than unusually high renal clearance.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Low creatinine is not usually interpreted as a direct disease marker without body composition context."
+        ],
+        "missing_data": {
+          "policy": "Review body habitus, age, nutritional state, and cystatin C before assigning renal significance to a low creatinine value."
+        },
+        "supporting_marker_refs": [
+          "albumin",
+          "cystatin_c",
+          "egfr"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_albumin_weakens_frailty_frame",
+            "marker_reference": "albumin",
+            "contradiction_rationale": "A well-maintained albumin reduces the plausibility of significant frailty or severe sarcopenia as the primary driver of low creatinine, as clinically significant muscle wasting is typically accompanied by protein-energy deficiency reflected in albumin.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_dilution_or_low_protein_intake_context",
+        "rank": 2,
+        "physiological_claim": "Low creatinine may also reflect dilutional or low protein intake context when broader nutritional or volume markers support that interpretation.",
+        "evidence_strength": "exploratory",
+        "caveats": [
+          "This frame is less specific and should remain secondary unless corroborated by nutritional or fluid data."
+        ],
+        "missing_data": {
+          "policy": "Assess diet, recent fluid balance, and albumin before treating low creatinine as clinically meaningful."
+        },
+        "supporting_marker_refs": [
+          "albumin",
+          "egfr"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_cystatin_c_not_low_generation",
+            "marker_reference": "cystatin_c",
+            "contradiction_rationale": "An abnormal cystatin C can redirect interpretation away from a simple low-generation explanation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_low_muscle_mass_or_frailty",
+        "hyp_dilution_or_low_protein_intake_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_cystatin_c_or_body_composition_context_review",
+        "rationale": "Cystatin C or body composition review helps clarify whether low creatinine mainly reflects low generation rather than unusual renal physiology."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_creatinine_low_with_albumin_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low creatinine coincides with low albumin, as this more strongly supports frailty, undernutrition, or low-generation context.",
+        "conditions": [
+          {
+            "metric_id": "albumin",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_hypoalbuminemia_review_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_kdigo_ckd_2024",
+          "paper_title": "KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease",
+          "journal": "Kidney International",
+          "year": 2024
+        },
+        {
+          "source_id": "source_hypoalbuminemia_review_2024",
+          "paper_title": "The clinical significance of hypoalbuminaemia",
+          "journal": "Clinical Nutrition ESPEN",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Low creatinine usually reflects low creatinine generation and can make creatinine-based kidney estimates appear more reassuring than they truly are.",
+      "threshold_notes": "No disease-defining low creatinine threshold is asserted; interpretation should remain laboratory and body-composition aware."
+    },
+    "narrative": {
+      "mechanism": "Creatinine concentration falls when muscle-derived generation is reduced or when dilution lowers the measured circulating concentration.",
+      "biological_pathway": "Creatine turnover, muscle mass, nutritional state, and creatinine-based estimation of kidney function.",
+      "interpretation": "This is usually a context signal rather than a kidney disease signal and is most useful for recognizing low-generation states.",
+      "implications": "Further assessment should usually focus on body composition, nutrition, and whether cystatin C tells a different renal story.",
+      "supporting_marker_roles": "Albumin contributes frailty or nutrition context, eGFR highlights creatinine-based estimation effects, and cystatin C helps discriminate low generation from true filtration status."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_crp_high_active_inflammatory_or_infective_state",
+    "signal_id": "signal_crp_high",
+    "research_domain": "inflammatory",
+    "primary_marker": {
+      "biomarker_id": "crp",
+      "rationale": "High CRP is a broadly responsive acute-phase marker that supports active inflammatory or infectious physiology but is not etiologically specific.",
+      "signal_system": "inflammatory"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "ferritin",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Ferritin can rise with inflammatory activation and supports an acute-phase context."
+      },
+      {
+        "biomarker_id": "neutrophils_abs",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Neutrophilia can corroborate an active inflammatory or infective state when CRP is elevated."
+      },
+      {
+        "biomarker_id": "procalcitonin",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Procalcitonin can help distinguish bacterial-predominant inflammatory states from nonbacterial inflammation."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_active_systemic_inflammation",
+        "rank": 1,
+        "physiological_claim": "High CRP may reflect active systemic inflammation from a wide range of infectious, inflammatory, or tissue injury states.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "CRP is highly nonspecific and should not be used alone to identify cause."
+        ],
+        "missing_data": {
+          "policy": "Review symptoms, time course, and parallel markers before narrowing etiology from CRP alone."
+        },
+        "supporting_marker_refs": [
+          "ferritin",
+          "neutrophils_abs",
+          "procalcitonin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_neutrophils_weakens_active_inflammation",
+            "marker_reference": "neutrophils_abs",
+            "contradiction_rationale": "A normal absolute neutrophil count weakens an active systemic inflammatory or infective state interpretation, as significant acute inflammation or bacterial infection typically drives neutrophilia alongside CRP elevation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_bacterial_predominant_inflammatory_state",
+        "rank": 2,
+        "physiological_claim": "High CRP may be part of a bacterial-predominant inflammatory pattern when supported by concordant markers and clinical context.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "CRP alone is not sufficient to attribute bacterial infection."
+        ],
+        "missing_data": {
+          "policy": "Use procalcitonin and clinical syndrome review if bacterial infection is being considered as the leading frame."
+        },
+        "supporting_marker_refs": [
+          "neutrophils_abs",
+          "procalcitonin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_no_procalcitonin_support",
+            "marker_reference": "procalcitonin",
+            "contradiction_rationale": "Lack of procalcitonin elevation weakens a bacterial-predominant interpretation relative to nonbacterial inflammation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_active_systemic_inflammation",
+        "hyp_bacterial_predominant_inflammatory_state"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_crp_with_clinical_focus_and_procalcitonin",
+        "rationale": "Repeat CRP with syndrome-focused testing and procalcitonin can help separate general inflammation from a bacterial-predominant pattern."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_crp_high_with_neutrophils_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high CRP coincides with high neutrophils, as this more strongly supports an active systemic inflammatory state.",
+        "conditions": [
+          {
+            "metric_id": "neutrophils_abs",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_hscrp_circulation_2003"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_hscrp_circulation_2003",
+          "paper_title": "C-Reactive Protein",
+          "journal": "Circulation",
+          "year": 2003
+        }
+      ],
+      "physiological_claim": "CRP is a responsive acute-phase protein that rises in many inflammatory and infectious states but remains nonspecific without clinical context.",
+      "threshold_notes": "No disease-specific CRP threshold is asserted here because interpretation depends on context, trajectory, and competing causes."
+    },
+    "narrative": {
+      "mechanism": "Hepatic CRP production increases rapidly in response to inflammatory cytokine signaling and tissue injury.",
+      "biological_pathway": "Acute-phase response, innate immune activation, cytokine signaling, and systemic inflammatory amplification.",
+      "interpretation": "This is a broad activity signal that supports inflammation or infection but does not by itself identify source or cause.",
+      "implications": "Trajectory, clinical syndrome, and differential inflammatory markers usually determine whether the pattern reflects infection, sterile inflammation, or tissue injury.",
+      "supporting_marker_roles": "Neutrophils corroborate active inflammation, ferritin supports acute-phase biology, and procalcitonin helps discriminate bacterial-predominant inflammation."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_crp_high_residual_cardiometabolic_inflammatory_risk",
+    "signal_id": "signal_crp_high",
+    "research_domain": "vascular",
+    "primary_marker": {
+      "biomarker_id": "crp",
+      "rationale": "High CRP can also mark residual inflammatory risk in cardiometabolic disease, especially when elevation persists outside an acute illness frame.",
+      "signal_system": "vascular"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "hba1c_pct",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Higher HbA1c can support a chronic metabolic-inflammatory context when CRP is persistently elevated."
+      },
+      {
+        "biomarker_id": "triglycerides",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Hypertriglyceridemia can corroborate an insulin-resistant cardiometabolic pattern associated with higher inflammatory burden."
+      },
+      {
+        "biomarker_id": "procalcitonin",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "A non-elevated procalcitonin can help redirect interpretation away from an acute bacterial process toward noninfectious inflammatory risk."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_residual_inflammatory_cardiometabolic_risk",
+        "rank": 1,
+        "physiological_claim": "Persistently high CRP may support residual inflammatory risk in a cardiometabolic phenotype rather than an acute infectious process.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This frame is most defensible when elevation is persistent and acute illness has been excluded."
+        ],
+        "missing_data": {
+          "policy": "Confirm persistence and exclude acute infection before interpreting CRP as a chronic cardiometabolic risk marker."
+        },
+        "supporting_marker_refs": [
+          "hba1c_pct",
+          "triglycerides",
+          "procalcitonin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_elevated_procalcitonin_redirects_from_cardiometabolic",
+            "marker_reference": "procalcitonin",
+            "contradiction_rationale": "An elevated procalcitonin redirects interpretation away from chronic residual cardiometabolic inflammatory risk and toward active infection or acute inflammation as the driver of CRP elevation.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_obesity_insulin_resistance_related_inflammation",
+        "rank": 2,
+        "physiological_claim": "High CRP may reflect chronic low-grade inflammation associated with obesity and insulin resistance when metabolic markers are concordant.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "The signal is associative and should not be overstated as a causal diagnosis."
+        ],
+        "missing_data": {
+          "policy": "Review weight, glycemia, and lipid pattern before assigning a chronic metabolic-inflammatory explanation."
+        },
+        "supporting_marker_refs": [
+          "hba1c_pct",
+          "triglycerides"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_hba1c_weakens_ir_inflammation",
+            "marker_reference": "hba1c_pct",
+            "contradiction_rationale": "A normal HbA1c weakens an obesity or insulin resistance driven chronic inflammation interpretation, as significant metabolic inflammatory activation typically manifests with concurrent glycaemic dysregulation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_residual_inflammatory_cardiometabolic_risk",
+        "hyp_obesity_insulin_resistance_related_inflammation"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_hscrp_outside_acute_illness",
+        "rationale": "Repeating hs-CRP outside acute illness helps determine whether the elevation reflects persistent inflammatory risk rather than a transient infection."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_crp_high_with_hba1c_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high CRP coincides with high HbA1c, as this more strongly supports a chronic cardiometabolic inflammatory pattern.",
+        "conditions": [
+          {
+            "metric_id": "hba1c_pct",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_hscrp_cv_2025"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_hscrp_cv_2025",
+          "paper_title": "C-reactive protein and cardiovascular risk in the general population",
+          "journal": "European Heart Journal",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "Persistently elevated CRP is associated with higher cardiovascular risk and can mark residual inflammatory burden in cardiometabolic disease.",
+      "threshold_notes": "Interpretation should emphasize persistence and exclusion of acute illness rather than a single isolated inflammatory reading."
+    },
+    "narrative": {
+      "mechanism": "Chronic cytokine-driven inflammatory signaling can maintain modest CRP elevation in insulin resistance, adiposity, and atherosclerotic risk states.",
+      "biological_pathway": "Low-grade innate immune activation linked to adiposity, insulin resistance, endothelial dysfunction, and atheroinflammatory pathways.",
+      "interpretation": "This pattern is more useful for chronic risk context than for etiologic diagnosis when elevation is persistent and acute infection has been excluded.",
+      "implications": "Repeat measurement outside acute illness and review of metabolic markers are usually needed before treating CRP as residual inflammatory risk.",
+      "supporting_marker_roles": "HbA1c and triglycerides support cardiometabolic context, while procalcitonin helps distinguish chronic noninfectious inflammation from acute bacterial processes."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_ferritin_low_iron_store_depletion",
+    "signal_id": "signal_ferritin_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "ferritin",
+      "rationale": "Low ferritin is a direct indicator of depleted iron stores and is one of the most useful biochemical markers of iron deficiency.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "iron",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low serum iron can corroborate depleted available iron when ferritin is low."
+      },
+      {
+        "biomarker_id": "hemoglobin",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low hemoglobin supports progression from iron depletion toward iron-deficiency anemia."
+      },
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "any",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "optional",
+        "rationale": "A noninflammatory context helps preserve ferritin specificity for iron deficiency because ferritin rises as an acute-phase reactant."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_absolute_iron_deficiency",
+        "rank": 1,
+        "physiological_claim": "Low ferritin strongly supports absolute iron store depletion and is consistent with iron deficiency when interpreted with inflammation awareness.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Ferritin can be less specific when inflammation is present, but low ferritin remains highly informative for depletion."
+        ],
+        "missing_data": {
+          "policy": "Assess CRP or broader inflammatory context if there is concern that ferritin interpretation could be confounded."
+        },
+        "supporting_marker_refs": [
+          "iron",
+          "hemoglobin",
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_elevated_crp_complicates_absolute_deficiency",
+            "marker_reference": "crp",
+            "contradiction_rationale": "An elevated CRP complicates a straightforward absolute iron deficiency interpretation, as inflammation suppresses serum iron and can reduce ferritin interpretation reliability, requiring functional iron status markers to clarify the pattern.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_iron_depletion_before_overt_anemia",
+        "rank": 2,
+        "physiological_claim": "Low ferritin may indicate early iron depletion before hemoglobin has fallen enough to show overt anemia.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Normal hemoglobin does not exclude clinically relevant iron depletion."
+        ],
+        "missing_data": {
+          "policy": "Review red-cell indices and symptoms before dismissing low ferritin in the absence of anemia."
+        },
+        "supporting_marker_refs": [
+          "iron",
+          "hemoglobin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_hemoglobin_exceeds_preanaemic_frame",
+            "marker_reference": "hemoglobin",
+            "contradiction_rationale": "A clearly low haemoglobin indicates that iron depletion has already progressed to overt iron deficiency anaemia, contradicting a pre-anaemic depletion interpretation and placing the finding in a more advanced deficiency stage.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_absolute_iron_deficiency",
+        "hyp_iron_depletion_before_overt_anemia"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_transferrin_saturation_and_cbc",
+        "rationale": "Transferrin saturation and CBC help confirm iron-deficient erythropoiesis and determine whether low ferritin is already affecting hematologic output."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_ferritin_low_with_hemoglobin_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low ferritin coincides with low hemoglobin, as this more strongly supports clinically significant iron-deficiency anemia rather than isolated iron depletion.",
+        "conditions": [
+          {
+            "metric_id": "hemoglobin",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_bsg_iron_guideline_2021"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_bsg_iron_guideline_2021",
+          "paper_title": "British Society of Gastroenterology guidelines for the management of iron deficiency anaemia in adults",
+          "journal": "Gut",
+          "year": 2021
+        },
+        {
+          "source_id": "source_iron_deficiency_review_2020",
+          "paper_title": "Diagnosis and management of iron deficiency in chronic inflammatory conditions",
+          "journal": "Hematology ASH Education Program",
+          "year": 2020
+        }
+      ],
+      "physiological_claim": "Low ferritin is a well-supported indicator of depleted iron stores and is among the more informative laboratory markers of absolute iron deficiency when inflammatory context is considered.",
+      "threshold_notes": "No extra numeric cutoff is asserted here because laboratory methods and inflammatory context affect interpretation."
+    },
+    "narrative": {
+      "mechanism": "Ferritin falls as stored iron becomes depleted and available reserve for erythropoiesis contracts.",
+      "biological_pathway": "Body iron storage, reticuloendothelial ferritin reserve, and iron supply to erythropoiesis.",
+      "interpretation": "This is a well-established nutrient-storage deficiency signal in routine testing and gains specificity for iron depletion when interpreted with inflammatory awareness.",
+      "implications": "The key follow-on task is usually to confirm functional iron restriction and determine whether the depletion has already impaired erythropoiesis.",
+      "supporting_marker_roles": "Serum iron and hemoglobin corroborate depletion and hematologic impact, while CRP helps differentiate true low stores from inflammatory distortion."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_ferritin_high_iron_overload_context",
+    "signal_id": "signal_ferritin_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "ferritin",
+      "rationale": "High ferritin can reflect increased iron stores, but interpretation requires discrimination from inflammatory hyperferritinemia.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "transferrin_saturation",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "specialist",
+        "rationale": "Raised transferrin saturation supports increased circulating iron availability and strengthens an iron overload frame."
+      },
+      {
+        "biomarker_id": "alt",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Liver enzyme abnormalities can support hepatic iron deposition or parallel liver injury in high-ferritin states."
+      },
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "CRP helps distinguish inflammatory hyperferritinemia from ferritin elevation driven mainly by iron overload."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_iron_overload_or_excess_storage",
+        "rank": 1,
+        "physiological_claim": "High ferritin may reflect increased iron stores when transferrin saturation is also elevated and inflammatory explanation is less compelling.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Ferritin alone is insufficient to diagnose iron overload because it rises in many noniron states."
+        ],
+        "missing_data": {
+          "policy": "Review transferrin saturation and inflammatory markers before attributing high ferritin to iron overload."
+        },
+        "supporting_marker_refs": [
+          "transferrin_saturation",
+          "alt",
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_elevated_crp_challenges_true_overload",
+            "marker_reference": "crp",
+            "contradiction_rationale": "An elevated CRP challenges a true iron overload or excess storage interpretation by indicating that high ferritin may reflect acute-phase inflammatory elevation rather than genuine iron accumulation, requiring transferrin saturation to clarify.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_hepatic_iron_related_context",
+        "rank": 2,
+        "physiological_claim": "High ferritin may sit within a hepatic iron-loading or mixed hepatic injury context when liver markers are also abnormal.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Liver disease can elevate ferritin through both iron-related and noniron mechanisms."
+        ],
+        "missing_data": {
+          "policy": "Assess liver enzymes and alcohol or metabolic liver context before assigning primary hereditary iron overload."
+        },
+        "supporting_marker_refs": [
+          "alt",
+          "transferrin_saturation",
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_alt_weakens_hepatic_iron_context",
+            "marker_reference": "alt",
+            "contradiction_rationale": "A normal ALT weakens a hepatic iron-related ferritin elevation interpretation, as clinically significant hepatic iron deposition or hepatic disease contributing to ferritin release is typically accompanied by hepatocellular injury markers.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_iron_overload_or_excess_storage",
+        "hyp_hepatic_iron_related_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_transferrin_saturation_repeat_ferritin",
+        "rationale": "Transferrin saturation with repeat ferritin helps separate iron overload from nonspecific ferritin elevation."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_ferritin_high_with_transferrin_saturation_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high ferritin coincides with high transferrin saturation, as this more strongly supports iron overload than inflammatory hyperferritinemia.",
+        "conditions": [
+          {
+            "metric_id": "transferrin_saturation",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_bsg_iron_guideline_2021"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_bsg_iron_guideline_2021",
+          "paper_title": "British Society of Gastroenterology guidelines for the management of iron deficiency anaemia in adults",
+          "journal": "Gut",
+          "year": 2021
+        }
+      ],
+      "physiological_claim": "Ferritin elevation is not specific for iron overload, but concordant transferrin saturation materially increases the plausibility of excess iron stores.",
+      "threshold_notes": "Interpretation should remain laboratory and context anchored rather than assigning iron overload from ferritin magnitude alone."
+    },
+    "narrative": {
+      "mechanism": "Ferritin rises with increased storage iron but also with inflammation, liver injury, and macrophage activation.",
+      "biological_pathway": "Iron storage homeostasis, transferrin saturation, hepatocellular handling of iron, and acute-phase ferritin regulation.",
+      "interpretation": "A high ferritin result becomes much more suggestive of iron loading when transferrin saturation is also elevated and inflammation is not the dominant frame.",
+      "implications": "The main next step is to distinguish true iron excess from inflammatory or hepatic hyperferritinemia.",
+      "supporting_marker_roles": "Transferrin saturation corroborates iron loading, ALT contributes hepatic context, and CRP helps differentiate iron overload from inflammatory ferritin elevation."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_ferritin_high_inflammatory_hyperferritinemia",
+    "signal_id": "signal_ferritin_high",
+    "research_domain": "inflammatory",
+    "primary_marker": {
+      "biomarker_id": "ferritin",
+      "rationale": "Ferritin is also an acute-phase reactant, so high ferritin may reflect inflammatory activation rather than iron excess.",
+      "signal_system": "inflammatory"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High CRP strongly supports an inflammatory acute-phase explanation for ferritin elevation."
+      },
+      {
+        "biomarker_id": "neutrophils_abs",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Neutrophilia can support active inflammatory physiology when ferritin is high."
+      },
+      {
+        "biomarker_id": "transferrin_saturation",
+        "expected_direction": "any",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "A non-elevated transferrin saturation helps redirect interpretation away from iron overload toward inflammatory hyperferritinemia."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_acute_phase_hyperferritinemia",
+        "rank": 1,
+        "physiological_claim": "High ferritin may reflect acute-phase inflammatory activation rather than excess iron stores when CRP is elevated and transferrin saturation is not raised.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Ferritin is biologically pleiotropic and should not be treated as an isolated iron marker when inflammation is present."
+        ],
+        "missing_data": {
+          "policy": "Review CRP and transferrin saturation before inferring excess iron from ferritin elevation."
+        },
+        "supporting_marker_refs": [
+          "crp",
+          "transferrin_saturation",
+          "neutrophils_abs"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_elevated_transferrin_saturation_challenges_inflammatory",
+            "marker_reference": "transferrin_saturation",
+            "contradiction_rationale": "An elevated transferrin saturation challenges a purely inflammatory hyperferritinemia interpretation, as inflammation typically suppresses transferrin saturation through iron sequestration; elevated saturation instead supports a true iron loading pattern.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_macrophage_activation_or_tissue_injury_context",
+        "rank": 2,
+        "physiological_claim": "High ferritin may also reflect macrophage activation or tissue injury context when inflammatory burden is substantial.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This frame remains nonspecific unless supported by the wider clinical syndrome."
+        ],
+        "missing_data": {
+          "policy": "Integrate severity markers and syndrome context before moving beyond a general inflammatory interpretation."
+        },
+        "supporting_marker_refs": [
+          "crp",
+          "neutrophils_abs"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_crp_weakens_macrophage_activation",
+            "marker_reference": "crp",
+            "contradiction_rationale": "A normal or mildly elevated CRP weakens a macrophage activation or significant tissue injury interpretation, as these processes typically drive substantial systemic inflammatory marker elevation alongside hyperferritinemia.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_acute_phase_hyperferritinemia",
+        "hyp_macrophage_activation_or_tissue_injury_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_crp_and_transferrin_saturation",
+        "rationale": "CRP and transferrin saturation help separate inflammatory hyperferritinemia from true iron overload."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_ferritin_high_with_crp_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high ferritin coincides with high CRP, as this more strongly supports clinically active inflammatory hyperferritinemia.",
+        "conditions": [
+          {
+            "metric_id": "crp",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_iron_deficiency_review_2020"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_iron_deficiency_review_2020",
+          "paper_title": "Diagnosis and management of iron deficiency in chronic inflammatory conditions",
+          "journal": "Hematology ASH Education Program",
+          "year": 2020
+        }
+      ],
+      "physiological_claim": "Ferritin commonly rises in inflammation and tissue injury, so elevation does not by itself establish increased iron stores.",
+      "threshold_notes": "No ferritin-only disease threshold is asserted because inflammatory state materially changes interpretation."
+    },
+    "narrative": {
+      "mechanism": "Inflammatory cytokines increase ferritin synthesis and iron sequestration, raising circulating ferritin independently of true iron excess.",
+      "biological_pathway": "Acute-phase signaling, macrophage iron sequestration, cytokine activation, and inflammatory tissue response.",
+      "interpretation": "This frame is often more plausible than iron overload when inflammation is evident and transferrin saturation is not raised.",
+      "implications": "The main next step is to differentiate acute-phase ferritin elevation from iron loading or severe hyperinflammatory syndromes.",
+      "supporting_marker_roles": "CRP corroborates inflammation, neutrophils support inflammatory activity, and transferrin saturation helps discriminate inflammation from iron overload."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_hdl_low_atherogenic_dyslipidemia",
+    "signal_id": "signal_hdl_low",
+    "research_domain": "lipid",
+    "primary_marker": {
+      "biomarker_id": "hdl",
+      "rationale": "Low HDL commonly accompanies atherogenic dyslipidemia and supports increased cardiometabolic risk when interpreted with the broader lipoprotein pattern.",
+      "signal_system": "lipid_transport"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "triglycerides",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "High triglycerides commonly accompany low HDL in atherogenic dyslipidemia."
+      },
+      {
+        "biomarker_id": "apob",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "specialist",
+        "rationale": "Higher apoB supports increased atherogenic particle burden when HDL is low."
+      },
+      {
+        "biomarker_id": "ldl",
+        "expected_direction": "any",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "LDL context helps distinguish isolated low HDL from a broader mixed dyslipidemic phenotype."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_atherogenic_particle_risk_context",
+        "rank": 1,
+        "physiological_claim": "Low HDL may support an atherogenic dyslipidemic phenotype, especially when apoB or other atherogenic lipids are also adverse.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "HDL concentration alone should not be treated as a stand-alone therapeutic target or causal diagnosis."
+        ],
+        "missing_data": {
+          "policy": "Interpret low HDL within the broader apoB, LDL, and triglyceride pattern rather than in isolation."
+        },
+        "supporting_marker_refs": [
+          "triglycerides",
+          "apob",
+          "ldl"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_triglycerides_weakens_atherogenic_dyslipidemia",
+            "marker_reference": "triglycerides",
+            "contradiction_rationale": "Normal triglycerides weaken a classic atherogenic dyslipidemia pattern, which typically requires concurrent hypertriglyceridemia to drive the HDL-lowering and small dense LDL particle burden associated with this frame.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_secondary_low_hdl_pattern",
+        "rank": 2,
+        "physiological_claim": "Low HDL may also reflect a secondary metabolic pattern rather than a primary HDL disorder when the broader lipid phenotype is mixed.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Low HDL is common in obesity, insulin resistance, and hypertriglyceridemia and is not specific."
+        ],
+        "missing_data": {
+          "policy": "Review triglycerides, glycemia, and secondary causes before inferring a primary HDL abnormality."
+        },
+        "supporting_marker_refs": [
+          "triglycerides",
+          "ldl"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_ldl_weakens_combined_atherogenic_burden",
+            "marker_reference": "ldl",
+            "contradiction_rationale": "A normal LDL reduces the clinical weight of a secondary combined atherogenic dyslipidemia frame, as the pattern is most clinically significant when low HDL is accompanied by elevated or borderline LDL particle burden.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_atherogenic_particle_risk_context",
+        "hyp_secondary_low_hdl_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_apob_or_non_hdl_cholesterol",
+        "rationale": "ApoB or non-HDL cholesterol helps determine whether low HDL sits within a higher atherogenic particle-burden phenotype."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_hdl_low_with_triglycerides_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low HDL coincides with high triglycerides, as this more strongly supports an atherogenic dyslipidemic pattern.",
+        "conditions": [
+          {
+            "metric_id": "triglycerides",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_esc_dyslipidaemia_2019"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_esc_dyslipidaemia_2019",
+          "paper_title": "2019 ESC/EAS Guidelines for the management of dyslipidaemias",
+          "journal": "European Heart Journal",
+          "year": 2019
+        }
+      ],
+      "physiological_claim": "Low HDL is best interpreted as part of a wider dyslipidemic pattern rather than as an isolated disease signal.",
+      "threshold_notes": "No HDL-specific disease threshold beyond laboratory abnormality is asserted; particle-burden context is more informative."
+    },
+    "narrative": {
+      "mechanism": "HDL falls in insulin-resistant and triglyceride-rich states where lipoprotein exchange and catabolism alter HDL concentration.",
+      "biological_pathway": "Reverse cholesterol transport, triglyceride-rich lipoprotein metabolism, and atherogenic particle interactions.",
+      "interpretation": "This pattern supports cardiometabolic dyslipidemia most strongly when other atherogenic markers are also unfavorable.",
+      "implications": "The next step is usually to determine whether low HDL reflects a broader apoB-rich phenotype rather than treating HDL alone as the primary problem.",
+      "supporting_marker_roles": "Triglycerides support the mechanism, apoB corroborates atherogenic burden, and LDL helps differentiate isolated low HDL from broader mixed dyslipidemia."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_hdl_low_hypertriglyceridemic_insulin_resistance_pattern",
+    "signal_id": "signal_hdl_low",
+    "research_domain": "metabolic",
+    "primary_marker": {
+      "biomarker_id": "hdl",
+      "rationale": "Low HDL frequently appears within insulin-resistant metabolic patterns, particularly when paired with hypertriglyceridemia and adverse glycemia.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "triglycerides",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High triglycerides can corroborate an insulin-resistant low-HDL pattern when the broader metabolic context is consistent."
+      },
+      {
+        "biomarker_id": "hba1c_pct",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Higher HbA1c can support impaired glycemic regulation within a low-HDL metabolic phenotype."
+      },
+      {
+        "biomarker_id": "ldl",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "LDL helps distinguish a mixed hyperlipidemic state from a more classic hypertriglyceridemic insulin-resistant low-HDL phenotype."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_insulin_resistance_related_low_hdl",
+        "rank": 1,
+        "physiological_claim": "Low HDL may reflect insulin resistance and disturbed triglyceride-rich lipoprotein metabolism when triglycerides and glycemia are also adverse.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This remains a pattern interpretation rather than a direct diagnostic statement about insulin resistance."
+        ],
+        "missing_data": {
+          "policy": "Review glycemia, waist-related measures, and triglycerides before attributing low HDL mainly to insulin resistance."
+        },
+        "supporting_marker_refs": [
+          "triglycerides",
+          "hba1c_pct",
+          "ldl"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_hba1c_weakens_insulin_resistance_context",
+            "marker_reference": "hba1c_pct",
+            "contradiction_rationale": "A normal HbA1c weakens an insulin resistance driven low HDL interpretation, as significant insulin resistance typically impairs glycaemic regulation alongside its adverse lipoprotein effects.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_metabolic_syndrome_lipoprotein_pattern",
+        "rank": 2,
+        "physiological_claim": "Low HDL may support a metabolic-syndrome-type lipoprotein pattern when combined with hypertriglyceridemia and other metabolic abnormalities.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "HDL is supportive within the pattern but not independently diagnostic."
+        ],
+        "missing_data": {
+          "policy": "Assess blood pressure, glycemia, and anthropometric context if a broader metabolic syndrome frame is being considered."
+        },
+        "supporting_marker_refs": [
+          "triglycerides",
+          "hba1c_pct"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_ldl_weakens_metabolic_syndrome_pattern",
+            "marker_reference": "ldl",
+            "contradiction_rationale": "A normal LDL reduces the coherence of a full metabolic syndrome lipoprotein pattern, as the syndrome characteristically involves multiple concurrent dyslipidaemic features beyond low HDL alone.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_insulin_resistance_related_low_hdl",
+        "hyp_metabolic_syndrome_lipoprotein_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_fasting_triglycerides_and_glycemic_review",
+        "rationale": "Fasting triglycerides and glycemic review help determine whether low HDL belongs to a broader insulin-resistant metabolic pattern."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_hdl_low_with_hba1c_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low HDL coincides with high HbA1c, as this more strongly supports a cardiometabolic low-HDL pattern with impaired glycemic context.",
+        "conditions": [
+          {
+            "metric_id": "hba1c_pct",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_esc_dyslipidaemia_2019"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_esc_dyslipidaemia_2019",
+          "paper_title": "2019 ESC/EAS Guidelines for the management of dyslipidaemias",
+          "journal": "European Heart Journal",
+          "year": 2019
+        }
+      ],
+      "physiological_claim": "Low HDL often travels with insulin resistance and hypertriglyceridemia rather than functioning as a stand-alone lipid disorder.",
+      "threshold_notes": "No additional numeric cutoffs were asserted; pattern recognition is more informative than HDL magnitude alone."
+    },
+    "narrative": {
+      "mechanism": "Insulin resistance alters triglyceride-rich lipoprotein handling and HDL remodeling, often reducing circulating HDL concentration.",
+      "biological_pathway": "Triglyceride-rich lipoprotein exchange, hepatic lipase activity, HDL catabolism, and metabolic syndrome physiology.",
+      "interpretation": "This is a pattern-level metabolic interpretation that gains credibility when glycemia and triglycerides are concordantly abnormal.",
+      "implications": "Further interpretation should focus on whether the low HDL is part of a broader insulin-resistant phenotype rather than an isolated lipid finding.",
+      "supporting_marker_roles": "Triglycerides corroborate the pattern, HbA1c supports metabolic mechanism, and LDL helps differentiate mixed hyperlipidemia from classic low-HDL hypertriglyceridemia."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_ldl_high_atherogenic_ldl_burden",
+    "signal_id": "signal_ldl_high",
+    "research_domain": "vascular",
+    "primary_marker": {
+      "biomarker_id": "ldl",
+      "rationale": "High LDL is a core marker of atherogenic lipoprotein burden and supports increased cardiovascular risk when persistently elevated.",
+      "signal_system": "lipid_transport"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "apob",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "specialist",
+        "rationale": "Higher apoB corroborates greater atherogenic particle burden when LDL is elevated."
+      },
+      {
+        "biomarker_id": "non_hdl_cholesterol",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "specialist",
+        "rationale": "Non-HDL cholesterol supports a broader burden of apoB-containing lipoproteins."
+      },
+      {
+        "biomarker_id": "triglycerides",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Triglycerides help distinguish relatively isolated LDL-driven risk from mixed dyslipidemia with remnant-rich particles."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_primary_atherogenic_ldl_excess",
+        "rank": 1,
+        "physiological_claim": "High LDL may reflect an atherogenic LDL-predominant lipid pattern associated with increased cardiovascular risk.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "LDL should be interpreted within total apoB burden and overall risk context."
+        ],
+        "missing_data": {
+          "policy": "Review apoB or non-HDL cholesterol to determine whether LDL elevation represents broader particle excess."
+        },
+        "supporting_marker_refs": [
+          "apob",
+          "non_hdl_cholesterol",
+          "triglycerides"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_apob_weakens_particle_excess_frame",
+            "marker_reference": "apob",
+            "contradiction_rationale": "A normal apoB despite elevated LDL cholesterol suggests fewer but larger LDL particles rather than true atherogenic particle excess, weakening a high-risk particle burden interpretation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_mixed_apob_rich_dyslipidemia",
+        "rank": 2,
+        "physiological_claim": "High LDL may also sit within a broader mixed apoB-rich dyslipidemia when triglycerides are also elevated.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Particle burden may be broader than triglycerides alone suggest."
+        ],
+        "missing_data": {
+          "policy": "Assess triglycerides and apoB before assuming an isolated LDL-predominant phenotype."
+        },
+        "supporting_marker_refs": [
+          "triglycerides",
+          "apob"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_triglycerides_weakens_mixed_dyslipidemia",
+            "marker_reference": "triglycerides",
+            "contradiction_rationale": "Normal triglycerides weaken a mixed apoB-rich dyslipidemia frame, as this pattern characteristically involves concurrent hypertriglyceridemia driving small dense LDL particle generation alongside elevated apoB.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_primary_atherogenic_ldl_excess",
+        "hyp_mixed_apob_rich_dyslipidemia"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_apob_or_non_hdl_confirmation",
+        "rationale": "ApoB or non-HDL cholesterol helps clarify whether high LDL reflects isolated LDL burden or broader apoB-rich dyslipidemia."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_ldl_high_with_apob_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high LDL coincides with high apoB, as this more strongly supports a materially elevated atherogenic particle burden.",
+        "conditions": [
+          {
+            "metric_id": "apob",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_esc_dyslipidaemia_2025"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_esc_dyslipidaemia_2019",
+          "paper_title": "2019 ESC/EAS Guidelines for the management of dyslipidaemias",
+          "journal": "European Heart Journal",
+          "year": 2019
+        },
+        {
+          "source_id": "source_esc_dyslipidaemia_2025",
+          "paper_title": "2025 Focused Update of the 2019 ESC/EAS Guidelines for the management of dyslipidaemias",
+          "journal": "Atherosclerosis",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "Persistently elevated LDL is a central atherogenic exposure marker and is most informative when considered alongside total apoB burden.",
+      "threshold_notes": "Risk interpretation should remain laboratory and risk-context anchored rather than inferred from LDL magnitude alone."
+    },
+    "narrative": {
+      "mechanism": "Excess LDL reflects increased circulating apoB-containing lipoprotein burden available for arterial retention.",
+      "biological_pathway": "ApoB lipoprotein production, LDL receptor clearance, arterial retention, and atherosclerotic plaque biology.",
+      "interpretation": "This is a well-established cardiovascular-risk signal, and concern is justified when the elevation is persistent and corroborated by apoB burden.",
+      "implications": "The main next step is usually to determine whether the phenotype is predominantly LDL-driven or part of broader mixed dyslipidemia.",
+      "supporting_marker_roles": "ApoB corroborates particle burden, non-HDL provides mechanism-level burden context, and triglycerides help distinguish LDL-predominant from mixed dyslipidemia."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_ldl_high_familial_hypercholesterolemia_context",
+    "signal_id": "signal_ldl_high",
+    "research_domain": "vascular",
+    "primary_marker": {
+      "biomarker_id": "ldl",
+      "rationale": "Markedly high LDL can raise suspicion for a familial or primary hypercholesterolemia context, particularly when discordant with secondary explanations.",
+      "signal_system": "lipid_transport"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "apob",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "specialist",
+        "rationale": "High apoB can corroborate a sustained primary atherogenic lipoprotein excess phenotype."
+      },
+      {
+        "biomarker_id": "tsh",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "TSH helps distinguish primary LDL elevation from secondary hypothyroid-related hypercholesterolemia."
+      },
+      {
+        "biomarker_id": "triglycerides",
+        "expected_direction": "any",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "optional",
+        "rationale": "Relatively normal triglycerides can fit an LDL-predominant phenotype more than a mixed dyslipidemia pattern."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_primary_or_familial_hypercholesterolemia_context",
+        "rank": 1,
+        "physiological_claim": "High LDL may support a primary or familial hypercholesterolemia context when elevation is marked, persistent, and not well explained by common secondary causes.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Definitive familial diagnosis requires family history, clinical criteria, and sometimes genetics."
+        ],
+        "missing_data": {
+          "policy": "Review thyroid status, secondary causes, and family history before assigning a primary inherited frame."
+        },
+        "supporting_marker_refs": [
+          "apob",
+          "tsh",
+          "triglycerides"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_elevated_tsh_challenges_primary_genetic_frame",
+            "marker_reference": "tsh",
+            "contradiction_rationale": "An elevated TSH challenges a primary or familial hypercholesterolaemia interpretation by identifying a reversible secondary cause of LDL elevation that should be corrected before attributing the pattern to genetic lipid disorder.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_secondary_hypothyroid_related_ldl_elevation",
+        "rank": 2,
+        "physiological_claim": "High LDL may instead reflect secondary hypothyroid-related lipid elevation when TSH is elevated.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Secondary causes should be excluded before inferring a primary inherited disorder."
+        ],
+        "missing_data": {
+          "policy": "Assess thyroid function and medication causes before escalating to a primary hypercholesterolemia interpretation."
+        },
+        "supporting_marker_refs": [
+          "tsh"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_triglycerides_weakens_hypothyroid_dyslipidemia",
+            "marker_reference": "triglycerides",
+            "contradiction_rationale": "Normal triglycerides alongside elevated LDL weakens a secondary hypothyroid-related dyslipidaemia interpretation, as overt hypothyroidism typically elevates both LDL and triglycerides through impaired lipoprotein clearance.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_primary_or_familial_hypercholesterolemia_context",
+        "hyp_secondary_hypothyroid_related_ldl_elevation"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_ldl_with_secondary_cause_review",
+        "rationale": "Repeat LDL with thyroid and secondary-cause review helps determine whether the pattern is primary or secondary."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_ldl_high_with_tsh_normal_apob_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high LDL coincides with high apoB, because that more strongly supports a persistent atherogenic particle phenotype than a trivial or transient elevation.",
+        "conditions": [
+          {
+            "metric_id": "apob",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_esc_dyslipidaemia_2025"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_esc_dyslipidaemia_2025",
+          "paper_title": "2025 Focused Update of the 2019 ESC/EAS Guidelines for the management of dyslipidaemias",
+          "journal": "Atherosclerosis",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "Marked LDL elevation can indicate a primary hypercholesterolemia context, but exclusion of secondary causes remains essential.",
+      "threshold_notes": "No familial-diagnosis cutoff is asserted here; interpretation remains context and persistence based."
+    },
+    "narrative": {
+      "mechanism": "Sustained LDL elevation can result from inherited LDL receptor pathway impairment or from secondary metabolic conditions such as hypothyroidism.",
+      "biological_pathway": "LDL receptor-mediated clearance, apoB particle persistence, inherited lipoprotein disorders, and secondary endocrine contributors.",
+      "interpretation": "This frame separates primary persistent LDL excess from common secondary explanations rather than claiming genetic diagnosis from a single LDL result.",
+      "implications": "The key task is to decide whether the elevation is likely primary and persistent or secondary to a reversible cause such as hypothyroidism.",
+      "supporting_marker_roles": "ApoB corroborates persistent particle excess, TSH performs true differential work against hypothyroid dyslipidemia, and triglycerides help phenotype the pattern."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_triglycerides_high_insulin_resistant_hypertriglyceridemia",
+    "signal_id": "signal_triglycerides_high",
+    "research_domain": "metabolic",
+    "primary_marker": {
+      "biomarker_id": "triglycerides",
+      "rationale": "High triglycerides commonly reflect insulin resistance, hepatic overproduction of triglyceride-rich lipoproteins, or impaired clearance.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "hdl",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low HDL commonly accompanies insulin-resistant hypertriglyceridemia."
+      },
+      {
+        "biomarker_id": "hba1c_pct",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Higher HbA1c supports impaired glycemic regulation within a metabolic hypertriglyceridemic state."
+      },
+      {
+        "biomarker_id": "ldl",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "LDL helps distinguish mixed hyperlipidemia from a more classic triglyceride-predominant insulin-resistant phenotype."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_insulin_resistant_hypertriglyceridemia",
+        "rank": 1,
+        "physiological_claim": "High triglycerides may reflect insulin-resistant overproduction or reduced clearance of triglyceride-rich lipoproteins when HDL is low and glycemia is adverse.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "This is a common metabolic pattern but still requires secondary-cause review."
+        ],
+        "missing_data": {
+          "policy": "Review glycemia, alcohol intake, and secondary causes before narrowing interpretation."
+        },
+        "supporting_marker_refs": [
+          "hdl",
+          "hba1c_pct",
+          "ldl"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_hba1c_weakens_insulin_resistance_tg_frame",
+            "marker_reference": "hba1c_pct",
+            "contradiction_rationale": "A normal HbA1c weakens an insulin resistance driven hypertriglyceridaemia interpretation, as significant metabolic insulin resistance typically manifests with glycaemic dysregulation alongside adverse triglyceride effects.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_mixed_dyslipidemic_particle_excess",
+        "rank": 2,
+        "physiological_claim": "High triglycerides may also sit within a broader mixed dyslipidemia if LDL and other apoB-containing particles are simultaneously elevated.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Particle burden may be broader than triglycerides alone suggest."
+        ],
+        "missing_data": {
+          "policy": "Assess LDL, non-HDL, or apoB if a mixed dyslipidemic phenotype is suspected."
+        },
+        "supporting_marker_refs": [
+          "ldl",
+          "hdl"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_ldl_weakens_mixed_particle_excess",
+            "marker_reference": "ldl",
+            "contradiction_rationale": "A normal LDL weakens a mixed dyslipidaemic particle excess interpretation, as the mixed pattern is most clinically significant when elevated triglycerides coincide with unfavourable LDL particle burden rather than appearing in isolation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_insulin_resistant_hypertriglyceridemia",
+        "hyp_mixed_dyslipidemic_particle_excess"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_fasting_repeat_triglycerides_and_glycemic_review",
+        "rationale": "Repeat fasting triglycerides with glycemic review helps confirm a persistent metabolic hypertriglyceridemic phenotype."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_triglycerides_high_with_hdl_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high triglycerides coincide with low HDL, as this more strongly supports an insulin-resistant hypertriglyceridemic pattern.",
+        "conditions": [
+          {
+            "metric_id": "hdl",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_esc_dyslipidaemia_2019"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_esc_dyslipidaemia_2019",
+          "paper_title": "2019 ESC/EAS Guidelines for the management of dyslipidaemias",
+          "journal": "European Heart Journal",
+          "year": 2019
+        }
+      ],
+      "physiological_claim": "High triglycerides often signal an insulin-resistant metabolic state and are most informative when interpreted with HDL and glycemia.",
+      "threshold_notes": "No severity threshold beyond laboratory abnormality is asserted here because clinical interpretation depends on fasting status and broader context."
+    },
+    "narrative": {
+      "mechanism": "Triglycerides rise when hepatic secretion of triglyceride-rich lipoproteins increases or peripheral clearance falls.",
+      "biological_pathway": "VLDL metabolism, insulin resistance, lipoprotein lipase activity, and triglyceride-rich lipoprotein handling.",
+      "interpretation": "This pattern is usually metabolic and syndromic rather than an isolated triglyceride disorder.",
+      "implications": "The main follow-on step is to determine whether the elevation is fasting and persistent and whether it belongs to a broader insulin-resistant phenotype.",
+      "supporting_marker_roles": "Low HDL corroborates the pattern, HbA1c supports metabolic mechanism, and LDL helps distinguish triglyceride-predominant from mixed dyslipidemia."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_triglycerides_high_severe_hypertriglyceridemia_context",
+    "signal_id": "signal_triglycerides_high",
+    "research_domain": "pancreatic",
+    "primary_marker": {
+      "biomarker_id": "triglycerides",
+      "rationale": "More marked triglyceride elevation can signal severe hypertriglyceridemia with risk implications that differ from routine cardiometabolic dyslipidemia.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "hdl",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low HDL frequently accompanies severe triglyceride-rich dyslipidemia."
+      },
+      {
+        "biomarker_id": "amylase",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "specialist",
+        "rationale": "Pancreatic enzymes can corroborate pancreatic involvement if symptoms suggest acute pancreatitis."
+      },
+      {
+        "biomarker_id": "ldl",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "optional",
+        "rationale": "Lower measured LDL can help distinguish severe triglyceride-rich phenotypes from more LDL-predominant dyslipidemia."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_severe_triglyceride_rich_lipoprotein_excess",
+        "rank": 1,
+        "physiological_claim": "High triglycerides may reflect a severe triglyceride-rich lipoprotein phenotype with implications beyond routine atherosclerotic risk assessment.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Fasting status and repeat confirmation remain important before concluding persistence."
+        ],
+        "missing_data": {
+          "policy": "Confirm fasting status and severity context before assigning a severe persistent phenotype."
+        },
+        "supporting_marker_refs": [
+          "hdl",
+          "ldl"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_elevated_ldl_redirects_from_pure_tg_excess",
+            "marker_reference": "ldl",
+            "contradiction_rationale": "A clearly elevated LDL alongside severe hypertriglyceridaemia redirects interpretation toward a mixed hyperlipidaemia pattern rather than a pure triglyceride-rich lipoprotein excess, suggesting a broader genetic or metabolic dyslipidaemia.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_hypertriglyceridemia_with_pancreatic_risk_context",
+        "rank": 2,
+        "physiological_claim": "High triglycerides may indicate a pancreatitis-relevant context when elevation is marked and pancreatic symptoms or enzyme changes are present.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Triglycerides alone do not diagnose pancreatitis and must be integrated with clinical features."
+        ],
+        "missing_data": {
+          "policy": "Review abdominal symptoms and pancreatic enzymes if acute pancreatic involvement is a concern."
+        },
+        "supporting_marker_refs": [
+          "amylase",
+          "hdl"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_amylase_weakens_pancreatic_risk_context",
+            "marker_reference": "amylase",
+            "contradiction_rationale": "A normal amylase weakens an active hypertriglyceridaemia-associated pancreatic risk context, as pancreatic inflammation driven by severe hypertriglyceridaemia typically elevates amylase.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_severe_triglyceride_rich_lipoprotein_excess",
+        "hyp_hypertriglyceridemia_with_pancreatic_risk_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_fasting_repeat_triglycerides_and_pancreatic_review",
+        "rationale": "Repeat fasting triglycerides and pancreatic review help distinguish persistent severe hypertriglyceridemia from transient elevation and identify pancreatic involvement when clinically relevant."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_triglycerides_high_with_amylase_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high triglycerides coincide with high amylase, as this more strongly supports a triglyceride-associated pancreatic injury context.",
+        "conditions": [
+          {
+            "metric_id": "amylase",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_esc_dyslipidaemia_2025"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_esc_dyslipidaemia_2025",
+          "paper_title": "2025 Focused Update of the 2019 ESC/EAS Guidelines for the management of dyslipidaemias",
+          "journal": "Atherosclerosis",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "More severe triglyceride elevation can carry pancreatitis-relevant implications and should not be interpreted only through a cardiovascular lens.",
+      "threshold_notes": "No universal disease cutoff is asserted here; severity framing remains laboratory and context based."
+    },
+    "narrative": {
+      "mechanism": "Marked accumulation of triglyceride-rich lipoproteins can alter plasma composition and, in the right context, contribute to pancreatic injury risk.",
+      "biological_pathway": "Chylomicron-rich or severe VLDL-rich states, impaired lipolysis, and triglyceride-associated pancreatic stress pathways.",
+      "interpretation": "This frame is used to separate routine metabolic hypertriglyceridemia from more severe triglyceride-rich states with different urgency and confirmatory needs.",
+      "implications": "The next step is usually to confirm fasting persistence and assess whether pancreatic involvement is clinically plausible.",
+      "supporting_marker_roles": "HDL adds phenotype context, amylase corroborates pancreatic involvement when present, and LDL helps distinguish severe triglyceride-rich patterns from LDL-predominant dyslipidemia."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_tsh_high_primary_hypothyroid_pattern",
+    "signal_id": "signal_tsh_high",
+    "research_domain": "thyroid",
+    "primary_marker": {
+      "biomarker_id": "tsh",
+      "rationale": "High TSH is a key marker of reduced thyroid hormone signaling at the pituitary level and commonly indicates a primary hypothyroid pattern when free T4 is low or low-normal.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "free_t4",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low free T4 strongly corroborates primary thyroid hormone deficiency when TSH is high."
+      },
+      {
+        "biomarker_id": "ldl",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "High LDL can support a metabolically relevant hypothyroid context."
+      },
+      {
+        "biomarker_id": "free_t3",
+        "expected_direction": "any",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Free T3 context helps distinguish early or subclinical TSH elevation from broader overt hypothyroid hormone deficiency."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_primary_hypothyroid_pattern",
+        "rank": 1,
+        "physiological_claim": "High TSH may reflect primary thyroid hormone deficiency, particularly when free T4 is low.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "TSH should be interpreted with free T4 rather than in isolation."
+        ],
+        "missing_data": {
+          "policy": "Review free T4 and repeat testing before distinguishing overt from subclinical hypothyroid patterns."
+        },
+        "supporting_marker_refs": [
+          "free_t4",
+          "free_t3",
+          "ldl"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_preserved_free_t4_weakens_overt_primary_hypothyroid",
+            "marker_reference": "free_t4",
+            "contradiction_rationale": "A preserved or normal free T4 alongside elevated TSH weakens an overt primary hypothyroid interpretation and supports a subclinical pattern, as overt primary hypothyroidism requires both TSH elevation and free T4 suppression below the reference range.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_subclinical_hypothyroid_pattern",
+        "rank": 2,
+        "physiological_claim": "High TSH may reflect a subclinical hypothyroid pattern when free thyroid hormone levels remain within range.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Subclinical and overt hypothyroid patterns should not be conflated."
+        ],
+        "missing_data": {
+          "policy": "Repeat TSH and free T4 to determine persistence and whether the pattern remains subclinical."
+        },
+        "supporting_marker_refs": [
+          "free_t4",
+          "free_t3"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_free_t3_challenges_subclinical_framing",
+            "marker_reference": "free_t3",
+            "contradiction_rationale": "A clearly low free T3 alongside elevated TSH challenges a purely subclinical hypothyroid interpretation by suggesting more significant thyroid hormone deficiency than the subclinical label typically implies, warranting reclassification toward overt or clinically relevant hypothyroidism.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_primary_hypothyroid_pattern",
+        "hyp_subclinical_hypothyroid_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_tsh_with_free_t4",
+        "rationale": "Repeat TSH with free T4 helps distinguish persistent subclinical elevation from overt primary hypothyroid physiology."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_tsh_high_with_free_t4_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high TSH coincides with low free T4, as this more strongly supports overt primary hypothyroid physiology.",
+        "conditions": [
+          {
+            "metric_id": "free_t4",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_ata_hyperthyroidism_2016"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_ata_hyperthyroidism_2016",
+          "paper_title": "2016 American Thyroid Association Guidelines for Diagnosis and Management of Hyperthyroidism and Other Causes of Thyrotoxicosis",
+          "journal": "Thyroid",
+          "year": 2016
+        }
+      ],
+      "physiological_claim": "High TSH is central to identifying a hypothyroid biochemical pattern, but overt versus subclinical interpretation depends on free T4.",
+      "threshold_notes": "Interpretation should remain pattern based rather than threshold embellished beyond laboratory abnormality."
+    },
+    "narrative": {
+      "mechanism": "Pituitary TSH secretion rises when thyroid hormone feedback becomes insufficient for physiologic demand.",
+      "biological_pathway": "Hypothalamic-pituitary-thyroid feedback regulation and systemic consequences of reduced thyroid hormone signaling.",
+      "interpretation": "This is a pattern-defining thyroid signal whose meaning depends primarily on the accompanying free T4 result.",
+      "implications": "The main follow-on task is to decide whether the pattern is overt or subclinical and whether it is persistent.",
+      "supporting_marker_roles": "Free T4 corroborates overt deficiency, LDL adds metabolic context, and free T3 helps discriminate early TSH elevation from broader hormone deficiency."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_tsh_low_thyrotoxic_pattern",
+    "signal_id": "signal_tsh_low",
+    "research_domain": "thyroid",
+    "primary_marker": {
+      "biomarker_id": "tsh",
+      "rationale": "Low or suppressed TSH is a key biochemical marker of thyrotoxic physiology when interpreted with circulating thyroid hormones.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "free_t4",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High free T4 corroborates biologically significant thyrotoxic hormone excess."
+      },
+      {
+        "biomarker_id": "free_t3",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "High free T3 can support T3-predominant or broader thyrotoxic physiology."
+      },
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "optional",
+        "rationale": "Inflammatory markers can help raise alternate thyroiditis or inflammatory contexts when TSH is low."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_overt_thyrotoxic_pattern",
+        "rank": 1,
+        "physiological_claim": "Low TSH may reflect overt thyrotoxic physiology when free T4 or free T3 is elevated.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "TSH suppression alone does not determine etiology."
+        ],
+        "missing_data": {
+          "policy": "Review free T4 and free T3 before classifying the pattern as overt or subclinical thyrotoxicosis."
+        },
+        "supporting_marker_refs": [
+          "free_t4",
+          "free_t3",
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_free_t4_weakens_overt_thyrotoxicosis",
+            "marker_reference": "free_t4",
+            "contradiction_rationale": "A normal free T4 alongside suppressed TSH weakens an overt thyrotoxic pattern and supports a subclinical thyrotoxicosis interpretation, as overt thyrotoxicosis requires measurable thyroid hormone elevation beyond the normal range.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_subclinical_or_early_thyrotoxic_pattern",
+        "rank": 2,
+        "physiological_claim": "Low TSH may reflect a subclinical or early thyrotoxic pattern when free thyroid hormones remain in range.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Suppressed TSH with normal hormones should not be overcalled as overt thyrotoxicosis."
+        ],
+        "missing_data": {
+          "policy": "Repeat the thyroid panel to determine persistence and whether hormone excess becomes overt."
+        },
+        "supporting_marker_refs": [
+          "free_t4",
+          "free_t3"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_elevated_free_t3_challenges_subclinical_frame",
+            "marker_reference": "free_t3",
+            "contradiction_rationale": "A clearly elevated free T3 alongside suppressed TSH challenges a subclinical or early thyrotoxicosis interpretation by indicating significant thyroid hormone excess already present in the biologically active T3 fraction, suggesting overt rather than subclinical thyrotoxicosis.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_overt_thyrotoxic_pattern",
+        "hyp_subclinical_or_early_thyrotoxic_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_tsh_with_free_t4_and_free_t3",
+        "rationale": "Repeat TSH with free T4 and free T3 helps determine whether the pattern is overt, subclinical, or transient."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_tsh_low_with_free_t4_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low TSH coincides with high free T4, as this more strongly supports overt thyrotoxic physiology.",
+        "conditions": [
+          {
+            "metric_id": "free_t4",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_ata_hyperthyroidism_2016"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_ata_hyperthyroidism_2016",
+          "paper_title": "2016 American Thyroid Association Guidelines for Diagnosis and Management of Hyperthyroidism and Other Causes of Thyrotoxicosis",
+          "journal": "Thyroid",
+          "year": 2016
+        }
+      ],
+      "physiological_claim": "Low TSH is a central biochemical sign of thyrotoxicosis, but the broader thyroid hormone pattern determines whether the state is overt or subclinical.",
+      "threshold_notes": "No extra numeric TSH cutoffs are asserted here beyond laboratory abnormality and hormonal patterning."
+    },
+    "narrative": {
+      "mechanism": "Pituitary TSH secretion is suppressed when circulating thyroid hormone signaling is excessive for physiologic demand.",
+      "biological_pathway": "Hypothalamic-pituitary-thyroid feedback suppression in overt, subclinical, or inflammatory thyroid hormone excess states.",
+      "interpretation": "This is a pattern-level thyroid abnormality whose significance depends on free hormone results and clinical context.",
+      "implications": "The next step is usually to classify the pattern as overt or subclinical and then investigate cause.",
+      "supporting_marker_roles": "Free T4 corroborates overt hormone excess, free T3 supports T3-predominant physiology, and CRP can help differentiate inflammatory thyroid contexts."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_vitamin_b12_low_b12_deficiency_context",
+    "signal_id": "signal_vitamin_b12_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "vitamin_b12",
+      "rationale": "Low vitamin B12 supports cobalamin deficiency, but clinical impact varies because deficiency can be hematologic, neurologic, or both.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "mcv",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Macrocytosis can corroborate hematologic impact of vitamin B12 deficiency."
+      },
+      {
+        "biomarker_id": "hemoglobin",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low hemoglobin can support ineffective erythropoiesis in clinically significant deficiency."
+      },
+      {
+        "biomarker_id": "folate",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Folate helps distinguish pure B12 deficiency from overlapping megaloblastic or nutritional deficiency states."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_cobalamin_deficiency",
+        "rank": 1,
+        "physiological_claim": "Low vitamin B12 may reflect true cobalamin deficiency with potential hematologic or neurologic consequences.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Symptoms and tissue-level impact can occur even when anemia is absent."
+        ],
+        "missing_data": {
+          "policy": "Review symptoms, blood count, and where needed metabolic confirmation before dismissing low B12 as clinically trivial."
+        },
+        "supporting_marker_refs": [
+          "mcv",
+          "hemoglobin",
+          "folate"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_mcv_weakens_advanced_cobalamin_deficiency",
+            "marker_reference": "mcv",
+            "contradiction_rationale": "A normal MCV weakens a clinically advanced cobalamin deficiency interpretation, as significant B12 deficiency typically impairs DNA synthesis in erythroid precursors and produces macrocytosis; absence of macrocytosis suggests earlier or less severe depletion.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_malabsorptive_or_autoimmune_b12_deficiency_context",
+        "rank": 2,
+        "physiological_claim": "Low vitamin B12 may indicate malabsorptive or autoimmune causes rather than simple dietary insufficiency when the pattern is persistent or clinically significant.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Etiology cannot be determined from serum B12 alone."
+        ],
+        "missing_data": {
+          "policy": "Assess diet, gastrointestinal history, and autoimmune context before assigning cause."
+        },
+        "supporting_marker_refs": [
+          "folate",
+          "mcv"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_folate_overlap",
+            "marker_reference": "folate",
+            "contradiction_rationale": "Low folate introduces an overlapping megaloblastic differential and reduces confidence in isolated B12 attribution.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_cobalamin_deficiency",
+        "hyp_malabsorptive_or_autoimmune_b12_deficiency_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_methylmalonic_acid_or_holotranscobalamin",
+        "rationale": "Methylmalonic acid or holotranscobalamin can help confirm physiologically relevant B12 deficiency when standard serum testing is equivocal."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_b12_low_with_mcv_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low vitamin B12 coincides with high MCV, as this more strongly supports clinically relevant megaloblastic impact of cobalamin deficiency.",
+        "conditions": [
+          {
+            "metric_id": "mcv",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_nice_b12_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_nice_b12_2024",
+          "paper_title": "Vitamin B12 deficiency in over 16s: diagnosis and management",
+          "journal": "NICE",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Low vitamin B12 is consistent with cobalamin deficiency, but interpretation should account for overlapping folate deficiency, symptoms, and confirmatory testing where needed.",
+      "threshold_notes": "No extra serum B12 cutoff is introduced here because assays and confirmatory pathways vary."
+    },
+    "narrative": {
+      "mechanism": "Cobalamin deficiency impairs DNA synthesis and methylation-dependent metabolic pathways, affecting hematopoiesis and neurologic function.",
+      "biological_pathway": "One-carbon metabolism, methylmalonate handling, DNA synthesis, and megaloblastic erythropoiesis.",
+      "interpretation": "This is a meaningful deficiency signal but still needs context to determine tissue impact and cause.",
+      "implications": "The main next step is to confirm physiologic relevance and determine whether the deficiency is nutritional, malabsorptive, or autoimmune.",
+      "supporting_marker_roles": "MCV corroborates hematologic expression, hemoglobin reflects impact on erythropoiesis, and folate helps differentiate overlapping megaloblastic deficiency states."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_vitamin_b12_high_supplementation_or_secondary_elevation",
+    "signal_id": "signal_vitamin_b12_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "vitamin_b12",
+      "rationale": "High vitamin B12 usually reflects supplementation or secondary elevation rather than a direct toxicity signal from the biomarker itself.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "alt",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Abnormal liver markers can support hepatic release or reduced clearance as a cause of high B12."
+      },
+      {
+        "biomarker_id": "creatinine",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Renal dysfunction can contribute to elevated circulating B12 concentrations."
+      },
+      {
+        "biomarker_id": "mcv",
+        "expected_direction": "any",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "optional",
+        "rationale": "Blood-count context can help distinguish supplementation or secondary elevation from an untreated deficiency picture with ineffective hematopoiesis."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_supplementation_or_recent_replacement",
+        "rank": 1,
+        "physiological_claim": "High vitamin B12 commonly reflects supplementation, replacement therapy, or recent exposure rather than a harmful standalone excess state, but secondary causes should be considered.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "An elevated concentration does not automatically indicate benefit or toxicity."
+        ],
+        "missing_data": {
+          "policy": "Review supplements, injections, and recent treatment history before investigating secondary causes."
+        },
+        "supporting_marker_refs": [
+          "mcv",
+          "alt",
+          "creatinine"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_elevated_alt_challenges_supplementation_only",
+            "marker_reference": "alt",
+            "contradiction_rationale": "An elevated ALT challenges a purely supplementation-related B12 elevation by introducing a hepatic release mechanism that could contribute to high circulating B12 independently of recent replacement.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_secondary_elevation_from_liver_kidney_or_hematologic_context",
+        "rank": 2,
+        "physiological_claim": "High vitamin B12 may also reflect secondary elevation in liver disease, kidney disease, or some hematologic disorders.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This frame is associative and should not be used as a diagnostic shortcut for malignancy."
+        ],
+        "missing_data": {
+          "policy": "Assess liver, kidney, and blood-count context before assigning pathological significance to a high B12 result."
+        },
+        "supporting_marker_refs": [
+          "alt",
+          "creatinine",
+          "mcv"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_creatinine_weakens_renal_secondary_elevation",
+            "marker_reference": "creatinine",
+            "contradiction_rationale": "A normal creatinine weakens a renal-driven secondary B12 elevation interpretation, as significant renal impairment contributing to B12 accumulation would typically be reflected in creatinine elevation and reduced filtration capacity.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_supplementation_or_recent_replacement",
+        "hyp_secondary_elevation_from_liver_kidney_or_hematologic_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_b12_with_supplement_review_and_basic_context_labs",
+        "rationale": "Repeat B12 with supplement review and basic liver, kidney, and blood-count context helps distinguish replacement-related elevation from secondary causes."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_b12_high_with_alt_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high vitamin B12 coincides with high ALT, as this more strongly supports a secondary hepatic context for the elevation.",
+        "conditions": [
+          {
+            "metric_id": "alt",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_macro_b12_2026"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_nice_b12_2024",
+          "paper_title": "Vitamin B12 deficiency in over 16s: diagnosis and management",
+          "journal": "NICE",
+          "year": 2024
+        },
+        {
+          "source_id": "source_macro_b12_2026",
+          "paper_title": "Unexplained Elevated Vitamin B12: Consider Macro-B12",
+          "journal": "International Journal of Laboratory Hematology",
+          "year": 2026
+        }
+      ],
+      "physiological_claim": "High vitamin B12 is often explained by supplementation or secondary disease context and should not be treated as a direct toxicity marker from concentration alone.",
+      "threshold_notes": "No toxicity threshold is asserted because the biomarker is most useful for context review rather than stand-alone hypervitaminosis diagnosis."
+    },
+    "narrative": {
+      "mechanism": "Circulating B12 can rise with exogenous replacement, altered binding proteins, liver release, or reduced renal clearance.",
+      "biological_pathway": "Cobalamin transport proteins, hepatic storage and release, renal handling, and treatment-related exposure.",
+      "interpretation": "This is usually a contextual finding and is most useful for checking replacement history and common secondary causes.",
+      "implications": "The next step is usually to review supplements first, then consider liver, kidney, or hematologic explanations if the elevation is unexplained.",
+      "supporting_marker_roles": "ALT and creatinine provide secondary-cause context, while blood-count features help differentiate benign supplementation-related elevation from other systemic patterns."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_vitamin_d_low_vitamin_d_deficiency",
+    "signal_id": "signal_vitamin_d_low",
+    "research_domain": "bone",
+    "primary_marker": {
+      "biomarker_id": "vitamin_d",
+      "rationale": "Low vitamin D most commonly reflects deficient or insufficient 25-hydroxyvitamin D status and is most clinically relevant for bone and mineral physiology.",
+      "signal_system": "nutritional"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "parathyroid_hormone",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "specialist",
+        "rationale": "Secondary hyperparathyroid response can support physiologically meaningful vitamin D deficiency."
+      },
+      {
+        "biomarker_id": "calcium",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low calcium can corroborate more biologically significant deficiency states."
+      },
+      {
+        "biomarker_id": "magnesium",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low magnesium can impair vitamin D handling and helps distinguish resistant correction or mixed mineral deficiency contexts."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_vitamin_d_deficiency_state",
+        "rank": 1,
+        "physiological_claim": "Low vitamin D may reflect true 25-hydroxyvitamin D deficiency or insufficiency with implications for bone and mineral metabolism.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Vitamin D status should not be overextended into broad disease claims beyond supported physiology."
+        ],
+        "missing_data": {
+          "policy": "Interpret the result within calcium, PTH, supplementation, and season or exposure context."
+        },
+        "supporting_marker_refs": [
+          "parathyroid_hormone",
+          "calcium",
+          "magnesium"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_pth_weakens_physiologically_significant_deficiency",
+            "marker_reference": "parathyroid_hormone",
+            "contradiction_rationale": "A normal PTH alongside low vitamin D weakens a physiologically significant deficiency interpretation, as clinically meaningful vitamin D deficiency typically stimulates compensatory secondary hyperparathyroidism to maintain calcium homeostasis.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_secondary_hyperparathyroid_mineral_response",
+        "rank": 2,
+        "physiological_claim": "Low vitamin D may be accompanied by a secondary mineral-regulatory response, especially when calcium handling is affected.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Not all low vitamin D states produce overt calcium abnormalities."
+        ],
+        "missing_data": {
+          "policy": "Review calcium and PTH before inferring physiologic impact beyond a low storage marker."
+        },
+        "supporting_marker_refs": [
+          "parathyroid_hormone",
+          "calcium"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_calcium_weakens_secondary_hyperPTH_response",
+            "marker_reference": "calcium",
+            "contradiction_rationale": "A normal calcium alongside elevated PTH weakens a clinically significant secondary hyperparathyroid mineral response interpretation, as the PTH elevation appears to be successfully maintaining calcium homeostasis without yet producing the hypocalcaemia that would indicate advanced mineral dysregulation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_vitamin_d_deficiency_state",
+        "hyp_secondary_hyperparathyroid_mineral_response"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_25ohd_with_calcium_and_pth",
+        "rationale": "Repeat 25-hydroxyvitamin D with calcium and PTH helps determine whether the low value is biologically consequential within mineral metabolism."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_vitamin_d_low_with_calcium_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low vitamin D coincides with low calcium, as this more strongly supports physiologically significant deficiency affecting mineral balance.",
+        "conditions": [
+          {
+            "metric_id": "calcium",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_ods_vitamin_d_2025"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_ods_vitamin_d_2025",
+          "paper_title": "Vitamin D - Health Professional Fact Sheet",
+          "journal": "NIH Office of Dietary Supplements",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "Low 25-hydroxyvitamin D is the standard indicator of deficient vitamin D status and is most clearly relevant to bone and mineral physiology.",
+      "threshold_notes": "Interpretation should remain 25-hydroxyvitamin-D based and assay aware rather than extended into unsupported disease-specific claims."
+    },
+    "narrative": {
+      "mechanism": "Vitamin D deficiency reduces intestinal calcium absorption and can trigger compensatory mineral-regulatory responses.",
+      "biological_pathway": "Cutaneous and dietary vitamin D supply, hepatic 25-hydroxylation, calcium absorption, and PTH-mediated mineral homeostasis.",
+      "interpretation": "This is a valid deficiency signal, but its main clinically defensible frame remains bone and mineral metabolism rather than broad nonspecific illness claims.",
+      "implications": "The next step is usually to determine whether the low status is accompanied by mineral-metabolism consequences or is an isolated low store marker.",
+      "supporting_marker_roles": "PTH supports mechanism-level response, calcium corroborates impact on mineral balance, and magnesium helps differentiate mixed deficiency or impaired correction contexts."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_vitamin_d_high_vitamin_d_excess_context",
+    "signal_id": "signal_vitamin_d_high",
+    "research_domain": "bone",
+    "primary_marker": {
+      "biomarker_id": "vitamin_d",
+      "rationale": "High vitamin D usually reflects supplementation excess or over-replacement and becomes clinically important mainly when calcium balance is affected.",
+      "signal_system": "endocrine"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "calcium",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High calcium corroborates clinically meaningful vitamin D excess physiology."
+      },
+      {
+        "biomarker_id": "creatinine",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Kidney function can provide context because hypercalcemia-related kidney effects may complicate significant vitamin D excess."
+      },
+      {
+        "biomarker_id": "parathyroid_hormone",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "Suppressed PTH helps distinguish vitamin D-mediated hypercalcemic physiology from PTH-driven calcium disorders."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_supplementation_related_vitamin_d_excess",
+        "rank": 1,
+        "physiological_claim": "High vitamin D may reflect supplementation-related excess, particularly when calcium is also elevated or replacement history is clear.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "A high vitamin D level alone does not establish symptomatic toxicity."
+        ],
+        "missing_data": {
+          "policy": "Review dose and calcium status before treating an isolated elevated vitamin D concentration as clinically dangerous."
+        },
+        "supporting_marker_refs": [
+          "calcium",
+          "parathyroid_hormone",
+          "creatinine"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_elevated_calcium_challenges_benign_supplementation",
+            "marker_reference": "calcium",
+            "contradiction_rationale": "An elevated calcium alongside high vitamin D challenges a benign supplementation-related elevation interpretation, as hypercalcaemia indicates the excess has reached a level with physiological consequences beyond asymptomatic laboratory abnormality.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_hypercalcemic_vitamin_d_excess_context",
+        "rank": 2,
+        "physiological_claim": "High vitamin D may indicate a clinically important excess state when paired with hypercalcemia and suppressed PTH.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Clinical significance depends more on calcium physiology than on vitamin D concentration alone."
+        ],
+        "missing_data": {
+          "policy": "Assess calcium and PTH before escalating from biochemical excess to clinically important toxicity context."
+        },
+        "supporting_marker_refs": [
+          "calcium",
+          "parathyroid_hormone"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_elevated_pth_challenges_vitamin_d_driven_hypercalcemia",
+            "marker_reference": "parathyroid_hormone",
+            "contradiction_rationale": "An elevated PTH alongside high calcium challenges a vitamin D excess driven hypercalcaemia interpretation, as primary hyperparathyroidism would provide an alternative and more common explanation for the calcium elevation.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_supplementation_related_vitamin_d_excess",
+        "hyp_hypercalcemic_vitamin_d_excess_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_calcium_pth_and_supplement_review",
+        "rationale": "Calcium, PTH, and supplement review help determine whether high vitamin D is benign over-replacement or clinically meaningful excess physiology."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_vitamin_d_high_with_calcium_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high vitamin D coincides with high calcium, as this more strongly supports clinically important vitamin D excess physiology.",
+        "conditions": [
+          {
+            "metric_id": "calcium",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_ods_vitamin_d_2025"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_ods_vitamin_d_2025",
+          "paper_title": "Vitamin D - Health Professional Fact Sheet",
+          "journal": "NIH Office of Dietary Supplements",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "High vitamin D is most clinically relevant when it is accompanied by hypercalcemia or clear over-replacement context.",
+      "threshold_notes": "No toxicity cutoff is asserted because assays and clinical significance depend heavily on the associated calcium physiology."
+    },
+    "narrative": {
+      "mechanism": "Excess vitamin D increases calcium absorption and can suppress PTH, with toxicity risk becoming relevant mainly when calcium balance is disturbed.",
+      "biological_pathway": "Vitamin D exposure, intestinal calcium absorption, PTH suppression, and calcium-related renal effects.",
+      "interpretation": "This is usually a supplementation-context signal rather than a disease label and becomes more important when calcium is abnormal.",
+      "implications": "The next step is to determine whether the high value is simply from replacement or whether calcium physiology indicates clinically important excess.",
+      "supporting_marker_roles": "Calcium corroborates excess physiology, creatinine adds kidney-effect context, and low PTH helps distinguish vitamin-D-mediated from PTH-mediated hypercalcemic states."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_magnesium_low_hypomagnesemia",
+    "signal_id": "signal_magnesium_low",
+    "research_domain": "electrolyte",
+    "primary_marker": {
+      "biomarker_id": "magnesium",
+      "rationale": "Low magnesium is a clinically relevant electrolyte abnormality that can affect neuromuscular, cardiac, and mineral-regulatory physiology.",
+      "signal_system": "mineral"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "potassium",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low potassium commonly coexists with hypomagnesemia and can support clinically important electrolyte depletion."
+      },
+      {
+        "biomarker_id": "calcium",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low calcium can reflect impaired PTH secretion or response in more significant magnesium deficiency."
+      },
+      {
+        "biomarker_id": "creatinine",
+        "expected_direction": "any",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "optional",
+        "rationale": "Kidney function helps distinguish renal wasting or treatment implications from low magnesium due mainly to gastrointestinal or intake factors."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_true_hypomagnesemia_with_electrolyte_instability",
+        "rank": 1,
+        "physiological_claim": "Low magnesium may represent true hypomagnesemia with consequences for accompanying potassium and calcium balance.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Clinical impact depends on severity and chronicity as well as associated electrolyte abnormalities."
+        ],
+        "missing_data": {
+          "policy": "Review potassium, calcium, medications, and gastrointestinal losses before treating the result as isolated."
+        },
+        "supporting_marker_refs": [
+          "potassium",
+          "calcium",
+          "creatinine"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_potassium_weakens_electrolyte_instability",
+            "marker_reference": "potassium",
+            "contradiction_rationale": "A normal potassium weakens a clinically significant electrolyte instability pattern, as hypomagnesaemia severe enough to cause systemic instability frequently co-exists with refractory hypokalaemia.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_renal_or_gastrointestinal_magnesium_loss_context",
+        "rank": 2,
+        "physiological_claim": "Low magnesium may reflect renal wasting or gastrointestinal loss rather than isolated low intake alone.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Etiology cannot be determined from serum magnesium alone."
+        ],
+        "missing_data": {
+          "policy": "Review diuretics, proton pump inhibitors, diarrhea, and renal context before assigning cause."
+        },
+        "supporting_marker_refs": [
+          "creatinine",
+          "potassium",
+          "calcium"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_creatinine_weakens_renal_loss_context",
+            "marker_reference": "creatinine",
+            "contradiction_rationale": "A normal creatinine reduces the likelihood of renal tubular dysfunction as the driver of magnesium wasting, making gastrointestinal loss or dietary insufficiency relatively more plausible explanations.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_true_hypomagnesemia_with_electrolyte_instability",
+        "hyp_renal_or_gastrointestinal_magnesium_loss_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_magnesium_with_potassium_and_calcium",
+        "rationale": "Repeat magnesium with potassium and calcium helps determine biological significance and whether multisystem electrolyte consequences are present."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_magnesium_low_with_potassium_low",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low magnesium coincides with low potassium, as this more strongly supports clinically relevant electrolyte depletion rather than an isolated biochemical abnormality.",
+        "conditions": [
+          {
+            "metric_id": "potassium",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_magnesium_core_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_magnesium_core_2024",
+          "paper_title": "Magnesium Disorders: Core Curriculum 2024",
+          "journal": "American Journal of Kidney Diseases",
+          "year": 2024
+        },
+        {
+          "source_id": "source_hypomagnesaemia_guideline_2024",
+          "paper_title": "Hypomagnesaemia – a guide for GPs",
+          "journal": "Royal United Hospitals Bath NHS Foundation Trust",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Low magnesium is clinically important because it commonly coexists with other electrolyte abnormalities and can worsen their correction.",
+      "threshold_notes": "No universal severity threshold is asserted here beyond laboratory abnormality because impact depends on associated electrolytes and symptoms."
+    },
+    "narrative": {
+      "mechanism": "Magnesium depletion impairs membrane stability, potassium handling, and calcium-regulatory physiology.",
+      "biological_pathway": "Renal tubular handling, gastrointestinal absorption, neuromuscular excitability, and PTH-dependent calcium regulation.",
+      "interpretation": "This is a clinically relevant electrolyte abnormality rather than a trivial finding, particularly when potassium or calcium are also abnormal.",
+      "implications": "The main next step is to identify whether there are parallel electrolyte disturbances and whether the likely driver is renal loss, gastrointestinal loss, or medication-related.",
+      "supporting_marker_roles": "Potassium corroborates clinically important depletion, calcium supports mechanism-level mineral effects, and creatinine helps with differential context around renal handling."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_magnesium_high_hypermagnesemia_context",
+    "signal_id": "signal_magnesium_high",
+    "research_domain": "electrolyte",
+    "primary_marker": {
+      "biomarker_id": "magnesium",
+      "rationale": "High magnesium usually reflects impaired renal excretion or exogenous magnesium load and is most clinically relevant in renal dysfunction or excessive intake contexts.",
+      "signal_system": "mineral"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "creatinine",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High creatinine corroborates impaired renal excretion as a common explanation for hypermagnesemia."
+      },
+      {
+        "biomarker_id": "calcium",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low calcium can coexist and support clinically meaningful mineral and neuromuscular effects in some cases."
+      },
+      {
+        "biomarker_id": "potassium",
+        "expected_direction": "any",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "optional",
+        "rationale": "Potassium context can help separate broad renal electrolyte failure from a more isolated magnesium-loading state."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_reduced_renal_magnesium_excretion",
+        "rank": 1,
+        "physiological_claim": "High magnesium may reflect impaired renal excretion, particularly when creatinine is elevated.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Mild elevation can also occur from exogenous magnesium exposure without severe symptoms."
+        ],
+        "missing_data": {
+          "policy": "Review kidney function and magnesium-containing medications or supplements before assigning broader pathology."
+        },
+        "supporting_marker_refs": [
+          "creatinine",
+          "calcium",
+          "potassium"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_creatinine_weakens_renal_retention",
+            "marker_reference": "creatinine",
+            "contradiction_rationale": "A normal creatinine weakens a reduced renal magnesium excretion interpretation, as clinically significant renal retention of magnesium is uncommon in the presence of preserved glomerular filtration.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_exogenous_magnesium_load",
+        "rank": 2,
+        "physiological_claim": "High magnesium may also reflect exogenous load from supplements, laxatives, or antacids, especially when renal clearance is limited.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Concentration alone does not determine symptom burden."
+        ],
+        "missing_data": {
+          "policy": "Review intake and renal reserve before interpreting high magnesium as a severe toxicity state."
+        },
+        "supporting_marker_refs": [
+          "creatinine",
+          "potassium"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_elevated_potassium_challenges_exogenous_only_frame",
+            "marker_reference": "potassium",
+            "contradiction_rationale": "A concurrent hyperkalaemia alongside hypermagnesaemia challenges a purely exogenous magnesium load interpretation by suggesting a broader renal excretory impairment affecting multiple electrolytes rather than intake excess alone.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_reduced_renal_magnesium_excretion",
+        "hyp_exogenous_magnesium_load"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_magnesium_with_renal_function_and_exposure_review",
+        "rationale": "Repeat magnesium with renal function and exposure review helps separate reduced excretion from reversible exogenous loading."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_magnesium_high_with_creatinine_high",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high magnesium coincides with high creatinine, as this more strongly supports impaired renal excretion as the driver of hypermagnesemia.",
+        "conditions": [
+          {
+            "metric_id": "creatinine",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_magnesium_core_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_magnesium_core_2024",
+          "paper_title": "Magnesium Disorders: Core Curriculum 2024",
+          "journal": "American Journal of Kidney Diseases",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Hypermagnesemia is most often a renal-excretion or exogenous-load problem rather than a primary endocrine disorder.",
+      "threshold_notes": "No toxicity cutoff is asserted here because symptom severity depends on concentration, kidney function, and exposure context."
+    },
+    "narrative": {
+      "mechanism": "Serum magnesium rises when filtered magnesium excretion is impaired or magnesium intake exceeds excretory capacity.",
+      "biological_pathway": "Renal magnesium handling, gastrointestinal exposure, and neuromuscular and cardiovascular effects of magnesium excess.",
+      "interpretation": "This is usually a context-dependent electrolyte abnormality and becomes more concerning when kidney function is impaired.",
+      "implications": "The main next step is to determine whether the elevation is exposure-related, renally retained, or both.",
+      "supporting_marker_roles": "Creatinine corroborates reduced excretion, calcium adds physiologic context, and potassium helps differentiate isolated hypermagnesemia from broader electrolyte failure."
+    }
+  }
+]
