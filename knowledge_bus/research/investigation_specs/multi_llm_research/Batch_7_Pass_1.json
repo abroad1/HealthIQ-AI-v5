@@ -1,0 +1,2419 @@
+[
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_neutrophils_high_acute_bacterial_inflammatory_response",
+    "signal_id": "signal_neutrophils_high",
+    "research_domain": "inflammatory",
+    "primary_marker": {
+      "biomarker_id": "neutrophils",
+      "rationale": "Neutrophilia commonly reflects activation of innate inflammatory pathways and should be interpreted in the context of infection, stress physiology, and marrow-driven causes.",
+      "signal_system": "inflammatory"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "wbc",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent leukocytosis supports a broader inflammatory or infectious response rather than an isolated analytic fluctuation."
+      },
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Raised CRP supports acute inflammatory signalling and strengthens an infection- or inflammation-linked explanation for neutrophilia."
+      },
+      {
+        "biomarker_id": "lym",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Relative lymphopenia can favour stress or acute inflammatory redistribution, whereas a preserved lymphocyte count may weaken that pattern."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_acute_bacterial_inflammation",
+        "rank": 1,
+        "physiological_claim": "High neutrophils may reflect an acute bacterial or acute inflammatory response when inflammatory markers and total leukocyte count are also elevated.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Neutrophilia is not specific for bacterial infection and can occur with non-infectious inflammation or physiological stress."
+        ],
+        "missing_data": {
+          "policy": "Review symptoms, recent infection history, and inflammatory markers before prioritising infection over other causes."
+        },
+        "supporting_marker_refs": [
+          "wbc",
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_crp",
+            "marker_reference": "crp",
+            "contradiction_rationale": "A normal CRP weakens an active inflammatory explanation, particularly when neutrophilia is mild or transient.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_stress_demargination_pattern",
+        "rank": 2,
+        "physiological_claim": "High neutrophils may reflect catecholamine- or glucocorticoid-associated demargination when lymphocytes are relatively low and overt inflammatory corroboration is limited.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This pattern is often transient and may follow physiological stress, corticosteroid exposure, or recent exertion."
+        ],
+        "missing_data": {
+          "policy": "Review medication exposure and recent stressors if lymphocyte suppression is present without clear inflammatory corroboration."
+        },
+        "supporting_marker_refs": [
+          "lym"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_wbc_broad_inflammatory",
+            "marker_reference": "wbc",
+            "contradiction_rationale": "Marked concurrent leukocytosis with inflammatory context shifts interpretation toward a broader inflammatory or infectious process rather than isolated demargination.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_acute_bacterial_inflammation",
+        "hyp_stress_demargination_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_blood_film",
+        "rationale": "A blood film can help assess left shift, toxic change, or other morphological features that support reactive neutrophilia and exclude hematologic artefact."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_neutrophils_high_with_high_crp",
+        "resulting_state": "at_risk",
+        "description": "Escalate when neutrophilia is accompanied by elevated CRP, as this is more consistent with an active inflammatory or infectious process than an isolated fluctuation.",
+        "conditions": [
+          {
+            "metric_id": "crp",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_neutrophilia_review_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_neutrophilia_review_2024",
+          "paper_title": "Contemporary review literature on neutrophilia, acute inflammation, and reactive leukocyte patterns",
+          "journal": "Review literature",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Neutrophilia is commonly associated with acute inflammatory signalling and bacterial infection, but interpretation remains context dependent.",
+      "threshold_notes": "No universal disease-specific threshold is used here beyond laboratory abnormality; escalation remains anchored to corroborating inflammatory context."
+    },
+    "narrative": {
+      "mechanism": "Neutrophils rise through marrow release, demargination, and cytokine-driven mobilisation during acute inflammation and stress responses.",
+      "biological_pathway": "Innate immune activation, acute-phase signalling, marrow reserve mobilisation, and stress-hormone mediated leukocyte redistribution.",
+      "interpretation": "High neutrophils support an acute inflammatory or stress-related pattern, but the result is not disease-specific without corroborating context.",
+      "implications": "This finding may justify review for infection, inflammatory stressors, or corticosteroid exposure rather than direct assumption of a single cause.",
+      "supporting_marker_roles": "WBC corroborates the presence of a broader leukocyte response, CRP supports inflammatory signalling, and lymphocyte suppression helps differentiate stress redistribution from other patterns."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_neutrophils_low_marrow_suppression_or_drug_effect",
+    "signal_id": "signal_neutrophils_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "neutrophils",
+      "rationale": "Neutropenia can reflect reduced marrow output, medication effect, viral suppression, or immune-mediated processes and requires differential interpretation.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "wbc",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent leukopenia supports a broader reduction in myeloid or overall white cell output rather than isolated neutrophil fluctuation."
+      },
+      {
+        "biomarker_id": "plt",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Concurrent thrombocytopenia raises concern for broader marrow suppression, whereas preserved platelets makes isolated peripheral or transient causes more plausible."
+      },
+      {
+        "biomarker_id": "lym",
+        "expected_direction": "either",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Relative lymphocyte preservation or predominance may fit viral or immune patterns, while broad lymphopenia can support generalized marrow or treatment-related suppression."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_broad_marrow_suppression",
+        "rank": 1,
+        "physiological_claim": "Low neutrophils may reflect reduced marrow production or treatment-related suppression when leukopenia is accompanied by other cytopenic features.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Isolated neutropenia can occur without generalized marrow failure and may be transient."
+        ],
+        "missing_data": {
+          "policy": "Review medication history, recent therapy exposure, and whether additional cell lines are reduced before assuming primary marrow pathology."
+        },
+        "supporting_marker_refs": [
+          "wbc",
+          "plt"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_preserved_platelets",
+            "marker_reference": "plt",
+            "contradiction_rationale": "A preserved platelet count weakens a broad marrow failure explanation and makes isolated or lineage-selective causes more plausible.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_viral_or_immune_neutropenia",
+        "rank": 2,
+        "physiological_claim": "Low neutrophils may reflect a viral or immune-mediated pattern when lymphocyte distribution is relatively preserved and broader multilineage suppression is absent.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This remains non-specific and clinical history is important for distinguishing transient viral suppression from chronic immune neutropenia."
+        ],
+        "missing_data": {
+          "policy": "Consider recent viral illness, autoimmune context, and serial counts before assigning a persistent immune-mediated interpretation."
+        },
+        "supporting_marker_refs": [
+          "lym"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_wbc_global_suppression",
+            "marker_reference": "wbc",
+            "contradiction_rationale": "Marked concurrent leukopenia supports broader marrow or systemic suppression rather than a relatively isolated viral or immune neutropenia pattern.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_broad_marrow_suppression",
+        "hyp_viral_or_immune_neutropenia"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_blood_film",
+        "rationale": "A blood film helps confirm true neutropenia and assess for additional morphological features suggesting marrow pathology or reactive change."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_neutrophils_low_with_low_platelets",
+        "resulting_state": "at_risk",
+        "description": "Escalate when neutropenia is accompanied by thrombocytopenia, as multilineage reduction is more concerning for marrow-level pathology or systemic suppression.",
+        "conditions": [
+          {
+            "metric_id": "plt",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_neutropenia_review_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_neutropenia_review_2024",
+          "paper_title": "Review literature on neutropenia evaluation, marrow suppression, and differential diagnosis",
+          "journal": "Review literature",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Neutropenia is clinically important because it can reflect either isolated lineage effects or broader marrow suppression, and the distinction depends on surrounding hematology context.",
+      "threshold_notes": "No disease-specific threshold is asserted beyond laboratory abnormality; escalation is driven by accompanying cytopenias rather than invented cut-offs."
+    },
+    "narrative": {
+      "mechanism": "Neutropenia can arise through reduced marrow production, increased peripheral destruction, immune-mediated clearance, or transient redistribution after viral illness or treatment.",
+      "biological_pathway": "Granulopoiesis, marrow reserve integrity, immune cell regulation, and treatment-related suppression of myeloid lineage output.",
+      "interpretation": "Low neutrophils warrant differential assessment for isolated transient causes versus broader marrow suppression, especially when other cell lines are also reduced.",
+      "implications": "This finding may justify repeat counts, medication review, and broader hematologic assessment rather than assuming a single benign explanation.",
+      "supporting_marker_roles": "WBC corroborates global white cell suppression, platelets help distinguish multilineage marrow effects from isolated neutropenia, and lymphocyte distribution helps compare viral or immune patterns against broader suppression."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_non_hdl_high_atherogenic_lipoprotein_burden",
+    "signal_id": "signal_non_hdl_high",
+    "research_domain": "vascular",
+    "primary_marker": {
+      "biomarker_id": "non_hdl",
+      "rationale": "Non-HDL cholesterol captures cholesterol carried by atherogenic apoB-containing particles and can support cardiovascular risk interpretation beyond LDL cholesterol alone.",
+      "signal_system": "vascular"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "apob",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "ApoB elevation corroborates increased atherogenic particle burden and strengthens interpretation of non-HDL as a particle-rich risk pattern."
+      },
+      {
+        "biomarker_id": "ldl_cholesterol",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Elevated LDL cholesterol supports a cholesterol-rich atherogenic pathway contributing to high non-HDL cholesterol."
+      },
+      {
+        "biomarker_id": "triglycerides",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "High triglycerides suggest a more mixed remnant-rich dyslipidaemia rather than predominantly LDL-driven elevation."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_atherogenic_particle_excess",
+        "rank": 1,
+        "physiological_claim": "High non-HDL cholesterol may reflect increased circulating atherogenic apoB-containing lipoproteins and support elevated cardiovascular risk interpretation.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Risk interpretation is strengthened by the broader lipid pattern and overall clinical risk context rather than by non-HDL in isolation."
+        ],
+        "missing_data": {
+          "policy": "Review apoB, triglycerides, and LDL-related context before assuming a predominantly LDL-driven pattern."
+        },
+        "supporting_marker_refs": [
+          "apob",
+          "ldl_cholesterol"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_apob",
+            "marker_reference": "apob",
+            "contradiction_rationale": "A normal apoB weakens interpretation of markedly increased particle burden and may suggest cholesterol enrichment without a strong particle-number signal.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_mixed_remnant_rich_dyslipidaemia",
+        "rank": 2,
+        "physiological_claim": "High non-HDL cholesterol may reflect mixed dyslipidaemia with remnant-rich particles when triglycerides are also elevated.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "This pattern often overlaps with insulin resistance and cannot be separated cleanly from LDL-related burden without fuller lipoprotein context."
+        ],
+        "missing_data": {
+          "policy": "Assess triglycerides and glycaemic-metabolic context before prioritising remnant-rich dyslipidaemia over a predominantly LDL-driven pattern."
+        },
+        "supporting_marker_refs": [
+          "triglycerides"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_ldl_predominant",
+            "marker_reference": "ldl_cholesterol",
+            "contradiction_rationale": "A strongly LDL-predominant pattern weakens the case for a mainly remnant-rich mixed dyslipidaemia frame.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_atherogenic_particle_excess",
+        "hyp_mixed_remnant_rich_dyslipidaemia"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_apolipoprotein_b",
+        "rationale": "ApoB testing can help clarify whether high non-HDL reflects increased atherogenic particle number rather than cholesterol content alone."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_non_hdl_high_with_high_apob",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high non-HDL cholesterol is accompanied by elevated apoB, as combined cholesterol and particle burden strengthens atherogenic risk interpretation.",
+        "conditions": [
+          {
+            "metric_id": "apob",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_non_hdl_guideline_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_non_hdl_guideline_2024",
+          "paper_title": "Guideline and review literature supporting non-HDL cholesterol as an atherogenic risk marker",
+          "journal": "Guideline and review literature",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Non-HDL cholesterol reflects cholesterol carried by apoB-containing lipoproteins and is widely used as an atherogenic risk marker in dyslipidaemia assessment.",
+      "threshold_notes": "Interpretation is lab-range anchored here; no additional disease-specific threshold is invented beyond the abnormal result and corroborating lipid context."
+    },
+    "narrative": {
+      "mechanism": "Non-HDL cholesterol aggregates the cholesterol content of LDL, VLDL, remnant particles, and other apoB-containing lipoproteins that contribute to atherogenesis.",
+      "biological_pathway": "Atherogenic lipoprotein transport, arterial retention of apoB particles, and cholesterol delivery into vascular wall inflammatory pathways.",
+      "interpretation": "High non-HDL supports an atherogenic lipid pattern, with apoB and triglycerides helping distinguish particle-rich burden from mixed remnant-rich dyslipidaemia.",
+      "implications": "This pattern may justify broader cardiovascular risk review and refinement of lipid phenotype rather than reliance on LDL cholesterol alone.",
+      "supporting_marker_roles": "ApoB corroborates particle burden, LDL cholesterol supports a cholesterol-rich atherogenic mechanism, and triglycerides help differentiate mixed remnant-rich dyslipidaemia from a more LDL-predominant pattern."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_non_hdl_low_reduced_atherogenic_lipoprotein_pool",
+    "signal_id": "signal_non_hdl_low",
+    "research_domain": "nutritional",
+    "primary_marker": {
+      "biomarker_id": "non_hdl",
+      "rationale": "Low non-HDL cholesterol is less often clinically central than high values, but it can reflect a reduced circulating pool of apoB-containing lipoproteins in selected contexts.",
+      "signal_system": "nutritional"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "apob",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low apoB corroborates a reduced pool of circulating atherogenic lipoproteins rather than isolated cholesterol redistribution."
+      },
+      {
+        "biomarker_id": "albumin",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low albumin can support undernutrition or systemic illness as a contributor to reduced lipoprotein levels."
+      },
+      {
+        "biomarker_id": "alt",
+        "expected_direction": "either",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Abnormal liver enzymes may redirect interpretation toward hepatic synthetic or metabolic context rather than simple low cardiometabolic risk."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_reduced_apob_lipoprotein_pool",
+        "rank": 1,
+        "physiological_claim": "Low non-HDL cholesterol may reflect a genuinely reduced circulating apoB-containing lipoprotein pool when apoB is also low.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Low non-HDL is not usually interpreted as a disease-specific diagnosis and may simply reflect a favourable lipid burden in many individuals."
+        ],
+        "missing_data": {
+          "policy": "Review apoB and overall clinical context before assigning a pathological explanation to low non-HDL cholesterol."
+        },
+        "supporting_marker_refs": [
+          "apob"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_apob_low_nonhdl",
+            "marker_reference": "apob",
+            "contradiction_rationale": "A normal apoB weakens interpretation of a materially reduced lipoprotein pool and raises the possibility of assay or distribution-related variation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_undernutrition_or_systemic_illness_context",
+        "rank": 2,
+        "physiological_claim": "Low non-HDL cholesterol may accompany undernutrition, systemic illness, or hepatic context rather than representing an isolated lipid phenotype.",
+        "evidence_strength": "exploratory",
+        "caveats": [
+          "This interpretation is non-specific and should not be inferred without corroborating clinical or biochemical context."
+        ],
+        "missing_data": {
+          "policy": "Use albumin and liver-related context cautiously; exclude benign low-risk lipid phenotype before prioritising systemic illness."
+        },
+        "supporting_marker_refs": [
+          "albumin",
+          "alt"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_albumin_low_nonhdl",
+            "marker_reference": "albumin",
+            "contradiction_rationale": "A normal albumin weakens the case for undernutrition or systemic protein-energy compromise as the main explanation for low non-HDL cholesterol.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_reduced_apob_lipoprotein_pool",
+        "hyp_undernutrition_or_systemic_illness_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_apolipoprotein_b",
+        "rationale": "ApoB measurement helps confirm whether low non-HDL reflects a reduced number of circulating atherogenic particles."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_non_hdl_low_with_low_apob",
+        "resulting_state": "at_risk",
+        "description": "Escalate cautiously when low non-HDL is accompanied by low apoB and additional biochemical concern, as this is less likely to represent a simple isolated lipid finding.",
+        "conditions": [
+          {
+            "metric_id": "apob",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_non_hdl_low_review_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_non_hdl_low_review_2024",
+          "paper_title": "Review literature on low apoB-containing lipoprotein states and contextual interpretation of low non-HDL cholesterol",
+          "journal": "Review literature",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Low non-HDL cholesterol is usually not a primary disease marker, but concurrent low apoB can support a genuinely reduced atherogenic lipoprotein pool.",
+      "threshold_notes": "No pathological threshold is asserted beyond a low laboratory value; interpretation remains cautious and context dependent."
+    },
+    "narrative": {
+      "mechanism": "Low non-HDL cholesterol reflects reduced cholesterol content within circulating apoB-containing lipoproteins, which may be benign or may accompany systemic nutritional or hepatic influences.",
+      "biological_pathway": "Lipoprotein assembly, hepatic export of apoB-containing particles, and systemic nutritional influences on lipid transport.",
+      "interpretation": "Low non-HDL is often benign, but low apoB or additional systemic context can make a reduced lipoprotein pool or illness-related pattern more plausible.",
+      "implications": "This finding should usually be interpreted cautiously and not over-medicalised without corroborating lipid or nutritional evidence.",
+      "supporting_marker_roles": "ApoB corroborates reduced particle burden, albumin helps differentiate nutritional or systemic illness context, and liver enzyme context can redirect interpretation toward hepatic causes."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_plt_high_reactive_thrombocytosis",
+    "signal_id": "signal_plt_high",
+    "research_domain": "inflammatory",
+    "primary_marker": {
+      "biomarker_id": "plt",
+      "rationale": "High platelet count can reflect reactive inflammatory states, iron deficiency, or myeloproliferative disease and needs contextual differential interpretation.",
+      "signal_system": "inflammatory"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Raised CRP supports inflammatory cytokine signalling as a reactive driver of thrombocytosis."
+      },
+      {
+        "biomarker_id": "ferritin",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low ferritin supports iron deficiency as an alternative reactive explanation for thrombocytosis."
+      },
+      {
+        "biomarker_id": "wbc",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent leukocytosis can support a broader reactive inflammatory pattern rather than isolated platelet elevation."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_reactive_inflammatory_thrombocytosis",
+        "rank": 1,
+        "physiological_claim": "High platelets may reflect reactive thrombocytosis driven by inflammation or acute-phase cytokine activity when CRP and other inflammatory markers are raised.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Reactive thrombocytosis is common and usually non-clonal, but it is not specific for a particular inflammatory disease."
+        ],
+        "missing_data": {
+          "policy": "Assess inflammatory markers and recent illness or inflammatory history before considering clonal thrombocytosis."
+        },
+        "supporting_marker_refs": [
+          "crp",
+          "wbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_ferritin_reactive_alt",
+            "marker_reference": "ferritin",
+            "contradiction_rationale": "Low ferritin redirects interpretation toward iron deficiency as a competing reactive explanation for thrombocytosis.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_iron_deficiency_associated_thrombocytosis",
+        "rank": 2,
+        "physiological_claim": "High platelets may occur with iron deficiency, particularly when ferritin is low and inflammatory corroboration is limited.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Ferritin can be elevated by inflammation, so interpretation must account for acute-phase effects."
+        ],
+        "missing_data": {
+          "policy": "Review ferritin alongside inflammatory context and red-cell indices before assuming iron deficiency is the main driver."
+        },
+        "supporting_marker_refs": [
+          "ferritin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_crp_reactive_inflammation",
+            "marker_reference": "crp",
+            "contradiction_rationale": "Raised CRP shifts interpretation toward inflammation-driven reactive thrombocytosis rather than iron deficiency as the primary explanation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_reactive_inflammatory_thrombocytosis",
+        "hyp_iron_deficiency_associated_thrombocytosis"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_blood_film",
+        "rationale": "A blood film can help confirm true thrombocytosis and assess whether additional hematologic abnormalities suggest a reactive or clonal process."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_plt_high_with_high_crp",
+        "resulting_state": "at_risk",
+        "description": "Escalate when thrombocytosis is accompanied by elevated CRP, as concurrent inflammatory activation makes a sustained reactive process more plausible.",
+        "conditions": [
+          {
+            "metric_id": "crp",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_thrombocytosis_review_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_thrombocytosis_review_2024",
+          "paper_title": "Guideline and review literature on thrombocytosis, reactive causes, and initial evaluation",
+          "journal": "Guideline and review literature",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Thrombocytosis is frequently reactive, especially in inflammatory states or iron deficiency, and should be interpreted before assuming a primary clonal disorder.",
+      "threshold_notes": "No disease-defining threshold is invented here beyond laboratory abnormality; escalation is linked to corroborating inflammatory or differential context."
+    },
+    "narrative": {
+      "mechanism": "Platelet counts can rise through inflammatory cytokine signalling, acute-phase thrombopoiesis, or iron-deficiency associated marrow responses.",
+      "biological_pathway": "Thrombopoietin regulation, inflammatory cytokine activity, marrow megakaryopoiesis, and iron-related hematopoietic adaptation.",
+      "interpretation": "High platelets often represent a reactive process, with CRP and ferritin helping separate inflammatory and iron-related frames.",
+      "implications": "This pattern may justify review for inflammatory disease or iron deficiency before moving to clonal thrombocytosis work-up.",
+      "supporting_marker_roles": "CRP supports inflammation-driven thrombopoiesis, ferritin differentiates iron deficiency from other reactive causes, and WBC corroborates broader inflammatory activation."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_plt_high_clonal_myeloproliferative_thrombocytosis",
+    "signal_id": "signal_plt_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "plt",
+      "rationale": "Persistent marked thrombocytosis can also reflect a clonal myeloproliferative process rather than a reactive platelet response.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "any",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Absent inflammatory corroboration weakens a reactive explanation and can make clonal thrombocytosis relatively more plausible."
+      },
+      {
+        "biomarker_id": "ferritin",
+        "expected_direction": "any",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "A ferritin result that does not support iron deficiency weakens a common reactive cause of thrombocytosis."
+      },
+      {
+        "biomarker_id": "wbc",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent leukocytosis can accompany myeloproliferative patterns, although it is not specific."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_clonal_mpn_pattern",
+        "rank": 1,
+        "physiological_claim": "High platelets may reflect a clonal myeloproliferative thrombocytosis when common reactive explanations are not supported and the abnormality is persistent.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "A platelet count alone does not diagnose a myeloproliferative neoplasm and persistence plus exclusion of reactive causes are essential."
+        ],
+        "missing_data": {
+          "policy": "Prioritise persistence, blood film review, and exclusion of inflammatory and iron-deficiency causes before assigning a clonal frame."
+        },
+        "supporting_marker_refs": [
+          "wbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_crp_reactive",
+            "marker_reference": "crp",
+            "contradiction_rationale": "A raised CRP supports reactive inflammatory thrombocytosis and weakens a primary clonal interpretation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_non_clonal_reactive_alternative",
+        "rank": 2,
+        "physiological_claim": "High platelets may still represent a non-clonal reactive process if common secondary causes remain incompletely excluded, even when platelets are substantially elevated.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This is a residual differential rather than a specific diagnosis and should not replace formal evaluation when thrombocytosis is persistent."
+        ],
+        "missing_data": {
+          "policy": "Reassess iron deficiency and inflammatory context before concluding that reactive explanations are exhausted."
+        },
+        "supporting_marker_refs": [
+          "crp",
+          "ferritin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_wbc_clonal_support",
+            "marker_reference": "wbc",
+            "contradiction_rationale": "Concurrent leukocytosis can strengthen suspicion for a clonal myeloproliferative pattern rather than a purely residual reactive explanation.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_clonal_mpn_pattern",
+        "hyp_non_clonal_reactive_alternative"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_jak2_calr_mpl_testing",
+        "rationale": "Clonal marker testing is relevant when thrombocytosis is persistent and secondary causes are not supported by the available data."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_plt_high_with_high_wbc",
+        "resulting_state": "at_risk",
+        "description": "Escalate when thrombocytosis is accompanied by leukocytosis, as combined myeloid elevation increases concern for a clonal hematologic process.",
+        "conditions": [
+          {
+            "metric_id": "wbc",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_mpn_thrombocytosis_review_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_mpn_thrombocytosis_review_2024",
+          "paper_title": "Review and guideline literature on persistent thrombocytosis and clonal myeloproliferative evaluation",
+          "journal": "Review and guideline literature",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Persistent thrombocytosis requires exclusion of common reactive causes because clonal myeloproliferative disease remains an important alternative explanation.",
+      "threshold_notes": "No clonal diagnosis is inferred from a single count; escalation is tied to persistence and corroborating hematologic context rather than a new cut-off."
+    },
+    "narrative": {
+      "mechanism": "Clonal thrombocytosis reflects dysregulated megakaryocyte proliferation rather than reactive thrombopoietin signalling alone.",
+      "biological_pathway": "Myeloproliferative hematopoiesis, megakaryocytic expansion, and possible parallel myeloid lineage activation.",
+      "interpretation": "A clonal frame becomes more plausible when inflammatory and iron-deficiency explanations are not supported and thrombocytosis persists.",
+      "implications": "This pattern may justify hematology-directed evaluation rather than repeated assumption of benign reactivity.",
+      "supporting_marker_roles": "CRP and ferritin help exclude common reactive causes, while WBC provides corroborating evidence for a broader myeloid proliferation pattern."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_plt_low_peripheral_consumption_or_immune_destruction",
+    "signal_id": "signal_plt_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "plt",
+      "rationale": "Thrombocytopenia may reflect peripheral platelet destruction or consumption as well as reduced marrow production, and the distinction matters clinically.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "hgb",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Anaemia alongside thrombocytopenia raises concern for broader consumption, blood loss, or marrow processes rather than isolated platelet destruction."
+      },
+      {
+        "biomarker_id": "wbc",
+        "expected_direction": "any",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "A relatively isolated platelet reduction with preserved white cell count can fit immune thrombocytopenia better than global marrow suppression."
+      },
+      {
+        "biomarker_id": "bilirubin",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Elevated bilirubin can support haemolytic or consumptive microangiopathic context when thrombocytopenia is not isolated."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_isolated_peripheral_platelet_destruction",
+        "rank": 1,
+        "physiological_claim": "Low platelets may reflect peripheral immune destruction when thrombocytopenia appears relatively isolated and other blood count abnormalities are limited.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Immune thrombocytopenia remains a diagnosis of exclusion and a platelet count alone is insufficient for diagnosis."
+        ],
+        "missing_data": {
+          "policy": "Review whether anaemia or leukocyte abnormalities are absent before favouring an isolated peripheral destruction frame."
+        },
+        "supporting_marker_refs": [
+          "wbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_hgb_nonisolated",
+            "marker_reference": "hgb",
+            "contradiction_rationale": "Concurrent anaemia weakens an isolated immune platelet destruction explanation and raises concern for a broader process.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_consumptive_or_microangiopathic_process",
+        "rank": 2,
+        "physiological_claim": "Low platelets may reflect consumptive or microangiopathic pathology when thrombocytopenia is accompanied by anaemia or biochemical evidence of haemolysis.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "This is a serious differential but remains non-specific without smear findings and formal haemolysis work-up."
+        ],
+        "missing_data": {
+          "policy": "Assess haemolysis markers and smear findings before inferring a thrombotic microangiopathic process from thrombocytopenia alone."
+        },
+        "supporting_marker_refs": [
+          "hgb",
+          "bilirubin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_preserved_wbc_isolated_pattern",
+            "marker_reference": "wbc",
+            "contradiction_rationale": "A preserved white cell count with isolated thrombocytopenia can weaken a broader consumptive or marrow-level interpretation and make isolated immune thrombocytopenia more plausible.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_isolated_peripheral_platelet_destruction",
+        "hyp_consumptive_or_microangiopathic_process"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_blood_film",
+        "rationale": "A blood film is important to exclude pseudothrombocytopenia and to look for schistocytes or other features suggesting consumption or marrow pathology."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_plt_low_with_low_hgb",
+        "resulting_state": "at_risk",
+        "description": "Escalate when thrombocytopenia is accompanied by anaemia, as combined cytopenia increases concern for consumption, bleeding, or marrow pathology rather than isolated platelet destruction.",
+        "conditions": [
+          {
+            "metric_id": "hgb",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_thrombocytopenia_review_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_thrombocytopenia_review_2024",
+          "paper_title": "Guideline and review literature on thrombocytopenia, isolated platelet reduction, and serious secondary causes",
+          "journal": "Guideline and review literature",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Thrombocytopenia can be isolated or part of a more serious systemic process, so surrounding count pattern and haemolytic context are central to interpretation.",
+      "threshold_notes": "Escalation is based on accompanying count abnormalities and haemolytic context, not on invented platelet cut-offs beyond the abnormal laboratory result."
+    },
+    "narrative": {
+      "mechanism": "Platelet counts fall through immune destruction, peripheral consumption, sequestration, or reduced marrow production, with very different clinical implications.",
+      "biological_pathway": "Platelet survival, immune clearance, thrombotic consumption, marrow megakaryocyte output, and haemolysis-associated microvascular injury.",
+      "interpretation": "Low platelets may represent isolated peripheral destruction or a broader consumptive process, depending on whether anaemia and haemolytic context are present.",
+      "implications": "This finding may justify urgent review when thrombocytopenia is not isolated, especially if anaemia or haemolytic markers coexist.",
+      "supporting_marker_roles": "Haemoglobin helps distinguish isolated thrombocytopenia from broader pathology, white cell context helps identify isolated patterns, and bilirubin supports possible haemolytic or consumptive mechanisms."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_plt_low_marrow_suppression_pattern",
+    "signal_id": "signal_plt_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "plt",
+      "rationale": "Low platelets can also reflect impaired marrow production, especially when additional cell lines are reduced.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "wbc",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent leukopenia supports a broader marrow production problem rather than isolated peripheral platelet loss."
+      },
+      {
+        "biomarker_id": "hgb",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Anaemia alongside thrombocytopenia supports multilineage involvement compatible with marrow suppression or infiltration."
+      },
+      {
+        "biomarker_id": "bilirubin",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Raised bilirubin can redirect interpretation toward haemolysis or consumption rather than primary marrow suppression."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_multilineage_marrow_suppression",
+        "rank": 1,
+        "physiological_claim": "Low platelets may reflect marrow suppression or infiltration when thrombocytopenia occurs with leukopenia or anaemia across additional cell lines.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Peripheral destruction can still coexist, so multilineage change is supportive rather than fully diagnostic."
+        ],
+        "missing_data": {
+          "policy": "Assess whether other cell lines are reduced and review drug or treatment exposures before prioritising marrow pathology."
+        },
+        "supporting_marker_refs": [
+          "wbc",
+          "hgb"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_bilirubin_consumption_alt",
+            "marker_reference": "bilirubin",
+            "contradiction_rationale": "Raised bilirubin may support haemolysis or consumptive pathology and therefore weakens a pure marrow suppression explanation.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_non_marrow_consumptive_alternative",
+        "rank": 2,
+        "physiological_claim": "Low platelets may instead reflect a non-marrow consumptive or destructive process if haemolytic or peripheral loss signals are present.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This remains a competing differential and requires clinical correlation rather than inference from bilirubin alone."
+        ],
+        "missing_data": {
+          "policy": "Look for haemolysis markers and smear abnormalities before downgrading a multilineage marrow interpretation."
+        },
+        "supporting_marker_refs": [
+          "bilirubin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_wbc_marrow_support",
+            "marker_reference": "wbc",
+            "contradiction_rationale": "Leukopenia supports a broader production problem and weakens a purely peripheral platelet-loss explanation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_multilineage_marrow_suppression",
+        "hyp_non_marrow_consumptive_alternative"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_bone_marrow_directed_workup",
+        "rationale": "Broader marrow-directed evaluation becomes more relevant when thrombocytopenia is accompanied by additional cytopenias."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_plt_low_with_low_wbc",
+        "resulting_state": "at_risk",
+        "description": "Escalate when thrombocytopenia is accompanied by leukopenia, as combined cytopenias strengthen concern for marrow-level pathology.",
+        "conditions": [
+          {
+            "metric_id": "wbc",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_thrombocytopenia_marrow_review_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_thrombocytopenia_marrow_review_2024",
+          "paper_title": "Review literature on thrombocytopenia with multilineage cytopenias and marrow pathology",
+          "journal": "Review literature",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Combined thrombocytopenia with other cytopenias increases concern for marrow-level pathology compared with isolated peripheral platelet loss.",
+      "threshold_notes": "No specific marrow threshold is introduced beyond laboratory cytopenia; escalation is tied to additional reduced cell lines."
+    },
+    "narrative": {
+      "mechanism": "Platelet production falls when megakaryopoiesis is impaired by marrow suppression, infiltration, or treatment-related toxicity, often alongside other cytopenias.",
+      "biological_pathway": "Bone marrow hematopoiesis, megakaryocyte output, multilineage progenitor suppression, and competing haemolytic-consumptive differentials.",
+      "interpretation": "Low platelets with other cytopenias favour a marrow production problem over isolated peripheral destruction, though overlap remains possible.",
+      "implications": "This pattern may justify broader hematologic evaluation rather than isolated platelet-focused follow-up alone.",
+      "supporting_marker_roles": "WBC and haemoglobin corroborate multilineage involvement, while bilirubin helps identify a competing haemolytic or consumptive frame."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_tyg_index_high_insulin_resistance_pattern",
+    "signal_id": "signal_tyg_index_high",
+    "research_domain": "metabolic",
+    "primary_marker": {
+      "biomarker_id": "tyg_index",
+      "rationale": "The TyG index is a derived marker used as a surrogate for insulin resistance and is most appropriately interpreted as a metabolic risk signal rather than a stand-alone diagnosis.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "hba1c",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Higher HbA1c can corroborate adverse glycaemic-metabolic context alongside an elevated TyG index."
+      },
+      {
+        "biomarker_id": "triglycerides",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "The TyG index is partly driven by triglyceride concentration, so high triglycerides support the lipotoxic-metabolic pathway underlying the index."
+      },
+      {
+        "biomarker_id": "alt",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Raised ALT can help distinguish a more hepatometabolic pattern associated with steatosis from a more general insulin-resistance signal without overt liver involvement."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_insulin_resistance_surrogate_signal",
+        "rank": 1,
+        "physiological_claim": "A high TyG index may reflect insulin resistance and adverse glycaemic-lipid interaction, particularly when supported by other metabolic abnormalities.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "TyG is a surrogate index and should not be treated as interchangeable with formal dynamic insulin testing."
+        ],
+        "missing_data": {
+          "policy": "Use TyG alongside HbA1c and broader metabolic context rather than as a stand-alone diagnostic threshold for insulin resistance."
+        },
+        "supporting_marker_refs": [
+          "hba1c",
+          "triglycerides"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_hba1c_tyg",
+            "marker_reference": "hba1c",
+            "contradiction_rationale": "A normal HbA1c weakens the case for established dysglycaemic burden, although insulin resistance may still be present before HbA1c rises.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_hepatometabolic_steatosis_association",
+        "rank": 2,
+        "physiological_claim": "A high TyG index may indicate a hepatometabolic pattern associated with fatty liver risk when liver-related markers such as ALT are also raised.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Association with steatosis risk does not establish the presence of fatty liver in an individual without imaging or formal hepatic assessment."
+        ],
+        "missing_data": {
+          "policy": "Use liver enzyme context cautiously and avoid equating an elevated TyG index with confirmed steatotic liver disease."
+        },
+        "supporting_marker_refs": [
+          "alt",
+          "triglycerides"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_alt_no_hepatic_context",
+            "marker_reference": "alt",
+            "contradiction_rationale": "A normal ALT weakens a hepatometabolic steatosis-oriented frame and favours a more general insulin-resistance interpretation.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_insulin_resistance_surrogate_signal",
+        "hyp_hepatometabolic_steatosis_association"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_fasting_glucose_and_triglyceride_confirmation",
+        "rationale": "Reconfirming fasting components can help ensure the derived TyG index reflects stable metabolic status rather than non-fasting variability."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_tyg_high_with_high_hba1c",
+        "resulting_state": "at_risk",
+        "description": "Escalate when a high TyG index is accompanied by elevated HbA1c, as combined dysglycaemic and lipotoxic signals strengthen adverse metabolic interpretation.",
+        "conditions": [
+          {
+            "metric_id": "hba1c",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_tyg_review_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_tyg_review_2024",
+          "paper_title": "Systematic review literature on the triglyceride-glucose index as a surrogate marker of insulin resistance",
+          "journal": "Systematic review literature",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "The TyG index is supported as a practical surrogate marker of insulin resistance and adverse metabolic risk, though it is not a definitive diagnostic test.",
+      "threshold_notes": "Interpretation remains anchored to an elevated derived index and corroborating metabolic context rather than a new universal cut-off in this contract."
+    },
+    "narrative": {
+      "mechanism": "The TyG index integrates fasting triglyceride and glucose information and reflects metabolic states linked to insulin resistance and hepatic lipid overflow.",
+      "biological_pathway": "Insulin signalling impairment, hepatic VLDL overproduction, glucose-triglyceride interaction, and downstream metabolically adverse energy storage pathways.",
+      "interpretation": "A high TyG index most often supports an insulin-resistance pattern, with ALT helping separate a more hepatometabolic frame from a general metabolic signal.",
+      "implications": "This finding may justify broader metabolic review, especially when accompanied by dysglycaemia or liver-related abnormalities, but it is not a stand-alone diagnosis.",
+      "supporting_marker_roles": "HbA1c corroborates dysglycaemic metabolic burden, triglycerides support the mechanistic basis of the index, and ALT helps differentiate a more steatosis-linked hepatometabolic pattern."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_urate_high_gout_crystal_deposition_risk",
+    "signal_id": "signal_urate_high",
+    "research_domain": "metabolic",
+    "primary_marker": {
+      "biomarker_id": "urate",
+      "rationale": "Raised urate is clinically relevant because sustained hyperuricaemia increases the likelihood of monosodium urate crystal formation, although not everyone with high urate develops gout.",
+      "signal_system": "metabolic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Raised CRP can support an active inflammatory context when hyperuricaemia is clinically linked to crystal-associated inflammation."
+      },
+      {
+        "biomarker_id": "egfr",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Reduced eGFR supports renal underexcretion as a competing or contributing explanation for hyperuricaemia."
+      },
+      {
+        "biomarker_id": "creatinine",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Raised creatinine corroborates renal context that can contribute to urate retention."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_hyperuricaemic_gout_risk",
+        "rank": 1,
+        "physiological_claim": "High urate may support increased risk of gout or urate crystal deposition when hyperuricaemia is sustained over time.",
+        "evidence_strength": "consensus",
+        "caveats": [
+          "Hyperuricaemia alone does not prove clinical gout, and many individuals remain asymptomatic."
+        ],
+        "missing_data": {
+          "policy": "Do not infer gout from urate alone; consider symptom history and persistence before prioritising a crystal-deposition frame."
+        },
+        "supporting_marker_refs": [
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_egfr_renal_retention_alt",
+            "marker_reference": "egfr",
+            "contradiction_rationale": "Reduced eGFR redirects interpretation toward renal underexcretion as a major driver rather than isolated crystal-deposition risk framing.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_renal_underexcretion_context",
+        "rank": 2,
+        "physiological_claim": "High urate may reflect renal underexcretion when kidney function markers indicate impaired clearance.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Renal contribution is common but does not exclude coexisting gout risk or metabolic drivers."
+        ],
+        "missing_data": {
+          "policy": "Assess eGFR and creatinine before interpreting hyperuricaemia as primarily dietary or idiopathic."
+        },
+        "supporting_marker_refs": [
+          "egfr",
+          "creatinine"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_crp_inflammatory_gout_context",
+            "marker_reference": "crp",
+            "contradiction_rationale": "Raised CRP in the right clinical setting can strengthen an active crystal-inflammatory frame and weaken a purely renal-retention interpretation.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_hyperuricaemic_gout_risk",
+        "hyp_renal_underexcretion_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_urate_and_clinical_gout_assessment",
+        "rationale": "Repeat urate measurement with clinical review helps distinguish persistent hyperuricaemia from a transient elevation and avoids assuming symptomatic gout from a single result."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_urate_high_with_low_egfr",
+        "resulting_state": "at_risk",
+        "description": "Escalate when hyperuricaemia is accompanied by reduced eGFR, as impaired renal clearance strengthens persistence and retention-based risk.",
+        "conditions": [
+          {
+            "metric_id": "egfr",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_urate_guideline_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "consensus",
+      "sources": [
+        {
+          "source_id": "source_urate_guideline_2024",
+          "paper_title": "Guideline and review literature on hyperuricaemia, gout risk, and renal urate handling",
+          "journal": "Guideline and review literature",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Sustained hyperuricaemia increases gout risk, but urate also rises because of impaired renal handling and other metabolic influences.",
+      "threshold_notes": "No gout-diagnostic threshold is asserted here beyond laboratory abnormality; escalation is contextual and recognises that hyperuricaemia alone is not equivalent to gout."
+    },
+    "narrative": {
+      "mechanism": "Urate rises when production exceeds excretion or when renal handling is impaired, increasing the substrate available for crystal formation.",
+      "biological_pathway": "Purine metabolism, renal urate transport, crystal deposition propensity, and inflammatory activation when crystals become clinically relevant.",
+      "interpretation": "High urate supports either crystal-deposition risk or renal underexcretion context, depending on kidney function and inflammatory correlation.",
+      "implications": "This finding may justify renal review, lifestyle and medication review, or gout-focused assessment if symptoms suggest crystal disease.",
+      "supporting_marker_roles": "CRP supports inflammatory crystal-context interpretation, eGFR differentiates renal underexcretion from other drivers, and creatinine corroborates kidney-related retention."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_urate_low_reduced_urate_pool_or_renal_loss",
+    "signal_id": "signal_urate_low",
+    "research_domain": "renal",
+    "primary_marker": {
+      "biomarker_id": "urate",
+      "rationale": "Low urate is less common than hyperuricaemia and is usually interpreted cautiously because it can reflect reduced production, medication effects, or renal urate wasting.",
+      "signal_system": "renal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "egfr",
+        "expected_direction": "any",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Kidney function context helps assess whether low urate sits within altered renal handling rather than isolated reduced production."
+      },
+      {
+        "biomarker_id": "urea",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low urea may support low protein substrate or systemic nutritional context rather than a specific renal urate-wasting pattern."
+      },
+      {
+        "biomarker_id": "creatinine",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Lower creatinine can accompany low muscle and purine turnover context, supporting a reduced urate pool interpretation in some individuals."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_reduced_purine_or_substrate_pool",
+        "rank": 1,
+        "physiological_claim": "Low urate may reflect a reduced purine substrate pool or medication-related lowering rather than a primary disease signal.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Low urate is often clinically non-specific and may be benign or treatment related."
+        ],
+        "missing_data": {
+          "policy": "Review medication exposure, diet, and overall metabolic context before assigning pathology to low urate."
+        },
+        "supporting_marker_refs": [
+          "creatinine",
+          "urea"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_abnormal_egfr_renal_handling",
+            "marker_reference": "egfr",
+            "contradiction_rationale": "Abnormal kidney function may redirect interpretation toward altered renal handling rather than a simple reduced substrate explanation.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_renal_urate_wasting_context",
+        "rank": 2,
+        "physiological_claim": "Low urate may reflect renal urate-wasting context when the broader biochemical pattern does not support low substrate availability alone.",
+        "evidence_strength": "exploratory",
+        "caveats": [
+          "This frame is exploratory in routine blood data and usually cannot be established confidently without urine-based assessment."
+        ],
+        "missing_data": {
+          "policy": "Avoid overcalling renal urate wasting from serum urate alone; use this only as a cautious differential if routine context is otherwise unexplained."
+        },
+        "supporting_marker_refs": [
+          "egfr"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_urea_low_substrate",
+            "marker_reference": "urea",
+            "contradiction_rationale": "Low urea supports reduced protein or substrate context and weakens a renal-wasting interpretation as the primary explanation.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_reduced_purine_or_substrate_pool",
+        "hyp_renal_urate_wasting_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_urate_with_medication_review",
+        "rationale": "Repeat urate alongside medication review helps distinguish persistent low urate from treatment-related or transient lowering."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_urate_low_with_low_urea",
+        "resulting_state": "at_risk",
+        "description": "Escalate cautiously when low urate is accompanied by low urea, as combined reduction may point to broader low substrate or systemic nutritional context rather than an isolated serum finding.",
+        "conditions": [
+          {
+            "metric_id": "urea",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_hypouricemia_review_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_hypouricemia_review_2024",
+          "paper_title": "Review literature on hypouricaemia and differential interpretation of low serum urate",
+          "journal": "Review literature",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Low urate is usually contextual rather than diagnostic and often reflects reduced substrate or treatment effects, with renal wasting as a narrower differential.",
+      "threshold_notes": "No disease-specific lower threshold is introduced beyond the laboratory result; interpretation remains cautious because routine serum data alone are limited."
+    },
+    "narrative": {
+      "mechanism": "Serum urate falls when production is reduced, excretion is increased, or pharmacologic urate lowering is present.",
+      "biological_pathway": "Purine turnover, renal tubular urate handling, and systemic nutritional influences on urate generation.",
+      "interpretation": "Low urate is generally a contextual finding, with substrate limitation usually more plausible than renal urate-wasting in routine blood data alone.",
+      "implications": "This result usually warrants medication and nutritional review before pursuing rare renal-wasting explanations.",
+      "supporting_marker_roles": "Creatinine corroborates low-turnover context, urea helps differentiate low substrate availability, and kidney function context helps consider altered renal handling."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_urea_high_prerenal_volume_depletion_or_catabolic_load",
+    "signal_id": "signal_urea_high",
+    "research_domain": "renal",
+    "primary_marker": {
+      "biomarker_id": "urea",
+      "rationale": "Raised urea may reflect reduced renal perfusion, increased catabolic load, gastrointestinal bleeding, or intrinsic kidney impairment and should not be interpreted in isolation.",
+      "signal_system": "renal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "creatinine",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Raised creatinine corroborates impaired renal clearance or broader renal context rather than an isolated urea fluctuation."
+      },
+      {
+        "biomarker_id": "egfr",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Reduced eGFR supports impaired renal filtration as a mechanistic contributor to high urea."
+      },
+      {
+        "biomarker_id": "hgb",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Anaemia can help raise suspicion for gastrointestinal blood loss as a competing explanation for elevated urea."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_renal_clearance_impairment",
+        "rank": 1,
+        "physiological_claim": "High urea may reflect impaired renal clearance when creatinine is elevated and eGFR is reduced.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Urea is less specific than creatinine for kidney function and is influenced by hydration, protein intake, and catabolism."
+        ],
+        "missing_data": {
+          "policy": "Interpret urea alongside creatinine and eGFR before assigning kidney dysfunction as the dominant explanation."
+        },
+        "supporting_marker_refs": [
+          "creatinine",
+          "egfr"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_hgb_gi_bleed_alt",
+            "marker_reference": "hgb",
+            "contradiction_rationale": "Anaemia may redirect interpretation toward gastrointestinal blood loss or another non-renal contributor to urea elevation.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_prerenal_or_catabolic_context",
+        "rank": 2,
+        "physiological_claim": "High urea may reflect prerenal volume depletion, increased protein catabolism, or upper gastrointestinal blood load when renal markers are not proportionately abnormal.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This pattern is non-specific and depends on the surrounding clinical picture rather than serum urea alone."
+        ],
+        "missing_data": {
+          "policy": "Review hydration status, protein-catabolic context, and possible blood loss if creatinine and eGFR do not strongly support intrinsic renal impairment."
+        },
+        "supporting_marker_refs": [
+          "hgb"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_egfr_renal_driver",
+            "marker_reference": "egfr",
+            "contradiction_rationale": "Reduced eGFR strengthens a renal filtration explanation and weakens a predominantly prerenal or catabolic interpretation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_renal_clearance_impairment",
+        "hyp_prerenal_or_catabolic_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_renal_profile_with_hydration_review",
+        "rationale": "Repeat renal profile with hydration and clinical review helps separate persistent renal dysfunction from transient prerenal causes."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_urea_high_with_low_egfr",
+        "resulting_state": "at_risk",
+        "description": "Escalate when urea is high and eGFR is reduced, as combined abnormality is more consistent with significant renal filtration impairment than isolated urea rise.",
+        "conditions": [
+          {
+            "metric_id": "egfr",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_urea_review_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_urea_review_2024",
+          "paper_title": "Review literature on blood urea interpretation in renal impairment and prerenal states",
+          "journal": "Review literature",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Urea is influenced by renal function, volume status, protein load, and catabolism, so interpretation depends on corroborating kidney and blood indices.",
+      "threshold_notes": "No urea-specific disease threshold is introduced beyond the abnormal result; escalation uses accompanying renal impairment markers."
+    },
+    "narrative": {
+      "mechanism": "Urea rises when glomerular clearance falls or when production increases because of catabolism, dehydration, or blood breakdown in the gut.",
+      "biological_pathway": "Protein catabolism, hepatic urea cycle output, renal filtration and tubular handling, and pre-renal concentration effects.",
+      "interpretation": "High urea may indicate renal impairment or a prerenal-catabolic state, with eGFR and haemoglobin helping separate those frames.",
+      "implications": "This result may justify hydration review, renal reassessment, or evaluation for catabolic and bleeding contributors depending on context.",
+      "supporting_marker_roles": "Creatinine corroborates renal context, eGFR supports filtration impairment mechanistically, and haemoglobin helps identify blood loss as a competing explanation."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_urea_low_low_protein_or_reduced_urea_cycle_input",
+    "signal_id": "signal_urea_low",
+    "research_domain": "nutritional",
+    "primary_marker": {
+      "biomarker_id": "urea",
+      "rationale": "Low urea is usually a contextual biochemical finding and may reflect low protein intake, low substrate delivery, or impaired hepatic urea-cycle contribution.",
+      "signal_system": "nutritional"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "albumin",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low albumin can corroborate poor nutritional or systemic protein status when urea is low."
+      },
+      {
+        "biomarker_id": "alt",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Abnormal liver enzymes can redirect interpretation toward hepatic context rather than simple low protein intake."
+      },
+      {
+        "biomarker_id": "creatinine",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Lower creatinine may support low muscle mass or lower substrate turnover, which can accompany low urea."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_low_protein_or_low_turnover_context",
+        "rank": 1,
+        "physiological_claim": "Low urea may reflect low protein intake, low substrate turnover, or dilutional physiology rather than a primary disease-specific process.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Low urea is often non-specific and may be benign in routine outpatient testing."
+        ],
+        "missing_data": {
+          "policy": "Interpret low urea with albumin, creatinine, and nutritional context before inferring pathology."
+        },
+        "supporting_marker_refs": [
+          "albumin",
+          "creatinine"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_alt_hepatic_alt",
+            "marker_reference": "alt",
+            "contradiction_rationale": "Abnormal liver enzyme context weakens a simple nutritional explanation and raises the possibility of hepatic contribution to low urea.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_hepatic_urea_cycle_context",
+        "rank": 2,
+        "physiological_claim": "Low urea may reflect reduced hepatic urea-cycle output when liver-related abnormalities suggest impaired nitrogen handling.",
+        "evidence_strength": "exploratory",
+        "caveats": [
+          "Mild enzyme abnormalities are non-specific and do not establish clinically meaningful hepatic synthetic failure."
+        ],
+        "missing_data": {
+          "policy": "Do not infer significant hepatic dysfunction from low urea alone; require supporting liver context and broader clinical evidence."
+        },
+        "supporting_marker_refs": [
+          "alt"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_albumin_nutritional_frame",
+            "marker_reference": "albumin",
+            "contradiction_rationale": "Low albumin can support nutritional or systemic protein-status explanations and weakens a liver-specific interpretation based on low urea alone.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_low_protein_or_low_turnover_context",
+        "hyp_hepatic_urea_cycle_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_urea_with_nutritional_and_liver_review",
+        "rationale": "Repeat testing with nutritional and liver context helps determine whether low urea is stable, benign, or part of a broader hepatic pattern."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_urea_low_with_low_albumin",
+        "resulting_state": "at_risk",
+        "description": "Escalate cautiously when low urea is accompanied by low albumin, as combined reduction may suggest broader nutritional or systemic protein compromise.",
+        "conditions": [
+          {
+            "metric_id": "albumin",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_low_urea_review_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_low_urea_review_2024",
+          "paper_title": "Review literature on low blood urea and contextual nutritional or hepatic interpretation",
+          "journal": "Review literature",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Low urea is usually contextual and often relates to low protein substrate or systemic nutritional factors rather than a stand-alone disease state.",
+      "threshold_notes": "No disease-specific lower threshold is added; escalation remains conservative and tied to corroborating nutritional context."
+    },
+    "narrative": {
+      "mechanism": "Urea falls when hepatic production is reduced, nitrogen substrate is limited, or dilutional states lower concentration.",
+      "biological_pathway": "Protein intake and catabolism, hepatic urea-cycle function, and concentration effects from systemic fluid balance.",
+      "interpretation": "Low urea usually favours a low-substrate or benign contextual explanation, with liver-related abnormalities providing an important competing frame.",
+      "implications": "This result generally warrants nutritional and liver-context review rather than immediate disease-specific conclusions.",
+      "supporting_marker_roles": "Albumin corroborates nutritional protein status, creatinine supports low-turnover context, and ALT helps differentiate hepatic contribution from simple low substrate."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_wbc_high_reactive_leukocytosis",
+    "signal_id": "signal_wbc_high",
+    "research_domain": "inflammatory",
+    "primary_marker": {
+      "biomarker_id": "wbc",
+      "rationale": "Leukocytosis is commonly reactive and should be interpreted against differential count patterns and inflammatory corroboration before assuming hematologic disease.",
+      "signal_system": "inflammatory"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "neutrophils",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Neutrophilia supports an acute inflammatory or bacterial-reactive driver of leukocytosis."
+      },
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Raised CRP corroborates acute inflammatory activation as a cause of leukocytosis."
+      },
+      {
+        "biomarker_id": "lym",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Lymphocyte predominance can shift interpretation away from neutrophil-driven bacterial inflammation toward alternative reactive or lymphoid patterns."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_neutrophil_dominant_reactive_leukocytosis",
+        "rank": 1,
+        "physiological_claim": "High white blood cell count may reflect a reactive neutrophil-dominant inflammatory response when neutrophils and CRP are elevated.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Reactive leukocytosis is common and should not be conflated with a hematologic malignancy without additional supporting features."
+        ],
+        "missing_data": {
+          "policy": "Assess differential count and CRP before assigning leukocytosis to a neutrophil-driven inflammatory process."
+        },
+        "supporting_marker_refs": [
+          "neutrophils",
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_lym_alt_pattern",
+            "marker_reference": "lym",
+            "contradiction_rationale": "Lymphocyte predominance weakens a neutrophil-dominant inflammatory interpretation and suggests an alternative leukocyte pattern.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_non_neutrophil_leukocyte_pattern",
+        "rank": 2,
+        "physiological_claim": "High white blood cell count may reflect a non-neutrophil-predominant reactive pattern when lymphocytes are relatively increased and acute-phase inflammatory corroboration is limited.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This remains a broad differential and does not establish a specific viral or lymphoproliferative diagnosis."
+        ],
+        "missing_data": {
+          "policy": "Review differential count before assigning a non-neutrophil frame, and avoid over-interpreting isolated leukocytosis."
+        },
+        "supporting_marker_refs": [
+          "lym"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_crp_neutro_reactive",
+            "marker_reference": "crp",
+            "contradiction_rationale": "Raised CRP supports an acute inflammatory state and weakens a non-neutrophil-predominant reactive interpretation.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_neutrophil_dominant_reactive_leukocytosis",
+        "hyp_non_neutrophil_leukocyte_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_blood_film",
+        "rationale": "A blood film helps clarify whether leukocytosis is reactive, left-shifted, or suggestive of a clonal hematologic process."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_wbc_high_with_high_neutrophils",
+        "resulting_state": "at_risk",
+        "description": "Escalate when leukocytosis is accompanied by neutrophilia, as this strengthens a clinically significant inflammatory or infectious interpretation.",
+        "conditions": [
+          {
+            "metric_id": "neutrophils",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_leukocytosis_review_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_leukocytosis_review_2024",
+          "paper_title": "Review literature on leukocytosis, differential count patterns, and reactive causes",
+          "journal": "Review literature",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Leukocytosis is frequently reactive, and differential-count context is necessary to interpret whether neutrophil-dominant inflammation is the likely driver.",
+      "threshold_notes": "No disease-specific WBC threshold is introduced beyond laboratory abnormality; differential count pattern determines escalation logic."
+    },
+    "narrative": {
+      "mechanism": "White blood cell counts rise through lineage-specific expansion, marrow release, demargination, and inflammatory signalling.",
+      "biological_pathway": "Leukocyte production and mobilisation, acute inflammatory signalling, and differential lineage responses within the circulating white cell pool.",
+      "interpretation": "High WBC usually requires differential-count context to distinguish neutrophil-dominant inflammatory leukocytosis from other reactive patterns.",
+      "implications": "This finding may justify infection or inflammation review and, when atypical, blood-film based exclusion of clonal disease.",
+      "supporting_marker_roles": "Neutrophils support the inflammatory mechanism, CRP corroborates acute-phase activation, and lymphocyte predominance helps identify a competing non-neutrophil pattern."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_wbc_low_global_leukopenic_suppression",
+    "signal_id": "signal_wbc_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "wbc",
+      "rationale": "Low white blood cell count can reflect generalized leukopenic suppression, marrow effects, treatment exposure, or selective lineage reductions that require differential context.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "neutrophils",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low neutrophils often drive leukopenia and support a myeloid-suppression interpretation."
+      },
+      {
+        "biomarker_id": "plt",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Concurrent thrombocytopenia supports multilineage marrow suppression rather than isolated white-cell fluctuation."
+      },
+      {
+        "biomarker_id": "lym",
+        "expected_direction": "either",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "A relatively preserved or predominant lymphocyte pattern may suggest a different lineage balance than broad leukopenic suppression."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_broad_leukopenic_marrow_or_treatment_effect",
+        "rank": 1,
+        "physiological_claim": "Low white blood cell count may reflect marrow suppression or treatment-related leukopenia, particularly when neutrophils and other cell lines are also reduced.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Leukopenia can be transient, so persistence and medication history remain important before assigning marrow pathology."
+        ],
+        "missing_data": {
+          "policy": "Assess neutrophils, medication exposure, and whether other cell lines are reduced before concluding a broad suppressive pattern."
+        },
+        "supporting_marker_refs": [
+          "neutrophils",
+          "plt"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_relative_lym_preservation",
+            "marker_reference": "lym",
+            "contradiction_rationale": "Relative lymphocyte preservation weakens a broad multilineage suppression frame and may suggest a more selective white-cell pattern.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_selective_lineage_pattern",
+        "rank": 2,
+        "physiological_claim": "Low white blood cell count may reflect a more selective lineage pattern rather than broad marrow suppression when other cell lines remain preserved.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This is a differential framing step rather than a diagnosis and requires serial and lineage-specific review."
+        ],
+        "missing_data": {
+          "policy": "Do not assume a benign selective pattern if thrombocytopenia or significant neutropenia is also present."
+        },
+        "supporting_marker_refs": [
+          "lym"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_plt_multilineage",
+            "marker_reference": "plt",
+            "contradiction_rationale": "Concurrent thrombocytopenia supports multilineage suppression and weakens a more selective isolated white-cell interpretation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_broad_leukopenic_marrow_or_treatment_effect",
+        "hyp_selective_lineage_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_cbc_with_blood_film",
+        "rationale": "Repeat CBC with blood film helps determine whether leukopenia is persistent and whether a selective or multilineage pattern is emerging."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_wbc_low_with_low_neutrophils",
+        "resulting_state": "at_risk",
+        "description": "Escalate when leukopenia is accompanied by neutropenia, as this increases concern for clinically meaningful myeloid suppression.",
+        "conditions": [
+          {
+            "metric_id": "neutrophils",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_leukopenia_review_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_leukopenia_review_2024",
+          "paper_title": "Review literature on leukopenia, neutropenia, and marrow or treatment-related suppression",
+          "journal": "Review literature",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Leukopenia is most clinically significant when it reflects neutropenia or broader marrow suppression rather than a minor isolated fluctuation.",
+      "threshold_notes": "No new threshold is added beyond laboratory abnormality; escalation is driven by associated neutropenia and multilineage context."
+    },
+    "narrative": {
+      "mechanism": "White blood cell counts fall when marrow output is reduced, lineage survival is impaired, or treatment effects suppress leukopoiesis.",
+      "biological_pathway": "Leukopoiesis, myeloid lineage output, marrow reserve integrity, and selective versus multilineage cytopenic responses.",
+      "interpretation": "Low WBC is most concerning when neutrophils and additional cell lines are also reduced, favouring a broader suppressive pattern.",
+      "implications": "This result may justify repeat hematology review, medication assessment, and broader marrow-focused evaluation when suppression appears persistent.",
+      "supporting_marker_roles": "Neutrophils support the mechanistic basis of leukopenia, platelets help distinguish multilineage suppression from selective patterns, and lymphocyte distribution helps identify an alternative lineage balance."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_wbc_high_possible_clonal_leukocyte_proliferation",
+    "signal_id": "signal_wbc_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "wbc",
+      "rationale": "A high white blood cell count can also reflect clonal hematologic proliferation, particularly when reactive explanations are not supported by accompanying data.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "any",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Absent inflammatory corroboration weakens a reactive leukocytosis frame and can increase relative concern for clonal causes."
+      },
+      {
+        "biomarker_id": "neutrophils",
+        "expected_direction": "either",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "An abnormal neutrophil pattern can accompany clonal myeloid proliferation, though it is not specific."
+      },
+      {
+        "biomarker_id": "plt",
+        "expected_direction": "either",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent platelet abnormalities can support a broader marrow or myeloproliferative process rather than isolated reactive leukocytosis."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_clonal_myeloid_or_lymphoid_process",
+        "rank": 1,
+        "physiological_claim": "High white blood cell count may reflect a clonal hematologic process when leukocytosis is persistent and inflammatory corroboration is limited.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "A single high WBC value is not sufficient for clonal diagnosis and morphology plus persistence remain central."
+        ],
+        "missing_data": {
+          "policy": "Prioritise repeat counts, blood film, and exclusion of reactive causes before assigning a clonal frame."
+        },
+        "supporting_marker_refs": [
+          "neutrophils",
+          "plt"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_crp_reactive_wbc",
+            "marker_reference": "crp",
+            "contradiction_rationale": "Raised CRP supports a reactive inflammatory cause of leukocytosis and weakens a clonal interpretation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_reactive_cause_not_excluded",
+        "rank": 2,
+        "physiological_claim": "High white blood cell count may still represent a reactive process if clonal features are not established, even when leukocytosis appears pronounced.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This is a residual differential and should not be used to dismiss persistent unexplained leukocytosis."
+        ],
+        "missing_data": {
+          "policy": "Do not close the differential prematurely if platelet or neutrophil abnormalities suggest broader marrow involvement."
+        },
+        "supporting_marker_refs": [
+          "crp"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_abnormal_plt_broader_marrow",
+            "marker_reference": "plt",
+            "contradiction_rationale": "Concurrent platelet abnormalities increase concern for broader marrow pathology and weaken a purely residual reactive explanation.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_clonal_myeloid_or_lymphoid_process",
+        "hyp_reactive_cause_not_excluded"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_blood_film_and_haematology_workup",
+        "rationale": "Blood-film based hematology workup is appropriate when leukocytosis is persistent or unexplained after common reactive causes are considered."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_wbc_high_with_abnormal_plt",
+        "resulting_state": "at_risk",
+        "description": "Escalate when leukocytosis is accompanied by an abnormal platelet count, as combined cell-line disturbance increases concern for marrow pathology.",
+        "conditions": [
+          {
+            "metric_id": "plt",
+            "operator": "outside",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "outside_range"
+          }
+        ],
+        "source_refs": [
+          "source_clonal_leukocytosis_review_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_clonal_leukocytosis_review_2024",
+          "paper_title": "Review literature on persistent leukocytosis and suspicion for clonal hematologic causes",
+          "journal": "Review literature",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "Persistent unexplained leukocytosis warrants consideration of clonal hematologic causes, particularly when accompanying cell-line abnormalities are present.",
+      "threshold_notes": "No malignant threshold is asserted from WBC alone; escalation relies on unexplained persistence and additional count abnormalities."
+    },
+    "narrative": {
+      "mechanism": "Clonal leukocytosis reflects dysregulated expansion of marrow-derived white cell populations rather than purely reactive mobilisation.",
+      "biological_pathway": "Myeloid or lymphoid proliferation, marrow-driven cell-line expansion, and loss of normal reactive regulation of circulating leukocyte numbers.",
+      "interpretation": "A clonal frame becomes more plausible when inflammatory corroboration is lacking and platelet or differential-count abnormalities suggest broader marrow involvement.",
+      "implications": "This finding may justify repeat testing, blood film review, and hematology-directed assessment when reactive explanations remain weak.",
+      "supporting_marker_roles": "CRP helps exclude reactive inflammation, neutrophil pattern provides broader leukocyte context, and platelet abnormalities corroborate possible marrow involvement."
+    }
+  }
+]
