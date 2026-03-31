@@ -1,0 +1,21 @@
+research_domain: nutritional
+sources:
+- source_id: source_alp_statpearls
+  paper_title: Alkaline Phosphatase
+  journal: StatPearls
+  year: 2023
+- source_id: source_alp_mayo
+  paper_title: Alkaline phosphatase (ALP) blood test
+  journal: Mayo Clinic
+  year: 2025
+biomarkers:
+- alp
+- magnesium
+- zinc
+physiological_claim: Low ALP may arise from nutritional or cofactor deficiency and benefits from contextual review before
+  inherited low-ALP disorders are considered.
+evidence_strength: moderate
+research_summary: KB-S56 Wave C ingestion from Batch_5_Pass_3.json; spec_id=inv_alp_low_nutrient_or_cofactor_deficiency;
+  signal_id=signal_alp_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1. Unblock (KB-S55 hardened tranche) vitamin_b6 omitted from supporting_metrics
+  (not SSOT-resolver-clean); zinc override_rule retained (canonical).

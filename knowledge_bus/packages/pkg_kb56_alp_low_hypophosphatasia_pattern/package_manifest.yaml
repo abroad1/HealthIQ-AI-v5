@@ -1,0 +1,12 @@
+package_id: pkg_kb56_alp_low_hypophosphatasia_pattern
+package_version: 1.0.0
+description: 'KB-S56 Wave C package for inv_alp_low_hypophosphatasia_pattern (signal_alp_low).
+  Source: Batch_5_Pass_3.json.'
+research_brief: research_brief.yaml
+signal_library: signal_library.yaml
+author: HealthIQ Knowledge Bus — KB-S56
+created_at: '2026-03-31'
+source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_5_Pass_3.json
+translation_mode: creation
+behavioural_impact: NONE
+engine_compatibility: v5.x
