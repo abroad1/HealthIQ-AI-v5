@@ -1,0 +1,16 @@
+research_domain: immunologic
+sources:
+- source_id: source_hypogammaglobulinemia_2022
+  paper_title: Practical guidance for the diagnosis and management of secondary hypogammaglobulinemia
+  journal: Journal of Allergy and Clinical Immunology
+  year: 2022
+biomarkers:
+- albumin
+- globulin
+physiological_claim: Low globulin can support reduced immunoglobulin burden, but protein loss and reduced synthesis remain
+  important alternatives that require discrimination.
+evidence_strength: moderate
+research_summary: KB-S56 Wave C ingestion from Batch_3_Pass_3.json; spec_id=inv_globulin_low_hypogammaglobulinemia_or_protein_loss;
+  signal_id=signal_globulin_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1. Unblock (KB-S55 hardened tranche) igg, urine_protein_creatinine_ratio, and override_rule
+  or_globulin_low_with_igg_low omitted (not SSOT-resolver-clean).

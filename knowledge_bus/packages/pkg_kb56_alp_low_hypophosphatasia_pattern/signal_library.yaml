@@ -1,0 +1,58 @@
+library:
+  package_id: KBP-4794
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S56 Wave C — Alp Low Hypophosphatasia Pattern
+  description: Ingested from inv_alp_low_hypophosphatasia_pattern (Batch_5_Pass_3.json).
+    KB-S56 tranche; phosphate, vitamin_b6, and PLP override omitted (unmapped / not SSOT-resolver-clean).
+signals:
+- signal_id: signal_alp_low
+  name: Alp Low Hypophosphatasia Pattern
+  description: Persistently low alkaline phosphatase can indicate impaired ALP activity and may support consideration of
+    hypophosphatasia when compatible clinical or biochemical features are present.
+  system: bone
+  primary_metric: alp
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: zinc
+    expected_direction: low
+    role: differential_marker
+    availability: optional
+    rationale: Low zinc offers an alternative acquired explanation for low ALP.
+  dependencies:
+    biomarkers:
+    - alp
+    - zinc
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_alp_low_lab_range_activation_placeholder
+    metric_id: alp
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules: []
+  output:
+    signal_value: alp
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: alp
+    supporting_markers:
+    - zinc
+  explanation:
+    mechanism: Low ALP can reflect reduced production or reduced activity of tissue non-specific alkaline phosphatase.
+    biological_pathway: Impaired dephosphorylation of mineralisation-related substrates can alter skeletal and dental mineral handling in hypophosphatasia.
+    interpretation: Persistently low ALP should prompt consideration of inherited and acquired causes, not just be dismissed as a benign laboratory variant.
+    implications: This pattern may justify repeat measurement, trace-mineral review, and targeted confirmatory testing when symptoms or history are compatible.
+    supporting_marker_roles: Zinc distinguishes acquired cofactor deficiency; phosphate and vitamin B6 markers were excluded pending SSOT coverage.

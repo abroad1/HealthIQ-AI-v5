@@ -1,0 +1,59 @@
+library:
+  package_id: KBP-4793
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S56 Wave C — Globulin Low Hypogammaglobulinemia or Protein Loss
+  description: Ingested from inv_globulin_low_hypogammaglobulinemia_or_protein_loss (Batch_3_Pass_3.json).
+    KB-S56 tranche; igg/UPCR and IgG override omitted (unmapped / not SSOT-resolver-clean).
+signals:
+- signal_id: signal_globulin_low
+  name: Globulin Low Hypogammaglobulinemia or Protein Loss
+  description: Low calculated globulin can indicate reduced immunoglobulin burden or broader protein loss, but it is not
+    specific without fractionated testing and clinical correlation.
+  system: inflammatory
+  primary_metric: globulin
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: albumin
+    expected_direction: any
+    role: mechanism_marker
+    availability: common
+    rationale: Albumin pattern helps distinguish isolated low globulin from generalized protein loss or synthetic failure.
+  dependencies:
+    biomarkers:
+    - albumin
+    - globulin
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_globulin_low_lab_range_activation_placeholder
+    metric_id: globulin
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules: []
+  output:
+    signal_value: globulin
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: globulin
+    supporting_markers:
+    - albumin
+  explanation:
+    mechanism: Globulin falls when immunoglobulin levels are reduced or when proteins are lost or underproduced.
+    biological_pathway: Humoral immunoglobulin production, hepatic protein synthesis, and renal or enteric protein loss.
+    interpretation: A low globulin result is best treated as a prompt for direct immunoglobulin and protein-loss assessment.
+    implications: The key distinction is between antibody deficiency and non-immune protein loss or synthetic impairment.
+    supporting_marker_roles: Albumin helps define global protein disturbance; IgG and UPCR were excluded from this governed package
+      pending SSOT coverage.

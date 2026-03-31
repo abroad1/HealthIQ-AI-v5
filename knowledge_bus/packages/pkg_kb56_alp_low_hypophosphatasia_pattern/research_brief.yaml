@@ -1,0 +1,16 @@
+research_domain: musculoskeletal
+sources:
+- source_id: source_alp_statpearls
+  paper_title: Alkaline Phosphatase
+  journal: StatPearls
+  year: 2023
+biomarkers:
+- alp
+- zinc
+physiological_claim: Persistently low ALP can support consideration of hypophosphatasia, but acquired nutritional and
+  cofactor-related causes remain important differentials.
+evidence_strength: moderate
+research_summary: KB-S56 Wave C ingestion from Batch_5_Pass_3.json; spec_id=inv_alp_low_hypophosphatasia_pattern;
+  signal_id=signal_alp_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1. Unblock (KB-S55 hardened tranche) phosphate, vitamin_b6, and override_rule
+  or_alp_low_with_plp_support omitted (not SSOT-resolver-clean). Zinc retained as differential/supporting context for commercial zinc key.

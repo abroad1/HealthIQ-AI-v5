@@ -1,0 +1,77 @@
+library:
+  package_id: KBP-4795
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S56 Wave C — Alp Low Nutrient or Cofactor Deficiency
+  description: Ingested from inv_alp_low_nutrient_or_cofactor_deficiency (Batch_5_Pass_3.json).
+    KB-S56 tranche; vitamin_b6 supporting metric excluded (not SSOT-resolver-clean).
+signals:
+- signal_id: signal_alp_low
+  name: Alp Low Nutrient or Cofactor Deficiency
+  description: Low alkaline phosphatase may reflect undernutrition or trace-mineral deficiency when broader metabolic context
+    supports reduced enzyme substrate or cofactor availability.
+  system: nutritional
+  primary_metric: alp
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: zinc
+    expected_direction: low
+    role: mechanism_marker
+    availability: optional
+    rationale: Zinc is a cofactor for alkaline phosphatase and low zinc can contribute to reduced circulating ALP activity.
+  - biomarker_id: magnesium
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low magnesium can accompany undernutrition and enzyme dysfunction.
+  dependencies:
+    biomarkers:
+    - alp
+    - magnesium
+    - zinc
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_alp_low_lab_range_activation_placeholder
+    metric_id: alp
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_alp_low_with_trace_mineral_deficiency
+    resulting_state: at_risk
+    description: Escalate when low ALP is accompanied by corroborating trace-mineral deficiency rather than remaining an isolated transient result.
+    conditions:
+    - metric_id: zinc
+      operator: '<'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_alp_statpearls
+    - source_alp_mayo
+  output:
+    signal_value: alp
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: alp
+    supporting_markers:
+    - zinc
+    - magnesium
+  explanation:
+    mechanism: ALP activity depends on adequate enzyme production and availability of trace-mineral cofactors.
+    biological_pathway: Undernutrition, zinc deficiency, and magnesium deficiency can contribute to reduced enzyme activity and lower circulating ALP.
+    interpretation: Low ALP is often contextual and should prompt nutritional review, especially when paired with other deficiency markers.
+    implications: This pattern may justify repeat biochemistry and nutritional assessment before rare inherited causes are prioritised.
+    supporting_marker_roles: Zinc provides mechanistic support and magnesium corroborates a broader deficiency state; vitamin B6 differential was excluded pending SSOT coverage.

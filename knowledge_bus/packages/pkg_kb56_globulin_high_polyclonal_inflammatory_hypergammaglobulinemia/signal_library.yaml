@@ -1,0 +1,78 @@
+library:
+  package_id: KBP-4791
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S56 Wave C — Globulin High Polyclonal Inflammatory Hypergammaglobulinemia
+  description: Ingested from inv_globulin_high_polyclonal_inflammatory_hypergammaglobulinemia (Batch_3_Pass_3.json).
+    KB-S56 tranche; serum_protein_electrophoresis excluded (NA-PROCEDURE / unmapped).
+signals:
+- signal_id: signal_globulin_high
+  name: Globulin High Polyclonal Inflammatory Hypergammaglobulinemia
+  description: Raised globulin can reflect polyclonal hypergammaglobulinemia in chronic inflammatory,
+    autoimmune, infectious, or liver-related states; calculated globulin is a screening clue for protein-fraction review.
+  system: inflammatory
+  primary_metric: globulin
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: crp
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: Raised CRP supports inflammatory or infectious polyclonal immune activation when globulin is high.
+  - biomarker_id: albumin
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low albumin commonly accompanies inflammatory protein shifts and can accentuate a raised globulin fraction.
+  dependencies:
+    biomarkers:
+    - albumin
+    - crp
+    - globulin
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_globulin_high_lab_range_activation_placeholder
+    metric_id: globulin
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_globulin_high_with_albumin_low
+    resulting_state: at_risk
+    description: Escalate when high globulin coincides with low albumin, as this more strongly supports
+      a clinically meaningful protein-pattern shift.
+    conditions:
+    - metric_id: albumin
+      operator: '<'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_polyclonal_hypergammaglobulinemia_2021
+  output:
+    signal_value: globulin
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: globulin
+    supporting_markers:
+    - crp
+    - albumin
+  explanation:
+    mechanism: Globulin rises when circulating immunoglobulin and other non-albumin serum proteins are increased relative to albumin.
+    biological_pathway: Humoral immune activation, hepatic protein production, and albumin-globulin balance.
+    interpretation: A high globulin value is usually a prompt for protein-fraction clarification rather than a specific diagnosis.
+    implications: The next step is to decide whether the pattern is polyclonal, monoclonal, inflammatory, hepatic, or mixed.
+    supporting_marker_roles: CRP supports inflammatory activation and albumin corroborates a shifted protein pattern;
+      SPE was excluded from this governed package as unmapped NA-PROCEDURE.

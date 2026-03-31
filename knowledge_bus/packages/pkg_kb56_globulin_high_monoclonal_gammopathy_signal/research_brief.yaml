@@ -1,0 +1,21 @@
+research_domain: hematologic
+sources:
+- source_id: source_polyclonal_hypergammaglobulinemia_2021
+  paper_title: Polyclonal hypergammaglobulinaemia
+  journal: The Lancet Haematology
+  year: 2021
+- source_id: source_hypogammaglobulinemia_2022
+  paper_title: Practical guidance for the diagnosis and management of secondary hypogammaglobulinemia
+  journal: Journal of Allergy and Clinical Immunology
+  year: 2022
+biomarkers:
+- albumin
+- globulin
+- total_protein
+physiological_claim: A raised globulin fraction can be the first laboratory clue to paraproteinemia, but confirmatory
+  protein-fraction testing is required to distinguish this from reactive polyclonal states.
+evidence_strength: moderate
+research_summary: KB-S56 Wave C ingestion from Batch_3_Pass_3.json; spec_id=inv_globulin_high_monoclonal_gammopathy_signal;
+  signal_id=signal_globulin_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1
+  / translation_remap_contract_KB-S52B_v1. Unblock (KB-S55 hardened tranche) serum_protein_electrophoresis omitted from supporting_metrics
+  (NA-PROCEDURE / not SSOT-resolvable). Primary commercial coverage for total_protein appears in this spec as corroborator.

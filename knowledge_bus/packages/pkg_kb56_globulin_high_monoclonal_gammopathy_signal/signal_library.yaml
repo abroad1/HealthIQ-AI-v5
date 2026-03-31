@@ -1,0 +1,78 @@
+library:
+  package_id: KBP-4792
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S56 Wave C — Globulin High Monoclonal Gammopathy Signal
+  description: Ingested from inv_globulin_high_monoclonal_gammopathy_signal (Batch_3_Pass_3.json).
+    KB-S56 tranche; serum_protein_electrophoresis excluded (NA-PROCEDURE / unmapped).
+signals:
+- signal_id: signal_globulin_high
+  name: Globulin High Monoclonal Gammopathy Signal
+  description: A markedly raised globulin fraction can indicate excess immunoglobulin production and should prompt
+    discrimination between monoclonal and polyclonal patterns using confirmatory protein-fraction testing.
+  system: hematologic
+  primary_metric: globulin
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: total_protein
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: High total protein supports that the raised globulin fraction reflects a genuine protein excess state.
+  - biomarker_id: albumin
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Low albumin may accentuate the protein gap and increase suspicion that the abnormality is clinically meaningful.
+  dependencies:
+    biomarkers:
+    - albumin
+    - globulin
+    - total_protein
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_globulin_high_lab_range_activation_placeholder
+    metric_id: globulin
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_globulin_high_with_total_protein_high
+    resulting_state: at_risk
+    description: Escalate when high globulin coincides with high total protein, as this strengthens the likelihood
+      of a meaningful protein-excess state.
+    conditions:
+    - metric_id: total_protein
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_polyclonal_hypergammaglobulinemia_2021
+  output:
+    signal_value: globulin
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: globulin
+    supporting_markers:
+    - total_protein
+    - albumin
+  explanation:
+    mechanism: Monoclonal immunoglobulin excess increases the non-albumin serum protein fraction and can widen the protein gap.
+    biological_pathway: Clonal plasma-cell or B-cell immunoglobulin production versus reactive polyclonal antibody expansion.
+    interpretation: This is a screening frame for abnormal protein composition, not proof of a plasma-cell neoplasm.
+    implications: The core decision is whether electrophoresis shows a discrete monoclonal component or a broad polyclonal increase.
+    supporting_marker_roles: Total protein corroborates protein excess and albumin helps define the protein gap; SPE was excluded
+      from this governed package as unmapped NA-PROCEDURE.
