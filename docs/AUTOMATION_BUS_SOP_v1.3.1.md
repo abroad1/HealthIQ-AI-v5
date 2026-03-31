@@ -135,6 +135,8 @@ Artifacts are runtime state and are gitignored unless explicitly versioned.
 
 ## Stage 0 — Branch Alignment
 
+Operational ownership for achieving branch alignment before implementation begins sits with Cursor during normal execution, unless recovery or tooling failure requires human intervention.
+
 * A dedicated branch must exist for the work package
 * The current branch must match the declared `branch` in front matter
 * No work may proceed without correct branch alignment
@@ -430,6 +432,14 @@ Kernel must not run the gate during `start`.
 ---
 
 ## Stage 4 — Cursor Execution
+
+Before modifying any repository files, Cursor owns branch-preparation and repo-readiness verification for the active work package.
+
+Cursor must:
+- ensure the current branch matches the prompt branch, including performing the branch checkout if needed
+- ensure the working tree is clean before implementation begins
+- STOP and report if branch correction or repo cleanup cannot be completed safely within scope
+
 
 Cursor reads the hardened prompt and performs the implementation work.
 
