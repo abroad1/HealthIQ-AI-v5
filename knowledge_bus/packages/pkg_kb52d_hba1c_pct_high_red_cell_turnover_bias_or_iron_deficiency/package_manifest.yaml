@@ -1,0 +1,13 @@
+package_id: pkg_kb52d_hba1c_pct_high_red_cell_turnover_bias_or_iron_deficiency
+package_version: 1.0.0
+description: 'KB-S52D Wave B package for inv_hba1c_pct_high_red_cell_turnover_bias_or_iron_deficiency
+  (signal_hba1c_pct_high). Source batch: Batch_3_Pass_3.json. Remap applied: fasting_glucose→glucose
+  per translation_remap_contract_KB-S52B_v1.'
+research_brief: research_brief.yaml
+signal_library: signal_library.yaml
+author: HealthIQ Knowledge Bus — KB-S52D
+created_at: '2026-03-31'
+source_document: knowledge_bus/research/investigation_specs/multi_llm_research/Batch_3_Pass_3.json
+translation_mode: creation
+behavioural_impact: NONE
+engine_compatibility: v5.x

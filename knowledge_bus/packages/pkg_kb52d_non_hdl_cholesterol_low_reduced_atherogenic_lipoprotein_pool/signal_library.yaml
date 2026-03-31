@@ -1,0 +1,92 @@
+library:
+  package_id: KBP-4790
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52D Wave B — Non Hdl Cholesterol Low Reduced Atherogenic Lipoprotein Pool
+  description: Ingested from inv_non_hdl_low_reduced_atherogenic_lipoprotein_pool (Batch_7_Pass_3.json).
+    KB-S52D Wave B remap-governed tranche; non_hdl→non_hdl_cholesterol per KB-S52B remap contract.
+signals:
+- signal_id: signal_non_hdl_low
+  name: Non Hdl Cholesterol Low Reduced Atherogenic Lipoprotein Pool
+  description: Low non-HDL cholesterol is less often clinically central than high values, but it can reflect
+    a reduced circulating pool of apoB-containing lipoproteins in selected contexts.
+  system: nutritional
+  primary_metric: non_hdl_cholesterol
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: apob
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low apoB corroborates a reduced pool of circulating atherogenic lipoproteins rather than
+      isolated cholesterol redistribution.
+  - biomarker_id: albumin
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: Low albumin can support undernutrition or systemic illness as a contributor to reduced lipoprotein
+      levels.
+  - biomarker_id: alt
+    expected_direction: any
+    role: differential_marker
+    availability: common
+    rationale: Abnormal liver enzymes may redirect interpretation toward hepatic synthetic or metabolic context
+      rather than simple low cardiometabolic risk.
+  dependencies:
+    biomarkers:
+    - albumin
+    - alt
+    - apob
+    - non_hdl_cholesterol
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_non_hdl_low_lab_range_activation_placeholder
+    metric_id: non_hdl_cholesterol
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_non_hdl_low_with_low_apob
+    resulting_state: at_risk
+    description: Escalate cautiously when low non-HDL is accompanied by low apoB and additional biochemical
+      concern, as this is less likely to represent a simple isolated lipid finding.
+    conditions:
+    - metric_id: apob
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_non_hdl_low_review_2024
+  output:
+    signal_value: non_hdl_cholesterol
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: non_hdl_cholesterol
+    supporting_markers:
+    - apob
+    - albumin
+    - alt
+  explanation:
+    mechanism: Low non-HDL cholesterol reflects reduced cholesterol content within circulating apoB-containing
+      lipoproteins, which may be benign or may accompany systemic nutritional or hepatic influences.
+    biological_pathway: Lipoprotein assembly, hepatic export of apoB-containing particles, and systemic nutritional
+      influences on lipid transport.
+    interpretation: Low non-HDL is often benign, but low apoB or additional systemic context can make a reduced
+      lipoprotein pool or illness-related pattern more plausible.
+    implications: This finding should usually be interpreted cautiously and not over-medicalised without corroborating
+      lipid or nutritional evidence.
+    supporting_marker_roles: ApoB corroborates reduced particle burden, albumin helps differentiate nutritional or
+      systemic illness context, and liver enzyme context can redirect interpretation toward hepatic causes.

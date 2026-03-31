@@ -1,0 +1,92 @@
+library:
+  package_id: KBP-4788
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52D Wave B — HbA1c Pct High Red Cell Turnover Bias Or Iron Deficiency
+  description: Ingested from inv_hba1c_pct_high_red_cell_turnover_bias_or_iron_deficiency (Batch_3_Pass_3.json).
+    KB-S52D Wave B remap-governed tranche; fasting_glucose→glucose per KB-S52B remap contract.
+signals:
+- signal_id: signal_hba1c_pct_high
+  name: HbA1c Pct High Red Cell Turnover Bias Or Iron Deficiency
+  description: A high HbA1c can occasionally overstate glycemia when erythrocyte survival is prolonged
+    or iron-restricted states are present.
+  system: hematologic
+  primary_metric: hba1c_pct
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: hemoglobin
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Concurrent anemia can increase suspicion that HbA1c may be biased by altered erythrocyte
+      biology.
+  - biomarker_id: ferritin
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Low ferritin supports iron deficiency, a recognized context in which HbA1c can be discordantly
+      higher.
+  - biomarker_id: glucose
+    expected_direction: any
+    role: differential_marker
+    availability: common
+    rationale: Glucose discordance helps distinguish true chronic hyperglycemia from a red-cell-mediated
+      overestimation of HbA1c (upstream token fasting_glucose remapped to glucose).
+  dependencies:
+    biomarkers:
+    - ferritin
+    - glucose
+    - hba1c_pct
+    - hemoglobin
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_hba1c_pct_high_lab_range_activation_placeholder
+    metric_id: hba1c_pct
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_hba1c_high_with_ferritin_low
+    resulting_state: at_risk
+    description: Escalate when high HbA1c coincides with low ferritin, as this strengthens suspicion
+      of iron-related distortion or mixed interpretation.
+    conditions:
+    - metric_id: ferritin
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_hba1c_lab_2023
+  output:
+    signal_value: hba1c_pct
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: hba1c_pct
+    supporting_markers:
+    - hemoglobin
+    - ferritin
+    - glucose
+  explanation:
+    mechanism: HbA1c depends on both glycemia and erythrocyte lifespan, so prolonged exposure of red
+      cells to glucose can raise the measured fraction.
+    biological_pathway: Interaction between glucose-dependent hemoglobin glycation and erythrocyte
+      turnover biology.
+    interpretation: This is a cautionary frame for discordant HbA1c results, not a replacement for
+      diabetes diagnostic criteria.
+    implications: When HbA1c appears higher than glucose measures suggest, iron status and red-cell
+      biology should be reviewed.
+    supporting_marker_roles: Hemoglobin and ferritin support a hematologic explanation for discordance,
+      while glucose provides the essential differential against true chronic hyperglycemia.
