@@ -1,0 +1,22 @@
+research_domain: metabolic
+sources:
+- source_id: source_ada_diabetes_2025
+  paper_title: 'Standards of Care in Diabetes—2025: Diagnosis and Classification of Diabetes'
+  journal: Diabetes Care
+  year: 2025
+- source_id: source_hba1c_lab_2023
+  paper_title: Guidelines and recommendations for laboratory analysis in the diagnosis and management of diabetes mellitus
+  journal: Diabetes Care
+  year: 2023
+biomarkers:
+- glucose
+- hba1c_pct
+- hemoglobin
+- triglycerides
+physiological_claim: High HbA1c may reflect chronic hyperglycemia in the prediabetes-to-diabetes
+  spectrum when supported by glucose-based measures.
+evidence_strength: consensus
+research_summary: KB-S52D Wave B ingestion from Batch_3_Pass_3.json; spec_id=inv_hba1c_pct_high_chronic_hyperglycemia_diabetes;
+  signal_id=signal_hba1c_pct_high; investigation_spec_contract_version=3.0.0;
+  governance=translation_contract_v3_to_package_KB-S52B_v1 / translation_remap_contract_KB-S52B_v1;
+  remap_applied=fasting_glucose→glucose.

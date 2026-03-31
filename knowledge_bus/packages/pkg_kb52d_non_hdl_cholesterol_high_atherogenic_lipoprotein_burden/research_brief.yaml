@@ -1,0 +1,18 @@
+research_domain: vascular
+sources:
+- source_id: source_non_hdl_guideline_2024
+  paper_title: Guideline and review literature supporting non-HDL cholesterol as an atherogenic risk marker
+  journal: Guideline and review literature
+  year: 2024
+biomarkers:
+- apob
+- ldl_cholesterol
+- non_hdl_cholesterol
+- triglycerides
+physiological_claim: High non-HDL cholesterol may reflect increased circulating atherogenic apoB-containing
+  lipoproteins and support elevated cardiovascular risk interpretation.
+evidence_strength: consensus
+research_summary: KB-S52D Wave B ingestion from Batch_7_Pass_3.json; spec_id=inv_non_hdl_high_atherogenic_lipoprotein_burden;
+  signal_id=signal_non_hdl_high; investigation_spec_contract_version=3.0.0;
+  governance=translation_contract_v3_to_package_KB-S52B_v1 / translation_remap_contract_KB-S52B_v1;
+  remap_applied=non_hdl→non_hdl_cholesterol.

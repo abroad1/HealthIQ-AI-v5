@@ -1,0 +1,91 @@
+library:
+  package_id: KBP-4787
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S52D Wave B — HbA1c Pct High Chronic Hyperglycemia Diabetes
+  description: Ingested from inv_hba1c_pct_high_chronic_hyperglycemia_diabetes (Batch_3_Pass_3.json).
+    KB-S52D Wave B remap-governed tranche; fasting_glucose→glucose per KB-S52B remap contract.
+signals:
+- signal_id: signal_hba1c_pct_high
+  name: HbA1c Pct High Chronic Hyperglycemia Diabetes
+  description: High HbA1c reflects increased hemoglobin glycation over the lifespan of circulating
+    erythrocytes and is a core marker of chronic hyperglycemia.
+  system: metabolic
+  primary_metric: hba1c_pct
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: glucose
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: High fasting-equivalent glucose supports a true chronic glycemic abnormality when
+      HbA1c is elevated (upstream token fasting_glucose remapped to glucose).
+  - biomarker_id: triglycerides
+    expected_direction: high
+    role: mechanism_marker
+    availability: common
+    rationale: Hypertriglyceridemia can support an insulin-resistant metabolic context associated
+      with elevated HbA1c.
+  - biomarker_id: hemoglobin
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: Anemia or altered red-cell turnover can distort HbA1c interpretation and helps
+      distinguish true glycemia from measurement bias.
+  dependencies:
+    biomarkers:
+    - glucose
+    - hba1c_pct
+    - hemoglobin
+    - triglycerides
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_hba1c_pct_high_lab_range_activation_placeholder
+    metric_id: hba1c_pct
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_hba1c_high_with_fasting_glucose_high
+    resulting_state: at_risk
+    description: Escalate when high HbA1c coincides with high glucose, as this more strongly supports
+      genuine chronic hyperglycemia (remapped from fasting_glucose per KB-S52B).
+    conditions:
+    - metric_id: glucose
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_ada_diabetes_2025
+  output:
+    signal_value: hba1c_pct
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: hba1c_pct
+    supporting_markers:
+    - glucose
+    - triglycerides
+    - hemoglobin
+  explanation:
+    mechanism: HbA1c rises as hemoglobin is exposed to higher average glucose concentrations over
+      erythrocyte lifespan.
+    biological_pathway: Nonenzymatic glycation of hemoglobin during chronic glucose exposure.
+    interpretation: A high HbA1c generally supports chronic dysglycemia, but red-cell disorders
+      can affect accuracy.
+    implications: The core question is whether the elevation reflects true glycemia, discordant
+      red-cell biology, or both.
+    supporting_marker_roles: Glucose corroborates glycemia, triglycerides provide metabolic context,
+      and hemoglobin helps detect red-cell conditions that can bias HbA1c.
