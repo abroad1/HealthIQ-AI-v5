@@ -1,0 +1,22 @@
+research_domain: lipid_transport
+sources:
+- paper_title: 'Total cholesterol/HDL-C ratio versus non-HDL-C as predictors for ischemic
+    heart disease: a 17-year follow-up study of women in southern Sweden'
+  journal: BMC Cardiovascular Disorders
+  year: 2021
+  source_id: source_tc_hdl_womens_followup_2021
+- paper_title: 'TC/HDL-C Ratio Discordance with LDL-C and non-HDL-C and Incidence of Atherosclerotic
+    Cardiovascular Disease in Primary Prevention: The ARIC Study'
+  journal: European Journal of Preventive Cardiology
+  year: 2019
+  source_id: source_tc_hdl_aric_2019
+biomarkers:
+- tc_hdl_ratio
+- total_cholesterol
+- ldl_cholesterol
+physiological_claim: A low TC:HDL ratio generally indicates a less unfavorable cholesterol
+  distribution than total cholesterol alone might suggest, especially when HDL is relatively
+  preserved.
+evidence_strength: moderate
+research_summary: KB-S60 ingestion from lipid_derived_pass_3.json; spec_id=inv_tc_hdl_ratio_low_hdl_dominant_pattern;
+  signal_id=signal_tc_hdl_ratio_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

@@ -1,0 +1,24 @@
+research_domain: hormonal
+sources:
+- paper_title: Genetics of Sex Hormone-Binding Globulin and Testosterone Levels in Men of
+    Reproductive Age
+  journal: Journal of the Endocrine Society
+  year: 2017
+  source_id: source_shbg_genetics_percent_ft_2017
+- paper_title: The association of obesity with sex hormone-binding globulin is stronger than
+    the association with ageing – implications for the interpretation of total testosterone
+    measurements
+  journal: Clinical Endocrinology
+  year: 2015
+  source_id: source_obesity_shbg_tt_2015
+biomarkers:
+- testosterone_free_testosterone_ratio
+- free_testosterone
+- fai
+physiological_claim: A low total-to-free testosterone ratio can support relative enrichment
+  of the free testosterone fraction, commonly through reduced binding rather than automatically
+  implying primary androgen excess.
+evidence_strength: moderate
+research_summary: KB-S60 ingestion from lipid_derived_pass_3.json; spec_id=inv_testosterone_free_testosterone_ratio_low_low_binding_high_free_fraction;
+  signal_id=signal_testosterone_free_testosterone_ratio_low; investigation_spec_contract_version=3.0.0;
+  governance=translation_contract_v3_to_package_KB-S52B_v1.

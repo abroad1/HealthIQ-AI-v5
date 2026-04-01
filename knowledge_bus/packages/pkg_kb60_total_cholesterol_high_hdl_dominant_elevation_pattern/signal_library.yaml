@@ -1,0 +1,90 @@
+library:
+  package_id: KBP-4823
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S60 Lipid / Derived — Total Cholesterol High Hdl Dominant Elevation Pattern
+  description: Ingested from inv_total_cholesterol_high_hdl_dominant_elevation_pattern (lipid_derived_pass_3.json).
+    KB-S60 lipid / derived tranche.
+signals:
+- signal_id: signal_total_cholesterol_high
+  name: Total Cholesterol High Hdl Dominant Elevation Pattern
+  description: A high total cholesterol result can be less atherogenic when it occurs with
+    a low TC:HDL ratio, suggesting that HDL contributes materially to the total cholesterol
+    value.
+  system: lipid_transport
+  primary_metric: total_cholesterol
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: tc_hdl_ratio
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: A low TC:HDL ratio suggests that the total cholesterol elevation may be partly
+      driven by preserved or high HDL rather than by predominantly atherogenic particles.
+  - biomarker_id: ldl_cholesterol
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: High LDL cholesterol argues against a benign HDL-rich explanation and helps
+      distinguish discordance from genuinely atherogenic hypercholesterolaemia.
+  dependencies:
+    biomarkers:
+    - ldl_cholesterol
+    - tc_hdl_ratio
+    - total_cholesterol
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_total_cholesterol_high_lab_range_activation_placeholder
+    metric_id: total_cholesterol
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_total_cholesterol_high_with_low_ratio
+    resulting_state: at_risk
+    description: Escalate for structured review when total cholesterol is high but TC:HDL
+      ratio is low, because this discordant pattern should be distinguished from straightforward
+      atherogenic hypercholesterolaemia rather than assumed to carry the same risk.
+    conditions:
+    - metric_id: tc_hdl_ratio
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_tc_hdl_womens_followup_2021
+    - source_tc_hdl_aric_2019
+  output:
+    signal_value: total_cholesterol
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: total_cholesterol
+    supporting_markers:
+    - tc_hdl_ratio
+    - ldl_cholesterol
+  explanation:
+    mechanism: When HDL contributes proportionally more to total cholesterol, the total cholesterol
+      value can appear high without carrying the same atherogenic meaning as an LDL- or non-HDL-dominant
+      elevation.
+    biological_pathway: Reverse cholesterol transport, lipoprotein distribution, and cholesterol
+      carriage between protective and apoB-containing particles.
+    interpretation: 'This pattern is best understood as lipid discordance: total cholesterol
+      is elevated, but the ratio suggests that the distribution of cholesterol may be less
+      unfavorable than the total value alone implies.'
+    implications: It may justify fuller lipid interpretation rather than immediate assumption
+      of severe atherogenic dyslipidaemia from total cholesterol in isolation.
+    supporting_marker_roles: A low TC:HDL ratio corroborates an HDL-rich discordant pattern,
+      while high LDL cholesterol acts as a differential marker that redirects interpretation
+      toward more clearly atherogenic hypercholesterolaemia.
