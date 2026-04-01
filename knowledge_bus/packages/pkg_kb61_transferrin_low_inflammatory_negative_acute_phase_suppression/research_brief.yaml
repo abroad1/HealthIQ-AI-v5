@@ -1,0 +1,21 @@
+research_domain: hematologic
+sources:
+- paper_title: Physiology, Acute Phase Reactants
+  journal: StatPearls
+  year: 2023
+  source_id: source_acute_phase_reactants_2023
+- paper_title: Biochemistry, Transferrin
+  journal: StatPearls
+  year: 2025
+  source_id: source_biochemistry_transferrin_2025
+biomarkers:
+- transferrin
+- crp
+- ferritin
+- rdw_cv
+physiological_claim: Low transferrin is consistent with a negative acute-phase response and
+  is most interpretable as an inflammatory signal when ferritin and inflammatory markers move
+  in the same direction, reflecting cytokine-driven hepatic reprogramming.
+evidence_strength: moderate
+research_summary: KB-S61 ingestion from transferrin_pass_3.json; spec_id=inv_transferrin_low_inflammatory_negative_acute_phase_suppression;
+  signal_id=signal_transferrin_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

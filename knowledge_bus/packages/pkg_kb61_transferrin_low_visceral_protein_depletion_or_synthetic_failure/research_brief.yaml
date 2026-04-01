@@ -1,0 +1,22 @@
+research_domain: hepatic
+sources:
+- paper_title: Biochemistry, Transferrin
+  journal: StatPearls
+  year: 2025
+  source_id: source_biochemistry_transferrin_2025
+- paper_title: Nutritional Laboratory Markers in Malnutrition
+  journal: Journal of Clinical Medicine
+  year: 2019
+  source_id: source_malnutrition_markers_2019
+biomarkers:
+- transferrin
+- albumin
+- total_cholesterol
+- urine_protein_creatinine_ratio
+- crp
+physiological_claim: Low transferrin may support identifying broader visceral protein depletion
+  or impaired hepatic protein synthesis, though this interpretation can be confounded by inflammation
+  and requires concurrent assessment of albumin, cholesterol, and urinary protein.
+evidence_strength: moderate
+research_summary: KB-S61 ingestion from transferrin_pass_3.json; spec_id=inv_transferrin_low_visceral_protein_depletion_or_synthetic_failure;
+  signal_id=signal_transferrin_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.
