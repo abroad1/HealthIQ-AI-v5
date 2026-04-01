@@ -1,0 +1,22 @@
+research_domain: hematologic
+sources:
+- paper_title: Biochemistry, Transferrin
+  journal: StatPearls
+  year: 2025
+  source_id: source_biochemistry_transferrin_2025
+- paper_title: 'Iron Deficiency in Adults: A Review'
+  journal: JAMA
+  year: 2025
+  source_id: source_iron_deficiency_adults_review_2025
+biomarkers:
+- transferrin
+- ferritin
+- mch
+- transferrin_saturation
+- rdw_cv
+physiological_claim: High transferrin reflects increased iron-binding capacity in response
+  to reduced body iron availability, and provides greater clinical utility when ferritin,
+  transferrin saturation, and erythrocyte indices are reviewed alongside it.
+evidence_strength: moderate
+research_summary: KB-S61 ingestion from transferrin_pass_3.json; spec_id=inv_transferrin_high_iron_deficiency_transport_upregulation;
+  signal_id=signal_transferrin_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

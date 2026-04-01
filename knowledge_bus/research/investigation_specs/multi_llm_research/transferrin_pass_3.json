@@ -1,0 +1,541 @@
+[
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_transferrin_high_iron_deficiency_transport_upregulation",
+    "signal_id": "signal_transferrin_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "transferrin",
+      "rationale": "High transferrin frequently reflects compensatory upregulation of iron-transport capacity when body iron availability is reduced.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "ferritin",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low ferritin supports depleted iron stores rather than a nonspecific isolated rise in transferrin."
+      },
+      {
+        "biomarker_id": "mch",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low MCH supports that reduced iron availability is affecting erythrocyte hemoglobinization, consistent with functional iron deficiency downstream of the transport upregulation."
+      },
+      {
+        "biomarker_id": "transferrin_saturation",
+        "expected_direction": "low",
+        "role": "severity_marker",
+        "relationship_kind": "severity",
+        "availability": "specialist",
+        "rationale": "Low transferrin saturation quantifies the degree to which available iron-binding capacity is unfilled, indicating the functional severity of iron-transport upregulation relative to actual iron supply."
+      },
+      {
+        "biomarker_id": "rdw_cv",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "High RDW-CV favors evolving iron deficiency or mixed deficiency over a non-deficiency cause of high transferrin, such as pregnancy or oestrogen effect, by indicating erythrocyte size heterogeneity from iron-restricted production."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_absolute_iron_store_depletion_with_transferrin_upregulation",
+        "rank": 1,
+        "physiological_claim": "High transferrin may reflect compensatory hepatic upregulation in absolute iron deficiency, particularly when ferritin is also low, indicating that iron stores have fallen sufficiently to drive increased iron-binding capacity.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Transferrin is less specific than ferritin for early iron deficiency and should not be interpreted in isolation.",
+          "Transferrin can be elevated by pregnancy, oestrogen therapy, and other non-deficiency states, requiring clinical context for interpretation."
+        ],
+        "missing_data": {
+          "policy": "Review ferritin and the broader iron panel before treating high transferrin as confirmation of iron deficiency."
+        },
+        "supporting_marker_refs": [
+          "ferritin",
+          "mch",
+          "transferrin_saturation"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_ferritin_not_low_weakens_absolute_depletion",
+            "marker_reference": "ferritin",
+            "contradiction_rationale": "A ferritin value that is not low weakens an absolute iron-store depletion interpretation and may warrant reassessment of whether the transferrin rise is driven by iron deficiency.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_early_iron_restricted_erythropoiesis_or_increased_demand",
+        "rank": 2,
+        "physiological_claim": "High transferrin may accompany early iron-restricted erythropoiesis or increased physiologic iron demand before more established CBC abnormalities become evident, representing a stage where binding capacity has risen but store depletion and erythrocyte changes are not fully expressed.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This remains a contextual interpretation until ferritin, saturation, and trend data clarify whether iron demand exceeds supply.",
+          "Physiological states such as pregnancy may produce a similar pattern without pathological iron restriction."
+        ],
+        "missing_data": {
+          "policy": "If ferritin and saturation are unavailable, keep early iron restriction as a cautious secondary explanation rather than an established diagnosis."
+        },
+        "supporting_marker_refs": [
+          "ferritin",
+          "rdw_cv"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_no_anisocytosis_weakens_progressive_iron_restriction",
+            "marker_reference": "rdw_cv",
+            "contradiction_rationale": "A non-elevated RDW-CV weakens a more established progressive iron-restricted erythropoietic pattern, making the high transferrin result less specific as an early restriction signal.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_absolute_iron_store_depletion_with_transferrin_upregulation",
+        "hyp_early_iron_restricted_erythropoiesis_or_increased_demand"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_ferritin_and_complete_iron_panel",
+        "rationale": "Ferritin with the broader iron panel, including transferrin saturation, helps distinguish true iron deficiency from less specific or compensatory transferrin elevation and supports assessment of store depletion."
+      },
+      {
+        "test_id": "ct_reticulocyte_hemoglobin_equivalent",
+        "rationale": "Reticulocyte hemoglobin equivalent provides a measure of functional iron availability for erythropoiesis, helping to identify iron-restricted production independently of storage markers."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_transferrin_high_with_low_ferritin_and_high_rdw_cv",
+        "resulting_state": "at_risk",
+        "description": "Escalate when transferrin is high with ferritin below the laboratory minimum and RDW-CV above the laboratory maximum, as this combination is consistent with clinically relevant iron deficiency.",
+        "conditions": [
+          {
+            "metric_id": "ferritin",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          },
+          {
+            "metric_id": "rdw_cv",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_biochemistry_transferrin_2025",
+          "source_iron_deficiency_adults_review_2025"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_biochemistry_transferrin_2025",
+          "paper_title": "Biochemistry, Transferrin",
+          "journal": "StatPearls",
+          "year": 2025
+        },
+        {
+          "source_id": "source_iron_deficiency_adults_review_2025",
+          "paper_title": "Iron Deficiency in Adults: A Review",
+          "journal": "JAMA",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "High transferrin reflects increased iron-binding capacity in response to reduced body iron availability, and provides greater clinical utility when ferritin, transferrin saturation, and erythrocyte indices are reviewed alongside it.",
+      "threshold_notes": "No disease-specific transferrin threshold should be utilized beyond the reporting laboratory range; ferritin, transferrin saturation, and the broader iron profile are required for structured interpretation."
+    },
+    "narrative": {
+      "mechanism": "Transferrin rises when hepatic iron-transport protein production increases in response to reduced available iron, expanding circulating binding capacity to facilitate capture of dietary or recycled iron.",
+      "biological_pathway": "Hepatic transferrin synthesis, iron transport homeostasis, transferrin saturation dynamics, and iron-restricted erythropoiesis pathways.",
+      "interpretation": "A high transferrin result is consistent with an iron-deficiency-type transport response, but it yields greater clinical utility when ferritin, transferrin saturation, and CBC indices are reviewed alongside it to assess store depletion and functional erythropoietic impact.",
+      "implications": "This pattern may warrant a full iron-status assessment and a review of potential bleeding, malabsorption, or increased-demand contexts, rather than interpreting transferrin in isolation.",
+      "supporting_marker_roles": "Low ferritin corroborates depleted iron stores; low MCH supports erythropoietic impact from iron restriction; low transferrin saturation quantifies the severity of unfilled binding capacity; and high RDW-CV acts as a differential marker favoring evolving deficiency over a non-deficiency or physiological transferrin rise."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_transferrin_low_inflammatory_negative_acute_phase_suppression",
+    "signal_id": "signal_transferrin_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "transferrin",
+      "rationale": "Low transferrin commonly reflects negative acute-phase suppression in inflammatory states and can contribute to functional iron-restriction patterns distinct from absolute iron deficiency.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "High CRP supports an active inflammatory acute-phase response that suppresses transferrin as a negative acute-phase reactant via cytokine-driven hepatic reprogramming."
+      },
+      {
+        "biomarker_id": "ferritin",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High ferritin is consistent with inflammatory iron sequestration moving in the opposite direction to transferrin, helping distinguish this pattern from absolute iron deficiency where ferritin would be low."
+      },
+      {
+        "biomarker_id": "rdw_cv",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Marked RDW-CV elevation competes with a purely inflammatory suppression pattern by indicating erythrocyte size heterogeneity, suggesting the possibility of concurrent or mixed absolute iron deficiency rather than isolated functional restriction."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_anemia_of_inflammation_functional_iron_restriction",
+        "rank": 1,
+        "physiological_claim": "Low transferrin may reflect inflammation-associated functional iron restriction when negative acute-phase suppression coexists with ferritin elevation, consistent with a pattern where iron is sequestered and erythropoiesis becomes iron-restricted despite adequate stores.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Low transferrin alone does not establish anemia of inflammation and must be interpreted with ferritin and inflammatory markers.",
+          "Concurrent absolute iron deficiency can coexist with inflammation and may not be fully excluded even when ferritin is elevated."
+        ],
+        "missing_data": {
+          "policy": "Review CRP, ferritin, and the broader anemia pattern before assigning an inflammatory iron-sequestration interpretation."
+        },
+        "supporting_marker_refs": [
+          "crp",
+          "ferritin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_ferritin_not_elevated_weakens_inflammatory_sequestration",
+            "marker_reference": "ferritin",
+            "contradiction_rationale": "A ferritin value that is not elevated or is low weakens an inflammatory sequestration frame and redirects suspicion toward absolute deficiency or another non-inflammatory cause of low transferrin.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_pre_anemia_inflammatory_acute_phase_suppression",
+        "rank": 2,
+        "physiological_claim": "Low transferrin may reflect active inflammatory negative acute-phase suppression prior to a fully established iron-restricted anemia pattern, where cytokine-mediated hepatic reprogramming reduces transferrin without yet producing overt erythropoietic consequences.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This is a contextual interpretation of inflammation and should not be treated as a specific disease state without clinical correlation.",
+          "Distinguishing this from rank-1 depends on the presence or absence of established anemia indices; without CBC context, the two frames may overlap."
+        ],
+        "missing_data": {
+          "policy": "If inflammatory markers are unavailable, keep negative acute-phase suppression as a cautious secondary explanation; CBC context is required to evaluate whether anemia has developed."
+        },
+        "supporting_marker_refs": [
+          "crp",
+          "ferritin"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_marked_anisocytosis_competes_with_pure_inflammatory_frame",
+            "marker_reference": "rdw_cv",
+            "contradiction_rationale": "Marked anisocytosis weakens a purely inflammatory suppression pattern and suggests mixed deficiency or more established iron-restricted erythropoiesis may be present.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_anemia_of_inflammation_functional_iron_restriction",
+        "hyp_pre_anemia_inflammatory_acute_phase_suppression"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_crp_ferritin_and_iron_panel_review",
+        "rationale": "CRP, ferritin, and the broader iron panel assist in distinguishing inflammatory transferrin suppression from absolute iron deficiency by clarifying whether iron sequestration or store depletion is the dominant feature."
+      },
+      {
+        "test_id": "ct_soluble_transferrin_receptor",
+        "rationale": "Soluble transferrin receptor is relatively unaffected by inflammation and can help identify underlying absolute iron deficiency in the context of anemia of inflammation when CRP and ferritin are ambiguous."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_transferrin_low_with_high_crp_and_high_ferritin",
+        "resulting_state": "at_risk",
+        "description": "Escalate when transferrin is low with CRP above the laboratory maximum and ferritin above the laboratory maximum, as this combination is consistent with inflammatory negative-acute-phase suppression and functional iron restriction.",
+        "conditions": [
+          {
+            "metric_id": "crp",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          },
+          {
+            "metric_id": "ferritin",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_acute_phase_reactants_2023",
+          "source_biochemistry_transferrin_2025"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_acute_phase_reactants_2023",
+          "paper_title": "Physiology, Acute Phase Reactants",
+          "journal": "StatPearls",
+          "year": 2023
+        },
+        {
+          "source_id": "source_biochemistry_transferrin_2025",
+          "paper_title": "Biochemistry, Transferrin",
+          "journal": "StatPearls",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "Low transferrin is consistent with a negative acute-phase response and is most interpretable as an inflammatory signal when ferritin and inflammatory markers move in the same direction, reflecting cytokine-driven hepatic reprogramming.",
+      "threshold_notes": "No disease-specific transferrin threshold is established for this mechanism; inflammatory context, the wider iron panel, and soluble transferrin receptor offer more interpretive value than isolated transferrin magnitude."
+    },
+    "narrative": {
+      "mechanism": "Transferrin decreases during inflammation as hepatic protein synthesis reprioritizes toward positive acute-phase reactants and away from negative acute-phase proteins, mediated primarily by interleukin-6 and related cytokines.",
+      "biological_pathway": "Acute-phase signaling, hepcidin-mediated iron sequestration, and inflammation-associated iron redistribution pathways leading to functional iron restriction.",
+      "interpretation": "A low transferrin result may support an inflammatory negative-acute-phase pattern, but requires distinction from hepatic synthetic failure, protein loss, and absolute iron deficiency, which can produce similar directional changes.",
+      "implications": "This pattern may warrant correlation with CRP, ferritin, soluble transferrin receptor, and broader assessment for inflammatory or chronic-disease contexts.",
+      "supporting_marker_roles": "High CRP supports active cytokine-driven inflammatory suppression of transferrin synthesis; high ferritin corroborates iron sequestration moving in the expected inflammatory direction; and high RDW-CV acts as a differential marker that competes with a purely inflammatory explanation by suggesting mixed or absolute deficiency."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_transferrin_low_visceral_protein_depletion_or_synthetic_failure",
+    "signal_id": "signal_transferrin_low",
+    "research_domain": "hepatic",
+    "primary_marker": {
+      "biomarker_id": "transferrin",
+      "rationale": "Low transferrin can reflect reduced visceral protein availability resulting from impaired hepatic synthesis, protein loss, or nutritional depletion, representing a non-inflammatory pathway to hypotransferrinemia.",
+      "signal_system": "hepatic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "albumin",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low albumin supports a broader reduction in liver-synthesized visceral proteins rather than an isolated transferrin abnormality, consistent with impaired hepatic output or accelerated visceral protein loss."
+      },
+      {
+        "biomarker_id": "total_cholesterol",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low total cholesterol corroborates a broader hepatic synthetic or nutritional depletion context when multiple liver-dependent outputs are simultaneously reduced."
+      },
+      {
+        "biomarker_id": "urine_protein_creatinine_ratio",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "specialist",
+        "rationale": "An elevated urine protein-creatinine ratio supports renal protein loss as a contributing mechanism driving low transferrin and albumin, helping to distinguish a protein-loss nephropathy frame from a primary hepatic synthetic failure frame."
+      },
+      {
+        "biomarker_id": "crp",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "High CRP suggests interpretation may be better directed toward inflammation-driven negative acute-phase suppression rather than a primary synthetic or protein-loss pattern."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_hepatic_synthetic_impairment_hypotransferrinemia",
+        "rank": 1,
+        "physiological_claim": "Low transferrin may reflect impaired hepatic synthetic function when other liver-synthesized visceral proteins are also reduced, suggesting the liver's capacity to produce export proteins may be compromised.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Low transferrin is not specific to liver disease and should be evaluated with broader hepatic context rather than as an isolated synthetic marker.",
+          "Inflammation can confound this interpretation by suppressing transferrin independently of synthetic capacity."
+        ],
+        "missing_data": {
+          "policy": "Review albumin, liver-function tests, and inflammatory markers before considering hepatic synthetic impairment as the primary mechanism."
+        },
+        "supporting_marker_refs": [
+          "albumin",
+          "total_cholesterol"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_high_crp_competes_with_primary_synthetic_failure",
+            "marker_reference": "crp",
+            "contradiction_rationale": "Elevated CRP weakens a primary synthetic-failure interpretation, making inflammatory negative-acute-phase suppression plausible; though the mechanisms can coexist, elevated CRP warrants specific inflammatory assessment.",
+            "contradiction_strength": "moderate"
+          },
+          {
+            "contradiction_id": "ctr_elevated_upcr_redirects_from_synthetic_to_loss",
+            "marker_reference": "urine_protein_creatinine_ratio",
+            "contradiction_rationale": "An elevated urine protein-creatinine ratio weakens isolated hepatic synthetic failure as an explanation and suggests renal protein loss contributes to the reduction in transferrin and albumin.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_protein_loss_or_severe_nutritional_visceral_depletion",
+        "rank": 2,
+        "physiological_claim": "Low transferrin may occur in protein-losing states or severe undernutrition where circulating visceral protein levels fall, either due to accelerated loss or limited substrate availability, rather than intrinsic impairment of hepatic synthetic machinery.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Transferrin has limited specificity as an isolated nutritional marker and its interpretation can be obscured by inflammation.",
+          "Protein-loss states such as nephrotic syndrome may yield low transferrin even when underlying hepatic synthetic function remains preserved."
+        ],
+        "missing_data": {
+          "policy": "Assess nutritional status, protein-loss pathways via urine protein, and inflammatory activity before attributing low transferrin primarily to undernutrition or protein loss."
+        },
+        "supporting_marker_refs": [
+          "albumin",
+          "urine_protein_creatinine_ratio"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_total_cholesterol_not_low_weakens_broad_visceral_depletion",
+            "marker_reference": "total_cholesterol",
+            "contradiction_rationale": "A total cholesterol result that is not low weakens the pattern for a broader visceral protein depletion or malnutrition state, suggesting isolated inflammatory suppression or selective protein-loss may be more likely.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_hepatic_synthetic_impairment_hypotransferrinemia",
+        "hyp_protein_loss_or_severe_nutritional_visceral_depletion"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_albumin_liver_context_and_protein_loss_review",
+        "rationale": "Review of albumin, hepatic function tests, and potential renal or gastrointestinal protein loss can help separate synthetic failure from inflammation-driven or protein-loss-driven mechanisms for low transferrin."
+      },
+      {
+        "test_id": "ct_urine_protein_creatinine_ratio_and_liver_function_panel",
+        "rationale": "Combining urine protein-creatinine ratio with a liver function panel aids in evaluating whether renal protein loss or intrinsic synthetic failure is the more prominent contributor."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_transferrin_low_with_low_albumin_and_low_total_cholesterol",
+        "resulting_state": "at_risk",
+        "description": "Escalate when transferrin is low with albumin below the laboratory minimum and total cholesterol below the laboratory minimum, as this combination is consistent with broader visceral protein depletion or hepatic synthetic impairment.",
+        "conditions": [
+          {
+            "metric_id": "albumin",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          },
+          {
+            "metric_id": "total_cholesterol",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_biochemistry_transferrin_2025",
+          "source_malnutrition_markers_2019"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_biochemistry_transferrin_2025",
+          "paper_title": "Biochemistry, Transferrin",
+          "journal": "StatPearls",
+          "year": 2025
+        },
+        {
+          "source_id": "source_malnutrition_markers_2019",
+          "paper_title": "Nutritional Laboratory Markers in Malnutrition",
+          "journal": "Journal of Clinical Medicine",
+          "year": 2019
+        }
+      ],
+      "physiological_claim": "Low transferrin may support identifying broader visceral protein depletion or impaired hepatic protein synthesis, though this interpretation can be confounded by inflammation and requires concurrent assessment of albumin, cholesterol, and urinary protein.",
+      "threshold_notes": "No specific low-transferrin threshold is established for this outcome; associated visceral-protein markers, liver-function metrics, and urinary protein measures are necessary to guide interpretation."
+    },
+    "narrative": {
+      "mechanism": "Transferrin levels can decrease when liver synthetic output is diminished by intrinsic hepatic disease, when protein is lost via renal or gastrointestinal routes, or when visceral protein availability is impacted by undernutrition.",
+      "biological_pathway": "Hepatic protein synthesis, visceral protein homeostasis, nutritional depletion, and protein-loss pathways including renal and gastrointestinal protein leak.",
+      "interpretation": "A low transferrin result may be consistent with synthetic or visceral-protein depletion states; however, inflammatory status should be evaluated because it can produce similar directional changes. Urine protein assessment aids in differentiating protein-loss from synthetic failure.",
+      "implications": "This pattern generally warrants review of albumin, liver function, nutritional status, and context for renal or gastrointestinal protein-loss, rather than interpreting low transferrin merely as an isolated iron-related signal.",
+      "supporting_marker_roles": "Low albumin supports a parallel visceral protein reduction consistent with either synthetic failure or protein loss; low total cholesterol corroborates a broader hepatic depletion or synthetic-failure context; elevated urine protein-creatinine ratio acts as a differential marker pointing toward protein-loss nephropathy; and high CRP acts as a differential marker that redirects the diagnostic frame toward inflammatory negative-acute-phase suppression."
+    }
+  }
+]

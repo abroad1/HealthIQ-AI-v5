@@ -1,0 +1,119 @@
+library:
+  package_id: KBP-4831
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S61 Transferrin — Transferrin Low Visceral Protein Depletion Or Synthetic
+    Failure
+  description: Ingested from inv_transferrin_low_visceral_protein_depletion_or_synthetic_failure
+    (transferrin_pass_3.json). KB-S61 transferrin tranche.
+signals:
+- signal_id: signal_transferrin_low
+  name: Transferrin Low Visceral Protein Depletion Or Synthetic Failure
+  description: Low transferrin can reflect reduced visceral protein availability resulting
+    from impaired hepatic synthesis, protein loss, or nutritional depletion, representing
+    a non-inflammatory pathway to hypotransferrinemia.
+  system: hepatic
+  primary_metric: transferrin
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: albumin
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Low albumin supports a broader reduction in liver-synthesized visceral proteins
+      rather than an isolated transferrin abnormality, consistent with impaired hepatic output
+      or accelerated visceral protein loss.
+  - biomarker_id: total_cholesterol
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low total cholesterol corroborates a broader hepatic synthetic or nutritional
+      depletion context when multiple liver-dependent outputs are simultaneously reduced.
+  - biomarker_id: urine_protein_creatinine_ratio
+    expected_direction: high
+    role: differential_marker
+    availability: specialist
+    rationale: An elevated urine protein-creatinine ratio supports renal protein loss as a
+      contributing mechanism driving low transferrin and albumin, helping to distinguish a
+      protein-loss nephropathy frame from a primary hepatic synthetic failure frame.
+  - biomarker_id: crp
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: High CRP suggests interpretation may be better directed toward inflammation-driven
+      negative acute-phase suppression rather than a primary synthetic or protein-loss pattern.
+  dependencies:
+    biomarkers:
+    - albumin
+    - crp
+    - total_cholesterol
+    - transferrin
+    - urine_protein_creatinine_ratio
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_transferrin_low_lab_range_activation_placeholder
+    metric_id: transferrin
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_transferrin_low_with_low_albumin_and_low_total_cholesterol
+    resulting_state: at_risk
+    description: Escalate when transferrin is low with albumin below the laboratory minimum
+      and total cholesterol below the laboratory minimum, as this combination is consistent
+      with broader visceral protein depletion or hepatic synthetic impairment.
+    conditions:
+    - metric_id: albumin
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    - metric_id: total_cholesterol
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_biochemistry_transferrin_2025
+    - source_malnutrition_markers_2019
+  output:
+    signal_value: transferrin
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: transferrin
+    supporting_markers:
+    - albumin
+    - total_cholesterol
+    - urine_protein_creatinine_ratio
+    - crp
+  explanation:
+    mechanism: Transferrin levels can decrease when liver synthetic output is diminished by
+      intrinsic hepatic disease, when protein is lost via renal or gastrointestinal routes,
+      or when visceral protein availability is impacted by undernutrition.
+    biological_pathway: Hepatic protein synthesis, visceral protein homeostasis, nutritional
+      depletion, and protein-loss pathways including renal and gastrointestinal protein leak.
+    interpretation: A low transferrin result may be consistent with synthetic or visceral-protein
+      depletion states; however, inflammatory status should be evaluated because it can produce
+      similar directional changes. Urine protein assessment aids in differentiating protein-loss
+      from synthetic failure.
+    implications: This pattern generally warrants review of albumin, liver function, nutritional
+      status, and context for renal or gastrointestinal protein-loss, rather than interpreting
+      low transferrin merely as an isolated iron-related signal.
+    supporting_marker_roles: Low albumin supports a parallel visceral protein reduction consistent
+      with either synthetic failure or protein loss; low total cholesterol corroborates a
+      broader hepatic depletion or synthetic-failure context; elevated urine protein-creatinine
+      ratio acts as a differential marker pointing toward protein-loss nephropathy; and high
+      CRP acts as a differential marker that redirects the diagnostic frame toward inflammatory
+      negative-acute-phase suppression.

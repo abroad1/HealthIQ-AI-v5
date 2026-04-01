@@ -1,0 +1,12 @@
+package_id: pkg_kb61_transferrin_low_inflammatory_negative_acute_phase_suppression
+package_version: 1.0.0
+description: 'KB-S61 transferrin package for inv_transferrin_low_inflammatory_negative_acute_phase_suppression.
+  Source: knowledge_bus/research/investigation_specs/multi_llm_research/transferrin_pass_3.json.'
+research_brief: research_brief.yaml
+signal_library: signal_library.yaml
+author: HealthIQ Knowledge Bus — KB-S61
+created_at: '2026-03-31'
+source_document: knowledge_bus/research/investigation_specs/multi_llm_research/transferrin_pass_3.json
+translation_mode: creation
+behavioural_impact: NONE
+engine_compatibility: v5.x
