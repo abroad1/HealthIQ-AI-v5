@@ -1,0 +1,91 @@
+library:
+  package_id: KBP-4827
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S60 Lipid / Derived — Testosterone Free Testosterone Ratio High High Binding
+    Low Free Fraction
+  description: Ingested from inv_testosterone_free_testosterone_ratio_high_high_binding_low_free_fraction
+    (lipid_derived_pass_3.json). KB-S60 lipid / derived tranche.
+signals:
+- signal_id: signal_testosterone_free_testosterone_ratio_high
+  name: Testosterone Free Testosterone Ratio High High Binding Low Free Fraction
+  description: A high total-to-free testosterone ratio suggests a reduced free testosterone
+    fraction relative to total testosterone and can indicate increased binding or free-fraction
+    discordance.
+  system: hormonal
+  primary_metric: testosterone_free_testosterone_ratio
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: free_testosterone
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low free testosterone directly supports that the ratio is reflecting a reduced
+      free-androgen fraction rather than a benign proportional variation.
+  - biomarker_id: fai
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: A low free androgen index helps distinguish materially reduced androgen availability
+      from a ratio-only shift with less clear biological consequence.
+  dependencies:
+    biomarkers:
+    - fai
+    - free_testosterone
+    - testosterone_free_testosterone_ratio
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_testosterone_free_testosterone_ratio_high_lab_range_activation_placeholder
+    metric_id: testosterone_free_testosterone_ratio
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_testosterone_free_testosterone_ratio_high_with_low_free_testosterone
+    resulting_state: at_risk
+    description: Escalate when the total-to-free testosterone ratio is high and free testosterone
+      is low, because this combination more strongly supports a clinically relevant reduced
+      free-androgen fraction than an isolated ratio change.
+    conditions:
+    - metric_id: free_testosterone
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_tt_predicts_ft_2012
+    - source_obesity_shbg_tt_2015
+  output:
+    signal_value: testosterone_free_testosterone_ratio
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: testosterone_free_testosterone_ratio
+    supporting_markers:
+    - free_testosterone
+    - fai
+  explanation:
+    mechanism: The ratio rises when a greater proportion of circulating testosterone is bound
+      relative to the free fraction, so free testosterone becomes lower than the total testosterone
+      value alone might suggest.
+    biological_pathway: Androgen transport, SHBG-mediated binding, free hormone fraction dynamics,
+      and gonadal-axis biochemical interpretation pathways.
+    interpretation: A high ratio is best read as a free-fraction discordance signal that can
+      make total testosterone alone look less informative than the biologically available
+      androgen picture.
+    implications: This pattern may justify repeat morning androgen testing, SHBG review, and
+      cautious interpretation of symptoms against both total and free testosterone measures.
+    supporting_marker_roles: Low free testosterone corroborates that the ratio reflects a
+      reduced free-androgen fraction, while low FAI acts as a differential marker that helps
+      separate true low available androgen from a ratio-only discordance pattern.

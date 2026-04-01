@@ -1,0 +1,25 @@
+research_domain: lipid_transport
+sources:
+- paper_title: 'Serum Cholesterol Levels and Risk of Cardiovascular Death: A Systematic Review
+    and a Dose-Response Meta-Analysis of Prospective Cohort Studies'
+  journal: Nutrients
+  year: 2022
+  source_id: source_tc_cvd_meta_2022
+- paper_title: 'TC/HDL-C Ratio Discordance with LDL-C and non-HDL-C and Incidence of Atherosclerotic
+    Cardiovascular Disease in Primary Prevention: The ARIC Study'
+  journal: European Journal of Preventive Cardiology
+  year: 2019
+  source_id: source_tc_hdl_aric_2019
+- paper_title: 'Cardiovascular disease: risk assessment and reduction, including lipid modification'
+  journal: NICE Guideline NG238
+  year: 2023
+  source_id: source_nice_lipid_modification_2023
+biomarkers:
+- total_cholesterol
+- tc_hdl_ratio
+- ldl_cholesterol
+physiological_claim: High total cholesterol becomes more clinically persuasive as an atherogenic
+  signal when a cholesterol-to-HDL discordance also indicates unfavorable lipoprotein balance.
+evidence_strength: moderate
+research_summary: KB-S60 ingestion from lipid_derived_pass_3.json; spec_id=inv_total_cholesterol_high_atherogenic_hypercholesterolemia;
+  signal_id=signal_total_cholesterol_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

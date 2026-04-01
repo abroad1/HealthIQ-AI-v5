@@ -1,0 +1,88 @@
+library:
+  package_id: KBP-4824
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S60 Lipid / Derived — Total Cholesterol Low Hypocholesterolemia Context
+  description: Ingested from inv_total_cholesterol_low_hypocholesterolemia_context (lipid_derived_pass_3.json).
+    KB-S60 lipid / derived tranche.
+signals:
+- signal_id: signal_total_cholesterol_low
+  name: Total Cholesterol Low Hypocholesterolemia Context
+  description: Low total cholesterol is less common than hypercholesterolaemia and may reflect
+    secondary illness, undernutrition, malabsorption, hyperthyroid states, or less commonly
+    primary low-apoB disorders.
+  system: lipid_transport
+  primary_metric: total_cholesterol
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: tc_hdl_ratio
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: A low TC:HDL ratio helps distinguish a broadly low-cholesterol state from isolated
+      HDL reduction or mixed lipid distortion.
+  - biomarker_id: ldl_cholesterol
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low LDL cholesterol supports that the low total cholesterol sits within a broader
+      low-apoB or hypocholesterolaemic pattern rather than reflecting only HDL reduction.
+  dependencies:
+    biomarkers:
+    - ldl_cholesterol
+    - tc_hdl_ratio
+    - total_cholesterol
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_total_cholesterol_low_lab_range_activation_placeholder
+    metric_id: total_cholesterol
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_total_cholesterol_low_with_low_ratio
+    resulting_state: at_risk
+    description: Escalate for contextual review when total cholesterol is low and TC:HDL ratio
+      is also low, because that combination is more consistent with a genuinely broad low-cholesterol
+      pattern than with isolated HDL reduction.
+    conditions:
+    - metric_id: tc_hdl_ratio
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_hypolipidemia_review_2008
+  output:
+    signal_value: total_cholesterol
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: total_cholesterol
+    supporting_markers:
+    - tc_hdl_ratio
+    - ldl_cholesterol
+  explanation:
+    mechanism: Total cholesterol falls when circulating lipoprotein cholesterol is reduced,
+      whether because of lower production, increased clearance, reduced substrate availability,
+      or severe systemic illness.
+    biological_pathway: Hepatic cholesterol synthesis, intestinal absorption, lipoprotein
+      assembly, inflammatory redistribution, and systemic catabolic pathways.
+    interpretation: Low total cholesterol is best read as a contextual clue rather than as
+      a favorable stand-alone result, especially when it is unexpectedly low or persistent.
+    implications: This pattern may justify review for undernutrition, malabsorption, liver
+      disease, thyroid excess, chronic illness, or rare inherited low-apoB conditions.
+    supporting_marker_roles: A low TC:HDL ratio acts as a differential marker by separating
+      a broadly low-cholesterol state from isolated HDL reduction, while low LDL cholesterol
+      corroborates a wider low-apoB pattern.

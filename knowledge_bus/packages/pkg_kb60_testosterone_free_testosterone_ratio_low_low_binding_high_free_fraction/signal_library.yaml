@@ -1,0 +1,90 @@
+library:
+  package_id: KBP-4828
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S60 Lipid / Derived — Testosterone Free Testosterone Ratio Low Low Binding
+    High Free Fraction
+  description: Ingested from inv_testosterone_free_testosterone_ratio_low_low_binding_high_free_fraction
+    (lipid_derived_pass_3.json). KB-S60 lipid / derived tranche.
+signals:
+- signal_id: signal_testosterone_free_testosterone_ratio_low
+  name: Testosterone Free Testosterone Ratio Low Low Binding High Free Fraction
+  description: A low total-to-free testosterone ratio suggests a relatively expanded free
+    testosterone fraction for the measured total testosterone level and can indicate reduced
+    binding or free-fraction enrichment.
+  system: hormonal
+  primary_metric: testosterone_free_testosterone_ratio
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: free_testosterone
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: High free testosterone supports that the low ratio is capturing a genuinely
+      expanded free-androgen fraction.
+  - biomarker_id: fai
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: A high free androgen index helps distinguish materially increased androgen
+      availability from a low-ratio pattern driven mainly by altered binding or assay context.
+  dependencies:
+    biomarkers:
+    - fai
+    - free_testosterone
+    - testosterone_free_testosterone_ratio
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_testosterone_free_testosterone_ratio_low_lab_range_activation_placeholder
+    metric_id: testosterone_free_testosterone_ratio
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_testosterone_free_testosterone_ratio_low_with_high_free_testosterone
+    resulting_state: at_risk
+    description: Escalate when the total-to-free testosterone ratio is low and free testosterone
+      is high, because this combination more strongly supports a materially expanded free-androgen
+      fraction than an isolated low ratio.
+    conditions:
+    - metric_id: free_testosterone
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_shbg_genetics_percent_ft_2017
+    - source_obesity_shbg_tt_2015
+  output:
+    signal_value: testosterone_free_testosterone_ratio
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: testosterone_free_testosterone_ratio
+    supporting_markers:
+    - free_testosterone
+    - fai
+  explanation:
+    mechanism: The ratio falls when free testosterone makes up a larger fraction of measured
+      testosterone, usually because binding is reduced or because the free androgen fraction
+      is relatively expanded.
+    biological_pathway: SHBG-related androgen binding, free hormone fraction regulation, metabolic
+      suppression of binding proteins, and androgen-availability pathways.
+    interpretation: A low ratio is best viewed as a low-binding or free-fraction-enrichment
+      signal rather than as a stand-alone diagnosis of androgen excess.
+    implications: This pattern may justify review of free testosterone, FAI, metabolic context,
+      and testing methodology before strong endocrine conclusions are drawn.
+    supporting_marker_roles: High free testosterone corroborates that the free fraction is
+      materially expanded, while high FAI acts as a differential marker that helps separate
+      true androgen enrichment from a low-ratio binding-pattern signal.

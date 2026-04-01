@@ -1,0 +1,15 @@
+research_domain: lipid_transport
+sources:
+- paper_title: 'Hypolipidemia: A Word of Caution'
+  journal: Libyan Journal of Medicine
+  year: 2008
+  source_id: source_hypolipidemia_review_2008
+biomarkers:
+- total_cholesterol
+- tc_hdl_ratio
+- ldl_cholesterol
+physiological_claim: Low total cholesterol is usually a contextual finding that warrants evaluation
+  for secondary systemic or nutritional causes before a primary lipid disorder is assumed.
+evidence_strength: exploratory
+research_summary: KB-S60 ingestion from lipid_derived_pass_3.json; spec_id=inv_total_cholesterol_low_hypocholesterolemia_context;
+  signal_id=signal_total_cholesterol_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

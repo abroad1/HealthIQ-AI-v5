@@ -1,0 +1,1060 @@
+[
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_total_cholesterol_high_atherogenic_hypercholesterolemia",
+    "signal_id": "signal_total_cholesterol_high",
+    "research_domain": "lipid_transport",
+    "primary_marker": {
+      "biomarker_id": "total_cholesterol",
+      "rationale": "High total cholesterol is most clinically meaningful when it reflects increased atherogenic lipoprotein burden rather than an isolated HDL-rich elevation.",
+      "signal_system": "lipid_transport"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "tc_hdl_ratio",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "A high TC:HDL ratio helps distinguish atherogenic cholesterol burden from isolated total-cholesterol elevation driven less by apoB-rich particles."
+      },
+      {
+        "biomarker_id": "ldl_cholesterol",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High LDL cholesterol supports that elevated total cholesterol is being carried in a more atherogenic apoB-rich fraction."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_atherogenic_cholesterol_burden",
+        "rank": 1,
+        "physiological_claim": "High total cholesterol may reflect increased atherogenic lipoprotein burden and higher long-term ASCVD risk, especially when the TC:HDL ratio is also elevated.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Total cholesterol is less specific than LDL-C or non-HDL-C and should not be interpreted as a stand-alone treatment target."
+        ],
+        "missing_data": {
+          "policy": "Review the full lipid profile before treating isolated high total cholesterol as equivalent to marked LDL-driven dyslipidaemia."
+        },
+        "supporting_marker_refs": [
+          "tc_hdl_ratio",
+          "ldl_cholesterol"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_ratio_not_elevated",
+            "marker_reference": "tc_hdl_ratio",
+            "contradiction_rationale": "A normal or low TC:HDL ratio weakens a clearly atherogenic interpretation and raises the possibility of an HDL-rich profile.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_secondary_or_polygenic_hypercholesterolemia",
+        "rank": 2,
+        "physiological_claim": "High total cholesterol may also sit within polygenic or secondary hypercholesterolaemia rather than a single monogenic disorder, particularly when the pattern is not extreme or highly discordant.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Secondary causes and family-history context materially affect how strongly a high total cholesterol result should be interpreted."
+        ],
+        "missing_data": {
+          "policy": "Exclude secondary causes and assess family history before promoting a hereditary hypercholesterolaemia interpretation."
+        },
+        "supporting_marker_refs": [
+          "ldl_cholesterol"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_ldl_not_elevated_against_strong_apoB_frame",
+            "marker_reference": "ldl_cholesterol",
+            "contradiction_rationale": "If LDL cholesterol is not elevated, a strongly apoB-rich hypercholesterolaemic frame is less secure from total cholesterol alone and secondary or distributional explanations need more weight.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_atherogenic_cholesterol_burden",
+        "hyp_secondary_or_polygenic_hypercholesterolemia"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_full_lipid_profile_and_secondary_cause_review",
+        "rationale": "A full lipid profile with review of secondary causes helps determine whether high total cholesterol is truly atherogenic and whether specialist assessment is warranted."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_total_cholesterol_high_with_high_ratio",
+        "resulting_state": "at_risk",
+        "description": "Escalate when total cholesterol is high and TC:HDL ratio is also high, because this combination is more consistent with clinically relevant atherogenic dyslipidaemia than with an isolated cholesterol elevation.",
+        "conditions": [
+          {
+            "metric_id": "tc_hdl_ratio",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_tc_cvd_meta_2022",
+          "source_tc_hdl_aric_2019",
+          "source_nice_lipid_modification_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_tc_cvd_meta_2022",
+          "paper_title": "Serum Cholesterol Levels and Risk of Cardiovascular Death: A Systematic Review and a Dose-Response Meta-Analysis of Prospective Cohort Studies",
+          "journal": "Nutrients",
+          "year": 2022
+        },
+        {
+          "source_id": "source_tc_hdl_aric_2019",
+          "paper_title": "TC/HDL-C Ratio Discordance with LDL-C and non-HDL-C and Incidence of Atherosclerotic Cardiovascular Disease in Primary Prevention: The ARIC Study",
+          "journal": "European Journal of Preventive Cardiology",
+          "year": 2019
+        },
+        {
+          "source_id": "source_nice_lipid_modification_2023",
+          "paper_title": "Cardiovascular disease: risk assessment and reduction, including lipid modification",
+          "journal": "NICE Guideline NG238",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "High total cholesterol becomes more clinically persuasive as an atherogenic signal when a cholesterol-to-HDL discordance also indicates unfavorable lipoprotein balance.",
+      "threshold_notes": "No disease-specific threshold should be invented beyond the reporting laboratory range; severe hereditary suspicion requires family history, persistence, and fuller lipid characterization."
+    },
+    "narrative": {
+      "mechanism": "Total cholesterol rises when circulating cholesterol carried in lipoproteins increases, most importantly when non-HDL and LDL-rich particles contribute materially to the total burden.",
+      "biological_pathway": "Hepatic lipoprotein production, apoB-containing particle trafficking, reverse cholesterol transport, and atherosclerotic lipid retention pathways.",
+      "interpretation": "High total cholesterol is a useful entry-point lipid signal, but it gains much more meaning when paired with TC:HDL ratio or other particle-focused measures.",
+      "implications": "This pattern may justify full lipid review, assessment of secondary causes, and broader cardiovascular risk stratification rather than interpretation from total cholesterol alone.",
+      "supporting_marker_roles": "A high TC:HDL ratio acts as a differential marker that separates atherogenic cholesterol distribution from less unfavorable patterns, while high LDL cholesterol corroborates that the total cholesterol elevation is being carried in a more atherogenic fraction."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_total_cholesterol_high_hdl_dominant_elevation_pattern",
+    "signal_id": "signal_total_cholesterol_high",
+    "research_domain": "lipid_transport",
+    "primary_marker": {
+      "biomarker_id": "total_cholesterol",
+      "rationale": "A high total cholesterol result can be less atherogenic when it occurs with a low TC:HDL ratio, suggesting that HDL contributes materially to the total cholesterol value.",
+      "signal_system": "lipid_transport"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "tc_hdl_ratio",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "A low TC:HDL ratio suggests that the total cholesterol elevation may be partly driven by preserved or high HDL rather than by predominantly atherogenic particles."
+      },
+      {
+        "biomarker_id": "ldl_cholesterol",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "High LDL cholesterol argues against a benign HDL-rich explanation and helps distinguish discordance from genuinely atherogenic hypercholesterolaemia."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_hdl_rich_total_cholesterol_elevation",
+        "rank": 1,
+        "physiological_claim": "High total cholesterol with a low TC:HDL ratio may reflect an HDL-rich lipid profile in which total cholesterol overstates atherogenic risk.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "A low ratio does not prove protection and should not override the broader clinical risk picture."
+        ],
+        "missing_data": {
+          "policy": "Review the full lipid profile and overall cardiovascular risk before reassuring on the basis of total cholesterol alone."
+        },
+        "supporting_marker_refs": [
+          "tc_hdl_ratio"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_ldl_high_redirects_to_atherogenicity",
+            "marker_reference": "ldl_cholesterol",
+            "contradiction_rationale": "Elevated LDL cholesterol weakens an HDL-dominant explanation and redirects interpretation toward more clearly atherogenic dyslipidaemia despite the favorable ratio.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_total_cholesterol_risk_overestimation_if_ratio_favorable",
+        "rank": 2,
+        "physiological_claim": "High total cholesterol may overestimate risk when considered without HDL context, and a favorable ratio can help identify this discordant pattern.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This remains a risk-refinement frame and not a stand-alone reason to ignore other risk enhancers or lipid abnormalities."
+        ],
+        "missing_data": {
+          "policy": "Do not use this frame in isolation; integrate age, diabetes status, smoking, blood pressure, and fuller lipid fractions."
+        },
+        "supporting_marker_refs": [
+          "tc_hdl_ratio",
+          "ldl_cholesterol"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_ratio_not_favorable",
+            "marker_reference": "tc_hdl_ratio",
+            "contradiction_rationale": "If the ratio is not low, a discordant HDL-dominant interpretation loses support and total cholesterol is more likely to reflect meaningful atherogenic burden.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_hdl_rich_total_cholesterol_elevation",
+        "hyp_total_cholesterol_risk_overestimation_if_ratio_favorable"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_full_lipid_fraction_review_for_total_cholesterol_discordance",
+        "rationale": "Review of the full lipid fractions helps determine whether high total cholesterol is being driven by HDL-rich discordance or by a more atherogenic lipoprotein profile."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_total_cholesterol_high_with_low_ratio",
+        "resulting_state": "at_risk",
+        "description": "Escalate for structured review when total cholesterol is high but TC:HDL ratio is low, because this discordant pattern should be distinguished from straightforward atherogenic hypercholesterolaemia rather than assumed to carry the same risk.",
+        "conditions": [
+          {
+            "metric_id": "tc_hdl_ratio",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_tc_hdl_womens_followup_2021",
+          "source_tc_hdl_aric_2019"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_tc_hdl_womens_followup_2021",
+          "paper_title": "Total cholesterol/HDL-C ratio versus non-HDL-C as predictors for ischemic heart disease: a 17-year follow-up study of women in southern Sweden",
+          "journal": "BMC Cardiovascular Disorders",
+          "year": 2021
+        },
+        {
+          "source_id": "source_tc_hdl_aric_2019",
+          "paper_title": "TC/HDL-C Ratio Discordance with LDL-C and non-HDL-C and Incidence of Atherosclerotic Cardiovascular Disease in Primary Prevention: The ARIC Study",
+          "journal": "European Journal of Preventive Cardiology",
+          "year": 2019
+        }
+      ],
+      "physiological_claim": "A low TC:HDL ratio can identify situations in which total cholesterol alone overstates atherogenic risk because HDL contributes materially to the total cholesterol concentration.",
+      "threshold_notes": "This remains a pattern-based interpretation; no favorable disease threshold should be invented beyond the reporting laboratory range and the broader lipid context."
+    },
+    "narrative": {
+      "mechanism": "When HDL contributes proportionally more to total cholesterol, the total cholesterol value can appear high without carrying the same atherogenic meaning as an LDL- or non-HDL-dominant elevation.",
+      "biological_pathway": "Reverse cholesterol transport, lipoprotein distribution, and cholesterol carriage between protective and apoB-containing particles.",
+      "interpretation": "This pattern is best understood as lipid discordance: total cholesterol is elevated, but the ratio suggests that the distribution of cholesterol may be less unfavorable than the total value alone implies.",
+      "implications": "It may justify fuller lipid interpretation rather than immediate assumption of severe atherogenic dyslipidaemia from total cholesterol in isolation.",
+      "supporting_marker_roles": "A low TC:HDL ratio corroborates an HDL-rich discordant pattern, while high LDL cholesterol acts as a differential marker that redirects interpretation toward more clearly atherogenic hypercholesterolaemia."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_total_cholesterol_low_hypocholesterolemia_context",
+    "signal_id": "signal_total_cholesterol_low",
+    "research_domain": "lipid_transport",
+    "primary_marker": {
+      "biomarker_id": "total_cholesterol",
+      "rationale": "Low total cholesterol is less common than hypercholesterolaemia and may reflect secondary illness, undernutrition, malabsorption, hyperthyroid states, or less commonly primary low-apoB disorders.",
+      "signal_system": "lipid_transport"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "tc_hdl_ratio",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "A low TC:HDL ratio helps distinguish a broadly low-cholesterol state from isolated HDL reduction or mixed lipid distortion."
+      },
+      {
+        "biomarker_id": "ldl_cholesterol",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low LDL cholesterol supports that the low total cholesterol sits within a broader low-apoB or hypocholesterolaemic pattern rather than reflecting only HDL reduction."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_secondary_hypocholesterolemia_systemic_or_nutritional",
+        "rank": 1,
+        "physiological_claim": "Low total cholesterol may reflect secondary hypocholesterolaemia associated with undernutrition, malabsorption, hyperthyroid states, chronic liver disease, infection, or inflammatory illness.",
+        "evidence_strength": "exploratory",
+        "caveats": [
+          "Low total cholesterol is non-specific and often reflects an associated clinical context rather than a primary lipid disorder."
+        ],
+        "missing_data": {
+          "policy": "Review nutritional status, thyroid status, liver context, systemic illness, and lipid-lowering exposure before interpreting isolated low total cholesterol."
+        },
+        "supporting_marker_refs": [
+          "tc_hdl_ratio",
+          "ldl_cholesterol"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_ratio_not_low",
+            "marker_reference": "tc_hdl_ratio",
+            "contradiction_rationale": "If the TC:HDL ratio is not low, the result may reflect disproportionate HDL reduction rather than a genuinely broad low-cholesterol state.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_primary_low_apoB_or_hypobetalipoproteinemic_pattern",
+        "rank": 2,
+        "physiological_claim": "Low total cholesterol may less commonly represent a primary low-apoB or hypobetalipoproteinaemic pattern when secondary causes are not evident.",
+        "evidence_strength": "exploratory",
+        "caveats": [
+          "Primary hypocholesterolaemic disorders are uncommon and should not be inferred from a single low total cholesterol value alone."
+        ],
+        "missing_data": {
+          "policy": "Repeat testing and fuller lipoprotein characterization are needed before retaining a primary genetic low-cholesterol explanation."
+        },
+        "supporting_marker_refs": [
+          "ldl_cholesterol"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_ldl_not_low_against_primary_low_apob_pattern",
+            "marker_reference": "ldl_cholesterol",
+            "contradiction_rationale": "If LDL cholesterol is not reduced, a primary broad low-apoB or hypobetalipoproteinaemic pattern becomes less convincing from total cholesterol alone.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_secondary_hypocholesterolemia_systemic_or_nutritional",
+        "hyp_primary_low_apoB_or_hypobetalipoproteinemic_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_lipid_profile_and_secondary_cause_review_for_low_tc",
+        "rationale": "Repeat lipid testing with evaluation for nutritional, hepatic, thyroid, inflammatory, and genetic contexts helps clarify whether low total cholesterol is secondary or primary."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_total_cholesterol_low_with_low_ratio",
+        "resulting_state": "at_risk",
+        "description": "Escalate for contextual review when total cholesterol is low and TC:HDL ratio is also low, because that combination is more consistent with a genuinely broad low-cholesterol pattern than with isolated HDL reduction.",
+        "conditions": [
+          {
+            "metric_id": "tc_hdl_ratio",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_hypolipidemia_review_2008"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "exploratory",
+      "sources": [
+        {
+          "source_id": "source_hypolipidemia_review_2008",
+          "paper_title": "Hypolipidemia: A Word of Caution",
+          "journal": "Libyan Journal of Medicine",
+          "year": 2008
+        }
+      ],
+      "physiological_claim": "Low total cholesterol is usually a contextual finding that warrants evaluation for secondary systemic or nutritional causes before a primary lipid disorder is assumed.",
+      "threshold_notes": "There is no universally accepted disease threshold for low total cholesterol, so interpretation should remain laboratory-range anchored and clinically contextual."
+    },
+    "narrative": {
+      "mechanism": "Total cholesterol falls when circulating lipoprotein cholesterol is reduced, whether because of lower production, increased clearance, reduced substrate availability, or severe systemic illness.",
+      "biological_pathway": "Hepatic cholesterol synthesis, intestinal absorption, lipoprotein assembly, inflammatory redistribution, and systemic catabolic pathways.",
+      "interpretation": "Low total cholesterol is best read as a contextual clue rather than as a favorable stand-alone result, especially when it is unexpectedly low or persistent.",
+      "implications": "This pattern may justify review for undernutrition, malabsorption, liver disease, thyroid excess, chronic illness, or rare inherited low-apoB conditions.",
+      "supporting_marker_roles": "A low TC:HDL ratio acts as a differential marker by separating a broadly low-cholesterol state from isolated HDL reduction, while low LDL cholesterol corroborates a wider low-apoB pattern."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_tc_hdl_ratio_high_atherogenic_discordance_pattern",
+    "signal_id": "signal_tc_hdl_ratio_high",
+    "research_domain": "lipid_transport",
+    "primary_marker": {
+      "biomarker_id": "tc_hdl_ratio",
+      "rationale": "A high total cholesterol:HDL ratio reflects an unfavorable cholesterol distribution and can reveal atherogenic discordance even when total cholesterol is not markedly elevated.",
+      "signal_system": "lipid_transport"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "total_cholesterol",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High total cholesterol strengthens the inference that a high ratio reflects clinically important cholesterol burden rather than a marginal ratio shift."
+      },
+      {
+        "biomarker_id": "ldl_cholesterol",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "High LDL cholesterol helps distinguish apoB-rich atherogenic burden from ratio elevation driven mainly by low HDL or broader cardiometabolic context."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_atherogenic_lipoprotein_discordance",
+        "rank": 1,
+        "physiological_claim": "A high TC:HDL ratio may indicate atherogenic lipoprotein discordance and increased ASCVD risk even when LDL-C or non-HDL-C are not clearly extreme.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "The ratio is a risk-pattern marker and should not replace guideline-directed assessment of LDL-C, non-HDL-C, and overall cardiovascular risk."
+        ],
+        "missing_data": {
+          "policy": "Interpret alongside the full lipid profile and overall risk assessment rather than using the ratio as a sole treatment target."
+        },
+        "supporting_marker_refs": [
+          "total_cholesterol",
+          "ldl_cholesterol"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_total_cholesterol_not_high",
+            "marker_reference": "total_cholesterol",
+            "contradiction_rationale": "If total cholesterol is not elevated, the ratio may still be informative but a severe cholesterol-burden interpretation becomes less secure.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_low_hdl_cardiometabolic_pattern",
+        "rank": 2,
+        "physiological_claim": "A high TC:HDL ratio may also reflect low-HDL cardiometabolic dyslipidaemia seen with obesity, insulin resistance, diabetes, or metabolic syndrome.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This ratio pattern is not specific for insulin resistance and should not be treated as a diagnosis by itself."
+        ],
+        "missing_data": {
+          "policy": "Review anthropometric, glycaemic, triglyceride, and metabolic context before prioritizing a cardiometabolic interpretation."
+        },
+        "supporting_marker_refs": [
+          "total_cholesterol"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_ldl_high_shifts_away_from_low_hdl_pattern",
+            "marker_reference": "ldl_cholesterol",
+            "contradiction_rationale": "Clearly elevated LDL cholesterol shifts interpretation away from a primarily low-HDL cardiometabolic frame and toward a more apoB-rich atherogenic dyslipidaemia pattern.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_atherogenic_lipoprotein_discordance",
+        "hyp_low_hdl_cardiometabolic_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_full_lipid_profile_and_global_cvd_risk_review_for_ratio",
+        "rationale": "Full lipid review and formal cardiovascular risk assessment help determine whether a high TC:HDL ratio reflects clinically important atherogenic discordance."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_tc_hdl_ratio_high_with_high_total_cholesterol",
+        "resulting_state": "at_risk",
+        "description": "Escalate when TC:HDL ratio is high and total cholesterol is also high, because this combination is more consistent with clinically relevant atherogenic dyslipidaemia than with an isolated ratio disturbance.",
+        "conditions": [
+          {
+            "metric_id": "total_cholesterol",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_tc_hdl_aric_2019",
+          "source_tc_hdl_womens_followup_2021",
+          "source_nice_lipid_modification_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_tc_hdl_aric_2019",
+          "paper_title": "TC/HDL-C Ratio Discordance with LDL-C and non-HDL-C and Incidence of Atherosclerotic Cardiovascular Disease in Primary Prevention: The ARIC Study",
+          "journal": "European Journal of Preventive Cardiology",
+          "year": 2019
+        },
+        {
+          "source_id": "source_tc_hdl_womens_followup_2021",
+          "paper_title": "Total cholesterol/HDL-C ratio versus non-HDL-C as predictors for ischemic heart disease: a 17-year follow-up study of women in southern Sweden",
+          "journal": "BMC Cardiovascular Disorders",
+          "year": 2021
+        },
+        {
+          "source_id": "source_nice_lipid_modification_2023",
+          "paper_title": "Cardiovascular disease: risk assessment and reduction, including lipid modification",
+          "journal": "NICE Guideline NG238",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "A high TC:HDL ratio is a clinically useful marker of unfavorable cholesterol balance and can identify residual atherogenic risk beyond total cholesterol alone.",
+      "threshold_notes": "Interpretation should remain laboratory-range anchored and integrated with LDL-C, non-HDL-C, and formal risk assessment rather than converted into an isolated disease threshold."
+    },
+    "narrative": {
+      "mechanism": "The TC:HDL ratio rises when total cholesterol is high relative to HDL, signaling that protective reverse-cholesterol-transport capacity is not keeping pace with the overall cholesterol burden.",
+      "biological_pathway": "Lipoprotein balance, reverse cholesterol transport, insulin-resistant dyslipidaemia, and atherosclerotic particle exposure pathways.",
+      "interpretation": "A high ratio is best read as an unfavorable cholesterol-distribution signal rather than as a replacement for the rest of the lipid profile.",
+      "implications": "This pattern may justify fuller risk stratification and lifestyle or lipid-lowering intensification review, especially when cardiometabolic risk factors cluster.",
+      "supporting_marker_roles": "High total cholesterol corroborates greater overall cholesterol burden, while high LDL cholesterol acts as a differential marker that helps separate apoB-rich atherogenic dyslipidaemia from lower-HDL-predominant ratio elevation."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_tc_hdl_ratio_low_hdl_dominant_pattern",
+    "signal_id": "signal_tc_hdl_ratio_low",
+    "research_domain": "lipid_transport",
+    "primary_marker": {
+      "biomarker_id": "tc_hdl_ratio",
+      "rationale": "A low total cholesterol:HDL ratio generally suggests a more favorable cholesterol distribution, although it should be interpreted in context rather than as a stand-alone protective marker.",
+      "signal_system": "lipid_transport"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "total_cholesterol",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "High total cholesterol with a low ratio identifies a discordant HDL-rich profile and helps separate it from genuinely low overall cholesterol burden."
+      },
+      {
+        "biomarker_id": "ldl_cholesterol",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low LDL cholesterol supports that a low ratio sits within a broadly less atherogenic lipid pattern rather than reflecting HDL-rich discordance with preserved apoB burden."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_hdl_dominant_low_atherogenic_distribution",
+        "rank": 1,
+        "physiological_claim": "A low TC:HDL ratio may reflect a relatively favorable cholesterol distribution in which HDL is preserved relative to total cholesterol.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "A low ratio does not eliminate cardiovascular risk from other factors and should not be used as a stand-alone reassurance tool."
+        ],
+        "missing_data": {
+          "policy": "Interpret within the full cardiovascular risk picture and do not ignore diabetes, smoking, hypertension, or marked LDL elevation elsewhere in the profile."
+        },
+        "supporting_marker_refs": [
+          "ldl_cholesterol"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_total_cholesterol_markedly_high",
+            "marker_reference": "total_cholesterol",
+            "contradiction_rationale": "Markedly high total cholesterol means the low ratio should be interpreted as discordance rather than assumed low overall lipid risk.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_high_total_cholesterol_ratio_discordance",
+        "rank": 2,
+        "physiological_claim": "A low TC:HDL ratio may also identify discordance in which high total cholesterol is partially offset by preserved HDL, making total cholesterol alone appear more alarming than the ratio suggests.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This is a risk-refinement frame, not proof that elevated cholesterol is benign."
+        ],
+        "missing_data": {
+          "policy": "Use the full lipid profile to determine whether the low ratio truly represents HDL-rich discordance or whether other atherogenic fractions remain high."
+        },
+        "supporting_marker_refs": [
+          "total_cholesterol"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_ldl_not_low_reinforces_discordance",
+            "marker_reference": "ldl_cholesterol",
+            "contradiction_rationale": "If LDL cholesterol is not low, the low ratio is more likely to represent HDL-rich discordance than broadly low atherogenic burden.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_hdl_dominant_low_atherogenic_distribution",
+        "hyp_high_total_cholesterol_ratio_discordance"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_full_lipid_profile_review_for_low_ratio",
+        "rationale": "A full lipid review helps distinguish broadly favorable lipid distribution from HDL-rich discordance with otherwise elevated total cholesterol."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_tc_hdl_ratio_low_with_high_total_cholesterol",
+        "resulting_state": "at_risk",
+        "description": "Escalate for structured review when TC:HDL ratio is low but total cholesterol is high, because this discordant pattern needs fuller lipid interpretation rather than simple reassurance.",
+        "conditions": [
+          {
+            "metric_id": "total_cholesterol",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_tc_hdl_womens_followup_2021",
+          "source_tc_hdl_aric_2019"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_tc_hdl_womens_followup_2021",
+          "paper_title": "Total cholesterol/HDL-C ratio versus non-HDL-C as predictors for ischemic heart disease: a 17-year follow-up study of women in southern Sweden",
+          "journal": "BMC Cardiovascular Disorders",
+          "year": 2021
+        },
+        {
+          "source_id": "source_tc_hdl_aric_2019",
+          "paper_title": "TC/HDL-C Ratio Discordance with LDL-C and non-HDL-C and Incidence of Atherosclerotic Cardiovascular Disease in Primary Prevention: The ARIC Study",
+          "journal": "European Journal of Preventive Cardiology",
+          "year": 2019
+        }
+      ],
+      "physiological_claim": "A low TC:HDL ratio generally indicates a less unfavorable cholesterol distribution than total cholesterol alone might suggest, especially when HDL is relatively preserved.",
+      "threshold_notes": "A low ratio should be interpreted as a context-refining signal rather than as an independent guarantee of low cardiovascular risk."
+    },
+    "narrative": {
+      "mechanism": "The ratio falls when HDL contributes proportionally more to the cholesterol pool or when total atherogenic cholesterol burden is relatively lower.",
+      "biological_pathway": "Reverse cholesterol transport, lipoprotein balance, and discordance between total cholesterol concentration and atherogenic particle burden.",
+      "interpretation": "A low ratio can be helpful for refining risk interpretation, particularly when total cholesterol appears high but the lipid distribution is less unfavorable than expected.",
+      "implications": "This pattern may justify fuller lipid-context review rather than immediate treatment decisions based on ratio alone.",
+      "supporting_marker_roles": "High total cholesterol acts as a differential marker by identifying HDL-rich discordance, while low LDL cholesterol corroborates that the low ratio may sit within a broadly less atherogenic pattern."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_testosterone_free_testosterone_ratio_high_high_binding_low_free_fraction",
+    "signal_id": "signal_testosterone_free_testosterone_ratio_high",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "testosterone_free_testosterone_ratio",
+      "rationale": "A high total-to-free testosterone ratio suggests a reduced free testosterone fraction relative to total testosterone and can indicate increased binding or free-fraction discordance.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "free_testosterone",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low free testosterone directly supports that the ratio is reflecting a reduced free-androgen fraction rather than a benign proportional variation."
+      },
+      {
+        "biomarker_id": "fai",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "A low free androgen index helps distinguish materially reduced androgen availability from a ratio-only shift with less clear biological consequence."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_high_shbg_binding_state_with_low_free_fraction",
+        "rank": 1,
+        "physiological_claim": "A high total-to-free testosterone ratio may reflect a high-binding state in which free testosterone fraction is reduced relative to total testosterone.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "The ratio is an indirect binding/fraction signal and should not replace direct SHBG or validated free-testosterone assessment where available."
+        ],
+        "missing_data": {
+          "policy": "Review SHBG context, assay method, and repeat morning testing before assigning a persistent high-binding androgen state."
+        },
+        "supporting_marker_refs": [
+          "free_testosterone",
+          "fai"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_free_testosterone_not_low",
+            "marker_reference": "free_testosterone",
+            "contradiction_rationale": "If free testosterone is not reduced, the biological significance of a high ratio becomes less secure and assay or proportional effects should be considered.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_total_testosterone_free_testosterone_discordance",
+        "rank": 2,
+        "physiological_claim": "A high ratio may also identify discordance in which total testosterone appears less abnormal than the free androgen fraction, and where biochemical androgen deficiency may be less apparent from total testosterone alone.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Biochemical interpretation remains dependent on symptoms, timing, assay quality, and repeat confirmation."
+        ],
+        "missing_data": {
+          "policy": "Do not rely on the ratio alone; confirm whether symptoms and free-testosterone measurement support a clinically relevant discordance pattern."
+        },
+        "supporting_marker_refs": [
+          "free_testosterone",
+          "fai"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_fai_not_low",
+            "marker_reference": "fai",
+            "contradiction_rationale": "A non-low free androgen index weakens the case that the ratio is capturing materially reduced androgen availability.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_high_shbg_binding_state_with_low_free_fraction",
+        "hyp_total_testosterone_free_testosterone_discordance"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_morning_testosterone_with_shbg_context_review",
+        "rationale": "Repeat morning testing with attention to SHBG context and free-testosterone methodology helps determine whether a high ratio reflects a persistent binding-related androgen discordance."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_testosterone_free_testosterone_ratio_high_with_low_free_testosterone",
+        "resulting_state": "at_risk",
+        "description": "Escalate when the total-to-free testosterone ratio is high and free testosterone is low, because this combination more strongly supports a clinically relevant reduced free-androgen fraction than an isolated ratio change.",
+        "conditions": [
+          {
+            "metric_id": "free_testosterone",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_tt_predicts_ft_2012",
+          "source_obesity_shbg_tt_2015"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_tt_predicts_ft_2012",
+          "paper_title": "Performance of Total Testosterone Measurement to Predict Free Testosterone for the Biochemical Evaluation of Male Hypogonadism",
+          "journal": "The Journal of Urology",
+          "year": 2012
+        },
+        {
+          "source_id": "source_obesity_shbg_tt_2015",
+          "paper_title": "The association of obesity with sex hormone-binding globulin is stronger than the association with ageing – implications for the interpretation of total testosterone measurements",
+          "journal": "Clinical Endocrinology",
+          "year": 2015
+        }
+      ],
+      "physiological_claim": "A high total-to-free testosterone ratio can support a reduced free testosterone fraction and highlight discordance between total testosterone and biologically available androgen status.",
+      "threshold_notes": "No ratio threshold should be invented outside the reporting range because interpretation depends on assay method, SHBG context, and repeat morning sampling."
+    },
+    "narrative": {
+      "mechanism": "The ratio rises when a greater proportion of circulating testosterone is bound relative to the free fraction, so free testosterone becomes lower than the total testosterone value alone might suggest.",
+      "biological_pathway": "Androgen transport, SHBG-mediated binding, free hormone fraction dynamics, and gonadal-axis biochemical interpretation pathways.",
+      "interpretation": "A high ratio is best read as a free-fraction discordance signal that can make total testosterone alone look less informative than the biologically available androgen picture.",
+      "implications": "This pattern may justify repeat morning androgen testing, SHBG review, and cautious interpretation of symptoms against both total and free testosterone measures.",
+      "supporting_marker_roles": "Low free testosterone corroborates that the ratio reflects a reduced free-androgen fraction, while low FAI acts as a differential marker that helps separate true low available androgen from a ratio-only discordance pattern."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_testosterone_free_testosterone_ratio_low_low_binding_high_free_fraction",
+    "signal_id": "signal_testosterone_free_testosterone_ratio_low",
+    "research_domain": "hormonal",
+    "primary_marker": {
+      "biomarker_id": "testosterone_free_testosterone_ratio",
+      "rationale": "A low total-to-free testosterone ratio suggests a relatively expanded free testosterone fraction for the measured total testosterone level and can indicate reduced binding or free-fraction enrichment.",
+      "signal_system": "hormonal"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "free_testosterone",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High free testosterone supports that the low ratio is capturing a genuinely expanded free-androgen fraction."
+      },
+      {
+        "biomarker_id": "fai",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "A high free androgen index helps distinguish materially increased androgen availability from a low-ratio pattern driven mainly by altered binding or assay context."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_low_binding_shbg_reduction_pattern",
+        "rank": 1,
+        "physiological_claim": "A low total-to-free testosterone ratio may reflect a low-binding state in which free testosterone fraction is relatively preserved or increased for the total testosterone level.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This interpretation is indirect and may reflect low SHBG physiology, especially in obesity or insulin-resistant states, rather than primary androgen excess."
+        ],
+        "missing_data": {
+          "policy": "Review metabolic context, assay method, and SHBG status before assigning a persistent low-binding androgen pattern."
+        },
+        "supporting_marker_refs": [
+          "free_testosterone",
+          "fai"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_free_testosterone_not_high",
+            "marker_reference": "free_testosterone",
+            "contradiction_rationale": "If free testosterone is not elevated or relatively preserved, the biological meaning of a low ratio becomes less secure.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_free_fraction_enrichment_or_hyperandrogenic_pattern",
+        "rank": 2,
+        "physiological_claim": "A low ratio may also accompany a high free-androgen state in which free testosterone is disproportionately elevated relative to total testosterone.",
+        "evidence_strength": "exploratory",
+        "caveats": [
+          "A low ratio alone is not sufficient to diagnose hyperandrogenism and should be interpreted with sex-specific clinical context."
+        ],
+        "missing_data": {
+          "policy": "Confirm whether free testosterone and the clinical phenotype actually support androgen excess before promoting a hyperandrogenic frame."
+        },
+        "supporting_marker_refs": [
+          "free_testosterone",
+          "fai"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_fai_not_high",
+            "marker_reference": "fai",
+            "contradiction_rationale": "A non-high free androgen index weakens the interpretation that a low ratio reflects materially increased androgen availability.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_low_binding_shbg_reduction_pattern",
+        "hyp_free_fraction_enrichment_or_hyperandrogenic_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_free_androgen_assessment_with_binding_context",
+        "rationale": "Repeat androgen testing with attention to free-testosterone methodology and binding context helps determine whether a low ratio reflects reduced binding or true androgen excess."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_testosterone_free_testosterone_ratio_low_with_high_free_testosterone",
+        "resulting_state": "at_risk",
+        "description": "Escalate when the total-to-free testosterone ratio is low and free testosterone is high, because this combination more strongly supports a materially expanded free-androgen fraction than an isolated low ratio.",
+        "conditions": [
+          {
+            "metric_id": "free_testosterone",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_shbg_genetics_percent_ft_2017",
+          "source_obesity_shbg_tt_2015"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_shbg_genetics_percent_ft_2017",
+          "paper_title": "Genetics of Sex Hormone-Binding Globulin and Testosterone Levels in Men of Reproductive Age",
+          "journal": "Journal of the Endocrine Society",
+          "year": 2017
+        },
+        {
+          "source_id": "source_obesity_shbg_tt_2015",
+          "paper_title": "The association of obesity with sex hormone-binding globulin is stronger than the association with ageing – implications for the interpretation of total testosterone measurements",
+          "journal": "Clinical Endocrinology",
+          "year": 2015
+        }
+      ],
+      "physiological_claim": "A low total-to-free testosterone ratio can support relative enrichment of the free testosterone fraction, commonly through reduced binding rather than automatically implying primary androgen excess.",
+      "threshold_notes": "No disease-specific low-ratio threshold should be invented because interpretation depends on assay method, binding-protein context, and the accompanying free-testosterone result."
+    },
+    "narrative": {
+      "mechanism": "The ratio falls when free testosterone makes up a larger fraction of measured testosterone, usually because binding is reduced or because the free androgen fraction is relatively expanded.",
+      "biological_pathway": "SHBG-related androgen binding, free hormone fraction regulation, metabolic suppression of binding proteins, and androgen-availability pathways.",
+      "interpretation": "A low ratio is best viewed as a low-binding or free-fraction-enrichment signal rather than as a stand-alone diagnosis of androgen excess.",
+      "implications": "This pattern may justify review of free testosterone, FAI, metabolic context, and testing methodology before strong endocrine conclusions are drawn.",
+      "supporting_marker_roles": "High free testosterone corroborates that the free fraction is materially expanded, while high FAI acts as a differential marker that helps separate true androgen enrichment from a low-ratio binding-pattern signal."
+    }
+  }
+]
