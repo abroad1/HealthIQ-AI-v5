@@ -685,6 +685,15 @@ transferrin:
   - Transferrin
   - Transferrin (Venous)
   - Transferrin - venous
+transferrin_saturation:
+  canonical_id: transferrin_saturation
+  aliases:
+  - Iron Saturation
+  - Serum Iron Saturation
+  - Transferrin Saturation
+  - Transferrin Saturation (Venous)
+  - TSAT
+  - transferrin_saturation
 triglycerides:
   canonical_id: triglycerides
   aliases:
@@ -735,6 +744,14 @@ urea_creatinine_ratio:
   - BUN:Creatinine
   - bun_creatinine_ratio
   - urea_creatinine_ratio
+urine_protein_creatinine_ratio:
+  canonical_id: urine_protein_creatinine_ratio
+  aliases:
+  - UPCR
+  - Urine Protein Creatinine Ratio
+  - Urine Protein-to-Creatinine Ratio
+  - Urine Protein/Creatinine Ratio
+  - urine_protein_creatinine_ratio
 vitamin_b12:
   canonical_id: vitamin_b12
   aliases:
