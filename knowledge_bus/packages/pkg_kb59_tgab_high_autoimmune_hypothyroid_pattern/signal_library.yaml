@@ -1,0 +1,112 @@
+library:
+  package_id: KBP-4820
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S59 Thyroid Abs — Tgab High Autoimmune Hypothyroid Pattern
+  description: Ingested from inv_tgab_high_autoimmune_hypothyroid_pattern (thyroid_antibodies_pass_3.json).
+    KB-S59 thyroid antibody tranche.
+signals:
+- signal_id: signal_tgab_high
+  name: Tgab High Autoimmune Hypothyroid Pattern
+  description: TgAb is a thyroid autoantibody that can support autoimmune thyroid interpretation,
+    especially when corroborated by thyroid function changes or other thyroid antibodies.
+  system: endocrine
+  primary_metric: tgab
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: tpo_ab
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Concurrent TPO antibody positivity strengthens confidence that TgAb elevation
+      represents true thyroid autoimmunity rather than an isolated laboratory finding.
+  - biomarker_id: tsh
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Raised TSH supports primary thyroid failure physiology in the presence of thyroid
+      autoantibodies.
+  - biomarker_id: free_t4
+    expected_direction: low
+    role: severity_marker
+    availability: common
+    rationale: Low free T4 differentiates overt hormone deficiency from antibody positivity
+      without current failure.
+  - biomarker_id: free_t3
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: A hyperthyroid hormone pattern would redirect interpretation away from a hypothyroid
+      autoimmune frame.
+  dependencies:
+    biomarkers:
+    - free_t3
+    - free_t4
+    - tgab
+    - tpo_ab
+    - tsh
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_tgab_high_lab_range_activation_placeholder
+    metric_id: tgab
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_tgab_high_with_hypothyroid_biochemistry
+    resulting_state: at_risk
+    description: Escalate when high TgAb coexists with raised TSH and low free T4, because
+      the combination is more consistent with clinically relevant autoimmune hypothyroid physiology
+      than isolated antibody positivity.
+    conditions:
+    - metric_id: tsh
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    - metric_id: free_t4
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_tgab_hashimoto_context
+    - source_tgab_review
+  output:
+    signal_value: tgab
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: tgab
+    supporting_markers:
+    - tpo_ab
+    - tsh
+    - free_t4
+    - free_t3
+  explanation:
+    mechanism: TgAb reflects immune reactivity against thyroglobulin and can appear as part
+      of autoimmune thyroid disease, especially when thyroid tissue injury and antigen exposure
+      are present.
+    biological_pathway: Thyroid autoimmunity with immune recognition of thyroglobulin, glandular
+      inflammation, reduced thyroid reserve, and eventual primary hypothyroid physiology in
+      susceptible individuals.
+    interpretation: High TgAb becomes more clinically persuasive when paired with TSH elevation,
+      low free T4, or concomitant TPO antibody positivity, because isolated TgAb is less specific
+      than TPOAb for routine autoimmune hypothyroid assessment.
+    implications: This pattern may justify follow-up thyroid testing and autoimmune thyroid
+      review, but TgAb is best interpreted as supportive context rather than a stand-alone
+      determinant of disease severity.
+    supporting_marker_roles: TPOAb provides corroborating autoimmune evidence, TSH confirms
+      primary gland stress, free T4 gauges overt hormone deficiency, and free T3 acts as a
+      differential marker when hyperthyroid physiology would redirect the frame.

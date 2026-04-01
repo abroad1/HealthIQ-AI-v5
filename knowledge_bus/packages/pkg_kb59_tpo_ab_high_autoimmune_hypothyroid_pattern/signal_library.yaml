@@ -1,0 +1,112 @@
+library:
+  package_id: KBP-4818
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S59 Thyroid Abs — Tpo Ab High Autoimmune Hypothyroid Pattern
+  description: Ingested from inv_tpo_ab_high_autoimmune_hypothyroid_pattern (thyroid_antibodies_pass_3.json).
+    KB-S59 thyroid antibody tranche.
+signals:
+- signal_id: signal_tpo_ab_high
+  name: Tpo Ab High Autoimmune Hypothyroid Pattern
+  description: TPO antibodies are a clinically established marker of thyroid autoimmunity
+    and are most informative when interpreted with thyroid function tests.
+  system: endocrine
+  primary_metric: tpo_ab
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: tsh
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Raised TSH supports evolving or established primary thyroid failure in the
+      setting of thyroid autoimmunity.
+  - biomarker_id: free_t4
+    expected_direction: low
+    role: severity_marker
+    availability: common
+    rationale: Low free T4 helps distinguish overt thyroid hormone deficiency from antibody
+      positivity without current biochemical failure.
+  - biomarker_id: free_t3
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: A hyperthyroid hormone pattern would redirect interpretation away from an autoimmune
+      hypothyroid frame toward a stimulatory or destructive thyrotoxic process.
+  - biomarker_id: tgab
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Concurrent thyroglobulin antibody positivity strengthens the interpretation
+      that the antibody signal sits within broader thyroid autoimmunity.
+  dependencies:
+    biomarkers:
+    - free_t3
+    - free_t4
+    - tgab
+    - tpo_ab
+    - tsh
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_tpo_ab_high_lab_range_activation_placeholder
+    metric_id: tpo_ab
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_tpo_ab_high_with_primary_hypothyroid_pattern
+    resulting_state: at_risk
+    description: Escalate when high TPO antibodies coexist with raised TSH and low free T4,
+      as this combination is more consistent with active autoimmune thyroid failure than isolated
+      antibody positivity.
+    conditions:
+    - metric_id: tsh
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    - metric_id: free_t4
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_tpo_nice_hypothyroid_context
+    - source_tpo_ata_hashimoto
+  output:
+    signal_value: tpo_ab
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: tpo_ab
+    supporting_markers:
+    - tsh
+    - free_t4
+    - free_t3
+    - tgab
+  explanation:
+    mechanism: TPO antibodies reflect autoimmune targeting of thyroid peroxidase and support
+      immune-mediated thyroid injury rather than a non-thyroidal cause of abnormal thyroid
+      function.
+    biological_pathway: Thyroid autoimmunity with lymphocytic inflammation, impaired hormone
+      synthesis, compensatory TSH rise, and eventual thyroid hormone failure when functional
+      reserve declines.
+    interpretation: High TPO antibodies are most clinically informative when paired with TSH
+      elevation and reduced free T4, because that pattern supports autoimmune thyroiditis
+      as a likely driver of primary hypothyroid physiology.
+    implications: This pattern may justify confirmation of persistent dysfunction, review
+      for autoimmune thyroid disease, and follow-up of thyroid function rather than treating
+      antibody positivity as a stand-alone diagnosis.
+    supporting_marker_roles: TSH corroborates primary thyroid failure, free T4 grades biochemical
+      severity, free T3 helps redirect away from a hypothyroid frame when hyperthyroid physiology
+      is present, and TgAb adds corroborating autoimmune context.

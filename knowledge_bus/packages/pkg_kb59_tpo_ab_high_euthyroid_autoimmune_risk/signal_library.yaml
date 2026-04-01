@@ -1,0 +1,108 @@
+library:
+  package_id: KBP-4819
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S59 Thyroid Abs — Tpo Ab High Euthyroid Autoimmune Risk
+  description: Ingested from inv_tpo_ab_high_euthyroid_autoimmune_risk (thyroid_antibodies_pass_3.json).
+    KB-S59 thyroid antibody tranche.
+signals:
+- signal_id: signal_tpo_ab_high
+  name: Tpo Ab High Euthyroid Autoimmune Risk
+  description: TPO antibodies are a marker of thyroid autoimmunity and can identify autoimmune
+    context even before overt thyroid dysfunction is established.
+  system: endocrine
+  primary_metric: tpo_ab
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: tgab
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Dual antibody positivity supports a broader autoimmune thyroid context rather
+      than an isolated assay finding.
+  - biomarker_id: tsh
+    expected_direction: any
+    role: differential_marker
+    availability: common
+    rationale: Current TSH status helps distinguish preserved thyroid function with future
+      risk from already active biochemical thyroid dysfunction.
+  - biomarker_id: free_t4
+    expected_direction: any
+    role: differential_marker
+    availability: common
+    rationale: Free T4 helps separate antibody-positive euthyroid risk from overt hormone
+      deficiency or thyrotoxicosis.
+  dependencies:
+    biomarkers:
+    - free_t4
+    - tgab
+    - tpo_ab
+    - tsh
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_tpo_ab_high_lab_range_activation_placeholder
+    metric_id: tpo_ab
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_tpo_ab_high_dual_antibody_euthyroid_pattern
+    resulting_state: at_risk
+    description: Escalate when high TPO antibodies coexist with high TgAb while TSH is not
+      above the reference range and free T4 is not below the reference range, because this
+      supports a stronger autoimmune thyroid context despite preserved current thyroid output.
+    conditions:
+    - metric_id: tgab
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    - metric_id: tsh
+      operator: <=
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: not_above_max
+    - metric_id: free_t4
+      operator: '>='
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: not_below_min
+    source_refs:
+    - source_tpo_nice_subclinical_context
+    - source_tpo_review_progression
+  output:
+    signal_value: tpo_ab
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: tpo_ab
+    supporting_markers:
+    - tgab
+    - tsh
+    - free_t4
+  explanation:
+    mechanism: TPO antibody positivity indicates immune recognition of thyroid peroxidase
+      and can precede measurable loss of thyroid hormone production.
+    biological_pathway: Early thyroid autoimmunity with preserved glandular reserve, possible
+      lymphocytic inflammation, and future transition toward raised TSH or reduced thyroid
+      hormone production in a subset of individuals.
+    interpretation: High TPO antibodies with currently preserved thyroid function are best
+      interpreted as autoimmune thyroid context with future risk, not as proof of current
+      overt hypothyroidism.
+    implications: This pattern may justify monitoring of thyroid function and attention to
+      evolving symptoms or biochemical change, while avoiding overstatement of current disease
+      burden.
+    supporting_marker_roles: TgAb adds corroborating autoimmune evidence, while TSH and free
+      T4 act as differential markers that separate preserved-function risk from already active
+      biochemical thyroid dysfunction.

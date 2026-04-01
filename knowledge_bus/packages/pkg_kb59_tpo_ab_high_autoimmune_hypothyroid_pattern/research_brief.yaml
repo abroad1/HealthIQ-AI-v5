@@ -1,0 +1,21 @@
+research_domain: endocrine
+sources:
+- paper_title: NICE guideline on thyroid disease assessment and management
+  journal: NICE guideline NG145
+  year: 2019
+  source_id: source_tpo_nice_hypothyroid_context
+- paper_title: American Thyroid Association Hashimoto's Thyroiditis patient guidance
+  journal: American Thyroid Association
+  year: 2023
+  source_id: source_tpo_ata_hashimoto
+biomarkers:
+- tpo_ab
+- tsh
+- free_t4
+- free_t3
+- tgab
+physiological_claim: TPO antibody positivity supports autoimmune thyroid disease and is clinically
+  useful when primary hypothyroid biochemistry is present.
+evidence_strength: strong
+research_summary: KB-S59 ingestion from thyroid_antibodies_pass_3.json; spec_id=inv_tpo_ab_high_autoimmune_hypothyroid_pattern;
+  signal_id=signal_tpo_ab_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

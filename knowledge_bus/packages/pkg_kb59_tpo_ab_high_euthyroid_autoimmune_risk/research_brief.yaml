@@ -1,0 +1,21 @@
+research_domain: endocrine
+sources:
+- paper_title: NICE CKS and NG145 statements on TPO antibodies in subclinical hypothyroidism
+  journal: NICE guidance and CKS
+  year: 2025
+  source_id: source_tpo_nice_subclinical_context
+- paper_title: Review of the usefulness of thyroid antibodies in autoimmune thyroid disease
+  journal: Diagnostics
+  year: 2023
+  source_id: source_tpo_review_progression
+biomarkers:
+- tpo_ab
+- tgab
+- tsh
+- free_t4
+physiological_claim: TPO antibody positivity can identify autoimmune thyroid context and a
+  higher likelihood of progression to hypothyroid dysfunction, particularly when thyroid function
+  is followed over time.
+evidence_strength: strong
+research_summary: KB-S59 ingestion from thyroid_antibodies_pass_3.json; spec_id=inv_tpo_ab_high_euthyroid_autoimmune_risk;
+  signal_id=signal_tpo_ab_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

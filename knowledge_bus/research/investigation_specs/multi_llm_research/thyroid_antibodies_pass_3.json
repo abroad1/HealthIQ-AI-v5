@@ -1,0 +1,728 @@
+[
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_tpo_ab_high_autoimmune_hypothyroid_pattern",
+    "signal_id": "signal_tpo_ab_high",
+    "research_domain": "endocrine",
+    "primary_marker": {
+      "biomarker_id": "tpo_ab",
+      "rationale": "TPO antibodies are a clinically established marker of thyroid autoimmunity and are most informative when interpreted with thyroid function tests.",
+      "signal_system": "endocrine"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "tsh",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Raised TSH supports evolving or established primary thyroid failure in the setting of thyroid autoimmunity."
+      },
+      {
+        "biomarker_id": "free_t4",
+        "expected_direction": "low",
+        "role": "severity_marker",
+        "relationship_kind": "severity",
+        "availability": "common",
+        "rationale": "Low free T4 helps distinguish overt thyroid hormone deficiency from antibody positivity without current biochemical failure."
+      },
+      {
+        "biomarker_id": "free_t3",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "A hyperthyroid hormone pattern would redirect interpretation away from an autoimmune hypothyroid frame toward a stimulatory or destructive thyrotoxic process."
+      },
+      {
+        "biomarker_id": "tgab",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent thyroglobulin antibody positivity strengthens the interpretation that the antibody signal sits within broader thyroid autoimmunity."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_autoimmune_primary_hypothyroid_pattern",
+        "rank": 1,
+        "physiological_claim": "High TPO antibodies with a primary hypothyroid biochemical pattern are consistent with autoimmune thyroiditis as a common cause of thyroid failure.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Antibody positivity supports autoimmunity but does not by itself establish current severity without thyroid function results."
+        ],
+        "missing_data": {
+          "policy": "Interpret TPO antibody elevation alongside TSH and free T4 before assigning active thyroid failure physiology."
+        },
+        "supporting_marker_refs": [
+          "tsh",
+          "free_t4",
+          "tgab"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_hyperthyroid_hormone_pattern",
+            "marker_reference": "free_t3",
+            "contradiction_rationale": "High free T3 would weaken a hypothyroid failure frame and suggest a different autoimmune or destructive thyroid process.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_subclinical_autoimmune_thyroid_failure",
+        "rank": 2,
+        "physiological_claim": "High TPO antibodies may identify autoimmune thyroid injury before free T4 falls, particularly when TSH is already above the reference range.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "The transition from antibody positivity to overt hypothyroidism is variable and should not be assumed from antibodies alone."
+        ],
+        "missing_data": {
+          "policy": "If free T4 is unavailable, keep interpretation at a subclinical or evolving thyroid failure level rather than assuming overt hypothyroidism."
+        },
+        "supporting_marker_refs": [
+          "tsh",
+          "tgab"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_preserved_free_t4_without_tsh_rise",
+            "marker_reference": "free_t4",
+            "contradiction_rationale": "Normal free T4 without TSH elevation weakens interpretation as active autoimmune hypothyroid physiology and supports a preclinical frame instead.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_autoimmune_primary_hypothyroid_pattern",
+        "hyp_subclinical_autoimmune_thyroid_failure"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_thyroid_function_panel",
+        "rationale": "Repeat TSH and free T4 help confirm whether antibody positivity is accompanied by stable thyroid failure or evolving dysfunction."
+      },
+      {
+        "test_id": "ct_thyroid_ultrasound",
+        "rationale": "Thyroid ultrasound can support autoimmune thyroiditis when biochemical or antibody patterns are present but the clinical picture remains uncertain."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_tpo_ab_high_with_primary_hypothyroid_pattern",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high TPO antibodies coexist with raised TSH and low free T4, as this combination is more consistent with active autoimmune thyroid failure than isolated antibody positivity.",
+        "conditions": [
+          {
+            "metric_id": "tsh",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          },
+          {
+            "metric_id": "free_t4",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_tpo_nice_hypothyroid_context",
+          "source_tpo_ata_hashimoto"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_tpo_nice_hypothyroid_context",
+          "paper_title": "NICE guideline on thyroid disease assessment and management",
+          "journal": "NICE guideline NG145",
+          "year": 2019
+        },
+        {
+          "source_id": "source_tpo_ata_hashimoto",
+          "paper_title": "American Thyroid Association Hashimoto's Thyroiditis patient guidance",
+          "journal": "American Thyroid Association",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "TPO antibody positivity supports autoimmune thyroid disease and is clinically useful when primary hypothyroid biochemistry is present.",
+      "threshold_notes": "Interpretation should remain anchored to the reporting laboratory reference range; antibody positivity alone should not be converted into an independent disease-severity threshold."
+    },
+    "narrative": {
+      "mechanism": "TPO antibodies reflect autoimmune targeting of thyroid peroxidase and support immune-mediated thyroid injury rather than a non-thyroidal cause of abnormal thyroid function.",
+      "biological_pathway": "Thyroid autoimmunity with lymphocytic inflammation, impaired hormone synthesis, compensatory TSH rise, and eventual thyroid hormone failure when functional reserve declines.",
+      "interpretation": "High TPO antibodies are most clinically informative when paired with TSH elevation and reduced free T4, because that pattern supports autoimmune thyroiditis as a likely driver of primary hypothyroid physiology.",
+      "implications": "This pattern may justify confirmation of persistent dysfunction, review for autoimmune thyroid disease, and follow-up of thyroid function rather than treating antibody positivity as a stand-alone diagnosis.",
+      "supporting_marker_roles": "TSH corroborates primary thyroid failure, free T4 grades biochemical severity, free T3 helps redirect away from a hypothyroid frame when hyperthyroid physiology is present, and TgAb adds corroborating autoimmune context."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_tpo_ab_high_euthyroid_autoimmune_risk",
+    "signal_id": "signal_tpo_ab_high",
+    "research_domain": "endocrine",
+    "primary_marker": {
+      "biomarker_id": "tpo_ab",
+      "rationale": "TPO antibodies are a marker of thyroid autoimmunity and can identify autoimmune context even before overt thyroid dysfunction is established.",
+      "signal_system": "endocrine"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "tgab",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Dual antibody positivity supports a broader autoimmune thyroid context rather than an isolated assay finding."
+      },
+      {
+        "biomarker_id": "tsh",
+        "expected_direction": "any",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Current TSH status helps distinguish preserved thyroid function with future risk from already active biochemical thyroid dysfunction."
+      },
+      {
+        "biomarker_id": "free_t4",
+        "expected_direction": "any",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Free T4 helps separate antibody-positive euthyroid risk from overt hormone deficiency or thyrotoxicosis."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_euthyroid_autoimmune_thyroid_risk",
+        "rank": 1,
+        "physiological_claim": "High TPO antibodies with preserved thyroid hormone levels may indicate thyroid autoimmunity before overt biochemical hypothyroidism develops.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Many antibody-positive individuals remain euthyroid for prolonged periods, so current disease severity should not be overstated."
+        ],
+        "missing_data": {
+          "policy": "If TSH and free T4 are not available, interpret antibody positivity as autoimmune context only and avoid assuming preserved or failed thyroid function."
+        },
+        "supporting_marker_refs": [
+          "tgab",
+          "tsh",
+          "free_t4"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_tsh_above_range",
+            "marker_reference": "tsh",
+            "contradiction_rationale": "Raised TSH redirects interpretation from euthyroid risk to active or evolving hypothyroid physiology.",
+            "contradiction_strength": "strong"
+          },
+          {
+            "contradiction_id": "ctr_free_t4_below_range",
+            "marker_reference": "free_t4",
+            "contradiction_rationale": "Low free T4 contradicts a preserved-function frame and indicates overt biochemical dysfunction.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_future_primary_hypothyroid_progression_risk",
+        "rank": 2,
+        "physiological_claim": "High TPO antibodies may identify people at increased risk of progressing from euthyroid or subclinical states to overt primary hypothyroidism.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "Risk is population- and context-dependent and should not be translated into a fixed short-term prognosis for an individual."
+        ],
+        "missing_data": {
+          "policy": "Use serial thyroid function testing rather than a one-time antibody result if the goal is to assess progression risk."
+        },
+        "supporting_marker_refs": [
+          "tsh",
+          "tgab"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_absent_tgab_weakens_progression_risk",
+            "marker_reference": "tgab",
+            "contradiction_rationale": "Absent corroborating TgAb alongside isolated TPO antibody positivity reduces confidence in a robust future progression risk frame, as dual antibody positivity is associated with higher transition rates to overt hypothyroid dysfunction than isolated TPO antibody elevation alone.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_euthyroid_autoimmune_thyroid_risk",
+        "hyp_future_primary_hypothyroid_progression_risk"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_interval_tsh_free_t4_monitoring",
+        "rationale": "Repeat thyroid function testing is the most direct way to determine whether antibody-positive euthyroid status remains stable or progresses."
+      },
+      {
+        "test_id": "ct_thyroid_ultrasound_if_uncertain",
+        "rationale": "Ultrasound may support autoimmune thyroiditis when antibodies are present but biochemical status remains preserved or equivocal."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_tpo_ab_high_dual_antibody_euthyroid_pattern",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high TPO antibodies coexist with high TgAb while TSH is not above the reference range and free T4 is not below the reference range, because this supports a stronger autoimmune thyroid context despite preserved current thyroid output.",
+        "conditions": [
+          {
+            "metric_id": "tgab",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          },
+          {
+            "metric_id": "tsh",
+            "operator": "<=",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "not_above_max"
+          },
+          {
+            "metric_id": "free_t4",
+            "operator": ">=",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "not_below_min"
+          }
+        ],
+        "source_refs": [
+          "source_tpo_nice_subclinical_context",
+          "source_tpo_review_progression"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_tpo_nice_subclinical_context",
+          "paper_title": "NICE CKS and NG145 statements on TPO antibodies in subclinical hypothyroidism",
+          "journal": "NICE guidance and CKS",
+          "year": 2025
+        },
+        {
+          "source_id": "source_tpo_review_progression",
+          "paper_title": "Review of the usefulness of thyroid antibodies in autoimmune thyroid disease",
+          "journal": "Diagnostics",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "TPO antibody positivity can identify autoimmune thyroid context and a higher likelihood of progression to hypothyroid dysfunction, particularly when thyroid function is followed over time.",
+      "threshold_notes": "No independent antibody threshold should be used to infer imminent thyroid failure; interpretation should remain lab-range anchored and longitudinal."
+    },
+    "narrative": {
+      "mechanism": "TPO antibody positivity indicates immune recognition of thyroid peroxidase and can precede measurable loss of thyroid hormone production.",
+      "biological_pathway": "Early thyroid autoimmunity with preserved glandular reserve, possible lymphocytic inflammation, and future transition toward raised TSH or reduced thyroid hormone production in a subset of individuals.",
+      "interpretation": "High TPO antibodies with currently preserved thyroid function are best interpreted as autoimmune thyroid context with future risk, not as proof of current overt hypothyroidism.",
+      "implications": "This pattern may justify monitoring of thyroid function and attention to evolving symptoms or biochemical change, while avoiding overstatement of current disease burden.",
+      "supporting_marker_roles": "TgAb adds corroborating autoimmune evidence, while TSH and free T4 act as differential markers that separate preserved-function risk from already active biochemical thyroid dysfunction."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_tgab_high_autoimmune_hypothyroid_pattern",
+    "signal_id": "signal_tgab_high",
+    "research_domain": "endocrine",
+    "primary_marker": {
+      "biomarker_id": "tgab",
+      "rationale": "TgAb is a thyroid autoantibody that can support autoimmune thyroid interpretation, especially when corroborated by thyroid function changes or other thyroid antibodies.",
+      "signal_system": "endocrine"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "tpo_ab",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent TPO antibody positivity strengthens confidence that TgAb elevation represents true thyroid autoimmunity rather than an isolated laboratory finding."
+      },
+      {
+        "biomarker_id": "tsh",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Raised TSH supports primary thyroid failure physiology in the presence of thyroid autoantibodies."
+      },
+      {
+        "biomarker_id": "free_t4",
+        "expected_direction": "low",
+        "role": "severity_marker",
+        "relationship_kind": "severity",
+        "availability": "common",
+        "rationale": "Low free T4 differentiates overt hormone deficiency from antibody positivity without current failure."
+      },
+      {
+        "biomarker_id": "free_t3",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "A hyperthyroid hormone pattern would redirect interpretation away from a hypothyroid autoimmune frame."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_tgab_autoimmune_thyroiditis_with_failure",
+        "rank": 1,
+        "physiological_claim": "High thyroglobulin antibodies with a primary hypothyroid biochemical pattern are consistent with autoimmune thyroiditis, particularly when other thyroid autoimmunity markers are also present.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "TgAb is generally less specific than TPOAb for routine autoimmune hypothyroid assessment and should be interpreted in context."
+        ],
+        "missing_data": {
+          "policy": "Give greater weight to TgAb when TPO antibodies and thyroid function tests are available, rather than interpreting isolated TgAb elevation in isolation."
+        },
+        "supporting_marker_refs": [
+          "tpo_ab",
+          "tsh",
+          "free_t4"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_free_t3_hyperthyroid_pattern",
+            "marker_reference": "free_t3",
+            "contradiction_rationale": "High free T3 would weaken a primary hypothyroid interpretation and suggest an alternative thyroid functional state.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_tgab_supportive_autoimmune_cause_of_primary_hypothyroidism",
+        "rank": 2,
+        "physiological_claim": "High TgAb may act as supportive evidence that primary hypothyroidism is autoimmune rather than purely non-autoimmune when thyroid dysfunction is already present.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "TgAb alone should not replace thyroid function testing or be treated as a stand-alone diagnosis of current autoimmune thyroid failure."
+        ],
+        "missing_data": {
+          "policy": "If TPO antibodies are unavailable, retain more uncertainty around specificity and seek corroboration from thyroid biochemistry or imaging."
+        },
+        "supporting_marker_refs": [
+          "tpo_ab",
+          "tsh"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_tsh_preserved_function",
+            "marker_reference": "tsh",
+            "contradiction_rationale": "Normal TSH reduces support for active autoimmune thyroid failure and is more consistent with preserved current thyroid function.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_tgab_autoimmune_thyroiditis_with_failure",
+        "hyp_tgab_supportive_autoimmune_cause_of_primary_hypothyroidism"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_thyroid_function_with_tpo_ab",
+        "rationale": "Repeat thyroid function and paired antibody assessment help confirm whether TgAb elevation sits within clinically relevant autoimmune hypothyroid physiology."
+      },
+      {
+        "test_id": "ct_thyroid_ultrasound_for_autoimmune_pattern",
+        "rationale": "Ultrasound may add supportive evidence for autoimmune thyroiditis when TgAb is positive but biochemical interpretation remains uncertain."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_tgab_high_with_hypothyroid_biochemistry",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high TgAb coexists with raised TSH and low free T4, because the combination is more consistent with clinically relevant autoimmune hypothyroid physiology than isolated antibody positivity.",
+        "conditions": [
+          {
+            "metric_id": "tsh",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          },
+          {
+            "metric_id": "free_t4",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_tgab_hashimoto_context",
+          "source_tgab_review"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_tgab_hashimoto_context",
+          "paper_title": "American Thyroid Association Hashimoto's Thyroiditis guidance",
+          "journal": "American Thyroid Association",
+          "year": 2023
+        },
+        {
+          "source_id": "source_tgab_review",
+          "paper_title": "Usefulness of thyroid antibodies in the diagnostic approach to autoimmune thyroid disease",
+          "journal": "Diagnostics",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "TgAb is a marker of thyroid autoimmunity and can support an autoimmune explanation for primary hypothyroid biochemistry, although it is usually less central than TPOAb in routine assessment.",
+      "threshold_notes": "Interpret TgAb using the reporting laboratory range and in conjunction with thyroid function testing; isolated antibody elevation should not be converted into a disease-severity threshold."
+    },
+    "narrative": {
+      "mechanism": "TgAb reflects immune reactivity against thyroglobulin and can appear as part of autoimmune thyroid disease, especially when thyroid tissue injury and antigen exposure are present.",
+      "biological_pathway": "Thyroid autoimmunity with immune recognition of thyroglobulin, glandular inflammation, reduced thyroid reserve, and eventual primary hypothyroid physiology in susceptible individuals.",
+      "interpretation": "High TgAb becomes more clinically persuasive when paired with TSH elevation, low free T4, or concomitant TPO antibody positivity, because isolated TgAb is less specific than TPOAb for routine autoimmune hypothyroid assessment.",
+      "implications": "This pattern may justify follow-up thyroid testing and autoimmune thyroid review, but TgAb is best interpreted as supportive context rather than a stand-alone determinant of disease severity.",
+      "supporting_marker_roles": "TPOAb provides corroborating autoimmune evidence, TSH confirms primary gland stress, free T4 gauges overt hormone deficiency, and free T3 acts as a differential marker when hyperthyroid physiology would redirect the frame."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_tgab_high_euthyroid_autoimmune_risk",
+    "signal_id": "signal_tgab_high",
+    "research_domain": "endocrine",
+    "primary_marker": {
+      "biomarker_id": "tgab",
+      "rationale": "TgAb is a marker of thyroid autoimmunity that is usually interpreted as supportive context, especially when current thyroid function is still preserved.",
+      "signal_system": "endocrine"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "tpo_ab",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent TPO antibody positivity makes an autoimmune thyroid interpretation more secure when current thyroid function remains preserved."
+      },
+      {
+        "biomarker_id": "tsh",
+        "expected_direction": "any",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "TSH distinguishes preserved-function thyroid autoimmunity from already active biochemical hypothyroidism."
+      },
+      {
+        "biomarker_id": "free_t4",
+        "expected_direction": "any",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Free T4 separates euthyroid autoimmune context from overt thyroid hormone deficiency or excess."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_tgab_euthyroid_autoimmune_context",
+        "rank": 1,
+        "physiological_claim": "High TgAb with preserved thyroid function may indicate underlying thyroid autoimmunity before overt biochemical thyroid failure is present.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "TgAb alone is less definitive than TPOAb in routine euthyroid risk assessment and should be interpreted cautiously when isolated."
+        ],
+        "missing_data": {
+          "policy": "Seek correlation with TPO antibodies and thyroid function results before treating isolated TgAb elevation as meaningful autoimmune risk."
+        },
+        "supporting_marker_refs": [
+          "tpo_ab",
+          "tsh",
+          "free_t4"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_tsh_above_max_redirects_to_dysfunction",
+            "marker_reference": "tsh",
+            "contradiction_rationale": "Raised TSH argues against a purely euthyroid risk frame and supports active or evolving hypothyroid physiology instead.",
+            "contradiction_strength": "strong"
+          },
+          {
+            "contradiction_id": "ctr_free_t4_below_min_redirects_to_overt_failure",
+            "marker_reference": "free_t4",
+            "contradiction_rationale": "Low free T4 contradicts preserved thyroid output and indicates overt biochemical dysfunction.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_tgab_future_hypothyroid_risk_supportive",
+        "rank": 2,
+        "physiological_claim": "High TgAb may support a higher likelihood of future hypothyroid progression when it appears within broader thyroid autoimmunity, especially if TPO antibodies are also positive.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "The prognostic signal is weaker and more context-dependent than for TPO antibodies."
+        ],
+        "missing_data": {
+          "policy": "Use longitudinal thyroid function follow-up rather than a single TgAb result if progression risk is the clinical question."
+        },
+        "supporting_marker_refs": [
+          "tpo_ab",
+          "tsh"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_isolated_tgab_without_other_autoimmune_support",
+            "marker_reference": "tpo_ab",
+            "contradiction_rationale": "Absent corroborating TPO antibody support reduces confidence that TgAb elevation represents a robust autoimmune risk signal.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_tgab_euthyroid_autoimmune_context",
+        "hyp_tgab_future_hypothyroid_risk_supportive"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_serial_thyroid_function_follow_up",
+        "rationale": "Serial TSH and free T4 are more informative than a one-time TgAb result for determining whether preserved thyroid function remains stable."
+      },
+      {
+        "test_id": "ct_tpo_ab_or_thyroid_ultrasound_corroboration",
+        "rationale": "Additional autoimmune corroboration can help determine whether TgAb positivity reflects meaningful thyroid autoimmunity when current function is preserved."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_tgab_high_with_tpo_ab_and_preserved_function",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high TgAb coexists with high TPO antibodies while TSH is not above the reference range and free T4 is not below the reference range, because this supports broader thyroid autoimmunity despite preserved current thyroid output.",
+        "conditions": [
+          {
+            "metric_id": "tpo_ab",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          },
+          {
+            "metric_id": "tsh",
+            "operator": "<=",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "not_above_max"
+          },
+          {
+            "metric_id": "free_t4",
+            "operator": ">=",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "not_below_min"
+          }
+        ],
+        "source_refs": [
+          "source_tgab_review",
+          "source_tgab_ata_context"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_tgab_review",
+          "paper_title": "Usefulness of thyroid antibodies in the diagnostic approach to autoimmune thyroid disease",
+          "journal": "Diagnostics",
+          "year": 2023
+        },
+        {
+          "source_id": "source_tgab_ata_context",
+          "paper_title": "American Thyroid Association Hashimoto's Thyroiditis guidance",
+          "journal": "American Thyroid Association",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "TgAb can support recognition of thyroid autoimmunity and may add prognostic context when interpreted with TPO antibodies and thyroid function results.",
+      "threshold_notes": "No stand-alone TgAb cut-off should be used to infer current or imminent thyroid failure; interpretation should remain contextual and longitudinal."
+    },
+    "narrative": {
+      "mechanism": "TgAb elevation indicates immune recognition of thyroglobulin and can appear before overt changes in thyroid hormone production, but isolated positivity is less specific than TPOAb.",
+      "biological_pathway": "Early thyroid autoimmunity with preserved glandular reserve, potential progression to gland dysfunction over time, and stronger autoimmune inference when dual-antibody positivity is present.",
+      "interpretation": "High TgAb with normal current thyroid function is best interpreted as supportive autoimmune context rather than proof of active disease, especially if TPO antibodies are not also elevated.",
+      "implications": "This pattern may justify monitoring and corroboration rather than immediate disease labelling, with particular caution against over-interpreting isolated TgAb positivity.",
+      "supporting_marker_roles": "TPOAb provides corroborating autoimmune support, while TSH and free T4 are differential markers that separate preserved-function autoimmune context from already established thyroid dysfunction."
+    }
+  }
+]
