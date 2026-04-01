@@ -1,0 +1,21 @@
+research_domain: endocrine
+sources:
+- paper_title: Usefulness of thyroid antibodies in the diagnostic approach to autoimmune thyroid
+    disease
+  journal: Diagnostics
+  year: 2023
+  source_id: source_tgab_review
+- paper_title: American Thyroid Association Hashimoto's Thyroiditis guidance
+  journal: American Thyroid Association
+  year: 2023
+  source_id: source_tgab_ata_context
+biomarkers:
+- tgab
+- tpo_ab
+- tsh
+- free_t4
+physiological_claim: TgAb can support recognition of thyroid autoimmunity and may add prognostic
+  context when interpreted with TPO antibodies and thyroid function results.
+evidence_strength: moderate
+research_summary: KB-S59 ingestion from thyroid_antibodies_pass_3.json; spec_id=inv_tgab_high_euthyroid_autoimmune_risk;
+  signal_id=signal_tgab_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

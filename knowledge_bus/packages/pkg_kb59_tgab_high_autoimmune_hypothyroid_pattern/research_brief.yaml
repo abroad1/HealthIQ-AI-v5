@@ -1,0 +1,23 @@
+research_domain: endocrine
+sources:
+- paper_title: American Thyroid Association Hashimoto's Thyroiditis guidance
+  journal: American Thyroid Association
+  year: 2023
+  source_id: source_tgab_hashimoto_context
+- paper_title: Usefulness of thyroid antibodies in the diagnostic approach to autoimmune thyroid
+    disease
+  journal: Diagnostics
+  year: 2023
+  source_id: source_tgab_review
+biomarkers:
+- tgab
+- tpo_ab
+- tsh
+- free_t4
+- free_t3
+physiological_claim: TgAb is a marker of thyroid autoimmunity and can support an autoimmune
+  explanation for primary hypothyroid biochemistry, although it is usually less central than
+  TPOAb in routine assessment.
+evidence_strength: moderate
+research_summary: KB-S59 ingestion from thyroid_antibodies_pass_3.json; spec_id=inv_tgab_high_autoimmune_hypothyroid_pattern;
+  signal_id=signal_tgab_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.
