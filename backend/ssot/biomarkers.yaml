@@ -344,6 +344,23 @@ biomarkers:
     - uti
     - menstrual_bleeding
     clinical_weight: 0.75
+  urine_protein_creatinine_ratio:
+    unit: mg/mmol
+    description: Urine protein-to-creatinine ratio (UPCR); proteinuria assessment paired with kidney function context
+    category: kidney
+    data_type: numeric
+    system: renal
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - nephrotic_syndrome
+    - chronic_kidney_disease
+    key_risks_when_low: []
+    known_modifiers:
+    - exercise
+    - infection
+    - uti
+    clinical_weight: 0.75
   vitamin_d:
     aliases:
     - Vitamin D
@@ -1723,4 +1740,22 @@ biomarkers:
     - liver_function
     - nutrition
     - inflammation
+    clinical_weight: 0.5
+  transferrin_saturation:
+    unit: "%"
+    description: Transferrin saturation (iron binding saturation; TSAT)
+    category: Iron Studies
+    data_type: numeric
+    system: nutritional
+    clusters: []
+    roles: []
+    key_risks_when_high:
+    - iron_overload
+    - haemochromatosis
+    key_risks_when_low:
+    - iron_deficiency
+    known_modifiers:
+    - iron_status
+    - inflammation
+    - recent_meals
     clinical_weight: 0.5
