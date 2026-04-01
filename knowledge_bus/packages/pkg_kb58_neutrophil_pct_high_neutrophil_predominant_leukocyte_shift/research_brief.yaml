@@ -1,0 +1,20 @@
+research_domain: hematologic
+sources:
+- paper_title: The Value of a Complete Blood Count (CBC) for Sepsis Diagnosis and Prognosis
+  journal: Diagnostics (Basel)
+  year: 2021
+  source_id: source_cbc_sepsis_review_2021
+- paper_title: Evaluation and Management of Patients with Isolated Neutropenia
+  journal: Seminars in Hematology
+  year: 2013
+  source_id: source_neutropenia_review_2013
+biomarkers:
+- neutrophil_pct
+- monocyte_pct
+- monocytes_abs
+- pdw
+physiological_claim: High neutrophil percentage is a differential-count pattern that often
+  reflects neutrophil predominance, but absolute counting remains essential for confirmation.
+evidence_strength: moderate
+research_summary: KB-S58 ingestion from cbc_hematology_pass_3.json; spec_id=inv_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift;
+  signal_id=signal_neutrophil_pct_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

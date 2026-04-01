@@ -1,0 +1,20 @@
+research_domain: hematologic
+sources:
+- paper_title: Differential Diagnosis and Workup of Monocytosis
+  journal: Current Hematologic Malignancy Reports
+  year: 2021
+  source_id: source_monocytosis_review_2021
+- paper_title: Monocytosis in primary care and risk of haematological malignancies
+  journal: European Journal of Haematology
+  year: 2023
+  source_id: source_monocytosis_primarycare_2023
+biomarkers:
+- monocyte_pct
+- monocytes_abs
+- neutrophil_pct
+- rbc
+physiological_claim: High monocyte percentage is most useful as a directional differential-count
+  signal that should be confirmed against the absolute monocyte count.
+evidence_strength: moderate
+research_summary: KB-S58 ingestion from cbc_hematology_pass_3.json; spec_id=inv_monocyte_pct_high_reactive_monocyte_predominance;
+  signal_id=signal_monocyte_pct_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

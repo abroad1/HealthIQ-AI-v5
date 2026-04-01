@@ -1,0 +1,22 @@
+research_domain: hematologic
+sources:
+- paper_title: 'Diagnostic Performance of Red Blood Cell Indices in the Differential Diagnosis
+    of Iron Deficiency Anemia and the Thalassemia Trait in Chile: A Retrospective Study'
+  journal: Diagnostics (Basel)
+  year: 2024
+  source_id: source_rbc_indices_ida_vs_thal_2024
+- paper_title: Differential diagnosis between iron deficiency anemia and thalassemia trait-induced
+    anemia
+  journal: Journal of Dental Sciences
+  year: 2023
+  source_id: source_ida_vs_thal_review_2023
+biomarkers:
+- mchc
+- mch
+- rdw_cv
+- rbc
+physiological_claim: Low MCHC is a supportive indicator of hypochromia and is most informative
+  when interpreted with other red-cell indices.
+evidence_strength: moderate
+research_summary: KB-S58 ingestion from cbc_hematology_pass_3.json; spec_id=inv_mchc_low_hypochromic_iron_restriction;
+  signal_id=signal_mchc_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

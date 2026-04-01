@@ -1,0 +1,93 @@
+library:
+  package_id: KBP-4810
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S58 CBC — Mpv Low Reduced Thrombopoietic Output Pattern
+  description: Ingested from inv_mpv_low_reduced_thrombopoietic_output_pattern (cbc_hematology_pass_3.json).
+    KB-S58 CBC tranche.
+signals:
+- signal_id: signal_mpv_low
+  name: Mpv Low Reduced Thrombopoietic Output Pattern
+  description: Low MPV reflects smaller average platelet size and can support reduced thrombopoietic
+    output when genuine.
+  system: hematologic
+  primary_metric: mpv
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: rbc
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Concurrent anemia can support a broader marrow-production problem rather than
+      isolated platelet variation.
+  - biomarker_id: monocytes_abs
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: Low absolute monocytes can support a broader marrow-suppressive context when
+      more than one lineage is affected.
+  - biomarker_id: pdw
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: A high PDW argues against a simple uniform low-MPV production pattern and favors
+      mixed platelet heterogeneity instead.
+  dependencies:
+    biomarkers:
+    - monocytes_abs
+    - mpv
+    - pdw
+    - rbc
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_mpv_low_lab_range_activation_placeholder
+    metric_id: mpv
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_mpv_low_with_low_rbc
+    resulting_state: at_risk
+    description: Escalate when MPV is low and RBC is also low, because combined reduction
+      across platelet size and erythrocyte number increases concern for clinically relevant
+      underproduction rather than isolated platelet-size variation.
+    conditions:
+    - metric_id: rbc
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_mpv_meta_2023
+  output:
+    signal_value: mpv
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: mpv
+    supporting_markers:
+    - rbc
+    - monocytes_abs
+    - pdw
+  explanation:
+    mechanism: MPV falls when smaller platelets dominate the circulating pool, which can occur
+      when marrow platelet production is reduced or altered.
+    biological_pathway: Megakaryocyte output, platelet release, and marrow suppression pathways.
+    interpretation: A low MPV result should prompt consideration of hypoproliferative platelet
+      production, especially if other lineages are also reduced.
+    implications: This pattern may justify platelet count review and broader assessment for
+      marrow suppression or underproduction states.
+    supporting_marker_roles: Low RBC and low monocytes_abs support a broader underproduction
+      context, while high PDW acts as a competing marker that suggests platelet heterogeneity
+      instead.

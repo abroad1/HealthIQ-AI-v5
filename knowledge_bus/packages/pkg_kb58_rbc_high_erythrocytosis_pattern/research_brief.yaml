@@ -1,0 +1,16 @@
+research_domain: hematologic
+sources:
+- paper_title: 'Erythrocytosis: Diagnosis and investigation'
+  journal: International Journal of Laboratory Hematology
+  year: 2024
+  source_id: source_erythrocytosis_review_2024
+biomarkers:
+- rbc
+- neutrophil_pct
+- mch
+- mchc
+physiological_claim: A high RBC count is an entry point into erythrocytosis work-up but cannot
+  by itself separate relative from absolute or primary from secondary causes.
+evidence_strength: moderate
+research_summary: KB-S58 ingestion from cbc_hematology_pass_3.json; spec_id=inv_rbc_high_erythrocytosis_pattern;
+  signal_id=signal_rbc_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

@@ -1,0 +1,97 @@
+library:
+  package_id: KBP-4804
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S58 CBC — Monocyte Pct High Reactive Monocyte Predominance
+  description: Ingested from inv_monocyte_pct_high_reactive_monocyte_predominance (cbc_hematology_pass_3.json).
+    KB-S58 CBC tranche.
+signals:
+- signal_id: signal_monocyte_pct_high
+  name: Monocyte Pct High Reactive Monocyte Predominance
+  description: High monocyte percentage reflects monocyte predominance within the differential
+    count and requires confirmation with the absolute monocyte count.
+  system: hematologic
+  primary_metric: monocyte_pct
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: monocytes_abs
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Concurrent elevation of the absolute monocyte count supports a true reactive
+      monocytosis rather than a purely relative percentage shift.
+  - biomarker_id: neutrophil_pct
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: A relatively lower neutrophil percentage can support a recovery or non-neutrophil-predominant
+      inflammatory differential rather than acute neutrophil-dominant stress.
+  - biomarker_id: rbc
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Coexisting anemia can support a clinically relevant systemic inflammatory context
+      rather than an incidental percentage fluctuation.
+  dependencies:
+    biomarkers:
+    - monocyte_pct
+    - monocytes_abs
+    - neutrophil_pct
+    - rbc
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_monocyte_pct_high_lab_range_activation_placeholder
+    metric_id: monocyte_pct
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_monocyte_pct_high_with_absolute_monocytosis
+    resulting_state: at_risk
+    description: Escalate when monocyte percentage is high and monocytes_abs is also high,
+      because that combination supports true monocytosis rather than a purely relative differential
+      shift.
+    conditions:
+    - metric_id: monocytes_abs
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_monocytosis_review_2021
+    - source_monocytosis_primarycare_2023
+  output:
+    signal_value: monocyte_pct
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: monocyte_pct
+    supporting_markers:
+    - monocytes_abs
+    - neutrophil_pct
+    - rbc
+  explanation:
+    mechanism: Monocyte predominance appears when innate immune activation, inflammatory recovery,
+      or marrow-output shifts increase the relative contribution of monocytes within circulating
+      leukocytes.
+    biological_pathway: Monocyte lineage trafficking, inflammatory recruitment, and leukocyte
+      differential redistribution.
+    interpretation: High monocyte percentage can support a reactive monocyte-predominant pattern,
+      but the absolute count determines whether the change is truly quantitative or merely
+      relative.
+    implications: This pattern often justifies repeat CBC review and clinical correlation
+      for chronic infection, inflammatory disease, or convalescent states.
+    supporting_marker_roles: High monocytes_abs corroborates true monocytosis, lower neutrophil_pct
+      helps separate non-neutrophil-predominant patterns, and low RBC may signal a broader
+      inflammatory illness context.

@@ -1,0 +1,20 @@
+research_domain: hematologic
+sources:
+- paper_title: Evaluation and Management of Patients with Isolated Neutropenia
+  journal: Seminars in Hematology
+  year: 2013
+  source_id: source_neutropenia_review_2013
+- paper_title: The Value of a Complete Blood Count (CBC) for Sepsis Diagnosis and Prognosis
+  journal: Diagnostics (Basel)
+  year: 2021
+  source_id: source_cbc_sepsis_review_2021
+biomarkers:
+- neutrophil_pct
+- monocyte_pct
+- monocytes_abs
+- rbc
+physiological_claim: Low neutrophil percentage is a differential-count clue that must be confirmed
+  with the absolute neutrophil count before clinical severity is inferred.
+evidence_strength: moderate
+research_summary: KB-S58 ingestion from cbc_hematology_pass_3.json; spec_id=inv_neutrophil_pct_low_relative_neutrophil_depletion_pattern;
+  signal_id=signal_neutrophil_pct_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

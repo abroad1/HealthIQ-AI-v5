@@ -1,0 +1,3568 @@
+[
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_mch_low_iron_restricted_erythropoiesis",
+    "signal_id": "signal_mch_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "mch",
+      "rationale": "Low MCH reflects reduced hemoglobin content per erythrocyte and is most useful in hypochromic microcytic anemia interpretation.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "mchc",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Concurrent low MCHC supports true hypochromia rather than an isolated index fluctuation."
+      },
+      {
+        "biomarker_id": "rdw_cv",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Higher RDW-CV favors iron deficiency or evolving nutritional deficiency over a more uniform microcytic carrier state."
+      },
+      {
+        "biomarker_id": "rbc",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "A reduced RBC count supports an anemic iron-restricted pattern rather than compensated microcytosis."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_iron_deficiency_restricted_hemoglobinization",
+        "rank": 1,
+        "physiological_claim": "Low MCH may reflect iron-restricted erythropoiesis, particularly when hypochromia and anisocytosis are also present.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Low MCH is supportive rather than diagnostic and should be interpreted with iron studies and the broader CBC pattern."
+        ],
+        "missing_data": {
+          "policy": "Review ferritin, transferrin saturation, and blood-loss context before treating isolated low MCH as definitive iron deficiency."
+        },
+        "supporting_marker_refs": [
+          "mchc",
+          "rdw_cv",
+          "rbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_preserved_high_rbc",
+            "marker_reference": "rbc",
+            "contradiction_rationale": "A preserved or elevated RBC count weakens simple iron deficiency as the leading explanation and raises the possibility of thalassemia trait.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_functional_iron_restriction_or_inflammatory_microcytosis",
+        "rank": 2,
+        "physiological_claim": "Low MCH may also occur with functional iron restriction or chronic inflammatory microcytosis, where hemoglobinization is reduced without classic iron depletion alone.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This interpretation remains non-specific without biochemical iron assessment."
+        ],
+        "missing_data": {
+          "policy": "If iron studies and inflammatory context are unavailable, keep inflammatory iron restriction as a secondary rather than primary explanation."
+        },
+        "supporting_marker_refs": [
+          "mchc",
+          "rbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_marked_rdw_with_progressive_fall",
+            "marker_reference": "rdw_cv",
+            "contradiction_rationale": "Marked anisocytosis strengthens nutritional deficiency and makes a more uniform inflammatory pattern less likely.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_iron_deficiency_restricted_hemoglobinization",
+        "hyp_functional_iron_restriction_or_inflammatory_microcytosis"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_iron_studies_and_ferritin",
+        "rationale": "Iron studies and ferritin help distinguish absolute iron deficiency from other causes of low erythrocyte hemoglobinization."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_mch_low_with_hypochromia_and_anisocytosis",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low MCH coexists with low MCHC and high RDW-CV, because this combination is more consistent with clinically relevant iron-restricted hypochromia than an isolated low index.",
+        "conditions": [
+          {
+            "metric_id": "mchc",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          },
+          {
+            "metric_id": "rdw_cv",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_rbc_indices_ida_vs_thal_2024",
+          "source_ida_vs_thal_review_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_rbc_indices_ida_vs_thal_2024",
+          "paper_title": "Diagnostic Performance of Red Blood Cell Indices in the Differential Diagnosis of Iron Deficiency Anemia and the Thalassemia Trait in Chile: A Retrospective Study",
+          "journal": "Diagnostics (Basel)",
+          "year": 2024
+        },
+        {
+          "source_id": "source_ida_vs_thal_review_2023",
+          "paper_title": "Differential diagnosis between iron deficiency anemia and thalassemia trait-induced anemia",
+          "journal": "Journal of Dental Sciences",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "Low MCH is most clinically useful as a marker of reduced erythrocyte hemoglobinization within hypochromic microcytic states.",
+      "threshold_notes": "No single MCH cut-off should be invented outside the reporting laboratory range; interpretation should remain directional and pattern-based."
+    },
+    "narrative": {
+      "mechanism": "MCH falls when erythrocytes are produced with reduced hemoglobin content, most often because iron availability or hemoglobin synthesis is impaired.",
+      "biological_pathway": "Erythropoiesis, hemoglobin synthesis, and iron-dependent red cell maturation pathways.",
+      "interpretation": "A low MCH result is usually a supportive index within a broader hypochromic microcytic pattern rather than a stand-alone diagnosis.",
+      "implications": "This pattern commonly prompts iron studies and review of chronic blood loss, malabsorption, or inflammatory context.",
+      "supporting_marker_roles": "Low MCHC supports genuine hypochromia, high RDW-CV favors evolving nutritional deficiency, and low RBC count supports an anemic rather than compensated carrier pattern."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_mch_low_thalassemia_trait_pattern",
+    "signal_id": "signal_mch_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "mch",
+      "rationale": "Low MCH can also mark uniform microcytic hypochromia in hemoglobin synthesis disorders such as thalassemia trait.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "rbc",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "A relatively preserved or elevated RBC count supports compensated microcytosis, which is typical of thalassemia trait."
+      },
+      {
+        "biomarker_id": "mchc",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low MCHC supports reduced hemoglobin content per cell in a microcytic carrier pattern."
+      },
+      {
+        "biomarker_id": "rdw_cv",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Marked RDW-CV elevation shifts suspicion toward iron deficiency or mixed deficiency rather than a uniform carrier state."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_thalassemia_trait_compensated_microcytosis",
+        "rank": 1,
+        "physiological_claim": "Low MCH with a preserved or high RBC count may reflect thalassemia trait, where marrow compensation produces many small hypochromic cells.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "MCH alone does not distinguish alpha from beta thalassemia trait and should not replace hemoglobinopathy testing."
+        ],
+        "missing_data": {
+          "policy": "Obtain family history and confirmatory hemoglobinopathy testing before assigning a carrier-state interpretation."
+        },
+        "supporting_marker_refs": [
+          "rbc",
+          "mchc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_low_rbc_with_progressive_anisocytosis",
+            "marker_reference": "rbc",
+            "contradiction_rationale": "A falling RBC count weakens compensated carrier-state interpretation and is more compatible with iron deficiency anemia.",
+            "contradiction_strength": "strong"
+          },
+          {
+            "contradiction_id": "ctr_marked_rdw_elevation",
+            "marker_reference": "rdw_cv",
+            "contradiction_rationale": "Pronounced anisocytosis is more typical of iron deficiency than a uniform thalassemia trait pattern.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_other_congenital_microcytic_hypochromic_state",
+        "rank": 2,
+        "physiological_claim": "Low MCH may less commonly reflect another inherited microcytic hypochromic state when the pattern resembles thalassemia but classical confirmation is absent.",
+        "evidence_strength": "exploratory",
+        "caveats": [
+          "This remains a cautious secondary interpretation and should not be promoted without confirmatory testing."
+        ],
+        "missing_data": {
+          "policy": "If hemoglobinopathy testing is negative, reassess for iron deficiency, combined deficiency, or rare congenital disorders before retaining a genetic explanation."
+        },
+        "supporting_marker_refs": [
+          "mchc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_mchc_weakens_hypochromic_congenital_state",
+            "marker_reference": "mchc",
+            "contradiction_rationale": "A normal MCHC weakens a hypochromic congenital microcytic state interpretation, as clinically significant congenital haemoglobinopathies causing hypochromia typically also reduce MCHC; its normalcy suggests preserved haemoglobin concentration despite microcytosis.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_thalassemia_trait_compensated_microcytosis",
+        "hyp_other_congenital_microcytic_hypochromic_state"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_hemoglobinopathy_testing",
+        "rationale": "Hemoglobin electrophoresis or equivalent hemoglobinopathy testing helps confirm thalassemia trait when low MCH occurs with preserved RBC count."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_mch_low_with_high_rbc_pattern",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low MCH coexists with high RBC count and low MCHC, because this combination is more consistent with compensated microcytic carrier-state physiology than isolated nutritional deficiency.",
+        "conditions": [
+          {
+            "metric_id": "rbc",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          },
+          {
+            "metric_id": "mchc",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_rbc_indices_ida_vs_thal_2024",
+          "source_ida_vs_thal_review_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_rbc_indices_ida_vs_thal_2024",
+          "paper_title": "Diagnostic Performance of Red Blood Cell Indices in the Differential Diagnosis of Iron Deficiency Anemia and the Thalassemia Trait in Chile: A Retrospective Study",
+          "journal": "Diagnostics (Basel)",
+          "year": 2024
+        },
+        {
+          "source_id": "source_ida_vs_thal_review_2023",
+          "paper_title": "Differential diagnosis between iron deficiency anemia and thalassemia trait-induced anemia",
+          "journal": "Journal of Dental Sciences",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "Low MCH combined with preserved erythrocyte number can support a compensated microcytic carrier-state pattern such as thalassemia trait.",
+      "threshold_notes": "Directional interpretation is preferred; no MCH threshold should be promoted outside the laboratory range or without confirmatory hemoglobinopathy testing."
+    },
+    "narrative": {
+      "mechanism": "In thalassemia trait, impaired globin-chain synthesis produces chronically small hypochromic erythrocytes, but overall RBC production may remain relatively preserved.",
+      "biological_pathway": "Globin synthesis, marrow compensation, and chronic microcytic erythropoiesis.",
+      "interpretation": "This pattern is clinically useful mainly for differential diagnosis between iron deficiency and compensated hemoglobinopathy-related microcytosis.",
+      "implications": "A confirmed carrier pattern changes further work-up, reduces unnecessary iron therapy, and may justify family or genetic counseling.",
+      "supporting_marker_roles": "High RBC count supports compensation, low MCHC supports hypochromia, and marked RDW-CV elevation acts as a competing marker that redirects toward iron deficiency."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_mchc_low_hypochromic_iron_restriction",
+    "signal_id": "signal_mchc_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "mchc",
+      "rationale": "Low MCHC reflects reduced hemoglobin concentration within erythrocytes and is a classic hypochromic red-cell index.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "mch",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low MCH alongside low MCHC supports reduced hemoglobinization at both cell-content and concentration levels."
+      },
+      {
+        "biomarker_id": "rdw_cv",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Higher RDW-CV favors iron deficiency or evolving combined deficiency over a more uniform carrier-state microcytosis."
+      },
+      {
+        "biomarker_id": "rbc",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "A low RBC count supports anemia from iron-restricted erythropoiesis rather than compensated microcytosis."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_absolute_iron_deficiency_hypochromia",
+        "rank": 1,
+        "physiological_claim": "Low MCHC commonly reflects absolute iron deficiency when accompanied by other hypochromic or microcytic CBC features.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Low MCHC is supportive and should not be interpreted in isolation from iron studies and the rest of the CBC."
+        ],
+        "missing_data": {
+          "policy": "Confirm iron status biochemically before concluding that hypochromia is due to iron depletion alone."
+        },
+        "supporting_marker_refs": [
+          "mch",
+          "rdw_cv",
+          "rbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_preserved_or_high_rbc",
+            "marker_reference": "rbc",
+            "contradiction_rationale": "Preserved or elevated RBC count weakens simple iron deficiency and raises the possibility of thalassemia trait.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_functional_iron_restriction_hypochromia",
+        "rank": 2,
+        "physiological_claim": "Low MCHC may also be seen with functional iron restriction in chronic inflammatory states where erythrocyte hemoglobinization is impaired.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This pattern is less specific than absolute iron deficiency and requires biochemical correlation."
+        ],
+        "missing_data": {
+          "policy": "If inflammatory or iron-transport data are unavailable, keep this explanation secondary and provisional."
+        },
+        "supporting_marker_refs": [
+          "mch",
+          "rbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_marked_anisocytosis",
+            "marker_reference": "rdw_cv",
+            "contradiction_rationale": "Marked anisocytosis shifts interpretation toward nutritional deficiency or mixed erythropoiesis rather than a relatively uniform inflammatory pattern.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_absolute_iron_deficiency_hypochromia",
+        "hyp_functional_iron_restriction_hypochromia"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_iron_studies_smear",
+        "rationale": "Iron studies with peripheral smear review help confirm whether low MCHC reflects true hypochromic iron restriction."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_mchc_low_with_low_mch_and_high_rdw",
+        "resulting_state": "at_risk",
+        "description": "Escalate when low MCHC coexists with low MCH and high RDW-CV, because this combination strengthens a clinically relevant hypochromic iron-restricted pattern.",
+        "conditions": [
+          {
+            "metric_id": "mch",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          },
+          {
+            "metric_id": "rdw_cv",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_rbc_indices_ida_vs_thal_2024",
+          "source_ida_vs_thal_review_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_rbc_indices_ida_vs_thal_2024",
+          "paper_title": "Diagnostic Performance of Red Blood Cell Indices in the Differential Diagnosis of Iron Deficiency Anemia and the Thalassemia Trait in Chile: A Retrospective Study",
+          "journal": "Diagnostics (Basel)",
+          "year": 2024
+        },
+        {
+          "source_id": "source_ida_vs_thal_review_2023",
+          "paper_title": "Differential diagnosis between iron deficiency anemia and thalassemia trait-induced anemia",
+          "journal": "Journal of Dental Sciences",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "Low MCHC is a supportive indicator of hypochromia and is most informative when interpreted with other red-cell indices.",
+      "threshold_notes": "Laboratory reference ranges vary and MCHC should be used directionally rather than as an invented disease-specific threshold."
+    },
+    "narrative": {
+      "mechanism": "MCHC decreases when erythrocytes carry a lower concentration of hemoglobin, usually because hemoglobin synthesis or iron availability is impaired during maturation.",
+      "biological_pathway": "Red-cell hemoglobinization, iron handling, and microcytic erythropoiesis.",
+      "interpretation": "Low MCHC supports hypochromia but does not distinguish absolute iron deficiency from other causes of iron-restricted red-cell production by itself.",
+      "implications": "This pattern commonly prompts iron assessment and evaluation for blood loss, malabsorption, or inflammatory iron sequestration.",
+      "supporting_marker_roles": "Low MCH reinforces reduced cell hemoglobinization, high RDW-CV helps separate iron deficiency from uniform carrier states, and low RBC count supports true anemia."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_mchc_high_spherocytic_hemolysis_pattern",
+    "signal_id": "signal_mchc_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "mchc",
+      "rationale": "High MCHC is unusual and, when genuine, raises concern for dense or spherocytic red-cell states more than for simple nutritional anemia.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "rdw_cv",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Higher RDW-CV supports accompanying red-cell heterogeneity often seen with hemolytic or membrane disorders."
+      },
+      {
+        "biomarker_id": "rbc",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "A reduced RBC count supports clinically relevant anemia rather than an isolated high index without red-cell loss."
+      },
+      {
+        "biomarker_id": "mch",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low MCH redirects interpretation toward hypochromic microcytosis rather than dense spherocytic erythrocytes."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_hereditary_spherocytosis_pattern",
+        "rank": 1,
+        "physiological_claim": "High MCHC may support hereditary spherocytosis when accompanied by anemia and red-cell heterogeneity, because denser spherocytes can raise measured cellular hemoglobin concentration.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "MCHC has useful screening value for hereditary spherocytosis but is not sufficiently specific to diagnose it in isolation."
+        ],
+        "missing_data": {
+          "policy": "Review family history and confirm with smear, EMA binding, or other membrane-focused testing before concluding hereditary spherocytosis."
+        },
+        "supporting_marker_refs": [
+          "rdw_cv",
+          "rbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_hypochromic_microcytic_pattern",
+            "marker_reference": "mch",
+            "contradiction_rationale": "Low MCH argues against a dense spherocytic pattern and favors hypochromic microcytosis instead.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_acquired_spherocytic_or_hemolytic_process",
+        "rank": 2,
+        "physiological_claim": "High MCHC may also occur in acquired hemolytic processes with spherocyte formation or marked red-cell dehydration.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Analytical artifact and sample issues remain alternative explanations and must be excluded before assigning pathology."
+        ],
+        "missing_data": {
+          "policy": "If smear review and hemolysis markers are unavailable, retain acquired hemolysis only as a cautious differential explanation."
+        },
+        "supporting_marker_refs": [
+          "rdw_cv",
+          "rbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_no_anemia_support",
+            "marker_reference": "rbc",
+            "contradiction_rationale": "A normal RBC count weakens a clinically important hemolytic interpretation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_hereditary_spherocytosis_pattern",
+        "hyp_acquired_spherocytic_or_hemolytic_process"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_smear_ema_and_hemolysis_panel",
+        "rationale": "Peripheral smear, EMA binding or equivalent membrane testing, and hemolysis studies help confirm whether high MCHC reflects spherocytic hemolysis."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_mchc_high_with_anemia_and_anisocytosis",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high MCHC coexists with low RBC count and high RDW-CV, because that combination is more compatible with clinically relevant spherocytic or hemolytic pathology than an isolated index shift.",
+        "conditions": [
+          {
+            "metric_id": "rbc",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          },
+          {
+            "metric_id": "rdw_cv",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_hs_protocol_2021",
+          "source_hs_overview_2025"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_hs_protocol_2021",
+          "paper_title": "The diagnostic protocol for hereditary spherocytosis-2021 update",
+          "journal": "Journal of Clinical Laboratory Analysis",
+          "year": 2021
+        },
+        {
+          "source_id": "source_hs_overview_2025",
+          "paper_title": "Overview on Hereditary Spherocytosis Diagnosis",
+          "journal": "International Journal of Laboratory Hematology",
+          "year": 2025
+        }
+      ],
+      "physiological_claim": "A genuine high MCHC is uncommon and is most clinically meaningful when it supports a spherocytic or dense-red-cell pattern rather than being interpreted as a nutritional signal.",
+      "threshold_notes": "High MCHC should remain lab-range anchored because sample artifact, cold agglutinins, or analyzer effects can also elevate it."
+    },
+    "narrative": {
+      "mechanism": "MCHC rises when erythrocytes become relatively dense, dehydrated, or spherocytic, producing an increased measured hemoglobin concentration within cells.",
+      "biological_pathway": "Red-cell membrane stability, spherocyte formation, and hemolytic red-cell turnover pathways.",
+      "interpretation": "When confirmed, high MCHC is a selective hematology clue that can support spherocytic hemolysis, but it must be integrated with smear and hemolysis testing.",
+      "implications": "This pattern may justify membrane-focused testing and hemolysis work-up rather than empiric iron therapy or generic anemia labeling.",
+      "supporting_marker_roles": "High RDW-CV supports heterogeneity, low RBC count supports clinically relevant anemia, and low MCH acts as a competing marker that redirects toward hypochromic microcytosis."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_rdw_cv_high_iron_deficiency_anisocytosis",
+    "signal_id": "signal_rdw_cv_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "rdw_cv",
+      "rationale": "High RDW-CV reflects increased variability in red-cell size and is most classically used in anemia differential diagnosis.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "mch",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low MCH supports impaired erythrocyte hemoglobinization within an anisocytic deficiency pattern."
+      },
+      {
+        "biomarker_id": "mchc",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low MCHC reinforces hypochromic physiology accompanying anisocytosis."
+      },
+      {
+        "biomarker_id": "rbc",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "A reduced RBC count favors iron deficiency anemia over compensated thalassemia trait."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_iron_deficiency_anisocytosis",
+        "rank": 1,
+        "physiological_claim": "High RDW-CV commonly reflects iron deficiency anisocytosis, especially when hypochromia and reduced erythrocyte number are also present.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "RDW-CV is helpful for pattern recognition but does not establish etiology by itself."
+        ],
+        "missing_data": {
+          "policy": "Confirm iron status before assigning causality because RDW-CV rises in several hematologic states."
+        },
+        "supporting_marker_refs": [
+          "mch",
+          "mchc",
+          "rbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_preserved_high_rbc",
+            "marker_reference": "rbc",
+            "contradiction_rationale": "A preserved or increased RBC count weakens classic iron deficiency anemia and favors thalassemia trait or another compensated microcytic state.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_early_or_combined_nutritional_deficiency",
+        "rank": 2,
+        "physiological_claim": "High RDW-CV may also reflect early or combined nutritional deficiency, where mixed cell populations emerge before a single uniform morphology dominates.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This explanation remains pattern-based until iron and vitamin status are measured."
+        ],
+        "missing_data": {
+          "policy": "If nutritional biochemistry is unavailable, keep combined deficiency as a secondary hypothesis rather than a definitive conclusion."
+        },
+        "supporting_marker_refs": [
+          "mch",
+          "mchc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_uniform_microcytosis_pattern",
+            "marker_reference": "rbc",
+            "contradiction_rationale": "A high RBC count with more uniform microcytosis is less compatible with mixed nutritional deficiency and more compatible with thalassemia trait.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_iron_deficiency_anisocytosis",
+        "hyp_early_or_combined_nutritional_deficiency"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_iron_b12_folate_review",
+        "rationale": "Iron studies with B12 and folate assessment help distinguish isolated iron deficiency from combined nutritional causes of anisocytosis."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_rdw_cv_high_with_hypochromic_anemia_pattern",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high RDW-CV coexists with low MCH and low RBC count, because that combination is more consistent with clinically relevant iron-deficiency-type anisocytosis than an isolated RDW shift.",
+        "conditions": [
+          {
+            "metric_id": "mch",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          },
+          {
+            "metric_id": "rbc",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_rdw_review_2019",
+          "source_ida_vs_thal_review_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_rdw_review_2019",
+          "paper_title": "The role of red blood cell distribution width (RDW) in cardiovascular risk assessment: useful or hype?",
+          "journal": "Annals of Translational Medicine",
+          "year": 2019
+        },
+        {
+          "source_id": "source_ida_vs_thal_review_2023",
+          "paper_title": "Differential diagnosis between iron deficiency anemia and thalassemia trait-induced anemia",
+          "journal": "Journal of Dental Sciences",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "High RDW-CV is a well-established indicator of anisocytosis and is particularly useful in distinguishing iron deficiency patterns from more uniform microcytic states.",
+      "threshold_notes": "RDW-CV should be interpreted against the analyzer reference interval and never converted into an invented disease-specific threshold."
+    },
+    "narrative": {
+      "mechanism": "RDW-CV increases when circulating erythrocytes vary substantially in size because new and old cell populations or different deficiency states coexist.",
+      "biological_pathway": "Red-cell maturation heterogeneity, nutritional erythropoiesis, and mixed erythrocyte population dynamics.",
+      "interpretation": "A raised RDW-CV supports anisocytosis but remains a contextual discriminator rather than a stand-alone diagnosis.",
+      "implications": "This pattern commonly prompts iron assessment and review for combined nutritional deficiency, blood loss, or recent treatment effects.",
+      "supporting_marker_roles": "Low MCH and low MCHC reinforce deficiency-type red-cell production, while low RBC count helps distinguish iron-deficiency anemia from compensated thalassemia trait."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_rdw_cv_high_mixed_red_cell_population_pattern",
+    "signal_id": "signal_rdw_cv_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "rdw_cv",
+      "rationale": "High RDW-CV can also reflect admixture of red-cell populations rather than isolated iron deficiency alone.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "rdw_sd",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent RDW-SD elevation supports genuine red-cell size heterogeneity rather than borderline variation in one RDW metric."
+      },
+      {
+        "biomarker_id": "mchc",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "A high MCHC redirects interpretation toward spherocytic or regenerative hemolytic processes rather than simple deficiency."
+      },
+      {
+        "biomarker_id": "rbc",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "A reduced RBC count supports clinically relevant anemia when anisocytosis is marked."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_regenerative_or_hemolytic_mixed_population",
+        "rank": 1,
+        "physiological_claim": "High RDW-CV may reflect a mixed erythrocyte population during hemolysis or regeneration, when newer cells differ substantially in size from the prevailing circulating population.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Without reticulocyte and hemolysis data, this remains an inference from the CBC pattern rather than a confirmed mechanism."
+        ],
+        "missing_data": {
+          "policy": "Add hemolysis and reticulocyte testing before prioritizing regeneration or destruction as the main cause of anisocytosis."
+        },
+        "supporting_marker_refs": [
+          "rdw_sd",
+          "rbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_hypochromic_profile",
+            "marker_reference": "mchc",
+            "contradiction_rationale": "A low or normal MCHC without other regenerative clues weakens a hemolytic or dense-cell interpretation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_post_treatment_or_combined_population_shift",
+        "rank": 2,
+        "physiological_claim": "High RDW-CV may also appear when more than one red-cell population is present, such as during treatment response, recovery, or mixed deficiency states.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This explanation is broad and should remain contextual until temporal CBC data or treatment history are known."
+        ],
+        "missing_data": {
+          "policy": "Repeat CBC comparison or clinical history is needed before promoting a treatment-response interpretation."
+        },
+        "supporting_marker_refs": [
+          "rdw_sd"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_rdw_sd_weakens_mixed_population_shift",
+            "marker_reference": "rdw_sd",
+            "contradiction_rationale": "A normal RDW-SD weakens a post-treatment or transitional mixed red cell population interpretation, as a true admixture of old and new red cell cohorts would be expected to produce absolute size dispersion captured by RDW-SD alongside the coefficient-based RDW-CV elevation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_regenerative_or_hemolytic_mixed_population",
+        "hyp_post_treatment_or_combined_population_shift"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_reticulocyte_and_smear_review",
+        "rationale": "Reticulocyte assessment and smear review help determine whether high RDW-CV reflects regeneration, hemolysis, or another mixed-population process."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_rdw_cv_high_with_high_mchc",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high RDW-CV coexists with high MCHC, because this combination is more compatible with a clinically important mixed-population or hemolytic pattern than uncomplicated deficiency alone.",
+        "conditions": [
+          {
+            "metric_id": "mchc",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_rdw_review_2019",
+          "source_hs_protocol_2021"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_rdw_review_2019",
+          "paper_title": "The role of red blood cell distribution width (RDW) in cardiovascular risk assessment: useful or hype?",
+          "journal": "Annals of Translational Medicine",
+          "year": 2019
+        },
+        {
+          "source_id": "source_hs_protocol_2021",
+          "paper_title": "The diagnostic protocol for hereditary spherocytosis-2021 update",
+          "journal": "Journal of Clinical Laboratory Analysis",
+          "year": 2021
+        }
+      ],
+      "physiological_claim": "High RDW-CV can reflect admixture of red-cell populations during regeneration, hemolysis, recovery, or combined deficiency states.",
+      "threshold_notes": "No disease-specific RDW-CV threshold should be invented; direction and pattern with corroborating indices are more reliable than isolated magnitude."
+    },
+    "narrative": {
+      "mechanism": "RDW-CV rises whenever circulating erythrocytes differ substantially in volume, whether from deficiency, destruction, regeneration, transfusion, or recovery.",
+      "biological_pathway": "Red-cell turnover, marrow response, and mixed circulating erythrocyte population dynamics.",
+      "interpretation": "A high RDW-CV result should prompt discrimination between deficiency-driven anisocytosis and broader mixed-population states.",
+      "implications": "This pattern may justify reticulocyte testing, smear review, and correlation with recent treatment, bleeding, or hemolysis history.",
+      "supporting_marker_roles": "RDW-SD confirms true heterogeneity, high MCHC redirects toward dense-cell or hemolytic physiology, and low RBC count supports clinically relevant anemia."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_rdw_sd_high_iron_deficiency_anisocytosis",
+    "signal_id": "signal_rdw_sd_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "rdw_sd",
+      "rationale": "High RDW-SD measures absolute red-cell size dispersion and, like RDW-CV, is useful in anemia pattern recognition.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "mch",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low MCH supports a deficiency-related red-cell production problem accompanying anisocytosis."
+      },
+      {
+        "biomarker_id": "mchc",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low MCHC supports hypochromic physiology within an anisocytic anemia pattern."
+      },
+      {
+        "biomarker_id": "rbc",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Reduced RBC count favors iron deficiency anemia over compensated thalassemia trait."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_iron_deficiency_anisocytosis_rdw_sd",
+        "rank": 1,
+        "physiological_claim": "High RDW-SD commonly reflects iron-deficiency-related anisocytosis when hypochromia and reduced RBC count are also present.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "RDW-SD improves characterization of heterogeneity but still does not identify the biochemical cause by itself."
+        ],
+        "missing_data": {
+          "policy": "Pair RDW-SD with iron studies before assigning definitive etiology."
+        },
+        "supporting_marker_refs": [
+          "mch",
+          "mchc",
+          "rbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_compensated_high_rbc_state",
+            "marker_reference": "rbc",
+            "contradiction_rationale": "A high RBC count weakens iron-deficiency anemia and suggests a compensated microcytic carrier pattern instead.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_combined_or_evolving_deficiency_rdw_sd",
+        "rank": 2,
+        "physiological_claim": "High RDW-SD may also represent combined or evolving deficiency states in which red-cell size dispersion broadens before morphology becomes uniform.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This remains a CBC-based inference without micronutrient confirmation."
+        ],
+        "missing_data": {
+          "policy": "If iron and vitamin status are not available, keep combined deficiency as a cautious secondary explanation."
+        },
+        "supporting_marker_refs": [
+          "mch",
+          "mchc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_uniform_compensated_microcytosis",
+            "marker_reference": "rbc",
+            "contradiction_rationale": "Preserved erythrocyte number argues against deficiency-dominant anisocytosis and favors a carrier-state pattern.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_iron_deficiency_anisocytosis_rdw_sd",
+        "hyp_combined_or_evolving_deficiency_rdw_sd"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_nutritional_deficiency_workup",
+        "rationale": "Iron studies with nutritional deficiency assessment help determine whether high RDW-SD reflects isolated or combined deficiency."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_rdw_sd_high_with_low_mch_and_rbc",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high RDW-SD coexists with low MCH and low RBC count, because that combination strengthens an iron-deficiency-type anisocytic anemia pattern.",
+        "conditions": [
+          {
+            "metric_id": "mch",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          },
+          {
+            "metric_id": "rbc",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_rdw_review_2019",
+          "source_ida_vs_thal_review_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_rdw_review_2019",
+          "paper_title": "The role of red blood cell distribution width (RDW) in cardiovascular risk assessment: useful or hype?",
+          "journal": "Annals of Translational Medicine",
+          "year": 2019
+        },
+        {
+          "source_id": "source_ida_vs_thal_review_2023",
+          "paper_title": "Differential diagnosis between iron deficiency anemia and thalassemia trait-induced anemia",
+          "journal": "Journal of Dental Sciences",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "High RDW-SD supports absolute red-cell size heterogeneity and is useful for distinguishing deficiency-driven anisocytosis from more uniform microcytic states.",
+      "threshold_notes": "Interpret RDW-SD directionally within the analyzer range; disease-specific cut-offs are not justified here."
+    },
+    "narrative": {
+      "mechanism": "RDW-SD increases when erythrocytes with different volumes circulate together, especially during deficiency-related ineffective or evolving erythropoiesis.",
+      "biological_pathway": "Red-cell size dispersion, nutritional erythropoiesis, and mixed-cell population dynamics.",
+      "interpretation": "A high RDW-SD result should be read as a heterogeneity signal that needs biochemical and morphological correlation.",
+      "implications": "This pattern commonly justifies iron studies and review for combined micronutrient deficiency or blood loss.",
+      "supporting_marker_roles": "Low MCH and low MCHC support deficiency-type erythropoiesis, while low RBC count helps separate anemia from compensated microcytic carrier states."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_rdw_sd_high_regenerative_or_mixed_population_pattern",
+    "signal_id": "signal_rdw_sd_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "rdw_sd",
+      "rationale": "High RDW-SD can also reflect broad absolute size dispersion from regeneration, hemolysis, or admixture of erythrocyte populations.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "rdw_cv",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent RDW-CV elevation supports true anisocytosis across both RDW measures."
+      },
+      {
+        "biomarker_id": "mchc",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Higher MCHC redirects toward dense-cell or spherocytic hemolytic physiology rather than simple deficiency."
+      },
+      {
+        "biomarker_id": "rbc",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low RBC count supports clinically relevant anemia when mixed red-cell populations are suspected."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_hemolytic_regenerative_dispersion",
+        "rank": 1,
+        "physiological_claim": "High RDW-SD may support hemolytic or regenerative dispersion when red-cell destruction and replacement create a broad size distribution.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This interpretation remains provisional without reticulocyte and hemolysis markers."
+        ],
+        "missing_data": {
+          "policy": "Add reticulocyte and hemolysis testing before prioritizing a regenerative mechanism."
+        },
+        "supporting_marker_refs": [
+          "rdw_cv",
+          "rbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_absence_of_dense_cell_clue",
+            "marker_reference": "mchc",
+            "contradiction_rationale": "Without a competing dense-cell clue, a regenerative or hemolytic interpretation becomes less specific and must remain cautious.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_admixture_recovery_or_transitional_state",
+        "rank": 2,
+        "physiological_claim": "High RDW-SD may also occur in transitional states with coexisting cell populations, such as recovery, recent treatment response, or mixed deficiency.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Temporal CBC data are usually needed to support a transitional interpretation."
+        ],
+        "missing_data": {
+          "policy": "Repeat CBC comparison is useful before assigning a recovery or transitional-state explanation."
+        },
+        "supporting_marker_refs": [
+          "rdw_cv"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_rdw_cv_weakens_admixture_transition",
+            "marker_reference": "rdw_cv",
+            "contradiction_rationale": "A normal RDW-CV weakens a true admixture or transitional mixed red cell population interpretation, as a clinically meaningful population shift producing elevated RDW-SD would typically also elevate the coefficient-based RDW-CV; their dissociation suggests a less prominent or more uniform dispersion pattern.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_hemolytic_regenerative_dispersion",
+        "hyp_admixture_recovery_or_transitional_state"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_reticulocyte_hemolysis_and_smear",
+        "rationale": "Reticulocyte count, hemolysis markers, and smear review help determine whether high RDW-SD reflects regeneration, destruction, or other mixed populations."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_rdw_sd_high_with_high_mchc",
+        "resulting_state": "at_risk",
+        "description": "Escalate when high RDW-SD coexists with high MCHC, because that pattern is more compatible with clinically relevant dense-cell or hemolytic heterogeneity than with isolated borderline anisocytosis.",
+        "conditions": [
+          {
+            "metric_id": "mchc",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_rdw_review_2019",
+          "source_hs_protocol_2021"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_rdw_review_2019",
+          "paper_title": "The role of red blood cell distribution width (RDW) in cardiovascular risk assessment: useful or hype?",
+          "journal": "Annals of Translational Medicine",
+          "year": 2019
+        },
+        {
+          "source_id": "source_hs_protocol_2021",
+          "paper_title": "The diagnostic protocol for hereditary spherocytosis-2021 update",
+          "journal": "Journal of Clinical Laboratory Analysis",
+          "year": 2021
+        }
+      ],
+      "physiological_claim": "High RDW-SD can signal broad absolute erythrocyte size dispersion from regeneration, hemolysis, recovery, or mixed cell populations.",
+      "threshold_notes": "Interpretation should remain directional and contextual because RDW-SD is not disease-specific."
+    },
+    "narrative": {
+      "mechanism": "RDW-SD broadens when differently sized erythrocytes coexist in circulation, whether from destruction, replacement, or recovery.",
+      "biological_pathway": "Red-cell turnover, marrow response, and transitional erythrocyte population kinetics.",
+      "interpretation": "A raised RDW-SD result should prompt discrimination between deficiency-related anisocytosis and broader regenerative or mixed-population states.",
+      "implications": "This pattern may justify hemolysis testing, reticulocyte assessment, and review of recent treatment or transfusion history.",
+      "supporting_marker_roles": "RDW-CV corroborates genuine anisocytosis, high MCHC redirects toward dense-cell pathology, and low RBC count supports clinically meaningful anemia."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_monocyte_pct_high_reactive_monocyte_predominance",
+    "signal_id": "signal_monocyte_pct_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "monocyte_pct",
+      "rationale": "High monocyte percentage reflects monocyte predominance within the differential count and requires confirmation with the absolute monocyte count.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "monocytes_abs",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent elevation of the absolute monocyte count supports a true reactive monocytosis rather than a purely relative percentage shift."
+      },
+      {
+        "biomarker_id": "neutrophil_pct",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "A relatively lower neutrophil percentage can support a recovery or non-neutrophil-predominant inflammatory differential rather than acute neutrophil-dominant stress."
+      },
+      {
+        "biomarker_id": "rbc",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Coexisting anemia can support a clinically relevant systemic inflammatory context rather than an incidental percentage fluctuation."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_reactive_monocytosis_inflammation_recovery",
+        "rank": 1,
+        "physiological_claim": "High monocyte percentage may reflect reactive monocytic predominance during chronic inflammation, chronic infection, or recovery from an acute inflammatory episode.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Percentage data alone can be misleading when other leukocyte fractions shift in the opposite direction."
+        ],
+        "missing_data": {
+          "policy": "Confirm with absolute monocyte count and repeat CBC trend before prioritizing a true reactive monocytosis interpretation."
+        },
+        "supporting_marker_refs": [
+          "monocytes_abs",
+          "neutrophil_pct"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_absence_of_absolute_monocytosis",
+            "marker_reference": "monocytes_abs",
+            "contradiction_rationale": "If the absolute monocyte count is not elevated, a true reactive monocytosis explanation is weakened and a relative differential shift becomes more likely.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_systemic_inflammatory_tissue_repair_context",
+        "rank": 2,
+        "physiological_claim": "High monocyte percentage may also accompany a broader inflammatory or tissue-repair response in which monocyte lineage activity becomes relatively more prominent.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This remains a contextual immune pattern and should not be treated as disease-specific without clinical correlation."
+        ],
+        "missing_data": {
+          "policy": "Assess infection, autoimmune, and recovery history before promoting tissue-repair or chronic inflammatory interpretations."
+        },
+        "supporting_marker_refs": [
+          "monocytes_abs",
+          "rbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_neutrophil_dominant_pattern",
+            "marker_reference": "neutrophil_pct",
+            "contradiction_rationale": "Marked neutrophil predominance weakens a monocyte-centered interpretation and instead favors acute neutrophil-driven stress or infection.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_reactive_monocytosis_inflammation_recovery",
+        "hyp_systemic_inflammatory_tissue_repair_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_cbc_and_absolute_monocyte_review",
+        "rationale": "Repeat CBC with review of the absolute monocyte count helps determine whether high monocyte percentage reflects true monocytosis or only a relative shift."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_monocyte_pct_high_with_absolute_monocytosis",
+        "resulting_state": "at_risk",
+        "description": "Escalate when monocyte percentage is high and monocytes_abs is also high, because that combination supports true monocytosis rather than a purely relative differential shift.",
+        "conditions": [
+          {
+            "metric_id": "monocytes_abs",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_monocytosis_review_2021",
+          "source_monocytosis_primarycare_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_monocytosis_review_2021",
+          "paper_title": "Differential Diagnosis and Workup of Monocytosis",
+          "journal": "Current Hematologic Malignancy Reports",
+          "year": 2021
+        },
+        {
+          "source_id": "source_monocytosis_primarycare_2023",
+          "paper_title": "Monocytosis in primary care and risk of haematological malignancies",
+          "journal": "European Journal of Haematology",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "High monocyte percentage is most useful as a directional differential-count signal that should be confirmed against the absolute monocyte count.",
+      "threshold_notes": "Percentage abnormalities should remain lab-range anchored because differential fractions can shift even when the absolute lineage count is normal."
+    },
+    "narrative": {
+      "mechanism": "Monocyte predominance appears when innate immune activation, inflammatory recovery, or marrow-output shifts increase the relative contribution of monocytes within circulating leukocytes.",
+      "biological_pathway": "Monocyte lineage trafficking, inflammatory recruitment, and leukocyte differential redistribution.",
+      "interpretation": "High monocyte percentage can support a reactive monocyte-predominant pattern, but the absolute count determines whether the change is truly quantitative or merely relative.",
+      "implications": "This pattern often justifies repeat CBC review and clinical correlation for chronic infection, inflammatory disease, or convalescent states.",
+      "supporting_marker_roles": "High monocytes_abs corroborates true monocytosis, lower neutrophil_pct helps separate non-neutrophil-predominant patterns, and low RBC may signal a broader inflammatory illness context."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_monocyte_pct_low_relative_or_true_monocytopenia",
+    "signal_id": "signal_monocyte_pct_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "monocyte_pct",
+      "rationale": "Low monocyte percentage may represent either a relative leukocyte redistribution or a true reduction in monocyte numbers.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "monocytes_abs",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "A low absolute monocyte count supports true monocytopenia rather than a percentage-only shift."
+      },
+      {
+        "biomarker_id": "neutrophil_pct",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "A high neutrophil percentage favors relative redistribution, stress, or acute innate activation as an explanation for low monocyte percentage."
+      },
+      {
+        "biomarker_id": "rbc",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent anemia can support a broader marrow or systemic illness context when monocytopenia is genuine."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_relative_monocyte_suppression_or_redistribution",
+        "rank": 1,
+        "physiological_claim": "Low monocyte percentage may reflect relative monocyte suppression or redistribution during acute stress, glucocorticoid exposure, or neutrophil-predominant inflammation.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Percentage data are especially vulnerable to reciprocal shifts in other white-cell fractions."
+        ],
+        "missing_data": {
+          "policy": "Confirm the absolute monocyte count before treating a low percentage as true monocytopenia."
+        },
+        "supporting_marker_refs": [
+          "monocytes_abs",
+          "neutrophil_pct"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_absolute_monocyte_preservation",
+            "marker_reference": "monocytes_abs",
+            "contradiction_rationale": "A normal absolute monocyte count weakens true monocytopenia and supports a relative differential shift instead.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_true_monocytopenia_marrow_or_severe_systemic_context",
+        "rank": 2,
+        "physiological_claim": "Low monocyte percentage may indicate true monocytopenia when the absolute monocyte count is also low, including marrow-suppressive or severe systemic contexts.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "True monocytopenia is less common and usually requires confirmation beyond a single percentage result."
+        ],
+        "missing_data": {
+          "policy": "Repeat CBC and assess medication, infection severity, and marrow context before promoting a true monocytopenia interpretation."
+        },
+        "supporting_marker_refs": [
+          "monocytes_abs",
+          "rbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_neutrophil_only_shift",
+            "marker_reference": "neutrophil_pct",
+            "contradiction_rationale": "Marked neutrophil predominance with preserved monocytes_abs suggests redistribution rather than lineage failure.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_relative_monocyte_suppression_or_redistribution",
+        "hyp_true_monocytopenia_marrow_or_severe_systemic_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_absolute_monocyte_confirmation",
+        "rationale": "Absolute monocyte count review helps distinguish true monocytopenia from a relative percentage reduction driven by other leukocyte changes."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_monocyte_pct_low_with_low_absolute_monocytes",
+        "resulting_state": "at_risk",
+        "description": "Escalate when monocyte percentage is low and monocytes_abs is also low, because that combination is more consistent with true monocytopenia than with a percentage-only redistribution pattern.",
+        "conditions": [
+          {
+            "metric_id": "monocytes_abs",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_glucocorticoid_monocyte_review_2019",
+          "source_cbc_sepsis_review_2021"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_glucocorticoid_monocyte_review_2019",
+          "paper_title": "More Than Suppression: Glucocorticoid Action on Monocytes and Macrophages",
+          "journal": "Frontiers in Immunology",
+          "year": 2019
+        },
+        {
+          "source_id": "source_cbc_sepsis_review_2021",
+          "paper_title": "The Value of a Complete Blood Count (CBC) for Sepsis Diagnosis and Prognosis",
+          "journal": "Diagnostics (Basel)",
+          "year": 2021
+        }
+      ],
+      "physiological_claim": "Low monocyte percentage is a contextual differential abnormality that requires confirmation against the absolute monocyte count.",
+      "threshold_notes": "Percentage interpretation should remain directional because reciprocal leukocyte changes can lower monocyte fraction without true monocyte depletion."
+    },
+    "narrative": {
+      "mechanism": "Monocyte percentage falls either because monocyte numbers fall or because another lineage expands enough to dilute monocyte representation within the differential.",
+      "biological_pathway": "Monocyte marrow release, leukocyte redistribution, glucocorticoid response, and acute innate immune shift pathways.",
+      "interpretation": "A low monocyte percentage result should be read cautiously until the absolute count clarifies whether the change is relative or truly quantitative.",
+      "implications": "This pattern may justify repeat CBC review, medication assessment, and evaluation for severe infection or marrow suppression if the absolute count is also low.",
+      "supporting_marker_roles": "Low monocytes_abs supports true monocytopenia, high neutrophil_pct helps identify relative redistribution, and low RBC suggests a broader marrow or systemic illness context."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_monocytes_abs_high_reactive_monocytosis",
+    "signal_id": "signal_monocytes_abs_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "monocytes_abs",
+      "rationale": "A high absolute monocyte count indicates true monocytosis and is more clinically robust than monocyte percentage alone.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "monocyte_pct",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "A high monocyte percentage supports visible differential predominance accompanying true monocytosis."
+      },
+      {
+        "biomarker_id": "neutrophil_pct",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "A relatively lower neutrophil percentage helps distinguish reactive monocytosis or recovery states from neutrophil-dominant acute stress responses."
+      },
+      {
+        "biomarker_id": "rbc",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent anemia can support a broader chronic inflammatory or systemic disease context."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_reactive_monocytosis_chronic_inflammation_or_infection",
+        "rank": 1,
+        "physiological_claim": "High monocytes_abs commonly reflects reactive monocytosis in chronic infection, chronic inflammation, autoimmune disease, or convalescent immune states.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Reactive monocytosis is not disease-specific and requires clinical context for prioritization."
+        ],
+        "missing_data": {
+          "policy": "Review duration, symptoms, and repeat CBC trend before inferring clonal disease from a single high monocyte count."
+        },
+        "supporting_marker_refs": [
+          "monocyte_pct",
+          "rbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_neutrophil_dominant_shift",
+            "marker_reference": "neutrophil_pct",
+            "contradiction_rationale": "Marked neutrophil predominance weakens a monocyte-centered reactive interpretation and favors acute neutrophil-driven inflammation instead.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_tissue_injury_or_recovery_monocyte_response",
+        "rank": 2,
+        "physiological_claim": "High monocytes_abs may also accompany tissue injury or inflammatory recovery, where monocyte-mediated cleanup and repair responses become more prominent.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This interpretation remains contextual and should not be used as a stand-alone disease label."
+        ],
+        "missing_data": {
+          "policy": "Temporal CBC review is useful before prioritizing a recovery-phase explanation."
+        },
+        "supporting_marker_refs": [
+          "monocyte_pct",
+          "neutrophil_pct"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_absent_percentage_support",
+            "marker_reference": "monocyte_pct",
+            "contradiction_rationale": "If monocyte percentage is not elevated, a true biologically dominant monocytic response is less secure and relative context must be reconsidered.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_reactive_monocytosis_chronic_inflammation_or_infection",
+        "hyp_tissue_injury_or_recovery_monocyte_response"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_monocyte_trend_and_clinical_review",
+        "rationale": "Repeat CBC trend and clinical correlation help distinguish transient reactive monocytosis from more persistent causes."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_monocytes_abs_high_with_high_percentage",
+        "resulting_state": "at_risk",
+        "description": "Escalate when monocytes_abs is high and monocyte_pct is also high, because that combination supports true monocytic predominance rather than an isolated borderline absolute elevation.",
+        "conditions": [
+          {
+            "metric_id": "monocyte_pct",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_monocytosis_review_2021",
+          "source_monocytosis_primarycare_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_monocytosis_review_2021",
+          "paper_title": "Differential Diagnosis and Workup of Monocytosis",
+          "journal": "Current Hematologic Malignancy Reports",
+          "year": 2021
+        },
+        {
+          "source_id": "source_monocytosis_primarycare_2023",
+          "paper_title": "Monocytosis in primary care and risk of haematological malignancies",
+          "journal": "European Journal of Haematology",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "High monocytes_abs is the key CBC marker for true monocytosis and is more clinically meaningful than percentage change alone.",
+      "threshold_notes": "Interpretation should remain lab-range anchored and persistence over time matters more than a single mild elevation."
+    },
+    "narrative": {
+      "mechanism": "Absolute monocytosis appears when marrow output, recruitment, or survival of monocyte lineage cells increases during inflammatory, infectious, or reparative states.",
+      "biological_pathway": "Monocyte lineage production, inflammatory recruitment, and tissue-repair immune pathways.",
+      "interpretation": "A high monocyte count commonly supports a reactive immune pattern, but chronicity and associated features determine how far the differential should extend.",
+      "implications": "This result usually warrants repeat CBC trend review and targeted evaluation for chronic inflammatory, infectious, or autoimmune causes.",
+      "supporting_marker_roles": "High monocyte_pct corroborates true monocytic predominance, lower neutrophil_pct helps separate recovery-type patterns, and low RBC may support a broader systemic inflammatory context."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_monocytes_abs_high_clonal_monocytosis_suspicion",
+    "signal_id": "signal_monocytes_abs_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "monocytes_abs",
+      "rationale": "Persistent absolute monocytosis can raise concern for a clonal myeloid disorder when reactive causes are not sufficient.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "monocyte_pct",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent monocyte predominance supports a genuine monocytic expansion pattern."
+      },
+      {
+        "biomarker_id": "rbc",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Coexisting anemia can support a marrow disorder context rather than isolated reactive monocytosis."
+      },
+      {
+        "biomarker_id": "neutrophil_pct",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Lack of neutrophil predominance may reduce the likelihood of a simple acute neutrophil-driven reactive process."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_cmml_or_related_clonal_monocytosis",
+        "rank": 1,
+        "physiological_claim": "High monocytes_abs may raise suspicion for chronic myelomonocytic leukemia or a related clonal monocytosis syndrome when the elevation is sustained and reactive causes are not convincing.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "A single elevated monocyte count has low absolute predictive value for malignancy outside a suggestive clinical context."
+        ],
+        "missing_data": {
+          "policy": "Require repeat persistence and hematology-directed evaluation before promoting a clonal interpretation."
+        },
+        "supporting_marker_refs": [
+          "monocyte_pct",
+          "rbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_absence_of_anemia_support",
+            "marker_reference": "rbc",
+            "contradiction_rationale": "A normal RBC count weakens marrow-disorder suspicion and makes a reactive explanation more likely in many cases.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_other_myeloid_neoplasm_with_monocytic_component",
+        "rank": 2,
+        "physiological_claim": "High monocytes_abs may also occur in other myeloid neoplasms with a monocytic component when accompanied by persistent hematologic abnormalities.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This is a cautious secondary interpretation and should not be promoted without persistence or broader marrow clues."
+        ],
+        "missing_data": {
+          "policy": "Assess repeat counts, smear findings, and other lineage abnormalities before favoring a broader clonal neoplasm interpretation."
+        },
+        "supporting_marker_refs": [
+          "monocyte_pct",
+          "rbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_transient_reactive_pattern",
+            "marker_reference": "neutrophil_pct",
+            "contradiction_rationale": "A clearly reactive leukocyte pattern with strong neutrophil predominance weakens a primary clonal monocytosis interpretation.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_cmml_or_related_clonal_monocytosis",
+        "hyp_other_myeloid_neoplasm_with_monocytic_component"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_monocytes_smear_and_hematology_workup",
+        "rationale": "Repeat monocyte counts, peripheral smear review, and hematology work-up are needed before attributing absolute monocytosis to clonal disease."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_monocytes_abs_high_with_percentage_and_anemia",
+        "resulting_state": "at_risk",
+        "description": "Escalate when monocytes_abs is high with high monocyte_pct and low RBC, because that combination increases concern for a persistent marrow-level monocytic process over a simple transient reactive change.",
+        "conditions": [
+          {
+            "metric_id": "monocyte_pct",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          },
+          {
+            "metric_id": "rbc",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_monocytosis_review_2021",
+          "source_monocytosis_primarycare_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_monocytosis_review_2021",
+          "paper_title": "Differential Diagnosis and Workup of Monocytosis",
+          "journal": "Current Hematologic Malignancy Reports",
+          "year": 2021
+        },
+        {
+          "source_id": "source_monocytosis_primarycare_2023",
+          "paper_title": "Monocytosis in primary care and risk of haematological malignancies",
+          "journal": "European Journal of Haematology",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "Persistent absolute monocytosis is the CBC pattern most relevant to clonal monocytosis suspicion, but single-sample specificity is limited.",
+      "threshold_notes": "No single monocyte threshold beyond the laboratory abnormal range should be invented here; persistence and associated abnormalities remain central."
+    },
+    "narrative": {
+      "mechanism": "Clonal monocytosis reflects expansion of monocyte-lineage production within the marrow and sustained release into peripheral blood.",
+      "biological_pathway": "Myeloid lineage proliferation, marrow dysregulation, and persistent monocytic expansion pathways.",
+      "interpretation": "A high monocytes_abs result can justify clonal suspicion only when it is persistent and reactive causes are insufficient, especially if other lineage abnormalities coexist.",
+      "implications": "This pattern may justify repeat testing, smear review, and formal hematology assessment rather than immediate reactive labeling.",
+      "supporting_marker_roles": "High monocyte_pct supports true monocytic predominance, low RBC supports a marrow-disease context, and lack of strong neutrophil predominance weakens simple acute-reactive explanations."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_monocytes_abs_low_monocytopenia_marrow_or_glucocorticoid_context",
+    "signal_id": "signal_monocytes_abs_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "monocytes_abs",
+      "rationale": "A low absolute monocyte count indicates true monocytopenia and is more informative than monocyte percentage alone.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "monocyte_pct",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "A low monocyte percentage supports a true quantitative reduction in monocytes."
+      },
+      {
+        "biomarker_id": "neutrophil_pct",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Neutrophil predominance can point toward stress or glucocorticoid redistribution rather than primary monocyte lineage failure."
+      },
+      {
+        "biomarker_id": "rbc",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent anemia raises concern for a broader marrow or systemic illness process."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_glucocorticoid_or_stress_associated_monocytopenia",
+        "rank": 1,
+        "physiological_claim": "Low monocytes_abs may reflect glucocorticoid-associated redistribution or a stress-related monocytopenic pattern.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Medication exposure and acute physiologic stress should be reviewed before assuming intrinsic marrow disease."
+        ],
+        "missing_data": {
+          "policy": "Check steroid exposure and repeat counts after recovery when a stress-mediated explanation is plausible."
+        },
+        "supporting_marker_refs": [
+          "monocyte_pct",
+          "neutrophil_pct"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_anemia_suggesting_broader_lineage_issue",
+            "marker_reference": "rbc",
+            "contradiction_rationale": "Concurrent anemia weakens a simple redistribution explanation and raises concern for a broader marrow or systemic process.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_marrow_suppression_or_severe_systemic_illness",
+        "rank": 2,
+        "physiological_claim": "Low monocytes_abs may also occur in marrow-suppressive states or severe systemic illness when monocyte production or release is impaired.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This explanation requires confirmation because monocytopenia is uncommon and not disease-specific."
+        ],
+        "missing_data": {
+          "policy": "If the count remains low on repeat testing or other cytopenias coexist, investigate marrow and severe systemic causes more directly."
+        },
+        "supporting_marker_refs": [
+          "monocyte_pct",
+          "rbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_neutrophil_predominant_stress_pattern",
+            "marker_reference": "neutrophil_pct",
+            "contradiction_rationale": "A strong neutrophil-predominant pattern favors redistribution or stress physiology over isolated marrow failure.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_glucocorticoid_or_stress_associated_monocytopenia",
+        "hyp_marrow_suppression_or_severe_systemic_illness"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_repeat_cbc_medication_and_marrow_review",
+        "rationale": "Repeat CBC with medication review and further marrow-focused assessment helps distinguish transient redistribution from broader production failure."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_monocytes_abs_low_with_low_percentage",
+        "resulting_state": "at_risk",
+        "description": "Escalate when monocytes_abs is low and monocyte_pct is also low, because that combination supports true monocytopenia rather than a percentage-only shift.",
+        "conditions": [
+          {
+            "metric_id": "monocyte_pct",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_glucocorticoid_monocyte_review_2019",
+          "source_cbc_sepsis_review_2021"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_glucocorticoid_monocyte_review_2019",
+          "paper_title": "More Than Suppression: Glucocorticoid Action on Monocytes and Macrophages",
+          "journal": "Frontiers in Immunology",
+          "year": 2019
+        },
+        {
+          "source_id": "source_cbc_sepsis_review_2021",
+          "paper_title": "The Value of a Complete Blood Count (CBC) for Sepsis Diagnosis and Prognosis",
+          "journal": "Diagnostics (Basel)",
+          "year": 2021
+        }
+      ],
+      "physiological_claim": "Low monocytes_abs is the most relevant CBC signal for true monocytopenia and should be interpreted with medication and systemic illness context.",
+      "threshold_notes": "Direction within the laboratory range is more defensible than any disease-specific threshold for monocytopenia in this setting."
+    },
+    "narrative": {
+      "mechanism": "Monocytopenia emerges when marrow release, lineage survival, or circulating distribution of monocytes is reduced.",
+      "biological_pathway": "Monocyte marrow release, glucocorticoid response, leukocyte redistribution, and systemic illness suppression pathways.",
+      "interpretation": "A low absolute monocyte count should prompt distinction between transient redistribution and more persistent or marrow-related causes.",
+      "implications": "This pattern may justify repeat CBC review, steroid assessment, and broader evaluation if additional cytopenias or severe illness features coexist.",
+      "supporting_marker_roles": "Low monocyte_pct corroborates true monocytopenia, high neutrophil_pct helps identify stress-related redistribution, and low RBC supports a broader marrow or systemic illness context."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_mpv_high_increased_platelet_turnover_pattern",
+    "signal_id": "signal_mpv_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "mpv",
+      "rationale": "High MPV reflects larger average platelet size and often accompanies increased platelet turnover or activation.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "pdw",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Higher PDW supports heterogeneous platelet enlargement rather than a uniform isolated size shift."
+      },
+      {
+        "biomarker_id": "neutrophil_pct",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Neutrophil predominance can support an inflammatory or consumptive context when platelet turnover is increased."
+      },
+      {
+        "biomarker_id": "monocyte_pct",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "A concomitant monocyte-predominant inflammatory signal can support broader thromboinflammatory activation."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_peripheral_platelet_destruction_or_consumption",
+        "rank": 1,
+        "physiological_claim": "High MPV may reflect increased platelet turnover, including peripheral destruction or consumption, because younger released platelets are typically larger.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "The discriminatory evidence is strongest when platelet count data are also available, which are not encoded in this object."
+        ],
+        "missing_data": {
+          "policy": "Review platelet count and smear before assigning a destruction-dominant interpretation to isolated high MPV."
+        },
+        "supporting_marker_refs": [
+          "pdw",
+          "neutrophil_pct"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_absence_of_platelet_heterogeneity",
+            "marker_reference": "pdw",
+            "contradiction_rationale": "If PDW is not elevated, a robust high-turnover interpretation becomes less secure and isolated analyzer or biologic variation remains possible.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_platelet_activation_thromboinflammatory_context",
+        "rank": 2,
+        "physiological_claim": "High MPV may also support a platelet-activation or thromboinflammatory context, where larger more reactive platelets are present in circulation.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "MPV is not a specific thrombosis marker and should not be interpreted as proof of clotting pathology."
+        ],
+        "missing_data": {
+          "policy": "Correlate with inflammatory context and platelet count before promoting a thromboinflammatory explanation."
+        },
+        "supporting_marker_refs": [
+          "pdw",
+          "monocyte_pct"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_no_inflammatory_support",
+            "marker_reference": "neutrophil_pct",
+            "contradiction_rationale": "Lack of inflammatory differential support weakens a thromboinflammatory interpretation for isolated high MPV.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_peripheral_platelet_destruction_or_consumption",
+        "hyp_platelet_activation_thromboinflammatory_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_platelet_count_and_smear_review",
+        "rationale": "Platelet count with smear review helps determine whether high MPV reflects turnover, destruction, or a broader activation pattern."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_mpv_high_with_high_pdw",
+        "resulting_state": "at_risk",
+        "description": "Escalate when MPV is high and PDW is also high, because combined enlargement and heterogeneity are more consistent with clinically relevant platelet turnover or activation than with an isolated MPV shift.",
+        "conditions": [
+          {
+            "metric_id": "pdw",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_mpv_meta_2023",
+          "source_pdw_activation_2010"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_mpv_meta_2023",
+          "paper_title": "The diagnostic accuracy of mean platelet volume in differentiating immune thrombocytopenic purpura from hypo-productive thrombocytopenia: A systematic review and meta-analysis",
+          "journal": "PLOS ONE",
+          "year": 2023
+        },
+        {
+          "source_id": "source_pdw_activation_2010",
+          "paper_title": "Platelet distribution width: a simple, practical and specific marker of activation of coagulation",
+          "journal": "Hippokratia",
+          "year": 2010
+        }
+      ],
+      "physiological_claim": "High MPV supports larger circulating platelets and is most useful as a pattern marker of increased platelet turnover or activation rather than as a disease-specific test.",
+      "threshold_notes": "MPV varies by analyzer and preanalytical handling, so interpretation should stay within laboratory-range context."
+    },
+    "narrative": {
+      "mechanism": "MPV rises when larger, younger, or morphologically activated platelets make up a greater proportion of the circulating pool.",
+      "biological_pathway": "Megakaryopoiesis, platelet release, peripheral destruction, and thromboinflammatory platelet activation pathways.",
+      "interpretation": "A high MPV result is a contextual platelet signal that gains value when paired with PDW and platelet count rather than when used alone.",
+      "implications": "This pattern may justify platelet count review, smear assessment, and correlation with inflammatory or consumptive clinical settings.",
+      "supporting_marker_roles": "High PDW corroborates heterogeneous platelet enlargement, high neutrophil_pct can support inflammatory consumption, and high monocyte_pct can support a broader thromboinflammatory context."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_mpv_low_reduced_thrombopoietic_output_pattern",
+    "signal_id": "signal_mpv_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "mpv",
+      "rationale": "Low MPV reflects smaller average platelet size and can support reduced thrombopoietic output when genuine.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "rbc",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent anemia can support a broader marrow-production problem rather than isolated platelet variation."
+      },
+      {
+        "biomarker_id": "monocytes_abs",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low absolute monocytes can support a broader marrow-suppressive context when more than one lineage is affected."
+      },
+      {
+        "biomarker_id": "pdw",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "A high PDW argues against a simple uniform low-MPV production pattern and favors mixed platelet heterogeneity instead."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_hypoproliferative_thrombopoiesis",
+        "rank": 1,
+        "physiological_claim": "Low MPV may reflect hypoproliferative thrombopoiesis, in which smaller platelets predominate because marrow platelet production is impaired.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Interpretation is stronger when thrombocytopenia is also present, which is not directly encoded in this object."
+        ],
+        "missing_data": {
+          "policy": "Review platelet count and broader lineage counts before promoting marrow hypoproduction from low MPV alone."
+        },
+        "supporting_marker_refs": [
+          "rbc",
+          "monocytes_abs"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_platelet_heterogeneity",
+            "marker_reference": "pdw",
+            "contradiction_rationale": "Marked PDW elevation weakens a simple low-output interpretation and suggests heterogeneous platelet populations instead.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_broader_marrow_suppressive_context",
+        "rank": 2,
+        "physiological_claim": "Low MPV may also sit within a broader marrow-suppressive context when additional hematopoietic lineages show reduction.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This remains a contextual marrow-pattern interpretation rather than a platelet-specific diagnosis."
+        ],
+        "missing_data": {
+          "policy": "If other lineage abnormalities are absent, keep broader marrow suppression as a cautious secondary explanation."
+        },
+        "supporting_marker_refs": [
+          "rbc",
+          "monocytes_abs"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_isolated_platelet_pattern",
+            "marker_reference": "rbc",
+            "contradiction_rationale": "A normal RBC count weakens the inference of multi-lineage marrow suppression from low MPV alone.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_hypoproliferative_thrombopoiesis",
+        "hyp_broader_marrow_suppressive_context"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_platelet_count_and_broader_lineage_review",
+        "rationale": "Platelet count with review of other blood-cell lineages helps determine whether low MPV reflects isolated platelet hypoproduction or broader marrow suppression."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_mpv_low_with_low_rbc",
+        "resulting_state": "at_risk",
+        "description": "Escalate when MPV is low and RBC is also low, because combined reduction across platelet size and erythrocyte number increases concern for clinically relevant underproduction rather than isolated platelet-size variation.",
+        "conditions": [
+          {
+            "metric_id": "rbc",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_mpv_meta_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_mpv_meta_2023",
+          "paper_title": "The diagnostic accuracy of mean platelet volume in differentiating immune thrombocytopenic purpura from hypo-productive thrombocytopenia: A systematic review and meta-analysis",
+          "journal": "PLOS ONE",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "Low MPV may support reduced thrombopoietic output, but it remains a contextual platelet-production clue rather than a stand-alone diagnostic marker.",
+      "threshold_notes": "No disease-specific low-MPV cut-off should be promoted because analyzer differences and sample handling can influence MPV."
+    },
+    "narrative": {
+      "mechanism": "MPV falls when smaller platelets dominate the circulating pool, which can occur when marrow platelet production is reduced or altered.",
+      "biological_pathway": "Megakaryocyte output, platelet release, and marrow suppression pathways.",
+      "interpretation": "A low MPV result should prompt consideration of hypoproliferative platelet production, especially if other lineages are also reduced.",
+      "implications": "This pattern may justify platelet count review and broader assessment for marrow suppression or underproduction states.",
+      "supporting_marker_roles": "Low RBC and low monocytes_abs support a broader underproduction context, while high PDW acts as a competing marker that suggests platelet heterogeneity instead."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_pdw_high_platelet_activation_pattern",
+    "signal_id": "signal_pdw_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "pdw",
+      "rationale": "High PDW reflects increased variability in platelet size and is often interpreted as a marker of platelet anisocytosis or activation.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "mpv",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "A high MPV alongside high PDW supports larger and more heterogeneous circulating platelets."
+      },
+      {
+        "biomarker_id": "neutrophil_pct",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Neutrophil predominance can support an inflammatory or consumptive context when platelet activation is suspected."
+      },
+      {
+        "biomarker_id": "monocyte_pct",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Monocyte predominance can support a broader thromboinflammatory immune context."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_platelet_activation_and_shape_change",
+        "rank": 1,
+        "physiological_claim": "High PDW may reflect platelet activation with increased variability in platelet shape and size.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "PDW is supportive and should not be treated as a specific thrombosis marker in isolation."
+        ],
+        "missing_data": {
+          "policy": "Correlate with platelet count, MPV, and clinical context before inferring clinically important activation."
+        },
+        "supporting_marker_refs": [
+          "mpv",
+          "neutrophil_pct"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_absence_of_large_platelet_support",
+            "marker_reference": "mpv",
+            "contradiction_rationale": "Without high MPV, the interpretation of high PDW as biologically important platelet activation is less secure.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_asynchronous_thrombopoiesis_or_consumption_response",
+        "rank": 2,
+        "physiological_claim": "High PDW may also occur when platelet production and release are asynchronous, including reactive or consumptive states with heterogeneous platelet populations.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This remains a broad interpretive frame and is not specific for one disease process."
+        ],
+        "missing_data": {
+          "policy": "Review platelet count trend and smear before favoring a production-versus-consumption explanation."
+        },
+        "supporting_marker_refs": [
+          "mpv",
+          "monocyte_pct"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_no_inflammatory_context",
+            "marker_reference": "neutrophil_pct",
+            "contradiction_rationale": "Lack of inflammatory differential support weakens a consumptive or reactive platelet-activation interpretation.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_platelet_activation_and_shape_change",
+        "hyp_asynchronous_thrombopoiesis_or_consumption_response"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_platelet_count_mpv_and_smear",
+        "rationale": "Platelet count, MPV review, and smear assessment help determine whether high PDW reflects activation, heterogeneous production, or another platelet process."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_pdw_high_with_high_mpv",
+        "resulting_state": "at_risk",
+        "description": "Escalate when PDW is high and MPV is also high, because combined platelet heterogeneity and enlargement are more consistent with clinically meaningful activation or turnover than with isolated PDW variation.",
+        "conditions": [
+          {
+            "metric_id": "mpv",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_pdw_activation_2010",
+          "source_mpv_meta_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_pdw_activation_2010",
+          "paper_title": "Platelet distribution width: a simple, practical and specific marker of activation of coagulation",
+          "journal": "Hippokratia",
+          "year": 2010
+        },
+        {
+          "source_id": "source_mpv_meta_2023",
+          "paper_title": "The diagnostic accuracy of mean platelet volume in differentiating immune thrombocytopenic purpura from hypo-productive thrombocytopenia: A systematic review and meta-analysis",
+          "journal": "PLOS ONE",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "High PDW is best interpreted as a platelet heterogeneity signal that can support activation or asynchronous platelet production.",
+      "threshold_notes": "PDW should remain analyzer- and range-specific because preanalytical handling can affect platelet size measurements."
+    },
+    "narrative": {
+      "mechanism": "PDW rises when circulating platelets differ more widely in size, often because activation or altered release changes platelet morphology.",
+      "biological_pathway": "Platelet shape change, megakaryocyte release heterogeneity, and thromboinflammatory activation pathways.",
+      "interpretation": "A high PDW result is a contextual platelet signal that becomes more informative when MPV and platelet count are reviewed together.",
+      "implications": "This pattern may justify platelet-count review and correlation with inflammatory or thrombotic clinical settings.",
+      "supporting_marker_roles": "High MPV corroborates heterogeneous enlargement, high neutrophil_pct can support inflammatory consumption, and high monocyte_pct can support broader thromboinflammatory context."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift",
+    "signal_id": "signal_neutrophil_pct_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "neutrophil_pct",
+      "rationale": "High neutrophil percentage reflects neutrophil predominance within the differential and should be interpreted in relation to the absolute neutrophil count.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "monocyte_pct",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Lower monocyte percentage can support a reciprocal differential shift seen in stress or acute innate activation."
+      },
+      {
+        "biomarker_id": "monocytes_abs",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low absolute monocytes can support glucocorticoid-associated or stress-related leukocyte redistribution."
+      },
+      {
+        "biomarker_id": "pdw",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "A high PDW can support an inflammatory or thromboinflammatory milieu when neutrophil predominance is present."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_acute_innate_inflammatory_shift",
+        "rank": 1,
+        "physiological_claim": "High neutrophil percentage may reflect an acute innate inflammatory shift, including bacterial infection, tissue injury, or other neutrophil-predominant inflammatory states.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Percentage data should not be used as a substitute for the absolute neutrophil count."
+        ],
+        "missing_data": {
+          "policy": "Confirm with absolute neutrophil count and total white-cell context before promoting clinically important neutrophilia."
+        },
+        "supporting_marker_refs": [
+          "monocyte_pct",
+          "pdw"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_monocyte_predominant_pattern",
+            "marker_reference": "monocyte_pct",
+            "contradiction_rationale": "A high monocyte percentage weakens a neutrophil-predominant interpretation and suggests an alternative differential pattern.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_stress_or_glucocorticoid_redistribution",
+        "rank": 2,
+        "physiological_claim": "High neutrophil percentage may also arise from stress or glucocorticoid-related redistribution rather than from primary infectious neutrophilia.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Medication and acute physiologic context are critical before prioritizing this explanation."
+        ],
+        "missing_data": {
+          "policy": "Review steroid exposure, recent stressors, and repeat differential counts when redistribution is plausible."
+        },
+        "supporting_marker_refs": [
+          "monocytes_abs",
+          "monocyte_pct"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_absence_of_redistribution_clues",
+            "marker_reference": "monocytes_abs",
+            "contradiction_rationale": "If absolute monocytes are not reduced, a strong redistribution explanation becomes less secure.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_acute_innate_inflammatory_shift",
+        "hyp_stress_or_glucocorticoid_redistribution"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_absolute_neutrophil_count_and_repeat_diff",
+        "rationale": "Absolute neutrophil count and repeat differential review help determine whether high neutrophil percentage represents true neutrophilia or only a relative shift."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_neutrophil_pct_high_with_low_monocyte_pct",
+        "resulting_state": "at_risk",
+        "description": "Escalate when neutrophil percentage is high and monocyte percentage is low, because that combination supports a pronounced neutrophil-predominant differential shift rather than a marginal isolated change.",
+        "conditions": [
+          {
+            "metric_id": "monocyte_pct",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_cbc_sepsis_review_2021",
+          "source_neutropenia_review_2013"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_cbc_sepsis_review_2021",
+          "paper_title": "The Value of a Complete Blood Count (CBC) for Sepsis Diagnosis and Prognosis",
+          "journal": "Diagnostics (Basel)",
+          "year": 2021
+        },
+        {
+          "source_id": "source_neutropenia_review_2013",
+          "paper_title": "Evaluation and Management of Patients with Isolated Neutropenia",
+          "journal": "Seminars in Hematology",
+          "year": 2013
+        }
+      ],
+      "physiological_claim": "High neutrophil percentage is a differential-count pattern that often reflects neutrophil predominance, but absolute counting remains essential for confirmation.",
+      "threshold_notes": "Percentage shifts should remain lab-range anchored because reciprocal movement in other leukocyte fractions can change neutrophil proportion without true neutrophilia."
+    },
+    "narrative": {
+      "mechanism": "Neutrophil percentage rises when innate immune activation, stress-mediated demargination, or reciprocal suppression of other leukocyte fractions changes the differential composition.",
+      "biological_pathway": "Innate immune activation, leukocyte demargination, and differential-count redistribution pathways.",
+      "interpretation": "A high neutrophil percentage result should be read as a pattern of leukocyte predominance rather than as proof of bacterial infection or true absolute neutrophilia.",
+      "implications": "This pattern usually justifies review of the absolute neutrophil count, medication exposure, and acute inflammatory context.",
+      "supporting_marker_roles": "Low monocyte_pct and low monocytes_abs help identify redistribution or stress patterns, while high PDW can support a broader inflammatory setting."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_neutrophil_pct_low_relative_neutrophil_depletion_pattern",
+    "signal_id": "signal_neutrophil_pct_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "neutrophil_pct",
+      "rationale": "Low neutrophil percentage may represent either relative neutrophil depletion within the differential or true neutropenia, which requires absolute-count confirmation.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "monocyte_pct",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Higher monocyte percentage supports a competing leukocyte pattern rather than isolated severe neutrophil-lineage loss."
+      },
+      {
+        "biomarker_id": "monocytes_abs",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Absolute monocytosis can help explain a relative reduction in neutrophil percentage within the differential."
+      },
+      {
+        "biomarker_id": "rbc",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent anemia can support a broader marrow or systemic illness context when low neutrophil percentage is genuine."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_relative_lymphoid_or_monocytic_shift",
+        "rank": 1,
+        "physiological_claim": "Low neutrophil percentage may reflect a relative differential shift away from neutrophil predominance rather than true neutropenia.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Percentage data alone cannot determine host-defense risk."
+        ],
+        "missing_data": {
+          "policy": "Confirm with absolute neutrophil count before treating low neutrophil percentage as clinically important neutropenia."
+        },
+        "supporting_marker_refs": [
+          "monocyte_pct",
+          "monocytes_abs"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_no_competing_leukocyte_shift",
+            "marker_reference": "monocytes_abs",
+            "contradiction_rationale": "If there is no competing leukocyte increase, a true neutrophil reduction becomes more plausible and should be checked directly.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_true_neutropenic_context_requiring_confirmation",
+        "rank": 2,
+        "physiological_claim": "Low neutrophil percentage may indicate a true neutropenic context when confirmed by the absolute neutrophil count, including marrow, autoimmune, viral, or drug-related causes.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This interpretation should remain conditional until the absolute count is known."
+        ],
+        "missing_data": {
+          "policy": "Do not infer severity from percentage alone; confirm with absolute neutrophil count and clinical context."
+        },
+        "supporting_marker_refs": [
+          "rbc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_monocytic_competition",
+            "marker_reference": "monocyte_pct",
+            "contradiction_rationale": "A prominent alternative leukocyte fraction weakens the case for isolated neutropenia from the percentage alone.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_relative_lymphoid_or_monocytic_shift",
+        "hyp_true_neutropenic_context_requiring_confirmation"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_absolute_neutrophil_count_confirmation",
+        "rationale": "Absolute neutrophil count is required to determine whether low neutrophil percentage reflects true neutropenia or only a relative differential shift."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_neutrophil_pct_low_with_high_monocyte_pct",
+        "resulting_state": "at_risk",
+        "description": "Escalate when neutrophil percentage is low and monocyte percentage is high, because that combination supports a substantial differential redistribution rather than a trivial isolated percentage change.",
+        "conditions": [
+          {
+            "metric_id": "monocyte_pct",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_neutropenia_review_2013",
+          "source_cbc_sepsis_review_2021"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_neutropenia_review_2013",
+          "paper_title": "Evaluation and Management of Patients with Isolated Neutropenia",
+          "journal": "Seminars in Hematology",
+          "year": 2013
+        },
+        {
+          "source_id": "source_cbc_sepsis_review_2021",
+          "paper_title": "The Value of a Complete Blood Count (CBC) for Sepsis Diagnosis and Prognosis",
+          "journal": "Diagnostics (Basel)",
+          "year": 2021
+        }
+      ],
+      "physiological_claim": "Low neutrophil percentage is a differential-count clue that must be confirmed with the absolute neutrophil count before clinical severity is inferred.",
+      "threshold_notes": "Direction within the laboratory differential range is more defensible than any disease-specific percentage threshold for neutropenia."
+    },
+    "narrative": {
+      "mechanism": "Neutrophil percentage falls either because neutrophil numbers decrease or because another leukocyte fraction expands enough to dilute their representation.",
+      "biological_pathway": "Granulocyte production, immune-mediated depletion, and leukocyte differential redistribution pathways.",
+      "interpretation": "A low neutrophil percentage result should be interpreted cautiously until absolute counting distinguishes relative redistribution from true neutropenia.",
+      "implications": "This pattern may justify absolute-count confirmation, medication review, and evaluation for viral, autoimmune, or marrow-related contexts if true neutropenia is present.",
+      "supporting_marker_roles": "High monocyte_pct and high monocytes_abs support a competing differential pattern, while low RBC can suggest a broader marrow or systemic illness context."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_rbc_low_iron_restricted_anemia_pattern",
+    "signal_id": "signal_rbc_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "rbc",
+      "rationale": "A low RBC count supports anemia and is most informative when interpreted with the red-cell indices that describe morphology and hemoglobinization.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "mch",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low MCH supports reduced hemoglobin content per cell within an iron-restricted anemia pattern."
+      },
+      {
+        "biomarker_id": "mchc",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low MCHC reinforces hypochromia accompanying reduced erythrocyte number."
+      },
+      {
+        "biomarker_id": "rdw_cv",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "High RDW-CV favors iron deficiency or mixed nutritional anemia over a more uniform compensated carrier state."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_iron_restricted_anemia",
+        "rank": 1,
+        "physiological_claim": "Low RBC count with hypochromic indices may reflect iron-restricted anemia, especially when anisocytosis is also present.",
+        "evidence_strength": "strong",
+        "caveats": [
+          "RBC count alone does not define the cause of anemia and must be integrated with red-cell morphology and iron studies."
+        ],
+        "missing_data": {
+          "policy": "Confirm iron status biochemically before concluding that low RBC count is driven by iron deficiency."
+        },
+        "supporting_marker_refs": [
+          "mch",
+          "mchc",
+          "rdw_cv"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_absence_of_anisocytosis",
+            "marker_reference": "rdw_cv",
+            "contradiction_rationale": "A normal RDW-CV weakens classic progressive iron-deficiency anemia and makes a more uniform microcytic process more plausible.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_inflammatory_iron_restriction_or_mixed_deficiency",
+        "rank": 2,
+        "physiological_claim": "Low RBC count with this pattern may also reflect inflammatory iron restriction or mixed nutritional anemia rather than isolated iron depletion alone.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This interpretation remains broad until biochemical testing clarifies iron and micronutrient status."
+        ],
+        "missing_data": {
+          "policy": "If iron studies and broader nutritional assessment are unavailable, keep mixed or inflammatory deficiency as a secondary explanation."
+        },
+        "supporting_marker_refs": [
+          "mch",
+          "rdw_cv"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_compensated_high_rbc",
+            "marker_reference": "mch",
+            "contradiction_rationale": "A compensated microcytic pattern with preserved erythrocyte number would be less compatible with this anemia-focused interpretation.",
+            "contradiction_strength": "weak"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_iron_restricted_anemia",
+        "hyp_inflammatory_iron_restriction_or_mixed_deficiency"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_iron_ferritin_and_smear",
+        "rationale": "Iron studies, ferritin, and smear review help determine whether low RBC count reflects iron-restricted anemia or another cause."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_rbc_low_with_low_mch_and_high_rdw",
+        "resulting_state": "at_risk",
+        "description": "Escalate when RBC is low with low MCH and high RDW-CV, because that combination is more consistent with clinically relevant iron-restricted anemia than with isolated count variation.",
+        "conditions": [
+          {
+            "metric_id": "mch",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          },
+          {
+            "metric_id": "rdw_cv",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_rbc_indices_ida_vs_thal_2024",
+          "source_ida_vs_thal_review_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "strong",
+      "sources": [
+        {
+          "source_id": "source_rbc_indices_ida_vs_thal_2024",
+          "paper_title": "Diagnostic Performance of Red Blood Cell Indices in the Differential Diagnosis of Iron Deficiency Anemia and the Thalassemia Trait in Chile: A Retrospective Study",
+          "journal": "Diagnostics (Basel)",
+          "year": 2024
+        },
+        {
+          "source_id": "source_ida_vs_thal_review_2023",
+          "paper_title": "Differential diagnosis between iron deficiency anemia and thalassemia trait-induced anemia",
+          "journal": "Journal of Dental Sciences",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "A low RBC count is one component of anemia assessment and becomes much more informative when paired with red-cell indices such as MCH, MCHC, and RDW.",
+      "threshold_notes": "RBC count should remain laboratory-range anchored and not be converted into a disease-specific threshold independent of hemoglobin or hematocrit."
+    },
+    "narrative": {
+      "mechanism": "RBC count falls when erythrocyte production is insufficient, blood loss or destruction exceeds replacement, or iron-restricted erythropoiesis limits effective red-cell output.",
+      "biological_pathway": "Erythropoiesis, iron handling, hemoglobin synthesis, and anemia-production pathways.",
+      "interpretation": "Low RBC count with hypochromic and anisocytic support is a useful anemia-pattern signal, but it still needs biochemical confirmation for cause assignment.",
+      "implications": "This pattern commonly prompts iron studies and evaluation for blood loss, inflammatory sequestration, or mixed nutritional deficiency.",
+      "supporting_marker_roles": "Low MCH and low MCHC support iron-restricted erythropoiesis, while high RDW-CV helps separate deficiency-related anemia from more uniform compensated carrier states."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_rbc_low_regenerative_or_hemolytic_anemia_pattern",
+    "signal_id": "signal_rbc_low",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "rbc",
+      "rationale": "A low RBC count with discordant or highly heterogeneous red-cell indices can support a regenerative or hemolytic anemia pattern.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "low",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": false,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": true,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "rdw_sd",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High RDW-SD supports broad red-cell size dispersion often seen when mixed or regenerative populations circulate."
+      },
+      {
+        "biomarker_id": "rdw_cv",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "High RDW-CV reinforces genuine anisocytosis accompanying reduced erythrocyte number."
+      },
+      {
+        "biomarker_id": "mchc",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "High MCHC redirects interpretation toward spherocytic or dense-cell hemolytic states rather than simple nutritional anemia."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_hemolytic_red_cell_loss_pattern",
+        "rank": 1,
+        "physiological_claim": "Low RBC count with marked anisocytosis and a competing high-MCHC signal may reflect hemolytic red-cell loss, including spherocytic processes.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "This pattern remains inferential without reticulocyte and hemolysis markers."
+        ],
+        "missing_data": {
+          "policy": "Review reticulocyte count, bilirubin, LDH, haptoglobin, and smear before favoring hemolysis."
+        },
+        "supporting_marker_refs": [
+          "rdw_sd",
+          "rdw_cv",
+          "mchc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_absence_of_dense_cell_signal",
+            "marker_reference": "mchc",
+            "contradiction_rationale": "Without a dense-cell clue, a simple hemolytic-spherocytic interpretation becomes less secure.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_regenerative_response_after_recent_loss",
+        "rank": 2,
+        "physiological_claim": "Low RBC count with broad anisocytosis may also reflect a regenerative response after recent blood loss or recovery from prior anemia.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Temporal CBC data are usually needed to distinguish regeneration from ongoing destruction."
+        ],
+        "missing_data": {
+          "policy": "Repeat CBC trend and reticulocyte testing are needed before promoting a recovery-state explanation."
+        },
+        "supporting_marker_refs": [
+          "rdw_sd",
+          "rdw_cv"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_normal_rdw_sd_weakens_regenerative_response",
+            "marker_reference": "rdw_sd",
+            "contradiction_rationale": "A normal RDW-SD weakens a significant regenerative response interpretation, as active reticulocytosis produces large polychromatic cells that typically elevate absolute size dispersion on RDW-SD alongside RDW-CV.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_hemolytic_red_cell_loss_pattern",
+        "hyp_regenerative_response_after_recent_loss"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_reticulocyte_hemolysis_and_smear_for_low_rbc",
+        "rationale": "Reticulocyte count, hemolysis studies, and smear review help distinguish low-RBC hemolysis from a regenerative post-loss pattern."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_rbc_low_with_high_rdw_sd_and_high_mchc",
+        "resulting_state": "at_risk",
+        "description": "Escalate when RBC is low with high RDW-SD and high MCHC, because that combination raises concern for clinically important regenerative or hemolytic red-cell loss rather than simple deficiency alone.",
+        "conditions": [
+          {
+            "metric_id": "rdw_sd",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          },
+          {
+            "metric_id": "mchc",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_rdw_review_2019",
+          "source_hs_protocol_2021"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_rdw_review_2019",
+          "paper_title": "The role of red blood cell distribution width (RDW) in cardiovascular risk assessment: useful or hype?",
+          "journal": "Annals of Translational Medicine",
+          "year": 2019
+        },
+        {
+          "source_id": "source_hs_protocol_2021",
+          "paper_title": "The diagnostic protocol for hereditary spherocytosis-2021 update",
+          "journal": "Journal of Clinical Laboratory Analysis",
+          "year": 2021
+        }
+      ],
+      "physiological_claim": "A low RBC count with marked red-cell heterogeneity may indicate that erythrocyte loss or regeneration is contributing to the anemia pattern.",
+      "threshold_notes": "No disease-specific RBC cut-off should be invented without reference to the laboratory range and supporting hemolysis data."
+    },
+    "narrative": {
+      "mechanism": "When red cells are lost or rapidly replaced, mixed cell populations can accumulate in circulation and broaden the size distribution while RBC number remains reduced.",
+      "biological_pathway": "Red-cell destruction, marrow regeneration, and mixed-population turnover pathways.",
+      "interpretation": "This pattern is useful mainly as a prompt to differentiate simple deficiency anemia from regenerative or hemolytic states.",
+      "implications": "It commonly prompts reticulocyte and hemolysis testing rather than immediate default attribution to iron deficiency alone.",
+      "supporting_marker_roles": "High RDW-SD and RDW-CV corroborate a mixed-population anemia, while high MCHC acts as a competing marker that raises concern for dense-cell or spherocytic physiology."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_rbc_high_erythrocytosis_pattern",
+    "signal_id": "signal_rbc_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "rbc",
+      "rationale": "A high RBC count raises consideration of relative or absolute erythrocytosis and requires correlation with hemoglobin, hematocrit, and clinical context.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "neutrophil_pct",
+        "expected_direction": "high",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Concurrent neutrophil predominance can support a proliferative or strong physiologic-stress context rather than a trivial isolated count shift."
+      },
+      {
+        "biomarker_id": "mch",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low MCH redirects interpretation toward microcytic high-count states such as thalassemia trait instead of true erythrocytosis."
+      },
+      {
+        "biomarker_id": "mchc",
+        "expected_direction": "low",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Low MCHC further weakens a pure erythrocytosis interpretation by suggesting hypochromic microcytosis."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_absolute_erythrocytosis_primary_or_secondary",
+        "rank": 1,
+        "physiological_claim": "High RBC count may reflect absolute erythrocytosis, whether primary or secondary, when red-cell mass is genuinely increased.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "RBC count alone is insufficient to distinguish absolute from relative erythrocytosis and should be integrated with hemoglobin, hematocrit, and erythropoietin assessment."
+        ],
+        "missing_data": {
+          "policy": "Confirm with hemoglobin or hematocrit and evaluate erythropoietin-driven versus primary marrow causes before assigning true erythrocytosis."
+        },
+        "supporting_marker_refs": [
+          "neutrophil_pct"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_hypochromic_microcytosis_redirect",
+            "marker_reference": "mch",
+            "contradiction_rationale": "Low MCH weakens a true erythrocytosis interpretation and suggests a microcytic high-count carrier state instead.",
+            "contradiction_strength": "strong"
+          },
+          {
+            "contradiction_id": "ctr_low_mchc_redirect",
+            "marker_reference": "mchc",
+            "contradiction_rationale": "Low MCHC similarly redirects away from pure erythrocytosis toward hypochromic microcytosis.",
+            "contradiction_strength": "strong"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_relative_hemoconcentration",
+        "rank": 2,
+        "physiological_claim": "High RBC count may also reflect relative hemoconcentration rather than a genuine increase in red-cell mass.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "Relative erythrocytosis cannot be separated from absolute erythrocytosis by RBC count alone."
+        ],
+        "missing_data": {
+          "policy": "Review volume status and confirm with hemoglobin or hematocrit before treating a high RBC count as true polycythemia."
+        },
+        "supporting_marker_refs": [
+          "neutrophil_pct"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_microcytic_carrier_pattern",
+            "marker_reference": "mch",
+            "contradiction_rationale": "Microcytic hypochromic support weakens hemoconcentration as the main explanation and points toward a carrier-state differential instead.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_absolute_erythrocytosis_primary_or_secondary",
+        "hyp_relative_hemoconcentration"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_hemoglobin_hematocrit_erythropoietin_and_jak2_review",
+        "rationale": "Hemoglobin, hematocrit, erythropoietin, and where appropriate JAK2 testing help distinguish relative from primary or secondary erythrocytosis."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_rbc_high_with_high_neutrophil_pct",
+        "resulting_state": "at_risk",
+        "description": "Escalate when RBC is high and neutrophil percentage is also high, because concurrent myeloid predominance can strengthen concern for a proliferative or clinically important erythrocytosis context.",
+        "conditions": [
+          {
+            "metric_id": "neutrophil_pct",
+            "operator": ">",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "above_max"
+          }
+        ],
+        "source_refs": [
+          "source_erythrocytosis_review_2024"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_erythrocytosis_review_2024",
+          "paper_title": "Erythrocytosis: Diagnosis and investigation",
+          "journal": "International Journal of Laboratory Hematology",
+          "year": 2024
+        }
+      ],
+      "physiological_claim": "A high RBC count is an entry point into erythrocytosis work-up but cannot by itself separate relative from absolute or primary from secondary causes.",
+      "threshold_notes": "Interpretation should remain directional and lab-range anchored because RBC count alone is not the defining criterion for erythrocytosis severity."
+    },
+    "narrative": {
+      "mechanism": "RBC count rises when circulating red-cell mass increases genuinely or when plasma volume contracts enough to concentrate circulating erythrocytes.",
+      "biological_pathway": "Erythropoietin signaling, marrow erythroid expansion, and hemoconcentration pathways.",
+      "interpretation": "A high RBC count should prompt erythrocytosis evaluation, but competing microcytic carrier-state patterns must be excluded before overcalling true polycythemia.",
+      "implications": "This pattern commonly prompts hemoglobin, hematocrit, erythropoietin, and secondary-cause review rather than immediate disease labeling from the RBC count alone.",
+      "supporting_marker_roles": "High neutrophil_pct can support a proliferative context, while low MCH and low MCHC act as competing markers that redirect toward microcytic high-count carrier states."
+    }
+  },
+  {
+    "investigation_spec_contract_version": "3.0.0",
+    "spec_id": "inv_rbc_high_microcytic_high_count_thalassemia_trait_pattern",
+    "signal_id": "signal_rbc_high",
+    "research_domain": "hematologic",
+    "primary_marker": {
+      "biomarker_id": "rbc",
+      "rationale": "A high RBC count with hypochromic microcytic support can indicate a compensated carrier-state pattern rather than true erythrocytosis.",
+      "signal_system": "hematologic"
+    },
+    "trigger_direction": "high",
+    "activation": {
+      "activation_logic": "lab_range_exceeded",
+      "activation_config": {
+        "enable_upper_bound": true,
+        "upper_bound_state": "suboptimal",
+        "enable_lower_bound": false,
+        "lower_bound_state": "suboptimal"
+      }
+    },
+    "states": {
+      "baseline_state": "suboptimal",
+      "escalation_state": "at_risk"
+    },
+    "supporting_markers": [
+      {
+        "biomarker_id": "mch",
+        "expected_direction": "low",
+        "role": "mechanism_marker",
+        "relationship_kind": "mechanism",
+        "availability": "common",
+        "rationale": "Low MCH supports chronic microcytic hypochromic red-cell production within a compensated high-count pattern."
+      },
+      {
+        "biomarker_id": "mchc",
+        "expected_direction": "low",
+        "role": "corroborator",
+        "relationship_kind": "corroboration",
+        "availability": "common",
+        "rationale": "Low MCHC reinforces hypochromia accompanying a preserved or high RBC count."
+      },
+      {
+        "biomarker_id": "rdw_cv",
+        "expected_direction": "high",
+        "role": "differential_marker",
+        "relationship_kind": "differential",
+        "availability": "common",
+        "rationale": "Marked RDW-CV elevation competes with a carrier-state interpretation and raises the possibility of iron deficiency or mixed deficiency instead."
+      }
+    ],
+    "hypotheses": [
+      {
+        "hypothesis_id": "hyp_thalassemia_trait_high_count_microcytosis",
+        "rank": 1,
+        "physiological_claim": "High RBC count with low MCH and low MCHC may reflect thalassemia trait, where marrow compensation maintains erythrocyte number despite microcytic hypochromia.",
+        "evidence_strength": "moderate",
+        "caveats": [
+          "RBC count does not distinguish alpha from beta thalassemia trait and should not replace confirmatory hemoglobinopathy testing."
+        ],
+        "missing_data": {
+          "policy": "Confirm with hemoglobinopathy testing before assigning a carrier-state interpretation from the CBC pattern alone."
+        },
+        "supporting_marker_refs": [
+          "mch",
+          "mchc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_marked_anisocytosis_competes",
+            "marker_reference": "rdw_cv",
+            "contradiction_rationale": "Marked RDW-CV elevation weakens a uniform carrier-state interpretation and shifts suspicion toward iron deficiency or mixed deficiency.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      },
+      {
+        "hypothesis_id": "hyp_other_compensated_microcytic_carrier_pattern",
+        "rank": 2,
+        "physiological_claim": "High RBC count with supported microcytosis may also represent another compensated inherited microcytic state when classical thalassemia confirmation is lacking.",
+        "evidence_strength": "exploratory",
+        "caveats": [
+          "This remains a cautious secondary frame and should not be promoted without confirmatory testing."
+        ],
+        "missing_data": {
+          "policy": "If hemoglobinopathy testing is unrevealing, reassess for mixed deficiency or rare inherited microcytic disorders before keeping a genetic explanation."
+        },
+        "supporting_marker_refs": [
+          "mch",
+          "mchc"
+        ],
+        "contradiction_markers": [
+          {
+            "contradiction_id": "ctr_progressive_anisocytosis",
+            "marker_reference": "rdw_cv",
+            "contradiction_rationale": "Increasing anisocytosis argues against a stable compensated carrier-state pattern.",
+            "contradiction_strength": "moderate"
+          }
+        ]
+      }
+    ],
+    "hypothesis_ranking": {
+      "ordered_hypothesis_ids": [
+        "hyp_thalassemia_trait_high_count_microcytosis",
+        "hyp_other_compensated_microcytic_carrier_pattern"
+      ]
+    },
+    "confirmatory_tests": [
+      {
+        "test_id": "ct_hemoglobinopathy_and_iron_review_for_high_rbc_microcytosis",
+        "rationale": "Hemoglobinopathy testing with iron assessment helps distinguish thalassemia trait from iron deficiency in a high-RBC microcytic pattern."
+      }
+    ],
+    "override_rules": [
+      {
+        "rule_id": "or_rbc_high_with_low_mch_and_low_mchc",
+        "resulting_state": "at_risk",
+        "description": "Escalate when RBC is high with low MCH and low MCHC, because that combination is more consistent with compensated microcytic carrier-state physiology than with true erythrocytosis.",
+        "conditions": [
+          {
+            "metric_id": "mch",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          },
+          {
+            "metric_id": "mchc",
+            "operator": "<",
+            "condition_type": "all_of",
+            "comparator_type": "lab_range_boundary",
+            "boundary": "below_min"
+          }
+        ],
+        "source_refs": [
+          "source_rbc_indices_ida_vs_thal_2024",
+          "source_ida_vs_thal_review_2023"
+        ]
+      }
+    ],
+    "evidence": {
+      "evidence_strength": "moderate",
+      "sources": [
+        {
+          "source_id": "source_rbc_indices_ida_vs_thal_2024",
+          "paper_title": "Diagnostic Performance of Red Blood Cell Indices in the Differential Diagnosis of Iron Deficiency Anemia and the Thalassemia Trait in Chile: A Retrospective Study",
+          "journal": "Diagnostics (Basel)",
+          "year": 2024
+        },
+        {
+          "source_id": "source_ida_vs_thal_review_2023",
+          "paper_title": "Differential diagnosis between iron deficiency anemia and thalassemia trait-induced anemia",
+          "journal": "Journal of Dental Sciences",
+          "year": 2023
+        }
+      ],
+      "physiological_claim": "A high RBC count can point away from erythrocytosis and toward compensated microcytic carrier states when hypochromic red-cell indices are also low.",
+      "threshold_notes": "Interpretation should remain pattern-based and lab-range anchored, not threshold-driven."
+    },
+    "narrative": {
+      "mechanism": "In thalassemia trait and related carrier states, chronic microcytic erythropoiesis can coexist with preserved or increased RBC number because marrow output compensates for reduced cell size and hemoglobin content.",
+      "biological_pathway": "Globin synthesis, chronic microcytic erythropoiesis, and marrow compensation pathways.",
+      "interpretation": "This pattern is a clinically useful reminder that high RBC count does not always indicate erythrocytosis; it can also mark compensated microcytic carrier physiology.",
+      "implications": "It often justifies hemoglobinopathy testing and iron review rather than erythrocytosis work-up alone.",
+      "supporting_marker_roles": "Low MCH and low MCHC support compensated microcytosis, while high RDW-CV is a competing marker that redirects toward iron deficiency or mixed nutritional states."
+    }
+  }
+]

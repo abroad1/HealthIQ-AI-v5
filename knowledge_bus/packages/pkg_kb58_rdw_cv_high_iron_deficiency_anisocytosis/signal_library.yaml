@@ -1,0 +1,99 @@
+library:
+  package_id: KBP-4800
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S58 CBC — Rdw Cv High Iron Deficiency Anisocytosis
+  description: Ingested from inv_rdw_cv_high_iron_deficiency_anisocytosis (cbc_hematology_pass_3.json).
+    KB-S58 CBC tranche.
+signals:
+- signal_id: signal_rdw_cv_high
+  name: Rdw Cv High Iron Deficiency Anisocytosis
+  description: High RDW-CV reflects increased variability in red-cell size and is most classically
+    used in anemia differential diagnosis.
+  system: hematologic
+  primary_metric: rdw_cv
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: mch
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Low MCH supports impaired erythrocyte hemoglobinization within an anisocytic
+      deficiency pattern.
+  - biomarker_id: mchc
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low MCHC reinforces hypochromic physiology accompanying anisocytosis.
+  - biomarker_id: rbc
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: A reduced RBC count favors iron deficiency anemia over compensated thalassemia
+      trait.
+  dependencies:
+    biomarkers:
+    - mch
+    - mchc
+    - rbc
+    - rdw_cv
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_rdw_cv_high_lab_range_activation_placeholder
+    metric_id: rdw_cv
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_rdw_cv_high_with_hypochromic_anemia_pattern
+    resulting_state: at_risk
+    description: Escalate when high RDW-CV coexists with low MCH and low RBC count, because
+      that combination is more consistent with clinically relevant iron-deficiency-type anisocytosis
+      than an isolated RDW shift.
+    conditions:
+    - metric_id: mch
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    - metric_id: rbc
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_rdw_review_2019
+    - source_ida_vs_thal_review_2023
+  output:
+    signal_value: rdw_cv
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: rdw_cv
+    supporting_markers:
+    - mch
+    - mchc
+    - rbc
+  explanation:
+    mechanism: RDW-CV increases when circulating erythrocytes vary substantially in size because
+      new and old cell populations or different deficiency states coexist.
+    biological_pathway: Red-cell maturation heterogeneity, nutritional erythropoiesis, and
+      mixed erythrocyte population dynamics.
+    interpretation: A raised RDW-CV supports anisocytosis but remains a contextual discriminator
+      rather than a stand-alone diagnosis.
+    implications: This pattern commonly prompts iron assessment and review for combined nutritional
+      deficiency, blood loss, or recent treatment effects.
+    supporting_marker_roles: Low MCH and low MCHC reinforce deficiency-type red-cell production,
+      while low RBC count helps distinguish iron-deficiency anemia from compensated thalassemia
+      trait.

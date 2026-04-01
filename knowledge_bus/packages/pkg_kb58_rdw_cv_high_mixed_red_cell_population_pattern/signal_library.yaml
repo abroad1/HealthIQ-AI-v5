@@ -1,0 +1,94 @@
+library:
+  package_id: KBP-4801
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S58 CBC — Rdw Cv High Mixed Red Cell Population Pattern
+  description: Ingested from inv_rdw_cv_high_mixed_red_cell_population_pattern (cbc_hematology_pass_3.json).
+    KB-S58 CBC tranche.
+signals:
+- signal_id: signal_rdw_cv_high
+  name: Rdw Cv High Mixed Red Cell Population Pattern
+  description: High RDW-CV can also reflect admixture of red-cell populations rather than
+    isolated iron deficiency alone.
+  system: hematologic
+  primary_metric: rdw_cv
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: rdw_sd
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Concurrent RDW-SD elevation supports genuine red-cell size heterogeneity rather
+      than borderline variation in one RDW metric.
+  - biomarker_id: mchc
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: A high MCHC redirects interpretation toward spherocytic or regenerative hemolytic
+      processes rather than simple deficiency.
+  - biomarker_id: rbc
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: A reduced RBC count supports clinically relevant anemia when anisocytosis is
+      marked.
+  dependencies:
+    biomarkers:
+    - mchc
+    - rbc
+    - rdw_cv
+    - rdw_sd
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_rdw_cv_high_lab_range_activation_placeholder
+    metric_id: rdw_cv
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_rdw_cv_high_with_high_mchc
+    resulting_state: at_risk
+    description: Escalate when high RDW-CV coexists with high MCHC, because this combination
+      is more compatible with a clinically important mixed-population or hemolytic pattern
+      than uncomplicated deficiency alone.
+    conditions:
+    - metric_id: mchc
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_rdw_review_2019
+    - source_hs_protocol_2021
+  output:
+    signal_value: rdw_cv
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: rdw_cv
+    supporting_markers:
+    - rdw_sd
+    - mchc
+    - rbc
+  explanation:
+    mechanism: RDW-CV rises whenever circulating erythrocytes differ substantially in volume,
+      whether from deficiency, destruction, regeneration, transfusion, or recovery.
+    biological_pathway: Red-cell turnover, marrow response, and mixed circulating erythrocyte
+      population dynamics.
+    interpretation: A high RDW-CV result should prompt discrimination between deficiency-driven
+      anisocytosis and broader mixed-population states.
+    implications: This pattern may justify reticulocyte testing, smear review, and correlation
+      with recent treatment, bleeding, or hemolysis history.
+    supporting_marker_roles: RDW-SD confirms true heterogeneity, high MCHC redirects toward
+      dense-cell or hemolytic physiology, and low RBC count supports clinically relevant anemia.

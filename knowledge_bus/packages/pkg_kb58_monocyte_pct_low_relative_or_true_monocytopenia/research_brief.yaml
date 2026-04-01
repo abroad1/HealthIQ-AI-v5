@@ -1,0 +1,20 @@
+research_domain: hematologic
+sources:
+- paper_title: 'More Than Suppression: Glucocorticoid Action on Monocytes and Macrophages'
+  journal: Frontiers in Immunology
+  year: 2019
+  source_id: source_glucocorticoid_monocyte_review_2019
+- paper_title: The Value of a Complete Blood Count (CBC) for Sepsis Diagnosis and Prognosis
+  journal: Diagnostics (Basel)
+  year: 2021
+  source_id: source_cbc_sepsis_review_2021
+biomarkers:
+- monocyte_pct
+- monocytes_abs
+- neutrophil_pct
+- rbc
+physiological_claim: Low monocyte percentage is a contextual differential abnormality that
+  requires confirmation against the absolute monocyte count.
+evidence_strength: moderate
+research_summary: KB-S58 ingestion from cbc_hematology_pass_3.json; spec_id=inv_monocyte_pct_low_relative_or_true_monocytopenia;
+  signal_id=signal_monocyte_pct_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

@@ -1,0 +1,23 @@
+research_domain: hematologic
+sources:
+- paper_title: 'Platelet distribution width: a simple, practical and specific marker of activation
+    of coagulation'
+  journal: Hippokratia
+  year: 2010
+  source_id: source_pdw_activation_2010
+- paper_title: 'The diagnostic accuracy of mean platelet volume in differentiating immune
+    thrombocytopenic purpura from hypo-productive thrombocytopenia: A systematic review and
+    meta-analysis'
+  journal: PLOS ONE
+  year: 2023
+  source_id: source_mpv_meta_2023
+biomarkers:
+- pdw
+- mpv
+- neutrophil_pct
+- monocyte_pct
+physiological_claim: High PDW is best interpreted as a platelet heterogeneity signal that
+  can support activation or asynchronous platelet production.
+evidence_strength: moderate
+research_summary: KB-S58 ingestion from cbc_hematology_pass_3.json; spec_id=inv_pdw_high_platelet_activation_pattern;
+  signal_id=signal_pdw_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

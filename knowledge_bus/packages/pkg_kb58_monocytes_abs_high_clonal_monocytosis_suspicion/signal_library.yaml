@@ -1,0 +1,100 @@
+library:
+  package_id: KBP-4807
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S58 CBC — Monocytes Abs High Clonal Monocytosis Suspicion
+  description: Ingested from inv_monocytes_abs_high_clonal_monocytosis_suspicion (cbc_hematology_pass_3.json).
+    KB-S58 CBC tranche.
+signals:
+- signal_id: signal_monocytes_abs_high
+  name: Monocytes Abs High Clonal Monocytosis Suspicion
+  description: Persistent absolute monocytosis can raise concern for a clonal myeloid disorder
+    when reactive causes are not sufficient.
+  system: hematologic
+  primary_metric: monocytes_abs
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: monocyte_pct
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Concurrent monocyte predominance supports a genuine monocytic expansion pattern.
+  - biomarker_id: rbc
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Coexisting anemia can support a marrow disorder context rather than isolated
+      reactive monocytosis.
+  - biomarker_id: neutrophil_pct
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: Lack of neutrophil predominance may reduce the likelihood of a simple acute
+      neutrophil-driven reactive process.
+  dependencies:
+    biomarkers:
+    - monocyte_pct
+    - monocytes_abs
+    - neutrophil_pct
+    - rbc
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_monocytes_abs_high_lab_range_activation_placeholder
+    metric_id: monocytes_abs
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_monocytes_abs_high_with_percentage_and_anemia
+    resulting_state: at_risk
+    description: Escalate when monocytes_abs is high with high monocyte_pct and low RBC, because
+      that combination increases concern for a persistent marrow-level monocytic process over
+      a simple transient reactive change.
+    conditions:
+    - metric_id: monocyte_pct
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    - metric_id: rbc
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_monocytosis_review_2021
+    - source_monocytosis_primarycare_2023
+  output:
+    signal_value: monocytes_abs
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: monocytes_abs
+    supporting_markers:
+    - monocyte_pct
+    - rbc
+    - neutrophil_pct
+  explanation:
+    mechanism: Clonal monocytosis reflects expansion of monocyte-lineage production within
+      the marrow and sustained release into peripheral blood.
+    biological_pathway: Myeloid lineage proliferation, marrow dysregulation, and persistent
+      monocytic expansion pathways.
+    interpretation: A high monocytes_abs result can justify clonal suspicion only when it
+      is persistent and reactive causes are insufficient, especially if other lineage abnormalities
+      coexist.
+    implications: This pattern may justify repeat testing, smear review, and formal hematology
+      assessment rather than immediate reactive labeling.
+    supporting_marker_roles: High monocyte_pct supports true monocytic predominance, low RBC
+      supports a marrow-disease context, and lack of strong neutrophil predominance weakens
+      simple acute-reactive explanations.

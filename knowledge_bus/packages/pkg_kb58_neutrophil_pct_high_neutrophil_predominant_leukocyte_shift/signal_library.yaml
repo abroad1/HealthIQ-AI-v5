@@ -1,0 +1,95 @@
+library:
+  package_id: KBP-4812
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S58 CBC — Neutrophil Pct High Neutrophil Predominant Leukocyte Shift
+  description: Ingested from inv_neutrophil_pct_high_neutrophil_predominant_leukocyte_shift
+    (cbc_hematology_pass_3.json). KB-S58 CBC tranche.
+signals:
+- signal_id: signal_neutrophil_pct_high
+  name: Neutrophil Pct High Neutrophil Predominant Leukocyte Shift
+  description: High neutrophil percentage reflects neutrophil predominance within the differential
+    and should be interpreted in relation to the absolute neutrophil count.
+  system: hematologic
+  primary_metric: neutrophil_pct
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: monocyte_pct
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: Lower monocyte percentage can support a reciprocal differential shift seen
+      in stress or acute innate activation.
+  - biomarker_id: monocytes_abs
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: Low absolute monocytes can support glucocorticoid-associated or stress-related
+      leukocyte redistribution.
+  - biomarker_id: pdw
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: A high PDW can support an inflammatory or thromboinflammatory milieu when neutrophil
+      predominance is present.
+  dependencies:
+    biomarkers:
+    - monocyte_pct
+    - monocytes_abs
+    - neutrophil_pct
+    - pdw
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_neutrophil_pct_high_lab_range_activation_placeholder
+    metric_id: neutrophil_pct
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_neutrophil_pct_high_with_low_monocyte_pct
+    resulting_state: at_risk
+    description: Escalate when neutrophil percentage is high and monocyte percentage is low,
+      because that combination supports a pronounced neutrophil-predominant differential shift
+      rather than a marginal isolated change.
+    conditions:
+    - metric_id: monocyte_pct
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_cbc_sepsis_review_2021
+    - source_neutropenia_review_2013
+  output:
+    signal_value: neutrophil_pct
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: neutrophil_pct
+    supporting_markers:
+    - monocyte_pct
+    - monocytes_abs
+    - pdw
+  explanation:
+    mechanism: Neutrophil percentage rises when innate immune activation, stress-mediated
+      demargination, or reciprocal suppression of other leukocyte fractions changes the differential
+      composition.
+    biological_pathway: Innate immune activation, leukocyte demargination, and differential-count
+      redistribution pathways.
+    interpretation: A high neutrophil percentage result should be read as a pattern of leukocyte
+      predominance rather than as proof of bacterial infection or true absolute neutrophilia.
+    implications: This pattern usually justifies review of the absolute neutrophil count,
+      medication exposure, and acute inflammatory context.
+    supporting_marker_roles: Low monocyte_pct and low monocytes_abs help identify redistribution
+      or stress patterns, while high PDW can support a broader inflammatory setting.
