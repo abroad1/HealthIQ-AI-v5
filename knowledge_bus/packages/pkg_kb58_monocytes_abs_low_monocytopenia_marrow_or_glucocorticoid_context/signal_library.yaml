@@ -1,0 +1,92 @@
+library:
+  package_id: KBP-4808
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S58 CBC — Monocytes Abs Low Monocytopenia Marrow Or Glucocorticoid Context
+  description: Ingested from inv_monocytes_abs_low_monocytopenia_marrow_or_glucocorticoid_context
+    (cbc_hematology_pass_3.json). KB-S58 CBC tranche.
+signals:
+- signal_id: signal_monocytes_abs_low
+  name: Monocytes Abs Low Monocytopenia Marrow Or Glucocorticoid Context
+  description: A low absolute monocyte count indicates true monocytopenia and is more informative
+    than monocyte percentage alone.
+  system: hematologic
+  primary_metric: monocytes_abs
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: monocyte_pct
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: A low monocyte percentage supports a true quantitative reduction in monocytes.
+  - biomarker_id: neutrophil_pct
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Neutrophil predominance can point toward stress or glucocorticoid redistribution
+      rather than primary monocyte lineage failure.
+  - biomarker_id: rbc
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Concurrent anemia raises concern for a broader marrow or systemic illness process.
+  dependencies:
+    biomarkers:
+    - monocyte_pct
+    - monocytes_abs
+    - neutrophil_pct
+    - rbc
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_monocytes_abs_low_lab_range_activation_placeholder
+    metric_id: monocytes_abs
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_monocytes_abs_low_with_low_percentage
+    resulting_state: at_risk
+    description: Escalate when monocytes_abs is low and monocyte_pct is also low, because
+      that combination supports true monocytopenia rather than a percentage-only shift.
+    conditions:
+    - metric_id: monocyte_pct
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_glucocorticoid_monocyte_review_2019
+    - source_cbc_sepsis_review_2021
+  output:
+    signal_value: monocytes_abs
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: monocytes_abs
+    supporting_markers:
+    - monocyte_pct
+    - neutrophil_pct
+    - rbc
+  explanation:
+    mechanism: Monocytopenia emerges when marrow release, lineage survival, or circulating
+      distribution of monocytes is reduced.
+    biological_pathway: Monocyte marrow release, glucocorticoid response, leukocyte redistribution,
+      and systemic illness suppression pathways.
+    interpretation: A low absolute monocyte count should prompt distinction between transient
+      redistribution and more persistent or marrow-related causes.
+    implications: This pattern may justify repeat CBC review, steroid assessment, and broader
+      evaluation if additional cytopenias or severe illness features coexist.
+    supporting_marker_roles: Low monocyte_pct corroborates true monocytopenia, high neutrophil_pct
+      helps identify stress-related redistribution, and low RBC supports a broader marrow
+      or systemic illness context.

@@ -1,0 +1,101 @@
+library:
+  package_id: KBP-4817
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S58 CBC — Rbc High Microcytic High Count Thalassemia Trait Pattern
+  description: Ingested from inv_rbc_high_microcytic_high_count_thalassemia_trait_pattern
+    (cbc_hematology_pass_3.json). KB-S58 CBC tranche.
+signals:
+- signal_id: signal_rbc_high
+  name: Rbc High Microcytic High Count Thalassemia Trait Pattern
+  description: A high RBC count with hypochromic microcytic support can indicate a compensated
+    carrier-state pattern rather than true erythrocytosis.
+  system: hematologic
+  primary_metric: rbc
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: mch
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Low MCH supports chronic microcytic hypochromic red-cell production within
+      a compensated high-count pattern.
+  - biomarker_id: mchc
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low MCHC reinforces hypochromia accompanying a preserved or high RBC count.
+  - biomarker_id: rdw_cv
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Marked RDW-CV elevation competes with a carrier-state interpretation and raises
+      the possibility of iron deficiency or mixed deficiency instead.
+  dependencies:
+    biomarkers:
+    - mch
+    - mchc
+    - rbc
+    - rdw_cv
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_rbc_high_lab_range_activation_placeholder
+    metric_id: rbc
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_rbc_high_with_low_mch_and_low_mchc
+    resulting_state: at_risk
+    description: Escalate when RBC is high with low MCH and low MCHC, because that combination
+      is more consistent with compensated microcytic carrier-state physiology than with true
+      erythrocytosis.
+    conditions:
+    - metric_id: mch
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    - metric_id: mchc
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_rbc_indices_ida_vs_thal_2024
+    - source_ida_vs_thal_review_2023
+  output:
+    signal_value: rbc
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: rbc
+    supporting_markers:
+    - mch
+    - mchc
+    - rdw_cv
+  explanation:
+    mechanism: In thalassemia trait and related carrier states, chronic microcytic erythropoiesis
+      can coexist with preserved or increased RBC number because marrow output compensates
+      for reduced cell size and hemoglobin content.
+    biological_pathway: Globin synthesis, chronic microcytic erythropoiesis, and marrow compensation
+      pathways.
+    interpretation: This pattern is a clinically useful reminder that high RBC count does
+      not always indicate erythrocytosis; it can also mark compensated microcytic carrier
+      physiology.
+    implications: It often justifies hemoglobinopathy testing and iron review rather than
+      erythrocytosis work-up alone.
+    supporting_marker_roles: Low MCH and low MCHC support compensated microcytosis, while
+      high RDW-CV is a competing marker that redirects toward iron deficiency or mixed nutritional
+      states.

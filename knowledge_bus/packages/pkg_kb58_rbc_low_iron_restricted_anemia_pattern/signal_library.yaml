@@ -1,0 +1,100 @@
+library:
+  package_id: KBP-4814
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S58 CBC — Rbc Low Iron Restricted Anemia Pattern
+  description: Ingested from inv_rbc_low_iron_restricted_anemia_pattern (cbc_hematology_pass_3.json).
+    KB-S58 CBC tranche.
+signals:
+- signal_id: signal_rbc_low
+  name: Rbc Low Iron Restricted Anemia Pattern
+  description: A low RBC count supports anemia and is most informative when interpreted with
+    the red-cell indices that describe morphology and hemoglobinization.
+  system: hematologic
+  primary_metric: rbc
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: mch
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Low MCH supports reduced hemoglobin content per cell within an iron-restricted
+      anemia pattern.
+  - biomarker_id: mchc
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low MCHC reinforces hypochromia accompanying reduced erythrocyte number.
+  - biomarker_id: rdw_cv
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: High RDW-CV favors iron deficiency or mixed nutritional anemia over a more
+      uniform compensated carrier state.
+  dependencies:
+    biomarkers:
+    - mch
+    - mchc
+    - rbc
+    - rdw_cv
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_rbc_low_lab_range_activation_placeholder
+    metric_id: rbc
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_rbc_low_with_low_mch_and_high_rdw
+    resulting_state: at_risk
+    description: Escalate when RBC is low with low MCH and high RDW-CV, because that combination
+      is more consistent with clinically relevant iron-restricted anemia than with isolated
+      count variation.
+    conditions:
+    - metric_id: mch
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    - metric_id: rdw_cv
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_rbc_indices_ida_vs_thal_2024
+    - source_ida_vs_thal_review_2023
+  output:
+    signal_value: rbc
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: rbc
+    supporting_markers:
+    - mch
+    - mchc
+    - rdw_cv
+  explanation:
+    mechanism: RBC count falls when erythrocyte production is insufficient, blood loss or
+      destruction exceeds replacement, or iron-restricted erythropoiesis limits effective
+      red-cell output.
+    biological_pathway: Erythropoiesis, iron handling, hemoglobin synthesis, and anemia-production
+      pathways.
+    interpretation: Low RBC count with hypochromic and anisocytic support is a useful anemia-pattern
+      signal, but it still needs biochemical confirmation for cause assignment.
+    implications: This pattern commonly prompts iron studies and evaluation for blood loss,
+      inflammatory sequestration, or mixed nutritional deficiency.
+    supporting_marker_roles: Low MCH and low MCHC support iron-restricted erythropoiesis,
+      while high RDW-CV helps separate deficiency-related anemia from more uniform compensated
+      carrier states.

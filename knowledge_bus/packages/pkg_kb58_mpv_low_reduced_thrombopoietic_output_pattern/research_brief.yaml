@@ -1,0 +1,18 @@
+research_domain: hematologic
+sources:
+- paper_title: 'The diagnostic accuracy of mean platelet volume in differentiating immune
+    thrombocytopenic purpura from hypo-productive thrombocytopenia: A systematic review and
+    meta-analysis'
+  journal: PLOS ONE
+  year: 2023
+  source_id: source_mpv_meta_2023
+biomarkers:
+- mpv
+- rbc
+- monocytes_abs
+- pdw
+physiological_claim: Low MPV may support reduced thrombopoietic output, but it remains a contextual
+  platelet-production clue rather than a stand-alone diagnostic marker.
+evidence_strength: moderate
+research_summary: KB-S58 ingestion from cbc_hematology_pass_3.json; spec_id=inv_mpv_low_reduced_thrombopoietic_output_pattern;
+  signal_id=signal_mpv_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

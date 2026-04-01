@@ -1,0 +1,21 @@
+research_domain: hematologic
+sources:
+- paper_title: 'The role of red blood cell distribution width (RDW) in cardiovascular risk
+    assessment: useful or hype?'
+  journal: Annals of Translational Medicine
+  year: 2019
+  source_id: source_rdw_review_2019
+- paper_title: The diagnostic protocol for hereditary spherocytosis-2021 update
+  journal: Journal of Clinical Laboratory Analysis
+  year: 2021
+  source_id: source_hs_protocol_2021
+biomarkers:
+- rdw_cv
+- rdw_sd
+- mchc
+- rbc
+physiological_claim: High RDW-CV can reflect admixture of red-cell populations during regeneration,
+  hemolysis, recovery, or combined deficiency states.
+evidence_strength: moderate
+research_summary: KB-S58 ingestion from cbc_hematology_pass_3.json; spec_id=inv_rdw_cv_high_mixed_red_cell_population_pattern;
+  signal_id=signal_rdw_cv_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

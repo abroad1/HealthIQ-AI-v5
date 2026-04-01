@@ -1,0 +1,22 @@
+research_domain: hematologic
+sources:
+- paper_title: 'The role of red blood cell distribution width (RDW) in cardiovascular risk
+    assessment: useful or hype?'
+  journal: Annals of Translational Medicine
+  year: 2019
+  source_id: source_rdw_review_2019
+- paper_title: Differential diagnosis between iron deficiency anemia and thalassemia trait-induced
+    anemia
+  journal: Journal of Dental Sciences
+  year: 2023
+  source_id: source_ida_vs_thal_review_2023
+biomarkers:
+- rdw_sd
+- mch
+- mchc
+- rbc
+physiological_claim: High RDW-SD supports absolute red-cell size heterogeneity and is useful
+  for distinguishing deficiency-driven anisocytosis from more uniform microcytic states.
+evidence_strength: strong
+research_summary: KB-S58 ingestion from cbc_hematology_pass_3.json; spec_id=inv_rdw_sd_high_iron_deficiency_anisocytosis;
+  signal_id=signal_rdw_sd_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

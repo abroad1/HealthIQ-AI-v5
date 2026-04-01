@@ -1,0 +1,95 @@
+library:
+  package_id: KBP-4805
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S58 CBC — Monocyte Pct Low Relative Or True Monocytopenia
+  description: Ingested from inv_monocyte_pct_low_relative_or_true_monocytopenia (cbc_hematology_pass_3.json).
+    KB-S58 CBC tranche.
+signals:
+- signal_id: signal_monocyte_pct_low
+  name: Monocyte Pct Low Relative Or True Monocytopenia
+  description: Low monocyte percentage may represent either a relative leukocyte redistribution
+    or a true reduction in monocyte numbers.
+  system: hematologic
+  primary_metric: monocyte_pct
+  trigger_direction: low
+  supporting_metrics:
+  - biomarker_id: monocytes_abs
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: A low absolute monocyte count supports true monocytopenia rather than a percentage-only
+      shift.
+  - biomarker_id: neutrophil_pct
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: A high neutrophil percentage favors relative redistribution, stress, or acute
+      innate activation as an explanation for low monocyte percentage.
+  - biomarker_id: rbc
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Concurrent anemia can support a broader marrow or systemic illness context
+      when monocytopenia is genuine.
+  dependencies:
+    biomarkers:
+    - monocyte_pct
+    - monocytes_abs
+    - neutrophil_pct
+    - rbc
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_monocyte_pct_low_lab_range_activation_placeholder
+    metric_id: monocyte_pct
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: false
+    upper_bound_state: suboptimal
+    enable_lower_bound: true
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_monocyte_pct_low_with_low_absolute_monocytes
+    resulting_state: at_risk
+    description: Escalate when monocyte percentage is low and monocytes_abs is also low, because
+      that combination is more consistent with true monocytopenia than with a percentage-only
+      redistribution pattern.
+    conditions:
+    - metric_id: monocytes_abs
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_glucocorticoid_monocyte_review_2019
+    - source_cbc_sepsis_review_2021
+  output:
+    signal_value: monocyte_pct
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: monocyte_pct
+    supporting_markers:
+    - monocytes_abs
+    - neutrophil_pct
+    - rbc
+  explanation:
+    mechanism: Monocyte percentage falls either because monocyte numbers fall or because another
+      lineage expands enough to dilute monocyte representation within the differential.
+    biological_pathway: Monocyte marrow release, leukocyte redistribution, glucocorticoid
+      response, and acute innate immune shift pathways.
+    interpretation: A low monocyte percentage result should be read cautiously until the absolute
+      count clarifies whether the change is relative or truly quantitative.
+    implications: This pattern may justify repeat CBC review, medication assessment, and evaluation
+      for severe infection or marrow suppression if the absolute count is also low.
+    supporting_marker_roles: Low monocytes_abs supports true monocytopenia, high neutrophil_pct
+      helps identify relative redistribution, and low RBC suggests a broader marrow or systemic
+      illness context.

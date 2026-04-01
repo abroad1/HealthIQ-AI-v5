@@ -1,0 +1,95 @@
+library:
+  package_id: KBP-4809
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S58 CBC — Mpv High Increased Platelet Turnover Pattern
+  description: Ingested from inv_mpv_high_increased_platelet_turnover_pattern (cbc_hematology_pass_3.json).
+    KB-S58 CBC tranche.
+signals:
+- signal_id: signal_mpv_high
+  name: Mpv High Increased Platelet Turnover Pattern
+  description: High MPV reflects larger average platelet size and often accompanies increased
+    platelet turnover or activation.
+  system: hematologic
+  primary_metric: mpv
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: pdw
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: Higher PDW supports heterogeneous platelet enlargement rather than a uniform
+      isolated size shift.
+  - biomarker_id: neutrophil_pct
+    expected_direction: high
+    role: differential_marker
+    availability: common
+    rationale: Neutrophil predominance can support an inflammatory or consumptive context
+      when platelet turnover is increased.
+  - biomarker_id: monocyte_pct
+    expected_direction: high
+    role: corroborator
+    availability: common
+    rationale: A concomitant monocyte-predominant inflammatory signal can support broader
+      thromboinflammatory activation.
+  dependencies:
+    biomarkers:
+    - monocyte_pct
+    - mpv
+    - neutrophil_pct
+    - pdw
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_mpv_high_lab_range_activation_placeholder
+    metric_id: mpv
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_mpv_high_with_high_pdw
+    resulting_state: at_risk
+    description: Escalate when MPV is high and PDW is also high, because combined enlargement
+      and heterogeneity are more consistent with clinically relevant platelet turnover or
+      activation than with an isolated MPV shift.
+    conditions:
+    - metric_id: pdw
+      operator: '>'
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: above_max
+    source_refs:
+    - source_mpv_meta_2023
+    - source_pdw_activation_2010
+  output:
+    signal_value: mpv
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: mpv
+    supporting_markers:
+    - pdw
+    - neutrophil_pct
+    - monocyte_pct
+  explanation:
+    mechanism: MPV rises when larger, younger, or morphologically activated platelets make
+      up a greater proportion of the circulating pool.
+    biological_pathway: Megakaryopoiesis, platelet release, peripheral destruction, and thromboinflammatory
+      platelet activation pathways.
+    interpretation: A high MPV result is a contextual platelet signal that gains value when
+      paired with PDW and platelet count rather than when used alone.
+    implications: This pattern may justify platelet count review, smear assessment, and correlation
+      with inflammatory or consumptive clinical settings.
+    supporting_marker_roles: High PDW corroborates heterogeneous platelet enlargement, high
+      neutrophil_pct can support inflammatory consumption, and high monocyte_pct can support
+      a broader thromboinflammatory context.

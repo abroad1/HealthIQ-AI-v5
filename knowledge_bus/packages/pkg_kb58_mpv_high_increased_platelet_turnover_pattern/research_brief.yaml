@@ -1,0 +1,24 @@
+research_domain: hematologic
+sources:
+- paper_title: 'The diagnostic accuracy of mean platelet volume in differentiating immune
+    thrombocytopenic purpura from hypo-productive thrombocytopenia: A systematic review and
+    meta-analysis'
+  journal: PLOS ONE
+  year: 2023
+  source_id: source_mpv_meta_2023
+- paper_title: 'Platelet distribution width: a simple, practical and specific marker of activation
+    of coagulation'
+  journal: Hippokratia
+  year: 2010
+  source_id: source_pdw_activation_2010
+biomarkers:
+- mpv
+- pdw
+- neutrophil_pct
+- monocyte_pct
+physiological_claim: High MPV supports larger circulating platelets and is most useful as
+  a pattern marker of increased platelet turnover or activation rather than as a disease-specific
+  test.
+evidence_strength: moderate
+research_summary: KB-S58 ingestion from cbc_hematology_pass_3.json; spec_id=inv_mpv_high_increased_platelet_turnover_pattern;
+  signal_id=signal_mpv_high; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

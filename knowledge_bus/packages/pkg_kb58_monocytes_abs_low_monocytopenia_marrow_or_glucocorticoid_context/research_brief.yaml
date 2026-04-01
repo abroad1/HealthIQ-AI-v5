@@ -1,0 +1,20 @@
+research_domain: hematologic
+sources:
+- paper_title: 'More Than Suppression: Glucocorticoid Action on Monocytes and Macrophages'
+  journal: Frontiers in Immunology
+  year: 2019
+  source_id: source_glucocorticoid_monocyte_review_2019
+- paper_title: The Value of a Complete Blood Count (CBC) for Sepsis Diagnosis and Prognosis
+  journal: Diagnostics (Basel)
+  year: 2021
+  source_id: source_cbc_sepsis_review_2021
+biomarkers:
+- monocytes_abs
+- monocyte_pct
+- neutrophil_pct
+- rbc
+physiological_claim: Low monocytes_abs is the most relevant CBC signal for true monocytopenia
+  and should be interpreted with medication and systemic illness context.
+evidence_strength: moderate
+research_summary: KB-S58 ingestion from cbc_hematology_pass_3.json; spec_id=inv_monocytes_abs_low_monocytopenia_marrow_or_glucocorticoid_context;
+  signal_id=signal_monocytes_abs_low; investigation_spec_contract_version=3.0.0; governance=translation_contract_v3_to_package_KB-S52B_v1.

@@ -1,0 +1,97 @@
+library:
+  package_id: KBP-4802
+  schema_version: 2.0.0
+  package_version: 1.0.0
+  library_name: KB-S58 CBC — Rdw Sd High Iron Deficiency Anisocytosis
+  description: Ingested from inv_rdw_sd_high_iron_deficiency_anisocytosis (cbc_hematology_pass_3.json).
+    KB-S58 CBC tranche.
+signals:
+- signal_id: signal_rdw_sd_high
+  name: Rdw Sd High Iron Deficiency Anisocytosis
+  description: High RDW-SD measures absolute red-cell size dispersion and, like RDW-CV, is
+    useful in anemia pattern recognition.
+  system: hematologic
+  primary_metric: rdw_sd
+  trigger_direction: high
+  supporting_metrics:
+  - biomarker_id: mch
+    expected_direction: low
+    role: mechanism_marker
+    availability: common
+    rationale: Low MCH supports a deficiency-related red-cell production problem accompanying
+      anisocytosis.
+  - biomarker_id: mchc
+    expected_direction: low
+    role: corroborator
+    availability: common
+    rationale: Low MCHC supports hypochromic physiology within an anisocytic anemia pattern.
+  - biomarker_id: rbc
+    expected_direction: low
+    role: differential_marker
+    availability: common
+    rationale: Reduced RBC count favors iron deficiency anemia over compensated thalassemia
+      trait.
+  dependencies:
+    biomarkers:
+    - mch
+    - mchc
+    - rbc
+    - rdw_sd
+    derived_metrics: []
+    signals: []
+  optional_dependencies:
+    biomarkers: []
+    derived_metrics: []
+    signals: []
+  thresholds:
+  - threshold_id: signal_rdw_sd_high_lab_range_activation_placeholder
+    metric_id: rdw_sd
+    operator: '>='
+    value: 9999.0
+    severity: at_risk
+    description: Validator placeholder; runtime activation uses lab_range_exceeded.
+  activation_logic: lab_range_exceeded
+  activation_config:
+    enable_upper_bound: true
+    upper_bound_state: suboptimal
+    enable_lower_bound: false
+    lower_bound_state: suboptimal
+  override_rules:
+  - rule_id: or_rdw_sd_high_with_low_mch_and_rbc
+    resulting_state: at_risk
+    description: Escalate when high RDW-SD coexists with low MCH and low RBC count, because
+      that combination strengthens an iron-deficiency-type anisocytic anemia pattern.
+    conditions:
+    - metric_id: mch
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    - metric_id: rbc
+      operator: <
+      condition_type: all_of
+      comparator_type: lab_range_boundary
+      boundary: below_min
+    source_refs:
+    - source_rdw_review_2019
+    - source_ida_vs_thal_review_2023
+  output:
+    signal_value: rdw_sd
+    signal_state: at_risk
+    confidence: confidence_model_v1
+    primary_metric: rdw_sd
+    supporting_markers:
+    - mch
+    - mchc
+    - rbc
+  explanation:
+    mechanism: RDW-SD increases when erythrocytes with different volumes circulate together,
+      especially during deficiency-related ineffective or evolving erythropoiesis.
+    biological_pathway: Red-cell size dispersion, nutritional erythropoiesis, and mixed-cell
+      population dynamics.
+    interpretation: A high RDW-SD result should be read as a heterogeneity signal that needs
+      biochemical and morphological correlation.
+    implications: This pattern commonly justifies iron studies and review for combined micronutrient
+      deficiency or blood loss.
+    supporting_marker_roles: Low MCH and low MCHC support deficiency-type erythropoiesis,
+      while low RBC count helps separate anemia from compensated microcytic carrier states.
