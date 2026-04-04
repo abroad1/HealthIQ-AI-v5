@@ -440,7 +440,6 @@ Cursor must:
 - ensure the working tree is clean before implementation begins
 - STOP and report if branch correction or repo cleanup cannot be completed safely within scope
 
-
 Cursor reads the hardened prompt and performs the implementation work.
 
 Before modifying any repository files, Cursor must verify:
@@ -553,6 +552,22 @@ If ignored files are involved, Cursor must explicitly state that standard stash 
 
 No stash creation, pop, apply, or drop is permitted without explicit user approval once closure has entered stash-remediation territory.
 
+#### Stash Resolution Requirement
+
+Any stash created during a work package lifecycle is considered a tracked closure artifact.
+
+Cursor must explicitly track and resolve every stash created during the active sprint.
+
+A stash is only considered resolved if it is:
+
+- restored and fully consumed into the working tree
+- explicitly retained with human approval and a stated reason
+- explicitly dropped with human approval
+
+Cursor must not leave any stash in an unresolved state at the end of closure.
+
+Creation of a stash introduces a mandatory resolution obligation before closure can be declared complete.
+
 ### 4A.6 Finish Readiness Gate
 
 Cursor must not run:
@@ -569,6 +584,7 @@ until it has explicitly confirmed all of the following:
 - no stray untracked files remain that matter to closure
 - no tooling files are leaking into sprint scope
 - no ambiguous or forgotten stash exists for the sprint
+- no unresolved stash entries exist that were created during this sprint
 - latest commit contains only in-scope work
 
 If any condition fails, Cursor must STOP and produce a remediation plan.
@@ -595,9 +611,14 @@ git stash list
 Cursor must explicitly state:
 
 - whether the branch is closure-clean
-- whether any stash entries remain from the sprint
+- whether any stash entries remain from the sprint, and explicit classification of each as:
+  - resolved (restored)
+  - retained with approval
+  - dropped
 - whether any tooling or out-of-scope files remain
 - whether the repo is ready for merge review
+
+Any unresolved stash entry blocks closure completeness.
 
 ### 4A.9 Local Merge Execution Rule
 
@@ -614,8 +635,10 @@ After merge, Cursor must report:
 - final `main` HEAD SHA
 - whether the sprint branch still exists locally
 - whether the sprint branch still exists remotely, if relevant
-- whether any stash entries remain from the sprint
+- confirmation that no unresolved stash entries from the sprint remain
 - whether the working tree is clean on `main`
+
+Merge must not proceed if any stash created during the sprint remains unresolved.
 
 ### 4A.10 Forbidden Closure Behaviour
 
@@ -889,6 +912,7 @@ The following rules cannot be violated:
 * No `run_work_package.py finish` without passing Stage 4A — Post-Implementation Closure Protocol
 * No tooling-file leakage (`.codex/`, `.vscode/`, `AGENTS.md`, or equivalent local tooling assets) into governed sprint branches unless explicitly in scope
 * No stash use as routine sprint-closure convenience
+* No sprint may reach closure-complete or merge-ready state while a stash created during that sprint remains unresolved
 
 ---
 
