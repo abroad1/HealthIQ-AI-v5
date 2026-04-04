@@ -1,393 +1,244 @@
 /**
- * Authentication API Service
- * Handles user authentication, authorization, and session management
+ * Authentication API — FE-FOUNDATION-A FastAPI contract only.
+ * Uses NEXT_PUBLIC_API_BASE + /api/auth/* (not Supabase JS session — avoids competing flows).
  */
 
-import { User, UserProfile, UserPreferences } from '../types/user';
-import { ApiResponse, ApiError } from '../types/api';
+import { User } from '../types/user'
+import { ApiResponse } from '../types/api'
+import type { AuthSessionResponse, BackendUserIdentity, MeResponse } from '../types/auth'
+import { API_BASE } from '../lib/api'
+import {
+  setAccessTokenCookie,
+  clearAccessTokenCookie,
+  readAccessTokenCookie,
+} from '../lib/auth-cookies'
 
-// Disabled: backend auth routes are not present; keep file for future restoration
-// const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000/api';
-const API_BASE_URL = 'about:blank';
+const AUTH_API_ROOT = `${API_BASE}/api/auth`
 
-// Token management
-const TOKEN_KEY = 'healthiq_auth_token';
-const USER_KEY = 'healthiq_user_data';
+const TOKEN_KEY = 'healthiq_auth_token'
+const USER_KEY = 'healthiq_user_data'
+
+function parseFastApiDetail(payload: unknown): string {
+  if (!payload || typeof payload !== 'object') return 'Request failed'
+  const detail = (payload as { detail?: unknown }).detail
+  if (typeof detail === 'string') return detail
+  if (Array.isArray(detail)) {
+    return detail.map((d) => (typeof d === 'object' && d && 'msg' in d ? String((d as { msg: string }).msg) : String(d))).join('; ')
+  }
+  return 'Request failed'
+}
+
+function identityToUser(u: BackendUserIdentity): User {
+  return {
+    id: u.id,
+    email: u.email ?? '',
+  }
+}
+
+function persistSession(session: AuthSessionResponse['session'], user: BackendUserIdentity): void {
+  localStorage.setItem(TOKEN_KEY, session.access_token)
+  localStorage.setItem(USER_KEY, JSON.stringify(identityToUser(user)))
+  setAccessTokenCookie(session.access_token, session.expires_in)
+}
 
 export class AuthService {
-  /**
-   * Login with email and password
-   */
-  static async login(credentials: { email: string; password: string }): Promise<ApiResponse<{ user: User; token: string }>> {
+  static async login(credentials: { email: string; password: string }): Promise<ApiResponse<AuthSessionResponse>> {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      const response = await fetch(`${AUTH_API_ROOT}/login`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),
-      });
+      })
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(parseFastApiDetail(errorData))
       }
 
-      const result = await response.json();
-      
-      // Store token and user data
-      if (result.token) {
-        localStorage.setItem(TOKEN_KEY, result.token);
-      }
-      if (result.user) {
-        localStorage.setItem(USER_KEY, JSON.stringify(result.user));
-      }
+      const result = (await response.json()) as AuthSessionResponse
+      persistSession(result.session, result.user)
 
       return {
         data: result,
         success: true,
         message: 'Login successful',
-      };
+      }
     } catch (error) {
       return {
-        data: null,
+        data: null as unknown as AuthSessionResponse,
         success: false,
         error: error instanceof Error ? error.message : 'Login failed',
-      };
+      }
     }
   }
 
-  /**
-   * Logout and clear session
-   */
   static async logout(): Promise<ApiResponse<{ logged_out: boolean }>> {
     try {
-      const token = this.getToken();
-      
+      const token = this.getToken()
       if (token) {
-        // Call logout endpoint if available
         try {
-          await fetch(`${API_BASE_URL}/auth/logout`, {
+          await fetch(`${AUTH_API_ROOT}/logout`, {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${token}`,
+              Authorization: `Bearer ${token}`,
               'Content-Type': 'application/json',
             },
-          });
-        } catch (error) {
-          // Continue with local logout even if server call fails
-          console.warn('Server logout failed, continuing with local logout:', error);
+          })
+        } catch {
+          /* local logout even if server call fails */
         }
       }
-
-      // Clear local storage
-      localStorage.removeItem(TOKEN_KEY);
-      localStorage.removeItem(USER_KEY);
-
-      return {
-        data: { logged_out: true },
-        success: true,
-        message: 'Logout successful',
-      };
+      localStorage.removeItem(TOKEN_KEY)
+      localStorage.removeItem(USER_KEY)
+      clearAccessTokenCookie()
+      return { data: { logged_out: true }, success: true, message: 'Logout successful' }
     } catch (error) {
       return {
         data: { logged_out: false },
         success: false,
         error: error instanceof Error ? error.message : 'Logout failed',
-      };
+      }
     }
   }
 
-  /**
-   * Get current user from stored data
-   */
   static getCurrentUser(): User | null {
     try {
-      const userData = localStorage.getItem(USER_KEY);
-      if (!userData) return null;
-      
-      return JSON.parse(userData);
-    } catch (error) {
-      console.error('Failed to parse stored user data:', error);
-      return null;
+      const userData = localStorage.getItem(USER_KEY)
+      if (!userData) return null
+      return JSON.parse(userData) as User
+    } catch {
+      return null
     }
   }
 
-  /**
-   * Get current user from server
-   */
   static async getCurrentUserFromServer(): Promise<ApiResponse<User>> {
     try {
-      const token = this.getToken();
+      const token = this.getToken()
       if (!token) {
-        return {
-          data: null,
-          success: false,
-          error: 'No authentication token found',
-        };
+        return { data: null as unknown as User, success: false, error: 'No authentication token found' }
       }
 
-      const response = await fetch(`${API_BASE_URL}/auth/me`, {
+      const response = await fetch(`${AUTH_API_ROOT}/me`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-      });
+      })
 
       if (!response.ok) {
         if (response.status === 401) {
-          // Token expired or invalid
-          this.clearAuthData();
-          return {
-            data: null,
-            success: false,
-            error: 'Authentication expired',
-          };
+          this.clearAuthData()
+          return { data: null as unknown as User, success: false, error: 'Authentication expired' }
         }
-        
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(parseFastApiDetail(errorData))
       }
 
-      const result = await response.json();
-      
-      // Update stored user data
-      if (result.user) {
-        localStorage.setItem(USER_KEY, JSON.stringify(result.user));
-      }
+      const result = (await response.json()) as MeResponse
+      const user = identityToUser(result.user)
+      localStorage.setItem(USER_KEY, JSON.stringify(user))
 
-      return {
-        data: result.user || result,
-        success: true,
-        message: 'User data retrieved successfully',
-      };
+      return { data: user, success: true, message: 'User data retrieved successfully' }
     } catch (error) {
       return {
-        data: null,
+        data: null as unknown as User,
         success: false,
         error: error instanceof Error ? error.message : 'Failed to get current user',
-      };
+      }
     }
   }
 
-  /**
-   * Check if user is authenticated
-   */
   static isAuthenticated(): boolean {
-    const token = this.getToken();
-    const user = this.getCurrentUser();
-    return !!(token && user);
+    return !!(this.getToken() && this.getCurrentUser())
   }
 
-  /**
-   * Get authentication token
-   */
   static getToken(): string | null {
-    return localStorage.getItem(TOKEN_KEY);
+    if (typeof window === 'undefined') return null
+    const fromStorage = localStorage.getItem(TOKEN_KEY)
+    if (fromStorage) return fromStorage
+    const fromCookie = readAccessTokenCookie()
+    if (fromCookie) {
+      localStorage.setItem(TOKEN_KEY, fromCookie)
+      return fromCookie
+    }
+    return null
   }
 
-  /**
-   * Clear all authentication data
-   */
   static clearAuthData(): void {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
+    localStorage.removeItem(TOKEN_KEY)
+    localStorage.removeItem(USER_KEY)
+    clearAccessTokenCookie()
   }
 
-  /**
-   * Register new user
-   */
   static async register(userData: {
-    email: string;
-    password: string;
-    name: string;
-    role?: 'user' | 'admin' | 'researcher';
-  }): Promise<ApiResponse<{ user: User; token: string }>> {
+    email: string
+    password: string
+    name?: string
+    role?: 'user' | 'admin' | 'researcher'
+  }): Promise<ApiResponse<AuthSessionResponse | null>> {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+      const response = await fetch(`${AUTH_API_ROOT}/register`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userData.email, password: userData.password }),
+      })
+
+      if (response.status === 202) {
+        const body = await response.json().catch(() => ({}))
+        return {
+          data: null,
+          success: true,
+          message: parseFastApiDetail(body) || 'Confirm your email, then sign in.',
+        }
+      }
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(parseFastApiDetail(errorData))
       }
 
-      const result = await response.json();
-      
-      // Store token and user data
-      if (result.token) {
-        localStorage.setItem(TOKEN_KEY, result.token);
-      }
-      if (result.user) {
-        localStorage.setItem(USER_KEY, JSON.stringify(result.user));
-      }
+      const result = (await response.json()) as AuthSessionResponse
+      persistSession(result.session, result.user)
 
       return {
         data: result,
         success: true,
         message: 'Registration successful',
-      };
+      }
     } catch (error) {
       return {
         data: null,
         success: false,
         error: error instanceof Error ? error.message : 'Registration failed',
-      };
+      }
     }
   }
 
-  /**
-   * Update user profile
-   */
-  static async updateProfile(profileData: Partial<UserProfile>): Promise<ApiResponse<User>> {
-    try {
-      const token = this.getToken();
-      if (!token) {
-        return {
-          data: null,
-          success: false,
-          error: 'No authentication token found',
-        };
-      }
-
-      const response = await fetch(`${API_BASE_URL}/auth/profile`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(profileData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      
-      // Update stored user data
-      if (result.user) {
-        localStorage.setItem(USER_KEY, JSON.stringify(result.user));
-      }
-
-      return {
-        data: result.user || result,
-        success: true,
-        message: 'Profile updated successfully',
-      };
-    } catch (error) {
-      return {
-        data: null,
-        success: false,
-        error: error instanceof Error ? error.message : 'Failed to update profile',
-      };
+  static async updateProfile(_profileData: Partial<import('../types/user').UserProfile>): Promise<ApiResponse<User>> {
+    return {
+      data: null as unknown as User,
+      success: false,
+      error: 'Profile update is out of scope for the current backend auth contract (FE-ACCOUNT / FE-PAGES).',
     }
   }
 
-  /**
-   * Change password
-   */
-  static async changePassword(passwordData: {
-    currentPassword: string;
-    newPassword: string;
+  static async changePassword(_passwordData: {
+    currentPassword: string
+    newPassword: string
   }): Promise<ApiResponse<{ changed: boolean }>> {
-    try {
-      const token = this.getToken();
-      if (!token) {
-        return {
-          data: null,
-          success: false,
-          error: 'No authentication token found',
-        };
-      }
-
-      const response = await fetch(`${API_BASE_URL}/auth/change-password`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(passwordData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-
-      return {
-        data: result,
-        success: true,
-        message: 'Password changed successfully',
-      };
-    } catch (error) {
-      return {
-        data: null,
-        success: false,
-        error: error instanceof Error ? error.message : 'Failed to change password',
-      };
+    return {
+      data: null as unknown as { changed: boolean },
+      success: false,
+      error: 'Password change is not exposed on the FE-FOUNDATION-A auth API.',
     }
   }
 
-  /**
-   * Refresh authentication token
-   */
   static async refreshToken(): Promise<ApiResponse<{ token: string }>> {
-    try {
-      const token = this.getToken();
-      if (!token) {
-        return {
-          data: null,
-          success: false,
-          error: 'No authentication token found',
-        };
-      }
-
-      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        this.clearAuthData();
-        return {
-          data: null,
-          success: false,
-          error: 'Token refresh failed',
-        };
-      }
-
-      const result = await response.json();
-      
-      // Update stored token
-      if (result.token) {
-        localStorage.setItem(TOKEN_KEY, result.token);
-      }
-
-      return {
-        data: result,
-        success: true,
-        message: 'Token refreshed successfully',
-      };
-    } catch (error) {
-      this.clearAuthData();
-      return {
-        data: null,
-        success: false,
-        error: error instanceof Error ? error.message : 'Failed to refresh token',
-      };
+    return {
+      data: null as unknown as { token: string },
+      success: false,
+      error: 'Token refresh is not implemented for the FastAPI auth contract',
     }
   }
 }
