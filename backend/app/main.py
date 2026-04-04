@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import analysis, upload, health, alias_api, questionnaire
+from app.routes import analysis, upload, health, alias_api, questionnaire, auth
 
 app = FastAPI(title="HealthIQ-AI")
 
@@ -23,3 +23,4 @@ app.include_router(upload.router, prefix="/api/upload")
 app.include_router(analysis.router, prefix="/api/analysis")
 app.include_router(alias_api.router, prefix="/api/biomarker-aliases")
 app.include_router(questionnaire.router, prefix="/api/questionnaire")
+app.include_router(auth.router, prefix="/api")
