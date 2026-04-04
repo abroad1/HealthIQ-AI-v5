@@ -69,6 +69,24 @@ Expected JSON fixtures (do not casually edit):
 
 ---
 
+## Operator acceptance — VR clinician fixture regeneration (gate / audit basis)
+
+**Recorded:** 2026-04-04  
+**work_id:** `KB-S53-ABVR-HARNESS`  
+
+**Decision:** Operator **explicitly accepts** the regenerated `backend/tests/fixtures/reports/clinician_report_v1_vr.json` as **stale fixture correction**, not a KB-S53 implementation defect.
+
+**Basis (authoritative for merge/gate conversations):**
+
+- VR clinician output matches **existing** deterministic ranking in `compile_report_v1` (`report_compiler_v1.py`): sort by state rank, then confidence, then **ascending `signal_id`** tie-break.
+- On the VR acceptance panel, `signal_alp_low` and `signal_homocysteine_elevation_context` tie on state and confidence; **`signal_alp_low` sorts first lexicographically** — see `docs/investigations/VR_PRIMARY_CONCERN_RANKING_INVESTIGATION.md`.
+- KB-S53 **did not** change pipeline / ranking code.
+- **No** ranking-policy sprint opened under this acceptance; clinical reordering of ties, if desired, is **out of scope** here.
+
+**Related artefacts:** `docs/investigations/KB-S53_VR_FIXTURE_OPERATOR_REVIEW.md` (review pack), `VR_PRIMARY_CONCERN_RANKING_INVESTIGATION.md` (technical trace).
+
+---
+
 ## How to run AB/VR acceptance
 
 From repo root:
