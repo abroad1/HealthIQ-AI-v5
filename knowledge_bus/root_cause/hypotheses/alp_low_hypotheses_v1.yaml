@@ -1,0 +1,75 @@
+schema_version: "v1"
+asset_id: "alp_low_hypotheses_v1"
+updated_at: "2026-04-04"
+primary_signal_id: "signal_alp_low"
+primary_metric: "alp"
+notes:
+  - "KB-S52B governed root-cause asset for low ALP (bone/metabolic pattern signal)."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+  - "confirmatory_tests limited to confirmatory_tests_v1.yaml (no registry expansion)."
+
+hypotheses:
+  - hypothesis_id: "alp_low_persistently_low_pattern_v1"
+    title: "Low ALP — reduced alkaline phosphatase activity pattern"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "ALP is low with a pattern consistent with reduced alkaline phosphatase activity on this structured panel."
+    required_markers:
+      - "alp"
+    confirmatory_markers:
+      - "vitamin_b12"
+      - "folate"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "alp_low_signal_fired"
+        signals_any:
+          - "signal_alp_low"
+        direction: "fired"
+        evidence_for_item: "An ALP-low signal fired, anchoring reduced alkaline phosphatase interpretation."
+        marker_refs:
+          - "alp"
+      - rule_id: "alp_marker_low"
+        markers_all:
+          - "alp"
+        direction: "low"
+        evidence_for_item: "ALP is below range, supporting a low alkaline phosphatase pattern."
+        marker_refs:
+          - "alp"
+    evidence_against_rules:
+      - rule_id: "alp_clearly_high"
+        markers_all:
+          - "alp"
+        direction: "high"
+        evidence_against_item: "ALP is elevated, arguing against a low-ALP pattern."
+        marker_refs:
+          - "alp"
+    missing_data_markers:
+      - marker_id: "zinc"
+        reason: "Zinc status can contextualise acquired low-ALP patterns when available."
+    confirmatory_tests:
+      - "test_full_blood_count_indices_v1"
+      - "test_serum_vitamin_b12_v1"
+
+  - hypothesis_id: "alp_low_nutritional_context_v1"
+    title: "Low ALP with nutritional marker context"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Low ALP co-occurs with nutritional markers that add interpretive context on the same panel."
+    required_markers:
+      - "alp"
+    confirmatory_markers:
+      - "folate"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "folate_low_context"
+        markers_any:
+          - "folate"
+        direction: "low"
+        evidence_for_item: "Folate is low, supporting nutritional context alongside reduced ALP."
+        marker_refs:
+          - "folate"
+    evidence_against_rules: []
+    missing_data_markers: []
+    confirmatory_tests:
+      - "test_serum_folate_v1"
+      - "test_full_blood_count_indices_v1"

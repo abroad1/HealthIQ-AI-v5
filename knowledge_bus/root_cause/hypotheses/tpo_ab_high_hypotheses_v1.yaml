@@ -1,0 +1,76 @@
+schema_version: "v1"
+asset_id: "tpo_ab_high_hypotheses_v1"
+updated_at: "2026-04-04"
+primary_signal_id: "signal_tpo_ab_high"
+primary_metric: "tpo_ab"
+notes:
+  - "KB-S52B governed root-cause asset for elevated TPO antibodies."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+
+hypotheses:
+  - hypothesis_id: "tpo_high_autoimmune_thyroid_pattern_v1"
+    title: "Elevated TPO antibodies — autoimmune thyroid pattern"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "TPO antibodies are elevated with a pattern consistent with thyroid autoimmune activity on this structured panel."
+    required_markers:
+      - "tpo_ab"
+    confirmatory_markers:
+      - "tgab"
+      - "tsh"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "tpo_signal_fired"
+        signals_any:
+          - "signal_tpo_ab_high"
+        direction: "fired"
+        evidence_for_item: "A TPO-antibody-high signal fired, anchoring elevated thyroid peroxidase antibody interpretation."
+        marker_refs:
+          - "tpo_ab"
+      - rule_id: "tpo_ab_marker_high"
+        markers_all:
+          - "tpo_ab"
+        direction: "high"
+        evidence_for_item: "TPO antibodies are above range, supporting sustained antibody elevation context."
+        marker_refs:
+          - "tpo_ab"
+    evidence_against_rules: []
+    missing_data_markers:
+      - marker_id: "tsh"
+        reason: "TSH and free T4 clarify functional thyroid status alongside antibodies."
+      - marker_id: "free_t4"
+        reason: "Free T4 refines euthyroid versus hypothyroid autoimmune patterns."
+    confirmatory_tests:
+      - "test_thyroid_tsh_ft4_v1"
+      - "test_full_blood_count_indices_v1"
+
+  - hypothesis_id: "tpo_high_tsh_axis_context_v1"
+    title: "TPO antibodies with TSH axis context"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "TPO antibody elevation co-occurs with TSH abnormalities that refine autoimmune hypothyroid risk context on the same panel."
+    required_markers:
+      - "tpo_ab"
+    confirmatory_markers:
+      - "tsh"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "tsh_high_with_tpo"
+        markers_any:
+          - "tsh"
+        direction: "high"
+        evidence_for_item: "TSH is elevated, supporting thyroid underactivity context alongside TPO antibodies."
+        marker_refs:
+          - "tsh"
+      - rule_id: "tsh_low_with_tpo"
+        markers_any:
+          - "tsh"
+        direction: "low"
+        evidence_for_item: "TSH is suppressed, supporting discordant axis context that may warrant clinical correlation."
+        marker_refs:
+          - "tsh"
+    evidence_against_rules: []
+    missing_data_markers: []
+    confirmatory_tests:
+      - "test_thyroid_tsh_ft4_v1"
+      - "test_crp_repeat_v1"

@@ -5,6 +5,7 @@ Additional targets (KB-S46): signal_insulin_resistance, signal_systemic_inflamma
 Additional targets (KB-S48): lipid transport and dyslipidaemia canonical signals.
 Additional targets (KB-S50): iron / oxygen transport and related canonical signals.
 Additional targets (KB-S52): hepatic GGT and thyroid TSH leaf signals (Tier 1).
+Additional targets (KB-S52B): remaining hepatic and thyroid hormone / antibody leaf signals (PURE_EXTENSION).
 Signals without a registered loader are skipped with no behavioural change.
 """
 
@@ -44,6 +45,17 @@ from core.knowledge.load_root_cause_hypotheses import (
     load_tsh_high_hypotheses_v1,
     load_tsh_hypotheses_v1,
     load_tsh_low_hypotheses_v1,
+    load_alp_high_hypotheses_v1,
+    load_alp_low_hypotheses_v1,
+    load_bilirubin_high_hypotheses_v1,
+    load_free_t3_high_hypotheses_v1,
+    load_free_t3_low_hypotheses_v1,
+    load_free_t4_high_hypotheses_v1,
+    load_free_t4_low_hypotheses_v1,
+    load_hepatic_metabolic_stress_hypotheses_v1,
+    load_hyperbilirubinemia_hypotheses_v1,
+    load_tgab_high_hypotheses_v1,
+    load_tpo_ab_high_hypotheses_v1,
 )
 
 _ROOT_CAUSE_TARGETS = [
@@ -68,6 +80,17 @@ _ROOT_CAUSE_TARGETS = [
     ("signal_ggt_high", load_ggt_high_hypotheses_v1),
     ("signal_tsh_high", load_tsh_high_hypotheses_v1),
     ("signal_tsh_low", load_tsh_low_hypotheses_v1),
+    ("signal_hepatic_metabolic_stress", load_hepatic_metabolic_stress_hypotheses_v1),
+    ("signal_alp_high", load_alp_high_hypotheses_v1),
+    ("signal_alp_low", load_alp_low_hypotheses_v1),
+    ("signal_bilirubin_high", load_bilirubin_high_hypotheses_v1),
+    ("signal_hyperbilirubinemia", load_hyperbilirubinemia_hypotheses_v1),
+    ("signal_free_t3_high", load_free_t3_high_hypotheses_v1),
+    ("signal_free_t3_low", load_free_t3_low_hypotheses_v1),
+    ("signal_free_t4_high", load_free_t4_high_hypotheses_v1),
+    ("signal_free_t4_low", load_free_t4_low_hypotheses_v1),
+    ("signal_tgab_high", load_tgab_high_hypotheses_v1),
+    ("signal_tpo_ab_high", load_tpo_ab_high_hypotheses_v1),
 ]
 
 

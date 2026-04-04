@@ -1,0 +1,75 @@
+schema_version: "v1"
+asset_id: "hyperbilirubinemia_hypotheses_v1"
+updated_at: "2026-04-04"
+primary_signal_id: "signal_hyperbilirubinemia"
+primary_metric: "bilirubin"
+notes:
+  - "KB-S52B governed root-cause asset for signal_hyperbilirubinemia (general hyperbilirubinaemia framing)."
+  - "Framing emphasises bilirubin-led patterns and ALP context for benign unconjugated-dominant discussion vs cholestatic patterns — not a diagnosis."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+
+hypotheses:
+  - hypothesis_id: "hbn_bilirubin_led_pattern_v1"
+    title: "Hyperbilirubinaemia — bilirubin-led panel pattern"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "Bilirubin is elevated as a leading signal on this panel, with interpretation depending on concurrent liver enzyme patterns."
+    required_markers:
+      - "bilirubin"
+    confirmatory_markers:
+      - "alp"
+      - "alt"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "hbn_signal_fired"
+        signals_any:
+          - "signal_hyperbilirubinemia"
+        direction: "fired"
+        evidence_for_item: "A hyperbilirubinaemia signal fired, anchoring elevated bilirubin interpretation."
+        marker_refs:
+          - "bilirubin"
+      - rule_id: "bilirubin_high_marker"
+        markers_all:
+          - "bilirubin"
+        direction: "high"
+        evidence_for_item: "Bilirubin is above range, supporting hyperbilirubinaemia context."
+        marker_refs:
+          - "bilirubin"
+    evidence_against_rules: []
+    missing_data_markers:
+      - marker_id: "alp"
+        reason: "ALP context helps separate cholestatic patterns from isolated bilirubin elevation."
+    confirmatory_tests:
+      - "test_liver_ggt_alt_ast_v1"
+      - "test_full_blood_count_indices_v1"
+
+  - hypothesis_id: "hbn_alp_within_range_context_v1"
+    title: "Elevated bilirubin with ALP not elevated"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Bilirubin elevation occurs without ALP elevation, a pattern that can be consistent with isolated conjugation or pre-hepatic contributions when clinically appropriate — discuss with a clinician."
+    required_markers:
+      - "bilirubin"
+    confirmatory_markers:
+      - "alp"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "alp_clearly_normal_with_hyperbili"
+        markers_all:
+          - "alp"
+        direction: "clearly_normal"
+        evidence_for_item: "ALP appears within range, reducing support for a dominant cholestatic ALP pattern alongside bilirubin."
+        marker_refs:
+          - "alp"
+    evidence_against_rules:
+      - rule_id: "alp_high_cholestatic"
+        markers_all:
+          - "alp"
+        direction: "high"
+        evidence_against_item: "ALP is elevated, favouring cholestatic or mixed hepatobiliary context over isolated bilirubin-led framing."
+        marker_refs:
+          - "alp"
+    missing_data_markers: []
+    confirmatory_tests:
+      - "test_liver_ggt_alt_ast_v1"
+      - "test_egfr_creatinine_v1"

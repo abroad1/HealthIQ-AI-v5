@@ -150,3 +150,47 @@ def load_transferrin_high_hypotheses_v1() -> Dict[str, Any]:
 
 def load_transferrin_low_hypotheses_v1() -> Dict[str, Any]:
     return load_root_cause_hypotheses_asset_v1("transferrin_low_hypotheses_v1.yaml")
+
+
+def load_hepatic_metabolic_stress_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("hepatic_metabolic_stress_hypotheses_v1.yaml")
+
+
+def load_alp_high_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("alp_high_hypotheses_v1.yaml")
+
+
+def load_alp_low_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("alp_low_hypotheses_v1.yaml")
+
+
+def load_bilirubin_high_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("bilirubin_high_hypotheses_v1.yaml")
+
+
+def load_hyperbilirubinemia_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("hyperbilirubinemia_hypotheses_v1.yaml")
+
+
+def load_free_t3_high_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("free_t3_high_hypotheses_v1.yaml")
+
+
+def load_free_t3_low_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("free_t3_low_hypotheses_v1.yaml")
+
+
+def load_free_t4_high_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("free_t4_high_hypotheses_v1.yaml")
+
+
+def load_free_t4_low_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("free_t4_low_hypotheses_v1.yaml")
+
+
+def load_tgab_high_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("tgab_high_hypotheses_v1.yaml")
+
+
+def load_tpo_ab_high_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("tpo_ab_high_hypotheses_v1.yaml")
