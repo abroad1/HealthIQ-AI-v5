@@ -1,0 +1,73 @@
+schema_version: "v1"
+asset_id: "iron_overload_context_hypotheses_v1"
+updated_at: "2026-04-04"
+primary_signal_id: "signal_iron_overload_context"
+primary_metric: "ferritin"
+notes:
+  - "KB-S50 governed root-cause asset for iron overload context (ferritin-led investigation framing)."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+
+hypotheses:
+  - hypothesis_id: "ioc_context_signal_anchor_v1"
+    title: "Iron overload context pattern"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "Iron overload context is active with ferritin elevation consistent with structured overload investigation framing on this panel."
+    required_markers:
+      - "ferritin"
+    confirmatory_markers:
+      - "iron"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "ioc_signal_fired"
+        signals_any:
+          - "signal_iron_overload_context"
+        direction: "fired"
+        evidence_for_item: "An iron overload context signal fired, anchoring ferritin-led overload interpretation."
+        marker_refs:
+          - "ferritin"
+      - rule_id: "ferritin_high_support"
+        markers_any:
+          - "ferritin"
+        direction: "high"
+        evidence_for_item: "Ferritin is elevated relative to range, supporting iron storage elevation context."
+        marker_refs:
+          - "ferritin"
+    evidence_against_rules:
+      - rule_id: "ferritin_clearly_low"
+        markers_all:
+          - "ferritin"
+        direction: "low"
+        evidence_against_item: "Ferritin is low, which argues against a classic overload storage pattern in isolation."
+        marker_refs:
+          - "ferritin"
+    missing_data_markers:
+      - marker_id: "transferrin_saturation"
+        reason: "Saturation helps separate storage elevation from inflammatory ferritin elevation when available."
+    confirmatory_tests:
+      - "test_liver_ggt_alt_ast_v1"
+      - "test_full_blood_count_indices_v1"
+
+  - hypothesis_id: "ioc_hepatic_stress_overlap_v1"
+    title: "Hepatic enzyme overlap with overload context"
+    safety_class: "monitoring"
+    evidence_strength: "exploratory"
+    summary_template: "Overload context appears alongside hepatic transaminase signals that can co-occur when iron-related stress patterns are present."
+    required_markers:
+      - "ferritin"
+    confirmatory_markers:
+      - "alt"
+      - "ast"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "alt_high_overload"
+        markers_any:
+          - "alt"
+        direction: "high"
+        evidence_for_item: "ALT is elevated, supporting hepatic stress that may accompany ferritin-led overload context."
+        marker_refs:
+          - "alt"
+    evidence_against_rules: []
+    missing_data_markers: []
+    confirmatory_tests:
+      - "test_liver_ggt_alt_ast_v1"

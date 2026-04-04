@@ -1,0 +1,76 @@
+schema_version: "v1"
+asset_id: "hemoglobin_low_hypotheses_v1"
+updated_at: "2026-04-04"
+primary_signal_id: "signal_hemoglobin_low"
+primary_metric: "hemoglobin"
+notes:
+  - "KB-S50 governed root-cause asset for low haemoglobin (anaemia signal)."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+
+hypotheses:
+  - hypothesis_id: "hbl_anaemia_anchor_v1"
+    title: "Low haemoglobin pattern"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "Haemoglobin is reduced with a pattern consistent with anaemia context on this structured panel."
+    required_markers:
+      - "hemoglobin"
+    confirmatory_markers:
+      - "hematocrit"
+      - "mcv"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "hbl_signal_fired"
+        signals_any:
+          - "signal_hemoglobin_low"
+        direction: "fired"
+        evidence_for_item: "A haemoglobin-low signal fired, anchoring reduced oxygen-carrying capacity context."
+        marker_refs:
+          - "hemoglobin"
+      - rule_id: "hemoglobin_low_marker"
+        markers_all:
+          - "hemoglobin"
+        direction: "low"
+        evidence_for_item: "Haemoglobin is below range, supporting anaemia framing."
+        marker_refs:
+          - "hemoglobin"
+    evidence_against_rules:
+      - rule_id: "hemoglobin_high_normal"
+        markers_all:
+          - "hemoglobin"
+        direction: "clearly_normal"
+        evidence_against_item: "Haemoglobin appears within range, arguing against sustained low-haemoglobin pattern."
+        marker_refs:
+          - "hemoglobin"
+    missing_data_markers:
+      - marker_id: "ferritin"
+        reason: "Ferritin distinguishes iron deficiency from other anaemia mechanisms."
+    confirmatory_tests:
+      - "test_full_blood_count_indices_v1"
+      - "test_serum_folate_v1"
+
+  - hypothesis_id: "hbl_iron_restriction_context_v1"
+    title: "Iron-restriction context with low haemoglobin"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Low haemoglobin co-occurs with low ferritin consistent with iron-restricted erythropoiesis patterns."
+    required_markers:
+      - "hemoglobin"
+    confirmatory_markers:
+      - "ferritin"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "ferritin_low_with_hbl"
+        markers_any:
+          - "ferritin"
+        direction: "low"
+        evidence_for_item: "Ferritin is low, supporting depleted stores alongside reduced haemoglobin."
+        marker_refs:
+          - "ferritin"
+    evidence_against_rules: []
+    missing_data_markers:
+      - marker_id: "vitamin_b12"
+        reason: "B12 deficiency can produce macrocytic anaemia patterns distinct from iron restriction."
+    confirmatory_tests:
+      - "test_serum_vitamin_b12_v1"
+      - "test_full_blood_count_indices_v1"

@@ -268,6 +268,23 @@ phenotypes:
       status: "pending"
     evidence_notes: "Documents inflammation-iron coupling as a governed placeholder pending research-package backing."
 
+  - phenotype_id: "ph_iron_overload_v1"
+    name: "Iron overload context stub"
+    description: "Minimal synthetic recognition pattern for iron overload context with ferritin-led elevation. KB-S50 bounded stub — not a full clinical overload suite."
+    systems_involved:
+      - "hematologic"
+      - "hepatic"
+    required_signals:
+      - "signal_iron_overload_context"
+    optional_signals:
+      - "signal_ferritin_high"
+    required_edges: []
+    synthetic_fixture_refs:
+      - "ph_iron_overload_v1.json"
+    chain_expectations:
+      status: "pending"
+    evidence_notes: "Structural placeholder for overload framing; expand only with research promotion."
+
   - phenotype_id: "ph_hba1c_metabolic_stress_v1"
     name: "HbA1c metabolic stress pattern"
     description: "Elevated HbA1c with dyslipidaemic and hepatic context markers used to strengthen synthetic WHY-layer regression coverage."

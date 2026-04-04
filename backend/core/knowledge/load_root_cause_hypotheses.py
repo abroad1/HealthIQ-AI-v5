@@ -63,7 +63,7 @@ def _load_hypotheses_asset(asset_filename: str) -> Dict[str, Any]:
     return {"path": str(path), "payload": payload, "hypotheses": validated}
 
 
-@lru_cache(maxsize=32)
+@lru_cache(maxsize=64)
 def load_root_cause_hypotheses_asset_v1(asset_filename: str) -> Dict[str, Any]:
     return _load_hypotheses_asset(asset_filename)
 
@@ -106,3 +106,35 @@ def load_hdl_cholesterol_low_hypotheses_v1() -> Dict[str, Any]:
 
 def load_triglycerides_high_hypotheses_v1() -> Dict[str, Any]:
     return load_root_cause_hypotheses_asset_v1("triglycerides_high_hypotheses_v1.yaml")
+
+
+def load_iron_deficiency_context_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("iron_deficiency_context_hypotheses_v1.yaml")
+
+
+def load_iron_overload_context_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("iron_overload_context_hypotheses_v1.yaml")
+
+
+def load_oxygen_transport_capacity_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("oxygen_transport_capacity_hypotheses_v1.yaml")
+
+
+def load_ferritin_low_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("ferritin_low_hypotheses_v1.yaml")
+
+
+def load_ferritin_high_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("ferritin_high_hypotheses_v1.yaml")
+
+
+def load_hemoglobin_low_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("hemoglobin_low_hypotheses_v1.yaml")
+
+
+def load_transferrin_high_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("transferrin_high_hypotheses_v1.yaml")
+
+
+def load_transferrin_low_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("transferrin_low_hypotheses_v1.yaml")

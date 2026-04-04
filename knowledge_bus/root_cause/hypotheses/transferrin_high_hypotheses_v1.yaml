@@ -1,0 +1,73 @@
+schema_version: "v1"
+asset_id: "transferrin_high_hypotheses_v1"
+updated_at: "2026-04-04"
+primary_signal_id: "signal_transferrin_high"
+primary_metric: "transferrin"
+notes:
+  - "KB-S50 governed root-cause asset for elevated transferrin (transport upregulation context, KB-S61)."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+
+hypotheses:
+  - hypothesis_id: "th_transport_upregulation_v1"
+    title: "Elevated transferrin — transport upregulation context"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "Transferrin is elevated with a pattern consistent with compensatory iron-transport upregulation on this panel."
+    required_markers:
+      - "transferrin"
+    confirmatory_markers:
+      - "ferritin"
+      - "iron"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "th_signal_fired"
+        signals_any:
+          - "signal_transferrin_high"
+        direction: "fired"
+        evidence_for_item: "A transferrin-high signal fired, anchoring transport-capacity interpretation."
+        marker_refs:
+          - "transferrin"
+      - rule_id: "transferrin_high_marker"
+        markers_all:
+          - "transferrin"
+        direction: "high"
+        evidence_for_item: "Transferrin is above range, supporting upregulated transport protein context."
+        marker_refs:
+          - "transferrin"
+    evidence_against_rules:
+      - rule_id: "transferrin_low_against"
+        markers_all:
+          - "transferrin"
+        direction: "low"
+        evidence_against_item: "Transferrin is low, arguing against isolated high-transferrin upregulation."
+        marker_refs:
+          - "transferrin"
+    missing_data_markers:
+      - marker_id: "hemoglobin"
+        reason: "Haemoglobin links transport upregulation to erythroid demand when available."
+    confirmatory_tests:
+      - "test_full_blood_count_indices_v1"
+      - "test_fasting_glucose_insulin_context_v1"
+
+  - hypothesis_id: "th_iron_deficiency_coupling_v1"
+    title: "Low ferritin coupling with high transferrin"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "High transferrin co-occurs with low ferritin consistent with iron-deficiency-type transport response patterns."
+    required_markers:
+      - "transferrin"
+    confirmatory_markers:
+      - "ferritin"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "ferritin_low_with_high_tf"
+        markers_any:
+          - "ferritin"
+        direction: "low"
+        evidence_for_item: "Ferritin is low, supporting depleted stores alongside high transferrin."
+        marker_refs:
+          - "ferritin"
+    evidence_against_rules: []
+    missing_data_markers: []
+    confirmatory_tests:
+      - "test_full_blood_count_indices_v1"

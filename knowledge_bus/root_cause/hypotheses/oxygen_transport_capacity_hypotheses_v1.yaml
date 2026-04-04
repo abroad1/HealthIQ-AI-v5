@@ -1,0 +1,73 @@
+schema_version: "v1"
+asset_id: "oxygen_transport_capacity_hypotheses_v1"
+updated_at: "2026-04-04"
+primary_signal_id: "signal_oxygen_transport_capacity"
+primary_metric: "hemoglobin"
+notes:
+  - "KB-S50 governed root-cause asset for oxygen transport capacity (hemoglobin-centred framing)."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+
+hypotheses:
+  - hypothesis_id: "otc_hemoglobin_anchor_v1"
+    title: "Oxygen transport capacity pattern"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "Oxygen transport capacity signalling reflects haemoglobin-centred red-cell oxygen-carrying context on this structured panel."
+    required_markers:
+      - "hemoglobin"
+    confirmatory_markers:
+      - "hematocrit"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "otc_signal_fired"
+        signals_any:
+          - "signal_oxygen_transport_capacity"
+        direction: "fired"
+        evidence_for_item: "An oxygen transport capacity signal fired, anchoring haemoglobin-led transport interpretation."
+        marker_refs:
+          - "hemoglobin"
+      - rule_id: "hemoglobin_low_support"
+        markers_any:
+          - "hemoglobin"
+        direction: "low"
+        evidence_for_item: "Haemoglobin is below range, supporting reduced oxygen-carrying capacity context."
+        marker_refs:
+          - "hemoglobin"
+    evidence_against_rules:
+      - rule_id: "hemoglobin_clearly_normal"
+        markers_all:
+          - "hemoglobin"
+        direction: "clearly_normal"
+        evidence_against_item: "Haemoglobin appears within range, weakening an isolated low-capacity pattern."
+        marker_refs:
+          - "hemoglobin"
+    missing_data_markers:
+      - marker_id: "ferritin"
+        reason: "Ferritin distinguishes iron-restricted from non-iron causes when haemoglobin is reduced."
+    confirmatory_tests:
+      - "test_full_blood_count_indices_v1"
+      - "test_egfr_creatinine_v1"
+
+  - hypothesis_id: "otc_iron_context_coupling_v1"
+    title: "Iron marker coupling with oxygen transport context"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Oxygen transport signals co-occur with iron markers that help interpret capacity change on the same panel."
+    required_markers:
+      - "hemoglobin"
+    confirmatory_markers:
+      - "ferritin"
+      - "iron"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "ferritin_low_with_low_hb"
+        markers_any:
+          - "ferritin"
+        direction: "low"
+        evidence_for_item: "Ferritin is low, supporting iron-store depletion alongside reduced haemoglobin context."
+        marker_refs:
+          - "ferritin"
+    evidence_against_rules: []
+    missing_data_markers: []
+    confirmatory_tests:
+      - "test_full_blood_count_indices_v1"

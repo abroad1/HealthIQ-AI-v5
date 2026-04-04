@@ -3,6 +3,7 @@ KB-S33 deterministic root-cause compiler — bounded signal targets with governe
 
 Additional targets (KB-S46): signal_insulin_resistance, signal_systemic_inflammation.
 Additional targets (KB-S48): lipid transport and dyslipidaemia canonical signals.
+Additional targets (KB-S50): iron / oxygen transport and related canonical signals.
 Signals without a registered loader are skipped with no behavioural change.
 """
 
@@ -22,13 +23,21 @@ from core.contracts.root_cause_v1 import (
 from core.knowledge.load_confirmatory_tests_registry import load_confirmatory_tests_registry_v1
 from core.knowledge.load_root_cause_hypotheses import (
     load_alt_hypotheses_v1,
+    load_ferritin_high_hypotheses_v1,
+    load_ferritin_low_hypotheses_v1,
     load_hba1c_hypotheses_v1,
     load_hdl_cholesterol_low_hypotheses_v1,
+    load_hemoglobin_low_hypotheses_v1,
     load_hcy_hypotheses_v1,
     load_insulin_resistance_hypotheses_v1,
+    load_iron_deficiency_context_hypotheses_v1,
+    load_iron_overload_context_hypotheses_v1,
     load_ldl_cholesterol_high_hypotheses_v1,
     load_lipid_transport_dysfunction_hypotheses_v1,
+    load_oxygen_transport_capacity_hypotheses_v1,
     load_systemic_inflammation_hypotheses_v1,
+    load_transferrin_high_hypotheses_v1,
+    load_transferrin_low_hypotheses_v1,
     load_triglycerides_high_hypotheses_v1,
     load_tsh_hypotheses_v1,
 )
@@ -44,6 +53,14 @@ _ROOT_CAUSE_TARGETS = [
     ("signal_ldl_cholesterol_high", load_ldl_cholesterol_high_hypotheses_v1),
     ("signal_hdl_cholesterol_low", load_hdl_cholesterol_low_hypotheses_v1),
     ("signal_triglycerides_high", load_triglycerides_high_hypotheses_v1),
+    ("signal_iron_deficiency_context", load_iron_deficiency_context_hypotheses_v1),
+    ("signal_iron_overload_context", load_iron_overload_context_hypotheses_v1),
+    ("signal_oxygen_transport_capacity", load_oxygen_transport_capacity_hypotheses_v1),
+    ("signal_ferritin_low", load_ferritin_low_hypotheses_v1),
+    ("signal_ferritin_high", load_ferritin_high_hypotheses_v1),
+    ("signal_hemoglobin_low", load_hemoglobin_low_hypotheses_v1),
+    ("signal_transferrin_high", load_transferrin_high_hypotheses_v1),
+    ("signal_transferrin_low", load_transferrin_low_hypotheses_v1),
 ]
 
 

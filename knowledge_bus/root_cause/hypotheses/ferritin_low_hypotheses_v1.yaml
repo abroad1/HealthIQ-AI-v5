@@ -1,0 +1,73 @@
+schema_version: "v1"
+asset_id: "ferritin_low_hypotheses_v1"
+updated_at: "2026-04-04"
+primary_signal_id: "signal_ferritin_low"
+primary_metric: "ferritin"
+notes:
+  - "KB-S50 governed root-cause asset for low ferritin (store depletion signal)."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+
+hypotheses:
+  - hypothesis_id: "fl_depleted_stores_v1"
+    title: "Low ferritin — depleted iron stores pattern"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "Ferritin is low with a pattern consistent with reduced iron stores on this panel."
+    required_markers:
+      - "ferritin"
+    confirmatory_markers:
+      - "hemoglobin"
+      - "iron"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "fl_signal_fired"
+        signals_any:
+          - "signal_ferritin_low"
+        direction: "fired"
+        evidence_for_item: "A ferritin-low signal fired, anchoring depleted-store interpretation."
+        marker_refs:
+          - "ferritin"
+      - rule_id: "ferritin_low_marker"
+        markers_all:
+          - "ferritin"
+        direction: "low"
+        evidence_for_item: "Ferritin is below range, supporting iron store depletion framing."
+        marker_refs:
+          - "ferritin"
+    evidence_against_rules:
+      - rule_id: "ferritin_high_against"
+        markers_all:
+          - "ferritin"
+        direction: "high"
+        evidence_against_item: "Ferritin is elevated, arguing against isolated depleted-store framing."
+        marker_refs:
+          - "ferritin"
+    missing_data_markers:
+      - marker_id: "crp"
+        reason: "CRP helps interpret ferritin when inflammation may suppress or mask stores."
+    confirmatory_tests:
+      - "test_full_blood_count_indices_v1"
+      - "test_crp_repeat_v1"
+
+  - hypothesis_id: "fl_anemia_progression_context_v1"
+    title: "Low ferritin with anaemia progression context"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Low ferritin co-occurs with reduced haemoglobin consistent with iron-restricted erythropoiesis patterns."
+    required_markers:
+      - "ferritin"
+    confirmatory_markers:
+      - "hemoglobin"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "hb_low_with_low_ferritin"
+        markers_any:
+          - "hemoglobin"
+        direction: "low"
+        evidence_for_item: "Haemoglobin is low, supporting anaemia context alongside low ferritin."
+        marker_refs:
+          - "hemoglobin"
+    evidence_against_rules: []
+    missing_data_markers: []
+    confirmatory_tests:
+      - "test_full_blood_count_indices_v1"
