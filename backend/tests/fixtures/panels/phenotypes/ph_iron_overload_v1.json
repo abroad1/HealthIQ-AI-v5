@@ -1,0 +1,10 @@
+{
+  "panel_id": "ph_iron_overload_v1",
+  "user": { "age": 52, "sex": "male" },
+  "biomarkers": {
+    "ferritin": { "value": 520, "unit": "ug/L", "reference_range": { "min": 30.0, "max": 400.0, "unit": "ug/L", "source": "lab" } },
+    "iron": { "value": 38, "unit": "umol/L", "reference_range": { "min": 10.0, "max": 30.0, "unit": "umol/L", "source": "lab" } },
+    "alt": { "value": 62, "unit": "U/L", "reference_range": { "min": 0.0, "max": 55.0, "unit": "U/L", "source": "lab" } },
+    "ast": { "value": 48, "unit": "U/L", "reference_range": { "min": 0.0, "max": 45.0, "unit": "U/L", "source": "lab" } }
+  }
+}

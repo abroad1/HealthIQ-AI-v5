@@ -1,0 +1,75 @@
+schema_version: "v1"
+asset_id: "iron_deficiency_context_hypotheses_v1"
+updated_at: "2026-04-04"
+primary_signal_id: "signal_iron_deficiency_context"
+primary_metric: "ferritin"
+notes:
+  - "KB-S50 governed root-cause asset for iron deficiency context (composite ferritin-led framing)."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+  - "confirmatory_tests limited to confirmatory_tests_v1.yaml (no registry expansion in KB-S50)."
+
+hypotheses:
+  - hypothesis_id: "idc_context_signal_anchor_v1"
+    title: "Iron deficiency context pattern"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "Iron deficiency context is active on this panel with ferritin-led interpretation consistent with structured deficiency framing."
+    required_markers:
+      - "ferritin"
+    confirmatory_markers:
+      - "hemoglobin"
+      - "iron"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "idc_signal_fired"
+        signals_any:
+          - "signal_iron_deficiency_context"
+        direction: "fired"
+        evidence_for_item: "An iron deficiency context signal fired, anchoring governed deficiency interpretation."
+        marker_refs:
+          - "ferritin"
+      - rule_id: "ferritin_low_support"
+        markers_any:
+          - "ferritin"
+        direction: "low"
+        evidence_for_item: "Ferritin is low relative to range, supporting depleted iron stores in this context."
+        marker_refs:
+          - "ferritin"
+    evidence_against_rules:
+      - rule_id: "ferritin_clearly_normal_high"
+        markers_all:
+          - "ferritin"
+        direction: "high"
+        evidence_against_item: "Ferritin is not low, which weakens a classic depleted-stores pattern in isolation."
+        marker_refs:
+          - "ferritin"
+    missing_data_markers:
+      - marker_id: "transferrin_saturation"
+        reason: "Transferrin saturation refines functional iron availability when ferritin is discordant."
+    confirmatory_tests:
+      - "test_full_blood_count_indices_v1"
+      - "test_crp_repeat_v1"
+
+  - hypothesis_id: "idc_inflammatory_coupling_v1"
+    title: "Inflammatory coupling with iron deficiency context"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Iron deficiency context co-occurs with inflammatory markers that can modulate ferritin interpretation on the same panel."
+    required_markers:
+      - "ferritin"
+    confirmatory_markers:
+      - "crp"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "crp_high_with_idc"
+        markers_any:
+          - "crp"
+        direction: "high"
+        evidence_for_item: "CRP is elevated, supporting inflammatory context alongside iron deficiency signalling."
+        marker_refs:
+          - "crp"
+    evidence_against_rules: []
+    missing_data_markers: []
+    confirmatory_tests:
+      - "test_crp_repeat_v1"
+      - "test_full_blood_count_indices_v1"

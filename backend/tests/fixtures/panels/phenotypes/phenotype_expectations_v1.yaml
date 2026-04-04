@@ -104,6 +104,25 @@ phenotypes:
       min_hypothesis_count: 0
       applies_to_signal_id: ""
 
+  - phenotype_id: "ph_iron_overload_v1"
+    chain_coverage_status: "pending"
+    clinical_intent: "Iron overload context stub; asserts overload context signal firing on synthetic high-ferritin panel; no chain enforcement."
+    fixture_filename: "ph_iron_overload_v1.json"
+    expected_signals:
+      must_fire:
+        - "signal_iron_overload_context"
+      must_not_fire: []
+    expected_chains:
+      must_exist: false
+      min_count: 0
+      min_chain_confidence: 0.0
+      must_include_any_signal: []
+      optional_expected_sequences: []
+    expected_root_cause:
+      must_exist: false
+      min_hypothesis_count: 0
+      applies_to_signal_id: ""
+
   - phenotype_id: "ph_hba1c_metabolic_stress_v1"
     chain_coverage_status: "pending"
     clinical_intent: "HbA1c-led metabolic stress context should fire HbA1c signal and emit governed HbA1c root-cause hypotheses."

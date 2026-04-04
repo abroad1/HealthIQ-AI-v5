@@ -1,0 +1,72 @@
+schema_version: "v1"
+asset_id: "transferrin_low_hypotheses_v1"
+updated_at: "2026-04-04"
+primary_signal_id: "signal_transferrin_low"
+primary_metric: "transferrin"
+notes:
+  - "KB-S50 governed root-cause asset for low transferrin (negative acute-phase / synthetic context, KB-S61)."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+
+hypotheses:
+  - hypothesis_id: "tl_reduced_transport_capacity_v1"
+    title: "Low transferrin pattern"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "Transferrin is reduced with a pattern consistent with lower circulating iron-binding transport capacity on this panel."
+    required_markers:
+      - "transferrin"
+    confirmatory_markers:
+      - "albumin"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "tl_signal_fired"
+        signals_any:
+          - "signal_transferrin_low"
+        direction: "fired"
+        evidence_for_item: "A transferrin-low signal fired, anchoring reduced transport protein context."
+        marker_refs:
+          - "transferrin"
+      - rule_id: "transferrin_low_marker"
+        markers_all:
+          - "transferrin"
+        direction: "low"
+        evidence_for_item: "Transferrin is below range, supporting reduced transport capacity framing."
+        marker_refs:
+          - "transferrin"
+    evidence_against_rules:
+      - rule_id: "transferrin_high_against"
+        markers_all:
+          - "transferrin"
+        direction: "high"
+        evidence_against_item: "Transferrin is elevated, arguing against isolated low-transferrin pattern."
+        marker_refs:
+          - "transferrin"
+    missing_data_markers:
+      - marker_id: "crp"
+        reason: "CRP helps distinguish inflammatory suppression from nutritional synthetic failure."
+    confirmatory_tests:
+      - "test_crp_repeat_v1"
+      - "test_liver_ggt_alt_ast_v1"
+
+  - hypothesis_id: "tl_inflammatory_suppression_v1"
+    title: "Inflammatory context with low transferrin"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Low transferrin co-occurs with CRP elevation consistent with negative acute-phase suppression patterns."
+    required_markers:
+      - "transferrin"
+    confirmatory_markers:
+      - "crp"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "crp_high_low_tf"
+        markers_any:
+          - "crp"
+        direction: "high"
+        evidence_for_item: "CRP is elevated, supporting inflammatory modulation alongside low transferrin."
+        marker_refs:
+          - "crp"
+    evidence_against_rules: []
+    missing_data_markers: []
+    confirmatory_tests:
+      - "test_crp_repeat_v1"
