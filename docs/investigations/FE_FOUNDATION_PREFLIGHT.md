@@ -173,6 +173,7 @@ All routes are public. The `(app)` group exists as a cosmetic layout grouping on
 
 | Surface | File | Action |
 |---------|------|--------|
+| Anon-key Supabase client (auth only) | `backend/core/supabase_anon.py` | **GPT-authorised** — bounded auth support; uses `SUPABASE_ANON_KEY` only; separates auth from service-role storage client (`backend/services/storage/supabase_client.py`) |
 | New auth router | `backend/app/routes/auth.py` | Create — Supabase Auth proxy endpoints |
 | Register endpoint | `POST /api/auth/register` | New — calls `supabase.auth.sign_up()` |
 | Login endpoint | `POST /api/auth/login` | New — calls `supabase.auth.sign_in_with_password()` |
@@ -225,6 +226,7 @@ This decision is already made by the existing repo. Both `@supabase/supabase-js`
 **change_type:** CONTENT (new endpoints and dependencies; does not modify Intelligence Core or analysis pipeline behaviour)
 
 Deliverables:
+- `backend/core/supabase_anon.py` — **GPT-authorised** anon-key Supabase client for auth (not service role); audit basis recorded in `automation_bus/latest_cursor_prompt.md` (Implementation constraints → GPT re-authorisation)
 - `backend/app/routes/auth.py` — auth endpoints proxying Supabase Auth SDK
 - `backend/core/dependencies/auth.py` — `get_current_user` FastAPI dependency using Supabase JWT verification
 - Register auth router in `backend/app/main.py`
