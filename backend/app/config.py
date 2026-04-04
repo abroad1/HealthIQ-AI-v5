@@ -10,6 +10,10 @@ from typing import Optional
 
 class Settings:
     """Application settings."""
+
+    # Supabase Auth (backend): align with frontend NEXT_PUBLIC_SUPABASE_* / .env.local
+    SUPABASE_URL: Optional[str] = os.getenv("SUPABASE_URL")
+    SUPABASE_ANON_KEY: Optional[str] = os.getenv("SUPABASE_ANON_KEY")
     
     # Validation settings
     STRICT_VALIDATION: bool = os.getenv("STRICT_VALIDATION", "false").lower() == "true"
