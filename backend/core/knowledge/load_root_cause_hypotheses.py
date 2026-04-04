@@ -84,6 +84,14 @@ def load_tsh_hypotheses_v1() -> Dict[str, Any]:
     return load_root_cause_hypotheses_asset_v1("tsh_hypotheses_v1.yaml")
 
 
+def load_tsh_high_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("tsh_high_hypotheses_v1.yaml")
+
+
+def load_tsh_low_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("tsh_low_hypotheses_v1.yaml")
+
+
 def load_insulin_resistance_hypotheses_v1() -> Dict[str, Any]:
     return load_root_cause_hypotheses_asset_v1("insulin_resistance_hypotheses_v1.yaml")
 
@@ -126,6 +134,10 @@ def load_ferritin_low_hypotheses_v1() -> Dict[str, Any]:
 
 def load_ferritin_high_hypotheses_v1() -> Dict[str, Any]:
     return load_root_cause_hypotheses_asset_v1("ferritin_high_hypotheses_v1.yaml")
+
+
+def load_ggt_high_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("ggt_high_hypotheses_v1.yaml")
 
 
 def load_hemoglobin_low_hypotheses_v1() -> Dict[str, Any]:

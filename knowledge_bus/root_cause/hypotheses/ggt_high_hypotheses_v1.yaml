@@ -1,0 +1,85 @@
+schema_version: "v1"
+asset_id: "ggt_high_hypotheses_v1"
+updated_at: "2026-04-04"
+primary_signal_id: "signal_ggt_high"
+primary_metric: "ggt"
+notes:
+  - "KB-S52 Tier 1 governed root-cause asset for elevated GGT (hepatic enzyme signal)."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+  - "confirmatory_tests limited to confirmatory_tests_v1.yaml (no registry expansion)."
+
+hypotheses:
+  - hypothesis_id: "ggt_elevated_hepatic_enzyme_v1"
+    title: "Elevated GGT — hepatic enzyme pattern"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "GGT is elevated with a pattern consistent with hepatic enzyme elevation on this structured panel."
+    required_markers:
+      - "ggt"
+    confirmatory_markers:
+      - "alt"
+      - "ast"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "ggt_signal_fired"
+        signals_any:
+          - "signal_ggt_high"
+        direction: "fired"
+        evidence_for_item: "A GGT-high signal fired, anchoring hepatic enzyme elevation interpretation."
+        marker_refs:
+          - "ggt"
+      - rule_id: "ggt_high_marker"
+        markers_all:
+          - "ggt"
+        direction: "high"
+        evidence_for_item: "GGT is above range, supporting sustained gamma-glutamyl transferase elevation context."
+        marker_refs:
+          - "ggt"
+    evidence_against_rules:
+      - rule_id: "ggt_clearly_normal"
+        markers_all:
+          - "ggt"
+        direction: "clearly_normal"
+        evidence_against_item: "GGT appears within range, arguing against an isolated GGT elevation pattern."
+        marker_refs:
+          - "ggt"
+    missing_data_markers:
+      - marker_id: "alt"
+        reason: "ALT refines hepatocellular injury context alongside GGT."
+    confirmatory_tests:
+      - "test_liver_ggt_alt_ast_v1"
+      - "test_crp_repeat_v1"
+
+  - hypothesis_id: "ggt_metabolic_inflammatory_coupling_v1"
+    title: "Metabolic and inflammatory coupling with GGT elevation"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "GGT elevation co-occurs with metabolic or inflammatory markers that often track with hepatic stress patterns."
+    required_markers:
+      - "ggt"
+    confirmatory_markers:
+      - "triglycerides"
+      - "crp"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "triglyceride_high_with_ggt"
+        markers_any:
+          - "triglycerides"
+        direction: "high"
+        evidence_for_item: "Triglycerides are elevated, supporting metabolic coupling with GGT-related hepatic patterns."
+        marker_refs:
+          - "triglycerides"
+      - rule_id: "crp_high_with_ggt"
+        markers_any:
+          - "crp"
+        direction: "high"
+        evidence_for_item: "CRP is elevated, supporting inflammatory context alongside GGT elevation."
+        marker_refs:
+          - "crp"
+    evidence_against_rules: []
+    missing_data_markers:
+      - marker_id: "glucose"
+        reason: "Glucose refines metabolic overlap with hepatic enzyme elevation when available."
+    confirmatory_tests:
+      - "test_ty_g_component_markers_panel_v1"
+      - "test_hba1c_repeat_v1"
