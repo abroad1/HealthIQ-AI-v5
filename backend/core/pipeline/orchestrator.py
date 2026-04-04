@@ -5,6 +5,7 @@ Analysis orchestrator - enforces canonical-only keys and coordinates analysis.
 import hashlib
 import json
 import os
+import re
 import subprocess
 from datetime import UTC, date, datetime
 from typing import Dict, Any, List, Mapping, Optional, Tuple
@@ -757,6 +758,21 @@ class AnalysisOrchestrator:
         except Exception:
             return ""
 
+    @staticmethod
+    def _canonical_burden_system_id_from_cluster_id(cluster_id: str) -> str:
+        """
+        Map ClusterEngineV2 cluster_id ({system}_{n}_biomarkers) to canonical burden system id.
+
+        KB-S54: primary burden grouping must use registry/SSOT system ids, not cluster-scoped keys.
+        """
+        cid = str(cluster_id).strip()
+        if not cid:
+            return cid
+        m = re.fullmatch(r"(.+)_(\d+)_biomarkers", cid)
+        if m:
+            return str(m.group(1)).strip()
+        return cid
+
     def _system_biomarker_map(self, insight_graph: Any) -> Dict[str, List[str]]:
         cluster_summary = insight_graph.cluster_summary if isinstance(insight_graph.cluster_summary, dict) else {}
         clusters = cluster_summary.get("clusters", []) if isinstance(cluster_summary, dict) else []
@@ -766,14 +782,60 @@ class AnalysisOrchestrator:
         for cluster in sorted(clusters, key=lambda c: str((c or {}).get("cluster_id", ""))):
             if not isinstance(cluster, dict):
                 continue
-            system_id = str(cluster.get("cluster_id", "")).strip()
+            raw_cluster_id = str(cluster.get("cluster_id", "")).strip()
+            if not raw_cluster_id:
+                continue
+            system_id = self._canonical_burden_system_id_from_cluster_id(raw_cluster_id)
             if not system_id:
                 continue
             biomarkers = cluster.get("biomarkers", [])
             if not isinstance(biomarkers, list):
                 biomarkers = []
-            out[system_id] = sorted({str(b).strip() for b in biomarkers if str(b).strip()})
+            names = {str(b).strip() for b in biomarkers if str(b).strip()}
+            if system_id in out:
+                out[system_id] = sorted(set(out[system_id]) | names)
+            else:
+                out[system_id] = sorted(names)
         return out
+
+    def _cluster_scoped_raw_burden_diagnostics(
+        self,
+        *,
+        insight_graph: Any,
+        biomarker_stats: Mapping[str, Mapping[str, Any]],
+        audited_registry: Mapping[str, Mapping[str, Any]],
+    ) -> Dict[str, float]:
+        """
+        Per-cluster-engine raw burden using original cluster_id keys (diagnostic only).
+
+        KB-S54: keeps cluster-shaped visibility without polluting canonical system burden vectors.
+        """
+        cluster_summary = insight_graph.cluster_summary if isinstance(insight_graph.cluster_summary, dict) else {}
+        clusters_list = cluster_summary.get("clusters") or []
+        if not isinstance(clusters_list, list):
+            return {}
+        cluster_diag_map: Dict[str, List[str]] = {}
+        for cl in clusters_list:
+            if not isinstance(cl, dict):
+                continue
+            cid = str(cl.get("cluster_id", "")).strip()
+            if not cid:
+                continue
+            bms_raw = cl.get("biomarkers", [])
+            if not isinstance(bms_raw, list):
+                bms_raw = []
+            scoped = sorted(
+                {str(b).strip() for b in bms_raw if str(b).strip() and str(b).strip() in biomarker_stats}
+            )
+            if scoped:
+                cluster_diag_map[cid] = scoped
+        if not cluster_diag_map:
+            return {}
+        return build_raw_system_burden_v1(
+            system_to_biomarkers=cluster_diag_map,
+            biomarker_stats=biomarker_stats,
+            audited_registry=audited_registry,
+        )
 
     def _extract_biomarker_value(self, row: Any) -> Optional[float]:
         if isinstance(row, dict):
@@ -1350,6 +1412,7 @@ class AnalysisOrchestrator:
             has_scorable_inputs = bool(biomarker_stats) and any(
                 bool(bids) for bids in system_to_biomarkers.values()
             )
+            cluster_scoped_raw_for_ig: Dict[str, float] = {}
             lifestyle_artifact: Optional[Dict[str, Any]] = None
             lifestyle_input_hash_value: Optional[str] = None
             if not has_scorable_inputs:
@@ -1373,6 +1436,11 @@ class AnalysisOrchestrator:
                     burden_hash=burden_hash,
                 )
             else:
+                cluster_scoped_raw_for_ig = self._cluster_scoped_raw_burden_diagnostics(
+                    insight_graph=insight_graph,
+                    biomarker_stats=biomarker_stats,
+                    audited_registry=audited_registry,
+                )
                 raw_system_burden_vector = build_raw_system_burden_v1(
                     system_to_biomarkers=system_to_biomarkers,
                     biomarker_stats=biomarker_stats,
@@ -1381,10 +1449,13 @@ class AnalysisOrchestrator:
                 for node in sorted(getattr(insight_graph, "system_states", []), key=lambda n: n.system_id):
                     node_system_id = str(getattr(node, "system_id", "")).strip()
                     if node_system_id and node_system_id != "unknown":
-                        raw_system_burden_vector.setdefault(node_system_id, 0.0)
+                        canon_sid = self._canonical_burden_system_id_from_cluster_id(node_system_id)
+                        raw_system_burden_vector.setdefault(canon_sid, 0.0)
                 burden_driver_system_id = ""
                 if insight_graph_driver and insight_graph_driver != "unknown":
-                    burden_driver_system_id = insight_graph_driver
+                    burden_driver_system_id = self._canonical_burden_system_id_from_cluster_id(
+                        insight_graph_driver
+                    )
                 elif raw_system_burden_vector:
                     burden_driver_system_id = sorted(str(k) for k in raw_system_burden_vector.keys())[0]
                 else:
@@ -1503,6 +1574,9 @@ class AnalysisOrchestrator:
             insight_graph.burden_hash = burden_hash
             insight_graph.burden_validation_status = validation_result.status
             insight_graph.burden_validation_violations = list(validation_result.violations)
+            insight_graph.cluster_scoped_raw_burden = {
+                k: float(cluster_scoped_raw_for_ig[k]) for k in sorted(cluster_scoped_raw_for_ig.keys())
+            }
 
             # Rebuild explainability so burden vectors are replay-stamped in final report.
             explainability_report = build_explainability_report_v1(
@@ -1904,11 +1978,22 @@ class AnalysisOrchestrator:
                 }
                 for k in derived_keys
             }
+            cluster_diag_safe: Dict[str, Any] = {}
+            _cd = getattr(insight_graph, "cluster_scoped_raw_burden", None)
+            if isinstance(_cd, dict):
+                cluster_diag_safe = {str(k): float(v) for k, v in _cd.items()}
+            for ck in sorted(cluster_diag_safe.keys()):
+                derived_components[ck] = {
+                    "raw": float(cluster_diag_safe[ck]),
+                    "adjusted": 0.0,
+                    "capacity": 100,
+                }
             meta["burden_vector"] = {
                 "raw_system_burden_vector": {k: raw_canonical[k] for k in sorted(raw_canonical.keys())},
                 "adjusted_system_burden_vector": {k: adj_canonical[k] for k in sorted(adj_canonical.keys())},
                 "system_capacity_scores": {k: cap_canonical[k] for k in sorted(cap_canonical.keys())},
                 "derived_components": derived_components,
+                "cluster_scoped_raw_burden": {k: cluster_diag_safe[k] for k in sorted(cluster_diag_safe.keys())},
                 "burden_hash": str(getattr(insight_graph, "burden_hash", "")),
                 "validation_status": str(getattr(insight_graph, "burden_validation_status", "")),
                 "validation_violations": list(getattr(insight_graph, "burden_validation_violations", [])),

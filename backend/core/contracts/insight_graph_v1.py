@@ -245,6 +245,7 @@ class InsightGraphV1(BaseModel):
     influence_propagator_version: str = Field(default="")
     capacity_scaler_version: str = Field(default="")
     validation_gate_version: str = Field(default="")
+    # Primary system burden: canonical system IDs only (SSOT system_burden_registry "system" values).
     raw_system_burden_vector: Dict[str, float] = Field(default_factory=dict)
     adjusted_system_burden_vector: Dict[str, float] = Field(default_factory=dict)
     burden_path_distances: Dict[str, float] = Field(default_factory=dict)
@@ -252,6 +253,10 @@ class InsightGraphV1(BaseModel):
     burden_hash: str = Field(default="")
     burden_validation_status: str = Field(default="")
     burden_validation_violations: List[str] = Field(default_factory=list)
+    # KB-S54: per-cluster-engine raw burden keyed by ClusterEngineV2 cluster_id
+    # (e.g. cardiovascular_4_biomarkers). Not authoritative for system-level totals;
+    # use raw_system_burden_vector / adjusted_system_burden_vector for canonical semantics.
+    cluster_scoped_raw_burden: Dict[str, float] = Field(default_factory=dict)
 
     # Biomarker nodes (deterministic order by biomarker_id)
     biomarker_nodes: List[BiomarkerNode] = Field(default_factory=list)

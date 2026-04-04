@@ -55,6 +55,11 @@ def score_clusters(
     derived: List[Dict[str, Any]]
 ) -> List[Dict[str, Any]]:
     """
+    Legacy deterministic cluster scoring (flags + cluster_rules.yaml).
+
+    **Not used by `AnalysisOrchestrator`.** Runtime clustering is `ClusterEngineV2` only (KB-S54).
+    Retained for unit tests and `smoke_cluster_engine_v2.py`.
+
     Score health system clusters based on biomarkers and derived metrics.
     
     Args:

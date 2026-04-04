@@ -3,6 +3,7 @@ v5.3 Sprint 6 - Unit tests for GoldenPanelRunner_v1.
 """
 
 import json
+import re
 import uuid
 import copy
 from datetime import date, datetime
@@ -10,6 +11,7 @@ from pathlib import Path
 
 import pytest
 import yaml
+from core.analytics.system_burden_engine import load_burden_registry
 from core.analytics import signal_interaction_builder as interaction_builder_module
 from core.analytics.ratio_registry import DERIVED_IDS
 from core.analytics.signal_evaluator import SignalRegistry
@@ -921,6 +923,54 @@ def test_ab_vr_interaction_chains_include_homocysteine_context_and_confidence_fl
         isinstance(row, dict) and row.get("signal_id") == "signal_homocysteine_elevation_context"
         for row in signal_results
     )
+
+
+@pytest.mark.parametrize(
+    "fixture_path",
+    acceptance_harness_fixture_paths(),
+    ids=lambda p: p.stem,
+)
+def test_kb54_primary_burden_canonical_and_cluster_diagnostics_separate(tmp_path, fixture_path):
+    """KB-S54: primary burden vectors use SSOT system ids only; cluster diagnostics stay separate."""
+    run_dir, _ = run_golden_panel(
+        fixture_path=fixture_path,
+        output_root=tmp_path / fixture_path.stem,
+        run_id=f"unit-kb54-burden-{fixture_path.stem}",
+        write_narrative=False,
+    )
+    insight = _load_json(run_dir / "insight_graph.json") or {}
+    burden_meta = _load_json(run_dir / "burden_vector.json") or {}
+
+    registry = load_burden_registry()
+    canonical = frozenset(
+        str(r.get("system", "")).strip()
+        for r in registry.values()
+        if isinstance(r, dict) and str(r.get("system", "")).strip()
+    )
+
+    for vec in (
+        insight.get("raw_system_burden_vector") or {},
+        insight.get("adjusted_system_burden_vector") or {},
+    ):
+        for k in vec:
+            assert k in canonical, f"non-canonical primary burden key: {k!r}"
+            assert not k.endswith("_biomarkers"), f"cluster-suffixed key leaked into primary burden: {k!r}"
+
+    assert (burden_meta.get("raw_system_burden_vector") or {}) == (
+        insight.get("raw_system_burden_vector") or {}
+    )
+    assert (burden_meta.get("adjusted_system_burden_vector") or {}) == (
+        insight.get("adjusted_system_burden_vector") or {}
+    )
+    assert (burden_meta.get("cluster_scoped_raw_burden") or {}) == (
+        insight.get("cluster_scoped_raw_burden") or {}
+    )
+
+    cluster_diag = insight.get("cluster_scoped_raw_burden") or {}
+    for ck in cluster_diag:
+        assert re.fullmatch(r".+_\d+_biomarkers", ck), (
+            f"cluster_scoped_raw_burden key expected ClusterEngineV2 shape, got {ck!r}"
+        )
 
 
 def test_interaction_edge_isolation_unrelated_fixture_unchanged(tmp_path, monkeypatch):
