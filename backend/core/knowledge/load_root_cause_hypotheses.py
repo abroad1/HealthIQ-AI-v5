@@ -63,7 +63,7 @@ def _load_hypotheses_asset(asset_filename: str) -> Dict[str, Any]:
     return {"path": str(path), "payload": payload, "hypotheses": validated}
 
 
-@lru_cache(maxsize=8)
+@lru_cache(maxsize=32)
 def load_root_cause_hypotheses_asset_v1(asset_filename: str) -> Dict[str, Any]:
     return _load_hypotheses_asset(asset_filename)
 
@@ -90,3 +90,19 @@ def load_insulin_resistance_hypotheses_v1() -> Dict[str, Any]:
 
 def load_systemic_inflammation_hypotheses_v1() -> Dict[str, Any]:
     return load_root_cause_hypotheses_asset_v1("systemic_inflammation_hypotheses_v1.yaml")
+
+
+def load_lipid_transport_dysfunction_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("lipid_transport_dysfunction_hypotheses_v1.yaml")
+
+
+def load_ldl_cholesterol_high_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("ldl_cholesterol_high_hypotheses_v1.yaml")
+
+
+def load_hdl_cholesterol_low_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("hdl_cholesterol_low_hypotheses_v1.yaml")
+
+
+def load_triglycerides_high_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("triglycerides_high_hypotheses_v1.yaml")

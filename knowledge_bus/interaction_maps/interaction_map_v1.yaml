@@ -1,12 +1,14 @@
 # Interaction map v1.1 keeps the v1 runtime contract and expands edges only within approved pathways.
 map_version: "v1"
-map_revision: "1.1.1"
+map_revision: "1.1.2"
 
 nodes:
   - signal_id: signal_hba1c_high
     system: metabolic
   - signal_id: signal_triglycerides_high
     system: metabolic
+  - signal_id: signal_lipid_transport_dysfunction
+    system: lipid_transport
   - signal_id: signal_ggt_high
     system: hepatic
   - signal_id: signal_alt_high
@@ -38,6 +40,11 @@ nodes:
 
 edges:
   # Pathway 1: metabolic -> hepatic -> inflammatory -> vascular
+  - from_signal: signal_triglycerides_high
+    to_signal: signal_lipid_transport_dysfunction
+    relationship_type: driver
+    evidence_strength: exploratory
+    rationale: Elevated triglycerides often accompany triglyceride-rich lipoprotein and atherogenic particle stress, supporting lipid transport dysfunction as a linked upstream driver pattern.
   - from_signal: signal_triglycerides_high
     to_signal: signal_ggt_high
     relationship_type: consequence

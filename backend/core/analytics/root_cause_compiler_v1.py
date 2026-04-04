@@ -2,6 +2,7 @@
 KB-S33 deterministic root-cause compiler — bounded signal targets with governed hypothesis assets.
 
 Additional targets (KB-S46): signal_insulin_resistance, signal_systemic_inflammation.
+Additional targets (KB-S48): lipid transport and dyslipidaemia canonical signals.
 Signals without a registered loader are skipped with no behavioural change.
 """
 
@@ -22,9 +23,13 @@ from core.knowledge.load_confirmatory_tests_registry import load_confirmatory_te
 from core.knowledge.load_root_cause_hypotheses import (
     load_alt_hypotheses_v1,
     load_hba1c_hypotheses_v1,
+    load_hdl_cholesterol_low_hypotheses_v1,
     load_hcy_hypotheses_v1,
     load_insulin_resistance_hypotheses_v1,
+    load_ldl_cholesterol_high_hypotheses_v1,
+    load_lipid_transport_dysfunction_hypotheses_v1,
     load_systemic_inflammation_hypotheses_v1,
+    load_triglycerides_high_hypotheses_v1,
     load_tsh_hypotheses_v1,
 )
 
@@ -35,6 +40,10 @@ _ROOT_CAUSE_TARGETS = [
     ("signal_thyroid_tsh_context", load_tsh_hypotheses_v1),
     ("signal_insulin_resistance", load_insulin_resistance_hypotheses_v1),
     ("signal_systemic_inflammation", load_systemic_inflammation_hypotheses_v1),
+    ("signal_lipid_transport_dysfunction", load_lipid_transport_dysfunction_hypotheses_v1),
+    ("signal_ldl_cholesterol_high", load_ldl_cholesterol_high_hypotheses_v1),
+    ("signal_hdl_cholesterol_low", load_hdl_cholesterol_low_hypotheses_v1),
+    ("signal_triglycerides_high", load_triglycerides_high_hypotheses_v1),
 ]
 
 
