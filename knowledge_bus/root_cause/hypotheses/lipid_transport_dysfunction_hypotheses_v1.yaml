@@ -1,0 +1,115 @@
+schema_version: "v1"
+asset_id: "lipid_transport_dysfunction_hypotheses_v1"
+updated_at: "2026-04-04"
+primary_signal_id: "signal_lipid_transport_dysfunction"
+primary_metric: "non_hdl_cholesterol"
+notes:
+  - "KB-S48 governed root-cause asset for lipid transport dysfunction (non-HDL–anchored context)."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+  - "All confirmatory_tests must reference knowledge_bus/registries/confirmatory_tests_v1.yaml."
+
+hypotheses:
+  - hypothesis_id: "lipid_non_hdl_atherogenic_burden_v1"
+    title: "Atherogenic non-HDL particle burden pattern"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "Non-HDL cholesterol context aligns with atherogenic particle burden framing on this structured panel."
+    required_markers:
+      - "non_hdl_cholesterol"
+    confirmatory_markers:
+      - "triglycerides"
+      - "ldl_cholesterol"
+    differentiator_markers:
+      - "hdl_cholesterol"
+    evidence_for_rules:
+      - rule_id: "lipid_transport_signal_fired"
+        signals_any:
+          - "signal_lipid_transport_dysfunction"
+        direction: "fired"
+        evidence_for_item: "A lipid transport dysfunction signal fired, anchoring non-HDL–related atherogenic context."
+        marker_refs:
+          - "non_hdl_cholesterol"
+      - rule_id: "non_hdl_high_support"
+        markers_all:
+          - "non_hdl_cholesterol"
+        direction: "high"
+        evidence_for_item: "Non-HDL cholesterol is elevated relative to range, supporting atherogenic particle excess interpretation."
+        marker_refs:
+          - "non_hdl_cholesterol"
+    evidence_against_rules:
+      - rule_id: "non_hdl_clearly_normal"
+        markers_all:
+          - "non_hdl_cholesterol"
+        direction: "clearly_normal"
+        evidence_against_item: "Non-HDL cholesterol appears clearly within range, weakening isolated atherogenic burden framing."
+        marker_refs:
+          - "non_hdl_cholesterol"
+    missing_data_markers:
+      - marker_id: "apolipoprotein_b"
+        reason: "ApoB refines particle number when non-HDL context is borderline."
+      - marker_id: "lipoprotein_a"
+        reason: "Lp(a) adds inherited vascular risk context alongside atherogenic markers."
+    confirmatory_tests:
+      - "test_thyroid_tsh_ft4_v1"
+      - "test_hba1c_repeat_v1"
+      - "test_liver_ggt_alt_ast_v1"
+
+  - hypothesis_id: "lipid_tg_rich_lipoprotein_stress_v1"
+    title: "Triglyceride-rich lipoprotein stress context"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Triglyceride elevation accompanies lipid transport signalling consistent with triglyceride-rich lipoprotein stress patterns."
+    required_markers:
+      - "non_hdl_cholesterol"
+    confirmatory_markers:
+      - "triglycerides"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "triglyceride_high_support"
+        markers_any:
+          - "triglycerides"
+        direction: "high"
+        evidence_for_item: "Triglycerides are elevated, supporting VLDL/remnant-rich patterns that often co-occur with transport dysfunction."
+        marker_refs:
+          - "triglycerides"
+    evidence_against_rules: []
+    missing_data_markers:
+      - marker_id: "glucose"
+        reason: "Fasting glucose clarifies glycaemic coupling with triglyceride-rich patterns."
+    confirmatory_tests:
+      - "test_ty_g_component_markers_panel_v1"
+      - "test_liver_ggt_alt_ast_v1"
+
+  - hypothesis_id: "lipid_metabolic_coupling_context_v1"
+    title: "Metabolic coupling with lipid transport context"
+    safety_class: "monitoring"
+    evidence_strength: "exploratory"
+    summary_template: "Lipid transport dysfunction context appears alongside glycaemic markers that often cluster in cardiometabolic overlap."
+    required_markers:
+      - "non_hdl_cholesterol"
+    confirmatory_markers:
+      - "hba1c"
+      - "glucose"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "hba1c_high_lipid_cluster"
+        markers_any:
+          - "hba1c"
+        direction: "high"
+        evidence_for_item: "HbA1c is elevated, supporting sustained glycaemic stress overlapping atherogenic lipid patterns."
+        marker_refs:
+          - "hba1c"
+      - rule_id: "glucose_high_lipid_cluster"
+        markers_any:
+          - "glucose"
+        direction: "high"
+        evidence_for_item: "Glucose is elevated, supporting near-term dysglycaemia alongside lipid transport signals."
+        marker_refs:
+          - "glucose"
+    evidence_against_rules: []
+    missing_data_markers:
+      - marker_id: "insulin"
+        reason: "Fasting insulin refines resistance context when glucose or TG are discordant."
+    confirmatory_tests:
+      - "test_hba1c_repeat_v1"
+      - "test_fasting_glucose_insulin_context_v1"
