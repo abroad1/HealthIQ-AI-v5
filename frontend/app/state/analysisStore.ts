@@ -34,7 +34,6 @@ export interface AnalysisResult {
   processing_time_seconds?: number;
   result_version?: string;
   meta?: Record<string, any>;
-  clinician_report_v1?: import('../types/analysis').ClinicianReportV1 | null;
 }
 
 export interface AnalysisError {
