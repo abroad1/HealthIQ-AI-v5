@@ -254,3 +254,13 @@ Potential execution surfaces (typical, not prescriptive):
 - [x] Formalisation gap  
 - [x] Acceptance-harness recommendation  
 - [x] Structural recommendation (sprint shape)  
+
+---
+
+## 13. Post-implementation authority (KB-S53-ABVR-HARNESS)
+
+After sprint `KB-S53-ABVR-HARNESS`, governed acceptance authority lives in:
+
+- `backend/tests/fixtures/panels/panel_acceptance_profiles_v1.yaml`
+- `docs/investigations/KB-S53_AB_VR_ACCEPTANCE_HARNESS.md`
+- `backend/scripts/run_ab_vr_acceptance_harness.py`

@@ -1,0 +1,80 @@
+# Governed AB/VR acceptance harness — KB-S53-ABVR-HARNESS (strategic Wave 3 KB-S53).
+#
+# Disambiguation: This manifest is NOT related to knowledge_bus/research/KB-S53_WAVE_C_CLASSIFICATION_AUDIT.md
+# (Wave C ingestion classification). Operators must treat those as separate artefacts.
+#
+# Machine-readable authority for panel fixtures. Human acceptance criteria:
+#   docs/investigations/KB-S53_AB_VR_ACCEPTANCE_HARNESS.md
+
+schema_version: "1.0"
+manifest_id: panel_acceptance_profiles_v1
+
+# Primary regression anchor for golden_gate_local + verify_three_layer_pipeline (unchanged by KB-S53).
+default_deterministic_gate_fixture:
+  profile_id: golden_panel_160
+  description: >
+    Default golden runner and control-plane gate use this fixture. It remains the broad
+    deterministic regression anchor. AB/VR profiles are additional acceptance harnesses,
+    not a replacement for this path.
+
+profiles:
+  ab_acceptance:
+    profile_id: ab_acceptance
+    display_name: "AB full panel — acceptance harness"
+    fixture_path: panels/ab_full_panel_with_ranges.json
+    role: acceptance_harness
+    authoritative_for_acceptance: true
+    intended_use: >
+      Primary AB acceptance input: clinician report alignment, golden-runner AB/VR parametrized tests,
+      homocysteine/root-cause parametrized tests, interaction-chain smoke. Rich biomarkers with
+      per-analyte reference_range (lab-shaped).
+
+  vr_acceptance:
+    profile_id: vr_acceptance
+    display_name: "VR full panel — acceptance harness"
+    fixture_path: panels/vr_full_panel_with_ranges.json
+    role: acceptance_harness
+    authoritative_for_acceptance: true
+    intended_use: >
+      Primary VR acceptance input; same harness class as AB acceptance. Full expected clinician
+      report JSON compared in test_clinician_report_runtime_alignment.
+
+  ab_minimal_legacy:
+    profile_id: ab_minimal_legacy
+    display_name: "AB minimal / legacy-shaped panel"
+    fixture_path: panels/ab_full_panel.json
+    role: legacy_minimal
+    authoritative_for_acceptance: false
+    intended_use: >
+      Naming-convention sibling; scalar biomarker values only (no reference_range objects).
+      NOT used as AB acceptance harness. Do not substitute for ab_acceptance.
+
+  vr_minimal_legacy:
+    profile_id: vr_minimal_legacy
+    display_name: "VR minimal / legacy-shaped panel"
+    fixture_path: panels/vr_full_panel.json
+    role: legacy_minimal
+    authoritative_for_acceptance: false
+    intended_use: >
+      Minimal VR sibling; NOT the VR acceptance harness.
+
+  ab_lab_reference_profile_variant:
+    profile_id: ab_lab_reference_profile_variant
+    display_name: "AB panel with embedded lab reference profiles"
+    fixture_path: panels/ab_full_panel_with_profiles.json
+    role: lab_reference_profile_coverage
+    authoritative_for_acceptance: false
+    intended_use: >
+      Lab reference profile pass-through and band labelling (e.g. test_ab_profile_fixture_pass_through).
+      NOT the primary AB/VR acceptance anchor for clinician contract tests.
+
+  golden_panel_160:
+    profile_id: golden_panel_160
+    display_name: "Golden panel 160 — default gate anchor"
+    fixture_path: golden_panel_160.json
+    role: default_gate_and_runner
+    authoritative_for_acceptance: false
+    intended_use: >
+      Default fixture for tools.run_golden_panel, verify_three_layer_pipeline, baseline collision
+      enforcement, and many unit tests. Structural truth for broad regression; distinct from AB/VR
+      commercial-harness acceptance role.

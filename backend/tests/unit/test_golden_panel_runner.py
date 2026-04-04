@@ -21,6 +21,7 @@ from tools.run_golden_panel import (
     _normalise_for_artifact_write,
     run_golden_panel,
 )
+from tests.support.panel_acceptance import acceptance_harness_fixture_paths
 
 
 def _load_json(path: Path):
@@ -443,7 +444,9 @@ def test_one_sided_lab_ranges_are_preserved_in_output_dto(tmp_path):
 
 
 def test_ab_profile_fixture_pass_through_and_hba1c_band_label(tmp_path):
-    fixture = Path(__file__).parent.parent / "fixtures" / "panels" / "ab_full_panel_with_profiles.json"
+    from tests.support.panel_acceptance import ab_lab_reference_profile_fixture_path
+
+    fixture = ab_lab_reference_profile_fixture_path()
     _, analysis_result = run_golden_panel(
         fixture_path=fixture,
         output_root=tmp_path,
@@ -850,14 +853,12 @@ def test_golden_panel_lab_range_activation_signal_is_deterministic_across_runs(t
 
 
 @pytest.mark.parametrize(
-    "fixture_name",
-    [
-        "ab_full_panel_with_ranges.json",
-        "vr_full_panel_with_ranges.json",
-    ],
+    "fixture_path",
+    acceptance_harness_fixture_paths(),
+    ids=lambda p: p.stem,
 )
-def test_report_v1_present_and_stable_for_ab_vr_panels(tmp_path, fixture_name):
-    fixture = Path(__file__).parent.parent / "fixtures" / "panels" / fixture_name
+def test_report_v1_present_and_stable_for_ab_vr_panels(tmp_path, fixture_path):
+    fixture = fixture_path
     run_a, _ = run_golden_panel(
         fixture_path=fixture,
         output_root=tmp_path / "a",
@@ -896,14 +897,12 @@ def test_report_v1_present_and_stable_for_ab_vr_panels(tmp_path, fixture_name):
 
 
 @pytest.mark.parametrize(
-    "fixture_name",
-    [
-        "ab_full_panel_with_ranges.json",
-        "vr_full_panel_with_ranges.json",
-    ],
+    "fixture_path",
+    acceptance_harness_fixture_paths(),
+    ids=lambda p: p.stem,
 )
-def test_ab_vr_interaction_chains_include_homocysteine_context_and_confidence_floor(tmp_path, fixture_name):
-    fixture = Path(__file__).parent.parent / "fixtures" / "panels" / fixture_name
+def test_ab_vr_interaction_chains_include_homocysteine_context_and_confidence_floor(tmp_path, fixture_path):
+    fixture = fixture_path
     run_dir, _ = run_golden_panel(
         fixture_path=fixture,
         output_root=tmp_path / fixture.stem,

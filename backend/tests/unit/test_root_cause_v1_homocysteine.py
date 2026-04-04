@@ -7,6 +7,12 @@ import yaml
 from core.analytics.root_cause_compiler_v1 import compile_root_cause_v1
 from tools.run_golden_panel import run_golden_panel
 
+from tests.support.panel_acceptance import (
+    ab_acceptance_fixture_path,
+    acceptance_harness_fixture_paths,
+    golden_panel_160_path,
+)
+
 
 def _load_json(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
@@ -21,14 +27,12 @@ def _finding_by_signal(root_cause: dict, signal_id: str):
 
 
 @pytest.mark.parametrize(
-    "fixture_name",
-    [
-        "ab_full_panel_with_ranges.json",
-        "vr_full_panel_with_ranges.json",
-    ],
+    "fixture_path",
+    acceptance_harness_fixture_paths(),
+    ids=lambda p: p.stem,
 )
-def test_root_cause_v1_present_for_homocysteine_and_non_regression(tmp_path, fixture_name):
-    fixture = Path(__file__).parent.parent / "fixtures" / "panels" / fixture_name
+def test_root_cause_v1_present_for_homocysteine_and_non_regression(tmp_path, fixture_path):
+    fixture = fixture_path
     run_a, _ = run_golden_panel(
         fixture_path=fixture,
         output_root=tmp_path / "a",
@@ -66,7 +70,7 @@ def test_root_cause_v1_present_for_homocysteine_and_non_regression(tmp_path, fix
 
 
 def test_root_cause_v1_homocysteine_finding_absent_when_context_signal_not_fired(tmp_path):
-    fixture = Path(__file__).parent.parent / "fixtures" / "golden_panel_160.json"
+    fixture = golden_panel_160_path()
     run_dir, _ = run_golden_panel(
         fixture_path=fixture,
         output_root=tmp_path / "absent",
@@ -83,7 +87,7 @@ def test_root_cause_v1_homocysteine_finding_absent_when_context_signal_not_fired
 
 
 def test_root_cause_v1_text_fields_respect_safety_denylist(tmp_path):
-    fixture = Path(__file__).parent.parent / "fixtures" / "panels" / "ab_full_panel_with_ranges.json"
+    fixture = ab_acceptance_fixture_path()
     run_dir, _ = run_golden_panel(
         fixture_path=fixture,
         output_root=tmp_path / "denylist",
@@ -118,7 +122,7 @@ def test_root_cause_v1_text_fields_respect_safety_denylist(tmp_path):
 
 
 def test_confirmatory_test_suppression_and_repeat_behavior_for_ab_panel(tmp_path):
-    fixture = Path(__file__).parent.parent / "fixtures" / "panels" / "ab_full_panel_with_ranges.json"
+    fixture = ab_acceptance_fixture_path()
     run_dir, _ = run_golden_panel(
         fixture_path=fixture,
         output_root=tmp_path / "suppression",
@@ -153,7 +157,7 @@ def test_confirmatory_test_suppression_and_repeat_behavior_for_ab_panel(tmp_path
 
 
 def test_confirmatory_test_suppression_output_is_deterministic_for_ab_panel(tmp_path):
-    fixture = Path(__file__).parent.parent / "fixtures" / "panels" / "ab_full_panel_with_ranges.json"
+    fixture = ab_acceptance_fixture_path()
     run_a, _ = run_golden_panel(
         fixture_path=fixture,
         output_root=tmp_path / "det-a",

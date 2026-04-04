@@ -6,11 +6,13 @@ from core.contracts.clinician_report_v1 import ClinicianReportV1
 from core.dto.builders import build_analysis_result_dto
 from tools.run_golden_panel import run_golden_panel
 
+from tests.support.panel_acceptance import ab_acceptance_fixture_path, vr_acceptance_fixture_path
+
 
 ROOT = Path(__file__).resolve().parents[2]
 REPO_ROOT = ROOT.parent
-AB_PANEL = ROOT / "tests" / "fixtures" / "panels" / "ab_full_panel_with_ranges.json"
-VR_PANEL = ROOT / "tests" / "fixtures" / "panels" / "vr_full_panel_with_ranges.json"
+AB_PANEL = ab_acceptance_fixture_path()
+VR_PANEL = vr_acceptance_fixture_path()
 AB_EXPECTED_FIXTURE = ROOT / "tests" / "fixtures" / "reports" / "clinician_report_v1_ab.json"
 VR_EXPECTED_FIXTURE = ROOT / "tests" / "fixtures" / "reports" / "clinician_report_v1_vr.json"
 
