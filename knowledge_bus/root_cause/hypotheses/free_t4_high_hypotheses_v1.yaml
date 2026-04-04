@@ -1,0 +1,74 @@
+schema_version: "v1"
+asset_id: "free_t4_high_hypotheses_v1"
+updated_at: "2026-04-04"
+primary_signal_id: "signal_free_t4_high"
+primary_metric: "free_t4"
+notes:
+  - "KB-S52B governed root-cause asset for elevated free T4."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+
+hypotheses:
+  - hypothesis_id: "ft4_high_thyroxine_excess_pattern_v1"
+    title: "Elevated free T4 — thyroxine excess pattern"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "Free T4 is elevated with a pattern consistent with increased thyroxine exposure on this structured panel."
+    required_markers:
+      - "free_t4"
+    confirmatory_markers:
+      - "tsh"
+      - "free_t3"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "ft4_high_signal_fired"
+        signals_any:
+          - "signal_free_t4_high"
+        direction: "fired"
+        evidence_for_item: "A free-T4-high signal fired, anchoring elevated free thyroxine interpretation."
+        marker_refs:
+          - "free_t4"
+      - rule_id: "free_t4_marker_high"
+        markers_all:
+          - "free_t4"
+        direction: "high"
+        evidence_for_item: "Free T4 is above range, supporting sustained T4 elevation context."
+        marker_refs:
+          - "free_t4"
+    evidence_against_rules:
+      - rule_id: "free_t4_clearly_normal"
+        markers_all:
+          - "free_t4"
+        direction: "clearly_normal"
+        evidence_against_item: "Free T4 appears within range, arguing against sustained T4 elevation."
+        marker_refs:
+          - "free_t4"
+    missing_data_markers:
+      - marker_id: "tsh"
+        reason: "TSH refines axis suppression versus discordant T4 elevation."
+    confirmatory_tests:
+      - "test_thyroid_tsh_ft4_v1"
+      - "test_crp_repeat_v1"
+
+  - hypothesis_id: "ft4_high_tsh_suppression_context_v1"
+    title: "Free T4 elevation with TSH suppression"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Free T4 elevation co-occurs with suppressed TSH consistent with thyrotoxic patterning on the same panel."
+    required_markers:
+      - "free_t4"
+    confirmatory_markers:
+      - "tsh"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "tsh_low_with_ft4_high"
+        markers_any:
+          - "tsh"
+        direction: "low"
+        evidence_for_item: "TSH is low, supporting axis suppression alongside elevated free T4."
+        marker_refs:
+          - "tsh"
+    evidence_against_rules: []
+    missing_data_markers: []
+    confirmatory_tests:
+      - "test_thyroid_tsh_ft4_v1"
+      - "test_hba1c_repeat_v1"

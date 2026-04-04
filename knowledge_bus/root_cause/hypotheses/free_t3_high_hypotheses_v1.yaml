@@ -1,0 +1,74 @@
+schema_version: "v1"
+asset_id: "free_t3_high_hypotheses_v1"
+updated_at: "2026-04-04"
+primary_signal_id: "signal_free_t3_high"
+primary_metric: "free_t3"
+notes:
+  - "KB-S52B governed root-cause asset for elevated free T3."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+
+hypotheses:
+  - hypothesis_id: "ft3_high_thyroid_hormone_excess_pattern_v1"
+    title: "Elevated free T3 — thyroid hormone activity pattern"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "Free T3 is elevated with a pattern consistent with increased triiodothyronine activity on this structured panel."
+    required_markers:
+      - "free_t3"
+    confirmatory_markers:
+      - "tsh"
+      - "free_t4"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "ft3_high_signal_fired"
+        signals_any:
+          - "signal_free_t3_high"
+        direction: "fired"
+        evidence_for_item: "A free-T3-high signal fired, anchoring elevated free triiodothyronine interpretation."
+        marker_refs:
+          - "free_t3"
+      - rule_id: "free_t3_marker_high"
+        markers_all:
+          - "free_t3"
+        direction: "high"
+        evidence_for_item: "Free T3 is above range, supporting sustained T3 elevation context."
+        marker_refs:
+          - "free_t3"
+    evidence_against_rules:
+      - rule_id: "free_t3_clearly_normal"
+        markers_all:
+          - "free_t3"
+        direction: "clearly_normal"
+        evidence_against_item: "Free T3 appears within range, arguing against sustained T3 elevation."
+        marker_refs:
+          - "free_t3"
+    missing_data_markers:
+      - marker_id: "tsh"
+        reason: "TSH refines whether T3 elevation is axis-suppressed or discordant."
+    confirmatory_tests:
+      - "test_thyroid_tsh_ft4_v1"
+      - "test_crp_repeat_v1"
+
+  - hypothesis_id: "ft3_high_tsh_suppression_context_v1"
+    title: "Free T3 elevation with TSH suppression context"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Free T3 elevation co-occurs with suppressed TSH consistent with biologically significant thyroid hormone excess patterns on the same panel."
+    required_markers:
+      - "free_t3"
+    confirmatory_markers:
+      - "tsh"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "tsh_low_with_ft3_high"
+        markers_any:
+          - "tsh"
+        direction: "low"
+        evidence_for_item: "TSH is low, supporting axis suppression context alongside elevated free T3."
+        marker_refs:
+          - "tsh"
+    evidence_against_rules: []
+    missing_data_markers: []
+    confirmatory_tests:
+      - "test_thyroid_tsh_ft4_v1"
+      - "test_full_blood_count_indices_v1"
