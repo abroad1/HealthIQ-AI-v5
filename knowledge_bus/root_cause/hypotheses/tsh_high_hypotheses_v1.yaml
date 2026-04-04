@@ -1,0 +1,73 @@
+schema_version: "v1"
+asset_id: "tsh_high_hypotheses_v1"
+updated_at: "2026-04-04"
+primary_signal_id: "signal_tsh_high"
+primary_metric: "tsh"
+notes:
+  - "KB-S52 Tier 1 governed root-cause asset for elevated TSH (thyroid signal)."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+
+hypotheses:
+  - hypothesis_id: "tsh_high_axis_elevation_v1"
+    title: "Elevated TSH pattern"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "TSH is elevated with a pattern consistent with thyroid-axis stimulation context on this panel."
+    required_markers:
+      - "tsh"
+    confirmatory_markers:
+      - "free_t4"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "tsh_high_signal_fired"
+        signals_any:
+          - "signal_tsh_high"
+        direction: "fired"
+        evidence_for_item: "A TSH-high signal fired, anchoring elevated TSH interpretation."
+        marker_refs:
+          - "tsh"
+      - rule_id: "tsh_high_marker"
+        markers_all:
+          - "tsh"
+        direction: "high"
+        evidence_for_item: "TSH is above range, supporting elevated thyroid-stimulating hormone context."
+        marker_refs:
+          - "tsh"
+    evidence_against_rules:
+      - rule_id: "tsh_clearly_normal_band"
+        markers_all:
+          - "tsh"
+        direction: "clearly_normal"
+        evidence_against_item: "TSH appears within range, arguing against a sustained TSH elevation pattern."
+        marker_refs:
+          - "tsh"
+    missing_data_markers:
+      - marker_id: "free_t4"
+        reason: "Free T4 clarifies thyroid hormone status alongside TSH."
+    confirmatory_tests:
+      - "test_thyroid_tsh_ft4_v1"
+
+  - hypothesis_id: "tsh_high_ft4_discordance_v1"
+    title: "TSH elevation with free T4 context"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "TSH elevation co-occurs with free T4 context that refines thyroid-axis interpretation on the same panel."
+    required_markers:
+      - "tsh"
+    confirmatory_markers:
+      - "free_t4"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "free_t4_low_with_high_tsh"
+        markers_any:
+          - "free_t4"
+        direction: "low"
+        evidence_for_item: "Free T4 is low, supporting hormone context alongside elevated TSH."
+        marker_refs:
+          - "free_t4"
+    evidence_against_rules: []
+    missing_data_markers:
+      - marker_id: "free_t3"
+        reason: "Free T3 can refine conversion context when TSH and T4 are discordant."
+    confirmatory_tests:
+      - "test_thyroid_tsh_ft4_v1"

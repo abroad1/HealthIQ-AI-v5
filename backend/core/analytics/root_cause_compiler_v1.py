@@ -4,6 +4,7 @@ KB-S33 deterministic root-cause compiler — bounded signal targets with governe
 Additional targets (KB-S46): signal_insulin_resistance, signal_systemic_inflammation.
 Additional targets (KB-S48): lipid transport and dyslipidaemia canonical signals.
 Additional targets (KB-S50): iron / oxygen transport and related canonical signals.
+Additional targets (KB-S52): hepatic GGT and thyroid TSH leaf signals (Tier 1).
 Signals without a registered loader are skipped with no behavioural change.
 """
 
@@ -25,6 +26,7 @@ from core.knowledge.load_root_cause_hypotheses import (
     load_alt_hypotheses_v1,
     load_ferritin_high_hypotheses_v1,
     load_ferritin_low_hypotheses_v1,
+    load_ggt_high_hypotheses_v1,
     load_hba1c_hypotheses_v1,
     load_hdl_cholesterol_low_hypotheses_v1,
     load_hemoglobin_low_hypotheses_v1,
@@ -39,7 +41,9 @@ from core.knowledge.load_root_cause_hypotheses import (
     load_transferrin_high_hypotheses_v1,
     load_transferrin_low_hypotheses_v1,
     load_triglycerides_high_hypotheses_v1,
+    load_tsh_high_hypotheses_v1,
     load_tsh_hypotheses_v1,
+    load_tsh_low_hypotheses_v1,
 )
 
 _ROOT_CAUSE_TARGETS = [
@@ -61,6 +65,9 @@ _ROOT_CAUSE_TARGETS = [
     ("signal_hemoglobin_low", load_hemoglobin_low_hypotheses_v1),
     ("signal_transferrin_high", load_transferrin_high_hypotheses_v1),
     ("signal_transferrin_low", load_transferrin_low_hypotheses_v1),
+    ("signal_ggt_high", load_ggt_high_hypotheses_v1),
+    ("signal_tsh_high", load_tsh_high_hypotheses_v1),
+    ("signal_tsh_low", load_tsh_low_hypotheses_v1),
 ]
 
 
