@@ -1,7 +1,10 @@
 import json
 from pathlib import Path
 
-from core.analytics.report_compiler_v1 import compile_clinician_report_v1
+from core.analytics.report_compiler_v1 import (
+    TOP_FINDINGS_RANKING_POLICY_VERSION,
+    compile_clinician_report_v1,
+)
 from core.contracts.clinician_report_v1 import ClinicianReportV1
 from core.dto.builders import build_analysis_result_dto
 from tools.run_golden_panel import run_golden_panel
@@ -42,6 +45,9 @@ def test_clinician_report_runtime_producer_returns_valid_contract_for_ab(tmp_pat
     assert contract.header.report_version == "v1"
     assert contract.sections.page1.primary_concern
     assert isinstance(contract.suppressed_confirmatory_tests, list)
+    assert contract.sections.page1.ranking_policy_version == TOP_FINDINGS_RANKING_POLICY_VERSION
+    assert contract.sections.page1.primary_concern_mode == "technical_tiebreak_lead"
+    assert contract.sections.page1.key_findings[0].startswith("Lead concern reflects")
 
 
 def test_clinician_report_ab_output_is_deterministic(tmp_path):
@@ -87,6 +93,44 @@ def test_clinician_report_vr_output_is_deterministic_and_matches_vr_fixture(tmp_
 
     vr_expected = json.loads(VR_EXPECTED_FIXTURE.read_text(encoding="utf-8"))
     assert dump_a == vr_expected
+
+
+def test_clinician_page1_near_tie_ambiguity_synthetic():
+    """When meta has no signal-id fallback but top signals tie on state and confidence, mode is near_tie."""
+    report = {
+        "meta": {
+            "ranking_signal_id_fallback_invoked": False,
+            "ranking_policy_version": TOP_FINDINGS_RANKING_POLICY_VERSION,
+        },
+        "top_findings": [
+            {
+                "signal_id": "sig_z",
+                "signal_state": "suboptimal",
+                "confidence": 0.7,
+                "primary_metric": "m1",
+                "why_it_matters": "z matters.",
+                "confidence_reasons": ["R"],
+                "supporting_markers": ["a"],
+            },
+            {
+                "signal_id": "sig_a",
+                "signal_state": "suboptimal",
+                "confidence": 0.7,
+                "primary_metric": "m2",
+                "why_it_matters": "a matters.",
+                "confidence_reasons": ["R"],
+                "supporting_markers": ["b"],
+            },
+        ],
+        "top_chains": [],
+        "root_cause_v1": {"findings": []},
+    }
+    out = compile_clinician_report_v1(report_v1_payload=report, biomarker_rows=[])
+    assert out is not None
+    p1 = out.sections.page1
+    assert p1.primary_concern_mode == "near_tie_ambiguity"
+    assert p1.co_primary_signal_ids == ["sig_a", "sig_z"]
+    assert "Ranked ambiguity" in p1.key_findings[0]
 
 
 def test_api_dto_exposes_clinician_report_v1(tmp_path):
