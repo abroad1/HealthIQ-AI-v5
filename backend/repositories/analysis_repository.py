@@ -87,6 +87,39 @@ class AnalysisRepository(BaseRepository[Analysis]):
         except Exception as e:
             logger.error(f"Failed to get recent analyses for user {user_id}: {str(e)}")
             raise
+
+    def count_analyses_for_user(self, user_id: UUID) -> int:
+        """Total persisted analyses for owner (for pagination)."""
+        try:
+            return (
+                self.db_session.query(Analysis)
+                .filter(Analysis.user_id == user_id)
+                .count()
+            )
+        except Exception as e:
+            logger.error(f"Failed to count analyses for user {user_id}: {str(e)}")
+            raise
+
+    def list_analyses_for_user(
+        self,
+        user_id: UUID,
+        *,
+        limit: int = 10,
+        offset: int = 0,
+    ) -> List[Analysis]:
+        """Owner-scoped analysis rows ordered by created_at desc with pagination."""
+        try:
+            return (
+                self.db_session.query(Analysis)
+                .filter(Analysis.user_id == user_id)
+                .order_by(desc(Analysis.created_at))
+                .offset(max(0, offset))
+                .limit(max(1, limit))
+                .all()
+            )
+        except Exception as e:
+            logger.error(f"Failed to list analyses for user {user_id}: {str(e)}")
+            raise
     
     def upsert_by_analysis_id(self, analysis_id: str, **kwargs) -> Optional[Analysis]:
         """

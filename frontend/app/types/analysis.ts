@@ -171,7 +171,9 @@ export interface AnalysisResult {
 
 
 export interface AnalysisHistoryItem {
+  /** Same as analysis_id; list API may include both keys. */
   id: string;
+  analysis_id?: string;
   created_at: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
   overall_score: number | null;

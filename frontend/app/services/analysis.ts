@@ -103,6 +103,7 @@ export class AnalysisService {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          ...analysisAuthHeaders(),
         },
       });
 
@@ -279,20 +280,20 @@ export class AnalysisService {
   }
 
   /**
-   * Get analysis history for a user
+   * Get persisted analysis history for the authenticated user (owner derived from Bearer).
    */
   static async getAnalysisHistory(
-    userId: string, 
-    limit: number = 10, 
-    offset: number = 0
+    limit: number = 10,
+    offset: number = 0,
   ): Promise<ApiResponse<AnalysisHistoryResponse>> {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/analysis/history?user_id=${encodeURIComponent(userId)}&limit=${limit}&offset=${offset}`,
+        `${API_BASE_URL}/analysis/history?limit=${encodeURIComponent(String(limit))}&offset=${encodeURIComponent(String(offset))}`,
         {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
+            ...analysisAuthHeaders(),
           },
         }
       );

@@ -167,10 +167,10 @@ class TestPersistenceService:
         ]
         
         # Mock repository methods
-        with patch.object(persistence_service.analysis_repo, 'get_recent_analyses') as mock_get_analyses, \
+        with patch.object(persistence_service.analysis_repo, 'list_analyses_for_user') as mock_list, \
              patch.object(persistence_service.analysis_result_repo, 'get_by_analysis_id') as mock_get_result:
             
-            mock_get_analyses.return_value = mock_analyses
+            mock_list.return_value = mock_analyses
             mock_result1 = Mock(overall_score=0.85)
             mock_result2 = Mock(overall_score=0.92)
             mock_get_result.side_effect = [mock_result1, mock_result2]
@@ -182,7 +182,10 @@ class TestPersistenceService:
             assert len(result) == 2
             assert result[0]["overall_score"] == 0.85
             assert result[1]["overall_score"] == 0.92
-            mock_get_analyses.assert_called_once_with(user_id, 10)
+            mock_list.assert_called_once()
+            call_kw = mock_list.call_args.kwargs
+            assert call_kw["limit"] == 10
+            assert call_kw["offset"] == 0
     
     def test_get_analysis_result_success(self, persistence_service, mock_db_session):
         """Test successful analysis result retrieval."""

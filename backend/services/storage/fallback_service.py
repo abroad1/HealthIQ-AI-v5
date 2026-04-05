@@ -271,7 +271,7 @@ class InMemoryFallback:
             logger.error(f"Error getting analysis result from fallback storage: {str(e)}")
             return None
     
-    def get_analysis_history(self, user_id: UUID, limit: int = 10) -> List[Dict[str, Any]]:
+    def get_analysis_history(self, user_id: UUID, limit: int = 10, offset: int = 0) -> List[Dict[str, Any]]:
         """Get analysis history from in-memory storage."""
         try:
             user_id_str = str(user_id)
@@ -282,7 +282,9 @@ class InMemoryFallback:
             
             # Sort by created_at descending and limit
             user_analyses.sort(key=lambda x: x.get("created_at", ""), reverse=True)
-            return user_analyses[:limit]
+            start = max(0, offset)
+            end = start + max(1, limit)
+            return user_analyses[start:end]
             
         except Exception as e:
             logger.error(f"Error getting analysis history from fallback storage: {str(e)}")

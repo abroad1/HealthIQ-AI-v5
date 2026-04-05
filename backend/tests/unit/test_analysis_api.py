@@ -4,21 +4,25 @@ Unit tests for analysis API endpoints.
 
 import uuid
 from unittest.mock import patch
-import pytest
 from fastapi.testclient import TestClient
 from app.main import app
 
+from tests.auth_headers import ANALYSIS_TEST_AUTH_HEADERS
+
 client = TestClient(app)
 
-# Fixture analysis_id used when injecting fixture data into _analysis_results
-FIXTURE_ANALYSIS_ID = "fixture-0001"
+AUTH_HEADERS = dict(ANALYSIS_TEST_AUTH_HEADERS)
+TEST_USER_ID = ANALYSIS_TEST_AUTH_HEADERS["X-Test-Auth-User-Id"]
+
+# Fixture analysis_id (must be a valid UUID; GET /result validates with UUID())
+FIXTURE_ANALYSIS_ID = str(uuid.UUID("00000000-0000-4000-8000-000000000001"))
 
 
 def _fixture_result():
     """Build result dict compatible with build_analysis_result_dto from SAMPLE_ANALYSIS."""
     from tests.fixtures.sample_analysis import SAMPLE_ANALYSIS
     return {
-        "analysis_id": SAMPLE_ANALYSIS["analysis_id"],
+        "analysis_id": FIXTURE_ANALYSIS_ID,
         "biomarkers": SAMPLE_ANALYSIS["biomarkers"],
         "clusters": [],
         "insights": [],
@@ -34,19 +38,34 @@ def _fixture_result():
 class TestAnalysisAPI:
     """Test analysis API endpoints."""
 
-    def test_get_analysis_result_returns_404_when_missing(self):
-        """Missing analysis_id returns 404."""
+    def test_get_analysis_result_requires_auth(self):
+        """GET /result without credentials returns 401."""
         analysis_id = str(uuid.uuid4())
         response = client.get(f"/api/analysis/result?analysis_id={analysis_id}")
+        assert response.status_code == 401
+
+    def test_get_analysis_result_returns_404_when_missing(self):
+        """Missing analysis for authenticated user returns 404."""
+        analysis_id = str(uuid.uuid4())
+        response = client.get(
+            f"/api/analysis/result?analysis_id={analysis_id}",
+            headers=AUTH_HEADERS,
+        )
         assert response.status_code == 404
         assert response.json().get("detail") == "Analysis not found"
 
     @patch("app.routes.analysis._analysis_results", {})
+    @patch("app.routes.analysis._analysis_owners", {})
     def test_get_analysis_result_includes_biomarkers(self):
         """Test that /api/analysis/result includes biomarkers when analysis exists."""
         from app.routes import analysis
+
         analysis._analysis_results[FIXTURE_ANALYSIS_ID] = _fixture_result()
-        response = client.get(f"/api/analysis/result?analysis_id={FIXTURE_ANALYSIS_ID}")
+        analysis._analysis_owners[FIXTURE_ANALYSIS_ID] = TEST_USER_ID
+        response = client.get(
+            f"/api/analysis/result?analysis_id={FIXTURE_ANALYSIS_ID}",
+            headers=AUTH_HEADERS,
+        )
 
         assert response.status_code == 200
         data = response.json()
@@ -77,11 +96,17 @@ class TestAnalysisAPI:
         assert isinstance(biomarker["interpretation"], str)
 
     @patch("app.routes.analysis._analysis_results", {})
+    @patch("app.routes.analysis._analysis_owners", {})
     def test_get_analysis_result_biomarker_status_values(self):
         """Test that biomarker status values are valid."""
         from app.routes import analysis
+
         analysis._analysis_results[FIXTURE_ANALYSIS_ID] = _fixture_result()
-        response = client.get(f"/api/analysis/result?analysis_id={FIXTURE_ANALYSIS_ID}")
+        analysis._analysis_owners[FIXTURE_ANALYSIS_ID] = TEST_USER_ID
+        response = client.get(
+            f"/api/analysis/result?analysis_id={FIXTURE_ANALYSIS_ID}",
+            headers=AUTH_HEADERS,
+        )
         assert response.status_code == 200
 
         data = response.json()
@@ -93,11 +118,17 @@ class TestAnalysisAPI:
                 f"Invalid status: {biomarker['status']}"
 
     @patch("app.routes.analysis._analysis_results", {})
+    @patch("app.routes.analysis._analysis_owners", {})
     def test_get_analysis_result_reference_ranges(self):
         """Test that reference ranges are properly structured when present."""
         from app.routes import analysis
+
         analysis._analysis_results[FIXTURE_ANALYSIS_ID] = _fixture_result()
-        response = client.get(f"/api/analysis/result?analysis_id={FIXTURE_ANALYSIS_ID}")
+        analysis._analysis_owners[FIXTURE_ANALYSIS_ID] = TEST_USER_ID
+        response = client.get(
+            f"/api/analysis/result?analysis_id={FIXTURE_ANALYSIS_ID}",
+            headers=AUTH_HEADERS,
+        )
         assert response.status_code == 200
 
         data = response.json()
@@ -115,6 +146,6 @@ class TestAnalysisAPI:
                 assert ref_range["min"] < ref_range["max"]
 
     def test_get_analysis_result_error_handling(self):
-        """Test error handling for invalid analysis IDs."""
-        response = client.get("/api/analysis/result")
+        """Missing analysis_id with auth returns 422."""
+        response = client.get("/api/analysis/result", headers=AUTH_HEADERS)
         assert response.status_code == 422
