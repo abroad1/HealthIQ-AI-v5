@@ -16,6 +16,7 @@ interface BiomarkerValue {
   unit: string;
   date?: string;
   score?: number;
+  interpretation?: string | null;
   referenceRange?: {
     min?: number;
     max?: number;
@@ -28,6 +29,8 @@ interface BiomarkerValue {
 interface BiomarkerDialsProps {
   biomarkers: Record<string, BiomarkerValue>;
   showDetails?: boolean;
+  /** Softer section heading when used as a supporting layer */
+  sectionTitle?: string;
 }
 
 const BIOMARKER_NAMES = {
@@ -195,21 +198,15 @@ const renderBiomarkerCard = (
   dialValue: number,
   showDetails: boolean = false
 ) => {
-  console.log(
-    '[BiomarkerDials] rendering',
-    biomarkerKey,
-    { value: data.value, score: data.score, referenceRange: data.referenceRange }
-  );
-
   return (
-    <Card className="hover:shadow-md transition-shadow w-full h-full">
+    <Card className="hover:shadow-md transition-shadow w-full h-full border-gray-200 bg-white">
       <CardContent className="pt-4 min-h-[180px]">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h4 className="font-semibold text-slate-50">
+            <h4 className="font-semibold text-gray-900">
               {BIOMARKER_NAMES[biomarkerKey as keyof typeof BIOMARKER_NAMES] || biomarkerKey}
             </h4>
-            <p className="text-sm text-slate-300">{data.unit}</p>
+            <p className="text-sm text-gray-500">{data.unit}</p>
           </div>
           <Badge className={getStatusColor(data.status)}>
             {getStatusIcon(data.status)}
@@ -219,18 +216,18 @@ const renderBiomarkerCard = (
 
         <div className="flex items-center justify-between gap-4">
           <div className="flex-1 min-w-0">
-            <div className="text-2xl font-bold text-slate-50 mb-1">
+            <div className="text-2xl font-bold text-gray-900 mb-1">
               {typeof data.value === 'number' ? data.value.toFixed(1) : 'N/A'}
             </div>
             {data.referenceRange && 
              typeof data.referenceRange.min === 'number' && 
              typeof data.referenceRange.max === 'number' && (
-              <div className="text-xs text-slate-400">
+              <div className="text-xs text-gray-500">
                 Range: {data.referenceRange.min}-{data.referenceRange.max} {data.referenceRange.unit}
               </div>
             )}
             {data.date && (
-              <div className="text-xs text-slate-400 mt-1">
+              <div className="text-xs text-gray-500 mt-1">
                 {new Date(data.date).toLocaleDateString()}
               </div>
             )}
@@ -240,17 +237,23 @@ const renderBiomarkerCard = (
           </div>
         </div>
 
+        {showDetails && data.interpretation ? (
+          <p className="mt-3 text-xs text-gray-600 leading-relaxed border-t border-gray-100 pt-3">
+            {data.interpretation}
+          </p>
+        ) : null}
+
         {showDetails && data.referenceRange && 
          typeof data.referenceRange.min === 'number' && 
          typeof data.referenceRange.max === 'number' && (
-          <div className="mt-4 pt-4 border-t border-slate-700">
+          <div className="mt-4 pt-4 border-t border-gray-100">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-300">Your value</span>
-              <span className="font-medium text-slate-50">{data.value}</span>
+              <span className="text-gray-600">Your value</span>
+              <span className="font-medium text-gray-900">{data.value}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-300">Reference range</span>
-              <span className="font-medium text-slate-50">
+              <span className="text-gray-600">Reference range</span>
+              <span className="font-medium text-gray-900">
                 {data.referenceRange.min} - {data.referenceRange.max}
               </span>
             </div>
@@ -276,11 +279,12 @@ const renderBiomarkerCard = (
   );
 };
 
-export default function BiomarkerDials({ biomarkers, showDetails = false }: BiomarkerDialsProps) {
-  console.log('[BiomarkerDials] biomarkers keys:', Object.keys(biomarkers || {}));
-  
+export default function BiomarkerDials({
+  biomarkers,
+  showDetails = false,
+  sectionTitle = 'Your markers',
+}: BiomarkerDialsProps) {
   const biomarkerEntries = Object.entries(biomarkers || {});
-  console.log('[BiomarkerDials] biomarkerEntries length:', biomarkerEntries.length);
 
   if (!biomarkerEntries.length) {
     return (
@@ -292,9 +296,12 @@ export default function BiomarkerDials({ biomarkers, showDetails = false }: Biom
 
   return (
     <div className="w-full space-y-4">
-      <h2 className="text-xl font-semibold mb-4">
-        Biomarker Analysis
-      </h2>
+      <div className="mb-2">
+        <h2 className="text-lg font-semibold text-gray-800">{sectionTitle}</h2>
+        <p className="text-sm text-gray-500">
+          Marker values support the interpretation above — details and lab wording come from your results payload.
+        </p>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full">
         {biomarkerEntries.map(([name, data]) => {
           const d = data as BiomarkerValue | undefined;
@@ -305,7 +312,6 @@ export default function BiomarkerDials({ biomarkers, showDetails = false }: Biom
           const hasValue = typeof d?.value === 'number' && !Number.isNaN(d.value);
           
           if (!hasScore && !hasValue) {
-            console.warn('[BiomarkerDials] Skipping invalid biomarker:', name, d);
             return null;
           }
 
@@ -318,7 +324,7 @@ export default function BiomarkerDials({ biomarkers, showDetails = false }: Biom
           );
 
           return (
-            <div key={name} className="border-2 border-red-500 p-2 min-h-[200px] bg-yellow-50">
+            <div key={name} className="min-h-[200px]">
               {renderBiomarkerCard(name, { ...d, value } as BiomarkerValue, dialValue, showDetails)}
             </div>
           );

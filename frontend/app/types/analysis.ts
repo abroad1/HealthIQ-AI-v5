@@ -71,12 +71,20 @@ export interface Insight {
   biomarkers_involved?: string[];
 }
 
+/** Cluster objects returned on analysis results (cluster engine / API). */
 export interface Cluster {
-  id: string;
-  category: string;
+  id?: string;
+  cluster_id?: string;
+  name?: string;
+  category?: string;
   summary?: string;
+  description?: string;
+  biomarkers?: string[];
   biomarkers_involved?: string[];
   score?: number;
+  confidence?: number;
+  severity?: string;
+  recommendations?: string[];
 }
 
 export interface ClinicianEvidenceItem {
