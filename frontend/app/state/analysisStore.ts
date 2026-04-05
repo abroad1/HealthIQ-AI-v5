@@ -7,6 +7,7 @@ import {
   UserProfile,
   AnalysisRequest,
   ClinicianReportV1,
+  Cluster,
 } from '../types/analysis';
 
 export interface BiomarkerResult {
@@ -30,7 +31,7 @@ export interface AnalysisResult {
   status: 'pending' | 'processing' | 'completed' | 'failed';
   progress?: number;
   biomarkers: BiomarkerResult[];
-  clusters: any[];
+  clusters: Cluster[];
   insights: any[];
   overall_score: number | null;
   recommendations?: string[];
