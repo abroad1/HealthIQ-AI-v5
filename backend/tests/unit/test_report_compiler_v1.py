@@ -4,7 +4,10 @@ from pathlib import Path
 
 import yaml
 
-from core.analytics.report_compiler_v1 import compile_report_v1
+from core.analytics.report_compiler_v1 import (
+    TOP_FINDINGS_RANKING_POLICY_VERSION,
+    compile_report_v1,
+)
 
 
 def _repo_root() -> Path:
@@ -74,6 +77,8 @@ def test_report_v1_ordering_and_schema_fields():
     assert dumped["meta"]["signal_registry_hash_sha256"] == sha
     assert dumped["meta"]["interaction_map_revision"] == "1.1.0"
     assert dumped["meta"]["safety_contract_version"] == "1.0.1"
+    assert dumped["meta"]["ranking_policy_version"] == TOP_FINDINGS_RANKING_POLICY_VERSION
+    assert dumped["meta"]["ranking_signal_id_fallback_invoked"] is False
 
 
 def test_report_v1_additive_inputs_unchanged():
@@ -179,6 +184,119 @@ def test_report_v1_text_fields_respect_denylist():
         assert phrase not in lowered
 
 
+def test_report_v1_top_findings_prefers_supporting_markers_over_signal_id():
+    """Same state/confidence/reasons; richer marker support ranks above lexicographic signal_id."""
+    signal_results = [
+        {
+            "signal_id": "signal_zzz",
+            "system": "metabolic",
+            "signal_state": "suboptimal",
+            "confidence": 0.70,
+            "confidence_reasons": ["PRIMARY_METRIC_PRESENT"],
+            "primary_metric": "m1",
+            "supporting_markers": ["a"],
+        },
+        {
+            "signal_id": "signal_aaa",
+            "system": "metabolic",
+            "signal_state": "suboptimal",
+            "confidence": 0.70,
+            "confidence_reasons": ["PRIMARY_METRIC_PRESENT"],
+            "primary_metric": "m1",
+            "supporting_markers": ["a", "b", "c"],
+        },
+    ]
+    report = compile_report_v1(
+        signal_results=signal_results,
+        interaction_summary=[],
+        interventions_v1=[],
+        signal_registry_version="v",
+        signal_registry_hash_sha256="e" * 64,
+        interaction_map_revision="1.1.0",
+        safety_contract_version="1.0.1",
+        generated_at="2026-03-15T00:00:00+00:00",
+    )
+    dumped = report.model_dump()["top_findings"]
+    assert len(dumped) == 2
+    assert dumped[0]["signal_id"] == "signal_aaa"
+    assert dumped[1]["signal_id"] == "signal_zzz"
+    assert report.meta.ranking_signal_id_fallback_invoked is False
+
+
+def test_report_v1_top_findings_signal_id_last_resort_only():
+    """Fully tied evidential key: lexicographic signal_id breaks the tie; flag is set."""
+    signal_results = [
+        {
+            "signal_id": "signal_b",
+            "system": "metabolic",
+            "signal_state": "suboptimal",
+            "confidence": 0.70,
+            "confidence_reasons": ["PRIMARY_METRIC_PRESENT"],
+            "primary_metric": "m1",
+            "supporting_markers": ["x"],
+        },
+        {
+            "signal_id": "signal_a",
+            "system": "metabolic",
+            "signal_state": "suboptimal",
+            "confidence": 0.70,
+            "confidence_reasons": ["PRIMARY_METRIC_PRESENT"],
+            "primary_metric": "m1",
+            "supporting_markers": ["x"],
+        },
+    ]
+    report = compile_report_v1(
+        signal_results=signal_results,
+        interaction_summary=[],
+        interventions_v1=[],
+        signal_registry_version="v",
+        signal_registry_hash_sha256="f" * 64,
+        interaction_map_revision="1.1.0",
+        safety_contract_version="1.0.1",
+        generated_at="2026-03-15T00:00:00+00:00",
+    )
+    dumped = report.model_dump()["top_findings"]
+    assert dumped[0]["signal_id"] == "signal_a"
+    assert dumped[1]["signal_id"] == "signal_b"
+    assert report.meta.ranking_signal_id_fallback_invoked is True
+
+
+def test_report_v1_top_findings_ordering_deterministic_across_runs():
+    rows = [
+        {
+            "signal_id": "sig_y",
+            "system": "s",
+            "signal_state": "at_risk",
+            "confidence": 0.55,
+            "confidence_reasons": ["B", "A"],
+            "primary_metric": "p",
+            "supporting_markers": [],
+        },
+        {
+            "signal_id": "sig_x",
+            "system": "s",
+            "signal_state": "at_risk",
+            "confidence": 0.55,
+            "confidence_reasons": ["A", "B"],
+            "primary_metric": "p",
+            "supporting_markers": [],
+        },
+    ]
+    kw = dict(
+        signal_results=list(rows),
+        interaction_summary=[],
+        interventions_v1=[],
+        signal_registry_version="v",
+        signal_registry_hash_sha256="a" * 64,
+        interaction_map_revision="1.1.0",
+        safety_contract_version="1.0.1",
+        generated_at="2026-03-15T00:00:00+00:00",
+    )
+    a = compile_report_v1(**kw)
+    b = compile_report_v1(**kw)
+    assert a.model_dump()["top_findings"] == b.model_dump()["top_findings"]
+
+
 def test_report_v1_meta_hash_sha256_semantics():
     artifact = [
         {"signal_id": "signal_a", "system": "metabolic"},
@@ -200,3 +318,5 @@ def test_report_v1_meta_hash_sha256_semantics():
     assert len(report.meta.signal_registry_hash_sha256) == 64
     int(report.meta.signal_registry_hash_sha256, 16)  # valid hex
     assert report.meta.signal_registry_hash_sha256 == expected_sha
+    assert report.meta.ranking_policy_version == TOP_FINDINGS_RANKING_POLICY_VERSION
+    assert report.meta.ranking_signal_id_fallback_invoked is False
