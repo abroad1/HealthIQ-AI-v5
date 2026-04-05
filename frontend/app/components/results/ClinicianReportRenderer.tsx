@@ -1,10 +1,77 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import type { ClinicianReportV1 } from '@/types/analysis';
+import type { ClinicianReportV1, PrimaryConcernModeV1 } from '@/types/analysis';
 
 interface ClinicianReportRendererProps {
   report: ClinicianReportV1 | null | undefined;
+}
+
+function normalizeConcernMode(mode: PrimaryConcernModeV1 | undefined): PrimaryConcernModeV1 {
+  return mode ?? 'distinct_lead';
+}
+
+function Page1RankingContext({ page1 }: { page1: ClinicianReportV1['sections']['page1'] }) {
+  const mode = normalizeConcernMode(page1.primary_concern_mode);
+  const coIds = page1.co_primary_signal_ids ?? [];
+  const policyVersion = (page1.ranking_policy_version ?? '').trim();
+
+  const showPolicyStamp = policyVersion.length > 0;
+
+  return (
+    <div className="space-y-2" data-testid="page1-ranking-context">
+      {mode === 'technical_tiebreak_lead' && (
+        <div
+          className="rounded-md border border-amber-200/80 bg-amber-50/60 px-3 py-2 text-sm text-amber-950"
+          data-testid="primary-concern-mode-technical"
+        >
+          <p className="font-medium">Ordering note</p>
+          <p className="mt-1 text-foreground/90">
+            The lead concern follows the report&rsquo;s deterministic ranking policy. Where evidence-aligned
+            steps did not fully separate similar items, a technical tie-break may have determined order. This
+            is not by itself a statement of clinical priority among close alternatives.
+          </p>
+          {coIds.length > 0 && (
+            <p className="mt-2">
+              <span className="font-medium">Co-ranked signal identifiers:</span>{' '}
+              {coIds.join(', ')}
+            </p>
+          )}
+        </div>
+      )}
+
+      {mode === 'near_tie_ambiguity' && (
+        <div
+          className="rounded-md border border-sky-200/80 bg-sky-50/60 px-3 py-2 text-sm text-sky-950"
+          data-testid="primary-concern-mode-ambiguity"
+        >
+          <p className="font-medium">Ambiguity</p>
+          <p className="mt-1 text-foreground/90">
+            Multiple concerns are similarly supported on this panel. Ordering is policy-guided; interpret
+            co-ranked items together with your clinician rather than as a single definitive lead diagnosis.
+          </p>
+          {coIds.length > 0 && (
+            <p className="mt-2">
+              <span className="font-medium">Co-ranked signal identifiers:</span>{' '}
+              {coIds.join(', ')}
+            </p>
+          )}
+        </div>
+      )}
+
+      {mode === 'distinct_lead' && (
+        <p className="sr-only" data-testid="primary-concern-mode-distinct">
+          Primary concern mode: distinct lead.
+        </p>
+      )}
+
+      {showPolicyStamp && (
+        <p className="text-xs text-gray-500" data-testid="ranking-policy-version">
+          Ranking policy reference: {policyVersion}
+        </p>
+      )}
+    </div>
+  );
 }
 
 export default function ClinicianReportRenderer({ report }: ClinicianReportRendererProps) {
@@ -58,7 +125,10 @@ export default function ClinicianReportRenderer({ report }: ClinicianReportRende
           <CardTitle>Page 1 Summary</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
-          <p><strong>Primary concern:</strong> {page1.primary_concern}</p>
+          <Page1RankingContext page1={page1} />
+          <p>
+            <strong>Primary concern:</strong> {page1.primary_concern}
+          </p>
           <div>
             <p className="font-semibold">Key findings</p>
             <ul className="list-disc list-inside space-y-1">
