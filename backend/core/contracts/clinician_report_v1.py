@@ -86,6 +86,12 @@ class Page1SummaryBlockV1(BaseModel):
     chains: List[str] = Field(default_factory=list, max_length=2)
     top_hypothesis_line: str = Field(..., min_length=1, max_length=220)
     confidence_and_missing_data: str = Field(..., min_length=1, max_length=220)
+    # KB-S54B Phase 2b — ranked ambiguity / policy honesty (PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY v1)
+    primary_concern_mode: Literal["distinct_lead", "near_tie_ambiguity", "technical_tiebreak_lead"] = (
+        "distinct_lead"
+    )
+    co_primary_signal_ids: List[str] = Field(default_factory=list, max_length=4)
+    ranking_policy_version: str = Field(default="", max_length=220)
 
 
 class ClinicianSectionsV1(BaseModel):

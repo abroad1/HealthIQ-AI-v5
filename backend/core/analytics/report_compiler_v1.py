@@ -5,7 +5,7 @@ KB-S32 deterministic report compiler.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Literal, Optional, Tuple
 
 import yaml
 
@@ -40,6 +40,8 @@ _STATE_RANK = {"at_risk": 4, "suboptimal": 3, "optimal": 2, "unknown": 1}
 TOP_FINDINGS_RANKING_POLICY_VERSION = (
     "PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1"
 )
+
+PrimaryConcernMode = Literal["distinct_lead", "near_tie_ambiguity", "technical_tiebreak_lead"]
 
 
 def _normalize_confidence_reasons_tuple(row: Dict[str, Any]) -> Tuple[str, ...]:
@@ -87,6 +89,87 @@ def _signal_id_fallback_invoked_for_top_findings(rows: List[Dict[str, Any]]) -> 
         prefix, sid = full[:-1], full[-1]
         by_prefix.setdefault(prefix, []).append(sid)
     return any(len(set(sids)) > 1 for sids in by_prefix.values())
+
+
+def _technical_tie_bucket_signal_ids(top_findings: List[Dict[str, Any]]) -> List[str]:
+    """Signal ids in ``top_findings`` that share the same governed tie prefix as the lead row."""
+    if not top_findings:
+        return []
+    primary = top_findings[0]
+    if not isinstance(primary, dict):
+        return []
+    prefix = _top_finding_sort_tuple(primary)[:-1]
+    ids = {
+        str(r.get("signal_id", "")).strip()
+        for r in top_findings
+        if isinstance(r, dict)
+        and _top_finding_sort_tuple(r)[:-1] == prefix
+        and str(r.get("signal_id", "")).strip()
+    }
+    return sorted(ids)
+
+
+def _near_tie_cluster_in_top3(top_findings: List[Dict[str, Any]], *, epsilon: float = 0.05) -> List[str]:
+    """Signals in the top three that tie with the lead on state and near-equal confidence."""
+    if len(top_findings) < 2:
+        return []
+    primary = top_findings[0]
+    if not isinstance(primary, dict):
+        return []
+    ps = str(primary.get("signal_state", "unknown")).strip() or "unknown"
+    pc = _safe_float(primary.get("confidence"))
+    cluster: set[str] = set()
+    pid = str(primary.get("signal_id", "")).strip()
+    if pid:
+        cluster.add(pid)
+    for r in top_findings[1:3]:
+        if not isinstance(r, dict):
+            continue
+        rs = str(r.get("signal_state", "unknown")).strip() or "unknown"
+        rc = _safe_float(r.get("confidence"))
+        rid = str(r.get("signal_id", "")).strip()
+        if not rid:
+            continue
+        if rs == ps and abs(rc - pc) <= epsilon:
+            cluster.add(rid)
+    if len(cluster) < 2:
+        return []
+    return sorted(cluster)
+
+
+def _page1_policy_key_finding_line(mode: PrimaryConcernMode, co_ids: List[str]) -> str:
+    if mode == "near_tie_ambiguity" and len(co_ids) >= 2:
+        return (
+            "Ranked ambiguity: multiple concerns share similar severity and confidence; "
+            f"policy-ordered co-concerns: {', '.join(co_ids)}."
+        )[:220]
+    if mode == "technical_tiebreak_lead":
+        if len(co_ids) >= 2:
+            return (
+                "Lead concern reflects a deterministic technical tie-break after evidence-aligned ranking; "
+                f"tied cluster: {', '.join(co_ids)}."
+            )[:220]
+        return (
+            "Lead concern reflects a deterministic technical tie-break after evidence-aligned ranking (report meta)."
+        )[:220]
+    return ""
+
+
+def _resolve_page1_concern_mode(
+    top_findings: List[Dict[str, Any]],
+    *,
+    ranking_signal_id_fallback_invoked: bool,
+) -> Tuple[PrimaryConcernMode, List[str]]:
+    if ranking_signal_id_fallback_invoked:
+        bucket = _technical_tie_bucket_signal_ids(top_findings)
+        co = bucket[:4] if len(bucket) >= 2 else []
+        return "technical_tiebreak_lead", co
+
+    near = _near_tie_cluster_in_top3(top_findings)
+    if len(near) >= 2:
+        return "near_tie_ambiguity", near[:4]
+
+    return "distinct_lead", []
 
 
 def _repo_root() -> Path:
@@ -335,6 +418,14 @@ def compile_clinician_report_v1(
     root_cause_row = _to_dict(report_row.get("root_cause_v1"))
     root_findings = [row for row in _to_list(root_cause_row.get("findings")) if isinstance(row, dict)]
 
+    meta_row = _to_dict(report_row.get("meta"))
+    ranking_fallback = bool(meta_row.get("ranking_signal_id_fallback_invoked"))
+    ranking_policy_version = str(meta_row.get("ranking_policy_version", "") or "")
+    concern_mode, co_primary_signal_ids = _resolve_page1_concern_mode(
+        top_findings,
+        ranking_signal_id_fallback_invoked=ranking_fallback,
+    )
+
     primary = top_findings[0] if top_findings else {}
     primary_signal_id = str(primary.get("signal_id", "")).strip()
     primary_state = str(primary.get("signal_state", "unknown")).strip() or "unknown"
@@ -389,7 +480,11 @@ def compile_clinician_report_v1(
             else "",
         ]
         if line
-    ][:5]
+    ]
+    policy_kf = _page1_policy_key_finding_line(concern_mode, co_primary_signal_ids)
+    if policy_kf:
+        key_findings = [policy_kf] + key_findings
+    key_findings = key_findings[:5]
 
     expected_metrics = sorted(
         {
@@ -451,6 +546,9 @@ def compile_clinician_report_v1(
                 chains=chain_lines,
                 top_hypothesis_line=top_hypothesis_line[:220],
                 confidence_and_missing_data=confidence_missing_line[:220],
+                primary_concern_mode=concern_mode,
+                co_primary_signal_ids=co_primary_signal_ids,
+                ranking_policy_version=ranking_policy_version[:220],
             ),
             root_cause=primary_root,
             confirmatory_tests=consolidated_tests,
