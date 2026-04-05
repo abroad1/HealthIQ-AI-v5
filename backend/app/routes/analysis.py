@@ -48,6 +48,8 @@ router = APIRouter()
 
 # In-memory cache for the current process (also persisted when DATABASE_URL is set)
 _analysis_results: Dict[str, Dict[str, Any]] = {}
+# analysis_id → authenticated Supabase user id (for owner-scoped GET /result)
+_analysis_owners: Dict[str, str] = {}
 
 
 def _generate_analysis_id() -> str:
@@ -209,6 +211,7 @@ async def start_analysis(
             "result_version": "1.0.0"
         }
         _analysis_results[analysis_id] = stored
+        _analysis_owners[analysis_id] = auth_user.id
 
         if db is not None:
             try:
@@ -254,24 +257,85 @@ async def start_analysis(
 
 
 @router.get("/result")
-async def get_analysis_result(analysis_id: str):
+async def get_analysis_result(
+    analysis_id: str,
+    auth_user: CurrentUser = Depends(require_analysis_submitter),
+    db: Optional[Session] = Depends(get_db_optional),
+):
     """
-    Get the final analysis result.
-    
-    Args:
-        analysis_id: The analysis ID to get results for
-        
-    Returns:
-        dict: Analysis result with biomarkers, clusters and insights
+    Get the final analysis result for the authenticated owner (memory and/or persisted snapshot).
     """
-    result = _analysis_results.get(analysis_id)
-    if not result:
-        raise HTTPException(status_code=404, detail="Analysis not found")
-
     try:
-        return build_analysis_result_dto(result)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get analysis result: {str(e)}")
+        analysis_uuid = UUID(analysis_id)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid analysis_id",
+        ) from exc
+
+    owner_str = auth_user.id
+
+    mem = _analysis_results.get(analysis_id)
+    if mem is not None and _analysis_owners.get(analysis_id) == owner_str:
+        try:
+            return build_analysis_result_dto(mem)
+        except Exception as e:
+            raise HTTPException(
+                status_code=500, detail=f"Failed to get analysis result: {str(e)}"
+            ) from e
+
+    if db is not None:
+        try:
+            owner_uuid = UUID(owner_str)
+            svc = PersistenceService(db, enable_fallback=False)
+            blob = svc.get_client_result_shape_for_owner(analysis_uuid, owner_uuid)
+            if blob:
+                return build_analysis_result_dto(blob)
+        except HTTPException:
+            raise
+        except Exception as exc:
+            logger.exception("Failed to load persisted analysis %s", analysis_id)
+            raise HTTPException(
+                status_code=500,
+                detail="Failed to load persisted analysis",
+            ) from exc
+
+    raise HTTPException(status_code=404, detail="Analysis not found")
+
+
+@router.get("/history")
+async def list_analysis_history(
+    limit: int = 10,
+    offset: int = 0,
+    auth_user: CurrentUser = Depends(require_analysis_submitter),
+    db: Optional[Session] = Depends(get_db_optional),
+):
+    """
+    Owner-scoped list of persisted analyses (minimal fields for continuity).
+    """
+    if db is None:
+        if os.getenv("HEALTHIQ_MODE", "").lower() == "test":
+            return {"history": [], "total": 0, "page": 1, "limit": max(1, min(limit, 100))}
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="DATABASE_URL is not configured",
+        )
+
+    lim = max(1, min(limit, 100))
+    off = max(0, offset)
+    try:
+        owner_uuid = UUID(auth_user.id)
+        svc = PersistenceService(db, enable_fallback=False)
+        items = svc.get_analysis_history(owner_uuid, limit=lim, offset=off)
+        total = svc.get_analysis_history_total(owner_uuid)
+        page = off // lim + 1
+        return {"history": items, "total": total, "page": page, "limit": lim}
+    except Exception as exc:
+        logger.exception("Failed to list analysis history")
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to list analysis history",
+        ) from exc
 
 
 @router.get("/events")

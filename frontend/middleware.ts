@@ -2,7 +2,14 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { AUTH_ACCESS_COOKIE_NAME } from './app/lib/auth-constants'
 
-const PROTECTED_PREFIXES = ['/dashboard', '/analysis', '/reports', '/settings', '/profile'] as const
+const PROTECTED_PREFIXES = [
+  '/dashboard',
+  '/analysis',
+  '/results',
+  '/reports',
+  '/settings',
+  '/profile',
+] as const
 
 function isProtectedPath(pathname: string): boolean {
   return PROTECTED_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))
@@ -43,6 +50,8 @@ export const config = {
     '/dashboard/:path*',
     '/analysis',
     '/analysis/:path*',
+    '/results',
+    '/results/:path*',
     '/reports',
     '/reports/:path*',
     '/settings',

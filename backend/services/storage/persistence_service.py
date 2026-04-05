@@ -485,7 +485,7 @@ class PersistenceService:
     @fallback_decorator("get_analysis_history")
     def get_analysis_history(self, user_id: UUID, limit: int = 10, offset: int = 0) -> List[Dict[str, Any]]:
         """
-        Get analysis history for a user.
+        Get analysis history for a user (owner-scoped, paginated).
         
         Args:
             user_id: User ID
@@ -496,18 +496,23 @@ class PersistenceService:
             List of analysis summary dictionaries
         """
         try:
-            analyses = self.analysis_repo.get_recent_analyses(user_id, limit)
+            analyses = self.analysis_repo.list_analyses_for_user(
+                user_id, limit=limit, offset=offset
+            )
             
             history = []
             for analysis in analyses:
                 # Get overall score from analysis result
                 result = self.analysis_result_repo.get_by_analysis_id(analysis.id)
                 overall_score = result.overall_score if result else None
+                st = analysis.status
+                status_str = st.value if hasattr(st, "value") else str(st)
                 
                 history.append({
                     "analysis_id": str(analysis.id),
+                    "id": str(analysis.id),
                     "created_at": analysis.created_at.isoformat(),
-                    "status": analysis.status,
+                    "status": status_str,
                     "overall_score": overall_score,
                     "processing_time_seconds": analysis.processing_time_seconds
                 })
@@ -517,6 +522,37 @@ class PersistenceService:
         except Exception as e:
             logger.error(f"Error getting analysis history for user {user_id}: {str(e)}")
             return []
+
+    def get_analysis_history_total(self, user_id: UUID) -> int:
+        """Owner-scoped count of persisted analyses (pagination)."""
+        try:
+            return self.analysis_repo.count_analyses_for_user(user_id)
+        except Exception as e:
+            logger.error(f"Error counting analyses for user {user_id}: {str(e)}")
+            return 0
+
+    def get_client_result_shape_for_owner(
+        self,
+        analysis_id: UUID,
+        owner_user_id: UUID,
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Load FE-PERSISTENCE-A snapshot for owner. Returns dict suitable for build_analysis_result_dto.
+        """
+        try:
+            analysis = self.analysis_repo.get_by_id(analysis_id)
+            if not analysis or analysis.user_id != owner_user_id:
+                return None
+            row = self.analysis_result_repo.get_by_analysis_id(analysis_id)
+            if not row or not isinstance(row.processing_metadata, dict):
+                return None
+            blob = row.processing_metadata.get(CLIENT_RESULT_SHAPE_V1)
+            if not isinstance(blob, dict):
+                return None
+            return blob
+        except Exception as e:
+            logger.error(f"Error loading client result snapshot for {analysis_id}: {str(e)}")
+            return None
     
     @fallback_decorator("get_analysis_result")
     def get_analysis_result(self, analysis_id: UUID) -> Optional[Dict[str, Any]]:

@@ -107,7 +107,10 @@ class TestAnalysisPersistsLabOrigin:
         analysis_id = start_resp.json().get("analysis_id")
         assert analysis_id
 
-        result_resp = client.get(f"/api/analysis/result?analysis_id={analysis_id}")
+        result_resp = client.get(
+            f"/api/analysis/result?analysis_id={analysis_id}",
+            headers=ANALYSIS_TEST_AUTH_HEADERS,
+        )
         assert result_resp.status_code == 200
         result = result_resp.json()
         assert "meta" in result
@@ -131,7 +134,10 @@ class TestAnalysisPersistsLabOrigin:
         assert start_resp.status_code == 200
         analysis_id = start_resp.json().get("analysis_id")
 
-        result_resp = client.get(f"/api/analysis/result?analysis_id={analysis_id}")
+        result_resp = client.get(
+            f"/api/analysis/result?analysis_id={analysis_id}",
+            headers=ANALYSIS_TEST_AUTH_HEADERS,
+        )
         assert result_resp.status_code == 200
         result = result_resp.json()
         meta_lo = result.get("meta", {}).get("lab_origin", {})
