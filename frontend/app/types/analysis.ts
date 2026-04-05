@@ -116,6 +116,12 @@ export interface ClinicianRootCauseFindingV1 {
   hypotheses: ClinicianHypothesisV1[];
 }
 
+/** KB-S54B-FE — mirrors backend Page1SummaryBlockV1.primary_concern_mode */
+export type PrimaryConcernModeV1 =
+  | 'distinct_lead'
+  | 'near_tie_ambiguity'
+  | 'technical_tiebreak_lead';
+
 export interface ClinicianReportV1 {
   header: {
     report_version: 'v1';
@@ -136,6 +142,10 @@ export interface ClinicianReportV1 {
       chains: string[];
       top_hypothesis_line: string;
       confidence_and_missing_data: string;
+      /** Optional for older API payloads; defaults interpreted in renderer. */
+      primary_concern_mode?: PrimaryConcernModeV1;
+      co_primary_signal_ids?: string[];
+      ranking_policy_version?: string;
     };
     root_cause: ClinicianRootCauseFindingV1 | null;
     confirmatory_tests: ClinicianConfirmatoryTestItem[];

@@ -1,7 +1,13 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { AnalysisService } from '../services/analysis';
-import { BiomarkerValue, BiomarkerData, UserProfile, AnalysisRequest } from '../types/analysis';
+import {
+  BiomarkerValue,
+  BiomarkerData,
+  UserProfile,
+  AnalysisRequest,
+  ClinicianReportV1,
+} from '../types/analysis';
 
 export interface BiomarkerResult {
   biomarker_name: string;
@@ -34,6 +40,7 @@ export interface AnalysisResult {
   processing_time_seconds?: number;
   result_version?: string;
   meta?: Record<string, any>;
+  clinician_report_v1?: ClinicianReportV1 | null;
 }
 
 export interface AnalysisError {

@@ -67,6 +67,48 @@ describe('ClinicianReportRenderer', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('B12-associated pattern')).toBeInTheDocument();
     expect(screen.getByText(/Methylmalonic acid \(MMA\)/)).toBeInTheDocument();
+    expect(screen.getByTestId('primary-concern-mode-distinct')).toBeInTheDocument();
+  });
+
+  it('surfaces technical tie-break mode, co-primaries, and policy stamp', () => {
+    const report: ClinicianReportV1 = {
+      ...sampleReport,
+      sections: {
+        ...sampleReport.sections,
+        page1: {
+          ...sampleReport.sections.page1,
+          primary_concern_mode: 'technical_tiebreak_lead',
+          co_primary_signal_ids: ['signal_a', 'signal_b'],
+          ranking_policy_version: 'PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1',
+        },
+      },
+    };
+    render(<ClinicianReportRenderer report={report} />);
+    expect(screen.getByTestId('primary-concern-mode-technical')).toBeInTheDocument();
+    expect(screen.getByText(/Co-ranked signal identifiers:/)).toBeInTheDocument();
+    expect(screen.getByText(/signal_a, signal_b/)).toBeInTheDocument();
+    expect(screen.getByTestId('ranking-policy-version')).toHaveTextContent(
+      'PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1',
+    );
+  });
+
+  it('surfaces near-tie ambiguity mode and co-primaries', () => {
+    const report: ClinicianReportV1 = {
+      ...sampleReport,
+      sections: {
+        ...sampleReport.sections,
+        page1: {
+          ...sampleReport.sections.page1,
+          primary_concern_mode: 'near_tie_ambiguity',
+          co_primary_signal_ids: ['sig_x', 'sig_y'],
+          ranking_policy_version: 'test-policy-v1',
+        },
+      },
+    };
+    render(<ClinicianReportRenderer report={report} />);
+    expect(screen.getByTestId('primary-concern-mode-ambiguity')).toBeInTheDocument();
+    expect(screen.getByText(/similarly supported on this panel/i)).toBeInTheDocument();
+    expect(screen.getByText(/sig_x, sig_y/)).toBeInTheDocument();
   });
 
   it('degrades safely when clinician report payload is null', () => {
