@@ -3,21 +3,12 @@ Analysis routes for biomarker processing and SSE streaming.
 """
 
 import asyncio
-import uuid
-from datetime import datetime, UTC
+import logging
+import os
 from typing import Dict, Any, Optional
 from uuid import UUID, uuid4
 
-# For ULID generation (fallback to uuid4 if ulid not available)
-try:
-    from ulid import ULID
-    def generate_analysis_id() -> str:
-        return str(ULID())
-except ImportError:
-    def generate_analysis_id() -> str:
-        return str(uuid.uuid4())
-
-from fastapi import APIRouter, HTTPException, Request, Depends, status
+from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
@@ -38,24 +29,38 @@ class AnalysisStartResponse(BaseModel):
     status: str
     message: str
 
-from core.models.biomarker import BiomarkerPanel
-from core.models.user import User
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
-from core.pipeline.events import stream_status
 from core.dto.builders import build_analysis_result_dto
 from core.canonical.normalize import normalize_biomarkers_with_metadata, detect_canonical_collisions
 from core.canonical.errors import CanonicalCollisionError
 from core.context import ContextFactory, ValidationError
 from core.units.registry import apply_unit_normalisation, UnitConversionError, UNIT_REGISTRY_VERSION
+from core.dependencies.analysis_auth import require_analysis_submitter
+from core.dependencies.auth import CurrentUser
+from core.profile_bridge import ensure_profile_for_auth_user
+from config.database import get_db_optional
+from services.storage.persistence_service import PersistenceService
+from sqlalchemy.orm import Session
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-# In-memory storage for analysis results (replaces database persistence)
+# In-memory cache for the current process (also persisted when DATABASE_URL is set)
 _analysis_results: Dict[str, Dict[str, Any]] = {}
 
 
+def _generate_analysis_id() -> str:
+    """UUIDv4 string only — matches ORM Analysis.id (PostgreSQL UUID)."""
+    return str(uuid4())
+
+
 @router.post("/start", response_model=AnalysisStartResponse)
-async def start_analysis(request: AnalysisStartRequest):
+async def start_analysis(
+    request: AnalysisStartRequest,
+    auth_user: CurrentUser = Depends(require_analysis_submitter),
+    db: Optional[Session] = Depends(get_db_optional),
+):
     """
     Start a new biomarker analysis.
     
@@ -67,10 +72,10 @@ async def start_analysis(request: AnalysisStartRequest):
     """
     try:
         # Generate unique analysis ID
-        analysis_id = generate_analysis_id()
+        analysis_id = _generate_analysis_id()
         
         # Trace incoming payload
-        data = request.dict()
+        data = request.model_dump()
         print("[TRACE] Incoming payload keys:", data.keys())
         print("[TRACE] Biomarker count:", len(data.get("biomarkers", {})))
         print("[TRACE] Route received biomarkers:", list(data.get("biomarkers", {}).keys()))
@@ -125,8 +130,9 @@ async def start_analysis(request: AnalysisStartRequest):
         
         # Run the complete pipeline: scoring → clustering → insights
         dto = orchestrator.run(normalized, request.user, assume_canonical=True, questionnaire_data=request.questionnaire_data)
-        
-        # Store result in memory (replaces database persistence)
+        dto = dto.model_copy(update={"analysis_id": analysis_id})
+
+        # Store result in memory
         lab_origin_meta = request.lab_origin or {
             "lab_provider_id": "unknown",
             "lab_provider_name": None,
@@ -136,7 +142,7 @@ async def start_analysis(request: AnalysisStartRequest):
         }
         meta = dict(dto.meta or {})
         meta["lab_origin"] = lab_origin_meta
-        _analysis_results[analysis_id] = {
+        stored = {
             "analysis_id": dto.analysis_id,
             "meta": meta,
             "replay_manifest": getattr(dto, "replay_manifest", None),
@@ -202,6 +208,34 @@ async def start_analysis(request: AnalysisStartRequest):
             "recommendations": [],
             "result_version": "1.0.0"
         }
+        _analysis_results[analysis_id] = stored
+
+        if db is not None:
+            try:
+                owner_uuid = ensure_profile_for_auth_user(db, auth_user)
+                PersistenceService(db, enable_fallback=False).save_live_analysis_after_run(
+                    owner_user_id=owner_uuid,
+                    analysis_id=UUID(analysis_id),
+                    client_result=stored,
+                    raw_biomarkers=request.biomarkers,
+                    questionnaire_data=request.questionnaire_data,
+                )
+            except Exception as exc:
+                logger.exception("Failed to persist analysis for user %s", auth_user.id)
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Analysis completed but persistence failed",
+                ) from exc
+        else:
+            if os.getenv("HEALTHIQ_MODE", "").lower() == "test":
+                logger.warning(
+                    "DATABASE_URL not set — skipping persistence (test mode only)"
+                )
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                    detail="DATABASE_URL is not configured; cannot persist analysis",
+                )
         
         return AnalysisStartResponse(
             analysis_id=analysis_id,

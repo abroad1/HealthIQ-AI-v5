@@ -1,8 +1,27 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import analysis, upload, health, alias_api, questionnaire, auth
 
-app = FastAPI(title="HealthIQ-AI")
+from app.routes import analysis, upload, health, alias_api, questionnaire, auth
+from config.database import get_database_url, log_database_config_on_startup, warmup_engine
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    log_database_config_on_startup()
+    if get_database_url():
+        try:
+            warmup_engine()
+            print("[INIT] Database engine warmed up (DATABASE_URL configured).")
+        except Exception as exc:
+            print(f"[INIT] WARNING: Database warmup failed: {exc}")
+    else:
+        print("[INIT] DATABASE_URL not set — API runs without DB persistence until configured.")
+    yield
+
+
+app = FastAPI(title="HealthIQ-AI", lifespan=lifespan)
 
 # --- CORS setup ---
 app.add_middleware(
@@ -12,10 +31,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-@app.on_event("startup")
-async def startup_event():
-    print("[INIT] Running HealthIQ-AI in fixture-only mode (no database required)")
 
 # --- Router registration ---
 app.include_router(health.router, prefix="/api")
