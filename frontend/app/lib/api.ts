@@ -1,5 +1,16 @@
 // frontend/app/lib/api.ts
+import { readAccessTokenCookie } from './auth-cookies';
+
 export const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://127.0.0.1:8000';
+
+function analysisAuthHeaders(): Record<string, string> {
+  if (typeof window === 'undefined') return {};
+  const token =
+    readAccessTokenCookie() ||
+    (typeof localStorage !== 'undefined' ? localStorage.getItem('healthiq_auth_token') : null);
+  if (!token) return {};
+  return { Authorization: `Bearer ${token}` };
+}
 
 export async function pingHealth(): Promise<any> {
   const res = await fetch(`${API_BASE}/api/health`, { credentials: 'omit' });
@@ -23,7 +34,7 @@ export async function startAnalysis(payload: {
 }): Promise<{ analysis_id: string }> {
   const res = await fetch(`${API_BASE}/api/analysis/start`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...analysisAuthHeaders() },
     body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error(`startAnalysis failed: ${res.status}`);

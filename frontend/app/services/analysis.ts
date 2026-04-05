@@ -13,8 +13,18 @@ import {
   ExportResponse
 } from '../types/analysis';
 import { ApiResponse, ApiError } from '../types/api';
+import { readAccessTokenCookie } from '../lib/auth-cookies';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000/api';
+
+function analysisAuthHeaders(): Record<string, string> {
+  if (typeof window === 'undefined') return {};
+  const token =
+    readAccessTokenCookie() ||
+    (typeof localStorage !== 'undefined' ? localStorage.getItem('healthiq_auth_token') : null);
+  if (!token) return {};
+  return { Authorization: `Bearer ${token}` };
+}
 
 export class AnalysisService {
   /**
@@ -52,6 +62,7 @@ export class AnalysisService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...analysisAuthHeaders(),
         },
         body: JSON.stringify(data),
       });

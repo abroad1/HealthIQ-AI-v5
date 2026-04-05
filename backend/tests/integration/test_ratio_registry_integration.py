@@ -10,6 +10,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
+from tests.auth_headers import ANALYSIS_TEST_AUTH_HEADERS
 
 
 def _lipid_payload():
@@ -32,7 +33,9 @@ class TestRatioRegistryIntegration:
         """POST /api/analysis/start with lipids; result meta includes derived_ratios and derived_markers."""
         client = TestClient(app)
         payload = _lipid_payload()
-        resp = client.post("/api/analysis/start", json=payload)
+        resp = client.post(
+            "/api/analysis/start", json=payload, headers=ANALYSIS_TEST_AUTH_HEADERS
+        )
         assert resp.status_code == 200
         analysis_id = resp.json().get("analysis_id")
         assert analysis_id
@@ -74,7 +77,9 @@ class TestRatioRegistryIntegration:
         """tc_hdl_ratio, tg_hdl_ratio, ldl_hdl_ratio in result biomarkers with status != unknown."""
         client = TestClient(app)
         payload = _lipid_payload()
-        resp = client.post("/api/analysis/start", json=payload)
+        resp = client.post(
+            "/api/analysis/start", json=payload, headers=ANALYSIS_TEST_AUTH_HEADERS
+        )
         assert resp.status_code == 200
         analysis_id = resp.json().get("analysis_id")
 
@@ -106,7 +111,9 @@ class TestRatioRegistryIntegration:
             },
             "user": {"user_id": "test", "age": 35, "gender": "male"},
         }
-        resp = client.post("/api/analysis/start", json=payload)
+        resp = client.post(
+            "/api/analysis/start", json=payload, headers=ANALYSIS_TEST_AUTH_HEADERS
+        )
         assert resp.status_code == 200
         analysis_id = resp.json().get("analysis_id")
 
@@ -135,7 +142,9 @@ class TestRatioRegistryIntegration:
             },
             "user": {"user_id": "test", "age": 35, "gender": "male"},
         }
-        resp = client.post("/api/analysis/start", json=payload)
+        resp = client.post(
+            "/api/analysis/start", json=payload, headers=ANALYSIS_TEST_AUTH_HEADERS
+        )
         assert resp.status_code == 200
         analysis_id = resp.json().get("analysis_id")
 
@@ -170,7 +179,9 @@ class TestRatioRegistryIntegration:
             },
             "user": {"user_id": "test", "age": 35, "gender": "male"},
         }
-        resp = client.post("/api/analysis/start", json=payload)
+        resp = client.post(
+            "/api/analysis/start", json=payload, headers=ANALYSIS_TEST_AUTH_HEADERS
+        )
         assert resp.status_code == 200
         analysis_id = resp.json().get("analysis_id")
 

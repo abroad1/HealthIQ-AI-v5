@@ -9,6 +9,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
+from tests.auth_headers import ANALYSIS_TEST_AUTH_HEADERS
 
 
 # Lab marker strings (short, realistic)
@@ -99,7 +100,9 @@ class TestAnalysisPersistsLabOrigin:
             "user": {"user_id": "test", "age": 35, "gender": "male"},
             "lab_origin": lab_origin_payload,
         }
-        start_resp = client.post("/api/analysis/start", json=payload)
+        start_resp = client.post(
+            "/api/analysis/start", json=payload, headers=ANALYSIS_TEST_AUTH_HEADERS
+        )
         assert start_resp.status_code == 200
         analysis_id = start_resp.json().get("analysis_id")
         assert analysis_id
@@ -122,7 +125,9 @@ class TestAnalysisPersistsLabOrigin:
             },
             "user": {"user_id": "test", "age": 35, "gender": "male"},
         }
-        start_resp = client.post("/api/analysis/start", json=payload)
+        start_resp = client.post(
+            "/api/analysis/start", json=payload, headers=ANALYSIS_TEST_AUTH_HEADERS
+        )
         assert start_resp.status_code == 200
         analysis_id = start_resp.json().get("analysis_id")
 

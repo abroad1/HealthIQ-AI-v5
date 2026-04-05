@@ -27,6 +27,9 @@ from .fallback_service import DatabaseFallbackService, CircuitBreakerConfig, Ret
 
 logger = logging.getLogger(__name__)
 
+# Part B retrieval: load AnalysisResult.processing_metadata[CLIENT_RESULT_SHAPE_V1] and pass to build_analysis_result_dto.
+CLIENT_RESULT_SHAPE_V1 = "client_result_shape_v1"
+
 
 class PersistenceService:
     """Service for orchestration-level persistence operations."""
@@ -313,6 +316,60 @@ class PersistenceService:
                 outcome="failure"
             )
             return False
+
+    def save_live_analysis_after_run(
+        self,
+        *,
+        owner_user_id: UUID,
+        analysis_id: UUID,
+        client_result: Dict[str, Any],
+        raw_biomarkers: Optional[Dict[str, Any]],
+        questionnaire_data: Optional[Dict[str, Any]],
+    ) -> None:
+        """
+        Persist one completed live analysis for an authenticated user.
+
+        Stores the same in-memory result shape used by /api/analysis/result inside
+        AnalysisResult.processing_metadata[CLIENT_RESULT_SHAPE_V1] so Part B can
+        rebuild the frontend DTO via build_analysis_result_dto without ORM cluster/insight row mapping.
+
+        Normalized Cluster / Insight / BiomarkerScore child rows are intentionally not written here
+        (Insight ORM requires provenance fields that pipeline insights do not populate).
+        """
+        analysis_payload = {
+            "analysis_id": str(analysis_id),
+            "status": client_result.get("status", "completed"),
+            "raw_biomarkers": raw_biomarkers,
+            "questionnaire_data": questionnaire_data,
+            "analysis_version": "1.0.0",
+            "pipeline_version": "1.0.0",
+        }
+        saved_id = self.save_analysis(analysis_payload, owner_user_id)
+        if saved_id is None:
+            raise RuntimeError("save_analysis failed")
+
+        processing_meta: Dict[str, Any] = {CLIENT_RESULT_SHAPE_V1: client_result}
+        result_row = {
+            "biomarkers": client_result.get("biomarkers"),
+            "clusters": client_result.get("clusters"),
+            "insights": client_result.get("insights"),
+            "overall_score": client_result.get("overall_score"),
+            "risk_assessment": client_result.get("risk_assessment") or {},
+            "recommendations": client_result.get("recommendations") or [],
+            "result_version": client_result.get("result_version", "1.0.0"),
+            "confidence_score": None,
+            "processing_metadata": processing_meta,
+            "replay_manifest": client_result.get("replay_manifest"),
+            "derived_markers": client_result.get("derived_markers"),
+        }
+        self.analysis_result_repo.upsert_by_analysis_id(analysis_id, **result_row)
+        self._log_audit_action(
+            action="live_analysis_snapshot_saved",
+            resource_type="analysis_result",
+            resource_id=analysis_id,
+            user_id=owner_user_id,
+            details={"schema": CLIENT_RESULT_SHAPE_V1},
+        )
     
     def save_insights(self, insights_dto: Dict[str, Any], analysis_id: UUID) -> bool:
         """
