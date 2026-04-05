@@ -36,6 +36,58 @@ from core.knowledge.load_confirmatory_tests_registry import load_confirmatory_te
 
 _STATE_RANK = {"at_risk": 4, "suboptimal": 3, "optimal": 2, "unknown": 1}
 
+# KB-S54B Phase 2a — report-layer ordering under PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY v1.
+TOP_FINDINGS_RANKING_POLICY_VERSION = (
+    "PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1"
+)
+
+
+def _normalize_confidence_reasons_tuple(row: Dict[str, Any]) -> Tuple[str, ...]:
+    reasons = row.get("confidence_reasons")
+    if not isinstance(reasons, list):
+        return tuple()
+    return tuple(sorted(str(x) for x in reasons if str(x).strip()))
+
+
+def _supporting_marker_count(row: Dict[str, Any]) -> int:
+    supporting = row.get("supporting_markers")
+    if not isinstance(supporting, list):
+        return 0
+    return sum(1 for x in supporting if str(x).strip())
+
+
+def _top_finding_sort_tuple(row: Dict[str, Any]) -> Tuple[Any, ...]:
+    """Deterministic total order: state, confidence, evidence density, then technical keys.
+
+    Lexicographic ``signal_id`` is only the final stabiliser when all governed comparisons tie.
+    """
+    state = str(row.get("signal_state", "unknown")).strip() or "unknown"
+    conf = _safe_float(row.get("confidence"), 0.0)
+    signal_id = str(row.get("signal_id", "")).strip()
+    primary_metric = str(row.get("primary_metric", "")).strip()
+    reasons_key = _normalize_confidence_reasons_tuple(row)
+    supp_n = _supporting_marker_count(row)
+    return (
+        -_STATE_RANK.get(state, 1),
+        -conf,
+        -supp_n,
+        reasons_key,
+        primary_metric,
+        signal_id,
+    )
+
+
+def _signal_id_fallback_invoked_for_top_findings(rows: List[Dict[str, Any]]) -> bool:
+    """True when any two rows share the same governed sort prefix but differ in ``signal_id``."""
+    by_prefix: Dict[Tuple[Any, ...], List[str]] = {}
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        full = _top_finding_sort_tuple(row)
+        prefix, sid = full[:-1], full[-1]
+        by_prefix.setdefault(prefix, []).append(sid)
+    return any(len(set(sids)) > 1 for sids in by_prefix.values())
+
 
 def _repo_root() -> Path:
     return Path(__file__).resolve().parents[3]
@@ -433,14 +485,8 @@ def compile_report_v1(
         if str(row.get("signal_id", "")).strip()
     }
 
-    ordered_findings = sorted(
-        signal_results,
-        key=lambda row: (
-            -_STATE_RANK.get(str(row.get("signal_state", "unknown")).strip(), 1),
-            -float(row.get("confidence", 0.0) if isinstance(row.get("confidence"), (int, float)) else 0.0),
-            str(row.get("signal_id", "")),
-        ),
-    )
+    fallback_invoked = _signal_id_fallback_invoked_for_top_findings(signal_results)
+    ordered_findings = sorted(signal_results, key=_top_finding_sort_tuple)
     top_findings: List[ReportTopFindingV1] = []
     for idx, row in enumerate(ordered_findings, start=1):
         signal_id = str(row.get("signal_id", "")).strip()
@@ -507,6 +553,8 @@ def compile_report_v1(
         interaction_map_revision=str(interaction_map_revision or _load_map_revision()),
         safety_contract_version=str(safety_contract_version or _load_safety_contract_version()),
         generated_at=str(generated_at or ""),
+        ranking_policy_version=TOP_FINDINGS_RANKING_POLICY_VERSION,
+        ranking_signal_id_fallback_invoked=fallback_invoked,
     )
     root_cause_v1 = compile_root_cause_v1(
         signal_results=signal_results,

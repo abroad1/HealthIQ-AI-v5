@@ -70,6 +70,8 @@ class ReportMetaV1(BaseModel):
     interaction_map_revision: str
     safety_contract_version: str
     generated_at: str
+    ranking_policy_version: str = ""
+    ranking_signal_id_fallback_invoked: bool = False
 
 
 class ReportV1(BaseModel):
