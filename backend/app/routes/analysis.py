@@ -30,7 +30,11 @@ class AnalysisStartResponse(BaseModel):
     message: str
 
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
-from core.dto.builders import build_analysis_result_dto
+from core.dto.builders import (
+    analysis_route_biomarker_row,
+    build_analysis_result_dto,
+    extend_cluster_client_dict_from_hit,
+)
 from core.canonical.normalize import normalize_biomarkers_with_metadata, detect_canonical_collisions
 from core.canonical.errors import CanonicalCollisionError
 from core.context import ContextFactory, ValidationError
@@ -147,31 +151,10 @@ async def start_analysis(
             "meta": meta,
             "replay_manifest": getattr(dto, "replay_manifest", None),
             "derived_markers": dto.derived_markers,
-            "biomarkers": [
-                {
-                    "biomarker_name": b.biomarker_name,
-                    "value": b.value,
-                    "unit": b.unit,
-                    "score": b.score,
-                    "percentile": b.percentile,
-                    "status": b.status,
-                    "reference_range": {
-                        "min": b.reference_range.get("min") if b.reference_range else None,
-                        "max": b.reference_range.get("max") if b.reference_range else None,
-                        "unit": b.reference_range.get("unit", b.unit) if b.reference_range else b.unit,
-                        "source": b.reference_range.get("source", "lab") if b.reference_range else "lab"
-                    } if b.reference_range else {
-                        "min": None,
-                        "max": None,
-                        "unit": b.unit,
-                        "source": "lab"
-                    },
-                    "interpretation": b.interpretation
-                }
-                for b in dto.biomarkers
-            ],
+            "biomarkers": [analysis_route_biomarker_row(b) for b in dto.biomarkers],
             "clusters": [
-                {
+                extend_cluster_client_dict_from_hit(
+                    {
                     "cluster_id": c.cluster_id,
                     "name": c.name,
                     "category": getattr(c, "category", "other"),
@@ -180,7 +163,9 @@ async def start_analysis(
                     "severity": c.severity,
                     "confidence": c.confidence,
                     "recommendations": getattr(c, "recommendations", [])
-                }
+                    },
+                    c,
+                )
                 for c in dto.clusters
             ],
             "insights": [

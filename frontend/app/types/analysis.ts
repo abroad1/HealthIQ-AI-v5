@@ -44,6 +44,30 @@ export interface ClusteringSummary {
   };
 }
 
+/** FE-VISUALISATION-B1A — governed retail explainer payloads (optional on API). */
+export interface BiomarkerEducationalExplainerV1 {
+  schema_version: string;
+  content_class: 'biomarker_education';
+  biomarker_id: string;
+  title: string;
+  body: string;
+}
+
+export interface SystemEducationalExplainerV1 {
+  schema_version: string;
+  content_class: 'system_education';
+  system_key: string;
+  title: string;
+  body: string;
+}
+
+export interface ContributionContextV1 {
+  schema_version: string;
+  content_class: 'contribution_context';
+  relationship_kind: 'cluster_membership';
+  factual_statement: string;
+}
+
 export interface BiomarkerResult {
   biomarker_name: string;
   value: number | null;
@@ -57,7 +81,10 @@ export interface BiomarkerResult {
     unit: string;
     source: string | null;
   } | null;
+  /** Engine/lab mechanics — not retail educational explainer text */
   interpretation?: string | null;
+  biomarker_educational_explainer?: BiomarkerEducationalExplainerV1 | null;
+  contribution_context?: ContributionContextV1 | null;
 }
 
 export interface Insight {
@@ -85,6 +112,7 @@ export interface Cluster {
   confidence?: number;
   severity?: string;
   recommendations?: string[];
+  system_educational_explainer?: SystemEducationalExplainerV1 | null;
 }
 
 export interface ClinicianEvidenceItem {

@@ -5,6 +5,11 @@ Analysis results models - immutable Pydantic v2 models for analysis results.
 from typing import List, Dict, Any, Optional, TYPE_CHECKING
 from pydantic import BaseModel, ConfigDict, Field
 
+from core.contracts.retail_explainer_v1 import (
+    BiomarkerEducationalExplainerV1,
+    ContributionContextV1,
+    SystemEducationalExplainerV1,
+)
 from core.models.biomarker import BiomarkerCluster, BiomarkerInsight
 from core.models.context import AnalysisContext
 
@@ -39,7 +44,18 @@ class BiomarkerScore(BaseModel):
         default=None,
         description="Band label matched from reference_profile.bands when deterministically classifiable"
     )
-    interpretation: str = Field(default="", description="Clinical interpretation")
+    interpretation: str = Field(
+        default="",
+        description="Engine/lab mechanics interpretation — not retail educational explainer text",
+    )
+    biomarker_educational_explainer: Optional[BiomarkerEducationalExplainerV1] = Field(
+        default=None,
+        description="FE-VISUALISATION-B1A: reusable educational copy; separate from interpretation",
+    )
+    contribution_context: Optional[ContributionContextV1] = Field(
+        default=None,
+        description="FE-VISUALISATION-B1A: bounded factual grouping context (e.g. cluster membership)",
+    )
 
 
 class AnalysisResult(BaseModel):
@@ -113,6 +129,10 @@ class ClusterHit(BaseModel):
     confidence: float = Field(..., description="Confidence score (0-1)")
     severity: str = Field(..., description="Severity level")
     description: str = Field(default="", description="Cluster description")
+    system_educational_explainer: Optional[SystemEducationalExplainerV1] = Field(
+        default=None,
+        description="FE-VISUALISATION-B1A: reusable body-system education; not personalised proof",
+    )
 
 
 class InsightResult(BaseModel):

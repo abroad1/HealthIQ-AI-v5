@@ -7,7 +7,7 @@ from datetime import datetime, UTC
 
 from core.analytics.report_compiler_v1 import compile_clinician_report_v1
 from core.models.biomarker import BiomarkerCluster, BiomarkerInsight
-from core.models.results import AnalysisResult, AnalysisSummary, BiomarkerScore
+from core.models.results import AnalysisResult, AnalysisSummary, BiomarkerScore, ClusterHit
 from core.models.insight import Insight, InsightSynthesisResult
 
 
@@ -65,7 +65,7 @@ def build_biomarker_score_dto(score: BiomarkerScore) -> Dict[str, Any]:
     Returns:
         Frontend-safe dictionary
     """
-    return {
+    row: Dict[str, Any] = {
         "biomarker_name": score.biomarker_name,
         "value": score.value,
         "unit": score.unit,
@@ -73,8 +73,53 @@ def build_biomarker_score_dto(score: BiomarkerScore) -> Dict[str, Any]:
         "percentile": score.percentile,
         "status": score.status,
         "reference_range": score.reference_range,
-        "interpretation": score.interpretation
+        "interpretation": score.interpretation,
     }
+    if score.biomarker_educational_explainer is not None:
+        row["biomarker_educational_explainer"] = score.biomarker_educational_explainer.model_dump()
+    if score.contribution_context is not None:
+        row["contribution_context"] = score.contribution_context.model_dump()
+    return row
+
+
+def analysis_route_biomarker_row(b: BiomarkerScore) -> Dict[str, Any]:
+    """Shape stored/API biomarker row from orchestrator DTO (includes B1A optional fields)."""
+    row: Dict[str, Any] = {
+        "biomarker_name": b.biomarker_name,
+        "value": b.value,
+        "unit": b.unit,
+        "score": b.score,
+        "percentile": b.percentile,
+        "status": b.status,
+        "reference_range": {
+            "min": b.reference_range.get("min") if b.reference_range else None,
+            "max": b.reference_range.get("max") if b.reference_range else None,
+            "unit": b.reference_range.get("unit", b.unit) if b.reference_range else b.unit,
+            "source": b.reference_range.get("source", "lab") if b.reference_range else "lab",
+        }
+        if b.reference_range
+        else {
+            "min": None,
+            "max": None,
+            "unit": b.unit,
+            "source": "lab",
+        },
+        "interpretation": b.interpretation,
+    }
+    if b.biomarker_educational_explainer is not None:
+        row["biomarker_educational_explainer"] = b.biomarker_educational_explainer.model_dump()
+    if b.contribution_context is not None:
+        row["contribution_context"] = b.contribution_context.model_dump()
+    return row
+
+
+def extend_cluster_client_dict_from_hit(cluster_dict: Dict[str, Any], cluster: ClusterHit) -> Dict[str, Any]:
+    """Merge B1A retail explainer fields onto a cluster client row when present."""
+    out = dict(cluster_dict)
+    sys_expl = getattr(cluster, "system_educational_explainer", None)
+    if sys_expl is not None:
+        out["system_educational_explainer"] = sys_expl.model_dump()
+    return out
 
 
 def build_biomarker_cluster_dto(cluster: BiomarkerCluster) -> Dict[str, Any]:

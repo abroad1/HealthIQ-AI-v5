@@ -1925,6 +1925,10 @@ class AnalysisOrchestrator:
                     severity=cluster['severity'],
                     description=cluster['description']
                 ))
+
+            from core.analytics.retail_explainer_assembly_v1 import attach_retail_explainers_v1
+
+            biomarker_dtos, cluster_dtos = attach_retail_explainers_v1(biomarker_dtos, cluster_dtos)
             
             # Step 8: Build insight DTOs
             logger.info("Step 8: Building insight DTOs")
