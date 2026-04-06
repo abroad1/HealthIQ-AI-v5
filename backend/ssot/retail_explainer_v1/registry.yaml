@@ -1,0 +1,21 @@
+# FE-VISUALISATION-B1A — governed retail explainer registry (v1)
+# Ownership: content population sprints (B1B+); schema governed here.
+# Pilot rows only — validate contract wiring; do not treat as clinical content sign-off.
+
+registry_version: "1.0.0"
+
+biomarkers:
+  glucose:
+    title: "Glucose (blood sugar)"
+    body: |
+      Glucose is a sugar your body uses for fuel. A blood test measures how much is circulating
+      at that moment. This text is general education only. It is not a diagnosis and does not
+      replace advice from a qualified clinician about your own numbers.
+
+systems:
+  metabolic:
+    title: "Metabolic pattern (educational overview)"
+    body: |
+      In lab reporting, “metabolic” often groups markers tied to how your body manages energy,
+      including blood sugar and fats. Names on your report describe a pattern grouping from this
+      analysis, not a disease label. This overview is educational context only.
