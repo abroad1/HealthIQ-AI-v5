@@ -39,13 +39,13 @@ def test_attach_enrichment_glucose_and_metabolic_cluster():
             interpretation="Scored using lab reference range",
         ),
         BiomarkerScore(
-            biomarker_name="creatinine",
-            value=80.0,
-            unit="µmol/L",
+            biomarker_name="albumin",
+            value=40.0,
+            unit="g/L",
             score=0.7,
             percentile=None,
             status="normal",
-            reference_range={"min": 60.0, "max": 110.0, "unit": "µmol/L"},
+            reference_range={"min": 35.0, "max": 50.0, "unit": "g/L"},
             interpretation="Scored using lab reference range",
         ),
     ]
@@ -65,9 +65,9 @@ def test_attach_enrichment_glucose_and_metabolic_cluster():
     assert g.biomarker_educational_explainer.content_class == "biomarker_education"
     assert g.contribution_context is not None
     assert g.contribution_context.relationship_kind == "cluster_membership"
-    cr = next(x for x in b_out if x.biomarker_name == "creatinine")
-    assert cr.biomarker_educational_explainer is None
-    assert cr.contribution_context is None
+    alb = next(x for x in b_out if x.biomarker_name == "albumin")
+    assert alb.biomarker_educational_explainer is None
+    assert alb.contribution_context is None
     assert c_out[0].system_educational_explainer is not None
     assert c_out[0].system_educational_explainer.content_class == "system_education"
 

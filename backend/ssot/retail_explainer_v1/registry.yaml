@@ -1,21 +1,364 @@
-# FE-VISUALISATION-B1A — governed retail explainer registry (v1)
-# Ownership: content population sprints (B1B+); schema governed here.
-# Pilot rows only — validate contract wiring; do not treat as clinical content sign-off.
+# FE-VISUALISATION-B1B — governed retail explainer registry (v1)
+# Ownership: retail_explainer_v1 SSOT. Keys must match canonical biomarker ids and cluster-schema system keys.
+# Symptom relevance and personalised interpretation are out of scope for this file.
+# ContributionContextV1 is assembled at runtime (cluster membership); it is not stored here.
 
-registry_version: "1.0.0"
+registry_version: "1.0.1"
 
 biomarkers:
   glucose:
     title: "Glucose (blood sugar)"
     body: |
-      Glucose is a sugar your body uses for fuel. A blood test measures how much is circulating
-      at that moment. This text is general education only. It is not a diagnosis and does not
-      replace advice from a qualified clinician about your own numbers.
+      Glucose is a simple sugar and the main fuel your cells use for quick energy. A blood glucose
+      measurement reflects how much is circulating when the sample was taken.
+
+      It matters because your body works to keep glucose in a balanced range for energy, hydration,
+      and organ function. Results are interpreted alongside other markers and clinical context.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  hba1c:
+    title: "HbA1c (glycated haemoglobin)"
+    body: |
+      HbA1c reflects average blood glucose exposure over roughly the past two to three months by
+      measuring how much glucose is attached to haemoglobin in red blood cells.
+
+      Because red cells live for months, HbA1c smooths out day-to-day swings and is widely used as
+      a longer-term glycaemic indicator alongside single glucose readings.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  insulin:
+    title: "Insulin"
+    body: |
+      Insulin is a hormone made by the pancreas that helps move glucose from the bloodstream into
+      cells so it can be used or stored.
+
+      It sits in a network of hormones and tissues that regulate energy storage and release.
+      Interpretation depends on sampling context and other metabolic markers, not this text alone.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  total_cholesterol:
+    title: "Total cholesterol"
+    body: |
+      Total cholesterol is the sum of cholesterol carried in the blood across major particle types.
+      Cholesterol is a fat-like substance used to build cell membranes and make certain hormones.
+
+      It is one piece of a broader cardiovascular risk picture that typically includes HDL, LDL or
+      apoB-related measures, triglycerides, blood pressure, and personal history.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  ldl_cholesterol:
+    title: "LDL cholesterol"
+    body: |
+      LDL cholesterol measures cholesterol carried in low-density lipoprotein particles. In public
+      health education it is often described as delivering cholesterol to tissues.
+
+      Higher LDL cholesterol is commonly highlighted as a modifiable factor in long-term
+      cardiovascular risk models, but your report should be interpreted as a whole—not from this
+      paragraph alone.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  hdl_cholesterol:
+    title: "HDL cholesterol"
+    body: |
+      HDL cholesterol reflects cholesterol carried in high-density lipoprotein particles. It is
+      often described in education as part of the system that moves cholesterol back toward the
+      liver for processing.
+
+      HDL is interpreted alongside triglycerides, LDL or non-HDL measures, and overall risk
+      context—not as a standalone “good or bad” label.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  triglycerides:
+    title: "Triglycerides"
+    body: |
+      Triglycerides are a form of fat stored and transported in the blood after meals and during
+      fasting, depending on metabolism and recent intake.
+
+      They relate to how your body handles dietary energy and insulin sensitivity and are often
+      reviewed together with glucose-related markers and HDL cholesterol.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  non_hdl_cholesterol:
+    title: "Non-HDL cholesterol"
+    body: |
+      Non-HDL cholesterol is calculated from total cholesterol minus HDL cholesterol. In educational
+      terms, it captures cholesterol carried by atherogenic (plaque-associated) particle types as a
+      group.
+
+      It is sometimes used as a practical complement to LDL in risk conversations because it is
+      available whenever total cholesterol and HDL are measured.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  apob:
+    title: "Apolipoprotein B (ApoB)"
+    body: |
+      ApoB is a protein found on several cholesterol- and triglyceride-carrying particles. Lab
+      tests often use ApoB concentration as a proxy for the number of these particles in circulation.
+
+      Particle number concepts are part of modern lipid education, but numbers still require
+      clinical interpretation alongside the rest of your panel and history.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  creatinine:
+    title: "Creatinine"
+    body: |
+      Creatinine is a waste product formed from muscle metabolism. Blood creatinine is commonly used
+      in equations that estimate how well the kidneys filter waste.
+
+      A single value reflects muscle mass, hydration, and kidney function signals together; it is
+      not a full kidney assessment by itself.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  egfr:
+    title: "eGFR (estimated glomerular filtration rate)"
+    body: |
+      eGFR is an estimated measure of kidney filtration derived from blood creatinine and other
+      standard inputs using validated equations.
+
+      It helps clinicians group kidney function for monitoring and decisions, but estimation has
+      limits and should be interpreted in clinical context.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  alt:
+    title: "ALT (alanine aminotransferase)"
+    body: |
+      ALT is an enzyme found largely in liver cells. When liver cells are stressed or injured, ALT
+      can rise in the bloodstream.
+
+      ALT is a laboratory signal, not a specific disease label. It is interpreted with other liver
+      tests, history, medications, and imaging when needed.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  ast:
+    title: "AST (aspartate aminotransferase)"
+    body: |
+      AST is an enzyme present in the liver and also in other tissues such as muscle and heart.
+      Because it is less liver-specific than ALT, results are usually read alongside ALT and other tests.
+
+      Patterns over time and the full panel matter more than any single snapshot in isolation.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  hemoglobin:
+    title: "Haemoglobin"
+    body: |
+      Haemoglobin is the protein inside red blood cells that binds oxygen in the lungs and delivers
+      it to tissues.
+
+      Blood haemoglobin concentration helps assess oxygen-carrying capacity and is interpreted
+      with cell indices, iron studies, and clinical symptoms when relevant.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  ferritin:
+    title: "Ferritin"
+    body: |
+      Ferritin reflects iron stored in the body and is commonly used as part of assessing iron
+      balance. It can also rise with inflammation because it behaves like an acute-phase reactant.
+
+      That dual role is why ferritin is interpreted with other iron markers and the clinical picture,
+      not from a single value alone.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  vitamin_d:
+    title: "Vitamin D (25‑hydroxyvitamin D)"
+    body: |
+      The commonly measured form, 25‑hydroxyvitamin D, reflects vitamin D obtained from sun exposure,
+      diet, and supplements over recent months.
+
+      Vitamin D supports bone mineralisation and has wide roles in physiology; laboratory thresholds
+      vary by lab method and guideline context.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
+
+  tsh:
+    title: "TSH (thyroid stimulating hormone)"
+    body: |
+      TSH is a pituitary hormone that signals the thyroid gland to produce thyroid hormones. In
+      steady state, TSH moves inversely with thyroid hormone levels in many common patterns.
+
+      Thyroid testing is interpreted as a panel (often including free T4 and sometimes antibodies)
+      and symptoms, not from TSH alone.
+
+      This is general education only. It is not a diagnosis and does not replace advice from a
+      qualified clinician about your own results.
 
 systems:
   metabolic:
-    title: "Metabolic pattern (educational overview)"
+    title: "Metabolic system (educational overview)"
     body: |
-      In lab reporting, “metabolic” often groups markers tied to how your body manages energy,
-      including blood sugar and fats. Names on your report describe a pattern grouping from this
-      analysis, not a disease label. This overview is educational context only.
+      In laboratory education, “metabolic” often refers to how your body converts food into energy
+      and manages fuels such as glucose and circulating fats.
+
+      Related biomarkers can reflect insulin signalling, short-term glucose exposure, and longer-term
+      glycaemic patterns, but names on your report describe analytic groupings—not a single disease.
+
+      When this system is under strain in population health language, it can mean multiple pathways
+      need review together with a clinician, including lifestyle and medications.
+
+      This overview is general education only. It does not prove illness in any individual and does
+      not replace personalised medical advice.
+
+  cardiovascular:
+    title: "Cardiovascular system (educational overview)"
+    body: |
+      The cardiovascular system includes the heart and blood vessels that move oxygen and nutrients.
+      Blood tests often focus on lipids and related markers that contribute to long-term vessel health
+      risk models.
+
+      Biomarkers in this theme usually describe particle-related cholesterol and triglycerides, not
+      chest symptoms or diagnoses.
+
+      Educational “strain” language means only that several markers may move in directions clinicians
+      monitor—not that a specific event has occurred.
+
+      This overview is general education only. It does not prove illness in any individual and does
+      not replace personalised medical advice.
+
+  renal:
+    title: "Renal (kidney) system (educational overview)"
+    body: |
+      Kidneys filter blood, regulate fluid and electrolytes, and help remove metabolic waste.
+      Creatinine-based estimates summarise filtration as a practical monitoring tool alongside urine
+      tests when used.
+
+      Kidney-related markers describe physiology and lab estimates; they do not replace clinical
+      assessment of symptoms or imaging.
+
+      In educational terms, “under strain” can mean filtration estimates or related signals deserve
+      structured follow-up with a clinician.
+
+      This overview is general education only. It does not prove illness in any individual and does
+      not replace personalised medical advice.
+
+  hepatic:
+    title: "Hepatic (liver chemistry) pattern (educational overview)"
+    body: |
+      Hepatic panels focus on liver-related enzymes and proteins measured in blood. Enzymes can rise
+      when liver cells are irritated, but patterns vary widely by cause and timing.
+
+      These markers are pieces of a liver health picture that may include history, medications,
+      imaging, and other labs.
+
+      “Strain” here means only that liver chemistry signals may warrant professional review—not a
+      specific diagnosis from grouping names.
+
+      This overview is general education only. It does not prove illness in any individual and does
+      not replace personalised medical advice.
+
+  liver:
+    title: "Liver (organ‑level) pattern (educational overview)"
+    body: |
+      The liver processes nutrients, makes proteins, and helps detoxify metabolic by-products.
+      Blood tests may reflect liver synthetic function and cellular stress signals.
+
+      Marker groupings are educational shorthand for how labs are organised in analysis; they are not a
+      substitute for a clinical liver evaluation.
+
+      When multiple liver-associated signals shift together, clinicians integrate context rather than
+      relying on pattern names alone.
+
+      This overview is general education only. It does not prove illness in any individual and does
+      not replace personalised medical advice.
+
+  hematological:
+    title: "Haematological (blood) system (educational overview)"
+    body: |
+      Haematology-related blood tests assess oxygen delivery (for example haemoglobin), cell
+      production, and iron storage markers.
+
+      These results describe blood physiology in broad terms and are paired with symptoms and
+      examination when interpreting change.
+
+      Educational phrasing about “strain” refers to patterns that may merit investigation, not a
+      confirmed condition from this text.
+
+      This overview is general education only. It does not prove illness in any individual and does
+      not replace personalised medical advice.
+
+  immune:
+    title: "Immune‑related markers (educational overview)"
+    body: |
+      Some blood markers rise with inflammation or immune activation. In educational materials they
+      are often grouped for visibility, but they are not specific to one infection or autoimmune label.
+
+      Interpretation depends on the full clinical context, timing, and often repeat testing.
+
+      A pattern grouping name cannot, by itself, establish an immune diagnosis.
+
+      This overview is general education only. It does not prove illness in any individual and does
+      not replace personalised medical advice.
+
+  thyroid:
+    title: "Thyroid system (educational overview)"
+    body: |
+      The thyroid gland makes hormones that set the pace for metabolism, temperature, and energy use.
+      Pituitary TSH and thyroid hormone levels are usually read together.
+
+      Laboratory grouping helps organise results for review; it does not replace the panel‑level
+      interpretation a clinician provides.
+
+      “Under strain” in plain language can mean hormone signals are discordant enough to warrant
+      professional follow-up—not a self-diagnosis.
+
+      This overview is general education only. It does not prove illness in any individual and does
+      not replace personalised medical advice.
+
+  nutritional:
+    title: "Nutritional markers (educational overview)"
+    body: |
+      Nutritional blood markers can reflect vitamins, minerals, and related transport proteins.
+      They describe physiology and intake patterns imperfectly because values shift with
+      inflammation, supplements, and lab methods.
+
+      Grouping supports consistent reporting; it is not a complete nutrition assessment by itself.
+
+      When several nutritional signals sit outside expected ranges, clinicians may recommend targeted
+      review rather than broad assumptions from labels alone.
+
+      This overview is general education only. It does not prove illness in any individual and does
+      not replace personalised medical advice.
+
+  hormonal:
+    title: "Hormonal markers (educational overview)"
+    body: |
+      Hormones coordinate growth, metabolism, reproduction, and stress responses. Laboratory
+      markers in this theme are highly timing- and context-dependent.
+
+      Educational grouping summarises related tests; it does not determine a single hormone disorder
+      without clinical correlation.
+
+      “Strain” language means only that endocrine signals may deserve structured interpretation—not
+      that any one marker proves a condition.
+
+      This overview is general education only. It does not prove illness in any individual and does
+      not replace personalised medical advice.
