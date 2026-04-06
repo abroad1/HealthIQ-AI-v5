@@ -60,7 +60,7 @@ phenotypes:
 
   - phenotype_id: "ph_renal_stress_v1"
     name: "Renal stress pattern"
-    description: "Creatinine, urea, and urate high-signal constellation suggesting renal-metabolic stress context. The creatinine→urea edge is promoted under investigation specs and KB-S52C packages; chain expectations stay pending until interaction-map renal wiring (KB-S56B)."
+    description: "Creatinine, urea, and urate high-signal constellation suggesting renal-metabolic stress context. The creatinine→urea edge is promoted under investigation specs and KB-S52C packages; interaction-map renal wiring and root-cause targets completed under KB-S56B."
     systems_involved:
       - "renal"
       - "metabolic"
@@ -81,8 +81,12 @@ phenotypes:
     synthetic_fixture_refs:
       - "ph_renal_stress_v1.json"
     chain_expectations:
-      status: "pending"
-    evidence_notes: "KB-S56A: creatinine→urea edge promoted via ref_edge_renal_creatinine_to_urea_v1.yaml; chain_expectations remain pending pending renal interaction-map completion (KB-S56B)."
+      status: "enforced"
+      min_chain_confidence: 0.40
+      must_include_any_signal:
+        - "signal_creatinine_high"
+        - "signal_urea_high"
+    evidence_notes: "KB-S56A: creatinine→urea edge promoted via ref_edge_renal_creatinine_to_urea_v1.yaml; KB-S56B: renal nodes and creatinine→urea edge added to interaction_map_v1.yaml with matching root-cause hypothesis loaders."
 
   - phenotype_id: "ph_metabolic_early_ir_v1"
     name: "Early insulin resistance dyslipidaemia pattern"

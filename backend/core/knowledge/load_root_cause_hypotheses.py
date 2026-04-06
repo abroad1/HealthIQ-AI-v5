@@ -168,6 +168,18 @@ def load_bilirubin_high_hypotheses_v1() -> Dict[str, Any]:
     return load_root_cause_hypotheses_asset_v1("bilirubin_high_hypotheses_v1.yaml")
 
 
+def load_creatinine_high_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("creatinine_high_hypotheses_v1.yaml")
+
+
+def load_urea_high_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("urea_high_hypotheses_v1.yaml")
+
+
+def load_urate_high_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("urate_high_hypotheses_v1.yaml")
+
+
 def load_hyperbilirubinemia_hypotheses_v1() -> Dict[str, Any]:
     return load_root_cause_hypotheses_asset_v1("hyperbilirubinemia_hypotheses_v1.yaml")
 

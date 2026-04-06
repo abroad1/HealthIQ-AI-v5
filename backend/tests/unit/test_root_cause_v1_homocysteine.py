@@ -430,3 +430,57 @@ def test_root_cause_v1_hba1c_only_finding_unchanged_kb_s46_regression():
     assert _finding_by_signal(dump, "signal_hba1c_high") is not None
     assert _finding_by_signal(dump, "signal_insulin_resistance") is None
     assert _finding_by_signal(dump, "signal_systemic_inflammation") is None
+
+
+def test_root_cause_v1_renal_kb_s56b_emits_hypotheses_for_creatinine_urea_urate():
+    """KB-S56B: renal high signals load governed hypothesis assets without cross-domain leakage."""
+    root = compile_root_cause_v1(
+        signal_results=[
+            {
+                "signal_id": "signal_creatinine_high",
+                "signal_state": "at_risk",
+                "confidence": 0.72,
+                "primary_metric": "creatinine",
+            },
+            {
+                "signal_id": "signal_urea_high",
+                "signal_state": "at_risk",
+                "confidence": 0.70,
+                "primary_metric": "urea",
+            },
+            {
+                "signal_id": "signal_urate_high",
+                "signal_state": "at_risk",
+                "confidence": 0.68,
+                "primary_metric": "urate",
+            },
+        ],
+        biomarker_context={
+            "creatinine": {"value": 135.0},
+            "urea": {"value": 9.5},
+            "urate": {"value": 480.0},
+        },
+        input_reference_ranges={
+            "creatinine": {"min": 60.0, "max": 110.0},
+            "urea": {"min": 2.5, "max": 7.8},
+            "urate": {"min": 150.0, "max": 420.0},
+        },
+    )
+    assert root is not None
+    dump = root.model_dump()
+    assert len(dump.get("findings") or []) == 3
+    cr = _finding_by_signal(dump, "signal_creatinine_high")
+    assert isinstance(cr, dict)
+    assert "creatinine_elevated_filtration_stress_v1" in {
+        str(h.get("hypothesis_id", "")).strip() for h in (cr.get("hypotheses") or []) if isinstance(h, dict)
+    }
+    ur = _finding_by_signal(dump, "signal_urea_high")
+    assert isinstance(ur, dict)
+    assert "urea_elevated_excretory_burden_v1" in {
+        str(h.get("hypothesis_id", "")).strip() for h in (ur.get("hypotheses") or []) if isinstance(h, dict)
+    }
+    uu = _finding_by_signal(dump, "signal_urate_high")
+    assert isinstance(uu, dict)
+    assert "urate_elevated_serum_hyperuricaemia_v1" in {
+        str(h.get("hypothesis_id", "")).strip() for h in (uu.get("hypotheses") or []) if isinstance(h, dict)
+    }

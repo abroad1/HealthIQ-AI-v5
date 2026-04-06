@@ -1,6 +1,6 @@
 # Interaction map v1.1 keeps the v1 runtime contract and expands edges only within approved pathways.
 map_version: "v1"
-map_revision: "1.1.3"
+map_revision: "1.1.4"
 
 nodes:
   - signal_id: signal_hba1c_high
@@ -43,6 +43,12 @@ nodes:
     system: lipid_transport
   - signal_id: signal_hdl_cholesterol_low
     system: lipid_transport
+  - signal_id: signal_creatinine_high
+    system: renal
+  - signal_id: signal_urea_high
+    system: renal
+  - signal_id: signal_urate_high
+    system: metabolic
 
 edges:
   # Pathway 1: metabolic -> hepatic -> inflammatory -> vascular
@@ -150,3 +156,10 @@ edges:
     relationship_type: co_occurrence
     evidence_strength: moderate
     rationale: Atherogenic dyslipidaemia frequently clusters with impaired glucose regulation, supporting a linked cardiometabolic interaction chain.
+
+  # Pathway 4: renal stress (KB-S56B) — creatinine–urea coupling governed in phenotype_map_v1 ph_renal_stress_v1
+  - from_signal: signal_creatinine_high
+    to_signal: signal_urea_high
+    relationship_type: co_occurrence
+    evidence_strength: strong
+    rationale: Elevated creatinine and urea often rise together when renal excretory capacity is stressed, supporting a governed co-occurrence link aligned with promoted renal phenotype evidence.
