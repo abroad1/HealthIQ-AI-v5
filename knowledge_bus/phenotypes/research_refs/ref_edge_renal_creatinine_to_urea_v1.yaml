@@ -1,0 +1,31 @@
+# Governed evidence record: creatinine_high → urea_high co-occurrence (renal phenotype)
+# KB-S56A — promotion phase. Cited from phenotype_map_v1.yaml for ph_renal_stress_v1.
+
+ref_id: "ref_edge_renal_creatinine_to_urea_v1"
+edge:
+  from_signal_id: "signal_creatinine_high"
+  to_signal_id: "signal_urea_high"
+phenotype_id: "ph_renal_stress_v1"
+evidence_strength: "strong"
+evidence_summary:
+  - "Investigation spec inv_creatinine_high_renal_v1 lists urea as corroborator with expected_direction high when creatinine is high; urea rises with intrinsic renal impairment and is interpreted alongside creatinine and hydration context."
+  - "Investigation spec inv_urea_high_renal lists creatinine as corroborator (expected high); override or_urea_intrinsic_renal escalates when high urea is paired with creatinine above range—bidirectional governance for the same pattern."
+  - "Promoted Knowledge Bus packages pkg_kb52c_creatinine_high_reduced_glomerular_filtration and pkg_kb52c_urea_high_prerenal_volume_depletion_or_catabolic_load carry aligned mechanism and supporting-marker narratives for these signals (renal system; lab-range activation)."
+sources:
+  - title: "Chronic kidney disease: assessment and management (NG203)"
+    year: 2021
+    source_type: "guideline"
+    ref: "knowledge_bus/research/investigation_specs/inv_creatinine_high_renal_v1.yaml"
+  - title: "Renal function tests"
+    year: 2019
+    source_type: "review"
+    ref: "knowledge_bus/research/investigation_specs/inv_urea_high_renal.yaml"
+  - title: "KB-S52C promoted signal library"
+    year: 2026
+    source_type: "internal_package"
+    ref: "knowledge_bus/packages/pkg_kb52c_creatinine_high_reduced_glomerular_filtration/package_manifest.yaml"
+  - title: "KB-S52C promoted signal library"
+    year: 2026
+    source_type: "internal_package"
+    ref: "knowledge_bus/packages/pkg_kb52c_urea_high_prerenal_volume_depletion_or_catabolic_load/package_manifest.yaml"
+requires_research_promotion: false
