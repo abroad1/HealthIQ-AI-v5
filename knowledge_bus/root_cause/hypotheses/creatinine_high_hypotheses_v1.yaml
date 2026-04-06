@@ -1,0 +1,74 @@
+schema_version: "v1"
+asset_id: "creatinine_high_hypotheses_v1"
+updated_at: "2026-04-06"
+primary_signal_id: "signal_creatinine_high"
+primary_metric: "creatinine"
+notes:
+  - "KB-S56B governed root-cause asset for elevated creatinine (renal filtration stress signal)."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+  - "confirmatory_tests limited to confirmatory_tests_v1.yaml registry IDs."
+
+hypotheses:
+  - hypothesis_id: "creatinine_elevated_filtration_stress_v1"
+    title: "Elevated creatinine — filtration stress pattern"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "Creatinine is elevated with a pattern consistent with reduced filtration or renal clearance stress on this structured panel."
+    required_markers:
+      - "creatinine"
+    confirmatory_markers:
+      - "urea"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "creatinine_signal_fired"
+        signals_any:
+          - "signal_creatinine_high"
+        direction: "fired"
+        evidence_for_item: "A creatinine-high signal fired, anchoring elevated filtration-marker interpretation."
+        marker_refs:
+          - "creatinine"
+      - rule_id: "creatinine_high_marker"
+        markers_all:
+          - "creatinine"
+        direction: "high"
+        evidence_for_item: "Creatinine is above the stated reference interval, supporting an elevated filtration-marker pattern."
+        marker_refs:
+          - "creatinine"
+    evidence_against_rules:
+      - rule_id: "creatinine_clearly_normal"
+        markers_all:
+          - "creatinine"
+        direction: "clearly_normal"
+        evidence_against_item: "Creatinine appears within range, arguing against an isolated creatinine elevation pattern."
+        marker_refs:
+          - "creatinine"
+    missing_data_markers:
+      - marker_id: "egfr"
+        reason: "eGFR adds filtration context when interpreting creatinine elevation."
+    confirmatory_tests:
+      - "test_egfr_creatinine_v1"
+      - "test_full_blood_count_indices_v1"
+
+  - hypothesis_id: "creatinine_urea_co_rise_renal_context_v1"
+    title: "Creatinine and urea rise together"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "Creatinine elevation co-occurs with elevated urea in a pattern often seen when excretory burden or clearance context is strained."
+    required_markers:
+      - "creatinine"
+      - "urea"
+    confirmatory_markers:
+      - "urate"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "urea_high_with_creatinine"
+        markers_all:
+          - "urea"
+        direction: "high"
+        evidence_for_item: "Urea is elevated alongside creatinine, supporting a coupled renal stress interpretation."
+        marker_refs:
+          - "urea"
+    evidence_against_rules: []
+    missing_data_markers: []
+    confirmatory_tests:
+      - "test_egfr_creatinine_v1"

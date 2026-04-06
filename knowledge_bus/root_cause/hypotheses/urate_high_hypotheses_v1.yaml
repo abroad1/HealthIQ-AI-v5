@@ -1,0 +1,74 @@
+schema_version: "v1"
+asset_id: "urate_high_hypotheses_v1"
+updated_at: "2026-04-06"
+primary_signal_id: "signal_urate_high"
+primary_metric: "urate"
+notes:
+  - "KB-S56B governed root-cause asset for elevated urate (hyperuricaemia / crystal risk framing per KB-S52C package)."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+
+hypotheses:
+  - hypothesis_id: "urate_elevated_serum_hyperuricaemia_v1"
+    title: "Elevated serum urate pattern"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "Serum urate is elevated with a pattern consistent with sustained hyperuricaemia risk context on this structured panel."
+    required_markers:
+      - "urate"
+    confirmatory_markers:
+      - "creatinine"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "urate_signal_fired"
+        signals_any:
+          - "signal_urate_high"
+        direction: "fired"
+        evidence_for_item: "A urate-high signal fired, anchoring elevated urate interpretation."
+        marker_refs:
+          - "urate"
+      - rule_id: "urate_high_marker"
+        markers_all:
+          - "urate"
+        direction: "high"
+        evidence_for_item: "Urate is above the stated reference interval, supporting an elevated serum urate pattern."
+        marker_refs:
+          - "urate"
+    evidence_against_rules:
+      - rule_id: "urate_clearly_normal"
+        markers_all:
+          - "urate"
+        direction: "clearly_normal"
+        evidence_against_item: "Urate appears within range, arguing against an isolated hyperuricaemia pattern."
+        marker_refs:
+          - "urate"
+    missing_data_markers:
+      - marker_id: "egfr"
+        reason: "eGFR refines renal underexcretion context when urate is elevated."
+    confirmatory_tests:
+      - "test_egfr_creatinine_v1"
+      - "test_urate_repeat_serum_v1"
+
+  - hypothesis_id: "urate_inflammatory_coupling_v1"
+    title: "Urate elevation with inflammatory markers"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Urate elevation co-occurs with inflammatory activity that can contextualise crystal-associated risk interpretation on the same panel."
+    required_markers:
+      - "urate"
+    confirmatory_markers:
+      - "crp"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "crp_high_with_urate"
+        markers_any:
+          - "crp"
+        direction: "high"
+        evidence_for_item: "CRP is elevated, supporting inflammatory context alongside urate elevation."
+        marker_refs:
+          - "crp"
+    evidence_against_rules: []
+    missing_data_markers:
+      - marker_id: "crp"
+        reason: "CRP can clarify inflammatory context when urate is elevated."
+    confirmatory_tests:
+      - "test_crp_repeat_v1"

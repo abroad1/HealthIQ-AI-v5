@@ -1,6 +1,6 @@
 schema_version: "v1"
 registry_id: "confirmatory_tests_v1"
-updated_at: "2026-03-26"
+updated_at: "2026-04-06"
 notes:
   - "Registry provides deterministic lookup for root_cause_v1 confirmatory_tests.test_id."
   - "Framing must remain non-directive (consider discussing / consider including in next panel)."
@@ -102,6 +102,31 @@ tests:
     related_signals:
       - "signal_renal_metabolic_stress"
       - "signal_homocysteine_elevation_context"
+      - "signal_creatinine_high"
+      - "signal_urea_high"
+      - "signal_urate_high"
+
+  - test_id: "test_urea_repeat_renal_context_v1"
+    display_name: "Repeat serum urea (BUN context)"
+    specimen: "blood"
+    safety_class: "monitoring"
+    rationale_template: "Consider repeating serum urea on a consistent panel to confirm persistence and track trend alongside renal filtration markers."
+    maps_to_biomarkers:
+      - "urea"
+    is_repeat_test: true
+    related_signals:
+      - "signal_urea_high"
+
+  - test_id: "test_urate_repeat_serum_v1"
+    display_name: "Repeat serum urate"
+    specimen: "blood"
+    safety_class: "monitoring"
+    rationale_template: "Consider repeating serum urate with consistent methodology to confirm persistence and monitor change over time."
+    maps_to_biomarkers:
+      - "urate"
+    is_repeat_test: true
+    related_signals:
+      - "signal_urate_high"
 
   - test_id: "test_hba1c_repeat_v1"
     display_name: "Repeat HbA1c"
