@@ -4,6 +4,10 @@ Run baseline (infra-free deterministic) tests.
 These tests do not require DB, LLM, or external providers.
 Use as a gate for infra-free verification.
 
+Includes the governed phenotype regression suite (`test_phenotype_suite_v1.py`, KB-S58A)
+so phenotype determinism, signal firing, and declared chain/root-cause expectations
+cannot bypass the standard gate.
+
 Usage:
   python backend/scripts/run_baseline_tests.py
 
@@ -27,6 +31,7 @@ def main() -> int:
             "tests/unit/test_default_golden_fixture_is_collision_free.py",
             "tests/unit/test_retail_explainer_b1a.py",
             "tests/unit/test_retail_explainer_b1b.py",
+            "tests/unit/test_phenotype_suite_v1.py",
             "-v",
         ],
         cwd=backend,
