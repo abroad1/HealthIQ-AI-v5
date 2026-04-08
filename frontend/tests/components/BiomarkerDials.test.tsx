@@ -42,7 +42,7 @@ describe('BiomarkerDials', () => {
   it('renders section title and biomarker labels', () => {
     render(<BiomarkerDials biomarkers={mockBiomarkers} />);
 
-    expect(screen.getByText('Your markers')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Biomarker evidence' })).toBeInTheDocument();
     expect(screen.getByText('Glucose')).toBeInTheDocument();
     expect(screen.getByText('HbA1c')).toBeInTheDocument();
     expect(screen.getByText('Total Cholesterol')).toBeInTheDocument();
@@ -56,19 +56,19 @@ describe('BiomarkerDials', () => {
     expect(screen.getAllByText('5.5').length).toBeGreaterThan(0);
   });
 
-  it('displays status badges', () => {
-    render(<BiomarkerDials biomarkers={mockBiomarkers} />);
+  it('displays icon-only status badges per marker', () => {
+    const { container } = render(<BiomarkerDials biomarkers={mockBiomarkers} />);
 
-    expect(screen.getAllByText('Normal').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Optimal').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Elevated').length).toBeGreaterThan(0);
+    expect(container.querySelectorAll('.lucide-circle-check-big').length).toBeGreaterThanOrEqual(2);
+    expect(container.querySelectorAll('.lucide-trending-up').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByRole('button', { name: /expand/i }).length).toBeGreaterThanOrEqual(3);
   });
 
-  it('shows reference ranges in details mode', () => {
-    render(<BiomarkerDials biomarkers={mockBiomarkers} showDetails />);
+  it('shows reference ranges on cards', () => {
+    render(<BiomarkerDials biomarkers={mockBiomarkers} />);
 
-    expect(screen.getAllByText(/Range: 70-100 mg\/dL/).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/Range: 4-5.7 %/).length).toBeGreaterThan(0);
+    expect(screen.getByText('Range: 70–100 mg/dL')).toBeInTheDocument();
+    expect(screen.getByText('Range: 4–5.7 %')).toBeInTheDocument();
   });
 
   it('renders dial svgs', () => {
@@ -76,8 +76,8 @@ describe('BiomarkerDials', () => {
     expect(document.querySelectorAll('svg').length).toBeGreaterThan(0);
   });
 
-  it('shows date when showDetails and date set', () => {
-    render(<BiomarkerDials biomarkers={mockBiomarkers} showDetails />);
+  it('shows date when date is set', () => {
+    render(<BiomarkerDials biomarkers={mockBiomarkers} />);
     expect(screen.getAllByText('01/01/2024').length).toBeGreaterThan(0);
   });
 
@@ -93,7 +93,7 @@ describe('BiomarkerDials', () => {
     expect(screen.getAllByText('100.0').length).toBeGreaterThan(0);
   });
 
-  it('shows interpretation when showDetails and interpretation provided', () => {
+  it('shows interpretation when interpretation provided', () => {
     render(
       <BiomarkerDials
         biomarkers={{
@@ -104,7 +104,6 @@ describe('BiomarkerDials', () => {
             interpretation: 'Within expected range.',
           },
         }}
-        showDetails
       />,
     );
     expect(screen.getByText('Within expected range.')).toBeInTheDocument();

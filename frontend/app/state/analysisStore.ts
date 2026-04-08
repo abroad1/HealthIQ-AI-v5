@@ -8,23 +8,11 @@ import {
   AnalysisRequest,
   ClinicianReportV1,
   Cluster,
+  type BiomarkerResult as ApiBiomarkerResult,
 } from '../types/analysis';
 
-export interface BiomarkerResult {
-  biomarker_name: string;
-  value: number | null;
-  unit: string;
-  score?: number | null;
-  percentile?: number | null;
-  status?: string | null;
-  reference_range?: {
-    min: number | null;
-    max: number | null;
-    unit: string;
-    source: string | null;
-  } | null;
-  interpretation?: string | null;
-}
+/** Store row mirrors API BiomarkerResult (B1A/B1B explainer fields optional). */
+export type BiomarkerResult = ApiBiomarkerResult;
 
 export interface AnalysisResult {
   analysis_id: string;

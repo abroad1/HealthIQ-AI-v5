@@ -1,20 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  BarChart3, 
-  TrendingUp, 
-  AlertTriangle, 
-  CheckCircle, 
-  Info,
-  ChevronDown,
-  ChevronRight,
-  Loader2
-} from 'lucide-react';
+import { BarChart3, AlertTriangle, CheckCircle, Info, ChevronDown, ChevronRight, Loader2 } from 'lucide-react';
 
 interface Cluster {
   id: string;
@@ -26,7 +16,10 @@ interface Cluster {
   description: string;
   recommendations: string[];
   severity: 'low' | 'moderate' | 'high' | 'critical';
-  trend?: 'improving' | 'stable' | 'declining';
+  /** Primary driver system group — highlighted in retail layout */
+  isPrimaryDriver?: boolean;
+  /** Governed educational copy; omitted entirely when absent */
+  systemEducationalExplainer?: { title: string; body: string } | null;
 }
 
 interface ClusterSummaryProps {
@@ -57,18 +50,6 @@ const SEVERITY_ICONS = {
   moderate: <Info className="h-4 w-4" />,
   high: <AlertTriangle className="h-4 w-4" />,
   critical: <AlertTriangle className="h-4 w-4" />
-};
-
-const TREND_COLORS = {
-  improving: 'text-green-600',
-  stable: 'text-blue-600',
-  declining: 'text-red-600'
-};
-
-const TREND_ICONS = {
-  improving: <TrendingUp className="h-4 w-4" />,
-  stable: <BarChart3 className="h-4 w-4" />,
-  declining: <TrendingUp className="h-4 w-4 transform rotate-180" />
 };
 
 const getScoreColor = (score: number) => {
@@ -118,7 +99,7 @@ export default function ClusterSummary({ clusters, isLoading = false, showDetail
         <CardContent className="pt-6">
           <div className="flex items-center justify-center py-8">
             <Loader2 className="h-8 w-8 animate-spin text-blue-500 mr-3" />
-            <span className="text-gray-600">Loading health clusters...</span>
+            <span className="text-gray-600">Loading system groups…</span>
           </div>
         </CardContent>
       </Card>
@@ -131,8 +112,8 @@ export default function ClusterSummary({ clusters, isLoading = false, showDetail
         <CardContent className="pt-6">
           <div className="text-center py-8">
             <BarChart3 className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500">No health clusters available.</p>
-            <p className="text-sm text-gray-400">Complete an analysis to view your health cluster analysis.</p>
+            <p className="text-gray-500">No system groups available.</p>
+            <p className="text-sm text-gray-400">Complete an analysis to view how your markers group.</p>
           </div>
         </CardContent>
       </Card>
@@ -147,7 +128,7 @@ export default function ClusterSummary({ clusters, isLoading = false, showDetail
           <CardContent className="pt-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-gray-900">{clusters.length}</div>
-              <div className="text-sm text-gray-500">Health Clusters</div>
+              <div className="text-sm text-gray-500">System groups</div>
             </div>
           </CardContent>
         </Card>
@@ -231,24 +212,24 @@ export default function ClusterSummary({ clusters, isLoading = false, showDetail
       {/* Clusters List */}
       <div className="space-y-4">
         {filteredClusters.map((cluster) => (
-          <Card key={cluster.id} className="hover:shadow-md transition-shadow">
+          <Card
+            key={cluster.id}
+            className={`hover:shadow-md transition-shadow ${cluster.isPrimaryDriver ? 'ring-2 ring-blue-500 ring-offset-2 border-blue-200' : ''}`}
+          >
             <CardContent className="pt-4">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
+                  <div className="flex items-center gap-3 mb-2 flex-wrap">
                     <h3 className="text-lg font-semibold text-gray-900">
                       {cluster.name}
                     </h3>
+                    {cluster.isPrimaryDriver ? (
+                      <Badge className="bg-blue-600 text-white hover:bg-blue-600">Primary driver</Badge>
+                    ) : null}
                     <Badge className={SEVERITY_COLORS[cluster.severity]}>
                       {SEVERITY_ICONS[cluster.severity]}
                       <span className="ml-1 capitalize">{cluster.severity}</span>
                     </Badge>
-                    {cluster.trend && (
-                      <Badge variant="outline" className={TREND_COLORS[cluster.trend]}>
-                        {TREND_ICONS[cluster.trend]}
-                        <span className="ml-1 capitalize">{cluster.trend}</span>
-                      </Badge>
-                    )}
                   </div>
                   
                   <p className="text-gray-600 text-sm mb-3">
@@ -311,9 +292,18 @@ export default function ClusterSummary({ clusters, isLoading = false, showDetail
               {/* Expanded Details */}
               {expandedClusters.has(cluster.id) && (
                 <div className="border-t border-gray-100 pt-4 space-y-4">
+                  {cluster.systemEducationalExplainer?.body ? (
+                    <div>
+                      <h4 className="text-sm font-semibold text-gray-800 mb-2">What your results suggest</h4>
+                      <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                        {cluster.systemEducationalExplainer.body}
+                      </p>
+                    </div>
+                  ) : null}
+
                   {/* Biomarkers */}
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Biomarkers Analyzed</h4>
+                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Contributing markers</h4>
                     <div className="flex flex-wrap gap-2">
                       {cluster.biomarkers.map((biomarker) => (
                         <Badge 
@@ -370,7 +360,7 @@ export default function ClusterSummary({ clusters, isLoading = false, showDetail
                 onClick={() => setSelectedSeverity('all')}
                 className="mt-2"
               >
-                Show All Clusters
+                Show all system groups
               </Button>
             </div>
           </CardContent>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ClusterSummary from '../../app/components/clusters/ClusterSummary';
 
@@ -86,11 +86,19 @@ describe('ClusterSummary', () => {
 
   it('shows summary statistics', () => {
     render(<ClusterSummary clusters={mockClusters} />);
-    
-    expect(screen.getByText('3')).toBeInTheDocument(); // Total clusters
-    expect(screen.getByText('60')).toBeInTheDocument(); // Average score
-    expect(screen.getByText('1')).toBeInTheDocument(); // Critical issues
-    expect(screen.getByText('1')).toBeInTheDocument(); // High priority
+
+    const systemGroupsCard = screen.getByText('System groups').closest('.text-center');
+    expect(systemGroupsCard).toBeTruthy();
+    expect(within(systemGroupsCard!).getByText('3')).toBeInTheDocument();
+
+    const avgCard = screen.getByText('Average Score').closest('.text-center');
+    expect(within(avgCard!).getByText('60')).toBeInTheDocument();
+
+    const criticalCard = screen.getByText('Critical Issues').closest('.text-center');
+    expect(within(criticalCard!).getByText('0')).toBeInTheDocument();
+
+    const highCard = screen.getByText('High Priority').closest('.text-center');
+    expect(within(highCard!).getByText('1')).toBeInTheDocument();
   });
 
   it('displays cluster scores and confidence levels', () => {
@@ -106,18 +114,18 @@ describe('ClusterSummary', () => {
 
   it('shows severity badges correctly', () => {
     render(<ClusterSummary clusters={mockClusters} />);
-    
-    expect(screen.getByText('Moderate')).toBeInTheDocument();
-    expect(screen.getByText('High')).toBeInTheDocument();
-    expect(screen.getByText('Low')).toBeInTheDocument();
+
+    expect(screen.getAllByText(/^moderate$/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/^high$/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/^low$/i).length).toBeGreaterThanOrEqual(1);
   });
 
-  it('displays trend indicators', () => {
+  it('does not surface historical trend indicators on cards', () => {
     render(<ClusterSummary clusters={mockClusters} />);
-    
-    expect(screen.getByText('Improving')).toBeInTheDocument();
-    expect(screen.getByText('Stable')).toBeInTheDocument();
-    expect(screen.getByText('Declining')).toBeInTheDocument();
+
+    expect(screen.queryByText('Improving')).not.toBeInTheDocument();
+    expect(screen.queryByText('Stable')).not.toBeInTheDocument();
+    expect(screen.queryByText('Declining')).not.toBeInTheDocument();
   });
 
   it('allows expanding cluster details', async () => {
@@ -125,14 +133,14 @@ describe('ClusterSummary', () => {
     render(<ClusterSummary clusters={mockClusters} />);
     
     // Initially details should be hidden
-    expect(screen.queryByText('Biomarkers Analyzed')).not.toBeInTheDocument();
-    
+    expect(screen.queryByText('Contributing markers')).not.toBeInTheDocument();
+
     // Click to expand first cluster
     const expandButtons = screen.getAllByRole('button', { name: /expand cluster details/i });
     await user.click(expandButtons[0]);
-    
+
     // Should now show details
-    expect(screen.getByText('Biomarkers Analyzed')).toBeInTheDocument();
+    expect(screen.getByText('Contributing markers')).toBeInTheDocument();
     expect(screen.getByText('Recommendations')).toBeInTheDocument();
   });
 
@@ -144,7 +152,7 @@ describe('ClusterSummary', () => {
     await user.click(expandButtons[0]);
     
     expect(screen.getByText('Glucose')).toBeInTheDocument();
-    expect(screen.getByText('HbA1c')).toBeInTheDocument();
+    expect(screen.getByText('Hba1c')).toBeInTheDocument();
     expect(screen.getByText('Insulin')).toBeInTheDocument();
   });
 
@@ -200,20 +208,20 @@ describe('ClusterSummary', () => {
     await user.click(criticalFilter);
     
     expect(screen.getByText('No clusters found for the selected severity level.')).toBeInTheDocument();
-    expect(screen.getByText('Show All Clusters')).toBeInTheDocument();
+    expect(screen.getByText('Show all system groups')).toBeInTheDocument();
   });
 
   it('shows loading state', () => {
     render(<ClusterSummary clusters={[]} isLoading={true} />);
-    
-    expect(screen.getByText('Loading health clusters...')).toBeInTheDocument();
+
+    expect(screen.getByText('Loading system groups…')).toBeInTheDocument();
   });
 
   it('shows empty state when no clusters provided', () => {
     render(<ClusterSummary clusters={[]} />);
-    
-    expect(screen.getByText('No health clusters available.')).toBeInTheDocument();
-    expect(screen.getByText('Complete an analysis to view your health cluster analysis.')).toBeInTheDocument();
+
+    expect(screen.getByText('No system groups available.')).toBeInTheDocument();
+    expect(screen.getByText('Complete an analysis to view how your markers group.')).toBeInTheDocument();
   });
 
   it('shows category information when expanded', async () => {
@@ -224,7 +232,7 @@ describe('ClusterSummary', () => {
     await user.click(expandButtons[0]);
     
     expect(screen.getByText('Category')).toBeInTheDocument();
-    expect(screen.getByText('Metabolic')).toBeInTheDocument();
+    expect(screen.getByText('metabolic')).toBeInTheDocument();
   });
 
   it('displays progress bars for cluster scores', () => {
