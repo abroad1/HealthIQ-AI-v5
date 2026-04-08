@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -9,23 +9,89 @@ import {
   BarChart3,
   TrendingUp,
   AlertCircle,
-  CheckCircle,
   RefreshCw,
   Download,
   Share2,
   Eye,
   EyeOff,
+  ChevronDown,
+  ChevronRight,
 } from 'lucide-react';
 import { useAnalysisStore } from '../state/analysisStore';
 import { useClusterStore } from '../state/clusterStore';
 import { InsightsPanel } from '@/components/insights/InsightsPanel';
 import { InsightPanel } from '@/components/insights/InsightPanel';
-import BiomarkerDials from '@/components/biomarkers/BiomarkerDials';
+import BiomarkerDials, { type BiomarkerDialEntry } from '@/components/biomarkers/BiomarkerDials';
 import ClusterSummary from '@/components/clusters/ClusterSummary';
 import ClinicianReportRenderer from '@/components/results/ClinicianReportRenderer';
 import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAnalysisResult } from '../queries/analysisResult';
+import type { Cluster, ClinicianReportV1 } from '../types/analysis';
+
+function pickPrimaryDriverCluster(clusters: Cluster[]): { id: string; name: string; biomarkers: string[] } | null {
+  const sevRank: Record<string, number> = { critical: 4, high: 3, moderate: 2, low: 1 };
+  let best: { id: string; name: string; biomarkers: string[]; rank: number; score: number } | null = null;
+  clusters.forEach((cluster, idx) => {
+    const id = String(cluster.cluster_id || cluster.id || `cluster-${idx}`);
+    const sev = String(cluster.severity || 'moderate').toLowerCase();
+    const rank = sevRank[sev] ?? 2;
+    const score = typeof cluster.score === 'number' ? cluster.score : (cluster.confidence ?? 0) * 100;
+    const name = cluster.name?.trim() ? cluster.name : 'Health pattern';
+    const biomarkers = cluster.biomarkers || cluster.biomarkers_involved || [];
+    if (!best || rank > best.rank || (rank === best.rank && score > best.score)) {
+      best = { id, name, biomarkers, rank, score };
+    }
+  });
+  if (!best) return null;
+  return { id: best.id, name: best.name, biomarkers: best.biomarkers };
+}
+
+function computeMissingChapterLine(
+  report: ClinicianReportV1 | null | undefined,
+  primaryDriver: { biomarkers: string[] } | null
+): string | null {
+  if (!report?.data_quality) return null;
+  const dq = report.data_quality;
+  const present = dq.panel_completeness_present ?? 0;
+  const expected = dq.panel_completeness_expected ?? 0;
+  const downgraded = dq.data_quality_passed === false;
+  const labLines = dq.lab_range_quality_by_primary_metric ?? [];
+  const missingish = labLines.filter((l) =>
+    /missing|not tested|not available|no lab range|no reference|was not tested|not on panel/i.test(l)
+  );
+  const panelGap = expected > 0 && present < expected;
+
+  if (missingish.length === 0 && !panelGap) return null;
+
+  const page1 = report.sections?.page1;
+  const heroBlob = [page1?.primary_concern, ...(page1?.key_findings ?? []), ...(page1?.chains ?? [])]
+    .join(' ')
+    .toLowerCase();
+
+  const affectsHero = missingish.some((line) => {
+    const tokens = line
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((w) => w.length > 3);
+    return tokens.some((t) => heroBlob.includes(t.replace(/[^a-z0-9]/g, '')) || heroBlob.includes(t));
+  });
+
+  const driverM = primaryDriver?.biomarkers.map((b) => b.toLowerCase()) ?? [];
+  const affectsDriver = missingish.some((line) => {
+    const low = line.toLowerCase();
+    return driverM.some((b) => low.includes(b) || low.includes(b.replace(/_/g, ' ')));
+  });
+
+  if (!affectsHero && !affectsDriver && !downgraded) return null;
+
+  return (
+    missingish[0] ||
+    (panelGap
+      ? `Some expected markers are not in this panel yet (${present} of ${expected} present), which can limit how complete the lead story is.`
+      : null)
+  );
+}
 
 export default function ResultsPage() {
   const router = useRouter();
@@ -48,6 +114,7 @@ export default function ResultsPage() {
 
   const [activeDetailTab, setActiveDetailTab] = useState('overview');
   const [showDetails, setShowDetails] = useState(false);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
 
   const idToFetch = currentAnalysisId || analysisIdFromUrl;
   const { isLoading: isResultLoading } = useAnalysisResult(idToFetch || null);
@@ -58,6 +125,14 @@ export default function ResultsPage() {
   const clusters = currentAnalysis?.clusters ?? [];
   const clinicianReport = currentAnalysis?.clinician_report_v1;
   const { created_at, completed_at } = currentAnalysis || {};
+
+  const primaryDriver = useMemo(() => pickPrimaryDriverCluster(clusters), [clusters]);
+  const missingChapterLine = useMemo(
+    () => computeMissingChapterLine(clinicianReport, primaryDriver),
+    [clinicianReport, primaryDriver]
+  );
+
+  const keyFindingsOverflow = clinicianReport?.sections?.page1?.key_findings?.slice(1) ?? [];
 
   useEffect(() => {
     if (analysisIdFromUrl && analysisIdFromUrl !== currentAnalysisId) {
@@ -191,24 +266,19 @@ export default function ResultsPage() {
     );
   }
 
-  const biomarkerDialData: Record<string, {
-    value: number;
-    unit: string;
-    status?: string;
-    score?: number;
-    interpretation?: string;
-    referenceRange?: {
-      min?: number;
-      max?: number;
-      unit: string;
-      source?: string;
-    };
-    date?: string;
-  }> = {};
+  const biomarkerDialData: Record<string, BiomarkerDialEntry> = {};
+
+  const relatedGroupNamesFor = (biomarkerName: string): string[] => {
+    return clusters
+      .filter((c) => (c.biomarkers || c.biomarkers_involved || []).includes(biomarkerName))
+      .map((c) => (c.name?.trim() ? c.name : 'System group'))
+      .filter(Boolean);
+  };
 
   biomarkers
     .filter((b) => b.biomarker_name && b.value != null && typeof b.value === 'number')
     .forEach((biomarker) => {
+      const expl = biomarker.biomarker_educational_explainer;
       biomarkerDialData[biomarker.biomarker_name] = {
         value: biomarker.value as number,
         unit: biomarker.unit,
@@ -224,28 +294,38 @@ export default function ResultsPage() {
             }
           : undefined,
         date: created_at,
+        educationalExplainer: expl?.body ? { title: expl.title, body: expl.body } : null,
+        contributionContext: biomarker.contribution_context?.factual_statement
+          ? { factual_statement: biomarker.contribution_context.factual_statement }
+          : null,
+        relatedSystemGroupNames: relatedGroupNamesFor(biomarker.biomarker_name),
       };
     });
 
-  const clusterSummaries = clusters.map((cluster, idx) => ({
-    id: String(cluster.cluster_id || cluster.id || `cluster-${idx}`),
-    name: cluster.name?.trim() ? cluster.name : 'Health pattern',
-    category: cluster.category || 'other',
-    score: typeof cluster.score === 'number' ? cluster.score : cluster.confidence ? cluster.confidence * 100 : 0,
-    confidence: typeof cluster.confidence === 'number' ? cluster.confidence : 0.85,
-    biomarkers: cluster.biomarkers || cluster.biomarkers_involved || [],
-    description: cluster.description || cluster.summary || '',
-    recommendations: cluster.recommendations || [],
-    severity: (() => {
-      const sev = cluster.severity;
-      if (sev === 'normal' || sev === 'mild' || sev === 'low') return 'low' as const;
-      if (sev === 'medium' || sev === 'moderate') return 'moderate' as const;
-      if (sev === 'high') return 'high' as const;
-      if (sev === 'critical') return 'critical' as const;
-      return 'moderate' as const;
-    })(),
-    trend: 'stable' as const,
-  }));
+  const clusterSummaries = clusters.map((cluster, idx) => {
+    const id = String(cluster.cluster_id || cluster.id || `cluster-${idx}`);
+    const expl = cluster.system_educational_explainer;
+    return {
+      id,
+      name: cluster.name?.trim() ? cluster.name : 'Health pattern',
+      category: cluster.category || 'other',
+      score: typeof cluster.score === 'number' ? cluster.score : cluster.confidence ? cluster.confidence * 100 : 0,
+      confidence: typeof cluster.confidence === 'number' ? cluster.confidence : 0.85,
+      biomarkers: cluster.biomarkers || cluster.biomarkers_involved || [],
+      description: cluster.description || cluster.summary || '',
+      recommendations: cluster.recommendations || [],
+      severity: (() => {
+        const sev = cluster.severity;
+        if (sev === 'normal' || sev === 'mild' || sev === 'low') return 'low' as const;
+        if (sev === 'medium' || sev === 'moderate') return 'moderate' as const;
+        if (sev === 'high') return 'high' as const;
+        if (sev === 'critical') return 'critical' as const;
+        return 'moderate' as const;
+      })(),
+      isPrimaryDriver: primaryDriver?.id === id,
+      systemEducationalExplainer: expl?.body ? { title: expl.title, body: expl.body } : null,
+    };
+  });
 
   const overallPercent =
     currentAnalysis.overall_score != null && currentAnalysis.overall_score <= 1
@@ -262,8 +342,8 @@ export default function ResultsPage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-1">Your results</h1>
               <p className="text-gray-600 max-w-2xl">
-                Interpretation first, then how your body systems cluster, then marker-level detail. Deeper structured
-                reporting stays available below.
+                Interpretation first, then system groups, then marker-level evidence. Deeper clinical views stay in
+                Advanced analysis.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -311,175 +391,197 @@ export default function ResultsPage() {
         </div>
 
         <div className="space-y-10">
-          {/* 1 Hero interpretation */}
           <section aria-labelledby="hero-interpretation">
             <h2 id="hero-interpretation" className="sr-only">
-              Primary interpretation
+              Hero interpretation
             </h2>
-            <InsightPanel report={clinicianReport} />
+            <InsightPanel report={clinicianReport} primaryDriverSystemGroupName={primaryDriver?.name ?? null} />
           </section>
 
-          {/* 2 Trust / data quality */}
           <section aria-labelledby="trust-layer">
             <h2 id="trust-layer" className="sr-only">
-              Data quality
+              Trust strip
             </h2>
             <PipelineStatus
               dataQuality={clinicianReport?.data_quality}
               confirmatoryTests={clinicianReport?.sections?.confirmatory_tests}
+              missingChapterLine={missingChapterLine}
             />
           </section>
 
-          {/* 3 Body systems / clusters */}
           <section className="space-y-3" aria-labelledby="cluster-heading">
             <h2 id="cluster-heading" className="text-xl font-semibold text-gray-900">
-              Body systems &amp; patterns
+              System groups
             </h2>
             <p className="text-sm text-gray-600">
-              How your markers group into biological patterns. Names describe the pattern, not internal IDs.
+              How your markers group into biological patterns. Names describe the pattern in plain language.
             </p>
-            <ClusterSummary
-              clusters={clusterSummaries}
-              isLoading={clustersLoading}
-              showDetails={showDetails}
-            />
+            <ClusterSummary clusters={clusterSummaries} isLoading={clustersLoading} showDetails={showDetails} />
           </section>
 
-          {/* 4 Biomarker supporting layer */}
           <section aria-labelledby="biomarkers-heading">
             <h2 id="biomarkers-heading" className="sr-only">
-              Biomarker detail
+              Biomarker evidence
             </h2>
-            <BiomarkerDials biomarkers={biomarkerDialData} showDetails={showDetails} />
+            <BiomarkerDials biomarkers={biomarkerDialData} sectionTitle="Biomarker evidence" />
           </section>
 
-          {/* Optional reserved: symptom relevance (dormant) */}
-          <section aria-hidden="true" className="opacity-60">
-            <Card className="border-dashed border-gray-300 bg-gray-50/50">
-              <CardHeader className="py-3">
-                <CardTitle className="text-sm font-medium text-gray-500">Symptom relevance</CardTitle>
-                <CardDescription className="text-xs">Reserved for a future release — no personalised content yet.</CardDescription>
+          <section aria-labelledby="advanced-analysis-heading">
+            <h2 id="advanced-analysis-heading" className="sr-only">
+              Advanced analysis
+            </h2>
+            <Card className="border-slate-200">
+              <CardHeader className="pb-2">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <CardTitle className="text-lg">Advanced analysis</CardTitle>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setAdvancedOpen((o) => !o)}
+                    aria-expanded={advancedOpen}
+                  >
+                    {advancedOpen ? (
+                      <>
+                        <ChevronDown className="h-4 w-4 mr-2" /> Collapse
+                      </>
+                    ) : (
+                      <>
+                        <ChevronRight className="h-4 w-4 mr-2" /> Expand
+                      </>
+                    )}
+                  </Button>
+                </div>
+                <CardDescription>
+                  Clinician-oriented detail, full insight list, and technical context — same page, progressive disclosure.
+                </CardDescription>
               </CardHeader>
-            </Card>
-          </section>
+              {advancedOpen ? (
+                <CardContent className="pt-0">
+                  <Tabs value={activeDetailTab} onValueChange={setActiveDetailTab} className="w-full">
+                    <TabsList className="grid w-full grid-cols-3 mb-6">
+                      <TabsTrigger value="overview" className="flex items-center gap-2 text-xs sm:text-sm">
+                        <BarChart3 className="h-4 w-4 shrink-0" />
+                        Overview
+                      </TabsTrigger>
+                      <TabsTrigger value="insights" className="flex items-center gap-2 text-xs sm:text-sm">
+                        <TrendingUp className="h-4 w-4 shrink-0" />
+                        All insights
+                      </TabsTrigger>
+                      <TabsTrigger value="clinician" className="flex items-center gap-2 text-xs sm:text-sm">
+                        <AlertCircle className="h-4 w-4 shrink-0" />
+                        Clinician report
+                      </TabsTrigger>
+                    </TabsList>
 
-          {/* 5 Deeper disclosure: overview, insights list, clinician */}
-          <section className="space-y-4" aria-labelledby="more-detail">
-            <h2 id="more-detail" className="text-xl font-semibold text-gray-900">
-              Additional detail
-            </h2>
-            <Tabs value={activeDetailTab} onValueChange={setActiveDetailTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-6">
-                <TabsTrigger value="overview" className="flex items-center gap-2 text-xs sm:text-sm">
-                  <BarChart3 className="h-4 w-4 shrink-0" />
-                  Overview
-                </TabsTrigger>
-                <TabsTrigger value="insights" className="flex items-center gap-2 text-xs sm:text-sm">
-                  <TrendingUp className="h-4 w-4 shrink-0" />
-                  All insights
-                </TabsTrigger>
-                <TabsTrigger value="clinician" className="flex items-center gap-2 text-xs sm:text-sm">
-                  <CheckCircle className="h-4 w-4 shrink-0" />
-                  Clinician report
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="overview" className="space-y-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <CheckCircle className="h-5 w-5 text-green-500" />
-                        Overall score
-                      </CardTitle>
-                      <CardDescription>Summary metric from the analysis engine — supporting context, not a clinical diagnosis.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-center">
-                        <div className="text-5xl font-bold text-green-600 mb-2">
-                          {overallPercent != null ? overallPercent : 'N/A'}
-                        </div>
-                        {overallPercent != null ? <p className="text-gray-600 text-sm">Normalised display score</p> : null}
-                        <div className="mt-4 w-full bg-gray-200 rounded-full h-3">
-                          <div
-                            className="bg-green-500 h-3 rounded-full transition-all duration-1000"
-                            style={{ width: `${Math.min(100, overallPercent ??  0)}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Risk summary</CardTitle>
-                      <CardDescription>From the engine risk assessment object, when present.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {currentAnalysis.risk_assessment &&
-                        typeof currentAnalysis.risk_assessment === 'object' &&
-                        !Array.isArray(currentAnalysis.risk_assessment) ? (
-                          Object.entries(currentAnalysis.risk_assessment).map(([category, score]) => (
-                            <div key={category} className="flex justify-between items-center">
-                              <span className="capitalize text-sm font-medium text-gray-700">
-                                {category.replace(/([A-Z])/g, ' $1').trim()}
-                              </span>
-                              <div className="flex items-center gap-2">
-                                {typeof score === 'number' ? (
-                                  <>
-                                    <div className="w-20 bg-gray-200 rounded-full h-2">
-                                      <div
-                                        className="bg-blue-500 h-2 rounded-full"
-                                        style={{ width: `${Math.min(100, Math.max(0, score))}%` }}
-                                      ></div>
-                                    </div>
-                                    <span className="text-sm font-semibold w-8">{Math.round(score)}</span>
-                                  </>
-                                ) : (
-                                  <span className="text-sm text-gray-700">{String(score)}</span>
-                                )}
+                    <TabsContent value="overview" className="space-y-6">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <Card>
+                          <CardHeader>
+                            <CardTitle className="flex items-center gap-2">Overall score</CardTitle>
+                            <CardDescription>
+                              Summary metric from the analysis engine — supporting context, not a clinical diagnosis.
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="text-center">
+                              <div className="text-5xl font-bold text-green-600 mb-2">
+                                {overallPercent != null ? overallPercent : 'N/A'}
+                              </div>
+                              {overallPercent != null ? <p className="text-gray-600 text-sm">Normalised display score</p> : null}
+                              <div className="mt-4 w-full bg-gray-200 rounded-full h-3">
+                                <div
+                                  className="bg-green-500 h-3 rounded-full transition-all duration-1000"
+                                  style={{ width: `${Math.min(100, overallPercent ?? 0)}%` }}
+                                ></div>
                               </div>
                             </div>
-                          ))
-                        ) : (
-                          <p className="text-sm text-gray-500">No structured risk breakdown for this result.</p>
-                        )}
+                          </CardContent>
+                        </Card>
+
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Risk summary</CardTitle>
+                            <CardDescription>From the engine risk assessment object, when present.</CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-4">
+                              {currentAnalysis.risk_assessment &&
+                              typeof currentAnalysis.risk_assessment === 'object' &&
+                              !Array.isArray(currentAnalysis.risk_assessment) ? (
+                                Object.entries(currentAnalysis.risk_assessment).map(([category, score]) => (
+                                  <div key={category} className="flex justify-between items-center">
+                                    <span className="capitalize text-sm font-medium text-gray-700">
+                                      {category.replace(/([A-Z])/g, ' $1').trim()}
+                                    </span>
+                                    <div className="flex items-center gap-2">
+                                      {typeof score === 'number' ? (
+                                        <>
+                                          <div className="w-20 bg-gray-200 rounded-full h-2">
+                                            <div
+                                              className="bg-blue-500 h-2 rounded-full"
+                                              style={{ width: `${Math.min(100, Math.max(0, score))}%` }}
+                                            ></div>
+                                          </div>
+                                          <span className="text-sm font-semibold w-8">{Math.round(score)}</span>
+                                        </>
+                                      ) : (
+                                        <span className="text-sm text-gray-700">{String(score)}</span>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))
+                              ) : (
+                                <p className="text-sm text-gray-500">No structured risk breakdown for this result.</p>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
                       </div>
-                    </CardContent>
-                  </Card>
-                </div>
 
-                {insights && insights.length > 0 ? (
-                  <Alert>
-                    <AlertDescription>
-                      {insights.length} engine insight{insights.length === 1 ? '' : 's'} available — open the &quot;All
-                      insights&quot; tab for the full list.
-                    </AlertDescription>
-                  </Alert>
-                ) : null}
-              </TabsContent>
+                      {keyFindingsOverflow.length > 0 ? (
+                        <div>
+                          <h3 className="text-sm font-semibold text-gray-800 mb-2">Additional key findings</h3>
+                          <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                            {keyFindingsOverflow.map((line, i) => (
+                              <li key={i}>{line}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      ) : null}
 
-              <TabsContent value="insights" className="space-y-6">
-                {insights && insights.length > 0 ? (
-                  <InsightsPanel insights={insights} />
-                ) : (
-                  <Card>
-                    <CardContent className="pt-6">
-                      <div className="text-center py-8">
-                        <TrendingUp className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                        <p className="text-gray-500">No insights available yet.</p>
-                        <p className="text-sm text-gray-400">Complete your analysis to generate personalised insights.</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
-              </TabsContent>
+                      {insights && insights.length > 0 ? (
+                        <Alert>
+                          <AlertDescription>
+                            {insights.length} engine insight{insights.length === 1 ? '' : 's'} available — open the
+                            &quot;All insights&quot; tab for the full list.
+                          </AlertDescription>
+                        </Alert>
+                      ) : null}
+                    </TabsContent>
 
-              <TabsContent value="clinician" className="space-y-6">
-                <ClinicianReportRenderer report={clinicianReport} />
-              </TabsContent>
-            </Tabs>
+                    <TabsContent value="insights" className="space-y-6">
+                      {insights && insights.length > 0 ? (
+                        <InsightsPanel insights={insights} />
+                      ) : (
+                        <Card>
+                          <CardContent className="pt-6">
+                            <div className="text-center py-8">
+                              <TrendingUp className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                              <p className="text-gray-500">No insights available yet.</p>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )}
+                    </TabsContent>
+
+                    <TabsContent value="clinician" className="space-y-6">
+                      <ClinicianReportRenderer report={clinicianReport} />
+                    </TabsContent>
+                  </Tabs>
+                </CardContent>
+              ) : null}
+            </Card>
           </section>
         </div>
 

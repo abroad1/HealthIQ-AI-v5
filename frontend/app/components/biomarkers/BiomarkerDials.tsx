@@ -1,17 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  AlertTriangle, 
-  CheckCircle, 
-  Info
-} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Info, ChevronDown, ChevronRight } from 'lucide-react';
 
-interface BiomarkerValue {
+/** Per-marker model for retail cards + shared / inline detail (FE-VISUALISATION-B2) */
+export interface BiomarkerDialEntry {
   value: number;
   unit: string;
   date?: string;
@@ -24,16 +20,18 @@ interface BiomarkerValue {
     source?: string;
   };
   status?: 'optimal' | 'normal' | 'elevated' | 'low' | 'critical' | string;
+  educationalExplainer?: { title: string; body: string } | null;
+  contributionContext?: { factual_statement: string } | null;
+  relatedSystemGroupNames?: string[];
 }
 
 interface BiomarkerDialsProps {
-  biomarkers: Record<string, BiomarkerValue>;
-  showDetails?: boolean;
+  biomarkers: Record<string, BiomarkerDialEntry>;
   /** Softer section heading when used as a supporting layer */
   sectionTitle?: string;
 }
 
-const BIOMARKER_NAMES = {
+const BIOMARKER_NAMES: Record<string, string> = {
   glucose: 'Glucose',
   hba1c: 'HbA1c',
   insulin: 'Insulin',
@@ -44,12 +42,15 @@ const BIOMARKER_NAMES = {
   triglycerides: 'Triglycerides',
   apolipoprotein_b: 'Apolipoprotein B',
   apolipoprotein_a1: 'Apolipoprotein A1',
+  homocysteine: 'Homocysteine',
   crp: 'C-Reactive Protein',
   esr: 'Erythrocyte Sedimentation Rate',
   il_6: 'Interleukin-6',
   tnf_alpha: 'TNF-α',
   creatinine: 'Creatinine',
   bun: 'Blood Urea Nitrogen',
+  urea: 'Urea',
+  urate: 'Urate',
   alt: 'ALT',
   ast: 'AST',
   ggt: 'GGT',
@@ -68,39 +69,65 @@ const BIOMARKER_NAMES = {
   vitamin_b12: 'Vitamin B12',
   folate: 'Folate',
   iron: 'Iron',
-  ferritin: 'Ferritin'
+  ferritin: 'Ferritin',
 };
 
 const getStatusColor = (status?: string) => {
   switch (status) {
-    case 'optimal': return 'text-green-600 bg-green-100';
-    case 'normal': return 'text-blue-600 bg-blue-100';
-    case 'elevated': return 'text-yellow-600 bg-yellow-100';
-    case 'low': return 'text-orange-600 bg-orange-100';
-    case 'critical': return 'text-red-600 bg-red-100';
-    default: return 'text-gray-600 bg-gray-100';
+    case 'optimal':
+      return 'text-green-600 bg-green-100';
+    case 'normal':
+      return 'text-blue-600 bg-blue-100';
+    case 'elevated':
+    case 'suboptimal':
+    case 'at_risk':
+      return 'text-yellow-600 bg-yellow-100';
+    case 'low':
+      return 'text-orange-600 bg-orange-100';
+    case 'critical':
+      return 'text-red-600 bg-red-100';
+    default:
+      return 'text-gray-600 bg-gray-100';
   }
 };
 
 const getStatusIcon = (status?: string) => {
   switch (status) {
-    case 'optimal': return <CheckCircle className="h-4 w-4" />;
-    case 'normal': return <CheckCircle className="h-4 w-4" />;
-    case 'elevated': return <TrendingUp className="h-4 w-4" />;
-    case 'low': return <TrendingDown className="h-4 w-4" />;
-    case 'critical': return <AlertTriangle className="h-4 w-4" />;
-    default: return <Info className="h-4 w-4" />;
+    case 'optimal':
+      return <CheckCircle className="h-4 w-4" />;
+    case 'normal':
+      return <CheckCircle className="h-4 w-4" />;
+    case 'elevated':
+    case 'suboptimal':
+    case 'at_risk':
+      return <TrendingUp className="h-4 w-4" />;
+    case 'low':
+      return <TrendingDown className="h-4 w-4" />;
+    case 'critical':
+      return <AlertTriangle className="h-4 w-4" />;
+    default:
+      return <Info className="h-4 w-4" />;
   }
 };
 
 const getStatusLabel = (status?: string) => {
   switch (status) {
-    case 'optimal': return 'Optimal';
-    case 'normal': return 'Normal';
-    case 'elevated': return 'Elevated';
-    case 'low': return 'Low';
-    case 'critical': return 'Critical';
-    default: return 'Unknown';
+    case 'optimal':
+      return 'Optimal';
+    case 'normal':
+      return 'Normal';
+    case 'elevated':
+      return 'Elevated';
+    case 'suboptimal':
+      return 'Suboptimal';
+    case 'at_risk':
+      return 'At risk';
+    case 'low':
+      return 'Low';
+    case 'critical':
+      return 'Critical';
+    default:
+      return 'Unknown';
   }
 };
 
@@ -109,49 +136,34 @@ const calculateDialValue = (
   referenceRange?: { min?: number; max?: number; unit: string; source?: string },
   score?: number
 ): number => {
-  // 1) Prefer backend score if provided (0–1 → 0–100)
   if (typeof score === 'number' && !Number.isNaN(score)) {
     const clamped = Math.min(1, Math.max(0, score));
     return Math.round(clamped * 100);
   }
-
-  // 2) Fallback to reference range if min/max defined and range > 0
-  if (
-    referenceRange &&
-    typeof referenceRange.min === 'number' &&
-    typeof referenceRange.max === 'number'
-  ) {
+  if (referenceRange && typeof referenceRange.min === 'number' && typeof referenceRange.max === 'number') {
     const range = referenceRange.max - referenceRange.min;
     if (range > 0) {
       const raw = ((value - referenceRange.min) / range) * 100;
       return Math.max(0, Math.min(100, raw));
     }
   }
-
-  // 3) Last resort default
   return 50;
 };
 
 const getDialColor = (value: number, status?: string) => {
   if (status === 'critical') return 'stroke-red-500';
-  if (status === 'elevated' || status === 'low') return 'stroke-yellow-500';
+  if (status === 'elevated' || status === 'low' || status === 'suboptimal' || status === 'at_risk')
+    return 'stroke-yellow-500';
   if (status === 'optimal' || status === 'normal') return 'stroke-green-500';
-  
-  // Default color based on value
   if (value < 20 || value > 80) return 'stroke-red-500';
   if (value < 30 || value > 70) return 'stroke-yellow-500';
   return 'stroke-green-500';
 };
 
 const renderDial = (value: number, status?: string, size: 'sm' | 'md' | 'lg' = 'md') => {
-  const sizeClasses = {
-    sm: 'w-16 h-16',
-    md: 'w-24 h-24',
-    lg: 'w-32 h-32'
-  };
-  
+  const sizeClasses = { sm: 'w-16 h-16', md: 'w-24 h-24', lg: 'w-32 h-32' };
   const strokeWidth = size === 'sm' ? 2 : size === 'md' ? 3 : 4;
-  const radius = size === 'sm' ? 28 : size === 'md' ? 40 : size === 'lg' ? 56 : 40;
+  const radius = size === 'sm' ? 28 : size === 'md' ? 40 : 56;
   const circumference = 2 * Math.PI * radius;
   const strokeDasharray = circumference;
   const strokeDashoffset = circumference - (value / 100) * circumference;
@@ -159,17 +171,7 @@ const renderDial = (value: number, status?: string, size: 'sm' | 'md' | 'lg' = '
   return (
     <div className={`${sizeClasses[size]} relative flex-shrink-0`}>
       <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-        {/* Background circle */}
-        <circle
-          cx="50"
-          cy="50"
-          r={radius}
-          stroke="currentColor"
-          strokeWidth={strokeWidth}
-          fill="none"
-          className="text-gray-200"
-        />
-        {/* Progress circle */}
+        <circle cx="50" cy="50" r={radius} stroke="currentColor" strokeWidth={strokeWidth} fill="none" className="text-gray-200" />
         <circle
           cx="50"
           cy="50"
@@ -192,99 +194,73 @@ const renderDial = (value: number, status?: string, size: 'sm' | 'md' | 'lg' = '
   );
 };
 
-const renderBiomarkerCard = (
-  biomarkerKey: string,
-  data: BiomarkerValue,
-  dialValue: number,
-  showDetails: boolean = false
-) => {
+function BiomarkerDetailZones({
+  biomarkerKey,
+  data,
+}: {
+  biomarkerKey: string;
+  data: BiomarkerDialEntry;
+}) {
+  const displayName = BIOMARKER_NAMES[biomarkerKey] || biomarkerKey.replace(/_/g, ' ');
   return (
-    <Card className="hover:shadow-md transition-shadow w-full h-full border-gray-200 bg-white">
-      <CardContent className="pt-4 min-h-[180px]">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h4 className="font-semibold text-gray-900">
-              {BIOMARKER_NAMES[biomarkerKey as keyof typeof BIOMARKER_NAMES] || biomarkerKey}
-            </h4>
-            <p className="text-sm text-gray-500">{data.unit}</p>
-          </div>
-          <Badge className={getStatusColor(data.status)}>
-            {getStatusIcon(data.status)}
-            <span className="ml-1">{getStatusLabel(data.status)}</span>
-          </Badge>
+    <div className="space-y-4 text-left border-t border-gray-200 pt-4 mt-3">
+      <h4 className="text-base font-semibold text-gray-900">{displayName}</h4>
+
+      {data.educationalExplainer?.body ? (
+        <div>
+          <h5 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">Educational explainer</h5>
+               <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{data.educationalExplainer.body}</p>
         </div>
+      ) : null}
 
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <div className="text-2xl font-bold text-gray-900 mb-1">
-              {typeof data.value === 'number' ? data.value.toFixed(1) : 'N/A'}
-            </div>
-            {data.referenceRange && 
-             typeof data.referenceRange.min === 'number' && 
-             typeof data.referenceRange.max === 'number' && (
-              <div className="text-xs text-gray-500">
-                Range: {data.referenceRange.min}-{data.referenceRange.max} {data.referenceRange.unit}
-              </div>
-            )}
-            {data.date && (
-              <div className="text-xs text-gray-500 mt-1">
-                {new Date(data.date).toLocaleDateString()}
-              </div>
-            )}
-          </div>
-          <div className="ml-4 flex-shrink-0 w-24 h-24">
-            {renderDial(dialValue, data.status, 'md')}
-          </div>
+      {data.contributionContext?.factual_statement ? (
+        <div>
+          <h5 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">Contribution context</h5>
+          <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{data.contributionContext.factual_statement}</p>
         </div>
+      ) : null}
 
-        {showDetails && data.interpretation ? (
-          <p className="mt-3 text-xs text-gray-600 leading-relaxed border-t border-gray-100 pt-3">
-            {data.interpretation}
-          </p>
-        ) : null}
-
-        {showDetails && data.referenceRange && 
-         typeof data.referenceRange.min === 'number' && 
-         typeof data.referenceRange.max === 'number' && (
-          <div className="mt-4 pt-4 border-t border-gray-100">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Your value</span>
-              <span className="font-medium text-gray-900">{data.value}</span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Reference range</span>
-              <span className="font-medium text-gray-900">
-                {data.referenceRange.min} - {data.referenceRange.max}
-              </span>
-            </div>
-            <div className="mt-2">
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className={`h-2 rounded-full transition-all duration-1000 ${
-                    data.value < data.referenceRange.min ? 'bg-red-500' :
-                    data.value > data.referenceRange.max ? 'bg-yellow-500' : 'bg-green-500'
-                  }`}
-                  style={{ 
-                    width: `${Math.min(100, Math.max(0, 
-                      ((data.value - data.referenceRange.min) / (data.referenceRange.max - data.referenceRange.min)) * 100
-                    ))}%` 
-                  }}
-                ></div>
-              </div>
-            </div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      {/* Trend/history: architectural slot only — no UI when history contract absent (wireframe amendment) */}
+      {data.relatedSystemGroupNames && data.relatedSystemGroupNames.length > 0 ? (
+        <div>
+          <h5 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">Related system groups</h5>
+          <ul className="flex flex-wrap gap-2 list-none p-0 m-0">
+            {data.relatedSystemGroupNames.map((n) => (
+              <li key={n}>
+                <Badge variant="outline" className="font-normal">
+                  {n}
+                </Badge>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+    </div>
   );
-};
+}
 
-export default function BiomarkerDials({
-  biomarkers,
-  showDetails = false,
-  sectionTitle = 'Your markers',
-}: BiomarkerDialsProps) {
+export default function BiomarkerDials({ biomarkers, sectionTitle = 'Biomarker evidence' }: BiomarkerDialsProps) {
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+      setIsDesktop(false);
+      return;
+    }
+    const mq = window.matchMedia('(min-width: 768px)');
+    const update = () => setIsDesktop(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+
+  const toggleSelect = useCallback((key: string) => {
+    setSelectedKey((cur) => (cur === key ? null : key));
+  }, []);
+
   const biomarkerEntries = Object.entries(biomarkers || {});
+  const selectedData = selectedKey && biomarkers[selectedKey] ? biomarkers[selectedKey] : null;
 
   if (!biomarkerEntries.length) {
     return (
@@ -299,37 +275,94 @@ export default function BiomarkerDials({
       <div className="mb-2">
         <h2 className="text-lg font-semibold text-gray-800">{sectionTitle}</h2>
         <p className="text-sm text-gray-500">
-          Marker values support the interpretation above — details and lab wording come from your results payload.
+          Marker values support the interpretation above. Select a card for more context on larger screens; on mobile,
+          details open under the card.
         </p>
       </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full">
-        {biomarkerEntries.map(([name, data]) => {
-          const d = data as BiomarkerValue | undefined;
-          
-          // More robust check: we want to render if we have at least a score OR a value
-          // Score 0 is valid and must NOT be treated as "falsy" for hiding
+        {biomarkerEntries.map(([name, raw]) => {
+          const d = raw as BiomarkerDialEntry | undefined;
           const hasScore = typeof d?.score === 'number' && !Number.isNaN(d.score);
           const hasValue = typeof d?.value === 'number' && !Number.isNaN(d.value);
-          
-          if (!hasScore && !hasValue) {
-            return null;
-          }
+          if (!hasScore && !hasValue) return null;
 
-          // Use value 0 as fallback if score exists but value doesn't, or vice versa
-          const value = hasValue ? d.value : (hasScore ? 0 : 0);
-          const dialValue = calculateDialValue(
-            value,
-            d?.referenceRange,
-            d?.score
-          );
+          const value = hasValue ? d!.value : 0;
+          const dialValue = calculateDialValue(value, d?.referenceRange, d?.score);
+          const isSel = selectedKey === name;
+          const displayName = BIOMARKER_NAMES[name] || name.replace(/_/g, ' ');
 
           return (
-            <div key={name} className="min-h-[200px]">
-              {renderBiomarkerCard(name, { ...d, value } as BiomarkerValue, dialValue, showDetails)}
+            <div key={name} className="min-h-[120px]">
+              <Card
+                className={`hover:shadow-md transition-shadow w-full h-full border-gray-200 bg-white ${
+                  isSel ? 'ring-2 ring-blue-400 ring-offset-1' : ''
+                }`}
+              >
+                <CardContent className="pt-4">
+                  <div className="flex items-center justify-between mb-3 gap-2">
+                    <div className="min-w-0">
+                      <h4 className="font-semibold text-gray-900 truncate">{displayName}</h4>
+                      <p className="text-sm text-gray-500">{d?.unit}</p>
+                    </div>
+                    <Badge className={getStatusColor(d?.status)}>{getStatusIcon(d?.status)}</Badge>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-2xl font-bold text-gray-900 mb-1">{value.toFixed(1)}</div>
+                      {d?.referenceRange &&
+                      typeof d.referenceRange.min === 'number' &&
+                      typeof d.referenceRange.max === 'number' ? (
+                        <div className="text-xs text-gray-500">
+                          Range: {d.referenceRange.min}–{d.referenceRange.max} {d.referenceRange.unit}
+                        </div>
+                      ) : null}
+                      {d?.interpretation ? (
+                        <p className="text-xs text-gray-700 mt-2 leading-relaxed line-clamp-3">{d.interpretation}</p>
+                      ) : null}
+                      {d?.date ? (
+                        <div className="text-xs text-gray-400 mt-1">{new Date(d.date).toLocaleDateString()}</div>
+                      ) : null}
+                    </div>
+                    <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                      {renderDial(dialValue, d?.status, 'md')}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="text-xs h-8"
+                        onClick={() => toggleSelect(name)}
+                        aria-expanded={isSel}
+                      >
+                        {isSel ? (
+                          <>
+                            <ChevronDown className="h-3 w-3 mr-1" /> Close
+                          </>
+                        ) : (
+                          <>
+                            <ChevronRight className="h-3 w-3 mr-1" /> Expand
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {!isDesktop && isSel && d ? <BiomarkerDetailZones biomarkerKey={name} data={d} /> : null}
+                </CardContent>
+              </Card>
             </div>
           );
         })}
       </div>
+
+      {isDesktop && selectedKey && selectedData ? (
+        <Card className="border-blue-100 bg-white shadow-sm">
+          <CardContent className="pt-6">
+            <BiomarkerDetailZones biomarkerKey={selectedKey} data={selectedData} />
+          </CardContent>
+        </Card>
+      ) : null}
     </div>
   );
 }

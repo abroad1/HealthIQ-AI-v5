@@ -3,12 +3,13 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Sparkles, ListOrdered, Microscope } from 'lucide-react';
+import { Sparkles, Microscope } from 'lucide-react';
 import type { ClinicianReportV1, PrimaryConcernModeV1 } from '@/types/analysis';
 
 export interface InsightPanelProps {
   report: ClinicianReportV1 | null | undefined;
+  /** Retail label for the Primary Driver System Group — visual thread only */
+  primaryDriverSystemGroupName?: string | null;
   className?: string;
 }
 
@@ -40,10 +41,14 @@ function modeAudienceNote(mode: PrimaryConcernModeV1 | undefined): string | null
 }
 
 /**
- * Policy-aligned hero: primary interpretation from clinician_report_v1.sections.page1.
- * Does not invent medical content when the report is absent.
+ * Hero interpretation — locked to four copy blocks per FE-VISUALISATION-B2 / wireframe §2.
+ * key_findings list is not rendered here; defer fuller lists to Advanced Analysis.
  */
-export function InsightPanel({ report, className = '' }: InsightPanelProps) {
+export function InsightPanel({
+  report,
+  primaryDriverSystemGroupName,
+  className = '',
+}: InsightPanelProps) {
   const page1 = report?.sections?.page1;
 
   if (!page1) {
@@ -55,8 +60,8 @@ export function InsightPanel({ report, className = '' }: InsightPanelProps) {
             Interpretation
           </CardTitle>
           <CardDescription>
-            A structured clinical summary is not available for this result yet. Use scores and markers below,
-            or open the clinician report in Additional detail when present.
+            A structured clinical summary is not available for this result yet. Use System Groups and markers below,
+            or open Advanced analysis when present.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -68,13 +73,23 @@ export function InsightPanel({ report, className = '' }: InsightPanelProps) {
   const ambiguityNote = modeAudienceNote(mode);
   const coPrimaries = page1.co_primary_signal_ids?.filter(Boolean) ?? [];
 
+  const headline = (page1.primary_concern || '').trim();
+  const interpretationParagraph = (page1.key_findings?.[0] || '').trim();
+  const confidenceLine = (page1.confidence_and_missing_data || '').trim();
+  const nextStepCue = (page1.top_hypothesis_line || '').trim();
+
+  const showCoPrimaryRow =
+    coPrimaries.length > 0 && (mode === 'near_tie_ambiguity' || mode === 'technical_tiebreak_lead');
+
   return (
-    <Card className={`border-blue-100 shadow-md ${className}`}>
+    <Card
+      className={`border-blue-100 shadow-md ${primaryDriverSystemGroupName ? 'border-l-4 border-l-blue-500' : ''} ${className}`}
+    >
       <CardHeader className="pb-2">
         <div className="flex flex-wrap items-center gap-2 mb-2">
           <CardTitle className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-gray-900 mr-auto">
             <Sparkles className="h-7 w-7 text-blue-600 flex-shrink-0" />
-            What matters most
+            Hero interpretation
           </CardTitle>
           <Badge variant={modeVariant}>{modeText}</Badge>
           {page1.ranking_policy_version ? (
@@ -83,27 +98,21 @@ export function InsightPanel({ report, className = '' }: InsightPanelProps) {
             </Badge>
           ) : null}
         </div>
-        <p className="text-lg text-gray-800 leading-relaxed font-medium mt-1">
-          {page1.primary_concern}
-        </p>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {ambiguityNote ? (
-          <Alert>
-            <AlertDescription>{ambiguityNote}</AlertDescription>
-          </Alert>
+        {primaryDriverSystemGroupName ? (
+          <p className="text-xs font-medium text-blue-800 mb-1">
+            Primary driver system group: <span className="font-semibold">{primaryDriverSystemGroupName}</span>
+          </p>
         ) : null}
-
-        {coPrimaries.length > 0 && (mode === 'near_tie_ambiguity' || mode === 'technical_tiebreak_lead') ? (
-          <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-              <Microscope className="h-4 w-4" />
-              Closely related signals
-            </h3>
+      </CardHeader>
+      <CardContent className="space-y-4 pt-0">
+        {showCoPrimaryRow ? (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Co-primary concerns</span>
             <ul className="flex flex-wrap gap-2 list-none p-0 m-0">
               {coPrimaries.map((sid) => (
                 <li key={sid}>
                   <Badge variant="outline" className="font-normal text-gray-700">
+                    <Microscope className="h-3 w-3 mr-1 inline" />
                     {formatSignalIdForDisplay(sid)}
                   </Badge>
                 </li>
@@ -112,36 +121,31 @@ export function InsightPanel({ report, className = '' }: InsightPanelProps) {
           </div>
         ) : null}
 
-        {page1.key_findings?.length ? (
-          <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-              <ListOrdered className="h-4 w-4" />
-              Key findings
-            </h3>
-            <ul className="space-y-2">
-              {page1.key_findings.map((line, i) => (
-                <li key={i} className="text-gray-700 text-sm leading-relaxed pl-1 border-l-2 border-blue-200 pl-3">
-                  {line}
-                </li>
-              ))}
-            </ul>
-          </div>
+        {ambiguityNote ? (
+          <p className="text-sm text-gray-600 bg-slate-50 border border-slate-100 rounded-md px-3 py-2">{ambiguityNote}</p>
         ) : null}
 
-        {page1.top_hypothesis_line ? (
-          <div className="rounded-lg bg-slate-50 border border-slate-100 px-4 py-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">Hypothesis & next steps</h3>
-            <p className="text-sm text-slate-800 leading-relaxed">{page1.top_hypothesis_line}</p>
-          </div>
+        {/* 1 headline line */}
+        <h2 className="text-xl font-semibold text-gray-900 leading-snug line-clamp-2 md:line-clamp-1" title={headline}>
+          {headline || '—'}
+        </h2>
+
+        {/* 1 interpretation paragraph */}
+        {interpretationParagraph ? (
+          <p className="text-base text-gray-800 leading-relaxed">{interpretationParagraph}</p>
         ) : null}
 
-        {page1.confidence_and_missing_data ? (
-          <div className="rounded-lg bg-amber-50/60 border border-amber-100 px-4 py-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-amber-800/90 mb-1">Confidence & gaps</h3>
-            <p className="text-sm text-amber-950/90 leading-relaxed whitespace-pre-wrap">
-              {page1.confidence_and_missing_data}
-            </p>
-          </div>
+        {/* 1 confidence qualifier line */}
+        {confidenceLine ? (
+          <p className="text-sm text-amber-900/90 leading-relaxed border-l-2 border-amber-200 pl-3">{confidenceLine}</p>
+        ) : null}
+
+        {/* 1 next-step cue max */}
+        {nextStepCue ? (
+          <p className="text-sm text-slate-800 leading-relaxed rounded-lg bg-slate-50 border border-slate-100 px-4 py-3">
+            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 block mb-1">Next step</span>
+            {nextStepCue}
+          </p>
         ) : null}
       </CardContent>
     </Card>
