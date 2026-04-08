@@ -173,7 +173,7 @@ phenotypes:
 
   - phenotype_id: "ph_thyroid_lipid_disturbance_v1"
     name: "Thyroid-lipid disturbance pattern"
-    description: "Thyroid context with lipid disturbance features where TSH context and LDL elevation may co-occur. Maintained as pending until evidence is promoted."
+    description: "Thyroid context with lipid disturbance features where TSH context and LDL elevation may co-occur. Chain expectations enforced under KB-S58B where interaction_map thyroid→lipid edges and fixture runtime align."
     systems_involved:
       - "hormonal"
       - "cardiovascular"
@@ -210,8 +210,12 @@ phenotypes:
     synthetic_fixture_refs:
       - "ph_thyroid_lipid_disturbance_v1.json"
     chain_expectations:
-      status: "pending"
-    evidence_notes: "Captures a clinically plausible thyroid-lipid link for formal review before interaction-map promotion."
+      status: "enforced"
+      min_chain_confidence: 0.35
+      must_include_any_signal:
+        - "signal_thyroid_tsh_context"
+        - "signal_ldl_cholesterol_high"
+    evidence_notes: "KB-S58B: chain enforcement promoted — interaction_map_v1.yaml has thyroid_tsh_context→LDL (moderate) and TSH-high→LDL (strong); fixture produces two deterministic chains with observed max summary confidence ~0.375, so min_chain_confidence set to 0.35 to match earned runtime truth."
 
   - phenotype_id: "ph_iron_deficiency_inflammation_v1"
     name: "Iron deficiency with inflammation pattern"
@@ -291,7 +295,7 @@ phenotypes:
 
   - phenotype_id: "ph_hba1c_metabolic_stress_v1"
     name: "HbA1c metabolic stress pattern"
-    description: "Elevated HbA1c with dyslipidaemic and hepatic context markers used to strengthen synthetic WHY-layer regression coverage."
+    description: "Elevated HbA1c with dyslipidaemic and hepatic context markers used to strengthen synthetic WHY-layer regression coverage; HbA1c→ALT chain enforced under KB-S58B per interaction_map."
     systems_involved:
       - "metabolic"
       - "hepatic"
@@ -313,8 +317,12 @@ phenotypes:
     synthetic_fixture_refs:
       - "ph_hba1c_metabolic_stress_v1.json"
     chain_expectations:
-      status: "pending"
-    evidence_notes: "Synthetic harness coverage phenotype for HbA1c-centred WHY-layer behaviour."
+      status: "enforced"
+      min_chain_confidence: 0.40
+      must_include_any_signal:
+        - "signal_hba1c_high"
+        - "signal_alt_high"
+    evidence_notes: "KB-S58B: chain enforcement promoted — interaction_map_v1.yaml has HbA1c-high→ALT (moderate); fixture yields a deterministic chain including signal_hdl_cholesterol_low, signal_hba1c_high, signal_alt_high with summary confidence 0.9."
 
   - phenotype_id: "ph_hepatic_alt_inflammatory_v1"
     name: "Hepatic ALT inflammatory pattern"

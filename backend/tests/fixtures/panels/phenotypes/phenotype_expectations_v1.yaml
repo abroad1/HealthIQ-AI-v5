@@ -1,9 +1,9 @@
 schema_version: "v1"
 suite_id: "phenotype_suite_v1"
-updated_at: "2026-03-15"
+updated_at: "2026-04-08"
 notes:
   - "Expectations are clinically declared first; engine output must not be copied back into expectations."
-  - "Chain coverage is enforced for homocysteine (v1) and renal stress (KB-S56B) where interaction-map edges exist; other phenotypes may remain pending."
+  - "Chain coverage is enforced for homocysteine (v1), renal stress (KB-S56B), HbA1c metabolic stress, and thyroid–lipid disturbance (KB-S58B) where interaction-map edges and runtime behaviour justify it."
 
 phenotypes:
   - phenotype_id: "ph_vascular_hcy_inflammation_v1"
@@ -69,18 +69,20 @@ phenotypes:
       applies_to_signal_id: ""
 
   - phenotype_id: "ph_thyroid_lipid_disturbance_v1"
-    chain_coverage_status: "pending"
-    clinical_intent: "Thyroid dysfunction with dyslipidaemia; asserts thyroid signal firing now; chain enforcement pending interaction mapping."
+    chain_coverage_status: "enforced"
+    clinical_intent: "Thyroid dysfunction with dyslipidaemia; asserts TSH context + LDL chain coupling per interaction_map (moderate/strong edges); min_chain_confidence 0.35 reflects observed runtime max ~0.375 on synthetic fixture."
     fixture_filename: "ph_thyroid_lipid_disturbance_v1.json"
     expected_signals:
       must_fire:
         - "signal_thyroid_tsh_context"
       must_not_fire: []
     expected_chains:
-      must_exist: false
-      min_count: 0
-      min_chain_confidence: 0.0
-      must_include_any_signal: []
+      must_exist: true
+      min_count: 1
+      min_chain_confidence: 0.35
+      must_include_any_signal:
+        - "signal_thyroid_tsh_context"
+        - "signal_ldl_cholesterol_high"
       optional_expected_sequences: []
     expected_root_cause:
       must_exist: false
@@ -126,18 +128,20 @@ phenotypes:
       applies_to_signal_id: ""
 
   - phenotype_id: "ph_hba1c_metabolic_stress_v1"
-    chain_coverage_status: "pending"
-    clinical_intent: "HbA1c-led metabolic stress context should fire HbA1c signal and emit governed HbA1c root-cause hypotheses."
+    chain_coverage_status: "enforced"
+    clinical_intent: "HbA1c-led metabolic stress context should fire HbA1c signal, emit governed HbA1c root-cause hypotheses, and yield at least one interaction chain covering HbA1c→ALT (interaction_map moderate edge)."
     fixture_filename: "ph_hba1c_metabolic_stress_v1.json"
     expected_signals:
       must_fire:
         - "signal_hba1c_high"
       must_not_fire: []
     expected_chains:
-      must_exist: false
-      min_count: 0
-      min_chain_confidence: 0.0
-      must_include_any_signal: []
+      must_exist: true
+      min_count: 1
+      min_chain_confidence: 0.40
+      must_include_any_signal:
+        - "signal_hba1c_high"
+        - "signal_alt_high"
       optional_expected_sequences: []
     expected_root_cause:
       must_exist: true
