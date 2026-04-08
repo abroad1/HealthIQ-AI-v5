@@ -7,7 +7,6 @@ import { useHistory } from '../../app/hooks/useHistory';
 import { AnalysisService } from '../../app/services/analysis';
 import { AnalysisHistoryResponse } from '../../app/types/analysis';
 
-// Mock the AnalysisService
 jest.mock('../../app/services/analysis');
 
 describe('useHistory', () => {
@@ -17,11 +16,9 @@ describe('useHistory', () => {
     jest.clearAllMocks();
   });
 
-  it('should initialize with empty state', () => {
-    // Act
-    const { result } = renderHook(() => useHistory());
+  it('should initialize with empty state when autoFetch is off', () => {
+    const { result } = renderHook(() => useHistory({ autoFetch: false }));
 
-    // Assert
     expect(result.current.analyses).toEqual([]);
     expect(result.current.loading).toBe(false);
     expect(result.current.error).toBeNull();
@@ -29,216 +26,164 @@ describe('useHistory', () => {
   });
 
   it('should load analyses successfully', async () => {
-    // Arrange
-    const userId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockResponse: AnalysisHistoryResponse = {
-      analyses: [
+    const mockData: AnalysisHistoryResponse = {
+      history: [
         {
-          analysis_id: '123e4567-e89b-12d3-a456-426614174000',
+          id: '123e4567-e89b-12d3-a456-426614174000',
           created_at: '2024-01-01T00:00:00Z',
           overall_score: 0.85,
           status: 'completed',
-          processing_time_seconds: 5.0
+          processing_time_seconds: 5.0,
         },
         {
-          analysis_id: '456e7890-e89b-12d3-a456-426614174001',
+          id: '456e7890-e89b-12d3-a456-426614174001',
           created_at: '2024-01-02T00:00:00Z',
           overall_score: 0.92,
           status: 'completed',
-          processing_time_seconds: 3.0
-        }
+          processing_time_seconds: 3.0,
+        },
       ],
       total: 2,
       limit: 10,
-      offset: 0
+      page: 1,
     };
 
-    mockAnalysisService.getAnalysisHistory.mockResolvedValueOnce(mockResponse);
-
-    // Act
-    const { result } = renderHook(() => useHistory());
-
-    await act(async () => {
-      await result.current.loadAnalyses(userId);
+    mockAnalysisService.getAnalysisHistory.mockResolvedValueOnce({
+      success: true,
+      data: mockData,
+      message: 'ok',
     });
 
-    // Assert
-    expect(result.current.analyses).toEqual(mockResponse.analyses);
+    const { result } = renderHook(() => useHistory({ autoFetch: false }));
+
+    await act(async () => {
+      await result.current.loadAnalyses();
+    });
+
+    expect(result.current.analyses).toEqual(mockData.history);
     expect(result.current.total).toBe(2);
     expect(result.current.loading).toBe(false);
     expect(result.current.error).toBeNull();
-    expect(mockAnalysisService.getAnalysisHistory).toHaveBeenCalledWith(userId, 10, 0);
+    expect(mockAnalysisService.getAnalysisHistory).toHaveBeenCalledWith(10, 0);
   });
 
   it('should handle loading state', async () => {
-    // Arrange
-    const userId = '123e4567-e89b-12d3-a456-426614174000';
-    let resolvePromise: (value: AnalysisHistoryResponse) => void;
-    const promise = new Promise<AnalysisHistoryResponse>((resolve) => {
-      resolvePromise = resolve;
-    });
+    let resolvePromise: (v: { success: true; data: AnalysisHistoryResponse; message: string }) => void;
+    const promise = new Promise<{ success: true; data: AnalysisHistoryResponse; message: string }>(
+      (resolve) => {
+        resolvePromise = resolve;
+      }
+    );
     mockAnalysisService.getAnalysisHistory.mockReturnValueOnce(promise);
 
-    // Act
-    const { result } = renderHook(() => useHistory());
+    const { result } = renderHook(() => useHistory({ autoFetch: false }));
 
     act(() => {
-      result.current.loadAnalyses(userId);
+      void result.current.loadAnalyses();
     });
 
-    // Assert - loading state
     expect(result.current.loading).toBe(true);
-    expect(result.current.analyses).toEqual([]);
 
-    // Act - resolve promise
     await act(async () => {
       resolvePromise!({
-        analyses: [],
-        total: 0,
-        limit: 10,
-        offset: 0
+        success: true,
+        data: { history: [], total: 0, limit: 10, page: 1 },
+        message: 'ok',
       });
     });
 
-    // Assert - loading completed
     expect(result.current.loading).toBe(false);
   });
 
-  it('should handle errors', async () => {
-    // Arrange
-    const userId = '123e4567-e89b-12d3-a456-426614174000';
-    const error = new Error('Failed to fetch analysis history');
-    mockAnalysisService.getAnalysisHistory.mockRejectedValueOnce(error);
-
-    // Act
-    const { result } = renderHook(() => useHistory());
-
-    await act(async () => {
-      await result.current.loadAnalyses(userId);
+  it('should handle errors from the service', async () => {
+    mockAnalysisService.getAnalysisHistory.mockResolvedValueOnce({
+      success: false,
+      error: 'Failed to fetch analysis history',
+      data: { history: [], total: 0, limit: 10, page: 1 },
     });
 
-    // Assert
+    const { result } = renderHook(() => useHistory({ autoFetch: false }));
+
+    await act(async () => {
+      await result.current.loadAnalyses();
+    });
+
     expect(result.current.error).toBe('Failed to fetch analysis history');
     expect(result.current.loading).toBe(false);
     expect(result.current.analyses).toEqual([]);
   });
 
-  it('should load more analyses with pagination', async () => {
-    // Arrange
-    const userId = '123e4567-e89b-12d3-a456-426614174000';
-    const initialResponse: AnalysisHistoryResponse = {
-      analyses: [
+  it('should load another page when autoFetch is false', async () => {
+    const first: AnalysisHistoryResponse = {
+      history: [
         {
-          analysis_id: '123e4567-e89b-12d3-a456-426614174000',
+          id: '123e4567-e89b-12d3-a456-426614174000',
           created_at: '2024-01-01T00:00:00Z',
           overall_score: 0.85,
           status: 'completed',
-          processing_time_seconds: 5.0
-        }
+        },
       ],
       total: 3,
       limit: 1,
-      offset: 0
+      page: 1,
     };
-
-    const moreResponse: AnalysisHistoryResponse = {
-      analyses: [
+    const second: AnalysisHistoryResponse = {
+      history: [
         {
-          analysis_id: '456e7890-e89b-12d3-a456-426614174001',
+          id: '456e7890-e89b-12d3-a456-426614174001',
           created_at: '2024-01-02T00:00:00Z',
           overall_score: 0.92,
           status: 'completed',
-          processing_time_seconds: 3.0
-        }
+        },
       ],
       total: 3,
       limit: 1,
-      offset: 1
+      page: 2,
     };
 
     mockAnalysisService.getAnalysisHistory
-      .mockResolvedValueOnce(initialResponse)
-      .mockResolvedValueOnce(moreResponse);
+      .mockResolvedValueOnce({ success: true, data: first, message: 'ok' })
+      .mockResolvedValueOnce({ success: true, data: second, message: 'ok' });
 
-    // Act
-    const { result } = renderHook(() => useHistory());
+    const { result } = renderHook(() => useHistory({ autoFetch: false, limit: 1 }));
 
-    // Load initial analyses
     await act(async () => {
-      await result.current.loadAnalyses(userId, 1, 0);
+      await result.current.loadAnalyses(1);
+    });
+    await act(async () => {
+      await result.current.loadAnalyses(2);
     });
 
-    // Load more analyses
-    await act(async () => {
-      await result.current.loadMore(userId, 1, 1);
-    });
-
-    // Assert
-    expect(result.current.analyses).toHaveLength(2);
-    expect(result.current.total).toBe(3);
+    expect(result.current.analyses).toHaveLength(1);
+    expect(result.current.analyses[0].id).toBe('456e7890-e89b-12d3-a456-426614174001');
     expect(mockAnalysisService.getAnalysisHistory).toHaveBeenCalledTimes(2);
-    expect(mockAnalysisService.getAnalysisHistory).toHaveBeenNthCalledWith(1, userId, 1, 0);
-    expect(mockAnalysisService.getAnalysisHistory).toHaveBeenNthCalledWith(2, userId, 1, 1);
+    expect(mockAnalysisService.getAnalysisHistory).toHaveBeenNthCalledWith(1, 1, 0);
+    expect(mockAnalysisService.getAnalysisHistory).toHaveBeenNthCalledWith(2, 1, 1);
   });
 
-  it('should clear error when loading new analyses', async () => {
-    // Arrange
-    const userId = '123e4567-e89b-12d3-a456-426614174000';
-    const error = new Error('Previous error');
-    const mockResponse: AnalysisHistoryResponse = {
-      analyses: [],
-      total: 0,
-      limit: 10,
-      offset: 0
-    };
-
+  it('should clear error when loading succeeds after a failure', async () => {
     mockAnalysisService.getAnalysisHistory
-      .mockRejectedValueOnce(error)
-      .mockResolvedValueOnce(mockResponse);
+      .mockResolvedValueOnce({
+        success: false,
+        error: 'Previous error',
+        data: { history: [], total: 0, limit: 10, page: 1 },
+      })
+      .mockResolvedValueOnce({
+        success: true,
+        data: { history: [], total: 0, limit: 10, page: 1 },
+        message: 'ok',
+      });
 
-    // Act
-    const { result } = renderHook(() => useHistory());
+    const { result } = renderHook(() => useHistory({ autoFetch: false }));
 
-    // First call fails
     await act(async () => {
-      await result.current.loadAnalyses(userId);
+      await result.current.loadAnalyses();
     });
-
     expect(result.current.error).toBe('Previous error');
 
-    // Second call succeeds
     await act(async () => {
-      await result.current.loadAnalyses(userId);
+      await result.current.loadAnalyses();
     });
-
-    // Assert
-    expect(result.current.error).toBeNull();
-    expect(result.current.analyses).toEqual([]);
-  });
-
-  it('should handle empty response', async () => {
-    // Arrange
-    const userId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockResponse: AnalysisHistoryResponse = {
-      analyses: [],
-      total: 0,
-      limit: 10,
-      offset: 0
-    };
-
-    mockAnalysisService.getAnalysisHistory.mockResolvedValueOnce(mockResponse);
-
-    // Act
-    const { result } = renderHook(() => useHistory());
-
-    await act(async () => {
-      await result.current.loadAnalyses(userId);
-    });
-
-    // Assert
-    expect(result.current.analyses).toEqual([]);
-    expect(result.current.total).toBe(0);
-    expect(result.current.loading).toBe(false);
     expect(result.current.error).toBeNull();
   });
 });

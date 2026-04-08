@@ -6,7 +6,6 @@ import {
   LayoutDashboard,
   Upload,
   FileText,
-  Activity,
   User,
   Settings,
 } from 'lucide-react'
@@ -25,7 +24,6 @@ import {
 const mainItems = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
   { title: 'Upload', url: '/upload', icon: Upload },
-  { title: 'Analysis', url: '/analysis', icon: Activity },
   { title: 'Reports', url: '/reports', icon: FileText },
 ]
 

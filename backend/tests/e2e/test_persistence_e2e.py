@@ -239,22 +239,23 @@ class TestPersistenceE2E:
         ]
         
         # Mock repository methods
-        with patch.object(persistence_service.analysis_repo, 'get_recent_analyses') as mock_get_analyses, \
+        with patch.object(persistence_service.analysis_repo, 'list_by_user_id') as mock_list, \
              patch.object(persistence_service.analysis_result_repo, 'get_by_analysis_id') as mock_get_result:
-            
-            mock_get_analyses.return_value = mock_analyses
+
+            mock_list.return_value = mock_analyses
             mock_get_result.side_effect = mock_results
-            
+
             # Act
             history = persistence_service.get_analysis_history(user_id, limit=10, offset=0)
-            
+
             # Assert
             assert len(history) == 2
             assert history[0]["analysis_id"] == str(analysis_id1)
+            assert history[0]["id"] == str(analysis_id1)
             assert history[0]["overall_score"] == 0.85
             assert history[1]["analysis_id"] == str(analysis_id2)
             assert history[1]["overall_score"] == 0.92
-            mock_get_analyses.assert_called_once_with(user_id, 10)
+            mock_list.assert_called_once_with(user_id, limit=10, offset=0)
             assert mock_get_result.call_count == 2
     
     def test_analysis_result_retrieval_flow(self, persistence_service, mock_db_session):

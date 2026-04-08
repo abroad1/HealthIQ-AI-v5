@@ -39,11 +39,15 @@ from core.canonical.normalize import normalize_biomarkers_with_metadata, detect_
 from core.canonical.errors import CanonicalCollisionError
 from core.context import ContextFactory, ValidationError
 from core.units.registry import apply_unit_normalisation, UnitConversionError, UNIT_REGISTRY_VERSION
-from core.dependencies.analysis_auth import require_analysis_submitter
+from core.dependencies.analysis_auth import (
+    require_analysis_submitter,
+    require_analysis_submitter_if_db,
+)
 from core.dependencies.auth import CurrentUser
 from core.profile_bridge import ensure_profile_for_auth_user
 from config.database import get_db_optional
-from services.storage.persistence_service import PersistenceService
+from services.storage.persistence_service import PersistenceService, CLIENT_RESULT_SHAPE_V1
+from repositories import AnalysisRepository, AnalysisResultRepository
 from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
@@ -238,8 +242,62 @@ async def start_analysis(
         )
 
 
+def _raw_result_payload_for_analysis_id(
+    analysis_id: str,
+    db: Optional[Session],
+    auth_user: Optional[CurrentUser],
+) -> Dict[str, Any]:
+    """
+    Resolve stored client-result shape: in-process cache, or DB snapshot (authenticated owner only).
+    When db is None, only the in-process cache is consulted (unit tests / no DATABASE_URL).
+    """
+    if db is None:
+        cached = _analysis_results.get(analysis_id)
+        if not cached:
+            raise HTTPException(status_code=404, detail="Analysis not found")
+        return cached
+
+    if auth_user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    try:
+        analysis_uuid = UUID(analysis_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail="Invalid analysis_id") from exc
+
+    owner_uuid = UUID(auth_user.id)
+    analysis_repo = AnalysisRepository(db)
+    row = analysis_repo.get_by_id(analysis_uuid)
+    if row is None:
+        raise HTTPException(status_code=404, detail="Analysis not found")
+    if row.user_id != owner_uuid:
+        raise HTTPException(status_code=403, detail="Not allowed to access this analysis")
+
+    cached = _analysis_results.get(analysis_id)
+    if cached:
+        return cached
+
+    result_repo = AnalysisResultRepository(db)
+    result_orm = result_repo.get_by_analysis_id(analysis_uuid)
+    if result_orm is None or not result_orm.processing_metadata:
+        raise HTTPException(status_code=404, detail="Analysis result not found")
+
+    stored = result_orm.processing_metadata.get(CLIENT_RESULT_SHAPE_V1)
+    if not isinstance(stored, dict):
+        raise HTTPException(status_code=404, detail="Analysis result not found")
+    return stored
+
+
 @router.get("/result")
-async def get_analysis_result(analysis_id: str):
+async def get_analysis_result(
+    analysis_id: str,
+    db: Optional[Session] = Depends(get_db_optional),
+    auth_user: Optional[CurrentUser] = Depends(require_analysis_submitter_if_db),
+):
     """
     Get the final analysis result.
     
@@ -249,14 +307,53 @@ async def get_analysis_result(analysis_id: str):
     Returns:
         dict: Analysis result with biomarkers, clusters and insights
     """
-    result = _analysis_results.get(analysis_id)
-    if not result:
-        raise HTTPException(status_code=404, detail="Analysis not found")
-
     try:
-        return build_analysis_result_dto(result)
+        raw = _raw_result_payload_for_analysis_id(analysis_id, db, auth_user)
+        return build_analysis_result_dto(raw)
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get analysis result: {str(e)}")
+
+
+@router.get("/history")
+async def get_analysis_history(
+    limit: int = 10,
+    offset: int = 0,
+    auth_user: CurrentUser = Depends(require_analysis_submitter),
+    db: Optional[Session] = Depends(get_db_optional),
+):
+    """Paginated analysis history for the authenticated user (owner-scoped)."""
+    if db is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="History requires database persistence",
+        )
+    if limit < 1 or limit > 100:
+        raise HTTPException(status_code=400, detail="limit must be between 1 and 100")
+    if offset < 0:
+        raise HTTPException(status_code=400, detail="offset must be non-negative")
+
+    try:
+        owner_uuid = ensure_profile_for_auth_user(db, auth_user)
+        svc = PersistenceService(db, enable_fallback=False)
+        history = svc.get_analysis_history(owner_uuid, limit=limit, offset=offset)
+        total = svc.count_analyses_for_user(owner_uuid)
+        page = offset // limit + 1
+        return {
+            "history": history,
+            "total": total,
+            "page": page,
+            "limit": limit,
+        }
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.exception("Failed to load analysis history for user %s", auth_user.id)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to load analysis history",
+        ) from exc
 
 
 @router.get("/events")
