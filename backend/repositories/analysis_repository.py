@@ -50,6 +50,18 @@ class AnalysisRepository(BaseRepository[Analysis]):
             List of analysis instances
         """
         return self.list_by_field("user_id", user_id, limit, offset)
+
+    def count_by_user_id(self, user_id: UUID) -> int:
+        """Count analyses owned by user."""
+        try:
+            return (
+                self.db_session.query(Analysis)
+                .filter(Analysis.user_id == user_id)
+                .count()
+            )
+        except SQLAlchemyError as e:
+            logger.error(f"Failed to count analyses for user {user_id}: {str(e)}")
+            raise
     
     def list_by_status(self, status: str, limit: int = 100, offset: int = 0) -> List[Analysis]:
         """

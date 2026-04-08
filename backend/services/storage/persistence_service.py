@@ -496,28 +496,34 @@ class PersistenceService:
             List of analysis summary dictionaries
         """
         try:
-            analyses = self.analysis_repo.get_recent_analyses(user_id, limit)
-            
+            analyses = self.analysis_repo.list_by_user_id(user_id, limit=limit, offset=offset)
+
             history = []
             for analysis in analyses:
                 # Get overall score from analysis result
                 result = self.analysis_result_repo.get_by_analysis_id(analysis.id)
                 overall_score = result.overall_score if result else None
-                
+                aid = str(analysis.id)
+
                 history.append({
-                    "analysis_id": str(analysis.id),
+                    "id": aid,
+                    "analysis_id": aid,
                     "created_at": analysis.created_at.isoformat(),
                     "status": analysis.status,
                     "overall_score": overall_score,
-                    "processing_time_seconds": analysis.processing_time_seconds
+                    "processing_time_seconds": analysis.processing_time_seconds,
                 })
-            
+
             return history
-            
+
         except Exception as e:
             logger.error(f"Error getting analysis history for user {user_id}: {str(e)}")
             return []
-    
+
+    def count_analyses_for_user(self, user_id: UUID) -> int:
+        """Total analyses owned by user (for pagination)."""
+        return self.analysis_repo.count_by_user_id(user_id)
+
     @fallback_decorator("get_analysis_result")
     def get_analysis_result(self, analysis_id: UUID) -> Optional[Dict[str, Any]]:
         """

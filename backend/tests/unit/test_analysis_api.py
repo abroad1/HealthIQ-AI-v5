@@ -7,8 +7,21 @@ from unittest.mock import patch
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
+from config.database import get_db_optional
 
 client = TestClient(app)
+
+
+def _no_db_session():
+    yield None
+
+
+@pytest.fixture(autouse=True)
+def _disable_db_for_analysis_unit_tests():
+    """GET /result without auth is only valid when persistence is disabled (in-memory cache)."""
+    app.dependency_overrides[get_db_optional] = _no_db_session
+    yield
+    app.dependency_overrides.pop(get_db_optional, None)
 
 # Fixture analysis_id used when injecting fixture data into _analysis_results
 FIXTURE_ANALYSIS_ID = "fixture-0001"

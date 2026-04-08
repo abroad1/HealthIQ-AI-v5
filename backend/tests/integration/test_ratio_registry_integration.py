@@ -40,7 +40,10 @@ class TestRatioRegistryIntegration:
         analysis_id = resp.json().get("analysis_id")
         assert analysis_id
 
-        result_resp = client.get(f"/api/analysis/result?analysis_id={analysis_id}")
+        result_resp = client.get(
+            f"/api/analysis/result?analysis_id={analysis_id}",
+            headers=ANALYSIS_TEST_AUTH_HEADERS,
+        )
         assert result_resp.status_code == 200
         result = result_resp.json()
 
@@ -83,7 +86,10 @@ class TestRatioRegistryIntegration:
         assert resp.status_code == 200
         analysis_id = resp.json().get("analysis_id")
 
-        result_resp = client.get(f"/api/analysis/result?analysis_id={analysis_id}")
+        result_resp = client.get(
+            f"/api/analysis/result?analysis_id={analysis_id}",
+            headers=ANALYSIS_TEST_AUTH_HEADERS,
+        )
         assert result_resp.status_code == 200
         result = result_resp.json()
         biomarkers = result.get("biomarkers", [])
@@ -117,7 +123,10 @@ class TestRatioRegistryIntegration:
         assert resp.status_code == 200
         analysis_id = resp.json().get("analysis_id")
 
-        result_resp = client.get(f"/api/analysis/result?analysis_id={analysis_id}")
+        result_resp = client.get(
+            f"/api/analysis/result?analysis_id={analysis_id}",
+            headers=ANALYSIS_TEST_AUTH_HEADERS,
+        )
         assert result_resp.status_code == 200
         result = result_resp.json()
 
@@ -148,7 +157,10 @@ class TestRatioRegistryIntegration:
         assert resp.status_code == 200
         analysis_id = resp.json().get("analysis_id")
 
-        result_resp = client.get(f"/api/analysis/result?analysis_id={analysis_id}")
+        result_resp = client.get(
+            f"/api/analysis/result?analysis_id={analysis_id}",
+            headers=ANALYSIS_TEST_AUTH_HEADERS,
+        )
         assert result_resp.status_code == 200
         result = result_resp.json()
         meta = result.get("meta", {})
@@ -185,7 +197,10 @@ class TestRatioRegistryIntegration:
         assert resp.status_code == 200
         analysis_id = resp.json().get("analysis_id")
 
-        result_resp = client.get(f"/api/analysis/result?analysis_id={analysis_id}")
+        result_resp = client.get(
+            f"/api/analysis/result?analysis_id={analysis_id}",
+            headers=ANALYSIS_TEST_AUTH_HEADERS,
+        )
         assert result_resp.status_code == 200
         result = result_resp.json()
         tc_entry = result.get("meta", {}).get("derived_ratios", {}).get("ratios", {}).get("tc_hdl_ratio")

@@ -1,10 +1,10 @@
 /**
- * Custom hook for managing analysis history.
- * TODO: Implement actual Supabase integration in Sprint 9b.
+ * Analysis history from the authenticated API (owner-scoped).
  */
 
-import { useState, useEffect } from 'react';
-import { getAnalysisHistory, AnalysisHistoryItem, HistoryResponse } from '../services/history';
+import { useState, useEffect, useRef } from 'react';
+import { AnalysisService } from '../services/analysis';
+import type { AnalysisHistoryItem } from '../types/analysis';
 
 export interface UseHistoryOptions {
   page?: number;
@@ -19,71 +19,79 @@ export interface UseHistoryReturn {
   total: number;
   page: number;
   limit: number;
-  loadAnalyses: (userId: string, page?: number, limit?: number) => Promise<void>;
+  loadAnalyses: (pageParam?: number) => Promise<void>;
   refetch: () => Promise<void>;
   nextPage: () => void;
   prevPage: () => void;
 }
 
-/**
- * Hook for managing analysis history.
- * @param userId - User ID
- * @param options - Hook options
- * @returns UseHistoryReturn
- */
-export function useHistory(
-  userId?: string,
-  options: UseHistoryOptions = {}
-): UseHistoryReturn {
+export function useHistory(options: UseHistoryOptions = {}): UseHistoryReturn {
   const { page = 1, limit = 10, autoFetch = true } = options;
-  
+
   const [analyses, setAnalyses] = useState<AnalysisHistoryItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(page);
+  const pageRef = useRef(currentPage);
+  const autoFetchRef = useRef(autoFetch);
 
-  const loadAnalyses = async (userIdParam: string, pageParam?: number, limitParam?: number) => {
-    if (!userIdParam) return;
-    
+  pageRef.current = currentPage;
+  autoFetchRef.current = autoFetch;
+
+  const runFetch = async (pageNum: number) => {
     setLoading(true);
     setError(null);
-    
     try {
-      const response = await getAnalysisHistory(userIdParam, pageParam || currentPage, limitParam || limit);
-      setAnalyses(response.history);
-      setTotal(response.total);
-      if (pageParam) {
-        setCurrentPage(pageParam);
+      const offset = (pageNum - 1) * limit;
+      const response = await AnalysisService.getAnalysisHistory(limit, offset);
+      if (response.success && response.data) {
+        setAnalyses(response.data.history);
+        setTotal(response.data.total);
+      } else {
+        setAnalyses([]);
+        setTotal(0);
+        setError(response.error ?? 'Failed to fetch history');
       }
     } catch (err) {
+      setAnalyses([]);
+      setTotal(0);
       setError(err instanceof Error ? err.message : 'Failed to fetch history');
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchHistory = async () => {
-    if (userId) {
-      await loadAnalyses(userId, currentPage, limit);
+  useEffect(() => {
+    if (!autoFetch) return;
+    void runFetch(currentPage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run when page/limit/autoFetch change only
+  }, [autoFetch, currentPage, limit]);
+
+  const loadAnalyses = async (pageParam?: number) => {
+    if (pageParam !== undefined) {
+      setCurrentPage(pageParam);
+      if (!autoFetchRef.current) {
+        await runFetch(pageParam);
+      }
+      return;
     }
+    await runFetch(pageRef.current);
   };
 
-  useEffect(() => {
-    if (autoFetch && userId) {
-      fetchHistory();
-    }
-  }, [userId, currentPage, limit, autoFetch]);
+  const refetch = async () => {
+    await runFetch(pageRef.current);
+  };
 
   const nextPage = () => {
     if (currentPage * limit < total) {
-      setCurrentPage(prev => prev + 1);
+      setCurrentPage((prev) => prev + 1);
     }
   };
 
   const prevPage = () => {
     if (currentPage > 1) {
-      setCurrentPage(prev => prev - 1);
+      setCurrentPage((prev) => prev - 1);
     }
   };
 
@@ -95,8 +103,8 @@ export function useHistory(
     page: currentPage,
     limit,
     loadAnalyses,
-    refetch: fetchHistory,
+    refetch,
     nextPage,
-    prevPage
+    prevPage,
   };
 }

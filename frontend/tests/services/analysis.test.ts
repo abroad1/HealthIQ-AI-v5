@@ -78,12 +78,12 @@ describe('AnalysisService', () => {
       // Assert
       expect(fetch).toHaveBeenCalledWith(
         `http://localhost:8000/api/analysis/result?analysis_id=${analysisId}`,
-        {
+        expect.objectContaining({
           method: 'GET',
-          headers: {
+          headers: expect.objectContaining({
             'Content-Type': 'application/json',
-          },
-        }
+          }),
+        })
       );
 
       expect(result).toEqual({
@@ -166,18 +166,17 @@ describe('AnalysisService', () => {
   describe('getAnalysisHistory', () => {
     it('should fetch analysis history with pagination', async () => {
       // Arrange
-      const userId = '123e4567-e89b-12d3-a456-426614174000';
       const mockApiResponse: AnalysisHistoryResponse = {
-        analyses: [
+        history: [
           {
-            analysis_id: '123e4567-e89b-12d3-a456-426614174000',
+            id: '123e4567-e89b-12d3-a456-426614174000',
             created_at: '2024-01-01T00:00:00Z',
             overall_score: 0.85,
             status: 'completed',
             processing_time_seconds: 5.0
           },
           {
-            analysis_id: '456e7890-e89b-12d3-a456-426614174001',
+            id: '456e7890-e89b-12d3-a456-426614174001',
             created_at: '2024-01-02T00:00:00Z',
             overall_score: 0.92,
             status: 'completed',
@@ -186,7 +185,7 @@ describe('AnalysisService', () => {
         ],
         total: 2,
         limit: 10,
-        offset: 0
+        page: 1
       };
 
       (fetch as jest.Mock).mockResolvedValueOnce({
@@ -195,17 +194,17 @@ describe('AnalysisService', () => {
       });
 
       // Act
-      const result = await AnalysisService.getAnalysisHistory(userId, 10, 0);
+      const result = await AnalysisService.getAnalysisHistory(10, 0);
 
       // Assert
       expect(fetch).toHaveBeenCalledWith(
-        `http://localhost:8000/api/analysis/history?user_id=${userId}&limit=10&offset=0`,
-        {
+        `http://localhost:8000/api/analysis/history?limit=10&offset=0`,
+        expect.objectContaining({
           method: 'GET',
-          headers: {
+          headers: expect.objectContaining({
             'Content-Type': 'application/json',
-          },
-        }
+          }),
+        })
       );
 
       expect(result).toEqual({
@@ -217,7 +216,6 @@ describe('AnalysisService', () => {
 
     it('should handle API errors for history', async () => {
       // Arrange
-      const userId = '123e4567-e89b-12d3-a456-426614174000';
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         status: 500,
@@ -226,7 +224,7 @@ describe('AnalysisService', () => {
       });
 
       // Act
-      const result = await AnalysisService.getAnalysisHistory(userId, 10, 0);
+      const result = await AnalysisService.getAnalysisHistory(10, 0);
 
       // Assert - service returns error response instead of throwing
       expect(result.success).toBe(false);

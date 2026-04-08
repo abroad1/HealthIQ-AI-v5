@@ -43,7 +43,9 @@ export async function startAnalysis(payload: {
 
 export async function getAnalysisResult(analysisId: string): Promise<any> {
   const url = `${API_BASE}/api/analysis/result?analysis_id=${encodeURIComponent(analysisId)}`;
-  const res = await fetch(url);
+  const res = await fetch(url, {
+    headers: { 'Content-Type': 'application/json', ...analysisAuthHeaders() },
+  });
   if (!res.ok) throw new Error(`getAnalysisResult failed: ${res.status}`);
   return res.json();
 }
