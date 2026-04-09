@@ -434,7 +434,11 @@ def _cli() -> int:
     parser.add_argument(
         "--enable-llm",
         action="store_true",
-        help="Enable network LLM calls (default: disabled). Also controllable via HEALTHIQ_ENABLE_LLM=1.",
+        help=(
+            "Enable network LLM for insight synthesis (default: off). Sets orchestrator allow_llm=True. "
+            "Also controllable via HEALTHIQ_ENABLE_LLM=1. "
+            "Note: production HTTP path separately requires HEALTHIQ_NARRATIVE_LLM=1 (BE-S1B double opt-in)."
+        ),
     )
     args = parser.parse_args()
     enable_llm = bool(args.enable_llm or _env_enable_llm())

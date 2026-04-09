@@ -18,6 +18,10 @@ from config.ai import LLMConfig
 from config.env import settings
 from core.llm.gemini_client import GeminiClient, LLMClient
 from core.llm.validator_v2 import validate_llm_output_v2
+from core.insights.narrative_runtime_policy import (
+    narrative_runtime_meta_from_decision,
+    resolve_narrative_llm_allow_llm,
+)
 from pydantic import ValidationError
 
 
@@ -343,15 +347,20 @@ class InsightSynthesizer:
         
         Args:
             llm_client: LLM client for insight generation (defaults to configured provider)
-            allow_llm: Explicit runtime gate for network LLM usage. False disables LLM.
+            allow_llm: Mirrors ``AnalysisOrchestrator(allow_llm=...)``; see
+                ``core.insights.narrative_runtime_policy`` for governed defaults (BE-S1B).
         """
-        self.allow_llm = allow_llm
-        # Use provided client or create based on LLM_PROVIDER configuration
+        self._narrative_runtime_decision = resolve_narrative_llm_allow_llm(
+            orchestrator_explicit_allow_llm=allow_llm,
+        )
+        self._llm_client_injected = llm_client is not None
         if llm_client:
             self.llm_client = llm_client
+            self.allow_llm = allow_llm
         else:
+            self.allow_llm = self._narrative_runtime_decision.synthesizer_allow_llm
             self.llm_client = self._create_llm_client()
-        
+
         self.prompt_templates = InsightPromptTemplates()
         self.llm_config = LLMConfig
     
@@ -519,8 +528,18 @@ class InsightSynthesizer:
             "llm_calls_made": len(categories_covered),
             "total_tokens_used": total_tokens_used,
             "total_latency_ms": total_latency_ms,
-            "llm_provider": getattr(self.llm_client, 'model_name', 'unknown')
+            "llm_provider": getattr(self.llm_client, 'model_name', 'unknown'),
+            "narrative_runtime": narrative_runtime_meta_from_decision(
+                self._narrative_runtime_decision,
+                self.llm_client,
+                client_injected=self._llm_client_injected,
+            ),
         }
+        nr = synthesis_summary["narrative_runtime"]
+        if isinstance(nr, dict):
+            if nr.get("runtime_mode") == "live_gemini" and len(all_insights) == 0:
+                nr = {**nr, "outcome": "no_validated_insights_after_live_call"}
+                synthesis_summary["narrative_runtime"] = nr
         
         return InsightSynthesisResult(
             analysis_id=context.analysis_id,
