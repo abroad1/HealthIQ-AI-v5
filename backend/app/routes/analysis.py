@@ -10,7 +10,7 @@ from uuid import UUID, uuid4
 
 from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field
 
 class ExportRequest(BaseModel):
     analysis_id: UUID
@@ -18,10 +18,16 @@ class ExportRequest(BaseModel):
 
 class AnalysisStartRequest(BaseModel):
     """Request model for starting biomarker analysis."""
+    model_config = ConfigDict(extra="ignore")
+
     biomarkers: Dict[str, Any]
     user: Dict[str, Any]
     lab_origin: Optional[Dict[str, Any]] = None
-    questionnaire_data: Optional[Dict[str, Any]] = None
+    # Canonical name: questionnaire_data. FE historically sent `questionnaire`; accept both (CONTEXT-HARDENING-A).
+    questionnaire_data: Optional[Dict[str, Any]] = Field(
+        default=None,
+        validation_alias=AliasChoices("questionnaire_data", "questionnaire"),
+    )
 
 class AnalysisStartResponse(BaseModel):
     """Response model for analysis start."""
@@ -45,6 +51,7 @@ from core.dependencies.analysis_auth import (
 )
 from core.dependencies.auth import CurrentUser
 from core.profile_bridge import ensure_profile_for_auth_user
+from app.analysis_payload import normalize_analysis_user_dict, build_context_factory_payload
 from config.database import get_db_optional
 from services.storage.persistence_service import PersistenceService, CLIENT_RESULT_SHAPE_V1
 from repositories import AnalysisRepository, AnalysisResultRepository
@@ -82,16 +89,24 @@ async def start_analysis(
         # Generate unique analysis ID
         analysis_id = _generate_analysis_id()
         
-        # Trace incoming payload
-        data = request.model_dump()
-        print("[TRACE] Incoming payload keys:", data.keys())
-        print("[TRACE] Biomarker count:", len(data.get("biomarkers", {})))
-        print("[TRACE] Route received biomarkers:", list(data.get("biomarkers", {}).keys()))
-        
-        # Create ContextFactory and validate payload
+        normalized_user = normalize_analysis_user_dict(request.user)
+        questionnaire_for_run = request.questionnaire_data
+
+        # Trace incoming payload (exclude large questionnaire bodies from key-only trace)
+        print("[TRACE] Incoming payload keys:", list(request.model_dump().keys()))
+        print("[TRACE] Biomarker count:", len(request.biomarkers))
+        print("[TRACE] Route received biomarkers:", list(request.biomarkers.keys()))
+        print("[TRACE] Questionnaire present:", questionnaire_for_run is not None)
+
+        # Create ContextFactory and validate payload (expects `questionnaire` key + canonical user fields)
         context_factory = ContextFactory()
+        context_payload = build_context_factory_payload(
+            biomarkers=request.biomarkers,
+            user=normalized_user,
+            questionnaire=questionnaire_for_run,
+        )
         try:
-            context = context_factory.create_context(data, analysis_id)
+            context = context_factory.create_context(context_payload, analysis_id)
             print(f"[TRACE] Created AnalysisContext with {len(context.biomarkers)} biomarkers, user={context.user.user_id}")
         except ValidationError as e:
             print(f"[ERROR] ContextFactory validation failed: {str(e)}")
@@ -137,7 +152,12 @@ async def start_analysis(
         orchestrator = AnalysisOrchestrator()
         
         # Run the complete pipeline: scoring → clustering → insights
-        dto = orchestrator.run(normalized, request.user, assume_canonical=True, questionnaire_data=request.questionnaire_data)
+        dto = orchestrator.run(
+            normalized,
+            normalized_user,
+            assume_canonical=True,
+            questionnaire_data=questionnaire_for_run,
+        )
         dto = dto.model_copy(update={"analysis_id": analysis_id})
 
         # Store result in memory

@@ -1156,18 +1156,9 @@ class AnalysisOrchestrator:
             signal_registry_hash_sha256 = self._get_signal_registry_hash_sha256()
             report_generated_at = self._utc_now_iso()
 
-            # Step 2: Score biomarkers using the scoring engine with input reference ranges
-            logger.info("Step 2: Scoring biomarkers")
-            scoring_result = self.score_biomarkers(
-                biomarkers=simple_biomarkers,
-                age=user.get('age'),
-                sex=user.get('gender'),
-                lifestyle_data=user.get('lifestyle_factors', {}),
-                input_reference_ranges=input_reference_ranges
-            )
-            
-            # Step 3: Create analysis context for clustering and insights
-            logger.info("Step 3: Creating analysis context")
+            # Step 2: Create analysis context first so questionnaire-derived lifestyle / demographics
+            # are merged into user_data before scoring (CONTEXT-HARDENING-A ordering fix).
+            logger.info("Step 2: Creating analysis context (questionnaire merge before scoring)")
             context = self.create_analysis_context(
                 analysis_id=analysis_id,
                 raw_biomarkers=filtered_biomarkers,
@@ -1175,13 +1166,23 @@ class AnalysisOrchestrator:
                 questionnaire_data=questionnaire_data,
                 assume_canonical=True
             )
+
+            # Step 3: Score biomarkers using merged user context from Step 2
+            logger.info("Step 3: Scoring biomarkers")
+            scoring_result = self.score_biomarkers(
+                biomarkers=simple_biomarkers,
+                age=context.user.age,
+                sex=context.user.gender,
+                lifestyle_data=context.user.lifestyle_factors or {},
+                input_reference_ranges=input_reference_ranges
+            )
             
             # Step 4: Cluster biomarkers
             logger.info("Step 4: Clustering biomarkers")
             clustering_result = self.cluster_biomarkers(
                 context=context,
                 scoring_result=scoring_result,
-                lifestyle_data=user.get('lifestyle_factors', {})
+                lifestyle_data=context.user.lifestyle_factors or {},
             )
             
             # Step 4.5: Evaluate biomarker criticality (Sprint 3)

@@ -9,18 +9,22 @@ export interface BiomarkerData {
   [key: string]: BiomarkerValue;
 }
 
+/** Canonical analysis user context (CONTEXT-HARDENING-A). Server still accepts legacy aliases (age, height, weight, gender). */
 export interface UserProfile {
-  user_id?: string;  // Optional user ID for profile linking
-  age: number;
+  user_id?: string;
+  chronological_age: number;
   sex: 'male' | 'female' | 'other';
-  weight?: number;
-  height?: number;
+  weight_kg: number;
+  height_cm: number;
 }
 
 export interface AnalysisRequest {
   biomarkers: BiomarkerData;
   user: UserProfile;
-  questionnaire?: Record<string, any>;
+  /** Canonical API field name; matches backend AnalysisStartRequest.questionnaire_data */
+  questionnaire_data?: Record<string, unknown>;
+  /** @deprecated use questionnaire_data — still serialized by some clients; prefer questionnaire_data */
+  questionnaire?: Record<string, unknown>;
 }
 
 export interface ClusterData {

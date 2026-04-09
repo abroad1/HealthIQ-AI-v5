@@ -28,6 +28,13 @@ const mockEventSource = {
 
 (global as any).EventSource = jest.fn(() => mockEventSource);
 
+const canonicalTestUser = (): UserProfile => ({
+  chronological_age: 35,
+  sex: 'male',
+  weight_kg: 75,
+  height_cm: 180,
+});
+
 describe('AnalysisStore', () => {
   beforeEach(() => {
     // Reset store state completely
@@ -119,12 +126,7 @@ describe('AnalysisStore', () => {
     });
 
     it('should set user profile', () => {
-      const profile: UserProfile = {
-        age: 35,
-        sex: 'male',
-        weight: 75,
-        height: 180,
-      };
+      const profile: UserProfile = canonicalTestUser();
       useAnalysisStore.getState().setUserProfile(profile);
       expect(useAnalysisStore.getState().userProfile).toEqual(profile);
     });
@@ -135,7 +137,7 @@ describe('AnalysisStore', () => {
       const mockAnalysisId = 'analysis-123';
       const mockRequest: AnalysisRequest = {
         biomarkers: { cholesterol: { value: 4.9, unit: 'mmol/L' } },
-        user: { age: 35, sex: 'male' },
+        user: canonicalTestUser(),
       };
 
       (AnalysisService.startAnalysis as jest.Mock).mockResolvedValue({
@@ -173,7 +175,7 @@ describe('AnalysisStore', () => {
       const mockAnalysisId = 'analysis-456';
       const mockRequest: AnalysisRequest = {
         biomarkers: { cholesterol: { value: 4.9, unit: 'mmol/L' } },
-        user: { age: 35, sex: 'male' },
+        user: canonicalTestUser(),
       };
 
       (AnalysisService.startAnalysis as jest.Mock).mockResolvedValue({
@@ -202,7 +204,7 @@ describe('AnalysisStore', () => {
     it('should handle validation errors', async () => {
       const mockRequest: AnalysisRequest = {
         biomarkers: { cholesterol: { value: -1, unit: 'mmol/L' } },
-        user: { age: 35, sex: 'male' },
+        user: canonicalTestUser(),
       };
 
       (AnalysisService.validateBiomarkerData as jest.Mock).mockReturnValue({
@@ -221,7 +223,7 @@ describe('AnalysisStore', () => {
     it('should handle API errors', async () => {
       const mockRequest: AnalysisRequest = {
         biomarkers: { cholesterol: { value: 4.9, unit: 'mmol/L' } },
-        user: { age: 35, sex: 'male' },
+        user: canonicalTestUser(),
       };
 
       (AnalysisService.validateBiomarkerData as jest.Mock).mockReturnValue({
@@ -494,8 +496,8 @@ describe('AnalysisStore', () => {
     it('should retry analysis with same data', async () => {
       const mockRequest: AnalysisRequest = {
         biomarkers: { cholesterol: { value: 4.9, unit: 'mmol/L' } },
-        user: { age: 35, sex: 'male' },
-        questionnaire: {},
+        user: canonicalTestUser(),
+        questionnaire_data: {},
       };
 
       // Set up initial state with current analysis

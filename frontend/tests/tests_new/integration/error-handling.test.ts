@@ -43,7 +43,12 @@ describe('Error Handling Integration', () => {
         biomarkers: {
           cholesterol: { value: 4.9, unit: 'mmol/L' },
         },
-        user: { age: 35, sex: 'male' as const },
+        user: {
+          chronological_age: 35,
+          sex: 'male' as const,
+          weight_kg: 75,
+          height_cm: 180,
+        },
       };
 
       // Mock network error
@@ -116,7 +121,12 @@ describe('Error Handling Integration', () => {
         biomarkers: {
           cholesterol: { value: -1, unit: 'mmol/L' }, // Invalid value
         },
-        user: { age: 35, sex: 'male' as const },
+        user: {
+          chronological_age: 35,
+          sex: 'male' as const,
+          weight_kg: 75,
+          height_cm: 180,
+        },
       };
 
       (AnalysisService.validateBiomarkerData as jest.Mock).mockReturnValue({
@@ -178,7 +188,12 @@ describe('Error Handling Integration', () => {
         biomarkers: {
           cholesterol: { value: 4.9, unit: 'mmol/L' },
         },
-        user: { age: 35, sex: 'male' as const },
+        user: {
+          chronological_age: 35,
+          sex: 'male' as const,
+          weight_kg: 75,
+          height_cm: 180,
+        },
       };
 
       (AnalysisService.startAnalysis as jest.Mock).mockResolvedValue({
@@ -208,7 +223,12 @@ describe('Error Handling Integration', () => {
         biomarkers: {
           cholesterol: { value: 4.9, unit: 'mmol/L' },
         },
-        user: { age: 35, sex: 'male' as const },
+        user: {
+          chronological_age: 35,
+          sex: 'male' as const,
+          weight_kg: 75,
+          height_cm: 180,
+        },
       };
 
       // Set up initial state with error
@@ -320,7 +340,12 @@ describe('Error Handling Integration', () => {
         biomarkers: {
           cholesterol: { value: 4.9, unit: 'mmol/L' },
         },
-        user: { age: 35, sex: 'male' as const },
+        user: {
+          chronological_age: 35,
+          sex: 'male' as const,
+          weight_kg: 75,
+          height_cm: 180,
+        },
       };
 
       // First attempt fails
