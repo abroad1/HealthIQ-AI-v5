@@ -437,6 +437,57 @@ class QuestionnaireMapper:
             return [response]
         else:
             return []
+
+    def extract_objective_lifestyle_inputs(self, responses: Dict[str, Any]) -> Dict[str, float]:
+        """
+        Map objective questionnaire fields to LifestyleModifierEngine canonical keys.
+
+        CONTEXT-HARDENING-B — SSOT: ``waist_circumference`` primary unit is inches (numeric);
+        alternative captures cm under dict key ``Waist circumference (cm)``.
+        ``blood_pressure_reading`` uses group labels ``Systolic (mmHg)`` / ``Diastolic (mmHg)``.
+
+        Omits BP keys when absent or non-positive (do not inject sentinel zeros).
+        """
+        out: Dict[str, float] = {}
+        cm_key = "Waist circumference (cm)"
+
+        if "waist_circumference" in responses:
+            raw = responses["waist_circumference"]
+            if isinstance(raw, (int, float)):
+                # SSOT primary label: inches → centimetres
+                inches = float(raw)
+                if inches > 0:
+                    out["waist_circumference_cm"] = round(inches * 2.54, 4)
+            elif isinstance(raw, dict):
+                if cm_key in raw and raw[cm_key] is not None:
+                    try:
+                        cm = float(raw[cm_key])
+                        if cm > 0:
+                            out["waist_circumference_cm"] = cm
+                    except (TypeError, ValueError):
+                        pass
+
+        if "blood_pressure_reading" in responses:
+            bp = responses["blood_pressure_reading"]
+            if isinstance(bp, dict):
+                sys_lbl = "Systolic (mmHg)"
+                dia_lbl = "Diastolic (mmHg)"
+                if sys_lbl in bp and bp[sys_lbl] is not None:
+                    try:
+                        s = float(bp[sys_lbl])
+                        if s > 0:
+                            out["systolic_bp"] = s
+                    except (TypeError, ValueError):
+                        pass
+                if dia_lbl in bp and bp[dia_lbl] is not None:
+                    try:
+                        d = float(bp[dia_lbl])
+                        if d > 0:
+                            out["diastolic_bp"] = d
+                    except (TypeError, ValueError):
+                        pass
+
+        return out
     
     def get_demographic_data(self, responses: Dict[str, Any]) -> Dict[str, Any]:
         """
