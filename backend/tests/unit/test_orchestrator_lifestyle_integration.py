@@ -16,7 +16,7 @@ from core.analytics.validation_gate import DIRECT_SCORING_ALLOWED_NO_PATH, LIFES
 from core.canonical.normalize import normalize_biomarkers_with_metadata
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 from core.units.registry import UNIT_REGISTRY_VERSION, apply_unit_normalisation
-from tools.run_golden_panel import run_golden_panel
+from tools.run_golden_panel import _EmptySession, run_golden_panel
 
 def _empty_session():
     class _Empty:
@@ -257,3 +257,49 @@ def test_with_lifestyle_input_hash_present_and_correct(tmp_path):
     replay = result.get("replay_manifest", {}) or {}
     actual_hash = replay.get("lifestyle_input_hash")
     assert actual_hash == expected_hash
+
+
+def test_run_path_questionnaire_behavioural_lifestyle_engine():
+    """Full orchestrator.run path: questionnaire behavioural fields → lifestyle_inputs → engine artifact."""
+    fixture_path = _collision_free_fixture()
+    payload = json.loads(fixture_path.read_text(encoding="utf-8"))
+    biomarkers = _prepare_biomarkers(payload["biomarkers"])
+    user = dict(payload["user"])
+    user["height"] = 170.0
+    user["weight"] = 65.0
+
+    questionnaire_data = {
+        "tobacco_use": "Daily use",
+        "alcohol_drinks_weekly": "15+ drinks",
+        "sleep_hours_nightly": "Less than 5 hours",
+    }
+
+    orchestrator = AnalysisOrchestrator(db_session=_EmptySession(), allow_llm=False)
+    dto = orchestrator.run(
+        biomarkers,
+        user,
+        assume_canonical=True,
+        questionnaire_data=questionnaire_data,
+    )
+
+    assert dto.status == "completed"
+    assert dto.lifestyle is not None
+
+    mods = dto.lifestyle.get("system_modifiers", {}) or {}
+    metabolic_contrib = mods.get("metabolic", {}).get("contributions", []) or []
+    metabolic_inputs = {c.get("input") for c in metabolic_contrib}
+    assert "alcohol_units_per_week" in metabolic_inputs or "sleep_hours" in metabolic_inputs
+
+    hepatic_contrib = mods.get("hepatic", {}).get("contributions", []) or []
+    hepatic_inputs = {c.get("input") for c in hepatic_contrib}
+    assert "alcohol_units_per_week" in hepatic_inputs
+
+    # Burden vectors are capacity-scaled downstream; assert non-zero rule application instead of raw>adj.
+    assert any(float(c.get("capped_modifier", 0)) > 0 for c in metabolic_contrib)
+    assert any(float(c.get("capped_modifier", 0)) > 0 for c in hepatic_contrib)
+
+    bv = (dto.meta or {}).get("burden_vector", {}) or {}
+    raw = bv.get("raw_system_burden_vector", {}) or {}
+    adj = bv.get("adjusted_system_burden_vector", {}) or {}
+    assert float(adj.get("metabolic", 0)) != float(raw.get("metabolic", 0))
+    assert float(adj.get("hepatic", 0)) != float(raw.get("hepatic", 0))
