@@ -155,9 +155,12 @@ async def start_analysis(
             "unit_registry_version": UNIT_REGISTRY_VERSION,
         }
 
-        # Create orchestrator and run analysis
+        # HTTP entry: insight narrative (insights[]) LLM gating is resolved inside InsightSynthesizer via
+        # core.insights.narrative_runtime_policy.resolve_narrative_llm_allow_llm with allow_llm=None.
+        # Production defaults stay off live network LLM unless HEALTHIQ_NARRATIVE_LLM and
+        # HEALTHIQ_ENABLE_LLM are both enabled (double opt-in; BE-S1B). Golden/scripts pass allow_llm explicitly.
         orchestrator = AnalysisOrchestrator()
-        
+
         # Run the complete pipeline: scoring → clustering → insights
         dto = orchestrator.run(
             normalized,
