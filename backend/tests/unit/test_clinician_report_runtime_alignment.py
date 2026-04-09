@@ -25,9 +25,12 @@ def _compile_from_analysis_result(analysis_result: dict) -> dict:
     insight_graph = meta.get("insight_graph", {}) if isinstance(meta, dict) else {}
     report_v1 = insight_graph.get("report_v1", {}) if isinstance(insight_graph, dict) else {}
     biomarkers = analysis_result.get("biomarkers", []) if isinstance(analysis_result, dict) else []
+    mh = meta.get("medical_history_snapshot")
+    mh = mh if isinstance(mh, dict) else None
     compiled = compile_clinician_report_v1(
         report_v1_payload=report_v1 if isinstance(report_v1, dict) else {},
         biomarker_rows=biomarkers if isinstance(biomarkers, list) else [],
+        medical_history=mh,
     )
     assert compiled is not None
     return compiled.model_dump()

@@ -27,9 +27,12 @@ def build_analysis_result_dto(result: Dict[str, Any]) -> Dict[str, Any]:
     insight_graph = meta.get("insight_graph", {})
     insight_graph = insight_graph if isinstance(insight_graph, dict) else {}
     report_v1 = insight_graph.get("report_v1", {})
+    mh_snap = meta.get("medical_history_snapshot")
+    mh_snap = mh_snap if isinstance(mh_snap, dict) else None
     clinician_report = compile_clinician_report_v1(
         report_v1_payload=report_v1 if isinstance(report_v1, dict) else {},
         biomarker_rows=result.get("biomarkers", []) if isinstance(result.get("biomarkers"), list) else [],
+        medical_history=mh_snap,
     )
 
     return {
