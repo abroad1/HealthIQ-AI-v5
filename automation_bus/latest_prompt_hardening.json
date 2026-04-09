@@ -88,7 +88,7 @@
     {
       "check": "2B — Deterministic scoring/IG paths not altered by BE-S1B slice",
       "result": "CONFIRMED",
-      "citation": "BE-S1B scoped files per sprint: narrative_runtime_policy.py (new), synthesis.py (policy hook + summary only), orchestrator.py (meta merge + docstring), analysis.py (comment), config/env.py (comment), tools/run_golden_panel.py (help), tests/unit/test_narrative_runtime_policy.py — no changes to scoring_engine.py, insight_graph_builder.py, signal_evaluator.py"
+      "citation": "backend/core/scoring/engine.py line 61: class ScoringEngine; backend/core/analytics/insight_graph_builder.py line 194: def build_insight_graph_v1; backend/core/analytics/signal_evaluator.py line 76: class SignalEvaluator; backend/core/pipeline/orchestrator.py lines 24-35: imports for ScoringEngine, SignalEvaluator, build_insight_graph_v1; lines 99-106: scoring_engine and signal_evaluator construction; lines 1295-1312: InsightGraph build from scoring/clustering — deterministic chain. BE-S1B edits in same file limited to narrative gates and meta (orchestrator.py lines 88-91, 104, 2112-2115 per other rows), not Steps 4.5-4.6 / scoring engine wiring."
     },
     {
       "check": "2B — Targeted regression coverage for policy",
@@ -103,7 +103,7 @@
     {
       "check": "2B — Tooling file leakage",
       "result": "CONFIRMED",
-      "citation": "Sprint touches backend/core, backend/app/routes/analysis.py, backend/tools/run_golden_panel.py, backend/tests/unit; no .codex/, .vscode/, AGENTS.md in scope"
+      "citation": ".gitignore lines 15-18: `.vscode/*`; line 39: `.cursor/`; line 60: `.claude/`; line 65: `automation_bus/`. BE-S1B product-code edits confined to backend paths cited in sibling CONFIRMED rows (e.g. orchestrator.py:88-104,2112-2115; synthesis.py; narrative_runtime_policy.py; analysis.py:158-162; env.py:20-22; run_golden_panel.py:344,437-440; tests/unit/test_narrative_runtime_policy.py) — no changes under excluded tooling roots above."
     }
   ],
   "content_review": "COMPLETE — BE-S1B prompt front matter and BE_S1_NARRATIVE_PREFLIGHT cross-checked. Narrative runtime policy module and HTTP/orchestrator wiring read with line-aligned citations.",
