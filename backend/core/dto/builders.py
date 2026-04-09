@@ -225,6 +225,7 @@ def build_user_dto(user_data: Dict[str, Any]) -> Dict[str, Any]:
         "ethnicity": user_data.get("ethnicity"),
         "medical_history": user_data.get("medical_history", {}),
         "medications": user_data.get("medications", []),
+        "supplements": user_data.get("supplements", []),
         "lifestyle_factors": user_data.get("lifestyle_factors", {}),
         # Note: email is excluded for privacy
         "created_at": user_data.get("created_at")

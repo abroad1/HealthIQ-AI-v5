@@ -330,6 +330,7 @@ class ContextFactory:
             # Extract optional fields
             medical_conditions = raw_user_data.get('medical_conditions', [])
             medications = raw_user_data.get('medications', [])
+            supplements = raw_user_data.get('supplements', [])
             family_history = raw_user_data.get('family_history', {})
             
             # Parse timestamps
@@ -352,6 +353,7 @@ class ContextFactory:
                 smoking_status=smoking_status,
                 medical_conditions=medical_conditions,
                 medications=medications,
+                supplements=supplements,
                 family_history=family_history,
                 created_at=created_at,
                 updated_at=updated_at

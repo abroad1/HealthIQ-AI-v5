@@ -23,8 +23,12 @@ class User(BaseModel):
         description="Medical history and conditions"
     )
     medications: list[str] = Field(
-        default_factory=list, 
-        description="Current medications"
+        default_factory=list,
+        description="Current medication exposure from questionnaire (SSOT bands), not verified drug identities",
+    )
+    supplements: list[str] = Field(
+        default_factory=list,
+        description="Supplement selections from questionnaire (SSOT checkbox), distinct from medications",
     )
     lifestyle_factors: Dict[str, Any] = Field(
         default_factory=dict, 

@@ -4,6 +4,7 @@ CONTEXT-HARDENING-A — regression tests for analysis request contract and norma
 
 import pytest
 from app.analysis_payload import (
+    apply_questionnaire_medication_representation_to_user,
     apply_questionnaire_objective_waist_to_user,
     build_context_factory_payload,
     normalize_analysis_user_dict,
@@ -139,3 +140,24 @@ def test_context_factory_usercontext_reads_canonical_waist_only():
     }
     ctx = factory.create_context(payload)
     assert ctx.user.waist_cm == 94.0
+
+
+def test_apply_questionnaire_medication_representation_aligns_usercontext():
+    factory = ContextFactory(enable_logging=False)
+    u = normalize_analysis_user_dict(
+        {"user_id": "u-med", "age": 40, "sex": "male", "height_cm": 180, "weight_kg": 80}
+    )
+    q = {
+        "current_medications": "3-5 medications",
+        "supplements": ["Vitamin D", "Omega-3"],
+        "chronic_conditions": ["None"],
+    }
+    apply_questionnaire_medication_representation_to_user(u, q)
+    payload = {
+        "biomarkers": {"glucose": {"value": 5.0, "unit": "mmol/L"}},
+        "user": u,
+        "questionnaire": q,
+    }
+    ctx = factory.create_context(payload)
+    assert ctx.user.medications == ["3-5 medications"]
+    assert ctx.user.supplements == ["Vitamin D", "Omega-3"]
