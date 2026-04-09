@@ -398,5 +398,51 @@ class TestQuestionnaireMapperEdgeCases:
         assert lifestyle_factors.stress_level == LifestyleLevel.AVERAGE  # Default
 
 
+class TestObjectiveLifestyleExtraction:
+    """CONTEXT-HARDENING-B — objective questionnaire → LifestyleModifierEngine keys."""
+
+    def setup_method(self):
+        self.mapper = QuestionnaireMapper()
+
+    def test_waist_numeric_is_inches_converted_to_cm(self):
+        out = self.mapper.extract_objective_lifestyle_inputs({"waist_circumference": 35.0})
+        assert abs(out["waist_circumference_cm"] - 35.0 * 2.54) < 1e-6
+
+    def test_waist_dict_cm_key_direct(self):
+        out = self.mapper.extract_objective_lifestyle_inputs(
+            {"waist_circumference": {"Waist circumference (cm)": 92.0}}
+        )
+        assert out["waist_circumference_cm"] == 92.0
+
+    def test_bp_group_extracted(self):
+        out = self.mapper.extract_objective_lifestyle_inputs({
+            "blood_pressure_reading": {
+                "Systolic (mmHg)": 128,
+                "Diastolic (mmHg)": 82,
+            }
+        })
+        assert out["systolic_bp"] == 128.0
+        assert out["diastolic_bp"] == 82.0
+
+    def test_bp_absent_empty(self):
+        out = self.mapper.extract_objective_lifestyle_inputs({})
+        assert "systolic_bp" not in out
+        assert "diastolic_bp" not in out
+
+    def test_bp_partial_sys_only(self):
+        out = self.mapper.extract_objective_lifestyle_inputs({
+            "blood_pressure_reading": {"Systolic (mmHg)": 118}
+        })
+        assert out["systolic_bp"] == 118.0
+        assert "diastolic_bp" not in out
+
+    def test_bp_zero_omitted(self):
+        out = self.mapper.extract_objective_lifestyle_inputs({
+            "blood_pressure_reading": {"Systolic (mmHg)": 0, "Diastolic (mmHg)": 70}
+        })
+        assert "systolic_bp" not in out
+        assert out["diastolic_bp"] == 70.0
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

@@ -118,6 +118,41 @@ class AnalysisOrchestrator:
             json.dumps(signals, sort_keys=True, separators=(",", ":")).encode("utf-8")
         ).hexdigest()
         return self._signal_registry_hash_sha256_cache
+
+    def _assemble_objective_lifestyle_inputs(
+        self,
+        user_data: Dict[str, Any],
+        questionnaire_data: Optional[Dict[str, Any]],
+    ) -> Dict[str, float]:
+        """
+        Single assembly point for LifestyleModifierEngine objective inputs (CONTEXT-HARDENING-B).
+
+        Canonical keys: height_cm, weight_kg, waist_circumference_cm, systolic_bp, diastolic_bp
+        per ``lifestyle_registry.yaml`` / ``LifestyleModifierEngine`` contract.
+        """
+        out: Dict[str, float] = {}
+
+        for canonical, aliases in (
+            ("height_cm", ("height_cm", "height")),
+            ("weight_kg", ("weight_kg", "weight")),
+        ):
+            for src in aliases:
+                raw = user_data.get(src)
+                if raw is None:
+                    continue
+                try:
+                    v = float(raw)
+                except (TypeError, ValueError):
+                    continue
+                if v > 0:
+                    out[canonical] = v
+                    break
+
+        if questionnaire_data:
+            qobj = self.questionnaire_mapper.extract_objective_lifestyle_inputs(questionnaire_data)
+            for k, v in sorted(qobj.items()):
+                out[k] = v
+        return out
     
     def create_analysis_context(
         self,
@@ -231,6 +266,13 @@ class AnalysisOrchestrator:
                 # Continue with empty lifestyle_factors and medical_history
                 lifestyle_factors = {}
                 medical_history = {}
+
+        # CONTEXT-HARDENING-B — canonical objective inputs for LifestyleModifierEngine (single assembly point)
+        assembled_objective = self._assemble_objective_lifestyle_inputs(user_data, questionnaire_data)
+        if assembled_objective:
+            user_data["lifestyle_inputs"] = assembled_objective
+        else:
+            user_data.pop("lifestyle_inputs", None)
         
         # Create user object
         user = self.context_factory.create_user_from_dict(user_data)
