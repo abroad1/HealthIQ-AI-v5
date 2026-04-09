@@ -4,6 +4,7 @@ CONTEXT-HARDENING-A — regression tests for analysis request contract and norma
 
 import pytest
 from app.analysis_payload import (
+    apply_questionnaire_behavioural_to_user,
     apply_questionnaire_objective_waist_to_user,
     build_context_factory_payload,
     normalize_analysis_user_dict,
@@ -139,3 +140,30 @@ def test_context_factory_usercontext_reads_canonical_waist_only():
     }
     ctx = factory.create_context(payload)
     assert ctx.user.waist_cm == 94.0
+
+
+def test_apply_questionnaire_behavioural_updates_usercontext_fields():
+    """CONTEXT-HARDENING-C — route-level user dict receives behavioural fields before ContextFactory."""
+    factory = ContextFactory(enable_logging=False)
+    u = normalize_analysis_user_dict(
+        {"age": 45, "sex": "female", "height_cm": 165, "weight_kg": 68}
+    )
+    apply_questionnaire_behavioural_to_user(
+        u,
+        {
+            "tobacco_use": "Daily use",
+            "sleep_hours_nightly": "Less than 5 hours",
+            "alcohol_drinks_weekly": "None",
+            "stress_level_rating": 9,
+        },
+    )
+    payload = {
+        "biomarkers": {"glucose": {"value": 5.0, "unit": "mmol/L"}},
+        "user": u,
+    }
+    ctx = factory.create_context(payload)
+    assert ctx.user.smoking_status == "current"
+    assert ctx.user.sleep_hours == 4.5
+    assert ctx.user.alcohol_units_per_week == 0
+    # rating 9 alone maps to LifestyleLevel.AVERAGE → UserContext stress 6 (bounded mapper).
+    assert ctx.user.stress_level == 6

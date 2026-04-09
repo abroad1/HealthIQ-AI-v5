@@ -119,18 +119,48 @@ class AnalysisOrchestrator:
         ).hexdigest()
         return self._signal_registry_hash_sha256_cache
 
+    def _merge_behavioural_lifestyle_engine_inputs(
+        self,
+        user_data: Dict[str, Any],
+        questionnaire_data: Optional[Dict[str, Any]],
+        out: Dict[str, Any],
+    ) -> None:
+        """
+        CONTEXT-HARDENING-C — behavioural keys for ``LifestyleModifierEngine`` (``lifestyle_registry.yaml``).
+
+        User-provided canonical values are applied first; questionnaire extract overwrites (sorted keys).
+        """
+        for key in ("sleep_hours", "alcohol_units_per_week"):
+            raw = user_data.get(key)
+            if raw is None:
+                continue
+            try:
+                v = float(raw)
+            except (TypeError, ValueError):
+                continue
+            if v >= 0:
+                out[key] = v
+        sm = user_data.get("smoking_status")
+        if isinstance(sm, str) and sm.strip().lower() in ("never", "former", "current"):
+            out["smoking_status"] = sm.strip().lower()
+        if questionnaire_data:
+            qbeh = self.questionnaire_mapper.extract_behavioural_lifestyle_inputs(dict(questionnaire_data))
+            for k in sorted(qbeh.keys()):
+                out[k] = qbeh[k]
+
     def _assemble_objective_lifestyle_inputs(
         self,
         user_data: Dict[str, Any],
         questionnaire_data: Optional[Dict[str, Any]],
-    ) -> Dict[str, float]:
+    ) -> Dict[str, Any]:
         """
-        Single assembly point for LifestyleModifierEngine objective inputs (CONTEXT-HARDENING-B).
+        Single assembly point for LifestyleModifierEngine inputs (CONTEXT-HARDENING-B objective fields
+        and CONTEXT-HARDENING-C behavioural fields).
 
-        Canonical keys: height_cm, weight_kg, waist_circumference_cm, systolic_bp, diastolic_bp
-        per ``lifestyle_registry.yaml`` / ``LifestyleModifierEngine`` contract.
+        Objective canonical keys: height_cm, weight_kg, waist_circumference_cm, systolic_bp, diastolic_bp.
+        Behavioural canonical keys: sleep_hours, alcohol_units_per_week, smoking_status.
         """
-        out: Dict[str, float] = {}
+        out: Dict[str, Any] = {}
 
         for canonical, aliases in (
             ("height_cm", ("height_cm", "height")),
@@ -158,6 +188,8 @@ class AnalysisOrchestrator:
             qobj = self.questionnaire_mapper.extract_objective_lifestyle_inputs(questionnaire_data)
             for k, v in sorted(qobj.items()):
                 out[k] = v
+
+        self._merge_behavioural_lifestyle_engine_inputs(user_data, questionnaire_data, out)
         return out
     
     def create_analysis_context(
@@ -2001,6 +2033,9 @@ class AnalysisOrchestrator:
             # Step 9: Create final analysis DTO
             logger.info("Step 9: Creating final analysis DTO")
             meta = dict(criticality_result) if criticality_result else {}
+            _cli = user.get("lifestyle_inputs")
+            if isinstance(_cli, dict) and _cli:
+                meta["canonical_lifestyle_inputs"] = {k: _cli[k] for k in sorted(_cli.keys())}
             meta["derived_ratios"] = derived_ratios_meta
             meta["reference_profiles"] = dict(input_reference_profiles)
             try:

@@ -22,6 +22,15 @@ class LifestyleLevel(Enum):
     VERY_POOR = "very_poor"
 
 
+_STRESS_LIFESTYLE_LEVEL_TO_USER_STRESS_INT: Dict[LifestyleLevel, int] = {
+    LifestyleLevel.EXCELLENT: 3,
+    LifestyleLevel.GOOD: 5,
+    LifestyleLevel.AVERAGE: 6,
+    LifestyleLevel.POOR: 8,
+    LifestyleLevel.VERY_POOR: 9,
+}
+
+
 @dataclass
 class MappedLifestyleFactors:
     """Mapped lifestyle factors from questionnaire responses."""
@@ -488,6 +497,69 @@ class QuestionnaireMapper:
                         pass
 
         return out
+
+    def extract_behavioural_lifestyle_inputs(self, responses: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        CONTEXT-HARDENING-C — Map behavioural questionnaire fields to ``lifestyle_registry.yaml`` engine keys.
+
+        Emits only keys for SSOT fields that are present with a recognised value (no sentinel defaults).
+        Canonical keys: ``sleep_hours``, ``alcohol_units_per_week``, ``smoking_status``.
+        """
+        out: Dict[str, Any] = {}
+
+        shr = responses.get("sleep_hours_nightly")
+        if shr is not None:
+            if shr == "Less than 5 hours":
+                out["sleep_hours"] = 4.5
+            elif shr == "5-6 hours":
+                out["sleep_hours"] = 5.5
+            elif shr == "7-8 hours":
+                out["sleep_hours"] = 7.5
+            elif shr == "9+ hours":
+                out["sleep_hours"] = 9.0
+
+        consumption = responses.get("alcohol_drinks_weekly")
+        if consumption is None:
+            consumption = responses.get("alcohol_consumption")
+        if consumption is not None:
+            if consumption == "None":
+                out["alcohol_units_per_week"] = 0.0
+            elif consumption == "1-3 drinks":
+                out["alcohol_units_per_week"] = 2.0
+            elif consumption == "4-7 drinks":
+                out["alcohol_units_per_week"] = 5.0
+            elif consumption == "8-14 drinks":
+                out["alcohol_units_per_week"] = 11.0
+            elif consumption == "15+ drinks":
+                out["alcohol_units_per_week"] = 20.0
+
+        raw_tobacco = responses.get("tobacco_use")
+        raw_smoking = responses.get("smoking_status")
+        status_raw = raw_tobacco if raw_tobacco is not None else raw_smoking
+        if status_raw is not None and str(status_raw).strip():
+            sl = str(status_raw).strip().lower()
+            if sl in ["never used", "never"]:
+                out["smoking_status"] = "never"
+            elif sl in ["former user quit >1 year", "former user quit <1 year", "former"]:
+                out["smoking_status"] = "former"
+            elif sl in ["occasional use", "daily use", "current"]:
+                out["smoking_status"] = "current"
+
+        return out
+
+    def extract_stress_level_for_user_context(self, responses: Dict[str, Any]) -> Optional[int]:
+        """
+        Map stress-related SSOT fields to ``UserContext.stress_level`` (1–10) only when at least one
+        stress field is present in the submission.
+        """
+        if not any(
+            k in responses
+            for k in ("stress_level_rating", "stress_control_frequency", "major_life_stressors")
+        ):
+            return None
+        level = self._map_stress_level(responses)
+        return _STRESS_LIFESTYLE_LEVEL_TO_USER_STRESS_INT.get(level, 5)
+
     
     def get_demographic_data(self, responses: Dict[str, Any]) -> Dict[str, Any]:
         """
