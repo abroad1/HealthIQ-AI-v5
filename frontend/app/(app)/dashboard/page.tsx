@@ -108,7 +108,7 @@ export default function DashboardPage() {
                       Score {formatScore(row.overall_score)}
                     </span>
                     <Button asChild size="sm" variant="default">
-                      <Link href={`/results?analysis_id=${encodeURIComponent(row.id)}`}>Open</Link>
+                      <Link href={`/analysis/${encodeURIComponent(row.id)}`}>Open</Link>
                     </Button>
                   </div>
                 </li>

@@ -1,5 +1,8 @@
 'use client';
 
+// Governed retail results surface. Stable saved-analysis URLs live under /analysis/[id]
+// (gateway → ?analysis_id= here); keep heavy UX in this module only.
+
 import React, { useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
