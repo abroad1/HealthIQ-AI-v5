@@ -28,8 +28,7 @@ class TestInsightPromptTemplates:
         
         assert isinstance(system_prompt, str)
         assert len(system_prompt) > 0
-        assert "clinical biomarker analysis expert" in system_prompt
-        assert "insights" in system_prompt
+        assert "translation" in system_prompt.lower()
         assert "structured" in system_prompt
     
     def test_get_template_metabolic(self):

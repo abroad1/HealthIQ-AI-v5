@@ -1,7 +1,7 @@
 """
 LLM Output Schemas v2 - Strict Pydantic validation for LLM responses.
 
-Sprint 17: Compute-only implementation (not wired to runtime).
+Sprint 17: Strict LLM output shape; used by validator_v2 on InsightGraph synthesis path (BE-S1A).
 Defines strict schemas with extra-forbid and post-validations.
 """
 

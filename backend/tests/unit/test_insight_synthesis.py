@@ -2,6 +2,7 @@
 Unit tests for insight synthesis engine.
 """
 
+import json
 import pytest
 from datetime import datetime, UTC
 from typing import Dict, Any, List
@@ -100,8 +101,8 @@ class TestInsightPromptTemplates:
     def test_get_system_prompt(self):
         """Test getting system prompt."""
         system_prompt = InsightPromptTemplates.get_system_prompt()
-        assert "clinical biomarker analysis expert" in system_prompt
-        assert "insights" in system_prompt
+        assert "translation" in system_prompt.lower()
+        assert "structured" in system_prompt.lower()
     
     def test_format_template(self):
         """Test formatting template with data."""
@@ -292,6 +293,111 @@ class TestInsightSynthesizer:
             requested_categories=["metabolic"]
         )
         assert synthesizer.validate_insight_request(invalid_request2) is False
+
+    @staticmethod
+    def _minimal_explainability() -> Dict[str, Any]:
+        return {
+            "run_metadata": {"report_version": "1.0.0"},
+            "conflict_summary": [],
+            "precedence_summary": [],
+            "dominance_resolution": {
+                "cycle_check": {"has_cycle": False, "status_code": "acyclic"},
+                "direct_edges": [],
+                "transitive_edges": [],
+                "influence_ordering": {
+                    "primary_driver_system_id": "metabolic",
+                    "supporting_systems": [],
+                    "influence_order": ["metabolic"],
+                },
+            },
+            "causal_edges": [],
+            "arbitration_decisions": {
+                "primary_driver_system_id": "metabolic",
+                "supporting_systems": [],
+                "decision_trace": [],
+                "tie_breakers": [],
+            },
+            "calibration_impact": {
+                "system_id": "metabolic",
+                "final_calibration_tier": "p1",
+                "reasons": [],
+            },
+            "replay_stamps": {
+                "conflict_registry_version": "1.0.0",
+                "conflict_registry_hash": "h1",
+                "arbitration_registry_version": "1.0.0",
+                "arbitration_registry_hash": "h2",
+                "arbitration_version": "1.0.0",
+                "arbitration_hash": "h3",
+                "explainability_hash": "h4",
+            },
+        }
+
+    def test_synthesize_insights_from_insight_graph_uses_validator_v2(self, mock_context):
+        """InsightGraph path accepts only validator_v2-shaped output."""
+        from core.contracts.insight_graph_v1 import InsightGraphV1, BiomarkerNode
+
+        ig = InsightGraphV1(
+            analysis_id="g-v2",
+            biomarker_nodes=[
+                BiomarkerNode(biomarker_id="glucose", status="normal", score=70.0),
+            ],
+            edges=[],
+        )
+        synthesizer = InsightSynthesizer(llm_client=MockLLMClient())
+        result = synthesizer.synthesize_insights(
+            context=mock_context,
+            insight_graph=ig,
+            explainability_report=self._minimal_explainability(),
+            lifestyle_profile={"diet_level": "average"},
+            requested_categories=["metabolic"],
+            max_insights_per_category=2,
+        )
+        assert result.total_insights >= 1
+        ins = result.insights[0]
+        assert ins.category == "metabolic"
+        assert ins.evidence.get("evidence_refs")
+        assert "glucose" in ins.summary.lower() or "structured" in ins.summary.lower()
+
+    def test_synthesize_insights_from_insight_graph_rejects_numeric_invention(self, mock_context):
+        from core.contracts.insight_graph_v1 import InsightGraphV1, BiomarkerNode
+
+        class BadLLM(LLMClient):
+            def generate_insights(self, system_prompt, user_prompt, category):
+                payload = {
+                    "insights": [
+                        {
+                            "id": "bad",
+                            "title": "x",
+                            "severity": "low",
+                            "evidence": ["glucose is 999.0"],
+                            "actions": ["Follow up with your clinician"],
+                            "red_flags": [],
+                            "confidence": 0.5,
+                        }
+                    ],
+                    "tokens_used": 1,
+                    "latency_ms": 1,
+                }
+                return {"text": json.dumps(payload)}
+
+        ig = InsightGraphV1(
+            analysis_id="g-bad",
+            biomarker_nodes=[
+                BiomarkerNode(biomarker_id="glucose", status="normal", score=70.0),
+            ],
+            edges=[],
+        )
+        synthesizer = InsightSynthesizer(llm_client=BadLLM())
+        result = synthesizer.synthesize_insights(
+            context=mock_context,
+            insight_graph=ig,
+            explainability_report=self._minimal_explainability(),
+            lifestyle_profile={},
+            requested_categories=["metabolic"],
+            max_insights_per_category=2,
+        )
+        assert result.total_insights == 0
 
 
 class TestInsightModels:
