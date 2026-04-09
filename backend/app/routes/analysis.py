@@ -51,7 +51,11 @@ from core.dependencies.analysis_auth import (
 )
 from core.dependencies.auth import CurrentUser
 from core.profile_bridge import ensure_profile_for_auth_user
-from app.analysis_payload import normalize_analysis_user_dict, build_context_factory_payload
+from app.analysis_payload import (
+    apply_questionnaire_objective_waist_to_user,
+    build_context_factory_payload,
+    normalize_analysis_user_dict,
+)
 from config.database import get_db_optional
 from services.storage.persistence_service import PersistenceService, CLIENT_RESULT_SHAPE_V1
 from repositories import AnalysisRepository, AnalysisResultRepository
@@ -91,6 +95,7 @@ async def start_analysis(
         
         normalized_user = normalize_analysis_user_dict(request.user)
         questionnaire_for_run = request.questionnaire_data
+        apply_questionnaire_objective_waist_to_user(normalized_user, questionnaire_for_run)
 
         # Trace incoming payload (exclude large questionnaire bodies from key-only trace)
         print("[TRACE] Incoming payload keys:", list(request.model_dump().keys()))

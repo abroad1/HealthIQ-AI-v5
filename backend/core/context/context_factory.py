@@ -24,6 +24,8 @@ import os
 
 from pydantic import ValidationError as PydanticValidationError
 
+from app.analysis_payload import resolve_waist_circumference_cm
+
 from .models import AnalysisContext, UserContext, BiomarkerContext, BiomarkerPanel, ScoringMetrics, Sex
 
 
@@ -313,10 +315,9 @@ class ContextFactory:
                 weight_raw = raw_user_data.get('weight', 0)
             weight_kg = self._parse_decimal(weight_raw)
             
-            # Extract optional fields with defaults
-            waist_cm = raw_user_data.get('waist_cm')
-            if waist_cm is not None:
-                waist_cm = self._parse_decimal(waist_cm)
+            # Optional waist: canonical waist_circumference_cm (cm); legacy waist_cm is compatibility alias only.
+            waist_resolved = resolve_waist_circumference_cm(raw_user_data)
+            waist_cm = self._parse_decimal(waist_resolved) if waist_resolved is not None else None
             
             stress_level = int(raw_user_data.get('stress_level', 5))
             sleep_hours = self._parse_decimal(raw_user_data.get('sleep_hours', 8.0))
