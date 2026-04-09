@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -43,14 +43,21 @@ export function InsightsPanel({ insights, className = '' }: InsightsPanelProps) 
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5" />
-            Health Insights
+            Narrative summaries
           </CardTitle>
+          <CardDescription>
+            Plain-language summaries derived from your structured analysis. They complement the hero interpretation and
+            clinician report — not a separate source of clinical truth.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 text-gray-500">
             <TrendingUp className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-            <p>No insights available yet.</p>
-            <p className="text-sm">Complete your biomarker analysis to generate personalized health insights.</p>
+            <p>No narrative summaries for this result yet.</p>
+            <p className="text-sm">
+              When your run produces them, they will appear here. Use the hero interpretation and clinician report for
+              the primary structured view.
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -114,11 +121,11 @@ export function InsightsPanel({ insights, className = '' }: InsightsPanelProps) 
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5" />
-            Health Insights
+            Narrative summaries
           </CardTitle>
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-sm">
-              {totalInsights} insights
+              {totalInsights} summaries
             </Badge>
             {criticalInsights > 0 && (
               <Badge variant="destructive" className="text-sm">
@@ -127,12 +134,16 @@ export function InsightsPanel({ insights, className = '' }: InsightsPanelProps) 
             )}
           </div>
         </div>
+        <CardDescription className="pt-1">
+          Readable summaries from structured results. They sit alongside — not above — the deterministic interpretation
+          in the hero and the structured clinician report.
+        </CardDescription>
 
         {/* Summary Statistics */}
         <div className="grid grid-cols-3 gap-4 pt-4">
           <div className="text-center">
             <div className="text-2xl font-bold text-gray-900">{totalInsights}</div>
-            <div className="text-sm text-gray-500">Total Insights</div>
+            <div className="text-sm text-gray-500">Total summaries</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-red-600">{criticalInsights + warningInsights}</div>
