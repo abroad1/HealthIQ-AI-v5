@@ -148,6 +148,12 @@ class AnalysisOrchestrator:
                     out[canonical] = v
                     break
 
+        from app.analysis_payload import resolve_waist_circumference_cm
+
+        w_user = resolve_waist_circumference_cm(user_data)
+        if w_user is not None:
+            out["waist_circumference_cm"] = w_user
+
         if questionnaire_data:
             qobj = self.questionnaire_mapper.extract_objective_lifestyle_inputs(questionnaire_data)
             for k, v in sorted(qobj.items()):
@@ -268,11 +274,15 @@ class AnalysisOrchestrator:
                 medical_history = {}
 
         # CONTEXT-HARDENING-B — canonical objective inputs for LifestyleModifierEngine (single assembly point)
+        from app.analysis_payload import propagate_waist_to_user_after_assembly, sync_waist_mirror_to_user_dict
+
         assembled_objective = self._assemble_objective_lifestyle_inputs(user_data, questionnaire_data)
         if assembled_objective:
             user_data["lifestyle_inputs"] = assembled_objective
+            propagate_waist_to_user_after_assembly(user_data, assembled_objective)
         else:
             user_data.pop("lifestyle_inputs", None)
+            sync_waist_mirror_to_user_dict(user_data)
         
         # Create user object
         user = self.context_factory.create_user_from_dict(user_data)

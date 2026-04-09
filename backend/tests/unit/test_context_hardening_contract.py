@@ -3,8 +3,15 @@ CONTEXT-HARDENING-A — regression tests for analysis request contract and norma
 """
 
 import pytest
-from app.analysis_payload import normalize_analysis_user_dict, build_context_factory_payload
+from app.analysis_payload import (
+    apply_questionnaire_objective_waist_to_user,
+    build_context_factory_payload,
+    normalize_analysis_user_dict,
+    propagate_waist_to_user_after_assembly,
+    resolve_waist_circumference_cm,
+)
 from app.routes.analysis import AnalysisStartRequest
+from core.context import ContextFactory
 
 
 def test_normalize_user_dict_aligns_aliases():
@@ -46,3 +53,89 @@ def test_build_context_factory_payload_uses_questionnaire_key():
     assert "questionnaire" in payload
     assert "questionnaire_data" not in payload
     assert payload["questionnaire"] == {"q": 1}
+
+
+def test_normalize_mirrors_canonical_waist_to_legacy_alias():
+    raw = {
+        "age": 40,
+        "sex": "male",
+        "height_cm": 180,
+        "weight_kg": 80,
+        "waist_circumference_cm": 92.0,
+    }
+    out = normalize_analysis_user_dict(raw)
+    assert out["waist_circumference_cm"] == 92.0
+    assert out["waist_cm"] == 92.0
+
+
+def test_normalize_promotes_legacy_waist_cm_to_canonical():
+    raw = {
+        "age": 40,
+        "sex": "male",
+        "height_cm": 180,
+        "weight_kg": 80,
+        "waist_cm": 88.0,
+    }
+    out = normalize_analysis_user_dict(raw)
+    assert out["waist_circumference_cm"] == 88.0
+    assert out["waist_cm"] == 88.0
+
+
+def test_canonical_waist_wins_when_legacy_differs():
+    raw = {
+        "age": 40,
+        "sex": "male",
+        "height_cm": 180,
+        "weight_kg": 80,
+        "waist_circumference_cm": 90.0,
+        "waist_cm": 999.0,
+    }
+    out = normalize_analysis_user_dict(raw)
+    assert out["waist_circumference_cm"] == 90.0
+    assert out["waist_cm"] == 90.0
+
+
+def test_resolve_waist_single_semantics_match_usercontext_and_engine():
+    m = {"waist_circumference_cm": 91.0, "waist_cm": 91.0}
+    assert resolve_waist_circumference_cm(m) == 91.0
+    assembled = {"waist_circumference_cm": resolve_waist_circumference_cm(m)}
+    assert assembled["waist_circumference_cm"] == 91.0
+
+
+def test_propagate_assembled_waist_mirrors_user_top_level():
+    ud = {"height_cm": 180.0, "weight_kg": 80.0}
+    assembled = {"height_cm": 180.0, "weight_kg": 80.0, "waist_circumference_cm": 93.0}
+    propagate_waist_to_user_after_assembly(ud, assembled)
+    assert ud["waist_circumference_cm"] == 93.0
+    assert ud["waist_cm"] == 93.0
+
+
+def test_apply_questionnaire_waist_updates_user_canonical_and_mirror():
+    user = normalize_analysis_user_dict(
+        {"age": 40, "sex": "male", "height_cm": 180, "weight_kg": 80}
+    )
+    apply_questionnaire_objective_waist_to_user(
+        user,
+        {"waist_circumference": {"Waist circumference (cm)": 87.0}},
+    )
+    assert user["waist_circumference_cm"] == 87.0
+    assert user["waist_cm"] == 87.0
+
+
+def test_context_factory_usercontext_reads_canonical_waist_only():
+    factory = ContextFactory(enable_logging=False)
+    u = normalize_analysis_user_dict(
+        {
+            "age": 40,
+            "sex": "male",
+            "height_cm": 180,
+            "weight_kg": 80,
+            "waist_circumference_cm": 94.0,
+        }
+    )
+    payload = {
+        "biomarkers": {"glucose": {"value": 5.0, "unit": "mmol/L"}},
+        "user": u,
+    }
+    ctx = factory.create_context(payload)
+    assert ctx.user.waist_cm == 94.0

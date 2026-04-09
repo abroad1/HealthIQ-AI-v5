@@ -18,6 +18,85 @@ from typing import Any, Dict, Mapping, Optional
 
 _ALLOWED_SEX = frozenset({"male", "female", "other"})
 
+# CONTEXT-HARDENING-B — single canonical waist field (cm), SSOT-aligned with lifestyle_registry / engine.
+CANONICAL_WAIST_CM_KEY = "waist_circumference_cm"
+# Compatibility only: mirrors CANONICAL_WAIST_CM_KEY for UserContext model field name `waist_cm`.
+LEGACY_USERCONTEXT_WAIST_CM_KEY = "waist_cm"
+
+
+def resolve_waist_circumference_cm(mapping: Mapping[str, Any]) -> Optional[float]:
+    """
+    Return one positive waist circumference in cm.
+    Canonical key wins when present; legacy ``waist_cm`` is accepted as input only.
+    """
+    def _positive_cm(x: Any) -> Optional[float]:
+        if x is None:
+            return None
+        try:
+            v = float(x)
+        except (TypeError, ValueError):
+            return None
+        return v if v > 0 else None
+
+    c = _positive_cm(mapping.get(CANONICAL_WAIST_CM_KEY))
+    if c is not None:
+        return c
+    return _positive_cm(mapping.get(LEGACY_USERCONTEXT_WAIST_CM_KEY))
+
+
+def sync_waist_mirror_to_user_dict(user: Dict[str, Any]) -> None:
+    """Write canonical + legacy mirror from ``resolve_waist_circumference_cm`` (no duplicate semantics)."""
+    w = resolve_waist_circumference_cm(user)
+    if w is not None:
+        user[CANONICAL_WAIST_CM_KEY] = w
+        user[LEGACY_USERCONTEXT_WAIST_CM_KEY] = w
+    else:
+        user.pop(CANONICAL_WAIST_CM_KEY, None)
+        user.pop(LEGACY_USERCONTEXT_WAIST_CM_KEY, None)
+
+
+def apply_questionnaire_objective_waist_to_user(
+    user: Dict[str, Any],
+    questionnaire: Optional[Mapping[str, Any]],
+) -> None:
+    """Promote questionnaire-derived waist into canonical user keys (then mirror legacy)."""
+    if questionnaire:
+        from core.pipeline.questionnaire_mapper import QuestionnaireMapper
+
+        qobj = QuestionnaireMapper().extract_objective_lifestyle_inputs(dict(questionnaire))
+        w_raw = qobj.get(CANONICAL_WAIST_CM_KEY)
+        if w_raw is not None:
+            try:
+                w = float(w_raw)
+            except (TypeError, ValueError):
+                w = None
+            else:
+                if w > 0:
+                    user[CANONICAL_WAIST_CM_KEY] = w
+    sync_waist_mirror_to_user_dict(user)
+
+
+def propagate_waist_to_user_after_assembly(
+    user_data: Dict[str, Any],
+    assembled_objective: Mapping[str, Any],
+) -> None:
+    """
+    After objective assembly, copy canonical waist from ``lifestyle_inputs`` shape into top-level user
+    so UserContext and engine share the same numeric cm value.
+    """
+    w_raw = assembled_objective.get(CANONICAL_WAIST_CM_KEY)
+    if w_raw is not None:
+        try:
+            w = float(w_raw)
+        except (TypeError, ValueError):
+            w = None
+        else:
+            if w > 0:
+                user_data[CANONICAL_WAIST_CM_KEY] = w
+                user_data[LEGACY_USERCONTEXT_WAIST_CM_KEY] = w
+                return
+    sync_waist_mirror_to_user_dict(user_data)
+
 
 def _canonical_sex(raw: Any) -> str:
     if raw is None:
@@ -73,6 +152,8 @@ def normalize_analysis_user_dict(user: Mapping[str, Any]) -> Dict[str, Any]:
         wf = 0.0
     out["weight_kg"] = wf
     out["weight"] = wf
+
+    sync_waist_mirror_to_user_dict(out)
 
     return out
 

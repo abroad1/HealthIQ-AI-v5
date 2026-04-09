@@ -31,3 +31,17 @@ def test_assemble_questionnaire_only_waist():
     q = {"waist_circumference": {"Waist circumference (cm)": 88.0}}
     out = orch._assemble_objective_lifestyle_inputs(ud, q)
     assert out == {"waist_circumference_cm": 88.0}
+
+
+def test_assemble_user_waist_cm_alias_maps_to_canonical_engine_key():
+    orch = AnalysisOrchestrator()
+    ud = {"waist_cm": 88.0}
+    out = orch._assemble_objective_lifestyle_inputs(ud, None)
+    assert out == {"waist_circumference_cm": 88.0}
+
+
+def test_assemble_canonical_waist_wins_over_conflicting_legacy():
+    orch = AnalysisOrchestrator()
+    ud = {"waist_circumference_cm": 90.0, "waist_cm": 12.0}
+    out = orch._assemble_objective_lifestyle_inputs(ud, None)
+    assert out == {"waist_circumference_cm": 90.0}
