@@ -234,17 +234,17 @@ export default function UploadPage() {
       
       console.log("🔄 Converted user data:", { age, sex, height: heightInCm, weight: weightInKg });
       
-      // Prepare analysis payload WITH questionnaire data
+      // Prepare analysis payload WITH questionnaire data (canonical field names, CONTEXT-HARDENING-A)
       const payload = {
         biomarkers: biomarkersObject,
         user: {
           user_id: questionnaireData?.user_id || "5029514b-f7fd-4dff-8d60-4fb8b7f90dd4",
-          age: age,
+          chronological_age: age,
           sex: sex,
-          height: heightInCm,
-          weight: weightInKg
+          height_cm: heightInCm,
+          weight_kg: weightInKg,
         },
-        questionnaire: questionnaireData  // ✅ GOOD - Include questionnaire data
+        questionnaire_data: questionnaireData,
       };
       
       console.log("📦 Analysis payload prepared:", payload);

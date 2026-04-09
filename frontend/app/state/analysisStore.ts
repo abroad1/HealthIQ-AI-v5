@@ -205,7 +205,8 @@ export const useAnalysisStore = create<AnalysisState>()(
           progress: 0,
           rawBiomarkers: request.biomarkers,
           userProfile: request.user,
-          questionnaireResponses: request.questionnaire || {},
+          questionnaireResponses:
+            (request.questionnaire_data ?? request.questionnaire ?? {}) as Record<string, unknown>,
         });
 
         try {
@@ -403,7 +404,7 @@ export const useAnalysisStore = create<AnalysisState>()(
           const request: AnalysisRequest = {
             biomarkers: state.rawBiomarkers,
             user: state.userProfile,
-            questionnaire: state.questionnaireResponses,
+            questionnaire_data: state.questionnaireResponses,
           };
           get().startAnalysis(request);
         }

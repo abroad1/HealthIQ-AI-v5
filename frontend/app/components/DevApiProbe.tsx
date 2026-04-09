@@ -76,7 +76,12 @@ export default function DevApiProbe() {
           cholesterol: { value: 4.9, unit: 'mmol/L' },
           blood_sugar: { value: 4.8, unit: 'mmol/L' },
         },
-        user: { age: 58, sex: 'male' as const },
+        user: {
+          chronological_age: 58,
+          sex: 'male' as const,
+          weight_kg: 80,
+          height_cm: 178,
+        },
       };
       
       log('Starting analysis with payload: ' + JSON.stringify(payload));

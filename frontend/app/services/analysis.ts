@@ -257,20 +257,21 @@ export class AnalysisService {
       return { valid: false, errors };
     }
 
-    if (typeof user.age !== 'number' || user.age < 0 || user.age > 150) {
-      errors.push('Age must be a number between 0 and 150');
+    const age = user.chronological_age;
+    if (typeof age !== 'number' || age < 0 || age > 150) {
+      errors.push('chronological_age must be a number between 0 and 150');
     }
 
     if (!['male', 'female', 'other'].includes(user.sex)) {
       errors.push('Sex must be one of: male, female, other');
     }
 
-    if (user.weight !== undefined && (typeof user.weight !== 'number' || user.weight <= 0)) {
-      errors.push('Weight must be a positive number if provided');
+    if (typeof user.weight_kg !== 'number' || user.weight_kg <= 0) {
+      errors.push('weight_kg must be a positive number');
     }
 
-    if (user.height !== undefined && (typeof user.height !== 'number' || user.height <= 0)) {
-      errors.push('Height must be a positive number if provided');
+    if (typeof user.height_cm !== 'number' || user.height_cm <= 0) {
+      errors.push('height_cm must be a positive number');
     }
 
     return {

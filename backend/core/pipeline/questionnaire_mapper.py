@@ -7,6 +7,7 @@ by the scoring engine and analysis pipeline.
 
 from typing import Dict, Any, List, Optional, Tuple
 from dataclasses import dataclass
+from datetime import date
 from enum import Enum
 
 from core.models.questionnaire import QuestionnaireSubmission, load_questionnaire_schema
@@ -449,14 +450,28 @@ class QuestionnaireMapper:
         """
         demographics = {}
         
-        # Age calculation from date of birth (date_of_birth)
+        # Age from date_of_birth (ISO date or date string); skip if parsing fails
         if "date_of_birth" in responses:
-            # This would need proper date parsing in a real implementation
-            demographics["age"] = 35  # Placeholder
-        
+            raw_dob = responses["date_of_birth"]
+            try:
+                if hasattr(raw_dob, "isoformat"):
+                    dob = raw_dob if isinstance(raw_dob, date) else date.fromisoformat(str(raw_dob)[:10])
+                else:
+                    dob_str = str(raw_dob).replace("Z", "").split("T")[0].strip()
+                    dob = date.fromisoformat(dob_str)
+                today = date.today()
+                demographics["age"] = today.year - dob.year - (
+                    (today.month, today.day) < (dob.month, dob.day)
+                )
+            except (ValueError, TypeError, AttributeError):
+                pass
+
         # Gender (biological_sex)
         if "biological_sex" in responses:
-            demographics["gender"] = responses["biological_sex"].lower()
+            g = str(responses["biological_sex"]).strip().lower()
+            if g == "intersex":
+                g = "other"
+            demographics["gender"] = g
         
         # Height (height)
         if "height" in responses:

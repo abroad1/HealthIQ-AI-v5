@@ -294,12 +294,24 @@ class ContextFactory:
             ValidationError: If user data validation fails
         """
         try:
-            # Extract required fields with defaults
+            # Extract required fields with defaults (aliases aligned with CONTEXT-HARDENING-A / FE)
             user_id = raw_user_data.get('user_id', str(uuid.uuid4()))
-            sex = self._parse_sex(raw_user_data.get('sex', 'other'))
-            chronological_age = int(raw_user_data.get('chronological_age', 0))
-            height_cm = self._parse_decimal(raw_user_data.get('height_cm', 0))
-            weight_kg = self._parse_decimal(raw_user_data.get('weight_kg', 0))
+            sex_raw = raw_user_data.get('sex')
+            if sex_raw is None:
+                sex_raw = raw_user_data.get('gender', 'other')
+            sex = self._parse_sex(sex_raw)
+            if raw_user_data.get('chronological_age') is not None:
+                chronological_age = int(raw_user_data.get('chronological_age', 0))
+            else:
+                chronological_age = int(raw_user_data.get('age', 0))
+            height_raw = raw_user_data.get('height_cm')
+            if height_raw is None:
+                height_raw = raw_user_data.get('height', 0)
+            height_cm = self._parse_decimal(height_raw)
+            weight_raw = raw_user_data.get('weight_kg')
+            if weight_raw is None:
+                weight_raw = raw_user_data.get('weight', 0)
+            weight_kg = self._parse_decimal(weight_raw)
             
             # Extract optional fields with defaults
             waist_cm = raw_user_data.get('waist_cm')

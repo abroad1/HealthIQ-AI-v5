@@ -44,7 +44,12 @@ describe('Store-Service Integration', () => {
           cholesterol: { value: 4.9, unit: 'mmol/L' },
           glucose: { value: 5.2, unit: 'mmol/L' },
         },
-        user: { age: 35, sex: 'male' as const },
+        user: {
+          chronological_age: 35,
+          sex: 'male' as const,
+          weight_kg: 75,
+          height_cm: 180,
+        },
       };
 
       (AnalysisService.startAnalysis as jest.Mock).mockResolvedValue({
@@ -75,7 +80,12 @@ describe('Store-Service Integration', () => {
         biomarkers: {
           cholesterol: { value: 4.9, unit: 'mmol/L' },
         },
-        user: { age: 35, sex: 'male' as const },
+        user: {
+          chronological_age: 35,
+          sex: 'male' as const,
+          weight_kg: 75,
+          height_cm: 180,
+        },
       };
 
       (AnalysisService.startAnalysis as jest.Mock).mockResolvedValue({
