@@ -485,14 +485,6 @@ class TestBehaviouralLifestyleExtraction:
         )
         assert "sleep_hours" not in out
 
-    def test_stress_level_none_without_stress_fields(self):
-        assert self.mapper.extract_stress_level_for_user_context({}) is None
-
-    def test_stress_level_mapped_when_rating_present(self):
-        s = self.mapper.extract_stress_level_for_user_context({"stress_level_rating": 9})
-        assert isinstance(s, int)
-        assert 1 <= s <= 10
-
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

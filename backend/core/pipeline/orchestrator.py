@@ -2033,9 +2033,6 @@ class AnalysisOrchestrator:
             # Step 9: Create final analysis DTO
             logger.info("Step 9: Creating final analysis DTO")
             meta = dict(criticality_result) if criticality_result else {}
-            _cli = user.get("lifestyle_inputs")
-            if isinstance(_cli, dict) and _cli:
-                meta["canonical_lifestyle_inputs"] = {k: _cli[k] for k in sorted(_cli.keys())}
             meta["derived_ratios"] = derived_ratios_meta
             meta["reference_profiles"] = dict(input_reference_profiles)
             try:
