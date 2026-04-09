@@ -111,6 +111,45 @@ export class AuthService {
     }
   }
 
+  /**
+   * Full `GET /api/auth/me` payload for account shell display (read-only).
+   * Does not replace persisted `User` in localStorage unless callers also invoke getCurrentUserFromServer.
+   */
+  static async fetchMe(): Promise<ApiResponse<MeResponse>> {
+    try {
+      const token = this.getToken()
+      if (!token) {
+        return { data: null as unknown as MeResponse, success: false, error: 'No authentication token found' }
+      }
+
+      const response = await fetch(`${AUTH_API_ROOT}/me`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          this.clearAuthData()
+          return { data: null as unknown as MeResponse, success: false, error: 'Authentication expired' }
+        }
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(parseFastApiDetail(errorData))
+      }
+
+      const result = (await response.json()) as MeResponse
+      return { data: result, success: true, message: 'Session loaded' }
+    } catch (error) {
+      return {
+        data: null as unknown as MeResponse,
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to load session',
+      }
+    }
+  }
+
   static async getCurrentUserFromServer(): Promise<ApiResponse<User>> {
     try {
       const token = this.getToken()

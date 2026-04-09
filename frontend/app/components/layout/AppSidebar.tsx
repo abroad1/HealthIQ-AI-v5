@@ -28,7 +28,7 @@ const mainItems = [
 ]
 
 const userItems = [
-  { title: 'Profile', url: '/profile', icon: User },
+  { title: 'My account', url: '/profile', icon: User },
   { title: 'Settings', url: '/settings', icon: Settings },
 ]
 
