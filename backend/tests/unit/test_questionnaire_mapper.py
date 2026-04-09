@@ -444,5 +444,55 @@ class TestObjectiveLifestyleExtraction:
         assert out["diastolic_bp"] == 70.0
 
 
+class TestBehaviouralLifestyleExtraction:
+    """CONTEXT-HARDENING-C — behavioural questionnaire → LifestyleModifierEngine keys."""
+
+    def setup_method(self):
+        self.mapper = QuestionnaireMapper()
+
+    def test_extract_behavioural_empty_without_fields(self):
+        assert self.mapper.extract_behavioural_lifestyle_inputs({}) == {}
+
+    def test_smoking_daily_use_is_current(self):
+        out = self.mapper.extract_behavioural_lifestyle_inputs({"tobacco_use": "Daily use"})
+        assert out == {"smoking_status": "current"}
+
+    def test_smoking_former_long_quit(self):
+        out = self.mapper.extract_behavioural_lifestyle_inputs(
+            {"tobacco_use": "Former user quit >1 year"}
+        )
+        assert out == {"smoking_status": "former"}
+
+    def test_smoking_never_used(self):
+        out = self.mapper.extract_behavioural_lifestyle_inputs({"tobacco_use": "Never used"})
+        assert out == {"smoking_status": "never"}
+
+    def test_alcohol_mid_bucket(self):
+        out = self.mapper.extract_behavioural_lifestyle_inputs(
+            {"alcohol_drinks_weekly": "8-14 drinks"}
+        )
+        assert out == {"alcohol_units_per_week": 11.0}
+
+    def test_sleep_short_bucket(self):
+        out = self.mapper.extract_behavioural_lifestyle_inputs(
+            {"sleep_hours_nightly": "Less than 5 hours"}
+        )
+        assert out == {"sleep_hours": 4.5}
+
+    def test_unknown_sleep_option_omitted(self):
+        out = self.mapper.extract_behavioural_lifestyle_inputs(
+            {"sleep_hours_nightly": "Invalid sleep range"}
+        )
+        assert "sleep_hours" not in out
+
+    def test_stress_level_none_without_stress_fields(self):
+        assert self.mapper.extract_stress_level_for_user_context({}) is None
+
+    def test_stress_level_mapped_when_rating_present(self):
+        s = self.mapper.extract_stress_level_for_user_context({"stress_level_rating": 9})
+        assert isinstance(s, int)
+        assert 1 <= s <= 10
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
