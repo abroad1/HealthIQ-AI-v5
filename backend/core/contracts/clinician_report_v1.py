@@ -116,3 +116,10 @@ class ClinicianReportV1(BaseModel):
 
     # Audit trail requirements
     suppressed_confirmatory_tests: List[str] = Field(default_factory=list)
+
+    # MEDICATION-CAVEAT-B — bounded interpretation caveat from questionnaire medical representation only
+    medication_supplement_interpretation_caveat: Optional[str] = Field(
+        default=None,
+        max_length=280,
+        description="Deterministic caveat from self-reported medication/supplement context; null when not applicable.",
+    )

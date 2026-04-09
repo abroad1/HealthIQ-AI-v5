@@ -2055,6 +2055,10 @@ class AnalysisOrchestrator:
             except (FileNotFoundError, ValueError):
                 pass
             meta["insight_graph"] = insight_graph.model_dump() if hasattr(insight_graph, "model_dump") else {}
+            # MEDICATION-CAVEAT-B — replay-stable questionnaire medical representation for clinician caveat compiler
+            meta["medical_history_snapshot"] = (
+                dict(context.medical_history) if isinstance(context.medical_history, dict) else {}
+            )
             exp_dump = explainability_report.model_dump() if hasattr(explainability_report, "model_dump") else {}
             if lifestyle_artifact is not None:
                 exp_dump["lifestyle"] = lifestyle_artifact

@@ -30,6 +30,9 @@ from core.contracts.clinician_report_v1 import (
     RootCauseFindingV1,
 )
 from core.analytics.intervention_annotation_compiler_v1 import build_intervention_annotations_v1
+from core.analytics.medication_caveat_assembler_v1 import (
+    build_medication_supplement_interpretation_caveat,
+)
 from core.analytics.root_cause_compiler_v1 import compile_root_cause_v1
 from core.knowledge.load_confirmatory_tests_registry import load_confirmatory_tests_registry_v1
 
@@ -408,6 +411,7 @@ def compile_clinician_report_v1(
     *,
     report_v1_payload: Dict[str, Any],
     biomarker_rows: List[Dict[str, Any]],
+    medical_history: Optional[Dict[str, Any]] = None,
 ) -> Optional[ClinicianReportV1]:
     report_row = _to_dict(report_v1_payload)
     if not report_row:
@@ -520,6 +524,8 @@ def compile_clinician_report_v1(
 
     data_quality_passed = bool(expected_metrics) and (present_metrics == len(expected_metrics)) and quality_ok
 
+    med_caveat = build_medication_supplement_interpretation_caveat(medical_history)
+
     return ClinicianReportV1(
         header=ClinicianHeaderV1(
             report_version="v1",
@@ -554,6 +560,7 @@ def compile_clinician_report_v1(
             confirmatory_tests=consolidated_tests,
         ),
         suppressed_confirmatory_tests=suppressed_ids,
+        medication_supplement_interpretation_caveat=med_caveat,
     )
 
 
