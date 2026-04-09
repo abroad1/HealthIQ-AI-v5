@@ -1,7 +1,7 @@
 """
 LLM Output Validator v2 - Validates LLM responses against prompt and schema.
 
-Sprint 17: Compute-only implementation (not wired to runtime).
+Sprint 17: Schema + cross-checks. Wired into InsightGraph insight synthesis (BE-S1A).
 Performs schema validation and post-validations (numeric invention, evidence referencing).
 """
 

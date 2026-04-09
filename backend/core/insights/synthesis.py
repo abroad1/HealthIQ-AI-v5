@@ -17,6 +17,71 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from config.ai import LLMConfig
 from config.env import settings
 from core.llm.gemini_client import GeminiClient, LLMClient
+from core.llm.validator_v2 import validate_llm_output_v2
+from pydantic import ValidationError
+
+
+GRAPH_PATH_USER_PROMPT_MARKERS = (
+    "**Arbitration summary (stamped):**",
+)
+
+
+def build_validator_prompt_json_from_insight_graph_dict(ig: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Build the prompt_json envelope used by validate_llm_output_v2 for cross-checks.
+
+    Values mirror structured truth already present on InsightGraph (status/score only per PRD §4.7).
+    """
+    biomarkers: List[Dict[str, Any]] = []
+    for n in ig.get("biomarker_nodes") or []:
+        if not isinstance(n, dict):
+            continue
+        bid = n.get("biomarker_id")
+        if not bid:
+            continue
+        entry: Dict[str, Any] = {"id": str(bid)}
+        sc = n.get("score")
+        if isinstance(sc, (int, float)):
+            entry["value"] = float(sc)
+        biomarkers.append(entry)
+
+    clusters: List[Dict[str, Any]] = []
+    cs = ig.get("cluster_summary") or {}
+    if isinstance(cs, dict):
+        for c in cs.get("clusters") or []:
+            if not isinstance(c, dict):
+                continue
+            cid = c.get("cluster_id") or c.get("id")
+            if not cid:
+                continue
+            cl: Dict[str, Any] = {"id": str(cid)}
+            conf = c.get("confidence")
+            if isinstance(conf, (int, float)):
+                cl["score"] = float(conf)
+            clusters.append(cl)
+
+    completeness: Dict[str, Any] = {}
+    conf = ig.get("confidence")
+    if isinstance(conf, dict):
+        sy = conf.get("system_confidence")
+        if isinstance(sy, (int, float)):
+            completeness["score"] = float(sy)
+
+    red_flags: List[Dict[str, Any]] = []
+    for sig in ig.get("signal_results") or []:
+        if not isinstance(sig, dict):
+            continue
+        sid = sig.get("signal_id") or sig.get("id")
+        sev = str(sig.get("severity", "")).lower()
+        if sid and sev in ("high", "critical", "at_risk", "warning"):
+            red_flags.append({"id": str(sid)})
+
+    return {
+        "biomarkers": biomarkers,
+        "clusters": clusters,
+        "completeness": completeness,
+        "red_flags": red_flags,
+    }
 
 
 class MockLLMClient(LLMClient):
@@ -230,6 +295,40 @@ class MockLLMClient(LLMClient):
         Returns:
             Mock response with insights
         """
+        # InsightGraph path: return governed LLMResultV2-shaped JSON (validated live in synthesis).
+        if any(m in user_prompt for m in GRAPH_PATH_USER_PROMPT_MARKERS):
+            import hashlib
+
+            prompt_hash = hashlib.md5(
+                f"{system_prompt}\n\n{user_prompt}".encode()
+            ).hexdigest()[:8]
+            payload = {
+                "insights": [
+                    {
+                        "id": f"{category}_translation_{prompt_hash}",
+                        "title": (
+                            f"{category.title()} focus: summarise structured signals; "
+                            "review with your clinician"
+                        ),
+                        "severity": "low",
+                        "evidence": ["structured_case_summary"],
+                        "actions": [
+                            "Discuss documented patterns with a qualified health professional"
+                        ],
+                        "red_flags": [],
+                        "confidence": 0.72,
+                    }
+                ],
+                "tokens_used": 10,
+                "latency_ms": 0,
+            }
+            text = json.dumps(payload)
+            return {
+                "text": text,
+                "candidates": [text],
+                "model": "mock-llm-client",
+            }
+
         # Combine system and user prompts
         full_prompt = f"{system_prompt}\n\n{user_prompt}"
         return self.generate(full_prompt)
@@ -552,90 +651,181 @@ class InsightSynthesizer:
             user_prompt=user_prompt,
             category=category
         )
-        insights = self._parse_llm_response(llm_response, category, context.analysis_id)
+        try:
+            ig_dict = json.loads(insight_graph_json)
+        except (json.JSONDecodeError, TypeError):
+            ig_dict = {}
+        validator_prompt_json = build_validator_prompt_json_from_insight_graph_dict(
+            ig_dict if isinstance(ig_dict, dict) else {}
+        )
+        insights = self._parse_llm_response(
+            llm_response,
+            category,
+            context.analysis_id,
+            validator_prompt_json=validator_prompt_json,
+        )
         return insights[:max_insights]
 
+    def _parse_llm_response_validated(
+        self,
+        llm_response: Dict[str, Any],
+        category: str,
+        validator_prompt_json: Dict[str, Any],
+    ) -> List[Insight]:
+        """InsightGraph path: parse JSON, validate via validator_v2, map to runtime Insight models."""
+        if "error" in llm_response:
+            print(f"[WARN] LLM error for {category}: {llm_response['error']}")
+            return []
+
+        llm_json: Optional[Dict[str, Any]] = None
+        if "text" in llm_response and llm_response["text"]:
+            response_text = llm_response["text"]
+            if not isinstance(response_text, str):
+                return []
+            if response_text.startswith("```json"):
+                response_text = response_text[7:]
+            if response_text.endswith("```"):
+                response_text = response_text[:-3]
+            response_text = response_text.strip()
+            try:
+                llm_json = json.loads(response_text)
+            except (json.JSONDecodeError, TypeError) as e:
+                print(f"[WARN] JSON parsing error (governed path) for {category}: {e}")
+                return []
+        else:
+            alt = llm_response.get("insights")
+            if isinstance(alt, list) and alt:
+                first = alt[0]
+                if (
+                    isinstance(first, dict)
+                    and "title" in first
+                    and first.get("severity") in ("low", "moderate", "high")
+                ):
+                    llm_json = {
+                        "insights": alt,
+                        "tokens_used": int(llm_response.get("tokens_used", 0)),
+                        "latency_ms": int(llm_response.get("latency_ms", 0)),
+                    }
+
+        if not llm_json:
+            return []
+
+        try:
+            validated = validate_llm_output_v2(validator_prompt_json, llm_json)
+        except (ValidationError, ValueError) as e:
+            print(f"[WARN] LLM output rejected by validator_v2 for {category}: {e}")
+            return []
+
+        prompt_bm_ids = {
+            str(b.get("id"))
+            for b in validator_prompt_json.get("biomarkers", [])
+            if isinstance(b, dict) and b.get("id")
+        }
+        prompt_cluster_ids = {
+            str(c.get("id"))
+            for c in validator_prompt_json.get("clusters", [])
+            if isinstance(c, dict) and c.get("id")
+        }
+        prompt_ids = prompt_bm_ids | prompt_cluster_ids
+
+        tokens_used = int(validated.tokens_used)
+        latency_ms = int(validated.latency_ms)
+        sev_map = {"low": "info", "moderate": "warning", "high": "critical"}
+
+        out: List[Insight] = []
+        for n in validated.insights:
+            bio_inv = [e for e in n.evidence if e in prompt_ids]
+            out.append(
+                Insight(
+                    id=n.id,
+                    category=category,
+                    summary=n.title,
+                    evidence={
+                        "evidence_refs": list(n.evidence),
+                        "red_flags": list(n.red_flags),
+                    },
+                    confidence=float(n.confidence),
+                    severity=sev_map.get(n.severity, "info"),
+                    recommendations=list(n.actions),
+                    biomarkers_involved=bio_inv,
+                    lifestyle_factors=[],
+                    tokens_used=tokens_used,
+                    latency_ms=latency_ms,
+                    created_at=datetime.now(UTC).isoformat(),
+                )
+            )
+        return out
+
     def _parse_llm_response(
-        self, 
-        llm_response: Dict[str, Any], 
-        category: str, 
-        analysis_id: str
+        self,
+        llm_response: Dict[str, Any],
+        category: str,
+        analysis_id: str,
+        *,
+        validator_prompt_json: Optional[Dict[str, Any]] = None,
     ) -> List[Insight]:
         """
         Parse LLM response into Insight objects.
-        
-        Args:
-            llm_response: Raw LLM response
-            category: Health category
-            analysis_id: Analysis identifier
-            
-        Returns:
-            List of parsed Insight objects
+
+        When validator_prompt_json is set (InsightGraph path), output must pass validate_llm_output_v2.
+        Legacy fixture path omits the validator and uses the historical insight JSON shape.
         """
-        insights = []
-        
+        if validator_prompt_json is not None:
+            return self._parse_llm_response_validated(
+                llm_response, category, validator_prompt_json
+            )
+
+        insights: List[Insight] = []
+
         try:
-            # Check for errors in LLM response
             if "error" in llm_response:
                 print(f"[WARN] LLM error for {category}: {llm_response['error']}")
                 return []
-            
-            # Handle new GeminiClient format
+
+            raw_insights: List[Any] = []
             if "text" in llm_response and llm_response["text"]:
-                # Try to parse JSON from text response
-                import json
                 try:
                     response_text = llm_response["text"]
                     if isinstance(response_text, str):
-                        # Clean JSON if wrapped in markdown
                         if response_text.startswith("```json"):
                             response_text = response_text[7:]
                         if response_text.endswith("```"):
                             response_text = response_text[:-3]
                         response_text = response_text.strip()
-                        
                         parsed_response = json.loads(response_text)
                         raw_insights = parsed_response.get("insights", [])
                     else:
                         raw_insights = []
                 except (json.JSONDecodeError, TypeError) as e:
                     print(f"[WARN] JSON parsing error for {category}: {e}")
-                    # Fallback: create a single insight from text
-                    raw_insights = [{
-                        "id": f"{category}_text_insight",
-                        "category": category,
-                        "summary": llm_response["text"][:200] + "..." if len(llm_response["text"]) > 200 else llm_response["text"],
-                        "evidence": {},
-                        "confidence": 0.5,
-                        "severity": "info",
-                        "recommendations": [],
-                        "biomarkers_involved": [],
-                        "lifestyle_factors": []
-                    }]
+                    return []
             else:
-                # Fallback to old format
                 raw_insights = llm_response.get("insights", [])
-            
+
             for i, raw_insight in enumerate(raw_insights):
                 try:
-                    # Normalize severity values
                     raw_severity = raw_insight.get("severity", "info")
+                    if not isinstance(raw_severity, str):
+                        raw_severity = "info"
                     severity_mapping = {
                         "high": "critical",
-                        "moderate_risk": "warning", 
+                        "moderate": "warning",
+                        "moderate_risk": "warning",
                         "low_risk": "info",
                         "protective_factor": "info",
                         "opportunity": "info",
                         "normal": "info",
-                        "optimal": "info"
+                        "optimal": "info",
+                        "warning": "warning",
+                        "info": "info",
+                        "critical": "critical",
                     }
-                    normalized_severity = severity_mapping.get(raw_severity.lower(), "info")
-                    
-                    # Enforce requested category at boundary (contract: insight.category == requested category)
-                    # LLM/mock may return wrong or missing category; overwrite unconditionally
+                    normalized_severity = severity_mapping.get(
+                        raw_severity.lower(), "info"
+                    )
                     insight_category = category
-                    
-                    # Create Insight object
+                    traw = raw_insight.get("tokens_used", llm_response.get("tokens_used", 0))
+                    lraw = raw_insight.get("latency_ms", llm_response.get("latency_ms", 0))
                     insight = Insight(
                         id=raw_insight.get("id", f"{category}_insight_{i+1}"),
                         category=insight_category,
@@ -646,22 +836,20 @@ class InsightSynthesizer:
                         recommendations=raw_insight.get("recommendations", []),
                         biomarkers_involved=raw_insight.get("biomarkers_involved", []),
                         lifestyle_factors=raw_insight.get("lifestyle_factors", []),
-                        tokens_used=llm_response.get("tokens_used", 0),
-                        latency_ms=llm_response.get("latency_ms", 0),
-                        created_at=datetime.now(UTC).isoformat()
+                        tokens_used=int(traw) if isinstance(traw, (int, float)) else 0,
+                        latency_ms=int(lraw) if isinstance(lraw, (int, float)) else 0,
+                        created_at=datetime.now(UTC).isoformat(),
                     )
-                    
                     insights.append(insight)
-                    
                 except Exception as e:
                     print(f"[ERROR] Error parsing insight {i}: {e}")
                     continue
-                    
+
         except Exception as e:
             print(f"[ERROR] Error parsing LLM response: {e}")
-        
+
         return insights
-    
+
     def _calculate_overall_confidence(self, insights: List[Insight]) -> float:
         """
         Calculate overall confidence score from individual insights.

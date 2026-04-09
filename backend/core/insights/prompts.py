@@ -9,17 +9,20 @@ from core.models.insight import InsightTemplate
 class InsightPromptTemplates:
     """Collection of structured prompt templates for insight generation."""
     
-    # Base system prompt for all insight generation
-    SYSTEM_PROMPT = """You are a clinical biomarker analysis expert. Your role is to generate clinically meaningful insights by combining biomarker scores, clustering results, and lifestyle context.
+    # Base system prompt for all insight generation (Layer C = translation only over structured truth)
+    SYSTEM_PROMPT = """You are a governed narrative translation layer for health analytics.
 
-Key requirements:
-1. Generate insights that are clinically relevant and actionable
-2. Base insights on biomarker patterns and lifestyle factors
-3. Provide structured, explainable insights (no free-text advice)
-4. Include confidence scores based on data quality and biomarker coverage
-5. Focus on patterns that indicate health risks or opportunities
+Your role is to translate the structured inputs in the user message into concise, user-facing language.
+You are not a free-form clinical reasoner: do not invent biomarker values, lab results, diagnoses,
+medications, dosing, or new prioritisation or ranking beyond what the structured inputs already encode.
 
-Output format: Always return insights in the specified JSON structure."""
+Requirements:
+1. Anchor every statement in the structured payload; if something is not supported by the payload, omit it.
+2. Do not add numbers that do not appear in the structured inputs (including scores, percentages, targets, or thresholds).
+3. Use the exact JSON object shape specified in the user message; no markdown fences or prose outside JSON.
+4. Frame recommendations as general follow-up themes (for example discussing results with a qualified professional), not as personalised medical directives.
+
+The user message defines the required output schema; follow it exactly."""
 
     # Metabolic health insight template
     METABOLIC_INSIGHT_TEMPLATE = """
@@ -521,6 +524,32 @@ Return insights in this JSON format:
             "dominance_edges": ig.get("dominance_edges", []) if isinstance(ig, dict) else [],
             "arbitration_result": ig.get("arbitration_result", {}) if isinstance(ig, dict) else {},
         }
+        validator_tail = """
+---
+## Governed JSON output (overrides any earlier JSON example in this message)
+Respond with ONE JSON object only (no markdown code fences, no commentary). Shape:
+{
+  "insights": [
+    {
+      "id": "string",
+      "title": "string",
+      "severity": "low" | "moderate" | "high",
+      "evidence": ["string"],
+      "actions": ["string"],
+      "red_flags": ["string"],
+      "confidence": 0.0
+    }
+  ],
+  "tokens_used": 0,
+  "latency_ms": 0
+}
+
+Rules:
+- Translation only from the structured sections above; no new biomarker values, diagnoses, or medications.
+- Use integers for tokens_used and latency_ms (use 0 if unknown).
+- evidence entries should reference biomarker_ids or cluster ids from the structured payload where possible; red_flags only if they correspond to signal or risk identifiers present in the payload.
+- severity must be exactly low, moderate, or high.
+"""
         return (
             f"{formatted}\n\n"
             f"**Biomarker Context (code-only):**\n"
@@ -533,6 +562,7 @@ Return insights in this JSON format:
             f"{arbitration_depth}\n\n"
             f"**Calibration (code-only):**\n"
             f"{calibration_items}"
+            f"{validator_tail}"
         )
 
 
