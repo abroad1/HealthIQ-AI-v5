@@ -86,6 +86,7 @@ class TestAnalysisContextEnhancement:
             "medications": ["None"],
             "family_history": [],
             "supplements": ["Vitamin D", "Omega-3"],
+            "long_term_medication_classes": [],
             "sleep_disorders": [],
             "allergies": [],
             "atrial_fibrillation": False,

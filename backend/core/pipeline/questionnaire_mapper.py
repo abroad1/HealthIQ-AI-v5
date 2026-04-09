@@ -43,6 +43,7 @@ class MappedMedicalHistory:
     medications: List[str]
     family_history: List[str]
     supplements: List[str]
+    long_term_medication_classes: List[str]
     sleep_disorders: List[str]
     allergies: List[str]
     # QRISK®3 cardiovascular risk factors
@@ -139,7 +140,7 @@ class QuestionnaireMapper:
         if "chronic_conditions" in responses:
             conditions = self._parse_checkbox_response(responses["chronic_conditions"])
         
-        # Map medications (current_medications - Current medications)
+        # Map medications (current_medications — SSOT dropdown: coarse exposure band, not drug identities)
         if "current_medications" in responses:
             medications = self._parse_checkbox_response(responses["current_medications"])
         
@@ -153,9 +154,15 @@ class QuestionnaireMapper:
         if "family_lifespan" in responses:
             family_history.extend(self._parse_checkbox_response(responses["family_lifespan"]))
         
-        # Map supplements (supplements - Supplements)
+        # Map supplements (supplements — SSOT checkbox, semi-structured; distinct from medications)
         if "supplements" in responses:
             supplements = self._parse_checkbox_response(responses["supplements"])
+
+        long_term_medication_classes: List[str] = []
+        if "long_term_medications" in responses:
+            long_term_medication_classes = self._parse_checkbox_response(
+                responses["long_term_medications"]
+            )
         
         # Map sleep disorders (sleep_disorders - Sleep disorders)
         if "sleep_disorders" in responses:
@@ -179,6 +186,7 @@ class QuestionnaireMapper:
             medications=medications,
             family_history=family_history,
             supplements=supplements,
+            long_term_medication_classes=long_term_medication_classes,
             sleep_disorders=sleep_disorders,
             allergies=allergies,
             atrial_fibrillation=atrial_fibrillation,

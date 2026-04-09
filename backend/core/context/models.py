@@ -98,7 +98,14 @@ class UserContext(BaseModel):
     exercise_days_per_week: int = Field(default=0, ge=0, le=7, description="Exercise days per week")
     smoking_status: str = Field(default="never", description="Smoking status")
     medical_conditions: List[str] = Field(default_factory=list, description="List of medical conditions")
-    medications: List[str] = Field(default_factory=list, description="List of medications")
+    medications: List[str] = Field(
+        default_factory=list,
+        description="Questionnaire current medication exposure (SSOT coarse bands) when sourced from SSOT",
+    )
+    supplements: List[str] = Field(
+        default_factory=list,
+        description="Questionnaire supplement selections (SSOT); distinct from medications",
+    )
     family_history: Dict[str, Any] = Field(default_factory=dict, description="Family medical history")
     created_at: Optional[datetime] = Field(default=None, description="When the user context was created")
     updated_at: Optional[datetime] = Field(default=None, description="When the user context was last updated")

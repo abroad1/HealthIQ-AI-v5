@@ -203,7 +203,7 @@ class TestQuestionnaireMapper:
         """Test mapping medical history from questionnaire responses."""
         responses = {
             "chronic_conditions": ["Diabetes", "Hypertension"],  # Medical conditions
-            "current_medications": ["Metformin", "Lisinopril"],   # Medications
+            "current_medications": "3-5 medications",  # SSOT dropdown: coarse band
             "family_cardiovascular_disease": ["Heart Disease"],   # Family history
             "family_cancer_history": ["Cancer"],   # Family history
             "supplements": ["Vitamin D", "Omega-3"],      # Supplements
@@ -216,7 +216,7 @@ class TestQuestionnaireMapper:
         )
         
         assert medical_history.conditions == ["Diabetes", "Hypertension"]
-        assert medical_history.medications == ["Metformin", "Lisinopril"]
+        assert medical_history.medications == ["3-5 medications"]
         assert "Heart Disease" in medical_history.family_history
         assert "Cancer" in medical_history.family_history
         assert medical_history.supplements == ["Vitamin D", "Omega-3"]
@@ -269,7 +269,7 @@ class TestQuestionnaireMapper:
             
             # Medical
             "chronic_conditions": ["Diabetes"],
-            "current_medications": ["Metformin"],
+            "current_medications": "1-2 medications",
             "family_cardiovascular_disease": ["Heart Disease"],
             "supplements": ["Vitamin D"],
             "sleep_disorders": ["Sleep apnea"],
@@ -296,11 +296,33 @@ class TestQuestionnaireMapper:
         
         # Verify medical history
         assert medical_history.conditions == ["Diabetes"]
-        assert medical_history.medications == ["Metformin"]
+        assert medical_history.medications == ["1-2 medications"]
         assert medical_history.family_history == ["Heart Disease"]
         assert medical_history.supplements == ["Vitamin D"]
         assert medical_history.sleep_disorders == ["Sleep apnea"]
         assert medical_history.allergies == ["Peanuts"]
+    
+    def test_long_term_medication_classes_and_qrisk_flags(self):
+        """SSOT long_term_medications classes and QRISK booleans map deterministically."""
+        responses = {
+            "chronic_conditions": ["None"],
+            "current_medications": "None",
+            "long_term_medications": ["Corticosteroids", "HIV/AIDS treatments"],
+            "medical_conditions": ["Atrial fibrillation", "Rheumatoid arthritis"],
+            "regular_migraines": "Yes",
+            "supplements": ["Vitamin D"],
+        }
+        _, mh = self.mapper.map_submission(
+            QuestionnaireSubmission(responses=responses, submission_id="qrisk_test")
+        )
+        assert mh.long_term_medication_classes == ["Corticosteroids", "HIV/AIDS treatments"]
+        assert mh.corticosteroids is True
+        assert mh.hiv_treatments is True
+        assert mh.atrial_fibrillation is True
+        assert mh.rheumatoid_arthritis is True
+        assert mh.migraines is True
+        assert mh.systemic_lupus is False
+        assert mh.atypical_antipsychotics is False
     
     def test_parse_checkbox_response(self):
         """Test parsing checkbox responses."""
@@ -374,6 +396,7 @@ class TestQuestionnaireMapperEdgeCases:
         assert medical_history.medications == []
         assert medical_history.family_history == []
         assert medical_history.supplements == []
+        assert medical_history.long_term_medication_classes == []
         assert medical_history.sleep_disorders == []
         assert medical_history.allergies == []
     

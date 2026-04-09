@@ -98,6 +98,44 @@ def propagate_waist_to_user_after_assembly(
     sync_waist_mirror_to_user_dict(user_data)
 
 
+def apply_questionnaire_medication_representation_to_user(
+    user: Dict[str, Any],
+    questionnaire: Optional[Mapping[str, Any]],
+) -> None:
+    """
+    MEDICATION-CAVEAT-A — Align validation-layer user fields with SSOT questionnaire mapping before ContextFactory.
+
+    When the corresponding SSOT keys are present, overwrites ``medications`` and ``supplements`` on ``user`` with
+    mapper output (coarse medication bands and supplement list), matching pipeline ``create_analysis_context``.
+    """
+    if not questionnaire:
+        return
+    q = dict(questionnaire)
+    if not any(
+        k in q
+        for k in (
+            "current_medications",
+            "supplements",
+            "long_term_medications",
+            "medical_conditions",
+            "regular_migraines",
+        )
+    ):
+        return
+    from core.models.questionnaire import QuestionnaireSubmission
+    from core.pipeline.questionnaire_mapper import QuestionnaireMapper
+
+    sub = QuestionnaireSubmission(responses=q, submission_id="_medication_context_bridge")
+    try:
+        _, mh = QuestionnaireMapper().map_submission(sub)
+    except Exception:
+        return
+    if "current_medications" in q:
+        user["medications"] = list(mh.medications)
+    if "supplements" in q:
+        user["supplements"] = list(mh.supplements)
+
+
 def _canonical_sex(raw: Any) -> str:
     if raw is None:
         return "other"

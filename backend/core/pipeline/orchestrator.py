@@ -279,20 +279,35 @@ class AnalysisOrchestrator:
                     "fluid_intake_liters": mapped_lifestyle_factors.fluid_intake_liters
                 }
                 
+                # Canonical medication / supplement representation (MEDICATION-CAVEAT-A):
+                # - medications: SSOT current_medications dropdown → coarse exposure bands only
+                # - long_term_medication_classes: SSOT long_term_medications checkbox selections
+                # - supplements: SSOT supplements checkbox selections
+                # - atrial_fibrillation … migraines: mapped QRISK / context flags (deterministic booleans)
                 medical_history = {
                     "conditions": mapped_medical_history.conditions,
                     "medications": mapped_medical_history.medications,
                     "family_history": mapped_medical_history.family_history,
                     "supplements": mapped_medical_history.supplements,
+                    "long_term_medication_classes": mapped_medical_history.long_term_medication_classes,
                     "sleep_disorders": mapped_medical_history.sleep_disorders,
-                    "allergies": mapped_medical_history.allergies
+                    "allergies": mapped_medical_history.allergies,
+                    "atrial_fibrillation": mapped_medical_history.atrial_fibrillation,
+                    "rheumatoid_arthritis": mapped_medical_history.rheumatoid_arthritis,
+                    "systemic_lupus": mapped_medical_history.systemic_lupus,
+                    "corticosteroids": mapped_medical_history.corticosteroids,
+                    "atypical_antipsychotics": mapped_medical_history.atypical_antipsychotics,
+                    "hiv_treatments": mapped_medical_history.hiv_treatments,
+                    "migraines": mapped_medical_history.migraines,
                 }
                 
                 # Update user_data with questionnaire-derived information
                 user_data.update({
                     "questionnaire": questionnaire_data,
                     "lifestyle_factors": lifestyle_factors,
-                    "medical_history": medical_history
+                    "medical_history": medical_history,
+                    "medications": mapped_medical_history.medications,
+                    "supplements": mapped_medical_history.supplements,
                 })
                 
                 # Extract demographic data
