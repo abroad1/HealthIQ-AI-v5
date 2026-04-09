@@ -85,7 +85,10 @@ class AnalysisOrchestrator:
         Args:
             normalizer: BiomarkerNormalizer instance, creates new one if None
             db_session: Optional DB session for longitudinal snapshot linking
-            allow_llm: Explicit runtime gate for LLM usage in insight synthesis.
+            allow_llm: Optional explicit gate for insight narrative LLM. ``None`` uses BE-S1B
+                production defaults (requires ``HEALTHIQ_NARRATIVE_LLM`` and
+                ``HEALTHIQ_ENABLE_LLM`` for live Gemini). ``True`` is explicit operator/golden
+                opt-in; ``False`` forces deterministic mock.
         """
         self.normalizer = normalizer or BiomarkerNormalizer()
         self.db_session = db_session
@@ -2106,6 +2109,10 @@ class AnalysisOrchestrator:
                 "validation_status": str(getattr(insight_graph, "burden_validation_status", "")),
                 "validation_violations": list(getattr(insight_graph, "burden_validation_violations", [])),
             }
+            ss = insights_result.get("synthesis_summary") or {}
+            nrm = ss.get("narrative_runtime")
+            if isinstance(nrm, dict):
+                meta["narrative_runtime"] = nrm
             analysis_primary_driver = insight_graph_driver
             assert_single_authority_driver(
                 insight_graph_driver=insight_graph_driver,

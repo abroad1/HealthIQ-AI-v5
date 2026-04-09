@@ -17,6 +17,8 @@ class Settings:
     GEMINI_API_KEY: Optional[str] = os.getenv("GEMINI_API_KEY")
     # Test mode: when HEALTHIQ_MODE=test or LLM_ENABLED=false, skip LLM init/calls
     HEALTHIQ_MODE: str = os.getenv("HEALTHIQ_MODE", "")
+    # BE-S1B: with default orchestrator path, live insight narrative also requires
+    # HEALTHIQ_NARRATIVE_LLM=1 (read in narrative_runtime_policy; not duplicated here).
     LLM_ENABLED: bool = os.getenv("LLM_ENABLED", "true").lower() in ("true", "1", "yes")
     CLAUDE_API_KEY: Optional[str] = os.getenv("CLAUDE_API_KEY")
     OPENAI_API_KEY: Optional[str] = os.getenv("OPENAI_API_KEY")  # reserved, policy-restricted
