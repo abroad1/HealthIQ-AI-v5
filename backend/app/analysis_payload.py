@@ -76,33 +76,6 @@ def apply_questionnaire_objective_waist_to_user(
     sync_waist_mirror_to_user_dict(user)
 
 
-def apply_questionnaire_behavioural_to_user(
-    user: Dict[str, Any],
-    questionnaire: Optional[Mapping[str, Any]],
-) -> None:
-    """
-    CONTEXT-HARDENING-C — copy recognised behavioural answers onto the user dict for ``UserContext`` validation.
-
-    Uses the same canonical engine-key extraction as the pipeline (no duplicate semantics).
-    """
-    if not questionnaire:
-        return
-    from core.pipeline.questionnaire_mapper import QuestionnaireMapper
-
-    mapper = QuestionnaireMapper()
-    qdict = dict(questionnaire)
-    behavioural = mapper.extract_behavioural_lifestyle_inputs(qdict)
-    if "sleep_hours" in behavioural:
-        user["sleep_hours"] = float(behavioural["sleep_hours"])
-    if "alcohol_units_per_week" in behavioural:
-        user["alcohol_units_per_week"] = int(round(float(behavioural["alcohol_units_per_week"])))
-    if "smoking_status" in behavioural:
-        user["smoking_status"] = str(behavioural["smoking_status"])
-    stress = mapper.extract_stress_level_for_user_context(qdict)
-    if stress is not None:
-        user["stress_level"] = int(stress)
-
-
 def propagate_waist_to_user_after_assembly(
     user_data: Dict[str, Any],
     assembled_objective: Mapping[str, Any],

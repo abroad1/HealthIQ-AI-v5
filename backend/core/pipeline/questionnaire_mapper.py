@@ -22,15 +22,6 @@ class LifestyleLevel(Enum):
     VERY_POOR = "very_poor"
 
 
-_STRESS_LIFESTYLE_LEVEL_TO_USER_STRESS_INT: Dict[LifestyleLevel, int] = {
-    LifestyleLevel.EXCELLENT: 3,
-    LifestyleLevel.GOOD: 5,
-    LifestyleLevel.AVERAGE: 6,
-    LifestyleLevel.POOR: 8,
-    LifestyleLevel.VERY_POOR: 9,
-}
-
-
 @dataclass
 class MappedLifestyleFactors:
     """Mapped lifestyle factors from questionnaire responses."""
@@ -547,20 +538,6 @@ class QuestionnaireMapper:
 
         return out
 
-    def extract_stress_level_for_user_context(self, responses: Dict[str, Any]) -> Optional[int]:
-        """
-        Map stress-related SSOT fields to ``UserContext.stress_level`` (1–10) only when at least one
-        stress field is present in the submission.
-        """
-        if not any(
-            k in responses
-            for k in ("stress_level_rating", "stress_control_frequency", "major_life_stressors")
-        ):
-            return None
-        level = self._map_stress_level(responses)
-        return _STRESS_LIFESTYLE_LEVEL_TO_USER_STRESS_INT.get(level, 5)
-
-    
     def get_demographic_data(self, responses: Dict[str, Any]) -> Dict[str, Any]:
         """
         Extract demographic data from questionnaire responses.
