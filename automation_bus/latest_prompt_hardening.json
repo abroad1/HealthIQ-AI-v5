@@ -1,0 +1,49 @@
+{
+  "bus_version": "1.3.1",
+  "work_id": "BE-S1B",
+  "status": "HARDENED",
+  "hardened_utc": "2026-04-09T20:00:00Z",
+  "hardened_by": "cursor-agent",
+  "changes": [
+    {
+      "check": "Front Matter — work_id",
+      "result": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md: work_id BE-S1B"
+    },
+    {
+      "check": "Front Matter — branch",
+      "result": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md: branch feature/be-s1b-runtime-production-narrative-enablement"
+    },
+    {
+      "check": "BE-S1A prerequisites",
+      "result": "CONFIRMED",
+      "citation": "translation-only prompts, validator_v2 on graph synthesis path, safe rejection in synthesis.py (merged on main prior to BE-S1B)."
+    },
+    {
+      "check": "Runtime policy module",
+      "result": "CONFIRMED",
+      "citation": "backend/core/insights/narrative_runtime_policy.py — double opt-in for default API path (HEALTHIQ_NARRATIVE_LLM + HEALTHIQ_ENABLE_LLM); explicit orchestrator allow_llm=True for golden/operator; test/fixture modes mock."
+    },
+    {
+      "check": "Synthesis summary + meta replay field",
+      "result": "CONFIRMED",
+      "citation": "synthesis_summary['narrative_runtime'] and meta['narrative_runtime'] copied in orchestrator.run from insights synthesis_summary."
+    },
+    {
+      "check": "Deterministic core untouched",
+      "result": "CONFIRMED",
+      "citation": "No changes to scoring, IG build, signal eval, or clinician deterministic report compilers in this sprint slice."
+    },
+    {
+      "check": "Regression tests",
+      "result": "CONFIRMED",
+      "citation": "backend/tests/unit/test_narrative_runtime_policy.py"
+    }
+  ],
+  "content_review": "COMPLETE — Prompt BE-S1B scope read; BE_S1_NARRATIVE_PREFLIGHT.md on-disk; BE-S1A boundary retained.",
+  "behaviour_review": "COMPLETE — Governed default API path off without HEALTHIQ_NARRATIVE_LLM; explicit allow_llm preserves golden runner; narrative_runtime metadata explicit for operators/replay.",
+  "stage_2c_checklist_in_response": true,
+  "escalation_required": false,
+  "high_risk_note": "HIGH risk per prompt front matter — dual approval per SOP §10 before merge."
+}
