@@ -1,114 +1,88 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "BE-S1B",
-  "status": "HARDENED",
-  "hardened_utc": "2026-04-09T21:30:00Z",
+  "work_id": "FE-S2B",
+  "status": "NOT_HARDENED",
+  "hardened_utc": "2026-04-10T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 2-2: work_id: BE-S1B"
+      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: FE-S2B"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 3-3: branch: feature/be-s1b-runtime-production-narrative-enablement"
+      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: feature/fe-s2b-narrative-runtime-state-presentation"
     },
     {
       "check": "Front Matter — risk_level",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 4-4: risk_level: HIGH"
+      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: STANDARD"
     },
     {
       "check": "Front Matter — execution_model",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 5-5: execution_model: TWO_PHASE_START_FINISH"
+      "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model: TWO_PHASE_START_FINISH"
     },
     {
       "check": "Front Matter — change_type",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 6-6: change_type: MIXED"
+      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: MIXED"
     },
     {
       "check": "2A — Governing preflight on disk",
-      "result": "CONFIRMED",
-      "citation": "docs/investigations/BE_S1_NARRATIVE_PREFLIGHT.md lines 15-16: Layer C `InsightSynthesizer` path from `AnalysisOrchestrator.run()`; `HEALTHIQ_ENABLE_LLM` and `allow_llm` on `AnalysisOrchestrator` / `InsightSynthesizer`."
+      "result": "BLOCKER",
+      "citation": "Prompt Stage 1C line 74 declares: 'the governing preflight is: docs/investigations/FE_S2_NARRATIVE_PRESENTATION_PREFLIGHT.md'. Glob of docs/investigations/ returns 26 files — this path is absent. The prompt requires Cursor to verify and record 5 items from this preflight before implementation (exact meta.narrative_runtime shape, stable fields, distinguishable scenarios, UI surfaces). Without this document the stated authority assumption does not match repo state. Stage 2A blocker per SOP §6 Stage 2A: 'the prompt stated authority assumptions match the actual repo state'."
     },
     {
-      "check": "2A — Double opt-in env: HEALTHIQ_NARRATIVE_LLM + HEALTHIQ_ENABLE_LLM",
+      "check": "2A — meta.narrative_runtime shape confirmed from backend source",
       "result": "CONFIRMED",
-      "citation": "backend/core/insights/narrative_runtime_policy.py lines 49-50: _env_truthy(HEALTHIQ_NARRATIVE_LLM), _env_truthy(HEALTHIQ_ENABLE_LLM); lines 101-118: API default path requires master then network; lines 131-137: synthesizer_allow_llm True only when both pass with LLM_ENABLED"
+      "citation": "backend/core/insights/narrative_runtime_policy.py lines 160-171: narrative_runtime_meta_from_decision() returns {policy_version: '1.0.0', runtime_mode: 'live_gemini'|'deterministic_mock', client_kind: str, synthesizer_allow_llm_resolved: bool, master_switch_HEALTHIQ_NARRATIVE_LLM: bool, HEALTHIQ_ENABLE_LLM: bool, HEALTHIQ_MODE: str, LLM_ENABLED: bool, policy_reason: str, client_constructor_injected: bool}. Optional 'outcome' key appended at backend/core/insights/synthesis.py lines 540-542 when runtime_mode=='live_gemini' and all_insights is empty."
     },
     {
-      "check": "2A — HTTP entry documents governed defaults (allow_llm=None)",
+      "check": "2A — Backend emits narrative_runtime into meta on API path",
       "result": "CONFIRMED",
-      "citation": "backend/app/routes/analysis.py lines 158-162: comment references narrative_runtime_policy.resolve_narrative_llm_allow_llm and double opt-in; line 162: AnalysisOrchestrator() implicit allow_llm=None"
+      "citation": "backend/core/pipeline/orchestrator.py lines 2112-2115: nrm = ss.get('narrative_runtime'); if isinstance(nrm, dict): meta['narrative_runtime'] = nrm. FE receives this in AnalysisResult.meta typed as Record<string, any> at frontend/app/types/analysis.ts line 208."
     },
     {
-      "check": "2A — Orchestrator passes allow_llm into InsightSynthesizer",
+      "check": "2A — FE currently does NOT consume meta.narrative_runtime",
       "result": "CONFIRMED",
-      "citation": "backend/core/pipeline/orchestrator.py lines 88-91: docstring states BE-S1B production defaults require HEALTHIQ_NARRATIVE_LLM and HEALTHIQ_ENABLE_LLM; line 104: InsightSynthesizer(allow_llm=allow_llm)"
+      "citation": "frontend/app/results/page.tsx — 601 lines read; no reference to meta or narrative_runtime. frontend/app/components/insights/InsightsPanel.tsx lines 40-58: empty state shows generic 'No insights available yet.' with no runtime metadata awareness."
     },
     {
-      "check": "2A — InsightSynthesizer applies narrative resolution when client not injected",
+      "check": "2A — No NarrativeRuntime type exists in FE types",
       "result": "CONFIRMED",
-      "citation": "backend/core/insights/synthesis.py lines 353-362: resolve_narrative_llm_allow_llm(orchestrator_explicit_allow_llm=allow_llm); lines 361-362: self.allow_llm and self.llm_client from decision when llm_client absent"
+      "citation": "frontend/app/types/analysis.ts line 208: meta?: Record<string, any> — fully untyped. No NarrativeRuntime interface in the 239-line file."
     },
     {
-      "check": "2A — Legacy HEALTHIQ_ENABLE_LLM in client factory (layered gate)",
+      "check": "2B — MIXED change_type is defensible",
       "result": "CONFIRMED",
-      "citation": "backend/core/insights/synthesis.py lines 377-383: env_enable_llm from HEALTHIQ_ENABLE_LLM; allow_llm not True and not env_enable_llm yields MockLLMClient"
+      "citation": "Typing additions to frontend/app/types/analysis.ts = CONTENT class. Rendering/state-handling changes to results/page.tsx and InsightsPanel.tsx = BEHAVIOUR class. Combined scope justifies MIXED per SOP §4."
     },
     {
-      "check": "2A — synthesis_summary carries narrative_runtime block",
+      "check": "2B — STOP conditions protect behavioural correctness",
       "result": "CONFIRMED",
-      "citation": "backend/core/insights/synthesis.py lines 532-536: narrative_runtime_meta_from_decision; lines 538-542: optional outcome when live_gemini and zero insights"
+      "citation": "Prompt lines 300-316: STOP if metadata does not support distinctions, if FE must invent assumptions, if work drifts into backend/hero/clinician report. runtime_mode is designed as the stable FE-facing discriminator per narrative_runtime_policy.py line 147 docstring: 'Stable, replay-friendly narrative runtime metadata'."
     },
     {
-      "check": "2A — Analysis meta copies narrative_runtime for replay/clients",
+      "check": "2B — Regression targets included",
       "result": "CONFIRMED",
-      "citation": "backend/core/pipeline/orchestrator.py lines 2112-2115: meta['narrative_runtime'] from insights_result synthesis_summary"
+      "citation": "Prompt lines 217-229: requires coverage for populated narrative state, bounded empty/degraded states, runtime-state messaging separated from hero/clinician report, no backend contract change. Acceptance criteria lines 288-298 enumerate 7 measurable gates."
     },
     {
-      "check": "2A — Settings comment points operators to narrative policy module",
+      "check": "2B — No Intelligence Core components touched",
       "result": "CONFIRMED",
-      "citation": "backend/config/env.py lines 20-22: BE-S1B comment referencing HEALTHIQ_NARRATIVE_LLM and narrative_runtime_policy"
-    },
-    {
-      "check": "2A — Golden panel explicit allow_llm (operator path)",
-      "result": "CONFIRMED",
-      "citation": "backend/tools/run_golden_panel.py line 344: AnalysisOrchestrator(..., allow_llm=bool(enable_llm)); lines 437-440: --enable-llm help distinguishes HTTP double opt-in"
-    },
-    {
-      "check": "2B — BE-S1A validator path still wired on InsightGraph parse",
-      "result": "CONFIRMED",
-      "citation": "backend/core/insights/synthesis.py lines 20-20: validate_llm_output_v2 import; lines 688-733: _parse_llm_response_validated calls validate_llm_output_v2"
-    },
-    {
-      "check": "2B — Deterministic scoring/IG paths not altered by BE-S1B slice",
-      "result": "CONFIRMED",
-      "citation": "backend/core/scoring/engine.py line 61: class ScoringEngine; backend/core/analytics/insight_graph_builder.py line 194: def build_insight_graph_v1; backend/core/analytics/signal_evaluator.py line 76: class SignalEvaluator; backend/core/pipeline/orchestrator.py lines 24-35: imports for ScoringEngine, SignalEvaluator, build_insight_graph_v1; lines 99-106: scoring_engine and signal_evaluator construction; lines 1295-1312: InsightGraph build from scoring/clustering — deterministic chain. BE-S1B edits in same file limited to narrative gates and meta (orchestrator.py lines 88-91, 104, 2112-2115 per other rows), not Steps 4.5-4.6 / scoring engine wiring."
-    },
-    {
-      "check": "2B — Targeted regression coverage for policy",
-      "result": "CONFIRMED",
-      "citation": "backend/tests/unit/test_narrative_runtime_policy.py lines 15-21: default production requires NARRATIVE_LLM reason; lines 24-30: double opt-in enables gate; lines 33-38: explicit orchestrator True skips master"
-    },
-    {
-      "check": "2B — STOP / scope drift",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 260-272 OUT OF SCOPE: no FE-S2, no clinician-report LLM rewrite — BE-S1B implementation respects bounded narrative surface (insights[] only)"
+      "citation": "All in-scope files are FE-only: frontend/app/types/analysis.ts, frontend/app/services/analysis.ts, frontend/app/results/page.tsx, frontend/app/components/insights/InsightsPanel.tsx. None appear in SOP §3 Intelligence Core list."
     },
     {
       "check": "2B — Tooling file leakage",
       "result": "CONFIRMED",
-      "citation": ".gitignore lines 15-18: `.vscode/*`; line 39: `.cursor/`; line 60: `.claude/`; line 65: `automation_bus/`. BE-S1B product-code edits confined to backend paths cited in sibling CONFIRMED rows (e.g. orchestrator.py:88-104,2112-2115; synthesis.py; narrative_runtime_policy.py; analysis.py:158-162; env.py:20-22; run_golden_panel.py:344,437-440; tests/unit/test_narrative_runtime_policy.py) — no changes under excluded tooling roots above."
+      "citation": "Prompt scope targets no tooling directories. All governed sprint files are under frontend/. No .codex/, .vscode/, or AGENTS.md involvement."
     }
   ],
-  "content_review": "COMPLETE — BE-S1B prompt front matter and BE_S1_NARRATIVE_PREFLIGHT cross-checked. Narrative runtime policy module and HTTP/orchestrator wiring read with line-aligned citations.",
-  "behaviour_review": "COMPLETE — Double opt-in (HEALTHIQ_NARRATIVE_LLM + HEALTHIQ_ENABLE_LLM) on default API path confirmed at narrative_runtime_policy.py:49-50,101-137 and analysis.py:158-162. Explicit allow_llm for golden/operator confirmed at run_golden_panel.py:344. BE-S1A validator acceptance path remains on synthesis.py:688-733.",
-  "stage_2c_checklist_in_response": true,
-  "escalation_required": false,
-  "high_risk_note": "HIGH risk per prompt front matter — dual approval (Claude audit + GPT architectural review) per SOP §10 before merge where applicable."
+  "content_review": "COMPLETE — Front matter cross-checked. meta.narrative_runtime shape read from narrative_runtime_policy.py:160-171 and synthesis.py:540-542. FE types and page files read confirming no current consumption.",
+  "behaviour_review": "COMPLETE — MIXED classification verified. STOP conditions present and targeted. Regression scope declared. Intelligence Core not touched. runtime_mode confirmed as stable FE-facing discriminator.",
+  "escalation_required": true,
+  "not_hardened_reason": "BLOCKER: Governing preflight docs/investigations/FE_S2_NARRATIVE_PRESENTATION_PREFLIGHT.md does not exist on disk. Prompt Stage 1C requires Cursor to verify and record 5 items from this document before implementation. Authority assumption in prompt does not match repo state. GPT must either create this preflight document or amend Stage 1C before re-issuing the prompt."
 }
