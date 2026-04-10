@@ -3,8 +3,10 @@
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2 } from 'lucide-react'
 import { useHistory } from '../../hooks/useHistory'
+import { friendlyHistoryError, savedAnalysisPrimaryLabel } from '@/lib/historyErrors'
 
 function formatScore(s: number | null | undefined): string {
   if (s == null) return '—'
@@ -26,7 +28,7 @@ export default function ReportsPage() {
       <div>
         <h1 className="text-4xl font-bold tracking-tight">Reports</h1>
         <p className="text-muted-foreground mt-2">
-          Your saved analyses. Open any row to view the full result.
+          Saved analyses for your account. Open a row for the full interpretation and report.
         </p>
       </div>
 
@@ -44,14 +46,19 @@ export default function ReportsPage() {
               Loading…
             </div>
           ) : error ? (
-            <p className="text-sm text-destructive">{error}</p>
+            <Alert variant="destructive">
+              <AlertDescription>
+                <span className="font-semibold block mb-1">Could not load reports</span>
+                {friendlyHistoryError(error)}
+              </AlertDescription>
+            </Alert>
           ) : analyses.length === 0 ? (
             <p className="text-sm text-muted-foreground py-6">
-              No reports yet.{' '}
+              No saved analyses yet.{' '}
               <Link href="/upload" className="text-primary underline underline-offset-4">
-                Upload labs
+                Upload lab results
               </Link>{' '}
-              to create your first analysis.
+              to create your first run.
             </p>
           ) : (
             <>
@@ -62,7 +69,9 @@ export default function ReportsPage() {
                     className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 text-sm"
                   >
                     <div className="min-w-0">
-                      <p className="font-medium font-mono text-xs sm:text-sm truncate">{row.id}</p>
+                      <p className="font-medium text-sm truncate" title={row.id}>
+                        {savedAnalysisPrimaryLabel(row.id).line}
+                      </p>
                       <p className="text-muted-foreground text-xs">
                         {new Date(row.created_at).toLocaleString()} · {row.status}
                       </p>

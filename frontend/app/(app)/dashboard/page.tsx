@@ -3,9 +3,11 @@
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { FileUp, FileText, Loader2 } from 'lucide-react'
 import { useAuthStore } from '../../state/authStore'
 import { useHistory } from '../../hooks/useHistory'
+import { friendlyHistoryError, savedAnalysisPrimaryLabel } from '@/lib/historyErrors'
 
 function formatScore(s: number | null | undefined): string {
   if (s == null) return '—'
@@ -28,7 +30,7 @@ export default function DashboardPage() {
       <div>
         <h1 className="text-4xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground mt-2">
-          Hi {displayName} — run a new analysis or open a past report.
+          Hi {displayName} — start a new upload or open a saved analysis.
         </p>
       </div>
 
@@ -39,7 +41,7 @@ export default function DashboardPage() {
               <FileUp className="h-5 w-5" />
               New analysis
             </CardTitle>
-            <CardDescription>Upload labs or enter biomarkers to get results.</CardDescription>
+            <CardDescription>Upload or paste a lab file, then run a structured analysis.</CardDescription>
           </CardHeader>
           <CardContent>
             <Button asChild className="w-full sm:w-auto">
@@ -84,12 +86,17 @@ export default function DashboardPage() {
               Loading history…
             </div>
           ) : error ? (
-            <p className="text-sm text-destructive">{error}</p>
+            <Alert variant="destructive">
+              <AlertDescription>
+                <span className="font-semibold block mb-1">Could not load recent analyses</span>
+                {friendlyHistoryError(error)}
+              </AlertDescription>
+            </Alert>
           ) : analyses.length === 0 ? (
             <p className="text-sm text-muted-foreground py-4">
-              Complete an upload to see your analyses here.{' '}
+              When you complete an upload, your saved runs will appear here.{' '}
               <Link href="/upload" className="text-primary underline underline-offset-4">
-                Start an analysis
+                Go to upload
               </Link>
               .
             </p>
@@ -98,7 +105,9 @@ export default function DashboardPage() {
               {analyses.map((row) => (
                 <li key={row.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-sm">
                   <div className="min-w-0">
-                    <p className="font-medium truncate">Analysis {row.id.slice(0, 8)}…</p>
+                    <p className="font-medium truncate" title={row.id}>
+                      {savedAnalysisPrimaryLabel(row.id).line}
+                    </p>
                     <p className="text-muted-foreground text-xs">
                       {new Date(row.created_at).toLocaleString()} · {row.status}
                     </p>
