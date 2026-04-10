@@ -28,6 +28,7 @@ import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAnalysisResult } from '../queries/analysisResult';
 import type { Cluster, ClinicianReportV1 } from '../types/analysis';
+import { extractNarrativeRuntimeMeta } from '@/lib/narrativeRuntimePresentation';
 
 function pickPrimaryDriverCluster(clusters: Cluster[]): { id: string; name: string; biomarkers: string[] } | null {
   const sevRank: Record<string, number> = { critical: 4, high: 3, moderate: 2, low: 1 };
@@ -125,6 +126,11 @@ export default function ResultsPage() {
   const clusters = currentAnalysis?.clusters ?? [];
   const clinicianReport = currentAnalysis?.clinician_report_v1;
   const { created_at, completed_at } = currentAnalysis || {};
+
+  const narrativeRuntime = useMemo(
+    () => extractNarrativeRuntimeMeta(currentAnalysis?.meta),
+    [currentAnalysis?.meta]
+  );
 
   const primaryDriver = useMemo(() => pickPrimaryDriverCluster(clusters), [clusters]);
   const missingChapterLine = useMemo(
@@ -563,21 +569,7 @@ export default function ResultsPage() {
                     </TabsContent>
 
                     <TabsContent value="insights" className="space-y-6">
-                      {insights && insights.length > 0 ? (
-                        <InsightsPanel insights={insights} />
-                      ) : (
-                        <Card>
-                          <CardContent className="pt-6">
-                            <div className="text-center py-8">
-                              <TrendingUp className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                              <p className="text-gray-500">No narrative summaries for this result yet.</p>
-                              <p className="text-sm text-gray-500 mt-2 max-w-md mx-auto">
-                                Your structured interpretation is in the hero and clinician report above.
-                              </p>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      )}
+                      <InsightsPanel insights={insights} narrativeRuntime={narrativeRuntime} />
                     </TabsContent>
 
                     <TabsContent value="clinician" className="space-y-6">

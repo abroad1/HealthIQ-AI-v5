@@ -11,7 +11,21 @@ describe('InsightsPanel narrative framing (FE-S2A)', () => {
     expect(screen.getByText('Narrative summaries')).toBeInTheDocument();
     expect(screen.getByText(/Plain-language summaries derived from your structured analysis/i)).toBeInTheDocument();
     expect(screen.queryByText('Health Insights')).not.toBeInTheDocument();
-    expect(screen.getByText('No narrative summaries for this result yet.')).toBeInTheDocument();
+    expect(screen.getByText(/No narrative summaries on this result/i)).toBeInTheDocument();
+  });
+
+  it('FE-S2B: shows runtime-aware copy when narrative is disabled by policy', () => {
+    render(
+      <InsightsPanel
+        insights={[]}
+        narrativeRuntime={{
+          synthesizer_allow_llm_resolved: false,
+          policy_reason: 'HEALTHIQ_NARRATIVE_LLM_not_set_default_off',
+        }}
+      />
+    );
+    expect(screen.getByText('Narrative summaries not generated for this run')).toBeInTheDocument();
+    expect(screen.getByText(/not enabled in this environment/i)).toBeInTheDocument();
   });
 
   it('keeps narrative framing when summaries exist', async () => {

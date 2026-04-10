@@ -193,6 +193,25 @@ export interface ClinicianReportV1 {
   suppressed_confirmatory_tests: string[];
 }
 
+/**
+ * Backend `meta.narrative_runtime` — mirrors narrative_runtime_policy.narrative_runtime_meta_from_decision
+ * plus optional `outcome` from synthesis when live call yields no validated insights.
+ */
+export interface NarrativeRuntimeMetaV1 {
+  policy_version?: string;
+  runtime_mode?: string;
+  client_kind?: string;
+  synthesizer_allow_llm_resolved?: boolean;
+  master_switch_HEALTHIQ_NARRATIVE_LLM?: boolean;
+  HEALTHIQ_ENABLE_LLM?: boolean;
+  HEALTHIQ_MODE?: string;
+  LLM_ENABLED?: boolean;
+  policy_reason?: string;
+  client_constructor_injected?: boolean;
+  /** e.g. no_validated_insights_after_live_call — see backend core/insights/synthesis.py */
+  outcome?: string;
+}
+
 export interface AnalysisResult {
   analysis_id: string;
   biomarkers: BiomarkerResult[];
@@ -205,6 +224,7 @@ export interface AnalysisResult {
   result_version?: string;
   risk_assessment?: Record<string, any>;
   recommendations?: string[];
+  /** Includes `narrative_runtime` when backend orchestrator attaches runtime metadata. */
   meta?: Record<string, any>;
   clinician_report_v1?: ClinicianReportV1 | null;
 }
