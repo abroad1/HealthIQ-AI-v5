@@ -1,19 +1,19 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "FE-S2A",
+  "work_id": "FE-S2B",
   "status": "HARDENED",
-  "hardened_utc": "2026-04-09T00:00:00Z",
+  "hardened_utc": "2026-04-10T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: FE-S2A"
+      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: FE-S2B"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: feature/fe-s2a-narrative-presentation-framing"
+      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: feature/fe-s2b-narrative-runtime-state-presentation"
     },
     {
       "check": "Front Matter — risk_level",
@@ -33,76 +33,71 @@
     {
       "check": "2A — Governing preflight on disk",
       "result": "CONFIRMED",
-      "citation": "docs/investigations/FE_S2_NARRATIVE_PRESENTATION_PREFLIGHT.md line 1: heading 'FE-S2 Narrative Presentation Layer — Preflight (READ-ONLY)'; line 5: 'Scope: Investigation only — no implementation, no sprint start'"
+      "citation": "docs/investigations/FE_S2_NARRATIVE_PRESENTATION_PREFLIGHT.md line 1: heading 'FE-S2 Narrative Presentation Layer — Preflight (READ-ONLY)'; line 5: 'Scope: Investigation only — no implementation, no sprint start'. Section 7 Phase B (lines 200-207) explicitly defines this sprint's scope: types/analysis.ts NarrativeRuntime type, results/page.tsx or small child component for empty states, tests under frontend/tests/**. Section 9 verdict (line 224): SPLIT_INTO_PRESENTATION_AND_RUNTIME_STATE_PHASES — Phase B is FE-S2B."
     },
     {
-      "check": "2A — InsightsPanel.tsx exists and contains 'Health Insights' label",
+      "check": "2A — meta.narrative_runtime shape confirmed from backend source",
       "result": "CONFIRMED",
-      "citation": "frontend/app/components/insights/InsightsPanel.tsx line 46: CardTitle text 'Health Insights' (empty state); line 116: CardTitle text 'Health Insights' (populated state)"
+      "citation": "backend/core/insights/narrative_runtime_policy.py lines 160-171: narrative_runtime_meta_from_decision() returns {policy_version: '1.0.0', runtime_mode: 'live_gemini'|'deterministic_mock', client_kind: str, synthesizer_allow_llm_resolved: bool, master_switch_HEALTHIQ_NARRATIVE_LLM: bool, HEALTHIQ_ENABLE_LLM: bool, HEALTHIQ_MODE: str, LLM_ENABLED: bool, policy_reason: str, client_constructor_injected: bool}. Optional 'outcome' key appended at backend/core/insights/synthesis.py lines 540-542 when runtime_mode=='live_gemini' and all_insights empty. runtime_mode is the designed stable FE discriminator per line 147 docstring: 'Stable, replay-friendly narrative runtime metadata'."
     },
     {
-      "check": "2A — results/page.tsx contains 'engine insight' Alert copy",
+      "check": "2A — Backend emits narrative_runtime into meta on API path",
       "result": "CONFIRMED",
-      "citation": "frontend/app/results/page.tsx lines 553-560: Alert containing '{insights.length} engine insight{...} available — open the \"All insights\" tab for the full list.'"
+      "citation": "backend/core/pipeline/orchestrator.py lines 2112-2115: nrm = ss.get('narrative_runtime'); if isinstance(nrm, dict): meta['narrative_runtime'] = nrm. frontend/app/services/analysis.ts line 126: meta: result.meta || {} — meta.narrative_runtime already passes through to the store. No service change required."
     },
     {
-      "check": "2A — Hero is driven by clinician_report_v1.sections.page1, not insights[]",
+      "check": "2A — FE currently does NOT consume meta.narrative_runtime",
       "result": "CONFIRMED",
-      "citation": "frontend/app/components/insights/InsightPanel.tsx line 52: 'const page1 = report?.sections?.page1'; frontend/app/results/page.tsx line 126: 'const clinicianReport = currentAnalysis?.clinician_report_v1'; line 398: '<InsightPanel report={clinicianReport} .../>'"
+      "citation": "frontend/app/results/page.tsx — 601 lines read; no reference to meta or narrative_runtime. frontend/app/components/insights/InsightsPanel.tsx lines 40-58: empty state shows generic 'No insights available yet.' with no runtime awareness. Confirmed independently and cross-referenced with preflight §6.1 (line 164-166)."
     },
     {
-      "check": "2A — InsightsPanel is behind Advanced Analysis 'All insights' tab only",
+      "check": "2A — No NarrativeRuntime type in FE types",
       "result": "CONFIRMED",
-      "citation": "frontend/app/results/page.tsx lines 563-576: InsightsPanel rendered only inside TabsContent value='insights', which is Advanced analysis tab index 2 (line 467-469: TabsTrigger value='insights' labeled 'All insights')"
+      "citation": "frontend/app/types/analysis.ts line 208: meta?: Record<string, any> — fully untyped. No NarrativeRuntime interface in the 239-line file. Preflight §4.1 (line 118) confirms same finding. Sprint is not a no-op."
     },
     {
-      "check": "2A — Clinician report in separate tab from insights[]",
+      "check": "2A — Sprint scope files identified in preflight",
       "result": "CONFIRMED",
-      "citation": "frontend/app/results/page.tsx lines 578-580: TabsContent value='clinician' contains ClinicianReportRenderer; line 471-474: TabsTrigger value='clinician' labeled 'Clinician report'. Entirely separate from 'All insights' TabsContent."
+      "citation": "Preflight §7 Phase B lines 200-207: 'frontend/app/types/analysis.ts (narrow type for narrative_runtime); frontend/app/results/page.tsx or small child component (empty states); Tests under frontend/tests/** for state matrix'. Matches prompt scope lines 119-229."
     },
     {
-      "check": "2A — No meta.narrative_runtime consumption in results page or insight components",
+      "check": "2B — MIXED change_type is correct",
       "result": "CONFIRMED",
-      "citation": "frontend/app/results/page.tsx: no reference to meta.narrative_runtime found. frontend/app/components/insights/InsightsPanel.tsx: no meta reference. frontend/app/components/insights/InsightPanel.tsx: no meta reference. Consistent with preflight §6.1 finding."
+      "citation": "Typing additions to frontend/app/types/analysis.ts = CONTENT class. Rendering/state-handling changes to results/page.tsx and InsightsPanel.tsx = BEHAVIOUR class. Combined scope justifies MIXED per SOP §4. Preflight §4.3 (lines 129-133) confirms FE typing is 'Recommended for Phase B' and no backend change required."
     },
     {
-      "check": "2A — ClinicianReportRenderer.tsx exists and has distinct title 'Clinician Summary Report'",
+      "check": "2B — Behavioural scope explicitly defined",
       "result": "CONFIRMED",
-      "citation": "frontend/app/components/results/ClinicianReportRenderer.tsx lines 81-87 (null case): CardTitle 'Clinician Summary Report'; lines 99-103 (populated): CardTitle 'Clinician Summary Report'"
+      "citation": "Prompt lines 113-229: adds NarrativeRuntime type, consumes meta.narrative_runtime, presents truthful empty/degraded states. Preflight §6.2 (lines 170-176) defines the exact state matrix (narrative disabled / validator rejected / unavailable vs nothing qualifying). Preflight §6.3 recommends 'non-alarmist status' copy."
     },
     {
-      "check": "2B — Behavioural scope defined: copy/label changes only, no ranking or output logic change",
+      "check": "2B — STOP conditions protect behavioural correctness",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 121-127: REQUIRED scope is 'revise labels such as Health Insights / engine insights'; lines 200-209: runtime-state OUT OF SCOPE ('do not read or interpret meta.narrative_runtime'); lines 255-264: OUT OF SCOPE list includes no backend changes, no new contracts, no reasoning logic. InsightsPanel.tsx lines 70-76: severity/confidence sort logic — NOT in scope for this sprint."
+      "citation": "Prompt lines 300-316: STOP if metadata does not support distinctions; STOP if FE must invent assumptions; STOP if drift into backend/hero/clinician report. Prompt line 157: 'if two states cannot be cleanly distinguished from existing metadata, do not fake the distinction'. Preflight §6.3 line 179: 'Phase 1: Safe silent omission or generic empty state remains acceptable if copy avoids implying a bug'."
     },
     {
-      "check": "2B — Regression targets identified (label/copy changes, hero separation, clinician report separation, no runtime logic introduction)",
+      "check": "2B — Regression targets included",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 219-228: regression must prove narrative-related labels reflect translation-layer framing; hero remains separate and deterministic; clinician report remains separate; no runtime-state logic silently introduced; no backend contract change required."
+      "citation": "Prompt lines 217-229: 6 targeted coverage items. Acceptance criteria lines 288-298: 7 measurable gates. Preflight §7 Phase B line 206: 'explicit matrix of empty/populated states + tests'. No full state-matrix explosion required — prompt line 230 confirms 'keep this targeted'."
     },
     {
-      "check": "2B — No scope creep into Intelligence Core: no backend/core/pipeline, no backend/core/analytics, no scoring, no signal evaluator touched",
+      "check": "2B — Determinism risks surfaced",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 255-264: OUT OF SCOPE explicitly includes 'No backend narrative changes', 'No new narrative contracts', 'No new reasoning logic'. All file paths in REQUIRED IN SCOPE are frontend/app/** only (lines 115-228)."
+      "citation": "runtime_mode is the stable FE discriminator (narrative_runtime_policy.py:147). Prompt line 266: 'Only distinguish states the backend metadata genuinely supports'. InsightsPanel.tsx lines 70-76: severity/confidence sort logic is untouched by this sprint — no client-side re-ranking. No emitted reasoning changes from Intelligence Core."
     },
     {
-      "check": "2B — STOP conditions protect behavioural correctness and prevent silent drift",
+      "check": "2B — No Intelligence Core components touched",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 309-318: STOP if framing requires broader results-page redesign; STOP if visibility requires promoting narrative above hero; STOP if clinician/narrative cannot stay distinct without larger UX rework; STOP if work drifts into meta.narrative_runtime; STOP if widening into FE-LAUNCH-INTEGRATION."
+      "citation": "All in-scope files are FE-only: frontend/app/types/analysis.ts, frontend/app/services/analysis.ts, frontend/app/results/page.tsx, frontend/app/components/insights/InsightsPanel.tsx. None appear in SOP §3 Intelligence Core list. Prompt lines 202-210: 'No backend code changes, no new DTO fields, no changes to narrative generation policy'."
     },
     {
-      "check": "2B — Determinism risk assessment: no client-side re-ranking or analytical output change",
+      "check": "2B — Tooling file leakage",
       "result": "CONFIRMED",
-      "citation": "InsightsPanel.tsx lines 70-76: sort by severityOrder then confidence — untouched by this sprint. InsightCard.tsx: renders fields only (lines 88-187), no computation. results/page.tsx: pickPrimaryDriverCluster (lines 32-48) and computeMissingChapterLine (lines 50-94) are deterministic utility functions — not in sprint scope. No emitted reasoning changes."
-    },
-    {
-      "check": "2B — No tooling file leakage expected",
-      "result": "CONFIRMED",
-      "citation": "Sprint scope is frontend/app/components/insights/*.tsx and frontend/app/results/page.tsx per prompt lines 115-228. No .codex/, .vscode/, or AGENTS.md paths mentioned or implied."
+      "citation": "Prompt scope targets no tooling directories. All governed sprint files are under frontend/. No .codex/, .vscode/, or AGENTS.md involvement."
     }
   ],
-  "content_review": "COMPLETE — Governing preflight FE_S2_NARRATIVE_PRESENTATION_PREFLIGHT.md read with line citations. Source files InsightsPanel.tsx, InsightPanel.tsx, InsightCard.tsx, ClinicianReportRenderer.tsx, results/page.tsx all read. Framing debt confirmed real ('Health Insights' at InsightsPanel.tsx:46,116; 'engine insight' at results/page.tsx:556). Sprint is not a no-op.",
-  "behaviour_review": "COMPLETE — MIXED designation reviewed: scope is presentation copy/labels only, no ranking logic, no analytical pipeline, no backend, no meta.narrative_runtime consumption. InsightsPanel.tsx:70-76 sort logic not in scope. deterministic hero chain (InsightPanel → clinician_report_v1.sections.page1) unchanged. STOP conditions protect against all identified drift vectors.",
+  "content_review": "COMPLETE — Governing preflight FE_S2_NARRATIVE_PRESENTATION_PREFLIGHT.md read in full (282 lines). meta.narrative_runtime shape read from narrative_runtime_policy.py:160-171 and synthesis.py:540-542. FE types, results page, InsightsPanel, and analysis service all read. Sprint is not a no-op: NarrativeRuntime type absent (types/analysis.ts:208), meta.narrative_runtime unconsummed (results/page.tsx:601 lines, InsightsPanel.tsx:40-58).",
+  "behaviour_review": "COMPLETE — MIXED classification verified. FE typing = CONTENT, state rendering = BEHAVIOUR. STOP conditions present and targeted. Regression scope declared. Intelligence Core not touched. runtime_mode confirmed as stable FE-facing discriminator (narrative_runtime_policy.py:147). No client-side re-ranking. InsightsPanel.tsx:70-76 sort logic not in sprint scope.",
   "stage_2c_checklist_in_response": true,
   "escalation_required": false
 }
