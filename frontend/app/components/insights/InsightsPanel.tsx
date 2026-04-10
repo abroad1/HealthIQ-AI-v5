@@ -8,9 +8,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronDown, ChevronRight, Filter, BarChart3, TrendingUp } from 'lucide-react';
 import { InsightCard, Insight } from './InsightCard';
+import type { NarrativeRuntimeMetaV1 } from '@/types/analysis';
+import { narrativeEmptyPresentation } from '@/lib/narrativeRuntimePresentation';
 
 interface InsightsPanelProps {
   insights: Insight[];
+  /** Backend runtime metadata for truthful empty states when `insights` is empty */
+  narrativeRuntime?: NarrativeRuntimeMetaV1;
   className?: string;
 }
 
@@ -29,7 +33,7 @@ const severityOrder = {
   info: 1
 };
 
-export function InsightsPanel({ insights, className = '' }: InsightsPanelProps) {
+export function InsightsPanel({ insights, narrativeRuntime, className = '' }: InsightsPanelProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedSeverity, setSelectedSeverity] = useState<string>('all');
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
@@ -38,6 +42,13 @@ export function InsightsPanel({ insights, className = '' }: InsightsPanelProps) 
   const safeInsights = insights ?? [];
 
   if (!safeInsights.length) {
+    const pres = narrativeEmptyPresentation(0, narrativeRuntime);
+    const bodyTitle = pres.variant === 'empty' ? pres.title : 'No narrative summaries for this result yet.';
+    const bodyDetail =
+      pres.variant === 'empty'
+        ? pres.detail
+        : 'When your run produces them, they will appear here. Use the hero interpretation and clinician report for the primary structured view.';
+
     return (
       <Card className={className}>
         <CardHeader>
@@ -53,11 +64,8 @@ export function InsightsPanel({ insights, className = '' }: InsightsPanelProps) 
         <CardContent>
           <div className="text-center py-8 text-gray-500">
             <TrendingUp className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-            <p>No narrative summaries for this result yet.</p>
-            <p className="text-sm">
-              When your run produces them, they will appear here. Use the hero interpretation and clinician report for
-              the primary structured view.
-            </p>
+            <p className="font-medium text-gray-700">{bodyTitle}</p>
+            <p className="text-sm mt-2 max-w-lg mx-auto leading-relaxed">{bodyDetail}</p>
           </div>
         </CardContent>
       </Card>
