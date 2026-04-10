@@ -17,8 +17,8 @@ import {
   ChevronDown,
   ChevronRight,
 } from 'lucide-react';
-import { useAnalysisStore } from '../state/analysisStore';
-import { useClusterStore } from '../state/clusterStore';
+import { useAnalysisStore } from '@/state/analysisStore';
+import { useClusterStore } from '@/state/clusterStore';
 import { InsightsPanel } from '@/components/insights/InsightsPanel';
 import { InsightPanel } from '@/components/insights/InsightPanel';
 import BiomarkerDials, { type BiomarkerDialEntry } from '@/components/biomarkers/BiomarkerDials';
@@ -26,8 +26,9 @@ import ClusterSummary from '@/components/clusters/ClusterSummary';
 import ClinicianReportRenderer from '@/components/results/ClinicianReportRenderer';
 import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useAnalysisResult } from '../queries/analysisResult';
-import type { Cluster, ClinicianReportV1 } from '../types/analysis';
+import { useAnalysisResult } from '@/queries/analysisResult';
+import type { Cluster, ClinicianReportV1 } from '@/types/analysis';
+import Link from 'next/link';
 import { extractNarrativeRuntimeMeta } from '@/lib/narrativeRuntimePresentation';
 
 function pickPrimaryDriverCluster(clusters: Cluster[]): { id: string; name: string; biomarkers: string[] } | null {
@@ -118,7 +119,11 @@ export default function ResultsPage() {
   const [advancedOpen, setAdvancedOpen] = useState(false);
 
   const idToFetch = currentAnalysisId || analysisIdFromUrl;
-  const { isLoading: isResultLoading } = useAnalysisResult(idToFetch || null);
+  const {
+    isLoading: isResultLoading,
+    isError: isResultFetchError,
+    error: resultFetchError,
+  } = useAnalysisResult(idToFetch || null);
   const isFetchingFromUrl = !!idToFetch && isResultLoading;
 
   const insights = currentAnalysis?.insights ?? [];
@@ -244,6 +249,45 @@ export default function ResultsPage() {
                 </Button>
                 <Button onClick={handleNewAnalysis} variant="outline" className="w-full">
                   Start New Analysis
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (
+    !isAnalyzing &&
+    !isFetchingFromUrl &&
+    !!idToFetch &&
+    isResultFetchError &&
+    !currentAnalysis
+  ) {
+    const msg =
+      resultFetchError instanceof Error ? resultFetchError.message : 'Could not load this analysis.';
+    const signInHref = `/login?next=${encodeURIComponent(
+      `/results?analysis_id=${encodeURIComponent(idToFetch)}`
+    )}`;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-6">
+            <div className="text-center space-y-3">
+              <AlertCircle className="h-16 w-16 text-amber-500 mx-auto mb-2" />
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Could not open this result</h2>
+              <p className="text-gray-600 text-sm">{msg}</p>
+              <p className="text-gray-500 text-xs">
+                Saved analyses are tied to your account. Sign in with the same account you used when you ran the
+                analysis, or start a new upload.
+              </p>
+              <div className="flex flex-col gap-2 pt-2">
+                <Button asChild className="w-full">
+                  <Link href={signInHref}>Sign in to retry</Link>
+                </Button>
+                <Button asChild variant="outline" className="w-full">
+                  <Link href="/upload">New analysis</Link>
                 </Button>
               </div>
             </div>

@@ -47,15 +47,19 @@ export default function LandingPage() {
         </h1>
           
           <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground md:text-xl">
-            Stop wondering what your numbers mean. Get personalized health insights powered by advanced AI analysis in minutes, not days.
+            Stop wondering what your numbers mean. Sign in to run a structured biomarker analysis and view your
+            interpretation, system groups, and clinician-grade report in one place.
           </p>
           
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button asChild size="lg" className="gap-2 text-lg">
-              <Link href="/upload">
-                Get Your Analysis
+              <Link href="/login?next=/upload">
+                Sign in to analyze
                 <ArrowRight className="h-5 w-5" />
               </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg">
+              <Link href="/register?next=/upload">Create account</Link>
             </Button>
             <Button asChild variant="outline" size="lg">
               <Link href="/demo">View Demo</Link>
@@ -164,8 +168,8 @@ export default function LandingPage() {
               Join thousands who&apos;ve taken control of their health journey with data-driven insights.
             </p>
             <Button asChild size="lg" className="gap-2 text-lg">
-              <Link href="/upload">
-                Start Your Analysis
+              <Link href="/login?next=/upload">
+                Sign in to start
                 <ArrowRight className="h-5 w-5" />
               </Link>
             </Button>

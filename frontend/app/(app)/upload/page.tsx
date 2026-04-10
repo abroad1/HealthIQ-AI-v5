@@ -8,13 +8,14 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Upload, FileText, Database, AlertCircle, CheckCircle, FileUp, Type } from 'lucide-react';
 import BiomarkerForm from '@/components/forms/BiomarkerForm';
 import QuestionnaireForm from '@/components/forms/QuestionnaireForm';
-import FileDropzone from '../components/upload/FileDropzone';
-import PasteInput from '../components/upload/PasteInput';
-import ParsedTable from '../components/preview/ParsedTable';
-import { useAnalysisStore } from '../state/analysisStore';
-import { useUploadStore, useUploadStatus, useParsedData } from '../state/upload';
-import { useParseUpload } from '../queries/parsing';
-import { useAnalysisResult } from '../queries/analysisResult';
+import FileDropzone from '@/components/upload/FileDropzone';
+import PasteInput from '@/components/upload/PasteInput';
+import ParsedTable from '@/components/preview/ParsedTable';
+import { useAnalysisStore } from '@/state/analysisStore';
+import { useUploadStore, useUploadStatus, useParsedData } from '@/state/upload';
+import { useParseUpload } from '@/queries/parsing';
+import { useAnalysisResult } from '@/queries/analysisResult';
+import { useAuthStore } from '@/state/authStore';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function UploadPage() {
@@ -25,6 +26,7 @@ export default function UploadPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   
   const { startAnalysis, isLoading: isAnalyzing, currentPhase, currentAnalysisId, error: analysisError } = useAnalysisStore();
+  const sessionUser = useAuthStore((s) => s.user);
   const router = useRouter();
 
   // Single source of truth: prefetch result when complete so results page gets cache hit
@@ -233,12 +235,23 @@ export default function UploadPage() {
       }
       
       console.log("🔄 Converted user data:", { age, sex, height: heightInCm, weight: weightInKg });
-      
+
+      const resolvedUserId =
+        (typeof questionnaireData?.user_id === 'string' && questionnaireData.user_id.trim()
+          ? questionnaireData.user_id.trim()
+          : null) || sessionUser?.id;
+      if (!resolvedUserId) {
+        setSubmitError(
+          'Your signed-in account could not be resolved. Please sign out and sign in again before starting an analysis.'
+        );
+        return;
+      }
+
       // Prepare analysis payload WITH questionnaire data (canonical field names, CONTEXT-HARDENING-A)
       const payload = {
         biomarkers: biomarkersObject,
         user: {
-          user_id: questionnaireData?.user_id || "5029514b-f7fd-4dff-8d60-4fb8b7f90dd4",
+          user_id: resolvedUserId,
           chronological_age: age,
           sex: sex,
           height_cm: heightInCm,

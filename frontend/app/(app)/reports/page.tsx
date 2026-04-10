@@ -72,7 +72,7 @@ export default function ReportsPage() {
                         {formatScore(row.overall_score)}
                       </span>
                       <Button asChild size="sm">
-                        <Link href={`/results?analysis_id=${encodeURIComponent(row.id)}`}>View results</Link>
+                        <Link href={`/analysis/${encodeURIComponent(row.id)}`}>View results</Link>
                       </Button>
                     </div>
                   </li>
