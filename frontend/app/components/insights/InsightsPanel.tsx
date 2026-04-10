@@ -1,16 +1,20 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronDown, ChevronRight, Filter, BarChart3, TrendingUp } from 'lucide-react';
 import { InsightCard, Insight } from './InsightCard';
+import type { NarrativeRuntimeMetaV1 } from '@/types/analysis';
+import { narrativeEmptyPresentation } from '@/lib/narrativeRuntimePresentation';
 
 interface InsightsPanelProps {
   insights: Insight[];
+  /** Backend runtime metadata for truthful empty states when `insights` is empty */
+  narrativeRuntime?: NarrativeRuntimeMetaV1;
   className?: string;
 }
 
@@ -29,7 +33,7 @@ const severityOrder = {
   info: 1
 };
 
-export function InsightsPanel({ insights, className = '' }: InsightsPanelProps) {
+export function InsightsPanel({ insights, narrativeRuntime, className = '' }: InsightsPanelProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedSeverity, setSelectedSeverity] = useState<string>('all');
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
@@ -38,19 +42,30 @@ export function InsightsPanel({ insights, className = '' }: InsightsPanelProps) 
   const safeInsights = insights ?? [];
 
   if (!safeInsights.length) {
+    const pres = narrativeEmptyPresentation(0, narrativeRuntime);
+    const bodyTitle = pres.variant === 'empty' ? pres.title : 'No narrative summaries for this result yet.';
+    const bodyDetail =
+      pres.variant === 'empty'
+        ? pres.detail
+        : 'When your run produces them, they will appear here. Use the hero interpretation and clinician report for the primary structured view.';
+
     return (
       <Card className={className}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5" />
-            Health Insights
+            Narrative summaries
           </CardTitle>
+          <CardDescription>
+            Plain-language summaries derived from your structured analysis. They complement the hero interpretation and
+            clinician report — not a separate source of clinical truth.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 text-gray-500">
             <TrendingUp className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-            <p>No insights available yet.</p>
-            <p className="text-sm">Complete your biomarker analysis to generate personalized health insights.</p>
+            <p className="font-medium text-gray-700">{bodyTitle}</p>
+            <p className="text-sm mt-2 max-w-lg mx-auto leading-relaxed">{bodyDetail}</p>
           </div>
         </CardContent>
       </Card>
@@ -114,11 +129,11 @@ export function InsightsPanel({ insights, className = '' }: InsightsPanelProps) 
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5" />
-            Health Insights
+            Narrative summaries
           </CardTitle>
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-sm">
-              {totalInsights} insights
+              {totalInsights} summaries
             </Badge>
             {criticalInsights > 0 && (
               <Badge variant="destructive" className="text-sm">
@@ -127,12 +142,16 @@ export function InsightsPanel({ insights, className = '' }: InsightsPanelProps) 
             )}
           </div>
         </div>
+        <CardDescription className="pt-1">
+          Readable summaries from structured results. They sit alongside — not above — the deterministic interpretation
+          in the hero and the structured clinician report.
+        </CardDescription>
 
         {/* Summary Statistics */}
         <div className="grid grid-cols-3 gap-4 pt-4">
           <div className="text-center">
             <div className="text-2xl font-bold text-gray-900">{totalInsights}</div>
-            <div className="text-sm text-gray-500">Total Insights</div>
+            <div className="text-sm text-gray-500">Total summaries</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-red-600">{criticalInsights + warningInsights}</div>

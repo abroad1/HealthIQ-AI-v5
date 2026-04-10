@@ -57,7 +57,7 @@ test.describe('Health Analysis Workflow', () => {
     
     // 9. Check AI insights tab
     await page.getByText('AI Insights').click();
-    await expect(page.getByText('Health Insights')).toBeVisible();
+    await expect(page.getByText('Narrative summaries')).toBeVisible();
   });
 
   test('questionnaire analysis workflow', async ({ page }) => {
@@ -197,7 +197,7 @@ test.describe('Health Analysis Workflow', () => {
     await expect(page.getByText('Health Clusters')).toBeVisible();
     
     await page.getByText('AI Insights').click();
-    await expect(page.getByText('Health Insights')).toBeVisible();
+    await expect(page.getByText('Narrative summaries')).toBeVisible();
     
     // 3. Test show/hide details toggle
     await page.getByText('Show Details').click();
