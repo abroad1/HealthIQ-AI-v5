@@ -28,6 +28,7 @@ import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAnalysisResult } from '../queries/analysisResult';
 import type { Cluster, ClinicianReportV1 } from '../types/analysis';
+import { extractNarrativeRuntimeMeta } from '@/lib/narrativeRuntimePresentation';
 
 function pickPrimaryDriverCluster(clusters: Cluster[]): { id: string; name: string; biomarkers: string[] } | null {
   const sevRank: Record<string, number> = { critical: 4, high: 3, moderate: 2, low: 1 };
@@ -126,6 +127,11 @@ export default function ResultsPage() {
   const clinicianReport = currentAnalysis?.clinician_report_v1;
   const { created_at, completed_at } = currentAnalysis || {};
 
+  const narrativeRuntime = useMemo(
+    () => extractNarrativeRuntimeMeta(currentAnalysis?.meta),
+    [currentAnalysis?.meta]
+  );
+
   const primaryDriver = useMemo(() => pickPrimaryDriverCluster(clusters), [clusters]);
   const missingChapterLine = useMemo(
     () => computeMissingChapterLine(clinicianReport, primaryDriver),
@@ -210,7 +216,7 @@ export default function ResultsPage() {
               <p className="text-gray-600 mb-4">
                 {isFetchingFromUrl
                   ? 'Fetching your analysis results from the server...'
-                  : 'Our AI is processing your biomarker data and generating personalized insights. This may take a few moments.'}
+                  : 'We are processing your biomarker data and structured analysis. Short narrative summaries may appear later under Advanced analysis when available. This may take a few moments.'}
               </p>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div className="bg-blue-600 h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
@@ -453,7 +459,8 @@ export default function ResultsPage() {
                   </Button>
                 </div>
                 <CardDescription>
-                  Clinician-oriented detail, full insight list, and technical context — same page, progressive disclosure.
+                  Structured clinician report, readable narrative summaries from your results, and technical context —
+                  same page, progressive disclosure.
                 </CardDescription>
               </CardHeader>
               {advancedOpen ? (
@@ -466,7 +473,7 @@ export default function ResultsPage() {
                       </TabsTrigger>
                       <TabsTrigger value="insights" className="flex items-center gap-2 text-xs sm:text-sm">
                         <TrendingUp className="h-4 w-4 shrink-0" />
-                        All insights
+                        Narrative
                       </TabsTrigger>
                       <TabsTrigger value="clinician" className="flex items-center gap-2 text-xs sm:text-sm">
                         <AlertCircle className="h-4 w-4 shrink-0" />
@@ -553,26 +560,16 @@ export default function ResultsPage() {
                       {insights && insights.length > 0 ? (
                         <Alert>
                           <AlertDescription>
-                            {insights.length} engine insight{insights.length === 1 ? '' : 's'} available — open the
-                            &quot;All insights&quot; tab for the full list.
+                            {insights.length} short narrative summar{insights.length === 1 ? 'y' : 'ies'} available —
+                            open the &quot;Narrative&quot; tab for the full list. These summaries complement the hero
+                            interpretation; they are not the primary structured report.
                           </AlertDescription>
                         </Alert>
                       ) : null}
                     </TabsContent>
 
                     <TabsContent value="insights" className="space-y-6">
-                      {insights && insights.length > 0 ? (
-                        <InsightsPanel insights={insights} />
-                      ) : (
-                        <Card>
-                          <CardContent className="pt-6">
-                            <div className="text-center py-8">
-                              <TrendingUp className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                              <p className="text-gray-500">No insights available yet.</p>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      )}
+                      <InsightsPanel insights={insights} narrativeRuntime={narrativeRuntime} />
                     </TabsContent>
 
                     <TabsContent value="clinician" className="space-y-6">
