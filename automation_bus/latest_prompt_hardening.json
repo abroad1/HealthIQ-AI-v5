@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "FE-S2B",
+  "work_id": "FE-LAUNCH-INTEGRATION-A",
   "status": "HARDENED",
   "hardened_utc": "2026-04-10T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
@@ -8,17 +8,17 @@
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: FE-S2B"
+      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: FE-LAUNCH-INTEGRATION-A"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: feature/fe-s2b-narrative-runtime-state-presentation"
+      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: feature/fe-launch-integration-a-coherence-journey-shell"
     },
     {
-      "check": "Front Matter — risk_level",
+      "check": "Front Matter — risk_level HIGH",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: STANDARD"
+      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: HIGH. Defensible: sprint modifies frontend/middleware.ts (auth routing = behavioural logic per SOP §10). HIGH requires Claude audit + GPT architectural review + dual approval before merge."
     },
     {
       "check": "Front Matter — execution_model",
@@ -26,78 +26,84 @@
       "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model: TWO_PHASE_START_FINISH"
     },
     {
-      "check": "Front Matter — change_type",
+      "check": "Front Matter — change_type MIXED",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: MIXED"
+      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: MIXED. Route/navigation label changes = CONTENT class; middleware auth routing logic + shell layout changes = BEHAVIOUR class."
     },
     {
       "check": "2A — Governing preflight on disk",
       "result": "CONFIRMED",
-      "citation": "docs/investigations/FE_S2_NARRATIVE_PRESENTATION_PREFLIGHT.md line 1: heading 'FE-S2 Narrative Presentation Layer — Preflight (READ-ONLY)'; line 5: 'Scope: Investigation only — no implementation, no sprint start'. Section 7 Phase B (lines 200-207) explicitly defines this sprint's scope: types/analysis.ts NarrativeRuntime type, results/page.tsx or small child component for empty states, tests under frontend/tests/**. Section 9 verdict (line 224): SPLIT_INTO_PRESENTATION_AND_RUNTIME_STATE_PHASES — Phase B is FE-S2B."
+      "citation": "docs/investigations/FE_LAUNCH_INTEGRATION_PREFLIGHT.md line 1: heading 'FE-LAUNCH-INTEGRATION Preflight — Product Coherence and Launch Readiness'. Section 7 Phase A (lines 136-139) lists exactly the same surfaces as prompt scope. Section 6 (lines 119-126) ranks the 6 launch-critical gaps that justify this sprint. Section 1 confirms FE-LAUNCH-INTEGRATION is justified now (line 31)."
     },
     {
-      "check": "2A — meta.narrative_runtime shape confirmed from backend source",
+      "check": "2A — Dual-shell gap confirmed: /upload and /results outside (app) shell",
       "result": "CONFIRMED",
-      "citation": "backend/core/insights/narrative_runtime_policy.py lines 160-171: narrative_runtime_meta_from_decision() returns {policy_version: '1.0.0', runtime_mode: 'live_gemini'|'deterministic_mock', client_kind: str, synthesizer_allow_llm_resolved: bool, master_switch_HEALTHIQ_NARRATIVE_LLM: bool, HEALTHIQ_ENABLE_LLM: bool, HEALTHIQ_MODE: str, LLM_ENABLED: bool, policy_reason: str, client_constructor_injected: bool}. Optional 'outcome' key appended at backend/core/insights/synthesis.py lines 540-542 when runtime_mode=='live_gemini' and all_insights empty. runtime_mode is the designed stable FE discriminator per line 147 docstring: 'Stable, replay-friendly narrative runtime metadata'."
+      "citation": "frontend/middleware.ts lines 5,8: PROTECTED_PREFIXES = ['/dashboard', '/analysis', '/reports', '/settings', '/profile'] — /upload and /results absent. Matcher lines 37-53 lists same paths — /upload and /results not included. frontend/app/(app)/layout.tsx lines 1-23: Header + AppSidebar + Footer provided only under (app) route group. /upload and /results receive no shell chrome."
     },
     {
-      "check": "2A — Backend emits narrative_runtime into meta on API path",
+      "check": "2A — Backend analysis start requires hard auth (not optional)",
       "result": "CONFIRMED",
-      "citation": "backend/core/pipeline/orchestrator.py lines 2112-2115: nrm = ss.get('narrative_runtime'); if isinstance(nrm, dict): meta['narrative_runtime'] = nrm. frontend/app/services/analysis.ts line 126: meta: result.meta || {} — meta.narrative_runtime already passes through to the store. No service change required."
+      "citation": "backend/app/routes/analysis.py line 81: auth_user: CurrentUser = Depends(require_analysis_submitter) — hard auth dependency on POST /api/analysis/start. frontend/app/page.tsx lines 55,167: landing CTAs both link to /upload with no auth gate or sign-in prompt. Gap between frontend journey and backend requirement is real and confirmed in repo."
     },
     {
-      "check": "2A — FE currently does NOT consume meta.narrative_runtime",
+      "check": "2A — /analysis/[id] is a confirmed stub",
       "result": "CONFIRMED",
-      "citation": "frontend/app/results/page.tsx — 601 lines read; no reference to meta or narrative_runtime. frontend/app/components/insights/InsightsPanel.tsx lines 40-58: empty state shows generic 'No insights available yet.' with no runtime awareness. Confirmed independently and cross-referenced with preflight §6.1 (line 164-166)."
+      "citation": "frontend/app/(app)/analysis/[id]/page.tsx lines 1-8: renders 'Analysis {params.id}' heading and 'Detailed biomarker analysis will appear here.' — no data fetching, no result display, no real implementation. Route role ambiguity vs /results?analysis_id= is real."
     },
     {
-      "check": "2A — No NarrativeRuntime type in FE types",
+      "check": "2A — Hardcoded user_id in upload confirmed",
       "result": "CONFIRMED",
-      "citation": "frontend/app/types/analysis.ts line 208: meta?: Record<string, any> — fully untyped. No NarrativeRuntime interface in the 239-line file. Preflight §4.1 (line 118) confirms same finding. Sprint is not a no-op."
+      "citation": "frontend/app/upload/page.tsx line 241: user_id: questionnaireData?.user_id || '5029514b-f7fd-4dff-8d60-4fb8b7f90dd4' — hardcoded UUID fallback. Fixing this (sourcing from auth state) is in-scope for auth-journey truthfulness. Removing deprecated tabs is Phase B / OUT OF SCOPE."
     },
     {
-      "check": "2A — Sprint scope files identified in preflight",
+      "check": "2A — Result read auth is optional/DB-dependent (partial auth gap)",
       "result": "CONFIRMED",
-      "citation": "Preflight §7 Phase B lines 200-207: 'frontend/app/types/analysis.ts (narrow type for narrative_runtime); frontend/app/results/page.tsx or small child component (empty states); Tests under frontend/tests/** for state matrix'. Matches prompt scope lines 119-229."
+      "citation": "backend/app/routes/analysis.py line 329: require_analysis_submitter_if_db on GET result — auth optional when no DB. Line 290: if auth_user is None — returns result for in-memory runs. Middleware does not protect /results (middleware.ts lines 5,37-53). Bookmarked /results?analysis_id= fails silently in DB-backed deployments without session — gap confirmed per preflight §3 line 81."
     },
     {
-      "check": "2B — MIXED change_type is correct",
+      "check": "2A — Compliance claims on landing page are OPS-S1 — out of scope",
       "result": "CONFIRMED",
-      "citation": "Typing additions to frontend/app/types/analysis.ts = CONTENT class. Rendering/state-handling changes to results/page.tsx and InsightsPanel.tsx = BEHAVIOUR class. Combined scope justifies MIXED per SOP §4. Preflight §4.3 (lines 129-133) confirms FE typing is 'Recommended for Phase B' and no backend change required."
+      "citation": "frontend/app/page.tsx lines 68,72: 'HIPAA Compliant', 'Bank-Level Security' present. Prompt line 250: 'No OPS-S1 or compliance work'. Cursor must not alter compliance claims. Landing changes are bounded to CTA/auth-flow truthfulness only (prompt lines 148-155)."
+    },
+    {
+      "check": "2B — MIXED classification correct",
+      "result": "CONFIRMED",
+      "citation": "Route stub replacement/navigation label changes = CONTENT class. frontend/middleware.ts auth routing changes + (app)/layout.tsx shell alignment = BEHAVIOUR class. Combined scope is MIXED per SOP §4."
     },
     {
       "check": "2B — Behavioural scope explicitly defined",
       "result": "CONFIRMED",
-      "citation": "Prompt lines 113-229: adds NarrativeRuntime type, consumes meta.narrative_runtime, presents truthful empty/degraded states. Preflight §6.2 (lines 170-176) defines the exact state matrix (narrative disabled / validator rejected / unavailable vs nothing qualifying). Preflight §6.3 recommends 'non-alarmist status' copy."
+      "citation": "Prompt lines 114-229: 5 required scope items with named surfaces and requirements. All scope items tied to structural coherence, not analytical output. Stage 1C (lines 60-107) requires Cursor to explicitly choose and record shell strategy, canonical route model, and auth/journey model before implementation."
     },
     {
       "check": "2B — STOP conditions protect behavioural correctness",
       "result": "CONFIRMED",
-      "citation": "Prompt lines 300-316: STOP if metadata does not support distinctions; STOP if FE must invent assumptions; STOP if drift into backend/hero/clinician report. Prompt line 157: 'if two states cannot be cleanly distinguished from existing metadata, do not fake the distinction'. Preflight §6.3 line 179: 'Phase 1: Safe silent omission or generic empty state remains acceptable if copy avoids implying a bug'."
+      "citation": "Prompt lines 300-307: STOP if shell alignment requires broader redesign; STOP if upload/auth cannot be made truthful without major model change; STOP if canonical routing cannot be resolved cleanly; STOP if work drifts into polish/OPS; STOP if coherence requires weakening deterministic results structure. All five STOP conditions are specific and testable."
     },
     {
-      "check": "2B — Regression targets included",
+      "check": "2B — Deterministic results hierarchy protected",
       "result": "CONFIRMED",
-      "citation": "Prompt lines 217-229: 6 targeted coverage items. Acceptance criteria lines 288-298: 7 measurable gates. Preflight §7 Phase B line 206: 'explicit matrix of empty/populated states + tests'. No full state-matrix explosion required — prompt line 230 confirms 'keep this targeted'."
-    },
-    {
-      "check": "2B — Determinism risks surfaced",
-      "result": "CONFIRMED",
-      "citation": "runtime_mode is the stable FE discriminator (narrative_runtime_policy.py:147). Prompt line 266: 'Only distinguish states the backend metadata genuinely supports'. InsightsPanel.tsx lines 70-76: severity/confidence sort logic is untouched by this sprint — no client-side re-ranking. No emitted reasoning changes from Intelligence Core."
+      "citation": "Prompt lines 129,280,294: 'preserve product truth hierarchy on results page'; 'Do not disturb hero/trust/report/narrative hierarchy on the results surface'; AC6: 'deterministic results hierarchy remains intact'. FE-S2B audit (automation_bus/latest_audit_summary.md) confirmed hero/trust/clinician/narrative unchanged. Preflight §1 line 14 confirms narrative runtime presentation already in place."
     },
     {
       "check": "2B — No Intelligence Core components touched",
       "result": "CONFIRMED",
-      "citation": "All in-scope files are FE-only: frontend/app/types/analysis.ts, frontend/app/services/analysis.ts, frontend/app/results/page.tsx, frontend/app/components/insights/InsightsPanel.tsx. None appear in SOP §3 Intelligence Core list. Prompt lines 202-210: 'No backend code changes, no new DTO fields, no changes to narrative generation policy'."
+      "citation": "All in-scope files are FE-only: frontend/middleware.ts, frontend/app/(app)/layout.tsx, frontend/app/upload/page.tsx, frontend/app/results/page.tsx, frontend/app/page.tsx, frontend/app/(app)/analysis/[id]/page.tsx, frontend/app/(app)/reports/page.tsx, frontend/app/(app)/dashboard/page.tsx, frontend/app/components/layout/AppSidebar.tsx, frontend/app/components/layout/Header.tsx. No Intelligence Core components (SOP §3) touched."
     },
     {
-      "check": "2B — Tooling file leakage",
+      "check": "2B — Regression targets declared",
       "result": "CONFIRMED",
-      "citation": "Prompt scope targets no tooling directories. All governed sprint files are under frontend/. No .codex/, .vscode/, or AGENTS.md involvement."
+      "citation": "Prompt lines 318-329: 9 evidence items required at closure (shell strategy, auth changes, canonical route, redirect behaviour, navigation changes, hierarchy preservation, files modified, tests added, final git state). AC1-7 (lines 286-294) provide 7 measurable gates."
+    },
+    {
+      "check": "2B — Tooling file leakage risk",
+      "result": "CONFIRMED",
+      "citation": "Sprint scope lists no tooling directories. All governed files under frontend/. No .codex/, .vscode/, or AGENTS.md involvement expected."
     }
   ],
-  "content_review": "COMPLETE — Governing preflight FE_S2_NARRATIVE_PRESENTATION_PREFLIGHT.md read in full (282 lines). meta.narrative_runtime shape read from narrative_runtime_policy.py:160-171 and synthesis.py:540-542. FE types, results page, InsightsPanel, and analysis service all read. Sprint is not a no-op: NarrativeRuntime type absent (types/analysis.ts:208), meta.narrative_runtime unconsummed (results/page.tsx:601 lines, InsightsPanel.tsx:40-58).",
-  "behaviour_review": "COMPLETE — MIXED classification verified. FE typing = CONTENT, state rendering = BEHAVIOUR. STOP conditions present and targeted. Regression scope declared. Intelligence Core not touched. runtime_mode confirmed as stable FE-facing discriminator (narrative_runtime_policy.py:147). No client-side re-ranking. InsightsPanel.tsx:70-76 sort logic not in sprint scope.",
+  "content_review": "COMPLETE — Governing preflight FE_LAUNCH_INTEGRATION_PREFLIGHT.md read in full (181 lines). middleware.ts read (53 lines). (app)/layout.tsx read (23 lines). analysis/[id]/page.tsx read (8 lines — stub confirmed). page.tsx read (193 lines). upload/page.tsx read (60 lines — hardcoded UUID at line 241 confirmed). Backend auth requirements confirmed via grep of analysis.py.",
+  "behaviour_review": "COMPLETE — MIXED classification verified. Middleware auth routing = behavioural logic (HIGH risk defensible). STOP conditions present and specific. Deterministic results hierarchy protected by explicit AC and STOP condition. No Intelligence Core components touched. Stage 1C requires Cursor to record explicit decisions before implementation — enforces disciplined approach to behavioural changes.",
   "stage_2c_checklist_in_response": true,
-  "escalation_required": false
+  "escalation_required": false,
+  "high_risk_note": "HIGH risk per prompt front matter — dual approval required: Claude audit + GPT architectural review before merge per SOP §10."
 }
