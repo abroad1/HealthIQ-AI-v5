@@ -89,7 +89,9 @@ export default function LandingPage() {
           <div className="mx-auto max-w-4xl">
             <div className="mb-12 text-center">
               <h2 className="mb-4 text-3xl font-bold md:text-4xl">How It Works</h2>
-              <p className="text-lg text-muted-foreground">Three simple steps to better health understanding</p>
+              <p className="text-lg text-muted-foreground">
+                Upload, run the structured engine, then review interpretation and reports in one place
+              </p>
             </div>
 
             <div className="grid gap-8 md:grid-cols-3">
@@ -105,16 +107,22 @@ export default function LandingPage() {
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
                   <span className="text-xl font-bold text-primary">2</span>
                 </div>
-                <h3 className="mb-2 text-xl font-bold">AI Analysis</h3>
-                <p className="text-muted-foreground">Our advanced AI analyzes your biomarkers across 6 health systems in seconds.</p>
+                <h3 className="mb-2 text-xl font-bold">Structured analysis</h3>
+                <p className="text-muted-foreground">
+                  Deterministic metabolic interpretation across your results — system groups, markers, and context-aware
+                  reasoning.
+                </p>
               </Card>
 
               <Card className="border-2 p-6 transition-all hover:border-primary/50 hover:shadow-lg">
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
                   <span className="text-xl font-bold text-primary">3</span>
                 </div>
-                <h3 className="mb-2 text-xl font-bold">Get Insights</h3>
-                <p className="text-muted-foreground">Receive personalized recommendations and track your health journey over time.</p>
+                <h3 className="mb-2 text-xl font-bold">Review your report</h3>
+                <p className="text-muted-foreground">
+                  Open your full results: interpretation first, then evidence, narrative summaries, and clinician-style
+                  structure where available.
+                </p>
               </Card>
             </div>
           </div>
