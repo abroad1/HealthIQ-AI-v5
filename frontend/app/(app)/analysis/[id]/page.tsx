@@ -1,8 +1,9 @@
-export default function AnalysisDetailPage({ params }: { params: { id: string } }) {
-  return (
-    <div className="container py-8">
-      <h1 className="text-4xl font-bold mb-4">Analysis {params.id}</h1>
-      <p className="text-muted-foreground">Detailed biomarker analysis will appear here.</p>
-    </div>
-  )
+import { redirect } from 'next/navigation'
+
+/**
+ * Canonical entry for reopening a saved analysis: redirects to the results view with the same analysis id.
+ * The full interpretation UI remains on `/results` (hero / trust / advanced tabs) — this route removes stub ambiguity.
+ */
+export default function AnalysisDetailRedirect({ params }: { params: { id: string } }) {
+  redirect(`/results?analysis_id=${encodeURIComponent(params.id)}`)
 }

@@ -72,7 +72,10 @@ function LoginForm() {
           </Button>
           <p className="text-sm text-muted-foreground text-center">
             No account?{' '}
-            <Link href="/register" className="text-primary underline-offset-4 hover:underline">
+            <Link
+              href={nextPath && nextPath !== '/dashboard' ? `/register?next=${encodeURIComponent(nextPath)}` : '/register'}
+              className="text-primary underline-offset-4 hover:underline"
+            >
               Register
             </Link>
           </p>

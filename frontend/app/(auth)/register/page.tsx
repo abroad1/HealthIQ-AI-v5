@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthStore } from '../../state/authStore'
 import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
@@ -10,8 +10,11 @@ import { Label } from '../../components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card'
 import { Alert, AlertDescription } from '../../components/ui/alert'
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const nextPath = searchParams.get('next') || '/dashboard'
+
   const register = useAuthStore((s) => s.register)
   const loading = useAuthStore((s) => s.loading)
   const error = useAuthStore((s) => s.error)
@@ -31,8 +34,11 @@ export default function RegisterPage() {
       setInfo(out.message)
       return
     }
-    router.replace('/dashboard')
+    router.replace(nextPath.startsWith('/') ? nextPath : '/dashboard')
   }
+
+  const loginHref =
+    nextPath && nextPath !== '/dashboard' ? `/login?next=${encodeURIComponent(nextPath)}` : '/login'
 
   return (
     <Card>
@@ -82,12 +88,20 @@ export default function RegisterPage() {
           </Button>
           <p className="text-sm text-muted-foreground text-center">
             Already have an account?{' '}
-            <Link href="/login" className="text-primary underline-offset-4 hover:underline">
+            <Link href={loginHref} className="text-primary underline-offset-4 hover:underline">
               Sign in
             </Link>
           </p>
         </div>
       </form>
     </Card>
+  )
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="text-muted-foreground text-sm">Loading…</div>}>
+      <RegisterForm />
+    </Suspense>
   )
 }
