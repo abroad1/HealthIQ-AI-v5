@@ -8,18 +8,23 @@ Sprint 5: derived_markers first-class for replay determinism.
 """
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.engine.reflection import Inspector
+from sqlalchemy import inspect
 
 revision = "add_derived_markers_column"
 down_revision = "insight_provenance_columns"
 branch_labels = None
 depends_on = None
 
+_SCHEMA = "public"
+
 
 def upgrade():
-    conn = op.get_bind()
-    inspector = Inspector.from_engine(conn)
-    columns = [c["name"] for c in inspector.get_columns("analysis_results")]
+    bind = op.get_bind()
+    inspector = inspect(bind)
+    columns = [
+        c["name"]
+        for c in inspector.get_columns("analysis_results", schema=_SCHEMA)
+    ]
     if "derived_markers" not in columns:
         op.add_column("analysis_results", sa.Column("derived_markers", sa.JSON(), nullable=True))
 

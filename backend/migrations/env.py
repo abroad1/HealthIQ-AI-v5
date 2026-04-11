@@ -7,8 +7,11 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parents[1]
 sys.path.append(str(BASE_DIR))
 
-# Load .env file into environment
-load_dotenv()
+# Load backend/.env explicitly so migrations use the same DATABASE_URL as local dev expects.
+# Default load_dotenv() uses override=False — a stale DATABASE_URL in the shell (e.g. pytest
+# localhost:5433 from DATABASE_URL_TEST habits) would win over .env; the app path that imports
+# config/env.py uses find_dotenv(..., override=True), which caused Alembic vs uvicorn mismatch.
+load_dotenv(BASE_DIR / ".env", override=True)
 
 from logging.config import fileConfig
 

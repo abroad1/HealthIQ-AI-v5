@@ -31,6 +31,8 @@ AI-powered biomarker analysis platform backend built with FastAPI and Python 3.1
    pip install -e .
    ```
 
+3. **Environment:** Copy `env.example` to `.env` and set at least `GEMINI_API_KEY` (and Supabase keys if you use auth). See `docs/local-development.md` for local URLs, optional `DATABASE_URL`, and frontend `NEXT_PUBLIC_API_BASE`.
+
 ### Development Server
 
 Start the development server with auto-reload:
