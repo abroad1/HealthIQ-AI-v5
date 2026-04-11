@@ -1,113 +1,88 @@
 {
-  "bus_version": "1.3.1",
-  "work_id": "FE-LAUNCH-INTEGRATION-B",
+  "work_id": "OPS-S1A",
   "status": "HARDENED",
-  "hardened_utc": "2026-04-10T00:00:00Z",
+  "bus_version": "1.3.1",
+  "hardened_utc": "2026-04-11T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
   "changes": [
     {
-      "check": "Front Matter — work_id",
+      "check": "Front Matter — all 5 required fields",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: FE-LAUNCH-INTEGRATION-B"
+      "evidence": "automation_bus/latest_cursor_prompt.md lines 2-6: work_id=OPS-S1A, branch=feature/ops-s1a-trust-uk-baseline, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED — all 5 mandatory fields present and valid per SOP v1.3.1"
     },
     {
-      "check": "Front Matter — branch",
+      "check": "2A — Authority Path: docs/investigations/OPS_S1_PREFLIGHT.md",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: feature/fe-launch-integration-b-polish"
+      "evidence": "File exists and readable. Line 1: 'OPS-S1 Preflight — Phase 1 Operational Readiness for UK B2C Launch'. Line 4: 'mode: READ_ONLY investigation'. Line 31: 'Yes. OPS-S1 is justified now.' Line 177: 'Preflight complete — OPS-S1 may be authored with docs/HealthIQ_Phase1_Launch_Posture.md as mandatory authority alongside this gap analysis.' Document status confirmed complete."
     },
     {
-      "check": "Front Matter — risk_level STANDARD",
+      "check": "2A — Authority Path: docs/HealthIQ_Phase1_Launch_Posture.md",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: STANDARD. Defensible: no middleware, no Intelligence Core, no backend auth logic. All changes are FE-only copy/UI cleanup. STANDARD requires Claude audit + GPT review before merge."
+      "evidence": "File exists and readable. Lines 21-30: agreed UK-first, B2C-primary, UK data residency by default, UK consumer health-data compliance baseline, strict non-diagnostic positioning. Lines 308-314: HIPAA-led launch, ISO 27001, SOC 2, medical device positioning explicitly excluded as Phase 1 floor. Lines 440-454: confirmed as governing OPS-S1 input."
     },
     {
-      "check": "Front Matter — execution_model",
+      "check": "2A — Authority Path: First Market Addendum",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model: TWO_PHASE_START_FINISH"
+      "evidence": "docs/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED_First_Market_Addendum.md exists (untracked in git). Lines 19-28: confirms UK-only, B2C-primary posture consistent with HealthIQ_Phase1_Launch_Posture.md. No conflict detected between authority docs."
     },
     {
-      "check": "Front Matter — change_type MIXED",
+      "check": "2A — No Duplicate Authority Sources Detectable",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: MIXED. Copy/label/empty-state updates = CONTENT class; removing deprecated Tabs imports + console.log strips from upload/page.tsx = BEHAVIOUR class (changes how upload component behaves/presents). MIXED is correct per SOP §4."
+      "evidence": "Three authority docs serve distinct roles: OPS_S1_PREFLIGHT.md (gap analysis/scope justification), HealthIQ_Phase1_Launch_Posture.md (governing posture/compliance floor), First Market Addendum (sprint sequencing). No competing SSOT for UK launch posture found."
     },
     {
-      "check": "2A — Governing preflight on disk",
+      "check": "2A — Source: misaligned trust claims confirmed in page.tsx",
       "result": "CONFIRMED",
-      "citation": "docs/investigations/FE_LAUNCH_INTEGRATION_PREFLIGHT.md line 1: heading present. Section 7 lines 141-143: 'SPLIT_INTO_COHERENCE_AND_POLISH_PHASES — Phase A = structural coherence, Phase B = polish, copy, empty states, upload debt'. Phase B scope maps exactly to prompt requirements. Section 6 gap ranking confirms upload debt (#6), landing copy vs in-app (#5) as remaining polish gaps."
+      "evidence": "frontend/app/page.tsx line 72: '<span>HIPAA Compliant</span>' (hero strip); line 75: '<span>Bank-Level Security</span>' (hero strip); line 146: '<h3 ...>Medical-Grade Security</h3>' (trust section); line 147: '<p ...>HIPAA compliant with end-to-end encryption. Your data is always private.</p>' (trust section). All four claims confirmed present. HealthIQ_Phase1_Launch_Posture.md lines 308-314 explicitly excludes HIPAA-led posture as Phase 1 floor — mismatch confirmed."
     },
     {
-      "check": "2A — FE-LAUNCH-INTEGRATION-A complete",
+      "check": "2A — Source: placeholder legal links confirmed in page.tsx and Footer.tsx",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_audit_summary.md line 3: work_id: FE-LAUNCH-INTEGRATION-A. Line 5: gate_status: PASS. All 7 AC rows in audit body show 'YES'. Audit confirms: shell migration complete, middleware updated, canonical route established, hardcoded UUID remediated. Phase A foundation confirmed present for Phase B to build on."
+      "evidence": "frontend/app/page.tsx lines 196-198: Privacy/Terms/Contact all href='#' placeholder anchors. frontend/app/components/layout/Footer.tsx lines 12-14: same href='#' for all three. Glob search for privacy*, terms*, contact* routes in frontend/app/ returned no matches — no real routes exist. Placeholder status confirmed in both surfaces."
     },
     {
-      "check": "2A — Upload deprecated Tabs debt confirmed on disk",
+      "check": "2A — Source: developer copy confirmed in login page",
       "result": "CONFIRMED",
-      "citation": "frontend/app/(app)/upload/page.tsx line 6: 'import { Tabs, TabsList, TabsTrigger } from ...' — deprecated tab imports still present. Line 22: 'const [activeTab, setActiveTab] = useState(...)' — activeTab state still active. Phase B prompt lines 159-175 targets exactly this. Real debt confirmed at specific lines."
-    },
-    {
-      "check": "2A — Upload console.log debug statements confirmed on disk",
-      "result": "CONFIRMED",
-      "citation": "frontend/app/(app)/upload/page.tsx: 30+ console.log/warn/error statements at lines 61, 68-77, 88, 92, 121, 125-126, 137, 142, 146, 169-179, 237, 263-278, 293, 298. Line 68 comment '// DEBUG: Log state changes' confirms developer-facing debt visible in launch path. Phase B prompt lines 165-167 'lingering debug/developer-facing presentation debt' targets this."
-    },
-    {
-      "check": "2A — Dashboard raw error state confirmed on disk",
-      "result": "CONFIRMED",
-      "citation": "frontend/app/(app)/dashboard/page.tsx line 87: '<p className=\"text-sm text-destructive\">{error}</p>' — raw error string rendered directly. No user-facing message, no technical-detail guard. Phase B prompt lines 181-196 targets empty/error/degraded-state polish."
-    },
-    {
-      "check": "2A — Reports raw error state and full UUID confirmed on disk",
-      "result": "CONFIRMED",
-      "citation": "frontend/app/(app)/reports/page.tsx line 47: '<p className=\"text-sm text-destructive\">{error}</p>' — raw error string. Line 65: 'font-mono text-xs' rendering full UUID row.id — developer-facing presentation in launch surface. Both are verified rough edges."
-    },
-    {
-      "check": "2A — Compliance claims on page.tsx are OPS-S1 — must not be touched",
-      "result": "CONFIRMED",
-      "citation": "frontend/app/page.tsx lines 68,72,76: 'HIPAA Compliant', 'Bank-Level Security', 'Medical-Grade Security'. Lines 138-139: additional compliance claims. Prompt lines 270-280 OUT OF SCOPE list: 'No OPS-S1 or compliance work'. FE-A audit confirmed these were untouched in Phase A. Phase B must continue to leave them untouched."
-    },
-    {
-      "check": "2A — FE-S2B narrative/results hierarchy preserved on disk",
-      "result": "CONFIRMED",
-      "citation": "frontend/app/(app)/results/page.tsx: InsightPanel (hero), PipelineStatus (trust strip), ClusterSummary, BiomarkerDials, InsightsPanel+ClinicianReportRenderer (tabs) — all present per FE-A audit. FE-S2B extractNarrativeRuntimeMeta and InsightsPanel narrativeRuntime prop confirmed in audit. Phase B must not disturb this hierarchy (prompt lines 217-231, AC5)."
-    },
-    {
-      "check": "2B — MIXED classification correct",
-      "result": "CONFIRMED",
-      "citation": "Copy/empty-state/label updates = CONTENT class. Removing deprecated Tabs imports, stripping debug console.log statements from upload/page.tsx = BEHAVIOUR class (changes component render path and dev-console output). MIXED per SOP §4."
+      "evidence": "frontend/app/(auth)/login/page.tsx line 37: CardDescription 'Use your HealthIQ account. Backend: FastAPI /api/auth.' — developer-oriented string confirmed present. OPS_S1_PREFLIGHT.md §3.1 table (line 71) flags this as 'Developer-oriented; weak for consumer trust'."
     },
     {
       "check": "2B — Behavioural scope explicitly defined",
       "result": "CONFIRMED",
-      "citation": "Prompt lines 119-250: 6 required scope items with named surfaces and requirements. Items 1-4 cover copy alignment, upload cleanup, empty/error polish, cross-surface coherence. Item 5 explicitly protects deterministic hierarchy. Item 6 requires targeted regression coverage. All scope items bounded to launch-facing polish surfaces."
-    },
-    {
-      "check": "2B — STOP conditions protect behavioural correctness",
-      "result": "CONFIRMED",
-      "citation": "Prompt lines 319-333: STOP if polish issues require structural redesign; STOP if work drifts into marketing rewrite or auth redesign; STOP if results hierarchy or clinician-report separation are altered; STOP if work widens into unrelated tidy-up; STOP if improvement requires inventing product claims or hiding limitations. All five STOP conditions are specific and testable."
-    },
-    {
-      "check": "2B — Deterministic results hierarchy protected",
-      "result": "CONFIRMED",
-      "citation": "Prompt lines 217-231 (scope item 5): 'Keep deterministic result hierarchy and clinician distinction intact — hero priority, trust strip role, clinician report separation, narrative as companion layer'. AC5 (line 309): 'deterministic results hierarchy and clinician/narrative distinctions remain intact'. Explicit protection requirement present."
-    },
-    {
-      "check": "2B — No Intelligence Core components in scope",
-      "result": "CONFIRMED",
-      "citation": "All in-scope surfaces: frontend/app/page.tsx, frontend/app/(app)/upload/page.tsx, frontend/app/(app)/results/page.tsx, frontend/app/(app)/dashboard/page.tsx, frontend/app/(app)/reports/page.tsx, small adjacent components. No backend/ssot/, backend/core/pipeline/, backend/core/analytics/, or any Intelligence Core component (SOP §3) in scope."
+      "evidence": "Prompt §SCOPE items 1-6 (lines 119-253) define exact required deliverables with named surfaces and requirements. §OUT OF SCOPE (lines 272-283) explicitly prohibits: OPS-S1B artefacts, DPIA/subprocessor/runbook, backend reasoning/narrative changes, broad marketing redesign, HIPAA-led/US posture, enterprise procurement, medical device, full legal/compliance programme, auth rewrite, launch-posture re-decision. Scope boundary is precise and complete."
     },
     {
       "check": "2B — Regression targets declared",
       "result": "CONFIRMED",
-      "citation": "Prompt lines 239-250 (scope item 6): 4 regression targets — launch-facing copy/labels align, upload no longer exposes deprecated/rough elements, empty/error states improved, no structural/auth/backend regressions. AC1-7 (lines 305-314) provide 7 measurable closure gates. Prompt line 241: 'Keep this targeted. Do not turn this into a broad test rewrite.'"
+      "evidence": "Prompt §REQUIRED IN SCOPE item 6 (lines 239-253): regression must prove (1) placeholder links replaced with real surfaces, (2) launch-facing claims no longer use the specific risky wording identified in Stage 1C, (3) trust/legal surfaces reachable from launch-facing UI, (4) no backend contract or analytical behaviour changed. Seven acceptance criteria (lines 313-321) provide measurable closure gates."
     },
     {
-      "check": "2B — Tooling file leakage risk",
+      "check": "2B — STOP conditions protect behavioural correctness",
       "result": "CONFIRMED",
-      "citation": "Sprint scope lists no tooling directories. All governed files under frontend/. No .codex/, .vscode/, or AGENTS.md involvement expected or permitted."
+      "evidence": "Five explicit STOP conditions (prompt lines 328-340): (1) operational evidence required belongs in OPS-S1B, (2) legal surfaces cannot be made credible within bounded sprint, (3) drift into broad marketing rewrite, (4) stronger unsupported claims reintroduced, (5) launch-posture strategy reopened. Each condition is specific and testable."
+    },
+    {
+      "check": "2B — Determinism risks surfaced",
+      "result": "CONFIRMED",
+      "evidence": "Prompt §IMPLEMENTATION CONSTRAINTS 'Preserve completed product work' (lines 302-305): 'Do not disturb FE-LAUNCH-INTEGRATION, FE-S2, or deterministic result hierarchy without direct trust-baseline need.' Backend analytical pipeline (Intelligence Core per SOP §3) is explicitly out of scope. No compiler, evaluator, pipeline, InsightGraph, assembler, or ranking/filtering component in scope."
+    },
+    {
+      "check": "2B — No scope creep risk",
+      "result": "CONFIRMED",
+      "evidence": "§OUT OF SCOPE (lines 272-283) is comprehensive. Five STOP conditions (lines 328-340) halt execution on drift. Prompt §1C (lines 100-115) pre-declares that six categories of work are explicitly NOT this sprint. 'Stay bounded' implementation constraint (lines 307-308): 'If the work starts to look like OPS-S1B or a full website rewrite, it is out of scope.'"
+    },
+    {
+      "check": "No Intelligence Core components in scope",
+      "result": "CONFIRMED",
+      "evidence": "In-scope surfaces are strictly frontend: frontend/app/page.tsx, frontend/app/components/layout/Footer.tsx, new Privacy/Terms/Contact page routes, auth screens only if trust-language requires. No backend/ssot/, backend/core/pipeline/, backend/core/analytics/, backend/scripts/run_work_package.py, backend/scripts/golden_gate_local.py, backend/scripts/update_cursor_status.py in scope."
+    },
+    {
+      "check": "Tooling file leakage risk",
+      "result": "CONFIRMED",
+      "evidence": "Sprint scope lists no tooling directories. All governed files under frontend/. No .codex/, .vscode/, or AGENTS.md involvement expected or permitted per SOP v1.3.1 non-negotiable."
     }
   ],
-  "content_review": "COMPLETE — Governing preflight FE_LAUNCH_INTEGRATION_PREFLIGHT.md confirmed on disk (Phase B scope at lines 141-143). FE-LAUNCH-INTEGRATION-A audit confirmed gate PASS and all 7 AC met. upload/page.tsx read — deprecated Tabs at line 6, activeTab at line 22, 30+ debug console.log statements at specific lines confirmed. dashboard/page.tsx read — raw error at line 87 confirmed. reports/page.tsx read — raw error at line 47, full UUID mono at line 65 confirmed. page.tsx compliance claims at lines 68,72,76,138-139 confirmed OPS-S1. Results hierarchy components confirmed present on disk.",
-  "behaviour_review": "COMPLETE — MIXED classification verified. Upload Tabs removal and console.log strip = behavioural class correctly included. STOP conditions present and specific. Deterministic results hierarchy protected by explicit scope item 5 and AC5. No Intelligence Core components touched. OPS-S1 compliance boundary clearly guarded by out-of-scope list and confirmed present in source files.",
+  "content_review": "COMPLETE — OPS_S1_PREFLIGHT.md confirmed on disk (gap analysis complete, lines 1-177). HealthIQ_Phase1_Launch_Posture.md confirmed on disk (governing authority, lines 1-454). First Market Addendum confirmed on disk (sprint sequencing, lines 1+). page.tsx read — HIPAA Compliant at line 72, Bank-Level Security at line 75, Medical-Grade Security at line 146, HIPAA compliant copy at line 147, placeholder legal links at lines 196-198 all confirmed. Footer.tsx read — placeholder links lines 12-14 confirmed. login/page.tsx read — developer copy at line 37 confirmed. No Privacy/Terms/Contact routes exist in frontend/app/ (Glob search confirmed).",
+  "behaviour_review": "COMPLETE — MIXED classification verified: trust-copy alignment = CONTENT class; new route creation and JSX component changes = BEHAVIOUR class. Five STOP conditions present and specific. Deterministic results hierarchy protected by explicit prompt scope item 5 and implementation constraints. No Intelligence Core components in scope. OPS-S1B boundary clearly guarded.",
   "stage_2c_checklist_in_response": true,
   "escalation_required": false
 }
