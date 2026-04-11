@@ -1,70 +1,70 @@
 ---
-work_id: OPS-S1A
-branch: feature/ops-s1a-trust-uk-baseline
+work_id: OPS-S1B
+branch: feature/ops-s1b-operational-evidence-controls
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# OPS-S1A — Trust and UK Baseline
+# OPS-S1B — Operational Evidence and Controls
 
 ## Context
 
-This is the first execution phase of **OPS-S1 — Phase 1 Operational Readiness for UK B2C Launch**.
+This is the second execution phase of **OPS-S1 — Phase 1 Operational Readiness for UK B2C Launch**.
 
-The governing OPS-S1 preflight concluded:
+**OPS-S1A** is complete and established the launch-facing trust baseline:
 
-* OPS-S1 is now justified because the launch posture has been explicitly decided
-* the correct delivery shape is:
+* launch-facing trust/compliance language is now materially aligned to the agreed UK-first B2C posture
+* real Privacy / Terms / Contact surfaces now exist
+* non-diagnostic positioning is visible where launch trust requires it
+* obvious trust-surface mismatches have been removed
 
-  * **OPS-S1A — Trust and UK baseline**
-  * **OPS-S1B — Operational evidence and controls**
-* the biggest immediate launch blockers are:
+The governing OPS-S1 preflight concluded that the correct delivery shape is:
 
-  * trust/claims mismatch with the agreed UK-first posture
-  * missing Privacy / Terms / Contact surfaces
-  * lack of a minimum credible UK B2C transparency baseline in the launch-facing product
+* **OPS-S1A — Trust and UK baseline**
+* **OPS-S1B — Operational evidence and controls**
 
-The agreed Phase 1 launch posture is:
+The preflight found that the biggest remaining launch-critical gaps are now:
 
-* **market:** UK only
-* **operating model:** B2C-primary
-* **launch user:** self-directed retail user with an already-tested blood panel
-* **data residency direction:** UK-hosted by default
-* **minimum posture:** UK consumer health-data trust/compliance floor with strict non-diagnostic positioning
-* **B2C role:** deliberate wedge / proof engine, not the long-term final model
+* no documented in-repo UK hosting / residency evidence
+* no in-repo subprocessor / vendor inventory
+* no DPIA or equivalent structured privacy-risk review artifact
+* no documented data-flow artifact
+* no minimum operational runbook / incident / backup / recovery / secrets baseline evidenced for launch
+* wedge-metric readiness is important, but should not displace the trust/control baseline needed for launch credibility
 
-This sprint is **OPS-S1A only**.
+This sprint is **OPS-S1B only**.
 
 It is **not**:
 
-* OPS-S1B operational evidence/control work
-* HIPAA-led or US-first posture work
+* OPS-S1A trust-surface work
+* backend reasoning/narrative changes
+* broad infrastructure replatforming
+* SOC 2 / ISO 27001 certification programme
+* HIPAA-led or US-first operational posture
 * enterprise/B2B procurement readiness
-* backend reasoning changes
-* broad marketing-site redesign
-* medical-device positioning
-* general legal drafting beyond what is required for launch-truth surfaces
+* broad product analytics implementation
 
 ---
 
 ## Objective
 
-Bring the launch-facing trust and legal baseline into line with the agreed UK B2C Phase 1 posture so the product no longer makes unsupported, jurisdictionally wrong, or incomplete trust claims at the point of launch.
+Create the minimum operational evidence and control artifacts needed to support a credible UK-first B2C launch, aligned with the agreed launch posture and without expanding into enterprise-grade compliance programmes or unrelated infrastructure work.
 
 This sprint must establish:
 
-* UK-appropriate trust/claims alignment on launch-facing surfaces
-* real Privacy / Terms / Contact surfaces rather than placeholders
-* consistent non-diagnostic positioning where launch-facing trust language requires it
-* no mismatch between the product’s declared launch posture and what the user sees publicly
-* no drift into broad ops/control work that belongs in OPS-S1B
+* documented UK hosting / residency evidence or explicit hosting-position artifact
+* subprocessor / vendor inventory for launch-relevant services
+* DPIA or equivalent structured privacy-risk review artifact
+* clear data-flow documentation for the launch product
+* minimum operational control artifacts covering incident / backup / recovery / secrets / access expectations
+* a bounded and honest operational baseline for Phase 1
 
-This sprint is about **launch-truth and trust baseline**, not the full operational evidence stack.
+This sprint is about **operational evidence and control baseline**, not certification or broad infra redesign.
 
 ---
 
-## Stage 1C — Trust Baseline Preflight (MANDATORY)
+## Stage 1C — Operational Evidence Preflight (MANDATORY)
 
 Before editing files, explicitly verify and record:
 
@@ -77,36 +77,36 @@ Before editing files, explicitly verify and record:
    * `docs/HealthIQ_Phase1_Launch_Posture.md`
    * and any adopted/addendum strategy doc now serving as first-market authority
 
-3. the current repo reality is still:
+3. OPS-S1A is complete and the current repo reality is still:
 
-   * launch-facing UI includes trust/legal claims that are not yet fully aligned with the UK-first launch posture
-   * Privacy / Terms / Contact surfaces are missing or placeholder
-   * OPS-S1A should address trust/claims surfaces first, before OPS-S1B operational evidence/control artefacts
+   * trust-surface alignment has been completed
+   * Privacy / Terms / Contact exist
+   * the remaining launch-critical gaps are now operational evidence / controls rather than public-facing trust copy
 
 4. before implementation, Cursor must explicitly verify and record:
 
-   * the exact launch-facing claims currently present
-   * which claims are supportable now
-   * which claims are risky, premature, or jurisdictionally mismatched
-   * where placeholder legal/trust surfaces currently exist
-   * what minimum UK B2C trust/legal surfaces are required for a credible launch baseline
+   * what hosting / residency evidence is already present in repo, if any
+   * what vendor/subprocessor evidence is already present in repo, if any
+   * what privacy/compliance docs are already present vs missing
+   * what operational control/runbook material is already present vs missing
+   * which evidence artifacts are required for a minimum credible UK B2C Phase 1 launch
 
 5. before implementation, Cursor must explicitly choose and record:
 
-   * the trust/claims posture to apply on the landing and launch-facing pages
-   * the exact scope of Privacy / Terms / Contact implementation in this sprint
-   * what content will be added as product-facing baseline vs what is deferred to OPS-S1B or later human/legal review
+   * the exact artifact set to create/update in this sprint
+   * the exact scope of operational controls to evidence now vs defer
+   * the exact boundary between OPS-S1B baseline artifacts and later certification/enterprise work
 
 6. this sprint will **not**:
 
-   * prove UK hosting/residency technically
-   * deliver DPIA/subprocessor/runbook artefacts
-   * redesign backend auth/analysis logic
-   * become a broad marketing rewrite
-   * make legal claims beyond what the agreed posture and repo reality can support
-   * reopen the Phase 1 launch-posture decision
+   * promise UK hosting if the repo/ops reality cannot evidence it honestly
+   * create fake compliance claims unsupported by deployment reality
+   * widen into a full security certification programme
+   * become a backend or infrastructure rewrite
+   * become a full analytics implementation sprint
+   * reopen the agreed launch posture
 
-7. if a truthful trust baseline cannot be implemented without broader operational evidence than this sprint allows, STOP and report rather than papering over the gap with vague copy
+7. if the required evidence cannot be authored truthfully from current repo/known launch reality, STOP and report rather than fabricating operational confidence
 
 If any of the above is false:
 
@@ -120,205 +120,236 @@ If any of the above is false:
 
 ### REQUIRED IN SCOPE
 
-#### 1. Launch-facing trust/claims alignment
+#### 1. UK hosting / residency evidence artifact
 
 Primary likely surfaces:
 
-* `frontend/app/page.tsx`
-* `frontend/app/components/layout/Footer.tsx`
-* any directly adjacent launch-facing trust/copy component strictly required
-* auth screens only if trust-language alignment clearly requires it
+* new docs under `docs/ops/` or `docs/compliance/`
+* config/environment documentation surfaces
+* any existing deployment/config docs that need bounded update
 
-You must align the most visible trust and compliance-facing language with the agreed UK B2C launch posture.
-
-This includes reviewing and correcting launch-facing claims such as:
-
-* HIPAA
-* bank-level security
-* medical-grade security
-* diagnostic-sounding language
-* overconfident trust/compliance wording
-* any other launch-facing claims that are not supportable by the agreed Phase 1 baseline
+You must create a truthful artifact describing the launch hosting/residency position for Phase 1.
 
 Requirements:
 
-* landing and other public-facing trust language must no longer contradict the UK-first posture
-* the product must not imply a US/HIPAA-led launch posture if that is explicitly not the chosen Phase 1 path
-* the product must not make stronger trust/compliance claims than the repo + launch posture can support
-* wording should remain commercially credible, but truthful and bounded
+* reflect the agreed **UK-hosted by default** direction only to the extent it can be evidenced honestly
+* explicitly distinguish:
 
-This is a key trust-baseline deliverable.
+  * confirmed deployment/hosting facts
+  * chosen launch posture assumptions
+  * items still requiring operational provisioning/verification outside repo
+* do not overclaim technical guarantees the repo cannot prove
+
+This artifact should make the launch hosting story reviewable and auditable.
 
 ---
 
-#### 2. Privacy / Terms / Contact surfaces
+#### 2. Vendor / subprocessor inventory
 
 Primary likely surfaces:
 
-* frontend routes/pages for:
+* new docs under `docs/ops/` or `docs/compliance/`
+* supporting references to current vendor/config usage in repo
 
-  * Privacy
-  * Terms
-  * Contact
-* footer/header links that currently point to placeholders
-* any small supporting components needed for those pages
-
-You must replace placeholder legal/support links with real product-facing surfaces appropriate to the agreed Phase 1 launch posture.
+You must create a bounded launch-relevant vendor/subprocessor inventory.
 
 Requirements:
 
-* Privacy, Terms, and Contact links must no longer be dead/placeholder links
-* each surface must be real, accessible, and coherent with the UK B2C launch posture
-* content should provide a credible launch baseline for transparency and user trust
-* do not over-engineer these into a legal-platform subsystem
+* include only vendors/services actually relevant to the launch product and its operation
+* distinguish roles clearly, e.g.:
 
-Important:
+  * hosting / database / auth
+  * analytics if present
+  * email/contact if relevant
+  * other launch-relevant infrastructure/services
+* identify what each service does in the launch stack
+* keep this practical and launch-oriented, not a giant enterprise procurement pack
 
-* this sprint is allowed to create the product-facing baseline surfaces
-* it is not required to solve every future legal nuance or enterprise requirement
+This is a minimum transparency/governance artifact, not a full legal register.
 
 ---
 
-#### 3. Non-diagnostic positioning consistency where launch trust requires it
+#### 3. DPIA or equivalent privacy-risk review artifact
 
 Primary likely surfaces:
 
-* landing and auth-adjacent copy
-* any launch-facing results-entry/CTA language if clearly relevant
-* any small trust/disclaimer blocks required by the agreed posture
+* new doc under `docs/compliance/` or equivalent
 
-You must ensure launch-facing wording does not drift into diagnostic or treatment-positioning language inconsistent with the agreed Phase 1 posture.
+You must create a structured privacy-risk review artifact suitable for the agreed UK B2C Phase 1 posture.
 
 Requirements:
 
-* do not imply the product is diagnosing, prescribing, or replacing clinicians
-* maintain consistency with the already-established product truth that structured interpretation and clinician discussion are distinct
-* do not add heavy disclaimers everywhere; apply this in a bounded, product-sensible way
+* it must be explicit, structured, and launch-oriented
+* it must cover the actual launch product model:
+
+  * upload blood results
+  * store/process health-related data
+  * provide structured interpretation
+  * provide downloadable clinician report
+* it must identify key risks, mitigations, and open items honestly
+* it must not pretend to be a regulator-approved formal instrument if it is an internal artifact
+
+Call it DPIA or equivalent only if that is honest for the artifact being produced.
 
 ---
 
-#### 4. Bounded support/contact truthfulness
+#### 4. Data-flow documentation
 
 Primary likely surfaces:
 
-* Contact page
-* footer/header references
-* auth or launch-facing help references if directly relevant
+* new architecture/ops/compliance doc
+* bounded updates to existing docs only if strictly required
 
-You must give users a truthful minimum support/contact path.
+You must document the launch-relevant data flow clearly enough that privacy/security/ops decisions are reviewable.
 
 Requirements:
 
-* there must be a real way for a launch user to understand how to contact the company
-* do not leave “Contact” as a decorative placeholder
-* keep this bounded to product-facing launch truth, not a full support platform
+* show the main lifecycle of launch-relevant data at a practical level
+* include:
+
+  * user input/upload
+  * analysis processing
+  * persistence/history
+  * account/auth relationship where relevant
+  * clinician report / downloadable output if relevant
+* distinguish code-backed flow from externally provisioned infra assumptions where necessary
+* keep the document readable and operationally useful
+
+This does not need to be a perfect enterprise data map, but it must be good enough for Phase 1 launch governance.
 
 ---
 
-#### 5. Preserve existing product hierarchy and launch posture
+#### 5. Minimum operational control baseline artifacts
 
 Primary likely surfaces:
 
-* landing page
-* upload/results/account surfaces only if touched for trust/legal reasons
+* new docs under `docs/ops/`
+* bounded updates to existing runbook/checklist docs if present
 
-You must preserve:
+You must create the minimum operational control artifact set for Phase 1 launch, covering at least the agreed baseline areas where the preflight found no evidence.
 
-* deterministic results hierarchy
-* narrative as companion layer
-* the agreed UK B2C launch posture
-* B2C-first wedge framing
+Likely topics include:
 
-This sprint must not accidentally undermine the completed FE work or broaden the product model.
+* incident response baseline
+* backup / recovery baseline
+* secrets/config handling expectations
+* access-control expectations
+* launch-day operational checklist or equivalent minimal runbook
+
+Requirements:
+
+* keep these artifacts bounded and practical
+* clearly separate:
+
+  * implemented product behaviour
+  * operational process expectation
+  * open dependencies requiring human/ops completion before launch
+* do not overstate maturity
+* do not create an enterprise security manual
 
 ---
 
-#### 6. Targeted regression coverage
+#### 6. Honest boundary and open-items documentation
+
+Across all created artifacts, you must explicitly document what remains outside Phase 1 scope or still requires non-repo completion.
+
+Requirements:
+
+* no false sense of completeness
+* open items must be visible
+* distinctions between:
+
+  * completed in repo
+  * documented requirement
+  * operational dependency
+    must be explicit
+
+This is critical for trust.
+
+---
+
+#### 7. Targeted regression / validation coverage
 
 Likely surfaces:
 
-* frontend route/component tests
-* link/render tests
-* small content-presence tests if useful
-* targeted e2e assertions only if genuinely needed
+* lightweight validation of required docs/routes if applicable
+* doc index references if your repo conventions support them
+* no heavy test suite required unless existing patterns make it appropriate
 
-You must add/update the minimum regression coverage needed to prove:
+You must provide the minimum validation evidence needed to show:
 
-* placeholder legal/support links are replaced with real surfaces
-* launch-facing claims no longer use the specific risky or misaligned wording selected in Stage 1C
-* trust/legal surfaces are reachable from the actual launch-facing UI
-* no backend contract or analytical behaviour was changed
+* required artifacts were created
+* artifact set is internally coherent with the agreed launch posture
+* no backend analytical behaviour changed
+* no unsupported trust claims were reintroduced through ops artifacts
 
-Keep this targeted.
-Do not turn it into a general content-management or legal-document test suite.
+Keep this bounded and proportionate.
 
 ---
 
 ### OPTIONAL / BOUNDED IN SCOPE
 
-#### 7. Small trust-language helper/refactor only if needed
+#### 8. Minimal wedge-metric governance note only if needed
 
-If a small bounded helper/component is needed to keep trust-language or footer/legal-link handling coherent, that is acceptable.
+If a short artifact is needed to state what launch metrics remain to be instrumented later, that is acceptable.
 
 Requirements:
 
-* explicit
-* bounded
-* directly tied to launch-truth surfaces
-* not a broad website framework refactor
+* this must remain a governance note, not a product analytics implementation
+* it should clarify what is deferred beyond OPS-S1B
+* do not let this consume the sprint
 
 ---
 
 ## OUT OF SCOPE (STRICT)
 
-* No OPS-S1B operational evidence/control artefacts
-* No DPIA/subprocessor/runbook implementation in this sprint
+* No OPS-S1A trust-surface rewrite
 * No backend reasoning/narrative changes
-* No broad marketing-site redesign
-* No HIPAA-led or US-first launch posture work
-* No enterprise procurement/security questionnaire work
-* No medical-device positioning
-* No full legal/compliance programme buildout
-* No auth-platform rewrite
+* No broad infra replatforming
+* No SOC 2 / ISO 27001 certification programme
+* No HIPAA-led or US-first posture work
+* No B2B procurement readiness programme
+* No full analytics/product-instrumentation implementation
 * No launch-posture re-decision
+* No pretending that human/legal/ops signoff is fully replaced by documents alone
 
 ---
 
 ## Implementation constraints
 
-### Truth over impressiveness
+### Evidence must be honest
 
-If a claim is not supportable under the agreed UK B2C posture, do not keep it just because it sounds strong.
+Only claim what can be supported by repo reality or clearly labeled operational decisions.
 
-### UK-first posture must be visible
+### Phase 1 baseline only
 
-Public-facing trust language must reflect the actual first-market choice.
+This sprint should produce the minimum credible UK B2C operational artifact set, not a mature enterprise compliance programme.
 
-### Product-facing legal baseline only
+### Open items must stay visible
 
-This sprint creates user-facing baseline surfaces, not the whole compliance machinery.
+Do not hide unresolved operational dependencies.
 
-### Preserve completed product work
+### Product logic untouched
 
-Do not disturb FE-LAUNCH-INTEGRATION, FE-S2, or deterministic result hierarchy without direct trust-baseline need.
+No analytical, reasoning, or results-hierarchy work belongs in this sprint.
 
-### Stay bounded
+### Keep it usable
 
-If the work starts to look like OPS-S1B or a full website rewrite, it is out of scope.
+Artifacts should be useful to humans planning launch, not just written to satisfy process.
 
 ---
 
 ## Acceptance criteria
 
-OPS-S1A is complete only if:
+OPS-S1B is complete only if:
 
-1. launch-facing trust/compliance language is materially aligned to the agreed UK B2C Phase 1 posture
-2. the key risky or jurisdictionally mismatched claims identified in Stage 1C are removed, qualified, or replaced appropriately
-3. Privacy / Terms / Contact are real product-facing surfaces rather than placeholders
-4. launch-facing wording is consistent with non-diagnostic positioning where required
-5. a truthful minimum support/contact path exists
-6. targeted regression coverage proves the trust-baseline changes
-7. no OPS-S1B artefact work, backend reasoning changes, or broad redesign scope is introduced
+1. a launch-relevant UK hosting/residency evidence artifact exists
+2. a bounded vendor/subprocessor inventory exists
+3. a structured privacy-risk review artifact exists
+4. launch-relevant data-flow documentation exists
+5. minimum operational control baseline artifacts exist for Phase 1
+6. open items and operational dependencies are documented honestly
+7. no backend reasoning, infra-rewrite, certification-programme, or analytics-implementation scope is introduced
 
 ---
 
@@ -326,11 +357,11 @@ OPS-S1A is complete only if:
 
 STOP immediately if:
 
-* the only way to make trust claims truthful is to add operational evidence/control work that clearly belongs in OPS-S1B
-* legal/support surfaces cannot be made credible within a bounded sprint
-* the work begins drifting into a broad marketing rewrite
-* the work begins reintroducing stronger unsupported claims in different wording
-* the work begins reopening launch-posture strategy or expanding into enterprise/us posture work
+* the sprint cannot produce truthful operational evidence without pretending facts not in evidence
+* required artifacts depend on external unknowns that make the docs misleading
+* the work begins drifting into broad infra/security programme buildout
+* the work begins substituting documentation for actual unresolved strategic decisions
+* the work begins widening into analytics implementation or backend product work
 
 If any STOP condition triggers:
 
@@ -344,12 +375,13 @@ If any STOP condition triggers:
 
 Before closure, provide evidence for:
 
-* exact launch-facing claims changed
-* exact Privacy / Terms / Contact surfaces added or wired
-* exact links/routes updated from placeholders
-* exact non-diagnostic/trust-language adjustments made
+* exact operational artifacts created/updated
+* exact hosting/residency position documented
+* exact vendor/subprocessor inventory scope
+* exact privacy-risk/data-flow artifacts created
+* exact operational baseline/runbook artifacts created
+* exact open items/dependencies documented
 * confirmation that no backend analytical behaviour changed
-* tests added/updated
 * files created/modified
 * final git state
 
@@ -358,14 +390,15 @@ Before closure, provide evidence for:
 ## Execution sequence (SOP aligned)
 
 1. Kernel START
-2. Complete Stage 1C Trust Baseline Preflight
-3. Align launch-facing trust/claims language
-4. Implement/wire real Privacy / Terms / Contact surfaces
-5. Apply bounded non-diagnostic/trust consistency fixes
-6. Add/update targeted regression coverage
-7. Validate locally
-8. Kernel FINISH
-9. Produce closure report
+2. Complete Stage 1C Operational Evidence Preflight
+3. Create hosting/residency evidence artifact
+4. Create vendor/subprocessor inventory
+5. Create privacy-risk and data-flow artifacts
+6. Create minimum operational control baseline artifacts
+7. Add/update bounded validation evidence
+8. Validate locally
+9. Kernel FINISH
+10. Produce closure report
 
 ---
 
@@ -374,10 +407,12 @@ Before closure, provide evidence for:
 Provide:
 
 * files created/modified
-* trust-claims-alignment summary
-* legal/support-surface summary
-* non-diagnostic-positioning summary
-* regression summary
+* hosting/residency-evidence summary
+* vendor/subprocessor summary
+* privacy-risk/data-flow summary
+* operational-controls summary
+* open-items/dependencies summary
+* regression/validation summary
 * kernel finish status
 * final git state
 
@@ -387,6 +422,6 @@ Provide:
 
 This sprint exists to:
 
-> create the minimum credible UK B2C launch-facing trust and legal baseline for HealthIQ so the product no longer presents unsupported or misaligned trust/compliance signals before first-market launch
+> create the minimum credible operational evidence and control baseline needed to support a UK-first B2C HealthIQ launch, without drifting into enterprise certification work, backend changes, or false operational certainty
 
 Do not expand beyond that.
