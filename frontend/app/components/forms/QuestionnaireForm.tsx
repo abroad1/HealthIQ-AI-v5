@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
@@ -12,38 +12,10 @@ import { Textarea } from '../ui/textarea';
 import { Progress } from '../ui/progress';
 import { Alert, AlertDescription } from '../ui/alert';
 import { Loader2, CheckCircle, AlertCircle } from 'lucide-react';
-import mockData from '@/lib/mock/questionnaire';
-
-interface QuestionnaireQuestion {
-  id: string;
-  section: string;
-  question: string;
-  type: string;
-  required: boolean;
-  options?: string[];
-  fields?: Array<{
-    label: string;
-    type: string;
-    min?: number;
-    max?: number;
-  }>;
-  alternativeUnit?: {
-    label: string;
-    type: string;
-    min?: number;
-    max?: number;
-  };
-  label?: string;
-  min?: number;
-  max?: number;
-  helpText?: string;
-  allowOther?: boolean;
-  labels?: Record<string, string>;
-  conditionalDisplay?: {
-    dependsOn: string;
-    showWhen: string[];
-  };
-}
+import {
+  fetchQuestionnaireSchema,
+  type QuestionnaireQuestion,
+} from '@/lib/questionnaireSchema';
 
 interface QuestionnaireFormProps {
   onSubmit: (responses: Record<string, any>) => void;
@@ -64,232 +36,41 @@ export default function QuestionnaireForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingQuestions, setLoadingQuestions] = useState(true);
+  const [schemaLoadError, setSchemaLoadError] = useState<string | null>(null);
 
   const questionsPerStep = 5; // Show 5 questions per step
-  const totalSteps = Math.ceil(questions.length / questionsPerStep);
+  const totalSteps = Math.max(1, Math.ceil(questions.length / questionsPerStep));
+
+  const loadQuestions = useCallback(async () => {
+    setSchemaLoadError(null);
+    setLoadingQuestions(true);
+    try {
+      const schema = await fetchQuestionnaireSchema();
+      setQuestions(schema);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Failed to load questionnaire schema';
+      console.error('Questionnaire schema load failed:', error);
+      setSchemaLoadError(message);
+      setQuestions([]);
+    } finally {
+      setLoadingQuestions(false);
+    }
+  }, []);
 
   useEffect(() => {
     loadQuestions();
-  }, []);
+  }, [loadQuestions]);
 
+  /** Dev/test only: `?autofill=true` loads sample answers from `@/lib/mock/questionnaire` (not the question list). */
   useEffect(() => {
     if (typeof window !== 'undefined' && window.location.search.includes('autofill=true')) {
-      setResponses(mockData);
-      console.log('🧪 Questionnaire auto-filled');
+      void import('@/lib/mock/questionnaire').then((m) => {
+        setResponses(m.default);
+        console.log('🧪 Questionnaire responses auto-filled (mock answers only)');
+      });
     }
   }, []);
-
-  const loadQuestions = async () => {
-    try {
-      // In a real implementation, this would fetch from the backend
-      // For now, we'll use a mock structure based on the questionnaire.json
-      const mockQuestions: QuestionnaireQuestion[] = [
-        {
-          id: "full_name",
-          section: "demographics",
-          question: "Full Name",
-          type: "text",
-          required: true
-        },
-        {
-          id: "email_address",
-          section: "demographics",
-          question: "Email Address",
-          type: "email",
-          required: true
-        },
-        {
-          id: "phone_number",
-          section: "demographics",
-          question: "Phone Number",
-          type: "phone",
-          required: true
-        },
-        {
-          id: "country",
-          section: "demographics",
-          question: "Country",
-          type: "dropdown",
-          options: ["United Kingdom", "United States", "Canada", "Australia", "Other"],
-          required: true
-        },
-        {
-          id: "state_province",
-          section: "demographics",
-          question: "State/Province",
-          type: "text",
-          required: false
-        },
-        {
-          id: "date_of_birth",
-          section: "demographics",
-          question: "Date of Birth",
-          type: "date",
-          required: true
-        },
-        {
-          id: "biological_sex",
-          section: "demographics",
-          question: "Biological Sex",
-          type: "dropdown",
-          options: ["Male", "Female", "Intersex"],
-          required: true
-        },
-        {
-          id: "height",
-          section: "demographics",
-          question: "Height",
-          type: "group",
-          fields: [
-            { label: "Feet", type: "number", min: 3, max: 8 },
-            { label: "Inches", type: "number", min: 0, max: 11 }
-          ],
-          alternativeUnit: {
-            label: "Height (cm)",
-            type: "number",
-            min: 100,
-            max: 250
-          },
-          required: true
-        },
-        {
-          id: "weight",
-          section: "demographics",
-          question: "Weight",
-          type: "number",
-          label: "Weight (lbs)",
-          alternativeUnit: {
-            label: "Weight (kg)",
-            type: "number",
-            min: 30,
-            max: 300
-          },
-          required: true
-        },
-        {
-          id: "sleep_hours_nightly",
-          section: "lifestyle",
-          question: "How many hours of sleep do you typically get per night?",
-          type: "dropdown",
-          options: ["Less than 5 hours", "5-6 hours", "7-8 hours", "9+ hours"],
-          required: true
-        },
-        {
-          id: "sleep_quality_rating",
-          section: "lifestyle",
-          question: "Rate your sleep quality (1-10)",
-          type: "slider",
-          min: 1,
-          max: 10,
-          labels: {
-            "1": "Wake up exhausted",
-            "5": "Somewhat rested",
-            "10": "Always refreshed"
-          },
-          required: true
-        },
-        {
-          id: "alcohol_drinks_weekly",
-          section: "lifestyle",
-          question: "How many alcoholic drinks do you consume per week?",
-          type: "dropdown",
-          options: ["None", "1-3 drinks", "4-7 drinks", "8-14 drinks", "15+ drinks"],
-          helpText: "1 drink = 12oz beer, 5oz wine, or 1.5oz spirits",
-          required: true
-        },
-        {
-          id: "tobacco_use",
-          section: "lifestyle",
-          question: "Do you currently use tobacco products?",
-          type: "dropdown",
-          options: ["Never used", "Former user quit >1 year", "Former user quit <1 year", "Occasional use", "Daily use"],
-          required: true
-        },
-        {
-          id: "stress_level_rating",
-          section: "lifestyle",
-          question: "Rate your average stress level (1-10)",
-          type: "slider",
-          min: 1,
-          max: 10,
-          labels: {
-            "1": "Very low stress",
-            "5": "Moderate stress",
-            "10": "Overwhelming stress"
-          },
-          required: true
-        },
-        {
-          id: "vigorous_exercise_days",
-          section: "lifestyle",
-          question: "How many days per week do you do vigorous exercise (20+ min)?",
-          type: "dropdown",
-          options: ["0 days", "1 day", "2 days", "3 days", "4+ days"],
-          helpText: "Vigorous = hard breathing and sweating",
-          required: true
-        },
-        {
-          id: "current_medications",
-          section: "medical_history",
-          question: "Are you currently taking any prescription medications?",
-          type: "dropdown",
-          options: ["None", "1-2 medications", "3-5 medications", "6+ medications", "Prefer not to say"],
-          required: true
-        },
-        {
-          id: "long_term_medications",
-          section: "medical_history",
-          question: "Are you currently taking any of the following long-term medications?",
-          type: "checkbox",
-          options: ["None", "Corticosteroids", "Atypical antipsychotics", "HIV/AIDS treatments"],
-          required: true,
-          helpText: "These medications can affect cardiovascular risk assessment"
-        },
-        {
-          id: "chronic_conditions",
-          section: "medical_history",
-          question: "Do you have any diagnosed chronic conditions?",
-          type: "checkbox",
-          options: ["None", "High blood pressure", "High cholesterol", "Diabetes Type 1", "Diabetes Type 2", "Heart disease", "Thyroid disorder", "Autoimmune condition", "Liver disease", "Kidney disease", "Other"],
-          allowOther: true,
-          required: true
-        },
-        {
-          id: "medical_conditions",
-          section: "medical_history",
-          question: "Have you ever been diagnosed with any of the following medical conditions?",
-          type: "checkbox",
-          options: ["None", "Atrial fibrillation", "Rheumatoid arthritis", "Systemic lupus erythematosus (SLE)"],
-          required: true,
-          helpText: "These conditions can affect cardiovascular risk assessment"
-        },
-        {
-          id: "current_symptoms",
-          section: "symptoms",
-          question: "Do you have any current symptoms affecting your daily life?",
-          type: "checkbox",
-          options: ["None", "Fatigue", "Brain fog", "Joint pain", "Digestive issues", "Sleep problems", "Mood changes", "Other"],
-          allowOther: true,
-          required: true
-        },
-        {
-          id: "regular_migraines",
-          section: "symptoms",
-          question: "Do you suffer from regular migraines?",
-          type: "dropdown",
-          options: ["Yes", "No", "Not sure"],
-          required: true,
-          helpText: "Migraines can be associated with cardiovascular risk factors"
-        }
-      ];
-
-      setQuestions(mockQuestions);
-      setLoadingQuestions(false);
-    } catch (error) {
-      console.error('Failed to load questions:', error);
-      setLoadingQuestions(false);
-    }
-  };
 
   const getCurrentQuestions = () => {
     const start = currentStep * questionsPerStep;
@@ -628,7 +409,32 @@ export default function QuestionnaireForm({
     );
   }
 
-  const currentQuestions = getCurrentQuestions();
+  if (schemaLoadError) {
+    return (
+      <div className="max-w-4xl mx-auto p-6 space-y-4">
+        <Alert className="border-red-200 bg-red-50">
+          <AlertCircle className="h-4 w-4 text-red-600" />
+          <AlertDescription className="text-red-800">
+            <strong>Could not load questionnaire.</strong> {schemaLoadError}
+          </AlertDescription>
+        </Alert>
+        <Button type="button" onClick={() => void loadQuestions()} variant="outline">
+          Retry
+        </Button>
+      </div>
+    );
+  }
+
+  if (questions.length === 0) {
+    return (
+      <div className="max-w-4xl mx-auto p-6">
+        <Alert>
+          <AlertDescription>No questionnaire questions were returned from the server.</AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
   const progress = ((currentStep + 1) / totalSteps) * 100;
 
   return (
