@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routes import analysis, upload, health, alias_api, questionnaire, auth
+from app.routes import analysis, upload, health, alias_api, questionnaire, auth, wedge_events
 from config.database import get_database_url, log_database_config_on_startup, warmup_engine
 
 
@@ -39,3 +39,4 @@ app.include_router(analysis.router, prefix="/api/analysis")
 app.include_router(alias_api.router, prefix="/api/biomarker-aliases")
 app.include_router(questionnaire.router, prefix="/api/questionnaire")
 app.include_router(auth.router, prefix="/api")
+app.include_router(wedge_events.router, prefix="/api/wedge-events")

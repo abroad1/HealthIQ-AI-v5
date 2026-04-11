@@ -1,8 +1,8 @@
 # Wedge event contract & governance — Phase 1 (WEDGE-METRICS-A)
 
 **Status:** Launch-bounded measurement contract — internal governance  
-**Sprint:** WEDGE-METRICS-A (definition only; **no** instrumentation in this sprint)  
-**Next:** WEDGE-METRICS-B — wire events per this contract  
+**Sprint:** WEDGE-METRICS-A (definition); WEDGE-METRICS-B (first-party instrumentation live — see §11)  
+**Next:** Retention policy for event logs; legal/privacy sign-off before broad prod use (see §6)  
 
 **Authority:** `docs/investigations/WEDGE_METRICS_PREFLIGHT.md`, `docs/HealthIQ_Phase1_Launch_Posture.md` §318–372, `docs/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED_First_Market_Addendum.md` §163+, `docs/ops/WEDGE_METRICS_GOVERNANCE_NOTE_PHASE1.md`.
 
@@ -174,12 +174,26 @@ Follow §4; enforce in client helper + server validation.
 
 ## 9. Validation
 
-- This sprint adds **documentation + manifest + test** only.  
-- No backend analytical behaviour change.  
-- Bounded test: `frontend/tests/integration/wedge-metrics-a-event-contract.test.ts` checks artefact presence and key disambiguation strings.
+- **WEDGE-METRICS-A:** governance artefacts + bounded contract test (`frontend/tests/integration/wedge-metrics-a-event-contract.test.ts`).  
+- **WEDGE-METRICS-B:** instrumentation + `frontend/tests/integration/wedge-metrics-b-instrumentation.test.ts` + `backend/tests/unit/test_wedge_events_api.py`.  
+- WEDGE-METRICS-B does **not** change Intelligence Core / scoring / analysis reasoning — only first-party event receipt and client emission.
 
 ---
 
-## 10. Revision
+## 10. Implementation status (WEDGE-METRICS-B)
+
+**Collection path:** Browser → `POST /api/wedge-events` → structured log line (`healthiq.wedge_events` logger), optional `user_sub` when a valid Bearer JWT is sent. Client helper: `frontend/app/lib/wedgeAnalytics.ts`. Disable client emission in any environment: `NEXT_PUBLIC_WEDGE_EVENTS_DISABLED=1`.
+
+**Live events:** Matches `event_names` in `docs/product/wedge_events_phase1.manifest.json` (names validated server-side in `backend/app/routes/wedge_events.py`).
+
+**Surfaces (indicative):** `authStore` (login/register), `upload/page.tsx` (upload/parse/questionnaire), `analysisStore` (analysis lifecycle), `results/page.tsx` (view/export/share/clinician tab), `analysis/[id]/page.tsx` (reopen from history).
+
+**Explicitly deferred (not emitted as live):** `deferred_event_names` in the manifest; also `wedge_paid_conversion`, segment split, clinician carry-through, and trust surveys — per §2 and §7 — are not wired.
+
+**Operational note:** Payloads are minimised per §4; no biomarker values, questionnaire answers, or report narrative in events.
+
+---
+
+## 11. Revision
 
 Bump `contract_version` in `wedge_events_phase1.manifest.json` when event names or semantics change.

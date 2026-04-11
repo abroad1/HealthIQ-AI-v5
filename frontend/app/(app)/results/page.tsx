@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -30,6 +30,7 @@ import { useAnalysisResult } from '@/queries/analysisResult';
 import type { Cluster, ClinicianReportV1 } from '@/types/analysis';
 import Link from 'next/link';
 import { extractNarrativeRuntimeMeta } from '@/lib/narrativeRuntimePresentation';
+import { emitWedgeEvent } from '@/lib/wedgeAnalytics';
 
 function pickPrimaryDriverCluster(clusters: Cluster[]): { id: string; name: string; biomarkers: string[] } | null {
   const sevRank: Record<string, number> = { critical: 4, high: 3, moderate: 2, low: 1 };
@@ -117,6 +118,7 @@ export default function ResultsPage() {
   const [activeDetailTab, setActiveDetailTab] = useState('overview');
   const [showDetails, setShowDetails] = useState(false);
   const [advancedOpen, setAdvancedOpen] = useState(false);
+  const resultsViewedForId = useRef<string | null>(null);
 
   const idToFetch = currentAnalysisId || analysisIdFromUrl;
   const {
@@ -152,6 +154,38 @@ export default function ResultsPage() {
   }, [analysisIdFromUrl, currentAnalysisId, setCurrentAnalysisId]);
 
   useEffect(() => {
+    if (!currentAnalysis || isAnalyzing || isFetchingFromUrl) return;
+    if (currentAnalysis.status !== 'completed') return;
+    const id = currentAnalysis.analysis_id;
+    if (!id || resultsViewedForId.current === id) return;
+    resultsViewedForId.current = id;
+
+    let entry: 'fresh' | 'from_url' | 'from_history' = 'fresh';
+    if (typeof window !== 'undefined') {
+      try {
+        if (sessionStorage.getItem('wedge_reopen_flag') === '1') {
+          sessionStorage.removeItem('wedge_reopen_flag');
+          entry = 'from_history';
+        } else if (analysisIdFromUrl) {
+          entry = 'from_url';
+        }
+      } catch {
+        if (analysisIdFromUrl) entry = 'from_url';
+      }
+    } else if (analysisIdFromUrl) {
+      entry = 'from_url';
+    }
+
+    emitWedgeEvent({
+      event_name: 'wedge_results_viewed',
+      timestamp: new Date().toISOString(),
+      route: '/results',
+      analysis_id: id,
+      entry,
+    });
+  }, [currentAnalysis, isAnalyzing, isFetchingFromUrl, analysisIdFromUrl]);
+
+  useEffect(() => {
     if (!currentAnalysis && !isAnalyzing && !analysisIdFromUrl && !isFetchingFromUrl) {
       router.push('/upload');
       return;
@@ -185,6 +219,13 @@ export default function ResultsPage() {
   const handleExportResults = () => {
     if (!currentAnalysis) return;
 
+    emitWedgeEvent({
+      event_name: 'wedge_results_export_json_clicked',
+      timestamp: new Date().toISOString(),
+      route: '/results',
+      analysis_id: currentAnalysis.analysis_id,
+    });
+
     const dataStr = JSON.stringify(currentAnalysis, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
 
@@ -197,6 +238,14 @@ export default function ResultsPage() {
   };
 
   const handleShareResults = () => {
+    if (currentAnalysis) {
+      emitWedgeEvent({
+        event_name: 'wedge_results_share_link_clicked',
+        timestamp: new Date().toISOString(),
+        route: '/results',
+        analysis_id: currentAnalysis.analysis_id,
+      });
+    }
     if (navigator.share && currentAnalysis) {
       navigator.share({
         title: 'HealthIQ Analysis Results',
@@ -509,7 +558,21 @@ export default function ResultsPage() {
               </CardHeader>
               {advancedOpen ? (
                 <CardContent className="pt-0">
-                  <Tabs value={activeDetailTab} onValueChange={setActiveDetailTab} className="w-full">
+                  <Tabs
+                    value={activeDetailTab}
+                    onValueChange={(v) => {
+                      setActiveDetailTab(v);
+                      if (v === 'clinician' && currentAnalysis?.analysis_id) {
+                        emitWedgeEvent({
+                          event_name: 'wedge_clinician_report_viewed',
+                          timestamp: new Date().toISOString(),
+                          route: '/results',
+                          analysis_id: currentAnalysis.analysis_id,
+                        });
+                      }
+                    }}
+                    className="w-full"
+                  >
                     <TabsList className="grid w-full grid-cols-3 mb-6">
                       <TabsTrigger value="overview" className="flex items-center gap-2 text-xs sm:text-sm">
                         <BarChart3 className="h-4 w-4 shrink-0" />

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { AnalysisService } from '../services/analysis';
+import { emitWedgeEvent, emitWedgeEventOnce } from '../lib/wedgeAnalytics';
 import {
   BiomarkerValue,
   BiomarkerData,
@@ -185,6 +186,12 @@ export const useAnalysisStore = create<AnalysisState>()(
         if (!biomarkerValidation.valid || !userValidation.valid) {
           const errors = [...biomarkerValidation.errors, ...userValidation.errors];
           console.warn("⚠️ Validation failed in analysisStore:", errors);
+          emitWedgeEvent({
+            event_name: 'wedge_analysis_failed',
+            timestamp: new Date().toISOString(),
+            route: '/upload',
+            error_class: 'validation',
+          });
           set({
             error: {
               message: `Validation failed: ${errors.join(', ')}`,
@@ -236,6 +243,14 @@ export const useAnalysisStore = create<AnalysisState>()(
             error: null,
             currentPhase: 'ingestion', // Move to ingestion phase
             progress: 0,
+          });
+
+          emitWedgeEvent({
+            event_name: 'wedge_analysis_started',
+            timestamp: new Date().toISOString(),
+            route: '/upload',
+            analysis_id: analysisId,
+            phase: 'ingestion',
           });
 
           // Add to history
@@ -300,6 +315,12 @@ export const useAnalysisStore = create<AnalysisState>()(
           set({ eventSource });
 
         } catch (error) {
+          emitWedgeEvent({
+            event_name: 'wedge_analysis_failed',
+            timestamp: new Date().toISOString(),
+            route: '/upload',
+            error_class: 'api_error',
+          });
           set({
             error: {
               message: error instanceof Error ? error.message : 'Failed to start analysis',
@@ -329,6 +350,13 @@ export const useAnalysisStore = create<AnalysisState>()(
 
       completeAnalysis: async (analysisId) => {
         const state = get();
+        emitWedgeEventOnce(`wedge_completed:${analysisId}`, {
+          event_name: 'wedge_analysis_completed',
+          timestamp: new Date().toISOString(),
+          route: '/results',
+          analysis_id: analysisId,
+          phase: 'completed',
+        });
         if (state.currentAnalysis?.analysis_id === analysisId) {
           // Stop events; result fetch is done by useAnalysisResult (single source of truth)
           set({
@@ -349,6 +377,14 @@ export const useAnalysisStore = create<AnalysisState>()(
 
       failAnalysis: (analysisId, error) => {
         const state = get();
+        const errClass = (error.code || 'analysis_error').toString().slice(0, 64);
+        emitWedgeEventOnce(`wedge_failed:${analysisId}`, {
+          event_name: 'wedge_analysis_failed',
+          timestamp: new Date().toISOString(),
+          route: '/results',
+          analysis_id: analysisId,
+          error_class: errClass,
+        });
         if (state.currentAnalysis?.analysis_id === analysisId) {
           const failedAnalysis: AnalysisResult = {
             ...state.currentAnalysis,
