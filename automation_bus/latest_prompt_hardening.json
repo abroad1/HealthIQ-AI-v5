@@ -1,5 +1,5 @@
 {
-  "work_id": "OPS-S1B",
+  "work_id": "WEDGE-METRICS-A",
   "status": "HARDENED",
   "bus_version": "1.3.1",
   "hardened_utc": "2026-04-11T00:00:00Z",
@@ -8,91 +8,96 @@
     {
       "check": "Front Matter — all 5 required fields",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md lines 2-6: work_id=OPS-S1B, branch=feature/ops-s1b-operational-evidence-controls, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED — all 5 mandatory fields present and valid per SOP v1.3.1"
+      "evidence": "automation_bus/latest_cursor_prompt.md lines 2-6: work_id=WEDGE-METRICS-A, branch=feature/wedge-metrics-a-event-contract-governance, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED — all 5 mandatory fields present and valid per SOP v1.3.1"
     },
     {
-      "check": "2A — Authority Path: docs/investigations/OPS_S1_PREFLIGHT.md",
+      "check": "Risk level STANDARD — no HIGH triggers present",
       "result": "CONFIRMED",
-      "evidence": "File exists (Glob confirmed). Line 177: 'Preflight complete'. §3.2 (lines 77-84): hosting is Supabase/DATABASE_URL-driven, no UK region flag in code — artifact must document this. §3.3 (lines 86-95): Privacy notice absent, DPIA absent, subprocessor inventory absent, incident/security process absent — all confirmed as gaps. §3.4 (lines 98-104): CI/CD exists, contact stub, secrets pattern exists, monitoring/backup not verified. §4 gap ranking confirms: gap 3 = no UK hosting/subprocessor story; gap 4 = missing DPIA/inventory/data-flow; gap 7 = operational runbooks."
+      "evidence": "Sprint scope is documentation artifacts (docs/product/ or docs/ops/) plus optional bounded validation. No Intelligence Core (SOP §3) components in scope. No backend/ssot/, backend/core/pipeline/, backend/core/analytics/, backend/scripts/run_work_package.py, golden_gate_local.py, update_cursor_status.py. No analytical output generation or behavioural logic touched. STANDARD (Claude audit + GPT review) is correct."
+    },
+    {
+      "check": "change_type MIXED — classification correct",
+      "result": "CONFIRMED",
+      "evidence": "Governance/event-contract docs = CONTENT class. Any bounded validation test coverage = BEHAVIOUR class (executable frontend test code). MIXED per SOP §4 definition: 'any work involving both'."
+    },
+    {
+      "check": "2A — Authority Path: docs/investigations/WEDGE_METRICS_PREFLIGHT.md",
+      "result": "CONFIRMED",
+      "evidence": "File exists and readable (202 lines). Line 136: recommendation 'SPLIT_INTO_EVENT_CONTRACT_AND_INSTRUMENTATION_PHASES'. §3.1 table confirms journey plumbing present (authStore, upload, analysisStore, results, history). §3.3 confirms missing: product analytics SDK, payment/subscription (no billing in repo), segment dimension, structured product events. §4 metric-readiness table covers all prompt-required metrics (registration, login, upload, analysis, results, clinician report, repeat, retention, segment, trust, enterprise). §5 UK B2C privacy boundary documented. §8 likely touched surfaces enumerated. Preflight status: COMPLETE."
     },
     {
       "check": "2A — Authority Path: docs/HealthIQ_Phase1_Launch_Posture.md",
       "result": "CONFIRMED",
-      "evidence": "File exists (Glob confirmed). Lines 238-257: 'UK-hosted by default' — strategic decision documented; no repo-enforced or code-level UK region constraint exists. Lines 281-289: encryption in transit, RBAC, audit logging, secure auth, backup/recovery posture, incident response capability, vulnerability management — these are expectations against which OPS-S1B must produce evidence artifacts. Lines 298-303: data-flow documentation, vendor/subprocessor inventory, DPIA or equivalent explicitly required. Lines 305-314: HIPAA-led/ISO/SOC2/medical-device explicitly excluded as Phase 1 floor."
+      "evidence": "File exists (confirmed repeatedly). Lines 318-331: what B2C wedge must prove (demand, willingness to pay, repeat usage, trust, clinician exposure via carry-through, B2B credibility signals). Lines 335-372: bridge metrics taxonomy (paid conversion, repeat upload/panel, retention, clinician report download/carry-through, self-reported discussion, trust signals, product-proof metrics, segment splits). This is the governing source for required metric coverage in the event contract."
     },
     {
       "check": "2A — Authority Path: First Market Addendum",
       "result": "CONFIRMED",
-      "evidence": "docs/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED_First_Market_Addendum.md exists and is now committed (git log shows commit 942b8d4 'docs: add strategic plan v1.5 first market addendum'). UK-only, B2C-primary posture consistent with governing authority. No conflict with HealthIQ_Phase1_Launch_Posture.md detected."
+      "evidence": "docs/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED_First_Market_Addendum.md exists and committed. Preflight line 6 and §2 cite it. Addendum §163+: Sprint 3 — Wedge metrics / launch instrumentation. Addendum §31-43: two B2C segments (standard retail, technical/biohacker) need separate measurement. This confirms the sprint sequencing and segment measurement requirement."
     },
     {
-      "check": "2A — OPS-S1A completion confirmed",
+      "check": "2A — Authority Path: docs/ops/WEDGE_METRICS_GOVERNANCE_NOTE_PHASE1.md",
       "result": "CONFIRMED",
-      "evidence": "git log shows commit 7219a35 'feat(frontend): OPS-S1A UK B2C trust baseline and legal surfaces' on main. frontend/app/privacy/page.tsx exists (Glob confirmed). frontend/app/terms/page.tsx and contact/page.tsx confirmed created in OPS-S1A sprint. automation_bus/latest_audit_summary.md (previous sprint) confirms gate_status: PASS for OPS-S1A. Prompt line 15 assertion 'OPS-S1A is complete' is correct."
+      "evidence": "File exists (from OPS-S1B sprint). Preflight line 128 and §9 cite it. Note confirms instrumentation deferred from OPS-S1B; calls for 'event contract + privacy alignment' before implementation. This is an upstream authority source that WEDGE-METRICS-A directly implements."
     },
     {
       "check": "2A — No duplicate authority sources",
       "result": "CONFIRMED",
-      "evidence": "No competing SSOT for UK operational posture detected. docs/ops/ does not exist (Glob returned nothing). docs/compliance/ does not exist (Glob returned nothing). No existing DPIA, subprocessor inventory, data-flow, or operational runbook artifacts found in docs/. Existing docs (BACKUP_STRATEGY.md, CI_CD_PIPELINE.md, Sprint 11) address code backup and CI/CD respectively — not launch operational governance artefacts. OPS-S1B creates new ground, no duplicate authority."
+      "evidence": "Four authority sources serve distinct roles: WEDGE_METRICS_PREFLIGHT.md (gap analysis + metric readiness), HealthIQ_Phase1_Launch_Posture.md (governing bridge metrics), First Market Addendum (sprint sequencing), WEDGE_METRICS_GOVERNANCE_NOTE_PHASE1.md (deferral record). No conflicting or competing SSOT for event contract definition found."
     },
     {
-      "check": "2A — Source cross-ref: hosting/residency reality",
+      "check": "2A — Source cross-ref: no analytics SDK present",
       "result": "CONFIRMED",
-      "evidence": "backend/config/settings.py lines 57-72: SupabaseConfig reads SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_ANON_KEY from env vars — no UK region constraint encoded in application code. backend/config/database.py line 28: get_database_url() reads DATABASE_URL from env — no region constraint. Hosting region is entirely determined by deployment environment, not repo. OPS_S1_PREFLIGHT.md §3.2 line 82: confirmed 'Vendor and connection-string driven — no UK region flag or constraint in application code'. Artifact must document this limitation honestly: UK residency is a strategic posture/deployment decision, not a repo-enforced technical constraint."
+      "evidence": "Grep across frontend/app/ for posthog, mixpanel, segment, amplitude, ga4, analytics, plausible, track(), gtag (case-insensitive): zero matches in application code. analysisStore.ts confirmed: only console.log/debug/warn at lines 129, 130, 133, 176, 182, 183, 187, 200, etc. — no structured telemetry, no track() calls. Prompt Stage 1C §3 assertion 'no dedicated product analytics SDK/pipeline is present' CONFIRMED."
     },
     {
-      "check": "2A — Source cross-ref: vendor/subprocessor reality",
+      "check": "2A — Source cross-ref: clinician report export/share semantics (MATERIAL)",
       "result": "CONFIRMED",
-      "evidence": "backend/config/settings.py line 57: SupabaseConfig — Supabase is auth, database, and file-storage vendor (storage_bucket 'healthiq-exports' at line 71). Line 77: GeminiConfig — Google Gemini ('gemini-1.5-pro' at line 89) is AI processing vendor. Line 97: SecurityConfig — JWT-based auth (SECRET_KEY, HS256 algorithm). .github/workflows/ci.yml, validate.yml, golden_gate.yml exist — GitHub Actions is CI platform. FastAPI backend (confirmed from login page CardDescription prior to OPS-S1A). Next.js 14 frontend (confirmed from project stack). These are the determinable launch-relevant vendors. No email/newsletter/analytics SDK identified in frontend/app/ or config files."
+      "evidence": "frontend/app/(app)/results/page.tsx line 185: handleExportResults() — downloads currentAnalysis as JSON file named healthiq-analysis-{date}.json. This is a full analysis data export, NOT a clinician report PDF. Line 199: handleShareResults() — navigator.share with page URL, fallback to clipboard.writeText(location.href). This is a URL-share action, not a report-specific download. frontend/app/services/reports.ts line 11: API_BASE_URL = 'about:blank'; line 9 comment: 'Disabled: backend reports routes are not registered; keep file for future restoration'. ReportsService.downloadReport() is completely non-functional in current product. The 'clinician report viewed' event maps to ClinicianReportRenderer tab render (in-app). There is NO live server-side clinician PDF download path. The event contract MUST distinguish: (1) results_exported_json = handleExportResults trigger, (2) results_shared = handleShareResults trigger, (3) clinician_report_viewed = ClinicianReportRenderer tab/render event, (4) clinician_report_pdf_downloaded = DEFERRED (ReportsService disabled; not a live action). Labelling handleExportResults as 'clinician_report_downloaded' would be semantically wrong and must not occur."
     },
     {
-      "check": "2A — Source cross-ref: data model / health data persistence reality",
+      "check": "2A — Source cross-ref: no paid conversion path present",
       "result": "CONFIRMED",
-      "evidence": "backend/core/models/database.py line 23: Profile model — email, demographics, consent_given (line 38), consent_version (line 39), consent_given_at (line 40), deletion_requests relationship (line 51). Line 62: ProfilePII — date_of_birth, PII stored separately with comment 'encrypted in production' (line 73 area). Line 93: Analysis model — raw_biomarkers (line 106), questionnaire_data (line 107) stored as JSON. Line 140: AnalysisResult — biomarkers, clusters, insights, overall_score, recommendations stored. These are special-category health data under UK GDPR. Data-flow artifact can cite this schema honestly."
+      "evidence": "Grep across frontend/app/ for stripe, billing, subscription, payment, checkout: zero matches (consistent with preflight §3.3). paid_conversion cannot be instrumented as a product event today. The event contract must mark this as BLOCKED/proxy-only. Preflight §4 table: 'Paid conversion — Missing; not instrumentable in-app until commerce exists or proxy defined'."
     },
     {
-      "check": "2A — Source cross-ref: GDPR schema hooks present",
+      "check": "2A — Source cross-ref: no segment dimension present",
       "result": "CONFIRMED",
-      "evidence": "backend/core/models/database.py: Profile.consent_given (line 38), consent_version (line 39), consent_given_at (line 40) — lawful basis / consent fields present at schema level. Profile.deletion_requests relationship (line 51) — DeletionRequest model exists. Profile.audit_logs relationship (line 50) — AuditLog model exists. Profile.consents relationship (line 49) — Consent model exists. These are schema-level GDPR hooks — artifacts should cite these as existing mitigations while noting they are schema-level only and operational processes (e.g. deletion SLA, audit retention policy) remain to be documented."
-    },
-    {
-      "check": "2A — Source cross-ref: existing operational docs",
-      "result": "CONFIRMED",
-      "evidence": "docs/context/BACKUP_STRATEGY.md: covers code backup/branching, not production incident response or data backup. docs/CI_CD_PIPELINE.md: covers CI/CD test pipeline, not production operational runbook. docs/sprints/SPRINT_11_TEST_ISOLATION_AND_SECURITY_VALIDATION.md: covers test database isolation, not launch incident/backup/access control baseline. No docs/ops/ or docs/compliance/ directory exists. OPS_S1_PREFLIGHT.md §3.4 assessment confirmed correct: CI/CD posture is good, but production runbooks, monitoring/alerting, and backup/recovery are documented gaps."
+      "evidence": "Preflight §3.3: 'No standard-vs-biohacker field for analytics identified in auth/profile flows reviewed.' backend/core/models/database.py Profile model (reviewed in OPS-S1B hardening): no user_segment or equivalent field. Questionnaire data exists as JSON in Analysis.questionnaire_data but no explicit segment enum in schema. Segment-split measurement is BLOCKED pending product definition + capture. Preflight §4: 'Segment split — Missing dimension; Bounded to high — needs product definition + capture'."
     },
     {
       "check": "2B — Behavioural scope explicitly defined",
       "result": "CONFIRMED",
-      "evidence": "Prompt §SCOPE items 1-7 (lines 123-286) define exact required artifacts with named destination paths (docs/ops/, docs/compliance/) and explicit content requirements. §OUT OF SCOPE (lines 304-314) prohibits: OPS-S1A trust-surface rewrite, backend reasoning/narrative, broad infra replatforming, SOC2/ISO certification, HIPAA/US posture, B2B procurement, full analytics, launch-posture re-decision, substituting docs for unresolved strategic decisions. Scope is entirely documentation artifacts — no backend or analytical code changes."
+      "evidence": "Prompt §SCOPE items 1-8 (lines 133-313) define exact required governance deliverables with explicit content requirements. §OUT OF SCOPE (lines 333-342) prohibits: event wiring, analytics SDK, BI/warehouse, experimentation, payment/billing, backend reasoning, generic logging, launch-posture reopening, fake precision on segmentation. No backend or application code changes permitted. §IMPLEMENTATION CONSTRAINTS 'Product behaviour untouched' (line 365): 'No application logic or instrumentation should be added in this sprint.'"
     },
     {
       "check": "2B — Regression targets declared",
       "result": "CONFIRMED",
-      "evidence": "Prompt scope item 7 (lines 271-286): validation must show (1) required artifacts created, (2) artifact set internally coherent with agreed launch posture, (3) no backend analytical behaviour changed, (4) no unsupported trust claims reintroduced through ops artifacts. Prompt §VALIDATION/EVIDENCE (lines 374-388) requires: exact artifacts created, exact hosting/residency position documented, exact vendor scope, exact privacy-risk/data-flow artifacts, exact open items. Proportionate to docs-dominant scope."
+      "evidence": "Prompt scope item 8 (lines 299-313): validation must show (1) required artifacts created, (2) event vocabulary internally coherent, (3) privacy boundaries explicit, (4) no backend analytical behaviour changed. Bounded and proportionate to docs-dominant scope."
     },
     {
       "check": "2B — STOP conditions protect behavioural correctness",
       "result": "CONFIRMED",
-      "evidence": "Five explicit STOP conditions (lines 358-370): (1) cannot produce truthful evidence without pretending facts not in evidence, (2) artifacts depend on external unknowns making docs misleading, (3) drift into broad infra/security programme, (4) substituting documentation for unresolved strategic decisions, (5) widening into analytics or backend product work. Condition 1 is directly relevant: hosting region is not repo-enforced; artifact must document this honestly rather than asserting UK guarantees the repo cannot prove."
+      "evidence": "Five explicit STOP conditions (lines 385-395): (1) event definitions require unresolved strategy beyond agreed posture, (2) privacy/consent implications make contract misleading, (3) drift into instrumentation implementation, (4) inventing segment/paid-conversion logic product does not support, (5) only way to complete artifact is to overclaim metric readiness. Conditions 4 and 5 directly address the two confirmed gaps: no billing path (paid conversion blocked) and no segment dimension (must not be fabricated)."
     },
     {
       "check": "2B — Determinism risks surfaced",
       "result": "CONFIRMED",
-      "evidence": "Prompt §IMPLEMENTATION CONSTRAINTS 'Product logic untouched' (line 334): 'No analytical, reasoning, or results-hierarchy work belongs in this sprint.' All scope items produce docs/* artifacts only. No backend/core/pipeline/, backend/ssot/, backend/scripts/, or frontend analytics code in scope. Intelligence Core (SOP §3) entirely unaffected. Emitted analytical reasoning identical to pre-sprint state."
+      "evidence": "Prompt §IMPLEMENTATION CONSTRAINTS 'Product behaviour untouched' (line 365): no application logic or instrumentation added. No Intelligence Core components in scope. No analytical pipeline, InsightGraph, ranking/filtering, or output assembly touched. Emitted analytical reasoning unchanged."
     },
     {
       "check": "2B — No scope creep risk",
       "result": "CONFIRMED",
-      "evidence": "§OUT OF SCOPE (lines 304-314) is comprehensive. §IMPLEMENTATION CONSTRAINTS (lines 318-338): 'Evidence must be honest', 'Phase 1 baseline only', 'Open items must stay visible', 'Product logic untouched', 'Keep it usable'. STOP condition 3 halts if drift to broad infra/security programme. STOP condition 4 halts if substituting docs for unresolved strategic decisions. The most material drift risk (overclaiming UK hosting) is directly addressed by the prompt's 'Evidence must be honest' constraint and STOP condition 1."
+      "evidence": "§OUT OF SCOPE is comprehensive and directly addresses the known risk vectors: 'No event wiring or analytics SDK integration' (line 334) — cannot drift into WEDGE-METRICS-B territory; 'No fake precision on user segmentation or clinician carry-through' (line 341) — directly addresses the two unresolvable metrics. STOP condition 3 halts implementation drift. STOP condition 4 halts metric fabrication."
     },
     {
-      "check": "Forbidden files (backend control-plane)",
+      "check": "Forbidden files (backend control-plane and Intelligence Core)",
       "result": "CONFIRMED",
-      "evidence": "Scope is strictly: new docs under docs/ops/ and docs/compliance/; optional bounded validation artifacts. backend/ssot/, backend/core/pipeline/, backend/core/analytics/, backend/scripts/run_work_package.py, backend/scripts/golden_gate_local.py, backend/scripts/update_cursor_status.py — all explicitly excluded by prompt §OUT OF SCOPE. No tooling directories (.codex/, .vscode/, AGENTS.md) in scope."
+      "evidence": "Scope is strictly: new docs under docs/ops/ or docs/product/ (or equivalent). Optional bounded machine-readable schema (scope item 9). Optional validation test. backend/ssot/, backend/core/pipeline/, backend/core/analytics/, backend/scripts/run_work_package.py, golden_gate_local.py, update_cursor_status.py — all explicitly excluded. No analytics SDK files in scope. No tooling directories (.codex/, .vscode/, AGENTS.md)."
     }
   ],
-  "content_review": "COMPLETE — OPS_S1_PREFLIGHT.md read and cross-referenced: §3.2 confirms hosting is env-var-driven with no UK region enforcement; §3.3 confirms DPIA/subprocessor/privacy notice absent; §3.4 confirms runbook/monitoring gaps. HealthIQ_Phase1_Launch_Posture.md read: §238-257 UK-hosted-by-default strategic decision; §281-289 security/operational expectations; §298-303 explicit artifact requirements. backend/config/settings.py read: SupabaseConfig (line 57), GeminiConfig (line 77) — vendors confirmed. backend/core/models/database.py read: GDPR schema hooks confirmed (consent fields line 38-40, DeletionRequest line 51, ProfilePII line 62). No docs/ops/ or docs/compliance/ exists — all artifacts are net-new creation. OPS-S1A completion confirmed: commit 7219a35 on main, privacy/terms/contact pages exist.",
-  "behaviour_review": "COMPLETE — MIXED classification: new compliance/operational docs = CONTENT class; any bounded validation coverage = BEHAVIOUR class (changes test assertions). No Intelligence Core components touched. No backend analytical code changes. STOP conditions protect against overclaiming (condition 1: cannot produce truthful evidence without pretending facts not in evidence) and against backend drift (condition 5). Deterministic results hierarchy entirely unaffected. Emitted reasoning unchanged.",
+  "content_review": "COMPLETE — WEDGE_METRICS_PREFLIGHT.md read and cross-referenced (202 lines): metric readiness table (§4) and data/privacy boundary (§5) confirmed. HealthIQ_Phase1_Launch_Posture.md §318-372 confirmed as bridge-metrics authority. First Market Addendum confirmed committed; §163+ sprint sequencing confirmed. WEDGE_METRICS_GOVERNANCE_NOTE_PHASE1.md confirmed present from OPS-S1B. analytics SDK search: zero matches in frontend/app/. results/page.tsx read: handleExportResults (JSON download, line 185), handleShareResults (URL share, line 199) confirmed — these are NOT clinician report PDF downloads. reports.ts read: API_BASE_URL='about:blank' (line 11), backend reports routes disabled (line 9 comment) — ReportsService non-functional in current product. analysisStore.ts grep: only console.log/debug/warn, no structured telemetry. No billing/payment references found.",
+  "behaviour_review": "COMPLETE — MIXED classification: governance docs = CONTENT class; any validation test = BEHAVIOUR class. No Intelligence Core or application code changes permitted. STOP conditions protect against instrumentation drift (condition 3) and metric fabrication (conditions 4, 5). The material clinician-report semantic finding is documented: contract must not label handleExportResults as 'clinician_report_downloaded' — that would be semantically false. Deterministic results hierarchy entirely unaffected.",
   "stage_2c_checklist_in_response": true,
   "escalation_required": false
 }

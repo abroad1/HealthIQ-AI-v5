@@ -1,112 +1,122 @@
 ---
-work_id: OPS-S1B
-branch: feature/ops-s1b-operational-evidence-controls
-risk_level: HIGH
+work_id: WEDGE-METRICS-A
+branch: feature/wedge-metrics-a-event-contract-governance
+risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# OPS-S1B — Operational Evidence and Controls
+# WEDGE-METRICS-A — Event Contract and Governance
 
 ## Context
 
-This is the second execution phase of **OPS-S1 — Phase 1 Operational Readiness for UK B2C Launch**.
+This is the first execution phase of the wedge-metrics lineage.
 
-**OPS-S1A** is complete and established the launch-facing trust baseline:
+The governing preflight concluded:
 
-* launch-facing trust/compliance language is now materially aligned to the agreed UK-first B2C posture
-* real Privacy / Terms / Contact surfaces now exist
-* non-diagnostic positioning is visible where launch trust requires it
-* obvious trust-surface mismatches have been removed
+* wedge-metrics work is justified now
+* the correct delivery shape is:
 
-The governing OPS-S1 preflight concluded that the correct delivery shape is:
+  * **WEDGE-METRICS-A — event contract and governance**
+  * **WEDGE-METRICS-B — instrumentation implementation**
+* the repo currently has no real product analytics layer
+* most wedge metrics are missing or only indirectly inferable
+* because this is a UK-first B2C health-data product, instrumentation must not be improvised without first defining the event contract, privacy boundaries, and vendor/collection posture 
 
-* **OPS-S1A — Trust and UK baseline**
-* **OPS-S1B — Operational evidence and controls**
+The agreed Phase 1 launch posture is:
 
-The preflight found that the biggest remaining launch-critical gaps are now:
+* UK only
+* B2C-primary
+* self-directed retail user with an already-tested blood panel
+* two B2C user groups:
 
-* no documented in-repo UK hosting / residency evidence
-* no in-repo subprocessor / vendor inventory
-* no DPIA or equivalent structured privacy-risk review artifact
-* no documented data-flow artifact
-* no minimum operational runbook / incident / backup / recovery / secrets baseline evidenced for launch
-* wedge-metric readiness is important, but should not displace the trust/control baseline needed for launch credibility
+  * standard retail
+  * technical / biohacker
+* B2C as deliberate wedge / proof engine
+* clinician report as a secondary exposure channel into real clinical conversations
 
-This sprint is **OPS-S1B only**.
+This sprint is **WEDGE-METRICS-A only**.
 
 It is **not**:
 
-* OPS-S1A trust-surface work
-* backend reasoning/narrative changes
-* broad infrastructure replatforming
-* SOC 2 / ISO 27001 certification programme
-* HIPAA-led or US-first operational posture
-* enterprise/B2B procurement readiness
-* broad product analytics implementation
+* full instrumentation implementation
+* full BI/warehouse setup
+* experimentation platform buildout
+* billing/payment implementation
+* backend reasoning changes
+* generic logging work outside wedge metrics
 
 ---
 
 ## Objective
 
-Create the minimum operational evidence and control artifacts needed to support a credible UK-first B2C launch, aligned with the agreed launch posture and without expanding into enterprise-grade compliance programmes or unrelated infrastructure work.
+Define the minimum event contract, governance rules, and privacy/collection posture required to measure the UK B2C wedge truthfully and safely, so instrumentation can be implemented in a bounded follow-on sprint.
 
 This sprint must establish:
 
-* documented UK hosting / residency evidence or explicit hosting-position artifact
-* subprocessor / vendor inventory for launch-relevant services
-* DPIA or equivalent structured privacy-risk review artifact
-* clear data-flow documentation for the launch product
-* minimum operational control artifacts covering incident / backup / recovery / secrets / access expectations
-* a bounded and honest operational baseline for Phase 1
+* named event vocabulary for the launch-critical wedge journey
+* clear event semantics for core actions
+* data-minimisation rules for event payloads
+* a bounded analytics collection posture
+* privacy/consent/update implications that must be handled before instrumentation
+* explicit classification of which metrics are in-scope now vs deferred
 
-This sprint is about **operational evidence and control baseline**, not certification or broad infra redesign.
+This sprint is about **measurement definition and governance**, not event wiring.
 
 ---
 
-## Stage 1C — Operational Evidence Preflight (MANDATORY)
+## Stage 1C — Event Contract Preflight (MANDATORY)
 
 Before editing files, explicitly verify and record:
 
 1. the governing preflight is:
 
-   * `docs/investigations/OPS_S1_PREFLIGHT.md`
+   * `docs/investigations/WEDGE_METRICS_PREFLIGHT.md`
 
 2. the launch authority is:
 
    * `docs/HealthIQ_Phase1_Launch_Posture.md`
-   * and any adopted/addendum strategy doc now serving as first-market authority
+   * `docs/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED_First_Market_Addendum.md`
+   * any docs now serving as sprint-plan authority for Phase 1 launch
 
-3. OPS-S1A is complete and the current repo reality is still:
+3. the current repo reality is still:
 
-   * trust-surface alignment has been completed
-   * Privacy / Terms / Contact exist
-   * the remaining launch-critical gaps are now operational evidence / controls rather than public-facing trust copy
+   * no dedicated product analytics SDK/pipeline is present
+   * most wedge metrics are missing or only partially inferable
+   * event contract and privacy/vendor posture should be defined before instrumentation
+   * segment measurement and clinician-report measurement semantics are not yet cleanly defined
 
 4. before implementation, Cursor must explicitly verify and record:
 
-   * what hosting / residency evidence is already present in repo, if any
-   * what vendor/subprocessor evidence is already present in repo, if any
-   * what privacy/compliance docs are already present vs missing
-   * what operational control/runbook material is already present vs missing
-   * which evidence artifacts are required for a minimum credible UK B2C Phase 1 launch
+   * the exact product journeys to be covered by the initial wedge event contract
+   * the exact metrics that are:
+
+     * measurable now with bounded implementation
+     * blocked pending later product/business work
+     * definitional only for now
+   * the exact current surfaces where future instrumentation is most likely to land
 
 5. before implementation, Cursor must explicitly choose and record:
 
-   * the exact artifact set to create/update in this sprint
-   * the exact scope of operational controls to evidence now vs defer
-   * the exact boundary between OPS-S1B baseline artifacts and later certification/enterprise work
+   * the proposed event vocabulary
+   * the proposed payload-minimisation rules
+   * the proposed collection posture:
+
+     * first-party only
+     * third-party
+     * hybrid
+   * the exact privacy/consent implications that must be documented before instrumentation
 
 6. this sprint will **not**:
 
-   * promise UK hosting if the repo/ops reality cannot evidence it honestly
-   * create fake compliance claims unsupported by deployment reality
-   * widen into a full security certification programme
-   * become a backend or infrastructure rewrite
-   * become a full analytics implementation sprint
-   * reopen the agreed launch posture
+   * wire events into the app
+   * add an analytics SDK
+   * implement billing or checkout
+   * create a warehouse/BI stack
+   * invent segment logic that the product does not yet capture
+   * widen into backend reasoning or product redesign
 
-7. if the required evidence cannot be authored truthfully from current repo/known launch reality, STOP and report rather than fabricating operational confidence
+7. if a truthful event contract cannot be defined without broader unresolved privacy/business decisions, STOP and report rather than guessing
 
 If any of the above is false:
 
@@ -120,168 +130,185 @@ If any of the above is false:
 
 ### REQUIRED IN SCOPE
 
-#### 1. UK hosting / residency evidence artifact
+#### 1. Define the Phase 1 wedge event vocabulary
 
 Primary likely surfaces:
 
-* new docs under `docs/ops/` or `docs/compliance/`
-* config/environment documentation surfaces
-* any existing deployment/config docs that need bounded update
+* new docs under `docs/ops/` or `docs/product/`
+* possibly a small shared schema doc location if repo conventions support it
 
-You must create a truthful artifact describing the launch hosting/residency position for Phase 1.
+You must define the named events for the minimum wedge journey.
+
+At minimum, the contract should address events such as:
+
+* registration completion
+* login success
+* upload start
+* upload completion / parse success
+* analysis start
+* analysis success / failure
+* results viewed
+* clinician report viewed
+* clinician report exported / shared / downloaded, with explicit semantics
+* historical result reopened
+* repeat upload / repeat panel behaviour, if eventable directly
 
 Requirements:
 
-* reflect the agreed **UK-hosted by default** direction only to the extent it can be evidenced honestly
-* explicitly distinguish:
-
-  * confirmed deployment/hosting facts
-  * chosen launch posture assumptions
-  * items still requiring operational provisioning/verification outside repo
-* do not overclaim technical guarantees the repo cannot prove
-
-This artifact should make the launch hosting story reviewable and auditable.
+* event names must be explicit and consistent
+* event meaning must be clear
+* avoid ambiguous overlap between similar actions
+* do not define a giant future-proof taxonomy; keep it launch-bounded
 
 ---
 
-#### 2. Vendor / subprocessor inventory
+#### 2. Define event semantics for ambiguous product actions
 
 Primary likely surfaces:
 
-* new docs under `docs/ops/` or `docs/compliance/`
-* supporting references to current vendor/config usage in repo
+* the same contract/governance docs
+* possibly a companion glossary section
 
-You must create a bounded launch-relevant vendor/subprocessor inventory.
+The preflight identified specific ambiguity around things like clinician-report “download” because the current product has view/export/share behaviours rather than one clearly defined download path.
+
+You must resolve these semantics for the launch wedge.
 
 Requirements:
 
-* include only vendors/services actually relevant to the launch product and its operation
-* distinguish roles clearly, e.g.:
+* distinguish clearly between:
 
-  * hosting / database / auth
-  * analytics if present
-  * email/contact if relevant
-  * other launch-relevant infrastructure/services
-* identify what each service does in the launch stack
-* keep this practical and launch-oriented, not a giant enterprise procurement pack
-
-This is a minimum transparency/governance artifact, not a full legal register.
+  * report viewed
+  * result export/download
+  * share action
+  * reopened saved result
+* do not label an event in a way the current product does not actually support
+* if an important business metric cannot yet be represented honestly, mark it as deferred or proxy-only
 
 ---
 
-#### 3. DPIA or equivalent privacy-risk review artifact
+#### 3. Define payload minimisation and privacy rules
 
 Primary likely surfaces:
 
-* new doc under `docs/compliance/` or equivalent
+* governance docs
+* possibly cross-reference to OPS docs/privacy surfaces
 
-You must create a structured privacy-risk review artifact suitable for the agreed UK B2C Phase 1 posture.
+You must define what event payloads are allowed to contain for Phase 1.
 
 Requirements:
 
-* it must be explicit, structured, and launch-oriented
-* it must cover the actual launch product model:
+* do not include raw biomarker values in product analytics payloads
+* do not include unnecessary health content in event payloads
+* use the minimum identifiers and metadata needed for wedge measurement
+* clearly state prohibited payload content
+* if user segmentation is to be measured later, document how that should be handled or deferred
 
-  * upload blood results
-  * store/process health-related data
-  * provide structured interpretation
-  * provide downloadable clinician report
-* it must identify key risks, mitigations, and open items honestly
-* it must not pretend to be a regulator-approved formal instrument if it is an internal artifact
-
-Call it DPIA or equivalent only if that is honest for the artifact being produced.
+This is critical because HealthIQ is handling health-related data under a UK B2C posture.
 
 ---
 
-#### 4. Data-flow documentation
+#### 4. Define analytics collection posture
 
 Primary likely surfaces:
 
-* new architecture/ops/compliance doc
-* bounded updates to existing docs only if strictly required
+* governance doc(s)
+* cross-reference to OPS-S1 docs if needed
 
-You must document the launch-relevant data flow clearly enough that privacy/security/ops decisions are reviewable.
+You must choose and document the collection posture for the next sprint to build against.
+
+Examples:
+
+* first-party only event collection
+* privacy-reviewed third-party collection
+* hybrid with strict boundaries
 
 Requirements:
 
-* show the main lifecycle of launch-relevant data at a practical level
-* include:
-
-  * user input/upload
-  * analysis processing
-  * persistence/history
-  * account/auth relationship where relevant
-  * clinician report / downloadable output if relevant
-* distinguish code-backed flow from externally provisioned infra assumptions where necessary
-* keep the document readable and operationally useful
-
-This does not need to be a perfect enterprise data map, but it must be good enough for Phase 1 launch governance.
+* the choice must be explicit
+* it must match the Phase 1 trust/compliance posture
+* if vendor choice is still open, document the permitted boundary instead of pretending it is decided
+* do not let this sprint drift into actual vendor integration
 
 ---
 
-#### 5. Minimum operational control baseline artifacts
+#### 5. Define privacy / consent / policy implications for instrumentation
 
 Primary likely surfaces:
 
-* new docs under `docs/ops/`
-* bounded updates to existing runbook/checklist docs if present
+* governance doc(s)
+* bounded updates or references to existing OPS docs/privacy surfaces if needed
 
-You must create the minimum operational control artifact set for Phase 1 launch, covering at least the agreed baseline areas where the preflight found no evidence.
-
-Likely topics include:
-
-* incident response baseline
-* backup / recovery baseline
-* secrets/config handling expectations
-* access-control expectations
-* launch-day operational checklist or equivalent minimal runbook
+You must document what has to be true before instrumentation is turned on.
 
 Requirements:
 
-* keep these artifacts bounded and practical
-* clearly separate:
+* identify whether privacy notice updates are required
+* identify whether analytics consent is required or must be reviewed
+* identify whether vendor/subprocessor inventory updates would be required for third-party analytics
+* distinguish:
 
-  * implemented product behaviour
-  * operational process expectation
-  * open dependencies requiring human/ops completion before launch
-* do not overstate maturity
-* do not create an enterprise security manual
+  * can be done now
+  * must be reviewed before implementation
+  * deferred
+
+This sprint should make the next implementation sprint safer.
 
 ---
 
-#### 6. Honest boundary and open-items documentation
+#### 6. Classify Phase 1 metrics as now / later / proxy
 
-Across all created artifacts, you must explicitly document what remains outside Phase 1 scope or still requires non-repo completion.
+You must explicitly classify the key wedge metrics.
+
+At minimum address:
+
+* paid conversion
+* repeat upload / repeat panel behaviour
+* retention / return usage
+* clinician report usage
+* clinician carry-through / discussion with clinician
+* segment differences
+* trust/usefulness signals
+* enterprise-relevant proof points
 
 Requirements:
 
-* no false sense of completeness
-* open items must be visible
-* distinctions between:
-
-  * completed in repo
-  * documented requirement
-  * operational dependency
-    must be explicit
-
-This is critical for trust.
+* identify which are measurable in the next sprint
+* which require a proxy
+* which are blocked pending later product/business work
+* do not pretend all desired metrics are ready now
 
 ---
 
-#### 7. Targeted regression / validation coverage
+#### 7. Produce a bounded instrumentation handoff for WEDGE-METRICS-B
+
+You must leave a clear handoff for the next sprint.
+
+Requirements:
+
+* likely touched surfaces
+* event names to wire
+* payload rules
+* excluded fields
+* privacy prerequisites
+* unresolved open items
+
+This should make WEDGE-METRICS-B straightforward to author.
+
+---
+
+#### 8. Targeted validation evidence
 
 Likely surfaces:
 
-* lightweight validation of required docs/routes if applicable
-* doc index references if your repo conventions support them
-* no heavy test suite required unless existing patterns make it appropriate
+* lightweight tests if repo conventions support doc/schema validation
+* otherwise bounded evidence through artifact set and internal consistency
 
 You must provide the minimum validation evidence needed to show:
 
-* required artifacts were created
-* artifact set is internally coherent with the agreed launch posture
+* required artifact(s) were created
+* event vocabulary is internally coherent
+* privacy boundaries are explicit
 * no backend analytical behaviour changed
-* no unsupported trust claims were reintroduced through ops artifacts
 
 Keep this bounded and proportionate.
 
@@ -289,67 +316,67 @@ Keep this bounded and proportionate.
 
 ### OPTIONAL / BOUNDED IN SCOPE
 
-#### 8. Minimal wedge-metric governance note only if needed
+#### 9. Minimal machine-readable event schema only if truly useful
 
-If a short artifact is needed to state what launch metrics remain to be instrumented later, that is acceptable.
+If a very small machine-readable event schema artifact would clearly help the follow-on sprint, that is acceptable.
 
 Requirements:
 
-* this must remain a governance note, not a product analytics implementation
-* it should clarify what is deferred beyond OPS-S1B
-* do not let this consume the sprint
+* bounded
+* launch-only
+* must match the human-readable governance doc
+* do not build a full analytics platform contract prematurely
 
 ---
 
 ## OUT OF SCOPE (STRICT)
 
-* No OPS-S1A trust-surface rewrite
-* No backend reasoning/narrative changes
-* No broad infra replatforming
-* No SOC 2 / ISO 27001 certification programme
-* No HIPAA-led or US-first posture work
-* No B2B procurement readiness programme
-* No full analytics/product-instrumentation implementation
-* No launch-posture re-decision
-* No pretending that human/legal/ops signoff is fully replaced by documents alone
+* No event wiring or analytics SDK integration
+* No full BI/warehouse programme
+* No experimentation framework
+* No payment/billing implementation
+* No backend reasoning changes
+* No broad product analytics redesign
+* No reopening launch posture
+* No fake precision on user segmentation or clinician carry-through
 
 ---
 
 ## Implementation constraints
 
-### Evidence must be honest
+### Define only what you can defend
 
-Only claim what can be supported by repo reality or clearly labeled operational decisions.
+If an event or metric cannot be described truthfully from current product reality, defer it or mark it proxy-only.
 
-### Phase 1 baseline only
+### Privacy first
 
-This sprint should produce the minimum credible UK B2C operational artifact set, not a mature enterprise compliance programme.
+This is a health-data product. Event payloads and collection posture must stay minimal and defensible.
 
-### Open items must stay visible
+### Launch-bounded
 
-Do not hide unresolved operational dependencies.
+Do not create a giant taxonomy for imagined future products.
 
-### Product logic untouched
+### Leave implementation-ready guidance
 
-No analytical, reasoning, or results-hierarchy work belongs in this sprint.
+This sprint should reduce ambiguity for WEDGE-METRICS-B, not just produce abstract notes.
 
-### Keep it usable
+### Product behaviour untouched
 
-Artifacts should be useful to humans planning launch, not just written to satisfy process.
+No application logic or instrumentation should be added in this sprint.
 
 ---
 
 ## Acceptance criteria
 
-OPS-S1B is complete only if:
+WEDGE-METRICS-A is complete only if:
 
-1. a launch-relevant UK hosting/residency evidence artifact exists
-2. a bounded vendor/subprocessor inventory exists
-3. a structured privacy-risk review artifact exists
-4. launch-relevant data-flow documentation exists
-5. minimum operational control baseline artifacts exist for Phase 1
-6. open items and operational dependencies are documented honestly
-7. no backend reasoning, infra-rewrite, certification-programme, or analytics-implementation scope is introduced
+1. a bounded Phase 1 wedge event vocabulary is defined
+2. ambiguous business/product actions are given explicit event semantics
+3. payload minimisation and prohibited data rules are documented
+4. the analytics collection posture is explicitly defined or bounded
+5. privacy/consent/policy prerequisites for instrumentation are documented
+6. key wedge metrics are classified as now / proxy / later honestly
+7. a clear handoff exists for WEDGE-METRICS-B without any actual instrumentation being introduced
 
 ---
 
@@ -357,11 +384,11 @@ OPS-S1B is complete only if:
 
 STOP immediately if:
 
-* the sprint cannot produce truthful operational evidence without pretending facts not in evidence
-* required artifacts depend on external unknowns that make the docs misleading
-* the work begins drifting into broad infra/security programme buildout
-* the work begins substituting documentation for actual unresolved strategic decisions
-* the work begins widening into analytics implementation or backend product work
+* event definitions require unresolved strategy decisions beyond the agreed launch posture
+* privacy/consent implications make any current event contract misleading
+* the work begins drifting into instrumentation implementation
+* the work begins inventing segment logic or paid-conversion logic the current product does not support
+* the only way to complete the artifact is to overclaim metric readiness
 
 If any STOP condition triggers:
 
@@ -375,14 +402,14 @@ If any STOP condition triggers:
 
 Before closure, provide evidence for:
 
-* exact operational artifacts created/updated
-* exact hosting/residency position documented
-* exact vendor/subprocessor inventory scope
-* exact privacy-risk/data-flow artifacts created
-* exact operational baseline/runbook artifacts created
-* exact open items/dependencies documented
-* confirmation that no backend analytical behaviour changed
-* files created/modified
+* exact artifact(s) created
+* exact event vocabulary defined
+* exact ambiguous action semantics resolved
+* exact payload minimisation rules defined
+* exact collection posture chosen or bounded
+* exact now / proxy / later metric classification
+* exact handoff for WEDGE-METRICS-B
+* confirmation that no application logic changed
 * final git state
 
 ---
@@ -390,13 +417,13 @@ Before closure, provide evidence for:
 ## Execution sequence (SOP aligned)
 
 1. Kernel START
-2. Complete Stage 1C Operational Evidence Preflight
-3. Create hosting/residency evidence artifact
-4. Create vendor/subprocessor inventory
-5. Create privacy-risk and data-flow artifacts
-6. Create minimum operational control baseline artifacts
-7. Add/update bounded validation evidence
-8. Validate locally
+2. Complete Stage 1C Event Contract Preflight
+3. Define wedge event vocabulary
+4. Define event semantics for ambiguous actions
+5. Define payload/privacy/collection rules
+6. Classify metrics as now / proxy / later
+7. Produce WEDGE-METRICS-B handoff
+8. Add/update bounded validation evidence
 9. Kernel FINISH
 10. Produce closure report
 
@@ -407,12 +434,13 @@ Before closure, provide evidence for:
 Provide:
 
 * files created/modified
-* hosting/residency-evidence summary
-* vendor/subprocessor summary
-* privacy-risk/data-flow summary
-* operational-controls summary
-* open-items/dependencies summary
-* regression/validation summary
+* event-vocabulary summary
+* event-semantics summary
+* payload/privacy summary
+* collection-posture summary
+* metric-classification summary
+* WEDGE-METRICS-B handoff summary
+* validation summary
 * kernel finish status
 * final git state
 
@@ -422,6 +450,6 @@ Provide:
 
 This sprint exists to:
 
-> create the minimum credible operational evidence and control baseline needed to support a UK-first B2C HealthIQ launch, without drifting into enterprise certification work, backend changes, or false operational certainty
+> define the minimum trustworthy event contract and measurement governance needed to make the UK B2C launch wedge measurable, without prematurely implementing analytics or compromising the product’s privacy and trust posture
 
 Do not expand beyond that.
