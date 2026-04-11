@@ -34,7 +34,7 @@ function LoginForm() {
     <Card>
       <CardHeader>
         <CardTitle>Sign in</CardTitle>
-        <CardDescription>Use your HealthIQ account. Backend: FastAPI /api/auth.</CardDescription>
+        <CardDescription>Use your HealthIQ account to sign in securely.</CardDescription>
       </CardHeader>
       <form onSubmit={onSubmit}>
         <CardContent className="space-y-4">

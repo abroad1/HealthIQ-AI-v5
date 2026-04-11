@@ -44,7 +44,7 @@ function RegisterForm() {
     <Card>
       <CardHeader>
         <CardTitle>Create account</CardTitle>
-        <CardDescription>Password must be at least 8 characters (backend rule).</CardDescription>
+        <CardDescription>Password must be at least 8 characters.</CardDescription>
       </CardHeader>
       <form onSubmit={onSubmit}>
         <CardContent className="space-y-4">
