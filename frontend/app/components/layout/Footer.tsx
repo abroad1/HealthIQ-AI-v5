@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 export function Footer() {
   return (
     <footer className="border-t border-border bg-background">
@@ -9,9 +11,15 @@ export function Footer() {
             © {new Date().getFullYear()} HealthIQ AI. All rights reserved.
           </p>
           <div className="flex gap-6 text-sm text-muted-foreground">
-            <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
-            <a href="#" className="hover:text-foreground transition-colors">Terms</a>
-            <a href="#" className="hover:text-foreground transition-colors">Contact</a>
+            <Link href="/privacy" className="transition-colors hover:text-foreground">
+              Privacy
+            </Link>
+            <Link href="/terms" className="transition-colors hover:text-foreground">
+              Terms
+            </Link>
+            <Link href="/contact" className="transition-colors hover:text-foreground">
+              Contact
+            </Link>
           </div>
         </div>
       </div>

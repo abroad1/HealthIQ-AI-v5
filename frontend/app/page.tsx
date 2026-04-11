@@ -48,7 +48,8 @@ export default function LandingPage() {
           
           <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground md:text-xl">
             Stop wondering what your numbers mean. Sign in to run a structured biomarker analysis and view your
-            interpretation, system groups, and clinician-grade report in one place.
+            interpretation, system groups, and a clinician-style report in one place — for clarity and discussion with a
+            qualified clinician, not a substitute for medical diagnosis.
           </p>
           
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -69,15 +70,15 @@ export default function LandingPage() {
           <div className="mt-12 flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-status-excellent" />
-              <span>HIPAA Compliant</span>
+              <span>UK-first product focus</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-status-excellent" />
-              <span>Bank-Level Security</span>
+              <span>Encryption &amp; access controls</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-5 w-5 text-status-excellent" />
-              <span>Instant Results</span>
+              <span>Structured biomarker analysis</span>
             </div>
           </div>
         </div>
@@ -143,8 +144,11 @@ export default function LandingPage() {
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
                   <Shield className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="mb-2 text-lg font-bold">Medical-Grade Security</h3>
-                <p className="text-sm text-muted-foreground">HIPAA compliant with end-to-end encryption. Your data is always private.</p>
+                <h3 className="mb-2 text-lg font-bold">Privacy &amp; security</h3>
+                <p className="text-sm text-muted-foreground">
+                  Health data is handled with a UK consumer health-data baseline in mind: encryption in transit, access
+                  controls, and careful product wording — without claiming frameworks outside our Phase 1 posture.
+                </p>
               </div>
 
               <div className="text-center">
@@ -159,8 +163,11 @@ export default function LandingPage() {
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
                   <Activity className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="mb-2 text-lg font-bold">Continuous Monitoring</h3>
-                <p className="text-sm text-muted-foreground">Track biomarker trends and receive alerts when action is needed.</p>
+                <h3 className="mb-2 text-lg font-bold">Trends over time</h3>
+                <p className="text-sm text-muted-foreground">
+                  Revisit uploaded panels to see how markers move — useful context to discuss with a clinician, not a
+                  diagnostic alert service.
+                </p>
               </div>
             </div>
           </div>
@@ -173,7 +180,7 @@ export default function LandingPage() {
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="mb-4 text-3xl font-bold md:text-4xl">Ready to Understand Your Health?</h2>
             <p className="mb-8 text-lg text-muted-foreground">
-              Join thousands who&apos;ve taken control of their health journey with data-driven insights.
+              Start from the blood tests you already have — structured interpretation built for UK-first, B2C launch.
             </p>
             <Button asChild size="lg" className="gap-2 text-lg">
               <Link href="/login?next=/upload">
@@ -193,9 +200,15 @@ export default function LandingPage() {
               © {new Date().getFullYear()} HealthIQ AI. All rights reserved.
             </p>
             <div className="flex gap-6 text-sm text-muted-foreground">
-              <a href="#" className="transition-colors hover:text-foreground">Privacy</a>
-              <a href="#" className="transition-colors hover:text-foreground">Terms</a>
-              <a href="#" className="transition-colors hover:text-foreground">Contact</a>
+              <Link href="/privacy" className="transition-colors hover:text-foreground">
+                Privacy
+              </Link>
+              <Link href="/terms" className="transition-colors hover:text-foreground">
+                Terms
+              </Link>
+              <Link href="/contact" className="transition-colors hover:text-foreground">
+                Contact
+              </Link>
             </div>
           </div>
         </div>
