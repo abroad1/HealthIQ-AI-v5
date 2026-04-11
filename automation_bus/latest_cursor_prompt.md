@@ -1,112 +1,112 @@
 ---
-work_id: FE-LAUNCH-INTEGRATION-B
-branch: feature/fe-launch-integration-b-polish
-risk_level: STANDARD
+work_id: OPS-S1A
+branch: feature/ops-s1a-trust-uk-baseline
+risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# FE-LAUNCH-INTEGRATION-B — Launch Polish and Surface Consistency
+# OPS-S1A — Trust and UK Baseline
 
 ## Context
 
-This is the second execution phase of **FE-LAUNCH-INTEGRATION**.
+This is the first execution phase of **OPS-S1 — Phase 1 Operational Readiness for UK B2C Launch**.
 
-**FE-LAUNCH-INTEGRATION-A** is complete and established the structural coherence layer:
+The governing OPS-S1 preflight concluded:
 
-* upload and results are now aligned into the authenticated product shell
-* frontend auth/journey truth is aligned with real analysis-start requirements
-* `/analysis/[id]` now serves as the canonical saved-analysis reopen route, redirecting into the results surface
-* dashboard/reports now align to the canonical route model
-* the deterministic results hierarchy remains intact
+* OPS-S1 is now justified because the launch posture has been explicitly decided
+* the correct delivery shape is:
 
-The governing preflight concluded that launch integration should be split into:
+  * **OPS-S1A — Trust and UK baseline**
+  * **OPS-S1B — Operational evidence and controls**
+* the biggest immediate launch blockers are:
 
-* **FE-LAUNCH-INTEGRATION-A — coherence / journey / shell alignment**
-* **FE-LAUNCH-INTEGRATION-B — launch polish**
+  * trust/claims mismatch with the agreed UK-first posture
+  * missing Privacy / Terms / Contact surfaces
+  * lack of a minimum credible UK B2C transparency baseline in the launch-facing product
 
-The preflight also found that after structural coherence, the remaining gaps are mostly quality-of-experience and consistency issues, such as:
+The agreed Phase 1 launch posture is:
 
-* upload technical debt
-* copy inconsistency across landing / upload / results / reports
-* weak or abrupt empty/error states
-* small rough edges that make the product feel unfinished even though major flows now work
+* **market:** UK only
+* **operating model:** B2C-primary
+* **launch user:** self-directed retail user with an already-tested blood panel
+* **data residency direction:** UK-hosted by default
+* **minimum posture:** UK consumer health-data trust/compliance floor with strict non-diagnostic positioning
+* **B2C role:** deliberate wedge / proof engine, not the long-term final model
 
-This sprint is **FE-LAUNCH-INTEGRATION-B only**.
+This sprint is **OPS-S1A only**.
 
 It is **not**:
 
-* OPS-S1
-* backend reasoning work
+* OPS-S1B operational evidence/control work
+* HIPAA-led or US-first posture work
+* enterprise/B2B procurement readiness
+* backend reasoning changes
 * broad marketing-site redesign
-* clinician workspace redesign
-* auth-platform rewrite
-* new analytical or narrative contracts
+* medical-device positioning
+* general legal drafting beyond what is required for launch-truth surfaces
 
 ---
 
 ## Objective
 
-Polish the now-coherent frontend product so key launch-facing surfaces feel consistent, intentional, and trustworthy, without changing the underlying analytical model or drifting into operations/compliance work.
+Bring the launch-facing trust and legal baseline into line with the agreed UK B2C Phase 1 posture so the product no longer makes unsupported, jurisdictionally wrong, or incomplete trust claims at the point of launch.
 
 This sprint must establish:
 
-* cleaner, more consistent copy across the main launch-facing journeys
-* removal or reduction of obvious outdated/deprecated UX debt in launch-critical surfaces
-* better empty/error/degraded-state presentation where current UI still feels abrupt
-* tighter “one product” feel across landing, upload, results, reports, and account-adjacent areas
-* no change to backend analytical contracts or truth hierarchy
+* UK-appropriate trust/claims alignment on launch-facing surfaces
+* real Privacy / Terms / Contact surfaces rather than placeholders
+* consistent non-diagnostic positioning where launch-facing trust language requires it
+* no mismatch between the product’s declared launch posture and what the user sees publicly
+* no drift into broad ops/control work that belongs in OPS-S1B
 
-This sprint is about **product polish and consistency**, not structural re-architecture.
+This sprint is about **launch-truth and trust baseline**, not the full operational evidence stack.
 
 ---
 
-## Stage 1C — Launch Polish Preflight (MANDATORY)
+## Stage 1C — Trust Baseline Preflight (MANDATORY)
 
 Before editing files, explicitly verify and record:
 
 1. the governing preflight is:
 
-   * `docs/investigations/FE_LAUNCH_INTEGRATION_PREFLIGHT.md`
+   * `docs/investigations/OPS_S1_PREFLIGHT.md`
 
-2. FE-LAUNCH-INTEGRATION-A is complete and the current repo reality is still:
+2. the launch authority is:
 
-   * core shell/journey/auth alignment is materially improved
-   * upload/results now sit coherently in the product journey
-   * canonical saved-analysis reopen route is established
-   * remaining launch gaps are now primarily polish/consistency issues, not structural route/auth issues
+   * `docs/HealthIQ_Phase1_Launch_Posture.md`
+   * and any adopted/addendum strategy doc now serving as first-market authority
 
-3. before implementation, Cursor must explicitly verify and record:
+3. the current repo reality is still:
 
-   * which specific remaining launch-facing rough edges are still present in:
+   * launch-facing UI includes trust/legal claims that are not yet fully aligned with the UK-first launch posture
+   * Privacy / Terms / Contact surfaces are missing or placeholder
+   * OPS-S1A should address trust/claims surfaces first, before OPS-S1B operational evidence/control artefacts
 
-     * landing
-     * upload
-     * results
-     * reports/history
-     * dashboard
-     * profile/settings where relevant
-   * which are truly launch-facing and in scope
-   * which are better deferred because they would widen into broader redesign
+4. before implementation, Cursor must explicitly verify and record:
 
-4. before implementation, Cursor must explicitly classify each candidate issue as one of:
+   * the exact launch-facing claims currently present
+   * which claims are supportable now
+   * which claims are risky, premature, or jurisdictionally mismatched
+   * where placeholder legal/trust surfaces currently exist
+   * what minimum UK B2C trust/legal surfaces are required for a credible launch baseline
 
-   * copy/label inconsistency
-   * empty/error/degraded-state weakness
-   * deprecated or misleading UI debt
-   * small navigation/interaction rough edge
-   * out of scope
+5. before implementation, Cursor must explicitly choose and record:
 
-5. this sprint will **not**:
+   * the trust/claims posture to apply on the landing and launch-facing pages
+   * the exact scope of Privacy / Terms / Contact implementation in this sprint
+   * what content will be added as product-facing baseline vs what is deferred to OPS-S1B or later human/legal review
 
-   * widen into OPS-S1
-   * change backend reasoning or narrative generation
-   * redesign the whole marketing site
-   * rewrite auth architecture
-   * redesign clinician report or deterministic results hierarchy
-   * become an unconstrained “general tidy-up”
+6. this sprint will **not**:
 
-6. if the remaining issues are broader than a bounded polish sprint allows, STOP and report rather than quietly expanding scope
+   * prove UK hosting/residency technically
+   * deliver DPIA/subprocessor/runbook artefacts
+   * redesign backend auth/analysis logic
+   * become a broad marketing rewrite
+   * make legal claims beyond what the agreed posture and repo reality can support
+   * reopen the Phase 1 launch-posture decision
+
+7. if a truthful trust baseline cannot be implemented without broader operational evidence than this sprint allows, STOP and report rather than papering over the gap with vague copy
 
 If any of the above is false:
 
@@ -120,115 +120,116 @@ If any of the above is false:
 
 ### REQUIRED IN SCOPE
 
-#### 1. Copy and terminology alignment across core product journey
+#### 1. Launch-facing trust/claims alignment
 
 Primary likely surfaces:
 
 * `frontend/app/page.tsx`
-* `frontend/app/(app)/upload/page.tsx`
-* `frontend/app/(app)/results/page.tsx`
-* `frontend/app/(app)/dashboard/page.tsx`
-* `frontend/app/(app)/reports/page.tsx`
-* small adjacent components only if directly relevant
+* `frontend/app/components/layout/Footer.tsx`
+* any directly adjacent launch-facing trust/copy component strictly required
+* auth screens only if trust-language alignment clearly requires it
 
-You must smooth out obvious copy inconsistencies across the main launch-facing journey.
+You must align the most visible trust and compliance-facing language with the agreed UK B2C launch posture.
+
+This includes reviewing and correcting launch-facing claims such as:
+
+* HIPAA
+* bank-level security
+* medical-grade security
+* diagnostic-sounding language
+* overconfident trust/compliance wording
+* any other launch-facing claims that are not supportable by the agreed Phase 1 baseline
 
 Requirements:
 
-* align terminology so users are not bounced between conflicting product concepts
-* preserve the deterministic-vs-narrative truth boundary already established
-* keep wording honest about what the product is doing
-* do not drift into full marketing rewriting
+* landing and other public-facing trust language must no longer contradict the UK-first posture
+* the product must not imply a US/HIPAA-led launch posture if that is explicitly not the chosen Phase 1 path
+* the product must not make stronger trust/compliance claims than the repo + launch posture can support
+* wording should remain commercially credible, but truthful and bounded
 
-This includes items such as:
-
-* route/page headings
-* CTAs
-* helper text
-* section labels
-* small explanatory copy
+This is a key trust-baseline deliverable.
 
 ---
 
-#### 2. Upload-surface cleanup for launch credibility
+#### 2. Privacy / Terms / Contact surfaces
 
 Primary likely surfaces:
 
-* `frontend/app/(app)/upload/page.tsx`
-* directly adjacent upload components if strictly required
+* frontend routes/pages for:
 
-You must address the most obvious upload-surface launch rough edges that the preflight identified.
+  * Privacy
+  * Terms
+  * Contact
+* footer/header links that currently point to placeholders
+* any small supporting components needed for those pages
 
-Examples may include:
-
-* deprecated or confusing tabs/paths that should not remain visible in the launch-facing experience
-* stale helper text
-* rough or overly technical UX elements
-* lingering debug/developer-facing presentation debt if still visible in the launch path
+You must replace placeholder legal/support links with real product-facing surfaces appropriate to the agreed Phase 1 launch posture.
 
 Requirements:
 
-* keep cleanup bounded
-* do not redesign the upload product from scratch
-* preserve truthful data-entry and analysis-start behaviour
+* Privacy, Terms, and Contact links must no longer be dead/placeholder links
+* each surface must be real, accessible, and coherent with the UK B2C launch posture
+* content should provide a credible launch baseline for transparency and user trust
+* do not over-engineer these into a legal-platform subsystem
+
+Important:
+
+* this sprint is allowed to create the product-facing baseline surfaces
+* it is not required to solve every future legal nuance or enterprise requirement
 
 ---
 
-#### 3. Empty / error / degraded-state polish in launch-facing journeys
+#### 3. Non-diagnostic positioning consistency where launch trust requires it
 
 Primary likely surfaces:
 
-* dashboard/reports empty states
-* upload/result launch-path feedback
-* small route-level error messaging in the frontend
-* narrative/report coexistence empty states only if still rough
+* landing and auth-adjacent copy
+* any launch-facing results-entry/CTA language if clearly relevant
+* any small trust/disclaimer blocks required by the agreed posture
 
-You must improve the most user-visible weak states that currently make the product feel abrupt or unfinished.
-
-Requirements:
-
-* keep messaging calm, clear, and non-technical where possible
-* do not hide real limitations
-* do not introduce fake reassurance
-* improve launch trust without changing underlying logic
-
-This is not a global state-system redesign.
-It is bounded launch polish.
-
----
-
-#### 4. Cross-surface coherence checks
-
-Likely surfaces:
-
-* headings and summaries across dashboard / upload / results / reports / profile / settings
-* navigation labels if directly needed
-* small CTA alignment across these areas
-
-You must ensure these major product surfaces feel like parts of one coherent product.
+You must ensure launch-facing wording does not drift into diagnostic or treatment-positioning language inconsistent with the agreed Phase 1 posture.
 
 Requirements:
 
-* no contradictory language between account and analysis areas
-* no route labels that feel out of sync with current product structure
-* no obvious stale wording left over from prior architecture phases if it affects launch quality
+* do not imply the product is diagnosing, prescribing, or replacing clinicians
+* maintain consistency with the already-established product truth that structured interpretation and clinician discussion are distinct
+* do not add heavy disclaimers everywhere; apply this in a bounded, product-sensible way
 
 ---
 
-#### 5. Keep deterministic result hierarchy and clinician distinction intact
+#### 4. Bounded support/contact truthfulness
 
 Primary likely surfaces:
 
-* results page and nearby copy only if touched
+* Contact page
+* footer/header references
+* auth or launch-facing help references if directly relevant
+
+You must give users a truthful minimum support/contact path.
+
+Requirements:
+
+* there must be a real way for a launch user to understand how to contact the company
+* do not leave “Contact” as a decorative placeholder
+* keep this bounded to product-facing launch truth, not a full support platform
+
+---
+
+#### 5. Preserve existing product hierarchy and launch posture
+
+Primary likely surfaces:
+
+* landing page
+* upload/results/account surfaces only if touched for trust/legal reasons
 
 You must preserve:
 
-* hero priority
-* trust strip role
-* clinician report separation
+* deterministic results hierarchy
 * narrative as companion layer
+* the agreed UK B2C launch posture
+* B2C-first wedge framing
 
-This sprint must not undo FE-S2 or FE-LAUNCH-INTEGRATION-A discipline.
+This sprint must not accidentally undermine the completed FE work or broaden the product model.
 
 ---
 
@@ -236,81 +237,88 @@ This sprint must not undo FE-S2 or FE-LAUNCH-INTEGRATION-A discipline.
 
 Likely surfaces:
 
-* frontend component tests
-* integration/e2e assertions if current labels or launch-path states are updated
-* small snapshot tests only if truly useful
+* frontend route/component tests
+* link/render tests
+* small content-presence tests if useful
+* targeted e2e assertions only if genuinely needed
 
 You must add/update the minimum regression coverage needed to prove:
 
-* launch-facing copy/labels now align with intended product framing
-* upload no longer exposes the specific deprecated/rough elements selected for cleanup
-* important empty/error/degraded states improved in bounded ways
-* no structural/auth/backend contract regressions were introduced
+* placeholder legal/support links are replaced with real surfaces
+* launch-facing claims no longer use the specific risky or misaligned wording selected in Stage 1C
+* trust/legal surfaces are reachable from the actual launch-facing UI
+* no backend contract or analytical behaviour was changed
 
 Keep this targeted.
-Do not turn this into a broad test rewrite.
+Do not turn it into a general content-management or legal-document test suite.
 
 ---
 
 ### OPTIONAL / BOUNDED IN SCOPE
 
-#### 7. Small interaction polish only if directly tied to launch-facing confusion
+#### 7. Small trust-language helper/refactor only if needed
 
-If a small interaction tweak is required to resolve a real launch-facing confusion point, that is acceptable.
+If a small bounded helper/component is needed to keep trust-language or footer/legal-link handling coherent, that is acceptable.
 
 Requirements:
 
+* explicit
 * bounded
-* directly tied to a verified issue from Stage 1C
-* not a broad UX redesign
+* directly tied to launch-truth surfaces
+* not a broad website framework refactor
 
 ---
 
 ## OUT OF SCOPE (STRICT)
 
-* No OPS-S1 or compliance work
-* No backend reasoning or narrative changes
-* No broad marketing-site rewrite
+* No OPS-S1B operational evidence/control artefacts
+* No DPIA/subprocessor/runbook implementation in this sprint
+* No backend reasoning/narrative changes
+* No broad marketing-site redesign
+* No HIPAA-led or US-first launch posture work
+* No enterprise procurement/security questionnaire work
+* No medical-device positioning
+* No full legal/compliance programme buildout
 * No auth-platform rewrite
-* No clinician report redesign
-* No hero/trust/results hierarchy redesign
-* No new analytical or narrative contracts
-* No enterprise/commercial workflow redesign
-* No unconstrained repo tidy-up
+* No launch-posture re-decision
 
 ---
 
 ## Implementation constraints
 
-### Polish only, not structural rework
+### Truth over impressiveness
 
-Structural coherence was handled in FE-LAUNCH-INTEGRATION-A. This sprint should remain a refinement pass.
+If a claim is not supportable under the agreed UK B2C posture, do not keep it just because it sounds strong.
 
-### Preserve truthfulness
+### UK-first posture must be visible
 
-Copy and polish must not overpromise or blur the deterministic/narrative boundary.
+Public-facing trust language must reflect the actual first-market choice.
 
-### Stay launch-facing
+### Product-facing legal baseline only
 
-Only fix rough edges that materially affect how the current product feels to a launch user.
+This sprint creates user-facing baseline surfaces, not the whole compliance machinery.
 
-### No hidden scope creep
+### Preserve completed product work
 
-Do not use this sprint as a vehicle for unrelated frontend clean-up.
+Do not disturb FE-LAUNCH-INTEGRATION, FE-S2, or deterministic result hierarchy without direct trust-baseline need.
+
+### Stay bounded
+
+If the work starts to look like OPS-S1B or a full website rewrite, it is out of scope.
 
 ---
 
 ## Acceptance criteria
 
-FE-LAUNCH-INTEGRATION-B is complete only if:
+OPS-S1A is complete only if:
 
-1. core launch-facing surfaces use more consistent and coherent wording
-2. the upload surface no longer exposes the selected high-visibility rough/deprecated elements
-3. the most important launch-facing empty/error/degraded states are improved in bounded ways
-4. dashboard / upload / results / reports / account-adjacent surfaces feel more like one product
-5. deterministic results hierarchy and clinician/narrative distinctions remain intact
-6. targeted regression coverage proves the polish changes
-7. no OPS, backend, auth-rewrite, or broad redesign scope is introduced
+1. launch-facing trust/compliance language is materially aligned to the agreed UK B2C Phase 1 posture
+2. the key risky or jurisdictionally mismatched claims identified in Stage 1C are removed, qualified, or replaced appropriately
+3. Privacy / Terms / Contact are real product-facing surfaces rather than placeholders
+4. launch-facing wording is consistent with non-diagnostic positioning where required
+5. a truthful minimum support/contact path exists
+6. targeted regression coverage proves the trust-baseline changes
+7. no OPS-S1B artefact work, backend reasoning changes, or broad redesign scope is introduced
 
 ---
 
@@ -318,11 +326,11 @@ FE-LAUNCH-INTEGRATION-B is complete only if:
 
 STOP immediately if:
 
-* the selected polish issues require structural redesign rather than bounded refinement
-* the work begins drifting into broad marketing rewrite or auth redesign
-* the work begins altering deterministic result hierarchy or clinician-report separation
-* the work begins widening into unrelated frontend tidy-up
-* the only way to improve the launch feel is to invent product claims or hide real limitations
+* the only way to make trust claims truthful is to add operational evidence/control work that clearly belongs in OPS-S1B
+* legal/support surfaces cannot be made credible within a bounded sprint
+* the work begins drifting into a broad marketing rewrite
+* the work begins reintroducing stronger unsupported claims in different wording
+* the work begins reopening launch-posture strategy or expanding into enterprise/us posture work
 
 If any STOP condition triggers:
 
@@ -336,11 +344,11 @@ If any STOP condition triggers:
 
 Before closure, provide evidence for:
 
-* exact launch-facing surfaces polished
-* exact copy/label/empty-state changes made
-* exact upload cleanup performed
-* exact cross-surface coherence issues resolved
-* confirmation that deterministic result hierarchy remained intact
+* exact launch-facing claims changed
+* exact Privacy / Terms / Contact surfaces added or wired
+* exact links/routes updated from placeholders
+* exact non-diagnostic/trust-language adjustments made
+* confirmation that no backend analytical behaviour changed
 * tests added/updated
 * files created/modified
 * final git state
@@ -350,10 +358,10 @@ Before closure, provide evidence for:
 ## Execution sequence (SOP aligned)
 
 1. Kernel START
-2. Complete Stage 1C Launch Polish Preflight
-3. Implement bounded launch-facing copy/coherence polish
-4. Clean selected upload-surface rough edges
-5. Improve bounded empty/error/degraded states
+2. Complete Stage 1C Trust Baseline Preflight
+3. Align launch-facing trust/claims language
+4. Implement/wire real Privacy / Terms / Contact surfaces
+5. Apply bounded non-diagnostic/trust consistency fixes
 6. Add/update targeted regression coverage
 7. Validate locally
 8. Kernel FINISH
@@ -366,10 +374,9 @@ Before closure, provide evidence for:
 Provide:
 
 * files created/modified
-* launch-polish summary
-* upload-cleanup summary
-* empty/error-state summary
-* cross-surface-coherence summary
+* trust-claims-alignment summary
+* legal/support-surface summary
+* non-diagnostic-positioning summary
 * regression summary
 * kernel finish status
 * final git state
@@ -380,6 +387,6 @@ Provide:
 
 This sprint exists to:
 
-> take the now-coherent frontend product and remove the most visible launch-facing rough edges so it feels more consistent, intentional, and trustworthy, without drifting into OPS work, backend changes, or broad redesign
+> create the minimum credible UK B2C launch-facing trust and legal baseline for HealthIQ so the product no longer presents unsupported or misaligned trust/compliance signals before first-market launch
 
 Do not expand beyond that.
