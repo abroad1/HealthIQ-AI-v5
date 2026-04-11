@@ -1,0 +1,32 @@
+{
+  "contract_id": "wedge-events-phase1",
+  "contract_version": "1.0.0",
+  "authority_docs": [
+    "docs/investigations/WEDGE_METRICS_PREFLIGHT.md",
+    "docs/HealthIQ_Phase1_Launch_Posture.md",
+    "docs/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED_First_Market_Addendum.md",
+    "docs/product/WEDGE_EVENT_CONTRACT_AND_GOVERNANCE_PHASE1.md"
+  ],
+  "event_names": [
+    "wedge_auth_register_completed",
+    "wedge_auth_register_failed",
+    "wedge_auth_login_success",
+    "wedge_auth_login_failed",
+    "wedge_upload_started",
+    "wedge_upload_parse_completed",
+    "wedge_upload_parse_failed",
+    "wedge_questionnaire_submitted",
+    "wedge_analysis_started",
+    "wedge_analysis_completed",
+    "wedge_analysis_failed",
+    "wedge_results_viewed",
+    "wedge_clinician_report_viewed",
+    "wedge_results_export_json_clicked",
+    "wedge_results_share_link_clicked",
+    "wedge_analysis_reopened_from_history"
+  ],
+  "deferred_event_names": [
+    "wedge_clinician_report_pdf_downloaded"
+  ],
+  "notes": "deferred_event_names require a live server-side PDF/download path; ReportsService is not registered in current product (see contract doc)."
+}
