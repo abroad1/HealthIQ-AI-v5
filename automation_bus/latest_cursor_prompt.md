@@ -1,71 +1,60 @@
 ---
-work_id: WEDGE-METRICS-A
-branch: feature/wedge-metrics-a-event-contract-governance
-risk_level: STANDARD
+work_id: WEDGE-METRICS-B
+branch: feature/wedge-metrics-b-instrumentation-implementation
+risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# WEDGE-METRICS-A — Event Contract and Governance
+# WEDGE-METRICS-B — Instrumentation Implementation
 
 ## Context
 
-This is the first execution phase of the wedge-metrics lineage.
+This is the second execution phase of the wedge-metrics lineage.
 
-The governing preflight concluded:
+**WEDGE-METRICS-A** is complete and established:
 
-* wedge-metrics work is justified now
-* the correct delivery shape is:
+* a bounded Phase 1 wedge event vocabulary
+* explicit semantics for ambiguous actions
+* payload minimisation rules
+* a bounded collection posture
+* privacy/consent/policy prerequisites for instrumentation
+* honest classification of metrics as now / proxy / later
+* a clear implementation handoff for the next sprint 
 
-  * **WEDGE-METRICS-A — event contract and governance**
-  * **WEDGE-METRICS-B — instrumentation implementation**
-* the repo currently has no real product analytics layer
-* most wedge metrics are missing or only indirectly inferable
-* because this is a UK-first B2C health-data product, instrumentation must not be improvised without first defining the event contract, privacy boundaries, and vendor/collection posture 
+The governing preflight and contract work concluded that HealthIQ should now instrument the UK B2C wedge in a bounded way so the launch can be measured as a deliberate proof engine, not a waiting room.
 
-The agreed Phase 1 launch posture is:
-
-* UK only
-* B2C-primary
-* self-directed retail user with an already-tested blood panel
-* two B2C user groups:
-
-  * standard retail
-  * technical / biohacker
-* B2C as deliberate wedge / proof engine
-* clinician report as a secondary exposure channel into real clinical conversations
-
-This sprint is **WEDGE-METRICS-A only**.
+This sprint is **WEDGE-METRICS-B only**.
 
 It is **not**:
 
-* full instrumentation implementation
-* full BI/warehouse setup
-* experimentation platform buildout
-* billing/payment implementation
+* BI/warehouse buildout
+* experimentation platform work
+* payment/billing implementation
 * backend reasoning changes
-* generic logging work outside wedge metrics
+* generic logging expansion outside the agreed wedge events
+* fabricated segment logic
+* fabricated clinician carry-through logic
 
 ---
 
 ## Objective
 
-Define the minimum event contract, governance rules, and privacy/collection posture required to measure the UK B2C wedge truthfully and safely, so instrumentation can be implemented in a bounded follow-on sprint.
+Implement the bounded launch instrumentation defined in WEDGE-METRICS-A so the core UK B2C wedge journey becomes measurable, while preserving privacy constraints and avoiding any drift into broad analytics infrastructure.
 
 This sprint must establish:
 
-* named event vocabulary for the launch-critical wedge journey
-* clear event semantics for core actions
-* data-minimisation rules for event payloads
-* a bounded analytics collection posture
-* privacy/consent/update implications that must be handled before instrumentation
-* explicit classification of which metrics are in-scope now vs deferred
+* actual event wiring for the agreed launch-critical wedge events
+* bounded payloads consistent with the governance contract
+* a concrete collection path that matches the agreed collection posture
+* truthful implementation of measurable-now metrics
+* no fake implementation of deferred metrics
 
-This sprint is about **measurement definition and governance**, not event wiring.
+This sprint is about **event implementation**, not broad analytics architecture.
 
 ---
 
-## Stage 1C — Event Contract Preflight (MANDATORY)
+## Stage 1C — Instrumentation Preflight (MANDATORY)
 
 Before editing files, explicitly verify and record:
 
@@ -73,50 +62,43 @@ Before editing files, explicitly verify and record:
 
    * `docs/investigations/WEDGE_METRICS_PREFLIGHT.md`
 
-2. the launch authority is:
+2. the governing contract is:
 
-   * `docs/HealthIQ_Phase1_Launch_Posture.md`
-   * `docs/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED_First_Market_Addendum.md`
-   * any docs now serving as sprint-plan authority for Phase 1 launch
+   * `docs/product/WEDGE_EVENT_CONTRACT_AND_GOVERNANCE_PHASE1.md`
+   * `docs/product/wedge_events_phase1.manifest.json`
 
 3. the current repo reality is still:
 
-   * no dedicated product analytics SDK/pipeline is present
-   * most wedge metrics are missing or only partially inferable
-   * event contract and privacy/vendor posture should be defined before instrumentation
-   * segment measurement and clinician-report measurement semantics are not yet cleanly defined
+   * no dedicated product analytics implementation is currently present
+   * WEDGE-METRICS-A defined the event contract and governance boundaries
+   * instrumentation must follow that contract exactly
+   * deferred metrics such as paid conversion, segment split, and clinician carry-through are still not to be fabricated now
 
 4. before implementation, Cursor must explicitly verify and record:
 
-   * the exact product journeys to be covered by the initial wedge event contract
-   * the exact metrics that are:
-
-     * measurable now with bounded implementation
-     * blocked pending later product/business work
-     * definitional only for now
-   * the exact current surfaces where future instrumentation is most likely to land
+   * the exact agreed events to wire in this sprint
+   * the exact current collection posture to implement against
+   * the exact product surfaces where instrumentation will be added
+   * whether any first-party endpoint or collection utility already exists and can be reused truthfully
+   * whether any privacy/notice prerequisites from WEDGE-METRICS-A must be satisfied or documented before event emission is enabled
 
 5. before implementation, Cursor must explicitly choose and record:
 
-   * the proposed event vocabulary
-   * the proposed payload-minimisation rules
-   * the proposed collection posture:
-
-     * first-party only
-     * third-party
-     * hybrid
-   * the exact privacy/consent implications that must be documented before instrumentation
+   * the concrete implementation pattern for event emission
+   * the exact event payload fields per event, constrained by the contract
+   * the exact handling of client-only versus server-truth events
+   * the exact events that will remain deferred in this sprint
 
 6. this sprint will **not**:
 
-   * wire events into the app
-   * add an analytics SDK
-   * implement billing or checkout
-   * create a warehouse/BI stack
-   * invent segment logic that the product does not yet capture
-   * widen into backend reasoning or product redesign
+   * introduce raw biomarker values or detailed health payloads into analytics events
+   * implement paid conversion tracking without real billing/product support
+   * invent a standard-retail vs biohacker segment field if the product does not already capture it
+   * label JSON export as clinician report download
+   * widen into broad warehouse / dashboard / BI work
+   * widen into experimentation, A/B testing, or pricing analytics
 
-7. if a truthful event contract cannot be defined without broader unresolved privacy/business decisions, STOP and report rather than guessing
+7. if truthful instrumentation cannot be implemented without violating the contract or privacy posture, STOP and report rather than improvising
 
 If any of the above is false:
 
@@ -130,253 +112,245 @@ If any of the above is false:
 
 ### REQUIRED IN SCOPE
 
-#### 1. Define the Phase 1 wedge event vocabulary
+#### 1. Implement the agreed Phase 1 wedge event set
 
 Primary likely surfaces:
 
-* new docs under `docs/ops/` or `docs/product/`
-* possibly a small shared schema doc location if repo conventions support it
+* `frontend/app/state/authStore.ts`
+* `frontend/app/(auth)/login/page.tsx`
+* `frontend/app/(auth)/register/page.tsx`
+* `frontend/app/(app)/upload/page.tsx`
+* `frontend/app/state/analysisStore.ts`
+* `frontend/app/(app)/results/page.tsx`
+* `frontend/app/(app)/analysis/[id]/page.tsx`
+* any small shared analytics utility/module strictly required
+* optional minimal backend endpoint only if the chosen collection posture requires first-party event receipt
 
-You must define the named events for the minimum wedge journey.
+You must implement the measurable-now event set defined in WEDGE-METRICS-A.
 
-At minimum, the contract should address events such as:
+At minimum, this should cover the bounded agreed events such as:
 
-* registration completion
-* login success
-* upload start
-* upload completion / parse success
-* analysis start
-* analysis success / failure
-* results viewed
-* clinician report viewed
-* clinician report exported / shared / downloaded, with explicit semantics
-* historical result reopened
-* repeat upload / repeat panel behaviour, if eventable directly
+* `wedge_auth_register_completed`
+* `wedge_auth_register_failed`
+* `wedge_auth_login_success`
+* `wedge_auth_login_failed`
+* `wedge_upload_started`
+* `wedge_upload_parse_completed`
+* `wedge_upload_parse_failed`
+* `wedge_questionnaire_submitted`
+* `wedge_analysis_started`
+* `wedge_analysis_completed`
+* `wedge_analysis_failed`
+* `wedge_results_viewed`
+* `wedge_clinician_report_viewed`
+* `wedge_results_export_json_clicked`
+* `wedge_results_share_link_clicked`
+* `wedge_analysis_reopened_from_history`
 
 Requirements:
 
-* event names must be explicit and consistent
-* event meaning must be clear
-* avoid ambiguous overlap between similar actions
-* do not define a giant future-proof taxonomy; keep it launch-bounded
+* implementation must match the contract naming exactly unless a justified correction is required
+* do not add speculative extra events
+* if a specific event cannot be emitted truthfully from current product behaviour, document and defer it rather than faking it
 
 ---
 
-#### 2. Define event semantics for ambiguous product actions
+#### 2. Respect event semantics exactly
 
 Primary likely surfaces:
 
-* the same contract/governance docs
-* possibly a companion glossary section
+* instrumentation utility and event call sites
+* results page / report interactions
+* history/reopen flow
 
-The preflight identified specific ambiguity around things like clinician-report “download” because the current product has view/export/share behaviours rather than one clearly defined download path.
+You must preserve the semantics established in WEDGE-METRICS-A.
 
-You must resolve these semantics for the launch wedge.
+Critical requirements:
 
-Requirements:
+* **do not** label JSON export as clinician report download
+* **do not** collapse view/export/share into one vague clinician-report event
+* if `wedge_results_viewed` uses an `entry` property, implement only the values defined by the contract
+* if repeat upload remains proxy/server-side rather than evented directly, do not force an event-based version now
 
-* distinguish clearly between:
-
-  * report viewed
-  * result export/download
-  * share action
-  * reopened saved result
-* do not label an event in a way the current product does not actually support
-* if an important business metric cannot yet be represented honestly, mark it as deferred or proxy-only
+The event vocabulary must remain trustworthy.
 
 ---
 
-#### 3. Define payload minimisation and privacy rules
+#### 3. Implement bounded payload minimisation
 
 Primary likely surfaces:
 
-* governance docs
-* possibly cross-reference to OPS docs/privacy surfaces
+* shared analytics/event utility
+* event call sites
+* optional first-party event receipt path if needed
 
-You must define what event payloads are allowed to contain for Phase 1.
+You must ensure payloads follow the minimisation rules from WEDGE-METRICS-A.
 
 Requirements:
 
-* do not include raw biomarker values in product analytics payloads
-* do not include unnecessary health content in event payloads
-* use the minimum identifiers and metadata needed for wedge measurement
-* clearly state prohibited payload content
-* if user segmentation is to be measured later, document how that should be handled or deferred
+* no raw biomarker values
+* no questionnaire answers
+* no clinician-report narrative text
+* no JWTs/tokens
+* no unnecessary health detail
+* only the minimum identifiers/metadata allowed by the contract
 
-This is critical because HealthIQ is handling health-related data under a UK B2C posture.
+If a field is not clearly allowed, leave it out.
 
 ---
 
-#### 4. Define analytics collection posture
+#### 4. Implement the agreed collection posture
 
 Primary likely surfaces:
 
-* governance doc(s)
-* cross-reference to OPS-S1 docs if needed
+* shared analytics utility
+* env/config surfaces
+* optional backend or API path if first-party collection is chosen
+* any docs/config updates strictly required to reflect the implementation
 
-You must choose and document the collection posture for the next sprint to build against.
-
-Examples:
-
-* first-party only event collection
-* privacy-reviewed third-party collection
-* hybrid with strict boundaries
+You must implement instrumentation in a way that matches the agreed collection posture from WEDGE-METRICS-A.
 
 Requirements:
 
-* the choice must be explicit
-* it must match the Phase 1 trust/compliance posture
-* if vendor choice is still open, document the permitted boundary instead of pretending it is decided
-* do not let this sprint drift into actual vendor integration
+* if the posture is first-party, implement first-party only
+* if the posture allows a bounded third-party path and it is actually chosen now, it must remain within the approved privacy/vendor boundaries
+* if vendor choice was still open, do not smuggle in a new vendor without explicit support from the contract/governance docs
+* implementation must remain reviewable and bounded
 
 ---
 
-#### 5. Define privacy / consent / policy implications for instrumentation
+#### 5. Preserve explicit deferrals
 
-Primary likely surfaces:
+You must keep the deferred metrics deferred unless the repo reality has changed and the contract is amended.
 
-* governance doc(s)
-* bounded updates or references to existing OPS docs/privacy surfaces if needed
+At minimum, preserve as deferred or proxy-only:
 
-You must document what has to be true before instrumentation is turned on.
+* paid conversion without billing/product support
+* standard retail vs biohacker segment split without a real captured field
+* clinician carry-through / “discussed with clinician”
+* trust/usefulness survey metrics unless a specific bounded capture mechanism is explicitly added and justified
 
 Requirements:
 
-* identify whether privacy notice updates are required
-* identify whether analytics consent is required or must be reviewed
-* identify whether vendor/subprocessor inventory updates would be required for third-party analytics
-* distinguish:
-
-  * can be done now
-  * must be reviewed before implementation
-  * deferred
-
-This sprint should make the next implementation sprint safer.
+* no false completeness
+* no hidden product-model changes just to satisfy analytics ambition
 
 ---
 
-#### 6. Classify Phase 1 metrics as now / later / proxy
-
-You must explicitly classify the key wedge metrics.
-
-At minimum address:
-
-* paid conversion
-* repeat upload / repeat panel behaviour
-* retention / return usage
-* clinician report usage
-* clinician carry-through / discussion with clinician
-* segment differences
-* trust/usefulness signals
-* enterprise-relevant proof points
-
-Requirements:
-
-* identify which are measurable in the next sprint
-* which require a proxy
-* which are blocked pending later product/business work
-* do not pretend all desired metrics are ready now
-
----
-
-#### 7. Produce a bounded instrumentation handoff for WEDGE-METRICS-B
-
-You must leave a clear handoff for the next sprint.
-
-Requirements:
-
-* likely touched surfaces
-* event names to wire
-* payload rules
-* excluded fields
-* privacy prerequisites
-* unresolved open items
-
-This should make WEDGE-METRICS-B straightforward to author.
-
----
-
-#### 8. Targeted validation evidence
+#### 6. Add bounded documentation / implementation notes
 
 Likely surfaces:
 
-* lightweight tests if repo conventions support doc/schema validation
-* otherwise bounded evidence through artifact set and internal consistency
+* docs/product/
+* docs/ops/ if needed
+* small implementation note or README update if current repo conventions support it
 
-You must provide the minimum validation evidence needed to show:
+You must update the relevant docs so the implemented instrumentation remains aligned with the contract.
 
-* required artifact(s) were created
-* event vocabulary is internally coherent
-* privacy boundaries are explicit
+Requirements:
+
+* note which events are now live
+* note which remain deferred
+* note any implementation-specific decisions needed for operation or debugging
+* keep this bounded; do not create a giant analytics handbook
+
+---
+
+#### 7. Targeted regression / validation coverage
+
+Likely surfaces:
+
+* frontend tests for event emission utilities
+* integration tests for key flows
+* minimal backend tests only if a first-party endpoint is added
+* no broad analytics platform test suite
+
+You must add/update the minimum regression coverage needed to prove:
+
+* agreed events fire from the intended surfaces
+* deferred events are not misrepresented as live
+* JSON export is not labelled as clinician report download
+* payload minimisation rules are respected in implementation
 * no backend analytical behaviour changed
 
-Keep this bounded and proportionate.
+Keep this targeted and proportionate.
 
 ---
 
 ### OPTIONAL / BOUNDED IN SCOPE
 
-#### 9. Minimal machine-readable event schema only if truly useful
+#### 8. Minimal first-party event receipt path only if truly required
 
-If a very small machine-readable event schema artifact would clearly help the follow-on sprint, that is acceptable.
+If the chosen collection posture requires a small first-party event receipt path, that is acceptable.
 
 Requirements:
 
 * bounded
-* launch-only
-* must match the human-readable governance doc
-* do not build a full analytics platform contract prematurely
+* minimal schema
+* no broad telemetry platform
+* no drift into operational warehouse work
+
+#### 9. Minimal debug/verification tooling only if needed
+
+If a tiny bounded way to verify instrumentation in non-production environments is needed, that is acceptable.
+
+Requirements:
+
+* bounded
+* no developer-noise leakage into user-facing product
+* not a full analytics console
 
 ---
 
 ## OUT OF SCOPE (STRICT)
 
-* No event wiring or analytics SDK integration
-* No full BI/warehouse programme
+* No BI/warehouse platform
 * No experimentation framework
 * No payment/billing implementation
+* No fabricated paid-conversion event
+* No fabricated user-segment measurement
+* No fabricated clinician carry-through measurement
 * No backend reasoning changes
-* No broad product analytics redesign
-* No reopening launch posture
-* No fake precision on user segmentation or clinician carry-through
+* No broad logging expansion unrelated to the wedge metrics
+* No launch-posture re-decision
 
 ---
 
 ## Implementation constraints
 
-### Define only what you can defend
+### Contract first
 
-If an event or metric cannot be described truthfully from current product reality, defer it or mark it proxy-only.
+The event contract from WEDGE-METRICS-A is authoritative.
 
-### Privacy first
+### Privacy and minimisation are non-negotiable
 
-This is a health-data product. Event payloads and collection posture must stay minimal and defensible.
+This is a UK B2C health-data product. Event payloads must stay narrow.
 
-### Launch-bounded
+### Measure only what is real
 
-Do not create a giant taxonomy for imagined future products.
+If the product does not support it yet, defer it.
 
-### Leave implementation-ready guidance
+### Keep the scope launch-bounded
 
-This sprint should reduce ambiguity for WEDGE-METRICS-B, not just produce abstract notes.
+This sprint is to measure the launch wedge, not to build a company-wide analytics platform.
 
-### Product behaviour untouched
+### Product behaviour should not change beyond instrumentation
 
-No application logic or instrumentation should be added in this sprint.
+Do not alter analytical logic, truth hierarchy, or clinician-report semantics.
 
 ---
 
 ## Acceptance criteria
 
-WEDGE-METRICS-A is complete only if:
+WEDGE-METRICS-B is complete only if:
 
-1. a bounded Phase 1 wedge event vocabulary is defined
-2. ambiguous business/product actions are given explicit event semantics
-3. payload minimisation and prohibited data rules are documented
-4. the analytics collection posture is explicitly defined or bounded
-5. privacy/consent/policy prerequisites for instrumentation are documented
-6. key wedge metrics are classified as now / proxy / later honestly
-7. a clear handoff exists for WEDGE-METRICS-B without any actual instrumentation being introduced
+1. the agreed measurable-now wedge events are actually instrumented
+2. event names and semantics match the WEDGE-METRICS-A contract
+3. payloads respect the documented minimisation rules
+4. implementation matches the agreed collection posture
+5. deferred metrics remain explicitly deferred and are not faked in code
+6. bounded docs/implementation notes are updated to reflect what is now live
+7. targeted regression coverage proves the implementation without introducing broader analytics scope
 
 ---
 
@@ -384,11 +358,11 @@ WEDGE-METRICS-A is complete only if:
 
 STOP immediately if:
 
-* event definitions require unresolved strategy decisions beyond the agreed launch posture
-* privacy/consent implications make any current event contract misleading
-* the work begins drifting into instrumentation implementation
-* the work begins inventing segment logic or paid-conversion logic the current product does not support
-* the only way to complete the artifact is to overclaim metric readiness
+* implementation requires deviating from the event contract without explicit amendment
+* collection posture cannot be implemented without introducing unresolved privacy/vendor risk
+* the only way to show progress is to fake blocked metrics
+* the work begins drifting into warehouse/BI/experimentation platform buildout
+* the work begins altering product semantics just to produce analytics events
 
 If any STOP condition triggers:
 
@@ -402,14 +376,14 @@ If any STOP condition triggers:
 
 Before closure, provide evidence for:
 
-* exact artifact(s) created
-* exact event vocabulary defined
-* exact ambiguous action semantics resolved
-* exact payload minimisation rules defined
-* exact collection posture chosen or bounded
-* exact now / proxy / later metric classification
-* exact handoff for WEDGE-METRICS-B
-* confirmation that no application logic changed
+* exact events implemented
+* exact surfaces instrumented
+* exact payload fields per event or event family
+* exact collection path used
+* exact deferred metrics preserved
+* exact docs/notes updated
+* exact tests added/updated
+* confirmation that no backend analytical behaviour changed
 * final git state
 
 ---
@@ -417,13 +391,13 @@ Before closure, provide evidence for:
 ## Execution sequence (SOP aligned)
 
 1. Kernel START
-2. Complete Stage 1C Event Contract Preflight
-3. Define wedge event vocabulary
-4. Define event semantics for ambiguous actions
-5. Define payload/privacy/collection rules
-6. Classify metrics as now / proxy / later
-7. Produce WEDGE-METRICS-B handoff
-8. Add/update bounded validation evidence
+2. Complete Stage 1C Instrumentation Preflight
+3. Implement the agreed measurable-now event set
+4. Enforce payload minimisation and event semantics
+5. Implement the agreed collection posture
+6. Update bounded docs/implementation notes
+7. Add/update targeted regression coverage
+8. Validate locally
 9. Kernel FINISH
 10. Produce closure report
 
@@ -434,13 +408,12 @@ Before closure, provide evidence for:
 Provide:
 
 * files created/modified
-* event-vocabulary summary
-* event-semantics summary
-* payload/privacy summary
-* collection-posture summary
-* metric-classification summary
-* WEDGE-METRICS-B handoff summary
-* validation summary
+* implemented-events summary
+* instrumented-surfaces summary
+* payload/collection summary
+* deferred-metrics summary
+* docs/notes summary
+* regression summary
 * kernel finish status
 * final git state
 
@@ -450,6 +423,6 @@ Provide:
 
 This sprint exists to:
 
-> define the minimum trustworthy event contract and measurement governance needed to make the UK B2C launch wedge measurable, without prematurely implementing analytics or compromising the product’s privacy and trust posture
+> make the UK B2C launch wedge measurably real by implementing the bounded event instrumentation defined in WEDGE-METRICS-A, without compromising privacy, overclaiming metric readiness, or expanding into a broad analytics platform
 
 Do not expand beyond that.
