@@ -14,8 +14,15 @@ import {
 } from '../types/analysis';
 import { ApiResponse, ApiError } from '../types/api';
 import { readAccessTokenCookie } from '../lib/auth-cookies';
+import { API_BASE } from '../lib/api';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000/api';
+/** FastAPI routes live under `/api/...`. `NEXT_PUBLIC_API_BASE` is the origin only (see env.local.example). */
+function analysisApiRoot(): string {
+  const base = API_BASE.replace(/\/$/, '');
+  return base.endsWith('/api') ? base : `${base}/api`;
+}
+
+const API_URL = analysisApiRoot();
 
 function analysisAuthHeaders(): Record<string, string> {
   if (typeof window === 'undefined') return {};
@@ -36,7 +43,7 @@ export class AnalysisService {
     console.log("📤 User data:", data.user);
     
     try {
-      const url = `${API_BASE_URL}/analysis/start`;
+      const url = `${API_URL}/analysis/start`;
       console.log("🌐 POST /api/analysis/start →", url);
       console.log("📨 Request body:", JSON.stringify(data, null, 2));
       console.log("Outgoing payload:", data);
@@ -99,7 +106,7 @@ export class AnalysisService {
    */
   static async getAnalysisResult(analysisId: string): Promise<ApiResponse<AnalysisResult>> {
     try {
-      const response = await fetch(`${API_BASE_URL}/analysis/result?analysis_id=${encodeURIComponent(analysisId)}`, {
+      const response = await fetch(`${API_URL}/analysis/result?analysis_id=${encodeURIComponent(analysisId)}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -289,7 +296,7 @@ export class AnalysisService {
   ): Promise<ApiResponse<AnalysisHistoryResponse>> {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/analysis/history?limit=${limit}&offset=${offset}`,
+        `${API_URL}/analysis/history?limit=${limit}&offset=${offset}`,
         {
           method: 'GET',
           headers: {
@@ -329,7 +336,7 @@ export class AnalysisService {
     userId?: string
   ): Promise<ApiResponse<ExportResponse>> {
     try {
-      const response = await fetch(`${API_BASE_URL}/analysis/export`, {
+      const response = await fetch(`${API_URL}/analysis/export`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
