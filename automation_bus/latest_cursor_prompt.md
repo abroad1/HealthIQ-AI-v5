@@ -1,428 +1,212 @@
 ---
-work_id: WEDGE-METRICS-B
-branch: feature/wedge-metrics-b-instrumentation-implementation
+work_id: KB-SQ1
+branch: feature/questionnaire-schema-wiring
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# WEDGE-METRICS-B — Instrumentation Implementation
-
-## Context
-
-This is the second execution phase of the wedge-metrics lineage.
-
-**WEDGE-METRICS-A** is complete and established:
-
-* a bounded Phase 1 wedge event vocabulary
-* explicit semantics for ambiguous actions
-* payload minimisation rules
-* a bounded collection posture
-* privacy/consent/policy prerequisites for instrumentation
-* honest classification of metrics as now / proxy / later
-* a clear implementation handoff for the next sprint 
-
-The governing preflight and contract work concluded that HealthIQ should now instrument the UK B2C wedge in a bounded way so the launch can be measured as a deliberate proof engine, not a waiting room.
-
-This sprint is **WEDGE-METRICS-B only**.
-
-It is **not**:
-
-* BI/warehouse buildout
-* experimentation platform work
-* payment/billing implementation
-* backend reasoning changes
-* generic logging expansion outside the agreed wedge events
-* fabricated segment logic
-* fabricated clinician carry-through logic
-
----
+# KB-SQ1 — Questionnaire Schema Wiring (Upload Flow)
 
 ## Objective
 
-Implement the bounded launch instrumentation defined in WEDGE-METRICS-A so the core UK B2C wedge journey becomes measurable, while preserving privacy constraints and avoiding any drift into broad analytics infrastructure.
+Replace mock-backed questionnaire loading in the upload flow with the governed questionnaire schema from the backend, ensuring all runtime questionnaire inputs align with SSOT and are correctly fed into downstream analysis.
 
-This sprint must establish:
+This is a governed-input wiring correction, not a UI redesign.
 
-* actual event wiring for the agreed launch-critical wedge events
-* bounded payloads consistent with the governance contract
-* a concrete collection path that matches the agreed collection posture
-* truthful implementation of measurable-now metrics
-* no fake implementation of deferred metrics
+## Stage 1A — Authority Preflight (MANDATORY)
 
-This sprint is about **event implementation**, not broad analytics architecture.
+### Canonical Authority
 
----
+- File:
+  `backend/ssot/questionnaire.json`
 
-## Stage 1C — Instrumentation Preflight (MANDATORY)
+This is the single source of truth for questionnaire structure and content.
 
-Before editing files, explicitly verify and record:
+### Runtime Loader
 
-1. the governing preflight is:
+- Endpoint:
+  `GET /api/questionnaire/schema`
 
-   * `docs/investigations/WEDGE_METRICS_PREFLIGHT.md`
+- Defined in:
+  `backend/app/routes/questionnaire.py`
 
-2. the governing contract is:
+- Expected response shape:
+  - top-level object containing `schema`
+  - `schema` is the questionnaire array loaded from `backend/ssot/questionnaire.json`
 
-   * `docs/product/WEDGE_EVENT_CONTRACT_AND_GOVERNANCE_PHASE1.md`
-   * `docs/product/wedge_events_phase1.manifest.json`
+### Frontend Consumer
 
-3. the current repo reality is still:
+- Component:
+  `frontend/app/components/forms/QuestionnaireForm.tsx`
 
-   * no dedicated product analytics implementation is currently present
-   * WEDGE-METRICS-A defined the event contract and governance boundaries
-   * instrumentation must follow that contract exactly
-   * deferred metrics such as paid conversion, segment split, and clinician carry-through are still not to be fabricated now
+- Render path:
+  `frontend/app/(app)/upload/page.tsx`
 
-4. before implementation, Cursor must explicitly verify and record:
+### Duplicate Authority Check
 
-   * the exact agreed events to wire in this sprint
-   * the exact current collection posture to implement against
-   * the exact product surfaces where instrumentation will be added
-   * whether any first-party endpoint or collection utility already exists and can be reused truthfully
-   * whether any privacy/notice prerequisites from WEDGE-METRICS-A must be satisfied or documented before event emission is enabled
+The following are non-authoritative and must not be used in production runtime:
 
-5. before implementation, Cursor must explicitly choose and record:
+- inline `mockQuestions` in `QuestionnaireForm.tsx`
+- `@/lib/mock/questionnaire`
 
-   * the concrete implementation pattern for event emission
-   * the exact event payload fields per event, constrained by the contract
-   * the exact handling of client-only versus server-truth events
-   * the exact events that will remain deferred in this sprint
+No second authority source may be introduced.
 
-6. this sprint will **not**:
+## Stage 1B — Reality Check
 
-   * introduce raw biomarker values or detailed health payloads into analytics events
-   * implement paid conversion tracking without real billing/product support
-   * invent a standard-retail vs biohacker segment field if the product does not already capture it
-   * label JSON export as clinician report download
-   * widen into broad warehouse / dashboard / BI work
-   * widen into experimentation, A/B testing, or pricing analytics
+Confirmed runtime defect:
 
-7. if truthful instrumentation cannot be implemented without violating the contract or privacy posture, STOP and report rather than improvising
+- questionnaire renders successfully
+- no request is made to `/api/questionnaire/schema`
+- form is populated from hardcoded `mockQuestions`
+- governed fields such as `blood_pressure_reading` are absent
 
-If any of the above is false:
+This sprint addresses a real defect and is not a no-op.
 
-* STOP
-* report precisely
-* do not proceed
+## Stage 1C — Intelligence Preflight
 
----
+This change affects:
 
-## Scope (strict)
+- `questionnaire_data` passed into analysis
+- contextual interpretation inputs reaching downstream runtime behaviour
 
-### REQUIRED IN SCOPE
+Therefore this work is:
 
-#### 1. Implement the agreed Phase 1 wedge event set
+- `change_type: MIXED`
+- HIGH risk under SOP rules
 
-Primary likely surfaces:
+## Scope
 
-* `frontend/app/state/authStore.ts`
-* `frontend/app/(auth)/login/page.tsx`
-* `frontend/app/(auth)/register/page.tsx`
-* `frontend/app/(app)/upload/page.tsx`
-* `frontend/app/state/analysisStore.ts`
-* `frontend/app/(app)/results/page.tsx`
-* `frontend/app/(app)/analysis/[id]/page.tsx`
-* any small shared analytics utility/module strictly required
-* optional minimal backend endpoint only if the chosen collection posture requires first-party event receipt
+### Primary Change
 
-You must implement the measurable-now event set defined in WEDGE-METRICS-A.
+Update:
 
-At minimum, this should cover the bounded agreed events such as:
+- `frontend/app/components/forms/QuestionnaireForm.tsx`
 
-* `wedge_auth_register_completed`
-* `wedge_auth_register_failed`
-* `wedge_auth_login_success`
-* `wedge_auth_login_failed`
-* `wedge_upload_started`
-* `wedge_upload_parse_completed`
-* `wedge_upload_parse_failed`
-* `wedge_questionnaire_submitted`
-* `wedge_analysis_started`
-* `wedge_analysis_completed`
-* `wedge_analysis_failed`
-* `wedge_results_viewed`
-* `wedge_clinician_report_viewed`
-* `wedge_results_export_json_clicked`
-* `wedge_results_share_link_clicked`
-* `wedge_analysis_reopened_from_history`
+Replace:
 
-Requirements:
+- hardcoded question loading via `mockQuestions`
 
-* implementation must match the contract naming exactly unless a justified correction is required
-* do not add speculative extra events
-* if a specific event cannot be emitted truthfully from current product behaviour, document and defer it rather than faking it
+With:
 
----
+- runtime fetch to `GET /api/questionnaire/schema`
+- question source set from `response.schema`
 
-#### 2. Respect event semantics exactly
+### Requirements
 
-Primary likely surfaces:
+- use the existing frontend API base resolution pattern already used elsewhere in the app
+- include loading state
+- include explicit error state
+- do not silently degrade to mock questions in the normal production runtime path
 
-* instrumentation utility and event call sites
-* results page / report interactions
-* history/reopen flow
+### Mock Handling
 
-You must preserve the semantics established in WEDGE-METRICS-A.
+- `mockQuestions` must not be used in the production questionnaire path
+- if retained for test/dev purposes, it must be clearly isolated from the normal runtime path
 
-Critical requirements:
+### Rendering
 
-* **do not** label JSON export as clinician report download
-* **do not** collapse view/export/share into one vague clinician-report event
-* if `wedge_results_viewed` uses an `entry` property, implement only the values defined by the contract
-* if repeat upload remains proxy/server-side rather than evented directly, do not force an event-based version now
+- preserve existing question rendering logic where compatible
+- do not redesign questionnaire UX
+- do not invent new question content
+- do not introduce new question types unless required by the authoritative schema and already supported
 
-The event vocabulary must remain trustworthy.
+## Non-Goals
 
----
+- no modification of `backend/ssot/questionnaire.json`
+- no questionnaire content rewrite
+- no backend route redesign if the current endpoint works
+- no results, narrative, clinician report, or broader analysis-pipeline changes
+- no duplicate authority source
 
-#### 3. Implement bounded payload minimisation
+## STOP Conditions (MANDATORY)
 
-Primary likely surfaces:
+Cursor must STOP immediately if:
 
-* shared analytics/event utility
-* event call sites
-* optional first-party event receipt path if needed
+1. `/api/questionnaire/schema` does not return the expected structure
+2. the authoritative schema contains field types unsupported by the current renderer
+3. any backend modification appears necessary to complete the wiring
+4. any production fallback to mock questions becomes necessary
+5. a second authority source would be introduced
+6. questionnaire submission becomes incompatible with the current analysis-start contract
 
-You must ensure payloads follow the minimisation rules from WEDGE-METRICS-A.
+## Phase Execution Model
 
-Requirements:
+### Phase 1 — Wiring
 
-* no raw biomarker values
-* no questionnaire answers
-* no clinician-report narrative text
-* no JWTs/tokens
-* no unnecessary health detail
-* only the minimum identifiers/metadata allowed by the contract
+- implement schema fetch in `QuestionnaireForm`
+- replace production use of `mockQuestions`
+- ensure questionnaire renders from API-backed schema
 
-If a field is not clearly allowed, leave it out.
+### Phase 2 — Validation
 
----
+- verify network request to `/api/questionnaire/schema`
+- verify blood pressure reading fields are rendered
+- verify questionnaire submission still progresses into analysis start
 
-#### 4. Implement the agreed collection posture
+## Regression Targets
 
-Primary likely surfaces:
+### Upload Flow
 
-* shared analytics utility
-* env/config surfaces
-* optional backend or API path if first-party collection is chosen
-* any docs/config updates strictly required to reflect the implementation
+- upload → parse → review → questionnaire still works
 
-You must implement instrumentation in a way that matches the agreed collection posture from WEDGE-METRICS-A.
+### Questionnaire
 
-Requirements:
+- `GET /api/questionnaire/schema` is called
+- `blood_pressure_reading` is present in rendered form
+- production runtime no longer depends on `mockQuestions`
 
-* if the posture is first-party, implement first-party only
-* if the posture allows a bounded third-party path and it is actually chosen now, it must remain within the approved privacy/vendor boundaries
-* if vendor choice was still open, do not smuggle in a new vendor without explicit support from the contract/governance docs
-* implementation must remain reviewable and bounded
+### Submission
 
----
+- `POST /api/analysis/start` still succeeds after questionnaire completion
+- questionnaire data remains compatible with the existing analysis flow
 
-#### 5. Preserve explicit deferrals
+### Determinism
 
-You must keep the deferred metrics deferred unless the repo reality has changed and the contract is amended.
+- same schema input produces the same rendered questionnaire
+- no randomness, hidden fallback, or duplicate authority logic introduced
 
-At minimum, preserve as deferred or proxy-only:
+## Test Requirements
 
-* paid conversion without billing/product support
-* standard retail vs biohacker segment split without a real captured field
-* clinician carry-through / “discussed with clinician”
-* trust/usefulness survey metrics unless a specific bounded capture mechanism is explicitly added and justified
+Minimum required:
 
-Requirements:
+- narrow test coverage proving questionnaire questions are sourced from API schema
+- bounded assertion that `blood_pressure_reading` is surfaced in the rendered questionnaire
+- smallest relevant test scope only
 
-* no false completeness
-* no hidden product-model changes just to satisfy analytics ambition
+## Execution Rules
 
----
+- follow this prompt exactly
+- do not widen scope
+- do not modify unrelated files
+- do not introduce speculative refactors
 
-#### 6. Add bounded documentation / implementation notes
+## Deliverables
 
-Likely surfaces:
+Cursor must return:
 
-* docs/product/
-* docs/ops/ if needed
-* small implementation note or README update if current repo conventions support it
+1. files changed
+2. implementation summary
+3. tests run and results
+4. browser verification evidence showing:
+   - `/api/questionnaire/schema` request observed
+   - blood pressure reading fields present
+5. confirmation that production runtime no longer uses `mockQuestions`
+6. any blocker encountered
 
-You must update the relevant docs so the implemented instrumentation remains aligned with the contract.
+## Governance
 
-Requirements:
+This is HIGH-risk work.
 
-* note which events are now live
-* note which remain deferred
-* note any implementation-specific decisions needed for operation or debugging
-* keep this bounded; do not create a giant analytics handbook
+Requires:
 
----
+- Claude hardening
+- kernel start
+- controlled execution
+- kernel finish
+- gate evidence
+- Claude audit summary
+- GPT architectural review
+- dual approval before merge
 
-#### 7. Targeted regression / validation coverage
-
-Likely surfaces:
-
-* frontend tests for event emission utilities
-* integration tests for key flows
-* minimal backend tests only if a first-party endpoint is added
-* no broad analytics platform test suite
-
-You must add/update the minimum regression coverage needed to prove:
-
-* agreed events fire from the intended surfaces
-* deferred events are not misrepresented as live
-* JSON export is not labelled as clinician report download
-* payload minimisation rules are respected in implementation
-* no backend analytical behaviour changed
-
-Keep this targeted and proportionate.
-
----
-
-### OPTIONAL / BOUNDED IN SCOPE
-
-#### 8. Minimal first-party event receipt path only if truly required
-
-If the chosen collection posture requires a small first-party event receipt path, that is acceptable.
-
-Requirements:
-
-* bounded
-* minimal schema
-* no broad telemetry platform
-* no drift into operational warehouse work
-
-#### 9. Minimal debug/verification tooling only if needed
-
-If a tiny bounded way to verify instrumentation in non-production environments is needed, that is acceptable.
-
-Requirements:
-
-* bounded
-* no developer-noise leakage into user-facing product
-* not a full analytics console
-
----
-
-## OUT OF SCOPE (STRICT)
-
-* No BI/warehouse platform
-* No experimentation framework
-* No payment/billing implementation
-* No fabricated paid-conversion event
-* No fabricated user-segment measurement
-* No fabricated clinician carry-through measurement
-* No backend reasoning changes
-* No broad logging expansion unrelated to the wedge metrics
-* No launch-posture re-decision
-
----
-
-## Implementation constraints
-
-### Contract first
-
-The event contract from WEDGE-METRICS-A is authoritative.
-
-### Privacy and minimisation are non-negotiable
-
-This is a UK B2C health-data product. Event payloads must stay narrow.
-
-### Measure only what is real
-
-If the product does not support it yet, defer it.
-
-### Keep the scope launch-bounded
-
-This sprint is to measure the launch wedge, not to build a company-wide analytics platform.
-
-### Product behaviour should not change beyond instrumentation
-
-Do not alter analytical logic, truth hierarchy, or clinician-report semantics.
-
----
-
-## Acceptance criteria
-
-WEDGE-METRICS-B is complete only if:
-
-1. the agreed measurable-now wedge events are actually instrumented
-2. event names and semantics match the WEDGE-METRICS-A contract
-3. payloads respect the documented minimisation rules
-4. implementation matches the agreed collection posture
-5. deferred metrics remain explicitly deferred and are not faked in code
-6. bounded docs/implementation notes are updated to reflect what is now live
-7. targeted regression coverage proves the implementation without introducing broader analytics scope
-
----
-
-## STOP conditions
-
-STOP immediately if:
-
-* implementation requires deviating from the event contract without explicit amendment
-* collection posture cannot be implemented without introducing unresolved privacy/vendor risk
-* the only way to show progress is to fake blocked metrics
-* the work begins drifting into warehouse/BI/experimentation platform buildout
-* the work begins altering product semantics just to produce analytics events
-
-If any STOP condition triggers:
-
-* halt
-* report precisely
-* do not widen the sprint
-
----
-
-## Validation / evidence required
-
-Before closure, provide evidence for:
-
-* exact events implemented
-* exact surfaces instrumented
-* exact payload fields per event or event family
-* exact collection path used
-* exact deferred metrics preserved
-* exact docs/notes updated
-* exact tests added/updated
-* confirmation that no backend analytical behaviour changed
-* final git state
-
----
-
-## Execution sequence (SOP aligned)
-
-1. Kernel START
-2. Complete Stage 1C Instrumentation Preflight
-3. Implement the agreed measurable-now event set
-4. Enforce payload minimisation and event semantics
-5. Implement the agreed collection posture
-6. Update bounded docs/implementation notes
-7. Add/update targeted regression coverage
-8. Validate locally
-9. Kernel FINISH
-10. Produce closure report
-
----
-
-## Output
-
-Provide:
-
-* files created/modified
-* implemented-events summary
-* instrumented-surfaces summary
-* payload/collection summary
-* deferred-metrics summary
-* docs/notes summary
-* regression summary
-* kernel finish status
-* final git state
-
----
-
-## Strategic intent
-
-This sprint exists to:
-
-> make the UK B2C launch wedge measurably real by implementing the bounded event instrumentation defined in WEDGE-METRICS-A, without compromising privacy, overclaiming metric readiness, or expanding into a broad analytics platform
-
-Do not expand beyond that.
+No shortcuts are permitted.

@@ -1,133 +1,138 @@
 {
-  "work_id": "WEDGE-METRICS-B",
+  "work_id": "KB-SQ1",
   "status": "HARDENED",
   "bus_version": "1.3.1",
-  "hardened_utc": "2026-04-11T00:00:00Z",
-  "hardened_by": "claude-sonnet-4-6",
+  "hardened_utc": "2026-04-11T12:00:00Z",
+  "hardened_by": "claude-code",
   "changes": [
     {
-      "check": "Front Matter — all 5 required fields",
+      "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md lines 2-6: work_id=WEDGE-METRICS-B, branch=feature/wedge-metrics-b-instrumentation-implementation, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED — all 5 mandatory fields present and valid per SOP v1.3.1"
+      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: KB-SQ1"
     },
     {
-      "check": "risk_level HIGH — classification justified",
+      "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "evidence": "WEDGE-METRICS-B adds event emission side-effects to production frontend components (authStore.ts, upload.ts, analysisStore.ts, results/page.tsx, upload/page.tsx, analysis/[id]/page.tsx) — this constitutes modifying behavioural logic in multiple components. SOP §10 HIGH trigger 'Modifies behavioural logic' applies. Additionally, an optional backend event receipt endpoint is in scope. HIGH is correctly declared. No Intelligence Core components are touched; the HIGH declaration is conservative-but-justified. HIGH requires Claude audit + GPT architectural review + dual approval."
+      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/questionnaire-schema-wiring"
     },
     {
-      "check": "change_type MIXED — classification correct",
+      "check": "Front Matter — risk_level HIGH",
       "result": "CONFIRMED",
-      "evidence": "Scope items 1-5 and 7: event wiring in frontend components + analytics utility + optional backend endpoint = BEHAVIOUR class (code with observable side-effects). Scope item 6: bounded docs/implementation notes = CONTENT class. Scope item 7: regression tests = BEHAVIOUR class. MIXED per SOP §4 definition: 'any work involving both'. MIXED uses BEHAVIOUR controls."
+      "citation": "automation_bus/latest_cursor_prompt.md:4 — HIGH; questionnaire_data feeds downstream analysis runtime (Stage 1C)"
     },
     {
-      "check": "2A — Authority Path: docs/investigations/WEDGE_METRICS_PREFLIGHT.md",
+      "check": "Front Matter — execution_model TWO_PHASE_START_FINISH",
       "result": "CONFIRMED",
-      "evidence": "File exists and was committed in WEDGE-METRICS-A sprint (confirmed from WEDGE-METRICS-A audit_summary.md files_touched list). 202 lines. §3.3 confirms: no analytics SDK, no billing, no segment dimension. §4 metric-readiness table covers all 8 required metrics. Recommendation: SPLIT_INTO_EVENT_CONTRACT_AND_INSTRUMENTATION_PHASES — this sprint is the instrumentation phase."
+      "citation": "automation_bus/latest_cursor_prompt.md:5"
     },
     {
-      "check": "2A — Authority Path: docs/product/WEDGE_EVENT_CONTRACT_AND_GOVERNANCE_PHASE1.md",
+      "check": "Front Matter — change_type MIXED",
       "result": "CONFIRMED",
-      "evidence": "File exists (created in WEDGE-METRICS-A). Read at docs/product/WEDGE_EVENT_CONTRACT_AND_GOVERNANCE_PHASE1.md. §2 defines 16 active events + 3 deferred with repo-evidence reasons. §3 resolves 4 semantic ambiguities. §4 defines prohibited payloads. §5 defines collection posture (first-party preferred). §6 defines privacy prerequisites. §8 provides WEDGE-METRICS-B handoff with 8 named surfaces. This is the authoritative implementation contract."
+      "citation": "automation_bus/latest_cursor_prompt.md:6 — BEHAVIOUR: frontend fetch wiring; no CONTENT change to SSOT"
     },
     {
-      "check": "2A — Authority Path: docs/product/wedge_events_phase1.manifest.json",
+      "check": "2A — SSOT authority file exists and contains blood_pressure_reading",
       "result": "CONFIRMED",
-      "evidence": "File exists (created in WEDGE-METRICS-A). 16 event_names in array matching §2 table of contract. deferred_event_names: ['wedge_clinician_report_pdf_downloaded'] with note 'ReportsService is not registered'. Machine-readable contract reference for implementation."
+      "citation": "backend/ssot/questionnaire.json:126-136 — id:blood_pressure_reading, type:group, fields:[{label:'Systolic (mmHg)',type:number,min:70,max:250},{label:'Diastolic (mmHg)',type:number,min:40,max:150}], required:false"
     },
     {
-      "check": "2A — No duplicate authority sources",
+      "check": "2A — Runtime loader route defined and reads from SSOT",
       "result": "CONFIRMED",
-      "evidence": "Three authority sources serve distinct roles: WEDGE_METRICS_PREFLIGHT.md (gap analysis, metric readiness), WEDGE_EVENT_CONTRACT_AND_GOVERNANCE_PHASE1.md (event definitions, semantics, payload rules, collection posture), wedge_events_phase1.manifest.json (machine-readable event list). No conflicting or competing event contract definition found. No second-event-manifest or alternative contract."
+      "citation": "backend/app/routes/questionnaire.py:14 — @router.get('/schema'); Path(__file__).parent.parent.parent/'ssot'/'questionnaire.json' at line 24; returns {schema:[...],total_questions:N,version:'1.0'} at lines 35-39"
     },
     {
-      "check": "2A — Repo reality: no dedicated product analytics implementation present",
+      "check": "2A — Route registered at /api/questionnaire/schema",
       "result": "CONFIRMED",
-      "evidence": "Grep across frontend/app/ for posthog, mixpanel, segment, amplitude, ga4, analytics, plausible, track(), gtag (case-insensitive): zero matches confirmed in WEDGE-METRICS-A hardening. No analytics utility files found: Glob 'frontend/app/lib/analytics*.ts' returned no matches (confirmed before summary). No import of any analytics library in any component. Stage 1C §3 assertion 'no dedicated product analytics SDK/pipeline is currently present' CONFIRMED."
+      "citation": "backend/app/main.py:40 — app.include_router(questionnaire.router, prefix='/api/questionnaire')"
     },
     {
-      "check": "2A — Source cross-ref: authStore.ts instrumentation hooks",
+      "check": "2A — API response shape {schema:[...]} — prompt expects response.schema",
       "result": "CONFIRMED",
-      "evidence": "frontend/app/state/authStore.ts read (97 lines). login() at line 59: returns bool — true on success, false on failure. register() at line 71: returns RegisterOutcome enum. Both functions have unambiguous success/failure return paths. No existing analytics calls. Clean hook points for wedge_auth_login_success, wedge_auth_login_failed, wedge_auth_register_completed, wedge_auth_register_failed at call sites in login/page.tsx and register/page.tsx."
+      "citation": "backend/app/routes/questionnaire.py:35-39; frontend/app/lib/questionnaireSchema.ts:72-77 — parseQuestionnaireSchemaPayload reads (data as {schema?:unknown}).schema — COMPATIBLE"
     },
     {
-      "check": "2A — Source cross-ref: upload.ts workflow state transitions",
+      "check": "2A — API_BASE used for fetch — no hardcoded URL",
       "result": "CONFIRMED",
-      "evidence": "frontend/app/state/upload.ts read (202 lines). startUpload() at line 55: sets status='uploading' — hook point for wedge_upload_started. startParsing() at line 61: sets status='parsing'. setParsedResults() at line 65: sets status='ready' — hook point for wedge_upload_parse_completed. Error path at lines 87-95: sets status='error' — hook point for wedge_upload_parse_failed. upload/page.tsx lines 38-44: handleFileUpload() calls parseUpload.mutate({file}), handleTextPaste() calls parseUpload.mutate({text}) — source: 'file'|'paste' distinction available for event payload."
+      "citation": "frontend/app/lib/questionnaireSchema.ts:1 — import {API_BASE} from '@/lib/api'; frontend/app/lib/api.ts:4 — API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://127.0.0.1:8000'"
     },
     {
-      "check": "2A — Source cross-ref: analysisStore.ts analysis lifecycle hooks",
+      "check": "2A — Fetch call targets correct endpoint",
       "result": "CONFIRMED",
-      "evidence": "frontend/app/state/analysisStore.ts read (451 lines). startAnalysis() at line 175: POST to AnalysisService.startAnalysis(); on success sets analysis_id at line 220 — hook for wedge_analysis_started (emit after analysis_id returned, line 220). catch block at line 302: sets currentPhase='idle', error — hook for wedge_analysis_failed. completeAnalysis() at line 330: sets currentPhase='completed' — hook for wedge_analysis_completed. failAnalysis() at line 350: sets currentPhase='error' — second hook for wedge_analysis_failed. No existing analytics calls — only console.log/debug/warn."
+      "citation": "frontend/app/lib/questionnaireSchema.ts:84 — fetch(`${API_BASE}/api/questionnaire/schema`, {credentials:'omit',cache:'no-store'})"
     },
     {
-      "check": "2A — Source cross-ref: results/page.tsx action hooks and reopen detection",
+      "check": "2A — Production path uses fetchQuestionnaireSchema(), not mock",
       "result": "CONFIRMED",
-      "evidence": "frontend/app/(app)/results/page.tsx read (250+ lines). handleExportResults() at line 185: downloads full analysis JSON as 'healthiq-analysis-{date}.json' — hook for wedge_results_export_json_clicked. handleShareResults() at line 199: navigator.share URL or clipboard — hook for wedge_results_share_link_clicked. ClinicianReportRenderer imported at line 26 and rendered in results page — tab focus/render is hook for wedge_clinician_report_viewed. analysisIdFromUrl = searchParams.get('analysis_id') at line 101 — distinguishes URL-loaded vs fresh analysis (entry: 'from_url'|'fresh'). Results page useEffect at line 148-152: sets currentAnalysisId from URL — hook for wedge_results_viewed with entry property."
+      "citation": "frontend/app/components/forms/QuestionnaireForm.tsx:48 — const schema = await fetchQuestionnaireSchema(); setQuestions(schema) at line 49; no mockQuestions array in file"
     },
     {
-      "check": "2A — Source cross-ref: analysis/[id]/page.tsx reopen redirect path",
+      "check": "2A — Mock isolated to dev/test autofill path only",
       "result": "CONFIRMED",
-      "evidence": "frontend/app/(app)/analysis/[id]/page.tsx read (9 lines): simple redirect to /results?analysis_id=. This is the canonical reopen route. wedge_analysis_reopened_from_history fires here (or at the dashboard click that navigates here). frontend/app/(app)/dashboard/page.tsx confirmed to use useHistory hook (Grep: 3 files use useHistory — dashboard/page.tsx, reports/page.tsx, hooks/useHistory.ts). Dashboard click handler is the upstream user action; the event should fire in the analysis/[id]/page.tsx entry point before redirect."
+      "citation": "frontend/app/components/forms/QuestionnaireForm.tsx:66-73 — mock loaded via dynamic import() gated on window.location.search.includes('autofill=true') only"
     },
     {
-      "check": "2A — Source cross-ref: no existing first-party event endpoint or analytics utility",
+      "check": "2A — No duplicate authority source introduced",
       "result": "CONFIRMED",
-      "evidence": "Glob 'backend/api/events*': no matches (confirmed before summary). Glob 'frontend/app/lib/analytics*.ts': no matches. No existing collection utility or endpoint to reuse. WEDGE-METRICS-B must create the analytics client utility and optionally a minimal backend endpoint from scratch. The prompt scope item 8 (optional first-party endpoint) correctly scopes this as a new creation if the chosen posture requires it."
+      "citation": "frontend/app/lib/mock/questionnaire.ts retained but isolated to autofill path only. frontend/app/lib/questionnaireSchema.ts is a fetch utility, not an authority source. No second canonical question source."
     },
     {
-      "check": "2A — Source cross-ref: deferred metrics still blocked — paid conversion",
+      "check": "2B — All SSOT question types in renderer's explicit type set",
       "result": "CONFIRMED",
-      "evidence": "Grep across frontend/app/ for stripe, billing, subscription, payment, checkout: zero matches (confirmed in WEDGE-METRICS-A hardening). No billing integration added since. wedge_paid_conversion must remain deferred. Contract §7 classification 'Later / blocked — No payment integration' remains accurate."
+      "citation": "frontend/app/lib/questionnaireSchema.ts:39-49 — RENDERER_EXPLICIT_TYPES: {text,email,phone,date,number,dropdown,slider,checkbox,group}. All types present in backend/ssot/questionnaire.json are covered."
     },
     {
-      "check": "2A — Source cross-ref: deferred metrics still blocked — segment",
+      "check": "2B — group type compatible with blood_pressure_reading fields",
       "result": "CONFIRMED",
-      "evidence": "backend/core/models/database.py Profile model: no user_segment or equivalent field (confirmed WEDGE-METRICS-A hardening). No schema change detected. Analysis.questionnaire_data (line 107) exists as JSON but no explicit segment enum. wedge_user_segment_assigned must remain deferred. Contract §4.3 'Do not send inferred retail vs biohacker until product stores a consented segment field' still applies."
+      "citation": "frontend/app/components/forms/QuestionnaireForm.tsx:340-376 — group renderer iterates question.fields[] by field.label as value key; blood_pressure_reading fields 'Systolic (mmHg)'/'Diastolic (mmHg)' stored as object keyed by label — no incompatibility"
     },
     {
-      "check": "2A — Source cross-ref: deferred metrics still blocked — clinician PDF",
+      "check": "2B — Loading state implemented",
       "result": "CONFIRMED",
-      "evidence": "frontend/app/services/reports.ts: API_BASE_URL = 'about:blank' (line 11); comment line 9: 'Disabled: backend reports routes are not registered; keep file for future restoration'. ReportsService non-functional. wedge_clinician_report_pdf_downloaded must remain deferred. This is the same state as confirmed in WEDGE-METRICS-A hardening."
+      "citation": "frontend/app/components/forms/QuestionnaireForm.tsx:38 — loadingQuestions state; lines 403-410 — spinner rendered while loading"
     },
     {
-      "check": "2A — Privacy/consent prerequisites from contract §6 acknowledged",
+      "check": "2B — Explicit error state with no silent mock fallback",
       "result": "CONFIRMED",
-      "evidence": "Contract §6 (WEDGE_EVENT_CONTRACT_AND_GOVERNANCE_PHASE1.md): 'Can do now: Finalise this contract, implement first-party endpoint design in WEDGE-METRICS-B.' — endpoint design is explicitly permitted. 'Must review before prod instrumentation: Legal/privacy on notice + consent.' Prompt Stage 1C item 4 requires explicit verification and recording of privacy prerequisites. Prompt scope item 4 (collection posture) requires matching §5. These prerequisites are a documented gate, not a blocker to implementation structure. Prompt correctly defers vendor selection behind the DPA/notice/consent gates."
+      "citation": "frontend/app/components/forms/QuestionnaireForm.tsx:39 — schemaLoadError state; lines 412-425 — error alert + retry button; line 55 — setQuestions([]) on error, no mock fallback"
     },
     {
-      "check": "2B — Behavioural scope explicitly defined",
+      "check": "2B — Submission contract unchanged",
       "result": "CONFIRMED",
-      "evidence": "Scope items 1-7 (lines 115-278) define exact required deliverables with explicit requirements. OUT OF SCOPE (lines 305-316) prohibits: BI/warehouse, experimentation, payment/billing, fabricated conversion/segment/carry-through, backend reasoning changes, broad logging, launch-posture reopening. Scope item 3 (payload minimisation) explicitly prohibits raw biomarkers, questionnaire answers, health content, tokens in event payloads."
+      "citation": "frontend/app/(app)/upload/page.tsx:168 — questionnaire_data:questionnaireData passed as-is to startAnalysis; QuestionnaireForm.tsx:167 — onSubmit(responses) signature unchanged"
     },
     {
-      "check": "2B — Regression targets declared",
+      "check": "2B — Determinism preserved",
       "result": "CONFIRMED",
-      "evidence": "Scope item 7 (lines 259-278): frontend tests for event emission utilities; integration tests for key flows; minimal backend tests if first-party endpoint added; no broad analytics test suite. Validation targets: agreed events fire from intended surfaces; deferred events not misrepresented as live; JSON export not labelled as clinician report download; payload minimisation respected; no backend analytical behaviour changed. Bounded and proportionate to scope."
+      "citation": "fetchQuestionnaireSchema(): cache:'no-store', no randomness, no hidden fallback. Same SSOT state → identical rendered questionnaire every request."
     },
     {
-      "check": "2B — STOP conditions protect correctness",
+      "check": "2B — All 6 STOP conditions evaluated — none triggered",
       "result": "CONFIRMED",
-      "evidence": "Five explicit STOP conditions (lines 359-373): (1) implementation requires deviating from event contract without amendment; (2) collection posture cannot be implemented without unresolved privacy/vendor risk; (3) only way to show progress is to fake blocked metrics; (4) work drifts into warehouse/BI/experimentation; (5) work alters product semantics to produce analytics events. Condition 3 directly protects against paid_conversion/segment/carry-through fabrication. Condition 1 protects event naming and semantic integrity."
+      "citation": "STOP1: route returns {schema:[...]} COMPATIBLE. STOP2: all SSOT types in RENDERER_EXPLICIT_TYPES. STOP3: no backend change needed. STOP4: error state used — no mock fallback. STOP5: no second authority source. STOP6: submission contract unchanged at upload/page.tsx:168."
     },
     {
-      "check": "2B — Determinism risks surfaced",
+      "check": "2B — Regression targets achievable",
       "result": "CONFIRMED",
-      "evidence": "Implementation constraints (lines 322-340): 'Product behaviour should not change beyond instrumentation — Do not alter analytical logic, truth hierarchy, or clinician-report semantics.' Intelligence Core untouched: authStore, upload.ts, analysisStore, results page are product surfaces, not analytical reasoning components. analysisStore.startAnalysis() calls AnalysisService.startAnalysis() (API call) — instrumentation adds side-effect analytics calls only, not changes to the API call or its response handling. Emitted analytical reasoning identical to pre-sprint state."
+      "citation": "GET /api/questionnaire/schema works (questionnaire.py:14). blood_pressure_reading in SSOT (questionnaire.json:126) and in assertQuestionnaireSchemaCompatible allowed set (questionnaireSchema.ts:39-49). POST /api/analysis/start path unchanged (upload/page.tsx:168-177)."
     },
     {
-      "check": "2B — No scope creep risk",
-      "result": "CONFIRMED",
-      "evidence": "OUT OF SCOPE explicitly excludes: BI/warehouse, experimentation, payment/billing implementation, fabricated paid-conversion/segment/carry-through events, backend reasoning changes, broad logging, launch-posture re-decision. Stage 1C §6 lists 6 explicit exclusions. STOP conditions 3 and 4 halt any drift. The optional backend endpoint (scope item 8) is bounded: 'minimal schema, no broad telemetry platform, no drift into operational warehouse work.'"
+      "check": "2B — conditionalDisplay not rendered — non-blocking gap, out of scope",
+      "result": "NON_BLOCKING_GAP",
+      "citation": "backend/ssot/questionnaire.json:218-236 — menstrual_hormonal_status, low_testosterone_symptoms have conditionalDisplay. Renderer has no such logic; both render for all users. Not a STOP condition. Out of scope per Non-Goals."
     },
     {
-      "check": "Forbidden files (backend control-plane and Intelligence Core)",
-      "result": "CONFIRMED",
-      "evidence": "Scope surfaces are: frontend/app/state/, frontend/app/(auth)/, frontend/app/(app)/upload/, frontend/app/(app)/results/, frontend/app/(app)/analysis/[id]/, frontend/app/hooks/, a new analytics utility, optional backend event endpoint. All explicitly exclude: backend/ssot/, backend/core/pipeline/, backend/core/analytics/, backend/scripts/run_work_package.py, golden_gate_local.py, update_cursor_status.py. No tooling directories (.codex/, .vscode/, AGENTS.md) in scope."
+      "check": "2B — alternativeUnit not rendered — non-blocking gap, out of scope",
+      "result": "NON_BLOCKING_GAP",
+      "citation": "backend/ssot/questionnaire.json:58-97 — height/weight/waist have alternativeUnit. Renderer iterates fields[] only. Imperial-only inputs rendered. Not a STOP condition. Out of scope."
+    },
+    {
+      "check": "2C — Ancillary file questionnaireSchema.ts: noted, not scope creep",
+      "result": "NOTED",
+      "citation": "Prompt scope: 'Update: QuestionnaireForm.tsx'. Implementation also created frontend/app/lib/questionnaireSchema.ts (fetch utility) and frontend/tests/lib/questionnaireSchema.test.ts. Utility is fetch-logic extraction required by change; test satisfies prompt test requirement. No behavioural surface beyond what primary change requires."
     }
   ],
-  "content_review": "COMPLETE — governing preflight WEDGE_METRICS_PREFLIGHT.md confirmed present (committed in WEDGE-METRICS-A). Event contract WEDGE_EVENT_CONTRACT_AND_GOVERNANCE_PHASE1.md read and cross-referenced: 16 active events, 3 deferred, 4 semantic disambiguations, payload prohibition list, collection posture (first-party preferred, third-party gated), privacy prerequisites. Manifest wedge_events_phase1.manifest.json confirmed: 16 event_names array + deferred_event_names with note. All 6 instrumentation surfaces cross-referenced: authStore.ts (login line 59, register line 71), upload.ts (startUpload line 55, setParsedResults line 65, error path lines 87-95), analysisStore.ts (startAnalysis line 175, completeAnalysis line 330, failAnalysis line 350), results/page.tsx (handleExportResults line 185, handleShareResults line 199, ClinicianReportRenderer line 26), analysis/[id]/page.tsx (9-line redirect), useHistory.ts (used in dashboard/page.tsx). No analytics utility, no backend event endpoint, no track() calls found in current repo.",
-  "behaviour_review": "COMPLETE — MIXED classification: event code + analytics utility + optional backend endpoint = BEHAVIOUR class; docs notes = CONTENT class. Intelligence Core completely unaffected. Product analytical reasoning unchanged. STOP conditions protect against: deferred-metric fabrication (condition 3), event contract deviation (condition 1), analytics drift (condition 4), product semantic alteration (condition 5). Material constraint from WEDGE-METRICS-A preserved: handleExportResults (results/page.tsx line 185) must fire wedge_results_export_json_clicked, not wedge_clinician_report_pdf_downloaded. Deferred events (paid_conversion, user_segment_assigned, clinician_report_pdf_downloaded) all confirmed still blocked by current product state.",
+  "content_review": "COMPLETE — backend/ssot/questionnaire.json read (59 questions, lines 1-536). SSOT not modified. blood_pressure_reading confirmed at line 126. Route loads SSOT at questionnaire.py:24. No content drift.",
+  "behaviour_review": "COMPLETE — MIXED correct: fetch wiring = BEHAVIOUR, no CONTENT changes. Intelligence Core unaffected. All 8 renderer types confirmed in RENDERER_EXPLICIT_TYPES. Loading state, explicit error state, no mock fallback confirmed. Two pre-existing non-blocking gaps (conditionalDisplay, alternativeUnit) out of scope. All 6 STOP conditions clear. Submission contract unchanged. Determinism preserved.",
   "stage_2c_checklist_in_response": true,
   "escalation_required": false
 }
