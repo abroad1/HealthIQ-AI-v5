@@ -24,6 +24,9 @@ function analysisApiRoot(): string {
 
 const API_URL = analysisApiRoot();
 
+/** Same as `API_URL`. Kept so any stale bundle/HMR that still references `API_BASE_URL` does not throw ReferenceError. */
+const API_BASE_URL = API_URL;
+
 function analysisAuthHeaders(): Record<string, string> {
   if (typeof window === 'undefined') return {};
   const token =
