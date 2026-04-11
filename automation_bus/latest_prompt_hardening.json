@@ -1,5 +1,5 @@
 {
-  "work_id": "OPS-S1A",
+  "work_id": "OPS-S1B",
   "status": "HARDENED",
   "bus_version": "1.3.1",
   "hardened_utc": "2026-04-11T00:00:00Z",
@@ -8,81 +8,91 @@
     {
       "check": "Front Matter — all 5 required fields",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md lines 2-6: work_id=OPS-S1A, branch=feature/ops-s1a-trust-uk-baseline, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED — all 5 mandatory fields present and valid per SOP v1.3.1"
+      "evidence": "automation_bus/latest_cursor_prompt.md lines 2-6: work_id=OPS-S1B, branch=feature/ops-s1b-operational-evidence-controls, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED — all 5 mandatory fields present and valid per SOP v1.3.1"
     },
     {
       "check": "2A — Authority Path: docs/investigations/OPS_S1_PREFLIGHT.md",
       "result": "CONFIRMED",
-      "evidence": "File exists and readable. Line 1: 'OPS-S1 Preflight — Phase 1 Operational Readiness for UK B2C Launch'. Line 4: 'mode: READ_ONLY investigation'. Line 31: 'Yes. OPS-S1 is justified now.' Line 177: 'Preflight complete — OPS-S1 may be authored with docs/HealthIQ_Phase1_Launch_Posture.md as mandatory authority alongside this gap analysis.' Document status confirmed complete."
+      "evidence": "File exists (Glob confirmed). Line 177: 'Preflight complete'. §3.2 (lines 77-84): hosting is Supabase/DATABASE_URL-driven, no UK region flag in code — artifact must document this. §3.3 (lines 86-95): Privacy notice absent, DPIA absent, subprocessor inventory absent, incident/security process absent — all confirmed as gaps. §3.4 (lines 98-104): CI/CD exists, contact stub, secrets pattern exists, monitoring/backup not verified. §4 gap ranking confirms: gap 3 = no UK hosting/subprocessor story; gap 4 = missing DPIA/inventory/data-flow; gap 7 = operational runbooks."
     },
     {
       "check": "2A — Authority Path: docs/HealthIQ_Phase1_Launch_Posture.md",
       "result": "CONFIRMED",
-      "evidence": "File exists and readable. Lines 21-30: agreed UK-first, B2C-primary, UK data residency by default, UK consumer health-data compliance baseline, strict non-diagnostic positioning. Lines 308-314: HIPAA-led launch, ISO 27001, SOC 2, medical device positioning explicitly excluded as Phase 1 floor. Lines 440-454: confirmed as governing OPS-S1 input."
+      "evidence": "File exists (Glob confirmed). Lines 238-257: 'UK-hosted by default' — strategic decision documented; no repo-enforced or code-level UK region constraint exists. Lines 281-289: encryption in transit, RBAC, audit logging, secure auth, backup/recovery posture, incident response capability, vulnerability management — these are expectations against which OPS-S1B must produce evidence artifacts. Lines 298-303: data-flow documentation, vendor/subprocessor inventory, DPIA or equivalent explicitly required. Lines 305-314: HIPAA-led/ISO/SOC2/medical-device explicitly excluded as Phase 1 floor."
     },
     {
       "check": "2A — Authority Path: First Market Addendum",
       "result": "CONFIRMED",
-      "evidence": "docs/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED_First_Market_Addendum.md exists (untracked in git). Lines 19-28: confirms UK-only, B2C-primary posture consistent with HealthIQ_Phase1_Launch_Posture.md. No conflict detected between authority docs."
+      "evidence": "docs/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED_First_Market_Addendum.md exists and is now committed (git log shows commit 942b8d4 'docs: add strategic plan v1.5 first market addendum'). UK-only, B2C-primary posture consistent with governing authority. No conflict with HealthIQ_Phase1_Launch_Posture.md detected."
     },
     {
-      "check": "2A — No Duplicate Authority Sources Detectable",
+      "check": "2A — OPS-S1A completion confirmed",
       "result": "CONFIRMED",
-      "evidence": "Three authority docs serve distinct roles: OPS_S1_PREFLIGHT.md (gap analysis/scope justification), HealthIQ_Phase1_Launch_Posture.md (governing posture/compliance floor), First Market Addendum (sprint sequencing). No competing SSOT for UK launch posture found."
+      "evidence": "git log shows commit 7219a35 'feat(frontend): OPS-S1A UK B2C trust baseline and legal surfaces' on main. frontend/app/privacy/page.tsx exists (Glob confirmed). frontend/app/terms/page.tsx and contact/page.tsx confirmed created in OPS-S1A sprint. automation_bus/latest_audit_summary.md (previous sprint) confirms gate_status: PASS for OPS-S1A. Prompt line 15 assertion 'OPS-S1A is complete' is correct."
     },
     {
-      "check": "2A — Source: misaligned trust claims confirmed in page.tsx",
+      "check": "2A — No duplicate authority sources",
       "result": "CONFIRMED",
-      "evidence": "frontend/app/page.tsx line 72: '<span>HIPAA Compliant</span>' (hero strip); line 75: '<span>Bank-Level Security</span>' (hero strip); line 146: '<h3 ...>Medical-Grade Security</h3>' (trust section); line 147: '<p ...>HIPAA compliant with end-to-end encryption. Your data is always private.</p>' (trust section). All four claims confirmed present. HealthIQ_Phase1_Launch_Posture.md lines 308-314 explicitly excludes HIPAA-led posture as Phase 1 floor — mismatch confirmed."
+      "evidence": "No competing SSOT for UK operational posture detected. docs/ops/ does not exist (Glob returned nothing). docs/compliance/ does not exist (Glob returned nothing). No existing DPIA, subprocessor inventory, data-flow, or operational runbook artifacts found in docs/. Existing docs (BACKUP_STRATEGY.md, CI_CD_PIPELINE.md, Sprint 11) address code backup and CI/CD respectively — not launch operational governance artefacts. OPS-S1B creates new ground, no duplicate authority."
     },
     {
-      "check": "2A — Source: placeholder legal links confirmed in page.tsx and Footer.tsx",
+      "check": "2A — Source cross-ref: hosting/residency reality",
       "result": "CONFIRMED",
-      "evidence": "frontend/app/page.tsx lines 196-198: Privacy/Terms/Contact all href='#' placeholder anchors. frontend/app/components/layout/Footer.tsx lines 12-14: same href='#' for all three. Glob search for privacy*, terms*, contact* routes in frontend/app/ returned no matches — no real routes exist. Placeholder status confirmed in both surfaces."
+      "evidence": "backend/config/settings.py lines 57-72: SupabaseConfig reads SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_ANON_KEY from env vars — no UK region constraint encoded in application code. backend/config/database.py line 28: get_database_url() reads DATABASE_URL from env — no region constraint. Hosting region is entirely determined by deployment environment, not repo. OPS_S1_PREFLIGHT.md §3.2 line 82: confirmed 'Vendor and connection-string driven — no UK region flag or constraint in application code'. Artifact must document this limitation honestly: UK residency is a strategic posture/deployment decision, not a repo-enforced technical constraint."
     },
     {
-      "check": "2A — Source: developer copy confirmed in login page",
+      "check": "2A — Source cross-ref: vendor/subprocessor reality",
       "result": "CONFIRMED",
-      "evidence": "frontend/app/(auth)/login/page.tsx line 37: CardDescription 'Use your HealthIQ account. Backend: FastAPI /api/auth.' — developer-oriented string confirmed present. OPS_S1_PREFLIGHT.md §3.1 table (line 71) flags this as 'Developer-oriented; weak for consumer trust'."
+      "evidence": "backend/config/settings.py line 57: SupabaseConfig — Supabase is auth, database, and file-storage vendor (storage_bucket 'healthiq-exports' at line 71). Line 77: GeminiConfig — Google Gemini ('gemini-1.5-pro' at line 89) is AI processing vendor. Line 97: SecurityConfig — JWT-based auth (SECRET_KEY, HS256 algorithm). .github/workflows/ci.yml, validate.yml, golden_gate.yml exist — GitHub Actions is CI platform. FastAPI backend (confirmed from login page CardDescription prior to OPS-S1A). Next.js 14 frontend (confirmed from project stack). These are the determinable launch-relevant vendors. No email/newsletter/analytics SDK identified in frontend/app/ or config files."
+    },
+    {
+      "check": "2A — Source cross-ref: data model / health data persistence reality",
+      "result": "CONFIRMED",
+      "evidence": "backend/core/models/database.py line 23: Profile model — email, demographics, consent_given (line 38), consent_version (line 39), consent_given_at (line 40), deletion_requests relationship (line 51). Line 62: ProfilePII — date_of_birth, PII stored separately with comment 'encrypted in production' (line 73 area). Line 93: Analysis model — raw_biomarkers (line 106), questionnaire_data (line 107) stored as JSON. Line 140: AnalysisResult — biomarkers, clusters, insights, overall_score, recommendations stored. These are special-category health data under UK GDPR. Data-flow artifact can cite this schema honestly."
+    },
+    {
+      "check": "2A — Source cross-ref: GDPR schema hooks present",
+      "result": "CONFIRMED",
+      "evidence": "backend/core/models/database.py: Profile.consent_given (line 38), consent_version (line 39), consent_given_at (line 40) — lawful basis / consent fields present at schema level. Profile.deletion_requests relationship (line 51) — DeletionRequest model exists. Profile.audit_logs relationship (line 50) — AuditLog model exists. Profile.consents relationship (line 49) — Consent model exists. These are schema-level GDPR hooks — artifacts should cite these as existing mitigations while noting they are schema-level only and operational processes (e.g. deletion SLA, audit retention policy) remain to be documented."
+    },
+    {
+      "check": "2A — Source cross-ref: existing operational docs",
+      "result": "CONFIRMED",
+      "evidence": "docs/context/BACKUP_STRATEGY.md: covers code backup/branching, not production incident response or data backup. docs/CI_CD_PIPELINE.md: covers CI/CD test pipeline, not production operational runbook. docs/sprints/SPRINT_11_TEST_ISOLATION_AND_SECURITY_VALIDATION.md: covers test database isolation, not launch incident/backup/access control baseline. No docs/ops/ or docs/compliance/ directory exists. OPS_S1_PREFLIGHT.md §3.4 assessment confirmed correct: CI/CD posture is good, but production runbooks, monitoring/alerting, and backup/recovery are documented gaps."
     },
     {
       "check": "2B — Behavioural scope explicitly defined",
       "result": "CONFIRMED",
-      "evidence": "Prompt §SCOPE items 1-6 (lines 119-253) define exact required deliverables with named surfaces and requirements. §OUT OF SCOPE (lines 272-283) explicitly prohibits: OPS-S1B artefacts, DPIA/subprocessor/runbook, backend reasoning/narrative changes, broad marketing redesign, HIPAA-led/US posture, enterprise procurement, medical device, full legal/compliance programme, auth rewrite, launch-posture re-decision. Scope boundary is precise and complete."
+      "evidence": "Prompt §SCOPE items 1-7 (lines 123-286) define exact required artifacts with named destination paths (docs/ops/, docs/compliance/) and explicit content requirements. §OUT OF SCOPE (lines 304-314) prohibits: OPS-S1A trust-surface rewrite, backend reasoning/narrative, broad infra replatforming, SOC2/ISO certification, HIPAA/US posture, B2B procurement, full analytics, launch-posture re-decision, substituting docs for unresolved strategic decisions. Scope is entirely documentation artifacts — no backend or analytical code changes."
     },
     {
       "check": "2B — Regression targets declared",
       "result": "CONFIRMED",
-      "evidence": "Prompt §REQUIRED IN SCOPE item 6 (lines 239-253): regression must prove (1) placeholder links replaced with real surfaces, (2) launch-facing claims no longer use the specific risky wording identified in Stage 1C, (3) trust/legal surfaces reachable from launch-facing UI, (4) no backend contract or analytical behaviour changed. Seven acceptance criteria (lines 313-321) provide measurable closure gates."
+      "evidence": "Prompt scope item 7 (lines 271-286): validation must show (1) required artifacts created, (2) artifact set internally coherent with agreed launch posture, (3) no backend analytical behaviour changed, (4) no unsupported trust claims reintroduced through ops artifacts. Prompt §VALIDATION/EVIDENCE (lines 374-388) requires: exact artifacts created, exact hosting/residency position documented, exact vendor scope, exact privacy-risk/data-flow artifacts, exact open items. Proportionate to docs-dominant scope."
     },
     {
       "check": "2B — STOP conditions protect behavioural correctness",
       "result": "CONFIRMED",
-      "evidence": "Five explicit STOP conditions (prompt lines 328-340): (1) operational evidence required belongs in OPS-S1B, (2) legal surfaces cannot be made credible within bounded sprint, (3) drift into broad marketing rewrite, (4) stronger unsupported claims reintroduced, (5) launch-posture strategy reopened. Each condition is specific and testable."
+      "evidence": "Five explicit STOP conditions (lines 358-370): (1) cannot produce truthful evidence without pretending facts not in evidence, (2) artifacts depend on external unknowns making docs misleading, (3) drift into broad infra/security programme, (4) substituting documentation for unresolved strategic decisions, (5) widening into analytics or backend product work. Condition 1 is directly relevant: hosting region is not repo-enforced; artifact must document this honestly rather than asserting UK guarantees the repo cannot prove."
     },
     {
       "check": "2B — Determinism risks surfaced",
       "result": "CONFIRMED",
-      "evidence": "Prompt §IMPLEMENTATION CONSTRAINTS 'Preserve completed product work' (lines 302-305): 'Do not disturb FE-LAUNCH-INTEGRATION, FE-S2, or deterministic result hierarchy without direct trust-baseline need.' Backend analytical pipeline (Intelligence Core per SOP §3) is explicitly out of scope. No compiler, evaluator, pipeline, InsightGraph, assembler, or ranking/filtering component in scope."
+      "evidence": "Prompt §IMPLEMENTATION CONSTRAINTS 'Product logic untouched' (line 334): 'No analytical, reasoning, or results-hierarchy work belongs in this sprint.' All scope items produce docs/* artifacts only. No backend/core/pipeline/, backend/ssot/, backend/scripts/, or frontend analytics code in scope. Intelligence Core (SOP §3) entirely unaffected. Emitted analytical reasoning identical to pre-sprint state."
     },
     {
       "check": "2B — No scope creep risk",
       "result": "CONFIRMED",
-      "evidence": "§OUT OF SCOPE (lines 272-283) is comprehensive. Five STOP conditions (lines 328-340) halt execution on drift. Prompt §1C (lines 100-115) pre-declares that six categories of work are explicitly NOT this sprint. 'Stay bounded' implementation constraint (lines 307-308): 'If the work starts to look like OPS-S1B or a full website rewrite, it is out of scope.'"
+      "evidence": "§OUT OF SCOPE (lines 304-314) is comprehensive. §IMPLEMENTATION CONSTRAINTS (lines 318-338): 'Evidence must be honest', 'Phase 1 baseline only', 'Open items must stay visible', 'Product logic untouched', 'Keep it usable'. STOP condition 3 halts if drift to broad infra/security programme. STOP condition 4 halts if substituting docs for unresolved strategic decisions. The most material drift risk (overclaiming UK hosting) is directly addressed by the prompt's 'Evidence must be honest' constraint and STOP condition 1."
     },
     {
-      "check": "No Intelligence Core components in scope",
+      "check": "Forbidden files (backend control-plane)",
       "result": "CONFIRMED",
-      "evidence": "In-scope surfaces are strictly frontend: frontend/app/page.tsx, frontend/app/components/layout/Footer.tsx, new Privacy/Terms/Contact page routes, auth screens only if trust-language requires. No backend/ssot/, backend/core/pipeline/, backend/core/analytics/, backend/scripts/run_work_package.py, backend/scripts/golden_gate_local.py, backend/scripts/update_cursor_status.py in scope."
-    },
-    {
-      "check": "Tooling file leakage risk",
-      "result": "CONFIRMED",
-      "evidence": "Sprint scope lists no tooling directories. All governed files under frontend/. No .codex/, .vscode/, or AGENTS.md involvement expected or permitted per SOP v1.3.1 non-negotiable."
+      "evidence": "Scope is strictly: new docs under docs/ops/ and docs/compliance/; optional bounded validation artifacts. backend/ssot/, backend/core/pipeline/, backend/core/analytics/, backend/scripts/run_work_package.py, backend/scripts/golden_gate_local.py, backend/scripts/update_cursor_status.py — all explicitly excluded by prompt §OUT OF SCOPE. No tooling directories (.codex/, .vscode/, AGENTS.md) in scope."
     }
   ],
-  "content_review": "COMPLETE — OPS_S1_PREFLIGHT.md confirmed on disk (gap analysis complete, lines 1-177). HealthIQ_Phase1_Launch_Posture.md confirmed on disk (governing authority, lines 1-454). First Market Addendum confirmed on disk (sprint sequencing, lines 1+). page.tsx read — HIPAA Compliant at line 72, Bank-Level Security at line 75, Medical-Grade Security at line 146, HIPAA compliant copy at line 147, placeholder legal links at lines 196-198 all confirmed. Footer.tsx read — placeholder links lines 12-14 confirmed. login/page.tsx read — developer copy at line 37 confirmed. No Privacy/Terms/Contact routes exist in frontend/app/ (Glob search confirmed).",
-  "behaviour_review": "COMPLETE — MIXED classification verified: trust-copy alignment = CONTENT class; new route creation and JSX component changes = BEHAVIOUR class. Five STOP conditions present and specific. Deterministic results hierarchy protected by explicit prompt scope item 5 and implementation constraints. No Intelligence Core components in scope. OPS-S1B boundary clearly guarded.",
+  "content_review": "COMPLETE — OPS_S1_PREFLIGHT.md read and cross-referenced: §3.2 confirms hosting is env-var-driven with no UK region enforcement; §3.3 confirms DPIA/subprocessor/privacy notice absent; §3.4 confirms runbook/monitoring gaps. HealthIQ_Phase1_Launch_Posture.md read: §238-257 UK-hosted-by-default strategic decision; §281-289 security/operational expectations; §298-303 explicit artifact requirements. backend/config/settings.py read: SupabaseConfig (line 57), GeminiConfig (line 77) — vendors confirmed. backend/core/models/database.py read: GDPR schema hooks confirmed (consent fields line 38-40, DeletionRequest line 51, ProfilePII line 62). No docs/ops/ or docs/compliance/ exists — all artifacts are net-new creation. OPS-S1A completion confirmed: commit 7219a35 on main, privacy/terms/contact pages exist.",
+  "behaviour_review": "COMPLETE — MIXED classification: new compliance/operational docs = CONTENT class; any bounded validation coverage = BEHAVIOUR class (changes test assertions). No Intelligence Core components touched. No backend analytical code changes. STOP conditions protect against overclaiming (condition 1: cannot produce truthful evidence without pretending facts not in evidence) and against backend drift (condition 5). Deterministic results hierarchy entirely unaffected. Emitted reasoning unchanged.",
   "stage_2c_checklist_in_response": true,
   "escalation_required": false
 }
