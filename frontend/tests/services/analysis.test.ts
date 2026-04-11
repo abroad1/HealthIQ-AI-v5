@@ -77,7 +77,7 @@ describe('AnalysisService', () => {
 
       // Assert
       expect(fetch).toHaveBeenCalledWith(
-        `http://localhost:8000/api/analysis/result?analysis_id=${analysisId}`,
+        `http://127.0.0.1:8000/api/analysis/result?analysis_id=${analysisId}`,
         expect.objectContaining({
           method: 'GET',
           headers: expect.objectContaining({
@@ -198,7 +198,7 @@ describe('AnalysisService', () => {
 
       // Assert
       expect(fetch).toHaveBeenCalledWith(
-        `http://localhost:8000/api/analysis/history?limit=10&offset=0`,
+        `http://127.0.0.1:8000/api/analysis/history?limit=10&offset=0`,
         expect.objectContaining({
           method: 'GET',
           headers: expect.objectContaining({
@@ -256,7 +256,7 @@ describe('AnalysisService', () => {
 
       // Assert
       expect(fetch).toHaveBeenCalledWith(
-        'http://localhost:8000/api/analysis/export',
+        'http://127.0.0.1:8000/api/analysis/export',
         {
           method: 'POST',
           headers: {
