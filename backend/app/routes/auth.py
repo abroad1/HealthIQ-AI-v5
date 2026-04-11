@@ -10,7 +10,7 @@ from __future__ import annotations
 from typing import Annotated, Any, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from gotrue.errors import AuthApiError
+from gotrue.errors import AuthError
 from gotrue.types import User as GotrueUser
 from pydantic import BaseModel, Field
 
@@ -79,19 +79,41 @@ def _identity_from_gotrue_user(user: Any) -> UserIdentity:
     return UserIdentity(id=user.id, email=user.email)
 
 
+def _http_exception_from_gotrue(exc: AuthError, *, default_status: int) -> HTTPException:
+    """Map any GoTrue AuthError (not only AuthApiError) to an HTTP error response."""
+    status_code = getattr(exc, "status", None)
+    if isinstance(status_code, int) and 400 <= status_code < 600:
+        code = status_code
+    elif status_code == 0:
+        code = status.HTTP_503_SERVICE_UNAVAILABLE
+    else:
+        code = default_status
+    detail = getattr(exc, "message", None) or str(exc) or "Authentication request failed"
+    return HTTPException(status_code=code, detail=detail)
+
+
+def _get_anon_client():
+    try:
+        return get_supabase_anon_client()
+    except RuntimeError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=str(exc),
+        ) from exc
+
+
 @router.post(
     "/register",
     response_model=AuthSessionResponse,
     status_code=status.HTTP_201_CREATED,
 )
 def register(body: RegisterRequest) -> AuthSessionResponse:
-    client = get_supabase_anon_client()
+    client = _get_anon_client()
     try:
         res = client.auth.sign_up({"email": body.email, "password": body.password})
-    except AuthApiError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(exc) or "Registration failed",
+    except AuthError as exc:
+        raise _http_exception_from_gotrue(
+            exc, default_status=status.HTTP_400_BAD_REQUEST
         ) from exc
     if res.session is None or res.user is None:
         raise HTTPException(
@@ -106,15 +128,14 @@ def register(body: RegisterRequest) -> AuthSessionResponse:
 
 @router.post("/login", response_model=AuthSessionResponse)
 def login(body: LoginRequest) -> AuthSessionResponse:
-    client = get_supabase_anon_client()
+    client = _get_anon_client()
     try:
         res = client.auth.sign_in_with_password(
             {"email": body.email, "password": body.password}
         )
-    except AuthApiError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=str(exc) or "Invalid credentials",
+    except AuthError as exc:
+        raise _http_exception_from_gotrue(
+            exc, default_status=status.HTTP_401_UNAUTHORIZED
         ) from exc
     if res.session is None or res.user is None:
         raise HTTPException(
