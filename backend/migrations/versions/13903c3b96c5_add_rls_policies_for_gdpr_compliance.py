@@ -29,9 +29,26 @@ def upgrade() -> None:
     
     for table in tables:
         op.execute(f'ALTER TABLE {table} ENABLE ROW LEVEL SECURITY;')
-    
-    # Create auth schema and functions for local test databases
-    op.execute("""
+
+    # Local/dev Postgres may lack Supabase-style auth helpers; stubs allow policies to reference
+    # auth.uid() / auth.role(). Hosted Supabase already defines the `auth` schema (managed DDL
+    # is rejected). Skip stub creation when auth.uid is already present — RLS policies below still apply.
+    bind = op.get_bind()
+    auth_uid_already_defined = bind.execute(
+        sa.text(
+            """
+            SELECT EXISTS (
+                SELECT 1
+                FROM pg_proc p
+                JOIN pg_namespace n ON p.pronamespace = n.oid
+                WHERE n.nspname = 'auth' AND p.proname = 'uid'
+            )
+            """
+        )
+    ).scalar()
+    if not auth_uid_already_defined:
+        op.execute(
+            """
 CREATE SCHEMA IF NOT EXISTS auth;
 CREATE OR REPLACE FUNCTION auth.uid()
 RETURNS uuid
@@ -45,8 +62,9 @@ LANGUAGE sql
 AS $$
   SELECT 'authenticated'::text;
 $$;
-""")
-    
+"""
+        )
+
     # Profiles table policies
     op.execute('''
         CREATE POLICY "Users can view own profile" ON profiles

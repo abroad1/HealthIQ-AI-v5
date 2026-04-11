@@ -15,12 +15,18 @@ down_revision = "add_derived_markers_column"
 branch_labels = None
 depends_on = None
 
+# App tables live in public; reflect on the migration connection (not the pooled Engine) so
+# hosted Postgres/Supabase sees the same schema as prior revisions.
+_SCHEMA = "public"
+
 
 def upgrade():
     bind = op.get_bind()
-    engine = getattr(bind, "engine", bind)
-    inspector = inspect(engine)
-    columns = [c["name"] for c in inspector.get_columns("analysis_results")]
+    inspector = inspect(bind)
+    columns = [
+        c["name"]
+        for c in inspector.get_columns("analysis_results", schema=_SCHEMA)
+    ]
     if "replay_manifest" not in columns:
         op.add_column(
             "analysis_results",
