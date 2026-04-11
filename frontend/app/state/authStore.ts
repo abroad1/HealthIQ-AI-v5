@@ -4,6 +4,7 @@ import { create } from 'zustand'
 import type { User } from '../types/user'
 import { AuthService } from '../services/auth'
 import { setAccessTokenCookie } from '../lib/auth-cookies'
+import { emitWedgeEvent } from '../lib/wedgeAnalytics'
 
 export type RegisterOutcome =
   | { ok: true; needsEmailConfirm: false }
@@ -62,9 +63,20 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ loading: false })
     if (!res.success) {
       set({ error: res.error || 'Login failed' })
+      emitWedgeEvent({
+        event_name: 'wedge_auth_login_failed',
+        timestamp: new Date().toISOString(),
+        route: '/login',
+        error_class: 'auth_failed',
+      })
       return false
     }
     set({ user: AuthService.getCurrentUser() })
+    emitWedgeEvent({
+      event_name: 'wedge_auth_login_success',
+      timestamp: new Date().toISOString(),
+      route: '/login',
+    })
     return true
   },
 
@@ -75,10 +87,22 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (!res.success) {
       const msg = res.error || 'Registration failed'
       set({ error: msg })
+      emitWedgeEvent({
+        event_name: 'wedge_auth_register_failed',
+        timestamp: new Date().toISOString(),
+        route: '/register',
+        error_class: 'registration_failed',
+      })
       return { ok: false, message: msg }
     }
     if (!res.data) {
       set({ error: null })
+      emitWedgeEvent({
+        event_name: 'wedge_auth_register_completed',
+        timestamp: new Date().toISOString(),
+        route: '/register',
+        phase: 'pending_email_confirm',
+      })
       return {
         ok: true,
         needsEmailConfirm: true,
@@ -86,6 +110,11 @@ export const useAuthStore = create<AuthState>((set) => ({
       }
     }
     set({ user: AuthService.getCurrentUser() })
+    emitWedgeEvent({
+      event_name: 'wedge_auth_register_completed',
+      timestamp: new Date().toISOString(),
+      route: '/register',
+    })
     return { ok: true, needsEmailConfirm: false }
   },
 

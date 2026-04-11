@@ -12,6 +12,11 @@ function analysisAuthHeaders(): Record<string, string> {
   return { Authorization: `Bearer ${token}` };
 }
 
+/** Bearer headers for authenticated API calls (wedge analytics, analysis, etc.). */
+export function getApiAuthHeaders(): Record<string, string> {
+  return analysisAuthHeaders();
+}
+
 export async function pingHealth(): Promise<any> {
   const res = await fetch(`${API_BASE}/api/health`, { credentials: 'omit' });
   return res.json();

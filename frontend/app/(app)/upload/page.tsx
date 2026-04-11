@@ -15,6 +15,7 @@ import { useParseUpload } from '@/queries/parsing';
 import { useAnalysisResult } from '@/queries/analysisResult';
 import { useAuthStore } from '@/state/authStore';
 import { useRouter } from 'next/navigation';
+import { emitWedgeEvent } from '@/lib/wedgeAnalytics';
 
 export default function UploadPage() {
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -34,15 +35,28 @@ export default function UploadPage() {
   const parseUpload = useParseUpload();
 
   const confirmAllOnceRef = useRef(false);
+  const parseCompleteEmittedFor = useRef<string | null>(null);
 
   const handleFileUpload = async (file: File) => {
     setError(null);
+    emitWedgeEvent({
+      event_name: 'wedge_upload_started',
+      timestamp: new Date().toISOString(),
+      route: '/upload',
+      source: 'file',
+    });
     parseUpload.mutate({ file });
     setSelectedFile(null);
   };
 
   const handleTextPaste = async (text: string) => {
     setError(null);
+    emitWedgeEvent({
+      event_name: 'wedge_upload_started',
+      timestamp: new Date().toISOString(),
+      route: '/upload',
+      source: 'paste',
+    });
     parseUpload.mutate({ text });
   };
 
@@ -154,6 +168,12 @@ export default function UploadPage() {
         questionnaire_data: questionnaireData,
       };
 
+      emitWedgeEvent({
+        event_name: 'wedge_questionnaire_submitted',
+        timestamp: new Date().toISOString(),
+        route: '/upload',
+      });
+
       await startAnalysis(payload);
 
       const storeState = useAnalysisStore.getState();
@@ -185,6 +205,16 @@ export default function UploadPage() {
 
   useEffect(() => {
     if (parseUpload.isSuccess && parseUpload.data) {
+      const aid = parseUpload.data.analysis_id as string | undefined;
+      if (aid && parseCompleteEmittedFor.current !== aid) {
+        parseCompleteEmittedFor.current = aid;
+        emitWedgeEvent({
+          event_name: 'wedge_upload_parse_completed',
+          timestamp: new Date().toISOString(),
+          route: '/upload',
+          analysis_id: aid,
+        });
+      }
       const { parsed_data } = parseUpload.data;
       const transformed = parsed_data.biomarkers.map((b: any) => ({
         name: b.name ?? b.id ?? b.biomarker_name,
@@ -202,6 +232,12 @@ export default function UploadPage() {
       confirmAllOnceRef.current = false;
       setParsedResults(transformed, parseUpload.data.analysis_id, parsed_data.metadata);
     } else if (parseUpload.isError && parseUpload.error) {
+      emitWedgeEvent({
+        event_name: 'wedge_upload_parse_failed',
+        timestamp: new Date().toISOString(),
+        route: '/upload',
+        error_class: 'parse_error',
+      });
       setError({
         code: 'PARSE_ERROR',
         message: parseUpload.error.message || 'Failed to parse upload',

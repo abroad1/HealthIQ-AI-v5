@@ -1,9 +1,37 @@
-import { redirect } from 'next/navigation'
+'use client'
+
+import { useEffect } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import { emitWedgeEvent } from '@/lib/wedgeAnalytics'
 
 /**
- * Canonical entry for reopening a saved analysis: redirects to the results view with the same analysis id.
- * The full interpretation UI remains on `/results` (hero / trust / advanced tabs) — this route removes stub ambiguity.
+ * Canonical reopen entry: emit reopen event, flag results page for `entry: from_history`, then navigate.
  */
-export default function AnalysisDetailRedirect({ params }: { params: { id: string } }) {
-  redirect(`/results?analysis_id=${encodeURIComponent(params.id)}`)
+export default function AnalysisReopenRedirect() {
+  const params = useParams()
+  const router = useRouter()
+  const raw = params?.id
+  const id = typeof raw === 'string' ? raw : Array.isArray(raw) ? raw[0] : ''
+
+  useEffect(() => {
+    if (!id) return
+    emitWedgeEvent({
+      event_name: 'wedge_analysis_reopened_from_history',
+      timestamp: new Date().toISOString(),
+      route: '/analysis/[id]',
+      analysis_id: id,
+    })
+    try {
+      sessionStorage.setItem('wedge_reopen_flag', '1')
+    } catch {
+      /* ignore private mode */
+    }
+    router.replace(`/results?analysis_id=${encodeURIComponent(id)}`)
+  }, [id, router])
+
+  return (
+    <div className="flex min-h-[40vh] items-center justify-center text-sm text-muted-foreground">
+      Opening your results…
+    </div>
+  )
 }
