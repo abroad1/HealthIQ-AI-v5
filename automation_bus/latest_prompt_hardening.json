@@ -1,5 +1,5 @@
 {
-  "work_id": "WEDGE-METRICS-A",
+  "work_id": "WEDGE-METRICS-B",
   "status": "HARDENED",
   "bus_version": "1.3.1",
   "hardened_utc": "2026-04-11T00:00:00Z",
@@ -8,96 +8,126 @@
     {
       "check": "Front Matter — all 5 required fields",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md lines 2-6: work_id=WEDGE-METRICS-A, branch=feature/wedge-metrics-a-event-contract-governance, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED — all 5 mandatory fields present and valid per SOP v1.3.1"
+      "evidence": "automation_bus/latest_cursor_prompt.md lines 2-6: work_id=WEDGE-METRICS-B, branch=feature/wedge-metrics-b-instrumentation-implementation, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED — all 5 mandatory fields present and valid per SOP v1.3.1"
     },
     {
-      "check": "Risk level STANDARD — no HIGH triggers present",
+      "check": "risk_level HIGH — classification justified",
       "result": "CONFIRMED",
-      "evidence": "Sprint scope is documentation artifacts (docs/product/ or docs/ops/) plus optional bounded validation. No Intelligence Core (SOP §3) components in scope. No backend/ssot/, backend/core/pipeline/, backend/core/analytics/, backend/scripts/run_work_package.py, golden_gate_local.py, update_cursor_status.py. No analytical output generation or behavioural logic touched. STANDARD (Claude audit + GPT review) is correct."
+      "evidence": "WEDGE-METRICS-B adds event emission side-effects to production frontend components (authStore.ts, upload.ts, analysisStore.ts, results/page.tsx, upload/page.tsx, analysis/[id]/page.tsx) — this constitutes modifying behavioural logic in multiple components. SOP §10 HIGH trigger 'Modifies behavioural logic' applies. Additionally, an optional backend event receipt endpoint is in scope. HIGH is correctly declared. No Intelligence Core components are touched; the HIGH declaration is conservative-but-justified. HIGH requires Claude audit + GPT architectural review + dual approval."
     },
     {
       "check": "change_type MIXED — classification correct",
       "result": "CONFIRMED",
-      "evidence": "Governance/event-contract docs = CONTENT class. Any bounded validation test coverage = BEHAVIOUR class (executable frontend test code). MIXED per SOP §4 definition: 'any work involving both'."
+      "evidence": "Scope items 1-5 and 7: event wiring in frontend components + analytics utility + optional backend endpoint = BEHAVIOUR class (code with observable side-effects). Scope item 6: bounded docs/implementation notes = CONTENT class. Scope item 7: regression tests = BEHAVIOUR class. MIXED per SOP §4 definition: 'any work involving both'. MIXED uses BEHAVIOUR controls."
     },
     {
       "check": "2A — Authority Path: docs/investigations/WEDGE_METRICS_PREFLIGHT.md",
       "result": "CONFIRMED",
-      "evidence": "File exists and readable (202 lines). Line 136: recommendation 'SPLIT_INTO_EVENT_CONTRACT_AND_INSTRUMENTATION_PHASES'. §3.1 table confirms journey plumbing present (authStore, upload, analysisStore, results, history). §3.3 confirms missing: product analytics SDK, payment/subscription (no billing in repo), segment dimension, structured product events. §4 metric-readiness table covers all prompt-required metrics (registration, login, upload, analysis, results, clinician report, repeat, retention, segment, trust, enterprise). §5 UK B2C privacy boundary documented. §8 likely touched surfaces enumerated. Preflight status: COMPLETE."
+      "evidence": "File exists and was committed in WEDGE-METRICS-A sprint (confirmed from WEDGE-METRICS-A audit_summary.md files_touched list). 202 lines. §3.3 confirms: no analytics SDK, no billing, no segment dimension. §4 metric-readiness table covers all 8 required metrics. Recommendation: SPLIT_INTO_EVENT_CONTRACT_AND_INSTRUMENTATION_PHASES — this sprint is the instrumentation phase."
     },
     {
-      "check": "2A — Authority Path: docs/HealthIQ_Phase1_Launch_Posture.md",
+      "check": "2A — Authority Path: docs/product/WEDGE_EVENT_CONTRACT_AND_GOVERNANCE_PHASE1.md",
       "result": "CONFIRMED",
-      "evidence": "File exists (confirmed repeatedly). Lines 318-331: what B2C wedge must prove (demand, willingness to pay, repeat usage, trust, clinician exposure via carry-through, B2B credibility signals). Lines 335-372: bridge metrics taxonomy (paid conversion, repeat upload/panel, retention, clinician report download/carry-through, self-reported discussion, trust signals, product-proof metrics, segment splits). This is the governing source for required metric coverage in the event contract."
+      "evidence": "File exists (created in WEDGE-METRICS-A). Read at docs/product/WEDGE_EVENT_CONTRACT_AND_GOVERNANCE_PHASE1.md. §2 defines 16 active events + 3 deferred with repo-evidence reasons. §3 resolves 4 semantic ambiguities. §4 defines prohibited payloads. §5 defines collection posture (first-party preferred). §6 defines privacy prerequisites. §8 provides WEDGE-METRICS-B handoff with 8 named surfaces. This is the authoritative implementation contract."
     },
     {
-      "check": "2A — Authority Path: First Market Addendum",
+      "check": "2A — Authority Path: docs/product/wedge_events_phase1.manifest.json",
       "result": "CONFIRMED",
-      "evidence": "docs/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED_First_Market_Addendum.md exists and committed. Preflight line 6 and §2 cite it. Addendum §163+: Sprint 3 — Wedge metrics / launch instrumentation. Addendum §31-43: two B2C segments (standard retail, technical/biohacker) need separate measurement. This confirms the sprint sequencing and segment measurement requirement."
-    },
-    {
-      "check": "2A — Authority Path: docs/ops/WEDGE_METRICS_GOVERNANCE_NOTE_PHASE1.md",
-      "result": "CONFIRMED",
-      "evidence": "File exists (from OPS-S1B sprint). Preflight line 128 and §9 cite it. Note confirms instrumentation deferred from OPS-S1B; calls for 'event contract + privacy alignment' before implementation. This is an upstream authority source that WEDGE-METRICS-A directly implements."
+      "evidence": "File exists (created in WEDGE-METRICS-A). 16 event_names in array matching §2 table of contract. deferred_event_names: ['wedge_clinician_report_pdf_downloaded'] with note 'ReportsService is not registered'. Machine-readable contract reference for implementation."
     },
     {
       "check": "2A — No duplicate authority sources",
       "result": "CONFIRMED",
-      "evidence": "Four authority sources serve distinct roles: WEDGE_METRICS_PREFLIGHT.md (gap analysis + metric readiness), HealthIQ_Phase1_Launch_Posture.md (governing bridge metrics), First Market Addendum (sprint sequencing), WEDGE_METRICS_GOVERNANCE_NOTE_PHASE1.md (deferral record). No conflicting or competing SSOT for event contract definition found."
+      "evidence": "Three authority sources serve distinct roles: WEDGE_METRICS_PREFLIGHT.md (gap analysis, metric readiness), WEDGE_EVENT_CONTRACT_AND_GOVERNANCE_PHASE1.md (event definitions, semantics, payload rules, collection posture), wedge_events_phase1.manifest.json (machine-readable event list). No conflicting or competing event contract definition found. No second-event-manifest or alternative contract."
     },
     {
-      "check": "2A — Source cross-ref: no analytics SDK present",
+      "check": "2A — Repo reality: no dedicated product analytics implementation present",
       "result": "CONFIRMED",
-      "evidence": "Grep across frontend/app/ for posthog, mixpanel, segment, amplitude, ga4, analytics, plausible, track(), gtag (case-insensitive): zero matches in application code. analysisStore.ts confirmed: only console.log/debug/warn at lines 129, 130, 133, 176, 182, 183, 187, 200, etc. — no structured telemetry, no track() calls. Prompt Stage 1C §3 assertion 'no dedicated product analytics SDK/pipeline is present' CONFIRMED."
+      "evidence": "Grep across frontend/app/ for posthog, mixpanel, segment, amplitude, ga4, analytics, plausible, track(), gtag (case-insensitive): zero matches confirmed in WEDGE-METRICS-A hardening. No analytics utility files found: Glob 'frontend/app/lib/analytics*.ts' returned no matches (confirmed before summary). No import of any analytics library in any component. Stage 1C §3 assertion 'no dedicated product analytics SDK/pipeline is currently present' CONFIRMED."
     },
     {
-      "check": "2A — Source cross-ref: clinician report export/share semantics (MATERIAL)",
+      "check": "2A — Source cross-ref: authStore.ts instrumentation hooks",
       "result": "CONFIRMED",
-      "evidence": "frontend/app/(app)/results/page.tsx line 185: handleExportResults() — downloads currentAnalysis as JSON file named healthiq-analysis-{date}.json. This is a full analysis data export, NOT a clinician report PDF. Line 199: handleShareResults() — navigator.share with page URL, fallback to clipboard.writeText(location.href). This is a URL-share action, not a report-specific download. frontend/app/services/reports.ts line 11: API_BASE_URL = 'about:blank'; line 9 comment: 'Disabled: backend reports routes are not registered; keep file for future restoration'. ReportsService.downloadReport() is completely non-functional in current product. The 'clinician report viewed' event maps to ClinicianReportRenderer tab render (in-app). There is NO live server-side clinician PDF download path. The event contract MUST distinguish: (1) results_exported_json = handleExportResults trigger, (2) results_shared = handleShareResults trigger, (3) clinician_report_viewed = ClinicianReportRenderer tab/render event, (4) clinician_report_pdf_downloaded = DEFERRED (ReportsService disabled; not a live action). Labelling handleExportResults as 'clinician_report_downloaded' would be semantically wrong and must not occur."
+      "evidence": "frontend/app/state/authStore.ts read (97 lines). login() at line 59: returns bool — true on success, false on failure. register() at line 71: returns RegisterOutcome enum. Both functions have unambiguous success/failure return paths. No existing analytics calls. Clean hook points for wedge_auth_login_success, wedge_auth_login_failed, wedge_auth_register_completed, wedge_auth_register_failed at call sites in login/page.tsx and register/page.tsx."
     },
     {
-      "check": "2A — Source cross-ref: no paid conversion path present",
+      "check": "2A — Source cross-ref: upload.ts workflow state transitions",
       "result": "CONFIRMED",
-      "evidence": "Grep across frontend/app/ for stripe, billing, subscription, payment, checkout: zero matches (consistent with preflight §3.3). paid_conversion cannot be instrumented as a product event today. The event contract must mark this as BLOCKED/proxy-only. Preflight §4 table: 'Paid conversion — Missing; not instrumentable in-app until commerce exists or proxy defined'."
+      "evidence": "frontend/app/state/upload.ts read (202 lines). startUpload() at line 55: sets status='uploading' — hook point for wedge_upload_started. startParsing() at line 61: sets status='parsing'. setParsedResults() at line 65: sets status='ready' — hook point for wedge_upload_parse_completed. Error path at lines 87-95: sets status='error' — hook point for wedge_upload_parse_failed. upload/page.tsx lines 38-44: handleFileUpload() calls parseUpload.mutate({file}), handleTextPaste() calls parseUpload.mutate({text}) — source: 'file'|'paste' distinction available for event payload."
     },
     {
-      "check": "2A — Source cross-ref: no segment dimension present",
+      "check": "2A — Source cross-ref: analysisStore.ts analysis lifecycle hooks",
       "result": "CONFIRMED",
-      "evidence": "Preflight §3.3: 'No standard-vs-biohacker field for analytics identified in auth/profile flows reviewed.' backend/core/models/database.py Profile model (reviewed in OPS-S1B hardening): no user_segment or equivalent field. Questionnaire data exists as JSON in Analysis.questionnaire_data but no explicit segment enum in schema. Segment-split measurement is BLOCKED pending product definition + capture. Preflight §4: 'Segment split — Missing dimension; Bounded to high — needs product definition + capture'."
+      "evidence": "frontend/app/state/analysisStore.ts read (451 lines). startAnalysis() at line 175: POST to AnalysisService.startAnalysis(); on success sets analysis_id at line 220 — hook for wedge_analysis_started (emit after analysis_id returned, line 220). catch block at line 302: sets currentPhase='idle', error — hook for wedge_analysis_failed. completeAnalysis() at line 330: sets currentPhase='completed' — hook for wedge_analysis_completed. failAnalysis() at line 350: sets currentPhase='error' — second hook for wedge_analysis_failed. No existing analytics calls — only console.log/debug/warn."
+    },
+    {
+      "check": "2A — Source cross-ref: results/page.tsx action hooks and reopen detection",
+      "result": "CONFIRMED",
+      "evidence": "frontend/app/(app)/results/page.tsx read (250+ lines). handleExportResults() at line 185: downloads full analysis JSON as 'healthiq-analysis-{date}.json' — hook for wedge_results_export_json_clicked. handleShareResults() at line 199: navigator.share URL or clipboard — hook for wedge_results_share_link_clicked. ClinicianReportRenderer imported at line 26 and rendered in results page — tab focus/render is hook for wedge_clinician_report_viewed. analysisIdFromUrl = searchParams.get('analysis_id') at line 101 — distinguishes URL-loaded vs fresh analysis (entry: 'from_url'|'fresh'). Results page useEffect at line 148-152: sets currentAnalysisId from URL — hook for wedge_results_viewed with entry property."
+    },
+    {
+      "check": "2A — Source cross-ref: analysis/[id]/page.tsx reopen redirect path",
+      "result": "CONFIRMED",
+      "evidence": "frontend/app/(app)/analysis/[id]/page.tsx read (9 lines): simple redirect to /results?analysis_id=. This is the canonical reopen route. wedge_analysis_reopened_from_history fires here (or at the dashboard click that navigates here). frontend/app/(app)/dashboard/page.tsx confirmed to use useHistory hook (Grep: 3 files use useHistory — dashboard/page.tsx, reports/page.tsx, hooks/useHistory.ts). Dashboard click handler is the upstream user action; the event should fire in the analysis/[id]/page.tsx entry point before redirect."
+    },
+    {
+      "check": "2A — Source cross-ref: no existing first-party event endpoint or analytics utility",
+      "result": "CONFIRMED",
+      "evidence": "Glob 'backend/api/events*': no matches (confirmed before summary). Glob 'frontend/app/lib/analytics*.ts': no matches. No existing collection utility or endpoint to reuse. WEDGE-METRICS-B must create the analytics client utility and optionally a minimal backend endpoint from scratch. The prompt scope item 8 (optional first-party endpoint) correctly scopes this as a new creation if the chosen posture requires it."
+    },
+    {
+      "check": "2A — Source cross-ref: deferred metrics still blocked — paid conversion",
+      "result": "CONFIRMED",
+      "evidence": "Grep across frontend/app/ for stripe, billing, subscription, payment, checkout: zero matches (confirmed in WEDGE-METRICS-A hardening). No billing integration added since. wedge_paid_conversion must remain deferred. Contract §7 classification 'Later / blocked — No payment integration' remains accurate."
+    },
+    {
+      "check": "2A — Source cross-ref: deferred metrics still blocked — segment",
+      "result": "CONFIRMED",
+      "evidence": "backend/core/models/database.py Profile model: no user_segment or equivalent field (confirmed WEDGE-METRICS-A hardening). No schema change detected. Analysis.questionnaire_data (line 107) exists as JSON but no explicit segment enum. wedge_user_segment_assigned must remain deferred. Contract §4.3 'Do not send inferred retail vs biohacker until product stores a consented segment field' still applies."
+    },
+    {
+      "check": "2A — Source cross-ref: deferred metrics still blocked — clinician PDF",
+      "result": "CONFIRMED",
+      "evidence": "frontend/app/services/reports.ts: API_BASE_URL = 'about:blank' (line 11); comment line 9: 'Disabled: backend reports routes are not registered; keep file for future restoration'. ReportsService non-functional. wedge_clinician_report_pdf_downloaded must remain deferred. This is the same state as confirmed in WEDGE-METRICS-A hardening."
+    },
+    {
+      "check": "2A — Privacy/consent prerequisites from contract §6 acknowledged",
+      "result": "CONFIRMED",
+      "evidence": "Contract §6 (WEDGE_EVENT_CONTRACT_AND_GOVERNANCE_PHASE1.md): 'Can do now: Finalise this contract, implement first-party endpoint design in WEDGE-METRICS-B.' — endpoint design is explicitly permitted. 'Must review before prod instrumentation: Legal/privacy on notice + consent.' Prompt Stage 1C item 4 requires explicit verification and recording of privacy prerequisites. Prompt scope item 4 (collection posture) requires matching §5. These prerequisites are a documented gate, not a blocker to implementation structure. Prompt correctly defers vendor selection behind the DPA/notice/consent gates."
     },
     {
       "check": "2B — Behavioural scope explicitly defined",
       "result": "CONFIRMED",
-      "evidence": "Prompt §SCOPE items 1-8 (lines 133-313) define exact required governance deliverables with explicit content requirements. §OUT OF SCOPE (lines 333-342) prohibits: event wiring, analytics SDK, BI/warehouse, experimentation, payment/billing, backend reasoning, generic logging, launch-posture reopening, fake precision on segmentation. No backend or application code changes permitted. §IMPLEMENTATION CONSTRAINTS 'Product behaviour untouched' (line 365): 'No application logic or instrumentation should be added in this sprint.'"
+      "evidence": "Scope items 1-7 (lines 115-278) define exact required deliverables with explicit requirements. OUT OF SCOPE (lines 305-316) prohibits: BI/warehouse, experimentation, payment/billing, fabricated conversion/segment/carry-through, backend reasoning changes, broad logging, launch-posture reopening. Scope item 3 (payload minimisation) explicitly prohibits raw biomarkers, questionnaire answers, health content, tokens in event payloads."
     },
     {
       "check": "2B — Regression targets declared",
       "result": "CONFIRMED",
-      "evidence": "Prompt scope item 8 (lines 299-313): validation must show (1) required artifacts created, (2) event vocabulary internally coherent, (3) privacy boundaries explicit, (4) no backend analytical behaviour changed. Bounded and proportionate to docs-dominant scope."
+      "evidence": "Scope item 7 (lines 259-278): frontend tests for event emission utilities; integration tests for key flows; minimal backend tests if first-party endpoint added; no broad analytics test suite. Validation targets: agreed events fire from intended surfaces; deferred events not misrepresented as live; JSON export not labelled as clinician report download; payload minimisation respected; no backend analytical behaviour changed. Bounded and proportionate to scope."
     },
     {
-      "check": "2B — STOP conditions protect behavioural correctness",
+      "check": "2B — STOP conditions protect correctness",
       "result": "CONFIRMED",
-      "evidence": "Five explicit STOP conditions (lines 385-395): (1) event definitions require unresolved strategy beyond agreed posture, (2) privacy/consent implications make contract misleading, (3) drift into instrumentation implementation, (4) inventing segment/paid-conversion logic product does not support, (5) only way to complete artifact is to overclaim metric readiness. Conditions 4 and 5 directly address the two confirmed gaps: no billing path (paid conversion blocked) and no segment dimension (must not be fabricated)."
+      "evidence": "Five explicit STOP conditions (lines 359-373): (1) implementation requires deviating from event contract without amendment; (2) collection posture cannot be implemented without unresolved privacy/vendor risk; (3) only way to show progress is to fake blocked metrics; (4) work drifts into warehouse/BI/experimentation; (5) work alters product semantics to produce analytics events. Condition 3 directly protects against paid_conversion/segment/carry-through fabrication. Condition 1 protects event naming and semantic integrity."
     },
     {
       "check": "2B — Determinism risks surfaced",
       "result": "CONFIRMED",
-      "evidence": "Prompt §IMPLEMENTATION CONSTRAINTS 'Product behaviour untouched' (line 365): no application logic or instrumentation added. No Intelligence Core components in scope. No analytical pipeline, InsightGraph, ranking/filtering, or output assembly touched. Emitted analytical reasoning unchanged."
+      "evidence": "Implementation constraints (lines 322-340): 'Product behaviour should not change beyond instrumentation — Do not alter analytical logic, truth hierarchy, or clinician-report semantics.' Intelligence Core untouched: authStore, upload.ts, analysisStore, results page are product surfaces, not analytical reasoning components. analysisStore.startAnalysis() calls AnalysisService.startAnalysis() (API call) — instrumentation adds side-effect analytics calls only, not changes to the API call or its response handling. Emitted analytical reasoning identical to pre-sprint state."
     },
     {
       "check": "2B — No scope creep risk",
       "result": "CONFIRMED",
-      "evidence": "§OUT OF SCOPE is comprehensive and directly addresses the known risk vectors: 'No event wiring or analytics SDK integration' (line 334) — cannot drift into WEDGE-METRICS-B territory; 'No fake precision on user segmentation or clinician carry-through' (line 341) — directly addresses the two unresolvable metrics. STOP condition 3 halts implementation drift. STOP condition 4 halts metric fabrication."
+      "evidence": "OUT OF SCOPE explicitly excludes: BI/warehouse, experimentation, payment/billing implementation, fabricated paid-conversion/segment/carry-through events, backend reasoning changes, broad logging, launch-posture re-decision. Stage 1C §6 lists 6 explicit exclusions. STOP conditions 3 and 4 halt any drift. The optional backend endpoint (scope item 8) is bounded: 'minimal schema, no broad telemetry platform, no drift into operational warehouse work.'"
     },
     {
       "check": "Forbidden files (backend control-plane and Intelligence Core)",
       "result": "CONFIRMED",
-      "evidence": "Scope is strictly: new docs under docs/ops/ or docs/product/ (or equivalent). Optional bounded machine-readable schema (scope item 9). Optional validation test. backend/ssot/, backend/core/pipeline/, backend/core/analytics/, backend/scripts/run_work_package.py, golden_gate_local.py, update_cursor_status.py — all explicitly excluded. No analytics SDK files in scope. No tooling directories (.codex/, .vscode/, AGENTS.md)."
+      "evidence": "Scope surfaces are: frontend/app/state/, frontend/app/(auth)/, frontend/app/(app)/upload/, frontend/app/(app)/results/, frontend/app/(app)/analysis/[id]/, frontend/app/hooks/, a new analytics utility, optional backend event endpoint. All explicitly exclude: backend/ssot/, backend/core/pipeline/, backend/core/analytics/, backend/scripts/run_work_package.py, golden_gate_local.py, update_cursor_status.py. No tooling directories (.codex/, .vscode/, AGENTS.md) in scope."
     }
   ],
-  "content_review": "COMPLETE — WEDGE_METRICS_PREFLIGHT.md read and cross-referenced (202 lines): metric readiness table (§4) and data/privacy boundary (§5) confirmed. HealthIQ_Phase1_Launch_Posture.md §318-372 confirmed as bridge-metrics authority. First Market Addendum confirmed committed; §163+ sprint sequencing confirmed. WEDGE_METRICS_GOVERNANCE_NOTE_PHASE1.md confirmed present from OPS-S1B. analytics SDK search: zero matches in frontend/app/. results/page.tsx read: handleExportResults (JSON download, line 185), handleShareResults (URL share, line 199) confirmed — these are NOT clinician report PDF downloads. reports.ts read: API_BASE_URL='about:blank' (line 11), backend reports routes disabled (line 9 comment) — ReportsService non-functional in current product. analysisStore.ts grep: only console.log/debug/warn, no structured telemetry. No billing/payment references found.",
-  "behaviour_review": "COMPLETE — MIXED classification: governance docs = CONTENT class; any validation test = BEHAVIOUR class. No Intelligence Core or application code changes permitted. STOP conditions protect against instrumentation drift (condition 3) and metric fabrication (conditions 4, 5). The material clinician-report semantic finding is documented: contract must not label handleExportResults as 'clinician_report_downloaded' — that would be semantically false. Deterministic results hierarchy entirely unaffected.",
+  "content_review": "COMPLETE — governing preflight WEDGE_METRICS_PREFLIGHT.md confirmed present (committed in WEDGE-METRICS-A). Event contract WEDGE_EVENT_CONTRACT_AND_GOVERNANCE_PHASE1.md read and cross-referenced: 16 active events, 3 deferred, 4 semantic disambiguations, payload prohibition list, collection posture (first-party preferred, third-party gated), privacy prerequisites. Manifest wedge_events_phase1.manifest.json confirmed: 16 event_names array + deferred_event_names with note. All 6 instrumentation surfaces cross-referenced: authStore.ts (login line 59, register line 71), upload.ts (startUpload line 55, setParsedResults line 65, error path lines 87-95), analysisStore.ts (startAnalysis line 175, completeAnalysis line 330, failAnalysis line 350), results/page.tsx (handleExportResults line 185, handleShareResults line 199, ClinicianReportRenderer line 26), analysis/[id]/page.tsx (9-line redirect), useHistory.ts (used in dashboard/page.tsx). No analytics utility, no backend event endpoint, no track() calls found in current repo.",
+  "behaviour_review": "COMPLETE — MIXED classification: event code + analytics utility + optional backend endpoint = BEHAVIOUR class; docs notes = CONTENT class. Intelligence Core completely unaffected. Product analytical reasoning unchanged. STOP conditions protect against: deferred-metric fabrication (condition 3), event contract deviation (condition 1), analytics drift (condition 4), product semantic alteration (condition 5). Material constraint from WEDGE-METRICS-A preserved: handleExportResults (results/page.tsx line 185) must fire wedge_results_export_json_clicked, not wedge_clinician_report_pdf_downloaded. Deferred events (paid_conversion, user_segment_assigned, clinician_report_pdf_downloaded) all confirmed still blocked by current product state.",
   "stage_2c_checklist_in_response": true,
   "escalation_required": false
 }
