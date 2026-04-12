@@ -71,13 +71,46 @@ describe('rangeAttentionLevel', () => {
     ).toBe('none');
   });
 
-  it('partial for one-sided', () => {
+  it('one-sided when only max bound', () => {
     expect(
       rangeAttentionLevel({
         unit: 'mg/dL',
         referenceRange: { max: 100, unit: 'mg/dL' },
       })
+    ).toBe('one-sided');
+  });
+
+  it('one-sided when only min bound', () => {
+    expect(
+      rangeAttentionLevel({
+        unit: 'mg/dL',
+        referenceRange: { min: 40, unit: 'mg/dL' },
+      })
+    ).toBe('one-sided');
+  });
+
+  it('partial when only contextual text and no numeric bounds', () => {
+    expect(
+      rangeAttentionLevel({
+        unit: 'mg/dL',
+        referenceText: 'See pregnancy table on page 2',
+      })
     ).toBe('partial');
+  });
+});
+
+describe('buildReferenceRangeFromParserRow rawReferenceText', () => {
+  it('prepends rawReferenceText before referenceRange string', () => {
+    const out = buildReferenceRangeFromParserRow({
+      unit: 'mIU/L',
+      rawReferenceText: 'Males: 2–18\nFemales: 2–29',
+      referenceRange: '< 25',
+      ref_low: null,
+      ref_high: 25,
+    });
+    expect(out.referenceText).toMatch(/Males: 2–18/);
+    expect(out.referenceText).toMatch(/< 25/);
+    expect(out.referenceRange?.max).toBe(25);
   });
 });
 

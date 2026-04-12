@@ -7,9 +7,10 @@ Your task is to analyze the PDF document and extract all quantitative biomarkers
     {
       "id": "string (canonical biomarker ID)",
       "name": "string (biomarker name)",
-      "value": float (numeric value),
+      "value": float (numeric measured value only — use the primary numeric result shown for the assay),
       "unit": "string (unit of measurement)",
-      "reference": "string (reference range)",
+      "reference": "string (primary reference interval line as printed adjacent to the result, verbatim when possible)",
+      "raw_reference_text": "string (optional — multi-line footnotes, sex-specific or pregnancy-specific blocks, life-stage notes, or additional reference context that appears with this marker in the PDF. Omit or use empty string if none.)",
       "confidence": float (confidence score 0.0-1.0),
       "ref_low": float (lower reference limit, optional),
       "ref_high": float (upper reference limit, optional)
@@ -38,23 +39,27 @@ Your task is to analyze the PDF document and extract all quantitative biomarkers
 8. **Multiple Sections**: Check for different lab panels (CBC, CMP, Lipid Panel, etc.)
 
 ## Extraction Guidelines:
-- Only extract quantitative biomarkers with numeric values
-- Use canonical biomarker IDs from the list above
-- Include confidence scores based on clarity of extraction (0.0-1.0)
-- Extract reference ranges when available
-- Include proper units of measurement
-- Skip qualitative results, ranges, or non-numeric data
+- Only extract rows that have a **numeric measured value** for the biomarker (the assay result).
+- Use canonical biomarker IDs from the list above where applicable.
+- Include confidence scores based on clarity of extraction (0.0-1.0).
+- **Preserve reference and interpretive text**: do not discard footnotes, sex-specific ranges, pregnancy ranges, age bands, or life-stage qualifiers that appear with the marker — put primary line in `reference` and longer or separate contextual blocks in `raw_reference_text`.
+- Include proper units of measurement.
 - Handle multi-page documents by scanning all pages
 - **Aim for comprehensive extraction**: Look for 50+ biomarkers in full lab reports
 - Check all sections: CBC, CMP, Lipid Panel, Thyroid, Vitamin D, etc.
 
-## Reference Range Parsing:
-- Extract reference ranges as strings (e.g., "70-100 mg/dL", "< 200 mg/dL")
-- If possible, also extract numeric limits:
+## Reference text and comparator preservation (critical):
+- Copy **inequality symbols exactly** as printed: use `<` vs `≤`, `>` vs `≥` as they appear — do not normalise `<` to `≤` or `>` to `≥` unless the PDF shows only the weak form.
+- Preserve **multi-line** reference content in `raw_reference_text` when footnotes or tables span lines (keep newlines; stay under ~4000 characters per field).
+- The `reference` field should contain the **main interval line** next to the result (e.g. `3.5–5.5`, `< 200 mg/dL`, `≥ 48`).
+- Use `raw_reference_text` for adjacent blocks such as “Pregnancy trimester ranges: …”, “Males: … Females: …”, or long explanatory notes.
+
+## Reference Range Parsing (numeric helpers):
+- Also set `ref_low` / `ref_high` when you can infer clear numeric limits from the text:
   - For "70-100 mg/dL", set ref_low: 70, ref_high: 100
-  - For "< 200 mg/dL", set ref_high: 200
-  - For "> 40 mg/dL", set ref_low: 40
-- Use ref_low and ref_high only when you can extract clear numeric limits
+  - For "< 200 mg/dL" or "≤ 200", set ref_high: 200 (preserve the symbol in the string fields)
+  - For "> 40 mg/dL" or "≥ 40", set ref_low: 40
+- One-sided thresholds are valid: only ref_low **or** only ref_high may be set.
 
 ## Output Requirements:
 - Only output valid JSON, no explanations or additional text

@@ -3,7 +3,8 @@
  * Keeps parse fidelity, one-sided bounds, and payload shape aligned with backend normalize.py.
  */
 
-export type RangeAttention = 'none' | 'partial' | 'missing';
+/** Review attention: one-sided thresholds are valid lab intervals, not "incomplete". */
+export type RangeAttention = 'none' | 'one-sided' | 'partial' | 'missing';
 
 export interface ParsedReferenceRange {
   min?: number;
@@ -31,11 +32,16 @@ export function buildReferenceRangeFromParserRow(b: Record<string, unknown>): Re
   const unit = typeof b.unit === 'string' ? b.unit : '';
 
   let referenceText: string | undefined;
+  if (typeof b.rawReferenceText === 'string' && b.rawReferenceText.trim()) {
+    referenceText = b.rawReferenceText.trim();
+  }
   if (typeof b.reference === 'string' && b.reference.trim()) {
-    referenceText = b.reference.trim();
+    referenceText = referenceText
+      ? `${referenceText}\n\n${b.reference.trim()}`
+      : b.reference.trim();
   }
   if (typeof b.referenceRange === 'string' && b.referenceRange.trim()) {
-    referenceText = (referenceText ? `${referenceText}; ` : '') + b.referenceRange.trim();
+    referenceText = (referenceText ? `${referenceText}\n\n` : '') + b.referenceRange.trim();
   }
 
   const low = _num(b.ref_low);
@@ -90,7 +96,8 @@ export function rangeAttentionLevel(b: {
   const hasMax = r?.max != null && Number.isFinite(r.max);
   const hasText = !!(b.referenceText && b.referenceText.trim());
   if (hasMin && hasMax) return 'none';
-  if (hasMin || hasMax || hasText) return 'partial';
+  if ((hasMin && !hasMax) || (!hasMin && hasMax)) return 'one-sided';
+  if (hasText) return 'partial';
   return 'missing';
 }
 
