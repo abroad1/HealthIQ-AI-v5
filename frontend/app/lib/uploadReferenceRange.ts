@@ -125,16 +125,127 @@ export function analysisBiomarkerKey(displayName: string): string {
   return base;
 }
 
+/** Match a single numeric token (lab-style quantitative value). */
+const BIOMARKER_VALUE_TOKEN_RE =
+  /^\s*([<>≤≥])?\s*([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)\s*$/;
+
+function _numStringVariants(n: number): string[] {
+  const s = String(n);
+  const out = [s];
+  if (Number.isInteger(n)) out.push(`${n}.0`);
+  return out;
+}
+
+/** Avoid matching `5` inside `45` when locating a bound value in free text. */
+function _isStandaloneNumberAt(t: string, idx: number, ns: string): boolean {
+  if (t.substring(idx, idx + ns.length) !== ns) return false;
+  const before = idx > 0 ? t[idx - 1] : '';
+  const after = idx + ns.length < t.length ? t[idx + ns.length] : '';
+  const beforeOk = idx === 0 || !/\d/.test(before);
+  const afterOk = idx + ns.length >= t.length || !/\d/.test(after);
+  return beforeOk && afterOk;
+}
+
+/**
+ * If reference text places a strict or weak inequality immediately before the bound value, return it.
+ * Otherwise return default (≥ for lower, ≤ for upper).
+ */
+function _comparatorBeforeBound(
+  refText: string | undefined,
+  bound: number,
+  edge: 'lower' | 'upper'
+): '>' | '≥' | '<' | '≤' | null {
+  const t = refText || '';
+  if (!t.trim()) return null;
+  const seen = new Set<number>();
+  for (const ns of _numStringVariants(bound)) {
+    let from = 0;
+    while (from <= t.length) {
+      const idx = t.indexOf(ns, from);
+      if (idx === -1) break;
+      if (!_isStandaloneNumberAt(t, idx, ns)) {
+        from = idx + 1;
+        continue;
+      }
+      if (seen.has(idx)) {
+        from = idx + 1;
+        continue;
+      }
+      seen.add(idx);
+      let i = idx - 1;
+      while (i >= 0 && /\s/.test(t[i])) i--;
+      if (i >= 0) {
+        const ch = t[i];
+        if (edge === 'upper') {
+          if (ch === '<') return '<';
+          if (ch === '≤') return '≤';
+        } else {
+          if (ch === '>') return '>';
+          if (ch === '≥') return '≥';
+        }
+      }
+      from = idx + 1;
+    }
+  }
+  return null;
+}
+
+function _inferLowerComparator(refText: string | undefined, bound: number): '>' | '≥' {
+  const c = _comparatorBeforeBound(refText, bound, 'lower');
+  if (c === '>') return '>';
+  return '≥';
+}
+
+function _inferUpperComparator(refText: string | undefined, bound: number): '<' | '≤' {
+  const c = _comparatorBeforeBound(refText, bound, 'upper');
+  if (c === '<') return '<';
+  return '≤';
+}
+
+/**
+ * Parse review-stage value input: plain number or inequality + number (e.g. "&lt;0.05").
+ * Display may keep a string when an inequality prefix is present; analysis payload uses the numeric part only.
+ */
+export function parseBiomarkerValueForReview(raw: string):
+  | { ok: true; display: number | string; numericForPayload: number }
+  | { ok: false; message: string } {
+  const t = raw.trim();
+  if (!t) return { ok: false, message: 'Value is required' };
+  const m = t.match(BIOMARKER_VALUE_TOKEN_RE);
+  if (!m) {
+    return { ok: false, message: 'Enter a number or inequality + number (e.g. <0.05)' };
+  }
+  const comp = m[1];
+  const n = parseFloat(m[2]);
+  if (!Number.isFinite(n)) return { ok: false, message: 'Invalid number' };
+  const display: number | string = comp ? t : n;
+  return { ok: true, display, numericForPayload: n };
+}
+
+/** Single numeric for POST /analysis/start — BiomarkerValue accepts numeric measurements. */
+export function numericPartForAnalysisPayload(value: number | string): number {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  const p = parseBiomarkerValueForReview(String(value));
+  return p.ok ? p.numericForPayload : NaN;
+}
+
 export function formatReferenceRangeDisplay(b: {
   referenceRange?: ParsedReferenceRange;
   referenceText?: string;
 }): string {
   const r = b.referenceRange;
+  const refText = b.referenceText;
   if (r && (r.min != null || r.max != null)) {
     const u = (r.unit || '').trim();
     if (r.min != null && r.max != null) return `${r.min}–${r.max}${u ? ` ${u}` : ''}`;
-    if (r.min != null) return `≥ ${r.min}${u ? ` ${u}` : ''}`;
-    if (r.max != null) return `≤ ${r.max}${u ? ` ${u}` : ''}`;
+    if (r.min != null) {
+      const sym = _inferLowerComparator(refText, r.min);
+      return `${sym} ${r.min}${u ? ` ${u}` : ''}`;
+    }
+    if (r.max != null) {
+      const sym = _inferUpperComparator(refText, r.max);
+      return `${sym} ${r.max}${u ? ` ${u}` : ''}`;
+    }
   }
   if (b.referenceText && b.referenceText.trim()) return b.referenceText.trim();
   return '—';

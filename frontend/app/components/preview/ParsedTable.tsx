@@ -158,14 +158,13 @@ export default function ParsedTable({
                     <TableCell className="font-medium">
                       {biomarker.name}
                     </TableCell>
-                    <TableCell>
-                      {typeof biomarker.value === 'number' 
+                    <TableCell className="font-mono text-sm max-w-[140px] break-all">
+                      {typeof biomarker.value === 'number'
                         ? biomarker.value.toFixed(2)
-                        : biomarker.value
-                      }
+                        : String(biomarker.value)}
                     </TableCell>
                     <TableCell>{biomarker.unit}</TableCell>
-                    <TableCell className="max-w-[220px] text-sm">
+                    <TableCell className="max-w-md min-w-[200px] align-top text-sm whitespace-pre-wrap break-words">
                       {formatReferenceRangeDisplay(biomarker)}
                     </TableCell>
                     <TableCell>{rangeBadge(biomarker)}</TableCell>
