@@ -7,8 +7,10 @@ import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { Badge } from '../ui/badge'
-import { X, Save, AlertCircle } from 'lucide-react'
+import { X, Save, AlertCircle, Copy } from 'lucide-react'
 import { ParsedBiomarker } from '../../types/parsed'
+import { Textarea } from '../ui/textarea'
+import { parseBiomarkerValueForReview } from '@/lib/uploadReferenceRange'
 
 interface EditDialogProps {
   biomarker: ParsedBiomarker | null
@@ -91,6 +93,7 @@ export default function EditDialog({
     status: 'edited' as ParsedBiomarker['status']
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [referenceTextUnlocked, setReferenceTextUnlocked] = useState(false)
 
   useEffect(() => {
     if (biomarker) {
@@ -106,6 +109,7 @@ export default function EditDialog({
         status: biomarker.status || 'edited'
       })
       setErrors({})
+      setReferenceTextUnlocked(false)
     }
   }, [biomarker])
 
@@ -116,15 +120,9 @@ export default function EditDialog({
       newErrors.name = 'Biomarker name is required'
     }
 
-    if (!formData.value.trim()) {
-      newErrors.value = 'Value is required'
-    } else {
-      const numValue = parseFloat(formData.value)
-      if (isNaN(numValue)) {
-        newErrors.value = 'Value must be a valid number'
-      } else if (numValue < 0) {
-        newErrors.value = 'Value must be positive'
-      }
+    const parsedVal = parseBiomarkerValueForReview(formData.value)
+    if (parsedVal.ok === false) {
+      newErrors.value = parsedVal.message
     }
 
     if (!formData.unit.trim()) {
@@ -156,7 +154,9 @@ export default function EditDialog({
       return
     }
 
-    const numValue = parseFloat(formData.value)
+    const parsedVal = parseBiomarkerValueForReview(formData.value)
+    if (parsedVal.ok === false) return
+
     const refMinN = formData.refMin.trim() === '' ? undefined : parseFloat(formData.refMin)
     const refMaxN = formData.refMax.trim() === '' ? undefined : parseFloat(formData.refMax)
     const hasMin = refMinN !== undefined && Number.isFinite(refMinN)
@@ -175,7 +175,7 @@ export default function EditDialog({
     const editedBiomarker: ParsedBiomarker = {
       ...biomarker,
       name: formData.name.trim(),
-      value: isNaN(numValue) ? formData.value : numValue,
+      value: parsedVal.display,
       unit: formData.unit.trim(),
       referenceRange,
       referenceText: formData.referenceText.trim() || undefined,
@@ -195,7 +195,7 @@ export default function EditDialog({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <Card className="w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <Card className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <CardTitle>Edit Biomarker</CardTitle>
           <Button
@@ -245,13 +245,17 @@ export default function EditDialog({
             <Label htmlFor="value">Value</Label>
             <Input
               id="value"
-              type="number"
-              step="any"
+              type="text"
+              inputMode="decimal"
+              autoComplete="off"
               value={formData.value}
               onChange={(e) => setFormData(prev => ({ ...prev, value: e.target.value }))}
-              placeholder="Enter value"
-              className={errors.value ? 'border-red-500' : ''}
+              placeholder={'e.g. 5.2 or <0.05'}
+              className={`font-mono text-sm ${errors.value ? 'border-red-500' : ''}`}
             />
+            <p className="text-xs text-muted-foreground">
+              Enter a number, or an inequality plus a number if your lab reported it that way (e.g. &lt;0.05).
+            </p>
             {errors.value && (
               <div className="flex items-center space-x-1 text-destructive text-sm">
                 <AlertCircle className="h-4 w-4" />
@@ -299,7 +303,8 @@ export default function EditDialog({
               <Badge variant="outline" className="text-xs font-normal">Optional</Badge>
             </div>
             <p className="text-xs text-muted-foreground">
-              Add or edit min/max if the parser missed your lab&apos;s interval. One-sided ranges are supported.
+              Add or edit min and/or max if the parser missed your lab&apos;s interval. Leave one side empty when the
+              lab only gives an upper or lower bound — both are not required.
             </p>
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
@@ -338,14 +343,58 @@ export default function EditDialog({
                 placeholder="Defaults to value unit if left blank when you save"
               />
             </div>
-            <div className="space-y-1">
-              <Label htmlFor="referenceText" className="text-xs">Raw reference text (optional)</Label>
-              <Input
-                id="referenceText"
-                value={formData.referenceText}
-                onChange={(e) => setFormData(prev => ({ ...prev, referenceText: e.target.value }))}
-                placeholder="e.g. 4.0–5.6 %"
-              />
+            <div className="space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <Label className="text-xs">Lab reference text (from your file)</Label>
+                <div className="flex gap-1 shrink-0">
+                  {formData.referenceText.trim() ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={() => {
+                        void navigator.clipboard?.writeText(formData.referenceText).catch(() => undefined)
+                      }}
+                    >
+                      <Copy className="h-3 w-3 mr-1" />
+                      Copy
+                    </Button>
+                  ) : null}
+                  {!referenceTextUnlocked && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={() => setReferenceTextUnlocked(true)}
+                    >
+                      {formData.referenceText.trim() ? 'Edit text' : 'Add text'}
+                    </Button>
+                  )}
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Preserved from parsing for context. Analysis uses the numeric min/max fields above when set — not a
+                substitute for correcting those bounds.
+              </p>
+              {referenceTextUnlocked ? (
+                <Textarea
+                  id="referenceText"
+                  value={formData.referenceText}
+                  onChange={(e) => setFormData(prev => ({ ...prev, referenceText: e.target.value }))}
+                  placeholder="e.g. multi-line lab footnotes"
+                  rows={5}
+                  className="text-sm font-mono min-h-[120px]"
+                />
+              ) : (
+                <div
+                  className="rounded-md border bg-background px-3 py-2 text-sm font-mono whitespace-pre-wrap break-words max-h-48 overflow-y-auto select-all"
+                  aria-readonly="true"
+                >
+                  {formData.referenceText.trim() ? formData.referenceText : '—'}
+                </div>
+              )}
             </div>
           </div>
 

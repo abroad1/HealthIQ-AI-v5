@@ -1,30 +1,35 @@
 ---
-work_id: BE-W1-PR1
-branch: feature/parse-range-edit-and-missing-range-ux
+work_id: BE-W1-PR2
+branch: feature/parse-inequalities-and-rich-reference-text
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# BE-W1-PR1 — Parse fidelity, manual range correction, and missing-range UX
+# BE-W1-PR2 — Parse inequality handling, rich reference-text preservation, and review usability
 
 ## Objective
 
-Deliver a single governable Wave 1 remediation pass for the upload → parse → review → analysis-input journey.
+Deliver the Wave 1 follow-on remediation pass for the upload → parse → review → edit journey.
 
-This sprint must improve parsing fidelity where the lab provides richer range/context detail, allow users to add or edit reference range data manually in marker review, and clearly flag biomarkers whose range data is missing or insufficient so the user knows intervention is needed before trusting the result.
+This sprint must resolve the remaining defects around:
 
-This sprint is explicitly **not** a broad fallback-range sprint.
-Do not introduce broad hard-coded fallback ranges for ordinary biomarkers.
-Do not change analytical scoring policy for ordinary biomarkers.
+- one-sided ranges not being handled gracefully in the actual review UX
+- `<`, `>`, `≤`, `≥` style values/ranges still being mishandled
+- raw parsed values with inequality symbols being visible but not meaningfully usable
+- rich multi-line lab reference text still not being surfaced for markers like prolactin
+
+This sprint is not a scoring-policy sprint.
+This sprint is not a fallback-range sprint.
+This sprint is not a broad parser rewrite.
 
 The required outcome is:
 
-- parsed biomarkers preserve more usable lab range/context detail where already present
-- marker review allows manual correction/addition of range data
-- missing or insufficient range data is clearly surfaced in UX
-- corrected range data flows through to analysis start
-- the user is visibly informed when parsing requires intervention
+- one-sided ranges are supported end to end in real UX, not just internal payload shape
+- inequality symbols are treated as first-class supported cases in parse/review/edit/display
+- raw parsed values are usable to help the user correct parsing issues
+- rich lab reference text is preserved and surfaced where already captured
+- the user can clearly understand and intervene when the lab’s range structure is more complex than a simple min/max pair
 
 ---
 
@@ -32,68 +37,65 @@ The required outcome is:
 
 ### Runtime truth already established
 
-Repo/runtime investigations have established that:
+Repo/runtime investigations and UAT have established that:
 
-- parser output can carry:
-  - raw `reference`
-  - `ref_low`
-  - `ref_high`
-- frontend upload mapping currently builds `referenceRange` only when both bounds exist in certain paths
-- marker review/edit currently preserves `referenceRange` if present but does not let the user add or change it
-- backend analysis payload already accepts `reference_range`
-- scoring/display for ordinary biomarkers is currently lab-range sovereign
-- broad governed fallback for ordinary biomarkers is not part of current runtime policy
+- one-sided bounds may now survive in internal payloads, but the UX still appears not to handle them gracefully
+- the system still appears to mishandle `<` / `>` style values or ranges in the live review experience
+- the edit dialog shows raw parsed values including inequality symbols, but the field is not meaningfully usable
+- rich multi-line reference text for biomarkers such as prolactin still does not appear clearly in the review flow
+- this is a follow-on Wave 1 defect cluster inside the same upload-review seam, not a scoring-policy issue
 
-This sprint must not guess a different policy truth.
+This sprint must not guess a different runtime truth.
 
 ### Authoritative backend files for this sprint
 
 At minimum, inspect and use the actual current versions of:
 
-- parser models / parser output definitions used in upload parse
+- parser models and parser output definitions used in upload parse
 - `backend/app/routes/upload.py`
-- `backend/app/routes/analysis.py`
-- normalization / biomarker metadata flow files actually used in the upload-to-analysis path
+- any parser helpers that capture `reference`, `ref_low`, `ref_high`, raw value text, or equivalent
+- any backend-normalisation files read by this seam if needed for contract confirmation
 
 ### Authoritative frontend files for this sprint
 
 At minimum, inspect and use the actual current versions of:
 
 - `frontend/app/(app)/upload/page.tsx`
-- marker review components
-- parsed biomarker edit dialog/component
-- any parsed biomarker types/interfaces used between parse and analysis start
+- `frontend/app/components/preview/ParsedTable.tsx`
+- `frontend/app/components/preview/EditDialog.tsx`
+- `frontend/app/lib/uploadReferenceRange.ts`
+- `frontend/app/types/parsed.ts`
 
-If hardening finds the active component paths differ, Claude must cite the exact actual files in evidence and hardening may narrow or correct touched-file scope. Cursor must not improvise beyond those verified files.
+If hardening finds the active component or helper paths differ, Claude must cite the exact actual files in evidence and hardening may narrow or correct touched-file scope. Cursor must not improvise beyond those verified files.
 
 ---
 
 ## Stage 1B — Reality Check
 
-This sprint addresses real UAT and investigation findings and is not a no-op.
+This sprint addresses real UAT findings and is not a no-op.
 
-Confirmed current issues include:
+Confirmed remaining issues include:
 
-- rich lab reference detail can be flattened or lost in parse/review
-- some biomarkers reach results as “Not scored - no reference range available”
-- the edit flow does not allow users to add or amend range data
-- users currently have no credible correction path when parsing misses range information
-- partial/one-sided bounds may be dropped before analysis even though downstream contracts can carry richer range metadata
+- one-sided ranges still appear awkward or unsupported in the visible review UX
+- `<`, `>`, `≤`, `≥` handling is still not trustworthy in the full user path
+- the UI still appears to imply that both min and max are required when that is not always true
+- raw parsed value visibility is not yet usefully actionable
+- rich multi-line reference text is still not meaningfully surfaced in review
 
 ---
 
 ## Stage 1C — Intelligence Preflight
 
-This sprint changes user-editable data entering analysis and changes how missing/insufficient range data is surfaced before submission.
+This sprint changes user-visible parsed biomarker state and user-editable review behaviour before analysis submission.
 
 It therefore affects:
 
-- upload review contract
-- user-corrected biomarker payloads
-- analysis input quality
-- pre-analysis UX and gating
+- parse fidelity presentation
+- user correction behaviour
+- upload-review UX
+- analysis input quality through corrected review state
 
-This is HIGH risk because it changes governed user-supplied input entering analysis, even though it must not change the scoring policy for ordinary biomarkers.
+This is HIGH risk because it changes governed user-supplied input behaviour entering analysis, even though it must not change scoring policy or introduce fallback ranges.
 
 No downgrade is permitted.
 
@@ -103,59 +105,49 @@ No downgrade is permitted.
 
 Cursor must implement these decisions exactly.
 
-### 1. No broad fallback-range expansion
+### 1. One-sided ranges are valid first-class cases
 
-Do not introduce broad hard-coded fallback ranges for ordinary biomarkers.
+The system must not assume both lower and upper bounds are required for every biomarker reference range.
 
-This sprint is not the place to change lab-range sovereignty for standard measured analytes.
+The following are valid supported cases in this sprint:
 
-### 2. Manual correction is the approved recovery path
+- lower-bound only
+- upper-bound only
+- inequality-style raw values / raw range text using `<`, `>`, `≤`, `≥`
 
-When parsing misses or incompletely captures lab range data, the approved product response is:
+### 2. No broad fallback behaviour
 
-- visibly flag the biomarker in the review UX
-- allow the user to add or edit range data manually
-- pass corrected range data into analysis
+Do not introduce hard-coded fallback ranges for ordinary biomarkers.
 
-Do not replace this with hidden fallback behaviour.
+The approved recovery path remains:
 
-### 3. Preserve richer lab detail where already available
+- preserve the lab’s range/value detail where possible
+- make the parsing limitation visible
+- let the user correct the data manually where needed
 
-If the parser already captures richer reference information, the frontend/review path must preserve as much usable range/context detail as the current contracts safely support.
+### 3. Rich reference text must be preserved where captured
 
-Do not unnecessarily drop partial or structured information before analysis.
+If the parser already captures rich raw reference text, the review experience must preserve and surface that text in a bounded, user-usable way.
 
-### 4. Missing/insufficient range data must be visible in UX
+Do not silently flatten it away if the contract can already carry it.
 
-Users must be clearly shown which biomarkers need attention before analysis can be trusted.
+### 4. Raw parsed values must be usable
 
-This may be warning-state UX, row-level flags, or equivalent bounded cues — but it must be explicit.
+If a raw parsed value containing an inequality symbol is shown to the user, it must be meaningfully usable for correction support.
 
-### 5. Range editing must include the actual analytical fields
+At minimum, it must be selectable/copyable or otherwise clearly presented as a read-only assistive field.
 
-The user must be able to add/edit, at minimum where the contract supports it:
+### 5. Stay inside the upload-review seam
 
-- minimum bound
-- maximum bound
-- unit
+This sprint must stay within:
 
-If raw reference text can be preserved safely in the parsed review model, that may also be retained, but the core requirement is analytical min/max/unit correction.
+- parser output handling
+- parsed biomarker state
+- review table display
+- edit dialog usability
+- analysis payload preparation
 
-### 6. Keep the change within the upload-review seam
-
-This sprint must stay in the seam:
-
-- parse output
-- upload review/edit state
-- analysis-start payload preparation
-
-Do not turn this into a broader scoring-policy or results-page sprint.
-
-### 7. Apo ratio contract issue may be fixed only if it is in this same seam
-
-If the `apolipoprotein_ratio_(venous)` unit/canonicalisation issue is confirmed to arise within the same upload-review contract seam, it may be fixed in this sprint.
-
-Do not widen beyond that seam.
+Do not widen into scoring-policy, results-page, or narrative-layer work.
 
 ---
 
@@ -163,48 +155,54 @@ Do not widen beyond that seam.
 
 ## Required Changes
 
-### A. Parse/review fidelity improvement
+### A. One-sided range UX completion
 
-Improve the upload-review path so richer lab-provided range/context data is preserved where already available from the parser.
+Complete the one-sided range support so the actual review UX handles and displays these cases cleanly.
 
-This includes eliminating avoidable frontend dropping of usable range information.
+This includes:
 
-### B. Manual range editing in marker review
+- review table display
+- edit dialog initialization
+- saved edit state
+- analysis payload serialization
 
-Update marker review/edit functionality so users can add/edit:
+### B. Inequality symbol support
 
-- min
-- max
-- unit
+Fix `<`, `>`, `≤`, `≥` handling across the full visible user seam:
 
-for parsed biomarkers before analysis start.
+- parse capture
+- parsed review state
+- table display
+- edit dialog
+- corrected submission payload
 
-### C. Missing-range attention UX
+### C. Raw parsed value usability
 
-Add clear review-stage indication for biomarkers whose range data is missing or insufficient for trusted downstream interpretation.
+Make raw parsed values with inequality symbols meaningfully usable in the edit flow.
 
-This must help users understand that they need to intervene.
+This is a bounded usability requirement, not a broad redesign.
 
-### D. Analysis payload propagation
+### D. Rich reference-text surfacing
 
-Ensure manually corrected range data is sent through the existing `reference_range` contract to analysis start.
+Preserve and surface rich multi-line lab reference text, where already captured, for markers such as prolactin and similar complex lab reference patterns.
 
-### E. Contract-alignment fixes within the same seam
+This must help the user understand that the lab provided more nuanced range context than a simple numeric min/max pair.
 
-If the apo ratio unit/key issue is confirmed to live in this upload-review contract seam, fix it here in the narrowest safe way.
+### E. Maintain review-stage attention UX
+
+Ensure that biomarkers with complex, partial, or ambiguous reference structures remain clearly flagged for user attention where appropriate.
 
 ---
 
 ## Explicit Non-Goals
 
-- no broad fallback-range implementation for ordinary biomarkers
-- no scoring-policy change for ordinary biomarkers
-- no Gemini/narrative/results-page work
-- no questionnaire redesign
+- no scoring-policy changes
+- no broad fallback-range behaviour
 - no broad parser rewrite
-- no full multi-profile sex/pregnancy-specific fallback-range system
-- no second authority source for ranges
-- no changes to downstream analytical logic except to consume corrected input already supported by contract
+- no results-page/narrative/Gemini work
+- no questionnaire work
+- no new second authority source for biomarker ranges
+- no broad UX redesign beyond this bounded review/edit seam
 
 ---
 
@@ -212,13 +210,12 @@ If the apo ratio unit/key issue is confirmed to live in this upload-review contr
 
 Cursor must STOP immediately if any of the following become true:
 
-1. Fixing the issue would require changing ordinary-biomarker scoring policy rather than the upload-review contract
-2. Manual range correction cannot be propagated without changing core analytical boundaries beyond the existing `reference_range` contract
-3. Preserving richer lab detail would require a broad parser rewrite rather than a bounded seam fix
-4. A second range authority source would be introduced
-5. The UX cannot clearly indicate missing/insufficient range state without broad redesign of the upload flow
-6. Apo ratio remediation would require widening beyond the upload-review seam
-7. The sprint would require introducing broad fallback behaviour contrary to the locked policy for this wave
+1. Fixing one-sided or inequality handling would require changing scoring policy rather than the upload-review seam
+2. Rich reference text cannot be surfaced without a broad parser rewrite rather than bounded preservation/display work
+3. Supporting these cases would require introducing a second range/value authority source
+4. The only way to resolve the issue would be a broad redesign of the upload-review flow
+5. Raw parsed value usability cannot be improved without widening outside the edit/review seam
+6. The sprint would require broad fallback behaviour contrary to the locked Wave 1 policy
 
 If any STOP condition triggers, do not improvise. Report the blocker.
 
@@ -226,23 +223,25 @@ If any STOP condition triggers, do not improvise. Report the blocker.
 
 ## Phase Execution Model
 
-### Phase 1 — Upload-review contract improvement
+### Phase 1 — Upload-review defect correction
 
-Implement the bounded backend/frontend changes required so that:
+Implement the bounded changes required so that:
 
-- richer parsed range detail is preserved where possible
-- users can manually add/edit range data in marker review
-- missing/insufficient range data is clearly flagged
-- corrected range data flows into analysis start
+- one-sided ranges are visible and usable
+- inequality symbols are preserved and handled properly
+- raw parsed values are useful to the user
+- rich reference text is surfaced where available
+- missing/complex range states remain clearly flagged
 
 ### Phase 2 — Validation
 
 Verify with targeted tests and browser checks that:
 
-- parsed biomarkers with missing range data are visibly flagged
-- edited range data persists into analysis submission
-- existing valid parse/review flow still works
-- no scoring-policy changes were introduced
+- one-sided ranges no longer feel broken in the live review UX
+- inequality-style values/ranges are handled cleanly
+- raw parsed values are usable
+- rich reference text is visible for supported examples
+- no scoring-policy or fallback-policy changes were introduced
 
 ---
 
@@ -250,36 +249,29 @@ Verify with targeted tests and browser checks that:
 
 Must verify all of the following.
 
-### Upload parse / review
+### Parse / review fidelity
 
-- parsed biomarkers still load correctly into review
-- valid existing range data is preserved
-- richer parser-provided range detail is not unnecessarily dropped
-- biomarkers with missing or insufficient range data are visibly flagged
+- one-sided bounds survive parse → review → edit → payload
+- `<`, `>`, `≤`, `≥` cases are not silently broken or flattened in UX
+- rich reference text is preserved where captured
 
-### Edit flow
+### Edit usability
 
-- users can add/edit min, max, and unit
-- edited values survive save/reopen within the review flow
-- range correction is included in analysis-start payload
+- raw parsed value is meaningfully usable in the edit dialog
+- edited one-sided or inequality-based entries persist correctly
+- no regression to normal min/max range editing
 
 ### Analysis handoff
 
-- existing `reference_range` contract is used
-- corrected ranges reach backend analysis input
-- no regressions to normal successful analysis submission
+- corrected values/ranges still flow through the existing payload contract
+- no regressions to successful analysis submission from valid reviewed biomarkers
 
-### Apo ratio (if included)
+### Safety / determinism
 
-- if fixed in this sprint, unit/canonicalisation behaviour is correct within the upload-review seam
-- no new validation blocker occurs for the ratio marker in the tested path
-
-### Determinism and safety
-
-- no hidden fallback ranges introduced for ordinary biomarkers
-- no second range authority source introduced
-- same edited input produces the same payload
-- no randomness or implicit hidden repair logic
+- no fallback ranges introduced
+- no second authority source introduced
+- same reviewed input produces the same payload
+- no hidden repair logic or silent data invention
 
 ---
 
@@ -287,11 +279,11 @@ Must verify all of the following.
 
 Minimum required tests must cover:
 
-1. marker review edit/add of range min/max/unit
-2. analysis payload includes corrected `reference_range`
-3. missing-range attention state in the review layer
-4. preservation of existing valid range data through review
-5. any narrow apo ratio contract fix included in scope
+1. one-sided bounds through review/edit/payload
+2. inequality-symbol handling in the visible review/edit seam
+3. raw parsed value usability / rendering behaviour
+4. rich reference-text preservation and display for a representative marker such as prolactin
+5. no regression to existing valid range-edit behaviour
 
 Use the smallest relevant test scope.
 Do not expand into broad unrelated suite creation.
@@ -302,8 +294,8 @@ Do not expand into broad unrelated suite creation.
 
 - follow this prompt exactly
 - do not turn this into a fallback-range sprint
-- do not change ordinary-biomarker scoring policy
-- do not invent a second range authority
+- do not change scoring policy
+- do not invent a second authority source
 - do not widen into results/questionnaire/narrative work
 - do not perform broad parser redesign beyond the bounded seam improvement
 - do not modify unrelated files
@@ -320,11 +312,11 @@ Cursor must return:
 4. implementation summary
 5. tests run and results
 6. before/after evidence that:
-   - missing-range biomarkers are now visibly flagged
-   - users can add/edit min/max/unit
-   - corrected ranges reach analysis start
-7. whether apo ratio was included and, if so, exactly how it was fixed within seam
-8. any blockers encountered
+   - one-sided ranges are now handled gracefully in the review UX
+   - inequality symbols are supported end to end in this seam
+   - raw parsed values are usable
+   - rich reference text is surfaced where available
+7. any blockers encountered
 
 ---
 

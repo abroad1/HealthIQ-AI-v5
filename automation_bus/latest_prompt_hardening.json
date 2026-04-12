@@ -1,26 +1,26 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "BE-W1-PR1",
+  "work_id": "BE-W1-PR2",
   "status": "HARDENED",
   "hardened_utc": "2026-04-12T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
-  "content_review": "NOT_APPLICABLE — no governed SSOT content files touched. All changes are within the upload-review contract seam (frontend components, types, state store). Backend parse route and analysis route read but not modified.",
-  "behaviour_review": "COMPLETE — MIXED correct. This sprint changes the data entering analysis (user-corrected reference_range values) and changes the pre-analysis UX (missing-range attention state). Both affect what data analysis receives and what the user is shown during review. Analytical scoring logic (report_compiler_v1.py, insight_graph, state_engine, signal evaluation) confirmed not in scope. Determinism preserved — range correction is explicit user action; same edited input produces same reference_range payload. No hidden fallback logic permitted (STOP 7). Three determinism risks surfaced: (1) one-sided bound type contract between frontend and normalize.py; (2) EditDialog spread vs explicit field overwrite; (3) type change to ParsedBiomarker.referenceRange min/max optionality.",
+  "content_review": "NOT_APPLICABLE — no governed SSOT content files touched. All changes are within the upload-review seam: frontend components, display helpers, type definitions. Backend upload.py, llm_parser.py, deterministic_parser.py read and verified but no backend SSOT or scoring-policy files in scope.",
+  "behaviour_review": "COMPLETE — MIXED correct. This sprint changes how parsed biomarker state is displayed and edited before analysis submission. It affects: (1) how inequality-style reference values are rendered in the review table; (2) what the user can enter in the edit dialog value field; (3) how raw reference text is presented as context. These changes affect the quality of user-corrected input entering analysis, even though analytical scoring logic is not touched. Determinism preserved — same reviewed input produces same analysis payload via unchanged referenceRangeToPayload() (uploadReferenceRange.ts:100-113). No hidden repair logic permitted. No second authority source introduced. Three determinism risks surfaced: (1) formatReferenceRangeDisplay() currently coerces all one-sided bounds to ≤/≥ — if sprint preserves original < vs > from referenceText, display must not affect payload; (2) EditDialog value field change from type=number to allow string — validation must not silently accept bad data; (3) referenceText read-only status change must not break existing editable flow for users who want to correct it.",
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: BE-W1-PR1"
+      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: BE-W1-PR2"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/parse-range-edit-and-missing-range-ux"
+      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/parse-inequalities-and-rich-reference-text"
     },
     {
       "check": "Front Matter — risk_level HIGH",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:4 — HIGH. Stage 1C (lines 88-98) confirms HIGH: sprint changes governed user-supplied input entering analysis. No downgrade permitted."
+      "citation": "automation_bus/latest_cursor_prompt.md:4 — HIGH. Stage 1C (lines 88-98): sprint changes governed user-supplied input entering analysis (parse fidelity, user correction behaviour). No downgrade permitted."
     },
     {
       "check": "Front Matter — execution_model TWO_PHASE_START_FINISH",
@@ -30,72 +30,92 @@
     {
       "check": "Front Matter — change_type MIXED",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:6 — MIXED: contract data shape changes (BEHAVIOUR) + UX attention layer (BEHAVIOUR) + governed input propagated to analysis (MIXED per SOP §4)."
+      "citation": "automation_bus/latest_cursor_prompt.md:6 — MIXED: UX behaviour changes (BEHAVIOUR) + governed parse output surfacing (MIXED per SOP §4 — new display of governed content consumed downstream by analysis)."
     },
     {
       "check": "2A — backend/app/routes/upload.py exists; parser output fields confirmed",
       "result": "CONFIRMED",
-      "citation": "backend/app/routes/upload.py:128-145 — enriches biomarkers with SSOT metadata; does not modify range fields. Parser output carries ref_low (float|null), ref_high (float|null), referenceRange (raw string) — confirmed via llm_parser.py:333-342 and deterministic_parser.py:68-79."
+      "citation": "backend/app/routes/upload.py:128-145 — enriches biomarkers with SSOT metadata; does not modify range fields. Output dict keys confirmed via llm_parser.py:333-342: { id, name, value, unit, referenceRange (raw string), confidence, ref_low (float|None), ref_high (float|None), healthStatus }. deterministic_parser.py:68-79 emits same shape with referenceRange: '' and ref_low/ref_high: null."
     },
     {
-      "check": "2A — backend/app/routes/analysis.py exists; reference_range contract confirmed open",
+      "check": "2A — llm_parser.py _parse_reference_range() confirmed handles inequality symbols",
       "result": "CONFIRMED",
-      "citation": "backend/app/routes/analysis.py:19-31 — AnalysisStartRequest.biomarkers: Dict[str, Any] — no reference_range field restriction. Line 130: normalize_biomarkers_with_metadata(request.biomarkers) called — confirmed to preserve reference_range per normalize.py:92-106."
+      "citation": "backend/services/parsing/llm_parser.py:161-188 — patterns include r'<\\s*(\\d+(?:\\.\\d+)?)' (line 173) and r'>\\s*(\\d+(?:\\.\\d+)?)' (line 174) and r'≤\\s*(\\d+(?:\\.\\d+)?)' (line 175) and r'≥\\s*(\\d+(?:\\.\\d+)?)' (line 176). For < and ≤ patterns: returns (None, float(group1)) at line 182. For > and ≥ patterns: returns (float(group1), None) at line 184. Backend correctly emits one-sided ref_low/ref_high from inequality reference strings."
     },
     {
-      "check": "2A — backend/core/canonical/normalize.py exists; one-sided bound support confirmed",
+      "check": "2A — llm_parser.py value field type confirmed float-only — inequality values in value field would be silently dropped",
+      "result": "CONFIRMED — RISK SURFACED",
+      "citation": "backend/services/parsing/llm_parser.py:25 — ParsedBiomarker.value: float = Field(...). If Gemini returns an inequality as the VALUE (e.g. '<0.05'), pydantic coercion fails; biomarker is silently skipped at line 244 (except block continues). Sprint scope does not require fixing this — Gemini typically returns numeric values; inequality context lives in the reference field. Cursor must not change this behaviour without explicit re-authorisation."
+    },
+    {
+      "check": "2A — frontend/app/(app)/upload/page.tsx exists; parse row mapping confirmed correct",
       "result": "CONFIRMED",
-      "citation": "backend/core/canonical/normalize.py:100-106 — constructs reference_range when (has_min OR has_max). Handles null min and null max separately. Both 'reference_range' (snake) and 'referenceRange' (camel) dict keys handled at lines 93-126. Backend will accept one-sided bounds correctly."
+      "citation": "frontend/app/(app)/upload/page.tsx:218-229 — uses buildReferenceRangeFromParserRow(row) from uploadReferenceRange.ts (line 220). Value passed through as number|string (line 224). referenceRange and referenceText from helper (line 221). This mapping is correct and complete — no defect in page.tsx transformation."
     },
     {
-      "check": "2A — frontend/app/(app)/upload/page.tsx exists; one-sided bound fidelity defect confirmed",
+      "check": "2A — frontend/app/lib/uploadReferenceRange.ts exists; one-sided bound capture confirmed correct",
+      "result": "CONFIRMED",
+      "citation": "frontend/app/lib/uploadReferenceRange.ts:41-55 — buildReferenceRangeFromParserRow(): ref_low/ref_high independently resolved (lines 41-43), one-sided referenceRange emitted when hasLow OR hasHigh (line 46). Lines 128-141: formatReferenceRangeDisplay() formats one-sided as '≥ X' (line 136) or '≤ X' (line 137). Lib is correct. Real defect: display coerces original '< 200' to '≤ 200' — strict inequality distinction lost when numeric bounds exist."
+    },
+    {
+      "check": "2A — frontend/app/lib/uploadReferenceRange.ts: inequality coercion defect confirmed",
       "result": "CONFIRMED — DEFECT",
-      "citation": "frontend/app/(app)/upload/page.tsx:224-229 — referenceRange built only when (b.ref_low != null && b.ref_high != null). One-sided bounds (e.g. only ref_high present) silently dropped; fallback to b.referenceRange which is a raw string ('') from LLM parser (llm_parser.py:338) — not a valid referenceRange object. Line 84-97: analysis payload correctly passes reference_range from biomarker.referenceRange if present."
+      "citation": "frontend/app/lib/uploadReferenceRange.ts:136-137 — formatReferenceRangeDisplay() always renders max-only bound as '≤ X' and min-only bound as '≥ X', regardless of whether the original reference text used strict < or >. When referenceText carries '< 200', the displayed format '≤ 200' misrepresents the lab's original strict bound. Fix must use referenceText to recover original inequality direction where present, without affecting referenceRangeToPayload() (lines 100-113) which is payload-only and must not be changed."
     },
     {
-      "check": "2A — frontend/app/components/preview/EditDialog.tsx exists; range edit gap confirmed",
-      "result": "CONFIRMED — GAP",
-      "citation": "frontend/app/components/preview/EditDialog.tsx:82-87 — formData: { name, value, unit, status } — no referenceRange fields. Line 128-143: handleSave spreads ...biomarker (passively preserves existing referenceRange if set) but form renders no inputs for min/max/unit. User cannot add range to a biomarker that lacks one."
+      "check": "2A — frontend/app/components/preview/EditDialog.tsx exists; value field blocks inequality strings",
+      "result": "CONFIRMED — DEFECT",
+      "citation": "frontend/app/components/preview/EditDialog.tsx:249 — value input uses type='number'. Browser strips non-numeric characters including inequality symbols. Line 122: validation calls parseFloat(formData.value) and checks isNaN(numValue) — rejects any non-numeric value. If a user attempts to enter a value like '<0.05', the input field prevents this entirely. Sprint must make value field accept strings (matching ParsedBiomarker.value: number | string from parsed.ts:10)."
     },
     {
-      "check": "2A — frontend/app/components/preview/ParsedTable.tsx exists; missing-range attention UX absent",
-      "result": "CONFIRMED — GAP",
-      "citation": "frontend/app/components/preview/ParsedTable.tsx:130-133 — renders referenceRange as 'min–max unit' or '—'. No per-row warning badge, icon, or attention indicator for biomarkers with missing or insufficient range data."
+      "check": "2A — frontend/app/components/preview/EditDialog.tsx: referenceText presented as editable input, not read-only assistive",
+      "result": "CONFIRMED — DEFECT",
+      "citation": "frontend/app/components/preview/EditDialog.tsx:341-349 — referenceText field is a standard mutable <Input> with onChange handler. There is no read-only display, no visual distinction from user-entered data, and no guidance that it represents the lab's original raw text. The user can accidentally overwrite the original parsed reference context. Sprint requirement §4 (prompt lines 136-143): raw parsed values 'must be selectable/copyable or otherwise clearly presented as a read-only assistive field'."
     },
     {
-      "check": "2A — frontend/app/types/parsed.ts exists; type requires assessment for one-sided bound support",
-      "result": "CONFIRMED — REVIEW REQUIRED",
-      "citation": "frontend/app/types/parsed.ts:20 — referenceRange?: { min: number; max: number; unit: string }. Both min and max are required non-optional numbers. To store one-sided bounds (e.g. ref_high only), either min or max must become optional (?: number). Cursor must decide; change is bounded within upload-review seam. Backend normalize.py already accepts null min/max."
-    },
-    {
-      "check": "2A — No duplicate authority source for reference ranges",
+      "check": "2A — frontend/app/components/preview/ParsedTable.tsx exists; inequality and rich text display confirmed working",
       "result": "CONFIRMED",
-      "citation": "Single authority chain: lab parser (llm_parser.py) or user edit (EditDialog.tsx) → upload/page.tsx payload → analysis.py → normalize.py. No second SSOT range registry accessed. Consistent with STOP condition 4."
+      "citation": "frontend/app/components/preview/ParsedTable.tsx:169 — formatReferenceRangeDisplay(biomarker) renders range in Range column. Lines 33-64: rangeBadge() uses rangeAttentionLevel() to show 'Range incomplete' (partial) or 'Range needed' (missing). Attention UX from BE-W1-PR1 is present and must be preserved. No regression target for ParsedTable attention UX beyond preservation."
+    },
+    {
+      "check": "2A — frontend/app/types/parsed.ts exists; ParsedBiomarker type confirmed supports string values",
+      "result": "CONFIRMED",
+      "citation": "frontend/app/types/parsed.ts:10 — value: number | string. referenceRange?: { min?: number; max?: number; unit: string } at line 23 (already updated in BE-W1-PR1 — min/max are optional). referenceText?: string at line 26. Type layer already supports the required shapes. The only type gap is the value field — string is allowed by the type but EditDialog.tsx:249 blocks it at the input layer."
+    },
+    {
+      "check": "2A — No duplicate authority source for reference ranges confirmed",
+      "result": "CONFIRMED",
+      "citation": "Single authority chain: lab parser (llm_parser.py) or user edit (EditDialog.tsx) → uploadReferenceRange helpers → upload/page.tsx → analysis payload → normalize.py. No SSOT range registry accessed. Consistent with STOP condition 3 and non-goal (prompt line 203): 'no new second authority source for biomarker ranges'."
+    },
+    {
+      "check": "2A — Rich reference text capture confirmed working end-to-end",
+      "result": "CONFIRMED",
+      "citation": "uploadReferenceRange.ts:34-39 — captures b.reference (string) and b.referenceRange (string) into referenceText. ParsedTable.tsx:169 — displays referenceText via formatReferenceRangeDisplay() when no numeric bounds. editDialog.tsx:105 — initialises formData.referenceText from biomarker.referenceText. Capture and basic display are present. Gap: for complex markers (e.g. prolactin) with multi-line text, the single-line Input in EditDialog truncates without visual indication — prominent multi-line surfacing needed."
     },
     {
       "check": "2B — Behavioural scope defined; Intelligence Core confirmed not touched",
       "result": "CONFIRMED",
-      "citation": "Prompt non-goals (lines 199-207): no changes to scoring policy, analytical logic, Gemini/narrative, results-page. sprint scope limited to: upload/page.tsx (parse mapping), EditDialog.tsx (add range fields), ParsedTable.tsx (attention UX), parsed.ts (type), state/upload.ts (if needed for range persistence). No pipeline, analytics, or ssot files in scope."
+      "citation": "Prompt non-goals (lines 199-207): no scoring-policy changes, no fallback-range behaviour, no parser rewrite, no results-page/narrative/Gemini work, no questionnaire work, no second authority source. Sprint scope confirmed to: EditDialog.tsx, formatReferenceRangeDisplay in uploadReferenceRange.ts, ParsedTable.tsx (preservation only), upload/page.tsx (no change needed). No pipeline, analytics, ssot, or core/ files touched."
     },
     {
       "check": "2B — Regression targets confirmed and testable",
       "result": "CONFIRMED",
-      "citation": "Prompt §Regression Targets (lines 254-284): existing valid range preserved, one-sided bounds not dropped, missing-range flag visible, edit flow saves min/max/unit and persists in payload, analysis-start reference_range contract not broken, no hidden fallback ranges introduced. All verifiable via targeted tests and browser walk-through."
+      "citation": "Prompt §Regression Targets (lines 249-284): one-sided bounds survive parse→review→edit→payload; inequality cases not silently broken in UX; rich reference text preserved where captured; raw parsed value usable in edit; edited one-sided entries persist; no regression to normal min/max editing; corrected values still flow through existing payload contract (referenceRangeToPayload() at uploadReferenceRange.ts:100-113 — unchanged). All verifiable via targeted tests and browser walk-through."
     },
     {
       "check": "2B — STOP conditions reviewed; none triggered",
       "result": "CONFIRMED",
-      "citation": "STOP1: fixing upload-review mapping does not require scoring policy change. STOP2: manual range correction propagates via existing reference_range contract (analysis.py:89-96 already works). STOP3: preserving richer detail is a bounded frontend fix to upload/page.tsx:225. STOP4: no second authority introduced. STOP5: missing-range UX requires only per-row badge addition — no broad redesign. STOP6: apo ratio fix scoped to upload-review seam only. STOP7: no fallback range behaviour — manual correction is the only recovery path."
+      "citation": "STOP1: inequality handling stays in upload-review seam, no scoring change needed. STOP2: rich reference text already captured in referenceText field — no parser rewrite required. STOP3: no second authority source needed — referenceText IS the preserved lab text. STOP4: changes are bounded to EditDialog.tsx + uploadReferenceRange.ts display helper + ParsedTable.tsx (preservation) — no broad redesign. STOP5: raw value usability improvement is bounded to EditDialog only. STOP6: no fallback ranges required or introduced."
     },
     {
       "check": "2B — Determinism risks surfaced",
       "result": "CONFIRMED",
-      "citation": "Risk 1: one-sided bound type contract — if min/max made optional in parsed.ts, Cursor must ensure normalize.py null-handling is tested (confirmed safe at normalize.py:100-106). Risk 2: EditDialog spread vs explicit field overwrite — must ensure new range fields in formData explicitly set referenceRange on save, not rely solely on spread from stale biomarker state. Risk 3: EditDialog formData initialisation — useEffect at EditDialog.tsx:90-99 must be extended to populate range fields when biomarker.referenceRange exists (avoids resetting user-entered data on re-render)."
+      "citation": "Risk 1: formatReferenceRangeDisplay() inequality direction fix — must only affect display, NOT affect referenceRangeToPayload() (uploadReferenceRange.ts:100-113). Payload contract unchanged. Risk 2: EditDialog value field change from type=number to text — validation must still reject clearly invalid non-numeric non-inequality inputs; must not silently accept garbage. Risk 3: referenceText display mode change (read-only vs editable) — if made read-only, the user loses ability to manually correct the text; Cursor must decide whether to make it read-only or retain editability with clearer labelling. Prompt §4 (line 140-143): 'selectable/copyable or otherwise clearly presented as a read-only assistive field' — intent is read-only but Cursor may provide selectable text element or clearly labelled read-only input."
     },
     {
       "check": "Stage 0 — branch pre-condition",
-      "result": "NOTE — BLOCKING before kernel start",
-      "citation": "git branch --show-current returns 'main'. Prompt requires branch: feature/parse-range-edit-and-missing-range-ux. Cursor must checkout or create this branch before running run_work_package.py start. Not a hardening blocker."
+      "result": "NOTE — BLOCKING before kernel start only",
+      "citation": "git branch --show-current returns 'main'. Prompt requires branch: feature/parse-inequalities-and-rich-reference-text. Cursor must checkout or create this branch before running run_work_package.py start. Not a hardening blocker — branch does not need to exist at hardening time."
     }
   ]
 }
