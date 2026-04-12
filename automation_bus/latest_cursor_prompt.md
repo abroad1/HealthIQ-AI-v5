@@ -1,32 +1,35 @@
 ---
-work_id: BE-W1-PR3
-branch: feature/pdf-parse-one-sided-ranges-and-rich-reference-text
-risk_level: HIGH
+work_id: BE-W1-PR4
+branch: feature/contextual-lab-range-extraction-and-selection
+risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# BE-W1-PR3 — PDF parse extraction, one-sided range classification, and rich reference-text preservation
+# BE-W1-PR4 — Contextual lab-range extraction and user selection workflow
 
 ## Objective
 
-Deliver the next Wave 1 remediation pass for the live PDF upload path.
+Deliver the next Wave 1 remediation pass for the PDF upload → parse → review → analysis-input journey.
 
-This sprint must fix the upstream extraction seam so that the actual PDF parse flow preserves and returns enough truth for the review UI to behave correctly.
+This sprint must resolve the real remaining product gap for markers whose lab reports contain multiple context-dependent reference ranges, such as:
 
-This sprint exists because BE-W1-PR1 and BE-W1-PR2 improved the upload-review frontend seam, but did not change the PDF extraction path itself. Post-sprint investigation established that the remaining defects are primarily upstream in the live PDF parse path.
+- male
+- female
+- female non-pregnant
+- female pregnant
+- female postmenopausal
+- other equivalent lab-defined contextual variants
 
 The required outcome is:
 
-- live PDF parsing preserves strict comparator semantics where present (`<`, `>`, `≤`, `≥`)
-- live PDF parsing preserves richer multi-line lab reference text where available
-- contextual lab reference text such as sex / pregnancy / life-stage blocks is preserved when present in the source panel
-- the parse response gives the frontend enough structured truth to distinguish:
-  - fully bounded range
-  - valid one-sided threshold
-  - rich contextual reference text
-  - genuinely incomplete range
-- frontend attention-state logic no longer treats valid one-sided thresholds as equivalent to incomplete ranges
+- the parser preserves rich contextual lab reference text
+- the parser attempts structured extraction of context-specific range options at parse time
+- the review/edit UI shows those detected contextual options clearly
+- the user can choose the applicable context when multiple valid options exist
+- selecting a context auto-populates the active min/max/unit used for analysis
+- raw lab text remains visible for transparency
+- manual override remains available when extraction is incomplete or wrong
 
 This sprint is not a scoring-policy sprint.
 This sprint is not a fallback-range sprint.
@@ -40,35 +43,35 @@ This sprint is not a broad results/narrative sprint.
 
 Repo/runtime investigation has established that:
 
-- BE-W1-PR2 changed the upload-review frontend seam only
-- it did not change:
-  - `LLMParser`
-  - the PDF parsing prompt
-  - `/api/upload/parse`
-- on the live PDF path, rich reference text and strict comparator semantics depend on what the parser/model returns in the parsed `reference` field
-- if the model returns shortened or symbol-free text, the frontend cannot reconstruct richer comparator/reference meaning later
-- screenshot evidence shows comparator display can now work, but one-sided ranges are still being classified as incomplete in the review attention logic
+- raw contextual lab reference text now survives further through the parse/review seam than before
+- the unresolved product failure is not just text preservation, but lack of a workflow to resolve which contextual range applies
+- the existing review/edit seam already contains:
+  - raw reference text display
+  - min/max/unit edit fields
+  - attention badges
+  - existing `reference_range` payload handoff
+- the missing step is structured context-option extraction plus explicit user selection
+- this work must remain outside scoring-policy changes
 
-This sprint must not guess a different truth.
+This sprint must not guess a different runtime truth.
 
 ### Authoritative backend files for this sprint
 
 At minimum, inspect and use the actual current versions of:
 
-- the parser models used by PDF parsing
-- `LLMParser` implementation
-- the PDF parsing prompt file(s), including any schema/prompt assets used for PDF extraction
+- `backend/core/llm/prompts/parsing_prompt_pdf.txt`
+- `backend/services/parsing/llm_parser.py`
 - `backend/app/routes/upload.py`
-- any parser response models and helpers that shape `reference`, `ref_low`, `ref_high`, raw value text, or related fields
+- any parser models / response models touched by the PDF extraction path
 
 ### Authoritative frontend files for this sprint
 
 At minimum, inspect and use the actual current versions of:
 
 - `frontend/app/(app)/upload/page.tsx`
-- `frontend/app/lib/uploadReferenceRange.ts`
 - `frontend/app/components/preview/ParsedTable.tsx`
 - `frontend/app/components/preview/EditDialog.tsx`
+- `frontend/app/lib/uploadReferenceRange.ts`
 - `frontend/app/types/parsed.ts`
 
 If hardening finds the active paths differ, Claude must cite the exact actual files in evidence and hardening may narrow or correct touched-file scope. Cursor must not improvise beyond those verified files.
@@ -77,32 +80,31 @@ If hardening finds the active paths differ, Claude must cite the exact actual fi
 
 ## Stage 1B — Reality Check
 
-This sprint addresses real UAT and investigation findings and is not a no-op.
+This sprint addresses a real remaining user problem and is not a no-op.
 
-Confirmed remaining issues include:
+Confirmed current gaps include:
 
-- the live PDF parse path does not reliably preserve richer reference text
-- the live PDF parse path does not reliably preserve strict comparator semantics in a recoverable way
-- pregnancy / sex / life-stage contextual range text is not being surfaced in review even when present in lab output
-- valid one-sided thresholds are still being flagged as incomplete by the review UX
-- previous frontend seam fixes cannot recover truth that was never extracted upstream
+- the system can preserve contextual lab text but does not help the user resolve which range applies
+- rich text alone is not sufficient for prolactin-style markers and similar multi-context lab ranges
+- users still have to manually interpret and transcribe the correct range from the contextual text
+- this prevents the review flow from feeling reliable or intelligent in context-dependent cases
 
 ---
 
 ## Stage 1C — Intelligence Preflight
 
-This sprint changes the governed parse extraction and review classification behaviour for user-supplied lab data before analysis submission.
+This sprint changes the governed parse/review behaviour for user-supplied lab data before analysis submission.
 
 It therefore affects:
 
-- PDF parse extraction truth
-- parser response shape / semantics
-- upload-review attention classification
-- user confidence in parsed lab data before analysis
+- PDF parse extraction contract
+- parsed biomarker review-state contract
+- review/edit user interaction before analysis
+- quality of user-confirmed `reference_range` entering analysis
 
-This is HIGH risk because it changes user-input interpretation upstream of analysis, even though it must not change scoring policy or introduce fallback ranges.
+This is STANDARD risk. It does not touch the listed HIGH-risk directories or analytical reasoning boundaries, but it does affect governed user input before analysis and must remain tightly bounded.
 
-No downgrade is permitted.
+No risk downgrade or scope widening is permitted.
 
 ---
 
@@ -110,64 +112,80 @@ No downgrade is permitted.
 
 Cursor must implement these decisions exactly.
 
-### 1. One-sided thresholds are valid, not inherently incomplete
+### 1. Structured context options are a review-stage assistive contract
 
-A lab reference such as:
+The parser may extract structured context-specific range options from lab text, but these options are assistive review-stage data only.
 
-- `> 1.55 mmol/L`
-- `< 39`
-- `≤ 5.7`
-- `≥ 48`
+They do not become a new SSOT or second range authority.
+The authoritative user-submitted range remains the final selected or manually edited `reference_range`.
 
-is a valid one-sided threshold and must not automatically be treated as incomplete.
+### 2. User confirmation is required when multiple context-specific ranges exist
 
-The system must distinguish between:
+If multiple valid contextual options are detected, the system must not silently choose one.
+
+The user must confirm the applicable context before the range is considered resolved.
+
+The only acceptable no-click case is:
+- one single unambiguous extracted option
+- or no extracted options at all
+
+### 3. Selecting a context auto-populates the active analytical range
+
+When the user selects a contextual option, the active min/max/unit fields used for analysis must populate automatically from that selection.
+
+This must feed the same existing `reference_range` contract already used downstream.
+
+### 4. Raw lab text must remain visible
+
+Even when structured context options are extracted successfully, the original lab reference text must remain visible in review/edit for transparency.
+
+### 5. Manual override remains available
+
+If structured extraction is incomplete, wrong, or not trusted, the user must still be able to manually set min/max/unit.
+
+### 6. Approach A is mandated
+
+Use prompt-level/schema-level structured extraction in the PDF parsing path.
+
+That means:
+- extend the PDF parsing prompt/schema to request structured contextual range options directly from Gemini when present
+- allow omission/null when the model cannot extract them confidently
+
+Do not choose a regex-only post-processing strategy as the primary approach for this sprint.
+
+### 7. Distinct review attention state required
+
+Markers with multiple detected context options but no confirmed selection must have a distinct attention state, such as:
+
+- context selection required
+
+This must not be conflated with:
 - valid one-sided threshold
-- rich contextual reference text requiring review
-- genuinely incomplete or malformed range data
+- text-only partial range
+- genuinely incomplete range
 
-### 2. Rich raw reference text is first-class evidence
+### 8. One-sided thresholds remain valid
 
-If the lab provides richer reference text, including multi-line or contextual blocks such as:
-- pregnancy
-- sex-specific ranges
-- menopausal status
-- age/life-stage distinctions
-that text must be preserved where possible and surfaced to the user in review.
+A contextual option may itself be one-sided.
+Examples:
+- Male: `> 1.55`
+- Adult: `< 25`
 
-Do not flatten it away if the parser can capture it.
+Those must remain valid selectable options.
 
-### 3. Preserve raw truth before simplification
+### 9. No scoring-policy changes
 
-The parser and parse route must preserve the richest truthful reference representation available before any frontend simplification into numeric bounds.
+This sprint must not change:
+- scoring rules
+- lab-range sovereignty
+- fallback-range policy
+- any analytical interpretation logic
 
-Numeric `ref_low` / `ref_high` remain useful, but they are not the only truth source.
+### 10. Value-level inequality parsing is explicitly out of scope
 
-### 4. Frontend classification must use better semantics
+This sprint does not address the separate defect family where biomarker result values themselves may be expressed as inequalities (for example `<0.05` values).
 
-Once richer parser truth is available, frontend attention-state logic must distinguish:
-- complete bounded range
-- valid one-sided threshold
-- rich contextual reference text present
-- no usable range/reference truth
-
-Do not continue using a rule that effectively means:
-- both min and max = complete
-- everything else = incomplete
-
-### 5. No broad fallback behaviour
-
-Do not introduce hard-coded fallback ranges for ordinary biomarkers.
-
-### 6. Stay within the PDF parse → review seam
-
-This sprint must stay within:
-- PDF parse extraction
-- parse response contract
-- upload-review classification/rendering
-- review/edit usability as needed to support the improved parse truth
-
-Do not widen into scoring-policy changes or results-page work.
+Do not widen into that problem in this sprint.
 
 ---
 
@@ -175,52 +193,68 @@ Do not widen into scoring-policy changes or results-page work.
 
 ## Required Changes
 
-### A. PDF parse extraction improvement
+### A. PDF prompt/schema extension for contextual options
 
-Improve the live PDF parse path so that it more faithfully captures:
+Update the PDF parsing prompt/schema so the parser can return structured contextual range options when the lab text clearly contains multiple context-specific reference ranges.
 
-- strict inequality symbols
-- one-sided thresholds
-- richer multi-line reference text
-- contextual reference blocks such as pregnancy / sex / life-stage text
+Each option should include, where available:
+- context label
+- min
+- max
+- unit
+- optional source snippet / source line text
 
-This includes prompt/schema/extraction handling in the actual PDF parse path, not just helper functions downstream.
+Confidence should be omission/null-based:
+- if the model cannot structure options confidently, it may omit them and preserve only raw text
 
-### B. Parse response contract quality
+### B. Parser/model support
 
-Ensure the parse route returns enough structure for the frontend to preserve:
+Update parser-side models and parse response shaping so contextual options can survive the live PDF parse path into the frontend review state.
 
+This must preserve:
 - raw reference text
-- numeric lower/upper bounds where safely extracted
-- one-sided threshold meaning where applicable
-- raw parsed value text when useful
+- numeric `ref_low` / `ref_high` where safely extractable
+- structured context options where available
 
-### C. Review classification improvement
+### C. Frontend review-state support
 
-Update the upload-review seam so valid one-sided thresholds are not automatically flagged as incomplete.
+Update the parsed biomarker review contract to support:
+- contextual range options
+- selected context id / selection state
+- active `referenceRange`
+- raw `referenceText`
 
-A richer classification model is required, grounded in the parser truth returned.
+Avoid conflicting multiple sources of truth. The precedence rule must be clear:
+- selected context option populates active range
+- manual edit may then override
+- active `referenceRange` is what goes to analysis
 
-### D. Rich reference-text surfacing
+### D. Review/edit UI for contextual selection
 
-Ensure rich reference text, where captured, is actually visible and usable in review for markers such as prolactin and similar complex cases.
+Update the review/edit experience so that for biomarkers with contextual range options:
 
-### E. Maintain editability and payload correctness
+- the user sees that multiple context-specific ranges were detected
+- the raw lab text remains visible
+- the selectable options are shown clearly
+- selecting an option populates min/max/unit
+- if no option is selected yet, the attention state reflects that
+- manual override remains possible
 
-Any improvements must remain compatible with the existing edit flow and analysis payload handoff.
-Do not break the already-approved min/max/unit edit path.
+### E. Payload handoff
+
+Ensure the selected or manually corrected active range continues to flow through the existing `reference_range` contract to analysis start.
 
 ---
 
 ## Explicit Non-Goals
 
 - no scoring-policy changes
-- no broad fallback-range behaviour
-- no broad parser redesign beyond the bounded PDF extraction seam
-- no results-page/narrative work
-- no questionnaire work
+- no fallback-range implementation for ordinary biomarkers
+- no results-page/narrative/Gemini-output work beyond PDF parse-time extraction
+- no broad parser redesign beyond this bounded contextual-range seam
+- no profile-based or silent auto-selection of pregnancy/sex/life-stage context
 - no second authority source for ranges
-- no broad UX redesign outside review/edit classification and display
+- no value-level inequality parsing work
 
 ---
 
@@ -228,12 +262,13 @@ Do not break the already-approved min/max/unit edit path.
 
 Cursor must STOP immediately if any of the following become true:
 
-1. Fixing the issue would require changing scoring policy rather than the parse/review seam
-2. Rich reference preservation would require an open-ended parser rewrite rather than a bounded PDF extraction improvement
-3. Supporting contextual reference text would require inventing a second authority source
-4. Valid one-sided threshold handling cannot be distinguished cleanly from genuinely incomplete data within the current parse/review seam
-5. The sprint would require broad redesign of the upload-review flow
-6. The only way to preserve richer reference truth would be a non-governed free-form parser output with no stable contract
+1. Supporting contextual range selection would require changing scoring policy rather than the parse/review seam
+2. Prompt-level structured extraction proves too unstable and would require broad parser redesign beyond the bounded sprint
+3. The design would introduce a second range authority instead of a review-stage assistive contract
+4. The system cannot preserve a single active `reference_range` without conflicting sources of truth
+5. The sprint would require silent medical-context inference without user confirmation
+6. The sprint would widen into value-level inequality parsing
+7. The sprint would require broad redesign of the upload-review flow beyond bounded contextual-range handling
 
 If any STOP condition triggers, do not improvise. Report the blocker.
 
@@ -241,25 +276,27 @@ If any STOP condition triggers, do not improvise. Report the blocker.
 
 ## Phase Execution Model
 
-### Phase 1 — Parser and review classification correction
+### Phase 1 — Contextual extraction and selection workflow
 
 Implement the bounded changes required so that:
 
-- live PDF parsing preserves richer reference truth
-- one-sided thresholds are preserved as valid semantics
-- contextual reference text is retained
-- review classification distinguishes valid one-sided cases from incomplete cases
-- rich reference text is visible in the review experience
+- contextual lab text is preserved
+- structured context options are extracted where possible
+- the user can choose the applicable context
+- the active analytical range is populated from that choice
+- manual override remains available
+- no scoring-policy changes occur
 
 ### Phase 2 — Validation
 
 Verify with targeted tests and browser checks that:
 
-- a representative PDF with one-sided thresholds now preserves them correctly
-- a representative PDF with rich contextual reference text now surfaces that text
-- valid one-sided thresholds are no longer flagged as incomplete
-- genuinely incomplete cases are still flagged
-- existing min/max edit flow still works
+- a representative contextual marker such as prolactin now surfaces structured options
+- selecting an option populates min/max/unit
+- raw text remains visible
+- context selection required state appears when appropriate
+- ordinary simple-range markers still behave normally
+- no regression to existing one-sided threshold support
 
 ---
 
@@ -269,29 +306,30 @@ Must verify all of the following.
 
 ### PDF parse extraction
 
-- parser captures strict comparator semantics where present
-- parser preserves richer raw reference text where present
-- parser preserves contextual reference blocks where present
+- parser preserves raw contextual lab text
+- parser returns structured context options when clearly present in the source
+- one-sided thresholds inside context options are preserved where applicable
 
-### Review classification and display
+### Review/edit behaviour
 
-- valid one-sided thresholds are displayed as valid one-sided thresholds
-- valid one-sided thresholds are not mislabeled as incomplete
-- rich reference text is visible where captured
-- truly missing or malformed range data is still flagged for attention
+- contextual-range markers show a clear context selection workflow
+- user selection populates the active min/max/unit
+- raw lab text remains visible
+- manual override remains possible
+- markers with options but no confirmed choice show a distinct attention state
 
-### Edit and payload handoff
+### Analysis handoff
 
-- edit flow remains functional for min/max/unit correction
-- improved parsed truth does not break payload serialization
-- corrected/parsed values still hand off correctly to analysis start
+- active selected/manual `reference_range` still serializes through the existing payload contract
+- no regressions to successful analysis submission for simple markers
+- no scoring-policy changes are introduced
 
 ### Safety / determinism
 
 - no fallback ranges introduced
 - no second authority source introduced
-- same PDF input produces the same parsed reference output
-- no hidden repair logic or silent invented values
+- same parsed contextual option set + same user choice produces the same active range payload
+- no silent context assumption when multiple choices exist
 
 ---
 
@@ -299,11 +337,13 @@ Must verify all of the following.
 
 Minimum required tests must cover:
 
-1. representative parser extraction for one-sided thresholds
-2. representative parser extraction for multi-line contextual reference text
-3. review classification that distinguishes valid one-sided threshold vs incomplete range
-4. rich reference-text display in review
-5. no regression to existing valid min/max edit behaviour
+1. representative parser extraction of contextual options from a multi-range marker such as prolactin
+2. one-sided contextual option support
+3. review-state handling of contextual options + selected option
+4. context selection required attention state
+5. selected option populates active `referenceRange`
+6. no regression to ordinary simple min/max markers
+7. no regression to existing one-sided threshold handling for non-contextual markers
 
 Use the smallest relevant test scope.
 Do not expand into broad unrelated suite creation.
@@ -313,11 +353,12 @@ Do not expand into broad unrelated suite creation.
 ## Execution Rules
 
 - follow this prompt exactly
-- do not turn this into a fallback-range sprint
 - do not change scoring policy
+- do not introduce fallback ranges
 - do not invent a second authority source
 - do not widen into results/questionnaire/narrative work
-- do not perform broad parser redesign beyond the bounded seam improvement
+- do not widen into value-level inequality parsing
+- do not perform broad parser redesign beyond the bounded contextual-range seam
 - do not modify unrelated files
 
 ---
@@ -332,16 +373,17 @@ Cursor must return:
 4. implementation summary
 5. tests run and results
 6. before/after evidence that:
-   - live PDF one-sided thresholds are preserved and classified correctly
-   - rich contextual reference text is surfaced where available
-   - valid one-sided thresholds are no longer mislabeled as incomplete
+   - contextual options are extracted and surfaced for representative markers
+   - user selection populates active range fields
+   - context selection required state appears when relevant
+   - raw text remains visible
 7. any blockers encountered
 
 ---
 
 ## Governance
 
-This is HIGH-risk governed input-contract work.
+This is STANDARD-risk governed input-contract work.
 
 Requires:
 
