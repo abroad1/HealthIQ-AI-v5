@@ -53,11 +53,18 @@ export default function ParsedTable({
         </Badge>
       )
     }
+    if (att === 'one-sided') {
+      return (
+        <Badge variant="outline" className="gap-1 font-normal border-slate-300 text-slate-800 bg-slate-50">
+          One-sided range
+        </Badge>
+      )
+    }
     if (att === 'partial') {
       return (
         <Badge variant="outline" className="gap-1 font-normal border-amber-400 text-amber-900">
           <AlertTriangle className="h-3 w-3" />
-          Range incomplete
+          Context / incomplete range
         </Badge>
       )
     }

@@ -24,11 +24,15 @@ class ParsedBiomarker(BaseModel):
     name: str = Field(..., description="Biomarker name")
     value: float = Field(..., description="Numeric value")
     unit: str = Field(..., description="Unit of measurement")
-    reference: str = Field(..., description="Reference range")
+    reference: str = Field(..., description="Reference range (may combine primary line + contextual text)")
     confidence: float = Field(..., ge=0.0, le=1.0, description="Confidence score")
     ref_low: Optional[float] = Field(None, description="Lower reference limit")
     ref_high: Optional[float] = Field(None, description="Upper reference limit")
     status: Optional[str] = Field(None, description="Health status: Low/Normal/High")
+    raw_reference_text: Optional[str] = Field(
+        None,
+        description="Optional multi-line footnotes / sex or pregnancy context from the PDF",
+    )
 
 
 class ParsedResult(BaseModel):
@@ -219,8 +223,17 @@ class LLMParser:
             biomarkers = []
             for biomarker_data in data.get("biomarkers", []):
                 try:
-                    # Parse reference range
-                    ref_low, ref_high = self._parse_reference_range(biomarker_data.get("reference", ""))
+                    main_ref = str(biomarker_data.get("reference") or "").strip()
+                    raw_extra = str(biomarker_data.get("raw_reference_text") or "").strip()
+                    if raw_extra and main_ref:
+                        combined_ref = f"{raw_extra}\n\n{main_ref}"
+                    elif raw_extra:
+                        combined_ref = raw_extra
+                    else:
+                        combined_ref = main_ref
+
+                    # Parse reference range from combined text so footnotes can carry bounds
+                    ref_low, ref_high = self._parse_reference_range(combined_ref)
                     
                     # Compute health status
                     status = self._compute_health_status(
@@ -234,11 +247,12 @@ class LLMParser:
                         name=biomarker_data["name"],
                         value=biomarker_data["value"],
                         unit=biomarker_data["unit"],
-                        reference=biomarker_data["reference"],
+                        reference=combined_ref if combined_ref else main_ref,
                         confidence=biomarker_data["confidence"],
                         ref_low=ref_low,
                         ref_high=ref_high,
-                        status=status
+                        status=status,
+                        raw_reference_text=raw_extra or None,
                     )
                     biomarkers.append(biomarker)
                 except (KeyError, ValueError, TypeError) as e:
@@ -339,7 +353,7 @@ class LLMParser:
                     "confidence": biomarker.confidence,
                     "ref_low": biomarker.ref_low,
                     "ref_high": biomarker.ref_high,
-                    "healthStatus": health_status
+                    "healthStatus": health_status,
                 })
             
             # Merge metadata, ensuring filename takes precedence

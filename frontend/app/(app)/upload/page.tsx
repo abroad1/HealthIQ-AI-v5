@@ -351,20 +351,21 @@ export default function UploadPage() {
           {uploadStatus === 'ready' && parsedData.length > 0 && (
             <div>
               <h3 className="text-lg font-semibold mb-4">Review parsed markers</h3>
-              {parsedData.some(
-                (b) =>
-                  !b.unit?.trim() ||
-                  rangeAttentionLevel({
-                    unit: b.unit,
-                    referenceRange: b.referenceRange,
-                    referenceText: b.referenceText,
-                  }) !== 'none'
-              ) && (
+              {parsedData.some((b) => {
+                if (!b.unit?.trim()) return true;
+                const att = rangeAttentionLevel({
+                  unit: b.unit,
+                  referenceRange: b.referenceRange,
+                  referenceText: b.referenceText,
+                });
+                return att !== 'none' && att !== 'one-sided';
+              }) && (
                 <Alert className="mb-4 border-amber-200 bg-amber-50">
                   <AlertCircle className="h-4 w-4 text-amber-800" />
                   <AlertDescription className="text-amber-950">
-                    Some markers are missing a unit, missing a reference range, or only have a partial range. Edit
-                    those rows before analysis so lab-interval context is complete where your report provides it.
+                    Some markers are missing a unit, missing a reference range, or need review for contextual
+                    reference text. Edit those rows before analysis so lab-interval context is complete where your
+                    report provides it.
                   </AlertDescription>
                 </Alert>
               )}
