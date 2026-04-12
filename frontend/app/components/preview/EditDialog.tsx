@@ -31,7 +31,8 @@ const COMMON_UNITS = [
   'μg/dL',
   'mEq/L',
   'ng/dL',
-  'pmol/L'
+  'pmol/L',
+  'ratio',
 ]
 
 const COMMON_BIOMARKERS = [
@@ -70,7 +71,7 @@ const COMMON_BIOMARKERS = [
   'CO2',
   'Calcium',
   'Phosphorus',
-  'Magnesium'
+  'Magnesium',
 ]
 
 export default function EditDialog({
@@ -83,16 +84,25 @@ export default function EditDialog({
     name: '',
     value: '',
     unit: '',
+    refMin: '',
+    refMax: '',
+    refUnit: '',
+    referenceText: '',
     status: 'edited' as ParsedBiomarker['status']
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   useEffect(() => {
     if (biomarker) {
+      const r = biomarker.referenceRange
       setFormData({
         name: biomarker.name,
         value: biomarker.value.toString(),
         unit: biomarker.unit,
+        refMin: r?.min != null && Number.isFinite(r.min) ? String(r.min) : '',
+        refMax: r?.max != null && Number.isFinite(r.max) ? String(r.max) : '',
+        refUnit: r?.unit ?? biomarker.unit ?? '',
+        referenceText: biomarker.referenceText ?? '',
         status: biomarker.status || 'edited'
       })
       setErrors({})
@@ -121,21 +131,54 @@ export default function EditDialog({
       newErrors.unit = 'Unit is required'
     }
 
+    const refMinN = formData.refMin.trim() === '' ? NaN : parseFloat(formData.refMin)
+    const refMaxN = formData.refMax.trim() === '' ? NaN : parseFloat(formData.refMax)
+    if (formData.refMin.trim() !== '' && !Number.isFinite(refMinN)) {
+      newErrors.refMin = 'Enter a valid number or leave empty'
+    }
+    if (formData.refMax.trim() !== '' && !Number.isFinite(refMaxN)) {
+      newErrors.refMax = 'Enter a valid number or leave empty'
+    }
+    if (
+      Number.isFinite(refMinN) &&
+      Number.isFinite(refMaxN) &&
+      refMinN >= refMaxN
+    ) {
+      newErrors.refMax = 'Max must be greater than min when both are set'
+    }
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
   const handleSave = () => {
-    if (!validateForm()) {
+    if (!validateForm() || !biomarker) {
       return
     }
 
     const numValue = parseFloat(formData.value)
+    const refMinN = formData.refMin.trim() === '' ? undefined : parseFloat(formData.refMin)
+    const refMaxN = formData.refMax.trim() === '' ? undefined : parseFloat(formData.refMax)
+    const hasMin = refMinN !== undefined && Number.isFinite(refMinN)
+    const hasMax = refMaxN !== undefined && Number.isFinite(refMaxN)
+    const refUnit = (formData.refUnit.trim() || formData.unit.trim()).trim()
+
+    let referenceRange: ParsedBiomarker['referenceRange'] = undefined
+    if (hasMin || hasMax) {
+      referenceRange = {
+        min: hasMin ? refMinN : undefined,
+        max: hasMax ? refMaxN : undefined,
+        unit: refUnit,
+      }
+    }
+
     const editedBiomarker: ParsedBiomarker = {
-      ...biomarker, // Preserve all existing fields including referenceRange
+      ...biomarker,
       name: formData.name.trim(),
       value: isNaN(numValue) ? formData.value : numValue,
       unit: formData.unit.trim(),
+      referenceRange,
+      referenceText: formData.referenceText.trim() || undefined,
       status: 'edited'
     }
 
@@ -247,6 +290,63 @@ export default function EditDialog({
                 <span>{errors.unit}</span>
               </div>
             )}
+          </div>
+
+          {/* Reference range (manual correction) */}
+          <div className="rounded-md border border-dashed p-3 space-y-3 bg-muted/30">
+            <div className="flex items-center justify-between">
+              <Label className="text-base">Reference range (lab)</Label>
+              <Badge variant="outline" className="text-xs font-normal">Optional</Badge>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Add or edit min/max if the parser missed your lab&apos;s interval. One-sided ranges are supported.
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-1">
+                <Label htmlFor="refMin" className="text-xs">Min</Label>
+                <Input
+                  id="refMin"
+                  type="number"
+                  step="any"
+                  value={formData.refMin}
+                  onChange={(e) => setFormData(prev => ({ ...prev, refMin: e.target.value }))}
+                  placeholder="—"
+                  className={errors.refMin ? 'border-red-500' : ''}
+                />
+                {errors.refMin && <span className="text-xs text-destructive">{errors.refMin}</span>}
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="refMax" className="text-xs">Max</Label>
+                <Input
+                  id="refMax"
+                  type="number"
+                  step="any"
+                  value={formData.refMax}
+                  onChange={(e) => setFormData(prev => ({ ...prev, refMax: e.target.value }))}
+                  placeholder="—"
+                  className={errors.refMax ? 'border-red-500' : ''}
+                />
+                {errors.refMax && <span className="text-xs text-destructive">{errors.refMax}</span>}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="refUnit">Range unit</Label>
+              <Input
+                id="refUnit"
+                value={formData.refUnit}
+                onChange={(e) => setFormData(prev => ({ ...prev, refUnit: e.target.value }))}
+                placeholder="Defaults to value unit if left blank when you save"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="referenceText" className="text-xs">Raw reference text (optional)</Label>
+              <Input
+                id="referenceText"
+                value={formData.referenceText}
+                onChange={(e) => setFormData(prev => ({ ...prev, referenceText: e.target.value }))}
+                placeholder="e.g. 4.0–5.6 %"
+              />
+            </div>
           </div>
 
           {/* Status */}
