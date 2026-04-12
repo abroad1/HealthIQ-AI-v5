@@ -1,26 +1,26 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "BE-W2-RQ2",
+  "work_id": "BE-W2-RQ3",
   "status": "HARDENED",
   "hardened_utc": "2026-04-12T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
-  "content_review": "COMPLETE — all 7 authoritative files read in full. backend/core/contracts/clinician_report_v1.py read additionally (required for contract change scoping). frontend/app/types/analysis.ts read additionally (required for frontend contract alignment). UAT-027 and UAT-028 gaps confirmed at source level.",
-  "behaviour_review": "COMPLETE — MIXED correct. Runner-up enrichment in compile_clinician_report_v1 changes emitted DTO shape (BEHAVIOUR tier). Why depth improvement in RootCauseEvidenceSummary.tsx changes emitted user-facing reasoning (BEHAVIOUR tier). Analytical logic (ranking, tie-break, signal evaluation, insight graph construction) confirmed not touched. Determinism preserved — runner-up sourced from deterministically sorted top_findings[1]. ranking_rationale from _build_ranking_rationale (L306) is a pure function. No randomness, no mutable global state.",
+  "content_review": "COMPLETE — all 10 authoritative files verified to exist in repo. 7 files read in full or materially sampled (report_compiler_v1.py 785 lines, builders.py 352 lines, explainability_builder.py 396 lines, orchestrator.py key sections, page.tsx 712 lines, InsightPanel.tsx 158 lines, state_engine_v1.py contract, analysis.ts types). Remaining 3 (RootCauseEvidenceSummary.tsx, ClusterSummary.tsx, ClinicianReportRenderer.tsx) confirmed to exist. meta.explainability_report confirmed stored at orchestrator.py:2068. meta.insight_graph.system_states confirmed at orchestrator.py:2060 and insight_graph_v1.py:209. system_stable_normal state code confirmed at state_engine.py:~97. meta.burden_vector.system_capacity_scores confirmed at orchestrator.py:~2102.",
+  "behaviour_review": "COMPLETE — MIXED correct. Balanced systems narrative changes what explanatory content is surfaced and therefore changes emitted user-facing reasoning (BEHAVIOUR tier). Explainability surfacing adds a new bounded section sourced from stored deterministic structures (BEHAVIOUR tier). Analytical logic (ranking, signal evaluation, cluster logic, burden logic, insight graph construction, arbitration) confirmed not in scope. Determinism preserved — balanced narrative derived only from system_states state_codes (sorted by system_id) and system_capacity_scores (deterministic per result). No randomness. No mutable global state. Three determinism risks surfaced: (1) system_states iteration order; (2) hand-authored fallback copy; (3) float display precision for capacity scores.",
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: BE-W2-RQ2"
+      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: BE-W2-RQ3"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/results-why-contract-depth"
+      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/results-explanation-surfacing-balanced-systems"
     },
     {
       "check": "Front Matter — risk_level HIGH",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:4 — HIGH. Sprint changes emitted user-facing reasoning and report presentation — output generation is Intelligence Core boundary. Prompt Stage 1C:98-104 confirms HIGH risk with no downgrade permitted."
+      "citation": "automation_bus/latest_cursor_prompt.md:4 — HIGH. Sprint changes what the product says to the user (emitted explanation). Stage 1C:98-100 confirms HIGH with no downgrade permitted."
     },
     {
       "check": "Front Matter — execution_model TWO_PHASE_START_FINISH",
@@ -30,82 +30,97 @@
     {
       "check": "Front Matter — change_type MIXED",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:6 — MIXED: runner-up enrichment adds governed content consumed by output assembler (BEHAVIOUR); Why depth uses existing deterministic evidence (BEHAVIOUR); compiler/renderer alignment (BEHAVIOUR + CONTENT)."
+      "citation": "automation_bus/latest_cursor_prompt.md:6 — MIXED: backend compiler output shaping (BEHAVIOUR) + new governed content from existing deterministic structures surfaced in UI (BEHAVIOUR + CONTENT)."
     },
     {
-      "check": "2A — backend/app/routes/analysis.py exists and confirmed as GET /api/analysis/result runtime path",
+      "check": "2A — backend/app/routes/analysis.py exists and confirmed",
       "result": "CONFIRMED",
-      "citation": "backend/app/routes/analysis.py:329-350 — GET /result calls _raw_result_payload_for_analysis_id then build_analysis_result_dto. analysis.py:345 — raw = _raw_result_payload_for_analysis_id. analysis.py:346 — return build_analysis_result_dto(raw). File read in full."
+      "citation": "backend/app/routes/analysis.py — file exists; imports build_analysis_result_dto from core.dto.builders at line ~39-43."
     },
     {
-      "check": "2A — backend/core/dto/builders.py exists; compile_clinician_report_v1 wired and meta passed through",
+      "check": "2A — backend/core/dto/builders.py exists; meta passed through",
       "result": "CONFIRMED",
-      "citation": "backend/core/dto/builders.py:8 — imports compile_clinician_report_v1. builders.py:27-36 — extracts report_v1 from insight_graph. builders.py:32-36 — calls compile_clinician_report_v1(report_v1_payload=report_v1). builders.py:53 — 'meta': meta passed through to frontend. Confirms meta.insight_graph.report_v1.top_findings is accessible on frontend via currentAnalysis.meta."
+      "citation": "backend/core/dto/builders.py:14 — build_analysis_result_dto defined. :25-28 — meta extracted from result dict. :32-36 — compile_clinician_report_v1 called with report_v1 from meta.insight_graph. :53 — 'meta': meta passed as-is to frontend. meta.insight_graph and meta.explainability_report are therefore accessible on the frontend via currentAnalysis.meta."
     },
     {
-      "check": "2A — backend/core/analytics/report_compiler_v1.py exists; compile_clinician_report_v1 confirmed",
+      "check": "2A — backend/core/pipeline/orchestrator.py exists; meta fields confirmed stored",
       "result": "CONFIRMED",
-      "citation": "backend/core/analytics/report_compiler_v1.py:443 — function compile_clinician_report_v1() defined. L461-464: _resolve_page1_concern_mode returns concern_mode + co_primary_signal_ids. L466: primary = top_findings[0] only — lead only compiled. L607: co_primary_signal_ids stores string IDs only. Runner-up top_findings[1] full data NOT compiled into report. File read in full (731 lines)."
+      "citation": "backend/core/pipeline/orchestrator.py:2060 — meta['insight_graph'] = insight_graph.model_dump(). :2068 — meta['explainability_report'] = exp_dump. :~2102 — meta['burden_vector'] dict including system_capacity_scores. :~2115 — meta['narrative_runtime']. All four meta sub-objects confirmed present in stored result contract."
     },
     {
-      "check": "2A — backend/core/contracts/clinician_report_v1.py read (CRITICAL constraint)",
+      "check": "2A — backend/core/analytics/report_compiler_v1.py exists",
       "result": "CONFIRMED",
-      "citation": "backend/core/contracts/clinician_report_v1.py:82-94 — Page1SummaryBlockV1. L83: model_config = ConfigDict(extra='forbid'). Current fields: primary_concern, key_findings, chains, top_hypothesis_line, confidence_and_missing_data, primary_concern_mode, co_primary_signal_ids, ranking_policy_version. No runner-up enriched field. CRITICAL: extra='forbid' means new fields MUST be declared in Pydantic model or validation will fail. L111: ClinicianReportV1 also extra='forbid'."
+      "citation": "backend/core/analytics/report_compiler_v1.py:490 — compile_clinician_report_v1 defined. :40 — _STATE_RANK = {at_risk:4, suboptimal:3, optimal:2, unknown:1}. :86 — _top_finding_sort_tuple (ranking logic — must not be touched). :631 — ClinicianReportV1 return. File read in full (785 lines)."
     },
     {
-      "check": "2A — frontend/app/(app)/results/page.tsx exists; confirmed entry point",
+      "check": "2A — backend/core/analytics/explainability_builder.py exists; debug material confirmed",
       "result": "CONFIRMED",
-      "citation": "frontend/app/(app)/results/page.tsx:135 — clinicianReport = currentAnalysis?.clinician_report_v1. page.tsx:498 — InsightPanel receives clinicianReport. page.tsx:516 — RootCauseEvidenceSummary receives clinicianReport. page.tsx:691 — ClinicianReportRenderer receives clinicianReport. File read in full (712 lines)."
+      "citation": "backend/core/analytics/explainability_builder.py:196 — build_explainability_report_v1 defined. :216-226 — conflict_summary assembled. :237-268 — precedence_summary assembled. :337-342 — arbitration_decisions with primary_driver_system_id + supporting_systems (SAFE for bounded surfacing). :349-362 — system_burden with raw/adjusted burden vectors + system_capacity_scores (SAFE for bounded surfacing). :363-377 — replay_stamps (INTERNAL — must not surface). :380 — assert_single_authority_driver. STOP 2 guard confirmed required."
     },
     {
-      "check": "2A — frontend/app/components/insights/InsightPanel.tsx exists; UAT-027 gap confirmed",
+      "check": "2A — meta.explainability_report stored in result contract",
       "result": "CONFIRMED",
-      "citation": "InsightPanel.tsx:74 — co_primary_signal_ids read from page1. InsightPanel.tsx:81-82 — showCoPrimaryRow gated on coPrimaries.length > 0 AND ambiguity/tiebreak mode. InsightPanel.tsx:108-110 — renders humanized signal IDs only via formatSignalIdForDisplay — no confidence, no why_it_matters, no signal_state for runner-up. UAT-027 gap confirmed: close-call mode shows runner-up label only, not what it is or why it did not lead."
+      "citation": "backend/core/pipeline/orchestrator.py:2068 — meta['explainability_report'] = exp_dump. Available at runtime as currentAnalysis.meta.explainability_report in frontend."
     },
     {
-      "check": "2A — frontend/app/components/results/RootCauseEvidenceSummary.tsx exists; UAT-028 gap confirmed",
+      "check": "2A — meta.insight_graph.system_states available and populated",
       "result": "CONFIRMED",
-      "citation": "RootCauseEvidenceSummary.tsx:19-28 — reads root_cause.hypotheses[0] (top hypothesis only). Renders evidence_for, evidence_against, missing_data as bullet lists. HypothesisV1.ranking_rationale (compiled at report_compiler_v1.py:391 via _build_ranking_rationale) NOT rendered. HypothesisV1.summary NOT rendered here. RootCauseFindingV1.signal_state and primary_metric NOT used as narrative intro. UAT-028 gap confirmed: structured fragments, no consultant-style walkthrough."
+      "citation": "backend/core/pipeline/orchestrator.py:2060 — insight_graph model_dump stored in meta. backend/core/contracts/insight_graph_v1.py:209 — system_states: List[SystemStateNode]. backend/core/contracts/state_engine_v1.py:16 — SystemStateNode fields: system_id (str), state_codes (List[str]), rationale_codes (List[str]), transition_summary_codes (List[str]), confidence_bucket (Literal high/moderate/low/insufficient)."
     },
     {
-      "check": "2A — frontend/app/components/results/ClinicianReportRenderer.tsx exists",
+      "check": "2A — system_stable_normal state code is the deterministic stable-system signal",
       "result": "CONFIRMED",
-      "citation": "ClinicianReportRenderer.tsx:87-216 — renders page1, root_cause (hypotheses with title, summary, confidence, rationale), confirmatory tests. Currently in Advanced/Clinician tab only. File read in full."
+      "citation": "backend/core/analytics/state_engine.py:~97 — state_codes.append('system_stable_normal') when high_count==0 and low_count==0 (no abnormal markers). This is the primary deterministic evidence basis for identifying well-regulated systems for the balanced narrative. STOP 3 is CLEAR."
     },
     {
-      "check": "2A — frontend/app/types/analysis.ts correct path confirmed (NOT frontend/types/analysis.ts)",
+      "check": "2A — meta.burden_vector.system_capacity_scores available",
       "result": "CONFIRMED",
-      "citation": "Glob('frontend/types/**/*.ts') returned no files. Glob('frontend/app/types/**') found: frontend/app/types/analysis.ts. ClinicianReportV1 type at analysis.ts:165-194. Page1 mirror at L179-189: co_primary_signal_ids?: string[] present, no runner-up enriched field. Cursor must update frontend/app/types/analysis.ts."
+      "citation": "backend/core/pipeline/orchestrator.py:~2102 — meta['burden_vector'] = { raw_system_burden_vector: ..., adjusted_system_burden_vector: ..., system_capacity_scores: ... }. Available at runtime as currentAnalysis.meta.burden_vector.system_capacity_scores."
     },
     {
-      "check": "2A — No duplicate narrative authority source",
+      "check": "2A — frontend/app/(app)/results/page.tsx exists; no balanced system section present",
       "result": "CONFIRMED",
-      "citation": "frontend/app/(app)/results/page.tsx:135 — hero sourced from clinician_report_v1 (deterministic compiler). Insights[] in InsightsPanel under Advanced/Narrative tab (page.tsx:687). meta.insight_graph.report_v1.top_findings accessible via currentAnalysis.meta but sprint uses this only via compiler path (not a second FE authority). No second narrative source introduced."
+      "citation": "frontend/app/(app)/results/page.tsx:139 — meta accessed only via extractNarrativeRuntimeMeta (narrative_runtime only). :498 — InsightPanel (concern-only). :516 — RootCauseEvidenceSummary (lead concern evidence only). :526 — ClusterSummary (cluster groups). No balanced system section exists. File read in full (712 lines)."
     },
     {
-      "check": "2B — Behavioural scope defined; Intelligence Core changes forbidden",
+      "check": "2A — frontend/app/components/insights/InsightPanel.tsx exists; concern-only confirmed",
       "result": "CONFIRMED",
-      "citation": "prompt:220-229 (Architectural Decisions 4) — no changes to: ranking logic, tie-break logic, signal evaluation, hypothesis ordering, cluster logic, burden logic, insight graph construction. These functions at report_compiler_v1.py:86-201 (_top_finding_sort_tuple, _near_tie_cluster_in_top3, _technical_tie_bucket_signal_ids, _resolve_page1_concern_mode) and compile_report_v1 at L618-730 are locked."
+      "citation": "frontend/app/components/insights/InsightPanel.tsx:81-84 — renders headline (primary_concern), interpretationParagraph (key_findings[0]), confidenceLine, nextStepCue only. No healthy/stable system layer. File read in full (158 lines)."
+    },
+    {
+      "check": "2A — frontend/app/types/analysis.ts confirmed path; meta typed as open record",
+      "result": "CONFIRMED",
+      "citation": "frontend/app/types/analysis.ts:232 — meta?: Record<string, any>. system_states, burden_vector, explainability_report accessible at runtime via meta; TypeScript will require explicit access patterns. AnalysisResult interface at L219-234."
+    },
+    {
+      "check": "2A — No duplicate authority source for balanced narrative",
+      "result": "CONFIRMED",
+      "citation": "Single authority chain: state_engine -> insight_graph.system_states -> meta.insight_graph. assert_single_authority_driver at explainability_builder.py:380 enforces single driver authority at runtime."
+    },
+    {
+      "check": "2B — Behavioural scope defined; Intelligence Core not touched",
+      "result": "CONFIRMED",
+      "citation": "prompt non-goals section: no changes to ranking logic (_top_finding_sort_tuple at report_compiler_v1.py:86), signal evaluation, cluster logic, burden logic, insight graph construction, phenotype firing. Sprint changes output compilation shaping and frontend presentation only."
     },
     {
       "check": "2B — Regression targets confirmed and testable",
       "result": "CONFIRMED",
-      "citation": "GET /api/analysis/result DTO — builders.py path stable, L38-58. clinician_report_v1 compile — report_compiler_v1.py:443. Runner-up in close-call — top_findings[1] available when len(top_findings) >= 2. Why depth — ranking_rationale at HypothesisV1 (contracts/clinician_report_v1.py:38), summary at L34. Determinism — _top_finding_sort_tuple pure function at report_compiler_v1.py:86-104."
+      "citation": "prompt §Regression Targets: GET /api/analysis/result DTO (builders.py:38-58 stable path); clinician_report_v1 compile (report_compiler_v1.py:490); balanced system narrative grounded in deterministic evidence; no explainability debug leakage; determinism (same payload -> same balanced layer); narrative runtime neutrality (passes with or without Gemini)."
     },
     {
       "check": "2B — STOP conditions reviewed; none triggered",
       "result": "CONFIRMED",
-      "citation": "STOP1: runner-up available in deterministically sorted top_findings[1], no ranking logic change needed. STOP2: Why depth uses ranking_rationale (L306) + summary (L34) already in payload, no new medical reasoning invented. STOP3: top_findings[1] exists when close-call detected; ranking_rationale + summary fields already compiled. STOP4: no second narrative authority required. STOP5: touched files are output compilation/presentation only — compile_clinician_report_v1 and frontend renderers. STOP6: no Gemini needed. STOP7: targeted contract/presentation change, no broad redesign."
+      "citation": "STOP1: system_stable_normal is pre-computed — no analytical logic change needed. STOP2: guard required but not a blocker — safe bounded subset identified at explainability_builder.py:337-362. STOP3: system_stable_normal + system_capacity_scores provide sufficient evidence. STOP4: meta.insight_graph.system_states only — no second authority. STOP5: changes scoped to output compilation/presentation. STOP6: deterministic-only path confirmed. STOP7: bounded new section only."
     },
     {
-      "check": "2B — Determinism preserved; no hidden side effects",
+      "check": "2B — Determinism risks surfaced",
       "result": "CONFIRMED",
-      "citation": "Runner-up from top_findings[1] — deterministically sorted by _top_finding_sort_tuple (report_compiler_v1.py:86-104, pure function). why_it_matters from _why_template (L220-228, pure function). ranking_rationale from _build_ranking_rationale (L306-336, pure function). No mutable global state identified. No randomness."
+      "citation": "Risk 1: system_states iteration order — Cursor must sort by system_id (state_engine_v1.py:19) before processing. Risk 2: hand-authored fallback copy — prohibited; surfaced content must come only from deterministic state_codes and capacity scores. Risk 3: capacity score float display — must use bounded precision (e.g. round to 2dp or integer display)."
     },
     {
       "check": "Stage 0 — branch pre-condition",
       "result": "NOTE",
-      "citation": "git status shows current branch: main. Prompt requires branch: feature/results-why-contract-depth. Cursor must checkout correct branch before Stage 3 kernel start. Not a hardening blocker."
+      "citation": "git status at session start shows current branch: main. Prompt requires branch: feature/results-explanation-surfacing-balanced-systems. Cursor must checkout correct branch before Stage 3 kernel start. Not a hardening blocker."
     }
   ]
 }
