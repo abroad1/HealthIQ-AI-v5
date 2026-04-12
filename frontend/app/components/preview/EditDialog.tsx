@@ -90,6 +90,8 @@ export default function EditDialog({
     refMax: '',
     refUnit: '',
     referenceText: '',
+    lowerComparator: '≥' as '>' | '≥',
+    upperComparator: '≤' as '<' | '≤',
     status: 'edited' as ParsedBiomarker['status']
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -116,6 +118,8 @@ export default function EditDialog({
         refMax: r?.max != null && Number.isFinite(r.max) ? String(r.max) : '',
         refUnit: r?.unit ?? biomarker.unit ?? '',
         referenceText: biomarker.referenceText ?? '',
+        lowerComparator: r?.lowerComparator === '>' ? '>' : '≥',
+        upperComparator: r?.upperComparator === '<' ? '<' : '≤',
         status: biomarker.status || 'edited'
       })
       let band = ''
@@ -206,6 +210,8 @@ export default function EditDialog({
         min: hasMin ? refMinN : undefined,
         max: hasMax ? refMaxN : undefined,
         unit: refUnit,
+        ...(hasMin && !hasMax ? { lowerComparator: formData.lowerComparator } : {}),
+        ...(!hasMin && hasMax ? { upperComparator: formData.upperComparator } : {}),
       }
     }
 
@@ -218,6 +224,9 @@ export default function EditDialog({
       referenceText: formData.referenceText.trim() || undefined,
       status: 'edited',
       contextRangeOptions: biomarker.contextRangeOptions,
+      referenceType: biomarker.referenceType,
+      labelledBands: biomarker.labelledBands,
+      matchedLabelledBand: biomarker.matchedLabelledBand,
     }
 
     onSave(editedBiomarker)
@@ -334,6 +343,35 @@ export default function EditDialog({
             )}
           </div>
 
+          {biomarker.referenceType === 'no_lab_range_supplied' && (
+            <div className="rounded-md border border-slate-200 bg-slate-50 p-3 text-sm text-slate-800">
+              This marker has <strong>no reference interval</strong> on your report (some labs omit ranges for derived or
+              calculated results). You may leave reference blank or add one manually below if you have it from
+              elsewhere.
+            </div>
+          )}
+
+          {biomarker.labelledBands && biomarker.labelledBands.length > 0 && (
+            <div className="rounded-md border border-emerald-200 bg-emerald-50/50 p-3 space-y-2">
+              <Label className="text-sm">Lab interpretive bands (from file)</Label>
+              <ul className="text-xs text-muted-foreground space-y-1 list-disc pl-4">
+                {biomarker.labelledBands.map((lb, i) => (
+                  <li key={i}>
+                    <span className="font-medium text-foreground">{lb.bandLabel}</span>
+                    {lb.min != null || lb.max != null
+                      ? ` — ${lb.min ?? '…'}–${lb.max ?? '…'}${lb.unit ? ` ${lb.unit}` : ''}`
+                      : ''}
+                  </li>
+                ))}
+              </ul>
+              {biomarker.matchedLabelledBand ? (
+                <p className="text-xs text-emerald-900 font-medium">
+                  Matched to your value: {biomarker.matchedLabelledBand}
+                </p>
+              ) : null}
+            </div>
+          )}
+
           {biomarker.contextRangeOptions && biomarker.contextRangeOptions.length > 1 && (
             <div className="rounded-md border border-violet-200 bg-violet-50/60 p-3 space-y-2">
               <Label htmlFor="contextBand">Which lab reference band applies?</Label>
@@ -383,7 +421,7 @@ export default function EditDialog({
             </p>
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <Label htmlFor="refMin" className="text-xs">Min</Label>
+                <Label htmlFor="refMin" className="text-xs">Min (lower threshold)</Label>
                 <Input
                   id="refMin"
                   type="number"
@@ -396,7 +434,7 @@ export default function EditDialog({
                 {errors.refMin && <span className="text-xs text-destructive">{errors.refMin}</span>}
               </div>
               <div className="space-y-1">
-                <Label htmlFor="refMax" className="text-xs">Max</Label>
+                <Label htmlFor="refMax" className="text-xs">Max (upper threshold)</Label>
                 <Input
                   id="refMax"
                   type="number"
@@ -409,6 +447,44 @@ export default function EditDialog({
                 {errors.refMax && <span className="text-xs text-destructive">{errors.refMax}</span>}
               </div>
             </div>
+            {formData.refMin.trim() !== '' && formData.refMax.trim() === '' && (
+              <div className="space-y-1">
+                <Label className="text-xs">Comparator (lower bound)</Label>
+                <Select
+                  value={formData.lowerComparator}
+                  onValueChange={(v) =>
+                    setFormData((prev) => ({ ...prev, lowerComparator: v as '>' | '≥' }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value=">">&gt; (strictly greater)</SelectItem>
+                    <SelectItem value="≥">≥ (greater or equal)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            {formData.refMin.trim() === '' && formData.refMax.trim() !== '' && (
+              <div className="space-y-1">
+                <Label className="text-xs">Comparator (upper bound)</Label>
+                <Select
+                  value={formData.upperComparator}
+                  onValueChange={(v) =>
+                    setFormData((prev) => ({ ...prev, upperComparator: v as '<' | '≤' }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="<">&lt; (strictly less)</SelectItem>
+                    <SelectItem value="≤">≤ (less or equal)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="refUnit">Range unit</Label>
               <Input

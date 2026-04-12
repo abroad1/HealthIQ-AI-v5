@@ -3,9 +3,21 @@
  * Keeps parse fidelity, one-sided bounds, and payload shape aligned with backend normalize.py.
  */
 
-import type { ContextRangeOption } from '@/types/parsed';
+import type {
+  ContextRangeOption,
+  LabelledBand,
+  ParsedReferenceRange,
+  ReferenceType,
+} from '@/types/parsed';
 
-export type { ContextRangeOption };
+export type { ContextRangeOption, LabelledBand, ParsedReferenceRange };
+
+const LLM_REFERENCE_TYPES = new Set<string>([
+  'labelled_bands',
+  'applicability_band_selection',
+  'no_lab_range_supplied',
+  'incomplete_or_ambiguous',
+]);
 
 /** Review attention: one-sided thresholds are valid lab intervals, not "incomplete". */
 export type RangeAttention =
@@ -13,14 +25,10 @@ export type RangeAttention =
   | 'one-sided'
   | 'partial'
   | 'missing'
-  | 'context-selection-required';
-
-export interface ParsedReferenceRange {
-  min?: number;
-  max?: number;
-  /** Unit for the reference interval (often matches the marker unit). */
-  unit: string;
-}
+  | 'context-selection-required'
+  | 'labelled-bands-resolved'
+  | 'no-lab-range-supplied'
+  | 'incomplete-or-ambiguous';
 
 export interface ReferenceRangeFromParseResult {
   referenceRange?: ParsedReferenceRange;
@@ -28,6 +36,10 @@ export interface ReferenceRangeFromParseResult {
   referenceText?: string;
   /** Structured contextual intervals when the lab lists multiple bands (BE-W1-PR4). */
   contextRangeOptions?: ContextRangeOption[];
+  /** Parser / derived review-stage reference type (BE-W1-PR5). */
+  referenceType?: ReferenceType;
+  labelledBands?: LabelledBand[];
+  matchedLabelledBand?: string;
 }
 
 function _num(v: unknown): number | undefined {
@@ -72,12 +84,109 @@ export function parseContextRangeOptionsFromRow(b: Record<string, unknown>): Con
   return out;
 }
 
+const ALL_REFERENCE_TYPES: ReferenceType[] = [
+  'bounded_range',
+  'one_sided_threshold',
+  'applicability_band_selection',
+  'labelled_bands',
+  'no_lab_range_supplied',
+  'incomplete_or_ambiguous',
+];
+
+/** Parse `referenceType` / `reference_type` from an API biomarker row. */
+export function parseReferenceTypeFromRow(b: Record<string, unknown>): ReferenceType | undefined {
+  const raw = b.referenceType ?? b.reference_type;
+  if (typeof raw !== 'string' || !raw.trim()) return undefined;
+  const s = raw.trim() as ReferenceType;
+  return ALL_REFERENCE_TYPES.includes(s) ? s : undefined;
+}
+
+/** Parse `labelledBands` / `labelled_bands` from an API biomarker row. */
+export function parseLabelledBandsFromRow(b: Record<string, unknown>): LabelledBand[] {
+  const raw = b.labelledBands ?? b.labelled_bands;
+  if (!Array.isArray(raw) || raw.length === 0) return [];
+  const out: LabelledBand[] = [];
+  for (const item of raw) {
+    if (!item || typeof item !== 'object') continue;
+    const o = item as Record<string, unknown>;
+    const label = String(o.bandLabel ?? o.band_label ?? '').trim() || 'Band';
+    const le =
+      o.lowerExclusive === true || o.lower_exclusive === true || o.lowerExclusive === 'true';
+    const sn =
+      typeof o.sourceSnippet === 'string'
+        ? o.sourceSnippet.trim()
+        : typeof o.source_snippet === 'string'
+          ? o.source_snippet.trim()
+          : undefined;
+    out.push({
+      bandLabel: label,
+      min: _num(o.min),
+      max: _num(o.max),
+      unit: typeof o.unit === 'string' ? o.unit.trim() : '',
+      lowerExclusive: !!le,
+      sourceSnippet: sn || undefined,
+    });
+  }
+  return out;
+}
+
+export function valueFitsLabelledBand(value: number, band: LabelledBand): boolean {
+  const { min, max } = band;
+  if (min !== undefined && max !== undefined) return min <= value && value <= max;
+  if (max !== undefined && min === undefined) return value <= max;
+  if (min !== undefined && max === undefined) {
+    if (band.lowerExclusive) return value > min;
+    return value >= min;
+  }
+  return false;
+}
+
+/** Deterministic first-match band (same order as parser). */
+export function matchLabelledBandFromValue(value: number, bands: LabelledBand[]): LabelledBand | undefined {
+  for (const band of bands) {
+    if (valueFitsLabelledBand(value, band)) return band;
+  }
+  return undefined;
+}
+
+/** Derive review `referenceType` when parser omits bounded/one-sided literals. */
+export function deriveReviewReferenceType(
+  referenceTypeFromParser: ReferenceType | undefined,
+  opts: {
+    referenceRange?: ParsedReferenceRange;
+    contextRangeOptions?: ContextRangeOption[];
+    labelledBands?: LabelledBand[];
+  }
+): ReferenceType | undefined {
+  if (referenceTypeFromParser) {
+    if (referenceTypeFromParser === 'bounded_range' || referenceTypeFromParser === 'one_sided_threshold') {
+      return referenceTypeFromParser;
+    }
+    if (LLM_REFERENCE_TYPES.has(referenceTypeFromParser)) {
+      return referenceTypeFromParser;
+    }
+  }
+  const { referenceRange: r, contextRangeOptions: co, labelledBands: lb } = opts;
+  if (lb && lb.length > 0) return 'labelled_bands';
+  if (co && co.length > 1) return 'applicability_band_selection';
+  if (!r || !_hasAnyRefBound(r)) {
+    return undefined;
+  }
+  const hm = r.min != null && Number.isFinite(r.min);
+  const hx = r.max != null && Number.isFinite(r.max);
+  if (hm && hx) return 'bounded_range';
+  if (hm || hx) return 'one_sided_threshold';
+  return undefined;
+}
+
 /**
  * Build structured range + optional raw text from a single parser biomarker row.
  */
 export function buildReferenceRangeFromParserRow(b: Record<string, unknown>): ReferenceRangeFromParseResult {
   const unit = typeof b.unit === 'string' ? b.unit : '';
   const contextRangeOptions = parseContextRangeOptionsFromRow(b);
+  const labelledBands = parseLabelledBandsFromRow(b);
+  const rtParser = parseReferenceTypeFromRow(b);
 
   let referenceText: string | undefined;
   if (typeof b.rawReferenceText === 'string' && b.rawReferenceText.trim()) {
@@ -92,80 +201,122 @@ export function buildReferenceRangeFromParserRow(b: Record<string, unknown>): Re
     referenceText = (referenceText ? `${referenceText}\n\n` : '') + b.referenceRange.trim();
   }
 
+  if (rtParser === 'no_lab_range_supplied') {
+    return {
+      referenceText,
+      referenceType: 'no_lab_range_supplied',
+      labelledBands: labelledBands.length ? labelledBands : undefined,
+      contextRangeOptions: contextRangeOptions.length ? contextRangeOptions : undefined,
+    };
+  }
+
+  let referenceRange: ParsedReferenceRange | undefined;
+
   if (contextRangeOptions.length > 1) {
     const low = _num(b.ref_low);
     const high = _num(b.ref_high);
     const hasLow = low !== undefined;
     const hasHigh = high !== undefined;
     if (hasLow || hasHigh) {
-      return {
-        referenceRange: {
-          min: hasLow ? low : undefined,
-          max: hasHigh ? high : undefined,
-          unit,
-        },
-        referenceText,
-        contextRangeOptions,
-      };
-    }
-    return { referenceText, contextRangeOptions };
-  }
-
-  if (contextRangeOptions.length === 1) {
-    const o0 = contextRangeOptions[0];
-    if (_hasAnyRefBound({ min: o0.min, max: o0.max, unit: o0.unit || unit })) {
-      const ru = (o0.unit || unit).trim();
-      return {
-        referenceRange: {
-          min: o0.min,
-          max: o0.max,
-          unit: ru || unit,
-        },
-        referenceText,
-        contextRangeOptions,
-      };
-    }
-  }
-
-  const low = _num(b.ref_low);
-  const high = _num(b.ref_high);
-  const hasLow = low !== undefined;
-  const hasHigh = high !== undefined;
-
-  if (hasLow || hasHigh) {
-    return {
-      referenceRange: {
+      referenceRange = {
         min: hasLow ? low : undefined,
         max: hasHigh ? high : undefined,
         unit,
-      },
-      referenceText,
-      contextRangeOptions: contextRangeOptions.length ? contextRangeOptions : undefined,
-    };
-  }
-
-  if (b.referenceRange && typeof b.referenceRange === 'object' && b.referenceRange !== null) {
-    const o = b.referenceRange as Record<string, unknown>;
-    const min = _num(o.min);
-    const max = _num(o.max);
-    const u = typeof o.unit === 'string' && o.unit.trim() ? o.unit : unit;
-    if (min !== undefined || max !== undefined) {
-      return {
-        referenceRange: {
-          min: min !== undefined ? min : undefined,
-          max: max !== undefined ? max : undefined,
-          unit: u,
-        },
-        referenceText,
-        contextRangeOptions: contextRangeOptions.length ? contextRangeOptions : undefined,
+        ...(hasLow && !hasHigh ? { lowerComparator: _inferLowerComparator(referenceText, low!) } : {}),
+        ...(!hasLow && hasHigh ? { upperComparator: _inferUpperComparator(referenceText, high!) } : {}),
+      };
+    }
+  } else if (contextRangeOptions.length === 1) {
+    const o0 = contextRangeOptions[0];
+    if (_hasAnyRefBound({ min: o0.min, max: o0.max, unit: o0.unit || unit })) {
+      const ru = (o0.unit || unit).trim();
+      const hm = o0.min != null && Number.isFinite(o0.min);
+      const hx = o0.max != null && Number.isFinite(o0.max);
+      referenceRange = {
+        min: o0.min,
+        max: o0.max,
+        unit: ru || unit,
+        ...(hm && !hx ? { lowerComparator: _inferLowerComparator(referenceText, o0.min!) } : {}),
+        ...(!hm && hx ? { upperComparator: _inferUpperComparator(referenceText, o0.max!) } : {}),
       };
     }
   }
 
-  if (referenceText) {
-    return { referenceText, contextRangeOptions: contextRangeOptions.length ? contextRangeOptions : undefined };
+  if (!referenceRange) {
+    const low = _num(b.ref_low);
+    const high = _num(b.ref_high);
+    const hasLow = low !== undefined;
+    const hasHigh = high !== undefined;
+
+    if (hasLow || hasHigh) {
+      referenceRange = {
+        min: hasLow ? low : undefined,
+        max: hasHigh ? high : undefined,
+        unit,
+        ...(hasLow && !hasHigh ? { lowerComparator: _inferLowerComparator(referenceText, low!) } : {}),
+        ...(!hasLow && hasHigh ? { upperComparator: _inferUpperComparator(referenceText, high!) } : {}),
+      };
+    } else if (b.referenceRange && typeof b.referenceRange === 'object' && b.referenceRange !== null) {
+      const o = b.referenceRange as Record<string, unknown>;
+      const min = _num(o.min);
+      const max = _num(o.max);
+      const u = typeof o.unit === 'string' && o.unit.trim() ? o.unit : unit;
+      if (min !== undefined || max !== undefined) {
+        const hm = min !== undefined;
+        const hx = max !== undefined;
+        referenceRange = {
+          min: min !== undefined ? min : undefined,
+          max: max !== undefined ? max : undefined,
+          unit: u,
+          ...(hm && !hx && min !== undefined ? { lowerComparator: _inferLowerComparator(referenceText, min) } : {}),
+          ...(!hm && hx && max !== undefined ? { upperComparator: _inferUpperComparator(referenceText, max) } : {}),
+        };
+      }
+    }
   }
-  return { contextRangeOptions: contextRangeOptions.length ? contextRangeOptions : undefined };
+
+  const val = _num(b.value);
+  if (labelledBands.length > 0 && val !== undefined && !referenceRange) {
+    const m = matchLabelledBandFromValue(val, labelledBands);
+    if (m) {
+      const hm = m.min != null && Number.isFinite(m.min);
+      const hx = m.max != null && Number.isFinite(m.max);
+      referenceRange = {
+        min: m.min,
+        max: m.max,
+        unit: (m.unit || unit).trim() || unit,
+        ...(hm && !hx && m.min !== undefined ? { lowerComparator: _inferLowerComparator(referenceText, m.min) } : {}),
+        ...(!hm && hx && m.max !== undefined ? { upperComparator: _inferUpperComparator(referenceText, m.max) } : {}),
+      };
+    }
+  }
+
+  let matchedLabelledBand: string | undefined =
+    typeof b.matchedLabelledBand === 'string'
+      ? b.matchedLabelledBand.trim()
+      : typeof b.matched_labelled_band === 'string'
+        ? b.matched_labelled_band.trim()
+        : undefined;
+  if (!matchedLabelledBand && val !== undefined && labelledBands.length > 0) {
+    const m = matchLabelledBandFromValue(val, labelledBands);
+    if (m) matchedLabelledBand = m.bandLabel;
+  }
+
+  const referenceType = deriveReviewReferenceType(rtParser, {
+    referenceRange,
+    contextRangeOptions,
+    labelledBands,
+  });
+
+  const out: ReferenceRangeFromParseResult = {
+    referenceText,
+    referenceRange,
+    contextRangeOptions: contextRangeOptions.length ? contextRangeOptions : undefined,
+    labelledBands: labelledBands.length ? labelledBands : undefined,
+    matchedLabelledBand,
+    referenceType,
+  };
+  return out;
 }
 
 /**
@@ -176,7 +327,18 @@ export function rangeAttentionLevel(b: {
   referenceRange?: ParsedReferenceRange;
   referenceText?: string;
   contextRangeOptions?: ContextRangeOption[];
+  referenceType?: ReferenceType;
+  matchedLabelledBand?: string;
 }): RangeAttention {
+  const rt = b.referenceType;
+  if (rt === 'no_lab_range_supplied') return 'no-lab-range-supplied';
+  if (rt === 'incomplete_or_ambiguous') return 'incomplete-or-ambiguous';
+  if (rt === 'labelled_bands') {
+    if (b.matchedLabelledBand?.trim()) return 'labelled-bands-resolved';
+    if (b.referenceText?.trim()) return 'partial';
+    return 'missing';
+  }
+
   const opts = b.contextRangeOptions;
   if (opts && opts.length > 1 && !_hasAnyRefBound(b.referenceRange)) {
     return 'context-selection-required';
@@ -329,21 +491,26 @@ export function numericPartForAnalysisPayload(value: number | string): number {
 export function formatReferenceRangeDisplay(b: {
   referenceRange?: ParsedReferenceRange;
   referenceText?: string;
+  matchedLabelledBand?: string;
 }): string {
   const r = b.referenceRange;
   const refText = b.referenceText;
+  let body = '—';
   if (r && (r.min != null || r.max != null)) {
     const u = (r.unit || '').trim();
-    if (r.min != null && r.max != null) return `${r.min}–${r.max}${u ? ` ${u}` : ''}`;
-    if (r.min != null) {
-      const sym = _inferLowerComparator(refText, r.min);
-      return `${sym} ${r.min}${u ? ` ${u}` : ''}`;
+    if (r.min != null && r.max != null) body = `${r.min}–${r.max}${u ? ` ${u}` : ''}`;
+    else if (r.min != null) {
+      const sym = r.lowerComparator ?? _inferLowerComparator(refText, r.min);
+      body = `${sym} ${r.min}${u ? ` ${u}` : ''}`;
+    } else if (r.max != null) {
+      const sym = r.upperComparator ?? _inferUpperComparator(refText, r.max);
+      body = `${sym} ${r.max}${u ? ` ${u}` : ''}`;
     }
-    if (r.max != null) {
-      const sym = _inferUpperComparator(refText, r.max);
-      return `${sym} ${r.max}${u ? ` ${u}` : ''}`;
-    }
+  } else if (b.referenceText && b.referenceText.trim()) {
+    body = b.referenceText.trim();
   }
-  if (b.referenceText && b.referenceText.trim()) return b.referenceText.trim();
-  return '—';
+  if (b.matchedLabelledBand?.trim()) {
+    return body !== '—' ? `${body} — ${b.matchedLabelledBand.trim()}` : `Matched: ${b.matchedLabelledBand.trim()}`;
+  }
+  return body;
 }

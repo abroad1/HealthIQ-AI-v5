@@ -1,59 +1,59 @@
 {
-  "work_id": "BE-W1-PR4",
-  "status": "HARDENED",
   "bus_version": "1.3.1",
+  "work_id": "BE-W1-PR5",
+  "status": "HARDENED",
   "hardened_utc": "2026-04-12T00:00:00Z",
-  "hardened_by": "Claude (Sonnet 4.6) — Stage 2 Prompt Hardening",
+  "hardened_by": "claude-sonnet-4-6",
   "changes": [
     {
       "check": "Front Matter — all five fields",
       "verdict": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md:2-6 — work_id: BE-W1-PR4, branch: feature/contextual-lab-range-extraction-and-selection, risk_level: STANDARD, execution_model: TWO_PHASE_START_FINISH, change_type: MIXED. All five mandatory fields present."
+      "citation": "automation_bus/latest_cursor_prompt.md:2-6 — work_id: BE-W1-PR5, branch: feature/reference-type-modelling-and-review-ux-completion, risk_level: STANDARD, execution_model: TWO_PHASE_START_FINISH, change_type: MIXED. All five mandatory fields present and correct."
     },
     {
       "check": "2A — backend/core/llm/prompts/parsing_prompt_pdf.txt exists and content verified",
       "verdict": "CONFIRMED — GAP REAL",
-      "citation": "backend/core/llm/prompts/parsing_prompt_pdf.txt:4-18 — Current schema fields: id, name, value, unit, reference, raw_reference_text, confidence, ref_low, ref_high. No context_options field exists. Sprint Scope A (structured contextual range extraction) is a real and necessary extension."
+      "citation": "backend/core/llm/prompts/parsing_prompt_pdf.txt:6-27 — Schema fields: id, name, value, unit, reference, raw_reference_text, context_range_options, confidence, ref_low, ref_high. No referenceType field. No labelled_bands array. context_range_options is live from PR4 (lines 14-22). Sprint must add referenceType to schema and a structured labelled_bands block."
     },
     {
       "check": "2A — backend/services/parsing/llm_parser.py exists and content verified",
       "verdict": "CONFIRMED — GAP REAL",
-      "citation": "backend/services/parsing/llm_parser.py:22-37 — ParsedBiomarker Pydantic model fields: id, name, value, unit, reference, confidence, ref_low, ref_high, status, raw_reference_text. No context_options field. Lines 219-292 (_parse_gemini_response): no contextual option handling. Lines 369-382 (output dict): emits rawReferenceText conditionally; no contextOptions. Sprint Scope B is real."
+      "citation": "backend/services/parsing/llm_parser.py:34-53 — ParsedBiomarker Pydantic model fields: id, name, value, unit, reference, confidence, ref_low, ref_high, status, raw_reference_text, context_range_options. No referenceType or labelled_bands field. Output dict lines 435-459 emits contextRangeOptions but no referenceType. Sprint must add model field and output dict key."
     },
     {
       "check": "2A — backend/app/routes/upload.py exists and content verified",
-      "verdict": "CONFIRMED — MINOR GAP",
-      "citation": "backend/app/routes/upload.py:146-148 — rawReferenceText passed through explicitly. No contextOptions pass-through exists. Sprint Scope E (payload handoff for contextOptions) is real."
+      "verdict": "CONFIRMED — LOW-TOUCH",
+      "citation": "backend/app/routes/upload.py:124-149 — Pure pass-through enrichment with SSOT metadata. No Intelligence Core interaction. No scoring logic. New parser fields will flow through automatically once added to parser output dict. No HIGH-risk path touched."
     },
     {
       "check": "2A — frontend/app/types/parsed.ts exists and content verified",
       "verdict": "CONFIRMED — GAP REAL",
-      "citation": "frontend/app/types/parsed.ts:6-27 — ParsedBiomarker interface fields: name, value, unit, status, referenceRange, referenceText. No contextOptions, selectedContextId, or contextSelectionRequired. Sprint Scope C requires additive-only new optional fields."
+      "citation": "frontend/app/types/parsed.ts:15-39 — ParsedBiomarker interface fields: name, value, unit, status, referenceRange, referenceText, contextRangeOptions. No referenceType, no labelledBands. ContextRangeOption interface lines 6-13 exists and is live. Sprint must extend ParsedBiomarker with referenceType union type and labelled-bands structure."
     },
     {
       "check": "2A — frontend/app/lib/uploadReferenceRange.ts exists and content verified",
       "verdict": "CONFIRMED — GAP REAL",
-      "citation": "frontend/app/lib/uploadReferenceRange.ts:7 — RangeAttention type: 'none' | 'one-sided' | 'partial' | 'missing'. No 'context-selection-required' variant. Lines 89-102 (rangeAttentionLevel): no context-selection-required branch. Lines 31-84 (buildReferenceRangeFromParserRow): no contextOptions passthrough. Sprint Scope C confirmed real."
+      "citation": "frontend/app/lib/uploadReferenceRange.ts:15-17 — RangeAttention type: 'none' | 'one-sided' | 'partial' | 'missing' | 'context-selection-required'. Missing new states for labelled-bands-resolved, no-lab-range-supplied, incomplete-or-ambiguous. rangeAttentionLevel lines 174-192: not type-driven. buildReferenceRangeFromParserRow lines 78-169: no referenceType extraction. CRITICAL: referenceRangeToPayload() lines 197-210 MUST remain unchanged — payload contract safe."
     },
     {
       "check": "2A — frontend/app/(app)/upload/page.tsx exists and content verified",
-      "verdict": "CONFIRMED — GAP REAL",
-      "citation": "frontend/app/(app)/upload/page.tsx:226-238 — Biomarker transformer builds referenceRange+referenceText only; no contextOptions passthrough. Lines 354-362 — attention alert guard checks att !== 'none' && att !== 'one-sided'; no 'context-selection-required' guard. Sprint Scope C/E confirmed real."
+      "verdict": "CONFIRMED — MINOR GAP",
+      "citation": "frontend/app/(app)/upload/page.tsx:226-239 — Biomarker transformer builds referenceRange+referenceText+contextRangeOptions. Must also pass through referenceType and labelledBands when present. Attention alert guard lines 356-364 checks att !== 'none' && att !== 'one-sided'; new attention states will be caught automatically once RangeAttention is extended."
     },
     {
       "check": "2A — frontend/app/components/preview/ParsedTable.tsx exists and content verified",
       "verdict": "CONFIRMED — GAP REAL",
-      "citation": "frontend/app/components/preview/ParsedTable.tsx:33-72 — rangeBadge() handles none/missing/one-sided/partial; no context-selection-required badge. Sprint Scope D confirmed real."
+      "citation": "frontend/app/components/preview/ParsedTable.tsx:33-81 — rangeBadge() handles context-selection-required, missing, one-sided, partial, none. Missing badge variants for labelled-bands-resolved, no-lab-range-supplied, incomplete-or-ambiguous. Sprint must add these badge cases."
     },
     {
       "check": "2A — frontend/app/components/preview/EditDialog.tsx exists and content verified",
       "verdict": "CONFIRMED — GAP REAL",
-      "citation": "frontend/app/components/preview/EditDialog.tsx:79-433 — Handles name/value/unit/refMin/refMax/refUnit/referenceText only. No contextual options UI (no context selector, no option list, no selectedContextId). Sprint Scope D confirmed real."
+      "citation": "frontend/app/components/preview/EditDialog.tsx:386-411 — refMin/refMax inputs are plain type=number — no comparator selector. Context band selection lines 337-372 is live from PR4, driven by biomarker.contextRangeOptions?.length > 1 — must not regress. No labelled-bands display section. No no-range-supplied neutral state. Sprint must add comparator selector (narrowly scoped to one-sided mode), labelled-bands display, and no-range-supplied state."
     },
     {
       "check": "2A — No duplicate authority source",
       "verdict": "CONFIRMED",
-      "citation": "frontend/app/lib/uploadReferenceRange.ts:107-120 (referenceRangeToPayload) is the single payload contract. context_options are declared assistive/review-stage only in prompt Arch Decision 1. No second SSOT or range authority created."
+      "citation": "frontend/app/lib/uploadReferenceRange.ts:197-210 (referenceRangeToPayload) is the single payload contract and MUST remain unchanged. referenceType is declared review-stage modelling only (prompt Arch Decision 1-2). No second scoring authority created."
     },
     {
       "check": "2A — Forbidden HIGH-risk files not in scope",
@@ -61,39 +61,34 @@
       "citation": "Files in scope: backend/core/llm/prompts/parsing_prompt_pdf.txt, backend/services/parsing/llm_parser.py, backend/app/routes/upload.py, frontend/app/types/parsed.ts, frontend/app/lib/uploadReferenceRange.ts, frontend/app/(app)/upload/page.tsx, frontend/app/components/preview/ParsedTable.tsx, frontend/app/components/preview/EditDialog.tsx. NOT in scope: backend/ssot/, backend/core/pipeline/, backend/core/analytics/, run_work_package.py, golden_gate_local.py, update_cursor_status.py."
     },
     {
-      "check": "2A — No tooling leakage",
-      "verdict": "CONFIRMED",
-      "citation": "No .codex/, .vscode/, AGENTS.md mentioned in scope. No stash-as-convenience use identified."
-    },
-    {
       "check": "2B — Behavioural scope defined",
       "verdict": "CONFIRMED",
-      "citation": "Prompt lines 196-258: bounded to parse prompt, parser model, upload route passthrough, TS types, rangeAttentionLevel, ParsedTable badge, EditDialog contextual UI, page transformer. Non-goals (lines 249-258): no scoring policy, no fallback ranges, no second authority, no value-level inequality parsing, no broad parser redesign, no results/narrative work."
+      "citation": "Prompt §Scope lines 235-335: bounded to PDF prompt/schema extension, parser model, upload route passthrough, TS contract types, rangeAttentionLevel, ParsedTable badges, EditDialog comparator + labelled-bands + no-range-supplied, page transformer passthrough. Non-goals (lines 339-348): no scoring policy, no fallback ranges, no second authority, no results/narrative, no value-level inequality parsing, no broad parser redesign."
     },
     {
       "check": "2B — Regression targets confirmed",
       "verdict": "CONFIRMED",
-      "citation": "Prompt §Regression Targets (lines 305-333): PDF parse extraction (raw text preserved, context options extracted when present, one-sided inside options valid), review/edit behaviour (context workflow, selection populates min/max/unit, raw text visible, manual override, distinct attention state), analysis handoff (existing referenceRange contract unchanged, no scoring changes), safety/determinism (no fallback, no second authority, same choice = same payload, no silent inference)."
+      "citation": "Prompt §Regression Targets lines 397-432: parse extraction (raw text preserved, referenceType emitted, labelled_bands and context_range_options returned), review/edit behaviour (type-driven, auto-resolve labelled bands, applicability bands require confirmation, comparator editing works, no-range-supplied distinct valid state), analysis handoff (referenceRange contract unchanged, no scoring changes), PR4 non-regression (applicability-band selection cases still work)."
     },
     {
       "check": "2B — STOP conditions reviewed; none triggered",
       "verdict": "CONFIRMED",
-      "citation": "STOP1: no scoring change required. STOP2: prompt-level extraction bounded by prompt Arch Decision 6 (omission/null on low confidence). STOP3: contextOptions are assistive-only (Arch Decision 1). STOP4: single active referenceRange contract preserved (referenceRangeToPayload unchanged). STOP5: user confirmation required when multiple options (Arch Decision 2) — no silent inference. STOP6: value-level inequality explicitly out of scope (prompt lines 186-188, STOP6). STOP7: EditDialog/ParsedTable changes are bounded additions, not broad flow redesign."
+      "citation": "STOP1: no scoring change required. STOP2: LLM can emit referenceType stably as a new JSON field; no broad parser rewrite needed. STOP3: referenceType is review-stage modelling, not second range authority. STOP4: referenceRangeToPayload() unchanged. STOP5: applicability bands preserve user confirmation per prompt Arch Decision 4. STOP6: no_lab_range_supplied emittable conservatively per prompt instructions. STOP7: value-level inequality explicitly out of scope (prompt lines 225-229). STOP8: changes are bounded additions to specific seam files, not broad flow redesign."
     },
     {
       "check": "2B — Determinism risks surfaced",
       "verdict": "CONFIRMED",
-      "citation": "Risk 1: Gemini non-determinism for contextual extraction is pre-existing and accepted; mitigated by omission/null model (prompt §A, Arch Decision 6). Risk 2: rangeAttentionLevel new 'context-selection-required' branch — must fire when contextOptions.length > 1 AND no selectedContextId; must not conflict with 'one-sided' or 'partial'. Risk 3: buildReferenceRangeFromParserRow contextOptions passthrough must be additive and must not alter existing ref_low/ref_high logic for simple markers. Risk 4: All three caller sites (page.tsx, ParsedTable.tsx, uploadReferenceRange.ts) must be updated atomically to avoid TypeScript type mismatches."
+      "citation": "Risk 1: LLM non-determinism for referenceType is accepted; mitigated by conservative emission rules in prompt. Risk 2: labelled-band auto-resolution from measured value must be deterministic — same parsed value + same bands = same matched band; no LLM call at resolve time. Risk 3: applicability-band selection requires user confirmation — no silent auto-selection; determinism preserved. Risk 4: buildReferenceRangeFromParserRow passthrough for referenceType and labelledBands must be additive and must not alter existing ref_low/ref_high path for simple markers (lines 78-169). Risk 5: PR4 context-selection-required path (uploadReferenceRange.ts:181-183) must remain intact alongside new type-driven logic."
     },
     {
       "check": "2B — Intelligence Core not touched",
       "verdict": "CONFIRMED",
-      "citation": "No root cause compilers, signal evaluators, InsightGraph construction, or output assembly mechanisms in scope. STANDARD risk level is correct. No risk upgrade required."
+      "citation": "No root cause compilers, signal evaluators, InsightGraph construction, analytical pipeline logic, or output assembly mechanisms in scope. STANDARD risk level is correct. No risk upgrade required."
     },
     {
       "check": "No-op protection",
       "verdict": "CONFIRMED — NOT A NO-OP",
-      "citation": "All 8 gaps verified by reading actual source content: context_options absent from prompt schema (parsing_prompt_pdf.txt:4-18), ParsedBiomarker model (llm_parser.py:22-37), upload route passthrough (upload.py:146-148), TS interface (parsed.ts:6-27), RangeAttention type (uploadReferenceRange.ts:7), rangeAttentionLevel() (uploadReferenceRange.ts:89-102), rangeBadge() (ParsedTable.tsx:33-72), EditDialog contextual UI (EditDialog.tsx:79-433)."
+      "citation": "All gaps verified by reading actual source content: no referenceType in prompt schema (parsing_prompt_pdf.txt:6-27), no referenceType in ParsedBiomarker model (llm_parser.py:34-53), no referenceType in output dict (llm_parser.py:435-459), no referenceType in TS interface (parsed.ts:15-39), no new RangeAttention states (uploadReferenceRange.ts:15-17), no type-driven attention logic (uploadReferenceRange.ts:174-192), no new badge cases (ParsedTable.tsx:33-81), no comparator selector or labelled-bands UI (EditDialog.tsx:386-411)."
     }
   ]
 }

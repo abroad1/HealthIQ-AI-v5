@@ -36,6 +36,8 @@ export default function ParsedTable({
       referenceRange: b.referenceRange,
       referenceText: b.referenceText,
       contextRangeOptions: b.contextRangeOptions,
+      referenceType: b.referenceType,
+      matchedLabelledBand: b.matchedLabelledBand,
     })
     const noUnit = !b.unit?.trim()
     if (noUnit) {
@@ -43,6 +45,28 @@ export default function ParsedTable({
         <Badge variant="destructive" className="gap-1 font-normal">
           <AlertCircle className="h-3 w-3" />
           Unit required
+        </Badge>
+      )
+    }
+    if (att === 'no-lab-range-supplied') {
+      return (
+        <Badge variant="outline" className="gap-1 font-normal border-slate-300 text-slate-800 bg-slate-100">
+          No lab range
+        </Badge>
+      )
+    }
+    if (att === 'incomplete-or-ambiguous') {
+      return (
+        <Badge variant="outline" className="gap-1 font-normal border-amber-500 text-amber-950 bg-amber-50">
+          <AlertTriangle className="h-3 w-3" />
+          Needs clarification
+        </Badge>
+      )
+    }
+    if (att === 'labelled-bands-resolved') {
+      return (
+        <Badge variant="outline" className="gap-1 font-normal border-emerald-400 text-emerald-950 bg-emerald-50">
+          Interpretive match
         </Badge>
       )
     }
