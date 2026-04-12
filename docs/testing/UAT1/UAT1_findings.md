@@ -30,7 +30,7 @@ There are no current core-path blockers in the latest manual run, but there are 
 
 Authoritative grouped status. Full write-ups remain in **Detailed findings** below.
 
-**Last updated:** 2026-04-11
+**Last updated:** 2026-04-12
 
 ### Recently completed
 - **UAT-001** — **Completed** — HbA1c dual-unit governance fix merged; `mmol/mol` no longer blocks analysis start and only canonical `hba1c` now feeds Layer B analysis.
@@ -53,6 +53,8 @@ Authoritative grouped status. Full write-ups remain in **Detailed findings** bel
 | UAT-020 | Open | Open — awaiting grouped remediation wave |
 | UAT-021 | Open | Open — awaiting grouped remediation wave |
 | UAT-022 | Open | Open — awaiting grouped remediation wave |
+| UAT-027 | Open | Open — awaiting grouped remediation wave |
+| UAT-028 | Open | Open — awaiting grouped remediation wave |
 
 ### Wave 3 — Questionnaire usability and repeat-user context
 | ID | Status | Current status |
@@ -357,6 +359,28 @@ Authoritative grouped status. Full write-ups remain in **Detailed findings** bel
 **Status:** Open  
 **Current status:** Open — investigated; fix not yet implemented (Wave 1).
 
+### UAT-027
+**Stage:** Results / Hero interpretation  
+**Title:** Hero says there was a close call but does not show the competing finding  
+**Expected:** If the hero says multiple findings were close, the user should be shown the secondary competing finding and why it lost.  
+**Actual:** The hero states “Close call between top findings” but does not identify the secondary finding.  
+**Severity:** High  
+**Type:** UX / trust / explanation quality  
+**Status:** Open  
+**Current status:** Open — awaiting grouped remediation wave (Wave 2).  
+**Recommendation:** Surface the competing finding and concise rationale for why the lead concern won.
+
+### UAT-028
+**Stage:** Results / Root-cause / Why  
+**Title:** Root-cause analysis lacks rich explanatory narrative  
+**Expected:** The Why layer should explain the reasoning behind the score and hypothesis in a coherent, clinically literate narrative.  
+**Actual:** The results show structured hypothesis fragments and evidence bullets, but not a deep explanatory walkthrough of why the system reached this conclusion.  
+**Severity:** High  
+**Type:** Analysis quality / narrative depth  
+**Status:** Open  
+**Current status:** Open — awaiting grouped remediation wave (Wave 2).  
+**Recommendation:** Surface a proper explanatory Why narrative that translates structured root-cause reasoning into clear, personalised interpretation.
+
 ---
 
 ## Triage snapshot
@@ -378,6 +402,8 @@ None currently confirmed in the latest successful end-to-end run.
 - UAT-020 — Supporting-marker logic too opaque
 - UAT-021 — Clinician report too thin
 - UAT-022 — Gemini narrative may not be active
+- UAT-027 — Hero “close call” without competing finding
+- UAT-028 — Root-cause Why lacks rich narrative
 
 ### Important but not blocking
 - UAT-006 — Resting heart rate missing
@@ -417,6 +443,8 @@ None currently confirmed in the latest successful end-to-end run.
 - UAT-020
 - UAT-021
 - UAT-022
+- UAT-027
+- UAT-028
 
 ### 4. Minor frontend polish and lifecycle issues
 - UAT-004
@@ -429,6 +457,6 @@ None currently confirmed in the latest successful end-to-end run.
 If prioritising the next work pass, the highest-value investigations/fixes are:
 
 1. Verify whether Gemini narrative generation is actually firing and what contract it receives (UAT-022)
-2. Improve user-facing interpretation quality and remove internal governance/debug language (UAT-017, UAT-018, UAT-020, UAT-021)
+2. Improve user-facing interpretation quality and remove internal governance/debug language (UAT-017, UAT-018, UAT-020, UAT-021); surface close-call runner-up context where claimed (UAT-027); deepen the Why / root-cause walkthrough beyond bullets (UAT-028)
 3. Address parsing-review fidelity and editable range control (UAT-005, UAT-016)
 4. Redesign questionnaire flow around sections, reuse, and necessity audit (UAT-011, UAT-012, UAT-013, UAT-014)
