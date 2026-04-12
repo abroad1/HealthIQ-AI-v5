@@ -1,121 +1,126 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "BE-W1-PR2",
+  "work_id": "BE-W1-PR3",
   "status": "HARDENED",
   "hardened_utc": "2026-04-12T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
-  "content_review": "NOT_APPLICABLE — no governed SSOT content files touched. All changes are within the upload-review seam: frontend components, display helpers, type definitions. Backend upload.py, llm_parser.py, deterministic_parser.py read and verified but no backend SSOT or scoring-policy files in scope.",
-  "behaviour_review": "COMPLETE — MIXED correct. This sprint changes how parsed biomarker state is displayed and edited before analysis submission. It affects: (1) how inequality-style reference values are rendered in the review table; (2) what the user can enter in the edit dialog value field; (3) how raw reference text is presented as context. These changes affect the quality of user-corrected input entering analysis, even though analytical scoring logic is not touched. Determinism preserved — same reviewed input produces same analysis payload via unchanged referenceRangeToPayload() (uploadReferenceRange.ts:100-113). No hidden repair logic permitted. No second authority source introduced. Three determinism risks surfaced: (1) formatReferenceRangeDisplay() currently coerces all one-sided bounds to ≤/≥ — if sprint preserves original < vs > from referenceText, display must not affect payload; (2) EditDialog value field change from type=number to allow string — validation must not silently accept bad data; (3) referenceText read-only status change must not break existing editable flow for users who want to correct it.",
+  "content_review": "NOT_APPLICABLE — no SSOT content files (biomarkers.yaml, lifestyle_registry.yaml, questionnaire.json) in scope. Changes are confined to: PDF parse prompt, LLM parser model and response, and frontend upload-review seam.",
+  "behaviour_review": "COMPLETE — MIXED correct. Sprint changes PDF extraction behaviour (what the LLM returns in the reference string), parse response contract (new or enriched fields), and upload-review attention classification (new one-sided state distinct from partial). These changes affect user-input interpretation upstream of analysis, even though scoring policy and analytics pipeline are not touched. Determinism: LLM parse output is inherently non-deterministic (pre-existing condition). rangeAttentionLevel() and buildReferenceRangeFromParserRow() are deterministic given the same parse output — no change to this guarantee. referenceRangeToPayload() must remain unchanged (payload contract). Regression: edit flow and analysis payload handoff must survive — EditDialog.tsx and the payload shape must not break.",
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: BE-W1-PR2"
+      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: BE-W1-PR3"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/parse-inequalities-and-rich-reference-text"
+      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/pdf-parse-one-sided-ranges-and-rich-reference-text"
     },
     {
       "check": "Front Matter — risk_level HIGH",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:4 — HIGH. Stage 1C (lines 88-98): sprint changes governed user-supplied input entering analysis (parse fidelity, user correction behaviour). No downgrade permitted."
+      "citation": "automation_bus/latest_cursor_prompt.md:5 — HIGH. Stage 1C (lines 92-105): sprint changes governed parse extraction truth and review classification behaviour for user-supplied lab data before analysis submission. No downgrade permitted."
     },
     {
       "check": "Front Matter — execution_model TWO_PHASE_START_FINISH",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH"
+      "citation": "automation_bus/latest_cursor_prompt.md:6 — TWO_PHASE_START_FINISH"
     },
     {
       "check": "Front Matter — change_type MIXED",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:6 — MIXED: UX behaviour changes (BEHAVIOUR) + governed parse output surfacing (MIXED per SOP §4 — new display of governed content consumed downstream by analysis)."
+      "citation": "automation_bus/latest_cursor_prompt.md:7 — MIXED: PDF parse extraction (BEHAVIOUR) + parse response contract (BEHAVIOUR) + frontend attention classification (BEHAVIOUR) + prompt/schema content update (CONTENT). MIXED governs using BEHAVIOUR controls per SOP §4."
     },
     {
-      "check": "2A — backend/app/routes/upload.py exists; parser output fields confirmed",
+      "check": "2A — backend/core/llm/prompts/parsing_prompt_pdf.txt exists and content verified",
+      "result": "CONFIRMED — GAP SURFACED",
+      "citation": "backend/core/llm/prompts/parsing_prompt_pdf.txt:46 — 'Skip qualitative results, ranges, or non-numeric data'. This instruction actively prevents the LLM from preserving multi-line or contextual reference text (sex-specific, pregnancy, life-stage blocks). It is the primary upstream cause of contextual reference text being lost during PDF extraction. Must be removed or replaced. Also: schema at lines 4-18 has no raw_reference_text or comparator field — LLM cannot return structured contextual blocks or strict inequality semantics. Lines 52-57 describe reference range parsing but do not instruct the LLM to preserve strict vs weak inequality symbols (< vs ≤, > vs ≥) in the reference string."
+    },
+    {
+      "check": "2A — backend/services/parsing/llm_parser.py exists; LLMParser path confirmed for PDF",
       "result": "CONFIRMED",
-      "citation": "backend/app/routes/upload.py:128-145 — enriches biomarkers with SSOT metadata; does not modify range fields. Output dict keys confirmed via llm_parser.py:333-342: { id, name, value, unit, referenceRange (raw string), confidence, ref_low (float|None), ref_high (float|None), healthStatus }. deterministic_parser.py:68-79 emits same shape with referenceRange: '' and ref_low/ref_high: null."
+      "citation": "backend/services/parsing/llm_parser.py:48-50 — 'application/pdf' maps to 'parsing_prompt_pdf.txt'. Lines 278-281: PDF files sent as raw multimodal input (input_files) directly to Gemini — prompt template is used as-is, no text conversion. Lines 223-243: _parse_gemini_response() calls _parse_reference_range(biomarker_data.get('reference', '')) for each biomarker. This confirms parsing_prompt_pdf.txt is the sole authority prompt for the live PDF parse path."
     },
     {
-      "check": "2A — llm_parser.py _parse_reference_range() confirmed handles inequality symbols",
+      "check": "2A — llm_parser.py ParsedBiomarker model and response dict confirmed; no raw_reference_text field",
       "result": "CONFIRMED",
-      "citation": "backend/services/parsing/llm_parser.py:161-188 — patterns include r'<\\s*(\\d+(?:\\.\\d+)?)' (line 173) and r'>\\s*(\\d+(?:\\.\\d+)?)' (line 174) and r'≤\\s*(\\d+(?:\\.\\d+)?)' (line 175) and r'≥\\s*(\\d+(?:\\.\\d+)?)' (line 176). For < and ≤ patterns: returns (None, float(group1)) at line 182. For > and ≥ patterns: returns (float(group1), None) at line 184. Backend correctly emits one-sided ref_low/ref_high from inequality reference strings."
+      "citation": "backend/services/parsing/llm_parser.py:21-31 — ParsedBiomarker fields: id: str, name: str, value: float, unit: str, reference: str, confidence: float, ref_low: Optional[float], ref_high: Optional[float], status: Optional[str]. No raw_reference_text or comparator field. Lines 333-343: response dict emits { id, name, value, unit, 'referenceRange': biomarker.reference (raw string), confidence, ref_low, ref_high, healthStatus }. No 'reference' key in the dict — raw string goes under 'referenceRange'."
     },
     {
-      "check": "2A — llm_parser.py value field type confirmed float-only — inequality values in value field would be silently dropped",
-      "result": "CONFIRMED — RISK SURFACED",
-      "citation": "backend/services/parsing/llm_parser.py:25 — ParsedBiomarker.value: float = Field(...). If Gemini returns an inequality as the VALUE (e.g. '<0.05'), pydantic coercion fails; biomarker is silently skipped at line 244 (except block continues). Sprint scope does not require fixing this — Gemini typically returns numeric values; inequality context lives in the reference field. Cursor must not change this behaviour without explicit re-authorisation."
-    },
-    {
-      "check": "2A — frontend/app/(app)/upload/page.tsx exists; parse row mapping confirmed correct",
+      "check": "2A — _parse_reference_range() one-sided extraction confirmed correct",
       "result": "CONFIRMED",
-      "citation": "frontend/app/(app)/upload/page.tsx:218-229 — uses buildReferenceRangeFromParserRow(row) from uploadReferenceRange.ts (line 220). Value passed through as number|string (line 224). referenceRange and referenceText from helper (line 221). This mapping is correct and complete — no defect in page.tsx transformation."
+      "citation": "backend/services/parsing/llm_parser.py:161-188 — patterns at lines 172-176 handle < (returns None, float), > (returns float, None), ≤ (returns None, float), ≥ (returns float, None). Logic at lines 180-186 correctly maps these. One-sided ref_low/ref_high correctly extracted from the reference string when present. However: comparator semantics (< vs ≤, > vs ≥) are lost — only the numeric bound is returned. The reference string must therefore preserve the exact symbol for the frontend display layer to recover it via _comparatorBeforeBound (uploadReferenceRange.ts:152-191)."
     },
     {
-      "check": "2A — frontend/app/lib/uploadReferenceRange.ts exists; one-sided bound capture confirmed correct",
+      "check": "2A — backend/app/routes/upload.py exists; response shape confirmed",
       "result": "CONFIRMED",
-      "citation": "frontend/app/lib/uploadReferenceRange.ts:41-55 — buildReferenceRangeFromParserRow(): ref_low/ref_high independently resolved (lines 41-43), one-sided referenceRange emitted when hasLow OR hasHigh (line 46). Lines 128-141: formatReferenceRangeDisplay() formats one-sided as '≥ X' (line 136) or '≤ X' (line 137). Lib is correct. Real defect: display coerces original '< 200' to '≤ 200' — strict inequality distinction lost when numeric bounds exist."
+      "citation": "backend/app/routes/upload.py:333-343 — biomarker dict keys confirmed: id, name, value, unit, referenceRange (= biomarker.reference raw string), confidence, ref_low, ref_high, healthStatus. Lines 128-145: SSOT enrichment adds 'ssot' block but does not touch range fields. No structural change needed in upload.py unless a new raw_reference_text field is added to ParsedBiomarker — in that case line 333 must emit it under a key readable by buildReferenceRangeFromParserRow (which reads b.reference at uploadReferenceRange.ts:34)."
     },
     {
-      "check": "2A — frontend/app/lib/uploadReferenceRange.ts: inequality coercion defect confirmed",
-      "result": "CONFIRMED — DEFECT",
-      "citation": "frontend/app/lib/uploadReferenceRange.ts:136-137 — formatReferenceRangeDisplay() always renders max-only bound as '≤ X' and min-only bound as '≥ X', regardless of whether the original reference text used strict < or >. When referenceText carries '< 200', the displayed format '≤ 200' misrepresents the lab's original strict bound. Fix must use referenceText to recover original inequality direction where present, without affecting referenceRangeToPayload() (lines 100-113) which is payload-only and must not be changed."
-    },
-    {
-      "check": "2A — frontend/app/components/preview/EditDialog.tsx exists; value field blocks inequality strings",
-      "result": "CONFIRMED — DEFECT",
-      "citation": "frontend/app/components/preview/EditDialog.tsx:249 — value input uses type='number'. Browser strips non-numeric characters including inequality symbols. Line 122: validation calls parseFloat(formData.value) and checks isNaN(numValue) — rejects any non-numeric value. If a user attempts to enter a value like '<0.05', the input field prevents this entirely. Sprint must make value field accept strings (matching ParsedBiomarker.value: number | string from parsed.ts:10)."
-    },
-    {
-      "check": "2A — frontend/app/components/preview/EditDialog.tsx: referenceText presented as editable input, not read-only assistive",
-      "result": "CONFIRMED — DEFECT",
-      "citation": "frontend/app/components/preview/EditDialog.tsx:341-349 — referenceText field is a standard mutable <Input> with onChange handler. There is no read-only display, no visual distinction from user-entered data, and no guidance that it represents the lab's original raw text. The user can accidentally overwrite the original parsed reference context. Sprint requirement §4 (prompt lines 136-143): raw parsed values 'must be selectable/copyable or otherwise clearly presented as a read-only assistive field'."
-    },
-    {
-      "check": "2A — frontend/app/components/preview/ParsedTable.tsx exists; inequality and rich text display confirmed working",
+      "check": "2A — frontend/app/lib/uploadReferenceRange.ts exists; buildReferenceRangeFromParserRow mapping confirmed",
       "result": "CONFIRMED",
-      "citation": "frontend/app/components/preview/ParsedTable.tsx:169 — formatReferenceRangeDisplay(biomarker) renders range in Range column. Lines 33-64: rangeBadge() uses rangeAttentionLevel() to show 'Range incomplete' (partial) or 'Range needed' (missing). Attention UX from BE-W1-PR1 is present and must be preserved. No regression target for ParsedTable attention UX beyond preservation."
+      "citation": "frontend/app/lib/uploadReferenceRange.ts:30-78 — buildReferenceRangeFromParserRow: reads b.reference (string, line 34) and b.referenceRange (string, line 37) into referenceText. Reads b.ref_low (line 41) and b.ref_high (line 42) for numeric bounds. Frontend correctly receives one-sided bounds when backend sends ref_low or ref_high. _comparatorBeforeBound (lines 152-191) already recovers < vs > from referenceText. This pipeline is correct and must be preserved."
     },
     {
-      "check": "2A — frontend/app/types/parsed.ts exists; ParsedBiomarker type confirmed supports string values",
-      "result": "CONFIRMED",
-      "citation": "frontend/app/types/parsed.ts:10 — value: number | string. referenceRange?: { min?: number; max?: number; unit: string } at line 23 (already updated in BE-W1-PR1 — min/max are optional). referenceText?: string at line 26. Type layer already supports the required shapes. The only type gap is the value field — string is allowed by the type but EditDialog.tsx:249 blocks it at the input layer."
+      "check": "2A — rangeAttentionLevel confirmed: one-sided currently returns 'partial', not 'missing'",
+      "result": "CONFIRMED — UX DEFECT CONFIRMED",
+      "citation": "frontend/app/lib/uploadReferenceRange.ts:83-95 — rangeAttentionLevel: (hasMin && hasMax) → 'none'; (hasMin || hasMax || hasText) → 'partial'; neither → 'missing'. A one-sided threshold (hasMin XOR hasMax) correctly returns 'partial', not 'missing'. But ParsedTable.tsx:56-63 renders 'partial' as badge label 'Range incomplete' with AlertTriangle — this label is misleading for valid one-sided thresholds. RangeAttention type (line 6) is 'none' | 'partial' | 'missing' — no distinct 'one-sided' state exists. Sprint must add 'one-sided' as a new distinct state and update both rangeAttentionLevel and ParsedTable."
     },
     {
-      "check": "2A — No duplicate authority source for reference ranges confirmed",
+      "check": "2A — frontend/app/components/preview/ParsedTable.tsx exists; badge rendering confirmed",
       "result": "CONFIRMED",
-      "citation": "Single authority chain: lab parser (llm_parser.py) or user edit (EditDialog.tsx) → uploadReferenceRange helpers → upload/page.tsx → analysis payload → normalize.py. No SSOT range registry accessed. Consistent with STOP condition 3 and non-goal (prompt line 203): 'no new second authority source for biomarker ranges'."
+      "citation": "frontend/app/components/preview/ParsedTable.tsx:33-64 — rangeBadge(): att === 'missing' → 'Range needed' badge (amber/secondary). att === 'partial' → 'Range incomplete' badge (amber/outline). No 'one-sided' branch. After rangeAttentionLevel is updated to emit 'one-sided', ParsedTable must add a new branch for 'one-sided' with a distinct neutral label (e.g. 'One-sided range') rather than the alarming 'Range incomplete'. Existing 'partial' branch can remain for text-only partial cases."
     },
     {
-      "check": "2A — Rich reference text capture confirmed working end-to-end",
+      "check": "2A — frontend/app/components/preview/EditDialog.tsx exists; confirmed no changes required",
       "result": "CONFIRMED",
-      "citation": "uploadReferenceRange.ts:34-39 — captures b.reference (string) and b.referenceRange (string) into referenceText. ParsedTable.tsx:169 — displays referenceText via formatReferenceRangeDisplay() when no numeric bounds. editDialog.tsx:105 — initialises formData.referenceText from biomarker.referenceText. Capture and basic display are present. Gap: for complex markers (e.g. prolactin) with multi-line text, the single-line Input in EditDialog truncates without visual indication — prominent multi-line surfacing needed."
+      "citation": "frontend/app/components/preview/EditDialog.tsx:79-433 — EditDialog already supports referenceText display with copy button and unlock-to-edit flow (lines 347-398). Min/max/unit edit fields intact (lines 309-344). parseBiomarkerValueForReview validates value field (line 123). Edit flow is already correct from BE-W1-PR2 — no changes required in this sprint. Payload handoff via referenceRangeToPayload() (uploadReferenceRange.ts:100-113) is unaffected."
     },
     {
-      "check": "2B — Behavioural scope defined; Intelligence Core confirmed not touched",
+      "check": "2A — frontend/app/types/parsed.ts exists; type coverage confirmed sufficient",
       "result": "CONFIRMED",
-      "citation": "Prompt non-goals (lines 199-207): no scoring-policy changes, no fallback-range behaviour, no parser rewrite, no results-page/narrative/Gemini work, no questionnaire work, no second authority source. Sprint scope confirmed to: EditDialog.tsx, formatReferenceRangeDisplay in uploadReferenceRange.ts, ParsedTable.tsx (preservation only), upload/page.tsx (no change needed). No pipeline, analytics, ssot, or core/ files touched."
+      "citation": "frontend/app/types/parsed.ts:22-27 — ParsedBiomarker already has referenceRange?: { min?: number; max?: number; unit: string } and referenceText?: string. RangeAttention type change is in uploadReferenceRange.ts not parsed.ts — no type changes needed in parsed.ts unless a new comparator field is added to ParsedBiomarker. Not required: _comparatorBeforeBound already reads the symbol from referenceText at runtime."
     },
     {
-      "check": "2B — Regression targets confirmed and testable",
+      "check": "2A — frontend/app/(app)/upload/page.tsx alert banner; one-sided attention check confirmed",
+      "result": "CONFIRMED — NOTE",
+      "citation": "frontend/app/(app)/upload/page.tsx:354-370 — amber alert triggered when any marker has rangeAttentionLevel !== 'none'. After 'one-sided' is added as a new state, one-sided thresholds will still trigger this alert unless the condition is updated to exclude 'one-sided'. Prompt §1 (lines 113-119): valid one-sided thresholds must not be treated as incomplete. Alert banner logic should be updated to exclude 'one-sided' from its trigger condition — it is not an attention-required case."
+    },
+    {
+      "check": "2A — No duplicate authority source for reference ranges",
       "result": "CONFIRMED",
-      "citation": "Prompt §Regression Targets (lines 249-284): one-sided bounds survive parse→review→edit→payload; inequality cases not silently broken in UX; rich reference text preserved where captured; raw parsed value usable in edit; edited one-sided entries persist; no regression to normal min/max editing; corrected values still flow through existing payload contract (referenceRangeToPayload() at uploadReferenceRange.ts:100-113 — unchanged). All verifiable via targeted tests and browser walk-through."
+      "citation": "Single authority chain confirmed: lab PDF → parsing_prompt_pdf.txt → LLMParser → upload.py → buildReferenceRangeFromParserRow → review/edit → referenceRangeToPayload → analysis payload. No SSOT range registry accessed in this path. STOP condition 3 not triggered."
+    },
+    {
+      "check": "2A — Forbidden files confirmed not in scope",
+      "result": "CONFIRMED",
+      "citation": "Files in scope: backend/core/llm/prompts/parsing_prompt_pdf.txt, backend/services/parsing/llm_parser.py, backend/app/routes/upload.py (minor or no change), frontend/app/lib/uploadReferenceRange.ts, frontend/app/components/preview/ParsedTable.tsx, frontend/app/(app)/upload/page.tsx. NOT touched: backend/ssot/, backend/core/pipeline/, backend/core/analytics/, backend/scripts/run_work_package.py, backend/scripts/golden_gate_local.py, backend/scripts/update_cursor_status.py."
+    },
+    {
+      "check": "2B — Behavioural scope defined; all Intelligence Core confirmed not touched",
+      "result": "CONFIRMED",
+      "citation": "Prompt non-goals (lines 214-222): no scoring-policy changes, no fallback-range behaviour, no broad parser redesign, no results-page/narrative work, no questionnaire work, no second authority source. Sprint scope: parsing_prompt_pdf.txt (extraction prompt), llm_parser.py (model + response), uploadReferenceRange.ts (RangeAttention type + rangeAttentionLevel + formatReferenceRangeDisplay), ParsedTable.tsx (badge for one-sided), page.tsx (alert condition). Intelligence Core (pipeline, analytics, InsightGraph) not touched."
+    },
+    {
+      "check": "2B — Regression targets confirmed and testable within scope",
+      "result": "CONFIRMED",
+      "citation": "Prompt §Regression Targets (lines 268-293): (1) parser captures comparator semantics — testable via parsing_prompt_pdf.txt change + unit test on _parse_reference_range with inequality input; (2) one-sided thresholds not mislabeled — testable via updated rangeAttentionLevel returning 'one-sided'; (3) rich reference text visible — testable via ParsedTable rendering referenceText; (4) truly missing data still flagged — rangeAttentionLevel 'missing' path unchanged; (5) edit flow intact — EditDialog.tsx unchanged; (6) payload serialization — referenceRangeToPayload() unchanged."
     },
     {
       "check": "2B — STOP conditions reviewed; none triggered",
       "result": "CONFIRMED",
-      "citation": "STOP1: inequality handling stays in upload-review seam, no scoring change needed. STOP2: rich reference text already captured in referenceText field — no parser rewrite required. STOP3: no second authority source needed — referenceText IS the preserved lab text. STOP4: changes are bounded to EditDialog.tsx + uploadReferenceRange.ts display helper + ParsedTable.tsx (preservation) — no broad redesign. STOP5: raw value usability improvement is bounded to EditDialog only. STOP6: no fallback ranges required or introduced."
+      "citation": "STOP1: no scoring policy change required. STOP2: prompt/model update is bounded — not an open-ended parser rewrite. STOP3: no second authority source — rich reference text is from the lab document itself. STOP4: one-sided vs incomplete IS distinguishable via hasMin XOR hasMax in rangeAttentionLevel — clean distinction. STOP5: changes bounded to parse extraction prompt + parser model + review classification — no broad redesign. STOP6: reference text preserved as structured field in existing response contract — not free-form unparseable output."
     },
     {
       "check": "2B — Determinism risks surfaced",
       "result": "CONFIRMED",
-      "citation": "Risk 1: formatReferenceRangeDisplay() inequality direction fix — must only affect display, NOT affect referenceRangeToPayload() (uploadReferenceRange.ts:100-113). Payload contract unchanged. Risk 2: EditDialog value field change from type=number to text — validation must still reject clearly invalid non-numeric non-inequality inputs; must not silently accept garbage. Risk 3: referenceText display mode change (read-only vs editable) — if made read-only, the user loses ability to manually correct the text; Cursor must decide whether to make it read-only or retain editability with clearer labelling. Prompt §4 (line 140-143): 'selectable/copyable or otherwise clearly presented as a read-only assistive field' — intent is read-only but Cursor may provide selectable text element or clearly labelled read-only input."
+      "citation": "Risk 1: LLM parse output non-determinism (pre-existing) — same PDF may return different reference strings across calls. Sprint does not introduce or worsen this. Risk 2: If parsing_prompt_pdf.txt instructs LLM to preserve multi-line text in the reference string, longer/richer text may occasionally exceed LLM context or truncate. Cursor must keep the field bounded and instruct the LLM on a maximum length where appropriate. Risk 3: rangeAttentionLevel adding 'one-sided' state — caller sites in page.tsx and ParsedTable.tsx must be updated together; partial updates would leave TypeScript type mismatch. Cursor must update all three files atomically."
     },
     {
       "check": "Stage 0 — branch pre-condition",
       "result": "NOTE — BLOCKING before kernel start only",
-      "citation": "git branch --show-current returns 'main'. Prompt requires branch: feature/parse-inequalities-and-rich-reference-text. Cursor must checkout or create this branch before running run_work_package.py start. Not a hardening blocker — branch does not need to exist at hardening time."
+      "citation": "Current branch is 'main'. Prompt requires branch: feature/pdf-parse-one-sided-ranges-and-rich-reference-text. Cursor must checkout or create this branch before running run_work_package.py start. Not a hardening blocker."
     }
   ]
 }

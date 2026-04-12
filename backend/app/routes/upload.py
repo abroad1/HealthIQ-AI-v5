@@ -142,6 +142,10 @@ async def parse_upload(
             
             # Add SSOT block (empty if not found, but still include it)
             enriched_biomarker = {**biomarker, "ssot": ssot_metadata}
+            # Frontend contract: multi-line footnote / contextual block (mirrors parser output when present)
+            raw_rt = enriched_biomarker.get("rawReferenceText") or biomarker.get("raw_reference_text")
+            if raw_rt is not None and str(raw_rt).strip():
+                enriched_biomarker["rawReferenceText"] = str(raw_rt).strip()
             enriched_biomarkers.append(enriched_biomarker)
         
         # Format response data
