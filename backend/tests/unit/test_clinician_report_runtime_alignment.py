@@ -50,6 +50,11 @@ def test_clinician_report_runtime_producer_returns_valid_contract_for_ab(tmp_pat
     assert isinstance(contract.suppressed_confirmatory_tests, list)
     assert contract.sections.page1.ranking_policy_version == TOP_FINDINGS_RANKING_POLICY_VERSION
     assert contract.sections.page1.primary_concern_mode == "technical_tiebreak_lead"
+    # BE-W2-RQ2 — runner-up from ranked top_findings[1] even when co_primary_signal_ids is empty (UAT-027).
+    assert contract.sections.page1.co_primary_signal_ids == []
+    assert contract.sections.page1.runner_up_topic_line
+    assert contract.sections.page1.runner_up_why_not_lead_line
+    assert "signal_" not in contract.sections.page1.runner_up_topic_line
     # Consumer hero copy leads with plain-language "why", not policy/tie-break boilerplate.
     assert contract.sections.page1.key_findings[0]
     assert "Homocysteine" in contract.sections.page1.key_findings[0]
@@ -137,6 +142,10 @@ def test_clinician_page1_near_tie_ambiguity_synthetic():
     assert p1.primary_concern_mode == "near_tie_ambiguity"
     assert p1.co_primary_signal_ids == ["sig_a", "sig_z"]
     assert any("Several findings have similar strength" in k for k in p1.key_findings)
+    assert p1.runner_up_signal_id == "sig_a"
+    assert p1.runner_up_topic_line
+    assert "sig_" not in p1.runner_up_topic_line
+    assert p1.runner_up_why_not_lead_line
 
 
 def test_api_dto_exposes_clinician_report_v1(tmp_path):

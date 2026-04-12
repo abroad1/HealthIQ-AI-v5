@@ -25,11 +25,26 @@ function Page1RankingContext({ page1 }: { page1: ClinicianReportV1['sections']['
   const mode = normalizeConcernMode(page1.primary_concern_mode);
   const coIds = page1.co_primary_signal_ids ?? [];
   const policyVersion = (page1.ranking_policy_version ?? '').trim();
+  const runnerTopic = (page1.runner_up_topic_line ?? '').trim();
+  const runnerWhy = (page1.runner_up_why_not_lead_line ?? '').trim();
+  const showRunnerUp =
+    Boolean(runnerTopic) && (mode === 'technical_tiebreak_lead' || mode === 'near_tie_ambiguity');
 
   const showPolicyStamp = policyVersion.length > 0;
 
   return (
     <div className="space-y-2" data-testid="page1-ranking-context">
+      {showRunnerUp && (
+        <div
+          className="rounded-md border border-blue-200/80 bg-blue-50/60 px-3 py-2 text-sm text-blue-950"
+          data-testid="page1-runner-up-clinician"
+        >
+          <p className="font-medium">Competing ranked finding</p>
+          <p className="mt-1 text-foreground/90">{runnerTopic}</p>
+          {runnerWhy ? <p className="mt-1 text-foreground/90">{runnerWhy}</p> : null}
+        </div>
+      )}
+
       {mode === 'technical_tiebreak_lead' && (
         <div
           className="rounded-md border border-amber-200/80 bg-amber-50/60 px-3 py-2 text-sm text-amber-950"

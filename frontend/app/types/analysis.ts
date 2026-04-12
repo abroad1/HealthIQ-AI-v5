@@ -186,6 +186,10 @@ export interface ClinicianReportV1 {
       primary_concern_mode?: PrimaryConcernModeV1;
       co_primary_signal_ids?: string[];
       ranking_policy_version?: string;
+      /** BE-W2-RQ2 — ranked runner-up from top_findings[1]; empty when not in close-call modes */
+      runner_up_signal_id?: string;
+      runner_up_topic_line?: string;
+      runner_up_why_not_lead_line?: string;
     };
     root_cause: ClinicianRootCauseFindingV1 | null;
     confirmatory_tests: ClinicianConfirmatoryTestItem[];

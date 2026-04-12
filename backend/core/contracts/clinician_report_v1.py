@@ -92,6 +92,10 @@ class Page1SummaryBlockV1(BaseModel):
     )
     co_primary_signal_ids: List[str] = Field(default_factory=list, max_length=4)
     ranking_policy_version: str = Field(default="", max_length=220)
+    # BE-W2-RQ2 — ranked runner-up from deterministically ordered top_findings[1] (not co_primary_signal_ids alone)
+    runner_up_signal_id: str = Field(default="", max_length=120)
+    runner_up_topic_line: str = Field(default="", max_length=220)
+    runner_up_why_not_lead_line: str = Field(default="", max_length=280)
 
 
 class ClinicianSectionsV1(BaseModel):
