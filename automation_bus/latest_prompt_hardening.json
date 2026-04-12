@@ -1,126 +1,101 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "BE-W2-RQ3",
+  "work_id": "BE-W1-PR1",
   "status": "HARDENED",
   "hardened_utc": "2026-04-12T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
-  "content_review": "COMPLETE — all 10 authoritative files verified to exist in repo. 7 files read in full or materially sampled (report_compiler_v1.py 785 lines, builders.py 352 lines, explainability_builder.py 396 lines, orchestrator.py key sections, page.tsx 712 lines, InsightPanel.tsx 158 lines, state_engine_v1.py contract, analysis.ts types). Remaining 3 (RootCauseEvidenceSummary.tsx, ClusterSummary.tsx, ClinicianReportRenderer.tsx) confirmed to exist. meta.explainability_report confirmed stored at orchestrator.py:2068. meta.insight_graph.system_states confirmed at orchestrator.py:2060 and insight_graph_v1.py:209. system_stable_normal state code confirmed at state_engine.py:~97. meta.burden_vector.system_capacity_scores confirmed at orchestrator.py:~2102.",
-  "behaviour_review": "COMPLETE — MIXED correct. Balanced systems narrative changes what explanatory content is surfaced and therefore changes emitted user-facing reasoning (BEHAVIOUR tier). Explainability surfacing adds a new bounded section sourced from stored deterministic structures (BEHAVIOUR tier). Analytical logic (ranking, signal evaluation, cluster logic, burden logic, insight graph construction, arbitration) confirmed not in scope. Determinism preserved — balanced narrative derived only from system_states state_codes (sorted by system_id) and system_capacity_scores (deterministic per result). No randomness. No mutable global state. Three determinism risks surfaced: (1) system_states iteration order; (2) hand-authored fallback copy; (3) float display precision for capacity scores.",
+  "content_review": "NOT_APPLICABLE — no governed SSOT content files touched. All changes are within the upload-review contract seam (frontend components, types, state store). Backend parse route and analysis route read but not modified.",
+  "behaviour_review": "COMPLETE — MIXED correct. This sprint changes the data entering analysis (user-corrected reference_range values) and changes the pre-analysis UX (missing-range attention state). Both affect what data analysis receives and what the user is shown during review. Analytical scoring logic (report_compiler_v1.py, insight_graph, state_engine, signal evaluation) confirmed not in scope. Determinism preserved — range correction is explicit user action; same edited input produces same reference_range payload. No hidden fallback logic permitted (STOP 7). Three determinism risks surfaced: (1) one-sided bound type contract between frontend and normalize.py; (2) EditDialog spread vs explicit field overwrite; (3) type change to ParsedBiomarker.referenceRange min/max optionality.",
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: BE-W2-RQ3"
+      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: BE-W1-PR1"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/results-explanation-surfacing-balanced-systems"
+      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/parse-range-edit-and-missing-range-ux"
     },
     {
       "check": "Front Matter — risk_level HIGH",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:4 — HIGH. Sprint changes what the product says to the user (emitted explanation). Stage 1C:98-100 confirms HIGH with no downgrade permitted."
+      "citation": "automation_bus/latest_cursor_prompt.md:4 — HIGH. Stage 1C (lines 88-98) confirms HIGH: sprint changes governed user-supplied input entering analysis. No downgrade permitted."
     },
     {
       "check": "Front Matter — execution_model TWO_PHASE_START_FINISH",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:5"
+      "citation": "automation_bus/latest_cursor_prompt.md:5 — TWO_PHASE_START_FINISH"
     },
     {
       "check": "Front Matter — change_type MIXED",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:6 — MIXED: backend compiler output shaping (BEHAVIOUR) + new governed content from existing deterministic structures surfaced in UI (BEHAVIOUR + CONTENT)."
+      "citation": "automation_bus/latest_cursor_prompt.md:6 — MIXED: contract data shape changes (BEHAVIOUR) + UX attention layer (BEHAVIOUR) + governed input propagated to analysis (MIXED per SOP §4)."
     },
     {
-      "check": "2A — backend/app/routes/analysis.py exists and confirmed",
+      "check": "2A — backend/app/routes/upload.py exists; parser output fields confirmed",
       "result": "CONFIRMED",
-      "citation": "backend/app/routes/analysis.py — file exists; imports build_analysis_result_dto from core.dto.builders at line ~39-43."
+      "citation": "backend/app/routes/upload.py:128-145 — enriches biomarkers with SSOT metadata; does not modify range fields. Parser output carries ref_low (float|null), ref_high (float|null), referenceRange (raw string) — confirmed via llm_parser.py:333-342 and deterministic_parser.py:68-79."
     },
     {
-      "check": "2A — backend/core/dto/builders.py exists; meta passed through",
+      "check": "2A — backend/app/routes/analysis.py exists; reference_range contract confirmed open",
       "result": "CONFIRMED",
-      "citation": "backend/core/dto/builders.py:14 — build_analysis_result_dto defined. :25-28 — meta extracted from result dict. :32-36 — compile_clinician_report_v1 called with report_v1 from meta.insight_graph. :53 — 'meta': meta passed as-is to frontend. meta.insight_graph and meta.explainability_report are therefore accessible on the frontend via currentAnalysis.meta."
+      "citation": "backend/app/routes/analysis.py:19-31 — AnalysisStartRequest.biomarkers: Dict[str, Any] — no reference_range field restriction. Line 130: normalize_biomarkers_with_metadata(request.biomarkers) called — confirmed to preserve reference_range per normalize.py:92-106."
     },
     {
-      "check": "2A — backend/core/pipeline/orchestrator.py exists; meta fields confirmed stored",
+      "check": "2A — backend/core/canonical/normalize.py exists; one-sided bound support confirmed",
       "result": "CONFIRMED",
-      "citation": "backend/core/pipeline/orchestrator.py:2060 — meta['insight_graph'] = insight_graph.model_dump(). :2068 — meta['explainability_report'] = exp_dump. :~2102 — meta['burden_vector'] dict including system_capacity_scores. :~2115 — meta['narrative_runtime']. All four meta sub-objects confirmed present in stored result contract."
+      "citation": "backend/core/canonical/normalize.py:100-106 — constructs reference_range when (has_min OR has_max). Handles null min and null max separately. Both 'reference_range' (snake) and 'referenceRange' (camel) dict keys handled at lines 93-126. Backend will accept one-sided bounds correctly."
     },
     {
-      "check": "2A — backend/core/analytics/report_compiler_v1.py exists",
-      "result": "CONFIRMED",
-      "citation": "backend/core/analytics/report_compiler_v1.py:490 — compile_clinician_report_v1 defined. :40 — _STATE_RANK = {at_risk:4, suboptimal:3, optimal:2, unknown:1}. :86 — _top_finding_sort_tuple (ranking logic — must not be touched). :631 — ClinicianReportV1 return. File read in full (785 lines)."
+      "check": "2A — frontend/app/(app)/upload/page.tsx exists; one-sided bound fidelity defect confirmed",
+      "result": "CONFIRMED — DEFECT",
+      "citation": "frontend/app/(app)/upload/page.tsx:224-229 — referenceRange built only when (b.ref_low != null && b.ref_high != null). One-sided bounds (e.g. only ref_high present) silently dropped; fallback to b.referenceRange which is a raw string ('') from LLM parser (llm_parser.py:338) — not a valid referenceRange object. Line 84-97: analysis payload correctly passes reference_range from biomarker.referenceRange if present."
     },
     {
-      "check": "2A — backend/core/analytics/explainability_builder.py exists; debug material confirmed",
-      "result": "CONFIRMED",
-      "citation": "backend/core/analytics/explainability_builder.py:196 — build_explainability_report_v1 defined. :216-226 — conflict_summary assembled. :237-268 — precedence_summary assembled. :337-342 — arbitration_decisions with primary_driver_system_id + supporting_systems (SAFE for bounded surfacing). :349-362 — system_burden with raw/adjusted burden vectors + system_capacity_scores (SAFE for bounded surfacing). :363-377 — replay_stamps (INTERNAL — must not surface). :380 — assert_single_authority_driver. STOP 2 guard confirmed required."
+      "check": "2A — frontend/app/components/preview/EditDialog.tsx exists; range edit gap confirmed",
+      "result": "CONFIRMED — GAP",
+      "citation": "frontend/app/components/preview/EditDialog.tsx:82-87 — formData: { name, value, unit, status } — no referenceRange fields. Line 128-143: handleSave spreads ...biomarker (passively preserves existing referenceRange if set) but form renders no inputs for min/max/unit. User cannot add range to a biomarker that lacks one."
     },
     {
-      "check": "2A — meta.explainability_report stored in result contract",
-      "result": "CONFIRMED",
-      "citation": "backend/core/pipeline/orchestrator.py:2068 — meta['explainability_report'] = exp_dump. Available at runtime as currentAnalysis.meta.explainability_report in frontend."
+      "check": "2A — frontend/app/components/preview/ParsedTable.tsx exists; missing-range attention UX absent",
+      "result": "CONFIRMED — GAP",
+      "citation": "frontend/app/components/preview/ParsedTable.tsx:130-133 — renders referenceRange as 'min–max unit' or '—'. No per-row warning badge, icon, or attention indicator for biomarkers with missing or insufficient range data."
     },
     {
-      "check": "2A — meta.insight_graph.system_states available and populated",
-      "result": "CONFIRMED",
-      "citation": "backend/core/pipeline/orchestrator.py:2060 — insight_graph model_dump stored in meta. backend/core/contracts/insight_graph_v1.py:209 — system_states: List[SystemStateNode]. backend/core/contracts/state_engine_v1.py:16 — SystemStateNode fields: system_id (str), state_codes (List[str]), rationale_codes (List[str]), transition_summary_codes (List[str]), confidence_bucket (Literal high/moderate/low/insufficient)."
+      "check": "2A — frontend/app/types/parsed.ts exists; type requires assessment for one-sided bound support",
+      "result": "CONFIRMED — REVIEW REQUIRED",
+      "citation": "frontend/app/types/parsed.ts:20 — referenceRange?: { min: number; max: number; unit: string }. Both min and max are required non-optional numbers. To store one-sided bounds (e.g. ref_high only), either min or max must become optional (?: number). Cursor must decide; change is bounded within upload-review seam. Backend normalize.py already accepts null min/max."
     },
     {
-      "check": "2A — system_stable_normal state code is the deterministic stable-system signal",
+      "check": "2A — No duplicate authority source for reference ranges",
       "result": "CONFIRMED",
-      "citation": "backend/core/analytics/state_engine.py:~97 — state_codes.append('system_stable_normal') when high_count==0 and low_count==0 (no abnormal markers). This is the primary deterministic evidence basis for identifying well-regulated systems for the balanced narrative. STOP 3 is CLEAR."
+      "citation": "Single authority chain: lab parser (llm_parser.py) or user edit (EditDialog.tsx) → upload/page.tsx payload → analysis.py → normalize.py. No second SSOT range registry accessed. Consistent with STOP condition 4."
     },
     {
-      "check": "2A — meta.burden_vector.system_capacity_scores available",
+      "check": "2B — Behavioural scope defined; Intelligence Core confirmed not touched",
       "result": "CONFIRMED",
-      "citation": "backend/core/pipeline/orchestrator.py:~2102 — meta['burden_vector'] = { raw_system_burden_vector: ..., adjusted_system_burden_vector: ..., system_capacity_scores: ... }. Available at runtime as currentAnalysis.meta.burden_vector.system_capacity_scores."
-    },
-    {
-      "check": "2A — frontend/app/(app)/results/page.tsx exists; no balanced system section present",
-      "result": "CONFIRMED",
-      "citation": "frontend/app/(app)/results/page.tsx:139 — meta accessed only via extractNarrativeRuntimeMeta (narrative_runtime only). :498 — InsightPanel (concern-only). :516 — RootCauseEvidenceSummary (lead concern evidence only). :526 — ClusterSummary (cluster groups). No balanced system section exists. File read in full (712 lines)."
-    },
-    {
-      "check": "2A — frontend/app/components/insights/InsightPanel.tsx exists; concern-only confirmed",
-      "result": "CONFIRMED",
-      "citation": "frontend/app/components/insights/InsightPanel.tsx:81-84 — renders headline (primary_concern), interpretationParagraph (key_findings[0]), confidenceLine, nextStepCue only. No healthy/stable system layer. File read in full (158 lines)."
-    },
-    {
-      "check": "2A — frontend/app/types/analysis.ts confirmed path; meta typed as open record",
-      "result": "CONFIRMED",
-      "citation": "frontend/app/types/analysis.ts:232 — meta?: Record<string, any>. system_states, burden_vector, explainability_report accessible at runtime via meta; TypeScript will require explicit access patterns. AnalysisResult interface at L219-234."
-    },
-    {
-      "check": "2A — No duplicate authority source for balanced narrative",
-      "result": "CONFIRMED",
-      "citation": "Single authority chain: state_engine -> insight_graph.system_states -> meta.insight_graph. assert_single_authority_driver at explainability_builder.py:380 enforces single driver authority at runtime."
-    },
-    {
-      "check": "2B — Behavioural scope defined; Intelligence Core not touched",
-      "result": "CONFIRMED",
-      "citation": "prompt non-goals section: no changes to ranking logic (_top_finding_sort_tuple at report_compiler_v1.py:86), signal evaluation, cluster logic, burden logic, insight graph construction, phenotype firing. Sprint changes output compilation shaping and frontend presentation only."
+      "citation": "Prompt non-goals (lines 199-207): no changes to scoring policy, analytical logic, Gemini/narrative, results-page. sprint scope limited to: upload/page.tsx (parse mapping), EditDialog.tsx (add range fields), ParsedTable.tsx (attention UX), parsed.ts (type), state/upload.ts (if needed for range persistence). No pipeline, analytics, or ssot files in scope."
     },
     {
       "check": "2B — Regression targets confirmed and testable",
       "result": "CONFIRMED",
-      "citation": "prompt §Regression Targets: GET /api/analysis/result DTO (builders.py:38-58 stable path); clinician_report_v1 compile (report_compiler_v1.py:490); balanced system narrative grounded in deterministic evidence; no explainability debug leakage; determinism (same payload -> same balanced layer); narrative runtime neutrality (passes with or without Gemini)."
+      "citation": "Prompt §Regression Targets (lines 254-284): existing valid range preserved, one-sided bounds not dropped, missing-range flag visible, edit flow saves min/max/unit and persists in payload, analysis-start reference_range contract not broken, no hidden fallback ranges introduced. All verifiable via targeted tests and browser walk-through."
     },
     {
       "check": "2B — STOP conditions reviewed; none triggered",
       "result": "CONFIRMED",
-      "citation": "STOP1: system_stable_normal is pre-computed — no analytical logic change needed. STOP2: guard required but not a blocker — safe bounded subset identified at explainability_builder.py:337-362. STOP3: system_stable_normal + system_capacity_scores provide sufficient evidence. STOP4: meta.insight_graph.system_states only — no second authority. STOP5: changes scoped to output compilation/presentation. STOP6: deterministic-only path confirmed. STOP7: bounded new section only."
+      "citation": "STOP1: fixing upload-review mapping does not require scoring policy change. STOP2: manual range correction propagates via existing reference_range contract (analysis.py:89-96 already works). STOP3: preserving richer detail is a bounded frontend fix to upload/page.tsx:225. STOP4: no second authority introduced. STOP5: missing-range UX requires only per-row badge addition — no broad redesign. STOP6: apo ratio fix scoped to upload-review seam only. STOP7: no fallback range behaviour — manual correction is the only recovery path."
     },
     {
       "check": "2B — Determinism risks surfaced",
       "result": "CONFIRMED",
-      "citation": "Risk 1: system_states iteration order — Cursor must sort by system_id (state_engine_v1.py:19) before processing. Risk 2: hand-authored fallback copy — prohibited; surfaced content must come only from deterministic state_codes and capacity scores. Risk 3: capacity score float display — must use bounded precision (e.g. round to 2dp or integer display)."
+      "citation": "Risk 1: one-sided bound type contract — if min/max made optional in parsed.ts, Cursor must ensure normalize.py null-handling is tested (confirmed safe at normalize.py:100-106). Risk 2: EditDialog spread vs explicit field overwrite — must ensure new range fields in formData explicitly set referenceRange on save, not rely solely on spread from stale biomarker state. Risk 3: EditDialog formData initialisation — useEffect at EditDialog.tsx:90-99 must be extended to populate range fields when biomarker.referenceRange exists (avoids resetting user-entered data on re-render)."
     },
     {
       "check": "Stage 0 — branch pre-condition",
-      "result": "NOTE",
-      "citation": "git status at session start shows current branch: main. Prompt requires branch: feature/results-explanation-surfacing-balanced-systems. Cursor must checkout correct branch before Stage 3 kernel start. Not a hardening blocker."
+      "result": "NOTE — BLOCKING before kernel start",
+      "citation": "git branch --show-current returns 'main'. Prompt requires branch: feature/parse-range-edit-and-missing-range-ux. Cursor must checkout or create this branch before running run_work_package.py start. Not a hardening blocker."
     }
   ]
 }
