@@ -24,6 +24,7 @@ import { InsightPanel } from '@/components/insights/InsightPanel';
 import BiomarkerDials, { type BiomarkerDialEntry } from '@/components/biomarkers/BiomarkerDials';
 import ClusterSummary from '@/components/clusters/ClusterSummary';
 import ClinicianReportRenderer from '@/components/results/ClinicianReportRenderer';
+import { RootCauseEvidenceSummary } from '@/components/results/RootCauseEvidenceSummary';
 import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAnalysisResult } from '@/queries/analysisResult';
@@ -506,6 +507,13 @@ export default function ResultsPage() {
               confirmatoryTests={clinicianReport?.sections?.confirmatory_tests}
               missingChapterLine={missingChapterLine}
             />
+          </section>
+
+          <section aria-labelledby="evidence-summary-heading">
+            <h2 id="evidence-summary-heading" className="sr-only">
+              Lead hypothesis evidence
+            </h2>
+            <RootCauseEvidenceSummary report={clinicianReport} />
           </section>
 
           <section className="space-y-3" aria-labelledby="cluster-heading">

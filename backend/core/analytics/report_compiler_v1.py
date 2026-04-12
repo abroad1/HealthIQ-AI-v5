@@ -47,6 +47,28 @@ TOP_FINDINGS_RANKING_POLICY_VERSION = (
 PrimaryConcernMode = Literal["distinct_lead", "near_tie_ambiguity", "technical_tiebreak_lead"]
 
 
+def _humanize_signal_id(signal_id: str) -> str:
+    """Consumer-facing label: strip internal prefixes and use title-style words (no raw snake_case IDs)."""
+    s = str(signal_id or "").strip()
+    if s.startswith("signal_"):
+        s = s[7:]
+    parts = [p for p in s.replace("-", "_").split("_") if p]
+    if not parts:
+        return "This pattern"
+    return " ".join(w[:1].upper() + w[1:] if w else "" for w in parts)
+
+
+def _state_consumer_phrase(state: str) -> str:
+    """Plain-English gloss for signal_state in headlines (not clinical staging)."""
+    key = str(state or "").strip().lower()
+    return {
+        "at_risk": "warrants attention on this panel",
+        "suboptimal": "is outside the optimal range on this panel",
+        "optimal": "looks favourable on this panel",
+        "unknown": "is not fully characterised from this panel alone",
+    }.get(key, f"is described as {key.replace('_', ' ')} on this panel")
+
+
 def _normalize_confidence_reasons_tuple(row: Dict[str, Any]) -> Tuple[str, ...]:
     reasons = row.get("confidence_reasons")
     if not isinstance(reasons, list):
@@ -141,20 +163,24 @@ def _near_tie_cluster_in_top3(top_findings: List[Dict[str, Any]], *, epsilon: fl
 
 
 def _page1_policy_key_finding_line(mode: PrimaryConcernMode, co_ids: List[str]) -> str:
+    """Secondary clarification for ambiguity/tie modes — plain English, humanized labels only."""
+    labels = [_humanize_signal_id(x) for x in co_ids if str(x).strip()]
+    tail = ""
+    if len(labels) >= 2:
+        tail = f" Related patterns in the same tier: {', '.join(labels[:4])}."
     if mode == "near_tie_ambiguity" and len(co_ids) >= 2:
         return (
-            "Ranked ambiguity: multiple concerns share similar severity and confidence; "
-            f"policy-ordered co-concerns: {', '.join(co_ids)}."
+            "Several findings have similar strength on this panel; the headline highlights one first so discussion "
+            "has a clear starting point." + tail
         )[:220]
     if mode == "technical_tiebreak_lead":
-        if len(co_ids) >= 2:
-            return (
-                "Lead concern reflects a deterministic technical tie-break after evidence-aligned ranking; "
-                f"tied cluster: {', '.join(co_ids)}."
-            )[:220]
-        return (
-            "Lead concern reflects a deterministic technical tie-break after evidence-aligned ranking (report meta)."
-        )[:220]
+        base = (
+            "Several findings scored similarly; the first item follows a stable ordering rule so your summary "
+            "has a single lead topic."
+        )
+        if len(labels) >= 2:
+            return (base + tail)[:220]
+        return (base)[:220]
     return ""
 
 
@@ -192,13 +218,20 @@ def _load_safety_contract_version() -> str:
 
 
 def _why_template(signal_id: str, signal_state: str, primary_metric: str) -> str:
-    text = f"{signal_id} is {signal_state}. {primary_metric} is the primary driver."
+    topic = _humanize_signal_id(signal_id)
+    metric = str(primary_metric or "").strip().replace("_", " ")
+    state_phrase = _state_consumer_phrase(signal_state)
+    if metric:
+        text = f"{topic} {state_phrase}. Your measured {metric} is the main lab anchor for this thread."
+    else:
+        text = f"{topic} {state_phrase}."
     return text[:200]
 
 
 def _chain_summary_text(chain_id: str, signals: List[str]) -> str:
-    joined = " -> ".join(signals) if signals else "none"
-    return f"Chain {chain_id}: {joined}."[:200]
+    hum = [_humanize_signal_id(s) for s in signals if str(s).strip()]
+    joined = " → ".join(hum) if hum else "—"
+    return f"Linked pattern ({chain_id}): {joined}."[:200]
 
 
 def _to_dict(value: Any) -> Dict[str, Any]:
@@ -452,15 +485,17 @@ def compile_clinician_report_v1(
     missing_count = 0
     if primary_root is not None and primary_root.hypotheses:
         top_hypothesis = primary_root.hypotheses[0]
+        hc = round(float(top_hypothesis.hypothesis_confidence), 2)
         top_hypothesis_line = (
             f"Top hypothesis: {top_hypothesis.title} "
-            f"(confidence {top_hypothesis.hypothesis_confidence:.2f})."
+            f"(confidence {hc:.2f})."
         )
         missing_count = sum(len(h.missing_data) for h in primary_root.hypotheses)
 
+    pc_conf = round(float(primary_confidence), 2)
     confidence_missing_line = (
-        f"Signal confidence {primary_confidence:.2f}; "
-        f"{'missing confirmatory markers limit differentiation.' if missing_count else 'no critical missing markers identified in v1 scope.'}"
+        f"Overall confidence for this lead pattern: {pc_conf:.2f}. "
+        f"{'Some expected confirmatory markers are not on this panel, which limits how specific the story can be.' if missing_count else 'No critical marker gaps were flagged for this lead thread in this report scope.'}"
     )
 
     chain_lines = []
@@ -469,11 +504,11 @@ def compile_clinician_report_v1(
         if summary_text:
             chain_lines.append(summary_text)
 
-    primary_concern = (
-        f"{primary_signal_id} ({primary_state})"
-        if primary_signal_id
-        else "No primary concern identified in v1."
-    )
+    if primary_signal_id:
+        lead_topic = _humanize_signal_id(primary_signal_id)
+        primary_concern = f"{lead_topic}: {_state_consumer_phrase(primary_state)}"[:160]
+    else:
+        primary_concern = "No primary concern identified in v1."[:160]
     key_findings = [
         line
         for line in [
@@ -487,7 +522,7 @@ def compile_clinician_report_v1(
     ]
     policy_kf = _page1_policy_key_finding_line(concern_mode, co_primary_signal_ids)
     if policy_kf:
-        key_findings = [policy_kf] + key_findings
+        key_findings.append(policy_kf)
     key_findings = key_findings[:5]
 
     expected_metrics = sorted(
@@ -526,6 +561,22 @@ def compile_clinician_report_v1(
 
     med_caveat = build_medication_supplement_interpretation_caveat(medical_history)
 
+    def _snap_root_cause_floats(root: Optional[RootCauseFindingV1]) -> Optional[RootCauseFindingV1]:
+        if root is None:
+            return None
+        hyps = [
+            h.model_copy(update={"hypothesis_confidence": round(float(h.hypothesis_confidence), 2)})
+            for h in root.hypotheses
+        ]
+        return root.model_copy(
+            update={
+                "hypotheses": hyps,
+                "signal_confidence": round(float(root.signal_confidence), 2),
+            }
+        )
+
+    primary_root_snapped = _snap_root_cause_floats(primary_root)
+
     return ClinicianReportV1(
         header=ClinicianHeaderV1(
             report_version="v1",
@@ -556,7 +607,7 @@ def compile_clinician_report_v1(
                 co_primary_signal_ids=co_primary_signal_ids,
                 ranking_policy_version=ranking_policy_version[:220],
             ),
-            root_cause=primary_root,
+            root_cause=primary_root_snapped,
             confirmatory_tests=consolidated_tests,
         ),
         suppressed_confirmatory_tests=suppressed_ids,

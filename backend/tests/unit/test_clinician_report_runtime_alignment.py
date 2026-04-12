@@ -50,7 +50,10 @@ def test_clinician_report_runtime_producer_returns_valid_contract_for_ab(tmp_pat
     assert isinstance(contract.suppressed_confirmatory_tests, list)
     assert contract.sections.page1.ranking_policy_version == TOP_FINDINGS_RANKING_POLICY_VERSION
     assert contract.sections.page1.primary_concern_mode == "technical_tiebreak_lead"
-    assert contract.sections.page1.key_findings[0].startswith("Lead concern reflects")
+    # Consumer hero copy leads with plain-language "why", not policy/tie-break boilerplate.
+    assert contract.sections.page1.key_findings[0]
+    assert "Homocysteine" in contract.sections.page1.key_findings[0]
+    assert "technical tie-break" not in contract.sections.page1.key_findings[0].lower()
 
 
 def test_clinician_report_ab_output_is_deterministic(tmp_path):
@@ -133,7 +136,7 @@ def test_clinician_page1_near_tie_ambiguity_synthetic():
     p1 = out.sections.page1
     assert p1.primary_concern_mode == "near_tie_ambiguity"
     assert p1.co_primary_signal_ids == ["sig_a", "sig_z"]
-    assert "Ranked ambiguity" in p1.key_findings[0]
+    assert any("Several findings have similar strength" in k for k in p1.key_findings)
 
 
 def test_api_dto_exposes_clinician_report_v1(tmp_path):
