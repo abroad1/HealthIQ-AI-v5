@@ -19,6 +19,7 @@ import { emitWedgeEvent } from '@/lib/wedgeAnalytics';
 import {
   analysisBiomarkerKey,
   buildReferenceRangeFromParserRow,
+  numericPartForAnalysisPayload,
   rangeAttentionLevel,
   referenceRangeToPayload,
 } from '@/lib/uploadReferenceRange';
@@ -86,15 +87,22 @@ export default function UploadPage() {
 
     try {
       const biomarkersObject: Record<string, any> = {};
-      parsedData.forEach((biomarker) => {
+      for (const biomarker of parsedData) {
         const key = analysisBiomarkerKey(biomarker.name);
+        const numericValue = numericPartForAnalysisPayload(biomarker.value);
+        if (!Number.isFinite(numericValue)) {
+          setSubmitError(
+            `Cannot start analysis: biomarker "${biomarker.name}" has a value that is not a usable number. Edit the value in review (e.g. clear any stray text).`
+          );
+          return;
+        }
         biomarkersObject[key] = {
-          value: parseFloat(biomarker.value.toString()),
+          value: numericValue,
           unit: biomarker.unit,
           timestamp: new Date().toISOString(),
           reference_range: referenceRangeToPayload(biomarker.referenceRange),
         };
-      });
+      }
 
       let heightInCm = 180;
       if (questionnaireData?.height) {
