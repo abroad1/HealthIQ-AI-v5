@@ -194,6 +194,25 @@ class UnitRegistry:
                 return float(c.get("factor", 2.5))
         return None
 
+    def _get_hba1c_mmol_mol_to_percent_linear(
+        self, biomarker_id: str, from_unit: str, to_unit: str
+    ) -> Optional[Tuple[float, float]]:
+        """
+        IFCC mmol/mol -> NGSP % for hba1c only. Authority: ssot/units.yaml mmol_mol_to_percent_hba1c.
+        """
+        if biomarker_id not in _HBA1C_BIOMARKERS:
+            return None
+        from_u = (from_unit or "").strip()
+        to_u = (to_unit or "").strip()
+        if from_u != "mmol/mol" or to_u != "%":
+            return None
+        data = self._load_units()
+        convs = data.get("units", {}).get("conversions", {})
+        c = convs.get("mmol_mol_to_percent_hba1c", {})
+        if c.get("from_unit") != from_u or c.get("to_unit") != to_u:
+            return None
+        return (float(c["slope"]), float(c["intercept"]))
+
     def _convert_with_explicit_unit(
         self, biomarker_id: str, value: float, from_unit: str
     ) -> Tuple[float, str]:
@@ -214,6 +233,10 @@ class UnitRegistry:
             return float(value), base_unit
         if _units_equivalent(from_u, base_unit):
             return float(value), base_unit
+        linear = self._get_hba1c_mmol_mol_to_percent_linear(biomarker_id, from_u, base_unit)
+        if linear is not None:
+            slope, intercept = linear
+            return round(float(value) * slope + intercept, 6), base_unit
         factor = self._get_conversion_factor(biomarker_id, from_u, base_unit)
         if factor is None:
             if biomarker_id not in _STRICT_CONVERSION_BIOMARKERS:

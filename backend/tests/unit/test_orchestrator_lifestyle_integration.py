@@ -14,6 +14,7 @@ import pytest
 from core.analytics.lifestyle_registry_loader import load_lifestyle_registry
 from core.analytics.validation_gate import DIRECT_SCORING_ALLOWED_NO_PATH, LIFESTYLE_ONLY_SYSTEMS
 from core.canonical.normalize import normalize_biomarkers_with_metadata
+from core.canonical.hba1c_layer_b_arbitration import arbitrate_hba1c_layer_b_input
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 from core.units.registry import UNIT_REGISTRY_VERSION, apply_unit_normalisation
 from tools.run_golden_panel import _EmptySession, run_golden_panel
@@ -37,6 +38,7 @@ def _empty_session():
 
 def _prepare_biomarkers(biomarkers: dict) -> dict:
     normalized = normalize_biomarkers_with_metadata(biomarkers)
+    normalized = arbitrate_hba1c_layer_b_input(normalized)
     from tools.run_golden_panel import _filter_unit_registry_supported, _coerce_to_ssot_units
     filtered = _filter_unit_registry_supported(normalized)
     coerced = _coerce_to_ssot_units(filtered)

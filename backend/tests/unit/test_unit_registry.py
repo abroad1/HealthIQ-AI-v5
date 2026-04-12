@@ -143,13 +143,11 @@ class TestApplyUnitNormalisation:
         assert g["original_unit"] == "mg/dL"
         assert g["unit_normalised"] is True
 
-    def test_unmapped_rejected_by_default(self):
-        """unmapped_ keys rejected by default (production safety)."""
+    def test_unmapped_bypasses_conversion_quarantine(self):
+        """unmapped_ keys bypass unit conversion for downstream quarantine handling."""
         normalized = {"unmapped_foo": {"value": 42, "unit": "U/L"}}
-        with pytest.raises(UnitConversionError) as exc:
-            apply_unit_normalisation(normalized)
-        assert "unmapped_foo" in str(exc.value) or exc.value.biomarker_id == "unmapped_foo"
-        assert "UNIT_ALLOW_UNMAPPED" in str(exc.value)
+        result = apply_unit_normalisation(normalized)
+        assert result["unmapped_foo"] == {"value": 42, "unit": "U/L"}
 
     def test_unmapped_allowed_when_flag_true(self):
         """unmapped_ passthrough only when allow_unmapped=True."""

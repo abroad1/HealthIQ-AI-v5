@@ -6,6 +6,7 @@ from core.analytics.capacity_scaler import scale_capacity_scores_v1
 from core.analytics.bio_stats_engine import build_bio_stats_v1
 from core.analytics.influence_propagator import propagate_influence_v1
 from core.canonical.normalize import normalize_biomarkers_with_metadata
+from core.canonical.hba1c_layer_b_arbitration import arbitrate_hba1c_layer_b_input
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 from core.analytics.system_burden_engine import (
     ALLOWED_RISK_DIRECTIONS,
@@ -35,6 +36,7 @@ class _EmptySession:
 
 def _prepare_unit_normalised(biomarkers: dict) -> dict:
     normalized = normalize_biomarkers_with_metadata(biomarkers)
+    normalized = arbitrate_hba1c_layer_b_input(normalized)
     normalized = apply_unit_normalisation(normalized)
     normalized[UNIT_NORMALISATION_META_KEY] = {
         "unit_normalised": True,

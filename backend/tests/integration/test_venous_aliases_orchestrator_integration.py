@@ -7,6 +7,7 @@ and resolves them to canonical biomarkers when assume_canonical=True.
 
 import pytest
 from core.canonical.normalize import normalize_biomarkers_with_metadata
+from core.canonical.hba1c_layer_b_arbitration import arbitrate_hba1c_layer_b_input
 from core.units.registry import apply_unit_normalisation, UNIT_REGISTRY_VERSION
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 
@@ -14,6 +15,7 @@ from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_
 def _prepare_unit_normalised(biomarkers: dict) -> dict:
     """Sprint 5: normalize -> unit norm -> add meta."""
     normalized = normalize_biomarkers_with_metadata(biomarkers)
+    normalized = arbitrate_hba1c_layer_b_input(normalized)
     normalized = apply_unit_normalisation(normalized)
     normalized[UNIT_NORMALISATION_META_KEY] = {"unit_normalised": True, "unit_registry_version": UNIT_REGISTRY_VERSION}
     return normalized

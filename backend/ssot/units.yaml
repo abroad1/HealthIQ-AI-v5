@@ -112,6 +112,15 @@ units:
       factor: 10.929
       description: "HbA1c conversion"
 
+    # IFCC (mmol/mol) -> NGSP (%). Linear NGSP = slope * IFCC_mmol_mol + intercept.
+    # Aligns 48 mmol/mol with ~6.5% diagnostic convention (ADA/WHO paired criteria).
+    mmol_mol_to_percent_hba1c:
+      from_unit: "mmol/mol"
+      to_unit: "%"
+      slope: 0.09148
+      intercept: 2.152
+      description: "HbA1c IFCC mmol/mol to NGSP %"
+
     mg_dL_to_mmol_L_urea:
       from_unit: "mg/dL"
       to_unit: "mmol/L"

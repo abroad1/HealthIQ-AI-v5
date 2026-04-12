@@ -12,6 +12,7 @@ from core.contracts.layer3_insights_v1 import (
     SYSTEM_CARD_IDS,
 )
 from core.canonical.normalize import normalize_biomarkers_with_metadata
+from core.canonical.hba1c_layer_b_arbitration import arbitrate_hba1c_layer_b_input
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 from core.units.registry import UNIT_REGISTRY_VERSION, apply_unit_normalisation
 
@@ -24,6 +25,7 @@ from tools.run_golden_panel import (
 
 def _prepare_biomarkers(biomarkers: dict) -> dict:
     normalized = normalize_biomarkers_with_metadata(biomarkers)
+    normalized = arbitrate_hba1c_layer_b_input(normalized)
     filtered = _filter_unit_registry_supported(normalized)
     coerced = _coerce_to_ssot_units(filtered)
     result = apply_unit_normalisation(coerced)

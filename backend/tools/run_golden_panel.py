@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any, Dict, Mapping, Optional, Tuple
 
 from core.canonical.normalize import normalize_biomarkers_with_metadata, detect_canonical_collisions
+from core.canonical.hba1c_layer_b_arbitration import arbitrate_hba1c_layer_b_input
 from core.canonical.errors import CanonicalCollisionError
 from core.canonical.alias_registry_service import get_alias_registry_service
 from core.contracts.insight_graph_v1 import InsightGraphV1
@@ -333,6 +334,7 @@ def run_golden_panel(
             collisions=fallback_collisions,
         )
 
+    biomarkers = arbitrate_hba1c_layer_b_input(biomarkers)
     biomarkers = _filter_unit_registry_supported(biomarkers)
     biomarkers = _coerce_to_ssot_units(biomarkers)
     biomarkers = apply_unit_normalisation(biomarkers)
