@@ -1,24 +1,26 @@
 {
-  "work_id": "KB-HBA1C-GOV1",
-  "status": "HARDENED",
   "bus_version": "1.3.1",
+  "work_id": "BE-W2-RQ1",
+  "status": "HARDENED",
   "hardened_utc": "2026-04-12T00:00:00Z",
-  "hardened_by": "claude-code",
+  "hardened_by": "claude-sonnet-4-6",
+  "content_review": "COMPLETE — report_compiler_v1.py read in full (lines 1-680). primary_concern template at L472-476, _why_template at L194-196, _page1_policy_key_finding_line at L143-158 all confirmed as sources of consumer-facing governance/signal-id leakage. Sprint scope bounded to these templates and frontend rendering components only.",
+  "behaviour_review": "COMPLETE — MIXED correct: clinician report copy = CONTENT tier; hero presentation text (compiler templates) and FE badge visibility = BEHAVIOUR tier (changes emitted reasoning visible to users). Determinism preserved — sort/rank logic at L593-594 and L64-82 is unchanged. No randomness, no mutable global state, no fallback content source. Regression targets all testable from existing code.",
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: KB-HBA1C-GOV1"
+      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: BE-W2-RQ1"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/hba1c-dual-id-governance"
+      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/wave2-results-contract-quality"
     },
     {
       "check": "Front Matter — risk_level HIGH",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:4 — HIGH; sprint modifies unit conversion path (registry.py) and pipeline behavioural input selection (analysis.py). Both are Intelligence Core boundary files."
+      "citation": "automation_bus/latest_cursor_prompt.md:4 — HIGH; sprint changes emitted user-facing reasoning and report presentation text — output generation is Intelligence Core boundary."
     },
     {
       "check": "Front Matter — execution_model TWO_PHASE_START_FINISH",
@@ -28,106 +30,82 @@
     {
       "check": "Front Matter — change_type MIXED",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:6 — SSOT content addition (units.yaml new conversion entry) + BEHAVIOUR change (registry.py conversion logic + analysis.py arbitration gate)"
+      "citation": "automation_bus/latest_cursor_prompt.md:6 — MIXED: compiler template text = output generation BEHAVIOUR; report formatting improvements = CONTENT; frontend badge visibility = BEHAVIOUR."
     },
     {
-      "check": "2A — biomarkers.yaml exists; hba1c canonical id confirmed with unit %",
+      "check": "2A — backend/app/routes/analysis.py exists and is the correct runtime path",
       "result": "CONFIRMED",
-      "citation": "backend/ssot/biomarkers.yaml:191 — hba1c: unit: '%'; description: Hemoglobin A1c percentage; system: metabolic"
+      "citation": "backend/app/routes/analysis.py:329 — GET /api/analysis/result returns build_analysis_result_dto(raw). backend/app/routes/analysis.py:169 — orchestrator.run() produces DTO stored as raw. Route confirmed as authoritative entry point."
     },
     {
-      "check": "2A — biomarkers.yaml exists; hba1c_pct canonical id confirmed with unit %",
+      "check": "2A — backend/core/dto/builders.py exists; compile_clinician_report_v1 wired here",
       "result": "CONFIRMED",
-      "citation": "backend/ssot/biomarkers.yaml:1602 — hba1c_pct: unit: '%'; description: Glycated haemoglobin (NGSP, %); system: metabolic"
+      "citation": "backend/core/dto/builders.py:8 — imports compile_clinician_report_v1 from core.analytics.report_compiler_v1. backend/core/dto/builders.py:32-36 — called with report_v1 payload. backend/core/dto/builders.py:54-56 — emitted as clinician_report_v1 key in DTO."
     },
     {
-      "check": "2A — clusters.yaml exists; only hba1c in metabolic cluster; hba1c_pct absent",
+      "check": "2A PATH CORRECTION — prompt claims backend/core/reports/report_compiler_v1.py; this file does NOT exist",
+      "result": "CORRECTED",
+      "citation": "Glob('backend/core/reports/**') returned no files. Actual authoritative path confirmed by Grep: backend/core/analytics/report_compiler_v1.py. Cursor must use the corrected path. builders.py:8 import also confirms: 'from core.analytics.report_compiler_v1 import compile_clinician_report_v1'."
+    },
+    {
+      "check": "2A — backend/core/analytics/report_compiler_v1.py verified; compile_clinician_report_v1 confirmed",
       "result": "CONFIRMED",
-      "citation": "backend/ssot/clusters.yaml:14-15 — metabolic.biomarker_membership.required: [glucose, hba1c]; hba1c_pct not present anywhere in file"
+      "citation": "backend/core/analytics/report_compiler_v1.py:410 — function compile_clinician_report_v1() defined. Entire file read (680 lines). This is the sole authority for clinician report compilation."
     },
     {
-      "check": "2A — criticality.yaml exists; only hba1c in metabolic required; hba1c_pct absent",
+      "check": "2A — frontend/app/(app)/results/page.tsx exists and confirmed as results entry point",
       "result": "CONFIRMED",
-      "citation": "backend/ssot/criticality.yaml:8 — metabolic.required: [glucose, hba1c]; hba1c_pct not listed anywhere in file"
+      "citation": "frontend/app/(app)/results/page.tsx:134 — clinicianReport = currentAnalysis?.clinician_report_v1. frontend/app/(app)/results/page.tsx:497 — InsightPanel receives clinicianReport. frontend/app/(app)/results/page.tsx:518 — ClusterSummary receives clusters. frontend/app/(app)/results/page.tsx:683 — ClinicianReportRenderer receives clinicianReport."
     },
     {
-      "check": "2A — ranges.yaml exists; hba1c ranges defined in %; hba1c_pct absent",
+      "check": "2A — frontend/app/components/insights/InsightPanel.tsx exists; governance leakage confirmed",
       "result": "CONFIRMED",
-      "citation": "backend/ssot/ranges.yaml:112-127 — hba1c: normal max:5.6%, prediabetes 5.7-6.4%, diabetes min:6.5%; unit:'%'; hba1c_pct not present"
+      "citation": "InsightPanel.tsx:95-99 — ranking_policy_version rendered as visible Badge in default consumer hero. InsightPanel.tsx:22-30 — modeLabel() returns string 'Lead concern uses a technical tie-break' rendered in default consumer Badge. InsightPanel.tsx:108-122 — co_primary_signal_ids rendered as Badges in default consumer view. All three are consumer-facing governance leakage confirmed by source."
     },
     {
-      "check": "2A — insight_graph_builder.py exists; only hba1c referenced; hba1c_pct absent",
+      "check": "2A — frontend/app/components/results/ClinicianReportRenderer.tsx exists; float and raw id issues confirmed",
       "result": "CONFIRMED",
-      "citation": "backend/core/analytics/insight_graph_builder.py:71,82-83 — hba1c = _as_float(filtered_biomarkers.get('hba1c')); if hba1c > 5.7: elevated_hba1c. hba1c_pct not referenced."
+      "citation": "ClinicianReportRenderer.tsx:168 — {hypothesis.hypothesis_confidence} rendered raw (no .toFixed()). ClinicianReportRenderer.tsx:160-162 — CardDescription renders raw signal_id, raw signal_confidence."
     },
     {
-      "check": "2A — units.yaml exists; percent_to_mmol_mol defined; mmol_mol_to_percent ABSENT (confirmed sprint gap)",
+      "check": "2A — frontend/app/components/clusters/ClusterSummary.tsx exists; description path confirmed",
       "result": "CONFIRMED",
-      "citation": "backend/ssot/units.yaml:109-113 — percent_to_mmol_mol: from_unit:'%', to_unit:'mmol/mol', factor:10.929. No mmol_mol_to_percent entry present. This is the SSOT gap the sprint adds."
+      "citation": "ClusterSummary.tsx:235-237 — cluster.description rendered as-is. ClusterSummary.tsx:295-300 — systemEducationalExplainer.body shown under 'What your results suggest' when present."
     },
     {
-      "check": "2A — registry.py exists; _HBA1C_BIOMARKERS confirmed; only % -> mmol/mol branch present; mmol/mol -> % branch ABSENT (confirmed runtime gap)",
+      "check": "2A — hero governance leakage source in report_compiler_v1.py confirmed",
       "result": "CONFIRMED",
-      "citation": "backend/core/units/registry.py:66 — _HBA1C_BIOMARKERS = frozenset({'hba1c'}); lines 179-182 — handles hba1c from_u=='%' to_u=='mmol/mol' only. No branch for from_u=='mmol/mol' to_u=='%'. This is the runtime gap the sprint adds."
+      "citation": "backend/core/analytics/report_compiler_v1.py:472-476 — primary_concern = f'{primary_signal_id} ({primary_state})' — raw signal_id in hero headline. backend/core/analytics/report_compiler_v1.py:194-196 — _why_template() = f'{signal_id} is {signal_state}. {primary_metric} is the primary driver.' — raw signal_id in key_findings[0] (interpretationParagraph). backend/core/analytics/report_compiler_v1.py:143-158 — _page1_policy_key_finding_line() emits 'technical tie-break' + raw signal_ids into key_findings prepend."
     },
     {
-      "check": "2A — analysis.py exists; arbitration seam confirmed between canonicalisation and apply_unit_normalisation",
+      "check": "2A — No duplicate narrative authority source",
       "result": "CONFIRMED",
-      "citation": "backend/app/routes/analysis.py:129 — normalized = normalize_biomarkers_with_metadata(request.biomarkers); line 142 — normalized = apply_unit_normalisation(normalized). Arbitration gate must be inserted between lines 138 and 142."
+      "citation": "frontend/app/(app)/results/page.tsx:134 — hero sourced from clinician_report_v1 (deterministic compiler). Insights[] in separate InsightsPanel under Advanced tab (results/page.tsx:679). No second narrative source introduced by this sprint."
     },
     {
-      "check": "2A — orchestrator.py exists; enforces unit-normalisation invariant before run",
+      "check": "2B — Behavioural scope defined; forbidden files not in scope",
       "result": "CONFIRMED",
-      "citation": "backend/core/pipeline/orchestrator.py:986-988 — checks __unit_normalisation_meta__ key presence; raises if missing. Arbitration gate must not remove this key (set at analysis.py:153-156, after apply_unit_normalisation)."
+      "citation": "prompt:186-194 (Non-Goals) — no changes to analytical ranking policy, signal evaluator, insight graph construction. Files NOT in sprint scope: backend/core/pipeline/, backend/core/analytics/signal_evaluator.py, backend/ssot/, backend/scripts/. Sprint is bounded to: report_compiler_v1.py presentation templates, builders.py (no change expected), InsightPanel.tsx, ClinicianReportRenderer.tsx, ClusterSummary.tsx."
     },
     {
-      "check": "2A — biomarker_alias_registry.yaml: HbA1c (Venous) -> hba1c; HbA1c % (Venous) -> hba1c_pct; two separate canonical ids confirmed",
+      "check": "2B — Regression targets present and testable from source",
       "result": "CONFIRMED",
-      "citation": "backend/ssot/biomarker_alias_registry.yaml:319 — 'HbA1c (Venous)' in hba1c aliases; line 328 — 'HbA1c % (Venous)' in hba1c_pct aliases. Both resolve to DIFFERENT canonical ids — no CanonicalCollisionError raised when both are present."
+      "citation": "prompt:306-346 — 7 regression categories. All confirmed testable: GET /api/analysis/result returns valid DTO (builders.py path stable), hero signal_id leakage (compiler template change), system-group cards (ClusterSummary.tsx), supporting/contradictory marker transparency (existing evidence_for/evidence_against fields in root_cause), clinician report formatting (hypothesis_confidence .toFixed()), Gemini-neutrality (hero from deterministic compiler), determinism (sort logic unchanged)."
     },
     {
-      "check": "2A — system_burden_registry.yaml: both hba1c and hba1c_pct present; hba1c_pct becomes dormant after gate",
+      "check": "2B — STOP conditions reviewed; none triggered",
       "result": "CONFIRMED",
-      "citation": "backend/ssot/system_burden_registry.yaml:74 — hba1c: system:metabolic, risk_direction:HIGH_IS_RISK, weight:0.8; line 314 — hba1c_pct: system:metabolic, risk_direction:HIGH_IS_RISK, weight:0.8. hba1c_pct entry persists in SSOT but becomes analytically dormant post-arbitration (Architectural Decision 5)."
+      "citation": "STOP1: improvements achievable via compiler template changes only, no ranking logic required. STOP2: hero from deterministic compiler path, no Gemini dependency. STOP3: supporting_markers at report_compiler_v1.py:604, evidence_for/evidence_against/missing_data at L315-350 already present in result contract. STOP4: no second narrative authority. STOP5: touched files are output compilation/presentation only. STOP6: ranking_policy_version badge can move to advanced section (not deleted). STOP7: targeted presentation improvement, no broad UI redesign needed."
     },
     {
-      "check": "2A — No duplicate authority source: unit conversion authority solely in units.yaml + registry.py",
+      "check": "2B — Determinism preserved; no hidden side effects",
       "result": "CONFIRMED",
-      "citation": "No hardcoded conversion factor for hba1c found outside registry.py. registry.py:153-154 loads conversion factors from units.yaml exclusively. Sprint adds to this same path only."
+      "citation": "backend/core/analytics/report_compiler_v1.py:593-594 — sorted() call with deterministic key. report_compiler_v1.py:64-82 — _top_finding_sort_tuple() is a pure function. Sprint does not touch sort/rank/cluster/evaluation logic. Frontend changes are display-only (badge visibility, text formatting). No mutable global state identified."
     },
     {
-      "check": "2B — Behavioural scope defined: unit conversion path + arbitration gate only",
-      "result": "CONFIRMED",
-      "citation": "prompt:167-205 — Required Changes A (units.yaml + registry.py), B (arbitration gate in analysis.py seam), C (no orchestrator/signal evaluator/insight graph changes), D (tests). Non-goals explicit at prompt:209-220."
-    },
-    {
-      "check": "2B — Regression targets present and testable",
-      "result": "CONFIRMED",
-      "citation": "prompt:263-292 — four regression categories: Unit Normalisation (hba1c %, hba1c mmol/mol, no glucose/lipid regression), Arbitration (single id, both ids, only hba1c_pct), Layer B (no duplicate signal/burden contribution), Determinism (same input -> same output)"
-    },
-    {
-      "check": "2B — STOP conditions reviewed; no STOP condition currently triggered",
-      "result": "CONFIRMED",
-      "citation": "STOP1: seam confirmed at analysis.py:129-142. STOP2: canonical id stays hba1c. STOP3: user-visible retention possible (hba1c_pct can remain in raw/results layers; gate only removes from Layer B-bound set). STOP4: no downstream contract broken by suppressing hba1c_pct from analytics only. STOP5: no second authority introduced. STOP6: no orchestrator/signal evaluator/insight graph redesign needed. STOP7: factor computable from SSOT (see determinism risk below)."
-    },
-    {
-      "check": "2B — DETERMINISM RISK SURFACED: conversion factor accuracy (mmol/mol -> %)",
-      "result": "RISK_SURFACED",
-      "citation": "units.yaml:109-113 uses simple linear factor 10.929 for % -> mmol/mol. Clinically accurate IFCC-NGSP reverse formula is NGSP% = (IFCC_mmol_mol / 10.929) + 2.15. Simple reciprocal (1/10.929 = 0.09150) omits +2.15 offset and will produce clinically wrong Layer B values (e.g. 48 mmol/mol -> 4.39% instead of 6.54%). Cursor MUST either: (a) implement full IFCC formula with offset, or (b) explicitly declare the SSOT is using a linear approximation by design and the +2.15 offset is intentionally excluded. This must be resolved before Phase 1 execution. STOP7 is proximate if (b) cannot be justified."
-    },
-    {
-      "check": "2B — Arbitration gate must not remove UNIT_NORMALISATION_META_KEY",
-      "result": "CONFIRMED",
-      "citation": "analysis.py:153-156 — UNIT_NORMALISATION_META_KEY set AFTER apply_unit_normalisation. Arbitration gate is inserted BEFORE apply_unit_normalisation (lines 138-142). Key is not yet set when gate runs; no risk of accidental removal."
-    },
-    {
-      "check": "2B — All 7 STOP conditions evaluated; none triggered (subject to STOP7 determinism risk resolution)",
-      "result": "CONFIRMED",
-      "citation": "See STOP conditions review at 2B-STOP check above. STOP7 requires Cursor to resolve conversion formula choice explicitly."
+      "check": "Stage 0 — branch pre-condition",
+      "result": "NOTE",
+      "citation": "Current branch is 'main'. Prompt requires 'feature/wave2-results-contract-quality'. Cursor must checkout the correct branch before Stage 3 kernel start. Not a hardening blocker; pre-execution requirement."
     }
-  ],
-  "content_review": "COMPLETE — backend/ssot/units.yaml read (lines 1-150). percent_to_mmol_mol defined at line 109-113. No mmol_mol_to_percent entry present. Sprint adds this entry. No other HbA1c content in units.yaml. biomarkers.yaml hba1c (L191) and hba1c_pct (L1602) both have unit:'%'. No content drift from sprint scope.",
-  "behaviour_review": "COMPLETE — MIXED correct: units.yaml addition = CONTENT; registry.py conversion branch addition + analysis.py arbitration gate = BEHAVIOUR. Determinism preserved for arbitration (gate is deterministic: always removes hba1c_pct from Layer B-bound set when present). Conversion determinism conditional on resolution of STOP7 risk (linear vs IFCC formula). Regression targets explicit and testable. Output structure unchanged for downstream consumers (hba1c still the sole Layer B HbA1c). No hidden side effects identified in orchestrator, signal evaluator, or insight graph paths.",
-  "stage_2c_checklist_in_response": true,
-  "escalation_required": false
+  ]
 }
