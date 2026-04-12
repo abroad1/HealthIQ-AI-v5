@@ -1,27 +1,30 @@
 ---
-work_id: BE-W2-RQ3
-branch: feature/results-explanation-surfacing-balanced-systems
+work_id: BE-W1-PR1
+branch: feature/parse-range-edit-and-missing-range-ux
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# BE-W2-RQ3 — Results explanation surfacing and balanced systems narrative
+# BE-W1-PR1 — Parse fidelity, manual range correction, and missing-range UX
 
 ## Objective
 
-Deliver the next bounded Wave 2 remediation pass to materially improve the explanatory depth, balance, and confidence-building quality of the results experience using existing governed deterministic structures already present in the runtime result contract.
+Deliver a single governable Wave 1 remediation pass for the upload → parse → review → analysis-input journey.
 
-This sprint must not depend on live Gemini enablement.
-This sprint must not change analytical reasoning logic.
-This sprint must not introduce a second narrative authority.
+This sprint must improve parsing fidelity where the lab provides richer range/context detail, allow users to add or edit reference range data manually in marker review, and clearly flag biomarkers whose range data is missing or insufficient so the user knows intervention is needed before trusting the result.
+
+This sprint is explicitly **not** a broad fallback-range sprint.
+Do not introduce broad hard-coded fallback ranges for ordinary biomarkers.
+Do not change analytical scoring policy for ordinary biomarkers.
 
 The required outcome is:
 
-- the results experience explains not only what appears suboptimal, but also which systems look stable / well-regulated / reassuring on this panel and why
-- existing richer deterministic explanation structures already present in the stored result contract are selectively surfaced in a safe, bounded, user-facing way
-- the default results experience becomes more metabolically intelligent and less one-sided without becoming alarmist or speculative
-- the product moves closer to a true metabolic reasoning engine rather than a concern-only pattern detector
+- parsed biomarkers preserve more usable lab range/context detail where already present
+- marker review allows manual correction/addition of range data
+- missing or insufficient range data is clearly surfaced in UX
+- corrected range data flows through to analysis start
+- the user is visibly informed when parsing requires intervention
 
 ---
 
@@ -29,74 +32,68 @@ The required outcome is:
 
 ### Runtime truth already established
 
-Repo/runtime investigation has established that:
+Repo/runtime investigations have established that:
 
-- the results API carries a deep structured stack in `meta`, especially:
-  - `meta.insight_graph`
-  - `meta.explainability_report`
-  - `meta.burden_vector`
-  - `meta.narrative_runtime`
-- the default results page currently leads with:
-  - `clinician_report_v1`
-  - `clusters`
-  - `biomarkers`
-- `meta.explainability_report` is stored on the result object but is not currently rendered by any frontend module
-- the deterministic compiler/report layer is currently the main trustworthy explanation layer
-- `insights[]` is often thin because the narrative runtime commonly resolves to mock/deterministic mode when live narrative LLM is not enabled
+- parser output can carry:
+  - raw `reference`
+  - `ref_low`
+  - `ref_high`
+- frontend upload mapping currently builds `referenceRange` only when both bounds exist in certain paths
+- marker review/edit currently preserves `referenceRange` if present but does not let the user add or change it
+- backend analysis payload already accepts `reference_range`
+- scoring/display for ordinary biomarkers is currently lab-range sovereign
+- broad governed fallback for ordinary biomarkers is not part of current runtime policy
 
-This sprint must not guess a different runtime truth.
+This sprint must not guess a different policy truth.
 
 ### Authoritative backend files for this sprint
 
 At minimum, inspect and use the actual current versions of:
 
+- parser models / parser output definitions used in upload parse
+- `backend/app/routes/upload.py`
 - `backend/app/routes/analysis.py`
-- `backend/core/dto/builders.py`
-- `backend/core/pipeline/orchestrator.py`
-- `backend/core/analytics/report_compiler_v1.py`
-- `backend/core/analytics/explainability_builder.py`
-- any contracts / helpers that define the explainability report and clinician report structures actually used in the runtime path
+- normalization / biomarker metadata flow files actually used in the upload-to-analysis path
 
 ### Authoritative frontend files for this sprint
 
 At minimum, inspect and use the actual current versions of:
 
-- `frontend/app/(app)/results/page.tsx`
-- `frontend/app/components/insights/InsightPanel.tsx`
-- `frontend/app/components/results/RootCauseEvidenceSummary.tsx`
-- `frontend/app/components/clusters/ClusterSummary.tsx`
-- `frontend/app/components/results/ClinicianReportRenderer.tsx`
+- `frontend/app/(app)/upload/page.tsx`
+- marker review components
+- parsed biomarker edit dialog/component
+- any parsed biomarker types/interfaces used between parse and analysis start
 
-If hardening finds the active rendering/component paths differ, Claude must cite the exact actual files in evidence and hardening may narrow or correct touched-file scope. Cursor must not improvise beyond those verified files.
+If hardening finds the active component paths differ, Claude must cite the exact actual files in evidence and hardening may narrow or correct touched-file scope. Cursor must not improvise beyond those verified files.
 
 ---
 
 ## Stage 1B — Reality Check
 
-This sprint addresses real UAT and contract findings and is not a no-op.
+This sprint addresses real UAT and investigation findings and is not a no-op.
 
-Confirmed current gaps include:
+Confirmed current issues include:
 
-- the product is still too heavily weighted toward lead concerns and weaker patterns
-- the experience does not adequately explain which systems appear healthy / stable / well-regulated
-- richer deterministic explanation structures exist in storage, especially `meta.explainability_report`, but are not currently surfaced
-- the deterministic compiler layer is stronger than the current Layer C narrative cards in default gated environments
-- the product therefore underuses existing governed explanation material that could improve confidence, balance, and credibility
+- rich lab reference detail can be flattened or lost in parse/review
+- some biomarkers reach results as “Not scored - no reference range available”
+- the edit flow does not allow users to add or amend range data
+- users currently have no credible correction path when parsing misses range information
+- partial/one-sided bounds may be dropped before analysis even though downstream contracts can carry richer range metadata
 
 ---
 
 ## Stage 1C — Intelligence Preflight
 
-This sprint changes emitted user-facing reasoning and explanation presentation.
+This sprint changes user-editable data entering analysis and changes how missing/insufficient range data is surfaced before submission.
 
 It therefore affects:
 
-- what explanatory content is surfaced from stored deterministic contracts
-- how balanced system-level interpretation is presented
-- how reassuring / stable system evidence is communicated
-- how default results guide user trust
+- upload review contract
+- user-corrected biomarker payloads
+- analysis input quality
+- pre-analysis UX and gating
 
-This is HIGH risk because it changes what the product says to the user, even though it must not change the underlying analytical logic.
+This is HIGH risk because it changes governed user-supplied input entering analysis, even though it must not change the scoring policy for ordinary biomarkers.
 
 No downgrade is permitted.
 
@@ -106,74 +103,59 @@ No downgrade is permitted.
 
 Cursor must implement these decisions exactly.
 
-### 1. Existing deterministic structures must remain the sole authority
+### 1. No broad fallback-range expansion
 
-This sprint must use only existing governed deterministic structures already produced in the runtime result contract, including where appropriate:
+Do not introduce broad hard-coded fallback ranges for ordinary biomarkers.
 
-- `clinician_report_v1`
-- `meta.insight_graph`
-- `meta.explainability_report`
-- existing cluster and biomarker evidence structures
+This sprint is not the place to change lab-range sovereignty for standard measured analytes.
 
-Do not introduce a second narrative authority.
-Do not invent a parallel summary engine.
-Do not author new free-floating medical narrative disconnected from governed structures.
+### 2. Manual correction is the approved recovery path
 
-### 2. Balanced system narrative is required
+When parsing misses or incompletely captures lab range data, the approved product response is:
 
-The results experience must not only describe strain / concern / suboptimal patterns.
+- visibly flag the biomarker in the review UX
+- allow the user to add or edit range data manually
+- pass corrected range data into analysis
 
-It must also surface, in a bounded and evidence-led way:
+Do not replace this with hidden fallback behaviour.
 
-- systems or domains that appear reassuring / stable / well-regulated on this panel
-- what marker evidence supports that interpretation
-- how those strengths shape a more balanced reading of the overall panel
+### 3. Preserve richer lab detail where already available
 
-This is a product requirement for this sprint, not an optional enhancement.
+If the parser already captures richer reference information, the frontend/review path must preserve as much usable range/context detail as the current contracts safely support.
 
-### 3. Balanced narrative must remain evidence-led and non-alarmist
+Do not unnecessarily drop partial or structured information before analysis.
 
-“Healthy systems” or “reassuring patterns” must only be surfaced where deterministic evidence supports that claim.
+### 4. Missing/insufficient range data must be visible in UX
 
-Do not produce generic positivity.
-Do not overstate normal findings.
-Do not imply diagnoses or guarantees.
+Users must be clearly shown which biomarkers need attention before analysis can be trusted.
 
-### 4. `meta.explainability_report` is an eligible surfacing source
+This may be warning-state UX, row-level flags, or equivalent bounded cues — but it must be explicit.
 
-Because investigation confirmed that `meta.explainability_report` is stored but not rendered, it is in scope to selectively surface a sanitized, bounded subset of that structure if needed.
+### 5. Range editing must include the actual analytical fields
 
-However:
-- do not dump raw technical/explainability payloads directly into the UI
-- do not expose arbitration/debug internals in consumer-facing language
-- use it only through carefully shaped compiler/presentation logic
+The user must be able to add/edit, at minimum where the contract supports it:
 
-### 5. No analytical reasoning changes
+- minimum bound
+- maximum bound
+- unit
 
-This sprint must not change:
+If raw reference text can be preserved safely in the parsed review model, that may also be retained, but the core requirement is analytical min/max/unit correction.
 
-- ranking logic
-- signal evaluation
-- cluster logic
-- burden logic
-- insight graph construction logic
-- phenotype firing logic
-- any governed rule determining what the engine believes
+### 6. Keep the change within the upload-review seam
 
-It may change only how the existing governed output is compiled, shaped, and presented.
+This sprint must stay in the seam:
 
-### 6. Gemini enablement is explicitly out of scope
+- parse output
+- upload review/edit state
+- analysis-start payload preparation
 
-Do not turn this into an env/config sprint.
-Do not depend on live Gemini to satisfy acceptance.
+Do not turn this into a broader scoring-policy or results-page sprint.
 
-This sprint must improve the product meaningfully using deterministic structures alone.
+### 7. Apo ratio contract issue may be fixed only if it is in this same seam
 
-### 7. Default results remain consumer-safe
+If the `apolipoprotein_ratio_(venous)` unit/canonicalisation issue is confirmed to arise within the same upload-review contract seam, it may be fixed in this sprint.
 
-If richer internal explanation structures are surfaced, they must be translated into user-safe, plain-English presentation.
-
-Technical/internal-only structures may be partially surfaced only through bounded compiler logic or advanced/clinician presentation where appropriate.
+Do not widen beyond that seam.
 
 ---
 
@@ -181,56 +163,48 @@ Technical/internal-only structures may be partially surfaced only through bounde
 
 ## Required Changes
 
-### A. Balanced systems narrative
+### A. Parse/review fidelity improvement
 
-Add a bounded explanation layer that explicitly identifies, where supported by existing deterministic evidence:
+Improve the upload-review path so richer lab-provided range/context data is preserved where already available from the parser.
 
-- systems or domains that appear broadly stable / reassuring / well-regulated on this panel
-- the key evidence supporting that conclusion
-- how those stronger systems temper or contextualise weaker findings
+This includes eliminating avoidable frontend dropping of usable range information.
 
-This may be a new bounded section on the results page or an enhancement to an existing section, but it must be driven by existing deterministic result data.
+### B. Manual range editing in marker review
 
-### B. Explainability surfacing
+Update marker review/edit functionality so users can add/edit:
 
-Selectively surface a sanitized subset of currently hidden deterministic explanation material, especially from `meta.explainability_report` if that is the best governed source, to deepen the results experience without exposing raw internal structures.
+- min
+- max
+- unit
 
-The sprint must decide at implementation time, based on actual repo truth, the smallest safe subset needed to improve:
-- balance
-- explanatory depth
-- confidence-building interpretation
+for parsed biomarkers before analysis start.
 
-### C. Compiler / presentation alignment
+### C. Missing-range attention UX
 
-Update the backend compiler and frontend rendering so that:
+Add clear review-stage indication for biomarkers whose range data is missing or insufficient for trusted downstream interpretation.
 
-- hero
-- Why / lead hypothesis explanation
-- system-level interpretation
-- clinician report, where relevant
+This must help users understand that they need to intervene.
 
-all remain aligned and non-contradictory after balanced-system surfacing is added.
+### D. Analysis payload propagation
 
-### D. Preserve boundedness
+Ensure manually corrected range data is sent through the existing `reference_range` contract to analysis start.
 
-Use the smallest safe change set needed to:
-- surface reassuring/healthy system interpretation
-- surface richer deterministic explanation
-- avoid raw explainability/debug leakage
-- keep default results understandable and premium-feeling
+### E. Contract-alignment fixes within the same seam
+
+If the apo ratio unit/key issue is confirmed to live in this upload-review contract seam, fix it here in the narrowest safe way.
 
 ---
 
 ## Explicit Non-Goals
 
-- no Gemini enablement / env toggle work
-- no changes to analytical ranking policy
-- no changes to signal evaluator, clusters, burden logic, or insight graph construction
-- no upload/parser/questionnaire work
-- no broad redesign of the entire results page
-- no second narrative authority source
-- no speculative claims that exceed deterministic evidence
-- no raw technical dump of `explainability_report`
+- no broad fallback-range implementation for ordinary biomarkers
+- no scoring-policy change for ordinary biomarkers
+- no Gemini/narrative/results-page work
+- no questionnaire redesign
+- no broad parser rewrite
+- no full multi-profile sex/pregnancy-specific fallback-range system
+- no second authority source for ranges
+- no changes to downstream analytical logic except to consume corrected input already supported by contract
 
 ---
 
@@ -238,13 +212,13 @@ Use the smallest safe change set needed to:
 
 Cursor must STOP immediately if any of the following become true:
 
-1. Surfacing balanced system narrative would require changing analytical logic rather than using existing deterministic outputs
-2. `meta.explainability_report` or related structures cannot be surfaced safely without exposing internal/debug/arbitration material and no bounded shaping path exists
-3. Existing result structures do not contain enough deterministic evidence to support a balanced healthy-system layer in this sprint
-4. A second narrative authority source would be introduced
-5. A touched file would cross into core analytical reasoning boundaries beyond output compilation/presentation
-6. The only way to satisfy the sprint would be to enable live Gemini
-7. The sprint would require broad redesign of the whole results page instead of bounded explanation surfacing
+1. Fixing the issue would require changing ordinary-biomarker scoring policy rather than the upload-review contract
+2. Manual range correction cannot be propagated without changing core analytical boundaries beyond the existing `reference_range` contract
+3. Preserving richer lab detail would require a broad parser rewrite rather than a bounded seam fix
+4. A second range authority source would be introduced
+5. The UX cannot clearly indicate missing/insufficient range state without broad redesign of the upload flow
+6. Apo ratio remediation would require widening beyond the upload-review seam
+7. The sprint would require introducing broad fallback behaviour contrary to the locked policy for this wave
 
 If any STOP condition triggers, do not improvise. Report the blocker.
 
@@ -252,23 +226,23 @@ If any STOP condition triggers, do not improvise. Report the blocker.
 
 ## Phase Execution Model
 
-### Phase 1 — Deterministic explanation surfacing
+### Phase 1 — Upload-review contract improvement
 
 Implement the bounded backend/frontend changes required so that:
 
-- reassuring / stable systems can be surfaced where deterministic evidence supports them
-- richer deterministic explanation material already present in runtime is selectively surfaced
-- default results become more balanced and confidence-building
-- no analytical logic changes occur
+- richer parsed range detail is preserved where possible
+- users can manually add/edit range data in marker review
+- missing/insufficient range data is clearly flagged
+- corrected range data flows into analysis start
 
 ### Phase 2 — Validation
 
 Verify with targeted tests and browser checks that:
 
-- the new balanced narrative is grounded in deterministic evidence
-- no raw internal explainability/debug structures are exposed
-- default results feel more balanced without becoming generic or hand-wavy
-- existing hero / Why / clinician report layers remain valid and deterministic
+- parsed biomarkers with missing range data are visibly flagged
+- edited range data persists into analysis submission
+- existing valid parse/review flow still works
+- no scoring-policy changes were introduced
 
 ---
 
@@ -276,43 +250,36 @@ Verify with targeted tests and browser checks that:
 
 Must verify all of the following.
 
-### Results contract
+### Upload parse / review
 
-- `GET /api/analysis/result` still returns a valid DTO
-- `clinician_report_v1` still compiles correctly
-- any newly surfaced explanation slice is sourced from existing deterministic result structures
-- no required fields for current results rendering are lost
+- parsed biomarkers still load correctly into review
+- valid existing range data is preserved
+- richer parser-provided range detail is not unnecessarily dropped
+- biomarkers with missing or insufficient range data are visibly flagged
 
-### Balanced systems narrative
+### Edit flow
 
-- at least one reassuring / stable / healthy system-level interpretation can be surfaced when supported by the current panel
-- the surfaced explanation names the evidence supporting that positive interpretation
-- the new balanced layer does not contradict the lead concern or Why layer
-- no unsupported positivity is introduced
+- users can add/edit min, max, and unit
+- edited values survive save/reopen within the review flow
+- range correction is included in analysis-start payload
 
-### Explainability surfacing
+### Analysis handoff
 
-- if `meta.explainability_report` or related structures are used, only a bounded sanitized subset is surfaced
-- no raw arbitration/debug language appears in the default consumer-facing layer
-- no second authority source is introduced
+- existing `reference_range` contract is used
+- corrected ranges reach backend analysis input
+- no regressions to normal successful analysis submission
 
-### Consumer safety and clarity
+### Apo ratio (if included)
 
-- the default results page remains readable and premium-feeling
-- the new layer improves balance and confidence rather than cluttering the page
-- no raw internal IDs, policy keys, or technical dump content appear
+- if fixed in this sprint, unit/canonicalisation behaviour is correct within the upload-review seam
+- no new validation blocker occurs for the ratio marker in the tested path
 
-### Determinism
+### Determinism and safety
 
-- same result payload produces the same surfaced balanced-system narrative
-- no randomness
-- no hidden fallback content source
-- no implicit dependence on runtime order or mutable global state
-
-### Narrative runtime neutrality
-
-- the sprint still passes whether live Gemini is enabled or not
-- no new dependency on `insights[]` quality for core acceptance
+- no hidden fallback ranges introduced for ordinary biomarkers
+- no second range authority source introduced
+- same edited input produces the same payload
+- no randomness or implicit hidden repair logic
 
 ---
 
@@ -320,11 +287,11 @@ Must verify all of the following.
 
 Minimum required tests must cover:
 
-1. compiler/presentation helpers changed by this sprint
-2. a representative payload where reassuring/stable system interpretation is surfaced from deterministic evidence
-3. proof that surfaced explanation content comes from existing governed structures, not new hand-authored authority
-4. targeted frontend rendering checks for the new balanced explanation layer
-5. no regression to results-page loading for an existing completed analysis result
+1. marker review edit/add of range min/max/unit
+2. analysis payload includes corrected `reference_range`
+3. missing-range attention state in the review layer
+4. preservation of existing valid range data through review
+5. any narrow apo ratio contract fix included in scope
 
 Use the smallest relevant test scope.
 Do not expand into broad unrelated suite creation.
@@ -334,11 +301,11 @@ Do not expand into broad unrelated suite creation.
 ## Execution Rules
 
 - follow this prompt exactly
-- do not turn this into a Gemini enablement sprint
-- do not change analytical reasoning
-- do not invent a second narrative source
-- do not widen into upload/questionnaire/parser work
-- do not perform broad redesign beyond the bounded explanation-surfacing improvement
+- do not turn this into a fallback-range sprint
+- do not change ordinary-biomarker scoring policy
+- do not invent a second range authority
+- do not widen into results/questionnaire/narrative work
+- do not perform broad parser redesign beyond the bounded seam improvement
 - do not modify unrelated files
 
 ---
@@ -348,21 +315,22 @@ Do not expand into broad unrelated suite creation.
 Cursor must return:
 
 1. files changed
-2. exact backend compiler/presentation files touched
-3. exact frontend rendering files touched
+2. exact backend files touched
+3. exact frontend files touched
 4. implementation summary
 5. tests run and results
 6. before/after evidence that:
-   - balanced reassuring/stable system narrative is now surfaced
-   - the results experience is less one-sided
-   - surfaced explanation remains deterministic and consumer-safe
-7. any blockers encountered
+   - missing-range biomarkers are now visibly flagged
+   - users can add/edit min/max/unit
+   - corrected ranges reach analysis start
+7. whether apo ratio was included and, if so, exactly how it was fixed within seam
+8. any blockers encountered
 
 ---
 
 ## Governance
 
-This is HIGH-risk governed output work.
+This is HIGH-risk governed input-contract work.
 
 Requires:
 
