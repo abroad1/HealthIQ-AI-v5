@@ -7,6 +7,16 @@ interface ClinicianReportRendererProps {
   report: ClinicianReportV1 | null | undefined;
 }
 
+function formatSignalIdForDisplay(signalId: string): string {
+  const stripped = signalId.replace(/^signal_/, '').replace(/_/g, ' ');
+  return stripped.replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function formatConfidence(value: number | undefined): string {
+  if (value === undefined || Number.isNaN(value)) return '—';
+  return (Math.round(value * 100) / 100).toFixed(2);
+}
+
 function normalizeConcernMode(mode: PrimaryConcernModeV1 | undefined): PrimaryConcernModeV1 {
   return mode ?? 'distinct_lead';
 }
@@ -33,8 +43,8 @@ function Page1RankingContext({ page1 }: { page1: ClinicianReportV1['sections']['
           </p>
           {coIds.length > 0 && (
             <p className="mt-2">
-              <span className="font-medium">Co-ranked signal identifiers:</span>{' '}
-              {coIds.join(', ')}
+              <span className="font-medium">Co-ranked patterns:</span>{' '}
+              {coIds.map((id) => formatSignalIdForDisplay(id)).join(' · ')}
             </p>
           )}
         </div>
@@ -52,8 +62,8 @@ function Page1RankingContext({ page1 }: { page1: ClinicianReportV1['sections']['
           </p>
           {coIds.length > 0 && (
             <p className="mt-2">
-              <span className="font-medium">Co-ranked signal identifiers:</span>{' '}
-              {coIds.join(', ')}
+              <span className="font-medium">Co-ranked patterns:</span>{' '}
+              {coIds.map((id) => formatSignalIdForDisplay(id)).join(' · ')}
             </p>
           )}
         </div>
@@ -157,7 +167,8 @@ export default function ClinicianReportRenderer({ report }: ClinicianReportRende
           <CardHeader>
             <CardTitle>Root Cause</CardTitle>
             <CardDescription>
-              {rootCause.signal_id} ({rootCause.signal_state}) - confidence {rootCause.signal_confidence}
+              {formatSignalIdForDisplay(rootCause.signal_id)} ({rootCause.signal_state}) — confidence{' '}
+              {formatConfidence(rootCause.signal_confidence)}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -165,7 +176,9 @@ export default function ClinicianReportRenderer({ report }: ClinicianReportRende
               <div key={hypothesis.hypothesis_id} className="rounded border p-3 space-y-2">
                 <p className="font-semibold">{hypothesis.title}</p>
                 <p className="text-sm">{hypothesis.summary}</p>
-                <p className="text-sm"><strong>Confidence:</strong> {hypothesis.hypothesis_confidence}</p>
+                <p className="text-sm">
+                  <strong>Confidence:</strong> {formatConfidence(hypothesis.hypothesis_confidence)}
+                </p>
                 <p className="text-sm"><strong>Rationale:</strong> {hypothesis.ranking_rationale}</p>
               </div>
             ))}

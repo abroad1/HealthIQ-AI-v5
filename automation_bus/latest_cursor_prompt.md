@@ -1,111 +1,117 @@
 ---
-work_id: KB-HBA1C-GOV1
-branch: feature/hba1c-dual-id-governance
+work_id: BE-W2-RQ1
+branch: feature/wave2-results-contract-quality
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# KB-HBA1C-GOV1 — HbA1c Dual-ID Governance and Unit Reconciliation
+# BE-W2-RQ1 — Wave 2 Results Contract and Narrative Quality
 
 ## Objective
 
-Fix the critical UAT blocker where HbA1c in `mmol/mol` fails analysis start, and enforce deterministic single-path Layer B analytical handling for HbA1c when commercial blood panels contain both:
+Deliver a single governable Wave 2 remediation pass that materially improves the quality, clarity, and trustworthiness of the results experience without changing analytical reasoning logic.
 
-- `HbA1c (Venous)` / IFCC-style reporting
-- `HbA1c % (Venous)` / NGSP-style reporting
+This sprint must correct the current gap where the core end-to-end journey works, but the returned results feel thin, overly technical, and insufficiently personalised because consumer-facing output is currently dominated by deterministic compiler text and governance/debug language.
 
-This is not a UI sprint.
-This is not a broad unit-system redesign.
-This is a governed ingestion-and-analysis input correction.
+This is not a transport/runtime sprint.
+This is not a broad product redesign.
+This is not a Gemini-enablement sprint.
 
-The required product outcome is:
+The required outcome is:
 
-- both HbA1c report-line representations may remain available to user-visible biomarker/results surfaces
-- only one canonical HbA1c representation may feed Layer B analysis
-- Layer B canonical HbA1c identity remains:
-  - biomarker id: `hba1c`
-  - canonical analytical unit: `%`
+- default consumer-facing results no longer expose internal governance/debug language
+- hero interpretation explains the main health story in plain English
+- system-group output is more pattern-specific and less boilerplate
+- supporting / contradictory / missing markers are surfaced more clearly
+- clinician report reads coherently and no longer leaks ugly raw formatting
+- the page remains useful even when live Gemini narrative is not enabled
 
 ---
 
 ## Stage 1A — Authority Preflight (MANDATORY)
 
-### Canonical Layer B HbA1c Analytical Truth
+### Runtime truth already established
 
-The authoritative Layer B HbA1c analytical identity for this sprint is fixed as:
+The current results experience is composed from these layers:
 
-- biomarker id: `hba1c`
-- canonical unit: `%`
+- `POST /api/analysis/start`
+  - returns start metadata only
+- `GET /api/analysis/result`
+  - returns DTO built by `build_analysis_result_dto(...)`
+- hero and clinician-facing copy are derived primarily from:
+  - `meta.insight_graph.report_v1`
+  - `compile_clinician_report_v1(...)`
+- optional richer narrative summaries are sourced from:
+  - `insights[]`
+  - produced by `InsightSynthesizer`
+  - which may use Gemini or may fall back to mock/deterministic clients depending on env
 
-This is based on existing repo reality across:
+This sprint must not guess a different runtime truth.
 
-- `backend/ssot/biomarkers.yaml`
-- `backend/ssot/clusters.yaml`
-- `backend/ssot/criticality.yaml`
-- `backend/ssot/ranges.yaml`
-- `backend/core/analytics/insight_graph_builder.py`
+### Authoritative backend files for this sprint
 
-Cursor must treat this as already decided architecture, not an open choice.
+At minimum, inspect and use the actual current versions of:
 
-### Parallel HbA1c Identifier
-
-A second SSOT biomarker id exists:
-
-- `hba1c_pct`
-
-This remains a valid parsed/display identifier in current repo reality, but it must not remain an independently contributing Layer B analytical path after this sprint.
-
-### Unit Conversion Authority
-
-Authoritative unit metadata and runtime handling are in:
-
-- `backend/ssot/units.yaml`
-- `backend/core/units/registry.py`
-
-### Parsing / Canonicalisation / Analysis Path
-
-Relevant runtime seam files include at minimum:
-
-- `backend/app/routes/upload.py`
 - `backend/app/routes/analysis.py`
-- `backend/core/canonical/normalize.py`
-- `backend/core/units/registry.py`
-- `backend/core/pipeline/orchestrator.py`
+- `backend/core/dto/builders.py`
+- `backend/core/reports/report_compiler_v1.py`
+- the module that defines `compile_clinician_report_v1(...)`
+- any directly related report-v1 assembly or presentation helper modules actually used in the runtime path
+
+### Authoritative frontend files for this sprint
+
+At minimum, inspect and use the actual current versions of:
+
+- `frontend/app/(app)/results/page.tsx`
+- `frontend` component(s) that render:
+  - hero interpretation
+  - system groups
+  - insights / narrative summaries
+  - clinician report
+- current repo evidence previously identified `InsightPanel.tsx` as one leakage point for:
+  - signal-derived badges
+  - policy version badges
+  - technical tie-break language
+
+If hardening finds the active rendering component paths differ from this assumed set, Claude must cite the exact actual files in evidence and hardening may narrow or correct touched-file scope. Cursor must not improvise beyond those verified files.
+
+### Non-governing facts to respect
+
+- Gemini/live LLM output is env-gated and may be off in this path
+- the hero is not the Gemini layer by default
+- therefore this sprint must not rely on live Gemini being enabled in order to meet acceptance
 
 ---
 
 ## Stage 1B — Reality Check
 
-Repo reality already established:
+This sprint addresses real UAT findings and is not a no-op.
 
-- `hba1c` and `hba1c_pct` are separate SSOT ids
-- both can survive canonicalisation into runtime biomarker maps
-- `hba1c` is the dominant Layer B analytical identity for core engine subsystems
-- some KB signals still reference `hba1c_pct`
-- `system_burden_registry.yaml` contains both ids
-- runtime currently lacks `mmol/mol -> %` conversion for `hba1c`
-- duplicate analytical contribution risk is real if both ids remain live
+Confirmed UAT problems in the current default results experience include:
 
-This sprint is not a no-op.
+- hero interpretation exposes internal governance language and signal IDs
+- system-group explanations are too generic
+- supporting / contradictory markers are not surfaced clearly enough
+- clinician report is thin and awkwardly formatted
+- output quality feels like structured backend text with light templating, not a polished end-user interpretation
+- live Gemini is env-dependent and cannot be assumed
 
 ---
 
 ## Stage 1C — Intelligence Preflight
 
-This sprint modifies governed runtime behaviour in the ingestion / normalisation / Layer B input path.
+This sprint changes emitted user-facing reasoning and report presentation.
 
-It affects:
+It therefore affects:
 
-- which HbA1c input reaches Layer B
-- unit reconciliation before analysis
-- whether duplicate HbA1c analytical contribution is possible
-- which downstream signals and burden paths remain live
+- output generation text
+- ranking explanation presentation
+- what evidence is shown to users
+- clinician report wording and structure
+- frontend presentation of backend-generated interpretation
 
-Therefore:
-
-- `risk_level: HIGH`
-- `change_type: MIXED`
+This is HIGH risk because it changes what the product says to the user, even though it must not change the underlying analytical logic.
 
 No downgrade is permitted.
 
@@ -115,48 +121,77 @@ No downgrade is permitted.
 
 Cursor must implement these decisions exactly.
 
-### 1. Canonical analytical HbA1c path
+### 1. Default consumer layer must not expose internal governance/debug language
 
-Only `hba1c` may feed Layer B analysis after arbitration.
+The default consumer-facing results layer must not display raw internal constructs such as:
 
-### 2. Canonical analytical unit
+- raw signal IDs
+- raw policy IDs / ranking policy version strings
+- “technical tie-break” as user-facing hero framing
+- policy-ordered ambiguity/governance phrasing as the primary explanation
 
-Layer B analytical HbA1c must remain `%`.
+If such data must remain available for technical/advanced use, it must not dominate the default consumer layer.
 
-Do not change canonical HbA1c base unit in SSOT.
+### 2. Hero interpretation is a consumer summary, not a policy explanation
 
-### 3. Arbitration gate location
+The hero must answer, in plain English:
 
-The arbitration gate must be inserted:
+- what the lead health concern/pattern is
+- why it was selected
+- which markers most strongly support it
+- what the user should understand from it
 
-- after canonicalisation
-- before `apply_unit_normalisation`
+The hero must not lead with ranking mechanics.
 
-Cursor must not choose a different seam.
+### 3. System-group text must become pattern-specific
 
-This is the required architectural insertion point.
+System-group descriptions must be materially more tied to the actual marker pattern returned in that analysis.
 
-### 4. Product handling rule
+Generic educational boilerplate may remain as secondary support, but it must not be the primary explanation when more specific deterministic evidence is already available.
 
-If both `hba1c` and `hba1c_pct` are present in one runtime biomarker set:
+### 4. Supporting / contradictory / missing marker transparency must improve
 
-- both may remain available to user-visible/raw/result-facing layers if current response shaping supports that
-- only `hba1c` may proceed into Layer B analytical input
+The sprint must use existing deterministic structured data where available to make it clearer:
 
-### 5. Fate of `hba1c_pct` in Layer B
+- which markers support the current interpretation
+- which markers weaken or complicate it
+- which missing markers limit confidence
 
-For this sprint:
+This must be done without exposing raw internal debugging structures.
 
-- `hba1c_pct` must be suppressed from Layer B analytical input after arbitration
-- `hba1c_pct`-based signals therefore become dormant in practice for this path
-- `hba1c_pct` burden contribution therefore becomes dormant in practice for this path
+### 5. Clinician report quality must improve without changing analytical logic
 
-Do not invent a second suppression mechanism elsewhere.
-Do not leave `hba1c_pct` analytically live.
+The clinician report may remain deterministic and compiler-driven in this sprint.
+It does not need to become a separate Gemini document.
 
-### 6. Conversion requirement
+But it must:
 
-`hba1c` must support `mmol/mol -> %` so UK-style uploads can normalise successfully into the canonical Layer B HbA1c input.
+- read coherently
+- avoid raw floating-point artefacts
+- avoid awkward duplication
+- avoid raw signal/policy leakage in consumer-facing sections
+- better reflect the structured evidence already present in `report_v1`
+
+### 6. Gemini enablement is not part of this sprint
+
+Do not turn this into an env/config sprint.
+
+Do not require live Gemini for acceptance.
+
+If the page contains runtime provenance indicators or empty-state logic related to narrative runtime, they may be softened or clarified, but this sprint must not be blocked on enabling Gemini.
+
+### 7. Analytical reasoning must not change
+
+This sprint must not change:
+
+- ranking logic
+- cluster logic
+- signal evaluation
+- burden calculations
+- insight graph construction
+- analytical hypotheses
+
+The sprint changes presentation contract and report compiler output quality, not the engine’s reasoning.
 
 ---
 
@@ -164,59 +199,63 @@ Do not leave `hba1c_pct` analytically live.
 
 ## Required Changes
 
-### A. Add missing HbA1c reverse conversion support
+### A. Consumer-facing hero cleanup
 
-Update the governed unit-conversion path so `hba1c` can normalise from:
+Update the backend/frontend contract so the default hero:
 
-- `mmol/mol` -> `%`
+- no longer leads with governance/debug language
+- does not expose raw signal IDs or policy IDs in primary consumer presentation
+- provides a plain-English lead interpretation with evidence-aware explanation
 
-Preferred authoritative implementation:
-- explicit SSOT conversion definition in `backend/ssot/units.yaml`
-- corresponding runtime support in `backend/core/units/registry.py`
+This includes, where needed:
 
-If runtime already loads SSOT conversion factors generically, use that path.
-Do not hardcode a shadow authority elsewhere.
+- compiler-side page 1 wording cleanup
+- frontend hero badge/label cleanup
+- removal or relocation of governance labels from default consumer view
 
-### B. Add deterministic HbA1c arbitration gate
+### B. Clinician report v1 copy and formatting improvement
 
-At the exact architectural seam:
+Improve `compile_clinician_report_v1(...)` and any directly related compiler/presentation helpers so that:
 
-- after canonicalisation
-- before `apply_unit_normalisation`
+- confidence values are formatted cleanly
+- duplicated or awkward phrasing is removed
+- root-cause and confirmatory-test sections read coherently
+- the report better reflects existing structured evidence without sounding like an internal debug artifact
 
-implement deterministic arbitration such that:
+### C. System-group presentation improvement
 
-- `hba1c` remains the sole Layer B analytical HbA1c input
-- `hba1c_pct` is removed from the Layer B-bound biomarker set
-- this occurs before unit normalisation and before orchestrator input assembly
+Improve the current system-group experience so the displayed explanation is more closely tied to the actual cluster pattern and contributing markers.
 
-### C. Preserve downstream analysis contract
+This must use existing deterministic data already present in the result contract where possible.
+Do not invent a second narrative authority.
 
-Do not redesign Layer B consumers.
-Do not patch orchestrator, signal evaluator, or insight graph to compensate for duplicate HbA1c ids if the arbitration gate can prevent that upstream.
+### D. Supporting-marker transparency
 
-### D. Tests
+Improve the default results experience so supporting / opposing / missing evidence is clearer.
+Use existing structured evidence in the returned result shape where available.
 
-Add the narrowest relevant test coverage proving:
+Do not expose raw internal payloads directly.
+Do not invent speculative medical claims.
 
-1. `hba1c` accepts `mmol/mol` and normalises to `%`
-2. when both `hba1c` and `hba1c_pct` are present, only `hba1c` reaches the Layer B-bound path
-3. duplicate analytical contribution does not occur for the governed HbA1c path
-4. current user-visible/raw retention is not broken unintentionally by the arbitration step, to the extent covered by existing response/normalisation tests
+### E. Frontend consumer/advanced separation
+
+If a distinction already exists between default results and advanced analysis, this sprint may move more technical material into the advanced/technical area rather than deleting it outright.
+
+But the default consumer-facing layer must become cleaner.
 
 ---
 
 ## Explicit Non-Goals
 
-- no UI workaround
-- no manual upload-data rewrite
-- no change to canonical Layer B HbA1c id away from `hba1c`
-- no change to canonical analytical unit away from `%`
-- no broad redesign of the unit system
-- no broad redesign of parsed biomarker display surfaces
-- no refactor of all duplicate-clinical-analyte handling in the platform
-- no Knowledge Bus content rewrite beyond what is strictly required by this governed runtime correction
-- do not redesign `hba1c_pct` package strategy globally outside this sprint
+- no Gemini enablement / env toggle work
+- no changes to analytical ranking policy
+- no changes to signal evaluator or insight graph construction logic
+- no questionnaire redesign
+- no upload/parser changes
+- no SSE/runtime transport work
+- no large visual redesign of the whole results page
+- no new separate narrative authority source
+- no hand-authored clinical prose outside the governed compiler/presentation path
 
 ---
 
@@ -224,13 +263,13 @@ Add the narrowest relevant test coverage proving:
 
 Cursor must STOP immediately if any of the following become true:
 
-1. The arbitration gate cannot be implemented at the declared seam without contradicting current runtime architecture
-2. Implementing the gate would require changing the canonical Layer B HbA1c id away from `hba1c`
-3. Both user-visible preservation and single analytical contribution cannot coexist without a broader response-model redesign
-4. `hba1c_pct` suppression from Layer B would break a contract that cannot be safely adjusted within this sprint
-5. A second authority source for HbA1c units or canonicality would be introduced
-6. The fix would require opportunistic redesign of orchestrator, signal evaluator, or insight graph beyond bounded upstream arbitration
-7. Clinical conversion precision cannot be implemented deterministically from governed SSOT/runtime authority
+1. Improving consumer-facing results quality would require changing analytical ranking, signal evaluation, or cluster logic rather than presentation/compilation
+2. The required quality improvement cannot be achieved without enabling live Gemini
+3. The existing result contract lacks enough structured evidence to improve hero/system/supporting-marker output within this sprint
+4. A second narrative authority source would be introduced
+5. A touched file would cross into core analytical reasoning boundaries beyond output compilation/presentation
+6. The only way to hide governance/debug language would be to remove data needed by clinician/advanced users with no bounded separation option
+7. The sprint would require broad redesign of the entire results UI rather than targeted contract/presentation improvement
 
 If any STOP condition triggers, do not improvise. Report the blocker.
 
@@ -238,23 +277,23 @@ If any STOP condition triggers, do not improvise. Report the blocker.
 
 ## Phase Execution Model
 
-### Phase 1 — Governed Fix
+### Phase 1 — Contract and presentation improvement
 
-Implement:
+Implement the bounded backend/frontend changes required so that:
 
-- `mmol/mol -> %` support for `hba1c`
-- HbA1c arbitration gate at the declared seam
-- suppression of `hba1c_pct` from Layer B-bound analytical input
+- consumer hero is plain English and evidence-aware
+- governance/debug leakage is removed from default consumer presentation
+- clinician report wording/formatting improves
+- system-group and supporting-marker visibility improve using existing deterministic inputs
 
 ### Phase 2 — Validation
 
-Verify:
+Verify with targeted tests and browser checks that:
 
-- UAT blocker is removed
-- Layer B sees only canonical `hba1c`
-- `hba1c_pct` no longer contributes analytically
-- determinism preserved
-- no unintended breakage in upload -> analysis start path
+- core analytical outputs still exist
+- user-facing presentation quality is materially improved
+- default consumer layer no longer shows internal policy/signal language
+- advanced/technical layers still function as intended if present
 
 ---
 
@@ -262,34 +301,48 @@ Verify:
 
 Must verify all of the following.
 
-### Unit Normalisation
+### Results contract
 
-- `hba1c` in `%` still behaves correctly
-- `hba1c` in `mmol/mol` now normalises successfully to `%`
-- no regression to existing glucose/lipid unit conversions
+- `GET /api/analysis/result` still returns a valid DTO
+- `clinician_report_v1` still compiles correctly
+- no required fields for current results rendering are lost
 
-### Arbitration
+### Consumer hero
 
-- when only `hba1c` exists, behaviour is unchanged
-- when only `hba1c_pct` exists, deterministic handling is explicit and tested according to the implemented gate logic
-- when both exist, only `hba1c` reaches Layer B analytical input
+- no raw signal IDs in default hero
+- no raw policy version strings in default hero
+- no “technical tie-break” lead message in default hero
+- hero now explains the actual concern in plain English
 
-### Layer B
+### System groups
 
-- no duplicate HbA1c signal contribution
-- no duplicate HbA1c burden contribution through the Layer B-bound input set
-- core Layer B consumers (`clusters`, `criticality`, `insight graph`) continue to operate on canonical `hba1c`
+- system-group card text is more specific to the actual pattern
+- contributing markers are still shown
+- no breakage in cluster rendering
 
-### UAT blocker path
+### Supporting-marker transparency
 
-- analysis start no longer fails on UK-style HbA1c `mmol/mol` input
+- supporting / contradictory / missing markers are surfaced more clearly
+- no unsupported claims are introduced
+- no raw debug payload leakage
+
+### Clinician report
+
+- no raw floating confidence artefacts like `0.6000000000000001`
+- duplicated/awkward phrasing removed
+- sections remain structurally intact
+
+### Narrative runtime neutrality
+
+- page remains acceptable whether live Gemini is enabled or not
+- no new dependency on env-specific LLM runtime for core acceptance
 
 ### Determinism
 
-- same dual-input set always produces the same arbitrated Layer B-bound HbA1c outcome
+- same result payload produces the same compiled/rendered output
 - no randomness
-- no silent fallback
-- no implicit ordering dependence
+- no hidden fallback content source
+- no implicit dependence on runtime order or mutable global state
 
 ---
 
@@ -297,11 +350,11 @@ Must verify all of the following.
 
 Minimum required tests must cover:
 
-1. `hba1c mmol/mol -> %` conversion
-2. arbitration when both `hba1c` and `hba1c_pct` are present
-3. proof that the Layer B-bound biomarker set excludes `hba1c_pct` after arbitration
-4. proof that no duplicate analytical contribution path remains in the tested flow
-5. preservation of expected behaviour for existing single-id HbA1c inputs
+1. consumer-facing hero no longer exposes raw internal governance language
+2. clinician report formatting/copy improvements on representative report payloads
+3. any compiler helpers changed by this sprint
+4. targeted frontend rendering checks for the cleaned hero/presentation contract
+5. no regression to results-page loading for an existing completed analysis result
 
 Use the smallest relevant test scope.
 Do not expand into broad unrelated suite creation.
@@ -311,10 +364,11 @@ Do not expand into broad unrelated suite creation.
 ## Execution Rules
 
 - follow this prompt exactly
-- do not choose a different arbitration seam
-- do not invent a different canonical HbA1c analytical id
-- do not leave `hba1c_pct` analytically live and “hope” downstream consumers ignore it
-- do not widen scope beyond this governed correction
+- do not turn this into a Gemini enablement sprint
+- do not change analytical reasoning
+- do not invent a second narrative source
+- do not widen into upload/questionnaire/parser work
+- do not perform broad redesign beyond the bounded contract/presentation improvement
 - do not modify unrelated files
 
 ---
@@ -324,21 +378,22 @@ Do not expand into broad unrelated suite creation.
 Cursor must return:
 
 1. files changed
-2. exact arbitration seam used, with file path and function
-3. implementation summary
-4. tests run and results
-5. evidence that `hba1c mmol/mol` now passes normalisation
-6. evidence that only canonical `hba1c` reaches Layer B analytical input when both ids are present
-7. confirmation of the practical fate of:
-   - `hba1c_pct` signals
-   - `hba1c_pct` burden contribution
-8. any blockers encountered
+2. exact backend compiler/presentation files touched
+3. exact frontend rendering files touched
+4. implementation summary
+5. tests run and results
+6. before/after evidence that:
+   - default hero no longer shows internal governance language
+   - system-group output is more specific
+   - supporting-marker transparency is improved
+   - clinician report formatting is improved
+7. any blockers encountered
 
 ---
 
 ## Governance
 
-This is HIGH-risk governed behaviour work.
+This is HIGH-risk governed output work.
 
 Requires:
 

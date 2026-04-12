@@ -66,6 +66,18 @@ const getScoreBarColor = (score: number) => {
   return 'bg-red-500';
 };
 
+function formatMarkerLabel(raw: string): string {
+  return raw.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+}
+
+function patternMarkersLine(biomarkers: string[]): string | null {
+  const cleaned = (biomarkers || []).map((b) => String(b).trim()).filter(Boolean);
+  if (!cleaned.length) return null;
+  const shown = cleaned.slice(0, 8);
+  const suffix = cleaned.length > shown.length ? ` (+${cleaned.length - shown.length} more)` : '';
+  return `${shown.map(formatMarkerLabel).join(', ')}${suffix}`;
+}
+
 export default function ClusterSummary({ clusters, isLoading = false, showDetails = false }: ClusterSummaryProps) {
   const [expandedClusters, setExpandedClusters] = useState<Set<string>>(new Set());
   const [selectedSeverity, setSelectedSeverity] = useState<string>('all');
@@ -235,6 +247,12 @@ export default function ClusterSummary({ clusters, isLoading = false, showDetail
                   <p className="text-gray-600 text-sm mb-3">
                     {cluster.description}
                   </p>
+                  {patternMarkersLine(cluster.biomarkers) ? (
+                    <p className="text-sm text-gray-800 mb-3">
+                      <span className="font-medium text-gray-700">Key markers in this group: </span>
+                      {patternMarkersLine(cluster.biomarkers)}
+                    </p>
+                  ) : null}
                   
                   <div className="flex items-center gap-4 text-sm">
                     <div className="flex items-center gap-2">
