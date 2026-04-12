@@ -1,202 +1,344 @@
 ---
-work_id: KB-SQ1
-branch: feature/questionnaire-schema-wiring
+work_id: KB-HBA1C-GOV1
+branch: feature/hba1c-dual-id-governance
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# KB-SQ1 — Questionnaire Schema Wiring (Upload Flow)
+# KB-HBA1C-GOV1 — HbA1c Dual-ID Governance and Unit Reconciliation
 
 ## Objective
 
-Replace mock-backed questionnaire loading in the upload flow with the governed questionnaire schema from the backend, ensuring all runtime questionnaire inputs align with SSOT and are correctly fed into downstream analysis.
+Fix the critical UAT blocker where HbA1c in `mmol/mol` fails analysis start, and enforce deterministic single-path Layer B analytical handling for HbA1c when commercial blood panels contain both:
 
-This is a governed-input wiring correction, not a UI redesign.
+- `HbA1c (Venous)` / IFCC-style reporting
+- `HbA1c % (Venous)` / NGSP-style reporting
+
+This is not a UI sprint.
+This is not a broad unit-system redesign.
+This is a governed ingestion-and-analysis input correction.
+
+The required product outcome is:
+
+- both HbA1c report-line representations may remain available to user-visible biomarker/results surfaces
+- only one canonical HbA1c representation may feed Layer B analysis
+- Layer B canonical HbA1c identity remains:
+  - biomarker id: `hba1c`
+  - canonical analytical unit: `%`
+
+---
 
 ## Stage 1A — Authority Preflight (MANDATORY)
 
-### Canonical Authority
+### Canonical Layer B HbA1c Analytical Truth
 
-- File:
-  `backend/ssot/questionnaire.json`
+The authoritative Layer B HbA1c analytical identity for this sprint is fixed as:
 
-This is the single source of truth for questionnaire structure and content.
+- biomarker id: `hba1c`
+- canonical unit: `%`
 
-### Runtime Loader
+This is based on existing repo reality across:
 
-- Endpoint:
-  `GET /api/questionnaire/schema`
+- `backend/ssot/biomarkers.yaml`
+- `backend/ssot/clusters.yaml`
+- `backend/ssot/criticality.yaml`
+- `backend/ssot/ranges.yaml`
+- `backend/core/analytics/insight_graph_builder.py`
 
-- Defined in:
-  `backend/app/routes/questionnaire.py`
+Cursor must treat this as already decided architecture, not an open choice.
 
-- Expected response shape:
-  - top-level object containing `schema`
-  - `schema` is the questionnaire array loaded from `backend/ssot/questionnaire.json`
+### Parallel HbA1c Identifier
 
-### Frontend Consumer
+A second SSOT biomarker id exists:
 
-- Component:
-  `frontend/app/components/forms/QuestionnaireForm.tsx`
+- `hba1c_pct`
 
-- Render path:
-  `frontend/app/(app)/upload/page.tsx`
+This remains a valid parsed/display identifier in current repo reality, but it must not remain an independently contributing Layer B analytical path after this sprint.
 
-### Duplicate Authority Check
+### Unit Conversion Authority
 
-The following are non-authoritative and must not be used in production runtime:
+Authoritative unit metadata and runtime handling are in:
 
-- inline `mockQuestions` in `QuestionnaireForm.tsx`
-- `@/lib/mock/questionnaire`
+- `backend/ssot/units.yaml`
+- `backend/core/units/registry.py`
 
-No second authority source may be introduced.
+### Parsing / Canonicalisation / Analysis Path
+
+Relevant runtime seam files include at minimum:
+
+- `backend/app/routes/upload.py`
+- `backend/app/routes/analysis.py`
+- `backend/core/canonical/normalize.py`
+- `backend/core/units/registry.py`
+- `backend/core/pipeline/orchestrator.py`
+
+---
 
 ## Stage 1B — Reality Check
 
-Confirmed runtime defect:
+Repo reality already established:
 
-- questionnaire renders successfully
-- no request is made to `/api/questionnaire/schema`
-- form is populated from hardcoded `mockQuestions`
-- governed fields such as `blood_pressure_reading` are absent
+- `hba1c` and `hba1c_pct` are separate SSOT ids
+- both can survive canonicalisation into runtime biomarker maps
+- `hba1c` is the dominant Layer B analytical identity for core engine subsystems
+- some KB signals still reference `hba1c_pct`
+- `system_burden_registry.yaml` contains both ids
+- runtime currently lacks `mmol/mol -> %` conversion for `hba1c`
+- duplicate analytical contribution risk is real if both ids remain live
 
-This sprint addresses a real defect and is not a no-op.
+This sprint is not a no-op.
+
+---
 
 ## Stage 1C — Intelligence Preflight
 
-This change affects:
+This sprint modifies governed runtime behaviour in the ingestion / normalisation / Layer B input path.
 
-- `questionnaire_data` passed into analysis
-- contextual interpretation inputs reaching downstream runtime behaviour
+It affects:
 
-Therefore this work is:
+- which HbA1c input reaches Layer B
+- unit reconciliation before analysis
+- whether duplicate HbA1c analytical contribution is possible
+- which downstream signals and burden paths remain live
 
+Therefore:
+
+- `risk_level: HIGH`
 - `change_type: MIXED`
-- HIGH risk under SOP rules
+
+No downgrade is permitted.
+
+---
+
+## Architectural Decisions Locked For This Sprint
+
+Cursor must implement these decisions exactly.
+
+### 1. Canonical analytical HbA1c path
+
+Only `hba1c` may feed Layer B analysis after arbitration.
+
+### 2. Canonical analytical unit
+
+Layer B analytical HbA1c must remain `%`.
+
+Do not change canonical HbA1c base unit in SSOT.
+
+### 3. Arbitration gate location
+
+The arbitration gate must be inserted:
+
+- after canonicalisation
+- before `apply_unit_normalisation`
+
+Cursor must not choose a different seam.
+
+This is the required architectural insertion point.
+
+### 4. Product handling rule
+
+If both `hba1c` and `hba1c_pct` are present in one runtime biomarker set:
+
+- both may remain available to user-visible/raw/result-facing layers if current response shaping supports that
+- only `hba1c` may proceed into Layer B analytical input
+
+### 5. Fate of `hba1c_pct` in Layer B
+
+For this sprint:
+
+- `hba1c_pct` must be suppressed from Layer B analytical input after arbitration
+- `hba1c_pct`-based signals therefore become dormant in practice for this path
+- `hba1c_pct` burden contribution therefore becomes dormant in practice for this path
+
+Do not invent a second suppression mechanism elsewhere.
+Do not leave `hba1c_pct` analytically live.
+
+### 6. Conversion requirement
+
+`hba1c` must support `mmol/mol -> %` so UK-style uploads can normalise successfully into the canonical Layer B HbA1c input.
+
+---
 
 ## Scope
 
-### Primary Change
+## Required Changes
 
-Update:
+### A. Add missing HbA1c reverse conversion support
 
-- `frontend/app/components/forms/QuestionnaireForm.tsx`
+Update the governed unit-conversion path so `hba1c` can normalise from:
 
-Replace:
+- `mmol/mol` -> `%`
 
-- hardcoded question loading via `mockQuestions`
+Preferred authoritative implementation:
+- explicit SSOT conversion definition in `backend/ssot/units.yaml`
+- corresponding runtime support in `backend/core/units/registry.py`
 
-With:
+If runtime already loads SSOT conversion factors generically, use that path.
+Do not hardcode a shadow authority elsewhere.
 
-- runtime fetch to `GET /api/questionnaire/schema`
-- question source set from `response.schema`
+### B. Add deterministic HbA1c arbitration gate
 
-### Requirements
+At the exact architectural seam:
 
-- use the existing frontend API base resolution pattern already used elsewhere in the app
-- include loading state
-- include explicit error state
-- do not silently degrade to mock questions in the normal production runtime path
+- after canonicalisation
+- before `apply_unit_normalisation`
 
-### Mock Handling
+implement deterministic arbitration such that:
 
-- `mockQuestions` must not be used in the production questionnaire path
-- if retained for test/dev purposes, it must be clearly isolated from the normal runtime path
+- `hba1c` remains the sole Layer B analytical HbA1c input
+- `hba1c_pct` is removed from the Layer B-bound biomarker set
+- this occurs before unit normalisation and before orchestrator input assembly
 
-### Rendering
+### C. Preserve downstream analysis contract
 
-- preserve existing question rendering logic where compatible
-- do not redesign questionnaire UX
-- do not invent new question content
-- do not introduce new question types unless required by the authoritative schema and already supported
+Do not redesign Layer B consumers.
+Do not patch orchestrator, signal evaluator, or insight graph to compensate for duplicate HbA1c ids if the arbitration gate can prevent that upstream.
 
-## Non-Goals
+### D. Tests
 
-- no modification of `backend/ssot/questionnaire.json`
-- no questionnaire content rewrite
-- no backend route redesign if the current endpoint works
-- no results, narrative, clinician report, or broader analysis-pipeline changes
-- no duplicate authority source
+Add the narrowest relevant test coverage proving:
+
+1. `hba1c` accepts `mmol/mol` and normalises to `%`
+2. when both `hba1c` and `hba1c_pct` are present, only `hba1c` reaches the Layer B-bound path
+3. duplicate analytical contribution does not occur for the governed HbA1c path
+4. current user-visible/raw retention is not broken unintentionally by the arbitration step, to the extent covered by existing response/normalisation tests
+
+---
+
+## Explicit Non-Goals
+
+- no UI workaround
+- no manual upload-data rewrite
+- no change to canonical Layer B HbA1c id away from `hba1c`
+- no change to canonical analytical unit away from `%`
+- no broad redesign of the unit system
+- no broad redesign of parsed biomarker display surfaces
+- no refactor of all duplicate-clinical-analyte handling in the platform
+- no Knowledge Bus content rewrite beyond what is strictly required by this governed runtime correction
+- do not redesign `hba1c_pct` package strategy globally outside this sprint
+
+---
 
 ## STOP Conditions (MANDATORY)
 
-Cursor must STOP immediately if:
+Cursor must STOP immediately if any of the following become true:
 
-1. `/api/questionnaire/schema` does not return the expected structure
-2. the authoritative schema contains field types unsupported by the current renderer
-3. any backend modification appears necessary to complete the wiring
-4. any production fallback to mock questions becomes necessary
-5. a second authority source would be introduced
-6. questionnaire submission becomes incompatible with the current analysis-start contract
+1. The arbitration gate cannot be implemented at the declared seam without contradicting current runtime architecture
+2. Implementing the gate would require changing the canonical Layer B HbA1c id away from `hba1c`
+3. Both user-visible preservation and single analytical contribution cannot coexist without a broader response-model redesign
+4. `hba1c_pct` suppression from Layer B would break a contract that cannot be safely adjusted within this sprint
+5. A second authority source for HbA1c units or canonicality would be introduced
+6. The fix would require opportunistic redesign of orchestrator, signal evaluator, or insight graph beyond bounded upstream arbitration
+7. Clinical conversion precision cannot be implemented deterministically from governed SSOT/runtime authority
+
+If any STOP condition triggers, do not improvise. Report the blocker.
+
+---
 
 ## Phase Execution Model
 
-### Phase 1 — Wiring
+### Phase 1 — Governed Fix
 
-- implement schema fetch in `QuestionnaireForm`
-- replace production use of `mockQuestions`
-- ensure questionnaire renders from API-backed schema
+Implement:
+
+- `mmol/mol -> %` support for `hba1c`
+- HbA1c arbitration gate at the declared seam
+- suppression of `hba1c_pct` from Layer B-bound analytical input
 
 ### Phase 2 — Validation
 
-- verify network request to `/api/questionnaire/schema`
-- verify blood pressure reading fields are rendered
-- verify questionnaire submission still progresses into analysis start
+Verify:
+
+- UAT blocker is removed
+- Layer B sees only canonical `hba1c`
+- `hba1c_pct` no longer contributes analytically
+- determinism preserved
+- no unintended breakage in upload -> analysis start path
+
+---
 
 ## Regression Targets
 
-### Upload Flow
+Must verify all of the following.
 
-- upload → parse → review → questionnaire still works
+### Unit Normalisation
 
-### Questionnaire
+- `hba1c` in `%` still behaves correctly
+- `hba1c` in `mmol/mol` now normalises successfully to `%`
+- no regression to existing glucose/lipid unit conversions
 
-- `GET /api/questionnaire/schema` is called
-- `blood_pressure_reading` is present in rendered form
-- production runtime no longer depends on `mockQuestions`
+### Arbitration
 
-### Submission
+- when only `hba1c` exists, behaviour is unchanged
+- when only `hba1c_pct` exists, deterministic handling is explicit and tested according to the implemented gate logic
+- when both exist, only `hba1c` reaches Layer B analytical input
 
-- `POST /api/analysis/start` still succeeds after questionnaire completion
-- questionnaire data remains compatible with the existing analysis flow
+### Layer B
+
+- no duplicate HbA1c signal contribution
+- no duplicate HbA1c burden contribution through the Layer B-bound input set
+- core Layer B consumers (`clusters`, `criticality`, `insight graph`) continue to operate on canonical `hba1c`
+
+### UAT blocker path
+
+- analysis start no longer fails on UK-style HbA1c `mmol/mol` input
 
 ### Determinism
 
-- same schema input produces the same rendered questionnaire
-- no randomness, hidden fallback, or duplicate authority logic introduced
+- same dual-input set always produces the same arbitrated Layer B-bound HbA1c outcome
+- no randomness
+- no silent fallback
+- no implicit ordering dependence
+
+---
 
 ## Test Requirements
 
-Minimum required:
+Minimum required tests must cover:
 
-- narrow test coverage proving questionnaire questions are sourced from API schema
-- bounded assertion that `blood_pressure_reading` is surfaced in the rendered questionnaire
-- smallest relevant test scope only
+1. `hba1c mmol/mol -> %` conversion
+2. arbitration when both `hba1c` and `hba1c_pct` are present
+3. proof that the Layer B-bound biomarker set excludes `hba1c_pct` after arbitration
+4. proof that no duplicate analytical contribution path remains in the tested flow
+5. preservation of expected behaviour for existing single-id HbA1c inputs
+
+Use the smallest relevant test scope.
+Do not expand into broad unrelated suite creation.
+
+---
 
 ## Execution Rules
 
 - follow this prompt exactly
-- do not widen scope
+- do not choose a different arbitration seam
+- do not invent a different canonical HbA1c analytical id
+- do not leave `hba1c_pct` analytically live and “hope” downstream consumers ignore it
+- do not widen scope beyond this governed correction
 - do not modify unrelated files
-- do not introduce speculative refactors
+
+---
 
 ## Deliverables
 
 Cursor must return:
 
 1. files changed
-2. implementation summary
-3. tests run and results
-4. browser verification evidence showing:
-   - `/api/questionnaire/schema` request observed
-   - blood pressure reading fields present
-5. confirmation that production runtime no longer uses `mockQuestions`
-6. any blocker encountered
+2. exact arbitration seam used, with file path and function
+3. implementation summary
+4. tests run and results
+5. evidence that `hba1c mmol/mol` now passes normalisation
+6. evidence that only canonical `hba1c` reaches Layer B analytical input when both ids are present
+7. confirmation of the practical fate of:
+   - `hba1c_pct` signals
+   - `hba1c_pct` burden contribution
+8. any blockers encountered
+
+---
 
 ## Governance
 
-This is HIGH-risk work.
+This is HIGH-risk governed behaviour work.
 
 Requires:
 
@@ -209,4 +351,4 @@ Requires:
 - GPT architectural review
 - dual approval before merge
 
-No shortcuts are permitted.
+No shortcuts permitted.

@@ -1,24 +1,24 @@
 {
-  "work_id": "KB-SQ1",
+  "work_id": "KB-HBA1C-GOV1",
   "status": "HARDENED",
   "bus_version": "1.3.1",
-  "hardened_utc": "2026-04-11T12:00:00Z",
+  "hardened_utc": "2026-04-12T00:00:00Z",
   "hardened_by": "claude-code",
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: KB-SQ1"
+      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: KB-HBA1C-GOV1"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/questionnaire-schema-wiring"
+      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/hba1c-dual-id-governance"
     },
     {
       "check": "Front Matter — risk_level HIGH",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:4 — HIGH; questionnaire_data feeds downstream analysis runtime (Stage 1C)"
+      "citation": "automation_bus/latest_cursor_prompt.md:4 — HIGH; sprint modifies unit conversion path (registry.py) and pipeline behavioural input selection (analysis.py). Both are Intelligence Core boundary files."
     },
     {
       "check": "Front Matter — execution_model TWO_PHASE_START_FINISH",
@@ -28,111 +28,106 @@
     {
       "check": "Front Matter — change_type MIXED",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:6 — BEHAVIOUR: frontend fetch wiring; no CONTENT change to SSOT"
+      "citation": "automation_bus/latest_cursor_prompt.md:6 — SSOT content addition (units.yaml new conversion entry) + BEHAVIOUR change (registry.py conversion logic + analysis.py arbitration gate)"
     },
     {
-      "check": "2A — SSOT authority file exists and contains blood_pressure_reading",
+      "check": "2A — biomarkers.yaml exists; hba1c canonical id confirmed with unit %",
       "result": "CONFIRMED",
-      "citation": "backend/ssot/questionnaire.json:126-136 — id:blood_pressure_reading, type:group, fields:[{label:'Systolic (mmHg)',type:number,min:70,max:250},{label:'Diastolic (mmHg)',type:number,min:40,max:150}], required:false"
+      "citation": "backend/ssot/biomarkers.yaml:191 — hba1c: unit: '%'; description: Hemoglobin A1c percentage; system: metabolic"
     },
     {
-      "check": "2A — Runtime loader route defined and reads from SSOT",
+      "check": "2A — biomarkers.yaml exists; hba1c_pct canonical id confirmed with unit %",
       "result": "CONFIRMED",
-      "citation": "backend/app/routes/questionnaire.py:14 — @router.get('/schema'); Path(__file__).parent.parent.parent/'ssot'/'questionnaire.json' at line 24; returns {schema:[...],total_questions:N,version:'1.0'} at lines 35-39"
+      "citation": "backend/ssot/biomarkers.yaml:1602 — hba1c_pct: unit: '%'; description: Glycated haemoglobin (NGSP, %); system: metabolic"
     },
     {
-      "check": "2A — Route registered at /api/questionnaire/schema",
+      "check": "2A — clusters.yaml exists; only hba1c in metabolic cluster; hba1c_pct absent",
       "result": "CONFIRMED",
-      "citation": "backend/app/main.py:40 — app.include_router(questionnaire.router, prefix='/api/questionnaire')"
+      "citation": "backend/ssot/clusters.yaml:14-15 — metabolic.biomarker_membership.required: [glucose, hba1c]; hba1c_pct not present anywhere in file"
     },
     {
-      "check": "2A — API response shape {schema:[...]} — prompt expects response.schema",
+      "check": "2A — criticality.yaml exists; only hba1c in metabolic required; hba1c_pct absent",
       "result": "CONFIRMED",
-      "citation": "backend/app/routes/questionnaire.py:35-39; frontend/app/lib/questionnaireSchema.ts:72-77 — parseQuestionnaireSchemaPayload reads (data as {schema?:unknown}).schema — COMPATIBLE"
+      "citation": "backend/ssot/criticality.yaml:8 — metabolic.required: [glucose, hba1c]; hba1c_pct not listed anywhere in file"
     },
     {
-      "check": "2A — API_BASE used for fetch — no hardcoded URL",
+      "check": "2A — ranges.yaml exists; hba1c ranges defined in %; hba1c_pct absent",
       "result": "CONFIRMED",
-      "citation": "frontend/app/lib/questionnaireSchema.ts:1 — import {API_BASE} from '@/lib/api'; frontend/app/lib/api.ts:4 — API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://127.0.0.1:8000'"
+      "citation": "backend/ssot/ranges.yaml:112-127 — hba1c: normal max:5.6%, prediabetes 5.7-6.4%, diabetes min:6.5%; unit:'%'; hba1c_pct not present"
     },
     {
-      "check": "2A — Fetch call targets correct endpoint",
+      "check": "2A — insight_graph_builder.py exists; only hba1c referenced; hba1c_pct absent",
       "result": "CONFIRMED",
-      "citation": "frontend/app/lib/questionnaireSchema.ts:84 — fetch(`${API_BASE}/api/questionnaire/schema`, {credentials:'omit',cache:'no-store'})"
+      "citation": "backend/core/analytics/insight_graph_builder.py:71,82-83 — hba1c = _as_float(filtered_biomarkers.get('hba1c')); if hba1c > 5.7: elevated_hba1c. hba1c_pct not referenced."
     },
     {
-      "check": "2A — Production path uses fetchQuestionnaireSchema(), not mock",
+      "check": "2A — units.yaml exists; percent_to_mmol_mol defined; mmol_mol_to_percent ABSENT (confirmed sprint gap)",
       "result": "CONFIRMED",
-      "citation": "frontend/app/components/forms/QuestionnaireForm.tsx:48 — const schema = await fetchQuestionnaireSchema(); setQuestions(schema) at line 49; no mockQuestions array in file"
+      "citation": "backend/ssot/units.yaml:109-113 — percent_to_mmol_mol: from_unit:'%', to_unit:'mmol/mol', factor:10.929. No mmol_mol_to_percent entry present. This is the SSOT gap the sprint adds."
     },
     {
-      "check": "2A — Mock isolated to dev/test autofill path only",
+      "check": "2A — registry.py exists; _HBA1C_BIOMARKERS confirmed; only % -> mmol/mol branch present; mmol/mol -> % branch ABSENT (confirmed runtime gap)",
       "result": "CONFIRMED",
-      "citation": "frontend/app/components/forms/QuestionnaireForm.tsx:66-73 — mock loaded via dynamic import() gated on window.location.search.includes('autofill=true') only"
+      "citation": "backend/core/units/registry.py:66 — _HBA1C_BIOMARKERS = frozenset({'hba1c'}); lines 179-182 — handles hba1c from_u=='%' to_u=='mmol/mol' only. No branch for from_u=='mmol/mol' to_u=='%'. This is the runtime gap the sprint adds."
     },
     {
-      "check": "2A — No duplicate authority source introduced",
+      "check": "2A — analysis.py exists; arbitration seam confirmed between canonicalisation and apply_unit_normalisation",
       "result": "CONFIRMED",
-      "citation": "frontend/app/lib/mock/questionnaire.ts retained but isolated to autofill path only. frontend/app/lib/questionnaireSchema.ts is a fetch utility, not an authority source. No second canonical question source."
+      "citation": "backend/app/routes/analysis.py:129 — normalized = normalize_biomarkers_with_metadata(request.biomarkers); line 142 — normalized = apply_unit_normalisation(normalized). Arbitration gate must be inserted between lines 138 and 142."
     },
     {
-      "check": "2B — All SSOT question types in renderer's explicit type set",
+      "check": "2A — orchestrator.py exists; enforces unit-normalisation invariant before run",
       "result": "CONFIRMED",
-      "citation": "frontend/app/lib/questionnaireSchema.ts:39-49 — RENDERER_EXPLICIT_TYPES: {text,email,phone,date,number,dropdown,slider,checkbox,group}. All types present in backend/ssot/questionnaire.json are covered."
+      "citation": "backend/core/pipeline/orchestrator.py:986-988 — checks __unit_normalisation_meta__ key presence; raises if missing. Arbitration gate must not remove this key (set at analysis.py:153-156, after apply_unit_normalisation)."
     },
     {
-      "check": "2B — group type compatible with blood_pressure_reading fields",
+      "check": "2A — biomarker_alias_registry.yaml: HbA1c (Venous) -> hba1c; HbA1c % (Venous) -> hba1c_pct; two separate canonical ids confirmed",
       "result": "CONFIRMED",
-      "citation": "frontend/app/components/forms/QuestionnaireForm.tsx:340-376 — group renderer iterates question.fields[] by field.label as value key; blood_pressure_reading fields 'Systolic (mmHg)'/'Diastolic (mmHg)' stored as object keyed by label — no incompatibility"
+      "citation": "backend/ssot/biomarker_alias_registry.yaml:319 — 'HbA1c (Venous)' in hba1c aliases; line 328 — 'HbA1c % (Venous)' in hba1c_pct aliases. Both resolve to DIFFERENT canonical ids — no CanonicalCollisionError raised when both are present."
     },
     {
-      "check": "2B — Loading state implemented",
+      "check": "2A — system_burden_registry.yaml: both hba1c and hba1c_pct present; hba1c_pct becomes dormant after gate",
       "result": "CONFIRMED",
-      "citation": "frontend/app/components/forms/QuestionnaireForm.tsx:38 — loadingQuestions state; lines 403-410 — spinner rendered while loading"
+      "citation": "backend/ssot/system_burden_registry.yaml:74 — hba1c: system:metabolic, risk_direction:HIGH_IS_RISK, weight:0.8; line 314 — hba1c_pct: system:metabolic, risk_direction:HIGH_IS_RISK, weight:0.8. hba1c_pct entry persists in SSOT but becomes analytically dormant post-arbitration (Architectural Decision 5)."
     },
     {
-      "check": "2B — Explicit error state with no silent mock fallback",
+      "check": "2A — No duplicate authority source: unit conversion authority solely in units.yaml + registry.py",
       "result": "CONFIRMED",
-      "citation": "frontend/app/components/forms/QuestionnaireForm.tsx:39 — schemaLoadError state; lines 412-425 — error alert + retry button; line 55 — setQuestions([]) on error, no mock fallback"
+      "citation": "No hardcoded conversion factor for hba1c found outside registry.py. registry.py:153-154 loads conversion factors from units.yaml exclusively. Sprint adds to this same path only."
     },
     {
-      "check": "2B — Submission contract unchanged",
+      "check": "2B — Behavioural scope defined: unit conversion path + arbitration gate only",
       "result": "CONFIRMED",
-      "citation": "frontend/app/(app)/upload/page.tsx:168 — questionnaire_data:questionnaireData passed as-is to startAnalysis; QuestionnaireForm.tsx:167 — onSubmit(responses) signature unchanged"
+      "citation": "prompt:167-205 — Required Changes A (units.yaml + registry.py), B (arbitration gate in analysis.py seam), C (no orchestrator/signal evaluator/insight graph changes), D (tests). Non-goals explicit at prompt:209-220."
     },
     {
-      "check": "2B — Determinism preserved",
+      "check": "2B — Regression targets present and testable",
       "result": "CONFIRMED",
-      "citation": "fetchQuestionnaireSchema(): cache:'no-store', no randomness, no hidden fallback. Same SSOT state → identical rendered questionnaire every request."
+      "citation": "prompt:263-292 — four regression categories: Unit Normalisation (hba1c %, hba1c mmol/mol, no glucose/lipid regression), Arbitration (single id, both ids, only hba1c_pct), Layer B (no duplicate signal/burden contribution), Determinism (same input -> same output)"
     },
     {
-      "check": "2B — All 6 STOP conditions evaluated — none triggered",
+      "check": "2B — STOP conditions reviewed; no STOP condition currently triggered",
       "result": "CONFIRMED",
-      "citation": "STOP1: route returns {schema:[...]} COMPATIBLE. STOP2: all SSOT types in RENDERER_EXPLICIT_TYPES. STOP3: no backend change needed. STOP4: error state used — no mock fallback. STOP5: no second authority source. STOP6: submission contract unchanged at upload/page.tsx:168."
+      "citation": "STOP1: seam confirmed at analysis.py:129-142. STOP2: canonical id stays hba1c. STOP3: user-visible retention possible (hba1c_pct can remain in raw/results layers; gate only removes from Layer B-bound set). STOP4: no downstream contract broken by suppressing hba1c_pct from analytics only. STOP5: no second authority introduced. STOP6: no orchestrator/signal evaluator/insight graph redesign needed. STOP7: factor computable from SSOT (see determinism risk below)."
     },
     {
-      "check": "2B — Regression targets achievable",
+      "check": "2B — DETERMINISM RISK SURFACED: conversion factor accuracy (mmol/mol -> %)",
+      "result": "RISK_SURFACED",
+      "citation": "units.yaml:109-113 uses simple linear factor 10.929 for % -> mmol/mol. Clinically accurate IFCC-NGSP reverse formula is NGSP% = (IFCC_mmol_mol / 10.929) + 2.15. Simple reciprocal (1/10.929 = 0.09150) omits +2.15 offset and will produce clinically wrong Layer B values (e.g. 48 mmol/mol -> 4.39% instead of 6.54%). Cursor MUST either: (a) implement full IFCC formula with offset, or (b) explicitly declare the SSOT is using a linear approximation by design and the +2.15 offset is intentionally excluded. This must be resolved before Phase 1 execution. STOP7 is proximate if (b) cannot be justified."
+    },
+    {
+      "check": "2B — Arbitration gate must not remove UNIT_NORMALISATION_META_KEY",
       "result": "CONFIRMED",
-      "citation": "GET /api/questionnaire/schema works (questionnaire.py:14). blood_pressure_reading in SSOT (questionnaire.json:126) and in assertQuestionnaireSchemaCompatible allowed set (questionnaireSchema.ts:39-49). POST /api/analysis/start path unchanged (upload/page.tsx:168-177)."
+      "citation": "analysis.py:153-156 — UNIT_NORMALISATION_META_KEY set AFTER apply_unit_normalisation. Arbitration gate is inserted BEFORE apply_unit_normalisation (lines 138-142). Key is not yet set when gate runs; no risk of accidental removal."
     },
     {
-      "check": "2B — conditionalDisplay not rendered — non-blocking gap, out of scope",
-      "result": "NON_BLOCKING_GAP",
-      "citation": "backend/ssot/questionnaire.json:218-236 — menstrual_hormonal_status, low_testosterone_symptoms have conditionalDisplay. Renderer has no such logic; both render for all users. Not a STOP condition. Out of scope per Non-Goals."
-    },
-    {
-      "check": "2B — alternativeUnit not rendered — non-blocking gap, out of scope",
-      "result": "NON_BLOCKING_GAP",
-      "citation": "backend/ssot/questionnaire.json:58-97 — height/weight/waist have alternativeUnit. Renderer iterates fields[] only. Imperial-only inputs rendered. Not a STOP condition. Out of scope."
-    },
-    {
-      "check": "2C — Ancillary file questionnaireSchema.ts: noted, not scope creep",
-      "result": "NOTED",
-      "citation": "Prompt scope: 'Update: QuestionnaireForm.tsx'. Implementation also created frontend/app/lib/questionnaireSchema.ts (fetch utility) and frontend/tests/lib/questionnaireSchema.test.ts. Utility is fetch-logic extraction required by change; test satisfies prompt test requirement. No behavioural surface beyond what primary change requires."
+      "check": "2B — All 7 STOP conditions evaluated; none triggered (subject to STOP7 determinism risk resolution)",
+      "result": "CONFIRMED",
+      "citation": "See STOP conditions review at 2B-STOP check above. STOP7 requires Cursor to resolve conversion formula choice explicitly."
     }
   ],
-  "content_review": "COMPLETE — backend/ssot/questionnaire.json read (59 questions, lines 1-536). SSOT not modified. blood_pressure_reading confirmed at line 126. Route loads SSOT at questionnaire.py:24. No content drift.",
-  "behaviour_review": "COMPLETE — MIXED correct: fetch wiring = BEHAVIOUR, no CONTENT changes. Intelligence Core unaffected. All 8 renderer types confirmed in RENDERER_EXPLICIT_TYPES. Loading state, explicit error state, no mock fallback confirmed. Two pre-existing non-blocking gaps (conditionalDisplay, alternativeUnit) out of scope. All 6 STOP conditions clear. Submission contract unchanged. Determinism preserved.",
+  "content_review": "COMPLETE — backend/ssot/units.yaml read (lines 1-150). percent_to_mmol_mol defined at line 109-113. No mmol_mol_to_percent entry present. Sprint adds this entry. No other HbA1c content in units.yaml. biomarkers.yaml hba1c (L191) and hba1c_pct (L1602) both have unit:'%'. No content drift from sprint scope.",
+  "behaviour_review": "COMPLETE — MIXED correct: units.yaml addition = CONTENT; registry.py conversion branch addition + analysis.py arbitration gate = BEHAVIOUR. Determinism preserved for arbitration (gate is deterministic: always removes hba1c_pct from Layer B-bound set when present). Conversion determinism conditional on resolution of STOP7 risk (linear vs IFCC formula). Regression targets explicit and testable. Output structure unchanged for downstream consumers (hba1c still the sole Layer B HbA1c). No hidden side effects identified in orchestrator, signal evaluator, or insight graph paths.",
   "stage_2c_checklist_in_response": true,
   "escalation_required": false
 }
