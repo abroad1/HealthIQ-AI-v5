@@ -85,8 +85,8 @@ describe('ClinicianReportRenderer', () => {
     };
     render(<ClinicianReportRenderer report={report} />);
     expect(screen.getByTestId('primary-concern-mode-technical')).toBeInTheDocument();
-    expect(screen.getByText(/Co-ranked signal identifiers:/)).toBeInTheDocument();
-    expect(screen.getByText(/signal_a, signal_b/)).toBeInTheDocument();
+    expect(screen.getByText(/Co-ranked patterns:/)).toBeInTheDocument();
+    expect(screen.getByText(/A · B/)).toBeInTheDocument();
     expect(screen.getByTestId('ranking-policy-version')).toHaveTextContent(
       'PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1',
     );
@@ -108,7 +108,7 @@ describe('ClinicianReportRenderer', () => {
     render(<ClinicianReportRenderer report={report} />);
     expect(screen.getByTestId('primary-concern-mode-ambiguity')).toBeInTheDocument();
     expect(screen.getByText(/similarly supported on this panel/i)).toBeInTheDocument();
-    expect(screen.getByText(/sig_x, sig_y/)).toBeInTheDocument();
+    expect(screen.getByText(/Sig X · Sig Y/)).toBeInTheDocument();
   });
 
   it('degrades safely when clinician report payload is null', () => {
