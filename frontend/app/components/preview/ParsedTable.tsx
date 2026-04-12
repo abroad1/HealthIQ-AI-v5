@@ -5,9 +5,13 @@ import { Button } from '../ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 import { Badge } from '../ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table'
-import { Edit, Check, X, AlertCircle } from 'lucide-react'
+import { Edit, Check, AlertCircle, AlertTriangle } from 'lucide-react'
 import { ParsedBiomarker } from '../../types/parsed'
 import EditDialog from './EditDialog'
+import {
+  formatReferenceRangeDisplay,
+  rangeAttentionLevel,
+} from '@/lib/uploadReferenceRange'
 
 interface ParsedTableProps {
   biomarkers: ParsedBiomarker[]
@@ -25,6 +29,40 @@ export default function ParsedTable({
   error = null
 }: ParsedTableProps) {
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
+
+  const rangeBadge = (b: ParsedBiomarker) => {
+    const att = rangeAttentionLevel({
+      unit: b.unit,
+      referenceRange: b.referenceRange,
+      referenceText: b.referenceText,
+    })
+    const noUnit = !b.unit?.trim()
+    if (noUnit) {
+      return (
+        <Badge variant="destructive" className="gap-1 font-normal">
+          <AlertCircle className="h-3 w-3" />
+          Unit required
+        </Badge>
+      )
+    }
+    if (att === 'missing') {
+      return (
+        <Badge variant="secondary" className="gap-1 font-normal border-amber-500/60 text-amber-900 bg-amber-50">
+          <AlertTriangle className="h-3 w-3" />
+          Range needed
+        </Badge>
+      )
+    }
+    if (att === 'partial') {
+      return (
+        <Badge variant="outline" className="gap-1 font-normal border-amber-400 text-amber-900">
+          <AlertTriangle className="h-3 w-3" />
+          Range incomplete
+        </Badge>
+      )
+    }
+    return null
+  }
 
   const getStatusBadge = (status: ParsedBiomarker['status']) => {
     switch (status) {
@@ -109,6 +147,7 @@ export default function ParsedTable({
                   <TableHead>Value</TableHead>
                   <TableHead>Unit</TableHead>
                   <TableHead>Range</TableHead>
+                  <TableHead>Attention</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="w-[100px]">Actions</TableHead>
                 </TableRow>
@@ -126,12 +165,10 @@ export default function ParsedTable({
                       }
                     </TableCell>
                     <TableCell>{biomarker.unit}</TableCell>
-                    <TableCell>
-                      {biomarker.referenceRange 
-                        ? `${biomarker.referenceRange.min}–${biomarker.referenceRange.max} ${biomarker.referenceRange.unit}`
-                        : '—'
-                      }
+                    <TableCell className="max-w-[220px] text-sm">
+                      {formatReferenceRangeDisplay(biomarker)}
                     </TableCell>
+                    <TableCell>{rangeBadge(biomarker)}</TableCell>
                     <TableCell>
                       {getStatusBadge(biomarker.status)}
                     </TableCell>

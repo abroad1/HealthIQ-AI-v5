@@ -16,6 +16,12 @@ import { useAnalysisResult } from '@/queries/analysisResult';
 import { useAuthStore } from '@/state/authStore';
 import { useRouter } from 'next/navigation';
 import { emitWedgeEvent } from '@/lib/wedgeAnalytics';
+import {
+  analysisBiomarkerKey,
+  buildReferenceRangeFromParserRow,
+  rangeAttentionLevel,
+  referenceRangeToPayload,
+} from '@/lib/uploadReferenceRange';
 
 export default function UploadPage() {
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -81,19 +87,12 @@ export default function UploadPage() {
     try {
       const biomarkersObject: Record<string, any> = {};
       parsedData.forEach((biomarker) => {
-        const key = biomarker.name.toLowerCase().replace(/\s+/g, '_');
+        const key = analysisBiomarkerKey(biomarker.name);
         biomarkersObject[key] = {
           value: parseFloat(biomarker.value.toString()),
           unit: biomarker.unit,
           timestamp: new Date().toISOString(),
-          reference_range: biomarker.referenceRange
-            ? {
-                min: biomarker.referenceRange.min,
-                max: biomarker.referenceRange.max,
-                unit: biomarker.referenceRange.unit,
-                source: 'lab',
-              }
-            : null,
+          reference_range: referenceRangeToPayload(biomarker.referenceRange),
         };
       });
 
@@ -216,18 +215,19 @@ export default function UploadPage() {
         });
       }
       const { parsed_data } = parseUpload.data;
-      const transformed = parsed_data.biomarkers.map((b: any) => ({
-        name: b.name ?? b.id ?? b.biomarker_name,
-        value: b.value,
-        unit: b.unit,
-        status: 'raw' as const,
-        referenceRange:
-          b.ref_low != null && b.ref_high != null
-            ? { min: Number(b.ref_low), max: Number(b.ref_high), unit: b.unit }
-            : b.referenceRange && typeof b.referenceRange === 'object'
-              ? b.referenceRange
-              : undefined,
-      }));
+      const transformed = parsed_data.biomarkers.map((b: any) => {
+        const row = b as Record<string, unknown>;
+        const { referenceRange, referenceText } = buildReferenceRangeFromParserRow(row);
+        const v = b.value;
+        return {
+          name: String(b.name ?? b.id ?? b.biomarker_name ?? ''),
+          value: (typeof v === 'number' || typeof v === 'string' ? v : Number(v)) as number | string,
+          unit: String(b.unit ?? ''),
+          status: 'raw' as const,
+          referenceRange,
+          referenceText,
+        };
+      });
 
       confirmAllOnceRef.current = false;
       setParsedResults(transformed, parseUpload.data.analysis_id, parsed_data.metadata);
@@ -343,6 +343,23 @@ export default function UploadPage() {
           {uploadStatus === 'ready' && parsedData.length > 0 && (
             <div>
               <h3 className="text-lg font-semibold mb-4">Review parsed markers</h3>
+              {parsedData.some(
+                (b) =>
+                  !b.unit?.trim() ||
+                  rangeAttentionLevel({
+                    unit: b.unit,
+                    referenceRange: b.referenceRange,
+                    referenceText: b.referenceText,
+                  }) !== 'none'
+              ) && (
+                <Alert className="mb-4 border-amber-200 bg-amber-50">
+                  <AlertCircle className="h-4 w-4 text-amber-800" />
+                  <AlertDescription className="text-amber-950">
+                    Some markers are missing a unit, missing a reference range, or only have a partial range. Edit
+                    those rows before analysis so lab-interval context is complete where your report provides it.
+                  </AlertDescription>
+                </Alert>
+              )}
               <ParsedTable
                 biomarkers={parsedData}
                 onBiomarkerEdit={handleBiomarkerEdit}

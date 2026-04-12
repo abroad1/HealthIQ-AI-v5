@@ -16,8 +16,14 @@ export interface ParsedBiomarker {
   /** Processing status of this biomarker */
   status?: "raw" | "edited" | "confirmed";
   
-  /** Reference range for this biomarker */
-  referenceRange?: { min: number; max: number; unit: string };
+  /**
+   * Reference interval (lab or user-edited). Min/max optional for one-sided ranges;
+   * backend accepts either side per normalize.py.
+   */
+  referenceRange?: { min?: number; max?: number; unit: string };
+
+  /** Raw reference string from parser when present (display/context; not a substitute for numeric bounds). */
+  referenceText?: string;
 }
 
 export interface ParseMetadata {
