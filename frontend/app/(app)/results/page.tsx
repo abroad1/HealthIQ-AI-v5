@@ -25,6 +25,7 @@ import BiomarkerDials, { type BiomarkerDialEntry } from '@/components/biomarkers
 import ClusterSummary from '@/components/clusters/ClusterSummary';
 import ClinicianReportRenderer from '@/components/results/ClinicianReportRenderer';
 import { RootCauseEvidenceSummary } from '@/components/results/RootCauseEvidenceSummary';
+import { BalancedSystemsSummary } from '@/components/results/BalancedSystemsSummary';
 import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAnalysisResult } from '@/queries/analysisResult';
@@ -133,6 +134,7 @@ export default function ResultsPage() {
   const biomarkers = currentAnalysis?.biomarkers ?? [];
   const clusters = currentAnalysis?.clusters ?? [];
   const clinicianReport = currentAnalysis?.clinician_report_v1;
+  const balancedSystems = currentAnalysis?.balanced_systems_v1;
   const { created_at, completed_at } = currentAnalysis || {};
 
   const narrativeRuntime = useMemo(
@@ -516,6 +518,13 @@ export default function ResultsPage() {
             <RootCauseEvidenceSummary report={clinicianReport} />
           </section>
 
+          <section aria-labelledby="balanced-systems-heading">
+            <h2 id="balanced-systems-heading" className="sr-only">
+              Stable system patterns
+            </h2>
+            <BalancedSystemsSummary balanced={balancedSystems} />
+          </section>
+
           <section className="space-y-3" aria-labelledby="cluster-heading">
             <h2 id="cluster-heading" className="text-xl font-semibold text-gray-900">
               System groups
@@ -688,7 +697,7 @@ export default function ResultsPage() {
                     </TabsContent>
 
                     <TabsContent value="clinician" className="space-y-6">
-                      <ClinicianReportRenderer report={clinicianReport} />
+                      <ClinicianReportRenderer report={clinicianReport} balancedSystems={balancedSystems} />
                     </TabsContent>
                   </Tabs>
                 </CardContent>

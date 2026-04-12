@@ -31,6 +31,11 @@ export interface AnalysisResult {
   result_version?: string;
   meta?: Record<string, any>;
   clinician_report_v1?: ClinicianReportV1 | null;
+  balanced_systems_v1?: {
+    intro_line: string;
+    items: Array<{ system_topic: string; evidence_line: string; capacity_note?: string }>;
+    context_line: string;
+  } | null;
 }
 
 export interface AnalysisError {

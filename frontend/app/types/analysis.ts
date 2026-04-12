@@ -231,6 +231,12 @@ export interface AnalysisResult {
   /** Includes `narrative_runtime` when backend orchestrator attaches runtime metadata. */
   meta?: Record<string, any>;
   clinician_report_v1?: ClinicianReportV1 | null;
+  /** BE-W2-RQ3 — deterministic balanced-system narrative; null when no stable systems to surface */
+  balanced_systems_v1?: {
+    intro_line: string;
+    items: Array<{ system_topic: string; evidence_line: string; capacity_note?: string }>;
+    context_line: string;
+  } | null;
 }
 
 
