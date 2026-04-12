@@ -24,19 +24,19 @@
   },
   "sections": {
     "page1": {
-      "primary_concern": "signal_homocysteine_elevation_context (at_risk)",
+      "primary_concern": "Homocysteine Elevation Context: warrants attention on this panel",
       "key_findings": [
-        "Lead concern reflects a deterministic technical tie-break after evidence-aligned ranking (report meta).",
-        "signal_homocysteine_elevation_context is at_risk. homocysteine is the primary driver.",
+        "Homocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.",
         "Primary metric: homocysteine.",
-        "Top chain confidence: 0.93."
+        "Top chain confidence: 0.93.",
+        "Several findings scored similarly; the first item follows a stable ordering rule so your summary has a single lead topic."
       ],
       "chains": [
-        "Chain chain_001: signal_homocysteine_high -> signal_homocysteine_elevation_context.",
-        "Chain chain_002: signal_systemic_inflammation -> signal_homocysteine_elevation_context."
+        "Linked pattern (chain_001): Homocysteine High \u2192 Homocysteine Elevation Context.",
+        "Linked pattern (chain_002): Systemic Inflammation \u2192 Homocysteine Elevation Context."
       ],
       "top_hypothesis_line": "Top hypothesis: B12-associated pattern (confidence 0.60).",
-      "confidence_and_missing_data": "Signal confidence 0.95; missing confirmatory markers limit differentiation.",
+      "confidence_and_missing_data": "Overall confidence for this lead pattern: 0.95. Some expected confirmatory markers are not on this panel, which limits how specific the story can be.",
       "primary_concern_mode": "technical_tiebreak_lead",
       "co_primary_signal_ids": [],
       "ranking_policy_version": "PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1"
@@ -51,7 +51,7 @@
           "hypothesis_id": "hcy_b12_pattern_v1",
           "title": "B12-associated pattern",
           "summary": "Homocysteine is elevated with a pattern that can be consistent with reduced B12-related methylation capacity.",
-          "hypothesis_confidence": 0.6000000000000001,
+          "hypothesis_confidence": 0.6,
           "ranking_rationale": "Ranked #1 because mcv evidence; vitamin_b12 counter-evidence.",
           "evidence_for": [
             {
@@ -88,7 +88,7 @@
           "hypothesis_id": "hcy_folate_pattern_v1",
           "title": "Folate-associated pattern",
           "summary": "Homocysteine is elevated with a pattern that can be consistent with reduced folate availability for one-carbon metabolism.",
-          "hypothesis_confidence": 0.6000000000000001,
+          "hypothesis_confidence": 0.6,
           "ranking_rationale": "Ranked #2 because mcv evidence; limited contradictory evidence.",
           "evidence_for": [
             {
@@ -143,7 +143,7 @@
           "hypothesis_id": "hcy_renal_clearance_context_v1",
           "title": "Renal clearance context pattern",
           "summary": "Homocysteine is elevated and renal clearance context may be relevant when interpreting metabolite accumulation patterns.",
-          "hypothesis_confidence": 0.6000000000000001,
+          "hypothesis_confidence": 0.6,
           "ranking_rationale": "Ranked #4 because available evidence; creatinine counter-evidence.",
           "evidence_for": [],
           "evidence_against": [

@@ -3,7 +3,7 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Microscope } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import type { ClinicianReportV1, PrimaryConcernModeV1 } from '@/types/analysis';
 
 export interface InsightPanelProps {
@@ -21,21 +21,21 @@ function formatSignalIdForDisplay(signalId: string): string {
 function modeLabel(mode: PrimaryConcernModeV1 | undefined): { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' } {
   switch (mode) {
     case 'near_tie_ambiguity':
-      return { label: 'Several findings are closely ranked', variant: 'outline' };
+      return { label: 'Several top findings are close', variant: 'outline' };
     case 'technical_tiebreak_lead':
-      return { label: 'Lead concern uses a technical tie-break', variant: 'secondary' };
+      return { label: 'Close call between top findings', variant: 'secondary' };
     case 'distinct_lead':
     default:
-      return { label: 'Clear lead concern', variant: 'default' };
+      return { label: 'Clear lead topic', variant: 'default' };
   }
 }
 
 function modeAudienceNote(mode: PrimaryConcernModeV1 | undefined): string | null {
   if (mode === 'near_tie_ambiguity') {
-    return 'More than one pattern may be similarly important. The headline reflects the current ranking, not certainty that other findings are less relevant.';
+    return 'More than one pattern may be similarly important. The headline shows one first for clarity—not that the others are unimportant.';
   }
   if (mode === 'technical_tiebreak_lead') {
-    return 'Two or more findings had similar scores; governance selected the lead concern with a technical rule.';
+    return 'Two or more findings scored similarly; the summary picks a single lead so the story has a clear starting point.';
   }
   return null;
 }
@@ -93,9 +93,7 @@ export function InsightPanel({
           </CardTitle>
           <Badge variant={modeVariant}>{modeText}</Badge>
           {page1.ranking_policy_version ? (
-            <Badge variant="outline" className="text-xs font-normal text-gray-600">
-              Policy v{page1.ranking_policy_version}
-            </Badge>
+            <span className="sr-only">Ranking policy reference: {page1.ranking_policy_version}</span>
           ) : null}
         </div>
         {primaryDriverSystemGroupName ? (
@@ -106,19 +104,10 @@ export function InsightPanel({
       </CardHeader>
       <CardContent className="space-y-4 pt-0">
         {showCoPrimaryRow ? (
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Co-primary concerns</span>
-            <ul className="flex flex-wrap gap-2 list-none p-0 m-0">
-              {coPrimaries.map((sid) => (
-                <li key={sid}>
-                  <Badge variant="outline" className="font-normal text-gray-700">
-                    <Microscope className="h-3 w-3 mr-1 inline" />
-                    {formatSignalIdForDisplay(sid)}
-                  </Badge>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <p className="text-sm text-gray-600">
+            <span className="font-medium text-gray-700">Also closely reviewed: </span>
+            {coPrimaries.map((sid) => formatSignalIdForDisplay(sid)).join(' · ')}
+          </p>
         ) : null}
 
         {ambiguityNote ? (
