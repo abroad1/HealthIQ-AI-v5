@@ -225,7 +225,14 @@ export default function UploadPage() {
       const { parsed_data } = parseUpload.data;
       const transformed = parsed_data.biomarkers.map((b: any) => {
         const row = b as Record<string, unknown>;
-        const { referenceRange, referenceText, contextRangeOptions } = buildReferenceRangeFromParserRow(row);
+        const {
+          referenceRange,
+          referenceText,
+          contextRangeOptions,
+          referenceType,
+          labelledBands,
+          matchedLabelledBand,
+        } = buildReferenceRangeFromParserRow(row);
         const v = b.value;
         return {
           name: String(b.name ?? b.id ?? b.biomarker_name ?? ''),
@@ -235,6 +242,9 @@ export default function UploadPage() {
           referenceRange,
           referenceText,
           ...(contextRangeOptions?.length ? { contextRangeOptions } : {}),
+          ...(referenceType ? { referenceType } : {}),
+          ...(labelledBands?.length ? { labelledBands } : {}),
+          ...(matchedLabelledBand ? { matchedLabelledBand } : {}),
         };
       });
 
@@ -359,8 +369,18 @@ export default function UploadPage() {
                   referenceRange: b.referenceRange,
                   referenceText: b.referenceText,
                   contextRangeOptions: b.contextRangeOptions,
+                  referenceType: b.referenceType,
+                  matchedLabelledBand: b.matchedLabelledBand,
                 });
-                return att !== 'none' && att !== 'one-sided';
+                if (
+                  att === 'none' ||
+                  att === 'one-sided' ||
+                  att === 'no-lab-range-supplied' ||
+                  att === 'labelled-bands-resolved'
+                ) {
+                  return false;
+                }
+                return true;
               }) && (
                 <Alert className="mb-4 border-amber-200 bg-amber-50">
                   <AlertCircle className="h-4 w-4 text-amber-800" />

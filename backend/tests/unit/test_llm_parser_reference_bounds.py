@@ -164,3 +164,130 @@ def test_single_context_range_option_populates_bounds():
     assert b.ref_low == pytest.approx(5.0)
     assert b.ref_high == pytest.approx(40.0)
     assert len(b.context_range_options) == 1
+
+
+def test_reference_type_no_lab_range_supplied_clears_bounds():
+    p = LLMParser()
+    text = _parse_json_response(
+        {
+            "biomarkers": [
+                {
+                    "id": "derived_x",
+                    "name": "Derived X",
+                    "value": 1.2,
+                    "unit": "ratio",
+                    "reference": "",
+                    "raw_reference_text": "",
+                    "confidence": 0.9,
+                    "referenceType": "no_lab_range_supplied",
+                }
+            ]
+        }
+    )
+    r = p._parse_gemini_response(text)
+    b = r.biomarkers[0]
+    assert b.reference_type == "no_lab_range_supplied"
+    assert b.ref_low is None
+    assert b.ref_high is None
+
+
+def test_labelled_bands_auto_match_and_reference_type():
+    p = LLMParser()
+    text = _parse_json_response(
+        {
+            "biomarkers": [
+                {
+                    "id": "folate",
+                    "name": "Folate",
+                    "value": 4.0,
+                    "unit": "ng/mL",
+                    "reference": "see bands",
+                    "raw_reference_text": "",
+                    "confidence": 0.9,
+                    "referenceType": "labelled_bands",
+                    "labelled_bands": [
+                        {
+                            "band_label": "Deficient",
+                            "min": 0.35,
+                            "max": 3.37,
+                            "unit": "ng/mL",
+                        },
+                        {
+                            "band_label": "Intermediate",
+                            "min": 3.38,
+                            "max": 5.38,
+                            "unit": "ng/mL",
+                        },
+                        {
+                            "band_label": "Normal",
+                            "min": 5.38,
+                            "max": None,
+                            "lower_exclusive": True,
+                            "unit": "ng/mL",
+                        },
+                    ],
+                }
+            ]
+        }
+    )
+    r = p._parse_gemini_response(text)
+    b = r.biomarkers[0]
+    assert b.reference_type == "labelled_bands"
+    assert b.matched_labelled_band == "Intermediate"
+    assert b.ref_low == pytest.approx(3.38)
+    assert b.ref_high == pytest.approx(5.38)
+
+
+def test_applicability_reference_type_multi_options():
+    p = LLMParser()
+    text = _parse_json_response(
+        {
+            "biomarkers": [
+                {
+                    "id": "p",
+                    "name": "Prolactin",
+                    "value": 10.0,
+                    "unit": "mIU/L",
+                    "reference": "table",
+                    "confidence": 0.9,
+                    "referenceType": "applicability_band_selection",
+                    "context_range_options": [
+                        {"context_label": "Male", "min": 2.0, "max": 18.0, "unit": "mIU/L"},
+                        {"context_label": "Female", "min": 2.0, "max": 29.0, "unit": "mIU/L"},
+                    ],
+                }
+            ]
+        }
+    )
+    r = p._parse_gemini_response(text)
+    b = r.biomarkers[0]
+    assert b.reference_type == "applicability_band_selection"
+    assert b.ref_low is None
+    assert b.ref_high is None
+
+
+def test_incomplete_or_ambiguous_uses_explicit_refs_only():
+    p = LLMParser()
+    text = _parse_json_response(
+        {
+            "biomarkers": [
+                {
+                    "id": "z",
+                    "name": "Z",
+                    "value": 50.0,
+                    "unit": "U/L",
+                    "reference": "unclear scanned table fragment …",
+                    "raw_reference_text": "",
+                    "confidence": 0.4,
+                    "referenceType": "incomplete_or_ambiguous",
+                    "ref_low": 40.0,
+                    "ref_high": 120.0,
+                }
+            ]
+        }
+    )
+    r = p._parse_gemini_response(text)
+    b = r.biomarkers[0]
+    assert b.reference_type == "incomplete_or_ambiguous"
+    assert b.ref_low == pytest.approx(40.0)
+    assert b.ref_high == pytest.approx(120.0)

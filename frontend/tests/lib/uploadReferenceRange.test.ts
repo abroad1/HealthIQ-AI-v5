@@ -1,7 +1,9 @@
 import {
   analysisBiomarkerKey,
   buildReferenceRangeFromParserRow,
+  deriveReviewReferenceType,
   formatReferenceRangeDisplay,
+  matchLabelledBandFromValue,
   numericPartForAnalysisPayload,
   parseBiomarkerValueForReview,
   rangeAttentionLevel,
@@ -16,7 +18,12 @@ describe('buildReferenceRangeFromParserRow', () => {
       ref_high: 100,
       value: 80,
     });
-    expect(out.referenceRange).toEqual({ min: undefined, max: 100, unit: 'mg/dL' });
+    expect(out.referenceRange).toEqual({
+      min: undefined,
+      max: 100,
+      unit: 'mg/dL',
+      upperComparator: '≤',
+    });
   });
 
   it('preserves one-sided ref_low only', () => {
@@ -26,7 +33,12 @@ describe('buildReferenceRangeFromParserRow', () => {
       ref_high: null,
       value: 5.2,
     });
-    expect(out.referenceRange).toEqual({ min: 4, max: undefined, unit: '%' });
+    expect(out.referenceRange).toEqual({
+      min: 4,
+      max: undefined,
+      unit: '%',
+      lowerComparator: '≥',
+    });
   });
 
   it('merges raw reference string when present', () => {
@@ -149,6 +161,64 @@ describe('rangeAttentionLevel', () => {
         ],
       })
     ).toBe('one-sided');
+  });
+
+  it('no-lab-range-supplied when referenceType says so', () => {
+    expect(
+      rangeAttentionLevel({
+        unit: 'ratio',
+        referenceType: 'no_lab_range_supplied',
+      })
+    ).toBe('no-lab-range-supplied');
+  });
+
+  it('incomplete-or-ambiguous when referenceType says so', () => {
+    expect(
+      rangeAttentionLevel({
+        unit: 'U/L',
+        referenceType: 'incomplete_or_ambiguous',
+        referenceText: 'unclear',
+      })
+    ).toBe('incomplete-or-ambiguous');
+  });
+
+  it('labelled-bands-resolved when matched label present', () => {
+    expect(
+      rangeAttentionLevel({
+        unit: 'ng/mL',
+        referenceType: 'labelled_bands',
+        matchedLabelledBand: 'Normal',
+        referenceRange: { min: 3, max: 5, unit: 'ng/mL' },
+      })
+    ).toBe('labelled-bands-resolved');
+  });
+});
+
+describe('deriveReviewReferenceType', () => {
+  it('infers bounded_range from two-sided numeric range', () => {
+    expect(
+      deriveReviewReferenceType(undefined, {
+        referenceRange: { min: 1, max: 10, unit: 'mg/dL' },
+      })
+    ).toBe('bounded_range');
+  });
+
+  it('infers labelled_bands when bands present without parser type', () => {
+    expect(
+      deriveReviewReferenceType(undefined, {
+        labelledBands: [{ bandLabel: 'A', min: 0, max: 1, unit: 'x' }],
+      })
+    ).toBe('labelled_bands');
+  });
+});
+
+describe('matchLabelledBandFromValue', () => {
+  it('matches inclusive closed band', () => {
+    const b = matchLabelledBandFromValue(3.5, [
+      { bandLabel: 'Low', min: 0, max: 3.37, unit: 'ng/mL' },
+      { bandLabel: 'Mid', min: 3.38, max: 5.38, unit: 'ng/mL' },
+    ]);
+    expect(b?.bandLabel).toBe('Mid');
   });
 });
 

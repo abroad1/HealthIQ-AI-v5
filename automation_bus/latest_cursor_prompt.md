@@ -1,39 +1,32 @@
 ---
-work_id: BE-W1-PR4
-branch: feature/contextual-lab-range-extraction-and-selection
+work_id: BE-W1-PR5
+branch: feature/reference-type-modelling-and-review-ux-completion
 risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# BE-W1-PR4 — Contextual lab-range extraction and user selection workflow
+# BE-W1-PR5 — Reference-type modelling and review UX completion
 
 ## Objective
 
-Deliver the next Wave 1 remediation pass for the PDF upload → parse → review → analysis-input journey.
+Deliver the next Wave 1 remediation pass for the upload → parse → review → analysis-input journey.
 
-This sprint must resolve the real remaining product gap for markers whose lab reports contain multiple context-dependent reference ranges, such as:
-
-- male
-- female
-- female non-pregnant
-- female pregnant
-- female postmenopausal
-- other equivalent lab-defined contextual variants
+This sprint must complete the review-stage modelling of different lab reference logic types so the user no longer has to fight the UI to represent what the lab actually said.
 
 The required outcome is:
 
-- the parser preserves rich contextual lab reference text
-- the parser attempts structured extraction of context-specific range options at parse time
-- the review/edit UI shows those detected contextual options clearly
-- the user can choose the applicable context when multiple valid options exist
-- selecting a context auto-populates the active min/max/unit used for analysis
-- raw lab text remains visible for transparency
-- manual override remains available when extraction is incomplete or wrong
+- parsed biomarkers are explicitly classified into the correct review-stage reference type
+- labelled interpretation bands are handled correctly
+- applicability-dependent reference bands are handled correctly
+- comparator-based one-sided thresholds can be edited faithfully
+- genuine “no lab range supplied” cases are handled as valid lab outputs
+- downstream analysis still receives the same singular `reference_range` contract where applicable
+- no scoring-policy or fallback-range behaviour is changed
 
 This sprint is not a scoring-policy sprint.
 This sprint is not a fallback-range sprint.
-This sprint is not a broad results/narrative sprint.
+This sprint is not a results/narrative sprint.
 
 ---
 
@@ -41,19 +34,19 @@ This sprint is not a broad results/narrative sprint.
 
 ### Runtime truth already established
 
-Repo/runtime investigation has established that:
+Repo/runtime validation has established that:
 
-- raw contextual lab reference text now survives further through the parse/review seam than before
-- the unresolved product failure is not just text preservation, but lack of a workflow to resolve which contextual range applies
+- PR4 correctly introduced contextual/applicability band extraction and user selection
+- the remaining gap is broader: the review seam still lacks first-class modelling of different reference logic types
+- current frontend attention and edit behaviour is still driven too much by data presence/absence rather than explicit reference semantics
 - the existing review/edit seam already contains:
   - raw reference text display
   - min/max/unit edit fields
-  - attention badges
+  - PR4 applicability-band selection flow
   - existing `reference_range` payload handoff
-- the missing step is structured context-option extraction plus explicit user selection
-- this work must remain outside scoring-policy changes
+- scoring policy and fallback policy must remain unchanged
 
-This sprint must not guess a different runtime truth.
+This sprint must not guess a different truth.
 
 ### Authoritative backend files for this sprint
 
@@ -68,11 +61,11 @@ At minimum, inspect and use the actual current versions of:
 
 At minimum, inspect and use the actual current versions of:
 
+- `frontend/app/types/parsed.ts`
+- `frontend/app/lib/uploadReferenceRange.ts`
 - `frontend/app/(app)/upload/page.tsx`
 - `frontend/app/components/preview/ParsedTable.tsx`
 - `frontend/app/components/preview/EditDialog.tsx`
-- `frontend/app/lib/uploadReferenceRange.ts`
-- `frontend/app/types/parsed.ts`
 
 If hardening finds the active paths differ, Claude must cite the exact actual files in evidence and hardening may narrow or correct touched-file scope. Cursor must not improvise beyond those verified files.
 
@@ -80,14 +73,15 @@ If hardening finds the active paths differ, Claude must cite the exact actual fi
 
 ## Stage 1B — Reality Check
 
-This sprint addresses a real remaining user problem and is not a no-op.
+This sprint addresses a real remaining product gap and is not a no-op.
 
-Confirmed current gaps include:
+Confirmed remaining issues include:
 
-- the system can preserve contextual lab text but does not help the user resolve which range applies
-- rich text alone is not sufficient for prolactin-style markers and similar multi-context lab ranges
-- users still have to manually interpret and transcribe the correct range from the contextual text
-- this prevents the review flow from feeling reliable or intelligent in context-dependent cases
+- labelled interpretation bands (for example folate-style “Deficient / Intermediate / Normal”) are not yet treated as a first-class reference mode
+- comparator-based thresholds cannot yet be faithfully entered in manual edit
+- genuine no-range-supplied cases are still conflated with missing/incomplete parsing
+- different range semantics are still being forced through the same incomplete/missing logic
+- the product needs an explicit review-stage reference model, not further patching by special case
 
 ---
 
@@ -100,9 +94,9 @@ It therefore affects:
 - PDF parse extraction contract
 - parsed biomarker review-state contract
 - review/edit user interaction before analysis
-- quality of user-confirmed `reference_range` entering analysis
+- quality and semantics of user-confirmed `reference_range` entering analysis
 
-This is STANDARD risk. It does not touch the listed HIGH-risk directories or analytical reasoning boundaries, but it does affect governed user input before analysis and must remain tightly bounded.
+This is STANDARD risk. It does not touch the listed HIGH-risk directories or analytical reasoning boundaries, but it does affect governed input before analysis and must remain tightly bounded.
 
 No risk downgrade or scope widening is permitted.
 
@@ -112,80 +106,127 @@ No risk downgrade or scope widening is permitted.
 
 Cursor must implement these decisions exactly.
 
-### 1. Structured context options are a review-stage assistive contract
+### 1. Reference type becomes first-class
 
-The parser may extract structured context-specific range options from lab text, but these options are assistive review-stage data only.
+The product must no longer infer review behaviour indirectly from missing min/max alone.
 
-They do not become a new SSOT or second range authority.
-The authoritative user-submitted range remains the final selected or manually edited `reference_range`.
+Introduce an explicit review-stage `referenceType` model with the following supported values:
 
-### 2. User confirmation is required when multiple context-specific ranges exist
+- `bounded_range`
+- `one_sided_threshold`
+- `applicability_band_selection`
+- `labelled_bands`
+- `no_lab_range_supplied`
+- `incomplete_or_ambiguous`
 
-If multiple valid contextual options are detected, the system must not silently choose one.
+This is a review-stage contract improvement, not a second scoring authority.
 
-The user must confirm the applicable context before the range is considered resolved.
+### 2. Classification authority is explicitly split
 
-The only acceptable no-click case is:
-- one single unambiguous extracted option
-- or no extracted options at all
+The following `referenceType` values must be **LLM-originated parse outputs** from the PDF prompt/schema:
 
-### 3. Selecting a context auto-populates the active analytical range
+- `labelled_bands`
+- `applicability_band_selection`
+- `no_lab_range_supplied`
+- `incomplete_or_ambiguous`
 
-When the user selects a contextual option, the active min/max/unit fields used for analysis must populate automatically from that selection.
+The following may remain **frontend-derived or helper-derived** from resolved numeric range structure:
 
-This must feed the same existing `reference_range` contract already used downstream.
+- `bounded_range`
+- `one_sided_threshold`
 
-### 4. Raw lab text must remain visible
+Do not leave this ambiguous.
 
-Even when structured context options are extracted successfully, the original lab reference text must remain visible in review/edit for transparency.
+### 3. Labelled bands auto-resolve from measured value
 
-### 5. Manual override remains available
+For markers with labelled interpretation bands, such as:
 
-If structured extraction is incomplete, wrong, or not trusted, the user must still be able to manually set min/max/unit.
+- Deficient
+- Intermediate
+- Normal
+- Optimal
+- Borderline
+- equivalent lab-defined labels
 
-### 6. Approach A is mandated
+the system must auto-resolve the matching band from the measured value.
 
-Use prompt-level/schema-level structured extraction in the PDF parsing path.
+This is not a user-choice workflow.
 
-That means:
-- extend the PDF parsing prompt/schema to request structured contextual range options directly from Gemini when present
-- allow omission/null when the model cannot extract them confidently
+The matched band may populate the active review-stage `referenceRange` where appropriate, while raw band text remains visible.
 
-Do not choose a regex-only post-processing strategy as the primary approach for this sprint.
+### 4. Applicability bands require user confirmation
 
-### 7. Distinct review attention state required
+For markers whose applicable reference band depends on a condition such as:
 
-Markers with multiple detected context options but no confirmed selection must have a distinct attention state, such as:
+- patient context
+- pregnancy/menopausal status
+- sex
+- collection time
+- fasting / non-fasting
+- other lab-defined applicability condition
 
-- context selection required
+the user must confirm the applicable band when multiple valid options exist.
 
-This must not be conflated with:
-- valid one-sided threshold
-- text-only partial range
-- genuinely incomplete range
+Do not silently choose one.
 
-### 8. One-sided thresholds remain valid
+This is the generalised PR4 flow and must remain non-regressed.
 
-A contextual option may itself be one-sided.
-Examples:
-- Male: `> 1.55`
-- Adult: `< 25`
+### 5. Comparator-aware manual editing must be supported
 
-Those must remain valid selectable options.
+The edit dialog must support faithful one-sided threshold entry.
 
-### 9. No scoring-policy changes
+At minimum, in one-sided edit mode, users must be able to enter:
+
+- comparator
+- numeric value
+- unit
+
+Do not force one-sided lab logic through bare numeric-only entry.
+
+This must remain narrowly scoped and must not change the downstream payload shape.
+
+### 6. No-lab-range-supplied is a valid state
+
+`no_lab_range_supplied` must be treated as a legitimate lab-output state, not as a parsing defect.
+
+This state must be emitted conservatively:
+- only when the PDF genuinely provides no usable reference interval for that marker
+- not when the parser is uncertain or failed to classify a supplied reference block
+
+Uncertain or conflicting cases must remain `incomplete_or_ambiguous`.
+
+### 7. Active analytical range remains singular
+
+Even with richer review-state modelling, analysis submission must still use a singular active `reference_range` where applicable.
+
+Do not introduce multiple downstream range authorities.
+
+### 8. Raw lab text must remain visible
+
+Even when structured bands or thresholds are extracted successfully, the original lab reference text must remain visible in review/edit for transparency.
+
+### 9. Manual override remains available
+
+If structured extraction is incomplete or wrong, manual edit remains available.
+
+### 10. No scoring-policy or fallback-range changes
 
 This sprint must not change:
 - scoring rules
 - lab-range sovereignty
-- fallback-range policy
-- any analytical interpretation logic
+- fallback policy
+- analytical reasoning logic
 
-### 10. Value-level inequality parsing is explicitly out of scope
+### 11. PR4 behaviour must not regress
+
+Existing applicability-band extraction and selection from PR4 must continue to work.
+PR5 generalises and formalises the model; it must not break the current working flow.
+
+### 12. Value-level inequality parsing remains out of scope
 
 This sprint does not address the separate defect family where biomarker result values themselves may be expressed as inequalities (for example `<0.05` values).
 
-Do not widen into that problem in this sprint.
+Do not widen into that problem.
 
 ---
 
@@ -193,56 +234,104 @@ Do not widen into that problem in this sprint.
 
 ## Required Changes
 
-### A. PDF prompt/schema extension for contextual options
+### A. PDF prompt/schema extension for reference type
 
-Update the PDF parsing prompt/schema so the parser can return structured contextual range options when the lab text clearly contains multiple context-specific reference ranges.
+Update the PDF parsing prompt/schema so the parser can explicitly emit `referenceType` for the supported LLM-originated classes:
 
-Each option should include, where available:
-- context label
-- min
-- max
-- unit
-- optional source snippet / source line text
+- `labelled_bands`
+- `applicability_band_selection`
+- `no_lab_range_supplied`
+- `incomplete_or_ambiguous`
 
-Confidence should be omission/null-based:
-- if the model cannot structure options confidently, it may omit them and preserve only raw text
+The prompt must include conservative instructions for `no_lab_range_supplied`:
+- emit this only when no lab interval is genuinely present
+- if reference text exists but cannot be confidently structured, emit `incomplete_or_ambiguous`
 
 ### B. Parser/model support
 
-Update parser-side models and parse response shaping so contextual options can survive the live PDF parse path into the frontend review state.
+Update parser-side models and parse response shaping so the live PDF parse path can return and preserve:
 
-This must preserve:
+- `referenceType`
 - raw reference text
-- numeric `ref_low` / `ref_high` where safely extractable
-- structured context options where available
+- structured labelled bands where present
+- structured applicability bands where present
+- existing numeric `ref_low` / `ref_high` where safely extractable
 
-### C. Frontend review-state support
+### C. Parsed biomarker review-state contract
 
-Update the parsed biomarker review contract to support:
-- contextual range options
-- selected context id / selection state
+Update the frontend parsed biomarker contract to support:
+
+- `referenceType`
+- labelled bands
+- applicability bands
 - active `referenceRange`
 - raw `referenceText`
 
-Avoid conflicting multiple sources of truth. The precedence rule must be clear:
-- selected context option populates active range
-- manual edit may then override
+Avoid conflicting multiple sources of truth.
+
+The precedence rule must be clear:
+
+- parser-provided structured band data populates review options
+- labelled bands auto-resolve to matched active range where appropriate
+- applicability bands require selection when multiple exist
+- manual edit may override
 - active `referenceRange` is what goes to analysis
 
-### D. Review/edit UI for contextual selection
+### D. Labelled-band support in review
 
-Update the review/edit experience so that for biomarkers with contextual range options:
+For markers like folate, the review/edit experience must:
 
-- the user sees that multiple context-specific ranges were detected
-- the raw lab text remains visible
-- the selectable options are shown clearly
-- selecting an option populates min/max/unit
-- if no option is selected yet, the attention state reflects that
-- manual override remains possible
+- show the raw lab text
+- show the structured labelled bands where available
+- determine the applicable band from the measured value automatically
+- surface the matched band clearly
+- avoid turning labelled bands into a user-selection workflow
 
-### E. Payload handoff
+### E. Applicability-band support in review
 
-Ensure the selected or manually corrected active range continues to flow through the existing `reference_range` contract to analysis start.
+For markers like prolactin or cortisol, the review/edit experience must:
+
+- show the raw lab text
+- show the structured applicability bands where available
+- require user selection when multiple valid bands exist
+- populate min/max/unit from the selected band
+- show a distinct “selection required” attention state until resolved
+
+### F. Comparator-aware editing
+
+Extend the edit workflow so comparator-aware one-sided thresholds can be entered and preserved in the review state.
+
+Scope this narrowly:
+- comparator selector appears only in one-sided edit mode or equivalent bounded condition
+- do not broadly redesign the edit form
+- keep `referenceRangeToPayload()` shape unchanged
+
+### G. No-range-supplied state in review
+
+Add a distinct valid review state for `no_lab_range_supplied`.
+
+This must:
+
+- render as a neutral valid state, not a failure state
+- allow optional manual entry if the user wishes
+- keep analysis payload shape unchanged (`reference_range: null` when no active range exists)
+
+### H. Review attention and badges by type
+
+Update review attention logic so it can distinguish at minimum:
+
+- bounded range resolved
+- one-sided threshold resolved
+- applicability band selection required
+- labelled bands resolved
+- no lab range supplied
+- incomplete or ambiguous
+
+Do not continue using one generic missing/incomplete path for these different states.
+
+### I. Payload handoff unchanged
+
+Ensure the selected or auto-resolved active range continues to flow through the existing `reference_range` contract to analysis start.
 
 ---
 
@@ -250,9 +339,9 @@ Ensure the selected or manually corrected active range continues to flow through
 
 - no scoring-policy changes
 - no fallback-range implementation for ordinary biomarkers
-- no results-page/narrative/Gemini-output work beyond PDF parse-time extraction
-- no broad parser redesign beyond this bounded contextual-range seam
-- no profile-based or silent auto-selection of pregnancy/sex/life-stage context
+- no results-page/narrative/Gemini-output work
+- no broad parser rewrite beyond the upload/review seam
+- no profile-based or silent auto-selection when multiple applicability bands exist
 - no second authority source for ranges
 - no value-level inequality parsing work
 
@@ -262,13 +351,14 @@ Ensure the selected or manually corrected active range continues to flow through
 
 Cursor must STOP immediately if any of the following become true:
 
-1. Supporting contextual range selection would require changing scoring policy rather than the parse/review seam
-2. Prompt-level structured extraction proves too unstable and would require broad parser redesign beyond the bounded sprint
+1. Supporting the required reference types would require changing scoring policy rather than the parse/review seam
+2. The parser cannot emit stable `referenceType` and structured band data without a broad parser rewrite beyond this bounded sprint
 3. The design would introduce a second range authority instead of a review-stage assistive contract
-4. The system cannot preserve a single active `reference_range` without conflicting sources of truth
-5. The sprint would require silent medical-context inference without user confirmation
-6. The sprint would widen into value-level inequality parsing
-7. The sprint would require broad redesign of the upload-review flow beyond bounded contextual-range handling
+4. The system cannot preserve a singular active `reference_range` without conflicting sources of truth
+5. The only way to resolve applicability bands would be silent medical-context inference without user confirmation
+6. `no_lab_range_supplied` cannot be emitted conservatively and would hide genuine parse defects
+7. The sprint would widen into value-level inequality parsing
+8. The sprint would require broad redesign of the upload-review flow beyond bounded reference-type handling
 
 If any STOP condition triggers, do not improvise. Report the blocker.
 
@@ -276,27 +366,29 @@ If any STOP condition triggers, do not improvise. Report the blocker.
 
 ## Phase Execution Model
 
-### Phase 1 — Contextual extraction and selection workflow
+### Phase 1 — Reference-type modelling and review completion
 
 Implement the bounded changes required so that:
 
-- contextual lab text is preserved
-- structured context options are extracted where possible
-- the user can choose the applicable context
-- the active analytical range is populated from that choice
-- manual override remains available
+- parsed biomarkers can carry explicit reference type
+- labelled bands are supported and auto-resolved
+- applicability bands are supported and user-selectable
+- comparator-aware one-sided editing is supported
+- genuine no-range-supplied cases are modelled correctly
+- raw text remains visible
+- active range payload shape remains unchanged
 - no scoring-policy changes occur
 
 ### Phase 2 — Validation
 
 Verify with targeted tests and browser checks that:
 
-- a representative contextual marker such as prolactin now surfaces structured options
-- selecting an option populates min/max/unit
-- raw text remains visible
-- context selection required state appears when appropriate
+- folate-style labelled bands are parsed and matched correctly
+- prolactin-style applicability bands still work and do not regress
+- cortisol-style condition-dependent applicability bands still work and do not regress
+- comparator-aware manual editing works in one-sided mode
+- no-lab-range-supplied markers display correctly
 - ordinary simple-range markers still behave normally
-- no regression to existing one-sided threshold support
 
 ---
 
@@ -304,32 +396,39 @@ Verify with targeted tests and browser checks that:
 
 Must verify all of the following.
 
-### PDF parse extraction
+### Parse extraction
 
-- parser preserves raw contextual lab text
-- parser returns structured context options when clearly present in the source
-- one-sided thresholds inside context options are preserved where applicable
+- parser preserves raw reference text
+- parser emits `referenceType` correctly for LLM-originated classes
+- parser returns structured labelled bands when clearly present
+- parser returns structured applicability bands when clearly present
+- parser emits `no_lab_range_supplied` conservatively only where appropriate
 
 ### Review/edit behaviour
 
-- contextual-range markers show a clear context selection workflow
-- user selection populates the active min/max/unit
-- raw lab text remains visible
-- manual override remains possible
-- markers with options but no confirmed choice show a distinct attention state
+- review behaviour is driven by `referenceType`
+- labelled-band markers auto-resolve to the matching band
+- applicability-band markers require user confirmation when multiple exist
+- comparator-aware editing works for one-sided thresholds
+- no-range-supplied markers show a distinct valid state
+- incomplete/ambiguous markers remain distinct from legitimate no-range cases
 
 ### Analysis handoff
 
-- active selected/manual `reference_range` still serializes through the existing payload contract
-- no regressions to successful analysis submission for simple markers
+- active selected or auto-resolved `referenceRange` still serializes through the existing payload contract
+- no regressions to successful analysis submission for ordinary markers
 - no scoring-policy changes are introduced
 
 ### Safety / determinism
 
 - no fallback ranges introduced
 - no second authority source introduced
-- same parsed contextual option set + same user choice produces the same active range payload
-- no silent context assumption when multiple choices exist
+- same parsed output + same user choices produce the same active payload
+- no silent applicability-band auto-selection when multiple options exist
+
+### PR4 non-regression
+
+- previously working contextual/applicability-band selection cases still work after the generalisation to `referenceType`
 
 ---
 
@@ -337,13 +436,15 @@ Must verify all of the following.
 
 Minimum required tests must cover:
 
-1. representative parser extraction of contextual options from a multi-range marker such as prolactin
-2. one-sided contextual option support
-3. review-state handling of contextual options + selected option
-4. context selection required attention state
-5. selected option populates active `referenceRange`
-6. no regression to ordinary simple min/max markers
-7. no regression to existing one-sided threshold handling for non-contextual markers
+1. parser extraction of `referenceType` for a labelled-band marker
+2. parser extraction of `referenceType` for an applicability-band marker
+3. conservative `no_lab_range_supplied` emission vs `incomplete_or_ambiguous`
+4. labelled-band auto-resolution from measured value
+5. applicability-band user-selection flow
+6. comparator-aware one-sided edit handling
+7. distinct no-range-supplied review attention state
+8. no regression to ordinary simple min/max markers
+9. no regression to PR4 applicability-band workflow
 
 Use the smallest relevant test scope.
 Do not expand into broad unrelated suite creation.
@@ -358,7 +459,7 @@ Do not expand into broad unrelated suite creation.
 - do not invent a second authority source
 - do not widen into results/questionnaire/narrative work
 - do not widen into value-level inequality parsing
-- do not perform broad parser redesign beyond the bounded contextual-range seam
+- do not perform broad parser redesign beyond the bounded reference-type seam
 - do not modify unrelated files
 
 ---
@@ -373,10 +474,12 @@ Cursor must return:
 4. implementation summary
 5. tests run and results
 6. before/after evidence that:
-   - contextual options are extracted and surfaced for representative markers
-   - user selection populates active range fields
-   - context selection required state appears when relevant
-   - raw text remains visible
+   - reference types are now modelled explicitly
+   - labelled bands are parsed and auto-resolved correctly
+   - applicability bands are parsed and user-selectable correctly
+   - comparator-aware editing works
+   - no-range-supplied markers are handled as valid states
+   - PR4 behaviour remains intact
 7. any blockers encountered
 
 ---

@@ -31,6 +31,33 @@ class ContextRangeOption(BaseModel):
     source_snippet: Optional[str] = Field(None, description="Short verbatim quote from the PDF")
 
 
+class LabelledBand(BaseModel):
+    """Single interpretive category band (e.g. Deficient / Normal) from the lab report."""
+
+    model_config = {"extra": "ignore"}
+
+    band_label: str = Field(default="", description="Lab interpretive label")
+    min: Optional[float] = Field(None, description="Lower bound (inclusive unless lower_exclusive)")
+    max: Optional[float] = Field(None, description="Upper bound (inclusive)")
+    unit: str = Field(default="", description="Unit for this band row")
+    lower_exclusive: bool = Field(
+        False,
+        description="If true and only min is set, band applies for values strictly greater than min",
+    )
+    source_snippet: Optional[str] = Field(None, description="Short verbatim quote")
+
+
+# LLM-originated reference classification (review-stage; not a second scoring authority).
+LLM_REFERENCE_TYPES = frozenset(
+    {
+        "labelled_bands",
+        "applicability_band_selection",
+        "no_lab_range_supplied",
+        "incomplete_or_ambiguous",
+    }
+)
+
+
 class ParsedBiomarker(BaseModel):
     """Parsed biomarker data structure."""
     id: str = Field(..., description="Canonical biomarker ID")
@@ -49,6 +76,18 @@ class ParsedBiomarker(BaseModel):
     context_range_options: List[ContextRangeOption] = Field(
         default_factory=list,
         description="Structured contextual intervals when the lab lists multiple bands",
+    )
+    labelled_bands: List[LabelledBand] = Field(
+        default_factory=list,
+        description="Interpretive category bands when the lab lists Deficient/Normal style rows",
+    )
+    reference_type: Optional[str] = Field(
+        None,
+        description="LLM-originated reference classification when applicable",
+    )
+    matched_labelled_band: Optional[str] = Field(
+        None,
+        description="Interpretive label whose band matches the measured value (labelled_bands)",
     )
 
 
@@ -220,6 +259,64 @@ class LLMParser:
                 continue
         return out
 
+    def _parse_labelled_bands(self, raw: Any) -> List[LabelledBand]:
+        if not isinstance(raw, list) or len(raw) == 0:
+            return []
+        out: List[LabelledBand] = []
+        for item in raw:
+            if not isinstance(item, dict):
+                continue
+            label = str(item.get("band_label") or item.get("bandLabel") or "").strip() or "Band"
+            lexc = bool(item.get("lower_exclusive") or item.get("lowerExclusive"))
+            try:
+                out.append(
+                    LabelledBand(
+                        band_label=label,
+                        min=self._coerce_optional_ref_bound(item.get("min")),
+                        max=self._coerce_optional_ref_bound(item.get("max")),
+                        unit=str(item.get("unit") or "").strip(),
+                        lower_exclusive=lexc,
+                        source_snippet=(
+                            str(item["source_snippet"]).strip()
+                            if item.get("source_snippet") or item.get("sourceSnippet")
+                            else None
+                        ),
+                    )
+                )
+            except (TypeError, ValueError):
+                continue
+        return out
+
+    @staticmethod
+    def _normalize_llm_reference_type(raw: Any) -> Optional[str]:
+        if raw is None:
+            return None
+        s = str(raw).strip()
+        return s if s in LLM_REFERENCE_TYPES else None
+
+    @staticmethod
+    def _value_fits_labelled_band(value: float, band: LabelledBand) -> bool:
+        if band.min is not None and band.max is not None:
+            return band.min <= value <= band.max
+        if band.max is not None and band.min is None:
+            return value <= band.max
+        if band.min is not None and band.max is None:
+            if band.lower_exclusive:
+                return value > band.min
+            return value >= band.min
+        return False
+
+    def _match_labelled_band(self, value: float, bands: List[LabelledBand]) -> Optional[LabelledBand]:
+        for b in bands:
+            if self._value_fits_labelled_band(value, b):
+                return b
+        return None
+
+    @staticmethod
+    def _active_refs_from_labelled_match(band: LabelledBand) -> tuple[Optional[float], Optional[float]]:
+        """Map a matched interpretive band to review-stage ref_low/ref_high (may be one-sided)."""
+        return band.min, band.max
+
     def _parse_reference_range(self, reference: str) -> tuple[Optional[float], Optional[float]]:
         """Parse reference range string to extract numeric limits."""
         if not reference:
@@ -281,10 +378,23 @@ class LLMParser:
             biomarkers = []
             for biomarker_data in data.get("biomarkers", []):
                 try:
+                    value = float(biomarker_data["value"])
                     context_opts = self._parse_context_range_options(
                         biomarker_data.get("context_range_options")
                         or biomarker_data.get("contextRangeOptions")
                     )
+                    labelled_bands = self._parse_labelled_bands(
+                        biomarker_data.get("labelled_bands") or biomarker_data.get("labelledBands")
+                    )
+                    rt_in = self._normalize_llm_reference_type(
+                        biomarker_data.get("reference_type") or biomarker_data.get("referenceType")
+                    )
+                    if rt_in is None:
+                        if labelled_bands:
+                            rt_in = "labelled_bands"
+                        elif len(context_opts) > 1:
+                            rt_in = "applicability_band_selection"
+
                     main_ref = str(biomarker_data.get("reference") or "").strip()
                     raw_extra = str(biomarker_data.get("raw_reference_text") or "").strip()
                     if raw_extra and main_ref:
@@ -294,10 +404,48 @@ class LLMParser:
                     else:
                         combined_ref = main_ref
 
-                    if len(context_opts) > 1:
-                        # Multiple contextual bands: require user selection; do not guess ref bounds.
+                    matched_lbl: Optional[str] = None
+                    ref_low: Optional[float] = None
+                    ref_high: Optional[float] = None
+                    status = "Unknown"
+                    rt_out: Optional[str] = rt_in
+
+                    if rt_in == "no_lab_range_supplied":
                         ref_low, ref_high = None, None
                         status = "Unknown"
+                    elif rt_in == "incomplete_or_ambiguous":
+                        ref_low = self._coerce_optional_ref_bound(biomarker_data.get("ref_low"))
+                        ref_high = self._coerce_optional_ref_bound(biomarker_data.get("ref_high"))
+                        if self._has_any_bound(ref_low, ref_high):
+                            status = self._compute_health_status(value, ref_low, ref_high)
+                        else:
+                            status = "Unknown"
+                    elif labelled_bands and rt_in != "applicability_band_selection":
+                        mb = self._match_labelled_band(value, labelled_bands)
+                        if mb:
+                            matched_lbl = mb.band_label
+                            ref_low, ref_high = self._active_refs_from_labelled_match(mb)
+                            if self._has_any_bound(ref_low, ref_high):
+                                status = self._compute_health_status(value, ref_low, ref_high)
+                            else:
+                                status = "Unknown"
+                        else:
+                            ref_low, ref_high = None, None
+                            status = "Unknown"
+                        rt_out = "labelled_bands"
+                    elif rt_in == "labelled_bands" and not labelled_bands:
+                        ref_low, ref_high = self._parse_reference_range(main_ref)
+                        if not self._has_any_bound(ref_low, ref_high):
+                            ref_low = self._coerce_optional_ref_bound(biomarker_data.get("ref_low"))
+                            ref_high = self._coerce_optional_ref_bound(biomarker_data.get("ref_high"))
+                        if not self._has_any_bound(ref_low, ref_high):
+                            ref_low, ref_high = self._parse_reference_range(combined_ref)
+                        status = self._compute_health_status(value, ref_low, ref_high)
+                        rt_out = "labelled_bands"
+                    elif len(context_opts) > 1:
+                        ref_low, ref_high = None, None
+                        status = "Unknown"
+                        rt_out = rt_out or "applicability_band_selection"
                     elif len(context_opts) == 1:
                         o0 = context_opts[0]
                         ref_low, ref_high = o0.min, o0.max
@@ -308,14 +456,9 @@ class LLMParser:
                             ref_high = self._coerce_optional_ref_bound(biomarker_data.get("ref_high"))
                         if not self._has_any_bound(ref_low, ref_high):
                             ref_low, ref_high = self._parse_reference_range(combined_ref)
-                        status = self._compute_health_status(
-                            biomarker_data["value"],
-                            ref_low,
-                            ref_high,
-                        )
+                        status = self._compute_health_status(value, ref_low, ref_high)
+                        rt_out = rt_out or "applicability_band_selection"
                     else:
-                        # Bound extraction: primary line first; LLM numeric helpers second; combined scan last only
-                        # if needed — avoids footnote/pregnancy tables overriding the main threshold.
                         ref_low, ref_high = self._parse_reference_range(main_ref)
                         if not self._has_any_bound(ref_low, ref_high):
                             ref_low = self._coerce_optional_ref_bound(biomarker_data.get("ref_low"))
@@ -323,11 +466,7 @@ class LLMParser:
                         if not self._has_any_bound(ref_low, ref_high):
                             ref_low, ref_high = self._parse_reference_range(combined_ref)
 
-                        status = self._compute_health_status(
-                            biomarker_data["value"],
-                            ref_low,
-                            ref_high,
-                        )
+                        status = self._compute_health_status(value, ref_low, ref_high)
 
                     biomarker = ParsedBiomarker(
                         id=biomarker_data["id"],
@@ -341,6 +480,9 @@ class LLMParser:
                         status=status,
                         raw_reference_text=raw_extra or None,
                         context_range_options=context_opts,
+                        labelled_bands=labelled_bands,
+                        reference_type=rt_out,
+                        matched_labelled_band=matched_lbl,
                     )
                     biomarkers.append(biomarker)
                 except (KeyError, ValueError, TypeError) as e:
@@ -456,6 +598,22 @@ class LLMParser:
                         }
                         for opt in biomarker.context_range_options
                     ]
+                if biomarker.reference_type:
+                    row["referenceType"] = biomarker.reference_type
+                if biomarker.labelled_bands:
+                    row["labelledBands"] = [
+                        {
+                            "bandLabel": b.band_label,
+                            "min": b.min,
+                            "max": b.max,
+                            "unit": b.unit,
+                            "lowerExclusive": b.lower_exclusive,
+                            "sourceSnippet": b.source_snippet,
+                        }
+                        for b in biomarker.labelled_bands
+                    ]
+                if biomarker.matched_labelled_band:
+                    row["matchedLabelledBand"] = biomarker.matched_labelled_band
                 biomarkers_list.append(row)
             
             # Merge metadata, ensuring filename takes precedence
