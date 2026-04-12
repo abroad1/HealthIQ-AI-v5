@@ -225,7 +225,7 @@ export default function UploadPage() {
       const { parsed_data } = parseUpload.data;
       const transformed = parsed_data.biomarkers.map((b: any) => {
         const row = b as Record<string, unknown>;
-        const { referenceRange, referenceText } = buildReferenceRangeFromParserRow(row);
+        const { referenceRange, referenceText, contextRangeOptions } = buildReferenceRangeFromParserRow(row);
         const v = b.value;
         return {
           name: String(b.name ?? b.id ?? b.biomarker_name ?? ''),
@@ -234,6 +234,7 @@ export default function UploadPage() {
           status: 'raw' as const,
           referenceRange,
           referenceText,
+          ...(contextRangeOptions?.length ? { contextRangeOptions } : {}),
         };
       });
 
@@ -357,15 +358,16 @@ export default function UploadPage() {
                   unit: b.unit,
                   referenceRange: b.referenceRange,
                   referenceText: b.referenceText,
+                  contextRangeOptions: b.contextRangeOptions,
                 });
                 return att !== 'none' && att !== 'one-sided';
               }) && (
                 <Alert className="mb-4 border-amber-200 bg-amber-50">
                   <AlertCircle className="h-4 w-4 text-amber-800" />
                   <AlertDescription className="text-amber-950">
-                    Some markers are missing a unit, missing a reference range, or need review for contextual
-                    reference text. Edit those rows before analysis so lab-interval context is complete where your
-                    report provides it.
+                    Some markers are missing a unit, need you to choose which lab reference band applies (multiple
+                    contextual ranges), or need review for reference text. Edit those rows before analysis so
+                    lab-interval context is complete where your report provides it.
                   </AlertDescription>
                 </Alert>
               )}

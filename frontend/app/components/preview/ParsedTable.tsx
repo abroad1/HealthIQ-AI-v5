@@ -35,6 +35,7 @@ export default function ParsedTable({
       unit: b.unit,
       referenceRange: b.referenceRange,
       referenceText: b.referenceText,
+      contextRangeOptions: b.contextRangeOptions,
     })
     const noUnit = !b.unit?.trim()
     if (noUnit) {
@@ -42,6 +43,14 @@ export default function ParsedTable({
         <Badge variant="destructive" className="gap-1 font-normal">
           <AlertCircle className="h-3 w-3" />
           Unit required
+        </Badge>
+      )
+    }
+    if (att === 'context-selection-required') {
+      return (
+        <Badge variant="outline" className="gap-1 font-normal border-violet-400 text-violet-950 bg-violet-50">
+          <AlertTriangle className="h-3 w-3" />
+          Choose reference band
         </Badge>
       )
     }

@@ -39,6 +39,33 @@ describe('buildReferenceRangeFromParserRow', () => {
     expect(out.referenceText).toContain('3.5');
     expect(out.referenceRange).toBeUndefined();
   });
+
+  it('returns multiple contextRangeOptions without numeric range when parser omits bounds', () => {
+    const out = buildReferenceRangeFromParserRow({
+      unit: 'mIU/L',
+      ref_low: null,
+      ref_high: null,
+      rawReferenceText: 'Males: 2–18\nFemales: 2–29',
+      contextRangeOptions: [
+        { contextLabel: 'Male', min: 2, max: 18, unit: 'mIU/L', sourceSnippet: 'Males: 2–18' },
+        { contextLabel: 'Female', min: 2, max: 29, unit: 'mIU/L', sourceSnippet: 'Females: 2–29' },
+      ],
+    });
+    expect(out.contextRangeOptions).toHaveLength(2);
+    expect(out.referenceRange).toBeUndefined();
+    expect(out.referenceText).toMatch(/Males/);
+  });
+
+  it('auto-fills reference range from a single context option when bounds exist', () => {
+    const out = buildReferenceRangeFromParserRow({
+      unit: 'mIU/L',
+      ref_low: null,
+      ref_high: null,
+      contextRangeOptions: [{ contextLabel: 'Adult', min: 2, max: 18, unit: 'mIU/L' }],
+    });
+    expect(out.referenceRange).toEqual({ min: 2, max: 18, unit: 'mIU/L' });
+    expect(out.contextRangeOptions).toHaveLength(1);
+  });
 });
 
 describe('referenceRangeToPayload', () => {
@@ -96,6 +123,32 @@ describe('rangeAttentionLevel', () => {
         referenceText: 'See pregnancy table on page 2',
       })
     ).toBe('partial');
+  });
+
+  it('context-selection-required when multiple bands and no numeric bounds yet', () => {
+    expect(
+      rangeAttentionLevel({
+        unit: 'mIU/L',
+        referenceText: 'Males / Females',
+        contextRangeOptions: [
+          { contextLabel: 'Male', min: 2, max: 18, unit: 'mIU/L' },
+          { contextLabel: 'Female', min: 2, max: 29, unit: 'mIU/L' },
+        ],
+      })
+    ).toBe('context-selection-required');
+  });
+
+  it('clears context-selection-required once any bound is set', () => {
+    expect(
+      rangeAttentionLevel({
+        unit: 'mIU/L',
+        referenceRange: { min: 2, unit: 'mIU/L' },
+        contextRangeOptions: [
+          { contextLabel: 'Male', min: 2, max: 18, unit: 'mIU/L' },
+          { contextLabel: 'Female', min: 2, max: 29, unit: 'mIU/L' },
+        ],
+      })
+    ).toBe('one-sided');
   });
 });
 
