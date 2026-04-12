@@ -17,6 +17,7 @@ from core.analytics.ratio_registry import DERIVED_IDS
 from core.analytics.signal_evaluator import SignalRegistry
 from core.models.signal import SignalResult
 from core.canonical.normalize import normalize_biomarkers_with_metadata
+from core.canonical.hba1c_layer_b_arbitration import arbitrate_hba1c_layer_b_input
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 from core.units.registry import UNIT_REGISTRY_VERSION, apply_unit_normalisation
 from tools.run_golden_panel import (
@@ -44,6 +45,7 @@ def _biomarker_rows_by_name(analysis_result: dict) -> dict:
 
 def _prepare_unit_normalised(biomarkers: dict) -> dict:
     normalized = normalize_biomarkers_with_metadata(biomarkers)
+    normalized = arbitrate_hba1c_layer_b_input(normalized)
     normalized = apply_unit_normalisation(normalized)
     normalized[UNIT_NORMALISATION_META_KEY] = {
         "unit_normalised": True,

@@ -9,6 +9,7 @@ from uuid import UUID
 from unittest.mock import patch
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 from core.canonical.normalize import normalize_biomarkers_with_metadata
+from core.canonical.hba1c_layer_b_arbitration import arbitrate_hba1c_layer_b_input
 from core.units.registry import apply_unit_normalisation, UNIT_REGISTRY_VERSION
 from core.canonical.alias_registry_service import AliasRegistryService, get_alias_registry_service
 from core.models.signal import SignalResult
@@ -17,6 +18,7 @@ from core.models.signal import SignalResult
 def _prepare_unit_normalised(biomarkers: dict) -> dict:
     """Apply normalize -> unit norm -> add meta (production path)."""
     normalized = normalize_biomarkers_with_metadata(biomarkers)
+    normalized = arbitrate_hba1c_layer_b_input(normalized)
     normalized = apply_unit_normalisation(normalized)
     normalized[UNIT_NORMALISATION_META_KEY] = {
         "unit_normalised": True,

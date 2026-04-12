@@ -42,6 +42,7 @@ from core.dto.builders import (
     extend_cluster_client_dict_from_hit,
 )
 from core.canonical.normalize import normalize_biomarkers_with_metadata, detect_canonical_collisions
+from core.canonical.hba1c_layer_b_arbitration import arbitrate_hba1c_layer_b_input
 from core.canonical.errors import CanonicalCollisionError
 from core.context import ContextFactory, ValidationError
 from core.units.registry import apply_unit_normalisation, UnitConversionError, UNIT_REGISTRY_VERSION
@@ -136,6 +137,9 @@ async def start_analysis(
                     "collisions": collisions,
                 },
             )
+
+        # KB-HBA1C-GOV1: single Layer B HbA1c id (hba1c) before unit normalisation.
+        normalized = arbitrate_hba1c_layer_b_input(normalized)
 
         # Sprint 1: Convert to base units at ingestion (Layer A). Deterministic; rejects unknown units.
         try:
