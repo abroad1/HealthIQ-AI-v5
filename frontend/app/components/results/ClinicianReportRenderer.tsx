@@ -5,6 +5,12 @@ import type { ClinicianReportV1, PrimaryConcernModeV1 } from '@/types/analysis';
 
 interface ClinicianReportRendererProps {
   report: ClinicianReportV1 | null | undefined;
+  /** BE-W2-RQ3 — same deterministic balanced-system copy as main results (optional) */
+  balancedSystems?: {
+    intro_line: string;
+    items: Array<{ system_topic: string; evidence_line: string; capacity_note?: string }>;
+    context_line: string;
+  } | null;
 }
 
 function formatSignalIdForDisplay(signalId: string): string {
@@ -99,7 +105,7 @@ function Page1RankingContext({ page1 }: { page1: ClinicianReportV1['sections']['
   );
 }
 
-export default function ClinicianReportRenderer({ report }: ClinicianReportRendererProps) {
+export default function ClinicianReportRenderer({ report, balancedSystems }: ClinicianReportRendererProps) {
   if (!report) {
     return (
       <Card>
@@ -120,6 +126,26 @@ export default function ClinicianReportRenderer({ report }: ClinicianReportRende
 
   return (
     <div className="space-y-6" data-testid="clinician-report-renderer">
+      {balancedSystems && balancedSystems.items?.length ? (
+        <Card className="border-emerald-100 bg-emerald-50/30">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Balanced panel context (deterministic)</CardTitle>
+            <CardDescription>{balancedSystems.intro_line}</CardDescription>
+          </CardHeader>
+          <CardContent className="text-sm space-y-2 text-emerald-950">
+            <ul className="list-disc pl-5 space-y-1">
+              {balancedSystems.items.map((it, i) => (
+                <li key={i}>
+                  <span className="font-medium">{it.system_topic}:</span> {it.evidence_line}
+                  {it.capacity_note ? <span className="block text-xs text-muted-foreground mt-0.5">{it.capacity_note}</span> : null}
+                </li>
+              ))}
+            </ul>
+            {balancedSystems.context_line ? <p className="pt-1">{balancedSystems.context_line}</p> : null}
+          </CardContent>
+        </Card>
+      ) : null}
+
       <Card>
         <CardHeader>
           <CardTitle>Clinician Summary Report</CardTitle>

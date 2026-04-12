@@ -6,6 +6,7 @@ from typing import Dict, Any, List
 from datetime import datetime, UTC
 
 from core.analytics.report_compiler_v1 import compile_clinician_report_v1
+from core.analytics.balanced_systems_presentation_v1 import compile_balanced_systems_v1
 from core.models.biomarker import BiomarkerCluster, BiomarkerInsight
 from core.models.results import AnalysisResult, AnalysisSummary, BiomarkerScore, ClusterHit
 from core.models.insight import Insight, InsightSynthesisResult
@@ -34,6 +35,10 @@ def build_analysis_result_dto(result: Dict[str, Any]) -> Dict[str, Any]:
         biomarker_rows=result.get("biomarkers", []) if isinstance(result.get("biomarkers"), list) else [],
         medical_history=mh_snap,
     )
+    balanced = compile_balanced_systems_v1(
+        meta=meta,
+        primary_driver_system_id=str(result.get("primary_driver_system_id", "") or ""),
+    )
 
     return {
         "analysis_id": result.get("analysis_id", ""),
@@ -54,6 +59,7 @@ def build_analysis_result_dto(result: Dict[str, Any]) -> Dict[str, Any]:
         "clinician_report_v1": (
             clinician_report.model_dump() if clinician_report is not None else None
         ),
+        "balanced_systems_v1": balanced,
         "replay_manifest": result.get("replay_manifest"),
     }
 
