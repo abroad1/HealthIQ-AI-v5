@@ -8,7 +8,7 @@ import { Label } from '../ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { Badge } from '../ui/badge'
 import { X, Save, AlertCircle, Copy } from 'lucide-react'
-import { ParsedBiomarker } from '../../types/parsed'
+import { ParsedBiomarker, type ContextRangeOption } from '../../types/parsed'
 import { Textarea } from '../ui/textarea'
 import { parseBiomarkerValueForReview } from '@/lib/uploadReferenceRange'
 
@@ -94,6 +94,16 @@ export default function EditDialog({
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [referenceTextUnlocked, setReferenceTextUnlocked] = useState(false)
+  const [selectedContextBand, setSelectedContextBand] = useState('')
+
+  const applyContextOption = (opt: ContextRangeOption, valueUnit: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      refMin: opt.min != null && Number.isFinite(opt.min) ? String(opt.min) : '',
+      refMax: opt.max != null && Number.isFinite(opt.max) ? String(opt.max) : '',
+      refUnit: (opt.unit || valueUnit).trim(),
+    }))
+  }
 
   useEffect(() => {
     if (biomarker) {
@@ -108,6 +118,25 @@ export default function EditDialog({
         referenceText: biomarker.referenceText ?? '',
         status: biomarker.status || 'edited'
       })
+      let band = ''
+      const opts = biomarker.contextRangeOptions
+      if (opts && opts.length > 1 && r) {
+        const idx = opts.findIndex((o) => {
+          const om = o.min
+          const ox = o.max
+          const rm = r.min
+          const rx = r.max
+          const mOk =
+            (om == null && rm == null) ||
+            (om != null && rm != null && Math.abs(om - rm) < 1e-9)
+          const xOk =
+            (ox == null && rx == null) ||
+            (ox != null && rx != null && Math.abs(ox - rx) < 1e-9)
+          return mOk && xOk
+        })
+        if (idx >= 0) band = String(idx)
+      }
+      setSelectedContextBand(band)
       setErrors({})
       setReferenceTextUnlocked(false)
     }
@@ -145,6 +174,14 @@ export default function EditDialog({
       newErrors.refMax = 'Max must be greater than min when both are set'
     }
 
+    const hasRefMin = Number.isFinite(refMinN)
+    const hasRefMax = Number.isFinite(refMaxN)
+    const multi = biomarker.contextRangeOptions && biomarker.contextRangeOptions.length > 1
+    if (multi && !hasRefMin && !hasRefMax) {
+      newErrors.contextBand =
+        'Select the reference band that matches your report, or enter min/max manually below.'
+    }
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -179,7 +216,8 @@ export default function EditDialog({
       unit: formData.unit.trim(),
       referenceRange,
       referenceText: formData.referenceText.trim() || undefined,
-      status: 'edited'
+      status: 'edited',
+      contextRangeOptions: biomarker.contextRangeOptions,
     }
 
     onSave(editedBiomarker)
@@ -295,6 +333,43 @@ export default function EditDialog({
               </div>
             )}
           </div>
+
+          {biomarker.contextRangeOptions && biomarker.contextRangeOptions.length > 1 && (
+            <div className="rounded-md border border-violet-200 bg-violet-50/60 p-3 space-y-2">
+              <Label htmlFor="contextBand">Which lab reference band applies?</Label>
+              <p className="text-xs text-muted-foreground">
+                Your report lists multiple intervals (e.g. by sex or pregnancy status). Choose the one that matches
+                you, or set min/max manually below.
+              </p>
+              <Select
+                value={selectedContextBand || undefined}
+                onValueChange={(v) => {
+                  setSelectedContextBand(v)
+                  const idx = parseInt(v, 10)
+                  const opt = biomarker.contextRangeOptions?.[idx]
+                  if (opt) applyContextOption(opt, formData.unit)
+                }}
+              >
+                <SelectTrigger id="contextBand" className={errors.contextBand ? 'border-red-500' : ''}>
+                  <SelectValue placeholder="Select the band from your lab report…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {biomarker.contextRangeOptions.map((opt, idx) => (
+                    <SelectItem key={idx} value={String(idx)}>
+                      {opt.contextLabel}
+                      {opt.sourceSnippet ? ` — ${opt.sourceSnippet}` : ''}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.contextBand && (
+                <div className="flex items-center space-x-1 text-destructive text-sm">
+                  <AlertCircle className="h-4 w-4" />
+                  <span>{errors.contextBand}</span>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Reference range (manual correction) */}
           <div className="rounded-md border border-dashed p-3 space-y-3 bg-muted/30">

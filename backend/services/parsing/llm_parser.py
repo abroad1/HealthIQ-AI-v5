@@ -19,6 +19,18 @@ from core.llm.gemini_client import GeminiClient
 from core.models.biomarker import BiomarkerValue
 
 
+class ContextRangeOption(BaseModel):
+    """Single sex/pregnancy/life-stage (etc.) band extracted for review-stage selection."""
+
+    model_config = {"extra": "ignore"}
+
+    context_label: str = Field(default="", description="Lab-defined label for this band")
+    min: Optional[float] = Field(None, description="Lower bound if applicable")
+    max: Optional[float] = Field(None, description="Upper bound if applicable")
+    unit: str = Field(default="", description="Unit for this interval row")
+    source_snippet: Optional[str] = Field(None, description="Short verbatim quote from the PDF")
+
+
 class ParsedBiomarker(BaseModel):
     """Parsed biomarker data structure."""
     id: str = Field(..., description="Canonical biomarker ID")
@@ -33,6 +45,10 @@ class ParsedBiomarker(BaseModel):
     raw_reference_text: Optional[str] = Field(
         None,
         description="Optional multi-line footnotes / sex or pregnancy context from the PDF",
+    )
+    context_range_options: List[ContextRangeOption] = Field(
+        default_factory=list,
+        description="Structured contextual intervals when the lab lists multiple bands",
     )
 
 
@@ -178,6 +194,32 @@ class LLMParser:
     def _has_any_bound(ref_low: Optional[float], ref_high: Optional[float]) -> bool:
         return ref_low is not None or ref_high is not None
 
+    def _parse_context_range_options(self, raw: Any) -> List[ContextRangeOption]:
+        if not isinstance(raw, list) or len(raw) == 0:
+            return []
+        out: List[ContextRangeOption] = []
+        for item in raw:
+            if not isinstance(item, dict):
+                continue
+            label = str(item.get("context_label") or item.get("contextLabel") or "").strip() or "Reference"
+            try:
+                out.append(
+                    ContextRangeOption(
+                        context_label=label,
+                        min=self._coerce_optional_ref_bound(item.get("min")),
+                        max=self._coerce_optional_ref_bound(item.get("max")),
+                        unit=str(item.get("unit") or "").strip(),
+                        source_snippet=(
+                            str(item["source_snippet"]).strip()
+                            if item.get("source_snippet") or item.get("sourceSnippet")
+                            else None
+                        ),
+                    )
+                )
+            except (TypeError, ValueError):
+                continue
+        return out
+
     def _parse_reference_range(self, reference: str) -> tuple[Optional[float], Optional[float]]:
         """Parse reference range string to extract numeric limits."""
         if not reference:
@@ -239,6 +281,10 @@ class LLMParser:
             biomarkers = []
             for biomarker_data in data.get("biomarkers", []):
                 try:
+                    context_opts = self._parse_context_range_options(
+                        biomarker_data.get("context_range_options")
+                        or biomarker_data.get("contextRangeOptions")
+                    )
                     main_ref = str(biomarker_data.get("reference") or "").strip()
                     raw_extra = str(biomarker_data.get("raw_reference_text") or "").strip()
                     if raw_extra and main_ref:
@@ -248,22 +294,41 @@ class LLMParser:
                     else:
                         combined_ref = main_ref
 
-                    # Bound extraction: primary line first; LLM numeric helpers second; combined scan last only
-                    # if needed — avoids footnote/pregnancy tables overriding the main threshold.
-                    ref_low, ref_high = self._parse_reference_range(main_ref)
-                    if not self._has_any_bound(ref_low, ref_high):
-                        ref_low = self._coerce_optional_ref_bound(biomarker_data.get("ref_low"))
-                        ref_high = self._coerce_optional_ref_bound(biomarker_data.get("ref_high"))
-                    if not self._has_any_bound(ref_low, ref_high):
-                        ref_low, ref_high = self._parse_reference_range(combined_ref)
-                    
-                    # Compute health status
-                    status = self._compute_health_status(
-                        biomarker_data["value"],
-                        ref_low,
-                        ref_high
-                    )
-                    
+                    if len(context_opts) > 1:
+                        # Multiple contextual bands: require user selection; do not guess ref bounds.
+                        ref_low, ref_high = None, None
+                        status = "Unknown"
+                    elif len(context_opts) == 1:
+                        o0 = context_opts[0]
+                        ref_low, ref_high = o0.min, o0.max
+                        if not self._has_any_bound(ref_low, ref_high):
+                            ref_low, ref_high = self._parse_reference_range(main_ref)
+                        if not self._has_any_bound(ref_low, ref_high):
+                            ref_low = self._coerce_optional_ref_bound(biomarker_data.get("ref_low"))
+                            ref_high = self._coerce_optional_ref_bound(biomarker_data.get("ref_high"))
+                        if not self._has_any_bound(ref_low, ref_high):
+                            ref_low, ref_high = self._parse_reference_range(combined_ref)
+                        status = self._compute_health_status(
+                            biomarker_data["value"],
+                            ref_low,
+                            ref_high,
+                        )
+                    else:
+                        # Bound extraction: primary line first; LLM numeric helpers second; combined scan last only
+                        # if needed — avoids footnote/pregnancy tables overriding the main threshold.
+                        ref_low, ref_high = self._parse_reference_range(main_ref)
+                        if not self._has_any_bound(ref_low, ref_high):
+                            ref_low = self._coerce_optional_ref_bound(biomarker_data.get("ref_low"))
+                            ref_high = self._coerce_optional_ref_bound(biomarker_data.get("ref_high"))
+                        if not self._has_any_bound(ref_low, ref_high):
+                            ref_low, ref_high = self._parse_reference_range(combined_ref)
+
+                        status = self._compute_health_status(
+                            biomarker_data["value"],
+                            ref_low,
+                            ref_high,
+                        )
+
                     biomarker = ParsedBiomarker(
                         id=biomarker_data["id"],
                         name=biomarker_data["name"],
@@ -275,6 +340,7 @@ class LLMParser:
                         ref_high=ref_high,
                         status=status,
                         raw_reference_text=raw_extra or None,
+                        context_range_options=context_opts,
                     )
                     biomarkers.append(biomarker)
                 except (KeyError, ValueError, TypeError) as e:
@@ -379,6 +445,17 @@ class LLMParser:
                 }
                 if biomarker.raw_reference_text:
                     row["rawReferenceText"] = biomarker.raw_reference_text
+                if biomarker.context_range_options:
+                    row["contextRangeOptions"] = [
+                        {
+                            "contextLabel": opt.context_label,
+                            "min": opt.min,
+                            "max": opt.max,
+                            "unit": opt.unit,
+                            "sourceSnippet": opt.source_snippet,
+                        }
+                        for opt in biomarker.context_range_options
+                    ]
                 biomarkers_list.append(row)
             
             # Merge metadata, ensuring filename takes precedence

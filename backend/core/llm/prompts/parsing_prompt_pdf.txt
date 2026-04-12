@@ -11,6 +11,15 @@ Your task is to analyze the PDF document and extract all quantitative biomarkers
       "unit": "string (unit of measurement)",
       "reference": "string (primary reference interval line as printed adjacent to the result, verbatim when possible)",
       "raw_reference_text": "string (optional — multi-line footnotes, sex-specific or pregnancy-specific blocks, life-stage notes, or additional reference context that appears with this marker in the PDF. Omit or use empty string if none.)",
+      "context_range_options": [
+        {
+          "context_label": "string (e.g. Male, Female non-pregnant, Pregnant trimester 1)",
+          "min": float (optional),
+          "max": float (optional),
+          "unit": "string (optional, interval unit for this row)",
+          "source_snippet": "string (optional — short verbatim quote from the lab text for this row)"
+        }
+      ],
       "confidence": float (confidence score 0.0-1.0),
       "ref_low": float (lower reference limit, optional),
       "ref_high": float (upper reference limit, optional)
@@ -53,6 +62,12 @@ Your task is to analyze the PDF document and extract all quantitative biomarkers
 - Preserve **multi-line** reference content in `raw_reference_text` when footnotes or tables span lines (keep newlines; stay under ~4000 characters per field).
 - The `reference` field should contain the **main interval line** next to the result (e.g. `3.5–5.5`, `< 200 mg/dL`, `≥ 48`).
 - Use `raw_reference_text` for adjacent blocks such as “Pregnancy trimester ranges: …”, “Males: … Females: …”, or long explanatory notes.
+
+## Context-specific reference ranges (when the lab lists multiple bands):
+- When a biomarker has **multiple mutually exclusive reference intervals** (e.g. male vs female, pregnancy vs non-pregnant, postmenopausal), populate `context_range_options` with **one object per distinct band**.
+- Each option should include `context_label`, numeric `min` / `max` when inferable (one-sided is OK: only min or only max), `unit`, and optional `source_snippet` from the PDF.
+- If you are **not confident** structuring options, **omit** `context_range_options` entirely (or use an empty array) and rely on `reference` + `raw_reference_text` only.
+- When **two or more** context options are present, **omit** top-level `ref_low` / `ref_high` so the downstream app can require explicit user selection (do not silently pick one band).
 
 ## Reference Range Parsing (numeric helpers):
 - Also set `ref_low` / `ref_high` when you can infer clear numeric limits from the text:

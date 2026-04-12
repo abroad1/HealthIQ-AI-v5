@@ -3,8 +3,17 @@
  * Keeps parse fidelity, one-sided bounds, and payload shape aligned with backend normalize.py.
  */
 
+import type { ContextRangeOption } from '@/types/parsed';
+
+export type { ContextRangeOption };
+
 /** Review attention: one-sided thresholds are valid lab intervals, not "incomplete". */
-export type RangeAttention = 'none' | 'one-sided' | 'partial' | 'missing';
+export type RangeAttention =
+  | 'none'
+  | 'one-sided'
+  | 'partial'
+  | 'missing'
+  | 'context-selection-required';
 
 export interface ParsedReferenceRange {
   min?: number;
@@ -17,6 +26,8 @@ export interface ReferenceRangeFromParseResult {
   referenceRange?: ParsedReferenceRange;
   /** Raw lab text when the parser supplied a string (context only; not a substitute for numeric bounds). */
   referenceText?: string;
+  /** Structured contextual intervals when the lab lists multiple bands (BE-W1-PR4). */
+  contextRangeOptions?: ContextRangeOption[];
 }
 
 function _num(v: unknown): number | undefined {
@@ -25,11 +36,48 @@ function _num(v: unknown): number | undefined {
   return Number.isFinite(n) ? n : undefined;
 }
 
+function _hasAnyRefBound(r: ParsedReferenceRange | undefined): boolean {
+  if (!r) return false;
+  const lo = r.min != null && Number.isFinite(r.min);
+  const hi = r.max != null && Number.isFinite(r.max);
+  return lo || hi;
+}
+
+/**
+ * Parse `contextRangeOptions` / `context_range_options` from an API biomarker row.
+ */
+export function parseContextRangeOptionsFromRow(b: Record<string, unknown>): ContextRangeOption[] {
+  const raw = b.contextRangeOptions ?? b.context_range_options;
+  if (!Array.isArray(raw) || raw.length === 0) return [];
+  const out: ContextRangeOption[] = [];
+  for (const item of raw) {
+    if (!item || typeof item !== 'object') continue;
+    const o = item as Record<string, unknown>;
+    const label = String(o.contextLabel ?? o.context_label ?? '').trim() || 'Reference';
+    const unit = typeof o.unit === 'string' ? o.unit.trim() : '';
+    const sn =
+      typeof o.sourceSnippet === 'string'
+        ? o.sourceSnippet.trim()
+        : typeof o.source_snippet === 'string'
+          ? o.source_snippet.trim()
+          : undefined;
+    out.push({
+      contextLabel: label,
+      min: _num(o.min),
+      max: _num(o.max),
+      unit,
+      sourceSnippet: sn || undefined,
+    });
+  }
+  return out;
+}
+
 /**
  * Build structured range + optional raw text from a single parser biomarker row.
  */
 export function buildReferenceRangeFromParserRow(b: Record<string, unknown>): ReferenceRangeFromParseResult {
   const unit = typeof b.unit === 'string' ? b.unit : '';
+  const contextRangeOptions = parseContextRangeOptionsFromRow(b);
 
   let referenceText: string | undefined;
   if (typeof b.rawReferenceText === 'string' && b.rawReferenceText.trim()) {
@@ -42,6 +90,41 @@ export function buildReferenceRangeFromParserRow(b: Record<string, unknown>): Re
   }
   if (typeof b.referenceRange === 'string' && b.referenceRange.trim()) {
     referenceText = (referenceText ? `${referenceText}\n\n` : '') + b.referenceRange.trim();
+  }
+
+  if (contextRangeOptions.length > 1) {
+    const low = _num(b.ref_low);
+    const high = _num(b.ref_high);
+    const hasLow = low !== undefined;
+    const hasHigh = high !== undefined;
+    if (hasLow || hasHigh) {
+      return {
+        referenceRange: {
+          min: hasLow ? low : undefined,
+          max: hasHigh ? high : undefined,
+          unit,
+        },
+        referenceText,
+        contextRangeOptions,
+      };
+    }
+    return { referenceText, contextRangeOptions };
+  }
+
+  if (contextRangeOptions.length === 1) {
+    const o0 = contextRangeOptions[0];
+    if (_hasAnyRefBound({ min: o0.min, max: o0.max, unit: o0.unit || unit })) {
+      const ru = (o0.unit || unit).trim();
+      return {
+        referenceRange: {
+          min: o0.min,
+          max: o0.max,
+          unit: ru || unit,
+        },
+        referenceText,
+        contextRangeOptions,
+      };
+    }
   }
 
   const low = _num(b.ref_low);
@@ -57,6 +140,7 @@ export function buildReferenceRangeFromParserRow(b: Record<string, unknown>): Re
         unit,
       },
       referenceText,
+      contextRangeOptions: contextRangeOptions.length ? contextRangeOptions : undefined,
     };
   }
 
@@ -73,14 +157,15 @@ export function buildReferenceRangeFromParserRow(b: Record<string, unknown>): Re
           unit: u,
         },
         referenceText,
+        contextRangeOptions: contextRangeOptions.length ? contextRangeOptions : undefined,
       };
     }
   }
 
   if (referenceText) {
-    return { referenceText };
+    return { referenceText, contextRangeOptions: contextRangeOptions.length ? contextRangeOptions : undefined };
   }
-  return {};
+  return { contextRangeOptions: contextRangeOptions.length ? contextRangeOptions : undefined };
 }
 
 /**
@@ -90,7 +175,12 @@ export function rangeAttentionLevel(b: {
   unit: string;
   referenceRange?: ParsedReferenceRange;
   referenceText?: string;
+  contextRangeOptions?: ContextRangeOption[];
 }): RangeAttention {
+  const opts = b.contextRangeOptions;
+  if (opts && opts.length > 1 && !_hasAnyRefBound(b.referenceRange)) {
+    return 'context-selection-required';
+  }
   const r = b.referenceRange;
   const hasMin = r?.min != null && Number.isFinite(r.min);
   const hasMax = r?.max != null && Number.isFinite(r.max);

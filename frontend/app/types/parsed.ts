@@ -3,6 +3,15 @@
  * Mirrors backend parse payloads and response structures
  */
 
+/** Context-specific reference band from PDF parse (assistive; user confirms range for analysis). */
+export interface ContextRangeOption {
+  contextLabel: string;
+  min?: number;
+  max?: number;
+  unit: string;
+  sourceSnippet?: string;
+}
+
 export interface ParsedBiomarker {
   /** Biomarker name (e.g., "Total Cholesterol") */
   name: string;
@@ -24,6 +33,9 @@ export interface ParsedBiomarker {
 
   /** Raw reference string from parser when present (display/context; not a substitute for numeric bounds). */
   referenceText?: string;
+
+  /** When the lab lists multiple contextual bands, parser may supply structured rows for review selection. */
+  contextRangeOptions?: ContextRangeOption[];
 }
 
 export interface ParseMetadata {
