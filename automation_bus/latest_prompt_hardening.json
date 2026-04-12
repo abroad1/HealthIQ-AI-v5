@@ -1,26 +1,26 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "BE-W2-RQ1",
+  "work_id": "BE-W2-RQ2",
   "status": "HARDENED",
   "hardened_utc": "2026-04-12T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
-  "content_review": "COMPLETE — report_compiler_v1.py read in full (lines 1-680). primary_concern template at L472-476, _why_template at L194-196, _page1_policy_key_finding_line at L143-158 all confirmed as sources of consumer-facing governance/signal-id leakage. Sprint scope bounded to these templates and frontend rendering components only.",
-  "behaviour_review": "COMPLETE — MIXED correct: clinician report copy = CONTENT tier; hero presentation text (compiler templates) and FE badge visibility = BEHAVIOUR tier (changes emitted reasoning visible to users). Determinism preserved — sort/rank logic at L593-594 and L64-82 is unchanged. No randomness, no mutable global state, no fallback content source. Regression targets all testable from existing code.",
+  "content_review": "COMPLETE — all 7 authoritative files read in full. backend/core/contracts/clinician_report_v1.py read additionally (required for contract change scoping). frontend/app/types/analysis.ts read additionally (required for frontend contract alignment). UAT-027 and UAT-028 gaps confirmed at source level.",
+  "behaviour_review": "COMPLETE — MIXED correct. Runner-up enrichment in compile_clinician_report_v1 changes emitted DTO shape (BEHAVIOUR tier). Why depth improvement in RootCauseEvidenceSummary.tsx changes emitted user-facing reasoning (BEHAVIOUR tier). Analytical logic (ranking, tie-break, signal evaluation, insight graph construction) confirmed not touched. Determinism preserved — runner-up sourced from deterministically sorted top_findings[1]. ranking_rationale from _build_ranking_rationale (L306) is a pure function. No randomness, no mutable global state.",
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: BE-W2-RQ1"
+      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: BE-W2-RQ2"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/wave2-results-contract-quality"
+      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/results-why-contract-depth"
     },
     {
       "check": "Front Matter — risk_level HIGH",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:4 — HIGH; sprint changes emitted user-facing reasoning and report presentation text — output generation is Intelligence Core boundary."
+      "citation": "automation_bus/latest_cursor_prompt.md:4 — HIGH. Sprint changes emitted user-facing reasoning and report presentation — output generation is Intelligence Core boundary. Prompt Stage 1C:98-104 confirms HIGH risk with no downgrade permitted."
     },
     {
       "check": "Front Matter — execution_model TWO_PHASE_START_FINISH",
@@ -30,82 +30,82 @@
     {
       "check": "Front Matter — change_type MIXED",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:6 — MIXED: compiler template text = output generation BEHAVIOUR; report formatting improvements = CONTENT; frontend badge visibility = BEHAVIOUR."
+      "citation": "automation_bus/latest_cursor_prompt.md:6 — MIXED: runner-up enrichment adds governed content consumed by output assembler (BEHAVIOUR); Why depth uses existing deterministic evidence (BEHAVIOUR); compiler/renderer alignment (BEHAVIOUR + CONTENT)."
     },
     {
-      "check": "2A — backend/app/routes/analysis.py exists and is the correct runtime path",
+      "check": "2A — backend/app/routes/analysis.py exists and confirmed as GET /api/analysis/result runtime path",
       "result": "CONFIRMED",
-      "citation": "backend/app/routes/analysis.py:329 — GET /api/analysis/result returns build_analysis_result_dto(raw). backend/app/routes/analysis.py:169 — orchestrator.run() produces DTO stored as raw. Route confirmed as authoritative entry point."
+      "citation": "backend/app/routes/analysis.py:329-350 — GET /result calls _raw_result_payload_for_analysis_id then build_analysis_result_dto. analysis.py:345 — raw = _raw_result_payload_for_analysis_id. analysis.py:346 — return build_analysis_result_dto(raw). File read in full."
     },
     {
-      "check": "2A — backend/core/dto/builders.py exists; compile_clinician_report_v1 wired here",
+      "check": "2A — backend/core/dto/builders.py exists; compile_clinician_report_v1 wired and meta passed through",
       "result": "CONFIRMED",
-      "citation": "backend/core/dto/builders.py:8 — imports compile_clinician_report_v1 from core.analytics.report_compiler_v1. backend/core/dto/builders.py:32-36 — called with report_v1 payload. backend/core/dto/builders.py:54-56 — emitted as clinician_report_v1 key in DTO."
+      "citation": "backend/core/dto/builders.py:8 — imports compile_clinician_report_v1. builders.py:27-36 — extracts report_v1 from insight_graph. builders.py:32-36 — calls compile_clinician_report_v1(report_v1_payload=report_v1). builders.py:53 — 'meta': meta passed through to frontend. Confirms meta.insight_graph.report_v1.top_findings is accessible on frontend via currentAnalysis.meta."
     },
     {
-      "check": "2A PATH CORRECTION — prompt claims backend/core/reports/report_compiler_v1.py; this file does NOT exist",
-      "result": "CORRECTED",
-      "citation": "Glob('backend/core/reports/**') returned no files. Actual authoritative path confirmed by Grep: backend/core/analytics/report_compiler_v1.py. Cursor must use the corrected path. builders.py:8 import also confirms: 'from core.analytics.report_compiler_v1 import compile_clinician_report_v1'."
-    },
-    {
-      "check": "2A — backend/core/analytics/report_compiler_v1.py verified; compile_clinician_report_v1 confirmed",
+      "check": "2A — backend/core/analytics/report_compiler_v1.py exists; compile_clinician_report_v1 confirmed",
       "result": "CONFIRMED",
-      "citation": "backend/core/analytics/report_compiler_v1.py:410 — function compile_clinician_report_v1() defined. Entire file read (680 lines). This is the sole authority for clinician report compilation."
+      "citation": "backend/core/analytics/report_compiler_v1.py:443 — function compile_clinician_report_v1() defined. L461-464: _resolve_page1_concern_mode returns concern_mode + co_primary_signal_ids. L466: primary = top_findings[0] only — lead only compiled. L607: co_primary_signal_ids stores string IDs only. Runner-up top_findings[1] full data NOT compiled into report. File read in full (731 lines)."
     },
     {
-      "check": "2A — frontend/app/(app)/results/page.tsx exists and confirmed as results entry point",
+      "check": "2A — backend/core/contracts/clinician_report_v1.py read (CRITICAL constraint)",
       "result": "CONFIRMED",
-      "citation": "frontend/app/(app)/results/page.tsx:134 — clinicianReport = currentAnalysis?.clinician_report_v1. frontend/app/(app)/results/page.tsx:497 — InsightPanel receives clinicianReport. frontend/app/(app)/results/page.tsx:518 — ClusterSummary receives clusters. frontend/app/(app)/results/page.tsx:683 — ClinicianReportRenderer receives clinicianReport."
+      "citation": "backend/core/contracts/clinician_report_v1.py:82-94 — Page1SummaryBlockV1. L83: model_config = ConfigDict(extra='forbid'). Current fields: primary_concern, key_findings, chains, top_hypothesis_line, confidence_and_missing_data, primary_concern_mode, co_primary_signal_ids, ranking_policy_version. No runner-up enriched field. CRITICAL: extra='forbid' means new fields MUST be declared in Pydantic model or validation will fail. L111: ClinicianReportV1 also extra='forbid'."
     },
     {
-      "check": "2A — frontend/app/components/insights/InsightPanel.tsx exists; governance leakage confirmed",
+      "check": "2A — frontend/app/(app)/results/page.tsx exists; confirmed entry point",
       "result": "CONFIRMED",
-      "citation": "InsightPanel.tsx:95-99 — ranking_policy_version rendered as visible Badge in default consumer hero. InsightPanel.tsx:22-30 — modeLabel() returns string 'Lead concern uses a technical tie-break' rendered in default consumer Badge. InsightPanel.tsx:108-122 — co_primary_signal_ids rendered as Badges in default consumer view. All three are consumer-facing governance leakage confirmed by source."
+      "citation": "frontend/app/(app)/results/page.tsx:135 — clinicianReport = currentAnalysis?.clinician_report_v1. page.tsx:498 — InsightPanel receives clinicianReport. page.tsx:516 — RootCauseEvidenceSummary receives clinicianReport. page.tsx:691 — ClinicianReportRenderer receives clinicianReport. File read in full (712 lines)."
     },
     {
-      "check": "2A — frontend/app/components/results/ClinicianReportRenderer.tsx exists; float and raw id issues confirmed",
+      "check": "2A — frontend/app/components/insights/InsightPanel.tsx exists; UAT-027 gap confirmed",
       "result": "CONFIRMED",
-      "citation": "ClinicianReportRenderer.tsx:168 — {hypothesis.hypothesis_confidence} rendered raw (no .toFixed()). ClinicianReportRenderer.tsx:160-162 — CardDescription renders raw signal_id, raw signal_confidence."
+      "citation": "InsightPanel.tsx:74 — co_primary_signal_ids read from page1. InsightPanel.tsx:81-82 — showCoPrimaryRow gated on coPrimaries.length > 0 AND ambiguity/tiebreak mode. InsightPanel.tsx:108-110 — renders humanized signal IDs only via formatSignalIdForDisplay — no confidence, no why_it_matters, no signal_state for runner-up. UAT-027 gap confirmed: close-call mode shows runner-up label only, not what it is or why it did not lead."
     },
     {
-      "check": "2A — frontend/app/components/clusters/ClusterSummary.tsx exists; description path confirmed",
+      "check": "2A — frontend/app/components/results/RootCauseEvidenceSummary.tsx exists; UAT-028 gap confirmed",
       "result": "CONFIRMED",
-      "citation": "ClusterSummary.tsx:235-237 — cluster.description rendered as-is. ClusterSummary.tsx:295-300 — systemEducationalExplainer.body shown under 'What your results suggest' when present."
+      "citation": "RootCauseEvidenceSummary.tsx:19-28 — reads root_cause.hypotheses[0] (top hypothesis only). Renders evidence_for, evidence_against, missing_data as bullet lists. HypothesisV1.ranking_rationale (compiled at report_compiler_v1.py:391 via _build_ranking_rationale) NOT rendered. HypothesisV1.summary NOT rendered here. RootCauseFindingV1.signal_state and primary_metric NOT used as narrative intro. UAT-028 gap confirmed: structured fragments, no consultant-style walkthrough."
     },
     {
-      "check": "2A — hero governance leakage source in report_compiler_v1.py confirmed",
+      "check": "2A — frontend/app/components/results/ClinicianReportRenderer.tsx exists",
       "result": "CONFIRMED",
-      "citation": "backend/core/analytics/report_compiler_v1.py:472-476 — primary_concern = f'{primary_signal_id} ({primary_state})' — raw signal_id in hero headline. backend/core/analytics/report_compiler_v1.py:194-196 — _why_template() = f'{signal_id} is {signal_state}. {primary_metric} is the primary driver.' — raw signal_id in key_findings[0] (interpretationParagraph). backend/core/analytics/report_compiler_v1.py:143-158 — _page1_policy_key_finding_line() emits 'technical tie-break' + raw signal_ids into key_findings prepend."
+      "citation": "ClinicianReportRenderer.tsx:87-216 — renders page1, root_cause (hypotheses with title, summary, confidence, rationale), confirmatory tests. Currently in Advanced/Clinician tab only. File read in full."
+    },
+    {
+      "check": "2A — frontend/app/types/analysis.ts correct path confirmed (NOT frontend/types/analysis.ts)",
+      "result": "CONFIRMED",
+      "citation": "Glob('frontend/types/**/*.ts') returned no files. Glob('frontend/app/types/**') found: frontend/app/types/analysis.ts. ClinicianReportV1 type at analysis.ts:165-194. Page1 mirror at L179-189: co_primary_signal_ids?: string[] present, no runner-up enriched field. Cursor must update frontend/app/types/analysis.ts."
     },
     {
       "check": "2A — No duplicate narrative authority source",
       "result": "CONFIRMED",
-      "citation": "frontend/app/(app)/results/page.tsx:134 — hero sourced from clinician_report_v1 (deterministic compiler). Insights[] in separate InsightsPanel under Advanced tab (results/page.tsx:679). No second narrative source introduced by this sprint."
+      "citation": "frontend/app/(app)/results/page.tsx:135 — hero sourced from clinician_report_v1 (deterministic compiler). Insights[] in InsightsPanel under Advanced/Narrative tab (page.tsx:687). meta.insight_graph.report_v1.top_findings accessible via currentAnalysis.meta but sprint uses this only via compiler path (not a second FE authority). No second narrative source introduced."
     },
     {
-      "check": "2B — Behavioural scope defined; forbidden files not in scope",
+      "check": "2B — Behavioural scope defined; Intelligence Core changes forbidden",
       "result": "CONFIRMED",
-      "citation": "prompt:186-194 (Non-Goals) — no changes to analytical ranking policy, signal evaluator, insight graph construction. Files NOT in sprint scope: backend/core/pipeline/, backend/core/analytics/signal_evaluator.py, backend/ssot/, backend/scripts/. Sprint is bounded to: report_compiler_v1.py presentation templates, builders.py (no change expected), InsightPanel.tsx, ClinicianReportRenderer.tsx, ClusterSummary.tsx."
+      "citation": "prompt:220-229 (Architectural Decisions 4) — no changes to: ranking logic, tie-break logic, signal evaluation, hypothesis ordering, cluster logic, burden logic, insight graph construction. These functions at report_compiler_v1.py:86-201 (_top_finding_sort_tuple, _near_tie_cluster_in_top3, _technical_tie_bucket_signal_ids, _resolve_page1_concern_mode) and compile_report_v1 at L618-730 are locked."
     },
     {
-      "check": "2B — Regression targets present and testable from source",
+      "check": "2B — Regression targets confirmed and testable",
       "result": "CONFIRMED",
-      "citation": "prompt:306-346 — 7 regression categories. All confirmed testable: GET /api/analysis/result returns valid DTO (builders.py path stable), hero signal_id leakage (compiler template change), system-group cards (ClusterSummary.tsx), supporting/contradictory marker transparency (existing evidence_for/evidence_against fields in root_cause), clinician report formatting (hypothesis_confidence .toFixed()), Gemini-neutrality (hero from deterministic compiler), determinism (sort logic unchanged)."
+      "citation": "GET /api/analysis/result DTO — builders.py path stable, L38-58. clinician_report_v1 compile — report_compiler_v1.py:443. Runner-up in close-call — top_findings[1] available when len(top_findings) >= 2. Why depth — ranking_rationale at HypothesisV1 (contracts/clinician_report_v1.py:38), summary at L34. Determinism — _top_finding_sort_tuple pure function at report_compiler_v1.py:86-104."
     },
     {
       "check": "2B — STOP conditions reviewed; none triggered",
       "result": "CONFIRMED",
-      "citation": "STOP1: improvements achievable via compiler template changes only, no ranking logic required. STOP2: hero from deterministic compiler path, no Gemini dependency. STOP3: supporting_markers at report_compiler_v1.py:604, evidence_for/evidence_against/missing_data at L315-350 already present in result contract. STOP4: no second narrative authority. STOP5: touched files are output compilation/presentation only. STOP6: ranking_policy_version badge can move to advanced section (not deleted). STOP7: targeted presentation improvement, no broad UI redesign needed."
+      "citation": "STOP1: runner-up available in deterministically sorted top_findings[1], no ranking logic change needed. STOP2: Why depth uses ranking_rationale (L306) + summary (L34) already in payload, no new medical reasoning invented. STOP3: top_findings[1] exists when close-call detected; ranking_rationale + summary fields already compiled. STOP4: no second narrative authority required. STOP5: touched files are output compilation/presentation only — compile_clinician_report_v1 and frontend renderers. STOP6: no Gemini needed. STOP7: targeted contract/presentation change, no broad redesign."
     },
     {
       "check": "2B — Determinism preserved; no hidden side effects",
       "result": "CONFIRMED",
-      "citation": "backend/core/analytics/report_compiler_v1.py:593-594 — sorted() call with deterministic key. report_compiler_v1.py:64-82 — _top_finding_sort_tuple() is a pure function. Sprint does not touch sort/rank/cluster/evaluation logic. Frontend changes are display-only (badge visibility, text formatting). No mutable global state identified."
+      "citation": "Runner-up from top_findings[1] — deterministically sorted by _top_finding_sort_tuple (report_compiler_v1.py:86-104, pure function). why_it_matters from _why_template (L220-228, pure function). ranking_rationale from _build_ranking_rationale (L306-336, pure function). No mutable global state identified. No randomness."
     },
     {
       "check": "Stage 0 — branch pre-condition",
       "result": "NOTE",
-      "citation": "Current branch is 'main'. Prompt requires 'feature/wave2-results-contract-quality'. Cursor must checkout the correct branch before Stage 3 kernel start. Not a hardening blocker; pre-execution requirement."
+      "citation": "git status shows current branch: main. Prompt requires branch: feature/results-why-contract-depth. Cursor must checkout correct branch before Stage 3 kernel start. Not a hardening blocker."
     }
   ]
 }

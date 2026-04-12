@@ -1,31 +1,31 @@
 ---
-work_id: BE-W2-RQ1
-branch: feature/wave2-results-contract-quality
+work_id: BE-W2-RQ2
+branch: feature/results-why-contract-depth
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# BE-W2-RQ1 — Wave 2 Results Contract and Narrative Quality
+# BE-W2-RQ2 — Results contract depth: hero runner-up visibility and Why explanation
 
 ## Objective
 
-Deliver a single governable Wave 2 remediation pass that materially improves the quality, clarity, and trustworthiness of the results experience without changing analytical reasoning logic.
+Deliver the next bounded Wave 2 remediation pass to improve the explanatory depth of the results experience without changing analytical reasoning logic.
 
-This sprint must correct the current gap where the core end-to-end journey works, but the returned results feel thin, overly technical, and insufficiently personalised because consumer-facing output is currently dominated by deterministic compiler text and governance/debug language.
+This sprint must address two confirmed UAT issues:
 
-This is not a transport/runtime sprint.
-This is not a broad product redesign.
+- UAT-027 — the hero says there was a close call between top findings but does not show the competing secondary finding
+- UAT-028 — the root-cause / Why layer lacks a coherent explanatory narrative and feels like structured fragments rather than a consultant-style walkthrough
+
 This is not a Gemini-enablement sprint.
+This is not a ranking-policy sprint.
+This is not a broad results-page redesign.
 
 The required outcome is:
 
-- default consumer-facing results no longer expose internal governance/debug language
-- hero interpretation explains the main health story in plain English
-- system-group output is more pattern-specific and less boilerplate
-- supporting / contradictory / missing markers are surfaced more clearly
-- clinician report reads coherently and no longer leaks ugly raw formatting
-- the page remains useful even when live Gemini narrative is not enabled
+- when the hero indicates a close call / tie-break / ranked ambiguity, the user can see the competing finding and why it did not lead
+- the Why layer becomes meaningfully more explanatory using governed existing deterministic evidence
+- the default results experience remains deterministic and useful even when live Gemini narrative is not enabled
 
 ---
 
@@ -35,17 +35,18 @@ The required outcome is:
 
 The current results experience is composed from these layers:
 
-- `POST /api/analysis/start`
-  - returns start metadata only
-- `GET /api/analysis/result`
-  - returns DTO built by `build_analysis_result_dto(...)`
-- hero and clinician-facing copy are derived primarily from:
-  - `meta.insight_graph.report_v1`
-  - `compile_clinician_report_v1(...)`
-- optional richer narrative summaries are sourced from:
+- default hero consumes:
+  - `clinician_report_v1.sections.page1`
+- clinician report consumes:
+  - `clinician_report_v1`
+- richer ranked finding detail exists in:
+  - `meta.insight_graph.report_v1.top_findings`
+- structured root-cause / Why data exists in:
+  - `meta.insight_graph.report_v1.root_cause_v1`
+  - mirrored into `clinician_report_v1.sections.root_cause`
+- optional narrative summaries are separate:
   - `insights[]`
-  - produced by `InsightSynthesizer`
-  - which may use Gemini or may fall back to mock/deterministic clients depending on env
+  - provenance recorded in `meta.narrative_runtime`
 
 This sprint must not guess a different runtime truth.
 
@@ -55,47 +56,35 @@ At minimum, inspect and use the actual current versions of:
 
 - `backend/app/routes/analysis.py`
 - `backend/core/dto/builders.py`
-- `backend/core/reports/report_compiler_v1.py`
+- `backend/core/analytics/report_compiler_v1.py`
 - the module that defines `compile_clinician_report_v1(...)`
-- any directly related report-v1 assembly or presentation helper modules actually used in the runtime path
+- the module that compiles or structures `report_v1`
+- any directly related report / explainability helper modules actually used in the runtime path
 
 ### Authoritative frontend files for this sprint
 
 At minimum, inspect and use the actual current versions of:
 
 - `frontend/app/(app)/results/page.tsx`
-- `frontend` component(s) that render:
-  - hero interpretation
-  - system groups
-  - insights / narrative summaries
-  - clinician report
-- current repo evidence previously identified `InsightPanel.tsx` as one leakage point for:
-  - signal-derived badges
-  - policy version badges
-  - technical tie-break language
+- `frontend/app/components/insights/InsightPanel.tsx`
+- `frontend/app/components/results/RootCauseEvidenceSummary.tsx`
+- `frontend/app/components/results/ClinicianReportRenderer.tsx`
 
-If hardening finds the active rendering component paths differ from this assumed set, Claude must cite the exact actual files in evidence and hardening may narrow or correct touched-file scope. Cursor must not improvise beyond those verified files.
-
-### Non-governing facts to respect
-
-- Gemini/live LLM output is env-gated and may be off in this path
-- the hero is not the Gemini layer by default
-- therefore this sprint must not rely on live Gemini being enabled in order to meet acceptance
+If hardening finds the active rendering paths differ, Claude must cite the exact actual files in evidence and hardening may narrow or correct touched-file scope. Cursor must not improvise beyond those verified files.
 
 ---
 
 ## Stage 1B — Reality Check
 
-This sprint addresses real UAT findings and is not a no-op.
+This sprint addresses real UAT and runtime-truth findings and is not a no-op.
 
-Confirmed UAT problems in the current default results experience include:
+Confirmed current issues:
 
-- hero interpretation exposes internal governance language and signal IDs
-- system-group explanations are too generic
-- supporting / contradictory markers are not surfaced clearly enough
-- clinician report is thin and awkwardly formatted
-- output quality feels like structured backend text with light templating, not a polished end-user interpretation
-- live Gemini is env-dependent and cannot be assumed
+- the hero can say “close call between top findings” while not showing the competing finding because the hero reads `clinician_report_v1.sections.page1`, not `meta.insight_graph.report_v1.top_findings`
+- richer ranking detail already exists in payload storage under `top_findings`, but the default hero does not use it
+- the current Why layer is structured compiler output, not a true explanatory walkthrough
+- no separate deep Why narrative field exists today
+- `meta.explainability_report` may exist in `meta`, but is not currently used as the default Why layer
 
 ---
 
@@ -105,11 +94,10 @@ This sprint changes emitted user-facing reasoning and report presentation.
 
 It therefore affects:
 
-- output generation text
-- ranking explanation presentation
-- what evidence is shown to users
-- clinician report wording and structure
-- frontend presentation of backend-generated interpretation
+- what explanation is shown for the lead concern
+- how runner-up findings are surfaced
+- how root-cause / Why reasoning is translated into user-visible output
+- clinician-report explanatory depth
 
 This is HIGH risk because it changes what the product says to the user, even though it must not change the underlying analytical logic.
 
@@ -121,77 +109,61 @@ No downgrade is permitted.
 
 Cursor must implement these decisions exactly.
 
-### 1. Default consumer layer must not expose internal governance/debug language
+### 1. Runner-up visibility must come from existing ranked data
 
-The default consumer-facing results layer must not display raw internal constructs such as:
+When the current hero contract indicates a close call / technical tie-break / ranked ambiguity, the system must surface the competing finding using existing ranked data already present in runtime payloads.
 
-- raw signal IDs
-- raw policy IDs / ranking policy version strings
-- “technical tie-break” as user-facing hero framing
-- policy-ordered ambiguity/governance phrasing as the primary explanation
+The authoritative ranked source for this sprint is:
 
-If such data must remain available for technical/advanced use, it must not dominate the default consumer layer.
+- `meta.insight_graph.report_v1.top_findings`
 
-### 2. Hero interpretation is a consumer summary, not a policy explanation
+Cursor must not invent a second ranking source.
 
-The hero must answer, in plain English:
+### 2. The hero contract must not rely only on `co_primary_signal_ids`
 
-- what the lead health concern/pattern is
-- why it was selected
-- which markers most strongly support it
-- what the user should understand from it
+The current gap exists because the hero row for the competing finding is gated on `co_primary_signal_ids`, which may be empty even when `top_findings` contains a valid runner-up.
 
-The hero must not lead with ranking mechanics.
+This sprint must resolve that contract gap explicitly.
 
-### 3. System-group text must become pattern-specific
+Cursor must not leave the hero dependent on `co_primary_signal_ids` alone if that preserves the current failure mode.
 
-System-group descriptions must be materially more tied to the actual marker pattern returned in that analysis.
+### 3. Why depth must be improved using existing deterministic evidence
 
-Generic educational boilerplate may remain as secondary support, but it must not be the primary explanation when more specific deterministic evidence is already available.
+This sprint must deepen the Why layer using already-governed deterministic structures such as:
 
-### 4. Supporting / contradictory / missing marker transparency must improve
+- `root_cause_v1`
+- `report_v1`
+- existing explainability structures actually present in the runtime path
 
-The sprint must use existing deterministic structured data where available to make it clearer:
+Do not add a second narrative authority.
+Do not invent speculative medical claims.
+Do not require live Gemini.
 
-- which markers support the current interpretation
-- which markers weaken or complicate it
-- which missing markers limit confidence
-
-This must be done without exposing raw internal debugging structures.
-
-### 5. Clinician report quality must improve without changing analytical logic
-
-The clinician report may remain deterministic and compiler-driven in this sprint.
-It does not need to become a separate Gemini document.
-
-But it must:
-
-- read coherently
-- avoid raw floating-point artefacts
-- avoid awkward duplication
-- avoid raw signal/policy leakage in consumer-facing sections
-- better reflect the structured evidence already present in `report_v1`
-
-### 6. Gemini enablement is not part of this sprint
-
-Do not turn this into an env/config sprint.
-
-Do not require live Gemini for acceptance.
-
-If the page contains runtime provenance indicators or empty-state logic related to narrative runtime, they may be softened or clarified, but this sprint must not be blocked on enabling Gemini.
-
-### 7. Analytical reasoning must not change
+### 4. No analytical reasoning changes
 
 This sprint must not change:
 
 - ranking logic
-- cluster logic
+- tie-break logic
 - signal evaluation
-- burden calculations
-- insight graph construction
-- analytical hypotheses
+- hypothesis ordering rules
+- cluster logic
+- burden logic
+- insight graph construction logic
 
-The sprint changes presentation contract and report compiler output quality, not the engine’s reasoning.
+It may change how the existing results are compiled and presented, not how they are decided.
+
+### 5. Default results must remain consumer-safe
+
+The default consumer-facing Why layer should feel like a competent consultant explanation, but it must remain bounded, evidence-led, and deterministic.
+
+Technical/debug language must not return to the default layer as the price of adding depth.
+
+### 6. Gemini enablement is not part of this sprint
+
+Do not turn this into a narrative runtime / env sprint.
+
+If the investigation found `insights[]` are mock/deterministic in this environment, accept that as current truth and do not couple this sprint to turning on live Gemini.
 
 ---
 
@@ -199,49 +171,50 @@ The sprint changes presentation contract and report compiler output quality, not
 
 ## Required Changes
 
-### A. Consumer-facing hero cleanup
+### A. Hero runner-up contract improvement
 
-Update the backend/frontend contract so the default hero:
+Update the backend/frontend contract so that when the hero indicates a close-call or ranked-ambiguity situation:
 
-- no longer leads with governance/debug language
-- does not expose raw signal IDs or policy IDs in primary consumer presentation
-- provides a plain-English lead interpretation with evidence-aware explanation
+- the competing secondary finding is shown
+- the user can understand what it was
+- the user can understand, briefly, why it did not become the lead concern
 
-This includes, where needed:
+This must be sourced from existing ranked data, not invented text.
 
-- compiler-side page 1 wording cleanup
-- frontend hero badge/label cleanup
-- removal or relocation of governance labels from default consumer view
+### B. Why explanation depth improvement
 
-### B. Clinician report v1 copy and formatting improvement
+Improve the current Why/root-cause output so it is more coherent and explanatory.
 
-Improve `compile_clinician_report_v1(...)` and any directly related compiler/presentation helpers so that:
+It must better answer:
 
-- confidence values are formatted cleanly
-- duplicated or awkward phrasing is removed
-- root-cause and confirmatory-test sections read coherently
-- the report better reflects existing structured evidence without sounding like an internal debug artifact
+- what pattern was seen
+- why that pattern led to the current lead hypothesis
+- which markers support it
+- which markers pull against it
+- what is missing and why that limits confidence
 
-### C. System-group presentation improvement
+This may use richer deterministic fields already available in:
+- `root_cause_v1`
+- `report_v1`
+- explainability structures already present in runtime payloads
 
-Improve the current system-group experience so the displayed explanation is more closely tied to the actual cluster pattern and contributing markers.
+### C. Compiler and renderer alignment
 
-This must use existing deterministic data already present in the result contract where possible.
-Do not invent a second narrative authority.
+Update compiler and frontend rendering so that:
 
-### D. Supporting-marker transparency
+- the hero
+- the lead hypothesis evidence / Why area
+- the clinician report
 
-Improve the default results experience so supporting / opposing / missing evidence is clearer.
-Use existing structured evidence in the returned result shape where available.
+all reflect the same improved explanatory contract without duplicating contradictory text.
 
-Do not expose raw internal payloads directly.
-Do not invent speculative medical claims.
+### D. Preserve boundedness
 
-### E. Frontend consumer/advanced separation
-
-If a distinction already exists between default results and advanced analysis, this sprint may move more technical material into the advanced/technical area rather than deleting it outright.
-
-But the default consumer-facing layer must become cleaner.
+Use the smallest safe change set needed to:
+- expose runner-up context
+- deepen Why explanation
+- keep determinism
+- avoid creating a new narrative authority
 
 ---
 
@@ -250,12 +223,11 @@ But the default consumer-facing layer must become cleaner.
 - no Gemini enablement / env toggle work
 - no changes to analytical ranking policy
 - no changes to signal evaluator or insight graph construction logic
-- no questionnaire redesign
-- no upload/parser changes
+- no upload/parser/questionnaire work
 - no SSE/runtime transport work
-- no large visual redesign of the whole results page
-- no new separate narrative authority source
-- no hand-authored clinical prose outside the governed compiler/presentation path
+- no broad redesign of the entire results page
+- no second narrative authority source
+- no broad clinician-report rearchitecture outside this bounded scope
 
 ---
 
@@ -263,13 +235,13 @@ But the default consumer-facing layer must become cleaner.
 
 Cursor must STOP immediately if any of the following become true:
 
-1. Improving consumer-facing results quality would require changing analytical ranking, signal evaluation, or cluster logic rather than presentation/compilation
-2. The required quality improvement cannot be achieved without enabling live Gemini
-3. The existing result contract lacks enough structured evidence to improve hero/system/supporting-marker output within this sprint
+1. Exposing the runner-up finding requires changing ranking logic rather than using existing ranked payloads
+2. Deepening the Why layer would require inventing new unsupported medical reasoning rather than reusing existing deterministic evidence
+3. The existing result contract does not contain enough structured data to improve runner-up visibility or Why depth within this sprint
 4. A second narrative authority source would be introduced
 5. A touched file would cross into core analytical reasoning boundaries beyond output compilation/presentation
-6. The only way to hide governance/debug language would be to remove data needed by clinician/advanced users with no bounded separation option
-7. The sprint would require broad redesign of the entire results UI rather than targeted contract/presentation improvement
+6. The only way to improve Why depth would be to enable live Gemini
+7. The sprint would require broad redesign of the entire results page rather than targeted contract/presentation improvement
 
 If any STOP condition triggers, do not improvise. Report the blocker.
 
@@ -281,19 +253,19 @@ If any STOP condition triggers, do not improvise. Report the blocker.
 
 Implement the bounded backend/frontend changes required so that:
 
-- consumer hero is plain English and evidence-aware
-- governance/debug leakage is removed from default consumer presentation
-- clinician report wording/formatting improves
-- system-group and supporting-marker visibility improve using existing deterministic inputs
+- close-call hero states show the competing finding
+- the Why layer is more explanatory using existing deterministic evidence
+- clinician and consumer presentation remain aligned
+- no analytical logic changes occur
 
 ### Phase 2 — Validation
 
 Verify with targeted tests and browser checks that:
 
-- core analytical outputs still exist
-- user-facing presentation quality is materially improved
-- default consumer layer no longer shows internal policy/signal language
-- advanced/technical layers still function as intended if present
+- the competing finding is shown in close-call scenarios
+- Why explanation is materially deeper and clearer
+- deterministic reasoning is unchanged
+- default consumer layer remains free of raw internal debug leakage
 
 ---
 
@@ -307,34 +279,31 @@ Must verify all of the following.
 - `clinician_report_v1` still compiles correctly
 - no required fields for current results rendering are lost
 
-### Consumer hero
+### Hero runner-up visibility
 
-- no raw signal IDs in default hero
-- no raw policy version strings in default hero
-- no “technical tie-break” lead message in default hero
-- hero now explains the actual concern in plain English
+- in a close-call / tie-break / ambiguity scenario, the hero now shows the competing finding
+- the competing finding is sourced from existing ranked data
+- the hero explains briefly why the lead concern won
+- no raw policy IDs or raw signal IDs appear in the default hero
 
-### System groups
+### Why depth
 
-- system-group card text is more specific to the actual pattern
-- contributing markers are still shown
-- no breakage in cluster rendering
-
-### Supporting-marker transparency
-
-- supporting / contradictory / missing markers are surfaced more clearly
+- Why output is materially richer than the current bullet-fragment experience
+- supporting markers are shown clearly
+- opposing / complicating markers are shown clearly
+- missing markers / confidence limits are shown clearly
 - no unsupported claims are introduced
-- no raw debug payload leakage
 
 ### Clinician report
 
-- no raw floating confidence artefacts like `0.6000000000000001`
-- duplicated/awkward phrasing removed
-- sections remain structurally intact
+- report remains structurally valid
+- Why-related sections are more coherent and readable
+- output remains deterministic
+- no raw floating artefacts or awkward formatting regressions
 
 ### Narrative runtime neutrality
 
-- page remains acceptable whether live Gemini is enabled or not
+- results remain acceptable whether live Gemini is enabled or not
 - no new dependency on env-specific LLM runtime for core acceptance
 
 ### Determinism
@@ -350,10 +319,10 @@ Must verify all of the following.
 
 Minimum required tests must cover:
 
-1. consumer-facing hero no longer exposes raw internal governance language
-2. clinician report formatting/copy improvements on representative report payloads
-3. any compiler helpers changed by this sprint
-4. targeted frontend rendering checks for the cleaned hero/presentation contract
+1. hero runner-up visibility in a representative close-call result payload
+2. any compiler helpers changed by this sprint
+3. Why-layer rendering / formatting improvements for representative root-cause payloads
+4. targeted frontend rendering checks for hero and Why contract changes
 5. no regression to results-page loading for an existing completed analysis result
 
 Use the smallest relevant test scope.
@@ -383,10 +352,9 @@ Cursor must return:
 4. implementation summary
 5. tests run and results
 6. before/after evidence that:
-   - default hero no longer shows internal governance language
-   - system-group output is more specific
-   - supporting-marker transparency is improved
-   - clinician report formatting is improved
+   - the competing finding is shown in close-call states
+   - Why output is deeper and clearer
+   - consumer-facing explanation remains deterministic and clean
 7. any blockers encountered
 
 ---
