@@ -201,6 +201,53 @@ def _resolve_page1_concern_mode(
     return "distinct_lead", []
 
 
+def _build_runner_up_page1_fields(
+    top_findings: List[Dict[str, Any]],
+    concern_mode: PrimaryConcernMode,
+) -> Tuple[str, str, str]:
+    """
+    Surface the competing ranked finding (top_findings[1]) for close-call hero modes.
+    Copy is derived only from existing ranked row fields — no new medical claims.
+    """
+    if concern_mode not in ("near_tie_ambiguity", "technical_tiebreak_lead"):
+        return "", "", ""
+    if len(top_findings) < 2:
+        return "", "", ""
+    primary = top_findings[0]
+    secondary = top_findings[1]
+    if not isinstance(primary, dict) or not isinstance(secondary, dict):
+        return "", "", ""
+    sec_sid = str(secondary.get("signal_id", "")).strip()
+    if not sec_sid:
+        return "", "", ""
+    pri_sid = str(primary.get("signal_id", "")).strip()
+    st = str(secondary.get("signal_state", "unknown")).strip() or "unknown"
+    topic = f"{_humanize_signal_id(sec_sid)}: {_state_consumer_phrase(st)}"[:220]
+    pc = _safe_float(primary.get("confidence"))
+    sc = _safe_float(secondary.get("confidence"))
+    pri_label = _humanize_signal_id(pri_sid) if pri_sid else "the lead pattern"
+    sec_label = _humanize_signal_id(sec_sid)
+
+    if concern_mode == "technical_tiebreak_lead":
+        why = (
+            f"{sec_label} sits in the same scored tier as {pri_label}. "
+            f"A fixed ordering rule lists the headline topic first so the summary has one clear entry point "
+            f"(scores {pc:.2f} vs {sc:.2f})."
+        )[:280]
+    else:
+        if abs(pc - sc) <= 0.05:
+            why = (
+                f"{pri_label} and {sec_label} are similarly strong on this panel ({pc:.2f} vs {sc:.2f}); "
+                f"the headline shows one pattern first so the discussion has a single starting point."
+            )[:280]
+        else:
+            why = (
+                f"{pri_label} shows a slightly stronger signal than {sec_label} on this panel "
+                f"({pc:.2f} vs {sc:.2f}). Both patterns are still important to consider."
+            )[:280]
+    return sec_sid[:120], topic, why
+
+
 def _repo_root() -> Path:
     return Path(__file__).resolve().parents[3]
 
@@ -462,6 +509,10 @@ def compile_clinician_report_v1(
         top_findings,
         ranking_signal_id_fallback_invoked=ranking_fallback,
     )
+    runner_up_signal_id, runner_up_topic_line, runner_up_why_not_lead_line = _build_runner_up_page1_fields(
+        top_findings,
+        concern_mode,
+    )
 
     primary = top_findings[0] if top_findings else {}
     primary_signal_id = str(primary.get("signal_id", "")).strip()
@@ -606,6 +657,9 @@ def compile_clinician_report_v1(
                 primary_concern_mode=concern_mode,
                 co_primary_signal_ids=co_primary_signal_ids,
                 ranking_policy_version=ranking_policy_version[:220],
+                runner_up_signal_id=runner_up_signal_id,
+                runner_up_topic_line=runner_up_topic_line,
+                runner_up_why_not_lead_line=runner_up_why_not_lead_line,
             ),
             root_cause=primary_root_snapped,
             confirmatory_tests=consolidated_tests,

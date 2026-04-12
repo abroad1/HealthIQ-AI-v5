@@ -72,6 +72,11 @@ export function InsightPanel({
   const { label: modeText, variant: modeVariant } = modeLabel(mode);
   const ambiguityNote = modeAudienceNote(mode);
   const coPrimaries = page1.co_primary_signal_ids?.filter(Boolean) ?? [];
+  const runnerTopic = (page1.runner_up_topic_line || '').trim();
+  const runnerWhy = (page1.runner_up_why_not_lead_line || '').trim();
+  /** Ranked payload from compiler — preferred over co_primary_signal_ids-only gating (BE-W2-RQ2). */
+  const showRunnerUp =
+    Boolean(runnerTopic) && (mode === 'near_tie_ambiguity' || mode === 'technical_tiebreak_lead');
 
   const headline = (page1.primary_concern || '').trim();
   const interpretationParagraph = (page1.key_findings?.[0] || '').trim();
@@ -103,6 +108,17 @@ export function InsightPanel({
         ) : null}
       </CardHeader>
       <CardContent className="space-y-4 pt-0">
+        {showRunnerUp ? (
+          <div
+            className="text-sm text-gray-700 bg-blue-50/80 border border-blue-100 rounded-md px-3 py-2 space-y-1"
+            data-testid="hero-runner-up"
+          >
+            <p className="font-medium text-gray-900">Competing ranked finding</p>
+            <p>{runnerTopic}</p>
+            {runnerWhy ? <p className="text-gray-600">{runnerWhy}</p> : null}
+          </div>
+        ) : null}
+
         {showCoPrimaryRow ? (
           <p className="text-sm text-gray-600">
             <span className="font-medium text-gray-700">Also closely reviewed: </span>
