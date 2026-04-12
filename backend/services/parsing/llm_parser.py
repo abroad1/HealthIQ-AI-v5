@@ -8,6 +8,7 @@ using Google's Gemini LLM with multimodal support for various file formats.
 import json
 import io
 import csv
+import math
 import mimetypes
 import re
 from typing import Dict, Any, List, Optional
@@ -162,6 +163,21 @@ class LLMParser:
         except Exception as e:
             raise ValueError(f"Failed to extract JSON text: {str(e)}")
     
+    @staticmethod
+    def _coerce_optional_ref_bound(value: Any) -> Optional[float]:
+        """Coerce LLM JSON ref_low/ref_high to float or None."""
+        if value is None:
+            return None
+        try:
+            f = float(value)
+        except (TypeError, ValueError):
+            return None
+        return f if math.isfinite(f) else None
+
+    @staticmethod
+    def _has_any_bound(ref_low: Optional[float], ref_high: Optional[float]) -> bool:
+        return ref_low is not None or ref_high is not None
+
     def _parse_reference_range(self, reference: str) -> tuple[Optional[float], Optional[float]]:
         """Parse reference range string to extract numeric limits."""
         if not reference:
@@ -232,8 +248,14 @@ class LLMParser:
                     else:
                         combined_ref = main_ref
 
-                    # Parse reference range from combined text so footnotes can carry bounds
-                    ref_low, ref_high = self._parse_reference_range(combined_ref)
+                    # Bound extraction: primary line first; LLM numeric helpers second; combined scan last only
+                    # if needed — avoids footnote/pregnancy tables overriding the main threshold.
+                    ref_low, ref_high = self._parse_reference_range(main_ref)
+                    if not self._has_any_bound(ref_low, ref_high):
+                        ref_low = self._coerce_optional_ref_bound(biomarker_data.get("ref_low"))
+                        ref_high = self._coerce_optional_ref_bound(biomarker_data.get("ref_high"))
+                    if not self._has_any_bound(ref_low, ref_high):
+                        ref_low, ref_high = self._parse_reference_range(combined_ref)
                     
                     # Compute health status
                     status = self._compute_health_status(
@@ -344,7 +366,7 @@ class LLMParser:
                 except (TypeError, ValueError):
                     health_status = "Unknown"
                 
-                biomarkers_list.append({
+                row: Dict[str, Any] = {
                     "id": biomarker.id,
                     "name": biomarker.name,
                     "value": biomarker.value,
@@ -354,7 +376,10 @@ class LLMParser:
                     "ref_low": biomarker.ref_low,
                     "ref_high": biomarker.ref_high,
                     "healthStatus": health_status,
-                })
+                }
+                if biomarker.raw_reference_text:
+                    row["rawReferenceText"] = biomarker.raw_reference_text
+                biomarkers_list.append(row)
             
             # Merge metadata, ensuring filename takes precedence
             metadata = {
