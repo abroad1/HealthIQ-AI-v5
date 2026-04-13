@@ -3,6 +3,7 @@ import {
   buildReferenceRangeFromParserRow,
   deriveReviewReferenceType,
   formatReferenceRangeDisplay,
+  inferComparatorFromSnippet,
   matchLabelledBandFromValue,
   numericPartForAnalysisPayload,
   parseBiomarkerValueForReview,
@@ -222,6 +223,36 @@ describe('matchLabelledBandFromValue', () => {
   });
 });
 
+describe('inferComparatorFromSnippet', () => {
+  it('reads strict upper comparator from band snippet', () => {
+    expect(inferComparatorFromSnippet('Normal < 39', 'upper')).toBe('<');
+    expect(inferComparatorFromSnippet('Normal ≤ 39', 'upper')).toBe('≤');
+  });
+});
+
+describe('buildReferenceRangeFromParserRow no-range heuristic', () => {
+  it('infers no_lab_range_supplied when there is no range text or structure', () => {
+    const out = buildReferenceRangeFromParserRow({
+      unit: '%',
+      value: 42.1,
+      ref_low: null,
+      ref_high: null,
+    });
+    expect(out.referenceType).toBe('no_lab_range_supplied');
+  });
+
+  it('does not override incomplete_or_ambiguous', () => {
+    const out = buildReferenceRangeFromParserRow({
+      unit: 'U/L',
+      value: 50,
+      referenceType: 'incomplete_or_ambiguous',
+      ref_low: null,
+      ref_high: null,
+    });
+    expect(out.referenceType).toBe('incomplete_or_ambiguous');
+  });
+});
+
 describe('buildReferenceRangeFromParserRow rawReferenceText', () => {
   it('prepends rawReferenceText before referenceRange string', () => {
     const out = buildReferenceRangeFromParserRow({
@@ -269,6 +300,16 @@ describe('formatReferenceRangeDisplay', () => {
         referenceText: multi,
       })
     ).toBe(multi);
+  });
+
+  it('shows matched interpretive label in parentheses without em dash separator', () => {
+    const s = formatReferenceRangeDisplay({
+      referenceRange: { max: 39, unit: 'pg/mL', upperComparator: '<' },
+      matchedLabelledBand: 'Normal',
+    });
+    expect(s).toContain('< 39');
+    expect(s).toContain('(Normal)');
+    expect(s).not.toMatch(/\s—\sNormal/);
   });
 });
 

@@ -232,12 +232,25 @@ export function buildReferenceRangeFromParserRow(b: Record<string, unknown>): Re
       const ru = (o0.unit || unit).trim();
       const hm = o0.min != null && Number.isFinite(o0.min);
       const hx = o0.max != null && Number.isFinite(o0.max);
+      const inferCtx = _combinedRefContext(referenceText, o0.sourceSnippet);
       referenceRange = {
         min: o0.min,
         max: o0.max,
         unit: ru || unit,
-        ...(hm && !hx ? { lowerComparator: _inferLowerComparator(referenceText, o0.min!) } : {}),
-        ...(!hm && hx ? { upperComparator: _inferUpperComparator(referenceText, o0.max!) } : {}),
+        ...(hm && !hx
+          ? {
+              lowerComparator:
+                inferComparatorFromSnippet(o0.sourceSnippet, 'lower') ??
+                _inferLowerComparator(inferCtx, o0.min!),
+            }
+          : {}),
+        ...(!hm && hx
+          ? {
+              upperComparator:
+                inferComparatorFromSnippet(o0.sourceSnippet, 'upper') ??
+                _inferUpperComparator(inferCtx, o0.max!),
+            }
+          : {}),
       };
     }
   }
@@ -281,12 +294,25 @@ export function buildReferenceRangeFromParserRow(b: Record<string, unknown>): Re
     if (m) {
       const hm = m.min != null && Number.isFinite(m.min);
       const hx = m.max != null && Number.isFinite(m.max);
+      const bandCtx = _combinedRefContext(referenceText, m.sourceSnippet);
       referenceRange = {
         min: m.min,
         max: m.max,
         unit: (m.unit || unit).trim() || unit,
-        ...(hm && !hx && m.min !== undefined ? { lowerComparator: _inferLowerComparator(referenceText, m.min) } : {}),
-        ...(!hm && hx && m.max !== undefined ? { upperComparator: _inferUpperComparator(referenceText, m.max) } : {}),
+        ...(hm && !hx && m.min !== undefined
+          ? {
+              lowerComparator:
+                inferComparatorFromSnippet(m.sourceSnippet, 'lower') ??
+                _inferLowerComparator(bandCtx, m.min),
+            }
+          : {}),
+        ...(!hm && hx && m.max !== undefined
+          ? {
+              upperComparator:
+                inferComparatorFromSnippet(m.sourceSnippet, 'upper') ??
+                _inferUpperComparator(bandCtx, m.max),
+            }
+          : {}),
       };
     }
   }
@@ -302,11 +328,22 @@ export function buildReferenceRangeFromParserRow(b: Record<string, unknown>): Re
     if (m) matchedLabelledBand = m.bandLabel;
   }
 
-  const referenceType = deriveReviewReferenceType(rtParser, {
+  let referenceType = deriveReviewReferenceType(rtParser, {
     referenceRange,
     contextRangeOptions,
     labelledBands,
   });
+
+  if (
+    referenceType === undefined &&
+    rtParser !== 'incomplete_or_ambiguous' &&
+    !referenceRange &&
+    !(referenceText && referenceText.trim()) &&
+    contextRangeOptions.length === 0 &&
+    labelledBands.length === 0
+  ) {
+    referenceType = 'no_lab_range_supplied';
+  }
 
   const out: ReferenceRangeFromParseResult = {
     referenceText,
@@ -461,6 +498,32 @@ function _inferUpperComparator(refText: string | undefined, bound: number): '<' 
   return '≤';
 }
 
+/** Prefer explicit inequality in a short band snippet (e.g. "Normal < 39") when long reference text lacks it. */
+export function inferComparatorFromSnippet(
+  snippet: string | undefined,
+  edge: 'lower' | 'upper'
+): '<' | '≤' | '>' | '≥' | undefined {
+  const t = (snippet || '').trim();
+  if (!t) return undefined;
+  if (edge === 'upper') {
+    const m = t.match(/([<≤])\s*([-+]?\d*\.?\d+)/);
+    if (m) return m[1] === '<' ? '<' : '≤';
+  } else {
+    const m = t.match(/([>≥])\s*([-+]?\d*\.?\d+)/);
+    if (m) return m[1] === '>' ? '>' : '≥';
+  }
+  return undefined;
+}
+
+function _combinedRefContext(referenceText: string | undefined, snippet: string | undefined): string | undefined {
+  const a = (referenceText || '').trim();
+  const b = (snippet || '').trim();
+  if (!b) return a || undefined;
+  if (!a) return b;
+  if (a.includes(b)) return a;
+  return `${a}\n${b}`;
+}
+
 /**
  * Parse review-stage value input: plain number or inequality + number (e.g. "&lt;0.05").
  * Display may keep a string when an inequality prefix is present; analysis payload uses the numeric part only.
@@ -510,7 +573,8 @@ export function formatReferenceRangeDisplay(b: {
     body = b.referenceText.trim();
   }
   if (b.matchedLabelledBand?.trim()) {
-    return body !== '—' ? `${body} — ${b.matchedLabelledBand.trim()}` : `Matched: ${b.matchedLabelledBand.trim()}`;
+    const label = b.matchedLabelledBand.trim();
+    return body !== '—' ? `${body} (${label})` : `Matched: ${label}`;
   }
   return body;
 }
