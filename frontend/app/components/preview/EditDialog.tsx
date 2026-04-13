@@ -88,7 +88,6 @@ export default function EditDialog({
     unit: '',
     refMin: '',
     refMax: '',
-    refUnit: '',
     referenceText: '',
     lowerComparator: '≥' as '>' | '≥',
     upperComparator: '≤' as '<' | '≤',
@@ -98,12 +97,11 @@ export default function EditDialog({
   const [referenceTextUnlocked, setReferenceTextUnlocked] = useState(false)
   const [selectedContextBand, setSelectedContextBand] = useState('')
 
-  const applyContextOption = (opt: ContextRangeOption, valueUnit: string) => {
+  const applyContextOption = (opt: ContextRangeOption, _valueUnit: string) => {
     setFormData((prev) => ({
       ...prev,
       refMin: opt.min != null && Number.isFinite(opt.min) ? String(opt.min) : '',
       refMax: opt.max != null && Number.isFinite(opt.max) ? String(opt.max) : '',
-      refUnit: (opt.unit || valueUnit).trim(),
     }))
   }
 
@@ -116,7 +114,6 @@ export default function EditDialog({
         unit: biomarker.unit,
         refMin: r?.min != null && Number.isFinite(r.min) ? String(r.min) : '',
         refMax: r?.max != null && Number.isFinite(r.max) ? String(r.max) : '',
-        refUnit: r?.unit ?? biomarker.unit ?? '',
         referenceText: biomarker.referenceText ?? '',
         lowerComparator: r?.lowerComparator === '>' ? '>' : '≥',
         upperComparator: r?.upperComparator === '<' ? '<' : '≤',
@@ -202,14 +199,14 @@ export default function EditDialog({
     const refMaxN = formData.refMax.trim() === '' ? undefined : parseFloat(formData.refMax)
     const hasMin = refMinN !== undefined && Number.isFinite(refMinN)
     const hasMax = refMaxN !== undefined && Number.isFinite(refMaxN)
-    const refUnit = (formData.refUnit.trim() || formData.unit.trim()).trim()
+    const rangeUnit = formData.unit.trim()
 
     let referenceRange: ParsedBiomarker['referenceRange'] = undefined
     if (hasMin || hasMax) {
       referenceRange = {
         min: hasMin ? refMinN : undefined,
         max: hasMax ? refMaxN : undefined,
-        unit: refUnit,
+        unit: rangeUnit,
         ...(hasMin && !hasMax ? { lowerComparator: formData.lowerComparator } : {}),
         ...(!hasMin && hasMax ? { upperComparator: formData.upperComparator } : {}),
       }
@@ -485,15 +482,9 @@ export default function EditDialog({
                 </Select>
               </div>
             )}
-            <div className="space-y-2">
-              <Label htmlFor="refUnit">Range unit</Label>
-              <Input
-                id="refUnit"
-                value={formData.refUnit}
-                onChange={(e) => setFormData(prev => ({ ...prev, refUnit: e.target.value }))}
-                placeholder="Defaults to value unit if left blank when you save"
-              />
-            </div>
+            <p className="text-xs text-muted-foreground">
+              Reference interval uses the same <strong>unit</strong> as the result value above.
+            </p>
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
                 <Label className="text-xs">Lab reference text (from your file)</Label>

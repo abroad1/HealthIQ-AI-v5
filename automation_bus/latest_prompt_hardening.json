@@ -1,94 +1,73 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "BE-W1-PR5",
+  "work_id": "BE-W1-PR6",
   "status": "HARDENED",
-  "hardened_utc": "2026-04-12T00:00:00Z",
-  "hardened_by": "claude-sonnet-4-6",
+  "hardened_utc": "2026-04-13T00:00:00Z",
+  "hardened_by": "Claude (claude-sonnet-4-6)",
   "changes": [
     {
-      "check": "Front Matter — all five fields",
-      "verdict": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md:2-6 — work_id: BE-W1-PR5, branch: feature/reference-type-modelling-and-review-ux-completion, risk_level: STANDARD, execution_model: TWO_PHASE_START_FINISH, change_type: MIXED. All five mandatory fields present and correct."
+      "id": "A",
+      "description": "Comparator display cleanup — fix dash shown for matched labelled band / one-sided threshold",
+      "root_cause": "formatReferenceRangeDisplay (uploadReferenceRange.ts:498) shows '—' when referenceRange is undefined. For labelled-band matched cases, referenceRange is built at buildReferenceRangeFromParserRow:279-292 only when band has numeric bounds. Additionally, lowerExclusive (parsed.ts:21) is not used in comparator assignment at line 287-289 — comparator inference relies on referenceText text-search; defaults safely to ≤/≥ if text absent.",
+      "authoritative_files": [
+        "frontend/app/lib/uploadReferenceRange.ts:279-292",
+        "frontend/app/lib/uploadReferenceRange.ts:287-289",
+        "frontend/app/lib/uploadReferenceRange.ts:498-515",
+        "frontend/app/types/parsed.ts:21"
+      ],
+      "scope_constraint": "Fix display only; do not change payload shape or scoring semantics"
     },
     {
-      "check": "2A — backend/core/llm/prompts/parsing_prompt_pdf.txt exists and content verified",
-      "verdict": "CONFIRMED — GAP REAL",
-      "citation": "backend/core/llm/prompts/parsing_prompt_pdf.txt:6-27 — Schema fields: id, name, value, unit, reference, raw_reference_text, context_range_options, confidence, ref_low, ref_high. No referenceType field. No labelled_bands array. context_range_options is live from PR4 (lines 14-22). Sprint must add referenceType to schema and a structured labelled_bands block."
+      "id": "B",
+      "description": "Duplicate unit cleanup — Range unit field shows same value as Marker unit field",
+      "root_cause": "EditDialog.tsx:119 initialises refUnit as r?.unit ?? biomarker.unit ?? ''. Since r?.unit typically equals biomarker unit, both the Unit field (L332) and Range unit field (L489) show the same value simultaneously.",
+      "authoritative_files": [
+        "frontend/app/components/preview/EditDialog.tsx:119",
+        "frontend/app/components/preview/EditDialog.tsx:332",
+        "frontend/app/components/preview/EditDialog.tsx:489-495"
+      ],
+      "scope_constraint": "Change refUnit initialisation default only; do not redesign the form"
     },
     {
-      "check": "2A — backend/services/parsing/llm_parser.py exists and content verified",
-      "verdict": "CONFIRMED — GAP REAL",
-      "citation": "backend/services/parsing/llm_parser.py:34-53 — ParsedBiomarker Pydantic model fields: id, name, value, unit, reference, confidence, ref_low, ref_high, status, raw_reference_text, context_range_options. No referenceType or labelled_bands field. Output dict lines 435-459 emits contextRangeOptions but no referenceType. Sprint must add model field and output dict key."
-    },
-    {
-      "check": "2A — backend/app/routes/upload.py exists and content verified",
-      "verdict": "CONFIRMED — LOW-TOUCH",
-      "citation": "backend/app/routes/upload.py:124-149 — Pure pass-through enrichment with SSOT metadata. No Intelligence Core interaction. No scoring logic. New parser fields will flow through automatically once added to parser output dict. No HIGH-risk path touched."
-    },
-    {
-      "check": "2A — frontend/app/types/parsed.ts exists and content verified",
-      "verdict": "CONFIRMED — GAP REAL",
-      "citation": "frontend/app/types/parsed.ts:15-39 — ParsedBiomarker interface fields: name, value, unit, status, referenceRange, referenceText, contextRangeOptions. No referenceType, no labelledBands. ContextRangeOption interface lines 6-13 exists and is live. Sprint must extend ParsedBiomarker with referenceType union type and labelled-bands structure."
-    },
-    {
-      "check": "2A — frontend/app/lib/uploadReferenceRange.ts exists and content verified",
-      "verdict": "CONFIRMED — GAP REAL",
-      "citation": "frontend/app/lib/uploadReferenceRange.ts:15-17 — RangeAttention type: 'none' | 'one-sided' | 'partial' | 'missing' | 'context-selection-required'. Missing new states for labelled-bands-resolved, no-lab-range-supplied, incomplete-or-ambiguous. rangeAttentionLevel lines 174-192: not type-driven. buildReferenceRangeFromParserRow lines 78-169: no referenceType extraction. CRITICAL: referenceRangeToPayload() lines 197-210 MUST remain unchanged — payload contract safe."
-    },
-    {
-      "check": "2A — frontend/app/(app)/upload/page.tsx exists and content verified",
-      "verdict": "CONFIRMED — MINOR GAP",
-      "citation": "frontend/app/(app)/upload/page.tsx:226-239 — Biomarker transformer builds referenceRange+referenceText+contextRangeOptions. Must also pass through referenceType and labelledBands when present. Attention alert guard lines 356-364 checks att !== 'none' && att !== 'one-sided'; new attention states will be caught automatically once RangeAttention is extended."
-    },
-    {
-      "check": "2A — frontend/app/components/preview/ParsedTable.tsx exists and content verified",
-      "verdict": "CONFIRMED — GAP REAL",
-      "citation": "frontend/app/components/preview/ParsedTable.tsx:33-81 — rangeBadge() handles context-selection-required, missing, one-sided, partial, none. Missing badge variants for labelled-bands-resolved, no-lab-range-supplied, incomplete-or-ambiguous. Sprint must add these badge cases."
-    },
-    {
-      "check": "2A — frontend/app/components/preview/EditDialog.tsx exists and content verified",
-      "verdict": "CONFIRMED — GAP REAL",
-      "citation": "frontend/app/components/preview/EditDialog.tsx:386-411 — refMin/refMax inputs are plain type=number — no comparator selector. Context band selection lines 337-372 is live from PR4, driven by biomarker.contextRangeOptions?.length > 1 — must not regress. No labelled-bands display section. No no-range-supplied neutral state. Sprint must add comparator selector (narrowly scoped to one-sided mode), labelled-bands display, and no-range-supplied state."
-    },
-    {
-      "check": "2A — No duplicate authority source",
-      "verdict": "CONFIRMED",
-      "citation": "frontend/app/lib/uploadReferenceRange.ts:197-210 (referenceRangeToPayload) is the single payload contract and MUST remain unchanged. referenceType is declared review-stage modelling only (prompt Arch Decision 1-2). No second scoring authority created."
-    },
-    {
-      "check": "2A — Forbidden HIGH-risk files not in scope",
-      "verdict": "CONFIRMED",
-      "citation": "Files in scope: backend/core/llm/prompts/parsing_prompt_pdf.txt, backend/services/parsing/llm_parser.py, backend/app/routes/upload.py, frontend/app/types/parsed.ts, frontend/app/lib/uploadReferenceRange.ts, frontend/app/(app)/upload/page.tsx, frontend/app/components/preview/ParsedTable.tsx, frontend/app/components/preview/EditDialog.tsx. NOT in scope: backend/ssot/, backend/core/pipeline/, backend/core/analytics/, run_work_package.py, golden_gate_local.py, update_cursor_status.py."
-    },
-    {
-      "check": "2B — Behavioural scope defined",
-      "verdict": "CONFIRMED",
-      "citation": "Prompt §Scope lines 235-335: bounded to PDF prompt/schema extension, parser model, upload route passthrough, TS contract types, rangeAttentionLevel, ParsedTable badges, EditDialog comparator + labelled-bands + no-range-supplied, page transformer passthrough. Non-goals (lines 339-348): no scoring policy, no fallback ranges, no second authority, no results/narrative, no value-level inequality parsing, no broad parser redesign."
-    },
-    {
-      "check": "2B — Regression targets confirmed",
-      "verdict": "CONFIRMED",
-      "citation": "Prompt §Regression Targets lines 397-432: parse extraction (raw text preserved, referenceType emitted, labelled_bands and context_range_options returned), review/edit behaviour (type-driven, auto-resolve labelled bands, applicability bands require confirmation, comparator editing works, no-range-supplied distinct valid state), analysis handoff (referenceRange contract unchanged, no scoring changes), PR4 non-regression (applicability-band selection cases still work)."
-    },
-    {
-      "check": "2B — STOP conditions reviewed; none triggered",
-      "verdict": "CONFIRMED",
-      "citation": "STOP1: no scoring change required. STOP2: LLM can emit referenceType stably as a new JSON field; no broad parser rewrite needed. STOP3: referenceType is review-stage modelling, not second range authority. STOP4: referenceRangeToPayload() unchanged. STOP5: applicability bands preserve user confirmation per prompt Arch Decision 4. STOP6: no_lab_range_supplied emittable conservatively per prompt instructions. STOP7: value-level inequality explicitly out of scope (prompt lines 225-229). STOP8: changes are bounded additions to specific seam files, not broad flow redesign."
-    },
-    {
-      "check": "2B — Determinism risks surfaced",
-      "verdict": "CONFIRMED",
-      "citation": "Risk 1: LLM non-determinism for referenceType is accepted; mitigated by conservative emission rules in prompt. Risk 2: labelled-band auto-resolution from measured value must be deterministic — same parsed value + same bands = same matched band; no LLM call at resolve time. Risk 3: applicability-band selection requires user confirmation — no silent auto-selection; determinism preserved. Risk 4: buildReferenceRangeFromParserRow passthrough for referenceType and labelledBands must be additive and must not alter existing ref_low/ref_high path for simple markers (lines 78-169). Risk 5: PR4 context-selection-required path (uploadReferenceRange.ts:181-183) must remain intact alongside new type-driven logic."
-    },
-    {
-      "check": "2B — Intelligence Core not touched",
-      "verdict": "CONFIRMED",
-      "citation": "No root cause compilers, signal evaluators, InsightGraph construction, analytical pipeline logic, or output assembly mechanisms in scope. STANDARD risk level is correct. No risk upgrade required."
-    },
-    {
-      "check": "No-op protection",
-      "verdict": "CONFIRMED — NOT A NO-OP",
-      "citation": "All gaps verified by reading actual source content: no referenceType in prompt schema (parsing_prompt_pdf.txt:6-27), no referenceType in ParsedBiomarker model (llm_parser.py:34-53), no referenceType in output dict (llm_parser.py:435-459), no referenceType in TS interface (parsed.ts:15-39), no new RangeAttention states (uploadReferenceRange.ts:15-17), no type-driven attention logic (uploadReferenceRange.ts:174-192), no new badge cases (ParsedTable.tsx:33-81), no comparator selector or labelled-bands UI (EditDialog.tsx:386-411)."
+      "id": "C",
+      "description": "No-range-supplied classification — derived/calculated markers show 'Range needed' instead of neutral no-lab-range-supplied state",
+      "root_cause": "deriveReviewReferenceType (uploadReferenceRange.ts:172-174) returns undefined (not 'no_lab_range_supplied') when no bounds, no contextRangeOptions, no labelledBands. buildReferenceRangeFromParserRow:204-211 passes through parser-supplied no_lab_range_supplied only. Cursor must first verify what reference_type the backend parser emits for affected markers (Free Testosterone %, Testosterone:Free Testosterone Ratio). Frontend-only auto-classification risks false positives — fix at the parse/review seam if backend not emitting the type.",
+      "authoritative_files": [
+        "frontend/app/lib/uploadReferenceRange.ts:153-180",
+        "frontend/app/lib/uploadReferenceRange.ts:172-174",
+        "frontend/app/lib/uploadReferenceRange.ts:204-211"
+      ],
+      "scope_constraint": "Verify backend emission before any frontend-only classification change; keep fix minimal and bounded; STOP if broader parser redesign is required"
     }
+  ],
+  "stop_conditions_verified": [
+    "No-range fix must not require broader parser redesign — STOP if it does",
+    "Comparator fix must not change payload shape or scoring semantics — STOP if it does",
+    "Unit cleanup must not require broad edit-form redesign — STOP if it does",
+    "Sprint must not widen into general parsing-quality work — STOP if it does"
+  ],
+  "regression_protection": [
+    "PR4: applicability-band selection (contextRangeOptions > 1) — confirmed wired at EditDialog.tsx:375-410 and rangeAttentionLevel:343-345",
+    "PR5: labelled-band handling — confirmed wired at buildReferenceRangeFromParserRow:279-303 and rangeAttentionLevel:336-340",
+    "Ordinary bounded ranges: formatReferenceRangeDisplay:501 handles min+max case",
+    "Analysis payload shape: referenceRangeToPayload (uploadReferenceRange.ts:359-372) not in scope — must remain unchanged"
+  ],
+  "determinism_risks": [
+    "Comparator inference (_inferUpperComparator/_inferLowerComparator) relies on referenceText text-search — if referenceText is absent, defaults to ≤/≥ (safe fallback, not a dash); lowerExclusive band flag not currently used in this path",
+    "No-range frontend inference would be non-deterministic if applied without parser signal — mitigated by requiring backend verification first before any frontend classification change"
+  ],
+  "behavioural_surface_area": [
+    "rangeAttentionLevel classification logic (uploadReferenceRange.ts:325-354)",
+    "formatReferenceRangeDisplay rendering (uploadReferenceRange.ts:491-516)",
+    "buildReferenceRangeFromParserRow labelled-band branch (uploadReferenceRange.ts:279-292)",
+    "EditDialog refUnit initialisation (EditDialog.tsx:119)"
+  ],
+  "forbidden_files_confirmed_absent": [
+    "backend/ssot/ — not in scope",
+    "backend/core/pipeline/ — not in scope",
+    "backend/core/analytics/ — not in scope",
+    "backend/scripts/run_work_package.py — not in scope",
+    "backend/scripts/golden_gate_local.py — not in scope",
+    "backend/scripts/update_cursor_status.py — not in scope"
   ]
 }
