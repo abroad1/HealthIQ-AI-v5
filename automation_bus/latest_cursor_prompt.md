@@ -1,251 +1,287 @@
 ---
-work_id: BE-W1-PR6
-branch: feature/review-cleanup-comparator-unit-no-range-state
+work_id: FE-R1-RESULTS-JOURNEY-V6
+branch: feature/results-journey-v6-r1-page-architecture
 risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
 change_type: BEHAVIOUR
 ---
 
-# BE-W1-PR6 — Review cleanup: comparator display, duplicate unit UI, and no-range-supplied classification
+# Sprint: R-1 — Results Page Architecture + Section 1 + Section 2 Reframe
 
 ## Objective
 
-Deliver a small, bounded cleanup pass for the upload/review experience.
+Restructure the `/results` page to implement the opening of the V6 Results Journey:
 
-This sprint must fix the remaining review-layer anomalies without reopening the broader parsing programme.
+1. Introduce a **clear, guided entry point**
+2. Present a **Body Overview (Section 1)** before any deep data
+3. Reposition **“What’s Working Well” (Section 2)** immediately after
+4. Embed a **lightweight “how to read this page” framing** without slowing the user down
 
-The required outcome is:
-
-- matched one-sided/labelled-band thresholds display the correct comparator symbol instead of a dash
-- the edit UI does not redundantly show the range unit twice in a confusing way
-- markers for which the lab genuinely supplied no range are classified and shown as `no_lab_range_supplied`, not `Range needed`
-
-This sprint is not a new parsing architecture sprint.
-This sprint is not a scoring-policy sprint.
-This sprint is not a fallback-range sprint.
-This sprint is not a results/narrative sprint.
-
----
-
-## Stage 1A — Authority Preflight (MANDATORY)
-
-### Runtime truth already established
-
-Recent UAT after PR5 shows the main parsing/review workflow is largely working, but three narrow issues remain:
-
-1. comparator display anomaly
-   - a dash is shown where a `<` comparator should be shown for a matched labelled band / one-sided threshold
-
-2. duplicate unit presentation
-   - the range unit is shown again beneath the comparator area in a way that feels redundant/confusing
-
-3. no-range-supplied misclassification
-   - markers such as Free Testosterone % and Testosterone:Free Testosterone Ratio are still being flagged as `Range needed` even though the lab did not provide a range
-
-This sprint must stay tightly focused on those issues.
-
-### Authoritative frontend files for this sprint
-
-At minimum, inspect and use the actual current versions of:
-
-- `frontend/app/lib/uploadReferenceRange.ts`
-- `frontend/app/components/preview/ParsedTable.tsx`
-- `frontend/app/components/preview/EditDialog.tsx`
-- `frontend/app/(app)/upload/page.tsx`
-- `frontend/app/types/parsed.ts`
-
-### Authoritative backend files for this sprint
-
-Inspect backend only if needed to confirm whether `referenceType` / no-range state is or is not being emitted correctly for the affected markers. If a backend touch is required, keep it minimal and bounded to the parse/review seam.
-
-If hardening finds the active paths differ, Claude must cite the exact actual files in evidence and hardening may narrow or correct touched-file scope. Cursor must not improvise beyond those verified files.
-
----
-
-## Stage 1B — Reality Check
-
-This sprint addresses real user-visible defects and is not a no-op.
-
-However, it is deliberately small.
-
-It must not widen into:
-- broader parser redesign
-- new reference-type expansion
-- scoring changes
-- narrative/results work
-
----
-
-## Architectural Decisions Locked For This Sprint
-
-Cursor must implement these decisions exactly.
-
-### 1. Comparator display must reflect actual resolved threshold semantics
-
-Where the system has already resolved a one-sided threshold or matched labelled band such as:
-- Normal: `< 39`
-the displayed active range must show the actual comparator, not a placeholder dash.
-
-### 2. Unit presentation must be simplified, not duplicated
-
-The edit form should show the unit once in the most useful place for the user.
-Do not show redundant unit presentation that adds confusion without adding information.
-
-### 3. No-lab-range-supplied is a valid neutral state
-
-If the lab genuinely did not provide a range for a marker, the review layer must show that as a valid neutral state, not as `Range needed`.
-
-This is especially important for calculated / derived markers.
-
-### 4. No scoring-policy or fallback changes
-
-This sprint must not change:
-- scoring
-- fallback behaviour
-- payload shape
-- results logic
-
-### 5. Keep this a cleanup pass
-
-Do not introduce new ambitious parsing behaviour in this sprint.
-Fix only the three enumerated issues.
+This sprint must change the **shape of the experience**, not just styling.
 
 ---
 
 ## Scope
 
-## Required Changes
+### In scope
 
-### A. Comparator display cleanup
-Fix the review/edit rendering path so resolved one-sided thresholds display the correct comparator symbol instead of `—` or other placeholder output.
+- `/results` page layout restructuring
+- Section 1: Body Overview (new)
+- Section 2: What’s Working Well (reposition + refine)
+- Lightweight intro framing (inline, not a full page)
+- Wiring only to **currently available frontend DTO/store data**, specifically:
+  - `clinician_report_v1`
+  - `balanced_systems_v1`
+  - `clusters`
+  - existing top-level analysis metadata already present on the current frontend path
 
-### B. Duplicate unit cleanup
-Refine the edit UI so the range unit is presented clearly once, without redundant repetition.
+### Out of scope
 
-### C. No-range-supplied classification cleanup
-Fix the review-state classification/rendering so markers with genuinely absent lab ranges surface as:
-- `No lab range supplied`
-or equivalent neutral state,
-not:
-- `Range needed`
-
-If the root cause is frontend classification only, keep the fix frontend-only.
-If the root cause is parser emission for these markers, make the smallest bounded parse/review seam correction necessary.
-
----
-
-## Explicit Non-Goals
-
-- no broad parser improvements
-- no new reference-type classes
-- no scoring-policy changes
-- no fallback-range changes
-- no results-page/narrative work
-- no broad UX redesign
-- no value-level inequality work
+- Section 3+ (Deep Discovery, Glass Box, etc.)
+- Pattern / phenotype display layer (R-7 / R-8)
+- New backend logic
+- Changes to analysis pipeline
+- New DTO fields
+- Visual polish beyond functional clarity
 
 ---
 
-## STOP Conditions (MANDATORY)
+## Key principles (must be followed)
 
-Cursor must STOP immediately if any of the following become true:
+1. **User came for results → show value immediately**
+   - No long educational block before insight
 
-1. fixing the no-range-supplied state would require broader parser redesign rather than a bounded classification fix
-2. comparator display correction would require changing payload shape or scoring semantics
-3. the unit presentation cleanup would require broad edit-form redesign
-4. the sprint begins to widen into general parsing-quality work beyond the three enumerated issues
+2. **Introduce → show → reinforce**
+   - micro framing → insight → reinforcement
 
-If any STOP condition triggers, do not improvise. Report the blocker.
+3. **Reassurance before concern**
+   - Section 2 must clearly show what is stable/working
 
----
+4. **No generic summaries**
+   - All text must be grounded in actual analysis outputs
 
-## Phase Execution Model
+5. **Do not expose raw structures**
+   - no raw JSON
+   - no internal naming
 
-### Phase 1 — Cleanup implementation
-Implement the smallest safe changes required to resolve the three review-layer issues.
-
-### Phase 2 — Validation
-Verify with targeted tests and browser checks that:
-
-- `<` / `>` style resolved ranges display correctly
-- duplicate unit presentation is gone
-- genuinely no-range-supplied markers no longer show `Range needed`
-- existing PR4/PR5 behaviour is not regressed
+6. **Do not depend on unavailable fields**
+   - do not use `arbitration_result`
+   - do not use `system_capacity_scores`
+   - do not use `adjusted_system_burden_vector`
+   - do not require backend additions in this sprint
 
 ---
 
-## Regression Targets
+## Confirmed data authority for this sprint
 
-Must verify all of the following.
+This sprint must be built only from data already available on the frontend results path.
 
-### Review display
-- resolved one-sided thresholds show the correct comparator
-- labelled-band matched thresholds display correctly
-- unit presentation is clear and non-duplicative
+### Primary section assets
 
-### Review state
-- no-range-supplied markers render as a valid neutral state
-- incomplete/ambiguous markers remain distinct from true no-range-supplied cases
+- `clinician_report_v1.sections.page1`
+- `balanced_systems_v1`
+- `clusters`
+- existing analysis-level fields already present in `analysis.ts` / store
 
-### Non-regression
-- PR4 applicability-band selection still works
-- PR5 labelled-band handling still works
-- ordinary bounded ranges still work
-- analysis payload shape remains unchanged
+### Explicit non-authority for this sprint
 
----
+The following are not currently available on the frontend DTO/store path and must not be referenced in implementation logic:
 
-## Test Requirements
+- `arbitration_result`
+- `system_capacity_scores`
+- `adjusted_system_burden_vector`
 
-Minimum required tests must cover:
-
-1. comparator display for a resolved one-sided / labelled-band threshold
-2. no-range-supplied classification for a representative derived/calculated marker
-3. non-regression for labelled-band and applicability-band review behaviour
-
-Use the smallest relevant test scope.
-Do not expand into broad unrelated suite creation.
+If any of these are needed, that is a separate backend/DTO sprint, not this one.
 
 ---
 
-## Execution Rules
+## Target UX structure
 
-- follow this prompt exactly
-- keep scope tiny
-- do not widen into general parsing work
-- do not change scoring or fallback behaviour
-- do not modify unrelated files
+### Section 1 — Body Overview (NEW)
+
+**Purpose:**
+Give the user immediate orientation and a single, clear understanding of their body state.
+
+**Must display:**
+
+- One **primary sentence**
+  - derived from `clinician_report_v1.sections.page1`
+  - using the best available combination of:
+    - `primary_concern`
+    - `key_findings`
+    - any existing page1 summary fields already present
+  - must answer:
+    - what stands out
+    - whether there is a clear lead concern
+    - that the page will guide the user through the bigger picture
+
+**Primary sentence rule:**
+- it must be derived from available `clinician_report_v1` content
+- it must **not** be a raw dump of page1 fields
+- it must be shaped into a single clear sentence
+- do not render raw clinician-report blocks
+- do not show multi-paragraph summaries in this section
+
+Example shape (not hardcoded):
+> “Your results suggest one main area that deserves closer attention, and we’ll show you how it fits into the wider picture of how your body is functioning.”
+
+- A simple overview visual or structural summary
+  - must be built only from currently available frontend data
+  - may use:
+    - `balanced_systems_v1`
+    - `clusters`
+    - sectioned labels such as “stable”, “needs attention”, “explore further”
+  - must allow quick scan across the body-level picture
+  - no heavy animation required
+
+**Add inline micro-framing (1–2 lines max):**
+- example intent:
+  > “We’ve grouped your results into body systems and patterns so you can understand the bigger picture before looking at the individual markers.”
+
+Do not expand beyond this.
 
 ---
 
-## Deliverables
+### Section 2 — What’s Working Well (REPOSITION + REFINE)
 
-Cursor must return:
+**Purpose:**
+Anchor the user in stability before introducing problems.
 
-1. files changed
-2. concise implementation summary
-3. tests run and results
-4. before/after evidence for:
-   - comparator display
-   - unit cleanup
-   - no-range-supplied state
-5. any blockers encountered
+**Must display:**
+
+- Systems with reassuring / stable interpretation
+  - derived from `balanced_systems_v1`
+  - if needed, supported by existing `clusters` context already on the frontend path
+
+- Each item must:
+  - name the system clearly
+  - include a short, grounded explanation
+
+Example shape:
+> “Your liver and kidney systems are showing no clear signs of strain in this panel.”
+
+**Rules:**
+
+- No vague praise (“looks good”, “healthy”)
+- Must be tied to actual system interpretation
+- Limit to top 2–4 systems max (avoid overload)
+- Each system explanation must be:
+  - maximum 1 sentence
+  - specific
+  - non-repetitive across systems
+- Do not repeat the same phrasing across multiple systems
 
 ---
 
-## Governance
+## Data wiring requirements
 
-This is STANDARD-risk governed review-layer cleanup work.
+You must verify:
 
-Requires:
+- `clinician_report_v1.sections.page1` is available and mapped correctly
+- `balanced_systems_v1` is available and filtered/rendered safely
+- `clusters` are available if needed for light overview support
+- fallback behaviour exists if any of the above are missing
 
-- Claude hardening
-- kernel start
-- controlled execution
-- kernel finish
-- gate evidence
-- Claude audit summary
-- GPT architectural review
-- dual approval before merge
+Fallback rules:
 
-No shortcuts permitted.
+- If `balanced_systems_v1` empty:
+  - show minimal message:
+    > “No clearly stable systems are highlighted in this panel — we’ll guide you through the key findings below.”
+
+- If `clinician_report_v1.sections.page1` missing or incomplete:
+  - do not fabricate
+  - show safe fallback:
+    > “We’ve analysed your results and will guide you through the key findings below.”
+
+- If both are partial:
+  - page must still render
+  - do not show empty visual shells or broken section containers
+
+---
+
+## Component / architecture rules
+
+Before creating new components:
+- identify whether existing results, summary, or balanced-system components can be reused or adapted
+
+Only create new components if:
+- no suitable component exists
+- or reuse would introduce complexity or inconsistency
+
+Avoid duplicating rendering logic across components.
+
+---
+
+## Files likely impacted
+
+- `frontend/app/(app)/results/page.tsx`
+- `frontend/app/components/results/BalancedSystemsSummary.tsx`
+- `frontend/app/types/analysis.ts`
+- new or adapted results-page section components only where necessary
+
+Do not create backend dependencies in this sprint.
+
+---
+
+## Acceptance criteria
+
+1. Results page opens with:
+   - Body Overview (Section 1)
+   - followed immediately by What’s Working Well (Section 2)
+
+2. User can understand within ~5 seconds:
+   - that there is an overall body-level interpretation
+   - whether anything stands out
+   - that there are also stable/reassuring areas
+
+3. No large text blocks before insight
+
+4. All text grounded in real available frontend data (no placeholders)
+
+5. Page does not crash with partial/missing data
+
+6. No references to:
+   - “phenotype”
+   - internal IDs
+   - raw signal names
+   - unavailable fields such as `arbitration_result`, `system_capacity_scores`, or `adjusted_system_burden_vector`
+
+---
+
+## Test instructions
+
+- Run full analysis flow via `/upload → /results`
+- Test with:
+  - strong abnormal case
+  - mostly normal case
+  - mixed case
+- Validate:
+  - Section 1 renders correctly
+  - Section 2 shows correct stable systems where available
+  - no duplication
+  - no empty UI blocks
+- Confirm no regression in:
+  - navigation
+  - analysis loading
+  - existing components
+
+---
+
+## Completion criteria
+
+- Code compiles cleanly
+- No console errors
+- Manual UX validation passes
+- Ready for gate validation via kernel
+
+---
+
+## Notes
+
+This sprint is foundational.
+
+Do not over-engineer visuals.
+Do not expand scope into later sections.
+Do not introduce backend requests for missing fields in this sprint.
+
+The goal is to **change how the user experiences the first 10 seconds** of the product using data the frontend already has.
