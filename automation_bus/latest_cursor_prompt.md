@@ -1,30 +1,30 @@
 ---
-work_id: FE-R2-RESULTS-JOURNEY-V6
-branch: feature/results-journey-v6-r2-primary-finding-why
+work_id: FE-R3-RESULTS-JOURNEY-V6
+branch: feature/results-journey-v6-r3-uncertainty-and-why-this-lead-won
 risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
 change_type: BEHAVIOUR
 ---
 
-# Sprint: R-2 — Primary Finding and Why
+# Sprint: R-3 — Why This Lead Won / Uncertainty
 
 ## Objective
 
-Implement Section 3 of the V6 Results Journey:
+Implement Section 4 of the V6 Results Journey:
 
-**Primary finding and why**
+**Why This Lead Won / Uncertainty**
 
-This sprint must turn the lead interpretation into a genuine reasoning layer rather than a short headline or a buried clinical block.
+This sprint must make the reasoning process visible to the user immediately after the primary finding.
 
 The user should be able to understand:
 
-1. what the main finding is
-2. what it means
-3. what evidence supports it
-4. what complicates it
-5. what data would strengthen or weaken confidence
+1. what nearly became the lead finding
+2. why it did not
+3. how certain HealthIQ is about the lead interpretation
+4. what data is missing
+5. what would change the conclusion
 
-This sprint must deepen understanding without introducing speculative narrative.
+This sprint must increase trust without exposing raw engine traces or technical internals.
 
 ---
 
@@ -32,9 +32,9 @@ This sprint must deepen understanding without introducing speculative narrative.
 
 ### In scope
 
-- Section 3: Primary Finding and Why
-- Surfacing the best currently available deterministic explanation assets for the lead finding
-- Clear fallbacks when richer hypothesis assets are absent
+- Section 4: Why This Lead Won / Uncertainty
+- Surfacing the strongest currently available deterministic confidence / runner-up / missing-data assets
+- Clear trust-building presentation of uncertainty
 - Repositioning or adapting existing components if appropriate
 - Wiring only to **currently available frontend DTO/store data**
 
@@ -42,49 +42,51 @@ This sprint must deepen understanding without introducing speculative narrative.
 
 Use only assets already available on the frontend results path, specifically:
 
-- `clinician_report_v1.sections.page1.primary_concern`
-- `clinician_report_v1.sections.page1.top_hypothesis_line`
-- `clinician_report_v1.sections.page1.key_findings`
-- `clinician_report_v1.sections.page1.chains`
-- `clinician_report_v1.sections.root_cause`
-- `clinician_report_v1.sections.confirmatory_tests`
-- existing fields already exposed in `analysis.ts` / store and currently consumed by results components
+- `clinician_report_v1.sections.page1.runner_up_topic_line`
+- `clinician_report_v1.sections.page1.runner_up_why_not_lead_line`
+- `clinician_report_v1.sections.page1.confidence_and_missing_data`
+- `clinician_report_v1.data_quality.confidence_caveat`
+- `clinician_report_v1.sections.page1.primary_concern_mode`
+- `clinician_report_v1.sections.page1.co_primary_signal_ids`
+- `clinician_report_v1.sections.page1.ranking_policy_version`
+- existing missing-data / confirmatory context already surfaced in `clinician_report_v1`
+- existing frontend DTO/store fields already exposed in `analysis.ts`
 
 ### Out of scope
 
-- Section 4+ (uncertainty, pattern layer, biomarkers, etc.)
 - New backend logic
 - New DTO fields
-- New compiler work
+- Raw `ExplainabilityReportV1`
+- `arbitration_result`
 - Gemini / LLM narrative generation
-- Pattern / phenotype display layer
-- Any use of internal explainability artifacts not already surfaced to the frontend DTO
-- Any raw use of `ExplainabilityReportV1`
+- Section 5+ work
+- Biomarker-level evidence changes
+- Pattern / phenotype display work
 
 ---
 
 ## Key principles (must be followed)
 
-1. **Explain, do not dump**
-   - The section must feel like a guided interpretation
-   - Do not paste raw clinician-report blocks into the page
+1. **Transparency without technical leakage**
+   - user should understand why the lead won
+   - do not expose raw arbitration traces, engine logs, or debugging language
 
-2. **Deterministic assets only**
-   - Use currently available frontend-facing deterministic text
-   - Do not fabricate reasoning
+2. **Confidence must feel honest, not defensive**
+   - uncertainty should build trust
+   - do not make the engine sound weak or confused if the deterministic conclusion is valid
 
-3. **Lead first, evidence second**
-   - The user must first understand the main interpretation
-   - Then see what supports it and what complicates it
+3. **Runner-up must clarify, not distract**
+   - this section is about why the main lead stands
+   - not about listing every alternative interpretation
 
-4. **No false completeness**
-   - If root-cause coverage is absent or partial, say less
-   - Do not imply a full hypothesis model exists where it does not
+4. **No false precision**
+   - if missing-data explanation is limited, keep it limited
+   - do not invent detailed uncertainty narratives
 
-5. **Keep tone calm and serious**
-   - No alarmism
-   - No consumer-wellness fluff
-   - No clinical jargon without framing
+5. **No duplication with Section 3**
+   - Section 3 explains the lead and its evidence
+   - Section 4 explains why this lead won and what uncertainty remains
+   - keep these roles distinct
 
 ---
 
@@ -94,182 +96,170 @@ This sprint must be built only from data already available on the frontend resul
 
 ### Primary section assets
 
-- `clinician_report_v1.sections.page1.primary_concern`
-- `clinician_report_v1.sections.page1.top_hypothesis_line`
-- `clinician_report_v1.sections.page1.key_findings`
-- `clinician_report_v1.sections.page1.chains`
-- `clinician_report_v1.sections.root_cause`
-- `clinician_report_v1.sections.confirmatory_tests`
+- `clinician_report_v1.sections.page1.runner_up_topic_line`
+- `clinician_report_v1.sections.page1.runner_up_why_not_lead_line`
+- `clinician_report_v1.sections.page1.confidence_and_missing_data`
+- `clinician_report_v1.data_quality.confidence_caveat`
+- `clinician_report_v1.sections.page1.primary_concern_mode`
+- `clinician_report_v1.sections.page1.co_primary_signal_ids`
+- `clinician_report_v1.sections.page1.ranking_policy_version`
 
 ### Explicit non-authority for this sprint
 
 Do not use or depend on:
 
 - raw `ExplainabilityReportV1`
-- `arbitration_result`
-- any backend-only signal-library source not already surfaced to the current frontend DTO
-- new backend / DTO additions
+- backend-only arbitration objects
+- raw `arbitration_result`
+- new DTO additions
+- internal trace structures
 
-If richer reasoning requires new contract work, that is a later sprint.
+If richer uncertainty logic requires new compiler work, that is a later sprint.
 
 ---
 
 ## Target UX structure
 
-### Section 3 — Primary Finding and Why
+### Section 4 — Why This Lead Won / Uncertainty
 
 **Purpose:**
-Give the user a clear explanation of the lead interpretation and the strongest current reasoning behind it.
+Give the user a clear and calm explanation of why the current lead finding was chosen, what nearly competed with it, and how much uncertainty remains.
 
 **This section must answer:**
-- what the main finding is
-- what HealthIQ currently thinks is the leading explanation
-- what supports that interpretation
-- what complicates or weakens it
-- what follow-up data or test would help
+- what nearly became the lead
+- why it did not
+- whether the lead was obvious or closely contested
+- what missing information limits certainty
+- what would make the conclusion stronger or weaker
 
 ---
 
 ### Required subsection structure
 
-#### A. Lead finding statement
+#### A. Why this lead won
 
 Must display:
-- a short lead interpretation statement
-- derived from `primary_concern`
-- optionally supported by `top_hypothesis_line`
+- a short explanation of why the lead finding was chosen
+- primarily derived from:
+  - `runner_up_why_not_lead_line`
+  - `primary_concern_mode`
 
 Rules:
-- must be concise
-- must not be a raw field dump
-- must not repeat the exact Section 1 wording
-- must feel like the start of a deeper explanation, not another hero banner
+- this must not read like an engine trace
+- it must be short and readable
+- if there is no meaningful runner-up explanation, omit cleanly
 
 ---
 
-#### B. What this means
+#### B. Competing finding
 
 Must display:
-- a short explanatory paragraph or block
-- primarily derived from `top_hypothesis_line`
-- may use the strongest available `key_findings[0]` support if needed
+- the runner-up / close competing finding only if present
+- from `runner_up_topic_line`
 
 Rules:
-- should explain what the lead pattern means in human terms
-- do not introduce new claims beyond surfaced deterministic content
-- do not over-expand if the underlying text is thin
+- max 1 competing finding
+- this is not a ranked alternatives list
+- if no runner-up exists, omit this block
 
 ---
 
-#### C. How the evidence connects
+#### C. How confident we are
 
 Must display:
-- 1–2 chain narratives from `chains`
-- if available
+- confidence framing from:
+  - `confidence_and_missing_data`
+  - `data_quality.confidence_caveat`
 
 Rules:
-- show only the strongest 1–2
-- do not dump a long list
-- must read as “how these findings connect”
-- if `chains` absent, omit cleanly
+- this should feel calm and specific
+- do not show multiple overlapping confidence blocks if one is enough
+- if both fields exist, shape them into a clean non-duplicative presentation
 
 ---
 
-#### D. Supports this interpretation
+#### D. What limits certainty
 
 Must display:
-- strongest evidence-for items from `root_cause`
-- only if `root_cause` exists for the lead finding
+- short missing-data / uncertainty explanation
+- derived from available page1 confidence/missing-data text and any related surfaced deterministic context
 
 Rules:
-- keep concise
-- max 3 evidence-for items
-- if absent, do not fabricate a “supports” block
+- focus on what is absent and why it matters
+- do not create a separate “limitations essay”
+- maximum one short block
 
 ---
 
-#### E. Pulls against or complicates it
+#### E. Special case — near tie / co-primary mode
 
-Must display:
-- strongest evidence-against / complicating items from `root_cause`
-- only if available
+If `primary_concern_mode` indicates:
+- close call
+- technical tiebreak
+- co-primary context
 
-Rules:
-- max 2–3 items
-- this is important for trust
-- if absent, omit cleanly
-
----
-
-#### F. What would clarify the picture
-
-Must display:
-- missing-data item(s) and/or confirmatory test rationale
-- from `root_cause` and `confirmatory_tests` where available
+then the section must reflect that clearly and calmly.
 
 Rules:
-- keep this short
-- this is not the full action section
-- it should answer:
-  - what extra data would make this interpretation stronger or weaker?
+- do not over-dramatise
+- explain that more than one interpretation was close if that is true
+- `co_primary_signal_ids` may be used only as an internal presence check that a co-primary situation exists
+- do not render raw signal IDs to the user
+- do not surface raw ranking logic or technical policy text as a main body block
 
 ---
 
 ## Fallback model (mandatory)
 
-This sprint must handle partial or absent hypothesis coverage honestly.
-
-### Case 1 — Full useful root-cause data present
+### Case 1 — Full runner-up + confidence data present
 Show:
-- lead finding
-- what this means
-- 1–2 chain narratives
-- supports
-- complicates
-- what would clarify
+- why this lead won
+- competing finding
+- how confident we are
+- what limits certainty
 
-### Case 2 — `top_hypothesis_line` present, but root-cause weak/absent
+### Case 2 — Confidence present, runner-up absent
 Show:
-- lead finding
-- what this means
-- 1–2 chain narratives if available
-- short “what would clarify” only if confirmatory test data exists
+- how confident we are
+- what limits certainty
 
-Do **not** fabricate supports/complicates sections.
+Do not create a fake competing finding block.
 
-### Case 3 — minimal page1 only
+### Case 3 — Minimal confidence signal only
 Show:
-- lead finding
-- short explanatory fallback from available `key_findings[0]` or equivalent page1 content
+- one calm confidence/limitation block
 
-Do not create fake hypothesis structure.
+Do not overbuild the section.
+
+### Case 4 — No meaningful uncertainty assets
+Omit the section cleanly rather than rendering an empty shell.
 
 ---
 
 ## Component / architecture rules
 
 Before creating new components:
-- identify whether existing interpretation / root-cause components can be reused or adapted
+- identify whether existing interpretation / panel / trust-related components can be reused or adapted
 
 Likely existing candidates:
 - `InsightPanel`
-- `RootCauseEvidenceSummary`
-- related results components already consuming clinician report content
+- `PipelineStatus`
+- related results components already surfacing clinician report confidence context
 
 Only create new components if:
 - no suitable component exists
-- or reuse would create confusing coupling with later sections
+- or reuse would create duplication or conceptual confusion with other sections
 
-Avoid duplicating reasoning-rendering logic across components.
+Avoid duplicating confidence / ambiguity rendering logic across components.
 
 ---
 
 ## Files likely impacted
 
 - `frontend/app/(app)/results/page.tsx`
-- existing interpretation / root-cause related result components
-- new Section 3 wrapper component only if needed
-- frontend helper/lib for shaping lead explanation text only if necessary
+- existing results components handling interpretation / trust / confidence
+- new Section 4 wrapper component only if needed
+- frontend helper/lib for shaping uncertainty text only if necessary
 
 Do not create backend dependencies in this sprint.
 
@@ -277,54 +267,58 @@ Do not create backend dependencies in this sprint.
 
 ## Content shaping rules
 
-1. Do not repeat the same sentence in:
+1. Do not repeat the same wording already shown in:
    - Section 1
    - Section 3
-   - existing clinical interpretation block
+   - existing trust strip / pipeline status copy
 
-2. Section 3 must feel like:
-   - deeper explanation
-   - not another summary header
+2. Section 4 must feel like:
+   - a trust layer
+   - not a repeat of the lead interpretation
 
 3. Keep visible text tight:
-   - lead statement
-   - one short explanatory block
-   - a few evidence bullets/rows
-   - a short clarify-the-picture block
+   - one short why-this-won explanation
+   - one runner-up block max
+   - one confidence/limitation block
+   - one special-case tie/co-primary clarification only if needed
 
-4. If the surfaced deterministic content is thin:
+4. If the deterministic content is thin:
    - keep the section thinner
-   - do not compensate with invented prose
+   - do not compensate with invented transparency prose
+
+5. `ranking_policy_version` may be retained only as a subtle metadata/detail element if already present in current UX patterns
+   - do not elevate it into the main explanatory text
+   - do not make policy version feel like a user-facing headline
 
 ---
 
 ## Acceptance criteria
 
-1. Section 3 appears after Section 2 and before later evidence-heavy layers
+1. Section 4 appears after Section 3 and before later evidence-heavy layers
 
 2. User can understand:
-   - what the lead finding is
-   - what it means
-   - what supports it
-   - what complicates it
-   - what would help clarify it
+   - what nearly became the lead
+   - why the current lead won
+   - how confident the system is
+   - what limits certainty
 
 3. Section uses only currently available frontend DTO/store data
 
-4. No raw clinician-report dumps
+4. No raw arbitration traces or internal technical language
 
-5. No fabricated reasoning where root-cause coverage is absent
+5. No fabricated runner-up / uncertainty explanations where data is absent
 
 6. No references to:
    - phenotype
    - internal IDs
    - raw signal names
-   - backend-only explainability artifacts
+   - backend-only arbitration or explainability artifacts
 
 7. Section renders safely with:
-   - full root-cause data
-   - partial data
-   - minimal page1 data only
+   - full runner-up + confidence data
+   - confidence-only data
+   - minimal uncertainty data
+   - no useful uncertainty data (section omitted cleanly)
 
 ---
 
@@ -332,24 +326,25 @@ Do not create backend dependencies in this sprint.
 
 - Run full analysis flow via `/upload → /results`
 - Test with:
-  - case with good root-cause coverage
-  - case with weak/partial root-cause coverage
-  - case with only minimal page1 narrative available
+  - case with close/competing finding present
+  - case with clear lead and minimal runner-up
+  - case with strong confidence caveat / missing-data note
+  - case where uncertainty assets are minimal or absent
 
 Validate:
-- Section 3 renders in the right position
-- lead finding is clear
-- chain narratives show only when meaningful
-- supports/complicates only show when real data exists
-- clarify-the-picture is concise and grounded
+- Section 4 renders in the right position
+- runner-up block only appears when real data exists
+- confidence wording is calm and non-duplicative
 - no empty shells / broken subsection headings
-- no repeated wording with Section 1
+- no repeated wording with Section 3 or trust strip
+- no raw policy / technical trace leakage
 
 Confirm no regression in:
 - Body Overview
 - What’s Working Well
+- Primary Finding and Why
 - InsightPanel / clinical interpretation
-- RootCauseEvidenceSummary if reused elsewhere
+- PipelineStatus
 - navigation / loading / advanced tabs
 
 ---
@@ -359,19 +354,19 @@ Confirm no regression in:
 - Code compiles cleanly
 - No console errors
 - Manual UX validation passes
-- Section 3 is visibly more explanatory than the current interpretation block
+- Section 4 materially improves trust and transparency without increasing confusion
 - Ready for gate validation via kernel
 
 ---
 
 ## Notes
 
-This sprint is the first one that materially affects **narrative integrity**.
+This sprint is sensitive because it introduces uncertainty handling.
 
 Do not overreach.
-Do not write beyond the deterministic evidence.
-Do not expand into Section 4 uncertainty logic yet.
+Do not make the system sound uncertain when the deterministic conclusion is strong.
+Do not expose internal mechanics as if they were user-facing explanation.
 
 The goal is to make the user feel:
 
-**“I understand what the main finding is, and I can see why the system is saying this.”**
+**“I can see why this conclusion was chosen, and I understand how certain the system is.”**
