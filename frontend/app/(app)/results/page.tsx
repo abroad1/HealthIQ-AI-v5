@@ -27,6 +27,7 @@ import ClinicianReportRenderer from '@/components/results/ClinicianReportRendere
 import { BalancedSystemsSummary } from '@/components/results/BalancedSystemsSummary';
 import { ResultsBodyOverview } from '@/components/results/ResultsBodyOverview';
 import { PrimaryFindingAndWhy } from '@/components/results/PrimaryFindingAndWhy';
+import { WhyThisLeadWonSection } from '@/components/results/WhyThisLeadWonSection';
 import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAnalysisResult } from '@/queries/analysisResult';
@@ -513,6 +514,13 @@ export default function ResultsPage() {
               Primary finding and why
             </h2>
             <PrimaryFindingAndWhy report={clinicianReport} />
+          </section>
+
+          <section aria-labelledby="why-lead-won-section-label">
+            <h2 id="why-lead-won-section-label" className="sr-only">
+              Why this lead won and uncertainty
+            </h2>
+            <WhyThisLeadWonSection report={clinicianReport} />
           </section>
 
           <section aria-labelledby="trust-layer">

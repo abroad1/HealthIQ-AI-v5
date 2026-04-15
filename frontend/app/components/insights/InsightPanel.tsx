@@ -11,8 +11,9 @@ export interface InsightPanelProps {
   /** Retail label for the Primary Driver System Group — visual thread only */
   primaryDriverSystemGroupName?: string | null;
   /**
-   * When true, hides the primary headline, first key-finding paragraph, and next-step cue — FE-R2 Section 3 owns that narrative.
-   * Ranking context, runner-up, co-primaries, ambiguity notes, and confidence line remain.
+   * When true, hides the primary headline, first key-finding paragraph, next-step cue, runner-up block, co-primary row,
+   * ambiguity note, and confidence line — FE-R2 Section 3 + FE-R3 Section 4 own that narrative.
+   * Mode badge and sr-only ranking policy remain.
    */
   contextOnly?: boolean;
   className?: string;
@@ -114,7 +115,7 @@ export function InsightPanel({
         ) : null}
       </CardHeader>
       <CardContent className="space-y-4 pt-0">
-        {showRunnerUp ? (
+        {!contextOnly && showRunnerUp ? (
           <div
             className="text-sm text-gray-700 bg-blue-50/80 border border-blue-100 rounded-md px-3 py-2 space-y-1"
             data-testid="hero-runner-up"
@@ -125,14 +126,14 @@ export function InsightPanel({
           </div>
         ) : null}
 
-        {showCoPrimaryRow ? (
+        {!contextOnly && showCoPrimaryRow ? (
           <p className="text-sm text-gray-600">
             <span className="font-medium text-gray-700">Also closely reviewed: </span>
             {coPrimaries.map((sid) => formatSignalIdForDisplay(sid)).join(' · ')}
           </p>
         ) : null}
 
-        {ambiguityNote ? (
+        {!contextOnly && ambiguityNote ? (
           <p className="text-sm text-gray-600 bg-slate-50 border border-slate-100 rounded-md px-3 py-2">{ambiguityNote}</p>
         ) : null}
 
@@ -150,8 +151,8 @@ export function InsightPanel({
           </>
         ) : null}
 
-        {/* 1 confidence qualifier line */}
-        {confidenceLine ? (
+        {/* 1 confidence qualifier line — Section 4 owns this when contextOnly */}
+        {!contextOnly && confidenceLine ? (
           <p className="text-sm text-amber-900/90 leading-relaxed border-l-2 border-amber-200 pl-3">{confidenceLine}</p>
         ) : null}
 
