@@ -1,23 +1,30 @@
 ---
-work_id: FE-R1-RESULTS-JOURNEY-V6
-branch: feature/results-journey-v6-r1-page-architecture
+work_id: FE-R2-RESULTS-JOURNEY-V6
+branch: feature/results-journey-v6-r2-primary-finding-why
 risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
 change_type: BEHAVIOUR
 ---
 
-# Sprint: R-1 — Results Page Architecture + Section 1 + Section 2 Reframe
+# Sprint: R-2 — Primary Finding and Why
 
 ## Objective
 
-Restructure the `/results` page to implement the opening of the V6 Results Journey:
+Implement Section 3 of the V6 Results Journey:
 
-1. Introduce a **clear, guided entry point**
-2. Present a **Body Overview (Section 1)** before any deep data
-3. Reposition **“What’s Working Well” (Section 2)** immediately after
-4. Embed a **lightweight “how to read this page” framing** without slowing the user down
+**Primary finding and why**
 
-This sprint must change the **shape of the experience**, not just styling.
+This sprint must turn the lead interpretation into a genuine reasoning layer rather than a short headline or a buried clinical block.
+
+The user should be able to understand:
+
+1. what the main finding is
+2. what it means
+3. what evidence supports it
+4. what complicates it
+5. what data would strengthen or weaken confidence
+
+This sprint must deepen understanding without introducing speculative narrative.
 
 ---
 
@@ -25,50 +32,59 @@ This sprint must change the **shape of the experience**, not just styling.
 
 ### In scope
 
-- `/results` page layout restructuring
-- Section 1: Body Overview (new)
-- Section 2: What’s Working Well (reposition + refine)
-- Lightweight intro framing (inline, not a full page)
-- Wiring only to **currently available frontend DTO/store data**, specifically:
-  - `clinician_report_v1`
-  - `balanced_systems_v1`
-  - `clusters`
-  - existing top-level analysis metadata already present on the current frontend path
+- Section 3: Primary Finding and Why
+- Surfacing the best currently available deterministic explanation assets for the lead finding
+- Clear fallbacks when richer hypothesis assets are absent
+- Repositioning or adapting existing components if appropriate
+- Wiring only to **currently available frontend DTO/store data**
+
+### Primary allowed assets
+
+Use only assets already available on the frontend results path, specifically:
+
+- `clinician_report_v1.sections.page1.primary_concern`
+- `clinician_report_v1.sections.page1.top_hypothesis_line`
+- `clinician_report_v1.sections.page1.key_findings`
+- `clinician_report_v1.sections.page1.chains`
+- `clinician_report_v1.sections.root_cause`
+- `clinician_report_v1.sections.confirmatory_tests`
+- existing fields already exposed in `analysis.ts` / store and currently consumed by results components
 
 ### Out of scope
 
-- Section 3+ (Deep Discovery, Glass Box, etc.)
-- Pattern / phenotype display layer (R-7 / R-8)
+- Section 4+ (uncertainty, pattern layer, biomarkers, etc.)
 - New backend logic
-- Changes to analysis pipeline
 - New DTO fields
-- Visual polish beyond functional clarity
+- New compiler work
+- Gemini / LLM narrative generation
+- Pattern / phenotype display layer
+- Any use of internal explainability artifacts not already surfaced to the frontend DTO
+- Any raw use of `ExplainabilityReportV1`
 
 ---
 
 ## Key principles (must be followed)
 
-1. **User came for results → show value immediately**
-   - No long educational block before insight
+1. **Explain, do not dump**
+   - The section must feel like a guided interpretation
+   - Do not paste raw clinician-report blocks into the page
 
-2. **Introduce → show → reinforce**
-   - micro framing → insight → reinforcement
+2. **Deterministic assets only**
+   - Use currently available frontend-facing deterministic text
+   - Do not fabricate reasoning
 
-3. **Reassurance before concern**
-   - Section 2 must clearly show what is stable/working
+3. **Lead first, evidence second**
+   - The user must first understand the main interpretation
+   - Then see what supports it and what complicates it
 
-4. **No generic summaries**
-   - All text must be grounded in actual analysis outputs
+4. **No false completeness**
+   - If root-cause coverage is absent or partial, say less
+   - Do not imply a full hypothesis model exists where it does not
 
-5. **Do not expose raw structures**
-   - no raw JSON
-   - no internal naming
-
-6. **Do not depend on unavailable fields**
-   - do not use `arbitration_result`
-   - do not use `system_capacity_scores`
-   - do not use `adjusted_system_burden_vector`
-   - do not require backend additions in this sprint
+5. **Keep tone calm and serious**
+   - No alarmism
+   - No consumer-wellness fluff
+   - No clinical jargon without framing
 
 ---
 
@@ -78,173 +94,237 @@ This sprint must be built only from data already available on the frontend resul
 
 ### Primary section assets
 
-- `clinician_report_v1.sections.page1`
-- `balanced_systems_v1`
-- `clusters`
-- existing analysis-level fields already present in `analysis.ts` / store
+- `clinician_report_v1.sections.page1.primary_concern`
+- `clinician_report_v1.sections.page1.top_hypothesis_line`
+- `clinician_report_v1.sections.page1.key_findings`
+- `clinician_report_v1.sections.page1.chains`
+- `clinician_report_v1.sections.root_cause`
+- `clinician_report_v1.sections.confirmatory_tests`
 
 ### Explicit non-authority for this sprint
 
-The following are not currently available on the frontend DTO/store path and must not be referenced in implementation logic:
+Do not use or depend on:
 
+- raw `ExplainabilityReportV1`
 - `arbitration_result`
-- `system_capacity_scores`
-- `adjusted_system_burden_vector`
+- any backend-only signal-library source not already surfaced to the current frontend DTO
+- new backend / DTO additions
 
-If any of these are needed, that is a separate backend/DTO sprint, not this one.
+If richer reasoning requires new contract work, that is a later sprint.
 
 ---
 
 ## Target UX structure
 
-### Section 1 — Body Overview (NEW)
+### Section 3 — Primary Finding and Why
 
 **Purpose:**
-Give the user immediate orientation and a single, clear understanding of their body state.
+Give the user a clear explanation of the lead interpretation and the strongest current reasoning behind it.
 
-**Must display:**
-
-- One **primary sentence**
-  - derived from `clinician_report_v1.sections.page1`
-  - using the best available combination of:
-    - `primary_concern`
-    - `key_findings`
-    - any existing page1 summary fields already present
-  - must answer:
-    - what stands out
-    - whether there is a clear lead concern
-    - that the page will guide the user through the bigger picture
-
-**Primary sentence rule:**
-- it must be derived from available `clinician_report_v1` content
-- it must **not** be a raw dump of page1 fields
-- it must be shaped into a single clear sentence
-- do not render raw clinician-report blocks
-- do not show multi-paragraph summaries in this section
-
-Example shape (not hardcoded):
-> “Your results suggest one main area that deserves closer attention, and we’ll show you how it fits into the wider picture of how your body is functioning.”
-
-- A simple overview visual or structural summary
-  - must be built only from currently available frontend data
-  - may use:
-    - `balanced_systems_v1`
-    - `clusters`
-    - sectioned labels such as “stable”, “needs attention”, “explore further”
-  - must allow quick scan across the body-level picture
-  - no heavy animation required
-
-**Add inline micro-framing (1–2 lines max):**
-- example intent:
-  > “We’ve grouped your results into body systems and patterns so you can understand the bigger picture before looking at the individual markers.”
-
-Do not expand beyond this.
+**This section must answer:**
+- what the main finding is
+- what HealthIQ currently thinks is the leading explanation
+- what supports that interpretation
+- what complicates or weakens it
+- what follow-up data or test would help
 
 ---
 
-### Section 2 — What’s Working Well (REPOSITION + REFINE)
+### Required subsection structure
 
-**Purpose:**
-Anchor the user in stability before introducing problems.
+#### A. Lead finding statement
 
-**Must display:**
+Must display:
+- a short lead interpretation statement
+- derived from `primary_concern`
+- optionally supported by `top_hypothesis_line`
 
-- Systems with reassuring / stable interpretation
-  - derived from `balanced_systems_v1`
-  - if needed, supported by existing `clusters` context already on the frontend path
-
-- Each item must:
-  - name the system clearly
-  - include a short, grounded explanation
-
-Example shape:
-> “Your liver and kidney systems are showing no clear signs of strain in this panel.”
-
-**Rules:**
-
-- No vague praise (“looks good”, “healthy”)
-- Must be tied to actual system interpretation
-- Limit to top 2–4 systems max (avoid overload)
-- Each system explanation must be:
-  - maximum 1 sentence
-  - specific
-  - non-repetitive across systems
-- Do not repeat the same phrasing across multiple systems
+Rules:
+- must be concise
+- must not be a raw field dump
+- must not repeat the exact Section 1 wording
+- must feel like the start of a deeper explanation, not another hero banner
 
 ---
 
-## Data wiring requirements
+#### B. What this means
 
-You must verify:
+Must display:
+- a short explanatory paragraph or block
+- primarily derived from `top_hypothesis_line`
+- may use the strongest available `key_findings[0]` support if needed
 
-- `clinician_report_v1.sections.page1` is available and mapped correctly
-- `balanced_systems_v1` is available and filtered/rendered safely
-- `clusters` are available if needed for light overview support
-- fallback behaviour exists if any of the above are missing
+Rules:
+- should explain what the lead pattern means in human terms
+- do not introduce new claims beyond surfaced deterministic content
+- do not over-expand if the underlying text is thin
 
-Fallback rules:
+---
 
-- If `balanced_systems_v1` empty:
-  - show minimal message:
-    > “No clearly stable systems are highlighted in this panel — we’ll guide you through the key findings below.”
+#### C. How the evidence connects
 
-- If `clinician_report_v1.sections.page1` missing or incomplete:
-  - do not fabricate
-  - show safe fallback:
-    > “We’ve analysed your results and will guide you through the key findings below.”
+Must display:
+- 1–2 chain narratives from `chains`
+- if available
 
-- If both are partial:
-  - page must still render
-  - do not show empty visual shells or broken section containers
+Rules:
+- show only the strongest 1–2
+- do not dump a long list
+- must read as “how these findings connect”
+- if `chains` absent, omit cleanly
+
+---
+
+#### D. Supports this interpretation
+
+Must display:
+- strongest evidence-for items from `root_cause`
+- only if `root_cause` exists for the lead finding
+
+Rules:
+- keep concise
+- max 3 evidence-for items
+- if absent, do not fabricate a “supports” block
+
+---
+
+#### E. Pulls against or complicates it
+
+Must display:
+- strongest evidence-against / complicating items from `root_cause`
+- only if available
+
+Rules:
+- max 2–3 items
+- this is important for trust
+- if absent, omit cleanly
+
+---
+
+#### F. What would clarify the picture
+
+Must display:
+- missing-data item(s) and/or confirmatory test rationale
+- from `root_cause` and `confirmatory_tests` where available
+
+Rules:
+- keep this short
+- this is not the full action section
+- it should answer:
+  - what extra data would make this interpretation stronger or weaker?
+
+---
+
+## Fallback model (mandatory)
+
+This sprint must handle partial or absent hypothesis coverage honestly.
+
+### Case 1 — Full useful root-cause data present
+Show:
+- lead finding
+- what this means
+- 1–2 chain narratives
+- supports
+- complicates
+- what would clarify
+
+### Case 2 — `top_hypothesis_line` present, but root-cause weak/absent
+Show:
+- lead finding
+- what this means
+- 1–2 chain narratives if available
+- short “what would clarify” only if confirmatory test data exists
+
+Do **not** fabricate supports/complicates sections.
+
+### Case 3 — minimal page1 only
+Show:
+- lead finding
+- short explanatory fallback from available `key_findings[0]` or equivalent page1 content
+
+Do not create fake hypothesis structure.
 
 ---
 
 ## Component / architecture rules
 
 Before creating new components:
-- identify whether existing results, summary, or balanced-system components can be reused or adapted
+- identify whether existing interpretation / root-cause components can be reused or adapted
+
+Likely existing candidates:
+- `InsightPanel`
+- `RootCauseEvidenceSummary`
+- related results components already consuming clinician report content
 
 Only create new components if:
 - no suitable component exists
-- or reuse would introduce complexity or inconsistency
+- or reuse would create confusing coupling with later sections
 
-Avoid duplicating rendering logic across components.
+Avoid duplicating reasoning-rendering logic across components.
 
 ---
 
 ## Files likely impacted
 
 - `frontend/app/(app)/results/page.tsx`
-- `frontend/app/components/results/BalancedSystemsSummary.tsx`
-- `frontend/app/types/analysis.ts`
-- new or adapted results-page section components only where necessary
+- existing interpretation / root-cause related result components
+- new Section 3 wrapper component only if needed
+- frontend helper/lib for shaping lead explanation text only if necessary
 
 Do not create backend dependencies in this sprint.
 
 ---
 
+## Content shaping rules
+
+1. Do not repeat the same sentence in:
+   - Section 1
+   - Section 3
+   - existing clinical interpretation block
+
+2. Section 3 must feel like:
+   - deeper explanation
+   - not another summary header
+
+3. Keep visible text tight:
+   - lead statement
+   - one short explanatory block
+   - a few evidence bullets/rows
+   - a short clarify-the-picture block
+
+4. If the surfaced deterministic content is thin:
+   - keep the section thinner
+   - do not compensate with invented prose
+
+---
+
 ## Acceptance criteria
 
-1. Results page opens with:
-   - Body Overview (Section 1)
-   - followed immediately by What’s Working Well (Section 2)
+1. Section 3 appears after Section 2 and before later evidence-heavy layers
 
-2. User can understand within ~5 seconds:
-   - that there is an overall body-level interpretation
-   - whether anything stands out
-   - that there are also stable/reassuring areas
+2. User can understand:
+   - what the lead finding is
+   - what it means
+   - what supports it
+   - what complicates it
+   - what would help clarify it
 
-3. No large text blocks before insight
+3. Section uses only currently available frontend DTO/store data
 
-4. All text grounded in real available frontend data (no placeholders)
+4. No raw clinician-report dumps
 
-5. Page does not crash with partial/missing data
+5. No fabricated reasoning where root-cause coverage is absent
 
 6. No references to:
-   - “phenotype”
+   - phenotype
    - internal IDs
    - raw signal names
-   - unavailable fields such as `arbitration_result`, `system_capacity_scores`, or `adjusted_system_burden_vector`
+   - backend-only explainability artifacts
+
+7. Section renders safely with:
+   - full root-cause data
+   - partial data
+   - minimal page1 data only
 
 ---
 
@@ -252,18 +332,25 @@ Do not create backend dependencies in this sprint.
 
 - Run full analysis flow via `/upload → /results`
 - Test with:
-  - strong abnormal case
-  - mostly normal case
-  - mixed case
-- Validate:
-  - Section 1 renders correctly
-  - Section 2 shows correct stable systems where available
-  - no duplication
-  - no empty UI blocks
-- Confirm no regression in:
-  - navigation
-  - analysis loading
-  - existing components
+  - case with good root-cause coverage
+  - case with weak/partial root-cause coverage
+  - case with only minimal page1 narrative available
+
+Validate:
+- Section 3 renders in the right position
+- lead finding is clear
+- chain narratives show only when meaningful
+- supports/complicates only show when real data exists
+- clarify-the-picture is concise and grounded
+- no empty shells / broken subsection headings
+- no repeated wording with Section 1
+
+Confirm no regression in:
+- Body Overview
+- What’s Working Well
+- InsightPanel / clinical interpretation
+- RootCauseEvidenceSummary if reused elsewhere
+- navigation / loading / advanced tabs
 
 ---
 
@@ -272,16 +359,19 @@ Do not create backend dependencies in this sprint.
 - Code compiles cleanly
 - No console errors
 - Manual UX validation passes
+- Section 3 is visibly more explanatory than the current interpretation block
 - Ready for gate validation via kernel
 
 ---
 
 ## Notes
 
-This sprint is foundational.
+This sprint is the first one that materially affects **narrative integrity**.
 
-Do not over-engineer visuals.
-Do not expand scope into later sections.
-Do not introduce backend requests for missing fields in this sprint.
+Do not overreach.
+Do not write beyond the deterministic evidence.
+Do not expand into Section 4 uncertainty logic yet.
 
-The goal is to **change how the user experiences the first 10 seconds** of the product using data the frontend already has.
+The goal is to make the user feel:
+
+**“I understand what the main finding is, and I can see why the system is saying this.”**
