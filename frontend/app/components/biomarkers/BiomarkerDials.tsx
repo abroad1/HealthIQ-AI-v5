@@ -23,6 +23,8 @@ export interface BiomarkerDialEntry {
   educationalExplainer?: { title: string; body: string } | null;
   contributionContext?: { factual_statement: string } | null;
   relatedSystemGroupNames?: string[];
+  /** Frontend-derived line connecting this marker to the lead pattern / groups — not a DTO field. */
+  patternRelevanceLine?: string | null;
 }
 
 interface BiomarkerDialsProps {
@@ -202,40 +204,55 @@ function BiomarkerDetailZones({
   data: BiomarkerDialEntry;
 }) {
   const displayName = BIOMARKER_NAMES[biomarkerKey] || biomarkerKey.replace(/_/g, ' ');
+  const layer2Body = data.educationalExplainer?.body?.trim();
+  const factual = data.contributionContext?.factual_statement?.trim();
+  const patternLine = data.patternRelevanceLine?.trim();
+  const hasLayer3 =
+    !!(patternLine || factual || (data.relatedSystemGroupNames && data.relatedSystemGroupNames.length > 0));
+
   return (
     <div className="space-y-4 text-left border-t border-gray-200 pt-4 mt-3">
       <h4 className="text-base font-semibold text-gray-900">{displayName}</h4>
 
-      {data.educationalExplainer?.body ? (
+      {layer2Body ? (
         <div>
-          <h5 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">Educational explainer</h5>
-               <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{data.educationalExplainer.body}</p>
+          <h5 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">Why this marker matters</h5>
+          <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{layer2Body}</p>
         </div>
       ) : null}
 
-      {data.contributionContext?.factual_statement ? (
-        <div>
-          <h5 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">Contribution context</h5>
-          <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{data.contributionContext.factual_statement}</p>
-        </div>
-      ) : null}
-
-      {/* Trend/history: architectural slot only — no UI when history contract absent (wireframe amendment) */}
-      {data.relatedSystemGroupNames && data.relatedSystemGroupNames.length > 0 ? (
-        <div>
-          <h5 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">Related system groups</h5>
-          <ul className="flex flex-wrap gap-2 list-none p-0 m-0">
-            {data.relatedSystemGroupNames.map((n) => (
-              <li key={n}>
-                <Badge variant="outline" className="font-normal">
-                  {n}
-                </Badge>
-              </li>
-            ))}
-          </ul>
+      {hasLayer3 ? (
+        <div className="space-y-3">
+          <h5 className="text-xs font-semibold uppercase tracking-wide text-gray-500">How it connects to your wider pattern</h5>
+          {patternLine ? (
+            <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{patternLine}</p>
+          ) : null}
+          {factual ? (
+            <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{factual}</p>
+          ) : null}
+          {data.relatedSystemGroupNames && data.relatedSystemGroupNames.length > 0 ? (
+            <ul className="flex flex-wrap gap-2 list-none p-0 m-0">
+              {data.relatedSystemGroupNames.map((n) => (
+                <li key={n}>
+                  <Badge variant="outline" className="font-normal">
+                    {n}
+                  </Badge>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </div>
       ) : null}
     </div>
+  );
+}
+
+function hasExpandableLayers(d: BiomarkerDialEntry): boolean {
+  return !!(
+    (d.educationalExplainer?.body && String(d.educationalExplainer.body).trim()) ||
+    (d.contributionContext?.factual_statement && String(d.contributionContext.factual_statement).trim()) ||
+    (d.patternRelevanceLine && String(d.patternRelevanceLine).trim()) ||
+    (d.relatedSystemGroupNames && d.relatedSystemGroupNames.length > 0)
   );
 }
 
@@ -291,6 +308,7 @@ export default function BiomarkerDials({ biomarkers, sectionTitle = 'Biomarker e
           const dialValue = calculateDialValue(value, d?.referenceRange, d?.score);
           const isSel = selectedKey === name;
           const displayName = BIOMARKER_NAMES[name] || name.replace(/_/g, ' ');
+          const expandable = hasExpandableLayers(d!);
 
           return (
             <div key={name} className="min-h-[120px]">
@@ -327,28 +345,30 @@ export default function BiomarkerDials({ biomarkers, sectionTitle = 'Biomarker e
                     </div>
                     <div className="flex flex-col items-end gap-2 flex-shrink-0">
                       {renderDial(dialValue, d?.status, 'md')}
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="text-xs h-8"
-                        onClick={() => toggleSelect(name)}
-                        aria-expanded={isSel}
-                      >
-                        {isSel ? (
-                          <>
-                            <ChevronDown className="h-3 w-3 mr-1" /> Close
-                          </>
-                        ) : (
-                          <>
-                            <ChevronRight className="h-3 w-3 mr-1" /> Expand
-                          </>
-                        )}
-                      </Button>
+                      {expandable ? (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="text-xs h-8"
+                          onClick={() => toggleSelect(name)}
+                          aria-expanded={isSel}
+                        >
+                          {isSel ? (
+                            <>
+                              <ChevronDown className="h-3 w-3 mr-1" /> Close
+                            </>
+                          ) : (
+                            <>
+                              <ChevronRight className="h-3 w-3 mr-1" /> Expand
+                            </>
+                          )}
+                        </Button>
+                      ) : null}
                     </div>
                   </div>
 
-                  {!isDesktop && isSel && d ? <BiomarkerDetailZones biomarkerKey={name} data={d} /> : null}
+                  {!isDesktop && isSel && expandable && d ? <BiomarkerDetailZones biomarkerKey={name} data={d} /> : null}
                 </CardContent>
               </Card>
             </div>
@@ -356,7 +376,7 @@ export default function BiomarkerDials({ biomarkers, sectionTitle = 'Biomarker e
         })}
       </div>
 
-      {isDesktop && selectedKey && selectedData ? (
+      {isDesktop && selectedKey && selectedData && hasExpandableLayers(selectedData) ? (
         <Card className="border-blue-100 bg-white shadow-sm">
           <CardContent className="pt-6">
             <BiomarkerDetailZones biomarkerKey={selectedKey} data={selectedData} />

@@ -35,6 +35,7 @@ import type { Cluster, ClinicianReportV1 } from '@/types/analysis';
 import Link from 'next/link';
 import { extractNarrativeRuntimeMeta } from '@/lib/narrativeRuntimePresentation';
 import { emitWedgeEvent } from '@/lib/wedgeAnalytics';
+import { derivePatternRelevanceLine } from '@/lib/biomarkerPatternRelevance';
 
 function pickPrimaryDriverCluster(clusters: Cluster[]): { id: string; name: string; biomarkers: string[] } | null {
   const sevRank: Record<string, number> = { critical: 4, high: 3, moderate: 2, low: 1 };
@@ -383,6 +384,14 @@ export default function ResultsPage() {
     .filter((b) => b.biomarker_name && b.value != null && typeof b.value === 'number')
     .forEach((biomarker) => {
       const expl = biomarker.biomarker_educational_explainer;
+      const relatedSystemGroupNames = relatedGroupNamesFor(biomarker.biomarker_name);
+      const hasContributionFactual = !!biomarker.contribution_context?.factual_statement?.trim();
+      const patternRelevanceLine = derivePatternRelevanceLine({
+        biomarkerKey: biomarker.biomarker_name,
+        primaryDriver,
+        hasContributionFactual,
+        relatedSystemGroupNames,
+      });
       biomarkerDialData[biomarker.biomarker_name] = {
         value: biomarker.value as number,
         unit: biomarker.unit,
@@ -402,7 +411,8 @@ export default function ResultsPage() {
         contributionContext: biomarker.contribution_context?.factual_statement
           ? { factual_statement: biomarker.contribution_context.factual_statement }
           : null,
-        relatedSystemGroupNames: relatedGroupNamesFor(biomarker.biomarker_name),
+        relatedSystemGroupNames,
+        patternRelevanceLine,
       };
     });
 
