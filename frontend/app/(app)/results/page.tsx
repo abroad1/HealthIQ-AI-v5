@@ -29,10 +29,12 @@ import { ResultsBodyOverview } from '@/components/results/ResultsBodyOverview';
 import { PrimaryFindingAndWhy } from '@/components/results/PrimaryFindingAndWhy';
 import { WhyThisLeadWonSection } from '@/components/results/WhyThisLeadWonSection';
 import { SystemUnderstandingSection } from '@/components/results/SystemUnderstandingSection';
+import { LayerCInsightSection } from '@/components/results/LayerCInsightSection';
 import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAnalysisResult } from '@/queries/analysisResult';
 import type { Cluster, ClinicianReportV1 } from '@/types/analysis';
+import type { LayerCFeatureBundleV1 } from '@/types/layerCFeatures';
 import Link from 'next/link';
 import { extractNarrativeRuntimeMeta } from '@/lib/narrativeRuntimePresentation';
 import { emitWedgeEvent } from '@/lib/wedgeAnalytics';
@@ -449,6 +451,9 @@ export default function ResultsPage() {
         ? Math.round(currentAnalysis.overall_score)
         : null;
 
+  const insightGraph = currentAnalysis.meta?.insight_graph as { layer_c_features?: LayerCFeatureBundleV1 } | undefined;
+  const layerCFeatures: LayerCFeatureBundleV1 | null = insightGraph?.layer_c_features ?? null;
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4 max-w-6xl">
@@ -562,6 +567,8 @@ export default function ResultsPage() {
               contextOnly
             />
           </section>
+
+          <LayerCInsightSection bundle={layerCFeatures} />
 
           <section className="space-y-3" aria-labelledby="cluster-heading">
             <h2 id="cluster-heading" className="text-xl font-semibold text-gray-900">
