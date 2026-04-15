@@ -1,5 +1,5 @@
 {
-  "work_id": "FE-R3-RESULTS-JOURNEY-V6",
+  "work_id": "FE-R4-RESULTS-JOURNEY-V6",
   "bus_version": "1.3.1",
   "status": "HARDENED",
   "hardened_utc": "2026-04-15T00:00:00Z",
@@ -7,111 +7,84 @@
   "changes": [
     {
       "id": "A",
-      "description": "Section 4 subsection A — Why this lead won, from runner_up_why_not_lead_line + primary_concern_mode",
-      "root_cause": "runner_up_why_not_lead_line?: string confirmed at frontend/app/types/analysis.ts:192. primary_concern_mode?: PrimaryConcernModeV1 confirmed at frontend/app/types/analysis.ts:186. Enum values: distinct_lead | near_tie_ambiguity | technical_tiebreak_lead confirmed at frontend/app/types/analysis.ts:160-163. OVERLAP RISK: InsightPanel in contextOnly mode already renders runner_up_why_not_lead_line at InsightPanel.tsx:124 (inside showRunnerUp block, lines 117-126) and modeAudienceNote from primary_concern_mode at InsightPanel.tsx:135-137. Cursor MUST strip the runner-up block and ambiguity note from InsightPanel contextOnly rendering since Section 4 will own these fields. Failing to do so will render the same text twice on screen.",
+      "description": "Restructure BiomarkerDetailZones into three-layer model: Layer 1 (what this result means now — already in card body), Layer 2 (why this marker matters — educationalExplainer), Layer 3 (how it connects — contributionContext + patternRelevanceLine)",
+      "root_cause": "BiomarkerDetailZones at BiomarkerDials.tsx:197-240 currently renders educationalExplainer, contributionContext, and relatedSystemGroupNames as flat unlabelled sections. The sprint requires a named, layered structure matching the three-layer model. Layer 1 (value, reference range, status, interpretation) is already in the card body at BiomarkerDials.tsx:302-348 and must remain there as the minimum layer — it must NOT be duplicated inside the expansion zone. Layer 2 must display educationalExplainer.body (confirmed at BiomarkerDials.tsx:209-213, authority: analysis.ts:52-58 BiomarkerEducationalExplainerV1.body). Layer 3 must display contributionContext.factual_statement (confirmed at BiomarkerDials.tsx:216-221, authority: analysis.ts:68-73 ContributionContextV1.factual_statement) plus patternRelevanceLine (new prop — see Change B). relatedSystemGroupNames badges (BiomarkerDials.tsx:224-237) are eligible to be retained as Layer 3 supporting detail but must not substitute for patternRelevanceLine. If Layer 2 content is absent, omit Layer 2 entirely — do not render an empty shell. If Layer 3 content is absent (no contributionContext and no patternRelevanceLine), omit Layer 3 entirely.",
       "authoritative_files": [
-        "frontend/app/types/analysis.ts:192",
-        "frontend/app/types/analysis.ts:186",
-        "frontend/app/types/analysis.ts:160-163",
-        "frontend/app/components/insights/InsightPanel.tsx:117-126",
-        "frontend/app/components/insights/InsightPanel.tsx:135-137"
+        "frontend/app/components/biomarkers/BiomarkerDials.tsx:197-240",
+        "frontend/app/components/biomarkers/BiomarkerDials.tsx:302-348",
+        "frontend/app/types/analysis.ts:52-58",
+        "frontend/app/types/analysis.ts:68-73"
       ],
-      "scope_constraint": "Must not read like an engine trace. If runner_up_why_not_lead_line is absent or empty, omit cleanly — do not fabricate rationale."
+      "scope_constraint": "Layer 1 must not be duplicated inside the expansion zone — it lives in the card body only. If both Layer 2 and Layer 3 are absent, the expansion zone must render nothing (or the expand button must be suppressed). Do not fabricate label text or educational prose where the real field is absent."
     },
     {
       "id": "B",
-      "description": "Section 4 subsection B — Competing finding, from runner_up_topic_line",
-      "root_cause": "runner_up_topic_line?: string confirmed at frontend/app/types/analysis.ts:191. Comment at line 190 confirms: 'BE-W2-RQ2 — ranked runner-up from top_findings[1]; empty when not in close-call modes'. OVERLAP RISK: InsightPanel in contextOnly mode already renders runner_up_topic_line at InsightPanel.tsx:123 (inside showRunnerUp block). The showRunnerUp gate is: Boolean(runnerTopic) && (mode === near_tie_ambiguity || technical_tiebreak_lead) — InsightPanel.tsx:84-85. Cursor MUST suppress the InsightPanel runner-up block when Section 4 is present.",
+      "description": "Add patternRelevanceLine?: string | null to BiomarkerDialEntry; compute per-marker in results/page.tsx inside the biomarkers.forEach loop using primaryDriver, contribution_context, and clinicianReport primary_concern; pass through biomarkerDialData to BiomarkerDials",
+      "root_cause": "BiomarkerDialEntry interface confirmed at BiomarkerDials.tsx:10-26. The interface currently lacks a patternRelevanceLine field. Adding it as optional (?: string | null) is an internal component prop change only — NOT a DTO change (BiomarkerDialEntry is defined in BiomarkerDials.tsx, not in analysis.ts). The results/page.tsx biomarkers.forEach loop at lines 382-407 already maps all BiomarkerDialEntry fields from the DTO. The derivation logic must be added inside this loop. Derivation inputs available in results/page.tsx: primaryDriver (line 147, type { id: string; name: string; biomarkers: string[] } | null, computed from clusters[]), clinicianReport?.sections?.page1?.primary_concern (line 138 clinicianReport, type ClinicianReportV1 | null | undefined — primary_concern confirmed at analysis.ts:183 as string). Derivation rule: if (contributionContext present) AND (biomarker.biomarker_name is in primaryDriver.biomarkers[]) → sentence connecting this marker to the lead pattern using primaryDriver.name. If (contributionContext present) AND (biomarker is NOT in primaryDriver.biomarkers but relatedSystemGroupNames.length > 0) → sentence referencing the system group. If derivation is weak or ambiguous → set patternRelevanceLine to null and omit; fall back to contributionContext.factual_statement only. Never fabricate a sentence when contributionContext is absent.",
       "authoritative_files": [
-        "frontend/app/types/analysis.ts:191",
-        "frontend/app/components/insights/InsightPanel.tsx:84-85",
-        "frontend/app/components/insights/InsightPanel.tsx:123"
+        "frontend/app/components/biomarkers/BiomarkerDials.tsx:10-26",
+        "frontend/app/(app)/results/page.tsx:147",
+        "frontend/app/(app)/results/page.tsx:138",
+        "frontend/app/(app)/results/page.tsx:382-407",
+        "frontend/app/types/analysis.ts:183",
+        "frontend/app/types/analysis.ts:105-120"
       ],
-      "scope_constraint": "Max 1 competing finding. If runner_up_topic_line is absent, omit this block. Do not fabricate alternatives."
+      "scope_constraint": "patternRelevanceLine must be null when: (a) contributionContext is absent, (b) no credible cluster link exists, or (c) primaryDriver is null. Never render raw cluster_id, biomarker_name identifiers, or signal IDs in the derivation sentence. Do not introduce a new backend DTO field — this is a purely frontend computed prop."
     },
     {
       "id": "C",
-      "description": "Section 4 subsection C — How confident we are, from confidence_and_missing_data + data_quality.confidence_caveat",
-      "root_cause": "confidence_and_missing_data: string confirmed at frontend/app/types/analysis.ts:184 (required, non-optional). data_quality.confidence_caveat: string confirmed at frontend/app/types/analysis.ts:176 (required on data_quality). CRITICAL OVERLAP — CONFIDENCE_AND_MISSING_DATA: InsightPanel in contextOnly mode renders confidence_and_missing_data ALWAYS (not gated by contextOnly flag) at InsightPanel.tsx:154-156 as a plain amber-bordered line. Section 4 must own this field. Cursor must remove the confidenceLine block from InsightPanel.tsx (lines 153-156) or gate it behind !contextOnly so it renders only once — in Section 4. CONDITIONAL OVERLAP — CONFIDENCE_CAVEAT: PipelineStatus renders confidence_caveat as line2 only when !checksPassed && caveat && !missingChapterLine (PipelineStatus.tsx:62-63), and in the expanded detail section (PipelineStatus.tsx:104-106). Section 4 subsection C also uses confidence_caveat. Cursor must ensure that when data_quality_passed === false, the PipelineStatus and Section 4 renderings of confidence_caveat are not identical adjacent blocks — either suppress confidence_caveat from Section 4 when the quality-failure caveat is already prominent in PipelineStatus, or use a shortened form.",
+      "description": "Fallback model enforcement: Case 1 (L1+L2+L3), Case 2 (L1+L3 when educationalExplainer absent), Case 3 (L1+L2 when contributionContext absent), Case 4 (L1 only — no expansion content, suppress or hide expand button)",
+      "root_cause": "The existing BiomarkerDetailZones already null-checks educationalExplainer.body (line 209) and contributionContext.factual_statement (line 216), so missing-content suppression is partially in place. Sprint requires these null guards be preserved and extended. Case 4 is the critical addition: when neither educationalExplainer nor contributionContext exists, the expansion zone has no content. The expand button at BiomarkerDials.tsx:330-347 must be suppressed (or the BiomarkerDetailZones must render nothing) to avoid an empty expansion shell. Concretely: in the card render loop (BiomarkerDials.tsx:284-356), compute hasExpandableContent = !!(d.educationalExplainer?.body || d.contributionContext?.factual_statement) and suppress the expand Button and BiomarkerDetailZones render when false.",
       "authoritative_files": [
-        "frontend/app/types/analysis.ts:184",
-        "frontend/app/types/analysis.ts:176",
-        "frontend/app/components/insights/InsightPanel.tsx:153-156",
-        "frontend/app/components/pipeline/PipelineStatus.tsx:62-63",
-        "frontend/app/components/pipeline/PipelineStatus.tsx:104-106"
+        "frontend/app/components/biomarkers/BiomarkerDials.tsx:209-221",
+        "frontend/app/components/biomarkers/BiomarkerDials.tsx:284-356",
+        "frontend/app/components/biomarkers/BiomarkerDials.tsx:330-347"
       ],
-      "scope_constraint": "Do not show multiple overlapping confidence blocks. If both fields exist, shape into a single non-duplicative presentation. If content is thin, keep the block thin."
-    },
-    {
-      "id": "D",
-      "description": "Section 4 subsection D — What limits certainty, from page1 confidence/missing-data text",
-      "root_cause": "confidence_and_missing_data: string at frontend/app/types/analysis.ts:184 and confidence_caveat: string at frontend/app/types/analysis.ts:176 are the only available deterministic missing-data/uncertainty fields on the current DTO. No separate 'limitations' field exists. Subsection D derives from the same source material as subsection C — Cursor must shape C and D together into a non-duplicative single block unless the content is rich enough to warrant two distinct paragraphs (e.g., confidence framing vs. specific missing-data gap).",
-      "authoritative_files": [
-        "frontend/app/types/analysis.ts:184",
-        "frontend/app/types/analysis.ts:176"
-      ],
-      "scope_constraint": "Maximum one short block. Do not create a 'limitations essay'. Focus on what is absent and why it matters — only if the field content supports that. Do not invent limitations text."
-    },
-    {
-      "id": "E",
-      "description": "Section 4 subsection E — Near-tie / co-primary mode, from primary_concern_mode + co_primary_signal_ids (presence check only)",
-      "root_cause": "primary_concern_mode?: PrimaryConcernModeV1 confirmed at frontend/app/types/analysis.ts:186. co_primary_signal_ids?: string[] confirmed at frontend/app/types/analysis.ts:187 — an array of signal ID strings, NOT prose. Prompt correctly states: co_primary_signal_ids may be used only as an internal presence check. Do not render raw signal IDs. OVERLAP RISK: InsightPanel in contextOnly mode renders co_primary_signal_ids as formatted display names at InsightPanel.tsx:128-133 (showCoPrimaryRow block) and the mode badge at InsightPanel.tsx:105. Section 4 subsection E must own the prose interpretation of the co-primary situation. Cursor must suppress the showCoPrimaryRow block from InsightPanel contextOnly rendering. The mode badge (InsightPanel.tsx:105) is header-level UI metadata — may be retained in InsightPanel as a badge classification but Section 4 must own the prose explanation.",
-      "authoritative_files": [
-        "frontend/app/types/analysis.ts:186",
-        "frontend/app/types/analysis.ts:187",
-        "frontend/app/components/insights/InsightPanel.tsx:92-93",
-        "frontend/app/components/insights/InsightPanel.tsx:105",
-        "frontend/app/components/insights/InsightPanel.tsx:128-133"
-      ],
-      "scope_constraint": "Do not render raw signal IDs or formatted signal names from co_primary_signal_ids. Use only as presence indicator. Do not over-dramatise the co-primary situation. Do not surface raw ranking policy text."
-    },
-    {
-      "id": "F",
-      "description": "ranking_policy_version — subtle metadata only, already rendered sr-only in InsightPanel",
-      "root_cause": "ranking_policy_version?: string confirmed at frontend/app/types/analysis.ts:188. InsightPanel already renders this as sr-only (screen-reader only, not visible) at InsightPanel.tsx:106-108. Content shaping rule 5 in prompt confirms: retain only as subtle metadata/detail — do not elevate into main explanatory text. No duplication risk since InsightPanel's rendering is invisible. Section 4 should NOT add a second rendering of this field. If referenced at all, it must remain non-prominent.",
-      "authoritative_files": [
-        "frontend/app/types/analysis.ts:188",
-        "frontend/app/components/insights/InsightPanel.tsx:106-108"
-      ],
-      "scope_constraint": "Do not add a second visible rendering. InsightPanel sr-only rendering at line 107 satisfies the metadata requirement. Section 4 need not reference this field."
+      "scope_constraint": "Do not render the expand button when no expandable content exists. Do not show an empty expansion panel. Layer 1 card display must always be present regardless of expandable content availability."
     }
   ],
   "stop_conditions_verified": [
-    "Do not use ExplainabilityReportV1 — not in frontend DTO, prohibited by prompt (line 59)",
-    "Do not use arbitration_result — not in frontend DTO, prohibited by prompt (line 60)",
-    "Do not add new backend DTO fields — explicitly out of scope (prompt line 58)",
-    "Do not implement Section 5+ work (prompt line 62)",
-    "Do not render raw signal IDs from co_primary_signal_ids — prompt Section E rule: presence check only (line 206)",
-    "Do not fabricate runner-up or uncertainty content where data is absent — Fallback Cases 2/3/4 (prompt lines 221-235)",
-    "Do not show empty section shell when no uncertainty assets exist — Case 4: omit cleanly (prompt line 234)",
-    "Do not expose raw arbitration traces or engine logs (prompt principle 1, lines 70-72)",
-    "Do not repeat wording from Section 1, Section 3, or trust strip (content shaping rule 1, prompt line 270)",
-    "Do not render ranking_policy_version as a user-facing headline (content shaping rule 5, prompt line 289)"
+    "Do not introduce new backend DTO fields — explicitly out of scope (prompt lines 46-52)",
+    "Do not touch backend/ssot/, backend/core/pipeline/, backend/core/analytics/ or backend scripts — not in scope",
+    "Do not use Gemini/LLM narrative generation — out of scope (prompt line 56)",
+    "Do not introduce a new backend-derived pattern relevance field — prompt §Pattern relevance derivation rule: frontend rendering-layer only",
+    "Do not render raw signal IDs, phenotype labels, internal IDs, raw KB package content — acceptance criteria line 8",
+    "Do not fabricate educational or pattern relevance prose when source data is absent — acceptance criteria line 6, prompt Key principle 3",
+    "Do not render empty expansion shells when no Layer 2 or Layer 3 content exists — fallback Case 4",
+    "Do not duplicate Layer 1 content (value/range/status/interpretation) inside the expansion zone — it belongs in the card body only",
+    "Do not rework the entire biomarker list UI beyond expansion experience — out of scope (prompt line 11)",
+    "Do not create new biomarker science generation or new system/pattern taxonomy contract — out of scope (prompt lines 53-54)"
   ],
   "regression_protection": [
-    "ResultsBodyOverview (Section 1) — must be unchanged; uses primary_concern independently",
-    "BalancedSystemsSummary (Section 2) — must be unchanged; uses balanced_systems_v1",
-    "PrimaryFindingAndWhy (Section 3) — must be unchanged; owns chains, evidence_for, evidence_against, missing_data",
-    "PipelineStatus (trust strip) — must be unchanged except for awareness of confidence_caveat overlap; uses data_quality.panel_completeness_*, data_quality_passed, lab_range_quality_by_primary_metric, confidence_caveat",
-    "InsightPanel (contextOnly) — WILL be adapted: runner-up block (lines 117-126), co-primary row (lines 128-133), ambiguity note (lines 135-137), and confidenceLine (lines 153-156) must be removed from contextOnly rendering; mode badge may be retained; not-contextOnly rendering must remain fully intact",
-    "ClusterSummary, BiomarkerDials — must be unchanged",
-    "Advanced analysis (ClinicianReportRenderer, InsightsPanel, tabs) — must remain functional and untouched",
+    "BiomarkerDials card body (Layer 1 display: value, unit, reference range, status badge, interpretation, dial) — must be unchanged at BiomarkerDials.tsx:302-348",
+    "BiomarkerDials expand/collapse toggle behaviour — must be preserved (toggleSelect at BiomarkerDials.tsx:258-260)",
+    "BiomarkerDials desktop sidebar vs mobile inline detail pattern — must be preserved (isDesktop logic at BiomarkerDials.tsx:244-256, conditional render at BiomarkerDials.tsx:351 and 359-365)",
+    "ResultsBodyOverview (Section 1) — must be unchanged; no interaction with biomarker expansion",
+    "BalancedSystemsSummary (Section 2) — must be unchanged",
+    "PrimaryFindingAndWhy (Section 3) — must be unchanged",
+    "WhyThisLeadWonSection (Section 4) — must be unchanged",
+    "PipelineStatus (trust strip) — must be unchanged",
+    "InsightPanel (contextOnly) — must be unchanged",
+    "ClusterSummary — must be unchanged",
+    "Advanced analysis tabs (ClinicianReportRenderer, InsightsPanel) — must remain functional and untouched",
     "Navigation, loading, error states in results/page.tsx — must be unchanged"
   ],
   "determinism_risks": [
-    "NONE — sprint is purely frontend presentation rendering. No analytics logic, ranking, compiler, evaluator, or backend pipeline touched.",
-    "UX INTEGRITY RISK (non-analytics): InsightPanel contextOnly currently renders confidence_and_missing_data, runner-up block, co-primary row, and ambiguity note. Section 4 owns all of these. Without adaptation of InsightPanel, identical content will appear twice on screen. Cursor must strip these four blocks from InsightPanel contextOnly mode."
+    "NONE (analytical) — sprint is purely frontend presentation. No analytics logic, ranking, compiler, evaluator, or backend pipeline touched.",
+    "RENDERING DETERMINISM — patternRelevanceLine derivation must be fully deterministic from data state: same data in must always produce same line or null out. No random or time-dependent logic permitted.",
+    "NULL SAFETY — derivation must handle null primaryDriver, null clinicianReport, null contribution_context, empty clusters[] without throwing. All path conditions must be explicitly null-checked before use.",
+    "EXPAND BUTTON VISIBILITY — hasExpandableContent guard must be logically correct: Layer 2 OR Layer 3 content presence must trigger it. Missing this guard causes empty expansion shells (UX regression)."
   ],
   "behavioural_surface_area": [
-    "frontend/app/(app)/results/page.tsx — new Section 4 insertion between Section 3 (PrimaryFindingAndWhy, line 517) and PipelineStatus (line 518), or between PipelineStatus and InsightPanel (line 529), or after InsightPanel — all satisfy prompt requirement of 'after Section 3, before evidence-heavy layers'",
-    "frontend/app/components/insights/InsightPanel.tsx — mandatory adaptation: strip runner-up block, co-primary row, ambiguity note, and confidence line from contextOnly rendering path",
-    "new Section 4 wrapper component if no existing component can cleanly serve the role without conceptual confusion"
+    "frontend/app/components/biomarkers/BiomarkerDials.tsx — BiomarkerDetailZones restructure (three-layer labels and layout), BiomarkerDialEntry interface (add patternRelevanceLine), expand button guard (hasExpandableContent)",
+    "frontend/app/(app)/results/page.tsx — patternRelevanceLine derivation logic inside biomarkers.forEach loop (lines 382-407), pass patternRelevanceLine into biomarkerDialData entries"
   ],
   "forbidden_fields_confirmed_absent": [
-    "ExplainabilityReportV1 — not in frontend DTO analysis.ts; prohibited by prompt",
-    "arbitration_result — not in analysis.ts or any frontend type; prohibited by prompt",
-    "co_primary_context — not in DTO (previous BLOCKER-1, now resolved: prompt correctly uses co_primary_signal_ids at analysis.ts:187)",
-    "ranking_policy_reference — not in DTO (previous BLOCKER-2, now resolved: prompt correctly uses ranking_policy_version at analysis.ts:188)"
+    "New backend DTO fields — none introduced; patternRelevanceLine is a frontend-only computed prop in BiomarkerDialEntry",
+    "phenotype — not in scope, not in DTO, not used",
+    "arbitration_result — not in scope",
+    "ExplainabilityReportV1 — not in scope",
+    "raw signal names — excluded by stop condition; pattern relevance sentence must use human-readable names only"
   ],
   "forbidden_files_confirmed_absent": [
     "backend/ssot/ — not in scope",
