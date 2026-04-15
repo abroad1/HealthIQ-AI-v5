@@ -26,6 +26,7 @@ import ClusterSummary from '@/components/clusters/ClusterSummary';
 import ClinicianReportRenderer from '@/components/results/ClinicianReportRenderer';
 import { RootCauseEvidenceSummary } from '@/components/results/RootCauseEvidenceSummary';
 import { BalancedSystemsSummary } from '@/components/results/BalancedSystemsSummary';
+import { ResultsBodyOverview } from '@/components/results/ResultsBodyOverview';
 import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAnalysisResult } from '@/queries/analysisResult';
@@ -444,8 +445,8 @@ export default function ResultsPage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-1">Your results</h1>
               <p className="text-gray-600 max-w-2xl">
-                Interpretation first, then system groups, then marker-level evidence. Deeper clinical views stay in
-                Advanced analysis.
+                Start with a body-level overview, then what looks stable, then deeper evidence and markers. Full clinical
+                detail stays in Advanced analysis.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -493,11 +494,18 @@ export default function ResultsPage() {
         </div>
 
         <div className="space-y-10">
-          <section aria-labelledby="hero-interpretation">
-            <h2 id="hero-interpretation" className="sr-only">
-              Hero interpretation
+          <section aria-labelledby="body-overview-section-label">
+            <h2 id="body-overview-section-label" className="sr-only">
+              Body overview
             </h2>
-            <InsightPanel report={clinicianReport} primaryDriverSystemGroupName={primaryDriver?.name ?? null} />
+            <ResultsBodyOverview clinicianReport={clinicianReport} clusters={clusters} />
+          </section>
+
+          <section aria-labelledby="whats-working-section-label">
+            <h2 id="whats-working-section-label" className="sr-only">
+              What is working well
+            </h2>
+            <BalancedSystemsSummary balanced={balancedSystems} maxItems={4} />
           </section>
 
           <section aria-labelledby="trust-layer">
@@ -511,18 +519,18 @@ export default function ResultsPage() {
             />
           </section>
 
+          <section aria-labelledby="hero-interpretation">
+            <h2 id="hero-interpretation" className="sr-only">
+              Clinical interpretation detail
+            </h2>
+            <InsightPanel report={clinicianReport} primaryDriverSystemGroupName={primaryDriver?.name ?? null} />
+          </section>
+
           <section aria-labelledby="evidence-summary-heading">
             <h2 id="evidence-summary-heading" className="sr-only">
               Lead hypothesis evidence
             </h2>
             <RootCauseEvidenceSummary report={clinicianReport} />
-          </section>
-
-          <section aria-labelledby="balanced-systems-heading">
-            <h2 id="balanced-systems-heading" className="sr-only">
-              Stable system patterns
-            </h2>
-            <BalancedSystemsSummary balanced={balancedSystems} />
           </section>
 
           <section className="space-y-3" aria-labelledby="cluster-heading">

@@ -57,7 +57,7 @@ export function InsightPanel({
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-xl">
             <Sparkles className="h-6 w-6 text-blue-600" />
-            Interpretation
+            Clinical interpretation
           </CardTitle>
           <CardDescription>
             A structured clinical summary is not available for this result yet. Use System Groups and markers below,
@@ -94,7 +94,7 @@ export function InsightPanel({
         <div className="flex flex-wrap items-center gap-2 mb-2">
           <CardTitle className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-gray-900 mr-auto">
             <Sparkles className="h-7 w-7 text-blue-600 flex-shrink-0" />
-            Hero interpretation
+            Clinical interpretation
           </CardTitle>
           <Badge variant={modeVariant}>{modeText}</Badge>
           {page1.ranking_policy_version ? (
