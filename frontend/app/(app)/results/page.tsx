@@ -28,6 +28,7 @@ import { BalancedSystemsSummary } from '@/components/results/BalancedSystemsSumm
 import { ResultsBodyOverview } from '@/components/results/ResultsBodyOverview';
 import { PrimaryFindingAndWhy } from '@/components/results/PrimaryFindingAndWhy';
 import { WhyThisLeadWonSection } from '@/components/results/WhyThisLeadWonSection';
+import { SystemUnderstandingSection } from '@/components/results/SystemUnderstandingSection';
 import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAnalysisResult } from '@/queries/analysisResult';
@@ -531,6 +532,13 @@ export default function ResultsPage() {
               Why this lead won and uncertainty
             </h2>
             <WhyThisLeadWonSection report={clinicianReport} />
+          </section>
+
+          <section aria-labelledby="system-understanding-section-label">
+            <h2 id="system-understanding-section-label" className="sr-only">
+              How to understand your results
+            </h2>
+            <SystemUnderstandingSection balanced={balancedSystems} clusters={clusters} primaryDriver={primaryDriver} />
           </section>
 
           <section aria-labelledby="trust-layer">
