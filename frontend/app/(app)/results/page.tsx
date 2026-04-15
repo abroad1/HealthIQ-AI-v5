@@ -24,9 +24,9 @@ import { InsightPanel } from '@/components/insights/InsightPanel';
 import BiomarkerDials, { type BiomarkerDialEntry } from '@/components/biomarkers/BiomarkerDials';
 import ClusterSummary from '@/components/clusters/ClusterSummary';
 import ClinicianReportRenderer from '@/components/results/ClinicianReportRenderer';
-import { RootCauseEvidenceSummary } from '@/components/results/RootCauseEvidenceSummary';
 import { BalancedSystemsSummary } from '@/components/results/BalancedSystemsSummary';
 import { ResultsBodyOverview } from '@/components/results/ResultsBodyOverview';
+import { PrimaryFindingAndWhy } from '@/components/results/PrimaryFindingAndWhy';
 import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAnalysisResult } from '@/queries/analysisResult';
@@ -508,6 +508,13 @@ export default function ResultsPage() {
             <BalancedSystemsSummary balanced={balancedSystems} maxItems={4} />
           </section>
 
+          <section aria-labelledby="primary-finding-section-label">
+            <h2 id="primary-finding-section-label" className="sr-only">
+              Primary finding and why
+            </h2>
+            <PrimaryFindingAndWhy report={clinicianReport} />
+          </section>
+
           <section aria-labelledby="trust-layer">
             <h2 id="trust-layer" className="sr-only">
               Trust strip
@@ -523,14 +530,11 @@ export default function ResultsPage() {
             <h2 id="hero-interpretation" className="sr-only">
               Clinical interpretation detail
             </h2>
-            <InsightPanel report={clinicianReport} primaryDriverSystemGroupName={primaryDriver?.name ?? null} />
-          </section>
-
-          <section aria-labelledby="evidence-summary-heading">
-            <h2 id="evidence-summary-heading" className="sr-only">
-              Lead hypothesis evidence
-            </h2>
-            <RootCauseEvidenceSummary report={clinicianReport} />
+            <InsightPanel
+              report={clinicianReport}
+              primaryDriverSystemGroupName={primaryDriver?.name ?? null}
+              contextOnly
+            />
           </section>
 
           <section className="space-y-3" aria-labelledby="cluster-heading">
@@ -693,8 +697,8 @@ export default function ResultsPage() {
                         <Alert>
                           <AlertDescription>
                             {insights.length} short narrative summar{insights.length === 1 ? 'y' : 'ies'} available —
-                            open the &quot;Narrative&quot; tab for the full list. These summaries complement the hero
-                            interpretation; they are not the primary structured report.
+                            open the &quot;Narrative&quot; tab for the full list. These summaries complement the
+                            clinical interpretation; they are not the primary structured report.
                           </AlertDescription>
                         </Alert>
                       ) : null}
