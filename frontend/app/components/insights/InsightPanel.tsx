@@ -10,6 +10,11 @@ export interface InsightPanelProps {
   report: ClinicianReportV1 | null | undefined;
   /** Retail label for the Primary Driver System Group — visual thread only */
   primaryDriverSystemGroupName?: string | null;
+  /**
+   * When true, hides the primary headline, first key-finding paragraph, and next-step cue — FE-R2 Section 3 owns that narrative.
+   * Ranking context, runner-up, co-primaries, ambiguity notes, and confidence line remain.
+   */
+  contextOnly?: boolean;
   className?: string;
 }
 
@@ -47,6 +52,7 @@ function modeAudienceNote(mode: PrimaryConcernModeV1 | undefined): string | null
 export function InsightPanel({
   report,
   primaryDriverSystemGroupName,
+  contextOnly = false,
   className = '',
 }: InsightPanelProps) {
   const page1 = report?.sections?.page1;
@@ -130,14 +136,18 @@ export function InsightPanel({
           <p className="text-sm text-gray-600 bg-slate-50 border border-slate-100 rounded-md px-3 py-2">{ambiguityNote}</p>
         ) : null}
 
-        {/* 1 headline line */}
-        <h2 className="text-xl font-semibold text-gray-900 leading-snug line-clamp-2 md:line-clamp-1" title={headline}>
-          {headline || '—'}
-        </h2>
+        {!contextOnly ? (
+          <>
+            {/* 1 headline line */}
+            <h2 className="text-xl font-semibold text-gray-900 leading-snug line-clamp-2 md:line-clamp-1" title={headline}>
+              {headline || '—'}
+            </h2>
 
-        {/* 1 interpretation paragraph */}
-        {interpretationParagraph ? (
-          <p className="text-base text-gray-800 leading-relaxed">{interpretationParagraph}</p>
+            {/* 1 interpretation paragraph */}
+            {interpretationParagraph ? (
+              <p className="text-base text-gray-800 leading-relaxed">{interpretationParagraph}</p>
+            ) : null}
+          </>
         ) : null}
 
         {/* 1 confidence qualifier line */}
@@ -145,8 +155,7 @@ export function InsightPanel({
           <p className="text-sm text-amber-900/90 leading-relaxed border-l-2 border-amber-200 pl-3">{confidenceLine}</p>
         ) : null}
 
-        {/* 1 next-step cue max */}
-        {nextStepCue ? (
+        {!contextOnly && nextStepCue ? (
           <p className="text-sm text-slate-800 leading-relaxed rounded-lg bg-slate-50 border border-slate-100 px-4 py-3">
             <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 block mb-1">Next step</span>
             {nextStepCue}
