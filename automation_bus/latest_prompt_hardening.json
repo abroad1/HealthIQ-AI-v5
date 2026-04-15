@@ -1,5 +1,5 @@
 {
-  "work_id": "FE-R5-RESULTS-JOURNEY-V6",
+  "work_id": "FE-R6-RESULTS-JOURNEY-V6",
   "bus_version": "1.3.1",
   "status": "HARDENED",
   "hardened_utc": "2026-04-15T00:00:00Z",
@@ -7,74 +7,81 @@
   "changes": [
     {
       "id": "A",
-      "description": "Create new SystemUnderstandingSection component (or equivalent) implementing Section 5 — three short blocks only: Block A (why results are grouped by system), Block B (what stable vs strain means), Block C (how markers connect to the bigger picture). Each block must anchor to real available data where present.",
-      "root_cause": "No Section 5 component exists (Glob against frontend/app/components/results/SystemUnderstanding*.tsx returned no results). The results/page.tsx currently renders sections 1–4 followed by trust/advanced sections with no system-comprehension bridging layer. The new component receives: balanced_systems_v1 (page.tsx:140, analysis.ts:235-239 — confirmed shape: intro_line, items[]{system_topic, evidence_line, capacity_note?}, context_line), clusters[] (page.tsx:138, analysis.ts:106-120 — confirmed fields: id?, cluster_id?, name?, biomarkers?[], severity?, score?, confidence?), primaryDriver (page.tsx:148 — type {id: string; name: string; biomarkers: string[]} | null, computed from clusters[]). Block A anchors to cluster names from clusters[].name (analysis.ts:109, nullable — fallback 'Health pattern' confirmed at page.tsx:424) — use 1-2 examples max, prioritising primaryDriver cluster. Block B anchors to balanced_systems_v1.items[].system_topic (analysis.ts:237) if present; otherwise falls back to general wording. Block C anchors to the existence of primaryDriver.name (page.tsx:148). All three fallback cases (1, 2, 3) must degrade gracefully: Case 3 renders all 3 blocks with general wording when clusters[] is empty, balanced_systems_v1 is null, and primaryDriver is null.",
+      "description": "Create a new LayerCInsightSection component (or equivalent) implementing Section 7 — Key body-level insights. Component reads layer_c_features from currentAnalysis.meta.insight_graph.layer_c_features (the only valid access path), applies a confidence-based robustness gate, and renders a maximum of 3 insight cards. If no feature passes the gate, the component renders nothing (clean omission, no shell).",
+      "root_cause": "layer_c_features has ZERO frontend matches — it is not a typed field in AnalysisResult (analysis.ts:219-240 confirmed: no layer_c_features field). The data is accessible ONLY via the untyped meta: Record<string, any> path. The route to the data is: orchestrator.py:2060 sets meta['insight_graph'] = insight_graph.model_dump() — confirmed. InsightGraphV1.layer_c_features is Optional[LayerCFeatureBundleV1] = Field(default=None) — confirmed at insight_graph_v1.py:266. Therefore the frontend access path is: currentAnalysis?.meta?.insight_graph?.layer_c_features (untyped). This sprint MUST add TypeScript interface definitions for the 5 feature shapes — these are frontend-only type narrowings of meta content, NOT new DTO fields. The 5 feature schemas from insight_graph_v1.py:56-128 are: MetabolicAgeFeatureV1 (metabolic_age: float, age_delta_years: float, homa_ir: float, severity: str, confidence: float, risk_flags: string[]), HeartFeatureV1 (heart_resilience_score: float, severity: str, confidence: float, risk_factors: string[], ldl_hdl_ratio: float|null, tc_hdl_ratio: float|null, tg_hdl_ratio: float|null), InflammationFeatureV1 (inflammation_burden_score: float, severity: str, confidence: float, risk_factors: string[], nlr: float|null), FatigueFeatureV1 (severity: str, confidence: float, root_causes: string[], iron_status: str, thyroid_status: str, vitamin_status: str, inflammation_status: str, cortisol_status: str), DetoxFeatureV1 (detox_filtration_score: float, liver_score: float, kidney_score: float, severity: str, confidence: float, risk_factors: string[], egfr: float|null, egfr_source: str). CRITICAL — all 5 sub-features have default_factory=<FeatureClass>() in LayerCFeatureBundleV1 (insight_graph_v1.py:124-128), meaning ALL sub-features are ALWAYS present in the serialized bundle with zero/default values even when the pipeline did not compute them. confidence: float = 0.0 is the default for every feature. Therefore the ONLY valid robustness gate is: confidence > 0 (feature was meaningfully computed). severity='normal' and score=0.0 are NOT valid robustness signals — they are defaults. The full bundle itself can be null (Optional on InsightGraphV1:266) — guard against null bundle before accessing any sub-feature.",
       "authoritative_files": [
-        "frontend/app/(app)/results/page.tsx:137-140",
-        "frontend/app/(app)/results/page.tsx:148",
-        "frontend/app/(app)/results/page.tsx:529-534",
-        "frontend/app/types/analysis.ts:106-120",
-        "frontend/app/types/analysis.ts:235-239"
+        "backend/core/contracts/insight_graph_v1.py:56-128",
+        "backend/core/contracts/insight_graph_v1.py:266",
+        "backend/core/pipeline/orchestrator.py:2060",
+        "frontend/app/types/analysis.ts:219-240",
+        "frontend/app/types/analysis.ts:232"
       ],
-      "scope_constraint": "Component must contain exactly 3 blocks. Must not introduce a new backend DTO field. Must not reference phenotype labels, raw signal IDs, KB package content, or Gemini-generated text. Must null-check all three data sources before referencing them in rendered output. If all three data sources are absent/empty, all 3 blocks must still render using general (non-data-anchored) fallback wording per Case 3. Do not duplicate block labels or rendering logic from BalancedSystemsSummary or PrimaryFindingAndWhy."
+      "feature_to_field_mapping": {
+        "metabolic age": "layer_c_features.metabolic_age — key fields: metabolic_age (float), age_delta_years (float), severity (str), confidence (float)",
+        "heart resilience score": "layer_c_features.heart_insight — key fields: heart_resilience_score (float), severity (str), confidence (float), risk_factors (string[])",
+        "inflammation burden": "layer_c_features.inflammation — key fields: inflammation_burden_score (float), severity (str), confidence (float), risk_factors (string[])",
+        "fatigue root causes": "layer_c_features.fatigue_root_cause — key fields: root_causes (string[]), severity (str), confidence (float)",
+        "detox capacity": "layer_c_features.detox_filtration — key fields: detox_filtration_score (float), liver_score (float), kidney_score (float), severity (str), confidence (float)"
+      },
+      "robustness_gate": "confidence > 0 for each sub-feature. All other fields (severity, score values) have zero/default values when uncomputed — they are NOT valid gates. The bundle itself may be null — guard first.",
+      "deterministic_card_selection": "When more than 3 features pass the gate, select the top 3 by confidence (descending). Tie-break order (stable, applied only when confidences are equal): metabolic_age, heart_insight, inflammation, fatigue_root_cause, detox_filtration.",
+      "scope_constraint": "Frontend-only. TypeScript interface definitions for Layer C feature shapes are required (they are not DTO additions — they type-narrow existing meta content). Do not add layer_c_features as a new top-level field to AnalysisResult in analysis.ts — access via meta only. Do not invent feature labels from internal field names. Do not render raw field names or internal status strings. Do not use insights[] prose as authority. Do not call any new backend endpoint."
     },
     {
       "id": "B",
-      "description": "Insert the new Section 5 component into results/page.tsx after Section 4 (WhyThisLeadWonSection) and before the biomarker-heavy sections (ClusterSummary and BiomarkerDials). Pass props: balanced={balancedSystems}, clusters={clusters}, primaryDriver={primaryDriver}.",
-      "root_cause": "results/page.tsx currently has no Section 5 render. balancedSystems is already bound at page.tsx:140 (currentAnalysis?.balanced_systems_v1). clusters is already bound at page.tsx:138 (currentAnalysis?.clusters ?? []). primaryDriver is already computed at page.tsx:148 via useMemo from pickPrimaryDriverCluster(clusters). No new state, no new data fetching, no new hooks required — all props already available. Placement must be after WhyThisLeadWonSection JSX block (page.tsx:529-534) and before ClusterSummary (page.tsx:558-566) which is the first biomarker-heavy section. PipelineStatus (page.tsx:536-545) and InsightPanel (page.tsx:547-555) are trust/context strips that may precede or follow Section 5 at Cursor's discretion, but Section 5 must not appear after ClusterSummary.",
+      "description": "Insert Section 7 (LayerCInsightSection) into results/page.tsx after the existing Section 5 (SystemUnderstandingSection, line 537) and before the biomarker-dense sections (ClusterSummary line 566, BiomarkerDials line 576). Exact position within that window is at Cursor's discretion based on the V6 journey flow. Pass the layer C data as a prop extracted from currentAnalysis?.meta.",
+      "root_cause": "results/page.tsx (as of R5 commit 74f67a1) has no Section 7 element. balancedSystems, clusters, primaryDriver are already bound. meta is available as currentAnalysis?.meta (typed Record<string, any> or undefined). The new section must extract layer_c_features from meta at the prop-passing site: const layerCFeatures = (currentAnalysis?.meta?.insight_graph as any)?.layer_c_features ?? null. No new state, hooks, or data fetching required. All existing sections (1-5, PipelineStatus, InsightPanel, ClusterSummary, BiomarkerDials, Advanced analysis) must remain structurally unchanged.",
       "authoritative_files": [
-        "frontend/app/(app)/results/page.tsx:529-534",
-        "frontend/app/(app)/results/page.tsx:536-545",
-        "frontend/app/(app)/results/page.tsx:558-566",
-        "frontend/app/(app)/results/page.tsx:140",
-        "frontend/app/(app)/results/page.tsx:138",
-        "frontend/app/(app)/results/page.tsx:148"
+        "frontend/app/(app)/results/page.tsx:537-542",
+        "frontend/app/(app)/results/page.tsx:566-574",
+        "frontend/app/(app)/results/page.tsx:141"
       ],
-      "scope_constraint": "Do not modify any existing section rendering, props, or logic. Do not add new state variables or data-fetching hooks to page.tsx. Only add: (1) the new component import, (2) a single new JSX section element in the correct position. All existing sections (1–4, trust strip, InsightPanel, ClusterSummary, BiomarkerDials, Advanced analysis) must be structurally identical after this change."
+      "scope_constraint": "Only add: (1) the new component import, (2) a layerCFeatures extraction variable, (3) a single new JSX section element. Do not modify any existing section, hook, or state. Section must not render any shell element when layerCFeatures is null or no feature passes the confidence gate."
     }
   ],
   "stop_conditions_verified": [
-    "Do not introduce new backend DTO fields — explicitly out of scope (prompt lines 46-52); all data available at page.tsx:137-140,148",
-    "Do not touch backend/ssot/, backend/core/pipeline/, backend/core/analytics/ or backend scripts — not in scope",
-    "Do not use Gemini/LLM narrative generation — explicitly out of scope (prompt line 56)",
-    "Do not reference phenotype labels, internal signal IDs, raw biomarker_name identifiers, or Knowledge Bus raw content — acceptance criteria item 6",
-    "Do not fabricate examples or render broken placeholders when data is absent — fallback model (prompt lines 185-202) and acceptance criteria item 3",
-    "Do not rewrite or modify Sections 1–4 components — out of scope; acceptance criteria regression test",
-    "Do not create a standalone learn page or modal — out of scope (prompt line 54)",
-    "Do not create new shared libraries — component/architecture rules (prompt line 210)",
-    "Do not duplicate system or biomarker rendering logic — component/architecture rules (prompt line 212)",
-    "Do not create long-form educational content — Key principle 1 + acceptance criteria item 5",
-    "Section must contain exactly 3 blocks — required structure (prompt line 122)"
+    "Do not add layer_c_features as a new top-level field to AnalysisResult in analysis.ts — access via meta.insight_graph.layer_c_features only (no DTO field addition)",
+    "Do not introduce new backend logic or new backend endpoint — confirmed: data already flows through meta from orchestrator.py:2060",
+    "Do not use insights[] narrative prose as the authority source — out of scope (prompt lines 53, 96-97)",
+    "Do not use Gemini-generated narrative — out of scope (prompt line 52)",
+    "Do not render a card from weak/null/partial data — robustness gate: confidence > 0 required per feature",
+    "Do not render a section shell when no feature qualifies — Case 4: section omits entirely",
+    "Do not render more than 3 cards — prompt render policy Case 1",
+    "Do not expose internal field names, raw class names, snake_case identifiers as user-facing labels",
+    "Do not touch backend/ssot/, backend/core/pipeline/, backend/core/analytics/ or backend scripts",
+    "Do not modify any of Sections 1-5, PipelineStatus, InsightPanel, ClusterSummary, BiomarkerDials, Advanced analysis",
+    "Do not introduce new shared framework or duplicate card logic — component/architecture rules (prompt line 231)"
   ],
   "regression_protection": [
-    "ResultsBodyOverview (Section 1) — must be unchanged at page.tsx:508-513",
-    "BalancedSystemsSummary (Section 2) — must be unchanged at page.tsx:515-520",
-    "PrimaryFindingAndWhy (Section 3) — must be unchanged at page.tsx:522-527",
-    "WhyThisLeadWonSection (Section 4) — must be unchanged at page.tsx:529-534",
-    "PipelineStatus (trust strip) — must be unchanged at page.tsx:536-545",
-    "InsightPanel (contextOnly) — must be unchanged at page.tsx:547-555",
-    "ClusterSummary — must be unchanged at page.tsx:558-566",
-    "BiomarkerDials (including FE-R4 expansion zones) — must be unchanged at page.tsx:568-573",
+    "ResultsBodyOverview (Section 1) — must be unchanged at page.tsx:509-514",
+    "BalancedSystemsSummary (Section 2) — must be unchanged at page.tsx:516-521",
+    "PrimaryFindingAndWhy (Section 3) — must be unchanged at page.tsx:523-528",
+    "WhyThisLeadWonSection (Section 4) — must be unchanged at page.tsx:530-535",
+    "SystemUnderstandingSection (Section 5, FE-R5) — must be unchanged at page.tsx:537-542",
+    "PipelineStatus (trust strip) — must be unchanged at page.tsx:544-553",
+    "InsightPanel (contextOnly) — must be unchanged at page.tsx:555-564",
+    "ClusterSummary — must be unchanged at page.tsx:566-574",
+    "BiomarkerDials (FE-R4 expansion zones) — must be unchanged at page.tsx:576-581",
     "Advanced analysis tabs (ClinicianReportRenderer, InsightsPanel) — must remain functional and untouched",
     "Navigation, loading, error states in results/page.tsx — must be unchanged"
   ],
   "determinism_risks": [
-    "NONE (analytical) — sprint is purely frontend presentation. No analytics logic, ranking, compiler, evaluator, or backend pipeline touched.",
-    "NULL SAFETY — all three props (balanced, clusters, primaryDriver) can be null/empty. All three blocks must render under Case 3 without throwing or rendering undefined values. Confirmed: balanced_systems_v1 is optional/null (analysis.ts:235), clusters defaults to [] (page.tsx:138), primaryDriver returns null when clusters empty (page.tsx:54).",
-    "CLUSTER NAME SELECTION — Block A must select 1-2 system names deterministically (e.g., primaryDriver first, then first cluster in array). No random selection permitted.",
-    "BALANCED SYSTEMS REFERENCE — Block B must null-check balanced?.items before indexing. If items empty or null, Block B must render in general wording mode without referencing a system topic.",
-    "NO TIME/RANDOM DEPENDENCY — component must be fully deterministic on input props. No Math.random(), no Date.now(), no non-deterministic selection logic."
+    "NULL BUNDLE — layer_c_features is Optional on InsightGraphV1 (insight_graph_v1.py:266); can be null in the serialized meta. Component must guard null bundle before accessing any sub-feature.",
+    "DEFAULT-VALUE MASQUERADE — all 5 sub-features are always present in the bundle with confidence=0.0 when not computed (default_factory pattern at insight_graph_v1.py:124-128). confidence === 0.0 MUST be treated as 'not computed'. Any component logic that renders a card for confidence=0.0 features is a gating defect.",
+    "CARD SELECTION DETERMINISM — when >3 features qualify, selection must be stable across identical data: sort descending by confidence, tie-break by declared order (metabolic_age, heart_insight, inflammation, fatigue_root_cause, detox_filtration). No random or positional selection.",
+    "UNTYPED META ACCESS — meta is Record<string,any>; accessing nested path .insight_graph.layer_c_features requires safe optional chaining at every step. A thrown access error would break the entire results page.",
+    "SEVERITY DEFAULT — severity='normal' is the default for ALL features regardless of computation state. It is NOT a robustness indicator and must not be used as a gate or primary card signal when confidence=0."
   ],
   "behavioural_surface_area": [
-    "frontend/app/components/results/SystemUnderstandingSection.tsx (new file) — three-block layout, data anchoring logic, fallback case handling per Cases 1/2/3",
-    "frontend/app/(app)/results/page.tsx — import of new component, new JSX section element inserted after WhyThisLeadWonSection (line 529) and before ClusterSummary (line 558), props: balanced={balancedSystems}, clusters={clusters}, primaryDriver={primaryDriver}"
+    "frontend/app/components/results/LayerCInsightSection.tsx (new file) — feature gating logic, card rendering, deterministic selection, clean-omission when no qualifying feature",
+    "frontend/app/(app)/results/page.tsx — import of new component, layerCFeatures extraction from currentAnalysis?.meta?.insight_graph, new JSX section element inserted between Section 5 (line 542) and ClusterSummary (line 566)"
   ],
   "forbidden_fields_confirmed_absent": [
-    "New backend DTO fields — none introduced; all props derive from existing currentAnalysis fields already mapped in page.tsx",
-    "phenotype — not in scope, not in new component",
-    "Knowledge Bus raw content — not in scope",
-    "Gemini-generated education — not in scope",
-    "raw signal names / internal IDs — excluded by stop condition; only human-readable cluster.name and system_topic values used"
+    "No new top-level field added to AnalysisResult — layer_c_features accessed via meta only",
+    "insights[] prose — not used as authority",
+    "Gemini narrative — not used",
+    "phenotype labels — not referenced",
+    "raw internal field names rendered as user labels — stop condition enforced"
   ],
   "forbidden_files_confirmed_absent": [
     "backend/ssot/ — not in scope",
