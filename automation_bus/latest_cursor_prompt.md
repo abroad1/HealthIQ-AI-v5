@@ -1,22 +1,29 @@
 ---
-work_id: FE-R5-RESULTS-JOURNEY-V6
-branch: feature/results-journey-v6-r5-system-understanding-layer
+work_id: FE-R6-RESULTS-JOURNEY-V6
+branch: feature/results-journey-v6-r6-layer-c-insight-features
 risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
 change_type: BEHAVIOUR
 ---
 
-# Sprint: R-5 — System Understanding Layer (“How to read your body”)
+# Sprint: R-6 — Layer C Insight Features
 
 ## Objective
 
-Introduce a **tight, embedded explanation layer** that helps the user understand:
+Implement Section 7 of the V6 Results Journey:
 
-1. why their results are grouped into systems
-2. how to interpret “stable vs strain”
-3. how biomarkers connect to the broader picture
+**Key body-level insights**
 
-This sprint must create an **“Ah-ha” moment** without slowing the user down or introducing a long educational block.
+This sprint must surface only the most robust, explainable, deterministic Layer C features so that the user sees a higher-order “body insight” layer after the core story is already understood.
+
+The user should be able to understand:
+
+1. what broader body-level insight has been identified
+2. why it matters
+3. how it relates to their wider interpretation
+4. that these insights are selective and grounded, not gimmicky
+
+This sprint must not depend on Gemini.
 
 ---
 
@@ -24,57 +31,53 @@ This sprint must create an **“Ah-ha” moment** without slowing the user down 
 
 ### In scope
 
-- Section 5: System Understanding Layer
-- Short, embedded explanation of:
-  - system grouping logic
-  - interpretation model (stable vs strain)
-  - biomarker → system → finding relationship
-- Light grounding in the user’s actual data
-- Rendering using only **currently available frontend DTO/store data**
+- Section 7: Key body-level insights
+- Surfacing deterministic Layer C features already available on the frontend results path
+- A strict render gate so only robust, populated features appear
+- A small number of insight cards only
+- Clean omission when no feature is sufficiently robust
 
 ### Primary allowed assets
 
-Use only data already available on the frontend results path:
+Use only data already available on the frontend results path, specifically:
 
-- `balanced_systems_v1`
-- `clusters[]`
-- `biomarkers[]`
-- Section 3 (Primary Finding) already-rendered context
-- Section 4 (Why this lead won) already-rendered context
-- existing system/cluster labels already present in the UI
+- `layer_c_features`
+- any already-exposed frontend DTO/store fields containing deterministic Layer C feature outputs
+- existing results context already visible on the page, only where needed for framing
 
 ### Out of scope
 
 - New backend logic
 - New DTO fields
-- Pattern / phenotype naming layer (R-7 / R-8)
-- Long-form educational content
-- Standalone “learn” pages or modals
-- Gemini / LLM generated education
-- Rewriting earlier sections
+- Gemini / LLM narrative generation
+- Use of `insights[]` narrative prose as authority
+- New clinical scoring logic
+- Section 5 pattern layer work
+- Section 8 action layer changes
+- Any feature that is not already deterministically computed and surfaced
 
 ---
 
 ## Key principles (must be followed)
 
-1. **No long education block**
-   - This must not feel like a tutorial
-   - Maximum: short, scannable, embedded content
+1. **Selective, not exhaustive**
+   - Show only features that are robust enough to deserve space
+   - Do not render thin or placeholder cards
 
-2. **Explain using the user’s data**
-   - All explanation must be anchored to what the user has already seen
-   - No abstract biology lecture
+2. **Deterministic authority only**
+   - Use surfaced Layer C features
+   - Do not depend on Gemini summary prose
 
-3. **Reinforce, not interrupt**
-   - This section should make earlier sections clearer
-   - Not introduce new complexity
+3. **No gimmick layer**
+   - This section must feel credible and grounded
+   - Not futuristic for its own sake
 
-4. **One concept per block**
-   - Avoid dense paragraphs
-   - Use short, clearly separated ideas
+4. **Optional by panel**
+   - If no robust features exist, the section must omit cleanly
 
-5. **No generic filler**
-   - Every sentence must help the user interpret their results
+5. **Concise interpretation**
+   - Each card must be short, high-signal, and readable
+   - No essay-style feature descriptions
 
 ---
 
@@ -84,145 +87,160 @@ This sprint must be built only from data already available on the frontend resul
 
 ### Primary section assets
 
-- `balanced_systems_v1`
-- `clusters[]`
-- `biomarkers[]`
-- already-rendered lead finding context (Section 3)
-- already-rendered system labels
+- `layer_c_features`
+- existing frontend DTO/store fields already carrying deterministic feature values
 
 ### Explicit non-authority
 
 Do not use or depend on:
 
-- new “system explanation” backend fields
-- Knowledge Bus raw content
-- unsurfaced phenotype definitions
-- Gemini-generated educational content
-- any new DTO additions
+- `insights[]` prose as the authoritative source
+- Gemini-generated narrative
+- unsurfaced InsightGraph internals
+- new DTO additions
+- new feature computation
+
+If a feature is not already deterministically available on the frontend path, it is out of scope for this sprint.
 
 ---
 
 ## Target UX structure
 
-### Section 5 — How to understand your results
+### Section 7 — Key body-level insights
 
 **Purpose:**
-Help the user understand how to read the page they are currently viewing.
+Show a small set of robust higher-order body insights once the user already understands the core interpretation.
 
 **This section must answer:**
-- why results are grouped
-- what systems represent
-- how markers connect to findings
+- what broader body-level feature was detected
+- what that suggests in plain language
+- why it is worth noticing
 
 ---
 
-## Required structure
+## Required section structure
 
-This section must be composed of **3 short blocks only**.
+### A. Section render gate
 
----
+This section must render only if at least one feature passes the robustness gate.
 
-### Block A — Why your results are grouped
-
-**Must explain:**
-- that biomarkers are grouped into systems
-- that this helps reveal how the body is functioning as a whole
-
-**Must anchor to real data:**
-- reference 1–2 system names visible on the page
-- optionally reference the system highlighted in Section 3
-
-Example shape (not hardcoded):
-> “We’ve grouped your results into body systems so you can see how different markers work together. For example, your [system name] combines markers like [A/B/C] to help explain your main finding.”
-
-Rules:
-- do not list many markers
-- do not show raw IDs
-- keep to 1–2 examples max
+If no qualifying feature exists:
+- omit the entire section cleanly
+- do not show placeholder headings or empty cards
 
 ---
 
-### Block B — What “stable vs strain” means
+### B. Insight cards
 
-**Must explain:**
-- what it means for a system to be stable
-- what it means for a system to show strain
+Each rendered feature must appear as a compact card containing:
 
-**Must anchor to real data:**
-- reference `balanced_systems_v1`
-- optionally contrast with the system driving the primary finding
+1. **Feature name**
+2. **Primary value / status**
+3. **Short explanation**
+4. **Why it matters** (short, single-block phrasing)
 
-Example shape (not hardcoded):
-> “Systems shown as stable are operating within expected ranges. Where we highlight strain, it means multiple markers are pointing in the same direction and may need closer attention.”
-
-Rules:
-- no medical overclaiming
-- no diagnostic language
-- keep it simple and grounded
+Cards must be concise and visually calm.
 
 ---
 
-### Block C — How markers connect to the bigger picture
+## Feature eligibility rule
 
-**Must explain:**
-- biomarkers are individual signals
-- patterns emerge when they are interpreted together
+Only surface features that are both:
 
-**Must anchor to real data:**
-- reference the existence of the lead finding
-- optionally reference clusters or groups already shown
+1. **present**
+2. **credible enough to show**
 
-Example shape (not hardcoded):
-> “Individual markers give useful signals, but the most important insights come from how they interact. That’s how we identified your main finding.”
+At minimum, the implementation must verify that each feature:
+- exists in the surfaced frontend data
+- has the minimum data needed to render meaningfully
+- is not null / partial / placeholder
 
-Rules:
-- do not introduce new concepts not already shown
-- do not repeat Section 3 wording
+If robustness is ambiguous:
+- omit the feature
 
 ---
 
-## Fallback model (mandatory)
+## Feature scope for this sprint
 
-### Case 1 — Full system + cluster context available
-Show all 3 blocks with light grounding in real data
+Features in scope only if already surfaced and populated on the frontend path:
 
-### Case 2 — Limited system context
-Show all 3 blocks but:
-- reduce references to specific systems
-- keep wording more general
+- metabolic age
+- heart resilience score
+- inflammation burden
+- fatigue root causes
+- detox capacity
 
-### Case 3 — Minimal usable context
-Show:
-- simplified versions of the 3 blocks
-- no forced references to missing data
+Do not assume all five will be available.
+Do not force all five to render.
 
-Do not:
-- create fake examples
-- render broken placeholders
+---
+
+## Required card behaviour
+
+For each feature card:
+
+### 1. Feature name
+Must use a user-readable label.
+Do not expose internal type/class names.
+
+### 2. Primary value / status
+Must present the actual surfaced deterministic output clearly.
+Do not invent labels if none exist.
+
+### 3. Short explanation
+Must explain what the feature means in plain language using already available deterministic content or carefully shaped UI copy tied directly to the surfaced value.
+
+### 4. Why it matters
+Must be short and specific.
+Do not drift into lifestyle advice.
+Do not imply diagnosis.
+
+---
+
+## Render policy
+
+### Case 1 — Multiple strong features available
+Show only the strongest small set.
+Maximum:
+- 3 cards
+
+Do not create a dashboard wall.
+
+### Case 2 — One strong feature available
+Show one card only.
+That is acceptable.
+
+### Case 3 — Feature data present but weak / partial
+Do not render that feature.
+
+### Case 4 — No robust features
+Omit the section entirely.
 
 ---
 
 ## Component / architecture rules
 
 Before creating new components:
-- check whether an existing section container or card layout can be reused
+- check whether an existing card/panel layout can be reused
 
-If new component is required:
-- create a single dedicated component for Section 5
-- keep logic minimal
-- do not introduce new shared libraries
+If a new component is required:
+- create one dedicated Section 7 component
+- keep feature mapping logic isolated and simple
+- use a small helper/lib only if needed for deterministic feature filtering or shaping
 
-Avoid:
-- duplicating system or biomarker rendering logic
-- re-fetching or reprocessing data
+Do not:
+- introduce new shared framework
+- duplicate card logic across many files
+- move business logic into styling components
 
 ---
 
 ## Files likely impacted
 
 - `frontend/app/(app)/results/page.tsx`
-- new component: SystemUnderstandingSection (or equivalent)
-- minimal helper logic if required for selecting example systems/markers
+- new Section 7 component (or equivalent)
+- small helper/lib for feature gating/shaping only if necessary
+- existing frontend results types only if already present and needing local narrowing without backend change
 
 No backend files.
 
@@ -230,59 +248,51 @@ No backend files.
 
 ## Content shaping rules
 
-1. Maximum:
-   - 3 blocks
-   - 2–3 sentences per block
+1. Keep each card tight:
+   - one title
+   - one primary value/status
+   - one short explanation block
+   - one short “why it matters” block
 
-2. No repetition of:
-   - Section 1 wording
-   - Section 3 explanation
+2. Do not repeat:
+   - Section 1 body overview language
+   - Section 3 lead explanation
    - Section 4 trust language
 
-3. No:
-   - long paragraphs
-   - bullet dumps
-   - generic “health education” language
+3. Do not make these cards sound like:
+   - marketing copy
+   - wellness fluff
+   - futuristic inventions
 
-4. Tone:
-   - clear
-   - calm
-   - intelligent
-   - not patronising
-
----
-
-## Placement rules
-
-- Section 5 must appear:
-  - after Section 4 (Why this lead won)
-  - before biomarker-heavy sections
-
-- It must feel like:
-  - a natural continuation
-  - not a separate learning module
+4. If a feature is thin:
+   - omit it
+   - do not stretch weak content into a card
 
 ---
 
 ## Acceptance criteria
 
-1. Section 5 renders as exactly 3 short blocks
+1. Section 7 renders only when at least one robust deterministic feature is available
 
-2. User can understand:
-   - why systems exist
-   - what stable vs strain means
-   - how markers connect to findings
+2. No more than 3 cards render
 
-3. Content is anchored to real data where available
+3. Each card contains:
+   - readable feature name
+   - surfaced value/status
+   - short explanation
+   - short why-it-matters framing
 
-4. No generic or filler educational text
+4. No feature card renders from weak / null / partial data
 
-5. Section does not slow down page comprehension
+5. No section shell appears when no feature qualifies
 
-6. No references to:
+6. No new backend or DTO dependency is introduced
+
+7. No references to:
    - phenotype
    - internal IDs
-   - raw signal names
+   - raw class names
+   - Gemini narrative
    - unsurfaced backend data
 
 ---
@@ -292,19 +302,21 @@ No backend files.
 - Run `/upload → /results`
 
 Test with:
-- strong abnormal case
-- mostly normal case
-- mixed case
+- case with multiple Layer C features available
+- case with one available feature
+- case with partial/weak feature coverage
+- case with no qualifying feature
 
 Validate:
-- section appears in correct position
-- content adapts to available data
-- no broken examples
-- no repeated wording from earlier sections
-- section is quick to scan (<10 seconds)
+- section appears only when appropriate
+- max 3 cards
+- no empty cards
+- no repeated explanation text
+- section feels credible and concise
+- omission works cleanly when no features qualify
 
 Confirm no regression in:
-- Sections 1–4
+- Sections 1–5
 - biomarker expansion
 - navigation / loading
 - advanced tabs
@@ -316,24 +328,25 @@ Confirm no regression in:
 - Code compiles cleanly
 - No console errors
 - Manual UX validation passes
-- Section delivers a clear “Ah-ha” moment
-- No overlong educational content introduced
+- Section 7 adds real value without gimmickry
+- Weak feature output is omitted rather than surfaced
 - Ready for gate validation via kernel
 
 ---
 
 ## Notes
 
-This sprint is about **clarity, not volume**.
+This sprint is about **earned insight**, not novelty.
 
 If done correctly, the user should feel:
 
-“I finally understand how to read this.”
+**“That’s interesting — and it feels grounded in my results.”**
 
-If done poorly, it will feel like:
-- a generic explainer
-- or unnecessary friction
+If done poorly, it will feel:
+- thin
+- showy
+- or untrustworthy
 
-Keep it tight.
-Keep it grounded.
-Keep it useful.
+Keep it selective.
+Keep it deterministic.
+Keep it credible.
