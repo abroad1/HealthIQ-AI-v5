@@ -1,25 +1,22 @@
 ---
-work_id: FE-R4-RESULTS-JOURNEY-V6
-branch: feature/results-journey-v6-r4-biomarker-expansion-depth
+work_id: FE-R5-RESULTS-JOURNEY-V6
+branch: feature/results-journey-v6-r5-system-understanding-layer
 risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
 change_type: BEHAVIOUR
 ---
 
-# Sprint: R-4 — Biomarker Expansion Depth
+# Sprint: R-5 — System Understanding Layer (“How to read your body”)
 
 ## Objective
 
-Implement the biomarker expansion model from the V6 Results Journey so that the marker-level experience becomes a second-order differentiator rather than a conventional blood-report appendix.
+Introduce a **tight, embedded explanation layer** that helps the user understand:
 
-This sprint must make each expanded biomarker card answer three questions:
+1. why their results are grouped into systems
+2. how to interpret “stable vs strain”
+3. how biomarkers connect to the broader picture
 
-1. what this result means now
-2. why this marker matters
-3. how it connects to the wider body story
-
-The goal is not to redesign the whole biomarker table.
-The goal is to make biomarker expansion feel materially richer, more relevant, and more connected to the user’s broader interpretation.
+This sprint must create an **“Ah-ha” moment** without slowing the user down or introducing a long educational block.
 
 ---
 
@@ -27,55 +24,57 @@ The goal is to make biomarker expansion feel materially richer, more relevant, a
 
 ### In scope
 
-- Expansion experience for biomarker cards in the main results page
-- Three-layer biomarker expansion model
-- Stronger surfacing of already-available educational / contribution assets
-- Rendering-layer derivation of pattern relevance using existing frontend data
-- Safe fallback behaviour when deeper layers are absent
-- Wiring only to **currently available frontend DTO/store data**
+- Section 5: System Understanding Layer
+- Short, embedded explanation of:
+  - system grouping logic
+  - interpretation model (stable vs strain)
+  - biomarker → system → finding relationship
+- Light grounding in the user’s actual data
+- Rendering using only **currently available frontend DTO/store data**
 
 ### Primary allowed assets
 
-Use only assets already available on the frontend results path, specifically:
+Use only data already available on the frontend results path:
 
-- `biomarkers[]`
-- `biomarker_educational_explainer`
-- `contribution_context`
-- value / unit / reference range / score / interpretation fields already exposed in `analysis.ts`
+- `balanced_systems_v1`
 - `clusters[]`
-- the already-identified lead interpretation context visible on the page (Section 3 output / associated frontend-available source data)
+- `biomarkers[]`
+- Section 3 (Primary Finding) already-rendered context
+- Section 4 (Why this lead won) already-rendered context
+- existing system/cluster labels already present in the UI
 
 ### Out of scope
 
 - New backend logic
 - New DTO fields
-- New biomarker science generation
-- New system/pattern taxonomy contract
-- Pattern layer / phenotype display work
-- Gemini / LLM narrative generation
-- Changes to analysis pipeline
-- Reworking the entire biomarker list UI beyond the expansion experience
+- Pattern / phenotype naming layer (R-7 / R-8)
+- Long-form educational content
+- Standalone “learn” pages or modals
+- Gemini / LLM generated education
+- Rewriting earlier sections
 
 ---
 
 ## Key principles (must be followed)
 
-1. **Point of parity + point of differentiation**
-   - users must still see familiar biomarker facts clearly
-   - but expansion must go beyond conventional blood-report UX
+1. **No long education block**
+   - This must not feel like a tutorial
+   - Maximum: short, scannable, embedded content
 
-2. **Expansion must be relevant, not generic**
-   - do not dump educational text without tying it back to the user’s broader interpretation
+2. **Explain using the user’s data**
+   - All explanation must be anchored to what the user has already seen
+   - No abstract biology lecture
 
-3. **No fabricated depth**
-   - if richer content is absent, keep the card simpler
-   - do not invent “why this matters” prose
+3. **Reinforce, not interrupt**
+   - This section should make earlier sections clearer
+   - Not introduce new complexity
 
-4. **Use existing assets more effectively**
-   - this sprint is about surfacing and structuring, not generating new knowledge
+4. **One concept per block**
+   - Avoid dense paragraphs
+   - Use short, clearly separated ideas
 
-5. **Pattern relevance must remain a rendering-layer derivation**
-   - do not introduce a new backend contract field in this sprint
+5. **No generic filler**
+   - Every sentence must help the user interpret their results
 
 ---
 
@@ -85,230 +84,230 @@ This sprint must be built only from data already available on the frontend resul
 
 ### Primary section assets
 
-- `biomarkers[]`
-- `biomarker_educational_explainer`
-- `contribution_context`
-- biomarker value / reference range / score / interpretation data already present in frontend DTOs
+- `balanced_systems_v1`
 - `clusters[]`
-- current lead interpretation context already surfaced in the results experience
+- `biomarkers[]`
+- already-rendered lead finding context (Section 3)
+- already-rendered system labels
 
-### Explicit non-authority for this sprint
+### Explicit non-authority
 
 Do not use or depend on:
 
-- new backend-derived “pattern relevance” field
-- raw Knowledge Bus package data
-- raw signal-library explanation content
-- new DTO additions
-- Gemini-generated explanation text
-
-If richer biomarker explanatory content requires new compiler or DTO work, that is a later sprint.
+- new “system explanation” backend fields
+- Knowledge Bus raw content
+- unsurfaced phenotype definitions
+- Gemini-generated educational content
+- any new DTO additions
 
 ---
 
 ## Target UX structure
 
-## Biomarker expansion rule
+### Section 5 — How to understand your results
 
-Every biomarker expansion must be structured as:
+**Purpose:**
+Help the user understand how to read the page they are currently viewing.
 
-### Layer 1 — What this result means now
-
-Must display:
-- current result
-- reference range
-- status / interpretation
-- a short interpretation tied to this user’s actual result
-
-Rules:
-- this is the minimum layer and must always render
-- must remain clean and fast to scan
-- do not bury the biomarker’s actual value beneath explanation
+**This section must answer:**
+- why results are grouped
+- what systems represent
+- how markers connect to findings
 
 ---
 
-### Layer 2 — Why this marker matters
+## Required structure
 
-Must display:
-- `biomarker_educational_explainer` where present
-
-Rules:
-- this should explain the marker’s biological or clinical significance
-- it must feel educational, not generic filler
-- if absent, omit cleanly
-- do not create substitute prose
+This section must be composed of **3 short blocks only**.
 
 ---
 
-### Layer 3 — How it connects to your wider pattern
+### Block A — Why your results are grouped
 
-Must display:
-- `contribution_context`
-- plus a rendering-layer “pattern relevance” line derived from:
-  - `contribution_context`
-  - the biomarker’s cluster membership
-  - the primary pattern / lead interpretation already visible in the current results flow
+**Must explain:**
+- that biomarkers are grouped into systems
+- that this helps reveal how the body is functioning as a whole
 
-Rules:
-- this is not a new backend field
-- it must be derived only from existing frontend data
-- it should help the user understand:
-  - whether this marker contributed to the main pattern
-  - or whether it sits in another meaningful group
+**Must anchor to real data:**
+- reference 1–2 system names visible on the page
+- optionally reference the system highlighted in Section 3
 
 Example shape (not hardcoded):
-> “This marker contributed to the [pattern/system] finding and helps explain why that pattern was highlighted.”
+> “We’ve grouped your results into body systems so you can see how different markers work together. For example, your [system name] combines markers like [A/B/C] to help explain your main finding.”
 
-If the derivation is weak or ambiguous:
-- show `contribution_context` only
-- do not force a synthetic “pattern relevance” sentence
+Rules:
+- do not list many markers
+- do not show raw IDs
+- keep to 1–2 examples max
 
 ---
 
-## Pattern relevance derivation rule
+### Block B — What “stable vs strain” means
 
-Pattern relevance must remain a **frontend rendering-layer derivation** only.
+**Must explain:**
+- what it means for a system to be stable
+- what it means for a system to show strain
 
-### Allowed derivation inputs
+**Must anchor to real data:**
+- reference `balanced_systems_v1`
+- optionally contrast with the system driving the primary finding
 
-- `contribution_context`
-- cluster membership from `clusters[]`
-- the lead interpretation context already surfaced in the results page
+Example shape (not hardcoded):
+> “Systems shown as stable are operating within expected ranges. Where we highlight strain, it means multiple markers are pointing in the same direction and may need closer attention.”
 
-### Not allowed
+Rules:
+- no medical overclaiming
+- no diagnostic language
+- keep it simple and grounded
 
-- new backend fields
-- guessed relationships not supported by surfaced data
-- hidden signal-level reasoning not available on the frontend
+---
 
-### Behaviour rule
+### Block C — How markers connect to the bigger picture
 
-- if a credible relevance link to the current lead interpretation can be made using existing surfaced data, render it
-- if not, omit that derived sentence and fall back to contribution-context only
+**Must explain:**
+- biomarkers are individual signals
+- patterns emerge when they are interpreted together
+
+**Must anchor to real data:**
+- reference the existence of the lead finding
+- optionally reference clusters or groups already shown
+
+Example shape (not hardcoded):
+> “Individual markers give useful signals, but the most important insights come from how they interact. That’s how we identified your main finding.”
+
+Rules:
+- do not introduce new concepts not already shown
+- do not repeat Section 3 wording
 
 ---
 
 ## Fallback model (mandatory)
 
-### Case 1 — Full biomarker support present
-Show:
-- Layer 1
-- Layer 2
-- Layer 3
+### Case 1 — Full system + cluster context available
+Show all 3 blocks with light grounding in real data
 
-### Case 2 — Educational explainer absent, contribution context present
-Show:
-- Layer 1
-- Layer 3
+### Case 2 — Limited system context
+Show all 3 blocks but:
+- reduce references to specific systems
+- keep wording more general
 
-### Case 3 — Educational explainer present, contribution context absent
+### Case 3 — Minimal usable context
 Show:
-- Layer 1
-- Layer 2
+- simplified versions of the 3 blocks
+- no forced references to missing data
 
-### Case 4 — Only base biomarker data present
-Show:
-- Layer 1 only
-
-Do not render empty shells for missing layers.
+Do not:
+- create fake examples
+- render broken placeholders
 
 ---
 
 ## Component / architecture rules
 
 Before creating new components:
-- identify whether existing biomarker card / dial / expansion components can be reused or adapted
+- check whether an existing section container or card layout can be reused
 
-Likely existing candidates:
-- biomarker rendering components currently used in the results page
-- existing educational explainer UI
-- existing contribution-context rendering
+If new component is required:
+- create a single dedicated component for Section 5
+- keep logic minimal
+- do not introduce new shared libraries
 
-Only create new components if:
-- no suitable component exists
-- or reuse would create excessive coupling or confusion
-
-Avoid duplicating biomarker rendering logic across components.
+Avoid:
+- duplicating system or biomarker rendering logic
+- re-fetching or reprocessing data
 
 ---
 
 ## Files likely impacted
 
 - `frontend/app/(app)/results/page.tsx`
-- biomarker-related results components
-- biomarker card / dial expansion components
-- small frontend helper/lib for pattern relevance derivation only if necessary
-- `frontend/app/types/analysis.ts` only if existing frontend type usage requires local tightening without backend change
+- new component: SystemUnderstandingSection (or equivalent)
+- minimal helper logic if required for selecting example systems/markers
 
-Do not create backend dependencies in this sprint.
+No backend files.
 
 ---
 
 ## Content shaping rules
 
-1. Do not allow educational content to appear without relevance framing when contribution context exists
-2. Do not repeat the same explanatory sentence across multiple biomarkers
-3. Keep expansion readable:
-   - one result layer
-   - one educational layer
-   - one connection layer
-4. If deeper content is absent:
-   - the card must still feel clean and complete
-   - not broken or incomplete
-5. Biomarker expansion must remain evidence-led, not narrative-led
+1. Maximum:
+   - 3 blocks
+   - 2–3 sentences per block
+
+2. No repetition of:
+   - Section 1 wording
+   - Section 3 explanation
+   - Section 4 trust language
+
+3. No:
+   - long paragraphs
+   - bullet dumps
+   - generic “health education” language
+
+4. Tone:
+   - clear
+   - calm
+   - intelligent
+   - not patronising
+
+---
+
+## Placement rules
+
+- Section 5 must appear:
+  - after Section 4 (Why this lead won)
+  - before biomarker-heavy sections
+
+- It must feel like:
+  - a natural continuation
+  - not a separate learning module
 
 ---
 
 ## Acceptance criteria
 
-1. Expanded biomarker cards follow the three-layer model where data supports it
+1. Section 5 renders as exactly 3 short blocks
 
-2. Every biomarker expansion shows at minimum:
-   - value
-   - range
-   - status / interpretation
+2. User can understand:
+   - why systems exist
+   - what stable vs strain means
+   - how markers connect to findings
 
-3. Educational explainer appears only when real data exists
+3. Content is anchored to real data where available
 
-4. Contribution context is clearly surfaced where present
+4. No generic or filler educational text
 
-5. Pattern relevance is derived only from existing frontend data and omitted when not credible
+5. Section does not slow down page comprehension
 
-6. No fabricated explanation appears where deeper data is absent
-
-7. No new backend or DTO dependency is introduced
-
-8. No references to:
+6. No references to:
    - phenotype
    - internal IDs
    - raw signal names
-   - unsurfaced KB package content
+   - unsurfaced backend data
 
 ---
 
 ## Test instructions
 
-- Run full analysis flow via `/upload → /results`
-- Test with:
-  - biomarker having educational explainer + contribution context
-  - biomarker having educational explainer only
-  - biomarker having contribution context only
-  - biomarker with only basic data
+- Run `/upload → /results`
+
+Test with:
+- strong abnormal case
+- mostly normal case
+- mixed case
 
 Validate:
-- all three layers render correctly when available
-- fallback behaviour is clean
-- no empty expansion sections
-- no repeated generic text
-- pattern relevance only appears when supportable
-- base biomarker usability remains strong
+- section appears in correct position
+- content adapts to available data
+- no broken examples
+- no repeated wording from earlier sections
+- section is quick to scan (<10 seconds)
 
 Confirm no regression in:
-- results page loading
-- biomarker list rendering
-- expand/collapse behaviour
-- Section 1–4 content already implemented
-- advanced tabs / navigation
+- Sections 1–4
+- biomarker expansion
+- navigation / loading
+- advanced tabs
 
 ---
 
@@ -317,19 +316,24 @@ Confirm no regression in:
 - Code compiles cleanly
 - No console errors
 - Manual UX validation passes
-- Biomarker expansion feels materially richer than the previous version
-- No fabricated “deep explanation” where supporting data is absent
+- Section delivers a clear “Ah-ha” moment
+- No overlong educational content introduced
 - Ready for gate validation via kernel
 
 ---
 
 ## Notes
 
-This sprint is important because biomarkers are the point of parity with conventional blood reports.
+This sprint is about **clarity, not volume**.
 
-Do not make them secondary or weak.
-Do not turn them into generic explainer cards.
+If done correctly, the user should feel:
 
-The goal is:
+“I finally understand how to read this.”
 
-**users should feel that HealthIQ both respects the familiar biomarker layer and makes it much more meaningful than a normal blood report.**
+If done poorly, it will feel like:
+- a generic explainer
+- or unnecessary friction
+
+Keep it tight.
+Keep it grounded.
+Keep it useful.
