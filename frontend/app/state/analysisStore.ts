@@ -10,6 +10,7 @@ import {
   ClinicianReportV1,
   Cluster,
   type BiomarkerResult as ApiBiomarkerResult,
+  type InterpretationDisplayLayerBundleV1,
 } from '../types/analysis';
 
 /** Store row mirrors API BiomarkerResult (B1A/B1B explainer fields optional). */
@@ -36,6 +37,7 @@ export interface AnalysisResult {
     items: Array<{ system_topic: string; evidence_line: string; capacity_note?: string }>;
     context_line: string;
   } | null;
+  interpretation_display_layer_v1?: InterpretationDisplayLayerBundleV1 | null;
 }
 
 export interface AnalysisError {

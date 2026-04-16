@@ -201,6 +201,44 @@ export interface ClinicianReportV1 {
  * Backend `meta.narrative_runtime` — mirrors narrative_runtime_policy.narrative_runtime_meta_from_decision
  * plus optional `outcome` from synthesis when live call yields no validated insights.
  */
+/** BE-IDL-1 / FE-R8 — mirrors backend/core/contracts/interpretation_display_layer_v1.py */
+export type InterpretationScientificClassV1 =
+  | 'phenotype'
+  | 'risk_construct'
+  | 'organ_pattern'
+  | 'syndrome_state';
+
+export type InterpretationFrontendAllowedTermV1 = 'phenotype_allowed' | 'clinical_only';
+
+export type InterpretationSeverityStateV1 =
+  | 'not_observed'
+  | 'watch'
+  | 'attention'
+  | 'strong_signal';
+
+export interface InterpretationDisplayRecordV1 {
+  internal_id: string;
+  scientific_class: InterpretationScientificClassV1;
+  clinical_display_label: string;
+  retail_display_label: string;
+  subtitle: string;
+  why_it_matters: string;
+  severity_state: InterpretationSeverityStateV1;
+  supporting_biomarkers_summary: string;
+  frontend_allowed_term: InterpretationFrontendAllowedTermV1;
+  display_order_priority: number;
+  enabled_for_frontend: boolean;
+  supporting_systems_summary?: string | null;
+  user_safe_description?: string | null;
+  future_commercial_domain?: string | null;
+  display_caveat?: string | null;
+}
+
+export interface InterpretationDisplayLayerBundleV1 {
+  schema_version: string;
+  records: InterpretationDisplayRecordV1[];
+}
+
 export interface NarrativeRuntimeMetaV1 {
   policy_version?: string;
   runtime_mode?: string;
@@ -237,6 +275,8 @@ export interface AnalysisResult {
     items: Array<{ system_topic: string; evidence_line: string; capacity_note?: string }>;
     context_line: string;
   } | null;
+  /** FE-R8 — governed pattern cards (Section 5); sole retail display authority for this section */
+  interpretation_display_layer_v1?: InterpretationDisplayLayerBundleV1 | null;
 }
 
 
