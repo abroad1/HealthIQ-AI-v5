@@ -1,94 +1,85 @@
 {
-  "work_id": "FE-R6-RESULTS-JOURNEY-V6",
+  "work_id": "FE-R7-RESULTS-JOURNEY-V6",
   "bus_version": "1.3.1",
   "status": "HARDENED",
-  "hardened_utc": "2026-04-15T00:00:00Z",
+  "hardened_utc": "2026-04-16T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
   "changes": [
     {
       "id": "A",
-      "description": "Create a new LayerCInsightSection component (or equivalent) implementing Section 7 — Key body-level insights. Component reads layer_c_features from currentAnalysis.meta.insight_graph.layer_c_features (the only valid access path), applies a confidence-based robustness gate, and renders a maximum of 3 insight cards. If no feature passes the gate, the component renders nothing (clean omission, no shell).",
-      "root_cause": "layer_c_features has ZERO frontend matches — it is not a typed field in AnalysisResult (analysis.ts:219-240 confirmed: no layer_c_features field). The data is accessible ONLY via the untyped meta: Record<string, any> path. The route to the data is: orchestrator.py:2060 sets meta['insight_graph'] = insight_graph.model_dump() — confirmed. InsightGraphV1.layer_c_features is Optional[LayerCFeatureBundleV1] = Field(default=None) — confirmed at insight_graph_v1.py:266. Therefore the frontend access path is: currentAnalysis?.meta?.insight_graph?.layer_c_features (untyped). This sprint MUST add TypeScript interface definitions for the 5 feature shapes — these are frontend-only type narrowings of meta content, NOT new DTO fields. The 5 feature schemas from insight_graph_v1.py:56-128 are: MetabolicAgeFeatureV1 (metabolic_age: float, age_delta_years: float, homa_ir: float, severity: str, confidence: float, risk_flags: string[]), HeartFeatureV1 (heart_resilience_score: float, severity: str, confidence: float, risk_factors: string[], ldl_hdl_ratio: float|null, tc_hdl_ratio: float|null, tg_hdl_ratio: float|null), InflammationFeatureV1 (inflammation_burden_score: float, severity: str, confidence: float, risk_factors: string[], nlr: float|null), FatigueFeatureV1 (severity: str, confidence: float, root_causes: string[], iron_status: str, thyroid_status: str, vitamin_status: str, inflammation_status: str, cortisol_status: str), DetoxFeatureV1 (detox_filtration_score: float, liver_score: float, kidney_score: float, severity: str, confidence: float, risk_factors: string[], egfr: float|null, egfr_source: str). CRITICAL — all 5 sub-features have default_factory=<FeatureClass>() in LayerCFeatureBundleV1 (insight_graph_v1.py:124-128), meaning ALL sub-features are ALWAYS present in the serialized bundle with zero/default values even when the pipeline did not compute them. confidence: float = 0.0 is the default for every feature. Therefore the ONLY valid robustness gate is: confidence > 0 (feature was meaningfully computed). severity='normal' and score=0.0 are NOT valid robustness signals — they are defaults. The full bundle itself can be null (Optional on InsightGraphV1:266) — guard against null bundle before accessing any sub-feature.",
+      "description": "Existence check of current Section 5 source assets. No code changes. Investigation reads cluster contract, DTO, SSOT, and current frontend rendering. Produces written decision artifact only.",
+      "root_cause": "v6 paper lines 358-379 (docs/strategy/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md) classifies Section 5 as Phase 2, gated behind a formal existence check. Sprint R-7 (v6 paper lines 1049-1070) is defined as a research-and-specification sprint, not an implementation sprint. No code modifications are authorised.",
       "authoritative_files": [
-        "backend/core/contracts/insight_graph_v1.py:56-128",
-        "backend/core/contracts/insight_graph_v1.py:266",
-        "backend/core/pipeline/orchestrator.py:2060",
-        "frontend/app/types/analysis.ts:219-240",
-        "frontend/app/types/analysis.ts:232"
+        "docs/strategy/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md:358-403",
+        "docs/strategy/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md:1049-1070",
+        "docs/strategy/Phenotype_Terminology_Proposal.md:1-175",
+        "docs/strategy/healthiq_future_screening_priorities.md:1-180"
       ],
-      "feature_to_field_mapping": {
-        "metabolic age": "layer_c_features.metabolic_age — key fields: metabolic_age (float), age_delta_years (float), severity (str), confidence (float)",
-        "heart resilience score": "layer_c_features.heart_insight — key fields: heart_resilience_score (float), severity (str), confidence (float), risk_factors (string[])",
-        "inflammation burden": "layer_c_features.inflammation — key fields: inflammation_burden_score (float), severity (str), confidence (float), risk_factors (string[])",
-        "fatigue root causes": "layer_c_features.fatigue_root_cause — key fields: root_causes (string[]), severity (str), confidence (float)",
-        "detox capacity": "layer_c_features.detox_filtration — key fields: detox_filtration_score (float), liver_score (float), kidney_score (float), severity (str), confidence (float)"
+      "source_cross_reference": {
+        "cluster_frontend_dto": {
+          "path": "frontend/app/types/analysis.ts:106-120",
+          "fields_present": ["id", "cluster_id", "name", "category", "summary", "description", "biomarkers", "biomarkers_involved", "score", "confidence", "severity", "recommendations", "system_educational_explainer"],
+          "section_5_naming_fields_present": false,
+          "missing_for_section_5": ["scientific_classification", "clinical_display_name", "plain_english_subtitle", "why_it_matters"]
+        },
+        "cluster_backend_model": {
+          "path": "backend/core/models/results.py:121-135",
+          "fields_present": ["cluster_id", "name", "biomarkers", "confidence", "severity", "description", "system_educational_explainer"],
+          "section_5_naming_fields_present": false
+        },
+        "cluster_ssot": {
+          "path": "backend/ssot/clusters.yaml:1-90",
+          "clusters_defined": ["metabolic", "cardiovascular", "hepatic", "renal", "inflammatory", "hematological", "hormonal", "nutritional"],
+          "naming_quality": "generic internal labels only — 'Metabolic biomarkers (glucose, HbA1c, insulin)', 'Cardiovascular risk biomarkers'. No user-facing classification or governed naming fields.",
+          "section_5_naming_fields_present": false
+        },
+        "api_emission": {
+          "path": "backend/app/routes/analysis.py:193-206",
+          "emitted_fields": ["cluster_id", "name", "category", "biomarkers", "description", "severity", "confidence", "recommendations", "system_educational_explainer (optional)"],
+          "section_5_naming_fields_present": false
+        },
+        "current_section_5_component": {
+          "path": "frontend/app/components/results/SystemUnderstandingSection.tsx:41",
+          "note": "FE-R5 comment labels this as Section 5. This component is an educational explainer ('How to understand your results') — three static blocks. It is NOT the pattern-card layer described in v6 paper Section 5. The pattern-card layer does not yet exist as a frontend component.",
+          "governed_pattern_layer_exists": false
+        },
+        "current_cluster_display": {
+          "path": "frontend/app/components/clusters/ClusterSummary.tsx:1-390",
+          "note": "Existing cluster display component. Shows name, severity, description, biomarkers, score, confidence, recommendations, systemEducationalExplainer. Uses generic cluster names. Not a governed pattern-card layer.",
+          "governed_naming_contract_present": false
+        }
       },
-      "robustness_gate": "confidence > 0 for each sub-feature. All other fields (severity, score values) have zero/default values when uncomputed — they are NOT valid gates. The bundle itself may be null — guard first.",
-      "deterministic_card_selection": "When more than 3 features pass the gate, select the top 3 by confidence (descending). Tie-break order (stable, applied only when confidences are equal): metabolic_age, heart_insight, inflammation, fatigue_root_cause, detox_filtration.",
-      "scope_constraint": "Frontend-only. TypeScript interface definitions for Layer C feature shapes are required (they are not DTO additions — they type-narrow existing meta content). Do not add layer_c_features as a new top-level field to AnalysisResult in analysis.ts — access via meta only. Do not invent feature labels from internal field names. Do not render raw field names or internal status strings. Do not use insights[] prose as authority. Do not call any new backend endpoint."
-    },
-    {
-      "id": "B",
-      "description": "Insert Section 7 (LayerCInsightSection) into results/page.tsx after the existing Section 5 (SystemUnderstandingSection, line 537) and before the biomarker-dense sections (ClusterSummary line 566, BiomarkerDials line 576). Exact position within that window is at Cursor's discretion based on the V6 journey flow. Pass the layer C data as a prop extracted from currentAnalysis?.meta.",
-      "root_cause": "results/page.tsx (as of R5 commit 74f67a1) has no Section 7 element. balancedSystems, clusters, primaryDriver are already bound. meta is available as currentAnalysis?.meta (typed Record<string, any> or undefined). The new section must extract layer_c_features from meta at the prop-passing site: const layerCFeatures = (currentAnalysis?.meta?.insight_graph as any)?.layer_c_features ?? null. No new state, hooks, or data fetching required. All existing sections (1-5, PipelineStatus, InsightPanel, ClusterSummary, BiomarkerDials, Advanced analysis) must remain structurally unchanged.",
-      "authoritative_files": [
-        "frontend/app/(app)/results/page.tsx:537-542",
-        "frontend/app/(app)/results/page.tsx:566-574",
-        "frontend/app/(app)/results/page.tsx:141"
-      ],
-      "scope_constraint": "Only add: (1) the new component import, (2) a layerCFeatures extraction variable, (3) a single new JSX section element. Do not modify any existing section, hook, or state. Section must not render any shell element when layerCFeatures is null or no feature passes the confidence gate."
+      "pre_investigation_evidence_summary": "Source evidence confirms: (1) no taxonomy classification field exists anywhere in the cluster contract chain; (2) no clinical_display_name, plain_english_subtitle, or why_it_matters fields exist; (3) current cluster names are generic internal labels; (4) no governed interpretation-display layer exists. Investigation should formally document and confirm these findings. Option B (contract/content sprint first) is the strongly indicated outcome, but sprint must reach and document this conclusion formally.",
+      "scope_constraint": "RESEARCH AND SPECIFICATION ONLY. Sprint produces a written decision artifact. No code changes, no DTO additions, no new frontend components, no new backend logic."
     }
   ],
+  "stage_2b_behavioural_hardening": {
+    "change_type_note": "change_type declared as BEHAVIOUR. Actual sprint output is documentation only (written decision artifact). BEHAVIOUR is over-classified vs the work (which is CONTENT). Over-classification is conservative and not a BLOCKER. However: if any code modification occurs during sprint execution, that is a scope violation and Cursor must STOP.",
+    "scope_defined": "CONFIRMED — prompt has explicit in-scope (existence check, verification, recommendation) and out-of-scope lists (no frontend implementation, no new backend logic, no new DTO fields)",
+    "no_implementation_drift_protected": "CONFIRMED — prompt states 'This is NOT a frontend implementation sprint' at line 11",
+    "regression_targets": "NOT APPLICABLE — no code changes",
+    "determinism_risks": "NOT APPLICABLE — no code changes",
+    "stop_conditions": "Implicit via out-of-scope list: no frontend implementation, no new backend logic, no DTO fields, no renaming, no new components. Adequate for a research sprint.",
+    "intelligence_core_interaction": "READ-ONLY investigation. No modification to cluster engine, DTO, or analytics pipeline.",
+    "verdict": "Behavioural scope is well-contained. Sprint is gating-only."
+  },
   "stop_conditions_verified": [
-    "Do not add layer_c_features as a new top-level field to AnalysisResult in analysis.ts — access via meta.insight_graph.layer_c_features only (no DTO field addition)",
-    "Do not introduce new backend logic or new backend endpoint — confirmed: data already flows through meta from orchestrator.py:2060",
-    "Do not use insights[] narrative prose as the authority source — out of scope (prompt lines 53, 96-97)",
-    "Do not use Gemini-generated narrative — out of scope (prompt line 52)",
-    "Do not render a card from weak/null/partial data — robustness gate: confidence > 0 required per feature",
-    "Do not render a section shell when no feature qualifies — Case 4: section omits entirely",
-    "Do not render more than 3 cards — prompt render policy Case 1",
-    "Do not expose internal field names, raw class names, snake_case identifiers as user-facing labels",
-    "Do not touch backend/ssot/, backend/core/pipeline/, backend/core/analytics/ or backend scripts",
-    "Do not modify any of Sections 1-5, PipelineStatus, InsightPanel, ClusterSummary, BiomarkerDials, Advanced analysis",
-    "Do not introduce new shared framework or duplicate card logic — component/architecture rules (prompt line 231)"
-  ],
-  "regression_protection": [
-    "ResultsBodyOverview (Section 1) — must be unchanged at page.tsx:509-514",
-    "BalancedSystemsSummary (Section 2) — must be unchanged at page.tsx:516-521",
-    "PrimaryFindingAndWhy (Section 3) — must be unchanged at page.tsx:523-528",
-    "WhyThisLeadWonSection (Section 4) — must be unchanged at page.tsx:530-535",
-    "SystemUnderstandingSection (Section 5, FE-R5) — must be unchanged at page.tsx:537-542",
-    "PipelineStatus (trust strip) — must be unchanged at page.tsx:544-553",
-    "InsightPanel (contextOnly) — must be unchanged at page.tsx:555-564",
-    "ClusterSummary — must be unchanged at page.tsx:566-574",
-    "BiomarkerDials (FE-R4 expansion zones) — must be unchanged at page.tsx:576-581",
-    "Advanced analysis tabs (ClinicianReportRenderer, InsightsPanel) — must remain functional and untouched",
-    "Navigation, loading, error states in results/page.tsx — must be unchanged"
-  ],
-  "determinism_risks": [
-    "NULL BUNDLE — layer_c_features is Optional on InsightGraphV1 (insight_graph_v1.py:266); can be null in the serialized meta. Component must guard null bundle before accessing any sub-feature.",
-    "DEFAULT-VALUE MASQUERADE — all 5 sub-features are always present in the bundle with confidence=0.0 when not computed (default_factory pattern at insight_graph_v1.py:124-128). confidence === 0.0 MUST be treated as 'not computed'. Any component logic that renders a card for confidence=0.0 features is a gating defect.",
-    "CARD SELECTION DETERMINISM — when >3 features qualify, selection must be stable across identical data: sort descending by confidence, tie-break by declared order (metabolic_age, heart_insight, inflammation, fatigue_root_cause, detox_filtration). No random or positional selection.",
-    "UNTYPED META ACCESS — meta is Record<string,any>; accessing nested path .insight_graph.layer_c_features requires safe optional chaining at every step. A thrown access error would break the entire results page.",
-    "SEVERITY DEFAULT — severity='normal' is the default for ALL features regardless of computation state. It is NOT a robustness indicator and must not be used as a gate or primary card signal when confidence=0."
-  ],
-  "behavioural_surface_area": [
-    "frontend/app/components/results/LayerCInsightSection.tsx (new file) — feature gating logic, card rendering, deterministic selection, clean-omission when no qualifying feature",
-    "frontend/app/(app)/results/page.tsx — import of new component, layerCFeatures extraction from currentAnalysis?.meta?.insight_graph, new JSX section element inserted between Section 5 (line 542) and ClusterSummary (line 566)"
-  ],
-  "forbidden_fields_confirmed_absent": [
-    "No new top-level field added to AnalysisResult — layer_c_features accessed via meta only",
-    "insights[] prose — not used as authority",
-    "Gemini narrative — not used",
-    "phenotype labels — not referenced",
-    "raw internal field names rendered as user labels — stop condition enforced"
+    "Do not implement Section 5 frontend — explicitly out of scope",
+    "Do not add new backend logic — explicitly out of scope",
+    "Do not add new DTO fields — explicitly out of scope",
+    "Do not rename internal contracts — explicitly out of scope",
+    "Do not build Gemini narrative — explicitly out of scope",
+    "Do not build UI prototypes — explicitly out of scope",
+    "Do not modify any existing frontend component",
+    "Do not modify any of: backend/ssot/, backend/core/pipeline/, backend/core/analytics/, backend/scripts/"
   ],
   "forbidden_files_confirmed_absent": [
-    "backend/ssot/ — not in scope",
+    "backend/ssot/ — read-only investigation only",
     "backend/core/pipeline/ — not in scope",
     "backend/core/analytics/ — not in scope",
     "backend/scripts/run_work_package.py — not in scope",
     "backend/scripts/golden_gate_local.py — not in scope",
     "backend/scripts/update_cursor_status.py — not in scope"
-  ]
+  ],
+  "overall_verdict": "HARDENED"
 }

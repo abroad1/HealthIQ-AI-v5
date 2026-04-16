@@ -1,29 +1,32 @@
 ---
-work_id: FE-R6-RESULTS-JOURNEY-V6
-branch: feature/results-journey-v6-r6-layer-c-insight-features
+work_id: FE-R7-RESULTS-JOURNEY-V6
+branch: feature/results-journey-v6-r7-pattern-layer-existence-check
 risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
 change_type: BEHAVIOUR
 ---
 
-# Sprint: R-6 — Layer C Insight Features
+# Sprint: R-7 — Pattern Layer Existence Check and Specification Gate
 
 ## Objective
 
-Implement Section 7 of the V6 Results Journey:
+Complete the formal gate for **Section 5 — Patterns across your body**.
 
-**Key body-level insights**
+This is **not** a frontend implementation sprint.
 
-This sprint must surface only the most robust, explainable, deterministic Layer C features so that the user sees a higher-order “body insight” layer after the core story is already understood.
+This sprint must determine, in a disciplined and evidence-based way:
 
-The user should be able to understand:
+1. what the current system / cluster / interpretation layer actually provides
+2. whether the current frontend-accessible assets are sufficient to build Section 5 now
+3. whether a governed interpretation-display layer already exists
+4. whether additional contract/content work is required before frontend implementation
+5. how the future pattern layer should align with the approved taxonomy direction:
+   - phenotype
+   - risk construct
+   - syndrome/state
+   - organ-pattern
 
-1. what broader body-level insight has been identified
-2. why it matters
-3. how it relates to their wider interpretation
-4. that these insights are selective and grounded, not gimmicky
-
-This sprint must not depend on Gemini.
+The output of this sprint must be a **written decision artifact**, not code-first implementation.
 
 ---
 
@@ -31,322 +34,234 @@ This sprint must not depend on Gemini.
 
 ### In scope
 
-- Section 7: Key body-level insights
-- Surfacing deterministic Layer C features already available on the frontend results path
-- A strict render gate so only robust, populated features appear
-- A small number of insight cards only
-- Clean omission when no feature is sufficiently robust
-
-### Primary allowed assets
-
-Use only data already available on the frontend results path, specifically:
-
-- `layer_c_features`
-- any already-exposed frontend DTO/store fields containing deterministic Layer C feature outputs
-- existing results context already visible on the page, only where needed for framing
+- Formal existence check of the current Section 5 source assets
+- Verification of current cluster/system/interpretation layer on the frontend path
+- Verification of available naming/display fields
+- Verification of whether current assets can support a user-facing pattern layer
+- Alignment check against current interpretation taxonomy and commercial screening direction
+- Written recommendation for one of two outcomes:
+  - Section 5 can be implemented as a frontend surfacing sprint
+  - Section 5 requires backend/content/contract work first
 
 ### Out of scope
 
+- Frontend implementation of Section 5
 - New backend logic
 - New DTO fields
-- Gemini / LLM narrative generation
-- Use of `insights[]` narrative prose as authority
-- New clinical scoring logic
-- Section 5 pattern layer work
-- Section 8 action layer changes
-- Any feature that is not already deterministically computed and surfaced
+- Renaming internal contracts during this sprint
+- Large refactors
+- Gemini narrative work
+- UI polish or prototype building
 
 ---
 
 ## Key principles (must be followed)
 
-1. **Selective, not exhaustive**
-   - Show only features that are robust enough to deserve space
-   - Do not render thin or placeholder cards
+1. **This is a gate, not a build sprint**
+   - Do not drift into implementation
 
-2. **Deterministic authority only**
-   - Use surfaced Layer C features
-   - Do not depend on Gemini summary prose
+2. **Do not assume “phenotype layer” exists**
+   - Verify what exists
+   - Do not infer missing structure
 
-3. **No gimmick layer**
-   - This section must feel credible and grounded
-   - Not futuristic for its own sake
+3. **Taxonomy must remain medically disciplined**
+   - not everything should be called a phenotype
+   - Section 5 must support multiple governed interpretation classes where appropriate
 
-4. **Optional by panel**
-   - If no robust features exist, the section must omit cleanly
+4. **Commercial alignment matters**
+   - the future pattern layer must be compatible with the commercial screening direction already established
 
-5. **Concise interpretation**
-   - Each card must be short, high-signal, and readable
-   - No essay-style feature descriptions
-
----
-
-## Confirmed data authority for this sprint
-
-This sprint must be built only from data already available on the frontend results path.
-
-### Primary section assets
-
-- `layer_c_features`
-- existing frontend DTO/store fields already carrying deterministic feature values
-
-### Explicit non-authority
-
-Do not use or depend on:
-
-- `insights[]` prose as the authoritative source
-- Gemini-generated narrative
-- unsurfaced InsightGraph internals
-- new DTO additions
-- new feature computation
-
-If a feature is not already deterministically available on the frontend path, it is out of scope for this sprint.
+5. **Naming quality is first-class**
+   - weak generic labels are not acceptable
+   - if the contract cannot support good naming, that must be called out explicitly
 
 ---
 
-## Target UX structure
+## Required inputs
 
-### Section 7 — Key body-level insights
+This sprint must use the following as governing context:
 
-**Purpose:**
-Show a small set of robust higher-order body insights once the user already understands the core interpretation.
+### A. Results Journey v6
+Use the current v6 paper as authority for:
+- Section 5 purpose
+- Phase 2 classification
+- existence-check requirement
+- three-layer naming goal
+- fallback expectations
 
-**This section must answer:**
-- what broader body-level feature was detected
-- what that suggests in plain language
-- why it is worth noticing
+### B. Interpretation taxonomy direction
+Use the current agreed taxonomy direction:
+- not every entity is a phenotype
+- supported classes may include:
+  - phenotype
+  - risk construct
+  - syndrome/state
+  - organ-pattern
 
----
+### C. Commercial screening priority direction
+Use the current strategic direction that future interpretation expansion should align to commercially valuable preventive/screening domains:
+- dysglycaemia / insulin resistance
+- atherogenic cardiometabolic risk
+- CKD / kidney risk
+- MASLD / liver fibrosis risk
+- integrated metabolic clustering
+- iron deficiency as a secondary high-volume lane
 
-## Required section structure
-
-### A. Section render gate
-
-This section must render only if at least one feature passes the robustness gate.
-
-If no qualifying feature exists:
-- omit the entire section cleanly
-- do not show placeholder headings or empty cards
-
----
-
-### B. Insight cards
-
-Each rendered feature must appear as a compact card containing:
-
-1. **Feature name**
-2. **Primary value / status**
-3. **Short explanation**
-4. **Why it matters** (short, single-block phrasing)
-
-Cards must be concise and visually calm.
+This does **not** mean Section 5 must fully implement those domains now.
+It means the existence check must assess whether the future pattern layer can evolve in that direction without taxonomy or contract chaos.
 
 ---
 
-## Feature eligibility rule
+## Required investigation tasks
 
-Only surface features that are both:
+### 1. Verify current frontend-accessible interpretation sources
 
-1. **present**
-2. **credible enough to show**
+Determine exactly what currently exists on the frontend results path for Section 5 candidates, including:
 
-At minimum, the implementation must verify that each feature:
-- exists in the surfaced frontend data
-- has the minimum data needed to render meaningfully
-- is not null / partial / placeholder
+- `clusters[]`
+- cluster labels / names
+- severity / status
+- cluster summaries
+- supporting biomarker groupings
+- system explainers
+- any current system-topic naming
+- any already-surfaced interpretation classification fields
 
-If robustness is ambiguous:
-- omit the feature
-
----
-
-## Feature scope for this sprint
-
-Features in scope only if already surfaced and populated on the frontend path:
-
-- metabolic age
-- heart resilience score
-- inflammation burden
-- fatigue root causes
-- detox capacity
-
-Do not assume all five will be available.
-Do not force all five to render.
+For each, determine:
+- whether it exists
+- whether it is already on the frontend path
+- whether it is user-safe
+- whether it is strong enough for direct use
 
 ---
 
-## Required card behaviour
+### 2. Verify current contract support for naming
 
-For each feature card:
+Determine whether the current layer supports the following naming/display model:
 
-### 1. Feature name
-Must use a user-readable label.
-Do not expose internal type/class names.
+- internal id
+- scientific classification
+  - phenotype / risk / syndrome-state / organ-pattern
+- clinical display name
+- plain-English subtitle
+- why-it-matters explainer
 
-### 2. Primary value / status
-Must present the actual surfaced deterministic output clearly.
-Do not invent labels if none exist.
+For each field, determine:
+- exists now
+- partially exists
+- missing entirely
 
-### 3. Short explanation
-Must explain what the feature means in plain language using already available deterministic content or carefully shaped UI copy tied directly to the surfaced value.
-
-### 4. Why it matters
-Must be short and specific.
-Do not drift into lifestyle advice.
-Do not imply diagnosis.
+Do not infer fields that are not actually present.
 
 ---
 
-## Render policy
+### 3. Assess current naming quality
 
-### Case 1 — Multiple strong features available
-Show only the strongest small set.
-Maximum:
-- 3 cards
+Assess whether the current user-facing naming is good enough for Section 5.
 
-Do not create a dashboard wall.
+This must explicitly answer:
+- are current labels too generic?
+- are they medically weak?
+- are they commercially weak?
+- would the current naming collapse the value of the middle interpretation layer?
 
-### Case 2 — One strong feature available
-Show one card only.
-That is acceptable.
-
-### Case 3 — Feature data present but weak / partial
-Do not render that feature.
-
-### Case 4 — No robust features
-Omit the section entirely.
+Be blunt and specific.
 
 ---
 
-## Component / architecture rules
+### 4. Assess whether Section 5 is currently a surfacing sprint or a contract/content sprint
 
-Before creating new components:
-- check whether an existing card/panel layout can be reused
+You must end with one clear decision:
 
-If a new component is required:
-- create one dedicated Section 7 component
-- keep feature mapping logic isolated and simple
-- use a small helper/lib only if needed for deterministic feature filtering or shaping
+### Option A — Surfacing sprint
+Choose this only if current assets are strong enough that frontend implementation can proceed without creating misleading UX.
 
-Do not:
-- introduce new shared framework
-- duplicate card logic across many files
-- move business logic into styling components
+### Option B — Contract/content sprint first
+Choose this if:
+- naming fields are missing
+- taxonomy classification is missing
+- interpretation summaries are too weak
+- the current cluster/system layer cannot support a strong user-facing middle layer
 
----
-
-## Files likely impacted
-
-- `frontend/app/(app)/results/page.tsx`
-- new Section 7 component (or equivalent)
-- small helper/lib for feature gating/shaping only if necessary
-- existing frontend results types only if already present and needing local narrowing without backend change
-
-No backend files.
+No hedging. Pick one.
 
 ---
 
-## Content shaping rules
+### 5. Produce the implementation consequences
 
-1. Keep each card tight:
-   - one title
-   - one primary value/status
-   - one short explanation block
-   - one short “why it matters” block
+Depending on the decision:
 
-2. Do not repeat:
-   - Section 1 body overview language
-   - Section 3 lead explanation
-   - Section 4 trust language
+#### If Option A
+Specify what R-8 should implement using the current assets.
 
-3. Do not make these cards sound like:
-   - marketing copy
-   - wellness fluff
-   - futuristic inventions
+#### If Option B
+Specify what must be built before R-8 can exist, for example:
+- naming contract
+- classification field
+- plain-English subtitle layer
+- why-it-matters copy
+- interpretation-display DTO work
 
-4. If a feature is thin:
-   - omit it
-   - do not stretch weak content into a card
+---
+
+## Explicit questions this sprint must answer
+
+1. What exactly is the current Section 5 source layer?
+2. Is there already a governed interpretation-display layer?
+3. Can current assets support user-facing pattern cards without weak/generic naming?
+4. Do current assets support the approved taxonomy direction?
+5. Can the future pattern layer evolve toward commercially valuable screening constructs cleanly?
+6. Is R-8 a frontend sprint next, or a backend/content contract sprint first?
+
+---
+
+## Output format
+
+Produce a short written decision artifact with these sections:
+
+1. Executive conclusion
+2. Current Section 5 asset inventory
+3. Naming/display contract assessment
+4. Taxonomy alignment assessment
+5. Commercial alignment assessment
+6. Decision:
+   - Surfacing sprint now
+   - or contract/content sprint first
+7. Consequences for R-8
+8. Risks if we proceed incorrectly
 
 ---
 
 ## Acceptance criteria
 
-1. Section 7 renders only when at least one robust deterministic feature is available
-
-2. No more than 3 cards render
-
-3. Each card contains:
-   - readable feature name
-   - surfaced value/status
-   - short explanation
-   - short why-it-matters framing
-
-4. No feature card renders from weak / null / partial data
-
-5. No section shell appears when no feature qualifies
-
-6. No new backend or DTO dependency is introduced
-
-7. No references to:
-   - phenotype
-   - internal IDs
-   - raw class names
-   - Gemini narrative
-   - unsurfaced backend data
-
----
-
-## Test instructions
-
-- Run `/upload → /results`
-
-Test with:
-- case with multiple Layer C features available
-- case with one available feature
-- case with partial/weak feature coverage
-- case with no qualifying feature
-
-Validate:
-- section appears only when appropriate
-- max 3 cards
-- no empty cards
-- no repeated explanation text
-- section feels credible and concise
-- omission works cleanly when no features qualify
-
-Confirm no regression in:
-- Sections 1–5
-- biomarker expansion
-- navigation / loading
-- advanced tabs
+1. The sprint ends with a clear yes/no decision on whether Section 5 is implementation-ready
+2. The decision is grounded in actual existing assets, not assumptions
+3. Naming quality is explicitly assessed
+4. Taxonomy alignment is explicitly assessed
+5. Commercial-screening alignment is explicitly assessed
+6. The output clearly states what R-8 must be next
 
 ---
 
 ## Completion criteria
 
-- Code compiles cleanly
-- No console errors
-- Manual UX validation passes
-- Section 7 adds real value without gimmickry
-- Weak feature output is omitted rather than surfaced
-- Ready for gate validation via kernel
+- Decision artifact completed
+- No implementation drift
+- No speculative contract assumptions
+- Clear recommendation for the next sprint
 
 ---
 
 ## Notes
 
-This sprint is about **earned insight**, not novelty.
+This sprint is strategically important.
 
-If done correctly, the user should feel:
+If done well, it will prevent:
+- weak middle-layer UX
+- taxonomy confusion
+- phenotype overreach
+- misalignment between product UX and future commercial strategy
 
-**“That’s interesting — and it feels grounded in my results.”**
+The goal is to answer:
 
-If done poorly, it will feel:
-- thin
-- showy
-- or untrustworthy
-
-Keep it selective.
-Keep it deterministic.
-Keep it credible.
+**“What are the named health constructs we can truthfully and usefully show users next — and are we actually ready to show them?”**
