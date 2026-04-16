@@ -1,124 +1,111 @@
 ---
-work_id: BE-IDL-1
-branch: feature/be-idl-1-interpretation-display-layer
-risk_level: HIGH
+work_id: FE-R8
+branch: feature/fe-r8-section-5-idl-render
+risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# BE-IDL-1 — Interpretation Display Layer v1
+# FE-R8 — Section 5 rendering against approved IDL
 
 ## Objective
 
-Create the governed Interpretation Display Layer (IDL) as the sole authority between Layer B interpretation entities and the future Section 5 frontend pattern cards.
+Implement Section 5, “Patterns across your body”, as a thin frontend surfacing sprint that renders the approved Interpretation Display Layer (IDL) from the analysis result payload.
 
-This sprint is a backend/content governance sprint.
+This sprint is not a design sprint.
+This sprint is not a taxonomy sprint.
+This sprint must not reopen naming, classification, or phenotype strategy.
 
-It exists to solve a classification, naming, and surfacing-contract gap.
-
-It does not redesign the underlying medical reasoning model.
-It does not introduce new interpretation entities.
-It does not implement Section 5 frontend rendering.
+The IDL now exists and is the sole authority for this section.
 
 ---
 
-## Strategic decision already made
+## Strategic context already settled
 
-The following is already decided and is not open for reinterpretation in this sprint:
+The following are already decided and are not open for reinterpretation in this sprint:
 
-- HealthIQ retains **phenotype** as a strategic, GTM, and B2B methodology term.
-- The current retail interpretation layer will use the medically stricter mixed classification model.
-- The current interpretation set is a governed mixed set, not a blanket “all phenotype” set.
-- Naming must remain revisable later through the governed IDL without rebuilding Layer B.
-- Frontend Section 5 remains blocked until the IDL exists.
+- The Interpretation Display Layer (IDL) is the sole authority for Section 5.
+- The current retail naming posture is approved.
+- The current interpretation layer uses the medically stricter mixed classification model.
+- Naming and classification remain governed through the IDL, not through frontend logic.
+- FE-R8 is a thin rendering sprint only.
 
-Your job is to implement that decision cleanly and deterministically.
+Your job is to render the approved IDL cleanly, accurately, and without inventing product logic in the UI.
 
 ---
 
 ## Required outcome
 
-Deliver a versioned Interpretation Display Layer that:
+Deliver a frontend Section 5 implementation that:
 
-1. classifies the current interpretation entities using the approved mixed model
-2. provides approved clinician and retail labels
-3. provides subtitle and why-it-matters copy
-4. controls whether restricted terminology is permitted on the retail surface
-5. publishes a typed IDL bundle on the analysis result payload
-6. is sufficiently governed that a later FE sprint can render Section 5 without inventing taxonomy
-
----
-
-## Classification model to support
-
-The IDL must support these exact classes:
-
-- `phenotype`
-- `risk_construct`
-- `organ_pattern`
-- `syndrome_state`
-
-No additional classes may be introduced in this sprint.
-
-The implementation must preserve the ability to rename or reclassify later through the governed IDL layer without rebuilding the underlying Layer B interpretation system.
+1. reads the typed `interpretation_display_layer_v1` payload from the analysis result
+2. renders approved pattern cards using only IDL-approved fields
+3. respects all IDL rendering and omission rules
+4. omits the section cleanly when no frontend-enabled records exist
+5. does not invent labels, classification, or explanatory text in frontend code
+6. fits correctly into the approved results journey structure
 
 ---
 
-## Sprint scope
+## Authority and preflight checks
 
-### In scope
+Before implementing, verify and cite:
 
-#### 1. Define the IDL contract
-Create a versioned typed backend contract for the Interpretation Display Layer.
+1. the current frontend results-page entry point and Section 5 insertion point
+2. the typed frontend path consuming the analysis result DTO
+3. the exact payload shape now exposing `interpretation_display_layer_v1`
+4. any existing component currently acting as the Section 5 placeholder / bridge
+5. whether any duplicate or conflicting Section 5 logic already exists in frontend code
+6. whether any existing frontend naming fallback would conflict with the new IDL authority
 
-At minimum, support fields for:
+If there is ambiguity around where Section 5 should be inserted, resolve it by following the approved results journey authority and current repo reality before modifying components.
 
-- `internal_id`
-- `scientific_class`
-- `clinical_display_label`
+---
+
+## In scope
+
+### 1. Render Section 5 from IDL only
+Implement Section 5 so that it renders from `interpretation_display_layer_v1` and not from raw clusters, raw system outputs, or any ad hoc frontend mapping.
+
+### 2. Card rendering
+Each pattern card must render only approved IDL fields.
+
+At minimum, render:
+
 - `retail_display_label`
 - `subtitle`
-- `why_it_matters`
 - `severity_state`
 - `supporting_biomarkers_summary`
-- `frontend_allowed_term`
-- `display_order_priority`
-- `enabled_for_frontend`
+- `why_it_matters`
 
-Support optional fields for:
+Optionally render, only when present:
 
 - `supporting_systems_summary`
 - `user_safe_description`
-- `future_commercial_domain`
 - `display_caveat`
 
-Do not widen the contract casually beyond what is needed for governed Section 5 rendering.
+### 3. Section render gate
+Render Section 5 only if at least one IDL record is both present and enabled for frontend display.
 
-#### 2. Create the governed records for the current interpretation set
-Author the initial IDL records for the current 9 existing interpretation entities using the agreed mixed classification model.
+If no such records exist, omit the section cleanly with no broken layout and no empty placeholder.
 
-The records must live in a governed backend/content authority layer, not in frontend code.
+### 4. Card ordering
+Use the ordering provided by the approved payload / IDL fields.
+Do not invent frontend ranking logic.
 
-#### 3. Publish the IDL deterministically
-Add the deterministic publisher / compiler / mapper step required to expose the IDL bundle on the analysis result payload.
+If the payload contains more than the approved default visible count, follow the governing display order and implement the approved truncation / expansion behaviour only if repo reality and existing design structure support it cleanly.
+If not, preserve deterministic ordered rendering and report any gap.
 
-The frontend must later be able to consume this bundle directly.
+### 5. Integrate into the results journey
+Insert Section 5 into the correct position in the results journey, between the already-approved surrounding sections, without destabilising the rest of the page.
 
-#### 4. Extend DTO / API output
-Expose the IDL bundle in the typed analysis result path.
-
-#### 5. Add governance validation
-Add tests / validations covering at minimum:
-
-- required field completeness
-- valid `scientific_class`
-- valid `frontend_allowed_term`
-- unique `display_order_priority`
-- banned generic retail labels
-- enforcement of restricted-term rules at retail label level
-
-#### 6. Preserve reversibility
-Ensure naming and classification remain externalised and revisable later through the IDL authority, rather than hardcoded into core reasoning logic or frontend presentation logic.
+### 6. Frontend tests / validation
+Add bounded frontend coverage for:
+- section presence when IDL exists
+- section omission when IDL absent or empty
+- correct rendering of required fields
+- absence of forbidden/internal fields
+- stable ordered rendering from payload data
 
 ---
 
@@ -126,83 +113,80 @@ Ensure naming and classification remain externalised and revisable later through
 
 The following are explicitly out of scope:
 
-- Section 5 frontend implementation
-- any Gemini / LLM-generated Section 5 copy
-- new interpretation entities
-- changes to biomarker-level UX
-- broader GTM copywriting
-- redesign of clinician summary architecture unless minimally required to consume typed IDL output
-- analytical or behavioural changes to Layer B reasoning unless strictly required for bounded deterministic publication of already-existing entities
+- changing IDL content
+- changing IDL classification
+- changing retail labels
+- changing `frontend_allowed_term`
+- changing backend DTO/API structure
+- changing Layer B reasoning
+- creating new interpretation entities
+- deriving new explanatory text in frontend code
+- introducing Gemini or LLM behaviour
+- redesigning the wider results journey beyond the bounded insertion needed for Section 5
 
 ---
 
-## Architectural rules
+## Rendering rules
 
-### Rule 1 — IDL is the sole Section 5 authority
-Section 5 must not read directly from raw clusters, raw system outputs, or ad hoc frontend mappings once the IDL exists.
+### Rule 1 — frontend is renderer only
+Frontend must render approved IDL content.
+It must not infer taxonomy.
 
-### Rule 2 — backend/content authority only
-Naming, classification, subtitles, and why-it-matters copy must live in a governed backend/content authority source.
+### Rule 2 — no label invention
+Frontend must not:
+- generate alternative names
+- substitute generic buckets such as “Metabolic Health”
+- infer that something is a phenotype
+- rewrite retail labels
 
-Frontend code must not:
-- classify entities
-- invent labels
-- infer whether something is a phenotype
-- substitute generic buckets as product card labels
+### Rule 3 — no internal or forbidden fields
+Frontend must not show:
+- `internal_id`
+- raw `scientific_class`
+- raw engine confidence numbers
+- raw biomarker values/ranges inside Section 5 cards
+- diagnostic claims
+- lifestyle prescriptions
 
-### Rule 3 — no duplicate authority
-Do not create multiple competing authority sources for classification or naming.
+### Rule 4 — no phenotype inference
+Frontend may only show the word “phenotype” where it already appears in the approved IDL retail label.
+No additional frontend logic may introduce that term.
 
-### Rule 4 — preserve Layer B / Layer C separation
-This sprint creates the contract between Layer B and Layer C.
-It must not collapse presentation naming into raw reasoning logic, and it must not move taxonomy decisions into the frontend.
-
-### Rule 5 — naming must remain revisable
-The implementation must support future naming revision by editing the governed IDL authority, not by rebuilding the interpretation engine.
-
----
-
-## Required preflight investigation
-
-Before implementing, verify and cite:
-
-1. the current authoritative source for the existing interpretation entities
-2. the current runtime loader / publisher path that emits the analysis result
-3. the typed DTO / contract file that must be extended
-4. whether any duplicate or parallel naming authority already exists
-5. the current source of cluster / system / interpretation naming used by the results surface
-6. the exact current path that FE would otherwise use for Section 5-adjacent data
-
-If authority is ambiguous, stop and report before modifying files.
+### Rule 5 — no duplicate authority
+If an older placeholder component or naming fallback exists, remove or bypass it rather than allowing parallel Section 5 authority paths.
 
 ---
 
-## Required implementation approach
+## Expected implementation shape
 
-Use the smallest clean architecture that produces a governed IDL.
+Use the thinnest clean frontend implementation that:
 
-Expected shape:
+1. consumes the typed IDL bundle
+2. maps records directly to a Section 5 component
+3. renders a pattern-card component from approved fields
+4. omits the section cleanly when no records qualify
+5. leaves naming/classification authority entirely in backend/content
 
-1. versioned typed IDL model
-2. governed source of IDL records for the current interpretation set
-3. deterministic mapping / publication step from internal interpretation entities to IDL records
-4. DTO / API exposure of the IDL bundle
-5. tests and validation for governance rules
-
-Do not use frontend fallbacks as a substitute for missing backend governance.
+The UI should feel production-quality, but this sprint must stay a rendering sprint, not become a new interpretation-design sprint.
 
 ---
 
-## Initial content / governance posture
+## UX expectations
 
-Implement the IDL in line with the already-approved product direction:
+The section should feel:
 
-- phenotype remains a strategic company/methodology term
-- the retail naming layer is medically stricter
-- the current interpretation set is mixed
-- naming remains revisable later through the IDL
+- structured
+- readable
+- medically credible
+- calm
+- clearly part of the guided reasoning journey
 
-Do not reinterpret this sprint as permission to reopen the phenotype strategy debate.
+It should not feel:
+
+- like a generic dashboard bucket layer
+- like a debug surface
+- like a biomarker table in disguise
+- like a new design experiment disconnected from the rest of the page
 
 ---
 
@@ -210,16 +194,15 @@ Do not reinterpret this sprint as permission to reopen the phenotype strategy de
 
 STOP immediately and report if any of the following are true:
 
-1. there is no single authoritative source for the existing interpretation entities
-2. implementing the IDL would require broad uncontrolled changes across intelligence-core reasoning rather than a bounded publication-layer addition
-3. the proposed implementation would create duplicate naming/classification authorities
-4. classification or naming would end up embedded in frontend code
-5. completing the sprint would require inventing new interpretation entities
-6. touched-file scope expands into broader behavioural logic unrelated to deterministic IDL publication
-7. the only feasible approach appears to hardcode labels directly into DTO assembly without a governed source layer
-8. the repo reality contradicts the assumption that the current 9 interpretation entities already exist in a stable enough form to map
+1. the frontend cannot access a stable `interpretation_display_layer_v1` payload path
+2. implementing Section 5 would require frontend code to invent names, classifications, or text
+3. there is an existing parallel Section 5 authority path that cannot be cleanly removed or bypassed
+4. the repo reality contradicts the assumption that FE-R8 is a thin rendering sprint
+5. the implementation would require backend contract changes rather than frontend rendering work
+6. the surrounding results-page structure is materially different from the assumed insertion model and would require a wider redesign sprint
+7. frontend typing for the analysis result is missing or inconsistent enough that safe rendering cannot proceed without widening scope
 
-If blocked, produce the exact blocker, affected files, and the smallest safe remediation path.
+If blocked, report the exact blocker, affected files, and the smallest safe remediation path.
 
 ---
 
@@ -227,13 +210,13 @@ If blocked, produce the exact blocker, affected files, and the smallest safe rem
 
 This sprint is successful only if:
 
-1. a typed versioned IDL contract exists
-2. the current 9 interpretation records exist in governed form
-3. the analysis result exposes the IDL bundle
-4. the bundle is sufficient for a later FE Section 5 renderer to consume without inventing taxonomy
-5. naming and classification are externalised and changeable later
-6. governance tests pass
-7. no Section 5 frontend implementation is attempted in this sprint
+1. Section 5 renders from `interpretation_display_layer_v1`
+2. the section uses only approved IDL display fields
+3. no naming or classification logic is invented in frontend code
+4. the section omits cleanly when no frontend-enabled records are present
+5. forbidden/internal fields are not shown
+6. rendering order is deterministic and payload-driven
+7. the implementation fits the approved results journey without destabilising other sections
 
 ---
 
@@ -241,12 +224,11 @@ This sprint is successful only if:
 
 At finish, the sprint should leave behind:
 
-- versioned IDL model(s)
-- governed record authority for the current 9 entities
-- deterministic publisher / mapper path
-- DTO / API exposure
-- tests / validations
-- brief implementation notes in the audit summary explaining where the authority now lives
+- Section 5 frontend component(s)
+- payload-to-component wiring from the typed analysis result
+- bounded tests or UI validation coverage
+- removal or bypass of any conflicting placeholder/fallback authority
+- audit-ready clarity on where Section 5 now renders from
 
 ---
 
@@ -254,23 +236,18 @@ At finish, the sprint should leave behind:
 
 You must show, with file citations and repo evidence:
 
-- where the interpretation entities live today
-- where the new IDL authority lives after implementation
-- where the analysis result is extended
-- where the deterministic publication step occurs
-- where validation tests enforce the rules
+- where `interpretation_display_layer_v1` enters the frontend
+- where Section 5 is inserted in the results page
+- where the card component renders approved IDL fields
+- where omission logic is handled
+- where tests/validation prove the section behaves correctly
 
-Do not claim the architecture is governed unless the authority paths are explicit and singular.
+Do not claim Section 5 is governed unless the frontend is demonstrably reading only from the IDL.
 
 ---
 
 ## After this sprint
 
-If BE-IDL-1 passes, the next sprint becomes a thin frontend surfacing sprint:
+After FE-R8, Section 5 should be live as a governed frontend surface.
 
-**FE-R8 — Section 5 rendering against the approved IDL**
-
-That later sprint should render the approved IDL only.
-It must not reopen classification, taxonomy, or naming strategy.
-
----
+Any future change to naming, classification, or phenotype usage must be handled through the IDL authority layer, not by reopening frontend logic.
