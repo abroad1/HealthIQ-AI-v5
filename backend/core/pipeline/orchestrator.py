@@ -33,6 +33,9 @@ from core.analytics.ratio_registry import RatioRegistry, DERIVED_IDS, compute
 from core.analytics.signal_evaluator import SignalRegistry, SignalEvaluator
 from core.clustering.cluster_schema_loader import get_cluster_schema_version_stamp
 from core.analytics.insight_graph_builder import build_insight_graph_v1
+from core.analytics.interpretation_display_layer_publish_v1 import (
+    publish_interpretation_display_layer_v1,
+)
 from core.analytics.replay_manifest_builder import build_replay_manifest_v1
 from core.analytics.explainability_builder import (
     build_explainability_report_v1,
@@ -2123,6 +2126,9 @@ class AnalysisOrchestrator:
                 "registry_version": derived_ratios_meta.get("ratio_registry_version"),
                 "derived": derived_ratios_meta.get("ratios", {}),
             }
+            idl_bundle = publish_interpretation_display_layer_v1(
+                insight_graph.model_dump() if hasattr(insight_graph, "model_dump") else {}
+            )
             result = AnalysisDTO(
                 analysis_id=analysis_id,
                 biomarkers=biomarker_dtos,
@@ -2139,6 +2145,7 @@ class AnalysisOrchestrator:
                 meta=meta,
                 replay_manifest=replay_manifest.model_dump(exclude_none=True),
                 lifestyle=lifestyle_artifact,
+                interpretation_display_layer_v1=idl_bundle,
             )
             
             logger.info(f"Analysis {analysis_id} completed successfully with {len(biomarker_dtos)} biomarkers, {len(cluster_dtos)} clusters, {len(insight_dtos)} insights")

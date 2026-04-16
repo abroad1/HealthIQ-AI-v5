@@ -1,0 +1,96 @@
+# Governed Interpretation Display Layer (IDL) v1 — static display authority.
+# Dynamic fields (severity_state, supporting_biomarkers_summary) are filled at publish time.
+# Source: docs/strategy/Interpretation_Display_Layer_Design_Lock.md §4
+
+schema_version: "1.0.0"
+
+records:
+  - internal_id: ph_metabolic_early_ir_v1
+    scientific_class: phenotype
+    clinical_display_label: Early insulin-resistance phenotype
+    retail_display_label: Insulin Resistance Phenotype
+    subtitle: A pattern suggesting early impaired sugar and lipid handling
+    why_it_matters: Left unaddressed, early insulin resistance progresses toward prediabetes and cardiometabolic risk.
+    frontend_allowed_term: phenotype_allowed
+    display_order_priority: 1
+    enabled_for_frontend: true
+
+  - internal_id: ph_hba1c_metabolic_stress_v1
+    scientific_class: syndrome_state
+    clinical_display_label: Dysglycaemic metabolic stress
+    retail_display_label: Blood Sugar Stress State
+    subtitle: A pattern suggesting sustained blood-sugar strain on the body
+    why_it_matters: Sustained glycaemic strain raises long-term metabolic and vascular risk.
+    frontend_allowed_term: clinical_only
+    display_order_priority: 2
+    enabled_for_frontend: true
+
+  - internal_id: ph_vascular_hcy_inflammation_v1
+    scientific_class: risk_construct
+    clinical_display_label: Vascular inflammation risk (homocysteine-linked)
+    retail_display_label: Vascular Inflammation Risk
+    subtitle: A pattern combining inflammation and homocysteine signals associated with vascular risk
+    why_it_matters: Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.
+    frontend_allowed_term: clinical_only
+    display_order_priority: 3
+    enabled_for_frontend: true
+
+  - internal_id: ph_hepatic_alt_inflammatory_v1
+    scientific_class: organ_pattern
+    clinical_display_label: Hepatic inflammatory pattern
+    retail_display_label: Liver Stress Pattern
+    subtitle: A pattern suggesting metabolic or inflammatory strain in the liver
+    why_it_matters: Early liver-strain patterns are a key lane toward MASLD/fibrosis risk if ignored.
+    frontend_allowed_term: clinical_only
+    display_order_priority: 4
+    enabled_for_frontend: true
+
+  - internal_id: ph_renal_stress_v1
+    scientific_class: organ_pattern
+    clinical_display_label: Renal stress pattern
+    retail_display_label: Kidney Stress Pattern
+    subtitle: A pattern suggesting the kidneys are under strain in this snapshot
+    why_it_matters: Kidney strain is common, expensive, and highly actionable when caught early.
+    frontend_allowed_term: clinical_only
+    display_order_priority: 5
+    enabled_for_frontend: true
+
+  - internal_id: ph_thyroid_lipid_disturbance_v1
+    scientific_class: organ_pattern
+    clinical_display_label: Thyroid-linked lipid disturbance pattern
+    retail_display_label: Thyroid–Lipid Pattern
+    subtitle: A pattern where thyroid-axis signals are accompanied by lipid disturbance
+    why_it_matters: Thyroid axis changes can drive lipid disturbance and warrant joint review.
+    frontend_allowed_term: clinical_only
+    display_order_priority: 6
+    enabled_for_frontend: true
+
+  - internal_id: ph_tsh_axis_metabolic_v1
+    scientific_class: organ_pattern
+    clinical_display_label: Thyroid-axis metabolic pattern
+    retail_display_label: Thyroid Axis Pattern
+    subtitle: A pattern suggesting the thyroid axis is influencing metabolic signals
+    why_it_matters: Thyroid axis shifts can quietly reshape metabolic reads and are worth monitoring.
+    frontend_allowed_term: clinical_only
+    display_order_priority: 7
+    enabled_for_frontend: true
+
+  - internal_id: ph_iron_deficiency_inflammation_v1
+    scientific_class: syndrome_state
+    clinical_display_label: Iron-deficient state with inflammation context
+    retail_display_label: Iron Deficiency (with inflammation)
+    subtitle: A pattern suggesting iron deficiency, read in the context of inflammation
+    why_it_matters: Iron deficiency is highly actionable; inflammation can mask it and must be read together.
+    frontend_allowed_term: clinical_only
+    display_order_priority: 8
+    enabled_for_frontend: true
+
+  - internal_id: ph_iron_overload_v1
+    scientific_class: syndrome_state
+    clinical_display_label: Iron-overload state
+    retail_display_label: Iron Overload
+    subtitle: A pattern suggesting excess iron stores that warrant clinical review
+    why_it_matters: Iron overload has real downstream organ risk and is worth catching early.
+    frontend_allowed_term: clinical_only
+    display_order_priority: 9
+    enabled_for_frontend: true

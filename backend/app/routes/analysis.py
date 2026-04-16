@@ -229,7 +229,12 @@ async def start_analysis(
             "burden_hash": getattr(dto, "burden_hash", ""),
             "risk_assessment": {},
             "recommendations": [],
-            "result_version": "1.0.0"
+            "result_version": "1.0.0",
+            "interpretation_display_layer_v1": (
+                dto.interpretation_display_layer_v1.model_dump()
+                if getattr(dto, "interpretation_display_layer_v1", None) is not None
+                else None
+            ),
         }
         _analysis_results[analysis_id] = stored
 

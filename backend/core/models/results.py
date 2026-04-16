@@ -2,7 +2,7 @@
 Analysis results models - immutable Pydantic v2 models for analysis results.
 """
 
-from typing import List, Dict, Any, Optional, TYPE_CHECKING
+from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, ConfigDict, Field
 
 from core.contracts.retail_explainer_v1 import (
@@ -12,9 +12,7 @@ from core.contracts.retail_explainer_v1 import (
 )
 from core.models.biomarker import BiomarkerCluster, BiomarkerInsight
 from core.models.context import AnalysisContext
-
-if TYPE_CHECKING:
-    pass
+from core.contracts.interpretation_display_layer_v1 import InterpretationDisplayLayerBundleV1
 
 
 class BiomarkerScore(BaseModel):
@@ -201,4 +199,8 @@ class AnalysisDTO(BaseModel):
     lifestyle: Optional[Dict[str, Any]] = Field(
         default=None,
         description="Sprint 20: Lifestyle modifier artifact (derived_inputs, system_modifiers, confidence_adjustments) when lifestyle_inputs provided",
+    )
+    interpretation_display_layer_v1: Optional[InterpretationDisplayLayerBundleV1] = Field(
+        default=None,
+        description="BE-IDL-1: governed interpretation display bundle for Section 5 pattern cards",
     )
