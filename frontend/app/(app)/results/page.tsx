@@ -30,6 +30,7 @@ import { PrimaryFindingAndWhy } from '@/components/results/PrimaryFindingAndWhy'
 import { WhyThisLeadWonSection } from '@/components/results/WhyThisLeadWonSection';
 import { SystemUnderstandingSection } from '@/components/results/SystemUnderstandingSection';
 import { LayerCInsightSection } from '@/components/results/LayerCInsightSection';
+import { InterpretationPatternsSection } from '@/components/results/InterpretationPatternsSection';
 import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAnalysisResult } from '@/queries/analysisResult';
@@ -569,6 +570,8 @@ export default function ResultsPage() {
           </section>
 
           <LayerCInsightSection bundle={layerCFeatures} />
+
+          <InterpretationPatternsSection bundle={currentAnalysis?.interpretation_display_layer_v1} />
 
           <section className="space-y-3" aria-labelledby="cluster-heading">
             <h2 id="cluster-heading" className="text-xl font-semibold text-gray-900">
