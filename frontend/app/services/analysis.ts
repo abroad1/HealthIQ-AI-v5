@@ -27,6 +27,59 @@ const API_URL = analysisApiRoot();
 /** Same as `API_URL`. Kept so any stale bundle/HMR that still references `API_BASE_URL` does not throw ReferenceError. */
 const API_BASE_URL = API_URL;
 
+/**
+ * Maps GET /api/analysis/result JSON into `AnalysisResult` without dropping backend fields (FE-R8A).
+ * Spreads the server payload and normalizes array/meta/risk + required frontend aliases.
+ */
+export function normalizeAnalysisResultPayload(raw: unknown): AnalysisResult {
+  if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) {
+    throw new Error('Invalid analysis result payload');
+  }
+  const r = raw as Record<string, unknown>;
+
+  const biomarkers = Array.isArray(r.biomarkers) ? r.biomarkers : [];
+  const clusters = Array.isArray(r.clusters) ? r.clusters : [];
+  const insights = Array.isArray(r.insights) ? r.insights : [];
+  const recommendations = Array.isArray(r.recommendations) ? r.recommendations : [];
+  const meta =
+    r.meta && typeof r.meta === 'object' && !Array.isArray(r.meta)
+      ? (r.meta as Record<string, unknown>)
+      : {};
+
+  const riskRaw = r.risk_assessment;
+  const risk_assessment =
+    riskRaw === undefined || riskRaw === null
+      ? {}
+      : typeof riskRaw === 'object' && !Array.isArray(riskRaw)
+        ? (riskRaw as Record<string, unknown>)
+        : {};
+
+  return {
+    ...r,
+    analysis_id: String(r.analysis_id ?? ''),
+    biomarkers: biomarkers as AnalysisResult['biomarkers'],
+    clusters: clusters as AnalysisResult['clusters'],
+    insights: insights as AnalysisResult['insights'],
+    recommendations,
+    meta,
+    risk_assessment,
+    status: 'completed',
+    clinician_report_v1: (r.clinician_report_v1 ?? null) as AnalysisResult['clinician_report_v1'],
+    balanced_systems_v1: (r.balanced_systems_v1 ?? null) as AnalysisResult['balanced_systems_v1'],
+    interpretation_display_layer_v1: (r.interpretation_display_layer_v1 ??
+      null) as AnalysisResult['interpretation_display_layer_v1'],
+    overall_score:
+      typeof r.overall_score === 'number'
+        ? r.overall_score
+        : r.overall_score === null
+          ? null
+          : null,
+    result_version: typeof r.result_version === 'string' ? r.result_version : undefined,
+    created_at: typeof r.created_at === 'string' ? r.created_at : undefined,
+    completed_at: typeof r.completed_at === 'string' ? r.completed_at : undefined,
+  } as AnalysisResult;
+}
+
 function analysisAuthHeaders(): Record<string, string> {
   if (typeof window === 'undefined') return {};
   const token =
@@ -123,22 +176,8 @@ export class AnalysisService {
       }
 
       const result = await response.json();
-      
-      // Map API response to frontend AnalysisResult format (Sprint 9b DTO parity)
-      const analysisResult: AnalysisResult = {
-        analysis_id: result.analysis_id,
-        result_version: result.result_version,
-        biomarkers: result.biomarkers || [],
-        clusters: result.clusters || [],
-        insights: result.insights || [],
-        recommendations: result.recommendations || [],
-        overall_score: result.overall_score,
-        meta: result.meta || {},
-        clinician_report_v1: result.clinician_report_v1 ?? null,
-        created_at: result.created_at,
-        status: 'completed'
-      };
-      
+      const analysisResult = normalizeAnalysisResultPayload(result);
+
       return {
         data: analysisResult,
         success: true,

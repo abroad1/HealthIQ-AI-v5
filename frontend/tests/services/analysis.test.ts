@@ -93,6 +93,9 @@ describe('AnalysisService', () => {
           analysis_id: analysisId,
           result_version: '1.0.0',
           status: 'completed',
+          balanced_systems_v1: null,
+          interpretation_display_layer_v1: null,
+          risk_assessment: {},
         biomarkers: [
           {
             biomarker_name: 'glucose',
@@ -141,6 +144,62 @@ describe('AnalysisService', () => {
         created_at: '2024-01-01T00:00:00Z'
         }
       });
+    });
+
+    it('should preserve balanced_systems_v1, interpretation_display_layer_v1, and risk_assessment from API', async () => {
+      const analysisId = '123e4567-e89b-12d3-a456-426614174000';
+      const idlStub = {
+        schema_version: '1.0',
+        records: [
+          {
+            internal_id: 't1',
+            scientific_class: 'phenotype',
+            clinical_display_label: 'Clinical',
+            retail_display_label: 'Retail',
+            subtitle: 'Sub',
+            why_it_matters: 'Because',
+            severity_state: 'watch',
+            supporting_biomarkers_summary: 'A, B',
+            frontend_allowed_term: 'phenotype_allowed',
+            display_order_priority: 1,
+            enabled_for_frontend: true,
+          },
+        ],
+      };
+      const balancedStub = {
+        intro_line: 'Intro',
+        items: [{ system_topic: 'Liver', evidence_line: 'Looks stable', capacity_note: '' }],
+        context_line: 'Context',
+      };
+      const mockApiResponse = {
+        analysis_id: analysisId,
+        result_version: '1.0.0',
+        biomarkers: [],
+        clusters: [],
+        insights: [],
+        recommendations: [],
+        overall_score: null,
+        meta: {},
+        created_at: '2024-01-01T00:00:00Z',
+        clinician_report_v1: null,
+        balanced_systems_v1: balancedStub,
+        interpretation_display_layer_v1: idlStub,
+        risk_assessment: { metabolic_strain: 12 },
+        primary_driver_system_id: 'metabolic',
+      };
+
+      (fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockApiResponse,
+      });
+
+      const result = await AnalysisService.getAnalysisResult(analysisId);
+
+      expect(result.success).toBe(true);
+      expect(result.data?.balanced_systems_v1).toEqual(balancedStub);
+      expect(result.data?.interpretation_display_layer_v1).toEqual(idlStub);
+      expect(result.data?.risk_assessment).toEqual({ metabolic_strain: 12 });
+      expect(result.data?.primary_driver_system_id).toBe('metabolic');
     });
 
     it('should handle API errors', async () => {

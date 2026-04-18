@@ -1,119 +1,76 @@
 {
+  "work_id": "FE-R8A",
   "bus_version": "1.3.1",
-  "work_id": "FE-R8",
   "status": "HARDENED",
-  "hardened_utc": "2026-04-16T00:00:00Z",
+  "hardened_utc": "2026-04-18T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
-  "changes": [
-    {
-      "check": "Front Matter — work_id",
-      "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: FE-R8"
+  "changes": {
+    "front_matter": {
+      "status": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:1-7",
+      "notes": "All five required fields present: work_id=FE-R8A, branch=feature/fe-r8a-results-dto-repair, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED"
     },
-    {
-      "check": "Front Matter — branch",
-      "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: feature/fe-r8-section-5-idl-render"
+    "authority_paths": {
+      "backend_dto_builder": {
+        "status": "CONFIRMED",
+        "citation": "backend/core/dto/builders.py:15-65",
+        "notes": "build_analysis_result_dto emits balanced_systems_v1 (line 62), interpretation_display_layer_v1 (line 64), risk_assessment (line 54). All three fields present in backend response contract."
+      },
+      "frontend_service": {
+        "status": "CONFIRMED",
+        "citation": "frontend/app/services/analysis.ts:128-140",
+        "notes": "getAnalysisResult constructs a narrowed object that OMITS balanced_systems_v1, interpretation_display_layer_v1, and risk_assessment. This is the confirmed root cause bug."
+      },
+      "frontend_types": {
+        "status": "CONFIRMED",
+        "citation": "frontend/app/types/analysis.ts:257-280",
+        "notes": "AnalysisResult interface correctly declares risk_assessment (line 267), balanced_systems_v1 (lines 273-277), interpretation_display_layer_v1 (line 279). Type layer is already correct — no changes needed."
+      },
+      "frontend_store": {
+        "status": "CONFIRMED",
+        "citation": "frontend/app/state/analysisStore.ts:19-41",
+        "notes": "Store AnalysisResult interface correctly declares all three fields: risk_assessment (line 28), balanced_systems_v1 (lines 35-39), interpretation_display_layer_v1 (line 40). Store is already correct — no changes needed."
+      },
+      "consumer_components": {
+        "status": "CONFIRMED",
+        "citation": "frontend/app/(app)/results/page.tsx:144,574,688-690",
+        "notes": "Page reads balanced_systems_v1 (line 144), interpretation_display_layer_v1 (line 574), risk_assessment (lines 688-690). Components exist and correctly consume fields from currentAnalysis."
+      },
+      "backend_route_get_result": {
+        "status": "CONFIRMED",
+        "citation": "backend/app/routes/analysis.py:334-355",
+        "notes": "GET /result endpoint calls build_analysis_result_dto(raw) at line 351, which correctly emits all three fields."
+      }
     },
-    {
-      "check": "Front Matter — risk_level",
-      "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: STANDARD — correct; sprint is frontend-only rendering, no Intelligence Core, no HIGH-risk backend paths touched (SOP §10 HIGH triggers do not apply)"
+    "primary_hypothesis": {
+      "status": "CONFIRMED",
+      "citation": "frontend/app/services/analysis.ts:128-140",
+      "notes": "Frontend mapping layer drops fields. Backend DTO correctly emits all three; frontend service constructs a hand-picked object omitting them. Fix: replace narrowed object construction with a spread of the full result plus explicit status override."
     },
-    {
-      "check": "Front Matter — execution_model",
-      "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model: TWO_PHASE_START_FINISH"
+    "stop_conditions": {
+      "status": "CONFIRMED — none triggered",
+      "citation": "backend/core/dto/builders.py:54,62,64 and frontend/app/services/analysis.ts:128-140",
+      "notes": "Backend emits fields (STOP 1 clear). Bug is frontend omission not null backend data (STOP 2 clear). Fix requires only frontend mapping change (STOP 3 clear). Bounded repair is possible (STOP 4 clear). Issue is mapping omission (STOP 5 clear). Repo confirms hypothesis (STOP 6 clear)."
     },
-    {
-      "check": "Front Matter — change_type",
-      "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: MIXED — new frontend rendering components (BEHAVIOUR) consuming governed IDL content (CONTENT); MIXED controls apply"
+    "advisory_risk_assessment": {
+      "status": "ADVISORY",
+      "citation": "backend/app/routes/analysis.py:230",
+      "notes": "risk_assessment is hardcoded to {} in the stored dict (line 230). build_analysis_result_dto propagates it as an empty dict. After frontend fix, risk_assessment will reach the page but contain no entries. The results page renders it conditionally (Object.entries check), so it will render silently empty — not broken but not populated. This is pre-existing backend behaviour, outside sprint scope. Cursor should confirm in browser during verification."
     },
-    {
-      "check": "Authority — IDL contract file exists and is readable",
-      "result": "CONFIRMED",
-      "citation": "backend/core/contracts/interpretation_display_layer_v1.py lines 20-49 — InterpretationDisplayRecordV1 confirmed with all sprint-required fields: retail_display_label (line 28), subtitle (line 29), why_it_matters (line 30), severity_state (line 31), supporting_biomarkers_summary (line 32), frontend_allowed_term (line 33), display_order_priority (line 34), enabled_for_frontend (line 35), supporting_systems_summary (line 37), user_safe_description (line 38), display_caveat (line 40); forbidden fields also confirmed: internal_id (line 26), scientific_class (line 27)"
+    "behavioural_scope": {
+      "status": "CONFIRMED",
+      "citation": "frontend/app/services/analysis.ts:128-140 and frontend/app/state/analysisStore.ts:19-41",
+      "notes": "change_type=MIXED is correct. Sprint modifies frontend mapping behaviour (service layer) but does not touch Intelligence Core. No backend analytics/pipeline logic in scope. Determinism: mapping is deterministic pass-through. No output generation logic changed. Regression targets: IDL survives API mapping into store, balanced_systems_v1 survives API mapping into store."
     },
-    {
-      "check": "Authority — IDL field in AnalysisDTO (backend model)",
-      "result": "CONFIRMED",
-      "citation": "backend/core/models/results.py lines 203-206 — AnalysisDTO has Optional[InterpretationDisplayLayerBundleV1] field interpretation_display_layer_v1, description 'BE-IDL-1: governed interpretation display bundle for Section 5 pattern cards'"
+    "forbidden_files": {
+      "status": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md (full file reviewed)",
+      "notes": "No .codex/, .vscode/, AGENTS.md in scope. No Intelligence Core files in scope. No control-plane scripts in scope."
     },
-    {
-      "check": "Authority — IDL passed through DTO builder",
-      "result": "CONFIRMED",
-      "citation": "backend/core/dto/builders.py line 64 — 'interpretation_display_layer_v1': result.get('interpretation_display_layer_v1') included in build_analysis_result_dto return dict"
-    },
-    {
-      "check": "Authority — IDL serialized in API route",
-      "result": "CONFIRMED",
-      "citation": "backend/app/routes/analysis.py lines 233-237 — dto.interpretation_display_layer_v1.model_dump() serialized into API response when present; None when absent"
-    },
-    {
-      "check": "Authority — IDL populated by orchestrator",
-      "result": "CONFIRMED",
-      "citation": "backend/core/pipeline/orchestrator.py lines 2129 and 2148 — publish_interpretation_display_layer_v1 called and result assigned as interpretation_display_layer_v1=idl_bundle on AnalysisResult"
-    },
-    {
-      "check": "Authority — Frontend AnalysisResult type gap",
-      "result": "ACTION_REQUIRED",
-      "citation": "frontend/app/types/analysis.ts lines 219-240 — AnalysisResult interface does not include interpretation_display_layer_v1. Field is absent from the TypeScript type. Cursor must add TypeScript interfaces for InterpretationDisplayLayerBundleV1 and InterpretationDisplayRecordV1 and add interpretation_display_layer_v1?: InterpretationDisplayLayerBundleV1 | null to AnalysisResult as first in-scope implementation action. This is within sprint scope (does not widen scope)."
-    },
-    {
-      "check": "Authority — Frontend payload path confirmed",
-      "result": "CONFIRMED",
-      "citation": "frontend/app/queries/analysisResult.ts line 24 — response.data cast as AnalysisResult; API JSON already contains interpretation_display_layer_v1. Once type is added, field is accessible via currentAnalysis.interpretation_display_layer_v1 in results/page.tsx"
-    },
-    {
-      "check": "Authority — No duplicate or conflicting Section 5 frontend component",
-      "result": "CONFIRMED",
-      "citation": "Grep for 'interpretation_display_layer|Section.*5|section.*5|PatternSection|section5' across frontend/app/ returned only SystemUnderstandingSection.tsx (not Section 5; confirmed to be a different section) and playwright-report. No existing Section 5 component, placeholder, or parallel naming fallback found."
-    },
-    {
-      "check": "Authority — Section 5 insertion point in results journey",
-      "result": "CONFIRMED",
-      "citation": "frontend/app/(app)/results/page.tsx line 571 — <LayerCInsightSection bundle={layerCFeatures} /> is the last governed journey section before system groups (line 573). Section 5 inserts between LayerCInsightSection (line 571) and the system groups section (lines 573-581). No Section 5 markup currently exists."
-    },
-    {
-      "check": "Behavioural scope — scope defined",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 67-108 — explicit in-scope: render interpretation_display_layer_v1 records, section omission gate, payload-driven ordering. Explicit out-of-scope: IDL content changes, backend DTO changes, naming logic, Label invention (lines 118-128)."
-    },
-    {
-      "check": "Behavioural scope — regression targets",
-      "result": "CONFIRMED",
-      "citation": "frontend/app/(app)/results/page.tsx lines 514-751 — all existing sections (ResultsBodyOverview, BalancedSystemsSummary, PrimaryFindingAndWhy, WhyThisLeadWonSection, SystemUnderstandingSection, PipelineStatus, InsightPanel, LayerCInsightSection, ClusterSummary, BiomarkerDials, Advanced analysis) must remain unaffected. Sprint adds one bounded section; no existing components are modified."
-    },
-    {
-      "check": "Behavioural scope — determinism risk",
-      "result": "CONFIRMED",
-      "citation": "backend/core/contracts/interpretation_display_layer_v1.py line 34 — display_order_priority drives ordering. No frontend ranking logic introduced. Ordering is payload-driven and deterministic. automation_bus/latest_cursor_prompt.md lines 93-98 explicitly forbids frontend ranking logic."
-    },
-    {
-      "check": "Behavioural scope — no scope creep risk",
-      "result": "CONFIRMED",
-      "citation": "STOP conditions automation_bus/latest_cursor_prompt.md lines 195-205 protect against: label invention (STOP 2), parallel authority (STOP 3), non-rendering scope (STOP 4), backend contract changes (STOP 5), wider redesign (STOP 6). Type gap (STOP 7) is in-scope remediation, not scope-widening."
-    },
-    {
-      "check": "Forbidden files — control-plane scripts untouched",
-      "result": "CONFIRMED",
-      "citation": "Sprint is frontend-only. backend/scripts/run_work_package.py, backend/scripts/golden_gate_local.py, backend/scripts/update_cursor_status.py not touched. backend/ssot/ not touched. backend/core/pipeline/ and backend/core/analytics/ not touched."
-    },
-    {
-      "check": "Branch Stage 0 alignment",
-      "result": "ACTION_REQUIRED",
-      "citation": "Current branch is main (verified via git branch --show-current). Cursor must checkout feature/fe-r8-section-5-idl-render before any file modification per SOP §0."
+    "duplicate_authority": {
+      "status": "CONFIRMED — none present",
+      "citation": "frontend/app/services/analysis.ts:128-140",
+      "notes": "Current narrowed mapping is the single mapping path. Prompt Rule 3 satisfied by repair: replace narrowed object with spread, not by adding a second path alongside it."
     }
-  ],
-  "stage_2b_behavioural_hardening": {
-    "change_type": "MIXED",
-    "scope_defined": "CONFIRMED — rendering sprint only; IDL is the sole authority; no backend changes; no label invention",
-    "intelligence_core_interaction": "NONE — sprint is frontend-only; IDL is already populated by backend Intelligence Core; frontend is read-only consumer",
-    "regression_targets": "All existing results/page.tsx sections must remain unaffected; bounded insertion only",
-    "determinism_risks": "NONE — ordering is display_order_priority from payload; no frontend ranking logic",
-    "no_silent_output_drift": "CONFIRMED — new Optional field added to AnalysisResult type only; all existing rendering logic preserved",
-    "verdict": "Behavioural scope well-contained. Frontend rendering sprint. MIXED classification correct. BEHAVIOUR controls (behaviour_review: COMPLETE required in audit)."
-  },
-  "overall_verdict": "HARDENED"
+  }
 }
