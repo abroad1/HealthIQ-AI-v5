@@ -1,6 +1,6 @@
 {
-  "work_id": "FE-R8A",
   "bus_version": "1.3.1",
+  "work_id": "FE-R8B",
   "status": "HARDENED",
   "hardened_utc": "2026-04-18T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
@@ -8,69 +8,79 @@
     "front_matter": {
       "status": "CONFIRMED",
       "citation": "automation_bus/latest_cursor_prompt.md:1-7",
-      "notes": "All five required fields present: work_id=FE-R8A, branch=feature/fe-r8a-results-dto-repair, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED"
+      "notes": "All five required fields present: work_id=FE-R8B, branch=feature/fe-r8b-results-journey-coherence, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED"
     },
     "authority_paths": {
-      "backend_dto_builder": {
+      "clinician_report_v1": {
         "status": "CONFIRMED",
-        "citation": "backend/core/dto/builders.py:15-65",
-        "notes": "build_analysis_result_dto emits balanced_systems_v1 (line 62), interpretation_display_layer_v1 (line 64), risk_assessment (line 54). All three fields present in backend response contract."
+        "citation": "frontend/app/(app)/results/page.tsx:143",
+        "notes": "Accessed as currentAnalysis?.clinician_report_v1. Feeds PrimaryFindingAndWhy, WhyThisLeadWonSection, InsightPanel, ResultsBodyOverview. Backend-authored content; must not be rewritten in frontend."
       },
-      "frontend_service": {
+      "balanced_systems_v1": {
         "status": "CONFIRMED",
-        "citation": "frontend/app/services/analysis.ts:128-140",
-        "notes": "getAnalysisResult constructs a narrowed object that OMITS balanced_systems_v1, interpretation_display_layer_v1, and risk_assessment. This is the confirmed root cause bug."
+        "citation": "frontend/app/(app)/results/page.tsx:144",
+        "notes": "Accessed as currentAnalysis?.balanced_systems_v1. Feeds BalancedSystemsSummary. Fields intro_line, system_topic, evidence_line, capacity_note, context_line are all backend-authored strings. Must not be rewritten."
       },
-      "frontend_types": {
+      "interpretation_display_layer_v1": {
         "status": "CONFIRMED",
-        "citation": "frontend/app/types/analysis.ts:257-280",
-        "notes": "AnalysisResult interface correctly declares risk_assessment (line 267), balanced_systems_v1 (lines 273-277), interpretation_display_layer_v1 (line 279). Type layer is already correct — no changes needed."
+        "citation": "frontend/app/(app)/results/page.tsx:574",
+        "notes": "Accessed as currentAnalysis?.interpretation_display_layer_v1. Feeds InterpretationPatternsSection. FE-R8 delivery. All IDL record fields (retail_display_label, subtitle, why_it_matters, supporting_biomarkers_summary) are backend-authored. Must not be rewritten."
       },
-      "frontend_store": {
+      "layer_c_features": {
         "status": "CONFIRMED",
-        "citation": "frontend/app/state/analysisStore.ts:19-41",
-        "notes": "Store AnalysisResult interface correctly declares all three fields: risk_assessment (line 28), balanced_systems_v1 (lines 35-39), interpretation_display_layer_v1 (line 40). Store is already correct — no changes needed."
+        "citation": "frontend/app/(app)/results/page.tsx:455-456",
+        "notes": "Accessed via meta.insight_graph.layer_c_features. Feeds LayerCInsightSection. Computed deterministic fields. LayerCInsightSection card explanation/whyItMatters strings are frontend-authored and refineable."
       },
-      "consumer_components": {
+      "clusters": {
         "status": "CONFIRMED",
-        "citation": "frontend/app/(app)/results/page.tsx:144,574,688-690",
-        "notes": "Page reads balanced_systems_v1 (line 144), interpretation_display_layer_v1 (line 574), risk_assessment (lines 688-690). Components exist and correctly consume fields from currentAnalysis."
-      },
-      "backend_route_get_result": {
-        "status": "CONFIRMED",
-        "citation": "backend/app/routes/analysis.py:334-355",
-        "notes": "GET /result endpoint calls build_analysis_result_dto(raw) at line 351, which correctly emits all three fields."
+        "citation": "frontend/app/(app)/results/page.tsx:141",
+        "notes": "currentAnalysis?.clusters. Feeds ClusterSummary, ResultsBodyOverview, SystemUnderstandingSection. Cluster names are backend-authored; frontend composition copy around them is frontend-authored."
       }
     },
-    "primary_hypothesis": {
+    "component_section_map": {
       "status": "CONFIRMED",
-      "citation": "frontend/app/services/analysis.ts:128-140",
-      "notes": "Frontend mapping layer drops fields. Backend DTO correctly emits all three; frontend service constructs a hand-picked object omitting them. Fix: replace narrowed object construction with a spread of the full result plus explicit status override."
+      "citation": "frontend/app/(app)/results/page.tsx:514-754",
+      "notes": "Section order confirmed: (1) ResultsBodyOverview:519, (2) BalancedSystemsSummary:526, (3) PrimaryFindingAndWhy:533, (4) WhyThisLeadWonSection:540, (5) SystemUnderstandingSection:547, (6) PipelineStatus:554, (7) InsightPanel:565, (8) LayerCInsightSection:572, (9) InterpretationPatternsSection:574, (10) ClusterSummary:583, (11) BiomarkerDials:590, (12) Advanced analysis accordion:593."
     },
-    "stop_conditions": {
-      "status": "CONFIRMED — none triggered",
-      "citation": "backend/core/dto/builders.py:54,62,64 and frontend/app/services/analysis.ts:128-140",
-      "notes": "Backend emits fields (STOP 1 clear). Bug is frontend omission not null backend data (STOP 2 clear). Fix requires only frontend mapping change (STOP 3 clear). Bounded repair is possible (STOP 4 clear). Issue is mapping omission (STOP 5 clear). Repo confirms hypothesis (STOP 6 clear)."
+    "primary_driver_system_group_location": {
+      "status": "CONFIRMED",
+      "citation": "frontend/app/components/insights/InsightPanel.tsx:113",
+      "notes": "'Primary driver system group:' label is frontend-authored text. Surfaced in InsightPanel rendered at page.tsx:565-568 with contextOnly=true. This label is refineable in this sprint."
     },
-    "advisory_risk_assessment": {
-      "status": "ADVISORY",
-      "citation": "backend/app/routes/analysis.py:230",
-      "notes": "risk_assessment is hardcoded to {} in the stored dict (line 230). build_analysis_result_dto propagates it as an empty dict. After frontend fix, risk_assessment will reach the page but contain no entries. The results page renders it conditionally (Object.entries check), so it will render silently empty — not broken but not populated. This is pre-existing backend behaviour, outside sprint scope. Cursor should confirm in browser during verification."
+    "frontend_vs_backend_copy_boundary": {
+      "status": "CONFIRMED",
+      "citation": "frontend/app/components/results/ResultsBodyOverview.tsx:47, SystemUnderstandingSection.tsx:54-110, InsightPanel.tsx:113, app/(app)/results/page.tsx:464-468",
+      "notes": "Frontend-authored and refineable: ResultsBodyOverview bridge text (ResultsBodyOverview.tsx:47), SystemUnderstandingSection blockA/B/C (entirely frontend-authored), LayerCInsightSection card explanation/whyItMatters strings, InsightPanel 'Primary driver system group:' label, page h1/description (page.tsx:464-468), Advanced analysis CardDescription (page.tsx:619-621). Backend-authored and protected: all BalancedSystemsSummary content fields, all PrimaryFindingAndWhy/WhyThisLeadWonSection content strings from clinician_report_v1, all InterpretationPatternsSection IDL record fields."
     },
     "behavioural_scope": {
       "status": "CONFIRMED",
-      "citation": "frontend/app/services/analysis.ts:128-140 and frontend/app/state/analysisStore.ts:19-41",
-      "notes": "change_type=MIXED is correct. Sprint modifies frontend mapping behaviour (service layer) but does not touch Intelligence Core. No backend analytics/pipeline logic in scope. Determinism: mapping is deterministic pass-through. No output generation logic changed. Regression targets: IDL survives API mapping into store, balanced_systems_v1 survives API mapping into store."
+      "citation": "automation_bus/latest_cursor_prompt.md:110-165",
+      "notes": "change_type=MIXED correct. Sprint modifies frontend composition/conditional rendering/progressive disclosure. No Intelligence Core touched. Behavioural surface: (1) possible change to advancedOpen default state at page.tsx:129, (2) conditional bridge copy rendering, (3) ordering/emphasis of existing sub-elements. All bounded to frontend rendering layer only. No backend contracts change."
+    },
+    "regression_targets": {
+      "status": "CONFIRMED",
+      "citation": "frontend/tests/components/InterpretationPatternsSection.test.tsx:1, frontend/tests/queries/analysisResult.test.ts:188-202",
+      "notes": "FE-R8 regression: InterpretationPatternsSection.test.tsx covers IDL rendering. FE-R8A regression: analysisResult.test.ts:188-202 covers payload mapping including primary_driver_system_id. Both must pass after sprint changes."
+    },
+    "stop_conditions": {
+      "status": "CONFIRMED — none triggered",
+      "citation": "automation_bus/latest_cursor_prompt.md:223-232",
+      "notes": "Five STOP conditions present and adequate. Main quality problems (mechanically stitched sections, competing primary framings, hidden narrative) are frontend composition problems, not backend copy quality issues. No backend contract changes needed. Deterministic reasoning outputs do not need to change. Sprint remains bounded to frontend composition changes."
+    },
+    "no_op_risk": {
+      "status": "CONFIRMED — real work exists",
+      "citation": "automation_bus/latest_cursor_prompt.md:69-83",
+      "notes": "Concrete defects confirmed: static hero framing, mechanically concatenated body overview, repeated tokens, competing 'primary' framings in InsightPanel and ClusterSummary, disconnected card stack, hidden narrative behind Advanced analysis accordion (advancedOpen defaults false at page.tsx:129). Sprint has legitimate and non-trivial work."
     },
     "forbidden_files": {
       "status": "CONFIRMED",
       "citation": "automation_bus/latest_cursor_prompt.md (full file reviewed)",
-      "notes": "No .codex/, .vscode/, AGENTS.md in scope. No Intelligence Core files in scope. No control-plane scripts in scope."
+      "notes": "No .codex/, .vscode/, AGENTS.md in scope. No backend/ssot/, backend/core/pipeline/, backend/core/analytics/ files in scope. No control-plane scripts in scope."
     },
     "duplicate_authority": {
       "status": "CONFIRMED — none present",
-      "citation": "frontend/app/services/analysis.ts:128-140",
-      "notes": "Current narrowed mapping is the single mapping path. Prompt Rule 3 satisfied by repair: replace narrowed object with spread, not by adding a second path alongside it."
+      "citation": "frontend/app/(app)/results/page.tsx:143-144,574",
+      "notes": "Each governed asset consumed from single source. No duplicate authority sources introduced or at risk of introduction. Rule 6 (preserve existing governed authority) confirmed adequate — no taxonomy or interpretation logic may move into frontend composition code."
     }
   }
 }
