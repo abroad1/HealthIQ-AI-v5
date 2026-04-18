@@ -38,6 +38,11 @@ export interface AnalysisResult {
     context_line: string;
   } | null;
   interpretation_display_layer_v1?: InterpretationDisplayLayerBundleV1 | null;
+  primary_driver_system_id?: string;
+  system_capacity_scores?: Record<string, unknown>;
+  burden_hash?: string;
+  derived_markers?: unknown;
+  replay_manifest?: unknown;
 }
 
 export interface AnalysisError {

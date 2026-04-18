@@ -1,22 +1,24 @@
 ---
-work_id: FE-R8
-branch: feature/fe-r8-section-5-idl-render
+work_id: FE-R8A
+branch: feature/fe-r8a-results-dto-repair
 risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# FE-R8 — Section 5 rendering against approved IDL
+# FE-R8A — Results DTO mapping repair and Section 5/Stable-layer recovery
 
 ## Objective
 
-Implement Section 5, “Patterns across your body”, as a thin frontend surfacing sprint that renders the approved Interpretation Display Layer (IDL) from the analysis result payload.
+Repair the frontend analysis-result mapping so the live results page consumes the full backend analysis payload already emitted by the server, then verify whether the missing governed interpretation layer and stable-system layer now appear correctly in the journey.
 
-This sprint is not a design sprint.
-This sprint is not a taxonomy sprint.
-This sprint must not reopen naming, classification, or phenotype strategy.
+This is a bounded frontend/data-consumption sprint.
 
-The IDL now exists and is the sole authority for this section.
+It exists to fix a surfacing gap between the backend DTO and the frontend store/render path.
+
+It is not a redesign sprint.
+It is not a new narrative sprint.
+It must not reopen naming, taxonomy, or Gemini strategy.
 
 ---
 
@@ -24,88 +26,99 @@ The IDL now exists and is the sole authority for this section.
 
 The following are already decided and are not open for reinterpretation in this sprint:
 
-- The Interpretation Display Layer (IDL) is the sole authority for Section 5.
-- The current retail naming posture is approved.
-- The current interpretation layer uses the medically stricter mixed classification model.
-- Naming and classification remain governed through the IDL, not through frontend logic.
-- FE-R8 is a thin rendering sprint only.
+- BE-IDL-1 is complete and approved.
+- FE-R8 is complete and approved as the thin Section 5 rendering sprint.
+- The current live journey feels dull and underpowered in part because richer backend assets are not being surfaced fully in the frontend.
+- The strongest immediate hypothesis is that the frontend mapping layer is dropping fields the backend already returns, especially:
+  - `balanced_systems_v1`
+  - `interpretation_display_layer_v1`
+  - `risk_assessment`
+- The immediate goal is to restore the intended DTO-to-UI flow before making broader product judgments about narrative quality or Gemini.
 
-Your job is to render the approved IDL cleanly, accurately, and without inventing product logic in the UI.
+Your job is to confirm that repo reality, repair it cleanly, and prove whether the missing layers now appear.
 
 ---
 
 ## Required outcome
 
-Deliver a frontend Section 5 implementation that:
+Deliver a bounded fix that:
 
-1. reads the typed `interpretation_display_layer_v1` payload from the analysis result
-2. renders approved pattern cards using only IDL-approved fields
-3. respects all IDL rendering and omission rules
-4. omits the section cleanly when no frontend-enabled records exist
-5. does not invent labels, classification, or explanatory text in frontend code
-6. fits correctly into the approved results journey structure
+1. repairs the frontend result-mapping layer so it consumes the backend analysis payload fields already emitted by the API
+2. ensures the frontend store and typed result shape preserve those fields end to end
+3. restores missing governed sections where the backend has already supplied valid data
+4. proves, with browser/repo evidence, whether:
+   - `balanced_systems_v1` now populates “What’s working well”
+   - `interpretation_display_layer_v1` now renders Section 5
+   - `risk_assessment` is now available to the existing frontend surfaces that expect it
+5. leaves the wider results journey structurally unchanged unless a minimal wiring correction is strictly required
+
+---
+
+## Primary hypothesis to test
+
+The backend DTO already contains richer payload fields, but the frontend analysis service is constructing a narrowed object and omitting fields that already exist in the backend response contract.
+
+The sprint must verify this hypothesis from source and fix it if true.
 
 ---
 
 ## Authority and preflight checks
 
-Before implementing, verify and cite:
+Before modifying files, verify and cite:
 
-1. the current frontend results-page entry point and Section 5 insertion point
-2. the typed frontend path consuming the analysis result DTO
-3. the exact payload shape now exposing `interpretation_display_layer_v1`
-4. any existing component currently acting as the Section 5 placeholder / bridge
-5. whether any duplicate or conflicting Section 5 logic already exists in frontend code
-6. whether any existing frontend naming fallback would conflict with the new IDL authority
+1. the backend DTO builder that emits the analysis result payload
+2. the frontend analysis service path that fetches and maps the result
+3. the frontend type definitions for `AnalysisResult`
+4. the frontend store shape receiving the mapped result
+5. the component(s) consuming:
+   - `balanced_systems_v1`
+   - `interpretation_display_layer_v1`
+   - `risk_assessment` or equivalent advanced/overview fields
+6. whether the current bug is caused by:
+   - dropped mapping fields
+   - inconsistent typing
+   - store omission
+   - conditional rendering logic
+   - or a combination
 
-If there is ambiguity around where Section 5 should be inserted, resolve it by following the approved results journey authority and current repo reality before modifying components.
+If the backend is not actually emitting the expected fields for this analysis result, stop and report that explicitly before widening scope.
 
 ---
 
 ## In scope
 
-### 1. Render Section 5 from IDL only
-Implement Section 5 so that it renders from `interpretation_display_layer_v1` and not from raw clusters, raw system outputs, or any ad hoc frontend mapping.
+### 1. Repair frontend result mapping
+Fix the frontend path so that backend-emitted fields are preserved instead of silently dropped.
 
-### 2. Card rendering
-Each pattern card must render only approved IDL fields.
+At minimum, investigate and repair handling for:
 
-At minimum, render:
+- `balanced_systems_v1`
+- `interpretation_display_layer_v1`
+- `risk_assessment`
 
-- `retail_display_label`
-- `subtitle`
-- `severity_state`
-- `supporting_biomarkers_summary`
-- `why_it_matters`
+Also preserve any other already-emitted fields that are required by the current results journey and are being lost by the narrowed mapping shape.
 
-Optionally render, only when present:
+### 2. Align types and store shape
+Ensure `frontend/app/types/analysis.ts`, any analysis service mapping layer, and store/state shape remain consistent with the consumed backend payload.
 
-- `supporting_systems_summary`
-- `user_safe_description`
-- `display_caveat`
+### 3. Verify governed sections now populate
+Once mapping is repaired, verify whether existing components now render richer content without further redesign.
 
-### 3. Section render gate
-Render Section 5 only if at least one IDL record is both present and enabled for frontend display.
+Specifically:
+- “What’s working well”
+- Section 5 / Interpretation Patterns
+- any existing advanced/overview surface expecting `risk_assessment`
 
-If no such records exist, omit the section cleanly with no broken layout and no empty placeholder.
+### 4. Add bounded tests
+Add tests covering the repaired mapping path.
 
-### 4. Card ordering
-Use the ordering provided by the approved payload / IDL fields.
-Do not invent frontend ranking logic.
+At minimum, include fixture-backed proof that:
+- IDL survives the API mapping into the store/result object
+- balanced systems survive the API mapping into the store/result object
+- omitted/narrowed mapping regression is prevented
 
-If the payload contains more than the approved default visible count, follow the governing display order and implement the approved truncation / expansion behaviour only if repo reality and existing design structure support it cleanly.
-If not, preserve deterministic ordered rendering and report any gap.
-
-### 5. Integrate into the results journey
-Insert Section 5 into the correct position in the results journey, between the already-approved surrounding sections, without destabilising the rest of the page.
-
-### 6. Frontend tests / validation
-Add bounded frontend coverage for:
-- section presence when IDL exists
-- section omission when IDL absent or empty
-- correct rendering of required fields
-- absence of forbidden/internal fields
-- stable ordered rendering from payload data
+### 5. Browser verification
+After implementation, verify the live page for the provided analysis result and confirm whether the missing layers now appear.
 
 ---
 
@@ -113,80 +126,53 @@ Add bounded frontend coverage for:
 
 The following are explicitly out of scope:
 
-- changing IDL content
-- changing IDL classification
-- changing retail labels
-- changing `frontend_allowed_term`
-- changing backend DTO/API structure
-- changing Layer B reasoning
-- creating new interpretation entities
-- deriving new explanatory text in frontend code
-- introducing Gemini or LLM behaviour
-- redesigning the wider results journey beyond the bounded insertion needed for Section 5
+- changing BE-IDL-1 content or registry values
+- changing naming/classification
+- redesigning the results journey
+- rewriting hero/body-overview copy
+- Gemini integration
+- backend analytical logic changes
+- new interpretation entities
+- broad Advanced analysis redesign
+- speculative “wow” enhancements not required to confirm the repaired data flow
 
 ---
 
-## Rendering rules
+## Implementation rules
 
-### Rule 1 — frontend is renderer only
-Frontend must render approved IDL content.
-It must not infer taxonomy.
+### Rule 1 — consume existing authority, do not invent new data
+This sprint must consume the backend DTO more faithfully.
+It must not fabricate replacement frontend content.
 
-### Rule 2 — no label invention
-Frontend must not:
-- generate alternative names
-- substitute generic buckets such as “Metabolic Health”
-- infer that something is a phenotype
-- rewrite retail labels
+### Rule 2 — smallest clean fix
+Use the smallest clean architecture that preserves the backend payload shape safely in the frontend.
 
-### Rule 3 — no internal or forbidden fields
-Frontend must not show:
-- `internal_id`
-- raw `scientific_class`
-- raw engine confidence numbers
-- raw biomarker values/ranges inside Section 5 cards
-- diagnostic claims
-- lifestyle prescriptions
+If spreading the backend result is safer and cleaner than hand-picking fields, prefer the cleaner durable option, provided typing remains explicit and safe.
 
-### Rule 4 — no phenotype inference
-Frontend may only show the word “phenotype” where it already appears in the approved IDL retail label.
-No additional frontend logic may introduce that term.
+### Rule 3 — no duplicate mapping authority
+Do not leave one narrowed mapping path in place while adding a second richer path elsewhere.
 
-### Rule 5 — no duplicate authority
-If an older placeholder component or naming fallback exists, remove or bypass it rather than allowing parallel Section 5 authority paths.
+### Rule 4 — preserve reversibility and clarity
+The repaired mapping should make future result fields easier to preserve, not harder.
+
+### Rule 5 — do not widen into a composition sprint
+If the repaired fields surface correctly and the page still feels flat, report that separately.
+Do not silently convert this sprint into a copy/design overhaul.
 
 ---
 
 ## Expected implementation shape
 
-Use the thinnest clean frontend implementation that:
+The expected shape is:
 
-1. consumes the typed IDL bundle
-2. maps records directly to a Section 5 component
-3. renders a pattern-card component from approved fields
-4. omits the section cleanly when no records qualify
-5. leaves naming/classification authority entirely in backend/content
+1. inspect backend result payload contract
+2. inspect frontend mapping narrowing point
+3. repair the narrowing/omission bug
+4. align types/store
+5. add regression tests
+6. validate in browser against the live page
 
-The UI should feel production-quality, but this sprint must stay a rendering sprint, not become a new interpretation-design sprint.
-
----
-
-## UX expectations
-
-The section should feel:
-
-- structured
-- readable
-- medically credible
-- calm
-- clearly part of the guided reasoning journey
-
-It should not feel:
-
-- like a generic dashboard bucket layer
-- like a debug surface
-- like a biomarker table in disguise
-- like a new design experiment disconnected from the rest of the page
+This should remain a bounded frontend/data-flow repair sprint.
 
 ---
 
@@ -194,13 +180,12 @@ It should not feel:
 
 STOP immediately and report if any of the following are true:
 
-1. the frontend cannot access a stable `interpretation_display_layer_v1` payload path
-2. implementing Section 5 would require frontend code to invent names, classifications, or text
-3. there is an existing parallel Section 5 authority path that cannot be cleanly removed or bypassed
-4. the repo reality contradicts the assumption that FE-R8 is a thin rendering sprint
-5. the implementation would require backend contract changes rather than frontend rendering work
-6. the surrounding results-page structure is materially different from the assumed insertion model and would require a wider redesign sprint
-7. frontend typing for the analysis result is missing or inconsistent enough that safe rendering cannot proceed without widening scope
+1. the backend does not actually emit the expected fields for the tested analysis result
+2. the missing sections are caused primarily by backend null data rather than frontend omission
+3. fixing the issue would require backend contract redesign rather than frontend mapping repair
+4. the existing frontend state architecture makes a bounded repair impossible without a much wider refactor
+5. the issue is not a mapping omission but a deeper rendering/logic bug requiring a separate sprint
+6. repo reality contradicts the hypothesis that FE-R8A is primarily a DTO-consumption repair sprint
 
 If blocked, report the exact blocker, affected files, and the smallest safe remediation path.
 
@@ -210,13 +195,13 @@ If blocked, report the exact blocker, affected files, and the smallest safe reme
 
 This sprint is successful only if:
 
-1. Section 5 renders from `interpretation_display_layer_v1`
-2. the section uses only approved IDL display fields
-3. no naming or classification logic is invented in frontend code
-4. the section omits cleanly when no frontend-enabled records are present
-5. forbidden/internal fields are not shown
-6. rendering order is deterministic and payload-driven
-7. the implementation fits the approved results journey without destabilising other sections
+1. the frontend preserves the required backend payload fields instead of dropping them
+2. `balanced_systems_v1` reaches the component(s) that need it
+3. `interpretation_display_layer_v1` reaches the component(s) that need it
+4. `risk_assessment` reaches any existing consumer surface that expects it
+5. regression tests prove the repaired mapping path
+6. browser verification confirms whether the missing layers now appear on the live page
+7. the sprint stays bounded to data-consumption repair, not broad redesign
 
 ---
 
@@ -224,30 +209,38 @@ This sprint is successful only if:
 
 At finish, the sprint should leave behind:
 
-- Section 5 frontend component(s)
-- payload-to-component wiring from the typed analysis result
-- bounded tests or UI validation coverage
-- removal or bypass of any conflicting placeholder/fallback authority
-- audit-ready clarity on where Section 5 now renders from
+- repaired frontend mapping/service path
+- aligned type/store handling
+- regression tests for preserved payload fields
+- browser-verified confirmation of what now appears on the page
+- audit-ready notes stating whether the wow-gap is still primarily a composition/copy problem after mapping repair
 
 ---
 
 ## Evidence requirements
 
-You must show, with file citations and repo evidence:
+You must show, with file citations and repo/browser evidence:
 
-- where `interpretation_display_layer_v1` enters the frontend
-- where Section 5 is inserted in the results page
-- where the card component renders approved IDL fields
-- where omission logic is handled
-- where tests/validation prove the section behaves correctly
+- where the backend emits the relevant fields
+- where the frontend was dropping them
+- where the mapping was repaired
+- where tests lock the fix
+- what changed in the live page after the fix
 
-Do not claim Section 5 is governed unless the frontend is demonstrably reading only from the IDL.
+Do not claim the issue is solved unless the browser confirms the missing layers now appear when backed by real data.
 
 ---
 
 ## After this sprint
 
-After FE-R8, Section 5 should be live as a governed frontend surface.
+After FE-R8A, report one of these outcomes clearly:
 
-Any future change to naming, classification, or phenotype usage must be handled through the IDL authority layer, not by reopening frontend logic.
+1. **Mapping repair solved the missing-layer problem**  
+   The journey can now be reassessed for experiential quality with the intended assets actually present.
+
+2. **Mapping repair was necessary but not sufficient**  
+   The missing layers now appear, but the page still lacks wow due to composition/copy/experience quality.  
+   In that case, the next sprint should be a bounded journey-refinement sprint, not Gemini by default.
+
+3. **Backend data was absent/null for this run**  
+   The problem was misdiagnosed as frontend omission and needs a different corrective sprint.

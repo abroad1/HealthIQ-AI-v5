@@ -277,6 +277,12 @@ export interface AnalysisResult {
   } | null;
   /** FE-R8 — governed pattern cards (Section 5); sole retail display authority for this section */
   interpretation_display_layer_v1?: InterpretationDisplayLayerBundleV1 | null;
+  /** Passthrough from `build_analysis_result_dto` — cluster/engine context */
+  primary_driver_system_id?: string;
+  system_capacity_scores?: Record<string, unknown>;
+  burden_hash?: string;
+  derived_markers?: unknown;
+  replay_manifest?: unknown;
 }
 
 
