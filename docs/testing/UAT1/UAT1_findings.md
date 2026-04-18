@@ -17,7 +17,7 @@
 
 ### Overall assessment
 The primary end-to-end journey is working. The current issues are concentrated in four areas:
-- parsing fidelity and marker-editing control
+- parsing fidelity, one-sided range handling, marker review display, and marker-editing control
 - questionnaire UX, content quality, and repeat-use burden
 - results/narrative quality and supporting-marker transparency
 - a small SSE lifecycle/polish issue
@@ -43,6 +43,10 @@ Authoritative grouped status. Full write-ups remain in **Detailed findings** bel
 | UAT-023 | Open | Open — umbrella finding; detail tracked in UAT-023a / UAT-023b |
 | UAT-023a | Open | Open — investigated; fix not yet implemented |
 | UAT-023b | Open | Open — investigated; fix not yet implemented |
+| UAT-033 | Open | Open — follow-on Wave 1 issue; investigate full one-sided range path |
+| UAT-034 | Open | Open — follow-on Wave 1 issue |
+| UAT-035 | Open | Open — follow-on Wave 1 issue; likely linked to UAT-033 |
+| UAT-036 | Open | Open — follow-on Wave 1 issue |
 
 ### Wave 2 — Results quality and narrative contract
 | ID | Status | Current status |
@@ -381,6 +385,50 @@ Authoritative grouped status. Full write-ups remain in **Detailed findings** bel
 **Current status:** Open — awaiting grouped remediation wave (Wave 2).  
 **Recommendation:** Surface a proper explanatory Why narrative that translates structured root-cause reasoning into clear, personalised interpretation.
 
+### UAT-033
+**Stage:** Parse / marker review  
+**Title:** One-sided reference ranges are still not handled gracefully in the parsed review UX  
+**Expected:** Markers with `<`, `>`, `≤`, or `≥` style ranges should be preserved and displayed cleanly without implying both bounds are required.  
+**Actual:** Parsed results still appear to mishandle one-sided ranges, and the UX implies both lower and upper bounds are needed.  
+**Severity:** High  
+**Type:** Functional / data-contract / UX  
+**Status:** Open  
+**Current status:** Open — follow-on Wave 1 issue; investigate full one-sided range path.  
+**Recommendation:** Re-check the full parse → review → edit → display path for one-sided bounds and inequality symbols, not just internal payload support.
+
+### UAT-034
+**Stage:** Marker review / edit dialog  
+**Title:** Raw biomarker value is shown but not usable/selectable  
+**Expected:** If raw biomarker value is displayed for user correction, it should be selectable/copyable or otherwise meaningfully usable.  
+**Actual:** The field shows the raw value including the inequality symbol, but there is no practical way to use/select it.  
+**Severity:** Medium  
+**Type:** UX friction  
+**Status:** Open  
+**Current status:** Open — follow-on Wave 1 issue.  
+**Recommendation:** Make raw parsed value selectable/read-only text, or convert it into a clearer assistive parsing reference.
+
+### UAT-035
+**Stage:** Parse / marker review  
+**Title:** Less-than and greater-than symbols are still not handled properly  
+**Expected:** `<` and `>` values/ranges should be interpreted and displayed as first-class supported cases.  
+**Actual:** The system still appears to mishandle these symbols.  
+**Severity:** High  
+**Type:** Functional / parsing-contract defect  
+**Status:** Open  
+**Current status:** Open — follow-on Wave 1 issue; likely linked to UAT-033.  
+**Recommendation:** Audit parse capture, frontend display formatting, edit initialization, and payload serialization for inequality-based values and ranges.
+
+### UAT-036
+**Stage:** Parse / marker review  
+**Title:** Rich multi-line biomarker reference text is still not visible for markers like prolactin  
+**Expected:** Where the lab provides rich reference text with sex/life-stage distinctions, the review flow should preserve and expose that detail clearly.  
+**Actual:** Rich parsed reference detail still does not appear for prolactin-type markers.  
+**Severity:** High  
+**Type:** Data fidelity / UX  
+**Status:** Open  
+**Current status:** Open — follow-on Wave 1 issue.  
+**Recommendation:** Re-check whether rich reference text is actually captured, preserved, and rendered, or whether it is still being flattened/dropped.
+
 ---
 
 ## Triage snapshot
@@ -392,6 +440,9 @@ None currently confirmed in the latest successful end-to-end run.
 
 ### Pre-launch improvements
 - UAT-005 — PDF rich reference-range loss
+- UAT-033 — One-sided / inequality reference ranges mishandled in review UX
+- UAT-035 — `<` / `>` symbols not handled properly in parse/review
+- UAT-036 — Rich multi-line reference text not visible (e.g. prolactin)
 - UAT-011 — Excessive Next-click flow
 - UAT-012 — Reusable questionnaire baseline
 - UAT-013 — Questionnaire sectioning
@@ -406,6 +457,7 @@ None currently confirmed in the latest successful end-to-end run.
 - UAT-028 — Root-cause Why lacks rich narrative
 
 ### Important but not blocking
+- UAT-034 — Raw biomarker value not selectable/usable in edit
 - UAT-006 — Resting heart rate missing
 - UAT-007 — Energy dropdown too limited
 - UAT-008 — Diet scale lacks anchors
@@ -424,6 +476,13 @@ None currently confirmed in the latest successful end-to-end run.
 ### 1. Parsing fidelity and review control
 - UAT-005
 - UAT-016
+- UAT-023
+- UAT-023a
+- UAT-023b
+- UAT-033
+- UAT-034
+- UAT-035
+- UAT-036
 
 ### 2. Questionnaire UX and repeat-use burden
 - UAT-006
@@ -458,5 +517,5 @@ If prioritising the next work pass, the highest-value investigations/fixes are:
 
 1. Verify whether Gemini narrative generation is actually firing and what contract it receives (UAT-022)
 2. Improve user-facing interpretation quality and remove internal governance/debug language (UAT-017, UAT-018, UAT-020, UAT-021); surface close-call runner-up context where claimed (UAT-027); deepen the Why / root-cause walkthrough beyond bullets (UAT-028)
-3. Address parsing-review fidelity and editable range control (UAT-005, UAT-016)
+3. Address parsing-review fidelity, editable range control, one-sided/inequality handling, and rich reference text exposure (UAT-005, UAT-016, UAT-023 / UAT-023a / UAT-023b, UAT-033, UAT-034, UAT-035, UAT-036)
 4. Redesign questionnaire flow around sections, reuse, and necessity audit (UAT-011, UAT-012, UAT-013, UAT-014)
