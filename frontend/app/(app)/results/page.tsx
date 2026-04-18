@@ -41,7 +41,6 @@ import Link from 'next/link';
 import { extractNarrativeRuntimeMeta } from '@/lib/narrativeRuntimePresentation';
 import { emitWedgeEvent } from '@/lib/wedgeAnalytics';
 import { derivePatternRelevanceLine } from '@/lib/biomarkerPatternRelevance';
-import { ensureTerminalPunctuation, extractFirstSentence } from '@/lib/bodyOverviewPrimarySentence';
 
 function pickPrimaryDriverCluster(clusters: Cluster[]): { id: string; name: string; biomarkers: string[] } | null {
   const sevRank: Record<string, number> = { critical: 4, high: 3, moderate: 2, low: 1 };
@@ -161,18 +160,11 @@ export default function ResultsPage() {
 
   const keyFindingsOverflow = clinicianReport?.sections?.page1?.key_findings?.slice(1) ?? [];
 
-  const investigationSpine = useMemo(() => {
-    const page1 = clinicianReport?.sections?.page1;
-    const leadSource = (page1?.primary_concern || page1?.top_hypothesis_line || page1?.key_findings?.[0] || '').trim();
-    const focusLine = leadSource ? ensureTerminalPunctuation(extractFirstSentence(leadSource)) : null;
+  /** First visible IDL retail label — pointer text only; full IDL stays in Section 5 (FE-R8C). */
+  const firstIdlRetailLabel = useMemo(() => {
     const idlRows = selectVisibleIdlRecords(currentAnalysis?.interpretation_display_layer_v1);
-    const first = idlRows[0];
-    return {
-      focusLine,
-      idlRetailLabel: first?.retail_display_label?.trim() ?? null,
-      idlSubtitle: first?.subtitle?.trim() ?? null,
-    };
-  }, [clinicianReport, currentAnalysis?.interpretation_display_layer_v1]);
+    return idlRows[0]?.retail_display_label?.trim() ?? null;
+  }, [currentAnalysis?.interpretation_display_layer_v1]);
 
   useEffect(() => {
     const id = currentAnalysis?.analysis_id;
@@ -542,11 +534,7 @@ export default function ResultsPage() {
         </div>
 
         <div className="space-y-10">
-          <ResultsInvestigationSpine
-            focusLine={investigationSpine.focusLine}
-            idlRetailLabel={investigationSpine.idlRetailLabel}
-            idlSubtitle={investigationSpine.idlSubtitle}
-          />
+          <ResultsInvestigationSpine crossBodyPatternLabel={firstIdlRetailLabel} />
 
           <section aria-labelledby="body-overview-section-label">
             <h2 id="body-overview-section-label" className="sr-only">
@@ -587,7 +575,12 @@ export default function ResultsPage() {
             <h2 id="system-understanding-section-label" className="sr-only">
               How to understand your results
             </h2>
-            <SystemUnderstandingSection balanced={balancedSystems} clusters={clusters} primaryDriver={primaryDriver} />
+            <SystemUnderstandingSection
+              balanced={balancedSystems}
+              clusters={clusters}
+              primaryDriver={primaryDriver}
+              idlRetailLabel={firstIdlRetailLabel}
+            />
           </section>
 
           <section aria-labelledby="trust-layer">

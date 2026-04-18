@@ -4,67 +4,51 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Route } from 'lucide-react';
 
 export interface ResultsInvestigationSpineProps {
-  /** First clause of lead topic — same source as body overview lead, without tie-break rider. */
-  focusLine: string | null;
-  /** First governed IDL record (retail + subtitle) — backend strings only. */
-  idlRetailLabel: string | null;
-  idlSubtitle: string | null;
+  /**
+   * FE-R8C — Optional first visible IDL retail label: named once as a pointer to Section 5
+   * (no subtitle/body duplicate here).
+   */
+  crossBodyPatternLabel: string | null;
   className?: string;
 }
 
 /**
- * FE-R8B — Above-the-fold investigation spine: connects lead topic to cross-body IDL read
- * using deterministic strings already on the result payload (no new clinical claims).
+ * FE-R8B / FE-R8C — Directional bridge only: orients the scroll order without restating
+ * the lead sentence (Body overview + Primary finding own that thread).
  */
 export function ResultsInvestigationSpine({
-  focusLine,
-  idlRetailLabel,
-  idlSubtitle,
+  crossBodyPatternLabel,
   className = '',
 }: ResultsInvestigationSpineProps) {
-  const hasIdl = Boolean(idlRetailLabel?.trim() || idlSubtitle?.trim());
-  if (!focusLine && !hasIdl) return null;
-
   return (
     <section
       aria-labelledby="investigation-spine-heading"
       className={className}
       data-testid="results-investigation-spine"
     >
-      <Card className="border-indigo-100 bg-gradient-to-b from-indigo-50/50 to-white shadow-sm">
+      <Card className="border-slate-200 bg-slate-50/40 shadow-sm">
         <CardHeader className="pb-2">
           <CardTitle
             id="investigation-spine-heading"
-            className="text-lg font-semibold text-indigo-950 flex items-center gap-2"
+            className="text-base font-semibold text-slate-900 flex items-center gap-2"
           >
-            <Route className="h-5 w-5 text-indigo-600 shrink-0" aria-hidden />
+            <Route className="h-5 w-5 text-slate-600 shrink-0" aria-hidden />
             Your investigation path
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 text-sm text-slate-800 pt-0">
-          {focusLine ? (
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-indigo-900/85 mb-1">Main focus</p>
-              <p className="leading-snug text-base text-slate-900">{focusLine}</p>
-            </div>
-          ) : null}
-          {hasIdl ? (
-            <div className="border-t border-indigo-100 pt-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">
-                Pattern read across the body
-              </p>
-              <p className="leading-snug">
-                {idlRetailLabel ? (
-                  <span className="font-semibold text-slate-900">{idlRetailLabel.trim()}</span>
-                ) : null}
-                {idlRetailLabel && idlSubtitle ? <span className="text-slate-500"> — </span> : null}
-                {idlSubtitle ? <span className="text-slate-700">{idlSubtitle.trim()}</span> : null}
-              </p>
-              <p className="text-xs text-slate-500 mt-2">
-                The sections below connect this cross-body pattern to your lead finding, stable systems, and markers.
-              </p>
-            </div>
-          ) : null}
+        <CardContent className="pt-0">
+          <p className="text-sm text-slate-700 leading-relaxed">
+            <span className="font-medium text-slate-900">Body overview</span> states the lead concern and pattern
+            scan. Next: what looks stable, the lead finding and evidence, why that lead ranked, then{' '}
+            <span className="font-medium text-slate-900">Patterns across your body</span>
+            {crossBodyPatternLabel ? (
+              <>
+                {' '}
+                (including <span className="font-medium text-slate-900">{crossBodyPatternLabel}</span>)
+              </>
+            ) : null}
+            , then deeper evidence—each block adds detail instead of repeating the same headline.
+          </p>
         </CardContent>
       </Card>
     </section>

@@ -14,6 +14,8 @@ export interface SystemUnderstandingSectionProps {
   balanced: BalancedSystemsV1 | null | undefined;
   clusters: Cluster[];
   primaryDriver: SystemUnderstandingPrimaryDriver | null;
+  /** FE-R8C — first visible IDL retail label; example binding only, no new inference */
+  idlRetailLabel?: string | null;
 }
 
 /** Human-readable label from a marker key — avoids displaying raw snake_case identifiers. */
@@ -45,9 +47,11 @@ export function SystemUnderstandingSection({
   balanced,
   clusters,
   primaryDriver,
+  idlRetailLabel,
 }: SystemUnderstandingSectionProps) {
   const leadName = primaryDriver?.name?.trim() || null;
   const stableFirstTopic = balanced?.items?.[0]?.system_topic?.trim() || null;
+  const idlLabel = idlRetailLabel?.trim() || null;
 
   // Block A — example system + 1–2 markers (deterministic: primary driver first, else first cluster)
   let blockA: string;
@@ -102,7 +106,9 @@ export function SystemUnderstandingSection({
 
   // Block C — markers → bigger picture (do not reuse Section 3 sentences)
   let blockC: string;
-  if (leadName) {
+  if (leadName && idlLabel) {
+    blockC = `Individual markers are single signals; the useful story is how they combine across systems. ${leadName} organises markers for comparison, while the cross-body read “${idlLabel}” summarises how related signals line up across the panel—both are on this page, answering different layers of the same investigation.`;
+  } else if (leadName) {
     blockC = `Individual markers are single signals; the useful story is how they combine across systems. When the evidence lines up, a pattern such as ${leadName} can sit at the top—without resting on any one number in isolation.`;
   } else {
     blockC =
