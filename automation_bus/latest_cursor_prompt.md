@@ -1,29 +1,29 @@
 ---
-work_id: FE-R8B
-branch: feature/fe-r8b-results-journey-coherence
+work_id: FE-R8C
+branch: feature/fe-r8c-results-dedup-and-example-binding
 risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# FE-R8B — Results journey coherence and narrative composition refinement
+# FE-R8C — Results journey de-duplication and example binding
 
 ## Objective
 
-Improve the results journey so it reads as one coherent, premium, body-wide investigation rather than several deterministic engines stacked vertically.
+Refine the results journey so it stops repeating the same lead story in multiple adjacent shells and makes the explanatory sections track the actual live investigation thread on the page.
 
-This is a bounded frontend composition and narrative-shaping sprint.
+This is a bounded frontend composition/editing sprint.
 
 It exists because:
-- FE-R8 and FE-R8A successfully surfaced the intended governed assets
-- the page is now richer
-- but the live experience still feels mechanically stitched, repetitive, and insufficiently world-class
+- FE-R8A restored the missing payload fields
+- FE-R8B improved the page structure and coherence
+- but the live page still repeats the same lead idea too many times and still uses generic educational examples that do not track the active story
 
-This sprint must improve coherence, hierarchy, and narrative flow without widening into a rebuild.
+This sprint must improve narrative economy and example alignment without widening into a redesign or backend rewrite.
 
-It must not introduce LLM/Gemini dependency.
-It must not redesign backend intelligence.
-It must not reopen taxonomy or IDL strategy.
+It must not introduce Gemini/LLM dependency.
+It must not change backend contracts.
+It must not reopen IDL strategy or naming.
 
 ---
 
@@ -31,20 +31,20 @@ It must not reopen taxonomy or IDL strategy.
 
 The following are already decided and are not open for reinterpretation in this sprint:
 
-- The results page is a guided reasoning journey, not a better lab report.
+- The page is a guided reasoning journey, not a better lab report.
 - Deterministic assets remain the narrative spine.
-- BE-IDL-1, FE-R8, and FE-R8A are complete and approved.
-- The current “wow” gap is now primarily a composition/narrative-shaping problem, not a missing-data-flow problem.
-- The page already has substantial backend intelligence on screen:
+- BE-IDL-1, FE-R8, FE-R8A, and FE-R8B are complete and approved.
+- The current live page now surfaces the intended core assets, including:
   - `clinician_report_v1`
   - `balanced_systems_v1`
   - `interpretation_display_layer_v1`
   - Layer C feature cards
   - clusters/system groups
   - biomarker evidence
-- The current live problem is that these appear as several adjacent systems rather than one guided investigation.
+  - Advanced/Narrative when present
+- The main remaining gap is now repetition, generic example binding, and editorial composition — not missing core backend intelligence.
 
-Your job is to improve how the existing assets are composed, introduced, and connected.
+Your job is to tighten the page so it feels more curated and less mechanically repetitive.
 
 ---
 
@@ -52,35 +52,27 @@ Your job is to improve how the existing assets are composed, introduced, and con
 
 Deliver a bounded refinement that:
 
-1. gives the page a clearer above-the-fold investigation spine
-2. reduces the sense that multiple engines are speaking independently
-3. improves narrative continuity between:
-   - Body overview
-   - What’s working well
-   - Primary finding
-   - Why this lead won
-   - Patterns across your body
-4. reduces obvious repetition and mechanically stitched phrasing where the frontend can do so safely through composition/presentation choices
-5. resolves or softens conflicting “center of gravity” cues so the user feels one coherent body-wide story
-6. improves access to deeper narrative where high-value content already exists
+1. reduces repetition of the same lead story across the upper page
+2. makes the investigation spine orient the user without duplicating nearby sections
+3. makes “How to understand your results” use examples grounded in the actual live page context rather than a fixed generic cardiovascular script
+4. preserves the governed backend meaning while improving editorial flow
+5. keeps the page feeling like one investigation rather than multiple repeated summaries
 
 ---
 
 ## Primary problems this sprint is intended to address
 
-The live page now has more real content, but still feels off because of:
+The live page is materially improved, but still feels off because of:
 
-- static, generic onboarding/hero framing
-- a body overview lead that reads as mechanically concatenated
-- repeated tokens and duplicated concepts across adjacent sections
-- competing “primary” framings:
-  - lead hypothesis / homocysteine-B12 story
-  - IDL pattern story
-  - “primary driver system group” language
-- strong deterministic assets presented as separate cards rather than one investigation path
-- deeper narrative content hidden behind progressive disclosure that is too easy to ignore
+- the lead thread being told multiple times across:
+  - investigation spine
+  - body overview
+  - primary finding
+- IDL being previewed in the spine and then repeated again immediately in full
+- “How to understand your results” using stock examples that do not track the active lead/IDL context
+- stacked cards still reading like adjacent outputs rather than a curated single narrative
 
-This sprint should address those issues through composition and frontend shaping, not new backend logic.
+This sprint should solve those issues through bounded frontend composition and copy binding only.
 
 ---
 
@@ -88,79 +80,74 @@ This sprint should address those issues through composition and frontend shaping
 
 Before modifying files, verify and cite:
 
-1. the current results-page structure and actual section order
-2. the components currently responsible for:
-   - Body overview
-   - What’s working well
-   - Primary finding and why
-   - Why this lead won
-   - Patterns across your body
-   - Clinical interpretation detail / trust strip / advanced analysis entry
-3. which visible phrases are:
-   - backend-authored strings that should not be rewritten in frontend
-   - frontend-authored intro/bridge/headline copy that may be refined
-4. where the “primary driver system group” line is currently surfaced
-5. whether a minimal composition layer can unify the visible story without altering backend contracts
+1. the current components responsible for:
+   - `ResultsInvestigationSpine`
+   - `ResultsBodyOverview`
+   - `PrimaryFindingAndWhy`
+   - `SystemUnderstandingSection`
+   - `InterpretationPatternsSection`
+2. which visible strings in those components are:
+   - backend-authored and must remain verbatim
+   - frontend-authored and may be tightened or rebound
+3. whether the current duplication comes from:
+   - frontend-authored wrappers/labels
+   - repeated surfacing of the same backend field
+   - or both
+4. what live deterministic values are already available in the page/component tree that can be safely used for example binding, such as:
+   - first visible IDL retail label
+   - primary driver system group name
+   - lead topic / lead concern label
+   - visible balanced-system names
 
-If repo reality shows that the main issue is backend-authored text that cannot be improved safely in frontend, stop and report that clearly rather than widening scope silently.
+If the duplication problem turns out to be mainly backend-authored copy that cannot be improved safely in frontend, stop and report that clearly.
 
 ---
 
 ## In scope
 
-### 1. Improve above-the-fold investigation spine
-Create a stronger opening flow so the user quickly understands:
-- what the main body-wide story is
-- what appears stable
-- what the main line of inquiry is
-- where they should look next
+### 1. Investigation spine de-duplication
+Refine the upper-page flow so the spine or body-overview layer does not restate the same lead thread in near-identical form.
 
 This may include:
-- a better introductory bridge between Body overview and the next sections
-- a short deterministic “what we’re investigating” framing block composed from already-visible assets
-- improved ordering or emphasis of existing sub-elements within the opening journey
+- shortening the investigation spine
+- making the spine more of a directional bridge and less of a second summary card
+- reducing or removing duplicated phrases where the next section already says the same thing better
 
+Do not remove clinically meaningful content without justification.
+
+### 2. Body overview / spine editorial economy
+Tighten the relationship between:
+- spine
+- body overview
+- primary finding
+
+The user should feel:
+- “I understand the thread”
+not
+- “I just read the same thing again”
+
+### 3. Example binding in “How to understand your results”
+Replace fixed generic examples with deterministic examples derived from already-visible page context when available.
+
+The section should use the actual live investigation thread more intelligently.
+
+Possible sources include:
+- first visible IDL `retail_display_label`
+- primary driver system group name
+- lead pattern / lead topic already on screen
+
+This must be deterministic substitution from existing loaded props/data.
+Do not create new inference logic.
 Do not invent new clinical claims.
 
-### 2. Reduce stitched / repetitive experience
-Reduce the sense that adjacent sections repeat the same idea mechanically.
+### 4. Section relationship tightening
+Where two nearby sections are conceptually valid but too close in substance, improve the transitions and emphasis so they feel complementary instead of repetitive.
 
-Possible mechanisms:
-- tighter section intros
-- better transitions between sections
-- de-emphasis or removal of redundant bridge copy
-- presentational consolidation where multiple nearby blocks say nearly the same thing
-
-Do not rewrite backend clinical strings unless the source is clearly frontend-authored presentation text.
-
-### 3. Resolve “multiple center of gravity” problem
-Where the user currently sees competing interpretations of what the page is “about,” improve composition so one main thread leads and secondary frames read as supporting context.
-
-This may include:
-- reframing or repositioning the “primary driver system group” line
-- reducing the prominence of secondary competing labels
-- making it clearer how the IDL pattern relates to the lead finding rather than appearing as a separate story
-
-### 4. Improve access to deeper narrative
-If deeper narrative content already exists and is valuable, improve the user’s chance of encountering it.
-
-This may include a bounded progressive-disclosure refinement such as:
-- default-opening the most relevant narrative surface when content exists
-- clearer invitation into advanced narrative
-- a stronger “deep dive” affordance
-
-Do not redesign Advanced analysis wholesale.
-
-### 5. Preserve governed data usage
-All improvements must continue to rely on existing governed deterministic assets.
-No frontend invention of clinical meaning.
-
-### 6. Add bounded tests / validation
-Add tests or UI validation where appropriate to protect:
-- new composition logic
-- conditional rendering
-- section order / visibility assumptions where changed
-- absence of regressions to FE-R8/FE-R8A behaviour
+### 5. Bounded tests / validation
+Add tests or validation as appropriate for:
+- example binding behaviour
+- de-duplication logic / conditional display choices
+- protection against regression into fixed generic examples
 
 ---
 
@@ -169,38 +156,34 @@ Add tests or UI validation where appropriate to protect:
 The following are explicitly out of scope:
 
 - backend analytical changes
-- IDL content or classification changes
-- new backend DTO fields
+- backend DTO changes
+- IDL content/classification changes
 - Gemini / LLM narrative enablement
-- full redesign of biomarker evidence
-- full redesign of Advanced analysis
-- rewriting backend-generated clinical reasoning text at source
+- full redesign of the results page
+- broad rewrite of backend-authored clinical strings
+- changes to biomarker evidence architecture
 - new interpretation entities
-- broader launch/trust/compliance work
+- launch/trust/compliance work
 
 ---
 
 ## Implementation rules
 
-### Rule 1 — composition over reinvention
-Use better composition of existing assets before inventing new UI complexity.
+### Rule 1 — no change to clinical meaning
+Frontend may improve wrappers, transitions, and example selection, but must not alter the meaning of backend-authored reasoning.
 
-### Rule 2 — one story, not many panels
-The page should feel like one investigation path.
-Avoid adding more disconnected cards that increase fragmentation.
+### Rule 2 — use existing deterministic context only
+Any smarter example binding must come from already-loaded deterministic fields already present on the page.
 
-### Rule 3 — frontend must not alter clinical meaning
-Do not paraphrase or soften backend-authored reasoning in ways that change its meaning.
+### Rule 3 — reduce repetition, do not strip substance
+The goal is editorial economy, not content loss.
 
-### Rule 4 — reduce duplication, do not hide truth
-If two blocks repeat the same concept, prefer cleaner composition.
-Do not solve repetition by removing clinically important context without justification.
+### Rule 4 — one thread, not one more card
+Prefer strengthening the single investigation thread over adding new presentational blocks.
 
-### Rule 5 — bounded progressive disclosure only
-Any changes to default-open/default-closed behaviour must remain narrow and justified by user comprehension.
-
-### Rule 6 — preserve existing governed authority
-No taxonomy, naming, or interpretation logic may move into frontend composition code.
+### Rule 5 — no hidden frontend intelligence
+Do not let example binding become implicit interpretation logic.
+It must remain simple, visible, and deterministic.
 
 ---
 
@@ -208,13 +191,13 @@ No taxonomy, naming, or interpretation logic may move into frontend composition 
 
 The expected shape is:
 
-1. inspect the live page and current section/component structure
-2. identify the smallest set of composition changes with highest coherence value
-3. implement bounded layout/heading/bridge/progressive-disclosure refinements
-4. preserve existing governed content sources
-5. validate in browser against the same live analysis result
+1. inspect the upper-page components and repeated strings
+2. identify the smallest set of edits with the highest de-duplication value
+3. bind educational/example copy to live deterministic context where safe
+4. validate in browser against the same analysis result
+5. confirm whether repetition is materially reduced
 
-This should remain a coherence sprint, not a broad redesign.
+This should remain a bounded editorial/frontend refinement sprint.
 
 ---
 
@@ -222,12 +205,11 @@ This should remain a coherence sprint, not a broad redesign.
 
 STOP immediately and report if any of the following are true:
 
-1. the main quality problem is clearly backend-authored copy that cannot be improved safely in frontend
-2. meaningful coherence improvement would require backend contract changes
-3. fixing the “multiple center of gravity” issue requires changing deterministic reasoning outputs rather than frontend composition
-4. the proposed solution starts to become a broad redesign of the results page
-5. the sprint would need to introduce new generated narrative rather than improving composition of existing assets
-6. repo reality contradicts the assumption that this is a bounded frontend coherence sprint
+1. the repetition problem is mainly caused by backend-authored strings that cannot be safely improved in frontend
+2. binding “How to understand” to live context would require new inference logic rather than deterministic substitution
+3. meaningful improvement would require backend contract changes
+4. the sprint starts to widen into a redesign of multiple sections
+5. repo reality contradicts the assumption that this is a bounded frontend de-duplication sprint
 
 If blocked, report the exact blocker, affected files, and the smallest safe next sprint.
 
@@ -237,13 +219,12 @@ If blocked, report the exact blocker, affected files, and the smallest safe next
 
 This sprint is successful only if:
 
-1. the page feels more like one guided investigation and less like stacked engines
-2. the opening journey is clearer and more compelling above the fold
-3. stable systems, lead finding, and IDL pattern feel connected rather than competing
-4. obvious repetition/mechanical stitching is reduced
-5. deeper narrative is easier to encounter where valuable content already exists
-6. no new backend or Gemini dependency is introduced
-7. FE-R8 and FE-R8A governed data-flow behaviour remains intact
+1. the upper-page journey repeats the lead story less obviously
+2. the investigation spine orients rather than duplicates
+3. “How to understand your results” reflects the actual live story more credibly
+4. the page feels more edited and less mechanically stitched
+5. no backend or Gemini dependency is introduced
+6. FE-R8 / FE-R8A / FE-R8B data-flow and coherence gains remain intact
 
 ---
 
@@ -251,11 +232,10 @@ This sprint is successful only if:
 
 At finish, the sprint should leave behind:
 
-- bounded frontend composition refinements
-- clearer investigation-spine presentation
-- any justified progressive-disclosure adjustment
-- tests/validation for the changed behaviours
-- browser-verified notes on how the user experience improved
+- bounded frontend de-duplication refinements
+- deterministic example-binding improvement in the explanatory section
+- tests/validation for changed behaviours
+- browser-verified notes showing how repetition was reduced
 
 ---
 
@@ -263,23 +243,20 @@ At finish, the sprint should leave behind:
 
 You must show, with file citations and browser evidence:
 
-- what specific sections/components were changed
-- what composition problem each change was intended to solve
-- how the live page now reads more coherently
+- what repeated content was reduced
+- which deterministic fields now drive the example binding
+- what changed in the upper-page reading experience
 - that no governed backend authority was bypassed
-- that the page still renders from the same deterministic assets
+- that the result is more coherent without becoming thinner or vaguer
 
-Do not claim the page is “world class” unless the browser-visible result materially supports that claim.
+Do not claim the issue is solved unless the browser-visible result materially supports that claim.
 
 ---
 
 ## After this sprint
 
-After FE-R8B, report clearly which of these is true:
+After FE-R8C, report clearly which of these is true:
 
-1. **The deterministic journey is now strong enough without Gemini**
-2. **The deterministic journey is much stronger, but selective narrative-polish work may still be justified later**
-3. **The remaining problem is now clearly upstream/backend-authored content quality, not frontend composition**
-
-That report will determine whether anything like R-9 is actually needed.
-```
+1. **The deterministic journey now feels strong enough without Gemini**
+2. **The journey is substantially better, but a later optional polish sprint may still help**
+3. **The remaining problem is now clearly upstream/backend-authored narrative quality, not frontend composition**

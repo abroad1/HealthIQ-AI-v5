@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "FE-R8B",
+  "work_id": "FE-R8C",
   "status": "HARDENED",
   "hardened_utc": "2026-04-18T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
@@ -8,79 +8,69 @@
     "front_matter": {
       "status": "CONFIRMED",
       "citation": "automation_bus/latest_cursor_prompt.md:1-7",
-      "notes": "All five required fields present: work_id=FE-R8B, branch=feature/fe-r8b-results-journey-coherence, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED"
+      "notes": "All five required fields present: work_id=FE-R8C, branch=feature/fe-r8c-results-dedup-and-example-binding, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED."
     },
     "authority_paths": {
-      "clinician_report_v1": {
+      "ResultsInvestigationSpine": {
         "status": "CONFIRMED",
-        "citation": "frontend/app/(app)/results/page.tsx:143",
-        "notes": "Accessed as currentAnalysis?.clinician_report_v1. Feeds PrimaryFindingAndWhy, WhyThisLeadWonSection, InsightPanel, ResultsBodyOverview. Backend-authored content; must not be rewritten in frontend."
+        "citation": "frontend/app/components/results/ResultsInvestigationSpine.tsx:1-72",
+        "notes": "Exists and read. Props: focusLine (string|null), idlRetailLabel (string|null), idlSubtitle (string|null). focusLine is frontend-shaped from backend primary_concern/top_hypothesis_line/key_findings[0] (page.tsx:166-167). idlRetailLabel/idlSubtitle are backend IDL fields (page.tsx:169-174). Rendering is conditional: focusLine block at line 45-50, IDL block at lines 51-67."
       },
-      "balanced_systems_v1": {
+      "ResultsBodyOverview": {
         "status": "CONFIRMED",
-        "citation": "frontend/app/(app)/results/page.tsx:144",
-        "notes": "Accessed as currentAnalysis?.balanced_systems_v1. Feeds BalancedSystemsSummary. Fields intro_line, system_topic, evidence_line, capacity_note, context_line are all backend-authored strings. Must not be rewritten."
+        "citation": "frontend/app/components/results/ResultsBodyOverview.tsx:1-74",
+        "notes": "Exists and read. Primary sentence from buildBodyOverviewPrimarySentence (bodyOverviewPrimarySentence.ts:28-51). Source: page1.primary_concern || top_hypothesis_line || key_findings[0] — SAME backend fields as Spine.focusLine (page.tsx:166-167 vs bodyOverviewPrimarySentence.ts:42-43). Duplication confirmed: both Spine and BodyOverview extract extractFirstSentence(same backend source). BodyOverview appends a frontend-authored suffix (bodyOverviewPrimarySentence.ts:45-50) which is refineable."
       },
-      "interpretation_display_layer_v1": {
+      "PrimaryFindingAndWhy": {
         "status": "CONFIRMED",
-        "citation": "frontend/app/(app)/results/page.tsx:574",
-        "notes": "Accessed as currentAnalysis?.interpretation_display_layer_v1. Feeds InterpretationPatternsSection. FE-R8 delivery. All IDL record fields (retail_display_label, subtitle, why_it_matters, supporting_biomarkers_summary) are backend-authored. Must not be rewritten."
+        "citation": "frontend/app/components/results/PrimaryFindingAndWhy.tsx:1-181 + frontend/app/lib/primaryFindingShaping.ts:1-60",
+        "notes": "Exists and read. buildSection3LeadStatement (primaryFindingShaping.ts:16-47) draws from same page1 fields. Already detects Section 1 duplication (line 43-46). Section 3 adds 'Main finding for this panel: ' and 'Leading explanation: ' wrapper labels — these are frontend-authored and refineable. Backend strings (concern, hyp) must remain verbatim. The 'What this means' block uses buildWhatThisMeansBlock (lines 49-60) which also uses top_hypothesis_line and key_findings[0]."
       },
-      "layer_c_features": {
+      "SystemUnderstandingSection": {
         "status": "CONFIRMED",
-        "citation": "frontend/app/(app)/results/page.tsx:455-456",
-        "notes": "Accessed via meta.insight_graph.layer_c_features. Feeds LayerCInsightSection. Computed deterministic fields. LayerCInsightSection card explanation/whyItMatters strings are frontend-authored and refineable."
+        "citation": "frontend/app/components/results/SystemUnderstandingSection.tsx:1-133",
+        "notes": "Exists and read. blockA (lines 53-88), blockB (lines 91-101), blockC (lines 104-110) are FULLY frontend-authored deterministic text. Currently uses primaryDriver.name and balanced.items[0].system_topic. Does NOT currently receive idlRetailLabel. To bind examples to first IDL retail_display_label, a new optional prop must be added and threaded from page.tsx (investigationSpine.idlRetailLabel already computed at page.tsx:168). This is deterministic prop threading — no inference logic."
       },
-      "clusters": {
+      "InterpretationPatternsSection": {
         "status": "CONFIRMED",
-        "citation": "frontend/app/(app)/results/page.tsx:141",
-        "notes": "currentAnalysis?.clusters. Feeds ClusterSummary, ResultsBodyOverview, SystemUnderstandingSection. Cluster names are backend-authored; frontend composition copy around them is frontend-authored."
+        "citation": "frontend/app/components/results/InterpretationPatternsSection.tsx:1-131",
+        "notes": "Exists and read. Renders all enabled IDL records ordered by display_order_priority (lines 11-18). First record has retail_display_label (line 77-79), subtitle (line 80), why_it_matters (line 96), supporting_biomarkers_summary (line 103) — all backend-authored. Spine previews the SAME first record via idlRetailLabel+idlSubtitle. Duplication confirmed: Spine shows IDL preview, InterpretationPatternsSection renders the full first card immediately after."
+      },
+      "results_page_composition": {
+        "status": "CONFIRMED",
+        "citation": "frontend/app/(app)/results/page.tsx:544-615",
+        "notes": "Section order confirmed: (1) ResultsInvestigationSpine:545, (2) ResultsBodyOverview:555, (3) BalancedSystemsSummary:562, (4) PrimaryFindingAndWhy:569, (5) WhyThisLeadWonSection:576, (6) InterpretationPatternsSection:583, (7) SystemUnderstandingSection:590. investigationSpine memo at lines 164-175 derives focusLine + idlRetailLabel + idlSubtitle — idlRetailLabel already in scope and can be passed to SystemUnderstandingSection at line 590 without new computation."
       }
     },
-    "component_section_map": {
+    "source_cross_reference": {
       "status": "CONFIRMED",
-      "citation": "frontend/app/(app)/results/page.tsx:514-754",
-      "notes": "Section order confirmed: (1) ResultsBodyOverview:519, (2) BalancedSystemsSummary:526, (3) PrimaryFindingAndWhy:533, (4) WhyThisLeadWonSection:540, (5) SystemUnderstandingSection:547, (6) PipelineStatus:554, (7) InsightPanel:565, (8) LayerCInsightSection:572, (9) InterpretationPatternsSection:574, (10) ClusterSummary:583, (11) BiomarkerDials:590, (12) Advanced analysis accordion:593."
+      "citation": "frontend/app/(app)/results/page.tsx:164-167 + frontend/app/lib/bodyOverviewPrimarySentence.ts:42-43 + frontend/app/lib/primaryFindingShaping.ts:16-47",
+      "notes": "Duplication root cause identified from source code: (A) Spine.focusLine = ensureTerminalPunctuation(extractFirstSentence(leadSource)) where leadSource = primary_concern||top_hypothesis_line||key_findings[0]. (B) BodyOverview.primary = extractFirstSentence(same leadSource) + frontend suffix. Identical first sentence, different suffix only. (C) PrimaryFinding.lead = 'Main finding: ' + firstSentence(same concern/hyp) — same content with a different label prefix. All three present the same backend sentence to the user in near-identical form within the first four sections. IDL duplication: Spine shows first IDL record (retail_display_label + subtitle), InterpretationPatternsSection renders the full same first card immediately after."
     },
-    "primary_driver_system_group_location": {
+    "prior_task_findings": {
       "status": "CONFIRMED",
-      "citation": "frontend/app/components/insights/InsightPanel.tsx:113",
-      "notes": "'Primary driver system group:' label is frontend-authored text. Surfaced in InsightPanel rendered at page.tsx:565-568 with contextOnly=true. This label is refineable in this sprint."
+      "citation": "automation_bus/latest_cursor_prompt.md:36-46",
+      "notes": "FE-R8A and FE-R8B declared complete and approved in prompt strategic context. Verified: ResultsInvestigationSpine.tsx exists (FE-R8B delivery). InterpretationPatternsSection.tsx exists (FE-R8 delivery). FE-R8A payload fields present: interpretation_display_layer_v1 consumed at page.tsx:583. No re-verification of prior task implementation details required for this sprint."
     },
-    "frontend_vs_backend_copy_boundary": {
-      "status": "CONFIRMED",
-      "citation": "frontend/app/components/results/ResultsBodyOverview.tsx:47, SystemUnderstandingSection.tsx:54-110, InsightPanel.tsx:113, app/(app)/results/page.tsx:464-468",
-      "notes": "Frontend-authored and refineable: ResultsBodyOverview bridge text (ResultsBodyOverview.tsx:47), SystemUnderstandingSection blockA/B/C (entirely frontend-authored), LayerCInsightSection card explanation/whyItMatters strings, InsightPanel 'Primary driver system group:' label, page h1/description (page.tsx:464-468), Advanced analysis CardDescription (page.tsx:619-621). Backend-authored and protected: all BalancedSystemsSummary content fields, all PrimaryFindingAndWhy/WhyThisLeadWonSection content strings from clinician_report_v1, all InterpretationPatternsSection IDL record fields."
+    "forbidden_files": {
+      "status": "CONFIRMED — none in scope",
+      "citation": "automation_bus/latest_cursor_prompt.md:156-168 (out of scope section)",
+      "notes": "No backend/ssot/, backend/core/pipeline/, backend/core/analytics/ files touched. No control-plane scripts (run_work_package.py, golden_gate_local.py, update_cursor_status.py) in scope. No IDL content/classification changes. No backend DTO changes. No Gemini/LLM logic. No .codex/, .vscode/, AGENTS.md tooling files at risk."
     },
     "behavioural_scope": {
       "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:110-165",
-      "notes": "change_type=MIXED correct. Sprint modifies frontend composition/conditional rendering/progressive disclosure. No Intelligence Core touched. Behavioural surface: (1) possible change to advancedOpen default state at page.tsx:129, (2) conditional bridge copy rendering, (3) ordering/emphasis of existing sub-elements. All bounded to frontend rendering layer only. No backend contracts change."
-    },
-    "regression_targets": {
-      "status": "CONFIRMED",
-      "citation": "frontend/tests/components/InterpretationPatternsSection.test.tsx:1, frontend/tests/queries/analysisResult.test.ts:188-202",
-      "notes": "FE-R8 regression: InterpretationPatternsSection.test.tsx covers IDL rendering. FE-R8A regression: analysisResult.test.ts:188-202 covers payload mapping including primary_driver_system_id. Both must pass after sprint changes."
+      "citation": "automation_bus/latest_cursor_prompt.md:108-153",
+      "notes": "change_type=MIXED correct. CONTENT side: editorial copy in Spine bridge text and BodyOverview suffix. BEHAVIOUR side: conditional display suppression of Spine focusLine block when duplication is severe; prop threading (idlRetailLabel) to SystemUnderstandingSection; new test coverage. No Intelligence Core touched. Regression targets: ResultsInvestigationSpine.test.tsx:1, InterpretationPatternsSection.test.tsx:1, plus new SystemUnderstandingSection tests for idlRetailLabel binding."
     },
     "stop_conditions": {
       "status": "CONFIRMED — none triggered",
-      "citation": "automation_bus/latest_cursor_prompt.md:223-232",
-      "notes": "Five STOP conditions present and adequate. Main quality problems (mechanically stitched sections, competing primary framings, hidden narrative) are frontend composition problems, not backend copy quality issues. No backend contract changes needed. Deterministic reasoning outputs do not need to change. Sprint remains bounded to frontend composition changes."
+      "citation": "automation_bus/latest_cursor_prompt.md:205-214",
+      "notes": "STOP 1: Duplication is mixed-source (same backend string in three frontend wrappers + IDL preview vs full render). Frontend can address the structural repetition by differentiating the wrapper framing — does not require backend copy changes. NOT triggered. STOP 2: Example binding via idlRetailLabel = deterministic prop threading from already-computed value. No inference logic needed. NOT triggered. STOP 3: No backend contract changes needed. NOT triggered. STOP 4: All changes bounded to five components. No redesign risk identified. NOT triggered. STOP 5: Repo confirms bounded frontend-only sprint. NOT triggered."
     },
     "no_op_risk": {
       "status": "CONFIRMED — real work exists",
-      "citation": "automation_bus/latest_cursor_prompt.md:69-83",
-      "notes": "Concrete defects confirmed: static hero framing, mechanically concatenated body overview, repeated tokens, competing 'primary' framings in InsightPanel and ClusterSummary, disconnected card stack, hidden narrative behind Advanced analysis accordion (advancedOpen defaults false at page.tsx:129). Sprint has legitimate and non-trivial work."
-    },
-    "forbidden_files": {
-      "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md (full file reviewed)",
-      "notes": "No .codex/, .vscode/, AGENTS.md in scope. No backend/ssot/, backend/core/pipeline/, backend/core/analytics/ files in scope. No control-plane scripts in scope."
-    },
-    "duplicate_authority": {
-      "status": "CONFIRMED — none present",
-      "citation": "frontend/app/(app)/results/page.tsx:143-144,574",
-      "notes": "Each governed asset consumed from single source. No duplicate authority sources introduced or at risk of introduction. Rule 6 (preserve existing governed authority) confirmed adequate — no taxonomy or interpretation logic may move into frontend composition code."
+      "citation": "frontend/app/components/results/ResultsInvestigationSpine.tsx:45-67 + frontend/app/(app)/results/page.tsx:544-590",
+      "notes": "Three sections (Spine, BodyOverview, PrimaryFinding) each wrap the same backend sentence from the same source field. IDL is previewed in Spine and fully rendered in InterpretationPatternsSection. SystemUnderstandingSection does not yet receive idlRetailLabel. All three gaps are genuine and addressable."
     }
   }
 }
