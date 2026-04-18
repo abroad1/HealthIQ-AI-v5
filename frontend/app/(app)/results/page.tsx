@@ -30,7 +30,8 @@ import { PrimaryFindingAndWhy } from '@/components/results/PrimaryFindingAndWhy'
 import { WhyThisLeadWonSection } from '@/components/results/WhyThisLeadWonSection';
 import { SystemUnderstandingSection } from '@/components/results/SystemUnderstandingSection';
 import { LayerCInsightSection } from '@/components/results/LayerCInsightSection';
-import { InterpretationPatternsSection } from '@/components/results/InterpretationPatternsSection';
+import { InterpretationPatternsSection, selectVisibleIdlRecords } from '@/components/results/InterpretationPatternsSection';
+import { ResultsInvestigationSpine } from '@/components/results/ResultsInvestigationSpine';
 import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAnalysisResult } from '@/queries/analysisResult';
@@ -40,6 +41,7 @@ import Link from 'next/link';
 import { extractNarrativeRuntimeMeta } from '@/lib/narrativeRuntimePresentation';
 import { emitWedgeEvent } from '@/lib/wedgeAnalytics';
 import { derivePatternRelevanceLine } from '@/lib/biomarkerPatternRelevance';
+import { ensureTerminalPunctuation, extractFirstSentence } from '@/lib/bodyOverviewPrimarySentence';
 
 function pickPrimaryDriverCluster(clusters: Cluster[]): { id: string; name: string; biomarkers: string[] } | null {
   const sevRank: Record<string, number> = { critical: 4, high: 3, moderate: 2, low: 1 };
@@ -128,6 +130,8 @@ export default function ResultsPage() {
   const [showDetails, setShowDetails] = useState(false);
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const resultsViewedForId = useRef<string | null>(null);
+  /** Auto-open narrative once per (analysis_id × insights length) to handle async insight hydration. */
+  const advancedNarrativeAutoOpenKey = useRef<string | null>(null);
 
   const idToFetch = currentAnalysisId || analysisIdFromUrl;
   const {
@@ -156,6 +160,32 @@ export default function ResultsPage() {
   );
 
   const keyFindingsOverflow = clinicianReport?.sections?.page1?.key_findings?.slice(1) ?? [];
+
+  const investigationSpine = useMemo(() => {
+    const page1 = clinicianReport?.sections?.page1;
+    const leadSource = (page1?.primary_concern || page1?.top_hypothesis_line || page1?.key_findings?.[0] || '').trim();
+    const focusLine = leadSource ? ensureTerminalPunctuation(extractFirstSentence(leadSource)) : null;
+    const idlRows = selectVisibleIdlRecords(currentAnalysis?.interpretation_display_layer_v1);
+    const first = idlRows[0];
+    return {
+      focusLine,
+      idlRetailLabel: first?.retail_display_label?.trim() ?? null,
+      idlSubtitle: first?.subtitle?.trim() ?? null,
+    };
+  }, [clinicianReport, currentAnalysis?.interpretation_display_layer_v1]);
+
+  useEffect(() => {
+    const id = currentAnalysis?.analysis_id;
+    if (!id) return;
+    const ins = currentAnalysis.insights ?? [];
+    const key = `${id}:${ins.length}`;
+    if (advancedNarrativeAutoOpenKey.current === key) return;
+    advancedNarrativeAutoOpenKey.current = key;
+    if (ins.length > 0) {
+      setAdvancedOpen(true);
+      setActiveDetailTab('insights');
+    }
+  }, [currentAnalysis?.analysis_id, currentAnalysis?.insights]);
 
   useEffect(() => {
     if (analysisIdFromUrl && analysisIdFromUrl !== currentAnalysisId) {
@@ -463,8 +493,8 @@ export default function ResultsPage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-1">Your results</h1>
               <p className="text-gray-600 max-w-2xl">
-                Start with a body-level overview, then what looks stable, then deeper evidence and markers. Full clinical
-                detail stays in Advanced analysis.
+                One guided path through your panel: lead focus, what stays stable, how cross-body patterns connect—then
+                evidence and optional narrative summaries in Advanced analysis.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -512,6 +542,12 @@ export default function ResultsPage() {
         </div>
 
         <div className="space-y-10">
+          <ResultsInvestigationSpine
+            focusLine={investigationSpine.focusLine}
+            idlRetailLabel={investigationSpine.idlRetailLabel}
+            idlSubtitle={investigationSpine.idlSubtitle}
+          />
+
           <section aria-labelledby="body-overview-section-label">
             <h2 id="body-overview-section-label" className="sr-only">
               Body overview
@@ -538,6 +574,13 @@ export default function ResultsPage() {
               Why this lead won and uncertainty
             </h2>
             <WhyThisLeadWonSection report={clinicianReport} />
+          </section>
+
+          <section aria-labelledby="patterns-across-body-section-label">
+            <h2 id="patterns-across-body-section-label" className="sr-only">
+              Patterns across your body
+            </h2>
+            <InterpretationPatternsSection bundle={currentAnalysis?.interpretation_display_layer_v1} />
           </section>
 
           <section aria-labelledby="system-understanding-section-label">
@@ -570,8 +613,6 @@ export default function ResultsPage() {
           </section>
 
           <LayerCInsightSection bundle={layerCFeatures} />
-
-          <InterpretationPatternsSection bundle={currentAnalysis?.interpretation_display_layer_v1} />
 
           <section className="space-y-3" aria-labelledby="cluster-heading">
             <h2 id="cluster-heading" className="text-xl font-semibold text-gray-900">
@@ -617,8 +658,8 @@ export default function ResultsPage() {
                   </Button>
                 </div>
                 <CardDescription>
-                  Structured clinician report, readable narrative summaries from your results, and technical context —
-                  same page, progressive disclosure.
+                  Structured clinician report, narrative summaries, and technical context. The Narrative tab opens here
+                  automatically when summaries exist so you don&apos;t miss them.
                 </CardDescription>
               </CardHeader>
               {advancedOpen ? (

@@ -42,11 +42,6 @@ export function ResultsBodyOverview({ clinicianReport, clusters, className = '' 
         <CardContent className="space-y-4 pt-0">
           <p className="text-lg font-medium text-gray-900 leading-snug">{primary}</p>
 
-          <p className="text-sm text-gray-600 leading-relaxed max-w-3xl">
-            We&apos;ve grouped your results into body systems and patterns so you can see the bigger picture before
-            individual markers.
-          </p>
-
           {hasBuckets ? (
             <div className="rounded-lg border border-slate-100 bg-slate-50/80 p-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">Pattern groups on this panel</p>

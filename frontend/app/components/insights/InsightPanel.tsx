@@ -109,8 +109,12 @@ export function InsightPanel({
           ) : null}
         </div>
         {primaryDriverSystemGroupName ? (
-          <p className="text-xs font-medium text-blue-800 mb-1">
-            Primary driver system group: <span className="font-semibold">{primaryDriverSystemGroupName}</span>
+          <p className="text-xs text-slate-600 border-l-2 border-slate-200 pl-2 max-w-prose">
+            <span className="font-medium text-slate-600">Marker grouping context: </span>
+            <span className="text-slate-800">{primaryDriverSystemGroupName}</span>
+            <span className="block text-slate-500 mt-1 font-normal">
+              This names how markers are clustered for comparison; your lead topic is established in the sections above.
+            </span>
           </p>
         ) : null}
       </CardHeader>

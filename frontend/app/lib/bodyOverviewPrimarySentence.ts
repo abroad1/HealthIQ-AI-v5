@@ -4,13 +4,21 @@ import type { ClinicianReportV1, PrimaryConcernModeV1 } from '@/types/analysis';
 export const BODY_OVERVIEW_FALLBACK_PRIMARY =
   "We've analysed your results and will guide you through the key findings below.";
 
-function firstSentence(text: string): string {
+/** First sentence or bounded excerpt — used for overview and investigation spine (FE-R8B). */
+export function extractFirstSentence(text: string): string {
   const t = text.trim();
   if (!t) return '';
   const cut = t.match(/^(.+?[.!?])(\s|$)/);
   if (cut) return cut[1].trim();
   if (t.length <= 280) return t;
   return `${t.slice(0, 277).trim()}…`;
+}
+
+/** Ensures a clause ends with `.` `!` or `?` before appending another sentence (FE-R8B). */
+export function ensureTerminalPunctuation(s: string): string {
+  const t = s.trim();
+  if (!t) return t;
+  return /[.!?]$/.test(t) ? t : `${t}.`;
 }
 
 /**
@@ -32,7 +40,7 @@ export function buildBodyOverviewPrimarySentence(
   }
 
   const leadSource = concern || topHyp || kf0;
-  const lead = firstSentence(leadSource);
+  const lead = ensureTerminalPunctuation(extractFirstSentence(leadSource));
 
   const wider =
     mode === 'near_tie_ambiguity' || mode === 'technical_tiebreak_lead'
