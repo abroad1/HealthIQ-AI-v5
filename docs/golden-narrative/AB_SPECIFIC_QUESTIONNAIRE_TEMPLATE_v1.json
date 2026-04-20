@@ -1,0 +1,625 @@
+{
+  "questionnaire_id": "ab_specific_questionnaire_v1",
+  "purpose": "Populate this with answers for the AB case so the gold-standard narrative can integrate blood data with declared lifestyle, symptoms, medications, and change over time.",
+  "instructions": [
+    "Fill the answer field for each question.",
+    "Where choices are provided, use one of the listed values exactly unless free_text_allowed is true.",
+    "Use null where the answer is unknown or not available.",
+    "For text fields, keep answers brief and factual."
+  ],
+  "sections": [
+    {
+      "section_id": "core_identity_and_interpretation_anchors",
+      "title": "Core identity and interpretation anchors",
+      "questions": [
+        {
+          "id": "age",
+          "question": "Age",
+          "type": "number",
+          "answer": null
+        },
+        {
+          "id": "biological_sex",
+          "question": "Biological sex",
+          "type": "dropdown",
+          "choices": ["Male", "Female", "Intersex"],
+          "answer": null
+        },
+        {
+          "id": "height_cm",
+          "question": "Height (cm)",
+          "type": "number",
+          "answer": null
+        },
+        {
+          "id": "weight_kg",
+          "question": "Weight (kg)",
+          "type": "number",
+          "answer": null
+        },
+        {
+          "id": "waist_circumference_cm",
+          "question": "Waist circumference (cm)",
+          "type": "number",
+          "answer": null
+        },
+        {
+          "id": "blood_pressure_systolic",
+          "question": "Blood pressure systolic (mmHg)",
+          "type": "number",
+          "answer": null
+        },
+        {
+          "id": "blood_pressure_diastolic",
+          "question": "Blood pressure diastolic (mmHg)",
+          "type": "number",
+          "answer": null
+        }
+      ]
+    },
+    {
+      "section_id": "medications_and_supplements",
+      "title": "Medications and supplements",
+      "questions": [
+        {
+          "id": "prescription_medications_detail",
+          "question": "List all current prescription medications, including dose if known",
+          "type": "text",
+          "free_text_allowed": true,
+          "answer": null
+        },
+        {
+          "id": "lipid_lowering_medication",
+          "question": "Are you taking lipid-lowering medication?",
+          "type": "dropdown",
+          "choices": ["No", "Yes", "Not sure"],
+          "answer": null
+        },
+        {
+          "id": "blood_pressure_medication",
+          "question": "Are you taking blood pressure medication?",
+          "type": "dropdown",
+          "choices": ["No", "Yes", "Not sure"],
+          "answer": null
+        },
+        {
+          "id": "diabetes_medication",
+          "question": "Are you taking diabetes or glucose-lowering medication?",
+          "type": "dropdown",
+          "choices": ["No", "Yes", "Not sure"],
+          "answer": null
+        },
+        {
+          "id": "testosterone_hrt_anabolic_use",
+          "question": "Are you using testosterone, HRT, or anabolic agents?",
+          "type": "dropdown",
+          "choices": ["No", "Yes", "Not sure"],
+          "answer": null
+        },
+        {
+          "id": "thyroid_medication",
+          "question": "Are you taking thyroid medication?",
+          "type": "dropdown",
+          "choices": ["No", "Yes", "Not sure"],
+          "answer": null
+        },
+        {
+          "id": "steroid_use",
+          "question": "Are you taking steroids or corticosteroids?",
+          "type": "dropdown",
+          "choices": ["No", "Yes", "Not sure"],
+          "answer": null
+        },
+        {
+          "id": "acid_suppression_use",
+          "question": "Are you taking acid-suppressing medication such as PPIs?",
+          "type": "dropdown",
+          "choices": ["No", "Yes", "Not sure"],
+          "answer": null
+        },
+        {
+          "id": "supplements_detail",
+          "question": "List regular supplements, ideally including dose if known",
+          "type": "list_of_objects",
+          "item_template": {
+            "supplement": null,
+            "dose": null,
+            "frequency": null
+          },
+          "answer": []
+        }
+      ]
+    },
+    {
+      "section_id": "alcohol_smoking_caffeine",
+      "title": "Alcohol, smoking, and caffeine",
+      "questions": [
+        {
+          "id": "alcohol_units_per_week",
+          "question": "Average alcohol units per week",
+          "type": "number",
+          "answer": null
+        },
+        {
+          "id": "alcohol_pattern",
+          "question": "Which best describes your alcohol pattern?",
+          "type": "dropdown",
+          "choices": [
+            "None",
+            "Occasional light drinking",
+            "Regular moderate drinking spread through the week",
+            "Mostly weekend drinking",
+            "Binge-style episodes",
+            "Variable / irregular"
+          ],
+          "answer": null
+        },
+        {
+          "id": "tobacco_use",
+          "question": "Current tobacco use",
+          "type": "dropdown",
+          "choices": [
+            "Never used",
+            "Former user quit >1 year",
+            "Former user quit <1 year",
+            "Occasional use",
+            "Daily use"
+          ],
+          "answer": null
+        },
+        {
+          "id": "caffeine_beverages_daily",
+          "question": "Caffeinated beverages per day",
+          "type": "dropdown",
+          "choices": ["None", "1-2", "3-4", "5-6", "7+"],
+          "answer": null
+        }
+      ]
+    },
+    {
+      "section_id": "diet_and_hydration",
+      "title": "Diet, fasting, and hydration",
+      "questions": [
+        {
+          "id": "dietary_pattern",
+          "question": "Which best describes your dietary pattern?",
+          "type": "dropdown",
+          "choices": [
+            "No specific pattern",
+            "Mediterranean-style",
+            "Low-carb / keto",
+            "Plant-based",
+            "Intermittent fasting",
+            "High-protein",
+            "Mixed / variable",
+            "Other"
+          ],
+          "answer": null
+        },
+        {
+          "id": "dietary_pattern_other",
+          "question": "If Other, specify dietary pattern",
+          "type": "text",
+          "free_text_allowed": true,
+          "answer": null
+        },
+        {
+          "id": "fasting_hours",
+          "question": "Typical fasting window between dinner and breakfast",
+          "type": "dropdown",
+          "choices": ["Less than 8 hours", "8-10 hours", "11-12 hours", "13-14 hours", "15+ hours"],
+          "answer": null
+        },
+        {
+          "id": "protein_intake_pattern",
+          "question": "Which best describes your protein intake?",
+          "type": "dropdown",
+          "choices": [
+            "Probably low",
+            "Moderate / typical",
+            "High-protein by intention",
+            "Very high-protein / bodybuilding-style",
+            "Not sure"
+          ],
+          "answer": null
+        },
+        {
+          "id": "fruit_vegetable_servings_daily",
+          "question": "Vegetable and fruit servings per day",
+          "type": "dropdown",
+          "choices": ["0-1 servings", "2-3 servings", "4-5 servings", "6+ servings"],
+          "answer": null
+        },
+        {
+          "id": "processed_food_frequency",
+          "question": "How often do you eat highly processed or fast food?",
+          "type": "dropdown",
+          "choices": [
+            "Rarely or never",
+            "1-2 times per month",
+            "1-2 times per week",
+            "3-5 times per week",
+            "Most days"
+          ],
+          "answer": null
+        },
+        {
+          "id": "sugary_drinks_weekly",
+          "question": "Sugar-sweetened drinks per week",
+          "type": "dropdown",
+          "choices": ["None", "1-3 drinks", "4-7 drinks", "8-14 drinks", "15+ drinks"],
+          "answer": null
+        },
+        {
+          "id": "daily_fluid_intake",
+          "question": "Average daily fluid intake",
+          "type": "dropdown",
+          "choices": ["Less than 1 litre", "1-2 litres", "2-3 litres", "More than 3 litres"],
+          "answer": null
+        }
+      ]
+    },
+    {
+      "section_id": "exercise_activity_body_composition",
+      "title": "Exercise, activity, and body composition context",
+      "questions": [
+        {
+          "id": "vigorous_exercise_days",
+          "question": "Days per week of vigorous exercise (20+ min)",
+          "type": "dropdown",
+          "choices": ["0 days", "1 day", "2 days", "3 days", "4+ days"],
+          "answer": null
+        },
+        {
+          "id": "resistance_training_days",
+          "question": "Days per week of resistance training",
+          "type": "dropdown",
+          "choices": ["0 days", "1 day", "2 days", "3+ days"],
+          "answer": null
+        },
+        {
+          "id": "sitting_hours_daily",
+          "question": "Hours per day spent sitting",
+          "type": "dropdown",
+          "choices": ["Less than 4 hours", "4-6 hours", "7-9 hours", "10-12 hours", "13+ hours"],
+          "answer": null
+        },
+        {
+          "id": "general_activity_pattern",
+          "question": "Which best describes your usual daily activity outside formal exercise?",
+          "type": "dropdown",
+          "choices": [
+            "Mostly sedentary",
+            "Lightly active",
+            "Moderately active",
+            "Highly active",
+            "Manual / physical job"
+          ],
+          "answer": null
+        },
+        {
+          "id": "muscular_build_context",
+          "question": "Which best describes your body composition context?",
+          "type": "dropdown",
+          "choices": [
+            "Average build",
+            "Lean but not especially muscular",
+            "Muscular / strength-trained",
+            "Higher body fat / central weight gain",
+            "Not sure"
+          ],
+          "answer": null
+        },
+        {
+          "id": "creatine_use",
+          "question": "Do you use creatine?",
+          "type": "dropdown",
+          "choices": ["No", "Yes", "Previously but not currently"],
+          "answer": null
+        }
+      ]
+    },
+    {
+      "section_id": "sleep_and_stress",
+      "title": "Sleep and stress",
+      "questions": [
+        {
+          "id": "sleep_hours_nightly",
+          "question": "Typical hours of sleep per night",
+          "type": "dropdown",
+          "choices": ["Less than 5 hours", "5-6 hours", "7-8 hours", "9+ hours"],
+          "answer": null
+        },
+        {
+          "id": "sleep_quality_rating",
+          "question": "Sleep quality rating (1-10)",
+          "type": "number",
+          "answer": null
+        },
+        {
+          "id": "sleep_schedule_consistency",
+          "question": "How consistent is your sleep schedule?",
+          "type": "dropdown",
+          "choices": [
+            "Very consistent (within 30 min)",
+            "Mostly consistent (within 1 hour)",
+            "Somewhat inconsistent (1-2 hours)",
+            "Very inconsistent (2+ hours)"
+          ],
+          "answer": null
+        },
+        {
+          "id": "sleep_disorders_or_snoring",
+          "question": "Do you have diagnosed sleep disorders or snoring?",
+          "type": "dropdown",
+          "choices": [
+            "No sleep issues",
+            "Mild snoring",
+            "Loud snoring",
+            "Sleep apnea",
+            "Other disorder"
+          ],
+          "answer": null
+        },
+        {
+          "id": "sleep_disorders_other",
+          "question": "If Other disorder, specify",
+          "type": "text",
+          "free_text_allowed": true,
+          "answer": null
+        },
+        {
+          "id": "stress_level_rating",
+          "question": "Average stress level (1-10)",
+          "type": "number",
+          "answer": null
+        },
+        {
+          "id": "major_life_stressors",
+          "question": "Major life stressors in the past 6 months",
+          "type": "dropdown",
+          "choices": ["No major stressors", "1 major stressor", "2-3 major stressors", "4+ major stressors"],
+          "answer": null
+        },
+        {
+          "id": "primary_stress_management_method",
+          "question": "Primary stress management method",
+          "type": "dropdown",
+          "choices": [
+            "Exercise",
+            "Meditation / mindfulness",
+            "Social support",
+            "Alcohol / substances",
+            "Prescription medication",
+            "No specific method"
+          ],
+          "answer": null
+        }
+      ]
+    },
+    {
+      "section_id": "symptoms_and_function",
+      "title": "Symptoms and function",
+      "questions": [
+        {
+          "id": "energy_level",
+          "question": "Current energy pattern",
+          "type": "dropdown",
+          "choices": [
+            "Consistent high energy",
+            "Good energy with afternoon dip",
+            "Moderate energy need rest",
+            "Low energy tired most days",
+            "Exhausted need multiple rests"
+          ],
+          "answer": null
+        },
+        {
+          "id": "current_symptoms",
+          "question": "Current symptoms affecting daily life",
+          "type": "multi_select",
+          "choices": [
+            "None",
+            "Fatigue",
+            "Brain fog",
+            "Digestive issues",
+            "Sleep problems",
+            "Mood changes",
+            "Joint pain",
+            "Low libido / sexual symptoms",
+            "Reduced exercise recovery",
+            "Other"
+          ],
+          "answer": []
+        },
+        {
+          "id": "current_symptoms_other",
+          "question": "If Other, specify symptoms",
+          "type": "text",
+          "free_text_allowed": true,
+          "answer": null
+        },
+        {
+          "id": "new_symptoms_since_panel_0",
+          "question": "Have any new symptoms appeared since panel 0?",
+          "type": "text",
+          "free_text_allowed": true,
+          "answer": null
+        },
+        {
+          "id": "recovery_time_after_exertion",
+          "question": "How long does it usually take to recover after physical exertion?",
+          "type": "dropdown",
+          "choices": ["Minutes", "1-2 hours", "Several hours", "Full day", "Multiple days"],
+          "answer": null
+        }
+      ]
+    },
+    {
+      "section_id": "medical_and_family_history",
+      "title": "Medical and family history",
+      "questions": [
+        {
+          "id": "personal_conditions",
+          "question": "Diagnosed medical conditions",
+          "type": "multi_select",
+          "choices": [
+            "None",
+            "High blood pressure",
+            "High cholesterol",
+            "Prediabetes",
+            "Type 2 diabetes",
+            "Heart disease",
+            "Kidney disease",
+            "Liver disease",
+            "Thyroid disorder",
+            "Autoimmune condition",
+            "Other"
+          ],
+          "answer": []
+        },
+        {
+          "id": "personal_conditions_other",
+          "question": "If Other, specify condition(s)",
+          "type": "text",
+          "free_text_allowed": true,
+          "answer": null
+        },
+        {
+          "id": "family_history_premature_cvd",
+          "question": "Immediate family history of cardiovascular disease before age 65",
+          "type": "dropdown",
+          "choices": ["No family history", "Heart attack", "Stroke", "Both", "Don't know"],
+          "answer": null
+        },
+        {
+          "id": "family_history_diabetes_metabolic",
+          "question": "Immediate family history of Type 2 diabetes or metabolic syndrome",
+          "type": "dropdown",
+          "choices": ["No family history", "Type 2 diabetes", "Obesity", "Both", "Don't know"],
+          "answer": null
+        }
+      ]
+    },
+    {
+      "section_id": "longitudinal_change_since_panel_0",
+      "title": "Longitudinal change since panel 0",
+      "questions": [
+        {
+          "id": "intentional_changes_since_panel_0",
+          "question": "What did you intentionally change after panel 0?",
+          "type": "multi_select",
+          "choices": [
+            "Diet",
+            "Weight loss / gain effort",
+            "Exercise",
+            "Supplements",
+            "Alcohol intake",
+            "Sleep",
+            "Stress management",
+            "Medication",
+            "Nothing intentional",
+            "Other"
+          ],
+          "answer": []
+        },
+        {
+          "id": "intentional_changes_other",
+          "question": "If Other, specify intentional changes",
+          "type": "text",
+          "free_text_allowed": true,
+          "answer": null
+        },
+        {
+          "id": "weight_change_since_panel_0",
+          "question": "Approximate weight change since panel 0",
+          "type": "dropdown",
+          "choices": [
+            "No meaningful change",
+            "Lost 1-3 kg",
+            "Lost 4-7 kg",
+            "Lost 8+ kg",
+            "Gained 1-3 kg",
+            "Gained 4-7 kg",
+            "Gained 8+ kg",
+            "Not sure"
+          ],
+          "answer": null
+        },
+        {
+          "id": "exercise_change_since_panel_0",
+          "question": "How did your exercise change since panel 0?",
+          "type": "dropdown",
+          "choices": [
+            "No meaningful change",
+            "Increased a little",
+            "Increased a lot",
+            "Decreased a little",
+            "Decreased a lot"
+          ],
+          "answer": null
+        },
+        {
+          "id": "sleep_change_since_panel_0",
+          "question": "How did your sleep change since panel 0?",
+          "type": "dropdown",
+          "choices": [
+            "No meaningful change",
+            "Improved a little",
+            "Improved a lot",
+            "Worsened a little",
+            "Worsened a lot"
+          ],
+          "answer": null
+        },
+        {
+          "id": "stress_change_since_panel_0",
+          "question": "How did your stress change since panel 0?",
+          "type": "dropdown",
+          "choices": [
+            "No meaningful change",
+            "Reduced a little",
+            "Reduced a lot",
+            "Increased a little",
+            "Increased a lot"
+          ],
+          "answer": null
+        },
+        {
+          "id": "alcohol_change_since_panel_0",
+          "question": "How did your alcohol intake change since panel 0?",
+          "type": "dropdown",
+          "choices": [
+            "No meaningful change",
+            "Reduced a little",
+            "Reduced a lot",
+            "Increased a little",
+            "Increased a lot"
+          ],
+          "answer": null
+        },
+        {
+          "id": "supplement_change_since_panel_0",
+          "question": "How did your supplement use change since panel 0?",
+          "type": "text",
+          "free_text_allowed": true,
+          "answer": null
+        },
+        {
+          "id": "medication_change_since_panel_0",
+          "question": "How did your medication change since panel 0?",
+          "type": "text",
+          "free_text_allowed": true,
+          "answer": null
+        },
+        {
+          "id": "users_main_goal_from_changes",
+          "question": "What was the main thing you were trying to improve between panel 0 and this panel?",
+          "type": "text",
+          "free_text_allowed": true,
+          "answer": null
+        }
+      ]
+    }
+  ]
+}
