@@ -1,23 +1,24 @@
 ---
-work_id: N-1
-branch: feature/n-1-narrative-target-lock-and-authority-map
+work_id: N-2
+branch: feature/n-2-narrative-compiler-architecture-design
 risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
 change_type: CONTENT
 ---
 
-# N-1 — Narrative target lock and authority map
+# N-2 — Narrative compiler architecture design
 
 ## Objective
 
-Create the formal authority package that locks the benchmark AB gold-standard narrative as the target-state reference and converts the reverse-engineering work into one approved deterministic support matrix.
+Design the deterministic narrative compiler architecture for HealthIQ AI before any implementation sprint begins.
 
-This is not a coding sprint.
+This is an architecture-design sprint.
+It is not a coding sprint.
 Do not modify backend or frontend application code.
-Do not redesign the product.
 Do not write implementation patches.
+Do not create provisional runtime logic.
 
-This sprint exists to turn the strategic narrative work into execution authority so that later deterministic build sprints are grounded, precise, and governed.
+This sprint exists to answer the key architectural questions that must be settled before new deterministic narrative assets and compiler work can be implemented safely.
 
 ---
 
@@ -25,109 +26,156 @@ This sprint exists to turn the strategic narrative work into execution authority
 
 The following are already decided and are not open for reinterpretation in this sprint:
 
-- The saved benchmark narrative is the preferred target-state narrative reference for this workstream.
-- The key problem is not missing raw data alone and not frontend polish alone.
-- The main gap is the missing deterministic narrative support stack:
-  - data/contract support where needed
-  - governed narrative assets
+- The benchmark narrative is locked as the target-state narrative reference.
+- The merged reverse-engineering matrix is now the planning authority for supportability and gap analysis.
+- The main problem is not raw data alone and not frontend polish alone.
+- The main missing layer is the deterministic narrative support stack:
+  - data/contract layer
+  - governed narrative asset layer
   - compiler/assembly layer
   - output/display layer
-- The final sprint strategy document is now the planning authority for this workstream.
-- The purpose of N-1 is to lock authority, not to debate the product vision again.
+- The final sprint strategy is the approved roadmap for this workstream.
+- N-2 is the architecture sprint that must define the compiler model before N-3 and later implementation sprints proceed.
 
-Your job is to produce the formal authority artifacts that the rest of the sprint series will build from.
+Your job is to produce the architectural design authority for the deterministic narrative compiler stack.
 
 ---
 
-## Inputs you must use
+## Required inputs
 
 Treat the following as required inputs:
 
-1. Final benchmark narrative
-`docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REPORT_CHAT_2_FINAL.md`
+1. Benchmark narrative target lock
+`docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md`
 
-2. Reverse-engineering reports
-- `docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_CURSOR.md`
-- `docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_CLAUDE.md`
+2. Merged reverse-engineering matrix
+`docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md`
 
 3. Final sprint strategy
 `docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md`
 
-4. Relevant repo-grounded authority files referenced by those documents
+4. Current relevant runtime authorities in the repo, including at minimum:
+- `backend/core/analytics/report_compiler_v1.py`
+- `backend/core/contracts/report_v1.py`
+- `backend/core/contracts/clinician_report_v1.py`
+- `backend/core/contracts/insight_graph_v1.py`
+- `backend/core/analytics/root_cause_compiler_v1.py`
+- `backend/core/analytics/interpretation_display_layer_publish_v1.py`
+- `backend/core/analytics/balanced_systems_presentation_v1.py`
+- `backend/core/analytics/snapshot_linker.py`
+- `backend/core/analytics/state_transition_engine.py`
+- any other files you determine are architecturally relevant
+
+---
+
+## Core architectural questions this sprint must answer
+
+This sprint must answer, explicitly and in writing:
+
+1. Should the deterministic narrative compiler extend `report_compiler_v1.py`, or should it be a separate module/layer?
+
+2. What is the output contract called?
+For example:
+- new `NarrativeReportV1`
+- extension of `ReportV1`
+- extension of `ClinicianReportV1`
+- another governed contract shape
+
+3. What is the relationship between the new narrative compiler output and existing contracts:
+- `ReportV1`
+- `ClinicianReportV1`
+- IDL bundle
+- Layer C features
+- any future retail summary layer
+
+4. What are the compiler stages?
+For example:
+- source data / contract inputs
+- governed narrative assets
+- interpretation joins
+- narrative assembly
+- output contracts
+
+5. Which narrative sections should be emitted as separate compiled assets versus assembled at display time?
+
+6. Which future sprint owns each layer of this architecture?
 
 ---
 
 ## Required outcome
 
-Deliver a clean authority package that does all of the following:
+Deliver a formal architecture design package that:
 
-1. locks the benchmark narrative as the approved target-state narrative reference for this workstream
-2. produces one merged reverse-engineering matrix from the Cursor and Claude reports
-3. resolves any remaining ambiguity in support classification where possible
-4. identifies the approved deterministic asset-gap categories
-5. states clearly which future sprint in the strategy is expected to address each major gap
-6. leaves behind a planning-ready artifact that later sprint authors can use without redoing the narrative-analysis work
+1. defines the deterministic narrative compiler stack clearly
+2. defines the compiler boundary and module placement
+3. defines the output contract strategy
+4. defines the input asset classes the compiler will consume
+5. defines the relationship to current report/compiler/runtime artifacts
+6. identifies any architectural prerequisite decisions for N-3 and later sprints
+7. leaves behind an implementation-ready design authority for later HIGH-risk build sprints
 
 ---
 
 ## In scope
 
-### 1. Narrative target lock
-Produce a short authority note that states:
-- which benchmark narrative file is the approved reference
-- what role it plays
-- what it is not
-- how it should be used in later sprints
+### 1. Compiler boundary decision
+Determine whether the deterministic narrative compiler should:
+- extend `report_compiler_v1.py`
+- sit alongside it as a separate compiler
+- or introduce another layered architecture
 
-This should make clear that the benchmark is:
-- a target-state narrative standard
-- not current product truth
-- not current deterministic runtime output
-- not freeform copy to paste into the frontend
+You must justify the decision with repo-grounded reasoning.
 
-### 2. Merged reverse-engineering matrix
-Produce one merged matrix that combines the strongest findings from the Cursor and Claude reports into a single planning artifact.
+### 2. Output contract design
+Define the recommended output contract strategy.
 
-The matrix must include, at minimum:
+At minimum, answer:
+- what new contract(s), if any, should exist
+- what each contract is for
+- which contract is authoritative for:
+  - retail patient summary
+  - body overview
+  - pathway-level narrative blocks
+  - longitudinal section
+  - next-steps narrative
+  - clinician synthesis
 
-- section / narrative move
-- benchmark text summary
-- required support type
-- existing repo asset(s)
-- exact file path(s)
-- support status:
-  - FULL
-  - PARTIAL
-  - NONE
-- gap explanation
-- required deterministic build implication
-- likely owning sprint from the final strategy
+### 3. Compiler stage model
+Define the stages of the deterministic narrative support stack.
 
-### 3. Support-status adjudication
-Where Cursor and Claude differ in emphasis or segmentation, adjudicate and produce one settled position.
+At minimum, describe:
+- data / contract layer
+- governed narrative asset layer
+- compiler / assembly layer
+- output / display layer
 
-Do not preserve duplicate rows unless they are meaningfully different.
-Do not average differences vaguely.
-Produce one clear planning-ready matrix.
+Make the dependency order explicit.
 
-### 4. Deterministic asset-gap categories
-Create a compact section that groups the major gaps into approved build categories, such as:
+### 4. Asset-consumption model
+For each major narrative section type, state what kinds of inputs the compiler should consume.
 
-- narrative compiler layer
-- body-overview / reassurance compiler
-- longitudinal raw-value and delta support
-- lifestyle-to-pathway joins
-- pathway-grade explainer assets
-- functional reading / confidence / monitoring assets
-- new governed interpretation entities
-- retail patient summary compiler
-- clinician synthesis compiler
+Examples:
+- biomarker and reference-range data
+- cluster/system burden outputs
+- root-cause hypotheses
+- confirmatory tests
+- questionnaire/lifestyle context
+- longitudinal transition outputs
+- pathway explainer assets
+- functional-reading assets
+- monitoring-criteria assets
+- IDL records
 
-### 5. Sprint linkage
-For each major gap category, state which sprint in the final strategy is intended to address it.
+### 5. Architectural constraints and prerequisites
+Identify any hard prerequisites for later sprints.
 
-This should create a clear bridge from:
-benchmark narrative → merged support matrix → sprint series
+Examples:
+- raw-value persistence needed before longitudinal narrative build
+- governed interpretation entities needed before certain compiler sections
+- lifestyle-to-pathway joins needed before contextual narrative can be emitted
+
+### 6. Sprint dependency mapping
+Map the architecture to the sprint strategy so later work packages are sequenced correctly.
 
 ---
 
@@ -135,91 +183,108 @@ benchmark narrative → merged support matrix → sprint series
 
 The following are explicitly out of scope:
 
-- implementation changes to backend or frontend
-- new contracts or code
-- changes to the benchmark narrative itself
-- new medical research
+- implementation changes to runtime code
+- changing backend contracts in code
+- adding new narrative assets in code or YAML
 - frontend redesign
-- Gemini / LLM integration work
-- changing the approved sprint strategy beyond minor authority clarifications if needed in the output notes
+- Gemini / LLM work
+- rewriting the benchmark narrative
+- redoing the merged matrix
+- broad strategic debate already settled in prior documents
 
 ---
 
 ## Required output files
 
-Create the following files in the same directory as the benchmark narrative and sprint strategy:
+Create the following files in:
+`docs/golden-narrative/`
 
-### 1. Narrative target lock
+### 1. Narrative compiler architecture design
 Suggested filename:
-`AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md`
+`HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md`
 
-### 2. Merged reverse-engineering matrix
-Suggested filename:
-`AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md`
+### 2. Optional companion decision log
+If helpful, create:
+`HealthIQ_Deterministic_Narrative_Compiler_Architecture_DECISIONS.md`
 
-You may keep these filenames unless repo reality strongly suggests a better naming pattern.
+Only create the second file if it adds real value and does not duplicate the first.
 
 ---
 
 ## Output structure requirements
 
-### File 1 — Narrative target lock
-Must include:
+### File 1 — Narrative compiler architecture design
+Must include, at minimum:
 
-- purpose
-- approved benchmark file path
-- what the benchmark is
-- what the benchmark is not
-- how later sprints must use it
-- relation to the final sprint strategy
-
-### File 2 — Merged reverse-engineering matrix
-Must include:
-
-#### 1. Executive summary
-- top-level supportability judgement
-- strongest existing backend strengths
-- most important deterministic gaps
+#### 1. Purpose
+What this architecture is for and why it is needed.
 
 #### 2. Source authorities used
-List the benchmark narrative, both reverse-engineering reports, and the final strategy file.
+List the target lock, merged matrix, final strategy, and runtime files inspected.
 
-#### 3. Merged reverse-engineering matrix
-Use a structured table with the required columns listed above.
+#### 3. Deterministic narrative support stack
+Define the stack layers explicitly.
 
-#### 4. Approved deterministic gap categories
-Grouped build categories.
+#### 4. Compiler boundary decision
+State whether the compiler extends existing architecture or becomes a new module, and why.
 
-#### 5. Sprint linkage map
-Gap category → intended sprint(s).
+#### 5. Output contract strategy
+Name the recommended output contract(s), their roles, and relationship to existing contracts.
 
-#### 6. Authority notes / ambiguities
-Only include unresolved ambiguities if they genuinely remain after adjudication.
+#### 6. Section-to-compiler model
+For each major narrative section type, state:
+- intended compiled output type
+- likely inputs
+- likely owning asset classes
+
+#### 7. Architectural prerequisites
+List the hard prerequisites that later sprints must satisfy.
+
+#### 8. Sprint dependency implications
+Map architecture decisions to the sprint sequence.
+
+#### 9. Risks and failure modes
+State the main architectural risks if the wrong design is chosen.
+
+#### 10. Recommended next implementation sprint
+State what N-3 must do in light of this architecture.
+
+### Optional File 2 — Decision log
+If created, it should contain:
+- major decisions
+- alternatives considered
+- reasons rejected
+- open questions requiring future adjudication
 
 ---
 
-## Adjudication rules
+## Design rules
 
-### Rule 1 — prefer precision over breadth
-If one report is more precise and repo-grounded on a specific issue, prefer that wording.
+### Rule 1 — architecture before convenience
+Do not choose an architecture merely because it is easiest to patch into current code.
 
-### Rule 2 — preserve complementary insight
-If Cursor and Claude each contributed distinct value, merge them rather than choosing one voice wholesale.
+### Rule 2 — preserve authority separation
+Do not collapse:
+- source data
+- governed narrative assets
+- compiler logic
+- output contracts
+into one muddy layer.
 
-### Rule 3 — distinguish confirmed gaps from probable gaps
-Do not use weak language where the repo evidence is already decisive.
+### Rule 3 — avoid brittle coupling
+If extending an existing compiler would make the narrative layer brittle or overloaded, say so clearly.
 
-### Rule 4 — maintain authority clarity
-Be explicit about what is:
-- authoritative source
-- fixture/example
-- compiled output
-- display-layer artifact
-- benchmark target
+### Rule 4 — repo-grounded design
+Use actual current runtime structures, not hypothetical generic architecture.
 
-### Rule 5 — no hand-waving
-This document will become planning authority.
-Use exact paths and grounded statements.
+### Rule 5 — design for deterministic scale
+The architecture must support future narrative assets beyond the AB benchmark case.
+
+### Rule 6 — respect SOP implications
+Call out where future implementation work will become HIGH-risk under the SOP due to touched paths such as:
+- `backend/core/contracts/`
+- `backend/core/analytics/`
+- pipeline/control-plane areas
 
 ---
 
@@ -227,13 +292,11 @@ Use exact paths and grounded statements.
 
 This sprint should amount to:
 
-1. read benchmark
-2. read both reverse-engineering reports
-3. read final sprint strategy
-4. reconcile and adjudicate
-5. write target lock
-6. write merged matrix
-7. save both files in `docs/golden-narrative/`
+1. inspect current runtime compiler and contract architecture
+2. inspect the planning authority documents
+3. answer the architecture questions explicitly
+4. write the architecture design document
+5. save it in `docs/golden-narrative/`
 
 No code changes should result.
 
@@ -243,10 +306,10 @@ No code changes should result.
 
 STOP immediately and report if any of the following are true:
 
-1. the benchmark file path is not the same file the strategy assumes
-2. the reverse-engineering reports materially conflict in ways that cannot be adjudicated without new repo investigation
-3. the final sprint strategy materially contradicts the benchmark or merged support findings
-4. required authority files are missing or stale enough to make the output unreliable
+1. the current runtime architecture is too ambiguous to determine compiler boundaries without new code investigation
+2. the merged matrix and final strategy materially conflict on what the compiler must produce
+3. no clean output-contract strategy can be recommended without first resolving another upstream design issue
+4. repo reality shows the current report/compiler contracts are materially different from what the planning docs assume
 
 If blocked, report the exact blocker and the smallest safe remediation path.
 
@@ -256,12 +319,12 @@ If blocked, report the exact blocker and the smallest safe remediation path.
 
 This sprint is successful only if:
 
-1. the benchmark narrative is formally locked as the approved target-state reference
-2. one merged reverse-engineering matrix exists
-3. the matrix is repo-grounded and adjudicated
-4. the major deterministic gap categories are clearly defined
-5. those categories are linked to the approved sprint series
-6. later sprint authors could use these files without rerunning the whole narrative exercise
+1. the deterministic narrative support stack is explicitly defined
+2. the compiler boundary decision is made and justified
+3. the output contract strategy is clear
+4. later sprint authors can see what assets and contracts the compiler will depend on
+5. N-3 and later sprints have a clean architectural starting point
+6. no implementation code was changed
 
 ---
 
@@ -269,13 +332,14 @@ This sprint is successful only if:
 
 At finish, the sprint should leave behind:
 
-- `docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md`
-- `docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md`
+- `docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md`
+- optionally, `docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_DECISIONS.md`
 
 plus a short completion note stating:
-- output filenames
-- top 3 findings
-- any remaining ambiguities needing human judgement
+- output filename(s)
+- the compiler boundary decision
+- the recommended output contract strategy
+- the top 3 architectural risks
 
 ---
 
@@ -283,11 +347,11 @@ plus a short completion note stating:
 
 You must show, with exact file paths and grounded references:
 
-- which benchmark file was locked
-- which reverse-engineering files were merged
-- which strategy file the sprint linked to
-- where the strongest backend supports are
-- where the main deterministic gaps remain
+- the current compiler/runtime files inspected
+- the contract files inspected
+- the reasons for the chosen compiler boundary
+- the reasons for the chosen output contract strategy
+- the architectural prerequisites for later sprints
 
-Do not produce a vague summary.
-Produce planning authority.
+Do not produce a generic architecture memo.
+Produce implementation-ready design authority.
