@@ -1,0 +1,208 @@
+{
+  "biomarkers": {
+    "albumin": {
+      "value": 43,
+      "unit": "g/L",
+      "reference_range": {
+        "min": 35.0,
+        "max": 56.0,
+        "unit": "g/L",
+        "source": "lab"
+      }
+    },
+    "alt": {
+      "value": 14.8,
+      "unit": "U/L",
+      "reference_range": {
+        "min": 10.0,
+        "max": 61.0,
+        "unit": "U/L",
+        "source": "lab"
+      }
+    },
+    "alp": {
+      "value": 47,
+      "unit": "U/L",
+      "reference_range": {
+        "min": 30.0,
+        "max": 131.0,
+        "unit": "U/L",
+        "source": "lab"
+      }
+    },
+    "creatinine": {
+      "value": 110,
+      "unit": "umol/L",
+      "reference_range": {
+        "min": 59.0,
+        "max": 105.0,
+        "unit": "umol/L",
+        "source": "lab"
+      }
+    },
+    "egfr": {
+      "value": 67,
+      "unit": "mL/min/1.73m2",
+      "reference_range": {
+        "min": 90.0,
+        "max": null,
+        "unit": "mL/min/1.73m2",
+        "source": "lab"
+      }
+    },
+    "ferritin": {
+      "value": 274.0,
+      "unit": "ug/L",
+      "reference_range": {
+        "min": 30.0,
+        "max": 301.0,
+        "unit": "ug/L",
+        "source": "lab"
+      }
+    },
+    "folate": {
+      "value": 5.69,
+      "unit": "ug/L",
+      "reference_range": {
+        "min": 4.46,
+        "max": null,
+        "unit": "ug/L",
+        "source": "lab"
+      }
+    },
+    "free_t4": {
+      "value": 15.0,
+      "unit": "pmol/L",
+      "reference_range": {
+        "min": 9.0,
+        "max": 26.0,
+        "unit": "pmol/L",
+        "source": "lab"
+      }
+    },
+    "ggt": {
+      "value": 18,
+      "unit": "U/L",
+      "reference_range": {
+        "min": 9.0,
+        "max": 51.0,
+        "unit": "U/L",
+        "source": "lab"
+      }
+    },
+    "hba1c": {
+      "value": 32,
+      "unit": "mmol/mol",
+      "reference_range": {
+        "min": null,
+        "max": 42.0,
+        "unit": "mmol/mol",
+        "source": "lab"
+      }
+    },
+    "hdl_cholesterol": {
+      "value": 2.1,
+      "unit": "mmol/L",
+      "reference_range": {
+        "min": 1.0,
+        "max": 1.6,
+        "unit": "mmol/L",
+        "source": "lab"
+      }
+    },
+    "ldl_cholesterol": {
+      "value": 2.7,
+      "unit": "mmol/L",
+      "reference_range": {
+        "min": null,
+        "max": 3.4,
+        "unit": "mmol/L",
+        "source": "lab"
+      }
+    },
+    "tc_hdl_ratio": {
+      "value": 2.6,
+      "unit": "mmol/L",
+      "reference_range": {
+        "min": null,
+        "max": 6.0,
+        "unit": "mmol/L",
+        "source": "lab"
+      }
+    },
+    "testosterone": {
+      "value": 13.9,
+      "unit": "nmol/L",
+      "reference_range": {
+        "min": 12.01,
+        "max": 31.0,
+        "unit": "nmol/L",
+        "source": "lab"
+      }
+    },
+    "total_cholesterol": {
+      "value": 5.4,
+      "unit": "mmol/L",
+      "reference_range": {
+        "min": null,
+        "max": 5.2,
+        "unit": "mmol/L",
+        "source": "lab"
+      }
+    },
+    "triglycerides": {
+      "value": 1.0,
+      "unit": "mmol/L",
+      "reference_range": {
+        "min": null,
+        "max": 1.7,
+        "unit": "mmol/L",
+        "source": "lab"
+      }
+    },
+    "tsh": {
+      "value": 1.66,
+      "unit": "\u03bcIU/mL",
+      "reference_range": {
+        "min": 0.4,
+        "max": 4.1,
+        "unit": "\u03bcIU/mL",
+        "source": "lab"
+      }
+    },
+    "urea": {
+      "value": 5.9,
+      "unit": "mmol/L",
+      "reference_range": {
+        "min": 2.5,
+        "max": 7.9,
+        "unit": "mmol/L",
+        "source": "lab"
+      }
+    },
+    "vitamin_b12": {
+      "value": 236,
+      "unit": "pg/ml",
+      "reference_range": {
+        "min": 301.0,
+        "max": 772.0,
+        "unit": "pg/ml",
+        "source": "lab"
+      }
+    },
+    "vitamin_d": {
+      "value": 78.0,
+      "unit": "nmol/L",
+      "reference_range": {
+        "min": 50.0,
+        "max": 126.0,
+        "unit": "nmol/L",
+        "source": "lab"
+      }
+    }
+  },
+  "user": {
+    "age": 55,
+    "biological_sex": "male"
+  }
+}
