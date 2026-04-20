@@ -1,76 +1,66 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "FE-R8C",
+  "work_id": "N-1",
   "status": "HARDENED",
-  "hardened_utc": "2026-04-18T00:00:00Z",
+  "hardened_utc": "2026-04-20T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
   "changes": {
     "front_matter": {
       "status": "CONFIRMED",
       "citation": "automation_bus/latest_cursor_prompt.md:1-7",
-      "notes": "All five required fields present: work_id=FE-R8C, branch=feature/fe-r8c-results-dedup-and-example-binding, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED."
+      "notes": "All five required fields present. work_id=N-1, branch=feature/n-1-narrative-target-lock-and-authority-map, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=CONTENT."
     },
     "authority_paths": {
-      "ResultsInvestigationSpine": {
+      "benchmark_narrative": {
         "status": "CONFIRMED",
-        "citation": "frontend/app/components/results/ResultsInvestigationSpine.tsx:1-72",
-        "notes": "Exists and read. Props: focusLine (string|null), idlRetailLabel (string|null), idlSubtitle (string|null). focusLine is frontend-shaped from backend primary_concern/top_hypothesis_line/key_findings[0] (page.tsx:166-167). idlRetailLabel/idlSubtitle are backend IDL fields (page.tsx:169-174). Rendering is conditional: focusLine block at line 45-50, IDL block at lines 51-67."
+        "citation": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REPORT_CHAT_2_FINAL.md:1-323",
+        "notes": "File read in full. 8-section pathway-led narrative for the AB case. Sections: body overview, what is working well, lead phenotype (homocysteine/methylation), secondary phenotype (lipid transport), longitudinal change (panel 0 vs current), other systems, next steps, clinician summary. This is the correct authority file. Versioned predecessors (_v1, _v2, _CHAT_2_v5) present in same directory but do not create a duplicate-authority conflict — FINAL suffix is unambiguous. Both reverse-engineering reports cite this exact path."
       },
-      "ResultsBodyOverview": {
+      "cursor_reverse_engineering": {
         "status": "CONFIRMED",
-        "citation": "frontend/app/components/results/ResultsBodyOverview.tsx:1-74",
-        "notes": "Exists and read. Primary sentence from buildBodyOverviewPrimarySentence (bodyOverviewPrimarySentence.ts:28-51). Source: page1.primary_concern || top_hypothesis_line || key_findings[0] — SAME backend fields as Spine.focusLine (page.tsx:166-167 vs bodyOverviewPrimarySentence.ts:42-43). Duplication confirmed: both Spine and BodyOverview extract extractFirstSentence(same backend source). BodyOverview appends a frontend-authored suffix (bodyOverviewPrimarySentence.ts:45-50) which is refineable."
+        "citation": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_CURSOR.md:1-109",
+        "notes": "File read in full. 22-row matrix covering all major benchmark narrative moves. Benchmark source confirmed at line 10. Six gap categories identified at lines 46-52. Seven build implications at lines 55-62. Uses FULL/PARTIAL/NONE classification."
       },
-      "PrimaryFindingAndWhy": {
+      "claude_reverse_engineering": {
         "status": "CONFIRMED",
-        "citation": "frontend/app/components/results/PrimaryFindingAndWhy.tsx:1-181 + frontend/app/lib/primaryFindingShaping.ts:1-60",
-        "notes": "Exists and read. buildSection3LeadStatement (primaryFindingShaping.ts:16-47) draws from same page1 fields. Already detects Section 1 duplication (line 43-46). Section 3 adds 'Main finding for this panel: ' and 'Leading explanation: ' wrapper labels — these are frontend-authored and refineable. Backend strings (concern, hyp) must remain verbatim. The 'What this means' block uses buildWhatThisMeansBlock (lines 49-60) which also uses top_hypothesis_line and key_findings[0]."
+        "citation": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_CLAUDE.md:1-261",
+        "notes": "File read in full. 22-row matrix with line-numbered citations. Benchmark source confirmed at line 37. Identifies 7 FULL, 11 PARTIAL, 4 NONE gaps. Key precision additions over Cursor report: BiomarkerNode missing raw_value field (snapshot_linker.py ~62-78), golden_runs/narrative.txt confirming placeholder output, retail_explainer_v1/registry.yaml biomarker-only scope. These precision items take precedence per adjudication Rule 1."
       },
-      "SystemUnderstandingSection": {
+      "sprint_strategy": {
         "status": "CONFIRMED",
-        "citation": "frontend/app/components/results/SystemUnderstandingSection.tsx:1-133",
-        "notes": "Exists and read. blockA (lines 53-88), blockB (lines 91-101), blockC (lines 104-110) are FULLY frontend-authored deterministic text. Currently uses primaryDriver.name and balanced.items[0].system_topic. Does NOT currently receive idlRetailLabel. To bind examples to first IDL retail_display_label, a new optional prop must be added and threaded from page.tsx (investigationSpine.idlRetailLabel already computed at page.tsx:168). This is deterministic prop threading — no inference logic."
-      },
-      "InterpretationPatternsSection": {
-        "status": "CONFIRMED",
-        "citation": "frontend/app/components/results/InterpretationPatternsSection.tsx:1-131",
-        "notes": "Exists and read. Renders all enabled IDL records ordered by display_order_priority (lines 11-18). First record has retail_display_label (line 77-79), subtitle (line 80), why_it_matters (line 96), supporting_biomarkers_summary (line 103) — all backend-authored. Spine previews the SAME first record via idlRetailLabel+idlSubtitle. Duplication confirmed: Spine shows IDL preview, InterpretationPatternsSection renders the full first card immediately after."
-      },
-      "results_page_composition": {
-        "status": "CONFIRMED",
-        "citation": "frontend/app/(app)/results/page.tsx:544-615",
-        "notes": "Section order confirmed: (1) ResultsInvestigationSpine:545, (2) ResultsBodyOverview:555, (3) BalancedSystemsSummary:562, (4) PrimaryFindingAndWhy:569, (5) WhyThisLeadWonSection:576, (6) InterpretationPatternsSection:583, (7) SystemUnderstandingSection:590. investigationSpine memo at lines 164-175 derives focusLine + idlRetailLabel + idlSubtitle — idlRetailLabel already in scope and can be passed to SystemUnderstandingSection at line 590 without new computation."
+        "citation": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md:1-556",
+        "notes": "File read in full. Sprint N-1 defined at lines 373-385. Sprint series N-1 through N-10 at lines 373-528. Strategy §4 (lines 196-300) lists the same gaps identified by both reverse-engineering reports, confirming internal consistency. SOP governance note at lines 350-365 explicitly flags N-2, N-3, N-8 as likely HIGH-risk. N-1 itself is a docs-only strategic lock sprint."
       }
     },
     "source_cross_reference": {
       "status": "CONFIRMED",
-      "citation": "frontend/app/(app)/results/page.tsx:164-167 + frontend/app/lib/bodyOverviewPrimarySentence.ts:42-43 + frontend/app/lib/primaryFindingShaping.ts:16-47",
-      "notes": "Duplication root cause identified from source code: (A) Spine.focusLine = ensureTerminalPunctuation(extractFirstSentence(leadSource)) where leadSource = primary_concern||top_hypothesis_line||key_findings[0]. (B) BodyOverview.primary = extractFirstSentence(same leadSource) + frontend suffix. Identical first sentence, different suffix only. (C) PrimaryFinding.lead = 'Main finding: ' + firstSentence(same concern/hyp) — same content with a different label prefix. All three present the same backend sentence to the user in near-identical form within the first four sections. IDL duplication: Spine shows first IDL record (retail_display_label + subtitle), InterpretationPatternsSection renders the full same first card immediately after."
+      "citation": "AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_CURSOR.md:10 + AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_CLAUDE.md:37",
+      "notes": "Both reports cite the identical benchmark path. No path discrepancy. Major gap conclusions are consistent across both reports (narrative compiler missing, body-overview compiler missing, lifestyle-to-pathway join missing, longitudinal numeric-delta gap, no methylation-first phenotype, no protective lipid context asset). Differences are classification-framing (Cursor: Hierarchy of concern = FULL because ranking exists; Claude: PARTIAL because prose rationale does not exist) — these are adjudicatable, not contradictory. Strategy §4 independently confirms the same gaps."
     },
     "prior_task_findings": {
       "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:36-46",
-      "notes": "FE-R8A and FE-R8B declared complete and approved in prompt strategic context. Verified: ResultsInvestigationSpine.tsx exists (FE-R8B delivery). InterpretationPatternsSection.tsx exists (FE-R8 delivery). FE-R8A payload fields present: interpretation_display_layer_v1 consumed at page.tsx:583. No re-verification of prior task implementation details required for this sprint."
+      "citation": "docs/golden-narrative/reverse-engineer-report.md:1-5",
+      "notes": "The prerequisite task brief (reverse-engineer-report.md) was the prompt for both outputs. Both reverse-engineering outputs now exist. Verified by directory listing and full file reads. No prior-hardening artifact to inherit — this is the first successful hardening of N-1."
     },
     "forbidden_files": {
       "status": "CONFIRMED — none in scope",
-      "citation": "automation_bus/latest_cursor_prompt.md:156-168 (out of scope section)",
-      "notes": "No backend/ssot/, backend/core/pipeline/, backend/core/analytics/ files touched. No control-plane scripts (run_work_package.py, golden_gate_local.py, update_cursor_status.py) in scope. No IDL content/classification changes. No backend DTO changes. No Gemini/LLM logic. No .codex/, .vscode/, AGENTS.md tooling files at risk."
-    },
-    "behavioural_scope": {
-      "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:108-153",
-      "notes": "change_type=MIXED correct. CONTENT side: editorial copy in Spine bridge text and BodyOverview suffix. BEHAVIOUR side: conditional display suppression of Spine focusLine block when duplication is severe; prop threading (idlRetailLabel) to SystemUnderstandingSection; new test coverage. No Intelligence Core touched. Regression targets: ResultsInvestigationSpine.test.tsx:1, InterpretationPatternsSection.test.tsx:1, plus new SystemUnderstandingSection tests for idlRetailLabel binding."
+      "citation": "automation_bus/latest_cursor_prompt.md:138-145",
+      "notes": "Out of scope section explicitly prohibits: backend/frontend implementation changes, new contracts or code, changes to the benchmark narrative, new medical research, frontend redesign, Gemini/LLM integration. Output is strictly two new markdown files under docs/golden-narrative/. No backend/ssot/, backend/core/pipeline/, backend/core/analytics/, or control-plane scripts (run_work_package.py, golden_gate_local.py, update_cursor_status.py) are touched."
     },
     "stop_conditions": {
       "status": "CONFIRMED — none triggered",
-      "citation": "automation_bus/latest_cursor_prompt.md:205-214",
-      "notes": "STOP 1: Duplication is mixed-source (same backend string in three frontend wrappers + IDL preview vs full render). Frontend can address the structural repetition by differentiating the wrapper framing — does not require backend copy changes. NOT triggered. STOP 2: Example binding via idlRetailLabel = deterministic prop threading from already-computed value. No inference logic needed. NOT triggered. STOP 3: No backend contract changes needed. NOT triggered. STOP 4: All changes bounded to five components. No redesign risk identified. NOT triggered. STOP 5: Repo confirms bounded frontend-only sprint. NOT triggered."
+      "citation": "automation_bus/latest_cursor_prompt.md:244-250",
+      "notes": "STOP 1: Benchmark file path consistent — both reports and the prompt all reference docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REPORT_CHAT_2_FINAL.md. Strategy §8/N-1 description is consistent with this file. NOT triggered. STOP 2: Reports do not materially conflict beyond adjudicatable classification-framing differences. No new repo investigation required. NOT triggered. STOP 3: Strategy §4 lists the same gaps both reports identify. No contradiction. NOT triggered. STOP 4: All four required authority files exist and were read in full. NOT triggered."
     },
     "no_op_risk": {
       "status": "CONFIRMED — real work exists",
-      "citation": "frontend/app/components/results/ResultsInvestigationSpine.tsx:45-67 + frontend/app/(app)/results/page.tsx:544-590",
-      "notes": "Three sections (Spine, BodyOverview, PrimaryFinding) each wrap the same backend sentence from the same source field. IDL is previewed in Spine and fully rendered in InterpretationPatternsSection. SystemUnderstandingSection does not yet receive idlRetailLabel. All three gaps are genuine and addressable."
+      "citation": "docs/golden-narrative/ directory listing",
+      "notes": "AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md does not exist. AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md does not exist. Both output files must be authored from scratch. Genuine adjudication required across 22+ matrix rows where Cursor and Claude reports differ in framing or precision. Not a no-op sprint."
+    },
+    "risk_and_change_type": {
+      "status": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:3-6",
+      "notes": "CONTENT classification is correct. All output under docs/golden-narrative/. No code, no SSOT, no compiled logic. STANDARD risk is correct. No Intelligence Core components, no HIGH-risk file paths, no control-plane scripts in scope."
     }
   }
 }
