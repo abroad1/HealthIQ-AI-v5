@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "N-1",
+  "work_id": "N-2",
   "status": "HARDENED",
   "hardened_utc": "2026-04-20T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
@@ -8,59 +8,104 @@
     "front_matter": {
       "status": "CONFIRMED",
       "citation": "automation_bus/latest_cursor_prompt.md:1-7",
-      "notes": "All five required fields present. work_id=N-1, branch=feature/n-1-narrative-target-lock-and-authority-map, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=CONTENT."
+      "notes": "All five required fields present. work_id=N-2, branch=feature/n-2-narrative-compiler-architecture-design, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=CONTENT. No missing or malformed fields."
     },
     "authority_paths": {
-      "benchmark_narrative": {
+      "target_lock": {
         "status": "CONFIRMED",
-        "citation": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REPORT_CHAT_2_FINAL.md:1-323",
-        "notes": "File read in full. 8-section pathway-led narrative for the AB case. Sections: body overview, what is working well, lead phenotype (homocysteine/methylation), secondary phenotype (lipid transport), longitudinal change (panel 0 vs current), other systems, next steps, clinician summary. This is the correct authority file. Versioned predecessors (_v1, _v2, _CHAT_2_v5) present in same directory but do not create a duplicate-authority conflict — FINAL suffix is unambiguous. Both reverse-engineering reports cite this exact path."
+        "citation": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md:1-20",
+        "notes": "File exists and was read. Formally locks AB_GOLD_STANDARD_NARRATIVE_REPORT_CHAT_2_FINAL.md as the benchmark authority. Created in N-1. Consistent with N-2 prompt's Required Inputs §1."
       },
-      "cursor_reverse_engineering": {
+      "merged_reverse_engineering_matrix": {
         "status": "CONFIRMED",
-        "citation": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_CURSOR.md:1-109",
-        "notes": "File read in full. 22-row matrix covering all major benchmark narrative moves. Benchmark source confirmed at line 10. Six gap categories identified at lines 46-52. Seven build implications at lines 55-62. Uses FULL/PARTIAL/NONE classification."
-      },
-      "claude_reverse_engineering": {
-        "status": "CONFIRMED",
-        "citation": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_CLAUDE.md:1-261",
-        "notes": "File read in full. 22-row matrix with line-numbered citations. Benchmark source confirmed at line 37. Identifies 7 FULL, 11 PARTIAL, 4 NONE gaps. Key precision additions over Cursor report: BiomarkerNode missing raw_value field (snapshot_linker.py ~62-78), golden_runs/narrative.txt confirming placeholder output, retail_explainer_v1/registry.yaml biomarker-only scope. These precision items take precedence per adjudication Rule 1."
+        "citation": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md:1-15",
+        "notes": "File exists. Executive summary confirms master gap is the narrative asset and compiler stack. Key confirmed gaps: no deterministic narrative compiler layer, no body-overview compiler, no lifestyle-to-pathway joins, no longitudinal raw-value/numeric-delta support. Consistent with N-2 prompt's architectural questions. Created in N-1."
       },
       "sprint_strategy": {
         "status": "CONFIRMED",
-        "citation": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md:1-556",
-        "notes": "File read in full. Sprint N-1 defined at lines 373-385. Sprint series N-1 through N-10 at lines 373-528. Strategy §4 (lines 196-300) lists the same gaps identified by both reverse-engineering reports, confirming internal consistency. SOP governance note at lines 350-365 explicitly flags N-2, N-3, N-8 as likely HIGH-risk. N-1 itself is a docs-only strategic lock sprint."
+        "citation": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md:386-401",
+        "notes": "N-2 sprint definition found at lines 386-401. Strategy text matches prompt scope exactly: compiler boundary decision, output contract naming, relationship to ReportV1/ClinicianReportV1, input consumption model, section scoping. Strategy also defines all four stack layers at lines 22-71, which maps directly to prompt §§Compiler stage model and Asset-consumption model. Internal consistency confirmed."
+      },
+      "report_compiler_v1": {
+        "status": "CONFIRMED",
+        "citation": "backend/core/analytics/report_compiler_v1.py",
+        "notes": "File exists in backend/core/analytics/. Confirmed by directory listing."
+      },
+      "root_cause_compiler_v1": {
+        "status": "CONFIRMED",
+        "citation": "backend/core/analytics/root_cause_compiler_v1.py",
+        "notes": "File exists in backend/core/analytics/. Confirmed by directory listing."
+      },
+      "interpretation_display_layer_publish_v1": {
+        "status": "CONFIRMED",
+        "citation": "backend/core/analytics/interpretation_display_layer_publish_v1.py",
+        "notes": "File exists in backend/core/analytics/. Confirmed by directory listing."
+      },
+      "balanced_systems_presentation_v1": {
+        "status": "CONFIRMED",
+        "citation": "backend/core/analytics/balanced_systems_presentation_v1.py",
+        "notes": "File exists in backend/core/analytics/. Confirmed by directory listing."
+      },
+      "snapshot_linker": {
+        "status": "CONFIRMED",
+        "citation": "backend/core/analytics/snapshot_linker.py",
+        "notes": "File exists in backend/core/analytics/. Confirmed by directory listing."
+      },
+      "state_transition_engine": {
+        "status": "CONFIRMED",
+        "citation": "backend/core/analytics/state_transition_engine.py",
+        "notes": "File exists in backend/core/analytics/. Confirmed by directory listing."
+      },
+      "report_v1": {
+        "status": "CONFIRMED",
+        "citation": "backend/core/contracts/report_v1.py",
+        "notes": "File exists in backend/core/contracts/. Confirmed by directory listing."
+      },
+      "clinician_report_v1": {
+        "status": "CONFIRMED",
+        "citation": "backend/core/contracts/clinician_report_v1.py",
+        "notes": "File exists in backend/core/contracts/. Confirmed by directory listing."
+      },
+      "insight_graph_v1": {
+        "status": "CONFIRMED",
+        "citation": "backend/core/contracts/insight_graph_v1.py",
+        "notes": "File exists in backend/core/contracts/. Confirmed by directory listing."
       }
     },
     "source_cross_reference": {
       "status": "CONFIRMED",
-      "citation": "AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_CURSOR.md:10 + AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_CLAUDE.md:37",
-      "notes": "Both reports cite the identical benchmark path. No path discrepancy. Major gap conclusions are consistent across both reports (narrative compiler missing, body-overview compiler missing, lifestyle-to-pathway join missing, longitudinal numeric-delta gap, no methylation-first phenotype, no protective lipid context asset). Differences are classification-framing (Cursor: Hierarchy of concern = FULL because ranking exists; Claude: PARTIAL because prose rationale does not exist) — these are adjudicatable, not contradictory. Strategy §4 independently confirms the same gaps."
+      "citation": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md:386-401 + automation_bus/latest_cursor_prompt.md:73-97",
+      "notes": "Prompt scope matches strategy N-2 definition at lines 386-401 on all five required architecture questions (compiler boundary, output contract name, contract relationships, input consumption, section scoping). Strategy four-layer stack (lines 22-71: data/contract, governed narrative asset, compiler/assembly, output/display) is consistent with prompt §Compiler stage model. No conflict between merged matrix conclusions and sprint strategy goals. Strategy §7 at lines 350-365 confirms N-2, N-3, N-8 are likely HIGH-risk sprints — see risk_and_change_type note."
     },
     "prior_task_findings": {
       "status": "CONFIRMED",
-      "citation": "docs/golden-narrative/reverse-engineer-report.md:1-5",
-      "notes": "The prerequisite task brief (reverse-engineer-report.md) was the prompt for both outputs. Both reverse-engineering outputs now exist. Verified by directory listing and full file reads. No prior-hardening artifact to inherit — this is the first successful hardening of N-1."
+      "citation": "git log: commit ad00310 (Merge branch 'feature/n-1-narrative-target-lock-and-authority-map') + commit e9c7d3f (docs(golden-narrative): close N-1 authority lock package)",
+      "notes": "N-1 is confirmed merged to main. Both N-1 output files (AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md, AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md) are present in docs/golden-narrative/ and were independently verified. N-2 prompt correctly treats these as settled authorities. No prior hardening artifact to inherit for N-2 — this is the first hardening of N-2."
     },
     "forbidden_files": {
       "status": "CONFIRMED — none in scope",
-      "citation": "automation_bus/latest_cursor_prompt.md:138-145",
-      "notes": "Out of scope section explicitly prohibits: backend/frontend implementation changes, new contracts or code, changes to the benchmark narrative, new medical research, frontend redesign, Gemini/LLM integration. Output is strictly two new markdown files under docs/golden-narrative/. No backend/ssot/, backend/core/pipeline/, backend/core/analytics/, or control-plane scripts (run_work_package.py, golden_gate_local.py, update_cursor_status.py) are touched."
+      "citation": "automation_bus/latest_cursor_prompt.md:187-195",
+      "notes": "Out of scope section explicitly prohibits: implementation changes to runtime code, changing backend contracts in code, adding narrative assets in code or YAML, frontend redesign, Gemini/LLM work, rewriting benchmark narrative, redoing merged matrix. Output is strictly docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md (and optional DECISIONS companion). No backend/core/analytics/, backend/core/contracts/, backend/ssot/, or control-plane scripts are modified. Output file does not yet exist — confirmed by directory listing. Clean write path."
     },
     "stop_conditions": {
-      "status": "CONFIRMED — none triggered",
-      "citation": "automation_bus/latest_cursor_prompt.md:244-250",
-      "notes": "STOP 1: Benchmark file path consistent — both reports and the prompt all reference docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REPORT_CHAT_2_FINAL.md. Strategy §8/N-1 description is consistent with this file. NOT triggered. STOP 2: Reports do not materially conflict beyond adjudicatable classification-framing differences. No new repo investigation required. NOT triggered. STOP 3: Strategy §4 lists the same gaps both reports identify. No contradiction. NOT triggered. STOP 4: All four required authority files exist and were read in full. NOT triggered."
+      "status": "CONFIRMED — none triggered pre-execution; all four STOP conditions are Cursor-evaluated at runtime",
+      "citation": "automation_bus/latest_cursor_prompt.md:307-315",
+      "notes": "STOP 1 (ambiguous compiler boundaries): Cursor will evaluate during runtime investigation. Not pre-triggerable. STOP 2 (merged matrix vs strategy conflict): Confirmed consistent above — not triggered. STOP 3 (no clean output-contract strategy): Cursor will evaluate during design. Not pre-triggerable. STOP 4 (repo reality differs from planning docs): Cursor will evaluate by reading runtime files. Not pre-triggerable. All STOP conditions are appropriately positioned as runtime guards."
     },
     "no_op_risk": {
       "status": "CONFIRMED — real work exists",
       "citation": "docs/golden-narrative/ directory listing",
-      "notes": "AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md does not exist. AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md does not exist. Both output files must be authored from scratch. Genuine adjudication required across 22+ matrix rows where Cursor and Claude reports differ in framing or precision. Not a no-op sprint."
+      "notes": "HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md does not exist. HealthIQ_Deterministic_Narrative_Compiler_Architecture_DECISIONS.md does not exist. Both are new files requiring genuine architectural analysis. Compiler boundary and output contract strategy are genuinely open design questions per the merged matrix and sprint strategy. Real work exists."
     },
     "risk_and_change_type": {
-      "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:3-6",
-      "notes": "CONTENT classification is correct. All output under docs/golden-narrative/. No code, no SSOT, no compiled logic. STANDARD risk is correct. No Intelligence Core components, no HIGH-risk file paths, no control-plane scripts in scope."
+      "status": "CONFIRMED with advisory flag",
+      "citation": "automation_bus/latest_cursor_prompt.md:3-6 + docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md:398-400",
+      "notes": "CHANGE_TYPE=CONTENT is correct: all output files are under docs/golden-narrative/, no code changes, no SSOT modifications. RISK_LEVEL=STANDARD: per SOP §10 HIGH triggers, this sprint does not modify backend/core/analytics/, backend/core/contracts/, or control-plane paths. ADVISORY FLAG: The strategy document at lines 398-400 states 'Likely risk classification: HIGH, if architecture decisions touch compiler and contract authority.' This sprint's entire purpose is to make architecture decisions about the compiler and output contracts. The prompt author (GPT) declared STANDARD on the basis that file writes are docs-only. This is defensible under SOP §10 (no High-risk path modifications). However, if GPT intends the design authority document to carry governing weight over future HIGH-risk sprints, GPT should confirm STANDARD is the correct classification before Stage 3."
+    },
+    "stage_0_branch_alignment": {
+      "status": "FLAG — action required by Cursor before Stage 3",
+      "citation": "git branch output: main",
+      "notes": "Current branch is 'main'. Prompt requires branch 'feature/n-2-narrative-compiler-architecture-design'. Per SOP Stage 0, branch alignment must be completed before any work. Cursor must create or checkout this feature branch before running 'python backend/scripts/run_work_package.py start'. This is not a hardening blocker — Claude hardening does not require branch alignment. It is a Stage 3 prerequisite."
     }
   }
 }
