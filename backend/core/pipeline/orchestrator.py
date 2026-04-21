@@ -1321,6 +1321,7 @@ class AnalysisOrchestrator:
 
             # Step 4.65: v5.3 Sprint 1 longitudinal state transitions (code-only)
             linked_snapshot_ids: List[str] = []
+            prior_biomarker_lab_snapshot_v1: Dict[str, Dict[str, Any]] = {}
             runtime_mode = os.getenv("HEALTHIQ_MODE", "").strip().lower()
             fixture_mode = runtime_mode in {"fixture", "fixtures"}
             soft_mode = fixture_mode or runtime_mode == "test"
@@ -1340,6 +1341,21 @@ class AnalysisOrchestrator:
                     insight_graph.state_transition_hash = stamp.state_transition_hash
                     insight_graph.state_transitions = transitions
                     linked_snapshot_ids = linked.linked_snapshot_ids
+                    if linked.prior_insight_graphs:
+                        prior_graph = linked.prior_insight_graphs[0]
+                        snap_labs: Dict[str, Dict[str, Any]] = {}
+                        for node in prior_graph.biomarker_nodes:
+                            lv = getattr(node, "lab_value", None)
+                            if lv is None:
+                                continue
+                            lu = getattr(node, "lab_unit", None)
+                            snap_labs[node.biomarker_id] = {
+                                "lab_value": float(lv),
+                                "lab_unit": lu,
+                            }
+                        prior_biomarker_lab_snapshot_v1 = {
+                            k: snap_labs[k] for k in sorted(snap_labs.keys())
+                        }
                 except Exception as exc:
                     if not fixture_mode:
                         raise ValueError(f"Snapshot linking failed: {exc}") from exc
@@ -2076,6 +2092,8 @@ class AnalysisOrchestrator:
                 pass
             meta["insight_graph"] = insight_graph.model_dump() if hasattr(insight_graph, "model_dump") else {}
             meta["lifestyle_interpretation_bridges_v1"] = lifestyle_interpretation_bridges_v1
+            if prior_biomarker_lab_snapshot_v1:
+                meta["prior_biomarker_lab_snapshot_v1"] = prior_biomarker_lab_snapshot_v1
             # MEDICATION-CAVEAT-B — replay-stable questionnaire medical representation for clinician caveat compiler
             meta["medical_history_snapshot"] = (
                 dict(context.medical_history) if isinstance(context.medical_history, dict) else {}

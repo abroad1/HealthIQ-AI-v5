@@ -3,6 +3,10 @@
 from __future__ import annotations
 
 from core.analytics.narrative_report_compiler_v1 import compile_narrative_report_v1
+from core.contracts.interpretation_display_layer_v1 import (
+    InterpretationDisplayLayerBundleV1,
+    InterpretationDisplayRecordV1,
+)
 
 
 def test_compiler_emits_lead_when_homocysteine_signal_fires():
@@ -46,3 +50,113 @@ def test_lifestyle_bridges_surface_when_active():
     }
     rep = compile_narrative_report_v1(analysis_id="a4", meta=meta, insight_graph={}, idl_bundle=None)
     assert "Lifestyle bridge" in rep.lead_narrative
+
+
+def _sample_idl_bundle() -> InterpretationDisplayLayerBundleV1:
+    return InterpretationDisplayLayerBundleV1(
+        schema_version="1.0.0",
+        records=[
+            InterpretationDisplayRecordV1(
+                internal_id="ph_demo_retail_v1",
+                scientific_class="phenotype",
+                clinical_display_label="Demo clinical pattern",
+                retail_display_label="Demo retail pattern",
+                subtitle="A concise subtitle for members.",
+                why_it_matters="This matters for long-term monitoring.",
+                severity_state="attention",
+                supporting_biomarkers_summary="Homocysteine, MCV",
+                frontend_allowed_term="phenotype_allowed",
+                display_order_priority=2,
+                enabled_for_frontend=True,
+                supporting_systems_summary="Methylation and erythroid dynamics.",
+                user_safe_description="Plain-language pattern note.",
+                display_caveat="Not a standalone diagnosis.",
+            ),
+        ],
+    )
+
+
+def test_retail_and_clinician_sections_use_idl_when_bundle_present():
+    ig = {
+        "signal_results": [
+            {"signal_id": "signal_homocysteine_high", "signal_state": "at_risk"},
+        ],
+        "primary_driver_system_id": "vascular",
+    }
+    bundle = _sample_idl_bundle()
+    rep = compile_narrative_report_v1(analysis_id="a5", meta={}, insight_graph=ig, idl_bundle=bundle)
+    assert rep.retail_summary
+    assert "Demo retail pattern" in rep.retail_summary
+    assert rep.clinician_synthesis
+    assert "Demo clinical pattern" in rep.clinician_synthesis
+    assert "Interpretation display layer" in rep.clinician_synthesis
+
+
+def test_longitudinal_narrative_uses_transitions_and_comparable_lab_delta():
+    ig = {
+        "signal_results": [],
+        "state_transitions": [
+            {
+                "biomarker_id": "homocysteine",
+                "from_status": "high",
+                "to_status": "normal",
+                "transition": "improving",
+                "evidence_codes": ["status_change"],
+            },
+        ],
+        "biomarker_nodes": [
+            {
+                "biomarker_id": "homocysteine",
+                "status": "normal",
+                "lab_value": 10.0,
+                "lab_unit": "µmol/L",
+            },
+        ],
+    }
+    meta = {
+        "prior_biomarker_lab_snapshot_v1": {
+            "homocysteine": {"lab_value": 15.0, "lab_unit": "µmol/L"},
+        },
+    }
+    rep = compile_narrative_report_v1(analysis_id="a6", meta=meta, insight_graph=ig, idl_bundle=None)
+    assert rep.longitudinal_narrative
+    assert "Homocysteine" in rep.longitudinal_narrative
+    assert "improved" in rep.longitudinal_narrative.lower()
+    assert "delta" in rep.longitudinal_narrative.lower()
+    assert "10" in rep.longitudinal_narrative and "15" in rep.longitudinal_narrative
+
+
+def test_next_steps_narrative_from_functional_when_lead_signal_fires():
+    ig = {
+        "signal_results": [
+            {"signal_id": "signal_homocysteine_high", "signal_state": "at_risk"},
+        ],
+    }
+    rep = compile_narrative_report_v1(analysis_id="a7", meta={}, insight_graph=ig, idl_bundle=None)
+    assert rep.next_steps_narrative
+    assert "Prioritised follow-up" in rep.next_steps_narrative
+    assert "• " in rep.next_steps_narrative
+
+
+def test_longitudinal_lab_delta_without_state_transitions():
+    ig = {
+        "signal_results": [],
+        "state_transitions": [],
+        "biomarker_nodes": [
+            {
+                "biomarker_id": "homocysteine",
+                "status": "normal",
+                "lab_value": 10.0,
+                "lab_unit": "µmol/L",
+            },
+        ],
+    }
+    meta = {
+        "prior_biomarker_lab_snapshot_v1": {
+            "homocysteine": {"lab_value": 15.0, "lab_unit": "µmol/L"},
+        },
+    }
+    rep = compile_narrative_report_v1(analysis_id="a8", meta=meta, insight_graph=ig, idl_bundle=None)
+    assert rep.longitudinal_narrative
+    assert "delta" in rep.longitudinal_narrative.lower()
+    assert "longitudinal_no_state_transitions" in rep.meta.get("skipped", [])
