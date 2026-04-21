@@ -1,28 +1,26 @@
 ---
-work_id: N-4
-branch: feature/n-4-lifestyle-interpretation-bridge-assets
-risk_level: HIGH
+work_id: N-5
+branch: feature/n-5-pathway-explainer-asset-pack-v1
+risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: CONTENT
 ---
 
-# N-4 — Lifestyle interpretation bridge assets
+# N-5 — Pathway explainer asset pack v1
 
 ## Objective
 
-Create the first governed deterministic lifestyle-to-interpretation bridge assets so HealthIQ can use lifestyle context in medically disciplined narrative interpretation rather than treating questionnaire data as passive intake only.
+Create the first governed pathway-grade explainer assets that the future deterministic narrative compiler will consume for benchmark-style system biology interpretation.
 
-This is a HIGH-risk sprint because it is expected to touch governed interpretation logic and may touch backend analytical infrastructure.
+This is a CONTENT sprint.
+It is not a frontend sprint.
+It is not a compiler implementation sprint.
+Do not modify backend analytical logic unless a tiny loader/registry touch is strictly required and justified.
+Do not widen into narrative assembly.
 
-This sprint is not a frontend sprint.
-Do not redesign the results page.
-Do not introduce Gemini or any other LLM dependency.
-Do not widen into full narrative compilation.
-
-The purpose of N-4 is to build the governed bridge layer between structured lifestyle inputs and interpretation outputs for the first benchmark-critical contexts:
-- alcohol → homocysteine / macrocytosis / one-carbon context
-- hydration / physical work pattern → renal interpretation context
-- weight loss / fasting pattern → glycaemic improvement context
+The purpose of N-5 is to author and govern the reusable explanatory assets needed to support the benchmark narrative at pathway level, starting with the two highest-priority domains:
+- methylation / one-carbon / homocysteine handling
+- lipid transport / cholesterol handling
 
 ---
 
@@ -33,11 +31,12 @@ The following are already decided and are not open for reinterpretation in this 
 - The benchmark narrative is locked.
 - The merged reverse-engineering matrix is locked.
 - The narrative compiler architecture is locked.
-- N-3 has now closed the longitudinal raw-value contract gap.
-- One of the major remaining deterministic gaps is that HealthIQ captures lifestyle context but does not yet join it cleanly into interpretation.
-- N-4 exists to create governed lifestyle-to-interpretation bridge assets before later narrative compiler work.
+- N-3 has closed the longitudinal raw-value contract gap.
+- N-4 has created the first lifestyle interpretation bridge assets.
+- One of the major remaining deterministic gaps is the absence of governed pathway-grade explainer assets.
+- N-5 exists to create those governed explainer assets before N-6 and N-8.
 
-Your job is to implement the minimum clean governed bridge layer that makes these three classes of contextual interpretation deterministically supportable.
+Your job is to create the first high-quality governed pathway explainer pack that later compiler work can consume.
 
 ---
 
@@ -45,123 +44,129 @@ Your job is to implement the minimum clean governed bridge layer that makes thes
 
 Treat the following as required inputs:
 
-1. Benchmark target lock
+1. Benchmark target lock  
 `docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md`
 
-2. Merged reverse-engineering matrix
+2. Merged reverse-engineering matrix  
 `docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md`
 
-3. Final sprint strategy
+3. Final sprint strategy  
 `docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md`
 
-4. Narrative compiler architecture
+4. Narrative compiler architecture  
 `docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md`
 
 5. Relevant current runtime and authority files, at minimum:
-- `backend/ssot/questionnaire.json`
-- `backend/ssot/lifestyle_registry.yaml`
-- `backend/core/pipeline/questionnaire_mapper.py`
-- `backend/core/analytics/lifestyle_modifier_engine.py`
-- `knowledge_bus/root_cause/hypotheses/hcy_hypotheses_v1.yaml`
-- relevant macrocytosis / renal / glycaemic packages and hypotheses
-- any intervention / confirmatory / report-support assets you determine are relevant
+- `knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml`
+- `knowledge_bus/phenotypes/phenotype_map_v1.yaml`
+- relevant homocysteine / macrocytosis / lipid transport packages and hypotheses
+- `backend/ssot/retail_explainer_v1/registry.yaml`
+- any current explainer-bearing asset paths you determine are relevant
 
 ---
 
 ## Core problem this sprint must solve
 
-HealthIQ already captures lifestyle inputs such as alcohol intake, fasting pattern, fluid intake, and work pattern.
+HealthIQ currently has:
+- signals
+- hypotheses
+- rankings
+- some short “why it matters” strings
 
-But the current deterministic system does not yet translate those inputs into governed interpretation context for the benchmark narrative.
+But it does not yet have governed pathway-level explanation assets that can tell the user, in medically disciplined and reusable prose:
+- what a pathway/system does
+- how the body uses it
+- why the relevant markers belong together
+- why the pattern matters beyond a single number
 
-This sprint must create a medically disciplined bridge layer so that lifestyle context can:
-- support interpretation
-- shape uncertainty and plausibility
-- influence contextual phrasing later
-without becoming hand-wavy or speculative.
+This sprint must create those assets in a governed form that later deterministic compiler work can consume.
 
 ---
 
 ## Required outcome
 
-Deliver a bounded HIGH-risk implementation that:
+Deliver a bounded CONTENT implementation that:
 
-1. defines and implements governed lifestyle-to-interpretation bridge assets for the three priority domains
-2. keeps lifestyle context as contextual interpretation support, not diagnosis inflation
-3. preserves deterministic behaviour and traceability
-4. makes later narrative compiler work able to consume these joins cleanly
-5. adds or updates tests proving the bridges behave as intended
+1. defines the correct governed home for pathway explainers
+2. authors the first v1 pathway explainer assets for the two benchmark-priority systems
+3. keeps the prose medically serious, readable, and reusable
+4. avoids overclaiming or diagnosis inflation
+5. leaves the assets ready for later compiler consumption
 
 ---
 
 ## In scope
 
-### 1. Preflight verification
-Before modifying code or governed assets, verify and cite:
+### 1. Preflight authority verification
+Before writing assets, verify and cite:
 
-- what lifestyle fields currently exist in SSOT and are relevant to the benchmark case
-- how questionnaire responses are currently mapped into runtime lifestyle structures
-- what the current `lifestyle_modifier_engine.py` actually does today
-- whether existing root-cause or signal assets already partially support any of the intended joins
-- what current deterministic path, if any, could already consume lifestyle context
+- what current explainer-bearing assets exist
+- whether any current field in IDL, phenotype map, or SSOT already partially serves this role
+- what current asset locations are clearly too shallow for benchmark needs
+- what the cleanest governed home is for reusable pathway explainers
 
-You must confirm the exact current gap before patching it.
+You must confirm the correct authority location before authoring content.
 
-### 2. Alcohol → methylation / macrocytosis context
-Build the first governed lifestyle interpretation bridge for alcohol intake.
+### 2. Governed asset location decision
+Choose and justify the governed home for these explainers.
 
-The target is not:
-- “alcohol causes the result”
-The target is:
-- alcohol is a plausible contextual modifier or contributor for interpreting homocysteine / macrocytosis / one-carbon pathway friction when the pattern is otherwise coherent
-
-This bridge must remain bounded and medically disciplined.
-
-### 3. Hydration / physical work → renal context
-Build a governed deterministic bridge allowing hydration level and manual/physical work context to inform renal interpretation context where appropriate.
-
-The target is not:
-- “renal issue explained away”
-The target is:
-- hydration / work context can shape the interpretation of reassuring or borderline renal markers in a deterministic, bounded way
-
-### 4. Weight loss / fasting → glycaemic improvement context
-Build a governed deterministic bridge allowing reported weight loss and fasting pattern to support interpretation of favourable glycaemic direction-of-travel where appropriate.
-
-The target is not:
-- broad metabolic praise
-The target is:
-- contextual support for interpreting a more favourable glycaemic trend coherently
-
-### 5. Governed asset placement
-Implement these bridges in the correct governed location(s).
-
-You must determine, repo-groundedly, whether the right home is:
-- lifestyle registry extension
-- root-cause hypothesis extension
-- new bridge asset(s)
+Possible options include:
+- extending an existing governed registry
+- creating a new pathway explainer registry
 - another bounded governed structure
 
-Do not scatter the logic casually across multiple layers without authority clarity.
+Prefer clarity, reuse, and future compiler compatibility.
 
-### 6. Runtime consumption path
-Ensure the new bridge assets are available to later deterministic narrative compilation.
+Do not bury long pathway prose in an inappropriate existing field if that would create muddled authority.
 
-This sprint does not need to produce the final prose narrative layer, but it must make the contextual bridge outputs accessible in a clean deterministic way.
+### 3. Methylation / one-carbon pathway explainer
+Author a governed pathway explainer for the lead benchmark domain.
 
-### 7. Tests and regression coverage
-Add or update tests covering at minimum:
-- alcohol context bridge behaviour
-- hydration/physical-work renal context bridge behaviour
-- weight-loss/fasting glycaemic context bridge behaviour
-- no speculative output when required context is absent
-- no breakage of existing logic
+It should cover, in disciplined reusable terms:
+- what the pathway does
+- how homocysteine fits into it
+- why remethylation / transsulfuration matter
+- why red-cell maturation belongs nearby
+- why this pathway can show friction even when serum availability looks improved
+- why it matters beyond a single marker reading
 
-### 8. Concise sprint note
-Add a short implementation note documenting:
-- what bridge assets were introduced
-- what runtime path now exposes them
-- what later sprint this unblocks
+This is not a full patient report.
+It is a reusable governed asset.
+
+### 4. Lipid transport / cholesterol handling explainer
+Author a governed pathway explainer for the secondary benchmark domain.
+
+It should cover, in disciplined reusable terms:
+- what the lipid transport system does
+- why LDL/HDL/ApoB/triglycerides are part of one transport story
+- why a single LDL number is not the whole architecture
+- how protective and atherogenic features can coexist
+- why the system matters beyond simplistic “high cholesterol” framing
+
+Again, this is a reusable governed asset, not a full report section.
+
+### 5. Asset structure and field design
+The asset structure must make clear which parts are for later compiler use.
+
+At minimum, the design should support clean compiler consumption of things like:
+- pathway role / function
+- system-in-action explanation
+- why markers belong together
+- why it matters beyond itself
+- bounded uncertainty / interpretive caution where needed
+
+Do not write one giant unstructured prose blob unless that is explicitly the cleanest governed design and you justify it.
+
+### 6. Tests / validation if required
+If the chosen asset location requires validation or schema coverage, add the minimum appropriate checks.
+
+If no code/schema change is required because this is a docs-only governed content addition under an already-valid structure, say so clearly.
+
+### 7. Short sprint note
+Add a concise implementation note documenting:
+- what asset location was chosen
+- what explainers were added
+- what future sprint this unblocks
 
 ---
 
@@ -169,44 +174,36 @@ Add a short implementation note documenting:
 
 The following are explicitly out of scope:
 
-- full narrative prose compiler work
+- full narrative compilation
 - frontend changes
-- broad report compiler redesign
-- new longitudinal contract work beyond consuming N-3 outputs where needed
-- new IDL display-layer design
-- broad phenotype/IDL expansion beyond what is strictly required for these bridge assets
+- body-overview compiler work
+- confidence/uncertainty compiler work
+- monitoring criteria assets unless minimally required by the chosen schema
+- new lifestyle bridge work
+- new longitudinal work
 - Gemini / LLM work
 
 ---
 
 ## Design rules
 
-### Rule 1 — contextual, not causal overreach
-Lifestyle context must support interpretation carefully.
-Do not let the system make stronger causal claims than the evidence supports.
+### Rule 1 — reusable, not bespoke report prose
+These assets must support many future reports, not just the AB benchmark case.
 
-### Rule 2 — governed asset first
-Do not bury interpretation joins in ad hoc code branches if they belong in a governed asset layer.
+### Rule 2 — medically disciplined explanation
+Do not drift into fluffy wellness language, dramatic prose, or unsupported simplifications.
 
-### Rule 3 — no silent narrative logic
-The bridge outputs must be inspectable and traceable.
-Do not create opaque “magic” lifestyle interpretation behaviour.
+### Rule 3 — system biology, not diagnosis inflation
+Explain the biology and interpretive logic without turning explanatory text into diagnostic claims.
 
-### Rule 4 — benchmark relevance first
-Focus on the three priority joins identified by the benchmark and merged matrix.
-Do not widen into a full lifestyle-intelligence platform.
+### Rule 4 — governed authority clarity
+Make it obvious where these explainers live and what owns them.
 
-### Rule 5 — HIGH-risk discipline
-Touched-file scope should remain tight.
-Any changes to:
-- `backend/core/analytics/`
-- `backend/core/pipeline/`
-- rooted hypothesis/KB assets
-must be justified and bounded.
+### Rule 5 — benchmark relevance first
+Focus on the two highest-value domains needed by the benchmark before widening to more systems.
 
-### Rule 6 — no diagnosis inflation
-These bridges are contextual modifiers and interpretation supports.
-They must not become diagnostic declarations.
+### Rule 6 — compiler-ready structure
+Author the content in a form the later narrative compiler can consume cleanly.
 
 ---
 
@@ -214,14 +211,13 @@ They must not become diagnostic declarations.
 
 The expected shape is:
 
-1. inspect current lifestyle intake and modifier paths
-2. verify the missing deterministic joins
-3. implement governed bridge assets in the correct authority layer
-4. expose them to later compiler consumption
-5. add regression tests
-6. document the bridges briefly
+1. inspect current explainer-bearing assets
+2. decide the correct governed home
+3. author the first pathway explainer assets
+4. add minimal validation if needed
+5. write a short sprint note
 
-This must remain a targeted enabling sprint.
+This must remain a targeted asset-authoring sprint, not a narrative assembly sprint.
 
 ---
 
@@ -229,18 +225,17 @@ This must remain a targeted enabling sprint.
 
 STOP immediately and report if any of the following are true:
 
-1. the relevant lifestyle fields are not actually available in structured runtime form
-2. the correct solution would require a much wider redesign of questionnaire mapping
-3. no clean governed asset location exists and architectural adjudication is needed first
-4. the intended joins would force speculative or unsafe interpretation behaviour
-5. touched-file scope expands materially beyond the expected lifestyle / bridge / hypothesis path
-6. repo reality contradicts the N-2 architecture assumptions or merged matrix support diagnosis
+1. there is no clean governed home and architectural adjudication is needed first
+2. the chosen asset location would blur authority with IDL, phenotype definitions, or frontend copy in an unsafe way
+3. the prose needed would require unresolved interpretation-entity decisions first
+4. schema/validation work needed is much larger than expected
+5. touched-file scope expands materially beyond the intended governed-content layer
 
 If blocked, report:
 - the exact blocker
 - the affected files
 - the smallest safe remediation path
-- whether N-4 should be split before continuing
+- whether N-5 should be split before continuing
 
 ---
 
@@ -248,12 +243,12 @@ If blocked, report:
 
 This sprint is successful only if:
 
-1. the three priority lifestyle interpretation bridges now exist deterministically
-2. they are governed and traceable
-3. they can be consumed by later narrative compiler work
-4. they do not overclaim causality
-5. tests prove the behaviour
-6. the sprint remains bounded and does not become a broader lifestyle engine rewrite
+1. the governed home for pathway explainers is clear
+2. the methylation/one-carbon explainer exists
+3. the lipid transport explainer exists
+4. the assets are medically serious and reusable
+5. later narrative compiler work is materially unblocked
+6. the sprint remains bounded and does not become narrative assembly
 
 ---
 
@@ -261,17 +256,17 @@ This sprint is successful only if:
 
 At finish, the sprint should leave behind:
 
-- bounded code and/or governed asset changes implementing the bridge layer
-- regression tests
+- the new or extended governed explainer asset file(s)
+- any minimal validation needed
 - a short sprint note explaining:
   - what was added
-  - what runtime path now exposes it
+  - where it lives
   - what future sprint it unblocks
 
 Report back with:
 - files touched
-- bridge-asset design chosen
-- how each of the three benchmark joins is now supported
+- governed asset location chosen
+- how each of the two benchmark domains is now supported
 - any remaining limitation later sprints must respect
 
 ---
@@ -280,11 +275,11 @@ Report back with:
 
 You must show, with exact file paths and grounded repo evidence:
 
-- what lifestyle fields were used
-- what new bridge assets or logic were introduced
-- where they now live
-- how runtime can consume them later
-- how tests prove the change
+- what current explainer assets were insufficient
+- where the new pathway explainers now live
+- what structure they use
+- why that structure is suitable for later compiler consumption
+- how this specifically unblocks later deterministic narrative work
 
-Do not claim success merely because a few new rules exist.
-Show that benchmark-critical lifestyle context is now deterministically supportable.
+Do not claim success merely because two prose entries were added.
+Show that benchmark-critical pathway explanation is now governed and reusable.
