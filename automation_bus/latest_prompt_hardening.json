@@ -1,144 +1,124 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "N-4",
+  "work_id": "N-5",
   "status": "HARDENED",
-  "hardened_utc": "2026-04-21T16:45:00Z",
-  "hardened_by": "claude-sonnet-4-6",
+  "hardened_utc": "2026-04-21T17:11:20Z",
+  "hardened_by": "Claude (Sonnet 4.6) — Prompt Hardening role",
   "changes": [
     {
-      "check": "front_matter_valid",
+      "check": "front_matter_all_five_fields",
+      "result": "PASS",
+      "evidence": "automation_bus/latest_cursor_prompt.md lines 2-6: work_id=N-5, branch=feature/n-5-pathway-explainer-asset-pack-v1, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=CONTENT — all five mandatory fields present"
+    },
+    {
+      "check": "change_type_CONTENT_correctness",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md lines 1-7: work_id=N-4, branch=feature/n-4-lifestyle-interpretation-bridge-assets, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED — all five mandatory fields present"
+      "evidence": "Sprint authors YAML governed assets only. No existing compiler loads pathway explainers — narrative_report_compiler_v1.py does not exist in repo (no file found). No current analytical output changes. CONTENT classification correct."
     },
     {
-      "check": "authority_path_target_lock",
+      "check": "risk_level_STANDARD_conditional",
+      "result": "CONDITIONAL — Constraint §A enforced",
+      "evidence": "STANDARD valid ONLY if output files placed outside backend/ssot/. SOP §10 triggers HIGH for any backend/ssot/ touch regardless of whether an existing engine loads the file. N-4 precedent: backend/ssot/lifestyle_interpretation_bridges_v1.yaml line 1 confirmed written to backend/ssot/ and classified HIGH/MIXED. N-5 pathway explainers have no existing consuming engine — but file path rule still applies. Recommended home: knowledge_bus/pathway_explainers_v1/. Cursor MUST STOP and return to GPT if backend/ssot/ placement is required."
+    },
+    {
+      "check": "authority_path_AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK",
       "result": "CONFIRMED",
-      "evidence": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md — present on disk, verified by directory listing"
+      "evidence": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md — confirmed present in docs/golden-narrative/ directory listing"
     },
     {
-      "check": "authority_path_reverse_engineering_merged",
+      "check": "authority_path_REVERSE_ENGINEERING_MERGED",
       "result": "CONFIRMED",
-      "evidence": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md — present on disk, verified by directory listing"
+      "evidence": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md — confirmed present in docs/golden-narrative/ directory listing"
     },
     {
-      "check": "authority_path_sprint_strategy",
+      "check": "authority_path_SPRINT_STRATEGY_FINAL",
       "result": "CONFIRMED",
-      "evidence": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md — present on disk, verified by directory listing"
+      "evidence": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md — confirmed present in docs/golden-narrative/ directory listing"
     },
     {
-      "check": "authority_path_compiler_architecture",
+      "check": "authority_path_COMPILER_ARCHITECTURE_v1",
       "result": "CONFIRMED",
-      "evidence": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md — present on disk; §3.2 defines governed narrative asset layer as home for lifestyle-to-pathway joins"
+      "evidence": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md — confirmed present; §3.2 lines 57-67 names pathway explainers as belonging to Governed narrative asset layer; §6.3 lines 261-276 and §6.4 lines 277-289 name pathway explainer assets as inputs to lead_narrative and secondary_narratives sections of NarrativeReportV1"
     },
     {
-      "check": "authority_path_questionnaire_json",
+      "check": "authority_path_idl_records_v1",
+      "result": "CONFIRMED — insufficient for pathway explainers",
+      "evidence": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml read lines 1-80: records contain why_it_matters (1-sentence, e.g. line 13) and subtitle. Display-label authority only. Confirmed cannot serve as pathway explainer home."
+    },
+    {
+      "check": "authority_path_phenotype_map_v1",
+      "result": "CONFIRMED — insufficient for pathway explainers",
+      "evidence": "knowledge_bus/phenotypes/phenotype_map_v1.yaml read lines 1-60: signal-matching logic with required_signals/required_edges (e.g. lines 11-23). No prose pathway explanation content. Confirmed cannot serve as pathway explainer home."
+    },
+    {
+      "check": "authority_path_retail_explainer_registry",
+      "result": "CONFIRMED — insufficient and must not be extended for pathway prose",
+      "evidence": "backend/ssot/retail_explainer_v1/registry.yaml read lines 215-365: systems section has short 3-4 sentence educational overviews. cardiovascular entry (lines 231-246) has no pathway mechanism, no marker-cohesion explanation, no transport architecture description. Extending this file would (a) touch backend/ssot/ — requiring HIGH risk reclassification — and (b) create muddled authority per prompt Rule 4."
+    },
+    {
+      "check": "source_cross_ref_lipid_transport_package",
       "result": "CONFIRMED",
-      "evidence": "backend/ssot/questionnaire.json — read in full (536 lines). Key lifestyle fields confirmed: alcohol_drinks_weekly (line 270), fasting_hours (line 254), daily_fluid_intake (line 348), vigorous_exercise_days (line 305), resistance_training_days (line 328), dietary_pattern includes 'Intermittent fasting' (line 302)"
+      "evidence": "knowledge_bus/packages/pkg_lipid_transport/research_brief.yaml lines 67-76: physiological_claim covers non-HDL-C/ApoB/TRL lipid transport dysfunction anchored to Lancet 2019 (n=398,846). Lines 56-65 list biomarkers: total_cholesterol, hdl_cholesterol, triglycerides, ldl_cholesterol, non_hdl_cholesterol. Confirmed as source content for lipid transport pathway explainer."
     },
     {
-      "check": "authority_path_lifestyle_registry",
+      "check": "source_cross_ref_homocysteine_package",
       "result": "CONFIRMED",
-      "evidence": "backend/ssot/lifestyle_registry.yaml — read in full. Canonical engine inputs: height_cm, weight_kg, waist_circumference_cm, systolic_bp, diastolic_bp, resting_heart_rate, smoking_status, alcohol_units_per_week, sleep_hours, sit_stand_value. Alcohol_units_per_week has metabolic+hepatic modifiers (lines 162-181). fluid_intake and fasting_hours are NOT in SSOT canonical engine inputs."
+      "evidence": "knowledge_bus/packages/pkg_homocysteine_elevation_context/research_brief.yaml lines 19-27: physiological_claim covers one-carbon metabolism impairment, B-vitamin insufficiency, endothelial stress context. Biomarkers: homocysteine, vitamin_b12, folate, transferrin, mcv, crp. Confirmed as source content for methylation/one-carbon pathway explainer."
     },
     {
-      "check": "authority_path_questionnaire_mapper",
+      "check": "source_cross_ref_kb52c_homocysteine_methylation",
       "result": "CONFIRMED",
-      "evidence": "backend/core/pipeline/questionnaire_mapper.py — read in full. alcohol_units_per_week mapped at lines 297-317 and 520-533. fluid_intake_liters mapped at lines 426-438 into MappedLifestyleFactors.fluid_intake_liters. fasting_hours questionnaire field is NOT mapped by any method in this file. extract_behavioural_lifestyle_inputs() (line 500) emits only: sleep_hours, alcohol_units_per_week, smoking_status."
+      "evidence": "knowledge_bus/packages/pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment/ — directory confirmed present. Package covers B-vitamin-related methylation impairment context for homocysteine domain."
     },
     {
-      "check": "authority_path_lifestyle_modifier_engine",
+      "check": "prior_task_N4_closed",
       "result": "CONFIRMED",
-      "evidence": "backend/core/analytics/lifestyle_modifier_engine.py — read (200 lines). apply() output at lines 139-146: produces derived_inputs, validated_inputs, input_errors, invalid_input_plausibility, system_modifiers, adjusted_system_burdens. Engine outputs ONLY numeric burden modifiers — no interpretation context tokens, no lifestyle narrative support produced."
+      "evidence": "backend/ssot/lifestyle_interpretation_bridges_v1.yaml line 1: '# N-4 — Governed lifestyle -> interpretation bridge thresholds (v1)'. Git log commit 5b6962d: 'feat(N-4): governed lifestyle interpretation bridges in analysis meta'. N-4 confirmed closed."
     },
     {
-      "check": "authority_path_hcy_hypotheses",
+      "check": "no_duplicate_authority_pathway_explainer",
       "result": "CONFIRMED",
-      "evidence": "knowledge_bus/root_cause/hypotheses/hcy_hypotheses_v1.yaml — read in full. 4 hypotheses (B12, folate, inflammation, renal clearance). None include alcohol lifestyle context. No lifestyle-to-interpretation bridge currently exists for homocysteine/macrocytosis/one-carbon pathway."
+      "evidence": "find command confirmed no directory or file named *pathway* or *explainer* exists outside backend/ssot/retail_explainer_v1/. Clean new asset space for pathway_explainers_v1. No existing authority to conflict with."
     },
     {
-      "check": "authority_path_creatinine_hypotheses",
-      "result": "CONFIRMED",
-      "evidence": "knowledge_bus/root_cause/hypotheses/creatinine_high_hypotheses_v1.yaml — read in full. 2 hypotheses (filtration stress, urea co-rise). Neither includes hydration or physical activity context. No lifestyle bridge for renal interpretation currently exists."
+      "check": "forbidden_files_compiler_code",
+      "result": "PASS",
+      "evidence": "CONTENT sprint. backend/core/analytics/ and backend/core/pipeline/ writes are out of scope per prompt lines 178-185 (out-of-scope list). No compiler code changes authorised. Narrative_report_compiler_v1.py does not exist — N-5 must not create it."
     },
     {
-      "check": "authority_path_hba1c_hypotheses",
-      "result": "CONFIRMED",
-      "evidence": "knowledge_bus/root_cause/hypotheses/hba1c_hypotheses_v1.yaml — read in full. 2 hypotheses (glycaemic exposure, glycaemic-lipid coupling). Neither includes fasting pattern or dietary pattern context. No lifestyle bridge for glycaemic interpretation currently exists."
-    },
-    {
-      "check": "no_duplicate_authority_sources",
-      "result": "CONFIRMED",
-      "evidence": "lifestyle_registry.yaml is the sole SSOT for numeric lifestyle burden modifiers. questionnaire.json is the sole SSOT for questionnaire field definitions. No duplicate authority detected."
-    },
-    {
-      "check": "gap_alcohol_methylation_bridge",
-      "result": "CONFIRMED — gap real, field available",
-      "evidence": "alcohol_drinks_weekly in questionnaire.json:270 maps to alcohol_units_per_week in questionnaire_mapper.py:297-317. hcy_hypotheses_v1.yaml has no alcohol context rule. Gap is real. alcohol_units_per_week is available as a numeric runtime value. Bridge is buildable."
-    },
-    {
-      "check": "gap_hydration_renal_bridge",
-      "result": "CONFIRMED — gap real, fields partially available; scope narrowing required",
-      "evidence": "daily_fluid_intake in questionnaire.json:348 maps to MappedLifestyleFactors.fluid_intake_liters at questionnaire_mapper.py:426-438, but fluid_intake is NOT in lifestyle_registry.yaml canonical inputs and is NOT emitted by extract_behavioural_lifestyle_inputs(). vigorous_exercise_days at questionnaire.json:305 is mapped to exercise_minutes_per_week in MappedLifestyleFactors. creatinine_high_hypotheses_v1.yaml has no hydration or physical activity context rule. No 'physical work pattern' or 'occupation type' field exists in questionnaire.json — only structured exercise fields. Sprint must use vigorous_exercise_days + fluid_intake as proxy. Cursor must add fluid_intake and exercise_level to the bridge-asset consumption path."
-    },
-    {
-      "check": "gap_fasting_glycaemic_bridge",
-      "result": "CONFIRMED — gap real; weight_loss field ABSENT, fasting fields available",
-      "evidence": "fasting_hours in questionnaire.json:254 is NOT mapped in questionnaire_mapper.py. dietary_pattern='Intermittent fasting' at questionnaire.json:302 is scored (+1) in _map_diet_level() but not extractable as a structured context token. hba1c_hypotheses_v1.yaml has no fasting or dietary pattern context. CRITICAL: no 'weight_loss', 'recent_weight_change', or 'intentional_weight_loss' questionnaire field exists. Sprint must scope to fasting/dietary-pattern bridge only — weight loss as a structured input is unavailable."
-    },
-    {
-      "check": "fluid_intake_not_in_registry_engine",
-      "result": "RISK_SURFACED",
-      "evidence": "lifestyle_registry.yaml inputs spec does NOT include fluid_intake. LifestyleModifierEngine.apply() does not accept or process fluid intake. fluid_intake_liters lives only in MappedLifestyleFactors (questionnaire_mapper.py:38). The renal bridge must source fluid context from MappedLifestyleFactors, not from the SSOT engine. This is not a STOP but constrains where the bridge is invoked — it must operate on the mapped questionnaire level, not the registry engine level."
-    },
-    {
-      "check": "fasting_hours_not_extracted",
-      "result": "RISK_SURFACED",
-      "evidence": "questionnaire_mapper.py extract_behavioural_lifestyle_inputs() (line 500) does NOT extract fasting_hours. The questionnaire.json fasting_hours field (line 254) is captured in the questionnaire but never becomes a runtime lifestyle variable. For the glycaemic bridge, Cursor must either: (a) add fasting_hours extraction to questionnaire_mapper.py, or (b) use dietary_pattern='Intermittent fasting' as the proxy token. Option (b) is lower risk (no mapper change). Option (a) is cleaner but widens the mapper file touch."
-    },
-    {
-      "check": "bridge_asset_location",
-      "result": "CONFIRMED — new asset layer is correct home",
-      "evidence": "N-2 architecture §3.2: governed narrative asset layer is the correct home for lifestyle-to-pathway joins. lifestyle_registry.yaml is inappropriate (burden modifiers only). Hypothesis YAMLs could receive lifestyle_context_rules but that extends a biomarker-centric schema with a lifestyle concept — a hybrid that risks architectural ambiguity. A new dedicated asset file (e.g., knowledge_bus/lifestyle_bridges/lifestyle_interpretation_bridges_v1.yaml or equivalent) is the cleanest clean governed location consistent with §3.2. Cursor must confirm the exact placement."
-    },
-    {
-      "check": "pipeline_consumption_path_gap",
-      "result": "RISK_SURFACED",
-      "evidence": "LifestyleModifierEngine.apply() output (lines 139-146) contains no interpretation context slot. InsightGraphV1 has no lifestyle_context or lifestyle_bridge fields. The bridge outputs need a home in the analysis result. Cursor must decide: add a new InsightGraphV1 field (HIGH risk, contract change), add to a side-channel output dict, or make them available via a new accessor pattern. This design decision must be grounded in the repo before implementation — not left implicit."
-    },
-    {
-      "check": "stop_condition_1_lifestyle_fields_unavailable",
-      "result": "NOT_TRIGGERED — with scope narrowing flag",
-      "evidence": "alcohol_units_per_week: available in runtime. fluid_intake_liters: available in MappedLifestyleFactors (not SSOT engine). vigorous_exercise_days: available in questionnaire/mapped. fasting_hours: in questionnaire but not extracted to runtime yet. weight_loss: ABSENT — no structured weight-change field exists. Sprint must scope glycaemic bridge to fasting/dietary pattern only."
-    },
-    {
-      "check": "stop_condition_2_questionnaire_redesign",
+      "check": "stop_condition_1_clean_governed_home",
       "result": "NOT_TRIGGERED",
-      "evidence": "No structural questionnaire redesign needed. Bridge assets can consume existing mapped lifestyle values. Adding fasting_hours extraction to questionnaire_mapper.py is a bounded addition if chosen."
+      "evidence": "knowledge_bus/ is a clean governed home consistent with compiler architecture §3.2. Recommended: knowledge_bus/pathway_explainers_v1/ new directory. No architectural adjudication needed."
     },
     {
-      "check": "stop_condition_3_no_clean_asset_location",
+      "check": "stop_condition_2_authority_blur",
       "result": "NOT_TRIGGERED",
-      "evidence": "New knowledge_bus/ bridge asset layer is a clean governed location consistent with N-2 architecture §3.2. No adjudication needed."
+      "evidence": "A dedicated pathway_explainers_v1 asset in knowledge_bus/ has clean separation from IDL (display labels), phenotype_map (signal logic), and retail_explainer (per-biomarker education). No blur if placed correctly."
     },
     {
-      "check": "stop_condition_4_speculative_interpretation",
+      "check": "stop_condition_3_interpretation_entity_decisions",
       "result": "NOT_TRIGGERED",
-      "evidence": "All three bridges are framed as contextual modifiers and plausibility supports, not causal declarations. Design rules 1 and 6 in the prompt enforce this boundary explicitly."
+      "evidence": "Pathway explainers describe biology and why markers belong together. They are not interpretation entities and do not require entity resolution before authoring."
+    },
+    {
+      "check": "stop_condition_4_schema_work_larger_than_expected",
+      "result": "NOT_TRIGGERED",
+      "evidence": "CONTENT sprint. New YAML asset with no required runtime loader. Validation is minimal (schema header, YAML lint). No compiler invocation required until N-6/N-8."
     },
     {
       "check": "stop_condition_5_scope_expansion",
-      "result": "NOT_TRIGGERED — monitor",
-      "evidence": "Expected touch set: new knowledge_bus bridge asset(s), possible questionnaire_mapper.py addition (fasting_hours extraction), possible InsightGraphV1 field or side-channel output. Potential HIGH risk expansion if InsightGraphV1 is modified. Must remain bounded."
+      "result": "NOT_TRIGGERED — conditional on Constraint §A",
+      "evidence": "Scope bounded to new YAML file(s) in knowledge_bus/pathway_explainers_v1/ plus minimal sprint note. STOP is triggered only if Cursor determines backend/ssot/ placement is required (which triggers HIGH reclassification)."
     },
     {
-      "check": "stop_condition_6_contradicts_n2",
-      "result": "NOT_TRIGGERED",
-      "evidence": "N-2 architecture §3.2 and §4 explicitly required lifestyle-to-pathway joins as a prerequisite for narrative compiler build. All repo evidence confirms this gap is real."
+      "check": "constraint_A_backend_ssot_prohibition",
+      "result": "ENFORCED",
+      "evidence": "SOP §10 lists backend/ssot/ as explicit HIGH risk trigger. STANDARD risk classification is valid only if N-5 output is placed outside backend/ssot/. Extending retail_explainer_v1/registry.yaml is prohibited for this reason AND because it would create muddled authority (prompt Rule 4). Cursor MUST STOP and return to GPT if it determines backend/ssot/ placement is required."
     },
     {
       "check": "stage_0_branch_alignment",
       "result": "FLAG — action required before Stage 3",
-      "evidence": "Current branch from git context: main. Prompt requires feature/n-4-lifestyle-interpretation-bridge-assets. Cursor must create or checkout this branch before Stage 3."
+      "evidence": "Current branch from git context: main. Prompt requires feature/n-5-pathway-explainer-asset-pack-v1. Cursor must create or checkout this branch before Stage 3 (run_work_package.py start)."
     }
   ]
 }
