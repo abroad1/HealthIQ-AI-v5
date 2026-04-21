@@ -11,6 +11,7 @@ from typing import Any, Dict, List, Mapping, Optional, Sequence, Set
 
 import yaml
 
+from core.analytics.longitudinal_numeric_v1 import comparable_lab_delta
 from core.contracts.narrative_report_v1 import NARRATIVE_REPORT_V1_VERSION, NarrativeReportV1
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -61,6 +62,321 @@ def _fired_suboptimal_signal_ids(insight_graph: Optional[Mapping[str, Any]]) -> 
 def _join_blocks(parts: Sequence[str]) -> str:
     cleaned = [p.strip() for p in parts if isinstance(p, str) and p.strip()]
     return "\n\n".join(cleaned)
+
+
+def _humanize_biomarker_id(biomarker_id: str) -> str:
+    s = str(biomarker_id or "").strip().replace("_", " ")
+    if not s:
+        return "Marker"
+    return s.title()
+
+
+def _rec_get(rec: Any, key: str, default: str = "") -> str:
+    if rec is None:
+        return default
+    if isinstance(rec, dict):
+        v = rec.get(key, default)
+    else:
+        v = getattr(rec, key, default)
+    if v is None:
+        return default
+    return str(v)
+
+
+def _rec_get_bool(rec: Any, key: str, default: bool = False) -> bool:
+    if rec is None:
+        return default
+    if isinstance(rec, dict):
+        v = rec.get(key, default)
+    else:
+        v = getattr(rec, key, default)
+    return bool(v)
+
+
+def _rec_int(rec: Any, key: str, default: int = 999) -> int:
+    raw = _rec_get(rec, key, str(default))
+    try:
+        return int(raw)
+    except ValueError:
+        return default
+
+
+def _idl_records(idl_bundle: Any) -> List[Any]:
+    if idl_bundle is None:
+        return []
+    if hasattr(idl_bundle, "records"):
+        recs = getattr(idl_bundle, "records", None)
+        return list(recs) if isinstance(recs, list) else []
+    if isinstance(idl_bundle, dict):
+        recs = idl_bundle.get("records")
+        return list(recs) if isinstance(recs, list) else []
+    return []
+
+
+def _prior_lab_map(meta: Optional[Mapping[str, Any]]) -> Dict[str, Any]:
+    if not meta or not isinstance(meta, dict):
+        return {}
+    snap = meta.get("prior_biomarker_lab_snapshot_v1")
+    return snap if isinstance(snap, dict) else {}
+
+
+def _build_retail_summary(idl_bundle: Any, compiler_meta: Dict[str, Any]) -> str:
+    records = _idl_records(idl_bundle)
+    if not records:
+        compiler_meta["skipped"].append("retail_summary_no_idl_records")
+        return ""
+    lines: List[str] = []
+    sev_phrase = {
+        "watch": "pattern to watch",
+        "attention": "needs attention",
+        "strong_signal": "strong signal",
+    }
+    for rec in sorted(records, key=lambda r: _rec_int(r, "display_order_priority", 999)):
+        sev = _rec_get(rec, "severity_state", "not_observed").strip().lower()
+        if sev == "not_observed":
+            continue
+        if not _rec_get_bool(rec, "enabled_for_frontend", False):
+            continue
+        if _rec_get(rec, "frontend_allowed_term", "") != "phenotype_allowed":
+            continue
+        label = _rec_get(rec, "retail_display_label", "").strip()
+        subtitle = _rec_get(rec, "subtitle", "").strip()
+        why = _rec_get(rec, "why_it_matters", "").strip()
+        sphr = sev_phrase.get(sev, sev.replace("_", " "))
+        head = f"{label} ({sphr})" if label else sphr.title()
+        body = _join_blocks([subtitle, why])
+        if body:
+            lines.append(f"{head}: {body}" if head else body)
+        elif head:
+            lines.append(head)
+    if not lines:
+        compiler_meta["skipped"].append("retail_summary_no_enabled_phenotype_cards")
+        return ""
+    compiler_meta["assets_resolved"].append("retail_summary_from_idl")
+    return _join_blocks(lines)
+
+
+def _transition_sentence(human_label: str, trow: Mapping[str, Any]) -> str:
+    bid = str(trow.get("biomarker_id", "")).strip()
+    fs = str(trow.get("from_status", "")).strip().lower()
+    ts = str(trow.get("to_status", "")).strip().lower()
+    tr = str(trow.get("transition", "")).strip().lower()
+    label = human_label or bid or "Marker"
+    if tr == "insufficient_history":
+        return f"{label}: first assessment in this series — no prior snapshot to compare."
+    if tr == "stable_normal":
+        return f"{label}: remained in a normal range versus the prior panel."
+    if tr == "stable_abnormal":
+        return f"{label}: remained outside the normal range versus the prior panel."
+    if tr == "improving":
+        return f"{label}: improved ({fs} → {ts}) versus the prior panel."
+    if tr == "worsening":
+        return f"{label}: worsened ({fs} → {ts}) versus the prior panel."
+    if tr == "volatile":
+        return f"{label}: showed volatile movement across recent panels."
+    if tr == "unknown":
+        return f"{label}: longitudinal direction unclear ({fs} → {ts})."
+    return f"{label}: {tr} ({fs} → {ts})."
+
+
+def _format_delta_line(biomarker_id: str, delta: Mapping[str, Any]) -> str:
+    label = _humanize_biomarker_id(biomarker_id)
+    p = delta["prior"]
+    c = delta["current"]
+    d = delta["delta"]
+    u = str(delta.get("unit") or "").strip()
+    u_suffix = f" {u}" if u else ""
+    return (
+        f"{label}: lab value prior {p:g}{u_suffix} → current {c:g}{u_suffix} "
+        f"(delta {d:+.4g}{u_suffix}, same-unit comparison)."
+    )
+
+
+def _build_longitudinal_narrative(
+    insight_graph: Optional[Mapping[str, Any]],
+    meta: Optional[Mapping[str, Any]],
+    compiler_meta: Dict[str, Any],
+) -> str:
+    if not insight_graph or not isinstance(insight_graph, dict):
+        compiler_meta["skipped"].append("longitudinal_no_insight_graph")
+        return ""
+    transitions = insight_graph.get("state_transitions") or []
+    if not isinstance(transitions, list):
+        transitions = []
+    t_lines: List[str] = []
+    for trow in sorted(
+        (r for r in transitions if isinstance(r, dict)),
+        key=lambda r: str(r.get("biomarker_id", "")),
+    ):
+        bid = str(trow.get("biomarker_id", "")).strip()
+        t_lines.append(_transition_sentence(_humanize_biomarker_id(bid), trow))
+
+    prior_map = _prior_lab_map(meta)
+    delta_lines: List[str] = []
+    if prior_map:
+        nodes = insight_graph.get("biomarker_nodes") or []
+        if isinstance(nodes, list):
+            for node in sorted(
+                (n for n in nodes if isinstance(n, dict)),
+                key=lambda n: str(n.get("biomarker_id", "")),
+            ):
+                bid = str(node.get("biomarker_id", "")).strip()
+                if not bid or bid not in prior_map:
+                    continue
+                pr = prior_map[bid]
+                if not isinstance(pr, dict):
+                    continue
+                delta = comparable_lab_delta(
+                    pr.get("lab_value"),
+                    pr.get("lab_unit"),
+                    node.get("lab_value"),
+                    node.get("lab_unit"),
+                )
+                if not delta:
+                    continue
+                delta_lines.append(_format_delta_line(bid, delta))
+    if delta_lines:
+        compiler_meta["assets_resolved"].append("longitudinal_numeric_delta")
+    if t_lines:
+        compiler_meta["assets_resolved"].append("longitudinal_state_transitions")
+    body = _join_blocks([*t_lines, *delta_lines])
+    if not body:
+        compiler_meta["skipped"].append("longitudinal_empty")
+    elif not t_lines and delta_lines:
+        compiler_meta["skipped"].append("longitudinal_no_state_transitions")
+    return body
+
+
+def _clarification_paths_block(domain: Mapping[str, Any]) -> str:
+    clar = domain.get("clarification_paths")
+    if not isinstance(clar, list) or not clar:
+        return ""
+    bullets = "\n".join(f"• {c.strip()}" for c in clar if isinstance(c, str) and c.strip())
+    return bullets
+
+
+def _collect_next_steps(
+    *,
+    entities_doc: Optional[Dict[str, Any]],
+    domains_by_id: Dict[str, Any],
+    include_lead: bool,
+    include_secondary: bool,
+    compiler_meta: Dict[str, Any],
+) -> str:
+    blocks: List[str] = []
+    rows = (entities_doc or {}).get("interpretation_entities")
+    if not isinstance(rows, list):
+        compiler_meta["skipped"].append("next_steps_no_interpretation_entities")
+        return ""
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        role = str(row.get("compiler_role", "")).strip()
+        fdid = str(row.get("functional_interpretation_domain_id", "")).strip()
+        domain = domains_by_id.get(fdid, {})
+        if not domain:
+            continue
+        if role == "benchmark_lead_domain" and not include_lead:
+            continue
+        if role == "benchmark_secondary_domain" and not include_secondary:
+            continue
+        if role not in {"benchmark_lead_domain", "benchmark_secondary_domain"}:
+            continue
+        title = str(domain.get("display_title", "")).strip()
+        clar = _clarification_paths_block(domain)
+        if not clar:
+            continue
+        head = f"{title}" if title else "Follow-up"
+        blocks.append(f"{head}:\n{clar}")
+    if not blocks:
+        compiler_meta["skipped"].append("next_steps_no_clarification_paths")
+        return ""
+    compiler_meta["assets_resolved"].append("next_steps_from_functional_domains")
+    return "Prioritised follow-up (governed assets):\n\n" + _join_blocks(blocks)
+
+
+def _clinician_functional_tail(domain: Mapping[str, Any]) -> str:
+    keys = (
+        "confidence_limits",
+        "monitoring_improvement_signals",
+        "monitoring_persistence_signals",
+    )
+    return _join_blocks(str(domain.get(k, "")) for k in keys if domain.get(k))
+
+
+def _build_clinician_synthesis(
+    *,
+    idl_bundle: Any,
+    entities_doc: Optional[Dict[str, Any]],
+    domains_by_id: Dict[str, Any],
+    include_lead: bool,
+    include_secondary: bool,
+    body_overview: str,
+    compiler_meta: Dict[str, Any],
+) -> str:
+    parts: List[str] = []
+    if body_overview:
+        parts.append(body_overview)
+
+    records = _idl_records(idl_bundle)
+    idl_lines: List[str] = []
+    for rec in sorted(records, key=lambda r: _rec_int(r, "display_order_priority", 999)):
+        sev = _rec_get(rec, "severity_state", "not_observed").strip().lower()
+        if sev == "not_observed":
+            continue
+        clin = _rec_get(rec, "clinical_display_label", "").strip()
+        why = _rec_get(rec, "why_it_matters", "").strip()
+        supp = _rec_get(rec, "supporting_biomarkers_summary", "").strip()
+        sys_s = _rec_get(rec, "supporting_systems_summary", "").strip()
+        usr = _rec_get(rec, "user_safe_description", "").strip()
+        cave = _rec_get(rec, "display_caveat", "").strip()
+        head = f"{clin} ({sev})" if clin else sev.title()
+        chunk = _join_blocks(
+            [
+                why,
+                f"Supporting biomarkers: {supp}." if supp else "",
+                f"Supporting systems: {sys_s}." if sys_s else "",
+                usr,
+                f"Caveat: {cave}" if cave else "",
+            ]
+        )
+        if chunk:
+            idl_lines.append(f"{head}\n{chunk}")
+    if idl_lines:
+        parts.append("Interpretation display layer (clinical-facing excerpts):\n\n" + _join_blocks(idl_lines))
+        compiler_meta["assets_resolved"].append("clinician_synthesis_idl")
+
+    dom_tails: List[str] = []
+    rows = (entities_doc or {}).get("interpretation_entities")
+    if isinstance(rows, list):
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            role = str(row.get("compiler_role", "")).strip()
+            fdid = str(row.get("functional_interpretation_domain_id", "")).strip()
+            domain = domains_by_id.get(fdid, {})
+            if not domain:
+                continue
+            if role == "benchmark_lead_domain" and include_lead:
+                pass
+            elif role == "benchmark_secondary_domain" and include_secondary:
+                pass
+            else:
+                continue
+            title = str(domain.get("display_title", "")).strip()
+            tail = _clinician_functional_tail(domain)
+            if tail:
+                dom_tails.append(f"{title}:\n{tail}" if title else tail)
+    if dom_tails:
+        parts.append(
+            "Functional interpretation — limits and monitoring (governed):\n\n" + _join_blocks(dom_tails)
+        )
+        compiler_meta["assets_resolved"].append("clinician_synthesis_functional")
+
+    out = _join_blocks(parts)
+    if not out:
+        compiler_meta["skipped"].append("clinician_synthesis_empty")
+    return out
 
 
 def _pathway_section(pathway: Mapping[str, Any]) -> str:
@@ -228,9 +544,32 @@ def compile_narrative_report_v1(
     if idl_bundle is not None:
         compiler_meta["idl_bundle_present"] = True
 
+    retail_summary = _build_retail_summary(idl_bundle, compiler_meta)
+    longitudinal_narrative = _build_longitudinal_narrative(insight_graph, meta, compiler_meta)
+    next_steps_narrative = _collect_next_steps(
+        entities_doc=entities_doc,
+        domains_by_id=domains_by_id,
+        include_lead=include_lead,
+        include_secondary=include_secondary,
+        compiler_meta=compiler_meta,
+    )
+    clinician_synthesis = _build_clinician_synthesis(
+        idl_bundle=idl_bundle,
+        entities_doc=entities_doc,
+        domains_by_id=domains_by_id,
+        include_lead=include_lead,
+        include_secondary=include_secondary,
+        body_overview=body_overview,
+        compiler_meta=compiler_meta,
+    )
+
     return NarrativeReportV1(
+        retail_summary=retail_summary,
         lead_narrative=lead_text,
         secondary_narratives=secondary_text,
         body_overview=body_overview,
+        longitudinal_narrative=longitudinal_narrative,
+        next_steps_narrative=next_steps_narrative,
+        clinician_synthesis=clinician_synthesis,
         meta=compiler_meta,
     )
