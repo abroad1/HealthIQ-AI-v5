@@ -1,0 +1,112 @@
+# Functional interpretation & confidence framing v1 — N-6 governed compiler authority
+#
+# Distinct from:
+# - pathway_explainers_v1 (what the pathway is / how biology works)
+# - root_cause hypotheses (evidence chains, mechanistic claims)
+# - idl_records_v1 (display labels, short “why it matters”)
+#
+# Intended consumer: deterministic narrative compiler (later sprints).
+
+schema_version: "1.0.0"
+pack_version: "1.0.0"
+authority: knowledge_bus/functional_interpretation_v1
+
+domains:
+  - domain_id: one_carbon_methylation_functional_v1
+    benchmark_domain: methylation_one_carbon
+    display_title: Functional read — one-carbon pathway and homocysteine patterning
+    related_pathway_explainer_id: one_carbon_methylation_homocysteine_v1
+
+    functional_reading: |
+      A coherent functional read treats one-carbon stress as pathway throughput and efficiency,
+      not only as a binary “serum B12 or folate is low.” Serum concentrations can look adequate
+      while homocysteine remains discordant, suggesting incomplete remethylation, higher cellular
+      demand, antagonists (e.g. certain drugs), inflammation, or genetic variation affecting enzyme
+      kinetics. The interpretive move is “incomplete pathway efficiency / clearance friction,”
+      not automatic proof of overt deficiency on every occasion.
+
+    why_beyond_itself: |
+      Homocysteine-related signalling sits in a vascular risk frame alongside inflammation and
+      endothelial health, and in a haematological frame alongside red-cell indices that reflect
+      erythroid division and maturation. The pattern matters because it links nutrient–cofactor
+      networks to long-term cardiometabolic surveillance and to marrow dynamics—not as a single
+      isolated number, but as part of a reproducible clinical question about trajectory and
+      resolution.
+
+    confidence_grade_label: moderate_by_default
+    confidence_supports_reading: |
+      Confidence strengthens when homocysteine elevation is repeatable, aligns directionally with
+      related indices (e.g. MCV, relevant vitamins where measured), and fits the wider panel
+      context. Concordant signals across time (when available) and absence of confounding acute
+      illness support a steadier reading.
+
+    confidence_limits: |
+      Certainty is limited when only homocysteine is available, when sampling or acute illness may
+      distort the picture, when key cofactors are not measured, or when medications and absorption
+      issues are unknown. A normal serum vitamin level does not, by itself, disprove functional
+      strain in the pathway.
+
+    clarification_paths:
+      - Repeat homocysteine and review B12, folate, and full blood count indices on a stable clinical footing.
+      - Where discordance persists, consider directed evaluation for malabsorption, drug effects, or specialist review per local practice.
+      - Integrate inflammatory markers and lipid context when vascular framing is the primary concern.
+
+    monitoring_improvement_signals: |
+      Improvement is suggested by a durable downward shift in homocysteine toward the individual’s
+      prior baseline or guideline-consistent targets used in your care setting, alongside
+      stabilisation or normalisation of related blood-count patterns when they were part of the
+      same story. Direction of travel matters more than a single post-intervention point.
+
+    monitoring_persistence_signals: |
+      Persistence means little change despite reasonable address of modifiable factors, or
+      re-elevation after an apparent response. That pattern raises priority for structured follow-up
+      and may change the weight given to vascular or haematological surveillance in shared
+      decision-making.
+
+  - domain_id: lipid_transport_functional_v1
+    benchmark_domain: lipid_transport
+    display_title: Functional read — lipid transport and residual particle exposure
+    related_pathway_explainer_id: lipid_transport_cholesterol_handling_v1
+
+    functional_reading: |
+      A functional read acknowledges when LDL-related cholesterol remains a residual exposure
+      within an otherwise more favourable transport picture—for example, higher HDL or lower
+      triglycerides that suggest cleaner remnant handling, yet apoB-rich particle burden or LDL
+      cholesterol still leaves meaningful long-term exposure. The move is not “ignore LDL,” but
+      “place LDL in the full architecture of particles, exchange pathways, and cumulative time
+      horizon,” avoiding collapse to a single headline number.
+
+    why_beyond_itself: |
+      Atherosclerotic risk integrates years of exposure to atherogenic particles, blood pressure,
+      metabolic state, and inflammation. Lipid markers are proxies for traffic, not moral labels.
+      Explaining residual LDL in context helps users see why panels include several measures and
+      why discordant patterns still warrant follow-up even when one fraction looks reassuring.
+
+    confidence_grade_label: moderate_by_default
+    confidence_supports_reading: |
+      Confidence is relatively stronger when multiple aligned markers (e.g. non-HDL or apoB-style
+      summaries where available, triglycerides, HDL) support the same story, repeat measures confirm
+      the pattern, and the person is not acutely ill or severely inflamed at sampling.
+
+    confidence_limits: |
+      Certainty weakens with single-marker panels, unfasting or non-standard sampling, acute illness,
+      pregnancy, or major weight change around the draw. Calculated LDL may be unreliable when
+      triglycerides are very high; direct measures or alternative summaries may be needed for a
+      firm read.
+
+    clarification_paths:
+      - Repeat lipids under consistent conditions; add non-HDL or apoB-related measures when available to quantify particle burden.
+      - Review blood pressure, glycaemic markers, and family history to place transport findings in overall risk context.
+      - Use clinician-guided risk tools appropriate to jurisdiction rather than inferring treatment solely from one lipid value.
+
+    monitoring_improvement_signals: |
+      Improvement is reflected by durable lowering of atherogenic particle burden markers
+      (including LDL cholesterol and/or apoB-rich summaries as used locally), favourable movement
+      in triglycerides when they were driving distortion, and stability of protective dynamics
+      where they were already strong—interpreted over months, not days.
+
+    monitoring_persistence_signals: |
+      Persistence is little change despite adherence and lifestyle effort, or worsening discordance
+      (e.g. rising triglycerides with static LDL summaries that obscure particle load). Such patterns
+      warrant structured reassessment and may shift the emphasis toward pharmacologic or specialist
+      pathways per guidelines.
