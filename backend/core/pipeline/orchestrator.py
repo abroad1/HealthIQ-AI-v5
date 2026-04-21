@@ -36,6 +36,9 @@ from core.analytics.insight_graph_builder import build_insight_graph_v1
 from core.analytics.interpretation_display_layer_publish_v1 import (
     publish_interpretation_display_layer_v1,
 )
+from core.analytics.lifestyle_interpretation_bridge_engine import (
+    compute_lifestyle_interpretation_bridges_v1,
+)
 from core.analytics.replay_manifest_builder import build_replay_manifest_v1
 from core.analytics.explainability_builder import (
     build_explainability_report_v1,
@@ -2053,6 +2056,16 @@ class AnalysisOrchestrator:
             
             # Step 9: Create final analysis DTO
             logger.info("Step 9: Creating final analysis DTO")
+            _bridge_li = lifestyle_inputs if lifestyle_inputs is not None else user.get("lifestyle_inputs")
+            if not isinstance(_bridge_li, dict):
+                _bridge_li = {}
+            _bridge_q = questionnaire_data if isinstance(questionnaire_data, dict) else {}
+            lifestyle_interpretation_bridges_v1 = compute_lifestyle_interpretation_bridges_v1(
+                lifestyle_inputs=_bridge_li,
+                questionnaire_responses=_bridge_q,
+                biomarkers=filtered_biomarkers,
+                reference_ranges=input_reference_ranges,
+            )
             meta = dict(criticality_result) if criticality_result else {}
             meta["derived_ratios"] = derived_ratios_meta
             meta["reference_profiles"] = dict(input_reference_profiles)
@@ -2061,6 +2074,7 @@ class AnalysisOrchestrator:
             except (FileNotFoundError, ValueError):
                 pass
             meta["insight_graph"] = insight_graph.model_dump() if hasattr(insight_graph, "model_dump") else {}
+            meta["lifestyle_interpretation_bridges_v1"] = lifestyle_interpretation_bridges_v1
             # MEDICATION-CAVEAT-B — replay-stable questionnaire medical representation for clinician caveat compiler
             meta["medical_history_snapshot"] = (
                 dict(context.medical_history) if isinstance(context.medical_history, dict) else {}
