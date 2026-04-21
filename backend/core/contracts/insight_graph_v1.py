@@ -35,12 +35,26 @@ class BiomarkerNode(BaseModel):
     """
     Single biomarker node in InsightGraph.
 
-    PRD §4.7: No raw values, units, or reference ranges. Only interpreted outputs.
+    Core interpretation fields follow PRD §4.7 (status/score as interpreted outputs).
+
+    Optional ``lab_value`` / ``lab_unit`` (N-3) hold the same persisted lab numeric facts
+    used for status derivation when available. They exist for deterministic longitudinal
+    comparison and downstream narrative compilation, not for LLM prompt enrichment.
+    Prompt assembly continues to consume only status/score-derived views.
     """
 
     biomarker_id: str
     status: str = "unknown"  # low | normal | high | elevated | critical | unknown
     score: Optional[float] = None  # 0-100, already computed by Layer B
+    lab_value: Optional[float] = Field(
+        default=None,
+        description="Optional measured lab value for longitudinal numeric comparison (paired with lab_unit).",
+    )
+    lab_unit: Optional[str] = Field(
+        default=None,
+        max_length=64,
+        description="Unit string for lab_value when present (e.g. mmol/mol, µmol/L).",
+    )
 
 
 class ClusterSummaryItem(BaseModel):

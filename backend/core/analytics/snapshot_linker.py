@@ -2,7 +2,10 @@
 v5.3 Sprint 1 - Snapshot linker.
 
 Builds deterministic prior InsightGraph snapshots from persisted analysis rows.
-Only safe InsightGraph-derived fields are returned (status/score/code metadata).
+
+Returns minimal InsightGraph slices for longitudinal replay. N-3 extends nodes with
+optional lab_value/lab_unit when persisted biomarker rows include measured values,
+so prior/current numeric comparison can be deterministic downstream.
 """
 
 from __future__ import annotations
@@ -57,6 +60,15 @@ def _normalise_score(score: Any) -> Optional[float]:
     return val
 
 
+def _optional_lab_value(raw: Any) -> Optional[float]:
+    if raw is None:
+        return None
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        return None
+
+
 def _nodes_from_biomarkers_payload(payload: Any) -> List[BiomarkerNode]:
     if not isinstance(payload, list):
         return []
@@ -67,11 +79,15 @@ def _nodes_from_biomarkers_payload(payload: Any) -> List[BiomarkerNode]:
         biomarker_id = str(item.get("biomarker_name", "")).strip()
         if not biomarker_id:
             continue
+        lab_val = _optional_lab_value(item.get("value"))
+        unit_s = str(item.get("unit") or "").strip()[:64]
         out.append(
             BiomarkerNode(
                 biomarker_id=biomarker_id,
                 status=_normalise_status(item.get("status")),
                 score=_normalise_score(item.get("score")),
+                lab_value=lab_val,
+                lab_unit=unit_s or None,
             )
         )
     out.sort(key=lambda n: n.biomarker_id)
