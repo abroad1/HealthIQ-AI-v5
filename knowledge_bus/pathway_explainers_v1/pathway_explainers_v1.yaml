@@ -1,0 +1,125 @@
+# Pathway Explainer Pack v1 — governed compiler authority (N-5)
+# Distinct from: IDL phenotype labels (interpretation_display_layer_v1),
+# retail_explainer_v1 (short per-biomarker UI education), and hypothesis YAML.
+# Intended consumer: deterministic narrative compiler (later sprints).
+
+schema_version: "1.0.0"
+pack_version: "1.0.0"
+authority: knowledge_bus/pathway_explainers_v1
+
+pathways:
+  - pathway_id: one_carbon_methylation_homocysteine_v1
+    benchmark_domain: methylation_one_carbon
+    display_title: One-carbon metabolism, methylation, and homocysteine handling
+    related_signal_themes:
+      - homocysteine
+      - b12_folate_axis
+      - erythropoiesis
+    pathway_role: |
+      The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter
+      metabolism, phospholipid production, and numerous cellular methylation reactions. It is a
+      shared biochemical “currency” that links nutrient availability, enzyme cofactors, and demand
+      from rapidly dividing tissues.
+
+    system_in_action: |
+      Dietary and stored folate species enter a cycle that interacts with vitamin B12–dependent
+      enzymes to recycle homocysteine back to methionine (remethylation) or route homocysteine
+      toward cysteine and glutathione-related metabolism (transsulfuration). The same network
+      supports purine and thymidylate synthesis for cell division. When throughput is constrained,
+      the system prioritises survival-critical pathways; biomarker patterns can reflect that
+      redistribution rather than a single nutrient “deficit” in isolation.
+
+    homocysteine_in_this_pathway: |
+      Homocysteine sits at a branch-point: it accumulates when remethylation or transsulfuration
+      is relatively slower than methionine turnover, or when upstream inputs and cofactors do not
+      match demand. Elevated homocysteine is therefore a pathway-level signal—not a standalone
+      entity—and is read alongside B12, folate, related indices, and clinical context.
+
+    remethylation_and_transsulfuration: |
+      Remethylation restores methionine for continued methylation reactions; transsulfuration
+      moves sulfur toward antioxidant and protein synthesis pathways. Both arms matter for
+      long-term vascular and cellular resilience. Interpretation focuses on coherent patterning
+      across these arms rather than treating a single step in isolation.
+
+    red_blood_cell_maturation_link: |
+      Red cell precursors divide frequently and depend on one-carbon intermediates and B12/folate
+      co-factors. Mean cell volume (MCV) and related indices can therefore sit adjacent to
+      homocysteine signals in the same interpretive frame: they reflect erythroid dynamics and
+      haemoglobinisation, not a separate “blood test topic” unrelated to methylation stress.
+
+    interpretive_friction_when_serum_b12_folate_improve: |
+      Serum B12 and folate can look adequate while intracellular functional need, genetic
+      variation, medications, inflammation, or high cellular demand still produce pathway friction.
+      Homocysteine may remain discordant until the whole pattern—not only a single nutrient
+      measurement—is considered. This is bounded uncertainty: it cautions against over-reading any
+      one surrogate as proof the pathway is fully optimised.
+
+    markers_belong_together: |
+      Homocysteine, B12, folate, and red-cell indices are read as a coordinated story about
+      one-carbon throughput, erythroid demand, and vascular context. They are not interchangeable
+      duplicates; each answers a different facet of the same network.
+
+    why_matters_beyond_a_single_marker_reading: |
+      Cardiometabolic and haematological risk assessment uses pathway coherence: elevation without
+      resolution across time, discordance between related markers, or clustering with inflammatory
+      or lipid signals changes the interpretive weight. The clinical question is pattern stability
+      and trajectory, not a solitary numeric label.
+
+    interpretive_caution: |
+      These explanations support education and deterministic narrative composition. They are not
+      diagnoses, treatment directives, or substitutes for clinician review—especially where
+      supplementation, malabsorption, or complex comorbidity is possible.
+
+  - pathway_id: lipid_transport_cholesterol_handling_v1
+    benchmark_domain: lipid_transport
+    display_title: Lipid transport, cholesterol carriers, and particle-related risk
+    related_signal_themes:
+      - atherogenic_particles
+      - reverse_cholesterol_transport
+      - triglyceride_rich_lipoproteins
+    pathway_role: |
+      The bloodstream moves lipids as water-insoluble cargo inside lipoprotein particles. The
+      system’s job is delivery, redistribution, and clearance—linking liver output, peripheral
+      uptake, and return traffic to the liver. “Cholesterol” in routine panels is mostly a summary
+      of what those particles are carrying, not a single substance acting alone.
+
+    system_in_action: |
+      The liver packages lipids into VLDL and related particles; lipoprotein lipase and metabolic
+      state influence how triglyceride-rich remnants persist. LDL-related particles deliver
+      cholesterol to tissues; HDL-related particles participate in reverse transport and dynamic
+      exchange. Apolipoproteins (including apoB on atherogenic particles) help define particle
+      number and behaviour. The ensemble—not one lipid fraction—shapes long-term vascular exposure.
+
+    lipid_particles_as_transport_architecture: |
+      LDL cholesterol, non-HDL cholesterol, triglycerides, and HDL cholesterol are different
+      summaries of overlapping particle populations. Atherogenic risk tracks strongly with
+      apoB-rich particle burden in many contexts; triglycerides modulate remnant pathways; HDL
+      metrics reflect transport dynamics that are not a simple “good cholesterol” dial.
+
+    apob_triglycerides_hdl_ldl_together: |
+      ApoB-related measures, triglycerides, LDL cholesterol (direct or calculated), non-HDL, and
+      HDL belong in one transport narrative because they describe traffic, particle load, and
+      compensatory patterns. The same person can show a reassuring HDL signal alongside residual
+      atherogenic particle burden—coexistence is common and must not be flattened into one label.
+
+    beyond_a_single_ldl_value: |
+      LDL cholesterol is an important summary, but it does not fully describe particle number,
+      small dense LDL, remnant exposure, or triglyceride-driven shifts. Deterministic interpretation
+      therefore resists “one number equals whole risk” framing when other transport markers are
+      available.
+
+    protective_and_atherogenic_can_coexist: |
+      Protective features (for example favourable HDL dynamics or lifestyle factors) can coexist
+      with atherogenic particle excess. Interpretation weighs the combined pattern, persistence, and
+      trajectory—not a winner-takes-all story from any single marker.
+
+    why_matters_beyond_simple_high_cholesterol_framing: |
+      Vascular risk management depends on particle burden, metabolic context, blood pressure,
+      inflammation, and personal history. Explaining transport biology supports users to see why
+      panels include several lipid-related measures and why discordant patterns warrant follow-up
+      even when one value looks “borderline.”
+
+    interpretive_caution: |
+      This text is educational and supports later compiler narration. It does not determine
+      treatment thresholds, diagnose familial disorders, or replace guideline-based clinical
+      decisions using full risk calculators and examination.
