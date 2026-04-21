@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "N-7",
+  "work_id": "N-8",
   "status": "HARDENED",
   "hardened_utc": "2026-04-21T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
@@ -8,132 +8,152 @@
     {
       "check": "front_matter_all_five_fields",
       "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 2-7: work_id=N-7, branch=feature/n-7-governed-interpretation-assets-ab-benchmark, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=CONTENT — all five mandatory fields present"
+      "citation": "automation_bus/latest_cursor_prompt.md lines 2-7: work_id=N-8, branch=feature/n-8-deterministic-narrative-compiler-v1, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED — all five mandatory fields present and valid"
     },
     {
-      "check": "change_type_CONTENT_correctness",
+      "check": "change_type_MIXED_correctness",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 17-20 and 187-195. Sprint creates new YAML governed interpretation entity entries only (phenotype_map_v1.yaml, idl_records_v1.yaml, and/or new knowledge_bus files). No backend analytical logic, no compiler code, no evaluator changes in scope. CONTENT classification correct and consistent with N-4/N-5/N-6 precedent."
+      "citation": "automation_bus/latest_cursor_prompt.md lines 9-13. Sprint introduces new compiler module (backend/core/analytics/narrative_report_compiler_v1.py) and new output contract (backend/core/contracts/narrative_report_v1.py) that load and consume governed knowledge_bus assets. Compiler output is emitted reasoning — MIXED is correct per SOP §4 definition: any work adding governed content consumed by Intelligence Core where emitted reasoning changes."
     },
     {
-      "check": "risk_level_STANDARD_correctness",
+      "check": "risk_level_HIGH_correctness",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 5. Sprint outputs to knowledge_bus/ only. None of the HIGH-risk trigger paths apply: no backend/ssot/, backend/core/pipeline/, backend/core/analytics/, run_work_package.py, golden_gate_local.py, or update_cursor_status.py in scope. N-8 compiler that will consume these assets does not yet exist — assets are not yet loaded by Intelligence Core at runtime. STANDARD + Claude audit + GPT review is correct."
+      "citation": "automation_bus/latest_cursor_prompt.md line 4. Sprint touches backend/core/analytics/ (new compiler), backend/core/contracts/ (new contract), backend/core/models/results.py (AnalysisDTO boundary), backend/core/pipeline/orchestrator.py (integration point). All are Intelligence Core components per SOP §3 definition. HIGH risk is mandatory."
     },
     {
       "check": "stage_0_branch_alignment",
       "result": "FLAG — action required before Stage 3",
-      "citation": "Current branch: feature/n-6-functional-interpretation-and-confidence-assets. Required by prompt (latest_cursor_prompt.md line 3): feature/n-7-governed-interpretation-assets-ab-benchmark. Cursor must checkout or create feature/n-7-governed-interpretation-assets-ab-benchmark before run_work_package.py start. Not a hardening blocker."
+      "citation": "Current branch: feature/n-7-governed-interpretation-assets-ab-benchmark. Required by prompt line 3: feature/n-8-deterministic-narrative-compiler-v1. Branch does not yet exist. Cursor must create and checkout feature/n-8-deterministic-narrative-compiler-v1 before run_work_package.py start. Not a hardening blocker."
     },
     {
       "check": "authority_path_AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK",
       "result": "CONFIRMED",
-      "citation": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md line 1: '# HealthIQ AI — AB Gold Standard Narrative Target Lock' — file read and confirmed present"
+      "citation": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md — confirmed present in directory listing. docs/golden-narrative/ directory verified."
     },
     {
       "check": "authority_path_REVERSE_ENGINEERING_MERGED",
       "result": "CONFIRMED",
-      "citation": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md line 1: '# HealthIQ AI — AB Gold Standard Narrative Reverse Engineering (Merged)' — file read and confirmed present"
+      "citation": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md — confirmed present in directory listing."
     },
     {
       "check": "authority_path_SPRINT_STRATEGY_FINAL",
       "result": "CONFIRMED",
-      "citation": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md line 1: '# HealthIQ AI — Deterministic Narrative Sprint Strategy (Final)' — file read and confirmed present"
+      "citation": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md — confirmed present in directory listing."
     },
     {
       "check": "authority_path_COMPILER_ARCHITECTURE_v1",
       "result": "CONFIRMED",
-      "citation": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md — confirmed present in directory listing"
+      "citation": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md line 1: '# HealthIQ AI — Deterministic Narrative Compiler Architecture v1'. File read in full (445 lines). Canonical module: backend/core/analytics/narrative_report_compiler_v1.py at line 93. Canonical contract: backend/core/contracts/narrative_report_v1.py at line 141. Integration placement: after orchestrator-level enrichments at line 130."
     },
     {
-      "check": "authority_path_phenotype_map_v1",
+      "check": "authority_path_report_compiler_v1",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/phenotypes/phenotype_map_v1.yaml line 1: 'schema_version: v1' — file read in full (380 lines). 9 phenotypes present. No methylation-first, protective-lipid, or cross-system vascular synthesis entity exists."
+      "citation": "backend/core/analytics/report_compiler_v1.py — confirmed present in analytics directory listing."
     },
     {
-      "check": "authority_path_idl_records_v1",
+      "check": "authority_path_contracts",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml line 5: 'schema_version: 1.0.0' — file read in full (97 lines). 9 records present. No methylation-first, protective-lipid, or cross-system vascular synthesis record exists."
+      "citation": "backend/core/contracts/report_v1.py, clinician_report_v1.py, insight_graph_v1.py — all confirmed present in contracts directory listing."
+    },
+    {
+      "check": "authority_path_snapshot_linker",
+      "result": "CONFIRMED",
+      "citation": "backend/core/analytics/snapshot_linker.py — confirmed present in analytics directory listing. Called at orchestrator.py line 64 import and line 1329 invocation."
+    },
+    {
+      "check": "authority_path_state_transition_engine",
+      "result": "CONFIRMED",
+      "citation": "backend/core/analytics/state_transition_engine.py — confirmed present in analytics directory listing. Called at orchestrator.py line 65 import, line 1334 invocation. State transitions written to insight_graph at lines 1338-1340."
+    },
+    {
+      "check": "authority_path_longitudinal_numeric_v1",
+      "result": "CONFIRMED",
+      "citation": "backend/core/analytics/longitudinal_numeric_v1.py line 12: def comparable_lab_delta(prior_value, prior_unit, current_value, current_unit). Returns {prior, current, delta, unit} or None. Pure helper — no hidden state, deterministic, unit-safe. This is the only public function in the module."
+    },
+    {
+      "check": "authority_path_lifestyle_interpretation_bridge_engine",
+      "result": "CONFIRMED",
+      "citation": "backend/core/analytics/lifestyle_interpretation_bridge_engine.py — confirmed present in analytics directory listing. compute_lifestyle_interpretation_bridges_v1() called at orchestrator.py line 2063, result stored in meta['lifestyle_interpretation_bridges_v1'] line 2077 — available at AnalysisDTO construction time."
     },
     {
       "check": "authority_path_pathway_explainers_v1",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml line 1: '# Pathway Explainer Pack v1 — governed compiler authority (N-5)'. Two pathways at line 11: one_carbon_methylation_homocysteine_v1 (benchmark_domain: methylation_one_carbon) and line 73: lipid_transport_cholesterol_handling_v1 (benchmark_domain: lipid_transport). N-5 deliverables confirmed in-repo."
+      "citation": "knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml line 6: schema_version '1.0.0', pack_version '1.0.0'. Two pathways: one_carbon_methylation_homocysteine_v1 (line 11) and lipid_transport_cholesterol_handling_v1. Pathway fields confirmed: pathway_role, system_in_action present (lines 18 and 27). Consumable by narrative compiler."
     },
     {
       "check": "authority_path_functional_interpretation_v1",
       "result": "CONFIRMED",
-      "citation": "knowledge_bus/functional_interpretation_v1/functional_interpretation_v1.yaml line 3: '# Functional interpretation & confidence framing v1 — N-6 governed compiler authority'. Two domains at line 15: one_carbon_methylation_functional_v1 (related_pathway_explainer_id: one_carbon_methylation_homocysteine_v1) and line 66: lipid_transport_functional_v1 (related_pathway_explainer_id: lipid_transport_cholesterol_handling_v1). N-6 deliverables confirmed in-repo."
+      "citation": "knowledge_bus/functional_interpretation_v1/functional_interpretation_v1.yaml line 13: schema_version '1.0.0'. Two domains: one_carbon_methylation_functional_v1 (line 15) and lipid_transport_functional_v1. Fields confirmed: functional_reading (line 27), why_beyond_itself (line 33). related_pathway_explainer_id links to pathway explainers pack. Consumable by narrative compiler."
     },
     {
-      "check": "source_cross_ref_gap_methylation_first_entity",
-      "result": "CONFIRMED GAP — real work required",
-      "citation": "phenotype_map_v1.yaml line 4: ph_vascular_hcy_inflammation_v1 is 'Vascular homocysteine inflammation pattern'; systems_involved at lines 8-10: [vascular, inflammatory, metabolic]. Framing is vascular/inflammation-led, NOT methylation-first, no macrocytosis primary framing. Reverse-engineering merged line 33 explicitly states: 'governed interpretation entity is still not methylation-first. Current phenotype/IDL framing is more vascular/inflammation-led.' Gap confirmed. N-7 must create a methylation-first entity."
+      "check": "authority_path_benchmark_interpretation_entities_v1",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/interpretation_entities_v1/benchmark_interpretation_entities_v1.yaml line 6: schema_version '1.0.0'. Two interpretation entities at lines 13 and 26: int_benchmark_one_carbon_homocysteine_macrocytosis_v1 (compiler_role: benchmark_lead_domain, pathway_explainer_id: one_carbon_methylation_homocysteine_v1, functional_interpretation_domain_id: one_carbon_methylation_functional_v1) and int_benchmark_lipid_residual_ldl_favourable_transport_v1 (compiler_role: benchmark_secondary_domain). Cross-references confirmed against pathway_explainers_v1 and functional_interpretation_v1 domain IDs."
     },
     {
-      "check": "source_cross_ref_gap_protective_lipid_entity",
-      "result": "CONFIRMED GAP — real work required",
-      "citation": "phenotype_map_v1.yaml line 91: ph_metabolic_early_ir_v1 is 'Early insulin resistance dyslipidaemia pattern'; description at line 93: 'Atherogenic lipid transport dysfunction phenotype with triglyceride-rich and low HDL context.' This is atherogenic/IR-framed — not the benchmark's protective-context residual-LDL framing. Reverse-engineering merged line 41: 'protective-context framing is not encoded as a governed interpretation entity.' Gap confirmed. N-7 must create a protective lipid transport entity."
+      "check": "authority_path_idl_records_v1",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml — confirmed present in directory listing."
     },
     {
-      "check": "source_cross_ref_gap_cross_system_vascular_synthesis",
-      "result": "CONFIRMED GAP — decision required",
-      "citation": "phenotype_map_v1.yaml reviewed in full (lines 1-380): 9 phenotypes, none combine homocysteine and lipid signals into a cross-system vascular synthesis entity. Reverse-engineering merged line 42: support_status = NONE. Sprint prompt lines 148-158 correctly states this entity must be created only if repo-grounded reasoning still justifies it post-N5/N6 asset work. Cursor must assess and either create or defer with documented justification."
+      "check": "new_files_absent_correct",
+      "result": "CONFIRMED — correctly absent",
+      "citation": "backend/core/contracts/ directory listing: no narrative_report_v1.py present. backend/core/analytics/ directory listing: no narrative_report_compiler_v1.py present. Both are N-8 creation targets per architecture doc lines 93 and 141."
+    },
+    {
+      "check": "integration_point_verification",
+      "result": "CONFIRMED",
+      "citation": "backend/core/pipeline/orchestrator.py lines 2143-2167: idl_bundle = publish_interpretation_display_layer_v1(...) at line 2143, then result = AnalysisDTO(..., interpretation_display_layer_v1=idl_bundle) at lines 2146-2167. Narrative compiler should be invoked between these two calls. lifestyle_interpretation_bridges_v1 available in meta (line 2077). State transitions written to insight_graph by line 1340. Architecture doc line 130 confirms: invoke after orchestrator-level enrichments complete."
+    },
+    {
+      "check": "analysis_dto_boundary_touch",
+      "result": "CONFIRMED — expected HIGH risk boundary modification",
+      "citation": "backend/core/models/results.py line 203: interpretation_display_layer_v1: Optional[InterpretationDisplayLayerBundleV1]. No narrative_report_v1 field exists. Adding Optional[NarrativeReportV1] follows established pattern. results.py is a boundary file — HIGH risk classification confirmed and correct."
+    },
+    {
+      "check": "dto_builders_pattern",
+      "result": "CONFIRMED",
+      "citation": "backend/core/dto/builders.py lines 33-64: compile_clinician_report_v1() and compile_balanced_systems_v1() called, results returned as top-level keys. The narrative compiler follows this same additive top-level pattern. builders.py may also need a new call per this pattern."
     },
     {
       "check": "no_duplicate_authority_sources",
       "result": "CONFIRMED — no duplicates",
-      "citation": "Phenotype map, IDL records, pathway explainers, and functional interpretation are separate registries with documented scope boundaries (pathway_explainers_v1.yaml lines 1-4 header explicitly declares distinct-from separation). No existing file encodes a methylation-first interpretation entity, protective lipid transport entity, or cross-system vascular synthesis entity. New additions are non-conflicting."
+      "citation": "Architecture doc lines 164-174 explicitly documents authority separation: ReportV1 (ranked findings), ClinicianReportV1 (compact clinician summary), InterpretationDisplayLayerBundleV1 (display records), NarrativeReportV1 (compiled narrative sections). Each has distinct scope. No existing file encodes narrative sections at the compiled level."
     },
     {
-      "check": "prior_task_findings_N5",
-      "result": "CONFIRMED by artifact read",
-      "citation": "pathway_explainers_v1.yaml line 1 header explicitly states '(N-5)'. Both benchmark pathway explainers (methylation_one_carbon, lipid_transport) present and ready for cross-asset linkage. Independently verified — not inherited from prior hardening."
-    },
-    {
-      "check": "prior_task_findings_N6",
-      "result": "CONFIRMED by artifact read",
-      "citation": "functional_interpretation_v1.yaml line 3 header explicitly states 'N-6 governed compiler authority'. Both benchmark domains present with confidence grading, clarification_paths, and monitoring signals. Independently verified — not inherited from prior hardening."
+      "check": "prior_task_findings_N3_N7",
+      "result": "CONFIRMED by artifact reads",
+      "citation": "N-3: longitudinal_numeric_v1.py line 12 function verified independently. N-4: lifestyle_interpretation_bridge_engine.py confirmed present and called at orchestrator line 2063. N-5: pathway_explainers_v1.yaml line 6 schema_version confirmed. N-6: functional_interpretation_v1.yaml line 13 schema_version confirmed. N-7: benchmark_interpretation_entities_v1.yaml line 6 schema_version confirmed. All independently verified — not inherited from prior hardenings."
     },
     {
       "check": "forbidden_files_check",
       "result": "PASS",
-      "citation": "Prompt lines 187-195 explicitly prohibit: compiler implementation, frontend changes, broad entity expansion, new lifestyle bridge work, new longitudinal contract work, broad report compiler redesign. backend/ssot/, backend/core/pipeline/, backend/core/analytics/, control-plane scripts — none in scope. No tooling file (.codex/, .vscode/, AGENTS.md) leakage risk."
+      "citation": "Prompt design rules and STOP conditions explicitly forbid: frontend redesign, LLM/Gemini, broad report infrastructure refactor, new governed asset authoring beyond tiny patches. Control-plane scripts run_work_package.py, golden_gate_local.py, update_cursor_status.py are not referenced in prompt scope. No tooling file leakage risk."
     },
     {
-      "check": "stop_condition_1_governed_home_ambiguous",
-      "result": "NOT TRIGGERED",
-      "citation": "Reverse-engineering merged §5 sprint linkage map line 95: 'New governed interpretation entities (methylation-first, protective lipid, cross-system vascular)' is explicitly assigned to N-7. Phenotype map and IDL records are the established governed home. Schema patterns well-established in existing entries. No architectural adjudication needed."
+      "check": "stage_2b_behavioural_scope_defined",
+      "result": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md change_type=MIXED. Behavioural scope: new narrative_report_compiler_v1.py module and NarrativeReportV1 contract create new emitted reasoning. Existing compilers (report_compiler_v1.py, root_cause_compiler_v1.py) must not change behaviour. STOP condition 4 guards against scope being too large."
     },
     {
-      "check": "stop_condition_2_redesign_forced",
-      "result": "NOT TRIGGERED",
-      "citation": "phenotype_map_v1.yaml schema (schema_version: v1) accommodates new entries following existing pattern. idl_records_v1.yaml (schema_version: 1.0.0) similarly accommodates new records. No schema extension required."
+      "check": "stage_2b_regression_targets",
+      "result": "CONFIRMED",
+      "citation": "Prompt success criteria line 6: 'existing report/compiler logic is not broken'. Prompt test requirements (§8): 'no breakage of existing current report/compiler logic' listed as mandatory test. Primary regression targets: report_compiler_v1.py compile_report_v1() call path (insight_graph_builder.py), compile_clinician_report_v1() call path (builders.py), and AnalysisDTO field set."
     },
     {
-      "check": "stop_condition_3_entity_no_longer_needed",
-      "result": "NOT TRIGGERED",
-      "citation": "Reverse-engineering merged §4 line 58-60 lists methylation-first entity, protective lipid transport entity, and cross-system vascular synthesis entity as confirmed gap categories. All three are still required. Cross-system vascular synthesis requires Cursor assessment per prompt lines 148-158 but is not a cancellation condition."
+      "check": "stage_2b_determinism_risks",
+      "result": "CONFIRMED — risks surfaced",
+      "citation": "Risk 1: YAML key ordering when loading governed assets — compiler must use explicit field access, not dict ordering. Risk 2: Missing governed assets (e.g. if pathway_explainer_id lookup fails) — must return None/empty section, not raise. Risk 3: Compiler invoked before state transitions are written to insight_graph — integration point must be after line 1340 where state_transitions are set. All three risks covered by prompt Rule 5 (deterministic, inspectable) and STOP condition 1."
     },
     {
-      "check": "stop_condition_4_validation_larger_than_expected",
-      "result": "NOT TRIGGERED",
-      "citation": "CONTENT sprint. New YAML entries only. Existing schema and test patterns cover the addition case. No novel runtime loader created in this sprint."
-    },
-    {
-      "check": "stop_condition_5_scope_expansion",
-      "result": "WATCH — monitor during implementation",
-      "citation": "Cross-system vascular synthesis entity (NONE status) may require new signal definitions or interaction_map_v1.yaml edges. If implementation reveals that cross-system entity requires touching backend/ or interaction_map logic, Cursor must trigger STOP condition 5 and report before proceeding. All other entities are additions to existing knowledge_bus files only."
-    },
-    {
-      "check": "stage_2b_behavioural_hardening",
-      "result": "NOT APPLICABLE",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type=CONTENT. No compiler logic, evaluator logic, pipeline behaviour, or output-generation code in scope. Stage 2B does not apply."
+      "check": "stop_conditions_review",
+      "result": "NONE TRIGGERED — proceed",
+      "citation": "STOP 1 (ambiguous integration point): NOT triggered — orchestrator lines 2143-2167 are clear. STOP 2 (wider DTO redesign): NOT triggered — additive Optional field only. STOP 3 (assets not consumable): NOT triggered — all YAML files read and cross-refs confirmed. STOP 4 (scope too large): NOT triggered per prompt — v1 is explicitly bounded. STOP 5 (file scope expands): MONITOR — if implementation reveals additional boundary files beyond contracts/, analytics/, models/results.py, orchestrator.py, builders.py, Cursor must report. STOP 6 (repo contradicts N-2): NOT triggered — architecture doc is in repo, matches implementation targets."
     },
     {
       "check": "no_op_protection",
       "result": "REAL WORK CONFIRMED",
-      "citation": "Three distinct governed interpretation entity gaps confirmed by source file reads: methylation-first entity (phenotype_map_v1.yaml line 4 confirmed misframed), protective lipid transport entity (phenotype_map_v1.yaml line 91 confirmed wrong framing), cross-system vascular synthesis (reverse-engineering merged line 42: NONE). Sprint is not a no-op."
+      "citation": "benchmark_interpretation_entities_v1.yaml line 6 confirms N-7 governed entities exist. narrative_report_compiler_v1.py is absent from analytics/ — compiler has not been built. narrative_report_v1.py is absent from contracts/ — contract has not been created. Sprint has real, non-trivial implementation work to do."
     }
   ]
 }
