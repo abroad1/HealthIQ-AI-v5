@@ -1,0 +1,12 @@
+{
+  "panel_id": "ph_one_carbon_homocysteine_macrocytosis_v1",
+  "user": { "age": 45, "sex": "male" },
+  "biomarkers": {
+    "homocysteine": { "value": 16.2, "unit": "umol/L", "reference_range": { "min": null, "max": 15.0, "unit": "umol/L", "source": "lab" } },
+    "crp": { "value": 1.0, "unit": "mg/L", "reference_range": { "min": 0.0, "max": 5.0, "unit": "mg/L", "source": "lab" } },
+    "vitamin_b12": { "value": 420, "unit": "ng/L", "reference_range": { "min": 200.0, "max": 900.0, "unit": "ng/L", "source": "lab" } },
+    "folate": { "value": 6.0, "unit": "ug/L", "reference_range": { "min": 3.4, "max": null, "unit": "ug/L", "source": "lab" } },
+    "mcv": { "value": 101.0, "unit": "fL", "reference_range": { "min": 80.0, "max": 100.0, "unit": "fL", "source": "lab" } },
+    "creatinine": { "value": 78, "unit": "umol/L", "reference_range": { "min": 60.0, "max": 110.0, "unit": "umol/L", "source": "lab" } }
+  }
+}

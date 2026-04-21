@@ -58,6 +58,37 @@ phenotypes:
         - "signal_homocysteine_elevation_context"
     evidence_notes: "Anchors the current homocysteine synthesis pathway and tracks an exploratory inflammation coupling pending research-package promotion."
 
+  - phenotype_id: "ph_one_carbon_homocysteine_macrocytosis_v1"
+    name: "One-carbon stress with homocysteine and macrocytic pattern"
+    description: "Homocysteine elevation with macrocytosis-oriented indices (MCV high), representing one-carbon / erythroid maturation pathway friction without requiring systemic inflammation as a defining feature. Distinct from ph_vascular_hcy_inflammation_v1, which requires inflammatory context for vascular-risk synthesis."
+    systems_involved:
+      - "vascular"
+      - "hematologic"
+      - "metabolic"
+    required_signals:
+      - "signal_homocysteine_high"
+      - "signal_homocysteine_elevation_context"
+      - "signal_mcv_high"
+    optional_signals:
+      - "signal_systemic_inflammation"
+      - "signal_crp_high"
+      - "signal_vitamin_b12_low"
+      - "signal_folate_low"
+    required_edges:
+      - from_signal_id: "signal_homocysteine_high"
+        to_signal_id: "signal_homocysteine_elevation_context"
+        relationship_type: "co_occurrence"
+        evidence_strength: "strong"
+        evidence_basis:
+          type: "research_package"
+          ref: "KB-S30d-stage2-hcy-context-link"
+        requires_research_promotion: false
+    synthetic_fixture_refs:
+      - "ph_one_carbon_homocysteine_macrocytosis_v1.json"
+    chain_expectations:
+      status: "pending"
+    evidence_notes: "N-7 benchmark interpretation entity: lead domain for methylation / homocysteine / macrocytosis without mandatory inflammation gate. Chain enforcement deferred pending dedicated homocysteine–MCV interaction-map edges."
+
   - phenotype_id: "ph_renal_stress_v1"
     name: "Renal stress pattern"
     description: "Creatinine, urea, and urate high-signal constellation suggesting renal-metabolic stress context. The creatinine→urea edge is promoted under investigation specs and KB-S52C packages; interaction-map renal wiring and root-cause targets completed under KB-S56B."
@@ -170,6 +201,33 @@ phenotypes:
     chain_expectations:
       status: "pending"
     evidence_notes: "Provides governance placeholder for map expansion in metabolic-lipid pathways while preserving current runtime logic."
+
+  - phenotype_id: "ph_lipid_residual_ldl_favourable_transport_v1"
+    name: "Residual LDL-related exposure within favourable transport context"
+    description: "LDL-cholesterol elevation co-occurring with high HDL-cholesterol signalling, representing residual atherogenic particle exposure within a relatively more protective transport picture—not broad lipid dysfunction or isolated high-cholesterol framing. Supports benchmark secondary-domain interpretation."
+    systems_involved:
+      - "lipid_transport"
+      - "cardiovascular"
+    required_signals:
+      - "signal_ldl_cholesterol_high"
+      - "signal_hdl_cholesterol_high"
+    optional_signals:
+      - "signal_triglycerides_high"
+      - "signal_non_hdl_high"
+    required_edges:
+      - from_signal_id: "signal_ldl_cholesterol_high"
+        to_signal_id: "signal_hdl_cholesterol_high"
+        relationship_type: "co_occurrence"
+        evidence_strength: "exploratory"
+        evidence_basis:
+          type: "guideline"
+          ref: "N-7-benchmark-lipid-discordance-pattern"
+        requires_research_promotion: false
+    synthetic_fixture_refs:
+      - "ph_lipid_residual_ldl_favourable_transport_v1.json"
+    chain_expectations:
+      status: "pending"
+    evidence_notes: "N-7 benchmark interpretation entity: secondary domain for protective lipid transport context with residual LDL signal. LDL–HDL co-occurrence edge is exploratory until promoted on interaction_map_v1."
 
   - phenotype_id: "ph_thyroid_lipid_disturbance_v1"
     name: "Thyroid-lipid disturbance pattern"

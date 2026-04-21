@@ -185,3 +185,44 @@ phenotypes:
       must_exist: true
       min_hypothesis_count: 2
       applies_to_signal_id: "signal_thyroid_tsh_context"
+
+  - phenotype_id: "ph_one_carbon_homocysteine_macrocytosis_v1"
+    chain_coverage_status: "pending"
+    clinical_intent: "N-7 benchmark lead: homocysteine + MCV high without relying on systemic inflammation as a required gate."
+    fixture_filename: "ph_one_carbon_homocysteine_macrocytosis_v1.json"
+    expected_signals:
+      must_fire:
+        - "signal_homocysteine_high"
+        - "signal_homocysteine_elevation_context"
+        - "signal_mcv_high"
+      must_not_fire: []
+    expected_chains:
+      must_exist: false
+      min_count: 0
+      min_chain_confidence: 0.0
+      must_include_any_signal: []
+      optional_expected_sequences: []
+    expected_root_cause:
+      must_exist: true
+      min_hypothesis_count: 1
+      applies_to_signal_id: "signal_homocysteine_elevation_context"
+
+  - phenotype_id: "ph_lipid_residual_ldl_favourable_transport_v1"
+    chain_coverage_status: "pending"
+    clinical_intent: "N-7 benchmark secondary: LDL high with HDL high—residual exposure in a relatively more protective transport context."
+    fixture_filename: "ph_lipid_residual_ldl_favourable_transport_v1.json"
+    expected_signals:
+      must_fire:
+        - "signal_ldl_cholesterol_high"
+        - "signal_hdl_cholesterol_high"
+      must_not_fire: []
+    expected_chains:
+      must_exist: false
+      min_count: 0
+      min_chain_confidence: 0.0
+      must_include_any_signal: []
+      optional_expected_sequences: []
+    expected_root_cause:
+      must_exist: true
+      min_hypothesis_count: 1
+      applies_to_signal_id: "signal_ldl_cholesterol_high"

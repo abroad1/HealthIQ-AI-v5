@@ -94,3 +94,23 @@ records:
     frontend_allowed_term: clinical_only
     display_order_priority: 9
     enabled_for_frontend: true
+
+  - internal_id: ph_one_carbon_homocysteine_macrocytosis_v1
+    scientific_class: syndrome_state
+    clinical_display_label: One-carbon pathway stress (homocysteine with macrocytic pattern)
+    retail_display_label: Methylation pathway pattern
+    subtitle: Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context
+    why_it_matters: This pattern links nutrient–cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot.
+    frontend_allowed_term: clinical_only
+    display_order_priority: 10
+    enabled_for_frontend: true
+
+  - internal_id: ph_lipid_residual_ldl_favourable_transport_v1
+    scientific_class: risk_construct
+    clinical_display_label: Residual LDL signal within a more favourable lipid transport picture
+    retail_display_label: LDL in context (protective transport features)
+    subtitle: LDL elevation alongside relatively stronger HDL signalling—particle architecture still matters
+    why_it_matters: Cumulative atherogenic exposure is read in full transport context; reassuring HDL does not erase residual LDL-related risk.
+    frontend_allowed_term: clinical_only
+    display_order_priority: 11
+    enabled_for_frontend: true
