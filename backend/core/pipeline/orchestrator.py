@@ -39,6 +39,7 @@ from core.analytics.interpretation_display_layer_publish_v1 import (
 from core.analytics.lifestyle_interpretation_bridge_engine import (
     compute_lifestyle_interpretation_bridges_v1,
 )
+from core.analytics.narrative_report_compiler_v1 import compile_narrative_report_v1
 from core.analytics.replay_manifest_builder import build_replay_manifest_v1
 from core.analytics.explainability_builder import (
     build_explainability_report_v1,
@@ -2143,6 +2144,12 @@ class AnalysisOrchestrator:
             idl_bundle = publish_interpretation_display_layer_v1(
                 insight_graph.model_dump() if hasattr(insight_graph, "model_dump") else {}
             )
+            narrative_report_v1 = compile_narrative_report_v1(
+                analysis_id=analysis_id,
+                meta=meta,
+                insight_graph=insight_graph.model_dump() if hasattr(insight_graph, "model_dump") else {},
+                idl_bundle=idl_bundle,
+            )
             result = AnalysisDTO(
                 analysis_id=analysis_id,
                 biomarkers=biomarker_dtos,
@@ -2160,6 +2167,7 @@ class AnalysisOrchestrator:
                 replay_manifest=replay_manifest.model_dump(exclude_none=True),
                 lifestyle=lifestyle_artifact,
                 interpretation_display_layer_v1=idl_bundle,
+                narrative_report_v1=narrative_report_v1,
             )
             
             logger.info(f"Analysis {analysis_id} completed successfully with {len(biomarker_dtos)} biomarkers, {len(cluster_dtos)} clusters, {len(insight_dtos)} insights")
