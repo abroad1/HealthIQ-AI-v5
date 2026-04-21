@@ -1,111 +1,134 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "N-2",
+  "work_id": "N-3",
   "status": "HARDENED",
-  "hardened_utc": "2026-04-20T00:00:00Z",
+  "hardened_utc": "2026-04-21T16:12:03Z",
   "hardened_by": "claude-sonnet-4-6",
-  "changes": {
-    "front_matter": {
-      "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:1-7",
-      "notes": "All five required fields present. work_id=N-2, branch=feature/n-2-narrative-compiler-architecture-design, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=CONTENT. No missing or malformed fields."
+  "changes": [
+    {
+      "check": "front_matter_valid",
+      "result": "CONFIRMED",
+      "evidence": "automation_bus/latest_cursor_prompt.md lines 1-7: work_id=N-3, branch=feature/n-3-longitudinal-contract-upgrade, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED — all five mandatory fields present"
     },
-    "authority_paths": {
-      "target_lock": {
-        "status": "CONFIRMED",
-        "citation": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md:1-20",
-        "notes": "File exists and was read. Formally locks AB_GOLD_STANDARD_NARRATIVE_REPORT_CHAT_2_FINAL.md as the benchmark authority. Created in N-1. Consistent with N-2 prompt's Required Inputs §1."
-      },
-      "merged_reverse_engineering_matrix": {
-        "status": "CONFIRMED",
-        "citation": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md:1-15",
-        "notes": "File exists. Executive summary confirms master gap is the narrative asset and compiler stack. Key confirmed gaps: no deterministic narrative compiler layer, no body-overview compiler, no lifestyle-to-pathway joins, no longitudinal raw-value/numeric-delta support. Consistent with N-2 prompt's architectural questions. Created in N-1."
-      },
-      "sprint_strategy": {
-        "status": "CONFIRMED",
-        "citation": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md:386-401",
-        "notes": "N-2 sprint definition found at lines 386-401. Strategy text matches prompt scope exactly: compiler boundary decision, output contract naming, relationship to ReportV1/ClinicianReportV1, input consumption model, section scoping. Strategy also defines all four stack layers at lines 22-71, which maps directly to prompt §§Compiler stage model and Asset-consumption model. Internal consistency confirmed."
-      },
-      "report_compiler_v1": {
-        "status": "CONFIRMED",
-        "citation": "backend/core/analytics/report_compiler_v1.py",
-        "notes": "File exists in backend/core/analytics/. Confirmed by directory listing."
-      },
-      "root_cause_compiler_v1": {
-        "status": "CONFIRMED",
-        "citation": "backend/core/analytics/root_cause_compiler_v1.py",
-        "notes": "File exists in backend/core/analytics/. Confirmed by directory listing."
-      },
-      "interpretation_display_layer_publish_v1": {
-        "status": "CONFIRMED",
-        "citation": "backend/core/analytics/interpretation_display_layer_publish_v1.py",
-        "notes": "File exists in backend/core/analytics/. Confirmed by directory listing."
-      },
-      "balanced_systems_presentation_v1": {
-        "status": "CONFIRMED",
-        "citation": "backend/core/analytics/balanced_systems_presentation_v1.py",
-        "notes": "File exists in backend/core/analytics/. Confirmed by directory listing."
-      },
-      "snapshot_linker": {
-        "status": "CONFIRMED",
-        "citation": "backend/core/analytics/snapshot_linker.py",
-        "notes": "File exists in backend/core/analytics/. Confirmed by directory listing."
-      },
-      "state_transition_engine": {
-        "status": "CONFIRMED",
-        "citation": "backend/core/analytics/state_transition_engine.py",
-        "notes": "File exists in backend/core/analytics/. Confirmed by directory listing."
-      },
-      "report_v1": {
-        "status": "CONFIRMED",
-        "citation": "backend/core/contracts/report_v1.py",
-        "notes": "File exists in backend/core/contracts/. Confirmed by directory listing."
-      },
-      "clinician_report_v1": {
-        "status": "CONFIRMED",
-        "citation": "backend/core/contracts/clinician_report_v1.py",
-        "notes": "File exists in backend/core/contracts/. Confirmed by directory listing."
-      },
-      "insight_graph_v1": {
-        "status": "CONFIRMED",
-        "citation": "backend/core/contracts/insight_graph_v1.py",
-        "notes": "File exists in backend/core/contracts/. Confirmed by directory listing."
-      }
+    {
+      "check": "authority_path_target_lock",
+      "result": "CONFIRMED",
+      "evidence": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md — file present on disk, verified by directory listing"
     },
-    "source_cross_reference": {
-      "status": "CONFIRMED",
-      "citation": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md:386-401 + automation_bus/latest_cursor_prompt.md:73-97",
-      "notes": "Prompt scope matches strategy N-2 definition at lines 386-401 on all five required architecture questions (compiler boundary, output contract name, contract relationships, input consumption, section scoping). Strategy four-layer stack (lines 22-71: data/contract, governed narrative asset, compiler/assembly, output/display) is consistent with prompt §Compiler stage model. No conflict between merged matrix conclusions and sprint strategy goals. Strategy §7 at lines 350-365 confirms N-2, N-3, N-8 are likely HIGH-risk sprints — see risk_and_change_type note."
+    {
+      "check": "authority_path_reverse_engineering_merged",
+      "result": "CONFIRMED",
+      "evidence": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md — file present on disk, verified by directory listing"
     },
-    "prior_task_findings": {
-      "status": "CONFIRMED",
-      "citation": "git log: commit ad00310 (Merge branch 'feature/n-1-narrative-target-lock-and-authority-map') + commit e9c7d3f (docs(golden-narrative): close N-1 authority lock package)",
-      "notes": "N-1 is confirmed merged to main. Both N-1 output files (AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md, AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md) are present in docs/golden-narrative/ and were independently verified. N-2 prompt correctly treats these as settled authorities. No prior hardening artifact to inherit for N-2 — this is the first hardening of N-2."
+    {
+      "check": "authority_path_sprint_strategy",
+      "result": "CONFIRMED",
+      "evidence": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md — file present on disk, verified by directory listing"
     },
-    "forbidden_files": {
-      "status": "CONFIRMED — none in scope",
-      "citation": "automation_bus/latest_cursor_prompt.md:187-195",
-      "notes": "Out of scope section explicitly prohibits: implementation changes to runtime code, changing backend contracts in code, adding narrative assets in code or YAML, frontend redesign, Gemini/LLM work, rewriting benchmark narrative, redoing merged matrix. Output is strictly docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md (and optional DECISIONS companion). No backend/core/analytics/, backend/core/contracts/, backend/ssot/, or control-plane scripts are modified. Output file does not yet exist — confirmed by directory listing. Clean write path."
+    {
+      "check": "authority_path_compiler_architecture",
+      "result": "CONFIRMED",
+      "evidence": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md — file present on disk; §8 (N-3 implications) explicitly authorises N-3 to settle the longitudinal raw-value contract decision"
     },
-    "stop_conditions": {
-      "status": "CONFIRMED — none triggered pre-execution; all four STOP conditions are Cursor-evaluated at runtime",
-      "citation": "automation_bus/latest_cursor_prompt.md:307-315",
-      "notes": "STOP 1 (ambiguous compiler boundaries): Cursor will evaluate during runtime investigation. Not pre-triggerable. STOP 2 (merged matrix vs strategy conflict): Confirmed consistent above — not triggered. STOP 3 (no clean output-contract strategy): Cursor will evaluate during design. Not pre-triggerable. STOP 4 (repo reality differs from planning docs): Cursor will evaluate by reading runtime files. Not pre-triggerable. All STOP conditions are appropriately positioned as runtime guards."
+    {
+      "check": "authority_path_insight_graph_v1",
+      "result": "CONFIRMED",
+      "evidence": "backend/core/contracts/insight_graph_v1.py lines 34-43: BiomarkerNode has biomarker_id, status, score only; line 38 PRD §4.7 note explicitly states 'No raw values, units, or reference ranges. Only interpreted outputs.' — intentional design"
     },
-    "no_op_risk": {
-      "status": "CONFIRMED — real work exists",
-      "citation": "docs/golden-narrative/ directory listing",
-      "notes": "HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md does not exist. HealthIQ_Deterministic_Narrative_Compiler_Architecture_DECISIONS.md does not exist. Both are new files requiring genuine architectural analysis. Compiler boundary and output contract strategy are genuinely open design questions per the merged matrix and sprint strategy. Real work exists."
+    {
+      "check": "authority_path_snapshot_linker",
+      "result": "CONFIRMED",
+      "evidence": "backend/core/analytics/snapshot_linker.py lines 60-78: _nodes_from_biomarkers_payload() reads biomarker_name/status/score from result.biomarkers payload only — 'value' and 'unit' keys present in payload are silently discarded"
     },
-    "risk_and_change_type": {
-      "status": "CONFIRMED with advisory flag",
-      "citation": "automation_bus/latest_cursor_prompt.md:3-6 + docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md:398-400",
-      "notes": "CHANGE_TYPE=CONTENT is correct: all output files are under docs/golden-narrative/, no code changes, no SSOT modifications. RISK_LEVEL=STANDARD: per SOP §10 HIGH triggers, this sprint does not modify backend/core/analytics/, backend/core/contracts/, or control-plane paths. ADVISORY FLAG: The strategy document at lines 398-400 states 'Likely risk classification: HIGH, if architecture decisions touch compiler and contract authority.' This sprint's entire purpose is to make architecture decisions about the compiler and output contracts. The prompt author (GPT) declared STANDARD on the basis that file writes are docs-only. This is defensible under SOP §10 (no High-risk path modifications). However, if GPT intends the design authority document to carry governing weight over future HIGH-risk sprints, GPT should confirm STANDARD is the correct classification before Stage 3."
+    {
+      "check": "authority_path_state_transition_engine",
+      "result": "CONFIRMED",
+      "evidence": "backend/core/analytics/state_transition_engine.py line 95: build_state_transition_v1() operates on BiomarkerNode.status and .score only across all 189 lines — no raw value access anywhere"
     },
-    "stage_0_branch_alignment": {
-      "status": "FLAG — action required by Cursor before Stage 3",
-      "citation": "git branch output: main",
-      "notes": "Current branch is 'main'. Prompt requires branch 'feature/n-2-narrative-compiler-architecture-design'. Per SOP Stage 0, branch alignment must be completed before any work. Cursor must create or checkout this feature branch before running 'python backend/scripts/run_work_package.py start'. This is not a hardening blocker — Claude hardening does not require branch alignment. It is a Stage 3 prerequisite."
+    {
+      "check": "authority_path_state_transition_v1",
+      "result": "CONFIRMED",
+      "evidence": "backend/core/contracts/state_transition_v1.py lines 29-38: BiomarkerTransitionNode has biomarker_id, from_status, to_status, transition, evidence_codes only; line 50: canonical_json_sha256 hashes t.model_dump() for each transition node"
+    },
+    {
+      "check": "authority_path_builders",
+      "result": "CONFIRMED",
+      "evidence": "backend/core/dto/builders.py lines 97-98: analysis_route_biomarker_row() persists 'value' and 'unit' alongside status/score in result.biomarkers — raw values ARE in DB, just not reconstructed in snapshot path"
+    },
+    {
+      "check": "raw_value_gap_confirmed",
+      "result": "CONFIRMED",
+      "evidence": "snapshot_linker.py:60-78 discards 'value'/'unit' from payload; architecture doc §7.1 independently confirms: 'snapshot_linker.py currently preserves only safe status/score metadata from fallback biomarker rows'"
+    },
+    {
+      "check": "no_duplicate_authority_sources",
+      "result": "CONFIRMED",
+      "evidence": "SSOT has two separate registries (biomarkers.yaml, lifestyle_registry.yaml) with distinct domains and no overlap. No duplicate narrative authority source detected in docs/golden-narrative/ or backend/core/contracts/."
+    },
+    {
+      "check": "stop_condition_1_raw_values_unavailable",
+      "result": "NOT_TRIGGERED",
+      "evidence": "builders.py:97-98 confirms raw values ARE persisted in result.biomarkers via analysis_route_biomarker_row(). Gap is in reconstruction path (snapshot_linker.py:60-78) only."
+    },
+    {
+      "check": "stop_condition_2_wide_persistence_redesign",
+      "result": "NOT_TRIGGERED",
+      "evidence": "Only snapshot_linker.py reconstruction path + BiomarkerTransitionNode extension required. No DB schema changes, no new persistence tables needed."
+    },
+    {
+      "check": "stop_condition_3_tight_coupling",
+      "result": "NOT_TRIGGERED",
+      "evidence": "BiomarkerTransitionNode consumers: state_transition_engine.py and test_state_transition_engine.py. Extension with optional None-default fields (prior_value, current_value, unit) is backward-safe for both consumers."
+    },
+    {
+      "check": "stop_condition_4_separate_contract_needs_adjudication",
+      "result": "NOT_TRIGGERED",
+      "evidence": "N-2 architecture doc §8 explicitly authorises N-3 to settle this decision. Extending BiomarkerTransitionNode is the minimum viable path — it does not violate PRD §4.7 (which governs BiomarkerNode, not BiomarkerTransitionNode). No additional architectural adjudication needed."
+    },
+    {
+      "check": "stop_condition_5_scope_expansion",
+      "result": "NOT_TRIGGERED",
+      "evidence": "Expected touch set bounded to: backend/core/contracts/state_transition_v1.py, backend/core/analytics/snapshot_linker.py, backend/core/analytics/state_transition_engine.py (minor value-threading), backend/tests/. No expansion beyond contract/snapshot/transition layer."
+    },
+    {
+      "check": "stop_condition_6_contradicts_n2_assumptions",
+      "result": "NOT_TRIGGERED",
+      "evidence": "N-2 architecture §7.1 correctly predicted the gap. All repo evidence (snapshot_linker.py:60-78, BiomarkerNode:34-43, state_transition_v1.py:29-38) aligns with N-2 assumptions."
+    },
+    {
+      "check": "determinism_risk_hash_mutation",
+      "result": "RISK_SURFACED",
+      "evidence": "state_transition_v1.py:50-53: canonical_json_sha256 hashes t.model_dump() for each BiomarkerTransitionNode. Adding optional None-default fields will change model_dump() output and break state_transition_hash for existing analyses. Cursor MUST bump STATE_TRANSITION_V1_VERSION (preferred: signals explicit schema change, preserves auditability) OR use model_dump(exclude_none=True) in hash computation. Must be resolved before implementing; not a STOP — a mandatory design decision."
+    },
+    {
+      "check": "partial_population_risk",
+      "result": "RISK_SURFACED",
+      "evidence": "Prior analyses stored before N-3 will not have value/unit in their embedded insight_graph snapshot (snapshot_linker.py:81-108 path reconstructs from stored data that predates N-3). New fields will be None for old snapshots. Sprint must handle gracefully — None is valid, sprint must not STOP or error on missing prior values."
+    },
+    {
+      "check": "behavioural_scope_defined",
+      "result": "CONFIRMED",
+      "evidence": "Scope: (1) extend BiomarkerTransitionNode with optional prior_value/current_value/unit; (2) update snapshot_linker reconstruction to extract value/unit; (3) thread raw values through state_transition_engine; (4) add regression tests. No narrative prose compilation in scope. MIXED classification correct: contract layer (CONTENT) + analytical pipeline threading (BEHAVIOUR)."
+    },
+    {
+      "check": "regression_targets_identified",
+      "result": "CONFIRMED",
+      "evidence": "Existing: backend/tests/unit/test_state_transition_engine.py (hash determinism + transition rules), backend/tests/enforcement/test_state_transition_not_hardcoded.py. Gap: NO existing tests for snapshot_linker.py — new tests must be added by sprint."
+    },
+    {
+      "check": "no_scope_creep",
+      "result": "CONFIRMED",
+      "evidence": "Prompt explicitly excludes narrative prose compilation, frontend, lifestyle joins, phenotype/IDL entities, report compiler redesign. Design rules 1-6 in prompt bound the implementation. Sprint is a contract-enabling sprint only."
+    },
+    {
+      "check": "forbidden_files_absent",
+      "result": "CONFIRMED",
+      "evidence": "No .codex/, .vscode/, AGENTS.md references in prompt or expected touch set. No control-plane scripts in scope."
+    },
+    {
+      "check": "stage_0_branch_alignment",
+      "result": "FLAG — action required before Stage 3",
+      "evidence": "Current branch is 'main'. Prompt requires branch 'feature/n-3-longitudinal-contract-upgrade'. Cursor must create or checkout this branch before running run_work_package.py start. Not a hardening blocker."
     }
-  }
+  ]
 }
