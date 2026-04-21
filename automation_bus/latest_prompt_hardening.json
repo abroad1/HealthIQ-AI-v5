@@ -1,134 +1,144 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "N-3",
+  "work_id": "N-4",
   "status": "HARDENED",
-  "hardened_utc": "2026-04-21T16:12:03Z",
+  "hardened_utc": "2026-04-21T16:45:00Z",
   "hardened_by": "claude-sonnet-4-6",
   "changes": [
     {
       "check": "front_matter_valid",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md lines 1-7: work_id=N-3, branch=feature/n-3-longitudinal-contract-upgrade, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED — all five mandatory fields present"
+      "evidence": "automation_bus/latest_cursor_prompt.md lines 1-7: work_id=N-4, branch=feature/n-4-lifestyle-interpretation-bridge-assets, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED — all five mandatory fields present"
     },
     {
       "check": "authority_path_target_lock",
       "result": "CONFIRMED",
-      "evidence": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md — file present on disk, verified by directory listing"
+      "evidence": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md — present on disk, verified by directory listing"
     },
     {
       "check": "authority_path_reverse_engineering_merged",
       "result": "CONFIRMED",
-      "evidence": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md — file present on disk, verified by directory listing"
+      "evidence": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md — present on disk, verified by directory listing"
     },
     {
       "check": "authority_path_sprint_strategy",
       "result": "CONFIRMED",
-      "evidence": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md — file present on disk, verified by directory listing"
+      "evidence": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md — present on disk, verified by directory listing"
     },
     {
       "check": "authority_path_compiler_architecture",
       "result": "CONFIRMED",
-      "evidence": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md — file present on disk; §8 (N-3 implications) explicitly authorises N-3 to settle the longitudinal raw-value contract decision"
+      "evidence": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md — present on disk; §3.2 defines governed narrative asset layer as home for lifestyle-to-pathway joins"
     },
     {
-      "check": "authority_path_insight_graph_v1",
+      "check": "authority_path_questionnaire_json",
       "result": "CONFIRMED",
-      "evidence": "backend/core/contracts/insight_graph_v1.py lines 34-43: BiomarkerNode has biomarker_id, status, score only; line 38 PRD §4.7 note explicitly states 'No raw values, units, or reference ranges. Only interpreted outputs.' — intentional design"
+      "evidence": "backend/ssot/questionnaire.json — read in full (536 lines). Key lifestyle fields confirmed: alcohol_drinks_weekly (line 270), fasting_hours (line 254), daily_fluid_intake (line 348), vigorous_exercise_days (line 305), resistance_training_days (line 328), dietary_pattern includes 'Intermittent fasting' (line 302)"
     },
     {
-      "check": "authority_path_snapshot_linker",
+      "check": "authority_path_lifestyle_registry",
       "result": "CONFIRMED",
-      "evidence": "backend/core/analytics/snapshot_linker.py lines 60-78: _nodes_from_biomarkers_payload() reads biomarker_name/status/score from result.biomarkers payload only — 'value' and 'unit' keys present in payload are silently discarded"
+      "evidence": "backend/ssot/lifestyle_registry.yaml — read in full. Canonical engine inputs: height_cm, weight_kg, waist_circumference_cm, systolic_bp, diastolic_bp, resting_heart_rate, smoking_status, alcohol_units_per_week, sleep_hours, sit_stand_value. Alcohol_units_per_week has metabolic+hepatic modifiers (lines 162-181). fluid_intake and fasting_hours are NOT in SSOT canonical engine inputs."
     },
     {
-      "check": "authority_path_state_transition_engine",
+      "check": "authority_path_questionnaire_mapper",
       "result": "CONFIRMED",
-      "evidence": "backend/core/analytics/state_transition_engine.py line 95: build_state_transition_v1() operates on BiomarkerNode.status and .score only across all 189 lines — no raw value access anywhere"
+      "evidence": "backend/core/pipeline/questionnaire_mapper.py — read in full. alcohol_units_per_week mapped at lines 297-317 and 520-533. fluid_intake_liters mapped at lines 426-438 into MappedLifestyleFactors.fluid_intake_liters. fasting_hours questionnaire field is NOT mapped by any method in this file. extract_behavioural_lifestyle_inputs() (line 500) emits only: sleep_hours, alcohol_units_per_week, smoking_status."
     },
     {
-      "check": "authority_path_state_transition_v1",
+      "check": "authority_path_lifestyle_modifier_engine",
       "result": "CONFIRMED",
-      "evidence": "backend/core/contracts/state_transition_v1.py lines 29-38: BiomarkerTransitionNode has biomarker_id, from_status, to_status, transition, evidence_codes only; line 50: canonical_json_sha256 hashes t.model_dump() for each transition node"
+      "evidence": "backend/core/analytics/lifestyle_modifier_engine.py — read (200 lines). apply() output at lines 139-146: produces derived_inputs, validated_inputs, input_errors, invalid_input_plausibility, system_modifiers, adjusted_system_burdens. Engine outputs ONLY numeric burden modifiers — no interpretation context tokens, no lifestyle narrative support produced."
     },
     {
-      "check": "authority_path_builders",
+      "check": "authority_path_hcy_hypotheses",
       "result": "CONFIRMED",
-      "evidence": "backend/core/dto/builders.py lines 97-98: analysis_route_biomarker_row() persists 'value' and 'unit' alongside status/score in result.biomarkers — raw values ARE in DB, just not reconstructed in snapshot path"
+      "evidence": "knowledge_bus/root_cause/hypotheses/hcy_hypotheses_v1.yaml — read in full. 4 hypotheses (B12, folate, inflammation, renal clearance). None include alcohol lifestyle context. No lifestyle-to-interpretation bridge currently exists for homocysteine/macrocytosis/one-carbon pathway."
     },
     {
-      "check": "raw_value_gap_confirmed",
+      "check": "authority_path_creatinine_hypotheses",
       "result": "CONFIRMED",
-      "evidence": "snapshot_linker.py:60-78 discards 'value'/'unit' from payload; architecture doc §7.1 independently confirms: 'snapshot_linker.py currently preserves only safe status/score metadata from fallback biomarker rows'"
+      "evidence": "knowledge_bus/root_cause/hypotheses/creatinine_high_hypotheses_v1.yaml — read in full. 2 hypotheses (filtration stress, urea co-rise). Neither includes hydration or physical activity context. No lifestyle bridge for renal interpretation currently exists."
+    },
+    {
+      "check": "authority_path_hba1c_hypotheses",
+      "result": "CONFIRMED",
+      "evidence": "knowledge_bus/root_cause/hypotheses/hba1c_hypotheses_v1.yaml — read in full. 2 hypotheses (glycaemic exposure, glycaemic-lipid coupling). Neither includes fasting pattern or dietary pattern context. No lifestyle bridge for glycaemic interpretation currently exists."
     },
     {
       "check": "no_duplicate_authority_sources",
       "result": "CONFIRMED",
-      "evidence": "SSOT has two separate registries (biomarkers.yaml, lifestyle_registry.yaml) with distinct domains and no overlap. No duplicate narrative authority source detected in docs/golden-narrative/ or backend/core/contracts/."
+      "evidence": "lifestyle_registry.yaml is the sole SSOT for numeric lifestyle burden modifiers. questionnaire.json is the sole SSOT for questionnaire field definitions. No duplicate authority detected."
     },
     {
-      "check": "stop_condition_1_raw_values_unavailable",
-      "result": "NOT_TRIGGERED",
-      "evidence": "builders.py:97-98 confirms raw values ARE persisted in result.biomarkers via analysis_route_biomarker_row(). Gap is in reconstruction path (snapshot_linker.py:60-78) only."
+      "check": "gap_alcohol_methylation_bridge",
+      "result": "CONFIRMED — gap real, field available",
+      "evidence": "alcohol_drinks_weekly in questionnaire.json:270 maps to alcohol_units_per_week in questionnaire_mapper.py:297-317. hcy_hypotheses_v1.yaml has no alcohol context rule. Gap is real. alcohol_units_per_week is available as a numeric runtime value. Bridge is buildable."
     },
     {
-      "check": "stop_condition_2_wide_persistence_redesign",
-      "result": "NOT_TRIGGERED",
-      "evidence": "Only snapshot_linker.py reconstruction path + BiomarkerTransitionNode extension required. No DB schema changes, no new persistence tables needed."
+      "check": "gap_hydration_renal_bridge",
+      "result": "CONFIRMED — gap real, fields partially available; scope narrowing required",
+      "evidence": "daily_fluid_intake in questionnaire.json:348 maps to MappedLifestyleFactors.fluid_intake_liters at questionnaire_mapper.py:426-438, but fluid_intake is NOT in lifestyle_registry.yaml canonical inputs and is NOT emitted by extract_behavioural_lifestyle_inputs(). vigorous_exercise_days at questionnaire.json:305 is mapped to exercise_minutes_per_week in MappedLifestyleFactors. creatinine_high_hypotheses_v1.yaml has no hydration or physical activity context rule. No 'physical work pattern' or 'occupation type' field exists in questionnaire.json — only structured exercise fields. Sprint must use vigorous_exercise_days + fluid_intake as proxy. Cursor must add fluid_intake and exercise_level to the bridge-asset consumption path."
     },
     {
-      "check": "stop_condition_3_tight_coupling",
-      "result": "NOT_TRIGGERED",
-      "evidence": "BiomarkerTransitionNode consumers: state_transition_engine.py and test_state_transition_engine.py. Extension with optional None-default fields (prior_value, current_value, unit) is backward-safe for both consumers."
+      "check": "gap_fasting_glycaemic_bridge",
+      "result": "CONFIRMED — gap real; weight_loss field ABSENT, fasting fields available",
+      "evidence": "fasting_hours in questionnaire.json:254 is NOT mapped in questionnaire_mapper.py. dietary_pattern='Intermittent fasting' at questionnaire.json:302 is scored (+1) in _map_diet_level() but not extractable as a structured context token. hba1c_hypotheses_v1.yaml has no fasting or dietary pattern context. CRITICAL: no 'weight_loss', 'recent_weight_change', or 'intentional_weight_loss' questionnaire field exists. Sprint must scope to fasting/dietary-pattern bridge only — weight loss as a structured input is unavailable."
     },
     {
-      "check": "stop_condition_4_separate_contract_needs_adjudication",
+      "check": "fluid_intake_not_in_registry_engine",
+      "result": "RISK_SURFACED",
+      "evidence": "lifestyle_registry.yaml inputs spec does NOT include fluid_intake. LifestyleModifierEngine.apply() does not accept or process fluid intake. fluid_intake_liters lives only in MappedLifestyleFactors (questionnaire_mapper.py:38). The renal bridge must source fluid context from MappedLifestyleFactors, not from the SSOT engine. This is not a STOP but constrains where the bridge is invoked — it must operate on the mapped questionnaire level, not the registry engine level."
+    },
+    {
+      "check": "fasting_hours_not_extracted",
+      "result": "RISK_SURFACED",
+      "evidence": "questionnaire_mapper.py extract_behavioural_lifestyle_inputs() (line 500) does NOT extract fasting_hours. The questionnaire.json fasting_hours field (line 254) is captured in the questionnaire but never becomes a runtime lifestyle variable. For the glycaemic bridge, Cursor must either: (a) add fasting_hours extraction to questionnaire_mapper.py, or (b) use dietary_pattern='Intermittent fasting' as the proxy token. Option (b) is lower risk (no mapper change). Option (a) is cleaner but widens the mapper file touch."
+    },
+    {
+      "check": "bridge_asset_location",
+      "result": "CONFIRMED — new asset layer is correct home",
+      "evidence": "N-2 architecture §3.2: governed narrative asset layer is the correct home for lifestyle-to-pathway joins. lifestyle_registry.yaml is inappropriate (burden modifiers only). Hypothesis YAMLs could receive lifestyle_context_rules but that extends a biomarker-centric schema with a lifestyle concept — a hybrid that risks architectural ambiguity. A new dedicated asset file (e.g., knowledge_bus/lifestyle_bridges/lifestyle_interpretation_bridges_v1.yaml or equivalent) is the cleanest clean governed location consistent with §3.2. Cursor must confirm the exact placement."
+    },
+    {
+      "check": "pipeline_consumption_path_gap",
+      "result": "RISK_SURFACED",
+      "evidence": "LifestyleModifierEngine.apply() output (lines 139-146) contains no interpretation context slot. InsightGraphV1 has no lifestyle_context or lifestyle_bridge fields. The bridge outputs need a home in the analysis result. Cursor must decide: add a new InsightGraphV1 field (HIGH risk, contract change), add to a side-channel output dict, or make them available via a new accessor pattern. This design decision must be grounded in the repo before implementation — not left implicit."
+    },
+    {
+      "check": "stop_condition_1_lifestyle_fields_unavailable",
+      "result": "NOT_TRIGGERED — with scope narrowing flag",
+      "evidence": "alcohol_units_per_week: available in runtime. fluid_intake_liters: available in MappedLifestyleFactors (not SSOT engine). vigorous_exercise_days: available in questionnaire/mapped. fasting_hours: in questionnaire but not extracted to runtime yet. weight_loss: ABSENT — no structured weight-change field exists. Sprint must scope glycaemic bridge to fasting/dietary pattern only."
+    },
+    {
+      "check": "stop_condition_2_questionnaire_redesign",
       "result": "NOT_TRIGGERED",
-      "evidence": "N-2 architecture doc §8 explicitly authorises N-3 to settle this decision. Extending BiomarkerTransitionNode is the minimum viable path — it does not violate PRD §4.7 (which governs BiomarkerNode, not BiomarkerTransitionNode). No additional architectural adjudication needed."
+      "evidence": "No structural questionnaire redesign needed. Bridge assets can consume existing mapped lifestyle values. Adding fasting_hours extraction to questionnaire_mapper.py is a bounded addition if chosen."
+    },
+    {
+      "check": "stop_condition_3_no_clean_asset_location",
+      "result": "NOT_TRIGGERED",
+      "evidence": "New knowledge_bus/ bridge asset layer is a clean governed location consistent with N-2 architecture §3.2. No adjudication needed."
+    },
+    {
+      "check": "stop_condition_4_speculative_interpretation",
+      "result": "NOT_TRIGGERED",
+      "evidence": "All three bridges are framed as contextual modifiers and plausibility supports, not causal declarations. Design rules 1 and 6 in the prompt enforce this boundary explicitly."
     },
     {
       "check": "stop_condition_5_scope_expansion",
+      "result": "NOT_TRIGGERED — monitor",
+      "evidence": "Expected touch set: new knowledge_bus bridge asset(s), possible questionnaire_mapper.py addition (fasting_hours extraction), possible InsightGraphV1 field or side-channel output. Potential HIGH risk expansion if InsightGraphV1 is modified. Must remain bounded."
+    },
+    {
+      "check": "stop_condition_6_contradicts_n2",
       "result": "NOT_TRIGGERED",
-      "evidence": "Expected touch set bounded to: backend/core/contracts/state_transition_v1.py, backend/core/analytics/snapshot_linker.py, backend/core/analytics/state_transition_engine.py (minor value-threading), backend/tests/. No expansion beyond contract/snapshot/transition layer."
-    },
-    {
-      "check": "stop_condition_6_contradicts_n2_assumptions",
-      "result": "NOT_TRIGGERED",
-      "evidence": "N-2 architecture §7.1 correctly predicted the gap. All repo evidence (snapshot_linker.py:60-78, BiomarkerNode:34-43, state_transition_v1.py:29-38) aligns with N-2 assumptions."
-    },
-    {
-      "check": "determinism_risk_hash_mutation",
-      "result": "RISK_SURFACED",
-      "evidence": "state_transition_v1.py:50-53: canonical_json_sha256 hashes t.model_dump() for each BiomarkerTransitionNode. Adding optional None-default fields will change model_dump() output and break state_transition_hash for existing analyses. Cursor MUST bump STATE_TRANSITION_V1_VERSION (preferred: signals explicit schema change, preserves auditability) OR use model_dump(exclude_none=True) in hash computation. Must be resolved before implementing; not a STOP — a mandatory design decision."
-    },
-    {
-      "check": "partial_population_risk",
-      "result": "RISK_SURFACED",
-      "evidence": "Prior analyses stored before N-3 will not have value/unit in their embedded insight_graph snapshot (snapshot_linker.py:81-108 path reconstructs from stored data that predates N-3). New fields will be None for old snapshots. Sprint must handle gracefully — None is valid, sprint must not STOP or error on missing prior values."
-    },
-    {
-      "check": "behavioural_scope_defined",
-      "result": "CONFIRMED",
-      "evidence": "Scope: (1) extend BiomarkerTransitionNode with optional prior_value/current_value/unit; (2) update snapshot_linker reconstruction to extract value/unit; (3) thread raw values through state_transition_engine; (4) add regression tests. No narrative prose compilation in scope. MIXED classification correct: contract layer (CONTENT) + analytical pipeline threading (BEHAVIOUR)."
-    },
-    {
-      "check": "regression_targets_identified",
-      "result": "CONFIRMED",
-      "evidence": "Existing: backend/tests/unit/test_state_transition_engine.py (hash determinism + transition rules), backend/tests/enforcement/test_state_transition_not_hardcoded.py. Gap: NO existing tests for snapshot_linker.py — new tests must be added by sprint."
-    },
-    {
-      "check": "no_scope_creep",
-      "result": "CONFIRMED",
-      "evidence": "Prompt explicitly excludes narrative prose compilation, frontend, lifestyle joins, phenotype/IDL entities, report compiler redesign. Design rules 1-6 in prompt bound the implementation. Sprint is a contract-enabling sprint only."
-    },
-    {
-      "check": "forbidden_files_absent",
-      "result": "CONFIRMED",
-      "evidence": "No .codex/, .vscode/, AGENTS.md references in prompt or expected touch set. No control-plane scripts in scope."
+      "evidence": "N-2 architecture §3.2 and §4 explicitly required lifestyle-to-pathway joins as a prerequisite for narrative compiler build. All repo evidence confirms this gap is real."
     },
     {
       "check": "stage_0_branch_alignment",
       "result": "FLAG — action required before Stage 3",
-      "evidence": "Current branch is 'main'. Prompt requires branch 'feature/n-3-longitudinal-contract-upgrade'. Cursor must create or checkout this branch before running run_work_package.py start. Not a hardening blocker."
+      "evidence": "Current branch from git context: main. Prompt requires feature/n-4-lifestyle-interpretation-bridge-assets. Cursor must create or checkout this branch before Stage 3."
     }
   ]
 }

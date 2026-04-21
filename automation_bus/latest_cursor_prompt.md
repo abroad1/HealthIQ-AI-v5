@@ -1,30 +1,28 @@
 ---
-work_id: N-3
-branch: feature/n-3-longitudinal-contract-upgrade
+work_id: N-4
+branch: feature/n-4-lifestyle-interpretation-bridge-assets
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# N-3 — Longitudinal contract upgrade
+# N-4 — Lifestyle interpretation bridge assets
 
 ## Objective
 
-Upgrade the deterministic longitudinal contract layer so HealthIQ can support benchmark-grade prior/current comparison, including raw numeric deltas, pathway-level persistence/improvement logic, and future narrative compilation.
+Create the first governed deterministic lifestyle-to-interpretation bridge assets so HealthIQ can use lifestyle context in medically disciplined narrative interpretation rather than treating questionnaire data as passive intake only.
 
-This is the first implementation sprint in the deterministic narrative workstream.
-
-It is a HIGH-risk sprint because it is expected to touch backend contracts and analytical infrastructure.
+This is a HIGH-risk sprint because it is expected to touch governed interpretation logic and may touch backend analytical infrastructure.
 
 This sprint is not a frontend sprint.
 Do not redesign the results page.
 Do not introduce Gemini or any other LLM dependency.
 Do not widen into full narrative compilation.
 
-The purpose of N-3 is to solve the contract and data-shape gap that currently prevents deterministic benchmark-style longitudinal narration such as:
-- “creatinine improved from 110 to 87”
-- “HbA1c improved from 32 to 26”
-- “this pathway remains unresolved despite broader systemic improvement”
+The purpose of N-4 is to build the governed bridge layer between structured lifestyle inputs and interpretation outputs for the first benchmark-critical contexts:
+- alcohol → homocysteine / macrocytosis / one-carbon context
+- hydration / physical work pattern → renal interpretation context
+- weight loss / fasting pattern → glycaemic improvement context
 
 ---
 
@@ -34,15 +32,12 @@ The following are already decided and are not open for reinterpretation in this 
 
 - The benchmark narrative is locked.
 - The merged reverse-engineering matrix is locked.
-- The narrative compiler architecture is now defined in:
-  - `docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md`
-- The architecture decision is to introduce a separate narrative compiler module rather than overload `report_compiler_v1.py`.
-- The merged planning authority identified a specific longitudinal gap:
-  - current prior snapshot support preserves status/score metadata
-  - but does not preserve raw prior numeric values sufficiently for benchmark-style delta narration
-- N-3 exists to close that gap at the contract/data layer before later compiler sprints.
+- The narrative compiler architecture is locked.
+- N-3 has now closed the longitudinal raw-value contract gap.
+- One of the major remaining deterministic gaps is that HealthIQ captures lifestyle context but does not yet join it cleanly into interpretation.
+- N-4 exists to create governed lifestyle-to-interpretation bridge assets before later narrative compiler work.
 
-Your job is to implement the minimum clean contract/data upgrade that makes deterministic longitudinal narrative support possible.
+Your job is to implement the minimum clean governed bridge layer that makes these three classes of contextual interpretation deterministically supportable.
 
 ---
 
@@ -62,95 +57,110 @@ Treat the following as required inputs:
 4. Narrative compiler architecture
 `docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md`
 
-5. Current runtime files expected to be relevant
-At minimum inspect and use:
-- `backend/core/contracts/insight_graph_v1.py`
-- `backend/core/analytics/snapshot_linker.py`
-- `backend/core/analytics/state_transition_engine.py`
-- `backend/core/contracts/state_transition_v1.py`
-- `backend/core/dto/builders.py`
-- any analysis-result persistence or prior-snapshot loading path you determine is authoritative
-- any tests already covering snapshot linking / state transitions / longitudinal behaviour
+5. Relevant current runtime and authority files, at minimum:
+- `backend/ssot/questionnaire.json`
+- `backend/ssot/lifestyle_registry.yaml`
+- `backend/core/pipeline/questionnaire_mapper.py`
+- `backend/core/analytics/lifestyle_modifier_engine.py`
+- `knowledge_bus/root_cause/hypotheses/hcy_hypotheses_v1.yaml`
+- relevant macrocytosis / renal / glycaemic packages and hypotheses
+- any intervention / confirmatory / report-support assets you determine are relevant
 
 ---
 
 ## Core problem this sprint must solve
 
-Current longitudinal support is not enough for benchmark-grade narrative because prior/current snapshot handling preserves normalized status/score-style metadata but not a clean raw-value layer suitable for deterministic numeric delta narration.
+HealthIQ already captures lifestyle inputs such as alcohol intake, fasting pattern, fluid intake, and work pattern.
 
-This sprint must determine and implement the correct safe shape for preserving and exposing the longitudinal numeric facts needed for later narrative compilation.
+But the current deterministic system does not yet translate those inputs into governed interpretation context for the benchmark narrative.
 
-It must also avoid corrupting existing longitudinal logic or overloading current contracts carelessly.
+This sprint must create a medically disciplined bridge layer so that lifestyle context can:
+- support interpretation
+- shape uncertainty and plausibility
+- influence contextual phrasing later
+without becoming hand-wavy or speculative.
 
 ---
 
 ## Required outcome
 
-Deliver a bounded HIGH-risk upgrade that:
+Deliver a bounded HIGH-risk implementation that:
 
-1. defines and implements the correct contract support for longitudinal raw numeric comparison
-2. preserves backward-safe longitudinal behaviour where possible
-3. allows prior/current biomarker value comparisons to be accessed deterministically
-4. leaves state-transition logic intact or safely adapted
-5. provides a clean substrate for later narrative compilation
-6. adds or updates tests proving the new longitudinal contract behaviour
+1. defines and implements governed lifestyle-to-interpretation bridge assets for the three priority domains
+2. keeps lifestyle context as contextual interpretation support, not diagnosis inflation
+3. preserves deterministic behaviour and traceability
+4. makes later narrative compiler work able to consume these joins cleanly
+5. adds or updates tests proving the bridges behave as intended
 
 ---
 
 ## In scope
 
-### 1. Preflight architectural verification
-Before changing code, verify and cite:
+### 1. Preflight verification
+Before modifying code or governed assets, verify and cite:
 
-- the exact current structure of `BiomarkerNode` or equivalent prior-snapshot biomarker representation
-- whether raw numeric values are currently preserved, discarded, or inaccessible in the prior snapshot path
-- the exact current role of `snapshot_linker.py`
-- the exact current role of `state_transition_engine.py`
-- how prior analysis results are currently loaded and normalized
-- whether downstream consumers assume the existing snapshot node shape
+- what lifestyle fields currently exist in SSOT and are relevant to the benchmark case
+- how questionnaire responses are currently mapped into runtime lifestyle structures
+- what the current `lifestyle_modifier_engine.py` actually does today
+- whether existing root-cause or signal assets already partially support any of the intended joins
+- what current deterministic path, if any, could already consume lifestyle context
 
-You must confirm the real contract gap before patching it.
+You must confirm the exact current gap before patching it.
 
-### 2. Contract upgrade
-Implement the minimum clean contract change needed to support deterministic prior/current numeric comparison.
+### 2. Alcohol → methylation / macrocytosis context
+Build the first governed lifestyle interpretation bridge for alcohol intake.
 
-This may include, if repo reality confirms it is the correct design:
-- adding raw numeric value support to the relevant biomarker snapshot contract
-- preserving units where required
-- preserving enough context to safely compare prior/current values
+The target is not:
+- “alcohol causes the result”
+The target is:
+- alcohol is a plausible contextual modifier or contributor for interpreting homocysteine / macrocytosis / one-carbon pathway friction when the pattern is otherwise coherent
 
-Do not widen the contract casually.
-Add only what is needed for safe deterministic longitudinal comparison.
+This bridge must remain bounded and medically disciplined.
 
-### 3. Snapshot-linking upgrade
-Update the prior snapshot reconstruction/loading path so the new contract fields are actually populated from persisted analysis data where available.
+### 3. Hydration / physical work → renal context
+Build a governed deterministic bridge allowing hydration level and manual/physical work context to inform renal interpretation context where appropriate.
 
-### 4. Longitudinal comparison readiness
-Ensure the upgraded longitudinal layer can support later narrative moves such as:
-- improved from X to Y
-- worsened from X to Y
-- stable abnormal
-- stable normal
-- unresolved pathway despite other improvements
+The target is not:
+- “renal issue explained away”
+The target is:
+- hydration / work context can shape the interpretation of reassuring or borderline renal markers in a deterministic, bounded way
 
-This sprint does not have to build the narrative prose compiler, but it must make those later moves possible.
+### 4. Weight loss / fasting → glycaemic improvement context
+Build a governed deterministic bridge allowing reported weight loss and fasting pattern to support interpretation of favourable glycaemic direction-of-travel where appropriate.
 
-### 5. State-transition compatibility
-Verify that the state-transition engine and existing transition contracts remain correct under the upgraded data shape.
+The target is not:
+- broad metabolic praise
+The target is:
+- contextual support for interpreting a more favourable glycaemic trend coherently
 
-If minor adaptation is required, keep it bounded and explain it clearly.
+### 5. Governed asset placement
+Implement these bridges in the correct governed location(s).
 
-### 6. Tests and regression coverage
+You must determine, repo-groundedly, whether the right home is:
+- lifestyle registry extension
+- root-cause hypothesis extension
+- new bridge asset(s)
+- another bounded governed structure
+
+Do not scatter the logic casually across multiple layers without authority clarity.
+
+### 6. Runtime consumption path
+Ensure the new bridge assets are available to later deterministic narrative compilation.
+
+This sprint does not need to produce the final prose narrative layer, but it must make the contextual bridge outputs accessible in a clean deterministic way.
+
+### 7. Tests and regression coverage
 Add or update tests covering at minimum:
-- raw prior/current numeric preservation
-- safe snapshot reconstruction
-- compatibility with transition evaluation
-- no breakage of existing longitudinal logic where prior behaviour should remain intact
+- alcohol context bridge behaviour
+- hydration/physical-work renal context bridge behaviour
+- weight-loss/fasting glycaemic context bridge behaviour
+- no speculative output when required context is absent
+- no breakage of existing logic
 
-### 7. Documentation note
-Add a concise implementation note in the audit/summary or nearby sprint output describing:
-- what contract changed
-- why it changed
+### 8. Concise sprint note
+Add a short implementation note documenting:
+- what bridge assets were introduced
+- what runtime path now exposes them
 - what later sprint this unblocks
 
 ---
@@ -159,42 +169,44 @@ Add a concise implementation note in the audit/summary or nearby sprint output d
 
 The following are explicitly out of scope:
 
-- narrative prose compilation
-- patient summary generation
-- body-overview compiler logic
+- full narrative prose compiler work
 - frontend changes
-- lifestyle-to-interpretation joins
-- new phenotype / IDL entities
 - broad report compiler redesign
-- any unrelated refactor of snapshot/persistence infrastructure
+- new longitudinal contract work beyond consuming N-3 outputs where needed
+- new IDL display-layer design
+- broad phenotype/IDL expansion beyond what is strictly required for these bridge assets
+- Gemini / LLM work
 
 ---
 
 ## Design rules
 
-### Rule 1 — minimum viable contract change
-Do not redesign half the pipeline.
-Make the smallest clean change that unlocks numeric longitudinal comparison.
+### Rule 1 — contextual, not causal overreach
+Lifestyle context must support interpretation carefully.
+Do not let the system make stronger causal claims than the evidence supports.
 
-### Rule 2 — preserve existing deterministic behaviour
-Do not break current transition/status logic to gain narrative convenience.
+### Rule 2 — governed asset first
+Do not bury interpretation joins in ad hoc code branches if they belong in a governed asset layer.
 
-### Rule 3 — contracts before prose
-This sprint is about enabling later narrative compilation, not starting it prematurely.
+### Rule 3 — no silent narrative logic
+The bridge outputs must be inspectable and traceable.
+Do not create opaque “magic” lifestyle interpretation behaviour.
 
-### Rule 4 — explicit units and comparison safety
-If raw values are preserved, ensure comparison remains safe and interpretable.
-Do not create ambiguous numeric comparisons.
+### Rule 4 — benchmark relevance first
+Focus on the three priority joins identified by the benchmark and merged matrix.
+Do not widen into a full lifestyle-intelligence platform.
 
-### Rule 5 — no speculative widening
-Do not add broad future-proofing fields unless there is a clear grounded need.
-
-### Rule 6 — HIGH-risk discipline
-Because this sprint is expected to touch:
-- `backend/core/contracts/`
+### Rule 5 — HIGH-risk discipline
+Touched-file scope should remain tight.
+Any changes to:
 - `backend/core/analytics/`
-it must be treated as HIGH-risk under the SOP.
-Keep the touched-file scope tight and justified.
+- `backend/core/pipeline/`
+- rooted hypothesis/KB assets
+must be justified and bounded.
+
+### Rule 6 — no diagnosis inflation
+These bridges are contextual modifiers and interpretation supports.
+They must not become diagnostic declarations.
 
 ---
 
@@ -202,15 +214,14 @@ Keep the touched-file scope tight and justified.
 
 The expected shape is:
 
-1. inspect current longitudinal contract and runtime flow
-2. verify the exact raw-value gap
-3. implement bounded contract upgrade
-4. implement bounded snapshot-linker/runtime support
-5. validate state-transition compatibility
-6. add regression tests
-7. document the contract change clearly
+1. inspect current lifestyle intake and modifier paths
+2. verify the missing deterministic joins
+3. implement governed bridge assets in the correct authority layer
+4. expose them to later compiler consumption
+5. add regression tests
+6. document the bridges briefly
 
-This must remain a precise enabling sprint, not a generalized refactor.
+This must remain a targeted enabling sprint.
 
 ---
 
@@ -218,32 +229,18 @@ This must remain a precise enabling sprint, not a generalized refactor.
 
 STOP immediately and report if any of the following are true:
 
-1. raw prior values are not actually available in persisted analysis outputs and cannot be recovered from the current storage path
-2. supporting numeric deltas would require a much wider persistence redesign than assumed
-3. downstream consumers are too tightly coupled to the old contract shape for a safe bounded change
-4. the correct solution appears to require introducing a separate longitudinal contract object rather than extending the current node shape, and that needs architectural adjudication first
-5. the touched-file scope expands materially beyond the expected contract/snapshot/transition layer
-6. repo reality contradicts the N-2 architecture assumptions
+1. the relevant lifestyle fields are not actually available in structured runtime form
+2. the correct solution would require a much wider redesign of questionnaire mapping
+3. no clean governed asset location exists and architectural adjudication is needed first
+4. the intended joins would force speculative or unsafe interpretation behaviour
+5. touched-file scope expands materially beyond the expected lifestyle / bridge / hypothesis path
+6. repo reality contradicts the N-2 architecture assumptions or merged matrix support diagnosis
 
 If blocked, report:
 - the exact blocker
 - the affected files
 - the smallest safe remediation path
-- whether N-3 should be split before implementation continues
-
----
-
-## Required output files and code expectations
-
-This is an implementation sprint.
-
-Expected outputs may include changes to:
-- contract files
-- analytics/snapshot files
-- transition files
-- tests
-
-You do not need to create a new strategy document unless a very short implementation note is necessary.
+- whether N-4 should be split before continuing
 
 ---
 
@@ -251,12 +248,12 @@ You do not need to create a new strategy document unless a very short implementa
 
 This sprint is successful only if:
 
-1. the longitudinal contract now supports deterministic raw prior/current numeric comparison
-2. the snapshot-linking path populates the required fields where data exists
-3. existing transition logic still works correctly or is safely adapted
-4. tests prove the new behaviour
-5. later narrative compiler work is materially unblocked
-6. the sprint remains bounded and does not become a broad pipeline rewrite
+1. the three priority lifestyle interpretation bridges now exist deterministically
+2. they are governed and traceable
+3. they can be consumed by later narrative compiler work
+4. they do not overclaim causality
+5. tests prove the behaviour
+6. the sprint remains bounded and does not become a broader lifestyle engine rewrite
 
 ---
 
@@ -264,18 +261,18 @@ This sprint is successful only if:
 
 At finish, the sprint should leave behind:
 
-- bounded code changes implementing the longitudinal contract upgrade
+- bounded code and/or governed asset changes implementing the bridge layer
 - regression tests
-- audit-ready explanation of:
-  - what changed
-  - why it changed
+- a short sprint note explaining:
+  - what was added
+  - what runtime path now exposes it
   - what future sprint it unblocks
 
 Report back with:
 - files touched
-- contract decision taken
-- whether raw numeric deltas are now deterministically supportable
-- any remaining limitation that later sprints must respect
+- bridge-asset design chosen
+- how each of the three benchmark joins is now supported
+- any remaining limitation later sprints must respect
 
 ---
 
@@ -283,11 +280,11 @@ Report back with:
 
 You must show, with exact file paths and grounded repo evidence:
 
-- where the old contract shape was insufficient
-- what new contract/data fields were introduced
-- where snapshot reconstruction now populates them
+- what lifestyle fields were used
+- what new bridge assets or logic were introduced
+- where they now live
+- how runtime can consume them later
 - how tests prove the change
-- how this specifically unblocks later narrative compilation
 
-Do not claim success merely because tests pass.
-Show that benchmark-style numeric longitudinal support is now actually enabled.
+Do not claim success merely because a few new rules exist.
+Show that benchmark-critical lifestyle context is now deterministically supportable.
