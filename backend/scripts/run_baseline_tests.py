@@ -32,6 +32,7 @@ def main() -> int:
             "tests/unit/test_retail_explainer_b1a.py",
             "tests/unit/test_retail_explainer_b1b.py",
             "tests/unit/test_pathway_explainers_v1.py",
+            "tests/unit/test_functional_interpretation_v1.py",
             "tests/unit/test_phenotype_suite_v1.py",
             "-v",
         ],
