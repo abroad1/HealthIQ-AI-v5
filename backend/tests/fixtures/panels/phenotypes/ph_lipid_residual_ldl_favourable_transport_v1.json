@@ -1,0 +1,10 @@
+{
+  "panel_id": "ph_lipid_residual_ldl_favourable_transport_v1",
+  "user": { "age": 50, "sex": "male" },
+  "biomarkers": {
+    "ldl_cholesterol": { "value": 3.8, "unit": "mmol/L", "reference_range": { "min": null, "max": 3.4, "unit": "mmol/L", "source": "lab" } },
+    "hdl_cholesterol": { "value": 2.0, "unit": "mmol/L", "reference_range": { "min": 1.0, "max": 1.6, "unit": "mmol/L", "source": "lab" } },
+    "total_cholesterol": { "value": 6.0, "unit": "mmol/L", "reference_range": { "min": null, "max": 5.2, "unit": "mmol/L", "source": "lab" } },
+    "triglycerides": { "value": 1.1, "unit": "mmol/L", "reference_range": { "min": null, "max": 1.7, "unit": "mmol/L", "source": "lab" } }
+  }
+}

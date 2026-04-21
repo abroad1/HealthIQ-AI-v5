@@ -1,0 +1,35 @@
+# N-7 — Benchmark-governed interpretation entities (compiler binding layer)
+#
+# Binds phenotype IDs, IDL records, and N-5/N-6 narrative-support assets for deterministic composition.
+# Does not replace phenotype_map_v1 (materialization rules) or idl_records_v1 (display authority).
+
+schema_version: "1.0.0"
+pack_version: "1.0.0"
+authority: knowledge_bus/interpretation_entities_v1
+
+cross_system_vascular_synthesis:
+  decision: deferred
+  rationale: |
+    Pathway explainers (N-5), functional interpretation assets (N-6), lifestyle bridges (N-4), and
+    existing ph_vascular_hcy_inflammation_v1 already cover vascular–inflammatory homocysteine
+    synthesis when inflammation signals fire. A separate umbrella “vascular synthesis” entity would
+    overlap those authorities without a distinct, non-redundant compiler object. Re-open only if
+    the locked benchmark narrative requires a named cross-system entity beyond int_benchmark_* bindings.
+
+interpretation_entities:
+  - interpretation_entity_id: int_benchmark_one_carbon_homocysteine_macrocytosis_v1
+    compiler_role: benchmark_lead_domain
+    phenotype_id: ph_one_carbon_homocysteine_macrocytosis_v1
+    idl_internal_id: ph_one_carbon_homocysteine_macrocytosis_v1
+    pathway_explainer_id: one_carbon_methylation_homocysteine_v1
+    functional_interpretation_domain_id: one_carbon_methylation_functional_v1
+    overlaps_note: |
+      When inflammatory signals are present, ph_vascular_hcy_inflammation_v1 may co-apply for
+      vascular-risk emphasis; the compiler should compose without merging governed authorities.
+
+  - interpretation_entity_id: int_benchmark_lipid_residual_ldl_favourable_transport_v1
+    compiler_role: benchmark_secondary_domain
+    phenotype_id: ph_lipid_residual_ldl_favourable_transport_v1
+    idl_internal_id: ph_lipid_residual_ldl_favourable_transport_v1
+    pathway_explainer_id: lipid_transport_cholesterol_handling_v1
+    functional_interpretation_domain_id: lipid_transport_functional_v1
