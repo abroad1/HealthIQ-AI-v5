@@ -243,7 +243,7 @@ def build_insight_graph_v1(
             return "high"
         return "unknown"
 
-    # Collect biomarker nodes: status + score only (PRD §4.7: no raw values/units/ranges)
+    # Collect biomarker nodes: interpreted status/score; optional lab_value/lab_unit for longitudinal (N-3).
     seen: Dict[str, Dict[str, Any]] = {}
     for system_name, system_score in scoring_result.get("health_system_scores", {}).items():
         for bs in system_score.get("biomarker_scores", []):
@@ -271,7 +271,14 @@ def build_insight_graph_v1(
                     score_float = float(score_val)
                 except (ValueError, TypeError):
                     pass
-            seen[name] = {"name": name, "status": status, "score": score_float}
+            unit_s = str(bs.get("unit") or "").strip()[:64]
+            seen[name] = {
+                "name": name,
+                "status": status,
+                "score": score_float,
+                "lab_value": value_float,
+                "lab_unit": unit_s or None,
+            }
 
     # Add unscored biomarkers (status only, no score)
     for name, bm_data in filtered_biomarkers.items():
@@ -293,13 +300,24 @@ def build_insight_graph_v1(
             mn, mx = ref_range.get("min"), ref_range.get("max")
             if isinstance(mn, (int, float)) and isinstance(mx, (int, float)):
                 status = frontend_status_from_value_and_range(value_float, float(mn), float(mx))
-        seen[name] = {"name": name, "status": status, "score": None}
+        unit_raw = ""
+        if isinstance(bm_data, dict):
+            unit_raw = str(bm_data.get("unit") or "").strip()[:64]
+        seen[name] = {
+            "name": name,
+            "status": status,
+            "score": None,
+            "lab_value": value_float,
+            "lab_unit": unit_raw or None,
+        }
 
     nodes = [
         BiomarkerNode(
             biomarker_id=v["name"],
             status=v["status"],
             score=v.get("score"),
+            lab_value=v.get("lab_value"),
+            lab_unit=v.get("lab_unit"),
         )
         for v in seen.values()
     ]
