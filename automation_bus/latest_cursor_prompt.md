@@ -1,26 +1,29 @@
 ---
-work_id: N-5
-branch: feature/n-5-pathway-explainer-asset-pack-v1
+work_id: N-6
+branch: feature/n-6-functional-interpretation-and-confidence-assets
 risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
 change_type: CONTENT
 ---
 
-# N-5 — Pathway explainer asset pack v1
+# N-6 — Functional interpretation and confidence assets
 
 ## Objective
 
-Create the first governed pathway-grade explainer assets that the future deterministic narrative compiler will consume for benchmark-style system biology interpretation.
+Create the first governed functional-interpretation, confidence, clarification, and monitoring assets that the future deterministic narrative compiler will consume for benchmark-style reasoning.
 
 This is a CONTENT sprint.
 It is not a frontend sprint.
 It is not a compiler implementation sprint.
-Do not modify backend analytical logic unless a tiny loader/registry touch is strictly required and justified.
+Do not modify backend analytical logic unless a tiny validation/registry touch is strictly required and justified.
 Do not widen into narrative assembly.
 
-The purpose of N-5 is to author and govern the reusable explanatory assets needed to support the benchmark narrative at pathway level, starting with the two highest-priority domains:
-- methylation / one-carbon / homocysteine handling
-- lipid transport / cholesterol handling
+The purpose of N-6 is to author the reusable governed assets needed for benchmark-grade interpretive moves such as:
+- “this is not simple persistent deficiency; it is incomplete pathway efficiency”
+- “why this matters beyond itself”
+- “confidence is moderate because…”
+- “what would clarify the picture”
+- “what improvement would look like”
 
 ---
 
@@ -31,12 +34,13 @@ The following are already decided and are not open for reinterpretation in this 
 - The benchmark narrative is locked.
 - The merged reverse-engineering matrix is locked.
 - The narrative compiler architecture is locked.
-- N-3 has closed the longitudinal raw-value contract gap.
-- N-4 has created the first lifestyle interpretation bridge assets.
-- One of the major remaining deterministic gaps is the absence of governed pathway-grade explainer assets.
-- N-5 exists to create those governed explainer assets before N-6 and N-8.
+- N-3 closed the longitudinal raw-value contract gap.
+- N-4 created the first lifestyle interpretation bridge assets.
+- N-5 created pathway-grade explainer assets for the two benchmark-priority systems.
+- One of the major remaining deterministic gaps is the absence of governed assets for functional reading, confidence framing, clarification logic, and monitoring criteria.
+- N-6 exists to create those governed assets before N-8 compiler implementation.
 
-Your job is to create the first high-quality governed pathway explainer pack that later compiler work can consume.
+Your job is to create the first high-quality governed asset pack for these interpretive moves.
 
 ---
 
@@ -56,30 +60,35 @@ Treat the following as required inputs:
 4. Narrative compiler architecture  
 `docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md`
 
-5. Relevant current runtime and authority files, at minimum:
+5. Relevant current authority files, at minimum:
+- `knowledge_bus/root_cause/hypotheses/hcy_hypotheses_v1.yaml`
+- relevant lipid transport / LDL hypotheses
+- `knowledge_bus/registries/confirmatory_tests_v1.yaml`
+- `knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml`
 - `knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml`
-- `knowledge_bus/phenotypes/phenotype_map_v1.yaml`
-- relevant homocysteine / macrocytosis / lipid transport packages and hypotheses
-- `backend/ssot/retail_explainer_v1/registry.yaml`
-- any current explainer-bearing asset paths you determine are relevant
+- any other current hypothesis/registry/explainer-bearing assets you determine are relevant
 
 ---
 
 ## Core problem this sprint must solve
 
-HealthIQ currently has:
+HealthIQ already has:
 - signals
 - hypotheses
-- rankings
+- confirmatory tests
+- pathway explainers
 - some short “why it matters” strings
 
-But it does not yet have governed pathway-level explanation assets that can tell the user, in medically disciplined and reusable prose:
-- what a pathway/system does
-- how the body uses it
-- why the relevant markers belong together
-- why the pattern matters beyond a single number
+But it does not yet have governed assets for the higher-order interpretive moves that make the benchmark report feel intelligent rather than descriptive.
 
-This sprint must create those assets in a governed form that later deterministic compiler work can consume.
+This sprint must create those governed assets in reusable form so that later compiler work can produce disciplined outputs such as:
+- functional reading
+- confidence / limits
+- clarification paths
+- monitoring relevance
+- “why this matters beyond itself”
+
+without relying on ad hoc prose assembly.
 
 ---
 
@@ -87,11 +96,11 @@ This sprint must create those assets in a governed form that later deterministic
 
 Deliver a bounded CONTENT implementation that:
 
-1. defines the correct governed home for pathway explainers
-2. authors the first v1 pathway explainer assets for the two benchmark-priority systems
-3. keeps the prose medically serious, readable, and reusable
-4. avoids overclaiming or diagnosis inflation
-5. leaves the assets ready for later compiler consumption
+1. defines the correct governed home for these new interpretive assets
+2. authors the first v1 assets for the benchmark-priority domains
+3. keeps the prose medically serious, reusable, and non-alarmist
+4. avoids diagnosis inflation or causal overclaiming
+5. leaves the assets ready for later narrative compiler consumption
 
 ---
 
@@ -100,73 +109,90 @@ Deliver a bounded CONTENT implementation that:
 ### 1. Preflight authority verification
 Before writing assets, verify and cite:
 
-- what current explainer-bearing assets exist
-- whether any current field in IDL, phenotype map, or SSOT already partially serves this role
-- what current asset locations are clearly too shallow for benchmark needs
-- what the cleanest governed home is for reusable pathway explainers
+- what current hypothesis/IDL/confirmatory-test fields already partially support these interpretive moves
+- which current fields are too shallow for benchmark needs
+- what the cleanest governed home is for reusable functional/confidence/monitoring assets
+- whether these should extend an existing governed asset family or become a new pack
 
 You must confirm the correct authority location before authoring content.
 
 ### 2. Governed asset location decision
-Choose and justify the governed home for these explainers.
+Choose and justify the governed home for these assets.
 
 Possible options include:
-- extending an existing governed registry
-- creating a new pathway explainer registry
+- extending an existing governed hypothesis family
+- extending the new pathway explainer pack
+- creating a new functional interpretation asset pack
 - another bounded governed structure
 
 Prefer clarity, reuse, and future compiler compatibility.
 
-Do not bury long pathway prose in an inappropriate existing field if that would create muddled authority.
+Do not blur:
+- pathway explanation
+- hypothesis evidence
+- display-layer copy
+- higher-order interpretive framing
 
-### 3. Methylation / one-carbon pathway explainer
-Author a governed pathway explainer for the lead benchmark domain.
+### 3. One-carbon / methylation functional interpretation assets
+Author governed assets for the lead benchmark domain covering, in reusable terms:
 
-It should cover, in disciplined reusable terms:
-- what the pathway does
-- how homocysteine fits into it
-- why remethylation / transsulfuration matter
-- why red-cell maturation belongs nearby
-- why this pathway can show friction even when serum availability looks improved
-- why it matters beyond a single marker reading
+- functional reading
+  - e.g. distinction between simple serum deficiency framing and incomplete pathway efficiency / clearance friction
+- why this matters beyond itself
+  - vascular context
+  - blood-cell maturation context
+  - interpretive relevance
+- confidence framing
+  - what supports the reading
+  - what limits certainty
+- clarification assets
+  - what additional markers or conditions would sharpen the picture
+- monitoring relevance
+  - what improvement would look like
+  - what persistence would mean
 
-This is not a full patient report.
-It is a reusable governed asset.
+These should be reusable governed assets, not a bespoke report section.
 
-### 4. Lipid transport / cholesterol handling explainer
-Author a governed pathway explainer for the secondary benchmark domain.
+### 4. Lipid transport functional interpretation assets
+Author governed assets for the secondary benchmark domain covering, in reusable terms:
 
-It should cover, in disciplined reusable terms:
-- what the lipid transport system does
-- why LDL/HDL/ApoB/triglycerides are part of one transport story
-- why a single LDL number is not the whole architecture
-- how protective and atherogenic features can coexist
-- why the system matters beyond simplistic “high cholesterol” framing
+- functional reading
+  - residual LDL-related exposure within a more protective transport context
+- why this matters beyond itself
+  - cumulative exposure
+  - transport architecture context
+- confidence framing
+  - what makes this reading relatively stronger or weaker
+- clarification assets
+  - what wider context modifies interpretation
+- monitoring relevance
+  - what future drift would matter
+  - what stable control would mean
 
-Again, this is a reusable governed asset, not a full report section.
+Again, this is a reusable governed asset set, not a final assembled section.
 
 ### 5. Asset structure and field design
-The asset structure must make clear which parts are for later compiler use.
+The structure must support later compiler consumption of things like:
+- functional_reading
+- why_beyond_itself
+- confidence_grade_label
+- confidence_limits
+- clarification_paths
+- monitoring_improvement_signals
+- monitoring_persistence_signals
 
-At minimum, the design should support clean compiler consumption of things like:
-- pathway role / function
-- system-in-action explanation
-- why markers belong together
-- why it matters beyond itself
-- bounded uncertainty / interpretive caution where needed
+Do not write one large undifferentiated prose block unless you explicitly justify it.
 
-Do not write one giant unstructured prose blob unless that is explicitly the cleanest governed design and you justify it.
+### 6. Validation / structural checks if needed
+If the chosen governed home needs validation or structural tests, add the minimum appropriate checks.
 
-### 6. Tests / validation if required
-If the chosen asset location requires validation or schema coverage, add the minimum appropriate checks.
-
-If no code/schema change is required because this is a docs-only governed content addition under an already-valid structure, say so clearly.
+If no code/schema change is needed beyond a content asset plus lightweight structure test, say so clearly.
 
 ### 7. Short sprint note
 Add a concise implementation note documenting:
 - what asset location was chosen
-- what explainers were added
-- what future sprint this unblocks
+- what interpretive assets were added
+- what later sprint this unblocks
 
 ---
 
@@ -174,36 +200,36 @@ Add a concise implementation note documenting:
 
 The following are explicitly out of scope:
 
-- full narrative compilation
+- narrative compiler implementation
 - frontend changes
 - body-overview compiler work
-- confidence/uncertainty compiler work
-- monitoring criteria assets unless minimally required by the chosen schema
+- broader pathway explainer work beyond the two benchmark domains
 - new lifestyle bridge work
-- new longitudinal work
+- new longitudinal contract work
+- new phenotype/IDL entities unless absolutely required by the chosen asset structure
 - Gemini / LLM work
 
 ---
 
 ## Design rules
 
-### Rule 1 — reusable, not bespoke report prose
+### Rule 1 — reusable interpretive assets, not bespoke copy
 These assets must support many future reports, not just the AB benchmark case.
 
-### Rule 2 — medically disciplined explanation
-Do not drift into fluffy wellness language, dramatic prose, or unsupported simplifications.
+### Rule 2 — medically disciplined framing
+Do not drift into dramatic, fluffy, speculative, or overly certain language.
 
-### Rule 3 — system biology, not diagnosis inflation
-Explain the biology and interpretive logic without turning explanatory text into diagnostic claims.
+### Rule 3 — no diagnosis inflation
+Explain interpretive meaning without making claims the panel alone cannot support.
 
-### Rule 4 — governed authority clarity
-Make it obvious where these explainers live and what owns them.
+### Rule 4 — clear authority separation
+Do not muddle pathway explainers, root-cause evidence, and higher-order interpretive framing into one unsafe layer.
 
 ### Rule 5 — benchmark relevance first
-Focus on the two highest-value domains needed by the benchmark before widening to more systems.
+Focus on the two benchmark-priority domains before widening to more systems.
 
 ### Rule 6 — compiler-ready structure
-Author the content in a form the later narrative compiler can consume cleanly.
+Author the content in a form the later narrative compiler can consume cleanly and selectively.
 
 ---
 
@@ -211,13 +237,13 @@ Author the content in a form the later narrative compiler can consume cleanly.
 
 The expected shape is:
 
-1. inspect current explainer-bearing assets
+1. inspect current interpretive-bearing assets
 2. decide the correct governed home
-3. author the first pathway explainer assets
+3. author the first functional/confidence/monitoring assets
 4. add minimal validation if needed
 5. write a short sprint note
 
-This must remain a targeted asset-authoring sprint, not a narrative assembly sprint.
+This must remain a targeted asset-authoring sprint, not narrative assembly.
 
 ---
 
@@ -226,7 +252,7 @@ This must remain a targeted asset-authoring sprint, not a narrative assembly spr
 STOP immediately and report if any of the following are true:
 
 1. there is no clean governed home and architectural adjudication is needed first
-2. the chosen asset location would blur authority with IDL, phenotype definitions, or frontend copy in an unsafe way
+2. the chosen asset location would blur authority with pathway explainers, hypotheses, or display-layer copy in an unsafe way
 3. the prose needed would require unresolved interpretation-entity decisions first
 4. schema/validation work needed is much larger than expected
 5. touched-file scope expands materially beyond the intended governed-content layer
@@ -235,7 +261,7 @@ If blocked, report:
 - the exact blocker
 - the affected files
 - the smallest safe remediation path
-- whether N-5 should be split before continuing
+- whether N-6 should be split before continuing
 
 ---
 
@@ -243,10 +269,10 @@ If blocked, report:
 
 This sprint is successful only if:
 
-1. the governed home for pathway explainers is clear
-2. the methylation/one-carbon explainer exists
-3. the lipid transport explainer exists
-4. the assets are medically serious and reusable
+1. the governed home for functional interpretation/confidence assets is clear
+2. the one-carbon / methylation asset set exists
+3. the lipid transport asset set exists
+4. the assets are medically serious, reusable, and non-alarmist
 5. later narrative compiler work is materially unblocked
 6. the sprint remains bounded and does not become narrative assembly
 
@@ -256,7 +282,7 @@ This sprint is successful only if:
 
 At finish, the sprint should leave behind:
 
-- the new or extended governed explainer asset file(s)
+- the new or extended governed asset file(s)
 - any minimal validation needed
 - a short sprint note explaining:
   - what was added
@@ -275,11 +301,11 @@ Report back with:
 
 You must show, with exact file paths and grounded repo evidence:
 
-- what current explainer assets were insufficient
-- where the new pathway explainers now live
+- what current assets were insufficient
+- where the new functional/confidence assets now live
 - what structure they use
 - why that structure is suitable for later compiler consumption
 - how this specifically unblocks later deterministic narrative work
 
-Do not claim success merely because two prose entries were added.
-Show that benchmark-critical pathway explanation is now governed and reusable.
+Do not claim success merely because some explanatory prose was added.
+Show that benchmark-critical functional interpretation and confidence framing is now governed and reusable.

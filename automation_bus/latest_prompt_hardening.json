@@ -1,124 +1,154 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "N-5",
+  "work_id": "N-6",
   "status": "HARDENED",
-  "hardened_utc": "2026-04-21T17:11:20Z",
-  "hardened_by": "Claude (Sonnet 4.6) — Prompt Hardening role",
+  "hardened_utc": "2026-04-21T00:00:00Z",
+  "hardened_by": "claude-sonnet-4-6",
   "changes": [
     {
       "check": "front_matter_all_five_fields",
       "result": "PASS",
-      "evidence": "automation_bus/latest_cursor_prompt.md lines 2-6: work_id=N-5, branch=feature/n-5-pathway-explainer-asset-pack-v1, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=CONTENT — all five mandatory fields present"
+      "citation": "automation_bus/latest_cursor_prompt.md lines 2-6: work_id=N-6, branch=feature/n-6-functional-interpretation-and-confidence-assets, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=CONTENT — all five mandatory fields present"
     },
     {
       "check": "change_type_CONTENT_correctness",
       "result": "CONFIRMED",
-      "evidence": "Sprint authors YAML governed assets only. No existing compiler loads pathway explainers — narrative_report_compiler_v1.py does not exist in repo (no file found). No current analytical output changes. CONTENT classification correct."
+      "citation": "automation_bus/latest_cursor_prompt.md:6. Sprint creates new knowledge_bus/ YAML governed asset files only. No backend analytical logic, no compiler code, no evaluator changes in scope per prompt lines 199-212 (out-of-scope list). CONTENT classification correct."
     },
     {
-      "check": "risk_level_STANDARD_conditional",
-      "result": "CONDITIONAL — Constraint §A enforced",
-      "evidence": "STANDARD valid ONLY if output files placed outside backend/ssot/. SOP §10 triggers HIGH for any backend/ssot/ touch regardless of whether an existing engine loads the file. N-4 precedent: backend/ssot/lifestyle_interpretation_bridges_v1.yaml line 1 confirmed written to backend/ssot/ and classified HIGH/MIXED. N-5 pathway explainers have no existing consuming engine — but file path rule still applies. Recommended home: knowledge_bus/pathway_explainers_v1/. Cursor MUST STOP and return to GPT if backend/ssot/ placement is required."
+      "check": "risk_level_STANDARD_correctness",
+      "result": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:4. Sprint outputs to knowledge_bus/ only. No backend/ssot/, backend/core/pipeline/, backend/core/analytics/, run_work_package.py, golden_gate_local.py, or update_cursor_status.py in scope. No existing Intelligence Core component loaded or modified. New assets will be consumed by a future compiler that does not yet exist. STANDARD is correct."
     },
     {
       "check": "authority_path_AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK",
       "result": "CONFIRMED",
-      "evidence": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md — confirmed present in docs/golden-narrative/ directory listing"
+      "citation": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md — file confirmed present in repo"
     },
     {
       "check": "authority_path_REVERSE_ENGINEERING_MERGED",
       "result": "CONFIRMED",
-      "evidence": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md — confirmed present in docs/golden-narrative/ directory listing"
+      "citation": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md — file confirmed present in repo"
     },
     {
       "check": "authority_path_SPRINT_STRATEGY_FINAL",
       "result": "CONFIRMED",
-      "evidence": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md — confirmed present in docs/golden-narrative/ directory listing"
+      "citation": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md — file confirmed present in repo"
     },
     {
       "check": "authority_path_COMPILER_ARCHITECTURE_v1",
       "result": "CONFIRMED",
-      "evidence": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md — confirmed present; §3.2 lines 57-67 names pathway explainers as belonging to Governed narrative asset layer; §6.3 lines 261-276 and §6.4 lines 277-289 name pathway explainer assets as inputs to lead_narrative and secondary_narratives sections of NarrativeReportV1"
+      "citation": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md — file confirmed present in repo"
+    },
+    {
+      "check": "authority_path_hcy_hypotheses_v1",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/root_cause/hypotheses/hcy_hypotheses_v1.yaml:1 — schema_version: 'v1', asset_id: 'hcy_hypotheses_v1', 4 hypotheses present (lines 11-174)"
+    },
+    {
+      "check": "authority_path_lipid_transport_dysfunction_hypotheses_v1",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/root_cause/hypotheses/lipid_transport_dysfunction_hypotheses_v1.yaml:1 — schema_version: 'v1', asset_id: 'lipid_transport_dysfunction_hypotheses_v1', 3 hypotheses present (lines 11-116)"
+    },
+    {
+      "check": "authority_path_ldl_cholesterol_high_hypotheses_v1",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/root_cause/hypotheses/ldl_cholesterol_high_hypotheses_v1.yaml:1 — schema_version: 'v1', asset_id: 'ldl_cholesterol_high_hypotheses_v1', 3 hypotheses present (lines 11-102)"
+    },
+    {
+      "check": "authority_path_confirmatory_tests_v1",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/registries/confirmatory_tests_v1.yaml:1 — schema_version: 'v1', registry_id: 'confirmatory_tests_v1'"
+    },
+    {
+      "check": "authority_path_pathway_explainers_v1",
+      "result": "CONFIRMED",
+      "citation": "knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml:6 — schema_version: '1.0.0', pack_version: '1.0.0'. Two pathways: one_carbon_methylation_homocysteine_v1 (line 11) and lipid_transport_cholesterol_handling_v1 (line 73)."
     },
     {
       "check": "authority_path_idl_records_v1",
-      "result": "CONFIRMED — insufficient for pathway explainers",
-      "evidence": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml read lines 1-80: records contain why_it_matters (1-sentence, e.g. line 13) and subtitle. Display-label authority only. Confirmed cannot serve as pathway explainer home."
+      "result": "CONFIRMED — insufficient for functional interpretation assets",
+      "citation": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:5 — schema_version: '1.0.0'. why_it_matters is a single sentence per record (e.g. line 35). No confidence framing, no clarification_paths, no monitoring fields. Confirmed cannot serve as home for N-6 assets."
     },
     {
-      "check": "authority_path_phenotype_map_v1",
-      "result": "CONFIRMED — insufficient for pathway explainers",
-      "evidence": "knowledge_bus/phenotypes/phenotype_map_v1.yaml read lines 1-60: signal-matching logic with required_signals/required_edges (e.g. lines 11-23). No prose pathway explanation content. Confirmed cannot serve as pathway explainer home."
+      "check": "no_duplicate_authority_sources",
+      "result": "CONFIRMED — no duplicates detected",
+      "citation": "Hypotheses, pathway_explainers_v1, IDL, and confirmatory tests are separate registries with non-overlapping scopes. No existing file provides functional_reading, confidence_grade_label, clarification_paths, or monitoring fields. A new pack is a clean, non-conflicting addition."
     },
     {
-      "check": "authority_path_retail_explainer_registry",
-      "result": "CONFIRMED — insufficient and must not be extended for pathway prose",
-      "evidence": "backend/ssot/retail_explainer_v1/registry.yaml read lines 215-365: systems section has short 3-4 sentence educational overviews. cardiovascular entry (lines 231-246) has no pathway mechanism, no marker-cohesion explanation, no transport architecture description. Extending this file would (a) touch backend/ssot/ — requiring HIGH risk reclassification — and (b) create muddled authority per prompt Rule 4."
+      "check": "source_cross_ref_functional_reading_gap",
+      "result": "CONFIRMED GAP",
+      "citation": "hcy_hypotheses_v1.yaml:16 summary_template is single-sentence root-cause descriptor ('Homocysteine is elevated with a pattern that can be consistent with reduced B12-related methylation capacity.'). lipid_transport_dysfunction_hypotheses_v1.yaml:16 same pattern. No functional_reading field exists in any current governed asset."
     },
     {
-      "check": "source_cross_ref_lipid_transport_package",
+      "check": "source_cross_ref_confidence_framing_gap",
+      "result": "CONFIRMED GAP",
+      "citation": "hcy_hypotheses_v1.yaml:16 evidence_strength: 'moderate'; lipid_transport_dysfunction_hypotheses_v1.yaml:15 evidence_strength: 'strong' — these are labels only. No confidence_grade_label or confidence_limits fields (what supports the reading, what limits certainty) exist anywhere in current governed assets."
+    },
+    {
+      "check": "source_cross_ref_clarification_paths_gap",
+      "result": "CONFIRMED GAP",
+      "citation": "hcy_hypotheses_v1.yaml:49-53 missing_data_markers tracks data gaps ('Active B12 adds functional context when serum B12 is borderline') — not an interpretive clarification path. No clarification_paths field exists in pathway_explainers_v1.yaml or idl_records_v1.yaml."
+    },
+    {
+      "check": "source_cross_ref_monitoring_signals_gap",
+      "result": "CONFIRMED GAP",
+      "citation": "No monitoring_improvement_signals or monitoring_persistence_signals field in hcy_hypotheses_v1.yaml (lines 1-175), lipid_transport_dysfunction_hypotheses_v1.yaml (lines 1-116), ldl_cholesterol_high_hypotheses_v1.yaml (lines 1-102), pathway_explainers_v1.yaml (lines 1-126), or idl_records_v1.yaml (lines 1-99)."
+    },
+    {
+      "check": "source_cross_ref_why_beyond_itself_gap",
+      "result": "CONFIRMED GAP",
+      "citation": "pathway_explainers_v1.yaml:61-67 'why_matters_beyond_a_single_marker_reading' is pathway-level educational prose — not a per-domain structured field reusable by the compiler as a discrete asset. idl_records_v1.yaml:35 why_it_matters is one sentence. Neither provides benchmark-grade structured why_beyond_itself."
+    },
+    {
+      "check": "source_cross_ref_pathway_explainers_scope_boundary",
       "result": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/pkg_lipid_transport/research_brief.yaml lines 67-76: physiological_claim covers non-HDL-C/ApoB/TRL lipid transport dysfunction anchored to Lancet 2019 (n=398,846). Lines 56-65 list biomarkers: total_cholesterol, hdl_cholesterol, triglycerides, ldl_cholesterol, non_hdl_cholesterol. Confirmed as source content for lipid transport pathway explainer."
+      "citation": "pathway_explainers_v1.yaml:1-4 comment header explicitly declares asset is 'Distinct from: IDL phenotype labels (interpretation_display_layer_v1), retail_explainer_v1 (short per-biomarker UI education), and hypothesis YAML.' N-6 must not extend pathway_explainers_v1.yaml with confidence/monitoring fields — that would violate the declared scope boundary."
     },
     {
-      "check": "source_cross_ref_homocysteine_package",
-      "result": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/pkg_homocysteine_elevation_context/research_brief.yaml lines 19-27: physiological_claim covers one-carbon metabolism impairment, B-vitamin insufficiency, endothelial stress context. Biomarkers: homocysteine, vitamin_b12, folate, transferrin, mcv, crp. Confirmed as source content for methylation/one-carbon pathway explainer."
-    },
-    {
-      "check": "source_cross_ref_kb52c_homocysteine_methylation",
-      "result": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/pkg_kb52c_homocysteine_high_b_vitamin_related_methylation_impairment/ — directory confirmed present. Package covers B-vitamin-related methylation impairment context for homocysteine domain."
-    },
-    {
-      "check": "prior_task_N4_closed",
-      "result": "CONFIRMED",
-      "evidence": "backend/ssot/lifestyle_interpretation_bridges_v1.yaml line 1: '# N-4 — Governed lifestyle -> interpretation bridge thresholds (v1)'. Git log commit 5b6962d: 'feat(N-4): governed lifestyle interpretation bridges in analysis meta'. N-4 confirmed closed."
-    },
-    {
-      "check": "no_duplicate_authority_pathway_explainer",
-      "result": "CONFIRMED",
-      "evidence": "find command confirmed no directory or file named *pathway* or *explainer* exists outside backend/ssot/retail_explainer_v1/. Clean new asset space for pathway_explainers_v1. No existing authority to conflict with."
-    },
-    {
-      "check": "forbidden_files_compiler_code",
-      "result": "PASS",
-      "evidence": "CONTENT sprint. backend/core/analytics/ and backend/core/pipeline/ writes are out of scope per prompt lines 178-185 (out-of-scope list). No compiler code changes authorised. Narrative_report_compiler_v1.py does not exist — N-5 must not create it."
+      "check": "no_op_protection",
+      "result": "REAL WORK CONFIRMED",
+      "citation": "Five distinct asset types (functional_reading, confidence framing, clarification_paths, monitoring signals, why_beyond_itself) are absent from all current governed assets. Gap confirmed by source file reads. Sprint is not a no-op."
     },
     {
       "check": "stop_condition_1_clean_governed_home",
-      "result": "NOT_TRIGGERED",
-      "evidence": "knowledge_bus/ is a clean governed home consistent with compiler architecture §3.2. Recommended: knowledge_bus/pathway_explainers_v1/ new directory. No architectural adjudication needed."
+      "result": "NOT TRIGGERED",
+      "citation": "A new pack (e.g. knowledge_bus/functional_interpretation_v1/) is a clean governed home consistent with prompt Rule 4 (authority separation). pathway_explainers_v1 header (line 1-4) explicitly excludes confidence/monitoring content. No architectural adjudication needed."
     },
     {
       "check": "stop_condition_2_authority_blur",
-      "result": "NOT_TRIGGERED",
-      "evidence": "A dedicated pathway_explainers_v1 asset in knowledge_bus/ has clean separation from IDL (display labels), phenotype_map (signal logic), and retail_explainer (per-biomarker education). No blur if placed correctly."
+      "result": "NOT TRIGGERED",
+      "citation": "New pack at knowledge_bus/functional_interpretation_v1/ has clean separation from: pathway explainers (pathway biology prose), hypotheses (root-cause evidence rules), IDL (display labels), retail_explainer (UI education). No blur if placed correctly."
     },
     {
-      "check": "stop_condition_3_interpretation_entity_decisions",
-      "result": "NOT_TRIGGERED",
-      "evidence": "Pathway explainers describe biology and why markers belong together. They are not interpretation entities and do not require entity resolution before authoring."
+      "check": "stop_condition_3_entity_decisions",
+      "result": "NOT TRIGGERED",
+      "citation": "Functional interpretation and confidence assets describe interpretive moves (what the pattern means functionally, what limits certainty). These do not require new interpretation entity resolution before authoring."
     },
     {
       "check": "stop_condition_4_schema_work_larger_than_expected",
-      "result": "NOT_TRIGGERED",
-      "evidence": "CONTENT sprint. New YAML asset with no required runtime loader. Validation is minimal (schema header, YAML lint). No compiler invocation required until N-6/N-8."
+      "result": "NOT TRIGGERED",
+      "citation": "CONTENT sprint. New YAML asset files only. Validation is minimal (YAML schema lint + structural test if needed). No runtime loader exists or is created in this sprint."
     },
     {
       "check": "stop_condition_5_scope_expansion",
-      "result": "NOT_TRIGGERED — conditional on Constraint §A",
-      "evidence": "Scope bounded to new YAML file(s) in knowledge_bus/pathway_explainers_v1/ plus minimal sprint note. STOP is triggered only if Cursor determines backend/ssot/ placement is required (which triggers HIGH reclassification)."
+      "result": "NOT TRIGGERED",
+      "citation": "Scope bounded to new YAML file(s) in knowledge_bus/ plus minimal sprint note. No backend file writes required."
     },
     {
-      "check": "constraint_A_backend_ssot_prohibition",
-      "result": "ENFORCED",
-      "evidence": "SOP §10 lists backend/ssot/ as explicit HIGH risk trigger. STANDARD risk classification is valid only if N-5 output is placed outside backend/ssot/. Extending retail_explainer_v1/registry.yaml is prohibited for this reason AND because it would create muddled authority (prompt Rule 4). Cursor MUST STOP and return to GPT if it determines backend/ssot/ placement is required."
+      "check": "forbidden_files_check",
+      "result": "PASS",
+      "citation": "backend/ssot/, backend/core/pipeline/, backend/core/analytics/, run_work_package.py, golden_gate_local.py, update_cursor_status.py — none referenced in scope. No tooling file (.codex/, .vscode/, AGENTS.md) leakage risk."
+    },
+    {
+      "check": "stage_2b_behavioural_hardening",
+      "result": "NOT APPLICABLE",
+      "citation": "automation_bus/latest_cursor_prompt.md:6 change_type: CONTENT. No compiler logic, evaluator logic, pipeline behaviour, or output-generation code in scope. Stage 2B does not apply."
     },
     {
       "check": "stage_0_branch_alignment",
       "result": "FLAG — action required before Stage 3",
-      "evidence": "Current branch from git context: main. Prompt requires feature/n-5-pathway-explainer-asset-pack-v1. Cursor must create or checkout this branch before Stage 3 (run_work_package.py start)."
+      "citation": "Current branch from git context: main. Prompt requires feature/n-6-functional-interpretation-and-confidence-assets (automation_bus/latest_cursor_prompt.md:3). Cursor must create or checkout this branch before Stage 3."
     }
   ]
 }
