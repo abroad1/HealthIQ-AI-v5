@@ -1,0 +1,39 @@
+# N-4 — Governed lifestyle → interpretation bridge thresholds (v1)
+# Consumed by core.analytics.lifestyle_interpretation_bridge_engine
+# Not clinical reference ranges for results; bounded narrative-compiler context only.
+
+version: "1.0.0"
+asset_id: lifestyle_interpretation_bridges_v1
+
+alcohol_one_carbon_macrocytosis:
+  # UK-style units/week already mapped from questionnaire in QuestionnaireMapper / behavioural inputs.
+  moderate_units_min: 8.0
+  elevated_units_min: 15.0
+  # Bridge activates only when intake ≥ moderate AND lab coherence exists (homocysteine and/or MCV interpretable).
+  coherence_biomarkers:
+    homocysteine_id: homocysteine
+    mcv_id: mcv
+
+hydration_activity_renal:
+  # Uses SSOT questionnaire: daily_fluid_intake, vigorous_exercise_days, resistance_training_days.
+  # Does not use occupational / physical-work fields (not in SSOT as a single field).
+  fluid_intake_low_liters_max: 1.2
+  daily_fluid_intake_low_labels:
+    - "Less than 1 litre"
+  vigorous_exercise_high_labels:
+    - "3 days"
+    - "4+ days"
+  resistance_training_high_labels:
+    - "3+ days"
+  renal_biomarker_ids:
+    - egfr
+    - creatinine
+    - urea
+
+fasting_dietary_glycaemic:
+  dietary_intermittent_fasting_label: "Intermittent fasting"
+  extended_fasting_hour_labels:
+    - "11-12 hours"
+    - "13-14 hours"
+    - "15+ hours"
+  glycaemic_biomarker_id: hba1c
