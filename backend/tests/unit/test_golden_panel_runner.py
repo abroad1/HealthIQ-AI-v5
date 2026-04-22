@@ -1033,3 +1033,26 @@ def test_interaction_edge_isolation_unrelated_fixture_unchanged(tmp_path, monkey
     assert insight_legacy.get("interaction_chains", []) == insight_current.get("interaction_chains", [])
     assert insight_legacy.get("interaction_summary", []) == insight_current.get("interaction_summary", [])
     assert insight_legacy.get("signal_results", []) == insight_current.get("signal_results", [])
+
+
+def test_golden_panel_narrative_harness_overlay_exercises_longitudinal(tmp_path):
+    """N-9B: harness overlay supplies prior labs + transitions; narrative longitudinal is non-empty on AB path."""
+    root = Path(__file__).resolve().parents[1]
+    fixture = root / "fixtures" / "panels" / "ab_full_panel_with_ranges.json"
+    overlay = root / "fixtures" / "panels" / "ab_n9b_narrative_harness_overlay.json"
+    run_dir, result = run_golden_panel(
+        fixture_path=fixture,
+        output_root=tmp_path,
+        run_id="unit-narrative-harness-longitudinal",
+        write_narrative=False,
+        narrative_harness_overlay_path=overlay,
+    )
+    assert result.get("status") == "completed"
+    nr = result.get("narrative_report_v1") or {}
+    long_text = str(nr.get("longitudinal_narrative") or "")
+    assert long_text.strip()
+    assert "creatinine" in long_text.lower()
+    assert "improved" in long_text.lower() or "improving" in long_text.lower()
+    ig = _load_json(run_dir / "insight_graph.json")
+    assert isinstance(ig.get("state_transitions"), list)
+    assert ig["state_transitions"]

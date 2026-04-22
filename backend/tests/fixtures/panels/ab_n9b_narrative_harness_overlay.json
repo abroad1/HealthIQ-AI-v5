@@ -1,0 +1,16 @@
+{
+  "narrative_harness_overrides_v1": {
+    "prior_biomarker_lab_snapshot_v1": {
+      "homocysteine": { "lab_value": 18.5, "lab_unit": "\u03bcmol/L" }
+    },
+    "state_transitions": [
+      {
+        "biomarker_id": "creatinine",
+        "from_status": "high",
+        "to_status": "normal",
+        "transition": "improving",
+        "evidence_codes": ["status_change"]
+      }
+    ]
+  }
+}

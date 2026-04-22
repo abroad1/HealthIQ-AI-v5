@@ -195,45 +195,6 @@ def _build_body_overview(
     return _join_blocks(parts)
 
 
-def _build_secondary_systems_summary(
-    *,
-    insight_graph: Optional[Mapping[str, Any]],
-    primary_driver: str,
-    compiler_meta: Dict[str, Any],
-) -> str:
-    if not insight_graph or not isinstance(insight_graph, dict):
-        compiler_meta["skipped"].append("secondary_systems_no_insight_graph")
-        return ""
-    caps = insight_graph.get("system_capacity_scores") or {}
-    if not isinstance(caps, dict) or not caps:
-        compiler_meta["skipped"].append("secondary_systems_no_capacity_scores")
-        return ""
-    prefix = ""
-    if primary_driver:
-        prefix = primary_driver.split("_")[0].strip().lower()
-    items: List[str] = []
-    for k in sorted(str(x) for x in caps.keys()):
-        v = caps.get(k)
-        try:
-            iv = int(float(v))
-        except (TypeError, ValueError):
-            continue
-        if iv < 90:
-            continue
-        if prefix and k.lower().startswith(prefix):
-            continue
-        items.append(f"{k} (capacity {iv})")
-    if not items:
-        compiler_meta["skipped"].append("secondary_systems_no_non_driver_calm")
-        return ""
-    compiler_meta["assets_resolved"].append("secondary_systems_reassurance")
-    return (
-        "Non-lead systems with comparatively strong modeled capacity in this snapshot: "
-        + ", ".join(items)
-        + "."
-    )
-
-
 def _build_retail_summary(idl_bundle: Any, compiler_meta: Dict[str, Any]) -> str:
     records = _idl_records(idl_bundle)
     if not records:
@@ -683,19 +644,12 @@ def compile_narrative_report_v1(
         compiler_meta=compiler_meta,
     )
 
-    secondary_systems_text = _build_secondary_systems_summary(
-        insight_graph=insight_graph,
-        primary_driver=primary_driver,
-        compiler_meta=compiler_meta,
-    )
-
     return NarrativeReportV1(
         retail_summary=retail_summary,
         lead_narrative=lead_text,
         secondary_narratives=secondary_text,
         body_overview=body_overview,
         longitudinal_narrative=longitudinal_narrative,
-        secondary_systems=secondary_systems_text,
         next_steps_narrative=next_steps_narrative,
         clinician_synthesis=clinician_synthesis,
         meta=compiler_meta,
