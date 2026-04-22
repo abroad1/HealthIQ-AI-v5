@@ -1,24 +1,26 @@
 ---
-work_id: N-9
-branch: feature/n-9-ab-benchmark-runtime-validation
-risk_level: STANDARD
+work_id: N-9B
+branch: feature/n-9b-post-validation-runtime-refinement
+risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: CONTENT
+change_type: MIXED
 ---
 
-# N-9 — AB benchmark runtime validation
+# N-9B — Post-validation runtime refinement
 
 ## Objective
 
-Validate the real deterministic runtime output for the AB benchmark case against the locked benchmark narrative and determine, with repo-grounded evidence, what is now strong enough, what is still materially weaker, and what remains missing before frontend re-entry.
+Implement the single bounded refinement sprint identified by N-9 so the deterministic runtime output is strong enough for controlled frontend re-entry.
 
-This is a validation sprint.
-It is not a frontend redesign sprint.
-It is not a new compiler-build sprint.
-Do not widen into general product strategy.
+This is a HIGH-risk sprint because it is expected to touch the narrative compiler and possibly bounded backend output assembly.
+
+This is not a frontend redesign sprint.
+Do not widen into broad UX work.
 Do not introduce Gemini or any other LLM dependency.
+Do not reopen the architecture from N-2.
+Do not start broad new asset-authoring work unless a tiny patch-level governed content fix is strictly required and justified.
 
-The purpose of N-9 is to pressure-test the newly built deterministic narrative stack end to end and produce a clear verdict on whether the current runtime output is good enough for controlled surfacing, or whether a bounded refinement sprint is still required first.
+The purpose of N-9B is to close the specific runtime-quality gaps identified by N-9, not to invent a new narrative system.
 
 ---
 
@@ -29,16 +31,13 @@ The following are already decided and are not open for reinterpretation in this 
 - The benchmark narrative is locked.
 - The merged reverse-engineering matrix is locked.
 - The narrative compiler architecture is locked.
-- N-3 through N-8 have now built:
-  - longitudinal numeric support
-  - lifestyle interpretation bridges
-  - pathway explainer assets
-  - functional interpretation / confidence assets
-  - governed benchmark interpretation entities
-  - deterministic narrative compiler v1
-- N-9 exists to test the real runtime output against the benchmark standard before major frontend re-entry.
+- N-3 through N-8 built the deterministic narrative support stack.
+- N-9 validated the real runtime output and concluded:
+  - the deterministic runtime is materially improved
+  - but one bounded refinement sprint is still needed before broad frontend re-entry
+- N-9B is that refinement sprint.
 
-Your job is to validate the actual generated output, not to speculate about what the system might produce.
+Your job is to refine the existing deterministic runtime output just enough to satisfy the N-9 findings and make frontend re-entry defensible.
 
 ---
 
@@ -52,8 +51,8 @@ Treat the following as required inputs:
 2. Locked benchmark narrative  
 `docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REPORT_CHAT_2_FINAL.md`
 
-3. Merged reverse-engineering matrix  
-`docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md`
+3. Runtime validation authority  
+`docs/golden-narrative/AB_BENCHMARK_RUNTIME_VALIDATION_N9.md`
 
 4. Final sprint strategy  
 `docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md`
@@ -61,107 +60,97 @@ Treat the following as required inputs:
 5. Narrative compiler architecture  
 `docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md`
 
-6. The real AB input fixture and any required paired context
-At minimum:
-- the authoritative AB panel fixture with ranges
-- the questionnaire/lifestyle context actually used for this benchmark run
-- any prior snapshot/panel 0 support used in runtime comparison
-
-7. Current runtime/compiler paths relevant to N-8 output
-At minimum:
+6. Current runtime/compiler files, at minimum:
 - `backend/core/analytics/narrative_report_compiler_v1.py`
 - `backend/core/contracts/narrative_report_v1.py`
 - `backend/core/pipeline/orchestrator.py`
 - `backend/core/models/results.py`
-- any runtime output artifact or API result path used to inspect the generated narrative
+- governed asset packs from N-4 to N-7
+- the runtime artifact path used in N-9 validation
 
 ---
 
 ## Core problem this sprint must solve
 
-HealthIQ now has a deterministic narrative compiler, but it is not yet known whether the actual runtime output is:
+N-9 concluded that the runtime is no longer structurally weak, but still has a small number of materially important gaps that prevent confident frontend re-entry.
 
-- close enough to the benchmark to justify frontend re-entry
-- still materially weaker due to compiler assembly limits
-- still materially weaker due to governed asset quality
-- or still blocked by some missing runtime support
+This sprint must close those specific gaps only.
 
-This sprint must answer that precisely using the real output, not aspiration.
+It must not become:
+- a fresh compiler architecture sprint
+- a broad content-authoring wave
+- a frontend sprint
+- a benchmark-perfection sprint
 
 ---
 
-## Required outcome
+## Required refinement scope
 
-Deliver a validation package that:
+Use N-9 as the authority for what must be improved.
 
-1. runs or inspects the real AB runtime narrative output produced by N-8
-2. compares that output against the locked benchmark narrative
-3. evaluates each major benchmark narrative move
-4. classifies the remaining gap for each weak area
-5. states clearly whether a bounded refinement sprint is required before frontend re-entry
-6. leaves behind a planning-ready recommendation for what comes after N-9
+At minimum, address the specific post-validation weak areas identified there, especially:
+
+### 1. Retail summary / retail-facing interpretation quality
+If N-9 found the retail summary weak, empty, gated off by IDL policy, or not fit for broad retail surfacing, refine this runtime path in the smallest safe way.
+
+This may include:
+- retail IDL policy alignment
+- better bounded assembly from existing governed assets
+- more usable summary generation within current authority boundaries
+
+Do not invent ungoverned prose.
+
+### 2. Body overview assembly quality
+If N-9 found body overview too thin, generic, or under-assembled relative to available runtime supports, improve it in the smallest safe way.
+
+This may include:
+- better use of existing positive-context / reassurance supports
+- better expression of “narrow lead issue against calmer background”
+- better use of current runtime evidence without inventing new logic casually
+
+### 3. Longitudinal / lifestyle runtime parity
+If N-9 found that longitudinal or lifestyle context was only partly visible in the actual runtime case, close the parity gap where appropriate.
+
+This may include:
+- making sure the existing N-3 and N-4 supports are actually used when available
+- tightening the runtime case path so the validated AB output reflects the intended deterministic stack more faithfully
+
+Do not widen into new longitudinal or lifestyle architecture unless absolutely necessary.
+
+### 4. Any one additional bounded runtime weakness explicitly identified in N-9
+Only if N-9 clearly named one further bounded weakness that can be solved inside the current architecture.
+
+Do not go beyond the validated recommendation.
 
 ---
 
 ## In scope
 
-### 1. Runtime output acquisition
-Obtain the actual deterministic runtime output for the AB benchmark case.
+### 1. Preflight validation re-read
+Before changing code, re-read N-9 and restate exactly which runtime gaps are being addressed.
 
-This may be via:
-- a generated backend artifact
-- a JSON/API result
-- a golden-run artifact
-- another grounded runtime output path
+Do not “improve things generally.”
+State the bounded target list first.
 
-Do not evaluate a hypothetical or hand-assembled output.
-Use the real runtime output from the current stack.
+### 2. Bounded compiler/runtime refinement
+Modify the smallest correct part of the runtime/compiler path to close the approved weak areas.
 
-### 2. Benchmark comparison
-Compare the generated runtime output against the locked benchmark narrative at the level of narrative moves, not just section titles.
+### 3. Tiny governed asset patches only if strictly required
+If one of the N-9 refinement goals cannot be achieved without a very small governed asset patch, keep it minimal and justify it explicitly.
 
-At minimum assess:
-- patient-summary quality
-- body overview quality
-- lead domain narrative quality
-- secondary domain narrative quality
-- longitudinal section quality
-- next-steps quality
-- clinician synthesis quality
+Do not reopen N-5/N-6/N-7 as broad content sprints.
 
-### 3. Strength / weakness classification
-For each major narrative area, classify it as:
-- strong enough
-- partially there
-- materially weaker than benchmark
-- absent / still unsupported
+### 4. Tests and regression coverage
+Add or update tests covering the refined runtime behaviour and ensuring existing sections do not regress.
 
-### 4. Gap-type classification
-For each materially weak area, classify the remaining cause as one or more of:
-- governed asset quality gap
-- compiler assembly gap
-- missing deterministic support
-- runtime integration/surfacing gap
-- wording polish only
+### 5. Fresh runtime re-check
+After implementation, validate the same AB runtime path again and confirm whether the specific N-9 weaknesses are materially improved.
 
-Do not collapse all remaining issues into “needs polish.”
-
-### 5. Frontend-readiness judgement
-Make a direct recommendation on one of the following:
-
-1. deterministic runtime is now strong enough for frontend re-entry
-2. deterministic runtime is materially improved but still needs one bounded refinement sprint first
-3. deterministic runtime is still too weak and needs more than one additional backend/content sprint before frontend re-entry
-
-### 6. Recommended next move
-If refinement is needed, state the smallest bounded next sprint that should happen.
-If refinement is not needed, state that frontend re-entry may begin.
-
-### 7. Concise validation note
-Leave behind a concise validation note or report documenting:
-- what runtime output was inspected
-- what the outcome was
-- what the next step should be
+### 6. Short sprint note
+Add a concise implementation note documenting:
+- what N-9 weaknesses were targeted
+- what was changed
+- whether the runtime is now ready for frontend re-entry
 
 ---
 
@@ -169,31 +158,35 @@ Leave behind a concise validation note or report documenting:
 
 The following are explicitly out of scope:
 
-- implementing fixes during this sprint
 - frontend redesign
-- writing new narrative assets
-- modifying compiler logic
+- broad new governed asset families
+- new architecture design
+- broad report compiler rewrite
 - Gemini / LLM work
-- broad strategy debate already settled
+- trying to make runtime perfectly match the benchmark prose everywhere
+- more than one bounded refinement wave inside this sprint
 
 ---
 
 ## Design rules
 
-### Rule 1 — validate reality, not intention
-Judge the actual runtime output only.
+### Rule 1 — N-9 is the authority
+Do not refine anything N-9 did not identify as a real weak area.
 
-### Rule 2 — benchmark is the standard
-Do not quietly lower the benchmark because the runtime is weaker.
+### Rule 2 — smallest effective change
+Use the smallest bounded implementation that materially improves the validated weak area.
 
-### Rule 3 — distinguish true weakness from missing surfacing
-If the output exists but is merely not surfaced well, say so clearly.
+### Rule 3 — preserve architecture
+Do not reopen the N-2/N-8 architecture unless repo reality forces it.
 
-### Rule 4 — no vague “needs work”
-Weaknesses must be classified precisely.
+### Rule 4 — governed assets before handwritten prose
+Do not slip ungoverned narrative strings into code to make the output look nicer.
 
-### Rule 5 — bounded recommendation
-If another sprint is needed, recommend the smallest one that would materially improve the runtime.
+### Rule 5 — refinement, not reinvention
+This sprint exists to make the current deterministic runtime acceptable for frontend re-entry, not to chase benchmark perfection.
+
+### Rule 6 — HIGH-risk discipline
+Touched-file scope should remain tight and justified if compiler/runtime files are modified.
 
 ---
 
@@ -201,66 +194,13 @@ If another sprint is needed, recommend the smallest one that would materially im
 
 The expected shape is:
 
-1. identify the real AB runtime output artifact/path
-2. inspect the generated deterministic narrative output
-3. compare it against the benchmark
-4. score/classify strengths and weaknesses
-5. identify the true remaining gap types
-6. produce a recommendation for what comes next
+1. restate the exact N-9 runtime weaknesses being addressed
+2. implement bounded compiler/runtime refinements
+3. add regression tests
+4. rerun the AB runtime path
+5. document whether frontend re-entry is now justified
 
-This must remain a validation sprint, not a fixing sprint.
-
----
-
-## Required output files
-
-Create the following file in:
-`docs/golden-narrative/`
-
-Suggested filename:
-`AB_BENCHMARK_RUNTIME_VALIDATION_N9.md`
-
-If repo reality strongly suggests a better naming pattern, justify it.
-
----
-
-## Output structure requirements
-
-The output file must include, at minimum:
-
-### 1. Purpose
-What was validated and why.
-
-### 2. Source authorities used
-List:
-- benchmark narrative
-- target lock
-- merged matrix
-- runtime artifact/output inspected
-- relevant runtime files inspected
-
-### 3. Runtime output inspected
-State exactly what output was evaluated and how it was obtained.
-
-### 4. Benchmark comparison table
-Use a structured table with columns such as:
-- benchmark narrative area
-- runtime output status
-- quality judgement
-- remaining gap type
-- notes
-
-### 5. Strongest wins
-State what parts of the deterministic runtime are now genuinely strong.
-
-### 6. Remaining weaknesses
-State what is still materially below benchmark and why.
-
-### 7. Frontend-readiness recommendation
-Choose one of the three frontend-readiness outcomes listed above.
-
-### 8. Recommended next sprint or next phase
-State the immediate next move.
+This must remain one bounded refinement sprint.
 
 ---
 
@@ -268,15 +208,17 @@ State the immediate next move.
 
 STOP immediately and report if any of the following are true:
 
-1. no reliable runtime output artifact can be obtained for the AB benchmark case
-2. the runtime output inspected does not actually reflect the current N-8 compiler path
-3. the benchmark comparison cannot be made reliably because the runtime case differs materially from the locked benchmark case
-4. another upstream issue prevents fair validation
+1. the N-9 weaknesses cannot be fixed without broader architecture changes
+2. the required refinement scope is materially larger than one bounded sprint
+3. new governed asset work is more than tiny patch-level content support
+4. the runtime still cannot fairly be judged against the same AB validation path
+5. touched-file scope expands materially beyond the intended compiler/runtime refinement layer
 
 If blocked, report:
 - the exact blocker
-- the affected files or runtime path
+- the affected files
 - the smallest safe remediation path
+- whether frontend re-entry should remain blocked
 
 ---
 
@@ -284,12 +226,12 @@ If blocked, report:
 
 This sprint is successful only if:
 
-1. the real deterministic AB runtime output was inspected
-2. the output was compared against the benchmark in a structured way
-3. remaining weaknesses were classified precisely
-4. a clear frontend-readiness judgement was made
-5. a clear next move was recommended
-6. no implementation changes were made during validation
+1. the specific N-9 runtime weaknesses targeted by the sprint are materially improved
+2. the runtime remains deterministic and governed
+3. no architecture boundary is broken
+4. tests prove the refined behaviour
+5. the AB runtime can be rechecked on the same path
+6. a clear recommendation can be made on frontend re-entry
 
 ---
 
@@ -297,12 +239,18 @@ This sprint is successful only if:
 
 At finish, the sprint should leave behind:
 
-- `docs/golden-narrative/AB_BENCHMARK_RUNTIME_VALIDATION_N9.md`
+- bounded compiler/runtime refinements
+- regression tests
+- a short sprint note explaining:
+  - what N-9 weaknesses were addressed
+  - what changed
+  - whether frontend re-entry is now justified
 
-plus a short completion note stating:
-- what runtime output was inspected
-- the frontend-readiness judgement
-- the recommended next move
+Report back with:
+- files touched
+- the exact N-9 weaknesses addressed
+- how they were improved
+- whether frontend re-entry is now recommended
 
 ---
 
@@ -310,11 +258,10 @@ plus a short completion note stating:
 
 You must show, with exact file paths and grounded runtime evidence:
 
-- where the runtime output came from
-- that it reflects the current N-8 compiler path
-- how each benchmark area compares
-- what the remaining weakness types actually are
-- why the recommended next step follows from the evidence
+- which N-9 findings were selected
+- what runtime/compiler changes were made
+- how the same AB runtime path improved
+- why the result is now sufficient, or still not sufficient, for frontend re-entry
 
-Do not produce a vague review.
-Produce a validation authority artifact.
+Do not produce a vague “polish” pass.
+Produce the bounded post-validation refinement the validation explicitly called for.
