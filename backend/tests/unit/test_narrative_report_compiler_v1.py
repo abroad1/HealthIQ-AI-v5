@@ -164,8 +164,8 @@ def test_longitudinal_lab_delta_without_state_transitions():
     assert "longitudinal_no_state_transitions" in rep.meta.get("skipped", [])
 
 
-def test_n9b_retail_summary_and_secondary_systems_with_published_idl():
-    """N-9B: benchmark phenotypes are phenotype_allowed; IDL publisher + AB-like signals yield retail + reassurance."""
+def test_n9b_retail_summary_and_body_overview_with_published_idl():
+    """N-9B: benchmark phenotypes are phenotype_allowed; IDL publisher + AB-like signals yield retail + richer overview."""
     ig = {
         "signal_results": [
             {"signal_id": "signal_homocysteine_high", "signal_state": "at_risk"},
@@ -190,7 +190,4 @@ def test_n9b_retail_summary_and_secondary_systems_with_published_idl():
     assert "LDL in context" in rep.retail_summary or "ldl" in rep.retail_summary.lower()
     assert "High capacity" in rep.body_overview
     assert "Co-supporting systems" in rep.body_overview
-    assert rep.secondary_systems
-    assert "metabolic" in rep.secondary_systems.lower()
     assert "retail_summary_from_idl" in rep.meta.get("assets_resolved", [])
-    assert "secondary_systems_reassurance" in rep.meta.get("assets_resolved", [])

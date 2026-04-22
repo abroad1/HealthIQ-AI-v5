@@ -22,6 +22,7 @@ from core.canonical.alias_registry_service import get_alias_registry_service
 from core.contracts.insight_graph_v1 import InsightGraphV1
 from core.layer3.insight_assembler_v1 import assemble_layer3_insights
 from core.analytics.calibration_engine import build_calibration_layer_v1
+from core.analytics.narrative_report_compiler_v1 import compile_narrative_report_v1
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 from core.units.registry import UNIT_REGISTRY_VERSION, UnitRegistry, apply_unit_normalisation
 
@@ -73,6 +74,46 @@ def _read_payload(path: Path) -> Dict[str, Any]:
     if "biomarkers" not in payload or "user" not in payload:
         raise ValueError("Golden panel fixture must include biomarkers and user")
     return payload
+
+
+def _merge_narrative_harness_overlay(payload: Dict[str, Any], overlay_path: Optional[Path]) -> Dict[str, Any]:
+    """Merge harness-only narrative keys from a sidecar JSON (does not replace biomarkers/user)."""
+    if overlay_path is None or not overlay_path.exists():
+        return payload
+    extra = json.loads(overlay_path.read_text(encoding="utf-8"))
+    if not isinstance(extra, dict) or "narrative_harness_overrides_v1" not in extra:
+        return payload
+    out = dict(payload)
+    out["narrative_harness_overrides_v1"] = extra["narrative_harness_overrides_v1"]
+    return out
+
+
+def _apply_narrative_harness_overrides_v1(dto: Any, payload: Dict[str, Any]) -> Any:
+    """
+    Re-run N-8 narrative compilation after merging synthetic longitudinal inputs.
+
+    Harness-only: simulates prior-lab snapshot + state_transitions when DB snapshot linking
+    is unavailable (_EmptySession golden runs), without changing orchestrator biology.
+    """
+    raw = payload.get("narrative_harness_overrides_v1")
+    if not isinstance(raw, dict) or not raw:
+        return dto
+    meta = copy.deepcopy(dict(getattr(dto, "meta", None) or {}))
+    ig = copy.deepcopy(dict(meta.get("insight_graph") or {}))
+    if isinstance(raw.get("state_transitions"), list):
+        ig["state_transitions"] = list(raw["state_transitions"])
+    snap = raw.get("prior_biomarker_lab_snapshot_v1")
+    if isinstance(snap, dict) and snap:
+        meta["prior_biomarker_lab_snapshot_v1"] = {str(k): snap[k] for k in sorted(str(x) for x in snap.keys())}
+    meta["insight_graph"] = ig
+    idl = getattr(dto, "interpretation_display_layer_v1", None)
+    nr = compile_narrative_report_v1(
+        analysis_id=str(getattr(dto, "analysis_id", "")),
+        meta=meta,
+        insight_graph=ig,
+        idl_bundle=idl,
+    )
+    return dto.model_copy(update={"meta": meta, "narrative_report_v1": nr})
 
 
 def _strip_volatile_fields(obj: Any) -> Any:
@@ -306,11 +347,13 @@ def run_golden_panel(
     write_narrative: bool = True,
     enable_llm: bool = False,
     lifestyle_fixture_path: Optional[Path] = None,
+    narrative_harness_overlay_path: Optional[Path] = None,
 ) -> Tuple[Path, Dict[str, Any]]:
     fixture = fixture_path or _default_fixture_path()
     out_root = output_root or _default_output_root()
     run_dir = _ensure_run_dir(out_root, run_id)
     payload = _read_payload(fixture)
+    payload = _merge_narrative_harness_overlay(payload, narrative_harness_overlay_path)
     lifestyle_inputs: Optional[Dict[str, Any]] = None
     if lifestyle_fixture_path is not None and lifestyle_fixture_path.exists():
         lifestyle_payload = json.loads(lifestyle_fixture_path.read_text(encoding="utf-8"))
@@ -351,6 +394,7 @@ def run_golden_panel(
         lifestyle_inputs=lifestyle_inputs,
         questionnaire_data=payload.get("questionnaire_data"),
     )
+    dto = _apply_narrative_harness_overrides_v1(dto, payload)
     dto_dump = dto.model_dump() if hasattr(dto, "model_dump") else dict(dto)
 
     # Omit lifestyle key entirely when not provided (per schema)
@@ -434,6 +478,15 @@ def _cli() -> int:
         help="Path to optional lifestyle inputs JSON (UK canonical). When provided, runs LifestyleModifierEngine.",
     )
     parser.add_argument(
+        "--narrative-harness-overlay",
+        default=None,
+        metavar="<json_file>",
+        help=(
+            "Optional sidecar JSON containing narrative_harness_overrides_v1 only "
+            "(prior_biomarker_lab_snapshot_v1 + state_transitions) to re-run N-8 compile on the golden DTO."
+        ),
+    )
+    parser.add_argument(
         "--enable-llm",
         action="store_true",
         help=(
@@ -445,6 +498,7 @@ def _cli() -> int:
     args = parser.parse_args()
     enable_llm = bool(args.enable_llm or _env_enable_llm())
     lifestyle_fixture = Path(args.lifestyle_fixture) if args.lifestyle_fixture else None
+    harness_overlay = Path(args.narrative_harness_overlay) if args.narrative_harness_overlay else None
 
     run_dir, result = run_golden_panel(
         fixture_path=Path(args.fixture),
@@ -453,6 +507,7 @@ def _cli() -> int:
         write_narrative=not args.no_narrative,
         enable_llm=enable_llm,
         lifestyle_fixture_path=lifestyle_fixture,
+        narrative_harness_overlay_path=harness_overlay,
     )
     status = str(result.get("status", "unknown"))
     error_type = str(result.get("error_type", "")).strip()
