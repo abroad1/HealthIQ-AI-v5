@@ -140,6 +140,47 @@ def test_next_steps_narrative_from_functional_when_lead_signal_fires():
     assert "• " in rep.next_steps_narrative
 
 
+def test_n9b_longitudinal_path_proof_direct_compiler_call():
+    """N-9B: longitudinal path exercised via compile_narrative_report_v1 only (state_transitions + prior lab snapshot in meta)."""
+    ig = {
+        "state_transitions": [
+            {
+                "biomarker_id": "creatinine",
+                "from_status": "high",
+                "to_status": "normal",
+                "transition": "improving",
+                "evidence_codes": ["status_change"],
+            },
+        ],
+        "biomarker_nodes": [
+            {
+                "biomarker_id": "homocysteine",
+                "status": "high",
+                "lab_value": 16.23,
+                "lab_unit": "µmol/L",
+            },
+        ],
+    }
+    meta = {
+        "prior_biomarker_lab_snapshot_v1": {
+            "homocysteine": {"lab_value": 18.5, "lab_unit": "µmol/L"},
+        },
+    }
+    rep = compile_narrative_report_v1(
+        analysis_id="n9b-longitudinal-proof",
+        meta=meta,
+        insight_graph=ig,
+        idl_bundle=None,
+    )
+    assert rep.longitudinal_narrative.strip()
+    assert "creatinine" in rep.longitudinal_narrative.lower()
+    assert "homocysteine" in rep.longitudinal_narrative.lower()
+    assert "improved" in rep.longitudinal_narrative.lower()
+    assert "delta" in rep.longitudinal_narrative.lower()
+    assert "longitudinal_state_transitions" in rep.meta.get("assets_resolved", [])
+    assert "longitudinal_numeric_delta" in rep.meta.get("assets_resolved", [])
+
+
 def test_longitudinal_lab_delta_without_state_transitions():
     ig = {
         "signal_results": [],

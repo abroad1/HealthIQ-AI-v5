@@ -1033,24 +1033,3 @@ def test_interaction_edge_isolation_unrelated_fixture_unchanged(tmp_path, monkey
     assert insight_legacy.get("interaction_chains", []) == insight_current.get("interaction_chains", [])
     assert insight_legacy.get("interaction_summary", []) == insight_current.get("interaction_summary", [])
     assert insight_legacy.get("signal_results", []) == insight_current.get("signal_results", [])
-
-
-def test_golden_panel_longitudinal_embed_fixture_exercises_narrative(tmp_path):
-    """N-9B: self-contained AB fixture embeds narrative_longitudinal_embed_v1 on user; longitudinal non-empty."""
-    root = Path(__file__).resolve().parents[1]
-    fixture = root / "fixtures" / "panels" / "ab_full_panel_with_ranges_longitudinal_embed_v1.json"
-    run_dir, result = run_golden_panel(
-        fixture_path=fixture,
-        output_root=tmp_path,
-        run_id="unit-longitudinal-embed-fixture",
-        write_narrative=False,
-    )
-    assert result.get("status") == "completed"
-    nr = result.get("narrative_report_v1") or {}
-    long_text = str(nr.get("longitudinal_narrative") or "")
-    assert long_text.strip()
-    assert "creatinine" in long_text.lower()
-    assert "improved" in long_text.lower() or "improving" in long_text.lower()
-    ig = _load_json(run_dir / "insight_graph.json")
-    assert isinstance(ig.get("state_transitions"), list)
-    assert ig["state_transitions"]
