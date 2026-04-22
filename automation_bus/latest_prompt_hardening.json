@@ -1,159 +1,140 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "N-8",
+  "work_id": "N-9",
   "status": "HARDENED",
-  "hardened_utc": "2026-04-21T00:00:00Z",
+  "hardened_utc": "2026-04-22T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
-  "changes": [
-    {
-      "check": "front_matter_all_five_fields",
-      "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 2-7: work_id=N-8, branch=feature/n-8-deterministic-narrative-compiler-v1, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED — all five mandatory fields present and valid"
+  "changes": {
+    "front_matter": {
+      "status": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md lines 1-7",
+      "fields_verified": {
+        "work_id": "N-9",
+        "branch": "feature/n-9-ab-benchmark-runtime-validation",
+        "risk_level": "STANDARD",
+        "execution_model": "TWO_PHASE_START_FINISH",
+        "change_type": "CONTENT"
+      },
+      "notes": "All five mandatory SOP v1.3 front matter fields present. change_type CONTENT is correct: deliverable is docs/golden-narrative/AB_BENCHMARK_RUNTIME_VALIDATION_N9.md only, no code modifications."
     },
-    {
-      "check": "change_type_MIXED_correctness",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 9-13. Sprint introduces new compiler module (backend/core/analytics/narrative_report_compiler_v1.py) and new output contract (backend/core/contracts/narrative_report_v1.py) that load and consume governed knowledge_bus assets. Compiler output is emitted reasoning — MIXED is correct per SOP §4 definition: any work adding governed content consumed by Intelligence Core where emitted reasoning changes."
+    "authority_paths": {
+      "status": "CONFIRMED",
+      "citation": "verified via filesystem; see per-file citations below",
+      "source_documents": {
+        "AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md": {
+          "path": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md",
+          "exists": true
+        },
+        "AB_GOLD_STANDARD_NARRATIVE_REPORT_CHAT_2_FINAL.md": {
+          "path": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REPORT_CHAT_2_FINAL.md",
+          "exists": true
+        },
+        "AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md": {
+          "path": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md",
+          "exists": true
+        },
+        "HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md": {
+          "path": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md",
+          "exists": true
+        },
+        "HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md": {
+          "path": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md",
+          "exists": true
+        }
+      },
+      "runtime_files": {
+        "narrative_report_compiler_v1.py": {
+          "path": "backend/core/analytics/narrative_report_compiler_v1.py",
+          "exists": true,
+          "lines": 575,
+          "compiler_integrated_in_orchestrator": "orchestrator.py:2165 — compile_narrative_report_v1() called; result assigned to AnalysisDTO.narrative_report_v1 at line 2188"
+        },
+        "narrative_report_v1.py": {
+          "path": "backend/core/contracts/narrative_report_v1.py",
+          "exists": true,
+          "NarrativeReportV1_fields": ["retail_summary","body_overview","lead_narrative","secondary_narratives","longitudinal_narrative","secondary_systems","next_steps_narrative","clinician_synthesis","meta"],
+          "citation": "backend/core/contracts/narrative_report_v1.py lines 16-33"
+        },
+        "orchestrator.py": {
+          "path": "backend/core/pipeline/orchestrator.py",
+          "exists": true
+        },
+        "results.py": {
+          "path": "backend/core/models/results.py",
+          "exists": true,
+          "narrative_report_v1_field": "results.py:208 — Optional[NarrativeReportV1], description: N-8 deterministic compiled narrative sections"
+        }
+      },
+      "knowledge_bus_assets": {
+        "benchmark_interpretation_entities_v1.yaml": {
+          "path": "knowledge_bus/interpretation_entities_v1/benchmark_interpretation_entities_v1.yaml",
+          "exists": true,
+          "loaded_by_compiler_at": "narrative_report_compiler_v1.py:19 — _ENTITIES_PATH"
+        },
+        "pathway_explainers_v1.yaml": {
+          "path": "knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml",
+          "exists": true,
+          "loaded_by_compiler_at": "narrative_report_compiler_v1.py:20 — _PATHWAY_PATH"
+        },
+        "functional_interpretation_v1.yaml": {
+          "path": "knowledge_bus/functional_interpretation_v1/functional_interpretation_v1.yaml",
+          "exists": true,
+          "loaded_by_compiler_at": "narrative_report_compiler_v1.py:21 — _FUNCTIONAL_PATH"
+        }
+      },
+      "ab_fixture": {
+        "path": "backend/tests/fixtures/panels/ab_full_panel_with_ranges.json",
+        "exists": true,
+        "biomarker_count": 79,
+        "key_ab_biomarkers": {
+          "homocysteine": "16.23 umol/L (range max 13.9) — ELEVATED, will fire signal_homocysteine_high",
+          "mcv": "99.5 fL (range max 96.0) — ELEVATED, will fire signal_mcv_high",
+          "ldl_cholesterol": "2.75 mmol/L (range max 2.59) — ELEVATED, will fire signal_ldl_cholesterol_high",
+          "hdl_cholesterol": "2.22 mmol/L (min 1.55) — in range",
+          "triglycerides": "0.68 mmol/L (max 1.7) — in range",
+          "non_hdl_cholesterol": "3.04 mmol/L (max 3.37) — in range"
+        },
+        "citation": "backend/tests/fixtures/panels/ab_full_panel_with_ranges.json — dict-keyed biomarkers field, verified 2026-04-22"
+      }
     },
-    {
-      "check": "risk_level_HIGH_correctness",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4. Sprint touches backend/core/analytics/ (new compiler), backend/core/contracts/ (new contract), backend/core/models/results.py (AnalysisDTO boundary), backend/core/pipeline/orchestrator.py (integration point). All are Intelligence Core components per SOP §3 definition. HIGH risk is mandatory."
+    "source_cross_reference": {
+      "status": "CONFIRMED",
+      "citation": "narrative_report_compiler_v1.py lines 18-21; orchestrator.py lines 2165-2188; results.py line 208; run_golden_panel.py lines 354-360 and 411-419",
+      "narrative_output_persistence": "run_golden_panel.py lines 354-360: dto.model_dump() serialised to analysis_result.json; narrative_report_v1 included (only 'lifestyle' key is excluded)",
+      "critical_execution_warnings": [
+        "narrative.txt in golden_runs is NOT NarrativeReportV1 output. run_golden_panel.py lines 411-419 write narrative.txt as insight[].description strings only. Cursor must read analysis_result.json['narrative_report_v1'] for the compiled narrative sections.",
+        "No post-N-8 AB golden run artifact exists in repo. Most recent golden run (backend/artifacts/golden_runs/20260405T085509Z, Apr 5 2026) predates N-8 commits (Apr 21 2026). ab-manual-001 (Mar 19 2026) also predates N-8 and has no narrative.txt. Cursor must generate fresh artifact: python backend/tools/run_golden_panel.py --fixture backend/tests/fixtures/panels/ab_full_panel_with_ranges.json --run-id ab-n8-validation",
+        "No AB-specific lifestyle fixture exists in backend/tests/fixtures/. Answered questionnaire (docs/golden-narrative/AB_SPECIFIC_QUESTIONNAIRE_TEMPLATE_v1_ANSWERED.json) has lifestyle data in questionnaire format, not the canonical lifestyle_inputs format. Cursor must either run without lifestyle modifier or manually derive a lifestyle fixture from the questionnaire answers. Either choice must be declared in the validation output.",
+        "Age discrepancy: ab_full_panel_with_ranges.json user.age=58 vs questionnaire answer age=59. Must be noted in validation artifact."
+      ]
     },
-    {
-      "check": "stage_0_branch_alignment",
-      "result": "FLAG — action required before Stage 3",
-      "citation": "Current branch: feature/n-7-governed-interpretation-assets-ab-benchmark. Required by prompt line 3: feature/n-8-deterministic-narrative-compiler-v1. Branch does not yet exist. Cursor must create and checkout feature/n-8-deterministic-narrative-compiler-v1 before run_work_package.py start. Not a hardening blocker."
+    "prior_task_findings": {
+      "status": "CONFIRMED",
+      "citation": "git log --format='%h %ai %s': commit 80bf17c 2026-04-21 'feat(N-8): deterministic narrative report compiler v1 on AnalysisDTO'; commit 5508568 2026-04-21 'feat(N-8): populate retail, longitudinal, next-steps, clinician narrative sections'",
+      "n8_compiler_merged_to_main": true,
+      "n8_assets_merged": ["N-5 pathway explainers (commit 00dfe18)", "N-6 functional interpretation (commit 401f5e4)", "N-7 benchmark interpretation entities (commit ced79ae)"],
+      "compiler_load_paths_verified_on_disk": true
     },
-    {
-      "check": "authority_path_AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK",
-      "result": "CONFIRMED",
-      "citation": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md — confirmed present in directory listing. docs/golden-narrative/ directory verified."
+    "forbidden_files": {
+      "status": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md lines 168-178 (out-of-scope section)",
+      "no_modification_permitted_to": [
+        "backend/core/analytics/narrative_report_compiler_v1.py",
+        "backend/core/contracts/narrative_report_v1.py",
+        "backend/core/pipeline/orchestrator.py",
+        "knowledge_bus/**/*.yaml",
+        "backend/scripts/run_work_package.py",
+        "backend/scripts/golden_gate_local.py",
+        "backend/scripts/update_cursor_status.py"
+      ],
+      "permitted_output_path": "docs/golden-narrative/AB_BENCHMARK_RUNTIME_VALIDATION_N9.md"
     },
-    {
-      "check": "authority_path_REVERSE_ENGINEERING_MERGED",
-      "result": "CONFIRMED",
-      "citation": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REVERSE_ENGINEERING_MERGED.md — confirmed present in directory listing."
-    },
-    {
-      "check": "authority_path_SPRINT_STRATEGY_FINAL",
-      "result": "CONFIRMED",
-      "citation": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md — confirmed present in directory listing."
-    },
-    {
-      "check": "authority_path_COMPILER_ARCHITECTURE_v1",
-      "result": "CONFIRMED",
-      "citation": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md line 1: '# HealthIQ AI — Deterministic Narrative Compiler Architecture v1'. File read in full (445 lines). Canonical module: backend/core/analytics/narrative_report_compiler_v1.py at line 93. Canonical contract: backend/core/contracts/narrative_report_v1.py at line 141. Integration placement: after orchestrator-level enrichments at line 130."
-    },
-    {
-      "check": "authority_path_report_compiler_v1",
-      "result": "CONFIRMED",
-      "citation": "backend/core/analytics/report_compiler_v1.py — confirmed present in analytics directory listing."
-    },
-    {
-      "check": "authority_path_contracts",
-      "result": "CONFIRMED",
-      "citation": "backend/core/contracts/report_v1.py, clinician_report_v1.py, insight_graph_v1.py — all confirmed present in contracts directory listing."
-    },
-    {
-      "check": "authority_path_snapshot_linker",
-      "result": "CONFIRMED",
-      "citation": "backend/core/analytics/snapshot_linker.py — confirmed present in analytics directory listing. Called at orchestrator.py line 64 import and line 1329 invocation."
-    },
-    {
-      "check": "authority_path_state_transition_engine",
-      "result": "CONFIRMED",
-      "citation": "backend/core/analytics/state_transition_engine.py — confirmed present in analytics directory listing. Called at orchestrator.py line 65 import, line 1334 invocation. State transitions written to insight_graph at lines 1338-1340."
-    },
-    {
-      "check": "authority_path_longitudinal_numeric_v1",
-      "result": "CONFIRMED",
-      "citation": "backend/core/analytics/longitudinal_numeric_v1.py line 12: def comparable_lab_delta(prior_value, prior_unit, current_value, current_unit). Returns {prior, current, delta, unit} or None. Pure helper — no hidden state, deterministic, unit-safe. This is the only public function in the module."
-    },
-    {
-      "check": "authority_path_lifestyle_interpretation_bridge_engine",
-      "result": "CONFIRMED",
-      "citation": "backend/core/analytics/lifestyle_interpretation_bridge_engine.py — confirmed present in analytics directory listing. compute_lifestyle_interpretation_bridges_v1() called at orchestrator.py line 2063, result stored in meta['lifestyle_interpretation_bridges_v1'] line 2077 — available at AnalysisDTO construction time."
-    },
-    {
-      "check": "authority_path_pathway_explainers_v1",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml line 6: schema_version '1.0.0', pack_version '1.0.0'. Two pathways: one_carbon_methylation_homocysteine_v1 (line 11) and lipid_transport_cholesterol_handling_v1. Pathway fields confirmed: pathway_role, system_in_action present (lines 18 and 27). Consumable by narrative compiler."
-    },
-    {
-      "check": "authority_path_functional_interpretation_v1",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/functional_interpretation_v1/functional_interpretation_v1.yaml line 13: schema_version '1.0.0'. Two domains: one_carbon_methylation_functional_v1 (line 15) and lipid_transport_functional_v1. Fields confirmed: functional_reading (line 27), why_beyond_itself (line 33). related_pathway_explainer_id links to pathway explainers pack. Consumable by narrative compiler."
-    },
-    {
-      "check": "authority_path_benchmark_interpretation_entities_v1",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/interpretation_entities_v1/benchmark_interpretation_entities_v1.yaml line 6: schema_version '1.0.0'. Two interpretation entities at lines 13 and 26: int_benchmark_one_carbon_homocysteine_macrocytosis_v1 (compiler_role: benchmark_lead_domain, pathway_explainer_id: one_carbon_methylation_homocysteine_v1, functional_interpretation_domain_id: one_carbon_methylation_functional_v1) and int_benchmark_lipid_residual_ldl_favourable_transport_v1 (compiler_role: benchmark_secondary_domain). Cross-references confirmed against pathway_explainers_v1 and functional_interpretation_v1 domain IDs."
-    },
-    {
-      "check": "authority_path_idl_records_v1",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml — confirmed present in directory listing."
-    },
-    {
-      "check": "new_files_absent_correct",
-      "result": "CONFIRMED — correctly absent",
-      "citation": "backend/core/contracts/ directory listing: no narrative_report_v1.py present. backend/core/analytics/ directory listing: no narrative_report_compiler_v1.py present. Both are N-8 creation targets per architecture doc lines 93 and 141."
-    },
-    {
-      "check": "integration_point_verification",
-      "result": "CONFIRMED",
-      "citation": "backend/core/pipeline/orchestrator.py lines 2143-2167: idl_bundle = publish_interpretation_display_layer_v1(...) at line 2143, then result = AnalysisDTO(..., interpretation_display_layer_v1=idl_bundle) at lines 2146-2167. Narrative compiler should be invoked between these two calls. lifestyle_interpretation_bridges_v1 available in meta (line 2077). State transitions written to insight_graph by line 1340. Architecture doc line 130 confirms: invoke after orchestrator-level enrichments complete."
-    },
-    {
-      "check": "analysis_dto_boundary_touch",
-      "result": "CONFIRMED — expected HIGH risk boundary modification",
-      "citation": "backend/core/models/results.py line 203: interpretation_display_layer_v1: Optional[InterpretationDisplayLayerBundleV1]. No narrative_report_v1 field exists. Adding Optional[NarrativeReportV1] follows established pattern. results.py is a boundary file — HIGH risk classification confirmed and correct."
-    },
-    {
-      "check": "dto_builders_pattern",
-      "result": "CONFIRMED",
-      "citation": "backend/core/dto/builders.py lines 33-64: compile_clinician_report_v1() and compile_balanced_systems_v1() called, results returned as top-level keys. The narrative compiler follows this same additive top-level pattern. builders.py may also need a new call per this pattern."
-    },
-    {
-      "check": "no_duplicate_authority_sources",
-      "result": "CONFIRMED — no duplicates",
-      "citation": "Architecture doc lines 164-174 explicitly documents authority separation: ReportV1 (ranked findings), ClinicianReportV1 (compact clinician summary), InterpretationDisplayLayerBundleV1 (display records), NarrativeReportV1 (compiled narrative sections). Each has distinct scope. No existing file encodes narrative sections at the compiled level."
-    },
-    {
-      "check": "prior_task_findings_N3_N7",
-      "result": "CONFIRMED by artifact reads",
-      "citation": "N-3: longitudinal_numeric_v1.py line 12 function verified independently. N-4: lifestyle_interpretation_bridge_engine.py confirmed present and called at orchestrator line 2063. N-5: pathway_explainers_v1.yaml line 6 schema_version confirmed. N-6: functional_interpretation_v1.yaml line 13 schema_version confirmed. N-7: benchmark_interpretation_entities_v1.yaml line 6 schema_version confirmed. All independently verified — not inherited from prior hardenings."
-    },
-    {
-      "check": "forbidden_files_check",
-      "result": "PASS",
-      "citation": "Prompt design rules and STOP conditions explicitly forbid: frontend redesign, LLM/Gemini, broad report infrastructure refactor, new governed asset authoring beyond tiny patches. Control-plane scripts run_work_package.py, golden_gate_local.py, update_cursor_status.py are not referenced in prompt scope. No tooling file leakage risk."
-    },
-    {
-      "check": "stage_2b_behavioural_scope_defined",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md change_type=MIXED. Behavioural scope: new narrative_report_compiler_v1.py module and NarrativeReportV1 contract create new emitted reasoning. Existing compilers (report_compiler_v1.py, root_cause_compiler_v1.py) must not change behaviour. STOP condition 4 guards against scope being too large."
-    },
-    {
-      "check": "stage_2b_regression_targets",
-      "result": "CONFIRMED",
-      "citation": "Prompt success criteria line 6: 'existing report/compiler logic is not broken'. Prompt test requirements (§8): 'no breakage of existing current report/compiler logic' listed as mandatory test. Primary regression targets: report_compiler_v1.py compile_report_v1() call path (insight_graph_builder.py), compile_clinician_report_v1() call path (builders.py), and AnalysisDTO field set."
-    },
-    {
-      "check": "stage_2b_determinism_risks",
-      "result": "CONFIRMED — risks surfaced",
-      "citation": "Risk 1: YAML key ordering when loading governed assets — compiler must use explicit field access, not dict ordering. Risk 2: Missing governed assets (e.g. if pathway_explainer_id lookup fails) — must return None/empty section, not raise. Risk 3: Compiler invoked before state transitions are written to insight_graph — integration point must be after line 1340 where state_transitions are set. All three risks covered by prompt Rule 5 (deterministic, inspectable) and STOP condition 1."
-    },
-    {
-      "check": "stop_conditions_review",
-      "result": "NONE TRIGGERED — proceed",
-      "citation": "STOP 1 (ambiguous integration point): NOT triggered — orchestrator lines 2143-2167 are clear. STOP 2 (wider DTO redesign): NOT triggered — additive Optional field only. STOP 3 (assets not consumable): NOT triggered — all YAML files read and cross-refs confirmed. STOP 4 (scope too large): NOT triggered per prompt — v1 is explicitly bounded. STOP 5 (file scope expands): MONITOR — if implementation reveals additional boundary files beyond contracts/, analytics/, models/results.py, orchestrator.py, builders.py, Cursor must report. STOP 6 (repo contradicts N-2): NOT triggered — architecture doc is in repo, matches implementation targets."
-    },
-    {
-      "check": "no_op_protection",
-      "result": "REAL WORK CONFIRMED",
-      "citation": "benchmark_interpretation_entities_v1.yaml line 6 confirms N-7 governed entities exist. narrative_report_compiler_v1.py is absent from analytics/ — compiler has not been built. narrative_report_v1.py is absent from contracts/ — contract has not been created. Sprint has real, non-trivial implementation work to do."
+    "stop_condition_preflight": {
+      "status": "CONFIRMED",
+      "stop_1_no_artifact": "NOT HIT at sprint start — fresh artifact generatable via backend/tools/run_golden_panel.py; tool confirmed present",
+      "stop_2_wrong_compiler_path": "MONITOR — existing artifacts predate N-8; Cursor must verify fresh artifact contains narrative_report_v1 key in analysis_result.json before proceeding with comparison",
+      "stop_3_case_mismatch": "NOT HIT — AB fixture biomarker values verified consistent with locked benchmark case: homocysteine elevated (16.23 vs max 13.9), MCV elevated (99.5 vs max 96.0), LDL marginally elevated (2.75 vs max 2.59)",
+      "stop_4_upstream_blocker": "NOT DETECTED at hardening time"
     }
-  ]
+  }
 }
