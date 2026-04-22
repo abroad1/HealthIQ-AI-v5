@@ -19,10 +19,10 @@ from core.analytics.interpretation_display_layer_publish_v1 import (
 def test_idl_registry_has_nine_records_aligned_with_phenotype_map():
     schema_ver, rows = load_idl_registry_document()
     assert schema_ver
-    assert len(rows) == 9
+    assert len(rows) == 11
     required_map = load_phenotype_required_signals_by_id()
     ids = {str(r.get("internal_id", "")).strip() for r in rows}
-    assert len(ids) == 9
+    assert len(ids) == 11
     for rid in ids:
         assert rid in required_map, f"missing phenotype_map entry for {rid}"
         assert required_map[rid], f"empty required_signals for {rid}"
@@ -71,4 +71,4 @@ def test_idl_registry_yaml_parseable():
         )
     )
     assert raw.get("schema_version")
-    assert len(raw.get("records") or []) == 9
+    assert len(raw.get("records") or []) == 11

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from core.analytics.interpretation_display_layer_publish_v1 import publish_interpretation_display_layer_v1
 from core.analytics.narrative_report_compiler_v1 import compile_narrative_report_v1
 from core.contracts.interpretation_display_layer_v1 import (
     InterpretationDisplayLayerBundleV1,
@@ -21,6 +22,7 @@ def test_compiler_emits_lead_when_homocysteine_signal_fires():
     assert "homocysteine" in rep.lead_narrative.lower() or "one-carbon" in rep.lead_narrative.lower()
     assert rep.body_overview
     assert "vascular" in rep.body_overview.lower()
+    assert "Benchmark interpretation themes" in rep.body_overview
 
 
 def test_compiler_emits_secondary_when_ldl_signal_fires():
@@ -160,3 +162,35 @@ def test_longitudinal_lab_delta_without_state_transitions():
     assert rep.longitudinal_narrative
     assert "delta" in rep.longitudinal_narrative.lower()
     assert "longitudinal_no_state_transitions" in rep.meta.get("skipped", [])
+
+
+def test_n9b_retail_summary_and_secondary_systems_with_published_idl():
+    """N-9B: benchmark phenotypes are phenotype_allowed; IDL publisher + AB-like signals yield retail + reassurance."""
+    ig = {
+        "signal_results": [
+            {"signal_id": "signal_homocysteine_high", "signal_state": "at_risk"},
+            {"signal_id": "signal_homocysteine_elevation_context", "signal_state": "at_risk"},
+            {"signal_id": "signal_mcv_high", "signal_state": "at_risk"},
+            {"signal_id": "signal_ldl_cholesterol_high", "signal_state": "suboptimal"},
+            {"signal_id": "signal_hdl_cholesterol_high", "signal_state": "suboptimal"},
+        ],
+        "primary_driver_system_id": "cardiovascular_4_biomarkers",
+        "supporting_systems": ["hematological_4_biomarkers", "renal_2_biomarkers"],
+        "system_capacity_scores": {
+            "cardiovascular": 73,
+            "metabolic": 100,
+            "renal": 100,
+            "hepatic": 100,
+        },
+    }
+    bundle = publish_interpretation_display_layer_v1(ig)
+    rep = compile_narrative_report_v1(analysis_id="n9b1", meta={}, insight_graph=ig, idl_bundle=bundle)
+    assert rep.retail_summary
+    assert "Methylation pathway pattern" in rep.retail_summary or "methylation" in rep.retail_summary.lower()
+    assert "LDL in context" in rep.retail_summary or "ldl" in rep.retail_summary.lower()
+    assert "High capacity" in rep.body_overview
+    assert "Co-supporting systems" in rep.body_overview
+    assert rep.secondary_systems
+    assert "metabolic" in rep.secondary_systems.lower()
+    assert "retail_summary_from_idl" in rep.meta.get("assets_resolved", [])
+    assert "secondary_systems_reassurance" in rep.meta.get("assets_resolved", [])
