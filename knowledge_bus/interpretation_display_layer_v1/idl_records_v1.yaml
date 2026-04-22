@@ -101,7 +101,7 @@ records:
     retail_display_label: Methylation pathway pattern
     subtitle: Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context
     why_it_matters: This pattern links nutrient–cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot.
-    frontend_allowed_term: clinical_only
+    frontend_allowed_term: phenotype_allowed
     display_order_priority: 10
     enabled_for_frontend: true
 
@@ -111,6 +111,6 @@ records:
     retail_display_label: LDL in context (protective transport features)
     subtitle: LDL elevation alongside relatively stronger HDL signalling—particle architecture still matters
     why_it_matters: Cumulative atherogenic exposure is read in full transport context; reassuring HDL does not erase residual LDL-related risk.
-    frontend_allowed_term: clinical_only
+    frontend_allowed_term: phenotype_allowed
     display_order_priority: 11
     enabled_for_frontend: true

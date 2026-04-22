@@ -120,6 +120,120 @@ def _prior_lab_map(meta: Optional[Mapping[str, Any]]) -> Dict[str, Any]:
     return snap if isinstance(snap, dict) else {}
 
 
+def _benchmark_domain_display_titles(
+    entities_doc: Optional[Dict[str, Any]],
+    domains_by_id: Dict[str, Any],
+    include_lead: bool,
+    include_secondary: bool,
+) -> List[str]:
+    titles: List[str] = []
+    rows = (entities_doc or {}).get("interpretation_entities")
+    if not isinstance(rows, list):
+        return titles
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        role = str(row.get("compiler_role", "")).strip()
+        fdid = str(row.get("functional_interpretation_domain_id", "")).strip()
+        domain = domains_by_id.get(fdid, {})
+        if not domain:
+            continue
+        title = str(domain.get("display_title", "")).strip()
+        if not title:
+            continue
+        if role == "benchmark_lead_domain" and include_lead:
+            titles.append(title)
+        elif role == "benchmark_secondary_domain" and include_secondary:
+            titles.append(title)
+    return titles
+
+
+def _build_body_overview(
+    *,
+    insight_graph: Optional[Mapping[str, Any]],
+    primary_driver: str,
+    include_lead: bool,
+    include_secondary: bool,
+    entities_doc: Optional[Dict[str, Any]],
+    domains_by_id: Dict[str, Any],
+    compiler_meta: Dict[str, Any],
+) -> str:
+    parts: List[str] = []
+    if primary_driver:
+        parts.append(f"Primary driver system (deterministic arbitration): {primary_driver}.")
+    sup_list: List[str] = []
+    if insight_graph and isinstance(insight_graph, dict):
+        raw_sup = insight_graph.get("supporting_systems") or []
+        if isinstance(raw_sup, list):
+            sup_list = sorted({str(x).strip() for x in raw_sup if str(x).strip()})
+    if sup_list:
+        parts.append("Co-supporting systems (deterministic arbitration): " + ", ".join(sup_list) + ".")
+    calm_parts: List[str] = []
+    if insight_graph and isinstance(insight_graph, dict):
+        caps = insight_graph.get("system_capacity_scores") or {}
+        if isinstance(caps, dict):
+            calm_rows = sorted(
+                (str(k), int(float(v)))
+                for k, v in caps.items()
+                if isinstance(v, (int, float)) and float(v) >= 90.0
+            )
+            if calm_rows:
+                calm_parts = [f"{k} ({v})" for k, v in calm_rows]
+    if calm_parts:
+        parts.append(
+            "High capacity / comparatively calmer systems in this snapshot (governed capacity score ≥90): "
+            + ", ".join(calm_parts)
+            + "."
+        )
+        compiler_meta["assets_resolved"].append("body_overview_capacity_context")
+    themes = _benchmark_domain_display_titles(entities_doc, domains_by_id, include_lead, include_secondary)
+    if themes:
+        parts.append(
+            "Benchmark interpretation themes (governed functional titles): " + "; ".join(themes) + "."
+        )
+        compiler_meta["assets_resolved"].append("body_overview_benchmark_themes")
+    return _join_blocks(parts)
+
+
+def _build_secondary_systems_summary(
+    *,
+    insight_graph: Optional[Mapping[str, Any]],
+    primary_driver: str,
+    compiler_meta: Dict[str, Any],
+) -> str:
+    if not insight_graph or not isinstance(insight_graph, dict):
+        compiler_meta["skipped"].append("secondary_systems_no_insight_graph")
+        return ""
+    caps = insight_graph.get("system_capacity_scores") or {}
+    if not isinstance(caps, dict) or not caps:
+        compiler_meta["skipped"].append("secondary_systems_no_capacity_scores")
+        return ""
+    prefix = ""
+    if primary_driver:
+        prefix = primary_driver.split("_")[0].strip().lower()
+    items: List[str] = []
+    for k in sorted(str(x) for x in caps.keys()):
+        v = caps.get(k)
+        try:
+            iv = int(float(v))
+        except (TypeError, ValueError):
+            continue
+        if iv < 90:
+            continue
+        if prefix and k.lower().startswith(prefix):
+            continue
+        items.append(f"{k} (capacity {iv})")
+    if not items:
+        compiler_meta["skipped"].append("secondary_systems_no_non_driver_calm")
+        return ""
+    compiler_meta["assets_resolved"].append("secondary_systems_reassurance")
+    return (
+        "Non-lead systems with comparatively strong modeled capacity in this snapshot: "
+        + ", ".join(items)
+        + "."
+    )
+
+
 def _build_retail_summary(idl_bundle: Any, compiler_meta: Dict[str, Any]) -> str:
     records = _idl_records(idl_bundle)
     if not records:
@@ -532,9 +646,15 @@ def compile_narrative_report_v1(
     if insight_graph and isinstance(insight_graph, dict):
         primary_driver = str(insight_graph.get("primary_driver_system_id", "") or "").strip()
 
-    body_overview = ""
-    if primary_driver:
-        body_overview = f"Primary driver system (deterministic arbitration): {primary_driver}."
+    body_overview = _build_body_overview(
+        insight_graph=insight_graph,
+        primary_driver=primary_driver,
+        include_lead=include_lead,
+        include_secondary=include_secondary,
+        entities_doc=entities_doc,
+        domains_by_id=domains_by_id,
+        compiler_meta=compiler_meta,
+    )
 
     if not include_lead:
         compiler_meta["skipped"].append("lead_narrative_no_matching_signals")
@@ -563,12 +683,19 @@ def compile_narrative_report_v1(
         compiler_meta=compiler_meta,
     )
 
+    secondary_systems_text = _build_secondary_systems_summary(
+        insight_graph=insight_graph,
+        primary_driver=primary_driver,
+        compiler_meta=compiler_meta,
+    )
+
     return NarrativeReportV1(
         retail_summary=retail_summary,
         lead_narrative=lead_text,
         secondary_narratives=secondary_text,
         body_overview=body_overview,
         longitudinal_narrative=longitudinal_narrative,
+        secondary_systems=secondary_systems_text,
         next_steps_narrative=next_steps_narrative,
         clinician_synthesis=clinician_synthesis,
         meta=compiler_meta,
