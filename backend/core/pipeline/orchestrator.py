@@ -2159,13 +2159,28 @@ class AnalysisOrchestrator:
                 "registry_version": derived_ratios_meta.get("ratio_registry_version"),
                 "derived": derived_ratios_meta.get("ratios", {}),
             }
+            # Deterministic narrative harness (golden/CI): optional embed in user — no DB priors required.
+            if isinstance(user, dict):
+                le = user.get("narrative_longitudinal_embed_v1")
+                if isinstance(le, dict) and le:
+                    snap = le.get("prior_biomarker_lab_snapshot_v1")
+                    if isinstance(snap, dict) and snap:
+                        meta["prior_biomarker_lab_snapshot_v1"] = {
+                            str(k): snap[k] for k in sorted(str(x) for x in snap.keys())
+                        }
+                    st = le.get("state_transitions")
+                    if isinstance(st, list):
+                        ig_embed = dict(meta.get("insight_graph") or {})
+                        ig_embed["state_transitions"] = list(st)
+                        meta["insight_graph"] = ig_embed
             idl_bundle = publish_interpretation_display_layer_v1(
                 insight_graph.model_dump() if hasattr(insight_graph, "model_dump") else {}
             )
+            ig_for_narrative = dict(meta.get("insight_graph") or {})
             narrative_report_v1 = compile_narrative_report_v1(
                 analysis_id=analysis_id,
                 meta=meta,
-                insight_graph=insight_graph.model_dump() if hasattr(insight_graph, "model_dump") else {},
+                insight_graph=ig_for_narrative,
                 idl_bundle=idl_bundle,
             )
             result = AnalysisDTO(

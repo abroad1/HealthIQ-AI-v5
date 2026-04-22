@@ -1035,17 +1035,15 @@ def test_interaction_edge_isolation_unrelated_fixture_unchanged(tmp_path, monkey
     assert insight_legacy.get("signal_results", []) == insight_current.get("signal_results", [])
 
 
-def test_golden_panel_narrative_harness_overlay_exercises_longitudinal(tmp_path):
-    """N-9B: harness overlay supplies prior labs + transitions; narrative longitudinal is non-empty on AB path."""
+def test_golden_panel_longitudinal_embed_fixture_exercises_narrative(tmp_path):
+    """N-9B: self-contained AB fixture embeds narrative_longitudinal_embed_v1 on user; longitudinal non-empty."""
     root = Path(__file__).resolve().parents[1]
-    fixture = root / "fixtures" / "panels" / "ab_full_panel_with_ranges.json"
-    overlay = root / "fixtures" / "panels" / "ab_n9b_narrative_harness_overlay.json"
+    fixture = root / "fixtures" / "panels" / "ab_full_panel_with_ranges_longitudinal_embed_v1.json"
     run_dir, result = run_golden_panel(
         fixture_path=fixture,
         output_root=tmp_path,
-        run_id="unit-narrative-harness-longitudinal",
+        run_id="unit-longitudinal-embed-fixture",
         write_narrative=False,
-        narrative_harness_overlay_path=overlay,
     )
     assert result.get("status") == "completed"
     nr = result.get("narrative_report_v1") or {}
