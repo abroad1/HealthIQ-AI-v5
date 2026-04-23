@@ -11,6 +11,7 @@ import {
   Cluster,
   type BiomarkerResult as ApiBiomarkerResult,
   type InterpretationDisplayLayerBundleV1,
+  type NarrativeReportV1,
 } from '../types/analysis';
 
 /** Store row mirrors API BiomarkerResult (B1A/B1B explainer fields optional). */
@@ -38,6 +39,7 @@ export interface AnalysisResult {
     context_line: string;
   } | null;
   interpretation_display_layer_v1?: InterpretationDisplayLayerBundleV1 | null;
+  narrative_report_v1?: NarrativeReportV1 | null;
   primary_driver_system_id?: string;
   system_capacity_scores?: Record<string, unknown>;
   burden_hash?: string;

@@ -64,6 +64,35 @@ def test_compile_excludes_primary_driver_system_from_stable_list():
     assert out is None
 
 
+def test_build_analysis_result_dto_includes_narrative_report_v1():
+    raw = {
+        "analysis_id": "a-narrative",
+        "biomarkers": [],
+        "clusters": [],
+        "insights": [],
+        "status": "completed",
+        "primary_driver_system_id": "",
+        "meta": {"insight_graph": {"report_v1": {}}},
+        "narrative_report_v1": {
+            "narrative_report_version": "1.0.0",
+            "retail_summary": "Lay summary line.",
+            "body_overview": "Body overview line.",
+            "lead_narrative": "Lead block.",
+            "secondary_narratives": "",
+            "longitudinal_narrative": "",
+            "secondary_systems": "",
+            "next_steps_narrative": "",
+            "clinician_synthesis": "",
+            "meta": {},
+        },
+    }
+    dto = build_analysis_result_dto(raw)
+    nr = dto.get("narrative_report_v1")
+    assert isinstance(nr, dict)
+    assert nr.get("retail_summary") == "Lay summary line."
+    assert nr.get("lead_narrative") == "Lead block."
+
+
 def test_build_analysis_result_dto_includes_balanced_systems():
     raw = {
         "analysis_id": "a1",

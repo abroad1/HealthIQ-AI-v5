@@ -11,6 +11,8 @@ interface ClinicianReportRendererProps {
     items: Array<{ system_topic: string; evidence_line: string; capacity_note?: string }>;
     context_line: string;
   } | null;
+  /** F-1 — `narrative_report_v1.clinician_synthesis` (advanced / clinician tab only) */
+  deterministicClinicianSynthesis?: string | null;
 }
 
 function formatSignalIdForDisplay(signalId: string): string {
@@ -105,7 +107,11 @@ function Page1RankingContext({ page1 }: { page1: ClinicianReportV1['sections']['
   );
 }
 
-export default function ClinicianReportRenderer({ report, balancedSystems }: ClinicianReportRendererProps) {
+export default function ClinicianReportRenderer({
+  report,
+  balancedSystems,
+  deterministicClinicianSynthesis,
+}: ClinicianReportRendererProps) {
   if (!report) {
     return (
       <Card>
@@ -117,6 +123,8 @@ export default function ClinicianReportRenderer({ report, balancedSystems }: Cli
     );
   }
 
+  const synthesis = (deterministicClinicianSynthesis ?? '').trim();
+
   const page1 = report.sections.page1;
   const rootCause = report.sections.root_cause;
   const confirmatoryTests = report.sections.confirmatory_tests || [];
@@ -126,6 +134,17 @@ export default function ClinicianReportRenderer({ report, balancedSystems }: Cli
 
   return (
     <div className="space-y-6" data-testid="clinician-report-renderer">
+      {synthesis ? (
+        <Card className="border-violet-200 bg-violet-50/40">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Clinician synthesis (deterministic compiler)</CardTitle>
+            <CardDescription>
+              Compiled synthesis from governed narrative assets — not a live model output.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-sm text-violet-950 whitespace-pre-line leading-relaxed">{synthesis}</CardContent>
+        </Card>
+      ) : null}
       {balancedSystems && balancedSystems.items?.length ? (
         <Card className="border-emerald-100 bg-emerald-50/30">
           <CardHeader className="pb-2">
