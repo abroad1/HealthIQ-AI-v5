@@ -239,6 +239,20 @@ export interface InterpretationDisplayLayerBundleV1 {
   records: InterpretationDisplayRecordV1[];
 }
 
+/** N-8 / F-1 — mirrors backend `core/contracts/narrative_report_v1.py` (deterministic compiler output). */
+export interface NarrativeReportV1 {
+  narrative_report_version?: string;
+  retail_summary: string;
+  body_overview: string;
+  lead_narrative: string;
+  secondary_narratives: string;
+  longitudinal_narrative: string;
+  secondary_systems: string;
+  next_steps_narrative: string;
+  clinician_synthesis: string;
+  meta?: Record<string, unknown>;
+}
+
 export interface NarrativeRuntimeMetaV1 {
   policy_version?: string;
   runtime_mode?: string;
@@ -277,6 +291,8 @@ export interface AnalysisResult {
   } | null;
   /** FE-R8 — governed pattern cards (Section 5); sole retail display authority for this section */
   interpretation_display_layer_v1?: InterpretationDisplayLayerBundleV1 | null;
+  /** N-8 — deterministic compiled narrative sections (F-1 surfaces in results journey) */
+  narrative_report_v1?: NarrativeReportV1 | null;
   /** Passthrough from `build_analysis_result_dto` — cluster/engine context */
   primary_driver_system_id?: string;
   system_capacity_scores?: Record<string, unknown>;

@@ -13,18 +13,27 @@ export interface ResultsBodyOverviewProps {
   clinicianReport: ClinicianReportV1 | null | undefined;
   /** Cluster rows from analysis (severity used only for bucket counts). */
   clusters: { severity?: string | null }[];
+  /** F-1 — when set, replaces heuristic primary sentence with backend `narrative_report_v1.body_overview`. */
+  compiledBodyOverview?: string | null;
   className?: string;
 }
 
 /**
  * FE-R1 Section 1 — Body overview: one primary sentence, quick pattern scan, micro-framing only.
  */
-export function ResultsBodyOverview({ clinicianReport, clusters, className = '' }: ResultsBodyOverviewProps) {
+export function ResultsBodyOverview({
+  clinicianReport,
+  clusters,
+  compiledBodyOverview,
+  className = '',
+}: ResultsBodyOverviewProps) {
   const page1 = clinicianReport?.sections?.page1;
+  const compiled = (compiledBodyOverview ?? '').trim();
   const primary =
-    page1 && (page1.primary_concern || page1.top_hypothesis_line || page1.key_findings?.[0])
+    compiled ||
+    (page1 && (page1.primary_concern || page1.top_hypothesis_line || page1.key_findings?.[0])
       ? buildBodyOverviewPrimarySentence(page1)
-      : BODY_OVERVIEW_FALLBACK_PRIMARY;
+      : BODY_OVERVIEW_FALLBACK_PRIMARY);
 
   const buckets = summarizeClusterPatternBuckets(clusters);
   const totalPatterns = clusters.length;

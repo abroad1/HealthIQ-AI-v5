@@ -235,6 +235,11 @@ async def start_analysis(
                 if getattr(dto, "interpretation_display_layer_v1", None) is not None
                 else None
             ),
+            "narrative_report_v1": (
+                dto.narrative_report_v1.model_dump()
+                if getattr(dto, "narrative_report_v1", None) is not None
+                else None
+            ),
         }
         _analysis_results[analysis_id] = stored
 

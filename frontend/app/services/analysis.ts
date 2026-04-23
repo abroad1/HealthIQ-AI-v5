@@ -68,6 +68,7 @@ export function normalizeAnalysisResultPayload(raw: unknown): AnalysisResult {
     balanced_systems_v1: (r.balanced_systems_v1 ?? null) as AnalysisResult['balanced_systems_v1'],
     interpretation_display_layer_v1: (r.interpretation_display_layer_v1 ??
       null) as AnalysisResult['interpretation_display_layer_v1'],
+    narrative_report_v1: (r.narrative_report_v1 ?? null) as AnalysisResult['narrative_report_v1'],
     overall_score:
       typeof r.overall_score === 'number'
         ? r.overall_score

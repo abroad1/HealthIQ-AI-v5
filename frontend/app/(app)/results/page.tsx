@@ -32,6 +32,11 @@ import { SystemUnderstandingSection } from '@/components/results/SystemUnderstan
 import { LayerCInsightSection } from '@/components/results/LayerCInsightSection';
 import { InterpretationPatternsSection, selectVisibleIdlRecords } from '@/components/results/InterpretationPatternsSection';
 import { ResultsInvestigationSpine } from '@/components/results/ResultsInvestigationSpine';
+import {
+  NarrativeLeadAndSupportingSections,
+  NarrativeLongitudinalAndNextSteps,
+  NarrativeRetailSummaryCard,
+} from '@/components/results/DeterministicNarrativeSurface';
 import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAnalysisResult } from '@/queries/analysisResult';
@@ -145,6 +150,7 @@ export default function ResultsPage() {
   const clusters = currentAnalysis?.clusters ?? [];
   const clinicianReport = currentAnalysis?.clinician_report_v1;
   const balancedSystems = currentAnalysis?.balanced_systems_v1;
+  const narrativeReport = currentAnalysis?.narrative_report_v1;
   const { created_at, completed_at } = currentAnalysis || {};
 
   const narrativeRuntime = useMemo(
@@ -485,8 +491,9 @@ export default function ResultsPage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-1">Your results</h1>
               <p className="text-gray-600 max-w-2xl">
-                One guided path through your panel: lead focus, what stays stable, how cross-body patterns connect—then
-                evidence and optional narrative summaries in Advanced analysis.
+                One guided path through your panel: deterministic summary and explanation from the narrative compiler
+                when available, then structured findings, patterns, and evidence. Optional legacy narrative summaries
+                remain under Advanced analysis.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -536,11 +543,17 @@ export default function ResultsPage() {
         <div className="space-y-10">
           <ResultsInvestigationSpine crossBodyPatternLabel={firstIdlRetailLabel} />
 
+          <NarrativeRetailSummaryCard narrative={narrativeReport} />
+
           <section aria-labelledby="body-overview-section-label">
             <h2 id="body-overview-section-label" className="sr-only">
               Body overview
             </h2>
-            <ResultsBodyOverview clinicianReport={clinicianReport} clusters={clusters} />
+            <ResultsBodyOverview
+              clinicianReport={clinicianReport}
+              clusters={clusters}
+              compiledBodyOverview={narrativeReport?.body_overview}
+            />
           </section>
 
           <section aria-labelledby="whats-working-section-label">
@@ -549,6 +562,8 @@ export default function ResultsPage() {
             </h2>
             <BalancedSystemsSummary balanced={balancedSystems} maxItems={4} />
           </section>
+
+          <NarrativeLeadAndSupportingSections narrative={narrativeReport} />
 
           <section aria-labelledby="primary-finding-section-label">
             <h2 id="primary-finding-section-label" className="sr-only">
@@ -563,6 +578,8 @@ export default function ResultsPage() {
             </h2>
             <WhyThisLeadWonSection report={clinicianReport} />
           </section>
+
+          <NarrativeLongitudinalAndNextSteps narrative={narrativeReport} />
 
           <section aria-labelledby="patterns-across-body-section-label">
             <h2 id="patterns-across-body-section-label" className="sr-only">
@@ -651,8 +668,10 @@ export default function ResultsPage() {
                   </Button>
                 </div>
                 <CardDescription>
-                  Structured clinician report, narrative summaries, and technical context. The Narrative tab opens here
-                  automatically when summaries exist so you don&apos;t miss them.
+                  Structured clinician report, optional legacy insight summaries, and technical context. Core
+                  deterministic narrative sections are on the main results path when{' '}
+                  <span className="font-medium">narrative_report_v1</span> is present; this area adds depth and older
+                  surfaces.
                 </CardDescription>
               </CardHeader>
               {advancedOpen ? (
@@ -779,7 +798,11 @@ export default function ResultsPage() {
                     </TabsContent>
 
                     <TabsContent value="clinician" className="space-y-6">
-                      <ClinicianReportRenderer report={clinicianReport} balancedSystems={balancedSystems} />
+                      <ClinicianReportRenderer
+                        report={clinicianReport}
+                        balancedSystems={balancedSystems}
+                        deterministicClinicianSynthesis={narrativeReport?.clinician_synthesis}
+                      />
                     </TabsContent>
                   </Tabs>
                 </CardContent>
