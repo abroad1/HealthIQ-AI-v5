@@ -1,26 +1,25 @@
 ---
-work_id: N-9B
-branch: feature/n-9b-post-validation-runtime-refinement
+work_id: F-1
+branch: feature/f-1-frontend-reentry-narrative-surfacing
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# N-9B — Post-validation runtime refinement
+# F-1 — Frontend re-entry: deterministic narrative surfacing
 
 ## Objective
 
-Implement the single bounded refinement sprint identified by N-9 so the deterministic runtime output is strong enough for controlled frontend re-entry.
+Re-enter the frontend in a bounded, controlled way by surfacing the new deterministic `narrative_report_v1` output in the results journey.
 
-This is a HIGH-risk sprint because it is expected to touch the narrative compiler and possibly bounded backend output assembly.
-
-This is not a frontend redesign sprint.
-Do not widen into broad UX work.
+This is a frontend integration sprint.
+It is not a backend architecture sprint.
+It is not a new narrative-asset sprint.
+Do not invent narrative logic in the frontend.
 Do not introduce Gemini or any other LLM dependency.
-Do not reopen the architecture from N-2.
-Do not start broad new asset-authoring work unless a tiny patch-level governed content fix is strictly required and justified.
+Do not widen into a broad redesign of the whole application.
 
-The purpose of N-9B is to close the specific runtime-quality gaps identified by N-9, not to invent a new narrative system.
+The purpose of F-1 is to replace weak or placeholder narrative areas in the results journey with the deterministic narrative outputs that now exist in the backend.
 
 ---
 
@@ -29,15 +28,12 @@ The purpose of N-9B is to close the specific runtime-quality gaps identified by 
 The following are already decided and are not open for reinterpretation in this sprint:
 
 - The benchmark narrative is locked.
-- The merged reverse-engineering matrix is locked.
-- The narrative compiler architecture is locked.
-- N-3 through N-8 built the deterministic narrative support stack.
-- N-9 validated the real runtime output and concluded:
-  - the deterministic runtime is materially improved
-  - but one bounded refinement sprint is still needed before broad frontend re-entry
-- N-9B is that refinement sprint.
+- The deterministic narrative support stack has now been built through N-3 to N-9B.
+- The backend runtime is now considered strong enough for controlled frontend re-entry.
+- The frontend must consume deterministic compiled outputs, not recreate narrative logic locally.
+- F-1 is a bounded surfacing sprint, not a new product strategy sprint.
 
-Your job is to refine the existing deterministic runtime output just enough to satisfy the N-9 findings and make frontend re-entry defensible.
+Your job is to integrate the deterministic narrative output into the frontend results journey in a clean, user-readable, architecturally disciplined way.
 
 ---
 
@@ -45,112 +41,108 @@ Your job is to refine the existing deterministic runtime output just enough to s
 
 Treat the following as required inputs:
 
-1. Benchmark target lock  
-`docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md`
-
-2. Locked benchmark narrative  
-`docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REPORT_CHAT_2_FINAL.md`
-
-3. Runtime validation authority  
-`docs/golden-narrative/AB_BENCHMARK_RUNTIME_VALIDATION_N9.md`
-
-4. Final sprint strategy  
-`docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md`
-
-5. Narrative compiler architecture  
-`docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md`
-
-6. Current runtime/compiler files, at minimum:
-- `backend/core/analytics/narrative_report_compiler_v1.py`
+1. Backend runtime output path and contracts
 - `backend/core/contracts/narrative_report_v1.py`
-- `backend/core/pipeline/orchestrator.py`
 - `backend/core/models/results.py`
-- governed asset packs from N-4 to N-7
-- the runtime artifact path used in N-9 validation
+- any API/DTO path exposing `narrative_report_v1`
+
+2. Current results frontend implementation
+- results page components and their data path from the API
+- any current sections using older placeholder or weaker narrative content
+
+3. Validation authority
+- `docs/golden-narrative/AB_BENCHMARK_RUNTIME_VALIDATION_N9.md`
+
+4. Current sprint-note and architecture authority where useful
+- `docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md`
 
 ---
 
 ## Core problem this sprint must solve
 
-N-9 concluded that the runtime is no longer structurally weak, but still has a small number of materially important gaps that prevent confident frontend re-entry.
+The backend now produces a deterministic narrative layer, but the frontend results journey was built before that layer existed and still contains weaker, thinner, or placeholder narrative surfaces.
 
-This sprint must close those specific gaps only.
-
-It must not become:
-- a fresh compiler architecture sprint
-- a broad content-authoring wave
-- a frontend sprint
-- a benchmark-perfection sprint
+This sprint must surface the deterministic narrative output cleanly so the user journey starts to feel like one coherent investigation rather than a stitched stack of older sections.
 
 ---
 
-## Required refinement scope
+## Required outcome
 
-Use N-9 as the authority for what must be improved.
+Deliver a bounded frontend integration that:
 
-At minimum, address the specific post-validation weak areas identified there, especially:
+1. reads and uses `narrative_report_v1`
+2. surfaces the benchmark-priority compiled narrative sections in the results journey
+3. removes or de-emphasises weaker placeholder narrative where the deterministic replacement now exists
+4. preserves authority separation by keeping narrative generation in the backend
+5. leaves the frontend in a strong state for focused UAT
 
-### 1. Retail summary / retail-facing interpretation quality
-If N-9 found the retail summary weak, empty, gated off by IDL policy, or not fit for broad retail surfacing, refine this runtime path in the smallest safe way.
+---
 
-This may include:
-- retail IDL policy alignment
-- better bounded assembly from existing governed assets
-- more usable summary generation within current authority boundaries
+## Required frontend scope
 
-Do not invent ungoverned prose.
+At minimum, integrate and surface these compiled sections where appropriate:
 
-### 2. Body overview assembly quality
-If N-9 found body overview too thin, generic, or under-assembled relative to available runtime supports, improve it in the smallest safe way.
+### 1. Retail summary
+Use the compiled `retail_summary` as the primary patient-facing summary layer near the top of the results experience.
 
-This may include:
-- better use of existing positive-context / reassurance supports
-- better expression of “narrow lead issue against calmer background”
-- better use of current runtime evidence without inventing new logic casually
+### 2. Body overview
+Use the compiled `body_overview` instead of weak placeholder or generic framing where appropriate.
 
-### 3. Longitudinal / lifestyle runtime parity
-If N-9 found that longitudinal or lifestyle context was only partly visible in the actual runtime case, close the parity gap where appropriate.
+### 3. Lead narrative
+Surface the compiled `lead_narrative` as the main deep explanation of the primary issue.
 
-This may include:
-- making sure the existing N-3 and N-4 supports are actually used when available
-- tightening the runtime case path so the validated AB output reflects the intended deterministic stack more faithfully
+### 4. Secondary narrative
+Surface the compiled `secondary_narratives` in a bounded secondary position, clearly subordinate to the lead.
 
-Do not widen into new longitudinal or lifestyle architecture unless absolutely necessary.
+### 5. Longitudinal narrative
+Surface the compiled `longitudinal_narrative` where trend and prior/current comparison belong.
 
-### 4. Any one additional bounded runtime weakness explicitly identified in N-9
-Only if N-9 clearly named one further bounded weakness that can be solved inside the current architecture.
+### 6. Next steps
+Surface the compiled `next_steps_narrative` as the action-oriented follow-up block.
 
-Do not go beyond the validated recommendation.
+### 7. Clinician synthesis
+Make the compiled `clinician_synthesis` available in the appropriate advanced / clinician-facing area.
 
 ---
 
 ## In scope
 
-### 1. Preflight validation re-read
-Before changing code, re-read N-9 and restate exactly which runtime gaps are being addressed.
+### 1. Frontend data integration
+Verify that the frontend receives `narrative_report_v1` cleanly from the existing backend/API result path.
 
-Do not “improve things generally.”
-State the bounded target list first.
+If small frontend-side typing or DTO updates are required to consume the field safely, make them in a bounded way.
 
-### 2. Bounded compiler/runtime refinement
-Modify the smallest correct part of the runtime/compiler path to close the approved weak areas.
+### 2. Results-page narrative replacement / surfacing
+Replace or de-emphasise older weaker narrative areas where the deterministic narrative output now provides a better source.
 
-### 3. Tiny governed asset patches only if strictly required
-If one of the N-9 refinement goals cannot be achieved without a very small governed asset patch, keep it minimal and justify it explicitly.
+Be disciplined:
+- frontend should display
+- backend should interpret
 
-Do not reopen N-5/N-6/N-7 as broad content sprints.
+### 3. Section ordering and hierarchy
+Use the deterministic sections to create a cleaner story order on the page.
 
-### 4. Tests and regression coverage
-Add or update tests covering the refined runtime behaviour and ensuring existing sections do not regress.
+At minimum, ensure the user can experience:
+- top-level summary
+- broad body overview
+- lead issue
+- secondary issue
+- trend / direction of travel
+- next steps
 
-### 5. Fresh runtime re-check
-After implementation, validate the same AB runtime path again and confirm whether the specific N-9 weaknesses are materially improved.
+without having to piece the story together from unrelated blocks.
 
-### 6. Short sprint note
-Add a concise implementation note documenting:
-- what N-9 weaknesses were targeted
-- what was changed
-- whether the runtime is now ready for frontend re-entry
+### 4. Progressive disclosure
+Keep more technical or dense layers appropriately placed.
+The frontend should not overwhelm the user with everything at once.
+
+### 5. Styling and presentation cleanup
+Light presentation improvements are allowed where necessary to make the new narrative readable and coherent.
+
+Do not widen into a full visual redesign.
+
+### 6. UAT-readiness
+Leave the page in a state that can be tested meaningfully against the narrative ambition.
 
 ---
 
@@ -158,35 +150,35 @@ Add a concise implementation note documenting:
 
 The following are explicitly out of scope:
 
-- frontend redesign
-- broad new governed asset families
-- new architecture design
-- broad report compiler rewrite
+- new backend narrative generation logic
+- new governed content assets
+- broad new frontend redesign unrelated to narrative surfacing
+- changing benchmark narrative authority
 - Gemini / LLM work
-- trying to make runtime perfectly match the benchmark prose everywhere
-- more than one bounded refinement wave inside this sprint
+- broad product copy rewrite outside the compiled sections
 
 ---
 
 ## Design rules
 
-### Rule 1 — N-9 is the authority
-Do not refine anything N-9 did not identify as a real weak area.
+### Rule 1 — no frontend-authored narrative logic
+Do not recreate or paraphrase backend narrative logic in the frontend unless there is a tiny display-only necessity.
 
-### Rule 2 — smallest effective change
-Use the smallest bounded implementation that materially improves the validated weak area.
+### Rule 2 — backend remains the authority
+`narrative_report_v1` is the source of truth for these new sections.
 
-### Rule 3 — preserve architecture
-Do not reopen the N-2/N-8 architecture unless repo reality forces it.
+### Rule 3 — bounded replacement, not total redesign
+Improve the journey where the deterministic output now exists.
+Do not widen into unrelated layout redesign.
 
-### Rule 4 — governed assets before handwritten prose
-Do not slip ungoverned narrative strings into code to make the output look nicer.
+### Rule 4 — hierarchy matters
+The user should encounter a coherent story, not a long undifferentiated stack.
 
-### Rule 5 — refinement, not reinvention
-This sprint exists to make the current deterministic runtime acceptable for frontend re-entry, not to chase benchmark perfection.
+### Rule 5 — preserve advanced access
+Clinician-style and more technical content should remain accessible without cluttering the top-level patient journey.
 
 ### Rule 6 — HIGH-risk discipline
-Touched-file scope should remain tight and justified if compiler/runtime files are modified.
+If any backend-touching integration issue arises, keep it minimal and justified.
 
 ---
 
@@ -194,13 +186,11 @@ Touched-file scope should remain tight and justified if compiler/runtime files a
 
 The expected shape is:
 
-1. restate the exact N-9 runtime weaknesses being addressed
-2. implement bounded compiler/runtime refinements
-3. add regression tests
-4. rerun the AB runtime path
-5. document whether frontend re-entry is now justified
-
-This must remain one bounded refinement sprint.
+1. inspect how `narrative_report_v1` currently reaches or does not reach the frontend
+2. update frontend typing/data flow if needed
+3. surface the compiled sections in the results journey
+4. remove or de-emphasise weaker overlapping narrative blocks
+5. leave the page ready for UAT
 
 ---
 
@@ -208,17 +198,16 @@ This must remain one bounded refinement sprint.
 
 STOP immediately and report if any of the following are true:
 
-1. the N-9 weaknesses cannot be fixed without broader architecture changes
-2. the required refinement scope is materially larger than one bounded sprint
-3. new governed asset work is more than tiny patch-level content support
-4. the runtime still cannot fairly be judged against the same AB validation path
-5. touched-file scope expands materially beyond the intended compiler/runtime refinement layer
+1. `narrative_report_v1` is not actually available on the frontend result path
+2. frontend consumption would require a much wider backend DTO/API change than expected
+3. the current results page architecture makes bounded narrative surfacing impossible without a broader redesign
+4. substantial missing backend output is discovered during integration
+5. touched-file scope expands materially beyond bounded frontend integration
 
 If blocked, report:
 - the exact blocker
 - the affected files
 - the smallest safe remediation path
-- whether frontend re-entry should remain blocked
 
 ---
 
@@ -226,12 +215,12 @@ If blocked, report:
 
 This sprint is successful only if:
 
-1. the specific N-9 runtime weaknesses targeted by the sprint are materially improved
-2. the runtime remains deterministic and governed
-3. no architecture boundary is broken
-4. tests prove the refined behaviour
-5. the AB runtime can be rechecked on the same path
-6. a clear recommendation can be made on frontend re-entry
+1. the frontend now consumes `narrative_report_v1`
+2. the main deterministic narrative sections are surfaced in the results journey
+3. weaker placeholder narrative is reduced or replaced where appropriate
+4. the page tells a clearer, more coherent story
+5. the sprint remains bounded and does not become a broad redesign
+6. the results page is ready for focused UAT
 
 ---
 
@@ -239,18 +228,18 @@ This sprint is successful only if:
 
 At finish, the sprint should leave behind:
 
-- bounded compiler/runtime refinements
-- regression tests
+- bounded frontend integration changes
+- any required type/data-flow updates
 - a short sprint note explaining:
-  - what N-9 weaknesses were addressed
-  - what changed
-  - whether frontend re-entry is now justified
+  - what sections are now surfaced
+  - what old sections were reduced/replaced
+  - what UAT should focus on next
 
 Report back with:
 - files touched
-- the exact N-9 weaknesses addressed
-- how they were improved
-- whether frontend re-entry is now recommended
+- how `narrative_report_v1` is now surfaced
+- what still remains weak in the journey
+- whether the page is ready for UAT
 
 ---
 
@@ -258,10 +247,10 @@ Report back with:
 
 You must show, with exact file paths and grounded runtime evidence:
 
-- which N-9 findings were selected
-- what runtime/compiler changes were made
-- how the same AB runtime path improved
-- why the result is now sufficient, or still not sufficient, for frontend re-entry
+- where `narrative_report_v1` is consumed
+- what frontend sections now use it
+- what weaker narrative surfaces were replaced or reduced
+- how the page hierarchy improved
 
-Do not produce a vague “polish” pass.
-Produce the bounded post-validation refinement the validation explicitly called for.
+Do not claim success merely because the field is displayed somewhere.
+Show that the results journey now makes meaningful use of the deterministic narrative output.

@@ -1,177 +1,101 @@
 {
+  "work_id": "F-1",
   "bus_version": "1.3.1",
-  "work_id": "N-9B",
   "status": "HARDENED",
-  "hardened_utc": "2026-04-22T00:00:00Z",
-  "hardened_by": "Claude (Sonnet 4.6) — Stage 2 Prompt Hardening",
-  "stage_2a_authority_verification": {
-    "result": "CONFIRMED",
-    "findings": [
-      {
-        "path": "docs/golden-narrative/AB_BENCHMARK_RUNTIME_VALIDATION_N9.md",
-        "status": "CONFIRMED — exists; read in full; is the authoritative N-9 findings doc driving this sprint"
-      },
-      {
-        "path": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_TARGET_LOCK.md",
-        "status": "CONFIRMED — exists"
-      },
-      {
-        "path": "docs/golden-narrative/AB_GOLD_STANDARD_NARRATIVE_REPORT_CHAT_2_FINAL.md",
-        "status": "CONFIRMED — exists"
-      },
-      {
-        "path": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Sprint_Strategy_FINAL.md",
-        "status": "CONFIRMED — exists"
-      },
-      {
-        "path": "docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md",
-        "status": "CONFIRMED — exists"
-      },
-      {
-        "path": "backend/core/analytics/narrative_report_compiler_v1.py",
-        "status": "CONFIRMED — exists; 575 lines; read in full"
-      },
-      {
-        "path": "backend/core/contracts/narrative_report_v1.py",
-        "status": "CONFIRMED — exists; NarrativeReportV1 Pydantic model with frozen=True and extra='forbid'; all required fields present"
-      },
-      {
-        "path": "backend/core/pipeline/orchestrator.py",
-        "status": "CONFIRMED — exists"
-      },
-      {
-        "path": "backend/core/models/results.py",
-        "status": "CONFIRMED — exists"
-      },
-      {
-        "path": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml",
-        "status": "CONFIRMED — exists; read; AB benchmark phenotype entries confirmed clinical_only at lines 104 and 114"
-      },
-      {
-        "path": "backend/artifacts/golden_runs/n9-ab-validation-20260422/",
-        "status": "CONFIRMED — directory exists; N-9 runtime artifact is present and reproducible"
-      },
-      {
-        "path": "backend/tools/run_golden_panel.py",
-        "status": "CONFIRMED — exists; golden runner harness"
-      },
-      {
-        "path": "backend/tests/fixtures/panels/ab_full_panel_with_ranges.json",
-        "status": "CONFIRMED — exists; AB acceptance fixture used in N-9 run"
-      },
-      {
-        "path": "knowledge_bus/interpretation_entities_v1/benchmark_interpretation_entities_v1.yaml",
-        "status": "CONFIRMED — exists; read in full; two entities: int_benchmark_one_carbon_homocysteine_macrocytosis_v1 (lead) and int_benchmark_lipid_residual_ldl_favourable_transport_v1 (secondary)"
-      },
-      {
-        "path": "knowledge_bus/pathway_explainers_v1/pathway_explainers_v1.yaml",
-        "status": "CONFIRMED — exists"
-      },
-      {
-        "path": "knowledge_bus/functional_interpretation_v1/functional_interpretation_v1.yaml",
-        "status": "CONFIRMED — exists"
-      }
-    ],
-    "duplicate_authority_sources": "NONE DETECTED — single IDL registry, single entities doc, single pathway doc, single functional doc"
-  },
-  "stage_2b_behavioural_hardening": {
-    "result": "CONFIRMED",
-    "change_type": "MIXED",
-    "governed_by": "BEHAVIOUR controls per SOP §4",
-    "intelligence_core_components_affected": [
-      "backend/core/analytics/narrative_report_compiler_v1.py — output assembly mechanism (_build_retail_summary at line 123, body_overview construction at line 535)",
-      "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml — governed content loader affecting emitted reasoning (retail gating policy at lines 104, 114)"
-    ],
-    "behavioural_surface_defined": true,
-    "expected_output_changes": [
-      "retail_summary: currently empty for AB case (compiler meta records retail_summary_no_enabled_phenotype_cards at line 153); post-sprint may be non-empty if IDL policy changed for AB phenotypes",
-      "body_overview: currently single arbitration line (compiler line 537: 'Primary driver system (deterministic arbitration): {primary_driver}.'); post-sprint may be multi-part structured assembly",
-      "longitudinal_narrative: expected to remain empty for base harness run (no prior snapshot in _EmptySession); fixture extension adds test coverage without changing base harness behaviour"
-    ],
-    "regression_targets": [
-      "lead_narrative: must remain non-empty for AB case — confirmed working in N-9 (include_lead fires via _LEAD_SIGNAL_HINTS at compiler line 489)",
-      "secondary_narratives: must remain non-empty for AB case — confirmed working in N-9 (include_secondary fires via _SECONDARY_SIGNAL_HINTS at compiler line 490)",
-      "next_steps_narrative: must remain non-empty (confirmed working in N-9)",
-      "clinician_synthesis: must remain non-empty (confirmed working in N-9); note: clinician_synthesis includes body_overview at line 319 — regression must cover combined output",
-      "compiler meta skipped/assets_resolved keys must remain accurate after any change",
-      "NarrativeReportV1 contract frozen=True (backend/core/contracts/narrative_report_v1.py:19) — no field additions/removals without contract version bump"
-    ],
-    "determinism_risks": [
-      "Any new body_overview assembly logic must use sorted iteration — no set-based iteration with undefined order",
-      "IDL record ordering must remain by display_order_priority (already sorted in _build_retail_summary at line 134)",
-      "No LLM calls permitted — compiler must remain 100% deterministic from governed assets only",
-      "No floating-point or time-based logic in assembly paths"
-    ],
-    "scope_creep_check": "CLEAR — STOP conditions in prompt guard against broader architecture changes, new LLM dependencies, broad content authoring, frontend work",
-    "no_silent_output_drift": "Addressed — compiler meta records assets_resolved and skipped deterministically; any change to assembly must be reflected in meta logging"
-  },
-  "source_cross_reference": {
-    "n9_weakness_1_retail_summary_empty": {
-      "n9_finding": "retail_summary absent ('') — compiler meta: retail_summary_no_enabled_phenotype_cards",
-      "root_cause_confirmed_at": [
-        "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:8 — ph_metabolic_early_ir_v1 is the ONLY phenotype_allowed record (line 14); does not fire on AB panel",
-        "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:98 — ph_one_carbon_homocysteine_macrocytosis_v1 (AB lead phenotype); frontend_allowed_term: clinical_only at line 104",
-        "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:108 — ph_lipid_residual_ldl_favourable_transport_v1 (AB secondary phenotype); frontend_allowed_term: clinical_only at line 114",
-        "backend/core/analytics/narrative_report_compiler_v1.py:140 — retail gate: if _rec_get(rec, 'frontend_allowed_term', '') != 'phenotype_allowed': continue",
-        "backend/core/analytics/narrative_report_compiler_v1.py:153 — skip recorded: retail_summary_no_enabled_phenotype_cards"
-      ],
-      "fix_path": "Promote ph_one_carbon_homocysteine_macrocytosis_v1 and/or ph_lipid_residual_ldl_favourable_transport_v1 to phenotype_allowed in idl_records_v1.yaml at lines 104 and/or 114. Both records already have retail_display_label, subtitle, and why_it_matters populated — no new ungoverned prose required.",
-      "attention": "This modifies a governed content file (idl_records_v1.yaml). Scope must be limited to these two records. Must not widen to other clinical_only records."
-    },
-    "n9_weakness_2_body_overview_thin": {
-      "n9_finding": "body_overview is a single arbitration line; benchmark expects multi-paragraph systemic framing",
-      "root_cause_confirmed_at": [
-        "backend/core/analytics/narrative_report_compiler_v1.py:532-533 — primary_driver read from insight_graph.primary_driver_system_id ('cardiovascular_4_biomarkers' for AB case)",
-        "backend/core/analytics/narrative_report_compiler_v1.py:535-537 — body_overview assembled as single f-string from primary_driver only; no multi-part assembly"
-      ],
-      "fix_path": "Extend body_overview assembly to include structured content using insight_graph lead/secondary signal domains and IDL calm-system context. Must remain deterministic, sorted, governed — no LLM.",
-      "attention": "body_overview feeds into clinician_synthesis at backend/core/analytics/narrative_report_compiler_v1.py:319. Any change to body_overview changes clinician_synthesis output. Regression tests must cover both fields."
-    },
-    "n9_weakness_3_longitudinal_harness_gap": {
-      "n9_finding": "longitudinal_narrative absent — harness uses _EmptySession with no linked prior snapshots",
-      "root_cause_confirmed_at": [
-        "backend/core/analytics/narrative_report_compiler_v1.py:244 — skipped: longitudinal_empty when no transitions or delta lines",
-        "docs/golden-narrative/AB_BENCHMARK_RUNTIME_VALIDATION_N9.md §3.3 — fairness note: harness uses _EmptySession, linked_snapshot_ids: []"
-      ],
-      "fix_path": "Extend backend/tests/fixtures/panels/ab_full_panel_with_ranges.json OR create a new merged fixture with questionnaire_data + prior_biomarker_lab_snapshot_v1 + state_transitions. Test infrastructure work only — no compiler logic changes needed.",
-      "attention": "N-9 explicitly states 'compiler can populate with DB-linked priors' — this is a fixture/harness gap only. Do NOT modify compiler longitudinal logic unless a real bug is discovered during implementation."
-    },
-    "prior_task_n9_artifact": {
-      "artifact_path": "backend/artifacts/golden_runs/n9-ab-validation-20260422/",
-      "status": "CONFIRMED — directory exists in repo at hardening time; N-9 ran independently and produced this artifact; independently re-verified, not inherited from prior hardening"
-    }
-  },
-  "forbidden_files_check": {
-    "backend/scripts/run_work_package.py": "NOT IN SCOPE",
-    "backend/scripts/golden_gate_local.py": "NOT IN SCOPE",
-    "backend/scripts/update_cursor_status.py": "NOT IN SCOPE",
-    "backend/ssot/": "NOT IN SCOPE",
-    "tooling_leakage (.codex/, .vscode/, AGENTS.md)": "NOT IN SCOPE"
-  },
-  "stop_conditions_review": {
-    "stop_1_broader_architecture_required": "PROTECTED — longitudinal gap is harness-only (no architecture change needed); retail and body_overview fixes are compiler and IDL bounded",
-    "stop_2_scope_too_large": "PROTECTED — three bounded items; prompt explicitly caps to one refinement wave",
-    "stop_3_broad_asset_work": "PROTECTED — IDL change is patch-level (field value change on two existing records); no new asset families or governed content chains",
-    "stop_4_harness_validity": "PROTECTED — same AB fixture and run_golden_panel.py harness used; N-9 artifact path confirmed present",
-    "stop_5_scope_expansion": "PROTECTED — compiler, IDL, and test fixture only; no control-plane or SSOT files"
-  },
+  "hardened_utc": "2026-04-23T00:00:00Z",
+  "hardened_by": "claude-sonnet-4-6",
   "changes": [
     {
-      "target": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:104 and :114",
-      "description": "Retail IDL policy alignment — promote AB benchmark phenotype records to phenotype_allowed (or justify explicit scoping decision); retail_display_label and why_it_matters already populated in both records",
-      "type": "CONTENT within MIXED"
+      "check": "Front Matter — work_id",
+      "result": "CONFIRMED",
+      "evidence": "automation_bus/latest_cursor_prompt.md:1 — work_id: F-1"
     },
     {
-      "target": "backend/core/analytics/narrative_report_compiler_v1.py:535-537",
-      "description": "body_overview assembly upgrade — replace single arbitration f-string with multi-part structured assembly using insight_graph and IDL calm-system context; must be deterministic, sorted, governed only",
-      "type": "BEHAVIOUR within MIXED"
+      "check": "Front Matter — branch",
+      "result": "CONFIRMED",
+      "evidence": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/f-1-frontend-reentry-narrative-surfacing"
     },
     {
-      "target": "backend/tests/fixtures/panels/ab_full_panel_with_ranges.json (extend) or new merged fixture",
-      "description": "Validation harness parity — add questionnaire_data + prior_biomarker_lab_snapshot_v1 + state_transitions to exercise longitudinal_narrative path; add corresponding regression test",
-      "type": "CONTENT (test infrastructure) within MIXED"
+      "check": "Front Matter — risk_level HIGH",
+      "result": "CONFIRMED",
+      "evidence": "automation_bus/latest_cursor_prompt.md:4 — risk_level: HIGH. Correct: sprint touches Intelligence Core output path (NarrativeReportV1 produced by narrative_report_compiler_v1.py) and backend DTO serialization (routes/analysis.py + builders.py)."
+    },
+    {
+      "check": "Front Matter — execution_model",
+      "result": "CONFIRMED",
+      "evidence": "automation_bus/latest_cursor_prompt.md:5 — execution_model: TWO_PHASE_START_FINISH"
+    },
+    {
+      "check": "Front Matter — change_type MIXED",
+      "result": "CONFIRMED",
+      "evidence": "automation_bus/latest_cursor_prompt.md:6 — change_type: MIXED. Correct: frontend display changes plus backend passthrough DTO wiring."
+    },
+    {
+      "check": "Authority path — backend/core/contracts/narrative_report_v1.py",
+      "result": "CONFIRMED",
+      "evidence": "File exists. NarrativeReportV1 class at line 16. All 7 prompt-referenced sections present: retail_summary (line 22), body_overview (line 23), lead_narrative (line 24), secondary_narratives (line 25), longitudinal_narrative (line 26), next_steps_narrative (line 28), clinician_synthesis (line 29). secondary_systems also present (line 27)."
+    },
+    {
+      "check": "Authority path — backend/core/models/results.py",
+      "result": "CONFIRMED",
+      "evidence": "File exists. AnalysisDTO.narrative_report_v1 at line 208: Optional[NarrativeReportV1] field, description 'N-8: deterministic compiled narrative sections'."
+    },
+    {
+      "check": "Authority path — docs/golden-narrative/AB_BENCHMARK_RUNTIME_VALIDATION_N9.md",
+      "result": "CONFIRMED",
+      "evidence": "File exists. Section 3.2 confirms orchestrator call path. Section 4 benchmark table documents runtime per-section status: retail_summary absent (IDL clinical_only gating), body_overview thin (single sentence). Section 3.3 fairness note: longitudinal_narrative expected empty when no prior snapshot."
+    },
+    {
+      "check": "Authority path — docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md",
+      "result": "CONFIRMED",
+      "evidence": "File exists."
+    },
+    {
+      "check": "No duplicate authority sources for NarrativeReportV1",
+      "result": "CONFIRMED",
+      "evidence": "grep across backend: single compiler at backend/core/analytics/narrative_report_compiler_v1.py, single contract at backend/core/contracts/narrative_report_v1.py, single orchestrator call at orchestrator.py:2165-2188. No duplicate compilers or contracts detected."
+    },
+    {
+      "check": "CRITICAL PATH — narrative_report_v1 availability on frontend result path",
+      "result": "GAP CONFIRMED — CURSOR MUST RESOLVE BEFORE UI WORK",
+      "evidence": "Three-layer gap verified by source read: (1) backend/app/routes/analysis.py:187-238 — stored dict built from AnalysisDTO omits narrative_report_v1; field stripped before cache write at line 239. (2) backend/core/dto/builders.py:43-65 — build_analysis_result_dto return dict also omits narrative_report_v1. (3) frontend/app/types/analysis.ts:257-286 — AnalysisResult interface has no narrative_report_v1 field. Remediation is bounded (2x3-line backend passthrough additions + frontend type addition) and within F-1 scope per prompt section 'In scope: 1. Frontend data integration'."
+    },
+    {
+      "check": "Orchestrator compiles narrative_report_v1",
+      "result": "CONFIRMED",
+      "evidence": "backend/core/pipeline/orchestrator.py:2165-2188 — compile_narrative_report_v1() called and assigned to AnalysisDTO.narrative_report_v1. Field is computed on every successful run."
+    },
+    {
+      "check": "Stage 2B — behavioural scope defined",
+      "result": "CONFIRMED",
+      "evidence": "automation_bus/latest_cursor_prompt.md sections 'In scope' and 'Out of scope' are explicit. No backend narrative generation logic changes. Backend changes are passthrough-only (no computation change). Frontend is display-only consumption."
+    },
+    {
+      "check": "Stage 2B — regression targets identified",
+      "result": "CONFIRMED",
+      "evidence": "Existing components using clinician_report_v1 (PrimaryFindingAndWhy, WhyThisLeadWonSection, ClinicianReportRenderer, PipelineStatus, ResultsBodyOverview), balanced_systems_v1 (BalancedSystemsSummary), interpretation_display_layer_v1 (InterpretationPatternsSection) must remain unaffected. NarrativeReportV1 sections are additive — no existing component removed, only supplemented or de-emphasised."
+    },
+    {
+      "check": "Stage 2B — determinism risks surfaced",
+      "result": "CONFIRMED",
+      "evidence": "Backend passthrough changes are dict inclusion only (no logic). Some sections may be empty strings at runtime (retail_summary per validation doc §4; longitudinal_narrative when no prior snapshot per §3.3). Frontend must guard: only render sections with non-empty content. No new determinism risk introduced by this sprint."
+    },
+    {
+      "check": "Stage 0 — branch alignment",
+      "result": "MISMATCH — expected and normal at hardening time",
+      "evidence": "Current branch: main. Required: feature/f-1-frontend-reentry-narrative-surfacing. Branch must be created/checked out before Stage 3 (run_work_package.py start). Cursor responsibility per SOP §0."
+    },
+    {
+      "check": "Forbidden files — control-plane scripts",
+      "result": "NOT IN SCOPE",
+      "evidence": "backend/scripts/run_work_package.py, golden_gate_local.py, update_cursor_status.py not referenced in prompt scope. backend/ssot/ not in scope. No tooling-leakage risk (.codex/, .vscode/, AGENTS.md) identified."
+    },
+    {
+      "check": "STOP conditions adequacy",
+      "result": "CONFIRMED",
+      "evidence": "All 5 STOP conditions present. STOP 1 (field unavailability) is the known bounded gap above. STOP 2 (wide backend change) not triggered — fix is 2x3-line passthrough. STOP 3 (architecture incompatibility) not triggered — existing page structure supports additive surfacing. STOP 4 (missing backend output) partially relevant — some sections may be empty strings; frontend guard required, not a blocker. STOP 5 (scope expansion) protects against drift."
     }
   ],
   "overall_verdict": "HARDENED",
-  "notes": "Stage 0 alert: current branch is 'main' at hardening time. Cursor must checkout/create feature/n-9b-post-validation-runtime-refinement before Stage 3 (run_work_package.py start). This is a pre-execution Cursor responsibility per SOP §0, not a hardening blocker."
+  "notes": "Critical path for Cursor Stage 4: resolve three-layer narrative_report_v1 gap FIRST (routes/analysis.py stored dict + builders.py DTO + frontend types/analysis.ts), then implement UI surfacing. Backend changes are passthrough-only and bounded."
 }
