@@ -467,6 +467,31 @@ Cursor must not:
 
 ---
 
+## Test Execution Discipline
+
+Cursor must not default to running the full repository test suite.
+
+For each work package, test execution must be proportionate to the approved scope and run in the following order:
+
+1. targeted tests for newly added or modified files
+2. directly related existing unit / integration / regression tests for touched runtime paths
+3. explicitly required golden, smoke, or acceptance tests relevant to the sprint
+
+Before running tests, Cursor must state:
+- which tests will be run
+- why they are relevant
+- which broader test suites are being deliberately excluded
+
+Full repository-wide test execution is permitted only when:
+- the active work package explicitly requires it, or
+- a targeted failure provides concrete evidence of likely wider regression
+
+Cursor must not run unrelated legacy, archived, or historically broad test suites by default.
+
+If broader testing appears necessary, Cursor must justify that need before running it.
+
+---
+
 ## Stage 4A — Post-Implementation Closure Protocol
 
 This stage is mandatory for every governed work package after implementation is complete and before `run_work_package.py finish` is executed.
