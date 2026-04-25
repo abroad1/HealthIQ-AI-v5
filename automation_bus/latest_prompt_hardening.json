@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "R-2A",
+  "work_id": "R-1B",
   "status": "HARDENED",
   "hardened_utc": "2026-04-25T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6 (Prompt Hardening)",
@@ -8,17 +8,17 @@
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md line 2 — work_id: R-2A"
+      "evidence": "automation_bus/latest_cursor_prompt.md line 2 — work_id: R-1B"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md line 3 — branch: fix/integration-stability-backend"
+      "evidence": "automation_bus/latest_cursor_prompt.md line 3 — branch: fix/unscored-marker-trust-gaps"
     },
     {
       "check": "Front Matter — risk_level HIGH",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md line 4 — risk_level: HIGH. Reset plan (docs/RESET_SPRINT_PLAN_2026-04.md lines 107-117) explicitly states 'use full SOP for the backend endpoint only' for Sprint 2B, which maps to HIGH under the full SOP governance model."
+      "evidence": "automation_bus/latest_cursor_prompt.md line 4 — risk_level: HIGH. Correct: all three defects touch backend/core/pipeline/orchestrator.py and backend/core/scoring/. All are explicit HIGH-risk paths per SOP §3 (Intelligence Core) and §10."
     },
     {
       "check": "Front Matter — execution_model",
@@ -26,76 +26,81 @@
       "evidence": "automation_bus/latest_cursor_prompt.md line 5 — execution_model: TWO_PHASE_START_FINISH"
     },
     {
-      "check": "Front Matter — change_type MIXED",
+      "check": "Front Matter — change_type BEHAVIOUR",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md line 6 — change_type: MIXED. Correct: sprint modifies API integration behaviour (SSE removal) and API response contracts (polling path shape). No SSOT/knowledge bus content changes."
+      "evidence": "automation_bus/latest_cursor_prompt.md line 6 — change_type: BEHAVIOUR. Correct: all three defects change scoring output and biomarker interpretation text for affected markers. Analytical output (scores, statuses, interpretation) changes by design."
     },
     {
-      "check": "Authority path — backend/app/routes/analysis.py",
+      "check": "Authority path — backend/core/pipeline/orchestrator.py",
       "result": "CONFIRMED",
-      "evidence": "File read, 440 lines. Fake SSE at lines 403-429: GET /events; asyncio.sleep(1); emits fabricated 'event: status\\ndata: started' then 'event: status\\ndata: completed' then 'event: close\\ndata: done'; no connection to actual pipeline state. Pipeline runs synchronously at lines 166-175: orchestrator.run() called inline inside POST /start, dto returned before AnalysisStartResponse. Polling path: GET /result at lines 339-360 returns stored result via _raw_result_payload_for_analysis_id. POST /start stores result at line 244 and returns status:'completed' at line 274. Option A (remove SSE) is directly supported."
+      "evidence": "File exists and read. Defect 1 drop points confirmed at lines 558-566 (score_biomarkers dict comprehension) and 724-731 (generate_insights dict comprehension): both omit unscored_reason from BiomarkerScore serialization. Consumer at line 1868: biomarker_score.get('unscored_reason', '') always returns '' because key is absent. _has_valid_numeric_bounds at lines 1089-1096 delegates to primitives.has_valid_numeric_lab_range — correctly handles one-sided bounds."
     },
     {
-      "check": "Authority path — docs/RESET_SPRINT_PLAN_2026-04.md",
+      "check": "Authority path — backend/core/scoring/rules.py",
       "result": "CONFIRMED",
-      "evidence": "File read. Sprint 2B Task 2B at lines 107-117: confirms fake SSE location (analysis.py ~403-429), confirms Option A preferred, confirms Option B description. Sprint branch naming fix/integration-stability at line 97; prompt uses fix/integration-stability-backend to denote backend-only sub-sprint — no conflict."
+      "evidence": "File exists and read. UNSCORED_REASON sentinel at lines 39-44 (policy-governed). calculate_biomarker_score at lines 186-234: one-sided handling at lines 212-219 — calls position_in_one_sided_lab_range; returns scored result when pos is not None. Engine-level scoring path is correctly wired for one-sided ranges."
     },
     {
-      "check": "Authority path — AGENTS.md",
+      "check": "Authority path — backend/core/analytics/primitives.py",
       "result": "CONFIRMED",
-      "evidence": "File read lines 1-60. healthiq-core-engine role defined at lines 34-50: allowed scope backend/core/, backend/ssot/, knowledge_bus/. backend/app/routes/ not in primary globs. Escape hatch: 'non-analytical API routes unless specifically escalated' (light PR model by default). Sprint explicitly escalates to full SOP. Role assignment is defensible under the 'specifically escalated' clause."
+      "evidence": "File exists and read. position_in_one_sided_lab_range at lines 42-63: returns 0.55 for in-range (max-only or min-only), 1.02 or 0.02 for out-of-range. has_valid_numeric_lab_range at lines 66-72: returns True when either bound is numeric. Both functions are one-sided compatible."
     },
     {
-      "check": "Authority path — .cursor/rules/healthiq-core-engine.mdc",
+      "check": "Authority path — BiomarkerScore dataclass (scoring engine)",
       "result": "CONFIRMED",
-      "evidence": "File read lines 1-50. Globs: backend/core/**, backend/ssot/**, knowledge_bus/**, backend/tests/**. backend/app/routes/ outside globs. Escape hatch at line 26: 'unrelated API or DTO changes unless explicitly required by the approved task'. This sprint explicitly requires backend/app/routes/analysis.py — escape hatch applies."
+      "evidence": "backend/core/scoring/engine.py line 35: unscored_reason: Optional[str] = None. Set at engine.py:213 when calculate_biomarker_score returns an unscored_reason. The field exists on the dataclass but is NOT included in either dict comprehension at orchestrator.py:558-566 or 724-731."
+    },
+    {
+      "check": "Authority path — Live diagnosis 6f702428-ec3e-4e00-9416-280904e9d4b3",
+      "result": "ADVISORY — no repo file; not a blocking gap",
+      "evidence": "No committed file for this live analysis ID found in repo. This is a runtime artifact, not a repo file path. SOP Stage 2A verifies file paths; this reference is not a file path. Defect specifications are self-contained in the prompt. Corroborating repo evidence: automation_bus/ab_panel_range_drop_investigation.md (read) confirms hdl_cholesterol, triglycerides, hba1c range-drop and unit semantics issues (lines 37-46, 87-92, 112-124)."
     },
     {
       "check": "No duplicate authority sources",
       "result": "CONFIRMED",
-      "evidence": "GET /events defined once at analysis.py:403. GET /result defined once at analysis.py:339. orchestrator.run() at analysis.py:169 — single invocation path. No duplicate SSE or result endpoints detected."
+      "evidence": "unscored_reason sentinel defined once at scoring_policy.yaml:16, loaded once at rules.py:39-44. BiomarkerScore dataclass defined once at engine.py:28-35. position_in_one_sided_lab_range defined once at primitives.py:42-63. No duplicate scoring policy authority detected."
     },
     {
       "check": "Stage 2B — behavioural scope defined",
       "result": "CONFIRMED",
-      "evidence": "Prompt sections 'Scope', 'In scope', 'Out of scope', 'Design rules' are explicit. In scope: fake SSE removal, polling-compatible backend flow, bounded tests. Out of scope: frontend polling, type generation, reports.ts, orchestrator redesign. Design Rule 3: 'Do not modify analysis logic, pipeline ordering, or narrative generation.'"
+      "evidence": "Three bounded defects with explicit required behaviour per defect. Out-of-scope list at prompt lines 158-165 explicitly excludes remnant_cholesterol policy, free_testosterone_pct policy, broad scoring redesign, broad unit redesign. Design Rule 5: 'If additional improvements are discovered, report them separately.'"
     },
     {
       "check": "Stage 2B — regression targets",
-      "result": "CONFIRMED (with gap noted)",
-      "evidence": "Existing test file: backend/tests/unit/test_analysis_api.py — covers GET /result 404 case and biomarker inclusion. No existing test covers GET /events. Gap: sprint must add a test confirming /events is removed or returns a non-misleading response. POST /start analytical output tests via golden pipeline tests (not named in prompt) continue to pass per STOP condition 4."
+      "result": "CONFIRMED",
+      "evidence": "Defect 1: marker with known non-empty unscored_reason must preserve cause into biomarker output path. Defect 2: representative min-only and max-only live-style markers (hdl_cholesterol, triglycerides, active_b12, egfr, folate) must produce scored output. Defect 3: HbA1c value/range unit mismatch must not surface as 'insufficient numeric bounds' — must show truthful reason or valid score."
     },
     {
-      "check": "Stage 2B — determinism risks",
+      "check": "Stage 2B — determinism risks surfaced",
       "result": "CONFIRMED",
-      "evidence": "RISK-1: SSE removal does not affect orchestrator, scoring engine, or analytical pipeline — determinism fully preserved. RISK-2: POST /start already stores result and returns status:'completed' synchronously (analysis.py:244, 274) — no pipeline timing risk from SSE removal. RISK-3: GET /result endpoint contract unchanged — result shape not modified by this sprint. No hidden side effects on analytical output."
+      "evidence": "RISK-1: Adding unscored_reason to biomarker score dicts at orchestrator.py:558-566 and 724-731 propagates new key into build_insight_graph_v1 and other consumers — verify no structural break; STOP 1 applies if broader contract redesign needed. RISK-2: Defect 2 fix changes score values for named markers from 0.0 to non-zero; overall_score and system scores shift — intended, but regression fixtures must use live-style markers (hdl_cholesterol etc.), not synthetic markers. RISK-3: HbA1c unit-mismatch detection must be narrowly gated; must not touch other markers' unit paths; STOP 3 applies if backend/core/units/registry.py requires broader change."
     },
     {
-      "check": "Stage 2B — Intelligence Core preservation",
+      "check": "Stage 2B — Intelligence Core scope",
       "result": "CONFIRMED",
-      "evidence": "No backend/core/**, backend/ssot/**, knowledge_bus/** files in sprint scope. Design Rule 3 and STOP condition 4 both forbid touching analytical runtime. orchestrator.run() call at analysis.py:169 is preserved as-is; sprint only affects what happens with the result after line 175."
+      "evidence": "All files in scope (orchestrator.py, scoring/rules.py, analytics/primitives.py, scoring/engine.py) are under backend/core/ — explicit Intelligence Core per SOP §3. HIGH risk is correctly declared. BEHAVIOUR change_type is correct: scoring output changes for affected markers."
     },
     {
       "check": "STOP conditions adequacy",
       "result": "CONFIRMED",
-      "evidence": "5 STOP conditions at prompt lines 207-213. STOP 1: async job-system redesign required. STOP 2: insufficient truthful retrieval path (not triggered — /result exists at analysis.py:339). STOP 3: file scope expansion. STOP 4: analytical runtime modification. STOP 5: undocumented frontend assumptions. All conditions are clear, binding, and proportionate."
+      "evidence": "5 STOP conditions at prompt lines 222-228. STOP 1: broader contract redesign (maps to RISK-1). STOP 2: upstream data corruption (not triggered — normalize.py correctly preserves one-sided ranges at lines 92-126). STOP 3: larger unit redesign for HbA1c (maps to RISK-3). STOP 4: file scope expansion beyond scoring/orchestrator/DTO. STOP 5: policy decisions required (maps to Defect 3 edge cases). All conditions are binding and proportionate."
     },
     {
       "check": "Forbidden files — control-plane scripts",
       "result": "NOT IN SCOPE",
-      "evidence": "run_work_package.py, golden_gate_local.py, update_cursor_status.py not referenced. No backend/ssot/ changes. No tooling-leakage risk (.codex/, .vscode/, AGENTS.md modification) identified."
+      "evidence": "run_work_package.py, golden_gate_local.py, update_cursor_status.py not referenced. No tooling-leakage risk identified."
     },
     {
       "check": "Stage 0 — branch alignment",
       "result": "MISMATCH — expected at hardening time",
-      "evidence": "Current branch: main. Required: fix/integration-stability-backend. Branch must be created/checked out before Stage 3 (run_work_package.py start). Cursor responsibility per SOP §0."
+      "evidence": "Current branch: fix/integration-stability-backend. Required: fix/unscored-marker-trust-gaps. New branch must be created/checked out before Stage 3 (run_work_package.py start). Cursor responsibility per SOP §0."
     }
   ],
   "overall_verdict": "HARDENED",
   "advisory_notes": [
-    "healthiq-core-engine cursor rule globs do not include backend/app/routes/ — escape hatch ('explicitly required by the approved task') applies; role assignment defensible.",
-    "No existing test covers GET /events — sprint must add a test confirming SSE removal (new test, not regression).",
-    "Option A is directly viable: POST /start already returns synchronously with status:'completed'; /result is the truthful polling path. No architectural impediment to SSE removal.",
-    "Frontend follow-on (Sprint 2 frontend, light model) should be told: remove SSE listener; poll GET /api/analysis/result?analysis_id={id} until status='completed' or 'error'; POST /start will return completed immediately on success."
+    "Live analysis 6f702428-ec3e-4e00-9416-280904e9d4b3 is not a committed file; Cursor must either reproduce the diagnosis via run_golden_panel or accept the defect specs as written in the prompt. The ab_panel_range_drop_investigation.md corroborates the defect areas.",
+    "Defect 1 fix is targeted: add 'unscored_reason': score.unscored_reason to two dict comprehensions at orchestrator.py:558-566 and 724-731. Verify InsightGraph builder does not break on the new key before claiming Defect 1 complete.",
+    "Defect 2 root cause not fully confirmed at hardening time — Cursor must trace why specific markers (active_b12, egfr, folate in particular) fail despite the one-sided range logic being nominally correct in scoring/engine. The second normalizer call at orchestrator.py:542 (from scalar-only simple_biomarkers) does not carry reference ranges; input_reference_ranges dict must be verified to contain the live marker names under the correct canonical keys.",
+    "Defect 3: hba1c_layer_b_arbitration.py exists at backend/core/canonical/hba1c_layer_b_arbitration.py — Cursor should check whether this arbitration path is relevant to the unit mismatch detection, or whether the fix belongs in the scoring/DTO path."
   ]
 }
