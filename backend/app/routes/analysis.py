@@ -1,15 +1,13 @@
 """
-Analysis routes for biomarker processing and SSE streaming.
+Analysis routes for biomarker processing and result retrieval.
 """
 
-import asyncio
 import logging
 import os
 from typing import Dict, Any, Optional
 from uuid import UUID, uuid4
 
 from fastapi import APIRouter, HTTPException, Depends, status
-from fastapi.responses import StreamingResponse
 from pydantic import AliasChoices, BaseModel, ConfigDict, Field
 
 class ExportRequest(BaseModel):
@@ -400,31 +398,25 @@ async def get_analysis_history(
         ) from exc
 
 
-@router.get("/events")
-async def stream_status(analysis_id: str):
+@router.get("/events", deprecated=True, include_in_schema=True)
+async def analysis_events_removed(analysis_id: Optional[str] = None):
     """
-    Stream simple analysis progress events for the frontend.
-    Ensures SSE stays open long enough and closes gracefully.
-    """
-    async def event_generator():
-        # Announce start
-        yield "event: status\ndata: started\n\n"
-        await asyncio.sleep(1)
-        # Announce completion
-        yield "event: status\ndata: completed\n\n"
-        # Allow time for browser to process
-        await asyncio.sleep(0.1)
-        # Explicit close event
-        yield "event: close\ndata: done\n\n"
+    Legacy path: fake SSE progress was removed (R-2A).
 
-    return StreamingResponse(
-        event_generator(),
-        media_type="text/event-stream",
-        headers={
-            "Cache-Control": "no-cache",
-            "Connection": "keep-alive",
-            "X-Accel-Buffering": "no",
-            "Access-Control-Allow-Origin": "http://localhost:3000",
+    The analysis pipeline runs synchronously inside POST /api/analysis/start, which
+    returns when processing is complete. Use GET /api/analysis/result?analysis_id=...
+    to load the final payload (suitable for polling if the client starts before
+    a result is ready in other integration modes).
+    """
+    raise HTTPException(
+        status_code=status.HTTP_410_GONE,
+        detail={
+            "error": "sse_progress_not_available",
+            "message": (
+                "Server-Sent Events are not used for analysis progress. "
+                "Call POST /api/analysis/start; on success, poll GET /api/analysis/result "
+                "with the returned analysis_id for the result payload."
+            ),
         },
     )
 

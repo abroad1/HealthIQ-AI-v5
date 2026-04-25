@@ -1,111 +1,101 @@
 {
-  "work_id": "R-1",
-  "status": "HARDENED",
   "bus_version": "1.3.1",
-  "hardened_by": "claude-sonnet-4-6",
+  "work_id": "R-2A",
+  "status": "HARDENED",
   "hardened_utc": "2026-04-25T00:00:00Z",
+  "hardened_by": "claude-sonnet-4-6 (Prompt Hardening)",
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:1 — work_id: R-1"
+      "evidence": "automation_bus/latest_cursor_prompt.md line 2 — work_id: R-2A"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:3 — branch: fix/engine-trust-bugs"
+      "evidence": "automation_bus/latest_cursor_prompt.md line 3 — branch: fix/integration-stability-backend"
     },
     {
       "check": "Front Matter — risk_level HIGH",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:4 — risk_level: HIGH. Correct: sprint touches Intelligence Core (signal_evaluator.py, orchestrator.py, root_cause_compiler_v1.py — all under backend/core/). HIGH by definition per SOP §3 and §10."
+      "evidence": "automation_bus/latest_cursor_prompt.md line 4 — risk_level: HIGH. Reset plan (docs/RESET_SPRINT_PLAN_2026-04.md lines 107-117) explicitly states 'use full SOP for the backend endpoint only' for Sprint 2B, which maps to HIGH under the full SOP governance model."
     },
     {
       "check": "Front Matter — execution_model",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:5 — execution_model: TWO_PHASE_START_FINISH"
+      "evidence": "automation_bus/latest_cursor_prompt.md line 5 — execution_model: TWO_PHASE_START_FINISH"
     },
     {
-      "check": "Front Matter — change_type BEHAVIOUR",
+      "check": "Front Matter — change_type MIXED",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:6 — change_type: BEHAVIOUR. Correct: all three bugs are in pipeline behaviour, signal activation logic, and output generation logic. No pure content/SSOT changes."
+      "evidence": "automation_bus/latest_cursor_prompt.md line 6 — change_type: MIXED. Correct: sprint modifies API integration behaviour (SSE removal) and API response contracts (polling path shape). No SSOT/knowledge bus content changes."
     },
     {
-      "check": "Authority path — Bug 1: backend/core/analytics/signal_evaluator.py",
+      "check": "Authority path — backend/app/routes/analysis.py",
       "result": "CONFIRMED",
-      "evidence": "File read. _evaluate_lab_range_activation_state at line 141. Bug confirmed at line 162-163: if high is not None and primary_value > high: return upper_bound_state — fires WITHOUT checking enable_upper_bound. Lower bound IS gated by enable_lower_bound at line 166. Asymmetry is the defect."
-    },
-    {
-      "check": "Authority path — Bug 2: backend/core/pipeline/orchestrator.py",
-      "result": "CONFIRMED",
-      "evidence": "File read. _has_valid_numeric_bounds at line 1086: requires isinstance(min_val, (int,float)) AND isinstance(max_val, (int,float)) AND float(min_val) < float(max_val) — both bounds required. _has_any_numeric_bound at line 1097 already exists but is only used in interpretation-text path at line 1866. Usage sites of _has_valid_numeric_bounds: lines 1103, 1212, 1235, 1244, 1864."
-    },
-    {
-      "check": "Authority path — Bug 3: backend/core/analytics/root_cause_compiler_v1.py",
-      "result": "CONFIRMED",
-      "evidence": "File read. _ROOT_CAUSE_TARGETS at lines 65-101 (34 signal entries). compile_root_cause_v1 at line 396 returns None at line 433-434 when findings is empty. Signals not in _ROOT_CAUSE_TARGETS produce no finding and no fallback. DTO surface: report_v1.py:85 — root_cause_v1: Optional[RootCauseV1] = None."
-    },
-    {
-      "check": "Authority path — root_cause_v1.py contract",
-      "result": "CONFIRMED",
-      "evidence": "backend/core/contracts/root_cause_v1.py read. RootCauseFindingV1 at line 48: extra='forbid', fields signal_id, primary_metric, signal_state, signal_confidence, hypotheses. RootCauseHypothesisV1 at line 34: extra='forbid', fields hypothesis_id, title, summary, hypothesis_confidence, evidence_for, evidence_against, missing_data, confirmatory_tests, safety_class. Fallback hypothesis must populate all required fields within this existing schema — no new fields permitted."
-    },
-    {
-      "check": "Authority path — clinician report null-guard: backend/core/analytics/report_compiler_v1.py",
-      "result": "CONFIRMED",
-      "evidence": "File read. compile_clinician_report_v1 at line 490. primary_root assigned at line 527: None when lead signal not in root_findings. String fallback at line 535: 'No hypothesis set available for this concern in v1.' This is a string-only fallback — no structured DTO fallback exists. The clinician report handles None gracefully (line 537 guards before accessing hypotheses). Required change: minimal null-guard verification only, no structural change to clinician report compilation path."
+      "evidence": "File read, 440 lines. Fake SSE at lines 403-429: GET /events; asyncio.sleep(1); emits fabricated 'event: status\\ndata: started' then 'event: status\\ndata: completed' then 'event: close\\ndata: done'; no connection to actual pipeline state. Pipeline runs synchronously at lines 166-175: orchestrator.run() called inline inside POST /start, dto returned before AnalysisStartResponse. Polling path: GET /result at lines 339-360 returns stored result via _raw_result_payload_for_analysis_id. POST /start stores result at line 244 and returns status:'completed' at line 274. Option A (remove SSE) is directly supported."
     },
     {
       "check": "Authority path — docs/RESET_SPRINT_PLAN_2026-04.md",
       "result": "CONFIRMED",
-      "evidence": "File read. Sprint 1 spec at lines 34-88. Three bugs match exactly. Branch naming fix/engine-trust-bugs confirmed at line 38. Success criteria at lines 83-88 match prompt success criteria."
+      "evidence": "File read. Sprint 2B Task 2B at lines 107-117: confirms fake SSE location (analysis.py ~403-429), confirms Option A preferred, confirms Option B description. Sprint branch naming fix/integration-stability at line 97; prompt uses fix/integration-stability-backend to denote backend-only sub-sprint — no conflict."
     },
     {
       "check": "Authority path — AGENTS.md",
       "result": "CONFIRMED",
-      "evidence": "File read at line 1. healthiq-core-engine role at line 34. Allowed scope includes backend/core/ — all three bug files are within scope."
+      "evidence": "File read lines 1-60. healthiq-core-engine role defined at lines 34-50: allowed scope backend/core/, backend/ssot/, knowledge_bus/. backend/app/routes/ not in primary globs. Escape hatch: 'non-analytical API routes unless specifically escalated' (light PR model by default). Sprint explicitly escalates to full SOP. Role assignment is defensible under the 'specifically escalated' clause."
     },
     {
       "check": "Authority path — .cursor/rules/healthiq-core-engine.mdc",
       "result": "CONFIRMED",
-      "evidence": "File read at line 1. Scope globs: backend/core/**, backend/ssot/**, knowledge_bus/**, backend/tests/**. All sprint files are within declared agent scope."
+      "evidence": "File read lines 1-50. Globs: backend/core/**, backend/ssot/**, knowledge_bus/**, backend/tests/**. backend/app/routes/ outside globs. Escape hatch at line 26: 'unrelated API or DTO changes unless explicitly required by the approved task'. This sprint explicitly requires backend/app/routes/analysis.py — escape hatch applies."
     },
     {
       "check": "No duplicate authority sources",
       "result": "CONFIRMED",
-      "evidence": "compile_root_cause_v1 has a single implementation at root_cause_compiler_v1.py:396. _evaluate_lab_range_activation_state has a single implementation at signal_evaluator.py:141. _has_valid_numeric_bounds has a single definition at orchestrator.py:1086. No duplicate authority detected."
+      "evidence": "GET /events defined once at analysis.py:403. GET /result defined once at analysis.py:339. orchestrator.run() at analysis.py:169 — single invocation path. No duplicate SSE or result endpoints detected."
     },
     {
       "check": "Stage 2B — behavioural scope defined",
       "result": "CONFIRMED",
-      "evidence": "prompt sections 'Scope', 'In scope', 'Out of scope', 'Design rules' are explicit. Bug 1: activation logic only. Bug 2: scoring eligibility logic only. Bug 3: fallback emission only. No new analytical depth, no new phenotype/IDL/narrative work, no frontend changes per prompt lines 143-149."
+      "evidence": "Prompt sections 'Scope', 'In scope', 'Out of scope', 'Design rules' are explicit. In scope: fake SSE removal, polling-compatible backend flow, bounded tests. Out of scope: frontend polling, type generation, reports.ts, orchestrator redesign. Design Rule 3: 'Do not modify analysis logic, pipeline ordering, or narrative generation.'"
     },
     {
-      "check": "Stage 2B — regression targets identified",
+      "check": "Stage 2B — regression targets",
+      "result": "CONFIRMED (with gap noted)",
+      "evidence": "Existing test file: backend/tests/unit/test_analysis_api.py — covers GET /result 404 case and biomarker inclusion. No existing test covers GET /events. Gap: sprint must add a test confirming /events is removed or returns a non-misleading response. POST /start analytical output tests via golden pipeline tests (not named in prompt) continue to pass per STOP condition 4."
+    },
+    {
+      "check": "Stage 2B — determinism risks",
       "result": "CONFIRMED",
-      "evidence": "Bug 1 target: mid-range cholesterol must not activate both signal_total_cholesterol_high and signal_total_cholesterol_low (prompt line 85). Bug 2 target: LDL max-only + HDL min-only panel must produce scored output not insufficient-bounds message (prompt line 103). Bug 3 target: non-governed lead signal must produce non-null WHY section via fallback (prompt line 128). Golden panel tests must continue to pass (prompt line 203)."
+      "evidence": "RISK-1: SSE removal does not affect orchestrator, scoring engine, or analytical pipeline — determinism fully preserved. RISK-2: POST /start already stores result and returns status:'completed' synchronously (analysis.py:244, 274) — no pipeline timing risk from SSE removal. RISK-3: GET /result endpoint contract unchanged — result shape not modified by this sprint. No hidden side effects on analytical output."
     },
     {
-      "check": "Stage 2B — determinism risks surfaced",
+      "check": "Stage 2B — Intelligence Core preservation",
       "result": "CONFIRMED",
-      "evidence": "RISK-1: Bug 1 enable_upper_bound default must be True (not False). False would silently suppress upper-bound activation on all existing signals that omit the flag, breaking golden panels. RISK-2: Bug 2 — score_biomarkers at orchestrator.py:542 delegates to self.scoring_engine.score_biomarkers(). Cursor must verify whether the scoring engine itself gates on both bounds; STOP 1 applies if that path requires broad redesign. RISK-3: Bug 3 fallback hypothesis_confidence must be a fixed constant (e.g. 0.0), and fallback text must be a constant phrase — no dynamic generation that could drift."
-    },
-    {
-      "check": "Forbidden files — control-plane scripts",
-      "result": "NOT IN SCOPE",
-      "evidence": "backend/scripts/run_work_package.py, golden_gate_local.py, update_cursor_status.py not referenced in prompt scope. backend/ssot/ not referenced. No tooling-leakage risk (.codex/, .vscode/) identified."
-    },
-    {
-      "check": "Stage 0 — branch alignment",
-      "result": "MISMATCH — expected and normal at hardening time",
-      "evidence": "Current branch: main. Required: fix/engine-trust-bugs. Branch must be created/checked out before Stage 3 (run_work_package.py start). Cursor responsibility per SOP §0."
+      "evidence": "No backend/core/**, backend/ssot/**, knowledge_bus/** files in sprint scope. Design Rule 3 and STOP condition 4 both forbid touching analytical runtime. orchestrator.run() call at analysis.py:169 is preserved as-is; sprint only affects what happens with the result after line 175."
     },
     {
       "check": "STOP conditions adequacy",
       "result": "CONFIRMED",
-      "evidence": "All 5 STOP conditions present in prompt at lines 184-196. RISK-2 (scoring engine gate) maps directly to STOP 1. STOP 2 (WHY fallback contract change) assessed: low risk — existing contract accommodates fallback. STOP 3 (activation from signal definition corruption) assessed: low risk — defect is runtime code, not definition data. STOP 4 (scope expansion): minimal supporting files (report_compiler_v1.py null-guard verification) are explicitly covered by prompt 'In scope' line 136. STOP 5 (unapproved Intelligence Core path): none identified."
+      "evidence": "5 STOP conditions at prompt lines 207-213. STOP 1: async job-system redesign required. STOP 2: insufficient truthful retrieval path (not triggered — /result exists at analysis.py:339). STOP 3: file scope expansion. STOP 4: analytical runtime modification. STOP 5: undocumented frontend assumptions. All conditions are clear, binding, and proportionate."
+    },
+    {
+      "check": "Forbidden files — control-plane scripts",
+      "result": "NOT IN SCOPE",
+      "evidence": "run_work_package.py, golden_gate_local.py, update_cursor_status.py not referenced. No backend/ssot/ changes. No tooling-leakage risk (.codex/, .vscode/, AGENTS.md modification) identified."
+    },
+    {
+      "check": "Stage 0 — branch alignment",
+      "result": "MISMATCH — expected at hardening time",
+      "evidence": "Current branch: main. Required: fix/integration-stability-backend. Branch must be created/checked out before Stage 3 (run_work_package.py start). Cursor responsibility per SOP §0."
     }
   ],
   "overall_verdict": "HARDENED",
-  "notes": "Three determinism risks surfaced for Cursor to handle before implementation: (1) enable_upper_bound default=True required for backward compatibility; (2) scoring engine bounds-gate must be verified before Bug 2 implementation — STOP 1 applies if redesign required; (3) Bug 3 fallback content must be a constant phrase, not dynamically derived. All fixes are bounded to named files plus minimal supporting files within healthiq-core-engine scope."
+  "advisory_notes": [
+    "healthiq-core-engine cursor rule globs do not include backend/app/routes/ — escape hatch ('explicitly required by the approved task') applies; role assignment defensible.",
+    "No existing test covers GET /events — sprint must add a test confirming SSE removal (new test, not regression).",
+    "Option A is directly viable: POST /start already returns synchronously with status:'completed'; /result is the truthful polling path. No architectural impediment to SSE removal.",
+    "Frontend follow-on (Sprint 2 frontend, light model) should be told: remove SSE listener; poll GET /api/analysis/result?analysis_id={id} until status='completed' or 'error'; POST /start will return completed immediately on success."
+  ]
 }

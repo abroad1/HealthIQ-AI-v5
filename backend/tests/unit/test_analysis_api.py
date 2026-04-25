@@ -131,3 +131,19 @@ class TestAnalysisAPI:
         """Test error handling for invalid analysis IDs."""
         response = client.get("/api/analysis/result")
         assert response.status_code == 422
+
+    def test_get_events_returns_410_gone(self):
+        """R-2A: fake SSE removed; /events must not emit fabricated progress."""
+        analysis_id = str(uuid.uuid4())
+        response = client.get(f"/api/analysis/events?analysis_id={analysis_id}")
+        assert response.status_code == 410
+        body = response.json()
+        assert body["detail"]["error"] == "sse_progress_not_available"
+        assert "POST /api/analysis/start" in body["detail"]["message"]
+        assert "GET /api/analysis/result" in body["detail"]["message"]
+
+    def test_get_events_without_analysis_id_still_410(self):
+        """Query param is optional; endpoint always documents removal of SSE."""
+        response = client.get("/api/analysis/events")
+        assert response.status_code == 410
+        assert response.json()["detail"]["error"] == "sse_progress_not_available"
