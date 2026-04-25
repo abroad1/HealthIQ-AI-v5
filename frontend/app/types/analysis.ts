@@ -1,4 +1,10 @@
-// TODO: Define analysis types
+import type { components } from './generated/openapi';
+
+/** Regenerated from OpenAPI (`npm run generate-types`); use for request/response contract checks. */
+export type ApiAnalysisStartRequest = components['schemas']['AnalysisStartRequest'];
+export type ApiAnalysisStartResponse = components['schemas']['AnalysisStartResponse'];
+export type ApiParseResponse = components['schemas']['ParseResponse'];
+
 export interface BiomarkerValue {
   value: number;
   unit: string;

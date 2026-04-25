@@ -141,7 +141,9 @@ describe('AnalysisService', () => {
           processing_metadata: { test: 'data' }
         },
         clinician_report_v1: null,
-        created_at: '2024-01-01T00:00:00Z'
+        created_at: '2024-01-01T00:00:00Z',
+        completed_at: undefined,
+        narrative_report_v1: null,
         }
       });
     });

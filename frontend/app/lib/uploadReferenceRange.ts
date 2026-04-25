@@ -251,7 +251,7 @@ export function buildReferenceRangeFromParserRow(b: Record<string, unknown>): Re
                 _inferUpperComparator(inferCtx, o0.max!),
             }
           : {}),
-      };
+      } as ParsedReferenceRange;
     }
   }
 
@@ -313,7 +313,7 @@ export function buildReferenceRangeFromParserRow(b: Record<string, unknown>): Re
                 _inferUpperComparator(bandCtx, m.max),
             }
           : {}),
-      };
+      } as ParsedReferenceRange;
     }
   }
 

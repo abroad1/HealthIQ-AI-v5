@@ -56,6 +56,20 @@ frontend/
 - **Server State**: TanStack Query for API data
 - **Real-time Updates**: WebSocket integration (future)
 
+## API types (OpenAPI)
+
+Contract types for the FastAPI surface are generated from a committed OpenAPI snapshot (Sprint 2 — integration stabilisation).
+
+1. **Regenerate** after backend API schema changes (or refresh the snapshot — see `scripts/openapi-snapshot.json` header):
+
+   ```bash
+   npm run generate-types
+   ```
+
+2. This writes `app/types/generated/openapi.ts`. Domain types in `app/types/analysis.ts` re-export selected schemas (for example `ApiAnalysisStartRequest`, `ApiAnalysisStartResponse`) and keep presentation-specific shapes where the OpenAPI schema is intentionally loose.
+
+3. **CI**: no automated gate in this sprint; run `npm run type-check` locally before PRs touching API clients.
+
 ## Development Guidelines
 
 ### Component Development

@@ -245,7 +245,7 @@ export default function ResultsPage() {
 
   const handleRetry = () => {
     if (currentAnalysis) {
-      retryAnalysis();
+      void retryAnalysis();
     }
   };
 

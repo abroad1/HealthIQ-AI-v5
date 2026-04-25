@@ -77,9 +77,6 @@ interface AnalysisState {
   questionnaireResponses: Record<string, any>;
   questionnaireCompleted: boolean;
   
-  // SSE connection
-  eventSource: EventSource | null;
-  
   // Actions
   setCurrentAnalysis: (analysis: AnalysisResult | null) => void;
   setCurrentAnalysisId: (analysisId: string | null) => void;
@@ -98,10 +95,10 @@ interface AnalysisState {
   // Complex actions
   startAnalysis: (request: AnalysisRequest) => Promise<void>;
   updateAnalysisProgress: (analysisId: string, progress: number, phase: string) => void;
-  completeAnalysis: (analysisId: string, results: any) => Promise<void>;
+  completeAnalysis: (analysisId: string) => Promise<void>;
   failAnalysis: (analysisId: string, error: AnalysisError) => void;
   clearAnalysis: () => void;
-  retryAnalysis: () => void;
+  retryAnalysis: () => Promise<void>;
   
   // Questionnaire actions
   setResponse: (id: string, value: any) => void;
@@ -137,7 +134,6 @@ export const useAnalysisStore = create<AnalysisState>()(
       userProfile: null,
       questionnaireResponses: {},
       questionnaireCompleted: false,
-      eventSource: null,
 
       // Basic setters
       setCurrentAnalysis: (analysis) => {
@@ -234,14 +230,14 @@ export const useAnalysisStore = create<AnalysisState>()(
           // Call the API service
           const response = await AnalysisService.startAnalysis(request);
           
-          if (!response.success) {
+          if (!response.success || !response.data) {
             throw new Error(response.error || 'Failed to start analysis');
           }
 
           const analysisId = response.data.analysis_id;
           const analysis: AnalysisResult = {
             analysis_id: analysisId,
-            status: 'pending',
+            status: 'processing',
             progress: 0,
             created_at: new Date().toISOString(),
             biomarkers: [],
@@ -253,9 +249,9 @@ export const useAnalysisStore = create<AnalysisState>()(
           set({
             currentAnalysis: analysis,
             currentAnalysisId: analysisId,
-            isLoading: false, // Set to false after successful start
+            isLoading: true,
             error: null,
-            currentPhase: 'ingestion', // Move to ingestion phase
+            currentPhase: 'ingestion',
             progress: 0,
           });
 
@@ -267,66 +263,10 @@ export const useAnalysisStore = create<AnalysisState>()(
             phase: 'ingestion',
           });
 
-          // Add to history
           get().addToHistory(analysis);
 
-          // Close any existing EventSource before creating a new one
-          const state = get();
-          if (state.eventSource) {
-            console.log('🧹 Closing previous SSE connection before starting new one');
-            state.eventSource.close();
-          }
-
-          // Start listening to SSE events
-          const eventSource = AnalysisService.subscribeToAnalysisEvents(
-            analysisId,
-            (event) => {
-              try {
-                const data = JSON.parse(event.data);
-                console.log('📡 SSE Event received:', data);
-                console.log('📡 Event phase:', data.phase, 'Progress:', data.progress);
-                
-                // Handle analysis_status events
-                if (data.phase && typeof data.progress === 'number') {
-                  console.log('🔔 Updating phase to:', data.phase);
-                  get().updateAnalysisProgress(analysisId, data.progress, data.phase);
-                  
-                  // Check if this is a completion event
-                  if (data.phase === 'complete') {
-                    get().completeAnalysis(analysisId, data.results);
-                  }
-                } else if (data.type === 'complete' || data.phase === 'complete') {
-                  get().completeAnalysis(analysisId, data.results);
-                } else if (data.type === 'error' || data.error) {
-                  get().failAnalysis(analysisId, {
-                    message: data.message || data.error || 'Analysis failed',
-                    code: data.code || 'ANALYSIS_ERROR',
-                    details: data.details,
-                  });
-                }
-              } catch (error) {
-                console.error('Failed to parse SSE event:', error);
-              }
-            },
-            (error) => {
-              console.warn('SSE stream closed or errored', error);
-              try {
-                eventSource.close();
-              } catch (_) { /* ignore */ }
-              // Treat as graceful completion instead of hard error
-              const state = get();
-              if (state.currentPhase !== 'completed') {
-                get().setPhase('completed');
-              }
-            },
-            () => {
-              console.log('Analysis completed via SSE');
-              get().completeAnalysis(analysisId, null);
-            }
-          );
-
-          // Store event source for cleanup
-          set({ eventSource });
+          /** R-2A: pipeline runs in POST /start; no SSE. Hand off to useAnalysisResult → GET /result. */
+          await get().completeAnalysis(analysisId);
 
         } catch (error) {
           emitWedgeEvent({
@@ -372,7 +312,6 @@ export const useAnalysisStore = create<AnalysisState>()(
           phase: 'completed',
         });
         if (state.currentAnalysis?.analysis_id === analysisId) {
-          // Stop events; result fetch is done by useAnalysisResult (single source of truth)
           set({
             isLoading: false,
             currentPhase: 'completed',
@@ -426,12 +365,6 @@ export const useAnalysisStore = create<AnalysisState>()(
       },
 
       clearAnalysis: () => {
-        // Close any active SSE connection
-        const state = get();
-        if (state.eventSource) {
-          state.eventSource.close();
-        }
-        
         set({
           currentAnalysis: null,
           currentAnalysisId: null,
@@ -444,11 +377,10 @@ export const useAnalysisStore = create<AnalysisState>()(
           unmappedBiomarkers: [],
           questionnaireResponses: {},
           questionnaireCompleted: false,
-          eventSource: null,
         });
       },
 
-      retryAnalysis: () => {
+      retryAnalysis: async () => {
         const state = get();
         if (state.currentAnalysis && state.userProfile) {
           const request: AnalysisRequest = {
@@ -456,7 +388,7 @@ export const useAnalysisStore = create<AnalysisState>()(
             user: state.userProfile,
             questionnaire_data: state.questionnaireResponses,
           };
-          get().startAnalysis(request);
+          await get().startAnalysis(request);
         }
       },
 
