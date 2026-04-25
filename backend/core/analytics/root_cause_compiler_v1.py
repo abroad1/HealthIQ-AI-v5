@@ -7,6 +7,7 @@ Additional targets (KB-S50): iron / oxygen transport and related canonical signa
 Additional targets (KB-S52): hepatic GGT and thyroid TSH leaf signals (Tier 1).
 Additional targets (KB-S52B): remaining hepatic and thyroid hormone / antibody leaf signals (PURE_EXTENSION).
 Additional targets (KB-S56B): renal creatinine, urea, and urate high signals with governed hypothesis assets.
+Additional targets (R-8 Wave 1): signal_total_cholesterol_high, signal_vitamin_d_low with governed hypothesis assets.
 Signals without a registered loader are skipped with no behavioural change.
 """
 
@@ -64,6 +65,8 @@ from core.knowledge.load_root_cause_hypotheses import (
     load_tgab_high_hypotheses_v1,
     load_tpo_ab_high_hypotheses_v1,
     load_urate_high_hypotheses_v1,
+    load_total_cholesterol_high_hypotheses_v1,
+    load_vitamin_d_low_hypotheses_v1,
 )
 
 _ROOT_CAUSE_TARGETS = [
@@ -77,6 +80,7 @@ _ROOT_CAUSE_TARGETS = [
     ("signal_ldl_cholesterol_high", load_ldl_cholesterol_high_hypotheses_v1),
     ("signal_hdl_cholesterol_low", load_hdl_cholesterol_low_hypotheses_v1),
     ("signal_triglycerides_high", load_triglycerides_high_hypotheses_v1),
+    ("signal_total_cholesterol_high", load_total_cholesterol_high_hypotheses_v1),
     ("signal_iron_deficiency_context", load_iron_deficiency_context_hypotheses_v1),
     ("signal_iron_overload_context", load_iron_overload_context_hypotheses_v1),
     ("signal_oxygen_transport_capacity", load_oxygen_transport_capacity_hypotheses_v1),
@@ -102,6 +106,7 @@ _ROOT_CAUSE_TARGETS = [
     ("signal_creatinine_high", load_creatinine_high_hypotheses_v1),
     ("signal_urea_high", load_urea_high_hypotheses_v1),
     ("signal_urate_high", load_urate_high_hypotheses_v1),
+    ("signal_vitamin_d_low", load_vitamin_d_low_hypotheses_v1),
 ]
 
 

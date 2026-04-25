@@ -206,3 +206,11 @@ def load_tgab_high_hypotheses_v1() -> Dict[str, Any]:
 
 def load_tpo_ab_high_hypotheses_v1() -> Dict[str, Any]:
     return load_root_cause_hypotheses_asset_v1("tpo_ab_high_hypotheses_v1.yaml")
+
+
+def load_total_cholesterol_high_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("total_cholesterol_high_hypotheses_v1.yaml")
+
+
+def load_vitamin_d_low_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("vitamin_d_low_hypotheses_v1.yaml")
