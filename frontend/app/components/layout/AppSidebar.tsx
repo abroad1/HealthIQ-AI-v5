@@ -7,6 +7,7 @@ import {
   Upload,
   ListChecks,
   FileText,
+  TrendingUp,
   User,
   Settings,
 } from 'lucide-react'
@@ -26,6 +27,7 @@ const mainItems = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
   { title: 'Upload', url: '/upload', icon: Upload },
   { title: 'Actions', url: '/actions', icon: ListChecks },
+  { title: 'Trends', url: '/trends', icon: TrendingUp },
   { title: 'Reports', url: '/reports', icon: FileText },
 ]
 

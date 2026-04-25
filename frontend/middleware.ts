@@ -10,6 +10,7 @@ const PROTECTED_PREFIXES = [
   '/profile',
   '/upload',
   '/results',
+  '/trends',
 ] as const
 
 function isProtectedPath(pathname: string): boolean {
@@ -61,5 +62,7 @@ export const config = {
     '/upload/:path*',
     '/results',
     '/results/:path*',
+    '/trends',
+    '/trends/:path*',
   ],
 }

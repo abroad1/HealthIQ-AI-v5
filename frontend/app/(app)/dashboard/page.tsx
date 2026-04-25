@@ -4,9 +4,11 @@ import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { FileUp, FileText, Loader2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, FileUp, FileText, Loader2, Minus, TrendingUp } from 'lucide-react'
 import { useAuthStore } from '../../state/authStore'
 import { useHistory } from '../../hooks/useHistory'
+import { useTrendData } from '../../hooks/useTrendData'
+import { topMovementRows } from '@/lib/trendComparison'
 import { friendlyHistoryError, savedAnalysisPrimaryLabel } from '@/lib/historyErrors'
 
 function formatScore(s: number | null | undefined): string {
@@ -25,6 +27,9 @@ export default function DashboardPage() {
     total,
   } = useHistory({ limit: 5, page: 1, autoFetch: true })
 
+  const trendState = useTrendData(true)
+  const trendGlanceRows = trendState.status === 'ready' ? topMovementRows(trendState.rows, 3) : []
+
   return (
     <div className="container max-w-4xl py-8 space-y-8">
       <div>
@@ -33,6 +38,70 @@ export default function DashboardPage() {
           Hi {displayName} — start a new upload or open a saved analysis.
         </p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <TrendingUp className="h-5 w-5" />
+            Your trends at a glance
+          </CardTitle>
+          <CardDescription>
+            Largest marker movements compared to your previous completed test.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {trendState.status === 'loading' ? (
+            <div className="flex items-center gap-2 text-muted-foreground py-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Checking for trend data…
+            </div>
+          ) : trendState.status === 'error' ? (
+            <p className="text-sm text-muted-foreground py-1">{trendState.message}</p>
+          ) : trendState.status === 'insufficient' ? (
+            <p className="text-sm text-muted-foreground py-1">
+              Trends become available after your next upload — we compare your latest test to the one before it.{' '}
+              <Link href="/upload" className="text-primary underline underline-offset-4">
+                Upload a blood test
+              </Link>
+              .
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {trendGlanceRows.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  No overlapping numeric markers to rank yet. Open the full table for details.
+                </p>
+              ) : (
+                <ul className="space-y-2">
+                  {trendGlanceRows.map((row) => (
+                    <li
+                      key={row.biomarkerName}
+                      className="flex flex-wrap items-center justify-between gap-2 text-sm border-b border-border/60 pb-2 last:border-0 last:pb-0"
+                    >
+                      <span className="font-medium min-w-0 truncate" title={row.biomarkerName}>
+                        {row.biomarkerName}
+                      </span>
+                      <span className="flex items-center gap-2 shrink-0 tabular-nums text-muted-foreground">
+                        {row.arrow === 'up' ? (
+                          <ArrowUp className="h-4 w-4 text-rose-600" aria-hidden />
+                        ) : row.arrow === 'down' ? (
+                          <ArrowDown className="h-4 w-4 text-emerald-700" aria-hidden />
+                        ) : (
+                          <Minus className="h-4 w-4" aria-hidden />
+                        )}
+                        <span>{row.deltaDisplay}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <Button asChild variant="outline" size="sm" className="w-full sm:w-auto">
+                <Link href="/trends">View full trends</Link>
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Card>
