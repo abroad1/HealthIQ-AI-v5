@@ -59,6 +59,7 @@ from app.analysis_payload import (
 )
 from config.database import get_db_optional
 from app.analysis_pdf_export import build_summary_pdf_bytes
+from app.billing_entitlement import enforce_new_analysis_entitlement
 from services.storage.persistence_service import PersistenceService, CLIENT_RESULT_SHAPE_V1
 from repositories import AnalysisRepository, AnalysisResultRepository
 from sqlalchemy.orm import Session
@@ -92,6 +93,9 @@ async def start_analysis(
         AnalysisStartResponse: Contains the analysis ID
     """
     try:
+        if db is not None:
+            enforce_new_analysis_entitlement(db, auth_user)
+
         # Generate unique analysis ID
         analysis_id = _generate_analysis_id()
         

@@ -8,6 +8,7 @@ import {
   ListChecks,
   FileText,
   TrendingUp,
+  CreditCard,
   User,
   Settings,
 } from 'lucide-react'
@@ -28,6 +29,7 @@ const mainItems = [
   { title: 'Upload', url: '/upload', icon: Upload },
   { title: 'Actions', url: '/actions', icon: ListChecks },
   { title: 'Trends', url: '/trends', icon: TrendingUp },
+  { title: 'Pricing', url: '/pricing', icon: CreditCard },
   { title: 'Reports', url: '/reports', icon: FileText },
 ]
 

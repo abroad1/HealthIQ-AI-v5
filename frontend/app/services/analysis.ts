@@ -13,7 +13,7 @@ import {
   ExportResponse,
   type ApiAnalysisStartResponse,
 } from '../types/analysis';
-import { ApiResponse, ApiError } from '../types/api';
+import { ApiResponse } from '../types/api';
 import { readAccessTokenCookie } from '../lib/auth-cookies';
 import { API_BASE } from '../lib/api';
 
@@ -134,8 +134,30 @@ export class AnalysisService {
       if (!response.ok) {
         const errorText = await response.clone().text();
         console.error("❌ Response error body:", errorText);
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
+        const errorData = await response.json().catch(() => ({})) as { detail?: unknown };
+        if (response.status === 402) {
+          const d = errorData.detail;
+          const msg =
+            typeof d === 'object' && d !== null && 'message' in d
+              ? String((d as { message: unknown }).message)
+              : typeof d === 'string'
+                ? d
+                : `HTTP ${response.status}: ${response.statusText}`;
+          return {
+            data: null,
+            success: false,
+            error: msg,
+            code: 'UPGRADE_REQUIRED',
+          };
+        }
+        const detail = errorData.detail;
+        const detailStr =
+          typeof detail === 'string'
+            ? detail
+            : detail && typeof detail === 'object' && 'message' in detail
+              ? String((detail as { message: unknown }).message)
+              : `HTTP ${response.status}: ${response.statusText}`;
+        throw new Error(detailStr);
       }
 
       const result = (await response.json()) as ApiAnalysisStartResponse;

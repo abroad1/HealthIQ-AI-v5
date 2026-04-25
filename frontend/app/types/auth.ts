@@ -25,4 +25,5 @@ export interface MeResponse {
   user: BackendUserIdentity
   app_metadata: Record<string, unknown>
   user_metadata: Record<string, unknown>
+  subscription_status?: string | null
 }

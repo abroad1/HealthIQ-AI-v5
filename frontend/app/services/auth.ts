@@ -3,7 +3,7 @@
  * Uses NEXT_PUBLIC_API_BASE + /api/auth/* (not Supabase JS session — avoids competing flows).
  */
 
-import { User } from '../types/user'
+import { User, type SubscriptionStatusV1 } from '../types/user'
 import { ApiResponse } from '../types/api'
 import type { AuthSessionResponse, BackendUserIdentity, MeResponse } from '../types/auth'
 import { API_BASE } from '../lib/api'
@@ -28,10 +28,18 @@ function parseFastApiDetail(payload: unknown): string {
   return 'Request failed'
 }
 
-function identityToUser(u: BackendUserIdentity): User {
+function normalizeSubscriptionStatus(raw: string | null | undefined): SubscriptionStatusV1 | undefined {
+  if (raw == null || raw === '') return undefined
+  const s = raw.toLowerCase()
+  if (s === 'free' || s === 'active' || s === 'cancelled') return s
+  return undefined
+}
+
+function identityToUser(u: BackendUserIdentity, subscriptionStatusRaw?: string | null): User {
   return {
     id: u.id,
     email: u.email ?? '',
+    subscription_status: normalizeSubscriptionStatus(subscriptionStatusRaw),
   }
 }
 
@@ -175,7 +183,7 @@ export class AuthService {
       }
 
       const result = (await response.json()) as MeResponse
-      const user = identityToUser(result.user)
+      const user = identityToUser(result.user, result.subscription_status)
       localStorage.setItem(USER_KEY, JSON.stringify(user))
 
       return { data: user, success: true, message: 'User data retrieved successfully' }

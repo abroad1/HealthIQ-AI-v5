@@ -38,6 +38,17 @@ class Profile(Base):
     consent_given = Column(Boolean, nullable=False, default=False)
     consent_version = Column(String(20), nullable=False, default="1.0")
     consent_given_at = Column(DateTime, nullable=True)
+
+    # Billing (Sprint 7 — Stripe; no analytical logic)
+    subscription_status = Column(
+        String(32),
+        nullable=False,
+        default="free",
+        server_default="free",
+        index=True,
+    )
+    stripe_customer_id = Column(String(255), nullable=True, index=True)
+    stripe_subscription_id = Column(String(255), nullable=True, index=True)
     
     # Timestamps
     created_at = Column(DateTime, default=func.now(), nullable=False, index=True)

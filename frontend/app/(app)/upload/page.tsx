@@ -15,6 +15,7 @@ import { useParseUpload } from '@/queries/parsing';
 import { useAnalysisResult } from '@/queries/analysisResult';
 import { useAuthStore } from '@/state/authStore';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { emitWedgeEvent } from '@/lib/wedgeAnalytics';
 import {
   analysisBiomarkerKey,
@@ -302,18 +303,43 @@ export default function UploadPage() {
         )}
 
         {analysisError && (
-          <Alert className="mb-6 border-red-200 bg-red-50">
-            <AlertCircle className="h-4 w-4 text-red-600" />
-            <AlertDescription className="text-red-800">
-              <strong>Could not start analysis:</strong> {analysisError.message || 'Validation failed'}
-              {analysisError.details && (
+          <Alert
+            className={
+              analysisError.code === 'UPGRADE_REQUIRED'
+                ? 'mb-6 border-amber-200 bg-amber-50'
+                : 'mb-6 border-red-200 bg-red-50'
+            }
+          >
+            <AlertCircle
+              className={
+                analysisError.code === 'UPGRADE_REQUIRED' ? 'h-4 w-4 text-amber-700' : 'h-4 w-4 text-red-600'
+              }
+            />
+            <AlertDescription
+              className={analysisError.code === 'UPGRADE_REQUIRED' ? 'text-amber-950' : 'text-red-800'}
+            >
+              {analysisError.code === 'UPGRADE_REQUIRED' ? (
+                <>
+                  <strong>Subscription required.</strong>{' '}
+                  {analysisError.message || 'Subscribe to run further analyses. Your past results stay available.'}{' '}
+                  <Link href="/pricing" className="font-semibold underline underline-offset-4">
+                    View pricing
+                  </Link>
+                  .
+                </>
+              ) : (
+                <>
+                  <strong>Could not start analysis:</strong> {analysisError.message || 'Validation failed'}
+                </>
+              )}
+              {analysisError.details && analysisError.code !== 'UPGRADE_REQUIRED' ? (
                 <details className="mt-2">
                   <summary className="cursor-pointer text-sm font-semibold">Technical details</summary>
                   <pre className="mt-2 text-xs bg-white p-2 rounded overflow-auto max-h-40">
                     {JSON.stringify(analysisError.details, null, 2)}
                   </pre>
                 </details>
-              )}
+              ) : null}
             </AlertDescription>
           </Alert>
         )}

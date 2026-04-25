@@ -62,7 +62,22 @@ class AnalysisRepository(BaseRepository[Analysis]):
         except SQLAlchemyError as e:
             logger.error(f"Failed to count analyses for user {user_id}: {str(e)}")
             raise
-    
+
+    def count_completed_by_user_id(self, user_id: UUID) -> int:
+        """Count completed analyses for paywall / free-tier enforcement."""
+        try:
+            return (
+                self.db_session.query(Analysis)
+                .filter(
+                    Analysis.user_id == user_id,
+                    Analysis.status == "completed",
+                )
+                .count()
+            )
+        except SQLAlchemyError as e:
+            logger.error(f"Failed to count completed analyses for user {user_id}: {str(e)}")
+            raise
+
     def list_by_status(self, status: str, limit: int = 100, offset: int = 0) -> List[Analysis]:
         """
         List analyses by status.
