@@ -4,19 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  BarChart3,
-  TrendingUp,
-  AlertCircle,
-  RefreshCw,
-  Download,
-  Share2,
-  Eye,
-  EyeOff,
-  ChevronDown,
-  ChevronRight,
-} from 'lucide-react';
+import { AlertCircle, RefreshCw, Download, Share2, Eye, EyeOff } from 'lucide-react';
 import { useAnalysisStore } from '@/state/analysisStore';
 import { useClusterStore } from '@/state/clusterStore';
 import { InsightsPanel } from '@/components/insights/InsightsPanel';
@@ -25,7 +13,6 @@ import BiomarkerDials, { type BiomarkerDialEntry } from '@/components/biomarkers
 import ClusterSummary from '@/components/clusters/ClusterSummary';
 import ClinicianReportRenderer from '@/components/results/ClinicianReportRenderer';
 import { BalancedSystemsSummary } from '@/components/results/BalancedSystemsSummary';
-import { ResultsBodyOverview } from '@/components/results/ResultsBodyOverview';
 import { PrimaryFindingAndWhy } from '@/components/results/PrimaryFindingAndWhy';
 import { WhyThisLeadWonSection } from '@/components/results/WhyThisLeadWonSection';
 import { SystemUnderstandingSection } from '@/components/results/SystemUnderstandingSection';
@@ -35,8 +22,13 @@ import { ResultsInvestigationSpine } from '@/components/results/ResultsInvestiga
 import {
   NarrativeLeadAndSupportingSections,
   NarrativeLongitudinalAndNextSteps,
-  NarrativeRetailSummaryCard,
 } from '@/components/results/DeterministicNarrativeSurface';
+import { ResultsDisclosureSection } from '@/components/results/ResultsDisclosureSection';
+import {
+  ResultsActionCardsBlock,
+  ResultsDrivingSignals,
+  ResultsPrimaryHero,
+} from '@/components/results/ResultsHeroBlocks';
 import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAnalysisResult } from '@/queries/analysisResult';
@@ -46,6 +38,16 @@ import Link from 'next/link';
 import { extractNarrativeRuntimeMeta } from '@/lib/narrativeRuntimePresentation';
 import { emitWedgeEvent } from '@/lib/wedgeAnalytics';
 import { derivePatternRelevanceLine } from '@/lib/biomarkerPatternRelevance';
+import {
+  buildActionCardModels,
+  buildPrimaryHeroSummary,
+  getFirstIdlRecord,
+  pickPhenotypeLabel,
+  pickTopDriverBiomarkers,
+  resolvePrimaryFindingSeverity,
+} from '@/lib/resultsPageLayout';
+
+const BIOMARKER_DIALS_SECTION_ID = 'section-biomarker-dials';
 
 function pickPrimaryDriverCluster(clusters: Cluster[]): { id: string; name: string; biomarkers: string[] } | null {
   const sevRank: Record<string, number> = { critical: 4, high: 3, moderate: 2, low: 1 };
@@ -111,6 +113,10 @@ function computeMissingChapterLine(
   );
 }
 
+function clusterById(clusters: Cluster[], id: string): Cluster | undefined {
+  return clusters.find((c) => String(c.cluster_id || c.id) === id);
+}
+
 export default function ResultsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -130,12 +136,9 @@ export default function ResultsPage() {
     loadClusters,
   } = useClusterStore();
 
-  const [activeDetailTab, setActiveDetailTab] = useState('overview');
   const [showDetails, setShowDetails] = useState(false);
-  const [advancedOpen, setAdvancedOpen] = useState(false);
   const resultsViewedForId = useRef<string | null>(null);
-  /** Auto-open narrative once per (analysis_id × insights length) to handle async insight hydration. */
-  const advancedNarrativeAutoOpenKey = useRef<string | null>(null);
+  const clinicianWedgeSentRef = useRef(false);
 
   const idToFetch = currentAnalysisId || analysisIdFromUrl;
   const {
@@ -159,31 +162,63 @@ export default function ResultsPage() {
   );
 
   const primaryDriver = useMemo(() => pickPrimaryDriverCluster(clusters), [clusters]);
+  const primaryCluster = useMemo(
+    () => (primaryDriver ? clusterById(clusters, primaryDriver.id) : undefined),
+    [clusters, primaryDriver]
+  );
   const missingChapterLine = useMemo(
     () => computeMissingChapterLine(clinicianReport, primaryDriver),
     [clinicianReport, primaryDriver]
   );
 
+  const firstIdl = useMemo(
+    () => getFirstIdlRecord(currentAnalysis?.interpretation_display_layer_v1),
+    [currentAnalysis?.interpretation_display_layer_v1]
+  );
+
   const keyFindingsOverflow = clinicianReport?.sections?.page1?.key_findings?.slice(1) ?? [];
 
-  /** First visible IDL retail label — pointer text only; full IDL stays in Section 5 (FE-R8C). */
   const firstIdlRetailLabel = useMemo(() => {
     const idlRows = selectVisibleIdlRecords(currentAnalysis?.interpretation_display_layer_v1);
     return idlRows[0]?.retail_display_label?.trim() ?? null;
   }, [currentAnalysis?.interpretation_display_layer_v1]);
 
+  const phenotypeLabel = useMemo(
+    () => pickPhenotypeLabel(clinicianReport, firstIdl, primaryDriver),
+    [clinicianReport, firstIdl, primaryDriver]
+  );
+
+  const heroSummary = useMemo(
+    () => buildPrimaryHeroSummary(narrativeReport?.retail_summary, clinicianReport),
+    [narrativeReport?.retail_summary, clinicianReport]
+  );
+
+  const heroSeverity = useMemo(
+    () => resolvePrimaryFindingSeverity(firstIdl, primaryCluster),
+    [firstIdl, primaryCluster]
+  );
+
+  const topDriverMarkers = useMemo(() => pickTopDriverBiomarkers(biomarkers, primaryDriver), [biomarkers, primaryDriver]);
+
+  const actionCards = useMemo(
+    () => buildActionCardModels(clusters, currentAnalysis?.recommendations),
+    [clusters, currentAnalysis?.recommendations]
+  );
+
+  const handleAdvancedOpen = (open: boolean) => {
+    if (!open || !currentAnalysis?.analysis_id || clinicianWedgeSentRef.current) return;
+    clinicianWedgeSentRef.current = true;
+    emitWedgeEvent({
+      event_name: 'wedge_clinician_report_viewed',
+      timestamp: new Date().toISOString(),
+      route: '/results',
+      analysis_id: currentAnalysis.analysis_id,
+    });
+  };
+
   useEffect(() => {
-    const id = currentAnalysis?.analysis_id;
-    if (!id) return;
-    const ins = currentAnalysis.insights ?? [];
-    const key = `${id}:${ins.length}`;
-    if (advancedNarrativeAutoOpenKey.current === key) return;
-    advancedNarrativeAutoOpenKey.current = key;
-    if (ins.length > 0) {
-      setAdvancedOpen(true);
-      setActiveDetailTab('insights');
-    }
-  }, [currentAnalysis?.analysis_id, currentAnalysis?.insights]);
+    clinicianWedgeSentRef.current = false;
+  }, [currentAnalysis?.analysis_id]);
 
   useEffect(() => {
     if (analysisIdFromUrl && analysisIdFromUrl !== currentAnalysisId) {
@@ -491,9 +526,8 @@ export default function ResultsPage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-1">Your results</h1>
               <p className="text-gray-600 max-w-2xl">
-                One guided path through your panel: deterministic summary and explanation from the narrative compiler
-                when available, then structured findings, patterns, and evidence. Optional legacy narrative summaries
-                remain under Advanced analysis.
+                Start with your primary finding, then open deeper sections for patterns, actions, and the full technical
+                report when you need it.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -540,69 +574,32 @@ export default function ResultsPage() {
           )}
         </div>
 
-        <div className="space-y-10">
-          <ResultsInvestigationSpine crossBodyPatternLabel={firstIdlRetailLabel} />
+        <div className="space-y-8">
+          <ResultsPrimaryHero
+            phenotypeLabel={phenotypeLabel}
+            summary={heroSummary}
+            severityLabel={heroSeverity.label}
+            severityTone={heroSeverity.tone}
+          />
 
-          <NarrativeRetailSummaryCard narrative={narrativeReport} />
+          <ResultsDrivingSignals markers={topDriverMarkers} biomarkerSectionId={BIOMARKER_DIALS_SECTION_ID} />
 
-          <section aria-labelledby="body-overview-section-label">
-            <h2 id="body-overview-section-label" className="sr-only">
-              Body overview
+          <section aria-labelledby="system-health-label">
+            <h2 id="system-health-label" className="sr-only">
+              Your system health
             </h2>
-            <ResultsBodyOverview
-              clinicianReport={clinicianReport}
-              clusters={clusters}
-              compiledBodyOverview={narrativeReport?.body_overview}
-            />
-          </section>
-
-          <section aria-labelledby="whats-working-section-label">
-            <h2 id="whats-working-section-label" className="sr-only">
-              What is working well
-            </h2>
-            <BalancedSystemsSummary balanced={balancedSystems} maxItems={4} />
-          </section>
-
-          <NarrativeLeadAndSupportingSections narrative={narrativeReport} />
-
-          <section aria-labelledby="primary-finding-section-label">
-            <h2 id="primary-finding-section-label" className="sr-only">
-              Primary finding and why
-            </h2>
-            <PrimaryFindingAndWhy report={clinicianReport} />
-          </section>
-
-          <section aria-labelledby="why-lead-won-section-label">
-            <h2 id="why-lead-won-section-label" className="sr-only">
-              Why this lead won and uncertainty
-            </h2>
-            <WhyThisLeadWonSection report={clinicianReport} />
-          </section>
-
-          <NarrativeLongitudinalAndNextSteps narrative={narrativeReport} />
-
-          <section aria-labelledby="patterns-across-body-section-label">
-            <h2 id="patterns-across-body-section-label" className="sr-only">
-              Patterns across your body
-            </h2>
-            <InterpretationPatternsSection bundle={currentAnalysis?.interpretation_display_layer_v1} />
-          </section>
-
-          <section aria-labelledby="system-understanding-section-label">
-            <h2 id="system-understanding-section-label" className="sr-only">
-              How to understand your results
-            </h2>
-            <SystemUnderstandingSection
+            <BalancedSystemsSummary
               balanced={balancedSystems}
-              clusters={clusters}
-              primaryDriver={primaryDriver}
-              idlRetailLabel={firstIdlRetailLabel}
+              sectionTitle="Your system health"
+              initialVisibleCount={6}
+              expandBeyondInitial
+              maxItems={4}
             />
           </section>
 
           <section aria-labelledby="trust-layer">
             <h2 id="trust-layer" className="sr-only">
-              Trust strip
+              Data quality
             </h2>
             <PipelineStatus
               dataQuality={clinicianReport?.data_quality}
@@ -611,204 +608,171 @@ export default function ResultsPage() {
             />
           </section>
 
-          <section aria-labelledby="hero-interpretation">
-            <h2 id="hero-interpretation" className="sr-only">
-              Clinical interpretation detail
-            </h2>
-            <InsightPanel
-              report={clinicianReport}
-              primaryDriverSystemGroupName={primaryDriver?.name ?? null}
-              contextOnly
+          <ResultsDisclosureSection
+            title="What this means"
+            description="Patterns, context, and the structured interpretation behind the summary above."
+            data-testid="section-what-this-means"
+            defaultOpen={false}
+          >
+            <ResultsInvestigationSpine crossBodyPatternLabel={firstIdlRetailLabel} />
+            <InterpretationPatternsSection bundle={currentAnalysis?.interpretation_display_layer_v1} />
+            <SystemUnderstandingSection
+              balanced={balancedSystems}
+              clusters={clusters}
+              primaryDriver={primaryDriver}
+              idlRetailLabel={firstIdlRetailLabel}
             />
-          </section>
+            <WhyThisLeadWonSection report={clinicianReport} />
+            <NarrativeLeadAndSupportingSections narrative={narrativeReport} />
+            <NarrativeLongitudinalAndNextSteps narrative={narrativeReport} />
+            <section aria-labelledby="root-cause-heading">
+              <h3 id="root-cause-heading" className="text-sm font-semibold text-slate-800 mb-2">
+                Clinician-structured &ldquo;why&rdquo; and evidence
+              </h3>
+              <PrimaryFindingAndWhy report={clinicianReport} omitIntroDuplicate />
+            </section>
+          </ResultsDisclosureSection>
 
-          <LayerCInsightSection bundle={layerCFeatures} />
+          <ResultsDisclosureSection
+            title="Actions"
+            description="Follow-ups suggested from your system group notes and any panel-level list returned with this result."
+            data-testid="section-actions"
+            defaultOpen={false}
+          >
+            <ResultsActionCardsBlock actions={actionCards} />
+          </ResultsDisclosureSection>
 
-          <section className="space-y-3" aria-labelledby="cluster-heading">
-            <h2 id="cluster-heading" className="text-xl font-semibold text-gray-900">
-              System groups
-            </h2>
-            <p className="text-sm text-gray-600">
-              How your markers group into biological patterns. Names describe the pattern in plain language.
-            </p>
-            <ClusterSummary clusters={clusterSummaries} isLoading={clustersLoading} showDetails={showDetails} />
-          </section>
-
-          <section aria-labelledby="biomarkers-heading">
-            <h2 id="biomarkers-heading" className="sr-only">
-              Biomarker evidence
-            </h2>
-            <BiomarkerDials biomarkers={biomarkerDialData} sectionTitle="Biomarker evidence" />
-          </section>
-
-          <section aria-labelledby="advanced-analysis-heading">
-            <h2 id="advanced-analysis-heading" className="sr-only">
-              Advanced analysis
-            </h2>
-            <Card className="border-slate-200">
-              <CardHeader className="pb-2">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <CardTitle className="text-lg">Advanced analysis</CardTitle>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setAdvancedOpen((o) => !o)}
-                    aria-expanded={advancedOpen}
-                  >
-                    {advancedOpen ? (
-                      <>
-                        <ChevronDown className="h-4 w-4 mr-2" /> Collapse
-                      </>
-                    ) : (
-                      <>
-                        <ChevronRight className="h-4 w-4 mr-2" /> Expand
-                      </>
-                    )}
-                  </Button>
-                </div>
-                <CardDescription>
-                  Structured clinician report, optional legacy insight summaries, and technical context. Core
-                  deterministic narrative sections are on the main results path when{' '}
-                  <span className="font-medium">narrative_report_v1</span> is present; this area adds depth and older
-                  surfaces.
-                </CardDescription>
-              </CardHeader>
-              {advancedOpen ? (
-                <CardContent className="pt-0">
-                  <Tabs
-                    value={activeDetailTab}
-                    onValueChange={(v) => {
-                      setActiveDetailTab(v);
-                      if (v === 'clinician' && currentAnalysis?.analysis_id) {
-                        emitWedgeEvent({
-                          event_name: 'wedge_clinician_report_viewed',
-                          timestamp: new Date().toISOString(),
-                          route: '/results',
-                          analysis_id: currentAnalysis.analysis_id,
-                        });
-                      }
-                    }}
-                    className="w-full"
-                  >
-                    <TabsList className="grid w-full grid-cols-3 mb-6">
-                      <TabsTrigger value="overview" className="flex items-center gap-2 text-xs sm:text-sm">
-                        <BarChart3 className="h-4 w-4 shrink-0" />
-                        Overview
-                      </TabsTrigger>
-                      <TabsTrigger value="insights" className="flex items-center gap-2 text-xs sm:text-sm">
-                        <TrendingUp className="h-4 w-4 shrink-0" />
-                        Narrative
-                      </TabsTrigger>
-                      <TabsTrigger value="clinician" className="flex items-center gap-2 text-xs sm:text-sm">
-                        <AlertCircle className="h-4 w-4 shrink-0" />
-                        Clinician report
-                      </TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="overview" className="space-y-6">
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <Card>
-                          <CardHeader>
-                            <CardTitle className="flex items-center gap-2">Overall score</CardTitle>
-                            <CardDescription>
-                              Summary metric from the analysis engine — supporting context, not a clinical diagnosis.
-                            </CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="text-center">
-                              <div className="text-5xl font-bold text-green-600 mb-2">
-                                {overallPercent != null ? overallPercent : 'N/A'}
-                              </div>
-                              {overallPercent != null ? <p className="text-gray-600 text-sm">Normalised display score</p> : null}
-                              <div className="mt-4 w-full bg-gray-200 rounded-full h-3">
-                                <div
-                                  className="bg-green-500 h-3 rounded-full transition-all duration-1000"
-                                  style={{ width: `${Math.min(100, overallPercent ?? 0)}%` }}
-                                ></div>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-
-                        <Card>
-                          <CardHeader>
-                            <CardTitle>Risk summary</CardTitle>
-                            <CardDescription>From the engine risk assessment object, when present.</CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="space-y-4">
-                              {currentAnalysis.risk_assessment &&
-                              typeof currentAnalysis.risk_assessment === 'object' &&
-                              !Array.isArray(currentAnalysis.risk_assessment) ? (
-                                Object.entries(currentAnalysis.risk_assessment).map(([category, score]) => (
-                                  <div key={category} className="flex justify-between items-center">
-                                    <span className="capitalize text-sm font-medium text-gray-700">
-                                      {category.replace(/([A-Z])/g, ' $1').trim()}
-                                    </span>
-                                    <div className="flex items-center gap-2">
-                                      {typeof score === 'number' ? (
-                                        <>
-                                          <div className="w-20 bg-gray-200 rounded-full h-2">
-                                            <div
-                                              className="bg-blue-500 h-2 rounded-full"
-                                              style={{ width: `${Math.min(100, Math.max(0, score))}%` }}
-                                            ></div>
-                                          </div>
-                                          <span className="text-sm font-semibold w-8">{Math.round(score)}</span>
-                                        </>
-                                      ) : (
-                                        <span className="text-sm text-gray-700">{String(score)}</span>
-                                      )}
-                                    </div>
-                                  </div>
-                                ))
-                              ) : (
-                                <p className="text-sm text-gray-500">No structured risk breakdown for this result.</p>
-                              )}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </div>
-
-                      {keyFindingsOverflow.length > 0 ? (
-                        <div>
-                          <h3 className="text-sm font-semibold text-gray-800 mb-2">Additional key findings</h3>
-                          <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                            {keyFindingsOverflow.map((line, i) => (
-                              <li key={i}>{line}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      ) : null}
-
-                      {insights && insights.length > 0 ? (
-                        <Alert>
-                          <AlertDescription>
-                            {insights.length} short narrative summar{insights.length === 1 ? 'y' : 'ies'} available —
-                            open the &quot;Narrative&quot; tab for the full list. These summaries complement the
-                            clinical interpretation; they are not the primary structured report.
-                          </AlertDescription>
-                        </Alert>
-                      ) : null}
-                    </TabsContent>
-
-                    <TabsContent value="insights" className="space-y-6">
-                      <InsightsPanel insights={insights} narrativeRuntime={narrativeRuntime} />
-                    </TabsContent>
-
-                    <TabsContent value="clinician" className="space-y-6">
-                      <ClinicianReportRenderer
-                        report={clinicianReport}
-                        balancedSystems={balancedSystems}
-                        deterministicClinicianSynthesis={narrativeReport?.clinician_synthesis}
-                      />
-                    </TabsContent>
-                  </Tabs>
+          <ResultsDisclosureSection
+            title="Advanced & clinician report"
+            description="Full biomarker dials, system groups, Layer C insights, and the long-form report."
+            data-testid="section-advanced"
+            defaultOpen={false}
+            onOpenChange={handleAdvancedOpen}
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">Overall score</CardTitle>
+                  <CardDescription>
+                    Summary metric from the analysis engine — supporting context, not a clinical diagnosis.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center">
+                    <div className="text-5xl font-bold text-green-600 mb-2">
+                      {overallPercent != null ? overallPercent : 'N/A'}
+                    </div>
+                    {overallPercent != null ? <p className="text-gray-600 text-sm">Normalised display score</p> : null}
+                    <div className="mt-4 w-full bg-gray-200 rounded-full h-3">
+                      <div
+                        className="bg-green-500 h-3 rounded-full transition-all duration-1000"
+                        style={{ width: `${Math.min(100, overallPercent ?? 0)}%` }}
+                      ></div>
+                    </div>
+                  </div>
                 </CardContent>
-              ) : null}
-            </Card>
-          </section>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Risk summary</CardTitle>
+                  <CardDescription>From the engine risk assessment object, when present.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {currentAnalysis.risk_assessment &&
+                    typeof currentAnalysis.risk_assessment === 'object' &&
+                    !Array.isArray(currentAnalysis.risk_assessment) ? (
+                      Object.entries(currentAnalysis.risk_assessment).map(([category, score]) => (
+                        <div key={category} className="flex justify-between items-center">
+                          <span className="capitalize text-sm font-medium text-gray-700">
+                            {category.replace(/([A-Z])/g, ' $1').trim()}
+                          </span>
+                          <div className="flex items-center gap-2">
+                            {typeof score === 'number' ? (
+                              <>
+                                <div className="w-20 bg-gray-200 rounded-full h-2">
+                                  <div
+                                    className="bg-blue-500 h-2 rounded-full"
+                                    style={{ width: `${Math.min(100, Math.max(0, score))}%` }}
+                                  ></div>
+                                </div>
+                                <span className="text-sm font-semibold w-8">{Math.round(score)}</span>
+                              </>
+                            ) : (
+                              <span className="text-sm text-gray-700">{String(score)}</span>
+                            )}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-sm text-gray-500">No structured risk breakdown for this result.</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {keyFindingsOverflow.length > 0 ? (
+              <div>
+                <h3 className="text-sm font-semibold text-gray-800 mb-2">Additional key findings</h3>
+                <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+                  {keyFindingsOverflow.map((line, i) => (
+                    <li key={i}>{line}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
+            {insights && insights.length > 0 ? (
+              <Alert>
+                <AlertDescription>
+                  {insights.length} short narrative summar{insights.length === 1 ? 'y' : 'ies'} available in the
+                  &quot;Narrative&quot; list below. These complement the clinical interpretation; they are not the primary
+                  structured report.
+                </AlertDescription>
+              </Alert>
+            ) : null}
+
+            <div className="space-y-2">
+              <h3 className="text-sm font-semibold text-slate-800">Clinical interpretation</h3>
+              <InsightPanel
+                report={clinicianReport}
+                primaryDriverSystemGroupName={primaryDriver?.name ?? null}
+                contextOnly
+              />
+            </div>
+
+            <LayerCInsightSection bundle={layerCFeatures} />
+
+            <section className="space-y-3" aria-labelledby="cluster-heading">
+              <h2 id="cluster-heading" className="text-xl font-semibold text-gray-900">
+                System groups
+              </h2>
+              <p className="text-sm text-gray-600">
+                How your markers group into biological patterns. Names describe the pattern in plain language.
+              </p>
+              <ClusterSummary clusters={clusterSummaries} isLoading={clustersLoading} showDetails={showDetails} />
+            </section>
+
+            <section id={BIOMARKER_DIALS_SECTION_ID} aria-labelledby="biomarkers-heading">
+              <h2 id="biomarkers-heading" className="text-xl font-semibold text-gray-900 mb-2">
+                Biomarker evidence
+              </h2>
+              <BiomarkerDials biomarkers={biomarkerDialData} sectionTitle="All markers on this run" />
+            </section>
+
+            <div className="space-y-2">
+              <h3 className="text-sm font-semibold text-slate-800">Narrative summaries</h3>
+              <InsightsPanel insights={insights} narrativeRuntime={narrativeRuntime} />
+            </div>
+
+            <ClinicianReportRenderer
+              report={clinicianReport}
+              balancedSystems={balancedSystems}
+              deterministicClinicianSynthesis={narrativeReport?.clinician_synthesis}
+            />
+          </ResultsDisclosureSection>
         </div>
 
         <div className="mt-10 flex justify-center gap-4">
@@ -817,7 +781,7 @@ export default function ResultsPage() {
           </Button>
           <Button onClick={handleExportResults}>
             <Download className="h-4 w-4 mr-2" />
-            Export Results
+            Export results
           </Button>
         </div>
       </div>

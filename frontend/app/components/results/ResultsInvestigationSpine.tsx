@@ -38,8 +38,8 @@ export function ResultsInvestigationSpine({
         </CardHeader>
         <CardContent className="pt-0">
           <p className="text-sm text-slate-700 leading-relaxed">
-            <span className="font-medium text-slate-900">Body overview</span> states the lead concern and pattern
-            scan. Next: what looks stable, the lead finding and evidence, why that lead ranked, then{' '}
+            <span className="font-medium text-slate-900">Primary finding</span> states the headline read for this
+            panel. Next: what looks stable, the lead finding and evidence, why that lead ranked, then{' '}
             <span className="font-medium text-slate-900">Patterns across your body</span>
             {crossBodyPatternLabel ? (
               <>

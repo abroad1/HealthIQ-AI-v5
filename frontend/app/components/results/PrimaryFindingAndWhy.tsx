@@ -17,12 +17,14 @@ function evidenceLine(ev: ClinicianEvidenceItem): string {
 
 export interface PrimaryFindingAndWhyProps {
   report: ClinicianReportV1 | null | undefined;
+  /** When true, hides the lead + “what this means” blocks (hero already surfaced them). */
+  omitIntroDuplicate?: boolean;
 }
 
 /**
  * FE-R2 Section 3 — Primary finding and why (deterministic clinician_report fields only).
  */
-export function PrimaryFindingAndWhy({ report }: PrimaryFindingAndWhyProps) {
+export function PrimaryFindingAndWhy({ report, omitIntroDuplicate = false }: PrimaryFindingAndWhyProps) {
   if (!report) {
     return (
       <section aria-labelledby="primary-finding-why-heading" data-testid="primary-finding-and-why">
@@ -88,12 +90,14 @@ export function PrimaryFindingAndWhy({ report }: PrimaryFindingAndWhyProps) {
           ) : null}
         </CardHeader>
         <CardContent className="space-y-6 text-sm text-gray-800">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">Lead finding</p>
-            <p className="text-base text-gray-900 leading-relaxed">{lead}</p>
-          </div>
+          {!omitIntroDuplicate ? (
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">Lead finding</p>
+              <p className="text-base text-gray-900 leading-relaxed">{lead}</p>
+            </div>
+          ) : null}
 
-          {bodyB ? (
+          {!omitIntroDuplicate && bodyB ? (
             <div>
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">What this means</p>
               <p className="leading-relaxed">{bodyB}</p>
