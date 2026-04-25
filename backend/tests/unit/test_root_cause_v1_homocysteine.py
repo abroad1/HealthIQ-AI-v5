@@ -484,3 +484,83 @@ def test_root_cause_v1_renal_kb_s56b_emits_hypotheses_for_creatinine_urea_urate(
     assert "urate_elevated_serum_hyperuricaemia_v1" in {
         str(h.get("hypothesis_id", "")).strip() for h in (uu.get("hypotheses") or []) if isinstance(h, dict)
     }
+
+
+def test_root_cause_v1_r8_total_cholesterol_high_emits_governed_hypotheses_not_fallback():
+    """R-8 Wave 1: signal_total_cholesterol_high maps to governed WHY assets."""
+    root = compile_root_cause_v1(
+        signal_results=[
+            {
+                "signal_id": "signal_total_cholesterol_high",
+                "signal_state": "at_risk",
+                "confidence": 0.78,
+                "primary_metric": "total_cholesterol",
+            },
+        ],
+        biomarker_context={
+            "total_cholesterol": {"value": 6.2},
+            "ldl_cholesterol": {"value": 3.8},
+            "hdl_cholesterol": {"value": 1.1},
+        },
+        input_reference_ranges={
+            "total_cholesterol": {"min": 3.5, "max": 5.2},
+            "ldl_cholesterol": {"min": 1.0, "max": 3.0},
+            "hdl_cholesterol": {"min": 1.0, "max": 3.0},
+        },
+    )
+    assert root is not None
+    dump = root.model_dump()
+    finding = _finding_by_signal(dump, "signal_total_cholesterol_high")
+    assert isinstance(finding, dict)
+    ids = {str(h.get("hypothesis_id", "")).strip() for h in (finding.get("hypotheses") or []) if isinstance(h, dict)}
+    assert "tc_atherogenic_panel_context_v1" in ids
+    assert "why_engine_fallback_v1" not in ids
+
+
+def test_root_cause_v1_r8_vitamin_d_low_emits_governed_hypotheses_not_fallback():
+    """R-8 Wave 1: signal_vitamin_d_low maps to governed WHY assets (empty confirmatory_tests allowed)."""
+    root = compile_root_cause_v1(
+        signal_results=[
+            {
+                "signal_id": "signal_vitamin_d_low",
+                "signal_state": "at_risk",
+                "confidence": 0.75,
+                "primary_metric": "vitamin_d",
+            },
+        ],
+        biomarker_context={
+            "vitamin_d": {"value": 32.0},
+        },
+        input_reference_ranges={
+            "vitamin_d": {"min": 75.0, "max": 200.0},
+        },
+    )
+    assert root is not None
+    dump = root.model_dump()
+    finding = _finding_by_signal(dump, "signal_vitamin_d_low")
+    assert isinstance(finding, dict)
+    ids = {str(h.get("hypothesis_id", "")).strip() for h in (finding.get("hypotheses") or []) if isinstance(h, dict)}
+    assert "vitamin_d_nutritional_status_context_v1" in ids
+    assert "why_engine_fallback_v1" not in ids
+
+
+def test_root_cause_v1_r8_fallback_still_applies_for_uncovered_lead_signal():
+    """R-8: lead signal without governed asset still receives engine fallback."""
+    root = compile_root_cause_v1(
+        signal_results=[
+            {
+                "signal_id": "signal_r8_regression_not_governed_v1",
+                "signal_state": "at_risk",
+                "confidence": 0.8,
+                "primary_metric": "ferritin",
+            },
+        ],
+        biomarker_context={"ferritin": {"value": 20.0}},
+        input_reference_ranges={"ferritin": {"min": 30.0, "max": 400.0}},
+    )
+    assert root is not None
+    dump = root.model_dump()
+    lead = (dump.get("findings") or [{}])[0]
+    assert str(lead.get("signal_id", "")).strip() == "signal_r8_regression_not_governed_v1"
+    h0 = (lead.get("hypotheses") or [{}])[0]
+    assert str(h0.get("hypothesis_id", "")).strip() == "why_engine_fallback_v1"
