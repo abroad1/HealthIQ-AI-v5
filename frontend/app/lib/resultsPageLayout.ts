@@ -2,6 +2,7 @@ import type {
   BiomarkerResult,
   Cluster,
   ClinicianReportV1,
+  Insight,
   InterpretationDisplayLayerBundleV1,
   InterpretationDisplayRecordV1,
 } from '@/types/analysis';
@@ -160,9 +161,10 @@ export interface ResultActionCardModel {
 
 function categoryFromCluster(c: Cluster | undefined): string {
   const raw = (c?.category || '').toLowerCase();
-  if (raw.includes('lifestyle') || raw.includes('diet')) return 'Lifestyle';
+  if (raw.includes('diet')) return 'Diet';
+  if (raw.includes('lifestyle')) return 'Lifestyle';
   if (raw.includes('supp')) return 'Supplement';
-  if (raw.includes('medical') || raw.includes('referral')) return 'Medical follow-up';
+  if (raw.includes('medical') || raw.includes('referral')) return 'Medical referral';
   if (raw.includes('lab') || raw.includes('test')) return 'Testing';
   if (c?.name) return 'System pattern';
   return 'Follow-up';
@@ -175,11 +177,39 @@ function evidenceLevelFromCluster(c: Cluster | undefined): string {
   return 'Moderate attention on this panel';
 }
 
-/** Flattens cluster recommendations and top-level result recommendations; deterministic ordering only. */
+function categoryFromInsight(ins: Insight): string {
+  const raw = (ins.category || '').toLowerCase();
+  if (raw.includes('diet') || raw.includes('nutrition')) return 'Diet';
+  if (raw.includes('lifestyle') || raw.includes('exercise') || raw.includes('activity')) return 'Lifestyle';
+  if (raw.includes('supp')) return 'Supplement';
+  if (raw.includes('medical') || raw.includes('refer') || raw.includes('clinical')) return 'Medical referral';
+  return 'Lifestyle';
+}
+
+function evidenceFromInsight(ins: Insight): string {
+  if (typeof ins.confidence === 'number' && ins.confidence > 0) {
+    if (ins.confidence >= 0.8) return 'Higher model confidence (contextual)';
+    if (ins.confidence >= 0.5) return 'Moderate model confidence (contextual)';
+  }
+  const s = (ins.severity || '').toLowerCase();
+  if (s === 'high' || s === 'critical') return 'Stronger emphasis in narrative block';
+  return 'Supporting note (narrative insight)';
+}
+
+export interface BuildActionCardOptions {
+  maxItems?: number;
+  /** When cluster/panel recs are thin, use insight.recommendation lines (already in DTO). */
+  insights?: Insight[] | null;
+}
+
+/** Flattens cluster recommendations, panel-level recs, then optional insight recs. Deterministic only. */
 export function buildActionCardModels(
   clusters: Cluster[],
-  topLevelRecs: string[] | null | undefined
+  topLevelRecs: string[] | null | undefined,
+  options?: BuildActionCardOptions
 ): ResultActionCardModel[] {
+  const maxItems = options?.maxItems ?? 8;
+  const insights = options?.insights;
   const out: ResultActionCardModel[] = [];
   for (const c of clusters) {
     const name = c.name?.trim() || 'System group';
@@ -194,7 +224,7 @@ export function buildActionCardModels(
         categoryLabel: categoryFromCluster(c),
         evidenceLevelLabel: evidenceLevelFromCluster(c),
       });
-      if (out.length >= 5) return out;
+      if (out.length >= maxItems) return out;
     }
   }
   for (const r of topLevelRecs || []) {
@@ -208,7 +238,22 @@ export function buildActionCardModels(
       categoryLabel: 'Follow-up',
       evidenceLevelLabel: 'Panel-level note',
     });
-    if (out.length >= 5) return out;
+    if (out.length >= maxItems) return out;
+  }
+  for (const ins of insights || []) {
+    for (const r of ins.recommendations || []) {
+      const paragraph = (r || '').trim();
+      if (!paragraph) continue;
+      const head = firstSentence(paragraph);
+      out.push({
+        heading: head.length > 100 ? `${head.slice(0, 97).trim()}…` : head,
+        paragraph,
+        sourceLabel: (ins.summary || ins.category || ins.id || 'Narrative insight').slice(0, 120),
+        categoryLabel: categoryFromInsight(ins),
+        evidenceLevelLabel: evidenceFromInsight(ins),
+      });
+      if (out.length >= maxItems) return out;
+    }
   }
   return out;
 }

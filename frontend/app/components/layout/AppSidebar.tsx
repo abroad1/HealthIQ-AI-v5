@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
   Upload,
+  ListChecks,
   FileText,
   User,
   Settings,
@@ -24,6 +25,7 @@ import {
 const mainItems = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
   { title: 'Upload', url: '/upload', icon: Upload },
+  { title: 'Actions', url: '/actions', icon: ListChecks },
   { title: 'Reports', url: '/reports', icon: FileText },
 ]
 
