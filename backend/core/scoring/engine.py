@@ -197,10 +197,18 @@ class ScoringEngine:
 
             val = biomarkers[biomarker_name]
             value = val.value if hasattr(val, 'value') else val
+            value_unit: Optional[str] = None
+            if hasattr(val, "unit") and isinstance(getattr(val, "unit", None), str):
+                value_unit = (getattr(val, "unit") or "").strip() or None
             input_range = (input_reference_ranges or {}).get(biomarker_name)
 
             score, score_range, unscored_reason = self.rules.calculate_biomarker_score(
-                biomarker_name, value, age, sex, input_reference_range=input_range
+                biomarker_name,
+                value,
+                age,
+                sex,
+                input_reference_range=input_range,
+                value_unit=value_unit,
             )
 
             if unscored_reason:
