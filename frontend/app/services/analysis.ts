@@ -316,7 +316,45 @@ export class AnalysisService {
   }
 
   /**
-   * Export analysis results
+   * Download PDF summary (GET /api/analysis/export/pdf) — Sprint 4 retail summary; requires auth when DB is used.
+   */
+  static async downloadSummaryPdf(
+    analysisId: string
+  ): Promise<{ blob: Blob; filename: string } | { error: string }> {
+    try {
+      const url = `${API_URL}/analysis/export/pdf?analysis_id=${encodeURIComponent(analysisId)}`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          ...analysisAuthHeaders(),
+        },
+      });
+      if (!response.ok) {
+        const errBody = await response.json().catch(() => ({}));
+        const detail =
+          typeof (errBody as { detail?: unknown }).detail === 'string'
+            ? (errBody as { detail: string }).detail
+            : `HTTP ${response.status}`;
+        return { error: detail };
+      }
+      const cd = response.headers.get('Content-Disposition');
+      let filename = `healthiq-summary-${analysisId.slice(0, 8)}.pdf`;
+      if (cd) {
+        const m = cd.match(/filename="?([^";\n]+)"?/i);
+        if (m?.[1]) filename = m[1].trim();
+      }
+      const blob = await response.blob();
+      if (!blob.size) {
+        return { error: 'Empty PDF response' };
+      }
+      return { blob, filename };
+    } catch (e) {
+      return { error: e instanceof Error ? e.message : 'Failed to download PDF' };
+    }
+  }
+
+  /**
+   * Export analysis results (legacy JSON contract; not used for Sprint 4 PDF).
    */
   static async exportAnalysis(
     analysisId: string, 

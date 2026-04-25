@@ -8,6 +8,7 @@ from typing import Dict, Any, Optional
 from uuid import UUID, uuid4
 
 from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi.responses import Response
 from pydantic import AliasChoices, BaseModel, ConfigDict, Field
 
 class ExportRequest(BaseModel):
@@ -57,6 +58,7 @@ from app.analysis_payload import (
     normalize_analysis_user_dict,
 )
 from config.database import get_db_optional
+from app.analysis_pdf_export import build_summary_pdf_bytes
 from services.storage.persistence_service import PersistenceService, CLIENT_RESULT_SHAPE_V1
 from repositories import AnalysisRepository, AnalysisResultRepository
 from sqlalchemy.orm import Session
@@ -356,6 +358,39 @@ async def get_analysis_result(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get analysis result: {str(e)}")
+
+
+@router.get("/export/pdf")
+async def export_analysis_summary_pdf(
+    analysis_id: str,
+    db: Optional[Session] = Depends(get_db_optional),
+    auth_user: Optional[CurrentUser] = Depends(require_analysis_submitter_if_db),
+):
+    """
+    Download a one-page presentable PDF summary (retail copy only; not the full clinician report).
+    """
+    try:
+        raw = _raw_result_payload_for_analysis_id(analysis_id, db, auth_user)
+        dto = build_analysis_result_dto(raw)
+        if auth_user and auth_user.email:
+            user_display = auth_user.email
+        else:
+            user_display = "User"
+        pdf_bytes = build_summary_pdf_bytes(dto, user_display=user_display)
+        safe = "".join(c if c.isalnum() or c in "-_" else "_" for c in analysis_id)[:32]
+        filename = f"healthiq-summary-{safe or 'export'}.pdf"
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("PDF export failed for analysis_id=%s", analysis_id)
+        raise HTTPException(
+            status_code=500, detail=f"Failed to build PDF export: {str(e)}"
+        ) from e
 
 
 @router.get("/history")
