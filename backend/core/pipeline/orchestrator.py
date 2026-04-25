@@ -27,7 +27,10 @@ from core.pipeline.questionnaire_mapper import QuestionnaireMapper, MappedLifest
 from core.models.questionnaire import QuestionnaireSubmission, create_questionnaire_validator
 from core.clustering.cluster_engine_v2 import ClusterEngineV2
 from core.insights.synthesis import InsightSynthesizer
-from core.analytics.primitives import frontend_status_from_value_and_range
+from core.analytics.primitives import (
+    frontend_status_from_lab_reference,
+    has_valid_numeric_lab_range,
+)
 from core.analytics.criticality import evaluate_criticality
 from core.analytics.ratio_registry import RatioRegistry, DERIVED_IDS, compute
 from core.analytics.signal_evaluator import SignalRegistry, SignalEvaluator
@@ -1088,11 +1091,9 @@ class AnalysisOrchestrator:
                     return False
                 min_val = ref.get("min")
                 max_val = ref.get("max")
-                return (
-                    isinstance(min_val, (int, float))
-                    and isinstance(max_val, (int, float))
-                    and float(min_val) < float(max_val)
-                )
+                a = float(min_val) if isinstance(min_val, (int, float)) else None
+                b = float(max_val) if isinstance(max_val, (int, float)) else None
+                return has_valid_numeric_lab_range(a, b)
 
             def _has_any_numeric_bound(ref: Any) -> bool:
                 if not isinstance(ref, dict):
@@ -1841,15 +1842,20 @@ class AnalysisOrchestrator:
                         if isinstance(profile, dict):
                             reference_profile_dict = dict(profile)
                     
-                    # Use HAS v1 primitive for status (single source of truth)
-                    if reference_range_dict and reference_range_dict.get('min') is not None and reference_range_dict.get('max') is not None:
-                        status = frontend_status_from_value_and_range(
+                    # Use HAS v1 primitive for status (single source of truth); supports one-sided lab ranges.
+                    if reference_range_dict and (
+                        isinstance(reference_range_dict.get("min"), (int, float))
+                        or isinstance(reference_range_dict.get("max"), (int, float))
+                    ):
+                        mn = reference_range_dict.get("min")
+                        mx = reference_range_dict.get("max")
+                        status = frontend_status_from_lab_reference(
                             float(value),
-                            float(reference_range_dict['min']),
-                            float(reference_range_dict['max']),
+                            float(mn) if isinstance(mn, (int, float)) else None,
+                            float(mx) if isinstance(mx, (int, float)) else None,
                         )
                     else:
-                        status = 'unknown'
+                        status = "unknown"
                     logger.debug(f"[DTO Builder] {biomarker_name} unit resolved as: {unit}, ref_range: {reference_range_dict}, status: {status}")
                     range_source = None
                     if isinstance(reference_range_dict, dict):
@@ -1989,15 +1995,27 @@ class AnalysisOrchestrator:
                         source_val = str(reference_range_dict.get("source", "")).strip().lower()
                         if source_val in {"lab", "policy", "ssot"}:
                             range_source = source_val
-                    if reference_range_dict and reference_range_dict.get('min') is not None and reference_range_dict.get('max') is not None:
+                    if (
+                        reference_range_dict
+                        and _has_valid_numeric_bounds(reference_range_dict)
+                    ):
                         try:
-                            min_val = float(reference_range_dict['min'])
-                            max_val = float(reference_range_dict['max'])
-                            status = frontend_status_from_value_and_range(float(value), min_val, max_val)
-                            score_raw, _ = self.scoring_engine.rules._calculate_score_from_range(
-                                float(value), min_val, max_val
+                            mn = reference_range_dict.get("min")
+                            mx = reference_range_dict.get("max")
+                            status = frontend_status_from_lab_reference(
+                                float(value),
+                                float(mn) if isinstance(mn, (int, float)) else None,
+                                float(mx) if isinstance(mx, (int, float)) else None,
                             )
-                            score = score_raw / 100.0  # Convert to 0-1 scale
+                            score_raw, _, unscored_r = self.scoring_engine.rules.calculate_biomarker_score(
+                                biomarker_name,
+                                float(value),
+                                None,
+                                None,
+                                input_reference_range=reference_range_dict,
+                            )
+                            if not str(unscored_r or "").strip():
+                                score = float(score_raw) / 100.0  # Convert to 0-1 scale
                         except Exception as e:
                             logger.warning(f"Could not score unscored biomarker {biomarker_name} using reference range: {e}")
                     

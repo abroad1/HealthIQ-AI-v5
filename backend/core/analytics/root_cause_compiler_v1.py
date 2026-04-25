@@ -15,6 +15,10 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional, Set
 
 from core.analytics.intervention_selector_v1 import load_safety_rules_v1
+from core.analytics.primitives import (
+    frontend_status_from_lab_reference,
+    has_valid_numeric_lab_range,
+)
 from core.contracts.root_cause_v1 import (
     RootCauseConfirmatoryTestV1,
     RootCauseEvidenceItemV1,
@@ -393,6 +397,55 @@ def _compile_finding(
     )
 
 
+_WHY_FALLBACK_HYPOTHESIS_ID = "why_engine_fallback_v1"
+
+
+def _compile_why_engine_fallback_finding(
+    lead: Dict[str, Any],
+    *,
+    biomarker_context: Dict[str, Any],
+    input_reference_ranges: Dict[str, Any],
+) -> RootCauseFindingV1:
+    """Structured placeholder when the ranked lead has no governed WHY hypotheses."""
+    primary_metric = str(lead.get("primary_metric", "")).strip()
+    value = _marker_value(primary_metric, biomarker_context) if primary_metric else None
+    ref: Optional[Dict[str, Any]] = None
+    if primary_metric and isinstance(input_reference_ranges.get(primary_metric), dict):
+        ref = input_reference_ranges[primary_metric]  # type: ignore[assignment]
+    range_bits = "lab range: not classifiable on this panel"
+    if value is not None and isinstance(ref, dict):
+        mn, mx = ref.get("min"), ref.get("max")
+        a = float(mn) if isinstance(mn, (int, float)) else None
+        b = float(mx) if isinstance(mx, (int, float)) else None
+        if has_valid_numeric_lab_range(a, b):
+            st = frontend_status_from_lab_reference(float(value), a, b)
+            range_bits = f"lab range classification: {st}"
+    act = str(lead.get("signal_state", "unknown")).strip() or "unknown"
+    title = f"No governed WHY for {str(lead.get('signal_id', '')).strip() or 'this signal'}"
+    summary = (
+        "Deep hypothesis (WHY) analysis is not yet available for this marker. "
+        f"Signal activation: {act}. {range_bits}."
+    )[:200]
+    hold = RootCauseHypothesisV1(
+        hypothesis_id=_WHY_FALLBACK_HYPOTHESIS_ID,
+        title=title[:120],
+        summary=summary,
+        hypothesis_confidence=0.0,
+        evidence_for=[],
+        evidence_against=[],
+        missing_data=[],
+        confirmatory_tests=[],
+        safety_class="informational",
+    )
+    return RootCauseFindingV1(
+        signal_id=str(lead.get("signal_id", "")).strip(),
+        primary_metric=primary_metric,
+        signal_state=act,
+        signal_confidence=float(lead.get("confidence", 0.0) if isinstance(lead.get("confidence"), (int, float)) else 0.0),
+        hypotheses=[hold],
+    )
+
+
 def compile_root_cause_v1(
     *,
     signal_results: List[Dict[str, Any]],
@@ -428,6 +481,22 @@ def compile_root_cause_v1(
                 input_reference_ranges=input_reference_ranges,
                 fired_signals=fired_signals,
             )
+        )
+
+    from core.analytics.report_compiler_v1 import _top_finding_sort_tuple
+
+    ordered = sorted(rows, key=_top_finding_sort_tuple)
+    lead = ordered[0] if ordered else None
+    lead_id = str(lead.get("signal_id", "")).strip() if lead else ""
+    with_finding = {f.signal_id for f in findings}
+    if lead_id and lead_id not in with_finding and lead is not None:
+        findings.insert(
+            0,
+            _compile_why_engine_fallback_finding(
+                lead,
+                biomarker_context=biomarker_context,
+                input_reference_ranges=input_reference_ranges,
+            ),
         )
 
     if not findings:

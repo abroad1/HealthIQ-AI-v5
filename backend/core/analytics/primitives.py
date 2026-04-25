@@ -39,6 +39,54 @@ def position_in_range(
     return round(pos, 6)
 
 
+def position_in_one_sided_lab_range(
+    value: float,
+    low: Optional[float],
+    high: Optional[float],
+) -> Optional[float]:
+    """
+    Map value to a 0..1 style position for one-sided commercial lab ranges.
+
+    max-only: in-range (value <= high) uses a mid-band position; above max is high-side.
+    min-only: in-range (value >= low) uses a mid-band position; below min is low-side.
+
+    When both bounds are numeric and low < high, delegates to :func:`position_in_range`.
+    """
+    has_low = isinstance(low, (int, float))
+    has_high = isinstance(high, (int, float))
+    if has_low and has_high and float(low) < float(high):
+        return position_in_range(value, float(low), float(high))
+    if has_high and not has_low:
+        return 0.55 if value <= float(high) else 1.02
+    if has_low and not has_high:
+        return 0.55 if value >= float(low) else 0.02
+    return None
+
+
+def has_valid_numeric_lab_range(ref_min: Optional[float], ref_max: Optional[float]) -> bool:
+    """True if the lab range can support scoring: two-sided with span, or any one-sided bound."""
+    has_min = isinstance(ref_min, (int, float))
+    has_max = isinstance(ref_max, (int, float))
+    if has_min and has_max:
+        return float(ref_min) < float(ref_max)  # type: ignore[arg-type]
+    return has_min or has_max
+
+
+def frontend_status_from_lab_reference(
+    value: float,
+    min_val: Optional[float],
+    max_val: Optional[float],
+) -> str:
+    """
+    Frontend status from lab reference, including one-sided commercial ranges.
+    """
+    pos = position_in_one_sided_lab_range(value, min_val, max_val)
+    if pos is None:
+        return "unknown"
+    has_status = map_position_to_status(pos)
+    return has_status_to_frontend(has_status)
+
+
 def map_position_to_status(
     pos: float,
     *,
