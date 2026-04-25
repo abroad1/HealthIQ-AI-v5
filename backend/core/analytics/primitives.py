@@ -7,7 +7,28 @@ and orchestrator. No SSOT/global range lookups; lab-ranges-first only.
 Location: backend/core/analytics/primitives.py
 """
 
-from typing import Optional
+from typing import Any, Optional
+
+
+def coerce_optional_float(x: Any) -> Optional[float]:
+    """
+    Best-effort parse for live lab JSON (numbers often arrive as strings).
+    """
+    if x is None:
+        return None
+    if isinstance(x, bool):
+        return None
+    if isinstance(x, (int, float)):
+        return float(x)
+    if isinstance(x, str):
+        s = x.strip()
+        if not s:
+            return None
+        try:
+            return float(s)
+        except ValueError:
+            return None
+    return None
 
 
 def position_in_range(

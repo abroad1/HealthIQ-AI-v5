@@ -28,9 +28,11 @@ from core.models.questionnaire import QuestionnaireSubmission, create_questionna
 from core.clustering.cluster_engine_v2 import ClusterEngineV2
 from core.insights.synthesis import InsightSynthesizer
 from core.analytics.primitives import (
+    coerce_optional_float,
     frontend_status_from_lab_reference,
     has_valid_numeric_lab_range,
 )
+from core.scoring.rules import UNSCORED_REASON_HBA1C_UNIT_MISMATCH
 from core.analytics.criticality import evaluate_criticality
 from core.analytics.ratio_registry import RatioRegistry, DERIVED_IDS, compute
 from core.analytics.signal_evaluator import SignalRegistry, SignalEvaluator
@@ -561,7 +563,8 @@ class AnalysisOrchestrator:
                             "value": score.value,
                             "score": score.score,
                             "score_range": score.score_range.value,
-                            "confidence": score.confidence.value
+                            "confidence": score.confidence.value,
+                            "unscored_reason": score.unscored_reason,
                         }
                         for score in system_score.biomarker_scores
                     ]
@@ -727,7 +730,8 @@ class AnalysisOrchestrator:
                                 "value": score.value,
                                 "score": score.score,
                                 "score_range": score.score_range.value,
-                                "confidence": score.confidence.value
+                                "confidence": score.confidence.value,
+                                "unscored_reason": score.unscored_reason,
                             }
                             for score in system_score.biomarker_scores
                         ]
@@ -1044,10 +1048,10 @@ class AnalysisOrchestrator:
                     # Extract reference range if present and valid
                     ref_range = biomarker_data.get('reference_range') or biomarker_data.get('referenceRange')
                     if ref_range and isinstance(ref_range, dict):
-                        min_val = ref_range.get('min')
-                        max_val = ref_range.get('max')
-                        has_min = isinstance(min_val, (int, float))
-                        has_max = isinstance(max_val, (int, float))
+                        min_val = coerce_optional_float(ref_range.get("min"))
+                        max_val = coerce_optional_float(ref_range.get("max"))
+                        has_min = min_val is not None
+                        has_max = max_val is not None
                         if has_min and has_max and float(min_val) >= float(max_val):
                             logger.warning(
                                 f"[Orchestrator] Invalid input reference range for {biomarker_name}: "
@@ -1055,10 +1059,10 @@ class AnalysisOrchestrator:
                             )
                         elif has_min or has_max:
                             input_reference_ranges[biomarker_name] = {
-                                'min': float(min_val) if has_min else None,
-                                'max': float(max_val) if has_max else None,
-                                'unit': ref_range.get('unit', ''),
-                                'source': ref_range.get('source', 'lab')
+                                "min": float(min_val) if has_min else None,
+                                "max": float(max_val) if has_max else None,
+                                "unit": ref_range.get("unit", ""),
+                                "source": ref_range.get("source", "lab"),
                             }
                             logger.debug(f"[Orchestrator] Preserved input reference range for {biomarker_name}: {input_reference_ranges[biomarker_name]}")
                     ref_profile = biomarker_data.get("reference_profile") or biomarker_data.get("referenceProfile")
@@ -1863,13 +1867,21 @@ class AnalysisOrchestrator:
                         if source_val in {"lab", "policy", "ssot"}:
                             range_source = source_val
                     
+                    ur = str(biomarker_score.get("unscored_reason") or "").strip()
                     interpretation = f"Scored {biomarker_score['score']:.1f}/100"
                     if (
-                        str(biomarker_score.get("unscored_reason", "")).strip()
+                        ur
                         or status == "unknown"
                         or not _has_valid_numeric_bounds(reference_range_dict)
                     ):
-                        if _has_any_numeric_bound(reference_range_dict):
+                        if ur == UNSCORED_REASON_HBA1C_UNIT_MISMATCH:
+                            interpretation = (
+                                "Not scored - HbA1c result unit and lab reference unit could not be "
+                                "aligned for scoring (e.g. % vs mmol/mol); check units on the report."
+                            )
+                        elif ur:
+                            interpretation = f"Not scored - {ur}"
+                        elif _has_any_numeric_bound(reference_range_dict):
                             interpretation = "Not scored - insufficient numeric bounds for scoring"
                         else:
                             interpretation = "Not scored - no reference range available"
@@ -2013,6 +2025,7 @@ class AnalysisOrchestrator:
                                 None,
                                 None,
                                 input_reference_range=reference_range_dict,
+                                value_unit=unit or None,
                             )
                             if not str(unscored_r or "").strip():
                                 score = float(score_raw) / 100.0  # Convert to 0-1 scale
