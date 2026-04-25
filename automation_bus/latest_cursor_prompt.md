@@ -1,39 +1,44 @@
 ---
-work_id: F-1
-branch: feature/f-1-frontend-reentry-narrative-surfacing
+work_id: R-1
+branch: fix/engine-trust-bugs
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: BEHAVIOUR
 ---
 
-# F-1 — Frontend re-entry: deterministic narrative surfacing
+# R-1 — Engine trust bugs
 
 ## Objective
 
-Re-enter the frontend in a bounded, controlled way by surfacing the new deterministic `narrative_report_v1` output in the results journey.
+Fix the three engine correctness failures that directly undermine HealthIQ’s deterministic trust claim:
 
-This is a frontend integration sprint.
-It is not a backend architecture sprint.
-It is not a new narrative-asset sprint.
-Do not invent narrative logic in the frontend.
-Do not introduce Gemini or any other LLM dependency.
-Do not widen into a broad redesign of the whole application.
+1. contradictory signal activation
+2. one-sided lab range scoring failure
+3. missing WHY fallback for non-covered lead signals
 
-The purpose of F-1 is to replace weak or placeholder narrative areas in the results journey with the deterministic narrative outputs that now exist in the backend.
+This is a HIGH-risk Intelligence Core sprint.
+
+Do not widen scope.
+Do not introduce new analytical depth beyond the explicit fallback behaviour required here.
+Do not perform unrelated cleanup or opportunistic refactors.
+
+## Expected Cursor role
+
+Operate as `healthiq-core-engine` for this work package.
+
+If the required implementation extends beyond that role’s allowed scope, stop and escalate rather than widening the sprint.
 
 ---
 
-## Strategic context already settled
+## Strategic context
 
-The following are already decided and are not open for reinterpretation in this sprint:
+This sprint is Sprint 1 in the reset plan.
+Order is non-negotiable:
+- engine trust bugs first
+- integration stability next
+- product shell after that
 
-- The benchmark narrative is locked.
-- The deterministic narrative support stack has now been built through N-3 to N-9B.
-- The backend runtime is now considered strong enough for controlled frontend re-entry.
-- The frontend must consume deterministic compiled outputs, not recreate narrative logic locally.
-- F-1 is a bounded surfacing sprint, not a new product strategy sprint.
-
-Your job is to integrate the deterministic narrative output into the frontend results journey in a clean, user-readable, architecturally disciplined way.
+This sprint exists because these failures directly damage user trust in the moat and must be resolved before further product-shell work proceeds.
 
 ---
 
@@ -41,156 +46,136 @@ Your job is to integrate the deterministic narrative output into the frontend re
 
 Treat the following as required inputs:
 
-1. Backend runtime output path and contracts
-- `backend/core/contracts/narrative_report_v1.py`
-- `backend/core/models/results.py`
-- any API/DTO path exposing `narrative_report_v1`
+1. Reset plan
+- `docs/RESET_SPRINT_PLAN_2026-04.md`
 
-2. Current results frontend implementation
-- results page components and their data path from the API
-- any current sections using older placeholder or weaker narrative content
+2. Relevant runtime files at minimum:
+- `backend/core/analytics/signal_evaluator.py`
+- `backend/core/pipeline/orchestrator.py`
+- `backend/core/analytics/root_cause_compiler_v1.py`
+- relevant contracts / DTO builders / clinician summary paths
+- relevant existing tests and golden-panel tests
 
-3. Validation authority
-- `docs/golden-narrative/AB_BENCHMARK_RUNTIME_VALIDATION_N9.md`
-
-4. Current sprint-note and architecture authority where useful
-- `docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md`
-
----
-
-## Core problem this sprint must solve
-
-The backend now produces a deterministic narrative layer, but the frontend results journey was built before that layer existed and still contains weaker, thinner, or placeholder narrative surfaces.
-
-This sprint must surface the deterministic narrative output cleanly so the user journey starts to feel like one coherent investigation rather than a stitched stack of older sections.
+3. Current standing operating docs:
+- `AGENTS.md`
+- `.cursor/rules/healthiq-core-engine.mdc`
 
 ---
 
-## Required outcome
+## Scope
 
-Deliver a bounded frontend integration that:
+This sprint is limited to the three trust bugs below.
 
-1. reads and uses `narrative_report_v1`
-2. surfaces the benchmark-priority compiled narrative sections in the results journey
-3. removes or de-emphasises weaker placeholder narrative where the deterministic replacement now exists
-4. preserves authority separation by keeping narrative generation in the backend
-5. leaves the frontend in a strong state for focused UAT
+### Bug 1 — Contradictory signal activation
+
+**File:** `backend/core/analytics/signal_evaluator.py`  
+**Target:** `_evaluate_lab_range_activation_state` or equivalent activation path
+
+### Problem
+`enable_upper_bound` / `enable_lower_bound` flags are not being honoured, allowing contradictory high and low activation on the same value.
+
+### Required behaviour
+- respect `enable_upper_bound`
+- respect `enable_lower_bound`
+- do not activate upper-bound logic when upper-bound is disabled
+- do not activate lower-bound logic when lower-bound is disabled
+- if a signal definition would still allow contradictory activation after this fix, treat that as a configuration warning/problem, not a runtime result
+
+### Regression target
+A mid-range cholesterol test value must not produce both `signal_total_cholesterol_high` and `signal_total_cholesterol_low` as active simultaneously.
 
 ---
 
-## Required frontend scope
+### Bug 2 — One-sided lab range scoring failure
 
-At minimum, integrate and surface these compiled sections where appropriate:
+**File:** `backend/core/pipeline/orchestrator.py`  
+**Target:** `_has_valid_numeric_bounds` or equivalent scoring eligibility logic
 
-### 1. Retail summary
-Use the compiled `retail_summary` as the primary patient-facing summary layer near the top of the results experience.
+### Problem
+Scoring currently requires both `min` and `max` numeric bounds, which breaks common commercial panels with one-sided ranges.
 
-### 2. Body overview
-Use the compiled `body_overview` instead of weak placeholder or generic framing where appropriate.
+### Required behaviour
+- a range is valid if either `min` or `max` is numeric
+- max-only: above max = high, below max = in-range
+- min-only: below min = low, above min = in-range
+- do not produce “insufficient numeric bounds” for valid one-sided commercial ranges
 
-### 3. Lead narrative
-Surface the compiled `lead_narrative` as the main deep explanation of the primary issue.
+### Regression target
+A panel with LDL max-only and HDL min-only ranges must produce scored output, not the “insufficient bounds” message.
 
-### 4. Secondary narrative
-Surface the compiled `secondary_narratives` in a bounded secondary position, clearly subordinate to the lead.
+---
 
-### 5. Longitudinal narrative
-Surface the compiled `longitudinal_narrative` where trend and prior/current comparison belong.
+### Bug 3 — WHY fallback for non-covered lead signals
 
-### 6. Next steps
-Surface the compiled `next_steps_narrative` as the action-oriented follow-up block.
+**Files:** 
+- `backend/core/analytics/root_cause_compiler_v1.py`
+- any directly related contracts / DTO / clinician summary path required to surface fallback cleanly
 
-### 7. Clinician synthesis
-Make the compiled `clinician_synthesis` available in the appropriate advanced / clinician-facing area.
+### Problem
+WHY reasoning exists for only a narrow governed set. When the lead signal falls outside that set, the summary can silently omit WHY content.
+
+### Required behaviour
+- return a structured fallback object instead of null/empty when no governed hypothesis exists
+- fallback must include:
+  - signal name
+  - activation state
+  - lab range classification
+  - a standard phrase stating that deep hypothesis analysis is not yet available for this marker
+- fallback must be surfaced visibly in the results DTO / clinician path
+- clinician summary must degrade gracefully and not assume `top_findings[0]` always has governed WHY content
+
+### Regression target
+A panel whose lead signal is outside the governed WHY set must still produce a visible, non-empty WHY section via fallback.
 
 ---
 
 ## In scope
 
-### 1. Frontend data integration
-Verify that the frontend receives `narrative_report_v1` cleanly from the existing backend/API result path.
-
-If small frontend-side typing or DTO updates are required to consume the field safely, make them in a bounded way.
-
-### 2. Results-page narrative replacement / surfacing
-Replace or de-emphasise older weaker narrative areas where the deterministic narrative output now provides a better source.
-
-Be disciplined:
-- frontend should display
-- backend should interpret
-
-### 3. Section ordering and hierarchy
-Use the deterministic sections to create a cleaner story order on the page.
-
-At minimum, ensure the user can experience:
-- top-level summary
-- broad body overview
-- lead issue
-- secondary issue
-- trend / direction of travel
-- next steps
-
-without having to piece the story together from unrelated blocks.
-
-### 4. Progressive disclosure
-Keep more technical or dense layers appropriately placed.
-The frontend should not overwhelm the user with everything at once.
-
-### 5. Styling and presentation cleanup
-Light presentation improvements are allowed where necessary to make the new narrative readable and coherent.
-
-Do not widen into a full visual redesign.
-
-### 6. UAT-readiness
-Leave the page in a state that can be tested meaningfully against the narrative ambition.
+- bounded fixes for the three bugs above
+- regression tests proving each fix
+- minimal DTO/summary/contract adaptation only if required to surface the WHY fallback cleanly
+- preservation of existing output contracts wherever possible
 
 ---
 
 ## Out of scope
 
-The following are explicitly out of scope:
-
-- new backend narrative generation logic
-- new governed content assets
-- broad new frontend redesign unrelated to narrative surfacing
-- changing benchmark narrative authority
-- Gemini / LLM work
-- broad product copy rewrite outside the compiled sections
+- expanding governed WHY coverage beyond the fallback mechanism
+- new phenotype/IDL/narrative work
+- frontend changes
+- product-shell changes
+- broad orchestrator refactoring
+- repo cleanup
+- documentation rationalisation beyond a short sprint note if needed
 
 ---
 
 ## Design rules
 
-### Rule 1 — no frontend-authored narrative logic
-Do not recreate or paraphrase backend narrative logic in the frontend unless there is a tiny display-only necessity.
+### Rule 1 — no scope drift
+Implement only the three trust fixes.
 
-### Rule 2 — backend remains the authority
-`narrative_report_v1` is the source of truth for these new sections.
+### Rule 2 — smallest safe behavioural change
+Fix the trust bug without broad redesign.
 
-### Rule 3 — bounded replacement, not total redesign
-Improve the journey where the deterministic output now exists.
-Do not widen into unrelated layout redesign.
+### Rule 3 — preserve existing contracts where possible
+Fallback should fit the existing WHY surface rather than triggering an unnecessary new contract family.
 
-### Rule 4 — hierarchy matters
-The user should encounter a coherent story, not a long undifferentiated stack.
+### Rule 4 — no silent omissions
+If WHY is unavailable, the user-visible/report-visible output must say so explicitly via fallback.
 
-### Rule 5 — preserve advanced access
-Clinician-style and more technical content should remain accessible without cluttering the top-level patient journey.
-
-### Rule 6 — HIGH-risk discipline
-If any backend-touching integration issue arises, keep it minimal and justified.
+### Rule 5 — no adjacent helpful changes
+If you discover a worthwhile related improvement, report it separately and do not implement it.
 
 ---
 
 ## Expected implementation shape
 
-The expected shape is:
-
-1. inspect how `narrative_report_v1` currently reaches or does not reach the frontend
-2. update frontend typing/data flow if needed
-3. surface the compiled sections in the results journey
-4. remove or de-emphasise weaker overlapping narrative blocks
-5. leave the page ready for UAT
+1. inspect current bug path for each of the three issues
+2. implement the smallest safe fix for each
+3. add or update regression tests
+4. run relevant targeted tests and golden-panel tests
+5. report back with exact files touched and how each bug is now prevented
 
 ---
 
@@ -198,16 +183,16 @@ The expected shape is:
 
 STOP immediately and report if any of the following are true:
 
-1. `narrative_report_v1` is not actually available on the frontend result path
-2. frontend consumption would require a much wider backend DTO/API change than expected
-3. the current results page architecture makes bounded narrative surfacing impossible without a broader redesign
-4. substantial missing backend output is discovered during integration
-5. touched-file scope expands materially beyond bounded frontend integration
+1. fixing one-sided ranges requires broader scoring-policy redesign than expected
+2. WHY fallback cannot be surfaced cleanly without a broader contract change
+3. contradictory activation is caused by upstream signal-definition corruption rather than runtime logic alone
+4. touched-file scope expands materially beyond the three named runtime paths plus minimal necessary supporting files
+5. any additional Intelligence Core path appears necessary but was not explicitly approved
 
 If blocked, report:
-- the exact blocker
-- the affected files
-- the smallest safe remediation path
+- exact blocker
+- affected files
+- smallest safe remediation path
 
 ---
 
@@ -215,12 +200,11 @@ If blocked, report:
 
 This sprint is successful only if:
 
-1. the frontend now consumes `narrative_report_v1`
-2. the main deterministic narrative sections are surfaced in the results journey
-3. weaker placeholder narrative is reduced or replaced where appropriate
-4. the page tells a clearer, more coherent story
-5. the sprint remains bounded and does not become a broad redesign
-6. the results page is ready for focused UAT
+1. contradictory high/low activation is prevented by test
+2. one-sided commercial ranges score correctly by test
+3. non-covered lead signals produce visible WHY fallback by test
+4. existing golden-panel tests continue to pass
+5. no unnecessary contract or runtime widening occurred
 
 ---
 
@@ -228,29 +212,28 @@ This sprint is successful only if:
 
 At finish, the sprint should leave behind:
 
-- bounded frontend integration changes
-- any required type/data-flow updates
-- a short sprint note explaining:
-  - what sections are now surfaced
-  - what old sections were reduced/replaced
-  - what UAT should focus on next
+- bounded code changes for the three trust bugs
+- regression tests
+- a short implementation note stating:
+  - files touched
+  - how each bug was fixed
+  - any follow-up issue discovered but not implemented
 
 Report back with:
-- files touched
-- how `narrative_report_v1` is now surfaced
-- what still remains weak in the journey
-- whether the page is ready for UAT
+- requested changes made
+- incidental changes made
+- optional extra changes not implemented
 
 ---
 
 ## Evidence requirements
 
-You must show, with exact file paths and grounded runtime evidence:
+You must show, with exact file paths and grounded evidence:
 
-- where `narrative_report_v1` is consumed
-- what frontend sections now use it
-- what weaker narrative surfaces were replaced or reduced
-- how the page hierarchy improved
+- where contradictory activation was prevented
+- where one-sided ranges are now treated as valid
+- where WHY fallback is now returned and surfaced
+- what tests prove the new behaviour
+- that existing golden-panel tests still pass
 
-Do not claim success merely because the field is displayed somewhere.
-Show that the results journey now makes meaningful use of the deterministic narrative output.
+Do not claim completion without showing each of the three trust failures is now directly addressed.

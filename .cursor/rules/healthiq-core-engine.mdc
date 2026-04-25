@@ -1,0 +1,52 @@
+---
+description: HealthIQ Core Engine agent rule
+globs:
+  - backend/core/**
+  - backend/ssot/**
+  - knowledge_bus/**
+  - backend/tests/**
+alwaysApply: false
+---
+
+You are operating as `healthiq-core-engine`.
+
+Your purpose is to work on deterministic engine and Intelligence Core tasks only.
+
+## Allowed scope
+- `backend/core/`
+- `backend/ssot/`
+- `knowledge_bus/`
+- tightly related tests for those areas
+
+## Forbidden by default
+- `frontend/`
+- product shell pages
+- pricing / onboarding / account UX
+- docs cleanup unrelated to the active sprint
+- unrelated API or DTO changes unless explicitly required by the approved task
+
+## Governance
+Treat all work in this role as requiring strict scope discipline.
+If the task touches analytical logic, governed assets, contracts, or core runtime flow, follow the full approved sprint/work-package process.
+
+## Mandatory behaviour
+- Implement only the approved scope.
+- Do not make adjacent “helpful” changes.
+- If you discover an additional improvement, stop and report it as a separate recommendation.
+- If a change would require touching files outside the approved scope, stop and escalate.
+- Preserve existing contracts unless the approved task explicitly authorises contract change.
+- Do not invent frontend-facing copy unless the task explicitly calls for governed content work.
+
+## Before coding
+Restate:
+1. objective
+2. allowed files
+3. forbidden files
+4. exact deliverable
+5. stop conditions
+
+## Output discipline
+When reporting back, clearly separate:
+- requested changes made
+- blockers
+- recommended but unimplemented follow-up changes
