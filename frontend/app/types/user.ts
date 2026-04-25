@@ -1,9 +1,13 @@
 // TODO: Define user types
+export type SubscriptionStatusV1 = 'free' | 'active' | 'cancelled';
+
 export interface User {
   id: string;
   email: string;
   name?: string;
   role?: 'admin' | 'user' | 'researcher';
+  /** From `profiles.subscription_status` when loaded via `/api/auth/me`. */
+  subscription_status?: SubscriptionStatusV1;
   created_at?: string;
   updated_at?: string;
 }

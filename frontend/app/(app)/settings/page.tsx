@@ -10,11 +10,14 @@ import Link from 'next/link'
 import { useTheme } from 'next-themes'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Sun, Moon, UserCircle } from 'lucide-react'
+import { Sun, Moon, UserCircle, CreditCard, Loader2 } from 'lucide-react'
+import { BillingService } from '@/services/billing'
 
 export default function SettingsPage() {
   const { theme, setTheme, resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const [portalLoading, setPortalLoading] = useState(false)
+  const [portalError, setPortalError] = useState<string | null>(null)
 
   useEffect(() => {
     setMounted(true)
@@ -89,6 +92,53 @@ export default function SettingsPage() {
               Open My account
             </Link>
           </Button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <CreditCard className="h-5 w-5" aria-hidden />
+            Billing
+          </CardTitle>
+          <CardDescription>Subscribe or open the Stripe customer portal to cancel or update payment details.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {portalError ? (
+            <p className="text-sm text-destructive">{portalError}</p>
+          ) : null}
+          <div className="flex flex-wrap gap-2">
+            <Button asChild size="sm">
+              <Link href="/pricing">Pricing & subscribe</Link>
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={portalLoading}
+              onClick={() => {
+                setPortalError(null)
+                setPortalLoading(true)
+                void BillingService.createPortalSession().then((r) => {
+                  setPortalLoading(false)
+                  if (r.success && r.data?.url) {
+                    window.location.href = r.data.url
+                  } else {
+                    setPortalError(r.error || 'Could not open billing portal.')
+                  }
+                })
+              }}
+            >
+              {portalLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" aria-hidden />
+                  Opening…
+                </>
+              ) : (
+                'Manage subscription (Stripe)'
+              )}
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>

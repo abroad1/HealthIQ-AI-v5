@@ -8,18 +8,22 @@ Bearer <access_token> for /me. Logout is client-side token discard for JWT flows
 from __future__ import annotations
 
 from typing import Annotated, Any, Optional
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from gotrue.errors import AuthError
 from gotrue.types import User as GotrueUser
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
+from config.database import get_db_optional
 from core.dependencies.auth import (
     get_gotrue_user,
     gotrue_user_app_metadata,
     gotrue_user_user_metadata,
 )
 from core.supabase_anon import get_supabase_anon_client
+from repositories import ProfileRepository
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -58,6 +62,10 @@ class MeResponse(BaseModel):
     user: UserIdentity
     app_metadata: dict[str, Any] = Field(default_factory=dict)
     user_metadata: dict[str, Any] = Field(default_factory=dict)
+    subscription_status: Optional[str] = Field(
+        default=None,
+        description="profiles.subscription_status when DATABASE_URL is configured",
+    )
 
 
 class LogoutResponse(BaseModel):
@@ -149,11 +157,26 @@ def login(body: LoginRequest) -> AuthSessionResponse:
 
 
 @router.get("/me", response_model=MeResponse)
-def me(user: Annotated[GotrueUser, Depends(get_gotrue_user)]) -> MeResponse:
+def me(
+    user: Annotated[GotrueUser, Depends(get_gotrue_user)],
+    db: Annotated[Optional[Session], Depends(get_db_optional)],
+) -> MeResponse:
+    subscription_status: Optional[str] = None
+    if db is not None:
+        try:
+            uid = UUID(user.id)
+        except ValueError:
+            uid = None
+        if uid is not None:
+            profile = ProfileRepository(db).get_by_user_id(uid)
+            if profile is not None:
+                subscription_status = profile.subscription_status
+
     return MeResponse(
         user=_identity_from_gotrue_user(user),
         app_metadata=gotrue_user_app_metadata(user),
         user_metadata=gotrue_user_user_metadata(user),
+        subscription_status=subscription_status,
     )
 
 

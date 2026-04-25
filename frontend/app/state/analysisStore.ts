@@ -229,8 +229,25 @@ export const useAnalysisStore = create<AnalysisState>()(
         try {
           // Call the API service
           const response = await AnalysisService.startAnalysis(request);
-          
+
           if (!response.success || !response.data) {
+            if (response.code === 'UPGRADE_REQUIRED') {
+              emitWedgeEvent({
+                event_name: 'wedge_analysis_paywall',
+                timestamp: new Date().toISOString(),
+                route: '/upload',
+                error_class: 'upgrade_required',
+              });
+              set({
+                error: {
+                  message: response.error || 'Subscribe to run further analyses.',
+                  code: 'UPGRADE_REQUIRED',
+                },
+                isLoading: false,
+                currentPhase: 'idle',
+              });
+              return;
+            }
             throw new Error(response.error || 'Failed to start analysis');
           }
 

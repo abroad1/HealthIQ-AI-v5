@@ -5,6 +5,8 @@ export interface ApiResponse<T = unknown> {
   success: boolean;
   message?: string;
   error?: string;
+  /** Machine-readable error category (e.g. paywall). */
+  code?: string;
 }
 
 export interface PaginatedResponse<T = any> extends ApiResponse<T[]> {

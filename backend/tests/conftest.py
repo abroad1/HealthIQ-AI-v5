@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 # (a) Set test mode and DB env vars BEFORE any app/config imports
 os.environ["HEALTHIQ_MODE"] = "test"
 os.environ["LLM_ENABLED"] = "false"
+# Sprint 7 paywall: integration tests may run many POST /analysis/start for the same auth user.
+os.environ.setdefault("HEALTHIQ_FREE_COMPLETED_ANALYSES", "1000")
 _TEST_DB_URL = "postgresql://postgres:test@localhost:5433/healthiq_test"
 os.environ.setdefault("SECRET_KEY", "test-secret-key")
 os.environ.setdefault("DATABASE_URL_TEST", _TEST_DB_URL)

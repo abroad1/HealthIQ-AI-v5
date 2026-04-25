@@ -17,10 +17,12 @@ import {
   LogOut,
   Loader2,
   UserCircle,
+  CreditCard,
 } from 'lucide-react'
 import { useAuthStore } from '@/state/authStore'
 import { AuthService } from '@/services/auth'
 import type { MeResponse } from '@/types/auth'
+import { BillingService } from '@/services/billing'
 
 function metadataNonEmpty(meta: Record<string, unknown> | undefined): boolean {
   return !!(meta && typeof meta === 'object' && Object.keys(meta).length > 0)
@@ -35,6 +37,8 @@ export default function ProfilePage() {
   const [me, setMe] = useState<MeResponse | null>(null)
   const [meLoading, setMeLoading] = useState(true)
   const [meError, setMeError] = useState<string | null>(null)
+  const [portalLoading, setPortalLoading] = useState(false)
+  const [portalError, setPortalError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!initialized) return
@@ -129,6 +133,59 @@ export default function ProfilePage() {
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">User id</p>
             <p className="font-mono text-xs mt-1 text-muted-foreground break-all">{userId || '—'}</p>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <CreditCard className="h-5 w-5" aria-hidden />
+            Billing
+          </CardTitle>
+          <CardDescription>Subscription status and Stripe Customer Portal (cancel / update card).</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3 text-sm">
+          <p>
+            Status:{' '}
+            <span className="font-medium text-foreground">
+              {me?.subscription_status ?? user?.subscription_status ?? '—'}
+            </span>
+          </p>
+          {portalError ? <p className="text-destructive text-sm">{portalError}</p> : null}
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline" size="sm">
+              <Link href="/pricing">View pricing</Link>
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              disabled={portalLoading}
+              onClick={() => {
+                setPortalError(null)
+                setPortalLoading(true)
+                void BillingService.createPortalSession().then((r) => {
+                  setPortalLoading(false)
+                  if (r.success && r.data?.url) {
+                    window.location.href = r.data.url
+                  } else {
+                    setPortalError(r.error || 'Could not open billing portal.')
+                  }
+                })
+              }}
+            >
+              {portalLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" aria-hidden />
+                  Opening…
+                </>
+              ) : (
+                'Manage subscription'
+              )}
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            “Manage subscription” requires a prior successful Stripe checkout so we have a customer id on file.
+          </p>
         </CardContent>
       </Card>
 

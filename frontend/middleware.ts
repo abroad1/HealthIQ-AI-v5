@@ -11,6 +11,7 @@ const PROTECTED_PREFIXES = [
   '/upload',
   '/results',
   '/trends',
+  '/pricing',
 ] as const
 
 function isProtectedPath(pathname: string): boolean {
@@ -64,5 +65,7 @@ export const config = {
     '/results/:path*',
     '/trends',
     '/trends/:path*',
+    '/pricing',
+    '/pricing/:path*',
   ],
 }
