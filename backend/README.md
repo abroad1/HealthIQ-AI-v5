@@ -52,7 +52,7 @@ All endpoints are prefixed with `/api/`:
 
 - `GET /api/health` - Health check
 - `POST /api/analysis/start` - Start biomarker analysis
-- `GET /api/analysis/events` - Stream analysis progress (SSE)
+- `GET /api/analysis/events` - **Deprecated (410 Gone)**; use `POST /api/analysis/start` (synchronous) then `GET /api/analysis/result` for the payload
 - `GET /api/analysis/result` - Get analysis results
 
 ## Testing
