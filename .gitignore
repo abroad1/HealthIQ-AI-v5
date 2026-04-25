@@ -35,8 +35,10 @@ frontend/.next/
 backend/reports/
 reports/forensics/
 
-# Tooling / caches
-.cursor/
+# Tooling / caches — ignore local Cursor state; keep shared agent rules
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/**
 **/__pycache__/
 .pytest_cache/
 *.pyc

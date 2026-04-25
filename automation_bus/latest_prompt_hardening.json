@@ -1,24 +1,24 @@
 {
-  "work_id": "F-1",
-  "bus_version": "1.3.1",
+  "work_id": "R-1",
   "status": "HARDENED",
-  "hardened_utc": "2026-04-23T00:00:00Z",
+  "bus_version": "1.3.1",
   "hardened_by": "claude-sonnet-4-6",
+  "hardened_utc": "2026-04-25T00:00:00Z",
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:1 — work_id: F-1"
+      "evidence": "automation_bus/latest_cursor_prompt.md:1 — work_id: R-1"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/f-1-frontend-reentry-narrative-surfacing"
+      "evidence": "automation_bus/latest_cursor_prompt.md:3 — branch: fix/engine-trust-bugs"
     },
     {
       "check": "Front Matter — risk_level HIGH",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:4 — risk_level: HIGH. Correct: sprint touches Intelligence Core output path (NarrativeReportV1 produced by narrative_report_compiler_v1.py) and backend DTO serialization (routes/analysis.py + builders.py)."
+      "evidence": "automation_bus/latest_cursor_prompt.md:4 — risk_level: HIGH. Correct: sprint touches Intelligence Core (signal_evaluator.py, orchestrator.py, root_cause_compiler_v1.py — all under backend/core/). HIGH by definition per SOP §3 and §10."
     },
     {
       "check": "Front Matter — execution_model",
@@ -26,76 +26,86 @@
       "evidence": "automation_bus/latest_cursor_prompt.md:5 — execution_model: TWO_PHASE_START_FINISH"
     },
     {
-      "check": "Front Matter — change_type MIXED",
+      "check": "Front Matter — change_type BEHAVIOUR",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md:6 — change_type: MIXED. Correct: frontend display changes plus backend passthrough DTO wiring."
+      "evidence": "automation_bus/latest_cursor_prompt.md:6 — change_type: BEHAVIOUR. Correct: all three bugs are in pipeline behaviour, signal activation logic, and output generation logic. No pure content/SSOT changes."
     },
     {
-      "check": "Authority path — backend/core/contracts/narrative_report_v1.py",
+      "check": "Authority path — Bug 1: backend/core/analytics/signal_evaluator.py",
       "result": "CONFIRMED",
-      "evidence": "File exists. NarrativeReportV1 class at line 16. All 7 prompt-referenced sections present: retail_summary (line 22), body_overview (line 23), lead_narrative (line 24), secondary_narratives (line 25), longitudinal_narrative (line 26), next_steps_narrative (line 28), clinician_synthesis (line 29). secondary_systems also present (line 27)."
+      "evidence": "File read. _evaluate_lab_range_activation_state at line 141. Bug confirmed at line 162-163: if high is not None and primary_value > high: return upper_bound_state — fires WITHOUT checking enable_upper_bound. Lower bound IS gated by enable_lower_bound at line 166. Asymmetry is the defect."
     },
     {
-      "check": "Authority path — backend/core/models/results.py",
+      "check": "Authority path — Bug 2: backend/core/pipeline/orchestrator.py",
       "result": "CONFIRMED",
-      "evidence": "File exists. AnalysisDTO.narrative_report_v1 at line 208: Optional[NarrativeReportV1] field, description 'N-8: deterministic compiled narrative sections'."
+      "evidence": "File read. _has_valid_numeric_bounds at line 1086: requires isinstance(min_val, (int,float)) AND isinstance(max_val, (int,float)) AND float(min_val) < float(max_val) — both bounds required. _has_any_numeric_bound at line 1097 already exists but is only used in interpretation-text path at line 1866. Usage sites of _has_valid_numeric_bounds: lines 1103, 1212, 1235, 1244, 1864."
     },
     {
-      "check": "Authority path — docs/golden-narrative/AB_BENCHMARK_RUNTIME_VALIDATION_N9.md",
+      "check": "Authority path — Bug 3: backend/core/analytics/root_cause_compiler_v1.py",
       "result": "CONFIRMED",
-      "evidence": "File exists. Section 3.2 confirms orchestrator call path. Section 4 benchmark table documents runtime per-section status: retail_summary absent (IDL clinical_only gating), body_overview thin (single sentence). Section 3.3 fairness note: longitudinal_narrative expected empty when no prior snapshot."
+      "evidence": "File read. _ROOT_CAUSE_TARGETS at lines 65-101 (34 signal entries). compile_root_cause_v1 at line 396 returns None at line 433-434 when findings is empty. Signals not in _ROOT_CAUSE_TARGETS produce no finding and no fallback. DTO surface: report_v1.py:85 — root_cause_v1: Optional[RootCauseV1] = None."
     },
     {
-      "check": "Authority path — docs/golden-narrative/HealthIQ_Deterministic_Narrative_Compiler_Architecture_v1.md",
+      "check": "Authority path — root_cause_v1.py contract",
       "result": "CONFIRMED",
-      "evidence": "File exists."
+      "evidence": "backend/core/contracts/root_cause_v1.py read. RootCauseFindingV1 at line 48: extra='forbid', fields signal_id, primary_metric, signal_state, signal_confidence, hypotheses. RootCauseHypothesisV1 at line 34: extra='forbid', fields hypothesis_id, title, summary, hypothesis_confidence, evidence_for, evidence_against, missing_data, confirmatory_tests, safety_class. Fallback hypothesis must populate all required fields within this existing schema — no new fields permitted."
     },
     {
-      "check": "No duplicate authority sources for NarrativeReportV1",
+      "check": "Authority path — clinician report null-guard: backend/core/analytics/report_compiler_v1.py",
       "result": "CONFIRMED",
-      "evidence": "grep across backend: single compiler at backend/core/analytics/narrative_report_compiler_v1.py, single contract at backend/core/contracts/narrative_report_v1.py, single orchestrator call at orchestrator.py:2165-2188. No duplicate compilers or contracts detected."
+      "evidence": "File read. compile_clinician_report_v1 at line 490. primary_root assigned at line 527: None when lead signal not in root_findings. String fallback at line 535: 'No hypothesis set available for this concern in v1.' This is a string-only fallback — no structured DTO fallback exists. The clinician report handles None gracefully (line 537 guards before accessing hypotheses). Required change: minimal null-guard verification only, no structural change to clinician report compilation path."
     },
     {
-      "check": "CRITICAL PATH — narrative_report_v1 availability on frontend result path",
-      "result": "GAP CONFIRMED — CURSOR MUST RESOLVE BEFORE UI WORK",
-      "evidence": "Three-layer gap verified by source read: (1) backend/app/routes/analysis.py:187-238 — stored dict built from AnalysisDTO omits narrative_report_v1; field stripped before cache write at line 239. (2) backend/core/dto/builders.py:43-65 — build_analysis_result_dto return dict also omits narrative_report_v1. (3) frontend/app/types/analysis.ts:257-286 — AnalysisResult interface has no narrative_report_v1 field. Remediation is bounded (2x3-line backend passthrough additions + frontend type addition) and within F-1 scope per prompt section 'In scope: 1. Frontend data integration'."
+      "check": "Authority path — docs/RESET_SPRINT_PLAN_2026-04.md",
+      "result": "CONFIRMED",
+      "evidence": "File read. Sprint 1 spec at lines 34-88. Three bugs match exactly. Branch naming fix/engine-trust-bugs confirmed at line 38. Success criteria at lines 83-88 match prompt success criteria."
     },
     {
-      "check": "Orchestrator compiles narrative_report_v1",
+      "check": "Authority path — AGENTS.md",
       "result": "CONFIRMED",
-      "evidence": "backend/core/pipeline/orchestrator.py:2165-2188 — compile_narrative_report_v1() called and assigned to AnalysisDTO.narrative_report_v1. Field is computed on every successful run."
+      "evidence": "File read at line 1. healthiq-core-engine role at line 34. Allowed scope includes backend/core/ — all three bug files are within scope."
+    },
+    {
+      "check": "Authority path — .cursor/rules/healthiq-core-engine.mdc",
+      "result": "CONFIRMED",
+      "evidence": "File read at line 1. Scope globs: backend/core/**, backend/ssot/**, knowledge_bus/**, backend/tests/**. All sprint files are within declared agent scope."
+    },
+    {
+      "check": "No duplicate authority sources",
+      "result": "CONFIRMED",
+      "evidence": "compile_root_cause_v1 has a single implementation at root_cause_compiler_v1.py:396. _evaluate_lab_range_activation_state has a single implementation at signal_evaluator.py:141. _has_valid_numeric_bounds has a single definition at orchestrator.py:1086. No duplicate authority detected."
     },
     {
       "check": "Stage 2B — behavioural scope defined",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md sections 'In scope' and 'Out of scope' are explicit. No backend narrative generation logic changes. Backend changes are passthrough-only (no computation change). Frontend is display-only consumption."
+      "evidence": "prompt sections 'Scope', 'In scope', 'Out of scope', 'Design rules' are explicit. Bug 1: activation logic only. Bug 2: scoring eligibility logic only. Bug 3: fallback emission only. No new analytical depth, no new phenotype/IDL/narrative work, no frontend changes per prompt lines 143-149."
     },
     {
       "check": "Stage 2B — regression targets identified",
       "result": "CONFIRMED",
-      "evidence": "Existing components using clinician_report_v1 (PrimaryFindingAndWhy, WhyThisLeadWonSection, ClinicianReportRenderer, PipelineStatus, ResultsBodyOverview), balanced_systems_v1 (BalancedSystemsSummary), interpretation_display_layer_v1 (InterpretationPatternsSection) must remain unaffected. NarrativeReportV1 sections are additive — no existing component removed, only supplemented or de-emphasised."
+      "evidence": "Bug 1 target: mid-range cholesterol must not activate both signal_total_cholesterol_high and signal_total_cholesterol_low (prompt line 85). Bug 2 target: LDL max-only + HDL min-only panel must produce scored output not insufficient-bounds message (prompt line 103). Bug 3 target: non-governed lead signal must produce non-null WHY section via fallback (prompt line 128). Golden panel tests must continue to pass (prompt line 203)."
     },
     {
       "check": "Stage 2B — determinism risks surfaced",
       "result": "CONFIRMED",
-      "evidence": "Backend passthrough changes are dict inclusion only (no logic). Some sections may be empty strings at runtime (retail_summary per validation doc §4; longitudinal_narrative when no prior snapshot per §3.3). Frontend must guard: only render sections with non-empty content. No new determinism risk introduced by this sprint."
-    },
-    {
-      "check": "Stage 0 — branch alignment",
-      "result": "MISMATCH — expected and normal at hardening time",
-      "evidence": "Current branch: main. Required: feature/f-1-frontend-reentry-narrative-surfacing. Branch must be created/checked out before Stage 3 (run_work_package.py start). Cursor responsibility per SOP §0."
+      "evidence": "RISK-1: Bug 1 enable_upper_bound default must be True (not False). False would silently suppress upper-bound activation on all existing signals that omit the flag, breaking golden panels. RISK-2: Bug 2 — score_biomarkers at orchestrator.py:542 delegates to self.scoring_engine.score_biomarkers(). Cursor must verify whether the scoring engine itself gates on both bounds; STOP 1 applies if that path requires broad redesign. RISK-3: Bug 3 fallback hypothesis_confidence must be a fixed constant (e.g. 0.0), and fallback text must be a constant phrase — no dynamic generation that could drift."
     },
     {
       "check": "Forbidden files — control-plane scripts",
       "result": "NOT IN SCOPE",
-      "evidence": "backend/scripts/run_work_package.py, golden_gate_local.py, update_cursor_status.py not referenced in prompt scope. backend/ssot/ not in scope. No tooling-leakage risk (.codex/, .vscode/, AGENTS.md) identified."
+      "evidence": "backend/scripts/run_work_package.py, golden_gate_local.py, update_cursor_status.py not referenced in prompt scope. backend/ssot/ not referenced. No tooling-leakage risk (.codex/, .vscode/) identified."
+    },
+    {
+      "check": "Stage 0 — branch alignment",
+      "result": "MISMATCH — expected and normal at hardening time",
+      "evidence": "Current branch: main. Required: fix/engine-trust-bugs. Branch must be created/checked out before Stage 3 (run_work_package.py start). Cursor responsibility per SOP §0."
     },
     {
       "check": "STOP conditions adequacy",
       "result": "CONFIRMED",
-      "evidence": "All 5 STOP conditions present. STOP 1 (field unavailability) is the known bounded gap above. STOP 2 (wide backend change) not triggered — fix is 2x3-line passthrough. STOP 3 (architecture incompatibility) not triggered — existing page structure supports additive surfacing. STOP 4 (missing backend output) partially relevant — some sections may be empty strings; frontend guard required, not a blocker. STOP 5 (scope expansion) protects against drift."
+      "evidence": "All 5 STOP conditions present in prompt at lines 184-196. RISK-2 (scoring engine gate) maps directly to STOP 1. STOP 2 (WHY fallback contract change) assessed: low risk — existing contract accommodates fallback. STOP 3 (activation from signal definition corruption) assessed: low risk — defect is runtime code, not definition data. STOP 4 (scope expansion): minimal supporting files (report_compiler_v1.py null-guard verification) are explicitly covered by prompt 'In scope' line 136. STOP 5 (unapproved Intelligence Core path): none identified."
     }
   ],
   "overall_verdict": "HARDENED",
-  "notes": "Critical path for Cursor Stage 4: resolve three-layer narrative_report_v1 gap FIRST (routes/analysis.py stored dict + builders.py DTO + frontend types/analysis.ts), then implement UI surfacing. Backend changes are passthrough-only and bounded."
+  "notes": "Three determinism risks surfaced for Cursor to handle before implementation: (1) enable_upper_bound default=True required for backward compatibility; (2) scoring engine bounds-gate must be verified before Bug 2 implementation — STOP 1 applies if redesign required; (3) Bug 3 fallback content must be a constant phrase, not dynamically derived. All fixes are bounded to named files plus minimal supporting files within healthiq-core-engine scope."
 }
