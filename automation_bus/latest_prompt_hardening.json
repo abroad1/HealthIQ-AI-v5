@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "R-1B",
+  "work_id": "R-8",
   "status": "HARDENED",
   "hardened_utc": "2026-04-25T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6 (Prompt Hardening)",
@@ -8,17 +8,17 @@
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md line 2 — work_id: R-1B"
+      "evidence": "automation_bus/latest_cursor_prompt.md line 2 — work_id: R-8"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md line 3 — branch: fix/unscored-marker-trust-gaps"
+      "evidence": "automation_bus/latest_cursor_prompt.md line 3 — branch: feature/why-coverage-expansion-wave-1. Branch does not exist in git yet; prompt lines 32-36 instruct Cursor to create it as Stage 0 prerequisite before implementation. Cursor responsibility per SOP §0."
     },
     {
       "check": "Front Matter — risk_level HIGH",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md line 4 — risk_level: HIGH. Correct: all three defects touch backend/core/pipeline/orchestrator.py and backend/core/scoring/. All are explicit HIGH-risk paths per SOP §3 (Intelligence Core) and §10."
+      "evidence": "automation_bus/latest_cursor_prompt.md line 4 — risk_level: HIGH. Correct: root_cause_compiler_v1.py is under backend/core/analytics/ (explicit HIGH-risk path per SOP §10 and §3 Intelligence Core). Hypothesis YAMLs consumed by Intelligence Core compiler are also governed."
     },
     {
       "check": "Front Matter — execution_model",
@@ -28,79 +28,95 @@
     {
       "check": "Front Matter — change_type BEHAVIOUR",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md line 6 — change_type: BEHAVIOUR. Correct: all three defects change scoring output and biomarker interpretation text for affected markers. Analytical output (scores, statuses, interpretation) changes by design."
+      "evidence": "automation_bus/latest_cursor_prompt.md line 6 — change_type: BEHAVIOUR. Correct: compiler wiring changes which signals receive governed WHY vs fallback. Emitted reasoning changes for panels where signal_total_cholesterol_high or signal_vitamin_d_low is the lead signal."
     },
     {
-      "check": "Authority path — backend/core/pipeline/orchestrator.py",
+      "check": "Authority path — signal_total_cholesterol_high absent from compiler",
       "result": "CONFIRMED",
-      "evidence": "File exists and read. Defect 1 drop points confirmed at lines 558-566 (score_biomarkers dict comprehension) and 724-731 (generate_insights dict comprehension): both omit unscored_reason from BiomarkerScore serialization. Consumer at line 1868: biomarker_score.get('unscored_reason', '') always returns '' because key is absent. _has_valid_numeric_bounds at lines 1089-1096 delegates to primitives.has_valid_numeric_lab_range — correctly handles one-sided bounds."
+      "evidence": "backend/core/analytics/root_cause_compiler_v1.py lines 69-105: _ROOT_CAUSE_TARGETS list has 34 entries. signal_total_cholesterol_high is absent from all entries. Genuinely unregistered."
     },
     {
-      "check": "Authority path — backend/core/scoring/rules.py",
+      "check": "Authority path — signal_vitamin_d_low absent from compiler",
       "result": "CONFIRMED",
-      "evidence": "File exists and read. UNSCORED_REASON sentinel at lines 39-44 (policy-governed). calculate_biomarker_score at lines 186-234: one-sided handling at lines 212-219 — calls position_in_one_sided_lab_range; returns scored result when pos is not None. Engine-level scoring path is correctly wired for one-sided ranges."
+      "evidence": "backend/core/analytics/root_cause_compiler_v1.py lines 69-105: signal_vitamin_d_low is absent from all 34 entries. Genuinely unregistered."
     },
     {
-      "check": "Authority path — backend/core/analytics/primitives.py",
+      "check": "Authority path — no existing hypothesis YAML for signal_total_cholesterol_high",
       "result": "CONFIRMED",
-      "evidence": "File exists and read. position_in_one_sided_lab_range at lines 42-63: returns 0.55 for in-range (max-only or min-only), 1.02 or 0.02 for out-of-range. has_valid_numeric_lab_range at lines 66-72: returns True when either bound is numeric. Both functions are one-sided compatible."
+      "evidence": "Glob of knowledge_bus/root_cause/hypotheses/total_cholesterol* returned no files. YAML must be authored in this sprint."
     },
     {
-      "check": "Authority path — BiomarkerScore dataclass (scoring engine)",
+      "check": "Authority path — no existing hypothesis YAML for signal_vitamin_d_low",
       "result": "CONFIRMED",
-      "evidence": "backend/core/scoring/engine.py line 35: unscored_reason: Optional[str] = None. Set at engine.py:213 when calculate_biomarker_score returns an unscored_reason. The field exists on the dataclass but is NOT included in either dict comprehension at orchestrator.py:558-566 or 724-731."
+      "evidence": "Glob of knowledge_bus/root_cause/hypotheses/vitamin_d* returned no files. YAML must be authored in this sprint."
     },
     {
-      "check": "Authority path — Live diagnosis 6f702428-ec3e-4e00-9416-280904e9d4b3",
-      "result": "ADVISORY — no repo file; not a blocking gap",
-      "evidence": "No committed file for this live analysis ID found in repo. This is a runtime artifact, not a repo file path. SOP Stage 2A verifies file paths; this reference is not a file path. Defect specifications are self-contained in the prompt. Corroborating repo evidence: automation_bus/ab_panel_range_drop_investigation.md (read) confirms hdl_cholesterol, triglycerides, hba1c range-drop and unit semantics issues (lines 37-46, 87-92, 112-124)."
-    },
-    {
-      "check": "No duplicate authority sources",
+      "check": "Authority path — canonical signal ID for signal_total_cholesterol_high",
       "result": "CONFIRMED",
-      "evidence": "unscored_reason sentinel defined once at scoring_policy.yaml:16, loaded once at rules.py:39-44. BiomarkerScore dataclass defined once at engine.py:28-35. position_in_one_sided_lab_range defined once at primitives.py:42-63. No duplicate scoring policy authority detected."
+      "evidence": "knowledge_bus/packages/pkg_kb60_total_cholesterol_high_atherogenic_hypercholesterolemia/signal_library.yaml line 9: signal_id: signal_total_cholesterol_high. primary_metric: total_cholesterol (line 13). activation_config: enable_upper_bound: true, enable_lower_bound: false — activates only when total_cholesterol is high."
+    },
+    {
+      "check": "Authority path — canonical signal ID for signal_vitamin_d_low",
+      "result": "CONFIRMED",
+      "evidence": "knowledge_bus/packages/pkg_s24_vitamin_d_low_deficiency/signal_library.yaml line 8: signal_id: signal_vitamin_d_low. primary_metric: vitamin_d (line 13). activation_config: enable_lower_bound: true — activates when vitamin_d is below range."
+    },
+    {
+      "check": "Authority path — loader validation constraints",
+      "result": "CONFIRMED",
+      "evidence": "backend/core/knowledge/load_root_cause_hypotheses.py lines 35-59: checks schema_version == 'v1', hypotheses is list, each hypothesis has hypothesis_id/title/summary_template, confirmatory_tests is list, all confirmatory_tests entries exist in registry. Raises ValueError on any violation. New YAMLs must satisfy all constraints."
+    },
+    {
+      "check": "Authority path — confirmatory tests registry constraint",
+      "result": "CONFIRMED — constraint acknowledged and resolved in prompt",
+      "evidence": "knowledge_bus/registries/confirmatory_tests_v1.yaml lines 1-192: 15 test IDs confirmed; no vitamin D or total cholesterol specific entries. Prompt lines 123-126 (In Scope §3) explicitly authorises minimal registry additions OR confirmatory_tests: [] with justification. Design Rule 6 (lines 172-173) requires loader-clean YAMLs. Existing reusable test IDs include test_thyroid_tsh_ft4_v1 (line 142), test_hba1c_repeat_v1 (line 131), test_liver_ggt_alt_ast_v1 (line 154), test_crp_repeat_v1 (line 81)."
+    },
+    {
+      "check": "Prior blocker B1 — signal ID mismatch and scope inflation",
+      "result": "RESOLVED",
+      "evidence": "Amended prompt Strategic Context lines 44-53 explicitly names signal_ldl_cholesterol_high, signal_hdl_cholesterol_low, signal_triglycerides_high as already governed (KB-S48) and excludes them from new work. Out of Scope lines 142-144 repeats the exclusion. Wave 1 scope locked to signal_total_cholesterol_high + signal_vitamin_d_low only."
+    },
+    {
+      "check": "Prior blocker B2 — confirmatory tests registry gap",
+      "result": "RESOLVED",
+      "evidence": "Amended prompt In Scope §3 lines 123-126 gives Cursor explicit authority to add minimal registry entries or use confirmatory_tests: []. Design Rule 6 lines 172-173 enforces loader-clean output."
     },
     {
       "check": "Stage 2B — behavioural scope defined",
       "result": "CONFIRMED",
-      "evidence": "Three bounded defects with explicit required behaviour per defect. Out-of-scope list at prompt lines 158-165 explicitly excludes remnant_cholesterol policy, free_testosterone_pct policy, broad scoring redesign, broad unit redesign. Design Rule 5: 'If additional improvements are discovered, report them separately.'"
+      "evidence": "Two canonical signal IDs named explicitly in Objective (lines 15-16), Group A/B (lines 78-84), Success Criteria (lines 233-234). No ambiguity. Both are confirmed absent from compiler and hypothesis directory."
     },
     {
       "check": "Stage 2B — regression targets",
       "result": "CONFIRMED",
-      "evidence": "Defect 1: marker with known non-empty unscored_reason must preserve cause into biomarker output path. Defect 2: representative min-only and max-only live-style markers (hdl_cholesterol, triglycerides, active_b12, egfr, folate) must produce scored output. Defect 3: HbA1c value/range unit mismatch must not surface as 'insufficient numeric bounds' — must show truthful reason or valid score."
+      "evidence": "Success criteria 3 (line 237): existing WHY-covered domains must continue. Success criteria 4 (line 238): fallback correct for uncovered domains. Success criteria 5 (line 239): regression tests must pass. STOP condition 1 (line 217): halt if broader architecture redesign needed."
     },
     {
-      "check": "Stage 2B — determinism risks surfaced",
+      "check": "Stage 2B — determinism preserved",
       "result": "CONFIRMED",
-      "evidence": "RISK-1: Adding unscored_reason to biomarker score dicts at orchestrator.py:558-566 and 724-731 propagates new key into build_insight_graph_v1 and other consumers — verify no structural break; STOP 1 applies if broader contract redesign needed. RISK-2: Defect 2 fix changes score values for named markers from 0.0 to non-zero; overall_score and system scores shift — intended, but regression fixtures must use live-style markers (hdl_cholesterol etc.), not synthetic markers. RISK-3: HbA1c unit-mismatch detection must be narrowly gated; must not touch other markers' unit paths; STOP 3 applies if backend/core/units/registry.py requires broader change."
+      "evidence": "Compiler _ROOT_CAUSE_TARGETS is an ordered list processed sequentially at lines 491-506. New entries appended. Fallback logic at lines 508-519 fires only when lead_id is not in with_finding — adding signal_total_cholesterol_high and signal_vitamin_d_low reduces fallback for those two IDs only; all other signal paths unchanged. No non-deterministic branching introduced."
     },
     {
-      "check": "Stage 2B — Intelligence Core scope",
+      "check": "Stage 2B — no silent output drift",
       "result": "CONFIRMED",
-      "evidence": "All files in scope (orchestrator.py, scoring/rules.py, analytics/primitives.py, scoring/engine.py) are under backend/core/ — explicit Intelligence Core per SOP §3. HIGH risk is correctly declared. BEHAVIOUR change_type is correct: scoring output changes for affected markers."
+      "evidence": "Output changes are intentional and declared: panels where signal_total_cholesterol_high or signal_vitamin_d_low is the lead will receive governed WHY instead of fallback. All other signals: no change. Fallback mechanism at compiler lines 400-468 remains intact and unmodified."
     },
     {
-      "check": "STOP conditions adequacy",
-      "result": "CONFIRMED",
-      "evidence": "5 STOP conditions at prompt lines 222-228. STOP 1: broader contract redesign (maps to RISK-1). STOP 2: upstream data corruption (not triggered — normalize.py correctly preserves one-sided ranges at lines 92-126). STOP 3: larger unit redesign for HbA1c (maps to RISK-3). STOP 4: file scope expansion beyond scoring/orchestrator/DTO. STOP 5: policy decisions required (maps to Defect 3 edge cases). All conditions are binding and proportionate."
+      "check": "Stage 0 — branch prerequisite",
+      "result": "ADVISORY — confirmed absent, prompt handles it",
+      "evidence": "git branch -a shows feature/why-coverage-expansion-wave-1 does not exist. Prompt lines 32-36 instruct Cursor to create it before implementation. Cursor must run git checkout -b feature/why-coverage-expansion-wave-1 before Stage 3."
     },
     {
       "check": "Forbidden files — control-plane scripts",
       "result": "NOT IN SCOPE",
-      "evidence": "run_work_package.py, golden_gate_local.py, update_cursor_status.py not referenced. No tooling-leakage risk identified."
-    },
-    {
-      "check": "Stage 0 — branch alignment",
-      "result": "MISMATCH — expected at hardening time",
-      "evidence": "Current branch: fix/integration-stability-backend. Required: fix/unscored-marker-trust-gaps. New branch must be created/checked out before Stage 3 (run_work_package.py start). Cursor responsibility per SOP §0."
+      "evidence": "run_work_package.py, golden_gate_local.py, update_cursor_status.py not referenced in prompt scope. signal_evaluator.py not required (signals already fire). orchestrator.py not required."
     }
   ],
-  "overall_verdict": "HARDENED",
   "advisory_notes": [
-    "Live analysis 6f702428-ec3e-4e00-9416-280904e9d4b3 is not a committed file; Cursor must either reproduce the diagnosis via run_golden_panel or accept the defect specs as written in the prompt. The ab_panel_range_drop_investigation.md corroborates the defect areas.",
-    "Defect 1 fix is targeted: add 'unscored_reason': score.unscored_reason to two dict comprehensions at orchestrator.py:558-566 and 724-731. Verify InsightGraph builder does not break on the new key before claiming Defect 1 complete.",
-    "Defect 2 root cause not fully confirmed at hardening time — Cursor must trace why specific markers (active_b12, egfr, folate in particular) fail despite the one-sided range logic being nominally correct in scoring/engine. The second normalizer call at orchestrator.py:542 (from scalar-only simple_biomarkers) does not carry reference ranges; input_reference_ranges dict must be verified to contain the live marker names under the correct canonical keys.",
-    "Defect 3: hba1c_layer_b_arbitration.py exists at backend/core/canonical/hba1c_layer_b_arbitration.py — Cursor should check whether this arbitration path is relevant to the unit mismatch detection, or whether the fix belongs in the scoring/DTO path."
-  ]
+    "New loader functions must be added to backend/core/knowledge/load_root_cause_hypotheses.py — one for each new hypothesis YAML (load_total_cholesterol_high_hypotheses_v1 and load_vitamin_d_low_hypotheses_v1). Pattern: simple wrapper calling load_root_cause_hypotheses_asset_v1 with the filename, matching the style at lines 107-116.",
+    "load_root_cause_hypotheses_asset_v1 is decorated with @lru_cache(maxsize=64) at line 66. In test environments, cache may persist across test cases if tests modify YAML files mid-run. Cursor should be aware test isolation may require pytest cache-clearing if needed.",
+    "signal_vitamin_d_low activates when vitamin_d is below range (enable_lower_bound: true). Evidence rules in the hypothesis YAML should use direction: 'low' for vitamin_d marker checks. signal_total_cholesterol_high activates when total_cholesterol is above range; use direction: 'high'.",
+    "The KB-S60 signal library for signal_total_cholesterol_high references tc_hdl_ratio as a supporting metric (signal_library.yaml lines 17-25). If hypothesis evidence rules reference tc_hdl_ratio, the marker must be available in biomarker_context for evidence to fire — may be missing in minimal test fixtures.",
+    "Regression test pattern: test_root_cause_v1_homocysteine.py uses run_golden_panel with fixture files and _finding_by_signal helper. Cursor should follow this pattern for new regression tests, with fixtures that activate the target signal (total_cholesterol above range for Group A; vitamin_d below range for Group B)."
+  ],
+  "overall_verdict": "HARDENED"
 }
