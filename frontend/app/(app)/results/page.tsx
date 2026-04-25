@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, RefreshCw, Download, Share2, Eye, EyeOff } from 'lucide-react';
+import { AlertCircle, ArrowRight, RefreshCw, Download, Share2, Eye, EyeOff } from 'lucide-react';
 import { useAnalysisStore } from '@/state/analysisStore';
 import { useClusterStore } from '@/state/clusterStore';
 import { InsightsPanel } from '@/components/insights/InsightsPanel';
@@ -205,8 +205,12 @@ export default function ResultsPage() {
   const topDriverMarkers = useMemo(() => pickTopDriverBiomarkers(biomarkers, primaryDriver), [biomarkers, primaryDriver]);
 
   const actionCards = useMemo(
-    () => buildActionCardModels(clusters, currentAnalysis?.recommendations),
-    [clusters, currentAnalysis?.recommendations]
+    () =>
+      buildActionCardModels(clusters, currentAnalysis?.recommendations, {
+        maxItems: 5,
+        insights: currentAnalysis?.insights,
+      }),
+    [clusters, currentAnalysis?.recommendations, currentAnalysis?.insights]
   );
 
   const handleDownloadReport = React.useCallback(async () => {
@@ -667,11 +671,26 @@ export default function ResultsPage() {
 
           <ResultsDisclosureSection
             title="Actions"
-            description="Follow-ups suggested from your system group notes and any panel-level list returned with this result."
+            description="Follow-ups from your system groups and panel notes. Open the Actions hub for the full list from your latest completed run."
             data-testid="section-actions"
             defaultOpen={false}
           >
-            <ResultsActionCardsBlock actions={actionCards} />
+            <div className="space-y-4">
+              <p className="text-sm text-slate-700">
+                <Link
+                  href="/actions"
+                  className="font-semibold text-indigo-700 hover:text-indigo-900 underline-offset-2 hover:underline inline-flex items-center gap-1"
+                >
+                  Open Actions hub
+                  <ArrowRight className="h-4 w-4" aria-hidden />
+                </Link>
+                <span className="text-slate-600">
+                  {' '}
+                  for the full set of follow-ups (up to eight) from your most recent completed analysis.
+                </span>
+              </p>
+              <ResultsActionCardsBlock actions={actionCards} />
+            </div>
           </ResultsDisclosureSection>
 
           <ResultsDisclosureSection
