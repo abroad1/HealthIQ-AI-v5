@@ -28,7 +28,9 @@ import {
   ResultsActionCardsBlock,
   ResultsDrivingSignals,
   ResultsPrimaryHero,
+  triggerBrowserDownload,
 } from '@/components/results/ResultsHeroBlocks';
+import { AnalysisService } from '@/services/analysis';
 import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAnalysisResult } from '@/queries/analysisResult';
@@ -137,6 +139,8 @@ export default function ResultsPage() {
   } = useClusterStore();
 
   const [showDetails, setShowDetails] = useState(false);
+  const [pdfDownloadPending, setPdfDownloadPending] = useState(false);
+  const [pdfDownloadError, setPdfDownloadError] = useState<string | null>(null);
   const resultsViewedForId = useRef<string | null>(null);
   const clinicianWedgeSentRef = useRef(false);
 
@@ -204,6 +208,26 @@ export default function ResultsPage() {
     () => buildActionCardModels(clusters, currentAnalysis?.recommendations),
     [clusters, currentAnalysis?.recommendations]
   );
+
+  const handleDownloadReport = React.useCallback(async () => {
+    const id = currentAnalysis?.analysis_id;
+    if (!id) return;
+    setPdfDownloadPending(true);
+    setPdfDownloadError(null);
+    const res = await AnalysisService.downloadSummaryPdf(id);
+    setPdfDownloadPending(false);
+    if ('error' in res) {
+      setPdfDownloadError(res.error);
+      return;
+    }
+    triggerBrowserDownload(res.blob, res.filename);
+    emitWedgeEvent({
+      event_name: 'wedge_results_pdf_downloaded',
+      timestamp: new Date().toISOString(),
+      route: '/results',
+      analysis_id: id,
+    });
+  }, [currentAnalysis?.analysis_id]);
 
   const handleAdvancedOpen = (open: boolean) => {
     if (!open || !currentAnalysis?.analysis_id || clinicianWedgeSentRef.current) return;
@@ -580,6 +604,14 @@ export default function ResultsPage() {
             summary={heroSummary}
             severityLabel={heroSeverity.label}
             severityTone={heroSeverity.tone}
+            onDownloadReport={
+              currentAnalysis?.status === 'completed' && currentAnalysis.analysis_id
+                ? handleDownloadReport
+                : undefined
+            }
+            downloadPending={pdfDownloadPending}
+            downloadError={pdfDownloadError}
+            downloadDisabledReason="Complete an analysis to download your PDF summary."
           />
 
           <ResultsDrivingSignals markers={topDriverMarkers} biomarkerSectionId={BIOMARKER_DIALS_SECTION_ID} />

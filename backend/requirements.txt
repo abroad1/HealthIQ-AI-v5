@@ -2,6 +2,7 @@
 # Canonical dependency declarations: pyproject.toml [project.dependencies] — keep these aligned.
 # Direct imports: gotrue (core.dependencies.auth, app.routes.auth), supabase (core.supabase_anon), sqlalchemy (config.database).
 
+fpdf2>=2.7.0
 fastapi>=0.104.0
 uvicorn[standard]>=0.24.0
 pydantic>=2.5.0

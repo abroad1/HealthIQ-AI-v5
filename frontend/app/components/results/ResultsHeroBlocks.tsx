@@ -27,15 +27,36 @@ export interface ResultsPrimaryHeroProps {
   summary: string;
   severityLabel: string;
   severityTone: 'rose' | 'amber' | 'slate' | 'emerald';
+  /** When set, enables the button and runs this handler (Sprint 4 PDF). */
+  onDownloadReport?: () => void | Promise<void>;
+  downloadPending?: boolean;
+  downloadError?: string | null;
   downloadDisabledReason?: string;
 }
+
+function triggerBrowserDownload(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+export { triggerBrowserDownload };
 
 export function ResultsPrimaryHero({
   phenotypeLabel,
   summary,
   severityLabel,
   severityTone,
-  downloadDisabledReason = 'PDF download is coming in a following release.',
+  onDownloadReport,
+  downloadPending = false,
+  downloadError = null,
+  downloadDisabledReason = 'Sign in to download your report.',
 }: ResultsPrimaryHeroProps) {
   return (
     <section aria-labelledby="primary-finding-hero" data-testid="results-primary-hero">
@@ -59,12 +80,26 @@ export function ResultsPrimaryHero({
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-base text-slate-800 leading-relaxed max-w-prose">{summary}</p>
-          <div className="flex flex-wrap items-center gap-2">
-            <Button type="button" size="sm" disabled className="gap-2" title={downloadDisabledReason}>
+          <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
+            <Button
+              type="button"
+              size="sm"
+              className="gap-2"
+              disabled={!onDownloadReport || downloadPending}
+              title={onDownloadReport ? 'Download a PDF summary' : downloadDisabledReason}
+              onClick={() => void onDownloadReport?.()}
+            >
               <Download className="h-4 w-4" aria-hidden />
-              Download report
+              {downloadPending ? 'Preparing PDF…' : 'Download report'}
             </Button>
-            <p className="text-xs text-slate-500">{downloadDisabledReason}</p>
+            {onDownloadReport ? null : (
+              <p className="text-xs text-slate-500">{downloadDisabledReason}</p>
+            )}
+            {downloadError ? (
+              <p className="text-xs text-red-600" role="alert">
+                {downloadError}
+              </p>
+            ) : null}
           </div>
         </CardContent>
       </Card>
