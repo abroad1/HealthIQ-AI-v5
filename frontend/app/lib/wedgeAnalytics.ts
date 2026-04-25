@@ -33,6 +33,7 @@ const onceEmitted = new Set<string>()
  */
 export function emitWedgeEvent(payload: WedgeEventPayload): void {
   if (typeof window === 'undefined') return
+  if (typeof fetch === 'undefined') return
   if (process.env.NEXT_PUBLIC_WEDGE_EVENTS_DISABLED === '1') return
 
   const body: WedgeEventPayload = {
@@ -41,18 +42,20 @@ export function emitWedgeEvent(payload: WedgeEventPayload): void {
     env: payload.env ?? getWedgeEnv(),
   }
 
-  void fetch(`${API_BASE}/api/wedge-events`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...getApiAuthHeaders() },
-    body: JSON.stringify(body),
-    keepalive: true,
-    credentials: 'omit',
-  }).catch(() => {
+  void Promise.resolve(
+    fetch(`${API_BASE}/api/wedge-events`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...getApiAuthHeaders() },
+      body: JSON.stringify(body),
+      keepalive: true,
+      credentials: 'omit',
+    })
+  ).catch(() => {
     /* intentionally silent — analytics must not break UX */
   })
 }
 
-/** Dedupe high-churn events (e.g. SSE calling complete twice) within this tab session. */
+/** Dedupe high-churn events (e.g. multiple completion handoffs) within this tab session. */
 export function emitWedgeEventOnce(dedupeKey: string, payload: WedgeEventPayload): void {
   if (onceEmitted.has(dedupeKey)) return
   onceEmitted.add(dedupeKey)

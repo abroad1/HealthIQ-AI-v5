@@ -1,6 +1,7 @@
 // TODO: Define API types
-export interface ApiResponse<T = any> {
-  data: T;
+export interface ApiResponse<T = unknown> {
+  /** Present when `success` is true; may be null on failure (check `success` first). */
+  data: T | null;
   success: boolean;
   message?: string;
   error?: string;

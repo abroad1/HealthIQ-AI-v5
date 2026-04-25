@@ -23,6 +23,16 @@ import {
   rangeAttentionLevel,
   referenceRangeToPayload,
 } from '@/lib/uploadReferenceRange';
+import type { BiomarkerValue } from '@/types/analysis';
+import type { ParsedBiomarker } from '@/types/parsed';
+
+type AnalysisBiomarkerEntry = BiomarkerValue & {
+  reference_range?: NonNullable<ReturnType<typeof referenceRangeToPayload>>;
+};
+
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return v !== null && typeof v === 'object' && !Array.isArray(v);
+}
 
 export default function UploadPage() {
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -67,7 +77,7 @@ export default function UploadPage() {
     parseUpload.mutate({ text });
   };
 
-  const handleBiomarkerEdit = (index: number, biomarker: any) => {
+  const handleBiomarkerEdit = (index: number, biomarker: ParsedBiomarker) => {
     updateBiomarker(index, biomarker);
   };
 
@@ -80,13 +90,13 @@ export default function UploadPage() {
     setStatus('questionnaire');
   }, [confirmAll, setStatus]);
 
-  const handleQuestionnaireFromUpload = async (questionnaireData: any) => {
+  const handleQuestionnaireFromUpload = async (questionnaireData: Record<string, unknown>) => {
     if (isAnalyzing) {
       return;
     }
 
     try {
-      const biomarkersObject: Record<string, any> = {};
+      const biomarkersObject: Record<string, AnalysisBiomarkerEntry> = {};
       for (const biomarker of parsedData) {
         const key = analysisBiomarkerKey(biomarker.name);
         const numericValue = numericPartForAnalysisPayload(biomarker.value);
@@ -105,57 +115,65 @@ export default function UploadPage() {
       }
 
       let heightInCm = 180;
-      if (questionnaireData?.height) {
-        if (typeof questionnaireData.height === 'number') {
-          heightInCm = questionnaireData.height;
-        } else if (typeof questionnaireData.height === 'object') {
-          if ('cm' in questionnaireData.height) {
-            heightInCm = parseFloat(questionnaireData.height.cm);
-          } else if ('Feet' in questionnaireData.height || 'Inches' in questionnaireData.height) {
-            const feet = parseFloat(questionnaireData.height.Feet || 0);
-            const inches = parseFloat(questionnaireData.height.Inches || 0);
+      const h = questionnaireData.height;
+      if (h !== undefined) {
+        if (typeof h === 'number') {
+          heightInCm = h;
+        } else if (isRecord(h)) {
+          if ('cm' in h && (typeof h.cm === 'string' || typeof h.cm === 'number')) {
+            heightInCm = parseFloat(String(h.cm));
+          } else if ('Feet' in h || 'Inches' in h) {
+            const feet = parseFloat(String(h.Feet ?? 0));
+            const inches = parseFloat(String(h.Inches ?? 0));
             heightInCm = (feet * 12 + inches) * 2.54;
           }
         }
       }
 
       let weightInKg = 75;
-      if (questionnaireData?.weight) {
-        if (typeof questionnaireData.weight === 'number') {
-          weightInKg = questionnaireData.weight;
-        } else if (typeof questionnaireData.weight === 'object') {
-          if ('kg' in questionnaireData.weight) {
-            weightInKg = parseFloat(questionnaireData.weight.kg);
-          } else if ('lbs' in questionnaireData.weight) {
-            weightInKg = parseFloat(questionnaireData.weight.lbs) * 0.453592;
+      const w = questionnaireData.weight;
+      if (w !== undefined) {
+        if (typeof w === 'number') {
+          weightInKg = w;
+        } else if (isRecord(w)) {
+          if ('kg' in w && (typeof w.kg === 'string' || typeof w.kg === 'number')) {
+            weightInKg = parseFloat(String(w.kg));
+          } else if ('lbs' in w && (typeof w.lbs === 'string' || typeof w.lbs === 'number')) {
+            weightInKg = parseFloat(String(w.lbs)) * 0.453592;
           }
         }
       }
 
       let sex: 'male' | 'female' | 'other' = 'male';
-      if (questionnaireData?.biological_sex) {
-        sex = questionnaireData.biological_sex.toLowerCase() as 'male' | 'female' | 'other';
-      } else if (questionnaireData?.sex) {
-        sex = questionnaireData.sex.toLowerCase() as 'male' | 'female' | 'other';
+      const bio = questionnaireData.biological_sex;
+      if (typeof bio === 'string') {
+        const s = bio.toLowerCase();
+        if (s === 'male' || s === 'female' || s === 'other') sex = s;
+      } else {
+        const sx = questionnaireData.sex;
+        if (typeof sx === 'string') {
+          const t = sx.toLowerCase();
+          if (t === 'male' || t === 'female' || t === 'other') sex = t;
+        }
       }
 
       let age = 35;
-      if (questionnaireData?.date_of_birth) {
-        const dob = new Date(questionnaireData.date_of_birth);
+      const dobRaw = questionnaireData.date_of_birth;
+      if (typeof dobRaw === 'string' || dobRaw instanceof Date) {
+        const dob = new Date(dobRaw);
         const today = new Date();
         age = today.getFullYear() - dob.getFullYear();
         const monthDiff = today.getMonth() - dob.getMonth();
         if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
           age--;
         }
-      } else if (questionnaireData?.age) {
-        age = parseFloat(questionnaireData.age);
+      } else if (questionnaireData.age !== undefined) {
+        age = parseFloat(String(questionnaireData.age));
       }
 
+      const uidRaw = questionnaireData.user_id;
       const resolvedUserId =
-        (typeof questionnaireData?.user_id === 'string' && questionnaireData.user_id.trim()
-          ? questionnaireData.user_id.trim()
-          : null) || sessionUser?.id;
+        (typeof uidRaw === 'string' && uidRaw.trim() ? uidRaw.trim() : null) || sessionUser?.id;
       if (!resolvedUserId) {
         setSubmitError(
           'Your signed-in account could not be resolved. Please sign out and sign in again before starting an analysis.'
@@ -223,8 +241,8 @@ export default function UploadPage() {
         });
       }
       const { parsed_data } = parseUpload.data;
-      const transformed = parsed_data.biomarkers.map((b: any) => {
-        const row = b as Record<string, unknown>;
+      const transformed = parsed_data.biomarkers.map((b: ParsedBiomarker) => {
+        const row = b as unknown as Record<string, unknown>;
         const {
           referenceRange,
           referenceText,
@@ -234,8 +252,9 @@ export default function UploadPage() {
           matchedLabelledBand,
         } = buildReferenceRangeFromParserRow(row);
         const v = b.value;
+        const bExt = b as ParsedBiomarker & { id?: string; biomarker_name?: string };
         return {
-          name: String(b.name ?? b.id ?? b.biomarker_name ?? ''),
+          name: String(bExt.name ?? bExt.id ?? bExt.biomarker_name ?? ''),
           value: (typeof v === 'number' || typeof v === 'string' ? v : Number(v)) as number | string,
           unit: String(b.unit ?? ''),
           status: 'raw' as const,

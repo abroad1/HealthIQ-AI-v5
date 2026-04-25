@@ -385,7 +385,7 @@ export default function EditDialog({
                   if (opt) applyContextOption(opt, formData.unit)
                 }}
               >
-                <SelectTrigger id="contextBand" className={errors.contextBand ? 'border-red-500' : ''}>
+                <SelectTrigger className={errors.contextBand ? 'border-red-500' : ''}>
                   <SelectValue placeholder="Select the band from your lab report…" />
                 </SelectTrigger>
                 <SelectContent>

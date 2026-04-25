@@ -1,5 +1,6 @@
 // frontend/app/lib/api.ts
 import { readAccessTokenCookie } from './auth-cookies';
+import type { ApiAnalysisStartResponse } from '../types/analysis';
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://127.0.0.1:8000';
 
@@ -22,28 +23,19 @@ export async function pingHealth(): Promise<any> {
   return res.json();
 }
 
-// DEPRECATED: This function has no cleanup and is not used in production flow
-// EventSource connections should be managed through AnalysisService.subscribeToAnalysisEvents()
-// which includes proper cleanup and error handling
-//
-// export function openAnalysisSSE(analysisId: string): EventSource {
-//   const url = `${API_BASE}/api/analysis/events?analysis_id=${encodeURIComponent(
-//     analysisId
-//   )}`;
-//   return new EventSource(url);
-// }
+// R-2A: /api/analysis/events is not used. Pipeline completes inside POST /api/analysis/start; load via GET /result.
 
 export async function startAnalysis(payload: {
-  biomarkers: Record<string, any>;
-  user: Record<string, any>;
-}): Promise<{ analysis_id: string }> {
+  biomarkers: Record<string, unknown>;
+  user: Record<string, unknown>;
+}): Promise<ApiAnalysisStartResponse> {
   const res = await fetch(`${API_BASE}/api/analysis/start`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...analysisAuthHeaders() },
     body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error(`startAnalysis failed: ${res.status}`);
-  return res.json();
+  return res.json() as Promise<ApiAnalysisStartResponse>;
 }
 
 export async function getAnalysisResult(analysisId: string): Promise<any> {

@@ -17,10 +17,21 @@ import {
   type QuestionnaireQuestion,
 } from '@/lib/questionnaireSchema';
 
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return v !== null && typeof v === 'object' && !Array.isArray(v);
+}
+
+function asString(v: unknown): string {
+  if (v === null || v === undefined) return '';
+  if (typeof v === 'string') return v;
+  if (typeof v === 'number' || typeof v === 'boolean') return String(v);
+  return '';
+}
+
 interface QuestionnaireFormProps {
-  onSubmit: (responses: Record<string, any>) => void;
+  onSubmit: (responses: Record<string, unknown>) => void;
   onCancel?: () => void;
-  initialData?: Record<string, any>;
+  initialData?: Record<string, unknown>;
   isLoading?: boolean;
 }
 
@@ -31,7 +42,7 @@ export default function QuestionnaireForm({
   isLoading = false 
 }: QuestionnaireFormProps) {
   const [questions, setQuestions] = useState<QuestionnaireQuestion[]>([]);
-  const [responses, setResponses] = useState<Record<string, any>>(initialData);
+  const [responses, setResponses] = useState<Record<string, unknown>>(initialData);
   const [currentStep, setCurrentStep] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -90,7 +101,7 @@ export default function QuestionnaireForm({
     return groupedQuestions;
   };
 
-  const handleResponseChange = (questionId: string, value: any) => {
+  const handleResponseChange = (questionId: string, value: unknown) => {
     setResponses(prev => ({
       ...prev,
       [questionId]: value
@@ -122,7 +133,7 @@ export default function QuestionnaireForm({
       // Email format validation
       if (question.type === 'email' && value) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(value)) {
+        if (!emailRegex.test(asString(value))) {
           newErrors[question.id] = 'Please enter a valid email address';
         }
       }
@@ -130,14 +141,14 @@ export default function QuestionnaireForm({
       // Phone format validation
       if (question.type === 'phone' && value) {
         const phoneRegex = /^[\d\s()+-]{6,}$/;
-        if (!phoneRegex.test(value)) {
+        if (!phoneRegex.test(asString(value))) {
           newErrors[question.id] = 'Please enter a valid phone number';
         }
       }
       
       // Number validation
       if (question.type === 'number' && value) {
-        if (isNaN(parseFloat(value))) {
+        if (isNaN(parseFloat(asString(value)))) {
           newErrors[question.id] = 'Please enter a valid number';
         }
       }
@@ -190,7 +201,7 @@ export default function QuestionnaireForm({
             <Input
               id={question.id}
               type={question.type}
-              value={value || ''}
+              value={asString(value)}
               onChange={(e) => handleResponseChange(question.id, e.target.value)}
               className={error ? 'border-red-500' : ''}
             />
@@ -215,7 +226,7 @@ export default function QuestionnaireForm({
               type="number"
               min={question.min}
               max={question.max}
-              value={value || ''}
+              value={asString(value)}
               onChange={(e) => handleResponseChange(question.id, parseFloat(e.target.value))}
               className={error ? 'border-red-500' : ''}
             />
@@ -236,7 +247,7 @@ export default function QuestionnaireForm({
               {question.required && <span className="text-red-500 ml-1">*</span>}
             </Label>
             <Select
-              value={value || ''}
+              value={asString(value)}
               onValueChange={(val) => handleResponseChange(question.id, val)}
             >
               <SelectTrigger className={error ? 'border-red-500' : ''}>
@@ -337,7 +348,8 @@ export default function QuestionnaireForm({
           </div>
         );
 
-      case 'group':
+      case 'group': {
+        const groupObj = isRecord(value) ? value : {};
         return (
           <div key={question.id} className="space-y-2">
             <Label className="text-sm font-medium">
@@ -355,10 +367,10 @@ export default function QuestionnaireForm({
                     type={field.type}
                     min={field.min}
                     max={field.max}
-                    value={value?.[field.label] || ''}
+                    value={asString(groupObj[field.label])}
                     onChange={(e) => {
                       const newValue = {
-                        ...value,
+                        ...groupObj,
                         [field.label]: field.type === 'number' ? parseFloat(e.target.value) : e.target.value
                       };
                       handleResponseChange(question.id, newValue);
@@ -375,6 +387,7 @@ export default function QuestionnaireForm({
             )}
           </div>
         );
+      }
 
       default:
         return (
@@ -385,7 +398,7 @@ export default function QuestionnaireForm({
             </Label>
             <Textarea
               id={question.id}
-              value={value || ''}
+              value={asString(value)}
               onChange={(e) => handleResponseChange(question.id, e.target.value)}
               className={error ? 'border-red-500' : ''}
             />

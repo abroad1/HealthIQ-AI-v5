@@ -12,7 +12,6 @@ jest.mock('../../app/services/analysis', () => ({
   AnalysisService: {
     startAnalysis: jest.fn(),
     getAnalysisResult: jest.fn(),
-    subscribeToAnalysisEvents: jest.fn(),
     validateBiomarkerData: jest.fn(),
     validateUserProfile: jest.fn(),
   },
@@ -53,7 +52,6 @@ describe('AnalysisStore', () => {
       userProfile: null,
       questionnaireResponses: {},
       questionnaireCompleted: false,
-      eventSource: null,
     });
     jest.clearAllMocks();
   });
@@ -71,7 +69,6 @@ describe('AnalysisStore', () => {
       expect(state.rawBiomarkers).toEqual({});
       expect(state.normalizedBiomarkers).toEqual({});
       expect(state.userProfile).toBeNull();
-      expect(state.eventSource).toBeNull();
     });
   });
 
@@ -98,8 +95,8 @@ describe('AnalysisStore', () => {
     });
 
     it('should set workflow phase', () => {
-      useAnalysisStore.getState().setPhase('processing');
-      expect(useAnalysisStore.getState().currentPhase).toBe('processing');
+      useAnalysisStore.getState().setPhase('normalization');
+      expect(useAnalysisStore.getState().currentPhase).toBe('normalization');
     });
 
     it('should set progress', () => {
@@ -142,7 +139,7 @@ describe('AnalysisStore', () => {
 
       (AnalysisService.startAnalysis as jest.Mock).mockResolvedValue({
         success: true,
-        data: { analysis_id: mockAnalysisId },
+        data: { analysis_id: mockAnalysisId, status: 'completed', message: 'ok' },
         message: 'Analysis started',
       });
 
@@ -161,10 +158,10 @@ describe('AnalysisStore', () => {
       const state = useAnalysisStore.getState();
       expect(state.isLoading).toBe(false);
       expect(state.error).toBeNull();
-      expect(state.currentPhase).toBe('ingestion');
+      expect(state.currentPhase).toBe('completed');
       expect(state.currentAnalysis).toMatchObject({ 
         analysis_id: mockAnalysisId,
-        status: 'pending',
+        status: 'processing',
         progress: 0,
       });
       expect(state.currentAnalysis?.created_at).toBeDefined();
@@ -180,7 +177,7 @@ describe('AnalysisStore', () => {
 
       (AnalysisService.startAnalysis as jest.Mock).mockResolvedValue({
         success: true,
-        data: { analysis_id: mockAnalysisId },
+        data: { analysis_id: mockAnalysisId, status: 'completed', message: 'ok' },
         message: 'Analysis started',
       });
 
@@ -260,25 +257,17 @@ describe('AnalysisStore', () => {
         created_at: new Date().toISOString(),
       });
       
-      useAnalysisStore.getState().updateAnalysisProgress('analysis-123', 50, 'processing');
+      useAnalysisStore.getState().updateAnalysisProgress('analysis-123', 50, 'normalization');
       
       const state = useAnalysisStore.getState();
       expect(state.progress).toBe(50);
-      expect(state.currentPhase).toBe('processing');
+      expect(state.currentPhase).toBe('normalization');
     });
   });
 
   describe('completeAnalysis', () => {
-    it('should complete analysis successfully', () => {
-      const mockResults = {
-        clusters: [],
-        insights: [],
-        overall_score: 85,
-        risk_assessment: {},
-        recommendations: [],
-      };
-
-      useAnalysisStore.getState().completeAnalysis('analysis-123', mockResults);
+    it('should complete analysis successfully', async () => {
+      await useAnalysisStore.getState().completeAnalysis('analysis-123');
 
       const state = useAnalysisStore.getState();
       expect(state.currentPhase).toBe('completed');
@@ -304,8 +293,8 @@ describe('AnalysisStore', () => {
     });
   });
 
-  describe('SSE Event Handling', () => {
-    it('should handle analysis_status events correctly', () => {
+  describe('Progress and completion (R-2A — no SSE)', () => {
+    it('should handle updateAnalysisProgress for UI that still uses phase/progress', () => {
       const store = useAnalysisStore.getState();
       
       // Set up a current analysis
@@ -316,15 +305,6 @@ describe('AnalysisStore', () => {
       });
       store.setCurrentAnalysisId('test-analysis-123');
 
-      // Simulate an analysis_status event
-      const mockEvent = new MessageEvent('analysis_status', {
-        data: JSON.stringify({
-          phase: 'normalization',
-          progress: 45,
-        }),
-      });
-
-      // Call the event handler directly
       store.updateAnalysisProgress('test-analysis-123', 45, 'normalization');
 
       const state = useAnalysisStore.getState();
@@ -332,10 +312,9 @@ describe('AnalysisStore', () => {
       expect(state.currentPhase).toBe('normalization');
     });
 
-    it('should handle complete events correctly', () => {
+    it('should complete analysis correctly', async () => {
       const store = useAnalysisStore.getState();
       
-      // Set up a current analysis
       store.setCurrentAnalysis({
         analysis_id: 'test-analysis-123',
         status: 'processing',
@@ -343,16 +322,7 @@ describe('AnalysisStore', () => {
       });
       store.setCurrentAnalysisId('test-analysis-123');
 
-      const mockResults = {
-        clusters: [],
-        insights: [],
-        overall_score: 85,
-        risk_assessment: {},
-        recommendations: [],
-      };
-
-      // Simulate completion
-      store.completeAnalysis('test-analysis-123', mockResults);
+      await store.completeAnalysis('test-analysis-123');
 
       const state = useAnalysisStore.getState();
       expect(state.currentPhase).toBe('completed');
@@ -387,10 +357,9 @@ describe('AnalysisStore', () => {
       expect(state.error).toEqual(mockError);
     });
 
-    it('should not set error state after successful completion', () => {
+    it('should not set error state after successful completion', async () => {
       const store = useAnalysisStore.getState();
       
-      // Set up a current analysis
       store.setCurrentAnalysis({
         analysis_id: 'test-analysis-123',
         status: 'processing',
@@ -398,39 +367,22 @@ describe('AnalysisStore', () => {
       });
       store.setCurrentAnalysisId('test-analysis-123');
 
-      // Simulate successful completion first
-      const mockResults = {
-        clusters: [],
-        insights: [],
-        overall_score: 85,
-        risk_assessment: {},
-        recommendations: [],
-      };
-      store.completeAnalysis('test-analysis-123', mockResults);
+      await store.completeAnalysis('test-analysis-123');
 
-      // Verify completion state
       let state = useAnalysisStore.getState();
       expect(state.currentPhase).toBe('completed');
       expect(state.error).toBeNull();
 
-      // Now simulate the SSE error handler logic that checks phase before failing
-      // This simulates the scenario where FastAPI closes the connection
-      // and the browser fires an error event, but our error handler checks the phase
       const mockError = {
         message: 'Connection lost during analysis',
         code: 'CONNECTION_ERROR',
         details: null,
       };
 
-      // Simulate the error handler logic from the store
-      // Only fail if analysis hasn't completed
       if (state.currentPhase !== 'completed') {
         store.failAnalysis('test-analysis-123', mockError);
-      } else {
-        console.log('SSE error after completion - ignoring');
       }
 
-      // State should still show completed, not error
       state = useAnalysisStore.getState();
       expect(state.currentPhase).toBe('completed');
       expect(state.error).toBeNull();
@@ -477,7 +429,7 @@ describe('AnalysisStore', () => {
         code: 'TEST_ERROR',
         details: null,
       });
-      useAnalysisStore.getState().setPhase('processing');
+      useAnalysisStore.getState().setPhase('ingestion');
       useAnalysisStore.getState().setProgress(50);
 
       useAnalysisStore.getState().clearAnalysis();
@@ -488,7 +440,6 @@ describe('AnalysisStore', () => {
       expect(state.error).toBeNull();
       expect(state.currentPhase).toBe('idle');
       expect(state.progress).toBe(0);
-      expect(state.eventSource).toBeNull();
     });
   });
 
@@ -527,14 +478,14 @@ describe('AnalysisStore', () => {
 
       (AnalysisService.startAnalysis as jest.Mock).mockResolvedValue({
         success: true,
-        data: { analysis_id: 'retry-123' },
+        data: { analysis_id: 'retry-123', status: 'completed', message: 'ok' },
         message: 'Analysis started',
       });
 
       await useAnalysisStore.getState().retryAnalysis();
 
       const state = useAnalysisStore.getState();
-      expect(state.currentPhase).toBe('ingestion'); // Should be ingestion after successful start
+      expect(state.currentPhase).toBe('completed');
       expect(state.error).toBeNull();
       expect(AnalysisService.startAnalysis).toHaveBeenCalledWith(mockRequest);
     });
