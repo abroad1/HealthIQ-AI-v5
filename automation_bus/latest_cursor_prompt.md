@@ -1,26 +1,26 @@
 ---
-work_id: R-1
-branch: fix/engine-trust-bugs
+work_id: R-2A
+branch: fix/integration-stability-backend
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: BEHAVIOUR
+change_type: MIXED
 ---
 
-# R-1 — Engine trust bugs
+# R-2A — Integration Layer Stabilisation (backend path)
 
 ## Objective
 
-Fix the three engine correctness failures that directly undermine HealthIQ’s deterministic trust claim:
+Stabilise the backend side of the integration layer by removing the fake SSE progress model and replacing it with an honest polling-compatible flow.
 
-1. contradictory signal activation
-2. one-sided lab range scoring failure
-3. missing WHY fallback for non-covered lead signals
+This sprint is limited to the backend/API path for Sprint 2.
+It does not include the frontend type-generation work.
+It does not include the `reports.ts` frontend cleanup.
+Those will be handled separately under the light model.
 
-This is a HIGH-risk Intelligence Core sprint.
-
-Do not widen scope.
-Do not introduce new analytical depth beyond the explicit fallback behaviour required here.
-Do not perform unrelated cleanup or opportunistic refactors.
+This is a bounded backend integration sprint.
+Do not widen into new analytical depth.
+Do not introduce real live phase-streaming in this sprint.
+Do not reopen the orchestrator architecture.
 
 ## Expected Cursor role
 
@@ -32,13 +32,18 @@ If the required implementation extends beyond that role’s allowed scope, stop 
 
 ## Strategic context
 
-This sprint is Sprint 1 in the reset plan.
-Order is non-negotiable:
-- engine trust bugs first
-- integration stability next
-- product shell after that
+This sprint follows R-1 in the reset plan.
 
-This sprint exists because these failures directly damage user trust in the moat and must be resolved before further product-shell work proceeds.
+The decision is now made:
+
+### Locked decision for Sprint 2B
+Use **Option A**:
+- remove fake SSE
+- use an honest polling-compatible model
+- do not build real phase-by-phase streaming in this sprint
+
+Business rationale:
+a truthful simple waiting experience is sufficient now, and engineering time should be preserved for higher-value product shell work.
 
 ---
 
@@ -49,133 +54,149 @@ Treat the following as required inputs:
 1. Reset plan
 - `docs/RESET_SPRINT_PLAN_2026-04.md`
 
-2. Relevant runtime files at minimum:
-- `backend/core/analytics/signal_evaluator.py`
-- `backend/core/pipeline/orchestrator.py`
-- `backend/core/analytics/root_cause_compiler_v1.py`
-- relevant contracts / DTO builders / clinician summary paths
-- relevant existing tests and golden-panel tests
+2. Relevant backend files at minimum:
+- `backend/app/routes/analysis.py`
+- any current analysis start/result/status endpoints
+- any frontend-facing status contract path touched by backend response shape
+- any tests directly covering `/api/analysis/start`, `/api/analysis/events`, or result polling paths
 
-3. Current standing operating docs:
+3. Standing operating docs:
 - `AGENTS.md`
 - `.cursor/rules/healthiq-core-engine.mdc`
 
 ---
 
+## Core problem
+
+The current SSE endpoint is fake:
+- it sleeps
+- emits a fabricated “completed” event
+- closes
+
+Meanwhile the real pipeline runs synchronously elsewhere.
+
+This produces a misleading user experience and a brittle integration model.
+
+This sprint must remove that fake mechanism and leave the backend in an honest, polling-compatible state.
+
+---
+
 ## Scope
 
-This sprint is limited to the three trust bugs below.
+This sprint is limited to the backend half of Sprint 2B.
 
-### Bug 1 — Contradictory signal activation
+### In scope
 
-**File:** `backend/core/analytics/signal_evaluator.py`  
-**Target:** `_evaluate_lab_range_activation_state` or equivalent activation path
+1. Identify the current fake SSE path and remove or disable it safely.
+2. Ensure the backend start/result flow supports a polling-compatible model.
+3. If a lightweight status/read endpoint adjustment is needed for polling compatibility, make the smallest safe change.
+4. Preserve current analytical behaviour.
+5. Add/update bounded tests for the backend flow change.
+6. Leave clear notes for the frontend light-model sprint that will consume this path.
 
-### Problem
-`enable_upper_bound` / `enable_lower_bound` flags are not being honoured, allowing contradictory high and low activation on the same value.
+### Out of scope
 
-### Required behaviour
-- respect `enable_upper_bound`
-- respect `enable_lower_bound`
-- do not activate upper-bound logic when upper-bound is disabled
-- do not activate lower-bound logic when lower-bound is disabled
-- if a signal definition would still allow contradictory activation after this fix, treat that as a configuration warning/problem, not a runtime result
-
-### Regression target
-A mid-range cholesterol test value must not produce both `signal_total_cholesterol_high` and `signal_total_cholesterol_low` as active simultaneously.
-
----
-
-### Bug 2 — One-sided lab range scoring failure
-
-**File:** `backend/core/pipeline/orchestrator.py`  
-**Target:** `_has_valid_numeric_bounds` or equivalent scoring eligibility logic
-
-### Problem
-Scoring currently requires both `min` and `max` numeric bounds, which breaks common commercial panels with one-sided ranges.
-
-### Required behaviour
-- a range is valid if either `min` or `max` is numeric
-- max-only: above max = high, below max = in-range
-- min-only: below min = low, above min = in-range
-- do not produce “insufficient numeric bounds” for valid one-sided commercial ranges
-
-### Regression target
-A panel with LDL max-only and HDL min-only ranges must produce scored output, not the “insufficient bounds” message.
+- frontend polling implementation
+- frontend type generation
+- removal of `reports.ts`
+- real phase-by-phase streaming
+- orchestrator redesign
+- progress callback infrastructure
+- new narrative or intelligence features
+- unrelated API cleanup
 
 ---
 
-### Bug 3 — WHY fallback for non-covered lead signals
+## Required outcome
 
-**Files:** 
-- `backend/core/analytics/root_cause_compiler_v1.py`
-- any directly related contracts / DTO / clinician summary path required to surface fallback cleanly
+Deliver a bounded backend integration change that:
 
-### Problem
-WHY reasoning exists for only a narrow governed set. When the lead signal falls outside that set, the summary can silently omit WHY content.
-
-### Required behaviour
-- return a structured fallback object instead of null/empty when no governed hypothesis exists
-- fallback must include:
-  - signal name
-  - activation state
-  - lab range classification
-  - a standard phrase stating that deep hypothesis analysis is not yet available for this marker
-- fallback must be surfaced visibly in the results DTO / clinician path
-- clinician summary must degrade gracefully and not assume `top_findings[0]` always has governed WHY content
-
-### Regression target
-A panel whose lead signal is outside the governed WHY set must still produce a visible, non-empty WHY section via fallback.
+1. removes the fake SSE behaviour
+2. leaves the backend with an honest result/status retrieval path suitable for polling
+3. does not alter Intelligence Core analytical output
+4. provides a stable backend contract for the frontend Sprint 2 follow-on
 
 ---
 
-## In scope
+## Required implementation behaviour
 
-- bounded fixes for the three bugs above
-- regression tests proving each fix
-- minimal DTO/summary/contract adaptation only if required to surface the WHY fallback cleanly
-- preservation of existing output contracts wherever possible
+### 1. Fake SSE removal
+The fake `/events` behaviour must no longer present fabricated progress/completion.
 
----
+Acceptable outcomes include:
+- removing the endpoint entirely if it is unused after the new flow
+- returning an explicit unsupported/not-used response if appropriate
+- otherwise making it inert in a clearly non-misleading way
 
-## Out of scope
+Do **not** leave a fake “completed” path in place.
 
-- expanding governed WHY coverage beyond the fallback mechanism
-- new phenotype/IDL/narrative work
-- frontend changes
-- product-shell changes
-- broad orchestrator refactoring
-- repo cleanup
-- documentation rationalisation beyond a short sprint note if needed
+### 2. Polling-compatible backend flow
+The backend must support a truthful client flow of:
+
+- start analysis
+- wait for completion / retrieve result via polling-compatible endpoint(s)
+
+Because the current pipeline runs synchronously, the simplest correct backend behaviour may be:
+- start endpoint returns the created/completed analysis identifier and/or completion state
+- result endpoint remains the truth source
+
+Choose the smallest safe backend shape consistent with honesty.
+
+### 3. No fake progress states
+Do not fabricate intermediate phases or completion messages not backed by real runtime events.
 
 ---
 
 ## Design rules
 
-### Rule 1 — no scope drift
-Implement only the three trust fixes.
+### Rule 1 — honesty over sophistication
+A simpler truthful backend flow is better than a more sophisticated fake one.
 
-### Rule 2 — smallest safe behavioural change
-Fix the trust bug without broad redesign.
+### Rule 2 — smallest safe backend change
+Do not turn this into a broader async job-system sprint.
 
-### Rule 3 — preserve existing contracts where possible
-Fallback should fit the existing WHY surface rather than triggering an unnecessary new contract family.
+### Rule 3 — preserve analytical runtime
+Do not modify analysis logic, pipeline ordering, or narrative generation.
 
-### Rule 4 — no silent omissions
-If WHY is unavailable, the user-visible/report-visible output must say so explicitly via fallback.
+### Rule 4 — no frontend invention
+This sprint prepares the backend for polling.
+It does not implement the frontend experience.
 
-### Rule 5 — no adjacent helpful changes
-If you discover a worthwhile related improvement, report it separately and do not implement it.
+### Rule 5 — no adjacent improvements
+If you identify a better long-term async architecture, report it separately.
+Do not implement it in this sprint.
+
+---
+
+## Test execution scope
+
+Run tests in this order only:
+
+1. new or updated tests for this sprint
+2. directly related existing unit/integration tests for touched backend/API paths
+3. explicitly required regression/golden tests relevant to this sprint
+
+Do not run the full repository test suite unless:
+- this prompt explicitly requires it, or
+- a targeted failure gives concrete evidence of wider regression risk
+
+Before running tests, state:
+- which tests you will run
+- why they are relevant
+- which broader suites you are deliberately not running
+
+Do not run unrelated legacy or archived tests by default.
 
 ---
 
 ## Expected implementation shape
 
-1. inspect current bug path for each of the three issues
-2. implement the smallest safe fix for each
-3. add or update regression tests
-4. run relevant targeted tests and golden-panel tests
-5. report back with exact files touched and how each bug is now prevented
+1. inspect current `/events` and analysis start/result backend flow
+2. identify the minimum backend changes needed for Option A
+3. remove or neutralise fake SSE safely
+4. ensure truthful polling-compatible backend behaviour
+5. add/update bounded tests
+6. report exact backend contract implications for the frontend follow-on sprint
 
 ---
 
@@ -183,11 +204,11 @@ If you discover a worthwhile related improvement, report it separately and do no
 
 STOP immediately and report if any of the following are true:
 
-1. fixing one-sided ranges requires broader scoring-policy redesign than expected
-2. WHY fallback cannot be surfaced cleanly without a broader contract change
-3. contradictory activation is caused by upstream signal-definition corruption rather than runtime logic alone
-4. touched-file scope expands materially beyond the three named runtime paths plus minimal necessary supporting files
-5. any additional Intelligence Core path appears necessary but was not explicitly approved
+1. removing fake SSE safely would require a broader async job-system redesign
+2. the backend does not currently expose a sufficient truthful retrieval path for polling and would require a larger contract redesign
+3. touched-file scope expands materially beyond the expected route/backend integration layer
+4. the proposed change would modify analytical runtime behaviour rather than integration behaviour
+5. the frontend follow-on would require undocumented backend assumptions not safely addressed here
 
 If blocked, report:
 - exact blocker
@@ -200,11 +221,11 @@ If blocked, report:
 
 This sprint is successful only if:
 
-1. contradictory high/low activation is prevented by test
-2. one-sided commercial ranges score correctly by test
-3. non-covered lead signals produce visible WHY fallback by test
-4. existing golden-panel tests continue to pass
-5. no unnecessary contract or runtime widening occurred
+1. fake SSE behaviour is gone
+2. the backend exposes an honest polling-compatible analysis retrieval path
+3. no analytical behaviour changes
+4. relevant backend/API tests pass
+5. the frontend follow-on can proceed on a stable backend basis
 
 ---
 
@@ -212,12 +233,12 @@ This sprint is successful only if:
 
 At finish, the sprint should leave behind:
 
-- bounded code changes for the three trust bugs
-- regression tests
+- bounded backend integration changes
+- bounded backend/API tests
 - a short implementation note stating:
-  - files touched
-  - how each bug was fixed
-  - any follow-up issue discovered but not implemented
+  - what fake SSE behaviour was removed
+  - what backend path frontend should now use
+  - any follow-on frontend assumptions
 
 Report back with:
 - requested changes made
@@ -230,10 +251,11 @@ Report back with:
 
 You must show, with exact file paths and grounded evidence:
 
-- where contradictory activation was prevented
-- where one-sided ranges are now treated as valid
-- where WHY fallback is now returned and surfaced
-- what tests prove the new behaviour
-- that existing golden-panel tests still pass
+- where fake SSE existed
+- how it was removed or neutralised
+- what backend path now supports polling
+- what tests prove the new backend behaviour
+- what the frontend follow-on should consume
 
-Do not claim completion without showing each of the three trust failures is now directly addressed.
+Do not claim completion merely because an endpoint changed.
+Show that the misleading progress model is actually gone.
