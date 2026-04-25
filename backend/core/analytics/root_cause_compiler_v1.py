@@ -400,6 +400,28 @@ def _compile_finding(
 _WHY_FALLBACK_HYPOTHESIS_ID = "why_engine_fallback_v1"
 
 
+def _confidence_value_for_lead_row(row: Dict[str, Any]) -> float:
+    c = row.get("confidence")
+    return float(c) if isinstance(c, (int, float)) else 0.0
+
+
+def _lead_row_for_why_fallback(rows: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    """
+    Deterministic lead for fallback only: confidence descending, then signal_id ascending.
+    Uses fields present on signal_results rows; no report-layer sort tuple.
+    """
+    candidates = [r for r in rows if str(r.get("signal_id", "")).strip()]
+    if not candidates:
+        return None
+    return min(
+        candidates,
+        key=lambda r: (
+            -_confidence_value_for_lead_row(r),
+            str(r.get("signal_id", "")).strip(),
+        ),
+    )
+
+
 def _compile_why_engine_fallback_finding(
     lead: Dict[str, Any],
     *,
@@ -483,10 +505,7 @@ def compile_root_cause_v1(
             )
         )
 
-    from core.analytics.report_compiler_v1 import _top_finding_sort_tuple
-
-    ordered = sorted(rows, key=_top_finding_sort_tuple)
-    lead = ordered[0] if ordered else None
+    lead = _lead_row_for_why_fallback(rows)
     lead_id = str(lead.get("signal_id", "")).strip() if lead else ""
     with_finding = {f.signal_id for f in findings}
     if lead_id and lead_id not in with_finding and lead is not None:
