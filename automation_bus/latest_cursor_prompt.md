@@ -1,25 +1,23 @@
 ---
-work_id: R-1B
-branch: fix/unscored-marker-trust-gaps
+work_id: R-8
+branch: feature/why-coverage-expansion-wave-1
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: BEHAVIOUR
 ---
 
-# R-1B — Unscored marker trust gaps
+# R-8 — WHY coverage expansion, Wave 1
 
 ## Objective
 
-Fix the bounded backend trust gaps surfaced in live-panel diagnosis around unscored biomarker output.
+Expand governed WHY reasoning for the genuinely ungoverned high-value Wave 1 findings only:
+
+1. `signal_total_cholesterol_high`
+2. `signal_vitamin_d_low`
 
 This is a HIGH-risk Intelligence Core sprint.
 
-This sprint exists to restore trust in the biomarker layer by ensuring:
-1. the true unscored reason is preserved through the scoring → DTO path
-2. markers with valid one-sided lab ranges that should score do in fact score
-3. HbA1c unit mismatch is handled truthfully rather than being mislabeled as a bounds problem
-
-Do not widen this sprint beyond those three defects.
+Do not widen scope beyond these two canonical signal IDs.
 
 ## Expected Cursor role
 
@@ -29,17 +27,29 @@ If the required implementation extends beyond that role’s allowed scope, stop 
 
 ---
 
+## Stage 0 prerequisite
+
+Before doing anything else, create and switch to this branch:
+
+`feature/why-coverage-expansion-wave-1`
+
+Confirm branch creation before implementation begins.
+
+---
+
 ## Strategic context
 
-This sprint is a direct follow-on trust-fix sprint after Sprint 1 and Sprint 2.
+This sprint comes after the reset plan’s product-shell sequence.
 
-The live-panel diagnosis established three distinct backend trust issues:
+Important scope correction:
+The following are already governed and are **not** new work in this sprint:
+- `signal_ldl_cholesterol_high`
+- `signal_hdl_cholesterol_low`
+- `signal_triglycerides_high`
 
-1. `unscored_reason` is attached internally but dropped before DTO interpretation text is built
-2. several live biomarkers with valid one-sided lab ranges still surface as unscored despite the one-sided scoring fix
-3. HbA1c can reach the user as “insufficient numeric bounds” when the real problem is unit mismatch (`%` vs `mmol/mol`)
-
-This sprint fixes those backend truthfulness/correctness issues only.
+Wave 1 new work is restricted to:
+- `signal_total_cholesterol_high`
+- `signal_vitamin_d_low`
 
 ---
 
@@ -47,15 +57,15 @@ This sprint fixes those backend truthfulness/correctness issues only.
 
 Treat the following as required inputs:
 
-1. Live-panel diagnosis and evidence
-- the latest QA diagnosis covering live analysis `6f702428-ec3e-4e00-9416-280904e9d4b3`
+1. Reset plan
+- `docs/RESET_SPRINT_PLAN_2026-04.md`
 
-2. Relevant runtime files at minimum:
-- `backend/core/pipeline/orchestrator.py`
-- `backend/core/scoring/rules.py`
-- `backend/core/analytics/primitives.py`
-- any biomarker score dataclass / score serialization path
-- any DTO/result-building path directly involved in biomarker interpretation text
+2. Relevant current runtime and governed files at minimum:
+- `backend/core/analytics/root_cause_compiler_v1.py`
+- `knowledge_bus/root_cause/hypotheses/`
+- `knowledge_bus/registries/confirmatory_tests_v1.yaml`
+- current governed WHY hypothesis files for existing supported domains
+- relevant fixtures and tests for root-cause output
 
 3. Standing operating docs:
 - `AGENTS.md`
@@ -63,124 +73,104 @@ Treat the following as required inputs:
 
 ---
 
+## Locked Wave 1 scope
+
+### Group A — Total cholesterol WHY
+Required:
+- `signal_total_cholesterol_high`
+
+### Group B — Vitamin D WHY
+Required:
+- `signal_vitamin_d_low`
+
+No other lipid, thyroid, inflammatory, renal, or iron WHY work is in scope.
+
+---
+
 ## Core problem
 
-The biomarker surface is currently mixing together:
-- real unscorable markers
-- markers that should score but do not
-- unit mismatch cases
-- generic heuristic fallback wording
+Fallback WHY prevents silence, but these two high-value/common findings still lack governed WHY output.
 
-This produces avoidable trust damage in the results page.
+This sprint must move them from fallback WHY to governed WHY.
 
-The sprint must make the backend truthful and correct for the bounded defects identified.
+---
+
+## Required outcome
+
+Deliver a bounded governed WHY expansion that:
+
+1. adds governed root-cause hypotheses for:
+   - `signal_total_cholesterol_high`
+   - `signal_vitamin_d_low`
+2. wires those hypotheses into `root_cause_compiler_v1.py`
+3. ensures panels dominated by those findings produce governed WHY rather than fallback
+4. preserves all existing WHY behaviour
+5. preserves fallback for still-uncovered signals
 
 ---
 
 ## Scope
 
-This sprint is limited to the three defects below.
+### In scope
 
-### Defect 1 — `unscored_reason` is dropped before DTO interpretation
+1. Governed hypothesis authoring for:
+- `signal_total_cholesterol_high`
+- `signal_vitamin_d_low`
 
-### Problem
-The scoring path attaches `unscored_reason` internally, but the orchestrator dict built for biomarker score rows drops it before the DTO/user-facing interpretation logic reads it.
+2. Root-cause compiler wiring:
+- update `root_cause_compiler_v1.py` so these signal IDs map to governed WHY output
 
-As a result, live biomarker interpretation text can fall back to weaker bounds/status heuristics and fail to state the true reason.
+3. Confirmatory test registry support:
+- because the loader validates confirmatory test IDs at load time, this sprint may add the **minimal** new entries needed to:
+  - `knowledge_bus/registries/confirmatory_tests_v1.yaml`
+- if no specific confirmatory tests are ready, you may use `confirmatory_tests: []` only if that is the smallest safe governed choice and you explain why
 
-### Required behaviour
-- preserve `unscored_reason` through the scoring → orchestrator/DTO path wherever biomarker interpretation text is constructed
-- do not invent a new broad contract family unless strictly required
-- ensure biomarker interpretation text can distinguish the real cause rather than relying on generic heuristics when the score already knows why it is unscored
+4. Tests / fixtures / regression:
+- add or update the minimum fixtures/tests needed to prove governed WHY now appears for these two signals
+- preserve regression coverage for existing WHY-covered domains
+- preserve fallback behaviour for signals still outside governed WHY
 
-### Regression target
-A marker with a known non-empty `unscored_reason` must preserve that cause into the biomarker output path used for interpretation text.
-
----
-
-### Defect 2 — valid one-sided live markers still surface as unscored
-
-### Problem
-The live diagnosis indicates these markers appear unscored despite valid one-sided lab ranges and matching units:
-- `hdl_cholesterol`
-- `triglycerides`
-- `active_b12`
-- `egfr`
-- `folate`
-
-This suggests the one-sided range fix from R-1 is not being fully honored somewhere in the live scoring/DTO path.
-
-### Required behaviour
-- trace the exact live scoring path for these markers
-- identify where the one-sided-range handling still fails or is discarded
-- fix the smallest safe backend path so valid one-sided ranges score end-to-end
-- do not widen into a broad redesign of biomarker scoring
-
-### Regression target
-A bounded regression fixture covering representative min-only and max-only live-style markers must produce scored output rather than an unscored interpretation when units and ranges are valid.
-
----
-
-### Defect 3 — HbA1c unit mismatch is misclassified as bounds failure
-
-### Problem
-HbA1c can surface as:
-- value in `%`
-- lab range in `mmol/mol`
-and currently reach the user as `Not scored - insufficient numeric bounds for scoring`
-
-That is not truthful. The issue is unit mismatch / harmonisation, not missing numeric bounds.
-
-### Required behaviour
-- detect this case truthfully in the backend path
-- either:
-  - harmonise units safely before scoring if already supported by current architecture, or
-  - classify it explicitly as a unit mismatch / incompatible units case rather than a bounds failure
-- do not fake scoring if the units cannot be meaningfully reconciled
-- do not widen this into a broad HbA1c architecture redesign
-
-### Regression target
-A fixture/path with HbA1c value/range unit mismatch must not surface as “insufficient numeric bounds.” It must either score correctly after valid conversion or report a truthful unit mismatch-style reason.
-
----
-
-## In scope
-
-- bounded fixes for the three defects above
-- regression tests proving each fix
-- minimal supporting runtime/serialization changes required to preserve true unscored reasons
-- minimal interpretation text correction needed so the backend no longer misstates the cause
+5. Minimal implementation note:
+- what signal IDs were added
+- what files were touched
+- what remains for Wave 2
 
 ---
 
 ## Out of scope
 
-- adding policy bounds for `remnant_cholesterol`
-- changing policy for markers with no lab range such as `free_testosterone_pct`
-- broad UI/wording redesign across all biomarker states
-- SSOT fallback scoring for lab-sovereign markers
-- new frontend work
-- broad scoring-engine redesign
-- broad unit-system redesign beyond what is required for truthful HbA1c handling
+- `signal_ldl_cholesterol_high`
+- `signal_hdl_cholesterol_low`
+- `signal_triglycerides_high`
+- iron WHY
+- broader inflammatory WHY
+- renal WHY
+- expanded thyroid WHY
+- frontend presentation
+- broad root-cause architecture redesign
 
 ---
 
 ## Design rules
 
-### Rule 1 — truthfulness first
-If a marker is unscored, the backend must preserve and surface the real reason where available.
+### Rule 1 — canonical IDs only
+Use the canonical runtime signal IDs exactly as named above.
 
-### Rule 2 — smallest safe fix
-Do not redesign the whole biomarker scoring layer.
+### Rule 2 — Wave 1 only
+Do not silently expand scope beyond these two signals.
 
-### Rule 3 — no policy creep
-Do not turn this sprint into a policy decision about which derived or no-range markers should be scored.
+### Rule 3 — governed WHY, not ad hoc prose
+Use the current governed hypothesis pattern.
 
-### Rule 4 — preserve existing contracts where possible
-Prefer bounded extension/preservation of existing fields over broad new structures unless strictly necessary.
+### Rule 4 — preserve current architecture
+Extend the current governed root-cause system.
+Do not redesign it.
 
-### Rule 5 — no adjacent helpful changes
-If additional unscored-marker improvements are discovered, report them separately and do not implement them in this sprint.
+### Rule 5 — fallback must remain correct
+Signals still outside governed WHY must continue to use fallback.
+
+### Rule 6 — confirmatory registry must load cleanly
+Do not introduce hypothesis YAML that fails loader validation because of missing confirmatory test IDs.
 
 ---
 
@@ -189,8 +179,8 @@ If additional unscored-marker improvements are discovered, report them separatel
 Run tests in this order only:
 
 1. new or updated regression tests for this sprint
-2. directly related existing unit/integration tests for touched scoring/orchestrator/DTO paths
-3. explicitly required golden/regression tests relevant to this sprint
+2. directly related existing unit/integration tests for touched root-cause/compiler paths
+3. explicitly required golden/regression tests relevant to WHY output
 
 Do not run the full repository test suite unless:
 - this prompt explicitly requires it, or
@@ -207,12 +197,16 @@ Do not run unrelated legacy or archived tests by default.
 
 ## Expected implementation shape
 
-1. inspect the scoring → orchestrator → biomarker DTO interpretation path
-2. preserve `unscored_reason` through that path
-3. reproduce and fix the one-sided live-marker scoring failure
-4. reproduce and fix truthful HbA1c unit-mismatch handling
-5. add/update regression tests
-6. report exact files touched and how each defect is now prevented
+1. inspect existing governed WHY pattern and loader rules
+2. author the minimum correct hypothesis files for:
+   - `signal_total_cholesterol_high`
+   - `signal_vitamin_d_low`
+3. add minimal confirmatory-test registry support if needed
+4. wire the signal IDs into `root_cause_compiler_v1.py`
+5. add/update bounded tests and fixtures
+6. verify governed WHY replaces fallback for these two signals
+7. verify fallback still works elsewhere
+8. report exact files touched and any Wave 2 recommendations not implemented
 
 ---
 
@@ -220,11 +214,10 @@ Do not run unrelated legacy or archived tests by default.
 
 STOP immediately and report if any of the following are true:
 
-1. preserving `unscored_reason` requires a broader contract redesign than expected
-2. the one-sided marker failure is caused by upstream data corruption rather than scoring/runtime logic
-3. truthful HbA1c handling requires a larger unit-normalisation redesign than can safely fit here
-4. touched-file scope expands materially beyond the expected scoring/orchestrator/DTO path
-5. any additional policy decision is required to complete the sprint safely
+1. these two signals cannot be completed without broader root-cause architecture redesign
+2. adding the hypotheses would force broader governed asset redesign beyond this sprint
+3. touched-file scope expands materially beyond root-cause hypotheses, confirmatory registry support, compiler wiring, and bounded tests
+4. any additional signal group is tempting but not explicitly approved
 
 If blocked, report:
 - exact blocker
@@ -237,11 +230,12 @@ If blocked, report:
 
 This sprint is successful only if:
 
-1. `unscored_reason` is preserved into the biomarker interpretation path
-2. representative live-style one-sided markers now score correctly end-to-end
-3. HbA1c unit mismatch is no longer mislabeled as a bounds failure
-4. relevant regression tests pass
-5. no policy-widening or frontend changes were introduced
+1. `signal_total_cholesterol_high` now produces governed WHY rather than fallback
+2. `signal_vitamin_d_low` now produces governed WHY rather than fallback
+3. existing WHY-covered domains continue to work
+4. fallback still works for uncovered domains
+5. relevant regression tests pass
+6. no scope widening beyond the two locked Wave 1 signals occurred
 
 ---
 
@@ -249,12 +243,16 @@ This sprint is successful only if:
 
 At finish, the sprint should leave behind:
 
-- bounded backend changes for the three defects
-- regression tests
+- governed hypothesis YAML(s) for:
+  - `signal_total_cholesterol_high`
+  - `signal_vitamin_d_low`
+- minimal confirmatory registry additions if required
+- bounded `root_cause_compiler_v1.py` updates
+- regression tests / fixture updates
 - a short implementation note stating:
-  - files touched
-  - how each defect was fixed
-  - any follow-up issue discovered but not implemented
+  - what was added
+  - what remains for later Wave 2
+  - any optional follow-up not implemented
 
 Report back with:
 - requested changes made
@@ -267,10 +265,11 @@ Report back with:
 
 You must show, with exact file paths and grounded evidence:
 
-- where `unscored_reason` was previously dropped and is now preserved
-- where the one-sided-range live-marker path was failing and is now fixed
-- where HbA1c mismatch is now handled truthfully
-- what tests prove the corrected behaviour
+- where the new governed hypotheses now live
+- where the compiler wiring was added
+- what test/fixture proves total cholesterol WHY now exists
+- what test/fixture proves vitamin D WHY now exists
+- that fallback still applies correctly outside the governed set
 
-Do not claim completion merely because some marker text changed.
-Show that the backend scoring/truth path is now correct.
+Do not claim completion merely because new YAML files were added.
+Show that Wave 1 WHY coverage is actually active in runtime behaviour.

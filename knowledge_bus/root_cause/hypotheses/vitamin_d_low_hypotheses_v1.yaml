@@ -1,0 +1,48 @@
+schema_version: "v1"
+asset_id: "vitamin_d_low_hypotheses_v1"
+updated_at: "2026-04-25"
+primary_signal_id: "signal_vitamin_d_low"
+primary_metric: "vitamin_d"
+notes:
+  - "R-8 Wave 1 — governed root-cause asset for signal_vitamin_d_low (25-hydroxyvitamin D)."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+  - "Confirmatory tests left empty: repeat 25(OH)D is not yet in confirmatory_tests_v1; smallest safe governed choice (per R-8)."
+
+hypotheses:
+  - hypothesis_id: "vitamin_d_nutritional_status_context_v1"
+    title: "Low 25-hydroxyvitamin D (nutritional status) context"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "25-hydroxyvitamin D is low relative to the lab reference on this panel, consistent with a nutritional sufficiency context worth clarifying on follow-up testing."
+    required_markers:
+      - "vitamin_d"
+    confirmatory_markers:
+      - "calcium"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "vit_d_signal_fired"
+        signals_any:
+          - "signal_vitamin_d_low"
+        direction: "fired"
+        evidence_for_item: "A vitamin-D-low signal fired, anchoring governed vitamin-D WHY on this run."
+        marker_refs:
+          - "vitamin_d"
+      - rule_id: "vit_d_low_support"
+        markers_all:
+          - "vitamin_d"
+        direction: "low"
+        evidence_for_item: "25-hydroxyvitamin D is below the lab reference range, supporting a low status pattern."
+        marker_refs:
+          - "vitamin_d"
+    evidence_against_rules:
+      - rule_id: "vit_d_clearly_normal"
+        markers_all:
+          - "vitamin_d"
+        direction: "clearly_normal"
+        evidence_against_item: "25-hydroxyvitamin D appears within range, arguing against a low sufficiency pattern."
+        marker_refs:
+          - "vitamin_d"
+    missing_data_markers:
+      - marker_id: "calcium"
+        reason: "Serum calcium can add bone-mineral context when vitamin D is low."
+    confirmatory_tests: []

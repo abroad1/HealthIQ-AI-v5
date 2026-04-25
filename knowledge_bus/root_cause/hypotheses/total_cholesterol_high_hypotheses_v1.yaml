@@ -1,0 +1,83 @@
+schema_version: "v1"
+asset_id: "total_cholesterol_high_hypotheses_v1"
+updated_at: "2026-04-25"
+primary_signal_id: "signal_total_cholesterol_high"
+primary_metric: "total_cholesterol"
+notes:
+  - "R-8 Wave 1 — governed root-cause asset for signal_total_cholesterol_high (total cholesterol elevation)."
+  - "No diagnosis language, medication advice, dosing, or intervention instructions."
+  - "Confirmatory test IDs reference knowledge_bus/registries/confirmatory_tests_v1.yaml."
+
+hypotheses:
+  - hypothesis_id: "tc_atherogenic_panel_context_v1"
+    title: "Total cholesterol elevation in atherogenic lipid panel context"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "Total cholesterol is elevated with patterns that can reflect atherogenic lipoprotein burden on this panel."
+    required_markers:
+      - "total_cholesterol"
+    confirmatory_markers:
+      - "ldl_cholesterol"
+      - "non_hdl_cholesterol"
+    differentiator_markers:
+      - "hdl_cholesterol"
+    evidence_for_rules:
+      - rule_id: "tc_signal_fired"
+        signals_any:
+          - "signal_total_cholesterol_high"
+        direction: "fired"
+        evidence_for_item: "A total-cholesterol-high signal fired, anchoring governed total-cholesterol WHY on this run."
+        marker_refs:
+          - "total_cholesterol"
+      - rule_id: "tc_high_support"
+        markers_all:
+          - "total_cholesterol"
+        direction: "high"
+        evidence_for_item: "Total cholesterol is above the lab reference range, supporting an elevation pattern."
+        marker_refs:
+          - "total_cholesterol"
+    evidence_against_rules:
+      - rule_id: "tc_clearly_normal"
+        markers_all:
+          - "total_cholesterol"
+        direction: "clearly_normal"
+        evidence_against_item: "Total cholesterol appears clearly within range, arguing against a sustained elevation pattern."
+        marker_refs:
+          - "total_cholesterol"
+    missing_data_markers:
+      - marker_id: "non_hdl_cholesterol"
+        reason: "Non-HDL refines atherogenic particle burden beyond total cholesterol alone."
+    confirmatory_tests:
+      - "test_hba1c_repeat_v1"
+      - "test_thyroid_tsh_ft4_v1"
+
+  - hypothesis_id: "tc_metabolic_coupling_context_v1"
+    title: "Metabolic coupling context with total cholesterol elevation"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Total cholesterol elevation co-occurs with glycaemic markers that can track with metabolic stress on the same panel."
+    required_markers:
+      - "total_cholesterol"
+    confirmatory_markers:
+      - "glucose"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "tc_signal_fired_glucose"
+        signals_any:
+          - "signal_total_cholesterol_high"
+        direction: "fired"
+        evidence_for_item: "Total-cholesterol-high context is active while glucose is available for metabolic coupling review."
+        marker_refs:
+          - "total_cholesterol"
+      - rule_id: "glucose_high_with_tc"
+        markers_any:
+          - "glucose"
+        direction: "high"
+        evidence_for_item: "Glucose is elevated relative to range, supporting coupled metabolic stress framing."
+        marker_refs:
+          - "glucose"
+    evidence_against_rules: []
+    missing_data_markers: []
+    confirmatory_tests:
+      - "test_fasting_glucose_insulin_context_v1"
+      - "test_ty_g_component_markers_panel_v1"
