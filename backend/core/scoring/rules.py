@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 from core.analytics.primitives import (
+    coerce_optional_float,
     map_position_to_status,
     position_in_one_sided_lab_range,
     position_in_range,
@@ -42,6 +43,11 @@ UNSCORED_REASON = str(
         "missing_lab_reference_range",
     )
 )
+
+# R-1B: HbA1c value and lab range use incompatible unit systems (e.g. % vs mmol/mol) and could not be harmonised.
+UNSCORED_REASON_HBA1C_UNIT_MISMATCH = "hba1c_value_and_reference_range_units_incompatible"
+
+_HBA1C_IDS = frozenset({"hba1c", "hba1c_pct"})
 
 
 class ScoreRange(Enum):
@@ -183,13 +189,78 @@ class ScoringRules:
         """True if biomarker is a derived ratio v5 computes (may use DERIVED_RATIO_BOUNDS when lab didn't supply)."""
         return biomarker_name in DERIVED_RATIOS
 
+    @staticmethod
+    def _hba1c_unit_family(unit_s: str) -> Optional[str]:
+        s = (unit_s or "").strip().lower()
+        if not s:
+            return None
+        if s in ("%", "percent", "pct"):
+            return "%"
+        if "mmol" in s and "mol" in s:
+            return "mmol/mol"
+        return None
+
+    def _harmonise_hba1c_reference_range(
+        self,
+        value_unit: Optional[str],
+        ref: Dict[str, Any],
+    ) -> Tuple[Dict[str, Any], Optional[str]]:
+        """
+        Align HbA1c lab range bounds to the same unit family as the measured value
+        (NGSP % vs IFCC mmol/mol) using the registry linear IFCC->NGSP mapping.
+        Returns (ref_out, err_reason). err_reason set when units conflict and cannot be converted.
+        """
+        from core.units.registry import _get_registry
+
+        ref = dict(ref)
+        raw_u = str(ref.get("unit", "") or "")
+        vf = self._hba1c_unit_family(value_unit or "")
+        rf = self._hba1c_unit_family(raw_u)
+        if vf is None or rf is None or vf == rf:
+            return ref, None
+
+        reg = _get_registry()
+        linear = reg._get_hba1c_mmol_mol_to_percent_linear("hba1c", "mmol/mol", "%")
+        if not linear:
+            return ref, UNSCORED_REASON_HBA1C_UNIT_MISMATCH
+        slope, intercept = linear
+
+        lo = coerce_optional_float(ref.get("min"))
+        hi = coerce_optional_float(ref.get("max"))
+        if lo is None and hi is None:
+            return ref, None
+
+        def mmol_to_pct(m: float) -> float:
+            return float(slope) * m + float(intercept)
+
+        def pct_to_mmol(p: float) -> float:
+            return (float(p) - float(intercept)) / float(slope)
+
+        if vf == "%" and rf == "mmol/mol":
+            if lo is not None:
+                ref["min"] = mmol_to_pct(lo)
+            if hi is not None:
+                ref["max"] = mmol_to_pct(hi)
+            ref["unit"] = "%"
+            return ref, None
+        if vf == "mmol/mol" and rf == "%":
+            if lo is not None:
+                ref["min"] = pct_to_mmol(lo)
+            if hi is not None:
+                ref["max"] = pct_to_mmol(hi)
+            ref["unit"] = "mmol/mol"
+            return ref, None
+
+        return ref, UNSCORED_REASON_HBA1C_UNIT_MISMATCH
+
     def calculate_biomarker_score(
         self, 
         biomarker_name: str, 
         value: float, 
         age: Optional[int] = None,
         sex: Optional[str] = None,
-        input_reference_range: Optional[Dict[str, Any]] = None
+        input_reference_range: Optional[Dict[str, Any]] = None,
+        value_unit: Optional[str] = None,
     ) -> Tuple[float, ScoreRange, Optional[str]]:
         """
         Calculate score for a single biomarker.
@@ -204,15 +275,20 @@ class ScoringRules:
         """
         # Priority 1: Use input reference range (lab) if available and valid
         if input_reference_range and isinstance(input_reference_range, dict):
-            min_val = input_reference_range.get('min')
-            max_val = input_reference_range.get('max')
-            if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)) and min_val < max_val:
+            ref: Dict[str, Any] = dict(input_reference_range)
+            if biomarker_name in _HBA1C_IDS:
+                ref, hba1c_err = self._harmonise_hba1c_reference_range(value_unit, ref)
+                if hba1c_err:
+                    return 0.0, ScoreRange.CRITICAL, hba1c_err
+            min_val = coerce_optional_float(ref.get("min"))
+            max_val = coerce_optional_float(ref.get("max"))
+            if min_val is not None and max_val is not None and min_val < max_val:
                 score, score_range = self._calculate_score_from_range(value, float(min_val), float(max_val))
                 return score, score_range, None
             pos = position_in_one_sided_lab_range(
                 value,
-                float(min_val) if isinstance(min_val, (int, float)) else None,
-                float(max_val) if isinstance(max_val, (int, float)) else None,
+                min_val,
+                max_val,
             )
             if pos is not None:
                 score, score_range = self._calculate_score_from_has_position(pos)
