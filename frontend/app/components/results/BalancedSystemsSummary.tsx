@@ -1,6 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { CheckCircle2 } from 'lucide-react';
 
 export interface BalancedSystemsV1 {
@@ -15,7 +17,11 @@ export interface BalancedSystemsV1 {
 
 interface BalancedSystemsSummaryProps {
   balanced: BalancedSystemsV1 | null | undefined;
-  /** FE-R1 — cap list length (default 4). */
+  /** When set with showMore, shows this many items before “Show more”. */
+  initialVisibleCount?: number;
+  /** When true and more items exist than `initialVisibleCount`, reveal the rest on demand. */
+  expandBeyondInitial?: boolean;
+  /** FE-R1 — cap list when not using expand (default 4). */
   maxItems?: number;
   /** Optional heading override; default matches results journey Section 2. */
   sectionTitle?: string;
@@ -31,9 +37,16 @@ const EMPTY_STABLE_COPY =
 export function BalancedSystemsSummary({
   balanced,
   maxItems = 4,
+  initialVisibleCount = 6,
+  expandBeyondInitial = false,
   sectionTitle = "What's working well",
 }: BalancedSystemsSummaryProps) {
-  const items = balanced?.items?.length ? balanced.items.slice(0, maxItems) : [];
+  const [showAll, setShowAll] = useState(false);
+  const all = balanced?.items?.length ? balanced.items : [];
+  const items = expandBeyondInitial
+    ? all.slice(0, showAll ? all.length : Math.min(initialVisibleCount, all.length))
+    : all.slice(0, maxItems);
+  const canShowMore = expandBeyondInitial && all.length > initialVisibleCount && !showAll;
 
   if (!balanced || !balanced.items?.length) {
     return (
@@ -79,6 +92,11 @@ export function BalancedSystemsSummary({
           <p className="text-sm text-emerald-900 leading-relaxed border-t border-emerald-100 pt-3">
             {balanced.context_line}
           </p>
+        ) : null}
+        {canShowMore ? (
+          <Button type="button" variant="ghost" className="px-0 text-emerald-900" onClick={() => setShowAll(true)}>
+            Show more
+          </Button>
         ) : null}
       </CardContent>
     </Card>
