@@ -9,7 +9,11 @@ from typing import Dict, List, Any, Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
 
-from core.analytics.primitives import position_in_range, map_position_to_status
+from core.analytics.primitives import (
+    map_position_to_status,
+    position_in_one_sided_lab_range,
+    position_in_range,
+)
 from core.analytics.scoring_policy_registry import load_scoring_policy
 
 _POLICY = load_scoring_policy()
@@ -205,6 +209,14 @@ class ScoringRules:
             if isinstance(min_val, (int, float)) and isinstance(max_val, (int, float)) and min_val < max_val:
                 score, score_range = self._calculate_score_from_range(value, float(min_val), float(max_val))
                 return score, score_range, None
+            pos = position_in_one_sided_lab_range(
+                value,
+                float(min_val) if isinstance(min_val, (int, float)) else None,
+                float(max_val) if isinstance(max_val, (int, float)) else None,
+            )
+            if pos is not None:
+                score, score_range = self._calculate_score_from_has_position(pos)
+                return score, score_range, None
 
         # Lab-provided biomarkers: NEVER use SSOT or rule fallback
         if not self._is_derived_ratio(biomarker_name):
@@ -238,7 +250,9 @@ class ScoringRules:
         position = position_in_range(value, min_val, max_val)
         if position is None:
             return 0.0, ScoreRange.CRITICAL
+        return self._calculate_score_from_has_position(position)
 
+    def _calculate_score_from_has_position(self, position: float) -> Tuple[float, ScoreRange]:
         has_status = map_position_to_status(position)
         score_range = self._has_to_score_range.get(has_status, ScoreRange.CRITICAL)
         curve = self._score_curve
@@ -317,7 +331,7 @@ class ScoringRules:
                 )
 
         return score, score_range
-    
+
     def _apply_adjustments(
         self,
         value: float,

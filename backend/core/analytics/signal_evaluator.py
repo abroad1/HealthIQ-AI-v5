@@ -160,7 +160,8 @@ class SignalEvaluator:
         if upper_bound_state not in self._STATE_RANK:
             upper_bound_state = "at_risk"
 
-        if high is not None and primary_value > high:
+        upper_bound_enabled = bool(activation_cfg.get("enable_upper_bound", True))
+        if upper_bound_enabled and high is not None and primary_value > high:
             return upper_bound_state
 
         lower_bound_enabled = bool(activation_cfg.get("enable_lower_bound", False))

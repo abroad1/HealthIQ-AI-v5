@@ -49,12 +49,12 @@ def test_clinician_report_runtime_producer_returns_valid_contract_for_ab(tmp_pat
     assert contract.sections.page1.primary_concern
     assert isinstance(contract.suppressed_confirmatory_tests, list)
     assert contract.sections.page1.ranking_policy_version == TOP_FINDINGS_RANKING_POLICY_VERSION
-    assert contract.sections.page1.primary_concern_mode == "technical_tiebreak_lead"
-    # BE-W2-RQ2 — runner-up from ranked top_findings[1] even when co_primary_signal_ids is empty (UAT-027).
+    assert contract.sections.page1.primary_concern_mode == "distinct_lead"
     assert contract.sections.page1.co_primary_signal_ids == []
-    assert contract.sections.page1.runner_up_topic_line
-    assert contract.sections.page1.runner_up_why_not_lead_line
-    assert "signal_" not in contract.sections.page1.runner_up_topic_line
+    # UAT-027 / runner-up copy applies when a meaningful runner-up exists (tie/ambiguity);
+    # unambiguous ``distinct_lead`` may leave runner-up fields blank.
+    assert "signal_" not in (contract.sections.page1.runner_up_topic_line or "")
+    assert "signal_" not in (contract.sections.page1.runner_up_why_not_lead_line or "")
     # Consumer hero copy leads with plain-language "why", not policy/tie-break boilerplate.
     assert contract.sections.page1.key_findings[0]
     assert "Homocysteine" in contract.sections.page1.key_findings[0]
