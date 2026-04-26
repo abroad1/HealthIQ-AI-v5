@@ -72,6 +72,29 @@ def test_wave1_emits_three_domains_score_and_confidence_together():
         assert r.next_step_sentence
 
 
+def test_wave1_next_step_sentences_are_domain_distinct_without_insights():
+    """D-3: per-domain next-step routing (governed fallbacks when no category insight)."""
+    scoring = {
+        "health_system_scores": {
+            "cardiovascular": {"overall_score": 80.0, "missing_biomarkers": []},
+            "metabolic": {"overall_score": 80.0, "missing_biomarkers": []},
+            "liver": {"overall_score": 80.0, "missing_biomarkers": []},
+        }
+    }
+    ig = _minimal_graph(signal_results=[], capacity={"hepatic": 80}, cluster_confidence={})
+    rows = assemble_consumer_domain_scores_v1(
+        scoring_result=scoring,
+        insight_graph=ig,
+        idl_bundle=None,
+        derived_ratios_meta=None,
+        panel_biomarker_ids={"alt", "glucose", "hba1c", "ldl_cholesterol"},
+        insight_results=None,
+        narrative_report_v1=None,
+    )
+    ns = [r.next_step_sentence for r in rows]
+    assert len(set(ns)) == 3
+
+
 def test_liver_blends_with_hepatic_capacity_not_liver_key():
     scoring = {
         "health_system_scores": {

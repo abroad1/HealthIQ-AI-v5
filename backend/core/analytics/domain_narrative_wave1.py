@@ -7,7 +7,7 @@ signal ids, and optional narrative_report / insight recommendations. No LLM.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Set, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, Set, Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from core.contracts.interpretation_display_layer_v1 import InterpretationDisplayRecordV1
@@ -301,18 +301,57 @@ def liv_consequence(by_id: Dict[str, Any]) -> str:
     return t or ""
 
 
+# D-3: governed last-resort next-step copy when no per-category InsightResult recommendation
+# (liver has no standard insight module — always uses this; CV/MET use after category filter)
+_GOVERNED_NEXT_STEP_CV = (
+    "For cardiovascular follow-up, discuss your lipid and vascular results with a clinician, "
+    "especially if the pattern is new, worsening, or you have symptoms."
+)
+_GOVERNED_NEXT_STEP_MET = (
+    "For blood sugar and metabolic follow-up, review these results with a clinician, "
+    "especially if you have risk factors, symptoms, or a history of prediabetes or diabetes."
+)
+_GOVERNED_NEXT_STEP_LIV = (
+    "For liver enzyme follow-up, review these results with a clinician, "
+    "including alcohol, medications, and any relevant liver history for correct interpretation."
+)
+
+
+def _first_recommendation_for_category_substrings(
+    insight_results: Optional[List[Dict[str, Any]]],
+    category_substrings: Tuple[str, ...],
+) -> str:
+    """Deterministic: iterate insights in list order, first match on category, first non-empty rec."""
+    if not insight_results or not category_substrings:
+        return ""
+    for ins in insight_results:
+        if not isinstance(ins, dict):
+            continue
+        cat = str(ins.get("category", "")).lower()
+        if not any(sub in cat for sub in category_substrings):
+            continue
+        for r in (ins.get("recommendations") or []):
+            s = str(r).strip()
+            if s:
+                return s[:600]
+    return ""
+
+
 def next_step_from_sources(
     insight_results: Optional[List[Dict[str, Any]]],
     narrative_report: Any,
 ) -> str:
+    """
+    Legacy global next-step (D-2). Prefer per-domain: next_step_cardiovascular / _blood_sugar / _liver.
+    """
     if insight_results:
         for ins in insight_results:
             if not isinstance(ins, dict):
                 continue
             for r in (ins.get("recommendations") or []):
-                s = str(r).strip()
-                if s:
-                    return s[:600]
+                t = str(r).strip()
+                if t:
+                    return t[:600]
     if narrative_report is not None:
         n = getattr(narrative_report, "next_steps_narrative", None) or ""
         n = str(n).strip()
@@ -322,3 +361,48 @@ def next_step_from_sources(
         "If you have questions about these results, discuss them with a qualified clinician. "
         "This information is not a medical diagnosis."
     )
+
+
+def next_step_cardiovascular(
+    insight_results: Optional[List[Dict[str, Any]]],
+    _narrative_report: Any,
+) -> str:
+    """D-3: first cardiovascular-category insight recommendation, else governed CV sentence."""
+    _ = _narrative_report
+    s = _first_recommendation_for_category_substrings(
+        insight_results, ("cardiovascular",)
+    )
+    if s:
+        return s
+    return _GOVERNED_NEXT_STEP_CV
+
+
+def next_step_blood_sugar(
+    insight_results: Optional[List[Dict[str, Any]]],
+    _narrative_report: Any,
+) -> str:
+    """D-3: first metabolic-category insight recommendation, else governed blood-sugar sentence."""
+    _ = _narrative_report
+    s = _first_recommendation_for_category_substrings(
+        insight_results, ("metabolic",)
+    )
+    if s:
+        return s
+    return _GOVERNED_NEXT_STEP_MET
+
+
+def next_step_liver(
+    insight_results: Optional[List[Dict[str, Any]]],
+    _narrative_report: Any,
+) -> str:
+    """
+    D-3: no standard hepatic/liver insight category in production modules — treat optional
+    category match, then always fall back to governed liver sentence.
+    """
+    _ = _narrative_report
+    s = _first_recommendation_for_category_substrings(
+        insight_results, ("hepatic", "liver", "hepat")
+    )
+    if s:
+        return s
+    return _GOVERNED_NEXT_STEP_LIV

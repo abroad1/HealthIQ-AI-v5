@@ -274,6 +274,28 @@ export interface NarrativeRuntimeMetaV1 {
   outcome?: string;
 }
 
+/** D-1/D-2/D-3 — Wave 1 customer domain card contract (mirrors Pydantic ConsumerDomainScoreV1) */
+export interface ConsumerDomainScoreV1 {
+  domain_id: string;
+  consumer_label: string;
+  clinical_label: string;
+  score: number;
+  band_label: string;
+  confidence_tier: 'high' | 'medium' | 'low';
+  active_signal_ids: string[];
+  primary_idl_record_id: string | null;
+  missing_marker_ids: string[];
+  source_track: string;
+  caveat_flags: string[];
+  contributing_system_keys: string[];
+  raw_evidence_refs: Record<string, unknown>;
+  headline_sentence: string;
+  contributor_sentence: string;
+  confidence_sentence: string;
+  consequence_sentence: string;
+  next_step_sentence: string;
+}
+
 export interface AnalysisResult {
   analysis_id: string;
   biomarkers: BiomarkerResult[];
@@ -299,6 +321,8 @@ export interface AnalysisResult {
   interpretation_display_layer_v1?: InterpretationDisplayLayerBundleV1 | null;
   /** N-8 — deterministic compiled narrative sections (F-1 surfaces in results journey) */
   narrative_report_v1?: NarrativeReportV1 | null;
+  /** D-3 — Wave 1 three-domain consumer cards (retail; not clinician report) */
+  consumer_domain_scores?: ConsumerDomainScoreV1[] | null;
   /** Passthrough from `build_analysis_result_dto` — cluster/engine context */
   primary_driver_system_id?: string;
   system_capacity_scores?: Record<string, unknown>;

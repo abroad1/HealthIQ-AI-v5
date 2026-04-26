@@ -25,7 +25,9 @@ from core.analytics.domain_narrative_wave1 import (
     liv_contributor,
     met_consequence,
     met_contributor,
-    next_step_from_sources,
+    next_step_blood_sugar,
+    next_step_cardiovascular,
+    next_step_liver,
 )
 from core.contracts.interpretation_display_layer_v1 import InterpretationDisplayLayerBundleV1
 from core.models.results import ConfidenceTierV1, ConsumerDomainScoreV1
@@ -332,10 +334,6 @@ def assemble_consumer_domain_scores_v1(
     hss = _health_systems(scoring_result)
     sig_rows = _iter_signal_results(insight_graph)
     by_id = idl_records_index(idl_bundle)
-    next_shared = next_step_from_sources(
-        insight_results,
-        narrative_report_v1,
-    )
     ratios = _ratios_map(derived_ratios_meta)
     cap: Dict[str, int] = {}
     sc_raw = dict(getattr(insight_graph, "system_capacity_scores", {}) or {})
@@ -391,7 +389,10 @@ def assemble_consumer_domain_scores_v1(
             contributor_sentence=cv_contributor(by_id, sids, sig_rows),
             confidence_sentence=confidence_sentence_for(tier, "cv"),
             consequence_sentence=cv_consequence(by_id, sids, sig_rows),
-            next_step_sentence=next_shared,
+            next_step_sentence=next_step_cardiovascular(
+                insight_results,
+                narrative_report_v1,
+            ),
         )
 
     def met_block() -> ConsumerDomainScoreV1:
@@ -435,7 +436,10 @@ def assemble_consumer_domain_scores_v1(
             contributor_sentence=met_contributor(by_id, sset, sig_rows),
             confidence_sentence=confidence_sentence_for(tier, "met"),
             consequence_sentence=met_consequence(by_id, sset, sig_rows),
-            next_step_sentence=next_shared,
+            next_step_sentence=next_step_blood_sugar(
+                insight_results,
+                narrative_report_v1,
+            ),
         )
 
     def liv_block() -> ConsumerDomainScoreV1:
@@ -494,7 +498,10 @@ def assemble_consumer_domain_scores_v1(
             contributor_sentence=liv_contributor(by_id, sids, sig_rows),
             confidence_sentence=confidence_sentence_for(tier, "liver"),
             consequence_sentence=liv_consequence(by_id),
-            next_step_sentence=next_shared,
+            next_step_sentence=next_step_liver(
+                insight_results,
+                narrative_report_v1,
+            ),
         )
 
     return [cv_block(), met_block(), liv_block()]

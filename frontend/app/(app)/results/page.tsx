@@ -30,6 +30,7 @@ import {
   ResultsPrimaryHero,
   triggerBrowserDownload,
 } from '@/components/results/ResultsHeroBlocks';
+import { Wave1DomainCards } from '@/components/results/Wave1DomainCards';
 import { AnalysisService } from '@/services/analysis';
 import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -609,6 +610,8 @@ export default function ResultsPage() {
           />
 
           <ResultsDrivingSignals markers={topDriverMarkers} biomarkerSectionId={BIOMARKER_DIALS_SECTION_ID} />
+
+          <Wave1DomainCards domains={currentAnalysis?.consumer_domain_scores} />
 
           <section aria-labelledby="system-health-label">
             <h2 id="system-health-label" className="sr-only">
