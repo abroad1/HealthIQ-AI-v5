@@ -10,6 +10,7 @@ import {
   ClinicianReportV1,
   Cluster,
   type BiomarkerResult as ApiBiomarkerResult,
+  type ConsumerDomainScoreV1,
   type InterpretationDisplayLayerBundleV1,
   type NarrativeReportV1,
 } from '../types/analysis';
@@ -45,6 +46,7 @@ export interface AnalysisResult {
   burden_hash?: string;
   derived_markers?: unknown;
   replay_manifest?: unknown;
+  consumer_domain_scores?: ConsumerDomainScoreV1[] | null;
 }
 
 export interface AnalysisError {
