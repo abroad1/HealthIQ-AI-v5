@@ -43,31 +43,15 @@ import { derivePatternRelevanceLine } from '@/lib/biomarkerPatternRelevance';
 import {
   buildActionCardModels,
   buildPrimaryHeroSummary,
+  deriveSecondaryRankedSignalLine,
   getFirstIdlRecord,
+  pickHeroAlignedPrimaryDriver,
   pickPhenotypeLabel,
   pickTopDriverBiomarkers,
   resolvePrimaryFindingSeverity,
 } from '@/lib/resultsPageLayout';
 
 const BIOMARKER_DIALS_SECTION_ID = 'section-biomarker-dials';
-
-function pickPrimaryDriverCluster(clusters: Cluster[]): { id: string; name: string; biomarkers: string[] } | null {
-  const sevRank: Record<string, number> = { critical: 4, high: 3, moderate: 2, low: 1 };
-  let best: { id: string; name: string; biomarkers: string[]; rank: number; score: number } | null = null;
-  clusters.forEach((cluster, idx) => {
-    const id = String(cluster.cluster_id || cluster.id || `cluster-${idx}`);
-    const sev = String(cluster.severity || 'moderate').toLowerCase();
-    const rank = sevRank[sev] ?? 2;
-    const score = typeof cluster.score === 'number' ? cluster.score : (cluster.confidence ?? 0) * 100;
-    const name = cluster.name?.trim() ? cluster.name : 'Health pattern';
-    const biomarkers = cluster.biomarkers || cluster.biomarkers_involved || [];
-    if (!best || rank > best.rank || (rank === best.rank && score > best.score)) {
-      best = { id, name, biomarkers, rank, score };
-    }
-  });
-  if (!best) return null;
-  return { id: best.id, name: best.name, biomarkers: best.biomarkers };
-}
 
 function computeMissingChapterLine(
   report: ClinicianReportV1 | null | undefined,
@@ -165,7 +149,12 @@ export default function ResultsPage() {
     [currentAnalysis?.meta]
   );
 
-  const primaryDriver = useMemo(() => pickPrimaryDriverCluster(clusters), [clusters]);
+  const firstIdl = useMemo(
+    () => getFirstIdlRecord(currentAnalysis?.interpretation_display_layer_v1),
+    [currentAnalysis?.interpretation_display_layer_v1]
+  );
+
+  const primaryDriver = useMemo(() => pickHeroAlignedPrimaryDriver(clusters, firstIdl), [clusters, firstIdl]);
   const primaryCluster = useMemo(
     () => (primaryDriver ? clusterById(clusters, primaryDriver.id) : undefined),
     [clusters, primaryDriver]
@@ -173,11 +162,6 @@ export default function ResultsPage() {
   const missingChapterLine = useMemo(
     () => computeMissingChapterLine(clinicianReport, primaryDriver),
     [clinicianReport, primaryDriver]
-  );
-
-  const firstIdl = useMemo(
-    () => getFirstIdlRecord(currentAnalysis?.interpretation_display_layer_v1),
-    [currentAnalysis?.interpretation_display_layer_v1]
   );
 
   const keyFindingsOverflow = clinicianReport?.sections?.page1?.key_findings?.slice(1) ?? [];
@@ -193,8 +177,13 @@ export default function ResultsPage() {
   );
 
   const heroSummary = useMemo(
-    () => buildPrimaryHeroSummary(narrativeReport?.retail_summary, clinicianReport),
-    [narrativeReport?.retail_summary, clinicianReport]
+    () => buildPrimaryHeroSummary(narrativeReport?.retail_summary, clinicianReport, firstIdl),
+    [narrativeReport?.retail_summary, clinicianReport, firstIdl]
+  );
+
+  const rankedSignalSecondaryLine = useMemo(
+    () => deriveSecondaryRankedSignalLine(clinicianReport, phenotypeLabel, firstIdl),
+    [clinicianReport, phenotypeLabel, firstIdl]
   );
 
   const heroSeverity = useMemo(
@@ -606,6 +595,7 @@ export default function ResultsPage() {
           <ResultsPrimaryHero
             phenotypeLabel={phenotypeLabel}
             summary={heroSummary}
+            rankedSignalSecondaryLine={rankedSignalSecondaryLine}
             severityLabel={heroSeverity.label}
             severityTone={heroSeverity.tone}
             onDownloadReport={

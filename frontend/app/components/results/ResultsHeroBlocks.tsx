@@ -27,6 +27,11 @@ export interface ResultsPrimaryHeroProps {
   summary: string;
   severityLabel: string;
   severityTone: 'rose' | 'amber' | 'slate' | 'emerald';
+  /**
+   * When the clinician-ranked lead differs from the pattern-led hero title (IDL present),
+   * show it only as explicit secondary copy — not as the main hero paragraph.
+   */
+  rankedSignalSecondaryLine?: string | null;
   /** When set, enables the button and runs this handler (Sprint 4 PDF). */
   onDownloadReport?: () => void | Promise<void>;
   downloadPending?: boolean;
@@ -53,6 +58,7 @@ export function ResultsPrimaryHero({
   summary,
   severityLabel,
   severityTone,
+  rankedSignalSecondaryLine = null,
   onDownloadReport,
   downloadPending = false,
   downloadError = null,
@@ -80,6 +86,11 @@ export function ResultsPrimaryHero({
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-base text-slate-800 leading-relaxed max-w-prose">{summary}</p>
+          {rankedSignalSecondaryLine ? (
+            <p className="text-sm text-slate-600 leading-relaxed max-w-prose border-l-2 border-slate-200 pl-3">
+              {rankedSignalSecondaryLine}
+            </p>
+          ) : null}
           <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
             <Button
               type="button"
