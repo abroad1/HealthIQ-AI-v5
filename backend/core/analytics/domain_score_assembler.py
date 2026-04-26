@@ -14,12 +14,14 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional, Set, Tuple, cast
 
 from core.analytics.domain_narrative_wave1 import (
+    confidence_sentence_cv_coherent,
     confidence_sentence_for,
     cv_consequence,
     cv_contributor,
-    headline_cv,
+    evidence_anchor_sentence,
+    headline_cv_coherent,
     headline_liv,
-    headline_met,
+    headline_met_coherent,
     idl_records_index,
     liv_consequence,
     liv_contributor,
@@ -37,6 +39,12 @@ _RAIL_CARDIOVASCULAR = "cardiovascular"
 _RAIL_METABOLIC = "metabolic"
 _RAIL_LIVER = "liver"
 _BURDEN_HEPATIC = "hepatic"
+
+# D-4: user-safe caveat lines (replaces internal slug list for retail cards)
+_LIVER_CAVEAT_USER_LINES = (
+    "Only the liver markers available on this panel are used here; a fuller liver profile would narrow the picture.",
+    "Liver load is also interpreted with related metabolic (hepatic) context, not from the liver score line alone.",
+)
 
 # Wave 1 IDL selection order (per docs/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md)
 _IDL_ORDER_CV = ("ph_vascular_hcy_inflammation_v1", "ph_lipid_residual_ldl_favourable_transport_v1")
@@ -371,6 +379,8 @@ def assemble_consumer_domain_scores_v1(
             "burden_capacity_cardiovascular": cardio_cap,
             "derived_ratio_keys": sorted(ratios.keys()) if ratios else [],
         }
+        _contrib = cv_contributor(by_id, sids, sig_rows)
+        _cons = cv_consequence(by_id, sids, sig_rows)
         return ConsumerDomainScoreV1(
             domain_id="wave1_cardiovascular",
             consumer_label="Cardiovascular health",
@@ -385,14 +395,15 @@ def assemble_consumer_domain_scores_v1(
             caveat_flags=[],
             contributing_system_keys=["cardiovascular"],
             raw_evidence_refs=ev,
-            headline_sentence=headline_cv(band),
-            contributor_sentence=cv_contributor(by_id, sids, sig_rows),
-            confidence_sentence=confidence_sentence_for(tier, "cv"),
-            consequence_sentence=cv_consequence(by_id, sids, sig_rows),
+            headline_sentence=headline_cv_coherent(band, _contrib, _cons),
+            contributor_sentence=_contrib,
+            confidence_sentence=confidence_sentence_cv_coherent(tier, _contrib),
+            consequence_sentence=_cons,
             next_step_sentence=next_step_cardiovascular(
                 insight_results,
                 narrative_report_v1,
             ),
+            evidence_anchor_sentence=evidence_anchor_sentence("cv", by_id, idl),
         )
 
     def met_block() -> ConsumerDomainScoreV1:
@@ -418,6 +429,8 @@ def assemble_consumer_domain_scores_v1(
             "burden_capacity_metabolic": metabolic_cap,
         }
         sset = set(sids)
+        _m_contrib = met_contributor(by_id, sset, sig_rows)
+        _m_cons = met_consequence(by_id, sset, sig_rows)
         return ConsumerDomainScoreV1(
             domain_id="wave1_blood_sugar",
             consumer_label="Blood sugar control",
@@ -432,14 +445,15 @@ def assemble_consumer_domain_scores_v1(
             caveat_flags=caveats,
             contributing_system_keys=["metabolic"],
             raw_evidence_refs=ev,
-            headline_sentence=headline_met(band),
-            contributor_sentence=met_contributor(by_id, sset, sig_rows),
+            headline_sentence=headline_met_coherent(band, _m_contrib, _m_cons),
+            contributor_sentence=_m_contrib,
             confidence_sentence=confidence_sentence_for(tier, "met"),
-            consequence_sentence=met_consequence(by_id, sset, sig_rows),
+            consequence_sentence=_m_cons,
             next_step_sentence=next_step_blood_sugar(
                 insight_results,
                 narrative_report_v1,
             ),
+            evidence_anchor_sentence=evidence_anchor_sentence("met", by_id, idl),
         )
 
     def liv_block() -> ConsumerDomainScoreV1:
@@ -467,12 +481,16 @@ def assemble_consumer_domain_scores_v1(
         missing = sorted(set(missing))
         sids = _collect_signal_ids(sig_rows, _is_wave1_liver)
         idl = _select_primary_idl(idl_bundle, _IDL_ORDER_LIV)
-        caveats = ["enzyme_limited_assessment", "hepatic_burden_uses_key_hepatic_not_liver_scoring_rail"]
+        caveats: List[str] = list(_LIVER_CAVEAT_USER_LINES)
         ev: Dict[str, Any] = {
             "layer3_system_pressure_id": "hepatic__system_pressure",
             "burden_capacity_hepatic": hepatic_cap,
             "scoring_rail_liver_overall_0_100": base_100,
             "blended_with_hepatic_capacity": hepatic_cap is not None,
+            "caveat_keys_internal": [
+                "enzyme_limited_assessment",
+                "hepatic_burden_uses_key_hepatic_not_liver_scoring_rail",
+            ],
         }
         ckeys = ["liver"]
         if hepatic_cap is not None:
@@ -502,6 +520,7 @@ def assemble_consumer_domain_scores_v1(
                 insight_results,
                 narrative_report_v1,
             ),
+            evidence_anchor_sentence=evidence_anchor_sentence("liver", by_id, idl),
         )
 
     return [cv_block(), met_block(), liv_block()]

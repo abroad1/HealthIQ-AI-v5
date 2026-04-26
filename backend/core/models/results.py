@@ -232,6 +232,10 @@ class ConsumerDomainScoreV1(BaseModel):
         default="",
         description="D-2: follow-up from insights recommendations or narrative next_steps, else generic",
     )
+    evidence_anchor_sentence: str = Field(
+        default="",
+        description="D-4: compact based-on / traceability line for the collapsed card (IDL retail label or safe fallback)",
+    )
 
 
 class AnalysisDTO(BaseModel):
