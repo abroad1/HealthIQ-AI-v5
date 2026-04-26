@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "D-2",
+  "work_id": "D-3",
   "status": "HARDENED",
   "hardened_utc": "2026-04-26T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
@@ -8,19 +8,19 @@
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: D-2"
+      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: D-3"
     },
     {
       "check": "Front Matter — branch",
-      "result": "CONFIRMED — CRITICAL BASE BRANCH CONSTRAINT",
-      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/domain-narrative-wave1",
-      "detail": "Branch does not yet exist. D-1 (feature/domain-score-assembler-wave1) has NOT been merged to main. Cursor MUST create feature/domain-narrative-wave1 from feature/domain-score-assembler-wave1, NOT from main. Command: git checkout feature/domain-score-assembler-wave1 && git checkout -b feature/domain-narrative-wave1. If created from main, D-1 output (domain_score_assembler.py, ConsumerDomainScoreV1, consumer_domain_scores field on AnalysisDTO, orchestrator wiring) will be absent — STOP condition 1 fires immediately."
+      "result": "CONFIRMED — base branch is main",
+      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/wave1-domain-cards",
+      "detail": "D-1 and D-2 are both merged to main (confirmed: git log ec4a6a7 'D-2 Wave1 consumer domain narrative assembly' is HEAD on main). Cursor must create feature/wave1-domain-cards from main. If branch already exists locally, check it out and confirm. Precondition check must verify domain_narrative_wave1.py exists and next_step_sentence field is present on ConsumerDomainScoreV1 before implementation begins."
     },
     {
       "check": "Front Matter — risk_level HIGH",
       "result": "CONFIRMED",
       "citation": "automation_bus/latest_cursor_prompt.md:4 — risk_level: HIGH",
-      "detail": "Correct. Sprint extends Intelligence Core narrative assembly layer, extends ConsumerDomainScoreV1 contract, and modifies IDL YAML — all explicit HIGH-risk paths per SOP §3 and §10."
+      "detail": "Correct. Part A modifies Intelligence Core components (domain_narrative_wave1.py, domain_score_assembler.py). Part B extends frontend contract and adds UI components. HIGH per SOP §3 and §10 — Intelligence Core contact mandatory."
     },
     {
       "check": "Front Matter — execution_model",
@@ -31,141 +31,133 @@
       "check": "Front Matter — change_type MIXED",
       "result": "CONFIRMED",
       "citation": "automation_bus/latest_cursor_prompt.md:6 — change_type: MIXED",
-      "detail": "Correct. Sprint involves both CONTENT (IDL YAML update for cardiovascular consequence routing) and BEHAVIOUR (narrative assembly logic extending domain_score_assembler.py and ConsumerDomainScoreV1). MIXED governed under BEHAVIOUR controls per SOP §4."
+      "detail": "Correct. Part A is BEHAVIOUR (Intelligence Core — domain_narrative_wave1.py and domain_score_assembler.py). Part B is BEHAVIOUR + CONTENT (frontend type definition extension + new UI components). MIXED governed under BEHAVIOUR controls per SOP §4."
     },
     {
-      "check": "Authority path — docs/HealthIQ_phased_customer_domain_score_sprint_plan_FINAL.md",
+      "check": "Authority path — backend/core/analytics/domain_narrative_wave1.py",
+      "result": "CONFIRMED — read lines 1–325",
+      "citation": "backend/core/analytics/domain_narrative_wave1.py:304–324 — next_step_from_sources() definition confirmed; returns first InsightResult.recommendations entry or NarrativeReportV1.next_steps_narrative as fallback, else generic sentence",
+      "detail": "This is the function that currently provides the shared next_step. D-3 Part A must add per-domain next_step functions alongside this, or refactor it to accept a domain filter. The existing generic fallback sentence at lines 321–324 must remain available as the final fallback for any domain that cannot source domain-specific content."
+    },
+    {
+      "check": "Authority path — backend/core/analytics/domain_score_assembler.py",
+      "result": "CONFIRMED — read lines 1–500",
+      "citation": "backend/core/analytics/domain_score_assembler.py:335–338 — next_shared = next_step_from_sources(...) computed once; used at lines 394 (cv_block), 438 (met_block), 497 (liv_block)",
+      "detail": "The exact defect from D-2 Known Limit #1. All three domain blocks receive the same next_shared value. D-3 Part A minimal fix: remove the single next_shared call and replace with three per-domain calls inside cv_block(), met_block(), liv_block(). No other fields change. No other assembler logic touched."
+    },
+    {
+      "check": "Authority path — backend/core/models/results.py",
+      "result": "CONFIRMED — read lines 1–290",
+      "citation": "backend/core/models/results.py:166 (ConsumerDomainScoreV1); :231 (next_step_sentence field = Field(default=''))",
+      "detail": "ConsumerDomainScoreV1 schema unchanged. The next_step_sentence field already exists with default=''. No model extension required for Part A — only the value populated changes. frozen=True, extra=forbid constraint at line 173 — do not add fields without explicit justification."
+    },
+    {
+      "check": "Authority path — backend/core/pipeline/orchestrator.py",
+      "result": "CONFIRMED — key lines verified via grep",
+      "citation": "backend/core/pipeline/orchestrator.py:2214–2222 — assemble_consumer_domain_scores_v1() call confirmed; passes narrative_report_v1 and insight_results (_insight_payloads)",
+      "detail": "No orchestrator changes required for Part A unless per-domain next_step functions require a new argument beyond what is already passed. Current arguments: scoring_result, insight_graph, idl_bundle, derived_ratios_meta, panel_biomarker_ids, narrative_report_v1, insight_results. All available in the orchestrator scope at the call site."
+    },
+    {
+      "check": "Authority path — frontend/app/(app)/results/page.tsx",
+      "result": "CONFIRMED — 831 lines; no domain card wiring present",
+      "citation": "frontend/app/(app)/results/page.tsx — 831 lines; grep for consumer_domain_scores returned no matches",
+      "detail": "Domain cards are not wired yet. Part B must add domain card components and insert them into the results page. The prompt requires additive insertion only — do not replace or disrupt existing results structures."
+    },
+    {
+      "check": "Authority path — frontend/app/types/analysis.ts",
+      "result": "CONFIRMED — AnalysisResult at line 277 lacks consumer_domain_scores",
+      "citation": "frontend/app/types/analysis.ts:277–308 — AnalysisResult definition confirmed; consumer_domain_scores field is ABSENT",
+      "detail": "FRONTEND TYPE GAP. The backend already serializes consumer_domain_scores at backend/app/routes/analysis.py:247–249 via model_dump(). The frontend type is missing. Part B must add: (1) a ConsumerDomainScoreV1 interface matching the Pydantic model shape; (2) consumer_domain_scores?: ConsumerDomainScoreV1[] | null to AnalysisResult. This is a prerequisite before any domain card component can be wired."
+    },
+    {
+      "check": "Source cross-reference — Layer3InsightsV1 next_steps viability",
+      "result": "CONFIRMED — NOT A VIABLE SOURCE",
+      "citation": "backend/core/layer3/insight_assembler_v1.py:217 — InsightCard always constructed with next_steps=[]",
+      "detail": "CRITICAL: Layer3InsightsV1.InsightCard.next_steps is ALWAYS an empty list. assemble_layer3_insights() at line 158 never populates next_steps — every card is constructed with next_steps=[] at line 217. Additionally, assemble_layer3_insights() takes a complete AnalysisDTO and is NOT called inside the orchestrator (only called in run_golden_panel.py as post-processing). Cursor must NOT use Layer3InsightsV1 next_steps as the domain-specific source. It will always be empty."
+    },
+    {
+      "check": "Source cross-reference — per-domain InsightResult categories available",
+      "result": "CONFIRMED — liver domain has NO matching InsightResult category",
+      "citation": "backend/core/insights/modules/heart_insight.py:44 (category='cardiovascular'); detox_filtration.py:41 (category='metabolic'); fatigue_root_cause.py:48 (category='metabolic'); metabolic_age.py:38 (category='metabolic'); inflammation.py:41 (category='inflammatory')",
+      "detail": "STOP CONDITION RISK FOR LIVER. Available insight categories: cardiovascular (heart_insight), metabolic (x3), inflammatory. There is NO hepatic or liver category insight module. Filtering _insight_payloads by category for per-domain routing: CV → category='cardiovascular' (heart_insight) AVAILABLE; Met → category='metabolic' (multiple modules) AVAILABLE; Liver → category='hepatic'/'liver' → NOTHING FOUND. The prompt's STOP condition #1 applies unless Cursor uses the 'minimal governed content fix' path explicitly permitted by the prompt. The acceptable resolution: author per-domain governed fallback sentences in domain_narrative_wave1.py (following the pattern already established for headline_cv/headline_met/headline_liv at lines 64–91). This MUST be clearly reported. Silent fallback to the generic global sentence is NOT acceptable."
+    },
+    {
+      "check": "Source cross-reference — IDL records for domain-specific next_step",
+      "result": "CONFIRMED — IDL has no next_step field",
+      "citation": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:1–116 — fields: internal_id, scientific_class, clinical_display_label, retail_display_label, subtitle, why_it_matters, frontend_allowed_term, display_order_priority, enabled_for_frontend",
+      "detail": "IDL records do not have a next_step, recommended_action, or action_sentence field. governed_idl_field() cannot source domain-specific next_steps from the IDL YAML. IDL is already fully utilised for contributor_sentence (subtitle) and consequence_sentence (why_it_matters) in D-2."
+    },
+    {
+      "check": "Source cross-reference — NarrativeReportV1.next_steps_narrative",
+      "result": "CONFIRMED — single global string, not domain-specific",
+      "citation": "backend/core/contracts/narrative_report_v1.py:28 — next_steps_narrative: str = Field(default='')",
+      "detail": "NarrativeReportV1.next_steps_narrative is a single undifferentiated string covering all systems. It is not domain-specific. It can serve as a final global fallback but cannot substitute for truly domain-specific next_step sentences."
+    },
+    {
+      "check": "Source cross-reference — backend serialization path confirmed",
       "result": "CONFIRMED",
-      "citation": "docs/HealthIQ_phased_customer_domain_score_sprint_plan_FINAL.md — file exists on disk (verified in D-1 Stage 2A)"
+      "citation": "backend/app/routes/analysis.py:247–249 — consumer_domain_scores serialized via [x.model_dump() for x in dto.consumer_domain_scores]"
     },
     {
-      "check": "Authority path — docs/Strategy_A_Domain_Narrative_Contract_v1.md",
+      "check": "Source cross-reference — D-2 defect location confirmed",
       "result": "CONFIRMED",
-      "citation": "docs/Strategy_A_Domain_Narrative_Contract_v1.md — file exists on disk (verified in D-1 Stage 2A)"
-    },
-    {
-      "check": "Authority path — docs/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md",
-      "result": "CONFIRMED",
-      "citation": "docs/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md — file exists on disk, read in full this session"
-    },
-    {
-      "check": "Authority path — docs/Strategy_A_Launch_Domains_Implementation_Blueprint.md",
-      "result": "CONFIRMED",
-      "citation": "docs/Strategy_A_Launch_Domains_Implementation_Blueprint.md — file exists on disk (verified in D-1 Stage 2A)"
-    },
-    {
-      "check": "Authority path — docs/STRATEGY_A_IMPLEMENTATION_BLUEPRINT.md",
-      "result": "CONFIRMED",
-      "citation": "docs/STRATEGY_A_IMPLEMENTATION_BLUEPRINT.md — file exists on disk (verified in D-1 Stage 2A)"
-    },
-    {
-      "check": "Authority path — AGENTS.md (READ-ONLY — must not be committed)",
-      "result": "CONFIRMED — READ-ONLY CONSTRAINT ACTIVE",
-      "citation": "AGENTS.md — file exists",
-      "detail": "SOP v1.3.1 non-negotiable: AGENTS.md must not appear in git diff at sprint finish. Read as background context only."
-    },
-    {
-      "check": "Authority path — .cursor/rules/healthiq-core-engine.mdc",
-      "result": "CONFIRMED",
-      "citation": ".cursor/rules/healthiq-core-engine.mdc — file exists (verified in D-1 Stage 2A)"
-    },
-    {
-      "check": "Authority path — docs/AUTOMATION_BUS_SOP_v1.3.1.md",
-      "result": "CONFIRMED",
-      "citation": "docs/AUTOMATION_BUS_SOP_v1.3.1.md — file exists (verified in D-1 Stage 2A)"
-    },
-    {
-      "check": "No duplicate authority sources",
-      "result": "CONFIRMED",
-      "citation": "Glob and Grep across docs/ and knowledge_bus/ — single IDL source at knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml; no duplicate authority detected"
-    },
-    {
-      "check": "Source cross-reference — D-1 output fields available for D-2 consumption",
-      "result": "CONFIRMED",
-      "citation": "backend/core/models/results.py:166-213 (ConsumerDomainScoreV1); backend/core/analytics/domain_score_assembler.py:302-461",
-      "detail": "ConsumerDomainScoreV1 fields available to D-2 narrative assembly: domain_id, consumer_label, clinical_label, score (0-1), band_label (strong/stable/watch/review), confidence_tier (high/medium/low), active_signal_ids, primary_idl_record_id (nullable), missing_marker_ids, source_track, caveat_flags, contributing_system_keys, raw_evidence_refs (contains layer3_system_pressure_id per domain). All three domains emit these fields deterministically. IMPORTANT: ConsumerDomainScoreV1 has NO narrative sentence fields yet — D-2 must extend this Pydantic model with Optional narrative fields declared as proper Pydantic fields (frozen=True, extra=forbid constraint applies at results.py:172)."
-    },
-    {
-      "check": "Source cross-reference — IDL YAML cardiovascular gap status",
-      "result": "CONFIRMED — GAP ALREADY RESOLVED IN YAML — ROUTING FIX ONLY NEEDED",
-      "citation": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:108-116",
-      "detail": "CRITICAL FINDING. ph_lipid_residual_ldl_favourable_transport_v1 NOW HAS a why_it_matters field in the YAML: 'Cumulative atherogenic exposure is read in full transport context; reassuring HDL does not erase residual LDL-related risk.' This directly contradicts DOMAIN_NARRATIVE_CONTRACT_WAVE1.md:49 and :638 which states 'no why_it_matters field in this record' and declares this a gap. The content already exists. D-2 must NOT author new why_it_matters content for this record — it would overwrite the existing governed text. The cardiovascular consequence fix is now a ROUTING fix only: wire the selection logic to route ph_lipid_residual_ldl_favourable_transport_v1.why_it_matters when this IDL record is primary_idl_record_id. No KB content authoring is required. If Cursor sees DOMAIN_NARRATIVE_CONTRACT_WAVE1.md and attempts to add a new why_it_matters field, it must NOT do so — the field already exists at line 113 of the YAML."
-    },
-    {
-      "check": "Source cross-reference — IDL why_it_matters fields for all Wave 1 domains",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:8-116",
-      "detail": "ph_metabolic_early_ir_v1.why_it_matters (line 13): 'Left unaddressed, early insulin resistance progresses toward prediabetes and cardiometabolic risk.' CONFIRMED. ph_hba1c_metabolic_stress_v1.why_it_matters (line 23): 'Sustained glycaemic strain raises long-term metabolic and vascular risk.' CONFIRMED. ph_vascular_hcy_inflammation_v1.why_it_matters (line 33): 'Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.' CONFIRMED. ph_lipid_residual_ldl_favourable_transport_v1.why_it_matters (line 113): 'Cumulative atherogenic exposure is read in full transport context; reassuring HDL does not erase residual LDL-related risk.' CONFIRMED (previously missing, now present). ph_hepatic_alt_inflammatory_v1.why_it_matters (line 43): 'Early liver-strain patterns are a key lane toward MASLD/fibrosis risk if ignored.' CONFIRMED."
-    },
-    {
-      "check": "Source cross-reference — IDL subtitle fields for contributor sentence assembly",
-      "result": "CONFIRMED",
-      "citation": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:12,21,30,43,112",
-      "detail": "ph_metabolic_early_ir_v1.subtitle (line 12): 'A pattern suggesting early impaired sugar and lipid handling'. ph_hba1c_metabolic_stress_v1.subtitle (line 21): 'A pattern suggesting sustained blood-sugar strain on the body'. ph_vascular_hcy_inflammation_v1.subtitle (line 30): 'A pattern combining inflammation and homocysteine signals associated with vascular risk'. ph_lipid_residual_ldl_favourable_transport_v1.subtitle (line 112): 'LDL elevation alongside relatively stronger HDL signalling—particle architecture still matters'. ph_hepatic_alt_inflammatory_v1.subtitle (line 43): 'A pattern suggesting metabolic or inflammatory strain in the liver'. All subtitles confirmed present and available for contributor sentence assembly."
-    },
-    {
-      "check": "Source cross-reference — Layer3InsightCard structure and system card IDs",
-      "result": "CONFIRMED — ACCESS PATH CONSTRAINT ACTIVE",
-      "citation": "backend/core/contracts/layer3_insights_v1.py:15-27 (SYSTEM_CARD_IDS), :83-96 (InsightCard fields)",
-      "detail": "cardiovascular__system_pressure, metabolic__system_pressure, hepatic__system_pressure are all in SYSTEM_CARD_IDS (line 15-27). InsightCard fields confirmed: title (line 90), severity Literal['action','watch','info'] (line 91), confidence Literal['high','medium','low'] (line 92), interpretation: str (line 94), next_steps: List[str] (line 95). CRITICAL ACCESS PATH CONSTRAINT: Layer3InsightsV1 is NOT a field on AnalysisDTO. It is assembled separately by assemble_layer3_insights(dto: AnalysisDTO) in backend/core/layer3/insight_assembler_v1.py:158. The current assemble_consumer_domain_scores_v1() signature does NOT accept Layer3InsightsV1. D-2 MUST extend the assembler to accept Layer3InsightsV1 as an additional argument (pre-assembled in orchestrator before the domain assembler call), OR create a separate narrative assembly function. Layer3InsightsV1 is the source for next_step_sentence (next_steps[0]) and contributor fallback (interpretation). This wiring does not require frontend changes and is achievable within the backend-only constraint."
-    },
-    {
-      "check": "Source cross-reference — RootCauseV1 access path",
-      "result": "CONFIRMED — PARTIAL ACCESS; PRIMARY SIGNAL STATE AVAILABLE FROM INSIGHT GRAPH",
-      "citation": "backend/core/contracts/report_v1.py:85 (RootCauseV1 on ReportV1); backend/core/analytics/domain_score_assembler.py:86-94 (_iter_signal_results reads signal_state from InsightGraph)",
-      "detail": "RootCauseV1 lives on ReportV1.root_cause_v1, compiled by report_compiler_v1.py:769. It is NOT on AnalysisDTO and NOT currently passed to the domain assembler. However: (1) signal_state per signal is already available from InsightGraph.signal_results (as confirmed in D-1 — _iter_signal_results() iterates these). D-2 can read signal_state for contributor sentence selection from the same InsightGraph already passed to the assembler. (2) safety_class (for next_step routing) is available as a proxy via InsightCard.severity ('action'/'watch'/'info') on Layer3InsightsV1 — no RootCauseV1 needed for this. (3) RootCauseHypothesisV1.missing_data[] reason strings are NOT accessible without RootCauseV1 — but missing_marker_ids from D-1 contract covers the marker IDs. D-2 should use governed confidence sentence templates rather than constructing sentences from missing_data reason strings. RootCauseV1 hypothesis title (liver pattern differentiation) can be sourced from IDL.subtitle or InsightCard.interpretation as fallback — no RootCauseV1 needed for Wave 1 narrative assembly."
-    },
-    {
-      "check": "Source cross-reference — ConfidenceTierV1 level count vs narrative contract 4-level model",
-      "result": "CONFIRMED — EXPLICIT MAPPING DECISION REQUIRED",
-      "citation": "backend/core/models/results.py:163 — ConfidenceTierV1 = Literal['high', 'medium', 'low']",
-      "detail": "D-1 defines confidence_tier as 3 levels (high/medium/low). The narrative contract (DOMAIN_NARRATIVE_CONTRACT_WAVE1.md) uses 4 levels (High/Good/Moderate/Limited) with distinct confidence sentences per level. Cursor must make an explicit mapping decision: either (A) map 3 D-1 tiers to 3 of the 4 narrative confidence sentences (collapsing one level), or (B) add a new narrative_confidence_level field to ConsumerDomainScoreV1 as a separate Optional field carrying the 4-level value. The mapping must be documented in code. Option B is preferred for truthfulness — it avoids information loss. Either way, the decision must be explicit and the chosen path documented in the sprint report."
-    },
-    {
-      "check": "Source cross-reference — prediabetes override in analytics core",
-      "result": "CONFIRMED — OVERRIDE DOES NOT EXIST IN ANALYTICS CORE",
-      "citation": "Grep for 'prediabetes' across backend/core/analytics/ — no matches found. Only present in backend/ssot/biomarkers.yaml:1612 (metadata tag) and backend/ssot/ranges.yaml:101,118 (range boundary labels) and test files.",
-      "detail": "DOMAIN_NARRATIVE_CONTRACT_WAVE1.md:264 describes a 'governed prediabetes override that fires when HbA1c >= 5.7% OR glucose >= 5.6 mmol/L (ADA Standards of Care 2026).' This logic is NOT implemented anywhere in backend/core/analytics/. Cursor must NOT attempt to implement a prediabetes override in D-2 — this would be inventing unsupported logic. For the blood sugar contributor sentence, use signal_state from InsightGraph.signal_results only. If signal_hba1c_high is at_risk, use the governed HbA1c contributor sentence. If signal_insulin_resistance is at_risk, use the IR contributor sentence. The prediabetes override case in the narrative contract's §2.2 priority list MUST be skipped — it references logic that does not exist. D-2 STOP condition 2 applies: if contributor sentence cannot be assembled without inventing unsupported logic, STOP and report."
+      "citation": "D-2 audit summary (latest_audit_summary.md lines 101–103) — Known Limit #1: 'next_step_sentence is domain-shared, not domain-specific. All three domains receive the same next_step_sentence.' D-2 audit_summary.md line 83: 'next_step_from_sources() at domain_narrative_wave1.py:304–324 uses InsightResult.recommendations from AnalysisDTO.insights... means next_step_sentence is shared across all three domains.'"
     },
     {
       "check": "Stage 2B — behavioural scope defined",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:80-115 (in/out of scope), :304-327 (acceptance criteria)",
-      "detail": "Scope precisely bounded: three Wave 1 domains, narrative field assembly in domain_score_assembler.py or equivalent, ConsumerDomainScoreV1 extension, IDL routing fix, targeted tests. Explicitly out of scope: frontend, PDF, score recalibration, thyroid, kidney, second-wave domains, LLM prose."
+      "citation": "automation_bus/latest_cursor_prompt.md:69–108 (in scope), :110–125 (out of scope)",
+      "detail": "Part A: per-domain next_step routing in domain_narrative_wave1.py and domain_score_assembler.py only. Part B: frontend type extension + new Wave 1 domain card components + results page wiring. Explicitly out of scope: clinician PDF, thyroid/kidney/blood-iron, 6-domain expansion, broad results redesign, second-wave domains."
+    },
+    {
+      "check": "Stage 2B — Intelligence Core components affected",
+      "result": "CONFIRMED",
+      "citation": "SOP §3 Intelligence Core definition",
+      "detail": "domain_narrative_wave1.py (narrative assembly functions) and domain_score_assembler.py (output assembly mechanism) are both Intelligence Core components per SOP §3. HIGH risk mandatory. Behavioural surface: next_step_sentence on all three ConsumerDomainScoreV1 objects will change from shared global value to per-domain values. All five other narrative fields and all D-1 fields unchanged."
     },
     {
       "check": "Stage 2B — regression targets",
       "result": "CONFIRMED",
-      "citation": "backend/tests/enforcement/ and backend/tests/unit/test_domain_score_assembler_v1.py",
-      "detail": "Key regression targets: test_domain_score_assembler_v1.py (D-1 targeted tests — both must still pass with extended model), enforcement tests: test_scoring_policy_not_hardcoded.py, test_no_raw_fields_in_insight_graph.py, test_runtime_requires_insight_graph.py. 79 enforcement tests passed in D-1 — must not regress. Any ConsumerDomainScoreV1 model extension must maintain Optional/default-safe backward compatibility for these tests."
+      "citation": "backend/tests/unit/test_domain_score_assembler_v1.py:72; backend/tests/unit/test_domain_narrative_wave1.py",
+      "detail": "KEY REGRESSION: test_wave1_emits_three_domains_score_and_confidence_together at test_domain_score_assembler_v1.py:25 — line 72 asserts r.next_step_sentence is truthy for all three domains. The test fixture passes no insight_results and no narrative_report. Per-domain next_step functions MUST return non-empty strings when no insight source is available — governed authored fallback sentences required. test_liver_blends_with_hepatic_capacity_not_liver_key at line 75 — no next_step_sentence assertion; not a blocker but must still pass. test_domain_narrative_wave1.py two tests (cv_consequence and governed_idl_field) — neither tests next_step; not a blocker."
     },
     {
-      "check": "Stage 2B — no unintended behavioural drift",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:119-145 (architectural constraints)",
-      "detail": "Narrative assembler is additive — it reads D-1 outputs and adds narrative fields. Score logic, confidence_tier, band_label are NOT recalculated. D-1 assembler function _bands_ and _confidence_tier_ functions must not be modified. Existing AnalysisDTO fields are unchanged. STOP if score logic needs reopening."
+      "check": "Stage 2B — no scope creep",
+      "result": "CONFIRMED — 5 STOP conditions in prompt",
+      "citation": "automation_bus/latest_cursor_prompt.md:316–327",
+      "detail": "STOP if: (1) domain-specific next_step cannot be implemented from approved deterministic sources; (2) frontend implementation requires additional backend contract redesign beyond Wave 1; (3) fourth domain creeps in; (4) clinician-facing outputs need changing; (5) results page requires broader redesign; (6) browser/UAT reveals major contract mismatch. Conditions 1 and 6 are the live risks in this sprint."
+    },
+    {
+      "check": "Stage 2B — determinism preserved",
+      "result": "CONFIRMED — governed authored sentences are deterministic",
+      "citation": "domain_narrative_wave1.py:64–91 — headline_cv/headline_met/headline_liv pattern as precedent",
+      "detail": "The approved pattern for per-domain next_step functions is authored governed sentence tables (band/signal-state lookup), identical in structure to headline_cv/headline_met/headline_liv already in domain_narrative_wave1.py. These are pure deterministic functions — same inputs produce same output. No randomness, no LLM, no file I/O beyond the already-used governed_idl_field() YAML reads. InsightResult.recommendations filtering by category is also deterministic provided the ordering of _insight_payloads is stable (confirmed: orchestrator iterates insight_dtos in module execution order, which is deterministic)."
+    },
+    {
+      "check": "Forbidden files — clinician surfaces",
+      "result": "NOT IN SCOPE — CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:98,118–122",
+      "detail": "ConsumerDomainScoreV1 is the consumer-only contract. It is separate from ClinicianReportV1 and the clinician PDF path. next_step_sentence lives only in ConsumerDomainScoreV1. No clinician surface modification required or permitted."
     },
     {
       "check": "Forbidden files — control-plane scripts",
       "result": "NOT IN SCOPE — CONFIRMED",
-      "citation": "run_work_package.py, golden_gate_local.py, update_cursor_status.py not referenced in D-2 scope",
-      "detail": "Not required. If Cursor attempts to modify these files, that is a scope violation and STOP condition."
+      "citation": "run_work_package.py, golden_gate_local.py, update_cursor_status.py not referenced in D-3 scope"
     },
     {
-      "check": "Forbidden files — frontend",
+      "check": "No duplicate authority sources",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:105,278-279 — frontend explicitly out of scope",
-      "detail": "No frontend files may be touched. Narrative fields are backend-only in D-2. If frontend wiring becomes necessary to validate, STOP condition 4 applies."
+      "citation": "Grep across backend/ and frontend/ — single IDL authority at knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml; no duplicate domain score assembler detected"
     }
   ],
   "advisory_notes": [
-    "BRANCH BASE IS CRITICAL: D-1 is not yet merged. Cursor MUST create feature/domain-narrative-wave1 from feature/domain-score-assembler-wave1 (git checkout feature/domain-score-assembler-wave1 && git checkout -b feature/domain-narrative-wave1). If branched from main, STOP condition 1 fires at the precondition check.",
-    "IDL CARDIOVASCULAR GAP IS ALREADY RESOLVED: ph_lipid_residual_ldl_favourable_transport_v1 already has why_it_matters = 'Cumulative atherogenic exposure is read in full transport context; reassuring HDL does not erase residual LDL-related risk.' at idl_records_v1.yaml:113. The sprint narrative contract doc is stale on this point. Do NOT add new why_it_matters content. Wire the routing logic to use the existing field. The consequence fix is now a routing-only change.",
-    "LAYER3 ACCESS PATH: assemble_layer3_insights(dto) returns Layer3InsightsV1. It takes a full AnalysisDTO. The domain assembler currently takes scoring_result/insight_graph/idl_bundle/derived_ratios_meta/panel_biomarker_ids. D-2 must either (A) extend the assembler to accept an Optional[Layer3InsightsV1] parameter (pre-assembled in orchestrator before domain assembler call), or (B) create a separate narrative assembly pass. next_step_sentence and contributor fallback depend on InsightCard from Layer3.",
-    "PREDIABETES OVERRIDE DOES NOT EXIST: No prediabetes override logic exists in backend/core/analytics/. DOMAIN_NARRATIVE_CONTRACT_WAVE1.md §2.2 references this as if it exists — it does not. Blood sugar contributor sentence must use signal_state from InsightGraph only. Do not implement override logic.",
-    "CONFIDENCETIERV1 MISMATCH: D-1 confidence_tier is 3 levels (high/medium/low). Narrative contract uses 4 levels. Add a new Optional narrative_confidence_level field OR explicitly collapse 4 → 3 levels with documentation. Decision must be explicit and reported.",
-    "CONSUMER DOMAIN SCORE EXTENSION: ConsumerDomainScoreV1 is frozen=True, extra=forbid. New narrative fields (headline_sentence, contributor_sentence, confidence_sentence, consequence_sentence, next_step_sentence) must be declared as proper Optional[str] Pydantic fields with default=None (or default='') for backward compatibility. Do not inject as extra kwargs.",
-    "SIGNAL STATE ACCESS: signal_state per signal is readable from InsightGraph.signal_results (confirmed in D-1 — _iter_signal_results already iterates these). No need for RootCauseV1 to get signal_state. Use InsightGraph signal rows for contributor sentence selection logic."
+    "LAYER3 NEXT_STEPS IS ALWAYS EMPTY: Do not attempt to source domain-specific next_steps from Layer3InsightsV1. insight_assembler_v1.py:217 hardcodes next_steps=[] for every card. This is not a viable source.",
+    "LIVER DOMAIN HAS NO INSIGHT CATEGORY: No InsightResult with category='hepatic' or category='liver' exists. The only acceptable resolution for liver domain-specific next_step is an authored governed sentence in domain_narrative_wave1.py (following the headline_liv/confidence_sentence_for pattern). Report this clearly in the finish report. Do not silently fall through to the global generic sentence.",
+    "REGRESSION TEST LINE 72: test_domain_score_assembler_v1.py:72 asserts r.next_step_sentence is truthy for all three domains with insight_results=None. Per-domain next_step functions must return non-empty governed strings when no insight data is available.",
+    "FRONTEND TYPE MUST BE EXTENDED FIRST: Before any Part B card wiring, add ConsumerDomainScoreV1 interface and consumer_domain_scores field to AnalysisResult in frontend/app/types/analysis.ts. Backend already serializes this at analysis.py:247–249.",
+    "MINIMAL ASSEMBLER CHANGE: Remove next_shared=next_step_from_sources(...) at domain_score_assembler.py:335–338. Replace next_step_sentence=next_shared at lines 394, 438, 497 with per-domain function calls. No other assembler fields change.",
+    "STOP CONDITION #1 LIVE RISK: If liver domain per-domain next_step cannot be sourced from existing insight_results, the acceptable path is authored governed sentences in domain_narrative_wave1.py clearly reported — NOT silent global fallback. Cursor must report which path was used for each domain.",
+    "BACKEND PART A MUST COMPLETE BEFORE FRONTEND PART B: Verify domain-specific next_step_sentence values are non-empty and domain-specific for all three domains before beginning Part B frontend work."
   ],
   "overall_verdict": "HARDENED"
 }

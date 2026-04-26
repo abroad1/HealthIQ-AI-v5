@@ -1,35 +1,38 @@
 ---
-work_id: D-2
-branch: feature/domain-narrative-wave1
+work_id: D-3
+branch: feature/wave1-domain-cards
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# D-2 — Wave 1 domain narrative contract implementation
+# D-3 — Wave 1 domain-specific next-step routing + frontend domain cards
 
 ## Cursor agent
 
 Use `healthiq-core-engine`.
 
 This is mandatory.
-Do not use `healthiq-frontend-shell`, `healthiq-qa-uat`, or `healthiq-docs-hygiene` for this sprint.
 
 ---
 
 ## Objective
 
-Implement the deterministic narrative assembly layer for the three Wave 1 customer domains:
+Complete the Wave 1 customer-domain card path for:
 
 1. Cardiovascular health
 2. Blood sugar control
 3. Liver health
 
-This sprint must populate the backend/domain contract with the narrative fields required for the new UX, using only existing governed engine outputs and approved content sources.
+This sprint has two tightly linked parts:
 
-This sprint must also close the known Wave 1 cardiovascular content gap for the lipid-dominant consequence line.
+### Part A — backend cleanup
+Fix the known D-2 limitation so each Wave 1 domain has its own deterministic `next_step_sentence`.
 
-Do not expose anything to the frontend yet.
+### Part B — frontend implementation
+Implement the Wave 1 frontend domain cards using the completed backend contract.
+
+The backend fix must happen first inside this sprint.
 
 ---
 
@@ -38,79 +41,69 @@ Do not expose anything to the frontend yet.
 Before doing anything else:
 
 1. create and switch to this branch:
-   `feature/domain-narrative-wave1`
+   `feature/wave1-domain-cards`
 2. confirm the branch name before implementation begins
 
 If the branch already exists locally, check it out and confirm.
 
 ---
 
-## Required background inputs
-
-Read these before implementation:
-
-1. `docs/HealthIQ_phased_customer_domain_score_sprint_plan_FINAL.md`
-2. `docs/Strategy_A_Domain_Narrative_Contract_v1.md`
-3. `docs/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md`
-4. `docs/Strategy_A_Launch_Domains_Implementation_Blueprint.md`
-5. `docs/STRATEGY_A_IMPLEMENTATION_BLUEPRINT.md`
-6. `AGENTS.md`
-7. `.cursor/rules/healthiq-core-engine.mdc`
-8. `docs/AUTOMATION_BUS_SOP_v1.3.1.md`  
-   If v1.3.2 has been adopted in-repo before execution, use that instead.
-
-Treat those as the governing context for this sprint.
-
----
-
 ## Precondition
 
-D-1 must already exist on the current branch history or be cleanly available for this branch to build on.
+D-1 and D-2 must already exist on the current branch history or be cleanly available for this branch to build on.
 
 Before implementation, restate:
 
 - where D-1 output is being read from
-- which existing domain contract fields were added in D-1
-- which narrative fields remain unpopulated and are being populated now
+- where D-2 output is being read from
+- what exact D-2 limitation is being corrected in Part A
+- which frontend surfaces will consume the completed contract in Part B
 
-If D-1 output is missing or inconsistent, STOP and report.
+If D-1 or D-2 output is missing or inconsistent, STOP and report.
 
 ---
 
 ## In scope
 
-### Domains
-Wave 1 only:
-
+### Wave 1 only
 - Cardiovascular health
 - Blood sugar control
 - Liver health
 
-### Backend work
-1. Populate deterministic narrative fields for the three Wave 1 domains.
-2. Implement assembly rules for:
-   - headline / score-band statement
-   - contributor sentence
-   - confidence sentence
-   - consequence sentence
-   - next-step sentence
-3. Surface “what would improve confidence” inputs from existing deterministic evidence where required.
-4. Close the known cardiovascular lipid-dominant consequence gap via governed content/source update and deterministic routing.
-5. Keep all narrative backend-only in this sprint.
+### Part A — backend
+1. Replace the current shared `next_step_sentence` behaviour with domain-specific deterministic routing.
+2. Keep all next-step routing grounded in approved existing deterministic sources.
+3. Do not invent new prose unless explicitly required by a minimal governed content fix and clearly reported.
+
+### Part B — frontend
+1. Build the Wave 1 domain card UI.
+2. Consume the completed backend contract.
+3. Show:
+   - consumer label
+   - short explainer
+   - score
+   - band label
+   - confidence
+   - one-line summary
+4. Expanded state should show:
+   - why this score
+   - confidence explanation
+   - what this may mean over time
+   - what to do next
+   - what would improve confidence
 
 ---
 
 ## Out of scope
 
-- frontend rendering
 - clinician PDF changes
-- score recalibration
+- 6-domain expansion
 - thyroid scoring
-- kidney expansion
+- kidney implementation
 - blood/iron/oxygen implementation
 - second-wave domains
-- LLM-generated prose
-- broad SSOT redesign
+- broad redesign of the whole results page
+- replacing existing clinician or narrative surfaces wholesale
 
 Do not widen scope.
 
@@ -118,135 +111,79 @@ Do not widen scope.
 
 ## Architectural constraints
 
-### 1. Narrative is a translation layer
-This sprint must assemble narrative from deterministic sources already in the repo.
-Do not invent a new storytelling layer.
+### 1. Backend first inside this sprint
+Do not begin frontend wiring until domain-specific `next_step_sentence` is fixed and verified.
 
-### 2. Consumer/clinical separation
-Consumer-facing narrative fields must not leak into clinician-facing outputs.
-Do not replace or alter clinical labels for clinician surfaces.
+### 2. Deterministic sources only
+Domain-specific next steps must come from approved deterministic sources only.
 
-### 3. Deterministic sources only
-Use only approved sources such as:
-- D-1 domain score fields
-- active signal ids
-- IDL subtitle
-- IDL `why_it_matters`
-- `insights`
-- `narrative_report_v1` only where domain use is explicitly justified
-- root-cause missing-data structures
-- governed next-step sources
+### 3. No clinician/consumer leakage
+Consumer card labels and copy must remain consumer-layer only.
+Do not alter clinician-facing labels or clinician report surfaces.
 
-### 4. No free-text invention
-Do not write new medical interpretation prose unless it is the explicitly scoped governed content fix for the known cardiovascular gap.
+### 4. Additive implementation only
+The Wave 1 cards are an additive product layer.
+Do not break or replace existing results structures beyond what is necessary to insert the new domain cards cleanly.
 
-### 5. Keep scoring and narrative separate
-Do not re-open score logic except where absolutely necessary to connect existing D-1 evidence fields to narrative assembly.
+### 5. No fake next-step specificity
+Do not make domain-specific next steps by slicing generic prose heuristically if repo-grounded evidence does not support it.
+If a true domain-specific source is unavailable for one domain, STOP and report rather than inventing.
 
 ---
 
-## Required narrative outputs
+## Part A — required backend fix
 
-For each of the three domains, populate deterministic fields for:
+### Current limitation from D-2
+`next_step_sentence` is currently shared across all three domains rather than truly domain-specific.
 
-- `headline_sentence`
-- `contributor_sentence`
-- `confidence_sentence`
-- `consequence_sentence`
-- `next_step_sentence`
+### Required outcome
+Each of the three domains must emit its own deterministic `next_step_sentence`.
 
-Also support:
-- `missing_marker_ids` / equivalent existing D-1 evidence fields for “what would improve confidence”
+### Approved source types
+Use only repo-grounded deterministic sources such as:
+- per-domain insight outputs, if available and appropriate
+- domain-mapped governed content
+- domain-scoped existing backend structures already identified in the narrative-contract research
 
-If field names differ, keep naming clean and internally consistent, but do not bloat the contract.
+### Not allowed
+- generic shared fallback copied into all domains unless explicitly documented as last-resort behaviour and approved in the report
+- LLM-generated wording
+- hidden heuristics that are not traceable to existing domain evidence
 
----
-
-## Domain rules
-
-## Domain 1 — Cardiovascular health
-
-### Headline
-Use D-1 score/band output only.
-
-### Contributor sentence
-Assemble deterministically from the approved source hierarchy in the narrative contract research.
-Do not silently mix separate systems into one sentence without explicit wording.
-
-### Confidence sentence
-Use the D-1 confidence tier and deterministic coverage logic.
-Do not invent a second independent confidence model.
-
-### Consequence sentence
-This sprint explicitly owns the known lipid-dominant cardiovascular content gap.
-
-You must implement a governed and deterministic consequence path for lipid-dominant cardiovascular cases.
-Preferred route:
-- approved governed content/source update in the most appropriate existing source
-- deterministic selection logic from that source
-
-Do not leave this gap unresolved.
-
-### Next-step sentence
-Use existing deterministic governed sources only.
+### Acceptance for Part A
+For each Wave 1 domain:
+- `next_step_sentence` must be populated
+- it must be domain-specific
+- it must be deterministic
+- the report must state the exact source path used
 
 ---
 
-## Domain 2 — Blood sugar control
+## Part B — required frontend implementation
 
-### Headline
-Use D-1 score/band output only.
+### Wave 1 card UX
+Implement frontend cards for the three Wave 1 domains.
 
-### Contributor sentence
-Follow the approved signal/IDL selection logic from the narrative contract research.
+Each collapsed card must show:
+- consumer label
+- short explainer
+- numeric score
+- band label
+- confidence tier
+- a concise summary line
 
-### Confidence sentence
-Use D-1 confidence tier and evidence coverage.
-If insulin/triglyceride-related completeness matters, reflect that through deterministic existing evidence only.
+Expanded content must show:
+- contributor / why-this-score content
+- confidence sentence
+- consequence sentence
+- next-step sentence
+- missing markers / what would improve confidence
 
-### Consequence sentence
-Use existing governed consequence sources already available in the repo where identified by the research.
-
-### Next-step sentence
-Use deterministic governed next-step sources only.
-
----
-
-## Domain 3 — Liver health
-
-### Headline
-Use D-1 score/band output only.
-Keep wording honest about enzyme-led assessment where required.
-
-### Contributor sentence
-Use approved deterministic hepatic pattern-selection logic only.
-
-### Confidence sentence
-Use the D-1 domain-level liver confidence logic.
-Do not fall back to the inadequate narrow cluster-only confidence logic if D-1 introduced a better domain confidence basis.
-
-### Consequence sentence
-Use existing governed source where already available.
-
-### Next-step sentence
-Use deterministic governed next-step sources only.
-
----
-
-## Known Wave 1 content gap to resolve in this sprint
-
-There is a known cardiovascular gap for the lipid-dominant consequence path.
-
-This sprint must assign and implement that fix explicitly.
-
-Requirements:
-- governed source only
-- smallest safe content change
-- deterministic routing
-- no broad KB rewrite
-- report exactly where the new source text now lives
-
-This is the only intentional content-scope element in the sprint.
+### Frontend behaviour requirements
+- do not expose domains beyond the Wave 1 three
+- gracefully handle absence/null if contract is not present
+- do not duplicate clinician-report copy blocks unnecessarily
+- keep presentation calm, readable, and consistent with the intended domain-score layer
 
 ---
 
@@ -254,29 +191,32 @@ This is the only intentional content-scope element in the sprint.
 
 These are likely, not mandatory:
 
+### Backend
+- `backend/core/analytics/domain_narrative_wave1.py`
 - `backend/core/analytics/domain_score_assembler.py`
 - `backend/core/models/results.py`
-- `backend/core/dto/builders.py`
 - `backend/core/pipeline/orchestrator.py`
-- relevant IDL or governed content source file(s) for the cardiovascular consequence gap
-- targeted tests
+- any directly relevant domain narrative / insight wiring path needed for domain-specific next-step sourcing
 
-Potentially:
-- `knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml`
-or another clearly justified governed source, if that is the approved minimal fix path
+### Frontend
+- `frontend/app/(app)/results/page.tsx`
+- new or existing Wave 1 domain card component(s)
+- `frontend/app/types/analysis.ts`
+- any directly relevant results component files
+- targeted frontend tests
 
 ---
 
 ## Files likely out of scope
 
-Do not touch unless absolutely required and justified in your report:
+Do not touch unless absolutely required and justified:
 
-- `frontend/**`
-- clinician PDF/export surfaces
+- clinician PDF/export paths
 - broad scoring policy files
-- unrelated analytics modules
 - thyroid/kidney/blood-iron domain logic
 - second-wave domain assets
+- unrelated frontend layout systems
+- pricing, trends, actions, upload flows
 
 ---
 
@@ -286,18 +226,19 @@ Do not run the full repository test suite.
 
 Run only:
 
-1. new or updated targeted backend/content tests for Wave 1 narrative assembly
-2. directly relevant existing tests for touched contract/orchestrator/domain assembler paths
-3. minimal validation needed to prove:
-   - all 3 Wave 1 domains emit the narrative fields
-   - the cardiovascular lipid-dominant consequence path is now filled
-   - no frontend dependency was introduced
-   - no clinician-layer outputs were unintentionally altered
+### Backend
+1. targeted tests for domain-specific next-step routing
+2. directly relevant existing D-1 / D-2 backend tests for the Wave 1 domain contract
+
+### Frontend
+3. targeted tests for the new Wave 1 card components / results integration
+4. type-check for touched frontend/backend contract surfaces
+5. bounded browser/UAT check for the three Wave 1 domains on a completed analysis
 
 Before running tests, state:
 - what you will run
 - why it is relevant
-- what you are deliberately not running
+- what broader suites you are deliberately excluding
 
 ---
 
@@ -305,24 +246,24 @@ Before running tests, state:
 
 This sprint is successful only if:
 
-1. Wave 1 domain objects now emit:
-   - headline sentence
-   - contributor sentence
-   - confidence sentence
-   - consequence sentence
-   - next-step sentence
+1. Wave 1 backend contract now emits domain-specific `next_step_sentence` values for:
+   - cardiovascular health
+   - blood sugar control
+   - liver health
 
-2. All narrative is assembled from deterministic approved sources.
+2. The exact deterministic source for each domain-specific next step is identified and reported.
 
-3. The cardiovascular lipid-dominant consequence gap is closed and clearly reported.
+3. Wave 1 frontend cards are implemented and consume the backend contract correctly.
 
-4. Blood sugar and liver domain narrative follow the repo-grounded contract work and do not introduce unsupported claims.
+4. The frontend shows the three domains only.
 
-5. No frontend exposure is introduced.
+5. No clinician-facing surfaces are altered.
 
-6. No clinician-facing language is replaced by consumer-layer language.
+6. No fake or non-deterministic prose is introduced.
 
-7. Targeted tests pass.
+7. Targeted backend and frontend tests pass.
+
+8. Browser/UAT confirms the cards render coherently on a real completed analysis.
 
 ---
 
@@ -337,33 +278,34 @@ When finished, report back in these sections:
 - objective
 - files touched
 - files not touched
-- where D-1 fields were read from
-- what new narrative fields were populated
+- D-1/D-2 dependency check
+- exact D-2 limitation being fixed first
 
-### 3. Requested changes made
+### 3. Part A — backend next-step routing fix
 - exact files changed
-- where sentence assembly lives
-- how each of the three domains now sources:
-  - headline
-  - contributor
-  - confidence
-  - consequence
-  - next step
+- exact source used for each domain’s next-step sentence
+- how determinism was preserved
+- any fallback behaviour
 
-### 4. Cardiovascular gap closure
-- exact file/source changed
-- exact path now used
-- why this was the minimal safe governed fix
+### 4. Part B — frontend Wave 1 cards
+- exact files changed
+- where cards were inserted
+- what each card shows collapsed and expanded
+- how missing/null contract states are handled
 
 ### 5. Tests run
 - exact tests
 - results
 
-### 6. Known limits intentionally deferred
-- anything left for later phases
-- any domain-level caveats not solved here
+### 6. Browser/UAT
+- what was checked
+- result
 
-### 7. Uncommitted / not merged
+### 7. Known limits intentionally deferred
+- anything left for later phases
+- any remaining contract or UX caveats
+
+### 8. Uncommitted / not merged
 - confirm work is not merged to `main`
 
 ---
@@ -372,12 +314,12 @@ When finished, report back in these sections:
 
 STOP and report instead of widening scope if any of the following occurs:
 
-1. D-1 output is missing or inconsistent.
-2. A domain narrative field cannot be assembled without inventing unsupported prose.
-3. The cardiovascular consequence gap cannot be fixed without a broad KB/content redesign.
-4. Frontend changes become necessary to validate the backend work.
-5. Clinician-layer outputs would need modification to complete this sprint.
-6. Any second-wave domain starts to creep into implementation.
+1. Domain-specific next-step routing cannot be implemented from approved deterministic sources.
+2. Frontend implementation depends on additional backend contract redesign beyond Wave 1 scope.
+3. A fourth domain starts to creep into scope.
+4. Clinician-facing outputs would need to change to complete the sprint.
+5. The results page would need a broader redesign beyond inserting the Wave 1 cards.
+6. Browser/UAT reveals a major contract mismatch that cannot be fixed safely inside this sprint.
 
 If blocked, report:
 - exact blocker
