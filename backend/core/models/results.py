@@ -2,7 +2,7 @@
 Analysis results models - immutable Pydantic v2 models for analysis results.
 """
 
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from core.contracts.retail_explainer_v1 import (
@@ -160,6 +160,59 @@ class InsightResult(BaseModel):
     latency_ms: int = Field(default=0, description="Processing latency in milliseconds")
 
 
+ConfidenceTierV1 = Literal["high", "medium", "low"]
+
+
+class ConsumerDomainScoreV1(BaseModel):
+    """
+    Wave 1 — deterministic customer domain translation (Strategy A).
+    D-1: score + band + confidence + raw references only (no consumer prose).
+    """
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    domain_id: str = Field(
+        ...,
+        description="Stable id, e.g. wave1_cardiovascular / wave1_blood_sugar / wave1_liver",
+    )
+    consumer_label: str = Field(..., description="Consumer-facing domain label (dashboard copy)")
+    clinical_label: str = Field(..., description="Clinician-oriented label; does not replace clinician report elsewhere")
+    score: float = Field(..., ge=0.0, le=1.0, description="0–1 domain score (deterministic mapping from base rails)")
+    band_label: str = Field(
+        ...,
+        description="Coarse band: strong | stable | watch | review (0–100 rail mapping, pre-normalisation buckets)",
+    )
+    confidence_tier: ConfidenceTierV1 = Field(
+        ...,
+        description="Domain confidence; emitted together with score (no score-without-confidence)",
+    )
+    active_signal_ids: List[str] = Field(default_factory=list, description="Active governed signals in this domain")
+    primary_idl_record_id: Optional[str] = Field(
+        default=None,
+        description="Primary Wave-1 IDL ph_* id for narrative assembly, if any",
+    )
+    missing_marker_ids: List[str] = Field(
+        default_factory=list,
+        description="Scoring-rail and domain-pool markers still missing (canonical ids)",
+    )
+    source_track: str = Field(
+        ...,
+        description="Calibration provenance, e.g. base:scoring_rail:cardiovascular; no silent track mixing",
+    )
+    caveat_flags: List[str] = Field(
+        default_factory=list,
+        description="Truthfulness / scope flags (e.g. liver enzyme_limited_assessment)",
+    )
+    contributing_system_keys: List[str] = Field(
+        default_factory=list,
+        description="Scoring or burden system keys that contributed to evidence (e.g. cardiovascular, hepatic)",
+    )
+    raw_evidence_refs: Dict[str, Any] = Field(
+        default_factory=dict,
+        description="Structured refs for D-2 narrative (Layer3 card ids, burden keys, IDL list)",
+    )
+
+
 class AnalysisDTO(BaseModel):
     """Immutable analysis data transfer object."""
     
@@ -208,4 +261,8 @@ class AnalysisDTO(BaseModel):
     narrative_report_v1: Optional[NarrativeReportV1] = Field(
         default=None,
         description="N-8: deterministic compiled narrative sections (governed asset assembly, no LLM)",
+    )
+    consumer_domain_scores: Optional[List[ConsumerDomainScoreV1]] = Field(
+        default=None,
+        description="D-1: Wave1 domain scores + confidence (backend contract; not wired to product shell in D-1)",
     )
