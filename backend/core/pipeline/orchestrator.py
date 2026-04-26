@@ -2205,12 +2205,20 @@ class AnalysisOrchestrator:
                 for k in filtered_biomarkers.keys()
                 if str(k) not in (UNIT_NORMALISATION_META_KEY, "age")
             }
+            _insight_payloads: List[Dict[str, Any]] = []
+            for _ins in insight_dtos:
+                if hasattr(_ins, "model_dump"):
+                    _insight_payloads.append(_ins.model_dump())
+                elif isinstance(_ins, dict):
+                    _insight_payloads.append(dict(_ins))
             consumer_domain_scores = assemble_consumer_domain_scores_v1(
                 scoring_result=scoring_result,
                 insight_graph=insight_graph,
                 idl_bundle=idl_bundle,
                 derived_ratios_meta=derived_ratios_meta,
                 panel_biomarker_ids=set(_panel_ids),
+                narrative_report_v1=narrative_report_v1,
+                insight_results=_insight_payloads,
             )
             result = AnalysisDTO(
                 analysis_id=analysis_id,

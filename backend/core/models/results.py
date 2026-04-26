@@ -166,7 +166,8 @@ ConfidenceTierV1 = Literal["high", "medium", "low"]
 class ConsumerDomainScoreV1(BaseModel):
     """
     Wave 1 — deterministic customer domain translation (Strategy A).
-    D-1: score + band + confidence + raw references only (no consumer prose).
+    D-1: score + band + confidence + raw references.
+    D-2: consumer narrative sentences (retail only; not injected into clinician surfaces).
     """
 
     model_config = ConfigDict(frozen=True, extra="forbid")
@@ -210,6 +211,26 @@ class ConsumerDomainScoreV1(BaseModel):
     raw_evidence_refs: Dict[str, Any] = Field(
         default_factory=dict,
         description="Structured refs for D-2 narrative (Layer3 card ids, burden keys, IDL list)",
+    )
+    headline_sentence: str = Field(
+        default="",
+        description="D-2: score-band consumer headline; assembled from D-1 band + domain copy tables",
+    )
+    contributor_sentence: str = Field(
+        default="",
+        description="D-2: deterministic contributor line (IDL subtitle / signal priority / fallbacks)",
+    )
+    confidence_sentence: str = Field(
+        default="",
+        description="D-2: copy derived from D-1 confidence tier + coverage; no second confidence model",
+    )
+    consequence_sentence: str = Field(
+        default="",
+        description="D-2: primarily IDL why_it_matters or governed idl_registry text; CV lipid path routed in D-2",
+    )
+    next_step_sentence: str = Field(
+        default="",
+        description="D-2: follow-up from insights recommendations or narrative next_steps, else generic",
     )
 
 

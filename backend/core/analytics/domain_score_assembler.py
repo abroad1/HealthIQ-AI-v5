@@ -13,6 +13,20 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Set, Tuple, cast
 
+from core.analytics.domain_narrative_wave1 import (
+    confidence_sentence_for,
+    cv_consequence,
+    cv_contributor,
+    headline_cv,
+    headline_liv,
+    headline_met,
+    idl_records_index,
+    liv_consequence,
+    liv_contributor,
+    met_consequence,
+    met_contributor,
+    next_step_from_sources,
+)
 from core.contracts.interpretation_display_layer_v1 import InterpretationDisplayLayerBundleV1
 from core.models.results import ConfidenceTierV1, ConsumerDomainScoreV1
 
@@ -306,13 +320,22 @@ def assemble_consumer_domain_scores_v1(
     idl_bundle: Optional[InterpretationDisplayLayerBundleV1],
     derived_ratios_meta: Optional[Dict[str, Any]],
     panel_biomarker_ids: Set[str],
+    narrative_report_v1: Any = None,
+    insight_results: Optional[List[Dict[str, Any]]] = None,
 ) -> List[ConsumerDomainScoreV1]:
     """
     Build three Wave 1 domain rows. Always returns three entries in stable order:
     cardiovascular, blood sugar, liver.
+
+    D-2: Populates consumer narrative fields from deterministic sources (IDL, D-1 bands/tiers, insights).
     """
     hss = _health_systems(scoring_result)
     sig_rows = _iter_signal_results(insight_graph)
+    by_id = idl_records_index(idl_bundle)
+    next_shared = next_step_from_sources(
+        insight_results,
+        narrative_report_v1,
+    )
     ratios = _ratios_map(derived_ratios_meta)
     cap: Dict[str, int] = {}
     sc_raw = dict(getattr(insight_graph, "system_capacity_scores", {}) or {})
@@ -364,6 +387,11 @@ def assemble_consumer_domain_scores_v1(
             caveat_flags=[],
             contributing_system_keys=["cardiovascular"],
             raw_evidence_refs=ev,
+            headline_sentence=headline_cv(band),
+            contributor_sentence=cv_contributor(by_id, sids, sig_rows),
+            confidence_sentence=confidence_sentence_for(tier, "cv"),
+            consequence_sentence=cv_consequence(by_id, sids, sig_rows),
+            next_step_sentence=next_shared,
         )
 
     def met_block() -> ConsumerDomainScoreV1:
@@ -388,6 +416,7 @@ def assemble_consumer_domain_scores_v1(
             "layer3_system_pressure_id": "metabolic__system_pressure",
             "burden_capacity_metabolic": metabolic_cap,
         }
+        sset = set(sids)
         return ConsumerDomainScoreV1(
             domain_id="wave1_blood_sugar",
             consumer_label="Blood sugar control",
@@ -402,6 +431,11 @@ def assemble_consumer_domain_scores_v1(
             caveat_flags=caveats,
             contributing_system_keys=["metabolic"],
             raw_evidence_refs=ev,
+            headline_sentence=headline_met(band),
+            contributor_sentence=met_contributor(by_id, sset, sig_rows),
+            confidence_sentence=confidence_sentence_for(tier, "met"),
+            consequence_sentence=met_consequence(by_id, sset, sig_rows),
+            next_step_sentence=next_shared,
         )
 
     def liv_block() -> ConsumerDomainScoreV1:
@@ -456,6 +490,11 @@ def assemble_consumer_domain_scores_v1(
             caveat_flags=caveats,
             contributing_system_keys=ckeys,
             raw_evidence_refs=ev,
+            headline_sentence=headline_liv(band),
+            contributor_sentence=liv_contributor(by_id, sids, sig_rows),
+            confidence_sentence=confidence_sentence_for(tier, "liver"),
+            consequence_sentence=liv_consequence(by_id),
+            next_step_sentence=next_shared,
         )
 
     return [cv_block(), met_block(), liv_block()]
