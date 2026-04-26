@@ -1,14 +1,19 @@
 # backend/config/env.py
 
 import os
+from pathlib import Path
 from typing import Optional
-from dotenv import load_dotenv
-
 from dotenv import load_dotenv, find_dotenv
-import os
 
-# Ensure .env is loaded from project root
+# 1) Legacy: first .env found walking upward from os.getcwd() (monorepo root, etc.)
 load_dotenv(find_dotenv(), override=True)
+
+# 2) Authoritative for API vars: always merge backend/.env (next to this package's parent),
+#    with override so local edits win over a parent directory .env. Without this, only
+#    HEALTHIQ_FREE_COMPLETED_ANALYSES in a discovered root .env applied; supabase_anon
+#    loads the same file with override=False and could not fix a bad parent value.
+_backend_root = Path(__file__).resolve().parent.parent
+load_dotenv(_backend_root / ".env", override=True)
 
 
 class Settings:

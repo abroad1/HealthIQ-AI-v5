@@ -11,6 +11,9 @@ services:
     environment:
       - DATABASE_URL=postgresql://postgres:password@db:5432/healthiq
       - REDIS_URL=redis://redis:6379
+      # Local docker dev: high free-run cap; prod compose should not copy blindly.
+      - HEALTHIQ_FREE_COMPLETED_ANALYSES=99
+      - HEALTHIQ_DISABLE_BILLING_ENFORCEMENT=1
     depends_on:
       - db
       - redis
