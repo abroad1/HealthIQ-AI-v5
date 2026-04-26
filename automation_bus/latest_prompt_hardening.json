@@ -1,122 +1,176 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "R-8",
+  "work_id": "D-1",
   "status": "HARDENED",
-  "hardened_utc": "2026-04-25T00:00:00Z",
-  "hardened_by": "claude-sonnet-4-6 (Prompt Hardening)",
+  "hardened_utc": "2026-04-26T00:00:00Z",
+  "hardened_by": "claude-sonnet-4-6",
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md line 2 — work_id: R-8"
+      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: D-1"
     },
     {
       "check": "Front Matter — branch",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md line 3 — branch: feature/why-coverage-expansion-wave-1. Branch does not exist in git yet; prompt lines 32-36 instruct Cursor to create it as Stage 0 prerequisite before implementation. Cursor responsibility per SOP §0."
+      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/domain-score-assembler-wave1",
+      "detail": "Branch does not exist yet. Prompt lines 44-52 instruct Cursor to create it as Stage 0 prerequisite. Cursor must run git checkout -b feature/domain-score-assembler-wave1 before any file modification."
     },
     {
       "check": "Front Matter — risk_level HIGH",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md line 4 — risk_level: HIGH. Correct: root_cause_compiler_v1.py is under backend/core/analytics/ (explicit HIGH-risk path per SOP §10 and §3 Intelligence Core). Hypothesis YAMLs consumed by Intelligence Core compiler are also governed."
+      "citation": "automation_bus/latest_cursor_prompt.md:4 — risk_level: HIGH",
+      "detail": "Correct. Sprint creates a new assembler in backend/core/analytics/ and extends AnalysisDTO — both are explicit HIGH-risk paths per SOP §3 (Intelligence Core) and §10. HIGH requires Claude audit + GPT review + dual approval before merge."
     },
     {
       "check": "Front Matter — execution_model",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md line 5 — execution_model: TWO_PHASE_START_FINISH"
+      "citation": "automation_bus/latest_cursor_prompt.md:5 — execution_model: TWO_PHASE_START_FINISH"
     },
     {
       "check": "Front Matter — change_type BEHAVIOUR",
       "result": "CONFIRMED",
-      "evidence": "automation_bus/latest_cursor_prompt.md line 6 — change_type: BEHAVIOUR. Correct: compiler wiring changes which signals receive governed WHY vs fallback. Emitted reasoning changes for panels where signal_total_cholesterol_high or signal_vitamin_d_low is the lead signal."
+      "citation": "automation_bus/latest_cursor_prompt.md:6 — change_type: BEHAVIOUR",
+      "detail": "Correct. Sprint creates a new analytics module that extends the analysis pipeline output and AnalysisDTO contract. Touches Intelligence Core components. BEHAVIOUR controls apply — MIXED would also be defensible but BEHAVIOUR is sufficient given no new SSOT/YAML assets are created."
     },
     {
-      "check": "Authority path — signal_total_cholesterol_high absent from compiler",
+      "check": "Authority path — docs/HealthIQ_phased_customer_domain_score_sprint_plan_FINAL.md",
       "result": "CONFIRMED",
-      "evidence": "backend/core/analytics/root_cause_compiler_v1.py lines 69-105: _ROOT_CAUSE_TARGETS list has 34 entries. signal_total_cholesterol_high is absent from all entries. Genuinely unregistered."
+      "citation": "docs/HealthIQ_phased_customer_domain_score_sprint_plan_FINAL.md — file exists on disk"
     },
     {
-      "check": "Authority path — signal_vitamin_d_low absent from compiler",
+      "check": "Authority path — docs/Strategy_A_Launch_Domains_Implementation_Blueprint.md",
       "result": "CONFIRMED",
-      "evidence": "backend/core/analytics/root_cause_compiler_v1.py lines 69-105: signal_vitamin_d_low is absent from all 34 entries. Genuinely unregistered."
+      "citation": "docs/Strategy_A_Launch_Domains_Implementation_Blueprint.md — file exists on disk"
     },
     {
-      "check": "Authority path — no existing hypothesis YAML for signal_total_cholesterol_high",
+      "check": "Authority path — docs/STRATEGY_A_IMPLEMENTATION_BLUEPRINT.md",
       "result": "CONFIRMED",
-      "evidence": "Glob of knowledge_bus/root_cause/hypotheses/total_cholesterol* returned no files. YAML must be authored in this sprint."
+      "citation": "docs/STRATEGY_A_IMPLEMENTATION_BLUEPRINT.md — file exists on disk"
     },
     {
-      "check": "Authority path — no existing hypothesis YAML for signal_vitamin_d_low",
+      "check": "Authority path — docs/Strategy_A_Domain_Narrative_Contract_v1.md",
       "result": "CONFIRMED",
-      "evidence": "Glob of knowledge_bus/root_cause/hypotheses/vitamin_d* returned no files. YAML must be authored in this sprint."
+      "citation": "docs/Strategy_A_Domain_Narrative_Contract_v1.md — file exists on disk"
     },
     {
-      "check": "Authority path — canonical signal ID for signal_total_cholesterol_high",
+      "check": "Authority path — docs/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md",
       "result": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/pkg_kb60_total_cholesterol_high_atherogenic_hypercholesterolemia/signal_library.yaml line 9: signal_id: signal_total_cholesterol_high. primary_metric: total_cholesterol (line 13). activation_config: enable_upper_bound: true, enable_lower_bound: false — activates only when total_cholesterol is high."
+      "citation": "docs/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md — file exists on disk"
     },
     {
-      "check": "Authority path — canonical signal ID for signal_vitamin_d_low",
+      "check": "Authority path — AGENTS.md (READ-ONLY — must not be committed)",
+      "result": "CONFIRMED — READ-ONLY CONSTRAINT ACTIVE",
+      "citation": "AGENTS.md — file exists",
+      "detail": "SOP v1.3.1 non-negotiable: no tooling-file leakage (AGENTS.md) into governed sprint branches. Cursor must read AGENTS.md as background context only. It must NOT appear in git diff at sprint finish. If Cursor is about to commit AGENTS.md, that is a STOP condition."
+    },
+    {
+      "check": "Authority path — .cursor/rules/healthiq-core-engine.mdc",
       "result": "CONFIRMED",
-      "evidence": "knowledge_bus/packages/pkg_s24_vitamin_d_low_deficiency/signal_library.yaml line 8: signal_id: signal_vitamin_d_low. primary_metric: vitamin_d (line 13). activation_config: enable_lower_bound: true — activates when vitamin_d is below range."
+      "citation": ".cursor/rules/healthiq-core-engine.mdc — file exists"
     },
     {
-      "check": "Authority path — loader validation constraints",
+      "check": "Authority path — docs/AUTOMATION_BUS_SOP_v1.3.1.md",
       "result": "CONFIRMED",
-      "evidence": "backend/core/knowledge/load_root_cause_hypotheses.py lines 35-59: checks schema_version == 'v1', hypotheses is list, each hypothesis has hypothesis_id/title/summary_template, confirmatory_tests is list, all confirmatory_tests entries exist in registry. Raises ValueError on any violation. New YAMLs must satisfy all constraints."
+      "citation": "docs/AUTOMATION_BUS_SOP_v1.3.1.md — file exists"
     },
     {
-      "check": "Authority path — confirmatory tests registry constraint",
-      "result": "CONFIRMED — constraint acknowledged and resolved in prompt",
-      "evidence": "knowledge_bus/registries/confirmatory_tests_v1.yaml lines 1-192: 15 test IDs confirmed; no vitamin D or total cholesterol specific entries. Prompt lines 123-126 (In Scope §3) explicitly authorises minimal registry additions OR confirmatory_tests: [] with justification. Design Rule 6 (lines 172-173) requires loader-clean YAMLs. Existing reusable test IDs include test_thyroid_tsh_ft4_v1 (line 142), test_hba1c_repeat_v1 (line 131), test_liver_ggt_alt_ast_v1 (line 154), test_crp_repeat_v1 (line 81)."
+      "check": "No duplicate authority sources",
+      "result": "CONFIRMED",
+      "citation": "Glob and Grep across docs/ and backend/ssot/ — no duplicate domain score authority detected"
     },
     {
-      "check": "Prior blocker B1 — signal ID mismatch and scope inflation",
-      "result": "RESOLVED",
-      "evidence": "Amended prompt Strategic Context lines 44-53 explicitly names signal_ldl_cholesterol_high, signal_hdl_cholesterol_low, signal_triglycerides_high as already governed (KB-S48) and excludes them from new work. Out of Scope lines 142-144 repeats the exclusion. Wave 1 scope locked to signal_total_cholesterol_high + signal_vitamin_d_low only."
+      "check": "Scoring rail key — cardiovascular",
+      "result": "CONFIRMED",
+      "citation": "backend/ssot/scoring_policy.yaml:23-26",
+      "detail": "System key is 'cardiovascular'. min_biomarkers_required: 3. Biomarkers: total_cholesterol, ldl_cholesterol, hdl_cholesterol, triglycerides, tc_hdl_ratio. Used as base score source for Domain 1 (cardiovascular health)."
     },
     {
-      "check": "Prior blocker B2 — confirmatory tests registry gap",
-      "result": "RESOLVED",
-      "evidence": "Amended prompt In Scope §3 lines 123-126 gives Cursor explicit authority to add minimal registry entries or use confirmatory_tests: []. Design Rule 6 lines 172-173 enforces loader-clean output."
+      "check": "Scoring rail key — metabolic (blood sugar domain base)",
+      "result": "CONFIRMED",
+      "citation": "backend/ssot/scoring_policy.yaml:19-22",
+      "detail": "System key is 'metabolic'. Biomarkers: glucose, hba1c, insulin. This is the correct base for Domain 2 (blood sugar control). Electrolyte-heavy systems (e.g. kidney) are separate scoring rails and must not bleed into blood sugar domain score."
+    },
+    {
+      "check": "Scoring rail key — liver (liver health domain base)",
+      "result": "CONFIRMED",
+      "citation": "backend/ssot/scoring_policy.yaml:43-46",
+      "detail": "System key is 'liver'. Biomarkers: alt, ast. This is the correct base for Domain 3 (liver health). The scoring result dict key is 'liver'."
+    },
+    {
+      "check": "Burden/capacity key — 'hepatic' (NOT 'liver')",
+      "result": "CONFIRMED — CRITICAL DETERMINISM RISK",
+      "citation": "backend/core/analytics/system_burden_engine.py:22",
+      "detail": "ALLOWED_BURDEN_SYSTEM_IDS contains 'hepatic', not 'liver'. system_capacity_scores (populated from burden engine and stored on InsightGraphV1, orchestrator.py:1702-1703) uses key 'hepatic'. Cursor MUST use system_capacity_scores.get('hepatic') for burden/capacity context in the liver health assembler. Calling system_capacity_scores['liver'] will silently return None/KeyError and produce wrong confidence without raising a clear error. This is the exact risk the prompt calls out at line 196 and it is real — verified against source."
+    },
+    {
+      "check": "AnalysisDTO frozen model — new field must be Pydantic-declared",
+      "result": "CONFIRMED — IMPLEMENTATION CONSTRAINT",
+      "citation": "backend/core/models/results.py:164-165",
+      "detail": "AnalysisDTO has model_config = ConfigDict(frozen=True, extra='forbid'). Adding consumer_domain_scores requires declaring it as a proper Optional Pydantic field (e.g., consumer_domain_scores: Optional[List[ConsumerDomainScoreV1]] = Field(default=None, ...)). Any attempt to inject it as an extra dict key or kwargs will raise ValidationError at runtime. The companion domain score model must also be a frozen Pydantic model with extra='forbid'. This is not a blocker but must be implemented correctly."
+    },
+    {
+      "check": "Signal IDs availability for active_signal_ids field",
+      "result": "CONFIRMED",
+      "citation": "backend/core/contracts/insight_graph_v1.py:200 and backend/core/analytics/signal_evaluator.py:51",
+      "detail": "InsightGraphV1.signal_results is List[Dict[str,Any]] where each item carries signal_id (confirmed at signal_evaluator.py:51). Assembler can iterate signal_results and filter by domain-relevant primary_metric or system mapping to produce active_signal_ids. This is a read-only access path — no modification to signal_results or InsightGraphV1 required."
+    },
+    {
+      "check": "IDL record IDs for primary_idl_record_id field",
+      "result": "CONFIRMED",
+      "citation": "backend/core/contracts/interpretation_display_layer_v1.py:25 and docs/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md:44-51",
+      "detail": "IDL records expose internal_id (ph_* pattern). Wave 1 relevant IDs: cardiovascular — ph_vascular_hcy_inflammation_v1, ph_lipid_residual_ldl_favourable_transport_v1; blood sugar — ph_metabolic_early_ir_v1, ph_hba1c_metabolic_stress_v1; liver — ph_hepatic_alt_inflammatory_v1. Assembler should look up fired IDL records from AnalysisDTO.interpretation_display_layer_v1. primary_idl_record_id is nullable — emit null if no matching IDL fired."
+    },
+    {
+      "check": "No prediabetes override path exists in analytics core",
+      "result": "CONFIRMED — STOP CONDITION BACKED",
+      "citation": "Grep for 'prediabetes' across backend/core/analytics/ — no matches found",
+      "detail": "Prompt constraint at line 179 is verified against source. There is no governed prediabetes override implementation path. Cursor must not invent one. If blood sugar confidence cannot be assembled without inventing unsupported logic, STOP condition 3 applies: stop and report the exact blocker."
+    },
+    {
+      "check": "Orchestrator injection point for assembler",
+      "result": "CONFIRMED",
+      "citation": "backend/core/pipeline/orchestrator.py:1309-1325 (InsightGraph build) and :1633-1638 (capacity scores finalised)",
+      "detail": "InsightGraph is built at Step 4.6 (~line 1309). system_capacity_scores is finalised after the burden/propagation steps (~line 1633). The domain score assembler should be invoked after both are available — approximately in the final assembly block (~line 2200+) where AnalysisResult is constructed. Must not alter the burden engine, scoring engine, or insight_graph_builder steps."
+    },
+    {
+      "check": "builders.py — consumer_domain_scores pass-through",
+      "result": "CONFIRMED — SCOPE GUIDANCE",
+      "citation": "backend/core/dto/builders.py:43-66",
+      "detail": "build_analysis_result_dto() constructs the API response. consumer_domain_scores should be included in the builder output for API availability (backend-only contract). It must not be wired to any frontend component or results page. STOP condition 2 applies if frontend code alteration is required."
     },
     {
       "check": "Stage 2B — behavioural scope defined",
       "result": "CONFIRMED",
-      "evidence": "Two canonical signal IDs named explicitly in Objective (lines 15-16), Group A/B (lines 78-84), Success Criteria (lines 233-234). No ambiguity. Both are confirmed absent from compiler and hypothesis directory."
+      "citation": "automation_bus/latest_cursor_prompt.md:74-99 (in/out of scope), 312-336 (acceptance criteria)",
+      "detail": "Scope is precisely bounded: three Wave 1 domains, new assembler module, AnalysisDTO extension, targeted backend tests. Explicitly out of scope: frontend, narrative sentences, thyroid, kidney, second-wave domains, LLM."
     },
     {
       "check": "Stage 2B — regression targets",
       "result": "CONFIRMED",
-      "evidence": "Success criteria 3 (line 237): existing WHY-covered domains must continue. Success criteria 4 (line 238): fallback correct for uncovered domains. Success criteria 5 (line 239): regression tests must pass. STOP condition 1 (line 217): halt if broader architecture redesign needed."
+      "citation": "backend/tests/enforcement/ (multiple test files confirmed)",
+      "detail": "Key regression targets: test_scoring_policy_not_hardcoded.py (scoring SSOT purity), test_no_raw_fields_in_insight_graph.py (InsightGraph contract), test_runtime_requires_insight_graph.py, test_scoring_orchestrator_integration.py. Sprint must not break these. Cursor should run the targeted suite declared in the prompt — not the full repository test suite."
     },
     {
-      "check": "Stage 2B — determinism preserved",
+      "check": "Stage 2B — no unintended behavioural drift",
       "result": "CONFIRMED",
-      "evidence": "Compiler _ROOT_CAUSE_TARGETS is an ordered list processed sequentially at lines 491-506. New entries appended. Fallback logic at lines 508-519 fires only when lead_id is not in with_finding — adding signal_total_cholesterol_high and signal_vitamin_d_low reduces fallback for those two IDs only; all other signal paths unchanged. No non-deterministic branching introduced."
-    },
-    {
-      "check": "Stage 2B — no silent output drift",
-      "result": "CONFIRMED",
-      "evidence": "Output changes are intentional and declared: panels where signal_total_cholesterol_high or signal_vitamin_d_low is the lead will receive governed WHY instead of fallback. All other signals: no change. Fallback mechanism at compiler lines 400-468 remains intact and unmodified."
-    },
-    {
-      "check": "Stage 0 — branch prerequisite",
-      "result": "ADVISORY — confirmed absent, prompt handles it",
-      "evidence": "git branch -a shows feature/why-coverage-expansion-wave-1 does not exist. Prompt lines 32-36 instruct Cursor to create it before implementation. Cursor must run git checkout -b feature/why-coverage-expansion-wave-1 before Stage 3."
+      "citation": "automation_bus/latest_cursor_prompt.md:107-115 (architectural constraints)",
+      "detail": "Assembler sits above the existing scoring/burden/signal layers and reads outputs only. It must not modify scoring engine, burden engine, or phenotype engine behaviour. Any existing panel that doesn't match a Wave 1 domain is unaffected. Output structure of existing fields is unchanged — new field is additive and Optional."
     },
     {
       "check": "Forbidden files — control-plane scripts",
-      "result": "NOT IN SCOPE",
-      "evidence": "run_work_package.py, golden_gate_local.py, update_cursor_status.py not referenced in prompt scope. signal_evaluator.py not required (signals already fire). orchestrator.py not required."
+      "result": "NOT IN SCOPE — CONFIRMED",
+      "citation": "run_work_package.py, golden_gate_local.py, update_cursor_status.py not referenced in prompt scope",
+      "detail": "Not required for this sprint. If Cursor attempts to modify these files, that is a scope violation and STOP condition."
     }
   ],
   "advisory_notes": [
-    "New loader functions must be added to backend/core/knowledge/load_root_cause_hypotheses.py — one for each new hypothesis YAML (load_total_cholesterol_high_hypotheses_v1 and load_vitamin_d_low_hypotheses_v1). Pattern: simple wrapper calling load_root_cause_hypotheses_asset_v1 with the filename, matching the style at lines 107-116.",
-    "load_root_cause_hypotheses_asset_v1 is decorated with @lru_cache(maxsize=64) at line 66. In test environments, cache may persist across test cases if tests modify YAML files mid-run. Cursor should be aware test isolation may require pytest cache-clearing if needed.",
-    "signal_vitamin_d_low activates when vitamin_d is below range (enable_lower_bound: true). Evidence rules in the hypothesis YAML should use direction: 'low' for vitamin_d marker checks. signal_total_cholesterol_high activates when total_cholesterol is above range; use direction: 'high'.",
-    "The KB-S60 signal library for signal_total_cholesterol_high references tc_hdl_ratio as a supporting metric (signal_library.yaml lines 17-25). If hypothesis evidence rules reference tc_hdl_ratio, the marker must be available in biomarker_context for evidence to fire — may be missing in minimal test fixtures.",
-    "Regression test pattern: test_root_cause_v1_homocysteine.py uses run_golden_panel with fixture files and _finding_by_signal helper. Cursor should follow this pattern for new regression tests, with fixtures that activate the target signal (total_cholesterol above range for Group A; vitamin_d below range for Group B)."
+    "The liver/hepatic key split is the single highest-risk implementation point in this sprint. Source-verified: scoring_policy.yaml uses 'liver' for the scoring rail; system_burden_engine.py uses 'hepatic' for burden/capacity. Cursor must map these explicitly in code with inline comments documenting the split.",
+    "AnalysisDTO.model_config = ConfigDict(frozen=True, extra='forbid') — the new ConsumerDomainScoreV1 dataclass or Pydantic model and the Optional field on AnalysisDTO must be declared before the AnalysisResult/AnalysisDTO is instantiated in the orchestrator. A runtime ValidationError here would be a hard crash.",
+    "IDL Layer3 system_pressure cards relevant to Wave 1: cardiovascular__system_pressure, metabolic__system_pressure, hepatic__system_pressure (confirmed in docs/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md:52-57). These may be useful as additional evidence references for the raw evidence block.",
+    "Blood sugar confidence: glucose and hba1c are required; insulin is optional enhancement. Triglycerides and TyG-index are derived markers accessible via InsightGraphV1.derived_ratios_meta. Cursor may use these as confidence enhancers but must not blend them silently into the numeric domain score.",
+    "AGENTS.md read-only constraint is a hard non-negotiable. It must not appear in the sprint git diff. Stage 4A closure protocol must verify this explicitly before finish.",
+    "The sprint reporting requirements (lines 339-390) are comprehensive. Cursor must confirm: (1) branch name, (2) explicit score source and confidence source per domain, (3) calibration handling especially liver/hepatic, (4) exact tests run with results, (5) that work is not merged to main."
   ],
   "overall_verdict": "HARDENED"
 }
