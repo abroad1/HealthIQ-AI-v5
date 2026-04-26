@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "D-1",
+  "work_id": "D-2",
   "status": "HARDENED",
   "hardened_utc": "2026-04-26T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
@@ -8,19 +8,19 @@
     {
       "check": "Front Matter — work_id",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: D-1"
+      "citation": "automation_bus/latest_cursor_prompt.md:2 — work_id: D-2"
     },
     {
       "check": "Front Matter — branch",
-      "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/domain-score-assembler-wave1",
-      "detail": "Branch does not exist yet. Prompt lines 44-52 instruct Cursor to create it as Stage 0 prerequisite. Cursor must run git checkout -b feature/domain-score-assembler-wave1 before any file modification."
+      "result": "CONFIRMED — CRITICAL BASE BRANCH CONSTRAINT",
+      "citation": "automation_bus/latest_cursor_prompt.md:3 — branch: feature/domain-narrative-wave1",
+      "detail": "Branch does not yet exist. D-1 (feature/domain-score-assembler-wave1) has NOT been merged to main. Cursor MUST create feature/domain-narrative-wave1 from feature/domain-score-assembler-wave1, NOT from main. Command: git checkout feature/domain-score-assembler-wave1 && git checkout -b feature/domain-narrative-wave1. If created from main, D-1 output (domain_score_assembler.py, ConsumerDomainScoreV1, consumer_domain_scores field on AnalysisDTO, orchestrator wiring) will be absent — STOP condition 1 fires immediately."
     },
     {
       "check": "Front Matter — risk_level HIGH",
       "result": "CONFIRMED",
       "citation": "automation_bus/latest_cursor_prompt.md:4 — risk_level: HIGH",
-      "detail": "Correct. Sprint creates a new assembler in backend/core/analytics/ and extends AnalysisDTO — both are explicit HIGH-risk paths per SOP §3 (Intelligence Core) and §10. HIGH requires Claude audit + GPT review + dual approval before merge."
+      "detail": "Correct. Sprint extends Intelligence Core narrative assembly layer, extends ConsumerDomainScoreV1 contract, and modifies IDL YAML — all explicit HIGH-risk paths per SOP §3 and §10."
     },
     {
       "check": "Front Matter — execution_model",
@@ -28,149 +28,144 @@
       "citation": "automation_bus/latest_cursor_prompt.md:5 — execution_model: TWO_PHASE_START_FINISH"
     },
     {
-      "check": "Front Matter — change_type BEHAVIOUR",
+      "check": "Front Matter — change_type MIXED",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:6 — change_type: BEHAVIOUR",
-      "detail": "Correct. Sprint creates a new analytics module that extends the analysis pipeline output and AnalysisDTO contract. Touches Intelligence Core components. BEHAVIOUR controls apply — MIXED would also be defensible but BEHAVIOUR is sufficient given no new SSOT/YAML assets are created."
+      "citation": "automation_bus/latest_cursor_prompt.md:6 — change_type: MIXED",
+      "detail": "Correct. Sprint involves both CONTENT (IDL YAML update for cardiovascular consequence routing) and BEHAVIOUR (narrative assembly logic extending domain_score_assembler.py and ConsumerDomainScoreV1). MIXED governed under BEHAVIOUR controls per SOP §4."
     },
     {
       "check": "Authority path — docs/HealthIQ_phased_customer_domain_score_sprint_plan_FINAL.md",
       "result": "CONFIRMED",
-      "citation": "docs/HealthIQ_phased_customer_domain_score_sprint_plan_FINAL.md — file exists on disk"
-    },
-    {
-      "check": "Authority path — docs/Strategy_A_Launch_Domains_Implementation_Blueprint.md",
-      "result": "CONFIRMED",
-      "citation": "docs/Strategy_A_Launch_Domains_Implementation_Blueprint.md — file exists on disk"
-    },
-    {
-      "check": "Authority path — docs/STRATEGY_A_IMPLEMENTATION_BLUEPRINT.md",
-      "result": "CONFIRMED",
-      "citation": "docs/STRATEGY_A_IMPLEMENTATION_BLUEPRINT.md — file exists on disk"
+      "citation": "docs/HealthIQ_phased_customer_domain_score_sprint_plan_FINAL.md — file exists on disk (verified in D-1 Stage 2A)"
     },
     {
       "check": "Authority path — docs/Strategy_A_Domain_Narrative_Contract_v1.md",
       "result": "CONFIRMED",
-      "citation": "docs/Strategy_A_Domain_Narrative_Contract_v1.md — file exists on disk"
+      "citation": "docs/Strategy_A_Domain_Narrative_Contract_v1.md — file exists on disk (verified in D-1 Stage 2A)"
     },
     {
       "check": "Authority path — docs/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md",
       "result": "CONFIRMED",
-      "citation": "docs/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md — file exists on disk"
+      "citation": "docs/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md — file exists on disk, read in full this session"
+    },
+    {
+      "check": "Authority path — docs/Strategy_A_Launch_Domains_Implementation_Blueprint.md",
+      "result": "CONFIRMED",
+      "citation": "docs/Strategy_A_Launch_Domains_Implementation_Blueprint.md — file exists on disk (verified in D-1 Stage 2A)"
+    },
+    {
+      "check": "Authority path — docs/STRATEGY_A_IMPLEMENTATION_BLUEPRINT.md",
+      "result": "CONFIRMED",
+      "citation": "docs/STRATEGY_A_IMPLEMENTATION_BLUEPRINT.md — file exists on disk (verified in D-1 Stage 2A)"
     },
     {
       "check": "Authority path — AGENTS.md (READ-ONLY — must not be committed)",
       "result": "CONFIRMED — READ-ONLY CONSTRAINT ACTIVE",
       "citation": "AGENTS.md — file exists",
-      "detail": "SOP v1.3.1 non-negotiable: no tooling-file leakage (AGENTS.md) into governed sprint branches. Cursor must read AGENTS.md as background context only. It must NOT appear in git diff at sprint finish. If Cursor is about to commit AGENTS.md, that is a STOP condition."
+      "detail": "SOP v1.3.1 non-negotiable: AGENTS.md must not appear in git diff at sprint finish. Read as background context only."
     },
     {
       "check": "Authority path — .cursor/rules/healthiq-core-engine.mdc",
       "result": "CONFIRMED",
-      "citation": ".cursor/rules/healthiq-core-engine.mdc — file exists"
+      "citation": ".cursor/rules/healthiq-core-engine.mdc — file exists (verified in D-1 Stage 2A)"
     },
     {
       "check": "Authority path — docs/AUTOMATION_BUS_SOP_v1.3.1.md",
       "result": "CONFIRMED",
-      "citation": "docs/AUTOMATION_BUS_SOP_v1.3.1.md — file exists"
+      "citation": "docs/AUTOMATION_BUS_SOP_v1.3.1.md — file exists (verified in D-1 Stage 2A)"
     },
     {
       "check": "No duplicate authority sources",
       "result": "CONFIRMED",
-      "citation": "Glob and Grep across docs/ and backend/ssot/ — no duplicate domain score authority detected"
+      "citation": "Glob and Grep across docs/ and knowledge_bus/ — single IDL source at knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml; no duplicate authority detected"
     },
     {
-      "check": "Scoring rail key — cardiovascular",
+      "check": "Source cross-reference — D-1 output fields available for D-2 consumption",
       "result": "CONFIRMED",
-      "citation": "backend/ssot/scoring_policy.yaml:23-26",
-      "detail": "System key is 'cardiovascular'. min_biomarkers_required: 3. Biomarkers: total_cholesterol, ldl_cholesterol, hdl_cholesterol, triglycerides, tc_hdl_ratio. Used as base score source for Domain 1 (cardiovascular health)."
+      "citation": "backend/core/models/results.py:166-213 (ConsumerDomainScoreV1); backend/core/analytics/domain_score_assembler.py:302-461",
+      "detail": "ConsumerDomainScoreV1 fields available to D-2 narrative assembly: domain_id, consumer_label, clinical_label, score (0-1), band_label (strong/stable/watch/review), confidence_tier (high/medium/low), active_signal_ids, primary_idl_record_id (nullable), missing_marker_ids, source_track, caveat_flags, contributing_system_keys, raw_evidence_refs (contains layer3_system_pressure_id per domain). All three domains emit these fields deterministically. IMPORTANT: ConsumerDomainScoreV1 has NO narrative sentence fields yet — D-2 must extend this Pydantic model with Optional narrative fields declared as proper Pydantic fields (frozen=True, extra=forbid constraint applies at results.py:172)."
     },
     {
-      "check": "Scoring rail key — metabolic (blood sugar domain base)",
+      "check": "Source cross-reference — IDL YAML cardiovascular gap status",
+      "result": "CONFIRMED — GAP ALREADY RESOLVED IN YAML — ROUTING FIX ONLY NEEDED",
+      "citation": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:108-116",
+      "detail": "CRITICAL FINDING. ph_lipid_residual_ldl_favourable_transport_v1 NOW HAS a why_it_matters field in the YAML: 'Cumulative atherogenic exposure is read in full transport context; reassuring HDL does not erase residual LDL-related risk.' This directly contradicts DOMAIN_NARRATIVE_CONTRACT_WAVE1.md:49 and :638 which states 'no why_it_matters field in this record' and declares this a gap. The content already exists. D-2 must NOT author new why_it_matters content for this record — it would overwrite the existing governed text. The cardiovascular consequence fix is now a ROUTING fix only: wire the selection logic to route ph_lipid_residual_ldl_favourable_transport_v1.why_it_matters when this IDL record is primary_idl_record_id. No KB content authoring is required. If Cursor sees DOMAIN_NARRATIVE_CONTRACT_WAVE1.md and attempts to add a new why_it_matters field, it must NOT do so — the field already exists at line 113 of the YAML."
+    },
+    {
+      "check": "Source cross-reference — IDL why_it_matters fields for all Wave 1 domains",
       "result": "CONFIRMED",
-      "citation": "backend/ssot/scoring_policy.yaml:19-22",
-      "detail": "System key is 'metabolic'. Biomarkers: glucose, hba1c, insulin. This is the correct base for Domain 2 (blood sugar control). Electrolyte-heavy systems (e.g. kidney) are separate scoring rails and must not bleed into blood sugar domain score."
+      "citation": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:8-116",
+      "detail": "ph_metabolic_early_ir_v1.why_it_matters (line 13): 'Left unaddressed, early insulin resistance progresses toward prediabetes and cardiometabolic risk.' CONFIRMED. ph_hba1c_metabolic_stress_v1.why_it_matters (line 23): 'Sustained glycaemic strain raises long-term metabolic and vascular risk.' CONFIRMED. ph_vascular_hcy_inflammation_v1.why_it_matters (line 33): 'Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.' CONFIRMED. ph_lipid_residual_ldl_favourable_transport_v1.why_it_matters (line 113): 'Cumulative atherogenic exposure is read in full transport context; reassuring HDL does not erase residual LDL-related risk.' CONFIRMED (previously missing, now present). ph_hepatic_alt_inflammatory_v1.why_it_matters (line 43): 'Early liver-strain patterns are a key lane toward MASLD/fibrosis risk if ignored.' CONFIRMED."
     },
     {
-      "check": "Scoring rail key — liver (liver health domain base)",
+      "check": "Source cross-reference — IDL subtitle fields for contributor sentence assembly",
       "result": "CONFIRMED",
-      "citation": "backend/ssot/scoring_policy.yaml:43-46",
-      "detail": "System key is 'liver'. Biomarkers: alt, ast. This is the correct base for Domain 3 (liver health). The scoring result dict key is 'liver'."
+      "citation": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:12,21,30,43,112",
+      "detail": "ph_metabolic_early_ir_v1.subtitle (line 12): 'A pattern suggesting early impaired sugar and lipid handling'. ph_hba1c_metabolic_stress_v1.subtitle (line 21): 'A pattern suggesting sustained blood-sugar strain on the body'. ph_vascular_hcy_inflammation_v1.subtitle (line 30): 'A pattern combining inflammation and homocysteine signals associated with vascular risk'. ph_lipid_residual_ldl_favourable_transport_v1.subtitle (line 112): 'LDL elevation alongside relatively stronger HDL signalling—particle architecture still matters'. ph_hepatic_alt_inflammatory_v1.subtitle (line 43): 'A pattern suggesting metabolic or inflammatory strain in the liver'. All subtitles confirmed present and available for contributor sentence assembly."
     },
     {
-      "check": "Burden/capacity key — 'hepatic' (NOT 'liver')",
-      "result": "CONFIRMED — CRITICAL DETERMINISM RISK",
-      "citation": "backend/core/analytics/system_burden_engine.py:22",
-      "detail": "ALLOWED_BURDEN_SYSTEM_IDS contains 'hepatic', not 'liver'. system_capacity_scores (populated from burden engine and stored on InsightGraphV1, orchestrator.py:1702-1703) uses key 'hepatic'. Cursor MUST use system_capacity_scores.get('hepatic') for burden/capacity context in the liver health assembler. Calling system_capacity_scores['liver'] will silently return None/KeyError and produce wrong confidence without raising a clear error. This is the exact risk the prompt calls out at line 196 and it is real — verified against source."
+      "check": "Source cross-reference — Layer3InsightCard structure and system card IDs",
+      "result": "CONFIRMED — ACCESS PATH CONSTRAINT ACTIVE",
+      "citation": "backend/core/contracts/layer3_insights_v1.py:15-27 (SYSTEM_CARD_IDS), :83-96 (InsightCard fields)",
+      "detail": "cardiovascular__system_pressure, metabolic__system_pressure, hepatic__system_pressure are all in SYSTEM_CARD_IDS (line 15-27). InsightCard fields confirmed: title (line 90), severity Literal['action','watch','info'] (line 91), confidence Literal['high','medium','low'] (line 92), interpretation: str (line 94), next_steps: List[str] (line 95). CRITICAL ACCESS PATH CONSTRAINT: Layer3InsightsV1 is NOT a field on AnalysisDTO. It is assembled separately by assemble_layer3_insights(dto: AnalysisDTO) in backend/core/layer3/insight_assembler_v1.py:158. The current assemble_consumer_domain_scores_v1() signature does NOT accept Layer3InsightsV1. D-2 MUST extend the assembler to accept Layer3InsightsV1 as an additional argument (pre-assembled in orchestrator before the domain assembler call), OR create a separate narrative assembly function. Layer3InsightsV1 is the source for next_step_sentence (next_steps[0]) and contributor fallback (interpretation). This wiring does not require frontend changes and is achievable within the backend-only constraint."
     },
     {
-      "check": "AnalysisDTO frozen model — new field must be Pydantic-declared",
-      "result": "CONFIRMED — IMPLEMENTATION CONSTRAINT",
-      "citation": "backend/core/models/results.py:164-165",
-      "detail": "AnalysisDTO has model_config = ConfigDict(frozen=True, extra='forbid'). Adding consumer_domain_scores requires declaring it as a proper Optional Pydantic field (e.g., consumer_domain_scores: Optional[List[ConsumerDomainScoreV1]] = Field(default=None, ...)). Any attempt to inject it as an extra dict key or kwargs will raise ValidationError at runtime. The companion domain score model must also be a frozen Pydantic model with extra='forbid'. This is not a blocker but must be implemented correctly."
+      "check": "Source cross-reference — RootCauseV1 access path",
+      "result": "CONFIRMED — PARTIAL ACCESS; PRIMARY SIGNAL STATE AVAILABLE FROM INSIGHT GRAPH",
+      "citation": "backend/core/contracts/report_v1.py:85 (RootCauseV1 on ReportV1); backend/core/analytics/domain_score_assembler.py:86-94 (_iter_signal_results reads signal_state from InsightGraph)",
+      "detail": "RootCauseV1 lives on ReportV1.root_cause_v1, compiled by report_compiler_v1.py:769. It is NOT on AnalysisDTO and NOT currently passed to the domain assembler. However: (1) signal_state per signal is already available from InsightGraph.signal_results (as confirmed in D-1 — _iter_signal_results() iterates these). D-2 can read signal_state for contributor sentence selection from the same InsightGraph already passed to the assembler. (2) safety_class (for next_step routing) is available as a proxy via InsightCard.severity ('action'/'watch'/'info') on Layer3InsightsV1 — no RootCauseV1 needed for this. (3) RootCauseHypothesisV1.missing_data[] reason strings are NOT accessible without RootCauseV1 — but missing_marker_ids from D-1 contract covers the marker IDs. D-2 should use governed confidence sentence templates rather than constructing sentences from missing_data reason strings. RootCauseV1 hypothesis title (liver pattern differentiation) can be sourced from IDL.subtitle or InsightCard.interpretation as fallback — no RootCauseV1 needed for Wave 1 narrative assembly."
     },
     {
-      "check": "Signal IDs availability for active_signal_ids field",
-      "result": "CONFIRMED",
-      "citation": "backend/core/contracts/insight_graph_v1.py:200 and backend/core/analytics/signal_evaluator.py:51",
-      "detail": "InsightGraphV1.signal_results is List[Dict[str,Any]] where each item carries signal_id (confirmed at signal_evaluator.py:51). Assembler can iterate signal_results and filter by domain-relevant primary_metric or system mapping to produce active_signal_ids. This is a read-only access path — no modification to signal_results or InsightGraphV1 required."
+      "check": "Source cross-reference — ConfidenceTierV1 level count vs narrative contract 4-level model",
+      "result": "CONFIRMED — EXPLICIT MAPPING DECISION REQUIRED",
+      "citation": "backend/core/models/results.py:163 — ConfidenceTierV1 = Literal['high', 'medium', 'low']",
+      "detail": "D-1 defines confidence_tier as 3 levels (high/medium/low). The narrative contract (DOMAIN_NARRATIVE_CONTRACT_WAVE1.md) uses 4 levels (High/Good/Moderate/Limited) with distinct confidence sentences per level. Cursor must make an explicit mapping decision: either (A) map 3 D-1 tiers to 3 of the 4 narrative confidence sentences (collapsing one level), or (B) add a new narrative_confidence_level field to ConsumerDomainScoreV1 as a separate Optional field carrying the 4-level value. The mapping must be documented in code. Option B is preferred for truthfulness — it avoids information loss. Either way, the decision must be explicit and the chosen path documented in the sprint report."
     },
     {
-      "check": "IDL record IDs for primary_idl_record_id field",
-      "result": "CONFIRMED",
-      "citation": "backend/core/contracts/interpretation_display_layer_v1.py:25 and docs/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md:44-51",
-      "detail": "IDL records expose internal_id (ph_* pattern). Wave 1 relevant IDs: cardiovascular — ph_vascular_hcy_inflammation_v1, ph_lipid_residual_ldl_favourable_transport_v1; blood sugar — ph_metabolic_early_ir_v1, ph_hba1c_metabolic_stress_v1; liver — ph_hepatic_alt_inflammatory_v1. Assembler should look up fired IDL records from AnalysisDTO.interpretation_display_layer_v1. primary_idl_record_id is nullable — emit null if no matching IDL fired."
-    },
-    {
-      "check": "No prediabetes override path exists in analytics core",
-      "result": "CONFIRMED — STOP CONDITION BACKED",
-      "citation": "Grep for 'prediabetes' across backend/core/analytics/ — no matches found",
-      "detail": "Prompt constraint at line 179 is verified against source. There is no governed prediabetes override implementation path. Cursor must not invent one. If blood sugar confidence cannot be assembled without inventing unsupported logic, STOP condition 3 applies: stop and report the exact blocker."
-    },
-    {
-      "check": "Orchestrator injection point for assembler",
-      "result": "CONFIRMED",
-      "citation": "backend/core/pipeline/orchestrator.py:1309-1325 (InsightGraph build) and :1633-1638 (capacity scores finalised)",
-      "detail": "InsightGraph is built at Step 4.6 (~line 1309). system_capacity_scores is finalised after the burden/propagation steps (~line 1633). The domain score assembler should be invoked after both are available — approximately in the final assembly block (~line 2200+) where AnalysisResult is constructed. Must not alter the burden engine, scoring engine, or insight_graph_builder steps."
-    },
-    {
-      "check": "builders.py — consumer_domain_scores pass-through",
-      "result": "CONFIRMED — SCOPE GUIDANCE",
-      "citation": "backend/core/dto/builders.py:43-66",
-      "detail": "build_analysis_result_dto() constructs the API response. consumer_domain_scores should be included in the builder output for API availability (backend-only contract). It must not be wired to any frontend component or results page. STOP condition 2 applies if frontend code alteration is required."
+      "check": "Source cross-reference — prediabetes override in analytics core",
+      "result": "CONFIRMED — OVERRIDE DOES NOT EXIST IN ANALYTICS CORE",
+      "citation": "Grep for 'prediabetes' across backend/core/analytics/ — no matches found. Only present in backend/ssot/biomarkers.yaml:1612 (metadata tag) and backend/ssot/ranges.yaml:101,118 (range boundary labels) and test files.",
+      "detail": "DOMAIN_NARRATIVE_CONTRACT_WAVE1.md:264 describes a 'governed prediabetes override that fires when HbA1c >= 5.7% OR glucose >= 5.6 mmol/L (ADA Standards of Care 2026).' This logic is NOT implemented anywhere in backend/core/analytics/. Cursor must NOT attempt to implement a prediabetes override in D-2 — this would be inventing unsupported logic. For the blood sugar contributor sentence, use signal_state from InsightGraph.signal_results only. If signal_hba1c_high is at_risk, use the governed HbA1c contributor sentence. If signal_insulin_resistance is at_risk, use the IR contributor sentence. The prediabetes override case in the narrative contract's §2.2 priority list MUST be skipped — it references logic that does not exist. D-2 STOP condition 2 applies: if contributor sentence cannot be assembled without inventing unsupported logic, STOP and report."
     },
     {
       "check": "Stage 2B — behavioural scope defined",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:74-99 (in/out of scope), 312-336 (acceptance criteria)",
-      "detail": "Scope is precisely bounded: three Wave 1 domains, new assembler module, AnalysisDTO extension, targeted backend tests. Explicitly out of scope: frontend, narrative sentences, thyroid, kidney, second-wave domains, LLM."
+      "citation": "automation_bus/latest_cursor_prompt.md:80-115 (in/out of scope), :304-327 (acceptance criteria)",
+      "detail": "Scope precisely bounded: three Wave 1 domains, narrative field assembly in domain_score_assembler.py or equivalent, ConsumerDomainScoreV1 extension, IDL routing fix, targeted tests. Explicitly out of scope: frontend, PDF, score recalibration, thyroid, kidney, second-wave domains, LLM prose."
     },
     {
       "check": "Stage 2B — regression targets",
       "result": "CONFIRMED",
-      "citation": "backend/tests/enforcement/ (multiple test files confirmed)",
-      "detail": "Key regression targets: test_scoring_policy_not_hardcoded.py (scoring SSOT purity), test_no_raw_fields_in_insight_graph.py (InsightGraph contract), test_runtime_requires_insight_graph.py, test_scoring_orchestrator_integration.py. Sprint must not break these. Cursor should run the targeted suite declared in the prompt — not the full repository test suite."
+      "citation": "backend/tests/enforcement/ and backend/tests/unit/test_domain_score_assembler_v1.py",
+      "detail": "Key regression targets: test_domain_score_assembler_v1.py (D-1 targeted tests — both must still pass with extended model), enforcement tests: test_scoring_policy_not_hardcoded.py, test_no_raw_fields_in_insight_graph.py, test_runtime_requires_insight_graph.py. 79 enforcement tests passed in D-1 — must not regress. Any ConsumerDomainScoreV1 model extension must maintain Optional/default-safe backward compatibility for these tests."
     },
     {
       "check": "Stage 2B — no unintended behavioural drift",
       "result": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:107-115 (architectural constraints)",
-      "detail": "Assembler sits above the existing scoring/burden/signal layers and reads outputs only. It must not modify scoring engine, burden engine, or phenotype engine behaviour. Any existing panel that doesn't match a Wave 1 domain is unaffected. Output structure of existing fields is unchanged — new field is additive and Optional."
+      "citation": "automation_bus/latest_cursor_prompt.md:119-145 (architectural constraints)",
+      "detail": "Narrative assembler is additive — it reads D-1 outputs and adds narrative fields. Score logic, confidence_tier, band_label are NOT recalculated. D-1 assembler function _bands_ and _confidence_tier_ functions must not be modified. Existing AnalysisDTO fields are unchanged. STOP if score logic needs reopening."
     },
     {
       "check": "Forbidden files — control-plane scripts",
       "result": "NOT IN SCOPE — CONFIRMED",
-      "citation": "run_work_package.py, golden_gate_local.py, update_cursor_status.py not referenced in prompt scope",
-      "detail": "Not required for this sprint. If Cursor attempts to modify these files, that is a scope violation and STOP condition."
+      "citation": "run_work_package.py, golden_gate_local.py, update_cursor_status.py not referenced in D-2 scope",
+      "detail": "Not required. If Cursor attempts to modify these files, that is a scope violation and STOP condition."
+    },
+    {
+      "check": "Forbidden files — frontend",
+      "result": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:105,278-279 — frontend explicitly out of scope",
+      "detail": "No frontend files may be touched. Narrative fields are backend-only in D-2. If frontend wiring becomes necessary to validate, STOP condition 4 applies."
     }
   ],
   "advisory_notes": [
-    "The liver/hepatic key split is the single highest-risk implementation point in this sprint. Source-verified: scoring_policy.yaml uses 'liver' for the scoring rail; system_burden_engine.py uses 'hepatic' for burden/capacity. Cursor must map these explicitly in code with inline comments documenting the split.",
-    "AnalysisDTO.model_config = ConfigDict(frozen=True, extra='forbid') — the new ConsumerDomainScoreV1 dataclass or Pydantic model and the Optional field on AnalysisDTO must be declared before the AnalysisResult/AnalysisDTO is instantiated in the orchestrator. A runtime ValidationError here would be a hard crash.",
-    "IDL Layer3 system_pressure cards relevant to Wave 1: cardiovascular__system_pressure, metabolic__system_pressure, hepatic__system_pressure (confirmed in docs/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md:52-57). These may be useful as additional evidence references for the raw evidence block.",
-    "Blood sugar confidence: glucose and hba1c are required; insulin is optional enhancement. Triglycerides and TyG-index are derived markers accessible via InsightGraphV1.derived_ratios_meta. Cursor may use these as confidence enhancers but must not blend them silently into the numeric domain score.",
-    "AGENTS.md read-only constraint is a hard non-negotiable. It must not appear in the sprint git diff. Stage 4A closure protocol must verify this explicitly before finish.",
-    "The sprint reporting requirements (lines 339-390) are comprehensive. Cursor must confirm: (1) branch name, (2) explicit score source and confidence source per domain, (3) calibration handling especially liver/hepatic, (4) exact tests run with results, (5) that work is not merged to main."
+    "BRANCH BASE IS CRITICAL: D-1 is not yet merged. Cursor MUST create feature/domain-narrative-wave1 from feature/domain-score-assembler-wave1 (git checkout feature/domain-score-assembler-wave1 && git checkout -b feature/domain-narrative-wave1). If branched from main, STOP condition 1 fires at the precondition check.",
+    "IDL CARDIOVASCULAR GAP IS ALREADY RESOLVED: ph_lipid_residual_ldl_favourable_transport_v1 already has why_it_matters = 'Cumulative atherogenic exposure is read in full transport context; reassuring HDL does not erase residual LDL-related risk.' at idl_records_v1.yaml:113. The sprint narrative contract doc is stale on this point. Do NOT add new why_it_matters content. Wire the routing logic to use the existing field. The consequence fix is now a routing-only change.",
+    "LAYER3 ACCESS PATH: assemble_layer3_insights(dto) returns Layer3InsightsV1. It takes a full AnalysisDTO. The domain assembler currently takes scoring_result/insight_graph/idl_bundle/derived_ratios_meta/panel_biomarker_ids. D-2 must either (A) extend the assembler to accept an Optional[Layer3InsightsV1] parameter (pre-assembled in orchestrator before domain assembler call), or (B) create a separate narrative assembly pass. next_step_sentence and contributor fallback depend on InsightCard from Layer3.",
+    "PREDIABETES OVERRIDE DOES NOT EXIST: No prediabetes override logic exists in backend/core/analytics/. DOMAIN_NARRATIVE_CONTRACT_WAVE1.md §2.2 references this as if it exists — it does not. Blood sugar contributor sentence must use signal_state from InsightGraph only. Do not implement override logic.",
+    "CONFIDENCETIERV1 MISMATCH: D-1 confidence_tier is 3 levels (high/medium/low). Narrative contract uses 4 levels. Add a new Optional narrative_confidence_level field OR explicitly collapse 4 → 3 levels with documentation. Decision must be explicit and reported.",
+    "CONSUMER DOMAIN SCORE EXTENSION: ConsumerDomainScoreV1 is frozen=True, extra=forbid. New narrative fields (headline_sentence, contributor_sentence, confidence_sentence, consequence_sentence, next_step_sentence) must be declared as proper Optional[str] Pydantic fields with default=None (or default='') for backward compatibility. Do not inject as extra kwargs.",
+    "SIGNAL STATE ACCESS: signal_state per signal is readable from InsightGraph.signal_results (confirmed in D-1 — _iter_signal_results already iterates these). No need for RootCauseV1 to get signal_state. Use InsightGraph signal rows for contributor sentence selection logic."
   ],
   "overall_verdict": "HARDENED"
 }
