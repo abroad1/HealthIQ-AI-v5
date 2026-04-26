@@ -1,12 +1,12 @@
 ---
-work_id: D-3
-branch: feature/wave1-domain-cards
+work_id: D-4
+branch: feature/wave1-domain-refinement
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: BEHAVIOUR
 ---
 
-# D-3 — Wave 1 domain-specific next-step routing + frontend domain cards
+# D-4 — Wave 1 domain-card refinement
 
 ## Cursor agent
 
@@ -18,21 +18,23 @@ This is mandatory.
 
 ## Objective
 
-Complete the Wave 1 customer-domain card path for:
+Refine the live Wave 1 domain-card experience for:
 
 1. Cardiovascular health
 2. Blood sugar control
 3. Liver health
 
-This sprint has two tightly linked parts:
+This sprint exists because UAT found the Wave 1 layer is directionally valuable but still has one refinement sprint’s worth of issues before broader use.
 
-### Part A — backend cleanup
-Fix the known D-2 limitation so each Wave 1 domain has its own deterministic `next_step_sentence`.
+The purpose of this sprint is to improve:
 
-### Part B — frontend implementation
-Implement the Wave 1 frontend domain cards using the completed backend contract.
+- band/headline coherence
+- collapsed-card clarity
+- confidence/story alignment
+- user-facing traceability
+- removal of internal caveat leakage
 
-The backend fix must happen first inside this sprint.
+Do not widen into Phase 2 domains.
 
 ---
 
@@ -41,7 +43,7 @@ The backend fix must happen first inside this sprint.
 Before doing anything else:
 
 1. create and switch to this branch:
-   `feature/wave1-domain-cards`
+   `feature/wave1-domain-refinement`
 2. confirm the branch name before implementation begins
 
 If the branch already exists locally, check it out and confirm.
@@ -50,16 +52,15 @@ If the branch already exists locally, check it out and confirm.
 
 ## Precondition
 
-D-1 and D-2 must already exist on the current branch history or be cleanly available for this branch to build on.
+D-1, D-2, and D-3 must already exist on the current branch history or be cleanly available for this branch to build on.
 
 Before implementation, restate:
 
-- where D-1 output is being read from
-- where D-2 output is being read from
-- what exact D-2 limitation is being corrected in Part A
-- which frontend surfaces will consume the completed contract in Part B
+- where D-3 frontend/backend output is being read from
+- which exact Wave 1 UAT issues are being addressed in this sprint
+- which issues are intentionally out of scope
 
-If D-1 or D-2 output is missing or inconsistent, STOP and report.
+If prior sprint output is missing or inconsistent, STOP and report.
 
 ---
 
@@ -70,120 +71,142 @@ If D-1 or D-2 output is missing or inconsistent, STOP and report.
 - Blood sugar control
 - Liver health
 
-### Part A — backend
-1. Replace the current shared `next_step_sentence` behaviour with domain-specific deterministic routing.
-2. Keep all next-step routing grounded in approved existing deterministic sources.
-3. Do not invent new prose unless explicitly required by a minimal governed content fix and clearly reported.
-
-### Part B — frontend
-1. Build the Wave 1 domain card UI.
-2. Consume the completed backend contract.
-3. Show:
-   - consumer label
-   - short explainer
-   - score
+### Backend / contract refinement
+1. Refine collapsed headline / summary logic so the visible first impression is coherent with:
    - band label
-   - confidence
-   - one-line summary
-4. Expanded state should show:
-   - why this score
-   - confidence explanation
-   - what this may mean over time
-   - what to do next
-   - what would improve confidence
+   - contributor pattern
+   - confidence state
+2. Prevent “Stable / broadly stable” wording from conflicting with active-risk or active-strain messaging where UAT showed that mismatch.
+3. Remove internal caveat slug leakage from user-facing card presentation.
+4. Improve collapsed traceability with a short evidence anchor phrase where needed.
+
+### Frontend refinement
+1. Update the Wave 1 cards to present the refined contract clearly.
+2. Ensure internal caveat flags are not shown raw to users.
+3. Keep the cards additive and limited to the three Wave 1 domains.
 
 ---
 
 ## Out of scope
 
+- Phase 2 domains
 - clinician PDF changes
-- 6-domain expansion
-- thyroid scoring
-- kidney implementation
-- blood/iron/oxygen implementation
-- second-wave domains
-- broad redesign of the whole results page
-- replacing existing clinician or narrative surfaces wholesale
+- large results-page redesign
+- full “What’s driving this” redesign
+- scoring-engine overhaul
+- confidence-tier model redesign beyond what is necessary for Wave 1 coherence
+- any LLM-generated narrative layer
 
 Do not widen scope.
 
 ---
 
+## UAT findings this sprint must address
+
+These are the specific UAT issues to solve:
+
+### 1. Cardiovascular coherence issue
+“Stable / broadly stable” clashes with:
+- homocysteine/inflammation-led subtitle
+- “accumulating vascular-risk signals”
+- “warrant review” style consequence
+
+### 2. Blood sugar coherence issue
+“Stable / broadly stable” clashes with:
+- impaired sugar/lipid handling subtitle
+- “glycaemic strain” language
+- limited confidence + missing markers
+
+### 3. Internal caveat leakage
+Liver card exposes internal-style caveat strings / engineering tokens to users.
+
+### 4. Weak collapsed traceability
+Users cannot quickly see what evidence domain cards are anchored to.
+
+These issues are in scope.
+Do not drift into unrelated page complaints unless directly required to solve the above.
+
+---
+
+## Required implementation outcomes
+
+## A. Headline / band / pattern coherence
+
+For cardiovascular and blood sugar cards:
+
+1. Rework the collapsed `headline_sentence` logic so it does not say “broadly stable” when:
+   - contributor or consequence language indicates active-risk / active-strain
+   - confidence is materially limited and the subtitle implies dysfunction
+2. Keep the result medically restrained and consumer-legible.
+3. Do not simply make everything more alarming.
+4. The collapsed line must read as one coherent story with:
+   - band
+   - contributor pattern
+   - confidence
+
+### Important
+This may require adjusting sentence-template selection logic rather than the numeric score itself.
+Do not recalibrate scores unless absolutely necessary and clearly justified.
+
+---
+
+## B. Confidence / story alignment
+
+For cardiovascular especially:
+
+1. Ensure the visible collapsed narrative does not imply one story while the confidence sentence clearly refers to a different evidence base without explanation.
+2. If confidence is driven by lipid completeness but the card story is led by homocysteine/inflammation context, the visible wording must bridge that honestly.
+
+The user should not feel:
+- “the story says X”
+- “confidence says Y”
+- “I don’t know what this score is actually about”
+
+---
+
+## C. Remove internal caveat leakage
+
+1. Raw internal caveat flags / snake_case / engineering tokens must not be shown in the user-facing Wave 1 cards.
+2. If caveat information is still useful to surface, convert it into safe user-facing language only if already supported by the contract and truthful.
+3. Otherwise suppress it from the visible card.
+
+Do not remove backend truth just to hide it.
+The requirement is to stop leaking internal implementation language to the user.
+
+---
+
+## D. Improve collapsed traceability
+
+For each Wave 1 domain card, add or refine a short collapsed evidence anchor so the user can more quickly understand what the card is reacting to.
+
+Examples of the kind of thing intended:
+- a short evidence cue
+- a small anchor phrase
+- a concise “based mainly on…” style signal
+
+Do not add a large new section.
+Do not redesign the whole card.
+This is a compact traceability improvement only.
+
+---
+
 ## Architectural constraints
 
-### 1. Backend first inside this sprint
-Do not begin frontend wiring until domain-specific `next_step_sentence` is fixed and verified.
+### 1. Keep Wave 1 additive
+Do not replace the broader results architecture.
 
-### 2. Deterministic sources only
-Domain-specific next steps must come from approved deterministic sources only.
+### 2. Do not expose internal reasoning artifacts raw
+No internal flags, slugs, or implementation tokens should appear in the customer-facing UI.
 
-### 3. No clinician/consumer leakage
-Consumer card labels and copy must remain consumer-layer only.
-Do not alter clinician-facing labels or clinician report surfaces.
+### 3. Keep deterministic assembly
+All refinements must remain deterministic and grounded in the current backend/domain contract.
 
-### 4. Additive implementation only
-The Wave 1 cards are an additive product layer.
-Do not break or replace existing results structures beyond what is necessary to insert the new domain cards cleanly.
+### 4. No false reassurance and no unnecessary alarm
+This sprint is about coherence, not tone inflation.
 
-### 5. No fake next-step specificity
-Do not make domain-specific next steps by slicing generic prose heuristically if repo-grounded evidence does not support it.
-If a true domain-specific source is unavailable for one domain, STOP and report rather than inventing.
-
----
-
-## Part A — required backend fix
-
-### Current limitation from D-2
-`next_step_sentence` is currently shared across all three domains rather than truly domain-specific.
-
-### Required outcome
-Each of the three domains must emit its own deterministic `next_step_sentence`.
-
-### Approved source types
-Use only repo-grounded deterministic sources such as:
-- per-domain insight outputs, if available and appropriate
-- domain-mapped governed content
-- domain-scoped existing backend structures already identified in the narrative-contract research
-
-### Not allowed
-- generic shared fallback copied into all domains unless explicitly documented as last-resort behaviour and approved in the report
-- LLM-generated wording
-- hidden heuristics that are not traceable to existing domain evidence
-
-### Acceptance for Part A
-For each Wave 1 domain:
-- `next_step_sentence` must be populated
-- it must be domain-specific
-- it must be deterministic
-- the report must state the exact source path used
-
----
-
-## Part B — required frontend implementation
-
-### Wave 1 card UX
-Implement frontend cards for the three Wave 1 domains.
-
-Each collapsed card must show:
-- consumer label
-- short explainer
-- numeric score
-- band label
-- confidence tier
-- a concise summary line
-
-Expanded content must show:
-- contributor / why-this-score content
-- confidence sentence
-- consequence sentence
-- next-step sentence
-- missing markers / what would improve confidence
-
-### Frontend behaviour requirements
-- do not expose domains beyond the Wave 1 three
-- gracefully handle absence/null if contract is not present
-- do not duplicate clinician-report copy blocks unnecessarily
-- keep presentation calm, readable, and consistent with the intended domain-score layer
+### 5. Prefer narrow fixes
+Solve the UAT issues with the smallest high-value changes.
+Do not over-engineer.
 
 ---
 
@@ -194,15 +217,12 @@ These are likely, not mandatory:
 ### Backend
 - `backend/core/analytics/domain_narrative_wave1.py`
 - `backend/core/analytics/domain_score_assembler.py`
-- `backend/core/models/results.py`
-- `backend/core/pipeline/orchestrator.py`
-- any directly relevant domain narrative / insight wiring path needed for domain-specific next-step sourcing
+- targeted backend tests if template selection or visible contract fields change
 
 ### Frontend
-- `frontend/app/(app)/results/page.tsx`
-- new or existing Wave 1 domain card component(s)
-- `frontend/app/types/analysis.ts`
-- any directly relevant results component files
+- `frontend/app/components/results/Wave1DomainCards.tsx`
+- `frontend/app/(app)/results/page.tsx` only if minimally needed
+- `frontend/app/types/analysis.ts` only if contract-safe additions are truly needed
 - targeted frontend tests
 
 ---
@@ -211,12 +231,12 @@ These are likely, not mandatory:
 
 Do not touch unless absolutely required and justified:
 
-- clinician PDF/export paths
-- broad scoring policy files
-- thyroid/kidney/blood-iron domain logic
-- second-wave domain assets
-- unrelated frontend layout systems
-- pricing, trends, actions, upload flows
+- clinician report surfaces
+- PDF/export paths
+- pricing / trends / actions / upload flows
+- Phase 2 domain logic
+- unrelated results components
+- broad SSOT/scoring policy files
 
 ---
 
@@ -227,13 +247,13 @@ Do not run the full repository test suite.
 Run only:
 
 ### Backend
-1. targeted tests for domain-specific next-step routing
-2. directly relevant existing D-1 / D-2 backend tests for the Wave 1 domain contract
+1. targeted tests for headline/summary/coherence logic where touched
+2. directly relevant existing Wave 1 backend tests
 
 ### Frontend
-3. targeted tests for the new Wave 1 card components / results integration
-4. type-check for touched frontend/backend contract surfaces
-5. bounded browser/UAT check for the three Wave 1 domains on a completed analysis
+3. targeted tests for Wave 1 card rendering / caveat suppression / collapsed evidence anchors
+4. type-check for touched contract/UI surfaces
+5. bounded browser/UAT recheck on the same Wave 1 result path if practical
 
 Before running tests, state:
 - what you will run
@@ -246,24 +266,14 @@ Before running tests, state:
 
 This sprint is successful only if:
 
-1. Wave 1 backend contract now emits domain-specific `next_step_sentence` values for:
-   - cardiovascular health
-   - blood sugar control
-   - liver health
-
-2. The exact deterministic source for each domain-specific next step is identified and reported.
-
-3. Wave 1 frontend cards are implemented and consume the backend contract correctly.
-
-4. The frontend shows the three domains only.
-
-5. No clinician-facing surfaces are altered.
-
-6. No fake or non-deterministic prose is introduced.
-
-7. Targeted backend and frontend tests pass.
-
-8. Browser/UAT confirms the cards render coherently on a real completed analysis.
+1. Cardiovascular collapsed card no longer reads as “stable” while simultaneously presenting active vascular-risk accumulation without a coherent bridge.
+2. Blood sugar collapsed card no longer reads as “stable” while simultaneously presenting impaired handling / glycaemic strain without a coherent bridge.
+3. User-facing internal caveat leakage is removed.
+4. Each Wave 1 card has a clearer collapsed evidence anchor.
+5. Scores remain deterministic and medically grounded.
+6. No frontend exposure beyond the three Wave 1 domains is introduced.
+7. Targeted tests pass.
+8. Browser/UAT confirms the refined cards feel more coherent than D-3.
 
 ---
 
@@ -278,32 +288,32 @@ When finished, report back in these sections:
 - objective
 - files touched
 - files not touched
-- D-1/D-2 dependency check
-- exact D-2 limitation being fixed first
+- exact UAT issues addressed
 
-### 3. Part A — backend next-step routing fix
+### 3. Requested changes made
 - exact files changed
-- exact source used for each domain’s next-step sentence
-- how determinism was preserved
-- any fallback behaviour
+- what changed in backend logic
+- what changed in frontend presentation
+- how internal caveat leakage was handled
+- how collapsed evidence traceability was improved
 
-### 4. Part B — frontend Wave 1 cards
-- exact files changed
-- where cards were inserted
-- what each card shows collapsed and expanded
-- how missing/null contract states are handled
+### 4. Coherence fixes
+For cardiovascular and blood sugar separately:
+- what the old issue was
+- what changed
+- why the new wording/logic is more coherent
 
 ### 5. Tests run
 - exact tests
 - results
 
-### 6. Browser/UAT
-- what was checked
-- result
+### 6. Browser/UAT recheck
+- what was rechecked
+- whether the D-3 UAT issues now feel materially improved
 
 ### 7. Known limits intentionally deferred
-- anything left for later phases
-- any remaining contract or UX caveats
+- anything still left for later
+- any remaining Wave 1 caveats
 
 ### 8. Uncommitted / not merged
 - confirm work is not merged to `main`
@@ -314,12 +324,11 @@ When finished, report back in these sections:
 
 STOP and report instead of widening scope if any of the following occurs:
 
-1. Domain-specific next-step routing cannot be implemented from approved deterministic sources.
-2. Frontend implementation depends on additional backend contract redesign beyond Wave 1 scope.
-3. A fourth domain starts to creep into scope.
-4. Clinician-facing outputs would need to change to complete the sprint.
-5. The results page would need a broader redesign beyond inserting the Wave 1 cards.
-6. Browser/UAT reveals a major contract mismatch that cannot be fixed safely inside this sprint.
+1. Fixing coherence would require a broad score recalibration rather than narrow refinement.
+2. Removing caveat leakage would require hiding contract truth in a misleading way.
+3. Improving collapsed traceability would require a large results-page redesign.
+4. A Phase 2 domain starts to creep into scope.
+5. Clinician-facing outputs would need modification to complete this sprint.
 
 If blocked, report:
 - exact blocker
