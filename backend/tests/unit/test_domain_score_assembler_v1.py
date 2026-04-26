@@ -65,6 +65,11 @@ def test_wave1_emits_three_domains_score_and_confidence_together():
         assert r.confidence_tier in ("high", "medium", "low")
         assert r.band_label in ("strong", "stable", "watch", "review")
         assert r.source_track
+        assert r.headline_sentence
+        assert r.contributor_sentence
+        assert r.confidence_sentence
+        assert r.consequence_sentence
+        assert r.next_step_sentence
 
 
 def test_liver_blends_with_hepatic_capacity_not_liver_key():

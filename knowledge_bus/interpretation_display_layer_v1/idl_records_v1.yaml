@@ -105,6 +105,8 @@ records:
     display_order_priority: 10
     enabled_for_frontend: true
 
+  # D-2: consumer consequence line for lipid-dominant CV (why_it_matters) — routed when IDL is active
+  #   or, when signals are lipid-dominant without hcy, via governed_idl_field() in domain_narrative_wave1.
   - internal_id: ph_lipid_residual_ldl_favourable_transport_v1
     scientific_class: risk_construct
     clinical_display_label: Residual LDL signal within a more favourable lipid transport picture
