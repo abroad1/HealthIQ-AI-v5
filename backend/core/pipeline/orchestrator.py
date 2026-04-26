@@ -37,6 +37,7 @@ from core.analytics.criticality import evaluate_criticality
 from core.analytics.ratio_registry import RatioRegistry, DERIVED_IDS, compute
 from core.analytics.signal_evaluator import SignalRegistry, SignalEvaluator
 from core.clustering.cluster_schema_loader import get_cluster_schema_version_stamp
+from core.analytics.domain_score_assembler import assemble_consumer_domain_scores_v1
 from core.analytics.insight_graph_builder import build_insight_graph_v1
 from core.analytics.interpretation_display_layer_publish_v1 import (
     publish_interpretation_display_layer_v1,
@@ -2199,6 +2200,18 @@ class AnalysisOrchestrator:
                 insight_graph=insight_graph.model_dump() if hasattr(insight_graph, "model_dump") else {},
                 idl_bundle=idl_bundle,
             )
+            _panel_ids = {
+                str(k)
+                for k in filtered_biomarkers.keys()
+                if str(k) not in (UNIT_NORMALISATION_META_KEY, "age")
+            }
+            consumer_domain_scores = assemble_consumer_domain_scores_v1(
+                scoring_result=scoring_result,
+                insight_graph=insight_graph,
+                idl_bundle=idl_bundle,
+                derived_ratios_meta=derived_ratios_meta,
+                panel_biomarker_ids=set(_panel_ids),
+            )
             result = AnalysisDTO(
                 analysis_id=analysis_id,
                 biomarkers=biomarker_dtos,
@@ -2217,6 +2230,7 @@ class AnalysisOrchestrator:
                 lifestyle=lifestyle_artifact,
                 interpretation_display_layer_v1=idl_bundle,
                 narrative_report_v1=narrative_report_v1,
+                consumer_domain_scores=consumer_domain_scores,
             )
             
             logger.info(f"Analysis {analysis_id} completed successfully with {len(biomarker_dtos)} biomarkers, {len(cluster_dtos)} clusters, {len(insight_dtos)} insights")
@@ -2234,6 +2248,7 @@ class AnalysisOrchestrator:
                 status="error",
                 created_at="1970-01-01T00:00:00+00:00",
                 overall_score=0.0,
+                consumer_domain_scores=None,
                 replay_manifest={
                     "manifest_version": "1.0.0",
                     "failure_code": "analysis_pipeline_failed",

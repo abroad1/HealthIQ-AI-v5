@@ -244,6 +244,11 @@ async def start_analysis(
                 if getattr(dto, "narrative_report_v1", None) is not None
                 else None
             ),
+            "consumer_domain_scores": (
+                [x.model_dump() for x in dto.consumer_domain_scores]
+                if getattr(dto, "consumer_domain_scores", None) is not None
+                else None
+            ),
         }
         _analysis_results[analysis_id] = stored
 

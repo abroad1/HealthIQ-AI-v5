@@ -63,6 +63,7 @@ def build_analysis_result_dto(result: Dict[str, Any]) -> Dict[str, Any]:
         "replay_manifest": result.get("replay_manifest"),
         "interpretation_display_layer_v1": result.get("interpretation_display_layer_v1"),
         "narrative_report_v1": result.get("narrative_report_v1"),
+        "consumer_domain_scores": result.get("consumer_domain_scores"),
     }
 
 
