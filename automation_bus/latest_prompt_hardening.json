@@ -1,5 +1,5 @@
 {
-  "work_id": "D-4",
+  "work_id": "D-5",
   "bus_version": "1.3.1",
   "status": "HARDENED",
   "hardened_utc": "2026-04-26T00:00:00Z",
@@ -10,143 +10,108 @@
       "field": "front_matter_validation",
       "status": "CONFIRMED",
       "citation": "automation_bus/latest_cursor_prompt.md:1-7",
-      "detail": "All five mandatory fields present: work_id=D-4, branch=feature/wave1-domain-refinement, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=BEHAVIOUR."
+      "detail": "All five mandatory fields present: work_id=D-5, branch=feature/wave1-runtime-diagnosis, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=BEHAVIOUR."
     },
     {
       "id": "AUTHORITY_PATH_1",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "backend/core/analytics/domain_narrative_wave1.py:1 (exists, 409 lines read)",
-      "detail": "headline_cv(band) at lines 64-71, headline_met(band) at lines 74-81, headline_liv(band) at lines 84-91 — all accept only band:str. confidence_sentence_for(tier, domain) at lines 94-131. D-3 governed next_step constants at lines 306-317. Per-domain next_step functions at lines 366-408."
+      "citation": "frontend/app/components/results/Wave1DomainCards.tsx:1 (153 lines, readable)",
+      "detail": "Component confirmed present. Reads: d.headline_sentence (line 90), d.evidence_anchor_sentence (lines 77-81, conditional), d.confidence_sentence (line 114), d.caveat_flags (lines 139-144, join(' · ')), d.contributor_sentence (lines 66-70), d.band_label (line 87), d.confidence_tier (line 89). All D-4 fields are wired correctly in the current component."
     },
     {
       "id": "AUTHORITY_PATH_2",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "backend/core/analytics/domain_score_assembler.py:1 (exists, 507 lines read)",
-      "detail": "cv_block() at lines 352-396, met_block() at lines 398-443, liv_block() at lines 445-505. headline_sentence=headline_cv(band) at line 388, headline_met(band) at line 435, headline_liv(band) at line 491 (inferred). caveat_flags=['enzyme_limited_assessment','hepatic_burden_uses_key_hepatic_not_liver_scoring_rail'] at line 470."
+      "citation": "backend/app/routes/analysis.py:71-72, 191-253, 298-345, 348-369",
+      "detail": "Analysis route confirmed. In-memory cache at line 72 (_analysis_results dict). Results stored at completion time as frozen model_dump() at lines 191-253 (consumer_domain_scores: [x.model_dump() for x in dto.consumer_domain_scores] at line 247-251). Fetch path at lines 337-344 reads result_orm.processing_metadata.get(CLIENT_RESULT_SHAPE_V1) — the stored snapshot, not rebuilt live. Analysis c1c061ab-4691-4a47-80b8-2938ae1460e4 generated pre-D-4 will return pre-D-4 field values."
     },
     {
       "id": "AUTHORITY_PATH_3",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "frontend/app/components/results/Wave1DomainCards.tsx:1 (exists, 148 lines read)",
-      "detail": "Raw caveat_flags rendered at lines 134-138: {d.caveat_flags.join(' · ')} in amber box visible to all users. Collapsed card shows contributor_sentence truncated at 140 chars as CardDescription (lines 66-70). headline_sentence rendered at line 85. No dedicated evidence anchor rendered in collapsed state."
+      "citation": "backend/core/analytics/domain_score_assembler.py:44-47, 398, 400, 406, 448, 450, 456, 515, 517, 523",
+      "detail": "Assembler confirmed present. D-4 functions wired into all three domain blocks: cv_block uses headline_cv_coherent (line 398), confidence_sentence_cv_coherent (line 400), evidence_anchor_sentence (line 406). met_block uses headline_met_coherent (line 448), confidence_sentence_for (line 450), evidence_anchor_sentence (line 456). liv_block uses headline_liv (line 515), confidence_sentence_for (line 517), evidence_anchor_sentence (line 523). Liver caveat fix at lines 44-47: _LIVER_CAVEAT_USER_LINES contains user-safe prose — internal slug tokens have been replaced."
     },
     {
       "id": "AUTHORITY_PATH_4",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "frontend/app/(app)/results/page.tsx:1 (exists)"
+      "citation": "backend/core/analytics/domain_narrative_wave1.py:148, 160, 169, 188",
+      "detail": "D-4 narrative functions confirmed in code: headline_cv_coherent(band, contributor, consequence) at line 148, headline_met_coherent(band, contributor, consequence) at line 160, confidence_sentence_cv_coherent(tier, contributor) at line 169, evidence_anchor_sentence(domain, by_id, primary_idl_id) at line 188. D-4 logic is present in the current codebase and merged to main (commit 2d3c3d2)."
     },
     {
       "id": "AUTHORITY_PATH_5",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "frontend/app/types/analysis.ts:278 — ConsumerDomainScoreV1 interface",
-      "detail": "ConsumerDomainScoreV1 interface at lines 278-297. caveat_flags: string[] at line 289. No evidence_anchor_sentence field. AnalysisResult.consumer_domain_scores at line 325."
-    },
-    {
-      "id": "AUTHORITY_PATH_6",
-      "field": "authority_path_exists",
-      "status": "CONFIRMED",
-      "citation": "backend/core/models/results.py:166-234 — ConsumerDomainScoreV1 Pydantic model (exists)",
-      "detail": "ConsumerDomainScoreV1 at lines 166-234. extra='forbid' at line 173. Current sentence fields: headline_sentence(215), contributor_sentence(219), confidence_sentence(223), consequence_sentence(227), next_step_sentence(231). No evidence_anchor_sentence or similar field. Any new field requires explicit Pydantic declaration — model will reject it at runtime otherwise."
-    },
-    {
-      "id": "UAT_1_CV_HEADLINE",
-      "field": "source_cross_reference",
-      "status": "CONFIRMED",
-      "citation": "backend/core/analytics/domain_narrative_wave1.py:64-71 (headline_cv); domain_score_assembler.py:73-81 (_band_label_from_0_100), :388 (headline_sentence=headline_cv(band))",
-      "detail": "headline_cv(band='stable') returns 'Your cardiovascular health looks broadly stable based on your current results.' unconditionally (line 68). Band='stable' is emitted for any score 65-79 regardless of active signal context. Active signals and IDL evidence are NOT passed to headline_cv(). UAT mismatch confirmed: 'broadly stable' can appear simultaneously with homocysteine/inflammation-led contributor and active-risk consequence sentences."
-    },
-    {
-      "id": "UAT_2_MET_HEADLINE",
-      "field": "source_cross_reference",
-      "status": "CONFIRMED",
-      "citation": "backend/core/analytics/domain_narrative_wave1.py:74-81 (headline_met); domain_score_assembler.py:73-81, :435 (headline_sentence=headline_met(band))",
-      "detail": "headline_met(band='stable') returns 'Your blood sugar control looks broadly stable based on your current results.' unconditionally (line 78). Same structural defect as UAT #1. UAT mismatch confirmed: 'broadly stable' can appear with glycaemic strain / impaired handling contributor language."
-    },
-    {
-      "id": "UAT_3_CAVEAT_LEAKAGE",
-      "field": "source_cross_reference",
-      "status": "CONFIRMED",
-      "citation": "backend/core/analytics/domain_score_assembler.py:470; frontend/app/components/results/Wave1DomainCards.tsx:134-138",
-      "detail": "Internal engineering tokens 'enzyme_limited_assessment' and 'hepatic_burden_uses_key_hepatic_not_liver_scoring_rail' populated at assembler line 470 as caveat_flags. Wave1DomainCards.tsx:134-138 renders {d.caveat_flags.join(' · ')} raw in amber box visible to all users. Internal leakage confirmed. Fix can be: (a) backend — stop populating raw tokens in caveat_flags, store internal truth elsewhere if needed; (b) frontend — suppress or translate. Preferred: suppress at frontend (no backend contract change) unless internal truth removal is also warranted. Do not expose internal implementation strings to users in any form."
-    },
-    {
-      "id": "UAT_4_TRACEABILITY",
-      "field": "source_cross_reference",
-      "status": "CONFIRMED",
-      "citation": "frontend/app/components/results/Wave1DomainCards.tsx:66-76; backend/core/models/results.py:166-234 (extra='forbid' at line 173)",
-      "detail": "Collapsed card shows contributor_sentence truncated to 140 chars as CardDescription — no dedicated evidence anchor. ConsumerDomainScoreV1 schema has extra='forbid' — new fields will cause validation errors unless explicitly declared in Pydantic model. PREFERRED PATH: refine contributor_sentence to be more evidence-anchored in assembly (no schema change). ALTERNATIVE: add evidence_anchor_sentence field to results.py:166-234 — requires results.py added to scope. Cursor must choose and report which path is used."
-    },
-    {
-      "id": "UAT_CONFIDENCE_STORY",
-      "field": "source_cross_reference",
-      "status": "CONFIRMED",
-      "citation": "backend/core/analytics/domain_narrative_wave1.py:94-131 (confidence_sentence_for); :157-176 (cv_contributor using _ID_VASCULAR/_ID_LIPID priority); domain_score_assembler.py:388-393 (cv_block call site)",
-      "detail": "confidence_sentence_for(tier, 'cv') emits lipid-completeness framing at all tiers (e.g. line 103: 'core lipid markers are present') regardless of whether _ID_VASCULAR (hcy/inflammation) or _ID_LIPID is the primary story driver. When cv_contributor() returns a vascular/hcy subtitle but confidence sentence references lipid markers, the card tells two different stories. Fix requires passing primary IDL selection or active signal context to confidence_sentence_for, or adding a bridging sentence variant for the vascular/hcy-led path."
-    },
-    {
-      "id": "PRIOR_TASK_D3_BLOCKER",
-      "field": "prior_task_findings",
-      "status": "CONFIRMED — PRE-EXECUTION BLOCKER",
-      "citation": "automation_bus/state/work_package_active.json:2-5 (work_id=D-3, status=STARTED); automation_bus/latest_audit_summary.md:4-6 (gate_status=GATE_PASSED, recommendation=PROCEED with finish)",
-      "detail": "D-3 gate PASSED and audit recommended run_work_package.py finish. However work_package_active.json still shows D-3 STARTED — finish has not been executed. D-4 Stage 3 (kernel start) cannot proceed until D-3 token is cleared. Cursor must: (1) confirm on feature/wave1-domain-cards; (2) run python backend/scripts/run_work_package.py finish for D-3; (3) verify work_package_active.json is removed/cleared; (4) then proceed with D-4 branch creation and Stage 3."
+      "citation": "frontend/app/types/analysis.ts:277-298, 327",
+      "detail": "ConsumerDomainScoreV1 interface at lines 278-298. evidence_anchor_sentence?: string at line ~298 (D-4 field declared). consumer_domain_scores?: ConsumerDomainScoreV1[] | null at line 327. TypeScript contract is up to date with D-4 schema."
     },
     {
       "id": "BRANCH_STATE",
       "field": "authority_verification",
-      "status": "CONFIRMED — RISK",
-      "citation": "git branch -a: feature/wave1-domain-refinement does not exist; feature/wave1-domain-cards exists",
-      "detail": "D-4 target branch feature/wave1-domain-refinement does not yet exist. Must be created from feature/wave1-domain-cards (D-3 branch) — NOT from main. If created from main, D-3 backend (domain_narrative_wave1.py, domain_score_assembler.py) and frontend (Wave1DomainCards.tsx, analysis.ts) changes will be absent and precondition check will fail."
+      "status": "ADVISORY — MUST CREATE",
+      "citation": "git branch -a: feature/wave1-runtime-diagnosis not present",
+      "detail": "Branch feature/wave1-runtime-diagnosis does not exist. Cursor must create it. Base branch: main — D-4 is merged there (commit 2d3c3d2). Do NOT base on feature/wave1-domain-refinement (D-4 branch); D-4 changes are in main."
+    },
+    {
+      "id": "STAGE3_BLOCKER_STALE_TOKEN",
+      "field": "prior_task_findings",
+      "status": "CONFIRMED — STAGE 3 BLOCKER",
+      "citation": "automation_bus/state/work_package_active.json:2-3 (work_id=D-4, status=STARTED)",
+      "detail": "D-4 kernel token is still STARTED. D-4 changes are merged to main (commit 2d3c3d2) but run_work_package.py finish was never executed. SOP §14 non-negotiable: No execution without a HARDENED prompt. Stage 3 (run_work_package.py start for D-5) cannot proceed until the stale D-4 token is resolved. Human must clear the D-4 token before Stage 3. Cursor must not override manually."
+    },
+    {
+      "id": "PERSISTENCE_DIAGNOSIS",
+      "field": "source_cross_reference",
+      "status": "CONFIRMED",
+      "citation": "backend/app/routes/analysis.py:191-253 (store), 337-344 (fetch)",
+      "detail": "Results are frozen JSON snapshots written at analysis-completion time. Fetch path reads the stored snapshot from DB, not rebuilt dynamically. Analysis c1c061ab-4691-4a47-80b8-2938ae1460e4 predates D-4 and will return pre-D-4 values for headline_sentence, evidence_anchor_sentence, confidence_sentence, and caveat_flags regardless of the current code state. Most likely root cause of the UAT mismatch. Rerunning the analysis (new submission) is the expected remediation path."
+    },
+    {
+      "id": "D4_CODE_TRUTH",
+      "field": "source_cross_reference",
+      "status": "CONFIRMED",
+      "citation": "domain_narrative_wave1.py:148, 160, 169, 188; domain_score_assembler.py:44-47, 398, 400, 406, 448, 450, 456, 515, 517, 523; git log:2d3c3d2",
+      "detail": "D-4 backend logic is present and merged. All three domain blocks use D-4 narrative functions. Liver caveat uses user-safe prose lines (not internal slugs). Any NEW analysis will pick up D-4 fields. The existing persisted analysis will not, since results are frozen at completion time."
+    },
+    {
+      "id": "FRONTEND_WIRING_TRUTH",
+      "field": "source_cross_reference",
+      "status": "CONFIRMED",
+      "citation": "frontend/app/components/results/Wave1DomainCards.tsx:77-81, 90, 114, 139-144",
+      "detail": "All D-4 fields are wired in Wave1DomainCards.tsx. headline_sentence rendered at line 90. evidence_anchor_sentence conditionally rendered at lines 77-81 (shows if non-null). confidence_sentence rendered at line 114 (expanded section). caveat_flags rendered at lines 139-144 as join(' · '). Frontend wiring is not the cause of the mismatch for a stale persisted result — but Cursor should verify caveat_flags join renders acceptably for the two long prose sentences now in _LIVER_CAVEAT_USER_LINES."
     },
     {
       "id": "FORBIDDEN_FILES",
       "field": "scope_boundary",
       "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:229-240 (out of scope)",
-      "detail": "Clinician PDF paths, backend/ssot/, pricing/trends/actions/upload flows, Phase 2 domains, run_work_package.py, golden_gate_local.py not in scope."
+      "citation": "automation_bus/latest_cursor_prompt.md:98-107 (out of scope)",
+      "detail": "Broad product refinement, Phase 2 work, clinician PDF, new domain logic, and speculative fixes are out of scope. backend/ssot/, run_work_package.py, golden_gate_local.py not in scope. Diagnosis only unless a tiny, fully obvious mechanical mistake is found and explicitly reported first."
     },
     {
-      "id": "RISK_SCHEMA_EXTENSION",
-      "field": "behavioural_risk",
-      "status": "ADVISORY",
-      "citation": "backend/core/models/results.py:173 (extra='forbid'); automation_bus/latest_cursor_prompt.md:214-225 (scope list does not include results.py)",
-      "detail": "If evidence anchor (req D) is implemented as a new ConsumerDomainScoreV1 field: results.py extra='forbid' at line 173 means any undeclared field causes validation errors at runtime. results.py is NOT in the D-4 scope list. Cursor must prefer refining contributor_sentence (no schema change). If new field is truly required: explicitly add results.py to scope, update Pydantic model, update TypeScript interface in analysis.ts, and report the schema extension in finish report."
+      "id": "BEHAVIOUR_SCOPE",
+      "field": "behavioural_hardening",
+      "status": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:22-35 (objective); SOP v1.3.1 §4",
+      "detail": "BEHAVIOUR classification is correct — any fix (if discovered) would touch Intelligence Core components. Diagnosis-only scope is well defined. No regression targets needed for pure diagnosis. If a tiny fix is made, Cursor must report it explicitly before proceeding and confirm no unintended behavioural drift. STOP conditions are binding: if diagnosis requires broad unrelated implementation, stop and report."
     },
     {
-      "id": "RISK_HEADLINE_CALLERS",
+      "id": "CAVEAT_DISPLAY_ADVISORY",
       "field": "behavioural_risk",
       "status": "ADVISORY",
-      "citation": "backend/core/analytics/domain_narrative_wave1.py:64,74 (function signatures); domain_score_assembler.py:388,435 (call sites)",
-      "detail": "headline_cv(band) and headline_met(band) take only band:str. Extending for signal-context requires new parameters. Cursor must grep all callers (including test files) before changing signatures to avoid breaking positional callers. Call sites in domain_score_assembler.py:388,435 must be updated to pass signal context."
-    },
-    {
-      "id": "RISK_DEFERRED_TIER_COLLAPSE",
-      "field": "behavioural_risk",
-      "status": "ADVISORY",
-      "citation": "backend/core/analytics/domain_narrative_wave1.py:94-95 (tier fallback); automation_bus/latest_audit_summary.md lines ~156 (deferred D-2 issue)",
-      "detail": "confidence_sentence_for() maps unknown tiers to 'medium' at line 95. This deferred D-2/D-3 issue remains unresolved. D-4 may touch confidence_sentence_for() for story alignment (req B). Cursor must NOT resolve the deferred tier-collapse issue unless it is the minimum required fix for UAT acceptance criterion. Report explicitly if touched."
-    },
-    {
-      "id": "RISK_MISSING_MARKERS_DISPLAY",
-      "field": "behavioural_risk",
-      "status": "ADVISORY",
-      "citation": "frontend/app/components/results/Wave1DomainCards.tsx:120-133",
-      "detail": "missing_marker_ids displayed as font-mono raw biomarker ID strings. Not a flagged UAT issue. Cursor must NOT widen scope to change this rendering."
+      "citation": "frontend/app/components/results/Wave1DomainCards.tsx:139-144; backend/core/analytics/domain_score_assembler.py:44-47",
+      "detail": "caveat_flags.join(' · ') renders both liver prose sentences as a single concatenated amber string separated by ' · '. The two sentences in _LIVER_CAVEAT_USER_LINES are each ~90 characters — the joined result is ~185 characters in one amber block. Cursor should assess whether this display is acceptable or whether the render path needs adjustment (e.g., render as list rather than join). Raising this as a finding, not a sprint obligation — do not widen scope unless it blocks acceptance."
     }
   ],
   "advisory_notes": [
-    "BLOCKER: Run python backend/scripts/run_work_package.py finish on feature/wave1-domain-cards for D-3 BEFORE starting D-4. Token must be cleared first.",
-    "BRANCH BASE: Create feature/wave1-domain-refinement from feature/wave1-domain-cards, not from main.",
-    "HEADLINE FIX — NARROW: Change headline_cv() and headline_met() to accept signal context. Do not touch _band_label_from_0_100() or numeric scoring. Grep all callers before changing function signatures.",
-    "CAVEAT LEAKAGE — PREFERRED: Suppress raw caveat_flags rendering in Wave1DomainCards.tsx. Do not expose snake_case/engineering tokens to users.",
-    "EVIDENCE ANCHOR — NARROW PATH FIRST: Refine contributor_sentence to be more evidence-anchored before attempting a new schema field. If a new field is needed, add results.py explicitly to scope.",
-    "SCHEMA CONSTRAINT: ConsumerDomainScoreV1 has extra='forbid' at backend/core/models/results.py:173. Any unregistered field will cause runtime validation errors.",
-    "DEFERRED ISSUE: Do not resolve the 4→3 confidence tier collapse (domain_narrative_wave1.py:95) unless it is the minimal fix required for UAT acceptance.",
-    "STOP CONDITIONS ARE BINDING: If coherence fix requires broad score recalibration, report and stop. If traceability fix requires large results redesign, report and stop."
+    "STAGE 3 BLOCKER: D-4 token is still STARTED in work_package_active.json. Human must clear or finish D-4 before running python backend/scripts/run_work_package.py start for D-5.",
+    "BRANCH BASE: Create feature/wave1-runtime-diagnosis from main — D-4 is merged there (commit 2d3c3d2).",
+    "PRIMARY HYPOTHESIS: Analysis c1c061ab-4691-4a47-80b8-2938ae1460e4 is a stale persisted result from before D-4. It will show pre-D-4 values regardless of the current code state. Verify this first (Task C) before deeper diagnosis.",
+    "D-4 CODE IS CORRECT: Backend D-4 functions are present and wired. Frontend D-4 fields are wired. A new analysis submission should produce correct D-4 output.",
+    "LIVER CAVEAT DISPLAY: caveat_flags.join(' · ') on two 90-char prose sentences = long amber block. Flag in report if it renders poorly.",
+    "DIAGNOSIS ONLY: Do not implement fixes unless a tiny, fully obvious mechanical mistake is found. Report explicitly before touching any file.",
+    "STOP CONDITIONS ARE BINDING: If diagnosis requires broad implementation, report blocker with exact cause and stop."
   ],
   "overall_verdict": "HARDENED"
 }

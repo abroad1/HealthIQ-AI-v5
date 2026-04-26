@@ -1,12 +1,12 @@
 ---
-work_id: D-4
-branch: feature/wave1-domain-refinement
+work_id: D-5
+branch: feature/wave1-runtime-diagnosis
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: BEHAVIOUR
 ---
 
-# D-4 — Wave 1 domain-card refinement
+# D-5 — Wave 1 runtime verification and stale-path diagnosis
 
 ## Cursor agent
 
@@ -18,23 +18,20 @@ This is mandatory.
 
 ## Objective
 
-Refine the live Wave 1 domain-card experience for:
+Diagnose why the live Wave 1 UAT recheck still appears to show pre-D-4 behaviour.
 
-1. Cardiovascular health
-2. Blood sugar control
-3. Liver health
+This sprint is diagnosis only.
 
-This sprint exists because UAT found the Wave 1 layer is directionally valuable but still has one refinement sprint’s worth of issues before broader use.
+The purpose is to determine, for the specific live analysis under review, whether the mismatch is caused by:
 
-The purpose of this sprint is to improve:
+- stale persisted analysis payload
+- stale frontend build/runtime
+- wrong frontend field wiring
+- D-4 logic not being exercised for this analysis
+- or a genuine failure in D-4 backend/frontend refinement logic
 
-- band/headline coherence
-- collapsed-card clarity
-- confidence/story alignment
-- user-facing traceability
-- removal of internal caveat leakage
-
-Do not widen into Phase 2 domains.
+Do not implement fixes in this sprint unless a tiny, fully obvious mechanical mistake is discovered and explicitly reported first.
+Primary goal is repo/runtime truth.
 
 ---
 
@@ -43,237 +40,190 @@ Do not widen into Phase 2 domains.
 Before doing anything else:
 
 1. create and switch to this branch:
-   `feature/wave1-domain-refinement`
-2. confirm the branch name before implementation begins
+   `feature/wave1-runtime-diagnosis`
+2. confirm the branch name before investigation begins
 
 If the branch already exists locally, check it out and confirm.
 
 ---
 
-## Precondition
+## Problem statement
 
-D-1, D-2, and D-3 must already exist on the current branch history or be cleanly available for this branch to build on.
+The post–D-4 live UAT still reported:
 
-Before implementation, restate:
+- cardiovascular and blood sugar showing “broadly stable”
+- liver still leaking internal caveat slugs
+- no visible evidence-anchor improvement
+- overall behaviour looking closer to pre-D-4 than post-D-4
 
-- where D-3 frontend/backend output is being read from
-- which exact Wave 1 UAT issues are being addressed in this sprint
-- which issues are intentionally out of scope
+That may mean:
+1. the wrong build is running
+2. the wrong analysis payload is being viewed
+3. D-4 only affects newly generated results
+4. the frontend is not rendering the new fields
+5. the D-4 logic is present but not firing for this payload
+6. or D-4 did not actually solve the runtime path
 
-If prior sprint output is missing or inconsistent, STOP and report.
+This sprint must determine which is true.
+
+---
+
+## Specific target to investigate
+
+Login:
+- `test-user3@example.com`
+- `Subaru@555`
+
+Analysis result:
+- `http://localhost:3000/results?analysis_id=c1c061ab-4691-4a47-80b8-2938ae1460e4`
 
 ---
 
 ## In scope
 
-### Wave 1 only
-- Cardiovascular health
-- Blood sugar control
-- Liver health
-
-### Backend / contract refinement
-1. Refine collapsed headline / summary logic so the visible first impression is coherent with:
-   - band label
-   - contributor pattern
-   - confidence state
-2. Prevent “Stable / broadly stable” wording from conflicting with active-risk or active-strain messaging where UAT showed that mismatch.
-3. Remove internal caveat slug leakage from user-facing card presentation.
-4. Improve collapsed traceability with a short evidence anchor phrase where needed.
-
-### Frontend refinement
-1. Update the Wave 1 cards to present the refined contract clearly.
-2. Ensure internal caveat flags are not shown raw to users.
-3. Keep the cards additive and limited to the three Wave 1 domains.
+### Investigation only
+1. Inspect the exact stored/backend response for analysis id:
+   `c1c061ab-4691-4a47-80b8-2938ae1460e4`
+2. Verify whether the API response for that analysis currently contains D-4 fields/values such as:
+   - refined `headline_sentence`
+   - refined `confidence_sentence`
+   - user-facing liver caveat strings
+   - `evidence_anchor_sentence`
+3. Verify whether the frontend is actually reading/rendering those fields.
+4. Verify whether the running frontend and backend processes are serving the expected code.
+5. Determine whether this analysis would need recomputation/regeneration to pick up D-4 changes.
 
 ---
 
 ## Out of scope
 
-- Phase 2 domains
-- clinician PDF changes
-- large results-page redesign
-- full “What’s driving this” redesign
-- scoring-engine overhaul
-- confidence-tier model redesign beyond what is necessary for Wave 1 coherence
-- any LLM-generated narrative layer
+- broad product refinement
+- Phase 2 work
+- unrelated frontend redesign
+- clinician PDF work
+- new domain logic
+- speculative fixes not grounded in the diagnosis
 
 Do not widen scope.
 
 ---
 
-## UAT findings this sprint must address
+## Required investigation tasks
 
-These are the specific UAT issues to solve:
+## A. Backend truth check
 
-### 1. Cardiovascular coherence issue
-“Stable / broadly stable” clashes with:
-- homocysteine/inflammation-led subtitle
-- “accumulating vascular-risk signals”
-- “warrant review” style consequence
+For the target analysis id:
 
-### 2. Blood sugar coherence issue
-“Stable / broadly stable” clashes with:
-- impaired sugar/lipid handling subtitle
-- “glycaemic strain” language
-- limited confidence + missing markers
+1. identify where the persisted result is stored and how it is served
+2. inspect the exact backend/API payload for `consumer_domain_scores`
+3. verify for each Wave 1 domain whether the returned payload currently contains:
+   - `headline_sentence`
+   - `confidence_sentence`
+   - `caveat_flags`
+   - `evidence_anchor_sentence`
+4. record the actual values seen for:
+   - cardiovascular
+   - blood sugar
+   - liver
 
-### 3. Internal caveat leakage
-Liver card exposes internal-style caveat strings / engineering tokens to users.
-
-### 4. Weak collapsed traceability
-Users cannot quickly see what evidence domain cards are anchored to.
-
-These issues are in scope.
-Do not drift into unrelated page complaints unless directly required to solve the above.
+Goal:
+prove whether the backend payload is already correct, incorrect, or stale.
 
 ---
 
-## Required implementation outcomes
+## B. Frontend rendering check
 
-## A. Headline / band / pattern coherence
-
-For cardiovascular and blood sugar cards:
-
-1. Rework the collapsed `headline_sentence` logic so it does not say “broadly stable” when:
-   - contributor or consequence language indicates active-risk / active-strain
-   - confidence is materially limited and the subtitle implies dysfunction
-2. Keep the result medically restrained and consumer-legible.
-3. Do not simply make everything more alarming.
-4. The collapsed line must read as one coherent story with:
-   - band
-   - contributor pattern
+1. inspect the current `Wave1DomainCards` rendering path
+2. verify exactly which fields it reads for:
+   - collapsed title/summary/headline
    - confidence
+   - caveat display
+   - evidence anchor
+3. determine whether the live UI could still show old text even if backend payload is correct
+4. identify any mismatch between:
+   - fields D-4 produces
+   - fields the component actually renders
 
-### Important
-This may require adjusting sentence-template selection logic rather than the numeric score itself.
-Do not recalibrate scores unless absolutely necessary and clearly justified.
-
----
-
-## B. Confidence / story alignment
-
-For cardiovascular especially:
-
-1. Ensure the visible collapsed narrative does not imply one story while the confidence sentence clearly refers to a different evidence base without explanation.
-2. If confidence is driven by lipid completeness but the card story is led by homocysteine/inflammation context, the visible wording must bridge that honestly.
-
-The user should not feel:
-- “the story says X”
-- “confidence says Y”
-- “I don’t know what this score is actually about”
+Goal:
+prove whether the frontend wiring is correct or stale.
 
 ---
 
-## C. Remove internal caveat leakage
+## C. Persistence / recomputation check
 
-1. Raw internal caveat flags / snake_case / engineering tokens must not be shown in the user-facing Wave 1 cards.
-2. If caveat information is still useful to surface, convert it into safe user-facing language only if already supported by the contract and truthful.
-3. Otherwise suppress it from the visible card.
+Determine whether `analysis_id=c1c061ab-4691-4a47-80b8-2938ae1460e4` is:
+- a stored analysis result generated before D-4
+- an object that would need regeneration to pick up D-4-computed strings
+- or a dynamically rebuilt response that should already reflect D-4
 
-Do not remove backend truth just to hide it.
-The requirement is to stop leaking internal implementation language to the user.
+Be explicit:
+- are domain narrative fields computed live on fetch?
+- or persisted at analysis-completion time?
 
----
-
-## D. Improve collapsed traceability
-
-For each Wave 1 domain card, add or refine a short collapsed evidence anchor so the user can more quickly understand what the card is reacting to.
-
-Examples of the kind of thing intended:
-- a short evidence cue
-- a small anchor phrase
-- a concise “based mainly on…” style signal
-
-Do not add a large new section.
-Do not redesign the whole card.
-This is a compact traceability improvement only.
+This is critical.
 
 ---
 
-## Architectural constraints
+## D. Runtime/build check
 
-### 1. Keep Wave 1 additive
-Do not replace the broader results architecture.
+Verify:
+1. whether the running frontend is using the latest built code for D-4
+2. whether the running backend is using the latest D-4 logic
+3. whether there is any stale dev-server/build/cache issue that could explain the mismatch
 
-### 2. Do not expose internal reasoning artifacts raw
-No internal flags, slugs, or implementation tokens should appear in the customer-facing UI.
-
-### 3. Keep deterministic assembly
-All refinements must remain deterministic and grounded in the current backend/domain contract.
-
-### 4. No false reassurance and no unnecessary alarm
-This sprint is about coherence, not tone inflation.
-
-### 5. Prefer narrow fixes
-Solve the UAT issues with the smallest high-value changes.
-Do not over-engineer.
+Do not guess.
+Ground this in what you can actually observe.
 
 ---
 
-## Files likely in scope
+## E. Live browser verification
 
-These are likely, not mandatory:
+Using the same login and analysis id:
+1. log in
+2. wait for the session to settle
+3. open the result URL
+4. inspect the visible Wave 1 cards
+5. compare what is on-screen against:
+   - the backend payload
+   - the frontend field mapping
+   - the intended D-4 logic
 
-### Backend
-- `backend/core/analytics/domain_narrative_wave1.py`
-- `backend/core/analytics/domain_score_assembler.py`
-- targeted backend tests if template selection or visible contract fields change
-
-### Frontend
-- `frontend/app/components/results/Wave1DomainCards.tsx`
-- `frontend/app/(app)/results/page.tsx` only if minimally needed
-- `frontend/app/types/analysis.ts` only if contract-safe additions are truly needed
-- targeted frontend tests
-
----
-
-## Files likely out of scope
-
-Do not touch unless absolutely required and justified:
-
-- clinician report surfaces
-- PDF/export paths
-- pricing / trends / actions / upload flows
-- Phase 2 domain logic
-- unrelated results components
-- broad SSOT/scoring policy files
-
----
-
-## Testing discipline
-
-Do not run the full repository test suite.
-
-Run only:
-
-### Backend
-1. targeted tests for headline/summary/coherence logic where touched
-2. directly relevant existing Wave 1 backend tests
-
-### Frontend
-3. targeted tests for Wave 1 card rendering / caveat suppression / collapsed evidence anchors
-4. type-check for touched contract/UI surfaces
-5. bounded browser/UAT recheck on the same Wave 1 result path if practical
-
-Before running tests, state:
-- what you will run
-- why it is relevant
-- what broader suites you are deliberately excluding
+Goal:
+state exactly where the divergence occurs.
 
 ---
 
 ## Acceptance criteria
 
-This sprint is successful only if:
+This sprint is successful only if it answers, explicitly:
 
-1. Cardiovascular collapsed card no longer reads as “stable” while simultaneously presenting active vascular-risk accumulation without a coherent bridge.
-2. Blood sugar collapsed card no longer reads as “stable” while simultaneously presenting impaired handling / glycaemic strain without a coherent bridge.
-3. User-facing internal caveat leakage is removed.
-4. Each Wave 1 card has a clearer collapsed evidence anchor.
-5. Scores remain deterministic and medically grounded.
-6. No frontend exposure beyond the three Wave 1 domains is introduced.
-7. Targeted tests pass.
-8. Browser/UAT confirms the refined cards feel more coherent than D-3.
+1. Is the backend payload for this analysis already showing D-4-refined fields or not?
+2. If yes, is the frontend rendering the wrong fields?
+3. If no, is the analysis result stale/persisted and therefore needs regeneration?
+4. Is the running frontend/backend code actually on the expected D-4 implementation?
+5. What is the smallest correct next step:
+   - rerun analysis
+   - regenerate stored result
+   - fix frontend field wiring
+   - fix backend runtime path
+   - or do a true D-4 follow-up refinement
+
+---
+
+## Testing / validation discipline
+
+Do not run the full repository test suite.
+
+Run only what is necessary to prove runtime truth, for example:
+- targeted inspection commands
+- direct API retrieval for the analysis id
+- minimal backend/frontend checks
+- bounded browser verification
+
+Before running anything, state:
+- what you will inspect
+- why it is relevant
+- what broader suites you are deliberately excluding
 
 ---
 
@@ -286,51 +236,58 @@ When finished, report back in these sections:
 
 ### 2. Preflight restatement
 - objective
-- files touched
-- files not touched
-- exact UAT issues addressed
+- files inspected
+- whether any files were modified
+- what was deliberately not changed
 
-### 3. Requested changes made
-- exact files changed
-- what changed in backend logic
-- what changed in frontend presentation
-- how internal caveat leakage was handled
-- how collapsed evidence traceability was improved
+### 3. Backend payload truth
+- exact payload status for each Wave 1 domain
+- whether D-4-refined fields are present
+- actual values relevant to the mismatch
 
-### 4. Coherence fixes
-For cardiovascular and blood sugar separately:
-- what the old issue was
-- what changed
-- why the new wording/logic is more coherent
+### 4. Frontend rendering truth
+- exact fields read by `Wave1DomainCards`
+- whether the UI wiring matches the payload
 
-### 5. Tests run
-- exact tests
-- results
+### 5. Persistence / recomputation finding
+- are these fields persisted or rebuilt live?
+- does this analysis id need recomputation to pick up D-4?
 
-### 6. Browser/UAT recheck
-- what was rechecked
-- whether the D-3 UAT issues now feel materially improved
+### 6. Runtime/build finding
+- is the running frontend/backend actually on D-4 code?
+- any stale-cache/build issue found?
 
-### 7. Known limits intentionally deferred
-- anything still left for later
-- any remaining Wave 1 caveats
+### 7. Browser comparison
+- what the user actually sees
+- what the payload says
+- where they diverge
 
-### 8. Uncommitted / not merged
-- confirm work is not merged to `main`
+### 8. Root cause
+Choose one primary cause:
+- stale persisted result
+- stale runtime/build
+- frontend wiring mismatch
+- backend logic not firing
+- true D-4 logic failure
+- other
+
+### 9. Smallest safe next step
+State the minimum correct remediation path.
+
+### 10. Uncommitted / not merged
+- confirm diagnosis work is not merged to `main`
 
 ---
 
 ## STOP conditions
 
-STOP and report instead of widening scope if any of the following occurs:
-
-1. Fixing coherence would require a broad score recalibration rather than narrow refinement.
-2. Removing caveat leakage would require hiding contract truth in a misleading way.
-3. Improving collapsed traceability would require a large results-page redesign.
-4. A Phase 2 domain starts to creep into scope.
-5. Clinician-facing outputs would need modification to complete this sprint.
+STOP and report if:
+1. the diagnosis would require broad unrelated implementation to continue
+2. the target analysis id cannot be retrieved/accessed
+3. the environment is too inconsistent to establish repo/runtime truth
+4. you discover the real issue is outside Wave 1 scope entirely
 
 If blocked, report:
 - exact blocker
-- affected files
+- affected files or runtime surface
 - smallest safe remediation path
