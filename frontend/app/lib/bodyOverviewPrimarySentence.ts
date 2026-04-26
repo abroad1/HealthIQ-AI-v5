@@ -1,4 +1,5 @@
 import type { ClinicianReportV1, PrimaryConcernModeV1 } from '@/types/analysis';
+import { sanitizeTopHypothesisLineForDisplay } from '@/lib/clinicianPage1Placeholders';
 
 /** Safe copy when `page1` is missing or insufficient — sprint FE-R1 fallback. */
 export const BODY_OVERVIEW_FALLBACK_PRIMARY =
@@ -31,7 +32,7 @@ export function buildBodyOverviewPrimarySentence(
   if (!page1) return BODY_OVERVIEW_FALLBACK_PRIMARY;
 
   const concern = (page1.primary_concern || '').trim();
-  const topHyp = (page1.top_hypothesis_line || '').trim();
+  const topHyp = sanitizeTopHypothesisLineForDisplay(page1.top_hypothesis_line);
   const kf0 = (page1.key_findings?.[0] || '').trim();
   const mode: PrimaryConcernModeV1 | undefined = page1.primary_concern_mode;
 

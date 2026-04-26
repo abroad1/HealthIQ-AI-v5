@@ -33,6 +33,18 @@ describe('bodyOverviewPrimarySentence (FE-R8B)', () => {
       expect(out).toContain('More than one pattern is close');
       expect(out.indexOf('panel.')).toBeLessThan(out.indexOf('More than'));
     });
+
+    it('ignores compiler placeholder top_hypothesis_line when primary_concern is empty', () => {
+      const page1 = {
+        primary_concern: '',
+        top_hypothesis_line: 'No hypothesis set available for this concern in v1.',
+        key_findings: ['Marker X is elevated on this panel.'],
+        chains: [],
+      };
+      const out = buildBodyOverviewPrimarySentence(page1);
+      expect(out).not.toContain('No hypothesis set available');
+      expect(out).toContain('Marker X is elevated');
+    });
   });
 
   describe('extractFirstSentence', () => {
