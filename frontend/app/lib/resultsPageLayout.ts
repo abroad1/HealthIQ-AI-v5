@@ -79,15 +79,170 @@ export function pickPhenotypeLabel(
   return 'Your analysis summary';
 }
 
+/** Normalized comparison for “same lead” heuristics (hero alignment). */
+export function normalizeHeroComparisonKey(s: string): string {
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * When the visible IDL record sets the hero title, the hero body must come from the same IDL authority —
+ * not `narrative_report_v1.retail_summary` or clinician page1 alone (avoids AB/VR split-brain).
+ */
+export function buildIdlLedHeroSummary(idl: InterpretationDisplayRecordV1): string {
+  const chunks: string[] = [];
+  for (const raw of [
+    idl.why_it_matters,
+    idl.subtitle,
+    idl.user_safe_description,
+    idl.supporting_biomarkers_summary,
+    idl.supporting_systems_summary,
+  ]) {
+    const s = (raw || '').trim();
+    if (!s) continue;
+    const sent = firstSentence(s);
+    const k = normalizeHeroComparisonKey(sent);
+    if (!k) continue;
+    if (chunks.some((c) => normalizeHeroComparisonKey(c) === k)) continue;
+    chunks.push(sent);
+  }
+  const combined = chunks.join(' ');
+  if (combined.trim()) return takeUpToNSentences(combined, 3);
+  return '';
+}
+
+/**
+ * If the clinician-ranked lead (page1) differs from the pattern-led hero title, surface it only as secondary copy.
+ */
+export function deriveSecondaryRankedSignalLine(
+  clinicianReport: ClinicianReportV1 | null | undefined,
+  heroTitle: string,
+  firstIdl: InterpretationDisplayRecordV1 | null | undefined
+): string | null {
+  if (!firstIdl || !clinicianReport?.sections?.page1) return null;
+  const concern = (clinicianReport.sections.page1.primary_concern || '').trim();
+  if (!concern) return null;
+  const concernLead = extractFirstSentence(concern);
+  const a = normalizeHeroComparisonKey(heroTitle);
+  const b = normalizeHeroComparisonKey(concernLead);
+  if (!a || !b) return null;
+  if (a === b) return null;
+  if (a.includes(b) || b.includes(a)) return null;
+  const aTokens = new Set(a.split(' ').filter((t) => t.length > 3));
+  const bTokens = b.split(' ').filter((t) => t.length > 3);
+  if (bTokens.length > 0) {
+    const overlap = bTokens.filter((t) => aTokens.has(t)).length;
+    if (overlap >= Math.min(2, bTokens.length)) return null;
+  }
+  return `Top ranked signal on this panel: ${concernLead}`;
+}
+
+const _sevRank: Record<string, number> = { critical: 4, high: 3, moderate: 2, low: 1 };
+
+function _clusterToDriver(
+  cluster: Cluster,
+  idx: number
+): { id: string; name: string; biomarkers: string[] } {
+  const id = String(cluster.cluster_id || cluster.id || `cluster-${idx}`);
+  const name = cluster.name?.trim() ? cluster.name : 'Health pattern';
+  const biomarkers = cluster.biomarkers || cluster.biomarkers_involved || [];
+  return { id, name, biomarkers };
+}
+
+/** Severity/score winner — same rule as legacy results page `pickPrimaryDriverCluster`. */
+export function pickSeverityPrimaryDriverCluster(clusters: Cluster[]): {
+  id: string;
+  name: string;
+  biomarkers: string[];
+} | null {
+  let best: { id: string; name: string; biomarkers: string[]; rank: number; score: number } | null = null;
+  clusters.forEach((cluster, idx) => {
+    const id = String(cluster.cluster_id || cluster.id || `cluster-${idx}`);
+    const sev = String(cluster.severity || 'moderate').toLowerCase();
+    const rank = _sevRank[sev] ?? 2;
+    const score = typeof cluster.score === 'number' ? cluster.score : (cluster.confidence ?? 0) * 100;
+    const name = cluster.name?.trim() ? cluster.name : 'Health pattern';
+    const biomarkers = cluster.biomarkers || cluster.biomarkers_involved || [];
+    if (!best || rank > best.rank || (rank === best.rank && score > best.score)) {
+      best = { id, name, biomarkers, rank, score };
+    }
+  });
+  if (!best) return null;
+  return { id: best.id, name: best.name, biomarkers: best.biomarkers };
+}
+
+function _scoreClusterAlignmentToIdl(c: Cluster, idl: InterpretationDisplayRecordV1): number {
+  const name = (c.name || '').toLowerCase().trim();
+  if (!name) return 0;
+  const retail = (idl.retail_display_label || '').toLowerCase();
+  const subtitle = (idl.subtitle || '').toLowerCase();
+  const sys = (idl.supporting_systems_summary || '').toLowerCase();
+  const blob = `${retail} ${subtitle} ${sys}`.trim();
+  let score = 0;
+  const nameWords = name.split(/\s+/).filter((w) => w.length > 3);
+  for (const w of nameWords) {
+    if (blob.includes(w)) score += 1;
+  }
+  if (retail && (name.includes(retail.slice(0, Math.min(18, retail.length))) || retail.includes(name.slice(0, Math.min(14, name.length)))))
+    score += 3;
+  if (subtitle && (name.includes(subtitle.slice(0, 14)) || subtitle.includes(name.slice(0, 12)))) score += 2;
+  return score;
+}
+
+/**
+ * Prefer a cluster aligned with the displayed IDL lead; otherwise fall back to severity primary driver.
+ */
+export function pickHeroAlignedPrimaryDriver(
+  clusters: Cluster[],
+  firstIdl: InterpretationDisplayRecordV1 | null | undefined
+): { id: string; name: string; biomarkers: string[] } | null {
+  if (!clusters.length) return null;
+  const fallback = pickSeverityPrimaryDriverCluster(clusters);
+  if (!firstIdl) return fallback;
+
+  const ALIGN_THRESHOLD = 2;
+  let best: { cluster: Cluster; idx: number; align: number; rank: number; score: number } | null = null;
+
+  clusters.forEach((cluster, idx) => {
+    const align = _scoreClusterAlignmentToIdl(cluster, firstIdl);
+    if (align < ALIGN_THRESHOLD) return;
+    const sev = String(cluster.severity || 'moderate').toLowerCase();
+    const rank = _sevRank[sev] ?? 2;
+    const score = typeof cluster.score === 'number' ? cluster.score : (cluster.confidence ?? 0) * 100;
+    if (!best || align > best.align || (align === best.align && rank > best.rank) || (align === best.align && rank === best.rank && score > best.score)) {
+      best = { cluster, idx, align, rank, score };
+    }
+  });
+
+  if (best) return _clusterToDriver(best.cluster, best.idx);
+  return fallback;
+}
+
+/**
+ * Hero summary precedence:
+ * 1) If a visible IDL record exists → IDL-only body (`buildIdlLedHeroSummary`), then clinician/narrative fallbacks that avoid retail_summary until IDL is exhausted.
+ * 2) Else → `narrative_report_v1.retail_summary` if present, else clinician page1 shaping (legacy).
+ */
 export function buildPrimaryHeroSummary(
   narrativeRetail: string | null | undefined,
-  clinicianReport: ClinicianReportV1 | null | undefined
+  clinicianReport: ClinicianReportV1 | null | undefined,
+  firstIdl?: InterpretationDisplayRecordV1 | null
 ): string {
+  if (firstIdl) {
+    const idlBody = buildIdlLedHeroSummary(firstIdl);
+    if (idlBody.trim()) return idlBody;
+  }
+
   const retail = (narrativeRetail ?? '').trim();
-  if (retail) {
+  if (retail && !firstIdl) {
     return takeUpToNSentences(retail, 3);
   }
+
   if (!clinicianReport) {
+    if (retail && !firstIdl) return takeUpToNSentences(retail, 3);
     return "We've organised the clearest interpretation available from your report fields below.";
   }
   const page1 = clinicianReport.sections?.page1;
@@ -99,6 +254,7 @@ export function buildPrimaryHeroSummary(
   }
   if (wtm) return takeUpToNSentences(wtm, 3);
   if (lead) return takeUpToNSentences(lead, 3);
+  if (retail && !firstIdl) return takeUpToNSentences(retail, 3);
   return buildBodyOverviewPrimarySentence(page1);
 }
 
