@@ -294,6 +294,8 @@ export interface ConsumerDomainScoreV1 {
   confidence_sentence: string;
   consequence_sentence: string;
   next_step_sentence: string;
+  /** D-4: compact "based on" traceability line (collapsed card) */
+  evidence_anchor_sentence?: string;
 }
 
 export interface AnalysisResult {

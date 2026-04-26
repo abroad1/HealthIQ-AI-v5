@@ -120,3 +120,49 @@ def test_liver_blends_with_hepatic_capacity_not_liver_key():
     assert "hepatic" in liver.source_track
     assert liver.raw_evidence_refs.get("blended_with_hepatic_capacity") is True
     assert liver.raw_evidence_refs.get("burden_capacity_hepatic") == 30
+
+
+def test_d4_liver_caveat_flags_are_user_phrases_not_slugs():
+    """D-4: caveat_flags must not leak internal snake_case slugs to retail."""
+    scoring = {
+        "health_system_scores": {
+            "cardiovascular": {"overall_score": 80.0, "missing_biomarkers": []},
+            "metabolic": {"overall_score": 80.0, "missing_biomarkers": []},
+            "liver": {"overall_score": 80.0, "missing_biomarkers": []},
+        }
+    }
+    ig = _minimal_graph(signal_results=[], capacity={"hepatic": 50}, cluster_confidence={})
+    rows = assemble_consumer_domain_scores_v1(
+        scoring_result=scoring,
+        insight_graph=ig,
+        idl_bundle=None,
+        derived_ratios_meta=None,
+        panel_biomarker_ids={"alt"},
+    )
+    liver = rows[2]
+    for line in liver.caveat_flags:
+        assert "enzyme_limited_assessment" not in line
+        assert "_" not in line
+        assert len(line) > 20
+    assert "Based mainly" in (liver.evidence_anchor_sentence or "")
+
+
+def test_d4_all_domains_emit_evidence_anchor():
+    scoring = {
+        "health_system_scores": {
+            "cardiovascular": {"overall_score": 80.0, "missing_biomarkers": []},
+            "metabolic": {"overall_score": 80.0, "missing_biomarkers": []},
+            "liver": {"overall_score": 80.0, "missing_biomarkers": []},
+        }
+    }
+    ig = _minimal_graph(signal_results=[], capacity={}, cluster_confidence={})
+    rows = assemble_consumer_domain_scores_v1(
+        scoring_result=scoring,
+        insight_graph=ig,
+        idl_bundle=None,
+        derived_ratios_meta=None,
+        panel_biomarker_ids={"alt", "glucose", "hba1c", "ldl_cholesterol"},
+    )
+    for r in rows:
+        assert r.evidence_anchor_sentence
+        assert "Based mainly" in r.evidence_anchor_sentence

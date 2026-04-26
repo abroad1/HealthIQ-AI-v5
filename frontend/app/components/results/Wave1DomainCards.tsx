@@ -74,6 +74,11 @@ export function Wave1DomainCards({ domains }: Props) {
               <CardHeader className="pb-2">
                 <CardTitle className="text-base font-semibold text-slate-900">{d.consumer_label}</CardTitle>
                 <CardDescription className="text-xs text-slate-600 line-clamp-3">{shortExpl}</CardDescription>
+                {d.evidence_anchor_sentence ? (
+                  <p className="text-xs text-slate-500 mt-1.5 border-l-2 border-indigo-200 pl-2">
+                    {d.evidence_anchor_sentence}
+                  </p>
+                ) : null}
               </CardHeader>
               <CardContent className="space-y-3 pt-0">
                 <div className="flex flex-wrap items-baseline gap-2">

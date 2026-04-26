@@ -91,6 +91,117 @@ def headline_liv(band: str) -> str:
     return "Your liver enzyme pattern shows a pattern that deserves closer review."
 
 
+def _narrative_lowercased(contributor: str, consequence: str) -> str:
+    return f"{contributor or ''} {consequence or ''}".strip().lower()
+
+
+def _cv_story_conflicts_with_stable_headline(contributor: str, consequence: str) -> bool:
+    """
+    D-4: True when a \"stable\" band would read as false reassurance against contributor/consequence.
+    """
+    t = _narrative_lowercased(contributor, consequence)
+    if not t:
+        return False
+    needles = (
+        "homocysteine",
+        "vascular",
+        "inflammation",
+        "atherogenic",
+        "accumulat",
+        "warrant",
+        "warrants",
+        "review",
+        "strain",
+        "adverse",
+        "stress",
+        "atheroscler",
+        "atherosclerosis",
+        "ldl is above",
+        "triglycerides are elevated",
+        "hdl is below",
+    )
+    return any(n in t for n in needles)
+
+
+def _met_story_conflicts_with_stable_headline(contributor: str, consequence: str) -> bool:
+    t = _narrative_lowercased(contributor, consequence)
+    if not t:
+        return False
+    needles = (
+        "glyc",
+        "insulin",
+        "resistance",
+        "impaired",
+        "hba1c",
+        "strain",
+        "glucose",
+        "sugar",
+        "metabolic stress",
+        "triglyceride",
+        "sustained",
+        "prediabet",
+        "diabet",
+    )
+    return any(n in t for n in needles)
+
+
+def headline_cv_coherent(band: str, contributor: str, consequence: str) -> str:
+    """
+    D-4: When band is \"stable\" but the underlying lines imply active context, avoid \"broadly stable\".
+    """
+    if band == "stable" and _cv_story_conflicts_with_stable_headline(contributor, consequence):
+        return (
+            "Your cardiovascular results do not read as a simple all-clear: some markers look reassuring "
+            "while others add context that is worth discussing with a clinician."
+        )
+    return headline_cv(band)
+
+
+def headline_met_coherent(band: str, contributor: str, consequence: str) -> str:
+    if band == "stable" and _met_story_conflicts_with_stable_headline(contributor, consequence):
+        return (
+            "Your blood sugar and metabolic read is mixed on this panel — it is not a clean "
+            "all-stable story; several markers shape the pattern together."
+        )
+    return headline_met(band)
+
+
+def confidence_sentence_cv_coherent(tier: str, contributor: str) -> str:
+    """
+    D-4: Bridge lipid-tier confidence with homocysteine-led story when both appear in the same card.
+    """
+    t = tier if tier in ("high", "medium", "low") else "medium"
+    c = (contributor or "").lower()
+    if "homocysteine" in c and t != "high":
+        if t == "medium":
+            return (
+                "Confidence is good for the lipid data you have; where homocysteine is elevated, "
+                "it is read in the same vascular picture as those lipids, not as a second headline score."
+            )
+        return (
+            "Confidence is limited by an incomplete lipid picture; where homocysteine is elevated, "
+            "it is still interpreted with the markers available on this panel, not to inflate certainty."
+        )
+    return confidence_sentence_for(t, "cv")
+
+
+def evidence_anchor_sentence(
+    domain: str,
+    by_id: Dict[str, Any],
+    primary_idl_id: Optional[str],
+) -> str:
+    """D-4: one-line collapsed traceability — primary IDL retail label, else a safe domain fallback."""
+    if primary_idl_id:
+        rec = idl_record(by_id, primary_idl_id)
+        if rec is not None and (rec.retail_display_label or "").strip():
+            return f"Based mainly on: {str(rec.retail_display_label).strip()}"
+    if domain == "cv":
+        return "Based mainly on: your cardiovascular signals and patterns on this panel."
+    if domain == "met":
+        return "Based mainly on: your blood sugar and metabolic markers on this panel."
+    return "Based mainly on: your liver-related markers on this panel."
+
+
 def confidence_sentence_for(tier: str, domain: str) -> str:
     t = tier if tier in ("high", "medium", "low") else "medium"
     if domain == "cv":
