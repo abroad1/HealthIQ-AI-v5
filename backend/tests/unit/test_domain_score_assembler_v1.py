@@ -50,7 +50,7 @@ def test_wave1_emits_three_domains_score_and_confidence_together():
         },
     )
     dr = {"ratios": {"tc_hdl_ratio": 3.2}, "ratio_registry_version": "t"}
-    rows = assemble_consumer_domain_scores_v1(
+    rows, wave1_meta = assemble_consumer_domain_scores_v1(
         scoring_result=scoring,
         insight_graph=ig,
         idl_bundle=None,
@@ -58,6 +58,7 @@ def test_wave1_emits_three_domains_score_and_confidence_together():
         panel_biomarker_ids=panel,
     )
     assert len(rows) == 3
+    assert wave1_meta.get("schema") == "wave1_aligned_drivers_v1"
     ids = [r.domain_id for r in rows]
     assert ids == ["wave1_cardiovascular", "wave1_blood_sugar", "wave1_liver"]
     for r in rows:
@@ -70,6 +71,7 @@ def test_wave1_emits_three_domains_score_and_confidence_together():
         assert r.confidence_sentence
         assert r.consequence_sentence
         assert r.next_step_sentence
+        assert r.card_schema_version == "1.1"
 
 
 def test_wave1_next_step_sentences_are_domain_distinct_without_insights():
@@ -82,7 +84,7 @@ def test_wave1_next_step_sentences_are_domain_distinct_without_insights():
         }
     }
     ig = _minimal_graph(signal_results=[], capacity={"hepatic": 80}, cluster_confidence={})
-    rows = assemble_consumer_domain_scores_v1(
+    rows, _ = assemble_consumer_domain_scores_v1(
         scoring_result=scoring,
         insight_graph=ig,
         idl_bundle=None,
@@ -108,7 +110,7 @@ def test_liver_blends_with_hepatic_capacity_not_liver_key():
         capacity={"hepatic": 30},
         cluster_confidence={"hepatic": 1.0},
     )
-    rows = assemble_consumer_domain_scores_v1(
+    rows, _ = assemble_consumer_domain_scores_v1(
         scoring_result=scoring,
         insight_graph=ig,
         idl_bundle=None,
@@ -132,7 +134,7 @@ def test_d4_liver_caveat_flags_are_user_phrases_not_slugs():
         }
     }
     ig = _minimal_graph(signal_results=[], capacity={"hepatic": 50}, cluster_confidence={})
-    rows = assemble_consumer_domain_scores_v1(
+    rows, _ = assemble_consumer_domain_scores_v1(
         scoring_result=scoring,
         insight_graph=ig,
         idl_bundle=None,
@@ -156,7 +158,7 @@ def test_d4_all_domains_emit_evidence_anchor():
         }
     }
     ig = _minimal_graph(signal_results=[], capacity={}, cluster_confidence={})
-    rows = assemble_consumer_domain_scores_v1(
+    rows, _ = assemble_consumer_domain_scores_v1(
         scoring_result=scoring,
         insight_graph=ig,
         idl_bundle=None,

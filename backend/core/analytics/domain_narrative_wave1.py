@@ -145,10 +145,34 @@ def _met_story_conflicts_with_stable_headline(contributor: str, consequence: str
     return any(n in t for n in needles)
 
 
-def headline_cv_coherent(band: str, contributor: str, consequence: str) -> str:
+def _idl_suggests_risk_or_review_led(primary_rec: Any) -> bool:
+    """D-6: When the resolved IDL record is not reassuring, block band-only 'looks strong' copy."""
+    if primary_rec is None:
+        return False
+    st = str(getattr(primary_rec, "severity_state", "") or "")
+    return st in ("watch", "attention", "strong_signal")
+
+
+def headline_cv_coherent(
+    band: str,
+    contributor: str,
+    consequence: str,
+    primary_rec: Any = None,
+) -> str:
     """
-    D-4: When band is \"stable\" but the underlying lines imply active context, avoid \"broadly stable\".
+    D-4 + D-6: Headline follows resolved primary IDL, not the numeric band alone.
+    Never use reassuring 'looks strong' / 'broadly stable' when the IDL is risk- or review-led.
     """
+    if band in ("strong", "stable") and _idl_suggests_risk_or_review_led(primary_rec):
+        return (
+            "Your cardiovascular read on this panel is not a simple all-clear: the leading pattern here "
+            "still deserves clinical context alongside your numbers."
+        )
+    if band == "strong" and _cv_story_conflicts_with_stable_headline(contributor, consequence):
+        return (
+            "Some markers in this cardiovascular view still need context with a clinician, even when "
+            "parts of the picture look supportive."
+        )
     if band == "stable" and _cv_story_conflicts_with_stable_headline(contributor, consequence):
         return (
             "Your cardiovascular results do not read as a simple all-clear: some markers look reassuring "
@@ -157,7 +181,22 @@ def headline_cv_coherent(band: str, contributor: str, consequence: str) -> str:
     return headline_cv(band)
 
 
-def headline_met_coherent(band: str, contributor: str, consequence: str) -> str:
+def headline_met_coherent(
+    band: str,
+    contributor: str,
+    consequence: str,
+    primary_rec: Any = None,
+) -> str:
+    if band in ("strong", "stable") and _idl_suggests_risk_or_review_led(primary_rec):
+        return (
+            "Your blood sugar and metabolic read is led by a pattern that still warrants structured review, "
+            "not a simple 'all good' label from the band alone."
+        )
+    if band == "strong" and _met_story_conflicts_with_stable_headline(contributor, consequence):
+        return (
+            "Your blood sugar and metabolic context still has active signals to address in care planning, "
+            "even if some results look in range on the surface."
+        )
     if band == "stable" and _met_story_conflicts_with_stable_headline(contributor, consequence):
         return (
             "Your blood sugar and metabolic read is mixed on this panel — it is not a clean "
@@ -287,6 +326,39 @@ def cv_contributor(
     return "Your key cardiovascular markers are within their reference ranges."
 
 
+def cv_contributor_primary(
+    by_id: Dict[str, Any],
+    active_sids: List[str],
+    sig_rows: List[Dict[str, Any]],
+    primary_idl: Optional[str],
+) -> str:
+    """
+    D-6: Single authority — subtitle from resolved primary IDL only; then signal fallback (no IDL greedy loop).
+    """
+    if primary_idl:
+        rec = idl_record(by_id, primary_idl)
+        if rec is not None and rec.severity_state != "not_observed" and rec.enabled_for_frontend and rec.subtitle:
+            return rec.subtitle.strip()
+    return _cv_contributor_signal_fallback(set(active_sids), sig_rows)
+
+
+def _cv_contributor_signal_fallback(sset: Set[str], sig_rows: List[Dict[str, Any]]) -> str:
+    for pref in _CV_SIGNAL_PRIORITY:
+        if any(s.startswith(pref) or s == pref for s in sset):
+            return governed_signal_line(pref, "cv")
+    if any("homocysteine" in s for s in sset):
+        g = governed_idl_field(_ID_VASCULAR, "subtitle")
+        if g:
+            return g
+    for r in sig_rows:
+        if not _active(r):
+            continue
+        sid = str(r.get("signal_id", ""))
+        if any(sid.startswith(p) for p in _CV_SIGNAL_PRIORITY):
+            return governed_signal_line(sid, "cv")
+    return "Your key cardiovascular markers are within their reference ranges."
+
+
 def governed_signal_line(signal_id: str, domain: str) -> str:
     """Narrow, non-diagnostic one-liners tied to known pattern ids (D-2)."""
     s = (signal_id or "").strip()
@@ -340,6 +412,29 @@ def met_contributor(by_id: Dict[str, Any], active_sids: Set[str], sig_rows: List
     return "Your key blood sugar markers are within their reference ranges."
 
 
+def met_contributor_primary(
+    by_id: Dict[str, Any],
+    active_sids: Set[str],
+    sig_rows: List[Dict[str, Any]],
+    primary_idl: Optional[str],
+) -> str:
+    """D-6: Primary IDL subtitle only, then signal fallback (no greedy IDL loop)."""
+    if primary_idl:
+        rec = idl_record(by_id, primary_idl)
+        if rec and rec.severity_state != "not_observed" and rec.enabled_for_frontend and rec.subtitle:
+            return rec.subtitle.strip()
+    for pref in ("signal_hba1c", "signal_insulin_resistance", "signal_glucose"):
+        for r in sig_rows:
+            if not _active(r):
+                continue
+            if str(r.get("signal_id", "")).startswith(pref):
+                return governed_signal_line(str(r.get("signal_id", "")), "met")
+    g = governed_idl_field(_ID_IR, "subtitle")
+    if g:
+        return g
+    return "Your key blood sugar markers are within their reference ranges."
+
+
 def liv_contributor(
     by_id: Dict[str, Any],
     active_sids: List[str],
@@ -358,6 +453,35 @@ def liv_contributor(
     return "Your liver enzyme markers are within their reference ranges."
 
 
+def liv_contributor_primary(
+    by_id: Dict[str, Any],
+    active_sids: List[str],
+    sig_rows: List[Dict[str, Any]],
+    primary_idl: Optional[str],
+) -> str:
+    """D-6: Primary IDL subtitle only, then prior signal fallback."""
+    if primary_idl:
+        rec = idl_record(by_id, primary_idl)
+        if rec and rec.severity_state != "not_observed" and rec.enabled_for_frontend and rec.subtitle:
+            return rec.subtitle.strip()
+    for r in sig_rows:
+        if not _active(r) or "hepatic" not in str(r.get("system", "")).lower():
+            continue
+        if str(r.get("signal_id", "")).startswith("signal_"):
+            return governed_signal_line(str(r.get("signal_id", "")), "liver")
+    if any(str(s).startswith("signal_") and "hep" in str(s) for s in active_sids):
+        return "Liver-enzyme signals are active on this panel and merit structured follow-up."
+    return "Your liver enzyme markers are within their reference ranges."
+
+
+def liv_consequence_primary(by_id: Dict[str, Any], primary_idl: Optional[str]) -> str:
+    if primary_idl:
+        rec = idl_record(by_id, primary_idl)
+        if rec and rec.why_it_matters and rec.severity_state != "not_observed" and rec.enabled_for_frontend:
+            return str(rec.why_it_matters).strip()
+    return liv_consequence(by_id)
+
+
 def cv_consequence(
     by_id: Dict[str, Any],
     active_sids: List[str],
@@ -365,6 +489,25 @@ def cv_consequence(
 ) -> str:
     for pid in (_ID_VASCULAR, _ID_LIPID):
         rec = idl_record(by_id, pid)
+        if rec and rec.severity_state != "not_observed" and rec.enabled_for_frontend and rec.why_it_matters:
+            return str(rec.why_it_matters).strip()
+    if _is_lipid_dominant(set(active_sids), all_sig_rows):
+        t = governed_idl_field(_ID_LIPID, "why_it_matters")
+        if t:
+            return t
+    t2 = governed_idl_field(_ID_VASCULAR, "why_it_matters")
+    return t2 or ""
+
+
+def cv_consequence_primary(
+    by_id: Dict[str, Any],
+    active_sids: List[str],
+    all_sig_rows: List[Dict[str, Any]],
+    primary_idl: Optional[str],
+) -> str:
+    """D-6: why_it_matters from resolved primary IDL first; lipid-dominant KB path preserved (deferred content gap)."""
+    if primary_idl:
+        rec = idl_record(by_id, primary_idl)
         if rec and rec.severity_state != "not_observed" and rec.enabled_for_frontend and rec.why_it_matters:
             return str(rec.why_it_matters).strip()
     if _is_lipid_dominant(set(active_sids), all_sig_rows):
@@ -401,6 +544,21 @@ def met_consequence(by_id: Dict[str, Any], active_sids: Set[str], sig_rows: List
     if t:
         return t
     return governed_idl_field(_ID_IR, "why_it_matters")
+
+
+def met_consequence_primary(
+    by_id: Dict[str, Any],
+    active_sids: Set[str],
+    sig_rows: List[Dict[str, Any]],
+    primary_idl: Optional[str],
+) -> str:
+    """D-6: why_it_matters from primary IDL when set; else same tiered logic as met_consequence."""
+    _ = active_sids
+    if primary_idl:
+        rec = idl_record(by_id, primary_idl)
+        if rec and rec.severity_state != "not_observed" and rec.enabled_for_frontend and rec.why_it_matters:
+            return str(rec.why_it_matters).strip()
+    return met_consequence(by_id, active_sids, sig_rows)
 
 
 def liv_consequence(by_id: Dict[str, Any]) -> str:

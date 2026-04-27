@@ -971,6 +971,7 @@ class AnalysisOrchestrator:
         assume_canonical: bool = False,
         lifestyle_inputs: Optional[Dict[str, Any]] = None,
         questionnaire_data: Optional[Dict[str, Any]] = None,
+        fixed_analysis_id: Optional[str] = None,
     ):
         """
         Run the complete analysis pipeline: scoring → clustering → insights.
@@ -1003,7 +1004,10 @@ class AnalysisOrchestrator:
                 "Unit normalisation required before orchestrator.run (apply_unit_normalisation)."
             )
         
-        analysis_id = str(uuid.uuid4())
+        if fixed_analysis_id is not None and str(fixed_analysis_id).strip():
+            analysis_id = str(fixed_analysis_id).strip()
+        else:
+            analysis_id = str(uuid.uuid4())
         try:
             if not assume_canonical:
                 self._assert_canonical_only(biomarkers, where="run")
@@ -2211,7 +2215,7 @@ class AnalysisOrchestrator:
                     _insight_payloads.append(_ins.model_dump())
                 elif isinstance(_ins, dict):
                     _insight_payloads.append(dict(_ins))
-            consumer_domain_scores = assemble_consumer_domain_scores_v1(
+            consumer_domain_scores, wave1_drivers_meta = assemble_consumer_domain_scores_v1(
                 scoring_result=scoring_result,
                 insight_graph=insight_graph,
                 idl_bundle=idl_bundle,
@@ -2220,6 +2224,7 @@ class AnalysisOrchestrator:
                 narrative_report_v1=narrative_report_v1,
                 insight_results=_insight_payloads,
             )
+            meta["wave1_aligned_drivers"] = wave1_drivers_meta
             result = AnalysisDTO(
                 analysis_id=analysis_id,
                 biomarkers=biomarker_dtos,

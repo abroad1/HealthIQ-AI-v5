@@ -16,17 +16,18 @@ from typing import Any, Dict, List, Optional, Set, Tuple, cast
 from core.analytics.domain_narrative_wave1 import (
     confidence_sentence_cv_coherent,
     confidence_sentence_for,
-    cv_consequence,
-    cv_contributor,
+    cv_consequence_primary,
+    cv_contributor_primary,
     evidence_anchor_sentence,
     headline_cv_coherent,
     headline_liv,
     headline_met_coherent,
+    idl_record,
     idl_records_index,
-    liv_consequence,
-    liv_contributor,
-    met_consequence,
-    met_contributor,
+    liv_consequence_primary,
+    liv_contributor_primary,
+    met_consequence_primary,
+    met_contributor_primary,
     next_step_blood_sugar,
     next_step_cardiovascular,
     next_step_liver,
@@ -323,6 +324,38 @@ def _missing_for_rail(hss: Dict[str, Any], system_key: str) -> List[str]:
     return sorted({str(x) for x in mb if str(x).strip()})
 
 
+def _wave1_aligned_drivers_meta(
+    rows: List[ConsumerDomainScoreV1],
+    sig_rows: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    """
+    D-6: Same evidence basis as Wave 1 cards — primary_metrics from active signals in each domain.
+    Frontend 'What's driving this' should prefer this over independent cluster arbitration for Wave 1.
+    """
+    by_domain: Dict[str, List[str]] = {}
+    ordered_keys: List[str] = []
+    for d in rows:
+        acc: List[str] = []
+        want = set(d.active_signal_ids)
+        for sr in sig_rows:
+            if str(sr.get("signal_id", "")) not in want:
+                continue
+            if not _active_signal_state(str(sr.get("signal_state", ""))):
+                continue
+            pm = str(sr.get("primary_metric", "")).strip()
+            if pm and pm not in acc:
+                acc.append(pm)
+        by_domain[d.domain_id] = acc[:8]
+        for k in acc:
+            if k not in ordered_keys:
+                ordered_keys.append(k)
+    return {
+        "schema": "wave1_aligned_drivers_v1",
+        "biomarker_keys": ordered_keys[:16],
+        "by_domain": by_domain,
+    }
+
+
 def assemble_consumer_domain_scores_v1(
     *,
     scoring_result: Dict[str, Any],
@@ -332,12 +365,13 @@ def assemble_consumer_domain_scores_v1(
     panel_biomarker_ids: Set[str],
     narrative_report_v1: Any = None,
     insight_results: Optional[List[Dict[str, Any]]] = None,
-) -> List[ConsumerDomainScoreV1]:
+) -> Tuple[List[ConsumerDomainScoreV1], Dict[str, Any]]:
     """
     Build three Wave 1 domain rows. Always returns three entries in stable order:
     cardiovascular, blood sugar, liver.
 
     D-2: Populates consumer narrative fields from deterministic sources (IDL, D-1 bands/tiers, insights).
+    D-6: Returns (rows, wave1_aligned_drivers_meta) for a single narrative authority + driving-strip alignment.
     """
     hss = _health_systems(scoring_result)
     sig_rows = _iter_signal_results(insight_graph)
@@ -379,10 +413,13 @@ def assemble_consumer_domain_scores_v1(
             "burden_capacity_cardiovascular": cardio_cap,
             "derived_ratio_keys": sorted(ratios.keys()) if ratios else [],
         }
-        _contrib = cv_contributor(by_id, sids, sig_rows)
-        _cons = cv_consequence(by_id, sids, sig_rows)
+        _contrib = cv_contributor_primary(by_id, sids, sig_rows, idl)
+        _cons = cv_consequence_primary(by_id, sids, sig_rows, idl)
+        _primary_rec = idl_record(by_id, idl) if idl else None
+        ev["deferred_kb_content"] = "lipid_dominant_cv_why_it_matters_gap_deferred_sprint"
         return ConsumerDomainScoreV1(
             domain_id="wave1_cardiovascular",
+            card_schema_version="1.1",
             consumer_label="Cardiovascular health",
             clinical_label="Cardiometabolic / Vascular Risk Status",
             score=score_01,
@@ -391,11 +428,11 @@ def assemble_consumer_domain_scores_v1(
             active_signal_ids=sids,
             primary_idl_record_id=idl,
             missing_marker_ids=missing,
-            source_track="base:scoring_rail:cardiovascular;context:optional_burden_capacity:cardiovascular",
+            source_track="base:scoring_rail:cardiovascular;context:optional_burden_capacity:cardiovascular;narrative:primary_idl_single_authority_d6",
             caveat_flags=[],
             contributing_system_keys=["cardiovascular"],
             raw_evidence_refs=ev,
-            headline_sentence=headline_cv_coherent(band, _contrib, _cons),
+            headline_sentence=headline_cv_coherent(band, _contrib, _cons, _primary_rec),
             contributor_sentence=_contrib,
             confidence_sentence=confidence_sentence_cv_coherent(tier, _contrib),
             consequence_sentence=_cons,
@@ -429,10 +466,12 @@ def assemble_consumer_domain_scores_v1(
             "burden_capacity_metabolic": metabolic_cap,
         }
         sset = set(sids)
-        _m_contrib = met_contributor(by_id, sset, sig_rows)
-        _m_cons = met_consequence(by_id, sset, sig_rows)
+        _m_contrib = met_contributor_primary(by_id, sset, sig_rows, idl)
+        _m_cons = met_consequence_primary(by_id, sset, sig_rows, idl)
+        _m_primary_rec = idl_record(by_id, idl) if idl else None
         return ConsumerDomainScoreV1(
             domain_id="wave1_blood_sugar",
+            card_schema_version="1.1",
             consumer_label="Blood sugar control",
             clinical_label="Glycaemic Regulation / Insulin Resistance Status",
             score=score_01,
@@ -441,11 +480,11 @@ def assemble_consumer_domain_scores_v1(
             active_signal_ids=sids,
             primary_idl_record_id=idl,
             missing_marker_ids=missing,
-            source_track="base:scoring_rail:metabolic(blood_sugar);not_metabolic_burden_electrolyte_track",
+            source_track="base:scoring_rail:metabolic(blood_sugar);narrative:primary_idl_single_authority_d6",
             caveat_flags=caveats,
             contributing_system_keys=["metabolic"],
             raw_evidence_refs=ev,
-            headline_sentence=headline_met_coherent(band, _m_contrib, _m_cons),
+            headline_sentence=headline_met_coherent(band, _m_contrib, _m_cons, _m_primary_rec),
             contributor_sentence=_m_contrib,
             confidence_sentence=confidence_sentence_for(tier, "met"),
             consequence_sentence=_m_cons,
@@ -466,14 +505,9 @@ def assemble_consumer_domain_scores_v1(
         score_01 = blended_100 / 100.0
         band = _band_label_from_0_100(blended_100)
         dom_tier = _liver_confidence_tier_domain(panel_biomarker_ids)
+        # D-6: User-facing liver tier follows domain-level hepatic marker depth, not cluster rail floor.
+        tier = cast(ConfidenceTierV1, dom_tier)
         rail_cc = cluster_conf.get("hepatic")
-        tier_rail = "medium"
-        if rail_cc is not None:
-            if rail_cc >= 0.85:
-                tier_rail = "high"
-            elif rail_cc < 0.5:
-                tier_rail = "low"
-        tier = _merge_tier_rail_and_domain(tier_rail, dom_tier)
         missing = _missing_for_rail(hss, _RAIL_LIVER)
         for m in ("ast", "ggt", "alp", "albumin", "total_bilirubin"):
             if m not in panel_biomarker_ids and m not in missing:
@@ -487,6 +521,7 @@ def assemble_consumer_domain_scores_v1(
             "burden_capacity_hepatic": hepatic_cap,
             "scoring_rail_liver_overall_0_100": base_100,
             "blended_with_hepatic_capacity": hepatic_cap is not None,
+            "cluster_confidence_hepatic_rail": rail_cc,
             "caveat_keys_internal": [
                 "enzyme_limited_assessment",
                 "hepatic_burden_uses_key_hepatic_not_liver_scoring_rail",
@@ -495,8 +530,11 @@ def assemble_consumer_domain_scores_v1(
         ckeys = ["liver"]
         if hepatic_cap is not None:
             ckeys.append("hepatic")
+        _l_contrib = liv_contributor_primary(by_id, sids, sig_rows, idl)
+        _l_cons = liv_consequence_primary(by_id, idl)
         return ConsumerDomainScoreV1(
             domain_id="wave1_liver",
+            card_schema_version="1.1",
             consumer_label="Liver health",
             clinical_label="Hepatic-Metabolic Strain Status",
             score=score_01,
@@ -507,15 +545,15 @@ def assemble_consumer_domain_scores_v1(
             missing_marker_ids=missing,
             source_track=(
                 "base:scoring_rail:liver;context:burden_capacity:hepatic"
-                + "(explicit_key_split_from_scoring_rail_liver)"
+                + "(explicit_key_split_from_scoring_rail_liver);narrative:primary_idl_single_authority_d6"
             ),
             caveat_flags=caveats,
             contributing_system_keys=ckeys,
             raw_evidence_refs=ev,
             headline_sentence=headline_liv(band),
-            contributor_sentence=liv_contributor(by_id, sids, sig_rows),
+            contributor_sentence=_l_contrib,
             confidence_sentence=confidence_sentence_for(tier, "liver"),
-            consequence_sentence=liv_consequence(by_id),
+            consequence_sentence=_l_cons,
             next_step_sentence=next_step_liver(
                 insight_results,
                 narrative_report_v1,
@@ -523,4 +561,5 @@ def assemble_consumer_domain_scores_v1(
             evidence_anchor_sentence=evidence_anchor_sentence("liver", by_id, idl),
         )
 
-    return [cv_block(), met_block(), liv_block()]
+    out_rows = [cv_block(), met_block(), liv_block()]
+    return out_rows, _wave1_aligned_drivers_meta(out_rows, sig_rows)

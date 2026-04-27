@@ -1,117 +1,131 @@
 {
-  "work_id": "D-5",
+  "work_id": "D-6",
   "bus_version": "1.3.1",
   "status": "HARDENED",
-  "hardened_utc": "2026-04-26T00:00:00Z",
+  "hardened_utc": "2026-04-27T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6)",
+  "failure_type": "NONE",
   "changes": [
     {
       "id": "FRONT_MATTER",
       "field": "front_matter_validation",
       "status": "CONFIRMED",
       "citation": "automation_bus/latest_cursor_prompt.md:1-7",
-      "detail": "All five mandatory fields present: work_id=D-5, branch=feature/wave1-runtime-diagnosis, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=BEHAVIOUR."
+      "detail": "All five mandatory fields present: work_id=D-6, branch=feature/wave1-architecture-remediation, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. Classification correct — MIXED covers behavioural changes (narrative assembly logic, driving-strip alignment, backfill runner) and content changes (ConsumerDomainScoreV1 field, TypeScript interface)."
     },
     {
       "id": "AUTHORITY_PATH_1",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "frontend/app/components/results/Wave1DomainCards.tsx:1 (153 lines, readable)",
-      "detail": "Component confirmed present. Reads: d.headline_sentence (line 90), d.evidence_anchor_sentence (lines 77-81, conditional), d.confidence_sentence (line 114), d.caveat_flags (lines 139-144, join(' · ')), d.contributor_sentence (lines 66-70), d.band_label (line 87), d.confidence_tier (line 89). All D-4 fields are wired correctly in the current component."
+      "citation": "backend/core/analytics/domain_narrative_wave1.py:148, 263, 319, 343, 361, 378, 406",
+      "detail": "File confirmed present. headline_cv_coherent() at line 148 (guards 'stable' band only — D-6 must extend to 'strong'). cv_contributor() at line 263, met_contributor() at line 319, liv_contributor() at line 343. cv_consequence() at line 361, met_consequence() at line 378, liv_consequence() at line 406. Selection condition in cv_contributor() (lines 268-270): severity_state != 'not_observed' AND enabled_for_frontend. Selection condition in cv_consequence() (lines 366-368): adds rec.why_it_matters check. Both conditions confirmed — no hidden divergence from _select_primary_idl() filter logic."
     },
     {
       "id": "AUTHORITY_PATH_2",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "backend/app/routes/analysis.py:71-72, 191-253, 298-345, 348-369",
-      "detail": "Analysis route confirmed. In-memory cache at line 72 (_analysis_results dict). Results stored at completion time as frozen model_dump() at lines 191-253 (consumer_domain_scores: [x.model_dump() for x in dto.consumer_domain_scores] at line 247-251). Fetch path at lines 337-344 reads result_orm.processing_metadata.get(CLIENT_RESULT_SHAPE_V1) — the stored snapshot, not rebuilt live. Analysis c1c061ab-4691-4a47-80b8-2938ae1460e4 generated pre-D-4 will return pre-D-4 field values."
+      "citation": "backend/core/analytics/domain_score_assembler.py:50-52, 211-227, 360-407, 459-524, 304-315",
+      "detail": "File confirmed present. _IDL_ORDER_CV at line 50, _IDL_ORDER_MET at line 51, _IDL_ORDER_LIV at line 52. _select_primary_idl() at lines 211-227 — existing resolver; filter: severity_state != 'not_observed' AND enabled_for_frontend — identical to cv_contributor() IDL check; no condition divergence. Called at line 376 (CV), 425 (MET), 483 (LIV); output currently passes only to primary_idl_record_id and evidence_anchor_sentence — NOT to narrative functions. D-6 must wire resolved output through to contributor, consequence, headline. cv_block() at lines 360-407, met_block() at lines 409-457, liv_block() at lines 459-524. _merge_tier_rail_and_domain() at lines 304-315: takes min(rail_tier, domain_tier). liv_block() line 476: tier = _merge_tier_rail_and_domain(tier_rail, dom_tier) — rail based on cluster_conf.get('hepatic') which is >= 0.85 when ALT present; D-6 section D requires this merge to be overridden for liver."
     },
     {
       "id": "AUTHORITY_PATH_3",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "backend/core/analytics/domain_score_assembler.py:44-47, 398, 400, 406, 448, 450, 456, 515, 517, 523",
-      "detail": "Assembler confirmed present. D-4 functions wired into all three domain blocks: cv_block uses headline_cv_coherent (line 398), confidence_sentence_cv_coherent (line 400), evidence_anchor_sentence (line 406). met_block uses headline_met_coherent (line 448), confidence_sentence_for (line 450), evidence_anchor_sentence (line 456). liv_block uses headline_liv (line 515), confidence_sentence_for (line 517), evidence_anchor_sentence (line 523). Liver caveat fix at lines 44-47: _LIVER_CAVEAT_USER_LINES contains user-safe prose — internal slug tokens have been replaced."
+      "citation": "backend/core/models/results.py:166-238",
+      "detail": "ConsumerDomainScoreV1 confirmed at line 166. model_config = ConfigDict(frozen=True, extra='forbid') at line 173. No card_schema_version field present. D-6 section A and implementation detail A require: card_schema_version: str = Field(default='1.0'). The Field(default='1.0') is explicitly specified in the prompt (line 91) — mandatory to avoid deserialization failures on old stored records under extra='forbid' model config. All narrative sentence fields confirmed at lines 215-238."
     },
     {
       "id": "AUTHORITY_PATH_4",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "backend/core/analytics/domain_narrative_wave1.py:148, 160, 169, 188",
-      "detail": "D-4 narrative functions confirmed in code: headline_cv_coherent(band, contributor, consequence) at line 148, headline_met_coherent(band, contributor, consequence) at line 160, confidence_sentence_cv_coherent(tier, contributor) at line 169, evidence_anchor_sentence(domain, by_id, primary_idl_id) at line 188. D-4 logic is present in the current codebase and merged to main (commit 2d3c3d2)."
+      "citation": "backend/core/pipeline/orchestrator.py:1001-1006",
+      "detail": "Orchestrator.run() confirmed. Unit-normalisation guard at lines 1001-1004: raises ValueError if __unit_normalisation_meta__ absent. analysis_id generation at line 1006: str(uuid.uuid4()) — new UUID on every call. Both backfill prerequisites confirmed in source. D-6 section H explicitly names both requirements — no discovery risk for Cursor."
     },
     {
       "id": "AUTHORITY_PATH_5",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "frontend/app/types/analysis.ts:277-298, 327",
-      "detail": "ConsumerDomainScoreV1 interface at lines 278-298. evidence_anchor_sentence?: string at line ~298 (D-4 field declared). consumer_domain_scores?: ConsumerDomainScoreV1[] | null at line 327. TypeScript contract is up to date with D-4 schema."
+      "citation": "frontend/app/lib/resultsPageLayout.ts:198-220, 261-288",
+      "detail": "pickHeroAlignedPrimaryDriver() confirmed at line 198. This function ALREADY attempts IDL-text-similarity alignment — it scores clusters against firstIdl.retail_display_label, subtitle, supporting_systems_summary (lines 180-192) with ALIGN_THRESHOLD=2, falling back to severity-primary-driver if no cluster scores >= 2. Despite this existing alignment attempt, biomarkers still come from the winning cluster's biomarker list — not from Wave 1 domain signals. D-6 driving-strip fix must understand this existing logic before replacing or augmenting it for the Wave 1 strip. pickTopDriverBiomarkers() at line 261 called from results/page.tsx:195 as pickTopDriverBiomarkers(biomarkers, primaryDriver). primaryDriver is computed at page.tsx:158 from pickHeroAlignedPrimaryDriver(clusters, firstIdl)."
     },
     {
-      "id": "BRANCH_STATE",
-      "field": "authority_verification",
-      "status": "ADVISORY — MUST CREATE",
-      "citation": "git branch -a: feature/wave1-runtime-diagnosis not present",
-      "detail": "Branch feature/wave1-runtime-diagnosis does not exist. Cursor must create it. Base branch: main — D-4 is merged there (commit 2d3c3d2). Do NOT base on feature/wave1-domain-refinement (D-4 branch); D-4 changes are in main."
+      "id": "AUTHORITY_PATH_6",
+      "field": "authority_path_exists",
+      "status": "CONFIRMED",
+      "citation": "frontend/app/types/analysis.ts:278-299",
+      "detail": "ConsumerDomainScoreV1 TypeScript interface confirmed at line 278. No card_schema_version field. No aligned driving-biomarker field. D-6 will add at minimum two new fields to the Pydantic model (card_schema_version, plus whatever Wave 1 aligned driving basis field is chosen). Both must be added to this TypeScript interface. Prompt covers this under 'Frontend: only what is needed to consume aligned Wave 1 authority safely' — this is sufficient; Cursor must include analysis.ts in the touched-files set. Prompt does not need amendment."
     },
     {
-      "id": "STAGE3_BLOCKER_STALE_TOKEN",
+      "id": "AUTHORITY_PATH_7",
+      "field": "authority_path_exists",
+      "status": "CONFIRMED",
+      "citation": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:110-118",
+      "detail": "ph_lipid_residual_ldl_favourable_transport_v1 confirmed at line 110. why_it_matters IS present at line 115: 'Cumulative atherogenic exposure is read in full transport context; reassuring HDL does not erase residual LDL-related risk.' Also ph_vascular_hcy_inflammation_v1 confirmed present with why_it_matters. Both IDL records have why_it_matters populated. DISCREPANCY NOTE: prior investigation (Issue F) claimed this field was absent. Current repo state contradicts that finding. The blank-consequence defect for lipid-dominant patterns may not be an active code defect in the current codebase. The deferral in D-6 section E is still appropriate — Cursor should verify this field on source read and report whether Issue F is live or already resolved."
+    },
+    {
+      "id": "BLOCKER_1_RESOLVED",
+      "field": "source_cross_reference",
+      "status": "CONFIRMED — PRIOR BLOCKER CLOSED",
+      "citation": "automation_bus/latest_cursor_prompt.md:110-121, 263-270; backend/core/analytics/domain_narrative_wave1.py:148-157",
+      "detail": "Prior blocker: headline_cv_coherent() guards only 'stable' band (line 152), leaving 'strong' band returning unmodified 'looks strong' template regardless of IDL state. Amended prompt section C (lines 110-121) now explicitly requires: headline_cv_coherent() and headline_met_coherent() must guard strong as well as stable; resolved primary pattern controls whether headline is reassuring or cautionary; strong + active risk-pattern must use context-aware alternative. AC #4 (line 415) and test discipline item 3 (line 378) cover this. Blocker closed."
+    },
+    {
+      "id": "BLOCKER_2_RESOLVED",
+      "field": "source_cross_reference",
+      "status": "CONFIRMED — PRIOR BLOCKER CLOSED",
+      "citation": "automation_bus/latest_cursor_prompt.md:136-149, 273-283",
+      "detail": "Prior blocker: 'What's driving this' alignment mechanism unspecified — three architecturally distinct options with no direction. Amended prompt section F (lines 136-149) specifies: backend-led authority alignment; backend emits Wave 1-aligned driving signal basis; frontend renders from emitted aligned authority for Wave 1; explicitly prohibits superficial frontend-only patch. AC #3 (line 414) and test discipline item 5 (line 380) cover this. Mechanism is unambiguous. Blocker closed."
+    },
+    {
+      "id": "BLOCKER_3_RESOLVED",
+      "field": "source_cross_reference",
+      "status": "CONFIRMED — PRIOR BLOCKER CLOSED",
+      "citation": "automation_bus/latest_cursor_prompt.md:162-173; backend/core/pipeline/orchestrator.py:1001-1006",
+      "detail": "Prior blocker: backfill runtime prerequisites not named (analysis_id override, unit-normalisation metadata). Amended prompt section H (lines 162-173) explicitly names both. Backfill runner section E steps 3 and 5 (lines 298-300) include re-apply unit normalisation and preserve original analysis id. Test discipline items 8d and 8e (lines 389-390) require both to be verified in tests. Blocker closed."
+    },
+    {
+      "id": "LIVER_CONFIDENCE_IN_SCOPE",
       "field": "prior_task_findings",
-      "status": "CONFIRMED — STAGE 3 BLOCKER",
-      "citation": "automation_bus/state/work_package_active.json:2-3 (work_id=D-4, status=STARTED)",
-      "detail": "D-4 kernel token is still STARTED. D-4 changes are merged to main (commit 2d3c3d2) but run_work_package.py finish was never executed. SOP §14 non-negotiable: No execution without a HARDENED prompt. Stage 3 (run_work_package.py start for D-5) cannot proceed until the stale D-4 token is resolved. Human must clear the D-4 token before Stage 3. Cursor must not override manually."
-    },
-    {
-      "id": "PERSISTENCE_DIAGNOSIS",
-      "field": "source_cross_reference",
       "status": "CONFIRMED",
-      "citation": "backend/app/routes/analysis.py:191-253 (store), 337-344 (fetch)",
-      "detail": "Results are frozen JSON snapshots written at analysis-completion time. Fetch path reads the stored snapshot from DB, not rebuilt dynamically. Analysis c1c061ab-4691-4a47-80b8-2938ae1460e4 predates D-4 and will return pre-D-4 values for headline_sentence, evidence_anchor_sentence, confidence_sentence, and caveat_flags regardless of the current code state. Most likely root cause of the UAT mismatch. Rerunning the analysis (new submission) is the expected remediation path."
+      "citation": "automation_bus/latest_cursor_prompt.md:123-127; backend/core/analytics/domain_score_assembler.py:459-476",
+      "detail": "Prior gap: liver confidence tier fix was absent from D-6 scope. Amended prompt section D (lines 123-127) now explicitly requires: 'do not allow structurally weak hepatic cluster rail confidence to suppress correct domain-level hepatic confidence result'; 'if this requires replacing merge behaviour in liv_block(), do so explicitly and report it.' AC #5 (line 416) covers this. The prescribed fix (use dom_tier directly at liv_block():476, bypassing _merge_tier_rail_and_domain() for liver) is architecturally sound and confirmed safe in source."
     },
     {
-      "id": "D4_CODE_TRUTH",
-      "field": "source_cross_reference",
-      "status": "CONFIRMED",
-      "citation": "domain_narrative_wave1.py:148, 160, 169, 188; domain_score_assembler.py:44-47, 398, 400, 406, 448, 450, 456, 515, 517, 523; git log:2d3c3d2",
-      "detail": "D-4 backend logic is present and merged. All three domain blocks use D-4 narrative functions. Liver caveat uses user-safe prose lines (not internal slugs). Any NEW analysis will pick up D-4 fields. The existing persisted analysis will not, since results are frozen at completion time."
+      "id": "IDL_CONTENT_GAP_DEFERRED",
+      "field": "prior_task_findings",
+      "status": "CONFIRMED — CORRECTLY DEFERRED",
+      "citation": "automation_bus/latest_cursor_prompt.md:129-133; knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:115",
+      "detail": "Issue F (lipid-dominant CV consequence gap) is correctly deferred in section E. AC #12 (line 423) requires explicit reporting of deferral. ADVISORY: prior investigation claimed why_it_matters was absent for ph_lipid_residual_ldl_favourable_transport_v1 — current source shows the field IS present at line 115. Cursor should verify on source read whether the blank-consequence defect is live. If absent: deferral stands for future verification. If present: the defect may already be resolved. Deferral handling is correct in either case."
     },
     {
-      "id": "FRONTEND_WIRING_TRUTH",
-      "field": "source_cross_reference",
-      "status": "CONFIRMED",
-      "citation": "frontend/app/components/results/Wave1DomainCards.tsx:77-81, 90, 114, 139-144",
-      "detail": "All D-4 fields are wired in Wave1DomainCards.tsx. headline_sentence rendered at line 90. evidence_anchor_sentence conditionally rendered at lines 77-81 (shows if non-null). confidence_sentence rendered at line 114 (expanded section). caveat_flags rendered at lines 139-144 as join(' · '). Frontend wiring is not the cause of the mismatch for a stale persisted result — but Cursor should verify caveat_flags join renders acceptably for the two long prose sentences now in _LIVER_CAVEAT_USER_LINES."
-    },
-    {
-      "id": "FORBIDDEN_FILES",
-      "field": "scope_boundary",
-      "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:98-107 (out of scope)",
-      "detail": "Broad product refinement, Phase 2 work, clinician PDF, new domain logic, and speculative fixes are out of scope. backend/ssot/, run_work_package.py, golden_gate_local.py not in scope. Diagnosis only unless a tiny, fully obvious mechanical mistake is found and explicitly reported first."
-    },
-    {
-      "id": "BEHAVIOUR_SCOPE",
+      "id": "REGRESSION_TARGETS",
       "field": "behavioural_hardening",
       "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:22-35 (objective); SOP v1.3.1 §4",
-      "detail": "BEHAVIOUR classification is correct — any fix (if discovered) would touch Intelligence Core components. Diagnosis-only scope is well defined. No regression targets needed for pure diagnosis. If a tiny fix is made, Cursor must report it explicitly before proceeding and confirm no unintended behavioural drift. STOP conditions are binding: if diagnosis requires broad unrelated implementation, stop and report."
+      "citation": "automation_bus/latest_cursor_prompt.md:372-400",
+      "detail": "Regression targets present in test discipline: test 1 (narrative alignment), test 2 (no contributor/consequence mismatch), test 3 ('strong' headline blocked when primary pattern is risk-led), test 4 (liver confidence tier), test 5 (driving-strip alignment), test 6 (safe deserialization of old records without card_schema_version), tests 7-8 (backfill runner covering old-card preservation, v1.1 tagging, determinism, analysis_id preservation, unit-normalisation pre-step). Regression surface is adequately bounded."
     },
     {
-      "id": "CAVEAT_DISPLAY_ADVISORY",
-      "field": "behavioural_risk",
-      "status": "ADVISORY",
-      "citation": "frontend/app/components/results/Wave1DomainCards.tsx:139-144; backend/core/analytics/domain_score_assembler.py:44-47",
-      "detail": "caveat_flags.join(' · ') renders both liver prose sentences as a single concatenated amber string separated by ' · '. The two sentences in _LIVER_CAVEAT_USER_LINES are each ~90 characters — the joined result is ~185 characters in one amber block. Cursor should assess whether this display is acceptable or whether the render path needs adjustment (e.g., render as list rather than join). Raising this as a finding, not a sprint obligation — do not widen scope unless it blocks acceptance."
+      "id": "DETERMINISM_RISKS",
+      "field": "behavioural_hardening",
+      "status": "CONFIRMED — ADVISORY ONLY",
+      "citation": "automation_bus/latest_cursor_prompt.md:321 ('Backfill reruns must remain deterministic and auditable'); backend/core/pipeline/orchestrator.py",
+      "detail": "Registry version drift during backfill rerun: if calibration, cluster schema, or unit registry versions have changed since an original analysis run, the rerun will produce scores that differ from the original — not just corrected narrative text. This is expected behaviour (backfill uses current corrected logic) but creates a mixed-version state for the scores. The replay_manifest stored in each analysis result contains version hashes that can be used to detect and log this drift. Cursor should log registry version information in the backfill audit output (step I). This is advisory — not a blocker."
+    },
+    {
+      "id": "SCOPE_BOUNDARY",
+      "field": "scope_boundary",
+      "status": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:185-195",
+      "detail": "Forbidden files not in scope: run_work_package.py, golden_gate_local.py, update_cursor_status.py, backend/ssot/. Phase 2 domains, pricing/billing, upload flow, clinician PDF, broad SSOT content files not in scope. KB/content fix for lipid-dominant CV why_it_matters explicitly excluded. Scope boundary is clean."
     }
   ],
   "advisory_notes": [
-    "STAGE 3 BLOCKER: D-4 token is still STARTED in work_package_active.json. Human must clear or finish D-4 before running python backend/scripts/run_work_package.py start for D-5.",
-    "BRANCH BASE: Create feature/wave1-runtime-diagnosis from main — D-4 is merged there (commit 2d3c3d2).",
-    "PRIMARY HYPOTHESIS: Analysis c1c061ab-4691-4a47-80b8-2938ae1460e4 is a stale persisted result from before D-4. It will show pre-D-4 values regardless of the current code state. Verify this first (Task C) before deeper diagnosis.",
-    "D-4 CODE IS CORRECT: Backend D-4 functions are present and wired. Frontend D-4 fields are wired. A new analysis submission should produce correct D-4 output.",
-    "LIVER CAVEAT DISPLAY: caveat_flags.join(' · ') on two 90-char prose sentences = long amber block. Flag in report if it renders poorly.",
-    "DIAGNOSIS ONLY: Do not implement fixes unless a tiny, fully obvious mechanical mistake is found. Report explicitly before touching any file.",
-    "STOP CONDITIONS ARE BINDING: If diagnosis requires broad implementation, report blocker with exact cause and stop."
+    "IDL YAML DISCREPANCY: Prior investigation claimed ph_lipid_residual_ldl_favourable_transport_v1.why_it_matters was absent. Current idl_records_v1.yaml:115 shows the field IS present. Cursor should verify on source read whether the blank-consequence defect is live — report finding, no action required in D-6 either way.",
+    "TYPESCRIPT INTERFACE: frontend/app/types/analysis.ts:278-299 ConsumerDomainScoreV1 interface must be updated to include card_schema_version and any new aligned driving-basis field chosen by Cursor. Include analysis.ts in the touched-files report.",
+    "EXISTING IDL-ALIGNMENT LOGIC: pickHeroAlignedPrimaryDriver() at resultsPageLayout.ts:198 already attempts IDL-text-similarity cluster alignment. Cursor must understand this before implementing Wave 1 driving-strip alignment — do not blindly overwrite it. The existing function still returns cluster biomarkers; D-6 fix replaces the source of the driving biomarker list for Wave 1 strips with the backend-emitted Wave 1-aligned basis.",
+    "WIRE-THROUGH NOT NEW BUILD: _select_primary_idl() at domain_score_assembler.py:211 is the correct resolver. The fix is to pass its already-resolved output to cv_contributor(), cv_consequence(), headline_cv_coherent(), and equivalent metabolic/liver functions — not to build a new resolver.",
+    "REGISTRY VERSION DRIFT: Backfill rerun audit logging (section I) should include registry version hashes alongside card hashes so version drift is detectable and auditable per analysis record.",
+    "LIVER CONFIDENCE FIX SCOPE: The prescribed fix at liv_block():476 is to use dom_tier directly, bypassing _merge_tier_rail_and_domain() for liver. This is a one-line change with clear reasoning. Cursor must report the exact change made and confirm it is isolated to liver domain only."
   ],
   "overall_verdict": "HARDENED"
 }

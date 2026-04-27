@@ -258,6 +258,25 @@ export function buildPrimaryHeroSummary(
   return buildBodyOverviewPrimarySentence(page1);
 }
 
+/**
+ * D-6: When backend emits meta.wave1_aligned_drivers.biomarker_keys, prefer that for
+ * "What's driving this" so the strip matches Wave 1 card authority (not cluster arbitration alone).
+ */
+export function pickBiomarkersByWave1Keys(
+  biomarkers: BiomarkerResult[],
+  canonicalKeys: string[] | null | undefined
+): BiomarkerResult[] {
+  if (!canonicalKeys?.length) return [];
+  const byName = new Map(biomarkers.map((b) => [b.biomarker_name.toLowerCase(), b]));
+  const out: BiomarkerResult[] = [];
+  for (const k of canonicalKeys) {
+    const b = byName.get(k.toLowerCase());
+    if (b) out.push(b);
+    if (out.length >= 8) break;
+  }
+  return out;
+}
+
 export function pickTopDriverBiomarkers(
   biomarkers: BiomarkerResult[],
   primaryDriver: { biomarkers: string[] } | null
