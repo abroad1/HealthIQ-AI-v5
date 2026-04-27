@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from types import SimpleNamespace
+
 from core.analytics.domain_narrative_wave1 import cv_consequence, governed_idl_field, idl_records_index
 from core.contracts.interpretation_display_layer_v1 import InterpretationDisplayLayerBundleV1
 
@@ -47,6 +49,22 @@ def test_d4_headline_met_avoids_broadly_stable_when_metabolic_strain():
     h = headline_met_coherent("stable", c, q)
     assert "broadly stable" not in h.lower()
     assert headline_met("stable") != h
+
+
+def test_headline_cv_coherent_strong_band_blocked_when_primary_rec_is_risk_led():
+    """D-6: strong band must not emit reassuring headline_cv('strong') when primary IDL is risk-led."""
+    from core.analytics.domain_narrative_wave1 import headline_cv, headline_cv_coherent
+
+    reassuring_strong = headline_cv("strong")
+    primary_rec = SimpleNamespace(severity_state="watch")
+    out = headline_cv_coherent(
+        "strong",
+        "Lipids look favourable on paper.",
+        "Residual transport risk still warrants structured review.",
+        primary_rec=primary_rec,
+    )
+    assert out != reassuring_strong
+    assert "looks strong" not in out.lower()
 
 
 def test_d4_confidence_cv_bridges_homocysteine_when_tier_not_high():

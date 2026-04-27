@@ -1,9 +1,13 @@
 """D-6 — backfill merge helpers (legacy preservation + version audit)."""
+
+import pytest
+from core.canonical.alias_registry_service import AliasRegistryService, get_alias_registry_service
 from core.pipeline.orchestrator import UNIT_NORMALISATION_META_KEY
 
 from scripts.wave1_backfill_consumer_cards import (
     merge_backfill_payload,
     prepare_stored_raw_for_orchestrator,
+    rerun_orchestrator_for_wave1_backfill,
     run_backfill_dry_run,
 )
 
@@ -37,6 +41,37 @@ def test_dry_run_returns_audit():
     assert r["new_card_version"] == "1.1"
     assert r["legacy_preserved"] is True
     assert "merged" in r
+
+
+@pytest.fixture(autouse=True)
+def _disable_common_alias_injection_for_orchestrator_backfill(monkeypatch):
+    """Same as orchestrator unit tests — stable canonical keys for rerun."""
+    get_alias_registry_service.cache_clear()
+    monkeypatch.setattr(
+        AliasRegistryService,
+        "_add_common_aliases",
+        lambda self, alias_mapping, insert_alias: None,
+    )
+    yield
+    get_alias_registry_service.cache_clear()
+
+
+def test_rerun_preserves_fixed_analysis_id():
+    fixed = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+    raw_biomarkers = {
+        "total_cholesterol": {"value": 200.0, "unit": "mg/dL"},
+        "hdl_cholesterol": {"value": 50.0, "unit": "mg/dL"},
+    }
+    user = {"user_id": "test-wave1-backfill", "age": 35, "gender": "male"}
+    dto, audit = rerun_orchestrator_for_wave1_backfill(
+        raw_biomarkers=raw_biomarkers,
+        user=user,
+        questionnaire_data=None,
+        fixed_analysis_id=fixed,
+        assume_canonical=True,
+    )
+    assert dto.analysis_id == fixed
+    assert audit["analysis_id"] == fixed
 
 
 def test_prepare_stored_raw_sets_unit_normalisation_meta():

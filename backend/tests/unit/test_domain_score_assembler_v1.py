@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
-from core.analytics.domain_score_assembler import assemble_consumer_domain_scores_v1
+from core.analytics.domain_score_assembler import (
+    _merge_tier_rail_and_domain,
+    assemble_consumer_domain_scores_v1,
+)
 from core.contracts.confidence_model_v1 import ConfidenceModelV1
 from core.contracts.insight_graph_v1 import InsightGraphV1
 
@@ -95,6 +98,38 @@ def test_wave1_next_step_sentences_are_domain_distinct_without_insights():
     )
     ns = [r.next_step_sentence for r in rows]
     assert len(set(ns)) == 3
+
+
+def test_liver_confidence_tier_uses_domain_not_cluster_rail():
+    """D-6: hepatic cluster rail may read as low while domain marker depth implies medium — tier follows domain."""
+    scoring = {
+        "health_system_scores": {
+            "cardiovascular": {"overall_score": 80.0, "missing_biomarkers": []},
+            "metabolic": {"overall_score": 80.0, "missing_biomarkers": []},
+            "liver": {"overall_score": 80.0, "missing_biomarkers": []},
+        }
+    }
+    # Domain: alt + ast -> medium hepatic marker-depth tier (no merge with rail).
+    panel = {"alt", "ast", "glucose", "hba1c", "ldl_cholesterol"}
+    ig = _minimal_graph(
+        signal_results=[],
+        capacity={"hepatic": 80},
+        cluster_confidence={"hepatic": 0.40},
+    )
+    rows, _ = assemble_consumer_domain_scores_v1(
+        scoring_result=scoring,
+        insight_graph=ig,
+        idl_bundle=None,
+        derived_ratios_meta=None,
+        panel_biomarker_ids=panel,
+    )
+    liver = rows[2]
+    assert liver.domain_id == "wave1_liver"
+    assert liver.raw_evidence_refs.get("cluster_confidence_hepatic_rail") == 0.40
+    assert liver.confidence_tier == "medium"
+    merged_hypothetical = _merge_tier_rail_and_domain("low", "medium")
+    assert merged_hypothetical == "low"
+    assert liver.confidence_tier != merged_hypothetical
 
 
 def test_liver_blends_with_hepatic_capacity_not_liver_key():
