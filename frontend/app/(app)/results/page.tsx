@@ -35,7 +35,7 @@ import { AnalysisService } from '@/services/analysis';
 import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAnalysisResult } from '@/queries/analysisResult';
-import type { Cluster, ClinicianReportV1 } from '@/types/analysis';
+import type { Cluster, ClinicianReportV1, Wave1AlignedDriversV1 } from '@/types/analysis';
 import type { LayerCFeatureBundleV1 } from '@/types/layerCFeatures';
 import Link from 'next/link';
 import { extractNarrativeRuntimeMeta } from '@/lib/narrativeRuntimePresentation';
@@ -48,6 +48,7 @@ import {
   getFirstIdlRecord,
   pickHeroAlignedPrimaryDriver,
   pickPhenotypeLabel,
+  pickBiomarkersByWave1Keys,
   pickTopDriverBiomarkers,
   resolvePrimaryFindingSeverity,
 } from '@/lib/resultsPageLayout';
@@ -192,7 +193,14 @@ export default function ResultsPage() {
     [firstIdl, primaryCluster]
   );
 
-  const topDriverMarkers = useMemo(() => pickTopDriverBiomarkers(biomarkers, primaryDriver), [biomarkers, primaryDriver]);
+  const wave1DriverKeys = (currentAnalysis?.meta as { wave1_aligned_drivers?: Wave1AlignedDriversV1 } | undefined)
+    ?.wave1_aligned_drivers?.biomarker_keys;
+
+  const topDriverMarkers = useMemo(() => {
+    const aligned = pickBiomarkersByWave1Keys(biomarkers, wave1DriverKeys);
+    if (aligned.length > 0) return aligned;
+    return pickTopDriverBiomarkers(biomarkers, primaryDriver);
+  }, [biomarkers, primaryDriver, wave1DriverKeys]);
 
   const actionCards = useMemo(
     () =>

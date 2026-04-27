@@ -176,6 +176,10 @@ class ConsumerDomainScoreV1(BaseModel):
         ...,
         description="Stable id, e.g. wave1_cardiovascular / wave1_blood_sugar / wave1_liver",
     )
+    card_schema_version: str = Field(
+        default="1.0",
+        description="Wave 1 card contract version: 1.0 legacy, 1.1 D-6 single-authority + aligned drivers",
+    )
     consumer_label: str = Field(..., description="Consumer-facing domain label (dashboard copy)")
     clinical_label: str = Field(..., description="Clinician-oriented label; does not replace clinician report elsewhere")
     score: float = Field(..., ge=0.0, le=1.0, description="0–1 domain score (deterministic mapping from base rails)")

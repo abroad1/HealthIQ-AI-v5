@@ -274,8 +274,17 @@ export interface NarrativeRuntimeMetaV1 {
   outcome?: string;
 }
 
+/** D-6 — Wave 1 aligned drivers (from orchestrator `meta.wave1_aligned_drivers`) */
+export interface Wave1AlignedDriversV1 {
+  schema?: 'wave1_aligned_drivers_v1';
+  biomarker_keys?: string[];
+  by_domain?: Record<string, string[]>;
+}
+
 /** D-1/D-2/D-3 — Wave 1 customer domain card contract (mirrors Pydantic ConsumerDomainScoreV1) */
 export interface ConsumerDomainScoreV1 {
+  /** D-6 — bump when card assembly / narrative contract changes; current Wave 1 retail is 1.1 */
+  card_schema_version?: string;
   domain_id: string;
   consumer_label: string;
   clinical_label: string;
