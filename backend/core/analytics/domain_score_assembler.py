@@ -516,6 +516,7 @@ def assemble_consumer_domain_scores_v1(
         sids = _collect_signal_ids(sig_rows, _is_wave1_liver)
         idl = _select_primary_idl(idl_bundle, _IDL_ORDER_LIV)
         caveats: List[str] = list(_LIVER_CAVEAT_USER_LINES)
+        _l_head = headline_liv(band)
         ev: Dict[str, Any] = {
             "layer3_system_pressure_id": "hepatic__system_pressure",
             "burden_capacity_hepatic": hepatic_cap,
@@ -531,7 +532,13 @@ def assemble_consumer_domain_scores_v1(
         if hepatic_cap is not None:
             ckeys.append("hepatic")
         _l_contrib = liv_contributor_primary(by_id, sids, sig_rows, idl)
-        _l_cons = liv_consequence_primary(by_id, idl)
+        _l_cons = liv_consequence_primary(
+            by_id,
+            idl,
+            contributor_sentence=_l_contrib,
+            headline_sentence=_l_head,
+            active_liver_signal_ids=sids,
+        )
         return ConsumerDomainScoreV1(
             domain_id="wave1_liver",
             card_schema_version="1.1",
@@ -550,7 +557,7 @@ def assemble_consumer_domain_scores_v1(
             caveat_flags=caveats,
             contributing_system_keys=ckeys,
             raw_evidence_refs=ev,
-            headline_sentence=headline_liv(band),
+            headline_sentence=_l_head,
             contributor_sentence=_l_contrib,
             confidence_sentence=confidence_sentence_for(tier, "liver"),
             consequence_sentence=_l_cons,

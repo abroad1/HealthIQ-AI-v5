@@ -1,0 +1,46 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { Wave1DomainCards } from '../../app/components/results/Wave1DomainCards';
+import type { ConsumerDomainScoreV1 } from '../../app/types/analysis';
+
+function minimalLiverDomain(overrides: Partial<ConsumerDomainScoreV1> = {}): ConsumerDomainScoreV1 {
+  return {
+    domain_id: 'wave1_liver',
+    consumer_label: 'Liver health',
+    clinical_label: 'Hepatic',
+    score: 0.8,
+    band_label: 'stable',
+    confidence_tier: 'medium',
+    active_signal_ids: [],
+    primary_idl_record_id: null,
+    missing_marker_ids: ['total_bilirubin', 'ast', 'ggt'],
+    source_track: 'test',
+    caveat_flags: [],
+    contributing_system_keys: ['liver'],
+    raw_evidence_refs: {},
+    headline_sentence: 'Your liver health looks broadly stable based on your current enzyme markers.',
+    contributor_sentence: 'Your liver enzyme markers are within their reference ranges.',
+    confidence_sentence: 'Medium confidence',
+    consequence_sentence: 'Neutral.',
+    next_step_sentence: 'Discuss with a clinician.',
+    ...overrides,
+  };
+}
+
+describe('Wave1DomainCards', () => {
+  it('renders user-safe labels for missing markers (D-7)', async () => {
+    const domains: ConsumerDomainScoreV1[] = [minimalLiverDomain()];
+    const user = userEvent.setup();
+    render(<Wave1DomainCards domains={domains} />);
+
+    await user.click(screen.getByRole('button', { name: /more detail/i }));
+
+    expect(await screen.findByText('Total bilirubin')).toBeInTheDocument();
+    expect(screen.getByText(/AST \(aspartate aminotransferase\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/GGT \(gamma-glutamyl transferase\)/i)).toBeInTheDocument();
+    expect(screen.queryByText('total_bilirubin')).not.toBeInTheDocument();
+    expect(screen.queryByText(/^ast$/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/^ggt$/i)).not.toBeInTheDocument();
+  });
+});

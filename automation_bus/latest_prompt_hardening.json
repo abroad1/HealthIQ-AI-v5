@@ -1,8 +1,8 @@
 {
-  "work_id": "D-6",
+  "work_id": "D-7",
   "bus_version": "1.3.1",
   "status": "HARDENED",
-  "hardened_utc": "2026-04-27T00:00:00Z",
+  "hardened_utc": "2026-04-28T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6)",
   "failure_type": "NONE",
   "changes": [
@@ -11,121 +11,70 @@
       "field": "front_matter_validation",
       "status": "CONFIRMED",
       "citation": "automation_bus/latest_cursor_prompt.md:1-7",
-      "detail": "All five mandatory fields present: work_id=D-6, branch=feature/wave1-architecture-remediation, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. Classification correct — MIXED covers behavioural changes (narrative assembly logic, driving-strip alignment, backfill runner) and content changes (ConsumerDomainScoreV1 field, TypeScript interface)."
+      "detail": "All five mandatory fields present: work_id=D-7, branch=feature/wave1-liver-cleanup, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=BEHAVIOUR. Classification correct — BEHAVIOUR covers changes to `liv_consequence()` fallback (changes emitted `consequence_sentence` text) and `Wave1DomainCards.tsx` label rendering (changes what user sees in governed rendering surface). HIGH risk is correct: domain_narrative_wave1.py is in backend/core/analytics/, which is an Intelligence Core path."
     },
     {
       "id": "AUTHORITY_PATH_1",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "backend/core/analytics/domain_narrative_wave1.py:148, 263, 319, 343, 361, 378, 406",
-      "detail": "File confirmed present. headline_cv_coherent() at line 148 (guards 'stable' band only — D-6 must extend to 'strong'). cv_contributor() at line 263, met_contributor() at line 319, liv_contributor() at line 343. cv_consequence() at line 361, met_consequence() at line 378, liv_consequence() at line 406. Selection condition in cv_contributor() (lines 268-270): severity_state != 'not_observed' AND enabled_for_frontend. Selection condition in cv_consequence() (lines 366-368): adds rec.why_it_matters check. Both conditions confirmed — no hidden divergence from _select_primary_idl() filter logic."
+      "citation": "backend/core/analytics/domain_narrative_wave1.py:477-482, 564-570",
+      "detail": "Liver consequence defect confirmed at exact source location. `liv_consequence_primary(by_id, primary_idl)` at line 477: when primary_idl is None (no active liver IDL record), falls to `return liv_consequence(by_id)` at line 482. `liv_consequence(by_id)` at line 564: checks `ph_hepatic_alt_inflammatory_v1` severity_state; when severity_state IS 'not_observed' (enzymes within range), the active-IDL branch at line 567-568 does NOT fire. Falls to line 569-570: `t = governed_idl_field(_ID_HEP, 'why_it_matters'); return t or ''`. This reads the STATIC YAML `why_it_matters` regardless of runtime severity_state — returning 'Early liver strain patterns are a key lane toward MASLD/fibrosis risk if ignored.' even when ALT/hepatic pattern is not_observed. This is the exact defect: static KB text emitted as if active. `liv_consequence()` has exactly one caller in the backend: `liv_consequence_primary()` at line 482. Fix is bounded."
     },
     {
       "id": "AUTHORITY_PATH_2",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "backend/core/analytics/domain_score_assembler.py:50-52, 211-227, 360-407, 459-524, 304-315",
-      "detail": "File confirmed present. _IDL_ORDER_CV at line 50, _IDL_ORDER_MET at line 51, _IDL_ORDER_LIV at line 52. _select_primary_idl() at lines 211-227 — existing resolver; filter: severity_state != 'not_observed' AND enabled_for_frontend — identical to cv_contributor() IDL check; no condition divergence. Called at line 376 (CV), 425 (MET), 483 (LIV); output currently passes only to primary_idl_record_id and evidence_anchor_sentence — NOT to narrative functions. D-6 must wire resolved output through to contributor, consequence, headline. cv_block() at lines 360-407, met_block() at lines 409-457, liv_block() at lines 459-524. _merge_tier_rail_and_domain() at lines 304-315: takes min(rail_tier, domain_tier). liv_block() line 476: tier = _merge_tier_rail_and_domain(tier_rail, dom_tier) — rail based on cluster_conf.get('hepatic') which is >= 0.85 when ALT present; D-6 section D requires this merge to be overridden for liver."
+      "citation": "frontend/app/components/results/Wave1DomainCards.tsx:125-136",
+      "detail": "Label rendering defect confirmed. At lines 125-136: `d.missing_marker_ids.map((m) => (<li key={m} className='font-mono text-xs'>{m}</li>))`. Raw internal ID `m` is rendered verbatim with font-mono class — no label transformation. IDs seen live in UAT: 'ast', 'ggt', 'total_bilirubin'. These are biomarker SSOT canonical keys emitted by `liv_block()` at domain_score_assembler.py. The assembler adds: `for m in ('ast', 'ggt', 'alp', 'albumin', 'total_bilirubin'): if m not in panel_biomarker_ids and m not in missing: missing.append(m)`. These raw IDs flow through ConsumerDomainScoreV1.missing_marker_ids and are rendered without transformation. Fix point is confirmed as Wave1DomainCards.tsx:131-134."
     },
     {
       "id": "AUTHORITY_PATH_3",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "backend/core/models/results.py:166-238",
-      "detail": "ConsumerDomainScoreV1 confirmed at line 166. model_config = ConfigDict(frozen=True, extra='forbid') at line 173. No card_schema_version field present. D-6 section A and implementation detail A require: card_schema_version: str = Field(default='1.0'). The Field(default='1.0') is explicitly specified in the prompt (line 91) — mandatory to avoid deserialization failures on old stored records under extra='forbid' model config. All narrative sentence fields confirmed at lines 215-238."
+      "citation": "backend/ssot/biomarkers.yaml:397-401 (ast), 1422-1424 (ggt), 1465-1467 (bilirubin)",
+      "detail": "Canonical label source confirmed present in SSOT. biomarkers.yaml has `description` fields for liver markers: ast.description='Aspartate aminotransferase' (line 402), ggt.description='Gamma-glutamyl transferase' (line 1424), bilirubin.description='Total bilirubin' (line 1467), alp.description='Alkaline phosphatase' (line 1444). These provide governed human-readable text. However: the SSOT canonical key is 'bilirubin' (not 'total_bilirubin') — but the assembler emits 'total_bilirubin' as a missing_marker_id. This creates a SSOT key mismatch. The label mapping must handle 'total_bilirubin' explicitly as an alias for the governed 'Total bilirubin' label, or the fix must normalise to the SSOT key. Prompt requirement 'if there is already a canonical/alias source in the repo that should drive this, use it' applies to these description fields."
     },
     {
       "id": "AUTHORITY_PATH_4",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "backend/core/pipeline/orchestrator.py:1001-1006",
-      "detail": "Orchestrator.run() confirmed. Unit-normalisation guard at lines 1001-1004: raises ValueError if __unit_normalisation_meta__ absent. analysis_id generation at line 1006: str(uuid.uuid4()) — new UUID on every call. Both backfill prerequisites confirmed in source. D-6 section H explicitly names both requirements — no discovery risk for Cursor."
+      "citation": "backend/core/analytics/domain_score_assembler.py (liv_block hardcoded missing list)",
+      "detail": "The hardcoded missing-marker supplement in liv_block() confirmed as the source of 'total_bilirubin' in missing_marker_ids. The list ('ast', 'ggt', 'alp', 'albumin', 'total_bilirubin') is appended at assembly time. 'total_bilirubin' does not match any SSOT top-level key (SSOT key is 'bilirubin'). D-7 Cursor must be aware: if it attempts to look up 'total_bilirubin' in biomarkers.yaml by top-level key, the lookup will fail. Label mapping must treat 'total_bilirubin' as a known case — either via explicit map entry or by normalising the assembler to emit 'bilirubin' instead. The latter (normalising the assembler) is out of scope per D-7 constraints unless Cursor judges it minimal and safe."
     },
     {
-      "id": "AUTHORITY_PATH_5",
-      "field": "authority_path_exists",
-      "status": "CONFIRMED",
-      "citation": "frontend/app/lib/resultsPageLayout.ts:198-220, 261-288",
-      "detail": "pickHeroAlignedPrimaryDriver() confirmed at line 198. This function ALREADY attempts IDL-text-similarity alignment — it scores clusters against firstIdl.retail_display_label, subtitle, supporting_systems_summary (lines 180-192) with ALIGN_THRESHOLD=2, falling back to severity-primary-driver if no cluster scores >= 2. Despite this existing alignment attempt, biomarkers still come from the winning cluster's biomarker list — not from Wave 1 domain signals. D-6 driving-strip fix must understand this existing logic before replacing or augmenting it for the Wave 1 strip. pickTopDriverBiomarkers() at line 261 called from results/page.tsx:195 as pickTopDriverBiomarkers(biomarkers, primaryDriver). primaryDriver is computed at page.tsx:158 from pickHeroAlignedPrimaryDriver(clusters, firstIdl)."
-    },
-    {
-      "id": "AUTHORITY_PATH_6",
-      "field": "authority_path_exists",
-      "status": "CONFIRMED",
-      "citation": "frontend/app/types/analysis.ts:278-299",
-      "detail": "ConsumerDomainScoreV1 TypeScript interface confirmed at line 278. No card_schema_version field. No aligned driving-biomarker field. D-6 will add at minimum two new fields to the Pydantic model (card_schema_version, plus whatever Wave 1 aligned driving basis field is chosen). Both must be added to this TypeScript interface. Prompt covers this under 'Frontend: only what is needed to consume aligned Wave 1 authority safely' — this is sufficient; Cursor must include analysis.ts in the touched-files set. Prompt does not need amendment."
-    },
-    {
-      "id": "AUTHORITY_PATH_7",
-      "field": "authority_path_exists",
-      "status": "CONFIRMED",
-      "citation": "knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:110-118",
-      "detail": "ph_lipid_residual_ldl_favourable_transport_v1 confirmed at line 110. why_it_matters IS present at line 115: 'Cumulative atherogenic exposure is read in full transport context; reassuring HDL does not erase residual LDL-related risk.' Also ph_vascular_hcy_inflammation_v1 confirmed present with why_it_matters. Both IDL records have why_it_matters populated. DISCREPANCY NOTE: prior investigation (Issue F) claimed this field was absent. Current repo state contradicts that finding. The blank-consequence defect for lipid-dominant patterns may not be an active code defect in the current codebase. The deferral in D-6 section E is still appropriate — Cursor should verify this field on source read and report whether Issue F is live or already resolved."
-    },
-    {
-      "id": "BLOCKER_1_RESOLVED",
+      "id": "LIVER_CONSEQUENCE_DEFECT",
       "field": "source_cross_reference",
-      "status": "CONFIRMED — PRIOR BLOCKER CLOSED",
-      "citation": "automation_bus/latest_cursor_prompt.md:110-121, 263-270; backend/core/analytics/domain_narrative_wave1.py:148-157",
-      "detail": "Prior blocker: headline_cv_coherent() guards only 'stable' band (line 152), leaving 'strong' band returning unmodified 'looks strong' template regardless of IDL state. Amended prompt section C (lines 110-121) now explicitly requires: headline_cv_coherent() and headline_met_coherent() must guard strong as well as stable; resolved primary pattern controls whether headline is reassuring or cautionary; strong + active risk-pattern must use context-aware alternative. AC #4 (line 415) and test discipline item 3 (line 378) cover this. Blocker closed."
-    },
-    {
-      "id": "BLOCKER_2_RESOLVED",
-      "field": "source_cross_reference",
-      "status": "CONFIRMED — PRIOR BLOCKER CLOSED",
-      "citation": "automation_bus/latest_cursor_prompt.md:136-149, 273-283",
-      "detail": "Prior blocker: 'What's driving this' alignment mechanism unspecified — three architecturally distinct options with no direction. Amended prompt section F (lines 136-149) specifies: backend-led authority alignment; backend emits Wave 1-aligned driving signal basis; frontend renders from emitted aligned authority for Wave 1; explicitly prohibits superficial frontend-only patch. AC #3 (line 414) and test discipline item 5 (line 380) cover this. Mechanism is unambiguous. Blocker closed."
-    },
-    {
-      "id": "BLOCKER_3_RESOLVED",
-      "field": "source_cross_reference",
-      "status": "CONFIRMED — PRIOR BLOCKER CLOSED",
-      "citation": "automation_bus/latest_cursor_prompt.md:162-173; backend/core/pipeline/orchestrator.py:1001-1006",
-      "detail": "Prior blocker: backfill runtime prerequisites not named (analysis_id override, unit-normalisation metadata). Amended prompt section H (lines 162-173) explicitly names both. Backfill runner section E steps 3 and 5 (lines 298-300) include re-apply unit normalisation and preserve original analysis id. Test discipline items 8d and 8e (lines 389-390) require both to be verified in tests. Blocker closed."
-    },
-    {
-      "id": "LIVER_CONFIDENCE_IN_SCOPE",
-      "field": "prior_task_findings",
       "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:123-127; backend/core/analytics/domain_score_assembler.py:459-476",
-      "detail": "Prior gap: liver confidence tier fix was absent from D-6 scope. Amended prompt section D (lines 123-127) now explicitly requires: 'do not allow structurally weak hepatic cluster rail confidence to suppress correct domain-level hepatic confidence result'; 'if this requires replacing merge behaviour in liv_block(), do so explicitly and report it.' AC #5 (line 416) covers this. The prescribed fix (use dom_tier directly at liv_block():476, bypassing _merge_tier_rail_and_domain() for liver) is architecturally sound and confirmed safe in source."
+      "citation": "backend/core/analytics/domain_narrative_wave1.py:564-570",
+      "detail": "Root cause is `governed_idl_field(_ID_HEP, 'why_it_matters')` at line 569 as the last fallback in `liv_consequence()`. This function reads directly from the static IDL YAML (bypassing the runtime IDL bundle and its published severity_state). When the runtime IDL has severity_state='not_observed' (normal enzymes), the dynamic check at line 567 does not fire, and the static YAML `why_it_matters` is returned — which contains active-strain language regardless. The fix must replace this final fallback with a neutral proportionate string for the no-active-pattern case. The stronger IDL-backed consequence must still appear when the live IDL record is active (severity_state in 'watch', 'attention', 'strong_signal'). This is a one- or two-line targeted fix in `liv_consequence()` — does not require reopening the D-6 primary-pattern architecture."
     },
     {
-      "id": "IDL_CONTENT_GAP_DEFERRED",
-      "field": "prior_task_findings",
-      "status": "CONFIRMED — CORRECTLY DEFERRED",
-      "citation": "automation_bus/latest_cursor_prompt.md:129-133; knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml:115",
-      "detail": "Issue F (lipid-dominant CV consequence gap) is correctly deferred in section E. AC #12 (line 423) requires explicit reporting of deferral. ADVISORY: prior investigation claimed why_it_matters was absent for ph_lipid_residual_ldl_favourable_transport_v1 — current source shows the field IS present at line 115. Cursor should verify on source read whether the blank-consequence defect is live. If absent: deferral stands for future verification. If present: the defect may already be resolved. Deferral handling is correct in either case."
-    },
-    {
-      "id": "REGRESSION_TARGETS",
+      "id": "BEHAVIOURAL_REGRESSION_TARGETS",
       "field": "behavioural_hardening",
       "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:372-400",
-      "detail": "Regression targets present in test discipline: test 1 (narrative alignment), test 2 (no contributor/consequence mismatch), test 3 ('strong' headline blocked when primary pattern is risk-led), test 4 (liver confidence tier), test 5 (driving-strip alignment), test 6 (safe deserialization of old records without card_schema_version), tests 7-8 (backfill runner covering old-card preservation, v1.1 tagging, determinism, analysis_id preservation, unit-normalisation pre-step). Regression surface is adequately bounded."
-    },
-    {
-      "id": "DETERMINISM_RISKS",
-      "field": "behavioural_hardening",
-      "status": "CONFIRMED — ADVISORY ONLY",
-      "citation": "automation_bus/latest_cursor_prompt.md:321 ('Backfill reruns must remain deterministic and auditable'); backend/core/pipeline/orchestrator.py",
-      "detail": "Registry version drift during backfill rerun: if calibration, cluster schema, or unit registry versions have changed since an original analysis run, the rerun will produce scores that differ from the original — not just corrected narrative text. This is expected behaviour (backfill uses current corrected logic) but creates a mixed-version state for the scores. The replay_manifest stored in each analysis result contains version hashes that can be used to detect and log this drift. Cursor should log registry version information in the backfill audit output (step I). This is advisory — not a blocker."
+      "citation": "automation_bus/latest_cursor_prompt.md:184-189",
+      "detail": "Four test targets explicitly named in prompt: (1) neutral/proportionate liver consequence when no active liver-risk pattern resolved; (2) stronger liver consequence when resolved pattern genuinely supports it; (3) missing/improver labels rendered as user-safe labels not raw ids; (4) type-check for touched surfaces. These are the minimal behavioral regression targets. Tests 1 and 2 require an IDL bundle fixture with `ph_hepatic_alt_inflammatory_v1` at severity_state='not_observed' vs 'attention'/'watch'. The InterpretationDisplayLayerBundleV1 fixture pattern from existing test files applies. Test 3 requires a rendering test for Wave1DomainCards with known missing_marker_ids."
     },
     {
       "id": "SCOPE_BOUNDARY",
       "field": "scope_boundary",
       "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:185-195",
-      "detail": "Forbidden files not in scope: run_work_package.py, golden_gate_local.py, update_cursor_status.py, backend/ssot/. Phase 2 domains, pricing/billing, upload flow, clinician PDF, broad SSOT content files not in scope. KB/content fix for lipid-dominant CV why_it_matters explicitly excluded. Scope boundary is clean."
+      "citation": "automation_bus/latest_cursor_prompt.md:87-97, 165-173",
+      "detail": "Forbidden scope confirmed: cardiovascular logic, blood sugar logic, backfill architecture, D-6 primary-pattern selector, 'What's driving this' architecture, Phase 2 domains, broader results-page redesign. Forbidden files: orchestrator.py, backfill runner, pricing/billing, upload flow, clinician PDF/export, Phase 2 domain logic, broad KB/SSOT changes. STOP conditions at lines 247-254 protect against reopening the Wave 1 architecture or discovering a hemoglobin/unit issue. No STOP condition triggered by source read."
+    },
+    {
+      "id": "DETERMINISM_RISK",
+      "field": "behavioural_hardening",
+      "status": "CONFIRMED — LOW RISK",
+      "citation": "backend/core/analytics/domain_narrative_wave1.py:477-482, 564-570",
+      "detail": "Liver consequence fix replaces a static YAML field read with either another static governed string (neutral fallback) or the runtime IDL-backed consequence. Both paths are deterministic — no LLM, no randomness. The condition (severity_state check) is already deterministic and identical to the pattern used in cv_consequence_primary() and met_consequence_primary(). No drift risk introduced. Label mapping in the frontend is a static lookup table — fully deterministic."
     }
   ],
   "advisory_notes": [
-    "IDL YAML DISCREPANCY: Prior investigation claimed ph_lipid_residual_ldl_favourable_transport_v1.why_it_matters was absent. Current idl_records_v1.yaml:115 shows the field IS present. Cursor should verify on source read whether the blank-consequence defect is live — report finding, no action required in D-6 either way.",
-    "TYPESCRIPT INTERFACE: frontend/app/types/analysis.ts:278-299 ConsumerDomainScoreV1 interface must be updated to include card_schema_version and any new aligned driving-basis field chosen by Cursor. Include analysis.ts in the touched-files report.",
-    "EXISTING IDL-ALIGNMENT LOGIC: pickHeroAlignedPrimaryDriver() at resultsPageLayout.ts:198 already attempts IDL-text-similarity cluster alignment. Cursor must understand this before implementing Wave 1 driving-strip alignment — do not blindly overwrite it. The existing function still returns cluster biomarkers; D-6 fix replaces the source of the driving biomarker list for Wave 1 strips with the backend-emitted Wave 1-aligned basis.",
-    "WIRE-THROUGH NOT NEW BUILD: _select_primary_idl() at domain_score_assembler.py:211 is the correct resolver. The fix is to pass its already-resolved output to cv_contributor(), cv_consequence(), headline_cv_coherent(), and equivalent metabolic/liver functions — not to build a new resolver.",
-    "REGISTRY VERSION DRIFT: Backfill rerun audit logging (section I) should include registry version hashes alongside card hashes so version drift is detectable and auditable per analysis record.",
-    "LIVER CONFIDENCE FIX SCOPE: The prescribed fix at liv_block():476 is to use dom_tier directly, bypassing _merge_tier_rail_and_domain() for liver. This is a one-line change with clear reasoning. Cursor must report the exact change made and confirm it is isolated to liver domain only."
+    "TOTAL_BILIRUBIN vs SSOT BILIRUBIN: The assembler emits 'total_bilirubin' as a missing_marker_id (hardcoded in liv_block()) but the SSOT canonical key is 'bilirubin' (description: 'Total bilirubin'). Any label map using SSOT description-field lookup by canonical key will not find 'total_bilirubin'. The map must include an explicit 'total_bilirubin' -> 'Total bilirubin' entry, or the assembler must be corrected to emit 'bilirubin'. If Cursor chooses to fix the assembler key, it must verify no downstream code depends on 'total_bilirubin' as a literal string.",
+    "LIV_CONSEQUENCE FIX SCOPE: The fix to `liv_consequence()` at line 569-570 only affects the final fallback — when ph_hepatic_alt_inflammatory_v1 is not_observed AND primary_idl is None. The IDL-backed consequence path (lines 566-568) is unchanged. Cursor must confirm the neutral fallback string is proportionate and not falsely reassuring — per prompt constraint: 'Do not make liver falsely reassuring. The goal is coherence, not optimism.'",
+    "SINGLE CALLER: `liv_consequence()` has exactly one caller — `liv_consequence_primary()` at line 482. No other backend call site. Fix is fully bounded.",
+    "SSOT DESCRIPTION FIELDS AS LABEL SOURCE: biomarkers.yaml description fields (ast='Aspartate aminotransferase', ggt='Gamma-glutamyl transferase', bilirubin='Total bilirubin', alp='Alkaline phosphatase', albumin — check for entry) provide governed text. Frontend label map may reference these values without reading YAML at runtime — a static TypeScript map derived from SSOT values is the cleanest bounded implementation."
   ],
   "overall_verdict": "HARDENED"
 }

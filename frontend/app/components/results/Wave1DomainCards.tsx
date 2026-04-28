@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import type { ConsumerDomainScoreV1 } from '@/types/analysis';
+import { wave1ConfidenceMarkerDisplayLabel } from '@/lib/wave1ConfidenceMarkerLabels';
 
 const WAVE1_ORDER: readonly string[] = [
   'wave1_cardiovascular',
@@ -129,8 +130,8 @@ export function Wave1DomainCards({ domains }: Props) {
                         </p>
                         <ul className="list-disc pl-4 space-y-1">
                           {d.missing_marker_ids.map((m) => (
-                            <li key={m} className="font-mono text-xs">
-                              {m}
+                            <li key={m} className="text-sm text-slate-700">
+                              {wave1ConfidenceMarkerDisplayLabel(m)}
                             </li>
                           ))}
                         </ul>
