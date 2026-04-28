@@ -153,6 +153,68 @@ def _idl_suggests_risk_or_review_led(primary_rec: Any) -> bool:
     return st in ("watch", "attention", "strong_signal")
 
 
+# D-7: Neutral consequence when headline/contributor read stable/in-range but strain consequence would contradict.
+_LIV_CONSEQUENCE_NEUTRAL_WHEN_SURFACE_STABLE_D7 = (
+    "Fibrosis-type risk is not something this enzyme snapshot alone can confirm or exclude; "
+    "your clinician can interpret these markers alongside history and any follow-up testing they consider appropriate."
+)
+
+_LIVER_CONTRIBUTOR_STRAIN_NEEDLES_D7 = (
+    "elevated",
+    "above the expected range",
+    "above the optimal range",
+    "merit structured follow-up",
+    "liver-enzyme signals are active",
+    "hepatocellular strain",
+    "metabolic or inflammatory strain",
+)
+
+
+def _liver_surface_reads_stable_or_in_range(contributor: str, headline: str) -> bool:
+    """True when collapsed/expanded liver lines read as broadly reassuring (D-7 coherence gate)."""
+    c = (contributor or "").lower()
+    h = (headline or "").lower()
+    if "within their reference ranges" in c or "within their reference range" in c:
+        return True
+    if "looks strong" in h or "broadly stable" in h:
+        return True
+    return False
+
+
+def _liver_contributor_implies_active_enzyme_strain(contributor: str) -> bool:
+    """True when contributor copy reflects enzyme strain / active hepatic signals (D-7)."""
+    t = (contributor or "").lower()
+    return any(n in t for n in _LIVER_CONTRIBUTOR_STRAIN_NEEDLES_D7)
+
+
+def _liver_use_neutral_consequence_instead_of_strain_copy(
+    *,
+    contributor_sentence: str,
+    headline_sentence: str,
+    primary_rec_for_hepatic: Any,
+    active_liver_signal_ids: List[str],
+) -> bool:
+    """
+    D-7: Use proportionate neutral consequence instead of MASLD-style strain copy.
+
+    Neutral when the surface reads stable/in-range and evidence does not support an active-strain story.
+
+    Strong strain consequence remains when:
+    - resolved hepatic IDL is risk-/review-led (watch / attention / strong_signal), or
+    - Wave 1 hepatic signals are active on the panel, or
+    - contributor copy already reflects enzyme elevation / strain.
+    """
+    if not _liver_surface_reads_stable_or_in_range(contributor_sentence, headline_sentence):
+        return False
+    if _liver_contributor_implies_active_enzyme_strain(contributor_sentence):
+        return False
+    if primary_rec_for_hepatic is not None and _idl_suggests_risk_or_review_led(primary_rec_for_hepatic):
+        return False
+    if active_liver_signal_ids:
+        return False
+    return True
+
+
 def headline_cv_coherent(
     band: str,
     contributor: str,
@@ -474,12 +536,33 @@ def liv_contributor_primary(
     return "Your liver enzyme markers are within their reference ranges."
 
 
-def liv_consequence_primary(by_id: Dict[str, Any], primary_idl: Optional[str]) -> str:
+def liv_consequence_primary(
+    by_id: Dict[str, Any],
+    primary_idl: Optional[str],
+    *,
+    contributor_sentence: str = "",
+    headline_sentence: str = "",
+    active_liver_signal_ids: Optional[List[str]] = None,
+) -> str:
+    """D-7: Gate strain consequence against stable contributor/headline when evidence does not support it."""
+    active_sids = list(active_liver_signal_ids or [])
     if primary_idl:
         rec = idl_record(by_id, primary_idl)
         if rec and rec.why_it_matters and rec.severity_state != "not_observed" and rec.enabled_for_frontend:
+            if _liver_use_neutral_consequence_instead_of_strain_copy(
+                contributor_sentence=contributor_sentence,
+                headline_sentence=headline_sentence,
+                primary_rec_for_hepatic=rec,
+                active_liver_signal_ids=active_sids,
+            ):
+                return _LIV_CONSEQUENCE_NEUTRAL_WHEN_SURFACE_STABLE_D7
             return str(rec.why_it_matters).strip()
-    return liv_consequence(by_id)
+    return liv_consequence(
+        by_id,
+        contributor_sentence=contributor_sentence,
+        headline_sentence=headline_sentence,
+        active_liver_signal_ids=active_sids,
+    )
 
 
 def cv_consequence(
@@ -561,12 +644,37 @@ def met_consequence_primary(
     return met_consequence(by_id, active_sids, sig_rows)
 
 
-def liv_consequence(by_id: Dict[str, Any]) -> str:
+def liv_consequence(
+    by_id: Dict[str, Any],
+    *,
+    contributor_sentence: str = "",
+    headline_sentence: str = "",
+    active_liver_signal_ids: Optional[List[str]] = None,
+) -> str:
+    """Fallback liver consequence path (non-primary-IDL); D-7 neutral gate applies to YAML/str copy."""
+    active_sids = list(active_liver_signal_ids or [])
     rec = idl_record(by_id, _ID_HEP)
     if rec and rec.why_it_matters:
         if rec.severity_state != "not_observed" and rec.enabled_for_frontend:
+            if _liver_use_neutral_consequence_instead_of_strain_copy(
+                contributor_sentence=contributor_sentence,
+                headline_sentence=headline_sentence,
+                primary_rec_for_hepatic=rec,
+                active_liver_signal_ids=active_sids,
+            ):
+                return _LIV_CONSEQUENCE_NEUTRAL_WHEN_SURFACE_STABLE_D7
             return str(rec.why_it_matters).strip()
     t = governed_idl_field(_ID_HEP, "why_it_matters")
+    if (
+        t
+        and _liver_use_neutral_consequence_instead_of_strain_copy(
+            contributor_sentence=contributor_sentence,
+            headline_sentence=headline_sentence,
+            primary_rec_for_hepatic=None,
+            active_liver_signal_ids=active_sids,
+        )
+    ):
+        return _LIV_CONSEQUENCE_NEUTRAL_WHEN_SURFACE_STABLE_D7
     return t or ""
 
 
