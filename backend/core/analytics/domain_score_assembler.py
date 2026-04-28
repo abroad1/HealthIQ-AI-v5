@@ -79,6 +79,11 @@ _HEP_CONFIDENCE_POOL = (
 )
 
 
+def _liver_panel_has_bilirubin_coverage(panel: Set[str]) -> bool:
+    """SSOT uses canonical ``bilirubin``; some rails still say ``total_bilirubin`` — either satisfies coverage."""
+    return ("bilirubin" in panel) or ("total_bilirubin" in panel)
+
+
 def _band_label_from_0_100(score_0_100: float) -> str:
     s = max(0.0, min(100.0, float(score_0_100)))
     if s >= 80.0:
@@ -508,10 +513,15 @@ def assemble_consumer_domain_scores_v1(
         # D-6: User-facing liver tier follows domain-level hepatic marker depth, not cluster rail floor.
         tier = cast(ConfidenceTierV1, dom_tier)
         rail_cc = cluster_conf.get("hepatic")
-        missing = _missing_for_rail(hss, _RAIL_LIVER)
-        for m in ("ast", "ggt", "alp", "albumin", "total_bilirubin"):
+        missing = list(_missing_for_rail(hss, _RAIL_LIVER))
+        if _liver_panel_has_bilirubin_coverage(panel_biomarker_ids):
+            missing = [x for x in missing if x not in ("bilirubin", "total_bilirubin")]
+        for m in ("ast", "ggt", "alp", "albumin"):
             if m not in panel_biomarker_ids and m not in missing:
                 missing.append(m)
+        if not _liver_panel_has_bilirubin_coverage(panel_biomarker_ids):
+            if "bilirubin" not in missing:
+                missing.append("bilirubin")
         missing = sorted(set(missing))
         sids = _collect_signal_ids(sig_rows, _is_wave1_liver)
         idl = _select_primary_idl(idl_bundle, _IDL_ORDER_LIV)

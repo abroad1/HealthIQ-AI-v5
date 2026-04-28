@@ -100,6 +100,8 @@ bilirubin:
   - Bilirubin Total (Venous)
   - Bilirubin Total - venous
   - Total Bilirubin
+  # Live parser / lab export (observed trace): canonical resolves to bilirubin, not total_bilirubin
+  - bilirubin_total_(venous)
 calcium:
   canonical_id: calcium
   aliases:
@@ -290,6 +292,8 @@ ggt:
   - Gamma-GlutamilTransferase GGT (Venous)
   - Gamma-Glutamyl Transferase
   - Gamma-GlutamylTransferase GGT (Venous)
+  # Observed runtime key (misspelling glutamil vs glutamyl); must map to ggt
+  - gamma-glutamiltransferase_ggt_(venous)
 globulin:
   canonical_id: globulin
   aliases:
