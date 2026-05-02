@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { DM_Serif_Display } from 'next/font/google';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import { Input } from '../ui/input';
@@ -14,6 +15,12 @@ import {
   type QuestionnaireQuestion,
 } from '@/lib/questionnaireSchema';
 import { cn } from '@/lib/utils';
+
+const dmSerif = DM_Serif_Display({ weight: '400', subsets: ['latin'], display: 'swap' });
+
+/** Question card shell — diagnostic panel, not floating shadcn default */
+const questionCardClass =
+  'border border-border bg-card shadow-none hover:border-border/80 hover:shadow-sm transition-all duration-200';
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -110,7 +117,7 @@ function SearchableSelect(props: {
         aria-haspopup="listbox"
         onClick={() => !disabled && setOpen((o) => !o)}
         className={cn(
-          'flex h-11 w-full items-center justify-between rounded-lg border bg-background px-3 text-left text-sm shadow-sm transition-colors',
+          'flex h-11 w-full items-center justify-between rounded-lg border border-border bg-background px-3 text-left text-sm transition-all duration-150 hover:border-primary/50 hover:bg-primary/5',
           error ? 'border-destructive' : 'border-input',
           disabled && 'cursor-not-allowed opacity-60'
         )}
@@ -135,8 +142,8 @@ function SearchableSelect(props: {
                 role="option"
                 aria-selected={opt === value}
                 className={cn(
-                  'flex w-full items-center rounded-md px-2 py-2 text-left text-sm hover:bg-accent',
-                  opt === value && 'bg-primary/10 text-primary'
+                  'flex w-full items-center rounded-md px-2 py-2 text-left text-sm transition-colors hover:bg-accent',
+                  opt === value && 'bg-primary text-primary-foreground'
                 )}
                 onClick={() => {
                   onChange(opt);
@@ -373,10 +380,10 @@ export default function QuestionnaireForm({
                 disabled={disabled}
                 onClick={() => handleResponseChange(question.id, option)}
                 className={cn(
-                  'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors',
+                  'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-all duration-150',
                   selected
-                    ? 'border-primary bg-primary/10 text-primary ring-1 ring-primary/25'
-                    : 'border-border bg-card hover:bg-muted/70',
+                    ? 'border-primary bg-primary text-primary-foreground shadow-sm'
+                    : 'border border-border bg-background text-foreground hover:border-primary/50 hover:bg-primary/5 hover:text-primary',
                   error && !selected && 'border-destructive/60'
                 )}
               >
@@ -430,10 +437,10 @@ export default function QuestionnaireForm({
                 }
               }}
               className={cn(
-                'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors text-left',
+                'inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-all duration-150 text-left',
                 selected
-                  ? 'border-primary bg-primary/10 text-primary ring-1 ring-primary/25'
-                  : 'border-border bg-card hover:bg-muted/70',
+                  ? 'border-primary bg-primary text-primary-foreground shadow-sm'
+                  : 'border border-border bg-background text-foreground hover:border-primary/50 hover:bg-primary/5 hover:text-primary',
                 error && !selected && 'border-destructive/60'
               )}
             >
@@ -446,11 +453,16 @@ export default function QuestionnaireForm({
     );
   };
 
-  const renderQuestion = (question: QuestionnaireQuestion) => {
+  const renderQuestion = (question: QuestionnaireQuestion, visibleIndex: number) => {
     if (!isQuestionVisible(question, responses)) return null;
 
     const value = responses[question.id];
     const error = errors[question.id];
+    const qMarker = (
+      <span className="mb-2 block text-xs font-mono uppercase tracking-wider text-primary/70">
+        Q{visibleIndex + 1}
+      </span>
+    );
     const inputSurface =
       'border-0 border-b border-input rounded-none bg-transparent px-0 shadow-none focus-visible:ring-0 focus-visible:border-primary';
 
@@ -460,9 +472,10 @@ export default function QuestionnaireForm({
       case 'phone':
       case 'date':
         return (
-          <Card key={question.id} className="border-border/80 shadow-sm">
+          <Card key={question.id} className={questionCardClass}>
             <CardContent className="space-y-2 pt-6">
-              <Label htmlFor={question.id} className="text-base font-medium leading-snug">
+              {qMarker}
+              <Label htmlFor={question.id} className="text-lg font-semibold leading-snug text-foreground">
                 {question.question}
                 {renderRequiredHint(question)}
               </Label>
@@ -475,7 +488,7 @@ export default function QuestionnaireForm({
                 className={cn(inputSurface, error && 'border-destructive')}
               />
               {question.helpText && (
-                <p className="text-xs text-muted-foreground">{question.helpText}</p>
+                <p className="mt-1.5 text-sm text-muted-foreground">{question.helpText}</p>
               )}
               {error && <p className="text-xs text-destructive">{error}</p>}
             </CardContent>
@@ -484,9 +497,10 @@ export default function QuestionnaireForm({
 
       case 'number':
         return (
-          <Card key={question.id} className="border-border/80 shadow-sm">
+          <Card key={question.id} className={questionCardClass}>
             <CardContent className="space-y-2 pt-6">
-              <Label htmlFor={question.id} className="text-base font-medium leading-snug">
+              {qMarker}
+              <Label htmlFor={question.id} className="text-lg font-semibold leading-snug text-foreground">
                 {question.question}
                 {renderRequiredHint(question)}
               </Label>
@@ -504,7 +518,7 @@ export default function QuestionnaireForm({
                 className={cn(inputSurface, error && 'border-destructive')}
               />
               {question.helpText && (
-                <p className="text-xs text-muted-foreground">{question.helpText}</p>
+                <p className="mt-1.5 text-sm text-muted-foreground">{question.helpText}</p>
               )}
               {error && <p className="text-xs text-destructive">{error}</p>}
             </CardContent>
@@ -513,15 +527,16 @@ export default function QuestionnaireForm({
 
       case 'dropdown':
         return (
-          <Card key={question.id} className="border-border/80 shadow-sm">
+          <Card key={question.id} className={questionCardClass}>
             <CardContent className="space-y-3 pt-6">
-              <Label htmlFor={question.id} className="text-base font-medium leading-snug">
+              {qMarker}
+              <Label htmlFor={question.id} className="text-lg font-semibold leading-snug text-foreground">
                 {question.question}
                 {renderRequiredHint(question)}
               </Label>
               {renderDropdownControl(question, value, error, busy)}
               {question.helpText && (
-                <p className="text-xs text-muted-foreground">{question.helpText}</p>
+                <p className="mt-1.5 text-sm text-muted-foreground">{question.helpText}</p>
               )}
               {error && <p className="text-xs text-destructive">{error}</p>}
             </CardContent>
@@ -533,18 +548,19 @@ export default function QuestionnaireForm({
         const sliderValue = Array.isArray(value) ? value[0] : (value ?? defaultSliderValue);
 
         return (
-          <Card key={question.id} className="border-border/80 shadow-sm">
+          <Card key={question.id} className={questionCardClass}>
             <CardContent className="space-y-4 pt-6">
-              <Label htmlFor={question.id} className="text-base font-medium leading-snug">
+              {qMarker}
+              <Label htmlFor={question.id} className="text-lg font-semibold leading-snug text-foreground">
                 {question.question}
                 {renderRequiredHint(question)}
               </Label>
-              <div className="rounded-xl border bg-muted/40 px-4 py-4">
-                <div className="mb-4 text-center">
-                  <span className="text-3xl font-semibold tabular-nums tracking-tight text-foreground">
-                    {sliderValue}
-                  </span>
-                  <span className="ml-2 text-sm text-muted-foreground">selected</span>
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-baseline gap-3">
+                  <span className="text-5xl font-bold tabular-nums leading-none text-primary">{sliderValue}</span>
+                  {question.labels?.[String(sliderValue)] != null ? (
+                    <span className="text-sm text-muted-foreground">{question.labels[String(sliderValue)]}</span>
+                  ) : null}
                 </div>
                 <div className={cn(busy && 'pointer-events-none opacity-60')}>
                   <Slider
@@ -556,7 +572,7 @@ export default function QuestionnaireForm({
                     className="w-full"
                   />
                 </div>
-                <div className="mt-3 flex justify-between text-xs text-muted-foreground">
+                <div className="flex justify-between text-xs font-mono text-muted-foreground">
                   {question.labels && (
                     <>
                       <span>{question.labels[String(question.min || 1)]}</span>
@@ -566,7 +582,7 @@ export default function QuestionnaireForm({
                 </div>
               </div>
               {question.helpText && (
-                <p className="text-xs text-muted-foreground">{question.helpText}</p>
+                <p className="mt-1.5 text-sm text-muted-foreground">{question.helpText}</p>
               )}
               {error && <p className="text-xs text-destructive">{error}</p>}
             </CardContent>
@@ -576,15 +592,16 @@ export default function QuestionnaireForm({
 
       case 'checkbox':
         return (
-          <Card key={question.id} className="border-border/80 shadow-sm">
+          <Card key={question.id} className={questionCardClass}>
             <CardContent className="space-y-3 pt-6">
-              <Label className="text-base font-medium leading-snug">
+              {qMarker}
+              <Label className="text-lg font-semibold leading-snug text-foreground">
                 {question.question}
                 {renderRequiredHint(question)}
               </Label>
               {renderCheckboxControl(question, value, error, busy)}
               {question.helpText && (
-                <p className="text-xs text-muted-foreground">{question.helpText}</p>
+                <p className="mt-1.5 text-sm text-muted-foreground">{question.helpText}</p>
               )}
               {error && <p className="text-xs text-destructive">{error}</p>}
             </CardContent>
@@ -594,9 +611,10 @@ export default function QuestionnaireForm({
       case 'group': {
         const groupObj = isRecord(value) ? value : {};
         return (
-          <Card key={question.id} className="border-border/80 shadow-sm">
+          <Card key={question.id} className={questionCardClass}>
             <CardContent className="space-y-3 pt-6">
-              <Label className="text-base font-medium leading-snug">
+              {qMarker}
+              <Label className="text-lg font-semibold leading-snug text-foreground">
                 {question.question}
                 {renderRequiredHint(question)}
               </Label>
@@ -631,7 +649,7 @@ export default function QuestionnaireForm({
                 ))}
               </div>
               {question.helpText && (
-                <p className="text-xs text-muted-foreground">{question.helpText}</p>
+                <p className="mt-1.5 text-sm text-muted-foreground">{question.helpText}</p>
               )}
               {error && <p className="text-xs text-destructive">{error}</p>}
             </CardContent>
@@ -641,9 +659,10 @@ export default function QuestionnaireForm({
 
       default:
         return (
-          <Card key={question.id} className="border-border/80 shadow-sm">
+          <Card key={question.id} className={questionCardClass}>
             <CardContent className="space-y-2 pt-6">
-              <Label htmlFor={question.id} className="text-base font-medium leading-snug">
+              {qMarker}
+              <Label htmlFor={question.id} className="text-lg font-semibold leading-snug text-foreground">
                 {question.question}
                 {renderRequiredHint(question)}
               </Label>
@@ -652,10 +671,10 @@ export default function QuestionnaireForm({
                 disabled={busy}
                 value={asString(value)}
                 onChange={(e) => handleResponseChange(question.id, e.target.value)}
-                className={cn('min-h-[100px]', error && 'border-destructive')}
+                className={cn('min-h-[100px] border-border bg-background', error && 'border-destructive')}
               />
               {question.helpText && (
-                <p className="text-xs text-muted-foreground">{question.helpText}</p>
+                <p className="mt-1.5 text-sm text-muted-foreground">{question.helpText}</p>
               )}
               {error && <p className="text-xs text-destructive">{error}</p>}
             </CardContent>
@@ -666,17 +685,24 @@ export default function QuestionnaireForm({
 
   const intentSectionCards = (
     <div className="grid gap-3 sm:grid-cols-2">
-      {sectionsOrdered.map(({ key, meta }) => (
+      {sectionsOrdered.map(({ key, meta }, idx) => (
         <div
           key={key}
-          className="flex items-start gap-3 rounded-xl border border-border/80 bg-card p-4 shadow-sm"
+          style={{ animationDelay: `${idx * 60}ms` }}
+          className={cn(
+            'animate-fade-up relative cursor-default overflow-hidden rounded-xl border border-border bg-card p-5',
+            'transition-all duration-200 hover:border-primary/40 hover:bg-primary/5',
+            'before:pointer-events-none before:absolute before:bottom-0 before:left-0 before:top-0 before:w-0.5 before:bg-primary before:opacity-0 before:transition-opacity before:duration-200 hover:before:opacity-100'
+          )}
         >
-          <span className="text-2xl leading-none" aria-hidden>
-            {meta.icon}
-          </span>
-          <div>
-            <p className="font-medium text-foreground">{meta.label}</p>
-            <p className="text-sm text-muted-foreground">{meta.estimate}</p>
+          <div className="flex items-start gap-3">
+            <span className="text-3xl leading-none" aria-hidden>
+              {meta.icon}
+            </span>
+            <div>
+              <p className="text-base font-semibold text-foreground">{meta.label}</p>
+              <p className="text-sm font-mono text-primary">{meta.estimate}</p>
+            </div>
           </div>
         </div>
       ))}
@@ -684,10 +710,10 @@ export default function QuestionnaireForm({
   );
 
   const sidebar = (
-    <aside className="hidden w-[260px] shrink-0 flex-col border-r border-border/60 bg-muted/20 lg:flex">
-      <div className="border-b border-border/60 px-5 py-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">HealthIQ</p>
-        <p className="mt-1 text-sm text-muted-foreground">Calibration map</p>
+    <aside className="hidden w-[240px] shrink-0 flex-col border-r border-border bg-card lg:flex">
+      <div className="border-b border-border px-5 py-5">
+        <p className="text-sm font-bold uppercase tracking-[0.2em] text-foreground">HealthIQ</p>
+        <p className="mt-0.5 text-xs text-muted-foreground">Calibration map</p>
       </div>
       <nav className="flex-1 space-y-1 px-3 py-4" aria-label="Questionnaire sections">
         {sectionsOrdered.map(({ key, meta }, idx) => {
@@ -701,7 +727,6 @@ export default function QuestionnaireForm({
               disabled={busy || flowPhase !== 'sections'}
               onClick={() => {
                 if (flowPhase !== 'sections') return;
-                /* Jump only backward or to completed — avoid skipping validation forward */
                 if (idx <= activeSectionIdx) {
                   setActiveSectionIdx(idx);
                   setErrors({});
@@ -709,9 +734,9 @@ export default function QuestionnaireForm({
               }}
               className={cn(
                 'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors',
-                isActive && 'bg-background shadow-sm ring-1 ring-border',
+                isActive && 'border border-primary/20 bg-primary/10 text-primary',
                 !isActive && isDone && 'text-muted-foreground hover:bg-muted/50',
-                !isActive && !isDone && 'text-muted-foreground/70',
+                !isActive && !isDone && 'text-muted-foreground/50',
                 busy && 'opacity-60'
               )}
             >
@@ -724,8 +749,10 @@ export default function QuestionnaireForm({
           );
         })}
       </nav>
-      <div className="border-t border-border/60 px-5 py-4 text-xs text-muted-foreground">
-        {completedBeforeActive} of {SECTION_KEYS.length} sections complete
+      <div className="border-t border-border px-5 py-4">
+        <p className="text-xs font-mono text-primary">
+          {completedBeforeActive} of {SECTION_KEYS.length} sections complete
+        </p>
       </div>
     </aside>
   );
@@ -749,9 +776,9 @@ export default function QuestionnaireForm({
             }}
             className={cn(
               'flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition-colors',
-              isActive && 'border-primary bg-primary/10 text-primary',
+              isActive && 'border-primary bg-primary/10 font-medium text-primary',
               !isActive && isDone && 'border-border bg-muted/50 text-muted-foreground',
-              !isActive && !isDone && 'border-border/60 bg-transparent text-muted-foreground'
+              !isActive && !isDone && 'border-border/50 bg-transparent text-muted-foreground/60'
             )}
           >
             <span aria-hidden>{meta.icon}</span>
@@ -799,44 +826,57 @@ export default function QuestionnaireForm({
 
   if (flowPhase === 'intent') {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-        <div className="space-y-8">
-          <header className="space-y-3">
-            <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-              Let&apos;s calibrate your analysis.
-            </h1>
-            <p className="max-w-2xl text-base leading-relaxed text-muted-foreground">
-              These questions let us interpret your results as you — not as population averages. Answer honestly;
-              precision improves your output.
-            </p>
-            <p className="text-sm font-medium text-muted-foreground">About 13 minutes · seven sections</p>
-          </header>
-
-          {intentSectionCards}
-
-          <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:justify-between">
-            <Button
-              type="button"
-              size="lg"
-              className="min-w-[200px]"
-              disabled={busy}
-              onClick={() => {
-                setFlowPhase('sections');
-                setActiveSectionIdx(0);
-              }}
-            >
-              Begin <ChevronRight className="ml-2 h-4 w-4" />
-            </Button>
-            {onCancel && (
-              <button
-                type="button"
-                onClick={onCancel}
-                disabled={busy}
-                className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+      <div className="relative min-h-screen w-full bg-background">
+        <div
+          className="pointer-events-none absolute inset-0"
+          aria-hidden
+          style={{
+            background:
+              'radial-gradient(ellipse 70% 50% at 100% 0%, hsl(142 76% 36% / 0.07) 0%, transparent 65%)',
+          }}
+        />
+        <div className="relative z-10 mx-auto max-w-4xl px-4 py-8 sm:px-6">
+          <div className="space-y-8">
+            <header className="animate-fade-up space-y-3">
+              <h1
+                className={`${dmSerif.className} text-4xl font-normal leading-tight tracking-tight text-foreground sm:text-5xl lg:text-6xl`}
               >
-                Not now
-              </button>
-            )}
+                Let&apos;s calibrate
+                <br />
+                your analysis.
+              </h1>
+              <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
+                These questions let us interpret your results as you — not as population averages. Answer honestly;
+                precision improves your output.
+              </p>
+              <p className="text-sm font-mono text-primary">About 13 minutes · seven sections</p>
+            </header>
+
+            {intentSectionCards}
+
+            <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center sm:justify-between">
+              <Button
+                type="button"
+                disabled={busy}
+                onClick={() => {
+                  setFlowPhase('sections');
+                  setActiveSectionIdx(0);
+                }}
+                className="h-14 min-w-[200px] rounded-xl bg-primary px-10 text-base font-semibold text-primary-foreground shadow-[0_0_24px_hsl(var(--primary)/0.35)] transition-all duration-300 hover:bg-primary-glow hover:shadow-[0_0_32px_hsl(var(--primary)/0.5)]"
+              >
+                Begin <ChevronRight className="ml-2 h-4 w-4" />
+              </Button>
+              {onCancel && (
+                <button
+                  type="button"
+                  onClick={onCancel}
+                  disabled={busy}
+                  className="text-sm text-muted-foreground/60 underline-offset-4 transition-colors hover:text-muted-foreground hover:underline"
+                >
+                  Not now
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -846,46 +886,54 @@ export default function QuestionnaireForm({
   const activeSection = sectionsOrdered[activeSectionIdx];
 
   return (
-    <div className="mx-auto flex min-h-[60vh] max-w-6xl flex-col lg:flex-row lg:border lg:border-border/60 lg:rounded-2xl lg:bg-card lg:shadow-sm">
+    <div className="mx-auto flex min-h-screen max-w-6xl flex-col bg-background lg:flex-row">
       {sidebar}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <div className="border-b border-border/60 px-4 py-6 sm:px-8">
+        <div className="border-b border-border border-t-[3px] border-t-primary px-4 py-6 sm:px-8">
           <div className="lg:hidden">{mobileSectionStrip}</div>
           <div className="mt-4 flex flex-wrap items-center gap-3 sm:mt-2">
             <span className="text-3xl leading-none" aria-hidden>
               {activeSection.meta.icon}
             </span>
             <div>
-              <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-                {activeSection.meta.label}
-              </h2>
-              <p className="text-sm text-muted-foreground">{activeSection.meta.estimate}</p>
+              <h2 className="text-2xl font-semibold tracking-tight text-foreground">{activeSection.meta.label}</h2>
+              <p className="text-sm font-mono text-primary">{activeSection.meta.estimate}</p>
             </div>
           </div>
         </div>
 
         <div className="flex flex-1 flex-col px-4 py-8 sm:px-8">
-          <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col space-y-6">
-            {activeSection.questions.map((q) => renderQuestion(q))}
+          <div key={activeSectionIdx} className="animate-fade-up mx-auto flex w-full max-w-2xl flex-1 flex-col space-y-6">
+            {activeSection.questions
+              .filter((q) => isQuestionVisible(q, responses))
+              .map((q, qi) => renderQuestion(q, qi))}
 
-            <div className="flex flex-col-reverse gap-3 border-t border-border/60 pt-8 sm:flex-row sm:justify-between">
+            <div className="flex flex-col-reverse gap-3 border-t border-border pt-8 sm:flex-row sm:justify-between">
               <Button type="button" variant="outline" onClick={handleBackSection} disabled={busy}>
                 ← Back
               </Button>
-              <Button type="button" onClick={handleAdvanceSection} disabled={busy}>
-                {activeSectionIdx >= SECTION_KEYS.length - 1 ? (
-                  <>
-                    Unlock my analysis
-                    <ChevronRight className="ml-2 h-4 w-4" />
-                  </>
-                ) : (
-                  <>
-                    Next section
-                    <ChevronRight className="ml-2 h-4 w-4" />
-                  </>
-                )}
-              </Button>
+              {activeSectionIdx >= SECTION_KEYS.length - 1 ? (
+                <Button
+                  type="button"
+                  onClick={handleAdvanceSection}
+                  disabled={busy}
+                  className="h-12 bg-primary px-8 font-semibold text-primary-foreground shadow-[0_0_20px_hsl(var(--primary)/0.3)] transition-all duration-300 hover:bg-primary-glow hover:shadow-[0_0_28px_hsl(var(--primary)/0.45)]"
+                >
+                  Unlock my analysis
+                  <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  onClick={handleAdvanceSection}
+                  disabled={busy}
+                  className="h-12 px-8 font-semibold"
+                >
+                  Next section
+                  <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
+              )}
             </div>
           </div>
         </div>
