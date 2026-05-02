@@ -1,210 +1,265 @@
 ---
-work_id: D-7
-branch: feature/wave1-liver-cleanup
+work_id: Q-1
+branch: feature/questionnaire-ux-redesign
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: BEHAVIOUR
 ---
 
-# D-7 — Wave 1 liver coherence and missing-marker label cleanup
+# Q-1 — Questionnaire UX redesign
 
 ## Cursor agent
 
-Use `healthiq-core-engine`.
+Use `healthiq-frontend`.
 
 This is mandatory.
+
+Claude already understands the design intent and prior research for this questionnaire redesign.
+You should use that design intent directly when implementing.
+Do not reduce this to a superficial restyle.
 
 ---
 
 ## Objective
 
-Implement a small, bounded follow-up to D-6.
+Redesign the questionnaire experience in `QuestionnaireForm.tsx` so it feels like a guided precision-health calibration flow rather than a long admin form.
 
-This sprint must fix two remaining user-facing issues in the Wave 1 layer:
+This sprint must:
+- replace the current all-sections-at-once wall-of-form experience
+- move to a section-by-section guided flow
+- preserve backend/schema contracts
+- preserve submission payload shape
+- preserve conditional logic
+- preserve the existing integration with the upload page
 
-1. **Liver consequence coherence**
-   - when the liver contributor/headline says enzymes are within range / broadly stable, the liver consequence must not jump to an active-strain / MASLD-fibrosis style message unless the resolved liver pattern genuinely supports that
-
-2. **Missing-marker label rendering**
-   - user-facing “What would improve confidence” labels must not expose internal ids or raw schema-style labels such as:
-     - `total_bilirubin`
-     - `ast`
-     - `ggt`
-
-This is a small cleanup sprint only.
-Do not reopen the broader Wave 1 architecture work.
+This is a real UX rebuild of the questionnaire component, not a cosmetic tidy-up.
 
 ---
 
-## Branch requirement
+## Problem being fixed
 
-Before doing anything else:
+The current questionnaire is functionally working but poor UX:
 
-1. create and switch to this branch:
-   `feature/wave1-liver-cleanup`
-2. confirm the branch name before implementation begins
+- all 56 questions across 7 sections are rendered at once
+- the progress bar is not semantically tied to the section structure
+- dropdowns are overused where direct choice controls would be better
+- the component renders all sections via one path but validates via another step-slice path, causing inconsistent required-field enforcement
+- the overall feel is tedious and administrative rather than purposeful
 
-If the branch already exists locally, check it out and confirm.
+The questionnaire is the first analytical act the user performs.
+It should feel like calibrating a precision instrument, not filling in a long form.
 
 ---
 
-## Precondition
+## Design intent
 
-D-6 is complete and accepted as the Wave 1 architecture remediation.
+Adopt the design direction already researched:
 
-Before implementation, restate briefly:
+- precision diagnostic tone
+- intent screen before questions
+- section-by-section flow
+- one section active at a time
+- sidebar section map on desktop
+- focused card-based question presentation
+- pill/tile selectors for small categorical choices
+- clear section progress
+- calm, premium, clinically trustworthy feel
 
-- the original Wave 1 contradiction issue is resolved
-- cardiovascular and blood sugar are out of scope
-- this sprint only fixes the remaining liver coherence and label-rendering issues
-
-If repo reality differs, STOP and report.
+Claude’s prior questionnaire UX research should be treated as the intended design direction for this sprint.
 
 ---
 
 ## In scope
 
-### A. Liver consequence coherence
-1. Review the liver consequence selection path for the case where:
-   - liver contributor says markers are within reference range
-   - headline says broadly stable
-   - no truly active liver-risk pattern is present
-2. Ensure the liver consequence falls back to a neutral / proportionate explanation in that case
-3. Do not emit a generic active-strain consequence when the resolved liver pattern does not support it
+### File in scope
+- `frontend/app/components/forms/QuestionnaireForm.tsx`
 
-### B. Missing-marker label rendering
-1. Replace raw/internal missing-marker ids with user-safe labels in the Wave 1 UI
-2. This must cover at least the currently observed examples:
-   - `total_bilirubin`
-   - `ast`
-   - `ggt`
-3. Prefer a governed / deterministic label mapping rather than ad hoc string hacks
-4. Keep the fix bounded to user-facing rendering for these confidence-improver labels
+### Same props interface must be preserved
+```ts
+interface QuestionnaireFormProps {
+  onSubmit: (responses: Record<string, unknown>) => void;
+  onCancel?: () => void;
+  initialData?: Record<string, unknown>;
+  isLoading?: boolean;
+}
+````
+
+Do not require caller changes.
+
+### Required UX structure
+
+#### Screen 0 — intent screen
+
+Before any question is shown, present:
+
+* headline
+* short explanatory subtext
+* section map with section names and time estimates
+* primary “Begin” CTA
+* low-prominence “Not now” / cancel path
+
+#### Screen 1–7 — one section at a time
+
+* one active section at a time
+* desktop: sidebar left, questions right
+* mobile: single-column
+* completed sections visually marked
+* active section clearly highlighted
+* progress shown as section completion, not arbitrary question slice
+
+### Required section display names / estimates
+
+Use this order and naming:
+
+* `demographics` → About you → 👤 → ~2 min
+* `medical_history` → Health history → 🏥 → ~3 min
+* `symptoms` → How you feel → 💬 → ~1 min
+* `lifestyle` → Daily habits → 🌿 → ~3 min
+* `physical_assessment` → Physical ability → 💪 → ~2 min
+* `cognitive_assessment` → Mental sharpness → 🧠 → ~1 min
+* `family_history` → Family story → 🧬 → ~1 min
+
+Total visible estimate on intent screen:
+
+* ~13 minutes
+
+---
+
+## Input behaviour requirements
+
+### Small categorical sets
+
+For dropdowns with 6 or fewer options:
+
+* use pill/tile selectors instead of dropdowns
+
+### Larger option sets
+
+For dropdowns with more than 6 options:
+
+* keep/select an appropriate searchable select pattern using current stack primitives
+
+### Checkboxes
+
+* use pill/tile multi-select treatment where appropriate
+
+### Sliders
+
+* keep slider pattern but make current value clear/prominent
+
+### Grouped physical inputs
+
+* render grouped inputs cleanly side by side where appropriate
+
+### Basic text/date/number fields
+
+* keep existing functional input types
+* improve presentation to match the new UX
+
+---
+
+## Conditional logic
+
+Preserve schema-driven conditional logic.
+
+Questions with `dependsOn` logic must still hide/show correctly based on responses.
+
+Do not break conditional display.
+
+---
+
+## Validation
+
+Validation must happen on **section advance**, not on every keystroke.
+
+Current mismatch to eliminate:
+
+* rendering all sections while validating an arbitrary 5-question slice
+
+Refactor validation so it validates:
+
+* the actual active section’s visible required questions
+
+Do not allow silent skipping of required questions in the active section.
+
+Inline errors only.
+Do not dump validation at the top of the page.
+
+---
+
+## State / behaviour constraints
+
+* keep response state local
+* keep payload structure passed to `onSubmit` unchanged
+* preserve `?autofill=true`
+* preserve existing wedge questionnaire submit behaviour
+* preserve loading/error states before render
+
+The component should track section-based flow, not arbitrary question-step slicing.
+
+---
+
+## Tech / design constraints
+
+* use the approved frontend stack already in force for HealthIQ
+* Tailwind only, no new CSS files
+* use existing project tokens / visual language
+* keep motion restrained and premium
+* do not introduce new state libraries
+* do not touch backend, schema, or upload page integration
 
 ---
 
 ## Out of scope
 
-- cardiovascular logic
-- blood sugar logic
-- backfill architecture
-- D-6 primary-pattern selector
-- “What’s driving this” architecture
-- hemoglobin/unit issue
-- broader results-page redesign
-- Phase 2 domains
+* backend schema/API changes
+* upload page rewrites
+* analytics event redesign
+* profile integration
+* PDF/export
+* broader results-page work
+* any non-questionnaire feature work
 
 Do not widen scope.
 
 ---
 
-## Architectural constraints
+## Acceptance criteria
 
-### 1. No re-opening D-6
-Do not rework the Wave 1 authority architecture unless absolutely necessary for this small liver fix.
-
-### 2. Keep the liver fix truthful
-Do not make liver falsely reassuring.
-The goal is coherence, not optimism.
-
-### 3. User-safe labels only
-Do not expose internal ids, snake_case labels, or implementation-shaped text in the confidence-improver section.
-
-### 4. Deterministic only
-No LLM text generation or ad hoc runtime inference.
-
----
-
-## Required implementation details
-
-## A. Liver consequence fallback
-Implement a proportionate fallback when the resolved liver pattern does not support an active-strain consequence.
-
-The corrected liver card should not produce:
-- stable / in-range headline
-and then
-- active liver-strain / MASLD-fibrosis consequence
-unless the resolved domain evidence truly supports that.
-
-Be explicit in reporting:
-- what condition now triggers the neutral fallback
-- what condition still triggers the stronger consequence
-
-## B. Missing-marker user label mapping
-Implement a clean user-facing mapping for the missing/improver marker list.
-
-At minimum ensure:
-- `ast` is shown with an understandable user-facing label
-- `ggt` is shown with an understandable user-facing label
-- `total_bilirubin` / bilirubin-related missing labels are shown cleanly
-
-If there is already a canonical/alias source in the repo that should drive this, use it.
-
----
-
-## Files likely in scope
-
-These are likely, not mandatory:
-
-### Backend
-- `backend/core/analytics/domain_narrative_wave1.py`
-- `backend/core/analytics/domain_score_assembler.py`
-
-### Frontend
-- `frontend/app/components/results/Wave1DomainCards.tsx`
-- any small helper used to render missing-marker labels safely
-
-### Tests
-- targeted backend tests
-- targeted frontend/rendering tests if needed
-
----
-
-## Files likely out of scope
-
-Do not touch unless absolutely required and justified:
-
-- `backend/core/pipeline/orchestrator.py`
-- backfill runner
-- pricing/billing
-- upload flow
-- clinician PDF/export paths
-- Phase 2 domain logic
-- broad KB/SSOT changes unless absolutely necessary for safe label mapping
+1. Intent screen appears before any question is shown.
+2. All 7 sections are displayed on the intent screen with names and time estimates.
+3. Questionnaire advances one section at a time.
+4. Active section is clearly shown; completed sections visibly marked.
+5. Small categorical choices use pill/tile selectors instead of dropdowns.
+6. Required validation fires on section advance against the actual active section.
+7. `onSubmit` payload structure remains unchanged.
+8. `onCancel` is reachable from the intent screen.
+9. `?autofill=true` still works.
+10. Conditional `dependsOn` logic still works.
+11. No TypeScript errors introduced.
+12. Upload page should not require modification to continue using this component.
 
 ---
 
 ## Testing discipline
 
-Do not run the full repository test suite.
+Do not run the full repository suite.
 
-Run only:
+Run only targeted checks relevant to:
 
-### Backend
-1. targeted test proving liver consequence is neutral/proportionate when no active liver-risk pattern is resolved
-2. targeted test proving stronger liver consequence still appears when the resolved pattern genuinely supports it
-
-### Frontend / rendering
-3. targeted test proving missing/improver labels are rendered as user-safe labels, not raw ids
-4. type-check for touched surfaces
+* component behaviour
+* section flow
+* validation behaviour
+* payload parity
+* autofill behaviour
+* conditional question logic
+* type safety
 
 Before running tests, state:
-- what you will run
-- why it is relevant
-- what broader suites you are deliberately excluding
 
----
-
-## Acceptance criteria
-
-This sprint is successful only if:
-
-1. Liver collapsed and expanded content no longer give a mixed stable-vs-strain story when no active liver-risk pattern is present.
-2. A stronger liver consequence still appears when domain evidence genuinely supports it.
-3. Missing-marker / confidence-improver labels no longer expose raw ids such as `total_bilirubin`.
-4. User-facing labels for AST / GGT / bilirubin-related fields are readable and appropriate.
-5. No broader Wave 1 architecture is disturbed.
-6. Targeted tests pass.
+* what you will run
+* why
+* what broader suites you are excluding
 
 ---
 
@@ -213,32 +268,41 @@ This sprint is successful only if:
 When finished, report back in these sections:
 
 ### 1. Branch
-- confirm branch name
+
+* confirm branch name
 
 ### 2. Preflight restatement
-- objective
-- files touched
-- files not touched
-- exact liver issue being fixed
-- exact label-rendering issue being fixed
 
-### 3. Requested changes made
-- exact files changed
-- how liver consequence fallback now works
-- how missing-marker labels are now rendered safely
+* objective
+* file(s) touched
+* what integration surfaces were intentionally left unchanged
 
-### 4. Tests run
-- exact tests
-- results
+### 3. UX implementation
 
-### 5. Browser/UAT note
-- whether this should now be rechecked in live UAT on the same liver case
+* how the intent screen works
+* how section-by-section navigation works
+* how sidebar/mobile behaviour works
+* how input patterns changed
+
+### 4. Validation and logic
+
+* how section validation now works
+* how payload parity was preserved
+* how `dependsOn` logic was preserved
+* how `?autofill=true` was preserved
+
+### 5. Tests run
+
+* exact tests/checks
+* results
 
 ### 6. Known limits intentionally deferred
-- anything still intentionally left out of scope
+
+* anything intentionally left out of scope
 
 ### 7. Uncommitted / not merged
-- confirm work is not merged to `main`
+
+* confirm work is not merged to `main`
 
 ---
 
@@ -246,12 +310,17 @@ When finished, report back in these sections:
 
 STOP and report if:
 
-1. fixing liver consequence coherence requires reopening the full Wave 1 authority architecture
-2. safe label rendering requires a much broader schema/content change than expected
-3. the liver issue turns out to be driven by the separate hemoglobin/unit/data problem
-4. scope starts to drift back into D-6 areas
+1. preserving payload parity requires changing backend/schema contracts
+2. upload page integration breaks and cannot be preserved cleanly
+3. conditional question logic cannot be preserved inside the redesign
+4. the redesign would require broader frontend architecture changes outside this component
+5. scope starts drifting into unrelated frontend work
 
 If blocked, report:
-- exact blocker
-- affected files/surfaces
-- smallest safe remediation path
+
+* exact blocker
+* affected file/surface
+* smallest safe remediation path
+
+```
+```

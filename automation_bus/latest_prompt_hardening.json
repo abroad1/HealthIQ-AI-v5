@@ -1,80 +1,79 @@
 {
-  "work_id": "D-7",
-  "bus_version": "1.3.1",
+  "work_id": "Q-1",
   "status": "HARDENED",
-  "hardened_utc": "2026-04-28T00:00:00Z",
-  "hardened_by": "Claude Code (claude-sonnet-4-6)",
-  "failure_type": "NONE",
+  "bus_version": "1.3.1",
+  "hardened_utc": "2026-05-02T07:52:00Z",
+  "hardened_by": "claude-sonnet-4-6",
   "changes": [
     {
       "id": "FRONT_MATTER",
       "field": "front_matter_validation",
       "status": "CONFIRMED",
       "citation": "automation_bus/latest_cursor_prompt.md:1-7",
-      "detail": "All five mandatory fields present: work_id=D-7, branch=feature/wave1-liver-cleanup, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=BEHAVIOUR. Classification correct — BEHAVIOUR covers changes to `liv_consequence()` fallback (changes emitted `consequence_sentence` text) and `Wave1DomainCards.tsx` label rendering (changes what user sees in governed rendering surface). HIGH risk is correct: domain_narrative_wave1.py is in backend/core/analytics/, which is an Intelligence Core path."
+      "detail": "All five mandatory fields present: work_id=Q-1, branch=feature/questionnaire-ux-redesign, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=BEHAVIOUR. BEHAVIOUR is correct — the sprint changes how the form renders, navigates, validates, and presents input controls. HIGH is conservative for a frontend-only component but GPT has architecture authority; no counter-evidence justifies overriding it. HIGH classification requires dual approval before merge."
     },
     {
       "id": "AUTHORITY_PATH_1",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "backend/core/analytics/domain_narrative_wave1.py:477-482, 564-570",
-      "detail": "Liver consequence defect confirmed at exact source location. `liv_consequence_primary(by_id, primary_idl)` at line 477: when primary_idl is None (no active liver IDL record), falls to `return liv_consequence(by_id)` at line 482. `liv_consequence(by_id)` at line 564: checks `ph_hepatic_alt_inflammatory_v1` severity_state; when severity_state IS 'not_observed' (enzymes within range), the active-IDL branch at line 567-568 does NOT fire. Falls to line 569-570: `t = governed_idl_field(_ID_HEP, 'why_it_matters'); return t or ''`. This reads the STATIC YAML `why_it_matters` regardless of runtime severity_state — returning 'Early liver strain patterns are a key lane toward MASLD/fibrosis risk if ignored.' even when ALT/hepatic pattern is not_observed. This is the exact defect: static KB text emitted as if active. `liv_consequence()` has exactly one caller in the backend: `liv_consequence_primary()` at line 482. Fix is bounded."
+      "citation": "frontend/app/components/forms/QuestionnaireForm.tsx:1-515",
+      "detail": "Sole file in scope. File exists. Props interface at lines 31-36 is identical to the interface specified in the prompt. The component loads schema from fetchQuestionnaireSchema() (questionnaireSchema.ts), which fetches from /api/questionnaire/schema and validates type compatibility via assertQuestionnaireSchemaCompatible(). Cursor must not change this loading mechanism."
     },
     {
       "id": "AUTHORITY_PATH_2",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "frontend/app/components/results/Wave1DomainCards.tsx:125-136",
-      "detail": "Label rendering defect confirmed. At lines 125-136: `d.missing_marker_ids.map((m) => (<li key={m} className='font-mono text-xs'>{m}</li>))`. Raw internal ID `m` is rendered verbatim with font-mono class — no label transformation. IDs seen live in UAT: 'ast', 'ggt', 'total_bilirubin'. These are biomarker SSOT canonical keys emitted by `liv_block()` at domain_score_assembler.py. The assembler adds: `for m in ('ast', 'ggt', 'alp', 'albumin', 'total_bilirubin'): if m not in panel_biomarker_ids and m not in missing: missing.append(m)`. These raw IDs flow through ConsumerDomainScoreV1.missing_marker_ids and are rendered without transformation. Fix point is confirmed as Wave1DomainCards.tsx:131-134."
+      "citation": "frontend/app/(app)/upload/page.tsx:1-80 (integration surface)",
+      "detail": "Upload page exists and uses QuestionnaireForm via import at line 8. Correctly listed as out-of-scope. Must require zero modification after redesign. Integration is through the unchanged props interface only."
     },
     {
       "id": "AUTHORITY_PATH_3",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "backend/ssot/biomarkers.yaml:397-401 (ast), 1422-1424 (ggt), 1465-1467 (bilirubin)",
-      "detail": "Canonical label source confirmed present in SSOT. biomarkers.yaml has `description` fields for liver markers: ast.description='Aspartate aminotransferase' (line 402), ggt.description='Gamma-glutamyl transferase' (line 1424), bilirubin.description='Total bilirubin' (line 1467), alp.description='Alkaline phosphatase' (line 1444). These provide governed human-readable text. However: the SSOT canonical key is 'bilirubin' (not 'total_bilirubin') — but the assembler emits 'total_bilirubin' as a missing_marker_id. This creates a SSOT key mismatch. The label mapping must handle 'total_bilirubin' explicitly as an alias for the governed 'Total bilirubin' label, or the fix must normalise to the SSOT key. Prompt requirement 'if there is already a canonical/alias source in the repo that should drive this, use it' applies to these description fields."
+      "citation": "frontend/app/lib/questionnaireSchema.ts:32-35",
+      "detail": "conditionalDisplay interface confirmed: { dependsOn: string; showWhen: string[] }. Current QuestionnaireForm.tsx does NOT read or act on conditionalDisplay — all questions render unconditionally. The prompt requirement to 'preserve conditional logic' is therefore an IMPLEMENTATION requirement, not a preservation requirement. Cursor must filter each question through: if (q.conditionalDisplay && !q.conditionalDisplay.showWhen.includes(String(responses[q.conditionalDisplay.dependsOn]))) hide question. Responses for hidden questions must not be cleared from state — only hidden from view — to preserve payload integrity."
     },
     {
-      "id": "AUTHORITY_PATH_4",
-      "field": "authority_path_exists",
-      "status": "CONFIRMED",
-      "citation": "backend/core/analytics/domain_score_assembler.py (liv_block hardcoded missing list)",
-      "detail": "The hardcoded missing-marker supplement in liv_block() confirmed as the source of 'total_bilirubin' in missing_marker_ids. The list ('ast', 'ggt', 'alp', 'albumin', 'total_bilirubin') is appended at assembly time. 'total_bilirubin' does not match any SSOT top-level key (SSOT key is 'bilirubin'). D-7 Cursor must be aware: if it attempts to look up 'total_bilirubin' in biomarkers.yaml by top-level key, the lookup will fail. Label mapping must treat 'total_bilirubin' as a known case — either via explicit map entry or by normalising the assembler to emit 'bilirubin' instead. The latter (normalising the assembler) is out of scope per D-7 constraints unless Cursor judges it minimal and safe."
-    },
-    {
-      "id": "LIVER_CONSEQUENCE_DEFECT",
+      "id": "SECTION_SPEC_CROSS_REFERENCE",
       "field": "source_cross_reference",
       "status": "CONFIRMED",
-      "citation": "backend/core/analytics/domain_narrative_wave1.py:564-570",
-      "detail": "Root cause is `governed_idl_field(_ID_HEP, 'why_it_matters')` at line 569 as the last fallback in `liv_consequence()`. This function reads directly from the static IDL YAML (bypassing the runtime IDL bundle and its published severity_state). When the runtime IDL has severity_state='not_observed' (normal enzymes), the dynamic check at line 567 does not fire, and the static YAML `why_it_matters` is returned — which contains active-strain language regardless. The fix must replace this final fallback with a neutral proportionate string for the no-active-pattern case. The stronger IDL-backed consequence must still appear when the live IDL record is active (severity_state in 'watch', 'attention', 'strong_signal'). This is a one- or two-line targeted fix in `liv_consequence()` — does not require reopening the D-6 primary-pattern architecture."
+      "citation": "automation_bus/latest_cursor_prompt.md:114-121 vs docs/QUESTIONNAIRE_UX_REDESIGN_BACKGROUND.md",
+      "detail": "Section display names, emojis, and time estimates in prompt match the background specification exactly. Seven sections in schema order: demographics, medical_history, symptoms, lifestyle, physical_assessment, cognitive_assessment, family_history. Total estimate ~13 min confirmed as sum of per-section estimates. Background doc is available at docs/QUESTIONNAIRE_UX_REDESIGN_BACKGROUND.md for Cursor reference."
+    },
+    {
+      "id": "RENDERING_BUG_CONFIRMATION",
+      "field": "source_cross_reference",
+      "status": "CONFIRMED",
+      "citation": "frontend/app/components/forms/QuestionnaireForm.tsx:86-101, 451-477",
+      "detail": "Render/validate mismatch confirmed. Line 468: render uses getQuestionsBySection() — renders all sections at once. Line 86-90: getCurrentQuestions() slices 5 questions at a time used only for validation. The step counter (currentStep) controls validation slice but not visible content. Redesign must replace both functions with section-aware rendering and section-aware validation aligned to the active section."
+    },
+    {
+      "id": "AUTOFILL_PRESERVATION",
+      "field": "authority_path_exists",
+      "status": "CONFIRMED",
+      "citation": "frontend/app/components/forms/QuestionnaireForm.tsx:77-84",
+      "detail": "?autofill=true dev shortcut exists at lines 77-84. Uses dynamic import of @/lib/mock/questionnaire. Must be preserved verbatim in redesign — only the state setter target changes (still setResponses). No logic change required."
+    },
+    {
+      "id": "PAYLOAD_PARITY_RISK",
+      "field": "behavioural_hardening",
+      "status": "CONFIRMED — RISK CALLED OUT",
+      "citation": "automation_bus/latest_cursor_prompt.md:196-198",
+      "detail": "onSubmit receives responses: Record<string,unknown> — a flat map of questionId to value. New section-based navigation must not partition responses into nested section objects. All question IDs from all sections must accumulate in a single flat responses map regardless of which section is currently active. Hidden conditional questions must retain their response value in state (not be cleared on hide). This is the critical payload parity risk — fully covered by AC-7 and STOP #1."
     },
     {
       "id": "BEHAVIOURAL_REGRESSION_TARGETS",
       "field": "behavioural_hardening",
       "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:184-189",
-      "detail": "Four test targets explicitly named in prompt: (1) neutral/proportionate liver consequence when no active liver-risk pattern resolved; (2) stronger liver consequence when resolved pattern genuinely supports it; (3) missing/improver labels rendered as user-safe labels not raw ids; (4) type-check for touched surfaces. These are the minimal behavioral regression targets. Tests 1 and 2 require an IDL bundle fixture with `ph_hepatic_alt_inflammatory_v1` at severity_state='not_observed' vs 'attention'/'watch'. The InterpretationDisplayLayerBundleV1 fixture pattern from existing test files applies. Test 3 requires a rendering test for Wave1DomainCards with known missing_marker_ids."
-    },
-    {
-      "id": "SCOPE_BOUNDARY",
-      "field": "scope_boundary",
-      "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:87-97, 165-173",
-      "detail": "Forbidden scope confirmed: cardiovascular logic, blood sugar logic, backfill architecture, D-6 primary-pattern selector, 'What's driving this' architecture, Phase 2 domains, broader results-page redesign. Forbidden files: orchestrator.py, backfill runner, pricing/billing, upload flow, clinician PDF/export, Phase 2 domain logic, broad KB/SSOT changes. STOP conditions at lines 247-254 protect against reopening the Wave 1 architecture or discovering a hemoglobin/unit issue. No STOP condition triggered by source read."
-    },
-    {
-      "id": "DETERMINISM_RISK",
-      "field": "behavioural_hardening",
-      "status": "CONFIRMED — LOW RISK",
-      "citation": "backend/core/analytics/domain_narrative_wave1.py:477-482, 564-570",
-      "detail": "Liver consequence fix replaces a static YAML field read with either another static governed string (neutral fallback) or the runtime IDL-backed consequence. Both paths are deterministic — no LLM, no randomness. The condition (severity_state check) is already deterministic and identical to the pattern used in cv_consequence_primary() and met_consequence_primary(). No drift risk introduced. Label mapping in the frontend is a static lookup table — fully deterministic."
+      "citation": "automation_bus/latest_cursor_prompt.md:229-241",
+      "detail": "AC targets verified: (1) intent screen before questions; (2) 7 sections on intent screen with names+estimates; (3) one section at a time; (4) completed/active section states; (5) pill tiles for <=6 options; (6) section-advance validation; (7) payload unchanged; (8) onCancel from intent screen; (9) autofill; (10) conditionalDisplay logic; (11) no TS errors; (12) upload page unmodified. These 12 AC items are complete and testable."
     }
   ],
   "advisory_notes": [
-    "TOTAL_BILIRUBIN vs SSOT BILIRUBIN: The assembler emits 'total_bilirubin' as a missing_marker_id (hardcoded in liv_block()) but the SSOT canonical key is 'bilirubin' (description: 'Total bilirubin'). Any label map using SSOT description-field lookup by canonical key will not find 'total_bilirubin'. The map must include an explicit 'total_bilirubin' -> 'Total bilirubin' entry, or the assembler must be corrected to emit 'bilirubin'. If Cursor chooses to fix the assembler key, it must verify no downstream code depends on 'total_bilirubin' as a literal string.",
-    "LIV_CONSEQUENCE FIX SCOPE: The fix to `liv_consequence()` at line 569-570 only affects the final fallback — when ph_hepatic_alt_inflammatory_v1 is not_observed AND primary_idl is None. The IDL-backed consequence path (lines 566-568) is unchanged. Cursor must confirm the neutral fallback string is proportionate and not falsely reassuring — per prompt constraint: 'Do not make liver falsely reassuring. The goal is coherence, not optimism.'",
-    "SINGLE CALLER: `liv_consequence()` has exactly one caller — `liv_consequence_primary()` at line 482. No other backend call site. Fix is fully bounded.",
-    "SSOT DESCRIPTION FIELDS AS LABEL SOURCE: biomarkers.yaml description fields (ast='Aspartate aminotransferase', ggt='Gamma-glutamyl transferase', bilirubin='Total bilirubin', alp='Alkaline phosphatase', albumin — check for entry) provide governed text. Frontend label map may reference these values without reading YAML at runtime — a static TypeScript map derived from SSOT values is the cleanest bounded implementation."
+    "CONDITIONAL DISPLAY IS NEW IMPLEMENTATION: The prompt says 'preserve' but the current component has zero conditionalDisplay handling. Cursor must implement it from scratch using questionnaireSchema.ts:32-35 interface. Do not skip this — menstrual_hormonal_status and low_testosterone_symptoms questions are conditional on biological_sex and must not render for the wrong sex.",
+    "DESIGN CONTEXT: 'Claude already understands the design intent' (prompt line 17) refers to session context Cursor does not share. Full design specification is at docs/QUESTIONNAIRE_UX_REDESIGN_BACKGROUND.md. Cursor should read this file before implementing the intent screen and section layout.",
+    "PILL TILE THRESHOLD: The <= 6 options rule applies to dropdowns and checkboxes. For reference: biological_sex (3 options), ethnicity (7 options — use searchable select), dietary_pattern, tobacco_use, sleep_quality_rating (slider — keep slider). Cursor must count options from the live schema, not assume.",
+    "HIGH RISK MERGE GATE: This is classified HIGH. Dual approval required before merge to main. Claude audit complete. GPT architectural review implicit (GPT authored prompt). Second approval must be obtained before merge."
   ],
   "overall_verdict": "HARDENED"
 }
