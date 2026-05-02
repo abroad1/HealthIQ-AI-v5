@@ -1,12 +1,12 @@
 ---
-work_id: Q-1
-branch: feature/questionnaire-ux-redesign
+work_id: Q-2
+branch: feature/questionnaire-visual-redesign
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: BEHAVIOUR
 ---
 
-# Q-1 — Questionnaire UX redesign
+# Q-2 — Questionnaire visual redesign
 
 ## Cursor agent
 
@@ -14,211 +14,294 @@ Use `healthiq-frontend`.
 
 This is mandatory.
 
-Claude already understands the design intent and prior research for this questionnaire redesign.
-You should use that design intent directly when implementing.
+Claude already understands the design intent and prior research for this redesign.
+Use that design intent directly.
 Do not reduce this to a superficial restyle.
 
 ---
 
 ## Objective
 
-Redesign the questionnaire experience in `QuestionnaireForm.tsx` so it feels like a guided precision-health calibration flow rather than a long admin form.
+Keep the Q-1 questionnaire UX architecture intact, but redesign the visual layer so the questionnaire feels like a premium diagnostic calibration flow rather than a generic form.
 
 This sprint must:
-- replace the current all-sections-at-once wall-of-form experience
-- move to a section-by-section guided flow
-- preserve backend/schema contracts
-- preserve submission payload shape
+- preserve the Q-1 functional behaviour
+- preserve props and payload parity
 - preserve conditional logic
-- preserve the existing integration with the upload page
+- preserve schema-driven flow
+- materially improve the visual design
 
-This is a real UX rebuild of the questionnaire component, not a cosmetic tidy-up.
-
----
-
-## Problem being fixed
-
-The current questionnaire is functionally working but poor UX:
-
-- all 56 questions across 7 sections are rendered at once
-- the progress bar is not semantically tied to the section structure
-- dropdowns are overused where direct choice controls would be better
-- the component renders all sections via one path but validates via another step-slice path, causing inconsistent required-field enforcement
-- the overall feel is tedious and administrative rather than purposeful
-
-The questionnaire is the first analytical act the user performs.
-It should feel like calibrating a precision instrument, not filling in a long form.
+This is a visual redesign sprint, not a backend or schema sprint.
 
 ---
 
-## Design intent
+## Why Q-1 was not enough
 
-Adopt the design direction already researched:
+Q-1 fixed the questionnaire flow and logic, but the visual result was still poor because the prompt did not give a strong enough design direction.
 
-- precision diagnostic tone
-- intent screen before questions
-- section-by-section flow
-- one section active at a time
-- sidebar section map on desktop
-- focused card-based question presentation
-- pill/tile selectors for small categorical choices
-- clear section progress
-- calm, premium, clinically trustworthy feel
+The outcome was too generic:
+- default-looking component styling
+- weak hierarchy
+- indistinct question cards
+- weak selected states
+- visually invisible sidebar
+- no premium launch moment
+- dark/light collisions on the intent screen
+- card-within-a-card framing caused by the upload page wrapper
 
-Claude’s prior questionnaire UX research should be treated as the intended design direction for this sprint.
+Q-2 exists to fix that.
+
+---
+
+## Design direction
+
+HealthIQ is a precision diagnostic instrument.
+
+The questionnaire should feel like calibrating something important.
+
+### Tone
+- dark
+- controlled
+- intelligent
+- premium
+- clinically trustworthy
+
+### Not
+- pastel
+- soft wellness-app styling
+- rounded-everything
+- chatty or playful
+- generic shadcn defaults
+
+### Yes
+- high contrast
+- deliberate typography
+- purposeful use of green accent
+- visible structure
+- restrained but premium motion
 
 ---
 
 ## In scope
 
-### File in scope
+### Files in scope
 - `frontend/app/components/forms/QuestionnaireForm.tsx`
+- `frontend/app/(app)/upload/page.tsx`
 
-### Same props interface must be preserved
-```ts
-interface QuestionnaireFormProps {
-  onSubmit: (responses: Record<string, unknown>) => void;
-  onCancel?: () => void;
-  initialData?: Record<string, unknown>;
-  isLoading?: boolean;
-}
-````
-
-Do not require caller changes.
-
-### Required UX structure
-
-#### Screen 0 — intent screen
-
-Before any question is shown, present:
-
-* headline
-* short explanatory subtext
-* section map with section names and time estimates
-* primary “Begin” CTA
-* low-prominence “Not now” / cancel path
-
-#### Screen 1–7 — one section at a time
-
-* one active section at a time
-* desktop: sidebar left, questions right
-* mobile: single-column
-* completed sections visually marked
-* active section clearly highlighted
-* progress shown as section completion, not arbitrary question slice
-
-### Required section display names / estimates
-
-Use this order and naming:
-
-* `demographics` → About you → 👤 → ~2 min
-* `medical_history` → Health history → 🏥 → ~3 min
-* `symptoms` → How you feel → 💬 → ~1 min
-* `lifestyle` → Daily habits → 🌿 → ~3 min
-* `physical_assessment` → Physical ability → 💪 → ~2 min
-* `cognitive_assessment` → Mental sharpness → 🧠 → ~1 min
-* `family_history` → Family story → 🧬 → ~1 min
-
-Total visible estimate on intent screen:
-
-* ~13 minutes
+No backend changes.
+No schema changes.
+No props interface changes.
+No analytics event changes.
 
 ---
 
-## Input behaviour requirements
+## Functional rules from Q-1 that must remain intact
 
-### Small categorical sets
+Do not break any of the following:
 
-For dropdowns with 6 or fewer options:
+- props interface
+- flat `Record<string, unknown>` submission payload
+- `conditionalDisplay` / `dependsOn` logic
+- section order, names, and estimates
+- `?autofill=true`
+- schema loading path
+- loading/error states
+- validation behaviour
+- section-by-section flow
+- intent screen flow
+- upload-page integration
 
-* use pill/tile selectors instead of dropdowns
+All Q-1 behavioural acceptance criteria remain in force.
 
-### Larger option sets
+---
 
-For dropdowns with more than 6 options:
+## Required visual redesign
 
-* keep/select an appropriate searchable select pattern using current stack primitives
+## A. Intent screen
 
-### Checkboxes
+### Root background
+The intent screen must own its background.
 
-* use pill/tile multi-select treatment where appropriate
+Use:
+- `bg-background`
+
+Do not inherit or rely on a light upload-page card background.
+This must eliminate the dark/light unreadable-text collision.
+
+Add subtle ambient green radial glow in the background.
+
+### Headline font
+Load `DM_Serif_Display` via `next/font/google`.
+
+Use it **only** for the intent-screen headline.
+
+Do not spread the display font across the rest of the form.
+
+### Headline treatment
+Large, high-presence, two-line headline.
+It should feel intentional and premium, not generic.
+
+### Supporting copy
+Use calmer, readable body copy with clear hierarchy.
+
+### Section map
+The 7 section cards on the intent screen should feel like a diagnostic map, not generic cards.
+
+Required qualities:
+- clear border
+- visible hover treatment
+- subtle accent
+- visible structure
+- readable time estimates
+
+### Time/readout styling
+Section estimates and total-time line should use the green accent and monospace styling so they feel like diagnostic readouts.
+
+### Begin CTA
+The Begin button must feel like a launch moment.
+It should have clearly more visual weight than a normal secondary button.
+
+### Cancel path
+“Not now” remains low prominence.
+
+---
+
+## B. Upload page wrapper
+
+The questionnaire must own its own framing.
+
+Remove the outer upload-page Card wrapper around `<QuestionnaireForm />` so the questionnaire is rendered directly.
+
+Keep the green “markers confirmed” confirmation card above it unchanged.
+
+This is necessary to eliminate the card-within-a-card problem.
+
+---
+
+## C. Questionnaire shell
+
+### Outer layout
+Do not wrap the whole questionnaire flow in another card-like shell.
+Use the page background and internal structure to define containment.
+
+### Sidebar
+The desktop sidebar must be clearly visible, with:
+- proper card/background presence
+- border separation
+- clear active state
+- clear completed state
+- dimmed future state
+- visible progress footer
+
+The current near-transparent muted panel look is not acceptable.
+
+### Active section state
+Use the brand green tint/primary treatment, not a generic neutral ring state.
+
+### Mobile section strip
+Use the same semantic treatment as desktop:
+- active
+- done
+- pending
+must read clearly and consistently.
+
+---
+
+## D. Section content area
+
+### Section header
+Increase hierarchy and clarity.
+The active section should feel like the user is entering a defined stage of calibration.
+
+### Section estimate
+Use green monospace styling, consistent with the intent screen.
+
+### Top marker
+Add a visible top-border/accent treatment for the active section content area.
+
+---
+
+## E. Question cards
+
+Question cards must no longer feel identical and flat.
+
+Required improvements:
+- clearer separation
+- better hierarchy
+- stronger question label styling
+- visible question numbering within each section
+
+Each visible question in a section must show a sequential `Q{n}` identifier above the label in a subtle diagnostic/readout style.
+
+---
+
+## F. Inputs
+
+### Pill/tile selectors — critical
+The selected state must be unambiguous.
+
+Do not use a faint tinted selected state.
+
+Selected options must use a strong, obvious selected treatment.
+Unselected options must still look interactive and premium.
 
 ### Sliders
+Upgrade the slider presentation so the current value is prominent and feels intentional.
+Do not leave it as a generic boxed control.
 
-* keep slider pattern but make current value clear/prominent
-
-### Grouped physical inputs
-
-* render grouped inputs cleanly side by side where appropriate
-
-### Basic text/date/number fields
-
-* keep existing functional input types
-* improve presentation to match the new UX
+### General controls
+Text inputs, grouped inputs, and large-option selectors should all visually belong to the same premium diagnostic system.
 
 ---
 
-## Conditional logic
+## G. Motion
 
-Preserve schema-driven conditional logic.
+Use only restrained motion already compatible with the current stack and existing Tailwind/keyframe setup.
 
-Questions with `dependsOn` logic must still hide/show correctly based on responses.
+Required motion moments:
+- intent-screen content entrance
+- staggered section-card entrance on intent screen
+- section-content entrance on section advance
+- smooth selected-state transitions for pill tiles
+- premium CTA hover/transition behaviour
 
-Do not break conditional display.
-
----
-
-## Validation
-
-Validation must happen on **section advance**, not on every keystroke.
-
-Current mismatch to eliminate:
-
-* rendering all sections while validating an arbitrary 5-question slice
-
-Refactor validation so it validates:
-
-* the actual active section’s visible required questions
-
-Do not allow silent skipping of required questions in the active section.
-
-Inline errors only.
-Do not dump validation at the top of the page.
+Do not over-animate.
 
 ---
 
-## State / behaviour constraints
+## Specific implementation notes to follow
 
-* keep response state local
-* keep payload structure passed to `onSubmit` unchanged
-* preserve `?autofill=true`
-* preserve existing wedge questionnaire submit behaviour
-* preserve loading/error states before render
+### Typography
+- `DM_Serif_Display` only for the intent-screen headline
+- section header stronger than Q-1
+- question labels upgraded from generic medium body styling
+- help text kept subtle and readable
 
-The component should track section-based flow, not arbitrary question-step slicing.
+### Question numbering
+Add `Q{n}` numbering per visible question within the active section.
 
----
+### Selected pill state
+Use a strong solid selected treatment, not a weak translucent tint.
 
-## Tech / design constraints
+### CTA treatment
+- Begin CTA: premium launch styling
+- final “Unlock my analysis” CTA: same family of premium styling
+- regular Next button: improved but not as strong as the final CTA
 
-* use the approved frontend stack already in force for HealthIQ
-* Tailwind only, no new CSS files
-* use existing project tokens / visual language
-* keep motion restrained and premium
-* do not introduce new state libraries
-* do not touch backend, schema, or upload page integration
+### Sidebar active state
+Use HealthIQ green-tinted active state, not generic grey/neutral emphasis.
 
 ---
 
 ## Out of scope
 
-* backend schema/API changes
-* upload page rewrites
-* analytics event redesign
-* profile integration
-* PDF/export
-* broader results-page work
-* any non-questionnaire feature work
+- backend/schema changes
+- questionnaire logic redesign
+- broader frontend design-system overhaul
+- global typography system work
+- global colour-system overhaul
+- results-page redesign
+- any non-questionnaire feature work
 
 Do not widen scope.
 
@@ -226,18 +309,22 @@ Do not widen scope.
 
 ## Acceptance criteria
 
-1. Intent screen appears before any question is shown.
-2. All 7 sections are displayed on the intent screen with names and time estimates.
-3. Questionnaire advances one section at a time.
-4. Active section is clearly shown; completed sections visibly marked.
-5. Small categorical choices use pill/tile selectors instead of dropdowns.
-6. Required validation fires on section advance against the actual active section.
-7. `onSubmit` payload structure remains unchanged.
-8. `onCancel` is reachable from the intent screen.
-9. `?autofill=true` still works.
-10. Conditional `dependsOn` logic still works.
-11. No TypeScript errors introduced.
-12. Upload page should not require modification to continue using this component.
+### Q-1 behaviour must still pass
+All Q-1 behavioural acceptance criteria must remain true.
+
+### Additional visual acceptance criteria
+13. Intent-screen headline uses `DM_Serif_Display`.
+14. Intent-screen root uses `bg-background`, avoiding dark/light collision.
+15. Intent-screen headline remains readable in dark mode.
+16. Section estimates and total-time line use green/monospace diagnostic styling.
+17. Selected pill tiles use a strong, unambiguous selected state.
+18. Slider value display is visually upgraded and prominent.
+19. Question cards show sequential `Q{n}` identifiers.
+20. Active desktop sidebar section uses a visible HealthIQ-specific active treatment.
+21. Begin CTA has visibly stronger launch styling.
+22. Final “Unlock my analysis” CTA has matching premium launch styling.
+23. Upload page renders `<QuestionnaireForm />` directly, without the outer Card wrapper.
+24. Section content animates in on section advance.
 
 ---
 
@@ -246,20 +333,17 @@ Do not widen scope.
 Do not run the full repository suite.
 
 Run only targeted checks relevant to:
-
-* component behaviour
-* section flow
-* validation behaviour
-* payload parity
-* autofill behaviour
-* conditional question logic
-* type safety
+- questionnaire behaviour regression
+- visual implementation sanity
+- conditional logic preservation
+- payload parity
+- autofill behaviour
+- type safety
 
 Before running tests, state:
-
-* what you will run
-* why
-* what broader suites you are excluding
+- what you will run
+- why
+- what broader suites you are excluding
 
 ---
 
@@ -268,41 +352,37 @@ Before running tests, state:
 When finished, report back in these sections:
 
 ### 1. Branch
-
-* confirm branch name
+- confirm branch name
 
 ### 2. Preflight restatement
+- objective
+- files touched
+- behavioural surfaces intentionally preserved
 
-* objective
-* file(s) touched
-* what integration surfaces were intentionally left unchanged
+### 3. Visual redesign implementation
+- intent-screen treatment
+- typography choices
+- sidebar treatment
+- question-card treatment
+- input/pill/slider treatment
+- CTA treatment
+- upload-page framing change
 
-### 3. UX implementation
-
-* how the intent screen works
-* how section-by-section navigation works
-* how sidebar/mobile behaviour works
-* how input patterns changed
-
-### 4. Validation and logic
-
-* how section validation now works
-* how payload parity was preserved
-* how `dependsOn` logic was preserved
-* how `?autofill=true` was preserved
+### 4. Behaviour preservation
+- how Q-1 behaviour was kept intact
+- how payload parity was preserved
+- how `conditionalDisplay` was preserved
+- how `?autofill=true` was preserved
 
 ### 5. Tests run
-
-* exact tests/checks
-* results
+- exact tests/checks
+- results
 
 ### 6. Known limits intentionally deferred
-
-* anything intentionally left out of scope
+- anything intentionally left out of scope
 
 ### 7. Uncommitted / not merged
-
-* confirm work is not merged to `main`
+- confirm work is not merged to `main`
 
 ---
 
@@ -310,17 +390,13 @@ When finished, report back in these sections:
 
 STOP and report if:
 
-1. preserving payload parity requires changing backend/schema contracts
-2. upload page integration breaks and cannot be preserved cleanly
-3. conditional question logic cannot be preserved inside the redesign
-4. the redesign would require broader frontend architecture changes outside this component
-5. scope starts drifting into unrelated frontend work
+1. removing the outer upload-page wrapper causes wider layout breakage
+2. `DM_Serif_Display` import causes build issues
+3. intended premium CTA styling causes Tailwind/build issues
+4. any Q-1 behavioural acceptance criterion regresses
+5. scope starts drifting into global frontend redesign work
 
 If blocked, report:
-
-* exact blocker
-* affected file/surface
-* smallest safe remediation path
-
-```
-```
+- exact blocker
+- affected file/surface
+- smallest safe remediation path
