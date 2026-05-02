@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, CheckCircle, FileUp, FileText, Type } from 'lucide-react';
@@ -471,24 +471,10 @@ export default function UploadPage() {
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5" />
-                    Health questionnaire
-                  </CardTitle>
-                  <CardDescription>
-                    Context for interpretation (age, sex, lifestyle) — used with your lab values, not for generic
-                    advice alone.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <QuestionnaireForm
-                    onSubmit={handleQuestionnaireFromUpload}
-                    isLoading={isAnalyzing}
-                  />
-                </CardContent>
-              </Card>
+              <QuestionnaireForm
+                onSubmit={handleQuestionnaireFromUpload}
+                isLoading={isAnalyzing}
+              />
             </div>
           )}
         </div>
