@@ -1,8 +1,8 @@
 {
-  "work_id": "Q-1",
+  "work_id": "Q-2",
   "status": "HARDENED",
   "bus_version": "1.3.1",
-  "hardened_utc": "2026-05-02T07:52:00Z",
+  "hardened_utc": "2026-05-02T09:10:00Z",
   "hardened_by": "claude-sonnet-4-6",
   "changes": [
     {
@@ -10,70 +10,103 @@
       "field": "front_matter_validation",
       "status": "CONFIRMED",
       "citation": "automation_bus/latest_cursor_prompt.md:1-7",
-      "detail": "All five mandatory fields present: work_id=Q-1, branch=feature/questionnaire-ux-redesign, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=BEHAVIOUR. BEHAVIOUR is correct — the sprint changes how the form renders, navigates, validates, and presents input controls. HIGH is conservative for a frontend-only component but GPT has architecture authority; no counter-evidence justifies overriding it. HIGH classification requires dual approval before merge."
+      "detail": "All five mandatory fields present: work_id=Q-2, branch=feature/questionnaire-visual-redesign, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=BEHAVIOUR. BEHAVIOUR is correct — visual layer changes constitute changes to rendered output. HIGH is conservative for a frontend-only styling sprint with no Intelligence Core involvement; GPT has authority over this classification. Consequence: dual approval required before merge."
     },
     {
       "id": "AUTHORITY_PATH_1",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "frontend/app/components/forms/QuestionnaireForm.tsx:1-515",
-      "detail": "Sole file in scope. File exists. Props interface at lines 31-36 is identical to the interface specified in the prompt. The component loads schema from fetchQuestionnaireSchema() (questionnaireSchema.ts), which fetches from /api/questionnaire/schema and validates type compatibility via assertQuestionnaireSchemaCompatible(). Cursor must not change this loading mechanism."
+      "citation": "frontend/app/components/forms/QuestionnaireForm.tsx",
+      "detail": "File exists on main. Contains the Q-1 implementation (895 lines). Q-2 visual redesign targets this file. Props interface at lines 61-66 must remain unchanged."
     },
     {
       "id": "AUTHORITY_PATH_2",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "frontend/app/(app)/upload/page.tsx:1-80 (integration surface)",
-      "detail": "Upload page exists and uses QuestionnaireForm via import at line 8. Correctly listed as out-of-scope. Must require zero modification after redesign. Integration is through the unchanged props interface only."
+      "citation": "frontend/app/(app)/upload/page.tsx:474-486",
+      "detail": "Card wrapper confirmed present. Structure: <Card> → <CardHeader> → <CardTitle>Health questionnaire</CardTitle> → <CardDescription>...</CardDescription> → </CardHeader> → <CardContent> → <QuestionnaireForm onSubmit={handleQuestionnaireFromUpload} isLoading={isAnalyzing} /> → </CardContent> → </Card>. Q-2 must replace this with a direct <QuestionnaireForm ... /> render. The green confirmation Card at lines 460-472 (uploadStatus === 'questionnaire') is a separate element above the form and must be left untouched."
     },
     {
       "id": "AUTHORITY_PATH_3",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "frontend/app/lib/questionnaireSchema.ts:32-35",
-      "detail": "conditionalDisplay interface confirmed: { dependsOn: string; showWhen: string[] }. Current QuestionnaireForm.tsx does NOT read or act on conditionalDisplay — all questions render unconditionally. The prompt requirement to 'preserve conditional logic' is therefore an IMPLEMENTATION requirement, not a preservation requirement. Cursor must filter each question through: if (q.conditionalDisplay && !q.conditionalDisplay.showWhen.includes(String(responses[q.conditionalDisplay.dependsOn]))) hide question. Responses for hidden questions must not be cleared from state — only hidden from view — to preserve payload integrity."
+      "citation": "docs/QUESTIONNAIRE_VISUAL_REDESIGN_Q2_BACKGROUND.md",
+      "detail": "Background spec doc exists and is complete. Contains exact Tailwind class strings, font loading code, glow shadow values, per-element implementation specs for every surface changed in this sprint."
     },
     {
-      "id": "SECTION_SPEC_CROSS_REFERENCE",
+      "id": "MANDATORY_BACKGROUND_DOC_READ",
+      "field": "behavioural_hardening",
+      "status": "MANDATORY — Cursor must act on this before writing any code",
+      "citation": "automation_bus/latest_cursor_prompt.md:17-18 vs docs/QUESTIONNAIRE_VISUAL_REDESIGN_Q2_BACKGROUND.md",
+      "detail": "The prompt at lines 17-18 says 'Claude already understands the design intent and prior research for this redesign. Use that design intent directly.' Cursor has no session context. This is the IDENTICAL gap that caused Q-1 to produce generic visual output — directional language without implementation specifics, and no pointer to the spec. The full implementation spec exists at docs/QUESTIONNAIRE_VISUAL_REDESIGN_Q2_BACKGROUND.md. Cursor MUST read that file in full before implementing any visual change. The doc specifies: exact Tailwind classes for pill selected/unselected states (solid bg-primary fill, not tint); exact glow shadow values for Begin and Unlock CTAs; DM_Serif_Display font loading code; sidebar active/done/pending class strings; slider layout replacing the muted box; question numbering implementation; section card hover treatment; and the radial gradient overlay for the intent screen. Not reading this document risks a repeat of Q-1's generic output."
+    },
+    {
+      "id": "Q1_BEHAVIOURAL_REGRESSION_PROTECTION",
+      "field": "behavioural_hardening",
+      "status": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md:98-114",
+      "detail": "Prompt explicitly names all Q-1 behavioural surfaces that must not regress: props interface, flat Record<string,unknown> payload, conditionalDisplay/dependsOn logic, section order/names/estimates, ?autofill=true, schema loading path, loading/error states, validation behaviour, section-by-section flow, intent screen flow, upload-page integration. AC 1-12 from Q-1 remain in force. All are functional surfaces — visual changes must not disturb them."
+    },
+    {
+      "id": "DESIGN_SYSTEM_TOKENS",
       "field": "source_cross_reference",
       "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:114-121 vs docs/QUESTIONNAIRE_UX_REDESIGN_BACKGROUND.md",
-      "detail": "Section display names, emojis, and time estimates in prompt match the background specification exactly. Seven sections in schema order: demographics, medical_history, symptoms, lifestyle, physical_assessment, cognitive_assessment, family_history. Total estimate ~13 min confirmed as sum of per-section estimates. Background doc is available at docs/QUESTIONNAIRE_UX_REDESIGN_BACKGROUND.md for Cursor reference."
+      "citation": "frontend/app/globals.css:1-93, frontend/tailwind.config.ts",
+      "detail": "Design system verified. Dark mode: bg-background = hsl(220 13% 8%), bg-card = hsl(220 13% 12%), primary = hsl(142 76% 46%). Custom palettes available: forest-*, sage-*, ocean-*. Animation keyframes available: fade-up, scale-in (in tailwind.config.ts:121-144). Primary glow token: --primary-glow = hsl(142 76% 56%). Cursor should use hsl(var(--primary)) syntax or the named Tailwind tokens rather than hardcoded hex values, so the design system remains coherent in both light and dark mode."
     },
     {
-      "id": "RENDERING_BUG_CONFIRMATION",
-      "field": "source_cross_reference",
-      "status": "CONFIRMED",
-      "citation": "frontend/app/components/forms/QuestionnaireForm.tsx:86-101, 451-477",
-      "detail": "Render/validate mismatch confirmed. Line 468: render uses getQuestionsBySection() — renders all sections at once. Line 86-90: getCurrentQuestions() slices 5 questions at a time used only for validation. The step counter (currentStep) controls validation slice but not visible content. Redesign must replace both functions with section-aware rendering and section-aware validation aligned to the active section."
-    },
-    {
-      "id": "AUTOFILL_PRESERVATION",
+      "id": "UPLOAD_PAGE_IMPORT_CLEANUP",
       "field": "authority_path_exists",
-      "status": "CONFIRMED",
-      "citation": "frontend/app/components/forms/QuestionnaireForm.tsx:77-84",
-      "detail": "?autofill=true dev shortcut exists at lines 77-84. Uses dynamic import of @/lib/mock/questionnaire. Must be preserved verbatim in redesign — only the state setter target changes (still setResponses). No logic change required."
+      "status": "ADVISORY",
+      "citation": "frontend/app/(app)/upload/page.tsx:4",
+      "detail": "Upload page imports Card, CardContent, CardDescription, CardHeader, CardTitle from '@/components/ui/card' at line 4. After removing the questionnaire wrapper, check whether Card is still used elsewhere on the page (it is — the markers confirmation banner at line 474 area uses Card). CardHeader, CardTitle, CardDescription, CardContent for the questionnaire wrapper can be removed from the import if no longer used. Do not remove Card itself."
     },
     {
-      "id": "PAYLOAD_PARITY_RISK",
+      "id": "FONT_BUILD_RISK",
       "field": "behavioural_hardening",
-      "status": "CONFIRMED — RISK CALLED OUT",
-      "citation": "automation_bus/latest_cursor_prompt.md:196-198",
-      "detail": "onSubmit receives responses: Record<string,unknown> — a flat map of questionId to value. New section-based navigation must not partition responses into nested section objects. All question IDs from all sections must accumulate in a single flat responses map regardless of which section is currently active. Hidden conditional questions must retain their response value in state (not be cleared on hide). This is the critical payload parity risk — fully covered by AC-7 and STOP #1."
-    },
-    {
-      "id": "BEHAVIOURAL_REGRESSION_TARGETS",
-      "field": "behavioural_hardening",
-      "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:229-241",
-      "detail": "AC targets verified: (1) intent screen before questions; (2) 7 sections on intent screen with names+estimates; (3) one section at a time; (4) completed/active section states; (5) pill tiles for <=6 options; (6) section-advance validation; (7) payload unchanged; (8) onCancel from intent screen; (9) autofill; (10) conditionalDisplay logic; (11) no TS errors; (12) upload page unmodified. These 12 AC items are complete and testable."
+      "status": "ADVISORY",
+      "citation": "automation_bus/latest_cursor_prompt.md:394-396 (STOP condition 2)",
+      "detail": "DM_Serif_Display loaded via next/font/google is a Next.js 14 built-in feature requiring no npm install. STOP condition 2 correctly handles the case where the import fails. If it does fail, the fallback is to use a CSS font-stack serif (Georgia, 'Times New Roman', serif) for the headline only — this preserves the typographic hierarchy intent without a build dependency. Do not silently drop the display font; report the STOP."
     }
   ],
-  "advisory_notes": [
-    "CONDITIONAL DISPLAY IS NEW IMPLEMENTATION: The prompt says 'preserve' but the current component has zero conditionalDisplay handling. Cursor must implement it from scratch using questionnaireSchema.ts:32-35 interface. Do not skip this — menstrual_hormonal_status and low_testosterone_symptoms questions are conditional on biological_sex and must not render for the wrong sex.",
-    "DESIGN CONTEXT: 'Claude already understands the design intent' (prompt line 17) refers to session context Cursor does not share. Full design specification is at docs/QUESTIONNAIRE_UX_REDESIGN_BACKGROUND.md. Cursor should read this file before implementing the intent screen and section layout.",
-    "PILL TILE THRESHOLD: The <= 6 options rule applies to dropdowns and checkboxes. For reference: biological_sex (3 options), ethnicity (7 options — use searchable select), dietary_pattern, tobacco_use, sleep_quality_rating (slider — keep slider). Cursor must count options from the live schema, not assume.",
-    "HIGH RISK MERGE GATE: This is classified HIGH. Dual approval required before merge to main. Claude audit complete. GPT architectural review implicit (GPT authored prompt). Second approval must be obtained before merge."
-  ],
+  "stage_2a": {
+    "verdict": "PASS",
+    "authority_files_verified": [
+      {
+        "path": "frontend/app/components/forms/QuestionnaireForm.tsx",
+        "exists": true,
+        "note": "Primary change target. Q-1 implementation present."
+      },
+      {
+        "path": "frontend/app/(app)/upload/page.tsx",
+        "exists": true,
+        "note": "Secondary change target. Card wrapper at lines 474-486 confirmed for removal."
+      },
+      {
+        "path": "docs/QUESTIONNAIRE_VISUAL_REDESIGN_Q2_BACKGROUND.md",
+        "exists": true,
+        "note": "MANDATORY pre-implementation read. Contains exact class strings for all visual changes."
+      }
+    ],
+    "duplicate_authority_sources": "NONE DETECTED"
+  },
+  "stage_2b": {
+    "verdict": "PASS",
+    "behavioural_scope_defined": true,
+    "regression_targets": [
+      "Q-1 AC 1-12 all in force — named explicitly at prompt lines 98-114",
+      "Payload parity: flat Record<string,unknown> — visual changes must not alter state shape",
+      "conditionalDisplay: isQuestionVisible() logic must be preserved verbatim",
+      "?autofill=true: useEffect at lines 200-208 of current component must be preserved",
+      "Upload page integration: onSubmit callback contract unchanged"
+    ],
+    "no_scope_creep": true,
+    "stop_conditions_adequate": true,
+    "determinism_risks": [
+      "Visual-only sprint: no analytical logic, no SSOT, no pipeline. Determinism risk is minimal.",
+      "State shape risk: visual restructuring must not introduce nested response objects. Flat responses map must be preserved.",
+      "Animation risk: staggered animation-delay uses inline styles — acceptable, no new dependencies."
+    ]
+  },
   "overall_verdict": "HARDENED"
 }
