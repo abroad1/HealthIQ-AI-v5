@@ -1,0 +1,275 @@
+You are conducting a **repo-grounded audit** for HealthIQ AI.
+
+This is not a coding task.
+Do not write code.
+Do not write sprint prompts.
+Do not propose implementation yet.
+
+Your job is to audit the current HealthIQ repo and produce a grounded inventory for the proposed **Background Testing Sentinel** operating model.
+
+This audit is intended to answer:
+- what is already present in the repo
+- what can realistically support Phase 1 and Phase 2 Sentinel work
+- what is missing
+- what the true first implementation slice should be
+
+## Context
+
+HealthIQ AI is considering a background testing and issue-surfacing system (“Sentinel”) that would:
+
+- watch code and product-risk surfaces continuously
+- classify affected areas
+- select relevant deterministic tests
+- surface issues early
+- eventually support very narrow, governed auto-remediation for safe defect classes only
+
+A strategy paper and operating model already exist.
+Do not rewrite them.
+This audit is the next layer down:
+**what in the current repo can actually support this?**
+
+## What you must do
+
+Perform a repo-grounded audit of the current codebase and report on the following areas.
+
+---
+
+## 1. Current test inventory
+
+Map the current test estate as it actually exists.
+
+Identify:
+- backend unit tests
+- backend integration tests
+- frontend/component tests
+- E2E/browser tests
+- fixture replay tests
+- persistence/snapshot-related tests
+- parser/alias mapping tests
+- domain-card / narrative coherence tests
+- any release/gate-related test artifacts
+
+For each major test area, state:
+- where it lives
+- what it appears to cover
+- whether it is active and meaningful
+- whether it looks narrow or broad
+- whether it maps cleanly to the Sentinel operating model
+
+Do not just list files. Summarise the real coverage picture.
+
+---
+
+## 2. Current fixture and sample-data inventory
+
+Identify what fixture assets already exist that could support Sentinel work.
+
+Examples to look for:
+- synthetic panels
+- representative blood panel fixtures
+- AB/VR panels
+- persisted-result examples
+- sample upload payloads
+- parser fixtures
+- frontend mock result payloads
+
+For each category, state:
+- location
+- purpose
+- whether it is reusable for background testing
+- whether it is too narrow / incomplete / stale
+
+---
+
+## 3. Current control-plane / gate support
+
+Audit what current scripts, buses, validators, or lifecycle controls could support a Sentinel Phase 1 or Phase 2 implementation.
+
+Look for:
+- work package lifecycle scripts
+- local gates
+- validators
+- audit summaries
+- evidence generation
+- result version handling
+- any existing automation/test selection logic
+- any current reporting artifacts that Sentinel could reuse
+
+State clearly:
+- what exists
+- what is reusable
+- what should remain separate
+- what Sentinel must not mutate directly
+
+---
+
+## 4. Path-based risk classification feasibility
+
+Audit whether the current repo structure is clear enough to support file-path/risk-surface classification.
+
+Specifically assess whether these or similar surfaces are cleanly identifiable in the repo:
+- parser / upload / alias
+- SSOT / canonical mapping
+- analytics / scoring / signal logic
+- persistence / result DTO / snapshot surfaces
+- frontend trust surfaces
+- governance/control-plane surfaces
+
+State:
+- whether path-based classification is realistic
+- where path ambiguity exists
+- what a first practical path map would look like
+
+---
+
+## 5. Persisted-result testing feasibility
+
+Audit what currently exists for:
+- persisted-result storage
+- result versioning
+- replay of stored analyses
+- old/new snapshot compatibility
+- frontend rendering of stored result shapes
+
+State clearly:
+- what support already exists
+- what is missing
+- whether persisted-result replay looks easy, moderate, or difficult to operationalise in Sentinel Phase 1/2
+
+---
+
+## 6. Frontend trust-surface testing feasibility
+
+Audit the current frontend testing and runtime structure for:
+- raw slug/internal-label leakage
+- contradictory visible sections
+- impossible-looking values
+- label/display safety
+- domain-card coherence
+- page-level authority alignment
+
+State:
+- what is already tested
+- what would be easy to add
+- what is currently missing
+- where live-browser/UAT checks still seem necessary
+
+---
+
+## 7. Parser/alias coverage feasibility
+
+Audit what already exists for:
+- alias registry validation
+- canonical mapping tests
+- present-but-missing checks
+- live-like payload replay
+- unit conversion and parser/normalisation checks
+
+This is important because recent issues included GGT and bilirubin mapping failures.
+
+State:
+- what support exists now
+- what is missing
+- whether a Phase 1/2 Sentinel alias/canonical sweep looks feasible from the current repo
+
+---
+
+## 8. Escaped-defect regression feasibility
+
+Audit whether recent escaped defects could realistically be turned into a permanent regression pack with the current repo structure.
+
+Use recent examples as the lens:
+- GGT alias miss
+- bilirubin canonical mismatch
+- internal slug leakage
+- Wave 1 narrative contradiction
+- stale persisted result behaviour
+
+State:
+- which of these are already partially covered
+- which are not
+- whether the repo supports a coherent “escaped defect pack”
+- where that pack should probably live
+
+---
+
+## 9. First realistic Sentinel slice
+
+Based on the real repo, recommend the **smallest realistic Phase 1 Sentinel implementation slice**.
+
+Do not design the whole future system.
+Just answer:
+
+If the team started now, what is the smallest real Sentinel slice that could be built with current repo reality?
+
+Examples might include:
+- reporting-only file-path classifier + targeted test selector
+- alias/canonical sweep + escaped-defect reporting
+- persisted-result replay pack
+- frontend trust-surface scan
+- etc.
+
+Pick the smallest real slice and justify it from the repo.
+
+---
+
+## Output format
+
+## 1. Executive summary
+- short judgement of repo readiness for Sentinel
+- is Phase 1 realistic now: yes/no/partly
+
+## 2. Current test inventory
+- real coverage map
+- strengths
+- weaknesses
+
+## 3. Fixture and sample-data inventory
+- what exists
+- what is reusable
+- key gaps
+
+## 4. Control-plane and gate support
+- reusable pieces
+- boundaries Sentinel must respect
+
+## 5. Path-classification feasibility
+- can Sentinel classify by changed files/surfaces in this repo or not?
+
+## 6. Persisted-result feasibility
+- what exists
+- what is missing
+- difficulty assessment
+
+## 7. Frontend trust-surface feasibility
+- current support
+- likely gaps
+
+## 8. Parser/alias feasibility
+- current support
+- likely gaps
+
+## 9. Escaped-defect regression feasibility
+- can the repo support a permanent escaped-defect pack?
+
+## 10. Smallest realistic Sentinel Phase 1 slice
+- your recommendation
+- why this should be first
+
+## 11. Open blockers / ambiguities
+- what cannot be confidently determined
+- what would need a follow-up check
+
+## Constraints
+
+- do not write code
+- do not write sprint prompts
+- do not propose a giant future-state architecture
+- stay grounded in the actual repo
+- do not assume files or tooling exist unless you find them
+- if something is unclear, say so explicitly
+
+## Important
+
+This audit will be run independently by both Claude Code and Cursor.
+Make it repo-grounded, neutral, and evidence-led.
