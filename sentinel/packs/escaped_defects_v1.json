@@ -1,0 +1,47 @@
+{
+  "pack_version": "1.0.0",
+  "pack_id": "escaped_defects_v1",
+  "description": "Named escaped-defect regression pack — Phase 1. One entry per known escaped defect class.",
+  "defect_classes": {
+    "ggt_alias_miss": {
+      "description": "GGT alias miss — runtime key with misspelling (glutamil vs glutamyl) failed to resolve to canonical 'ggt'.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_ggt_alias_regression.py",
+      "first_seen": "2026-04",
+      "fix_commit": "43e181f"
+    },
+    "bilirubin_canonical_mismatch": {
+      "description": "Bilirubin venous alias 'bilirubin_total_(venous)' resolved to 'total_bilirubin' instead of canonical 'bilirubin'.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_bilirubin_alias_regression.py",
+      "first_seen": "2026-04",
+      "fix_commit": "43e181f"
+    },
+    "slug_leakage": {
+      "description": "Internal identifiers (ph_*_v*, snake_case slugs, backend strings) appearing in customer-facing results surfaces.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_slug_leakage_regression.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "wave1_contradiction": {
+      "description": "Wave 1 narrative contradiction — domain summary and domain score contradicting each other on rendered results page.",
+      "guard_type": "status_reporting",
+      "status": "PLACEHOLDER",
+      "test_file": "backend/tests/regression/test_wave1_contradiction_status.py",
+      "first_seen": "2026-05",
+      "note": "Full deterministic coverage requires Playwright. Phase 1 reports status only."
+    },
+    "persisted_result_replay": {
+      "description": "Stale persisted result loaded into current frontend fails to render or renders with schema mismatch.",
+      "guard_type": "status_reporting",
+      "status": "PLACEHOLDER",
+      "test_file": "backend/tests/regression/test_persisted_result_replay_status.py",
+      "first_seen": "2026-05",
+      "note": "Full replay harness deferred. Phase 1 reports gap status only."
+    }
+  }
+}
