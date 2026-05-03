@@ -28,7 +28,8 @@
 import fs from 'fs'
 import path from 'path'
 
-const repoRoot = path.resolve(__dirname, '../../../..')
+// frontend/tests/regression → repo root is three levels up
+const repoRoot = path.resolve(__dirname, '../../..')
 const frontendRoot = path.join(repoRoot, 'frontend')
 const resultsDir = path.join(frontendRoot, 'app', 'components', 'results')
 
