@@ -471,10 +471,12 @@ export default function UploadPage() {
                 </CardContent>
               </Card>
 
-              <QuestionnaireForm
-                onSubmit={handleQuestionnaireFromUpload}
-                isLoading={isAnalyzing}
-              />
+              <div className="overflow-hidden rounded-2xl border border-border/60 bg-background shadow-[0_40px_100px_-48px_rgba(0,0,0,0.35)] ring-1 ring-primary/[0.07]">
+                <QuestionnaireForm
+                  onSubmit={handleQuestionnaireFromUpload}
+                  isLoading={isAnalyzing}
+                />
+              </div>
             </div>
           )}
         </div>
