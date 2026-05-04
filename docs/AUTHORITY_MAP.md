@@ -33,11 +33,11 @@ Find the domain you care about. Look at the Status column.
 | `docs/MASTER_ROADMAP_v5.2_to_v5.3.md` | STALE | v5.2/v5.3 framing. Partially superseded by reset. Do not use for sprint sequencing. |
 | `docs/Delivery_Sprint_Plan_v5.2.md` | SUPERSEDED | Pre-reset sprint plan. |
 | `docs/Master_PRD_v5.2.md` | SUPERSEDED | v5.2 PRD. Reset plan supersedes it for Phase 1 execution. May have useful feature specification detail. |
-| `docs/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.4_amended.md` | SUPERSEDED | Superseded by v1.5 FINAL. |
-| `docs/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan.md` (no version) | SUPERSEDED | Pre-versioning draft. |
-| `docs/Download-Arch/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan*.md` (9 files) | ARCHIVE | All pre-FINAL drafts. |
+| `docs/archive/superseded/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.4_amended.md` | SUPERSEDED | Superseded by v1.5 FINAL. Moved to archive. |
+| `docs/archive/superseded/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan.md` (no version) | SUPERSEDED | Pre-versioning draft. Moved to archive. |
+| `docs/archive/working-papers/download-arch/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan*.md` (9 files) | ARCHIVE | All pre-FINAL drafts. |
 | `docs/strategy/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md` | AUTHORITATIVE | Current results experience authority. |
-| `docs/Download-Arch/HealthIQ_Final_Results_Journey_Recommendation_Paper_v*.md` (v1–v5) | ARCHIVE | All superseded. v6 is current. |
+| `docs/archive/working-papers/download-arch/HealthIQ_Final_Results_Journey_Recommendation_Paper_v*.md` (v1–v5) | ARCHIVE | All superseded. v6 is current. |
 
 ---
 
@@ -60,8 +60,8 @@ Find the domain you care about. Look at the Status column.
 | `docs/architecture/PHASE_0_AS_IS_ARCHITECTURE_AUDIT.md` | ARCHIVE | Pre-project baseline. |
 | `docs/architecture/HealthIQ_Intelligence_Model_Design_Second_Pass.md` | SUPPORTING | Design workshop output. |
 | `docs/ARCHITECTURE_INSIGHT_MODULARITY_REVIEW.md` | SUPPORTING | Modularity review. |
-| `docs/ARCHITECTURE_REVIEW_REPORT.md` | STALE | Sprint 14 / October 2025. Superseded notice added. |
-| `docs/DOCUMENTATION_HIERARCHY.md` | SUPERSEDED | Points to stale docs. Superseded notice added. Use `docs/README.md`. |
+| `docs/archive/superseded/ARCHITECTURE_REVIEW_REPORT.md` | STALE | Sprint 14 / October 2025. Moved to archive. |
+| `docs/archive/superseded/DOCUMENTATION_HIERARCHY.md` | SUPERSEDED | Pointed to stale docs. Moved to archive. Use `docs/README.md`. |
 
 ---
 
@@ -82,7 +82,7 @@ Find the domain you care about. Look at the Status column.
 | `docs/investigations/2026-04-12_results_why_narrative_runtime_investigation.md` | SUPPORTING | WHY narrative runtime investigation. |
 | `docs/investigations/2026-04-21_N3_longitudinal_lab_value_contract.md` | SUPPORTING | Longitudinal lab value contract (N-3). |
 | `docs/investigations/2026-04-26_D5_wave1_runtime_diagnosis.md` | SUPPORTING | D-5 runtime diagnosis. |
-| `docs/investigations/KB-S*_PREFLIGHT.md` (many files) | ARCHIVE | KB sprint preflights. Historical record. |
+| `docs/archive/sprint-history/investigations/` (~30 files) | ARCHIVE | KB sprint preflights (KB-S*, FE_*, BE_S1, etc.). Historical record. Moved to archive. |
 | `docs/investigations/PRODUCT_REALITY_AND_DIRECTION_AUDIT.md` | AUTHORITATIVE | (See above.) |
 | `docs/investigations/VR_PRIMARY_CONCERN_RANKING_INVESTIGATION.md` | SUPPORTING | VR primary concern ranking. |
 | `backend/artifacts/intelligence_model_audit.md` | SUPPORTING | Intelligence model audit artifact. |
@@ -104,10 +104,10 @@ Find the domain you care about. Look at the Status column.
 | `docs/clinician_report_v1_spec.md` | SUPPORTING | Clinician report spec. |
 | `docs/architecture/Frontend/HealthIQ_Results_Page_UX_Design_Package.md` | SUPPORTING | v5.2 design package. Results Journey Paper v6 is current authority. |
 | `docs/architecture/Frontend/HealthIQ_Results_Wireframe_Package.md` | SUPPORTING | v5.2 wireframes. |
-| `docs/context/UX_UI_GUIDE.md` | STALE | Pre-governance era. Superseded by Results Journey Paper v6. |
-| `docs/Download-Arch/HealthIQ_Results_Page_UX_Design_Package_v*.md` (v1–v5) | ARCHIVE | Superseded versions. |
-| `docs/Download-Arch/HealthIQ_FE_VISUALISATION_Surface_Policy_Final_v3.md` | SUPPORTING | Historical surface policy. Useful context. |
-| `docs/Download-Arch/HealthIQ_FE_VISUALISATION_Surface_Policy_Final_v*.md` (v1–v2) | ARCHIVE | Superseded. |
+| `docs/archive/sprint-history/context/UX_UI_GUIDE.md` | ARCHIVE | Pre-governance era. Superseded by Results Journey Paper v6. Moved to archive. |
+| `docs/archive/working-papers/download-arch/HealthIQ_Results_Page_UX_Design_Package_v*.md` (v1–v5) | ARCHIVE | Superseded versions. |
+| `docs/archive/working-papers/download-arch/HealthIQ_FE_VISUALISATION_Surface_Policy_Final_v3.md` | SUPPORTING | Historical surface policy. Useful context. |
+| `docs/archive/working-papers/download-arch/HealthIQ_FE_VISUALISATION_Surface_Policy_Final_v*.md` (v1–v2) | ARCHIVE | Superseded. |
 
 ---
 
@@ -137,15 +137,15 @@ Find the domain you care about. Look at the Status column.
 | `docs/KNOWLEDGE_BUS_SOP_v1.3.md` | AUTHORITATIVE | Active Knowledge Bus SOP. |
 | `docs/agents/CURSOR_OPERATING_POLICY.md` | AUTHORITATIVE | Cursor operating policy. |
 | `AGENTS.md` | AUTHORITATIVE | Agent operating map. |
-| `docs/AUTOMATION_BUS_SOP_v1.3.md` | SUPERSEDED | Superseded notice added. |
-| `docs/AUTOMATION_BUS_SOP_v1.2.md` | SUPERSEDED | Superseded notice added. |
-| `docs/KNOWLEDGE_BUS_SOP_v1.2.md` | SUPERSEDED | Superseded notice added. |
-| `docs/Download-Arch/AUTOMATION_BUS_SOP_v1.1.md` | ARCHIVE | Old version. |
-| `docs/Download-Arch/AUTOMATION_BUS_SOP_v1.2 (1).md` | ARCHIVE | Old version. |
-| `docs/Download-Arch/AUTOMATION_BUS_SOP_v1.3.1_aligned.md` | ARCHIVE | Draft/alignment variant. Not operative. |
-| `docs/Download-Arch/AUTOMATION_BUS_SOP_v1.3.1_final_merged.md` | ARCHIVE | Draft/merge variant. Not operative. |
-| `docs/Download-Arch/AUTOMATION_BUS_SOP_v1.3.1_stash_fix_patch.md` | ARCHIVE | Patch draft. Not operative. |
-| `docs/Download-Arch/AUTOMATION_BUS_SOP_v1.3.2_draft.md` | ARCHIVE | Draft of a potential future version. Not operative. |
+| `docs/archive/superseded/AUTOMATION_BUS_SOP_v1.3.md` | SUPERSEDED | Moved to archive. |
+| `docs/archive/superseded/AUTOMATION_BUS_SOP_v1.2.md` | SUPERSEDED | Moved to archive. |
+| `docs/archive/superseded/KNOWLEDGE_BUS_SOP_v1.2.md` | SUPERSEDED | Moved to archive. |
+| `docs/archive/working-papers/download-arch/AUTOMATION_BUS_SOP_v1.1.md` | ARCHIVE | Old version. |
+| `docs/archive/working-papers/download-arch/AUTOMATION_BUS_SOP_v1.2 (1).md` | ARCHIVE | Old version. |
+| `docs/archive/working-papers/download-arch/AUTOMATION_BUS_SOP_v1.3.1_aligned.md` | ARCHIVE | Draft/alignment variant. Not operative. |
+| `docs/archive/working-papers/download-arch/AUTOMATION_BUS_SOP_v1.3.1_final_merged.md` | ARCHIVE | Draft/merge variant. Not operative. |
+| `docs/archive/working-papers/download-arch/AUTOMATION_BUS_SOP_v1.3.1_stash_fix_patch.md` | ARCHIVE | Patch draft. Not operative. |
+| `docs/archive/working-papers/download-arch/AUTOMATION_BUS_SOP_v1.3.2_draft.md` | ARCHIVE | Draft of a potential future version. Not operative. |
 | `automation_bus/latest_audit_summary.md` | SUPPORTING | Most recent gate audit output. Operational record. |
 | `automation_bus/latest_cursor_prompt.md` | SUPPORTING | Most recent cursor prompt. Operational artefact. |
 
@@ -167,11 +167,14 @@ Find the domain you care about. Look at the Status column.
 
 ## Archive Directories
 
+See `docs/archive/README.md` for full archive structure.
+
 | Location | What it contains |
 |---|---|
 | `docs/archive/fix-reports/` | ~40 root-level incident/fix reports (2025). Historical record only. |
-| `docs/Download-Arch/` | ~90 working papers, design explorations, superseded SOPs, strategy drafts. See `docs/Download-Arch/README.md`. |
-| `docs/context/` | Pre-governance-era context files. Currency not verified. Use with caution. |
+| `docs/archive/superseded/` | Superseded SOPs (v1.2, v1.3), old strategy plan versions (v1.4 and earlier), old baseline docs, deprecated navigation docs. |
+| `docs/archive/working-papers/` | Working papers, docx design files, early research proposals, PRP tooling, Download-Arch dump of ~90 historical documents. |
+| `docs/archive/sprint-history/` | Old sprint notes, preflight investigations, delivery reports, golden-narrative design work, pre-governance context files, stash patches, diagnostics. |
 | `backend/artifacts/` | Golden run outputs, arbitration run outputs, audit artifacts. Operational history. |
 
 ---

@@ -49,7 +49,7 @@ If a document is not listed here as current, it is either reference-only or arch
 | `architecture/ARCHITECTURE_GUARDRAILS.md` | **AUTHORITATIVE** | Enforceable rules derived from ADRs. |
 | `architecture/HEALTHIQ_REASONING_PIPELINE.md` | **AUTHORITATIVE** | Canonical Evidence → Signal → Insight model. |
 | `docs/architecture/ANALYTICAL_ASSETS_INVENTORY_v5.2.md` | **SUPPORTING** | Asset inventory at v5.2 baseline. May undercount — KB has grown since. |
-| `docs/ARCHITECTURE_REVIEW_REPORT.md` | **STALE — do not use** | Sprint 14 / October 2025. Superseded notice added. |
+| `docs/archive/superseded/ARCHITECTURE_REVIEW_REPORT.md` | **STALE — do not use** | Sprint 14 / October 2025. Moved to archive. |
 
 ---
 
@@ -63,7 +63,7 @@ If a document is not listed here as current, it is either reference-only or arch
 | `docs/policy/PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_v1.md` | **AUTHORITATIVE** | Policy for primary concern and ranked ambiguity. |
 | `docs/Wave1-codebase-analysis_v3.md` | **SUPPORTING** | Wave 1 implementation analysis. v3 is latest. |
 | `docs/investigations/2026-04-12_*.md` | **SUPPORTING** | April 2026 investigation notes (4 files). Operational reference. |
-| `docs/investigations/KB-S*_PREFLIGHT.md` | **ARCHIVE / OPERATIONAL RECORDS** | Sprint preflight investigations. Historical record only. |
+| `docs/archive/sprint-history/investigations/` | **ARCHIVE** | ~30 sprint preflight investigations (KB-S*, FE_*, BE_S1, etc.). Historical record only. |
 
 ---
 
@@ -78,7 +78,7 @@ If a document is not listed here as current, it is either reference-only or arch
 | `docs/QUESTIONNAIRE_VISUAL_REDESIGN_Q2_BACKGROUND.md` | **AUTHORITATIVE** | Q-2 premium visual layer background. |
 | `docs/CLAUDE_TRANSLATION_SPEC_v1.md` | **SUPPORTING** | Translation spec for Layer C narrative. |
 | `docs/clinician_language_style_guide_v1.md` | **SUPPORTING** | Clinical language style. |
-| `docs/context/UX_UI_GUIDE.md` | **STALE** | Pre-governance era. Superseded by Results Journey Paper v6. |
+| `docs/archive/sprint-history/context/UX_UI_GUIDE.md` | **ARCHIVE** | Pre-governance era. Superseded by Results Journey Paper v6. Moved to archive. |
 
 ---
 
@@ -104,9 +104,9 @@ If a document is not listed here as current, it is either reference-only or arch
 | `docs/KNOWLEDGE_BUS_SOP_v1.3.md` | **AUTHORITATIVE — ACTIVE SOP** | Operative Knowledge Bus SOP. |
 | `docs/agents/CURSOR_OPERATING_POLICY.md` | **AUTHORITATIVE** | Cursor operating policy within the bus. |
 | `AGENTS.md` | **AUTHORITATIVE** | Agent operating map. |
-| `docs/AUTOMATION_BUS_SOP_v1.3.md` | **SUPERSEDED** | Superseded notice added. |
-| `docs/AUTOMATION_BUS_SOP_v1.2.md` | **SUPERSEDED** | Superseded notice added. |
-| `docs/KNOWLEDGE_BUS_SOP_v1.2.md` | **SUPERSEDED** | Superseded notice added. |
+| `docs/archive/superseded/AUTOMATION_BUS_SOP_v1.3.md` | **SUPERSEDED** | Moved to archive. |
+| `docs/archive/superseded/AUTOMATION_BUS_SOP_v1.2.md` | **SUPERSEDED** | Moved to archive. |
+| `docs/archive/superseded/KNOWLEDGE_BUS_SOP_v1.2.md` | **SUPERSEDED** | Moved to archive. |
 
 ---
 
@@ -130,7 +130,7 @@ If a document is not listed here as current, it is either reference-only or arch
 - **For governance/SOPs:** `docs/AUTOMATION_BUS_SOP_v1.3.1.md` and `docs/KNOWLEDGE_BUS_SOP_v1.3.md`
 - **For document authority classification:** `docs/AUTHORITY_MAP.md`
 - **For settled decisions:** `docs/DECISION_REGISTER.md`
-- **For archive material:** `docs/archive/` and `docs/Download-Arch/`
+- **For archive material:** `docs/archive/` — see `docs/archive/README.md` for structure
 
 ---
 
@@ -138,9 +138,9 @@ If a document is not listed here as current, it is either reference-only or arch
 
 | Document | Why |
 |---|---|
-| `docs/DOCUMENTATION_HIERARCHY.md` | SUPERSEDED — points to stale Sprint 14 documents |
-| `docs/ARCHITECTURE_REVIEW_REPORT.md` | STALE — Sprint 14 / October 2025 |
-| `docs/AUTOMATION_BUS_SOP_v1.2.md` / `v1.3.md` | SUPERSEDED |
-| `docs/KNOWLEDGE_BUS_SOP_v1.2.md` | SUPERSEDED |
-| Anything in `docs/Download-Arch/` | Working papers archive |
-| Anything in `docs/archive/` | Historical archive |
+| `docs/archive/superseded/DOCUMENTATION_HIERARCHY.md` | SUPERSEDED — pointed to stale Sprint 14 documents. Moved to archive. |
+| `docs/archive/superseded/ARCHITECTURE_REVIEW_REPORT.md` | STALE — Sprint 14 / October 2025. Moved to archive. |
+| `docs/archive/superseded/AUTOMATION_BUS_SOP_v1.2.md` / `v1.3.md` | SUPERSEDED — use v1.3.1. Moved to archive. |
+| `docs/archive/superseded/KNOWLEDGE_BUS_SOP_v1.2.md` | SUPERSEDED — use v1.3. Moved to archive. |
+| Anything in `docs/archive/working-papers/download-arch/` | Working papers archive (~90 files) |
+| Anything in `docs/archive/` | Historical archive — see `docs/archive/README.md` |
