@@ -30,9 +30,9 @@ Find the domain you care about. Look at the Status column.
 | `docs/strategy/HealthIQ_Strategy_Stack_Document_Authority_Map.md` | SUPPORTING | Governance note on doc hierarchy. |
 | `docs/strategy/HealthIQ_Executive_GTM_Report_Updated_v2.md` | SUPPORTING | GTM context. |
 | `docs/HealthIQ_Phase1_Launch_Posture.md` | UNCLEAR | Currency uncertain. Verify against April review. |
-| `docs/MASTER_ROADMAP_v5.2_to_v5.3.md` | STALE | v5.2/v5.3 framing. Partially superseded by reset. Do not use for sprint sequencing. |
-| `docs/Delivery_Sprint_Plan_v5.2.md` | SUPERSEDED | Pre-reset sprint plan. |
-| `docs/Master_PRD_v5.2.md` | SUPERSEDED | v5.2 PRD. Reset plan supersedes it for Phase 1 execution. May have useful feature specification detail. |
+| `docs/archive/superseded/MASTER_ROADMAP_v5.2_to_v5.3.md` | SUPERSEDED | v5.2/v5.3 framing. Superseded by April 2026 reset. Moved to archive. |
+| `docs/archive/superseded/Delivery_Sprint_Plan_v5.2.md` | SUPERSEDED | Pre-reset sprint plan. Moved to archive. |
+| `docs/archive/superseded/Master_PRD_v5.2.md` | SUPERSEDED | v5.2 PRD. Reset plan supersedes it. May have useful feature specification detail. Moved to archive. |
 | `docs/archive/superseded/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.4_amended.md` | SUPERSEDED | Superseded by v1.5 FINAL. Moved to archive. |
 | `docs/archive/superseded/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan.md` (no version) | SUPERSEDED | Pre-versioning draft. Moved to archive. |
 | `docs/archive/working-papers/download-arch/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan*.md` (9 files) | ARCHIVE | All pre-FINAL drafts. |
@@ -59,7 +59,7 @@ Find the domain you care about. Look at the Status column.
 | `docs/architecture/ANALYTICAL_ASSETS_INVENTORY_v5.2.md` | SUPPORTING | Asset inventory. May undercount — KB has grown. |
 | `docs/architecture/PHASE_0_AS_IS_ARCHITECTURE_AUDIT.md` | ARCHIVE | Pre-project baseline. |
 | `docs/architecture/HealthIQ_Intelligence_Model_Design_Second_Pass.md` | SUPPORTING | Design workshop output. |
-| `docs/ARCHITECTURE_INSIGHT_MODULARITY_REVIEW.md` | SUPPORTING | Modularity review. |
+| `docs/archive/working-papers/ARCHITECTURE_INSIGHT_MODULARITY_REVIEW.md` | ARCHIVE | Modularity review. Moved to archive. |
 | `docs/archive/superseded/ARCHITECTURE_REVIEW_REPORT.md` | STALE | Sprint 14 / October 2025. Moved to archive. |
 | `docs/archive/superseded/DOCUMENTATION_HIERARCHY.md` | SUPERSEDED | Pointed to stale docs. Moved to archive. Use `docs/README.md`. |
 
@@ -75,7 +75,7 @@ Find the domain you care about. Look at the Status column.
 | `docs/policy/PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_v1.md` | AUTHORITATIVE | Primary concern policy. |
 | `docs/architecture/SIGNAL_ARCHITECTURE_COMPLETION_v1.0.md` | SUPPORTING | Signal architecture completion note. |
 | `docs/Wave1-codebase-analysis_v3.md` | SUPPORTING | v3 is latest. |
-| `docs/Wave1-codebase-analysis-v2.md` | SUPERSEDED | v3 supersedes. |
+| `docs/archive/working-papers/Wave1-codebase-analysis-v2.md` | ARCHIVE | v3 supersedes. Moved to archive. |
 | `docs/investigations/2026-04-12_full_results_narrative_contract_inventory.md` | SUPPORTING | Narrative contract inventory. |
 | `docs/investigations/2026-04-12_insulin_resistance_and_narrative_visibility_investigation.md` | SUPPORTING | IR narrative investigation. |
 | `docs/investigations/2026-04-12_lab_range_fallback_policy_alignment.md` | SUPPORTING | Lab range fallback policy. |
@@ -83,8 +83,7 @@ Find the domain you care about. Look at the Status column.
 | `docs/investigations/2026-04-21_N3_longitudinal_lab_value_contract.md` | SUPPORTING | Longitudinal lab value contract (N-3). |
 | `docs/investigations/2026-04-26_D5_wave1_runtime_diagnosis.md` | SUPPORTING | D-5 runtime diagnosis. |
 | `docs/archive/sprint-history/investigations/` (~30 files) | ARCHIVE | KB sprint preflights (KB-S*, FE_*, BE_S1, etc.). Historical record. Moved to archive. |
-| `docs/investigations/PRODUCT_REALITY_AND_DIRECTION_AUDIT.md` | AUTHORITATIVE | (See above.) |
-| `docs/investigations/VR_PRIMARY_CONCERN_RANKING_INVESTIGATION.md` | SUPPORTING | VR primary concern ranking. |
+| `docs/archive/sprint-history/investigations/VR_PRIMARY_CONCERN_RANKING_INVESTIGATION.md` | ARCHIVE | VR primary concern ranking investigation. Moved to archive. |
 | `backend/artifacts/intelligence_model_audit.md` | SUPPORTING | Intelligence model audit artifact. |
 | `backend/artifacts/promoted_signal_intelligence_audit.md` | SUPPORTING | Promoted signal audit. |
 
@@ -186,5 +185,5 @@ See `docs/archive/README.md` for full archive structure.
 | `docs/HealthIQ_Phase1_Launch_Posture.md` | Not verified against April 2026 review findings. |
 | `docs/compliance/PRIVACY_RISK_REVIEW_PHASE1_EQUIVALENT.md` | April review found GDPR gap not covered by disclosure in upload flow. |
 | `docs/testing/automated-testing-sentinel-repo-audit-report.md` | Possible duplicate of `healthiq_sentinel_repo_audit_v1.md`. |
-| `docs/context/INTELLIGENCE_LIFECYCLE.md` + other context/ files | Pre-governance. Not verified for current accuracy. |
+| `docs/archive/sprint-history/context/` (all context/ files) | Moved to archive in Pass 2. Pre-governance content, not verified for current accuracy. Do not cite as current truth. |
 | `architecture/` — ADR-006 gap | ADR-007 and ADR-008 exist; ADR-006 does not. No explanation in index. |

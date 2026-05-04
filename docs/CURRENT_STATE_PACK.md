@@ -117,11 +117,11 @@ Based on the above documents and git history as of 2026-05-04:
 ### Product Shell
 - All 8 reset sprints complete: integration stability, results restructure, PDF export, actions hub, trend view, pricing/paywall, WHY Wave 1
 
-### Active Work (as of 2026-05)
-- Questionnaire UX redesign — Q-1 (guided flow) and Q-2 (premium visual layer): both committed
-- Wave 1 domain card work — D-1 through D-7 all committed to main
-- Liver/alias fix hardening — committed (GGT trace alias, bilirubin venous alias)
-- Sentinel Phase 1 — complete and merged
+### Also complete (as of 2026-05)
+- Questionnaire UX redesign — Q-1 (guided flow, `d096833`) and Q-2 (premium visual layer, `4d8517d`): both merged to main
+- Wave 1 domain card work — D-1 through D-7 all merged to main (see `docs/SPRINT_STATUS.md` for commit refs)
+- Liver/alias fix hardening — merged (`43e181f`): GGT trace alias, bilirubin venous alias
+- Sentinel Phase 1 — merged to main; see `docs/testing/healthiq_sentinel_phase1_implementation_report.md`
 
 ### Remaining Gaps (from coverage audit + April review)
 - WHY Wave 2 coverage (iron, inflammatory, renal, expanded thyroid)

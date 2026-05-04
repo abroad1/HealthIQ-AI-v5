@@ -31,7 +31,7 @@ If a document is not listed here as current, it is either reference-only or arch
 | `docs/strategy/HealthIQ_Strategy_Stack_Document_Authority_Map.md` | **SUPPORTING** | Governance note on how strategy documents relate. |
 | `docs/strategy/HealthIQ_Executive_GTM_Report_Updated_v2.md` | **SUPPORTING** | GTM positioning context. |
 | `docs/HealthIQ_Phase1_Launch_Posture.md` | **SUPPORTING** | Phase 1 launch posture. Currency uncertain — verify against April review. |
-| Earlier strategy versions (v1.4, all v1.5 drafts) | **SUPERSEDED** | See `docs/Download-Arch/` |
+| Earlier strategy versions (v1.4, all v1.5 drafts) | **SUPERSEDED** | See `docs/archive/working-papers/download-arch/` |
 
 ---
 
