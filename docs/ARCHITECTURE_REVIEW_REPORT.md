@@ -1,6 +1,16 @@
-# 🧠 HealthIQ AI v5 — Architecture Review & Upgrade Report
+> **STALE — Do not use as current-state reference.**
+> This document was produced at Sprint 14 (October 2025) and reflects the architecture state at that time. It is **not** the current SSOT for sprint status or implementation state despite the claim below.
+>
+> **Current product state:** `docs/PRODUCT_REVIEW_AND_STRATEGIC_RESET_2026-04.md`
+> **Current sprint status:** `docs/SPRINT_STATUS.md`
+> **Current entry point:** `docs/README.md`
 
-> **🎯 PURPOSE**: **PRIMARY SSOT (Level 1)** - This is the authoritative source of truth for current sprint status, implementation state, and build progress. Always consult this document before making any code changes or architectural decisions.
+---
+
+# HealthIQ AI v5 — Architecture Review & Upgrade Report
+*(STALE — Sprint 14 / October 2025 — see docs/README.md for current truth)*
+
+> ~~**PURPOSE**: **PRIMARY SSOT (Level 1)**~~ — This designation is no longer valid. See superseded notice above.
 
 > ⚠️ **CRITICAL NOTICE**: This document has been **UPDATED** to reflect current implementation status. Previous versions contained outdated information claiming components were "MISSING" when they actually existed as scaffolded implementations. **This document is now the current source of truth** for architecture status.
 

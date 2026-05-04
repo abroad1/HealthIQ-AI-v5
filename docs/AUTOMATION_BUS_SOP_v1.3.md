@@ -1,4 +1,6 @@
-# AUTOMATION BUS SOP v1.3
+> **SUPERSEDED** — Active SOP is `docs/AUTOMATION_BUS_SOP_v1.3.1.md`. Do not follow this version.
+
+# AUTOMATION BUS SOP v1.3 *(SUPERSEDED)*
 ## Intelligence Governance Edition
 
 **Status:** LOCKED
