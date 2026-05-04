@@ -56,14 +56,10 @@ Find the domain you care about. Look at the Status column.
 | `architecture/HEALTHIQ_REASONING_PIPELINE.md` | AUTHORITATIVE | Canonical pipeline model. |
 | `docs/architecture/ANALYTICAL_ASSETS_INVENTORY_v5.2.md` | SUPPORTING | Asset inventory. May undercount — KB has grown. |
 | `docs/architecture/openapi.yaml` | SUPPORTING | API contract. |
-| `docs/architecture/HealthIQ_Intelligence_Model_Design_Second_Pass.md` | SUPPORTING | Design workshop output. |
-| `docs/architecture/HealthIQ_Investigation_Layer.md` | SUPPORTING | Investigation layer architecture note. |
-| `docs/architecture/Intervention_Effects_Registry_Discussion_Note.md` | SUPPORTING | Intervention effects registry design. |
-| `docs/architecture/Intervention_Registry_Investigation_Memo.md` | SUPPORTING | Intervention registry investigation. |
 | `docs/architecture/RETAIL_EXPLAINER_CONTENT_BOUNDARIES_v1.md` | SUPPORTING | Retail explainer content boundary rules. |
 | `docs/architecture/SIGNAL_ARCHITECTURE_COMPLETION_v1.0.md` | SUPPORTING | Signal architecture completion note. |
 | `docs/architecture/R-2A_backend_sse_removal.md` | SUPPORTING | R-2A sprint note: backend SSE removal. |
-| `docs/architecture/PHASE_0_AS_IS_ARCHITECTURE_AUDIT.md` | ARCHIVE | Pre-project baseline. |
+| `docs/archive/working-papers/PHASE_0_AS_IS_ARCHITECTURE_AUDIT.md` | ARCHIVE | Pre-project baseline. Moved to archive. |
 | `docs/archive/superseded/ARCHITECTURE_REVIEW_REPORT.md` | STALE | Sprint 14 / October 2025. Moved to archive. |
 | `docs/archive/superseded/DOCUMENTATION_HIERARCHY.md` | SUPERSEDED | Pointed to stale docs. Moved to archive. Use `docs/README.md`. |
 
@@ -86,6 +82,10 @@ Find the domain you care about. Look at the Status column.
 | `docs/intelligence/2026-04-26_D5_wave1_runtime_diagnosis.md` | SUPPORTING | D-5 runtime diagnosis. |
 | `docs/intelligence/R-8_why_coverage_wave1.md` | SUPPORTING | WHY Wave 1 sprint implementation note. |
 | `docs/intelligence/R-1B_unscored_marker_trust_gaps.md` | SUPPORTING | Unscored marker trust gaps sprint note. |
+| `docs/intelligence/HealthIQ_Intelligence_Model_Design_Second_Pass.md` | SUPPORTING | Intelligence model design workshop output. |
+| `docs/intelligence/HealthIQ_Investigation_Layer.md` | SUPPORTING | Investigation layer architecture note. |
+| `docs/intelligence/Intervention_Effects_Registry_Discussion_Note.md` | SUPPORTING | Intervention effects registry design. |
+| `docs/intelligence/Intervention_Registry_Investigation_Memo.md` | SUPPORTING | Intervention registry investigation. |
 | `docs/archive/sprint-history/investigations/` (~30 files) | ARCHIVE | KB sprint preflights (KB-S*, FE_*, BE_S1, etc.). Historical record. |
 | `docs/archive/sprint-history/investigations/VR_PRIMARY_CONCERN_RANKING_INVESTIGATION.md` | ARCHIVE | VR primary concern ranking investigation. |
 | `backend/artifacts/intelligence_model_audit.md` | SUPPORTING | Intelligence model audit artifact. |
