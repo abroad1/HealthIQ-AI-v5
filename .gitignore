@@ -30,6 +30,10 @@ storybook-static
 backend/reports/validation/*
 !backend/reports/validation/README.md
 
+# Sentinel Phase 1 run outputs (keep .gitkeep)
+sentinel/reports/*
+!sentinel/reports/.gitkeep
+
 # Build artefacts
 frontend/.next/
 backend/reports/
