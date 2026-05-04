@@ -1,4 +1,6 @@
-# AUTOMATION BUS SOP v1.2  
+> **SUPERSEDED** — Active SOP is `docs/AUTOMATION_BUS_SOP_v1.3.1.md`. Do not follow this version.
+
+# AUTOMATION BUS SOP v1.2 *(SUPERSEDED)*
 **Final — Operationally Validated Edition (Execution Authority Enforcement Update)**
 
 Status: LOCKED  

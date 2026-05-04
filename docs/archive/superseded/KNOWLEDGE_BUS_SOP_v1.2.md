@@ -1,4 +1,6 @@
-KNOWLEDGE BUS SOP v1.1
+> **SUPERSEDED** — Active SOP is `docs/KNOWLEDGE_BUS_SOP_v1.3.md`. Do not follow this version.
+
+KNOWLEDGE BUS SOP v1.1 *(SUPERSEDED)*
 
 Status: LOCKED
 Authority: HealthIQ Development Governance
