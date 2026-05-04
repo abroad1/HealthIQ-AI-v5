@@ -23,21 +23,19 @@ Find the domain you care about. Look at the Status column.
 
 | Document | Status | Notes |
 |---|---|---|
-| `docs/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED.md` | AUTHORITATIVE | Master strategic record. |
+| `docs/strategy/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED.md` | AUTHORITATIVE | Master strategic record. |
 | `docs/strategy/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED_First_Market_Addendum.md` | AUTHORITATIVE | Read with parent. |
-| `docs/PRODUCT_REVIEW_AND_STRATEGIC_RESET_2026-04.md` | AUTHORITATIVE | April 2026 full review. |
-| `docs/RESET_SPRINT_PLAN_2026-04.md` | AUTHORITATIVE | 8-sprint reset plan. All complete. |
+| `docs/strategy/PRODUCT_REVIEW_AND_STRATEGIC_RESET_2026-04.md` | AUTHORITATIVE | April 2026 full review. |
+| `docs/strategy/RESET_SPRINT_PLAN_2026-04.md` | AUTHORITATIVE | 8-sprint reset plan. All complete. |
 | `docs/strategy/HealthIQ_Strategy_Stack_Document_Authority_Map.md` | SUPPORTING | Governance note on doc hierarchy. |
 | `docs/strategy/HealthIQ_Executive_GTM_Report_Updated_v2.md` | SUPPORTING | GTM context. |
-| `docs/HealthIQ_Phase1_Launch_Posture.md` | UNCLEAR | Currency uncertain. Verify against April review. |
-| `docs/archive/superseded/MASTER_ROADMAP_v5.2_to_v5.3.md` | SUPERSEDED | v5.2/v5.3 framing. Superseded by April 2026 reset. Moved to archive. |
-| `docs/archive/superseded/Delivery_Sprint_Plan_v5.2.md` | SUPERSEDED | Pre-reset sprint plan. Moved to archive. |
-| `docs/archive/superseded/Master_PRD_v5.2.md` | SUPERSEDED | v5.2 PRD. Reset plan supersedes it. May have useful feature specification detail. Moved to archive. |
+| `docs/strategy/HealthIQ_Phase1_Launch_Posture.md` | UNCLEAR | Currency uncertain. Verify against April review. |
+| `docs/strategy/Phenotype_Terminology_Proposal.md` | SUPPORTING | Phenotype naming proposal. |
+| `docs/strategy/healthiq_future_screening_priorities.md` | SUPPORTING | Future screening priorities. |
 | `docs/archive/superseded/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.4_amended.md` | SUPERSEDED | Superseded by v1.5 FINAL. Moved to archive. |
 | `docs/archive/superseded/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan.md` (no version) | SUPERSEDED | Pre-versioning draft. Moved to archive. |
 | `docs/archive/working-papers/download-arch/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan*.md` (9 files) | ARCHIVE | All pre-FINAL drafts. |
-| `docs/strategy/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md` | AUTHORITATIVE | Current results experience authority. |
-| `docs/archive/working-papers/download-arch/HealthIQ_Final_Results_Journey_Recommendation_Paper_v*.md` (v1–v5) | ARCHIVE | All superseded. v6 is current. |
+| `docs/archive/working-papers/download-arch/HealthIQ_Final_Results_Journey_Recommendation_Paper_v*.md` (v1–v5) | ARCHIVE | All superseded. v6 is current (now in docs/frontend/). |
 
 ---
 
@@ -57,9 +55,15 @@ Find the domain you care about. Look at the Status column.
 | `architecture/ARCHITECTURE_GUARDRAILS.md` | AUTHORITATIVE | Enforceable rules. |
 | `architecture/HEALTHIQ_REASONING_PIPELINE.md` | AUTHORITATIVE | Canonical pipeline model. |
 | `docs/architecture/ANALYTICAL_ASSETS_INVENTORY_v5.2.md` | SUPPORTING | Asset inventory. May undercount — KB has grown. |
-| `docs/architecture/PHASE_0_AS_IS_ARCHITECTURE_AUDIT.md` | ARCHIVE | Pre-project baseline. |
+| `docs/architecture/openapi.yaml` | SUPPORTING | API contract. |
 | `docs/architecture/HealthIQ_Intelligence_Model_Design_Second_Pass.md` | SUPPORTING | Design workshop output. |
-| `docs/archive/working-papers/ARCHITECTURE_INSIGHT_MODULARITY_REVIEW.md` | ARCHIVE | Modularity review. Moved to archive. |
+| `docs/architecture/HealthIQ_Investigation_Layer.md` | SUPPORTING | Investigation layer architecture note. |
+| `docs/architecture/Intervention_Effects_Registry_Discussion_Note.md` | SUPPORTING | Intervention effects registry design. |
+| `docs/architecture/Intervention_Registry_Investigation_Memo.md` | SUPPORTING | Intervention registry investigation. |
+| `docs/architecture/RETAIL_EXPLAINER_CONTENT_BOUNDARIES_v1.md` | SUPPORTING | Retail explainer content boundary rules. |
+| `docs/architecture/SIGNAL_ARCHITECTURE_COMPLETION_v1.0.md` | SUPPORTING | Signal architecture completion note. |
+| `docs/architecture/R-2A_backend_sse_removal.md` | SUPPORTING | R-2A sprint note: backend SSE removal. |
+| `docs/architecture/PHASE_0_AS_IS_ARCHITECTURE_AUDIT.md` | ARCHIVE | Pre-project baseline. |
 | `docs/archive/superseded/ARCHITECTURE_REVIEW_REPORT.md` | STALE | Sprint 14 / October 2025. Moved to archive. |
 | `docs/archive/superseded/DOCUMENTATION_HIERARCHY.md` | SUPERSEDED | Pointed to stale docs. Moved to archive. Use `docs/README.md`. |
 
@@ -69,21 +73,21 @@ Find the domain you care about. Look at the Status column.
 
 | Document | Status | Notes |
 |---|---|---|
-| `docs/investigations/PRODUCT_REALITY_AND_DIRECTION_AUDIT.md` | AUTHORITATIVE | April 2026 technical audit. Code-grounded. |
-| `docs/METABOLIC_PATHWAY_COVERAGE_AUDIT_2026-03-20.md` | AUTHORITATIVE | Coverage map. Renal and Wave 2 WHY gaps still open. |
-| `docs/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md` | AUTHORITATIVE | Wave 1 domain narrative contract. |
-| `docs/policy/PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_v1.md` | AUTHORITATIVE | Primary concern policy. |
-| `docs/architecture/SIGNAL_ARCHITECTURE_COMPLETION_v1.0.md` | SUPPORTING | Signal architecture completion note. |
-| `docs/Wave1-codebase-analysis_v3.md` | SUPPORTING | v3 is latest. |
-| `docs/archive/working-papers/Wave1-codebase-analysis-v2.md` | ARCHIVE | v3 supersedes. Moved to archive. |
-| `docs/investigations/2026-04-12_full_results_narrative_contract_inventory.md` | SUPPORTING | Narrative contract inventory. |
-| `docs/investigations/2026-04-12_insulin_resistance_and_narrative_visibility_investigation.md` | SUPPORTING | IR narrative investigation. |
-| `docs/investigations/2026-04-12_lab_range_fallback_policy_alignment.md` | SUPPORTING | Lab range fallback policy. |
-| `docs/investigations/2026-04-12_results_why_narrative_runtime_investigation.md` | SUPPORTING | WHY narrative runtime investigation. |
-| `docs/investigations/2026-04-21_N3_longitudinal_lab_value_contract.md` | SUPPORTING | Longitudinal lab value contract (N-3). |
-| `docs/investigations/2026-04-26_D5_wave1_runtime_diagnosis.md` | SUPPORTING | D-5 runtime diagnosis. |
-| `docs/archive/sprint-history/investigations/` (~30 files) | ARCHIVE | KB sprint preflights (KB-S*, FE_*, BE_S1, etc.). Historical record. Moved to archive. |
-| `docs/archive/sprint-history/investigations/VR_PRIMARY_CONCERN_RANKING_INVESTIGATION.md` | ARCHIVE | VR primary concern ranking investigation. Moved to archive. |
+| `docs/intelligence/PRODUCT_REALITY_AND_DIRECTION_AUDIT.md` | AUTHORITATIVE | April 2026 technical audit. Code-grounded. |
+| `docs/intelligence/METABOLIC_PATHWAY_COVERAGE_AUDIT_2026-03-20.md` | AUTHORITATIVE | Coverage map. Renal and Wave 2 WHY gaps still open. |
+| `docs/intelligence/DOMAIN_NARRATIVE_CONTRACT_WAVE1.md` | AUTHORITATIVE | Wave 1 domain narrative contract. |
+| `docs/intelligence/PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_v1.md` | AUTHORITATIVE | Primary concern policy. |
+| `docs/intelligence/Wave1-codebase-analysis_v3.md` | SUPPORTING | v3 is latest. |
+| `docs/intelligence/2026-04-12_full_results_narrative_contract_inventory.md` | SUPPORTING | Narrative contract inventory. |
+| `docs/intelligence/2026-04-12_insulin_resistance_and_narrative_visibility_investigation.md` | SUPPORTING | IR narrative investigation. |
+| `docs/intelligence/2026-04-12_lab_range_fallback_policy_alignment.md` | SUPPORTING | Lab range fallback policy. |
+| `docs/intelligence/2026-04-12_results_why_narrative_runtime_investigation.md` | SUPPORTING | WHY narrative runtime investigation. |
+| `docs/intelligence/2026-04-21_N3_longitudinal_lab_value_contract.md` | SUPPORTING | Longitudinal lab value contract (N-3). |
+| `docs/intelligence/2026-04-26_D5_wave1_runtime_diagnosis.md` | SUPPORTING | D-5 runtime diagnosis. |
+| `docs/intelligence/R-8_why_coverage_wave1.md` | SUPPORTING | WHY Wave 1 sprint implementation note. |
+| `docs/intelligence/R-1B_unscored_marker_trust_gaps.md` | SUPPORTING | Unscored marker trust gaps sprint note. |
+| `docs/archive/sprint-history/investigations/` (~30 files) | ARCHIVE | KB sprint preflights (KB-S*, FE_*, BE_S1, etc.). Historical record. |
+| `docs/archive/sprint-history/investigations/VR_PRIMARY_CONCERN_RANKING_INVESTIGATION.md` | ARCHIVE | VR primary concern ranking investigation. |
 | `backend/artifacts/intelligence_model_audit.md` | SUPPORTING | Intelligence model audit artifact. |
 | `backend/artifacts/promoted_signal_intelligence_audit.md` | SUPPORTING | Promoted signal audit. |
 
@@ -93,17 +97,17 @@ Find the domain you care about. Look at the Status column.
 
 | Document | Status | Notes |
 |---|---|---|
-| `docs/strategy/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md` | AUTHORITATIVE | Current results experience authority. |
-| `docs/strategy/Interpretation_Display_Layer_Design_Lock.md` | AUTHORITATIVE | IDL design lock. |
-| `docs/strategy/HealthIQ_IDL_Naming_Decision_Note_Approved.md` | AUTHORITATIVE | IDL naming. Approved and locked. |
-| `docs/QUESTIONNAIRE_UX_REDESIGN_BACKGROUND.md` | AUTHORITATIVE | Q-1 background. |
-| `docs/QUESTIONNAIRE_VISUAL_REDESIGN_Q2_BACKGROUND.md` | AUTHORITATIVE | Q-2 background. |
-| `docs/CLAUDE_TRANSLATION_SPEC_v1.md` | SUPPORTING | Layer C translation spec. |
-| `docs/clinician_language_style_guide_v1.md` | SUPPORTING | Clinical language style. |
-| `docs/clinician_report_v1_spec.md` | SUPPORTING | Clinician report spec. |
-| `docs/architecture/Frontend/HealthIQ_Results_Page_UX_Design_Package.md` | SUPPORTING | v5.2 design package. Results Journey Paper v6 is current authority. |
-| `docs/architecture/Frontend/HealthIQ_Results_Wireframe_Package.md` | SUPPORTING | v5.2 wireframes. |
-| `docs/archive/sprint-history/context/UX_UI_GUIDE.md` | ARCHIVE | Pre-governance era. Superseded by Results Journey Paper v6. Moved to archive. |
+| `docs/frontend/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md` | AUTHORITATIVE | Current results experience authority. |
+| `docs/frontend/Interpretation_Display_Layer_Design_Lock.md` | AUTHORITATIVE | IDL design lock. |
+| `docs/frontend/HealthIQ_IDL_Naming_Decision_Note_Approved.md` | AUTHORITATIVE | IDL naming. Approved and locked. |
+| `docs/frontend/QUESTIONNAIRE_UX_REDESIGN_BACKGROUND.md` | AUTHORITATIVE | Q-1 background. |
+| `docs/frontend/QUESTIONNAIRE_VISUAL_REDESIGN_Q2_BACKGROUND.md` | AUTHORITATIVE | Q-2 background. |
+| `docs/frontend/CLAUDE_TRANSLATION_SPEC_v1.md` | SUPPORTING | Layer C translation spec. |
+| `docs/frontend/clinician_language_style_guide_v1.md` | SUPPORTING | Clinical language style. |
+| `docs/frontend/clinician_report_v1_spec.md` | SUPPORTING | Clinician report spec. |
+| `docs/frontend/HealthIQ_Results_Page_UX_Design_Package.md` | SUPPORTING | v5.2 design package. Results Journey Paper v6 is current authority. |
+| `docs/frontend/HealthIQ_Results_Wireframe_Package.md` | SUPPORTING | v5.2 wireframes. |
+| `docs/archive/sprint-history/context/UX_UI_GUIDE.md` | ARCHIVE | Pre-governance era. Superseded by Results Journey Paper v6. |
 | `docs/archive/working-papers/download-arch/HealthIQ_Results_Page_UX_Design_Package_v*.md` (v1–v5) | ARCHIVE | Superseded versions. |
 | `docs/archive/working-papers/download-arch/HealthIQ_FE_VISUALISATION_Surface_Policy_Final_v3.md` | SUPPORTING | Historical surface policy. Useful context. |
 | `docs/archive/working-papers/download-arch/HealthIQ_FE_VISUALISATION_Surface_Policy_Final_v*.md` (v1–v2) | ARCHIVE | Superseded. |
@@ -132,10 +136,14 @@ Find the domain you care about. Look at the Status column.
 | Document | Status | Notes |
 |---|---|---|
 | `.claude/CLAUDE.md` | AUTHORITATIVE | Permanent context. Always current. |
-| `docs/AUTOMATION_BUS_SOP_v1.3.1.md` | AUTHORITATIVE | Active SOP. |
-| `docs/KNOWLEDGE_BUS_SOP_v1.3.md` | AUTHORITATIVE | Active Knowledge Bus SOP. |
-| `docs/agents/CURSOR_OPERATING_POLICY.md` | AUTHORITATIVE | Cursor operating policy. |
+| `docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md` | AUTHORITATIVE | Active SOP. |
+| `docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md` | AUTHORITATIVE | Active Knowledge Bus SOP. |
+| `docs/governance/CURSOR_OPERATING_POLICY.md` | AUTHORITATIVE | Cursor operating policy. |
 | `AGENTS.md` | AUTHORITATIVE | Agent operating map. |
+| `docs/governance/healthiq-core-engine.md` | SUPPORTING | Core engine agent definition. |
+| `docs/governance/healthiq-frontend-shell.md` | SUPPORTING | Frontend shell agent definition. |
+| `docs/governance/healthiq-qa-uat.md` | SUPPORTING | QA/UAT agent definition. |
+| `docs/governance/healthiq-docs-hygiene.md` | SUPPORTING | Docs hygiene agent definition. |
 | `docs/archive/superseded/AUTOMATION_BUS_SOP_v1.3.md` | SUPERSEDED | Moved to archive. |
 | `docs/archive/superseded/AUTOMATION_BUS_SOP_v1.2.md` | SUPERSEDED | Moved to archive. |
 | `docs/archive/superseded/KNOWLEDGE_BUS_SOP_v1.2.md` | SUPERSEDED | Moved to archive. |
@@ -158,6 +166,7 @@ Find the domain you care about. Look at the Status column.
 | `docs/ops/OPERATIONAL_CONTROLS_BASELINE_PHASE1.md` | SUPPORTING | Operational controls. |
 | `docs/ops/UK_HOSTING_AND_RESIDENCY_PHASE1.md` | SUPPORTING | UK hosting posture. |
 | `docs/ops/VENDOR_SUBPROCESSOR_INVENTORY_PHASE1.md` | SUPPORTING | Vendor inventory. |
+| `docs/ops/local-development.md` | SUPPORTING | Local development setup. |
 | `docs/compliance/DATA_FLOW_LAUNCH_PRODUCT_PHASE1.md` | SUPPORTING | Phase 1 data flow. |
 | `docs/compliance/PRIVACY_RISK_REVIEW_PHASE1_EQUIVALENT.md` | UNCLEAR | Privacy review. April 2026 identified a GDPR gap on LLM parsing. Verify whether this document covers it. |
 | `docs/product/WEDGE_EVENT_CONTRACT_AND_GOVERNANCE_PHASE1.md` | SUPPORTING | Wedge event contract. |
@@ -182,7 +191,7 @@ See `docs/archive/README.md` for full archive structure.
 
 | Document | Why Unclear |
 |---|---|
-| `docs/HealthIQ_Phase1_Launch_Posture.md` | Not verified against April 2026 review findings. |
+| `docs/strategy/HealthIQ_Phase1_Launch_Posture.md` | Not verified against April 2026 review findings. |
 | `docs/compliance/PRIVACY_RISK_REVIEW_PHASE1_EQUIVALENT.md` | April review found GDPR gap not covered by disclosure in upload flow. |
 | `docs/testing/automated-testing-sentinel-repo-audit-report.md` | Possible duplicate of `healthiq_sentinel_repo_audit_v1.md`. |
 | `docs/archive/sprint-history/context/` (all context/ files) | Moved to archive in Pass 2. Pre-governance content, not verified for current accuracy. Do not cite as current truth. |

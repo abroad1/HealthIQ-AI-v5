@@ -11,7 +11,7 @@ This is the compact leadership pack. Read these documents in order to understand
 ## The Seven Documents
 
 ### 1. Product Review & Strategic Reset — April 2026
-**Path:** `docs/PRODUCT_REVIEW_AND_STRATEGIC_RESET_2026-04.md`  
+**Path:** `docs/strategy/PRODUCT_REVIEW_AND_STRATEGIC_RESET_2026-04.md`  
 **Read time:** ~20 minutes
 
 The most complete, honest, repo-grounded state-of-truth document in the project. Produced April 2026. Covers:
@@ -27,7 +27,7 @@ The most complete, honest, repo-grounded state-of-truth document in the project.
 ---
 
 ### 2. Product Reality & Direction Audit — April 2026
-**Path:** `docs/investigations/PRODUCT_REALITY_AND_DIRECTION_AUDIT.md`  
+**Path:** `docs/intelligence/PRODUCT_REALITY_AND_DIRECTION_AUDIT.md`  
 **Read time:** ~15 minutes
 
 The technical companion to document 1. Produced by a repo-grounded code audit. Provides:
@@ -41,7 +41,7 @@ The technical companion to document 1. Produced by a repo-grounded code audit. P
 ---
 
 ### 3. Metabolic Pathway Coverage Audit — March 2026
-**Path:** `docs/METABOLIC_PATHWAY_COVERAGE_AUDIT_2026-03-20.md`  
+**Path:** `docs/intelligence/METABOLIC_PATHWAY_COVERAGE_AUDIT_2026-03-20.md`  
 **Read time:** ~10 minutes
 
 The definitive analytical coverage map. Shows, for every metabolic pathway:
@@ -55,7 +55,7 @@ The definitive analytical coverage map. Shows, for every metabolic pathway:
 ---
 
 ### 4. Reset Sprint Plan — April 2026
-**Path:** `docs/RESET_SPRINT_PLAN_2026-04.md`  
+**Path:** `docs/strategy/RESET_SPRINT_PLAN_2026-04.md`  
 **Read time:** ~10 minutes
 
 The 8-sprint plan produced alongside the April review. All 8 sprints are now complete (see `docs/SPRINT_STATUS.md`). Read this to understand what was fixed, in what order, and why.
@@ -78,7 +78,7 @@ The permanent context file. Kept current. Contains:
 ---
 
 ### 6. Strategic Vision v1.5 FINAL ADOPTED
-**Path:** `docs/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED.md`  
+**Path:** `docs/strategy/HealthIQ_AI_Strategic-Vision-and-12-Month-Sprint-Plan_v1.5_FINAL_ADOPTED.md`  
 **Read time:** ~25 minutes
 
 The master strategic record for Phase 1. Governs:
@@ -138,4 +138,4 @@ This pack gives leadership the current state. It does not replace:
 - `docs/SPRINT_STATUS.md` for day-to-day sprint tracking
 - `docs/DECISION_REGISTER.md` for settled architectural/product decisions
 - `architecture/ARCHITECTURE_INDEX.md` for binding architecture constraints
-- `docs/AUTOMATION_BUS_SOP_v1.3.1.md` for sprint execution governance
+- `docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md` for sprint execution governance
