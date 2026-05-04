@@ -10,7 +10,7 @@ This is the source of truth for what has been done, what is in progress, and wha
 
 ## Reset Sprints (April 2026 — all complete)
 
-These are the 8 sprints defined in `docs/RESET_SPRINT_PLAN_2026-04.md`. All are now complete and merged to main.
+These are the 8 sprints defined in `docs/strategy/RESET_SPRINT_PLAN_2026-04.md`. All are now complete and merged to main.
 
 | Sprint | Name | Type | Status | Branch / Commit |
 |---|---|---|---|---|
@@ -73,7 +73,7 @@ Domain card sprints implementing the D-series wave 1 consumer domain narrative.
 
 | Area | Status | Notes |
 |---|---|---|
-| WHY Wave 2 — iron, inflammatory, renal, expanded thyroid | **NOT STARTED** | Defined in `docs/RESET_SPRINT_PLAN_2026-04.md` Sprint 8 Wave 2 targets. Requires full SOP. |
+| WHY Wave 2 — iron, inflammatory, renal, expanded thyroid | **NOT STARTED** | Defined in `docs/strategy/RESET_SPRINT_PLAN_2026-04.md` Sprint 8 Wave 2 targets. Requires full SOP. |
 | Renal interaction-map edges | **NOT STARTED** | Zero edges currently. Flagged in pathway coverage audit. |
 | Sentinel Phase 2 | **NOT STARTED** | Deferred per brief. Requires Playwright. |
 | Privacy disclosure on LLM parsing at upload | **UNCERTAIN** | GDPR gap identified in April 2026 review. Verify whether addressed in current upload flow. |

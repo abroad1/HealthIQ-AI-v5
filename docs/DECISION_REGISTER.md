@@ -48,7 +48,7 @@ Each entry states the decision, who/what established it, and where the full reas
 **Decision:** The results experience leads with phenotype-level interpretation, not a biomarker list or lab report view. Biomarkers are a premium evidence layer, not the primary narrative.
 
 **Established by:** Results Journey Paper v6; Strategy Stack Authority Map decision 3  
-**Authority:** `docs/strategy/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md`  
+**Authority:** `docs/frontend/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md`  
 **Status:** Settled.
 
 ---
@@ -87,7 +87,7 @@ Each entry states the decision, who/what established it, and where the full reas
 
 **Decision:** The first WHY expansion wave covers total cholesterol high and Vitamin D low — the highest-prevalence signals in UK commercial blood panels. Complete. Wave 2 targets are iron panel, inflammatory markers, renal, and expanded thyroid — not yet started.
 
-**Established by:** `docs/RESET_SPRINT_PLAN_2026-04.md` Sprint 8  
+**Established by:** `docs/strategy/RESET_SPRINT_PLAN_2026-04.md` Sprint 8  
 **Implementation:** R-8 (`2f0b346`)  
 **Status:** Wave 1 settled and complete. Wave 2 pending.
 
@@ -97,7 +97,7 @@ Each entry states the decision, who/what established it, and where the full reas
 
 **Decision:** A single panel value must not simultaneously activate both the high-signal and low-signal for the same analyte. This is a trust-destroying bug. The `enable_upper_bound` / `enable_lower_bound` flags in signal definitions are the authority for which direction is valid.
 
-**Established by:** `docs/investigations/PRODUCT_REALITY_AND_DIRECTION_AUDIT.md` §2.1  
+**Established by:** `docs/intelligence/PRODUCT_REALITY_AND_DIRECTION_AUDIT.md` §2.1  
 **Implementation:** R-1 (`7f48cb6`)  
 **Status:** Fixed. Regression guard is part of Sentinel Phase 1.
 
@@ -107,7 +107,7 @@ Each entry states the decision, who/what established it, and where the full reas
 
 **Decision:** A biomarker range is valid and scoreable if it has either a min or a max — not both required. LDL (upper bound only) and HDL (lower bound only) are the canonical examples. Requiring both min and max is a bug.
 
-**Established by:** `docs/investigations/PRODUCT_REALITY_AND_DIRECTION_AUDIT.md` §2.2  
+**Established by:** `docs/intelligence/PRODUCT_REALITY_AND_DIRECTION_AUDIT.md` §2.2  
 **Implementation:** R-1B (`7679f89`)  
 **Status:** Fixed.
 
@@ -119,8 +119,8 @@ Each entry states the decision, who/what established it, and where the full reas
 
 **Decision:** The full Automation Bus SOP (Stages 0–5, prompt hardening, gate) is required for changes to `backend/core/`, `backend/ssot/`, `backend/scripts/` (run_work_package, golden_gate, update_cursor_status), and Knowledge Bus hypothesis YAMLs consumed by the Intelligence Core. Frontend, API routes, and commercial surfaces use a lightweight branch-PR-review model.
 
-**Established by:** `docs/RESET_SPRINT_PLAN_2026-04.md` governance calibration table  
-**Authority:** `docs/AUTOMATION_BUS_SOP_v1.3.1.md`  
+**Established by:** `docs/strategy/RESET_SPRINT_PLAN_2026-04.md` governance calibration table  
+**Authority:** `docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md`  
 **Status:** Standing governance rule.
 
 ---
@@ -147,7 +147,7 @@ Each entry states the decision, who/what established it, and where the full reas
 
 **Decision:** The Docs-Only Bypass (SOP §11) applies only when every changed file in the branch is under `/docs/`. A single file outside `/docs/` requires the full bus.
 
-**Established by:** `docs/AUTOMATION_BUS_SOP_v1.3.1.md` §11  
+**Established by:** `docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md` §11  
 **Status:** Non-negotiable rule.
 
 ---
@@ -167,7 +167,7 @@ Each entry states the decision, who/what established it, and where the full reas
 
 **Decision:** The results page must answer "what is my most important finding and what does it mean?" without requiring the user to scroll. Progressive disclosure gates depth behind deliberate interaction. Wall-of-sections is not acceptable.
 
-**Established by:** `docs/RESET_SPRINT_PLAN_2026-04.md` Sprint 3 specification  
+**Established by:** `docs/strategy/RESET_SPRINT_PLAN_2026-04.md` Sprint 3 specification  
 **Implementation:** Sprint 3 (`284d188`)  
 **Status:** Settled and implemented.
 
