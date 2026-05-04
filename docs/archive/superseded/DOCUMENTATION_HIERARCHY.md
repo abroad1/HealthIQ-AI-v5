@@ -1,6 +1,16 @@
-# 📚 HealthIQ AI v5 - Documentation Hierarchy & Source of Truth
+> **SUPERSEDED — Do not use for navigation.**
+> This hierarchy document was written at the v5.2 baseline (Sprint 14, October 2025) and does not reflect the current product state. It incorrectly designates `ARCHITECTURE_REVIEW_REPORT.md` as Level 1 SSOT — that document is stale.
+>
+> **Current entry point:** `docs/README.md`
+> **Current state pack:** `docs/CURRENT_STATE_PACK.md`
+> **Document authority map:** `docs/AUTHORITY_MAP.md`
 
-## 🏛️ **v5.2 BASELINE AUTHORITY** (Start Here)
+---
+
+# HealthIQ AI v5 - Documentation Hierarchy & Source of Truth
+*(SUPERSEDED — see docs/README.md)*
+
+## **v5.2 BASELINE AUTHORITY** (Start Here)
 
 **For v5.2 execution, the top-level authority is:**
 
