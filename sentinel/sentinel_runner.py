@@ -22,6 +22,7 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
 import uuid
 from pathlib import Path
 from typing import Optional
@@ -66,28 +67,84 @@ def _git_branch() -> str:
         return "unknown"
 
 
+def _counts_from_pytest_json_report(report_path: Path) -> dict[str, int] | None:
+    """Read pytest-json-report output; returns None if unreadable."""
+    try:
+        payload = json.loads(report_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    summary = payload.get("summary") or {}
+    # Outcomes come from pytest-json-report's Counter(keys = passed/failed/skipped/error/…)
+    err_n = summary.get("error")
+    if err_n is None:
+        err_n = summary.get("errors", 0)
+    return {
+        "passed": int(summary.get("passed", 0)),
+        "failed": int(summary.get("failed", 0)),
+        "errors": int(err_n or 0),
+        "skipped": int(summary.get("skipped", 0)),
+    }
+
+
 def _run_pytest(test_paths: list[str]) -> dict:
-    """Run pytest on the given test paths; return structured result."""
+    """Run pytest on the given test paths; return structured result.
+
+    Uses pytest-json-report so pass/fail/skip/error counts match pytest's real
+    totals. Plain ``-q`` output does not include a textual summary line, so text
+    heuristics alone would stay at zeros.
+    """
     abs_paths = [str(REPO_ROOT / p) for p in test_paths]
-    cmd = [sys.executable, "-m", "pytest", "--tb=short", "-q", "--no-header", "-m", "regression", *abs_paths]
+    fd, json_path_str = tempfile.mkstemp(prefix="sentinel_pytest_", suffix=".json")
+    json_path = Path(json_path_str)
+    os.close(fd)
+    cmd = [
+        sys.executable,
+        "-m",
+        "pytest",
+        "--tb=short",
+        "-q",
+        "--no-header",
+        "-m",
+        "regression",
+        "--json-report",
+        f"--json-report-file={json_path}",
+        *abs_paths,
+    ]
 
     try:
         proc = subprocess.run(
             cmd, capture_output=True, text=True, cwd=str(REPO_ROOT)
         )
+        counts = _counts_from_pytest_json_report(json_path)
+        if counts is None:
+            counts = _parse_pytest_output(
+                "\n".join((proc.stdout or "", proc.stderr or ""))
+            )
         return {
             "exit_code": proc.returncode,
             "stdout": proc.stdout,
             "stderr": proc.stderr,
             "passed": proc.returncode == 0,
+            "test_counts": counts,
         }
     except Exception as exc:
+        try:
+            json_path.unlink(missing_ok=True)
+        except OSError:
+            pass
+        zero = {"passed": 0, "failed": 0, "errors": 0, "skipped": 0}
         return {
             "exit_code": -1,
             "stdout": "",
             "stderr": str(exc),
             "passed": False,
+            "test_counts": zero,
         }
+    finally:
+        try:
+            json_path.unlink(missing_ok=True)
+        except OSError:
+            pass
 
 
 def _parse_pytest_output(stdout: str) -> dict:
@@ -117,6 +174,14 @@ def _parse_pytest_output(stdout: str) -> dict:
                 if "error" in part:
                     try:
                         counts["errors"] = int(part.split()[0])
+                    except (ValueError, IndexError):
+                        pass
+        if "skipped" in line_l:
+            for part in line_l.split(","):
+                part = part.strip()
+                if "skipped" in part:
+                    try:
+                        counts["skipped"] = int(part.split()[0])
                     except (ValueError, IndexError):
                         pass
     return counts
@@ -196,14 +261,21 @@ def run(
         coverage_gaps.append(f"Regression test file not found on disk: {mt}")
 
     # Run the tests
-    pytest_result: dict = {"exit_code": -1, "stdout": "", "stderr": "No tests run", "passed": True}
-    test_counts: dict = {"passed": 0, "failed": 0, "errors": 0, "skipped": 0}
+    zero_counts = {"passed": 0, "failed": 0, "errors": 0, "skipped": 0}
+    pytest_result: dict = {
+        "exit_code": -1,
+        "stdout": "",
+        "stderr": "No tests run",
+        "passed": True,
+        "test_counts": dict(zero_counts),
+    }
+    test_counts: dict = dict(zero_counts)
     issues_found: list[str] = []
 
     if existing_tests:
         print(f"[SENTINEL] Running {len(existing_tests)} test file(s)…")
         pytest_result = _run_pytest(existing_tests)
-        test_counts = _parse_pytest_output(pytest_result["stdout"])
+        test_counts = pytest_result.get("test_counts") or dict(zero_counts)
 
         if not pytest_result["passed"]:
             issues_found.append(
