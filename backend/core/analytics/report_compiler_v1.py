@@ -30,8 +30,8 @@ from core.contracts.clinician_report_v1 import (
     Page1SummaryBlockV1,
     RootCauseFindingV1,
 )
-from core.analytics.intervention_annotation_compiler_v1 import (
-    build_intervention_annotations_v1,
+from core.analytics.intervention_annotation_compiler_v1 import build_intervention_annotations_v1
+from core.analytics.intervention_annotation_formatter_v1 import (
     format_intervention_annotation_clinician_page1_v1,
 )
 from core.analytics.medication_caveat_assembler_v1 import (

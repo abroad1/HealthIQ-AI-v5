@@ -14,7 +14,7 @@ import yaml
 from core.analytics.longitudinal_numeric_v1 import comparable_lab_delta
 from core.contracts.intervention_annotation_v1 import InterventionAnnotationsV1
 from core.contracts.narrative_report_v1 import NARRATIVE_REPORT_V1_VERSION, NarrativeReportV1
-from core.analytics.intervention_annotation_compiler_v1 import (
+from core.analytics.intervention_annotation_formatter_v1 import (
     format_intervention_annotation_narrative_appendix_v1,
 )
 
