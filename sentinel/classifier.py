@@ -35,6 +35,7 @@ SURFACE_TEST_MAP: dict[str, list[str]] = {
         "backend/tests/regression/test_bilirubin_alias_regression.py",
     ],
     SURFACE_ANALYTICS_SCORING_SIGNAL: [
+        "backend/tests/regression/test_narrative_compiler_why_surface_regression.py",
         "backend/tests/regression/test_wave1_contradiction_status.py",
     ],
     SURFACE_FRONTEND_TRUST: [
