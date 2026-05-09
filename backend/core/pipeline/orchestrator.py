@@ -45,8 +45,8 @@ from core.analytics.interpretation_display_layer_publish_v1 import (
 from core.analytics.lifestyle_interpretation_bridge_engine import (
     compute_lifestyle_interpretation_bridges_v1,
 )
-from core.analytics.intervention_annotation_compiler_v1 import (
-    build_intervention_annotations_v1,
+from core.analytics.intervention_annotation_compiler_v1 import build_intervention_annotations_v1
+from core.analytics.intervention_annotation_formatter_v1 import (
     format_intervention_annotation_consumer_cv_suffix_v1,
 )
 from core.analytics.narrative_report_compiler_v1 import compile_narrative_report_v1
