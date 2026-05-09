@@ -13,6 +13,7 @@ from core.contracts.retail_explainer_v1 import (
 from core.models.biomarker import BiomarkerCluster, BiomarkerInsight
 from core.models.context import AnalysisContext
 from core.contracts.interpretation_display_layer_v1 import InterpretationDisplayLayerBundleV1
+from core.contracts.intervention_annotation_v1 import InterventionAnnotationsV1
 from core.contracts.narrative_report_v1 import NarrativeReportV1
 
 
@@ -294,4 +295,8 @@ class AnalysisDTO(BaseModel):
     consumer_domain_scores: Optional[List[ConsumerDomainScoreV1]] = Field(
         default=None,
         description="D-1: Wave1 domain scores + confidence (backend contract; not wired to product shell in D-1)",
+    )
+    intervention_annotations_v1: Optional[InterventionAnnotationsV1] = Field(
+        default=None,
+        description="LC-S2+: Layer B intervention annotations (parallel; no signal/ranking mutation)",
     )

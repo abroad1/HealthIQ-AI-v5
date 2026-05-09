@@ -147,7 +147,7 @@
       "section": "medical_history",
       "question": "Are you currently taking any of the following long-term medications?",
       "type": "checkbox",
-      "options": ["None","Corticosteroids","Atypical antipsychotics","HIV/AIDS treatments"],
+      "options": ["None","Corticosteroids","Atypical antipsychotics","HIV/AIDS treatments","Statins (cholesterol medication)"],
       "required": true,
       "helpText": "These medications can affect cardiovascular risk assessment"
     },

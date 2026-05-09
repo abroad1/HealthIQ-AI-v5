@@ -17,6 +17,7 @@ from core.contracts.report_v1 import (
     ReportTopFindingV1,
     ReportV1,
 )
+from core.contracts.intervention_annotation_v1 import InterventionAnnotationsV1
 from core.contracts.clinician_report_v1 import (
     ClinicianReportV1,
     ClinicianHeaderV1,
@@ -29,7 +30,10 @@ from core.contracts.clinician_report_v1 import (
     Page1SummaryBlockV1,
     RootCauseFindingV1,
 )
-from core.analytics.intervention_annotation_compiler_v1 import build_intervention_annotations_v1
+from core.analytics.intervention_annotation_compiler_v1 import (
+    build_intervention_annotations_v1,
+    format_intervention_annotation_clinician_page1_v1,
+)
 from core.analytics.medication_caveat_assembler_v1 import (
     build_medication_supplement_interpretation_caveat,
 )
@@ -492,6 +496,7 @@ def compile_clinician_report_v1(
     report_v1_payload: Dict[str, Any],
     biomarker_rows: List[Dict[str, Any]],
     medical_history: Optional[Dict[str, Any]] = None,
+    intervention_annotations_v1: Optional[InterventionAnnotationsV1] = None,
 ) -> Optional[ClinicianReportV1]:
     report_row = _to_dict(report_v1_payload)
     if not report_row:
@@ -628,6 +633,8 @@ def compile_clinician_report_v1(
 
     primary_root_snapped = _snap_root_cause_floats(primary_root)
 
+    ia_ctx = format_intervention_annotation_clinician_page1_v1(intervention_annotations_v1)[:420]
+
     return ClinicianReportV1(
         header=ClinicianHeaderV1(
             report_version="v1",
@@ -660,6 +667,7 @@ def compile_clinician_report_v1(
                 runner_up_signal_id=runner_up_signal_id,
                 runner_up_topic_line=runner_up_topic_line,
                 runner_up_why_not_lead_line=runner_up_why_not_lead_line,
+                intervention_annotation_context=ia_ctx,
             ),
             root_cause=primary_root_snapped,
             confirmatory_tests=consolidated_tests,

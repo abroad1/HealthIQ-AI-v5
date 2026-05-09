@@ -370,6 +370,7 @@ def assemble_consumer_domain_scores_v1(
     panel_biomarker_ids: Set[str],
     narrative_report_v1: Any = None,
     insight_results: Optional[List[Dict[str, Any]]] = None,
+    intervention_cv_suffix: str = "",
 ) -> Tuple[List[ConsumerDomainScoreV1], Dict[str, Any]]:
     """
     Build three Wave 1 domain rows. Always returns three entries in stable order:
@@ -420,6 +421,8 @@ def assemble_consumer_domain_scores_v1(
         }
         _contrib = cv_contributor_primary(by_id, sids, sig_rows, idl)
         _cons = cv_consequence_primary(by_id, sids, sig_rows, idl)
+        _suffix = (intervention_cv_suffix or "").strip()
+        _cons_cv = (_cons + " " + _suffix).strip() if _suffix else _cons
         _primary_rec = idl_record(by_id, idl) if idl else None
         ev["deferred_kb_content"] = "lipid_dominant_cv_why_it_matters_gap_deferred_sprint"
         return ConsumerDomainScoreV1(
@@ -437,10 +440,10 @@ def assemble_consumer_domain_scores_v1(
             caveat_flags=[],
             contributing_system_keys=["cardiovascular"],
             raw_evidence_refs=ev,
-            headline_sentence=headline_cv_coherent(band, _contrib, _cons, _primary_rec),
+            headline_sentence=headline_cv_coherent(band, _contrib, _cons_cv, _primary_rec),
             contributor_sentence=_contrib,
             confidence_sentence=confidence_sentence_cv_coherent(tier, _contrib),
-            consequence_sentence=_cons,
+            consequence_sentence=_cons_cv,
             next_step_sentence=next_step_cardiovascular(
                 insight_results,
                 narrative_report_v1,
