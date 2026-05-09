@@ -1,402 +1,248 @@
 ---
-work_id: Q-2
-branch: feature/questionnaire-visual-redesign
+work_id: LC-S1-ANALYTICAL-HARDENING
+branch: feature/lc-s1-analytical-hardening
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: BEHAVIOUR
+change_type: MIXED
+agent_owner: healthiq-core-engine
+primary_cursor_agent: healthiq-core-engine
+requires_claude_audit: true
+requires_gpt_architecture_review: true
 ---
 
-# Q-2 — Questionnaire visual redesign
+# Sprint 1 — Launch-core analytical hardening
 
-## Cursor agent
+## SOP status
 
-Use `healthiq-frontend`.
+This work package is governed under the active Automation Bus / Knowledge Bus SOPs.
 
-This is mandatory.
+Before any file changes:
+- verify the authoritative prompt path being used by the runtime/process
+- verify the active work package state file exists and matches this `work_id` and `branch`
+- verify work is not being performed on `main`
+- verify the working tree is clean or intentionally governed
+- follow the required two-phase start/finish lifecycle for HIGH-risk work
 
-Claude already understands the design intent and prior research for this redesign.
-Use that design intent directly.
-Do not reduce this to a superficial restyle.
+This is HIGH risk because it touches the analytical core and governed interpretation behaviour.
 
----
+## Assigned execution agent
+
+Use Cursor agent:
+
+**`healthiq-core-engine`**
+
+This is core analytical estate work, not frontend-shell work.
+
+## Operational precondition
+
+Do not begin Stage 3 execution until the currently active Q-2 token has been formally cleared via the required finish flow.
+
+If Q-2 remains active, stop and report that the operational precondition is not yet satisfied.
 
 ## Objective
 
-Keep the Q-1 questionnaire UX architecture intact, but redesign the visual layer so the questionnaire feels like a premium diagnostic calibration flow rather than a generic form.
+Harden the launch-core analytical slice so that the bounded proving use case has the governed WHY assets and analytical behaviour needed for end-to-end proving.
 
-This sprint must:
-- preserve the Q-1 functional behaviour
-- preserve props and payload parity
-- preserve conditional logic
-- preserve schema-driven flow
-- materially improve the visual design
+This sprint is:
+- not broad WHY expansion
+- not medication modifier implementation
+- not frontend redesign
+- not Layer C payload authoring
 
-This is a visual redesign sprint, not a backend or schema sprint.
+This sprint is targeted analytical completion for the approved proving slice.
 
----
+## Approved decisions from the closed Pre-Sprint 1 gate
 
-## Why Q-1 was not enough
+These are fixed inputs, not questions to reopen.
 
-Q-1 fixed the questionnaire flow and logic, but the visual result was still poor because the prompt did not give a strong enough design direction.
+### 1. Launch-core biology slice
+Approved bounded slice:
+- homocysteine / methylation / cardiometabolic / lipid cluster
+- based on the active signal set already proven on AB and VR
 
-The outcome was too generic:
-- default-looking component styling
-- weak hierarchy
-- indistinct question cards
-- weak selected states
-- visually invisible sidebar
-- no premium launch moment
-- dark/light collisions on the intent screen
-- card-within-a-card framing caused by the upload page wrapper
+Use the approved launch-core signal set already recorded in the closed gate pack.
 
-Q-2 exists to fix that.
+### 2. Frontend/report proving surface
+All working parts needed to prove the pipeline are in scope for proving.
+Do not artificially narrow the proving surface.
 
----
+### 3. Medication category
+- statins
 
-## Design direction
+### 4. Medication path sequencing
+- statin prerequisites are **not Sprint 1 scope**
+- they are deferred to a separate **pre-Sprint 2 gate**
 
-HealthIQ is a precision diagnostic instrument.
+Do not start building the statin modifier path in this sprint.
 
-The questionnaire should feel like calibrating something important.
+### 5. Silent-WHY policy
+Sprint 1 must build the governed WHY assets needed to support:
+- the chosen test panel
+- the minimal proving questionnaire
+- the drug-usage pathway
 
-### Tone
-- dark
-- controlled
-- intelligent
-- premium
-- clinically trustworthy
+This is targeted WHY completion for the proving slice only.
 
-### Not
-- pastel
-- soft wellness-app styling
-- rounded-everything
-- chatty or playful
-- generic shadcn defaults
+### 6. `insights[]`
+`insights[]` is being retired as an intelligence layer.
+Do not build new logic around it.
+Do not use it as a source of truth.
 
-### Yes
-- high contrast
-- deliberate typography
-- purposeful use of green accent
-- visible structure
-- restrained but premium motion
+### 7. Layer B → Layer C rule
+**Layer B decides. Layer C synthesises.**
 
----
+Sprint 1 must not weaken this boundary.
 
-## In scope
+## Scope
 
-### Files in scope
-- `frontend/app/components/forms/QuestionnaireForm.tsx`
-- `frontend/app/(app)/upload/page.tsx`
+### In scope
 
-No backend changes.
-No schema changes.
-No props interface changes.
-No analytics event changes.
+1. Confirm the exact launch-core signal list from the closed gate pack and bind Sprint 1 work to it.
+2. Identify which signals in that approved slice still lack governed WHY support.
+3. Author the missing governed WHY assets required for the proving slice.
+4. Ensure the analytical outputs required for AB/VR proving are complete and coherent for the approved slice.
+5. Remove silent-WHY gaps within the approved slice.
+6. Preserve deterministic analytical truth and existing governed outputs.
+7. Add or update regression protection for the newly hardened launch-core analytical slice where appropriate.
+8. Produce a concise audit trail of:
+   - which signals were hardened
+   - which WHY assets were added
+   - which gaps remain intentionally deferred
 
----
+### Explicitly out of scope
 
-## Functional rules from Q-1 that must remain intact
+- full WHY Wave 2
+- statin/drug modifier engine
+- questionnaire schema expansion beyond what is strictly needed for Sprint 1 analytical compatibility review
+- frontend carriage redesign
+- Layer C payload redesign
+- speculative expansion outside the approved slice
+- reintroducing `insights[]` as a reasoning layer
 
-Do not break any of the following:
+## Required repo-grounded tasks
 
-- props interface
-- flat `Record<string, unknown>` submission payload
-- `conditionalDisplay` / `dependsOn` logic
-- section order, names, and estimates
-- `?autofill=true`
-- schema loading path
-- loading/error states
-- validation behaviour
-- section-by-section flow
-- intent screen flow
-- upload-page integration
+### A. Lock the approved signal set
+Use the closed Pre-Sprint 1 pack as authority.
 
-All Q-1 behavioural acceptance criteria remain in force.
+Translate the approved biology slice into the exact named signal list Sprint 1 will harden.
 
----
+This list must be explicit in the implementation notes / completion report.
 
-## Required visual redesign
+**Mandatory warning resolution:**
+- explicitly verify the canonical LDL signal ID used by the runtime/compiler
+- the gate pack references `signal_ldl_high`
+- hardening must confirm whether the canonical ID is actually `signal_ldl_cholesterol_high` or another registered form
+- do not proceed on naming assumption
 
-## A. Intent screen
+### B. Identify remaining silent-WHY gaps inside the approved slice
+Repo-ground and runtime-ground this.
+Do not assume.
 
-### Root background
-The intent screen must own its background.
-
-Use:
-- `bg-background`
-
-Do not inherit or rely on a light upload-page card background.
-This must eliminate the dark/light unreadable-text collision.
-
-Add subtle ambient green radial glow in the background.
-
-### Headline font
-Load `DM_Serif_Display` via `next/font/google`.
-
-Use it **only** for the intent-screen headline.
-
-Do not spread the display font across the rest of the form.
-
-### Headline treatment
-Large, high-presence, two-line headline.
-It should feel intentional and premium, not generic.
-
-### Supporting copy
-Use calmer, readable body copy with clear hierarchy.
-
-### Section map
-The 7 section cards on the intent screen should feel like a diagnostic map, not generic cards.
-
-Required qualities:
-- clear border
-- visible hover treatment
-- subtle accent
-- visible structure
-- readable time estimates
-
-### Time/readout styling
-Section estimates and total-time line should use the green accent and monospace styling so they feel like diagnostic readouts.
-
-### Begin CTA
-The Begin button must feel like a launch moment.
-It should have clearly more visual weight than a normal secondary button.
-
-### Cancel path
-“Not now” remains low prominence.
-
----
-
-## B. Upload page wrapper
-
-The questionnaire must own its own framing.
-
-Remove the outer upload-page Card wrapper around `<QuestionnaireForm />` so the questionnaire is rendered directly.
-
-Keep the green “markers confirmed” confirmation card above it unchanged.
-
-This is necessary to eliminate the card-within-a-card problem.
-
----
-
-## C. Questionnaire shell
-
-### Outer layout
-Do not wrap the whole questionnaire flow in another card-like shell.
-Use the page background and internal structure to define containment.
-
-### Sidebar
-The desktop sidebar must be clearly visible, with:
-- proper card/background presence
-- border separation
-- clear active state
-- clear completed state
-- dimmed future state
-- visible progress footer
-
-The current near-transparent muted panel look is not acceptable.
-
-### Active section state
-Use the brand green tint/primary treatment, not a generic neutral ring state.
-
-### Mobile section strip
-Use the same semantic treatment as desktop:
-- active
-- done
-- pending
-must read clearly and consistently.
-
----
-
-## D. Section content area
-
-### Section header
-Increase hierarchy and clarity.
-The active section should feel like the user is entering a defined stage of calibration.
-
-### Section estimate
-Use green monospace styling, consistent with the intent screen.
-
-### Top marker
-Add a visible top-border/accent treatment for the active section content area.
-
----
-
-## E. Question cards
-
-Question cards must no longer feel identical and flat.
-
-Required improvements:
-- clearer separation
-- better hierarchy
-- stronger question label styling
-- visible question numbering within each section
-
-Each visible question in a section must show a sequential `Q{n}` identifier above the label in a subtle diagnostic/readout style.
-
----
-
-## F. Inputs
-
-### Pill/tile selectors — critical
-The selected state must be unambiguous.
-
-Do not use a faint tinted selected state.
-
-Selected options must use a strong, obvious selected treatment.
-Unselected options must still look interactive and premium.
-
-### Sliders
-Upgrade the slider presentation so the current value is prominent and feels intentional.
-Do not leave it as a generic boxed control.
-
-### General controls
-Text inputs, grouped inputs, and large-option selectors should all visually belong to the same premium diagnostic system.
-
----
-
-## G. Motion
-
-Use only restrained motion already compatible with the current stack and existing Tailwind/keyframe setup.
-
-Required motion moments:
-- intent-screen content entrance
-- staggered section-card entrance on intent screen
-- section-content entrance on section advance
-- smooth selected-state transitions for pill tiles
-- premium CTA hover/transition behaviour
-
-Do not over-animate.
-
----
-
-## Specific implementation notes to follow
-
-### Typography
-- `DM_Serif_Display` only for the intent-screen headline
-- section header stronger than Q-1
-- question labels upgraded from generic medium body styling
-- help text kept subtle and readable
-
-### Question numbering
-Add `Q{n}` numbering per visible question within the active section.
-
-### Selected pill state
-Use a strong solid selected treatment, not a weak translucent tint.
-
-### CTA treatment
-- Begin CTA: premium launch styling
-- final “Unlock my analysis” CTA: same family of premium styling
-- regular Next button: improved but not as strong as the final CTA
-
-### Sidebar active state
-Use HealthIQ green-tinted active state, not generic grey/neutral emphasis.
-
----
-
-## Out of scope
-
-- backend/schema changes
-- questionnaire logic redesign
-- broader frontend design-system overhaul
-- global typography system work
-- global colour-system overhaul
-- results-page redesign
-- any non-questionnaire feature work
-
-Do not widen scope.
-
----
+State clearly for each signal:
+- signal ID
+- current status
+- whether WHY exists
+- whether fallback is currently used
+- whether the signal is visible on proving surfaces
+
+### C. Build missing WHY assets only for the approved slice
+Create the minimum governed assets needed so the approved slice is analytically complete for proving.
+
+These assets must be medically disciplined and deterministic.
+Do not write shallow filler WHYs just to tick the box.
+
+**Mandatory warning resolution:**
+- verify whether `signal_apoa1_cardio_risk` is truly registered and supportable for Sprint 1 WHY authoring
+- confirm whether it has:
+  - KB package support
+  - SSOT presence
+  - WHY loader path
+- if not, document precisely and treat it as a scoped blocker or intentional deferral rather than improvising unsupported WHY authoring
+
+### D. Preserve analytical coherence
+Ensure the new WHY assets do not create:
+- contradiction with existing top-finding ranking
+- contradiction with domain scores
+- contradiction with existing clinician-facing structured outputs
+- contradiction with IDL / pattern outputs where already active
+
+### E. Regression protection
+Add or strengthen regression checks for the approved slice so the newly hardened WHY behaviour is protected.
+
+This should be bounded and directly related to Sprint 1 work.
+Do not turn this into a testing-estate redesign.
 
 ## Acceptance criteria
 
-### Q-1 behaviour must still pass
-All Q-1 behavioural acceptance criteria must remain true.
+Sprint 1 is complete only if all of the following are true:
 
-### Additional visual acceptance criteria
-13. Intent-screen headline uses `DM_Serif_Display`.
-14. Intent-screen root uses `bg-background`, avoiding dark/light collision.
-15. Intent-screen headline remains readable in dark mode.
-16. Section estimates and total-time line use green/monospace diagnostic styling.
-17. Selected pill tiles use a strong, unambiguous selected state.
-18. Slider value display is visually upgraded and prominent.
-19. Question cards show sequential `Q{n}` identifiers.
-20. Active desktop sidebar section uses a visible HealthIQ-specific active treatment.
-21. Begin CTA has visibly stronger launch styling.
-22. Final “Unlock my analysis” CTA has matching premium launch styling.
-23. Upload page renders `<QuestionnaireForm />` directly, without the outer Card wrapper.
-24. Section content animates in on section advance.
+1. The approved launch-core signal list is explicitly documented.
+2. Every signal in the approved Sprint 1 slice that needs governed WHY for proving now has governed WHY support, or is explicitly documented as intentionally deferred with justification.
+3. No user-visible signal inside the approved proving slice is relying on the generic fallback because Sprint 1 failed to supply the necessary WHY asset.
+4. AB and VR proving runs show the approved slice behaving coherently after the Sprint 1 changes.
+5. No broad WHY expansion has occurred outside the approved slice.
+6. No statin modifier implementation has been started in Sprint 1.
+7. Regression checks protecting the newly hardened slice are added or updated.
+8. A concise Sprint 1 completion note is produced.
 
----
+## Required outputs
 
-## Testing discipline
+1. Updated governed WHY assets for the approved slice
+2. Any necessary bounded analytical-core code changes required to support those assets
+3. Regression tests/checks for the approved slice
+4. A concise completion note covering:
+   - exact signals hardened
+   - exact WHY assets added/updated
+   - proof that work remained inside approved scope
+   - remaining intentional gaps
+   - anything that should feed the pre-Sprint 2 statin gate
 
-Do not run the full repository suite.
+## Guardrails
 
-Run only targeted checks relevant to:
-- questionnaire behaviour regression
-- visual implementation sanity
-- conditional logic preservation
-- payload parity
-- autofill behaviour
-- type safety
+- Do not expand scope because adjacent signals look interesting.
+- Do not silently author WHY outside the approved slice.
+- Do not solve Sprint 2 problems inside Sprint 1.
+- Do not introduce demo-only logic.
+- Do not alter ranking/interpretation rules casually while adding WHY assets.
+- Do not use `insights[]` as an active design dependency.
+- Do not weaken the Layer B / Layer C boundary.
 
-Before running tests, state:
-- what you will run
-- why
-- what broader suites you are excluding
+## If blocked
 
----
+If you discover that a required Sprint 1 completion item cannot be finished without violating scope, do not improvise a broad solution.
 
-## Reporting requirements
+Instead:
+- complete everything that remains valid within scope
+- document the blocker precisely
+- identify whether it should be handled by:
+  - a small Sprint 1 addendum
+  - the pre-Sprint 2 statin gate
+  - or a later sprint
 
-When finished, report back in these sections:
+## Deliverable format back to leadership
 
-### 1. Branch
-- confirm branch name
+When complete, report back in this structure:
 
-### 2. Preflight restatement
-- objective
-- files touched
-- behavioural surfaces intentionally preserved
+### 1. Summary
+- what was hardened
+- whether Sprint 1 acceptance criteria were met
 
-### 3. Visual redesign implementation
-- intent-screen treatment
-- typography choices
-- sidebar treatment
-- question-card treatment
-- input/pill/slider treatment
-- CTA treatment
-- upload-page framing change
+### 2. Exact signal list in scope
+- approved named signals actually worked on
+- include canonical ID confirmation where naming differed from the gate pack wording
 
-### 4. Behaviour preservation
-- how Q-1 behaviour was kept intact
-- how payload parity was preserved
-- how `conditionalDisplay` was preserved
-- how `?autofill=true` was preserved
+### 3. WHY assets added or updated
+- signal by signal
 
-### 5. Tests run
+### 4. Regression protection added
 - exact tests/checks
-- results
 
-### 6. Known limits intentionally deferred
-- anything intentionally left out of scope
+### 5. Remaining intentional gaps
+- only those outside Sprint 1 scope
 
-### 7. Uncommitted / not merged
-- confirm work is not merged to `main`
+### 6. Risks / follow-ons
+- especially anything relevant to the pre-Sprint 2 statin gate
+- include any registration/SSOT/KB-path issue affecting ApoA1-related work
 
----
-
-## STOP conditions
-
-STOP and report if:
-
-1. removing the outer upload-page wrapper causes wider layout breakage
-2. `DM_Serif_Display` import causes build issues
-3. intended premium CTA styling causes Tailwind/build issues
-4. any Q-1 behavioural acceptance criterion regresses
-5. scope starts drifting into global frontend redesign work
-
-If blocked, report:
-- exact blocker
-- affected file/surface
-- smallest safe remediation path
+### 7. Branch / working tree / SOP status
+- confirm governed execution under the correct branch and active work package state
