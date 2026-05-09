@@ -1,0 +1,675 @@
+{
+  "git_short_sha": "433a821",
+  "matrix_path": "backend\\tests\\fixtures\\proving\\launch_core_matrix.json",
+  "runs": {
+    "AB__baseline": {
+      "clinician_page1": {
+        "key_findings_head": "",
+        "primary_concern_head": "",
+        "top_hypothesis_line_head": ""
+      },
+      "consumer_band_labels": [
+        "strong",
+        "stable",
+        "review"
+      ],
+      "consumer_domain_rows": [
+        {
+          "band_label": "strong",
+          "consequence_sentence_head": "Sustained glycaemic strain raises long-term metabolic and vascular risk.",
+          "domain_id": "wave1_blood_sugar"
+        },
+        {
+          "band_label": "stable",
+          "consequence_sentence_head": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
+          "domain_id": "wave1_cardiovascular"
+        },
+        {
+          "band_label": "review",
+          "consequence_sentence_head": "Early liver-strain patterns are a key lane toward MASLD/fibrosis risk if ignored.",
+          "domain_id": "wave1_liver"
+        }
+      ],
+      "idl": {
+        "enabled_count": 4,
+        "first_enabled_titles": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "present": true,
+        "version": "1.0.0"
+      },
+      "intervention": {
+        "present": false,
+        "resolved_class_ids": []
+      },
+      "lifestyle_fixture": null,
+      "narrative": {
+        "body_overview_head": "Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.\n\nCo-supporting systems (deterministic arbitration): cardiovascular, hematological, hepatic, hormonal, immune, metabolic, nutritional, renal, thyroid.\n\nHigh capacity / comparatively calmer systems in this snapshot (governed capacity score \u226590): hematological (100), hepatic (100), hormonal (100), immune (100), metabolic (100), nutritional (100), renal (100), thyroid (100).\n\nBenchmark interpretation ",
+        "lead_narrative_head": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nfrom rapidly dividing tissues.\n\nDietary a",
+        "retail_summary_head": "Methylation pathway pattern (strong signal): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context\n\nThis pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot.\n\nLDL in context (protective "
+      },
+      "questionnaire_data": null,
+      "scenario_description": "No lifestyle fixture; questionnaire_data omitted (minimal intake).",
+      "signal_state_by_id": {
+        "signal_apoa1_cardio_risk": "suboptimal",
+        "signal_homocysteine_elevation_context": "at_risk",
+        "signal_homocysteine_high": "suboptimal",
+        "signal_ldl_cholesterol_high": "suboptimal",
+        "signal_ldl_high": "suboptimal",
+        "signal_lipid_transport_dysfunction": "optimal",
+        "signal_mcv_high": "suboptimal",
+        "signal_oxygen_transport_capacity": "optimal",
+        "signal_renal_metabolic_stress": "optimal",
+        "signal_systemic_inflammation": "suboptimal",
+        "signal_total_cholesterol_high": "suboptimal",
+        "signal_transferrin_low": "suboptimal",
+        "signal_vascular_inflammatory_stress": "optimal"
+      },
+      "status": "completed",
+      "top_finding_signal_ids": [
+        "signal_homocysteine_elevation_context",
+        "signal_homocysteine_high",
+        "signal_mcv_high",
+        "signal_total_cholesterol_high",
+        "signal_apoa1_cardio_risk",
+        "signal_ldl_cholesterol_high",
+        "signal_ldl_high",
+        "signal_transferrin_low",
+        "signal_systemic_inflammation",
+        "signal_oxygen_transport_capacity",
+        "signal_lipid_transport_dysfunction",
+        "signal_vascular_inflammatory_stress",
+        "signal_renal_metabolic_stress"
+      ]
+    },
+    "AB__lifestyle_context": {
+      "clinician_page1": {
+        "key_findings_head": "",
+        "primary_concern_head": "",
+        "top_hypothesis_line_head": ""
+      },
+      "consumer_band_labels": [
+        "strong",
+        "stable",
+        "review"
+      ],
+      "consumer_domain_rows": [
+        {
+          "band_label": "strong",
+          "consequence_sentence_head": "Sustained glycaemic strain raises long-term metabolic and vascular risk.",
+          "domain_id": "wave1_blood_sugar"
+        },
+        {
+          "band_label": "stable",
+          "consequence_sentence_head": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
+          "domain_id": "wave1_cardiovascular"
+        },
+        {
+          "band_label": "review",
+          "consequence_sentence_head": "Early liver-strain patterns are a key lane toward MASLD/fibrosis risk if ignored.",
+          "domain_id": "wave1_liver"
+        }
+      ],
+      "idl": {
+        "enabled_count": 4,
+        "first_enabled_titles": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "present": true,
+        "version": "1.0.0"
+      },
+      "intervention": {
+        "present": false,
+        "resolved_class_ids": []
+      },
+      "lifestyle_fixture": "tests/fixtures/lifestyle_minimal.json",
+      "narrative": {
+        "body_overview_head": "Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.\n\nCo-supporting systems (deterministic arbitration): autonomic, cardiovascular, hematological, hepatic, hormonal, immune, metabolic, musculoskeletal, nutritional, renal, thyroid.\n\nHigh capacity / comparatively calmer systems in this snapshot (governed capacity score \u226590): autonomic (100), hematological (100), hepatic (100), hormonal (100), immune (100), metabolic (99), musculoskeletal (100), nutrit",
+        "lead_narrative_head": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nfrom rapidly dividing tissues.\n\nDietary a",
+        "retail_summary_head": "Methylation pathway pattern (strong signal): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context\n\nThis pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot.\n\nLDL in context (protective "
+      },
+      "questionnaire_data": null,
+      "scenario_description": "Existing SSOT lifestyle fixture; no questionnaire_data.",
+      "signal_state_by_id": {
+        "signal_apoa1_cardio_risk": "suboptimal",
+        "signal_homocysteine_elevation_context": "at_risk",
+        "signal_homocysteine_high": "suboptimal",
+        "signal_ldl_cholesterol_high": "suboptimal",
+        "signal_ldl_high": "suboptimal",
+        "signal_lipid_transport_dysfunction": "optimal",
+        "signal_mcv_high": "suboptimal",
+        "signal_oxygen_transport_capacity": "optimal",
+        "signal_renal_metabolic_stress": "optimal",
+        "signal_systemic_inflammation": "suboptimal",
+        "signal_total_cholesterol_high": "suboptimal",
+        "signal_transferrin_low": "suboptimal",
+        "signal_vascular_inflammatory_stress": "optimal"
+      },
+      "status": "completed",
+      "top_finding_signal_ids": [
+        "signal_homocysteine_elevation_context",
+        "signal_homocysteine_high",
+        "signal_mcv_high",
+        "signal_total_cholesterol_high",
+        "signal_apoa1_cardio_risk",
+        "signal_ldl_cholesterol_high",
+        "signal_ldl_high",
+        "signal_transferrin_low",
+        "signal_systemic_inflammation",
+        "signal_oxygen_transport_capacity",
+        "signal_lipid_transport_dysfunction",
+        "signal_vascular_inflammatory_stress",
+        "signal_renal_metabolic_stress"
+      ]
+    },
+    "AB__statin_off": {
+      "clinician_page1": {
+        "key_findings_head": "",
+        "primary_concern_head": "",
+        "top_hypothesis_line_head": ""
+      },
+      "consumer_band_labels": [
+        "strong",
+        "watch",
+        "review"
+      ],
+      "consumer_domain_rows": [
+        {
+          "band_label": "strong",
+          "consequence_sentence_head": "Sustained glycaemic strain raises long-term metabolic and vascular risk.",
+          "domain_id": "wave1_blood_sugar"
+        },
+        {
+          "band_label": "watch",
+          "consequence_sentence_head": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
+          "domain_id": "wave1_cardiovascular"
+        },
+        {
+          "band_label": "review",
+          "consequence_sentence_head": "Early liver-strain patterns are a key lane toward MASLD/fibrosis risk if ignored.",
+          "domain_id": "wave1_liver"
+        }
+      ],
+      "idl": {
+        "enabled_count": 4,
+        "first_enabled_titles": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "present": true,
+        "version": "1.0.0"
+      },
+      "intervention": {
+        "present": false,
+        "resolved_class_ids": []
+      },
+      "lifestyle_fixture": null,
+      "narrative": {
+        "body_overview_head": "Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.\n\nCo-supporting systems (deterministic arbitration): cardiovascular, hematological, hepatic, hormonal, immune, metabolic, nutritional, renal, thyroid.\n\nHigh capacity / comparatively calmer systems in this snapshot (governed capacity score \u226590): hematological (100), hepatic (100), hormonal (100), immune (100), metabolic (100), nutritional (100), renal (100), thyroid (100).\n\nBenchmark interpretation ",
+        "lead_narrative_head": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nfrom rapidly dividing tissues.\n\nDietary a",
+        "retail_summary_head": "Methylation pathway pattern (strong signal): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context\n\nThis pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot.\n\nLDL in context (protective "
+      },
+      "questionnaire_data": {
+        "long_term_medications": [
+          "None"
+        ]
+      },
+      "scenario_description": "Explicit statin-off questionnaire answer; no lifestyle fixture.",
+      "signal_state_by_id": {
+        "signal_apoa1_cardio_risk": "suboptimal",
+        "signal_homocysteine_elevation_context": "at_risk",
+        "signal_homocysteine_high": "suboptimal",
+        "signal_ldl_cholesterol_high": "suboptimal",
+        "signal_ldl_high": "suboptimal",
+        "signal_lipid_transport_dysfunction": "optimal",
+        "signal_mcv_high": "suboptimal",
+        "signal_oxygen_transport_capacity": "optimal",
+        "signal_renal_metabolic_stress": "optimal",
+        "signal_systemic_inflammation": "suboptimal",
+        "signal_total_cholesterol_high": "suboptimal",
+        "signal_transferrin_low": "suboptimal",
+        "signal_vascular_inflammatory_stress": "optimal"
+      },
+      "status": "completed",
+      "top_finding_signal_ids": [
+        "signal_homocysteine_elevation_context",
+        "signal_homocysteine_high",
+        "signal_mcv_high",
+        "signal_total_cholesterol_high",
+        "signal_apoa1_cardio_risk",
+        "signal_ldl_cholesterol_high",
+        "signal_ldl_high",
+        "signal_transferrin_low",
+        "signal_systemic_inflammation",
+        "signal_oxygen_transport_capacity",
+        "signal_lipid_transport_dysfunction",
+        "signal_vascular_inflammatory_stress",
+        "signal_renal_metabolic_stress"
+      ]
+    },
+    "AB__statin_on": {
+      "clinician_page1": {
+        "key_findings_head": "",
+        "primary_concern_head": "",
+        "top_hypothesis_line_head": ""
+      },
+      "consumer_band_labels": [
+        "strong",
+        "watch",
+        "review"
+      ],
+      "consumer_domain_rows": [
+        {
+          "band_label": "strong",
+          "consequence_sentence_head": "Sustained glycaemic strain raises long-term metabolic and vascular risk.",
+          "domain_id": "wave1_blood_sugar"
+        },
+        {
+          "band_label": "watch",
+          "consequence_sentence_head": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action. Medication context: Layer B intervention annotation \u2014 lipid-lowering statin (user-reported; framing only; does not alter signal stat",
+          "domain_id": "wave1_cardiovascular"
+        },
+        {
+          "band_label": "review",
+          "consequence_sentence_head": "Early liver-strain patterns are a key lane toward MASLD/fibrosis risk if ignored.",
+          "domain_id": "wave1_liver"
+        }
+      ],
+      "idl": {
+        "enabled_count": 4,
+        "first_enabled_titles": [
+          "",
+          "",
+          "",
+          ""
+        ],
+        "present": true,
+        "version": "1.0.0"
+      },
+      "intervention": {
+        "present": true,
+        "resolved_class_ids": [
+          "lipid_lowering_statin"
+        ]
+      },
+      "lifestyle_fixture": null,
+      "narrative": {
+        "body_overview_head": "Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.\n\nCo-supporting systems (deterministic arbitration): cardiovascular, hematological, hepatic, hormonal, immune, metabolic, nutritional, renal, thyroid.\n\nHigh capacity / comparatively calmer systems in this snapshot (governed capacity score \u226590): hematological (100), hepatic (100), hormonal (100), immune (100), metabolic (100), nutritional (100), renal (100), thyroid (100).\n\nBenchmark interpretation ",
+        "lead_narrative_head": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nfrom rapidly dividing tissues.\n\nDietary a",
+        "retail_summary_head": "Methylation pathway pattern (strong signal): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context\n\nThis pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot.\n\nLDL in context (protective "
+      },
+      "questionnaire_data": {
+        "long_term_medications": [
+          "Statins (cholesterol medication)"
+        ]
+      },
+      "scenario_description": "Statin-on \u2014 must use exact SSOT option label.",
+      "signal_state_by_id": {
+        "signal_apoa1_cardio_risk": "suboptimal",
+        "signal_homocysteine_elevation_context": "at_risk",
+        "signal_homocysteine_high": "suboptimal",
+        "signal_ldl_cholesterol_high": "suboptimal",
+        "signal_ldl_high": "suboptimal",
+        "signal_lipid_transport_dysfunction": "optimal",
+        "signal_mcv_high": "suboptimal",
+        "signal_oxygen_transport_capacity": "optimal",
+        "signal_renal_metabolic_stress": "optimal",
+        "signal_systemic_inflammation": "suboptimal",
+        "signal_total_cholesterol_high": "suboptimal",
+        "signal_transferrin_low": "suboptimal",
+        "signal_vascular_inflammatory_stress": "optimal"
+      },
+      "status": "completed",
+      "top_finding_signal_ids": [
+        "signal_homocysteine_elevation_context",
+        "signal_homocysteine_high",
+        "signal_mcv_high",
+        "signal_total_cholesterol_high",
+        "signal_apoa1_cardio_risk",
+        "signal_ldl_cholesterol_high",
+        "signal_ldl_high",
+        "signal_transferrin_low",
+        "signal_systemic_inflammation",
+        "signal_oxygen_transport_capacity",
+        "signal_lipid_transport_dysfunction",
+        "signal_vascular_inflammatory_stress",
+        "signal_renal_metabolic_stress"
+      ]
+    },
+    "VR__baseline": {
+      "clinician_page1": {
+        "key_findings_head": "",
+        "primary_concern_head": "",
+        "top_hypothesis_line_head": ""
+      },
+      "consumer_band_labels": [
+        "strong",
+        "strong",
+        "strong"
+      ],
+      "consumer_domain_rows": [
+        {
+          "band_label": "strong",
+          "consequence_sentence_head": "Sustained glycaemic strain raises long-term metabolic and vascular risk.",
+          "domain_id": "wave1_blood_sugar"
+        },
+        {
+          "band_label": "strong",
+          "consequence_sentence_head": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
+          "domain_id": "wave1_cardiovascular"
+        },
+        {
+          "band_label": "strong",
+          "consequence_sentence_head": "Early liver-strain patterns are a key lane toward MASLD/fibrosis risk if ignored.",
+          "domain_id": "wave1_liver"
+        }
+      ],
+      "idl": {
+        "enabled_count": 2,
+        "first_enabled_titles": [
+          "",
+          ""
+        ],
+        "present": true,
+        "version": "1.0.0"
+      },
+      "intervention": {
+        "present": false,
+        "resolved_class_ids": []
+      },
+      "lifestyle_fixture": null,
+      "narrative": {
+        "body_overview_head": "Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.\n\nCo-supporting systems (deterministic arbitration): cardiovascular, hematological, hepatic, hormonal, immune, metabolic, nutritional, renal, thyroid.\n\nHigh capacity / comparatively calmer systems in this snapshot (governed capacity score \u226590): hematological (100), hepatic (100), hormonal (100), immune (100), metabolic (100), nutritional (100), renal (100), thyroid (100).\n\nBenchmark interpretation ",
+        "lead_narrative_head": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nfrom rapidly dividing tissues.\n\nDietary a",
+        "retail_summary_head": "Methylation pathway pattern (pattern to watch): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context\n\nThis pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot."
+      },
+      "questionnaire_data": null,
+      "scenario_description": "No lifestyle fixture; questionnaire_data omitted (minimal intake).",
+      "signal_state_by_id": {
+        "signal_alp_low": "suboptimal",
+        "signal_cortisol_high": "suboptimal",
+        "signal_creatine_kinase_high": "suboptimal",
+        "signal_homocysteine_elevation_context": "suboptimal",
+        "signal_homocysteine_high": "suboptimal",
+        "signal_hypercortisolism": "suboptimal",
+        "signal_lipid_transport_dysfunction": "optimal",
+        "signal_oxygen_transport_capacity": "optimal",
+        "signal_renal_metabolic_stress": "optimal",
+        "signal_systemic_inflammation": "suboptimal",
+        "signal_vascular_inflammatory_stress": "optimal",
+        "signal_vitamin_d_low": "suboptimal"
+      },
+      "status": "completed",
+      "top_finding_signal_ids": [
+        "signal_homocysteine_elevation_context",
+        "signal_homocysteine_high",
+        "signal_alp_low",
+        "signal_hypercortisolism",
+        "signal_vitamin_d_low",
+        "signal_cortisol_high",
+        "signal_creatine_kinase_high",
+        "signal_systemic_inflammation",
+        "signal_oxygen_transport_capacity",
+        "signal_lipid_transport_dysfunction",
+        "signal_vascular_inflammatory_stress",
+        "signal_renal_metabolic_stress"
+      ]
+    },
+    "VR__lifestyle_context": {
+      "clinician_page1": {
+        "key_findings_head": "",
+        "primary_concern_head": "",
+        "top_hypothesis_line_head": ""
+      },
+      "consumer_band_labels": [
+        "strong",
+        "strong",
+        "strong"
+      ],
+      "consumer_domain_rows": [
+        {
+          "band_label": "strong",
+          "consequence_sentence_head": "Sustained glycaemic strain raises long-term metabolic and vascular risk.",
+          "domain_id": "wave1_blood_sugar"
+        },
+        {
+          "band_label": "strong",
+          "consequence_sentence_head": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
+          "domain_id": "wave1_cardiovascular"
+        },
+        {
+          "band_label": "strong",
+          "consequence_sentence_head": "Early liver-strain patterns are a key lane toward MASLD/fibrosis risk if ignored.",
+          "domain_id": "wave1_liver"
+        }
+      ],
+      "idl": {
+        "enabled_count": 2,
+        "first_enabled_titles": [
+          "",
+          ""
+        ],
+        "present": true,
+        "version": "1.0.0"
+      },
+      "intervention": {
+        "present": false,
+        "resolved_class_ids": []
+      },
+      "lifestyle_fixture": "tests/fixtures/lifestyle_minimal.json",
+      "narrative": {
+        "body_overview_head": "Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.\n\nCo-supporting systems (deterministic arbitration): autonomic, cardiovascular, hematological, hepatic, hormonal, immune, metabolic, musculoskeletal, nutritional, renal, thyroid.\n\nHigh capacity / comparatively calmer systems in this snapshot (governed capacity score \u226590): autonomic (100), hematological (100), hepatic (100), hormonal (100), immune (100), metabolic (99), musculoskeletal (100), nutrit",
+        "lead_narrative_head": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nfrom rapidly dividing tissues.\n\nDietary a",
+        "retail_summary_head": "Methylation pathway pattern (pattern to watch): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context\n\nThis pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot."
+      },
+      "questionnaire_data": null,
+      "scenario_description": "Existing SSOT lifestyle fixture; no questionnaire_data.",
+      "signal_state_by_id": {
+        "signal_alp_low": "suboptimal",
+        "signal_cortisol_high": "suboptimal",
+        "signal_creatine_kinase_high": "suboptimal",
+        "signal_homocysteine_elevation_context": "suboptimal",
+        "signal_homocysteine_high": "suboptimal",
+        "signal_hypercortisolism": "suboptimal",
+        "signal_lipid_transport_dysfunction": "optimal",
+        "signal_oxygen_transport_capacity": "optimal",
+        "signal_renal_metabolic_stress": "optimal",
+        "signal_systemic_inflammation": "suboptimal",
+        "signal_vascular_inflammatory_stress": "optimal",
+        "signal_vitamin_d_low": "suboptimal"
+      },
+      "status": "completed",
+      "top_finding_signal_ids": [
+        "signal_homocysteine_elevation_context",
+        "signal_homocysteine_high",
+        "signal_alp_low",
+        "signal_hypercortisolism",
+        "signal_vitamin_d_low",
+        "signal_cortisol_high",
+        "signal_creatine_kinase_high",
+        "signal_systemic_inflammation",
+        "signal_oxygen_transport_capacity",
+        "signal_lipid_transport_dysfunction",
+        "signal_vascular_inflammatory_stress",
+        "signal_renal_metabolic_stress"
+      ]
+    },
+    "VR__statin_off": {
+      "clinician_page1": {
+        "key_findings_head": "",
+        "primary_concern_head": "",
+        "top_hypothesis_line_head": ""
+      },
+      "consumer_band_labels": [
+        "strong",
+        "stable",
+        "stable"
+      ],
+      "consumer_domain_rows": [
+        {
+          "band_label": "strong",
+          "consequence_sentence_head": "Sustained glycaemic strain raises long-term metabolic and vascular risk.",
+          "domain_id": "wave1_blood_sugar"
+        },
+        {
+          "band_label": "stable",
+          "consequence_sentence_head": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
+          "domain_id": "wave1_cardiovascular"
+        },
+        {
+          "band_label": "stable",
+          "consequence_sentence_head": "Early liver-strain patterns are a key lane toward MASLD/fibrosis risk if ignored.",
+          "domain_id": "wave1_liver"
+        }
+      ],
+      "idl": {
+        "enabled_count": 2,
+        "first_enabled_titles": [
+          "",
+          ""
+        ],
+        "present": true,
+        "version": "1.0.0"
+      },
+      "intervention": {
+        "present": false,
+        "resolved_class_ids": []
+      },
+      "lifestyle_fixture": null,
+      "narrative": {
+        "body_overview_head": "Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.\n\nCo-supporting systems (deterministic arbitration): cardiovascular, hematological, hepatic, hormonal, immune, metabolic, nutritional, renal, thyroid.\n\nHigh capacity / comparatively calmer systems in this snapshot (governed capacity score \u226590): hematological (100), hepatic (100), hormonal (100), immune (100), metabolic (100), nutritional (100), renal (100), thyroid (100).\n\nBenchmark interpretation ",
+        "lead_narrative_head": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nfrom rapidly dividing tissues.\n\nDietary a",
+        "retail_summary_head": "Methylation pathway pattern (pattern to watch): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context\n\nThis pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot."
+      },
+      "questionnaire_data": {
+        "long_term_medications": [
+          "None"
+        ]
+      },
+      "scenario_description": "Explicit statin-off questionnaire answer; no lifestyle fixture.",
+      "signal_state_by_id": {
+        "signal_alp_low": "suboptimal",
+        "signal_cortisol_high": "suboptimal",
+        "signal_creatine_kinase_high": "suboptimal",
+        "signal_homocysteine_elevation_context": "suboptimal",
+        "signal_homocysteine_high": "suboptimal",
+        "signal_hypercortisolism": "suboptimal",
+        "signal_lipid_transport_dysfunction": "optimal",
+        "signal_oxygen_transport_capacity": "optimal",
+        "signal_renal_metabolic_stress": "optimal",
+        "signal_systemic_inflammation": "suboptimal",
+        "signal_vascular_inflammatory_stress": "optimal",
+        "signal_vitamin_d_low": "suboptimal"
+      },
+      "status": "completed",
+      "top_finding_signal_ids": [
+        "signal_homocysteine_elevation_context",
+        "signal_homocysteine_high",
+        "signal_alp_low",
+        "signal_hypercortisolism",
+        "signal_vitamin_d_low",
+        "signal_cortisol_high",
+        "signal_creatine_kinase_high",
+        "signal_systemic_inflammation",
+        "signal_oxygen_transport_capacity",
+        "signal_lipid_transport_dysfunction",
+        "signal_vascular_inflammatory_stress",
+        "signal_renal_metabolic_stress"
+      ]
+    },
+    "VR__statin_on": {
+      "clinician_page1": {
+        "key_findings_head": "",
+        "primary_concern_head": "",
+        "top_hypothesis_line_head": ""
+      },
+      "consumer_band_labels": [
+        "strong",
+        "stable",
+        "stable"
+      ],
+      "consumer_domain_rows": [
+        {
+          "band_label": "strong",
+          "consequence_sentence_head": "Sustained glycaemic strain raises long-term metabolic and vascular risk.",
+          "domain_id": "wave1_blood_sugar"
+        },
+        {
+          "band_label": "stable",
+          "consequence_sentence_head": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action. Medication context: Layer B intervention annotation \u2014 lipid-lowering statin (user-reported; framing only; does not alter signal stat",
+          "domain_id": "wave1_cardiovascular"
+        },
+        {
+          "band_label": "stable",
+          "consequence_sentence_head": "Early liver-strain patterns are a key lane toward MASLD/fibrosis risk if ignored.",
+          "domain_id": "wave1_liver"
+        }
+      ],
+      "idl": {
+        "enabled_count": 2,
+        "first_enabled_titles": [
+          "",
+          ""
+        ],
+        "present": true,
+        "version": "1.0.0"
+      },
+      "intervention": {
+        "present": true,
+        "resolved_class_ids": [
+          "lipid_lowering_statin"
+        ]
+      },
+      "lifestyle_fixture": null,
+      "narrative": {
+        "body_overview_head": "Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.\n\nCo-supporting systems (deterministic arbitration): cardiovascular, hematological, hepatic, hormonal, immune, metabolic, nutritional, renal, thyroid.\n\nHigh capacity / comparatively calmer systems in this snapshot (governed capacity score \u226590): hematological (100), hepatic (100), hormonal (100), immune (100), metabolic (100), nutritional (100), renal (100), thyroid (100).\n\nBenchmark interpretation ",
+        "lead_narrative_head": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nfrom rapidly dividing tissues.\n\nDietary a",
+        "retail_summary_head": "Methylation pathway pattern (pattern to watch): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context\n\nThis pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot."
+      },
+      "questionnaire_data": {
+        "long_term_medications": [
+          "Statins (cholesterol medication)"
+        ]
+      },
+      "scenario_description": "Statin-on \u2014 must use exact SSOT option label.",
+      "signal_state_by_id": {
+        "signal_alp_low": "suboptimal",
+        "signal_cortisol_high": "suboptimal",
+        "signal_creatine_kinase_high": "suboptimal",
+        "signal_homocysteine_elevation_context": "suboptimal",
+        "signal_homocysteine_high": "suboptimal",
+        "signal_hypercortisolism": "suboptimal",
+        "signal_lipid_transport_dysfunction": "optimal",
+        "signal_oxygen_transport_capacity": "optimal",
+        "signal_renal_metabolic_stress": "optimal",
+        "signal_systemic_inflammation": "suboptimal",
+        "signal_vascular_inflammatory_stress": "optimal",
+        "signal_vitamin_d_low": "suboptimal"
+      },
+      "status": "completed",
+      "top_finding_signal_ids": [
+        "signal_homocysteine_elevation_context",
+        "signal_homocysteine_high",
+        "signal_alp_low",
+        "signal_hypercortisolism",
+        "signal_vitamin_d_low",
+        "signal_cortisol_high",
+        "signal_creatine_kinase_high",
+        "signal_systemic_inflammation",
+        "signal_oxygen_transport_capacity",
+        "signal_lipid_transport_dysfunction",
+        "signal_vascular_inflammatory_stress",
+        "signal_renal_metabolic_stress"
+      ]
+    }
+  },
+  "stamp": "lc-proving-commit"
+}
