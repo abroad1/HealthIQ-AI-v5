@@ -1,6 +1,6 @@
 ---
-work_id: LC-S1-ANALYTICAL-HARDENING
-branch: feature/lc-s1-analytical-hardening
+work_id: LC-S2-CONTEXT-INTEGRATION
+branch: feature/lc-s2-context-integration
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
@@ -10,7 +10,7 @@ requires_claude_audit: true
 requires_gpt_architecture_review: true
 ---
 
-# Sprint 1 — Launch-core analytical hardening
+# Sprint 2 — Launch-core context integration
 
 ## SOP status
 
@@ -23,7 +23,7 @@ Before any file changes:
 - verify the working tree is clean or intentionally governed
 - follow the required two-phase start/finish lifecycle for HIGH-risk work
 
-This is HIGH risk because it touches the analytical core and governed interpretation behaviour.
+This is HIGH risk because it changes live analytical-context wiring, report carriage, and governed interpretation flow.
 
 ## Assigned execution agent
 
@@ -31,218 +31,244 @@ Use Cursor agent:
 
 **`healthiq-core-engine`**
 
-This is core analytical estate work, not frontend-shell work.
-
-## Operational precondition
-
-Do not begin Stage 3 execution until the currently active Q-2 token has been formally cleared via the required finish flow.
-
-If Q-2 remains active, stop and report that the operational precondition is not yet satisfied.
+This is analytical/context pipeline work with DTO/report-surface implications, not a frontend-shell-only task.
 
 ## Objective
 
-Harden the launch-core analytical slice so that the bounded proving use case has the governed WHY assets and analytical behaviour needed for end-to-end proving.
+Implement the real, production-grade statin context path for the launch-core slice.
 
-This sprint is:
-- not broad WHY expansion
-- not medication modifier implementation
-- not frontend redesign
-- not Layer C payload authoring
+Sprint 2 must wire the already-existing governed statin assets and annotation compiler through the live pipeline so that statin-on vs statin-off produces deterministic, user-visible context changes without mutating analytical truth.
 
-This sprint is targeted analytical completion for the approved proving slice.
+This sprint is not about inventing statin science.
+The governed statin truth already exists.
+This sprint is about making the real path work end to end.
 
-## Approved decisions from the closed Pre-Sprint 1 gate
+## Gate authority
 
-These are fixed inputs, not questions to reopen.
+This sprint may proceed because the Pre-Sprint 2 statin gate is closed.
 
-### 1. Launch-core biology slice
-Approved bounded slice:
-- homocysteine / methylation / cardiometabolic / lipid cluster
-- based on the active signal set already proven on AB and VR
+Use the closed statin gate pack as binding authority.
 
-Use the approved launch-core signal set already recorded in the closed gate pack.
+## Fixed inputs from the closed statin gate
 
-### 2. Frontend/report proving surface
-All working parts needed to prove the pipeline are in scope for proving.
-Do not artificially narrow the proving surface.
+These are not open questions.
 
-### 3. Medication category
-- statins
+### 1. Statin questionnaire capture
+Approved:
+- add **“Statins (cholesterol medication)”** to the existing `long_term_medications` checkbox
+- do not create a standalone statin question
 
-### 4. Medication path sequencing
-- statin prerequisites are **not Sprint 1 scope**
-- they are deferred to a separate **pre-Sprint 2 gate**
+### 2. Governed statin truth location
+Approved:
+- use existing governed asset(s)
+- do not author new statin-effect science unless an unexpected hard blocker forces a separately governed follow-up
 
-Do not start building the statin modifier path in this sprint.
+### 3. Modifier engine approach
+Approved:
+- wire the existing architecture
+- do not build a separate ad hoc statin engine
+- do not use sprint-only shortcuts
 
-### 5. Silent-WHY policy
-Sprint 1 must build the governed WHY assets needed to support:
-- the chosen test panel
-- the minimal proving questionnaire
-- the drug-usage pathway
+### 4. Minimum affected outputs
+Approved:
+- clinician surface
+- plus as many consumer-visible fields as are naturally relevant to the medication prose
+- do not artificially constrain the statin path to only one consumer field if multiple launch-core fields should properly change
 
-This is targeted WHY completion for the proving slice only.
+### 5. Allowed effect type
+Approved:
+- statin context may change interpretation framing, confidence/context explanation, and follow-up wording where governed
+- statin context must not mutate signal firing, domain bands, rankings, or analytical truth
 
-### 6. `insights[]`
-`insights[]` is being retired as an intelligence layer.
-Do not build new logic around it.
-Do not use it as a source of truth.
+### 6. Layer B / Layer C rule
+Approved:
+- Layer B decides
+- Layer C synthesises
 
-### 7. Layer B → Layer C rule
-**Layer B decides. Layer C synthesises.**
+Statin context is a Layer B deterministic annotation.
+Layer C may narrate it, not invent it.
 
-Sprint 1 must not weaken this boundary.
+### 7. Proving checks
+Approved:
+- S-1 through S-6 as written in the closed statin gate pack
+
+## Verified current-state starting point
+
+Use the closed statin gate pack as source of truth, including these starting facts:
+
+- statin governed truth already exists in the intervention effects registry
+- statin alias map already exists
+- intervention annotation compiler already exists and is tested
+- current production gap is missing pipeline wiring:
+  - no statin questionnaire capture
+  - no mapper path to `user_intervention_document`
+  - no orchestrator pass-through
+  - no `AnalysisDTO` carriage for the annotation
+  - no live clinician / consumer surface reading the annotation
 
 ## Scope
 
 ### In scope
 
-1. Confirm the exact launch-core signal list from the closed gate pack and bind Sprint 1 work to it.
-2. Identify which signals in that approved slice still lack governed WHY support.
-3. Author the missing governed WHY assets required for the proving slice.
-4. Ensure the analytical outputs required for AB/VR proving are complete and coherent for the approved slice.
-5. Remove silent-WHY gaps within the approved slice.
-6. Preserve deterministic analytical truth and existing governed outputs.
-7. Add or update regression protection for the newly hardened launch-core analytical slice where appropriate.
-8. Produce a concise audit trail of:
-   - which signals were hardened
-   - which WHY assets were added
-   - which gaps remain intentionally deferred
+1. Add statin capture to the existing questionnaire path.
+2. Extend the questionnaire mapper to build a valid `user_intervention_document` for statin-on responses.
+3. Pass that document through the live orchestrator path.
+4. Ensure the existing intervention annotation compiler is invoked in the live production path.
+5. Expose the resulting statin annotation through the production DTO / output path.
+6. Make clinician-facing output reflect statin context where appropriate.
+7. Make all relevant consumer-visible launch-core fields reflect statin context where appropriate.
+8. Add bounded proving/regression coverage for the statin-on vs statin-off path.
+9. Produce a concise completion note and explicit proof against checks S-1 through S-6.
 
 ### Explicitly out of scope
 
-- full WHY Wave 2
-- statin/drug modifier engine
-- questionnaire schema expansion beyond what is strictly needed for Sprint 1 analytical compatibility review
-- frontend carriage redesign
-- Layer C payload redesign
-- speculative expansion outside the approved slice
-- reintroducing `insights[]` as a reasoning layer
+- broad medication ontology expansion
+- free-text medication entry
+- named-drug alias resolution at intake
+- additional drug categories beyond statins
+- signal-threshold mutation
+- band/ranking mutation
+- broad questionnaire redesign beyond the approved statin checkbox addition
+- non-statin intervention content authoring
+- speculative frontend redesign outside launch-core surfaces
 
-## Required repo-grounded tasks
+## Required implementation tasks
 
-### A. Lock the approved signal set
-Use the closed Pre-Sprint 1 pack as authority.
+### A. Questionnaire capture
+Implement the approved questionnaire change:
+- add **“Statins (cholesterol medication)”** to the existing `long_term_medications` checkbox
 
-Translate the approved biology slice into the exact named signal list Sprint 1 will harden.
+Do not introduce a new standalone question.
 
-This list must be explicit in the implementation notes / completion report.
+### B. Mapper output
+Extend the questionnaire mapper so a statin-on response produces a valid `user_intervention_document` with the correct governed class mapping:
 
-**Mandatory warning resolution:**
-- explicitly verify the canonical LDL signal ID used by the runtime/compiler
-- the gate pack references `signal_ldl_high`
-- hardening must confirm whether the canonical ID is actually `signal_ldl_cholesterol_high` or another registered form
-- do not proceed on naming assumption
+- `intervention_class_id: lipid_lowering_statin`
+- `link_status: mapped`
 
-### B. Identify remaining silent-WHY gaps inside the approved slice
-Repo-ground and runtime-ground this.
-Do not assume.
+This must use the real production document shape.
 
-State clearly for each signal:
-- signal ID
-- current status
-- whether WHY exists
-- whether fallback is currently used
-- whether the signal is visible on proving surfaces
+### C. Orchestrator wiring
+Wire the live orchestrator path so the `user_intervention_document` reaches the existing intervention annotation compiler.
 
-### C. Build missing WHY assets only for the approved slice
-Create the minimum governed assets needed so the approved slice is analytically complete for proving.
+Do not create a side-path or debug-only path.
 
-These assets must be medically disciplined and deterministic.
-Do not write shallow filler WHYs just to tick the box.
+### D. DTO / contract propagation
+Expose the statin annotation through the live production output path.
 
-**Mandatory warning resolution:**
-- verify whether `signal_apoa1_cardio_risk` is truly registered and supportable for Sprint 1 WHY authoring
-- confirm whether it has:
-  - KB package support
-  - SSOT presence
-  - WHY loader path
-- if not, document precisely and treat it as a scoped blocker or intentional deferral rather than improvising unsupported WHY authoring
+If `AnalysisDTO` needs to carry `intervention_annotations_v1`, do it cleanly and explicitly using the real contract shape.
 
-### D. Preserve analytical coherence
-Ensure the new WHY assets do not create:
-- contradiction with existing top-finding ranking
-- contradiction with domain scores
-- contradiction with existing clinician-facing structured outputs
-- contradiction with IDL / pattern outputs where already active
+Do not invent a temporary parallel field.
 
-### E. Regression protection
-Add or strengthen regression checks for the approved slice so the newly hardened WHY behaviour is protected.
+### E. Clinician surface
+Ensure clinician-facing structured output reflects statin context where relevant.
 
-This should be bounded and directly related to Sprint 1 work.
-Do not turn this into a testing-estate redesign.
+This should be a real clinician-grade context statement, not vague prose.
+
+### F. Consumer-visible surfaces
+Ensure all launch-core consumer-visible fields that are naturally affected by statin context are updated accordingly.
+
+Do not artificially constrain this to a single field if multiple consumer-facing fields should legitimately reflect the annotation.
+
+But also do not spray statin prose everywhere unnecessarily.
+
+### G. Boundary discipline
+Preserve the approved statin boundary:
+- annotation/context only
+- no mutation of signal firing
+- no mutation of ranking
+- no mutation of domain score banding
+- no Layer C invention
+
+### H. Regression / proving protection
+Add bounded tests for:
+- S-1 questionnaire capture
+- S-2 mapper output
+- S-3 annotation compiler resolution
+- S-4 pipeline carriage
+- S-5 visible difference between statin-on and statin-off
+- S-6 no analytical truth mutation from statin annotation alone
+
+Keep this bounded.
+Do not redesign Sentinel broadly.
 
 ## Acceptance criteria
 
-Sprint 1 is complete only if all of the following are true:
+Sprint 2 is complete only if all of the following are true:
 
-1. The approved launch-core signal list is explicitly documented.
-2. Every signal in the approved Sprint 1 slice that needs governed WHY for proving now has governed WHY support, or is explicitly documented as intentionally deferred with justification.
-3. No user-visible signal inside the approved proving slice is relying on the generic fallback because Sprint 1 failed to supply the necessary WHY asset.
-4. AB and VR proving runs show the approved slice behaving coherently after the Sprint 1 changes.
-5. No broad WHY expansion has occurred outside the approved slice.
-6. No statin modifier implementation has been started in Sprint 1.
-7. Regression checks protecting the newly hardened slice are added or updated.
-8. A concise Sprint 1 completion note is produced.
+1. The questionnaire includes **“Statins (cholesterol medication)”** in the approved place.
+2. A statin-on questionnaire response produces a valid `user_intervention_document` with `lipid_lowering_statin`.
+3. The live pipeline invokes the existing intervention annotation compiler and carries the resulting annotation forward.
+4. The production DTO/output path exposes the statin annotation cleanly.
+5. Clinician-facing output changes appropriately when statin context is present.
+6. All relevant consumer-visible launch-core fields change appropriately when statin context is present.
+7. A statin-on vs statin-off comparison produces at least one user-visible difference.
+8. Rankings, signal states, and domain bands remain unchanged by statin annotation alone.
+9. No sprint-only stub, hardcoded shortcut, or fake statin logic is introduced.
+10. A concise Sprint 2 completion note is produced.
 
 ## Required outputs
 
-1. Updated governed WHY assets for the approved slice
-2. Any necessary bounded analytical-core code changes required to support those assets
-3. Regression tests/checks for the approved slice
-4. A concise completion note covering:
-   - exact signals hardened
-   - exact WHY assets added/updated
-   - proof that work remained inside approved scope
-   - remaining intentional gaps
-   - anything that should feed the pre-Sprint 2 statin gate
+1. Questionnaire update for statin capture
+2. Mapper update producing valid `user_intervention_document`
+3. Orchestrator wiring for intervention annotation path
+4. DTO / contract propagation update if required
+5. Clinician + consumer surface updates
+6. Bounded tests for S-1 through S-6
+7. Sprint 2 completion note
 
 ## Guardrails
 
-- Do not expand scope because adjacent signals look interesting.
-- Do not silently author WHY outside the approved slice.
-- Do not solve Sprint 2 problems inside Sprint 1.
-- Do not introduce demo-only logic.
-- Do not alter ranking/interpretation rules casually while adding WHY assets.
-- Do not use `insights[]` as an active design dependency.
+- Do not build a new statin science layer.
+- Do not change the locked governed statin registry unless a genuine hard blocker forces separately governed follow-up.
+- Do not mutate analytical truth.
+- Do not fake visible payoff.
+- Do not constrain consumer carriage to one field if more are naturally affected.
+- Do not widen into multi-medication support.
+- Do not turn this into a general questionnaire redesign.
 - Do not weaken the Layer B / Layer C boundary.
 
 ## If blocked
 
-If you discover that a required Sprint 1 completion item cannot be finished without violating scope, do not improvise a broad solution.
-
-Instead:
-- complete everything that remains valid within scope
+If a required Sprint 2 completion item cannot be achieved without violating scope:
+- complete everything else that remains valid
 - document the blocker precisely
-- identify whether it should be handled by:
-  - a small Sprint 1 addendum
-  - the pre-Sprint 2 statin gate
+- identify whether it needs:
+  - a small Sprint 2 addendum
+  - a new governed follow-up
   - or a later sprint
+
+Do not improvise a broad workaround.
 
 ## Deliverable format back to leadership
 
-When complete, report back in this structure:
+When complete, report in this structure:
 
 ### 1. Summary
-- what was hardened
-- whether Sprint 1 acceptance criteria were met
+- what was implemented
+- whether Sprint 2 acceptance criteria were met
 
-### 2. Exact signal list in scope
-- approved named signals actually worked on
-- include canonical ID confirmation where naming differed from the gate pack wording
+### 2. Questionnaire capture
+- exact change made
 
-### 3. WHY assets added or updated
-- signal by signal
+### 3. Mapper / document path
+- how statin-on responses now map to `user_intervention_document`
 
-### 4. Regression protection added
-- exact tests/checks
+### 4. Pipeline wiring
+- how the annotation now travels through the live path
 
-### 5. Remaining intentional gaps
-- only those outside Sprint 1 scope
+### 5. Surface changes
+- clinician-facing changes
+- consumer-facing changes
 
-### 6. Risks / follow-ons
-- especially anything relevant to the pre-Sprint 2 statin gate
-- include any registration/SSOT/KB-path issue affecting ApoA1-related work
+### 6. Tests added or updated
+- exact tests for S-1 through S-6
 
-### 7. Branch / working tree / SOP status
+### 7. Remaining intentional gaps
+- only those outside Sprint 2 scope
+
+### 8. Risks / follow-ons
+- especially anything that affects later medication-category expansion
+
+### 9. Branch / working tree / SOP status
 - confirm governed execution under the correct branch and active work package state
