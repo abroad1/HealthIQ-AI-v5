@@ -1,0 +1,13 @@
+{
+  "height_cm": 180,
+  "weight_kg": 105,
+  "waist_circumference_cm": 110,
+  "systolic_bp": 158,
+  "diastolic_bp": 96,
+  "resting_heart_rate": 88,
+  "smoking_status": "current",
+  "alcohol_units_per_week": 35,
+  "sleep_hours": 5.0,
+  "sit_stand_test_type": "reps_30s",
+  "sit_stand_value": 7
+}

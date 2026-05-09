@@ -1,0 +1,968 @@
+{
+  "AB_full_panel_with_ranges": {
+    "panel": "AB_full_panel_with_ranges",
+    "baseline_profile": "P0_no_lifestyle",
+    "baseline_overall_score": 0.8120755772727273,
+    "baseline_primary_driver": "cardiovascular_4_biomarkers",
+    "baseline_top_finding_signal": [
+      {
+        "rank": 1,
+        "signal_id": "signal_homocysteine_elevation_context",
+        "signal_state": "at_risk",
+        "system": "vascular",
+        "primary_metric": "homocysteine",
+        "confidence": 0.95,
+        "supporting_markers": [
+          "vitamin_b12",
+          "folate",
+          "transferrin",
+          "mcv",
+          "crp"
+        ],
+        "why_it_matters": "Homocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread."
+      },
+      {
+        "rank": 2,
+        "signal_id": "signal_homocysteine_high",
+        "signal_state": "suboptimal",
+        "system": "vascular",
+        "primary_metric": "homocysteine",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "vitamin_b12",
+          "folate",
+          "creatinine"
+        ],
+        "why_it_matters": "Homocysteine High is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread."
+      },
+      {
+        "rank": 3,
+        "signal_id": "signal_mcv_high",
+        "signal_state": "suboptimal",
+        "system": "hematologic",
+        "primary_metric": "mcv",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "vitamin_b12",
+          "folate",
+          "ggt"
+        ],
+        "why_it_matters": "Mcv High is outside the optimal range on this panel. Your measured mcv is the main lab anchor for this thread."
+      },
+      {
+        "rank": 4,
+        "signal_id": "signal_total_cholesterol_high",
+        "signal_state": "suboptimal",
+        "system": "lipid_transport",
+        "primary_metric": "total_cholesterol",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "tc_hdl_ratio",
+          "ldl_cholesterol"
+        ],
+        "why_it_matters": "Total Cholesterol High is outside the optimal range on this panel. Your measured total cholesterol is the main lab anchor for this thread."
+      },
+      {
+        "rank": 5,
+        "signal_id": "signal_apoa1_cardio_risk",
+        "signal_state": "suboptimal",
+        "system": "lipid_transport",
+        "primary_metric": "apoa1",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "apob_apoa1_ratio"
+        ],
+        "why_it_matters": "Apoa1 Cardio Risk is outside the optimal range on this panel. Your measured apoa1 is the main lab anchor for this thread."
+      },
+      {
+        "rank": 6,
+        "signal_id": "signal_ldl_cholesterol_high",
+        "signal_state": "suboptimal",
+        "system": "lipid_transport",
+        "primary_metric": "ldl_cholesterol",
+        "confidence": 0.85,
+        "supporting_markers": [
+          "non_hdl_cholesterol",
+          "apob",
+          "hdl_cholesterol",
+          "triglycerides",
+          "lipoprotein_a"
+        ],
+        "why_it_matters": "Ldl Cholesterol High is outside the optimal range on this panel. Your measured ldl cholesterol is the main lab anchor for this thread."
+      },
+      {
+        "rank": 7,
+        "signal_id": "signal_ldl_high",
+        "signal_state": "suboptimal",
+        "system": "lipid_transport",
+        "primary_metric": "ldl_cholesterol",
+        "confidence": 0.85,
+        "supporting_markers": [
+          "apob",
+          "tsh",
+          "triglycerides"
+        ],
+        "why_it_matters": "Ldl High is outside the optimal range on this panel. Your measured ldl cholesterol is the main lab anchor for this thread."
+      },
+      {
+        "rank": 8,
+        "signal_id": "signal_transferrin_low",
+        "signal_state": "suboptimal",
+        "system": "hepatic",
+        "primary_metric": "transferrin",
+        "confidence": 0.75,
+        "supporting_markers": [
+          "albumin",
+          "total_cholesterol",
+          "urine_protein_creatinine_ratio",
+          "crp"
+        ],
+        "why_it_matters": "Transferrin Low is outside the optimal range on this panel. Your measured transferrin is the main lab anchor for this thread."
+      },
+      {
+        "rank": 9,
+        "signal_id": "signal_systemic_inflammation",
+        "signal_state": "suboptimal",
+        "system": "inflammatory",
+        "primary_metric": "crp",
+        "confidence": 0.3,
+        "supporting_markers": [
+          "nlr",
+          "sii"
+        ],
+        "why_it_matters": "Systemic Inflammation is outside the optimal range on this panel. Your measured crp is the main lab anchor for this thread."
+      },
+      {
+        "rank": 10,
+        "signal_id": "signal_oxygen_transport_capacity",
+        "signal_state": "optimal",
+        "system": "hematologic",
+        "primary_metric": "hemoglobin",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "hematocrit",
+          "ferritin",
+          "iron"
+        ],
+        "why_it_matters": "Oxygen Transport Capacity looks favourable on this panel. Your measured hemoglobin is the main lab anchor for this thread."
+      },
+      {
+        "rank": 11,
+        "signal_id": "signal_lipid_transport_dysfunction",
+        "signal_state": "optimal",
+        "system": "lipid_transport",
+        "primary_metric": "non_hdl_cholesterol",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "tg_hdl_ratio",
+          "remnant_cholesterol",
+          "triglycerides"
+        ],
+        "why_it_matters": "Lipid Transport Dysfunction looks favourable on this panel. Your measured non hdl cholesterol is the main lab anchor for this thread."
+      },
+      {
+        "rank": 12,
+        "signal_id": "signal_vascular_inflammatory_stress",
+        "signal_state": "optimal",
+        "system": "vascular",
+        "primary_metric": "crp",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "non_hdl_cholesterol"
+        ],
+        "why_it_matters": "Vascular Inflammatory Stress looks favourable on this panel. Your measured crp is the main lab anchor for this thread."
+      },
+      {
+        "rank": 13,
+        "signal_id": "signal_renal_metabolic_stress",
+        "signal_state": "optimal",
+        "system": "renal",
+        "primary_metric": "urea_creatinine_ratio",
+        "confidence": 0.6,
+        "supporting_markers": [
+          "creatinine",
+          "uric_acid"
+        ],
+        "why_it_matters": "Renal Metabolic Stress looks favourable on this panel. Your measured urea creatinine ratio is the main lab anchor for this thread."
+      }
+    ],
+    "comparisons": [
+      {
+        "profile": "P1_healthy",
+        "overall_score": 0.8120755772727273,
+        "overall_score_delta": 0.0,
+        "primary_driver_system_id": "cardiovascular_4_biomarkers",
+        "primary_driver_changed": false,
+        "lead_signal": "signal_homocysteine_elevation_context",
+        "lead_signal_changed": false,
+        "lifestyle_present": true,
+        "lifestyle_nonzero_modifiers": {},
+        "lifestyle_input_errors": null,
+        "lifestyle_invalid": null,
+        "narrative_runtime_mode": "deterministic_mock",
+        "consumer_domain_scores_changed": true,
+        "narrative_lead_head_baseline": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nf",
+        "narrative_lead_head_other": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nf",
+        "narrative_lead_changed": false,
+        "retail_summary_changed": false,
+        "actions_count_baseline": 0,
+        "actions_count_other": 0,
+        "idl_enabled_count_baseline": 4,
+        "idl_enabled_count_other": 4,
+        "system_confidence_baseline": {
+          "cardiovascular": 100,
+          "cbc": 100,
+          "hormonal": 100,
+          "inflammatory": 100,
+          "kidney": 100,
+          "liver": 75,
+          "metabolic": 72,
+          "nutritional": 100
+        },
+        "system_confidence_other": {
+          "cardiovascular": 100,
+          "cbc": 100,
+          "hormonal": 100,
+          "inflammatory": 100,
+          "kidney": 100,
+          "liver": 75,
+          "metabolic": 72,
+          "nutritional": 100
+        }
+      },
+      {
+        "profile": "P2_minimal_existing_fixture",
+        "overall_score": 0.8120755772727273,
+        "overall_score_delta": 0.0,
+        "primary_driver_system_id": "cardiovascular_4_biomarkers",
+        "primary_driver_changed": false,
+        "lead_signal": "signal_homocysteine_elevation_context",
+        "lead_signal_changed": false,
+        "lifestyle_present": true,
+        "lifestyle_nonzero_modifiers": {
+          "cardiovascular": 0.13,
+          "metabolic": 0.08
+        },
+        "lifestyle_input_errors": null,
+        "lifestyle_invalid": null,
+        "narrative_runtime_mode": "deterministic_mock",
+        "consumer_domain_scores_changed": true,
+        "narrative_lead_head_baseline": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nf",
+        "narrative_lead_head_other": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nf",
+        "narrative_lead_changed": false,
+        "retail_summary_changed": false,
+        "actions_count_baseline": 0,
+        "actions_count_other": 0,
+        "idl_enabled_count_baseline": 4,
+        "idl_enabled_count_other": 4,
+        "system_confidence_baseline": {
+          "cardiovascular": 100,
+          "cbc": 100,
+          "hormonal": 100,
+          "inflammatory": 100,
+          "kidney": 100,
+          "liver": 75,
+          "metabolic": 72,
+          "nutritional": 100
+        },
+        "system_confidence_other": {
+          "cardiovascular": 100,
+          "cbc": 100,
+          "hormonal": 100,
+          "inflammatory": 100,
+          "kidney": 100,
+          "liver": 75,
+          "metabolic": 72,
+          "nutritional": 100
+        }
+      },
+      {
+        "profile": "P3_stressed",
+        "overall_score": 0.8120755772727273,
+        "overall_score_delta": 0.0,
+        "primary_driver_system_id": "cardiovascular_4_biomarkers",
+        "primary_driver_changed": false,
+        "lead_signal": "signal_homocysteine_elevation_context",
+        "lead_signal_changed": false,
+        "lifestyle_present": true,
+        "lifestyle_nonzero_modifiers": {
+          "cardiovascular": 0.2,
+          "hepatic": 0.1,
+          "immune": 0.06,
+          "metabolic": 0.2,
+          "musculoskeletal": 0.05
+        },
+        "lifestyle_input_errors": null,
+        "lifestyle_invalid": null,
+        "narrative_runtime_mode": "deterministic_mock",
+        "consumer_domain_scores_changed": true,
+        "narrative_lead_head_baseline": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nf",
+        "narrative_lead_head_other": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nf",
+        "narrative_lead_changed": false,
+        "retail_summary_changed": false,
+        "actions_count_baseline": 0,
+        "actions_count_other": 0,
+        "idl_enabled_count_baseline": 4,
+        "idl_enabled_count_other": 4,
+        "system_confidence_baseline": {
+          "cardiovascular": 100,
+          "cbc": 100,
+          "hormonal": 100,
+          "inflammatory": 100,
+          "kidney": 100,
+          "liver": 75,
+          "metabolic": 72,
+          "nutritional": 100
+        },
+        "system_confidence_other": {
+          "cardiovascular": 100,
+          "cbc": 100,
+          "hormonal": 100,
+          "inflammatory": 100,
+          "kidney": 100,
+          "liver": 75,
+          "metabolic": 72,
+          "nutritional": 100
+        }
+      }
+    ]
+  },
+  "VR_full_panel_with_ranges": {
+    "panel": "VR_full_panel_with_ranges",
+    "baseline_profile": "P0_no_lifestyle",
+    "baseline_overall_score": 0.9401323272727272,
+    "baseline_primary_driver": "cardiovascular_4_biomarkers",
+    "baseline_top_finding_signal": [
+      {
+        "rank": 1,
+        "signal_id": "signal_homocysteine_elevation_context",
+        "signal_state": "suboptimal",
+        "system": "vascular",
+        "primary_metric": "homocysteine",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "vitamin_b12",
+          "folate",
+          "transferrin",
+          "mcv",
+          "crp"
+        ],
+        "why_it_matters": "Homocysteine Elevation Context is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread."
+      },
+      {
+        "rank": 2,
+        "signal_id": "signal_homocysteine_high",
+        "signal_state": "suboptimal",
+        "system": "vascular",
+        "primary_metric": "homocysteine",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "vitamin_b12",
+          "folate",
+          "creatinine"
+        ],
+        "why_it_matters": "Homocysteine High is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread."
+      },
+      {
+        "rank": 3,
+        "signal_id": "signal_alp_low",
+        "signal_state": "suboptimal",
+        "system": "nutritional",
+        "primary_metric": "alp",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "zinc",
+          "magnesium"
+        ],
+        "why_it_matters": "Alp Low is outside the optimal range on this panel. Your measured alp is the main lab anchor for this thread."
+      },
+      {
+        "rank": 4,
+        "signal_id": "signal_hypercortisolism",
+        "signal_state": "suboptimal",
+        "system": "hormonal",
+        "primary_metric": "cortisol",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "potassium",
+          "hba1c"
+        ],
+        "why_it_matters": "Hypercortisolism is outside the optimal range on this panel. Your measured cortisol is the main lab anchor for this thread."
+      },
+      {
+        "rank": 5,
+        "signal_id": "signal_vitamin_d_low",
+        "signal_state": "suboptimal",
+        "system": "nutritional",
+        "primary_metric": "vitamin_d",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "calcium",
+          "alp"
+        ],
+        "why_it_matters": "Vitamin D Low is outside the optimal range on this panel. Your measured vitamin d is the main lab anchor for this thread."
+      },
+      {
+        "rank": 6,
+        "signal_id": "signal_cortisol_high",
+        "signal_state": "suboptimal",
+        "system": "hormonal",
+        "primary_metric": "cortisol",
+        "confidence": 0.7,
+        "supporting_markers": [
+          "acth",
+          "hba1c",
+          "neutrophils_abs"
+        ],
+        "why_it_matters": "Cortisol High is outside the optimal range on this panel. Your measured cortisol is the main lab anchor for this thread."
+      },
+      {
+        "rank": 7,
+        "signal_id": "signal_creatine_kinase_high",
+        "signal_state": "suboptimal",
+        "system": "mitochondrial",
+        "primary_metric": "creatine_kinase",
+        "confidence": 0.6,
+        "supporting_markers": [
+          "aldolase",
+          "tsh"
+        ],
+        "why_it_matters": "Creatine Kinase High is outside the optimal range on this panel. Your measured creatine kinase is the main lab anchor for this thread."
+      },
+      {
+        "rank": 8,
+        "signal_id": "signal_systemic_inflammation",
+        "signal_state": "suboptimal",
+        "system": "inflammatory",
+        "primary_metric": "crp",
+        "confidence": 0.3,
+        "supporting_markers": [
+          "nlr",
+          "sii"
+        ],
+        "why_it_matters": "Systemic Inflammation is outside the optimal range on this panel. Your measured crp is the main lab anchor for this thread."
+      },
+      {
+        "rank": 9,
+        "signal_id": "signal_oxygen_transport_capacity",
+        "signal_state": "optimal",
+        "system": "hematologic",
+        "primary_metric": "hemoglobin",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "hematocrit",
+          "ferritin",
+          "iron"
+        ],
+        "why_it_matters": "Oxygen Transport Capacity looks favourable on this panel. Your measured hemoglobin is the main lab anchor for this thread."
+      },
+      {
+        "rank": 10,
+        "signal_id": "signal_lipid_transport_dysfunction",
+        "signal_state": "optimal",
+        "system": "lipid_transport",
+        "primary_metric": "non_hdl_cholesterol",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "tg_hdl_ratio",
+          "remnant_cholesterol",
+          "triglycerides"
+        ],
+        "why_it_matters": "Lipid Transport Dysfunction looks favourable on this panel. Your measured non hdl cholesterol is the main lab anchor for this thread."
+      },
+      {
+        "rank": 11,
+        "signal_id": "signal_vascular_inflammatory_stress",
+        "signal_state": "optimal",
+        "system": "vascular",
+        "primary_metric": "crp",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "non_hdl_cholesterol"
+        ],
+        "why_it_matters": "Vascular Inflammatory Stress looks favourable on this panel. Your measured crp is the main lab anchor for this thread."
+      },
+      {
+        "rank": 12,
+        "signal_id": "signal_renal_metabolic_stress",
+        "signal_state": "optimal",
+        "system": "renal",
+        "primary_metric": "urea_creatinine_ratio",
+        "confidence": 0.6,
+        "supporting_markers": [
+          "creatinine",
+          "uric_acid"
+        ],
+        "why_it_matters": "Renal Metabolic Stress looks favourable on this panel. Your measured urea creatinine ratio is the main lab anchor for this thread."
+      }
+    ],
+    "comparisons": [
+      {
+        "profile": "P1_healthy",
+        "overall_score": 0.9401323272727272,
+        "overall_score_delta": 0.0,
+        "primary_driver_system_id": "cardiovascular_4_biomarkers",
+        "primary_driver_changed": false,
+        "lead_signal": "signal_homocysteine_elevation_context",
+        "lead_signal_changed": false,
+        "lifestyle_present": true,
+        "lifestyle_nonzero_modifiers": {},
+        "lifestyle_input_errors": null,
+        "lifestyle_invalid": null,
+        "narrative_runtime_mode": "deterministic_mock",
+        "consumer_domain_scores_changed": true,
+        "narrative_lead_head_baseline": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nf",
+        "narrative_lead_head_other": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nf",
+        "narrative_lead_changed": false,
+        "retail_summary_changed": false,
+        "actions_count_baseline": 0,
+        "actions_count_other": 0,
+        "idl_enabled_count_baseline": 2,
+        "idl_enabled_count_other": 2,
+        "system_confidence_baseline": {
+          "cardiovascular": 100,
+          "cbc": 100,
+          "hormonal": 100,
+          "inflammatory": 100,
+          "kidney": 100,
+          "liver": 75,
+          "metabolic": 72,
+          "nutritional": 100
+        },
+        "system_confidence_other": {
+          "cardiovascular": 100,
+          "cbc": 100,
+          "hormonal": 100,
+          "inflammatory": 100,
+          "kidney": 100,
+          "liver": 75,
+          "metabolic": 72,
+          "nutritional": 100
+        }
+      },
+      {
+        "profile": "P2_minimal_existing_fixture",
+        "overall_score": 0.9401323272727272,
+        "overall_score_delta": 0.0,
+        "primary_driver_system_id": "cardiovascular_4_biomarkers",
+        "primary_driver_changed": false,
+        "lead_signal": "signal_homocysteine_elevation_context",
+        "lead_signal_changed": false,
+        "lifestyle_present": true,
+        "lifestyle_nonzero_modifiers": {
+          "cardiovascular": 0.13,
+          "metabolic": 0.08
+        },
+        "lifestyle_input_errors": null,
+        "lifestyle_invalid": null,
+        "narrative_runtime_mode": "deterministic_mock",
+        "consumer_domain_scores_changed": true,
+        "narrative_lead_head_baseline": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nf",
+        "narrative_lead_head_other": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nf",
+        "narrative_lead_changed": false,
+        "retail_summary_changed": false,
+        "actions_count_baseline": 0,
+        "actions_count_other": 0,
+        "idl_enabled_count_baseline": 2,
+        "idl_enabled_count_other": 2,
+        "system_confidence_baseline": {
+          "cardiovascular": 100,
+          "cbc": 100,
+          "hormonal": 100,
+          "inflammatory": 100,
+          "kidney": 100,
+          "liver": 75,
+          "metabolic": 72,
+          "nutritional": 100
+        },
+        "system_confidence_other": {
+          "cardiovascular": 100,
+          "cbc": 100,
+          "hormonal": 100,
+          "inflammatory": 100,
+          "kidney": 100,
+          "liver": 75,
+          "metabolic": 72,
+          "nutritional": 100
+        }
+      },
+      {
+        "profile": "P3_stressed",
+        "overall_score": 0.9401323272727272,
+        "overall_score_delta": 0.0,
+        "primary_driver_system_id": "cardiovascular_4_biomarkers",
+        "primary_driver_changed": false,
+        "lead_signal": "signal_homocysteine_elevation_context",
+        "lead_signal_changed": false,
+        "lifestyle_present": true,
+        "lifestyle_nonzero_modifiers": {
+          "cardiovascular": 0.2,
+          "hepatic": 0.1,
+          "immune": 0.06,
+          "metabolic": 0.2,
+          "musculoskeletal": 0.05
+        },
+        "lifestyle_input_errors": null,
+        "lifestyle_invalid": null,
+        "narrative_runtime_mode": "deterministic_mock",
+        "consumer_domain_scores_changed": true,
+        "narrative_lead_head_baseline": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nf",
+        "narrative_lead_head_other": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nf",
+        "narrative_lead_changed": false,
+        "retail_summary_changed": false,
+        "actions_count_baseline": 0,
+        "actions_count_other": 0,
+        "idl_enabled_count_baseline": 2,
+        "idl_enabled_count_other": 2,
+        "system_confidence_baseline": {
+          "cardiovascular": 100,
+          "cbc": 100,
+          "hormonal": 100,
+          "inflammatory": 100,
+          "kidney": 100,
+          "liver": 75,
+          "metabolic": 72,
+          "nutritional": 100
+        },
+        "system_confidence_other": {
+          "cardiovascular": 100,
+          "cbc": 100,
+          "hormonal": 100,
+          "inflammatory": 100,
+          "kidney": 100,
+          "liver": 75,
+          "metabolic": 72,
+          "nutritional": 100
+        }
+      }
+    ]
+  },
+  "AB_full_panel_with_profiles": {
+    "panel": "AB_full_panel_with_profiles",
+    "baseline_profile": "P0_no_lifestyle",
+    "baseline_overall_score": 0.8120755772727273,
+    "baseline_primary_driver": "cardiovascular_4_biomarkers",
+    "baseline_top_finding_signal": [
+      {
+        "rank": 1,
+        "signal_id": "signal_homocysteine_elevation_context",
+        "signal_state": "at_risk",
+        "system": "vascular",
+        "primary_metric": "homocysteine",
+        "confidence": 0.95,
+        "supporting_markers": [
+          "vitamin_b12",
+          "folate",
+          "transferrin",
+          "mcv",
+          "crp"
+        ],
+        "why_it_matters": "Homocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread."
+      },
+      {
+        "rank": 2,
+        "signal_id": "signal_homocysteine_high",
+        "signal_state": "suboptimal",
+        "system": "vascular",
+        "primary_metric": "homocysteine",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "vitamin_b12",
+          "folate",
+          "creatinine"
+        ],
+        "why_it_matters": "Homocysteine High is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread."
+      },
+      {
+        "rank": 3,
+        "signal_id": "signal_mcv_high",
+        "signal_state": "suboptimal",
+        "system": "hematologic",
+        "primary_metric": "mcv",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "vitamin_b12",
+          "folate",
+          "ggt"
+        ],
+        "why_it_matters": "Mcv High is outside the optimal range on this panel. Your measured mcv is the main lab anchor for this thread."
+      },
+      {
+        "rank": 4,
+        "signal_id": "signal_total_cholesterol_high",
+        "signal_state": "suboptimal",
+        "system": "lipid_transport",
+        "primary_metric": "total_cholesterol",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "tc_hdl_ratio",
+          "ldl_cholesterol"
+        ],
+        "why_it_matters": "Total Cholesterol High is outside the optimal range on this panel. Your measured total cholesterol is the main lab anchor for this thread."
+      },
+      {
+        "rank": 5,
+        "signal_id": "signal_apoa1_cardio_risk",
+        "signal_state": "suboptimal",
+        "system": "lipid_transport",
+        "primary_metric": "apoa1",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "apob_apoa1_ratio"
+        ],
+        "why_it_matters": "Apoa1 Cardio Risk is outside the optimal range on this panel. Your measured apoa1 is the main lab anchor for this thread."
+      },
+      {
+        "rank": 6,
+        "signal_id": "signal_ldl_cholesterol_high",
+        "signal_state": "suboptimal",
+        "system": "lipid_transport",
+        "primary_metric": "ldl_cholesterol",
+        "confidence": 0.85,
+        "supporting_markers": [
+          "non_hdl_cholesterol",
+          "apob",
+          "hdl_cholesterol",
+          "triglycerides",
+          "lipoprotein_a"
+        ],
+        "why_it_matters": "Ldl Cholesterol High is outside the optimal range on this panel. Your measured ldl cholesterol is the main lab anchor for this thread."
+      },
+      {
+        "rank": 7,
+        "signal_id": "signal_ldl_high",
+        "signal_state": "suboptimal",
+        "system": "lipid_transport",
+        "primary_metric": "ldl_cholesterol",
+        "confidence": 0.85,
+        "supporting_markers": [
+          "apob",
+          "tsh",
+          "triglycerides"
+        ],
+        "why_it_matters": "Ldl High is outside the optimal range on this panel. Your measured ldl cholesterol is the main lab anchor for this thread."
+      },
+      {
+        "rank": 8,
+        "signal_id": "signal_transferrin_low",
+        "signal_state": "suboptimal",
+        "system": "hepatic",
+        "primary_metric": "transferrin",
+        "confidence": 0.75,
+        "supporting_markers": [
+          "albumin",
+          "total_cholesterol",
+          "urine_protein_creatinine_ratio",
+          "crp"
+        ],
+        "why_it_matters": "Transferrin Low is outside the optimal range on this panel. Your measured transferrin is the main lab anchor for this thread."
+      },
+      {
+        "rank": 9,
+        "signal_id": "signal_systemic_inflammation",
+        "signal_state": "suboptimal",
+        "system": "inflammatory",
+        "primary_metric": "crp",
+        "confidence": 0.3,
+        "supporting_markers": [
+          "nlr",
+          "sii"
+        ],
+        "why_it_matters": "Systemic Inflammation is outside the optimal range on this panel. Your measured crp is the main lab anchor for this thread."
+      },
+      {
+        "rank": 10,
+        "signal_id": "signal_oxygen_transport_capacity",
+        "signal_state": "optimal",
+        "system": "hematologic",
+        "primary_metric": "hemoglobin",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "hematocrit",
+          "ferritin",
+          "iron"
+        ],
+        "why_it_matters": "Oxygen Transport Capacity looks favourable on this panel. Your measured hemoglobin is the main lab anchor for this thread."
+      },
+      {
+        "rank": 11,
+        "signal_id": "signal_lipid_transport_dysfunction",
+        "signal_state": "optimal",
+        "system": "lipid_transport",
+        "primary_metric": "non_hdl_cholesterol",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "tg_hdl_ratio",
+          "remnant_cholesterol",
+          "triglycerides"
+        ],
+        "why_it_matters": "Lipid Transport Dysfunction looks favourable on this panel. Your measured non hdl cholesterol is the main lab anchor for this thread."
+      },
+      {
+        "rank": 12,
+        "signal_id": "signal_vascular_inflammatory_stress",
+        "signal_state": "optimal",
+        "system": "vascular",
+        "primary_metric": "crp",
+        "confidence": 0.9,
+        "supporting_markers": [
+          "non_hdl_cholesterol"
+        ],
+        "why_it_matters": "Vascular Inflammatory Stress looks favourable on this panel. Your measured crp is the main lab anchor for this thread."
+      },
+      {
+        "rank": 13,
+        "signal_id": "signal_renal_metabolic_stress",
+        "signal_state": "optimal",
+        "system": "renal",
+        "primary_metric": "urea_creatinine_ratio",
+        "confidence": 0.6,
+        "supporting_markers": [
+          "creatinine",
+          "uric_acid"
+        ],
+        "why_it_matters": "Renal Metabolic Stress looks favourable on this panel. Your measured urea creatinine ratio is the main lab anchor for this thread."
+      }
+    ],
+    "comparisons": [
+      {
+        "profile": "P1_healthy",
+        "overall_score": 0.8120755772727273,
+        "overall_score_delta": 0.0,
+        "primary_driver_system_id": "cardiovascular_4_biomarkers",
+        "primary_driver_changed": false,
+        "lead_signal": "signal_homocysteine_elevation_context",
+        "lead_signal_changed": false,
+        "lifestyle_present": true,
+        "lifestyle_nonzero_modifiers": {},
+        "lifestyle_input_errors": null,
+        "lifestyle_invalid": null,
+        "narrative_runtime_mode": "deterministic_mock",
+        "consumer_domain_scores_changed": true,
+        "narrative_lead_head_baseline": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nf",
+        "narrative_lead_head_other": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nf",
+        "narrative_lead_changed": false,
+        "retail_summary_changed": false,
+        "actions_count_baseline": 0,
+        "actions_count_other": 0,
+        "idl_enabled_count_baseline": 4,
+        "idl_enabled_count_other": 4,
+        "system_confidence_baseline": {
+          "cardiovascular": 100,
+          "cbc": 100,
+          "hormonal": 100,
+          "inflammatory": 100,
+          "kidney": 100,
+          "liver": 75,
+          "metabolic": 72,
+          "nutritional": 100
+        },
+        "system_confidence_other": {
+          "cardiovascular": 100,
+          "cbc": 100,
+          "hormonal": 100,
+          "inflammatory": 100,
+          "kidney": 100,
+          "liver": 75,
+          "metabolic": 72,
+          "nutritional": 100
+        }
+      },
+      {
+        "profile": "P2_minimal_existing_fixture",
+        "overall_score": 0.8120755772727273,
+        "overall_score_delta": 0.0,
+        "primary_driver_system_id": "cardiovascular_4_biomarkers",
+        "primary_driver_changed": false,
+        "lead_signal": "signal_homocysteine_elevation_context",
+        "lead_signal_changed": false,
+        "lifestyle_present": true,
+        "lifestyle_nonzero_modifiers": {
+          "cardiovascular": 0.13,
+          "metabolic": 0.08
+        },
+        "lifestyle_input_errors": null,
+        "lifestyle_invalid": null,
+        "narrative_runtime_mode": "deterministic_mock",
+        "consumer_domain_scores_changed": true,
+        "narrative_lead_head_baseline": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nf",
+        "narrative_lead_head_other": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nf",
+        "narrative_lead_changed": false,
+        "retail_summary_changed": false,
+        "actions_count_baseline": 0,
+        "actions_count_other": 0,
+        "idl_enabled_count_baseline": 4,
+        "idl_enabled_count_other": 4,
+        "system_confidence_baseline": {
+          "cardiovascular": 100,
+          "cbc": 100,
+          "hormonal": 100,
+          "inflammatory": 100,
+          "kidney": 100,
+          "liver": 75,
+          "metabolic": 72,
+          "nutritional": 100
+        },
+        "system_confidence_other": {
+          "cardiovascular": 100,
+          "cbc": 100,
+          "hormonal": 100,
+          "inflammatory": 100,
+          "kidney": 100,
+          "liver": 75,
+          "metabolic": 72,
+          "nutritional": 100
+        }
+      },
+      {
+        "profile": "P3_stressed",
+        "overall_score": 0.8120755772727273,
+        "overall_score_delta": 0.0,
+        "primary_driver_system_id": "cardiovascular_4_biomarkers",
+        "primary_driver_changed": false,
+        "lead_signal": "signal_homocysteine_elevation_context",
+        "lead_signal_changed": false,
+        "lifestyle_present": true,
+        "lifestyle_nonzero_modifiers": {
+          "cardiovascular": 0.2,
+          "hepatic": 0.1,
+          "immune": 0.06,
+          "metabolic": 0.2,
+          "musculoskeletal": 0.05
+        },
+        "lifestyle_input_errors": null,
+        "lifestyle_invalid": null,
+        "narrative_runtime_mode": "deterministic_mock",
+        "consumer_domain_scores_changed": true,
+        "narrative_lead_head_baseline": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nf",
+        "narrative_lead_head_other": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nf",
+        "narrative_lead_changed": false,
+        "retail_summary_changed": false,
+        "actions_count_baseline": 0,
+        "actions_count_other": 0,
+        "idl_enabled_count_baseline": 4,
+        "idl_enabled_count_other": 4,
+        "system_confidence_baseline": {
+          "cardiovascular": 100,
+          "cbc": 100,
+          "hormonal": 100,
+          "inflammatory": 100,
+          "kidney": 100,
+          "liver": 75,
+          "metabolic": 72,
+          "nutritional": 100
+        },
+        "system_confidence_other": {
+          "cardiovascular": 100,
+          "cbc": 100,
+          "hormonal": 100,
+          "inflammatory": 100,
+          "kidney": 100,
+          "liver": 75,
+          "metabolic": 72,
+          "nutritional": 100
+        }
+      }
+    ]
+  }
+}

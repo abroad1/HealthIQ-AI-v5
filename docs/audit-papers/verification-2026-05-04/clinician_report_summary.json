@@ -1,0 +1,406 @@
+[
+  {
+    "run": "AB_full_panel_with_profiles__P0_no_lifestyle",
+    "primary_concern": "Homocysteine Elevation Context: warrants attention on this panel",
+    "primary_concern_mode": "distinct_lead",
+    "co_primary_signal_ids": [],
+    "key_findings": [
+      "Homocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+      "Primary metric: homocysteine.",
+      "Top chain confidence: 0.93."
+    ],
+    "chains": [
+      "Linked pattern (chain_001): Homocysteine High \u2192 Homocysteine Elevation Context.",
+      "Linked pattern (chain_002): Systemic Inflammation \u2192 Homocysteine Elevation Context."
+    ],
+    "top_hypothesis_line": "Top hypothesis: B12-associated pattern (confidence 0.60).",
+    "confidence_and_missing_data": "Overall confidence for this lead pattern: 0.95. Some expected confirmatory markers are not on this panel, which limits how specific the story can be.",
+    "runner_up_signal_id": "",
+    "runner_up_topic_line": "",
+    "runner_up_why_not_lead_line": "",
+    "ranking_policy_version": "PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1",
+    "root_cause_section": {
+      "signal_id": "signal_homocysteine_elevation_context",
+      "signal_state": "at_risk",
+      "signal_confidence": 0.95,
+      "hypothesis_count": 4
+    },
+    "section_keys": [
+      "confirmatory_tests",
+      "page1",
+      "root_cause"
+    ]
+  },
+  {
+    "run": "AB_full_panel_with_profiles__P1_healthy",
+    "primary_concern": "Homocysteine Elevation Context: warrants attention on this panel",
+    "primary_concern_mode": "distinct_lead",
+    "co_primary_signal_ids": [],
+    "key_findings": [
+      "Homocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+      "Primary metric: homocysteine.",
+      "Top chain confidence: 0.93."
+    ],
+    "chains": [
+      "Linked pattern (chain_001): Homocysteine High \u2192 Homocysteine Elevation Context.",
+      "Linked pattern (chain_002): Systemic Inflammation \u2192 Homocysteine Elevation Context."
+    ],
+    "top_hypothesis_line": "Top hypothesis: B12-associated pattern (confidence 0.60).",
+    "confidence_and_missing_data": "Overall confidence for this lead pattern: 0.95. Some expected confirmatory markers are not on this panel, which limits how specific the story can be.",
+    "runner_up_signal_id": "",
+    "runner_up_topic_line": "",
+    "runner_up_why_not_lead_line": "",
+    "ranking_policy_version": "PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1",
+    "root_cause_section": {
+      "signal_id": "signal_homocysteine_elevation_context",
+      "signal_state": "at_risk",
+      "signal_confidence": 0.95,
+      "hypothesis_count": 4
+    },
+    "section_keys": [
+      "confirmatory_tests",
+      "page1",
+      "root_cause"
+    ]
+  },
+  {
+    "run": "AB_full_panel_with_profiles__P2_minimal_existing_fixture",
+    "primary_concern": "Homocysteine Elevation Context: warrants attention on this panel",
+    "primary_concern_mode": "distinct_lead",
+    "co_primary_signal_ids": [],
+    "key_findings": [
+      "Homocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+      "Primary metric: homocysteine.",
+      "Top chain confidence: 0.93."
+    ],
+    "chains": [
+      "Linked pattern (chain_001): Homocysteine High \u2192 Homocysteine Elevation Context.",
+      "Linked pattern (chain_002): Systemic Inflammation \u2192 Homocysteine Elevation Context."
+    ],
+    "top_hypothesis_line": "Top hypothesis: B12-associated pattern (confidence 0.60).",
+    "confidence_and_missing_data": "Overall confidence for this lead pattern: 0.95. Some expected confirmatory markers are not on this panel, which limits how specific the story can be.",
+    "runner_up_signal_id": "",
+    "runner_up_topic_line": "",
+    "runner_up_why_not_lead_line": "",
+    "ranking_policy_version": "PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1",
+    "root_cause_section": {
+      "signal_id": "signal_homocysteine_elevation_context",
+      "signal_state": "at_risk",
+      "signal_confidence": 0.95,
+      "hypothesis_count": 4
+    },
+    "section_keys": [
+      "confirmatory_tests",
+      "page1",
+      "root_cause"
+    ]
+  },
+  {
+    "run": "AB_full_panel_with_profiles__P3_stressed",
+    "primary_concern": "Homocysteine Elevation Context: warrants attention on this panel",
+    "primary_concern_mode": "distinct_lead",
+    "co_primary_signal_ids": [],
+    "key_findings": [
+      "Homocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+      "Primary metric: homocysteine.",
+      "Top chain confidence: 0.93."
+    ],
+    "chains": [
+      "Linked pattern (chain_001): Homocysteine High \u2192 Homocysteine Elevation Context.",
+      "Linked pattern (chain_002): Systemic Inflammation \u2192 Homocysteine Elevation Context."
+    ],
+    "top_hypothesis_line": "Top hypothesis: B12-associated pattern (confidence 0.60).",
+    "confidence_and_missing_data": "Overall confidence for this lead pattern: 0.95. Some expected confirmatory markers are not on this panel, which limits how specific the story can be.",
+    "runner_up_signal_id": "",
+    "runner_up_topic_line": "",
+    "runner_up_why_not_lead_line": "",
+    "ranking_policy_version": "PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1",
+    "root_cause_section": {
+      "signal_id": "signal_homocysteine_elevation_context",
+      "signal_state": "at_risk",
+      "signal_confidence": 0.95,
+      "hypothesis_count": 4
+    },
+    "section_keys": [
+      "confirmatory_tests",
+      "page1",
+      "root_cause"
+    ]
+  },
+  {
+    "run": "AB_full_panel_with_ranges__P0_no_lifestyle",
+    "primary_concern": "Homocysteine Elevation Context: warrants attention on this panel",
+    "primary_concern_mode": "distinct_lead",
+    "co_primary_signal_ids": [],
+    "key_findings": [
+      "Homocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+      "Primary metric: homocysteine.",
+      "Top chain confidence: 0.93."
+    ],
+    "chains": [
+      "Linked pattern (chain_001): Homocysteine High \u2192 Homocysteine Elevation Context.",
+      "Linked pattern (chain_002): Systemic Inflammation \u2192 Homocysteine Elevation Context."
+    ],
+    "top_hypothesis_line": "Top hypothesis: B12-associated pattern (confidence 0.60).",
+    "confidence_and_missing_data": "Overall confidence for this lead pattern: 0.95. Some expected confirmatory markers are not on this panel, which limits how specific the story can be.",
+    "runner_up_signal_id": "",
+    "runner_up_topic_line": "",
+    "runner_up_why_not_lead_line": "",
+    "ranking_policy_version": "PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1",
+    "root_cause_section": {
+      "signal_id": "signal_homocysteine_elevation_context",
+      "signal_state": "at_risk",
+      "signal_confidence": 0.95,
+      "hypothesis_count": 4
+    },
+    "section_keys": [
+      "confirmatory_tests",
+      "page1",
+      "root_cause"
+    ]
+  },
+  {
+    "run": "AB_full_panel_with_ranges__P1_healthy",
+    "primary_concern": "Homocysteine Elevation Context: warrants attention on this panel",
+    "primary_concern_mode": "distinct_lead",
+    "co_primary_signal_ids": [],
+    "key_findings": [
+      "Homocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+      "Primary metric: homocysteine.",
+      "Top chain confidence: 0.93."
+    ],
+    "chains": [
+      "Linked pattern (chain_001): Homocysteine High \u2192 Homocysteine Elevation Context.",
+      "Linked pattern (chain_002): Systemic Inflammation \u2192 Homocysteine Elevation Context."
+    ],
+    "top_hypothesis_line": "Top hypothesis: B12-associated pattern (confidence 0.60).",
+    "confidence_and_missing_data": "Overall confidence for this lead pattern: 0.95. Some expected confirmatory markers are not on this panel, which limits how specific the story can be.",
+    "runner_up_signal_id": "",
+    "runner_up_topic_line": "",
+    "runner_up_why_not_lead_line": "",
+    "ranking_policy_version": "PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1",
+    "root_cause_section": {
+      "signal_id": "signal_homocysteine_elevation_context",
+      "signal_state": "at_risk",
+      "signal_confidence": 0.95,
+      "hypothesis_count": 4
+    },
+    "section_keys": [
+      "confirmatory_tests",
+      "page1",
+      "root_cause"
+    ]
+  },
+  {
+    "run": "AB_full_panel_with_ranges__P2_minimal_existing_fixture",
+    "primary_concern": "Homocysteine Elevation Context: warrants attention on this panel",
+    "primary_concern_mode": "distinct_lead",
+    "co_primary_signal_ids": [],
+    "key_findings": [
+      "Homocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+      "Primary metric: homocysteine.",
+      "Top chain confidence: 0.93."
+    ],
+    "chains": [
+      "Linked pattern (chain_001): Homocysteine High \u2192 Homocysteine Elevation Context.",
+      "Linked pattern (chain_002): Systemic Inflammation \u2192 Homocysteine Elevation Context."
+    ],
+    "top_hypothesis_line": "Top hypothesis: B12-associated pattern (confidence 0.60).",
+    "confidence_and_missing_data": "Overall confidence for this lead pattern: 0.95. Some expected confirmatory markers are not on this panel, which limits how specific the story can be.",
+    "runner_up_signal_id": "",
+    "runner_up_topic_line": "",
+    "runner_up_why_not_lead_line": "",
+    "ranking_policy_version": "PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1",
+    "root_cause_section": {
+      "signal_id": "signal_homocysteine_elevation_context",
+      "signal_state": "at_risk",
+      "signal_confidence": 0.95,
+      "hypothesis_count": 4
+    },
+    "section_keys": [
+      "confirmatory_tests",
+      "page1",
+      "root_cause"
+    ]
+  },
+  {
+    "run": "AB_full_panel_with_ranges__P3_stressed",
+    "primary_concern": "Homocysteine Elevation Context: warrants attention on this panel",
+    "primary_concern_mode": "distinct_lead",
+    "co_primary_signal_ids": [],
+    "key_findings": [
+      "Homocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+      "Primary metric: homocysteine.",
+      "Top chain confidence: 0.93."
+    ],
+    "chains": [
+      "Linked pattern (chain_001): Homocysteine High \u2192 Homocysteine Elevation Context.",
+      "Linked pattern (chain_002): Systemic Inflammation \u2192 Homocysteine Elevation Context."
+    ],
+    "top_hypothesis_line": "Top hypothesis: B12-associated pattern (confidence 0.60).",
+    "confidence_and_missing_data": "Overall confidence for this lead pattern: 0.95. Some expected confirmatory markers are not on this panel, which limits how specific the story can be.",
+    "runner_up_signal_id": "",
+    "runner_up_topic_line": "",
+    "runner_up_why_not_lead_line": "",
+    "ranking_policy_version": "PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1",
+    "root_cause_section": {
+      "signal_id": "signal_homocysteine_elevation_context",
+      "signal_state": "at_risk",
+      "signal_confidence": 0.95,
+      "hypothesis_count": 4
+    },
+    "section_keys": [
+      "confirmatory_tests",
+      "page1",
+      "root_cause"
+    ]
+  },
+  {
+    "run": "VR_full_panel_with_ranges__P0_no_lifestyle",
+    "primary_concern": "Homocysteine Elevation Context: is outside the optimal range on this panel",
+    "primary_concern_mode": "near_tie_ambiguity",
+    "co_primary_signal_ids": [
+      "signal_alp_low",
+      "signal_homocysteine_elevation_context",
+      "signal_homocysteine_high"
+    ],
+    "key_findings": [
+      "Homocysteine Elevation Context is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+      "Primary metric: homocysteine.",
+      "Top chain confidence: 0.90.",
+      "Several findings have similar strength on this panel; the headline highlights one first so discussion has a clear starting point. Related patterns in the same tier: Alp Low, Homocysteine Elevation Context, Homocysteine H"
+    ],
+    "chains": [
+      "Linked pattern (chain_001): Homocysteine High \u2192 Homocysteine Elevation Context.",
+      "Linked pattern (chain_002): Systemic Inflammation \u2192 Homocysteine Elevation Context."
+    ],
+    "top_hypothesis_line": "Top hypothesis: B12-associated pattern (confidence 0.60).",
+    "confidence_and_missing_data": "Overall confidence for this lead pattern: 0.90. Some expected confirmatory markers are not on this panel, which limits how specific the story can be.",
+    "runner_up_signal_id": "signal_homocysteine_high",
+    "runner_up_topic_line": "Homocysteine High: is outside the optimal range on this panel",
+    "runner_up_why_not_lead_line": "Homocysteine Elevation Context and Homocysteine High are similarly strong on this panel (0.90 vs 0.90); the headline shows one pattern first so the discussion has a single starting point.",
+    "ranking_policy_version": "PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1",
+    "root_cause_section": {
+      "signal_id": "signal_homocysteine_elevation_context",
+      "signal_state": "suboptimal",
+      "signal_confidence": 0.9,
+      "hypothesis_count": 4
+    },
+    "section_keys": [
+      "confirmatory_tests",
+      "page1",
+      "root_cause"
+    ]
+  },
+  {
+    "run": "VR_full_panel_with_ranges__P1_healthy",
+    "primary_concern": "Homocysteine Elevation Context: is outside the optimal range on this panel",
+    "primary_concern_mode": "near_tie_ambiguity",
+    "co_primary_signal_ids": [
+      "signal_alp_low",
+      "signal_homocysteine_elevation_context",
+      "signal_homocysteine_high"
+    ],
+    "key_findings": [
+      "Homocysteine Elevation Context is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+      "Primary metric: homocysteine.",
+      "Top chain confidence: 0.90.",
+      "Several findings have similar strength on this panel; the headline highlights one first so discussion has a clear starting point. Related patterns in the same tier: Alp Low, Homocysteine Elevation Context, Homocysteine H"
+    ],
+    "chains": [
+      "Linked pattern (chain_001): Homocysteine High \u2192 Homocysteine Elevation Context.",
+      "Linked pattern (chain_002): Systemic Inflammation \u2192 Homocysteine Elevation Context."
+    ],
+    "top_hypothesis_line": "Top hypothesis: B12-associated pattern (confidence 0.60).",
+    "confidence_and_missing_data": "Overall confidence for this lead pattern: 0.90. Some expected confirmatory markers are not on this panel, which limits how specific the story can be.",
+    "runner_up_signal_id": "signal_homocysteine_high",
+    "runner_up_topic_line": "Homocysteine High: is outside the optimal range on this panel",
+    "runner_up_why_not_lead_line": "Homocysteine Elevation Context and Homocysteine High are similarly strong on this panel (0.90 vs 0.90); the headline shows one pattern first so the discussion has a single starting point.",
+    "ranking_policy_version": "PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1",
+    "root_cause_section": {
+      "signal_id": "signal_homocysteine_elevation_context",
+      "signal_state": "suboptimal",
+      "signal_confidence": 0.9,
+      "hypothesis_count": 4
+    },
+    "section_keys": [
+      "confirmatory_tests",
+      "page1",
+      "root_cause"
+    ]
+  },
+  {
+    "run": "VR_full_panel_with_ranges__P2_minimal_existing_fixture",
+    "primary_concern": "Homocysteine Elevation Context: is outside the optimal range on this panel",
+    "primary_concern_mode": "near_tie_ambiguity",
+    "co_primary_signal_ids": [
+      "signal_alp_low",
+      "signal_homocysteine_elevation_context",
+      "signal_homocysteine_high"
+    ],
+    "key_findings": [
+      "Homocysteine Elevation Context is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+      "Primary metric: homocysteine.",
+      "Top chain confidence: 0.90.",
+      "Several findings have similar strength on this panel; the headline highlights one first so discussion has a clear starting point. Related patterns in the same tier: Alp Low, Homocysteine Elevation Context, Homocysteine H"
+    ],
+    "chains": [
+      "Linked pattern (chain_001): Homocysteine High \u2192 Homocysteine Elevation Context.",
+      "Linked pattern (chain_002): Systemic Inflammation \u2192 Homocysteine Elevation Context."
+    ],
+    "top_hypothesis_line": "Top hypothesis: B12-associated pattern (confidence 0.60).",
+    "confidence_and_missing_data": "Overall confidence for this lead pattern: 0.90. Some expected confirmatory markers are not on this panel, which limits how specific the story can be.",
+    "runner_up_signal_id": "signal_homocysteine_high",
+    "runner_up_topic_line": "Homocysteine High: is outside the optimal range on this panel",
+    "runner_up_why_not_lead_line": "Homocysteine Elevation Context and Homocysteine High are similarly strong on this panel (0.90 vs 0.90); the headline shows one pattern first so the discussion has a single starting point.",
+    "ranking_policy_version": "PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1",
+    "root_cause_section": {
+      "signal_id": "signal_homocysteine_elevation_context",
+      "signal_state": "suboptimal",
+      "signal_confidence": 0.9,
+      "hypothesis_count": 4
+    },
+    "section_keys": [
+      "confirmatory_tests",
+      "page1",
+      "root_cause"
+    ]
+  },
+  {
+    "run": "VR_full_panel_with_ranges__P3_stressed",
+    "primary_concern": "Homocysteine Elevation Context: is outside the optimal range on this panel",
+    "primary_concern_mode": "near_tie_ambiguity",
+    "co_primary_signal_ids": [
+      "signal_alp_low",
+      "signal_homocysteine_elevation_context",
+      "signal_homocysteine_high"
+    ],
+    "key_findings": [
+      "Homocysteine Elevation Context is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+      "Primary metric: homocysteine.",
+      "Top chain confidence: 0.90.",
+      "Several findings have similar strength on this panel; the headline highlights one first so discussion has a clear starting point. Related patterns in the same tier: Alp Low, Homocysteine Elevation Context, Homocysteine H"
+    ],
+    "chains": [
+      "Linked pattern (chain_001): Homocysteine High \u2192 Homocysteine Elevation Context.",
+      "Linked pattern (chain_002): Systemic Inflammation \u2192 Homocysteine Elevation Context."
+    ],
+    "top_hypothesis_line": "Top hypothesis: B12-associated pattern (confidence 0.60).",
+    "confidence_and_missing_data": "Overall confidence for this lead pattern: 0.90. Some expected confirmatory markers are not on this panel, which limits how specific the story can be.",
+    "runner_up_signal_id": "signal_homocysteine_high",
+    "runner_up_topic_line": "Homocysteine High: is outside the optimal range on this panel",
+    "runner_up_why_not_lead_line": "Homocysteine Elevation Context and Homocysteine High are similarly strong on this panel (0.90 vs 0.90); the headline shows one pattern first so the discussion has a single starting point.",
+    "ranking_policy_version": "PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1",
+    "root_cause_section": {
+      "signal_id": "signal_homocysteine_elevation_context",
+      "signal_state": "suboptimal",
+      "signal_confidence": 0.9,
+      "hypothesis_count": 4
+    },
+    "section_keys": [
+      "confirmatory_tests",
+      "page1",
+      "root_cause"
+    ]
+  }
+]
