@@ -1,0 +1,370 @@
+{
+  "arbitration_decisions": {
+    "decision_trace": [
+      "score:cardiovascular_4_biomarkers:4",
+      "score:hematological_4_biomarkers:4",
+      "score:renal_2_biomarkers:4"
+    ],
+    "primary_driver_system_id": "cardiovascular_4_biomarkers",
+    "supporting_systems": [
+      "cardiovascular",
+      "autonomic",
+      "hematological",
+      "hepatic",
+      "hormonal",
+      "immune",
+      "metabolic",
+      "musculoskeletal",
+      "nutritional",
+      "renal",
+      "thyroid"
+    ],
+    "tie_breakers": [
+      "wins_desc",
+      "transitive_desc",
+      "weighted_score_desc",
+      "precedence_tier_asc",
+      "confidence_bucket_desc",
+      "system_id_asc"
+    ]
+  },
+  "calibration_impact": {
+    "final_calibration_tier": "p3",
+    "reasons": [
+      "calibration:default"
+    ],
+    "system_id": "cardiovascular_4_biomarkers"
+  },
+  "causal_edges": [],
+  "conflict_summary": [],
+  "dominance_resolution": {
+    "cycle_check": {
+      "has_cycle": false,
+      "status_code": "acyclic"
+    },
+    "direct_edges": [],
+    "influence_ordering": {
+      "influence_order": [
+        "cardiovascular",
+        "autonomic",
+        "hematological",
+        "hepatic",
+        "hormonal",
+        "immune",
+        "metabolic",
+        "musculoskeletal",
+        "nutritional",
+        "renal",
+        "thyroid"
+      ],
+      "primary_driver_system_id": "cardiovascular_4_biomarkers",
+      "supporting_systems": [
+        "cardiovascular",
+        "autonomic",
+        "hematological",
+        "hepatic",
+        "hormonal",
+        "immune",
+        "metabolic",
+        "musculoskeletal",
+        "nutritional",
+        "renal",
+        "thyroid"
+      ]
+    },
+    "transitive_edges": []
+  },
+  "lifestyle": {
+    "confidence_adjustments": {
+      "autonomic": 0.0,
+      "cardiovascular": 0.0,
+      "hematological": 0.0,
+      "hepatic": 0.0,
+      "hormonal": 0.0,
+      "immune": 0.0,
+      "metabolic": 0.0,
+      "musculoskeletal": 0.0,
+      "nutritional": 0.0,
+      "renal": 0.0,
+      "thyroid": 0.0
+    },
+    "derived_inputs": {
+      "bmi": 22.2222,
+      "waist_to_height_ratio": 0.4444
+    },
+    "system_modifiers": {
+      "autonomic": {
+        "cap": 0.1,
+        "capped_total_modifier": 0.0,
+        "confidence_penalty": 0.0,
+        "contributions": [],
+        "missing_core_inputs": [],
+        "total_modifier": 0.0
+      },
+      "cardiovascular": {
+        "cap": 0.2,
+        "capped_total_modifier": 0.0,
+        "confidence_penalty": 0.0,
+        "contributions": [
+          {
+            "capped_modifier": 0.0,
+            "details": {},
+            "input": "diastolic_bp",
+            "modifier": 0.0,
+            "rule": "thresholds_above",
+            "value": 70
+          },
+          {
+            "capped_modifier": 0.0,
+            "details": {},
+            "input": "resting_heart_rate",
+            "modifier": 0.0,
+            "rule": "thresholds_above",
+            "value": 58
+          },
+          {
+            "capped_modifier": 0.0,
+            "details": {},
+            "input": "smoking_status",
+            "modifier": 0.0,
+            "rule": "categorical_values",
+            "value": "never"
+          },
+          {
+            "capped_modifier": 0.0,
+            "details": {},
+            "input": "systolic_bp",
+            "modifier": 0.0,
+            "rule": "thresholds_above",
+            "value": 112
+          },
+          {
+            "capped_modifier": 0.0,
+            "details": {},
+            "input": "waist_to_height_ratio",
+            "modifier": 0.0,
+            "rule": "thresholds_above",
+            "value": 0.4444
+          }
+        ],
+        "missing_core_inputs": [],
+        "total_modifier": 0.0
+      },
+      "hematological": {
+        "cap": 0.1,
+        "capped_total_modifier": 0.0,
+        "confidence_penalty": 0.0,
+        "contributions": [],
+        "missing_core_inputs": [],
+        "total_modifier": 0.0
+      },
+      "hepatic": {
+        "cap": 0.15,
+        "capped_total_modifier": 0.0,
+        "confidence_penalty": 0.0,
+        "contributions": [
+          {
+            "capped_modifier": 0.0,
+            "details": {},
+            "input": "alcohol_units_per_week",
+            "modifier": 0.0,
+            "rule": "thresholds_above",
+            "value": 0
+          },
+          {
+            "capped_modifier": 0.0,
+            "details": {},
+            "input": "smoking_status",
+            "modifier": 0.0,
+            "rule": "categorical_values",
+            "value": "never"
+          }
+        ],
+        "missing_core_inputs": [],
+        "total_modifier": 0.0
+      },
+      "hormonal": {
+        "cap": 0.1,
+        "capped_total_modifier": 0.0,
+        "confidence_penalty": 0.0,
+        "contributions": [],
+        "missing_core_inputs": [],
+        "total_modifier": 0.0
+      },
+      "immune": {
+        "cap": 0.1,
+        "capped_total_modifier": 0.0,
+        "confidence_penalty": 0.0,
+        "contributions": [
+          {
+            "capped_modifier": 0.0,
+            "details": {},
+            "input": "sleep_hours",
+            "modifier": 0.0,
+            "rule": "thresholds_below",
+            "value": 8.0
+          },
+          {
+            "capped_modifier": 0.0,
+            "details": {},
+            "input": "smoking_status",
+            "modifier": 0.0,
+            "rule": "categorical_values",
+            "value": "never"
+          }
+        ],
+        "missing_core_inputs": [],
+        "total_modifier": 0.0
+      },
+      "metabolic": {
+        "cap": 0.2,
+        "capped_total_modifier": 0.0,
+        "confidence_penalty": 0.0,
+        "contributions": [
+          {
+            "capped_modifier": 0.0,
+            "details": {},
+            "input": "alcohol_units_per_week",
+            "modifier": 0.0,
+            "rule": "thresholds_above",
+            "value": 0
+          },
+          {
+            "capped_modifier": 0.0,
+            "details": {},
+            "input": "bmi",
+            "modifier": 0.0,
+            "rule": "thresholds_above",
+            "value": 22.2222
+          },
+          {
+            "capped_modifier": 0.0,
+            "details": {},
+            "input": "sleep_hours",
+            "modifier": 0.0,
+            "rule": "thresholds_below",
+            "value": 8.0
+          },
+          {
+            "capped_modifier": 0.0,
+            "details": {},
+            "input": "smoking_status",
+            "modifier": 0.0,
+            "rule": "categorical_values",
+            "value": "never"
+          },
+          {
+            "capped_modifier": 0.0,
+            "details": {},
+            "input": "waist_to_height_ratio",
+            "modifier": 0.0,
+            "rule": "thresholds_above",
+            "value": 0.4444
+          }
+        ],
+        "missing_core_inputs": [],
+        "total_modifier": 0.0
+      },
+      "musculoskeletal": {
+        "cap": 0.1,
+        "capped_total_modifier": 0.0,
+        "confidence_penalty": 0.0,
+        "contributions": [
+          {
+            "capped_modifier": 0.0,
+            "details": {},
+            "input": "sit_stand_value",
+            "modifier": 0.0,
+            "rule": "sit_stand_phase1",
+            "value": 22
+          }
+        ],
+        "missing_core_inputs": [],
+        "total_modifier": 0.0
+      },
+      "nutritional": {
+        "cap": 0.1,
+        "capped_total_modifier": 0.0,
+        "confidence_penalty": 0.0,
+        "contributions": [],
+        "missing_core_inputs": [],
+        "total_modifier": 0.0
+      },
+      "renal": {
+        "cap": 0.1,
+        "capped_total_modifier": 0.0,
+        "confidence_penalty": 0.0,
+        "contributions": [],
+        "missing_core_inputs": [],
+        "total_modifier": 0.0
+      },
+      "thyroid": {
+        "cap": 0.1,
+        "capped_total_modifier": 0.0,
+        "confidence_penalty": 0.0,
+        "contributions": [],
+        "missing_core_inputs": [],
+        "total_modifier": 0.0
+      }
+    }
+  },
+  "precedence_summary": [],
+  "replay_stamps": {
+    "arbitration_hash": "507e31462199c3ce70d5c29570836f6e8adf9081bdd5712d0f8cea015eb01e73",
+    "arbitration_registry_hash": "391238636991d75a0df396f72f9cbe2d909b29d9fe67fe4b3fdaf72e3b2c8f2f",
+    "arbitration_registry_version": "1.0.0",
+    "arbitration_version": "1.0.0",
+    "burden_hash": "80f658e2a37c2916c93a945a809ade35a370190a3e4264b234005cbedb940ba4",
+    "conflict_registry_hash": "29b9616986543ee2bef4c0000161dd3e1af0e0314ac5d04a6fb28246b1124b14",
+    "conflict_registry_version": "1.0.0",
+    "explainability_hash": "65a6fe98ce2428be67b663fab7b80101eadbe50df249312c2303ccc574e3da93"
+  },
+  "run_metadata": {
+    "generated_at_utc": "2026-05-04T21:02:43.114914+00:00",
+    "git_commit_short": "d57aa94",
+    "report_version": "1.0.0",
+    "run_id": "6f76b0fc-a816-4b28-9ff2-9085c8ee9555",
+    "scenario_id": ""
+  },
+  "system_burden": {
+    "adjusted_system_burden_vector": {
+      "autonomic": 0.0,
+      "cardiovascular": 1.0,
+      "hematological": 0.0,
+      "hepatic": 0.0,
+      "hormonal": 0.0,
+      "immune": 0.0,
+      "metabolic": 0.0,
+      "musculoskeletal": 0.0,
+      "nutritional": 0.0,
+      "renal": 0.0,
+      "thyroid": 0.0
+    },
+    "burden_validation_status": "PASS",
+    "burden_validation_violations": [],
+    "raw_system_burden_vector": {
+      "cardiovascular": 2.201207101173936,
+      "hematological": 2.4115600061267313,
+      "hepatic": 0.33549999999999996,
+      "hormonal": 2.831848570777533,
+      "immune": 1.1744186147186149,
+      "metabolic": 1.762426777426779,
+      "nutritional": 1.8572164491573409,
+      "renal": 0.6814814814814816,
+      "thyroid": 0.8082767874257237
+    },
+    "system_capacity_scores": {
+      "autonomic": 100,
+      "cardiovascular": 88,
+      "hematological": 100,
+      "hepatic": 100,
+      "hormonal": 100,
+      "immune": 100,
+      "metabolic": 100,
+      "musculoskeletal": 100,
+      "nutritional": 100,
+      "renal": 100,
+      "thyroid": 100
+    }
+  }
+}

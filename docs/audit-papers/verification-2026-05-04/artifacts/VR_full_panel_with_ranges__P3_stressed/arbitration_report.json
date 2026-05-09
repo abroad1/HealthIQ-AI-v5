@@ -1,0 +1,40 @@
+{
+  "arbitration_decisions": {
+    "decision_trace": [
+      "score:cardiovascular_4_biomarkers:4",
+      "score:hematological_4_biomarkers:4",
+      "score:renal_2_biomarkers:4"
+    ],
+    "primary_driver_system_id": "cardiovascular_4_biomarkers",
+    "supporting_systems": [
+      "hematological_4_biomarkers",
+      "renal_2_biomarkers"
+    ]
+  },
+  "calibration_impact": {
+    "final_calibration_tier": "p3",
+    "previous_calibration_tier": "p3",
+    "reasons": [
+      "calibration:default"
+    ],
+    "system_id": "cardiovascular_4_biomarkers"
+  },
+  "causal_edges": [],
+  "conflict_summary": [],
+  "precedence_summary": [],
+  "replay_stamps": {
+    "arbitration_hash": "507e31462199c3ce70d5c29570836f6e8adf9081bdd5712d0f8cea015eb01e73",
+    "arbitration_registry_hash": "391238636991d75a0df396f72f9cbe2d909b29d9fe67fe4b3fdaf72e3b2c8f2f",
+    "arbitration_registry_version": "1.0.0",
+    "arbitration_version": "1.0.0",
+    "conflict_registry_hash": "29b9616986543ee2bef4c0000161dd3e1af0e0314ac5d04a6fb28246b1124b14",
+    "conflict_registry_version": "1.0.0"
+  },
+  "run_metadata": {
+    "arbitration_hash": "507e31462199c3ce70d5c29570836f6e8adf9081bdd5712d0f8cea015eb01e73",
+    "arbitration_version": "1.0.0",
+    "generated_at_utc": "2026-05-04T21:02:46.747403+00:00",
+    "git_commit_short": "d57aa94",
+    "run_id": "VR_full_panel_with_ranges__P3_stressed"
+  }
+}

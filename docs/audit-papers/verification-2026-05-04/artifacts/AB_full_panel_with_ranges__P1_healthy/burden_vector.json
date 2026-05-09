@@ -1,0 +1,64 @@
+{
+  "adjusted_system_burden_vector": {
+    "autonomic": 0.0,
+    "cardiovascular": 1.0,
+    "hematological": 0.0,
+    "hepatic": 0.0,
+    "hormonal": 0.0,
+    "immune": 0.0,
+    "metabolic": 0.0,
+    "musculoskeletal": 0.0,
+    "nutritional": 0.0,
+    "renal": 0.0,
+    "thyroid": 0.0
+  },
+  "burden_hash": "80f658e2a37c2916c93a945a809ade35a370190a3e4264b234005cbedb940ba4",
+  "cluster_scoped_raw_burden": {
+    "cardiovascular_4_biomarkers": 0.6185328185328185,
+    "hematological_4_biomarkers": 0.7826886446886449,
+    "renal_2_biomarkers": 0.7163636363636365
+  },
+  "derived_components": {
+    "cardiovascular_4_biomarkers": {
+      "adjusted": 0.0,
+      "capacity": 100,
+      "raw": 0.6185328185328185
+    },
+    "hematological_4_biomarkers": {
+      "adjusted": 0.0,
+      "capacity": 100,
+      "raw": 0.7826886446886449
+    },
+    "renal_2_biomarkers": {
+      "adjusted": 0.0,
+      "capacity": 100,
+      "raw": 0.7163636363636365
+    }
+  },
+  "raw_system_burden_vector": {
+    "cardiovascular": 2.1208293217038197,
+    "hematological": 2.924238644688645,
+    "hepatic": 0.48000000000000004,
+    "hormonal": 2.666946581874732,
+    "immune": 0.5703579807289484,
+    "metabolic": 1.1479942279942281,
+    "nutritional": 1.9217519319333762,
+    "renal": 0.8891465109813735,
+    "thyroid": 0.803190850424893
+  },
+  "system_capacity_scores": {
+    "autonomic": 100,
+    "cardiovascular": 88,
+    "hematological": 100,
+    "hepatic": 100,
+    "hormonal": 100,
+    "immune": 100,
+    "metabolic": 100,
+    "musculoskeletal": 100,
+    "nutritional": 100,
+    "renal": 100,
+    "thyroid": 100
+  },
+  "validation_status": "PASS",
+  "validation_violations": []
+}
