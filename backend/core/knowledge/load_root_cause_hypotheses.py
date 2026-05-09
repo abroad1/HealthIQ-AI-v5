@@ -214,3 +214,15 @@ def load_total_cholesterol_high_hypotheses_v1() -> Dict[str, Any]:
 
 def load_vitamin_d_low_hypotheses_v1() -> Dict[str, Any]:
     return load_root_cause_hypotheses_asset_v1("vitamin_d_low_hypotheses_v1.yaml")
+
+
+def load_mcv_high_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("mcv_high_hypotheses_v1.yaml")
+
+
+def load_apoa1_cardio_risk_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("apoa1_cardio_risk_hypotheses_v1.yaml")
+
+
+def load_hypercortisolism_hypotheses_v1() -> Dict[str, Any]:
+    return load_root_cause_hypotheses_asset_v1("hypercortisolism_hypotheses_v1.yaml")

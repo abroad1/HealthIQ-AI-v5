@@ -1,0 +1,78 @@
+schema_version: "v1"
+asset_id: "apoa1_cardio_risk_hypotheses_v1"
+updated_at: "2026-05-09"
+primary_signal_id: "signal_apoa1_cardio_risk"
+primary_metric: "apoa1"
+notes:
+  - "Launch-core LC-S1 governed WHY for KB-S45d signal_apoa1_cardio_risk (low ApoA1 cardio transport framing)."
+  - "Distinct from signal_lipid_transport_dysfunction — complementary bounded WHY where package activates independently."
+  - "confirmatory_tests limited to confirmatory_tests_v1.yaml."
+
+hypotheses:
+  - hypothesis_id: "apoa1_low_hdl_transport_anchor_v1"
+    title: "Low ApoA1 — reduced HDL-mediated cholesterol efflux framing"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "ApoA1 is reduced versus expectation with an activated cardio-risk signal, framing diminished HDL-mediated protective cholesterol transport capacity."
+    required_markers:
+      - "apoa1"
+    confirmatory_markers:
+      - "hdl_cholesterol"
+      - "apob"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "apoa1_signal_fired"
+        signals_any:
+          - "signal_apoa1_cardio_risk"
+        direction: "fired"
+        evidence_for_item: "ApoA1 cardio-risk signal fired on structured lipid thresholds."
+        marker_refs:
+          - "apoa1"
+      - rule_id: "apoa1_marker_low"
+        markers_all:
+          - "apoa1"
+        direction: "low"
+        evidence_for_item: "Measured ApoA1 sits below reference range, aligning with reduced HDL-particle protein context."
+        marker_refs:
+          - "apoa1"
+    evidence_against_rules:
+      - rule_id: "apoa1_marker_high_normal"
+        markers_all:
+          - "apoa1"
+        direction: "high"
+        evidence_against_item: "ApoA1 appears elevated relative to range, weakening isolated low-ApoA1 framing."
+        marker_refs:
+          - "apoa1"
+    missing_data_markers:
+      - marker_id: "apob"
+        reason: "ApoB refines particle number imbalance interpretation versus ApoA1."
+    confirmatory_tests:
+      - "test_apoa1_repeat_panel_context_v1"
+      - "test_thyroid_tsh_ft4_v1"
+
+  - hypothesis_id: "apoa1_ratio_adverse_pattern_v1"
+    title: "Adverse ApoB:ApoA1 ratio alongside reduced ApoA1"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Low ApoA1 pairs with an adverse ApoB:ApoA1 ratio suggesting imbalance between atherogenic and protective particle axes."
+    required_markers:
+      - "apoa1"
+    confirmatory_markers:
+      - "apob"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "apob_apoa1_ratio_high"
+        markers_all:
+          - "apob_apoa1_ratio"
+        direction: "high"
+        evidence_for_item: "ApoB:ApoA1 ratio is elevated relative to range, indicating disproportion between pro- and anti-atherogenic axes."
+        marker_refs:
+          - "apob_apoa1_ratio"
+          - "apoa1"
+    evidence_against_rules: []
+    missing_data_markers:
+      - marker_id: "lipoprotein_a"
+        reason: "Lp(a) refines inherited risk layering alongside lipid particle imbalance."
+    confirmatory_tests:
+      - "test_apob_apoa1_repeat_coord_panel_v1"
+      - "test_lipoprotein_a_serum_context_v1"

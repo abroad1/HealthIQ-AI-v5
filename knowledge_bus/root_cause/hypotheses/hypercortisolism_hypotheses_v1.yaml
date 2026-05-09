@@ -1,0 +1,83 @@
+schema_version: "v1"
+asset_id: "hypercortisolism_hypotheses_v1"
+updated_at: "2026-05-09"
+primary_signal_id: "signal_hypercortisolism"
+primary_metric: "cortisol"
+notes:
+  - "Launch-core LC-S1 governed WHY for KB-S45d signal_hypercortisolism."
+  - "Stress physiology framing — persists abnormal diagnoses."
+  - "confirmatory_tests limited to confirmatory_tests_v1.yaml."
+
+hypotheses:
+  - hypothesis_id: "hypercortisolism_lab_anchor_v1"
+    title: "Morning cortisol elevation — activated glucocorticoid excess signal"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "Cortisol is elevated versus expectation with an activated hypercortisolism-related signal on this panel."
+    required_markers:
+      - "cortisol"
+    confirmatory_markers:
+      - "potassium"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "hypercortisolism_signal_fired"
+        signals_any:
+          - "signal_hypercortisolism"
+        direction: "fired"
+        evidence_for_item: "Hypercortisolism signal fired on structured thresholds."
+        marker_refs:
+          - "cortisol"
+      - rule_id: "cortisol_marker_high"
+        markers_all:
+          - "cortisol"
+        direction: "high"
+        evidence_for_item: "Measured cortisol exceeds reference range, aligning with sustained glucocorticoid excess physiology framing."
+        marker_refs:
+          - "cortisol"
+    evidence_against_rules:
+      - rule_id: "cortisol_marker_low_normal"
+        markers_all:
+          - "cortisol"
+        direction: "low"
+        evidence_against_item: "Cortisol sits below reference range, weakening isolated cortisol-excess framing."
+        marker_refs:
+          - "cortisol"
+    missing_data_markers:
+      - marker_id: "potassium"
+        reason: "Potassium adds electrolyte context when cortisol-driven mineralocorticoid-like physiology is suspected."
+    confirmatory_tests:
+      - "test_cortisol_repeat_context_v1"
+      - "test_thyroid_tsh_ft4_v1"
+
+  - hypothesis_id: "hypercortisolism_metabolic_coupling_v1"
+    title: "Elevated cortisol with glycemic strain markers"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Elevated cortisol appears alongside glycemic markers consistent with counter-regulatory hormone physiology overlap."
+    required_markers:
+      - "cortisol"
+    confirmatory_markers:
+      - "hba1c"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "hba1c_high_with_cortisol_context"
+        markers_any:
+          - "hba1c"
+        direction: "high"
+        evidence_for_item: "HbA1c is elevated relative to range, supporting chronic glycemic strain beside cortisol elevation."
+        marker_refs:
+          - "hba1c"
+          - "cortisol"
+      - rule_id: "fasting_glucose_high_proxy"
+        markers_any:
+          - "glucose"
+        direction: "high"
+        evidence_for_item: "Glucose is elevated relative to range on this panel, aligning with cortisol-driven glycemic pressure framing."
+        marker_refs:
+          - "glucose"
+          - "cortisol"
+    evidence_against_rules: []
+    missing_data_markers: []
+    confirmatory_tests:
+      - "test_hba1c_repeat_v1"
+      - "test_fasting_glucose_insulin_context_v1"
