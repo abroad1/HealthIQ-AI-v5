@@ -1,0 +1,167 @@
+{
+  "insights": [
+    {
+      "confidence": "high",
+      "evidence": {
+        "system_burdens": [
+          {
+            "adjusted_burden": 2.1208,
+            "base_burden": 2.1208,
+            "system_id": "cardiovascular"
+          }
+        ]
+      },
+      "insight_id": "cardiovascular__system_pressure",
+      "interpretation": "Your cardiovascular signals are in the elevated range based on this panel.",
+      "next_steps": [],
+      "severity": "action",
+      "system_id": "cardiovascular",
+      "title": "Cardiovascular system pressure"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "system_burdens": [
+          {
+            "adjusted_burden": 0.0,
+            "base_burden": 0.0,
+            "system_id": "hematological"
+          }
+        ]
+      },
+      "insight_id": "hematological__system_pressure",
+      "interpretation": "Your hematological signals are in the optimal range based on this panel.",
+      "next_steps": [],
+      "severity": "info",
+      "system_id": "hematological",
+      "title": "Hematological system pressure"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "system_burdens": [
+          {
+            "adjusted_burden": 0.0,
+            "base_burden": 0.0,
+            "system_id": "hepatic"
+          }
+        ]
+      },
+      "insight_id": "hepatic__system_pressure",
+      "interpretation": "Your hepatic signals are in the optimal range based on this panel.",
+      "next_steps": [],
+      "severity": "info",
+      "system_id": "hepatic",
+      "title": "Hepatic system pressure"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "system_burdens": [
+          {
+            "adjusted_burden": 0.0,
+            "base_burden": 0.0,
+            "system_id": "hormonal"
+          }
+        ]
+      },
+      "insight_id": "hormonal__system_pressure",
+      "interpretation": "Your hormonal signals are in the optimal range based on this panel.",
+      "next_steps": [],
+      "severity": "info",
+      "system_id": "hormonal",
+      "title": "Hormonal system pressure"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "system_burdens": [
+          {
+            "adjusted_burden": 0.0,
+            "base_burden": 0.0,
+            "system_id": "immune"
+          }
+        ]
+      },
+      "insight_id": "immune__system_pressure",
+      "interpretation": "Your immune signals are in the optimal range based on this panel.",
+      "next_steps": [],
+      "severity": "info",
+      "system_id": "immune",
+      "title": "Immune system pressure"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "system_burdens": [
+          {
+            "adjusted_burden": 0.0,
+            "base_burden": 0.0,
+            "system_id": "metabolic"
+          }
+        ]
+      },
+      "insight_id": "metabolic__system_pressure",
+      "interpretation": "Your metabolic signals are in the optimal range based on this panel.",
+      "next_steps": [],
+      "severity": "info",
+      "system_id": "metabolic",
+      "title": "Metabolic system pressure"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "system_burdens": [
+          {
+            "adjusted_burden": 0.0,
+            "base_burden": 0.0,
+            "system_id": "nutritional"
+          }
+        ]
+      },
+      "insight_id": "nutritional__system_pressure",
+      "interpretation": "Your nutritional signals are in the optimal range based on this panel.",
+      "next_steps": [],
+      "severity": "info",
+      "system_id": "nutritional",
+      "title": "Nutritional system pressure"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "system_burdens": [
+          {
+            "adjusted_burden": 0.0,
+            "base_burden": 0.0,
+            "system_id": "renal"
+          }
+        ]
+      },
+      "insight_id": "renal__system_pressure",
+      "interpretation": "Your renal signals are in the optimal range based on this panel.",
+      "next_steps": [],
+      "severity": "info",
+      "system_id": "renal",
+      "title": "Renal system pressure"
+    },
+    {
+      "confidence": "high",
+      "evidence": {
+        "system_burdens": [
+          {
+            "adjusted_burden": 0.0,
+            "base_burden": 0.0,
+            "system_id": "thyroid"
+          }
+        ]
+      },
+      "insight_id": "thyroid__system_pressure",
+      "interpretation": "Your thyroid signals are in the optimal range based on this panel.",
+      "next_steps": [],
+      "severity": "info",
+      "system_id": "thyroid",
+      "title": "Thyroid system pressure"
+    }
+  ],
+  "schema_version": "1.0.0"
+}

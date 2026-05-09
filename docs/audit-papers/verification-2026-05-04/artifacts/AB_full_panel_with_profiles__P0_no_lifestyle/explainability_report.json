@@ -1,0 +1,126 @@
+{
+  "arbitration_decisions": {
+    "decision_trace": [
+      "score:cardiovascular_4_biomarkers:4",
+      "score:hematological_4_biomarkers:4",
+      "score:renal_2_biomarkers:4"
+    ],
+    "primary_driver_system_id": "cardiovascular_4_biomarkers",
+    "supporting_systems": [
+      "cardiovascular",
+      "hematological",
+      "hepatic",
+      "hormonal",
+      "immune",
+      "metabolic",
+      "nutritional",
+      "renal",
+      "thyroid"
+    ],
+    "tie_breakers": [
+      "wins_desc",
+      "transitive_desc",
+      "weighted_score_desc",
+      "precedence_tier_asc",
+      "confidence_bucket_desc",
+      "system_id_asc"
+    ]
+  },
+  "calibration_impact": {
+    "final_calibration_tier": "p3",
+    "reasons": [
+      "calibration:default"
+    ],
+    "system_id": "cardiovascular_4_biomarkers"
+  },
+  "causal_edges": [],
+  "conflict_summary": [],
+  "dominance_resolution": {
+    "cycle_check": {
+      "has_cycle": false,
+      "status_code": "acyclic"
+    },
+    "direct_edges": [],
+    "influence_ordering": {
+      "influence_order": [
+        "cardiovascular",
+        "hematological",
+        "hepatic",
+        "hormonal",
+        "immune",
+        "metabolic",
+        "nutritional",
+        "renal",
+        "thyroid"
+      ],
+      "primary_driver_system_id": "cardiovascular_4_biomarkers",
+      "supporting_systems": [
+        "cardiovascular",
+        "hematological",
+        "hepatic",
+        "hormonal",
+        "immune",
+        "metabolic",
+        "nutritional",
+        "renal",
+        "thyroid"
+      ]
+    },
+    "transitive_edges": []
+  },
+  "precedence_summary": [],
+  "replay_stamps": {
+    "arbitration_hash": "507e31462199c3ce70d5c29570836f6e8adf9081bdd5712d0f8cea015eb01e73",
+    "arbitration_registry_hash": "391238636991d75a0df396f72f9cbe2d909b29d9fe67fe4b3fdaf72e3b2c8f2f",
+    "arbitration_registry_version": "1.0.0",
+    "arbitration_version": "1.0.0",
+    "burden_hash": "32a7b3cdf63328d100b591ffffa866e7febc2048fffd769969105d0edf1e988b",
+    "conflict_registry_hash": "29b9616986543ee2bef4c0000161dd3e1af0e0314ac5d04a6fb28246b1124b14",
+    "conflict_registry_version": "1.0.0",
+    "explainability_hash": "e135236a7b38ae5e58b4c288b6266590b1cf2fb5a04bda99cfe37759978158a6"
+  },
+  "run_metadata": {
+    "generated_at_utc": "2026-05-04T21:02:48.043085+00:00",
+    "git_commit_short": "d57aa94",
+    "report_version": "1.0.0",
+    "run_id": "80e34d1e-3f06-459c-ac62-d6dd26bb1be9",
+    "scenario_id": ""
+  },
+  "system_burden": {
+    "adjusted_system_burden_vector": {
+      "cardiovascular": 2.1208293217038197,
+      "hematological": 0.0,
+      "hepatic": 0.0,
+      "hormonal": 0.0,
+      "immune": 0.0,
+      "metabolic": 0.0,
+      "nutritional": 0.0,
+      "renal": 0.0,
+      "thyroid": 0.0
+    },
+    "burden_validation_status": "PASS",
+    "burden_validation_violations": [],
+    "raw_system_burden_vector": {
+      "cardiovascular": 2.1208293217038197,
+      "hematological": 2.924238644688645,
+      "hepatic": 0.48000000000000004,
+      "hormonal": 2.666946581874732,
+      "immune": 0.5703579807289484,
+      "metabolic": 1.1479942279942281,
+      "nutritional": 1.9217519319333762,
+      "renal": 0.8891465109813735,
+      "thyroid": 0.803190850424893
+    },
+    "system_capacity_scores": {
+      "cardiovascular": 73,
+      "hematological": 100,
+      "hepatic": 100,
+      "hormonal": 100,
+      "immune": 100,
+      "metabolic": 100,
+      "nutritional": 100,
+      "renal": 100,
+      "thyroid": 100
+    }
+  }
+}

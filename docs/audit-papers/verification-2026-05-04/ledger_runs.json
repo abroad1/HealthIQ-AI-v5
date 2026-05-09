@@ -1,0 +1,2530 @@
+[
+  {
+    "panel": "AB_full_panel_with_ranges",
+    "profile": "P0_no_lifestyle",
+    "panel_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\backend\\tests\\fixtures\\panels\\ab_full_panel_with_ranges.json",
+    "profile_path": null,
+    "ok": true,
+    "error": null,
+    "status": "completed",
+    "engine_version": null,
+    "schema_version": null,
+    "biomarker_count": 82,
+    "insight_count": 6,
+    "insight_titles": [
+      "Metabolic focus: summarise structured signals; review with your clinician",
+      "Cardiovascular focus: summarise structured signals; review with your clinician",
+      "Inflammatory focus: summarise structured signals; review with your clinician",
+      "Organ focus: summarise structured signals; review with your clinician",
+      "Nutritional focus: summarise structured signals; review with your clinician",
+      "Hormonal focus: summarise structured signals; review with your clinician"
+    ],
+    "signal_summary": {
+      "count": 13,
+      "active_count": 0,
+      "by_state": {
+        "": 13
+      },
+      "active": []
+    },
+    "root_cause_summary": {
+      "present": true,
+      "fallback_strings": [],
+      "governed_for": [
+        {
+          "insight_id": null,
+          "head": "Metabolic focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Cardiovascular focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Inflammatory focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Organ focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Nutritional focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Hormonal focus: summarise structured signals; review with your clinician"
+        }
+      ],
+      "lengths": [
+        73,
+        78,
+        76,
+        69,
+        75,
+        72
+      ]
+    },
+    "clinician_report": {
+      "primary_concern": null,
+      "primary_concern_mode": null,
+      "runner_up_topic_line": null,
+      "runner_up_why_not_lead_line": null,
+      "missing_data_line": null,
+      "confidence_line": null,
+      "headline": null,
+      "page1_keys": [],
+      "report_keys": []
+    },
+    "idl": {
+      "present": true,
+      "record_count": 11,
+      "enabled_count": 4,
+      "first_enabled": [
+        {
+          "internal_id": "ph_vascular_hcy_inflammation_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Vascular inflammation risk (homocysteine-linked)",
+          "retail_display_label": "Vascular Inflammation Risk",
+          "subtitle": "A pattern combining inflammation and homocysteine signals associated with vascular risk",
+          "why_it_matters": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
+          "severity_state": "strong_signal",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 3,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_thyroid_lipid_disturbance_v1",
+          "scientific_class": "organ_pattern",
+          "clinical_display_label": "Thyroid-linked lipid disturbance pattern",
+          "retail_display_label": "Thyroid\u2013Lipid Pattern",
+          "subtitle": "A pattern where thyroid-axis signals are accompanied by lipid disturbance",
+          "why_it_matters": "Thyroid axis changes can drive lipid disturbance and warrant joint review.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Ldl Cholesterol, Non Hdl Cholesterol, Apob, Hdl Cholesterol",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 6,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_one_carbon_homocysteine_macrocytosis_v1",
+          "scientific_class": "syndrome_state",
+          "clinical_display_label": "One-carbon pathway stress (homocysteine with macrocytic pattern)",
+          "retail_display_label": "Methylation pathway pattern",
+          "subtitle": "Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context",
+          "why_it_matters": "This pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot.",
+          "severity_state": "strong_signal",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 10,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_lipid_residual_ldl_favourable_transport_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Residual LDL signal within a more favourable lipid transport picture",
+          "retail_display_label": "LDL in context (protective transport features)",
+          "subtitle": "LDL elevation alongside relatively stronger HDL signalling\u2014particle architecture still matters",
+          "why_it_matters": "Cumulative atherogenic exposure is read in full transport context; reassuring HDL does not erase residual LDL-related risk.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Ldl Cholesterol, Non Hdl Cholesterol, Apob, Hdl Cholesterol",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 11,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        }
+      ],
+      "version": "1.0.0"
+    },
+    "lifestyle": {
+      "present": false
+    },
+    "meta_modes": {
+      "narrative_runtime_mode": null,
+      "narrative_runtime_keys": [
+        "HEALTHIQ_ENABLE_LLM",
+        "HEALTHIQ_MODE",
+        "LLM_ENABLED",
+        "client_constructor_injected",
+        "client_kind",
+        "master_switch_HEALTHIQ_NARRATIVE_LLM",
+        "policy_reason",
+        "policy_version",
+        "runtime_mode",
+        "synthesizer_allow_llm_resolved"
+      ],
+      "explainability_present": true,
+      "meta_keys": [
+        "burden_vector",
+        "cluster_schema_hash",
+        "cluster_schema_version",
+        "confidence_downgrades",
+        "criticality_version",
+        "derived_ratios",
+        "explainability_report",
+        "insight_graph",
+        "lifestyle_interpretation_bridges_v1",
+        "medical_history_snapshot",
+        "missing_markers",
+        "narrative_runtime",
+        "overall_confidence",
+        "reference_profiles",
+        "system_confidence",
+        "wave1_aligned_drivers"
+      ]
+    },
+    "top_findings": null,
+    "primary_concern_top": null,
+    "result_keys": [
+      "analysis_id",
+      "biomarkers",
+      "burden_hash",
+      "clusters",
+      "consumer_domain_scores",
+      "created_at",
+      "derived_markers",
+      "insights",
+      "interpretation_display_layer_v1",
+      "meta",
+      "narrative_report_v1",
+      "overall_score",
+      "primary_driver_system_id",
+      "replay_manifest",
+      "status",
+      "system_capacity_scores",
+      "unmapped_biomarkers"
+    ],
+    "run_dir": "C:\\Users\\abroa\\HealthIQ-AI-v5\\docs\\audit-papers\\verification-2026-05-04\\artifacts\\AB_full_panel_with_ranges__P0_no_lifestyle"
+  },
+  {
+    "panel": "AB_full_panel_with_ranges",
+    "profile": "P1_healthy",
+    "panel_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\backend\\tests\\fixtures\\panels\\ab_full_panel_with_ranges.json",
+    "profile_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\docs\\audit-papers\\verification-2026-05-04\\profile_healthy.json",
+    "ok": true,
+    "error": null,
+    "status": "completed",
+    "engine_version": null,
+    "schema_version": null,
+    "biomarker_count": 82,
+    "insight_count": 6,
+    "insight_titles": [
+      "Metabolic focus: summarise structured signals; review with your clinician",
+      "Cardiovascular focus: summarise structured signals; review with your clinician",
+      "Inflammatory focus: summarise structured signals; review with your clinician",
+      "Organ focus: summarise structured signals; review with your clinician",
+      "Nutritional focus: summarise structured signals; review with your clinician",
+      "Hormonal focus: summarise structured signals; review with your clinician"
+    ],
+    "signal_summary": {
+      "count": 13,
+      "active_count": 0,
+      "by_state": {
+        "": 13
+      },
+      "active": []
+    },
+    "root_cause_summary": {
+      "present": true,
+      "fallback_strings": [],
+      "governed_for": [
+        {
+          "insight_id": null,
+          "head": "Metabolic focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Cardiovascular focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Inflammatory focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Organ focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Nutritional focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Hormonal focus: summarise structured signals; review with your clinician"
+        }
+      ],
+      "lengths": [
+        73,
+        78,
+        76,
+        69,
+        75,
+        72
+      ]
+    },
+    "clinician_report": {
+      "primary_concern": null,
+      "primary_concern_mode": null,
+      "runner_up_topic_line": null,
+      "runner_up_why_not_lead_line": null,
+      "missing_data_line": null,
+      "confidence_line": null,
+      "headline": null,
+      "page1_keys": [],
+      "report_keys": []
+    },
+    "idl": {
+      "present": true,
+      "record_count": 11,
+      "enabled_count": 4,
+      "first_enabled": [
+        {
+          "internal_id": "ph_vascular_hcy_inflammation_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Vascular inflammation risk (homocysteine-linked)",
+          "retail_display_label": "Vascular Inflammation Risk",
+          "subtitle": "A pattern combining inflammation and homocysteine signals associated with vascular risk",
+          "why_it_matters": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
+          "severity_state": "strong_signal",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 3,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_thyroid_lipid_disturbance_v1",
+          "scientific_class": "organ_pattern",
+          "clinical_display_label": "Thyroid-linked lipid disturbance pattern",
+          "retail_display_label": "Thyroid\u2013Lipid Pattern",
+          "subtitle": "A pattern where thyroid-axis signals are accompanied by lipid disturbance",
+          "why_it_matters": "Thyroid axis changes can drive lipid disturbance and warrant joint review.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Ldl Cholesterol, Non Hdl Cholesterol, Apob, Hdl Cholesterol",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 6,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_one_carbon_homocysteine_macrocytosis_v1",
+          "scientific_class": "syndrome_state",
+          "clinical_display_label": "One-carbon pathway stress (homocysteine with macrocytic pattern)",
+          "retail_display_label": "Methylation pathway pattern",
+          "subtitle": "Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context",
+          "why_it_matters": "This pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot.",
+          "severity_state": "strong_signal",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 10,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_lipid_residual_ldl_favourable_transport_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Residual LDL signal within a more favourable lipid transport picture",
+          "retail_display_label": "LDL in context (protective transport features)",
+          "subtitle": "LDL elevation alongside relatively stronger HDL signalling\u2014particle architecture still matters",
+          "why_it_matters": "Cumulative atherogenic exposure is read in full transport context; reassuring HDL does not erase residual LDL-related risk.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Ldl Cholesterol, Non Hdl Cholesterol, Apob, Hdl Cholesterol",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 11,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        }
+      ],
+      "version": "1.0.0"
+    },
+    "lifestyle": {
+      "present": true,
+      "derived_inputs": {
+        "bmi": 22.2222,
+        "waist_to_height_ratio": 0.4444
+      },
+      "input_errors": null,
+      "invalid_input_plausibility": null,
+      "nonzero_capped_modifiers": {},
+      "adjusted_system_burdens_keys": []
+    },
+    "meta_modes": {
+      "narrative_runtime_mode": null,
+      "narrative_runtime_keys": [
+        "HEALTHIQ_ENABLE_LLM",
+        "HEALTHIQ_MODE",
+        "LLM_ENABLED",
+        "client_constructor_injected",
+        "client_kind",
+        "master_switch_HEALTHIQ_NARRATIVE_LLM",
+        "policy_reason",
+        "policy_version",
+        "runtime_mode",
+        "synthesizer_allow_llm_resolved"
+      ],
+      "explainability_present": true,
+      "meta_keys": [
+        "burden_vector",
+        "cluster_schema_hash",
+        "cluster_schema_version",
+        "confidence_downgrades",
+        "criticality_version",
+        "derived_ratios",
+        "explainability_report",
+        "insight_graph",
+        "lifestyle_interpretation_bridges_v1",
+        "medical_history_snapshot",
+        "missing_markers",
+        "narrative_runtime",
+        "overall_confidence",
+        "reference_profiles",
+        "system_confidence",
+        "wave1_aligned_drivers"
+      ]
+    },
+    "top_findings": null,
+    "primary_concern_top": null,
+    "result_keys": [
+      "analysis_id",
+      "biomarkers",
+      "burden_hash",
+      "clusters",
+      "consumer_domain_scores",
+      "created_at",
+      "derived_markers",
+      "insights",
+      "interpretation_display_layer_v1",
+      "lifestyle",
+      "meta",
+      "narrative_report_v1",
+      "overall_score",
+      "primary_driver_system_id",
+      "replay_manifest",
+      "status",
+      "system_capacity_scores",
+      "unmapped_biomarkers"
+    ],
+    "run_dir": "C:\\Users\\abroa\\HealthIQ-AI-v5\\docs\\audit-papers\\verification-2026-05-04\\artifacts\\AB_full_panel_with_ranges__P1_healthy"
+  },
+  {
+    "panel": "AB_full_panel_with_ranges",
+    "profile": "P2_minimal_existing_fixture",
+    "panel_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\backend\\tests\\fixtures\\panels\\ab_full_panel_with_ranges.json",
+    "profile_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\backend\\tests\\fixtures\\lifestyle_minimal.json",
+    "ok": true,
+    "error": null,
+    "status": "completed",
+    "engine_version": null,
+    "schema_version": null,
+    "biomarker_count": 82,
+    "insight_count": 6,
+    "insight_titles": [
+      "Metabolic focus: summarise structured signals; review with your clinician",
+      "Cardiovascular focus: summarise structured signals; review with your clinician",
+      "Inflammatory focus: summarise structured signals; review with your clinician",
+      "Organ focus: summarise structured signals; review with your clinician",
+      "Nutritional focus: summarise structured signals; review with your clinician",
+      "Hormonal focus: summarise structured signals; review with your clinician"
+    ],
+    "signal_summary": {
+      "count": 13,
+      "active_count": 0,
+      "by_state": {
+        "": 13
+      },
+      "active": []
+    },
+    "root_cause_summary": {
+      "present": true,
+      "fallback_strings": [],
+      "governed_for": [
+        {
+          "insight_id": null,
+          "head": "Metabolic focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Cardiovascular focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Inflammatory focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Organ focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Nutritional focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Hormonal focus: summarise structured signals; review with your clinician"
+        }
+      ],
+      "lengths": [
+        73,
+        78,
+        76,
+        69,
+        75,
+        72
+      ]
+    },
+    "clinician_report": {
+      "primary_concern": null,
+      "primary_concern_mode": null,
+      "runner_up_topic_line": null,
+      "runner_up_why_not_lead_line": null,
+      "missing_data_line": null,
+      "confidence_line": null,
+      "headline": null,
+      "page1_keys": [],
+      "report_keys": []
+    },
+    "idl": {
+      "present": true,
+      "record_count": 11,
+      "enabled_count": 4,
+      "first_enabled": [
+        {
+          "internal_id": "ph_vascular_hcy_inflammation_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Vascular inflammation risk (homocysteine-linked)",
+          "retail_display_label": "Vascular Inflammation Risk",
+          "subtitle": "A pattern combining inflammation and homocysteine signals associated with vascular risk",
+          "why_it_matters": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
+          "severity_state": "strong_signal",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 3,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_thyroid_lipid_disturbance_v1",
+          "scientific_class": "organ_pattern",
+          "clinical_display_label": "Thyroid-linked lipid disturbance pattern",
+          "retail_display_label": "Thyroid\u2013Lipid Pattern",
+          "subtitle": "A pattern where thyroid-axis signals are accompanied by lipid disturbance",
+          "why_it_matters": "Thyroid axis changes can drive lipid disturbance and warrant joint review.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Ldl Cholesterol, Non Hdl Cholesterol, Apob, Hdl Cholesterol",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 6,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_one_carbon_homocysteine_macrocytosis_v1",
+          "scientific_class": "syndrome_state",
+          "clinical_display_label": "One-carbon pathway stress (homocysteine with macrocytic pattern)",
+          "retail_display_label": "Methylation pathway pattern",
+          "subtitle": "Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context",
+          "why_it_matters": "This pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot.",
+          "severity_state": "strong_signal",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 10,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_lipid_residual_ldl_favourable_transport_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Residual LDL signal within a more favourable lipid transport picture",
+          "retail_display_label": "LDL in context (protective transport features)",
+          "subtitle": "LDL elevation alongside relatively stronger HDL signalling\u2014particle architecture still matters",
+          "why_it_matters": "Cumulative atherogenic exposure is read in full transport context; reassuring HDL does not erase residual LDL-related risk.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Ldl Cholesterol, Non Hdl Cholesterol, Apob, Hdl Cholesterol",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 11,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        }
+      ],
+      "version": "1.0.0"
+    },
+    "lifestyle": {
+      "present": true,
+      "derived_inputs": {
+        "bmi": 27.7778,
+        "waist_to_height_ratio": 0.5278
+      },
+      "input_errors": null,
+      "invalid_input_plausibility": null,
+      "nonzero_capped_modifiers": {
+        "cardiovascular": 0.13,
+        "metabolic": 0.08
+      },
+      "adjusted_system_burdens_keys": []
+    },
+    "meta_modes": {
+      "narrative_runtime_mode": null,
+      "narrative_runtime_keys": [
+        "HEALTHIQ_ENABLE_LLM",
+        "HEALTHIQ_MODE",
+        "LLM_ENABLED",
+        "client_constructor_injected",
+        "client_kind",
+        "master_switch_HEALTHIQ_NARRATIVE_LLM",
+        "policy_reason",
+        "policy_version",
+        "runtime_mode",
+        "synthesizer_allow_llm_resolved"
+      ],
+      "explainability_present": true,
+      "meta_keys": [
+        "burden_vector",
+        "cluster_schema_hash",
+        "cluster_schema_version",
+        "confidence_downgrades",
+        "criticality_version",
+        "derived_ratios",
+        "explainability_report",
+        "insight_graph",
+        "lifestyle_interpretation_bridges_v1",
+        "medical_history_snapshot",
+        "missing_markers",
+        "narrative_runtime",
+        "overall_confidence",
+        "reference_profiles",
+        "system_confidence",
+        "wave1_aligned_drivers"
+      ]
+    },
+    "top_findings": null,
+    "primary_concern_top": null,
+    "result_keys": [
+      "analysis_id",
+      "biomarkers",
+      "burden_hash",
+      "clusters",
+      "consumer_domain_scores",
+      "created_at",
+      "derived_markers",
+      "insights",
+      "interpretation_display_layer_v1",
+      "lifestyle",
+      "meta",
+      "narrative_report_v1",
+      "overall_score",
+      "primary_driver_system_id",
+      "replay_manifest",
+      "status",
+      "system_capacity_scores",
+      "unmapped_biomarkers"
+    ],
+    "run_dir": "C:\\Users\\abroa\\HealthIQ-AI-v5\\docs\\audit-papers\\verification-2026-05-04\\artifacts\\AB_full_panel_with_ranges__P2_minimal_existing_fixture"
+  },
+  {
+    "panel": "AB_full_panel_with_ranges",
+    "profile": "P3_stressed",
+    "panel_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\backend\\tests\\fixtures\\panels\\ab_full_panel_with_ranges.json",
+    "profile_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\docs\\audit-papers\\verification-2026-05-04\\profile_stressed.json",
+    "ok": true,
+    "error": null,
+    "status": "completed",
+    "engine_version": null,
+    "schema_version": null,
+    "biomarker_count": 82,
+    "insight_count": 6,
+    "insight_titles": [
+      "Metabolic focus: summarise structured signals; review with your clinician",
+      "Cardiovascular focus: summarise structured signals; review with your clinician",
+      "Inflammatory focus: summarise structured signals; review with your clinician",
+      "Organ focus: summarise structured signals; review with your clinician",
+      "Nutritional focus: summarise structured signals; review with your clinician",
+      "Hormonal focus: summarise structured signals; review with your clinician"
+    ],
+    "signal_summary": {
+      "count": 13,
+      "active_count": 0,
+      "by_state": {
+        "": 13
+      },
+      "active": []
+    },
+    "root_cause_summary": {
+      "present": true,
+      "fallback_strings": [],
+      "governed_for": [
+        {
+          "insight_id": null,
+          "head": "Metabolic focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Cardiovascular focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Inflammatory focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Organ focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Nutritional focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Hormonal focus: summarise structured signals; review with your clinician"
+        }
+      ],
+      "lengths": [
+        73,
+        78,
+        76,
+        69,
+        75,
+        72
+      ]
+    },
+    "clinician_report": {
+      "primary_concern": null,
+      "primary_concern_mode": null,
+      "runner_up_topic_line": null,
+      "runner_up_why_not_lead_line": null,
+      "missing_data_line": null,
+      "confidence_line": null,
+      "headline": null,
+      "page1_keys": [],
+      "report_keys": []
+    },
+    "idl": {
+      "present": true,
+      "record_count": 11,
+      "enabled_count": 4,
+      "first_enabled": [
+        {
+          "internal_id": "ph_vascular_hcy_inflammation_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Vascular inflammation risk (homocysteine-linked)",
+          "retail_display_label": "Vascular Inflammation Risk",
+          "subtitle": "A pattern combining inflammation and homocysteine signals associated with vascular risk",
+          "why_it_matters": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
+          "severity_state": "strong_signal",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 3,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_thyroid_lipid_disturbance_v1",
+          "scientific_class": "organ_pattern",
+          "clinical_display_label": "Thyroid-linked lipid disturbance pattern",
+          "retail_display_label": "Thyroid\u2013Lipid Pattern",
+          "subtitle": "A pattern where thyroid-axis signals are accompanied by lipid disturbance",
+          "why_it_matters": "Thyroid axis changes can drive lipid disturbance and warrant joint review.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Ldl Cholesterol, Non Hdl Cholesterol, Apob, Hdl Cholesterol",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 6,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_one_carbon_homocysteine_macrocytosis_v1",
+          "scientific_class": "syndrome_state",
+          "clinical_display_label": "One-carbon pathway stress (homocysteine with macrocytic pattern)",
+          "retail_display_label": "Methylation pathway pattern",
+          "subtitle": "Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context",
+          "why_it_matters": "This pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot.",
+          "severity_state": "strong_signal",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 10,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_lipid_residual_ldl_favourable_transport_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Residual LDL signal within a more favourable lipid transport picture",
+          "retail_display_label": "LDL in context (protective transport features)",
+          "subtitle": "LDL elevation alongside relatively stronger HDL signalling\u2014particle architecture still matters",
+          "why_it_matters": "Cumulative atherogenic exposure is read in full transport context; reassuring HDL does not erase residual LDL-related risk.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Ldl Cholesterol, Non Hdl Cholesterol, Apob, Hdl Cholesterol",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 11,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        }
+      ],
+      "version": "1.0.0"
+    },
+    "lifestyle": {
+      "present": true,
+      "derived_inputs": {
+        "bmi": 32.4074,
+        "waist_to_height_ratio": 0.6111
+      },
+      "input_errors": null,
+      "invalid_input_plausibility": null,
+      "nonzero_capped_modifiers": {
+        "cardiovascular": 0.2,
+        "hepatic": 0.1,
+        "immune": 0.06,
+        "metabolic": 0.2,
+        "musculoskeletal": 0.05
+      },
+      "adjusted_system_burdens_keys": []
+    },
+    "meta_modes": {
+      "narrative_runtime_mode": null,
+      "narrative_runtime_keys": [
+        "HEALTHIQ_ENABLE_LLM",
+        "HEALTHIQ_MODE",
+        "LLM_ENABLED",
+        "client_constructor_injected",
+        "client_kind",
+        "master_switch_HEALTHIQ_NARRATIVE_LLM",
+        "policy_reason",
+        "policy_version",
+        "runtime_mode",
+        "synthesizer_allow_llm_resolved"
+      ],
+      "explainability_present": true,
+      "meta_keys": [
+        "burden_vector",
+        "cluster_schema_hash",
+        "cluster_schema_version",
+        "confidence_downgrades",
+        "criticality_version",
+        "derived_ratios",
+        "explainability_report",
+        "insight_graph",
+        "lifestyle_interpretation_bridges_v1",
+        "medical_history_snapshot",
+        "missing_markers",
+        "narrative_runtime",
+        "overall_confidence",
+        "reference_profiles",
+        "system_confidence",
+        "wave1_aligned_drivers"
+      ]
+    },
+    "top_findings": null,
+    "primary_concern_top": null,
+    "result_keys": [
+      "analysis_id",
+      "biomarkers",
+      "burden_hash",
+      "clusters",
+      "consumer_domain_scores",
+      "created_at",
+      "derived_markers",
+      "insights",
+      "interpretation_display_layer_v1",
+      "lifestyle",
+      "meta",
+      "narrative_report_v1",
+      "overall_score",
+      "primary_driver_system_id",
+      "replay_manifest",
+      "status",
+      "system_capacity_scores",
+      "unmapped_biomarkers"
+    ],
+    "run_dir": "C:\\Users\\abroa\\HealthIQ-AI-v5\\docs\\audit-papers\\verification-2026-05-04\\artifacts\\AB_full_panel_with_ranges__P3_stressed"
+  },
+  {
+    "panel": "VR_full_panel_with_ranges",
+    "profile": "P0_no_lifestyle",
+    "panel_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\backend\\tests\\fixtures\\panels\\vr_full_panel_with_ranges.json",
+    "profile_path": null,
+    "ok": true,
+    "error": null,
+    "status": "completed",
+    "engine_version": null,
+    "schema_version": null,
+    "biomarker_count": 82,
+    "insight_count": 6,
+    "insight_titles": [
+      "Metabolic focus: summarise structured signals; review with your clinician",
+      "Cardiovascular focus: summarise structured signals; review with your clinician",
+      "Inflammatory focus: summarise structured signals; review with your clinician",
+      "Organ focus: summarise structured signals; review with your clinician",
+      "Nutritional focus: summarise structured signals; review with your clinician",
+      "Hormonal focus: summarise structured signals; review with your clinician"
+    ],
+    "signal_summary": {
+      "count": 12,
+      "active_count": 0,
+      "by_state": {
+        "": 12
+      },
+      "active": []
+    },
+    "root_cause_summary": {
+      "present": true,
+      "fallback_strings": [],
+      "governed_for": [
+        {
+          "insight_id": null,
+          "head": "Metabolic focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Cardiovascular focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Inflammatory focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Organ focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Nutritional focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Hormonal focus: summarise structured signals; review with your clinician"
+        }
+      ],
+      "lengths": [
+        73,
+        78,
+        76,
+        69,
+        75,
+        72
+      ]
+    },
+    "clinician_report": {
+      "primary_concern": null,
+      "primary_concern_mode": null,
+      "runner_up_topic_line": null,
+      "runner_up_why_not_lead_line": null,
+      "missing_data_line": null,
+      "confidence_line": null,
+      "headline": null,
+      "page1_keys": [],
+      "report_keys": []
+    },
+    "idl": {
+      "present": true,
+      "record_count": 11,
+      "enabled_count": 2,
+      "first_enabled": [
+        {
+          "internal_id": "ph_vascular_hcy_inflammation_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Vascular inflammation risk (homocysteine-linked)",
+          "retail_display_label": "Vascular Inflammation Risk",
+          "subtitle": "A pattern combining inflammation and homocysteine signals associated with vascular risk",
+          "why_it_matters": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
+          "severity_state": "attention",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 3,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_one_carbon_homocysteine_macrocytosis_v1",
+          "scientific_class": "syndrome_state",
+          "clinical_display_label": "One-carbon pathway stress (homocysteine with macrocytic pattern)",
+          "retail_display_label": "Methylation pathway pattern",
+          "subtitle": "Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context",
+          "why_it_matters": "This pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 10,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        }
+      ],
+      "version": "1.0.0"
+    },
+    "lifestyle": {
+      "present": false
+    },
+    "meta_modes": {
+      "narrative_runtime_mode": null,
+      "narrative_runtime_keys": [
+        "HEALTHIQ_ENABLE_LLM",
+        "HEALTHIQ_MODE",
+        "LLM_ENABLED",
+        "client_constructor_injected",
+        "client_kind",
+        "master_switch_HEALTHIQ_NARRATIVE_LLM",
+        "policy_reason",
+        "policy_version",
+        "runtime_mode",
+        "synthesizer_allow_llm_resolved"
+      ],
+      "explainability_present": true,
+      "meta_keys": [
+        "burden_vector",
+        "cluster_schema_hash",
+        "cluster_schema_version",
+        "confidence_downgrades",
+        "criticality_version",
+        "derived_ratios",
+        "explainability_report",
+        "insight_graph",
+        "lifestyle_interpretation_bridges_v1",
+        "medical_history_snapshot",
+        "missing_markers",
+        "narrative_runtime",
+        "overall_confidence",
+        "reference_profiles",
+        "system_confidence",
+        "wave1_aligned_drivers"
+      ]
+    },
+    "top_findings": null,
+    "primary_concern_top": null,
+    "result_keys": [
+      "analysis_id",
+      "biomarkers",
+      "burden_hash",
+      "clusters",
+      "consumer_domain_scores",
+      "created_at",
+      "derived_markers",
+      "insights",
+      "interpretation_display_layer_v1",
+      "meta",
+      "narrative_report_v1",
+      "overall_score",
+      "primary_driver_system_id",
+      "replay_manifest",
+      "status",
+      "system_capacity_scores",
+      "unmapped_biomarkers"
+    ],
+    "run_dir": "C:\\Users\\abroa\\HealthIQ-AI-v5\\docs\\audit-papers\\verification-2026-05-04\\artifacts\\VR_full_panel_with_ranges__P0_no_lifestyle"
+  },
+  {
+    "panel": "VR_full_panel_with_ranges",
+    "profile": "P1_healthy",
+    "panel_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\backend\\tests\\fixtures\\panels\\vr_full_panel_with_ranges.json",
+    "profile_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\docs\\audit-papers\\verification-2026-05-04\\profile_healthy.json",
+    "ok": true,
+    "error": null,
+    "status": "completed",
+    "engine_version": null,
+    "schema_version": null,
+    "biomarker_count": 82,
+    "insight_count": 6,
+    "insight_titles": [
+      "Metabolic focus: summarise structured signals; review with your clinician",
+      "Cardiovascular focus: summarise structured signals; review with your clinician",
+      "Inflammatory focus: summarise structured signals; review with your clinician",
+      "Organ focus: summarise structured signals; review with your clinician",
+      "Nutritional focus: summarise structured signals; review with your clinician",
+      "Hormonal focus: summarise structured signals; review with your clinician"
+    ],
+    "signal_summary": {
+      "count": 12,
+      "active_count": 0,
+      "by_state": {
+        "": 12
+      },
+      "active": []
+    },
+    "root_cause_summary": {
+      "present": true,
+      "fallback_strings": [],
+      "governed_for": [
+        {
+          "insight_id": null,
+          "head": "Metabolic focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Cardiovascular focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Inflammatory focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Organ focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Nutritional focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Hormonal focus: summarise structured signals; review with your clinician"
+        }
+      ],
+      "lengths": [
+        73,
+        78,
+        76,
+        69,
+        75,
+        72
+      ]
+    },
+    "clinician_report": {
+      "primary_concern": null,
+      "primary_concern_mode": null,
+      "runner_up_topic_line": null,
+      "runner_up_why_not_lead_line": null,
+      "missing_data_line": null,
+      "confidence_line": null,
+      "headline": null,
+      "page1_keys": [],
+      "report_keys": []
+    },
+    "idl": {
+      "present": true,
+      "record_count": 11,
+      "enabled_count": 2,
+      "first_enabled": [
+        {
+          "internal_id": "ph_vascular_hcy_inflammation_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Vascular inflammation risk (homocysteine-linked)",
+          "retail_display_label": "Vascular Inflammation Risk",
+          "subtitle": "A pattern combining inflammation and homocysteine signals associated with vascular risk",
+          "why_it_matters": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
+          "severity_state": "attention",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 3,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_one_carbon_homocysteine_macrocytosis_v1",
+          "scientific_class": "syndrome_state",
+          "clinical_display_label": "One-carbon pathway stress (homocysteine with macrocytic pattern)",
+          "retail_display_label": "Methylation pathway pattern",
+          "subtitle": "Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context",
+          "why_it_matters": "This pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 10,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        }
+      ],
+      "version": "1.0.0"
+    },
+    "lifestyle": {
+      "present": true,
+      "derived_inputs": {
+        "bmi": 22.2222,
+        "waist_to_height_ratio": 0.4444
+      },
+      "input_errors": null,
+      "invalid_input_plausibility": null,
+      "nonzero_capped_modifiers": {},
+      "adjusted_system_burdens_keys": []
+    },
+    "meta_modes": {
+      "narrative_runtime_mode": null,
+      "narrative_runtime_keys": [
+        "HEALTHIQ_ENABLE_LLM",
+        "HEALTHIQ_MODE",
+        "LLM_ENABLED",
+        "client_constructor_injected",
+        "client_kind",
+        "master_switch_HEALTHIQ_NARRATIVE_LLM",
+        "policy_reason",
+        "policy_version",
+        "runtime_mode",
+        "synthesizer_allow_llm_resolved"
+      ],
+      "explainability_present": true,
+      "meta_keys": [
+        "burden_vector",
+        "cluster_schema_hash",
+        "cluster_schema_version",
+        "confidence_downgrades",
+        "criticality_version",
+        "derived_ratios",
+        "explainability_report",
+        "insight_graph",
+        "lifestyle_interpretation_bridges_v1",
+        "medical_history_snapshot",
+        "missing_markers",
+        "narrative_runtime",
+        "overall_confidence",
+        "reference_profiles",
+        "system_confidence",
+        "wave1_aligned_drivers"
+      ]
+    },
+    "top_findings": null,
+    "primary_concern_top": null,
+    "result_keys": [
+      "analysis_id",
+      "biomarkers",
+      "burden_hash",
+      "clusters",
+      "consumer_domain_scores",
+      "created_at",
+      "derived_markers",
+      "insights",
+      "interpretation_display_layer_v1",
+      "lifestyle",
+      "meta",
+      "narrative_report_v1",
+      "overall_score",
+      "primary_driver_system_id",
+      "replay_manifest",
+      "status",
+      "system_capacity_scores",
+      "unmapped_biomarkers"
+    ],
+    "run_dir": "C:\\Users\\abroa\\HealthIQ-AI-v5\\docs\\audit-papers\\verification-2026-05-04\\artifacts\\VR_full_panel_with_ranges__P1_healthy"
+  },
+  {
+    "panel": "VR_full_panel_with_ranges",
+    "profile": "P2_minimal_existing_fixture",
+    "panel_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\backend\\tests\\fixtures\\panels\\vr_full_panel_with_ranges.json",
+    "profile_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\backend\\tests\\fixtures\\lifestyle_minimal.json",
+    "ok": true,
+    "error": null,
+    "status": "completed",
+    "engine_version": null,
+    "schema_version": null,
+    "biomarker_count": 82,
+    "insight_count": 6,
+    "insight_titles": [
+      "Metabolic focus: summarise structured signals; review with your clinician",
+      "Cardiovascular focus: summarise structured signals; review with your clinician",
+      "Inflammatory focus: summarise structured signals; review with your clinician",
+      "Organ focus: summarise structured signals; review with your clinician",
+      "Nutritional focus: summarise structured signals; review with your clinician",
+      "Hormonal focus: summarise structured signals; review with your clinician"
+    ],
+    "signal_summary": {
+      "count": 12,
+      "active_count": 0,
+      "by_state": {
+        "": 12
+      },
+      "active": []
+    },
+    "root_cause_summary": {
+      "present": true,
+      "fallback_strings": [],
+      "governed_for": [
+        {
+          "insight_id": null,
+          "head": "Metabolic focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Cardiovascular focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Inflammatory focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Organ focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Nutritional focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Hormonal focus: summarise structured signals; review with your clinician"
+        }
+      ],
+      "lengths": [
+        73,
+        78,
+        76,
+        69,
+        75,
+        72
+      ]
+    },
+    "clinician_report": {
+      "primary_concern": null,
+      "primary_concern_mode": null,
+      "runner_up_topic_line": null,
+      "runner_up_why_not_lead_line": null,
+      "missing_data_line": null,
+      "confidence_line": null,
+      "headline": null,
+      "page1_keys": [],
+      "report_keys": []
+    },
+    "idl": {
+      "present": true,
+      "record_count": 11,
+      "enabled_count": 2,
+      "first_enabled": [
+        {
+          "internal_id": "ph_vascular_hcy_inflammation_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Vascular inflammation risk (homocysteine-linked)",
+          "retail_display_label": "Vascular Inflammation Risk",
+          "subtitle": "A pattern combining inflammation and homocysteine signals associated with vascular risk",
+          "why_it_matters": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
+          "severity_state": "attention",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 3,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_one_carbon_homocysteine_macrocytosis_v1",
+          "scientific_class": "syndrome_state",
+          "clinical_display_label": "One-carbon pathway stress (homocysteine with macrocytic pattern)",
+          "retail_display_label": "Methylation pathway pattern",
+          "subtitle": "Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context",
+          "why_it_matters": "This pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 10,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        }
+      ],
+      "version": "1.0.0"
+    },
+    "lifestyle": {
+      "present": true,
+      "derived_inputs": {
+        "bmi": 27.7778,
+        "waist_to_height_ratio": 0.5278
+      },
+      "input_errors": null,
+      "invalid_input_plausibility": null,
+      "nonzero_capped_modifiers": {
+        "cardiovascular": 0.13,
+        "metabolic": 0.08
+      },
+      "adjusted_system_burdens_keys": []
+    },
+    "meta_modes": {
+      "narrative_runtime_mode": null,
+      "narrative_runtime_keys": [
+        "HEALTHIQ_ENABLE_LLM",
+        "HEALTHIQ_MODE",
+        "LLM_ENABLED",
+        "client_constructor_injected",
+        "client_kind",
+        "master_switch_HEALTHIQ_NARRATIVE_LLM",
+        "policy_reason",
+        "policy_version",
+        "runtime_mode",
+        "synthesizer_allow_llm_resolved"
+      ],
+      "explainability_present": true,
+      "meta_keys": [
+        "burden_vector",
+        "cluster_schema_hash",
+        "cluster_schema_version",
+        "confidence_downgrades",
+        "criticality_version",
+        "derived_ratios",
+        "explainability_report",
+        "insight_graph",
+        "lifestyle_interpretation_bridges_v1",
+        "medical_history_snapshot",
+        "missing_markers",
+        "narrative_runtime",
+        "overall_confidence",
+        "reference_profiles",
+        "system_confidence",
+        "wave1_aligned_drivers"
+      ]
+    },
+    "top_findings": null,
+    "primary_concern_top": null,
+    "result_keys": [
+      "analysis_id",
+      "biomarkers",
+      "burden_hash",
+      "clusters",
+      "consumer_domain_scores",
+      "created_at",
+      "derived_markers",
+      "insights",
+      "interpretation_display_layer_v1",
+      "lifestyle",
+      "meta",
+      "narrative_report_v1",
+      "overall_score",
+      "primary_driver_system_id",
+      "replay_manifest",
+      "status",
+      "system_capacity_scores",
+      "unmapped_biomarkers"
+    ],
+    "run_dir": "C:\\Users\\abroa\\HealthIQ-AI-v5\\docs\\audit-papers\\verification-2026-05-04\\artifacts\\VR_full_panel_with_ranges__P2_minimal_existing_fixture"
+  },
+  {
+    "panel": "VR_full_panel_with_ranges",
+    "profile": "P3_stressed",
+    "panel_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\backend\\tests\\fixtures\\panels\\vr_full_panel_with_ranges.json",
+    "profile_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\docs\\audit-papers\\verification-2026-05-04\\profile_stressed.json",
+    "ok": true,
+    "error": null,
+    "status": "completed",
+    "engine_version": null,
+    "schema_version": null,
+    "biomarker_count": 82,
+    "insight_count": 6,
+    "insight_titles": [
+      "Metabolic focus: summarise structured signals; review with your clinician",
+      "Cardiovascular focus: summarise structured signals; review with your clinician",
+      "Inflammatory focus: summarise structured signals; review with your clinician",
+      "Organ focus: summarise structured signals; review with your clinician",
+      "Nutritional focus: summarise structured signals; review with your clinician",
+      "Hormonal focus: summarise structured signals; review with your clinician"
+    ],
+    "signal_summary": {
+      "count": 12,
+      "active_count": 0,
+      "by_state": {
+        "": 12
+      },
+      "active": []
+    },
+    "root_cause_summary": {
+      "present": true,
+      "fallback_strings": [],
+      "governed_for": [
+        {
+          "insight_id": null,
+          "head": "Metabolic focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Cardiovascular focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Inflammatory focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Organ focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Nutritional focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Hormonal focus: summarise structured signals; review with your clinician"
+        }
+      ],
+      "lengths": [
+        73,
+        78,
+        76,
+        69,
+        75,
+        72
+      ]
+    },
+    "clinician_report": {
+      "primary_concern": null,
+      "primary_concern_mode": null,
+      "runner_up_topic_line": null,
+      "runner_up_why_not_lead_line": null,
+      "missing_data_line": null,
+      "confidence_line": null,
+      "headline": null,
+      "page1_keys": [],
+      "report_keys": []
+    },
+    "idl": {
+      "present": true,
+      "record_count": 11,
+      "enabled_count": 2,
+      "first_enabled": [
+        {
+          "internal_id": "ph_vascular_hcy_inflammation_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Vascular inflammation risk (homocysteine-linked)",
+          "retail_display_label": "Vascular Inflammation Risk",
+          "subtitle": "A pattern combining inflammation and homocysteine signals associated with vascular risk",
+          "why_it_matters": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
+          "severity_state": "attention",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 3,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_one_carbon_homocysteine_macrocytosis_v1",
+          "scientific_class": "syndrome_state",
+          "clinical_display_label": "One-carbon pathway stress (homocysteine with macrocytic pattern)",
+          "retail_display_label": "Methylation pathway pattern",
+          "subtitle": "Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context",
+          "why_it_matters": "This pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 10,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        }
+      ],
+      "version": "1.0.0"
+    },
+    "lifestyle": {
+      "present": true,
+      "derived_inputs": {
+        "bmi": 32.4074,
+        "waist_to_height_ratio": 0.6111
+      },
+      "input_errors": null,
+      "invalid_input_plausibility": null,
+      "nonzero_capped_modifiers": {
+        "cardiovascular": 0.2,
+        "hepatic": 0.1,
+        "immune": 0.06,
+        "metabolic": 0.2,
+        "musculoskeletal": 0.05
+      },
+      "adjusted_system_burdens_keys": []
+    },
+    "meta_modes": {
+      "narrative_runtime_mode": null,
+      "narrative_runtime_keys": [
+        "HEALTHIQ_ENABLE_LLM",
+        "HEALTHIQ_MODE",
+        "LLM_ENABLED",
+        "client_constructor_injected",
+        "client_kind",
+        "master_switch_HEALTHIQ_NARRATIVE_LLM",
+        "policy_reason",
+        "policy_version",
+        "runtime_mode",
+        "synthesizer_allow_llm_resolved"
+      ],
+      "explainability_present": true,
+      "meta_keys": [
+        "burden_vector",
+        "cluster_schema_hash",
+        "cluster_schema_version",
+        "confidence_downgrades",
+        "criticality_version",
+        "derived_ratios",
+        "explainability_report",
+        "insight_graph",
+        "lifestyle_interpretation_bridges_v1",
+        "medical_history_snapshot",
+        "missing_markers",
+        "narrative_runtime",
+        "overall_confidence",
+        "reference_profiles",
+        "system_confidence",
+        "wave1_aligned_drivers"
+      ]
+    },
+    "top_findings": null,
+    "primary_concern_top": null,
+    "result_keys": [
+      "analysis_id",
+      "biomarkers",
+      "burden_hash",
+      "clusters",
+      "consumer_domain_scores",
+      "created_at",
+      "derived_markers",
+      "insights",
+      "interpretation_display_layer_v1",
+      "lifestyle",
+      "meta",
+      "narrative_report_v1",
+      "overall_score",
+      "primary_driver_system_id",
+      "replay_manifest",
+      "status",
+      "system_capacity_scores",
+      "unmapped_biomarkers"
+    ],
+    "run_dir": "C:\\Users\\abroa\\HealthIQ-AI-v5\\docs\\audit-papers\\verification-2026-05-04\\artifacts\\VR_full_panel_with_ranges__P3_stressed"
+  },
+  {
+    "panel": "AB_full_panel_with_profiles",
+    "profile": "P0_no_lifestyle",
+    "panel_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\backend\\tests\\fixtures\\panels\\ab_full_panel_with_profiles.json",
+    "profile_path": null,
+    "ok": true,
+    "error": null,
+    "status": "completed",
+    "engine_version": null,
+    "schema_version": null,
+    "biomarker_count": 82,
+    "insight_count": 6,
+    "insight_titles": [
+      "Metabolic focus: summarise structured signals; review with your clinician",
+      "Cardiovascular focus: summarise structured signals; review with your clinician",
+      "Inflammatory focus: summarise structured signals; review with your clinician",
+      "Organ focus: summarise structured signals; review with your clinician",
+      "Nutritional focus: summarise structured signals; review with your clinician",
+      "Hormonal focus: summarise structured signals; review with your clinician"
+    ],
+    "signal_summary": {
+      "count": 13,
+      "active_count": 0,
+      "by_state": {
+        "": 13
+      },
+      "active": []
+    },
+    "root_cause_summary": {
+      "present": true,
+      "fallback_strings": [],
+      "governed_for": [
+        {
+          "insight_id": null,
+          "head": "Metabolic focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Cardiovascular focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Inflammatory focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Organ focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Nutritional focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Hormonal focus: summarise structured signals; review with your clinician"
+        }
+      ],
+      "lengths": [
+        73,
+        78,
+        76,
+        69,
+        75,
+        72
+      ]
+    },
+    "clinician_report": {
+      "primary_concern": null,
+      "primary_concern_mode": null,
+      "runner_up_topic_line": null,
+      "runner_up_why_not_lead_line": null,
+      "missing_data_line": null,
+      "confidence_line": null,
+      "headline": null,
+      "page1_keys": [],
+      "report_keys": []
+    },
+    "idl": {
+      "present": true,
+      "record_count": 11,
+      "enabled_count": 4,
+      "first_enabled": [
+        {
+          "internal_id": "ph_vascular_hcy_inflammation_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Vascular inflammation risk (homocysteine-linked)",
+          "retail_display_label": "Vascular Inflammation Risk",
+          "subtitle": "A pattern combining inflammation and homocysteine signals associated with vascular risk",
+          "why_it_matters": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
+          "severity_state": "strong_signal",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 3,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_thyroid_lipid_disturbance_v1",
+          "scientific_class": "organ_pattern",
+          "clinical_display_label": "Thyroid-linked lipid disturbance pattern",
+          "retail_display_label": "Thyroid\u2013Lipid Pattern",
+          "subtitle": "A pattern where thyroid-axis signals are accompanied by lipid disturbance",
+          "why_it_matters": "Thyroid axis changes can drive lipid disturbance and warrant joint review.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Ldl Cholesterol, Non Hdl Cholesterol, Apob, Hdl Cholesterol",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 6,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_one_carbon_homocysteine_macrocytosis_v1",
+          "scientific_class": "syndrome_state",
+          "clinical_display_label": "One-carbon pathway stress (homocysteine with macrocytic pattern)",
+          "retail_display_label": "Methylation pathway pattern",
+          "subtitle": "Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context",
+          "why_it_matters": "This pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot.",
+          "severity_state": "strong_signal",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 10,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_lipid_residual_ldl_favourable_transport_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Residual LDL signal within a more favourable lipid transport picture",
+          "retail_display_label": "LDL in context (protective transport features)",
+          "subtitle": "LDL elevation alongside relatively stronger HDL signalling\u2014particle architecture still matters",
+          "why_it_matters": "Cumulative atherogenic exposure is read in full transport context; reassuring HDL does not erase residual LDL-related risk.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Ldl Cholesterol, Non Hdl Cholesterol, Apob, Hdl Cholesterol",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 11,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        }
+      ],
+      "version": "1.0.0"
+    },
+    "lifestyle": {
+      "present": false
+    },
+    "meta_modes": {
+      "narrative_runtime_mode": null,
+      "narrative_runtime_keys": [
+        "HEALTHIQ_ENABLE_LLM",
+        "HEALTHIQ_MODE",
+        "LLM_ENABLED",
+        "client_constructor_injected",
+        "client_kind",
+        "master_switch_HEALTHIQ_NARRATIVE_LLM",
+        "policy_reason",
+        "policy_version",
+        "runtime_mode",
+        "synthesizer_allow_llm_resolved"
+      ],
+      "explainability_present": true,
+      "meta_keys": [
+        "burden_vector",
+        "cluster_schema_hash",
+        "cluster_schema_version",
+        "confidence_downgrades",
+        "criticality_version",
+        "derived_ratios",
+        "explainability_report",
+        "insight_graph",
+        "lifestyle_interpretation_bridges_v1",
+        "medical_history_snapshot",
+        "missing_markers",
+        "narrative_runtime",
+        "overall_confidence",
+        "reference_profiles",
+        "system_confidence",
+        "wave1_aligned_drivers"
+      ]
+    },
+    "top_findings": null,
+    "primary_concern_top": null,
+    "result_keys": [
+      "analysis_id",
+      "biomarkers",
+      "burden_hash",
+      "clusters",
+      "consumer_domain_scores",
+      "created_at",
+      "derived_markers",
+      "insights",
+      "interpretation_display_layer_v1",
+      "meta",
+      "narrative_report_v1",
+      "overall_score",
+      "primary_driver_system_id",
+      "replay_manifest",
+      "status",
+      "system_capacity_scores",
+      "unmapped_biomarkers"
+    ],
+    "run_dir": "C:\\Users\\abroa\\HealthIQ-AI-v5\\docs\\audit-papers\\verification-2026-05-04\\artifacts\\AB_full_panel_with_profiles__P0_no_lifestyle"
+  },
+  {
+    "panel": "AB_full_panel_with_profiles",
+    "profile": "P1_healthy",
+    "panel_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\backend\\tests\\fixtures\\panels\\ab_full_panel_with_profiles.json",
+    "profile_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\docs\\audit-papers\\verification-2026-05-04\\profile_healthy.json",
+    "ok": true,
+    "error": null,
+    "status": "completed",
+    "engine_version": null,
+    "schema_version": null,
+    "biomarker_count": 82,
+    "insight_count": 6,
+    "insight_titles": [
+      "Metabolic focus: summarise structured signals; review with your clinician",
+      "Cardiovascular focus: summarise structured signals; review with your clinician",
+      "Inflammatory focus: summarise structured signals; review with your clinician",
+      "Organ focus: summarise structured signals; review with your clinician",
+      "Nutritional focus: summarise structured signals; review with your clinician",
+      "Hormonal focus: summarise structured signals; review with your clinician"
+    ],
+    "signal_summary": {
+      "count": 13,
+      "active_count": 0,
+      "by_state": {
+        "": 13
+      },
+      "active": []
+    },
+    "root_cause_summary": {
+      "present": true,
+      "fallback_strings": [],
+      "governed_for": [
+        {
+          "insight_id": null,
+          "head": "Metabolic focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Cardiovascular focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Inflammatory focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Organ focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Nutritional focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Hormonal focus: summarise structured signals; review with your clinician"
+        }
+      ],
+      "lengths": [
+        73,
+        78,
+        76,
+        69,
+        75,
+        72
+      ]
+    },
+    "clinician_report": {
+      "primary_concern": null,
+      "primary_concern_mode": null,
+      "runner_up_topic_line": null,
+      "runner_up_why_not_lead_line": null,
+      "missing_data_line": null,
+      "confidence_line": null,
+      "headline": null,
+      "page1_keys": [],
+      "report_keys": []
+    },
+    "idl": {
+      "present": true,
+      "record_count": 11,
+      "enabled_count": 4,
+      "first_enabled": [
+        {
+          "internal_id": "ph_vascular_hcy_inflammation_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Vascular inflammation risk (homocysteine-linked)",
+          "retail_display_label": "Vascular Inflammation Risk",
+          "subtitle": "A pattern combining inflammation and homocysteine signals associated with vascular risk",
+          "why_it_matters": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
+          "severity_state": "strong_signal",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 3,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_thyroid_lipid_disturbance_v1",
+          "scientific_class": "organ_pattern",
+          "clinical_display_label": "Thyroid-linked lipid disturbance pattern",
+          "retail_display_label": "Thyroid\u2013Lipid Pattern",
+          "subtitle": "A pattern where thyroid-axis signals are accompanied by lipid disturbance",
+          "why_it_matters": "Thyroid axis changes can drive lipid disturbance and warrant joint review.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Ldl Cholesterol, Non Hdl Cholesterol, Apob, Hdl Cholesterol",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 6,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_one_carbon_homocysteine_macrocytosis_v1",
+          "scientific_class": "syndrome_state",
+          "clinical_display_label": "One-carbon pathway stress (homocysteine with macrocytic pattern)",
+          "retail_display_label": "Methylation pathway pattern",
+          "subtitle": "Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context",
+          "why_it_matters": "This pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot.",
+          "severity_state": "strong_signal",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 10,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_lipid_residual_ldl_favourable_transport_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Residual LDL signal within a more favourable lipid transport picture",
+          "retail_display_label": "LDL in context (protective transport features)",
+          "subtitle": "LDL elevation alongside relatively stronger HDL signalling\u2014particle architecture still matters",
+          "why_it_matters": "Cumulative atherogenic exposure is read in full transport context; reassuring HDL does not erase residual LDL-related risk.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Ldl Cholesterol, Non Hdl Cholesterol, Apob, Hdl Cholesterol",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 11,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        }
+      ],
+      "version": "1.0.0"
+    },
+    "lifestyle": {
+      "present": true,
+      "derived_inputs": {
+        "bmi": 22.2222,
+        "waist_to_height_ratio": 0.4444
+      },
+      "input_errors": null,
+      "invalid_input_plausibility": null,
+      "nonzero_capped_modifiers": {},
+      "adjusted_system_burdens_keys": []
+    },
+    "meta_modes": {
+      "narrative_runtime_mode": null,
+      "narrative_runtime_keys": [
+        "HEALTHIQ_ENABLE_LLM",
+        "HEALTHIQ_MODE",
+        "LLM_ENABLED",
+        "client_constructor_injected",
+        "client_kind",
+        "master_switch_HEALTHIQ_NARRATIVE_LLM",
+        "policy_reason",
+        "policy_version",
+        "runtime_mode",
+        "synthesizer_allow_llm_resolved"
+      ],
+      "explainability_present": true,
+      "meta_keys": [
+        "burden_vector",
+        "cluster_schema_hash",
+        "cluster_schema_version",
+        "confidence_downgrades",
+        "criticality_version",
+        "derived_ratios",
+        "explainability_report",
+        "insight_graph",
+        "lifestyle_interpretation_bridges_v1",
+        "medical_history_snapshot",
+        "missing_markers",
+        "narrative_runtime",
+        "overall_confidence",
+        "reference_profiles",
+        "system_confidence",
+        "wave1_aligned_drivers"
+      ]
+    },
+    "top_findings": null,
+    "primary_concern_top": null,
+    "result_keys": [
+      "analysis_id",
+      "biomarkers",
+      "burden_hash",
+      "clusters",
+      "consumer_domain_scores",
+      "created_at",
+      "derived_markers",
+      "insights",
+      "interpretation_display_layer_v1",
+      "lifestyle",
+      "meta",
+      "narrative_report_v1",
+      "overall_score",
+      "primary_driver_system_id",
+      "replay_manifest",
+      "status",
+      "system_capacity_scores",
+      "unmapped_biomarkers"
+    ],
+    "run_dir": "C:\\Users\\abroa\\HealthIQ-AI-v5\\docs\\audit-papers\\verification-2026-05-04\\artifacts\\AB_full_panel_with_profiles__P1_healthy"
+  },
+  {
+    "panel": "AB_full_panel_with_profiles",
+    "profile": "P2_minimal_existing_fixture",
+    "panel_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\backend\\tests\\fixtures\\panels\\ab_full_panel_with_profiles.json",
+    "profile_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\backend\\tests\\fixtures\\lifestyle_minimal.json",
+    "ok": true,
+    "error": null,
+    "status": "completed",
+    "engine_version": null,
+    "schema_version": null,
+    "biomarker_count": 82,
+    "insight_count": 6,
+    "insight_titles": [
+      "Metabolic focus: summarise structured signals; review with your clinician",
+      "Cardiovascular focus: summarise structured signals; review with your clinician",
+      "Inflammatory focus: summarise structured signals; review with your clinician",
+      "Organ focus: summarise structured signals; review with your clinician",
+      "Nutritional focus: summarise structured signals; review with your clinician",
+      "Hormonal focus: summarise structured signals; review with your clinician"
+    ],
+    "signal_summary": {
+      "count": 13,
+      "active_count": 0,
+      "by_state": {
+        "": 13
+      },
+      "active": []
+    },
+    "root_cause_summary": {
+      "present": true,
+      "fallback_strings": [],
+      "governed_for": [
+        {
+          "insight_id": null,
+          "head": "Metabolic focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Cardiovascular focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Inflammatory focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Organ focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Nutritional focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Hormonal focus: summarise structured signals; review with your clinician"
+        }
+      ],
+      "lengths": [
+        73,
+        78,
+        76,
+        69,
+        75,
+        72
+      ]
+    },
+    "clinician_report": {
+      "primary_concern": null,
+      "primary_concern_mode": null,
+      "runner_up_topic_line": null,
+      "runner_up_why_not_lead_line": null,
+      "missing_data_line": null,
+      "confidence_line": null,
+      "headline": null,
+      "page1_keys": [],
+      "report_keys": []
+    },
+    "idl": {
+      "present": true,
+      "record_count": 11,
+      "enabled_count": 4,
+      "first_enabled": [
+        {
+          "internal_id": "ph_vascular_hcy_inflammation_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Vascular inflammation risk (homocysteine-linked)",
+          "retail_display_label": "Vascular Inflammation Risk",
+          "subtitle": "A pattern combining inflammation and homocysteine signals associated with vascular risk",
+          "why_it_matters": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
+          "severity_state": "strong_signal",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 3,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_thyroid_lipid_disturbance_v1",
+          "scientific_class": "organ_pattern",
+          "clinical_display_label": "Thyroid-linked lipid disturbance pattern",
+          "retail_display_label": "Thyroid\u2013Lipid Pattern",
+          "subtitle": "A pattern where thyroid-axis signals are accompanied by lipid disturbance",
+          "why_it_matters": "Thyroid axis changes can drive lipid disturbance and warrant joint review.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Ldl Cholesterol, Non Hdl Cholesterol, Apob, Hdl Cholesterol",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 6,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_one_carbon_homocysteine_macrocytosis_v1",
+          "scientific_class": "syndrome_state",
+          "clinical_display_label": "One-carbon pathway stress (homocysteine with macrocytic pattern)",
+          "retail_display_label": "Methylation pathway pattern",
+          "subtitle": "Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context",
+          "why_it_matters": "This pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot.",
+          "severity_state": "strong_signal",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 10,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_lipid_residual_ldl_favourable_transport_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Residual LDL signal within a more favourable lipid transport picture",
+          "retail_display_label": "LDL in context (protective transport features)",
+          "subtitle": "LDL elevation alongside relatively stronger HDL signalling\u2014particle architecture still matters",
+          "why_it_matters": "Cumulative atherogenic exposure is read in full transport context; reassuring HDL does not erase residual LDL-related risk.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Ldl Cholesterol, Non Hdl Cholesterol, Apob, Hdl Cholesterol",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 11,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        }
+      ],
+      "version": "1.0.0"
+    },
+    "lifestyle": {
+      "present": true,
+      "derived_inputs": {
+        "bmi": 27.7778,
+        "waist_to_height_ratio": 0.5278
+      },
+      "input_errors": null,
+      "invalid_input_plausibility": null,
+      "nonzero_capped_modifiers": {
+        "cardiovascular": 0.13,
+        "metabolic": 0.08
+      },
+      "adjusted_system_burdens_keys": []
+    },
+    "meta_modes": {
+      "narrative_runtime_mode": null,
+      "narrative_runtime_keys": [
+        "HEALTHIQ_ENABLE_LLM",
+        "HEALTHIQ_MODE",
+        "LLM_ENABLED",
+        "client_constructor_injected",
+        "client_kind",
+        "master_switch_HEALTHIQ_NARRATIVE_LLM",
+        "policy_reason",
+        "policy_version",
+        "runtime_mode",
+        "synthesizer_allow_llm_resolved"
+      ],
+      "explainability_present": true,
+      "meta_keys": [
+        "burden_vector",
+        "cluster_schema_hash",
+        "cluster_schema_version",
+        "confidence_downgrades",
+        "criticality_version",
+        "derived_ratios",
+        "explainability_report",
+        "insight_graph",
+        "lifestyle_interpretation_bridges_v1",
+        "medical_history_snapshot",
+        "missing_markers",
+        "narrative_runtime",
+        "overall_confidence",
+        "reference_profiles",
+        "system_confidence",
+        "wave1_aligned_drivers"
+      ]
+    },
+    "top_findings": null,
+    "primary_concern_top": null,
+    "result_keys": [
+      "analysis_id",
+      "biomarkers",
+      "burden_hash",
+      "clusters",
+      "consumer_domain_scores",
+      "created_at",
+      "derived_markers",
+      "insights",
+      "interpretation_display_layer_v1",
+      "lifestyle",
+      "meta",
+      "narrative_report_v1",
+      "overall_score",
+      "primary_driver_system_id",
+      "replay_manifest",
+      "status",
+      "system_capacity_scores",
+      "unmapped_biomarkers"
+    ],
+    "run_dir": "C:\\Users\\abroa\\HealthIQ-AI-v5\\docs\\audit-papers\\verification-2026-05-04\\artifacts\\AB_full_panel_with_profiles__P2_minimal_existing_fixture"
+  },
+  {
+    "panel": "AB_full_panel_with_profiles",
+    "profile": "P3_stressed",
+    "panel_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\backend\\tests\\fixtures\\panels\\ab_full_panel_with_profiles.json",
+    "profile_path": "C:\\Users\\abroa\\HealthIQ-AI-v5\\docs\\audit-papers\\verification-2026-05-04\\profile_stressed.json",
+    "ok": true,
+    "error": null,
+    "status": "completed",
+    "engine_version": null,
+    "schema_version": null,
+    "biomarker_count": 82,
+    "insight_count": 6,
+    "insight_titles": [
+      "Metabolic focus: summarise structured signals; review with your clinician",
+      "Cardiovascular focus: summarise structured signals; review with your clinician",
+      "Inflammatory focus: summarise structured signals; review with your clinician",
+      "Organ focus: summarise structured signals; review with your clinician",
+      "Nutritional focus: summarise structured signals; review with your clinician",
+      "Hormonal focus: summarise structured signals; review with your clinician"
+    ],
+    "signal_summary": {
+      "count": 13,
+      "active_count": 0,
+      "by_state": {
+        "": 13
+      },
+      "active": []
+    },
+    "root_cause_summary": {
+      "present": true,
+      "fallback_strings": [],
+      "governed_for": [
+        {
+          "insight_id": null,
+          "head": "Metabolic focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Cardiovascular focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Inflammatory focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Organ focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Nutritional focus: summarise structured signals; review with your clinician"
+        },
+        {
+          "insight_id": null,
+          "head": "Hormonal focus: summarise structured signals; review with your clinician"
+        }
+      ],
+      "lengths": [
+        73,
+        78,
+        76,
+        69,
+        75,
+        72
+      ]
+    },
+    "clinician_report": {
+      "primary_concern": null,
+      "primary_concern_mode": null,
+      "runner_up_topic_line": null,
+      "runner_up_why_not_lead_line": null,
+      "missing_data_line": null,
+      "confidence_line": null,
+      "headline": null,
+      "page1_keys": [],
+      "report_keys": []
+    },
+    "idl": {
+      "present": true,
+      "record_count": 11,
+      "enabled_count": 4,
+      "first_enabled": [
+        {
+          "internal_id": "ph_vascular_hcy_inflammation_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Vascular inflammation risk (homocysteine-linked)",
+          "retail_display_label": "Vascular Inflammation Risk",
+          "subtitle": "A pattern combining inflammation and homocysteine signals associated with vascular risk",
+          "why_it_matters": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
+          "severity_state": "strong_signal",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 3,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_thyroid_lipid_disturbance_v1",
+          "scientific_class": "organ_pattern",
+          "clinical_display_label": "Thyroid-linked lipid disturbance pattern",
+          "retail_display_label": "Thyroid\u2013Lipid Pattern",
+          "subtitle": "A pattern where thyroid-axis signals are accompanied by lipid disturbance",
+          "why_it_matters": "Thyroid axis changes can drive lipid disturbance and warrant joint review.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Ldl Cholesterol, Non Hdl Cholesterol, Apob, Hdl Cholesterol",
+          "frontend_allowed_term": "clinical_only",
+          "display_order_priority": 6,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_one_carbon_homocysteine_macrocytosis_v1",
+          "scientific_class": "syndrome_state",
+          "clinical_display_label": "One-carbon pathway stress (homocysteine with macrocytic pattern)",
+          "retail_display_label": "Methylation pathway pattern",
+          "subtitle": "Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context",
+          "why_it_matters": "This pattern links nutrient\u2013cofactor networks to vascular and blood-cell maturation questions that deserve coherent follow-up, not a single-marker snapshot.",
+          "severity_state": "strong_signal",
+          "supporting_biomarkers_summary": "Homocysteine, Vitamin B12, Folate, Transferrin",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 10,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        },
+        {
+          "internal_id": "ph_lipid_residual_ldl_favourable_transport_v1",
+          "scientific_class": "risk_construct",
+          "clinical_display_label": "Residual LDL signal within a more favourable lipid transport picture",
+          "retail_display_label": "LDL in context (protective transport features)",
+          "subtitle": "LDL elevation alongside relatively stronger HDL signalling\u2014particle architecture still matters",
+          "why_it_matters": "Cumulative atherogenic exposure is read in full transport context; reassuring HDL does not erase residual LDL-related risk.",
+          "severity_state": "watch",
+          "supporting_biomarkers_summary": "Ldl Cholesterol, Non Hdl Cholesterol, Apob, Hdl Cholesterol",
+          "frontend_allowed_term": "phenotype_allowed",
+          "display_order_priority": 11,
+          "enabled_for_frontend": true,
+          "supporting_systems_summary": null,
+          "user_safe_description": null,
+          "future_commercial_domain": null,
+          "display_caveat": null
+        }
+      ],
+      "version": "1.0.0"
+    },
+    "lifestyle": {
+      "present": true,
+      "derived_inputs": {
+        "bmi": 32.4074,
+        "waist_to_height_ratio": 0.6111
+      },
+      "input_errors": null,
+      "invalid_input_plausibility": null,
+      "nonzero_capped_modifiers": {
+        "cardiovascular": 0.2,
+        "hepatic": 0.1,
+        "immune": 0.06,
+        "metabolic": 0.2,
+        "musculoskeletal": 0.05
+      },
+      "adjusted_system_burdens_keys": []
+    },
+    "meta_modes": {
+      "narrative_runtime_mode": null,
+      "narrative_runtime_keys": [
+        "HEALTHIQ_ENABLE_LLM",
+        "HEALTHIQ_MODE",
+        "LLM_ENABLED",
+        "client_constructor_injected",
+        "client_kind",
+        "master_switch_HEALTHIQ_NARRATIVE_LLM",
+        "policy_reason",
+        "policy_version",
+        "runtime_mode",
+        "synthesizer_allow_llm_resolved"
+      ],
+      "explainability_present": true,
+      "meta_keys": [
+        "burden_vector",
+        "cluster_schema_hash",
+        "cluster_schema_version",
+        "confidence_downgrades",
+        "criticality_version",
+        "derived_ratios",
+        "explainability_report",
+        "insight_graph",
+        "lifestyle_interpretation_bridges_v1",
+        "medical_history_snapshot",
+        "missing_markers",
+        "narrative_runtime",
+        "overall_confidence",
+        "reference_profiles",
+        "system_confidence",
+        "wave1_aligned_drivers"
+      ]
+    },
+    "top_findings": null,
+    "primary_concern_top": null,
+    "result_keys": [
+      "analysis_id",
+      "biomarkers",
+      "burden_hash",
+      "clusters",
+      "consumer_domain_scores",
+      "created_at",
+      "derived_markers",
+      "insights",
+      "interpretation_display_layer_v1",
+      "lifestyle",
+      "meta",
+      "narrative_report_v1",
+      "overall_score",
+      "primary_driver_system_id",
+      "replay_manifest",
+      "status",
+      "system_capacity_scores",
+      "unmapped_biomarkers"
+    ],
+    "run_dir": "C:\\Users\\abroa\\HealthIQ-AI-v5\\docs\\audit-papers\\verification-2026-05-04\\artifacts\\AB_full_panel_with_profiles__P3_stressed"
+  }
+]

@@ -1,0 +1,3569 @@
+{
+  "adjusted_system_burden_vector": {
+    "autonomic": 0.0,
+    "cardiovascular": 1.0,
+    "hematological": 0.0,
+    "hepatic": 0.1,
+    "hormonal": 0.0,
+    "immune": 0.06,
+    "metabolic": 0.2,
+    "musculoskeletal": 0.05,
+    "nutritional": 0.0,
+    "renal": 0.0,
+    "thyroid": 0.0
+  },
+  "analysis_id": "dca7837f-7ae0-468d-bb8f-0f78e91db6b5",
+  "arbitration_hash": "507e31462199c3ce70d5c29570836f6e8adf9081bdd5712d0f8cea015eb01e73",
+  "arbitration_result": {
+    "decision_trace_codes": [
+      "score:cardiovascular_4_biomarkers:4",
+      "score:hematological_4_biomarkers:4",
+      "score:renal_2_biomarkers:4"
+    ],
+    "rationale_codes": [
+      "causal_edges:0",
+      "conflicts:0",
+      "dominance_edges:0",
+      "transitive_pairs:0"
+    ],
+    "supporting_system_ids": [
+      "hematological_4_biomarkers",
+      "renal_2_biomarkers"
+    ],
+    "tie_breaker_codes": [
+      "wins_desc",
+      "transitive_desc",
+      "weighted_score_desc",
+      "precedence_tier_asc",
+      "confidence_bucket_desc",
+      "system_id_asc"
+    ]
+  },
+  "arbitration_version": "1.0.0",
+  "bio_stats_engine_version": "1.0.0",
+  "biomarker_context": [
+    {
+      "biomarker_id": "active_b12",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_unknown"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "albumin",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "alp",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_low"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "low"
+    },
+    {
+      "biomarker_id": "alt",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_low_band",
+        "status_high"
+      ],
+      "relationship_codes": [
+        "relationship:ast_alt_hepatic_pattern"
+      ],
+      "score": 6.15385,
+      "status": "high"
+    },
+    {
+      "biomarker_id": "apoa1",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_high"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "high"
+    },
+    {
+      "biomarker_id": "apob",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [
+        "relationship:apob_ldl_discordance"
+      ],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "apob_apoa1_ratio",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_unknown"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "basophil_pct",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "basophils_abs",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "bilirubin",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "calcium",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "chloride",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "corrected_calcium",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "cortisol",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "creatine_kinase",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "creatinine",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_high_band",
+        "status_normal"
+      ],
+      "relationship_codes": [
+        "relationship:urea_creatinine_renal_pattern"
+      ],
+      "score": 100.0,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "crp",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_high_band",
+        "status_normal"
+      ],
+      "relationship_codes": [
+        "relationship:ferritin_crp_inflammation_modifier"
+      ],
+      "score": 91.0,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "dhea",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "egfr",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_unknown"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "eosinophil_pct",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "eosinophils_abs",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "fai",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_low"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "low"
+    },
+    {
+      "biomarker_id": "ferritin",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [
+        "relationship:ferritin_crp_inflammation_modifier"
+      ],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "folate",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_unknown"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "free_t3",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "free_t4",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "free_testosterone",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "free_testosterone_pct",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_unknown"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "fsh",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "ggt",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "globulin",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "hba1c",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_high_band",
+        "status_unknown"
+      ],
+      "relationship_codes": [],
+      "score": 100.0,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "hdl_cholesterol",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_high_band",
+        "status_unknown"
+      ],
+      "relationship_codes": [
+        "relationship:tg_hdl_metabolic_pattern"
+      ],
+      "score": 100.0,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "hematocrit",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_high_band",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": 100.0,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "hemoglobin",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_high_band",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": 100.0,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "homocysteine",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_high"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "high"
+    },
+    {
+      "biomarker_id": "iron",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "ldl_cholesterol",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_low_band",
+        "status_unknown"
+      ],
+      "relationship_codes": [
+        "relationship:apob_ldl_discordance"
+      ],
+      "score": 29.0,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "ldl_hdl_ratio",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "lh",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_low"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "low"
+    },
+    {
+      "biomarker_id": "lipoprotein_a",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "lymphocyte_pct",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "lymphocytes_abs",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "magnesium",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "mch",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_high"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "high"
+    },
+    {
+      "biomarker_id": "mchc",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "mcv",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_high"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "high"
+    },
+    {
+      "biomarker_id": "monocyte_pct",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "monocytes_abs",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "mpv",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "neutrophil_pct",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "neutrophils_abs",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "non_hdl_cholesterol",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_high"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "high"
+    },
+    {
+      "biomarker_id": "oestradiol",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "pdw",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_low"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "low"
+    },
+    {
+      "biomarker_id": "platelets",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_high_band",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": 100.0,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "potassium",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "prolactin",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "rbc",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_low"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "low"
+    },
+    {
+      "biomarker_id": "rdw_cv",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "rdw_sd",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "remnant_cholesterol",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_unknown"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "shbg",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "sodium",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "tc_hdl_ratio",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_high_band",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": 100.0,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "testosterone",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "testosterone_free_testosterone_ratio",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_low"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "low"
+    },
+    {
+      "biomarker_id": "tg_hdl_ratio",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_low"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "low"
+    },
+    {
+      "biomarker_id": "tgab",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_unknown"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "total_cholesterol",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_low_band",
+        "status_high"
+      ],
+      "relationship_codes": [],
+      "score": 29.2278,
+      "status": "high"
+    },
+    {
+      "biomarker_id": "total_protein",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "tpo_ab",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "transferrin",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_high"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "high"
+    },
+    {
+      "biomarker_id": "triglycerides",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_high_band",
+        "status_unknown"
+      ],
+      "relationship_codes": [
+        "relationship:tg_hdl_metabolic_pattern"
+      ],
+      "score": 100.0,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "tsh",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "urate",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "urea",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_high_band",
+        "status_normal"
+      ],
+      "relationship_codes": [
+        "relationship:urea_creatinine_renal_pattern"
+      ],
+      "score": 100.0,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "urea_creatinine_ratio",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_low"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "low"
+    },
+    {
+      "biomarker_id": "vitamin_b12",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "vitamin_d",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_low"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "low"
+    },
+    {
+      "biomarker_id": "white_blood_cells",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_high_band",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": 100.0,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "zinc",
+      "missing_codes": [],
+      "reason_codes": [
+        "score_missing",
+        "status_normal"
+      ],
+      "relationship_codes": [],
+      "score": null,
+      "status": "normal"
+    }
+  ],
+  "biomarker_context_hash": "35cfb318fea8003ac83a55114475f3324509489c358f8fe59f3875c761929e6d",
+  "biomarker_context_version": "1.0.0",
+  "biomarker_nodes": [
+    {
+      "biomarker_id": "active_b12",
+      "lab_unit": "pmol/L",
+      "lab_value": 139.18,
+      "score": null,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "albumin",
+      "lab_unit": "g/L",
+      "lab_value": 44.0,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "alp",
+      "lab_unit": "U/L",
+      "lab_value": 46.0,
+      "score": null,
+      "status": "low"
+    },
+    {
+      "biomarker_id": "alt",
+      "lab_unit": null,
+      "lab_value": 7.0,
+      "score": 6.15385,
+      "status": "critical"
+    },
+    {
+      "biomarker_id": "apoa1",
+      "lab_unit": "g/L",
+      "lab_value": 1.73,
+      "score": null,
+      "status": "elevated"
+    },
+    {
+      "biomarker_id": "apob",
+      "lab_unit": "g/L",
+      "lab_value": 0.69,
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "apob_apoa1_ratio",
+      "lab_unit": "ratio",
+      "lab_value": 0.4,
+      "score": null,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "basophil_pct",
+      "lab_unit": "%",
+      "lab_value": 0.2,
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "basophils_abs",
+      "lab_unit": "10^9/L",
+      "lab_value": 0.01,
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "bilirubin",
+      "lab_unit": "umol/L",
+      "lab_value": 17.0,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "calcium",
+      "lab_unit": "mg/dL",
+      "lab_value": 2.33,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "chloride",
+      "lab_unit": "mEq/L",
+      "lab_value": 106.0,
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "corrected_calcium",
+      "lab_unit": "mg/dL",
+      "lab_value": 2.25,
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "cortisol",
+      "lab_unit": "nmol/L",
+      "lab_value": 438.11,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "creatine_kinase",
+      "lab_unit": "U/L",
+      "lab_value": 88.0,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "creatinine",
+      "lab_unit": null,
+      "lab_value": 87.0,
+      "score": 100.0,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "crp",
+      "lab_unit": null,
+      "lab_value": 1.1,
+      "score": 91.0,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "dhea",
+      "lab_unit": "umol/L",
+      "lab_value": 5.12,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "egfr",
+      "lab_unit": "mL/min/1.73m2",
+      "lab_value": 84.0,
+      "score": null,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "eosinophil_pct",
+      "lab_unit": "%",
+      "lab_value": 2.8,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "eosinophils_abs",
+      "lab_unit": "10^9/L",
+      "lab_value": 0.16,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "fai",
+      "lab_unit": "%",
+      "lab_value": 30.48,
+      "score": null,
+      "status": "low"
+    },
+    {
+      "biomarker_id": "ferritin",
+      "lab_unit": "ng/mL",
+      "lab_value": 202.7,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "folate",
+      "lab_unit": "ug/L",
+      "lab_value": 7.69,
+      "score": null,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "free_t3",
+      "lab_unit": "pmol/L",
+      "lab_value": 4.55,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "free_t4",
+      "lab_unit": "ng/dL",
+      "lab_value": 16.8,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "free_testosterone",
+      "lab_unit": "pmol/L",
+      "lab_value": 277.93,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "free_testosterone_pct",
+      "lab_unit": "%",
+      "lab_value": 2.54,
+      "score": null,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "fsh",
+      "lab_unit": "mIU/mL",
+      "lab_value": 4.08,
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "ggt",
+      "lab_unit": "U/L",
+      "lab_value": 15.0,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "globulin",
+      "lab_unit": "g/L",
+      "lab_value": 23.0,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "hba1c",
+      "lab_unit": null,
+      "lab_value": 26.0,
+      "score": 100.0,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "hdl_cholesterol",
+      "lab_unit": null,
+      "lab_value": 2.22,
+      "score": 100.0,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "hematocrit",
+      "lab_unit": null,
+      "lab_value": 0.438,
+      "score": 100.0,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "hemoglobin",
+      "lab_unit": null,
+      "lab_value": 144.0,
+      "score": 100.0,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "homocysteine",
+      "lab_unit": "umol/L",
+      "lab_value": 16.23,
+      "score": null,
+      "status": "elevated"
+    },
+    {
+      "biomarker_id": "iron",
+      "lab_unit": "umol/L",
+      "lab_value": 28.0,
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "ldl_cholesterol",
+      "lab_unit": null,
+      "lab_value": 2.75,
+      "score": 29.0,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "ldl_hdl_ratio",
+      "lab_unit": "ratio",
+      "lab_value": 1.239,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "lh",
+      "lab_unit": "mIU/mL",
+      "lab_value": 1.61,
+      "score": null,
+      "status": "low"
+    },
+    {
+      "biomarker_id": "lipoprotein_a",
+      "lab_unit": "g/L",
+      "lab_value": 0.14,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "lymphocyte_pct",
+      "lab_unit": "%",
+      "lab_value": 34.3,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "lymphocytes_abs",
+      "lab_unit": "10^9/L",
+      "lab_value": 1.95,
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "magnesium",
+      "lab_unit": "mg/dL",
+      "lab_value": 0.89,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "mch",
+      "lab_unit": "pg",
+      "lab_value": 32.7,
+      "score": null,
+      "status": "elevated"
+    },
+    {
+      "biomarker_id": "mchc",
+      "lab_unit": "g/L",
+      "lab_value": 329.0,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "mcv",
+      "lab_unit": "fL",
+      "lab_value": 99.5,
+      "score": null,
+      "status": "elevated"
+    },
+    {
+      "biomarker_id": "monocyte_pct",
+      "lab_unit": "%",
+      "lab_value": 7.9,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "monocytes_abs",
+      "lab_unit": "10^9/L",
+      "lab_value": 0.45,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "mpv",
+      "lab_unit": "fL",
+      "lab_value": 9.0,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "neutrophil_pct",
+      "lab_unit": "%",
+      "lab_value": 54.8,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "neutrophils_abs",
+      "lab_unit": "10^9/L",
+      "lab_value": 3.11,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "non_hdl_cholesterol",
+      "lab_unit": "mmol/L",
+      "lab_value": 3.04,
+      "score": null,
+      "status": "elevated"
+    },
+    {
+      "biomarker_id": "oestradiol",
+      "lab_unit": "pmol/L",
+      "lab_value": 85.65,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "pdw",
+      "lab_unit": "fL",
+      "lab_value": 11.0,
+      "score": null,
+      "status": "low"
+    },
+    {
+      "biomarker_id": "platelets",
+      "lab_unit": null,
+      "lab_value": 225.0,
+      "score": 100.0,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "potassium",
+      "lab_unit": "mEq/L",
+      "lab_value": 4.24,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "prolactin",
+      "lab_unit": "mIU/L",
+      "lab_value": 166.19,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "rbc",
+      "lab_unit": "10^12/L",
+      "lab_value": 4.4,
+      "score": null,
+      "status": "low"
+    },
+    {
+      "biomarker_id": "rdw_cv",
+      "lab_unit": "%",
+      "lab_value": 16.0,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "rdw_sd",
+      "lab_unit": "fL",
+      "lab_value": 50.3,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "remnant_cholesterol",
+      "lab_unit": "mmol/L",
+      "lab_value": 0.29,
+      "score": null,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "shbg",
+      "lab_unit": "nmol/L",
+      "lab_value": 35.95,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "sodium",
+      "lab_unit": "mEq/L",
+      "lab_value": 138.0,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "tc_hdl_ratio",
+      "lab_unit": null,
+      "lab_value": 2.3693,
+      "score": 100.0,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "testosterone",
+      "lab_unit": "nmol/L",
+      "lab_value": 10.96,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "testosterone_free_testosterone_ratio",
+      "lab_unit": "ratio",
+      "lab_value": 0.04,
+      "score": null,
+      "status": "low"
+    },
+    {
+      "biomarker_id": "tg_hdl_ratio",
+      "lab_unit": "ratio",
+      "lab_value": 0.306,
+      "score": null,
+      "status": "low"
+    },
+    {
+      "biomarker_id": "tgab",
+      "lab_unit": "IU/mL",
+      "lab_value": 1.0,
+      "score": null,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "total_cholesterol",
+      "lab_unit": null,
+      "lab_value": 5.26,
+      "score": 29.2278,
+      "status": "elevated"
+    },
+    {
+      "biomarker_id": "total_protein",
+      "lab_unit": "g/L",
+      "lab_value": 67.0,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "tpo_ab",
+      "lab_unit": "kU/L",
+      "lab_value": 40.0,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "transferrin",
+      "lab_unit": "g/L",
+      "lab_value": 2.0,
+      "score": null,
+      "status": "critical"
+    },
+    {
+      "biomarker_id": "triglycerides",
+      "lab_unit": null,
+      "lab_value": 0.68,
+      "score": 100.0,
+      "status": "unknown"
+    },
+    {
+      "biomarker_id": "tsh",
+      "lab_unit": "mIU/L",
+      "lab_value": 1.409,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "urate",
+      "lab_unit": "umol/L",
+      "lab_value": 440.0,
+      "score": null,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "urea",
+      "lab_unit": null,
+      "lab_value": 7.1,
+      "score": 100.0,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "urea_creatinine_ratio",
+      "lab_unit": "ratio",
+      "lab_value": 0.082,
+      "score": null,
+      "status": "low"
+    },
+    {
+      "biomarker_id": "vitamin_b12",
+      "lab_unit": "pg/mL",
+      "lab_value": 336.0,
+      "score": null,
+      "status": "normal"
+    },
+    {
+      "biomarker_id": "vitamin_d",
+      "lab_unit": "nmol/L",
+      "lab_value": 89.13,
+      "score": null,
+      "status": "low"
+    },
+    {
+      "biomarker_id": "white_blood_cells",
+      "lab_unit": null,
+      "lab_value": 5.68,
+      "score": 100.0,
+      "status": "optimal"
+    },
+    {
+      "biomarker_id": "zinc",
+      "lab_unit": "umol/L",
+      "lab_value": 12.77,
+      "score": null,
+      "status": "optimal"
+    }
+  ],
+  "burden_hash": "6ac81fee0eb2a1492aace082f7f2068764d182a5142a35989624ad959a46f89f",
+  "burden_path_distances": {
+    "cardiovascular": 0.0,
+    "hematological": -1.0,
+    "hepatic": -1.0,
+    "hormonal": -1.0,
+    "immune": -1.0,
+    "metabolic": -1.0,
+    "nutritional": -1.0,
+    "renal": -1.0,
+    "thyroid": -1.0
+  },
+  "burden_validation_status": "PASS",
+  "burden_validation_violations": [],
+  "calibration_hash": "84c6f935ac989be9d6aca82dbac22c2b540beaf3229606a5b975b71c5018027b",
+  "calibration_items": [
+    {
+      "action_intensity": "info",
+      "applied_rule_ids": [],
+      "explanation_codes": [
+        "calibration:default"
+      ],
+      "priority_tier": "p3",
+      "stability_flag": "stable",
+      "system_id": "cardiovascular_4_biomarkers",
+      "urgency_band": "routine"
+    },
+    {
+      "action_intensity": "info",
+      "applied_rule_ids": [],
+      "explanation_codes": [
+        "calibration:default"
+      ],
+      "priority_tier": "p3",
+      "stability_flag": "stable",
+      "system_id": "hematological_4_biomarkers",
+      "urgency_band": "routine"
+    },
+    {
+      "action_intensity": "info",
+      "applied_rule_ids": [],
+      "explanation_codes": [
+        "calibration:default"
+      ],
+      "priority_tier": "p3",
+      "stability_flag": "stable",
+      "system_id": "renal_2_biomarkers",
+      "urgency_band": "routine"
+    }
+  ],
+  "calibration_version": "1.0.0",
+  "capacity_scaler_version": "1.0.0",
+  "causal_edges": [],
+  "causal_layer_hash": "19279f30700f246680459643bf0882098baed7229d5c59cd76fa6e898442e9a0",
+  "causal_layer_version": "1.0.0",
+  "cluster_scoped_raw_burden": {
+    "cardiovascular_4_biomarkers": 0.6185328185328185,
+    "hematological_4_biomarkers": 0.7826886446886449,
+    "renal_2_biomarkers": 0.7163636363636365
+  },
+  "cluster_summary": {
+    "clusters": [
+      {
+        "biomarkers": [
+          "hdl_cholesterol",
+          "ldl_cholesterol",
+          "total_cholesterol",
+          "triglycerides"
+        ],
+        "cluster_id": "cardiovascular_4_biomarkers",
+        "confidence": 0.697513488037,
+        "name": "Cardiovascular Health Pattern",
+        "severity": "moderate"
+      },
+      {
+        "biomarkers": [
+          "hematocrit",
+          "hemoglobin",
+          "platelets",
+          "white_blood_cells"
+        ],
+        "cluster_id": "hematological_4_biomarkers",
+        "confidence": 1.0,
+        "name": "Hematological Health Pattern",
+        "severity": "normal"
+      },
+      {
+        "biomarkers": [
+          "creatinine",
+          "urea"
+        ],
+        "cluster_id": "renal_2_biomarkers",
+        "confidence": 1.0,
+        "name": "Renal Health Pattern",
+        "severity": "normal"
+      }
+    ],
+    "schema_hash": "11d2a492953d0119",
+    "schema_version": "1.0.0"
+  },
+  "confidence": {
+    "biomarker_confidence": {
+      "active_b12": 1.0,
+      "albumin": 1.0,
+      "alp": 1.0,
+      "alt": 1.0,
+      "apoa1": 1.0,
+      "apob": 1.0,
+      "apob_apoa1_ratio": 1.0,
+      "basophil_pct": 1.0,
+      "basophils_abs": 1.0,
+      "bilirubin": 1.0,
+      "calcium": 1.0,
+      "chloride": 1.0,
+      "corrected_calcium": 1.0,
+      "cortisol": 1.0,
+      "creatine_kinase": 1.0,
+      "creatinine": 1.0,
+      "crp": 1.0,
+      "dhea": 1.0,
+      "egfr": 1.0,
+      "eosinophil_pct": 1.0,
+      "eosinophils_abs": 1.0,
+      "fai": 1.0,
+      "ferritin": 1.0,
+      "folate": 1.0,
+      "free_t3": 1.0,
+      "free_t4": 1.0,
+      "free_testosterone": 1.0,
+      "free_testosterone_pct": 1.0,
+      "fsh": 1.0,
+      "ggt": 1.0,
+      "globulin": 1.0,
+      "glucose": 0.0,
+      "hba1c": 1.0,
+      "hdl_cholesterol": 1.0,
+      "hematocrit": 1.0,
+      "hemoglobin": 1.0,
+      "homocysteine": 1.0,
+      "iron": 1.0,
+      "ldl_cholesterol": 1.0,
+      "ldl_hdl_ratio": 1.0,
+      "lh": 1.0,
+      "lipoprotein_a": 1.0,
+      "lymphocyte_pct": 1.0,
+      "lymphocytes_abs": 1.0,
+      "magnesium": 1.0,
+      "mch": 1.0,
+      "mchc": 1.0,
+      "mcv": 1.0,
+      "monocyte_pct": 1.0,
+      "monocytes_abs": 1.0,
+      "mpv": 1.0,
+      "neutrophil_pct": 1.0,
+      "neutrophils_abs": 1.0,
+      "non_hdl_cholesterol": 1.0,
+      "oestradiol": 1.0,
+      "pdw": 1.0,
+      "platelets": 1.0,
+      "potassium": 1.0,
+      "prolactin": 1.0,
+      "rbc": 1.0,
+      "rdw_cv": 1.0,
+      "rdw_sd": 1.0,
+      "remnant_cholesterol": 1.0,
+      "shbg": 1.0,
+      "sodium": 1.0,
+      "tc_hdl_ratio": 1.0,
+      "testosterone": 1.0,
+      "testosterone_free_testosterone_ratio": 1.0,
+      "tg_hdl_ratio": 1.0,
+      "tgab": 1.0,
+      "total_cholesterol": 1.0,
+      "total_protein": 1.0,
+      "tpo_ab": 1.0,
+      "transferrin": 1.0,
+      "triglycerides": 1.0,
+      "tsh": 1.0,
+      "urate": 1.0,
+      "urea": 1.0,
+      "urea_creatinine_ratio": 1.0,
+      "vitamin_b12": 1.0,
+      "vitamin_d": 1.0,
+      "white_blood_cells": 1.0,
+      "zinc": 1.0
+    },
+    "cluster_confidence": {
+      "cardiovascular": 1.0,
+      "hematological": 1.0,
+      "hepatic": 1.0,
+      "hormonal": 1.0,
+      "inflammatory": 1.0,
+      "metabolic": 0.5,
+      "nutritional": 1.0,
+      "renal": 1.0
+    },
+    "cluster_schema_hash": "11d2a492953d0119",
+    "cluster_schema_version": "1.0.0",
+    "missing_required_biomarkers": [
+      "glucose"
+    ],
+    "missing_required_clusters": [
+      "metabolic"
+    ],
+    "model_version": "1.0.0",
+    "ratio_registry_version": "1.1.0",
+    "system_confidence": 0.9375
+  },
+  "conflict_set": [],
+  "criticality": {
+    "confidence_downgrades": [
+      {
+        "biomarker": "glucose",
+        "penalty": 25,
+        "reason": "Missing required biomarker",
+        "system": "metabolic",
+        "tier": "required"
+      },
+      {
+        "biomarker": "insulin",
+        "penalty": 3,
+        "reason": "Missing optional biomarker",
+        "system": "metabolic",
+        "tier": "optional"
+      },
+      {
+        "biomarker": "ast",
+        "penalty": 25,
+        "reason": "Missing required biomarker",
+        "system": "liver",
+        "tier": "required"
+      }
+    ],
+    "criticality_version": "1.0.0",
+    "missing_markers": {
+      "liver": [
+        "ast"
+      ],
+      "metabolic": [
+        "glucose",
+        "insulin"
+      ]
+    },
+    "overall_confidence": 93.4,
+    "system_confidence": {
+      "cardiovascular": 100,
+      "cbc": 100,
+      "hormonal": 100,
+      "inflammatory": 100,
+      "kidney": 100,
+      "liver": 75,
+      "metabolic": 72,
+      "nutritional": 100
+    }
+  },
+  "derived_markers": {
+    "derived": {
+      "apob_apoa1_ratio": {
+        "bounds_applied": true,
+        "bounds_rejected_reason": null,
+        "bounds_source": "lab",
+        "inputs_used": null,
+        "source": "lab",
+        "unit": "ratio",
+        "value": 0.4
+      },
+      "ldl_hdl_ratio": {
+        "bounds_applied": true,
+        "bounds_rejected_reason": null,
+        "bounds_source": "ratio_registry",
+        "inputs_used": [
+          "ldl_cholesterol",
+          "hdl_cholesterol"
+        ],
+        "source": "computed",
+        "unit": "ratio",
+        "value": 1.239
+      },
+      "non_hdl_cholesterol": {
+        "bounds_applied": true,
+        "bounds_rejected_reason": null,
+        "bounds_source": "lab",
+        "inputs_used": null,
+        "source": "lab",
+        "unit": "mmol/L",
+        "value": 3.04
+      },
+      "remnant_cholesterol": {
+        "bounds_applied": false,
+        "bounds_rejected_reason": "policy_bounds_missing",
+        "bounds_source": null,
+        "inputs_used": [
+          "total_cholesterol",
+          "ldl_cholesterol",
+          "hdl_cholesterol"
+        ],
+        "source": "computed",
+        "unit": "mmol/L",
+        "value": 0.29
+      },
+      "tc_hdl_ratio": {
+        "bounds_applied": true,
+        "bounds_rejected_reason": null,
+        "bounds_source": "lab",
+        "inputs_used": null,
+        "source": "lab",
+        "unit": "ratio",
+        "value": 2.3693
+      },
+      "testosterone_free_testosterone_ratio": {
+        "bounds_applied": true,
+        "bounds_rejected_reason": null,
+        "bounds_source": "ratio_registry",
+        "inputs_used": null,
+        "source": "lab",
+        "unit": "ratio",
+        "value": 0.04
+      },
+      "tg_hdl_ratio": {
+        "bounds_applied": true,
+        "bounds_rejected_reason": null,
+        "bounds_source": "ratio_registry",
+        "inputs_used": [
+          "triglycerides",
+          "hdl_cholesterol"
+        ],
+        "source": "computed",
+        "unit": "ratio",
+        "value": 0.306
+      },
+      "urea_creatinine_ratio": {
+        "bounds_applied": true,
+        "bounds_rejected_reason": null,
+        "bounds_source": "ratio_registry",
+        "inputs_used": [
+          "urea",
+          "creatinine"
+        ],
+        "source": "computed",
+        "unit": "ratio",
+        "value": 0.082
+      }
+    },
+    "registry_version": "1.1.0"
+  },
+  "dominance_edges": [],
+  "edges": [],
+  "graph_version": "1.0.0",
+  "influence_order": [
+    "cardiovascular",
+    "metabolic",
+    "hepatic",
+    "immune",
+    "musculoskeletal",
+    "autonomic",
+    "hematological",
+    "hormonal",
+    "nutritional",
+    "renal",
+    "thyroid"
+  ],
+  "influence_propagator_version": "1.0.0",
+  "interaction_chains": [
+    [
+      "signal_homocysteine_high",
+      "signal_homocysteine_elevation_context"
+    ],
+    [
+      "signal_systemic_inflammation",
+      "signal_homocysteine_elevation_context"
+    ]
+  ],
+  "interaction_graph": {
+    "edges": [
+      {
+        "evidence_strength": "strong",
+        "from_signal": "signal_homocysteine_high",
+        "rationale": "Both signals are homocysteine manifestations where one is threshold-based and the other is a context wrapper on the same primary metric.",
+        "relationship_type": "co_occurrence",
+        "to_signal": "signal_homocysteine_elevation_context"
+      },
+      {
+        "evidence_strength": "exploratory",
+        "from_signal": "signal_systemic_inflammation",
+        "rationale": "Inflammation context can co-occur with vascular homocysteine interpretation patterns in AB and VR synthesis panels.",
+        "relationship_type": "co_occurrence",
+        "to_signal": "signal_homocysteine_elevation_context"
+      }
+    ],
+    "map_version": "v1",
+    "nodes": [
+      "signal_homocysteine_elevation_context",
+      "signal_homocysteine_high",
+      "signal_ldl_cholesterol_high",
+      "signal_mcv_high",
+      "signal_systemic_inflammation"
+    ]
+  },
+  "interaction_summary": [
+    {
+      "chain_confidence": 0.925,
+      "chain_id": "chain_001",
+      "chain_summary_text": "signal_homocysteine_high -> signal_homocysteine_elevation_context (edge evidence: strong)",
+      "confidence": 0.925,
+      "priority_rank": 1,
+      "signals_involved": [
+        "signal_homocysteine_high",
+        "signal_homocysteine_elevation_context"
+      ]
+    },
+    {
+      "chain_confidence": 0.625,
+      "chain_id": "chain_002",
+      "chain_summary_text": "signal_systemic_inflammation -> signal_homocysteine_elevation_context (edge evidence: exploratory)",
+      "confidence": 0.625,
+      "priority_rank": 2,
+      "signals_involved": [
+        "signal_systemic_inflammation",
+        "signal_homocysteine_elevation_context"
+      ]
+    }
+  ],
+  "interventions_v1": [
+    {
+      "body": "Arrange clinician follow-up for vascular risk interpretation and near-term monitoring plan. Bring cardiovascular history and prior laboratory records.",
+      "chain_refs": [
+        "chain_001"
+      ],
+      "escalation_required": true,
+      "evidence_strength": "consensus",
+      "evidence_summary": "- International vascular prevention guideline, n=consensus panel, European Heart Journal, 2021.\n- Population risk follow-up cohort, n=12000, Circulation, 2019.",
+      "intervention_id": "intv_vascular_clinician_referral_v1",
+      "safety_class": "clinician_referral",
+      "signal_refs": [
+        "signal_homocysteine_elevation_context"
+      ],
+      "title": "Clinician review advised for vascular signal pattern",
+      "why_this_matters": "Escalated vascular signals are linked with higher event risk and need clinical risk stratification. (signal: signal_homocysteine_elevation_context)."
+    },
+    {
+      "body": "Arrange clinician follow-up for focused hepatic assessment and trend interpretation. Include recent medication and alcohol exposure history at review.",
+      "chain_refs": [],
+      "escalation_required": true,
+      "evidence_strength": "strong",
+      "evidence_summary": "- Practice guideline synthesis, n=expert panel, Journal of Hepatology, 2022.\n- Prospective referral outcomes study, n=1220, Hepatology Communications, 2021.",
+      "intervention_id": "intv_hepatic_clinician_referral_v1",
+      "safety_class": "clinician_referral",
+      "signal_refs": [
+        "signal_transferrin_low"
+      ],
+      "title": "Clinician review advised for hepatic signal pattern",
+      "why_this_matters": "Escalated hepatic signals require timely clinical evaluation for persistent liver-related risk. (signal: signal_transferrin_low)."
+    },
+    {
+      "body": "Use a Mediterranean-style dietary pattern and structured physical activity each week. Maintain consistent sleep timing and smoking avoidance. Track blood pressure and pulse trends between lab checks.",
+      "chain_refs": [
+        "chain_001"
+      ],
+      "escalation_required": true,
+      "evidence_strength": "strong",
+      "evidence_summary": "- Randomized cardiovascular prevention trial, n=7447, NEJM, 2013.\n- Prospective vascular-risk cohort, n=2600, Circulation, 2020.",
+      "intervention_id": "intv_vascular_pattern_lifestyle_v1",
+      "safety_class": "lifestyle",
+      "signal_refs": [
+        "signal_homocysteine_elevation_context"
+      ],
+      "title": "Vascular risk pattern lifestyle reset",
+      "why_this_matters": "This targets vascular-associated signal patterns that align with higher endothelial stress. (signal: signal_homocysteine_elevation_context)."
+    },
+    {
+      "body": "Shift toward high-fiber whole-food patterns and regular weekly exercise. Reduce high-sugar ultra-processed intake. Maintain consistent sleep and stress-management routines.",
+      "chain_refs": [],
+      "escalation_required": false,
+      "evidence_strength": "strong",
+      "evidence_summary": "- Lifestyle cardiovascular outcomes trial, n=3200, European Heart Journal, 2020.\n- Diet-quality intervention study, n=540, Atherosclerosis, 2022.",
+      "intervention_id": "intv_lipid_transport_lifestyle_v1",
+      "safety_class": "lifestyle",
+      "signal_refs": [
+        "signal_apoa1_cardio_risk"
+      ],
+      "title": "Cardiometabolic lipid lifestyle focus",
+      "why_this_matters": "This supports lipid transport signals that can couple with metabolic dysregulation in chain analyses. (signal: signal_apoa1_cardio_risk)."
+    },
+    {
+      "body": "Reduce alcohol exposure and prioritize consistent hydration. Use regular moderate activity and weight-stable nutrition habits. Recheck trends after a full recovery window.",
+      "chain_refs": [],
+      "escalation_required": true,
+      "evidence_strength": "strong",
+      "evidence_summary": "- Controlled lifestyle intervention, n=312, Hepatology, 2020.\n- Multi-center cohort, n=1450, Journal of Hepatology, 2021.",
+      "intervention_id": "intv_hepatic_burden_lifestyle_v1",
+      "safety_class": "lifestyle",
+      "signal_refs": [
+        "signal_transferrin_low"
+      ],
+      "title": "Liver-supportive daily routine",
+      "why_this_matters": "This addresses hepatic stress signals that can amplify inflammatory burden when persistent. (signal: signal_transferrin_low)."
+    }
+  ],
+  "lab_origin": null,
+  "layer_c_features": {
+    "detox_filtration": {
+      "confidence": 0.79,
+      "detox_filtration_score": 85.0,
+      "egfr": 84.0,
+      "egfr_source": "measured",
+      "kidney_score": 85.0,
+      "liver_score": 88.0,
+      "recommendations": [
+        "Support detox and filtration resilience"
+      ],
+      "risk_factors": [
+        "elevated_creatinine"
+      ],
+      "severity": "mild",
+      "urea_creatinine_ratio": 0.08
+    },
+    "fatigue_root_cause": {
+      "confidence": 0.74,
+      "cortisol_status": "unknown",
+      "inflammation_status": "moderate_inflammation",
+      "iron_status": "normal",
+      "recommendations": [
+        "Address fatigue root causes"
+      ],
+      "root_causes": [
+        "inflammatory_fatigue"
+      ],
+      "severity": "moderate",
+      "thyroid_status": "normal",
+      "vitamin_status": "normal"
+    },
+    "heart_insight": {
+      "confidence": 0.75,
+      "heart_resilience_score": 100.0,
+      "ldl_hdl_ratio": 1.24,
+      "recommendations": [
+        "Maintain cardiovascular baseline"
+      ],
+      "risk_factors": [],
+      "severity": "normal",
+      "tc_hdl_ratio": 2.37,
+      "tg_hdl_ratio": 0.31
+    },
+    "inflammation": {
+      "confidence": 0.8300000000000001,
+      "inflammation_burden_score": 20.0,
+      "nlr": null,
+      "recommendations": [
+        "Reduce inflammatory burden"
+      ],
+      "risk_factors": [
+        "elevated_crp"
+      ],
+      "severity": "mild"
+    },
+    "metabolic_age": {
+      "age_delta_years": 2.0,
+      "confidence": 0.74,
+      "homa_ir": 0.0,
+      "metabolic_age": 2.0,
+      "recommendations": [
+        "Focus on metabolic recovery"
+      ],
+      "risk_flags": [
+        "elevated_hba1c"
+      ],
+      "severity": "mild"
+    }
+  },
+  "precedence_engine_hash": "b14d5b36fd8d96526f1454a2ff0345a4368f72507df28c053f67719b12756967",
+  "precedence_engine_version": "1.0.0",
+  "precedence_output": {
+    "conflicts_resolved": [],
+    "dominant_edges": [],
+    "primary_driver_system_id": "cardiovascular_4_biomarkers",
+    "rationale_codes": []
+  },
+  "primary_driver_system_id": "cardiovascular_4_biomarkers",
+  "raw_system_burden_vector": {
+    "cardiovascular": 2.1208293217038197,
+    "hematological": 2.924238644688645,
+    "hepatic": 0.48000000000000004,
+    "hormonal": 2.666946581874732,
+    "immune": 0.5703579807289484,
+    "metabolic": 1.1479942279942281,
+    "nutritional": 1.9217519319333762,
+    "renal": 0.8891465109813735,
+    "thyroid": 0.803190850424893
+  },
+  "relationship_registry_hash": "716a5df55adea070f55385a8b2fdacd09f47ccbd03483329037eb89b50548a13",
+  "relationship_registry_version": "1.0.0",
+  "relationships": [
+    {
+      "biomarkers": [
+        "apob",
+        "ldl_cholesterol"
+      ],
+      "classification_code": "LIPOPROTEIN_DISCORDANCE",
+      "evidence": [],
+      "relationship_id": "apob_ldl_discordance",
+      "severity": "moderate",
+      "triggered": false,
+      "version": "1.0.0"
+    },
+    {
+      "biomarkers": [
+        "ast",
+        "alt"
+      ],
+      "classification_code": "HEPATIC_PATTERN",
+      "evidence": [],
+      "relationship_id": "ast_alt_hepatic_pattern",
+      "severity": "moderate",
+      "triggered": false,
+      "version": "1.0.0"
+    },
+    {
+      "biomarkers": [
+        "ferritin",
+        "crp"
+      ],
+      "classification_code": "INFLAMMATION_MODIFIER_PATTERN",
+      "evidence": [],
+      "relationship_id": "ferritin_crp_inflammation_modifier",
+      "severity": "moderate",
+      "triggered": false,
+      "version": "1.0.0"
+    },
+    {
+      "biomarkers": [
+        "neutrophils",
+        "lymphocytes"
+      ],
+      "classification_code": "INFLAMMATION_CELLULAR_PATTERN",
+      "evidence": [],
+      "relationship_id": "neutrophils_lymphocytes_inflammation_pattern",
+      "severity": "moderate",
+      "triggered": false,
+      "version": "1.0.0"
+    },
+    {
+      "biomarkers": [
+        "triglycerides",
+        "hdl_cholesterol"
+      ],
+      "classification_code": "METABOLIC_LIPID_PATTERN",
+      "evidence": [],
+      "relationship_id": "tg_hdl_metabolic_pattern",
+      "severity": "moderate",
+      "triggered": false,
+      "version": "1.0.0"
+    },
+    {
+      "biomarkers": [
+        "urea",
+        "creatinine"
+      ],
+      "classification_code": "RENAL_PATTERN",
+      "evidence": [],
+      "relationship_id": "urea_creatinine_renal_pattern",
+      "severity": "moderate",
+      "triggered": false,
+      "version": "1.0.0"
+    }
+  ],
+  "report_v1": {
+    "actions": {
+      "clinician_referrals": [
+        {
+          "body": "Arrange clinician follow-up for vascular risk interpretation and near-term monitoring plan. Bring cardiovascular history and prior laboratory records.",
+          "chain_refs": [
+            "chain_001"
+          ],
+          "contraindications": null,
+          "escalation_required": true,
+          "evidence_strength": "consensus",
+          "evidence_summary": "- International vascular prevention guideline, n=consensus panel, European Heart Journal, 2021.\n- Population risk follow-up cohort, n=12000, Circulation, 2019.",
+          "intervention_id": "intv_vascular_clinician_referral_v1",
+          "retest_guidance": null,
+          "safety_class": "clinician_referral",
+          "signal_refs": [
+            "signal_homocysteine_elevation_context"
+          ],
+          "title": "Clinician review advised for vascular signal pattern",
+          "why_this_matters": "Escalated vascular signals are linked with higher event risk and need clinical risk stratification. (signal: signal_homocysteine_elevation_context)."
+        },
+        {
+          "body": "Arrange clinician follow-up for focused hepatic assessment and trend interpretation. Include recent medication and alcohol exposure history at review.",
+          "chain_refs": [],
+          "contraindications": null,
+          "escalation_required": true,
+          "evidence_strength": "strong",
+          "evidence_summary": "- Practice guideline synthesis, n=expert panel, Journal of Hepatology, 2022.\n- Prospective referral outcomes study, n=1220, Hepatology Communications, 2021.",
+          "intervention_id": "intv_hepatic_clinician_referral_v1",
+          "retest_guidance": null,
+          "safety_class": "clinician_referral",
+          "signal_refs": [
+            "signal_transferrin_low"
+          ],
+          "title": "Clinician review advised for hepatic signal pattern",
+          "why_this_matters": "Escalated hepatic signals require timely clinical evaluation for persistent liver-related risk. (signal: signal_transferrin_low)."
+        }
+      ],
+      "interventions": [
+        {
+          "body": "Arrange clinician follow-up for vascular risk interpretation and near-term monitoring plan. Bring cardiovascular history and prior laboratory records.",
+          "chain_refs": [
+            "chain_001"
+          ],
+          "contraindications": null,
+          "escalation_required": true,
+          "evidence_strength": "consensus",
+          "evidence_summary": "- International vascular prevention guideline, n=consensus panel, European Heart Journal, 2021.\n- Population risk follow-up cohort, n=12000, Circulation, 2019.",
+          "intervention_id": "intv_vascular_clinician_referral_v1",
+          "retest_guidance": null,
+          "safety_class": "clinician_referral",
+          "signal_refs": [
+            "signal_homocysteine_elevation_context"
+          ],
+          "title": "Clinician review advised for vascular signal pattern",
+          "why_this_matters": "Escalated vascular signals are linked with higher event risk and need clinical risk stratification. (signal: signal_homocysteine_elevation_context)."
+        },
+        {
+          "body": "Arrange clinician follow-up for focused hepatic assessment and trend interpretation. Include recent medication and alcohol exposure history at review.",
+          "chain_refs": [],
+          "contraindications": null,
+          "escalation_required": true,
+          "evidence_strength": "strong",
+          "evidence_summary": "- Practice guideline synthesis, n=expert panel, Journal of Hepatology, 2022.\n- Prospective referral outcomes study, n=1220, Hepatology Communications, 2021.",
+          "intervention_id": "intv_hepatic_clinician_referral_v1",
+          "retest_guidance": null,
+          "safety_class": "clinician_referral",
+          "signal_refs": [
+            "signal_transferrin_low"
+          ],
+          "title": "Clinician review advised for hepatic signal pattern",
+          "why_this_matters": "Escalated hepatic signals require timely clinical evaluation for persistent liver-related risk. (signal: signal_transferrin_low)."
+        },
+        {
+          "body": "Use a Mediterranean-style dietary pattern and structured physical activity each week. Maintain consistent sleep timing and smoking avoidance. Track blood pressure and pulse trends between lab checks.",
+          "chain_refs": [
+            "chain_001"
+          ],
+          "contraindications": null,
+          "escalation_required": true,
+          "evidence_strength": "strong",
+          "evidence_summary": "- Randomized cardiovascular prevention trial, n=7447, NEJM, 2013.\n- Prospective vascular-risk cohort, n=2600, Circulation, 2020.",
+          "intervention_id": "intv_vascular_pattern_lifestyle_v1",
+          "retest_guidance": null,
+          "safety_class": "lifestyle",
+          "signal_refs": [
+            "signal_homocysteine_elevation_context"
+          ],
+          "title": "Vascular risk pattern lifestyle reset",
+          "why_this_matters": "This targets vascular-associated signal patterns that align with higher endothelial stress. (signal: signal_homocysteine_elevation_context)."
+        },
+        {
+          "body": "Shift toward high-fiber whole-food patterns and regular weekly exercise. Reduce high-sugar ultra-processed intake. Maintain consistent sleep and stress-management routines.",
+          "chain_refs": [],
+          "contraindications": null,
+          "escalation_required": false,
+          "evidence_strength": "strong",
+          "evidence_summary": "- Lifestyle cardiovascular outcomes trial, n=3200, European Heart Journal, 2020.\n- Diet-quality intervention study, n=540, Atherosclerosis, 2022.",
+          "intervention_id": "intv_lipid_transport_lifestyle_v1",
+          "retest_guidance": null,
+          "safety_class": "lifestyle",
+          "signal_refs": [
+            "signal_apoa1_cardio_risk"
+          ],
+          "title": "Cardiometabolic lipid lifestyle focus",
+          "why_this_matters": "This supports lipid transport signals that can couple with metabolic dysregulation in chain analyses. (signal: signal_apoa1_cardio_risk)."
+        },
+        {
+          "body": "Reduce alcohol exposure and prioritize consistent hydration. Use regular moderate activity and weight-stable nutrition habits. Recheck trends after a full recovery window.",
+          "chain_refs": [],
+          "contraindications": null,
+          "escalation_required": true,
+          "evidence_strength": "strong",
+          "evidence_summary": "- Controlled lifestyle intervention, n=312, Hepatology, 2020.\n- Multi-center cohort, n=1450, Journal of Hepatology, 2021.",
+          "intervention_id": "intv_hepatic_burden_lifestyle_v1",
+          "retest_guidance": null,
+          "safety_class": "lifestyle",
+          "signal_refs": [
+            "signal_transferrin_low"
+          ],
+          "title": "Liver-supportive daily routine",
+          "why_this_matters": "This addresses hepatic stress signals that can amplify inflammatory burden when persistent. (signal: signal_transferrin_low)."
+        }
+      ],
+      "monitoring": []
+    },
+    "intervention_annotations_v1": null,
+    "meta": {
+      "generated_at": "2026-05-04T21:02:52.917149Z",
+      "interaction_map_revision": "1.1.4",
+      "ranking_policy_version": "PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1",
+      "ranking_signal_id_fallback_invoked": false,
+      "safety_contract_version": "1.0.1",
+      "signal_registry_hash_sha256": "c0048052b19adea669af4f6cbd2ed7186a5d0fdc9fd6a938adf58c63ada589f0",
+      "signal_registry_version": "be00c64d8b0a"
+    },
+    "report_version": "v1",
+    "root_cause_v1": {
+      "findings": [
+        {
+          "hypotheses": [
+            {
+              "confirmatory_tests": [
+                {
+                  "display_name": "Methylmalonic acid (MMA)",
+                  "rationale": "Consider discussing methylmalonic acid (MMA) testing with your clinician to evaluate functional B12 deficiency.",
+                  "test_id": "test_methylmalonic_acid_v1"
+                }
+              ],
+              "evidence_against": [
+                {
+                  "item": "B12 appears clearly within range, which makes a B12-driven pattern less likely on this panel alone.",
+                  "marker_refs": [
+                    "vitamin_b12"
+                  ]
+                }
+              ],
+              "evidence_for": [
+                {
+                  "item": "MCV is elevated, which can be consistent with a megaloblastic nutrient pattern in context.",
+                  "marker_refs": [
+                    "mcv"
+                  ]
+                }
+              ],
+              "hypothesis_confidence": 0.6000000000000001,
+              "hypothesis_id": "hcy_b12_pattern_v1",
+              "missing_data": [
+                {
+                  "marker_id": "methylmalonic_acid",
+                  "reason": "MMA can help evaluate functional B12 deficiency when homocysteine is elevated."
+                }
+              ],
+              "safety_class": "monitoring",
+              "summary": "Homocysteine is elevated with a pattern that can be consistent with reduced B12-related methylation capacity.",
+              "title": "B12-associated pattern"
+            },
+            {
+              "confirmatory_tests": [
+                {
+                  "display_name": "Repeat homocysteine",
+                  "rationale": "Consider repeating homocysteine in 8\u201312 weeks to confirm persistence and track change over time.",
+                  "test_id": "test_homocysteine_repeat_v1"
+                }
+              ],
+              "evidence_against": [],
+              "evidence_for": [
+                {
+                  "item": "MCV is elevated, which can align with folate-related red cell maturation patterns in context.",
+                  "marker_refs": [
+                    "mcv"
+                  ]
+                }
+              ],
+              "hypothesis_confidence": 0.6000000000000001,
+              "hypothesis_id": "hcy_folate_pattern_v1",
+              "missing_data": [],
+              "safety_class": "monitoring",
+              "summary": "Homocysteine is elevated with a pattern that can be consistent with reduced folate availability for one-carbon metabolism.",
+              "title": "Folate-associated pattern"
+            },
+            {
+              "confirmatory_tests": [
+                {
+                  "display_name": "Repeat CRP",
+                  "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated.",
+                  "test_id": "test_crp_repeat_v1"
+                },
+                {
+                  "display_name": "Repeat homocysteine",
+                  "rationale": "Consider repeating homocysteine in 8\u201312 weeks to confirm persistence and track change over time.",
+                  "test_id": "test_homocysteine_repeat_v1"
+                }
+              ],
+              "evidence_against": [],
+              "evidence_for": [
+                {
+                  "item": "A systemic inflammation signal fired, indicating inflammatory context on this panel.",
+                  "marker_refs": [
+                    "crp"
+                  ]
+                }
+              ],
+              "hypothesis_confidence": 0.4,
+              "hypothesis_id": "hcy_inflammation_context_v1",
+              "missing_data": [],
+              "safety_class": "monitoring",
+              "summary": "Homocysteine is elevated with inflammatory context signals that may be relevant to vascular stress interpretation.",
+              "title": "Inflammatory context pattern"
+            },
+            {
+              "confirmatory_tests": [
+                {
+                  "display_name": "Repeat homocysteine",
+                  "rationale": "Consider repeating homocysteine in 8\u201312 weeks to confirm persistence and track change over time.",
+                  "test_id": "test_homocysteine_repeat_v1"
+                }
+              ],
+              "evidence_against": [
+                {
+                  "item": "Creatinine appears within range, which reduces evidence for a renal clearance contribution on this panel alone.",
+                  "marker_refs": [
+                    "creatinine"
+                  ]
+                }
+              ],
+              "evidence_for": [],
+              "hypothesis_confidence": 0.6000000000000001,
+              "hypothesis_id": "hcy_renal_clearance_context_v1",
+              "missing_data": [],
+              "safety_class": "monitoring",
+              "summary": "Homocysteine is elevated and renal clearance context may be relevant when interpreting metabolite accumulation patterns.",
+              "title": "Renal clearance context pattern"
+            }
+          ],
+          "primary_metric": "homocysteine",
+          "signal_confidence": 0.95,
+          "signal_id": "signal_homocysteine_elevation_context",
+          "signal_state": "at_risk"
+        },
+        {
+          "hypotheses": [
+            {
+              "confirmatory_tests": [
+                {
+                  "display_name": "Repeat CRP",
+                  "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated.",
+                  "test_id": "test_crp_repeat_v1"
+                }
+              ],
+              "evidence_against": [
+                {
+                  "item": "CRP appears clearly within range, which argues against a persistent inflammatory burden pattern.",
+                  "marker_refs": [
+                    "crp"
+                  ]
+                }
+              ],
+              "evidence_for": [
+                {
+                  "item": "A systemic inflammation signal fired, anchoring hs-CRP elevation in governed chronic-risk framing.",
+                  "marker_refs": [
+                    "crp"
+                  ]
+                }
+              ],
+              "hypothesis_confidence": 0.4,
+              "hypothesis_id": "infl_persistent_low_grade_burden_v1",
+              "missing_data": [
+                {
+                  "marker_id": "neutrophils",
+                  "reason": "Neutrophils help interpret cellular inflammatory patterns alongside CRP."
+                },
+                {
+                  "marker_id": "lymphocytes",
+                  "reason": "Lymphocytes help contextualize differential white-cell patterns with CRP."
+                }
+              ],
+              "safety_class": "monitoring",
+              "summary": "hs-CRP is elevated with a pattern consistent with chronic low-grade systemic inflammation on this structured panel.",
+              "title": "Persistent low-grade inflammatory burden"
+            },
+            {
+              "confirmatory_tests": [
+                {
+                  "display_name": "Repeat HbA1c",
+                  "rationale": "Consider repeating HbA1c in 8\u201312 weeks to confirm persistence and monitor trend.",
+                  "test_id": "test_hba1c_repeat_v1"
+                },
+                {
+                  "display_name": "Repeat CRP",
+                  "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated.",
+                  "test_id": "test_crp_repeat_v1"
+                }
+              ],
+              "evidence_against": [],
+              "evidence_for": [],
+              "hypothesis_confidence": 0.6000000000000001,
+              "hypothesis_id": "infl_metabolic_companion_context_v1",
+              "missing_data": [],
+              "safety_class": "monitoring",
+              "summary": "Systemic inflammation marker elevation co-occurs with metabolic markers that often accompany meta-inflammatory stress patterns.",
+              "title": "Metabolic companion inflammation context"
+            },
+            {
+              "confirmatory_tests": [
+                {
+                  "display_name": "Liver enzymes (GGT/ALT/AST)",
+                  "rationale": "Consider including liver enzymes (GGT/ALT/AST) to add hepatic context that can influence lipid and inflammation patterns",
+                  "test_id": "test_liver_ggt_alt_ast_v1"
+                },
+                {
+                  "display_name": "Repeat CRP",
+                  "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated.",
+                  "test_id": "test_crp_repeat_v1"
+                }
+              ],
+              "evidence_against": [],
+              "evidence_for": [],
+              "hypothesis_confidence": 0.6000000000000001,
+              "hypothesis_id": "infl_hepatic_coupling_context_v1",
+              "missing_data": [],
+              "safety_class": "monitoring",
+              "summary": "CRP elevation appears alongside hepatic enzyme context that may reflect hepatic\u2013inflammatory overlap rather than isolated acute-phase noise.",
+              "title": "Hepatic coupling inflammation context"
+            }
+          ],
+          "primary_metric": "crp",
+          "signal_confidence": 0.3,
+          "signal_id": "signal_systemic_inflammation",
+          "signal_state": "suboptimal"
+        },
+        {
+          "hypotheses": [
+            {
+              "confirmatory_tests": [
+                {
+                  "display_name": "Repeat HbA1c",
+                  "rationale": "Consider repeating HbA1c in 8\u201312 weeks to confirm persistence and monitor trend.",
+                  "test_id": "test_hba1c_repeat_v1"
+                },
+                {
+                  "display_name": "Liver enzymes (GGT/ALT/AST)",
+                  "rationale": "Consider including liver enzymes (GGT/ALT/AST) to add hepatic context that can influence lipid and inflammation patterns",
+                  "test_id": "test_liver_ggt_alt_ast_v1"
+                }
+              ],
+              "evidence_against": [
+                {
+                  "item": "Non-HDL cholesterol appears clearly within range, weakening isolated atherogenic burden framing.",
+                  "marker_refs": [
+                    "non_hdl_cholesterol"
+                  ]
+                }
+              ],
+              "evidence_for": [],
+              "hypothesis_confidence": 0.6000000000000001,
+              "hypothesis_id": "lipid_non_hdl_atherogenic_burden_v1",
+              "missing_data": [
+                {
+                  "marker_id": "apolipoprotein_b",
+                  "reason": "ApoB refines particle number when non-HDL context is borderline."
+                }
+              ],
+              "safety_class": "monitoring",
+              "summary": "Non-HDL cholesterol context aligns with atherogenic particle burden framing on this structured panel.",
+              "title": "Atherogenic non-HDL particle burden pattern"
+            },
+            {
+              "confirmatory_tests": [
+                {
+                  "display_name": "Triglyceride and glucose (TyG-related markers)",
+                  "rationale": "Consider repeating triglycerides and glucose with consistent methodology to track TyG-related metabolic trend over time.",
+                  "test_id": "test_ty_g_component_markers_panel_v1"
+                },
+                {
+                  "display_name": "Liver enzymes (GGT/ALT/AST)",
+                  "rationale": "Consider including liver enzymes (GGT/ALT/AST) to add hepatic context that can influence lipid and inflammation patterns",
+                  "test_id": "test_liver_ggt_alt_ast_v1"
+                }
+              ],
+              "evidence_against": [],
+              "evidence_for": [],
+              "hypothesis_confidence": 0.6000000000000001,
+              "hypothesis_id": "lipid_tg_rich_lipoprotein_stress_v1",
+              "missing_data": [
+                {
+                  "marker_id": "glucose",
+                  "reason": "Fasting glucose clarifies glycaemic coupling with triglyceride-rich patterns."
+                }
+              ],
+              "safety_class": "monitoring",
+              "summary": "Triglyceride elevation accompanies lipid transport signalling consistent with triglyceride-rich lipoprotein stress patterns.",
+              "title": "Triglyceride-rich lipoprotein stress context"
+            },
+            {
+              "confirmatory_tests": [
+                {
+                  "display_name": "Repeat HbA1c",
+                  "rationale": "Consider repeating HbA1c in 8\u201312 weeks to confirm persistence and monitor trend.",
+                  "test_id": "test_hba1c_repeat_v1"
+                },
+                {
+                  "display_name": "Fasting glucose with insulin",
+                  "rationale": "Consider including fasting glucose with insulin on a consistent panel to clarify pancreatic compensation and peripheral ",
+                  "test_id": "test_fasting_glucose_insulin_context_v1"
+                }
+              ],
+              "evidence_against": [],
+              "evidence_for": [],
+              "hypothesis_confidence": 0.6000000000000001,
+              "hypothesis_id": "lipid_metabolic_coupling_context_v1",
+              "missing_data": [
+                {
+                  "marker_id": "insulin",
+                  "reason": "Fasting insulin refines resistance context when glucose or TG are discordant."
+                }
+              ],
+              "safety_class": "monitoring",
+              "summary": "Lipid transport dysfunction context appears alongside glycaemic markers that often cluster in cardiometabolic overlap.",
+              "title": "Metabolic coupling with lipid transport context"
+            }
+          ],
+          "primary_metric": "non_hdl_cholesterol",
+          "signal_confidence": 0.9,
+          "signal_id": "signal_lipid_transport_dysfunction",
+          "signal_state": "optimal"
+        },
+        {
+          "hypotheses": [
+            {
+              "confirmatory_tests": [
+                {
+                  "display_name": "Repeat HbA1c",
+                  "rationale": "Consider repeating HbA1c in 8\u201312 weeks to confirm persistence and monitor trend.",
+                  "test_id": "test_hba1c_repeat_v1"
+                }
+              ],
+              "evidence_against": [],
+              "evidence_for": [
+                {
+                  "item": "An LDL-cholesterol-high signal fired, anchoring atherogenic LDL-C interpretation.",
+                  "marker_refs": [
+                    "ldl_cholesterol"
+                  ]
+                }
+              ],
+              "hypothesis_confidence": 0.6000000000000001,
+              "hypothesis_id": "ldl_classic_atherogenic_elevation_v1",
+              "missing_data": [],
+              "safety_class": "monitoring",
+              "summary": "LDL cholesterol is elevated with a pattern consistent with atherogenic LDL-C burden on this panel.",
+              "title": "Classic LDL-cholesterol elevation pattern"
+            },
+            {
+              "confirmatory_tests": [],
+              "evidence_against": [],
+              "evidence_for": [],
+              "hypothesis_confidence": 0.6000000000000001,
+              "hypothesis_id": "ldl_thyroid_linked_context_v1",
+              "missing_data": [],
+              "safety_class": "monitoring",
+              "summary": "LDL elevation co-occurs with thyroid-axis markers that can influence lipid clearance interpretation.",
+              "title": "Thyroid-linked LDL elevation context"
+            },
+            {
+              "confirmatory_tests": [
+                {
+                  "display_name": "Repeat CRP",
+                  "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated.",
+                  "test_id": "test_crp_repeat_v1"
+                },
+                {
+                  "display_name": "Liver enzymes (GGT/ALT/AST)",
+                  "rationale": "Consider including liver enzymes (GGT/ALT/AST) to add hepatic context that can influence lipid and inflammation patterns",
+                  "test_id": "test_liver_ggt_alt_ast_v1"
+                }
+              ],
+              "evidence_against": [],
+              "evidence_for": [],
+              "hypothesis_confidence": 0.6000000000000001,
+              "hypothesis_id": "ldl_inflammatory_companion_v1",
+              "missing_data": [],
+              "safety_class": "monitoring",
+              "summary": "LDL elevation appears alongside inflammatory markers that can co-occur in meta-inflammatory cardiometabolic stress.",
+              "title": "Inflammatory companion context with LDL elevation"
+            }
+          ],
+          "primary_metric": "ldl_cholesterol",
+          "signal_confidence": 0.85,
+          "signal_id": "signal_ldl_cholesterol_high",
+          "signal_state": "suboptimal"
+        },
+        {
+          "hypotheses": [
+            {
+              "confirmatory_tests": [
+                {
+                  "display_name": "Repeat HbA1c",
+                  "rationale": "Consider repeating HbA1c in 8\u201312 weeks to confirm persistence and monitor trend.",
+                  "test_id": "test_hba1c_repeat_v1"
+                }
+              ],
+              "evidence_against": [],
+              "evidence_for": [
+                {
+                  "item": "A total-cholesterol-high signal fired, anchoring governed total-cholesterol WHY on this run.",
+                  "marker_refs": [
+                    "total_cholesterol"
+                  ]
+                },
+                {
+                  "item": "Total cholesterol is above the lab reference range, supporting an elevation pattern.",
+                  "marker_refs": [
+                    "total_cholesterol"
+                  ]
+                }
+              ],
+              "hypothesis_confidence": 0.6000000000000001,
+              "hypothesis_id": "tc_atherogenic_panel_context_v1",
+              "missing_data": [],
+              "safety_class": "monitoring",
+              "summary": "Total cholesterol is elevated with patterns that can reflect atherogenic lipoprotein burden on this panel.",
+              "title": "Total cholesterol elevation in atherogenic lipid panel context"
+            },
+            {
+              "confirmatory_tests": [
+                {
+                  "display_name": "Fasting glucose with insulin",
+                  "rationale": "Consider including fasting glucose with insulin on a consistent panel to clarify pancreatic compensation and peripheral ",
+                  "test_id": "test_fasting_glucose_insulin_context_v1"
+                },
+                {
+                  "display_name": "Triglyceride and glucose (TyG-related markers)",
+                  "rationale": "Consider repeating triglycerides and glucose with consistent methodology to track TyG-related metabolic trend over time.",
+                  "test_id": "test_ty_g_component_markers_panel_v1"
+                }
+              ],
+              "evidence_against": [],
+              "evidence_for": [
+                {
+                  "item": "Total-cholesterol-high context is active while glucose is available for metabolic coupling review.",
+                  "marker_refs": [
+                    "total_cholesterol"
+                  ]
+                }
+              ],
+              "hypothesis_confidence": 0.4,
+              "hypothesis_id": "tc_metabolic_coupling_context_v1",
+              "missing_data": [],
+              "safety_class": "monitoring",
+              "summary": "Total cholesterol elevation co-occurs with glycaemic markers that can track with metabolic stress on the same panel.",
+              "title": "Metabolic coupling context with total cholesterol elevation"
+            }
+          ],
+          "primary_metric": "total_cholesterol",
+          "signal_confidence": 0.9,
+          "signal_id": "signal_total_cholesterol_high",
+          "signal_state": "suboptimal"
+        },
+        {
+          "hypotheses": [
+            {
+              "confirmatory_tests": [],
+              "evidence_against": [
+                {
+                  "item": "Haemoglobin appears within range, weakening an isolated low-capacity pattern.",
+                  "marker_refs": [
+                    "hemoglobin"
+                  ]
+                }
+              ],
+              "evidence_for": [],
+              "hypothesis_confidence": 0.6000000000000001,
+              "hypothesis_id": "otc_hemoglobin_anchor_v1",
+              "missing_data": [],
+              "safety_class": "monitoring",
+              "summary": "Oxygen transport capacity signalling reflects haemoglobin-centred red-cell oxygen-carrying context on this structured panel.",
+              "title": "Oxygen transport capacity pattern"
+            },
+            {
+              "confirmatory_tests": [],
+              "evidence_against": [],
+              "evidence_for": [],
+              "hypothesis_confidence": 0.6000000000000001,
+              "hypothesis_id": "otc_iron_context_coupling_v1",
+              "missing_data": [],
+              "safety_class": "monitoring",
+              "summary": "Oxygen transport signals co-occur with iron markers that help interpret capacity change on the same panel.",
+              "title": "Iron marker coupling with oxygen transport context"
+            }
+          ],
+          "primary_metric": "hemoglobin",
+          "signal_confidence": 0.9,
+          "signal_id": "signal_oxygen_transport_capacity",
+          "signal_state": "optimal"
+        },
+        {
+          "hypotheses": [
+            {
+              "confirmatory_tests": [
+                {
+                  "display_name": "Repeat CRP",
+                  "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated.",
+                  "test_id": "test_crp_repeat_v1"
+                },
+                {
+                  "display_name": "Liver enzymes (GGT/ALT/AST)",
+                  "rationale": "Consider including liver enzymes (GGT/ALT/AST) to add hepatic context that can influence lipid and inflammation patterns",
+                  "test_id": "test_liver_ggt_alt_ast_v1"
+                }
+              ],
+              "evidence_against": [],
+              "evidence_for": [
+                {
+                  "item": "A transferrin-low signal fired, anchoring reduced transport protein context.",
+                  "marker_refs": [
+                    "transferrin"
+                  ]
+                },
+                {
+                  "item": "Transferrin is below range, supporting reduced transport capacity framing.",
+                  "marker_refs": [
+                    "transferrin"
+                  ]
+                }
+              ],
+              "hypothesis_confidence": 0.6000000000000001,
+              "hypothesis_id": "tl_reduced_transport_capacity_v1",
+              "missing_data": [],
+              "safety_class": "monitoring",
+              "summary": "Transferrin is reduced with a pattern consistent with lower circulating iron-binding transport capacity on this panel.",
+              "title": "Low transferrin pattern"
+            },
+            {
+              "confirmatory_tests": [
+                {
+                  "display_name": "Repeat CRP",
+                  "rationale": "Consider repeating CRP with a consistent method to see if inflammation markers are persistently elevated.",
+                  "test_id": "test_crp_repeat_v1"
+                }
+              ],
+              "evidence_against": [],
+              "evidence_for": [],
+              "hypothesis_confidence": 0.6000000000000001,
+              "hypothesis_id": "tl_inflammatory_suppression_v1",
+              "missing_data": [],
+              "safety_class": "monitoring",
+              "summary": "Low transferrin co-occurs with CRP elevation consistent with negative acute-phase suppression patterns.",
+              "title": "Inflammatory context with low transferrin"
+            }
+          ],
+          "primary_metric": "transferrin",
+          "signal_confidence": 0.75,
+          "signal_id": "signal_transferrin_low",
+          "signal_state": "suboptimal"
+        }
+      ],
+      "version": "v1"
+    },
+    "top_chains": [
+      {
+        "chain_id": "chain_001",
+        "confidence": 0.925,
+        "priority_rank": 1,
+        "signals_involved": [
+          "signal_homocysteine_high",
+          "signal_homocysteine_elevation_context"
+        ],
+        "summary_text": "Linked pattern (chain_001): Homocysteine High \u2192 Homocysteine Elevation Context.",
+        "summary_tokens": [
+          "vascular",
+          "vascular"
+        ]
+      },
+      {
+        "chain_id": "chain_002",
+        "confidence": 0.625,
+        "priority_rank": 2,
+        "signals_involved": [
+          "signal_systemic_inflammation",
+          "signal_homocysteine_elevation_context"
+        ],
+        "summary_text": "Linked pattern (chain_002): Systemic Inflammation \u2192 Homocysteine Elevation Context.",
+        "summary_tokens": [
+          "inflammatory",
+          "vascular"
+        ]
+      }
+    ],
+    "top_findings": [
+      {
+        "confidence": 0.95,
+        "confidence_reasons": [
+          "ALL_SUPPORTING_MARKERS_PRESENT",
+          "ESCALATION_SINGLE_CONDITION",
+          "REFERENCE_RANGE_COMPLETE",
+          "PRIMARY_METRIC_PRESENT"
+        ],
+        "primary_metric": "homocysteine",
+        "priority_rank": 1,
+        "signal_id": "signal_homocysteine_elevation_context",
+        "signal_state": "at_risk",
+        "supporting_markers": [
+          "vitamin_b12",
+          "folate",
+          "transferrin",
+          "mcv",
+          "crp"
+        ],
+        "system": "vascular",
+        "why_it_matters": "Homocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread."
+      },
+      {
+        "confidence": 0.9,
+        "confidence_reasons": [
+          "ALL_SUPPORTING_MARKERS_PRESENT",
+          "REFERENCE_RANGE_COMPLETE",
+          "PRIMARY_METRIC_PRESENT"
+        ],
+        "primary_metric": "homocysteine",
+        "priority_rank": 2,
+        "signal_id": "signal_homocysteine_high",
+        "signal_state": "suboptimal",
+        "supporting_markers": [
+          "vitamin_b12",
+          "folate",
+          "creatinine"
+        ],
+        "system": "vascular",
+        "why_it_matters": "Homocysteine High is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread."
+      },
+      {
+        "confidence": 0.9,
+        "confidence_reasons": [
+          "ALL_SUPPORTING_MARKERS_PRESENT",
+          "REFERENCE_RANGE_COMPLETE",
+          "PRIMARY_METRIC_PRESENT"
+        ],
+        "primary_metric": "mcv",
+        "priority_rank": 3,
+        "signal_id": "signal_mcv_high",
+        "signal_state": "suboptimal",
+        "supporting_markers": [
+          "vitamin_b12",
+          "folate",
+          "ggt"
+        ],
+        "system": "hematologic",
+        "why_it_matters": "Mcv High is outside the optimal range on this panel. Your measured mcv is the main lab anchor for this thread."
+      },
+      {
+        "confidence": 0.9,
+        "confidence_reasons": [
+          "ALL_SUPPORTING_MARKERS_PRESENT",
+          "REFERENCE_RANGE_COMPLETE",
+          "PRIMARY_METRIC_PRESENT"
+        ],
+        "primary_metric": "total_cholesterol",
+        "priority_rank": 4,
+        "signal_id": "signal_total_cholesterol_high",
+        "signal_state": "suboptimal",
+        "supporting_markers": [
+          "tc_hdl_ratio",
+          "ldl_cholesterol"
+        ],
+        "system": "lipid_transport",
+        "why_it_matters": "Total Cholesterol High is outside the optimal range on this panel. Your measured total cholesterol is the main lab anchor for this thread."
+      },
+      {
+        "confidence": 0.9,
+        "confidence_reasons": [
+          "ALL_SUPPORTING_MARKERS_PRESENT",
+          "REFERENCE_RANGE_COMPLETE",
+          "PRIMARY_METRIC_PRESENT"
+        ],
+        "primary_metric": "apoa1",
+        "priority_rank": 5,
+        "signal_id": "signal_apoa1_cardio_risk",
+        "signal_state": "suboptimal",
+        "supporting_markers": [
+          "apob_apoa1_ratio"
+        ],
+        "system": "lipid_transport",
+        "why_it_matters": "Apoa1 Cardio Risk is outside the optimal range on this panel. Your measured apoa1 is the main lab anchor for this thread."
+      },
+      {
+        "confidence": 0.85,
+        "confidence_reasons": [
+          "ALL_SUPPORTING_MARKERS_PRESENT",
+          "REFERENCE_RANGE_ONE_SIDED",
+          "PRIMARY_METRIC_PRESENT"
+        ],
+        "primary_metric": "ldl_cholesterol",
+        "priority_rank": 6,
+        "signal_id": "signal_ldl_cholesterol_high",
+        "signal_state": "suboptimal",
+        "supporting_markers": [
+          "non_hdl_cholesterol",
+          "apob",
+          "hdl_cholesterol",
+          "triglycerides",
+          "lipoprotein_a"
+        ],
+        "system": "lipid_transport",
+        "why_it_matters": "Ldl Cholesterol High is outside the optimal range on this panel. Your measured ldl cholesterol is the main lab anchor for this thread."
+      },
+      {
+        "confidence": 0.85,
+        "confidence_reasons": [
+          "ALL_SUPPORTING_MARKERS_PRESENT",
+          "REFERENCE_RANGE_ONE_SIDED",
+          "PRIMARY_METRIC_PRESENT"
+        ],
+        "primary_metric": "ldl_cholesterol",
+        "priority_rank": 7,
+        "signal_id": "signal_ldl_high",
+        "signal_state": "suboptimal",
+        "supporting_markers": [
+          "apob",
+          "tsh",
+          "triglycerides"
+        ],
+        "system": "lipid_transport",
+        "why_it_matters": "Ldl High is outside the optimal range on this panel. Your measured ldl cholesterol is the main lab anchor for this thread."
+      },
+      {
+        "confidence": 0.75,
+        "confidence_reasons": [
+          "PARTIAL_SUPPORTING_MARKERS",
+          "REFERENCE_RANGE_COMPLETE",
+          "PRIMARY_METRIC_PRESENT"
+        ],
+        "primary_metric": "transferrin",
+        "priority_rank": 8,
+        "signal_id": "signal_transferrin_low",
+        "signal_state": "suboptimal",
+        "supporting_markers": [
+          "albumin",
+          "total_cholesterol",
+          "urine_protein_creatinine_ratio",
+          "crp"
+        ],
+        "system": "hepatic",
+        "why_it_matters": "Transferrin Low is outside the optimal range on this panel. Your measured transferrin is the main lab anchor for this thread."
+      },
+      {
+        "confidence": 0.3,
+        "confidence_reasons": [
+          "PARTIAL_SUPPORTING_MARKERS",
+          "REFERENCE_RANGE_COMPLETE",
+          "PRIMARY_METRIC_PRESENT"
+        ],
+        "primary_metric": "crp",
+        "priority_rank": 9,
+        "signal_id": "signal_systemic_inflammation",
+        "signal_state": "suboptimal",
+        "supporting_markers": [
+          "nlr",
+          "sii"
+        ],
+        "system": "inflammatory",
+        "why_it_matters": "Systemic Inflammation is outside the optimal range on this panel. Your measured crp is the main lab anchor for this thread."
+      },
+      {
+        "confidence": 0.9,
+        "confidence_reasons": [
+          "ALL_SUPPORTING_MARKERS_PRESENT",
+          "REFERENCE_RANGE_COMPLETE",
+          "PRIMARY_METRIC_PRESENT"
+        ],
+        "primary_metric": "hemoglobin",
+        "priority_rank": 10,
+        "signal_id": "signal_oxygen_transport_capacity",
+        "signal_state": "optimal",
+        "supporting_markers": [
+          "hematocrit",
+          "ferritin",
+          "iron"
+        ],
+        "system": "hematologic",
+        "why_it_matters": "Oxygen Transport Capacity looks favourable on this panel. Your measured hemoglobin is the main lab anchor for this thread."
+      },
+      {
+        "confidence": 0.9,
+        "confidence_reasons": [
+          "ALL_SUPPORTING_MARKERS_PRESENT",
+          "REFERENCE_RANGE_COMPLETE",
+          "PRIMARY_METRIC_PRESENT"
+        ],
+        "primary_metric": "non_hdl_cholesterol",
+        "priority_rank": 11,
+        "signal_id": "signal_lipid_transport_dysfunction",
+        "signal_state": "optimal",
+        "supporting_markers": [
+          "tg_hdl_ratio",
+          "remnant_cholesterol",
+          "triglycerides"
+        ],
+        "system": "lipid_transport",
+        "why_it_matters": "Lipid Transport Dysfunction looks favourable on this panel. Your measured non hdl cholesterol is the main lab anchor for this thread."
+      },
+      {
+        "confidence": 0.9,
+        "confidence_reasons": [
+          "ALL_SUPPORTING_MARKERS_PRESENT",
+          "REFERENCE_RANGE_COMPLETE",
+          "PRIMARY_METRIC_PRESENT"
+        ],
+        "primary_metric": "crp",
+        "priority_rank": 12,
+        "signal_id": "signal_vascular_inflammatory_stress",
+        "signal_state": "optimal",
+        "supporting_markers": [
+          "non_hdl_cholesterol"
+        ],
+        "system": "vascular",
+        "why_it_matters": "Vascular Inflammatory Stress looks favourable on this panel. Your measured crp is the main lab anchor for this thread."
+      },
+      {
+        "confidence": 0.6,
+        "confidence_reasons": [
+          "PARTIAL_SUPPORTING_MARKERS",
+          "REFERENCE_RANGE_COMPLETE",
+          "PRIMARY_METRIC_PRESENT"
+        ],
+        "primary_metric": "urea_creatinine_ratio",
+        "priority_rank": 13,
+        "signal_id": "signal_renal_metabolic_stress",
+        "signal_state": "optimal",
+        "supporting_markers": [
+          "creatinine",
+          "uric_acid"
+        ],
+        "system": "renal",
+        "why_it_matters": "Renal Metabolic Stress looks favourable on this panel. Your measured urea creatinine ratio is the main lab anchor for this thread."
+      }
+    ]
+  },
+  "signal_registry_hash": "be00c64d8b0a",
+  "signal_registry_version": "be00c64d8b0a",
+  "signal_results": [
+    {
+      "confidence": 0.9,
+      "confidence_reasons": [
+        "ALL_SUPPORTING_MARKERS_PRESENT",
+        "REFERENCE_RANGE_COMPLETE",
+        "PRIMARY_METRIC_PRESENT"
+      ],
+      "explanation": {
+        "biological_pathway": "Reverse cholesterol transport moves cholesterol toward the liver for clearance and redistribution.\n",
+        "implications": "Atherogenic balance worsens when ApoB-bearing particle burden is high relative to ApoA1-bearing HDL capacity.\n",
+        "interpretation": "Low ApoA1 indicates reduced HDL particle protein mass relative to the expected laboratory range for the assay context.\n",
+        "mechanism": "ApoA1 stabilizes HDL structure and participates in cholesterol efflux pathways from peripheral tissues.\n",
+        "supporting_marker_roles": "The ApoB-to-ApoA1 ratio contextualizes whether low ApoA1 reflects an adverse pro-atherogenic particle balance.\n"
+      },
+      "lab_normal_but_flagged": false,
+      "primary_metric": "apoa1",
+      "signal_id": "signal_apoa1_cardio_risk",
+      "signal_state": "suboptimal",
+      "signal_value": 1.73,
+      "supporting_markers": [
+        "apob_apoa1_ratio"
+      ],
+      "system": "lipid_transport"
+    },
+    {
+      "confidence": 0.95,
+      "confidence_reasons": [
+        "ALL_SUPPORTING_MARKERS_PRESENT",
+        "ESCALATION_SINGLE_CONDITION",
+        "REFERENCE_RANGE_COMPLETE",
+        "PRIMARY_METRIC_PRESENT"
+      ],
+      "explanation": {
+        "biological_pathway": "Methionine cycle remethylation and transsulfuration dynamics, with vascular endothelial exposure.\n",
+        "implications": "Persistent elevation with contextual deficits may indicate increased endothelial stress burden.\n",
+        "interpretation": "Homocysteine elevation is interpreted with nutrient and inflammatory context to improve mechanistic investigation framing while preserving deterministic detection semantics.\n",
+        "mechanism": "Elevated homocysteine suggests one-carbon metabolism stress and impaired remethylation context.\n",
+        "supporting_marker_roles": {
+          "crp": "Inflammatory context marker for endothelial stress interpretation.",
+          "folate": "Methyl donor support in one-carbon metabolism.",
+          "mcv": "Cell-size context that can reflect macrocytic nutrient deficiency patterns.",
+          "transferrin": "Nutrient transport context proxy.",
+          "vitamin_b12": "Cofactor support for remethylation of homocysteine."
+        }
+      },
+      "lab_normal_but_flagged": false,
+      "primary_metric": "homocysteine",
+      "signal_id": "signal_homocysteine_elevation_context",
+      "signal_state": "at_risk",
+      "signal_value": 16.23,
+      "supporting_markers": [
+        "vitamin_b12",
+        "folate",
+        "transferrin",
+        "mcv",
+        "crp"
+      ],
+      "system": "vascular"
+    },
+    {
+      "confidence": 0.9,
+      "confidence_reasons": [
+        "ALL_SUPPORTING_MARKERS_PRESENT",
+        "REFERENCE_RANGE_COMPLETE",
+        "PRIMARY_METRIC_PRESENT"
+      ],
+      "explanation": {
+        "biological_pathway": "The Methionine-Homocysteine cycle (One-carbon metabolism).",
+        "implications": "Associated with increased risk of stroke and dementia.",
+        "interpretation": "Reflects methylation capacity and B-vitamin status.",
+        "mechanism": "Homocysteine lies at the junction of the remethylation and transsulfuration pathways.",
+        "supporting_marker_roles": "Escalation context is supported by correlated marker patterns, including vitamin_b12 (Indicates a likely remethylation failure.); folate (Indicates likely methyl-donor insufficiency within one-carbon metabolism.)."
+      },
+      "lab_normal_but_flagged": false,
+      "primary_metric": "homocysteine",
+      "signal_id": "signal_homocysteine_high",
+      "signal_state": "suboptimal",
+      "signal_value": 16.23,
+      "supporting_markers": [
+        "vitamin_b12",
+        "folate",
+        "creatinine"
+      ],
+      "system": "vascular"
+    },
+    {
+      "confidence": 0.85,
+      "confidence_reasons": [
+        "ALL_SUPPORTING_MARKERS_PRESENT",
+        "REFERENCE_RANGE_ONE_SIDED",
+        "PRIMARY_METRIC_PRESENT"
+      ],
+      "explanation": {
+        "biological_pathway": "Reverse cholesterol transport is overwhelmed by the influx of LDL-C into the vascular endothelium.",
+        "implications": "High levels indicate a need for dietary modification or statin therapy to lower ASCVD risk.",
+        "interpretation": "Primary driver of cardiovascular risk. Interpretation should be framed by the patient's overall QRISK/Framingham score.",
+        "mechanism": "LDL carries cholesterol from the liver to cells. When in excess, it deposits in arterial walls.",
+        "supporting_marker_roles": "Escalation context is supported by correlated marker patterns, including non_hdl_cholesterol (Provides a more comprehensive view of atherogenic risk than LDL alone.); triglycerides (High levels often shift LDL particles toward the smaller, more dangerous dense form.)."
+      },
+      "lab_normal_but_flagged": false,
+      "primary_metric": "ldl_cholesterol",
+      "signal_id": "signal_ldl_cholesterol_high",
+      "signal_state": "suboptimal",
+      "signal_value": 2.75,
+      "supporting_markers": [
+        "non_hdl_cholesterol",
+        "apob",
+        "hdl_cholesterol",
+        "triglycerides",
+        "lipoprotein_a"
+      ],
+      "system": "lipid_transport"
+    },
+    {
+      "confidence": 0.85,
+      "confidence_reasons": [
+        "ALL_SUPPORTING_MARKERS_PRESENT",
+        "REFERENCE_RANGE_ONE_SIDED",
+        "PRIMARY_METRIC_PRESENT"
+      ],
+      "explanation": {
+        "biological_pathway": "LDL receptor-mediated clearance, apoB particle persistence, inherited lipoprotein disorders, and secondary endocrine contributors.",
+        "implications": "The key task is to decide whether the elevation is likely primary and persistent or secondary to a reversible cause such as hypothyroidism.",
+        "interpretation": "This frame separates primary persistent LDL excess from common secondary explanations rather than claiming genetic diagnosis from a single LDL result.",
+        "mechanism": "Sustained LDL elevation can result from inherited LDL receptor pathway impairment or from secondary metabolic conditions such as hypothyroidism.",
+        "supporting_marker_roles": "ApoB corroborates persistent particle excess, TSH performs true differential work against hypothyroid dyslipidemia, and triglycerides help phenotype the pattern."
+      },
+      "lab_normal_but_flagged": false,
+      "primary_metric": "ldl_cholesterol",
+      "signal_id": "signal_ldl_high",
+      "signal_state": "suboptimal",
+      "signal_value": 2.75,
+      "supporting_markers": [
+        "apob",
+        "tsh",
+        "triglycerides"
+      ],
+      "system": "lipid_transport"
+    },
+    {
+      "confidence": 0.9,
+      "confidence_reasons": [
+        "ALL_SUPPORTING_MARKERS_PRESENT",
+        "REFERENCE_RANGE_COMPLETE",
+        "PRIMARY_METRIC_PRESENT"
+      ],
+      "explanation": null,
+      "lab_normal_but_flagged": false,
+      "primary_metric": "non_hdl_cholesterol",
+      "signal_id": "signal_lipid_transport_dysfunction",
+      "signal_state": "optimal",
+      "signal_value": 3.04,
+      "supporting_markers": [
+        "tg_hdl_ratio",
+        "remnant_cholesterol",
+        "triglycerides"
+      ],
+      "system": "lipid_transport"
+    },
+    {
+      "confidence": 0.9,
+      "confidence_reasons": [
+        "ALL_SUPPORTING_MARKERS_PRESENT",
+        "REFERENCE_RANGE_COMPLETE",
+        "PRIMARY_METRIC_PRESENT"
+      ],
+      "explanation": {
+        "biological_pathway": "Erythropoiesis and nucleotide synthesis pathways in bone marrow.",
+        "implications": "Persistent macrocytosis warrants investigation for megaloblastic anemia, alcohol-related change, thyroid dysfunction, or marrow disorder.",
+        "interpretation": "High MCV is a morphology-led investigation trigger requiring nutritional, hepatic, and alcohol-context evaluation.",
+        "mechanism": "MCV rises when erythrocytes are larger due to ineffective maturation or altered membrane composition.",
+        "supporting_marker_roles": "Escalation context is supported by correlated marker patterns, including vitamin_b12 (Assesses cobalamin-dependent megaloblastic mechanism.); folate (Assesses folate-dependent megaloblastic mechanism.); ggt (Provides alcohol/hepatic context for differential interpretation.)."
+      },
+      "lab_normal_but_flagged": false,
+      "primary_metric": "mcv",
+      "signal_id": "signal_mcv_high",
+      "signal_state": "suboptimal",
+      "signal_value": 99.5,
+      "supporting_markers": [
+        "vitamin_b12",
+        "folate",
+        "ggt"
+      ],
+      "system": "hematologic"
+    },
+    {
+      "confidence": 0.9,
+      "confidence_reasons": [
+        "ALL_SUPPORTING_MARKERS_PRESENT",
+        "REFERENCE_RANGE_COMPLETE",
+        "PRIMARY_METRIC_PRESENT"
+      ],
+      "explanation": null,
+      "lab_normal_but_flagged": false,
+      "primary_metric": "hemoglobin",
+      "signal_id": "signal_oxygen_transport_capacity",
+      "signal_state": "optimal",
+      "signal_value": 144.0,
+      "supporting_markers": [
+        "hematocrit",
+        "ferritin",
+        "iron"
+      ],
+      "system": "hematologic"
+    },
+    {
+      "confidence": 0.6,
+      "confidence_reasons": [
+        "PARTIAL_SUPPORTING_MARKERS",
+        "REFERENCE_RANGE_COMPLETE",
+        "PRIMARY_METRIC_PRESENT"
+      ],
+      "explanation": null,
+      "lab_normal_but_flagged": false,
+      "primary_metric": "urea_creatinine_ratio",
+      "signal_id": "signal_renal_metabolic_stress",
+      "signal_state": "optimal",
+      "signal_value": 0.082,
+      "supporting_markers": [
+        "creatinine",
+        "uric_acid"
+      ],
+      "system": "renal"
+    },
+    {
+      "confidence": 0.3,
+      "confidence_reasons": [
+        "PARTIAL_SUPPORTING_MARKERS",
+        "REFERENCE_RANGE_COMPLETE",
+        "PRIMARY_METRIC_PRESENT"
+      ],
+      "explanation": null,
+      "lab_normal_but_flagged": true,
+      "primary_metric": "crp",
+      "signal_id": "signal_systemic_inflammation",
+      "signal_state": "suboptimal",
+      "signal_value": 1.1,
+      "supporting_markers": [
+        "nlr",
+        "sii"
+      ],
+      "system": "inflammatory"
+    },
+    {
+      "confidence": 0.9,
+      "confidence_reasons": [
+        "ALL_SUPPORTING_MARKERS_PRESENT",
+        "REFERENCE_RANGE_COMPLETE",
+        "PRIMARY_METRIC_PRESENT"
+      ],
+      "explanation": {
+        "biological_pathway": "Reverse cholesterol transport, lipoprotein distribution, and cholesterol carriage between protective and apoB-containing particles.",
+        "implications": "It may justify fuller lipid interpretation rather than immediate assumption of severe atherogenic dyslipidaemia from total cholesterol in isolation.",
+        "interpretation": "This pattern is best understood as lipid discordance: total cholesterol is elevated, but the ratio suggests that the distribution of cholesterol may be less unfavorable than the total value alone implies.",
+        "mechanism": "When HDL contributes proportionally more to total cholesterol, the total cholesterol value can appear high without carrying the same atherogenic meaning as an LDL- or non-HDL-dominant elevation.",
+        "supporting_marker_roles": "A low TC:HDL ratio corroborates an HDL-rich discordant pattern, while high LDL cholesterol acts as a differential marker that redirects interpretation toward more clearly atherogenic hypercholesterolaemia."
+      },
+      "lab_normal_but_flagged": false,
+      "primary_metric": "total_cholesterol",
+      "signal_id": "signal_total_cholesterol_high",
+      "signal_state": "suboptimal",
+      "signal_value": 5.26,
+      "supporting_markers": [
+        "tc_hdl_ratio",
+        "ldl_cholesterol"
+      ],
+      "system": "lipid_transport"
+    },
+    {
+      "confidence": 0.75,
+      "confidence_reasons": [
+        "PARTIAL_SUPPORTING_MARKERS",
+        "REFERENCE_RANGE_COMPLETE",
+        "PRIMARY_METRIC_PRESENT"
+      ],
+      "explanation": {
+        "biological_pathway": "Hepatic protein synthesis, visceral protein homeostasis, nutritional depletion, and protein-loss pathways including renal and gastrointestinal protein leak.",
+        "implications": "This pattern generally warrants review of albumin, liver function, nutritional status, and context for renal or gastrointestinal protein-loss, rather than interpreting low transferrin merely as an isolated iron-related signal.",
+        "interpretation": "A low transferrin result may be consistent with synthetic or visceral-protein depletion states; however, inflammatory status should be evaluated because it can produce similar directional changes. Urine protein assessment aids in differentiating protein-loss from synthetic failure.",
+        "mechanism": "Transferrin levels can decrease when liver synthetic output is diminished by intrinsic hepatic disease, when protein is lost via renal or gastrointestinal routes, or when visceral protein availability is impacted by undernutrition.",
+        "supporting_marker_roles": "Low albumin supports a parallel visceral protein reduction consistent with either synthetic failure or protein loss; low total cholesterol corroborates a broader hepatic depletion or synthetic-failure context; elevated urine protein-creatinine ratio acts as a differential marker pointing toward protein-loss nephropathy; and high CRP acts as a differential marker that redirects the diagnostic frame toward inflammatory negative-acute-phase suppression."
+      },
+      "lab_normal_but_flagged": false,
+      "primary_metric": "transferrin",
+      "signal_id": "signal_transferrin_low",
+      "signal_state": "suboptimal",
+      "signal_value": 2.0,
+      "supporting_markers": [
+        "albumin",
+        "total_cholesterol",
+        "urine_protein_creatinine_ratio",
+        "crp"
+      ],
+      "system": "hepatic"
+    },
+    {
+      "confidence": 0.9,
+      "confidence_reasons": [
+        "ALL_SUPPORTING_MARKERS_PRESENT",
+        "REFERENCE_RANGE_COMPLETE",
+        "PRIMARY_METRIC_PRESENT"
+      ],
+      "explanation": null,
+      "lab_normal_but_flagged": false,
+      "primary_metric": "crp",
+      "signal_id": "signal_vascular_inflammatory_stress",
+      "signal_state": "optimal",
+      "signal_value": 1.1,
+      "supporting_markers": [
+        "non_hdl_cholesterol"
+      ],
+      "system": "vascular"
+    }
+  ],
+  "state_engine_hash": "f7f01f1f1cf4ad33dc4f46d6368e803d4776f35a37c83d8aa64a1c67f054b498",
+  "state_engine_version": "1.0.0",
+  "state_transition_hash": null,
+  "state_transition_version": null,
+  "state_transitions": [],
+  "supporting_systems": [
+    "cardiovascular",
+    "metabolic",
+    "hepatic",
+    "immune",
+    "musculoskeletal",
+    "autonomic",
+    "hematological",
+    "hormonal",
+    "nutritional",
+    "renal",
+    "thyroid"
+  ],
+  "system_burden_engine_version": "1.0.0",
+  "system_capacity_scores": {
+    "autonomic": 100,
+    "cardiovascular": 88,
+    "hematological": 100,
+    "hepatic": 99,
+    "hormonal": 100,
+    "immune": 99,
+    "metabolic": 98,
+    "musculoskeletal": 99,
+    "nutritional": 100,
+    "renal": 100,
+    "thyroid": 100
+  },
+  "system_states": [
+    {
+      "confidence_bucket": "insufficient",
+      "rationale_codes": [
+        "high_count_1",
+        "low_count_0",
+        "normal_count_0",
+        "system_relationship_sparse",
+        "unknown_count_3"
+      ],
+      "state_codes": [
+        "system_focal_derangement"
+      ],
+      "system_id": "cardiovascular_4_biomarkers",
+      "transition_summary_codes": []
+    },
+    {
+      "confidence_bucket": "insufficient",
+      "rationale_codes": [
+        "high_count_0",
+        "low_count_0",
+        "normal_count_4",
+        "system_relationship_sparse",
+        "unknown_count_0"
+      ],
+      "state_codes": [
+        "system_stable_normal"
+      ],
+      "system_id": "hematological_4_biomarkers",
+      "transition_summary_codes": []
+    },
+    {
+      "confidence_bucket": "insufficient",
+      "rationale_codes": [
+        "high_count_0",
+        "low_count_0",
+        "normal_count_2",
+        "system_relationship_sparse",
+        "unknown_count_0"
+      ],
+      "state_codes": [
+        "system_stable_normal"
+      ],
+      "system_id": "renal_2_biomarkers",
+      "transition_summary_codes": []
+    }
+  ],
+  "unit_normalisation_meta": {
+    "unit_normalised": true,
+    "unit_registry_version": "1.0"
+  },
+  "validation_gate_version": "1.0.0"
+}
