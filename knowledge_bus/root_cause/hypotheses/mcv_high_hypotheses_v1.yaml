@@ -1,0 +1,127 @@
+schema_version: "v1"
+asset_id: "mcv_high_hypotheses_v1"
+updated_at: "2026-05-09"
+primary_signal_id: "signal_mcv_high"
+primary_metric: "mcv"
+notes:
+  - "Launch-core LC-S1 governed WHY asset for activated signal_mcv_high (KB packages pkg_s24_mcv_high_macrocytosis / KB-S52C)."
+  - "Interpretive framing only — no diagnosis, prescribing, brands, or supplement directives."
+  - "confirmatory_tests limited to confirmatory_tests_v1.yaml."
+
+hypotheses:
+  - hypothesis_id: "mcv_high_anchor_pattern_v1"
+    title: "Elevated MCV — structured macrocytosis signal pattern"
+    safety_class: "monitoring"
+    evidence_strength: "strong"
+    summary_template: "MCV is elevated with an activated macrocytosis-related signal on this structured panel."
+    required_markers:
+      - "mcv"
+    confirmatory_markers:
+      - "vitamin_b12"
+      - "folate"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "mcv_high_signal_fired"
+        signals_any:
+          - "signal_mcv_high"
+        direction: "fired"
+        evidence_for_item: "An MCV-high signal fired, anchoring macrocytic red-cell interpretation."
+        marker_refs:
+          - "mcv"
+      - rule_id: "mcv_marker_above_range"
+        markers_all:
+          - "mcv"
+        direction: "high"
+        evidence_for_item: "MCV is above reference range, supporting macrocytosis as measured."
+        marker_refs:
+          - "mcv"
+    evidence_against_rules:
+      - rule_id: "mcv_clearly_normal"
+        markers_all:
+          - "mcv"
+        direction: "clearly_normal"
+        evidence_against_item: "MCV appears within reference range, arguing against macrocytosis on this panel alone."
+        marker_refs:
+          - "mcv"
+    missing_data_markers:
+      - marker_id: "vitamin_b12"
+        reason: "Serum B12 clarifies whether nutrient deficiency contributes when MCV is high."
+      - marker_id: "folate"
+        reason: "Folate adds methylation-context clarity alongside elevated MCV."
+    confirmatory_tests:
+      - "test_full_blood_count_indices_v1"
+      - "test_serum_vitamin_b12_v1"
+      - "test_serum_folate_v1"
+
+  - hypothesis_id: "mcv_high_nutrient_association_v1"
+    title: "Elevated MCV with low or marginal B12 or folate"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Elevated MCV appears alongside marginal or low B12/folate markers consistent with nutritional contributors."
+    required_markers:
+      - "mcv"
+    confirmatory_markers:
+      - "homocysteine"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "b12_low_with_high_mcv"
+        markers_any:
+          - "vitamin_b12"
+        direction: "low"
+        evidence_for_item: "Vitamin B12 is below reference range, supporting nutrient-associated macrocytosis context."
+        marker_refs:
+          - "vitamin_b12"
+          - "mcv"
+      - rule_id: "folate_low_with_high_mcv"
+        markers_any:
+          - "folate"
+        direction: "low"
+        evidence_for_item: "Folate is below reference range, supporting one-carbon pathway strain alongside elevated MCV."
+        marker_refs:
+          - "folate"
+          - "mcv"
+      - rule_id: "homocysteine_elevation_support"
+        markers_any:
+          - "homocysteine"
+        direction: "high"
+        evidence_for_item: "Homocysteine is elevated, adding metabolic strain context when MCV is high."
+        marker_refs:
+          - "homocysteine"
+    evidence_against_rules: []
+    missing_data_markers:
+      - marker_id: "methylmalonic_acid"
+        reason: "MMA can refine functional B12 status when serum markers are borderline."
+    confirmatory_tests:
+      - "test_holotranscobalamin_active_b12_v1"
+      - "test_methylmalonic_acid_v1"
+
+  - hypothesis_id: "mcv_high_hepatic_marker_association_v1"
+    title: "Elevated MCV with hepatic enzyme elevation context"
+    safety_class: "monitoring"
+    evidence_strength: "moderate"
+    summary_template: "Elevated MCV appears alongside hepatic enzyme signals that add liver-related interpretation context."
+    required_markers:
+      - "mcv"
+    confirmatory_markers:
+      - "ggt"
+    differentiator_markers: []
+    evidence_for_rules:
+      - rule_id: "ggt_high_macrocytic_context"
+        markers_any:
+          - "ggt"
+        direction: "high"
+        evidence_for_item: "GGT is elevated, supporting hepatic stress context alongside elevated MCV."
+        marker_refs:
+          - "ggt"
+          - "mcv"
+      - rule_id: "alt_high_macrocytic_context"
+        markers_any:
+          - "alt"
+        direction: "high"
+        evidence_for_item: "ALT is elevated, supporting hepato-cellular stress alongside elevated MCV."
+        marker_refs:
+          - "alt"
+    evidence_against_rules: []
+    missing_data_markers: []
+    confirmatory_tests:
+      - "test_liver_ggt_alt_ast_v1"

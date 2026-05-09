@@ -1,6 +1,6 @@
 schema_version: "v1"
 registry_id: "confirmatory_tests_v1"
-updated_at: "2026-04-06"
+updated_at: "2026-05-09"
 notes:
   - "Registry provides deterministic lookup for root_cause_v1 confirmatory_tests.test_id."
   - "Framing must remain non-directive (consider discussing / consider including in next panel)."
@@ -189,3 +189,50 @@ tests:
     is_repeat_test: true
     related_signals:
       - "signal_insulin_resistance"
+
+  - test_id: "test_apoa1_repeat_panel_context_v1"
+    display_name: "Repeat ApoA1 with lipid panel context"
+    specimen: "blood"
+    safety_class: "monitoring"
+    rationale_template: "Consider repeating ApoA1 with a consistent lipid panel to confirm persistence and trend alongside related ratios."
+    maps_to_biomarkers:
+      - "apoa1"
+    is_repeat_test: true
+    related_signals:
+      - "signal_apoa1_cardio_risk"
+
+  - test_id: "test_apob_apoa1_repeat_coord_panel_v1"
+    display_name: "Repeat ApoB with ApoA1 on a coordinated fasting lipid panel"
+    specimen: "blood"
+    safety_class: "monitoring"
+    rationale_template: "Consider repeating ApoB alongside ApoA1 using consistent fasting conditions and laboratory methodology so ApoB:ApoA1 balance can be tracked reliably over time."
+    maps_to_biomarkers:
+      - "apob"
+      - "apoa1"
+    is_repeat_test: true
+    related_signals:
+      - "signal_apoa1_cardio_risk"
+      - "signal_lipid_imbalance"
+
+  - test_id: "test_lipoprotein_a_serum_context_v1"
+    display_name: "Serum lipoprotein(a)"
+    specimen: "blood"
+    safety_class: "monitoring"
+    rationale_template: "Consider including lipoprotein(a) with your clinician when ApoB:ApoA1 imbalance is present, to layer inherited atherogenic lipoprotein burden alongside measured particle protein levels."
+    maps_to_biomarkers:
+      - "lipoprotein_a"
+    is_repeat_test: false
+    related_signals:
+      - "signal_apoa1_cardio_risk"
+      - "signal_lipid_transport_dysfunction"
+
+  - test_id: "test_cortisol_repeat_context_v1"
+    display_name: "Repeat cortisol with clinical correlation"
+    specimen: "blood"
+    safety_class: "monitoring"
+    rationale_template: "Consider repeating cortisol with consistent timing and discussing interpretation with your clinician when elevation persists."
+    maps_to_biomarkers:
+      - "cortisol"
+    is_repeat_test: true
+    related_signals:
+      - "signal_hypercortisolism"

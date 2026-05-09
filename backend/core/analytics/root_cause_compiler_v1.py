@@ -8,6 +8,7 @@ Additional targets (KB-S52): hepatic GGT and thyroid TSH leaf signals (Tier 1).
 Additional targets (KB-S52B): remaining hepatic and thyroid hormone / antibody leaf signals (PURE_EXTENSION).
 Additional targets (KB-S56B): renal creatinine, urea, and urate high signals with governed hypothesis assets.
 Additional targets (R-8 Wave 1): signal_total_cholesterol_high, signal_vitamin_d_low with governed hypothesis assets.
+Additional targets (LC-S1 launch-core slice): signal_homocysteine_high, signal_mcv_high, signal_apoa1_cardio_risk, signal_hypercortisolism.
 Signals without a registered loader are skipped with no behavioural change.
 """
 
@@ -34,6 +35,7 @@ from core.knowledge.load_root_cause_hypotheses import (
     load_ferritin_high_hypotheses_v1,
     load_ferritin_low_hypotheses_v1,
     load_ggt_high_hypotheses_v1,
+    load_apoa1_cardio_risk_hypotheses_v1,
     load_hba1c_hypotheses_v1,
     load_hdl_cholesterol_low_hypotheses_v1,
     load_hemoglobin_low_hypotheses_v1,
@@ -42,6 +44,7 @@ from core.knowledge.load_root_cause_hypotheses import (
     load_iron_deficiency_context_hypotheses_v1,
     load_iron_overload_context_hypotheses_v1,
     load_ldl_cholesterol_high_hypotheses_v1,
+    load_mcv_high_hypotheses_v1,
     load_lipid_transport_dysfunction_hypotheses_v1,
     load_oxygen_transport_capacity_hypotheses_v1,
     load_systemic_inflammation_hypotheses_v1,
@@ -62,6 +65,7 @@ from core.knowledge.load_root_cause_hypotheses import (
     load_free_t4_low_hypotheses_v1,
     load_hepatic_metabolic_stress_hypotheses_v1,
     load_hyperbilirubinemia_hypotheses_v1,
+    load_hypercortisolism_hypotheses_v1,
     load_tgab_high_hypotheses_v1,
     load_tpo_ab_high_hypotheses_v1,
     load_urate_high_hypotheses_v1,
@@ -71,13 +75,16 @@ from core.knowledge.load_root_cause_hypotheses import (
 
 _ROOT_CAUSE_TARGETS = [
     ("signal_homocysteine_elevation_context", load_hcy_hypotheses_v1),
+    ("signal_homocysteine_high", load_hcy_hypotheses_v1),
     ("signal_hba1c_high", load_hba1c_hypotheses_v1),
     ("signal_hepatic_alt_context", load_alt_hypotheses_v1),
     ("signal_thyroid_tsh_context", load_tsh_hypotheses_v1),
     ("signal_insulin_resistance", load_insulin_resistance_hypotheses_v1),
     ("signal_systemic_inflammation", load_systemic_inflammation_hypotheses_v1),
     ("signal_lipid_transport_dysfunction", load_lipid_transport_dysfunction_hypotheses_v1),
+    ("signal_mcv_high", load_mcv_high_hypotheses_v1),
     ("signal_ldl_cholesterol_high", load_ldl_cholesterol_high_hypotheses_v1),
+    ("signal_apoa1_cardio_risk", load_apoa1_cardio_risk_hypotheses_v1),
     ("signal_hdl_cholesterol_low", load_hdl_cholesterol_low_hypotheses_v1),
     ("signal_triglycerides_high", load_triglycerides_high_hypotheses_v1),
     ("signal_total_cholesterol_high", load_total_cholesterol_high_hypotheses_v1),
@@ -97,6 +104,7 @@ _ROOT_CAUSE_TARGETS = [
     ("signal_alp_low", load_alp_low_hypotheses_v1),
     ("signal_bilirubin_high", load_bilirubin_high_hypotheses_v1),
     ("signal_hyperbilirubinemia", load_hyperbilirubinemia_hypotheses_v1),
+    ("signal_hypercortisolism", load_hypercortisolism_hypotheses_v1),
     ("signal_free_t3_high", load_free_t3_high_hypotheses_v1),
     ("signal_free_t3_low", load_free_t3_low_hypotheses_v1),
     ("signal_free_t4_high", load_free_t4_high_hypotheses_v1),
