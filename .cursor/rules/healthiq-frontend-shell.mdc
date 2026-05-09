@@ -29,6 +29,9 @@ Your purpose is to build or refine the product shell and frontend journey.
 Use the light PR model by default.
 If you discover that backend changes are required, stop and report exactly what backend path is missing.
 
+## Frontend stack
+Follow `healthiq-frontend-tech-stack.mdc` (mirrors `docs/HealthIQ_AI_frontend_tech_stack_reference.md` and inventories `frontend/package.json`). Do not add new frontend libraries outside that discipline without explicit approval.
+
 ## Mandatory behaviour
 - The backend remains the source of truth for interpretation.
 - Do not recreate narrative logic in the frontend.

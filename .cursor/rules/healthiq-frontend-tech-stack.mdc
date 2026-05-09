@@ -1,0 +1,53 @@
+---
+description: HealthIQ approved frontend stack (mirrors docs + package.json inventory)
+globs:
+  - frontend/**
+alwaysApply: false
+---
+
+## Canonical source
+
+Normative narrative: `docs/HealthIQ_AI_frontend_tech_stack_reference.md`  
+Product addendum: `.claude/skills/HealthIQ-frontend-design/SKILL.md` (use with global `frontend-design`).
+
+## Approved core stack (must use for new work)
+
+| Layer | Choice |
+|--------|--------|
+| Framework | Next.js (App Router), React, TypeScript |
+| Styling | Tailwind CSS |
+| Primitives | Radix UI |
+| Default motion | Motion for React — in this repo: `framer-motion` (^12.x) |
+| Biomarker visuals | Custom SVG (no generic gauge libs as the long-term default) |
+| Server state | TanStack Query (`@tanstack/react-query`) |
+| Client/UI state | Zustand |
+| Premium one-offs | GSAP only when explicitly justified — **not** currently in `package.json` |
+
+Do **not** add libraries outside this stack without explicit instruction (per HealthIQ-frontend-design skill).
+
+## `frontend/package.json` cross-check (alignment)
+
+**Matches reference (present today)**
+
+- **Next.js / React / TS**: `next`, `react`, `react-dom`; `typescript` (dev).
+- **Tailwind**: `tailwindcss`, `tailwindcss-animate`, `postcss`, `autoprefixer`.
+- **Radix**: `@radix-ui/react-*` (accordion, dialog, select, slider, tooltip, etc.).
+- **Motion**: `framer-motion` (^12.23.x) — same product family as “Motion for React”; prefer imports/API consistent with Motion docs for new code.
+- **TanStack Query**: `@tanstack/react-query`.
+- **Zustand**: `zustand`.
+- **Custom SVG**: no dependency (expected).
+
+**Named as optional in reference — absent unless needed**
+
+- **GSAP**: not listed in dependencies (allowed only for rare hero moments).
+
+**Additional dependencies already in repo (grandfathered — use when appropriate; avoid adding parallels)**
+
+Examples: `@supabase/supabase-js`, `class-variance-authority`, `clsx`, `tailwind-merge`, `cmdk`, `date-fns`, `react-day-picker`, `embla-carousel-react`, `input-otp`, `lucide-react`, `next-themes`, `react-dropzone`, `react-hook-form`, `react-resizable-panels`, `recharts`, `sonner`, `vaul`, `zod`, and tooling (`jest`, `playwright`, `storybook`, `msw`, etc.).  
+
+New UI dependencies should still satisfy the **spirit** of the reference (Radix-first primitives, Tailwind-first styling, Motion as default animation layer unless GSAP is explicitly approved).
+
+## Agent discipline
+
+- Prefer patterns from `docs/HealthIQ_AI_frontend_tech_stack_reference.md` when choosing animation, state, and composition.
+- Before proposing a **new** npm dependency, confirm it is not already covered by Radix / Motion / TanStack Query / Zustand / Tailwind / custom SVG.
