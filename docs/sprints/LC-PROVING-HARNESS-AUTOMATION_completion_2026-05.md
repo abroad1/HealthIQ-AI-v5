@@ -44,3 +44,16 @@ python backend/tools/launch_core_proving_harness.py --stamp my-run-id --matrix b
 ```bash
 cd backend && python -m pytest tests/unit/test_launch_core_proving_harness.py -v
 ```
+
+## Stage 4A closure — observations carried forward
+
+### OBS-2 (requires GPT/human confirmation)
+
+AB band label diverges between baseline (no questionnaire) and statin_off (explicit 'None'). This was surfaced by the harness and requires GPT/human confirmation on whether these states are expected to differ.
+
+## Stage 4A closure protocol
+
+- Harness implementation committed on `feature/lc-proving-harness-automation`.
+- Bounded unit tests for matrix integrity and fixture merge in place.
+- Human-review outputs documented (`PROVING_REPORT.md`, `latest_fingerprints.json`); bulk golden artefacts optional local-only.
+- OBS-2 recorded above before kernel `finish`.

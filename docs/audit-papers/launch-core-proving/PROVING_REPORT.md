@@ -165,3 +165,7 @@ Expect: lifestyle-derived fields present under lifestyle_context; narrative head
 
 - Golden outputs (per run): `docs/audit-papers/launch-core-proving/artifacts/lc-proving-commit/` — written by `run_golden_panel`; omit bulk artefacts from git if desired.
 - Latest fingerprints JSON: `docs/audit-papers/launch-core-proving/latest_fingerprints.json`
+
+## OBS-2 — closure observation (GPT/human)
+
+AB band label diverges between baseline (no questionnaire) and statin_off (explicit 'None'). This was surfaced by the harness and requires GPT/human confirmation on whether these states are expected to differ.
