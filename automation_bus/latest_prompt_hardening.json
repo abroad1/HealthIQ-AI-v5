@@ -1,206 +1,140 @@
 {
+  "work_id": "LC-PROVING-HARNESS-AUTOMATION",
   "bus_version": "1.3.1",
-  "work_id": "LC-S2-CONTEXT-INTEGRATION",
   "status": "HARDENED",
   "hardened_utc": "2026-05-09T00:00:00Z",
-  "hardened_by": "claude-sonnet-4-6",
+  "hardened_by": "claude-code",
   "changes": [
+    {
+      "id": "OPERATIONAL_BLOCKER",
+      "field": "kernel_token_state",
+      "status": "BLOCKER — must resolve before Stage 3",
+      "citation": "automation_bus/state/work_package_active.json:3",
+      "detail": "work_package_active.json currently holds work_id: LC-S2-CONTEXT-INTEGRATION with status: STARTED. The kernel will reject run_work_package.py start for this package until LC-S2-CONTEXT-INTEGRATION is finished. No prompt amendment required — this is a runtime state issue. Cursor must not touch any files until the token is cleared and re-issued for LC-PROVING-HARNESS-AUTOMATION."
+    },
     {
       "id": "FRONT_MATTER",
       "field": "front_matter_validation",
       "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:1-10",
-      "detail": "All five mandatory fields present and valid. work_id=LC-S2-CONTEXT-INTEGRATION, branch=feature/lc-s2-context-integration, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. HIGH is correct: touches orchestrator.py (Intelligence Core, SOP §3), narrative_report_compiler_v1.py (Intelligence Core), AnalysisDTO contract (output generation surface). MIXED is correct: questionnaire.json addition is CONTENT; orchestrator/mapper/DTO/compiler wiring is BEHAVIOUR; SOP §4.2 requires MIXED when both are present. TWO_PHASE_START_FINISH is required for all HIGH-risk work."
+      "citation": "automation_bus/latest_cursor_prompt.md:2-6",
+      "detail": "All five mandatory fields present and valid. work_id=LC-PROVING-HARNESS-AUTOMATION, branch=feature/lc-proving-harness-automation, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. HIGH is correct per prompt rationale (affects validation infrastructure). MIXED is correct: new fixture content is CONTENT; new harness script invoking real orchestrator is BEHAVIOUR. TWO_PHASE_START_FINISH is required for all HIGH-risk work."
     },
     {
-      "id": "AUTHORITY_PATH_1",
+      "id": "AUTHORITY_PATH_RUN_GOLDEN_PANEL",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "docs/planning-papers/healthiq_pre_sprint2_statin_gate_pack_FINAL.md",
-      "detail": "Statin gate pack confirmed. Gate closed 2026-05-09 with all 6 decisions CLOSED: statin capture (§4.1), governed truth location (§4.2), modifier engine architecture (§4.3), affected outputs (§4.4), allowed effect type (§4.5), Layer B/C boundary (§4.6). Proving checks S-1 through S-6 approved (§4.8). Gate outcome: CLOSED. This is the binding prerequisite authority for Sprint 2."
+      "citation": "backend/tools/run_golden_panel.py:302",
+      "detail": "run_golden_panel() function confirmed at line 302. Accepts fixture_path, lifestyle_fixture_path, questionnaire_data (read from payload.get('questionnaire_data') at line 352). No separate questionnaire_data override parameter — statin-on/off differentiation must be achieved through fixture variants, not a function parameter."
     },
     {
-      "id": "AUTHORITY_PATH_2",
+      "id": "AUTHORITY_PATH_VERIFICATION_LEDGER",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "knowledge_bus/interventions/intervention_effects_registry_v1.yaml:9-35",
-      "detail": "lipid_lowering_statin registry entry read in full. Three interpretation_effects: (1) expected_biomarker_effect on [ldl_cholesterol, non_hdl_cholesterol, apob], direction: lower; (2) monitoring_relevance on [alt, ast, creatine_kinase], direction: variable; (3) caveat_only on [hdl_cholesterol], direction: variable. evidence_strength: strong. Registry status: LOCKED. No changes permitted in Sprint 2."
+      "citation": "backend/tools/verification_ledger_run.py:30-41",
+      "detail": "verification_ledger_run.py confirmed. Already runs AB + VR panels with multiple profiles through run_golden_panel. Lines 30-34: PANELS dict with AB_full_panel_with_ranges and VR_full_panel_with_ranges. Lines 36-41: PROFILES dict with P0_no_lifestyle, P1_healthy, P2_minimal_existing_fixture, P3_stressed. Provides the structural model for the proving harness."
     },
     {
-      "id": "AUTHORITY_PATH_3",
+      "id": "AUTHORITY_PATH_AB_PANEL",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "knowledge_bus/interventions/intervention_class_alias_map_v1.yaml:22-43",
-      "detail": "Statin alias section confirmed. 11 aliases: atorvastatin, crestor, fluvastatin, lescol, lipitor, lovastatin, pitavastatin, pravastatin, rosuvastatin, simvastatin, zocor — all mapping to lipid_lowering_statin. Status: LOCKED. No changes permitted in Sprint 2."
+      "citation": "backend/tests/fixtures/panels/ab_full_panel_with_ranges.json (glob verified)",
+      "detail": "AB full panel fixture confirmed present. This is the canonical launch-core AB panel."
     },
     {
-      "id": "AUTHORITY_PATH_4",
+      "id": "AUTHORITY_PATH_VR_PANEL",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "backend/core/analytics/intervention_annotation_compiler_v1.py:21-22",
-      "detail": "lipid_lowering_statin confirmed in _APPROVED_INTERVENTION_CLASS_IDS set at line 21-22. Compiler build_intervention_annotations_v1() signature at line 80-82 accepts Optional[Dict[str, Any]] user_intervention_document. Emits InterventionAnnotationsV1 with resolved/unresolved lists. No changes required to this file — it is production-grade and governed."
+      "citation": "backend/tests/fixtures/panels/vr_full_panel_with_ranges.json (glob verified)",
+      "detail": "VR full panel fixture confirmed present. This is the canonical launch-core VR panel."
     },
     {
-      "id": "AUTHORITY_PATH_5",
+      "id": "AUTHORITY_PATH_LIFESTYLE_FIXTURE",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "backend/core/contracts/intervention_annotation_v1.py:56-63",
-      "detail": "InterventionAnnotationsV1 contract confirmed. Fields: version (Literal['v1']), registry_id (str), registry_schema_version (str), resolved (List[InterventionAnnotationResolvedV1]), unresolved (List[InterventionAnnotationUnresolvedV1]). model_config extra='forbid'. InterventionAnnotationResolvedV1 contains: intervention_record_id, entered_label, intervention_class_id, effects (List[InterventionAnnotationEffectV1]). This is the contract shape Cursor must use for AnalysisDTO extension."
+      "citation": "backend/tests/fixtures/lifestyle_minimal.json:1-11",
+      "detail": "lifestyle_minimal.json confirmed. Contains height_cm, weight_kg, waist_circumference_cm, systolic_bp, diastolic_bp, resting_heart_rate, smoking_status, alcohol_units_per_week, sleep_hours. Suitable as lifestyle/context variant scenario input."
     },
     {
-      "id": "AUTHORITY_PATH_6",
-      "field": "authority_path_exists",
-      "status": "CONFIRMED",
-      "citation": "knowledge_bus/schema/user_intervention_exposure_schema_v1.yaml:1-88",
-      "detail": "user_intervention_document LOCKED schema confirmed. Root required: schema_version ('1.0.0'), intervention_records. Record required: intervention_record_id, intervention_type (medication|supplement|lifestyle|behavioural|clinical), entered_label, canonical_class (with link_status: mapped|unmapped), timeline (effective_from_date, effective_to_date, is_ongoing, change_event_type: started|stopped|changed), provenance (source_type: user_reported|clinician_prescribed|inferred, confidence: confirmed|estimated|unknown). Fixture reference at backend/tests/fixtures/user_intervention_exposure/valid_record_set.yaml — EXISTS and confirmed as canonical shape reference."
+      "id": "STATIN_FIXTURE_CONSTRAINT",
+      "field": "implementation_constraint",
+      "status": "MUST_KNOW — implementation guidance",
+      "citation": "backend/tools/run_golden_panel.py:352 + backend/core/pipeline/questionnaire_mapper.py:16",
+      "detail": "run_golden_panel() reads questionnaire_data from payload.get('questionnaire_data') only — no separate override parameter. To produce statin-on vs statin-off scenarios, Cursor MUST create separate fixture variants that include or omit questionnaire_data.long_term_medications containing the statin label. Do NOT modify run_golden_panel.py to add a questionnaire override — that modifies a governed tool and escalates risk. The exact SSOT-governed statin label is: 'Statins (cholesterol medication)' (STATINS_LONG_TERM_MEDICATION_LABEL at questionnaire_mapper.py:16). Statin-on fixture: add questionnaire_data: {long_term_medications: ['Statins (cholesterol medication)']} to the panel JSON."
     },
     {
-      "id": "QUESTIONNAIRE_GAP_CONFIRMED",
+      "id": "STATIN_ORCHESTRATOR_WIRING",
       "field": "source_cross_reference",
       "status": "CONFIRMED",
-      "citation": "backend/ssot/questionnaire.json:146-153",
-      "detail": "long_term_medications question at lines 146-153. Current options read from file: ['None', 'Corticosteroids', 'Atypical antipsychotics', 'HIV/AIDS treatments']. Statin option is ABSENT. Gate pack §4.1 claim verified by direct file read. Sprint Task A must add 'Statins (cholesterol medication)' to this options array."
+      "citation": "backend/core/pipeline/orchestrator.py:1294-1298",
+      "detail": "orchestrator.py:1296 calls questionnaire_mapper.build_user_intervention_document_for_statin(questionnaire_data). This fires only when questionnaire_data long_term_medications includes 'Statins (cholesterol medication)'. Returns a schema-compliant user_intervention_document. Line 1298 passes it to build_intervention_annotations_v1(). Statin-on wiring is already in place from LC-S2."
     },
     {
-      "id": "MAPPER_GAP_CONFIRMED",
+      "id": "STATIN_ANNOTATION_SURFACE",
       "field": "source_cross_reference",
       "status": "CONFIRMED",
-      "citation": "backend/core/pipeline/questionnaire_mapper.py:161-165",
-      "detail": "long_term_medications handling at lines 161-165 maps to List[str] (long_term_medication_classes) only. No path to user_intervention_document. Gate pack §4.1/§4.3 claim verified. Sprint Task B must extend the mapper to build a schema-compliant user_intervention_document when 'Statins (cholesterol medication)' is selected."
+      "citation": "backend/core/analytics/intervention_annotation_formatter_v1.py:17-20",
+      "detail": "_statin_resolved_rows() at lines 17-20 filters for lipid_lowering_statin class and produces annotation rows. This is the surface the harness output must capture to prove statin-on wording appears in the diff output."
     },
     {
-      "id": "ORCHESTRATOR_GAP_CONFIRMED",
-      "field": "source_cross_reference",
+      "id": "NO_FORBIDDEN_FILE_ACCESS",
+      "field": "forbidden_files",
       "status": "CONFIRMED",
-      "citation": "backend/core/pipeline/orchestrator.py:2201-2206",
-      "detail": "compile_narrative_report_v1() call at lines 2201-2206: parameters are analysis_id, meta, insight_graph, idl_bundle. No user_intervention_document or intervention_annotations_v1 parameter. Gate pack §4.3 claim verified. Sprint Task C must wire user_intervention_document through the orchestrator and resolve the annotation before or during compile_narrative_report_v1() invocation."
+      "citation": "automation_bus/latest_cursor_prompt.md:106-109",
+      "detail": "Scope explicitly excludes new analytical logic, questionnaire strategy changes, frontend redesign, and broad Sentinel redesign. No modifications expected to backend/ssot/, backend/core/analytics/ evaluation/compiler logic, or kernel scripts. Harness is a read-only consumer of the pipeline."
     },
     {
-      "id": "NARRATIVE_COMPILER_GAP_CONFIRMED",
-      "field": "source_cross_reference",
+      "id": "NO_INTELLIGENCE_CORE_MODIFICATION",
+      "field": "behaviour_review",
       "status": "CONFIRMED",
-      "citation": "backend/core/analytics/narrative_report_compiler_v1.py:522-528",
-      "detail": "compile_narrative_report_v1() function signature at lines 522-528 accepts: analysis_id, meta, insight_graph, idl_bundle. No user_intervention_document or intervention_annotations_v1 parameter. Gate pack §4.3 claim verified. Sprint Task E/F requires this function to accept the annotation and use it to produce statin-contextualised narrative content."
+      "citation": "automation_bus/latest_cursor_prompt.md:162-170",
+      "detail": "Harness runs the real pipeline as a consumer — it does not modify orchestrator, signal evaluators, compilers, InsightGraph, or assembler. Determinism of the analytical engine is not at risk. Analytical truth invariants are an OBSERVED assertion in harness output, not a code change."
     },
     {
-      "id": "ANALYSIS_DTO_GAP_CONFIRMED",
-      "field": "source_cross_reference",
+      "id": "STOP_CONDITIONS",
+      "field": "stop_conditions",
       "status": "CONFIRMED",
-      "citation": "backend/core/models/results.py:245-298",
-      "detail": "AnalysisDTO fields read at lines 245-298. No intervention_annotations_v1 field present. model_config: frozen=True, extra='forbid'. Gate pack §4.3 claim verified. Sprint Task D must add intervention_annotations_v1: Optional[InterventionAnnotationsV1] = Field(default=None) to AnalysisDTO. Import from core.contracts.intervention_annotation_v1 required. The Optional + default=None pattern is backward-compatible with frozen=True and extra='forbid'."
+      "citation": "automation_bus/latest_cursor_prompt.md:19-25 + 209-228",
+      "detail": "Prompt includes correct SOP preflight checks: branch, token, clean tree. Guardrails section prohibits scope widening, stash use, fake test-only product behaviour. If blocked: document precisely, identify bounded addendum path — no hidden redesign."
     },
     {
-      "id": "NO_DUPLICATE_AUTHORITY_SOURCES",
+      "id": "VERIFICATION_CLINICIAN_REPORT_TOOL",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "knowledge_bus/interventions/intervention_effects_registry_v1.yaml",
-      "detail": "Single registry file. No duplicate intervention authority source detected. The legacy compile_report_v1() wiring at report_compiler_v1.py:774 also calls build_intervention_annotations_v1() but this is the legacy (non-production) path — not a duplicate authority source for the governed registry."
-    },
-    {
-      "id": "WARNING_W1_SCHEMA_COMPLETENESS",
-      "field": "warning",
-      "status": "WARNING — precision risk",
-      "citation": "knowledge_bus/schema/user_intervention_exposure_schema_v1.yaml:22-58; backend/tests/fixtures/user_intervention_exposure/valid_record_set.yaml:1-54",
-      "detail": "Gate pack §4.1 describes mapper output as 'intervention_class_id: lipid_lowering_statin, link_status: mapped'. LOCKED schema requires full document shape including all timeline and provenance fields. Cursor must build a complete schema-valid document. Recommended field values for questionnaire-derived statin: schema_version='1.0.0', intervention_record_id='rec_statin_01' (or generated), intervention_type='medication', entered_label='Statins (cholesterol medication)', canonical_class.link_status='mapped', canonical_class.intervention_class_id='lipid_lowering_statin', timeline.is_ongoing=true, timeline.change_event_type='started', timeline.effective_from_date=null, timeline.effective_to_date=null, provenance.source_type='user_reported', provenance.confidence='estimated'. Prompt instruction 'real production document shape' adequately covers this — treating as WARNING not BLOCKER."
-    },
-    {
-      "id": "WARNING_W2_BUILD_ONCE_ARCHITECTURE",
-      "field": "warning",
-      "status": "WARNING — implementation guidance",
-      "citation": "backend/core/pipeline/orchestrator.py:2201-2206; backend/core/analytics/intervention_annotation_compiler_v1.py:80-82",
-      "detail": "The sprint must carry the statin annotation to both AnalysisDTO and the narrative compiler. Two approaches exist: (a) orchestrator calls build_intervention_annotations_v1() once and passes the InterventionAnnotationsV1 object to both; (b) narrative compiler calls it internally from the raw document (loads registry twice). Architecture (a) is correct: build once, carry the object. This avoids redundant registry loads and is consistent with determinism principles. Cursor must not call build_intervention_annotations_v1() twice for the same analysis run."
+      "citation": "backend/tools/verification_clinician_report.py (glob verified)",
+      "detail": "verification_clinician_report.py confirmed present. Relevant for capturing clinician summary surface in harness output as required by acceptance criteria."
     }
   ],
   "stage_2a": {
-    "verdict": "PASS",
+    "verdict": "PASS — with BLOCKER on token state",
     "authority_files_verified": [
-      {
-        "path": "docs/planning-papers/healthiq_pre_sprint2_statin_gate_pack_FINAL.md",
-        "exists": true,
-        "note": "Gate pack. Closed 2026-05-09. All 6 decisions CLOSED. Binding authority for Sprint 2 scope."
-      },
-      {
-        "path": "knowledge_bus/interventions/intervention_effects_registry_v1.yaml",
-        "exists": true,
-        "note": "LOCKED. lipid_lowering_statin entry at lines 9-35 read in full. 3 effect types confirmed."
-      },
-      {
-        "path": "knowledge_bus/interventions/intervention_class_alias_map_v1.yaml",
-        "exists": true,
-        "note": "LOCKED. 11 statin aliases at lines 22-43 confirmed."
-      },
-      {
-        "path": "backend/core/analytics/intervention_annotation_compiler_v1.py",
-        "exists": true,
-        "note": "lipid_lowering_statin in _APPROVED_INTERVENTION_CLASS_IDS at line 22. build_intervention_annotations_v1() confirmed. No changes required."
-      },
-      {
-        "path": "backend/core/contracts/intervention_annotation_v1.py",
-        "exists": true,
-        "note": "InterventionAnnotationsV1 contract confirmed. extra='forbid'. Full schema read."
-      },
-      {
-        "path": "knowledge_bus/schema/user_intervention_exposure_schema_v1.yaml",
-        "exists": true,
-        "note": "LOCKED. All required fields confirmed. Forbidden keys confirmed (threshold, override_signal, signal_state_mutation, etc.)."
-      },
-      {
-        "path": "backend/tests/fixtures/user_intervention_exposure/valid_record_set.yaml",
-        "exists": true,
-        "note": "Fixture confirmed. Shows full schema-compliant document shape. Use as Cursor reference for mapper implementation."
-      },
-      {
-        "path": "backend/ssot/questionnaire.json",
-        "exists": true,
-        "note": "long_term_medications at lines 146-153. Statin absent confirmed. Sprint Task A target."
-      },
-      {
-        "path": "backend/core/pipeline/questionnaire_mapper.py",
-        "exists": true,
-        "note": "long_term_medications mapped to List[str] at lines 161-165. No user_intervention_document path. Sprint Task B target."
-      },
-      {
-        "path": "backend/core/pipeline/orchestrator.py",
-        "exists": true,
-        "note": "compile_narrative_report_v1() call at lines 2201-2206. No intervention_document arg. Sprint Task C target."
-      },
-      {
-        "path": "backend/core/analytics/narrative_report_compiler_v1.py",
-        "exists": true,
-        "note": "compile_narrative_report_v1() signature at lines 522-528. No intervention param. Sprint Tasks E/F target."
-      },
-      {
-        "path": "backend/core/models/results.py",
-        "exists": true,
-        "note": "AnalysisDTO at lines 245-298. No intervention_annotations_v1 field. Sprint Task D target."
-      }
+      {"path": "backend/tools/run_golden_panel.py", "exists": true, "note": "Core reuse tooling. run_golden_panel() at line 302 confirmed."},
+      {"path": "backend/tools/verification_ledger_run.py", "exists": true, "note": "Model structure for harness. AB+VR panel matrix at lines 30-41."},
+      {"path": "backend/tools/verification_clinician_report.py", "exists": true, "note": "Clinician report surface tool confirmed."},
+      {"path": "backend/tests/fixtures/panels/ab_full_panel_with_ranges.json", "exists": true, "note": "AB launch-core panel fixture confirmed."},
+      {"path": "backend/tests/fixtures/panels/vr_full_panel_with_ranges.json", "exists": true, "note": "VR launch-core panel fixture confirmed."},
+      {"path": "backend/tests/fixtures/lifestyle_minimal.json", "exists": true, "note": "Lifestyle fixture for context variant scenario."},
+      {"path": "backend/core/pipeline/questionnaire_mapper.py", "exists": true, "note": "Statin label at line 16, statin method at line 70."},
+      {"path": "backend/core/pipeline/orchestrator.py", "exists": true, "note": "Statin wiring at lines 1294-1298."},
+      {"path": "backend/core/analytics/intervention_annotation_formatter_v1.py", "exists": true, "note": "Statin annotation rows at lines 17-20."}
     ],
     "duplicate_authority_sources": "NONE DETECTED"
   },
   "stage_2b": {
     "verdict": "PASS",
-    "intelligence_core_components_identified": [
-      "backend/core/pipeline/orchestrator.py — wiring user_intervention_document + annotation build through live pipeline",
-      "backend/core/analytics/narrative_report_compiler_v1.py — new param + statin annotation consumption for narrative output",
-      "backend/core/models/results.py (AnalysisDTO) — new intervention_annotations_v1 field (output contract change)",
-      "backend/core/pipeline/questionnaire_mapper.py — new user_intervention_document building path (BEHAVIOUR: input-to-governed-contract translation)"
-    ],
-    "behavioural_surface_area": "compile_narrative_report_v1() gains a new parameter and produces different output for statin-on profiles in consumer-facing fields (lead_narrative, clinician section). AnalysisDTO gains intervention_annotations_v1 Optional field (default None — backward compatible). All statin-off profiles: output unchanged. Signal states, rankings, domain bands: must be identical between statin-on and statin-off (S-6).",
-    "expected_output_changes": "Statin-on profiles: (1) AnalysisDTO.intervention_annotations_v1 populated with lipid_lowering_statin resolved annotation; (2) at least one consumer-visible field in lead_narrative or clinician_report_v1.sections.page1 differs from statin-off. Statin-off profiles: AnalysisDTO.intervention_annotations_v1=None, no narrative change. Rankings/signals/bands: unchanged in both profiles.",
+    "intelligence_core_components_identified": "NONE modified — harness is a read-only pipeline consumer",
+    "behavioural_surface_area": "New harness script and fixture variants only. No changes to orchestrator, evaluators, compilers, or AnalysisDTO. All statin context wiring was completed in LC-S2.",
+    "expected_output_changes": "None to the pipeline. Harness produces new comparison output artefacts in a dedicated output directory.",
     "regression_targets": [
-      "backend/tests/unit/test_intervention_annotation_compiler_v1.py — existing tests must pass unchanged",
-      "Existing golden panel tests — statin-off profile must produce identical AnalysisDTO output on all pre-existing fields",
-      "New tests required: S-1 questionnaire capture, S-2 mapper output, S-3 annotation compiler resolution, S-4 pipeline carriage, S-5 statin-on vs statin-off visible difference, S-6 no analytical truth mutation"
+      "Existing golden panel tests — must pass unchanged after harness is added",
+      "Statin-on fixture must produce visible annotation in harness diff vs statin-off (proving statin wiring works)"
     ],
     "determinism_preserved": true,
     "no_lm_reasoning_in_layer_b": true,
     "no_scope_creep": true,
     "stop_conditions_adequate": true,
     "determinism_risks": [
-      "Narrative statin prose: must be derived deterministically from the intervention registry annotation only — no LLM, no hardcoded freeform strings. Mitigated by Layer B/C boundary instruction in prompt.",
-      "user_intervention_document construction: timeline fields (effective_from_date, is_ongoing) must use consistent, reproducible defaults — not system time or random values. Mitigated by Warning W-1 guidance.",
-      "AnalysisDTO frozen=True: adding Optional field with default None is backward-compatible; any Cursor deviation (e.g. required field) would break existing tests immediately. Mitigated by explicit 'Optional' instruction in Task D.",
-      "Build-once risk: if annotation is built twice (orchestrator + narrative compiler), registry may be loaded twice — not a determinism risk but an architectural smell. Mitigated by Warning W-2 guidance."
+      "Statin-on fixture must use exact SSOT-governed label ('Statins (cholesterol medication)') — any typo produces statin-off behaviour silently. Mitigated by citation at questionnaire_mapper.py:16.",
+      "Harness comparison output must strip volatile fields (timestamps, run_ids) before diffing — otherwise every run will show false positives. run_golden_panel._strip_volatile_fields() already handles this."
     ]
   },
   "overall_verdict": "HARDENED"

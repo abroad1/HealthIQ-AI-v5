@@ -1,16 +1,16 @@
 ---
-work_id: LC-S2-CONTEXT-INTEGRATION
-branch: feature/lc-s2-context-integration
+work_id: LC-PROVING-HARNESS-AUTOMATION
+branch: feature/lc-proving-harness-automation
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
-agent_owner: healthiq-core-engine
-primary_cursor_agent: healthiq-core-engine
+agent_owner: healthiq-qa-uat
+primary_cursor_agent: healthiq-qa-uat
 requires_claude_audit: true
 requires_gpt_architecture_review: true
 ---
 
-# Sprint 2 — Launch-core context integration
+# Launch-core proving harness automation
 
 ## SOP status
 
@@ -23,252 +23,234 @@ Before any file changes:
 - verify the working tree is clean or intentionally governed
 - follow the required two-phase start/finish lifecycle for HIGH-risk work
 
-This is HIGH risk because it changes live analytical-context wiring, report carriage, and governed interpretation flow.
+This is HIGH risk because it affects how the product is validated going forward and may touch protected verification, fixture, and reporting paths.
 
 ## Assigned execution agent
 
 Use Cursor agent:
 
-**`healthiq-core-engine`**
+**`healthiq-qa-uat`**
 
-This is analytical/context pipeline work with DTO/report-surface implications, not a frontend-shell-only task.
+This is proving/verification automation work, not intelligence expansion and not a frontend-only task.
 
 ## Objective
 
-Implement the real, production-grade statin context path for the launch-core slice.
+Build a repeatable, fixture-driven proving harness for the launch-core slice so Anthony does not need to manually upload panels and fill in questionnaires to validate end-to-end behaviour.
 
-Sprint 2 must wire the already-existing governed statin assets and annotation compiler through the live pipeline so that statin-on vs statin-off produces deterministic, user-visible context changes without mutating analytical truth.
+The harness must run a bounded matrix of fixed scenarios and produce a compact, human-readable comparison output showing:
 
-This sprint is not about inventing statin science.
-The governed statin truth already exists.
-This sprint is about making the real path work end to end.
+- what changed
+- what stayed stable
+- whether expected context effects appeared
+- whether analytical truth stayed intact where required
 
-## Gate authority
+This is not a demo script.
+It is a production-grade proving tool for the current launch-core pathway.
 
-This sprint may proceed because the Pre-Sprint 2 statin gate is closed.
+## Why this exists
 
-Use the closed statin gate pack as binding authority.
+The programme has now completed:
+- Sprint 1 launch-core analytical hardening
+- Sprint 2 statin context integration
 
-## Fixed inputs from the closed statin gate
+The next need is not more manual clicking.  
+It is a governed way to repeatedly prove the slice using fixed fixtures and scenario payloads.
 
-These are not open questions.
+Human review should become:
+- review the proving output
+- decide whether it is correct
 
-### 1. Statin questionnaire capture
-Approved:
-- add **“Statins (cholesterol medication)”** to the existing `long_term_medications` checkbox
-- do not create a standalone statin question
+not:
+- repeatedly key in panels and questionnaires by hand
 
-### 2. Governed statin truth location
-Approved:
-- use existing governed asset(s)
-- do not author new statin-effect science unless an unexpected hard blocker forces a separately governed follow-up
+## Fixed programme assumptions
 
-### 3. Modifier engine approach
-Approved:
-- wire the existing architecture
-- do not build a separate ad hoc statin engine
-- do not use sprint-only shortcuts
+These are binding inputs, not open questions:
 
-### 4. Minimum affected outputs
-Approved:
-- clinician surface
-- plus as many consumer-visible fields as are naturally relevant to the medication prose
-- do not artificially constrain the statin path to only one consumer field if multiple launch-core fields should properly change
+### 1. The launch-core slice already exists
+The proving harness is validating the current launch-core slice, not inventing a new one.
 
-### 5. Allowed effect type
-Approved:
-- statin context may change interpretation framing, confidence/context explanation, and follow-up wording where governed
-- statin context must not mutate signal firing, domain bands, rankings, or analytical truth
+### 2. Statin context is now on the mainline
+The harness must include statin-on / statin-off proving scenarios.
 
-### 6. Layer B / Layer C rule
-Approved:
-- Layer B decides
-- Layer C synthesises
+### 3. Questionnaire proving must stay minimal
+The harness should use a very small number of fixed questionnaire payloads, not a giant scenario library.
 
-Statin context is a Layer B deterministic annotation.
-Layer C may narrate it, not invent it.
+### 4. Layer B / Layer C boundary remains binding
+The harness must be able to show that context changes produce appropriate wording differences without mutating analytical truth where they should not.
 
-### 7. Proving checks
-Approved:
-- S-1 through S-6 as written in the closed statin gate pack
-
-## Verified current-state starting point
-
-Use the closed statin gate pack as source of truth, including these starting facts:
-
-- statin governed truth already exists in the intervention effects registry
-- statin alias map already exists
-- intervention annotation compiler already exists and is tested
-- current production gap is missing pipeline wiring:
-  - no statin questionnaire capture
-  - no mapper path to `user_intervention_document`
-  - no orchestrator pass-through
-  - no `AnalysisDTO` carriage for the annotation
-  - no live clinician / consumer surface reading the annotation
+### 5. Human proving remains necessary
+The harness does not replace judgement.
+It replaces repetitive manual setup.
 
 ## Scope
 
 ### In scope
 
-1. Add statin capture to the existing questionnaire path.
-2. Extend the questionnaire mapper to build a valid `user_intervention_document` for statin-on responses.
-3. Pass that document through the live orchestrator path.
-4. Ensure the existing intervention annotation compiler is invoked in the live production path.
-5. Expose the resulting statin annotation through the production DTO / output path.
-6. Make clinician-facing output reflect statin context where appropriate.
-7. Make all relevant consumer-visible launch-core fields reflect statin context where appropriate.
-8. Add bounded proving/regression coverage for the statin-on vs statin-off path.
-9. Produce a concise completion note and explicit proof against checks S-1 through S-6.
+1. Define a bounded launch-core proving scenario matrix.
+2. Encode the matrix as fixed fixtures / payloads.
+3. Run those scenarios automatically through the real pipeline.
+4. Produce a compact comparison output suitable for human review.
+5. Show both:
+   - expected differences
+   - expected invariants
+6. Reuse existing verification tooling where sensible.
+7. Keep the harness narrow, deterministic, and easy to rerun.
 
 ### Explicitly out of scope
 
-- broad medication ontology expansion
-- free-text medication entry
-- named-drug alias resolution at intake
-- additional drug categories beyond statins
-- signal-threshold mutation
-- band/ranking mutation
-- broad questionnaire redesign beyond the approved statin checkbox addition
-- non-statin intervention content authoring
-- speculative frontend redesign outside launch-core surfaces
+- full UAT framework redesign
+- broad Sentinel redesign
+- broad fixture explosion across many panels and personas
+- new analytical logic
+- new questionnaire strategy
+- new medication categories beyond the already approved launch-core context path
+- frontend redesign
+- ad hoc one-off notebooks/scripts that are not fit to live in the repo
 
-## Required implementation tasks
+## Required proving matrix
 
-### A. Questionnaire capture
-Implement the approved questionnaire change:
-- add **“Statins (cholesterol medication)”** to the existing `long_term_medications` checkbox
+At minimum, support a bounded matrix around the current launch-core panels:
 
-Do not introduce a new standalone question.
+### Panels
+- AB
+- VR
 
-### B. Mapper output
-Extend the questionnaire mapper so a statin-on response produces a valid `user_intervention_document` with the correct governed class mapping:
+### Scenario types
+At minimum:
+1. baseline
+2. lifestyle/context variant
+3. statin-off
+4. statin-on
 
-- `intervention_class_id: lipid_lowering_statin`
-- `link_status: mapped`
+Use the smallest scenario matrix that still proves:
+- questionnaire/lifestyle payoff
+- statin payoff
+- analytical invariants
 
-This must use the real production document shape.
+Do not create a huge matrix unless a very small matrix is clearly insufficient.
 
-### C. Orchestrator wiring
-Wire the live orchestrator path so the `user_intervention_document` reaches the existing intervention annotation compiler.
+## Required outputs of the harness
 
-Do not create a side-path or debug-only path.
+For each scenario run, capture and compare at least:
 
-### D. DTO / contract propagation
-Expose the statin annotation through the live production output path.
+- top findings
+- consumer domain scores
+- lead / retail narrative summary fields
+- clinician summary surface
+- IDL / interpretation pattern surface where relevant
+- intervention/statin-related wording where present
 
-If `AnalysisDTO` needs to carry `intervention_annotations_v1`, do it cleanly and explicitly using the real contract shape.
+The comparison output must make it easy to see:
 
-Do not invent a temporary parallel field.
+### Expected changes
+Examples:
+- statin context wording appears
+- lifestyle/alcohol context wording appears
+- relevant clinician summary wording changes
 
-### E. Clinician surface
-Ensure clinician-facing structured output reflects statin context where relevant.
+### Expected invariants
+Examples:
+- top-finding order unchanged where required
+- signal states unchanged where required
+- domain band labels unchanged where required
 
-This should be a real clinician-grade context statement, not vague prose.
+## Implementation requirements
 
-### F. Consumer-visible surfaces
-Ensure all launch-core consumer-visible fields that are naturally affected by statin context are updated accordingly.
+### A. Reuse before rebuilding
+Inspect the current verification tooling and reuse existing pieces where sensible, especially:
+- recovered verification scripts
+- any golden-panel or ledger tooling already on `main`
+- existing fixture assets
 
-Do not artificially constrain this to a single field if multiple consumer-facing fields should legitimately reflect the annotation.
+Do not rebuild equivalent plumbing unnecessarily.
 
-But also do not spray statin prose everywhere unnecessarily.
+### B. Real pipeline only
+The harness must run the real current launch-core pipeline, not a mocked shadow path.
 
-### G. Boundary discipline
-Preserve the approved statin boundary:
-- annotation/context only
-- no mutation of signal firing
-- no mutation of ranking
-- no mutation of domain score banding
-- no Layer C invention
+### C. Deterministic scenario payloads
+Scenario definitions must be fixed, reviewable, and easy to rerun.
+No manual UI entry required.
 
-### H. Regression / proving protection
-Add bounded tests for:
-- S-1 questionnaire capture
-- S-2 mapper output
-- S-3 annotation compiler resolution
-- S-4 pipeline carriage
-- S-5 visible difference between statin-on and statin-off
-- S-6 no analytical truth mutation from statin annotation alone
+### D. Human-readable output
+The final output should be understandable by Anthony without deep technical digging.
+A compact markdown or similarly readable comparison summary is preferred.
 
-Keep this bounded.
-Do not redesign Sentinel broadly.
+### E. Bounded but extensible
+The harness should be built in a shape that can later expand to more panels/scenarios, but do not overbuild that future now.
 
 ## Acceptance criteria
 
-Sprint 2 is complete only if all of the following are true:
+This work package is complete only if all of the following are true:
 
-1. The questionnaire includes **“Statins (cholesterol medication)”** in the approved place.
-2. A statin-on questionnaire response produces a valid `user_intervention_document` with `lipid_lowering_statin`.
-3. The live pipeline invokes the existing intervention annotation compiler and carries the resulting annotation forward.
-4. The production DTO/output path exposes the statin annotation cleanly.
-5. Clinician-facing output changes appropriately when statin context is present.
-6. All relevant consumer-visible launch-core fields change appropriately when statin context is present.
-7. A statin-on vs statin-off comparison produces at least one user-visible difference.
-8. Rankings, signal states, and domain bands remain unchanged by statin annotation alone.
-9. No sprint-only stub, hardcoded shortcut, or fake statin logic is introduced.
-10. A concise Sprint 2 completion note is produced.
+1. A bounded proving matrix exists for the current launch-core slice.
+2. AB and VR can be run through the harness without manual UI data entry.
+3. Lifestyle/context and statin scenarios are included.
+4. The output clearly distinguishes:
+   - expected changes
+   - expected invariants
+5. The output is human-reviewable, not raw debug noise.
+6. The harness uses the real pipeline.
+7. The harness is committed as a maintainable repo asset, not an ad hoc local script.
+8. A concise completion note explains:
+   - scenario matrix
+   - tooling used
+   - output format
+   - how to rerun it
 
 ## Required outputs
 
-1. Questionnaire update for statin capture
-2. Mapper update producing valid `user_intervention_document`
-3. Orchestrator wiring for intervention annotation path
-4. DTO / contract propagation update if required
-5. Clinician + consumer surface updates
-6. Bounded tests for S-1 through S-6
-7. Sprint 2 completion note
+1. Bounded proving harness implementation
+2. Fixed scenario definitions / payloads
+3. Human-readable comparison output format
+4. Any required bounded tests for the harness itself
+5. Completion note with rerun instructions
 
 ## Guardrails
 
-- Do not build a new statin science layer.
-- Do not change the locked governed statin registry unless a genuine hard blocker forces separately governed follow-up.
-- Do not mutate analytical truth.
-- Do not fake visible payoff.
-- Do not constrain consumer carriage to one field if more are naturally affected.
-- Do not widen into multi-medication support.
-- Do not turn this into a general questionnaire redesign.
-- Do not weaken the Layer B / Layer C boundary.
+- Do not turn this into a broad testing platform project.
+- Do not use stashes as a convenience mechanism during start.
+- Do not widen scope into general product analytics.
+- Do not create a harness that only works for one run and is then forgotten.
+- Do not introduce fake test-only product behaviour.
+- Do not require Anthony to manually drive the scenarios through the UI.
 
 ## If blocked
 
-If a required Sprint 2 completion item cannot be achieved without violating scope:
-- complete everything else that remains valid
+If the harness cannot be built cleanly without a wider architectural change:
+- complete the bounded parts that are still valid
 - document the blocker precisely
-- identify whether it needs:
-  - a small Sprint 2 addendum
-  - a new governed follow-up
-  - or a later sprint
+- identify whether it should be:
+  - a small addendum
+  - a follow-on proving sprint
+  - or a later infrastructure task
 
-Do not improvise a broad workaround.
+Do not improvise a large hidden redesign.
 
 ## Deliverable format back to leadership
 
 When complete, report in this structure:
 
 ### 1. Summary
-- what was implemented
-- whether Sprint 2 acceptance criteria were met
+- what proving harness was built
+- whether acceptance criteria were met
 
-### 2. Questionnaire capture
-- exact change made
+### 2. Scenario matrix
+- exact panels and scenarios included
 
-### 3. Mapper / document path
-- how statin-on responses now map to `user_intervention_document`
+### 3. Tooling / assets used
+- what existing verification tooling was reused
+- what new assets were added
 
-### 4. Pipeline wiring
-- how the annotation now travels through the live path
+### 4. Output format
+- what the human reviewer sees
+- how expected changes/invariants are shown
 
-### 5. Surface changes
-- clinician-facing changes
-- consumer-facing changes
+### 5. Rerun method
+- exact command or procedure to run the harness again
 
-### 6. Tests added or updated
-- exact tests for S-1 through S-6
+### 6. Remaining gaps
+- only those outside this bounded proving-harness scope
 
-### 7. Remaining intentional gaps
-- only those outside Sprint 2 scope
-
-### 8. Risks / follow-ons
-- especially anything that affects later medication-category expansion
-
-### 9. Branch / working tree / SOP status
+### 7. Branch / working tree / SOP status
 - confirm governed execution under the correct branch and active work package state
