@@ -1,6 +1,6 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "LC-S1-ANALYTICAL-HARDENING",
+  "work_id": "LC-S2-CONTEXT-INTEGRATION",
   "status": "HARDENED",
   "hardened_utc": "2026-05-09T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
@@ -10,111 +10,169 @@
       "field": "front_matter_validation",
       "status": "CONFIRMED",
       "citation": "automation_bus/latest_cursor_prompt.md:1-10",
-      "detail": "All five mandatory fields present and valid. work_id=LC-S1-ANALYTICAL-HARDENING, branch=feature/lc-s1-analytical-hardening, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. HIGH is correct — root_cause_compiler_v1.py is Intelligence Core per SOP §3. MIXED is correct — WHY asset authoring (CONTENT) is consumed by root_cause_compiler_v1.py which emits structured reasoning (BEHAVIOUR); MIXED is therefore required per SOP §4.2. TWO_PHASE_START_FINISH is required — HIGH-risk sprint with kernel start/finish lifecycle."
-    },
-    {
-      "id": "OPERATIONAL_PRECONDITION",
-      "field": "active_token_check",
-      "status": "CONFIRMED — operationally addressed in prompt",
-      "citation": "automation_bus/latest_cursor_prompt.md:36-39",
-      "detail": "Q-2 active token (work_package_active.json) is currently held as of hardening time. Prompt now includes an explicit operational precondition at lines 36-39 directing Cursor to stop if Q-2 remains active. Cursor must verify token match at Stage 4 before modifying any files. This is an operational pre-condition, not a prompt authoring defect — prompt correctly encodes it."
+      "detail": "All five mandatory fields present and valid. work_id=LC-S2-CONTEXT-INTEGRATION, branch=feature/lc-s2-context-integration, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. HIGH is correct: touches orchestrator.py (Intelligence Core, SOP §3), narrative_report_compiler_v1.py (Intelligence Core), AnalysisDTO contract (output generation surface). MIXED is correct: questionnaire.json addition is CONTENT; orchestrator/mapper/DTO/compiler wiring is BEHAVIOUR; SOP §4.2 requires MIXED when both are present. TWO_PHASE_START_FINISH is required for all HIGH-risk work."
     },
     {
       "id": "AUTHORITY_PATH_1",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "docs/planning-papers/healthiq_pre_sprint1_decision_pack_FINAL.md",
-      "detail": "Closed gate pack confirmed. All nine decisions are CLOSED 2026-05-09. §3.1 approves the bounded signal slice: signal_homocysteine_elevation_context (lead), signal_homocysteine_high, signal_mcv_high, signal_apoa1_cardio_risk, signal_ldl_high, signal_alp_low, signal_hypercortisolism. This is the only authority for the approved signal list. No duplicate authority source exists."
+      "citation": "docs/planning-papers/healthiq_pre_sprint2_statin_gate_pack_FINAL.md",
+      "detail": "Statin gate pack confirmed. Gate closed 2026-05-09 with all 6 decisions CLOSED: statin capture (§4.1), governed truth location (§4.2), modifier engine architecture (§4.3), affected outputs (§4.4), allowed effect type (§4.5), Layer B/C boundary (§4.6). Proving checks S-1 through S-6 approved (§4.8). Gate outcome: CLOSED. This is the binding prerequisite authority for Sprint 2."
     },
     {
       "id": "AUTHORITY_PATH_2",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "backend/core/analytics/root_cause_compiler_v1.py:72-110",
-      "detail": "_ROOT_CAUSE_TARGETS registry read in full. 35 registered signal WHY loaders. Intelligence Core component confirmed. Sprint 1 WHY additions must be made here."
+      "citation": "knowledge_bus/interventions/intervention_effects_registry_v1.yaml:9-35",
+      "detail": "lipid_lowering_statin registry entry read in full. Three interpretation_effects: (1) expected_biomarker_effect on [ldl_cholesterol, non_hdl_cholesterol, apob], direction: lower; (2) monitoring_relevance on [alt, ast, creatine_kinase], direction: variable; (3) caveat_only on [hdl_cholesterol], direction: variable. evidence_strength: strong. Registry status: LOCKED. No changes permitted in Sprint 2."
     },
     {
       "id": "AUTHORITY_PATH_3",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "backend/core/analytics/report_compiler_v1.py:535",
-      "detail": "Fallback string confirmed: 'No hypothesis set available for this concern in v1.' — this is the user-visible gap Sprint 1 must eliminate for the approved slice. Consumption logic at lines 537-543 is deterministic and unchanged by this sprint."
+      "citation": "knowledge_bus/interventions/intervention_class_alias_map_v1.yaml:22-43",
+      "detail": "Statin alias section confirmed. 11 aliases: atorvastatin, crestor, fluvastatin, lescol, lipitor, lovastatin, pitavastatin, pravastatin, rosuvastatin, simvastatin, zocor — all mapping to lipid_lowering_statin. Status: LOCKED. No changes permitted in Sprint 2."
     },
     {
       "id": "AUTHORITY_PATH_4",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "backend/core/knowledge/load_root_cause_hypotheses.py",
-      "detail": "Loader module confirmed present. New loader functions for signal_homocysteine_high, signal_mcv_high, signal_hypercortisolism (and conditionally signal_apoa1_cardio_risk) must be added here and registered in root_cause_compiler_v1.py _ROOT_CAUSE_TARGETS."
+      "citation": "backend/core/analytics/intervention_annotation_compiler_v1.py:21-22",
+      "detail": "lipid_lowering_statin confirmed in _APPROVED_INTERVENTION_CLASS_IDS set at line 21-22. Compiler build_intervention_annotations_v1() signature at line 80-82 accepts Optional[Dict[str, Any]] user_intervention_document. Emits InterventionAnnotationsV1 with resolved/unresolved lists. No changes required to this file — it is production-grade and governed."
     },
     {
-      "id": "WHY_COVERAGE_CONFIRMED",
+      "id": "AUTHORITY_PATH_5",
+      "field": "authority_path_exists",
+      "status": "CONFIRMED",
+      "citation": "backend/core/contracts/intervention_annotation_v1.py:56-63",
+      "detail": "InterventionAnnotationsV1 contract confirmed. Fields: version (Literal['v1']), registry_id (str), registry_schema_version (str), resolved (List[InterventionAnnotationResolvedV1]), unresolved (List[InterventionAnnotationUnresolvedV1]). model_config extra='forbid'. InterventionAnnotationResolvedV1 contains: intervention_record_id, entered_label, intervention_class_id, effects (List[InterventionAnnotationEffectV1]). This is the contract shape Cursor must use for AnalysisDTO extension."
+    },
+    {
+      "id": "AUTHORITY_PATH_6",
+      "field": "authority_path_exists",
+      "status": "CONFIRMED",
+      "citation": "knowledge_bus/schema/user_intervention_exposure_schema_v1.yaml:1-88",
+      "detail": "user_intervention_document LOCKED schema confirmed. Root required: schema_version ('1.0.0'), intervention_records. Record required: intervention_record_id, intervention_type (medication|supplement|lifestyle|behavioural|clinical), entered_label, canonical_class (with link_status: mapped|unmapped), timeline (effective_from_date, effective_to_date, is_ongoing, change_event_type: started|stopped|changed), provenance (source_type: user_reported|clinician_prescribed|inferred, confidence: confirmed|estimated|unknown). Fixture reference at backend/tests/fixtures/user_intervention_exposure/valid_record_set.yaml — EXISTS and confirmed as canonical shape reference."
+    },
+    {
+      "id": "QUESTIONNAIRE_GAP_CONFIRMED",
       "field": "source_cross_reference",
       "status": "CONFIRMED",
-      "citation": "backend/core/analytics/root_cause_compiler_v1.py:73,80,97",
-      "detail": "Three approved-slice signals already have governed WHY coverage: (1) signal_homocysteine_elevation_context — loader load_hcy_hypotheses_v1 at line 73, KB package pkg_homocysteine_elevation_context/signal_library.yaml verified with full explanation block. (2) signal_ldl_cholesterol_high — loader load_ldl_cholesterol_high_hypotheses_v1 at line 80, pkg_s24_ldl_high_dyslipidaemia/signal_library.yaml verified with full explanation block. (3) signal_alp_low — loader load_alp_low_hypotheses_v1 at line 97, loader confirmed registered."
+      "citation": "backend/ssot/questionnaire.json:146-153",
+      "detail": "long_term_medications question at lines 146-153. Current options read from file: ['None', 'Corticosteroids', 'Atypical antipsychotics', 'HIV/AIDS treatments']. Statin option is ABSENT. Gate pack §4.1 claim verified by direct file read. Sprint Task A must add 'Statins (cholesterol medication)' to this options array."
     },
     {
-      "id": "WHY_GAPS_CONFIRMED",
+      "id": "MAPPER_GAP_CONFIRMED",
       "field": "source_cross_reference",
-      "status": "CONFIRMED — gaps grounded in repo reads",
-      "citation": "backend/core/analytics/root_cause_compiler_v1.py:72-110 (absence confirmed by full read); report_compiler_v1.py:535 (fallback path confirmed)",
-      "detail": "Three approved-slice signals lack WHY loaders and will surface the fallback string: (1) signal_homocysteine_high — absent from _ROOT_CAUSE_TARGETS, confirmed active in interaction_map_v1.yaml:20 and clinician_report_v1_vr.json:41. (2) signal_mcv_high — absent from _ROOT_CAUSE_TARGETS, confirmed active in interaction_map_v1.yaml:28 and phenotype_expectations_v1.yaml:197. (3) signal_hypercortisolism — absent from _ROOT_CAUSE_TARGETS, VR co-primary per gate pack §3.1. All three require WHY authoring or explicit documented deferral in Sprint 1."
+      "status": "CONFIRMED",
+      "citation": "backend/core/pipeline/questionnaire_mapper.py:161-165",
+      "detail": "long_term_medications handling at lines 161-165 maps to List[str] (long_term_medication_classes) only. No path to user_intervention_document. Gate pack §4.1/§4.3 claim verified. Sprint Task B must extend the mapper to build a schema-compliant user_intervention_document when 'Statins (cholesterol medication)' is selected."
     },
     {
-      "id": "NAMING_DISCREPANCY_RESOLVED_IN_PROMPT",
-      "field": "warning_resolution",
-      "status": "CONFIRMED — directed to Cursor via Task A",
-      "citation": "automation_bus/latest_cursor_prompt.md:131-136",
-      "detail": "Gate pack §3.1 uses 'signal_ldl_high'; root_cause_compiler_v1.py:80 registers 'signal_ldl_cholesterol_high'; no 'signal_ldl_high' entry found in _ROOT_CAUSE_TARGETS, SSOT, or KB packages. Prompt Task A now mandates explicit canonical ID verification before any WHY authoring. Cursor must not proceed on naming assumption. If signal_ldl_cholesterol_high is the canonical runtime ID, WHY coverage for the LDL-high approved signal is already complete — Cursor must confirm and document this in the completion note."
+      "id": "ORCHESTRATOR_GAP_CONFIRMED",
+      "field": "source_cross_reference",
+      "status": "CONFIRMED",
+      "citation": "backend/core/pipeline/orchestrator.py:2201-2206",
+      "detail": "compile_narrative_report_v1() call at lines 2201-2206: parameters are analysis_id, meta, insight_graph, idl_bundle. No user_intervention_document or intervention_annotations_v1 parameter. Gate pack §4.3 claim verified. Sprint Task C must wire user_intervention_document through the orchestrator and resolve the annotation before or during compile_narrative_report_v1() invocation."
     },
     {
-      "id": "APOA1_GROUNDING_DIRECTED",
-      "field": "warning_resolution",
-      "status": "CONFIRMED — directed to Cursor via Task C",
-      "citation": "automation_bus/latest_cursor_prompt.md:154-161",
-      "detail": "signal_apoa1_cardio_risk not found in root_cause_compiler_v1.py _ROOT_CAUSE_TARGETS, SSOT, or KB packages. Gate pack §3.5 proposed deduplication against signal_lipid_transport_dysfunction but did not confirm resolution. Prompt Task C now mandates repo-grounded registration verification before any WHY authoring decision. If signal_apoa1_cardio_risk is not registered in the evaluator, WHY authoring would be unsupported — treat as scoped blocker or intentional deferral and document precisely per the 'If blocked' instructions."
+      "id": "NARRATIVE_COMPILER_GAP_CONFIRMED",
+      "field": "source_cross_reference",
+      "status": "CONFIRMED",
+      "citation": "backend/core/analytics/narrative_report_compiler_v1.py:522-528",
+      "detail": "compile_narrative_report_v1() function signature at lines 522-528 accepts: analysis_id, meta, insight_graph, idl_bundle. No user_intervention_document or intervention_annotations_v1 parameter. Gate pack §4.3 claim verified. Sprint Task E/F requires this function to accept the annotation and use it to produce statin-contextualised narrative content."
+    },
+    {
+      "id": "ANALYSIS_DTO_GAP_CONFIRMED",
+      "field": "source_cross_reference",
+      "status": "CONFIRMED",
+      "citation": "backend/core/models/results.py:245-298",
+      "detail": "AnalysisDTO fields read at lines 245-298. No intervention_annotations_v1 field present. model_config: frozen=True, extra='forbid'. Gate pack §4.3 claim verified. Sprint Task D must add intervention_annotations_v1: Optional[InterventionAnnotationsV1] = Field(default=None) to AnalysisDTO. Import from core.contracts.intervention_annotation_v1 required. The Optional + default=None pattern is backward-compatible with frozen=True and extra='forbid'."
     },
     {
       "id": "NO_DUPLICATE_AUTHORITY_SOURCES",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "backend/core/analytics/root_cause_compiler_v1.py:72-110; backend/core/knowledge/load_root_cause_hypotheses.py",
-      "detail": "Each signal ID appears once in _ROOT_CAUSE_TARGETS. Loader functions are defined in a single module. No parallel or duplicate WHY authority source detected for any approved-slice signal."
+      "citation": "knowledge_bus/interventions/intervention_effects_registry_v1.yaml",
+      "detail": "Single registry file. No duplicate intervention authority source detected. The legacy compile_report_v1() wiring at report_compiler_v1.py:774 also calls build_intervention_annotations_v1() but this is the legacy (non-production) path — not a duplicate authority source for the governed registry."
+    },
+    {
+      "id": "WARNING_W1_SCHEMA_COMPLETENESS",
+      "field": "warning",
+      "status": "WARNING — precision risk",
+      "citation": "knowledge_bus/schema/user_intervention_exposure_schema_v1.yaml:22-58; backend/tests/fixtures/user_intervention_exposure/valid_record_set.yaml:1-54",
+      "detail": "Gate pack §4.1 describes mapper output as 'intervention_class_id: lipid_lowering_statin, link_status: mapped'. LOCKED schema requires full document shape including all timeline and provenance fields. Cursor must build a complete schema-valid document. Recommended field values for questionnaire-derived statin: schema_version='1.0.0', intervention_record_id='rec_statin_01' (or generated), intervention_type='medication', entered_label='Statins (cholesterol medication)', canonical_class.link_status='mapped', canonical_class.intervention_class_id='lipid_lowering_statin', timeline.is_ongoing=true, timeline.change_event_type='started', timeline.effective_from_date=null, timeline.effective_to_date=null, provenance.source_type='user_reported', provenance.confidence='estimated'. Prompt instruction 'real production document shape' adequately covers this — treating as WARNING not BLOCKER."
+    },
+    {
+      "id": "WARNING_W2_BUILD_ONCE_ARCHITECTURE",
+      "field": "warning",
+      "status": "WARNING — implementation guidance",
+      "citation": "backend/core/pipeline/orchestrator.py:2201-2206; backend/core/analytics/intervention_annotation_compiler_v1.py:80-82",
+      "detail": "The sprint must carry the statin annotation to both AnalysisDTO and the narrative compiler. Two approaches exist: (a) orchestrator calls build_intervention_annotations_v1() once and passes the InterventionAnnotationsV1 object to both; (b) narrative compiler calls it internally from the raw document (loads registry twice). Architecture (a) is correct: build once, carry the object. This avoids redundant registry loads and is consistent with determinism principles. Cursor must not call build_intervention_annotations_v1() twice for the same analysis run."
     }
   ],
   "stage_2a": {
     "verdict": "PASS",
     "authority_files_verified": [
       {
-        "path": "docs/planning-papers/healthiq_pre_sprint1_decision_pack_FINAL.md",
+        "path": "docs/planning-papers/healthiq_pre_sprint2_statin_gate_pack_FINAL.md",
         "exists": true,
-        "note": "Closed gate pack. All decisions closed 2026-05-09. Authoritative signal list at §3.1."
+        "note": "Gate pack. Closed 2026-05-09. All 6 decisions CLOSED. Binding authority for Sprint 2 scope."
       },
       {
-        "path": "backend/core/analytics/root_cause_compiler_v1.py",
+        "path": "knowledge_bus/interventions/intervention_effects_registry_v1.yaml",
         "exists": true,
-        "note": "Intelligence Core. _ROOT_CAUSE_TARGETS at lines 72-110 is the authoritative WHY registration point. Read in full."
+        "note": "LOCKED. lipid_lowering_statin entry at lines 9-35 read in full. 3 effect types confirmed."
       },
       {
-        "path": "backend/core/analytics/report_compiler_v1.py",
+        "path": "knowledge_bus/interventions/intervention_class_alias_map_v1.yaml",
         "exists": true,
-        "note": "WHY consumer. Fallback string at line 535 confirmed. No structural changes required in Sprint 1."
+        "note": "LOCKED. 11 statin aliases at lines 22-43 confirmed."
       },
       {
-        "path": "backend/core/knowledge/load_root_cause_hypotheses.py",
+        "path": "backend/core/analytics/intervention_annotation_compiler_v1.py",
         "exists": true,
-        "note": "WHY loader module. New loaders for Sprint 1 gaps must be added here."
+        "note": "lipid_lowering_statin in _APPROVED_INTERVENTION_CLASS_IDS at line 22. build_intervention_annotations_v1() confirmed. No changes required."
       },
       {
-        "path": "knowledge_bus/packages/pkg_homocysteine_elevation_context/signal_library.yaml",
+        "path": "backend/core/contracts/intervention_annotation_v1.py",
         "exists": true,
-        "note": "Verified. Full explanation block present. signal_homocysteine_elevation_context WHY coverage confirmed."
+        "note": "InterventionAnnotationsV1 contract confirmed. extra='forbid'. Full schema read."
       },
       {
-        "path": "knowledge_bus/packages/pkg_s24_ldl_high_dyslipidaemia/signal_library.yaml",
+        "path": "knowledge_bus/schema/user_intervention_exposure_schema_v1.yaml",
         "exists": true,
-        "note": "Verified. Full explanation block present. signal_ldl_cholesterol_high WHY coverage confirmed pending canonical ID resolution."
+        "note": "LOCKED. All required fields confirmed. Forbidden keys confirmed (threshold, override_signal, signal_state_mutation, etc.)."
+      },
+      {
+        "path": "backend/tests/fixtures/user_intervention_exposure/valid_record_set.yaml",
+        "exists": true,
+        "note": "Fixture confirmed. Shows full schema-compliant document shape. Use as Cursor reference for mapper implementation."
+      },
+      {
+        "path": "backend/ssot/questionnaire.json",
+        "exists": true,
+        "note": "long_term_medications at lines 146-153. Statin absent confirmed. Sprint Task A target."
+      },
+      {
+        "path": "backend/core/pipeline/questionnaire_mapper.py",
+        "exists": true,
+        "note": "long_term_medications mapped to List[str] at lines 161-165. No user_intervention_document path. Sprint Task B target."
+      },
+      {
+        "path": "backend/core/pipeline/orchestrator.py",
+        "exists": true,
+        "note": "compile_narrative_report_v1() call at lines 2201-2206. No intervention_document arg. Sprint Task C target."
+      },
+      {
+        "path": "backend/core/analytics/narrative_report_compiler_v1.py",
+        "exists": true,
+        "note": "compile_narrative_report_v1() signature at lines 522-528. No intervention param. Sprint Tasks E/F target."
+      },
+      {
+        "path": "backend/core/models/results.py",
+        "exists": true,
+        "note": "AnalysisDTO at lines 245-298. No intervention_annotations_v1 field. Sprint Task D target."
       }
     ],
     "duplicate_authority_sources": "NONE DETECTED"
@@ -122,26 +180,27 @@
   "stage_2b": {
     "verdict": "PASS",
     "intelligence_core_components_identified": [
-      "backend/core/analytics/root_cause_compiler_v1.py — WHY loader registration (_ROOT_CAUSE_TARGETS)",
-      "backend/core/knowledge/load_root_cause_hypotheses.py — WHY loader functions",
-      "backend/core/analytics/report_compiler_v1.py — WHY consumer (no structural change required)"
+      "backend/core/pipeline/orchestrator.py — wiring user_intervention_document + annotation build through live pipeline",
+      "backend/core/analytics/narrative_report_compiler_v1.py — new param + statin annotation consumption for narrative output",
+      "backend/core/models/results.py (AnalysisDTO) — new intervention_annotations_v1 field (output contract change)",
+      "backend/core/pipeline/questionnaire_mapper.py — new user_intervention_document building path (BEHAVIOUR: input-to-governed-contract translation)"
     ],
-    "behavioural_surface_area": "top_hypothesis_line field in report_compiler_v1.py at line 535 — transitions from fallback string to governed hypothesis text for newly registered signals only. No change to ranking, domain scores, IDL records, confidence values, or any other AnalysisDTO field.",
-    "expected_output_changes": "signal_homocysteine_high, signal_mcv_high, signal_hypercortisolism: transition from fallback string to governed WHY hypothesis text in clinician-facing report output. All other AnalysisDTO fields unchanged.",
+    "behavioural_surface_area": "compile_narrative_report_v1() gains a new parameter and produces different output for statin-on profiles in consumer-facing fields (lead_narrative, clinician section). AnalysisDTO gains intervention_annotations_v1 Optional field (default None — backward compatible). All statin-off profiles: output unchanged. Signal states, rankings, domain bands: must be identical between statin-on and statin-off (S-6).",
+    "expected_output_changes": "Statin-on profiles: (1) AnalysisDTO.intervention_annotations_v1 populated with lipid_lowering_statin resolved annotation; (2) at least one consumer-visible field in lead_narrative or clinician_report_v1.sections.page1 differs from statin-off. Statin-off profiles: AnalysisDTO.intervention_annotations_v1=None, no narrative change. Rankings/signals/bands: unchanged in both profiles.",
     "regression_targets": [
-      "backend/tests/unit/test_golden_panel_runner.py — existing signal_homocysteine_elevation_context WHY assertions at lines 681, 716, 922, 925 must not regress",
-      "backend/tests/unit/test_signal_evaluator.py — all 32 determinism and override tests must pass",
-      "backend/tests/fixtures/panels/phenotypes/phenotype_expectations_v1.yaml — phenotype suite must not regress",
-      "New regression tests required for newly registered signals per Acceptance Criterion 7"
+      "backend/tests/unit/test_intervention_annotation_compiler_v1.py — existing tests must pass unchanged",
+      "Existing golden panel tests — statin-off profile must produce identical AnalysisDTO output on all pre-existing fields",
+      "New tests required: S-1 questionnaire capture, S-2 mapper output, S-3 annotation compiler resolution, S-4 pipeline carriage, S-5 statin-on vs statin-off visible difference, S-6 no analytical truth mutation"
     ],
     "determinism_preserved": true,
     "no_lm_reasoning_in_layer_b": true,
     "no_scope_creep": true,
     "stop_conditions_adequate": true,
     "determinism_risks": [
-      "WHY YAML authoring: hypotheses must be deterministic, medically grounded, and non-circular. Shallow or invented content would pass silently — mitigated by acceptance criterion 3 and regression tests.",
-      "Loader registration error: a mis-wired loader could break hypothesis rendering for that signal — mitigated by requirement for AB/VR proving runs to pass (AC 4).",
-      "signal_apoa1_cardio_risk: unsupported WHY authoring risk if registration is not grounded first — mitigated by Task C mandatory grounding instruction."
+      "Narrative statin prose: must be derived deterministically from the intervention registry annotation only — no LLM, no hardcoded freeform strings. Mitigated by Layer B/C boundary instruction in prompt.",
+      "user_intervention_document construction: timeline fields (effective_from_date, is_ongoing) must use consistent, reproducible defaults — not system time or random values. Mitigated by Warning W-1 guidance.",
+      "AnalysisDTO frozen=True: adding Optional field with default None is backward-compatible; any Cursor deviation (e.g. required field) would break existing tests immediately. Mitigated by explicit 'Optional' instruction in Task D.",
+      "Build-once risk: if annotation is built twice (orchestrator + narrative compiler), registry may be loaded twice — not a determinism risk but an architectural smell. Mitigated by Warning W-2 guidance."
     ]
   },
   "overall_verdict": "HARDENED"
