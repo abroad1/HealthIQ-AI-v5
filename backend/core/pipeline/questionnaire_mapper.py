@@ -5,12 +5,15 @@ This module converts questionnaire responses into structured data that can be us
 by the scoring engine and analysis pipeline.
 """
 
-from typing import Dict, Any, List, Optional, Tuple
 from dataclasses import dataclass
 from datetime import date
 from enum import Enum
+from typing import Any, Dict, List, Optional, Tuple
 
 from core.models.questionnaire import QuestionnaireSubmission, load_questionnaire_schema
+
+# LC-S2 — governed statin intake label (must match SSOT questionnaire.json option text).
+STATINS_LONG_TERM_MEDICATION_LABEL = "Statins (cholesterol medication)"
 
 
 class LifestyleLevel(Enum):
@@ -64,6 +67,44 @@ class QuestionnaireMapper:
         self.schema = load_questionnaire_schema()
         self._question_map = {q.id: q for q in self.schema.questions}
     
+    def build_user_intervention_document_for_statin(self, responses: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """
+        When the SSOT long_term_medications checkbox includes the governed statin label, emit a
+        KB-S48d-compliant user_intervention_document (single mapped lipid_lowering_statin record).
+
+        Deterministic defaults only — no wall-clock timestamps (replay-stable).
+        """
+        if not isinstance(responses, dict):
+            return None
+        raw = responses.get("long_term_medications")
+        choices = self._parse_checkbox_response(raw)
+        if STATINS_LONG_TERM_MEDICATION_LABEL not in choices:
+            return None
+        return {
+            "schema_version": "1.0.0",
+            "intervention_records": [
+                {
+                    "intervention_record_id": "rec_questionnaire_statin_001",
+                    "intervention_type": "medication",
+                    "entered_label": STATINS_LONG_TERM_MEDICATION_LABEL,
+                    "canonical_class": {
+                        "link_status": "mapped",
+                        "intervention_class_id": "lipid_lowering_statin",
+                    },
+                    "timeline": {
+                        "effective_from_date": None,
+                        "effective_to_date": None,
+                        "is_ongoing": True,
+                        "change_event_type": "started",
+                    },
+                    "provenance": {
+                        "source_type": "user_reported",
+                        "confidence": "estimated",
+                    },
+                }
+            ],
+        }
+
     def map_submission(self, submission: QuestionnaireSubmission) -> Tuple[MappedLifestyleFactors, MappedMedicalHistory]:
         """
         Map questionnaire submission to lifestyle factors and medical history.

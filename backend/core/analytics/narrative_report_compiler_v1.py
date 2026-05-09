@@ -12,7 +12,11 @@ from typing import Any, Dict, List, Mapping, Optional, Sequence, Set
 import yaml
 
 from core.analytics.longitudinal_numeric_v1 import comparable_lab_delta
+from core.contracts.intervention_annotation_v1 import InterventionAnnotationsV1
 from core.contracts.narrative_report_v1 import NARRATIVE_REPORT_V1_VERSION, NarrativeReportV1
+from core.analytics.intervention_annotation_compiler_v1 import (
+    format_intervention_annotation_narrative_appendix_v1,
+)
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _ENTITIES_PATH = _REPO_ROOT / "knowledge_bus" / "interpretation_entities_v1" / "benchmark_interpretation_entities_v1.yaml"
@@ -525,6 +529,7 @@ def compile_narrative_report_v1(
     meta: Optional[Mapping[str, Any]] = None,
     insight_graph: Optional[Mapping[str, Any]] = None,
     idl_bundle: Any = None,
+    intervention_annotations_v1: Optional[InterventionAnnotationsV1] = None,
 ) -> NarrativeReportV1:
     """
     Compile a bounded v1 narrative report from governed assets and enriched graph/meta.
@@ -616,6 +621,10 @@ def compile_narrative_report_v1(
         domains_by_id=domains_by_id,
         compiler_meta=compiler_meta,
     )
+    ia_appendix = format_intervention_annotation_narrative_appendix_v1(intervention_annotations_v1)
+    if ia_appendix:
+        body_overview = _join_blocks([body_overview, ia_appendix])
+        compiler_meta["assets_resolved"].append("intervention_annotation_appendix_lc_s2")
 
     if not include_lead:
         compiler_meta["skipped"].append("lead_narrative_no_matching_signals")

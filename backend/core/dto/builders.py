@@ -2,14 +2,28 @@
 DTO builders - transform internal objects into frontend-safe dictionaries.
 """
 
-from typing import Dict, Any, List
+from typing import Any, Dict, List, Optional
 from datetime import datetime, UTC
 
 from core.analytics.report_compiler_v1 import compile_clinician_report_v1
+from core.contracts.intervention_annotation_v1 import InterventionAnnotationsV1
 from core.analytics.balanced_systems_presentation_v1 import compile_balanced_systems_v1
 from core.models.biomarker import BiomarkerCluster, BiomarkerInsight
 from core.models.results import AnalysisResult, AnalysisSummary, BiomarkerScore, ClusterHit
 from core.models.insight import Insight, InsightSynthesisResult
+
+
+def _coerce_intervention_annotations_v1(raw: Any) -> Optional[InterventionAnnotationsV1]:
+    if raw is None:
+        return None
+    if isinstance(raw, InterventionAnnotationsV1):
+        return raw
+    if isinstance(raw, dict):
+        try:
+            return InterventionAnnotationsV1.model_validate(raw)
+        except Exception:
+            return None
+    return None
 
 
 def build_analysis_result_dto(result: Dict[str, Any]) -> Dict[str, Any]:
@@ -30,10 +44,12 @@ def build_analysis_result_dto(result: Dict[str, Any]) -> Dict[str, Any]:
     report_v1 = insight_graph.get("report_v1", {})
     mh_snap = meta.get("medical_history_snapshot")
     mh_snap = mh_snap if isinstance(mh_snap, dict) else None
+    ia_v1 = _coerce_intervention_annotations_v1(result.get("intervention_annotations_v1"))
     clinician_report = compile_clinician_report_v1(
         report_v1_payload=report_v1 if isinstance(report_v1, dict) else {},
         biomarker_rows=result.get("biomarkers", []) if isinstance(result.get("biomarkers"), list) else [],
         medical_history=mh_snap,
+        intervention_annotations_v1=ia_v1,
     )
     balanced = compile_balanced_systems_v1(
         meta=meta,
@@ -64,6 +80,9 @@ def build_analysis_result_dto(result: Dict[str, Any]) -> Dict[str, Any]:
         "interpretation_display_layer_v1": result.get("interpretation_display_layer_v1"),
         "narrative_report_v1": result.get("narrative_report_v1"),
         "consumer_domain_scores": result.get("consumer_domain_scores"),
+        "intervention_annotations_v1": (
+            ia_v1.model_dump() if ia_v1 is not None else None
+        ),
     }
 
 

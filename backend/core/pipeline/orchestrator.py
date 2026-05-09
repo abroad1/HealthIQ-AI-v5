@@ -45,6 +45,10 @@ from core.analytics.interpretation_display_layer_publish_v1 import (
 from core.analytics.lifestyle_interpretation_bridge_engine import (
     compute_lifestyle_interpretation_bridges_v1,
 )
+from core.analytics.intervention_annotation_compiler_v1 import (
+    build_intervention_annotations_v1,
+    format_intervention_annotation_consumer_cv_suffix_v1,
+)
 from core.analytics.narrative_report_compiler_v1 import compile_narrative_report_v1
 from core.analytics.replay_manifest_builder import build_replay_manifest_v1
 from core.analytics.explainability_builder import (
@@ -1286,6 +1290,13 @@ class AnalysisOrchestrator:
                 assume_canonical=True
             )
 
+            user_intervention_document: Optional[Dict[str, Any]] = None
+            if questionnaire_data and isinstance(questionnaire_data, dict):
+                user_intervention_document = (
+                    self.questionnaire_mapper.build_user_intervention_document_for_statin(questionnaire_data)
+                )
+            intervention_annotations_v1 = build_intervention_annotations_v1(user_intervention_document)
+
             # Step 3: Score biomarkers using merged user context from Step 2
             logger.info("Step 3: Scoring biomarkers")
             scoring_result = self.score_biomarkers(
@@ -2203,6 +2214,7 @@ class AnalysisOrchestrator:
                 meta=meta,
                 insight_graph=insight_graph.model_dump() if hasattr(insight_graph, "model_dump") else {},
                 idl_bundle=idl_bundle,
+                intervention_annotations_v1=intervention_annotations_v1,
             )
             _panel_ids = {
                 str(k)
@@ -2223,6 +2235,9 @@ class AnalysisOrchestrator:
                 panel_biomarker_ids=set(_panel_ids),
                 narrative_report_v1=narrative_report_v1,
                 insight_results=_insight_payloads,
+                intervention_cv_suffix=format_intervention_annotation_consumer_cv_suffix_v1(
+                    intervention_annotations_v1
+                ),
             )
             meta["wave1_aligned_drivers"] = wave1_drivers_meta
             result = AnalysisDTO(
@@ -2244,6 +2259,7 @@ class AnalysisOrchestrator:
                 interpretation_display_layer_v1=idl_bundle,
                 narrative_report_v1=narrative_report_v1,
                 consumer_domain_scores=consumer_domain_scores,
+                intervention_annotations_v1=intervention_annotations_v1,
             )
             
             logger.info(f"Analysis {analysis_id} completed successfully with {len(biomarker_dtos)} biomarkers, {len(cluster_dtos)} clusters, {len(insight_dtos)} insights")

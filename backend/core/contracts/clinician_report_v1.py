@@ -96,6 +96,11 @@ class Page1SummaryBlockV1(BaseModel):
     runner_up_signal_id: str = Field(default="", max_length=120)
     runner_up_topic_line: str = Field(default="", max_length=220)
     runner_up_why_not_lead_line: str = Field(default="", max_length=280)
+    intervention_annotation_context: str = Field(
+        default="",
+        max_length=420,
+        description="LC-S2: deterministic Layer B statin annotation summary (registry-derived)",
+    )
 
 
 class ClinicianSectionsV1(BaseModel):
