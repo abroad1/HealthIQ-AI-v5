@@ -1,9 +1,9 @@
 # AUTOMATION BUS SOP v1.3.1
-## Intelligence Governance Edition — Cursor Evidence Clarification
+## Intelligence Governance Edition
 
-**Status:** LOCKED — PROPOSED SUCCESSOR DRAFT
+**Status:** LOCKED
 **Authority:** Control-Plane + Intelligence Governance
-**Supersedes:** v1.3.1
+**Supersedes:** v1.3
 
 ---
 
@@ -11,7 +11,7 @@
 
 The Automation Bus defines the deterministic control-plane governing all work packages in HealthIQ AI.
 
-Version 1.3.2 extends the system beyond execution control into full intelligence governance. It ensures that all analytical logic, behavioural outputs, and reasoning pathways remain:
+Version 1.3.1 extends the system beyond execution control into full intelligence governance. It ensures that all analytical logic, behavioural outputs, and reasoning pathways remain:
 
 - Deterministic
 - Auditable
@@ -120,7 +120,6 @@ The Automation Bus operates through the following required artifacts:
 * `automation_bus/latest_cursor_prompt.md` — active work package definition
 * `automation_bus/latest_prompt_hardening.json` — hardened prompt metadata
 * `automation_bus/latest_cursor_status.json` — kernel-owned lifecycle state
-* `automation_bus/latest_cursor_execution_summary.md` — Cursor-owned implementation evidence handoff for audit
 * `automation_bus/latest_gate_evidence.json` — gate evidence
 * `automation_bus/latest_gate_output.txt` — gate output log
 * `automation_bus/latest_audit_summary.md` — Claude audit summary
@@ -466,64 +465,6 @@ Cursor must not:
 * Self-certify success
 * Modify `latest_cursor_status.json`
 
-### Stage 4 Mandatory Pre-Implementation Confirmation
-
-Before making the first repository modification, Cursor must explicitly report all of the following:
-
-1. current branch (`git branch --show-current`)
-2. repo cleanliness (`git status --short`)
-3. confirmation that `automation_bus/state/work_package_active.json` exists
-4. confirmation that the token `work_id` matches the prompt
-5. confirmation that `automation_bus/latest_cursor_status.json` is kernel-owned and will not be modified by Cursor
-
-If any item fails, Cursor must STOP and report the exact blocker before implementation begins.
-
-### Stage 4B — Mandatory Implementation Evidence Handoff
-
-After implementation is complete, and before Stage 4A closure commands are run, Cursor must write:
-
-`automation_bus/latest_cursor_execution_summary.md`
-
-This artifact is mandatory for every governed sprint.
-
-Its purpose is to give Claude a stable implementation-evidence handoff rather than relying on conversational summaries.
-
-#### Required YAML header
-
-```yaml
----
-work_id:
-branch:
-head_sha:
-status: IMPLEMENTATION_COMPLETE
----
-```
-
-#### Required body sections
-
-* Preflight
-* Implementation
-* Files Changed
-* Tests Run
-* Explicit Test Exclusions
-* Deferred / Not Implemented
-* Closure Risks
-
-#### Minimum content requirements
-
-Cursor must explicitly state:
-
-* the sprint branch
-* the implementation commit SHA
-* the files changed
-* the exact tests run
-* which broader suites were deliberately excluded
-* which known limitations are intentionally deferred
-* whether any docs, planning files, or automation artifacts were committed as collateral
-* whether any closure blockers remain
-
-This artifact must be written before `run_work_package.py finish`.
-
 ---
 
 ## Test Execution Discipline
@@ -833,7 +774,6 @@ After kernel finish, Claude reads:
 
 * `automation_bus/latest_gate_evidence.json`
 * `automation_bus/latest_cursor_status.json`
-* `automation_bus/latest_cursor_execution_summary.md`
 * repository diff
 
 Claude writes:
@@ -1027,6 +967,6 @@ The system guarantees integrity.
 
 ---
 
-**Version:** v1.3.2
-**Edition:** Intelligence Governance Edition — Hardening Evidence + Cursor Evidence Standard
-**Status:** PROPOSED DRAFT
+**Version:** v1.3.1
+**Edition:** Intelligence Governance Edition — Hardening Evidence Standard
+**Status:** LOCKED
