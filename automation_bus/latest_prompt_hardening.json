@@ -1,111 +1,147 @@
 {
-  "work_id": "Q-2",
-  "status": "HARDENED",
   "bus_version": "1.3.1",
-  "hardened_utc": "2026-05-02T09:10:00Z",
+  "work_id": "LC-S1-ANALYTICAL-HARDENING",
+  "status": "HARDENED",
+  "hardened_utc": "2026-05-09T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
   "changes": [
     {
       "id": "FRONT_MATTER",
       "field": "front_matter_validation",
       "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:1-7",
-      "detail": "All five mandatory fields present: work_id=Q-2, branch=feature/questionnaire-visual-redesign, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=BEHAVIOUR. BEHAVIOUR is correct — visual layer changes constitute changes to rendered output. HIGH is conservative for a frontend-only styling sprint with no Intelligence Core involvement; GPT has authority over this classification. Consequence: dual approval required before merge."
+      "citation": "automation_bus/latest_cursor_prompt.md:1-10",
+      "detail": "All five mandatory fields present and valid. work_id=LC-S1-ANALYTICAL-HARDENING, branch=feature/lc-s1-analytical-hardening, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. HIGH is correct — root_cause_compiler_v1.py is Intelligence Core per SOP §3. MIXED is correct — WHY asset authoring (CONTENT) is consumed by root_cause_compiler_v1.py which emits structured reasoning (BEHAVIOUR); MIXED is therefore required per SOP §4.2. TWO_PHASE_START_FINISH is required — HIGH-risk sprint with kernel start/finish lifecycle."
+    },
+    {
+      "id": "OPERATIONAL_PRECONDITION",
+      "field": "active_token_check",
+      "status": "CONFIRMED — operationally addressed in prompt",
+      "citation": "automation_bus/latest_cursor_prompt.md:36-39",
+      "detail": "Q-2 active token (work_package_active.json) is currently held as of hardening time. Prompt now includes an explicit operational precondition at lines 36-39 directing Cursor to stop if Q-2 remains active. Cursor must verify token match at Stage 4 before modifying any files. This is an operational pre-condition, not a prompt authoring defect — prompt correctly encodes it."
     },
     {
       "id": "AUTHORITY_PATH_1",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "frontend/app/components/forms/QuestionnaireForm.tsx",
-      "detail": "File exists on main. Contains the Q-1 implementation (895 lines). Q-2 visual redesign targets this file. Props interface at lines 61-66 must remain unchanged."
+      "citation": "docs/planning-papers/healthiq_pre_sprint1_decision_pack_FINAL.md",
+      "detail": "Closed gate pack confirmed. All nine decisions are CLOSED 2026-05-09. §3.1 approves the bounded signal slice: signal_homocysteine_elevation_context (lead), signal_homocysteine_high, signal_mcv_high, signal_apoa1_cardio_risk, signal_ldl_high, signal_alp_low, signal_hypercortisolism. This is the only authority for the approved signal list. No duplicate authority source exists."
     },
     {
       "id": "AUTHORITY_PATH_2",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "frontend/app/(app)/upload/page.tsx:474-486",
-      "detail": "Card wrapper confirmed present. Structure: <Card> → <CardHeader> → <CardTitle>Health questionnaire</CardTitle> → <CardDescription>...</CardDescription> → </CardHeader> → <CardContent> → <QuestionnaireForm onSubmit={handleQuestionnaireFromUpload} isLoading={isAnalyzing} /> → </CardContent> → </Card>. Q-2 must replace this with a direct <QuestionnaireForm ... /> render. The green confirmation Card at lines 460-472 (uploadStatus === 'questionnaire') is a separate element above the form and must be left untouched."
+      "citation": "backend/core/analytics/root_cause_compiler_v1.py:72-110",
+      "detail": "_ROOT_CAUSE_TARGETS registry read in full. 35 registered signal WHY loaders. Intelligence Core component confirmed. Sprint 1 WHY additions must be made here."
     },
     {
       "id": "AUTHORITY_PATH_3",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "docs/QUESTIONNAIRE_VISUAL_REDESIGN_Q2_BACKGROUND.md",
-      "detail": "Background spec doc exists and is complete. Contains exact Tailwind class strings, font loading code, glow shadow values, per-element implementation specs for every surface changed in this sprint."
+      "citation": "backend/core/analytics/report_compiler_v1.py:535",
+      "detail": "Fallback string confirmed: 'No hypothesis set available for this concern in v1.' — this is the user-visible gap Sprint 1 must eliminate for the approved slice. Consumption logic at lines 537-543 is deterministic and unchanged by this sprint."
     },
     {
-      "id": "MANDATORY_BACKGROUND_DOC_READ",
-      "field": "behavioural_hardening",
-      "status": "MANDATORY — Cursor must act on this before writing any code",
-      "citation": "automation_bus/latest_cursor_prompt.md:17-18 vs docs/QUESTIONNAIRE_VISUAL_REDESIGN_Q2_BACKGROUND.md",
-      "detail": "The prompt at lines 17-18 says 'Claude already understands the design intent and prior research for this redesign. Use that design intent directly.' Cursor has no session context. This is the IDENTICAL gap that caused Q-1 to produce generic visual output — directional language without implementation specifics, and no pointer to the spec. The full implementation spec exists at docs/QUESTIONNAIRE_VISUAL_REDESIGN_Q2_BACKGROUND.md. Cursor MUST read that file in full before implementing any visual change. The doc specifies: exact Tailwind classes for pill selected/unselected states (solid bg-primary fill, not tint); exact glow shadow values for Begin and Unlock CTAs; DM_Serif_Display font loading code; sidebar active/done/pending class strings; slider layout replacing the muted box; question numbering implementation; section card hover treatment; and the radial gradient overlay for the intent screen. Not reading this document risks a repeat of Q-1's generic output."
-    },
-    {
-      "id": "Q1_BEHAVIOURAL_REGRESSION_PROTECTION",
-      "field": "behavioural_hardening",
+      "id": "AUTHORITY_PATH_4",
+      "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:98-114",
-      "detail": "Prompt explicitly names all Q-1 behavioural surfaces that must not regress: props interface, flat Record<string,unknown> payload, conditionalDisplay/dependsOn logic, section order/names/estimates, ?autofill=true, schema loading path, loading/error states, validation behaviour, section-by-section flow, intent screen flow, upload-page integration. AC 1-12 from Q-1 remain in force. All are functional surfaces — visual changes must not disturb them."
+      "citation": "backend/core/knowledge/load_root_cause_hypotheses.py",
+      "detail": "Loader module confirmed present. New loader functions for signal_homocysteine_high, signal_mcv_high, signal_hypercortisolism (and conditionally signal_apoa1_cardio_risk) must be added here and registered in root_cause_compiler_v1.py _ROOT_CAUSE_TARGETS."
     },
     {
-      "id": "DESIGN_SYSTEM_TOKENS",
+      "id": "WHY_COVERAGE_CONFIRMED",
       "field": "source_cross_reference",
       "status": "CONFIRMED",
-      "citation": "frontend/app/globals.css:1-93, frontend/tailwind.config.ts",
-      "detail": "Design system verified. Dark mode: bg-background = hsl(220 13% 8%), bg-card = hsl(220 13% 12%), primary = hsl(142 76% 46%). Custom palettes available: forest-*, sage-*, ocean-*. Animation keyframes available: fade-up, scale-in (in tailwind.config.ts:121-144). Primary glow token: --primary-glow = hsl(142 76% 56%). Cursor should use hsl(var(--primary)) syntax or the named Tailwind tokens rather than hardcoded hex values, so the design system remains coherent in both light and dark mode."
+      "citation": "backend/core/analytics/root_cause_compiler_v1.py:73,80,97",
+      "detail": "Three approved-slice signals already have governed WHY coverage: (1) signal_homocysteine_elevation_context — loader load_hcy_hypotheses_v1 at line 73, KB package pkg_homocysteine_elevation_context/signal_library.yaml verified with full explanation block. (2) signal_ldl_cholesterol_high — loader load_ldl_cholesterol_high_hypotheses_v1 at line 80, pkg_s24_ldl_high_dyslipidaemia/signal_library.yaml verified with full explanation block. (3) signal_alp_low — loader load_alp_low_hypotheses_v1 at line 97, loader confirmed registered."
     },
     {
-      "id": "UPLOAD_PAGE_IMPORT_CLEANUP",
+      "id": "WHY_GAPS_CONFIRMED",
+      "field": "source_cross_reference",
+      "status": "CONFIRMED — gaps grounded in repo reads",
+      "citation": "backend/core/analytics/root_cause_compiler_v1.py:72-110 (absence confirmed by full read); report_compiler_v1.py:535 (fallback path confirmed)",
+      "detail": "Three approved-slice signals lack WHY loaders and will surface the fallback string: (1) signal_homocysteine_high — absent from _ROOT_CAUSE_TARGETS, confirmed active in interaction_map_v1.yaml:20 and clinician_report_v1_vr.json:41. (2) signal_mcv_high — absent from _ROOT_CAUSE_TARGETS, confirmed active in interaction_map_v1.yaml:28 and phenotype_expectations_v1.yaml:197. (3) signal_hypercortisolism — absent from _ROOT_CAUSE_TARGETS, VR co-primary per gate pack §3.1. All three require WHY authoring or explicit documented deferral in Sprint 1."
+    },
+    {
+      "id": "NAMING_DISCREPANCY_RESOLVED_IN_PROMPT",
+      "field": "warning_resolution",
+      "status": "CONFIRMED — directed to Cursor via Task A",
+      "citation": "automation_bus/latest_cursor_prompt.md:131-136",
+      "detail": "Gate pack §3.1 uses 'signal_ldl_high'; root_cause_compiler_v1.py:80 registers 'signal_ldl_cholesterol_high'; no 'signal_ldl_high' entry found in _ROOT_CAUSE_TARGETS, SSOT, or KB packages. Prompt Task A now mandates explicit canonical ID verification before any WHY authoring. Cursor must not proceed on naming assumption. If signal_ldl_cholesterol_high is the canonical runtime ID, WHY coverage for the LDL-high approved signal is already complete — Cursor must confirm and document this in the completion note."
+    },
+    {
+      "id": "APOA1_GROUNDING_DIRECTED",
+      "field": "warning_resolution",
+      "status": "CONFIRMED — directed to Cursor via Task C",
+      "citation": "automation_bus/latest_cursor_prompt.md:154-161",
+      "detail": "signal_apoa1_cardio_risk not found in root_cause_compiler_v1.py _ROOT_CAUSE_TARGETS, SSOT, or KB packages. Gate pack §3.5 proposed deduplication against signal_lipid_transport_dysfunction but did not confirm resolution. Prompt Task C now mandates repo-grounded registration verification before any WHY authoring decision. If signal_apoa1_cardio_risk is not registered in the evaluator, WHY authoring would be unsupported — treat as scoped blocker or intentional deferral and document precisely per the 'If blocked' instructions."
+    },
+    {
+      "id": "NO_DUPLICATE_AUTHORITY_SOURCES",
       "field": "authority_path_exists",
-      "status": "ADVISORY",
-      "citation": "frontend/app/(app)/upload/page.tsx:4",
-      "detail": "Upload page imports Card, CardContent, CardDescription, CardHeader, CardTitle from '@/components/ui/card' at line 4. After removing the questionnaire wrapper, check whether Card is still used elsewhere on the page (it is — the markers confirmation banner at line 474 area uses Card). CardHeader, CardTitle, CardDescription, CardContent for the questionnaire wrapper can be removed from the import if no longer used. Do not remove Card itself."
-    },
-    {
-      "id": "FONT_BUILD_RISK",
-      "field": "behavioural_hardening",
-      "status": "ADVISORY",
-      "citation": "automation_bus/latest_cursor_prompt.md:394-396 (STOP condition 2)",
-      "detail": "DM_Serif_Display loaded via next/font/google is a Next.js 14 built-in feature requiring no npm install. STOP condition 2 correctly handles the case where the import fails. If it does fail, the fallback is to use a CSS font-stack serif (Georgia, 'Times New Roman', serif) for the headline only — this preserves the typographic hierarchy intent without a build dependency. Do not silently drop the display font; report the STOP."
+      "status": "CONFIRMED",
+      "citation": "backend/core/analytics/root_cause_compiler_v1.py:72-110; backend/core/knowledge/load_root_cause_hypotheses.py",
+      "detail": "Each signal ID appears once in _ROOT_CAUSE_TARGETS. Loader functions are defined in a single module. No parallel or duplicate WHY authority source detected for any approved-slice signal."
     }
   ],
   "stage_2a": {
     "verdict": "PASS",
     "authority_files_verified": [
       {
-        "path": "frontend/app/components/forms/QuestionnaireForm.tsx",
+        "path": "docs/planning-papers/healthiq_pre_sprint1_decision_pack_FINAL.md",
         "exists": true,
-        "note": "Primary change target. Q-1 implementation present."
+        "note": "Closed gate pack. All decisions closed 2026-05-09. Authoritative signal list at §3.1."
       },
       {
-        "path": "frontend/app/(app)/upload/page.tsx",
+        "path": "backend/core/analytics/root_cause_compiler_v1.py",
         "exists": true,
-        "note": "Secondary change target. Card wrapper at lines 474-486 confirmed for removal."
+        "note": "Intelligence Core. _ROOT_CAUSE_TARGETS at lines 72-110 is the authoritative WHY registration point. Read in full."
       },
       {
-        "path": "docs/QUESTIONNAIRE_VISUAL_REDESIGN_Q2_BACKGROUND.md",
+        "path": "backend/core/analytics/report_compiler_v1.py",
         "exists": true,
-        "note": "MANDATORY pre-implementation read. Contains exact class strings for all visual changes."
+        "note": "WHY consumer. Fallback string at line 535 confirmed. No structural changes required in Sprint 1."
+      },
+      {
+        "path": "backend/core/knowledge/load_root_cause_hypotheses.py",
+        "exists": true,
+        "note": "WHY loader module. New loaders for Sprint 1 gaps must be added here."
+      },
+      {
+        "path": "knowledge_bus/packages/pkg_homocysteine_elevation_context/signal_library.yaml",
+        "exists": true,
+        "note": "Verified. Full explanation block present. signal_homocysteine_elevation_context WHY coverage confirmed."
+      },
+      {
+        "path": "knowledge_bus/packages/pkg_s24_ldl_high_dyslipidaemia/signal_library.yaml",
+        "exists": true,
+        "note": "Verified. Full explanation block present. signal_ldl_cholesterol_high WHY coverage confirmed pending canonical ID resolution."
       }
     ],
     "duplicate_authority_sources": "NONE DETECTED"
   },
   "stage_2b": {
     "verdict": "PASS",
-    "behavioural_scope_defined": true,
-    "regression_targets": [
-      "Q-1 AC 1-12 all in force — named explicitly at prompt lines 98-114",
-      "Payload parity: flat Record<string,unknown> — visual changes must not alter state shape",
-      "conditionalDisplay: isQuestionVisible() logic must be preserved verbatim",
-      "?autofill=true: useEffect at lines 200-208 of current component must be preserved",
-      "Upload page integration: onSubmit callback contract unchanged"
+    "intelligence_core_components_identified": [
+      "backend/core/analytics/root_cause_compiler_v1.py — WHY loader registration (_ROOT_CAUSE_TARGETS)",
+      "backend/core/knowledge/load_root_cause_hypotheses.py — WHY loader functions",
+      "backend/core/analytics/report_compiler_v1.py — WHY consumer (no structural change required)"
     ],
+    "behavioural_surface_area": "top_hypothesis_line field in report_compiler_v1.py at line 535 — transitions from fallback string to governed hypothesis text for newly registered signals only. No change to ranking, domain scores, IDL records, confidence values, or any other AnalysisDTO field.",
+    "expected_output_changes": "signal_homocysteine_high, signal_mcv_high, signal_hypercortisolism: transition from fallback string to governed WHY hypothesis text in clinician-facing report output. All other AnalysisDTO fields unchanged.",
+    "regression_targets": [
+      "backend/tests/unit/test_golden_panel_runner.py — existing signal_homocysteine_elevation_context WHY assertions at lines 681, 716, 922, 925 must not regress",
+      "backend/tests/unit/test_signal_evaluator.py — all 32 determinism and override tests must pass",
+      "backend/tests/fixtures/panels/phenotypes/phenotype_expectations_v1.yaml — phenotype suite must not regress",
+      "New regression tests required for newly registered signals per Acceptance Criterion 7"
+    ],
+    "determinism_preserved": true,
+    "no_lm_reasoning_in_layer_b": true,
     "no_scope_creep": true,
     "stop_conditions_adequate": true,
     "determinism_risks": [
-      "Visual-only sprint: no analytical logic, no SSOT, no pipeline. Determinism risk is minimal.",
-      "State shape risk: visual restructuring must not introduce nested response objects. Flat responses map must be preserved.",
-      "Animation risk: staggered animation-delay uses inline styles — acceptable, no new dependencies."
+      "WHY YAML authoring: hypotheses must be deterministic, medically grounded, and non-circular. Shallow or invented content would pass silently — mitigated by acceptance criterion 3 and regression tests.",
+      "Loader registration error: a mis-wired loader could break hypothesis rendering for that signal — mitigated by requirement for AB/VR proving runs to pass (AC 4).",
+      "signal_apoa1_cardio_risk: unsupported WHY authoring risk if registration is not grounded first — mitigated by Task C mandatory grounding instruction."
     ]
   },
   "overall_verdict": "HARDENED"
