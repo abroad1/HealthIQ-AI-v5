@@ -1,0 +1,37 @@
+{
+  "description": "Bounded launch-core proving matrix — LC-PROVING-HARNESS-AUTOMATION (read by launch_core_proving_harness.py).",
+  "panels": {
+    "AB": "tests/fixtures/panels/ab_full_panel_with_ranges.json",
+    "VR": "tests/fixtures/panels/vr_full_panel_with_ranges.json"
+  },
+  "scenarios": [
+    {
+      "id": "baseline",
+      "description": "No lifestyle fixture; questionnaire_data omitted (minimal intake).",
+      "lifestyle_fixture": null,
+      "questionnaire_data": null
+    },
+    {
+      "id": "lifestyle_context",
+      "description": "Existing SSOT lifestyle fixture; no questionnaire_data.",
+      "lifestyle_fixture": "tests/fixtures/lifestyle_minimal.json",
+      "questionnaire_data": null
+    },
+    {
+      "id": "statin_off",
+      "description": "Explicit statin-off questionnaire answer; no lifestyle fixture.",
+      "lifestyle_fixture": null,
+      "questionnaire_data": {
+        "long_term_medications": ["None"]
+      }
+    },
+    {
+      "id": "statin_on",
+      "description": "Statin-on — must use exact SSOT option label.",
+      "lifestyle_fixture": null,
+      "questionnaire_data": {
+        "long_term_medications": ["Statins (cholesterol medication)"]
+      }
+    }
+  ]
+}
