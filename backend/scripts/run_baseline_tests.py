@@ -35,6 +35,7 @@ def main() -> int:
             "tests/unit/test_functional_interpretation_v1.py",
             "tests/unit/test_interpretation_entities_benchmark_v1.py",
             "tests/unit/test_narrative_report_compiler_v1.py",
+            "tests/regression/test_narrative_compiler_why_surface_regression.py",
             "tests/unit/test_phenotype_suite_v1.py",
             "-v",
         ],

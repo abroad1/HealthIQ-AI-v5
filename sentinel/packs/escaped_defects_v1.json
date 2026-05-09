@@ -42,6 +42,15 @@
       "test_file": "backend/tests/regression/test_persisted_result_replay_status.py",
       "first_seen": "2026-05",
       "note": "Full replay harness deferred. Phase 1 reports gap status only."
+    },
+    "narrative_compiler_why_surface": {
+      "description": "Layer B WHY signals compile but deterministic narrative compiler (Layer C mock path) fails to emit lead/secondary consumer-visible prose for homocysteine leaf or LDL canonical lane.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_narrative_compiler_why_surface_regression.py",
+      "first_seen": "2026-05",
+      "fix_commit": null,
+      "note": "Promoted post-LC-S1 from unit narrative compiler tests — Sentinel + baseline parity."
     }
   }
 }

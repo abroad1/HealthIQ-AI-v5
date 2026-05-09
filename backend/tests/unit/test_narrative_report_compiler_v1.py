@@ -10,32 +10,6 @@ from core.contracts.interpretation_display_layer_v1 import (
 )
 
 
-def test_compiler_emits_lead_when_homocysteine_signal_fires():
-    ig = {
-        "signal_results": [
-            {"signal_id": "signal_homocysteine_high", "signal_state": "at_risk"},
-        ],
-        "primary_driver_system_id": "vascular",
-    }
-    rep = compile_narrative_report_v1(analysis_id="a1", meta={}, insight_graph=ig, idl_bundle=None)
-    assert rep.lead_narrative
-    assert "homocysteine" in rep.lead_narrative.lower() or "one-carbon" in rep.lead_narrative.lower()
-    assert rep.body_overview
-    assert "vascular" in rep.body_overview.lower()
-    assert "Benchmark interpretation themes" in rep.body_overview
-
-
-def test_compiler_emits_secondary_when_ldl_signal_fires():
-    ig = {
-        "signal_results": [
-            {"signal_id": "signal_ldl_cholesterol_high", "signal_state": "suboptimal"},
-        ],
-    }
-    rep = compile_narrative_report_v1(analysis_id="a2", meta={}, insight_graph=ig, idl_bundle=None)
-    assert rep.secondary_narratives
-    assert "lipid" in rep.secondary_narratives.lower() or "ldl" in rep.secondary_narratives.lower()
-
-
 def test_compiler_no_raise_when_assets_missing(monkeypatch, tmp_path):
     from core.analytics import narrative_report_compiler_v1 as mod
 

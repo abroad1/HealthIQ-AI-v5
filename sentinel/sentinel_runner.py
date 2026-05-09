@@ -51,6 +51,9 @@ DEFECT_CLASS_TESTS: dict[str, list[str]] = {
     "wave1_contradiction":         ["backend/tests/regression/test_wave1_contradiction_status.py"],
     "persisted_result_replay":     ["backend/tests/regression/test_persisted_result_replay_status.py"],
     "alias_sweep":                 ["backend/tests/regression/test_alias_canonical_sweep.py"],
+    "narrative_compiler_why_surface": [
+        "backend/tests/regression/test_narrative_compiler_why_surface_regression.py",
+    ],
 }
 
 ALL_REGRESSION_TESTS = [t for tests in DEFECT_CLASS_TESTS.values() for t in tests]
