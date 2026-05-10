@@ -60,6 +60,15 @@
       "first_seen": "2026-05",
       "fix_commit": "6c7e4c0",
       "note": "Promoted post-LC-OBS-2 from unit orchestrator bridge tests — baseline parity + statin invariants."
+    },
+    "narrative_payload_assembly": {
+      "description": "NarrativePayloadV1-primary Layer C assembly path (LC-S3) — five sections unpopulated, prohibited claims emitted, prescriptive language in next-steps, or backwards-compat regression when payload absent.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_narrative_payload_compiler_regression.py",
+      "first_seen": "2026-05",
+      "fix_commit": null,
+      "note": "Promoted post-LC-S3 — guards payload-primary assembly path not covered by legacy narrative_compiler_why_surface guard."
     }
   }
 }
