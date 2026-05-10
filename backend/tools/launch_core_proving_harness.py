@@ -24,6 +24,8 @@ DEFAULT_OUT_ROOT = REPO_ROOT / "docs" / "audit-papers" / "launch-core-proving"
 
 sys.path.insert(0, str(BACKEND))
 
+from core.analytics.report_compiler_v1 import compile_clinician_report_v1  # noqa: E402
+from core.contracts.intervention_annotation_v1 import InterventionAnnotationsV1  # noqa: E402
 from tools.run_golden_panel import run_golden_panel  # noqa: E402
 
 
@@ -102,9 +104,42 @@ def _narrative_heads(nr: Any) -> Dict[str, Any]:
 
 
 def _clinician_heads(analysis_result: Dict[str, Any]) -> Dict[str, Any]:
-    cr = analysis_result.get("clinician_report_v1") or {}
-    if not isinstance(cr, dict):
+    """Match runtime clinician compilation used in tests (report_v1 is nested under meta)."""
+    meta = analysis_result.get("meta") or {}
+    if not isinstance(meta, dict):
+        meta = {}
+    ig = meta.get("insight_graph") or {}
+    if not isinstance(ig, dict):
+        ig = {}
+    report_v1 = _report_v1_dict(ig)
+
+    biomarkers = analysis_result.get("biomarkers") or []
+    if not isinstance(biomarkers, list):
+        biomarkers = []
+
+    mh = meta.get("medical_history_snapshot")
+    mh = mh if isinstance(mh, dict) else None
+
+    ia_obj: Optional[InterventionAnnotationsV1] = None
+    ia = analysis_result.get("intervention_annotations_v1")
+    if ia is not None:
+        ia_dump = ia.model_dump() if hasattr(ia, "model_dump") else ia
+        if isinstance(ia_dump, dict):
+            try:
+                ia_obj = InterventionAnnotationsV1.model_validate(ia_dump)
+            except Exception:
+                ia_obj = None
+
+    compiled = compile_clinician_report_v1(
+        report_v1_payload=report_v1,
+        biomarker_rows=biomarkers,
+        medical_history=mh,
+        intervention_annotations_v1=ia_obj,
+    )
+    if compiled is None:
         return {}
+
+    cr = compiled.model_dump()
     sections = cr.get("sections") or {}
     if not isinstance(sections, dict):
         return {}

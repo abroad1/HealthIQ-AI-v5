@@ -1,12 +1,12 @@
 {
-  "git_short_sha": "433a821",
+  "git_short_sha": "48efd2e",
   "matrix_path": "backend\\tests\\fixtures\\proving\\launch_core_matrix.json",
   "runs": {
     "AB__baseline": {
       "clinician_page1": {
-        "key_findings_head": "",
-        "primary_concern_head": "",
-        "top_hypothesis_line_head": ""
+        "key_findings_head": "Homocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+        "primary_concern_head": "Homocysteine Elevation Context: warrants attention on this panel",
+        "top_hypothesis_line_head": "Top hypothesis: B12-associated pattern (confidence 0.60)."
       },
       "consumer_band_labels": [
         "strong",
@@ -87,9 +87,9 @@
     },
     "AB__lifestyle_context": {
       "clinician_page1": {
-        "key_findings_head": "",
-        "primary_concern_head": "",
-        "top_hypothesis_line_head": ""
+        "key_findings_head": "Homocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+        "primary_concern_head": "Homocysteine Elevation Context: warrants attention on this panel",
+        "top_hypothesis_line_head": "Top hypothesis: B12-associated pattern (confidence 0.60)."
       },
       "consumer_band_labels": [
         "strong",
@@ -170,13 +170,13 @@
     },
     "AB__statin_off": {
       "clinician_page1": {
-        "key_findings_head": "",
-        "primary_concern_head": "",
-        "top_hypothesis_line_head": ""
+        "key_findings_head": "Homocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+        "primary_concern_head": "Homocysteine Elevation Context: warrants attention on this panel",
+        "top_hypothesis_line_head": "Top hypothesis: B12-associated pattern (confidence 0.60)."
       },
       "consumer_band_labels": [
         "strong",
-        "watch",
+        "stable",
         "review"
       ],
       "consumer_domain_rows": [
@@ -186,7 +186,7 @@
           "domain_id": "wave1_blood_sugar"
         },
         {
-          "band_label": "watch",
+          "band_label": "stable",
           "consequence_sentence_head": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
           "domain_id": "wave1_cardiovascular"
         },
@@ -257,13 +257,13 @@
     },
     "AB__statin_on": {
       "clinician_page1": {
-        "key_findings_head": "",
-        "primary_concern_head": "",
-        "top_hypothesis_line_head": ""
+        "key_findings_head": "Homocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+        "primary_concern_head": "Homocysteine Elevation Context: warrants attention on this panel",
+        "top_hypothesis_line_head": "Top hypothesis: B12-associated pattern (confidence 0.60)."
       },
       "consumer_band_labels": [
         "strong",
-        "watch",
+        "stable",
         "review"
       ],
       "consumer_domain_rows": [
@@ -273,7 +273,7 @@
           "domain_id": "wave1_blood_sugar"
         },
         {
-          "band_label": "watch",
+          "band_label": "stable",
           "consequence_sentence_head": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action. Medication context: Layer B intervention annotation \u2014 lipid-lowering statin (user-reported; framing only; does not alter signal stat",
           "domain_id": "wave1_cardiovascular"
         },
@@ -346,9 +346,9 @@
     },
     "VR__baseline": {
       "clinician_page1": {
-        "key_findings_head": "",
-        "primary_concern_head": "",
-        "top_hypothesis_line_head": ""
+        "key_findings_head": "Homocysteine Elevation Context is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+        "primary_concern_head": "Homocysteine Elevation Context: is outside the optimal range on this panel",
+        "top_hypothesis_line_head": "Top hypothesis: B12-associated pattern (confidence 0.60)."
       },
       "consumer_band_labels": [
         "strong",
@@ -425,9 +425,9 @@
     },
     "VR__lifestyle_context": {
       "clinician_page1": {
-        "key_findings_head": "",
-        "primary_concern_head": "",
-        "top_hypothesis_line_head": ""
+        "key_findings_head": "Homocysteine Elevation Context is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+        "primary_concern_head": "Homocysteine Elevation Context: is outside the optimal range on this panel",
+        "top_hypothesis_line_head": "Top hypothesis: B12-associated pattern (confidence 0.60)."
       },
       "consumer_band_labels": [
         "strong",
@@ -504,14 +504,14 @@
     },
     "VR__statin_off": {
       "clinician_page1": {
-        "key_findings_head": "",
-        "primary_concern_head": "",
-        "top_hypothesis_line_head": ""
+        "key_findings_head": "Homocysteine Elevation Context is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+        "primary_concern_head": "Homocysteine Elevation Context: is outside the optimal range on this panel",
+        "top_hypothesis_line_head": "Top hypothesis: B12-associated pattern (confidence 0.60)."
       },
       "consumer_band_labels": [
         "strong",
-        "stable",
-        "stable"
+        "strong",
+        "strong"
       ],
       "consumer_domain_rows": [
         {
@@ -520,12 +520,12 @@
           "domain_id": "wave1_blood_sugar"
         },
         {
-          "band_label": "stable",
+          "band_label": "strong",
           "consequence_sentence_head": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action.",
           "domain_id": "wave1_cardiovascular"
         },
         {
-          "band_label": "stable",
+          "band_label": "strong",
           "consequence_sentence_head": "Early liver-strain patterns are a key lane toward MASLD/fibrosis risk if ignored.",
           "domain_id": "wave1_liver"
         }
@@ -587,14 +587,14 @@
     },
     "VR__statin_on": {
       "clinician_page1": {
-        "key_findings_head": "",
-        "primary_concern_head": "",
-        "top_hypothesis_line_head": ""
+        "key_findings_head": "Homocysteine Elevation Context is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread.",
+        "primary_concern_head": "Homocysteine Elevation Context: is outside the optimal range on this panel",
+        "top_hypothesis_line_head": "Top hypothesis: B12-associated pattern (confidence 0.60)."
       },
       "consumer_band_labels": [
         "strong",
-        "stable",
-        "stable"
+        "strong",
+        "strong"
       ],
       "consumer_domain_rows": [
         {
@@ -603,12 +603,12 @@
           "domain_id": "wave1_blood_sugar"
         },
         {
-          "band_label": "stable",
+          "band_label": "strong",
           "consequence_sentence_head": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action. Medication context: Layer B intervention annotation \u2014 lipid-lowering statin (user-reported; framing only; does not alter signal stat",
           "domain_id": "wave1_cardiovascular"
         },
         {
-          "band_label": "stable",
+          "band_label": "strong",
           "consequence_sentence_head": "Early liver-strain patterns are a key lane toward MASLD/fibrosis risk if ignored.",
           "domain_id": "wave1_liver"
         }
@@ -671,5 +671,5 @@
       ]
     }
   },
-  "stamp": "lc-proving-commit"
+  "stamp": "proving-wp2-layer-bc-closure"
 }

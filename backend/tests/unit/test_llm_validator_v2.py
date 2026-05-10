@@ -158,3 +158,43 @@ def test_validate_llm_output_v2_red_flag_referencing(canonical_prompt):
     error_str = str(exc_info.value)
     assert "red flag" in error_str.lower()
 
+
+def test_validate_llm_output_v2_fail_prohibited_claim_language(canonical_prompt, valid_llm_result):
+    bad = json.loads(json.dumps(valid_llm_result))
+    bad["insights"][0]["title"] = bad["insights"][0]["title"] + " This confirms diabetes."
+    with pytest.raises(ValueError) as exc_info:
+        validate_llm_output_v2(canonical_prompt, bad)
+    assert "prohibited claim language" in str(exc_info.value).lower()
+
+
+def test_validate_llm_output_v2_fail_lead_signal_token_mismatch(canonical_prompt, valid_llm_result):
+    prompt = dict(canonical_prompt)
+    prompt["layer_b_lead_signal_id"] = "signal_glucose_high"
+    bad = json.loads(json.dumps(valid_llm_result))
+    bad["insights"][0][
+        "title"
+    ] = "Focus on signal_ldl_cholesterol_high — lipid-centred narrative."
+    with pytest.raises(ValueError) as exc_info:
+        validate_llm_output_v2(prompt, bad)
+    assert "lead finding preservation" in str(exc_info.value).lower()
+
+
+def test_validate_llm_output_v2_fail_invented_hypothesis(canonical_prompt, valid_llm_result):
+    prompt = dict(canonical_prompt)
+    prompt["layer_b_hypothesis_ids"] = ["hyp_allowed_only"]
+    bad = json.loads(json.dumps(valid_llm_result))
+    bad["insights"][0]["actions"] = list(bad["insights"][0]["actions"]) + [
+        "Discuss hyp_invented_only pathway."
+    ]
+    with pytest.raises(ValueError) as exc_info:
+        validate_llm_output_v2(prompt, bad)
+    assert "hypothesis allow-list" in str(exc_info.value).lower()
+
+
+def test_validate_llm_output_v2_pass_lead_when_no_signal_tokens(canonical_prompt, valid_llm_result):
+    """If the model uses plain-language-only copy, signal-token lead checks stay inert."""
+    prompt = dict(canonical_prompt)
+    prompt["layer_b_lead_signal_id"] = "signal_glucose_high"
+    result = validate_llm_output_v2(prompt, valid_llm_result)
+    assert len(result.insights) == 2
+

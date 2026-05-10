@@ -30,6 +30,41 @@ GRAPH_PATH_USER_PROMPT_MARKERS = (
 )
 
 
+def _layer_b_fields_for_validator_prompt(ig: Dict[str, Any]) -> Dict[str, Any]:
+    """Mirror typed Layer B truth from insight_graph.report_v1 into validator prompt_json (WP2)."""
+    out: Dict[str, Any] = {}
+    rv = ig.get("report_v1")
+    if rv is None:
+        return out
+    if hasattr(rv, "model_dump"):
+        rv = rv.model_dump()
+    if not isinstance(rv, dict):
+        return out
+
+    tfs = rv.get("top_findings") or []
+    if isinstance(tfs, list) and tfs:
+        row0 = tfs[0]
+        if isinstance(row0, dict):
+            sid = str(row0.get("signal_id", "")).strip()
+            if sid:
+                out["layer_b_lead_signal_id"] = sid
+
+    rc = rv.get("root_cause_v1")
+    if hasattr(rc, "model_dump"):
+        rc = rc.model_dump()
+    if isinstance(rc, dict):
+        hyps: List[str] = []
+        for f in rc.get("findings") or []:
+            if not isinstance(f, dict):
+                continue
+            for h in f.get("hypotheses") or []:
+                if isinstance(h, dict) and h.get("hypothesis_id"):
+                    hyps.append(str(h["hypothesis_id"]))
+        out["layer_b_hypothesis_ids"] = sorted(set(hyps))
+
+    return out
+
+
 def build_validator_prompt_json_from_insight_graph_dict(ig: Dict[str, Any]) -> Dict[str, Any]:
     """
     Build the prompt_json envelope used by validate_llm_output_v2 for cross-checks.
@@ -80,12 +115,14 @@ def build_validator_prompt_json_from_insight_graph_dict(ig: Dict[str, Any]) -> D
         if sid and sev in ("high", "critical", "at_risk", "warning"):
             red_flags.append({"id": str(sid)})
 
-    return {
+    envelope: Dict[str, Any] = {
         "biomarkers": biomarkers,
         "clusters": clusters,
         "completeness": completeness,
         "red_flags": red_flags,
     }
+    envelope.update(_layer_b_fields_for_validator_prompt(ig))
+    return envelope
 
 
 class MockLLMClient(LLMClient):
