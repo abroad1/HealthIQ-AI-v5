@@ -13,6 +13,7 @@ import yaml
 
 from core.analytics.longitudinal_numeric_v1 import comparable_lab_delta
 from core.contracts.intervention_annotation_v1 import InterventionAnnotationsV1
+from core.contracts.narrative_payload_v1 import NarrativePayloadV1
 from core.contracts.narrative_report_v1 import NARRATIVE_REPORT_V1_VERSION, NarrativeReportV1
 from core.analytics.intervention_annotation_formatter_v1 import (
     format_intervention_annotation_narrative_appendix_v1,
@@ -530,6 +531,7 @@ def compile_narrative_report_v1(
     insight_graph: Optional[Mapping[str, Any]] = None,
     idl_bundle: Any = None,
     intervention_annotations_v1: Optional[InterventionAnnotationsV1] = None,
+    narrative_payload_v1: Optional[NarrativePayloadV1] = None,
 ) -> NarrativeReportV1:
     """
     Compile a bounded v1 narrative report from governed assets and enriched graph/meta.
@@ -542,6 +544,24 @@ def compile_narrative_report_v1(
         "assets_resolved": [],
         "skipped": [],
     }
+
+    if narrative_payload_v1 is not None:
+        compiler_meta["narrative_payload_v1_present"] = True
+        tf = narrative_payload_v1.top_findings
+        digest_lead = str(tf[0].signal_id).strip() if tf else ""
+        rc = narrative_payload_v1.root_cause_v1
+        hyp_n = 0
+        if rc is not None:
+            for f in rc.findings:
+                hyp_n += len(f.hypotheses)
+        compiler_meta["narrative_payload_v1_digest"] = {
+            "payload_schema_version": narrative_payload_v1.payload_schema_version,
+            "payload_analysis_id": narrative_payload_v1.analysis_id,
+            "lead_signal_id": digest_lead,
+            "top_finding_count": len(tf),
+            "root_cause_hypothesis_count": hyp_n,
+            "section_intent_keys": sorted(narrative_payload_v1.section_intents.keys()),
+        }
 
     entities_doc = _load_yaml(_ENTITIES_PATH)
     pathway_doc = _load_yaml(_PATHWAY_PATH)

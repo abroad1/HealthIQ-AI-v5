@@ -11,8 +11,12 @@ from core.pipeline.questionnaire_mapper import STATINS_LONG_TERM_MEDICATION_LABE
 from tools.launch_core_proving_harness import (
     DEFAULT_MATRIX,
     build_merged_fixture,
+    fingerprint_analysis_result,
     load_matrix,
 )
+from tools.run_golden_panel import run_golden_panel
+
+from tests.support.panel_acceptance import ab_acceptance_fixture_path
 
 BACKEND = Path(__file__).resolve().parents[2]
 
@@ -52,3 +56,14 @@ def test_load_matrix_shape() -> None:
     assert "AB" in panels and "VR" in panels
     ids = [str(s.get("id")) for s in scenarios]
     assert ids == ["baseline", "lifestyle_context", "statin_off", "statin_on"]
+
+
+def test_fingerprint_clinician_primary_concern_head_non_empty(tmp_path: Path) -> None:
+    _, analysis_result = run_golden_panel(
+        fixture_path=ab_acceptance_fixture_path(),
+        output_root=tmp_path,
+        run_id="wp2-proving-clinician-head",
+        write_narrative=False,
+    )
+    fp = fingerprint_analysis_result(analysis_result)
+    assert fp["clinician_page1"]["primary_concern_head"].strip()

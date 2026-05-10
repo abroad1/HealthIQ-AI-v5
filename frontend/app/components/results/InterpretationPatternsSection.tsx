@@ -13,7 +13,7 @@ export function selectVisibleIdlRecords(
 ): InterpretationDisplayRecordV1[] {
   if (!bundle?.records?.length) return [];
   return [...bundle.records]
-    .filter((r) => r.enabled_for_frontend === true)
+    .filter((r) => r.enabled_for_frontend === true && r.frontend_allowed_term !== 'clinical_only')
     .sort((a, b) => a.display_order_priority - b.display_order_priority);
 }
 

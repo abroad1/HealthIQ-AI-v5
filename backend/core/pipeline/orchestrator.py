@@ -49,7 +49,9 @@ from core.analytics.intervention_annotation_compiler_v1 import build_interventio
 from core.analytics.intervention_annotation_formatter_v1 import (
     format_intervention_annotation_consumer_cv_suffix_v1,
 )
+from core.analytics.narrative_payload_builder_v1 import build_narrative_payload_v1
 from core.analytics.narrative_report_compiler_v1 import compile_narrative_report_v1
+from core.contracts.report_v1 import ReportV1
 from core.analytics.replay_manifest_builder import build_replay_manifest_v1
 from core.analytics.explainability_builder import (
     build_explainability_report_v1,
@@ -2211,12 +2213,22 @@ class AnalysisOrchestrator:
             idl_bundle = publish_interpretation_display_layer_v1(
                 insight_graph.model_dump() if hasattr(insight_graph, "model_dump") else {}
             )
+            narrative_payload_v1 = None
+            _rv = getattr(insight_graph, "report_v1", None)
+            if _rv is not None:
+                _rv_payload = _rv.model_dump() if hasattr(_rv, "model_dump") else _rv
+                narrative_payload_v1 = build_narrative_payload_v1(
+                    analysis_id=analysis_id,
+                    report_v1=ReportV1.model_validate(_rv_payload),
+                    intervention_annotations_v1=intervention_annotations_v1,
+                )
             narrative_report_v1 = compile_narrative_report_v1(
                 analysis_id=analysis_id,
                 meta=meta,
                 insight_graph=insight_graph.model_dump() if hasattr(insight_graph, "model_dump") else {},
                 idl_bundle=idl_bundle,
                 intervention_annotations_v1=intervention_annotations_v1,
+                narrative_payload_v1=narrative_payload_v1,
             )
             _panel_ids = {
                 str(k)

@@ -31,7 +31,7 @@ const baseRecord = {
   why_it_matters: 'Why A',
   severity_state: 'attention' as const,
   supporting_biomarkers_summary: 'Markers A',
-  frontend_allowed_term: 'clinical_only' as const,
+  frontend_allowed_term: 'phenotype_allowed' as const,
   display_order_priority: 2,
   enabled_for_frontend: true,
 };
@@ -79,6 +79,57 @@ describe('selectVisibleIdlRecords', () => {
     expect(vis).toHaveLength(2);
     expect(vis[0].retail_display_label).toBe('First card');
     expect(vis[1].retail_display_label).toBe('Third card');
+  });
+
+  it('excludes clinical_only rows even when enabled_for_frontend is true', () => {
+    const bundle: InterpretationDisplayLayerBundleV1 = {
+      schema_version: '1.0.0',
+      records: [
+        {
+          ...baseRecord,
+          internal_id: 'ph_allowed_v1',
+          retail_display_label: 'Allowed row',
+          display_order_priority: 2,
+          enabled_for_frontend: true,
+          frontend_allowed_term: 'phenotype_allowed',
+        },
+        {
+          ...baseRecord,
+          internal_id: 'ph_clinical_gate_v1',
+          retail_display_label: 'Clinical-only row',
+          display_order_priority: 1,
+          enabled_for_frontend: true,
+          frontend_allowed_term: 'clinical_only',
+        },
+      ],
+    };
+    const vis = selectVisibleIdlRecords(bundle);
+    expect(vis).toHaveLength(1);
+    expect(vis[0].retail_display_label).toBe('Allowed row');
+  });
+
+  it('preserves ordering among visible phenotype_allowed rows', () => {
+    const bundle: InterpretationDisplayLayerBundleV1 = {
+      schema_version: '1.0.0',
+      records: [
+        {
+          ...baseRecord,
+          internal_id: 'z_last',
+          retail_display_label: 'Z last',
+          display_order_priority: 30,
+          frontend_allowed_term: 'phenotype_allowed',
+        },
+        {
+          ...baseRecord,
+          internal_id: 'a_first',
+          retail_display_label: 'A first',
+          display_order_priority: 5,
+          frontend_allowed_term: 'phenotype_allowed',
+        },
+      ],
+    };
+    const vis = selectVisibleIdlRecords(bundle);
+    expect(vis.map((r) => r.retail_display_label)).toEqual(['A first', 'Z last']);
   });
 
   it('returns empty for missing bundle', () => {

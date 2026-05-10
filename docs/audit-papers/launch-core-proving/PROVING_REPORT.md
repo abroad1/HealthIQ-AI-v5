@@ -1,7 +1,7 @@
 # Launch-core proving harness — comparison report
 
-- **Stamp:** `lc-proving-commit`
-- **Git (short):** `433a821`
+- **Stamp:** `proving-wp2-layer-bc-closure`
+- **Git (short):** `48efd2e`
 - **Matrix:** `backend\tests\fixtures\proving\launch_core_matrix.json`
 
 ## Scenario matrix (panels × scenarios)
@@ -31,7 +31,7 @@ This pattern links nutrie...
 - **body overview (head):** Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.
 
 Co-supporting systems (deterministic arbitration): cardiovascular, hematologica...
-- **clinician primary_concern (head):** ...
+- **clinician primary_concern (head):** Homocysteine Elevation Context: warrants attention on this panel...
 - **IDL enabled patterns:** 4 titles=['', '', '', '']
 
 ### `AB__lifestyle_context`
@@ -46,14 +46,14 @@ This pattern links nutrie...
 - **body overview (head):** Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.
 
 Co-supporting systems (deterministic arbitration): autonomic, cardiovascular, h...
-- **clinician primary_concern (head):** ...
+- **clinician primary_concern (head):** Homocysteine Elevation Context: warrants attention on this panel...
 - **IDL enabled patterns:** 4 titles=['', '', '', '']
 
 ### `AB__statin_off`
 
 - **status:** completed
 - **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_mcv_high, signal_total_cholesterol_high, signal_apoa1_cardio_risk, signal_ldl_cholesterol_high, signal_ldl_high, signal_transferrin_low, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
-- **consumer band labels:** `['strong', 'watch', 'review']`
+- **consumer band labels:** `['strong', 'stable', 'review']`
 - **intervention present:** False classes=[]
 - **retail summary (head):** Methylation pathway pattern (strong signal): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context
 
@@ -61,14 +61,14 @@ This pattern links nutrie...
 - **body overview (head):** Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.
 
 Co-supporting systems (deterministic arbitration): cardiovascular, hematologica...
-- **clinician primary_concern (head):** ...
+- **clinician primary_concern (head):** Homocysteine Elevation Context: warrants attention on this panel...
 - **IDL enabled patterns:** 4 titles=['', '', '', '']
 
 ### `AB__statin_on`
 
 - **status:** completed
 - **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_mcv_high, signal_total_cholesterol_high, signal_apoa1_cardio_risk, signal_ldl_cholesterol_high, signal_ldl_high, signal_transferrin_low, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
-- **consumer band labels:** `['strong', 'watch', 'review']`
+- **consumer band labels:** `['strong', 'stable', 'review']`
 - **intervention present:** True classes=['lipid_lowering_statin']
 - **retail summary (head):** Methylation pathway pattern (strong signal): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context
 
@@ -76,7 +76,7 @@ This pattern links nutrie...
 - **body overview (head):** Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.
 
 Co-supporting systems (deterministic arbitration): cardiovascular, hematologica...
-- **clinician primary_concern (head):** ...
+- **clinician primary_concern (head):** Homocysteine Elevation Context: warrants attention on this panel...
 - **IDL enabled patterns:** 4 titles=['', '', '', '']
 
 ### `VR__baseline`
@@ -91,7 +91,7 @@ This pattern links nut...
 - **body overview (head):** Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.
 
 Co-supporting systems (deterministic arbitration): cardiovascular, hematologica...
-- **clinician primary_concern (head):** ...
+- **clinician primary_concern (head):** Homocysteine Elevation Context: is outside the optimal range on this panel...
 - **IDL enabled patterns:** 2 titles=['', '']
 
 ### `VR__lifestyle_context`
@@ -106,14 +106,14 @@ This pattern links nut...
 - **body overview (head):** Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.
 
 Co-supporting systems (deterministic arbitration): autonomic, cardiovascular, h...
-- **clinician primary_concern (head):** ...
+- **clinician primary_concern (head):** Homocysteine Elevation Context: is outside the optimal range on this panel...
 - **IDL enabled patterns:** 2 titles=['', '']
 
 ### `VR__statin_off`
 
 - **status:** completed
 - **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_alp_low, signal_hypercortisolism, signal_vitamin_d_low, signal_cortisol_high, signal_creatine_kinase_high, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
-- **consumer band labels:** `['strong', 'stable', 'stable']`
+- **consumer band labels:** `['strong', 'strong', 'strong']`
 - **intervention present:** False classes=[]
 - **retail summary (head):** Methylation pathway pattern (pattern to watch): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context
 
@@ -121,14 +121,14 @@ This pattern links nut...
 - **body overview (head):** Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.
 
 Co-supporting systems (deterministic arbitration): cardiovascular, hematologica...
-- **clinician primary_concern (head):** ...
+- **clinician primary_concern (head):** Homocysteine Elevation Context: is outside the optimal range on this panel...
 - **IDL enabled patterns:** 2 titles=['', '']
 
 ### `VR__statin_on`
 
 - **status:** completed
 - **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_alp_low, signal_hypercortisolism, signal_vitamin_d_low, signal_cortisol_high, signal_creatine_kinase_high, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
-- **consumer band labels:** `['strong', 'stable', 'stable']`
+- **consumer band labels:** `['strong', 'strong', 'strong']`
 - **intervention present:** True classes=['lipid_lowering_statin']
 - **retail summary (head):** Methylation pathway pattern (pattern to watch): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context
 
@@ -136,7 +136,7 @@ This pattern links nut...
 - **body overview (head):** Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.
 
 Co-supporting systems (deterministic arbitration): cardiovascular, hematologica...
-- **clinician primary_concern (head):** ...
+- **clinician primary_concern (head):** Homocysteine Elevation Context: is outside the optimal range on this panel...
 - **IDL enabled patterns:** 2 titles=['', '']
 
 ## Analytical invariants — statin-off vs statin-on (same panel, no lifestyle)
@@ -163,9 +163,5 @@ Expect: lifestyle-derived fields present under lifestyle_context; narrative head
 
 ## Artifact paths
 
-- Golden outputs (per run): `docs/audit-papers/launch-core-proving/artifacts/lc-proving-commit/` — written by `run_golden_panel`; omit bulk artefacts from git if desired.
+- Golden outputs (per run): `docs/audit-papers/launch-core-proving/artifacts/proving-wp2-layer-bc-closure/` — written by `run_golden_panel`; omit bulk artefacts from git if desired.
 - Latest fingerprints JSON: `docs/audit-papers/launch-core-proving/latest_fingerprints.json`
-
-## OBS-2 — closure observation (GPT/human)
-
-AB band label diverges between baseline (no questionnaire) and statin_off (explicit 'None'). This was surfaced by the harness and requires GPT/human confirmation on whether these states are expected to differ.
