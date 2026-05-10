@@ -30,7 +30,8 @@ class MappedLifestyleFactors:
     """Mapped lifestyle factors from questionnaire responses."""
     diet_level: LifestyleLevel
     sleep_hours: float
-    exercise_minutes_per_week: int
+    # None = exercise questions not answered (unknown); do not coerce to 0 — avoids false VERY_POOR exercise overlay (OBS-2).
+    exercise_minutes_per_week: Optional[int]
     alcohol_units_per_week: int
     smoking_status: str
     stress_level: LifestyleLevel
@@ -307,12 +308,22 @@ class QuestionnaireMapper:
                 return 9.0
         return 7.0  # Default
     
-    def _map_exercise_minutes(self, responses: Dict[str, Any]) -> int:
-        """Map exercise minutes per week from questionnaire responses."""
+    def _map_exercise_minutes(self, responses: Dict[str, Any]) -> Optional[int]:
+        """Map exercise minutes per week from questionnaire responses.
+
+        When neither vigorous nor resistance exercise question is present, returns None (unknown).
+        Present keys with recognised option values contribute minutes; explicit absence of both keys
+        must not be treated as zero weekly exercise (OBS-2).
+        """
+        has_vigorous = "vigorous_exercise_days" in responses
+        has_resistance = "resistance_training_days" in responses
+        if not has_vigorous and not has_resistance:
+            return None
+
         total_minutes = 0
-        
+
         # Vigorous exercise (vigorous_exercise_days)
-        if "vigorous_exercise_days" in responses:
+        if has_vigorous:
             vigorous_days = responses["vigorous_exercise_days"]
             if vigorous_days == "4+ days":
                 total_minutes += 120  # 4 days * 30 min
@@ -324,7 +335,7 @@ class QuestionnaireMapper:
                 total_minutes += 30
         
         # Resistance training (resistance_training_days)
-        if "resistance_training_days" in responses:
+        if has_resistance:
             resistance_days = responses["resistance_training_days"]
             if resistance_days == "3+ days":
                 total_minutes += 90  # 3 days * 30 min
@@ -332,7 +343,7 @@ class QuestionnaireMapper:
                 total_minutes += 60
             elif resistance_days == "1 day":
                 total_minutes += 30
-        
+
         return total_minutes
     
     def _map_alcohol_consumption(self, responses: Dict[str, Any]) -> int:

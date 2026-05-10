@@ -81,6 +81,25 @@ class TestQuestionnaireMapper:
         
         # 4 days * 30 min + 3 days * 30 min = 210 minutes
         assert lifestyle_factors.exercise_minutes_per_week == 210
+
+    def test_map_exercise_minutes_unknown_when_questions_absent_obs2(self):
+        """Minimal payload (e.g. LC proving statin_off): no exercise keys → unknown, not 0."""
+        lifestyle_factors, _ = self.mapper.map_submission(
+            QuestionnaireSubmission(
+                responses={"long_term_medications": ["None"]},
+                submission_id="obs2_partial",
+            )
+        )
+        assert lifestyle_factors.exercise_minutes_per_week is None
+
+    def test_map_exercise_minutes_vigorous_only_still_maps(self):
+        lifestyle_factors, _ = self.mapper.map_submission(
+            QuestionnaireSubmission(
+                responses={"vigorous_exercise_days": "2 days"},
+                submission_id="obs2_vig",
+            )
+        )
+        assert lifestyle_factors.exercise_minutes_per_week == 60
     
     def test_map_alcohol_consumption(self):
         """Test mapping alcohol consumption to units per week."""
@@ -368,7 +387,7 @@ class TestQuestionnaireMapperEdgeCases:
         assert lifestyle_factors.sleep_hours == 7.5
         assert lifestyle_factors.alcohol_units_per_week == 0
         assert lifestyle_factors.diet_level == LifestyleLevel.AVERAGE  # Default
-        assert lifestyle_factors.exercise_minutes_per_week == 0  # Default
+        assert lifestyle_factors.exercise_minutes_per_week is None  # exercise questions absent → unknown (OBS-2)
         assert lifestyle_factors.smoking_status == "never"  # Default
         assert lifestyle_factors.stress_level == LifestyleLevel.AVERAGE  # Default
     
@@ -386,7 +405,7 @@ class TestQuestionnaireMapperEdgeCases:
         # Should use all default values
         assert lifestyle_factors.diet_level == LifestyleLevel.AVERAGE
         assert lifestyle_factors.sleep_hours == 7.0
-        assert lifestyle_factors.exercise_minutes_per_week == 0
+        assert lifestyle_factors.exercise_minutes_per_week is None
         assert lifestyle_factors.alcohol_units_per_week == 5
         assert lifestyle_factors.smoking_status == "never"
         assert lifestyle_factors.stress_level == LifestyleLevel.AVERAGE

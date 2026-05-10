@@ -1,6 +1,6 @@
 ---
-work_id: LC-PROVING-HARNESS-AUTOMATION
-branch: feature/lc-proving-harness-automation
+work_id: LC-OBS2-QUESTIONNAIRE-SEMANTICS-INVESTIGATION
+branch: feature/lc-obs2-questionnaire-semantics-investigation
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
@@ -10,7 +10,7 @@ requires_claude_audit: true
 requires_gpt_architecture_review: true
 ---
 
-# Launch-core proving harness automation
+# LC-OBS2 — Questionnaire semantics investigation
 
 ## SOP status
 
@@ -23,7 +23,7 @@ Before any file changes:
 - verify the working tree is clean or intentionally governed
 - follow the required two-phase start/finish lifecycle for HIGH-risk work
 
-This is HIGH risk because it affects how the product is validated going forward and may touch protected verification, fixture, and reporting paths.
+This is HIGH risk because it may touch live questionnaire semantics and context interpretation behaviour.
 
 ## Assigned execution agent
 
@@ -31,226 +31,168 @@ Use Cursor agent:
 
 **`healthiq-qa-uat`**
 
-This is proving/verification automation work, not intelligence expansion and not a frontend-only task.
+This is a bounded behavioural investigation of launch-core pipeline semantics, not a new feature sprint.
 
 ## Objective
 
-Build a repeatable, fixture-driven proving harness for the launch-core slice so Anthony does not need to manually upload panels and fill in questionnaires to validate end-to-end behaviour.
+Investigate OBS-2 surfaced by the launch-core proving harness:
 
-The harness must run a bounded matrix of fixed scenarios and produce a compact, human-readable comparison output showing:
+- AB band label diverges between:
+  - baseline = no questionnaire data
+  - statin_off = explicit `"None"` style questionnaire response
 
-- what changed
-- what stayed stable
-- whether expected context effects appeared
-- whether analytical truth stayed intact where required
+Determine whether this divergence is:
 
-This is not a demo script.
-It is a production-grade proving tool for the current launch-core pathway.
+1. expected product semantics
+2. an unintended behavioural inconsistency
+3. a fixture/harness artefact
+4. a mapper/orchestrator/questionnaire-normalisation issue
 
-## Why this exists
+This package is primarily an **investigation and clarification** package.  
+Do not assume the outcome is “fix it.”  
+First establish whether the behaviour is correct.
 
-The programme has now completed:
-- Sprint 1 launch-core analytical hardening
-- Sprint 2 statin context integration
+## Background
 
-The next need is not more manual clicking.  
-It is a governed way to repeatedly prove the slice using fixed fixtures and scenario payloads.
+The proving harness surfaced OBS-2 and preserved it in:
+- `docs/sprints/LC-PROVING-HARNESS-AUTOMATION_completion_2026-05.md`
+- `docs/audit-papers/launch-core-proving/PROVING_REPORT.md`
 
-Human review should become:
-- review the proving output
-- decide whether it is correct
+The key question is:
 
-not:
-- repeatedly key in panels and questionnaires by hand
+**Should “no questionnaire provided” and “explicitly answered none” be treated as equivalent by the live pipeline, or not?**
 
-## Fixed programme assumptions
-
-These are binding inputs, not open questions:
-
-### 1. The launch-core slice already exists
-The proving harness is validating the current launch-core slice, not inventing a new one.
-
-### 2. Statin context is now on the mainline
-The harness must include statin-on / statin-off proving scenarios.
-
-### 3. Questionnaire proving must stay minimal
-The harness should use a very small number of fixed questionnaire payloads, not a giant scenario library.
-
-### 4. Layer B / Layer C boundary remains binding
-The harness must be able to show that context changes produce appropriate wording differences without mutating analytical truth where they should not.
-
-### 5. Human proving remains necessary
-The harness does not replace judgement.
-It replaces repetitive manual setup.
+The harness has done its job by exposing the difference.
+This package determines whether the difference is correct.
 
 ## Scope
 
 ### In scope
 
-1. Define a bounded launch-core proving scenario matrix.
-2. Encode the matrix as fixed fixtures / payloads.
-3. Run those scenarios automatically through the real pipeline.
-4. Produce a compact comparison output suitable for human review.
-5. Show both:
-   - expected differences
-   - expected invariants
-6. Reuse existing verification tooling where sensible.
-7. Keep the harness narrow, deterministic, and easy to rerun.
+1. Reproduce OBS-2 cleanly.
+2. Trace the behavioural difference through the real pipeline.
+3. Identify the first point at which:
+   - no-questionnaire state
+   - explicit-none state
+   diverge.
+4. Determine whether that divergence is intentional, documented, and product-correct.
+5. Recommend one of:
+   - retain behaviour and document it
+   - normalise the two states to equivalence
+   - narrow fix in mapper/orchestrator/questionnaire semantics
+6. Add or update a bounded test that locks the intended behaviour once decided.
+7. Produce a concise investigation note.
 
 ### Explicitly out of scope
 
-- full UAT framework redesign
-- broad Sentinel redesign
-- broad fixture explosion across many panels and personas
-- new analytical logic
-- new questionnaire strategy
-- new medication categories beyond the already approved launch-core context path
-- frontend redesign
-- ad hoc one-off notebooks/scripts that are not fit to live in the repo
+- broad questionnaire redesign
+- multi-medication expansion
+- statin-path redesign
+- new proving harness work
+- broad analytics refactor
+- opportunistic fixing of unrelated questionnaire behaviours
 
-## Required proving matrix
+## Required method
 
-At minimum, support a bounded matrix around the current launch-core panels:
+### A. Reproduce the issue
+Use the proving harness or the smallest equivalent real-pipeline run to reproduce:
+- AB baseline with no questionnaire payload
+- AB explicit-none equivalent payload
 
-### Panels
-- AB
-- VR
+Make the comparison explicit.
 
-### Scenario types
-At minimum:
-1. baseline
-2. lifestyle/context variant
-3. statin-off
-4. statin-on
+### B. Trace the divergence
+Inspect and trace the semantics through the relevant live path, including as needed:
+- questionnaire intake shape
+- questionnaire mapper
+- orchestrator
+- any lifestyle / context defaulting logic
+- any domain-score assembly inputs
+- DTO/report assembly
 
-Use the smallest scenario matrix that still proves:
-- questionnaire/lifestyle payoff
-- statin payoff
-- analytical invariants
+The goal is to identify the exact reason the band label diverges.
 
-Do not create a huge matrix unless a very small matrix is clearly insufficient.
+### C. Establish intended semantics
+Use the current product/gate docs and repo logic to answer:
 
-## Required outputs of the harness
+- is absence of questionnaire data supposed to mean “unknown / no evidence”
+- is explicit-none supposed to mean “known negative / user denied factor”
+- should those differ in scoring/context
+- if so, where is that rule actually expressed
+- if not, where is the accidental divergence being introduced
 
-For each scenario run, capture and compare at least:
+### D. Decide whether code change is needed
+If the behaviour is correct:
+- do not “fix” it
+- instead document it and add a test that locks it
 
-- top findings
-- consumer domain scores
-- lead / retail narrative summary fields
-- clinician summary surface
-- IDL / interpretation pattern surface where relevant
-- intervention/statin-related wording where present
+If the behaviour is incorrect:
+- implement the smallest clean correction at the right layer
+- then add a test that locks the corrected semantics
 
-The comparison output must make it easy to see:
-
-### Expected changes
-Examples:
-- statin context wording appears
-- lifestyle/alcohol context wording appears
-- relevant clinician summary wording changes
-
-### Expected invariants
-Examples:
-- top-finding order unchanged where required
-- signal states unchanged where required
-- domain band labels unchanged where required
-
-## Implementation requirements
-
-### A. Reuse before rebuilding
-Inspect the current verification tooling and reuse existing pieces where sensible, especially:
-- recovered verification scripts
-- any golden-panel or ledger tooling already on `main`
-- existing fixture assets
-
-Do not rebuild equivalent plumbing unnecessarily.
-
-### B. Real pipeline only
-The harness must run the real current launch-core pipeline, not a mocked shadow path.
-
-### C. Deterministic scenario payloads
-Scenario definitions must be fixed, reviewable, and easy to rerun.
-No manual UI entry required.
-
-### D. Human-readable output
-The final output should be understandable by Anthony without deep technical digging.
-A compact markdown or similarly readable comparison summary is preferred.
-
-### E. Bounded but extensible
-The harness should be built in a shape that can later expand to more panels/scenarios, but do not overbuild that future now.
+### E. Keep this bounded
+This is an OBS-2 investigation package, not a new feature sprint.
 
 ## Acceptance criteria
 
-This work package is complete only if all of the following are true:
+This package is complete only if all of the following are true:
 
-1. A bounded proving matrix exists for the current launch-core slice.
-2. AB and VR can be run through the harness without manual UI data entry.
-3. Lifestyle/context and statin scenarios are included.
-4. The output clearly distinguishes:
-   - expected changes
-   - expected invariants
-5. The output is human-reviewable, not raw debug noise.
-6. The harness uses the real pipeline.
-7. The harness is committed as a maintainable repo asset, not an ad hoc local script.
-8. A concise completion note explains:
-   - scenario matrix
-   - tooling used
-   - output format
-   - how to rerun it
+1. OBS-2 is reproducibly explained.
+2. The first semantic divergence point is identified.
+3. A clear conclusion is reached:
+   - expected behaviour
+   - or real inconsistency
+4. If no code change is required, the intended behaviour is documented and test-protected.
+5. If a code change is required, the narrowest correct fix is implemented and test-protected.
+6. No unrelated questionnaire or analytics behaviour is changed.
+7. A concise investigation/completion note is produced.
 
 ## Required outputs
 
-1. Bounded proving harness implementation
-2. Fixed scenario definitions / payloads
-3. Human-readable comparison output format
-4. Any required bounded tests for the harness itself
-5. Completion note with rerun instructions
+1. Reproduction evidence for OBS-2
+2. Root-cause explanation
+3. Decision on intended semantics
+4. Narrow fix or documentation update, as appropriate
+5. Bounded regression test locking the intended behaviour
+6. Completion note
 
 ## Guardrails
 
-- Do not turn this into a broad testing platform project.
-- Do not use stashes as a convenience mechanism during start.
-- Do not widen scope into general product analytics.
-- Do not create a harness that only works for one run and is then forgotten.
-- Do not introduce fake test-only product behaviour.
-- Do not require Anthony to manually drive the scenarios through the UI.
-
-## If blocked
-
-If the harness cannot be built cleanly without a wider architectural change:
-- complete the bounded parts that are still valid
-- document the blocker precisely
-- identify whether it should be:
-  - a small addendum
-  - a follow-on proving sprint
-  - or a later infrastructure task
-
-Do not improvise a large hidden redesign.
+- Do not assume “difference = bug.”
+- Do not assume “same label = correct.”
+- Do not widen into general questionnaire semantics.
+- Do not alter statin-path behaviour unless the OBS-2 root cause truly requires it.
+- Do not redesign the proving harness.
 
 ## Deliverable format back to leadership
 
 When complete, report in this structure:
 
 ### 1. Summary
-- what proving harness was built
-- whether acceptance criteria were met
+- what OBS-2 turned out to be
+- whether code change was required
 
-### 2. Scenario matrix
-- exact panels and scenarios included
+### 2. Reproduction
+- exact scenarios used
+- what differed
 
-### 3. Tooling / assets used
-- what existing verification tooling was reused
-- what new assets were added
+### 3. Root cause
+- first point of semantic divergence
+- why it happens
 
-### 4. Output format
-- what the human reviewer sees
-- how expected changes/invariants are shown
+### 4. Decision
+- expected behaviour or inconsistency
+- rationale
 
-### 5. Rerun method
-- exact command or procedure to run the harness again
+### 5. Action taken
+- code change / test / docs update
+- exact files
 
-### 6. Remaining gaps
-- only those outside this bounded proving-harness scope
+### 6. Protection added
+- exact test(s) added or updated
 
-### 7. Branch / working tree / SOP status
+### 7. Remaining implications
+- only if this affects later questionnaire or proving work
+
+### 8. Branch / working tree / SOP status
 - confirm governed execution under the correct branch and active work package state
