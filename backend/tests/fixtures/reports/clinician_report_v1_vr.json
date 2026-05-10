@@ -41,6 +41,7 @@
         "signal_homocysteine_high"
       ],
       "confidence_and_missing_data": "Overall confidence for this lead pattern: 0.90. Some expected confirmatory markers are not on this panel, which limits how specific the story can be.",
+      "intervention_annotation_context": "",
       "key_findings": [
         "Homocysteine Elevation Context is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread.",
         "Primary metric: homocysteine.",

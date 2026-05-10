@@ -13,6 +13,10 @@ import yaml
 
 from core.analytics.longitudinal_numeric_v1 import comparable_lab_delta
 from core.contracts.intervention_annotation_v1 import InterventionAnnotationsV1
+from core.analytics.narrative_compiler_lc_s3_assembly_v1 import (
+    assemble_lc_s3_sections,
+    infer_yaml_flags_from_payload,
+)
 from core.contracts.narrative_payload_v1 import NarrativePayloadV1
 from core.contracts.narrative_report_v1 import NARRATIVE_REPORT_V1_VERSION, NarrativeReportV1
 from core.analytics.intervention_annotation_formatter_v1 import (
@@ -585,9 +589,12 @@ def compile_narrative_report_v1(
         if isinstance(d, dict) and str(d.get("domain_id", "")).strip()
     }
 
-    fired = _fired_suboptimal_signal_ids(insight_graph)
-    include_lead = bool(fired & _LEAD_SIGNAL_HINTS)
-    include_secondary = bool(fired & _SECONDARY_SIGNAL_HINTS)
+    if narrative_payload_v1 is not None:
+        include_lead_yaml, include_secondary_yaml = infer_yaml_flags_from_payload(narrative_payload_v1)
+    else:
+        fired = _fired_suboptimal_signal_ids(insight_graph)
+        include_lead_yaml = bool(fired & _LEAD_SIGNAL_HINTS)
+        include_secondary_yaml = bool(fired & _SECONDARY_SIGNAL_HINTS)
 
     lead_text = ""
     secondary_text = ""
@@ -608,77 +615,130 @@ def compile_narrative_report_v1(
                     _functional_section(domain) if domain else "",
                 ]
             )
-            if role == "benchmark_lead_domain" and include_lead:
+            if role == "benchmark_lead_domain" and include_lead_yaml:
                 lead_text = block
                 compiler_meta["assets_resolved"].append("lead_domain_composed")
-            elif role == "benchmark_secondary_domain" and include_secondary:
+            elif role == "benchmark_secondary_domain" and include_secondary_yaml:
                 secondary_text = block
                 compiler_meta["assets_resolved"].append("secondary_domain_composed")
 
+    lead_pathway_block = lead_text
+    secondary_pathway_block = secondary_text
     bridge_block = _join_blocks(_bridge_lines(meta))
-    if bridge_block:
-        compiler_meta["lifestyle_bridge_lines"] = bridge_block
-        if lead_text:
-            lead_text = _join_blocks([lead_text, bridge_block])
-            compiler_meta["assets_resolved"].append("lifestyle_bridges_appended_to_lead")
-        elif secondary_text:
-            secondary_text = _join_blocks([secondary_text, bridge_block])
-            compiler_meta["assets_resolved"].append("lifestyle_bridges_appended_to_secondary")
+    if narrative_payload_v1 is None:
+        if bridge_block:
+            compiler_meta["lifestyle_bridge_lines"] = bridge_block
+            if lead_pathway_block:
+                lead_text = _join_blocks([lead_pathway_block, bridge_block])
+                compiler_meta["assets_resolved"].append("lifestyle_bridges_appended_to_lead")
+            elif secondary_pathway_block:
+                secondary_text = _join_blocks([secondary_pathway_block, bridge_block])
+                compiler_meta["assets_resolved"].append("lifestyle_bridges_appended_to_secondary")
+            else:
+                lead_text = bridge_block
+                compiler_meta["assets_resolved"].append("lifestyle_bridges_only")
         else:
-            lead_text = bridge_block
-            compiler_meta["assets_resolved"].append("lifestyle_bridges_only")
+            lead_text = lead_pathway_block
+            secondary_text = secondary_pathway_block
+    else:
+        lead_text = lead_pathway_block
+        secondary_text = secondary_pathway_block
+        if bridge_block:
+            compiler_meta["lifestyle_bridge_lines"] = bridge_block
 
     primary_driver = ""
     if insight_graph and isinstance(insight_graph, dict):
         primary_driver = str(insight_graph.get("primary_driver_system_id", "") or "").strip()
 
-    body_overview = _build_body_overview(
+    body_overview_struct = _build_body_overview(
         insight_graph=insight_graph,
         primary_driver=primary_driver,
-        include_lead=include_lead,
-        include_secondary=include_secondary,
+        include_lead=include_lead_yaml,
+        include_secondary=include_secondary_yaml,
         entities_doc=entities_doc,
         domains_by_id=domains_by_id,
         compiler_meta=compiler_meta,
     )
     ia_appendix = format_intervention_annotation_narrative_appendix_v1(intervention_annotations_v1)
+    body_overview_with_ia = body_overview_struct
     if ia_appendix:
-        body_overview = _join_blocks([body_overview, ia_appendix])
+        body_overview_with_ia = _join_blocks([body_overview_struct, ia_appendix])
         compiler_meta["assets_resolved"].append("intervention_annotation_appendix_lc_s2")
 
-    if not include_lead:
+    if not include_lead_yaml:
         compiler_meta["skipped"].append("lead_narrative_no_matching_signals")
-    if not include_secondary:
+    if not include_secondary_yaml:
         compiler_meta["skipped"].append("secondary_narratives_no_matching_signals")
 
     if idl_bundle is not None:
         compiler_meta["idl_bundle_present"] = True
 
-    retail_summary = _build_retail_summary(idl_bundle, compiler_meta)
     longitudinal_narrative = _build_longitudinal_narrative(insight_graph, meta, compiler_meta)
-    next_steps_narrative = _collect_next_steps(
-        entities_doc=entities_doc,
-        domains_by_id=domains_by_id,
-        include_lead=include_lead,
-        include_secondary=include_secondary,
-        compiler_meta=compiler_meta,
-    )
-    clinician_synthesis = _build_clinician_synthesis(
-        idl_bundle=idl_bundle,
-        entities_doc=entities_doc,
-        domains_by_id=domains_by_id,
-        include_lead=include_lead,
-        include_secondary=include_secondary,
-        body_overview=body_overview,
-        compiler_meta=compiler_meta,
-    )
+
+    if narrative_payload_v1 is not None:
+        idl_retail_block = _build_retail_summary(idl_bundle, compiler_meta)
+        clarification_paths_block = _collect_next_steps(
+            entities_doc=entities_doc,
+            domains_by_id=domains_by_id,
+            include_lead=include_lead_yaml,
+            include_secondary=include_secondary_yaml,
+            compiler_meta=compiler_meta,
+        )
+        clinician_base_without_consumer_lead = _build_clinician_synthesis(
+            idl_bundle=idl_bundle,
+            entities_doc=entities_doc,
+            domains_by_id=domains_by_id,
+            include_lead=include_lead_yaml,
+            include_secondary=include_secondary_yaml,
+            body_overview=body_overview_with_ia,
+            compiler_meta=compiler_meta,
+        )
+        lc3 = assemble_lc_s3_sections(
+            payload=narrative_payload_v1,
+            idl_retail_block=idl_retail_block,
+            clarification_paths_block=clarification_paths_block,
+            lead_yaml_block=lead_text,
+            secondary_yaml_block=secondary_text,
+            bridge_block=bridge_block,
+            body_overview_structural_with_ia=body_overview_with_ia,
+            clinician_base_without_consumer_lead=clinician_base_without_consumer_lead,
+            compiler_meta=compiler_meta,
+        )
+        retail_summary = lc3.retail_summary
+        lead_narrative = lc3.lead_narrative
+        body_overview = lc3.body_overview
+        next_steps_narrative = lc3.next_steps_narrative
+        clinician_synthesis = lc3.clinician_synthesis
+        secondary_narratives = lc3.secondary_narratives
+    else:
+        retail_summary = _build_retail_summary(idl_bundle, compiler_meta)
+        lead_narrative = lead_text
+        body_overview = body_overview_with_ia
+        next_steps_narrative = _collect_next_steps(
+            entities_doc=entities_doc,
+            domains_by_id=domains_by_id,
+            include_lead=include_lead_yaml,
+            include_secondary=include_secondary_yaml,
+            compiler_meta=compiler_meta,
+        )
+        clinician_synthesis = _build_clinician_synthesis(
+            idl_bundle=idl_bundle,
+            entities_doc=entities_doc,
+            domains_by_id=domains_by_id,
+            include_lead=include_lead_yaml,
+            include_secondary=include_secondary_yaml,
+            body_overview=body_overview_with_ia,
+            compiler_meta=compiler_meta,
+        )
+        secondary_narratives = secondary_text
 
     return NarrativeReportV1(
         retail_summary=retail_summary,
-        lead_narrative=lead_text,
-        secondary_narratives=secondary_text,
+        lead_narrative=lead_narrative,
+        secondary_narratives=secondary_narratives,
         body_overview=body_overview,
         longitudinal_narrative=longitudinal_narrative,
+        secondary_systems="",
         next_steps_narrative=next_steps_narrative,
         clinician_synthesis=clinician_synthesis,
         meta=compiler_meta,
