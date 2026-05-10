@@ -57,6 +57,9 @@ DEFECT_CLASS_TESTS: dict[str, list[str]] = {
     "questionnaire_exercise_unknown": [
         "backend/tests/regression/test_obs2_questionnaire_exercise_unknown_regression.py",
     ],
+    "narrative_payload_assembly": [
+        "backend/tests/regression/test_narrative_payload_compiler_regression.py",
+    ],
 }
 
 ALL_REGRESSION_TESTS = [t for tests in DEFECT_CLASS_TESTS.values() for t in tests]
