@@ -51,6 +51,15 @@
       "first_seen": "2026-05",
       "fix_commit": null,
       "note": "Promoted post-LC-S1 from unit narrative compiler tests — Sentinel + baseline parity."
+    },
+    "questionnaire_exercise_unknown": {
+      "description": "Questionnaire exercise absence coerced to zero minutes at mapper bridge — no questionnaire answer must resolve to unknown, not zero exercise.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_obs2_questionnaire_exercise_unknown_regression.py",
+      "first_seen": "2026-05",
+      "fix_commit": "6c7e4c0",
+      "note": "Promoted post-LC-OBS-2 from unit orchestrator bridge tests — baseline parity + statin invariants."
     }
   }
 }

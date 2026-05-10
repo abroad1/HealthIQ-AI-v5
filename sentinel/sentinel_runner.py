@@ -54,6 +54,9 @@ DEFECT_CLASS_TESTS: dict[str, list[str]] = {
     "narrative_compiler_why_surface": [
         "backend/tests/regression/test_narrative_compiler_why_surface_regression.py",
     ],
+    "questionnaire_exercise_unknown": [
+        "backend/tests/regression/test_obs2_questionnaire_exercise_unknown_regression.py",
+    ],
 }
 
 ALL_REGRESSION_TESTS = [t for tests in DEFECT_CLASS_TESTS.values() for t in tests]
