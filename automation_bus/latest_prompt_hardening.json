@@ -1,140 +1,158 @@
 {
-  "work_id": "LC-PROVING-HARNESS-AUTOMATION",
+  "work_id": "LC-OBS2-QUESTIONNAIRE-SEMANTICS-INVESTIGATION",
   "bus_version": "1.3.1",
   "status": "HARDENED",
   "hardened_utc": "2026-05-09T00:00:00Z",
   "hardened_by": "claude-code",
   "changes": [
     {
-      "id": "OPERATIONAL_BLOCKER",
-      "field": "kernel_token_state",
-      "status": "BLOCKER — must resolve before Stage 3",
-      "citation": "automation_bus/state/work_package_active.json:3",
-      "detail": "work_package_active.json currently holds work_id: LC-S2-CONTEXT-INTEGRATION with status: STARTED. The kernel will reject run_work_package.py start for this package until LC-S2-CONTEXT-INTEGRATION is finished. No prompt amendment required — this is a runtime state issue. Cursor must not touch any files until the token is cleared and re-issued for LC-PROVING-HARNESS-AUTOMATION."
-    },
-    {
       "id": "FRONT_MATTER",
       "field": "front_matter_validation",
       "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:2-6",
-      "detail": "All five mandatory fields present and valid. work_id=LC-PROVING-HARNESS-AUTOMATION, branch=feature/lc-proving-harness-automation, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. HIGH is correct per prompt rationale (affects validation infrastructure). MIXED is correct: new fixture content is CONTENT; new harness script invoking real orchestrator is BEHAVIOUR. TWO_PHASE_START_FINISH is required for all HIGH-risk work."
+      "citation": "automation_bus/latest_cursor_prompt.md:2-7",
+      "detail": "All five mandatory fields present and valid. work_id=LC-OBS2-QUESTIONNAIRE-SEMANTICS-INVESTIGATION, branch=feature/lc-obs2-questionnaire-semantics-investigation, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. HIGH is correct: investigation may result in a code change touching ScoringEngine lifestyle overlay activation path — an Intelligence Core boundary. MIXED is correct: investigation note is CONTENT; any mapper/orchestrator/scoring fix is BEHAVIOUR. TWO_PHASE_START_FINISH required for HIGH risk."
     },
     {
-      "id": "AUTHORITY_PATH_RUN_GOLDEN_PANEL",
+      "id": "OBS2_EVIDENCE_DOCS",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "backend/tools/run_golden_panel.py:302",
-      "detail": "run_golden_panel() function confirmed at line 302. Accepts fixture_path, lifestyle_fixture_path, questionnaire_data (read from payload.get('questionnaire_data') at line 352). No separate questionnaire_data override parameter — statin-on/off differentiation must be achieved through fixture variants, not a function parameter."
+      "citation": "docs/sprints/LC-PROVING-HARNESS-AUTOMATION_completion_2026-05.md:50-53 + docs/audit-papers/launch-core-proving/PROVING_REPORT.md:169-171",
+      "detail": "Both OBS-2 preservation files confirmed and read. Completion note at lines 50-53: 'AB band label diverges between baseline (no questionnaire) and statin_off (explicit None). Requires GPT/human confirmation on whether states are expected to differ.' PROVING_REPORT.md confirms: AB baseline consumer_band_labels=['strong','stable','review'], AB statin_off=['strong','watch','review']. The second band diverges (metabolic/blood_sugar domain). VR statin_off/statin_on also diverge from VR baseline on second and third bands."
     },
     {
-      "id": "AUTHORITY_PATH_VERIFICATION_LEDGER",
-      "field": "authority_path_exists",
-      "status": "CONFIRMED",
-      "citation": "backend/tools/verification_ledger_run.py:30-41",
-      "detail": "verification_ledger_run.py confirmed. Already runs AB + VR panels with multiple profiles through run_golden_panel. Lines 30-34: PANELS dict with AB_full_panel_with_ranges and VR_full_panel_with_ranges. Lines 36-41: PROFILES dict with P0_no_lifestyle, P1_healthy, P2_minimal_existing_fixture, P3_stressed. Provides the structural model for the proving harness."
-    },
-    {
-      "id": "AUTHORITY_PATH_AB_PANEL",
-      "field": "authority_path_exists",
-      "status": "CONFIRMED",
-      "citation": "backend/tests/fixtures/panels/ab_full_panel_with_ranges.json (glob verified)",
-      "detail": "AB full panel fixture confirmed present. This is the canonical launch-core AB panel."
-    },
-    {
-      "id": "AUTHORITY_PATH_VR_PANEL",
-      "field": "authority_path_exists",
-      "status": "CONFIRMED",
-      "citation": "backend/tests/fixtures/panels/vr_full_panel_with_ranges.json (glob verified)",
-      "detail": "VR full panel fixture confirmed present. This is the canonical launch-core VR panel."
-    },
-    {
-      "id": "AUTHORITY_PATH_LIFESTYLE_FIXTURE",
-      "field": "authority_path_exists",
-      "status": "CONFIRMED",
-      "citation": "backend/tests/fixtures/lifestyle_minimal.json:1-11",
-      "detail": "lifestyle_minimal.json confirmed. Contains height_cm, weight_kg, waist_circumference_cm, systolic_bp, diastolic_bp, resting_heart_rate, smoking_status, alcohol_units_per_week, sleep_hours. Suitable as lifestyle/context variant scenario input."
-    },
-    {
-      "id": "STATIN_FIXTURE_CONSTRAINT",
-      "field": "implementation_constraint",
-      "status": "MUST_KNOW — implementation guidance",
-      "citation": "backend/tools/run_golden_panel.py:352 + backend/core/pipeline/questionnaire_mapper.py:16",
-      "detail": "run_golden_panel() reads questionnaire_data from payload.get('questionnaire_data') only — no separate override parameter. To produce statin-on vs statin-off scenarios, Cursor MUST create separate fixture variants that include or omit questionnaire_data.long_term_medications containing the statin label. Do NOT modify run_golden_panel.py to add a questionnaire override — that modifies a governed tool and escalates risk. The exact SSOT-governed statin label is: 'Statins (cholesterol medication)' (STATINS_LONG_TERM_MEDICATION_LABEL at questionnaire_mapper.py:16). Statin-on fixture: add questionnaire_data: {long_term_medications: ['Statins (cholesterol medication)']} to the panel JSON."
-    },
-    {
-      "id": "STATIN_ORCHESTRATOR_WIRING",
+      "id": "ROOT_CAUSE_CONFIRMED",
       "field": "source_cross_reference",
       "status": "CONFIRMED",
-      "citation": "backend/core/pipeline/orchestrator.py:1294-1298",
-      "detail": "orchestrator.py:1296 calls questionnaire_mapper.build_user_intervention_document_for_statin(questionnaire_data). This fires only when questionnaire_data long_term_medications includes 'Statins (cholesterol medication)'. Returns a schema-compliant user_intervention_document. Line 1298 passes it to build_intervention_annotations_v1(). Statin-on wiring is already in place from LC-S2."
+      "citation": "backend/core/pipeline/orchestrator.py:271 + orchestrator.py:1306 + backend/core/scoring/overlays.py:157-162 + backend/core/pipeline/questionnaire_mapper.py:310-336",
+      "detail": "Root cause fully traced through source content. Five-step causal chain: (1) orchestrator.py:271 `if questionnaire_data:` — dict {'long_term_medications': ['None']} is truthy, so map_submission runs; None is falsy, so baseline skips entirely. (2) questionnaire_mapper.py:310-336 _map_exercise_minutes — no vigorous_exercise_days or resistance_training_days keys present in statin_off payload → returns 0 (hardcoded default, not null). (3) These lifestyle_factors (exercise_minutes_per_week=0 among other defaults) are injected into user_data at orchestrator.py:325-331. (4) orchestrator.py:1306 passes context.user.lifestyle_factors (non-empty dict) as lifestyle_data to score_biomarkers. (5) overlays.py:380-388 _determine_exercise_level(0) → VERY_POOR; overlays.py:157-162 adjustment_factor=0.8; the metabolic/blood_sugar score is multiplied by 0.8, dropping it from stable band (>=65) to watch band (>=45). Baseline receives no overlay — lifestyle_data={} is falsy at orchestrator.py:536."
     },
     {
-      "id": "STATIN_ANNOTATION_SURFACE",
+      "id": "DIVERGENCE_POINT_IDENTIFIED",
       "field": "source_cross_reference",
       "status": "CONFIRMED",
-      "citation": "backend/core/analytics/intervention_annotation_formatter_v1.py:17-20",
-      "detail": "_statin_resolved_rows() at lines 17-20 filters for lipid_lowering_statin class and produces annotation rows. This is the surface the harness output must capture to prove statin-on wording appears in the diff output."
+      "citation": "backend/core/pipeline/orchestrator.py:536",
+      "detail": "First point of semantic divergence is orchestrator.py:536 `if lifestyle_data:`. For baseline this is falsy ({}). For statin_off this is truthy (non-empty dict from map_submission defaults). The upstream cause is orchestrator.py:271 gate which triggers map_submission for any non-None questionnaire_data. The proximate scoring divergence is the exercise_minutes_per_week=0 default injected by _map_exercise_minutes when exercise questions are absent — this activates a VERY_POOR exercise adjustment (0.8 multiplier) that baseline never receives."
     },
     {
-      "id": "NO_FORBIDDEN_FILE_ACCESS",
-      "field": "forbidden_files",
+      "id": "SEMANTIC_INCONSISTENCY_CONFIRMED",
+      "field": "source_cross_reference",
       "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:106-109",
-      "detail": "Scope explicitly excludes new analytical logic, questionnaire strategy changes, frontend redesign, and broad Sentinel redesign. No modifications expected to backend/ssot/, backend/core/analytics/ evaluation/compiler logic, or kernel scripts. Harness is a read-only consumer of the pipeline."
+      "citation": "backend/core/pipeline/questionnaire_mapper.py:310-336 vs backend/core/pipeline/questionnaire_mapper.py:541-588",
+      "detail": "Two mapper paths exhibit different semantics for absent fields. Legacy path (_map_exercise_minutes, lines 310-336): returns 0 when no exercise questions are answered — treats absence as 'zero exercise'. Newer path (extract_behavioural_lifestyle_inputs, lines 541-588): emits only keys for questions that are actually present — treats absence as 'unknown, do not inject'. This inconsistency means a partial questionnaire (any non-None payload) activates the legacy path's sentinel defaults, while no questionnaire skips them entirely. This is the behavioural inconsistency underlying OBS-2."
     },
     {
-      "id": "NO_INTELLIGENCE_CORE_MODIFICATION",
+      "id": "MATRIX_FIXTURE_CONFIRMED",
+      "field": "authority_path_exists",
+      "status": "CONFIRMED",
+      "citation": "backend/tests/fixtures/proving/launch_core_matrix.json:22-26",
+      "detail": "statin_off scenario confirmed at lines 22-26: questionnaire_data = {long_term_medications: ['None']}, lifestyle_fixture: null. This is the exact payload that triggers the OBS-2 divergence. AB panel user dict confirmed at backend/tests/fixtures/panels/ab_full_panel_with_ranges.json:794-797: only age=58 and biological_sex=male — no lifestyle inputs — so all lifestyle overlay activation comes exclusively from the questionnaire path."
+    },
+    {
+      "id": "STATIN_INVARIANT_PRESERVED",
+      "field": "source_cross_reference",
+      "status": "CONFIRMED",
+      "citation": "docs/audit-papers/launch-core-proving/PROVING_REPORT.md:146-148",
+      "detail": "PROVING_REPORT confirms statin_off vs statin_on invariant PASSES for both AB and VR. Both statin_off and statin_on have identical questionnaire structure (only long_term_medications differs), so both receive the same lifestyle_factor defaults from map_submission, including exercise_minutes_per_week=0. The band labels are identical between them. This invariant must remain PASS after any fix."
+    },
+    {
+      "id": "INTELLIGENCE_CORE_BOUNDARY",
       "field": "behaviour_review",
-      "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:162-170",
-      "detail": "Harness runs the real pipeline as a consumer — it does not modify orchestrator, signal evaluators, compilers, InsightGraph, or assembler. Determinism of the analytical engine is not at risk. Analytical truth invariants are an OBSERVED assertion in harness output, not a code change."
+      "status": "CRITICAL — must classify before implementation",
+      "citation": "backend/core/pipeline/orchestrator.py:271 + orchestrator.py:1306 + backend/core/scoring/overlays.py",
+      "detail": "Any code fix touches Intelligence Core. The three candidate fix surfaces are: (A) questionnaire_mapper.py _map_exercise_minutes — change from returning 0 to returning None when no exercise questions answered, then filter None values from lifestyle_factors; (B) orchestrator.py:1306 score_biomarkers call — add a gate so lifestyle_data is only passed when lifestyle-relevant fields (exercise, diet, alcohol, sleep) were explicitly answered; (C) orchestrator.py:271 map_submission gate — change to only run map_submission for fields relevant to medical context (medications), not lifestyle scoring. All three options change emitted scores for partial questionnaire inputs. Cursor must not implement without explicit GPT/human classification of which fix is product-correct."
     },
     {
       "id": "STOP_CONDITIONS",
       "field": "stop_conditions",
       "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:19-25 + 209-228",
-      "detail": "Prompt includes correct SOP preflight checks: branch, token, clean tree. Guardrails section prohibits scope widening, stash use, fake test-only product behaviour. If blocked: document precisely, identify bounded addendum path — no hidden redesign."
+      "citation": "automation_bus/latest_cursor_prompt.md:19-25 + 159-165",
+      "detail": "Prompt includes SOP preflight checks (branch, token, working tree). Guardrails at lines 159-165: do not assume difference=bug; do not widen into general questionnaire semantics; do not alter statin-path behaviour unless OBS-2 root cause requires it. Investigation method (sections A-E) is well-bounded: reproduce, trace, establish intended semantics, decide, add test. STOP condition implied by acceptance criterion 1: OBS-2 must be reproducibly explained before any fix is attempted."
     },
     {
-      "id": "VERIFICATION_CLINICIAN_REPORT_TOOL",
-      "field": "authority_path_exists",
+      "id": "NO_TOOLING_LEAKAGE_RISK",
+      "field": "behaviour_review",
       "status": "CONFIRMED",
-      "citation": "backend/tools/verification_clinician_report.py (glob verified)",
-      "detail": "verification_clinician_report.py confirmed present. Relevant for capturing clinician summary surface in harness output as required by acceptance criteria."
+      "citation": "automation_bus/latest_cursor_prompt.md:69-86",
+      "detail": "Scope explicitly excludes: broad questionnaire redesign, multi-medication expansion, statin-path redesign, new proving harness work, broad analytics refactor. No .codex/, AGENTS.md, or IDE artefact creation expected. Investigation note format is defined in prompt (sections 1-8), limiting scope of output."
+    },
+    {
+      "id": "REGRESSION_SURFACE",
+      "field": "behaviour_review",
+      "status": "MUST_KNOW — implementation constraint",
+      "citation": "backend/core/scoring/overlays.py:380-388 + backend/core/pipeline/questionnaire_mapper.py:310-336",
+      "detail": "Any fix to the exercise default sentinel must be regression-tested against: (1) statin_off vs statin_on invariant — must stay PASS (identical bands); (2) full questionnaire submission — exercise_minutes_per_week must still be scored when exercise questions ARE answered; (3) baseline (no questionnaire) — must remain unchanged; (4) lifestyle_context scenario — bands must remain unchanged (lifestyle comes from separate fixture, not questionnaire). The fix must be the narrowest change that equalises the baseline vs statin_off band at the metabolic domain without side-effecting other scenarios."
     }
   ],
   "stage_2a": {
-    "verdict": "PASS — with BLOCKER on token state",
+    "verdict": "PASS",
     "authority_files_verified": [
-      {"path": "backend/tools/run_golden_panel.py", "exists": true, "note": "Core reuse tooling. run_golden_panel() at line 302 confirmed."},
-      {"path": "backend/tools/verification_ledger_run.py", "exists": true, "note": "Model structure for harness. AB+VR panel matrix at lines 30-41."},
-      {"path": "backend/tools/verification_clinician_report.py", "exists": true, "note": "Clinician report surface tool confirmed."},
-      {"path": "backend/tests/fixtures/panels/ab_full_panel_with_ranges.json", "exists": true, "note": "AB launch-core panel fixture confirmed."},
-      {"path": "backend/tests/fixtures/panels/vr_full_panel_with_ranges.json", "exists": true, "note": "VR launch-core panel fixture confirmed."},
-      {"path": "backend/tests/fixtures/lifestyle_minimal.json", "exists": true, "note": "Lifestyle fixture for context variant scenario."},
-      {"path": "backend/core/pipeline/questionnaire_mapper.py", "exists": true, "note": "Statin label at line 16, statin method at line 70."},
-      {"path": "backend/core/pipeline/orchestrator.py", "exists": true, "note": "Statin wiring at lines 1294-1298."},
-      {"path": "backend/core/analytics/intervention_annotation_formatter_v1.py", "exists": true, "note": "Statin annotation rows at lines 17-20."}
+      {
+        "path": "docs/sprints/LC-PROVING-HARNESS-AUTOMATION_completion_2026-05.md",
+        "exists": true,
+        "note": "OBS-2 recorded at lines 50-53. Read and confirmed."
+      },
+      {
+        "path": "docs/audit-papers/launch-core-proving/PROVING_REPORT.md",
+        "exists": true,
+        "note": "OBS-2 at lines 169-171. Band divergence data confirmed: AB baseline=['strong','stable','review'], AB statin_off=['strong','watch','review']."
+      },
+      {
+        "path": "backend/tests/fixtures/proving/launch_core_matrix.json",
+        "exists": true,
+        "note": "statin_off questionnaire_data confirmed at lines 22-26: {long_term_medications: ['None']}."
+      },
+      {
+        "path": "backend/tests/fixtures/panels/ab_full_panel_with_ranges.json",
+        "exists": true,
+        "note": "User dict at lines 794-797: only age=58 and biological_sex=male. No lifestyle inputs in fixture."
+      },
+      {
+        "path": "backend/core/pipeline/orchestrator.py",
+        "exists": true,
+        "note": "Questionnaire gate at line 271. Lifestyle_data path at line 1306. LifestyleModifierEngine gate at line 1624."
+      },
+      {
+        "path": "backend/core/pipeline/questionnaire_mapper.py",
+        "exists": true,
+        "note": "_map_exercise_minutes at lines 310-336 (returns 0 default). extract_behavioural_lifestyle_inputs at lines 541-588 (emits only present keys)."
+      },
+      {
+        "path": "backend/core/scoring/overlays.py",
+        "exists": true,
+        "note": "_determine_exercise_level at lines 380-388. VERY_POOR adjustment_factor=0.8 at lines 157-162. create_lifestyle_profile at lines 269-308."
+      },
+      {
+        "path": "backend/core/analytics/domain_score_assembler.py",
+        "exists": true,
+        "note": "_band_label_from_0_100 at lines 87-95: stable>=65, watch>=45. Metabolic domain at lines 455-488."
+      }
     ],
     "duplicate_authority_sources": "NONE DETECTED"
   },
   "stage_2b": {
-    "verdict": "PASS",
-    "intelligence_core_components_identified": "NONE modified — harness is a read-only pipeline consumer",
-    "behavioural_surface_area": "New harness script and fixture variants only. No changes to orchestrator, evaluators, compilers, or AnalysisDTO. All statin context wiring was completed in LC-S2.",
-    "expected_output_changes": "None to the pipeline. Harness produces new comparison output artefacts in a dedicated output directory.",
-    "regression_targets": [
-      "Existing golden panel tests — must pass unchanged after harness is added",
-      "Statin-on fixture must produce visible annotation in harness diff vs statin-off (proving statin wiring works)"
+    "verdict": "PASS — with CRITICAL implementation constraint on fix classification",
+    "intelligence_core_components_identified": [
+      "backend/core/pipeline/orchestrator.py (map_submission gate, lifestyle_data passthrough)",
+      "backend/core/pipeline/questionnaire_mapper.py (_map_exercise_minutes default logic)",
+      "backend/core/scoring/overlays.py (LifestyleOverlays adjustment chain)",
+      "backend/core/analytics/domain_score_assembler.py (_band_label_from_0_100 threshold logic)"
     ],
-    "determinism_preserved": true,
+    "behavioural_surface_area": "OBS-2 root cause is in the questionnaire-to-scoring bridge. Any fix changes band labels for partial questionnaire inputs. No fix is zero-surface-area. The narrowest fix is in _map_exercise_minutes (mapper layer) — change return 0 to return None when no exercise fields present, then filter None from lifestyle_factors dict before injecting into user_data. This restores baseline-equivalence without affecting full questionnaire submissions.",
+    "expected_output_changes": "If code fix is implemented: AB statin_off consumer_band_labels[1] changes from 'watch' back to 'stable' (matching baseline). VR statin_off bands would similarly equalise with VR baseline. statin_off vs statin_on invariant must remain PASS (both would have the fix applied identically). If no code fix: investigation note documents the behaviour as intentional and a test locks current band values.",
+    "regression_targets": [
+      "AB statin_off vs AB statin_on: consumer_band_labels must remain identical (invariant PASS)",
+      "AB baseline vs AB statin_off: second band must match after fix (the fix target)",
+      "AB lifestyle_context: bands must remain unchanged — lifestyle comes from fixture not questionnaire",
+      "Full questionnaire submission: exercise_minutes_per_week must still score when exercise questions answered",
+      "VR baseline vs VR statin_off: band equivalence after fix"
+    ],
+    "determinism_preserved": "CONDITIONAL — preserved only if fix does not introduce any branch dependent on wall-clock time, random state, or LLM reasoning. mapper/orchestrator fix is deterministic by nature.",
     "no_lm_reasoning_in_layer_b": true,
-    "no_scope_creep": true,
+    "no_scope_creep": "Guardrails explicitly prohibit broad questionnaire redesign and statin-path redesign. Fix must be confined to the exercise default sentinel at the mapper or orchestrator layer.",
     "stop_conditions_adequate": true,
     "determinism_risks": [
-      "Statin-on fixture must use exact SSOT-governed label ('Statins (cholesterol medication)') — any typo produces statin-off behaviour silently. Mitigated by citation at questionnaire_mapper.py:16.",
-      "Harness comparison output must strip volatile fields (timestamps, run_ids) before diffing — otherwise every run will show false positives. run_golden_panel._strip_volatile_fields() already handles this."
+      "Fix to _map_exercise_minutes must not use any sentinel that could be falsy (e.g. None) in a way that accidentally activates a 0 score elsewhere — test must confirm no accidental downstream effect.",
+      "If fix is at orchestrator layer (lifestyle_data gate), it must not suppress legitimate lifestyle data when exercise IS answered as part of a full questionnaire."
     ]
   },
   "overall_verdict": "HARDENED"

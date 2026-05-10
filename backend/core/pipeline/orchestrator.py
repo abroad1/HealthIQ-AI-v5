@@ -290,14 +290,16 @@ class AnalysisOrchestrator:
                 lifestyle_factors = {
                     "diet_level": mapped_lifestyle_factors.diet_level.value,
                     "sleep_hours": mapped_lifestyle_factors.sleep_hours,
-                    "exercise_minutes_per_week": mapped_lifestyle_factors.exercise_minutes_per_week,
                     "alcohol_units_per_week": mapped_lifestyle_factors.alcohol_units_per_week,
                     "smoking_status": mapped_lifestyle_factors.smoking_status,
                     "stress_level": mapped_lifestyle_factors.stress_level.value,
                     "sedentary_hours_per_day": mapped_lifestyle_factors.sedentary_hours_per_day,
                     "caffeine_consumption": mapped_lifestyle_factors.caffeine_consumption,
-                    "fluid_intake_liters": mapped_lifestyle_factors.fluid_intake_liters
+                    "fluid_intake_liters": mapped_lifestyle_factors.fluid_intake_liters,
                 }
+                # OBS-2: omit key when exercise questions were not answered — downstream uses neutral default (150), not 0.
+                if mapped_lifestyle_factors.exercise_minutes_per_week is not None:
+                    lifestyle_factors["exercise_minutes_per_week"] = mapped_lifestyle_factors.exercise_minutes_per_week
                 
                 # Canonical medication / supplement representation (MEDICATION-CAVEAT-A):
                 # - medications: SSOT current_medications dropdown → coarse exposure bands only
