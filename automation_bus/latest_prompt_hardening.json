@@ -1,8 +1,8 @@
 {
-  "work_id": "LC-OBS2-QUESTIONNAIRE-SEMANTICS-INVESTIGATION",
+  "work_id": "WP2-LAYER-B-LAYER-C-TECHNICAL-CLOSURE",
   "bus_version": "1.3.1",
   "status": "HARDENED",
-  "hardened_utc": "2026-05-09T00:00:00Z",
+  "hardened_utc": "2026-05-10T00:00:00Z",
   "hardened_by": "claude-code",
   "changes": [
     {
@@ -10,149 +10,204 @@
       "field": "front_matter_validation",
       "status": "CONFIRMED",
       "citation": "automation_bus/latest_cursor_prompt.md:2-7",
-      "detail": "All five mandatory fields present and valid. work_id=LC-OBS2-QUESTIONNAIRE-SEMANTICS-INVESTIGATION, branch=feature/lc-obs2-questionnaire-semantics-investigation, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. HIGH is correct: investigation may result in a code change touching ScoringEngine lifestyle overlay activation path — an Intelligence Core boundary. MIXED is correct: investigation note is CONTENT; any mapper/orchestrator/scoring fix is BEHAVIOUR. TWO_PHASE_START_FINISH required for HIGH risk."
+      "detail": "All five mandatory fields present and valid. work_id=WP2-LAYER-B-LAYER-C-TECHNICAL-CLOSURE, branch=wp2/layer-b-layer-c-technical-closure, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. HIGH is correct: work package touches Intelligence Core (narrative_report_compiler_v1.py is an analytics-layer assembler; validator_v2.py is the LLM output guard; orchestrator wiring at line 2214 is directly in the production analysis path). MIXED is correct: new Pydantic contracts are CONTENT; changes to compiler signature, orchestrator wiring, and validator are BEHAVIOUR. TWO_PHASE_START_FINISH required for HIGH risk."
     },
     {
-      "id": "OBS2_EVIDENCE_DOCS",
+      "id": "AUTHORITY_DOCS",
       "field": "authority_path_exists",
       "status": "CONFIRMED",
-      "citation": "docs/sprints/LC-PROVING-HARNESS-AUTOMATION_completion_2026-05.md:50-53 + docs/audit-papers/launch-core-proving/PROVING_REPORT.md:169-171",
-      "detail": "Both OBS-2 preservation files confirmed and read. Completion note at lines 50-53: 'AB band label diverges between baseline (no questionnaire) and statin_off (explicit None). Requires GPT/human confirmation on whether states are expected to differ.' PROVING_REPORT.md confirms: AB baseline consumer_band_labels=['strong','stable','review'], AB statin_off=['strong','watch','review']. The second band diverges (metabolic/blood_sugar domain). VR statin_off/statin_on also diverge from VR baseline on second and third bands."
+      "citation": "docs/planning-papers/healthiq_pre_sprint1_decision_pack_FINAL.md (glob confirmed) + docs/planning-papers/healthiq_pre_sprint2_statin_gate_pack_FINAL.md (glob confirmed) + docs/planning-papers/healthiq_pre_sprint3_closure_pack_FINAL.md (glob confirmed) + docs/audit-papers/gate_compliance_audit_sprint3_readiness.md (glob confirmed) + docs/audit-papers/wp2_layer_b_layer_c_implementation_readiness_audit.md (read confirmed) + docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md (glob confirmed)",
+      "detail": "All six project authority documents referenced in the prompt exist at the stated paths. The SOP (docs/AUTOMATION_BUS_SOP_v1.3.1.md in prompt; authoritative location docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md per CLAUDE.md) is operationally active. No duplicate authority sources detected. Advisory: docs/architecture/ directory does not yet exist — Cursor must create it for Task 1 ADR. Not a stop condition."
     },
     {
-      "id": "ROOT_CAUSE_CONFIRMED",
+      "id": "REPORT_V1_CONTRACT",
       "field": "source_cross_reference",
       "status": "CONFIRMED",
-      "citation": "backend/core/pipeline/orchestrator.py:271 + orchestrator.py:1306 + backend/core/scoring/overlays.py:157-162 + backend/core/pipeline/questionnaire_mapper.py:310-336",
-      "detail": "Root cause fully traced through source content. Five-step causal chain: (1) orchestrator.py:271 `if questionnaire_data:` — dict {'long_term_medications': ['None']} is truthy, so map_submission runs; None is falsy, so baseline skips entirely. (2) questionnaire_mapper.py:310-336 _map_exercise_minutes — no vigorous_exercise_days or resistance_training_days keys present in statin_off payload → returns 0 (hardcoded default, not null). (3) These lifestyle_factors (exercise_minutes_per_week=0 among other defaults) are injected into user_data at orchestrator.py:325-331. (4) orchestrator.py:1306 passes context.user.lifestyle_factors (non-empty dict) as lifestyle_data to score_biomarkers. (5) overlays.py:380-388 _determine_exercise_level(0) → VERY_POOR; overlays.py:157-162 adjustment_factor=0.8; the metabolic/blood_sugar score is multiplied by 0.8, dropping it from stable band (>=65) to watch band (>=45). Baseline receives no overlay — lifestyle_data={} is falsy at orchestrator.py:536."
+      "citation": "backend/core/contracts/report_v1.py:77-86",
+      "detail": "ReportV1 is a typed Pydantic model (extra='forbid'). top_findings: List[ReportTopFindingV1] at line 81. root_cause_v1: Optional[RootCauseV1] = None at line 85. intervention_annotations_v1: Optional[InterventionAnnotationsV1] = None at line 86. All three fields the NarrativePayloadV1 must carry are present and typed. No stop condition."
     },
     {
-      "id": "DIVERGENCE_POINT_IDENTIFIED",
+      "id": "ROOT_CAUSE_V1_CONTRACT",
       "field": "source_cross_reference",
       "status": "CONFIRMED",
-      "citation": "backend/core/pipeline/orchestrator.py:536",
-      "detail": "First point of semantic divergence is orchestrator.py:536 `if lifestyle_data:`. For baseline this is falsy ({}). For statin_off this is truthy (non-empty dict from map_submission defaults). The upstream cause is orchestrator.py:271 gate which triggers map_submission for any non-None questionnaire_data. The proximate scoring divergence is the exercise_minutes_per_week=0 default injected by _map_exercise_minutes when exercise questions are absent — this activates a VERY_POOR exercise adjustment (0.8 multiplier) that baseline never receives."
+      "citation": "backend/core/contracts/root_cause_v1.py:58-63",
+      "detail": "RootCauseV1 is a typed Pydantic model (extra='forbid') with version: str and findings: List[RootCauseFindingV1]. RootCauseFindingV1 at lines 48-55 contains signal_id, primary_metric, signal_state, signal_confidence, hypotheses: List[RootCauseHypothesisV1]. Each RootCauseHypothesisV1 at lines 34-45 contains hypothesis_id — this is the field the validator must check for invented hypothesis rejection. Typed contract is present and sufficient."
     },
     {
-      "id": "SEMANTIC_INCONSISTENCY_CONFIRMED",
+      "id": "INTERVENTION_ANNOTATIONS_V1_CONTRACT",
       "field": "source_cross_reference",
       "status": "CONFIRMED",
-      "citation": "backend/core/pipeline/questionnaire_mapper.py:310-336 vs backend/core/pipeline/questionnaire_mapper.py:541-588",
-      "detail": "Two mapper paths exhibit different semantics for absent fields. Legacy path (_map_exercise_minutes, lines 310-336): returns 0 when no exercise questions are answered — treats absence as 'zero exercise'. Newer path (extract_behavioural_lifestyle_inputs, lines 541-588): emits only keys for questions that are actually present — treats absence as 'unknown, do not inject'. This inconsistency means a partial questionnaire (any non-None payload) activates the legacy path's sentinel defaults, while no questionnaire skips them entirely. This is the behavioural inconsistency underlying OBS-2."
+      "citation": "backend/core/contracts/intervention_annotation_v1.py (glob confirmed) + backend/core/contracts/report_v1.py:11",
+      "detail": "InterventionAnnotationsV1 contract exists and is imported in report_v1.py at line 11. NarrativePayloadV1 can import it directly without duplication."
     },
     {
-      "id": "MATRIX_FIXTURE_CONFIRMED",
-      "field": "authority_path_exists",
-      "status": "CONFIRMED",
-      "citation": "backend/tests/fixtures/proving/launch_core_matrix.json:22-26",
-      "detail": "statin_off scenario confirmed at lines 22-26: questionnaire_data = {long_term_medications: ['None']}, lifestyle_fixture: null. This is the exact payload that triggers the OBS-2 divergence. AB panel user dict confirmed at backend/tests/fixtures/panels/ab_full_panel_with_ranges.json:794-797: only age=58 and biological_sex=male — no lifestyle inputs — so all lifestyle overlay activation comes exclusively from the questionnaire path."
-    },
-    {
-      "id": "STATIN_INVARIANT_PRESERVED",
+      "id": "NARRATIVE_PAYLOAD_V1_ABSENT",
       "field": "source_cross_reference",
       "status": "CONFIRMED",
-      "citation": "docs/audit-papers/launch-core-proving/PROVING_REPORT.md:146-148",
-      "detail": "PROVING_REPORT confirms statin_off vs statin_on invariant PASSES for both AB and VR. Both statin_off and statin_on have identical questionnaire structure (only long_term_medications differs), so both receive the same lifestyle_factor defaults from map_submission, including exercise_minutes_per_week=0. The band labels are identical between them. This invariant must remain PASS after any fix."
+      "citation": "glob backend/core/contracts/narrative_payload_v1.py — zero results",
+      "detail": "narrative_payload_v1.py does not exist. Task 1 creates a new file. No collision or duplication risk."
     },
     {
-      "id": "INTELLIGENCE_CORE_BOUNDARY",
-      "field": "behaviour_review",
-      "status": "CRITICAL — must classify before implementation",
-      "citation": "backend/core/pipeline/orchestrator.py:271 + orchestrator.py:1306 + backend/core/scoring/overlays.py",
-      "detail": "Any code fix touches Intelligence Core. The three candidate fix surfaces are: (A) questionnaire_mapper.py _map_exercise_minutes — change from returning 0 to returning None when no exercise questions answered, then filter None values from lifestyle_factors; (B) orchestrator.py:1306 score_biomarkers call — add a gate so lifestyle_data is only passed when lifestyle-relevant fields (exercise, diet, alcohol, sleep) were explicitly answered; (C) orchestrator.py:271 map_submission gate — change to only run map_submission for fields relevant to medical context (medications), not lifestyle scoring. All three options change emitted scores for partial questionnaire inputs. Cursor must not implement without explicit GPT/human classification of which fix is product-correct."
+      "id": "COMPILER_SIGNATURE",
+      "field": "source_cross_reference",
+      "status": "CONFIRMED",
+      "citation": "backend/core/analytics/narrative_report_compiler_v1.py:526-533",
+      "detail": "compile_narrative_report_v1() signature uses keyword-only arguments: analysis_id (str), meta (Optional[Mapping[str, Any]]=None), insight_graph (Optional[Mapping[str, Any]]=None), idl_bundle (Any=None), intervention_annotations_v1 (Optional[InterventionAnnotationsV1]=None). All parameters are keyword-only and optional except analysis_id. Adding narrative_payload_v1: Optional[NarrativePayloadV1] = None as a new keyword-only optional parameter will not break the existing call site at orchestrator.py:2214-2220, which passes named arguments. No stop condition."
     },
     {
-      "id": "STOP_CONDITIONS",
+      "id": "ORCHESTRATOR_CALL_SITE",
+      "field": "source_cross_reference",
+      "status": "CONFIRMED",
+      "citation": "backend/core/pipeline/orchestrator.py:2214-2220",
+      "detail": "compile_narrative_report_v1() is called at lines 2214-2220 with named kwargs: analysis_id=analysis_id, meta=meta, insight_graph=insight_graph.model_dump(), idl_bundle=idl_bundle, intervention_annotations_v1=intervention_annotations_v1. AnalysisDTO is assembled at lines 2245-2265. insight_graph.model_dump() is called at line 2142 and stored in meta['insight_graph'] — the same insight_graph object carries report_v1, accessible via hasattr check. NarrativePayloadV1 builder can be inserted between line 2213 and line 2214. AnalysisDTO at line 2245-2265 does NOT include top_findings or root_cause_v1 as fields — Path B confirmed, no AnalysisDTO restructuring needed."
+    },
+    {
+      "id": "PROVING_HARNESS_ROOT_CAUSE",
+      "field": "source_cross_reference",
+      "status": "CONFIRMED",
+      "citation": "backend/tools/launch_core_proving_harness.py:104-124",
+      "detail": "_clinician_heads() reads cr = analysis_result.get('clinician_report_v1') at line 105. analysis_result is AnalysisDTO.model_dump() from run_golden_panel (per audit §8 and direct harness read). AnalysisDTO has no clinician_report_v1 field (confirmed in results.py). Therefore cr is always {}. Fix must follow pattern in test_clinician_report_runtime_alignment.py:23-36 — extract meta.insight_graph.report_v1 from analysis_result and call compile_clinician_report_v1() directly. This is a tooling fix only. Not a BEHAVIOUR-class change."
+    },
+    {
+      "id": "VALIDATOR_GAPS",
+      "field": "source_cross_reference",
+      "status": "CONFIRMED",
+      "citation": "backend/core/llm/validator_v2.py:110-178",
+      "detail": "Three existing guards confirmed: schema validation at line 126-130, numeric invention at lines 143-154, red flag referencing at lines 170-176. Three gaps confirmed absent: (A) no lead finding preservation check — no code checks that insight signal IDs centre the prompt's top_findings[0].signal_id; (B) no hypothesis invention check — no code checks hypothesis_id values against root_cause_v1.findings[*].hypotheses[*].hypothesis_id; (C) no prohibited claim detection — no regex for 'diagnoses', 'confirms', 'rules out', etc. All three additions are pure validation layer extensions — no pipeline, SSOT, or analytical engine changes required. Evidence-referencing pass-through at lines 156-167 confirmed lenient (pass branch at line 167 allows unmatched free text — noted as advisory, not a stop condition)."
+    },
+    {
+      "id": "IDL_FRONTEND_GATE",
+      "field": "source_cross_reference",
+      "status": "CONFIRMED",
+      "citation": "frontend/app/components/results/InterpretationPatternsSection.tsx:11-17 + frontend/app/types/analysis.ts:217 + frontend/app/types/analysis.ts:234",
+      "detail": "selectVisibleIdlRecords() at lines 11-17 filters only r.enabled_for_frontend === true. Missing: r.frontend_allowed_term !== 'clinical_only'. InterpretationFrontendAllowedTermV1 type at analysis.ts:217 = 'phenotype_allowed' | 'clinical_only'. frontend_allowed_term is a typed field on InterpretationDisplayRecordV1 at analysis.ts:234. Fix is a single additional filter clause. No backend IDL YAML change required. No stop condition."
+    },
+    {
+      "id": "STOP_CONDITIONS_CLEAR",
       "field": "stop_conditions",
       "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:19-25 + 159-165",
-      "detail": "Prompt includes SOP preflight checks (branch, token, working tree). Guardrails at lines 159-165: do not assume difference=bug; do not widen into general questionnaire semantics; do not alter statin-path behaviour unless OBS-2 root cause requires it. Investigation method (sections A-E) is well-bounded: reproduce, trace, establish intended semantics, decide, add test. STOP condition implied by acceptance criterion 1: OBS-2 must be reproducibly explained before any fix is attempted."
+      "citation": "automation_bus/latest_cursor_prompt.md:387-400 — all nine stop conditions evaluated against current codebase state",
+      "detail": "All nine stop conditions evaluated: (1) ReportV1 present with top_findings/root_cause_v1 — CLEAR (report_v1.py:81,85); (2) root_cause_v1 has typed contract — CLEAR (root_cause_v1.py:58-63); (3) compile_narrative_report_v1() can accept optional typed payload — CLEAR (keyword-only optional params at lines 526-533); (4) validator hardening does not require broad LLM prompt restructuring — CLEAR (pure validation layer additions); (5) proving harness issue is harness gap not compiler defect — CLEAR (confirmed by test_clinician_report_runtime_alignment.py passing); (6) IDL frontend types expose frontend_allowed_term — CLEAR (analysis.ts:234); (7) no Knowledge Bus content modification — CLEAR (scope explicitly excludes it); (8) no broad frontend redesign — CLEAR (single filter line + test updates only); (9) no AnalysisDTO modification for top_findings/root_cause_v1 — CLEAR (Path B confirmed). No stop conditions triggered."
     },
     {
       "id": "NO_TOOLING_LEAKAGE_RISK",
       "field": "behaviour_review",
       "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:69-86",
-      "detail": "Scope explicitly excludes: broad questionnaire redesign, multi-medication expansion, statin-path redesign, new proving harness work, broad analytics refactor. No .codex/, AGENTS.md, or IDE artefact creation expected. Investigation note format is defined in prompt (sections 1-8), limiting scope of output."
-    },
-    {
-      "id": "REGRESSION_SURFACE",
-      "field": "behaviour_review",
-      "status": "MUST_KNOW — implementation constraint",
-      "citation": "backend/core/scoring/overlays.py:380-388 + backend/core/pipeline/questionnaire_mapper.py:310-336",
-      "detail": "Any fix to the exercise default sentinel must be regression-tested against: (1) statin_off vs statin_on invariant — must stay PASS (identical bands); (2) full questionnaire submission — exercise_minutes_per_week must still be scored when exercise questions ARE answered; (3) baseline (no questionnaire) — must remain unchanged; (4) lifestyle_context scenario — bands must remain unchanged (lifestyle comes from separate fixture, not questionnaire). The fix must be the narrowest change that equalises the baseline vs statin_off band at the metabolic domain without side-effecting other scenarios."
+      "citation": "automation_bus/latest_cursor_prompt.md:441-464 (non-goals) + automation_bus/latest_cursor_prompt.md:409-440 (expected files touched)",
+      "detail": "Non-goals explicitly prohibit: Sprint 3 authoring, Gemini activation, questionnaire changes, SSOT changes, Knowledge Bus changes, insight[] retirement, fallback parsers, duplicate authority sources. Expected files list is bounded and specific. Forbidden files list is explicit: backend/ssot/, knowledge_bus/, run_work_package.py, golden_gate_local.py, update_cursor_status.py. No .codex/, AGENTS.md, or IDE artefact creation expected."
     }
   ],
   "stage_2a": {
     "verdict": "PASS",
     "authority_files_verified": [
       {
-        "path": "docs/sprints/LC-PROVING-HARNESS-AUTOMATION_completion_2026-05.md",
+        "path": "docs/planning-papers/healthiq_pre_sprint1_decision_pack_FINAL.md",
         "exists": true,
-        "note": "OBS-2 recorded at lines 50-53. Read and confirmed."
+        "note": "Governing §3.9 Layer B decides / Layer C synthesises boundary. Confirmed present."
       },
       {
-        "path": "docs/audit-papers/launch-core-proving/PROVING_REPORT.md",
+        "path": "docs/planning-papers/healthiq_pre_sprint2_statin_gate_pack_FINAL.md",
         "exists": true,
-        "note": "OBS-2 at lines 169-171. Band divergence data confirmed: AB baseline=['strong','stable','review'], AB statin_off=['strong','watch','review']."
+        "note": "Pre-Sprint 2 statin gate authority. Confirmed present."
       },
       {
-        "path": "backend/tests/fixtures/proving/launch_core_matrix.json",
+        "path": "docs/planning-papers/healthiq_pre_sprint3_closure_pack_FINAL.md",
         "exists": true,
-        "note": "statin_off questionnaire_data confirmed at lines 22-26: {long_term_medications: ['None']}."
+        "note": "Pre-Sprint 3 closure blockers C-1 through C-5. Confirmed present."
       },
       {
-        "path": "backend/tests/fixtures/panels/ab_full_panel_with_ranges.json",
+        "path": "docs/audit-papers/gate_compliance_audit_sprint3_readiness.md",
         "exists": true,
-        "note": "User dict at lines 794-797: only age=58 and biological_sex=male. No lifestyle inputs in fixture."
+        "note": "Sprint 3 readiness gate audit. Confirmed present."
+      },
+      {
+        "path": "docs/audit-papers/wp2_layer_b_layer_c_implementation_readiness_audit.md",
+        "exists": true,
+        "note": "Direct-inspection readiness audit for this work package. Confirmed present — read in full."
+      },
+      {
+        "path": "docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md",
+        "exists": true,
+        "note": "Launch-core transformation plan. Confirmed present."
+      },
+      {
+        "path": "backend/core/contracts/report_v1.py",
+        "exists": true,
+        "note": "ReportV1 at lines 77-86 with top_findings (line 81) and root_cause_v1 (line 85). Read and confirmed."
+      },
+      {
+        "path": "backend/core/contracts/root_cause_v1.py",
+        "exists": true,
+        "note": "RootCauseV1 at lines 58-63 with hypothesis_id chain traceable to line 37. Read and confirmed."
+      },
+      {
+        "path": "backend/core/contracts/intervention_annotation_v1.py",
+        "exists": true,
+        "note": "InterventionAnnotationsV1 contract. Glob confirmed."
+      },
+      {
+        "path": "backend/core/analytics/narrative_report_compiler_v1.py",
+        "exists": true,
+        "note": "compile_narrative_report_v1() signature at lines 526-533. Keyword-only optional params confirmed — safe to extend."
       },
       {
         "path": "backend/core/pipeline/orchestrator.py",
         "exists": true,
-        "note": "Questionnaire gate at line 271. Lifestyle_data path at line 1306. LifestyleModifierEngine gate at line 1624."
+        "note": "compile_narrative_report_v1() call at lines 2214-2220. AnalysisDTO construction at lines 2245-2265. insight_graph.model_dump() at line 2142."
       },
       {
-        "path": "backend/core/pipeline/questionnaire_mapper.py",
+        "path": "backend/core/llm/validator_v2.py",
         "exists": true,
-        "note": "_map_exercise_minutes at lines 310-336 (returns 0 default). extract_behavioural_lifestyle_inputs at lines 541-588 (emits only present keys)."
+        "note": "validate_llm_output_v2() at lines 110-178. Three existing guards confirmed. Three gaps (lead finding, hypothesis invention, prohibited claims) confirmed absent."
       },
       {
-        "path": "backend/core/scoring/overlays.py",
+        "path": "backend/tools/launch_core_proving_harness.py",
         "exists": true,
-        "note": "_determine_exercise_level at lines 380-388. VERY_POOR adjustment_factor=0.8 at lines 157-162. create_lifestyle_profile at lines 269-308."
+        "note": "_clinician_heads() at lines 104-124. Root cause confirmed: reads from AnalysisDTO.model_dump() which lacks clinician_report_v1."
       },
       {
-        "path": "backend/core/analytics/domain_score_assembler.py",
+        "path": "backend/tests/unit/test_clinician_report_runtime_alignment.py",
         "exists": true,
-        "note": "_band_label_from_0_100 at lines 87-95: stable>=65, watch>=45. Metabolic domain at lines 455-488."
+        "note": "Reference pattern for correct clinician_report_v1 extraction. Glob confirmed."
+      },
+      {
+        "path": "frontend/app/components/results/InterpretationPatternsSection.tsx",
+        "exists": true,
+        "note": "selectVisibleIdlRecords at lines 11-17. clinical_only filter gap confirmed at line 15-16."
+      },
+      {
+        "path": "frontend/app/types/analysis.ts",
+        "exists": true,
+        "note": "InterpretationFrontendAllowedTermV1 at line 217. frontend_allowed_term field on InterpretationDisplayRecordV1 at line 234."
       }
     ],
-    "duplicate_authority_sources": "NONE DETECTED"
+    "duplicate_authority_sources": "NONE DETECTED",
+    "advisory": "docs/architecture/ directory does not exist. Cursor must create it when writing ADR_WP2_layer_b_layer_c_contract_path_b.md for Task 1. Standard directory creation — not a stop condition."
   },
   "stage_2b": {
-    "verdict": "PASS — with CRITICAL implementation constraint on fix classification",
+    "verdict": "PASS",
     "intelligence_core_components_identified": [
-      "backend/core/pipeline/orchestrator.py (map_submission gate, lifestyle_data passthrough)",
-      "backend/core/pipeline/questionnaire_mapper.py (_map_exercise_minutes default logic)",
-      "backend/core/scoring/overlays.py (LifestyleOverlays adjustment chain)",
-      "backend/core/analytics/domain_score_assembler.py (_band_label_from_0_100 threshold logic)"
+      "backend/core/analytics/narrative_report_compiler_v1.py (compile_narrative_report_v1 — analytics output assembler)",
+      "backend/core/llm/validator_v2.py (validate_llm_output_v2 — LLM output guard)",
+      "backend/core/pipeline/orchestrator.py (NarrativePayloadV1 construction and wiring at lines 2214-2220)"
     ],
-    "behavioural_surface_area": "OBS-2 root cause is in the questionnaire-to-scoring bridge. Any fix changes band labels for partial questionnaire inputs. No fix is zero-surface-area. The narrowest fix is in _map_exercise_minutes (mapper layer) — change return 0 to return None when no exercise fields present, then filter None from lifestyle_factors dict before injecting into user_data. This restores baseline-equivalence without affecting full questionnaire submissions.",
-    "expected_output_changes": "If code fix is implemented: AB statin_off consumer_band_labels[1] changes from 'watch' back to 'stable' (matching baseline). VR statin_off bands would similarly equalise with VR baseline. statin_off vs statin_on invariant must remain PASS (both would have the fix applied identically). If no code fix: investigation note documents the behaviour as intentional and a test locks current band values.",
+    "behavioural_surface_area": "Three bounded behavioural surfaces: (1) compile_narrative_report_v1() gains an optional typed payload parameter — when provided, the compiler prefers typed payload over raw insight_graph dict for Layer B truth. This changes the _input path_ not the analytical logic. (2) validate_llm_output_v2() gains three new rejection guards — lead finding, hypothesis invention, prohibited claims. These are additive restrictions; Gemini is not yet activated so no current output is rejected. (3) Orchestrator wiring at lines 2214-2220 — NarrativePayloadV1 is constructed from existing insight_graph.report_v1 and passed to the compiler. No new analytical reasoning is introduced.",
+    "expected_output_changes": "NONE for current runtime. NarrativePayloadV1 is a new contract layer derived deterministically from existing ReportV1. The compiler's output shape (NarrativeReportV1) is unchanged. The validator adds rejection paths that are not triggered in the current deterministic mock path (Gemini is not active). Proving harness fix will make primary_concern_head, key_findings_head, top_hypothesis_line_head non-empty in fingerprints — this is a correction of previously blank values, not an analytical change.",
     "regression_targets": [
-      "AB statin_off vs AB statin_on: consumer_band_labels must remain identical (invariant PASS)",
-      "AB baseline vs AB statin_off: second band must match after fix (the fix target)",
-      "AB lifestyle_context: bands must remain unchanged — lifestyle comes from fixture not questionnaire",
-      "Full questionnaire submission: exercise_minutes_per_week must still score when exercise questions answered",
-      "VR baseline vs VR statin_off: band equivalence after fix"
+      "backend/tests/unit/test_clinician_report_runtime_alignment.py — must continue passing (compiler called directly, not affected by orchestrator wiring)",
+      "backend/tests/unit/test_report_compiler_v1.py — must continue passing (no change to report compiler logic)",
+      "backend/tests/regression/test_obs2_questionnaire_exercise_unknown_regression.py — must continue passing (unrelated to Layer B/C changes)",
+      "frontend/tests/components/InterpretationPatternsSection.test.tsx — will need updating (add phenotype_allowed record, add clinical_only exclusion assertion)",
+      "Any golden panel fixture tests — narrative_report_v1 output shape is unchanged; asserting non-empty compile output should remain stable"
     ],
-    "determinism_preserved": "CONDITIONAL — preserved only if fix does not introduce any branch dependent on wall-clock time, random state, or LLM reasoning. mapper/orchestrator fix is deterministic by nature.",
+    "determinism_preserved": "YES — NarrativePayloadV1 builder is deterministic (derives fields from existing typed ReportV1 with no new reasoning). Compiler preference for typed payload over raw dict produces same section assembly since it is reading the same underlying data. Validator additions are pure regex/set membership checks.",
     "no_lm_reasoning_in_layer_b": true,
-    "no_scope_creep": "Guardrails explicitly prohibit broad questionnaire redesign and statin-path redesign. Fix must be confined to the exercise default sentinel at the mapper or orchestrator layer.",
+    "no_scope_creep": "Non-goals explicitly prohibit Sprint 3 authoring, Gemini activation, SSOT changes, Knowledge Bus changes, and AnalysisDTO restructuring. Scope is bounded to 8 numbered tasks with explicit file lists and a forbidden files registry.",
     "stop_conditions_adequate": true,
     "determinism_risks": [
-      "Fix to _map_exercise_minutes must not use any sentinel that could be falsy (e.g. None) in a way that accidentally activates a 0 score elsewhere — test must confirm no accidental downstream effect.",
-      "If fix is at orchestrator layer (lifestyle_data gate), it must not suppress legitimate lifestyle data when exercise IS answered as part of a full questionnaire."
+      "Task 3 compiler preference rule ('prefer typed payload for Layer B truth') must not alter section assembly logic — it should change the source object accessed, not the assembly outcome. Cursor must confirm compiled NarrativeReportV1 is field-equivalent whether using typed payload or raw dict path.",
+      "Task 5 validator new checks must not reject any currently passing deterministic mock output — guards should only fire on Gemini-produced content. Cursor must confirm mock path is unaffected.",
+      "Task 6 harness fix changes fingerprint artefacts (primary_concern_head will become non-empty) — this is intentional correction, not regression. latest_fingerprints.json and PROVING_REPORT.md must be updated by the harness run, not manually."
     ]
   },
   "overall_verdict": "HARDENED"
