@@ -1,20 +1,29 @@
 ---
-work_id: LC-S3-LAYER-C-PAYLOAD-IMPLEMENTATION
-branch: sprint3/layer-c-payload-implementation
+work_id: WP3-QUESTIONNAIRE-RATIONALISATION
+branch: wp3/questionnaire-rationalisation
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: BEHAVIOUR
+change_type: MIXED
 ---
 
-# LC-S3 — Layer B → Layer C Payload Implementation
+# WP3 — Questionnaire Rationalisation and Proving Readiness
 
 ## Objective
 
-Implement Sprint 3: make the narrative layer use the governed `NarrativePayloadV1` contract as the authoritative Layer B → Layer C input.
+Rationalise the HealthIQ AI questionnaire so it supports practical human proving and improves the quality of personalised biomarker interpretation without forcing users through low-value, unused, duplicative, or poorly worded questions.
 
-This sprint must make the report feel more composed, coherent, and governed without allowing Layer C to invent medical reasoning.
+This is not just a temporary proving shortcut.
 
-Layer B decides. Layer C synthesises.
+This work package must:
+
+- keep the existing frontend multi-section questionnaire flow
+- remove clearly low-value questions from the main questionnaire SSOT
+- merge or simplify overlapping medical-history questions where safe
+- preserve questions that materially improve interpretation
+- introduce question importance/tier metadata
+- ensure only mandatory questions block progress
+- ensure skipped non-mandatory answers map to unknown, not false healthy/zero/moderate defaults
+- preserve future extensibility so questions can be added back later through governed SSOT changes
 
 ## Authority documents
 
@@ -22,326 +31,454 @@ Read before implementation:
 
 - `docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md`
 - `docs/planning-papers/healthiq_pre_sprint1_decision_pack_FINAL.md`
-  - especially §3.9 Layer B → Layer C boundary
-- `docs/planning-papers/healthiq_pre_sprint3_closure_pack_FINAL.md`
+  - especially questionnaire minimum proving-set notes
+- `docs/planning-papers/healthiq_pre_sprint2_statin_gate_pack_FINAL.md`
 - `docs/audit-papers/gate_compliance_audit_sprint3_readiness_second_pass.md`
-- `docs/architecture/ADR_WP2_layer_b_layer_c_contract_path_b.md`
-- `docs/audit-papers/wp2_layer_b_layer_c_implementation_readiness_audit.md`
+- `docs/audit-papers/wp3_questionnaire_proving_readiness_audit.md`
 - `docs/AUTOMATION_BUS_SOP_v1.3.1.md`
 
-## Current approved architecture
+## Authority precedence note
 
-Sprint 3 must build on the approved Path B contract:
+`docs/audit-papers/wp3_questionnaire_proving_readiness_audit.md` is included as factual evidence only.
 
-`ReportV1 → NarrativePayloadV1 → NarrativeReportV1`
+Its factual findings remain relevant, especially:
 
-- `ReportV1` is the typed Layer B source.
-- `NarrativePayloadV1` is the formal Layer B → Layer C handoff.
-- `NarrativeReportV1` remains the Layer C prose output.
-- `AnalysisDTO` restructuring is not Sprint 3 scope.
-- Layer C must not access arbitrary `meta` fields for medical meaning.
+- field-by-field consumption map
+- mapper default risks
+- frontend/backend validation findings
+- statin SSOT verification
+- conditional validation issues
 
-## Scope
+However, its original recommendation to preserve all questions in `questionnaire.json` and use only a profile-based reduction has been superseded by the product/architecture decision in this work package.
 
-Implement governed narrative generation for the existing five `NarrativeReportV1` fields:
+This WP3 prompt is the implementation authority.
 
-- `retail_summary`
-- `lead_narrative`
-- `body_overview`
-- `next_steps_narrative`
-- `clinician_synthesis`
+Therefore, the audit’s §11 non-goals:
 
-The implementation must use `NarrativePayloadV1` as the primary source of truth where available.
+- “Do not remove any question from questionnaire.json”
+- “Do not reduce the required flag on any existing SSOT field”
 
-## Required behaviour
+do not apply to this work package.
 
-Layer C may:
+Cursor must follow this prompt’s explicit question disposition, removal list, tiering model, and validation requirements.
 
-- translate structured Layer B truth into natural prose
-- combine deterministic facts into coherent sentences
-- improve readability, flow, tone, and audience fit
-- use fired deterministic modifiers for emphasis
-- use section intents to shape each narrative section
-- use claim boundaries to avoid unsafe wording
+## Current baseline
 
-Layer C must not:
+The current questionnaire SSOT is:
 
-- invent new medical reasoning
-- change lead finding or ranking
-- alter confidence or banding
-- add causal claims beyond Layer B evidence
-- introduce new evidence
-- reinterpret absent data
-- invent confounders or next steps
-- produce claims outside the allowed wording boundaries
-- recommend medicines, supplements, or treatment
-- diagnose or rule out disease
+`backend/ssot/questionnaire.json`
 
-## Task 1 — Make `NarrativePayloadV1` the primary narrative input
+It currently contains 59 questions, many of which are required. The WP3 audit found that only a minority currently affect launch-core interpretation, while many are admin-only, captured-only, duplicative, or not clearly consumed downstream.
 
-Update the narrative compiler path so `compile_narrative_report_v1()` uses `narrative_payload_v1` as the primary governed input.
+The frontend questionnaire already uses a multi-section wizard. Do not replace that flow.
 
-Expected file:
+## Strategic principle
 
-- `backend/core/analytics/narrative_report_compiler_v1.py`
+A question earns its place only if it improves:
 
-Required:
+- biomarker interpretation
+- report personalisation
+- clinical/contextual safety
+- user-specific explanation
+- future governed analytical expansion
 
-- preserve backwards compatibility where `narrative_payload_v1` is absent
-- prefer `narrative_payload_v1.report_v1`, `.top_findings`, `.root_cause_v1`, `.section_intents`, and `.claim_boundaries` where present
-- avoid uncontrolled traversal of `meta` / raw `insight_graph` for medical meaning
-- keep deterministic fallback safe
+Do not keep questions merely because they already exist.
 
-Do not remove existing deterministic-mock support.
+Do not remove useful questions merely to shorten the form.
 
-## Task 2 — Implement section-specific governed prose assembly
+Question changes are governed but not irreversible. Questions removed now may be reintroduced later through governed SSOT updates if a future analytical system, edge case, or report feature justifies them.
 
-For each of the five narrative fields, use the section intent and permitted source fields from `NarrativePayloadV1`.
+## Required architecture
 
-Minimum expectations:
+Use one questionnaire SSOT.
 
-### `retail_summary`
+Do not create a second questionnaire authority source.
 
-Purpose:
+Questionnaire changes must remain governed through:
 
-- concise user-facing overview
-- identify the main pattern
-- avoid over-claiming
-- acknowledge uncertainty where relevant
+`backend/ssot/questionnaire.json`
 
-Must use:
+Each remaining question should have an importance/tier value.
 
-- lead finding from `top_findings[0]`
-- domain / pattern context where available
-- claim boundaries
+Suggested field:
 
-Must not:
+```json
+"importance": "mandatory" | "recommended" | "optional" | "advanced"
+````
 
-- introduce diagnosis
-- imply all-clear if Layer B is uncertain
-- invent future risk
+If a different field name is already more consistent with repo conventions, use that, but do not create multiple competing concepts.
 
-### `lead_narrative`
+## Tier definitions
 
-Purpose:
+### mandatory
 
-- explain the lead finding and biological mechanism
-- use governed WHY / root-cause evidence
-- explain why it matters
+Required for the current personalised report.
 
-Must use:
+User cannot proceed without answering, if the question is visible.
 
-- lead finding
-- `root_cause_v1`
-- evidence-for
-- evidence-against / limiting factors
-- missing data / confirmatory tests where available
+### recommended
 
-Must not:
+Improves the report but is not essential.
 
-- invent a cause
-- ignore evidence-against
-- convert “suggests” into “confirms”
+User can skip it.
 
-### `body_overview`
+UI should label it clearly, for example:
 
-Purpose:
+`Improves your report`
 
-- summarise relevant system-level patterns
-- explain how the lead finding fits into the wider panel
+### optional
 
-Must use:
+Useful context but not essential.
 
-- available `ReportV1` / IDL / domain-level context where already available to the compiler
-- only deterministic system/pattern data
+User can skip it.
 
-Must not:
+### advanced
 
-- invent cross-system connections
-- overstate weak or missing patterns
+Future or deeper module context.
 
-### `next_steps_narrative`
+Should not burden the core launch questionnaire. May be collapsed, hidden, or lower priority depending on current frontend capability.
 
-Purpose:
+## Questions to remove from the main questionnaire SSOT
+
+Remove these questions unless implementation evidence proves a strong reason to retain one:
+
+* `state_province`
+* `body_composition`
+* `overall_health_rating`
+* `current_medications`
+* `recent_blood_work`
+* `energy_level`
+* `current_symptoms`
+* `diet_quality_rating`
+* `sugar_beverages_weekly`
+* `fruit_vegetable_servings`
+* `sitting_hours_daily`
+* `caffeine_beverages_daily`
+* `pollution_exposure`
+* `sleep_schedule_consistency`
+* `stress_control_frequency`
+* `major_life_stressors`
+* `stress_management_method`
+* `food_sensitivities`
 
-- frame safe next steps
+Rationale:
 
-Allowed next-step styles:
+These are currently low-value, vague, duplicative, admin-like, captured-only, or not sufficiently tied to current personalised biomarker interpretation to justify user effort.
 
-- discuss with clinician
-- monitor
-- retest
-- review lifestyle context
-- consider confirmatory testing where Layer B lists it
+If any of these are retained, Cursor must STOP and report the evidence-based reason before proceeding.
 
-Prohibited:
+## Questions to move out of the health questionnaire
 
-- medication advice
-- supplement advice
-- treatment recommendations
-- urgent escalation unless already present in governed Layer B safety data
+These should not remain part of the health interpretation questionnaire:
 
-### `clinician_synthesis`
+* `full_name`
+* `email_address`
+* `phone_number`
 
-Purpose:
+If still needed, they belong in account/profile/report-delivery flow, not the biomarker interpretation questionnaire.
 
-- clinician-facing fast-read
+Do not build that separate account/profile flow in this work package.
 
-Must include where available:
+For now, remove them from the health questionnaire SSOT unless doing so breaks current frontend/API assumptions. If it does, STOP and report the dependency.
 
-- lead concern
-- top hypothesis
-- key supporting evidence
-- evidence-against / uncertainty
-- missing confirmatory markers
-- medication/context caveats
+## Questions to keep
 
-Must not:
+Keep and tier the following.
 
-- create new clinical interpretation outside Layer B
-- include consumer-only simplification if clinician detail is available
+### mandatory
 
-## Task 3 — Enforce claim boundaries in deterministic prose
+* `date_of_birth`
+* `biological_sex`
+* `height`
+* `weight`
+* `waist_circumference`
+* `long_term_medications`
+* `alcohol_drinks_weekly`
+* `tobacco_use`
+* `sleep_hours_nightly`
 
-Use `NarrativePayloadV1.claim_boundaries` to prevent unsafe deterministic prose.
+### recommended
 
-Required:
+* `blood_pressure_reading`
+* `chronic_conditions`
+* `medical_conditions`
+* `regular_migraines`
+* `recent_infections`
+* `fasting_hours`
+* `supplements`
+* `dietary_pattern`
+* `vigorous_exercise_days`
+* `resistance_training_days`
+* `sleep_quality_rating`
+* `sleep_disorders`
+* `stress_level_rating`
+* `family_cardiovascular_disease`
+* `family_diabetes_metabolic`
 
-- avoid prohibited claim patterns in generated deterministic output
-- use allowed claim strength wording such as “suggests”, “may reflect”, “is consistent with” where appropriate
-- keep clinician-only content out of consumer sections unless explicitly allowed
+### optional or advanced
 
-If the existing `claim_boundaries` model is insufficient for this task, STOP and report the missing field. Do not invent a parallel boundary system.
+* `country`
+* `ethnicity`
+* `menstrual_hormonal_status`
+* `low_testosterone_symptoms`
+* `daily_fluid_intake`
+* `balance_ability`
+* `stair_climbing_ability`
+* `push_up_capacity`
+* `grip_strength_assessment`
+* `physical_recovery_time`
+* `memory_changes`
+* `antibiotics_past_two_years`
+* `family_cancer_history`
+* `family_lifespan`
 
-## Task 4 — Preserve validator compatibility
+Use judgement from current frontend capability. If advanced questions cannot be hidden/collapsed safely in this work package, keep them visible but non-blocking and clearly labelled.
 
-Ensure the output remains compatible with `validate_llm_output_v2` and the validator prompt envelope.
+## Medical-history rationalisation
 
-Expected files may include:
+There is overlap between:
 
-- `backend/core/analytics/narrative_report_compiler_v1.py`
-- `backend/core/insights/synthesis.py`
-- `backend/core/llm/validator_v2.py`
+* `chronic_conditions`
+* `medical_conditions`
 
-Do not widen `synthesis.py` unless strictly required. If a change to `synthesis.py` is required, explicitly explain why and keep it additive.
+Do not delete clinically useful condition options.
 
-Do not activate Gemini.
+Preferred approach:
 
-## Task 5 — Tests
+* keep both only if current mapper/tests depend on both
+* otherwise merge into one clearer question or rationalise options safely
+* preserve AF, RA, SLE because they are QRISK/cardio-relevant
+* preserve diabetes, high blood pressure, high cholesterol, thyroid, liver, kidney, autoimmune where useful for future interpretation
 
-Add/update focused tests.
+If merging would require wider mapper changes than expected, keep both for now but mark only the most important one as recommended and make both skippable.
 
-Required backend tests:
+## Long-term medications
 
-- narrative compiler uses `NarrativePayloadV1` when provided
-- all five `NarrativeReportV1` fields are populated from governed payload input
-- lead finding in narrative output matches Layer B lead finding
-- deterministic prose does not include prohibited claim language
-- root-cause evidence / hypothesis information is reflected without invention
-- missing-data / uncertainty is handled safely
-- next steps do not include treatment, medication, or supplement advice
-- clinician synthesis includes clinician-facing lead concern when available
-- backwards compatibility remains when `narrative_payload_v1` is absent
+Keep:
 
-Likely test files:
+* `long_term_medications`
 
-- existing narrative compiler tests, if present
-- otherwise create a focused unit test under `backend/tests/unit/`
+It must include:
 
-Run relevant existing tests, including:
+* `None`
+* `Corticosteroids`
+* `Atypical antipsychotics`
+* `HIV/AIDS treatments`
+* `Statins (cholesterol medication)`
 
-- narrative payload WP-2 tests
-- validator v2 tests
-- clinician report runtime alignment tests
-- launch-core proving harness tests
+Current evidence indicates `Statins (cholesterol medication)` may already be present in `questionnaire.json`.
 
-## Task 6 — Documentation note
+Cursor must verify current SSOT state before editing:
 
-Create a short Sprint 3 completion note under:
+* if present exactly once, make no change
+* if missing, add it exactly once
+* if duplicated, STOP and report
 
-`docs/sprints/LC-S3_layer_c_payload_implementation_completion_2026-05.md`
+## Frontend requirements
 
-It must record:
+Keep the current multi-section wizard.
 
-- what changed
-- how `NarrativePayloadV1` is now used
-- how claim boundaries are respected
-- tests run
-- known limitations
-- confirmation that questionnaire sharpening, `insights[]` retirement, and mock-mode honesty were not part of this sprint
+Do not redesign the page flow.
+
+Update the frontend so it can display tier labels, for example:
+
+* Mandatory: `Required for your report`
+* Recommended: `Improves your report`
+* Optional: `Optional context`
+* Advanced: `Advanced context`
+
+Frontend validation should block only:
+
+* visible questions with `importance: "mandatory"`
+
+It should not block recommended, optional, or advanced questions.
+
+Conditional questions must remain respected. Hidden conditional questions must not block progress.
+
+## Backend validation requirements
+
+Update backend validation so it does not require every historical `required: true` field after rationalisation.
+
+Validation must align to the new importance model:
+
+* mandatory visible/applicable questions are required
+* non-mandatory questions are skippable
+* conditional questions are not required when hidden/not applicable
+
+If backend validation cannot determine visibility from `conditionalDisplay`, implement the minimal safe handling needed for existing conditional questions.
+
+Do not let backend validation become noisy for normal launch-core submissions.
+
+## Mapper safety requirements
+
+Skipped non-mandatory answers must be treated as unknown, not:
+
+* zero
+* normal
+* healthy
+* moderate
+* average
+
+Specifically inspect and fix:
+
+* alcohol absent behaviour
+* exercise absent behaviour
+* sleep absent behaviour
+* stress absent behaviour
+
+Known issue to address:
+
+`alcohol_drinks_weekly` currently risks defaulting to a moderate value when absent. This must be changed so absent alcohol is unknown/None unless explicitly answered.
+
+Preserve OBS-2 protection: missing exercise answers must not become zero exercise.
+
+## Do not introduce fallback parsers
+
+No fallback parser.
+
+No dummy questionnaire parser.
+
+No silent defaults that make absent lifestyle answers look normal, adverse, moderate, or healthy.
+
+## Expected files touched
+
+Expected:
+
+* `backend/ssot/questionnaire.json`
+* `backend/core/models/questionnaire.py`
+* `backend/core/pipeline/questionnaire_mapper.py`
+* `frontend/app/components/forms/QuestionnaireForm.tsx`
+* `frontend/app/lib/questionnaireSchema.ts`
+* relevant backend tests
+* relevant frontend tests
+* `docs/sprints/WP3_questionnaire_rationalisation_completion_2026-05.md`
+
+Possibly expected, only if needed:
+
+* backend questionnaire route/schema response files
+* upload page integration if type changes require it
+
+Not expected:
+
+* Knowledge Bus files
+* biomarker interpretation logic
+* narrative compiler files
+* Sentinel runner unless tests need promotion
+* Automation Bus control-plane scripts
+* report carriage UI
+* Sprint 4 planning files
+
+## Required tests
+
+Add or update tests proving:
+
+### SSOT integrity
+
+* questionnaire JSON loads successfully
+* removed question IDs are no longer present
+* remaining questions have valid `importance`
+* mandatory question list matches expected core set
+* no duplicate question IDs
+* `long_term_medications` contains statin option exactly once
+* `sleep_schedule_consistency` is no longer present
+
+### Frontend behaviour
+
+* mandatory visible questions block progress
+* recommended questions do not block progress
+* optional questions do not block progress
+* advanced questions do not block progress
+* tier labels render correctly
+* hidden conditional questions do not block progress
+* existing section navigation still works
+
+### Backend validation
+
+* submission with only mandatory launch-core fields passes validation
+* missing mandatory field fails validation
+* skipped recommended/optional/advanced fields do not fail validation
+* hidden conditional questions do not fail validation
+
+### Mapper safety
+
+* absent alcohol maps to unknown/None, not moderate
+* absent exercise remains unknown/None, not zero
+* statin-on still produces `user_intervention_document`
+* statin-off / none produces no statin intervention document
+* omitted optional fields do not crash mapper
+
+### Regression
+
+Run relevant existing questionnaire mapper tests.
+
+Run relevant frontend questionnaire form tests.
+
+Run any existing launch-core proving/profile tests if present.
 
 ## Stop conditions
 
 STOP and report before implementation if:
 
-- `NarrativePayloadV1` does not exist
-- ADR Path B is missing
-- `NarrativePayloadV1` does not include section intents or claim boundaries
-- `ReportV1` does not expose `top_findings` or `root_cause_v1`
-- using `NarrativePayloadV1` requires adding `top_findings` / `root_cause_v1` to `AnalysisDTO`
-- the implementation would require questionnaire changes
-- the implementation would require Knowledge Bus content changes
-- the implementation would require SSOT changes
-- the implementation would require frontend redesign
-- Gemini activation becomes necessary
-- claim boundaries cannot be enforced with the current contract
-- narrative output would require invented medical reasoning
-
-## Expected files touched
-
-Expected backend:
-
-- `backend/core/analytics/narrative_report_compiler_v1.py`
-- relevant backend narrative compiler tests
-- possibly `backend/core/insights/synthesis.py` only if strictly required for validator compatibility
-- possibly `backend/core/llm/validator_v2.py` only if strictly required for compatibility
-
-Expected docs:
-
-- `docs/sprints/LC-S3_layer_c_payload_implementation_completion_2026-05.md`
-
-Not expected:
-
-- `backend/core/models/results.py`
-- `backend/ssot/`
-- `knowledge_bus/`
-- frontend report pages
-- questionnaire files
-- `insights[]` retirement files
-- mock-mode honesty UI files
-- Automation Bus control-plane scripts
-- Sprint 4 or Sprint 5 planning files
+* removing admin fields breaks upload submission or user identity assumptions
+* removing any flagged question breaks mapper tests in a way that cannot be fixed locally
+* current frontend cannot support `importance` without broad redesign
+* backend validation cannot be made importance-aware without broad API redesign
+* removing `current_medications` breaks medication context handling
+* merging `chronic_conditions` and `medical_conditions` would require unsafe mapper restructuring
+* adding tier metadata causes schema parsing failure
+* skipped optional fields cause unsafe default assumptions that cannot be fixed within this work package
+* any Knowledge Bus change appears necessary
+* any biomarker interpretation logic change appears necessary
+* any narrative compiler change appears necessary
+* any Automation Bus control-plane script change appears necessary
 
 ## Explicit non-goals
 
 Do not:
 
-- restructure `AnalysisDTO`
-- sharpen or reduce the questionnaire
-- retire `insights[]`
-- implement mock-mode honesty wording
-- redesign frontend report carriage
-- add new WHY assets
-- alter signal ranking
-- alter confidence or banding
-- alter statin annotation logic
-- activate Gemini
-- add fallback parsers
-- create duplicate SSOT authority sources
+* build a new questionnaire UX
+* create a second questionnaire SSOT
+* create a user-facing profile chooser
+* build account/profile/report-delivery flow
+* change biomarker interpretation logic
+* change narrative/report compiler logic
+* change Knowledge Bus assets
+* change blood-test parsing
+* change Sentinel unless test promotion is explicitly required
+* implement Sprint 4 report carriage
+* implement proving harness CHECKs 2, 4, 5, 6
+* add new advanced health modules
+
+## Completion note
+
+Create:
+
+`docs/sprints/WP3_questionnaire_rationalisation_completion_2026-05.md`
+
+It must record:
+
+* questions removed
+* questions retained
+* final mandatory/recommended/optional/advanced counts
+* why removals were justified
+* how tiering works
+* how skipped answers are treated
+* tests run
+* known limitations
+* confirmation that the full questionnaire can still be expanded later through governed SSOT changes
 
 ## Validation commands
 
-Inspect project scripts and run the narrowest relevant tests first.
+Inspect repo scripts and run appropriate targeted tests first.
 
-At minimum, run targeted backend tests for:
+At minimum, run:
 
-- narrative compiler
-- narrative payload WP-2
-- validator v2
-- clinician report runtime alignment
-- proving harness
+* backend questionnaire/model tests
+* backend questionnaire mapper tests
+* frontend questionnaire form tests
+* any relevant upload-page tests
 
-Then run the broader backend test command if feasible.
+Then run broader backend/frontend tests if feasible.
 
 Report every command and result.
 
@@ -349,25 +486,30 @@ Report every command and result.
 
 Before finish, report:
 
-- branch name
-- work_id
-- files changed
-- summary of narrative compiler changes
-- confirmation `NarrativePayloadV1` is used as governed input
-- confirmation all five narrative sections are covered
-- confirmation claim boundaries are enforced
-- confirmation no questionnaire files were changed
-- confirmation no Knowledge Bus files were changed
-- confirmation no SSOT files were changed
-- confirmation no `AnalysisDTO` restructuring occurred
-- tests run and results
-- known limitations
-- whether Sprint 3 completion criteria are satisfied
+* branch
+* work_id
+* files changed
+* final question count
+* final mandatory question count
+* removed question IDs
+* retained question IDs by tier
+* whether statin option is present exactly once
+* whether skipped alcohol is unknown/None
+* whether skipped exercise remains unknown/None
+* tests run and results
+* confirmation no Knowledge Bus files changed
+* confirmation no biomarker interpretation logic changed
+* confirmation no narrative compiler files changed
+* confirmation no Automation Bus control-plane scripts changed
 
 ## Final expected outcome
 
-After this sprint, HealthIQ AI should have a governed deterministic Layer C implementation that uses:
+After WP3, the questionnaire should be shorter, clearer, and more honest.
 
-`ReportV1 → NarrativePayloadV1 → NarrativeReportV1`
+Users should only be forced to answer questions that materially improve the current personalised report.
 
-Sprint 4 may then focus on report carriage, `insights[]` retirement, mock-mode honesty, and user-facing coherence.
+Additional questions should remain available only where they improve report quality or preserve future extensibility.
+
+Future question changes remain possible through governed SSOT updates.
+
+````
