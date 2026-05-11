@@ -84,14 +84,20 @@ class TestQuestionnaireAPI:
         
         # Verify expected question types exist
         question_types = {q["type"] for q in schema}
-        expected_types = {"text", "dropdown", "checkbox", "slider", "number", "group"}
+        expected_types = {"dropdown", "checkbox", "slider", "number", "group", "date"}
         assert expected_types.issubset(question_types)
         
         # Verify specific important questions exist
         question_ids = {q["id"] for q in schema}
         expected_questions = {
-            "biological_sex", "date_of_birth", "diet_quality_rating",
-            "sleep_hours_nightly", "alcohol_drinks_weekly", "tobacco_use"
+            "biological_sex",
+            "date_of_birth",
+            "dietary_pattern",
+            "sleep_hours_nightly",
+            "alcohol_drinks_weekly",
+            "tobacco_use",
+            "waist_circumference",
+            "long_term_medications",
         }
         assert expected_questions.issubset(question_ids)
     

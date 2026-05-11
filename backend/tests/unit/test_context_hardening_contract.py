@@ -148,7 +148,7 @@ def test_apply_questionnaire_medication_representation_aligns_usercontext():
         {"user_id": "u-med", "age": 40, "sex": "male", "height_cm": 180, "weight_kg": 80}
     )
     q = {
-        "current_medications": "3-5 medications",
+        "long_term_medications": ["None"],
         "supplements": ["Vitamin D", "Omega-3"],
         "chronic_conditions": ["None"],
     }
@@ -159,5 +159,5 @@ def test_apply_questionnaire_medication_representation_aligns_usercontext():
         "questionnaire": q,
     }
     ctx = factory.create_context(payload)
-    assert ctx.user.medications == ["3-5 medications"]
+    assert ctx.user.medications == []
     assert ctx.user.supplements == ["Vitamin D", "Omega-3"]

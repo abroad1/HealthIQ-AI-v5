@@ -4,12 +4,16 @@ import { API_BASE } from '@/lib/api';
  * Question shape from GET /api/questionnaire/schema → `schema` array (SSOT-aligned).
  * Used by QuestionnaireForm rendering; must stay compatible with backend/ssot/questionnaire.json.
  */
+export type QuestionImportanceV1 = 'mandatory' | 'recommended' | 'optional' | 'advanced';
+
 export interface QuestionnaireQuestion {
   id: string;
   section: string;
   question: string;
   type: string;
   required: boolean;
+  /** WP3 tier from SSOT; when absent, UI falls back to `required` for copy only. */
+  importance?: QuestionImportanceV1;
   options?: string[];
   fields?: Array<{
     label: string;

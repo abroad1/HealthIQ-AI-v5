@@ -129,6 +129,31 @@ class AnalysisOrchestrator:
     def _utc_now_iso() -> str:
         return datetime.now(UTC).isoformat().replace("+00:00", "Z")
 
+    def _lifestyle_profile_from_flat_dict(
+        self, lifestyle_data: Optional[Dict[str, Any]]
+    ) -> Optional[LifestyleProfile]:
+        """Build LifestyleProfile from flat dict; omit unknown dimensions (WP3)."""
+        if not lifestyle_data:
+            return None
+        kwargs: Dict[str, Any] = {}
+        for key in (
+            "diet_level",
+            "sleep_hours",
+            "exercise_minutes_per_week",
+            "alcohol_units_per_week",
+            "smoking_status",
+            "stress_level",
+        ):
+            if key not in lifestyle_data:
+                continue
+            val = lifestyle_data[key]
+            if val is None:
+                continue
+            kwargs[key] = val
+        if not kwargs:
+            return None
+        return self.lifestyle_overlays.create_lifestyle_profile(**kwargs)
+
     def _get_signal_registry_hash_sha256(self) -> Optional[str]:
         if self._signal_registry_hash_sha256_cache is not None:
             return self._signal_registry_hash_sha256_cache
@@ -288,23 +313,29 @@ class AnalysisOrchestrator:
             try:
                 mapped_lifestyle_factors, mapped_medical_history = self.questionnaire_mapper.map_submission(submission)
                 
-                # Convert to dictionaries for context
-                lifestyle_factors = {
-                    "diet_level": mapped_lifestyle_factors.diet_level.value,
-                    "sleep_hours": mapped_lifestyle_factors.sleep_hours,
-                    "alcohol_units_per_week": mapped_lifestyle_factors.alcohol_units_per_week,
-                    "smoking_status": mapped_lifestyle_factors.smoking_status,
-                    "stress_level": mapped_lifestyle_factors.stress_level.value,
-                    "sedentary_hours_per_day": mapped_lifestyle_factors.sedentary_hours_per_day,
-                    "caffeine_consumption": mapped_lifestyle_factors.caffeine_consumption,
-                    "fluid_intake_liters": mapped_lifestyle_factors.fluid_intake_liters,
-                }
-                # OBS-2: omit key when exercise questions were not answered — downstream uses neutral default (150), not 0.
+                lifestyle_factors: Dict[str, Any] = {}
+                if mapped_lifestyle_factors.diet_level is not None:
+                    lifestyle_factors["diet_level"] = mapped_lifestyle_factors.diet_level.value
+                if mapped_lifestyle_factors.sleep_hours is not None:
+                    lifestyle_factors["sleep_hours"] = mapped_lifestyle_factors.sleep_hours
+                if mapped_lifestyle_factors.alcohol_units_per_week is not None:
+                    lifestyle_factors["alcohol_units_per_week"] = mapped_lifestyle_factors.alcohol_units_per_week
+                if mapped_lifestyle_factors.smoking_status:
+                    lifestyle_factors["smoking_status"] = mapped_lifestyle_factors.smoking_status
+                if mapped_lifestyle_factors.stress_level is not None:
+                    lifestyle_factors["stress_level"] = mapped_lifestyle_factors.stress_level.value
+                if mapped_lifestyle_factors.sedentary_hours_per_day is not None:
+                    lifestyle_factors["sedentary_hours_per_day"] = mapped_lifestyle_factors.sedentary_hours_per_day
+                if mapped_lifestyle_factors.caffeine_consumption is not None:
+                    lifestyle_factors["caffeine_consumption"] = mapped_lifestyle_factors.caffeine_consumption
+                if mapped_lifestyle_factors.fluid_intake_liters is not None:
+                    lifestyle_factors["fluid_intake_liters"] = mapped_lifestyle_factors.fluid_intake_liters
+                # OBS-2: omit key when exercise is unknown — overlays skip exercise (no false zero minutes).
                 if mapped_lifestyle_factors.exercise_minutes_per_week is not None:
                     lifestyle_factors["exercise_minutes_per_week"] = mapped_lifestyle_factors.exercise_minutes_per_week
-                
+
                 # Canonical medication / supplement representation (MEDICATION-CAVEAT-A):
-                # - medications: SSOT current_medications dropdown → coarse exposure bands only
+                # - medications: retired from WP3 SSOT (was current_medications coarse bands)
                 # - long_term_medication_classes: SSOT long_term_medications checkbox selections
                 # - supplements: SSOT supplements checkbox selections
                 # - atrial_fibrillation … migraines: mapped QRISK / context flags (deterministic booleans)
@@ -538,14 +569,7 @@ class AnalysisOrchestrator:
         # Create lifestyle profile if provided
         lifestyle_profile = None
         if lifestyle_data:
-            lifestyle_profile = self.lifestyle_overlays.create_lifestyle_profile(
-                diet_level=lifestyle_data.get("diet_level", "average"),
-                sleep_hours=lifestyle_data.get("sleep_hours", 7.0),
-                exercise_minutes_per_week=lifestyle_data.get("exercise_minutes_per_week", 150),
-                alcohol_units_per_week=lifestyle_data.get("alcohol_units_per_week", 5),
-                smoking_status=lifestyle_data.get("smoking_status", "never"),
-                stress_level=lifestyle_data.get("stress_level", "average")
-            )
+            lifestyle_profile = self._lifestyle_profile_from_flat_dict(lifestyle_data)
         
         # Exclude helper key injected for derived computation; it's not a canonical biomarker.
         scoring_biomarkers = {k: v for k, v in biomarkers.items() if k != "age"}
@@ -615,15 +639,8 @@ class AnalysisOrchestrator:
             # Create lifestyle profile if provided
             lifestyle_profile = None
             if lifestyle_data:
-                lifestyle_profile = self.lifestyle_overlays.create_lifestyle_profile(
-                    diet_level=lifestyle_data.get("diet_level", "average"),
-                    sleep_hours=lifestyle_data.get("sleep_hours", 7.0),
-                    exercise_minutes_per_week=lifestyle_data.get("exercise_minutes_per_week", 150),
-                    alcohol_units_per_week=lifestyle_data.get("alcohol_units_per_week", 5),
-                    smoking_status=lifestyle_data.get("smoking_status", "never"),
-                    stress_level=lifestyle_data.get("stress_level", "average")
-                )
-            
+                lifestyle_profile = self._lifestyle_profile_from_flat_dict(lifestyle_data)
+
             # Normalize biomarkers first
             normalized_biomarkers, unmapped = self.normalizer.normalize_biomarkers(biomarkers)
             
@@ -703,15 +720,8 @@ class AnalysisOrchestrator:
             # Create lifestyle profile if provided
             lifestyle_profile = None
             if lifestyle_data:
-                lifestyle_profile = self.lifestyle_overlays.create_lifestyle_profile(
-                    diet_level=lifestyle_data.get("diet_level", "average"),
-                    sleep_hours=lifestyle_data.get("sleep_hours", 7.0),
-                    exercise_minutes_per_week=lifestyle_data.get("exercise_minutes_per_week", 150),
-                    alcohol_units_per_week=lifestyle_data.get("alcohol_units_per_week", 5),
-                    smoking_status=lifestyle_data.get("smoking_status", "never"),
-                    stress_level=lifestyle_data.get("stress_level", "average")
-                )
-            
+                lifestyle_profile = self._lifestyle_profile_from_flat_dict(lifestyle_data)
+
             # Normalize biomarkers first
             normalized_biomarkers, unmapped = self.normalizer.normalize_biomarkers(biomarkers)
             

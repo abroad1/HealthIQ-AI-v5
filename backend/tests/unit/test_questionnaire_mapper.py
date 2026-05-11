@@ -24,32 +24,28 @@ class TestQuestionnaireMapper:
         self.mapper = QuestionnaireMapper()
     
     def test_map_diet_level_excellent(self):
-        """Test mapping excellent diet level."""
+        """WP3: diet tier is driven by dietary_pattern only; Mediterranean → GOOD."""
         responses = {
-            "dietary_pattern": "Mediterranean",  # Dietary pattern
-            "fruit_vegetable_servings": "6+ servings",    # Fruit and vegetables
-            "sugar_beverages_weekly": "None"            # Sugar-sweetened beverages
+            "dietary_pattern": "Mediterranean",
         }
-        
+
         lifestyle_factors, _ = self.mapper.map_submission(
             QuestionnaireSubmission(responses=responses, submission_id="test")
         )
-        
-        assert lifestyle_factors.diet_level == LifestyleLevel.EXCELLENT
-    
-    def test_map_diet_level_poor(self):
-        """Test mapping poor diet level."""
+
+        assert lifestyle_factors.diet_level == LifestyleLevel.GOOD
+
+    def test_map_diet_level_none_pattern_is_average(self):
+        """Explicit 'None' pattern scores neutral (average), not 'unknown'."""
         responses = {
-            "dietary_pattern": "None",           # No specific pattern
-            "fruit_vegetable_servings": "0-1 servings",   # Low fruit and vegetables
-            "sugar_beverages_weekly": "15+ drinks"      # High sugar beverages
+            "dietary_pattern": "None",
         }
-        
+
         lifestyle_factors, _ = self.mapper.map_submission(
             QuestionnaireSubmission(responses=responses, submission_id="test")
         )
-        
-        assert lifestyle_factors.diet_level == LifestyleLevel.VERY_POOR
+
+        assert lifestyle_factors.diet_level == LifestyleLevel.AVERAGE
     
     def test_map_sleep_hours(self):
         """Test mapping sleep hours from questionnaire responses."""
@@ -137,33 +133,24 @@ class TestQuestionnaireMapper:
             
             assert lifestyle_factors.smoking_status == expected
     
-    def test_map_stress_level_excellent(self):
-        """Test mapping excellent stress level."""
-        responses = {
-            "stress_level_rating": 2,                    # Low stress level
-            "stress_control_frequency": "Never",              # Good control
-            "major_life_stressors": "No major stressors"  # No major stressors
-        }
-        
+    def test_map_stress_level_good_from_low_slider(self):
+        """Stress mapping uses stress_level_rating only (WP3)."""
+        responses = {"stress_level_rating": 2}
+
         lifestyle_factors, _ = self.mapper.map_submission(
             QuestionnaireSubmission(responses=responses, submission_id="test")
         )
-        
-        assert lifestyle_factors.stress_level == LifestyleLevel.EXCELLENT
-    
-    def test_map_stress_level_very_poor(self):
-        """Test mapping very poor stress level."""
-        responses = {
-            "stress_level_rating": 10,                   # High stress level
-            "stress_control_frequency": "Very often",         # Poor control
-            "major_life_stressors": "4+ major stressors"  # Many stressors
-        }
-        
+
+        assert lifestyle_factors.stress_level == LifestyleLevel.GOOD
+
+    def test_map_stress_level_poor_from_high_slider(self):
+        responses = {"stress_level_rating": 10}
+
         lifestyle_factors, _ = self.mapper.map_submission(
             QuestionnaireSubmission(responses=responses, submission_id="test")
         )
-        
-        assert lifestyle_factors.stress_level == LifestyleLevel.VERY_POOR
+
+        assert lifestyle_factors.stress_level == LifestyleLevel.POOR
     
     def test_map_sedentary_hours(self):
         """Test mapping sedentary hours per day."""
@@ -221,26 +208,24 @@ class TestQuestionnaireMapper:
     def test_map_medical_history(self):
         """Test mapping medical history from questionnaire responses."""
         responses = {
-            "chronic_conditions": ["Diabetes", "Hypertension"],  # Medical conditions
-            "current_medications": "3-5 medications",  # SSOT dropdown: coarse band
-            "family_cardiovascular_disease": ["Heart Disease"],   # Family history
-            "family_cancer_history": ["Cancer"],   # Family history
-            "supplements": ["Vitamin D", "Omega-3"],      # Supplements
-            "sleep_disorders": ["Sleep apnea"],               # Sleep disorders
-            "food_sensitivities": ["Peanuts", "Shellfish"]       # Allergies
+            "chronic_conditions": ["Diabetes", "Hypertension"],
+            "family_cardiovascular_disease": ["Heart Disease"],
+            "family_cancer_history": ["Cancer"],
+            "supplements": ["Vitamin D", "Omega-3"],
+            "sleep_disorders": ["Sleep apnea"],
         }
-        
+
         _, medical_history = self.mapper.map_submission(
             QuestionnaireSubmission(responses=responses, submission_id="test")
         )
-        
+
         assert medical_history.conditions == ["Diabetes", "Hypertension"]
-        assert medical_history.medications == ["3-5 medications"]
+        assert medical_history.medications == []
         assert "Heart Disease" in medical_history.family_history
         assert "Cancer" in medical_history.family_history
         assert medical_history.supplements == ["Vitamin D", "Omega-3"]
         assert medical_history.sleep_disorders == ["Sleep apnea"]
-        assert medical_history.allergies == ["Peanuts", "Shellfish"]
+        assert medical_history.allergies == []
     
     def test_map_demographic_data(self):
         """Test mapping demographic data from questionnaire responses."""
@@ -249,15 +234,15 @@ class TestQuestionnaireMapper:
             "biological_sex": "Male",        # Sex
             "height": {"Feet": 5, "Inches": 10},  # Height
             "weight": {"Weight (lbs)": 180},      # Weight
-            "ethnicity": "Caucasian"   # Ethnicity
+            "ethnicity": "White/Caucasian",
         }
-        
+
         demographics = self.mapper.get_demographic_data(responses)
-        
+
         assert demographics["gender"] == "male"
         assert demographics["height"] == pytest.approx(177.8, rel=1e-2)  # 5'10" in cm
         assert demographics["weight"] == pytest.approx(81.6, rel=1e-2)   # 180 lbs in kg
-        assert demographics["ethnicity"] == "Caucasian"
+        assert demographics["ethnicity"] == "White/Caucasian"
     
     def test_map_complete_submission(self):
         """Test mapping a complete questionnaire submission."""
@@ -267,32 +252,26 @@ class TestQuestionnaireMapper:
             "biological_sex": "Male",
             "height": {"Feet": 5, "Inches": 10},
             "weight": {"Weight (lbs)": 180},
-            "ethnicity": "Caucasian",
-            
+            "ethnicity": "White/Caucasian",
+
             # Lifestyle
             "dietary_pattern": "Mediterranean",
-            "fruit_vegetable_servings": "6+ servings",
-            "sugar_beverages_weekly": "None",
             "sleep_hours_nightly": "7-8 hours",
             "sleep_quality_rating": 8,
             "alcohol_drinks_weekly": "1-3 drinks",
             "tobacco_use": "Never used",
             "stress_level_rating": 3,
-            "stress_control_frequency": "Never",
-            "major_life_stressors": "No major stressors",
             "vigorous_exercise_days": "4+ days",
             "resistance_training_days": "3+ days",
             "sitting_hours_daily": "7-9 hours",
             "caffeine_beverages_daily": "1-2",
             "daily_fluid_intake": "2-3 litres",
-            
+
             # Medical
             "chronic_conditions": ["Diabetes"],
-            "current_medications": "1-2 medications",
             "family_cardiovascular_disease": ["Heart Disease"],
             "supplements": ["Vitamin D"],
             "sleep_disorders": ["Sleep apnea"],
-            "food_sensitivities": ["Peanuts"]
         }
         
         submission = QuestionnaireSubmission(
@@ -303,29 +282,28 @@ class TestQuestionnaireMapper:
         lifestyle_factors, medical_history = self.mapper.map_submission(submission)
         
         # Verify lifestyle factors
-        assert lifestyle_factors.diet_level == LifestyleLevel.EXCELLENT
+        assert lifestyle_factors.diet_level == LifestyleLevel.GOOD
         assert lifestyle_factors.sleep_hours == 7.5
         assert lifestyle_factors.exercise_minutes_per_week == 210
         assert lifestyle_factors.alcohol_units_per_week == 2
         assert lifestyle_factors.smoking_status == "never"
-        assert lifestyle_factors.stress_level == LifestyleLevel.EXCELLENT
+        assert lifestyle_factors.stress_level == LifestyleLevel.GOOD
         assert lifestyle_factors.sedentary_hours_per_day == 8.0
         assert lifestyle_factors.caffeine_consumption == 1
         assert lifestyle_factors.fluid_intake_liters == 2.5
         
         # Verify medical history
         assert medical_history.conditions == ["Diabetes"]
-        assert medical_history.medications == ["1-2 medications"]
+        assert medical_history.medications == []
         assert medical_history.family_history == ["Heart Disease"]
         assert medical_history.supplements == ["Vitamin D"]
         assert medical_history.sleep_disorders == ["Sleep apnea"]
-        assert medical_history.allergies == ["Peanuts"]
+        assert medical_history.allergies == []
     
     def test_long_term_medication_classes_and_qrisk_flags(self):
         """SSOT long_term_medications classes and QRISK booleans map deterministically."""
         responses = {
             "chronic_conditions": ["None"],
-            "current_medications": "None",
             "long_term_medications": ["Corticosteroids", "HIV/AIDS treatments"],
             "medical_conditions": ["Atrial fibrillation", "Rheumatoid arthritis"],
             "regular_migraines": "Yes",
@@ -383,13 +361,12 @@ class TestQuestionnaireMapperEdgeCases:
         
         lifestyle_factors, medical_history = self.mapper.map_submission(submission)
         
-        # Should use default values for missing data
         assert lifestyle_factors.sleep_hours == 7.5
         assert lifestyle_factors.alcohol_units_per_week == 0
-        assert lifestyle_factors.diet_level == LifestyleLevel.AVERAGE  # Default
-        assert lifestyle_factors.exercise_minutes_per_week is None  # exercise questions absent → unknown (OBS-2)
-        assert lifestyle_factors.smoking_status == "never"  # Default
-        assert lifestyle_factors.stress_level == LifestyleLevel.AVERAGE  # Default
+        assert lifestyle_factors.diet_level is None
+        assert lifestyle_factors.exercise_minutes_per_week is None
+        assert lifestyle_factors.smoking_status is None
+        assert lifestyle_factors.stress_level is None
     
     def test_map_with_empty_responses(self):
         """Test mapping with empty questionnaire responses."""
@@ -402,13 +379,12 @@ class TestQuestionnaireMapperEdgeCases:
         
         lifestyle_factors, medical_history = self.mapper.map_submission(submission)
         
-        # Should use all default values
-        assert lifestyle_factors.diet_level == LifestyleLevel.AVERAGE
-        assert lifestyle_factors.sleep_hours == 7.0
+        assert lifestyle_factors.diet_level is None
+        assert lifestyle_factors.sleep_hours is None
         assert lifestyle_factors.exercise_minutes_per_week is None
-        assert lifestyle_factors.alcohol_units_per_week == 5
-        assert lifestyle_factors.smoking_status == "never"
-        assert lifestyle_factors.stress_level == LifestyleLevel.AVERAGE
+        assert lifestyle_factors.alcohol_units_per_week is None
+        assert lifestyle_factors.smoking_status is None
+        assert lifestyle_factors.stress_level is None
         
         # Medical history should be empty
         assert medical_history.conditions == []
@@ -435,9 +411,9 @@ class TestQuestionnaireMapperEdgeCases:
         # Should not crash and use default values
         lifestyle_factors, medical_history = self.mapper.map_submission(submission)
         
-        assert lifestyle_factors.sleep_hours == 7.0  # Default
-        assert lifestyle_factors.alcohol_units_per_week == 5  # Default
-        assert lifestyle_factors.stress_level == LifestyleLevel.AVERAGE  # Default
+        assert lifestyle_factors.sleep_hours is None
+        assert lifestyle_factors.alcohol_units_per_week is None
+        assert lifestyle_factors.stress_level is None
 
 
 class TestObjectiveLifestyleExtraction:

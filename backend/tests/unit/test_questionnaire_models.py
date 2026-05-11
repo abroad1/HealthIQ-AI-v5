@@ -1,7 +1,7 @@
 """
 Unit tests for questionnaire models and validation.
 
-Tests the 56-question questionnaire schema, validation logic, and data models.
+Tests questionnaire schema models and validation (WP3 SSOT-backed).
 """
 
 import pytest
@@ -297,7 +297,7 @@ class TestQuestionnaireSchemaLoading:
         schema = load_questionnaire_schema()
         
         assert isinstance(schema, QuestionnaireSchema)
-        assert len(schema.questions) == 59  # Should have 59 questions (58 + QRISK3)
+        assert len(schema.questions) == 38
         assert schema.version == "1.0"
         
         # Check that all questions have required fields
@@ -312,11 +312,12 @@ class TestQuestionnaireSchemaLoading:
         validator = create_questionnaire_validator()
         
         assert isinstance(validator, QuestionnaireValidator)
-        assert len(validator.schema.questions) == 59
-        
-        # Test that validator can validate responses
-        is_valid, error = validator.validate_response("full_name", "Test Name")
-        assert is_valid is True or is_valid is False  # Should not crash
+        assert len(validator.schema.questions) == 38
+
+        # Smoke: known SSOT id
+        is_valid, error = validator.validate_response("date_of_birth", "1990-01-01")
+        assert is_valid is True
+        assert error is None
 
 
 class TestQuestionnaireIntegration:
@@ -326,22 +327,17 @@ class TestQuestionnaireIntegration:
         """Test validation with real questionnaire data structure."""
         validator = create_questionnaire_validator()
         
-        # Test with realistic responses
+        # Minimal valid submission for current SSOT (mandatory + visible only)
         responses = {
-            "full_name": "John Doe",
-            "email_address": "john@example.com",
-            "phone_number": "+1234567890",
-            "country": "United States",
             "date_of_birth": "1990-01-01",
             "biological_sex": "Male",
             "height": {"Feet": 5, "Inches": 10},
-            "weight": {"Weight (lbs)": 180},
+            "weight": 180,
+            "waist_circumference": 36,
+            "long_term_medications": ["None"],
+            "alcohol_drinks_weekly": "1-3 drinks",
+            "tobacco_use": "Never used",
             "sleep_hours_nightly": "7-8 hours",
-            "sleep_quality_rating": 7,
-            "alcohol_consumption": "1-3 drinks",
-            "smoking_status": "Never used",
-            "stress_level": 5,
-            "exercise_frequency": "3 days"
         }
         
         submission = QuestionnaireSubmission(
@@ -350,14 +346,8 @@ class TestQuestionnaireIntegration:
         )
         
         is_valid, errors = validator.validate_submission(submission)
-        
-        # Should be valid or have specific validation errors
-        if not is_valid:
-            print(f"Validation errors: {errors}")
-            # Check that errors are specific and helpful
-            for error in errors:
-                assert len(error) > 10  # Should be descriptive
-                # Should reference semantic question ID
+
+        assert is_valid is True, errors
 
 
 if __name__ == "__main__":

@@ -354,8 +354,23 @@ export default function QuestionnaireForm({
     }
   };
 
-  const renderRequiredHint = (question: QuestionnaireQuestion) =>
-    question.required ? <span className="text-muted-foreground font-normal"> (required)</span> : null;
+  const renderTierHint = (question: QuestionnaireQuestion) => {
+    const tier = question.importance ?? (question.required ? 'mandatory' : 'recommended');
+    if (tier === 'mandatory') {
+      return <span className="text-muted-foreground font-normal"> (required)</span>;
+    }
+    const label =
+      tier === 'recommended'
+        ? 'Recommended'
+        : tier === 'optional'
+          ? 'Optional'
+          : tier === 'advanced'
+            ? 'Advanced'
+            : tier;
+    return (
+      <span className="text-muted-foreground ml-1 text-xs font-normal normal-case">· {label}</span>
+    );
+  };
 
   const pillGridClass = 'flex flex-wrap gap-2';
 
@@ -477,7 +492,7 @@ export default function QuestionnaireForm({
               {qMarker}
               <Label htmlFor={question.id} className="text-lg font-semibold leading-snug text-foreground">
                 {question.question}
-                {renderRequiredHint(question)}
+                {renderTierHint(question)}
               </Label>
               <Input
                 id={question.id}
@@ -502,7 +517,7 @@ export default function QuestionnaireForm({
               {qMarker}
               <Label htmlFor={question.id} className="text-lg font-semibold leading-snug text-foreground">
                 {question.question}
-                {renderRequiredHint(question)}
+                {renderTierHint(question)}
               </Label>
               <Input
                 id={question.id}
@@ -532,7 +547,7 @@ export default function QuestionnaireForm({
               {qMarker}
               <Label htmlFor={question.id} className="text-lg font-semibold leading-snug text-foreground">
                 {question.question}
-                {renderRequiredHint(question)}
+                {renderTierHint(question)}
               </Label>
               {renderDropdownControl(question, value, error, busy)}
               {question.helpText && (
@@ -553,7 +568,7 @@ export default function QuestionnaireForm({
               {qMarker}
               <Label htmlFor={question.id} className="text-lg font-semibold leading-snug text-foreground">
                 {question.question}
-                {renderRequiredHint(question)}
+                {renderTierHint(question)}
               </Label>
               <div className="space-y-4">
                 <div className="flex flex-wrap items-baseline gap-3">
@@ -597,7 +612,7 @@ export default function QuestionnaireForm({
               {qMarker}
               <Label className="text-lg font-semibold leading-snug text-foreground">
                 {question.question}
-                {renderRequiredHint(question)}
+                {renderTierHint(question)}
               </Label>
               {renderCheckboxControl(question, value, error, busy)}
               {question.helpText && (
@@ -616,7 +631,7 @@ export default function QuestionnaireForm({
               {qMarker}
               <Label className="text-lg font-semibold leading-snug text-foreground">
                 {question.question}
-                {renderRequiredHint(question)}
+                {renderTierHint(question)}
               </Label>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {question.fields?.map((field) => (
@@ -664,7 +679,7 @@ export default function QuestionnaireForm({
               {qMarker}
               <Label htmlFor={question.id} className="text-lg font-semibold leading-snug text-foreground">
                 {question.question}
-                {renderRequiredHint(question)}
+                {renderTierHint(question)}
               </Label>
               <Textarea
                 id={question.id}
