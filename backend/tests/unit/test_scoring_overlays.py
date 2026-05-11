@@ -44,16 +44,16 @@ class TestLifestyleOverlays:
         assert profile.exercise_minutes_per_week == 300, "Should set correct exercise minutes"
         assert profile.alcohol_units_per_week == 0, "Should set correct alcohol units"
         assert profile.smoking_status == "never", "Should set correct smoking status"
-        assert profile.stress_level == LifestyleLevel.AVERAGE, "Should set correct stress level (mapped from excellent)"
+        assert profile.stress_level == LifestyleLevel.EXCELLENT, "Should map stress_level excellent string to EXCELLENT"
         
-        # Test with default parameters
+        # Omitted args stay unknown (WP3 — overlays skip None dimensions)
         default_profile = self.overlays.create_lifestyle_profile()
-        assert default_profile.diet_level == LifestyleLevel.AVERAGE, "Should use default diet level"
-        assert default_profile.sleep_hours == 7.0, "Should use default sleep hours"
-        assert default_profile.exercise_minutes_per_week == 150, "Should use default exercise minutes"
-        assert default_profile.alcohol_units_per_week == 5, "Should use default alcohol units"
-        assert default_profile.smoking_status == "never", "Should use default smoking status"
-        assert default_profile.stress_level == LifestyleLevel.AVERAGE, "Should use default stress level"
+        assert default_profile.diet_level is None
+        assert default_profile.sleep_hours is None
+        assert default_profile.exercise_minutes_per_week is None
+        assert default_profile.alcohol_units_per_week is None
+        assert default_profile.smoking_status is None
+        assert default_profile.stress_level is None
     
     def test_excellent_lifestyle_overlay_adjustments(self):
         """

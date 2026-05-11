@@ -10,9 +10,12 @@ def test_create_analysis_context_medical_history_includes_qrisk_and_long_term_cl
         "date_of_birth": "1988-05-15",
         "height": {"Feet": 5, "Inches": 10},
         "weight": {"Weight (lbs)": 175},
+        "waist_circumference": 34,
+        "alcohol_drinks_weekly": "None",
+        "tobacco_use": "Never used",
+        "sleep_hours_nightly": "7-8 hours",
         "ethnicity": "White/Caucasian",
         "chronic_conditions": ["None"],
-        "current_medications": "None",
         "long_term_medications": ["Corticosteroids"],
         "medical_conditions": ["None"],
         "regular_migraines": "No",
@@ -30,10 +33,10 @@ def test_create_analysis_context_medical_history_includes_qrisk_and_long_term_cl
     )
     mh = context.medical_history
     assert mh is not None
-    assert mh["medications"] == ["None"]
+    assert mh["medications"] == []
     assert mh["supplements"] == ["Vitamin D"]
     assert mh["long_term_medication_classes"] == ["Corticosteroids"]
     assert mh["corticosteroids"] is True
     assert mh["hiv_treatments"] is False
     assert context.user.supplements == ["Vitamin D"]
-    assert context.user.medications == ["None"]
+    assert context.user.medications == []

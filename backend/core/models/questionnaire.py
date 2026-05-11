@@ -1,11 +1,11 @@
 """
 Questionnaire models - immutable Pydantic v2 models for questionnaire data.
 
-This module defines the 58-question questionnaire schema and validation logic
-based on the canonical questionnaire.json file.
+This module defines the 38-question questionnaire schema and validation logic
+based on the canonical ``backend/ssot/questionnaire.json`` file.
 """
 
-from typing import Dict, List, Any, Optional, Union
+from typing import Dict, List, Any, Literal, Optional, Union
 from pydantic import BaseModel, ConfigDict, Field, validator
 from datetime import datetime, date
 import json
@@ -34,6 +34,9 @@ class AlternativeUnit(BaseModel):
     max: Optional[Union[int, float]] = Field(default=None, description="Maximum value")
 
 
+QuestionImportanceV1 = Literal["mandatory", "recommended", "optional", "advanced"]
+
+
 class QuestionnaireQuestion(BaseModel):
     """Immutable questionnaire question definition."""
     
@@ -43,7 +46,11 @@ class QuestionnaireQuestion(BaseModel):
     section: str = Field(..., description="Question section for grouping")
     question: str = Field(..., description="Question text")
     type: str = Field(..., description="Question type (text, dropdown, number, etc.)")
-    required: bool = Field(default=False, description="Whether question is required")
+    required: bool = Field(default=False, description="Whether question is required (WP3: mandatory tier)")
+    importance: QuestionImportanceV1 = Field(
+        default="recommended",
+        description="WP3: mandatory | recommended | optional | advanced",
+    )
     options: Optional[List[str]] = Field(default=None, description="Options for dropdown questions")
     fields: Optional[List[QuestionnaireField]] = Field(default=None, description="Fields for group questions")
     alternativeUnit: Optional[AlternativeUnit] = Field(default=None, description="Alternative unit specification")
@@ -86,6 +93,21 @@ class QuestionnaireSubmission(BaseModel):
     submission_id: str = Field(..., description="Unique submission identifier")
     completed_at: str = Field(default_factory=lambda: datetime.now().isoformat(), description="Submission completion timestamp")
     version: str = Field(default="1.0", description="Questionnaire version used")
+
+
+def is_question_visible(question: QuestionnaireQuestion, responses: Dict[str, Any]) -> bool:
+    """Respect conditionalDisplay so hidden questions do not block validation."""
+    cd = question.conditionalDisplay
+    if not cd or not isinstance(cd, dict):
+        return True
+    dep = str(cd.get("dependsOn") or "").strip()
+    show_when = cd.get("showWhen")
+    if not dep or not isinstance(show_when, list):
+        return True
+    val = responses.get(dep)
+    if val is None or val == "":
+        return False
+    return str(val).strip() in [str(x) for x in show_when]
 
 
 class QuestionnaireValidator:
@@ -179,13 +201,34 @@ class QuestionnaireValidator:
         """
         errors = []
         
-        # Check all required questions are answered
+        # WP3: only mandatory tier questions that are visible block submission
         for question in self.schema.questions:
-            if question.required and question.id not in submission.responses:
+            if not question.required:
+                continue
+            if not is_question_visible(question, submission.responses):
+                continue
+            if question.id not in submission.responses:
                 errors.append(f"Required question {question.id} is missing")
+                continue
+            val = submission.responses.get(question.id)
+            if val is None or val == "":
+                errors.append(f"Required question {question.id} is missing")
+            elif question.type == "checkbox" and isinstance(val, list) and len(val) == 0:
+                errors.append(f"Required question {question.id} is missing")
+            elif question.type == "group" and isinstance(val, dict):
+                empty = True
+                for field in question.fields or []:
+                    fv = val.get(field.label)
+                    if fv not in (None, "", []):
+                        empty = False
+                        break
+                if empty:
+                    errors.append(f"Required question {question.id} is missing")
         
-        # Validate all responses
+        # Validate all responses (ignore unknown keys — legacy clients may post retired fields)
         for question_id, value in submission.responses.items():
+            if question_id not in self._question_map:
+                continue
             is_valid, error = self.validate_response(question_id, value)
             if not is_valid:
                 errors.append(error)
@@ -226,6 +269,7 @@ def load_questionnaire_schema() -> QuestionnaireSchema:
             question=q_data["question"],
             type=q_data["type"],
             required=q_data.get("required", False),
+            importance=q_data.get("importance", "recommended"),
             options=q_data.get("options"),
             fields=fields,
             alternativeUnit=alternative_unit,

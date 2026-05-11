@@ -28,16 +28,17 @@ class LifestyleLevel(Enum):
 @dataclass
 class MappedLifestyleFactors:
     """Mapped lifestyle factors from questionnaire responses."""
-    diet_level: LifestyleLevel
-    sleep_hours: float
+    # None = dimension not answered / not applicable — overlays must not invent defaults (WP3).
+    diet_level: Optional[LifestyleLevel]
+    sleep_hours: Optional[float]
     # None = exercise questions not answered (unknown); do not coerce to 0 — avoids false VERY_POOR exercise overlay (OBS-2).
     exercise_minutes_per_week: Optional[int]
-    alcohol_units_per_week: int
-    smoking_status: str
-    stress_level: LifestyleLevel
-    sedentary_hours_per_day: float
-    caffeine_consumption: int
-    fluid_intake_liters: float
+    alcohol_units_per_week: Optional[int]
+    smoking_status: Optional[str]
+    stress_level: Optional[LifestyleLevel]
+    sedentary_hours_per_day: Optional[float]
+    caffeine_consumption: Optional[int]
+    fluid_intake_liters: Optional[float]
 
 
 @dataclass
@@ -182,10 +183,6 @@ class QuestionnaireMapper:
         if "chronic_conditions" in responses:
             conditions = self._parse_checkbox_response(responses["chronic_conditions"])
         
-        # Map medications (current_medications — SSOT dropdown: coarse exposure band, not drug identities)
-        if "current_medications" in responses:
-            medications = self._parse_checkbox_response(responses["current_medications"])
-        
         # Map family history (family_* - Family history)
         if "family_cardiovascular_disease" in responses:
             family_history.extend(self._parse_checkbox_response(responses["family_cardiovascular_disease"]))
@@ -209,10 +206,6 @@ class QuestionnaireMapper:
         # Map sleep disorders (sleep_disorders - Sleep disorders)
         if "sleep_disorders" in responses:
             sleep_disorders = self._parse_checkbox_response(responses["sleep_disorders"])
-        
-        # Map allergies (food_sensitivities - Food sensitivities/allergies)
-        if "food_sensitivities" in responses:
-            allergies = self._parse_checkbox_response(responses["food_sensitivities"])
         
         # Map QRISK®3 cardiovascular risk factors
         atrial_fibrillation = self._check_qrisk_condition(responses, "medical_conditions", "Atrial fibrillation")
@@ -240,73 +233,48 @@ class QuestionnaireMapper:
             migraines=migraines
         )
     
-    def _map_diet_level(self, responses: Dict[str, Any]) -> LifestyleLevel:
-        """Map diet-related responses to diet level."""
+    def _map_diet_level(self, responses: Dict[str, Any]) -> Optional[LifestyleLevel]:
+        """Map diet-related responses to diet level (unknown when dietary_pattern not answered)."""
+        if "dietary_pattern" not in responses:
+            return None
         diet_score = 0
-        
-        # Dietary pattern (dietary_pattern)
-        if "dietary_pattern" in responses:
-            pattern = responses["dietary_pattern"]
-            if pattern == "Mediterranean":
-                diet_score += 2
-            elif pattern == "Plant-based":
-                diet_score += 2
-            elif pattern == "Low-carb/Keto":
-                diet_score += 1
-            elif pattern == "Intermittent fasting":
-                diet_score += 1
-            elif pattern == "None":
-                diet_score += 0
-        
-        # Fruit and vegetable servings (fruit_vegetable_servings)
-        if "fruit_vegetable_servings" in responses:
-            servings = responses["fruit_vegetable_servings"]
-            if servings == "6+ servings":
-                diet_score += 2
-            elif servings == "4-5 servings":
-                diet_score += 1
-            elif servings == "2-3 servings":
-                diet_score += 0
-            elif servings == "0-1 servings":
-                diet_score -= 1
-        
-        # Sugar-sweetened beverages (sugar_beverages_weekly)
-        if "sugar_beverages_weekly" in responses:
-            beverages = responses["sugar_beverages_weekly"]
-            if beverages == "None":
-                diet_score += 1
-            elif beverages == "1-3 drinks":
-                diet_score += 0
-            elif beverages == "4-7 drinks":
-                diet_score -= 1
-            elif beverages in ["8-14 drinks", "15+ drinks"]:
-                diet_score -= 2
-        
-        # Convert score to lifestyle level
+
+        pattern = responses["dietary_pattern"]
+        if pattern == "Mediterranean":
+            diet_score += 2
+        elif pattern == "Plant-based":
+            diet_score += 2
+        elif pattern == "Low-carb/Keto":
+            diet_score += 1
+        elif pattern == "Intermittent fasting":
+            diet_score += 1
+        elif pattern == "None":
+            diet_score += 0
+
         if diet_score >= 4:
             return LifestyleLevel.EXCELLENT
-        elif diet_score >= 2:
+        if diet_score >= 2:
             return LifestyleLevel.GOOD
-        elif diet_score >= 0:
+        if diet_score >= 0:
             return LifestyleLevel.AVERAGE
-        elif diet_score >= -2:
+        if diet_score >= -2:
             return LifestyleLevel.POOR
-        else:
-            return LifestyleLevel.VERY_POOR
-    
-    def _map_sleep_hours(self, responses: Dict[str, Any]) -> float:
-        """Map sleep hours from questionnaire responses."""
-        if "sleep_hours_nightly" in responses:
-            sleep_range = responses["sleep_hours_nightly"]
-            if sleep_range == "Less than 5 hours":
-                return 4.5
-            elif sleep_range == "5-6 hours":
-                return 5.5
-            elif sleep_range == "7-8 hours":
-                return 7.5
-            elif sleep_range == "9+ hours":
-                return 9.0
-        return 7.0  # Default
+        return LifestyleLevel.VERY_POOR
+
+    def _map_sleep_hours(self, responses: Dict[str, Any]) -> Optional[float]:
+        """Map sleep hours from questionnaire responses (unknown when unanswered)."""
+        if "sleep_hours_nightly" not in responses:
+            return None
+        sleep_range = responses["sleep_hours_nightly"]
+        if sleep_range == "Less than 5 hours":
+            return 4.5
+        if sleep_range == "5-6 hours":
+            return 5.5
+        if sleep_range == "7-8 hours":
+            return 7.5
+        if sleep_range == "9+ hours":
+            return 9.0
+        return None
     
     def _map_exercise_minutes(self, responses: Dict[str, Any]) -> Optional[int]:
         """Map exercise minutes per week from questionnaire responses.
@@ -346,148 +314,123 @@ class QuestionnaireMapper:
 
         return total_minutes
     
-    def _map_alcohol_consumption(self, responses: Dict[str, Any]) -> int:
-        """Map alcohol consumption to units per week."""
-        # Check both possible field names for backward compatibility
+    def _map_alcohol_consumption(self, responses: Dict[str, Any]) -> Optional[int]:
+        """Map alcohol consumption to units per week (unknown when unanswered — WP3)."""
         consumption = None
         if "alcohol_drinks_weekly" in responses:
             consumption = responses["alcohol_drinks_weekly"]
         elif "alcohol_consumption" in responses:
             consumption = responses["alcohol_consumption"]
-        
-        if consumption:
-            if consumption == "None":
-                return 0
-            elif consumption == "1-3 drinks":
-                return 2
-            elif consumption == "4-7 drinks":
-                return 5
-            elif consumption == "8-14 drinks":
-                return 11
-            elif consumption == "15+ drinks":
-                return 20
-        return 5  # Default moderate
+        if consumption is None or consumption == "":
+            return None
+        if consumption == "None":
+            return 0
+        if consumption == "1-3 drinks":
+            return 2
+        if consumption == "4-7 drinks":
+            return 5
+        if consumption == "8-14 drinks":
+            return 11
+        if consumption == "15+ drinks":
+            return 20
+        return None
     
-    def _map_smoking_status(self, responses: Dict[str, Any]) -> str:
+    def _map_smoking_status(self, responses: Dict[str, Any]) -> Optional[str]:
         """Map smoking status from questionnaire responses."""
-        # Check both possible field names for backward compatibility
         status = None
         if "tobacco_use" in responses:
             status = responses["tobacco_use"]
         elif "smoking_status" in responses:
             status = responses["smoking_status"]
-        
-        if status:
-            # Handle case-insensitive matching
-            status_lower = status.lower()
-            if status_lower in ["never used", "never"]:
-                return "never"
-            elif status_lower in ["former user quit >1 year", "former user quit <1 year", "former"]:
-                return "former"
-            elif status_lower in ["occasional use", "daily use", "current"]:
-                return "current"
-        return "never"  # Default
-    
-    def _map_stress_level(self, responses: Dict[str, Any]) -> LifestyleLevel:
-        """Map stress level from questionnaire responses."""
+
+        if status is None or status == "":
+            return None
+        status_lower = str(status).lower()
+        if status_lower in ["never used", "never"]:
+            return "never"
+        if status_lower in ["former user quit >1 year", "former user quit <1 year", "former"]:
+            return "former"
+        if status_lower in ["occasional use", "daily use", "current"]:
+            return "current"
+        return None
+
+    def _map_stress_level(self, responses: Dict[str, Any]) -> Optional[LifestyleLevel]:
+        """Map stress level from questionnaire responses (unknown when slider not answered)."""
+        if "stress_level_rating" not in responses:
+            return None
+        stress_level = responses["stress_level_rating"]
+        if not isinstance(stress_level, (int, float)):
+            return None
         stress_score = 0
-        
-        # Average stress level (stress_level_rating)
-        if "stress_level_rating" in responses:
-            stress_level = responses["stress_level_rating"]
-            if isinstance(stress_level, (int, float)):
-                if stress_level <= 3:
-                    stress_score += 2
-                elif stress_level <= 5:
-                    stress_score += 1
-                elif stress_level <= 7:
-                    stress_score += 0
-                elif stress_level <= 9:
-                    stress_score -= 1
-                else:
-                    stress_score -= 2
-        
-        # Control over important things (stress_control_frequency)
-        if "stress_control_frequency" in responses:
-            control = responses["stress_control_frequency"]
-            if control == "Never":
-                stress_score += 1
-            elif control == "Almost never":
-                stress_score += 0
-            elif control == "Sometimes":
-                stress_score -= 1
-            elif control in ["Fairly often", "Very often"]:
-                stress_score -= 2
-        
-        # Major life stressors (major_life_stressors)
-        if "major_life_stressors" in responses:
-            stressors = responses["major_life_stressors"]
-            if stressors == "No major stressors":
-                stress_score += 1
-            elif stressors == "1 major stressor":
-                stress_score += 0
-            elif stressors == "2-3 major stressors":
-                stress_score -= 1
-            elif stressors == "4+ major stressors":
-                stress_score -= 2
-        
-        # Convert score to lifestyle level
+        if stress_level <= 3:
+            stress_score += 2
+        elif stress_level <= 5:
+            stress_score += 1
+        elif stress_level <= 7:
+            stress_score += 0
+        elif stress_level <= 9:
+            stress_score -= 1
+        else:
+            stress_score -= 2
+
         if stress_score >= 3:
             return LifestyleLevel.EXCELLENT
-        elif stress_score >= 1:
+        if stress_score >= 1:
             return LifestyleLevel.GOOD
-        elif stress_score >= -1:
+        if stress_score >= -1:
             return LifestyleLevel.AVERAGE
-        elif stress_score >= -3:
+        if stress_score >= -3:
             return LifestyleLevel.POOR
-        else:
-            return LifestyleLevel.VERY_POOR
-    
-    def _map_sedentary_hours(self, responses: Dict[str, Any]) -> float:
+        return LifestyleLevel.VERY_POOR
+
+    def _map_sedentary_hours(self, responses: Dict[str, Any]) -> Optional[float]:
         """Map sedentary hours per day from questionnaire responses."""
-        if "sitting_hours_daily" in responses:
-            sitting_time = responses["sitting_hours_daily"]
-            if sitting_time == "Less than 4 hours":
-                return 3.0
-            elif sitting_time == "4-6 hours":
-                return 5.0
-            elif sitting_time == "7-9 hours":
-                return 8.0
-            elif sitting_time == "10-12 hours":
-                return 11.0
-            elif sitting_time == "13+ hours":
-                return 14.0
-        return 8.0  # Default
-    
-    def _map_caffeine_consumption(self, responses: Dict[str, Any]) -> int:
+        if "sitting_hours_daily" not in responses:
+            return None
+        sitting_time = responses["sitting_hours_daily"]
+        if sitting_time == "Less than 4 hours":
+            return 3.0
+        if sitting_time == "4-6 hours":
+            return 5.0
+        if sitting_time == "7-9 hours":
+            return 8.0
+        if sitting_time == "10-12 hours":
+            return 11.0
+        if sitting_time == "13+ hours":
+            return 14.0
+        return None
+
+    def _map_caffeine_consumption(self, responses: Dict[str, Any]) -> Optional[int]:
         """Map caffeine consumption from questionnaire responses."""
-        if "caffeine_beverages_daily" in responses:
-            consumption = responses["caffeine_beverages_daily"]
-            if consumption == "None":
-                return 0
-            elif consumption == "1-2":
-                return 1
-            elif consumption == "3-4":
-                return 3
-            elif consumption == "5-6":
-                return 5
-            elif consumption == "7+":
-                return 8
-        return 2  # Default moderate
-    
-    def _map_fluid_intake(self, responses: Dict[str, Any]) -> float:
+        if "caffeine_beverages_daily" not in responses:
+            return None
+        consumption = responses["caffeine_beverages_daily"]
+        if consumption == "None":
+            return 0
+        if consumption == "1-2":
+            return 1
+        if consumption == "3-4":
+            return 3
+        if consumption == "5-6":
+            return 5
+        if consumption == "7+":
+            return 8
+        return None
+
+    def _map_fluid_intake(self, responses: Dict[str, Any]) -> Optional[float]:
         """Map fluid intake from questionnaire responses."""
-        if "daily_fluid_intake" in responses:
-            intake = responses["daily_fluid_intake"]
-            if intake == "Less than 1 litre":
-                return 0.5
-            elif intake == "1-2 litres":
-                return 1.5
-            elif intake == "2-3 litres":
-                return 2.5
-            elif intake == "More than 3 litres":
-                return 3.5
-        return 2.0  # Default
+        if "daily_fluid_intake" not in responses:
+            return None
+        intake = responses["daily_fluid_intake"]
+        if intake == "Less than 1 litre":
+            return 0.5
+        if intake == "1-2 litres":
+            return 1.5
+        if intake == "2-3 litres":
+            return 2.5
+        if intake == "More than 3 litres":
+            return 3.5
+        return None
     
     def _parse_checkbox_response(self, response: Any) -> List[str]:
         """Parse checkbox response into list of strings."""
@@ -656,7 +599,9 @@ class QuestionnaireMapper:
                     # Convert to kg
                     weight_kg = weight_data["Weight (lbs)"] * 0.453592
                     demographics["weight"] = weight_kg
-        
+            elif isinstance(weight_data, (int, float)):
+                demographics["weight"] = float(weight_data) * 0.453592
+
         # Ethnicity (ethnicity)
         if "ethnicity" in responses:
             demographics["ethnicity"] = responses["ethnicity"]

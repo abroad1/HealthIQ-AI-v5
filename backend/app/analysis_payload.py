@@ -105,8 +105,8 @@ def apply_questionnaire_medication_representation_to_user(
     """
     MEDICATION-CAVEAT-A — Align validation-layer user fields with SSOT questionnaire mapping before ContextFactory.
 
-    When the corresponding SSOT keys are present, overwrites ``medications`` and ``supplements`` on ``user`` with
-    mapper output (coarse medication bands and supplement list), matching pipeline ``create_analysis_context``.
+    When the corresponding SSOT keys are present, overwrites ``supplements`` on ``user`` with mapper output.
+    WP3 retired ``current_medications`` from the SSOT; ``medications`` on the user is not set from questionnaire here.
     """
     if not questionnaire:
         return
@@ -114,7 +114,6 @@ def apply_questionnaire_medication_representation_to_user(
     if not any(
         k in q
         for k in (
-            "current_medications",
             "supplements",
             "long_term_medications",
             "medical_conditions",
@@ -130,8 +129,6 @@ def apply_questionnaire_medication_representation_to_user(
         _, mh = QuestionnaireMapper().map_submission(sub)
     except Exception:
         return
-    if "current_medications" in q:
-        user["medications"] = list(mh.medications)
     if "supplements" in q:
         user["supplements"] = list(mh.supplements)
 

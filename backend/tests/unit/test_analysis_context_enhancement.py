@@ -53,14 +53,14 @@ class TestAnalysisContextEnhancement:
     def sample_questionnaire_responses(self):
         """Create sample questionnaire responses."""
         return {
-            "diet_quality_rating": 8,
-            "exercise_frequency": "4+ days per week",
+            "dietary_pattern": "Mediterranean",
+            "vigorous_exercise_days": "4+ days",
             "sleep_hours_nightly": "7-8 hours",
             "stress_level_rating": 4,
             "tobacco_use": "Never used",
             "alcohol_drinks_weekly": "1-3 drinks",
             "chronic_conditions": ["None"],
-            "current_medications": "None"
+            "long_term_medications": ["None"],
         }
     
     @pytest.fixture

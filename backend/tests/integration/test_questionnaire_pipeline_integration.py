@@ -25,13 +25,14 @@ class TestQuestionnairePipelineIntegration:
             "date_of_birth": "1988-05-15",
             "height": {"Feet": 5, "Inches": 10},
             "weight": {"Weight (lbs)": 175},
+            "waist_circumference": 34,
             "ethnicity": "White/Caucasian",
-            "diet_quality_rating": 8,
+            "dietary_pattern": "Mediterranean",
             "sleep_hours_nightly": "7-8 hours",
             "alcohol_drinks_weekly": "1-3 drinks",
             "tobacco_use": "Never used",
+            "long_term_medications": ["None"],
             "chronic_conditions": ["None"],
-            "current_medications": "None"
         }
     
     @pytest.fixture
@@ -63,7 +64,7 @@ class TestQuestionnairePipelineIntegration:
         
         # Verify questionnaire responses are preserved
         assert context.questionnaire_responses["biological_sex"] == "Male"
-        assert context.questionnaire_responses["diet_quality_rating"] == 8
+        assert context.questionnaire_responses["dietary_pattern"] == "Mediterranean"
     
     def test_orchestrator_without_questionnaire_data(
         self,

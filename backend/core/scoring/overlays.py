@@ -40,13 +40,18 @@ class LifestyleAdjustment:
 
 @dataclass
 class LifestyleProfile:
-    """Complete lifestyle profile for a user."""
-    diet_level: LifestyleLevel
-    sleep_hours: float
-    exercise_minutes_per_week: int
-    alcohol_units_per_week: int
-    smoking_status: str  # "never", "former", "current"
-    stress_level: LifestyleLevel
+    """Complete lifestyle profile for a user.
+
+    WP3 / OBS-2: ``None`` on a field means the questionnaire did not supply that signal;
+    overlays skip that dimension (no invented moderate alcohol, no zero exercise, etc.).
+    """
+
+    diet_level: Optional[LifestyleLevel] = None
+    sleep_hours: Optional[float] = None
+    exercise_minutes_per_week: Optional[int] = None
+    alcohol_units_per_week: Optional[int] = None
+    smoking_status: Optional[str] = None  # "never", "former", "current"
+    stress_level: Optional[LifestyleLevel] = None
 
 
 class LifestyleOverlays:
@@ -268,43 +273,47 @@ class LifestyleOverlays:
     
     def create_lifestyle_profile(
         self,
-        diet_level: str = "average",
-        sleep_hours: float = 7.0,
-        exercise_minutes_per_week: int = 150,
-        alcohol_units_per_week: int = 5,
-        smoking_status: str = "never",
-        stress_level: str = "average"
+        diet_level: Optional[str] = None,
+        sleep_hours: Optional[float] = None,
+        exercise_minutes_per_week: Optional[int] = None,
+        alcohol_units_per_week: Optional[int] = None,
+        smoking_status: Optional[str] = None,
+        stress_level: Optional[str] = None,
     ) -> LifestyleProfile:
         """
         Create a lifestyle profile from user inputs.
-        
-        Args:
-            diet_level: Diet quality level
-            sleep_hours: Average hours of sleep per night
-            exercise_minutes_per_week: Minutes of moderate exercise per week
-            alcohol_units_per_week: Alcohol units consumed per week
-            smoking_status: Smoking status
-            stress_level: Stress level
-            
-        Returns:
-            LifestyleProfile object
+
+        Omitted / ``None`` arguments remain ``None`` on the profile so overlays can skip them.
         """
-        # Map stress level to correct enum value
         stress_mapping = {
             "low": LifestyleLevel.EXCELLENT,
             "good": LifestyleLevel.GOOD,
             "average": LifestyleLevel.AVERAGE,
             "poor": LifestyleLevel.POOR,
-            "very_poor": LifestyleLevel.VERY_POOR
+            "very_poor": LifestyleLevel.VERY_POOR,
+            # Enum value strings from questionnaire / LifestyleLevel (WP3 pipeline)
+            "excellent": LifestyleLevel.EXCELLENT,
         }
-        
+
+        diet_enum: Optional[LifestyleLevel] = None
+        if diet_level:
+            diet_enum = LifestyleLevel(diet_level.lower())
+
+        stress_enum: Optional[LifestyleLevel] = None
+        if stress_level:
+            stress_enum = stress_mapping.get(stress_level.lower(), LifestyleLevel.AVERAGE)
+
+        smoking_norm: Optional[str] = None
+        if smoking_status:
+            smoking_norm = smoking_status.lower()
+
         return LifestyleProfile(
-            diet_level=LifestyleLevel(diet_level.lower()),
+            diet_level=diet_enum,
             sleep_hours=sleep_hours,
             exercise_minutes_per_week=exercise_minutes_per_week,
             alcohol_units_per_week=alcohol_units_per_week,
-            smoking_status=smoking_status.lower(),
-            stress_level=stress_mapping.get(stress_level.lower(), LifestyleLevel.AVERAGE)
+            smoking_status=smoking_norm,
+            stress_level=stress_enum,
         )
     
     def apply_lifestyle_overlays(
@@ -326,38 +335,44 @@ class LifestyleOverlays:
         adjustments = []
         
         # Apply diet adjustment
-        diet_adj = self._adjustments[LifestyleFactor.DIET][lifestyle_profile.diet_level]
-        adjusted_score *= diet_adj.adjustment_factor
-        adjustments.append(f"Diet: {diet_adj.description}")
+        if lifestyle_profile.diet_level is not None:
+            diet_adj = self._adjustments[LifestyleFactor.DIET][lifestyle_profile.diet_level]
+            adjusted_score *= diet_adj.adjustment_factor
+            adjustments.append(f"Diet: {diet_adj.description}")
         
         # Apply sleep adjustment
-        sleep_level = self._determine_sleep_level(lifestyle_profile.sleep_hours)
-        sleep_adj = self._adjustments[LifestyleFactor.SLEEP][sleep_level]
-        adjusted_score *= sleep_adj.adjustment_factor
-        adjustments.append(f"Sleep: {sleep_adj.description}")
+        if lifestyle_profile.sleep_hours is not None:
+            sleep_level = self._determine_sleep_level(lifestyle_profile.sleep_hours)
+            sleep_adj = self._adjustments[LifestyleFactor.SLEEP][sleep_level]
+            adjusted_score *= sleep_adj.adjustment_factor
+            adjustments.append(f"Sleep: {sleep_adj.description}")
         
         # Apply exercise adjustment
-        exercise_level = self._determine_exercise_level(lifestyle_profile.exercise_minutes_per_week)
-        exercise_adj = self._adjustments[LifestyleFactor.EXERCISE][exercise_level]
-        adjusted_score *= exercise_adj.adjustment_factor
-        adjustments.append(f"Exercise: {exercise_adj.description}")
+        if lifestyle_profile.exercise_minutes_per_week is not None:
+            exercise_level = self._determine_exercise_level(lifestyle_profile.exercise_minutes_per_week)
+            exercise_adj = self._adjustments[LifestyleFactor.EXERCISE][exercise_level]
+            adjusted_score *= exercise_adj.adjustment_factor
+            adjustments.append(f"Exercise: {exercise_adj.description}")
         
         # Apply alcohol adjustment
-        alcohol_level = self._determine_alcohol_level(lifestyle_profile.alcohol_units_per_week)
-        alcohol_adj = self._adjustments[LifestyleFactor.ALCOHOL][alcohol_level]
-        adjusted_score *= alcohol_adj.adjustment_factor
-        adjustments.append(f"Alcohol: {alcohol_adj.description}")
+        if lifestyle_profile.alcohol_units_per_week is not None:
+            alcohol_level = self._determine_alcohol_level(lifestyle_profile.alcohol_units_per_week)
+            alcohol_adj = self._adjustments[LifestyleFactor.ALCOHOL][alcohol_level]
+            adjusted_score *= alcohol_adj.adjustment_factor
+            adjustments.append(f"Alcohol: {alcohol_adj.description}")
         
         # Apply smoking adjustment
-        smoking_level = self._determine_smoking_level(lifestyle_profile.smoking_status)
-        smoking_adj = self._adjustments[LifestyleFactor.SMOKING][smoking_level]
-        adjusted_score *= smoking_adj.adjustment_factor
-        adjustments.append(f"Smoking: {smoking_adj.description}")
+        if lifestyle_profile.smoking_status:
+            smoking_level = self._determine_smoking_level(lifestyle_profile.smoking_status)
+            smoking_adj = self._adjustments[LifestyleFactor.SMOKING][smoking_level]
+            adjusted_score *= smoking_adj.adjustment_factor
+            adjustments.append(f"Smoking: {smoking_adj.description}")
         
         # Apply stress adjustment
-        stress_adj = self._adjustments[LifestyleFactor.STRESS][lifestyle_profile.stress_level]
-        adjusted_score *= stress_adj.adjustment_factor
-        adjustments.append(f"Stress: {stress_adj.description}")
+        if lifestyle_profile.stress_level is not None:
+            stress_adj = self._adjustments[LifestyleFactor.STRESS][lifestyle_profile.stress_level]
+            adjusted_score *= stress_adj.adjustment_factor
+            adjustments.append(f"Stress: {stress_adj.description}")
         
         # Ensure score stays within 0-100 range
         adjusted_score = max(0.0, min(100.0, adjusted_score))
@@ -425,19 +440,25 @@ class LifestyleOverlays:
         recommendations = []
         
         # Diet recommendations
-        if lifestyle_profile.diet_level in [LifestyleLevel.POOR, LifestyleLevel.VERY_POOR]:
+        if lifestyle_profile.diet_level is not None and lifestyle_profile.diet_level in [
+            LifestyleLevel.POOR,
+            LifestyleLevel.VERY_POOR,
+        ]:
             recommendations.append("Improve diet quality by reducing processed foods and increasing whole foods")
         
         # Sleep recommendations
-        if lifestyle_profile.sleep_hours < 6.0:
+        if lifestyle_profile.sleep_hours is not None and lifestyle_profile.sleep_hours < 6.0:
             recommendations.append("Aim for 7-9 hours of quality sleep per night")
         
         # Exercise recommendations
-        if lifestyle_profile.exercise_minutes_per_week < 150:
+        if (
+            lifestyle_profile.exercise_minutes_per_week is not None
+            and lifestyle_profile.exercise_minutes_per_week < 150
+        ):
             recommendations.append("Increase physical activity to at least 150 minutes of moderate exercise per week")
         
         # Alcohol recommendations
-        if lifestyle_profile.alcohol_units_per_week > 14:
+        if lifestyle_profile.alcohol_units_per_week is not None and lifestyle_profile.alcohol_units_per_week > 14:
             recommendations.append("Reduce alcohol consumption to moderate levels (1-7 units per week)")
         
         # Smoking recommendations
@@ -445,7 +466,10 @@ class LifestyleOverlays:
             recommendations.append("Consider smoking cessation programs for significant health benefits")
         
         # Stress recommendations
-        if lifestyle_profile.stress_level in [LifestyleLevel.POOR, LifestyleLevel.VERY_POOR]:
+        if lifestyle_profile.stress_level is not None and lifestyle_profile.stress_level in [
+            LifestyleLevel.POOR,
+            LifestyleLevel.VERY_POOR,
+        ]:
             recommendations.append("Develop stress management techniques like meditation, yoga, or counseling")
         
         return recommendations
