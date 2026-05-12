@@ -37,7 +37,7 @@ SURFACE_TEST_MAP: dict[str, list[str]] = {
     SURFACE_ANALYTICS_SCORING_SIGNAL: [
         "backend/tests/regression/test_narrative_compiler_why_surface_regression.py",
         "backend/tests/regression/test_narrative_payload_compiler_regression.py",
-        "backend/tests/regression/test_wave1_contradiction_status.py",
+        "backend/tests/regression/test_lc_s5_proving_checks.py",
         "backend/tests/regression/test_obs2_questionnaire_exercise_unknown_regression.py",
     ],
     SURFACE_FRONTEND_TRUST: [
