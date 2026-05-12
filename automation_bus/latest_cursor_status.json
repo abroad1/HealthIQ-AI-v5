@@ -1,9 +1,10 @@
 {
   "branch": "sprint5/launch-core-proving-and-human-validation",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-12T20:44:22Z",
   "cursor_started_utc": "2026-05-12T20:35:52Z",
-  "head_sha": "181606b450fa714a1fb50fe4bc0aea4ccd2e3719",
+  "head_sha": "ddfbd7e7867e97e196f8b0ee5d0aa4dba63872f8",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "LC-S5-LAUNCH-CORE-PROVING-AND-HUMAN-VALIDATION"
 }
