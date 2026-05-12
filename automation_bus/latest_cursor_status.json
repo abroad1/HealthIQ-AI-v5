@@ -1,10 +1,9 @@
 {
-  "branch": "sprint4/launch-core-report-carriage",
+  "branch": "sprint5/launch-core-proving-and-human-validation",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-12T17:45:39Z",
-  "cursor_started_utc": "2026-05-12T17:39:24Z",
-  "head_sha": "c2c469b2f358bfabfcc4b1fc457e2202a43f7cc4",
+  "cursor_started_utc": "2026-05-12T20:35:52Z",
+  "head_sha": "181606b450fa714a1fb50fe4bc0aea4ccd2e3719",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "LC-S4-LAUNCH-CORE-REPORT-CARRIAGE"
+  "status": "IN_PROGRESS",
+  "work_id": "LC-S5-LAUNCH-CORE-PROVING-AND-HUMAN-VALIDATION"
 }

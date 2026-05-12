@@ -1,7 +1,7 @@
 # Launch-core proving harness — comparison report
 
-- **Stamp:** `proving-wp2-layer-bc-closure`
-- **Git (short):** `48efd2e`
+- **Stamp:** `20260512T203559Z`
+- **Git (short):** `181606b`
 - **Matrix:** `backend\tests\fixtures\proving\launch_core_matrix.json`
 
 ## Scenario matrix (panels × scenarios)
@@ -25,12 +25,10 @@
 - **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_mcv_high, signal_total_cholesterol_high, signal_apoa1_cardio_risk, signal_ldl_cholesterol_high, signal_ldl_high, signal_transferrin_low, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
 - **consumer band labels:** `['strong', 'stable', 'review']`
 - **intervention present:** False classes=[]
-- **retail summary (head):** Methylation pathway pattern (strong signal): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context
+- **retail summary (head):** The ranked lead pattern is **Homocysteine Elevation Context** (at_risk), centred on **Homocysteine**. Layer B frames this as the priority focus for interpretati...
+- **body overview (head):** Lead ranked finding **Homocysteine Elevation Context** (at_risk) is interpreted alongside the wider deterministic system snapshot below.
 
-This pattern links nutrie...
-- **body overview (head):** Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.
-
-Co-supporting systems (deterministic arbitration): cardiovascular, hematologica...
+Primary driver system ...
 - **clinician primary_concern (head):** Homocysteine Elevation Context: warrants attention on this panel...
 - **IDL enabled patterns:** 4 titles=['', '', '', '']
 
@@ -40,12 +38,10 @@ Co-supporting systems (deterministic arbitration): cardiovascular, hematologica.
 - **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_mcv_high, signal_total_cholesterol_high, signal_apoa1_cardio_risk, signal_ldl_cholesterol_high, signal_ldl_high, signal_transferrin_low, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
 - **consumer band labels:** `['strong', 'stable', 'review']`
 - **intervention present:** False classes=[]
-- **retail summary (head):** Methylation pathway pattern (strong signal): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context
+- **retail summary (head):** The ranked lead pattern is **Homocysteine Elevation Context** (at_risk), centred on **Homocysteine**. Layer B frames this as the priority focus for interpretati...
+- **body overview (head):** Lead ranked finding **Homocysteine Elevation Context** (at_risk) is interpreted alongside the wider deterministic system snapshot below.
 
-This pattern links nutrie...
-- **body overview (head):** Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.
-
-Co-supporting systems (deterministic arbitration): autonomic, cardiovascular, h...
+Primary driver system ...
 - **clinician primary_concern (head):** Homocysteine Elevation Context: warrants attention on this panel...
 - **IDL enabled patterns:** 4 titles=['', '', '', '']
 
@@ -55,12 +51,10 @@ Co-supporting systems (deterministic arbitration): autonomic, cardiovascular, h.
 - **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_mcv_high, signal_total_cholesterol_high, signal_apoa1_cardio_risk, signal_ldl_cholesterol_high, signal_ldl_high, signal_transferrin_low, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
 - **consumer band labels:** `['strong', 'stable', 'review']`
 - **intervention present:** False classes=[]
-- **retail summary (head):** Methylation pathway pattern (strong signal): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context
+- **retail summary (head):** The ranked lead pattern is **Homocysteine Elevation Context** (at_risk), centred on **Homocysteine**. Layer B frames this as the priority focus for interpretati...
+- **body overview (head):** Lead ranked finding **Homocysteine Elevation Context** (at_risk) is interpreted alongside the wider deterministic system snapshot below.
 
-This pattern links nutrie...
-- **body overview (head):** Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.
-
-Co-supporting systems (deterministic arbitration): cardiovascular, hematologica...
+Primary driver system ...
 - **clinician primary_concern (head):** Homocysteine Elevation Context: warrants attention on this panel...
 - **IDL enabled patterns:** 4 titles=['', '', '', '']
 
@@ -70,12 +64,10 @@ Co-supporting systems (deterministic arbitration): cardiovascular, hematologica.
 - **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_mcv_high, signal_total_cholesterol_high, signal_apoa1_cardio_risk, signal_ldl_cholesterol_high, signal_ldl_high, signal_transferrin_low, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
 - **consumer band labels:** `['strong', 'stable', 'review']`
 - **intervention present:** True classes=['lipid_lowering_statin']
-- **retail summary (head):** Methylation pathway pattern (strong signal): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context
+- **retail summary (head):** The ranked lead pattern is **Homocysteine Elevation Context** (at_risk), centred on **Homocysteine**. Layer B frames this as the priority focus for interpretati...
+- **body overview (head):** Lead ranked finding **Homocysteine Elevation Context** (at_risk) is interpreted alongside the wider deterministic system snapshot below.
 
-This pattern links nutrie...
-- **body overview (head):** Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.
-
-Co-supporting systems (deterministic arbitration): cardiovascular, hematologica...
+Primary driver system ...
 - **clinician primary_concern (head):** Homocysteine Elevation Context: warrants attention on this panel...
 - **IDL enabled patterns:** 4 titles=['', '', '', '']
 
@@ -85,12 +77,10 @@ Co-supporting systems (deterministic arbitration): cardiovascular, hematologica.
 - **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_alp_low, signal_hypercortisolism, signal_vitamin_d_low, signal_cortisol_high, signal_creatine_kinase_high, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
 - **consumer band labels:** `['strong', 'strong', 'strong']`
 - **intervention present:** False classes=[]
-- **retail summary (head):** Methylation pathway pattern (pattern to watch): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context
+- **retail summary (head):** The ranked lead pattern is **Homocysteine Elevation Context** (suboptimal), centred on **Homocysteine**. Layer B frames this as the priority focus for interpret...
+- **body overview (head):** Lead ranked finding **Homocysteine Elevation Context** (suboptimal) is interpreted alongside the wider deterministic system snapshot below.
 
-This pattern links nut...
-- **body overview (head):** Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.
-
-Co-supporting systems (deterministic arbitration): cardiovascular, hematologica...
+Primary driver syst...
 - **clinician primary_concern (head):** Homocysteine Elevation Context: is outside the optimal range on this panel...
 - **IDL enabled patterns:** 2 titles=['', '']
 
@@ -100,12 +90,10 @@ Co-supporting systems (deterministic arbitration): cardiovascular, hematologica.
 - **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_alp_low, signal_hypercortisolism, signal_vitamin_d_low, signal_cortisol_high, signal_creatine_kinase_high, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
 - **consumer band labels:** `['strong', 'strong', 'strong']`
 - **intervention present:** False classes=[]
-- **retail summary (head):** Methylation pathway pattern (pattern to watch): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context
+- **retail summary (head):** The ranked lead pattern is **Homocysteine Elevation Context** (suboptimal), centred on **Homocysteine**. Layer B frames this as the priority focus for interpret...
+- **body overview (head):** Lead ranked finding **Homocysteine Elevation Context** (suboptimal) is interpreted alongside the wider deterministic system snapshot below.
 
-This pattern links nut...
-- **body overview (head):** Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.
-
-Co-supporting systems (deterministic arbitration): autonomic, cardiovascular, h...
+Primary driver syst...
 - **clinician primary_concern (head):** Homocysteine Elevation Context: is outside the optimal range on this panel...
 - **IDL enabled patterns:** 2 titles=['', '']
 
@@ -115,12 +103,10 @@ Co-supporting systems (deterministic arbitration): autonomic, cardiovascular, h.
 - **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_alp_low, signal_hypercortisolism, signal_vitamin_d_low, signal_cortisol_high, signal_creatine_kinase_high, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
 - **consumer band labels:** `['strong', 'strong', 'strong']`
 - **intervention present:** False classes=[]
-- **retail summary (head):** Methylation pathway pattern (pattern to watch): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context
+- **retail summary (head):** The ranked lead pattern is **Homocysteine Elevation Context** (suboptimal), centred on **Homocysteine**. Layer B frames this as the priority focus for interpret...
+- **body overview (head):** Lead ranked finding **Homocysteine Elevation Context** (suboptimal) is interpreted alongside the wider deterministic system snapshot below.
 
-This pattern links nut...
-- **body overview (head):** Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.
-
-Co-supporting systems (deterministic arbitration): cardiovascular, hematologica...
+Primary driver syst...
 - **clinician primary_concern (head):** Homocysteine Elevation Context: is outside the optimal range on this panel...
 - **IDL enabled patterns:** 2 titles=['', '']
 
@@ -130,12 +116,10 @@ Co-supporting systems (deterministic arbitration): cardiovascular, hematologica.
 - **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_alp_low, signal_hypercortisolism, signal_vitamin_d_low, signal_cortisol_high, signal_creatine_kinase_high, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
 - **consumer band labels:** `['strong', 'strong', 'strong']`
 - **intervention present:** True classes=['lipid_lowering_statin']
-- **retail summary (head):** Methylation pathway pattern (pattern to watch): Homocysteine elevation with larger red-cell index suggesting one-carbon / marrow context
+- **retail summary (head):** The ranked lead pattern is **Homocysteine Elevation Context** (suboptimal), centred on **Homocysteine**. Layer B frames this as the priority focus for interpret...
+- **body overview (head):** Lead ranked finding **Homocysteine Elevation Context** (suboptimal) is interpreted alongside the wider deterministic system snapshot below.
 
-This pattern links nut...
-- **body overview (head):** Primary driver system (deterministic arbitration): cardiovascular_4_biomarkers.
-
-Co-supporting systems (deterministic arbitration): cardiovascular, hematologica...
+Primary driver syst...
 - **clinician primary_concern (head):** Homocysteine Elevation Context: is outside the optimal range on this panel...
 - **IDL enabled patterns:** 2 titles=['', '']
 
@@ -163,5 +147,5 @@ Expect: lifestyle-derived fields present under lifestyle_context; narrative head
 
 ## Artifact paths
 
-- Golden outputs (per run): `docs/audit-papers/launch-core-proving/artifacts/proving-wp2-layer-bc-closure/` — written by `run_golden_panel`; omit bulk artefacts from git if desired.
+- Golden outputs (per run): `docs/audit-papers/launch-core-proving/artifacts/20260512T203559Z/` — written by `run_golden_panel`; omit bulk artefacts from git if desired.
 - Latest fingerprints JSON: `docs/audit-papers/launch-core-proving/latest_fingerprints.json`

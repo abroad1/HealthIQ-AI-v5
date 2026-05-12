@@ -48,7 +48,7 @@ DEFECT_CLASS_TESTS: dict[str, list[str]] = {
     "ggt_alias_miss":              ["backend/tests/regression/test_ggt_alias_regression.py"],
     "bilirubin_canonical_mismatch":["backend/tests/regression/test_bilirubin_alias_regression.py"],
     "slug_leakage":                ["backend/tests/regression/test_slug_leakage_regression.py"],
-    "wave1_contradiction":         ["backend/tests/regression/test_wave1_contradiction_status.py"],
+    "wave1_contradiction":         ["backend/tests/regression/test_lc_s5_proving_checks.py"],
     "persisted_result_replay":     ["backend/tests/regression/test_persisted_result_replay_status.py"],
     "alias_sweep":                 ["backend/tests/regression/test_alias_canonical_sweep.py"],
     "narrative_compiler_why_surface": [
