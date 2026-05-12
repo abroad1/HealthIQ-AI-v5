@@ -1,16 +1,118 @@
 {
   "bus_version": "1.3.1",
+  "work_id": "LC-S5-LAUNCH-CORE-PROVING-AND-HUMAN-VALIDATION",
+  "status": "HARDENED",
+  "overall_verdict": "HARDENED",
+  "hardened_utc": "2026-05-12T20:30:00Z",
+  "hardened_by": "Claude Code Sonnet 4.6 — Stage 2 hardening (SOP v1.3.1)",
   "changes": [
     {
-      "detail": "Kernel preflight alignment to LC-S4 prompt work_id and branch after WP3 finish cleared stale token. Formal Stage 2C evidence checklist remains required from Claude before merge per AUTOMATION_BUS_SOP v1.3.1.",
-      "field": "work_id_branch_alignment",
-      "id": "LC-S4_KERNEL_PREFLIGHT",
-      "status": "ALIGNED_FOR_START"
+      "id": "2A-001",
+      "field": "authority_path_verification",
+      "status": "CONFIRMED",
+      "detail": "docs/audit-papers/lc_s5_proving_readiness_preflight_audit.md — file exists (created 2026-05-12, this session). Primary evidence source. Cited at prompt line 33."
+    },
+    {
+      "id": "2A-002",
+      "field": "authority_path_verification",
+      "status": "CONFIRMED",
+      "detail": "backend/tools/launch_core_proving_harness.py — file exists, read lines 1-494. Imports run_golden_panel, compile_clinician_report_v1, InterventionAnnotationsV1. Runs AB × VR × 4-scenario matrix. No modification by LC-S3/LC-S4/WP3 confirmed."
+    },
+    {
+      "id": "2A-003",
+      "field": "authority_path_verification",
+      "status": "CONFIRMED",
+      "detail": "backend/tests/fixtures/proving/launch_core_matrix.json — file exists, read lines 1-37. Panels: AB (tests/fixtures/panels/ab_full_panel_with_ranges.json), VR (tests/fixtures/panels/vr_full_panel_with_ranges.json). 4 scenarios: baseline, lifestyle_context, statin_off, statin_on. Both panel fixture paths verified on disk."
+    },
+    {
+      "id": "2A-004",
+      "field": "authority_path_verification",
+      "status": "CONFIRMED",
+      "detail": "backend/tests/fixtures/lifestyle_minimal.json — file exists, read lines 1-12. alcohol_units_per_week: 7. Cited at launch_core_matrix.json:17 as lifestyle_fixture for lifestyle_context scenario."
+    },
+    {
+      "id": "2A-005",
+      "field": "authority_path_verification",
+      "status": "CONFIRMED",
+      "detail": "sentinel/packs/escaped_defects_v1.json — file exists, read lines 1-83. 9 defect classes present. wave1_contradiction at lines 33-39: guard_type status_reporting, status PLACEHOLDER. statin_signal_isolation at lines 73-82: GUARDED."
+    },
+    {
+      "id": "2A-006",
+      "field": "authority_path_verification",
+      "status": "CONFIRMED",
+      "detail": "sentinel/sentinel_runner.py — file exists, read lines 1-378. DEFECT_CLASS_TESTS map at lines 47-66. wave1_contradiction → test_wave1_contradiction_status.py (line 52). All claimed test paths in DEFECT_CLASS_TESTS verified present in runner map."
+    },
+    {
+      "id": "2A-007",
+      "field": "authority_path_verification",
+      "status": "CONFIRMED",
+      "detail": "docs/planning-papers/healthiq_pre_sprint1_decision_pack_FINAL.md — file exists (Glob confirmed). Historical authority only per prompt line 39."
+    },
+    {
+      "id": "2A-008",
+      "field": "authority_path_verification",
+      "status": "CONFIRMED",
+      "detail": "docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md — file exists (Glob confirmed). Historical authority only per prompt line 40."
+    },
+    {
+      "id": "2A-009",
+      "field": "no_duplicate_authority",
+      "status": "CONFIRMED",
+      "detail": "No competing authority source for proving logic. Historical planning documents explicitly scoped to conflict resolution only (prompt lines 39-42). LC-S5 preflight audit is sole implementation evidence source. No duplicate SSOT paths cited."
+    },
+    {
+      "id": "2B-001",
+      "field": "CHECK2_fixture_threshold_mismatch",
+      "status": "CRITICAL_IMPLEMENTATION_NOTE",
+      "detail": "CHECK 2 via existing lifestyle_context scenario WILL NOT PRODUCE alcohol bridge text. Evidence: lifestyle_minimal.json line 9 alcohol_units_per_week=7; backend/ssot/lifestyle_interpretation_bridges_v1.yaml line 12 moderate_units_min=8.0; backend/core/analytics/lifestyle_interpretation_bridge_engine.py lines 145-150 alcohol_active requires units >= mod_min (8.0). 7 < 8 → bridge does NOT fire. AB__lifestyle_context lead_narrative_head will contain NO alcohol/methylation language. Cursor must NOT attempt to assert alcohol content from the existing lifestyle_context proving fingerprint — it will not be there. REQUIRED IMPLEMENTATION PATH: Implement CHECK 2 as a direct pipeline unit test that injects alcohol_units_per_week >= 8 (e.g. 10) alongside the AB panel biomarkers (confirmed high homocysteine and MCV on AB — bridge coherence condition met), calls the orchestrator or the proving harness programmatically, and asserts bridge language in lead_narrative. Do NOT modify lifestyle_minimal.json — that would alter existing proving scenario semantics. Do NOT use the proving harness matrix AB__lifestyle_context output for CHECK 2 assertion."
+    },
+    {
+      "id": "2B-002",
+      "field": "CHECK5_implementation_scope",
+      "status": "CONFIRMED_IN_SCOPE",
+      "detail": "CHECK 5 (band/headline contradiction) can be implemented against fresh proving fingerprints without modifying domain score assembly logic. The harness captures consumer_domain_rows with band_label and consequence_sentence_head for all 8 runs. Conservative assertion: stable band rows must not contain danger/alarm language; strong/concern band rows must not contain falsely reassuring language. Substring patterns must be derived from fresh harness output — phrase selection is data-driven. STOP condition applies if ambiguity exists."
+    },
+    {
+      "id": "2B-003",
+      "field": "CHECK6_implementation_scope",
+      "status": "CONFIRMED_IN_SCOPE",
+      "detail": "CHECK 6 (primary_concern / retail_summary lead coherence) can be implemented against fresh proving fingerprints. WP2 fingerprints (stale, SHA 48efd2e) show AB__baseline: clinician_page1.primary_concern_head contains 'Homocysteine Elevation Context' and narrative.retail_summary_head contains 'Methylation pathway pattern'. Both reference the same lead biomarker family. Fresh harness run must confirm current state before assertion is encoded. Use lead signal name presence in both fields as assertion (not exact wording), to avoid brittleness."
+    },
+    {
+      "id": "2B-004",
+      "field": "sentinel_runner_modification_risk",
+      "status": "CONFIRMED_STANDARD_RISK",
+      "detail": "sentinel/sentinel_runner.py is not in the SOP §10 HIGH-risk trigger list (run_work_package.py, golden_gate_local.py, update_cursor_status.py). Modification to add wave1_contradiction test path is STANDARD risk. sentinel/packs/escaped_defects_v1.json is a CONTENT-only governed JSON asset — STANDARD risk for pack updates. Sentinel graduation of wave1_contradiction is correctly conditioned on CHECK 5 producing a genuine deterministic assertion."
+    },
+    {
+      "id": "2B-005",
+      "field": "pipeline_import_in_tests",
+      "status": "CONFIRMED_IN_SCOPE",
+      "detail": "New CHECK 2 unit test will import from core.pipeline.orchestrator (to run the pipeline on a synthetic fixture). This is the established project pattern — test_lc_s4_statin_signal_isolation_regression.py lines 22-26 does the same. Read-only pipeline consumption in test context is NOT an Intelligence Core modification. Does not trigger HIGH risk."
+    },
+    {
+      "id": "2B-006",
+      "field": "stop_conditions_scope_protection",
+      "status": "CONFIRMED",
+      "detail": "13 STOP conditions are present and well-defined (prompt lines 316-326). Key protections: harness failure → STOP; fresh fingerprints not generated → STOP; CHECK 2 wording cannot be identified safely → STOP; adding checks requires modifying analytical engine → STOP. Scope perimeter is robust."
+    },
+    {
+      "id": "2B-007",
+      "field": "no_analytical_engine_scope_creep",
+      "status": "CONFIRMED",
+      "detail": "Expected files list (prompt lines 252-276) explicitly excludes backend/ssot/, knowledge_bus/, backend/core/pipeline/, backend/core/analytics/, backend/core/contracts/, frontend results/actions pages, questionnaire files, narrative compiler files, and Automation Bus control-plane scripts. Non-goals list (prompt lines 329-344) is comprehensive. Scope boundary is unambiguous."
+    },
+    {
+      "id": "2B-008",
+      "field": "human_validation_walkthrough",
+      "status": "CONFIRMED_LIMITATION_ACKNOWLEDGED",
+      "detail": "Prompt correctly acknowledges Cursor cannot execute a real browser walkthrough (prompt lines 209-215): 'If a browser/manual run is not performed in this sprint, record that clearly as a limitation and carry it forward.' Human validation is preparation + documentation, not live execution. No hardening concern."
+    },
+    {
+      "id": "2B-009",
+      "field": "front_matter_validation",
+      "status": "CONFIRMED",
+      "detail": "All 5 SOP-required front matter fields present. work_id: LC-S5-LAUNCH-CORE-PROVING-AND-HUMAN-VALIDATION (line 2). branch: sprint5/launch-core-proving-and-human-validation (line 3). risk_level: STANDARD (line 4). execution_model: TWO_PHASE_START_FINISH (line 5). change_type: MIXED (line 6). change_type MIXED = correct: new test code (BEHAVIOUR dimension, pipeline consumed read-only) + Sentinel pack JSON update (CONTENT dimension)."
     }
-  ],
-  "hardened_by": "cursor-preflight-kernel-alignment",
-  "hardened_utc": "2026-05-12T17:45:00Z",
-  "overall_verdict": "HARDENED",
-  "status": "HARDENED",
-  "work_id": "LC-S4-LAUNCH-CORE-REPORT-CARRIAGE"
+  ]
 }
