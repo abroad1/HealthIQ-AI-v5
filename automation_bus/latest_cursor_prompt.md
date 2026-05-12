@@ -433,5 +433,3 @@ After LC-S4, the launch-core report should visibly carry the governed backend ou
 
 The report should feel coherent, honest, and production-facing rather than hiding governed narrative in collapsed sections or leaking legacy placeholder `insights[]`.
 
-````
-
