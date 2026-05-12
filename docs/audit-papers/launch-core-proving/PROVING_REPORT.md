@@ -1,7 +1,7 @@
 # Launch-core proving harness — comparison report
 
-- **Stamp:** `20260512T204032Z`
-- **Git (short):** `4edb9e0`
+- **Stamp:** `20260512T204115Z`
+- **Git (short):** `c375af6`
 - **Matrix:** `backend\tests\fixtures\proving\launch_core_matrix.json`
 
 ## Scenario matrix (panels × scenarios)
@@ -147,5 +147,5 @@ Expect: lifestyle-derived fields present under lifestyle_context; narrative head
 
 ## Artifact paths
 
-- Golden outputs (per run): `docs/audit-papers/launch-core-proving/artifacts/20260512T204032Z/` — written by `run_golden_panel`; omit bulk artefacts from git if desired.
+- Golden outputs (per run): `docs/audit-papers/launch-core-proving/artifacts/20260512T204115Z/` — written by `run_golden_panel`; omit bulk artefacts from git if desired.
 - Latest fingerprints JSON: `docs/audit-papers/launch-core-proving/latest_fingerprints.json`
