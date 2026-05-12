@@ -1,484 +1,407 @@
 ---
-work_id: WP3-QUESTIONNAIRE-RATIONALISATION
-branch: wp3/questionnaire-rationalisation
+work_id: LC-S4-LAUNCH-CORE-REPORT-CARRIAGE
+branch: sprint4/launch-core-report-carriage
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# WP3 — Questionnaire Rationalisation and Proving Readiness
+# LC-S4 — Launch-Core Report Carriage
 
 ## Objective
 
-Rationalise the HealthIQ AI questionnaire so it supports practical human proving and improves the quality of personalised biomarker interpretation without forcing users through low-value, unused, duplicative, or poorly worded questions.
+Implement Sprint 4: make the frontend results experience faithfully carry the governed launch-core report now produced by the backend.
 
-This is not just a temporary proving shortcut.
+The backend now produces governed narrative output through:
 
-This work package must:
+`ReportV1 → NarrativePayloadV1 → NarrativeReportV1`
 
-- keep the existing frontend multi-section questionnaire flow
-- remove clearly low-value questions from the main questionnaire SSOT
-- merge or simplify overlapping medical-history questions where safe
-- preserve questions that materially improve interpretation
-- introduce question importance/tier metadata
-- ensure only mandatory questions block progress
-- ensure skipped non-mandatory answers map to unknown, not false healthy/zero/moderate defaults
-- preserve future extensibility so questions can be added back later through governed SSOT changes
+Sprint 4 must make that governed output visible, coherent, honest, and non-placeholder across the launch-core report surfaces.
 
-## Authority documents
+This is not an analytical engine sprint.
 
-Read before implementation:
+Do not change biomarker interpretation logic.  
+Do not change questionnaire logic.  
+Do not change Knowledge Bus assets.  
+Do not change the LC-S3 narrative compiler assembly logic unless a STOP condition is reached and explicit approval is given.
 
-- `docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md`
+## Authority and evidence
+
+Primary implementation authority:
+
+- This LC-S4 SOP prompt
+
+Primary evidence source:
+
+- `docs/audit-papers/lc_s4_report_carriage_readiness_audit.md`
+
+Claude has already completed the LC-S4 readiness audit. Cursor should use that audit as the factual source for file locations, current gaps, and recommended implementation scope.
+
+Historical authority, for conflict resolution only:
+
 - `docs/planning-papers/healthiq_pre_sprint1_decision_pack_FINAL.md`
-  - especially questionnaire minimum proving-set notes
-- `docs/planning-papers/healthiq_pre_sprint2_statin_gate_pack_FINAL.md`
-- `docs/audit-papers/gate_compliance_audit_sprint3_readiness_second_pass.md`
-- `docs/audit-papers/wp3_questionnaire_proving_readiness_audit.md`
-- `docs/AUTOMATION_BUS_SOP_v1.3.1.md`
+- `docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md`
 
-## Authority precedence note
+Do not reread the full historical planning pack unless the LC-S4 audit and this prompt conflict or are unclear.
 
-`docs/audit-papers/wp3_questionnaire_proving_readiness_audit.md` is included as factual evidence only.
+## Risk classification
 
-Its factual findings remain relevant, especially:
+This work package is HIGH risk because Task 6 touches:
 
-- field-by-field consumption map
-- mapper default risks
-- frontend/backend validation findings
-- statin SSOT verification
-- conditional validation issues
+`backend/core/analytics/intervention_annotation_formatter_v1.py`
 
-However, its original recommendation to preserve all questions in `questionnaire.json` and use only a profile-based reduction has been superseded by the product/architecture decision in this work package.
+Although the intended change is bounded wording/formatter work and must not alter analytical logic, the file path is mechanically HIGH risk under the Automation Bus SOP.
 
-This WP3 prompt is the implementation authority.
+Therefore this package requires Claude audit and GPT architectural review before merge.
 
-Therefore, the audit’s §11 non-goals:
+## Pre-start requirement
 
-- “Do not remove any question from questionnaire.json”
-- “Do not reduce the required flag on any existing SSOT field”
+Before starting LC-S4 implementation, the stale WP3 Automation Bus token must be resolved.
 
-do not apply to this work package.
+Known issue:
 
-Cursor must follow this prompt’s explicit question disposition, removal list, tiering model, and validation requirements.
+`automation_bus/state/work_package_active.json` may still record:
 
-## Current baseline
+`WP3-QUESTIONNAIRE-RATIONALISATION`
 
-The current questionnaire SSOT is:
+as `STARTED`, even though WP3 has been merged to `main`.
 
-`backend/ssot/questionnaire.json`
+Cursor must resolve this through the SOP-compliant closure path before starting LC-S4.
 
-It currently contains 59 questions, many of which are required. The WP3 audit found that only a minority currently affect launch-core interpretation, while many are admin-only, captured-only, duplicative, or not clearly consumed downstream.
+Preferred command:
 
-The frontend questionnaire already uses a multi-section wizard. Do not replace that flow.
-
-## Strategic principle
-
-A question earns its place only if it improves:
-
-- biomarker interpretation
-- report personalisation
-- clinical/contextual safety
-- user-specific explanation
-- future governed analytical expansion
-
-Do not keep questions merely because they already exist.
-
-Do not remove useful questions merely to shorten the form.
-
-Question changes are governed but not irreversible. Questions removed now may be reintroduced later through governed SSOT updates if a future analytical system, edge case, or report feature justifies them.
-
-## Required architecture
-
-Use one questionnaire SSOT.
-
-Do not create a second questionnaire authority source.
-
-Questionnaire changes must remain governed through:
-
-`backend/ssot/questionnaire.json`
-
-Each remaining question should have an importance/tier value.
-
-Suggested field:
-
-```json
-"importance": "mandatory" | "recommended" | "optional" | "advanced"
+```bash
+python backend/scripts/run_work_package.py finish
 ````
 
-If a different field name is already more consistent with repo conventions, use that, but do not create multiple competing concepts.
+If the command cannot run because WP3 is already merged or the token state is inconsistent, STOP and report the exact error and the SOP-compliant token resolution path.
 
-## Tier definitions
+Do not manually edit control-plane state unless explicitly instructed after reporting.
 
-### mandatory
+## Key audit findings to address
 
-Required for the current personalised report.
+The LC-S4 audit found that the backend is producing governed narrative fields, but the frontend is not carrying them sufficiently:
 
-User cannot proceed without answering, if the question is visible.
+* `body_overview` is produced but not rendered anywhere.
+* `retail_summary` is bypassed on IDL panels and is effectively invisible in AB/VR launch-core cases.
+* `lead_narrative` and `next_steps_narrative` exist but are hidden inside a collapsed “What this means” section.
+* `insights[]` / `legacy_v1` still leaks into consumer-facing paths.
+* mock-mode honesty wording is not implemented.
+* statin context reaches the frontend in technical wording rather than consumer-readable language.
+* `clinician_synthesis` can render literal markdown tokens.
 
-### recommended
+## Scope
 
-Improves the report but is not essential.
+Implement bounded report-carriage changes only.
 
-User can skip it.
+Expected focus:
 
-UI should label it clearly, for example:
+* frontend results page wiring
+* frontend Actions hub legacy-insights gating
+* mock-mode honesty disclosure
+* consumer-safe statin formatter wording
+* clinician synthesis rendering cleanup
+* focused tests
+* Sprint 4 completion note
 
-`Improves your report`
+## Task 1 — Wire `body_overview`
 
-### optional
+File:
 
-Useful context but not essential.
+* `frontend/app/(app)/results/page.tsx`
 
-User can skip it.
+Required:
 
-### advanced
+* import `ResultsBodyOverview`
+* render it using `narrativeReport?.body_overview`
+* keep existing props expected by the component, including `clinicianReport` and `clusters`
+* recommended placement: inside “What this means”, before the investigation spine / lead narrative components
 
-Future or deeper module context.
+Purpose:
 
-Should not burden the core launch questionnaire. May be collapsed, hidden, or lower priority depending on current frontend capability.
+`body_overview` is the cross-system posture section. It is currently produced by the backend but invisible to users. It also carries medication/context appendix content where available.
 
-## Questions to remove from the main questionnaire SSOT
+Do not alter backend narrative compiler output.
 
-Remove these questions unless implementation evidence proves a strong reason to retain one:
+## Task 2 — Wire `NarrativeRetailSummaryCard`
 
-* `state_province`
-* `body_composition`
-* `overall_health_rating`
-* `current_medications`
-* `recent_blood_work`
-* `energy_level`
-* `current_symptoms`
-* `diet_quality_rating`
-* `sugar_beverages_weekly`
-* `fruit_vegetable_servings`
-* `sitting_hours_daily`
-* `caffeine_beverages_daily`
-* `pollution_exposure`
-* `sleep_schedule_consistency`
-* `stress_control_frequency`
-* `major_life_stressors`
-* `stress_management_method`
-* `food_sensitivities`
+Files:
 
-Rationale:
+* `frontend/app/(app)/results/page.tsx`
+* existing component in `frontend/app/components/results/DeterministicNarrativeSurface.tsx`
 
-These are currently low-value, vague, duplicative, admin-like, captured-only, or not sufficiently tied to current personalised biomarker interpretation to justify user effort.
+Required:
 
-If any of these are retained, Cursor must STOP and report the evidence-based reason before proceeding.
+* import and render `NarrativeRetailSummaryCard`
+* pass the full `narrativeReport` object to the component, not `narrativeReport?.retail_summary`
+* expected JSX shape should be equivalent to:
 
-## Questions to move out of the health questionnaire
+```tsx
+<NarrativeRetailSummaryCard narrative={narrativeReport} />
+```
 
-These should not remain part of the health interpretation questionnaire:
+Purpose:
 
-* `full_name`
-* `email_address`
-* `phone_number`
+`retail_summary` must be visible even when IDL records exist. It must not remain only a hero fallback.
 
-If still needed, they belong in account/profile/report-delivery flow, not the biomarker interpretation questionnaire.
+The component itself reads `narrative?.retail_summary` internally.
 
-Do not build that separate account/profile flow in this work package.
+## Task 3 — Make “What this means” open by default
 
-For now, remove them from the health questionnaire SSOT unless doing so breaks current frontend/API assumptions. If it does, STOP and report the dependency.
+File:
 
-## Questions to keep
+* `frontend/app/(app)/results/page.tsx`
+* or `frontend/app/components/results/ResultsDisclosureSection.tsx` if that is where default state is controlled
 
-Keep and tier the following.
+Required:
 
-### mandatory
+* default the “What this means” section to open
 
-* `date_of_birth`
-* `biological_sex`
-* `height`
-* `weight`
-* `waist_circumference`
-* `long_term_medications`
-* `alcohol_drinks_weekly`
-* `tobacco_use`
-* `sleep_hours_nightly`
+Purpose:
 
-### recommended
+This section contains the core governed explanation. Keeping it collapsed hides the most valuable part of the report and weakens the visible personalisation payoff.
 
-* `blood_pressure_reading`
-* `chronic_conditions`
-* `medical_conditions`
-* `regular_migraines`
-* `recent_infections`
-* `fasting_hours`
-* `supplements`
-* `dietary_pattern`
-* `vigorous_exercise_days`
-* `resistance_training_days`
-* `sleep_quality_rating`
-* `sleep_disorders`
-* `stress_level_rating`
-* `family_cardiovascular_disease`
-* `family_diabetes_metabolic`
+Do not default all advanced/clinician sections open. Only “What this means”.
 
-### optional or advanced
+## Task 4 — Implement mock-mode honesty disclosure
 
-* `country`
-* `ethnicity`
-* `menstrual_hormonal_status`
-* `low_testosterone_symptoms`
-* `daily_fluid_intake`
-* `balance_ability`
-* `stair_climbing_ability`
-* `push_up_capacity`
-* `grip_strength_assessment`
-* `physical_recovery_time`
-* `memory_changes`
-* `antibiotics_past_two_years`
-* `family_cancer_history`
-* `family_lifespan`
+File:
 
-Use judgement from current frontend capability. If advanced questions cannot be hidden/collapsed safely in this work package, keep them visible but non-blocking and clearly labelled.
+* `frontend/app/(app)/results/page.tsx`
 
-## Medical-history rationalisation
+Required:
 
-There is overlap between:
+* show a visible but non-intrusive disclosure near the top of the report, preferably between the page header and hero card
+* use existing `narrativeRuntime` extraction
+* condition: show when `narrativeRuntime?.synthesizer_allow_llm_resolved === false` or equivalent deterministic/mock runtime condition
 
-* `chronic_conditions`
-* `medical_conditions`
+Use this exact approved wording:
 
-Do not delete clinically useful condition options.
+> Your report is built from governed clinical rules applied to your lab data. AI-personalised narrative is not active in this view.
 
-Preferred approach:
+Use existing UI primitives if available, such as `Alert` and `AlertDescription`.
 
-* keep both only if current mapper/tests depend on both
-* otherwise merge into one clearer question or rationalise options safely
-* preserve AF, RA, SLE because they are QRISK/cardio-relevant
-* preserve diabetes, high blood pressure, high cholesterol, thyroid, liver, kidney, autoimmune where useful for future interpretation
+Do not invent alternative wording unless the current component requires minor punctuation only.
 
-If merging would require wider mapper changes than expected, keep both for now but mark only the most important one as recommended and make both skippable.
+## Task 5 — Retire `insights[]` from consumer-visible paths
 
-## Long-term medications
+Files likely involved:
 
-Keep:
+* `frontend/app/(app)/results/page.tsx`
+* `frontend/app/(app)/actions/page.tsx`
+* possibly `frontend/app/lib/resultsPageLayout.ts`
+* possibly `frontend/app/state/clusterStore.ts`
 
-* `long_term_medications`
+Required:
 
-It must include:
+1. Stop passing `insights` into `buildActionCardModels` on the results page.
+2. Stop passing `insights` into `buildActionCardModels` on the Actions page.
+3. Remove or gate the advanced-section alert that says short narrative summaries are available when the only available data is legacy `insights[]`.
+4. Remove or gate `InsightsPanel` on the launch-core report path when the content is `manifest_id: "legacy_v1"`.
+5. Do not delete backend `AnalysisDTO.insights` in this sprint.
 
-* `None`
-* `Corticosteroids`
-* `Atypical antipsychotics`
-* `HIV/AIDS treatments`
-* `Statins (cholesterol medication)`
+Acceptable approaches:
 
-Current evidence indicates `Statins (cholesterol medication)` may already be present in `questionnaire.json`.
+* remove consumer rendering of legacy insights entirely
+* or gate behind an explicit development/debug flag such as `HEALTHIQ_LEGACY_INSIGHTS`
 
-Cursor must verify current SSOT state before editing:
+Do not allow `legacy_v1` recommendations to appear in the consumer Actions hub.
 
-* if present exactly once, make no change
-* if missing, add it exactly once
-* if duplicated, STOP and report
+## Task 6 — Improve statin consumer wording
 
-## Frontend requirements
+File:
 
-Keep the current multi-section wizard.
+* `backend/core/analytics/intervention_annotation_formatter_v1.py`
 
-Do not redesign the page flow.
+Required:
 
-Update the frontend so it can display tier labels, for example:
+* update `format_intervention_annotation_consumer_cv_suffix_v1()` so it produces consumer-readable wording
+* preserve the meaning: statin context is user-reported, framing only, and must not alter signal states, bands, or rankings
+* do not change the intervention annotation engine
+* do not change signal scoring
+* do not change statin detection logic
 
-* Mandatory: `Required for your report`
-* Recommended: `Improves your report`
-* Optional: `Optional context`
-* Advanced: `Advanced context`
+The wording should be understandable to a paying user.
 
-Frontend validation should block only:
+Acceptable style:
 
-* visible questions with `importance: "mandatory"`
+> Statin medication noted — this may help explain lower LDL-related readings on this panel.
 
-It should not block recommended, optional, or advanced questions.
+Do not make treatment claims.
+Do not advise medication use.
+Do not imply causality beyond cautious context.
 
-Conditional questions must remain respected. Hidden conditional questions must not block progress.
+## Task 7 — Strip markdown tokens from clinician synthesis rendering
 
-## Backend validation requirements
+File:
 
-Update backend validation so it does not require every historical `required: true` field after rationalisation.
+* `frontend/app/components/results/ClinicianReportRenderer.tsx`
 
-Validation must align to the new importance model:
+Required:
 
-* mandatory visible/applicable questions are required
-* non-mandatory questions are skippable
-* conditional questions are not required when hidden/not applicable
+* prevent visible raw markdown tokens such as `**` and backticks appearing in `clinician_synthesis`
+* either strip simple markdown markers before rendering or render safely with an existing markdown-capable component if one already exists
+* do not introduce a large new markdown dependency unless already present in the repo
 
-If backend validation cannot determine visibility from `conditionalDisplay`, implement the minimal safe handling needed for existing conditional questions.
+This is a display cleanup only.
 
-Do not let backend validation become noisy for normal launch-core submissions.
+## Task 8 — Tests
 
-## Mapper safety requirements
+Add or update focused tests.
 
-Skipped non-mandatory answers must be treated as unknown, not:
+Required coverage:
 
-* zero
-* normal
-* healthy
-* moderate
-* average
+### Narrative carriage
 
-Specifically inspect and fix:
+* `body_overview` renders when non-empty
+* `retail_summary` renders even when IDL records are present
+* “What this means” defaults open
+* `lead_narrative` remains rendered
+* `next_steps_narrative` remains rendered
 
-* alcohol absent behaviour
-* exercise absent behaviour
-* sleep absent behaviour
-* stress absent behaviour
+### Mock-mode honesty
 
-Known issue to address:
+* approved disclosure appears when `synthesizer_allow_llm_resolved === false`
+* disclosure does not appear when LLM/personalisaton mode is active, if such a fixture exists
 
-`alcohol_drinks_weekly` currently risks defaulting to a moderate value when absent. This must be changed so absent alcohol is unknown/None unless explicitly answered.
+### Legacy insights retirement
 
-Preserve OBS-2 protection: missing exercise answers must not become zero exercise.
+* `legacy_v1 insights[]` do not feed Actions hub cards
+* advanced “narrative summaries available” alert does not render for legacy-only insights
+* `InsightsPanel` is not visible on the launch-core consumer path unless explicitly debug-gated
 
-## Do not introduce fallback parsers
+### Consumer / clinician boundary
 
-No fallback parser.
+* clinician synthesis remains only in the advanced/clinician section
+* clinician synthesis renders without raw markdown markers
+* existing IDL `clinical_only` exclusion test still passes
 
-No dummy questionnaire parser.
+### Statin wording
 
-No silent defaults that make absent lifestyle answers look normal, adverse, moderate, or healthy.
+* consumer statin formatter output is human-readable
+* output does not include internal phrases such as:
+
+  * `Layer B intervention annotation`
+  * `direction=`
+  * raw biomarker ID lists
+* output does not recommend medication or treatment
+
+## Sentinel consideration
+
+Before merge, ask Claude/Sentinel owner whether any LC-S4 tests should be promoted to Sentinel.
+
+Strong Sentinel candidates:
+
+* legacy `insights[]` not visible on consumer Actions path
+* IDL `clinical_only` gate remains protected
+* mock-mode honesty disclosure appears when LLM is inactive
+* `body_overview` / `retail_summary` carriage does not regress
+
+Do not modify Sentinel unless instructed through the correct Sentinel ownership process.
 
 ## Expected files touched
 
-Expected:
+Expected frontend:
 
-* `backend/ssot/questionnaire.json`
-* `backend/core/models/questionnaire.py`
-* `backend/core/pipeline/questionnaire_mapper.py`
-* `frontend/app/components/forms/QuestionnaireForm.tsx`
-* `frontend/app/lib/questionnaireSchema.ts`
-* relevant backend tests
+* `frontend/app/(app)/results/page.tsx`
+* `frontend/app/(app)/actions/page.tsx`
+* `frontend/app/components/results/ClinicianReportRenderer.tsx`
 * relevant frontend tests
-* `docs/sprints/WP3_questionnaire_rationalisation_completion_2026-05.md`
 
-Possibly expected, only if needed:
+Expected backend:
 
-* backend questionnaire route/schema response files
-* upload page integration if type changes require it
+* `backend/core/analytics/intervention_annotation_formatter_v1.py`
+* relevant backend formatter tests
+
+Expected docs:
+
+* `docs/sprints/LC-S4_launch_core_report_carriage_completion_2026-05.md`
+
+Possibly expected:
+
+* `frontend/app/lib/resultsPageLayout.ts`
+* `frontend/app/state/clusterStore.ts`
+* component test fixtures / mocks
 
 Not expected:
 
-* Knowledge Bus files
+* `backend/ssot/`
+* `knowledge_bus/`
+* `backend/core/models/results.py`
+* `backend/core/analytics/narrative_report_compiler_v1.py`
+* `backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py`
+* `backend/core/contracts/narrative_payload_v1.py`
+* questionnaire files
 * biomarker interpretation logic
-* narrative compiler files
-* Sentinel runner unless tests need promotion
 * Automation Bus control-plane scripts
-* report carriage UI
-* Sprint 4 planning files
-
-## Required tests
-
-Add or update tests proving:
-
-### SSOT integrity
-
-* questionnaire JSON loads successfully
-* removed question IDs are no longer present
-* remaining questions have valid `importance`
-* mandatory question list matches expected core set
-* no duplicate question IDs
-* `long_term_medications` contains statin option exactly once
-* `sleep_schedule_consistency` is no longer present
-
-### Frontend behaviour
-
-* mandatory visible questions block progress
-* recommended questions do not block progress
-* optional questions do not block progress
-* advanced questions do not block progress
-* tier labels render correctly
-* hidden conditional questions do not block progress
-* existing section navigation still works
-
-### Backend validation
-
-* submission with only mandatory launch-core fields passes validation
-* missing mandatory field fails validation
-* skipped recommended/optional/advanced fields do not fail validation
-* hidden conditional questions do not fail validation
-
-### Mapper safety
-
-* absent alcohol maps to unknown/None, not moderate
-* absent exercise remains unknown/None, not zero
-* statin-on still produces `user_intervention_document`
-* statin-off / none produces no statin intervention document
-* omitted optional fields do not crash mapper
-
-### Regression
-
-Run relevant existing questionnaire mapper tests.
-
-Run relevant frontend questionnaire form tests.
-
-Run any existing launch-core proving/profile tests if present.
+* Sentinel files unless separately approved
 
 ## Stop conditions
 
 STOP and report before implementation if:
 
-* removing admin fields breaks upload submission or user identity assumptions
-* removing any flagged question breaks mapper tests in a way that cannot be fixed locally
-* current frontend cannot support `importance` without broad redesign
-* backend validation cannot be made importance-aware without broad API redesign
-* removing `current_medications` breaks medication context handling
-* merging `chronic_conditions` and `medical_conditions` would require unsafe mapper restructuring
-* adding tier metadata causes schema parsing failure
-* skipped optional fields cause unsafe default assumptions that cannot be fixed within this work package
-* any Knowledge Bus change appears necessary
-* any biomarker interpretation logic change appears necessary
-* any narrative compiler change appears necessary
-* any Automation Bus control-plane script change appears necessary
+* the WP3 active token cannot be resolved through the SOP-compliant finish path
+* `body_overview` is not present on `NarrativeReportV1`
+* `ResultsBodyOverview` no longer exists
+* `NarrativeRetailSummaryCard` no longer exists
+* mock-mode runtime metadata is unavailable on the results page
+* removing `insights` from action-card inputs leaves the Actions hub empty with no governed fallback
+* statin consumer wording requires changing intervention annotation semantics
+* any change requires touching Knowledge Bus, SSOT, biomarker scoring, narrative compiler assembly, or AnalysisDTO structure
+* any frontend report change requires broad redesign outside the results/action surfaces
+* Sentinel changes appear necessary but Claude/Sentinel owner has not approved them
 
 ## Explicit non-goals
 
 Do not:
 
-* build a new questionnaire UX
-* create a second questionnaire SSOT
-* create a user-facing profile chooser
-* build account/profile/report-delivery flow
-* change biomarker interpretation logic
-* change narrative/report compiler logic
+* change the analytical engine
+* change signal ranking
+* change confidence or banding
+* change questionnaire logic
 * change Knowledge Bus assets
-* change blood-test parsing
-* change Sentinel unless test promotion is explicitly required
-* implement Sprint 4 report carriage
-* implement proving harness CHECKs 2, 4, 5, 6
-* add new advanced health modules
+* change SSOT files
+* change `NarrativePayloadV1`
+* change LC-S3 narrative assembly logic
+* activate Gemini
+* implement Sprint 5 proving harness CHECKs
+* add new WHY assets
+* implement longitudinal narrative
+* delete backend `AnalysisDTO.insights`
 
 ## Completion note
 
 Create:
 
-`docs/sprints/WP3_questionnaire_rationalisation_completion_2026-05.md`
+`docs/sprints/LC-S4_launch_core_report_carriage_completion_2026-05.md`
 
 It must record:
 
-* questions removed
-* questions retained
-* final mandatory/recommended/optional/advanced counts
-* why removals were justified
-* how tiering works
-* how skipped answers are treated
+* report surfaces changed
+* how `body_overview` is now carried
+* how `retail_summary` is now carried
+* how mock-mode honesty is shown
+* how legacy `insights[]` is gated/removed from consumer paths
+* how statin wording changed
+* how clinician synthesis display was cleaned
 * tests run
 * known limitations
-* confirmation that the full questionnaire can still be expanded later through governed SSOT changes
+* confirmation that no SSOT, Knowledge Bus, questionnaire, biomarker interpretation, or LC-S3 compiler files were changed
+* confirmation Claude audit and GPT architectural review are required before merge because this is HIGH risk
 
 ## Validation commands
 
-Inspect repo scripts and run appropriate targeted tests first.
+Inspect repo scripts and run targeted tests first.
 
 At minimum, run:
 
-* backend questionnaire/model tests
-* backend questionnaire mapper tests
-* frontend questionnaire form tests
-* any relevant upload-page tests
+* frontend results-page/component tests touched by Sprint 4
+* frontend actions-page tests if available
+* frontend IDL clinical-only gate test
+* backend intervention annotation formatter test
+* any affected result layout tests
 
-Then run broader backend/frontend tests if feasible.
+Then run broader frontend/backend tests if feasible.
 
 Report every command and result.
 
@@ -489,27 +412,26 @@ Before finish, report:
 * branch
 * work_id
 * files changed
-* final question count
-* final mandatory question count
-* removed question IDs
-* retained question IDs by tier
-* whether statin option is present exactly once
-* whether skipped alcohol is unknown/None
-* whether skipped exercise remains unknown/None
+* whether `body_overview` is rendered
+* whether `retail_summary` is rendered
+* whether “What this means” defaults open
+* whether mock-mode honesty wording appears
+* whether legacy `insights[]` are removed/gated from consumer paths
+* whether statin wording is consumer-readable
+* whether clinician synthesis renders without raw markdown tokens
 * tests run and results
+* confirmation no SSOT files changed
 * confirmation no Knowledge Bus files changed
+* confirmation no questionnaire files changed
 * confirmation no biomarker interpretation logic changed
-* confirmation no narrative compiler files changed
-* confirmation no Automation Bus control-plane scripts changed
+* confirmation no LC-S3 narrative compiler assembly logic changed
+* confirmation Claude audit and GPT architectural review are completed before merge
 
 ## Final expected outcome
 
-After WP3, the questionnaire should be shorter, clearer, and more honest.
+After LC-S4, the launch-core report should visibly carry the governed backend output.
 
-Users should only be forced to answer questions that materially improve the current personalised report.
-
-Additional questions should remain available only where they improve report quality or preserve future extensibility.
-
-Future question changes remain possible through governed SSOT updates.
+The report should feel coherent, honest, and production-facing rather than hiding governed narrative in collapsed sections or leaking legacy placeholder `insights[]`.
 
 ````
+
