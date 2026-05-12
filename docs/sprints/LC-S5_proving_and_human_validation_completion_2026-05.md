@@ -11,7 +11,7 @@
   - `docs/audit-papers/launch-core-proving/PROVING_REPORT.md`
   - `docs/audit-papers/launch-core-proving/latest_fingerprints.json`
 - **Stamp (report):** `20260512T203559Z` (see `PROVING_REPORT.md` header)
-- **Fingerprint `git_short_sha`:** Written at harness execution time (see `latest_fingerprints.json`); a follow-up harness run after the final LC-S5 commit may advance this SHA for strict alignment with release HEAD.
+- **Fingerprint `git_short_sha`:** `58bcd8f` (matches branch tip; see `latest_fingerprints.json` after final harness refresh).
 
 ## Matrix covered
 
