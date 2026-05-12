@@ -69,7 +69,17 @@ After a clean working tree and Stage 4A-style checks implicit in the committed s
 
 - **Automation Bus Stage 2:** `latest_prompt_hardening.json` was aligned to this `work_id` for kernel preflight after WP3 `finish`; **full Stage 2C hardening evidence from Claude should still be completed for merge governance** on this HIGH-risk package.
 - **Stash:** `stash@{0}` on `feature/questionnaire-visual-redesign` was **not** modified; disposition is left to the operator (governed triage).
-- **Sentinel:** Not changed per sprint instructions.
+- **Sentinel:** Post-merge follow-up promoted defect class `statin_signal_isolation` (see `sentinel/packs/escaped_defects_v1.json` and `sentinel/sentinel_runner.py`).
+
+## Sentinel carry-forward (infrastructure gaps)
+
+Future Sentinel / regression infrastructure work (not in scope for LC-S4 statin promotion):
+
+- Frontend Jest Sentinel runner support (orchestrated parity with backend regression runs).
+- IDL `clinical_only` gate promotion to escaped-defect pack.
+- Legacy insights consumer-path promotion to escaped-defect pack.
+- `body_overview` / `retail_summary` frontend carriage promotion to escaped-defect pack.
+- Mock-mode honesty conditional render test and later promotion.
 
 ## Scope confirmations (non-goals)
 

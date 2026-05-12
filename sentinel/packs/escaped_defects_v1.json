@@ -69,6 +69,15 @@
       "first_seen": "2026-05",
       "fix_commit": null,
       "note": "Promoted post-LC-S3 — guards payload-primary assembly path not covered by legacy narrative_compiler_why_surface guard."
+    },
+    "statin_signal_isolation": {
+      "description": "Statin medication annotation changes consumer wording only — signal states, rankings, top findings order, and domain band labels must be identical between statin-on and statin-off runs on the same panel.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s4_statin_signal_isolation_regression.py",
+      "first_seen": "2026-05",
+      "fix_commit": null,
+      "note": "Promoted post-LC-S4 from unit statin context integration test test_s6 — guards formatter-level isolation of consumer wording from analytical scoring."
     }
   }
 }
