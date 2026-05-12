@@ -106,6 +106,8 @@ export interface Insight {
   severity?: string;
   recommendations?: string[];
   biomarkers_involved?: string[];
+  /** Provenance — `legacy_v1` rows are gated off consumer surfaces (LC-S4). */
+  manifest_id?: string;
 }
 
 /** Cluster objects returned on analysis results (cluster engine / API). */

@@ -58,8 +58,12 @@ def format_intervention_annotation_clinician_page1_v1(
 def format_intervention_annotation_consumer_cv_suffix_v1(
     ann: Optional[InterventionAnnotationsV1],
 ) -> str:
-    """Short cardiovascular-domain consequence suffix for Wave-1 consumer cards."""
-    base = format_intervention_annotation_narrative_appendix_v1(ann)
-    if not base:
+    """Short cardiovascular-domain context for Wave-1 consumer cards (plain language; framing only)."""
+    rows = _statin_resolved_rows(ann)
+    if not rows:
         return ""
-    return ("Medication context: " + base)[:420]
+    # User-reported statin context only — no treatment advice, no causal claims beyond cautious framing.
+    return (
+        "Statin medication noted — this may help explain lower LDL-related readings on this panel. "
+        "Taken from your questionnaire as context only; it does not change how signals are scored or ranked."
+    )[:420]

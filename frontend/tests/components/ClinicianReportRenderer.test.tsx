@@ -118,4 +118,17 @@ describe('ClinicianReportRenderer', () => {
       screen.getByText('This analysis does not include a clinician report payload.'),
     ).toBeInTheDocument();
   });
+
+  it('LC-S4: strips simple markdown markers from deterministic clinician synthesis', () => {
+    const { container } = render(
+      <ClinicianReportRenderer
+        report={sampleReport}
+        deterministicClinicianSynthesis="**Bold lead** and `marker_id` context."
+      />,
+    );
+    expect(container.textContent).toContain('Bold lead');
+    expect(container.textContent).toContain('marker_id');
+    expect(container.textContent).not.toContain('**');
+    expect(container.textContent).not.toContain('`');
+  });
 });

@@ -153,7 +153,10 @@ def test_s5_visible_narrative_and_consumer_suffix_difference_when_annotation_pre
     assert appendix in (on.body_overview or "")
     assert appendix not in (off.body_overview or "")
     sfx = format_intervention_annotation_consumer_cv_suffix_v1(ann)
-    assert sfx.startswith("Medication context")
+    assert sfx
+    assert "Statin medication noted" in sfx
+    assert "Layer B intervention annotation" not in sfx
+    assert "direction=" not in sfx
 
 
 def test_s6_statin_on_vs_off_preserves_top_findings_order_bands_and_signal_states():

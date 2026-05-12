@@ -59,7 +59,6 @@ export default function ActionsPage() {
       const data = resultRes.data;
       const models = buildActionCardModels(data.clusters || [], data.recommendations, {
         maxItems: 8,
-        insights: data.insights,
       });
 
       const when = data.completed_at || data.created_at || completed.created_at;
