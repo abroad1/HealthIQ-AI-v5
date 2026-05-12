@@ -11,7 +11,7 @@
   - `docs/audit-papers/launch-core-proving/PROVING_REPORT.md`
   - `docs/audit-papers/launch-core-proving/latest_fingerprints.json`
 - **Stamp (report):** `20260512T203559Z` (see `PROVING_REPORT.md` header)
-- **Fingerprint `git_short_sha`:** `8a0e1a7` (matches branch tip; see `latest_fingerprints.json` after final harness refresh).
+- **Fingerprint `git_short_sha`:** `a87df29` (last full matrix harness; see `latest_fingerprints.json`).
 
 ## Matrix covered
 
