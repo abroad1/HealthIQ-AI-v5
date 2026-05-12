@@ -22,7 +22,9 @@ import { ResultsInvestigationSpine } from '@/components/results/ResultsInvestiga
 import {
   NarrativeLeadAndSupportingSections,
   NarrativeLongitudinalAndNextSteps,
+  NarrativeRetailSummaryCard,
 } from '@/components/results/DeterministicNarrativeSurface';
+import { ResultsBodyOverview } from '@/components/results/ResultsBodyOverview';
 import { ResultsDisclosureSection } from '@/components/results/ResultsDisclosureSection';
 import {
   ResultsActionCardsBlock,
@@ -41,6 +43,8 @@ import Link from 'next/link';
 import { extractNarrativeRuntimeMeta } from '@/lib/narrativeRuntimePresentation';
 import { emitWedgeEvent } from '@/lib/wedgeAnalytics';
 import { derivePatternRelevanceLine } from '@/lib/biomarkerPatternRelevance';
+import { filterConsumerInsights, legacyInsightsDebugEnabled } from '@/lib/legacyInsightsVisibility';
+import { LC_S4_MOCK_MODE_HONESTY_DISCLOSURE } from '@/lib/lcS4ResultsCopy';
 import {
   buildActionCardModels,
   buildPrimaryHeroSummary,
@@ -139,6 +143,7 @@ export default function ResultsPage() {
   const isFetchingFromUrl = !!idToFetch && isResultLoading;
 
   const insights = currentAnalysis?.insights ?? [];
+  const consumerInsights = useMemo(() => filterConsumerInsights(insights), [insights]);
   const biomarkers = currentAnalysis?.biomarkers ?? [];
   const clusters = currentAnalysis?.clusters ?? [];
   const clinicianReport = currentAnalysis?.clinician_report_v1;
@@ -206,10 +211,11 @@ export default function ResultsPage() {
     () =>
       buildActionCardModels(clusters, currentAnalysis?.recommendations, {
         maxItems: 5,
-        insights: currentAnalysis?.insights,
       }),
-    [clusters, currentAnalysis?.recommendations, currentAnalysis?.insights]
+    [clusters, currentAnalysis?.recommendations]
   );
+
+  const showInsightsPanelSection = legacyInsightsDebugEnabled() || consumerInsights.length > 0;
 
   const handleDownloadReport = React.useCallback(async () => {
     const id = currentAnalysis?.analysis_id;
@@ -369,7 +375,7 @@ export default function ResultsPage() {
               <p className="text-gray-600 mb-4">
                 {isFetchingFromUrl
                   ? 'Fetching your analysis results from the server...'
-                  : 'We are processing your biomarker data and structured analysis. Short narrative summaries may appear later under Advanced analysis when available. This may take a few moments.'}
+                  : 'We are processing your biomarker data and structured analysis. This may take a few moments.'}
               </p>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div className="bg-blue-600 h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
@@ -601,6 +607,12 @@ export default function ResultsPage() {
         </div>
 
         <div className="space-y-8">
+          {narrativeRuntime?.synthesizer_allow_llm_resolved === false ? (
+            <Alert className="border-slate-200 bg-slate-50/80" data-testid="mock-mode-narrative-disclosure">
+              <AlertDescription className="text-slate-800 text-sm">{LC_S4_MOCK_MODE_HONESTY_DISCLOSURE}</AlertDescription>
+            </Alert>
+          ) : null}
+
           <ResultsPrimaryHero
             phenotypeLabel={phenotypeLabel}
             summary={heroSummary}
@@ -616,6 +628,8 @@ export default function ResultsPage() {
             downloadError={pdfDownloadError}
             downloadDisabledReason="Complete an analysis to download your PDF summary."
           />
+
+          <NarrativeRetailSummaryCard narrative={narrativeReport} />
 
           <ResultsDrivingSignals markers={topDriverMarkers} biomarkerSectionId={BIOMARKER_DIALS_SECTION_ID} />
 
@@ -649,8 +663,13 @@ export default function ResultsPage() {
             title="What this means"
             description="Patterns, context, and the structured interpretation behind the summary above."
             data-testid="section-what-this-means"
-            defaultOpen={false}
+            defaultOpen
           >
+            <ResultsBodyOverview
+              clinicianReport={clinicianReport}
+              clusters={clusters}
+              compiledBodyOverview={narrativeReport?.body_overview}
+            />
             <ResultsInvestigationSpine crossBodyPatternLabel={firstIdlRetailLabel} />
             <InterpretationPatternsSection bundle={currentAnalysis?.interpretation_display_layer_v1} />
             <SystemUnderstandingSection
@@ -776,12 +795,12 @@ export default function ResultsPage() {
               </div>
             ) : null}
 
-            {insights && insights.length > 0 ? (
+            {consumerInsights.length > 0 ? (
               <Alert>
                 <AlertDescription>
-                  {insights.length} short narrative summar{insights.length === 1 ? 'y' : 'ies'} available in the
-                  &quot;Narrative&quot; list below. These complement the clinical interpretation; they are not the primary
-                  structured report.
+                  {consumerInsights.length} short narrative summar{consumerInsights.length === 1 ? 'y' : 'ies'}{' '}
+                  available in the &quot;Narrative&quot; list below. These complement the clinical interpretation; they
+                  are not the primary structured report.
                 </AlertDescription>
               </Alert>
             ) : null}
@@ -814,10 +833,12 @@ export default function ResultsPage() {
               <BiomarkerDials biomarkers={biomarkerDialData} sectionTitle="All markers on this run" />
             </section>
 
-            <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-slate-800">Narrative summaries</h3>
-              <InsightsPanel insights={insights} narrativeRuntime={narrativeRuntime} />
-            </div>
+            {showInsightsPanelSection ? (
+              <div className="space-y-2">
+                <h3 className="text-sm font-semibold text-slate-800">Narrative summaries</h3>
+                <InsightsPanel insights={consumerInsights} narrativeRuntime={narrativeRuntime} />
+              </div>
+            ) : null}
 
             <ClinicianReportRenderer
               report={clinicianReport}

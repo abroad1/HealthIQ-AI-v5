@@ -1,0 +1,9 @@
+{
+  "branch": "sprint4/launch-core-report-carriage",
+  "bus_version": "1.2",
+  "cursor_started_utc": "2026-05-12T17:39:24Z",
+  "head_sha": "9d3a59ee22106c533812e84dd34e76b4ae6fc4c0",
+  "raw_stop_condition": null,
+  "status": "IN_PROGRESS",
+  "work_id": "LC-S4-LAUNCH-CORE-REPORT-CARRIAGE"
+}

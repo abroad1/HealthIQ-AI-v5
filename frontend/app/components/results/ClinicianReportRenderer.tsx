@@ -107,6 +107,14 @@ function Page1RankingContext({ page1 }: { page1: ClinicianReportV1['sections']['
   );
 }
 
+function stripSimpleMarkdownDecorators(text: string): string {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/\*(.+?)\*/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/`+/g, '');
+}
+
 export default function ClinicianReportRenderer({
   report,
   balancedSystems,
@@ -123,7 +131,7 @@ export default function ClinicianReportRenderer({
     );
   }
 
-  const synthesis = (deterministicClinicianSynthesis ?? '').trim();
+  const synthesis = stripSimpleMarkdownDecorators((deterministicClinicianSynthesis ?? '').trim());
 
   const page1 = report.sections.page1;
   const rootCause = report.sections.root_cause;
