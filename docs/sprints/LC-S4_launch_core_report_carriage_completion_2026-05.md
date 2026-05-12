@@ -61,6 +61,10 @@ python -m pytest backend/tests/unit/test_lc_s2_statin_context_integration.py::te
 
 Result: **1 passed.**
 
+## Kernel finish (post-implementation)
+
+After a clean working tree and Stage 4A-style checks implicit in the committed state, `python backend/scripts/run_work_package.py finish` completed successfully on branch `sprint4/launch-core-report-carriage` with `latest_gate_evidence.json` overall **PASS** for work_id `LC-S4-LAUNCH-CORE-REPORT-CARRIAGE` (baseline tests + three-layer pipeline per local gate configuration).
+
 ## Known limitations
 
 - **Automation Bus Stage 2:** `latest_prompt_hardening.json` was aligned to this `work_id` for kernel preflight after WP3 `finish`; **full Stage 2C hardening evidence from Claude should still be completed for merge governance** on this HIGH-risk package.
