@@ -1,17 +1,16 @@
 {
-  "work_id": "WP3-QUESTIONNAIRE-RATIONALISATION",
   "bus_version": "1.3.1",
-  "status": "HARDENED",
-  "hardened_utc": "2026-05-10T18:00:00Z",
-  "hardened_by": "cursor-agent",
   "changes": [
     {
-      "id": "FRONT_MATTER",
-      "field": "front_matter_validation",
-      "status": "CONFIRMED",
-      "citation": "automation_bus/latest_cursor_prompt.md:1-7",
-      "detail": "work_id=WP3-QUESTIONNAIRE-RATIONALISATION, branch=wp3/questionnaire-rationalisation, HIGH, TWO_PHASE_START_FINISH, MIXED."
+      "detail": "Kernel preflight alignment to LC-S4 prompt work_id and branch after WP3 finish cleared stale token. Formal Stage 2C evidence checklist remains required from Claude before merge per AUTOMATION_BUS_SOP v1.3.1.",
+      "field": "work_id_branch_alignment",
+      "id": "LC-S4_KERNEL_PREFLIGHT",
+      "status": "ALIGNED_FOR_START"
     }
   ],
-  "overall_verdict": "HARDENED"
+  "hardened_by": "cursor-preflight-kernel-alignment",
+  "hardened_utc": "2026-05-12T17:45:00Z",
+  "overall_verdict": "HARDENED",
+  "status": "HARDENED",
+  "work_id": "LC-S4-LAUNCH-CORE-REPORT-CARRIAGE"
 }
