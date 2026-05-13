@@ -1,384 +1,383 @@
 ---
-work_id: LC-S5-LAUNCH-CORE-PROVING-AND-HUMAN-VALIDATION
-branch: sprint5/launch-core-proving-and-human-validation
+work_id: LC-S6-RESULTS-RETAIL-HARDENING
+branch: sprint6/results-retail-hardening
 risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# LC-S5 — Launch-Core Proving and Human Validation
+# LC-S6 — Results Retail Hardening
 
 ## Objective
 
-Implement Sprint 5: prove that the launch-core product now works coherently across automated proving and human validation.
+Make the default HealthIQ AI results page read like a credible patient-facing product, not an internal technical report.
 
-Sprint 5 must confirm that the governed analytical pipeline, questionnaire context, narrative payload, report carriage, statin context, and consumer-facing surfaces behave consistently after LC-S1 through LC-S4, WP2, WP3, and LC-OBS2.
+This sprint must harden the visible results experience following browser UAT of:
 
-This is a proving and validation sprint.
+`/results?analysis_id=b2dfa0c4-efd6-467f-9f2a-84bdf20d8d51`
 
-Do not change analytical logic.  
-Do not change questionnaire logic.  
-Do not change Knowledge Bus assets.  
-Do not change SSOT files.  
-Do not change frontend report carriage unless a STOP condition is reached and explicitly approved.
+Primary UAT evidence:
+
+- `UAT_results_page_analysis_b2dfa0c4_2026-05-12.md`
+
+The UAT verdict was **not launch-ready** because consumer-visible pages contain internal architecture language, raw markdown, backend slugs, conflicting primary framing, and an empty Actions hub despite rich next-step content.
+
+This is a retail presentation hardening sprint.
+
+Do not change analytical scoring.
+Do not change signal ranking.
+Do not change Knowledge Bus assets.
+Do not change questionnaire logic.
+Do not change backend narrative compiler logic unless a STOP condition is reached and GPT approves.
 
 ## Authority and evidence
 
 Primary implementation authority:
 
-- This LC-S5 SOP prompt
+- this LC-S6 SOP prompt
 
 Primary evidence source:
 
-- `docs/audit-papers/lc_s5_proving_readiness_preflight_audit.md`
+- `UAT_results_page_analysis_b2dfa0c4_2026-05-12.md`
 
-Claude has already completed the LC-S5 readiness preflight. Cursor should use that audit as the factual source for current proving state, known stale artefacts, remaining CHECKs, recommended implementation scope, and human validation checklist.
+Use the UAT report as the factual evidence source for browser-visible defects.
 
-Historical authority, for conflict resolution only:
-
-- `docs/planning-papers/healthiq_pre_sprint1_decision_pack_FINAL.md`
-- `docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md`
-
-Do not reread the full historical planning pack unless the LC-S5 audit and this prompt conflict or are unclear.
-
-## Current state
-
-The following are complete and merged:
-
-- LC-S1 analytical hardening
-- LC-S2 statin/context integration
-- WP2 Layer B → Layer C contract closure
-- LC-S3 narrative payload implementation
-- WP3 questionnaire rationalisation
-- LC-S4 report carriage
-- LC-S4 Sentinel promotion for `statin_signal_isolation`
-
-The LC-S5 preflight found that Sprint 5 is ready to author, with one mandatory pre-action:
-
-The proving artefacts are stale and must be regenerated against current `main` before binary assertions are finalised.
+Do not reread historical planning packs unless this prompt and the UAT report conflict.
 
 ## Scope
 
-Sprint 5 should include:
+Fix the default consumer-facing results experience.
 
-1. Fresh proving harness run.
-2. Updated proving artefacts.
-3. Binary automated checks for remaining CHECKs 2, 5, and 6.
-4. Sentinel graduation for `wave1_contradiction` if CHECK 5 becomes a real guard.
-5. Human validation checklist execution and documentation.
-6. Sprint 5 completion note.
+Expected focus:
 
-## Mandatory Stage 1 — Fresh proving harness run
+- results page copy/rendering
+- technical-language filtering/gating
+- markdown rendering/stripping
+- primary finding alignment
+- Actions hub empty-state contradiction
+- advanced/clinician section gating
+- focused frontend tests
+- completion note
 
-Before writing new binary assertions, run the proving harness fresh from repo root:
+## Task 1 — Remove internal architecture language from consumer-visible copy
 
-```bash
-python backend/tools/launch_core_proving_harness.py
-````
+Inspect the results page and components rendering:
 
-Required outputs:
+- Summary
+- body overview
+- lead narrative
+- next steps
+- domain cards
+- advanced teaser
+- Actions hub
 
-* `docs/audit-papers/launch-core-proving/PROVING_REPORT.md`
-* `docs/audit-papers/launch-core-proving/latest_fingerprints.json`
+Remove or rewrite user-visible internal terms including:
 
-Required checks after run:
+- Layer B
+- Layer C
+- deterministic narrative compiler
+- deterministic arbitration
+- governed capacity score
+- compiler
+- payload
+- manifest
+- runtime
+- IDL
+- backend slugs
+- `cardiovascular_4_biomarkers`
+- `chain_001`
+- `chain_002`
+- `alcohol_intake_moderate_or_higher_with_one_carbon_lab_coherence`
+- snake_case marker references where user-facing labels should be shown
 
-* confirm artefacts are stamped with current branch/HEAD
-* confirm AB and VR runs are present
-* confirm baseline, lifestyle/context, statin-off, and statin-on scenarios are present
-* inspect `lead_narrative_head` for alcohol/lifestyle bridge wording
-* inspect `consumer_band_labels` / domain card consequence sentence heads for contradiction risk
-* inspect `clinician_page1.primary_concern_head` and `narrative.retail_summary_head` for lead coherence
+Consumer-facing copy should use plain English.
 
-If the harness fails to run, STOP and report.
+Acceptable replacements:
 
-If the fresh fingerprints differ materially from expected launch-core behaviour, STOP and report before writing assertions.
+- “This report is generated from structured clinical rules applied to your lab data.”
+- “The main pattern in this result is…”
+- “This section explains how the markers fit together.”
+- “This context may help explain the pattern, but it does not prove a cause.”
 
-## Task 1 — Add CHECK 2 binary assertion
+Do not hide uncertainty. Remove the machinery, not the caution.
 
-CHECK 2:
+## Task 2 — Fix raw markdown rendering
 
-Alcohol bridge appears in human language in `lead_narrative`.
+The UAT showed literal markdown such as:
 
-Expected file:
+- `**Homocysteine Elevation Context**`
+- `**does not**`
+- `**Methylmalonic acid (MMA)**`
 
-* new test file, preferably `backend/tests/unit/test_lc_s5_proving_checks.py`
-* or a dedicated regression file if Sentinel promotion is chosen immediately
+Fix user-visible rendering so raw markdown tokens do not appear.
 
-Required:
+Acceptable approach:
 
-* use the fresh proving artefact or run the proving harness in-test if current project pattern supports it
-* inspect `AB__lifestyle_context`
-* assert that `narrative.lead_narrative_head` includes recognisable alcohol / methylation / macrocytosis context language
-* choose the substring based on the fresh harness output
-* do not hardcode a phrase before the harness has been run and inspected
+- strip simple markdown decorators before rendering, or
+- render safely using existing markdown utility/component if one already exists
 
-Do not change the narrative compiler.
+Do not introduce a large new markdown dependency unless already present and approved.
 
-## Task 2 — Add CHECK 5 binary assertion
+Apply consistently to:
 
-CHECK 5:
+- retail summary
+- body overview
+- lead narrative
+- next steps
+- clinician synthesis/advanced content if not already handled
 
-No band/headline contradiction.
+## Task 3 — Align primary story
 
-Required:
+The UAT found a confusing mismatch:
 
-* verify consumer domain card band labels and associated consequence/headline text do not contradict
-* at minimum, assert that stable/strong bands do not carry danger/emergency wording and that concern/elevated bands do not carry falsely reassuring wording
-* use current fresh AB and VR fingerprints or fixture output
-* keep the check conservative and transparent
+- hero says: `Vascular Inflammation Risk`
+- summary/body says ranked lead is: `Homocysteine Elevation Context`
 
-If contradiction rules cannot be safely inferred from current output, STOP and report the exact ambiguity.
-
-Do not change domain score assembly logic.
-
-## Task 3 — Add CHECK 6 binary assertion
-
-CHECK 6:
-
-Clinician `primary_concern` and `retail_summary` reference the same lead pattern.
-
-Required:
-
-* use fresh AB and VR baseline fingerprints
-* compare `clinician_page1.primary_concern_head` with `narrative.retail_summary_head`
-* assert that both reference the same lead pattern or lead biomarker family
-* encode this transparently, using known fresh output terms
-* avoid brittle over-specific wording if a stable signal ID or deterministic lead label is available
-
-Do not change clinician report compiler or narrative compiler.
-
-## Task 4 — Sentinel graduation for `wave1_contradiction`
-
-Current status:
-
-* `wave1_contradiction` is a placeholder/status-reporting Sentinel class.
-
-If Task 2 creates a real deterministic CHECK 5 guard, update:
-
-* `sentinel/packs/escaped_defects_v1.json`
-* `sentinel/sentinel_runner.py`
+This must be made coherent.
 
 Required:
 
-* promote `wave1_contradiction` from placeholder/status-reporting to guarded/active deterministic only if the new test genuinely asserts no contradiction
-* wire the new test path into the runner
-* run Sentinel for `wave1_contradiction`
-* report 0 issues / 0 gaps
+- inspect the source of the hero title and the source of the ranked lead narrative
+- ensure the default consumer page has one clear primary story
+- either align the hero to the ranked lead, or explicitly explain the relationship between the consumer domain label and the ranked lead pattern
 
-If the CHECK 5 test cannot be made robust in this sprint, leave `wave1_contradiction` as PLACEHOLDER and document why.
+Preferred consumer wording style:
 
-## Task 5 — Human validation walkthrough
+- “Primary finding: Homocysteine elevation pattern”
+- “Main system context: vascular / cardiovascular risk”
+- avoid making the user choose between two apparent primary findings
 
-Execute or prepare the human validation walkthrough using the checklist from:
+Do not change backend ranking logic.
 
-`docs/audit-papers/lc_s5_proving_readiness_preflight_audit.md`
+If alignment requires backend analytical changes, STOP and report.
 
-At minimum, document validation for:
+## Task 4 — Rewrite Summary subtitle and intro copy
 
-### Upload/questionnaire
+Remove:
 
-* 9 mandatory questionnaire fields can be completed
-* statin-on path can be triggered using `Statins (cholesterol medication)`
-* alcohol/context path can be triggered with non-zero alcohol input
+- “Plain-language overview from the deterministic narrative compiler.”
 
-### Results page
+Replace with consumer-safe wording, for example:
 
-* mock-mode honesty banner visible
-* hero label is user-facing, not a backend slug
-* retail summary visible
-* “What this means” open by default
-* body overview visible
-* lead narrative visible
-* next steps visible
-* alcohol/lifestyle bridge visible where expected
-* statin context visible where expected
-* no legacy insights visible on consumer paths
+- “A plain-language summary of the main pattern in your results.”
 
-### Actions page
+Also remove copy that says:
 
-* no generic legacy action cards from `legacy_v1`
-* action cards do not show internal identifiers
+- “Layer B frames this…”
+- “Layer C…”
 
-### Advanced/clinician section
+The Summary section should be understandable without any knowledge of system architecture.
 
-* clinician synthesis visible only in advanced/clinician section
-* no raw markdown tokens visible
-* clinician primary concern agrees with retail summary lead pattern
+## Task 5 — Clean body overview and next steps
 
-Document whether this walkthrough was:
+The UAT found body overview and next steps contain:
 
-* executed fully in browser
-* partially executed
-* prepared as a checklist only
+- deterministic system snapshot
+- deterministic arbitration
+- governed capacity score
+- Layer C
+- system slugs
+- internal bridge codes
 
-If a browser/manual run is not performed in this sprint, record that clearly as a limitation and carry it forward.
+Fix the rendered body overview and next-step text so consumer view does not expose these tokens.
 
-## Task 6 — Update proving artefacts
+If these tokens are generated upstream and cannot be safely filtered in the frontend, STOP and report the exact source.
 
-Commit regenerated proving artefacts if this is the established project pattern:
+Preferred approach:
 
-* `docs/audit-papers/launch-core-proving/PROVING_REPORT.md`
-* `docs/audit-papers/launch-core-proving/latest_fingerprints.json`
+- frontend retail sanitiser/gate for known internal tokens, if safe
+- or route only approved narrative fields to the consumer view
 
-If the harness generates additional timestamped artefacts, include only those normally committed by prior proving runs.
+Do not alter LC-S3 narrative compiler unless approved.
 
-Do not commit transient local files.
+## Task 6 — Gate advanced/clinician technical content more strongly
 
-## Task 7 — Completion note
+The UAT found chain IDs, ranking lines and internal marker IDs visible in the default scroll path.
 
-Create:
+Required:
 
-`docs/sprints/LC-S5_proving_and_human_validation_completion_2026-05.md`
+- ensure clinician/advanced content is clearly separated from consumer content
+- keep technical detail behind explicit “technical / clinician” disclosure
+- do not show chain IDs or snake_case evidence labels in default consumer sections
+- where marker IDs appear, use display labels where available
 
-It must record:
+Advanced content may remain technical, but it must not leak into the default retail journey.
 
-* fresh proving harness run command and result
-* current HEAD used for fingerprints
-* AB/VR scenario matrix covered
-* CHECK 2 result
-* CHECK 4 status
-* CHECK 5 result
-* CHECK 6 result
-* Sentinel changes, if any
-* human validation walkthrough status
-* remaining manual validation gaps
-* frontend Sentinel infrastructure gaps carried forward
-* confirmation no analytical engine, SSOT, Knowledge Bus, questionnaire, narrative compiler, or report carriage code changed unless explicitly approved
+## Task 7 — Fix Actions hub contradiction
+
+The UAT found the Actions hub says:
+
+“No actions to show yet”
+
+while the results page contains rich next-step/follow-up content.
+
+Required:
+
+- inspect why Actions hub receives no action cards
+- either:
+  - wire it to the governed `actions` / `interventions_v1` / next-step source already present in the result, or
+  - remove/de-emphasise the Actions hub entry point until real action cards are available
+
+Do not show generic legacy insights.
+
+Do not reintroduce `legacy_v1 insights[]`.
+
+If safe wiring requires backend DTO changes, STOP and report.
+
+## Task 8 — Fix mock-mode honesty banner wording
+
+The UAT found the banner wording is partially garbled:
+
+- “AI-per narrative is not active…”
+
+Fix display wording to exactly:
+
+“Your report is built from structured clinical rules applied to your lab data. AI-personalised narrative is not active in this view.”
+
+Use “structured clinical rules” rather than “governed clinical rules” for consumer clarity.
+
+## Task 9 — Remove internal roadmap labels
+
+Remove or rewrite:
+
+- “Wave 1”
+
+from user-facing domain headings.
+
+Preferred:
+
+- “Your health domains”
+- “Main health areas reviewed”
+- “System-level patterns”
+
+## Task 10 — Tests
+
+Add or update frontend tests proving:
+
+- no `Layer B` visible in default results page
+- no `Layer C` visible in default results page
+- no `deterministic narrative compiler` visible
+- no `deterministic arbitration` visible
+- no backend system slug such as `cardiovascular_4_biomarkers` visible
+- no raw markdown `**` appears in summary/body/next-step rendering
+- no bridge slug such as `alcohol_intake_moderate_or_higher_with_one_carbon_lab_coherence` appears
+- Summary subtitle uses consumer-safe copy
+- mock-mode banner uses approved wording
+- Actions hub does not show contradictory empty state when governed actions/interventions exist
+- legacy `insights[]` remain hidden from consumer paths
 
 ## Expected files touched
 
 Expected:
 
-* `docs/audit-papers/launch-core-proving/PROVING_REPORT.md`
-* `docs/audit-papers/launch-core-proving/latest_fingerprints.json`
-* `backend/tests/unit/test_lc_s5_proving_checks.py`
-* or `backend/tests/regression/test_lc_s5_proving_checks.py`
-* `docs/sprints/LC-S5_proving_and_human_validation_completion_2026-05.md`
+- `frontend/app/(app)/results/page.tsx`
+- `frontend/app/(app)/actions/page.tsx`
+- frontend result components under `frontend/app/components/results/`
+- frontend copy/sanitisation helpers if needed
+- frontend tests
+- `docs/sprints/LC-S6_results_retail_hardening_completion_2026-05.md`
 
 Possibly expected:
 
-* `sentinel/packs/escaped_defects_v1.json`
-* `sentinel/sentinel_runner.py`
-
-Only if `wave1_contradiction` is promoted to a real guarded defect class.
+- frontend types if needed for safe action/intervention wiring
 
 Not expected:
 
-* `backend/ssot/`
-* `knowledge_bus/`
-* `backend/core/pipeline/`
-* `backend/core/analytics/`
-* `backend/core/contracts/`
-* `frontend/app/(app)/results/page.tsx`
-* `frontend/app/(app)/actions/page.tsx`
-* questionnaire files
-* narrative compiler files
-* biomarker interpretation logic
-* Automation Bus control-plane scripts
-
-## Tests and validation
-
-Required:
-
-1. Run the proving harness fresh:
-
-```bash
-python backend/tools/launch_core_proving_harness.py
-```
-
-2. Run new LC-S5 proving tests.
-
-3. Run relevant existing regression tests:
-
-```bash
-python -m pytest backend/tests/regression -m regression --tb=short -q
-```
-
-4. If `wave1_contradiction` is promoted, run:
-
-```bash
-python sentinel/sentinel_runner.py --defect-class wave1_contradiction
-```
-
-5. Run `statin_signal_isolation` Sentinel again to confirm no regression:
-
-```bash
-python sentinel/sentinel_runner.py --defect-class statin_signal_isolation
-```
-
-Report all commands and results.
+- `backend/ssot/`
+- `knowledge_bus/`
+- `backend/core/analytics/`
+- `backend/core/pipeline/`
+- `backend/core/contracts/`
+- questionnaire files
+- narrative compiler files
+- biomarker scoring logic
+- Automation Bus control-plane scripts
+- Sentinel files
 
 ## Stop conditions
 
 STOP and report before implementation if:
 
-* proving harness does not run
-* fresh fingerprints are not generated
-* AB/VR scenarios are missing
-* lifestyle/context scenario no longer produces a usable lead narrative
-* statin-on/off scenario no longer preserves analytical invariants
-* CHECK 2 wording cannot be identified safely from fresh output
-* CHECK 5 contradiction criteria cannot be made robust
-* CHECK 6 cannot compare lead pattern coherently from current fingerprints
-* adding checks requires modifying analytical engine code
-* any change appears to require SSOT, Knowledge Bus, questionnaire, narrative compiler, or report carriage code
-* Sentinel promotion requires control-plane script changes
+- fixing consumer copy requires changing analytical ranking logic
+- fixing hero alignment requires backend scoring/ranking changes
+- removing internal language requires changing LC-S3 narrative compiler logic
+- Actions hub wiring requires backend DTO/schema changes
+- any Knowledge Bus, SSOT, pipeline, analytics, or contract files appear necessary
+- legacy `insights[]` would need to be reintroduced to populate Actions hub
+- safe markdown rendering requires adding a large dependency
 
 ## Explicit non-goals
 
 Do not:
 
-* modify analytical engine logic
-* modify narrative compiler logic
-* modify questionnaire logic
-* modify report carriage UI
-* modify Knowledge Bus assets
-* modify SSOT files
-* activate Gemini
-* build frontend Sentinel/Jest runner support
-* implement PDF export testing
-* implement paywall/pricing testing
-* implement longitudinal narrative
-* restructure `AnalysisDTO`
-* author Sprint 6
+- change analytical scoring
+- change signal ranking
+- change biomarker interpretation
+- change questionnaire logic
+- change Knowledge Bus assets
+- change SSOT
+- change narrative compiler assembly
+- activate Gemini
+- build frontend Sentinel infrastructure
+- perform full biomarker unit/status QA in this sprint
+- change PDF/export structure unless the same rendered components are reused automatically
 
-## Risk classification
+## Completion note
 
-Risk level: STANDARD.
+Create:
 
-Rationale:
+`docs/sprints/LC-S6_results_retail_hardening_completion_2026-05.md`
 
-Sprint 5 is expected to touch tests, proving artefacts, Sprint documentation, and possibly Sentinel pack/runner entries. It must not touch Intelligence Core, SSOT, Knowledge Bus, backend pipeline logic, frontend report UI, or Automation Bus control-plane scripts.
+It must record:
 
-If any HIGH-risk path becomes necessary, STOP and escalate to GPT before proceeding.
+- UAT blockers addressed
+- internal terms removed/gated
+- markdown rendering fix
+- hero/summary alignment decision
+- Actions hub decision
+- tests run
+- known limitations
+- confirmation no backend analytical, SSOT, Knowledge Bus, questionnaire, narrative compiler, or control-plane files changed
+
+## Validation
+
+Run relevant frontend tests.
+
+At minimum:
+
+- results page/component tests
+- Actions page tests
+- legacy insights visibility tests
+- LC-S4 report-carriage tests
+- any new LC-S6 leakage tests
+
+Then run broader frontend test suite if feasible.
+
+Report all commands and results.
 
 ## Closure evidence required
 
 Before finish, report:
 
-* branch
-* work_id
-* files changed
-* proving harness command/result
-* current HEAD in fingerprints
-* CHECK 2 pass/fail
-* CHECK 4 status
-* CHECK 5 pass/fail
-* CHECK 6 pass/fail
-* Sentinel commands/results
-* whether `wave1_contradiction` was promoted
-* human validation walkthrough status
-* known limitations
-* confirmation no analytical engine files changed
-* confirmation no SSOT files changed
-* confirmation no Knowledge Bus files changed
-* confirmation no questionnaire files changed
-* confirmation no frontend report files changed
-* confirmation no Automation Bus control-plane scripts changed
+- branch
+- work_id
+- files changed
+- before/after summary of major copy fixes
+- whether internal terms are absent from default consumer page
+- whether raw markdown is absent
+- whether hero and ranked lead are coherent
+- whether Actions hub contradiction is resolved
+- whether legacy insights remain hidden
+- tests run and results
+- confirmation no backend analytical files changed
+- confirmation no SSOT files changed
+- confirmation no Knowledge Bus files changed
+- confirmation no questionnaire files changed
+- confirmation no narrative compiler files changed
+- confirmation no Automation Bus control-plane scripts changed
 
 ## Final expected outcome
 
-After LC-S5, HealthIQ AI should have current launch-core proving artefacts, binary checks for the remaining key proving obligations, and a documented human validation outcome/checklist.
+After LC-S6, the default results page should feel like a credible patient-facing HealthIQ AI report.
 
-The product should be ready for the next planning decision based on evidence rather than assumption.
+It should show the user the main finding clearly, explain the result in plain English, preserve appropriate caution, and hide internal system machinery unless deliberately opened in a technical/clinician view.
