@@ -1,9 +1,10 @@
 {
   "branch": "sprint6/results-retail-hardening",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-13T12:52:58Z",
   "cursor_started_utc": "2026-05-13T12:23:35Z",
-  "head_sha": "743d6676c374a67528e0e8247268a4e41ec78f63",
+  "head_sha": "02eb6c36b32fd640da5fa4e4f36cd6f6a86f81d5",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "LC-S6-RESULTS-RETAIL-HARDENING"
 }
