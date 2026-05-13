@@ -1,9 +1,10 @@
 {
   "branch": "sprint7/consumer-boundary-and-biomarker-display-qa",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-13T20:46:10Z",
   "cursor_started_utc": "2026-05-13T20:36:53Z",
-  "head_sha": "ead501622514090f04508e63fef4d571bc4e6492",
+  "head_sha": "0a557b829a04a4cb00768a31c5fafe5667996be1",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "LC-S7-CONSUMER-BOUNDARY-AND-BIOMARKER-DISPLAY-QA"
 }
