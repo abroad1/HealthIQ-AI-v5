@@ -1,84 +1,155 @@
 {
   "bus_version": "1.3.1",
-  "work_id": "LC-S6-RESULTS-RETAIL-HARDENING",
+  "work_id": "LC-S7-CONSUMER-BOUNDARY-AND-BIOMARKER-DISPLAY-QA",
   "status": "HARDENED",
   "hardened_utc": "2026-05-13T00:00:00Z",
-  "hardened_by": "claude-sonnet-4-6",
+  "hardened_by": "Claude Code (Sonnet 4.6) — Stage 2 SOP v1.3.1",
   "changes": [
     {
-      "check": "Front matter completeness",
-      "status": "PASS",
-      "note": "All 5 required fields present: work_id, branch, risk_level, execution_model, change_type. automation_bus/latest_cursor_prompt.md lines 2-6."
+      "check": "Front Matter — work_id",
+      "result": "CONFIRMED",
+      "citation": "automation_bus/latest_cursor_prompt.md line 2"
     },
     {
-      "check": "Authority path: UAT report",
-      "status": "CONFIRMED — independently verified",
-      "note": "docs/testing/UAT_results_page_analysis_b2dfa0c4_2026-05-12.md — read in full. All blocker defects cross-referenced against source files line-by-line."
+      "check": "Front Matter — branch",
+      "result": "CONFIRMED: sprint7/consumer-boundary-and-biomarker-display-qa",
+      "citation": "automation_bus/latest_cursor_prompt.md line 3"
     },
     {
-      "check": "Authority path: lcS4ResultsCopy.ts — PATH CORRECTION REQUIRED",
-      "status": "FLAG",
-      "note": "Prompt lists 'frontend/lib/lcS4ResultsCopy.ts'. Actual path is 'frontend/app/lib/lcS4ResultsCopy.ts'. Cursor must use the real path."
+      "check": "Front Matter — risk_level HIGH",
+      "result": "CONFIRMED: HIGH declared and correct. Prompt explicitly touches narrative_report_compiler_v1.py, intervention_annotation_formatter_v1.py, narrative_compiler_lc_s3_assembly_v1.py — all are Intelligence Core HIGH-risk paths per SOP §10.",
+      "citation": "automation_bus/latest_cursor_prompt.md line 4; docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md §10"
     },
     {
-      "check": "Summary subtitle blocker",
-      "status": "CONFIRMED — frontend/app/components/results/DeterministicNarrativeSurface.tsx:48",
-      "note": "CardDescription = 'Plain-language overview from the deterministic narrative compiler.' Must be replaced per Task 4."
+      "check": "Front Matter — execution_model",
+      "result": "CONFIRMED: TWO_PHASE_START_FINISH",
+      "citation": "automation_bus/latest_cursor_prompt.md line 5"
     },
     {
-      "check": "'Deterministic' in What this means description",
-      "status": "CONFIRMED — frontend/app/components/results/DeterministicNarrativeSurface.tsx:83",
-      "note": "CardDescription = 'Deterministic explanation of the primary pattern and related context.' Must be rewritten to consumer-safe copy per Task 4."
+      "check": "Front Matter — change_type MIXED",
+      "result": "CONFIRMED and correct. Backend narrative compiler logic changes + frontend display/label changes. MIXED is governed by BEHAVIOUR controls per SOP §4.",
+      "citation": "automation_bus/latest_cursor_prompt.md line 6"
     },
     {
-      "check": "Wave 1 in domain section heading",
-      "status": "CONFIRMED — frontend/app/components/results/Wave1DomainCards.tsx:57",
-      "note": "Heading = 'Your health domains (Wave 1)'. Must remove '(Wave 1)' per Task 9."
+      "check": "Authority path — narrative_report_compiler_v1.py",
+      "result": "CONFIRMED EXISTS — file read",
+      "citation": "backend/core/analytics/narrative_report_compiler_v1.py (glob + read verified)"
     },
     {
-      "check": "Layer C in advanced section teaser",
-      "status": "CONFIRMED — frontend/app/(app)/results/page.tsx:719",
-      "note": "description = 'Full biomarker dials, system groups, Layer C insights, and the long-form report.' Consumer-visible before opening the disclosure. Must be rewritten per Task 6."
+      "check": "Authority path — intervention_annotation_formatter_v1.py",
+      "result": "CONFIRMED EXISTS — file read",
+      "citation": "backend/core/analytics/intervention_annotation_formatter_v1.py (glob + read verified)"
     },
     {
-      "check": "Raw markdown not stripped",
-      "status": "CONFIRMED — frontend/app/components/results/DeterministicNarrativeSurface.tsx:8-10",
-      "note": "NarrativeProse renders text with whitespace-pre-line only. No markdown stripping or rendering. Backend ** tokens display literally. A strip helper is required per Task 2. No large dependency needed."
+      "check": "Authority path — narrative_compiler_lc_s3_assembly_v1.py",
+      "result": "CONFIRMED EXISTS — file read",
+      "citation": "backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py (glob + read verified)"
     },
     {
-      "check": "Snake-case marker names in driving signals",
-      "status": "CONFIRMED — frontend/app/components/results/ResultsHeroBlocks.tsx:147",
-      "note": "{b.biomarker_name} rendered directly in 'What's driving this'. Must apply humanize/display-label transform per Task 1."
+      "check": "Authority path — retailNarrativeSanitize.ts",
+      "result": "CONFIRMED EXISTS — file read",
+      "citation": "frontend/app/lib/retailNarrativeSanitize.ts (glob + read verified)"
     },
     {
-      "check": "Actions hub empty state engineering copy",
-      "status": "CONFIRMED — frontend/app/(app)/actions/page.tsx:137",
-      "note": "'did not include structured recommendation lines in the data we receive.' Engineering-facing language confirmed. Must be rewritten per Task 7. Copy fix is frontend-safe; no backend DTO change required for copy fix."
+      "check": "Authority path — resultsPageLayout.ts",
+      "result": "CONFIRMED EXISTS — file read",
+      "citation": "frontend/app/lib/resultsPageLayout.ts (glob + read verified)"
     },
     {
-      "check": "Mock-mode banner copy mismatch",
-      "status": "CONFIRMED — frontend/app/lib/lcS4ResultsCopy.ts:5",
-      "note": "Current value: 'governed clinical rules'. Task 8 requires 'structured clinical rules'. Direct conflict. Must be fixed at the real path (not the path listed in the prompt)."
+      "check": "Authority path — ResultsBodyOverview.tsx / ClinicianReportRenderer.tsx / PrimaryFindingAndWhy.tsx / BiomarkerDials.tsx / results/page.tsx",
+      "result": "CONFIRMED EXISTS — all five glob-verified",
+      "citation": "frontend/app/components/results/ResultsBodyOverview.tsx; frontend/app/components/results/ClinicianReportRenderer.tsx; frontend/app/components/results/PrimaryFindingAndWhy.tsx; frontend/app/components/biomarkers/BiomarkerDials.tsx; frontend/app/(app)/results/page.tsx"
     },
     {
-      "check": "Behavioural scope — frontend sanitiser",
-      "status": "PASS",
-      "note": "Frontend token sanitiser is presentation-layer only. Does not alter analytical output, data values, ranking, or compiler logic. Determinism of Intelligence Core is preserved."
+      "check": "Evidence source — preflight triage",
+      "result": "CONFIRMED EXISTS — file read in full",
+      "citation": "docs/testing/LC-S7_preflight_triage_post_LC-S6_UAT.md"
     },
     {
-      "check": "Forbidden files",
-      "status": "PASS",
-      "note": "backend/ssot/, knowledge_bus/, backend/core/analytics/, backend/core/pipeline/, narrative compiler, questionnaire files — none in expected scope. STOP conditions explicitly guard them."
+      "check": "Task 1 — Intervention appendix leak mechanism (source cross-ref)",
+      "result": "CONFIRMED. narrative_report_compiler_v1.py line 662 calls format_intervention_annotation_narrative_appendix_v1. Lines 663-666 conditionally join result into body_overview_with_ia via _join_blocks. The appendix emits literal machine text: 'Layer B intervention annotation — lipid-lowering statin...: expected_biomarker_effect [ldl_cholesterol, non_hdl_cholesterol, apob] direction=lower' (intervention_annotation_formatter_v1.py lines 38-47). retailNarrativeSanitize.ts line 36 replaces 'Layer B' only → producing 'supporting clinical context intervention annotation'. Consumer-safe replacement format_intervention_annotation_consumer_cv_suffix_v1 EXISTS and is ready to use (intervention_annotation_formatter_v1.py lines 58-69).",
+      "citation": "backend/core/analytics/narrative_report_compiler_v1.py lines 662-666; backend/core/analytics/intervention_annotation_formatter_v1.py lines 23-48 and 58-69; frontend/app/lib/retailNarrativeSanitize.ts line 36"
     },
     {
-      "check": "risk_level: STANDARD",
-      "status": "PASS",
-      "note": "No HIGH-risk trigger files in scope. Intelligence Core not touched. Frontend-only changes. STANDARD is correct."
+      "check": "Task 2 — Body overview technical phrases confirmed in source",
+      "result": "CONFIRMED. _build_body_overview emits: (1) 'Primary driver system (deterministic arbitration):' at line 172 — sanitizer rule at retailNarrativeSanitize.ts line 33 converts 'deterministic arbitration' → 'clinical prioritisation on this panel'; (2) 'Co-supporting systems (deterministic arbitration):' at line 179 — same sanitizer rule; (3) 'High capacity / comparatively calmer systems in this snapshot (governed capacity score ≥90):' at lines 192-196 — sanitizer converts 'governed capacity score' → 'confidence score' (line 35) but 'High capacity / comparatively calmer systems' remains; (4) 'Benchmark interpretation themes (governed functional titles):' at lines 200-202 — NO sanitizer rule covers 'governed functional titles'.",
+      "citation": "backend/core/analytics/narrative_report_compiler_v1.py lines 172, 179, 192-196, 200-202; frontend/app/lib/retailNarrativeSanitize.ts lines 30-44"
     },
     {
-      "check": "STOP conditions",
-      "status": "PASS",
-      "note": "All STOP conditions correctly identify backend escalation triggers: analytical ranking, compiler changes, backend DTO, SSOT, Knowledge Bus. Scope boundary is protected."
+      "check": "Task 3 — Raw identifiers in default consumer paths confirmed",
+      "result": "CONFIRMED. (1) _clinician_header emits raw signal_id in backtick: '- Signal: `{lead.signal_id}`' at narrative_compiler_lc_s3_assembly_v1.py line 206. (2) _root_cause_block emits raw hypothesis_id: 'Hypothesis `{hyp.hypothesis_id}`' at line 121. (3) Ranking policy version exposed as plain <p> without showDetails gating (confirmed from preflight triage §1 table row 5). (4) chain_001 visible in <details> without global technical toggle (confirmed from preflight §1 table row 6). Sanitizer scrubLongInternalSlugs (retailNarrativeSanitize.ts lines 22-27) catches tokens ≥38 chars but 'signal_homocysteine_elevation_context' (38 chars) and shorter hypothesis IDs may not be caught.",
+      "citation": "backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py lines 121, 206; docs/testing/LC-S7_preflight_triage_post_LC-S6_UAT.md §1; frontend/app/lib/retailNarrativeSanitize.ts lines 22-27"
+    },
+    {
+      "check": "Task 4 — Secondary ranked heading confirmed in source",
+      "result": "CONFIRMED. _secondary_ranked returns 'Secondary ranked patterns (Layer B order, deterministic):\\n\\n' at narrative_compiler_lc_s3_assembly_v1.py line 241. After sanitizer: 'Layer B' → 'supporting clinical context' produces 'Secondary ranked patterns (supporting clinical context order, deterministic):'. The word 'deterministic' is not removed by any sanitizer rule.",
+      "citation": "backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py line 241; frontend/app/lib/retailNarrativeSanitize.ts (no rule for standalone 'deterministic')"
+    },
+    {
+      "check": "Task 5 — Actions preamble source confirmed",
+      "result": "CONFIRMED. _next_steps_from_payload hard-codes preamble 'Safe next-step framing (Layer C, bounded):\\n' at narrative_compiler_lc_s3_assembly_v1.py line 189. buildActionCardModels in resultsPageLayout.ts lines 499-514 uses narrativeNextStepsNarrative only as last-resort fallback (guard: out.length === 0). Duplication is from two surfaces rendering the same content (full narrative block + action cards).",
+      "citation": "backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py line 189; frontend/app/lib/resultsPageLayout.ts lines 499-514"
+    },
+    {
+      "check": "Task 6 — Biomarker unit/range mismatch classification",
+      "result": "CONFIRMED as backend/source data issue. BiomarkerDials.tsx passes value and referenceRange units as-is from API (preflight §4 table). Haemoglobin g/dL vs range g/L and haematocrit 0.4 % vs L/L are upstream data problems. STOP condition applies: Cursor must classify defect locus and STOP before touching backend scoring or inventing unit conversion.",
+      "citation": "frontend/app/components/biomarkers/BiomarkerDials.tsx lines 136-152; docs/testing/LC-S7_preflight_triage_post_LC-S6_UAT.md §4; automation_bus/latest_cursor_prompt.md §Stop conditions"
+    },
+    {
+      "check": "Task 7 — Label registry gaps confirmed",
+      "result": "CONFIRMED. BIOMARKER_NAMES in BiomarkerDials.tsx lines 36-75 is missing: tc_hdl_ratio, tg_hdl_ratio, ldl_hdl_ratio, non_hdl_cholesterol, active_b12, apoa1, apob, egfr, mcv, mch, mchc, fsh, lh. Key 'hemoglobin' exists at line 60 (US spelling) — UK key 'haemoglobin' absent. 'apolipoprotein_b' exists at line 45 but 'apob' does not — Cursor must verify actual API key. 'ggt' already exists at line 58. 'tsh' already exists at line 65.",
+      "citation": "frontend/app/components/biomarkers/BiomarkerDials.tsx lines 36-75"
+    },
+    {
+      "check": "Forbidden files — SSOT / KB / ranking / questionnaire",
+      "result": "CONFIRMED NOT IN SCOPE. Declared expected files do not include backend/ssot/, knowledge_bus/, questionnaire files, signal scoring files, or ranking policy files. Prompt explicitly lists these as Not Expected.",
+      "citation": "automation_bus/latest_cursor_prompt.md §Expected files touched — Not expected"
+    },
+    {
+      "check": "Tooling leakage risk",
+      "result": "NO TOOLING LEAKAGE RISK. No .codex/, .vscode/, AGENTS.md files in scope.",
+      "citation": "automation_bus/latest_cursor_prompt.md §Expected files touched"
+    },
+    {
+      "check": "STOP conditions — completeness",
+      "result": "CONFIRMED PRESENT and specific. Seven STOP conditions cover: signal activation changes, ranking logic changes, clinical unit conversion, backend scoring changes, KB/SSOT changes, DTO shape changes, consumer/technical view indistinguishability. Correct boundaries for HIGH/MIXED work.",
+      "citation": "automation_bus/latest_cursor_prompt.md §Stop conditions"
+    },
+    {
+      "check": "Determinism — no LLM in analytical changes",
+      "result": "CONFIRMED. All backend changes are deterministic prose substitution and append/join logic only. No LLM call sites introduced. format_intervention_annotation_consumer_cv_suffix_v1 is a fixed-string function.",
+      "citation": "backend/core/analytics/intervention_annotation_formatter_v1.py lines 58-69"
+    },
+    {
+      "check": "Regression targets declared",
+      "result": "CONFIRMED. Task 8 lists explicit regression targets: LC-S6 leakage tests, slug-leakage-guard test, consumer boundary strings, body_overview prose, actions dedup, label mappings, unit/range mismatch handling.",
+      "citation": "automation_bus/latest_cursor_prompt.md §Task 8; docs/testing/LC-S7_preflight_triage_post_LC-S6_UAT.md §5"
+    }
+  ],
+  "surfaced_risks": [
+    {
+      "risk": "Task 6 STOP — haemoglobin/haematocrit unit mismatch is a backend data problem. Cursor must investigate the API source, classify the defect locus precisely, and STOP before any backend scoring or unit conversion change. Non-negotiable per the prompt's own stop conditions.",
+      "severity": "BLOCKER if misclassified"
+    },
+    {
+      "risk": "Task 7 — 'apob' key conflict. BIOMARKER_NAMES already has 'apolipoprotein_b' (BiomarkerDials.tsx line 45). Cursor must verify which key the API actually emits before adding 'apob' → 'ApoB' mapping, to avoid a dead or duplicate entry.",
+      "severity": "HIGH"
+    },
+    {
+      "risk": "Task 7 — UK/US spelling gap. BIOMARKER_NAMES has 'hemoglobin' (line 60) but not 'haemoglobin'. If the API emits the UK key, the label falls through to replace(/_/g, ' '). Cursor must add 'haemoglobin' entry.",
+      "severity": "HIGH"
+    },
+    {
+      "risk": "Task 2 — 'governed functional titles' phrase has no sanitizer rule. Fix must be upstream in _build_body_overview (preferred) or a new sanitizer entry. If upstream, it is a backend Intelligence Core change requiring test coverage.",
+      "severity": "HIGH"
+    },
+    {
+      "risk": "Task 3 — ClinicianReportRenderer.tsx ranking policy version hide requires showDetails prop or context to be available at that render site. Cursor must confirm before gating.",
+      "severity": "MEDIUM"
+    },
+    {
+      "risk": "Task 1 — Switching body_overview from format_intervention_annotation_narrative_appendix_v1 to format_intervention_annotation_consumer_cv_suffix_v1 is an intentional behavioural output change and must be covered by backend narrative tests.",
+      "severity": "MEDIUM — expected and in scope, must be tested"
     }
   ]
 }
