@@ -4,6 +4,12 @@
 **Branch:** `sprint7/consumer-boundary-and-biomarker-display-qa`  
 **Authority:** `automation_bus/latest_cursor_prompt.md`, `docs/testing/LC-S7_preflight_triage_post_LC-S6_UAT.md`
 
+## Post-audit mini-fix (pre-merge)
+
+- **Regression test:** `test_narrative_compiler_why_surface_regression.py` now requires **“Related interpretation themes”** in consumer `body_overview` and explicitly rejects **“Benchmark interpretation themes”** and **“governed functional titles”** (no OR-with-legacy phrasing).
+- **Parameter naming:** `assemble_lc_s3_sections(..., body_overview_for_consumer=...)` renamed from the misleading `body_overview_structural_with_ia` (call site in `narrative_report_compiler_v1.py` only; behaviour unchanged).
+- **Still separate future work:** backend unit/range normalisation at the API/engine layer; broader slug-leakage CI expansion as its own hardening package.
+
 ## Summary
 
 Closed release-blocking presentation gaps after LC-S6 UAT: consumer `body_overview` no longer carries the machine statin intervention appendix; structural body overview copy is plain-language; LC-S3 assembly removes consumer-hostile headers and raw hypothesis/signal IDs from default prose paths; frontend gates ranking policy strings and technical chain blocks behind **Show technical detail**; action cards dedupe and no longer duplicate full `next_steps_narrative` when that block is already shown; retail sanitizer and biomarker cards cover label and unit/range display safety called out in the sprint.

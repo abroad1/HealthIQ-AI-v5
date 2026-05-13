@@ -264,11 +264,15 @@ def assemble_lc_s3_sections(
     lead_yaml_block: str,
     secondary_yaml_block: str,
     bridge_block: str,
-    body_overview_structural_with_ia: str,
+    body_overview_for_consumer: str,
     clinician_base_without_consumer_lead: str,
     compiler_meta: Dict[str, Any],
 ) -> LcS3AssembledSections:
-    """Compose governed prose when NarrativePayloadV1 is the primary Layer B input."""
+    """Compose governed prose when NarrativePayloadV1 is the primary Layer B input.
+
+    ``body_overview_for_consumer`` is the consumer-safe structural overview (and optional
+    consumer statin suffix), not the machine intervention appendix string.
+    """
     compiler_meta["assets_resolved"].append("lc_s3_payload_primary_assembly")
     compiler_meta["lc_s3_assembly_version"] = "1"
 
@@ -285,7 +289,7 @@ def assemble_lc_s3_sections(
 
     bo_raw = "\n\n".join(
         p
-        for p in [_body_overview_payload_sentence(payload).strip(), body_overview_structural_with_ia.strip()]
+        for p in [_body_overview_payload_sentence(payload).strip(), body_overview_for_consumer.strip()]
         if p
     )
     body_overview = _apply_boundary(bo_raw, boundaries)

@@ -726,7 +726,7 @@ def compile_narrative_report_v1(
             lead_yaml_block=lead_text,
             secondary_yaml_block=secondary_text,
             bridge_block=bridge_block,
-            body_overview_structural_with_ia=body_overview_for_consumer,
+            body_overview_for_consumer=body_overview_for_consumer,
             clinician_base_without_consumer_lead=clinician_base_without_consumer_lead,
             compiler_meta=compiler_meta,
         )
