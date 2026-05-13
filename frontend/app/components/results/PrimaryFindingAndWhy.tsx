@@ -21,12 +21,18 @@ export interface PrimaryFindingAndWhyProps {
   report: ClinicianReportV1 | null | undefined;
   /** When true, hides the lead + “what this means” blocks (hero already surfaced them). */
   omitIntroDuplicate?: boolean;
+  /** LC-S7 — evidence chains / raw ranking rationale only when user enables technical detail. */
+  showTechnicalDetail?: boolean;
 }
 
 /**
  * FE-R2 Section 3 — Primary finding and why (deterministic clinician_report fields only).
  */
-export function PrimaryFindingAndWhy({ report, omitIntroDuplicate = false }: PrimaryFindingAndWhyProps) {
+export function PrimaryFindingAndWhy({
+  report,
+  omitIntroDuplicate = false,
+  showTechnicalDetail = false,
+}: PrimaryFindingAndWhyProps) {
   if (!report) {
     return (
       <section aria-labelledby="primary-finding-why-heading" data-testid="primary-finding-and-why">
@@ -107,35 +113,42 @@ export function PrimaryFindingAndWhy({ report, omitIntroDuplicate = false }: Pri
           ) : null}
 
           {(hypRanking && hasRootNarrative) || chains.length > 0 ? (
-            <details className="rounded-md border border-slate-200 bg-slate-50/60 px-3 py-2">
-              <summary className="text-sm font-medium text-slate-800 cursor-pointer select-none">
-                Technical ranking and evidence chains (optional detail)
-              </summary>
-              <div className="mt-4 space-y-4">
-                {hypRanking && hasRootNarrative ? (
-                  <div className="rounded-md border border-indigo-100 bg-indigo-50/40 px-3 py-2">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-indigo-900 mb-1">
-                      How this ranks on this panel
-                    </p>
-                    <p className="text-indigo-950 leading-relaxed">{hypRanking}</p>
-                  </div>
-                ) : null}
-                {chains.length > 0 ? (
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">
-                      How the evidence connects
-                    </p>
-                    <ul className="list-disc pl-5 space-y-2">
-                      {chains.map((line, i) => (
-                        <li key={i} className="leading-relaxed">
-                          {line}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
-              </div>
-            </details>
+            showTechnicalDetail ? (
+              <details className="rounded-md border border-slate-200 bg-slate-50/60 px-3 py-2">
+                <summary className="text-sm font-medium text-slate-800 cursor-pointer select-none">
+                  Technical ranking and evidence chains (optional detail)
+                </summary>
+                <div className="mt-4 space-y-4">
+                  {hypRanking && hasRootNarrative ? (
+                    <div className="rounded-md border border-indigo-100 bg-indigo-50/40 px-3 py-2">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-indigo-900 mb-1">
+                        How this ranks on this panel
+                      </p>
+                      <p className="text-indigo-950 leading-relaxed">{hypRanking}</p>
+                    </div>
+                  ) : null}
+                  {chains.length > 0 ? (
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">
+                        How the evidence connects
+                      </p>
+                      <ul className="list-disc pl-5 space-y-2">
+                        {chains.map((line, i) => (
+                          <li key={i} className="leading-relaxed">
+                            {line}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                </div>
+              </details>
+            ) : (
+              <p className="text-sm text-slate-600 border border-dashed border-slate-200 rounded-md px-3 py-2 bg-slate-50/50">
+                Technical ranking references and evidence-chain wording are hidden by default. Turn on{' '}
+                <strong>Show technical detail</strong> above to review them when you need them.
+              </p>
+            )
           ) : null}
 
           {showSupportsComplicates && supports.length > 0 ? (

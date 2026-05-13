@@ -212,6 +212,9 @@ export default function ResultsPage() {
       buildActionCardModels(clusters, currentAnalysis?.recommendations, {
         maxItems: 5,
         narrativeNextStepsNarrative: narrativeReport?.next_steps_narrative ?? null,
+        omitNarrativeNextStepsFromCards: Boolean(
+          (narrativeReport?.next_steps_narrative || '').trim().length > 0
+        ),
       }),
     [clusters, currentAnalysis?.recommendations, narrativeReport?.next_steps_narrative]
   );
@@ -687,7 +690,7 @@ export default function ResultsPage() {
               <h3 id="root-cause-heading" className="text-sm font-semibold text-slate-800 mb-2">
                 Clinician-structured &ldquo;why&rdquo; and evidence
               </h3>
-              <PrimaryFindingAndWhy report={clinicianReport} omitIntroDuplicate />
+              <PrimaryFindingAndWhy report={clinicianReport} omitIntroDuplicate showTechnicalDetail={showDetails} />
             </section>
           </ResultsDisclosureSection>
 
@@ -846,6 +849,7 @@ export default function ResultsPage() {
               report={clinicianReport}
               balancedSystems={balancedSystems}
               deterministicClinicianSynthesis={narrativeReport?.clinician_synthesis}
+              showTechnicalDetail={showDetails}
             />
           </ResultsDisclosureSection>
         </div>

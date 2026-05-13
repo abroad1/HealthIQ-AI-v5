@@ -89,7 +89,7 @@ def _retail_from_payload(payload: NarrativePayloadV1, idl_retail_block: str) -> 
     head = (
         f"The ranked lead pattern is **{_humanize_signal(lead.signal_id)}** "
         f"({lead.signal_state}), centred on **{_humanize_metric(lead.primary_metric)}**. "
-        "Layer B frames this as the priority focus for interpretation."
+        "This is the priority focus for interpretation on this panel."
     )
     tail = (lead.why_it_matters or "").strip()
     hedge = (
@@ -118,27 +118,27 @@ def _root_cause_block(payload: NarrativePayloadV1) -> str:
     for hyp in hyps:
         parts_h: List[str] = []
         parts_h.append(
-            f"Hypothesis `{hyp.hypothesis_id}` — **{hyp.title.strip()}**: "
+            f"Hypothesis — **{hyp.title.strip()}**: "
             f"{hyp.summary.strip()} "
-            f"(Layer B confidence weight **{hyp.hypothesis_confidence:.2f}**)."
+            f"(confidence weight **{hyp.hypothesis_confidence:.2f}** — structured ranking only)."
         )
         ev_ok = [str(e.item).strip() for e in hyp.evidence_for if str(e.item).strip()]
         if ev_ok:
             parts_h.append(
-                "Evidence supporting this read (Layer B): "
+                "Evidence supporting this read: "
                 + "; ".join(ev_ok[:8])
                 + (" …" if len(ev_ok) > 8 else "")
             )
         ev_no = [str(e.item).strip() for e in hyp.evidence_against if str(e.item).strip()]
         if ev_no:
             parts_h.append(
-                "Limiting factors / evidence against (Layer B): "
+                "Limiting factors or evidence against: "
                 + "; ".join(ev_no[:8])
                 + (" …" if len(ev_no) > 8 else "")
             )
         miss = [f"{m.marker_id}: {m.reason}" for m in hyp.missing_data if m.marker_id]
         if miss:
-            parts_h.append("Missing data noted by Layer B: " + "; ".join(miss[:6]))
+            parts_h.append("Missing data noted: " + "; ".join(miss[:6]))
         conf_tests = [
             f"{t.display_name} — {t.rationale}".strip(" —")
             for t in hyp.confirmatory_tests
@@ -146,13 +146,13 @@ def _root_cause_block(payload: NarrativePayloadV1) -> str:
         ]
         if conf_tests:
             parts_h.append(
-                "Confirmatory tests Layer B lists for discussion with a clinician: "
+                "Confirmatory tests listed for discussion with a clinician: "
                 + "; ".join(conf_tests[:6])
             )
         blocks.append("\n".join(parts_h))
     if not blocks:
         return ""
-    return "Root-cause scaffolding for the lead signal (Layer B, deterministic):\n\n" + "\n\n".join(blocks)
+    return "How the lead pattern may be explained (structured interpretation):\n\n" + "\n\n".join(blocks)
 
 
 def _body_overview_payload_sentence(payload: NarrativePayloadV1) -> str:
@@ -173,7 +173,7 @@ def _next_steps_from_payload(
         "Discuss these findings with a clinician who knows your history.",
         "Monitor trends on the cadence your clinician recommends.",
         "Repeat priority markers when your clinician advises retesting.",
-        "Review lifestyle context already captured — Layer C does not add new behavioural prescriptions here.",
+        "Review lifestyle context already captured in your questionnaire — no new behavioural prescriptions are added here.",
     ]
     finding = _lead_matching_finding(payload)
     extra: List[str] = []
@@ -186,7 +186,7 @@ def _next_steps_from_payload(
                 if key not in seen:
                     seen.add(key)
                     extra.append(line)
-    parts = ["Safe next-step framing (Layer C, bounded):\n"]
+    parts = []
     parts.extend(f"• {b}" for b in bullets)
     if extra:
         parts.append("")
@@ -202,20 +202,21 @@ def _clinician_header(payload: NarrativePayloadV1) -> str:
     if lead is None:
         return ""
     lines = [
-        "**Clinician fast-read — Layer B lead**",
-        f"- Signal: `{lead.signal_id}` ({lead.signal_state}); primary metric `{lead.primary_metric}`; "
-        f"confidence {lead.confidence:.2f}.",
-        f"- Why it matters (Layer B): {lead.why_it_matters.strip()}",
+        "**Clinician fast-read — lead pattern**",
+        f"- Pattern: **{_humanize_signal(lead.signal_id)}** ({lead.signal_state}); "
+        f"primary marker **{_humanize_metric(lead.primary_metric)}**; "
+        f"confidence score {lead.confidence:.2f}.",
+        f"- Why it matters: {lead.why_it_matters.strip()}",
     ]
     reasons = [r.strip() for r in (lead.confidence_reasons or []) if isinstance(r, str) and r.strip()]
     if reasons:
-        lines.append("- Confidence drivers (Layer B): " + "; ".join(reasons[:6]))
+        lines.append("- Confidence drivers: " + "; ".join(reasons[:6]))
 
     finding = _lead_matching_finding(payload)
     if finding and finding.hypotheses:
         top = max(finding.hypotheses, key=lambda h: float(h.hypothesis_confidence))
         lines.append(
-            f"- Top hypothesis (Layer B ranked): `{top.hypothesis_id}` — {top.title}: {top.summary}"
+            f"- Top ranked hypothesis: **{top.title.strip()}** — {top.summary}"
         )
         miss = [f"{m.marker_id}: {m.reason}" for m in top.missing_data if m.marker_id]
         if miss:
@@ -223,7 +224,7 @@ def _clinician_header(payload: NarrativePayloadV1) -> str:
 
     sup_markers = [str(m).strip() for m in (lead.supporting_markers or []) if str(m).strip()]
     if sup_markers:
-        lines.append("- Supporting markers (Layer B): " + ", ".join(sup_markers[:16]))
+            lines.append("- Supporting markers: " + ", ".join(sup_markers[:16]))
 
     return "\n".join(lines)
 
@@ -238,7 +239,7 @@ def _secondary_ranked(payload: NarrativePayloadV1) -> str:
             f"**{_humanize_signal(tf.signal_id)}** ({tf.signal_state}) on "
             f"**{_humanize_metric(tf.primary_metric)}**: {tf.why_it_matters.strip()}"
         )
-    return "Secondary ranked patterns (Layer B order, deterministic):\n\n" + "\n\n".join(chunks)
+    return "Other patterns considered on this panel:\n\n" + "\n\n".join(chunks)
 
 
 def _apply_boundary(text: str, boundaries: NarrativeClaimBoundaryV1) -> str:

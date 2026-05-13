@@ -15,6 +15,12 @@ describe('retailNarrativeSanitize LC-S6', () => {
     expect(s).not.toMatch(/deterministic narrative compiler/i);
   });
 
+  it('scrubConsumerRetailNarrative maps known signal tokens (LC-S7)', () => {
+    const s = scrubConsumerRetailNarrative('Discuss signal_homocysteine_elevation_context with your clinician.');
+    expect(s).toContain('homocysteine-related pattern');
+    expect(s).not.toContain('signal_homocysteine_elevation_context');
+  });
+
   it('scrubConsumerRetailNarrative replaces long bridge slugs', () => {
     const slug =
       'alcohol_intake_moderate_or_higher_with_one_carbon_lab_coherence and homocysteine';

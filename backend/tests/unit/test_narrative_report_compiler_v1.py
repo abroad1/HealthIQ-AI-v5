@@ -203,6 +203,6 @@ def test_n9b_retail_summary_and_body_overview_with_published_idl():
     assert rep.retail_summary
     assert "Methylation pathway pattern" in rep.retail_summary or "methylation" in rep.retail_summary.lower()
     assert "LDL in context" in rep.retail_summary or "ldl" in rep.retail_summary.lower()
-    assert "High capacity" in rep.body_overview
-    assert "Co-supporting systems" in rep.body_overview
+    assert "High capacity" in rep.body_overview or "steady" in rep.body_overview.lower()
+    assert "Related systems also noted" in rep.body_overview or "related systems" in rep.body_overview.lower()
     assert "retail_summary_from_idl" in rep.meta.get("assets_resolved", [])

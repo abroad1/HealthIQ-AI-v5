@@ -65,5 +65,5 @@ def format_intervention_annotation_consumer_cv_suffix_v1(
     # User-reported statin context only — no treatment advice, no causal claims beyond cautious framing.
     return (
         "Statin medication noted — this may help explain lower LDL-related readings on this panel. "
-        "Taken from your questionnaire as context only; it does not change how signals are scored or ranked."
+        "This is taken from your questionnaire as context only and does not change how signals are scored or ranked."
     )[:420]

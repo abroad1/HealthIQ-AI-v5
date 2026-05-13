@@ -1,10 +1,9 @@
 {
-  "branch": "sprint6/results-retail-hardening",
+  "branch": "sprint7/consumer-boundary-and-biomarker-display-qa",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-13T12:52:58Z",
-  "cursor_started_utc": "2026-05-13T12:23:35Z",
-  "head_sha": "02eb6c36b32fd640da5fa4e4f36cd6f6a86f81d5",
+  "cursor_started_utc": "2026-05-13T20:36:53Z",
+  "head_sha": "ead501622514090f04508e63fef4d571bc4e6492",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "LC-S6-RESULTS-RETAIL-HARDENING"
+  "status": "IN_PROGRESS",
+  "work_id": "LC-S7-CONSUMER-BOUNDARY-AND-BIOMARKER-DISPLAY-QA"
 }
