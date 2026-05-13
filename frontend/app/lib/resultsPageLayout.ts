@@ -89,9 +89,28 @@ export function normalizeHeroComparisonKey(s: string): string {
     .trim();
 }
 
+const LC_S7_BIOMARKER_LABELS: Record<string, string> = {
+  tc_hdl_ratio: 'TC:HDL ratio',
+  tg_hdl_ratio: 'TG:HDL ratio',
+  ldl_hdl_ratio: 'LDL:HDL ratio',
+  non_hdl_cholesterol: 'Non-HDL cholesterol',
+  active_b12: 'Active B12',
+  apoa1: 'ApoA1',
+  apob: 'ApoB',
+  egfr: 'eGFR',
+  mcv: 'MCV',
+  mch: 'MCH',
+  mchc: 'MCHC',
+  fsh: 'FSH',
+  lh: 'LH',
+  haemoglobin: 'Haemoglobin',
+};
+
 export function formatBiomarkerDisplayName(raw: string): string {
   const s = (raw || '').trim();
   if (!s) return raw;
+  const mapped = LC_S7_BIOMARKER_LABELS[s.toLowerCase()];
+  if (mapped) return mapped;
   if (!s.includes('_')) {
     return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
   }
@@ -426,6 +445,8 @@ export interface BuildActionCardOptions {
   insights?: Insight[] | null;
   /** LC-S6 — governed `narrative_report_v1.next_steps_narrative` when structured rec lines are absent. */
   narrativeNextStepsNarrative?: string | null;
+  /** LC-S7 — when true, skip narrative-derived action cards (next steps already shown in Direction). */
+  omitNarrativeNextStepsFromCards?: boolean;
 }
 
 export function parseNarrativeNextStepParagraphs(text: string): string[] {
@@ -437,10 +458,21 @@ export function parseNarrativeNextStepParagraphs(text: string): string[] {
       .replace(/^\s*[-•*]\s+/, '')
       .replace(/^\s*\d+[).]\s+/, '')
       .trim();
+    if (!line.length) continue;
+    if (/safe\s+next-?step\s+framing/i.test(line)) continue;
     if (line.length >= 12) lines.push(line);
   }
   if (lines.length === 0 && t.length >= 12) return [t];
   return lines;
+}
+
+function normalizeActionDedupeKey(s: string): string {
+  return s
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .replace(/[^a-z0-9\s]/g, '')
+    .trim()
+    .slice(0, 200);
 }
 
 /** Flattens cluster recommendations, panel-level recs, then optional insight recs. Deterministic only. */
@@ -451,14 +483,23 @@ export function buildActionCardModels(
 ): ResultActionCardModel[] {
   const maxItems = options?.maxItems ?? 8;
   const insights = options?.insights;
+  const omitNarrative = options?.omitNarrativeNextStepsFromCards === true;
   const out: ResultActionCardModel[] = [];
+  const seen = new Set<string>();
+  const pushDeduped = (m: ResultActionCardModel) => {
+    const k = normalizeActionDedupeKey(m.paragraph);
+    if (!k.length) return;
+    if (seen.has(k)) return;
+    seen.add(k);
+    out.push(m);
+  };
   for (const c of clusters) {
     const name = c.name?.trim() || 'System group';
     for (const r of c.recommendations || []) {
       const paragraph = (r || '').trim();
       if (!paragraph) continue;
       const head = firstSentence(paragraph);
-      out.push({
+      pushDeduped({
         heading: head.length > 100 ? `${head.slice(0, 97).trim()}…` : head,
         paragraph,
         sourceLabel: name,
@@ -472,7 +513,7 @@ export function buildActionCardModels(
     const paragraph = (r || '').trim();
     if (!paragraph) continue;
     const head = firstSentence(paragraph);
-    out.push({
+    pushDeduped({
       heading: head.length > 100 ? `${head.slice(0, 97).trim()}…` : head,
       paragraph,
       sourceLabel: 'Panel summary',
@@ -486,7 +527,7 @@ export function buildActionCardModels(
       const paragraph = (r || '').trim();
       if (!paragraph) continue;
       const head = firstSentence(paragraph);
-      out.push({
+      pushDeduped({
         heading: head.length > 100 ? `${head.slice(0, 97).trim()}…` : head,
         paragraph,
         sourceLabel: (ins.summary || ins.category || ins.id || 'Narrative insight').slice(0, 120),
@@ -497,12 +538,12 @@ export function buildActionCardModels(
     }
   }
   const nextNarr = options?.narrativeNextStepsNarrative?.trim();
-  if (out.length === 0 && nextNarr) {
+  if (!omitNarrative && out.length === 0 && nextNarr) {
     for (const paragraph of parseNarrativeNextStepParagraphs(nextNarr)) {
       const cleaned = scrubConsumerRetailNarrative(paragraph);
       if (!cleaned.trim()) continue;
       const head = firstSentence(cleaned);
-      out.push({
+      pushDeduped({
         heading: head.length > 100 ? `${head.slice(0, 97).trim()}…` : head,
         paragraph: cleaned,
         sourceLabel: 'Report next steps',

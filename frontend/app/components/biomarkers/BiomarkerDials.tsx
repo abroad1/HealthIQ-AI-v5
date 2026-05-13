@@ -42,14 +42,21 @@ const BIOMARKER_NAMES: Record<string, string> = {
   ldl_cholesterol: 'LDL Cholesterol',
   hdl_cholesterol: 'HDL Cholesterol',
   triglycerides: 'Triglycerides',
+  tc_hdl_ratio: 'TC:HDL ratio',
+  tg_hdl_ratio: 'TG:HDL ratio',
+  ldl_hdl_ratio: 'LDL:HDL ratio',
+  non_hdl_cholesterol: 'Non-HDL cholesterol',
   apolipoprotein_b: 'Apolipoprotein B',
+  apob: 'ApoB',
   apolipoprotein_a1: 'Apolipoprotein A1',
+  apoa1: 'ApoA1',
   homocysteine: 'Homocysteine',
   crp: 'C-Reactive Protein',
   esr: 'Erythrocyte Sedimentation Rate',
   il_6: 'Interleukin-6',
   tnf_alpha: 'TNF-α',
   creatinine: 'Creatinine',
+  egfr: 'eGFR',
   bun: 'Blood Urea Nitrogen',
   urea: 'Urea',
   urate: 'Urate',
@@ -58,21 +65,45 @@ const BIOMARKER_NAMES: Record<string, string> = {
   ggt: 'GGT',
   alkaline_phosphatase: 'Alkaline Phosphatase',
   hemoglobin: 'Hemoglobin',
+  haemoglobin: 'Haemoglobin',
   hematocrit: 'Hematocrit',
+  haematocrit: 'Haematocrit',
+  mcv: 'MCV',
+  mch: 'MCH',
+  mchc: 'MCHC',
   wbc: 'White Blood Cell Count',
   rbc: 'Red Blood Cell Count',
   platelets: 'Platelet Count',
   tsh: 'TSH',
+  fsh: 'FSH',
+  lh: 'LH',
   free_t4: 'Free T4',
   free_t3: 'Free T3',
   cortisol: 'Cortisol',
   testosterone: 'Testosterone',
   vitamin_d: 'Vitamin D',
   vitamin_b12: 'Vitamin B12',
+  active_b12: 'Active B12',
   folate: 'Folate',
   iron: 'Iron',
   ferritin: 'Ferritin',
 };
+
+/** LC-S7 — hide numeric reference band when value vs range units are clearly incompatible (display-only). */
+function shouldSuppressReferenceRange(valueUnit?: string | null, rangeUnit?: string | null): boolean {
+  const vu = (valueUnit || '').toLowerCase().replace(/\s+/g, '').replace('µ', 'u');
+  const ru = (rangeUnit || '').toLowerCase().replace(/\s+/g, '').replace('µ', 'u');
+  if (!vu || !ru) return false;
+  const valueGdl = vu.includes('g/dl') || vu === 'gdl';
+  const rangeGl = ru === 'g/l' || (ru.includes('g/l') && !ru.includes('dl'));
+  if (valueGdl && rangeGl) return true;
+  const valuePct = vu === '%' || (vu.length <= 5 && vu.endsWith('%'));
+  if (valuePct && ru.includes('l/l')) return true;
+  const mmolMol = ru.includes('mmol/mol') || ru.includes('mmolmol');
+  if (mmolMol && vu.includes('%')) return true;
+  if ((vu.includes('mmol/mol') || vu.includes('mmolmol')) && ru.includes('%')) return true;
+  return false;
+}
 
 const getStatusColor = (status?: string) => {
   switch (status) {
@@ -309,6 +340,7 @@ export default function BiomarkerDials({ biomarkers, sectionTitle = 'Biomarker e
           const isSel = selectedKey === name;
           const displayName = BIOMARKER_NAMES[name] || name.replace(/_/g, ' ');
           const expandable = hasExpandableLayers(d!);
+          const hideRange = shouldSuppressReferenceRange(d?.unit, d?.referenceRange?.unit);
 
           return (
             <div key={name} className="min-h-[120px]">
@@ -331,10 +363,17 @@ export default function BiomarkerDials({ biomarkers, sectionTitle = 'Biomarker e
                       <div className="text-2xl font-bold text-gray-900 mb-1">{value.toFixed(1)}</div>
                       {d?.referenceRange &&
                       typeof d.referenceRange.min === 'number' &&
-                      typeof d.referenceRange.max === 'number' ? (
+                      typeof d.referenceRange.max === 'number' &&
+                      !hideRange ? (
                         <div className="text-xs text-gray-500">
                           Range: {d.referenceRange.min}–{d.referenceRange.max} {d.referenceRange.unit}
                         </div>
+                      ) : null}
+                      {hideRange ? (
+                        <p className="text-xs text-amber-800/90 mt-1 leading-snug">
+                          Reference range not shown here because the lab units differ from the value row — use your
+                          original report or ask your clinician.
+                        </p>
                       ) : null}
                       {d?.interpretation ? (
                         <p className="text-xs text-gray-700 mt-2 leading-relaxed line-clamp-3">{d.interpretation}</p>

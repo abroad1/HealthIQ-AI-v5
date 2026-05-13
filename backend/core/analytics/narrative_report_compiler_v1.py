@@ -20,6 +20,7 @@ from core.analytics.narrative_compiler_lc_s3_assembly_v1 import (
 from core.contracts.narrative_payload_v1 import NarrativePayloadV1
 from core.contracts.narrative_report_v1 import NARRATIVE_REPORT_V1_VERSION, NarrativeReportV1
 from core.analytics.intervention_annotation_formatter_v1 import (
+    format_intervention_annotation_consumer_cv_suffix_v1,
     format_intervention_annotation_narrative_appendix_v1,
 )
 
@@ -157,6 +158,11 @@ def _benchmark_domain_display_titles(
     return titles
 
 
+def _humanize_system_label(raw: str) -> str:
+    s = str(raw or "").strip().replace("_", " ").replace("-", " ")
+    return " ".join(w.capitalize() for w in s.split()) if s else ""
+
+
 def _build_body_overview(
     *,
     insight_graph: Optional[Mapping[str, Any]],
@@ -167,16 +173,27 @@ def _build_body_overview(
     domains_by_id: Dict[str, Any],
     compiler_meta: Dict[str, Any],
 ) -> str:
+    """Consumer-facing structural overview (LC-S7): plain language, no compiler scaffolding."""
     parts: List[str] = []
-    if primary_driver:
-        parts.append(f"Primary driver system (deterministic arbitration): {primary_driver}.")
+    driver_label = _humanize_system_label(primary_driver)
+    if driver_label:
+        parts.append(
+            f"Your main finding sits in a **{driver_label}** context — this is where the panel places "
+            "most interpretive weight."
+        )
     sup_list: List[str] = []
     if insight_graph and isinstance(insight_graph, dict):
         raw_sup = insight_graph.get("supporting_systems") or []
         if isinstance(raw_sup, list):
             sup_list = sorted({str(x).strip() for x in raw_sup if str(x).strip()})
     if sup_list:
-        parts.append("Co-supporting systems (deterministic arbitration): " + ", ".join(sup_list) + ".")
+        shown = sup_list[:8]
+        extra = len(sup_list) - 8
+        tail = f", plus {extra} other related area{'s' if extra != 1 else ''}" if extra > 0 else ""
+        human_sup = [_humanize_system_label(x) for x in shown]
+        parts.append(
+            "Related systems also noted on this panel: " + ", ".join(human_sup) + tail + "."
+        )
     calm_parts: List[str] = []
     if insight_graph and isinstance(insight_graph, dict):
         caps = insight_graph.get("system_capacity_scores") or {}
@@ -187,19 +204,23 @@ def _build_body_overview(
                 if isinstance(v, (int, float)) and float(v) >= 90.0
             )
             if calm_rows:
-                calm_parts = [f"{k} ({v})" for k, v in calm_rows]
+                calm_parts = [f"{_humanize_system_label(k)} ({v})" for k, v in calm_rows]
     if calm_parts:
-        parts.append(
-            "High capacity / comparatively calmer systems in this snapshot (governed capacity score ≥90): "
-            + ", ".join(calm_parts)
-            + "."
-        )
+        if len(calm_parts) <= 4:
+            calm_readable = ", ".join(calm_parts)
+            parts.append(
+                f"Several areas look comparatively steady on this snapshot ({calm_readable}). "
+                "That context supports interpreting the lead finding in proportion."
+            )
+        else:
+            parts.append(
+                "Most other system groups look broadly stable on this panel compared with the lead focus — "
+                "that helps place the concern in perspective rather than suggesting the whole panel is off track."
+            )
         compiler_meta["assets_resolved"].append("body_overview_capacity_context")
     themes = _benchmark_domain_display_titles(entities_doc, domains_by_id, include_lead, include_secondary)
     if themes:
-        parts.append(
-            "Benchmark interpretation themes (governed functional titles): " + "; ".join(themes) + "."
-        )
+        parts.append("Related interpretation themes on this panel: " + "; ".join(themes) + ".")
         compiler_meta["assets_resolved"].append("body_overview_benchmark_themes")
     return _join_blocks(parts)
 
@@ -660,10 +681,15 @@ def compile_narrative_report_v1(
         compiler_meta=compiler_meta,
     )
     ia_appendix = format_intervention_annotation_narrative_appendix_v1(intervention_annotations_v1)
+    consumer_ia_suffix = format_intervention_annotation_consumer_cv_suffix_v1(intervention_annotations_v1)
     body_overview_with_ia = body_overview_struct
     if ia_appendix:
         body_overview_with_ia = _join_blocks([body_overview_struct, ia_appendix])
         compiler_meta["assets_resolved"].append("intervention_annotation_appendix_lc_s2")
+    body_overview_for_consumer = body_overview_struct
+    if consumer_ia_suffix:
+        body_overview_for_consumer = _join_blocks([body_overview_struct, consumer_ia_suffix])
+        compiler_meta["assets_resolved"].append("intervention_annotation_consumer_cv_suffix_lc_s7")
 
     if not include_lead_yaml:
         compiler_meta["skipped"].append("lead_narrative_no_matching_signals")
@@ -700,7 +726,7 @@ def compile_narrative_report_v1(
             lead_yaml_block=lead_text,
             secondary_yaml_block=secondary_text,
             bridge_block=bridge_block,
-            body_overview_structural_with_ia=body_overview_with_ia,
+            body_overview_structural_with_ia=body_overview_for_consumer,
             clinician_base_without_consumer_lead=clinician_base_without_consumer_lead,
             compiler_meta=compiler_meta,
         )
@@ -713,7 +739,7 @@ def compile_narrative_report_v1(
     else:
         retail_summary = _build_retail_summary(idl_bundle, compiler_meta)
         lead_narrative = lead_text
-        body_overview = body_overview_with_ia
+        body_overview = body_overview_for_consumer
         next_steps_narrative = _collect_next_steps(
             entities_doc=entities_doc,
             domains_by_id=domains_by_id,

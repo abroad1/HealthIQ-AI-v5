@@ -14,6 +14,8 @@ interface ClinicianReportRendererProps {
   } | null;
   /** F-1 — `narrative_report_v1.clinician_synthesis` (advanced / clinician tab only) */
   deterministicClinicianSynthesis?: string | null;
+  /** LC-S7 — when false, ranking policy version string stays out of default visual scan. */
+  showTechnicalDetail?: boolean;
 }
 
 function formatSignalIdForDisplay(signalId: string): string {
@@ -30,7 +32,13 @@ function normalizeConcernMode(mode: PrimaryConcernModeV1 | undefined): PrimaryCo
   return mode ?? 'distinct_lead';
 }
 
-function Page1RankingContext({ page1 }: { page1: ClinicianReportV1['sections']['page1'] }) {
+function Page1RankingContext({
+  page1,
+  showTechnicalDetail,
+}: {
+  page1: ClinicianReportV1['sections']['page1'];
+  showTechnicalDetail: boolean;
+}) {
   const mode = normalizeConcernMode(page1.primary_concern_mode);
   const coIds = page1.co_primary_signal_ids ?? [];
   const policyVersion = (page1.ranking_policy_version ?? '').trim();
@@ -99,11 +107,22 @@ function Page1RankingContext({ page1 }: { page1: ClinicianReportV1['sections']['
         </p>
       )}
 
-      {showPolicyStamp && (
-        <p className="text-xs text-gray-500" data-testid="ranking-policy-version">
-          Ranking policy reference: {policyVersion}
-        </p>
-      )}
+      {showPolicyStamp ? (
+        <>
+          <p className="text-xs text-muted-foreground">
+            Ordering follows a structured ranking policy for this panel.
+          </p>
+          {showTechnicalDetail ? (
+            <p className="text-xs text-gray-500 mt-1" data-testid="ranking-policy-version">
+              Policy reference: {policyVersion}
+            </p>
+          ) : (
+            <span className="sr-only" data-testid="ranking-policy-version-sr">
+                Policy reference: {policyVersion}
+              </span>
+          )}
+        </>
+      ) : null}
     </div>
   );
 }
@@ -112,6 +131,7 @@ export default function ClinicianReportRenderer({
   report,
   balancedSystems,
   deterministicClinicianSynthesis,
+  showTechnicalDetail = false,
 }: ClinicianReportRendererProps) {
   if (!report) {
     return (
@@ -196,7 +216,7 @@ export default function ClinicianReportRenderer({
           <CardTitle>Page 1 Summary</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
-          <Page1RankingContext page1={page1} />
+          <Page1RankingContext page1={page1} showTechnicalDetail={showTechnicalDetail} />
           <p>
             <strong>Primary concern:</strong> {page1.primary_concern}
           </p>

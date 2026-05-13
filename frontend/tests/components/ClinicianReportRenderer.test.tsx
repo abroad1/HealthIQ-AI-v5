@@ -83,10 +83,18 @@ describe('ClinicianReportRenderer', () => {
         },
       },
     };
-    render(<ClinicianReportRenderer report={report} />);
+    const { unmount } = render(<ClinicianReportRenderer report={report} />);
     expect(screen.getByTestId('primary-concern-mode-technical')).toBeInTheDocument();
     expect(screen.getByText(/Co-ranked patterns:/)).toBeInTheDocument();
     expect(screen.getByText(/A · B/)).toBeInTheDocument();
+    expect(screen.getByText(/Ordering follows a structured ranking policy/)).toBeInTheDocument();
+    expect(screen.getByTestId('ranking-policy-version-sr')).toHaveTextContent(
+      'PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1',
+    );
+    expect(screen.queryByTestId('ranking-policy-version')).toBeNull();
+    unmount();
+
+    render(<ClinicianReportRenderer report={report} showTechnicalDetail />);
     expect(screen.getByTestId('ranking-policy-version')).toHaveTextContent(
       'PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1',
     );
@@ -115,7 +123,7 @@ describe('ClinicianReportRenderer', () => {
     render(<ClinicianReportRenderer report={null} />);
     expect(screen.getByText('Clinician Summary Report')).toBeInTheDocument();
     expect(
-      screen.getByText('This analysis does not include a clinician report payload.'),
+      screen.getByText('This analysis does not include a clinician summary for this run.'),
     ).toBeInTheDocument();
   });
 

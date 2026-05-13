@@ -33,6 +33,11 @@ const EXACT_TOKEN_REPLACEMENTS: Array<[RegExp, string]> = [
   [/\bdeterministic\s+arbitration\b/gi, 'clinical prioritisation on this panel'],
   [/\bdeterministic\s+system\s+snapshot\b/gi, 'structured snapshot of this panel'],
   [/\bgoverned\s+capacity\s+score\b/gi, 'confidence score'],
+  [/\bgoverned\s+functional\s+titles\b/gi, 'interpretation themes'],
+  [/\bexpected_biomarker_effect\b/gi, 'expected marker pattern'],
+  [/\bdirection\s*=\s*lower\b/gi, 'expected direction: lower'],
+  [/\bPRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY[^\s]*\b/gi, 'ordering policy'],
+  [/\bsupporting\s+clinical\s+context\s+intervention\s+annotation\b/gi, 'medication context note'],
   [/\bLayer\s+B\b/gi, 'supporting clinical context'],
   [/\bLayer\s+C\b/gi, 'follow-up guidance'],
   [/\bIDL\b/g, 'display layer'],
@@ -54,5 +59,8 @@ export function scrubInternalArchitecturePhrases(text: string): string {
 /** Full pipeline for default consumer narrative blocks. */
 export function scrubConsumerRetailNarrative(text: string): string {
   const stripped = stripSimpleMarkdownDecorators(text);
-  return scrubInternalArchitecturePhrases(stripped);
+  let s = scrubInternalArchitecturePhrases(stripped);
+  s = s.replace(/\bsignal_homocysteine_elevation_context\b/gi, 'homocysteine-related pattern');
+  s = s.replace(/\bhcy_b12_pattern_v1\b/gi, 'B12–homocysteine pattern');
+  return s;
 }

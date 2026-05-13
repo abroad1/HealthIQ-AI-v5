@@ -41,3 +41,45 @@ describe('resultsPageLayout LC-S6', () => {
     expect(models[0].paragraph).toContain('vegetables');
   });
 });
+
+describe('resultsPageLayout LC-S7', () => {
+  it('parseNarrativeNextStepParagraphs drops Safe next-step framing preamble line', () => {
+    const lines = parseNarrativeNextStepParagraphs(
+      'Safe next-step framing (Layer C, bounded):\n• Discuss these findings with a clinician.',
+    );
+    expect(lines.some((l) => /safe\s+next-?step\s+framing/i.test(l))).toBe(false);
+    expect(lines.length).toBeGreaterThan(0);
+  });
+
+  it('buildActionCardModels omits narrative fallback when omitNarrativeNextStepsFromCards is true', () => {
+    const models = buildActionCardModels([], [], {
+      narrativeNextStepsNarrative: '- Discuss these results with your clinician.',
+      omitNarrativeNextStepsFromCards: true,
+    });
+    expect(models).toHaveLength(0);
+  });
+
+  it('buildActionCardModels dedupes identical paragraphs from different clusters', () => {
+    const models = buildActionCardModels(
+      [
+        {
+          cluster_id: '1',
+          name: 'A',
+          severity: 'moderate',
+          biomarkers: [],
+          recommendations: ['Same follow-up sentence for fibre and movement daily.'],
+        },
+        {
+          cluster_id: '2',
+          name: 'B',
+          severity: 'moderate',
+          biomarkers: [],
+          recommendations: ['Same follow-up sentence for fibre and movement daily.'],
+        },
+      ],
+      [],
+      {},
+    );
+    expect(models).toHaveLength(1);
+  });
+});

@@ -150,11 +150,12 @@ def test_s5_visible_narrative_and_consumer_suffix_difference_when_annotation_pre
     )
     appendix = format_intervention_annotation_narrative_appendix_v1(ann)
     assert appendix
-    assert appendix in (on.body_overview or "")
+    assert appendix not in (on.body_overview or "")
     assert appendix not in (off.body_overview or "")
     sfx = format_intervention_annotation_consumer_cv_suffix_v1(ann)
     assert sfx
-    assert "Statin medication noted" in sfx
+    assert sfx in (on.body_overview or "")
+    assert "Statin medication noted" in (on.body_overview or "")
     assert "Layer B intervention annotation" not in sfx
     assert "direction=" not in sfx
 

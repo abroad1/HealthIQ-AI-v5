@@ -135,8 +135,8 @@ def test_lc_s3_hypothesis_block_surfaces_without_invention() -> None:
         idl_bundle=None,
         narrative_payload_v1=payload,
     )
-    assert "hyp_lc_s3_a" in nr.lead_narrative
-    assert "May reflect" in nr.lead_narrative or "may reflect" in nr.lead_narrative.lower()
+    assert "Nutrient–enzyme cofactor limitation" in nr.lead_narrative
+    assert "hyp_lc_s3_a" not in nr.lead_narrative
 
 
 def test_lc_s3_next_steps_avoids_prescriptive_artefacts() -> None:
@@ -165,8 +165,8 @@ def test_lc_s3_clinician_block_has_fast_read_header() -> None:
         idl_bundle=None,
         narrative_payload_v1=payload,
     )
-    assert "Layer B lead" in nr.clinician_synthesis
-    assert "hyp_lc_s3_a" in nr.clinician_synthesis
+    assert "Clinician fast-read" in nr.clinician_synthesis
+    assert "Nutrient–enzyme cofactor limitation" in nr.clinician_synthesis
 
 
 def test_lc_s3_secondary_ranked_echoes_second_finding() -> None:
@@ -179,6 +179,7 @@ def test_lc_s3_secondary_ranked_echoes_second_finding() -> None:
         idl_bundle=None,
         narrative_payload_v1=payload,
     )
+    assert "Other patterns considered on this panel" in nr.secondary_narratives
     assert "ldl" in nr.secondary_narratives.lower()
 
 
