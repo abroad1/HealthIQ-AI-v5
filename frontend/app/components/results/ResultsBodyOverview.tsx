@@ -8,6 +8,7 @@ import {
   buildBodyOverviewPrimarySentence,
   summarizeClusterPatternBuckets,
 } from '@/lib/bodyOverviewPrimarySentence';
+import { scrubConsumerRetailNarrative } from '@/lib/retailNarrativeSanitize';
 
 export interface ResultsBodyOverviewProps {
   clinicianReport: ClinicianReportV1 | null | undefined;
@@ -29,11 +30,12 @@ export function ResultsBodyOverview({
 }: ResultsBodyOverviewProps) {
   const page1 = clinicianReport?.sections?.page1;
   const compiled = (compiledBodyOverview ?? '').trim();
-  const primary =
+  const primaryRaw =
     compiled ||
     (page1 && (page1.primary_concern || page1.top_hypothesis_line || page1.key_findings?.[0])
       ? buildBodyOverviewPrimarySentence(page1)
       : BODY_OVERVIEW_FALLBACK_PRIMARY);
+  const primary = scrubConsumerRetailNarrative(primaryRaw);
 
   const buckets = summarizeClusterPatternBuckets(clusters);
   const totalPatterns = clusters.length;

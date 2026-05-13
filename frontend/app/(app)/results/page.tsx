@@ -48,13 +48,13 @@ import { LC_S4_MOCK_MODE_HONESTY_DISCLOSURE } from '@/lib/lcS4ResultsCopy';
 import {
   buildActionCardModels,
   buildPrimaryHeroSummary,
-  deriveSecondaryRankedSignalLine,
   getFirstIdlRecord,
   pickHeroAlignedPrimaryDriver,
   pickPhenotypeLabel,
   pickBiomarkersByWave1Keys,
   pickTopDriverBiomarkers,
   resolvePrimaryFindingSeverity,
+  resolveHeroPrimaryStory,
 } from '@/lib/resultsPageLayout';
 
 const BIOMARKER_DIALS_SECTION_ID = 'section-biomarker-dials';
@@ -188,8 +188,8 @@ export default function ResultsPage() {
     [narrativeReport?.retail_summary, clinicianReport, firstIdl]
   );
 
-  const rankedSignalSecondaryLine = useMemo(
-    () => deriveSecondaryRankedSignalLine(clinicianReport, phenotypeLabel, firstIdl),
+  const heroStory = useMemo(
+    () => resolveHeroPrimaryStory(clinicianReport, phenotypeLabel, firstIdl),
     [clinicianReport, phenotypeLabel, firstIdl]
   );
 
@@ -211,8 +211,9 @@ export default function ResultsPage() {
     () =>
       buildActionCardModels(clusters, currentAnalysis?.recommendations, {
         maxItems: 5,
+        narrativeNextStepsNarrative: narrativeReport?.next_steps_narrative ?? null,
       }),
-    [clusters, currentAnalysis?.recommendations]
+    [clusters, currentAnalysis?.recommendations, narrativeReport?.next_steps_narrative]
   );
 
   const showInsightsPanelSection = legacyInsightsDebugEnabled() || consumerInsights.length > 0;
@@ -614,9 +615,10 @@ export default function ResultsPage() {
           ) : null}
 
           <ResultsPrimaryHero
-            phenotypeLabel={phenotypeLabel}
+            phenotypeLabel={heroStory.heroTitle}
             summary={heroSummary}
-            rankedSignalSecondaryLine={rankedSignalSecondaryLine}
+            rankedSignalSecondaryLine={heroStory.bridgeExplanation}
+            systemContextLine={heroStory.systemContextLine}
             severityLabel={heroSeverity.label}
             severityTone={heroSeverity.tone}
             onDownloadReport={
@@ -715,7 +717,7 @@ export default function ResultsPage() {
 
           <ResultsDisclosureSection
             title="Advanced & clinician report"
-            description="Full biomarker dials, system groups, Layer C insights, and the long-form report."
+            description="Full biomarker dials, system groups, clinician-only synthesis, and the long-form report."
             data-testid="section-advanced"
             defaultOpen={false}
             onOpenChange={handleAdvancedOpen}

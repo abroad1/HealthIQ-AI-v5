@@ -59,6 +59,7 @@ export default function ActionsPage() {
       const data = resultRes.data;
       const models = buildActionCardModels(data.clusters || [], data.recommendations, {
         maxItems: 8,
+        narrativeNextStepsNarrative: data.narrative_report_v1?.next_steps_narrative ?? null,
       });
 
       const when = data.completed_at || data.created_at || completed.created_at;
@@ -134,7 +135,7 @@ export default function ActionsPage() {
             <CardDescription>
               {emptyKind === 'no-completed'
                 ? 'Complete a blood test analysis first. When a run finishes, recommended follow-ups from that result can appear here.'
-                : 'Your latest completed analysis did not include structured recommendation lines in the data we receive. Open your full results for narrative and system-level guidance.'}
+                : 'Your latest completed analysis did not include a separate checklist of follow-up lines. Your results page still includes next steps in the report — open results to read them.'}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2">

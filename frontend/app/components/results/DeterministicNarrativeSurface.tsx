@@ -1,12 +1,21 @@
 'use client';
 
+import { useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, ListChecks, Route, Stethoscope, TrendingUp } from 'lucide-react';
 import type { NarrativeReportV1 } from '@/types/analysis';
 import { cn } from '@/lib/utils';
+import { scrubConsumerRetailNarrative } from '@/lib/retailNarrativeSanitize';
 
-function NarrativeProse({ text, className }: { text: string; className?: string }) {
-  return <div className={cn('text-sm text-slate-800 leading-relaxed whitespace-pre-line', className)}>{text}</div>;
+function NarrativeProse({
+  text,
+  className,
+}: {
+  text: string;
+  className?: string;
+}) {
+  const safe = useMemo(() => scrubConsumerRetailNarrative(text), [text]);
+  return <div className={cn('text-sm text-slate-800 leading-relaxed whitespace-pre-line', className)}>{safe}</div>;
 }
 
 export function hasDeterministicNarrativeContent(n: NarrativeReportV1 | null | undefined): boolean {
@@ -45,7 +54,7 @@ export function NarrativeRetailSummaryCard({
             <BookOpen className="h-5 w-5 text-indigo-600 shrink-0" aria-hidden />
             Summary
           </CardTitle>
-          <CardDescription>Plain-language overview from the deterministic narrative compiler.</CardDescription>
+          <CardDescription>A plain-language summary of the main pattern in your results.</CardDescription>
         </CardHeader>
         <CardContent className="pt-0">
           <NarrativeProse text={text} className="text-base text-slate-900" />
@@ -79,7 +88,10 @@ export function NarrativeLeadAndSupportingSections({
             <Stethoscope className="h-6 w-6 text-slate-600 shrink-0" aria-hidden />
             What this means
           </CardTitle>
-          <CardDescription>Deterministic explanation of the primary pattern and related context.</CardDescription>
+          <CardDescription>
+            How the main pattern fits with the rest of your markers — written in plain language, with appropriate
+            caution.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6 pt-0">
           {lead ? (

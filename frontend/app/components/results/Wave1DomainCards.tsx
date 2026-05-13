@@ -54,7 +54,7 @@ export function Wave1DomainCards({ domains }: Props) {
     <section aria-labelledby="wave1-domain-cards-heading" className="space-y-4">
       <div>
         <h2 id="wave1-domain-cards-heading" className="text-lg font-semibold text-slate-900">
-          Your health domains (Wave 1)
+          Your health domains
         </h2>
         <p className="text-sm text-slate-600 mt-1">
           High-level scores for three focus areas. Open a card for detail — not a diagnosis.

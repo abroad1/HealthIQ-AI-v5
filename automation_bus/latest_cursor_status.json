@@ -1,10 +1,9 @@
 {
-  "branch": "sprint5/launch-core-proving-and-human-validation",
+  "branch": "sprint6/results-retail-hardening",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-12T20:44:22Z",
-  "cursor_started_utc": "2026-05-12T20:35:52Z",
-  "head_sha": "ddfbd7e7867e97e196f8b0ee5d0aa4dba63872f8",
+  "cursor_started_utc": "2026-05-13T12:23:35Z",
+  "head_sha": "743d6676c374a67528e0e8247268a4e41ec78f63",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "LC-S5-LAUNCH-CORE-PROVING-AND-HUMAN-VALIDATION"
+  "status": "IN_PROGRESS",
+  "work_id": "LC-S6-RESULTS-RETAIL-HARDENING"
 }
