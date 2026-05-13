@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { ClinicianReportV1, PrimaryConcernModeV1 } from '@/types/analysis';
+import { scrubConsumerRetailNarrative } from '@/lib/retailNarrativeSanitize';
 
 interface ClinicianReportRendererProps {
   report: ClinicianReportV1 | null | undefined;
@@ -60,7 +61,7 @@ function Page1RankingContext({ page1 }: { page1: ClinicianReportV1['sections']['
         >
           <p className="font-medium">Ordering note</p>
           <p className="mt-1 text-foreground/90">
-            The lead concern follows the report&rsquo;s deterministic ranking policy. Where evidence-aligned
+            The lead concern follows the report&rsquo;s structured ranking policy. Where evidence-aligned
             steps did not fully separate similar items, a technical tie-break may have determined order. This
             is not by itself a statement of clinical priority among close alternatives.
           </p>
@@ -107,14 +108,6 @@ function Page1RankingContext({ page1 }: { page1: ClinicianReportV1['sections']['
   );
 }
 
-function stripSimpleMarkdownDecorators(text: string): string {
-  return text
-    .replace(/\*\*(.+?)\*\*/g, '$1')
-    .replace(/\*(.+?)\*/g, '$1')
-    .replace(/`([^`]+)`/g, '$1')
-    .replace(/`+/g, '');
-}
-
 export default function ClinicianReportRenderer({
   report,
   balancedSystems,
@@ -125,13 +118,13 @@ export default function ClinicianReportRenderer({
       <Card>
         <CardHeader>
           <CardTitle>Clinician Summary Report</CardTitle>
-          <CardDescription>This analysis does not include a clinician report payload.</CardDescription>
+          <CardDescription>This analysis does not include a clinician summary for this run.</CardDescription>
         </CardHeader>
       </Card>
     );
   }
 
-  const synthesis = stripSimpleMarkdownDecorators((deterministicClinicianSynthesis ?? '').trim());
+  const synthesis = scrubConsumerRetailNarrative((deterministicClinicianSynthesis ?? '').trim());
 
   const page1 = report.sections.page1;
   const rootCause = report.sections.root_cause;
@@ -145,9 +138,9 @@ export default function ClinicianReportRenderer({
       {synthesis ? (
         <Card className="border-violet-200 bg-violet-50/40">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Clinician synthesis (deterministic compiler)</CardTitle>
+            <CardTitle className="text-base">Clinician synthesis (structured rules)</CardTitle>
             <CardDescription>
-              Compiled synthesis from governed narrative assets — not a live model output.
+              Compiled from narrative assets attached to this report — not a live model output.
             </CardDescription>
           </CardHeader>
           <CardContent className="text-sm text-violet-950 whitespace-pre-line leading-relaxed">{synthesis}</CardContent>
@@ -156,7 +149,7 @@ export default function ClinicianReportRenderer({
       {balancedSystems && balancedSystems.items?.length ? (
         <Card className="border-emerald-100 bg-emerald-50/30">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Balanced panel context (deterministic)</CardTitle>
+            <CardTitle className="text-base">Balanced panel context (structured)</CardTitle>
             <CardDescription>{balancedSystems.intro_line}</CardDescription>
           </CardHeader>
           <CardContent className="text-sm space-y-2 text-emerald-950">

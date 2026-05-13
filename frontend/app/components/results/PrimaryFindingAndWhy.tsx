@@ -3,16 +3,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { ClinicianEvidenceItem, ClinicianReportV1 } from '@/types/analysis';
 import { buildSection3LeadStatement, buildWhatThisMeansBlock, firstSentence } from '@/lib/primaryFindingShaping';
+import { scrubConsumerRetailNarrative } from '@/lib/retailNarrativeSanitize';
 
 function formatMarkerRef(id: string): string {
   return id.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 function evidenceLine(ev: ClinicianEvidenceItem): string {
+  const item = scrubConsumerRetailNarrative(ev.item || '');
   const refs = ev.marker_refs?.length
     ? ` (related markers: ${ev.marker_refs.map(formatMarkerRef).join(', ')})`
     : '';
-  return `${ev.item}${refs}`;
+  return `${item}${refs}`;
 }
 
 export interface PrimaryFindingAndWhyProps {
@@ -50,12 +52,12 @@ export function PrimaryFindingAndWhy({ report, omitIntroDuplicate = false }: Pri
   const hyp0 = rc?.hypotheses?.[0];
   const confirmatory = report?.sections?.confirmatory_tests ?? [];
 
-  const lead = buildSection3LeadStatement(page1);
-  let bodyB = buildWhatThisMeansBlock(page1);
-  const hypSummary = (hyp0?.summary || '').trim();
-  const hypRanking = (hyp0?.ranking_rationale || '').trim();
+  const lead = scrubConsumerRetailNarrative(buildSection3LeadStatement(page1) || '');
+  let bodyB = scrubConsumerRetailNarrative(buildWhatThisMeansBlock(page1) || '');
+  const hypSummary = scrubConsumerRetailNarrative((hyp0?.summary || '').trim());
+  const hypRanking = scrubConsumerRetailNarrative((hyp0?.ranking_rationale || '').trim());
 
-  const chains = (page1?.chains ?? []).map((c) => c.trim()).filter(Boolean).slice(0, 2);
+  const chains = (page1?.chains ?? []).map((c) => scrubConsumerRetailNarrative(c.trim())).filter(Boolean).slice(0, 2);
 
   const supports = (hyp0?.evidence_for ?? []).slice(0, 3);
   const against = (hyp0?.evidence_against ?? []).slice(0, 3);
@@ -74,7 +76,7 @@ export function PrimaryFindingAndWhy({ report, omitIntroDuplicate = false }: Pri
     const kfOnly = (page1.key_findings?.[0] || '').trim();
     const noTopHyp = !(page1.top_hypothesis_line || '').trim();
     if (noTopHyp && kfOnly) {
-      bodyB = firstSentence(kfOnly);
+      bodyB = scrubConsumerRetailNarrative(firstSentence(kfOnly));
     }
   }
 
@@ -86,7 +88,7 @@ export function PrimaryFindingAndWhy({ report, omitIntroDuplicate = false }: Pri
             Primary finding and why
           </CardTitle>
           {hyp0?.title ? (
-            <p className="text-sm font-medium text-indigo-950 pt-1">{hyp0.title}</p>
+            <p className="text-sm font-medium text-indigo-950 pt-1">{scrubConsumerRetailNarrative(hyp0.title)}</p>
           ) : null}
         </CardHeader>
         <CardContent className="space-y-6 text-sm text-gray-800">
@@ -104,24 +106,36 @@ export function PrimaryFindingAndWhy({ report, omitIntroDuplicate = false }: Pri
             </div>
           ) : null}
 
-          {hypRanking && hasRootNarrative ? (
-            <div className="rounded-md border border-indigo-100 bg-indigo-50/40 px-3 py-2">
-              <p className="text-xs font-semibold uppercase tracking-wide text-indigo-900 mb-1">How this ranks on this panel</p>
-              <p className="text-indigo-950 leading-relaxed">{hypRanking}</p>
-            </div>
-          ) : null}
-
-          {chains.length > 0 ? (
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">How the evidence connects</p>
-              <ul className="list-disc pl-5 space-y-2">
-                {chains.map((line, i) => (
-                  <li key={i} className="leading-relaxed">
-                    {line}
-                  </li>
-                ))}
-              </ul>
-            </div>
+          {(hypRanking && hasRootNarrative) || chains.length > 0 ? (
+            <details className="rounded-md border border-slate-200 bg-slate-50/60 px-3 py-2">
+              <summary className="text-sm font-medium text-slate-800 cursor-pointer select-none">
+                Technical ranking and evidence chains (optional detail)
+              </summary>
+              <div className="mt-4 space-y-4">
+                {hypRanking && hasRootNarrative ? (
+                  <div className="rounded-md border border-indigo-100 bg-indigo-50/40 px-3 py-2">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-indigo-900 mb-1">
+                      How this ranks on this panel
+                    </p>
+                    <p className="text-indigo-950 leading-relaxed">{hypRanking}</p>
+                  </div>
+                ) : null}
+                {chains.length > 0 ? (
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">
+                      How the evidence connects
+                    </p>
+                    <ul className="list-disc pl-5 space-y-2">
+                      {chains.map((line, i) => (
+                        <li key={i} className="leading-relaxed">
+                          {line}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+              </div>
+            </details>
           ) : null}
 
           {showSupportsComplicates && supports.length > 0 ? (

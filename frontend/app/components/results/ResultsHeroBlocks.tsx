@@ -6,8 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import type { BiomarkerResult } from '@/types/analysis';
 import { Download } from 'lucide-react';
-import { humanizeStatus, oneLineMarkerInterpretation, type ResultActionCardModel } from '@/lib/resultsPageLayout';
+import { humanizeStatus, oneLineMarkerInterpretation, type ResultActionCardModel, formatBiomarkerDisplayName } from '@/lib/resultsPageLayout';
 import { cn } from '@/lib/utils';
+import { scrubConsumerRetailNarrative } from '@/lib/retailNarrativeSanitize';
 
 function severityBadgeClass(tone: 'rose' | 'amber' | 'slate' | 'emerald'): string {
   switch (tone) {
@@ -32,6 +33,8 @@ export interface ResultsPrimaryHeroProps {
    * show it only as explicit secondary copy — not as the main hero paragraph.
    */
   rankedSignalSecondaryLine?: string | null;
+  /** LC-S6 — e.g. "Main system context: …" when hero title is the ranked lead pattern. */
+  systemContextLine?: string | null;
   /** When set, enables the button and runs this handler (Sprint 4 PDF). */
   onDownloadReport?: () => void | Promise<void>;
   downloadPending?: boolean;
@@ -59,11 +62,16 @@ export function ResultsPrimaryHero({
   severityLabel,
   severityTone,
   rankedSignalSecondaryLine = null,
+  systemContextLine = null,
   onDownloadReport,
   downloadPending = false,
   downloadError = null,
   downloadDisabledReason = 'Sign in to download your report.',
 }: ResultsPrimaryHeroProps) {
+  const safeSummary = scrubConsumerRetailNarrative(summary);
+  const safeSecondary = rankedSignalSecondaryLine ? scrubConsumerRetailNarrative(rankedSignalSecondaryLine) : null;
+  const safeSystemContext = systemContextLine ? scrubConsumerRetailNarrative(systemContextLine) : null;
+
   return (
     <section aria-labelledby="primary-finding-hero" data-testid="results-primary-hero">
       <Card className="border-indigo-100 bg-gradient-to-b from-indigo-50/40 to-white shadow-sm">
@@ -74,6 +82,9 @@ export function ResultsPrimaryHero({
               <CardTitle id="primary-finding-hero" className="text-2xl font-semibold text-slate-900 leading-snug max-w-2xl">
                 {phenotypeLabel}
               </CardTitle>
+              {systemContextLine ? (
+                <p className="text-sm text-slate-600 leading-snug max-w-2xl mt-1">{safeSystemContext}</p>
+              ) : null}
             </div>
             <Badge
               variant="outline"
@@ -85,10 +96,10 @@ export function ResultsPrimaryHero({
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-base text-slate-800 leading-relaxed max-w-prose">{summary}</p>
-          {rankedSignalSecondaryLine ? (
+          <p className="text-base text-slate-800 leading-relaxed max-w-prose">{safeSummary}</p>
+          {safeSecondary ? (
             <p className="text-sm text-slate-600 leading-relaxed max-w-prose border-l-2 border-slate-200 pl-3">
-              {rankedSignalSecondaryLine}
+              {safeSecondary}
             </p>
           ) : null}
           <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
@@ -131,7 +142,7 @@ export function ResultsDrivingSignals({ markers, biomarkerSectionId }: ResultsDr
           <CardTitle id="driving-signals-heading" className="text-lg">
             What&apos;s driving this
           </CardTitle>
-          <CardDescription>Top signals behind the main pattern, using the values returned for this run.</CardDescription>
+          <CardDescription>Key markers behind the main pattern, using the values returned for this run.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {markers.length === 0 ? (
@@ -144,7 +155,7 @@ export function ResultsDrivingSignals({ markers, biomarkerSectionId }: ResultsDr
                   className="rounded-lg border border-slate-100 bg-slate-50/60 px-3 py-3"
                 >
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <p className="font-medium text-slate-900">{b.biomarker_name}</p>
+                    <p className="font-medium text-slate-900">{formatBiomarkerDisplayName(b.biomarker_name)}</p>
                     <p className="text-sm text-slate-700 tabular-nums">
                       {b.value} {b.unit}
                       <span className="text-slate-500"> · {humanizeStatus(b.status)}</span>
@@ -173,8 +184,7 @@ export function ResultsActionCardsBlock({ actions }: { actions: ResultActionCard
   if (actions.length === 0) {
     return (
       <p className="text-sm text-slate-600 border border-dashed border-slate-200 rounded-md px-3 py-3 bg-slate-50/50">
-        No separate action list was included with this result. Your clinician interpretation and system groups below
-        still describe what to discuss next.
+        No separate checklist of follow-up lines was packaged with this result. The sections below still describe what to discuss next.
       </p>
     );
   }

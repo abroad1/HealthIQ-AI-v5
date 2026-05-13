@@ -5,6 +5,7 @@ import {
   normalizeHeroComparisonKey,
   pickHeroAlignedPrimaryDriver,
   pickSeverityPrimaryDriverCluster,
+  resolveHeroPrimaryStory,
 } from '@/lib/resultsPageLayout';
 import type { Cluster, ClinicianReportV1, InterpretationDisplayRecordV1 } from '@/types/analysis';
 
@@ -88,8 +89,42 @@ describe('results hero alignment', () => {
     };
     const idl = idlRecord({ retail_display_label: 'Metabolic stress pattern' });
     const line = deriveSecondaryRankedSignalLine(report, 'Metabolic stress pattern', idl);
-    expect(line).toContain('Top ranked signal');
+    expect(line).toContain('Leading pattern described');
     expect(line).toContain('LDL');
+  });
+
+  it('resolveHeroPrimaryStory swaps hero title when ranked lead differs from IDL label', () => {
+    const report: ClinicianReportV1 = {
+      header: {
+        report_version: 'v1',
+        disclaimer_top: '',
+        footer_line: '',
+      },
+      data_quality: {
+        panel_completeness_present: 1,
+        panel_completeness_expected: 1,
+        lab_range_quality_by_primary_metric: [],
+        confidence_caveat: '',
+        data_quality_passed: true,
+      },
+      sections: {
+        page1: {
+          primary_concern: 'LDL cholesterol is the dominant signal on this panel.',
+          key_findings: [],
+          chains: [],
+          top_hypothesis_line: '',
+          confidence_and_missing_data: '',
+        },
+        root_cause: null,
+        confirmatory_tests: [],
+      },
+      suppressed_confirmatory_tests: [],
+    };
+    const idl = idlRecord({ retail_display_label: 'Metabolic stress pattern' });
+    const pack = resolveHeroPrimaryStory(report, 'Metabolic stress pattern', idl);
+    expect(pack.heroTitle).toContain('LDL');
+    expect(pack.systemContextLine).toContain('Main system context');
+    expect(pack.bridgeExplanation).toBeNull();
   });
 
   it('pickHeroAlignedPrimaryDriver falls back to severity when no IDL alignment', () => {

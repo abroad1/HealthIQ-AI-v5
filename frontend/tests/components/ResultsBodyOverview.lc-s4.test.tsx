@@ -7,10 +7,10 @@ describe('ResultsBodyOverview LC-S4', () => {
       <ResultsBodyOverview
         clinicianReport={undefined}
         clusters={[]}
-        compiledBodyOverview="Cross-system posture from the narrative compiler."
+        compiledBodyOverview="Cross-system posture summarised for this panel."
       />,
     );
     expect(screen.getByTestId('results-body-overview')).toBeInTheDocument();
-    expect(screen.getByText('Cross-system posture from the narrative compiler.')).toBeInTheDocument();
+    expect(screen.getByText('Cross-system posture summarised for this panel.')).toBeInTheDocument();
   });
 });

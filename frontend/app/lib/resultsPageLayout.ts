@@ -8,6 +8,7 @@ import type {
 } from '@/types/analysis';
 import { buildBodyOverviewPrimarySentence, extractFirstSentence } from '@/lib/bodyOverviewPrimarySentence';
 import { buildSection3LeadStatement, buildWhatThisMeansBlock, firstSentence } from '@/lib/primaryFindingShaping';
+import { scrubConsumerRetailNarrative } from '@/lib/retailNarrativeSanitize';
 
 export function takeUpToNSentences(text: string, maxSentences: number): string {
   const t = text.trim();
@@ -88,6 +89,54 @@ export function normalizeHeroComparisonKey(s: string): string {
     .trim();
 }
 
+export function formatBiomarkerDisplayName(raw: string): string {
+  const s = (raw || '').trim();
+  if (!s) return raw;
+  if (!s.includes('_')) {
+    return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+  }
+  return s
+    .split('_')
+    .filter(Boolean)
+    .map((w) => {
+      const lower = w.toLowerCase();
+      if (lower === 'b12' || lower === 'mma' || lower === 'dna' || lower === 'alt' || lower === 'ast')
+        return lower.toUpperCase();
+      if (lower.length <= 2) return lower.toUpperCase();
+      return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+    })
+    .join(' ');
+}
+
+export function extractPage1ConcernLeadSentence(
+  clinicianReport: ClinicianReportV1 | null | undefined
+): string | null {
+  const concern = (clinicianReport?.sections?.page1?.primary_concern || '').trim();
+  if (!concern) return null;
+  return extractFirstSentence(concern);
+}
+
+/**
+ * LC-S6 — one primary story: lead pattern as headline when it differs from the IDL retail label,
+ * with explicit system-context line instead of engineering “ranked signal” wording.
+ */
+export function resolveHeroPrimaryStory(
+  clinicianReport: ClinicianReportV1 | null | undefined,
+  phenotypeLabel: string,
+  firstIdl: InterpretationDisplayRecordV1 | null | undefined
+): { heroTitle: string; systemContextLine: string | null; bridgeExplanation: string | null } {
+  const secondary = deriveSecondaryRankedSignalLine(clinicianReport, phenotypeLabel, firstIdl);
+  const concernLead = extractPage1ConcernLeadSentence(clinicianReport);
+  if (!secondary || !concernLead) {
+    return { heroTitle: phenotypeLabel, systemContextLine: null, bridgeExplanation: secondary };
+  }
+  return {
+    heroTitle: concernLead,
+    systemContextLine: `Main system context: ${phenotypeLabel}`,
+    bridgeExplanation: null,
+  };
+}
+
 /**
  * When the visible IDL record sets the hero title, the hero body must come from the same IDL authority —
  * not `narrative_report_v1.retail_summary` or clinician page1 alone (avoids AB/VR split-brain).
@@ -137,7 +186,7 @@ export function deriveSecondaryRankedSignalLine(
     const overlap = bTokens.filter((t) => aTokens.has(t)).length;
     if (overlap >= Math.min(2, bTokens.length)) return null;
   }
-  return `Top ranked signal on this panel: ${concernLead}`;
+  return `Leading pattern described in this report: ${concernLead}`;
 }
 
 const _sevRank: Record<string, number> = { critical: 4, high: 3, moderate: 2, low: 1 };
@@ -375,6 +424,23 @@ export interface BuildActionCardOptions {
   maxItems?: number;
   /** When cluster/panel recs are thin, use insight.recommendation lines (already in DTO). */
   insights?: Insight[] | null;
+  /** LC-S6 — governed `narrative_report_v1.next_steps_narrative` when structured rec lines are absent. */
+  narrativeNextStepsNarrative?: string | null;
+}
+
+export function parseNarrativeNextStepParagraphs(text: string): string[] {
+  const t = text.trim();
+  if (!t) return [];
+  const lines: string[] = [];
+  for (const chunk of t.split(/\n+/)) {
+    const line = chunk
+      .replace(/^\s*[-•*]\s+/, '')
+      .replace(/^\s*\d+[).]\s+/, '')
+      .trim();
+    if (line.length >= 12) lines.push(line);
+  }
+  if (lines.length === 0 && t.length >= 12) return [t];
+  return lines;
 }
 
 /** Flattens cluster recommendations, panel-level recs, then optional insight recs. Deterministic only. */
@@ -426,6 +492,22 @@ export function buildActionCardModels(
         sourceLabel: (ins.summary || ins.category || ins.id || 'Narrative insight').slice(0, 120),
         categoryLabel: categoryFromInsight(ins),
         evidenceLevelLabel: evidenceFromInsight(ins),
+      });
+      if (out.length >= maxItems) return out;
+    }
+  }
+  const nextNarr = options?.narrativeNextStepsNarrative?.trim();
+  if (out.length === 0 && nextNarr) {
+    for (const paragraph of parseNarrativeNextStepParagraphs(nextNarr)) {
+      const cleaned = scrubConsumerRetailNarrative(paragraph);
+      if (!cleaned.trim()) continue;
+      const head = firstSentence(cleaned);
+      out.push({
+        heading: head.length > 100 ? `${head.slice(0, 97).trim()}…` : head,
+        paragraph: cleaned,
+        sourceLabel: 'Report next steps',
+        categoryLabel: 'Follow-up',
+        evidenceLevelLabel: 'From your structured report',
       });
       if (out.length >= maxItems) return out;
     }

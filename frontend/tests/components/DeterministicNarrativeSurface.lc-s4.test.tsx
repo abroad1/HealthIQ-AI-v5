@@ -28,5 +28,22 @@ describe('DeterministicNarrativeSurface LC-S4', () => {
     );
     expect(screen.getByTestId('narrative-retail-summary')).toBeInTheDocument();
     expect(screen.getByText('Governed retail line for this panel.')).toBeInTheDocument();
+    expect(
+      screen.getByText('A plain-language summary of the main pattern in your results.'),
+    ).toBeInTheDocument();
+  });
+
+  it('strips markdown and internal layer labels from retail summary', () => {
+    render(
+      <NarrativeRetailSummaryCard
+        narrative={minimalNarrative({
+          retail_summary: '**Homocysteine** elevation and Layer B context.',
+        })}
+      />,
+    );
+    const card = screen.getByTestId('narrative-retail-summary');
+    expect(card.textContent).not.toContain('**');
+    expect(card.textContent).not.toContain('Layer B');
+    expect(card.textContent).toMatch(/Homocysteine/);
   });
 });
