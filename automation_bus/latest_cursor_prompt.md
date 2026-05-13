@@ -1,310 +1,354 @@
 ---
-work_id: LC-S6-RESULTS-RETAIL-HARDENING
-branch: sprint6/results-retail-hardening
-risk_level: STANDARD
+work_id: LC-S7-CONSUMER-BOUNDARY-AND-BIOMARKER-DISPLAY-QA
+branch: sprint7/consumer-boundary-and-biomarker-display-qa
+risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# LC-S6 — Results Retail Hardening
+# LC-S7 — Consumer Boundary and Biomarker Display QA
 
 ## Objective
 
-Make the default HealthIQ AI results page read like a credible patient-facing product, not an internal technical report.
+Fix the remaining release-blocking defects found after LC-S6 browser UAT.
 
-This sprint must harden the visible results experience following browser UAT of:
+The post-LC-S6 page is materially improved, but it is still not safe for controlled external testing because technical/compiler content is still entering the default consumer journey, and biomarker cards expose unit/range/display inconsistencies.
 
-`/results?analysis_id=b2dfa0c4-efd6-467f-9f2a-84bdf20d8d51`
+This sprint must make the results page safe for a human consumer while preserving the governed analytical truth.
 
-Primary UAT evidence:
-
-- `UAT_results_page_analysis_b2dfa0c4_2026-05-12.md`
-
-The UAT verdict was **not launch-ready** because consumer-visible pages contain internal architecture language, raw markdown, backend slugs, conflicting primary framing, and an empty Actions hub despite rich next-step content.
-
-This is a retail presentation hardening sprint.
-
-Do not change analytical scoring.
-Do not change signal ranking.
-Do not change Knowledge Bus assets.
-Do not change questionnaire logic.
-Do not change backend narrative compiler logic unless a STOP condition is reached and GPT approves.
+Do not change scoring.  
+Do not change signal activation.  
+Do not change ranking.  
+Do not change questionnaire logic.  
+Do not change Knowledge Bus assets.  
+Do not introduce new clinical claims.
 
 ## Authority and evidence
 
 Primary implementation authority:
 
-- this LC-S6 SOP prompt
+- this LC-S7 SOP prompt
 
 Primary evidence source:
 
-- `UAT_results_page_analysis_b2dfa0c4_2026-05-12.md`
+- `LC-S7_preflight_triage_post_LC-S6_UAT.md`
 
-Use the UAT report as the factual evidence source for browser-visible defects.
+Use the preflight triage as the factual source for current defects, source paths, and recommended fix direction. The preflight concluded that frontend sanitising alone is insufficient and that the cleaner fix likely requires separating consumer narrative from technical appendix content. :contentReference[oaicite:0]{index=0}
 
-Do not reread historical planning packs unless this prompt and the UAT report conflict.
+## Risk classification
 
-## Scope
+This package is HIGH risk because the cleanest fix may touch:
 
-Fix the default consumer-facing results experience.
+- `backend/core/analytics/narrative_report_compiler_v1.py`
+- `backend/core/analytics/intervention_annotation_formatter_v1.py`
+- `backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py`
 
-Expected focus:
+These are HIGH-risk paths under the Automation Bus SOP.
 
-- results page copy/rendering
-- technical-language filtering/gating
-- markdown rendering/stripping
-- primary finding alignment
-- Actions hub empty-state contradiction
-- advanced/clinician section gating
-- focused frontend tests
-- completion note
+Therefore this package requires Claude audit and GPT architectural review before merge.
 
-## Task 1 — Remove internal architecture language from consumer-visible copy
+## Strategic principle
 
-Inspect the results page and components rendering:
+The consumer report must show:
 
-- Summary
-- body overview
-- lead narrative
-- next steps
-- domain cards
-- advanced teaser
-- Actions hub
+- what matters
+- why it matters
+- what is uncertain
+- what to discuss next
 
-Remove or rewrite user-visible internal terms including:
+It must not show:
 
-- Layer B
-- Layer C
-- deterministic narrative compiler
-- deterministic arbitration
-- governed capacity score
-- compiler
-- payload
-- manifest
-- runtime
-- IDL
-- backend slugs
-- `cardiovascular_4_biomarkers`
+- compiler scaffolding
+- machine appendix lines
+- DTO/version/policy identifiers
+- signal IDs
+- chain IDs
+- hypothesis IDs
+- effect-type enums
+- internal bridge codes
+- raw backend slugs
+
+Technical material may remain available only behind a clearly marked clinician/technical-detail boundary.
+
+## Task 1 — Stop machine intervention appendix leaking into consumer Body Overview
+
+Problem observed:
+
+Consumer Body Overview still displays content such as:
+
+- `supporting clinical context intervention annotation`
+- `expected_biomarker_effect`
+- `[ldl_cholesterol, non_hdl_cholesterol, apob]`
+- `direction=lower`
+- statin monitoring fragments intended for technical/clinician context
+
+Required:
+
+- inspect `narrative_report_compiler_v1.py`
+- inspect `intervention_annotation_formatter_v1.py`
+- identify exactly where intervention appendix text is appended to `narrative_report_v1.body_overview`
+- prevent raw technical appendix content from being appended into the consumer body overview
+
+Preferred implementation:
+
+- keep `body_overview` consumer-safe
+- use the existing consumer-facing statin suffix where appropriate
+- keep machine/technical appendix available only in clinician/technical sections if already supported
+- do not alter intervention annotation semantics
+
+Acceptable consumer statin wording:
+
+“Statin medication noted — this may help explain lower LDL-related readings on this panel. This is taken from your questionnaire as context only and does not change how signals are scored or ranked.”
+
+Do not include internal biomarker arrays, effect types, or direction fields in consumer prose.
+
+## Task 2 — Clean Body Overview structural wording
+
+Problem observed:
+
+Body Overview still contains technical framing such as:
+
+- `governed functional titles`
+- `clinical prioritisation on this panel`
+- `confidence score ≥90`
+- long system lists that feel like compiler output
+
+Required:
+
+- make Body Overview read as a short consumer summary
+- retain the same underlying meaning
+- remove internal/compiler phrasing
+- reduce long lists where possible
+
+Preferred style:
+
+“Your main finding sits in a cardiovascular/vascular context. Most other system groups look broadly stable on this panel, which helps place the concern in perspective rather than suggesting the whole panel is off track.”
+
+Do not remove clinically relevant reassurance.
+
+## Task 3 — Gate or humanise clinician/technical identifiers
+
+Problem observed:
+
+The visible page still exposes:
+
+- `signal_homocysteine_elevation_context`
+- `PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1`
 - `chain_001`
 - `chain_002`
-- `alcohol_intake_moderate_or_higher_with_one_carbon_lab_coherence`
-- snake_case marker references where user-facing labels should be shown
+- `hcy_b12_pattern_v1`
+- suppressed confirmatory test IDs
+- raw hypothesis/ranking identifiers
 
-Consumer-facing copy should use plain English.
+Required:
 
-Acceptable replacements:
+- inspect `ClinicianReportRenderer.tsx`
+- inspect `PrimaryFindingAndWhy.tsx`
+- inspect `results/page.tsx`
+- ensure these identifiers are not visible in default consumer scroll paths
 
-- “This report is generated from structured clinical rules applied to your lab data.”
-- “The main pattern in this result is…”
-- “This section explains how the markers fit together.”
-- “This context may help explain the pattern, but it does not prove a cause.”
+Acceptable fixes:
 
-Do not hide uncertainty. Remove the machinery, not the caution.
+- hide behind explicit “Show technical detail”
+- rewrite as human labels
+- remove from default rendering
+- use display labels instead of IDs
 
-## Task 2 — Fix raw markdown rendering
+Do not delete underlying data from DTOs.
 
-The UAT showed literal markdown such as:
+## Task 4 — Fix secondary ranked pattern heading
 
-- `**Homocysteine Elevation Context**`
-- `**does not**`
-- `**Methylmalonic acid (MMA)**`
+Problem observed:
 
-Fix user-visible rendering so raw markdown tokens do not appear.
+Secondary ranked patterns still use technical ordering language, e.g.:
+
+- `supporting clinical context order, deterministic`
+
+Required:
+
+- inspect `narrative_compiler_lc_s3_assembly_v1.py`
+- replace technical heading with consumer-safe wording, or keep secondary-ranked details out of default consumer view
+
+Preferred wording:
+
+“Other patterns considered on this panel”
+
+or:
+
+“Additional patterns the engine reviewed”
+
+Do not change ranking logic.
+
+## Task 5 — Dedupe Actions and Next Steps
+
+Problem observed:
+
+Actions cards duplicate “Safe next-step framing” / repeated follow-up text.
+
+Required:
+
+- inspect `resultsPageLayout.ts`
+- inspect results action components
+- inspect `/actions/page.tsx`
+- ensure actions are not duplicative or awkward when generated from `next_steps_narrative`
+
+Required behaviour:
+
+- no repeated “Safe next-step framing” preamble
+- no duplicate cards with the same first sentence
+- no legacy insights reintroduced
+- no internal source labels that read like data plumbing
 
 Acceptable approach:
 
-- strip simple markdown decorators before rendering, or
-- render safely using existing markdown utility/component if one already exists
+- dedupe by normalised text
+- strip preamble before card generation
+- prefer concise action cards over repeating full narrative blocks
 
-Do not introduce a large new markdown dependency unless already present and approved.
+## Task 6 — Biomarker display QA: unit/range coherence
 
-Apply consistently to:
+Investigate and fix display-level issues where possible without changing scoring.
 
-- retail summary
-- body overview
-- lead narrative
-- next steps
-- clinician synthesis/advanced content if not already handled
+Known examples from UAT:
 
-## Task 3 — Align primary story
-
-The UAT found a confusing mismatch:
-
-- hero says: `Vascular Inflammation Risk`
-- summary/body says ranked lead is: `Homocysteine Elevation Context`
-
-This must be made coherent.
+- Haemoglobin displays `144 g/dL` with range `130–175 g/L`
+- Haematocrit displays `0.4 %` with range `0.35–0.48 L/L`
+- HbA1c displays `%` while reference range may be mmol/mol
+- Testosterone displays “Not scored - no reference range available” despite source range concern
+- ratio labels such as `tc hdl ratio`
+- lower-case labels such as `active b12`, `apoa1`, `non hdl cholesterol`
 
 Required:
 
-- inspect the source of the hero title and the source of the ranked lead narrative
-- ensure the default consumer page has one clear primary story
-- either align the hero to the ranked lead, or explicitly explain the relationship between the consumer domain label and the ranked lead pattern
+- inspect biomarker card display pipeline
+- identify whether each issue is:
+  - source data/API
+  - unit normalisation
+  - reference range attachment
+  - frontend display formatting
+  - label registry gap
 
-Preferred consumer wording style:
+Fix frontend display/label issues where safe.
 
-- “Primary finding: Homocysteine elevation pattern”
-- “Main system context: vascular / cardiovascular risk”
-- avoid making the user choose between two apparent primary findings
+If unit/range inconsistency originates in backend source data or scoring, STOP before changing backend interpretation logic and report the exact file/path and recommended next package.
 
-Do not change backend ranking logic.
+Allowed frontend fixes:
 
-If alignment requires backend analytical changes, STOP and report.
+- improve display labels
+- hide incompatible range display if value unit and range unit clearly conflict
+- add neutral wording such as “range unit differs from displayed unit” only if product-approved in implementation notes
+- fix obvious label registry names
 
-## Task 4 — Rewrite Summary subtitle and intro copy
+Do not invent clinical unit conversions in frontend unless there is an existing governed conversion utility.
 
-Remove:
+## Task 7 — Improve biomarker labels
 
-- “Plain-language overview from the deterministic narrative compiler.”
+Add or update label mapping for common display defects:
 
-Replace with consumer-safe wording, for example:
+- `tc_hdl_ratio` → `TC:HDL ratio`
+- `tg_hdl_ratio` → `TG:HDL ratio`
+- `ldl_hdl_ratio` → `LDL:HDL ratio`
+- `non_hdl_cholesterol` → `Non-HDL cholesterol`
+- `active_b12` → `Active B12`
+- `apoa1` → `ApoA1`
+- `apob` → `ApoB`
+- `egfr` → `eGFR`
+- `mcv` → `MCV`
+- `mch` → `MCH`
+- `mchc` → `MCHC`
+- `fsh` → `FSH`
+- `lh` → `LH`
+- `ggt` → `GGT`
+- `tsh` → `TSH`
 
-- “A plain-language summary of the main pattern in your results.”
+Use existing label registry or frontend mapping pattern if present.
 
-Also remove copy that says:
+Do not create duplicate competing label registries if one already exists.
 
-- “Layer B frames this…”
-- “Layer C…”
+## Task 8 — Tests
 
-The Summary section should be understandable without any knowledge of system architecture.
+Add or update tests proving:
 
-## Task 5 — Clean body overview and next steps
+### Consumer boundary
 
-The UAT found body overview and next steps contain:
+- default consumer results view does not show:
+  - `supporting clinical context intervention annotation`
+  - `expected_biomarker_effect`
+  - `direction=lower`
+  - `governed functional titles`
+  - `confidence framing (governed label)`
+  - `supporting clinical context order, deterministic`
+  - `signal_homocysteine_elevation_context`
+  - `PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY`
+  - `chain_001`
+  - `hcy_b12_pattern_v1`
 
-- deterministic system snapshot
-- deterministic arbitration
-- governed capacity score
-- Layer C
-- system slugs
-- internal bridge codes
+### Body overview
 
-Fix the rendered body overview and next-step text so consumer view does not expose these tokens.
+- `body_overview` renders consumer-safe prose
+- statin context appears only in consumer-safe wording
+- technical statin appendix is not visible in consumer Body Overview
 
-If these tokens are generated upstream and cannot be safely filtered in the frontend, STOP and report the exact source.
+### Actions
 
-Preferred approach:
+- no duplicate cards from the same next-step sentence
+- “Safe next-step framing” preamble is not rendered as an action card
+- legacy insights remain hidden
 
-- frontend retail sanitiser/gate for known internal tokens, if safe
-- or route only approved narrative fields to the consumer view
+### Biomarker display
 
-Do not alter LC-S3 narrative compiler unless approved.
-
-## Task 6 — Gate advanced/clinician technical content more strongly
-
-The UAT found chain IDs, ranking lines and internal marker IDs visible in the default scroll path.
-
-Required:
-
-- ensure clinician/advanced content is clearly separated from consumer content
-- keep technical detail behind explicit “technical / clinician” disclosure
-- do not show chain IDs or snake_case evidence labels in default consumer sections
-- where marker IDs appear, use display labels where available
-
-Advanced content may remain technical, but it must not leak into the default retail journey.
-
-## Task 7 — Fix Actions hub contradiction
-
-The UAT found the Actions hub says:
-
-“No actions to show yet”
-
-while the results page contains rich next-step/follow-up content.
-
-Required:
-
-- inspect why Actions hub receives no action cards
-- either:
-  - wire it to the governed `actions` / `interventions_v1` / next-step source already present in the result, or
-  - remove/de-emphasise the Actions hub entry point until real action cards are available
-
-Do not show generic legacy insights.
-
-Do not reintroduce `legacy_v1 insights[]`.
-
-If safe wiring requires backend DTO changes, STOP and report.
-
-## Task 8 — Fix mock-mode honesty banner wording
-
-The UAT found the banner wording is partially garbled:
-
-- “AI-per narrative is not active…”
-
-Fix display wording to exactly:
-
-“Your report is built from structured clinical rules applied to your lab data. AI-personalised narrative is not active in this view.”
-
-Use “structured clinical rules” rather than “governed clinical rules” for consumer clarity.
-
-## Task 9 — Remove internal roadmap labels
-
-Remove or rewrite:
-
-- “Wave 1”
-
-from user-facing domain headings.
-
-Preferred:
-
-- “Your health domains”
-- “Main health areas reviewed”
-- “System-level patterns”
-
-## Task 10 — Tests
-
-Add or update frontend tests proving:
-
-- no `Layer B` visible in default results page
-- no `Layer C` visible in default results page
-- no `deterministic narrative compiler` visible
-- no `deterministic arbitration` visible
-- no backend system slug such as `cardiovascular_4_biomarkers` visible
-- no raw markdown `**` appears in summary/body/next-step rendering
-- no bridge slug such as `alcohol_intake_moderate_or_higher_with_one_carbon_lab_coherence` appears
-- Summary subtitle uses consumer-safe copy
-- mock-mode banner uses approved wording
-- Actions hub does not show contradictory empty state when governed actions/interventions exist
-- legacy `insights[]` remain hidden from consumer paths
+- label mappings render key markers correctly
+- unit/range mismatch is handled safely for haemoglobin and haematocrit
+- ratio labels render professionally
 
 ## Expected files touched
 
-Expected:
+Expected backend, if needed:
 
+- `backend/core/analytics/narrative_report_compiler_v1.py`
+- `backend/core/analytics/intervention_annotation_formatter_v1.py`
+- `backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py`
+- relevant backend unit tests
+
+Expected frontend:
+
+- `frontend/app/lib/retailNarrativeSanitize.ts`
+- `frontend/app/lib/resultsPageLayout.ts`
+- `frontend/app/components/results/ResultsBodyOverview.tsx`
+- `frontend/app/components/results/ClinicianReportRenderer.tsx`
+- `frontend/app/components/results/PrimaryFindingAndWhy.tsx`
+- `frontend/app/components/biomarkers/BiomarkerDials.tsx`
 - `frontend/app/(app)/results/page.tsx`
-- `frontend/app/(app)/actions/page.tsx`
-- frontend result components under `frontend/app/components/results/`
-- frontend copy/sanitisation helpers if needed
-- frontend tests
-- `docs/sprints/LC-S6_results_retail_hardening_completion_2026-05.md`
+- relevant frontend tests
 
-Possibly expected:
+Expected docs:
 
-- frontend types if needed for safe action/intervention wiring
+- `docs/sprints/LC-S7_consumer_boundary_and_biomarker_display_qa_completion_2026-05.md`
 
 Not expected:
 
 - `backend/ssot/`
 - `knowledge_bus/`
-- `backend/core/analytics/`
-- `backend/core/pipeline/`
-- `backend/core/contracts/`
 - questionnaire files
-- narrative compiler files
-- biomarker scoring logic
+- signal scoring files
+- ranking policy files
 - Automation Bus control-plane scripts
-- Sentinel files
+- Sentinel files unless separately requested
+- database migrations
 
 ## Stop conditions
 
 STOP and report before implementation if:
 
-- fixing consumer copy requires changing analytical ranking logic
-- fixing hero alignment requires backend scoring/ranking changes
-- removing internal language requires changing LC-S3 narrative compiler logic
-- Actions hub wiring requires backend DTO/schema changes
-- any Knowledge Bus, SSOT, pipeline, analytics, or contract files appear necessary
-- legacy `insights[]` would need to be reintroduced to populate Actions hub
-- safe markdown rendering requires adding a large dependency
+- fixing consumer leakage requires changing signal activation
+- fixing consumer leakage requires changing ranking logic
+- unit/range correction requires clinical unit conversion not already governed
+- biomarker display correction requires backend scoring changes
+- Knowledge Bus or SSOT changes appear necessary
+- DTO/schema shape changes appear necessary
+- frontend cannot distinguish default consumer view from technical/clinician view safely
+- intervention annotation semantics would change
+- Automation Bus control-plane files appear necessary
 
 ## Explicit non-goals
 
@@ -312,72 +356,30 @@ Do not:
 
 - change analytical scoring
 - change signal ranking
-- change biomarker interpretation
+- change signal activation
 - change questionnaire logic
 - change Knowledge Bus assets
 - change SSOT
-- change narrative compiler assembly
 - activate Gemini
 - build frontend Sentinel infrastructure
-- perform full biomarker unit/status QA in this sprint
-- change PDF/export structure unless the same rendered components are reused automatically
-
-## Completion note
-
-Create:
-
-`docs/sprints/LC-S6_results_retail_hardening_completion_2026-05.md`
-
-It must record:
-
-- UAT blockers addressed
-- internal terms removed/gated
-- markdown rendering fix
-- hero/summary alignment decision
-- Actions hub decision
-- tests run
-- known limitations
-- confirmation no backend analytical, SSOT, Knowledge Bus, questionnaire, narrative compiler, or control-plane files changed
+- perform full clinical biomarker range redesign
+- rewrite the whole results page
+- create a new report architecture
+- add medication/treatment recommendations
+- recommend supplements
 
 ## Validation
 
-Run relevant frontend tests.
+Run targeted tests first.
 
 At minimum:
 
-- results page/component tests
-- Actions page tests
-- legacy insights visibility tests
-- LC-S4 report-carriage tests
-- any new LC-S6 leakage tests
+- relevant backend narrative/formatter tests if backend touched
+- frontend results page/component tests
+- frontend biomarker display tests
+- LC-S6 leakage tests
+- Actions layout tests
 
-Then run broader frontend test suite if feasible.
+Then run broader frontend/backend tests if feasible.
 
-Report all commands and results.
-
-## Closure evidence required
-
-Before finish, report:
-
-- branch
-- work_id
-- files changed
-- before/after summary of major copy fixes
-- whether internal terms are absent from default consumer page
-- whether raw markdown is absent
-- whether hero and ranked lead are coherent
-- whether Actions hub contradiction is resolved
-- whether legacy insights remain hidden
-- tests run and results
-- confirmation no backend analytical files changed
-- confirmation no SSOT files changed
-- confirmation no Knowledge Bus files changed
-- confirmation no questionnaire files changed
-- confirmation no narrative compiler files changed
-- confirmation no Automation Bus control-plane scripts changed
-
-## Final expected outcome
-
-After LC-S6, the default results page should feel like a credible patient-facing HealthIQ AI report.
-
-It should show the user the main finding clearly, explain the result in plain English, preserve appropriate caution, and hide internal system machinery unless deliberately opened in a technical/clinician view.
+```
