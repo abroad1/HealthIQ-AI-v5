@@ -32,7 +32,10 @@ from core.analytics.primitives import (
     frontend_status_from_lab_reference,
     has_valid_numeric_lab_range,
 )
-from core.scoring.rules import UNSCORED_REASON_HBA1C_UNIT_MISMATCH
+from core.scoring.rules import (
+    UNSCORED_REASON_HBA1C_UNIT_MISMATCH,
+    UNSCORED_REASON_UNIT_REFERENCE_RANGE_INCOHERENT,
+)
 from core.analytics.criticality import evaluate_criticality
 from core.analytics.ratio_registry import RatioRegistry, DERIVED_IDS, compute
 from core.analytics.signal_evaluator import SignalRegistry, SignalEvaluator
@@ -1908,6 +1911,11 @@ class AnalysisOrchestrator:
                             interpretation = (
                                 "Not scored - HbA1c result unit and lab reference unit could not be "
                                 "aligned for scoring (e.g. % vs mmol/mol); check units on the report."
+                            )
+                        elif ur == UNSCORED_REASON_UNIT_REFERENCE_RANGE_INCOHERENT:
+                            interpretation = (
+                                "Not scored - result unit and lab reference range unit cannot be "
+                                "aligned for this marker (incompatible units); check units on the report."
                             )
                         elif ur:
                             interpretation = f"Not scored - {ur}"

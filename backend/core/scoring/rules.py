@@ -16,6 +16,7 @@ from core.analytics.primitives import (
     position_in_range,
 )
 from core.analytics.scoring_policy_registry import load_scoring_policy
+from core.units.registry import value_and_reference_units_coherent_for_numeric_compare
 
 _POLICY = load_scoring_policy()
 DERIVED_RATIOS = frozenset(_POLICY.raw.get("derived_ratios", []))
@@ -46,6 +47,9 @@ UNSCORED_REASON = str(
 
 # R-1B: HbA1c value and lab range use incompatible unit systems (e.g. % vs mmol/mol) and could not be harmonised.
 UNSCORED_REASON_HBA1C_UNIT_MISMATCH = "hba1c_value_and_reference_range_units_incompatible"
+
+# LC-S8: value unit and lab reference unit cannot be aligned for numeric comparison (no registry path).
+UNSCORED_REASON_UNIT_REFERENCE_RANGE_INCOHERENT = "unit_reference_range_incoherent"
 
 _HBA1C_IDS = frozenset({"hba1c", "hba1c_pct"})
 
@@ -280,6 +284,12 @@ class ScoringRules:
                 ref, hba1c_err = self._harmonise_hba1c_reference_range(value_unit, ref)
                 if hba1c_err:
                     return 0.0, ScoreRange.CRITICAL, hba1c_err
+            ref_u = str(ref.get("unit") or "").strip()
+            vu = (value_unit or "").strip()
+            if ref_u and vu and not value_and_reference_units_coherent_for_numeric_compare(
+                biomarker_name, vu, ref_u
+            ):
+                return 0.0, ScoreRange.CRITICAL, UNSCORED_REASON_UNIT_REFERENCE_RANGE_INCOHERENT
             min_val = coerce_optional_float(ref.get("min"))
             max_val = coerce_optional_float(ref.get("max"))
             if min_val is not None and max_val is not None and min_val < max_val:

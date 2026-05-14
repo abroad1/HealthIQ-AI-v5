@@ -79,6 +79,14 @@
       "first_seen": "2026-05",
       "fix_commit": null,
       "note": "Promoted post-LC-S4 from unit statin context integration test test_s6 — guards formatter-level isolation of consumer wording from analytical scoring."
+    },
+    "biomarker_value_reference_unit_incoherence": {
+      "description": "LC-S8 — biomarker numeric value unit vs lab reference range unit must be convertible (registry) or identical before scoring; hemoglobin g/L, hematocrit L/L, and one-sided refs normalise deterministically; incompatible pairs yield unit_reference_range_incoherent.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s8_biomarker_unit_reference_incoherence_regression.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
     }
   }
 }

@@ -1,10 +1,9 @@
 {
-  "branch": "sprint7/consumer-boundary-and-biomarker-display-qa",
+  "branch": "sprint8/biomarker-unit-range-normalisation-qa",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-13T20:46:10Z",
-  "cursor_started_utc": "2026-05-13T20:36:53Z",
-  "head_sha": "0a557b829a04a4cb00768a31c5fafe5667996be1",
+  "cursor_started_utc": "2026-05-14T18:15:55Z",
+  "head_sha": "584d5c5da04271700ac34aa72f6181a1abd0cbbd",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "LC-S7-CONSUMER-BOUNDARY-AND-BIOMARKER-DISPLAY-QA"
+  "status": "IN_PROGRESS",
+  "work_id": "LC-S8-BIOMARKER-UNIT-RANGE-NORMALISATION-QA"
 }
