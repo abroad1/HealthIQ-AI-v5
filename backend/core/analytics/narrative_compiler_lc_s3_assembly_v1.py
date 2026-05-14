@@ -85,6 +85,19 @@ def _lead_matching_finding(payload: NarrativePayloadV1) -> Optional[Any]:
 
 
 def _retail_from_payload(payload: NarrativePayloadV1, idl_retail_block: str) -> str:
+    if not payload.top_findings:
+        hedge = (
+            "This wording stays descriptive and **does not** replace clinician judgement "
+            "or imply certainty beyond what the markers support."
+        )
+        parts = [
+            "No ranked lead pattern was available for this panel; interpretation uses the supplied markers only."
+        ]
+        if idl_retail_block.strip():
+            parts.append(idl_retail_block.strip())
+        parts.append(hedge)
+        return "\n\n".join(parts)
+
     lead = payload.top_findings[0]
     head = (
         f"The ranked lead pattern is **{_humanize_signal(lead.signal_id)}** "
