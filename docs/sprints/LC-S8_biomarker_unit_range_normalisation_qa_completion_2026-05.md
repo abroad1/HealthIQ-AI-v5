@@ -58,8 +58,25 @@
 |--------|--------|
 | `python -m pytest backend/tests/regression/test_lc_s8_biomarker_unit_reference_incoherence_regression.py -q` | **11 passed** |
 | `python sentinel/sentinel_runner.py --defect-class biomarker_value_reference_unit_incoherence` | **0 issues**, report generated |
+| `python -m pytest backend/tests/unit/test_hba1c_governance.py::TestHbA1cLayerBBoundPath backend/tests/unit/test_unit_registry.py backend/tests/unit/test_scoring_rules.py -q` (post-doc re-check) | **56 passed** |
 
-**Note:** `backend/tests/unit/test_hba1c_governance.py::TestHbA1cLayerBBoundPath::test_orchestrator_input_excludes_hba1c_pct_when_both_present` currently fails with `IndexError` in `narrative_compiler_lc_s3_assembly_v1` (`top_findings[0]` empty) during full orchestrator `run`; this appears orthogonal to LC-S8 unit changes. `backend/tests/unit/test_unit_registry.py` route tests observed 500 vs expected 2xx in this environment (likely service/fixture setup).
+**Note:** `backend/tests/unit/test_unit_registry.py` route tests may return 500 vs expected 2xx in some environments (service/fixture setup).
+
+## Retroactively authorised scope expansion
+
+This sprint’s original LC-S8 prompt did **not** include narrative compiler work. The following change was nevertheless merged onto the LC-S8 branch and is **retroactively authorised** as a bounded LC-S8 scope expansion (GPT, post-hoc), with Claude audit confirming the fix is correct, useful, deterministic, and not analytically harmful. LC-S8 is already **HIGH** risk; resolution is explicit authorisation plus this documentation correction, **not** extracting the commit.
+
+| Field | Detail |
+|--------|--------|
+| **Commit** | `e5e6d87` |
+| **File** | `backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py` |
+| **Purpose** | Defensive guard to avoid `IndexError` when `NarrativePayloadV1.top_findings` is empty (`_retail_from_payload` no longer indexes `[0]` blindly). |
+| **Authorisation rationale** | Deterministic defensive guard only; no changes to scoring, ranking, signal definitions, SSOT, Knowledge Bus, or questionnaire surfaces. |
+| **Scope honesty** | Outside the original LC-S8 prompt; **authorised by GPT before merge** (retroactive governance record). |
+
+**Audit follow-up:** Re-run **Claude audit** on the branch after this documentation correction (including `e5e6d87` and this section).
+
+**Merge:** Do **not** merge until human review and the refreshed Claude audit complete.
 
 ## Known limitations / deferred
 
@@ -72,5 +89,6 @@
 
 - **Knowledge Bus:** not modified.
 - **Questionnaire:** not modified.
-- **Narrative compiler:** not modified (orchestrator import/copy only).
+- **Narrative compiler:** `backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py` **was** modified — see **Retroactively authorised scope expansion** (`e5e6d87`). No other narrative compiler modules were changed for LC-S8.
+- **Orchestrator:** `backend/core/pipeline/orchestrator.py` — interpretation copy for `unit_reference_range_incoherent` only (as in original LC-S8 scope).
 - **Automation Bus control-plane scripts:** not modified.
