@@ -43,6 +43,8 @@ class UnitEnum(str, Enum):
     """Canonical unit tokens. Aligns with ssot/units.yaml."""
     MG_DL = "mg/dL"
     G_DL = "g/dL"
+    G_L = "g/L"
+    L_L = "L/L"
     PERCENT = "%"
     U_L = "U/L"
     K_UL = "K/μL"
@@ -67,6 +69,8 @@ _HBA1C_BIOMARKERS = frozenset({"hba1c"})
 _UREA_BIOMARKERS = frozenset({"urea"})
 _CREATININE_BIOMARKERS = frozenset({"creatinine"})
 _VITAMIN_D_BIOMARKERS = frozenset({"vitamin_d"})
+_HEMOGLOBIN_BIOMARKERS = frozenset({"hemoglobin"})
+_HEMATOCRIT_BIOMARKERS = frozenset({"hematocrit"})
 _STRICT_CONVERSION_BIOMARKERS = frozenset().union(
     _CHOLESTEROL_BIOMARKERS,
     _TRIGLYCERIDE_BIOMARKERS,
@@ -75,6 +79,8 @@ _STRICT_CONVERSION_BIOMARKERS = frozenset().union(
     _UREA_BIOMARKERS,
     _CREATININE_BIOMARKERS,
     _VITAMIN_D_BIOMARKERS,
+    _HEMOGLOBIN_BIOMARKERS,
+    _HEMATOCRIT_BIOMARKERS,
 )
 
 _UMOL_EQUIVALENTS = frozenset({"µmol/L", "umol/L", "uMol/L"})
@@ -192,6 +198,22 @@ class UnitRegistry:
             c = convs.get("ng_mL_to_nmol_L_vitamin_d", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
                 return float(c.get("factor", 2.5))
+        if biomarker_id in _HEMOGLOBIN_BIOMARKERS and from_u == "g/L" and to_u == "g/dL":
+            c = convs.get("g_L_to_g_dL_hemoglobin", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 0.1))
+        if biomarker_id in _HEMOGLOBIN_BIOMARKERS and from_u == "g/dL" and to_u == "g/L":
+            c = convs.get("g_dL_to_g_L_hemoglobin", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 10.0))
+        if biomarker_id in _HEMATOCRIT_BIOMARKERS and from_u == "L/L" and to_u == "%":
+            c = convs.get("l_L_to_percent_hematocrit", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 100.0))
+        if biomarker_id in _HEMATOCRIT_BIOMARKERS and from_u == "%" and to_u == "L/L":
+            c = convs.get("percent_to_l_L_hematocrit", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 0.01))
         return None
 
     def _get_hba1c_mmol_mol_to_percent_linear(
@@ -396,7 +418,36 @@ def apply_unit_normalisation(
                 except UnitConversionError:
                     raise
         elif ref_range:
-            ref_converted = dict(ref_range)
+            ref_unit = ref_unit_raw or input_unit
+            has_min_only = isinstance(rmin, (int, float)) and not isinstance(rmax, (int, float))
+            has_max_only = isinstance(rmax, (int, float)) and not isinstance(rmin, (int, float))
+            if ref_unit and (has_min_only or has_max_only):
+                try:
+                    if has_min_only:
+                        cmin, _ = reg._convert_with_explicit_unit(key, float(rmin), ref_unit)
+                        ref_converted = {
+                            "min": cmin,
+                            "max": None,
+                            "unit": base_unit,
+                            "source": ref_range.get("source", "lab"),
+                        }
+                    else:
+                        cmax, _ = reg._convert_with_explicit_unit(key, float(rmax), ref_unit)
+                        ref_converted = {
+                            "min": None,
+                            "max": cmax,
+                            "unit": base_unit,
+                            "source": ref_range.get("source", "lab"),
+                        }
+                except UnitConversionError:
+                    ref_converted = dict(ref_range)
+            else:
+                ref_converted = dict(ref_range)
+
+        if ref_converted and isinstance(ref_converted, dict):
+            rru = (ref_converted.get("unit") or "").strip()
+            if rru and rru != base_unit and not _units_equivalent(rru, base_unit):
+                ref_converted = None
 
         out = {
             "value": val_converted,
@@ -420,3 +471,32 @@ def apply_unit_normalisation(
         result[key] = out
 
     return result
+
+
+def value_and_reference_units_coherent_for_numeric_compare(
+    biomarker_id: str,
+    value_unit: str,
+    ref_unit: str,
+    *,
+    registry: Optional[UnitRegistry] = None,
+) -> bool:
+    """
+    True when value and reference range units are the same, µmol/L-equivalent,
+    linked by an explicit registry conversion, or HbA1c % vs mmol/mol pair.
+    Used to block numeric scoring on incompatible pairs (e.g. hemoglobin in mmol/L vs g/dL).
+    """
+    vu = (value_unit or "").strip()
+    ru = (ref_unit or "").strip()
+    if not ru or not vu:
+        return True
+    if vu == ru or _units_equivalent(vu, ru):
+        return True
+    conv_id = "hba1c" if biomarker_id == "hba1c_pct" else biomarker_id
+    if conv_id in _HBA1C_BIOMARKERS and {vu, ru} == {"%", "mmol/mol"}:
+        return True
+    reg = registry or _get_registry()
+    if reg._get_conversion_factor(conv_id, vu, ru) is not None:
+        return True
+    if reg._get_conversion_factor(conv_id, ru, vu) is not None:
+        return True
+    return False

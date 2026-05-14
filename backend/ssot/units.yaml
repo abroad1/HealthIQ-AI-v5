@@ -14,6 +14,18 @@ units:
     description: "Grams per deciliter"
     category: "concentration"
     si_equivalent: "g/dL"
+
+  g_L:
+    name: "g/L"
+    description: "Grams per liter (mass concentration)"
+    category: "concentration"
+    si_equivalent: "g/L"
+
+  l_L:
+    name: "L/L"
+    description: "Liters per liter (volume fraction, e.g. haematocrit)"
+    category: "concentration"
+    si_equivalent: "L/L"
     
   # Percentage Units
   percent:
@@ -138,12 +150,36 @@ units:
       to_unit: "nmol/L"
       factor: 2.5
       description: "Vitamin D conversion"
+
+    g_L_to_g_dL_hemoglobin:
+      from_unit: "g/L"
+      to_unit: "g/dL"
+      factor: 0.1
+      description: "Hemoglobin mass concentration (SI g/L to US g/dL)"
+
+    g_dL_to_g_L_hemoglobin:
+      from_unit: "g/dL"
+      to_unit: "g/L"
+      factor: 10.0
+      description: "Hemoglobin mass concentration (US g/dL to SI g/L)"
+
+    l_L_to_percent_hematocrit:
+      from_unit: "L/L"
+      to_unit: "%"
+      factor: 100.0
+      description: "Hematocrit volume fraction to percent"
+
+    percent_to_l_L_hematocrit:
+      from_unit: "%"
+      to_unit: "L/L"
+      factor: 0.01
+      description: "Hematocrit percent to volume fraction"
       
   # Unit Categories
   categories:
     concentration:
       description: "Concentration-based measurements"
-      units: ["mg/dL", "g/dL", "μU/mL", "mg/L"]
+      units: ["mg/dL", "g/dL", "g/L", "L/L", "μU/mL", "mg/L"]
       
     ratio:
       description: "Ratio and percentage measurements"

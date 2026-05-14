@@ -63,6 +63,9 @@ DEFECT_CLASS_TESTS: dict[str, list[str]] = {
     "statin_signal_isolation": [
         "backend/tests/regression/test_lc_s4_statin_signal_isolation_regression.py",
     ],
+    "biomarker_value_reference_unit_incoherence": [
+        "backend/tests/regression/test_lc_s8_biomarker_unit_reference_incoherence_regression.py",
+    ],
 }
 
 ALL_REGRESSION_TESTS = [t for tests in DEFECT_CLASS_TESTS.values() for t in tests]

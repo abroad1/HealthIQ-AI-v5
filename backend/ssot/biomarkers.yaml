@@ -645,6 +645,7 @@ biomarkers:
     aliases:
     - hgb
     - hb
+    - haemoglobin
     unit: g/dL
     description: Hemoglobin level
     category: cbc
