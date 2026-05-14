@@ -1,8 +1,8 @@
 {
-  "bus_version": "1.3.1",
-  "work_id": "LC-S7-CONSUMER-BOUNDARY-AND-BIOMARKER-DISPLAY-QA",
+  "work_id": "LC-S8-BIOMARKER-UNIT-RANGE-NORMALISATION-QA",
   "status": "HARDENED",
-  "hardened_utc": "2026-05-13T00:00:00Z",
+  "bus_version": "1.3.1",
+  "hardened_utc": "2026-05-14T00:00:00Z",
   "hardened_by": "Claude Code (Sonnet 4.6) — Stage 2 SOP v1.3.1",
   "changes": [
     {
@@ -12,13 +12,13 @@
     },
     {
       "check": "Front Matter — branch",
-      "result": "CONFIRMED: sprint7/consumer-boundary-and-biomarker-display-qa",
+      "result": "CONFIRMED: sprint8/biomarker-unit-range-normalisation-qa",
       "citation": "automation_bus/latest_cursor_prompt.md line 3"
     },
     {
       "check": "Front Matter — risk_level HIGH",
-      "result": "CONFIRMED: HIGH declared and correct. Prompt explicitly touches narrative_report_compiler_v1.py, intervention_annotation_formatter_v1.py, narrative_compiler_lc_s3_assembly_v1.py — all are Intelligence Core HIGH-risk paths per SOP §10.",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4; docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md §10"
+      "result": "CONFIRMED and correct. Sprint touches backend/core/units/registry.py, backend/core/pipeline/orchestrator.py, backend/core/scoring/rules.py and engine.py, backend/ssot/biomarkers.yaml, backend/ssot/units.yaml — all match HIGH-risk trigger surfaces defined in SOP §10 (Intelligence Core + SSOT).",
+      "citation": "automation_bus/latest_cursor_prompt.md lines 4, 60–75"
     },
     {
       "check": "Front Matter — execution_model",
@@ -27,129 +27,139 @@
     },
     {
       "check": "Front Matter — change_type MIXED",
-      "result": "CONFIRMED and correct. Backend narrative compiler logic changes + frontend display/label changes. MIXED is governed by BEHAVIOUR controls per SOP §4.",
+      "result": "CONFIRMED and correct. Sprint modifies SSOT YAML (CONTENT surfaces) and unit normalisation / scoring / orchestrator backend logic (BEHAVIOUR surfaces). MIXED is correct; BEHAVIOUR controls apply per SOP §4.",
       "citation": "automation_bus/latest_cursor_prompt.md line 6"
     },
     {
-      "check": "Authority path — narrative_report_compiler_v1.py",
-      "result": "CONFIRMED EXISTS — file read",
-      "citation": "backend/core/analytics/narrative_report_compiler_v1.py (glob + read verified)"
+      "check": "Authority path — architecture/ADR-002-deterministic-analysis-engine.md",
+      "result": "CONFIRMED EXISTS — glob verified.",
+      "citation": "architecture/ADR-002-deterministic-analysis-engine.md"
     },
     {
-      "check": "Authority path — intervention_annotation_formatter_v1.py",
-      "result": "CONFIRMED EXISTS — file read",
-      "citation": "backend/core/analytics/intervention_annotation_formatter_v1.py (glob + read verified)"
+      "check": "Authority path — architecture/ADR-001-platform-non-negotiables.md",
+      "result": "CONFIRMED EXISTS — glob verified.",
+      "citation": "architecture/ADR-001-platform-non-negotiables.md"
     },
     {
-      "check": "Authority path — narrative_compiler_lc_s3_assembly_v1.py",
-      "result": "CONFIRMED EXISTS — file read",
-      "citation": "backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py (glob + read verified)"
+      "check": "Authority path — architecture/Master_PRD_v5.2.md",
+      "result": "CONFIRMED EXISTS at architecture/Master_PRD_v5.2.md (moved from docs/archive/superseded/; untracked in git status, consistent with recent file reorganisation seen in git status output).",
+      "citation": "architecture/Master_PRD_v5.2.md (glob verified); git status: ?? architecture/Master_PRD_v5.2.md, D docs/archive/superseded/Master_PRD_v5.2.md"
     },
     {
-      "check": "Authority path — retailNarrativeSanitize.ts",
-      "result": "CONFIRMED EXISTS — file read",
-      "citation": "frontend/app/lib/retailNarrativeSanitize.ts (glob + read verified)"
+      "check": "Authority path — docs/audit-papers/LC-S8_biomarker_unit_range_normalisation_preflight.md",
+      "result": "CONFIRMED EXISTS and read in full. Contains end-to-end pipeline map (§3), defect tracing for haemoglobin/haematocrit/HbA1c/testosterone/ratios (§4), unit normalisation architecture (§6), scoring safety assessment (§7), existing test/Sentinel coverage gap (§9), and stop conditions (§14).",
+      "citation": "docs/audit-papers/LC-S8_biomarker_unit_range_normalisation_preflight.md (read confirmed)"
     },
     {
-      "check": "Authority path — resultsPageLayout.ts",
-      "result": "CONFIRMED EXISTS — file read",
-      "citation": "frontend/app/lib/resultsPageLayout.ts (glob + read verified)"
+      "check": "Authority path — backend/ssot/biomarkers.yaml (source cross-ref)",
+      "result": "CONFIRMED EXISTS and content read. Key findings: (1) hemoglobin at line 644, unit: g/dL (line 648) — US spelling, aliases: hgb, hb. (2) hematocrit at line 659, unit: % (line 663) — US spelling. (3) hba1c at line 191, unit: % (line 196), aliases: hemoglobin_a1c, a1c, glycated_hemoglobin. (4) tc_hdl_ratio unit: ratio (line 68). (5) tg_hdl_ratio unit: ratio (line 81). (6) ldl_hdl_ratio unit: ratio (line 107). (7) non_hdl_cholesterol unit: mmol/L (line 120). (8) apob_apoa1_ratio unit: ratio (line 133). (9) urea_creatinine_ratio unit: ratio (line 719). (10) testosterone unit: nmol/L (line 1103). (11) testosterone_free_testosterone_ratio unit: ratio (line 1368).",
+      "citation": "backend/ssot/biomarkers.yaml lines 66–68, 79–81, 105–107, 118–120, 131–133, 191–196, 644–648, 659–663, 717–720, 1102–1103, 1366–1368"
     },
     {
-      "check": "Authority path — ResultsBodyOverview.tsx / ClinicianReportRenderer.tsx / PrimaryFindingAndWhy.tsx / BiomarkerDials.tsx / results/page.tsx",
-      "result": "CONFIRMED EXISTS — all five glob-verified",
-      "citation": "frontend/app/components/results/ResultsBodyOverview.tsx; frontend/app/components/results/ClinicianReportRenderer.tsx; frontend/app/components/results/PrimaryFindingAndWhy.tsx; frontend/app/components/biomarkers/BiomarkerDials.tsx; frontend/app/(app)/results/page.tsx"
+      "check": "Authority path — backend/ssot/units.yaml (source cross-ref)",
+      "result": "CONFIRMED EXISTS and content read. Contains: g/dL (lines 12–16), mg/dL, mmol/L, nmol/L, µmol/L, mg/L, %, mmol/mol. HbA1c conversions: % → mmol/mol factor 10.929 (line 109–113); mmol/mol → % linear (slope 0.09148, intercept 2.152, lines 117–122). Cholesterol, triglycerides, glucose, urea, creatinine, vitamin D conversion factors present. g/L: NOT PRESENT. L/L: NOT PRESENT.",
+      "citation": "backend/ssot/units.yaml lines 5–148"
     },
     {
-      "check": "Evidence source — preflight triage",
-      "result": "CONFIRMED EXISTS — file read in full",
-      "citation": "docs/testing/LC-S7_preflight_triage_post_LC-S6_UAT.md"
+      "check": "Authority path — backend/core/units/registry.py (source cross-ref)",
+      "result": "CONFIRMED EXISTS and content read. UnitEnum (lines 42–57) defines: MG_DL, G_DL, PERCENT, U_L, K_UL, UU_ML, MG_L, MMOL_L, UMOL_L, NMOL_L, NG_ML, MMOL_MOL, MEQ_L, RATIO. _STRICT_CONVERSION_BIOMARKERS (lines 70–78) includes: cholesterol, triglycerides, glucose, hba1c, urea, creatinine, vitamin_d — hemoglobin and hematocrit are NOT in the strict set. Passthrough branch for non-strict at lines 241–245. Reference range conversion at lines 363–399.",
+      "citation": "backend/core/units/registry.py lines 42–57, 60–78, 241–245, 363–399"
     },
     {
-      "check": "Task 1 — Intervention appendix leak mechanism (source cross-ref)",
-      "result": "CONFIRMED. narrative_report_compiler_v1.py line 662 calls format_intervention_annotation_narrative_appendix_v1. Lines 663-666 conditionally join result into body_overview_with_ia via _join_blocks. The appendix emits literal machine text: 'Layer B intervention annotation — lipid-lowering statin...: expected_biomarker_effect [ldl_cholesterol, non_hdl_cholesterol, apob] direction=lower' (intervention_annotation_formatter_v1.py lines 38-47). retailNarrativeSanitize.ts line 36 replaces 'Layer B' only → producing 'supporting clinical context intervention annotation'. Consumer-safe replacement format_intervention_annotation_consumer_cv_suffix_v1 EXISTS and is ready to use (intervention_annotation_formatter_v1.py lines 58-69).",
-      "citation": "backend/core/analytics/narrative_report_compiler_v1.py lines 662-666; backend/core/analytics/intervention_annotation_formatter_v1.py lines 23-48 and 58-69; frontend/app/lib/retailNarrativeSanitize.ts line 36"
+      "check": "CRITICAL GAP — g/L missing from units.yaml and UnitEnum",
+      "result": "BLOCKER RISK SURFACED. g/L is NOT defined in backend/ssot/units.yaml (only g/dL at lines 12–16; mg/L at lines 47–51 — a different unit). g/L is NOT in UnitEnum in registry.py (lines 42–57). No g/dL ↔ g/L conversion factor exists in units.yaml. Sprint Task 3 requires haemoglobin g/L coherence. Without adding g/L, _convert_with_explicit_unit will fire the passthrough branch (registry.py lines 241–245) for hemoglobin when input unit is g/L, leaving value unchanged with input unit — incoherent pair mechanism preserved. Cursor MUST add: (1) g/L unit definition to units.yaml, (2) bidirectional g/dL ↔ g/L conversion factor (×10 / ÷10) to units.yaml conversions block, (3) G_L token to UnitEnum in registry.py. These additions are within sprint scope and do not require SSOT duplication.",
+      "citation": "backend/ssot/units.yaml full content; backend/core/units/registry.py lines 42–57, 241–245"
     },
     {
-      "check": "Task 2 — Body overview technical phrases confirmed in source",
-      "result": "CONFIRMED. _build_body_overview emits: (1) 'Primary driver system (deterministic arbitration):' at line 172 — sanitizer rule at retailNarrativeSanitize.ts line 33 converts 'deterministic arbitration' → 'clinical prioritisation on this panel'; (2) 'Co-supporting systems (deterministic arbitration):' at line 179 — same sanitizer rule; (3) 'High capacity / comparatively calmer systems in this snapshot (governed capacity score ≥90):' at lines 192-196 — sanitizer converts 'governed capacity score' → 'confidence score' (line 35) but 'High capacity / comparatively calmer systems' remains; (4) 'Benchmark interpretation themes (governed functional titles):' at lines 200-202 — NO sanitizer rule covers 'governed functional titles'.",
-      "citation": "backend/core/analytics/narrative_report_compiler_v1.py lines 172, 179, 192-196, 200-202; frontend/app/lib/retailNarrativeSanitize.ts lines 30-44"
+      "check": "CRITICAL GAP — L/L missing from units.yaml and UnitEnum",
+      "result": "BLOCKER RISK SURFACED. L/L is NOT defined in backend/ssot/units.yaml or UnitEnum. Sprint Task 4 requires haematocrit L/L coherence. Clinical policy decision (L/L vs %) must be made before implementation per sprint Task 4 requirements. If L/L → % conversion is needed, Cursor must add: (1) L/L unit definition to units.yaml, (2) bidirectional L/L ↔ % conversion (×100 / ÷100), (3) L_L token to UnitEnum. If policy is to keep canonical unit % and reject L/L-labelled input as incoherent, the scoring guard (unit_reference_range_incoherent) applies instead. STOP condition activates if policy cannot be resolved.",
+      "citation": "backend/ssot/units.yaml full content; backend/core/units/registry.py lines 42–57; automation_bus/latest_cursor_prompt.md Task 4 STOP condition"
     },
     {
-      "check": "Task 3 — Raw identifiers in default consumer paths confirmed",
-      "result": "CONFIRMED. (1) _clinician_header emits raw signal_id in backtick: '- Signal: `{lead.signal_id}`' at narrative_compiler_lc_s3_assembly_v1.py line 206. (2) _root_cause_block emits raw hypothesis_id: 'Hypothesis `{hyp.hypothesis_id}`' at line 121. (3) Ranking policy version exposed as plain <p> without showDetails gating (confirmed from preflight triage §1 table row 5). (4) chain_001 visible in <details> without global technical toggle (confirmed from preflight §1 table row 6). Sanitizer scrubLongInternalSlugs (retailNarrativeSanitize.ts lines 22-27) catches tokens ≥38 chars but 'signal_homocysteine_elevation_context' (38 chars) and shorter hypothesis IDs may not be caught.",
-      "citation": "backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py lines 121, 206; docs/testing/LC-S7_preflight_triage_post_LC-S6_UAT.md §1; frontend/app/lib/retailNarrativeSanitize.ts lines 22-27"
+      "check": "SSOT SPELLING — hemoglobin (US) not haemoglobin (UK)",
+      "result": "WARNING SURFACED. biomarkers.yaml canonical key is hemoglobin (US spelling, line 644), aliases: hgb, hb. Sprint prompt uses haemoglobin throughout. Cursor MUST use canonical key hemoglobin in all backend logic. Creating a new key haemoglobin would introduce a duplicate SSOT authority source — FORBIDDEN per non-negotiables. Similarly hematocrit (US, line 659) not haematocrit. If UK lab payloads send haemoglobin as the key, an alias must be added to the existing hemoglobin entry — NOT a new SSOT entry.",
+      "citation": "backend/ssot/biomarkers.yaml lines 644–652, 659–664"
     },
     {
-      "check": "Task 4 — Secondary ranked heading confirmed in source",
-      "result": "CONFIRMED. _secondary_ranked returns 'Secondary ranked patterns (Layer B order, deterministic):\\n\\n' at narrative_compiler_lc_s3_assembly_v1.py line 241. After sanitizer: 'Layer B' → 'supporting clinical context' produces 'Secondary ranked patterns (supporting clinical context order, deterministic):'. The word 'deterministic' is not removed by any sanitizer rule.",
-      "citation": "backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py line 241; frontend/app/lib/retailNarrativeSanitize.ts (no rule for standalone 'deterministic')"
+      "check": "Defect mechanism — registry.py reference range mislabelling (source cross-ref)",
+      "result": "CONFIRMED. When value unit ≠ ref unit for a non-strict marker: registry.py lines 386–389 call _convert_with_explicit_unit on ref min/max with ref_unit. For hemoglobin (non-strict, no g/L factor): passthrough returns (130.0, 'g/L') for a 130 g/L bound. Lines 390–395 then assemble ref_converted = {min: 130, max: 175, unit: base_unit} where base_unit = 'g/dL'. Result: g/L-scale bounds (130–175) labelled as g/dL. This is the confirmed mechanism producing the incoherent pair displayed in UAT. Sprint fix must either: (a) add conversion factor so numeric bounds are actually converted, or (b) detect the passthrough case and emit unit_reference_range_incoherent before scoring.",
+      "citation": "backend/core/units/registry.py lines 241–245, 379–395"
     },
     {
-      "check": "Task 5 — Actions preamble source confirmed",
-      "result": "CONFIRMED. _next_steps_from_payload hard-codes preamble 'Safe next-step framing (Layer C, bounded):\\n' at narrative_compiler_lc_s3_assembly_v1.py line 189. buildActionCardModels in resultsPageLayout.ts lines 499-514 uses narrativeNextStepsNarrative only as last-resort fallback (guard: out.length === 0). Duplication is from two surfaces rendering the same content (full narrative block + action cards).",
-      "citation": "backend/core/analytics/narrative_compiler_lc_s3_assembly_v1.py line 189; frontend/app/lib/resultsPageLayout.ts lines 499-514"
+      "check": "One-sided reference range passthrough (source cross-ref)",
+      "result": "CONFIRMED. has_ref_bounds (registry.py line 328) requires both rmin and rmax to be isinstance(int, float). If only one bound is present: block at lines 367–397 is skipped; ref_converted = dict(ref_range) at line 399 copies raw ref dict with original units. Value may have been converted. This creates value/ref unit split for one-sided ranges. Sprint Task 2 and STOP conditions correctly address this class.",
+      "citation": "backend/core/units/registry.py lines 327–328, 363–399"
     },
     {
-      "check": "Task 6 — Biomarker unit/range mismatch classification",
-      "result": "CONFIRMED as backend/source data issue. BiomarkerDials.tsx passes value and referenceRange units as-is from API (preflight §4 table). Haemoglobin g/dL vs range g/L and haematocrit 0.4 % vs L/L are upstream data problems. STOP condition applies: Cursor must classify defect locus and STOP before touching backend scoring or inventing unit conversion.",
-      "citation": "frontend/app/components/biomarkers/BiomarkerDials.tsx lines 136-152; docs/testing/LC-S7_preflight_triage_post_LC-S6_UAT.md §4; automation_bus/latest_cursor_prompt.md §Stop conditions"
+      "check": "HbA1c canonical unit change — potential broad fixture drift STOP trigger",
+      "result": "WARNING SURFACED. hba1c SSOT canonical unit is currently % (biomarkers.yaml line 196). Sprint Task 5 states 'define canonical analytical unit for UK internal scoring, preferably mmol/mol'. Changing SSOT canonical from % to mmol/mol would affect ALL existing test fixtures and golden-gate fingerprints using hba1c. Sprint STOP condition explicitly covers this: 'STOP if correcting unit normalisation would change scores across many fixtures without migration/replay policy'. Cursor MUST audit fixture impact before changing hba1c canonical unit. If drift is broad: STOP and report per sprint instructions.",
+      "citation": "backend/ssot/biomarkers.yaml line 196; automation_bus/latest_cursor_prompt.md STOP conditions section; backend/core/units/registry.py line 66 (_HBA1C_BIOMARKERS)"
     },
     {
-      "check": "Task 7 — Label registry gaps confirmed",
-      "result": "CONFIRMED. BIOMARKER_NAMES in BiomarkerDials.tsx lines 36-75 is missing: tc_hdl_ratio, tg_hdl_ratio, ldl_hdl_ratio, non_hdl_cholesterol, active_b12, apoa1, apob, egfr, mcv, mch, mchc, fsh, lh. Key 'hemoglobin' exists at line 60 (US spelling) — UK key 'haemoglobin' absent. 'apolipoprotein_b' exists at line 45 but 'apob' does not — Cursor must verify actual API key. 'ggt' already exists at line 58. 'tsh' already exists at line 65.",
-      "citation": "frontend/app/components/biomarkers/BiomarkerDials.tsx lines 36-75"
+      "check": "HbA1c harmonisation — existing governed path",
+      "result": "CONFIRMED PRESENT. backend/core/scoring/rules.py _harmonise_hba1c_reference_range (lines 203–254) converts between % and mmol/mol families using the governed linear mapping from units.yaml (slope 0.09148, intercept 2.152). UNSCORED_REASON_HBA1C_UNIT_MISMATCH emitted when harmonisation fails (lines 47–48, 279–282). Sprint Task 5 builds on this path. Cursor must not duplicate or replace it — extend only.",
+      "citation": "backend/core/scoring/rules.py lines 47–48, 203–254, 279–282"
     },
     {
-      "check": "Forbidden files — SSOT / KB / ranking / questionnaire",
-      "result": "CONFIRMED NOT IN SCOPE. Declared expected files do not include backend/ssot/, knowledge_bus/, questionnaire files, signal scoring files, or ranking policy files. Prompt explicitly lists these as Not Expected.",
-      "citation": "automation_bus/latest_cursor_prompt.md §Expected files touched — Not expected"
+      "check": "Scoring unit-agnosticism confirmed (source cross-ref)",
+      "result": "CONFIRMED. backend/core/scoring/rules.py calculate_biomarker_score performs numeric comparison against reference bounds with no unit coherence check for non-HbA1c markers (lines 285–287, 312–328). Status is derived from frontend_status_from_lab_reference which is also unit-agnostic (primitives.py lines 96–108 per preflight §7). This is the scoring safety defect targeted by Task 2. The unit_reference_range_incoherent reason must be emitted upstream (in registry.py or orchestrator.py) before markers reach scoring.",
+      "citation": "backend/core/scoring/rules.py lines 285–287, 312–328; docs/audit-papers/LC-S8_biomarker_unit_range_normalisation_preflight.md §7"
+    },
+    {
+      "check": "Sentinel pack — no biomarker_value_reference_unit_incoherence class",
+      "result": "CONFIRMED ABSENT. sentinel/packs/escaped_defects_v1.json (read in full) contains defect classes: ggt_alias_miss, bilirubin_canonical_mismatch, slug_leakage, wave1_contradiction, persisted_result_replay, narrative_compiler_why_surface, questionnaire_exercise_unknown, narrative_payload_assembly, statin_signal_isolation. No biomarker unit-range incoherence class present. Sprint Task 10 correctly adds biomarker_value_reference_unit_incoherence.",
+      "citation": "sentinel/packs/escaped_defects_v1.json lines 5–83"
+    },
+    {
+      "check": "Behavioural surface area (2B — Intelligence Core)",
+      "result": "CONFIRMED. Sprint modifies: (1) registry.py — unit normalisation pipeline, (2) orchestrator.py — DTO construction and reference range sourcing, (3) scoring/rules.py and engine.py — scoring engine. All are Intelligence Core components per SOP §3. Behavioural output changes are intentional and explicitly declared (unscored markers previously silently scored will become unscored with explicit reason). Regression targets specified in Task 9. STOP conditions protect against unintended score changes on existing fixtures.",
+      "citation": "automation_bus/latest_cursor_prompt.md Tasks 1–9; backend/core/units/registry.py; backend/core/pipeline/orchestrator.py; backend/core/scoring/rules.py"
+    },
+    {
+      "check": "STOP conditions — completeness review",
+      "result": "CONFIRMED PRESENT and sufficient. Key STOP conditions verified: cannot resolve canonical unit policy; haemoglobin fix requires broad SSOT migration; haematocrit policy indeterminate; HbA1c requires DTO/schema extension; fixture drift without migration/replay policy; frontend-only fix; missing conversion factor; lab-range sovereignty conflict; any KB change; any Automation Bus control-plane change; old analyses require migration.",
+      "citation": "automation_bus/latest_cursor_prompt.md STOP conditions section"
+    },
+    {
+      "check": "Forbidden files — Knowledge Bus, questionnaire, Automation Bus control-plane",
+      "result": "CONFIRMED EXCLUDED. Sprint 'Not expected' section correctly excludes: knowledge_bus/ packages, questionnaire files, narrative compiler files, Automation Bus control-plane scripts. Expected files touched do not overlap with run_work_package.py, golden_gate_local.py, or update_cursor_status.py.",
+      "citation": "automation_bus/latest_cursor_prompt.md Not expected and Explicit non-goals sections"
+    },
+    {
+      "check": "Duplicate SSOT authority risk",
+      "result": "CONFIRMED CLEAN. Sprint explicitly states 'Do not create a second SSOT' (Task 1). No expected file creates a parallel authority for unit definitions or biomarker canonical units. Additions to units.yaml and biomarkers.yaml extend the single SSOT — they do not fork it.",
+      "citation": "automation_bus/latest_cursor_prompt.md Task 1 last line"
     },
     {
       "check": "Tooling leakage risk",
-      "result": "NO TOOLING LEAKAGE RISK. No .codex/, .vscode/, AGENTS.md files in scope.",
-      "citation": "automation_bus/latest_cursor_prompt.md §Expected files touched"
-    },
-    {
-      "check": "STOP conditions — completeness",
-      "result": "CONFIRMED PRESENT and specific. Seven STOP conditions cover: signal activation changes, ranking logic changes, clinical unit conversion, backend scoring changes, KB/SSOT changes, DTO shape changes, consumer/technical view indistinguishability. Correct boundaries for HIGH/MIXED work.",
-      "citation": "automation_bus/latest_cursor_prompt.md §Stop conditions"
-    },
-    {
-      "check": "Determinism — no LLM in analytical changes",
-      "result": "CONFIRMED. All backend changes are deterministic prose substitution and append/join logic only. No LLM call sites introduced. format_intervention_annotation_consumer_cv_suffix_v1 is a fixed-string function.",
-      "citation": "backend/core/analytics/intervention_annotation_formatter_v1.py lines 58-69"
-    },
-    {
-      "check": "Regression targets declared",
-      "result": "CONFIRMED. Task 8 lists explicit regression targets: LC-S6 leakage tests, slug-leakage-guard test, consumer boundary strings, body_overview prose, actions dedup, label mappings, unit/range mismatch handling.",
-      "citation": "automation_bus/latest_cursor_prompt.md §Task 8; docs/testing/LC-S7_preflight_triage_post_LC-S6_UAT.md §5"
+      "result": "NO RISK. Expected files do not include .codex/, .vscode/, AGENTS.md, or other tooling paths.",
+      "citation": "automation_bus/latest_cursor_prompt.md Expected files touched section"
     }
   ],
   "surfaced_risks": [
     {
-      "risk": "Task 6 STOP — haemoglobin/haematocrit unit mismatch is a backend data problem. Cursor must investigate the API source, classify the defect locus precisely, and STOP before any backend scoring or unit conversion change. Non-negotiable per the prompt's own stop conditions.",
-      "severity": "BLOCKER if misclassified"
+      "risk": "g/L and L/L units are absent from units.yaml and UnitEnum. Must be added before Task 3 (haemoglobin) and Task 4 (haematocrit) can be implemented. This is within sprint scope but must not be skipped.",
+      "severity": "BLOCKER if omitted"
     },
     {
-      "risk": "Task 7 — 'apob' key conflict. BIOMARKER_NAMES already has 'apolipoprotein_b' (BiomarkerDials.tsx line 45). Cursor must verify which key the API actually emits before adding 'apob' → 'ApoB' mapping, to avoid a dead or duplicate entry.",
-      "severity": "HIGH"
+      "risk": "SSOT uses US spellings: hemoglobin (line 644) and hematocrit (line 659). Sprint prompt uses UK spellings throughout. Cursor must use the SSOT canonical keys. Do not create haemoglobin or haematocrit as new SSOT entries.",
+      "severity": "BLOCKER if mis-keyed"
     },
     {
-      "risk": "Task 7 — UK/US spelling gap. BIOMARKER_NAMES has 'hemoglobin' (line 60) but not 'haemoglobin'. If the API emits the UK key, the label falls through to replace(/_/g, ' '). Cursor must add 'haemoglobin' entry.",
-      "severity": "HIGH"
+      "risk": "Changing hba1c canonical SSOT unit from % to mmol/mol (Task 5) is a HIGH-impact SSOT change. Cursor must audit fixture impact first. If drift is broad, STOP and report before committing.",
+      "severity": "STOP condition trigger"
     },
     {
-      "risk": "Task 2 — 'governed functional titles' phrase has no sanitizer rule. Fix must be upstream in _build_body_overview (preferred) or a new sanitizer entry. If upstream, it is a backend Intelligence Core change requiring test coverage.",
-      "severity": "HIGH"
+      "risk": "registry.py passthrough branch (lines 241–245) currently labels ref range output with base_unit even when numeric bounds were not actually converted. Fix must ensure the output unit reflects the actual scale of the numeric bounds — not merely the SSOT base_unit label.",
+      "severity": "HIGH — core defect mechanism"
     },
     {
-      "risk": "Task 3 — ClinicianReportRenderer.tsx ranking policy version hide requires showDetails prop or context to be available at that render site. Cursor must confirm before gating.",
+      "risk": "Task 2 unit_reference_range_incoherent reason must be emitted before scoring (in registry.py or orchestrator.py), not inside scoring engine. Adding it inside rules.py risks missing the one-sided range passthrough path which does not reach the same scoring branch.",
+      "severity": "HIGH — architectural placement"
+    },
+    {
+      "risk": "frontend/app/(app)/results/page.tsx and BiomarkerDials.tsx must remain renderer-only. Task 8 frontend work must not introduce clinical unit conversion. Cursor must inspect current BiomarkerDials.tsx shouldSuppressReferenceRange (lines 92–105) to ensure LC-S7 defensive suppression is preserved and not widened beyond its current scope.",
       "severity": "MEDIUM"
-    },
-    {
-      "risk": "Task 1 — Switching body_overview from format_intervention_annotation_narrative_appendix_v1 to format_intervention_annotation_consumer_cv_suffix_v1 is an intentional behavioural output change and must be covered by backend narrative tests.",
-      "severity": "MEDIUM — expected and in scope, must be tested"
     }
   ]
 }
