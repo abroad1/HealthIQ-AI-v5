@@ -1,9 +1,10 @@
 {
   "branch": "launch-core/lc-s8b-uk-canonical-unit-policy-validation",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-16T09:53:30Z",
   "cursor_started_utc": "2026-05-16T09:48:41Z",
-  "head_sha": "219f969b2cdeafaf3e66f117e28e2e356c71b583",
+  "head_sha": "da648988267ef0265b3534cc49d80fa49e4d0ee4",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "LC-S8B"
 }
