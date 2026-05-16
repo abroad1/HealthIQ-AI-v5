@@ -6,12 +6,100 @@ import yaml
 
 from core.analytics.report_compiler_v1 import (
     TOP_FINDINGS_RANKING_POLICY_VERSION,
+    _normalise_hypothesis_safety_class,
+    compile_clinician_report_v1,
     compile_report_v1,
 )
+from core.dto.builders import build_analysis_result_dto
 
 
 def _repo_root() -> Path:
     return Path(__file__).resolve().parents[3]
+
+
+def _report_v1_with_informational_root_cause_fallback() -> dict:
+    """Minimal report_v1 payload mirroring root_cause_compiler_v1 WHY fallback."""
+    return {
+        "meta": {
+            "ranking_signal_id_fallback_invoked": False,
+            "ranking_policy_version": TOP_FINDINGS_RANKING_POLICY_VERSION,
+        },
+        "top_findings": [
+            {
+                "signal_id": "signal_homocysteine",
+                "signal_state": "suboptimal",
+                "confidence": 0.7,
+                "primary_metric": "homocysteine",
+                "why_it_matters": "Elevated homocysteine may reflect methylation stress.",
+                "confidence_reasons": ["PRIMARY_METRIC_PRESENT"],
+                "supporting_markers": [],
+            }
+        ],
+        "top_chains": [],
+        "root_cause_v1": {
+            "findings": [
+                {
+                    "signal_id": "signal_homocysteine",
+                    "signal_state": "suboptimal",
+                    "signal_confidence": 0.7,
+                    "primary_metric": "homocysteine",
+                    "hypotheses": [
+                        {
+                            "hypothesis_id": "why_engine_fallback_v1",
+                            "title": "No governed WHY for signal_homocysteine",
+                            "summary": (
+                                "Deep hypothesis (WHY) analysis is not yet available for this marker."
+                            ),
+                            "hypothesis_confidence": 0.0,
+                            "evidence_for": [],
+                            "evidence_against": [],
+                            "missing_data": [],
+                            "confirmatory_tests": [],
+                            "safety_class": "informational",
+                        }
+                    ],
+                }
+            ],
+        },
+    }
+
+
+def test_normalise_hypothesis_safety_class_legacy_and_unknown_tokens():
+    assert _normalise_hypothesis_safety_class("informational") == "monitoring"
+    assert _normalise_hypothesis_safety_class("") == "monitoring"
+    assert _normalise_hypothesis_safety_class("  ") == "monitoring"
+    assert _normalise_hypothesis_safety_class("legacy_unknown") == "monitoring"
+    assert _normalise_hypothesis_safety_class("clinician_referral") == "clinician_referral"
+
+
+def test_compile_clinician_report_v1_maps_informational_safety_class_to_monitoring():
+    """LC-S8D: legacy informational safety_class must not break HypothesisV1 validation."""
+    report = _report_v1_with_informational_root_cause_fallback()
+    compiled = compile_clinician_report_v1(report_v1_payload=report, biomarker_rows=[])
+    assert compiled is not None
+    assert compiled.sections.root_cause is not None
+    assert len(compiled.sections.root_cause.hypotheses) == 1
+    assert compiled.sections.root_cause.hypotheses[0].safety_class == "monitoring"
+
+
+def test_build_analysis_result_dto_accepts_informational_root_cause_fallback():
+    """GET /api/analysis/result path: build_analysis_result_dto must not 500 on informational."""
+    raw = {
+        "analysis_id": "lc-s8d-informational-fallback-test",
+        "biomarkers": [],
+        "clusters": [],
+        "insights": [],
+        "status": "completed",
+        "meta": {
+            "insight_graph": {
+                "report_v1": _report_v1_with_informational_root_cause_fallback(),
+            }
+        },
+    }
+    dto = build_analysis_result_dto(raw)
+    assert dto["clinician_report_v1"] is not None
+    hypotheses = dto["clinician_report_v1"]["sections"]["root_cause"]["hypotheses"]
+    assert hypotheses[0]["safety_class"] == "monitoring"
 
 
 def test_report_v1_ordering_and_schema_fields():
