@@ -456,10 +456,11 @@ def _compile_why_engine_fallback_finding(
             st = frontend_status_from_lab_reference(float(value), a, b)
             range_bits = f"lab range classification: {st}"
     act = str(lead.get("signal_state", "unknown")).strip() or "unknown"
-    title = f"No governed WHY for {str(lead.get('signal_id', '')).strip() or 'this signal'}"
+    title = "Pattern noted — deeper causal explanation not yet available"
     summary = (
-        "Deep hypothesis (WHY) analysis is not yet available for this marker. "
-        f"Signal activation: {act}. {range_bits}."
+        "We identified a pattern on this panel, but governed causal hypotheses are "
+        "not yet available for this lead. "
+        f"{range_bits} Discuss with your clinician if you need a fuller explanation."
     )[:200]
     hold = RootCauseHypothesisV1(
         hypothesis_id=_WHY_FALLBACK_HYPOTHESIS_ID,

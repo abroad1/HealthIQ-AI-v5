@@ -13,7 +13,7 @@
     },
     {
       "id": "lifestyle_context",
-      "description": "Existing SSOT lifestyle fixture; no questionnaire_data.",
+      "description": "SSOT lifestyle fixture (alcohol_units_per_week=10, moderate+); no questionnaire_data.",
       "lifestyle_fixture": "tests/fixtures/lifestyle_minimal.json",
       "questionnaire_data": null
     },

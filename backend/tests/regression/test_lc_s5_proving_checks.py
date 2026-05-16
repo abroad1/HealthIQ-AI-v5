@@ -159,6 +159,68 @@ def test_check5_wave1_consumer_domain_band_vs_consequence_consistency() -> None:
 
 
 @pytest.mark.regression
+def test_check4_statin_intervention_and_bounded_framing_from_fingerprints() -> None:
+    """CHECK 4 — statin_on vs statin_off: intervention present only when on; bounded analytical invariants."""
+    data = _load_fingerprints()
+    runs: Dict[str, Any] = data.get("runs") or {}
+    for panel in ("AB", "VR"):
+        off_key = f"{panel}__statin_off"
+        on_key = f"{panel}__statin_on"
+        fa = runs.get(off_key) or {}
+        fb = runs.get(on_key) or {}
+        assert fa, f"Missing harness run {off_key}"
+        assert fb, f"Missing harness run {on_key}"
+
+        assert fa.get("top_finding_signal_ids") == fb.get("top_finding_signal_ids"), (
+            f"{panel}: top findings must match statin off/on"
+        )
+        assert fa.get("signal_state_by_id") == fb.get("signal_state_by_id"), (
+            f"{panel}: signal states must match statin off/on"
+        )
+        assert fa.get("consumer_band_labels") == fb.get("consumer_band_labels"), (
+            f"{panel}: consumer band labels must match statin off/on"
+        )
+
+        ia_off = fa.get("intervention") or {}
+        ia_on = fb.get("intervention") or {}
+        assert not ia_off.get("present"), f"{off_key}: intervention must be absent when statins off"
+        assert ia_on.get("present"), f"{on_key}: intervention must be present when statins on"
+
+        def _cv_consequence_head(payload: Dict[str, Any]) -> str:
+            for row in payload.get("consumer_domain_rows") or []:
+                if isinstance(row, dict) and "cardiovascular" in str(row.get("domain_id", "")):
+                    return str(row.get("consequence_sentence_head", ""))
+            return ""
+
+        cv_off = _cv_consequence_head(fa)
+        cv_on = _cv_consequence_head(fb)
+        assert cv_off and cv_on, f"{panel}: cardiovascular consequence_sentence required"
+        assert cv_off != cv_on, (
+            f"{panel}: statin on must change cardiovascular consequence framing "
+            f"(off={cv_off[:80]!r} on={cv_on[:80]!r})"
+        )
+
+
+@pytest.mark.regression
+def test_check2_lifestyle_context_narrative_differs_from_baseline() -> None:
+    """CHECK 2 — matrix lifestyle_context must change narrative vs baseline (fixture alcohol >= moderate)."""
+    data = _load_fingerprints()
+    runs: Dict[str, Any] = data.get("runs") or {}
+    for panel in ("AB", "VR"):
+        base = runs.get(f"{panel}__baseline") or {}
+        life = runs.get(f"{panel}__lifestyle_context") or {}
+        assert base and life, f"Missing baseline or lifestyle_context for {panel}"
+        n0 = base.get("narrative") or {}
+        n1 = life.get("narrative") or {}
+        assert n0 != n1, f"{panel}: lifestyle_context must change narrative fingerprint vs baseline"
+        lead = str((n1.get("lead_narrative_head") or "")).lower()
+        assert any(
+            token in lead
+            for token in ("alcohol", "macrocytosis", "lifestyle", "methylation", "remethylation", "transsulfuration")
+        ), f"{panel}: expected lifestyle bridge language in lead_narrative_head: {lead[:240]!r}"
+
+
+@pytest.mark.regression
 def test_check6_clinician_retail_lead_family_alignment_ab_vr_baseline() -> None:
     """CHECK 6 — primary_concern_head and retail_summary_head both anchor on homocysteine lead family."""
     data = _load_fingerprints()
