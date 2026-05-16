@@ -284,6 +284,34 @@ export interface Wave1AlignedDriversV1 {
 }
 
 /** D-1/D-2/D-3 — Wave 1 customer domain card contract (mirrors Pydantic ConsumerDomainScoreV1) */
+/** LC-S8D / FE-S8E — pre-arbitration upload row (Mode A fidelity). */
+export interface UploadPanelObservation {
+  value: number;
+  unit: string;
+}
+
+/** LC-S8D — governed display policy metadata on analysis results (presentation only). */
+export interface DisplayUnitPolicyBiomarkerEntry {
+  uploaded_panel_fidelity?: {
+    preserve_equivalent_rows?: boolean;
+    equivalent_canonical_ids?: string[];
+    legacy_input_units?: string[];
+  };
+}
+
+export interface DisplayUnitPolicyMeta {
+  display_unit_policy_version?: string;
+  presentation_modes?: Record<string, unknown>;
+  /** Present when backend embeds full policy; optional for older payloads. */
+  biomarkers?: Record<string, DisplayUnitPolicyBiomarkerEntry>;
+}
+
+export interface AnalysisResultMetaV1 {
+  upload_panel_observations?: Record<string, UploadPanelObservation | Record<string, unknown>>;
+  display_unit_policy?: DisplayUnitPolicyMeta;
+  [key: string]: unknown;
+}
+
 export interface ConsumerDomainScoreV1 {
   /** D-6 — bump when card assembly / narrative contract changes; current Wave 1 retail is 1.1 */
   card_schema_version?: string;
@@ -321,8 +349,8 @@ export interface AnalysisResult {
   result_version?: string;
   risk_assessment?: Record<string, any>;
   recommendations?: string[];
-  /** Includes `narrative_runtime` when backend orchestrator attaches runtime metadata. */
-  meta?: Record<string, any>;
+  /** Includes `narrative_runtime`, `upload_panel_observations`, `display_unit_policy` when present. */
+  meta?: AnalysisResultMetaV1 & Record<string, unknown>;
   clinician_report_v1?: ClinicianReportV1 | null;
   /** BE-W2-RQ3 — deterministic balanced-system narrative; null when no stable systems to surface */
   balanced_systems_v1?: {
