@@ -10,6 +10,8 @@ import { useClusterStore } from '@/state/clusterStore';
 import { InsightsPanel } from '@/components/insights/InsightsPanel';
 import { InsightPanel } from '@/components/insights/InsightPanel';
 import BiomarkerDials, { type BiomarkerDialEntry } from '@/components/biomarkers/BiomarkerDials';
+import UploadedPanelFidelity from '@/components/biomarkers/UploadedPanelFidelity';
+import { buildUploadedPanelFidelityRows } from '@/lib/uploadPanelFidelity';
 import ClusterSummary from '@/components/clusters/ClusterSummary';
 import ClinicianReportRenderer from '@/components/results/ClinicianReportRenderer';
 import { BalancedSystemsSummary } from '@/components/results/BalancedSystemsSummary';
@@ -519,6 +521,12 @@ export default function ResultsPage() {
       };
     });
 
+  const uploadPanelFidelityRows = buildUploadedPanelFidelityRows(
+    currentAnalysis.meta?.upload_panel_observations as Record<string, unknown> | undefined,
+    currentAnalysis.meta?.display_unit_policy,
+    biomarkers
+  );
+
   const clusterSummaries = clusters.map((cluster, idx) => {
     const id = String(cluster.cluster_id || cluster.id || `cluster-${idx}`);
     const expl = cluster.system_educational_explainer;
@@ -836,6 +844,7 @@ export default function ResultsPage() {
                 Biomarker evidence
               </h2>
               <BiomarkerDials biomarkers={biomarkerDialData} sectionTitle="All markers on this run" />
+              <UploadedPanelFidelity rows={uploadPanelFidelityRows} />
             </section>
 
             {showInsightsPanelSection ? (

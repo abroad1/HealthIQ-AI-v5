@@ -72,6 +72,7 @@ const BIOMARKER_NAMES: Record<string, string> = {
   mch: 'MCH',
   mchc: 'MCHC',
   wbc: 'White Blood Cell Count',
+  white_blood_cells: 'White Blood Cells',
   rbc: 'Red Blood Cell Count',
   platelets: 'Platelet Count',
   tsh: 'TSH',
