@@ -1,9 +1,9 @@
 {
-  "branch": "launch-core/lc-s8d-uk-si-unit-governance-remediation",
+  "branch": "launch-core/fe-s8e-uploaded-panel-fidelity-rendering",
   "bus_version": "1.2",
-  "cursor_started_utc": "2026-05-16T12:42:20Z",
-  "head_sha": "c8309d8f16165d134b62965a99e6a7ac0bae7205",
+  "cursor_started_utc": "2026-05-16T14:07:25Z",
+  "head_sha": "851f889fad890fcc2ce00710dc785cba379b2df2",
   "raw_stop_condition": null,
   "status": "IN_PROGRESS",
-  "work_id": "LC-S8D"
+  "work_id": "FE-S8E"
 }
