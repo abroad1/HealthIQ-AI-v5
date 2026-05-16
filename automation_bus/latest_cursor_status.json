@@ -1,10 +1,9 @@
 {
-  "branch": "launch-core/lc-s8b-uk-canonical-unit-policy-validation",
+  "branch": "launch-core/lc-s8d-uk-si-unit-governance-remediation",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-16T09:53:30Z",
-  "cursor_started_utc": "2026-05-16T09:48:41Z",
-  "head_sha": "da648988267ef0265b3534cc49d80fa49e4d0ee4",
+  "cursor_started_utc": "2026-05-16T12:27:38Z",
+  "head_sha": "107540d4dca8233064a965924f34b286982a1ef9",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "LC-S8B"
+  "status": "IN_PROGRESS",
+  "work_id": "LC-S8D"
 }
