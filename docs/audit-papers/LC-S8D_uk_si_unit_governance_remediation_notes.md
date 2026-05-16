@@ -86,11 +86,31 @@
 
 ## Phase E — Sentinel lockdown
 
-**Status:** COMPLETE (warn for Phase B deferred rows)
+**Status:** COMPLETE (Phase E retry — all 12 guardrail defect classes registered)
 
-**Files:**
-- `sentinel/packs/lc_s8d_unit_governance_v1.json`
+**Pack:** `sentinel/packs/lc_s8d_unit_governance_v1.json`
+
+| Defect class | Status | Test surface |
+|--------------|--------|--------------|
+| `uk_layer_b_canonical_unit_drift` | GUARDED | `test_lc_s8d_unit_governance_sentinel.py` |
+| `layer_b_unit_declared` | GUARDED | `test_lc_s8d_unit_governance_sentinel.py` |
+| `input_unit_has_authority` | GUARDED | `test_lc_s8d_unit_governance_sentinel.py` |
+| `unknown_unit_not_scored` | GUARDED | `test_lc_s8d_unit_governance_sentinel.py` |
+| `biomarker_value_reference_unit_incoherence` | GUARDED | `test_lc_s8d_unit_governance_sentinel.py` |
+| `hba1c_single_analytical_identity` | GUARDED | `test_hba1c_governance.py` |
+| `hematocrit_fraction_percent_display` | GUARDED | `test_lc_s8d_unit_governance_sentinel.py` |
+| `bun_not_uric_acid` | GUARDED | `test_lc_s8d_unit_governance_sentinel.py` |
+| `frontend_no_unit_repair` | GUARDED | `test_lc_s8d_unit_governance_sentinel.py` |
+| `new_biomarker_unit_metadata` | GUARDED | `test_lc_s8d_unit_governance_sentinel.py` |
+| `phase_b_blocked_pending_evidence` | WARN | notes file (Ca/Mg/fT4/Hb) |
+
+**Phase E retry (this pass):** Added 5 previously missing guardrails — `layer_b_unit_declared`, `input_unit_has_authority`, `biomarker_value_reference_unit_incoherence`, `frontend_no_unit_repair`, `new_biomarker_unit_metadata`.
+
+**Tests run (Phase E retry):**
 - `backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py`
+- Required LC-S8D validation suite (unit registry, scoring rules, hba1c governance, LC-S8 + LC-S8D regression)
+
+**Next phase safe:** N/A (sprint implementation closure)
 
 ---
 
