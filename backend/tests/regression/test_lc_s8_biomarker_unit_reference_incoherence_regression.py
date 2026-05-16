@@ -70,13 +70,13 @@ class TestLC_S8UnitNormalisation:
             }
         )
         row = out["hematocrit"]
-        assert row["unit"] == "%"
-        assert abs(float(row["value"]) - 43.8) < 0.02
+        assert row["unit"] == "L/L"
+        assert abs(float(row["value"]) - 0.438) < 0.001
         ref = row["reference_range"]
         assert ref is not None
-        assert ref["unit"] == "%"
-        assert abs(float(ref["min"]) - 40.0) < 0.02
-        assert abs(float(ref["max"]) - 54.0) < 0.02
+        assert ref["unit"] == "L/L"
+        assert abs(float(ref["min"]) - 0.40) < 0.02
+        assert abs(float(ref["max"]) - 0.54) < 0.02
 
     def test_hemoglobin_one_sided_min_ref_converts_to_base(self):
         out = apply_unit_normalisation(
@@ -159,12 +159,12 @@ class TestLC_S8UnitNormalisation:
             }
         )
         row = out["hematocrit"]
-        assert row["unit"] == "%"
-        assert abs(float(row["value"]) - 43.8) < 0.02
+        assert row["unit"] == "L/L"
+        assert abs(float(row["value"]) - 0.438) < 0.001
         ref = row["reference_range"]
-        assert ref is not None and ref["unit"] == "%"
-        assert abs(float(ref["min"]) - 35.0) < 0.02
-        assert abs(float(ref["max"]) - 48.0) < 0.02
+        assert ref is not None and ref["unit"] == "L/L"
+        assert abs(float(ref["min"]) - 0.35) < 0.02
+        assert abs(float(ref["max"]) - 0.48) < 0.02
 
 
 @pytest.mark.regression

@@ -56,6 +56,7 @@ class UnitEnum(str, Enum):
     NG_ML = "ng/mL"
     MMOL_MOL = "mmol/mol"
     MEQ_L = "mEq/L"
+    TEN_9_L = "10^9/L"
     RATIO = "ratio"
 
 
@@ -71,6 +72,11 @@ _CREATININE_BIOMARKERS = frozenset({"creatinine"})
 _VITAMIN_D_BIOMARKERS = frozenset({"vitamin_d"})
 _HEMOGLOBIN_BIOMARKERS = frozenset({"hemoglobin"})
 _HEMATOCRIT_BIOMARKERS = frozenset({"hematocrit"})
+_ELECTROLYTE_BIOMARKERS = frozenset({"sodium", "potassium", "chloride"})
+_COUNT_BIOMARKERS = frozenset({
+    "platelets", "white_blood_cells", "neutrophils", "lymphocytes",
+    "monocytes", "eosinophils", "basophils",
+})
 _STRICT_CONVERSION_BIOMARKERS = frozenset().union(
     _CHOLESTEROL_BIOMARKERS,
     _TRIGLYCERIDE_BIOMARKERS,
@@ -84,6 +90,8 @@ _STRICT_CONVERSION_BIOMARKERS = frozenset().union(
 )
 
 _UMOL_EQUIVALENTS = frozenset({"µmol/L", "umol/L", "uMol/L"})
+_COUNT_UNIT_EQUIVALENTS = frozenset({"K/μL", "K/uL", "10^9/L"})
+_MONOVALENT_EQUIVALENTS = frozenset({"mEq/L", "mmol/L"})
 
 
 def _units_equivalent(from_unit: str, to_unit: str) -> bool:
@@ -91,7 +99,13 @@ def _units_equivalent(from_unit: str, to_unit: str) -> bool:
     to_u = (to_unit or "").strip()
     if from_u == to_u:
         return True
-    return from_u in _UMOL_EQUIVALENTS and to_u in _UMOL_EQUIVALENTS
+    if from_u in _UMOL_EQUIVALENTS and to_u in _UMOL_EQUIVALENTS:
+        return True
+    if from_u in _COUNT_UNIT_EQUIVALENTS and to_u in _COUNT_UNIT_EQUIVALENTS:
+        return True
+    if from_u in _MONOVALENT_EQUIVALENTS and to_u in _MONOVALENT_EQUIVALENTS:
+        return True
+    return False
 
 
 class UnitRegistry:
@@ -182,7 +196,18 @@ class UnitRegistry:
             c = convs.get("mmol_L_to_mg_dL_triglycerides", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
                 return float(c.get("factor", 88.57))
+        if biomarker_id in _ELECTROLYTE_BIOMARKERS:
+            if from_u in _MONOVALENT_EQUIVALENTS and to_u in _MONOVALENT_EQUIVALENTS:
+                return 1.0
+        if biomarker_id in _COUNT_BIOMARKERS:
+            if from_u in _COUNT_UNIT_EQUIVALENTS and to_u in _COUNT_UNIT_EQUIVALENTS:
+                return 1.0
         if biomarker_id in _HBA1C_BIOMARKERS and from_u == "%" and to_u == "mmol/mol":
+            linear = self._get_hba1c_mmol_mol_to_percent_linear(biomarker_id, "mmol/mol", "%")
+            if linear:
+                slope, intercept = linear
+                if slope:
+                    return 1.0 / float(slope)
             c = convs.get("percent_to_mmol_mol", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
                 return float(c.get("factor", 10.929))
@@ -206,14 +231,14 @@ class UnitRegistry:
             c = convs.get("g_dL_to_g_L_hemoglobin", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
                 return float(c.get("factor", 10.0))
-        if biomarker_id in _HEMATOCRIT_BIOMARKERS and from_u == "L/L" and to_u == "%":
-            c = convs.get("l_L_to_percent_hematocrit", {})
-            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
-                return float(c.get("factor", 100.0))
         if biomarker_id in _HEMATOCRIT_BIOMARKERS and from_u == "%" and to_u == "L/L":
             c = convs.get("percent_to_l_L_hematocrit", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
                 return float(c.get("factor", 0.01))
+        if biomarker_id in _HEMATOCRIT_BIOMARKERS and from_u == "L/L" and to_u == "%":
+            c = convs.get("l_L_to_percent_hematocrit", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 100.0))
         return None
 
     def _get_hba1c_mmol_mol_to_percent_linear(
@@ -255,6 +280,12 @@ class UnitRegistry:
             return float(value), base_unit
         if _units_equivalent(from_u, base_unit):
             return float(value), base_unit
+        if biomarker_id in _HBA1C_BIOMARKERS and from_u == "%" and base_unit == "mmol/mol":
+            linear = self._get_hba1c_mmol_mol_to_percent_linear(biomarker_id, "mmol/mol", "%")
+            if linear is not None:
+                slope, intercept = linear
+                if slope:
+                    return round((float(value) - float(intercept)) / float(slope), 6), base_unit
         linear = self._get_hba1c_mmol_mol_to_percent_linear(biomarker_id, from_u, base_unit)
         if linear is not None:
             slope, intercept = linear
