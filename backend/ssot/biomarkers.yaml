@@ -193,8 +193,8 @@ biomarkers:
     - hemoglobin_a1c
     - a1c
     - glycated_hemoglobin
-    unit: '%'
-    description: Hemoglobin A1c percentage
+    unit: mmol/mol
+    description: Hemoglobin A1c (IFCC mmol/mol, UK primary)
     category: metabolic
     data_type: numeric
     system: metabolic
@@ -661,8 +661,8 @@ biomarkers:
     aliases:
     - hct
     - pcv
-    unit: '%'
-    description: Hematocrit percentage
+    unit: L/L
+    description: Haematocrit volume fraction (UK primary)
     category: cbc
     data_type: numeric
     system: hematological
@@ -676,7 +676,7 @@ biomarkers:
     aliases:
     - wbc
     - leukocytes
-    unit: K/μL
+    unit: 10^9/L
     description: White blood cell count
     category: cbc
     data_type: numeric
@@ -691,7 +691,7 @@ biomarkers:
     aliases:
     - plt
     - platelet_count
-    unit: K/μL
+    unit: 10^9/L
     description: Platelet count
     category: cbc
     data_type: numeric
@@ -772,7 +772,7 @@ biomarkers:
   sodium:
     aliases:
     - sodium_(venous)
-    unit: mEq/L
+    unit: mmol/L
     description: Serum sodium level
     category: electrolyte
     data_type: numeric
@@ -786,7 +786,7 @@ biomarkers:
   potassium:
     aliases:
     - potassium_(venous)
-    unit: mEq/L
+    unit: mmol/L
     description: Serum potassium level
     category: electrolyte
     data_type: numeric
@@ -800,7 +800,7 @@ biomarkers:
   chloride:
     aliases:
     - chloride_(venous)
-    unit: mEq/L
+    unit: mmol/L
     description: Serum chloride level
     category: electrolyte
     data_type: numeric

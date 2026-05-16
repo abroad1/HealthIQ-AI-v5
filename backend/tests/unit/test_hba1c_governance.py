@@ -35,16 +35,16 @@ def _prepare_layer_b_payload(biomarkers: dict) -> dict:
 
 
 class TestHbA1cMmolMolToPercent:
-    def test_hba1c_mmol_mol_converts_to_percent_diabetes_threshold(self):
-        """48 mmol/mol aligns ~6.5% NGSP (paired criteria)."""
+    def test_hba1c_mmol_mol_identity_at_diabetes_threshold(self):
+        """48 mmol/mol remains canonical base (UK IFCC)."""
         val, unit = convert_value("hba1c", 48.0, "mmol/mol")
-        assert unit == "%"
-        assert abs(val - 6.54304) < 0.02
+        assert unit == "mmol/mol"
+        assert abs(val - 48.0) < 0.02
 
-    def test_hba1c_percent_identity(self):
-        val, unit = convert_value("hba1c", 5.5, "%")
-        assert unit == "%"
-        assert val == 5.5
+    def test_hba1c_percent_converts_to_mmol_mol(self):
+        val, unit = convert_value("hba1c", 6.5, "%")
+        assert unit == "mmol/mol"
+        assert abs(val - 47.6) < 1.0
 
 
 class TestHbA1cArbitration:

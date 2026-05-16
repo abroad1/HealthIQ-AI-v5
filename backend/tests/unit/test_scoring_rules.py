@@ -28,7 +28,7 @@ class TestScoringRules:
         glucose_rule = self.rules.get_biomarker_rule("glucose")
         assert glucose_rule is not None, "Should find glucose rule"
         assert glucose_rule.biomarker_name == "glucose", "Should have correct biomarker name"
-        assert glucose_rule.unit == "mg/dL", "Should have correct unit"
+        assert glucose_rule.unit == "mmol/L", "Should have correct unit"
         assert glucose_rule.weight > 0, "Should have positive weight"
         
         # Test unknown biomarker
@@ -58,33 +58,33 @@ class TestScoringRules:
         Test glucose scoring accuracy against clinical thresholds.
         Uses lab reference range (required for lab-provided biomarkers).
         """
-        lab_range = {"min": 70.0, "max": 100.0, "unit": "mg/dL", "source": "lab"}
-        # Test optimal glucose (70-100 mg/dL)
+        lab_range = {"min": 3.9, "max": 5.6, "unit": "mmol/L", "source": "lab"}
+        # Test optimal glucose (3.9-5.6 mmol/L)
         score_optimal, range_optimal, _ = self.rules.calculate_biomarker_score(
-            "glucose", 85.0, input_reference_range=lab_range
+            "glucose", 4.7, input_reference_range=lab_range
         )
         assert score_optimal >= 90, "Optimal glucose should score high"
         assert range_optimal == ScoreRange.OPTIMAL, "Should be in optimal range"
 
         # Test normal glucose (70-100 mg/dL)
         score_normal, range_normal, _ = self.rules.calculate_biomarker_score(
-            "glucose", 95.0, input_reference_range=lab_range
+            "glucose", 5.0, input_reference_range=lab_range
         )
         assert score_normal >= 90, "Normal glucose should score high"
         assert range_normal in [ScoreRange.NORMAL, ScoreRange.OPTIMAL], "Should be in normal or optimal range"
 
         # Test prediabetic glucose (100-125 mg/dL) - lab range scores by position
-        lab_pred = {"min": 70.0, "max": 125.0, "unit": "mg/dL", "source": "lab"}
+        lab_pred = {"min": 3.9, "max": 6.9, "unit": "mmol/L", "source": "lab"}
         score_prediabetic, range_prediabetic, _ = self.rules.calculate_biomarker_score(
-            "glucose", 110.0, input_reference_range=lab_pred
+            "glucose", 6.2, input_reference_range=lab_pred
         )
         assert score_prediabetic > 0, "Prediabetic glucose should be scored"
         assert range_prediabetic in [ScoreRange.BORDERLINE, ScoreRange.NORMAL, ScoreRange.OPTIMAL]
 
-        # Test diabetic glucose (>126 mg/dL) - value near top of range scores lower
-        lab_diabetic = {"min": 70.0, "max": 126.0, "unit": "mg/dL", "source": "lab"}
+        # Test diabetic glucose (>6.9 mmol/L) - value near top of range scores lower
+        lab_diabetic = {"min": 3.9, "max": 6.9, "unit": "mmol/L", "source": "lab"}
         score_diabetic, range_diabetic, _ = self.rules.calculate_biomarker_score(
-            "glucose", 150.0, input_reference_range=lab_diabetic
+            "glucose", 8.3, input_reference_range=lab_diabetic
         )
         assert score_diabetic <= 50, "Diabetic glucose should score low"
         assert range_diabetic in [ScoreRange.HIGH, ScoreRange.VERY_HIGH, ScoreRange.CRITICAL], "Should be in high range"
@@ -94,23 +94,23 @@ class TestScoringRules:
         Test HbA1c scoring accuracy against clinical thresholds.
         Uses lab reference range (required for lab-provided biomarkers).
         """
-        lab_range = {"min": 4.0, "max": 5.6, "unit": "%", "source": "lab"}
+        lab_range = {"min": 20.2, "max": 37.4, "unit": "mmol/mol", "source": "lab"}
         score_optimal, range_optimal, _ = self.rules.calculate_biomarker_score(
-            "hba1c", 5.0, input_reference_range=lab_range
+            "hba1c", 32.0, input_reference_range=lab_range, value_unit="mmol/mol"
         )
         assert score_optimal >= 90, "Optimal HbA1c should score high"
         assert range_optimal == ScoreRange.OPTIMAL, "Should be in optimal range"
 
-        lab_pred = {"min": 4.0, "max": 6.4, "unit": "%", "source": "lab"}
+        lab_pred = {"min": 20.2, "max": 46.5, "unit": "mmol/mol", "source": "lab"}
         score_prediabetic, range_prediabetic, _ = self.rules.calculate_biomarker_score(
-            "hba1c", 6.0, input_reference_range=lab_pred
+            "hba1c", 42.0, input_reference_range=lab_pred, value_unit="mmol/mol"
         )
         assert score_prediabetic > 0, "Prediabetic HbA1c should be scored"
         assert range_prediabetic in [ScoreRange.BORDERLINE, ScoreRange.NORMAL, ScoreRange.OPTIMAL]
 
-        lab_diabetic = {"min": 4.0, "max": 6.5, "unit": "%", "source": "lab"}
+        lab_diabetic = {"min": 20.2, "max": 47.7, "unit": "mmol/mol", "source": "lab"}
         score_diabetic, range_diabetic, _ = self.rules.calculate_biomarker_score(
-            "hba1c", 7.5, input_reference_range=lab_diabetic
+            "hba1c", 60.0, input_reference_range=lab_diabetic, value_unit="mmol/mol"
         )
         assert score_diabetic <= 50, "Diabetic HbA1c should score low"
         assert range_diabetic in [ScoreRange.HIGH, ScoreRange.VERY_HIGH, ScoreRange.CRITICAL], "Should be in high range"
@@ -120,23 +120,23 @@ class TestScoringRules:
         Test cholesterol scoring accuracy against clinical thresholds.
         Uses lab reference range (required for lab-provided biomarkers).
         """
-        lab_optimal = {"min": 0.0, "max": 100.0, "unit": "mg/dL", "source": "lab"}
+        lab_optimal = {"min": 0.0, "max": 2.59, "unit": "mmol/L", "source": "lab"}
         score_optimal, range_optimal, _ = self.rules.calculate_biomarker_score(
-            "ldl_cholesterol", 90.0, input_reference_range=lab_optimal
+            "ldl_cholesterol", 2.3, input_reference_range=lab_optimal, value_unit="mmol/L"
         )
         assert score_optimal >= 90, "Optimal LDL should score high"
         assert range_optimal in [ScoreRange.OPTIMAL, ScoreRange.NORMAL], "Should be in optimal/normal range"
 
-        lab_borderline = {"min": 0.0, "max": 130.0, "unit": "mg/dL", "source": "lab"}
+        lab_borderline = {"min": 0.0, "max": 3.34, "unit": "mmol/L", "source": "lab"}
         score_borderline, range_borderline, _ = self.rules.calculate_biomarker_score(
-            "ldl_cholesterol", 140.0, input_reference_range=lab_borderline
+            "ldl_cholesterol", 3.5, input_reference_range=lab_borderline, value_unit="mmol/L"
         )
         assert score_borderline > 0, "Borderline LDL should be scored"
         assert range_borderline in [ScoreRange.BORDERLINE, ScoreRange.HIGH, ScoreRange.CRITICAL], "Should indicate elevated"
 
-        lab_high = {"min": 0.0, "max": 130.0, "unit": "mg/dL", "source": "lab"}
+        lab_high = {"min": 0.0, "max": 4.12, "unit": "mmol/L", "source": "lab"}
         score_high, range_high, _ = self.rules.calculate_biomarker_score(
-            "ldl_cholesterol", 180.0, input_reference_range=lab_high
+            "ldl_cholesterol", 4.5, input_reference_range=lab_high, value_unit="mmol/L"
         )
         assert score_high < 50, "High LDL should score low"
         assert range_high in [ScoreRange.HIGH, ScoreRange.VERY_HIGH, ScoreRange.CRITICAL], "Should be in high range"
@@ -172,22 +172,22 @@ class TestScoringRules:
         Test age adjustments for biomarkers that require them.
         Uses lab reference range (required for lab-provided biomarkers).
         """
-        lab_creat = {"min": 0.6, "max": 1.2, "unit": "mg/dL", "source": "lab"}
+        lab_creat = {"min": 53.0, "max": 106.0, "unit": "µmol/L", "source": "lab"}
         score_young, _, _ = self.rules.calculate_biomarker_score(
-            "creatinine", 1.0, age=25, input_reference_range=lab_creat
+            "creatinine", 88.0, age=25, input_reference_range=lab_creat, value_unit="µmol/L"
         )
         score_old, _, _ = self.rules.calculate_biomarker_score(
-            "creatinine", 1.0, age=75, input_reference_range=lab_creat
+            "creatinine", 88.0, age=75, input_reference_range=lab_creat, value_unit="µmol/L"
         )
         assert score_young > 0, "Should have positive score"
         assert score_old > 0, "Should have positive score"
 
-        lab_glucose = {"min": 70.0, "max": 125.0, "unit": "mg/dL", "source": "lab"}
+        lab_glucose = {"min": 3.9, "max": 6.9, "unit": "mmol/L", "source": "lab"}
         score_young_glucose, _, _ = self.rules.calculate_biomarker_score(
-            "glucose", 100.0, age=25, input_reference_range=lab_glucose
+            "glucose", 5.5, age=25, input_reference_range=lab_glucose, value_unit="mmol/L"
         )
         score_old_glucose, _, _ = self.rules.calculate_biomarker_score(
-            "glucose", 100.0, age=75, input_reference_range=lab_glucose
+            "glucose", 5.5, age=75, input_reference_range=lab_glucose, value_unit="mmol/L"
         )
         assert score_young_glucose > 0, "Should have positive score"
         assert score_old_glucose > 0, "Should have positive score"
@@ -207,12 +207,12 @@ class TestScoringRules:
         assert score_male > 0, "Should have positive score"
         assert score_female > 0, "Should have positive score"
 
-        lab_hdl = {"min": 40.0, "max": 60.0, "unit": "mg/dL", "source": "lab"}
+        lab_hdl = {"min": 1.03, "max": 1.55, "unit": "mmol/L", "source": "lab"}
         score_male_hdl, _, _ = self.rules.calculate_biomarker_score(
-            "hdl_cholesterol", 50.0, sex="male", input_reference_range=lab_hdl
+            "hdl_cholesterol", 1.3, sex="male", input_reference_range=lab_hdl, value_unit="mmol/L"
         )
         score_female_hdl, _, _ = self.rules.calculate_biomarker_score(
-            "hdl_cholesterol", 50.0, sex="female", input_reference_range=lab_hdl
+            "hdl_cholesterol", 1.3, sex="female", input_reference_range=lab_hdl, value_unit="mmol/L"
         )
         assert score_male_hdl > 0, "Should have positive score"
         assert score_female_hdl > 0, "Should have positive score"

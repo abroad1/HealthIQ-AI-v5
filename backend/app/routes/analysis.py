@@ -2,6 +2,7 @@
 Analysis routes for biomarker processing and result retrieval.
 """
 
+import copy
 import logging
 import os
 from typing import Dict, Any, Optional
@@ -45,6 +46,7 @@ from core.canonical.hba1c_layer_b_arbitration import arbitrate_hba1c_layer_b_inp
 from core.canonical.errors import CanonicalCollisionError
 from core.context import ContextFactory, ValidationError
 from core.units.registry import apply_unit_normalisation, UnitConversionError, UNIT_REGISTRY_VERSION
+from core.units.display_policy import build_display_policy_meta
 from core.dependencies.analysis_auth import (
     require_analysis_submitter,
     require_analysis_submitter_if_db,
@@ -142,6 +144,13 @@ async def start_analysis(
                 },
             )
 
+        # LC-S8D Mode A: preserve pre-arbitration upload rows for uploaded-panel fidelity.
+        upload_panel_observations = {
+            k: copy.deepcopy(v)
+            for k, v in normalized.items()
+            if k != UNIT_NORMALISATION_META_KEY
+        }
+
         # KB-HBA1C-GOV1: single Layer B HbA1c id (hba1c) before unit normalisation.
         normalized = arbitrate_hba1c_layer_b_input(normalized)
 
@@ -188,6 +197,8 @@ async def start_analysis(
         }
         meta = dict(dto.meta or {})
         meta["lab_origin"] = lab_origin_meta
+        meta["display_unit_policy"] = build_display_policy_meta()
+        meta["upload_panel_observations"] = upload_panel_observations
         stored = {
             "analysis_id": dto.analysis_id,
             "meta": meta,

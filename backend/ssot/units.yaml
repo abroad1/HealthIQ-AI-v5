@@ -79,6 +79,24 @@ units:
     description: "Micromoles per liter"
     category: "concentration"
     si_equivalent: "µmol/L"
+
+  mmol_L:
+    name: "mmol/L"
+    description: "Millimoles per liter"
+    category: "concentration"
+    si_equivalent: "mmol/L"
+
+  mEq_L:
+    name: "mEq/L"
+    description: "Milliequivalents per liter (monovalent ions)"
+    category: "concentration"
+    si_equivalent: "mmol/L"
+
+  ten_9_L:
+    name: "10^9/L"
+    description: "Billions per liter (cell count)"
+    category: "count"
+    si_equivalent: "10^9/L"
     
   # Conversion Factors
   conversions:
@@ -174,6 +192,31 @@ units:
       to_unit: "L/L"
       factor: 0.01
       description: "Hematocrit percent to volume fraction"
+
+    # LC-S8D Phase A — 1:1 label equivalences (no numeric rescale)
+    K_uL_to_ten_9_L:
+      from_unit: "K/μL"
+      to_unit: "10^9/L"
+      factor: 1.0
+      description: "Platelet/WBC count label equivalence"
+
+    K_u_alt_to_ten_9_L:
+      from_unit: "K/uL"
+      to_unit: "10^9/L"
+      factor: 1.0
+      description: "Platelet/WBC count label equivalence (ASCII u)"
+
+    mEq_L_to_mmol_L:
+      from_unit: "mEq/L"
+      to_unit: "mmol/L"
+      factor: 1.0
+      description: "Monovalent electrolyte equivalence"
+
+    mmol_L_to_mEq_L:
+      from_unit: "mmol/L"
+      to_unit: "mEq/L"
+      factor: 1.0
+      description: "Monovalent electrolyte equivalence"
       
   # Unit Categories
   categories:
@@ -191,4 +234,4 @@ units:
       
     count:
       description: "Cell and particle counts"
-      units: ["K/μL"]
+      units: ["K/μL", "10^9/L"]

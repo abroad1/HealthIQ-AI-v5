@@ -45,10 +45,35 @@ class TestConvertValue:
         assert abs(val - 5.172) < 0.001
 
     def test_hba1c_percent_to_mmol_mol(self):
-        """HbA1c canonical unit from SSOT remains percent."""
+        """HbA1c: legacy % input normalises to UK IFCC mmol/mol base."""
         val, unit = convert_value("hba1c", 5.5, "%")
-        assert unit == "%"
-        assert val == 5.5
+        assert unit == "mmol/mol"
+        assert abs(val - 36.4) < 0.5
+
+    def test_phase_a_platelets_k_ul_equivalent_to_ten_9_L(self):
+        val, unit = convert_value("platelets", 225.0, "K/μL")
+        assert unit == "10^9/L"
+        assert val == 225.0
+
+    def test_phase_a_wbc_k_uL_equivalent_to_ten_9_L(self):
+        val, unit = convert_value("white_blood_cells", 6.4, "K/uL")
+        assert unit == "10^9/L"
+        assert val == 6.4
+
+    def test_phase_a_sodium_mEq_L_to_mmol_L(self):
+        val, unit = convert_value("sodium", 140.0, "mEq/L")
+        assert unit == "mmol/L"
+        assert val == 140.0
+
+    def test_phase_a_potassium_mEq_L_to_mmol_L(self):
+        val, unit = convert_value("potassium", 4.3, "mEq/L")
+        assert unit == "mmol/L"
+        assert val == 4.3
+
+    def test_phase_a_chloride_mEq_L_to_mmol_L(self):
+        val, unit = convert_value("chloride", 102.0, "mEq/L")
+        assert unit == "mmol/L"
+        assert val == 102.0
 
     def test_identity_when_already_base_unit(self):
         """Value already in base unit passes through."""
@@ -57,9 +82,9 @@ class TestConvertValue:
         assert val == 5.27
 
     def test_identity_for_biomarkers_without_conversion(self):
-        """Biomarkers without conversion path use SSOT unit as base."""
+        """Electrolytes: mEq/L is equivalent to mmol/L base."""
         val, unit = convert_value("sodium", 140.0, "mEq/L")
-        assert unit == "mEq/L"
+        assert unit == "mmol/L"
         assert val == 140.0
 
     def test_urea_mg_dl_to_mmol_l(self):
@@ -419,7 +444,7 @@ class TestUnitRegistryDirect:
 
     def test_get_base_unit_hba1c(self):
         reg = UnitRegistry()
-        assert reg.get_base_unit("hba1c") == "%"
+        assert reg.get_base_unit("hba1c") == "mmol/mol"
 
     def test_get_base_unit_creatinine(self):
         reg = UnitRegistry()

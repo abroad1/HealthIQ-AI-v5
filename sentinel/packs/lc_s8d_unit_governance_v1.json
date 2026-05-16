@@ -1,0 +1,50 @@
+{
+  "pack_version": "1.0.0",
+  "pack_id": "lc_s8d_unit_governance_v1",
+  "description": "LC-S8D UK/SI unit governance guardrails",
+  "defect_classes": {
+    "uk_layer_b_canonical_unit_drift": {
+      "description": "Layer B scoring-policy unit must match SSOT canonical analytical unit after LC-S8D migration.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py",
+      "first_seen": "2026-05"
+    },
+    "unknown_unit_not_scored": {
+      "description": "Layer B must not score values whose unit cannot align with scoring-policy unit.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py",
+      "first_seen": "2026-05"
+    },
+    "hba1c_single_analytical_identity": {
+      "description": "HbA1c scored once; arbitration drops hba1c_pct from Layer B path.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/unit/test_hba1c_governance.py",
+      "first_seen": "2026-05"
+    },
+    "hematocrit_fraction_percent_display": {
+      "description": "Haematocrit L/L fraction must not be stored or scored as bare percent.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py",
+      "first_seen": "2026-05"
+    },
+    "bun_not_uric_acid": {
+      "description": "BUN alias must resolve to urea, never urate.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py",
+      "first_seen": "2026-05"
+    },
+    "phase_b_blocked_pending_evidence": {
+      "description": "True conversions for Ca/Mg/fT4/Hb remain blocked without primary evidence.",
+      "guard_type": "status_reporting",
+      "status": "WARN",
+      "test_file": "docs/audit-papers/LC-S8D_uk_si_unit_governance_remediation_notes.md",
+      "first_seen": "2026-05",
+      "note": "Documented blocked rows; no runtime conversion until evidence attached."
+    }
+  }
+}

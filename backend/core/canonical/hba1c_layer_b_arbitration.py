@@ -4,7 +4,7 @@ KB-HBA1C-GOV1 — Layer B HbA1c single analytical identity.
 Runs after canonicalisation (normalize_biomarkers_with_metadata) and before
 apply_unit_normalisation, per Automation Bus work package KB-HBA1C-GOV1.
 
-Layer B analytical identity is fixed to biomarker id ``hba1c`` in ``%`` (post unit norm).
+Layer B analytical identity is fixed to biomarker id ``hba1c`` in ``mmol/mol`` (post unit norm).
 The parallel SSOT id ``hba1c_pct`` must not contribute to the same analytical path.
 """
 

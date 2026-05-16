@@ -1,0 +1,84 @@
+# LC-S8D — Layer C governed display unit policy (presentation only; no scoring authority).
+policy_version: "1.0.0"
+
+presentation_modes:
+  uploaded_panel_fidelity:
+    description: "Biomarker dials, upload review — preserve duplicate-equivalent source rows"
+    surfaces:
+      - biomarker_dials
+      - uploaded_results_review
+      - upload_edit
+  analytical_report:
+    description: "Report, narrative, burden — one row per canonical biomarker"
+    surfaces:
+      - personalised_report
+      - narrative_interpretation
+      - burden_summary
+      - signal_summary
+
+biomarkers:
+  hba1c:
+    layer_b_unit: mmol/mol
+    uploaded_panel_fidelity:
+      preserve_equivalent_rows: true
+      equivalent_canonical_ids: [hba1c_pct]
+    analytical_report:
+      collapse_equivalent: true
+      display_unit: mmol/mol
+      legacy_input_units: ["%"]
+  hematocrit:
+    layer_b_unit: L/L
+    uploaded_panel_fidelity:
+      preserve_equivalent_rows: true
+      legacy_input_units: ["%"]
+    analytical_report:
+      collapse_equivalent: true
+      display_unit: L/L
+      forbid_fraction_percent_label: true
+  urea:
+    layer_b_unit: mmol/L
+    uploaded_panel_fidelity:
+      bun_label_allowed: true
+    analytical_report:
+      display_unit: mmol/L
+      bun_display_note: "BUN-labeled uploads map to urea; never urate"
+  vitamin_d:
+    layer_b_unit: nmol/L
+    analytical_report:
+      display_unit: nmol/L
+  glucose:
+    layer_b_unit: mmol/L
+    analytical_report:
+      display_unit: mmol/L
+  total_cholesterol:
+    layer_b_unit: mmol/L
+    analytical_report:
+      display_unit: mmol/L
+  ldl_cholesterol:
+    layer_b_unit: mmol/L
+    analytical_report:
+      display_unit: mmol/L
+  hdl_cholesterol:
+    layer_b_unit: mmol/L
+    analytical_report:
+      display_unit: mmol/L
+  triglycerides:
+    layer_b_unit: mmol/L
+    analytical_report:
+      display_unit: mmol/L
+  creatinine:
+    layer_b_unit: µmol/L
+    analytical_report:
+      display_unit: µmol/L
+  platelets:
+    layer_b_unit: 10^9/L
+    uploaded_panel_fidelity:
+      legacy_input_units: ["K/μL", "K/uL"]
+    analytical_report:
+      display_unit: 10^9/L
+  white_blood_cells:
+    layer_b_unit: 10^9/L
+    uploaded_panel_fidelity:
+      legacy_input_units: ["K/μL", "K/uL"]
+    analytical_report:
+      display_unit: 10^9/L

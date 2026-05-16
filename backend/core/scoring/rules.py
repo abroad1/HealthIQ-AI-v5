@@ -51,6 +51,9 @@ UNSCORED_REASON_HBA1C_UNIT_MISMATCH = "hba1c_value_and_reference_range_units_inc
 # LC-S8: value unit and lab reference unit cannot be aligned for numeric comparison (no registry path).
 UNSCORED_REASON_UNIT_REFERENCE_RANGE_INCOHERENT = "unit_reference_range_incoherent"
 
+# LC-S8D: post-normalisation value unit cannot align with Layer B scoring-policy unit.
+UNSCORED_REASON_UNKNOWN_UNIT_NOT_SCORED = "unknown_unit_not_scored"
+
 _HBA1C_IDS = frozenset({"hba1c", "hba1c_pct"})
 
 
@@ -290,6 +293,15 @@ class ScoringRules:
                 biomarker_name, vu, ref_u
             ):
                 return 0.0, ScoreRange.CRITICAL, UNSCORED_REASON_UNIT_REFERENCE_RANGE_INCOHERENT
+            if not self._is_derived_ratio(biomarker_name) and vu:
+                policy_rule = self.get_biomarker_rule(biomarker_name)
+                policy_unit = (
+                    str(policy_rule.unit).strip() if policy_rule and policy_rule.unit else ""
+                )
+                if policy_unit and not value_and_reference_units_coherent_for_numeric_compare(
+                    biomarker_name, vu, policy_unit
+                ):
+                    return 0.0, ScoreRange.CRITICAL, UNSCORED_REASON_UNKNOWN_UNIT_NOT_SCORED
             min_val = coerce_optional_float(ref.get("min"))
             max_val = coerce_optional_float(ref.get("max"))
             if min_val is not None and max_val is not None and min_val < max_val:
