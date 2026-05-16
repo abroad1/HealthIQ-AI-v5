@@ -1,10 +1,9 @@
 {
-  "branch": "launch-core/fe-s8e-uploaded-panel-fidelity-rendering",
+  "branch": "launch-core/lc-s9b-proving-closeout",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-16T14:14:28Z",
-  "cursor_started_utc": "2026-05-16T14:07:25Z",
-  "head_sha": "4dd26348b10eb77d1c13d9f61133d05a45e2e308",
+  "cursor_started_utc": "2026-05-16T20:39:02Z",
+  "head_sha": "b8e77e35de4582db60d380abc53f880a059e8523",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "FE-S8E"
+  "status": "IN_PROGRESS",
+  "work_id": "LC-S9B"
 }
