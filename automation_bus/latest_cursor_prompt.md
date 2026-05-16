@@ -1,421 +1,95 @@
 ---
-work_id: LC-S8D
-branch: launch-core/lc-s8d-uk-si-unit-governance-remediation
-risk_level: HIGH
+work_id: FE-S8E
+branch: launch-core/fe-s8e-uploaded-panel-fidelity-rendering
+risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# LC-S8D — UK/SI Unit Governance Remediation
+# FE-S8E — Uploaded-Panel Fidelity Rendering for Layer C Mode A
 
 ## Classification
 
-This is a HIGH-risk MIXED work package.
+This is a STANDARD-risk MIXED frontend/display-contract work package.
 
-Reason: this work may touch SSOT, unit registry, scoring policy, canonicalisation, Layer B scoring behaviour, backend display contracts, tests, and Sentinel guardrails. These surfaces can affect analytical correctness and emitted output.
+Reason: LC-S8D backend unit governance is already passing. This sprint must not alter analytical logic, unit conversion, scoring, canonicalisation, SSOT unit policy, or Layer B behaviour.
 
-This is one controlled HIGH-risk remediation sprint with internal phase gates.
-
-It is not permission for an uncontrolled “fix all unit problems” pass.
+This sprint implements frontend rendering of the already-delivered backend contract for Layer C Mode A uploaded-panel fidelity.
 
 ## Purpose
 
-Remediate the UK/SI unit-governance defects identified in LC-S8C-PREFLIGHT while preserving deterministic analytical behaviour.
+Implement the frontend/upload-review presentation layer required by LC-S8D.
 
-Primary goals:
+LC-S8D correctly preserves original uploaded biomarker observations in:
 
-1. Implement safe Phase A unit equivalences.
-2. Align SSOT unit labels only where safe and evidence-authorised.
-3. Prevent Layer B from scoring unknown, mixed, or incoherent units.
-4. Migrate Layer B scoring units only where authorised by evidence and phase gates.
-5. Introduce a governed Layer C display policy model.
-6. Preserve uploaded-panel fidelity for biomarker dials/upload review.
-7. Collapse duplicate-equivalent biomarkers for Layer B and analytical-report interpretation.
-8. Add regression tests for remediated unit paths.
-9. Add Sentinel guardrails only after the relevant implementation phase is stable.
+```text
+meta.upload_panel_observations
+````
 
-## Governing authority
+and exposes display policy metadata in:
 
-Read these files before editing anything:
+```text
+meta.display_unit_policy
+```
+
+However, the current frontend dials/results surface renders only canonical analytical `biomarkers[]`, so duplicate-equivalent source observations such as HbA1c `%` are not visible to the user. This creates a user-trust gap: users may think uploaded rows were ignored or lost.
+
+The goal is to show uploaded source observations where appropriate, while preserving the analytical-report rule that equivalent biomarkers are analysed once only.
+
+## Governing context
+
+Read before editing:
 
 ```text
 docs/audit-papers/LC-S8C_ssot_wide_unit_governance_preflight.md
-docs/audit-papers/LC-S8B_uk_canonical_unit_policy_validation.md
-docs/audit-papers/LC-S8C_pre_sprint_unit_policy_validation_note.md
-
-architecture/Master_PRD_v5.2.md
-architecture/ADR-001-platform-non-negotiables.md
-architecture/ADR-002-deterministic-analysis-engine.md
-
-backend/ssot/biomarkers.yaml
-backend/ssot/units.yaml
-backend/ssot/scoring_policy.yaml
-backend/ssot/biomarker_alias_registry.yaml
-backend/ssot/system_burden_registry.yaml
-
-backend/core/units/registry.py
-backend/core/canonical/hba1c_layer_b_arbitration.py
-````
-
-If any path differs on the current branch, STOP and report the actual path before making changes.
-
-LC-S8C-PREFLIGHT is a working architectural basis only. It is not final clinical evidence authority.
-
-Do not treat any `REPO_POLICY_ONLY`, `CATEGORY_EVIDENCE_CITED`, or `BLOCKED_PENDING_EVIDENCE` row as final clinical proof unless the phase rules below explicitly allow that limited action.
-
-## Architectural model
-
-HealthIQ must preserve this boundary:
-
-```text
-raw uploaded biomarker + raw uploaded unit
-→ Layer A canonicalisation and unit normalisation
-→ Layer B calculation using one governed canonical analytical unit
-→ Layer C governed presentation/display conversion
-```
-
-Layer C and frontend must not repair, infer, calculate, or clinically normalise units.
-
-Frontend is renderer-only.
-
-No fallback parser may be introduced.
-
-No hidden conversion logic may be added to frontend code.
-
-## Mandatory preflight before editing
-
-Run and record:
-
-```powershell
-git branch --show-current
-git status --short
-git log --oneline -n 5
-```
-
-Then verify:
-
-```powershell
-Test-Path automation_bus/state/work_package_active.json
-```
-
-Read `automation_bus/state/work_package_active.json` and confirm:
-
-* `work_id` is `LC-S8D`
-* branch is `launch-core/lc-s8d-uk-si-unit-governance-remediation`
-
-If the token is missing or mismatched, STOP:
-
-```text
-Kernel start not executed or work package mismatch.
-```
-
-Before modifying files, confirm:
-
-1. The authoritative biomarker SSOT is `backend/ssot/biomarkers.yaml`.
-2. The authoritative unit registry data is `backend/ssot/units.yaml`.
-3. The runtime unit normaliser is `backend/core/units/registry.py`.
-4. The scoring bands are loaded from `backend/ssot/scoring_policy.yaml`.
-5. No duplicate SSOT/unit/scoring authority exists for the same domain.
-
-If any authority ambiguity exists, STOP and report it.
-
-## Potentially allowed files
-
-Only edit files required for authorised phase work.
-
-Potentially allowed:
-
-```text
-backend/ssot/biomarkers.yaml
-backend/ssot/units.yaml
-backend/ssot/scoring_policy.yaml
-backend/ssot/biomarker_alias_registry.yaml
-backend/ssot/system_burden_registry.yaml
-backend/ssot/display_unit_policy.yaml
-
-backend/core/units/registry.py
-backend/core/canonical/hba1c_layer_b_arbitration.py
-backend/core/**/*
-backend/app/**/*
-backend/tests/**/*
-
-frontend/app/types/**/*
-frontend/app/queries/**/*
-frontend/app/services/**/*
-frontend/app/components/**/*
-frontend/app/(app)/results/**/*
-
-sentinel/packs/**/*
-sentinel/**/*
-
 docs/audit-papers/LC-S8D_uk_si_unit_governance_remediation_notes.md
-```
-
-Frontend edits are allowed only for renderer contract support and tests.
-
-Frontend must not contain conversion constants or analytical unit-repair logic.
-
-## Forbidden files
-
-Do not edit:
-
-```text
-backend/scripts/run_work_package.py
-backend/scripts/golden_gate_local.py
-backend/scripts/update_cursor_status.py
-automation_bus/latest_gate_evidence.json
-automation_bus/latest_gate_output.txt
-automation_bus/latest_cursor_status.json
-```
-
-Do not modify control-plane scripts.
-
-Do not add tooling files such as:
-
-```text
-.codex/
-.vscode/
-AGENTS.md
-```
-
-unless explicitly authorised in a separate tooling sprint.
-
-## Phase gates
-
-This sprint has five internal phases.
-
-Each phase must end with a checkpoint in:
-
-```text
-docs/audit-papers/LC-S8D_uk_si_unit_governance_remediation_notes.md
-```
-
-Each checkpoint must state:
-
-* files changed
-* tests run
-* decisions made
-* blocked rows
-* whether the next phase is safe to enter
-
-Do not skip phase checkpoints.
-
----
-
-# Phase A — Safe equivalence remediation
-
-## Scope
-
-Authorised biomarkers:
-
-```text
-platelets
-white_blood_cells
-sodium
-potassium
-chloride
-```
-
-## Required work
-
-1. Add explicit 1:1 equivalence support:
-
-   * `K/μL`, `K/uL` ↔ `10^9/L` for platelets/WBC where appropriate.
-   * `mEq/L` ↔ `mmol/L` for sodium, potassium, chloride as monovalent ions only.
-2. Register equivalence in `units.yaml` and `registry.py`.
-3. Update SSOT canonical labels only after equivalence support exists.
-4. Align directly affected scoring unit labels for PLT/WBC only if numeric values remain equivalent and regression tests prove no scoring drift.
-5. Add registry tests proving old and new labels normalise coherently.
-
-## Phase A STOP conditions
-
-STOP if:
-
-* equivalence is not 1:1
-* registry behaviour would change numeric values unexpectedly
-* scoring bands would require numeric rebanding rather than label alignment
-* any marker outside the five authorised Phase A markers is touched
-* any frontend conversion is proposed
-
-## Phase A required tests
-
-At minimum, add or update:
-
-```text
-backend/tests/unit/test_unit_registry.py
-backend/tests/unit/test_scoring_rules.py
-```
-
-Test examples must include:
-
-```text
-platelets 225 K/μL == 225 10^9/L
-white_blood_cells 6.4 K/μL == 6.4 10^9/L
-sodium 140 mEq/L == 140 mmol/L
-potassium 4.3 mEq/L == 4.3 mmol/L
-chloride 102 mEq/L == 102 mmol/L
-```
-
----
-
-# Phase B — True conversion evidence gate
-
-## Scope
-
-Blocked biomarkers:
-
-```text
-calcium
-corrected_calcium
-magnesium
-free_t4
-hemoglobin
-urate
-```
-
-## Required action
-
-Do not implement conversion changes for these rows unless primary evidence is present in-repo or directly cited in:
-
-```text
-docs/audit-papers/LC-S8D_uk_si_unit_governance_remediation_notes.md
-```
-
-Required evidence must include:
-
-* source name
-* URL or file path
-* quoted unit/conversion statement or exact conversion factor
-* biomarker ID
-* conversion direction
-* formula
-* test vector
-
-## Phase B allowed outcome
-
-If evidence is missing, record:
-
-```text
-PHASE_B_BLOCKED_PENDING_EVIDENCE
-```
-
-and do not change those biomarkers.
-
-Phase B being blocked must not prevent already-authorised Phase A changes from completing.
-
-## Phase B STOP conditions
-
-STOP if:
-
-* any Phase B conversion is implemented without primary evidence
-* any conversion factor is inferred from memory or LLM output
-* value/reference-range conversion is not handled coherently
-* calcium, corrected calcium, magnesium, free T4, haemoglobin, or urate are modified without evidence
-
----
-
-# Phase C — Layer B scoring migration
-
-## Scope
-
-Only proceed row-by-row where authorised by LC-S8C §19/§20.
-
-Potentially authorised rows:
-
-```text
-glucose
-total_cholesterol
-ldl_cholesterol
-hdl_cholesterol
-triglycerides
-creatinine
-hba1c
-hematocrit
-hba1c_pct merge/deprecation only
-platelets after Phase A
-white_blood_cells after Phase A
-hemoglobin only if Phase B evidence passes
-```
-
-## Required work
-
-1. Confirm current scoring unit per biomarker.
-2. Confirm Layer A output unit per biomarker.
-3. Migrate scoring bands only where source-supported.
-4. Add golden before/after test vectors.
-5. Prove no scoring drift except where explicitly intended.
-6. Ensure Layer B never scores raw uploaded unit values directly.
-7. Ensure HbA1c is scored once only.
-8. Ensure haematocrit cannot be scored or displayed as `0.438 %`.
-
-## HbA1c-specific requirements
-
-* Canonical analytical identity: `hba1c`.
-* UK Layer B unit: `mmol/mol`.
-* `%` is accepted as legacy/secondary input.
-* If both `mmol/mol` and `%` appear in one uploaded panel, Layer A must preserve both source observations but Layer B must score one HbA1c result only.
-* `hba1c_pct` must not be independently scored.
-* Do not remove user-visible upload provenance needed for Layer C Mode A.
-
-## Haematocrit-specific requirements
-
-* UK Layer B unit: `L/L`.
-* `%` may be accepted only if value and reference range are coherently transformed.
-* Never allow `0.438 %`.
-* Never allow value and reference range in different unit families.
-
-## Phase C STOP conditions
-
-STOP if:
-
-* primary scoring bands are not source-supported
-* Layer A output unit and scoring-policy unit disagree
-* `hba1c` and `hba1c_pct` can both be scored
-* haematocrit fraction can be labelled as percent
-* glucose/lipids/creatinine bands remain US `mg/dL` while Layer A emits UK/SI units
-* any Phase B-blocked biomarker is scored in a migrated unit without evidence
-
----
-
-# Phase D — Layer C display policy
-
-## Scope
-
-Introduce governed display policy support.
-
-Proposed authority file:
-
-```text
+docs/audit-papers/LC-S8D_frontend_layer_c_uat_report.md
+
+frontend/app/(app)/results/page.tsx
+frontend/app/components/biomarkers/BiomarkerDials.tsx
+frontend/app/types/analysis.ts
+frontend/app/queries/analysisResult.ts
+
+backend/app/routes/analysis.py
+backend/core/units/display_policy.py
 backend/ssot/display_unit_policy.yaml
 ```
 
-If another display-policy authority already exists, STOP and report it.
+LC-S8D UAT found:
 
-## Required policy model
+* backend analytical payload passes
+* Layer B canonicalisation passes
+* HbA1c is scored once only
+* haematocrit is correctly `L/L`
+* BUN maps to urea, not urate
+* backend preserves `upload_panel_observations`
+* frontend does not yet render uploaded-panel fidelity mode
 
-Layer C must support two governed presentation modes.
+## Architectural rule
 
-## Mode A — Uploaded-panel fidelity
+Layer C has two presentation modes.
 
-Use for:
+### Mode A — Uploaded-panel fidelity
+
+Used for:
 
 ```text
 biomarker dials
 raw uploaded-results review
-upload/edit flows
+upload/edit confirmation surfaces
 ```
 
 Rules:
 
 * Preserve every uploaded biomarker row where safe.
-* If the same canonical biomarker appears in current/canonical and legacy/equivalent units, show both uploaded representations back to the user.
+* If the same canonical biomarker appears in current/canonical and legacy/equivalent units, show both uploaded representations.
 * Visually link or annotate equivalent rows as the same biomarker.
-* Do not imply the duplicate-equivalent row was ignored or lost.
-* Frontend must display governed API fields only; no conversion constants.
+* Do not imply duplicate-equivalent rows were ignored or lost.
+* Do not perform frontend conversion maths.
 
-## Mode B — Analytical-report
+### Mode B — Analytical-report mode
 
-Use for:
+Used for:
 
 ```text
 personalised observational report
@@ -426,10 +100,10 @@ signal summaries
 
 Rules:
 
-* Refer to each biomarker once by canonical biomarker identity.
-* Use the Layer B analytical unit unless `display_unit_policy.yaml` authorises a governed secondary display.
-* Do not duplicate equivalent biomarkers in prose or analytical summary tables.
-* Narrative consumes collapsed Layer B input, not raw duplicate source rows.
+* Refer to each biomarker once by canonical identity.
+* Use canonical Layer B analytical unit unless governed display policy says otherwise.
+* Do not duplicate equivalent biomarkers in narrative/prose.
+* Do not change report interpretation behaviour in this sprint.
 
 General rule:
 
@@ -438,191 +112,246 @@ Preserve duplicate-equivalent source observations for uploaded-results fidelity.
 Collapse duplicate-equivalent observations for Layer B analysis and report interpretation.
 ```
 
-## Required display-policy rows
-
-At minimum cover:
-
-```text
-hba1c
-hematocrit
-urea / BUN display
-vitamin_d
-glucose
-total_cholesterol
-ldl_cholesterol
-hdl_cholesterol
-triglycerides
-creatinine
-platelets
-white_blood_cells
-hemoglobin if Phase B evidence passes
-```
-
-## Phase D STOP conditions
-
-STOP if:
-
-* frontend performs conversion maths
-* display policy duplicates analytical authority
-* display policy changes Layer B scoring unit
-* uploaded-panel fidelity mode cannot preserve duplicate-equivalent source observations
-* analytical-report mode still renders duplicate-equivalent biomarkers as separate findings
-
----
-
-# Phase E — Sentinel lockdown
-
 ## Scope
 
-Add Sentinel guardrails only after the relevant Phase A–D implementation is stable and tests pass.
+Implement frontend support for Mode A display only.
 
-Required guardrails:
-
-```text
-uk_layer_b_canonical_unit_drift
-layer_b_unit_declared
-input_unit_has_authority
-unknown_unit_not_scored
-biomarker_value_reference_unit_incoherence
-hba1c_single_analytical_identity
-hematocrit_fraction_percent_display
-bun_not_uric_acid
-frontend_no_unit_repair
-new_biomarker_unit_metadata
-```
-
-Sentinel may be introduced in warn mode only where blocking would fail due to deferred Phase B evidence.
-
-Blocking mode is required for completed Phase A and completed HbA1c/haematocrit protections.
-
-## Phase E STOP conditions
-
-STOP if:
-
-* Sentinel blocks deferred evidence rows that were intentionally not remediated
-* Sentinel allows completed Phase A drift
-* Sentinel allows BUN to map to urate
-* Sentinel allows frontend unit conversion constants
-* Sentinel allows `hba1c` and `hba1c_pct` to both score
-
----
-
-# Required validation commands
-
-Run relevant targeted tests after each phase.
-
-At minimum before Cursor completion, run:
-
-```powershell
-python -m pytest backend/tests/unit/test_unit_registry.py -q
-python -m pytest backend/tests/unit/test_scoring_rules.py -q
-python -m pytest backend/tests/unit/test_hba1c_governance.py -q
-python -m pytest backend/tests/regression/test_lc_s8_biomarker_unit_reference_incoherence_regression.py -q
-```
-
-If any listed test file does not exist, either create it if in scope or record why it is not applicable.
-
-Run frontend no-conversion scan:
-
-```powershell
-Select-String -Path frontend/app/**/*.ts,frontend/app/**/*.tsx -Pattern "mg/dL|mmol|umol|µmol|K/μL|K/uL|mEq|0.055|18.018|38.67|88.4|0.01|100" -CaseSensitive:$false
-```
-
-Any hit must be reviewed.
-
-Conversion constants in frontend are blockers unless they are static text examples in tests/docs.
-
-Run SSOT/unit/scoring scan:
-
-```powershell
-Select-String -Path backend/ssot/*.yaml,backend/core/**/*.py,backend/tests/**/*.py -Pattern "unit|units|mmol|mol|mg/dL|g/dL|mEq|K/μL|K/uL|HbA1c|hba1c|hematocrit|haematocrit|BUN|urea|uric" -CaseSensitive:$false
-```
-
-# Required documentation output
-
-Create or update:
+Allowed files:
 
 ```text
-docs/audit-papers/LC-S8D_uk_si_unit_governance_remediation_notes.md
+frontend/app/(app)/results/page.tsx
+frontend/app/components/biomarkers/BiomarkerDials.tsx
+frontend/app/types/analysis.ts
+frontend/app/queries/analysisResult.ts
+frontend/app/services/*
+frontend/app/components/*
+backend/tests/* only if needed for contract fixture coverage
+frontend tests if present
 ```
 
-It must include:
+Backend code may be read but must not be changed unless a type/contract mismatch prevents frontend rendering and the required change is purely DTO typing or fixture support.
 
-1. Phase A result.
-2. Phase B evidence result or blocked status.
-3. Phase C row-by-row scoring migration result.
-4. Phase D display-policy result.
-5. Phase E Sentinel result.
-6. Files changed.
-7. Tests run.
-8. Deferred items.
-9. Known residual risk.
-10. Cursor completion recommendation.
+## Forbidden changes
 
-# Acceptance criteria
+Do not edit:
 
-The work is complete only if:
+```text
+backend/ssot/biomarkers.yaml
+backend/ssot/units.yaml
+backend/ssot/scoring_policy.yaml
+backend/core/units/registry.py
+backend/core/scoring/rules.py
+backend/core/canonical/hba1c_layer_b_arbitration.py
+sentinel/*
+automation_bus/*
+```
 
-* Phase A equivalence is implemented and tested.
-* Phase B blocked rows remain untouched unless evidence is attached.
-* Layer B never scores unknown or incoherent units.
-* HbA1c cannot be scored twice.
-* Haematocrit cannot display or score incoherently.
-* BUN cannot map to urate.
-* Display policy separates uploaded-panel fidelity from analytical-report collapse.
-* Frontend remains renderer-only.
-* No fallback parser is introduced.
-* No control-plane scripts are changed.
-* Tests and Sentinel rules reflect completed scope.
-* Deferred items are explicit and intentional.
+Do not:
 
-# Cursor completion requirements
+* add frontend conversion constants
+* calculate unit conversions in React/TypeScript
+* alter scoring
+* alter canonical units
+* hide failed biomarkers
+* remove canonical biomarker dials
+* reintroduce `hba1c_pct` as an analytical biomarker
+* add fallback parser logic
 
-When implementation is complete, Cursor must:
+## Required implementation
 
-1. Run all required targeted validation commands listed in this prompt.
-2. Update `docs/audit-papers/LC-S8D_uk_si_unit_governance_remediation_notes.md` with:
+### 1. Extend frontend types
 
-   * phase results
-   * files changed
-   * tests run
-   * blocked/deferred items
-   * known residual risks
-   * Cursor completion recommendation
-3. Run the mandatory post-implementation closure audit required by Automation Bus SOP:
+Update frontend result types so they recognise:
 
-   * `git branch --show-current`
-   * `git status --short`
-   * `git log --oneline -n 5`
-   * `git diff --name-only`
-   * `git diff --cached --name-only`
-   * `git stash list`
-4. Classify:
+```text
+meta.upload_panel_observations
+meta.display_unit_policy
+```
 
-   * tracked modified files
-   * staged files
-   * untracked files
-   * tooling files
-   * out-of-scope files
-   * stash entries
-5. STOP if there are unrelated files, tooling leakage, dirty branch ambiguity, or stash ambiguity.
-6. If closure is clean, run:
+The type should tolerate absence of these fields for older results.
+
+### 2. Render uploaded-panel fidelity information
+
+On the results page or biomarker dial section, add a clear uploaded-panel fidelity surface.
+
+Acceptable implementation options:
+
+Option A — preferred:
+
+Add a compact “Uploaded panel” or “Uploaded values” section near the biomarker dials showing the original uploaded rows.
+
+Option B:
+
+Within each biomarker dial/card, show an “Uploaded as” line where the uploaded unit differs from the canonical analytical unit.
+
+Option C:
+
+Group equivalent uploaded observations beneath the canonical dial.
+
+Use the least disruptive UI that proves the contract.
+
+### 3. Duplicate-equivalent handling
+
+For this test case, confirm:
+
+* HbA1c canonical dial remains `42 mmol/mol`.
+* HbA1c uploaded `%` row remains visible somewhere in Mode A as `6 %`.
+* It is clearly annotated as an equivalent representation of HbA1c, not a separate scored biomarker.
+* Haematocrit canonical display remains `0.438 L/L`, but uploaded `43.8 %` may be shown as uploaded source observation.
+* Platelets uploaded `K/uL` may be shown as uploaded source observation while analytical value remains `10^9/L`.
+* WBC uploaded `K/uL` may be shown as uploaded source observation while analytical value remains `10^9/L`.
+* Sodium/potassium/chloride uploaded `mEq/L` may be shown while analytical values remain `mmol/L`.
+
+### 4. Renderer-only requirement
+
+Frontend must display values supplied by the API only.
+
+Do not calculate:
+
+```text
+mg/dL ↔ mmol/L
+% ↔ mmol/mol
+% ↔ L/L
+K/uL ↔ 10^9/L
+mEq/L ↔ mmol/L
+```
+
+Any transformation must already exist in backend payload.
+
+### 5. Fix small visible label issue if trivial
+
+If the display-name map is local and safe to update, add a friendly label for:
+
+```text
+white_blood_cells → White Blood Cells
+```
+
+Do not widen into a general label-cleanup sprint.
+
+## Test case
+
+Use the existing analysis:
+
+```text
+http://localhost:3000/results?analysis_id=e4dc8e59-2588-4943-b37b-a299c89f9442
+```
+
+Login:
+
+```text
+test-user3@example.com
+Subaru@555
+```
+
+Expected observations:
+
+* Page loads.
+* API returns 200.
+* Biomarker dials still show canonical analytical values.
+* Uploaded-panel fidelity surface shows original uploaded observations.
+* HbA1c `%` is visible as uploaded/equivalent, not scored independently.
+* No frontend conversion maths is added.
+* No console errors.
+* No failed network calls.
+
+## Required validation
+
+Run frontend checks available in the repo, for example:
+
+```powershell
+npm run lint
+npm run typecheck
+npm run test
+```
+
+If a command does not exist, record that clearly.
+
+Run no-conversion scan:
+
+```powershell
+Select-String -Path frontend/app/**/*.ts,frontend/app/**/*.tsx -Pattern "0.055|0.0555|18.018|38.67|88.4|0.02586|0.01|100|mg_dL|mmol_L|convert" -CaseSensitive:$false
+```
+
+Review all hits. Frontend conversion constants are blockers unless they are static copy, tests, or pre-existing unrelated dev tooling.
+
+Manual browser validation required:
+
+* open the report URL
+* inspect dials/results area
+* confirm uploaded-panel fidelity display
+* confirm HbA1c `%` source row is visible
+* confirm canonical analytical report still collapses HbA1c
+* capture screenshots or concise written observations in the completion report
+
+## Required documentation output
+
+Create:
+
+```text
+docs/audit-papers/FE-S8E_uploaded_panel_fidelity_uat_notes.md
+```
+
+Include:
+
+1. files changed
+2. UI behaviour before
+3. UI behaviour after
+4. how `upload_panel_observations` is rendered
+5. how duplicate-equivalent biomarkers are annotated
+6. confirmation frontend remains renderer-only
+7. validation commands run
+8. browser UAT result
+9. known gaps deferred
+
+## Acceptance criteria
+
+This sprint is complete only if:
+
+* frontend consumes `meta.upload_panel_observations`
+* uploaded source observations are visible in the results experience
+* HbA1c `%` appears as uploaded/equivalent when present
+* equivalent rows are not represented as separate analytical findings
+* canonical biomarker dials still use analytical `biomarkers[]`
+* no frontend conversion logic is introduced
+* no backend scoring/unit/canonicalisation files are changed
+* no console/network errors are introduced
+* browser UAT confirms the report still loads
+
+## Cursor completion requirements
+
+When complete, Cursor must:
+
+1. Run relevant validation commands.
+2. Complete browser UAT on the specified report.
+3. Update the required documentation note.
+4. Run closure audit:
+
+```powershell
+git branch --show-current
+git status --short
+git log --oneline -n 5
+git diff --name-only
+git diff --cached --name-only
+git stash list
+```
+
+5. Classify tracked, staged, untracked, tooling, out-of-scope, and stash items.
+6. STOP if unrelated files, tooling leakage, dirty branch ambiguity, or stash ambiguity exists.
+7. If closure is clean, run:
 
 ```powershell
 python backend/scripts/run_work_package.py finish
 ```
 
-7. Report whether finish completed or failed.
-8. Do not merge.
-9. Do not create `automation_bus/latest_audit_summary.md`.
-10. Do not claim final approval.
+8. Report whether finish completed or failed.
+9. Do not merge.
+10. Do not create `automation_bus/latest_audit_summary.md`.
+11. Do not claim final approval.
 
-# Explicit non-authority statement
+## Explicit non-authority statement
 
 Cursor implements only.
 
-Cursor may not self-certify clinical correctness, architecture correctness, merge readiness, or final approval.
-
-Cursor must report evidence and stop at implementation completion.
+Cursor may not self-certify architecture correctness, merge readiness, or final approval.
 
 ````
