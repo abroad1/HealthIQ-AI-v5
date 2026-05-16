@@ -21,8 +21,9 @@ HealthIQ AI does not yet have a locked, evidence-backed UK-first canonical bioma
 | `APPROVED_LABEL_EQUIVALENCE_ONLY` | 5 rows | LC-S8C |
 | `NEEDS_CONVERSION_FACTOR_VALIDATION` | 5 rows | LC-S8D |
 | `NEEDS_POLICY_DECISION` | 3 rows | LC-S8E / LC-S8F |
-| `NO_CHANGE_REQUIRED` | 12 rows | — |
+| `NO_CHANGE_REQUIRED` | 16 rows | — |
 | `DEFER_NOT_LAUNCH_CRITICAL` | 2 rows | Post-launch |
+| **Total (§6 table)** | **31 rows** | — |
 
 **Launch-critical blockers for UK analytical accuracy:** calcium, corrected calcium, magnesium, and free T4 must not be implemented until conversion factors are validated from primary clinical/laboratory sources (LC-S8D).
 
@@ -124,8 +125,8 @@ Stash:   stash@{0} retained — unrelated LC-S1 on feature/questionnaire-visual-
 
 | Biomarker ID | Display name | Current SSOT unit | Current accepted input units / aliases | Proposed UK canonical analytical unit | Proposed UK launch display unit | Evidence source(s) | Conversion type | Risk | Decision | Rationale | Follow-on sprint |
 | ------------ | ------------ | ----------------- | -------------------------------------- | ------------------------------------- | ------------------------------- | ------------------ | --------------- | ---- | -------- | --------- | ---------------- |
-| `platelets` | Platelet count | `K/μL` | `plt`, `platelet_count`; UK labs commonly `10^9/L`, `x10^9/L` | `10^9/L` | `10^9/L` | NHS pathology reporting (e.g. [NHS UK pathology units](https://www.rcpath.org/)); SI: 1 K/μL = 10³ cells/μL = 10⁹ cells/L; BCSH FBC guidance | `LABEL_EQUIVALENCE_1_TO_1` | LOW | `APPROVED_LABEL_EQUIVALENCE_ONLY` | 1 K/μL numerically equals 1×10⁹/L; no scale change. SSOT label must become UK standard. | LC-S8C |
-| `white_blood_cells` | White blood cell count | `K/μL` | `wbc`, `leukocytes`; UK `10^9/L` | `10^9/L` | `10^9/L` | Same as platelets; UK FBC panels report WBC as ×10⁹/L | `LABEL_EQUIVALENCE_1_TO_1` | LOW | `APPROVED_LABEL_EQUIVALENCE_ONLY` | Equivalent to platelets policy. | LC-S8C |
+| `platelets` | Platelet count | `K/μL` | `plt`, `platelet_count`; UK labs commonly `10^9/L`, `x10^9/L` | `10^9/L` | `10^9/L` | **UK display:** UK NEQAS Haematology EQA and NHS pathology data definitions report platelet count as ×10⁹/L (not K/μL). **Equivalence proof:** SI/BIPM volume: 1 L = 10⁶ μL; “K/μL” = 10³ cells·μL⁻¹ → 10³ × 10⁶ cells·L⁻¹ = 10⁹ cells·L⁻¹; numeric factor 1.0. **Professional:** BCSH/RCPath UK FBC reporting aligns with SI multiples (10⁹/L). | `LABEL_EQUIVALENCE_1_TO_1` | LOW | `APPROVED_LABEL_EQUIVALENCE_ONLY` | UK launch display must be 10⁹/L; K/μL is a US customary label for the same magnitude. No scale conversion—register equivalence before SSOT relabel. | LC-S8C |
+| `white_blood_cells` | White blood cell count | `K/μL` | `wbc`, `leukocytes`; UK `10^9/L` | `10^9/L` | `10^9/L` | **UK display:** NHS/UK NEQAS FBC programmes report total WBC as ×10⁹/L (leucocyte count). **Equivalence proof:** Identical dimensional reduction to platelets: 1 K/μL = 1×10⁹/L (10³/μL × 10⁶ μL/L). **Professional:** BCSH standard UK full blood count reporting uses 10⁹/L for total white cell count. | `LABEL_EQUIVALENCE_1_TO_1` | LOW | `APPROVED_LABEL_EQUIVALENCE_ONLY` | Same 1:1 label equivalence class as platelets; not a separate conversion policy. | LC-S8C |
 | `neutrophils` | Neutrophils (absolute) | `10^9/L` | `neutrophil_count`, `neutrophils_(venous)` | `10^9/L` | `10^9/L` | UK FBC standard unit for absolute differential | `NO_CHANGE_REQUIRED` | LOW | `NO_CHANGE_REQUIRED` | Already UK/SI canonical. | — |
 | `lymphocytes` | Lymphocytes (absolute) | `10^9/L` | `lymphocyte_count`, `lymphocytes_(venous)` | `10^9/L` | `10^9/L` | UK FBC standard | `NO_CHANGE_REQUIRED` | LOW | `NO_CHANGE_REQUIRED` | Already correct. | — |
 | `neutrophils_abs` | Neutrophils absolute | `10^9/L` | `neutrophil_(neu_#)`, etc. | `10^9/L` | `10^9/L` | UK FBC | `NO_CHANGE_REQUIRED` | LOW | `NO_CHANGE_REQUIRED` | Already correct. | — |
@@ -134,14 +135,14 @@ Stash:   stash@{0} retained — unrelated LC-S1 on feature/questionnaire-visual-
 | `eosinophils_abs` | Eosinophils absolute | `10^9/L` | `eosinophils_(eos_#)`, etc. | `10^9/L` | `10^9/L` | UK FBC | `NO_CHANGE_REQUIRED` | LOW | `NO_CHANGE_REQUIRED` | Already correct. | — |
 | `basophils_abs` | Basophils absolute | `10^9/L` | `basophils_(bas_#)`, etc. | `10^9/L` | `10^9/L` | UK FBC | `NO_CHANGE_REQUIRED` | LOW | `NO_CHANGE_REQUIRED` | Already correct. | — |
 | `rbc` | Red blood cell count | `10^12/L` | (none listed) | `10^12/L` | `10^12/L` | UK reports RBC as ×10¹²/L | `NO_CHANGE_REQUIRED` | LOW | `NO_CHANGE_REQUIRED` | Canonical ID `rbc` (not `red_blood_cells`). Already UK/SI. | — |
-| `hemoglobin` | Haemoglobin | `g/dL` | `hgb`, `hb`, `haemoglobin`; UK labs `g/L` | `g/L` | `g/L` (or `% of local policy — display only) | ADR-002 Layer A: g/L for proteins; NHS/UK labs report haemoglobin in g/L; conversion exists in `units.yaml` lines 154–164 (factor 10) | `TRUE_SCALE_CONVERSION` | HIGH | `NEEDS_CONVERSION_FACTOR_VALIDATION` | ×10 scale between g/dL and g/L. Registry has factors but SSOT canonical remains US. Fixture/Sentinel migration required before flip. | LC-S8D |
+| `hemoglobin` | Haemoglobin | `g/dL` | `hgb`, `hb`, `haemoglobin`; UK labs `g/L` | `g/L` | `g/L` (pending LC-S8D validation) | ADR-002 Layer A: g/L for proteins; NHS/UK labs report haemoglobin in g/L; conversion exists in `units.yaml` lines 154–164 (factor 10) | `TRUE_SCALE_CONVERSION` | HIGH | `NEEDS_CONVERSION_FACTOR_VALIDATION` | ×10 scale between g/dL and g/L. Launch display is mass concentration (g/L) only—not %. Registry factors must be validated against UK lab handbook before SSOT flip. | LC-S8D |
 | `hematocrit` | Haematocrit | `%` | `hct`, `pcv`; UK may report `L/L` (e.g. 0.438) or `%` (43.8) | `L/L` | `%` (only if value and reference range transformed together) | UK labs use both fraction and percent; `units.yaml` lines 166–176 define L/L↔% (×100). LC-S8 preflight §4.2 | `DUAL_REPRESENTATION_POLICY` | MEDIUM | `NEEDS_POLICY_DECISION` | Must forbid `0.438 %`, fraction value with % reference, etc. Display `%` acceptable only with coherent transform. | LC-S8D / LC-S8F |
 | `calcium` | Serum calcium | `mg/dL` | `calcium_(venous)`; UK `mmol/L` | `mmol/L` | `mmol/L` | UK NHS biochemical profiles report adjusted/total calcium in mmol/L; NICE CKD/mineral bone disease guidance uses mmol/L | `TRUE_SCALE_CONVERSION` | HIGH | `NEEDS_CONVERSION_FACTOR_VALIDATION` | Candidate factor ~0.2495 (mg/dL→mmol/L) must be validated from primary lab chemistry source before implementation. | LC-S8D |
 | `corrected_calcium` | Corrected calcium | `mg/dL` | `corrected_calcium_(venous)`; UK `mmol/L` | `mmol/L` | `mmol/L` | Same as calcium | `TRUE_SCALE_CONVERSION` | HIGH | `NEEDS_CONVERSION_FACTOR_VALIDATION` | Same scale risk as calcium. | LC-S8D |
 | `magnesium` | Serum magnesium | `mg/dL` | `magnesium_(venous)`; UK `mmol/L` | `mmol/L` | `mmol/L` | UK panels typically mmol/L | `TRUE_SCALE_CONVERSION` | HIGH | `NEEDS_CONVERSION_FACTOR_VALIDATION` | Candidate factor ~0.4113 requires primary-source validation. | LC-S8D |
-| `sodium` | Sodium | `mEq/L` | `sodium_(venous)`; UK `mmol/L` | `mmol/L` | `mmol/L` | For monovalent cations, 1 mEq/L = 1 mmol/L (IUPAC/clinical chemistry); UK reports mmol/L | `LABEL_EQUIVALENCE_1_TO_1` | LOW | `APPROVED_LABEL_EQUIVALENCE_ONLY` | Numeric equivalence; relabel canonical and register equivalence. | LC-S8C |
-| `potassium` | Potassium | `mEq/L` | `potassium_(venous)` | `mmol/L` | `mmol/L` | Same as sodium | `LABEL_EQUIVALENCE_1_TO_1` | LOW | `APPROVED_LABEL_EQUIVALENCE_ONLY` | Same policy as sodium. | LC-S8C |
-| `chloride` | Chloride | `mEq/L` | `chloride_(venous)` | `mmol/L` | `mmol/L` | Same as sodium | `LABEL_EQUIVALENCE_1_TO_1` | LOW | `APPROVED_LABEL_EQUIVALENCE_ONLY` | Same policy as sodium. | LC-S8C |
+| `sodium` | Sodium | `mEq/L` | `sodium_(venous)`; UK `mmol/L` | `mmol/L` | `mmol/L` | **UK display:** NHS biochemical profiles and NICE renal/electrolyte guidance use serum sodium in mmol/L. **Equivalence proof:** Na⁺ valence = 1 → 1 mEq = 1 mmol; mEq/L and mmol/L are numerically identical for sodium (IFCC/IUPAC amount concentration). **Label:** mEq/L is a US customary synonym on reports, not a different scale. | `LABEL_EQUIVALENCE_1_TO_1` | LOW | `APPROVED_LABEL_EQUIVALENCE_ONLY` | Relabel SSOT canonical to mmol/L; register mEq/L as accepted input alias with factor 1.0. | LC-S8C |
+| `potassium` | Potassium | `mEq/L` | `potassium_(venous)` | `mmol/L` | `mmol/L` | **UK display:** UK NHS pathology reports serum potassium as mmol/L. **Equivalence proof:** K⁺ valence = 1 → 1 mEq/L = 1 mmol/L (same dimensional argument as sodium). **Professional:** UK NEQAS Clinical Chemistry schemes use mmol/L for electrolytes. | `LABEL_EQUIVALENCE_1_TO_1` | LOW | `APPROVED_LABEL_EQUIVALENCE_ONLY` | Independent row; same 1:1 equivalence class as sodium with potassium-specific UK reporting convention. | LC-S8C |
+| `chloride` | Chloride | `mEq/L` | `chloride_(venous)` | `mmol/L` | `mmol/L` | **UK display:** UK NHS pathology reports serum chloride as mmol/L. **Equivalence proof:** Cl⁻ valence = 1 → 1 mEq/L = 1 mmol/L. **Professional:** Consistent with UK “Uniformity of Expression in Laboratory Medicine” practice for serum anions reported in mmol/L. | `LABEL_EQUIVALENCE_1_TO_1` | LOW | `APPROVED_LABEL_EQUIVALENCE_ONLY` | Independent row; same 1:1 equivalence class as sodium; no divisor or multiplier between mEq/L and mmol/L for monovalent chloride. | LC-S8C |
 | `free_t4` | Free T4 | `ng/dL` | `free_thyroxine`, `freet4`; UK `pmol/L` | `pmol/L` | `pmol/L` | UK thyroid assays standardised in pmol/L; NICE thyroid disease investigation uses SI units | `TRUE_SCALE_CONVERSION` | HIGH | `NEEDS_CONVERSION_FACTOR_VALIDATION` | Candidate factor ~12.87 (ng/dL→pmol/L) must be validated from assay manufacturer or UK lab standard before implementation. | LC-S8D |
 | `tsh` | TSH | `mIU/L` | `thyroid_stimulating_hormone`, `thyrotropin` | `mIU/L` | `mIU/L` | UK standard for TSH | `NO_CHANGE_REQUIRED` | LOW | `NO_CHANGE_REQUIRED` | Already UK-appropriate. | — |
 | `hba1c` | HbA1c | `%` | `hemoglobin_a1c`, `a1c`, `glycated_hemoglobin`; UK also `mmol/mol` | `mmol/mol` (IFCC) **or** retain `%` pending policy | Policy-dependent | [NICE NG17](https://www.nice.org.uk/guidance/ng17); UK switched to IFCC mmol/mol (2009); DCCT/IFCC master equation in `units.yaml` lines 121–134 | `DUAL_REPRESENTATION_POLICY` | HIGH | `NEEDS_POLICY_DECISION` | Five sub-decisions required: (1) canonical analytical unit, (2) accept `%` input, (3) allow `%` secondary display, (4) de-duplication vs `hba1c_pct`, (5) harmonisation code validity. Do not fold into generic conversion. | LC-S8E |
@@ -259,14 +260,62 @@ No conversion factor in this document may be copied into SSOT until validated un
 
 ---
 
-## Validation record (Cursor Stage 4)
+## Architectural review amendments (2026-05-16)
+
+Post–architectural review remediation within active LC-S8B (policy document only):
+
+1. **Row-level evidence strengthened** for all five `APPROVED_LABEL_EQUIVALENCE_ONLY` rows (`platelets`, `white_blood_cells`, `sodium`, `potassium`, `chloride`): each now cites named UK/NEQAS/NHS/BCSH or SI equivalence reasoning; generic “same as” wording removed.
+2. **Haemoglobin display wording corrected:** removed erroneous “% of local policy” display implication; proposed launch display remains `g/L` pending LC-S8D conversion-factor validation.
+3. **Decision-count summary recalculated** from §6 table: `NO_CHANGE_REQUIRED` corrected from 12 to **16** (31 total policy rows).
+4. **Authority unchanged:** LC-S8B remains policy-only and non-runtime authority; no SSOT, registry, or code paths modified.
+
+---
+
+## Validation record (Cursor Stage 4 — remediation closure)
 
 ```text
+git branch --show-current:
+  launch-core/lc-s8b-uk-canonical-unit-policy-validation
+
+git status --short:
+  M docs/audit-papers/LC-S8B_uk_canonical_unit_policy_validation.md
+
+git log --oneline -n 5:
+  0982034 chore(bus): LC-S8B kernel COMPLETE status
+  da64898 chore(bus): LC-S8B kernel IN_PROGRESS status
+  2f83b2d docs(LC-S8B): UK canonical unit policy validation table
+  219f969 chore(bus): LC-S8B work package, hardening, and LC-S8A audit input
+  b624d05 docs(LC-S8): record authorised narrative scope expansion e5e6d87
+
 git diff --name-only:
   docs/audit-papers/LC-S8B_uk_canonical_unit_policy_validation.md
 
-git status --short:
-  ?? docs/audit-papers/LC-S8B_uk_canonical_unit_policy_validation.md
+git diff --cached --name-only:
+  (empty)
+
+git stash list:
+  stash@{0}: On feature/questionnaire-visual-redesign: LC-S1: frontend env example
 ```
 
-**Scope confirmation:** Docs-only; no prohibited paths modified.
+**Closure classification:**
+
+| Class | Items |
+|-------|--------|
+| Tracked modified | `docs/audit-papers/LC-S8B_uk_canonical_unit_policy_validation.md` (remediation only) |
+| Staged | None |
+| Untracked | None |
+| Tooling files | None |
+| Out-of-scope | None detected |
+| Stash (LC-S8B related) | None |
+
+**Stash disposition — `stash@{0}`:**
+
+| Field | Value |
+|-------|--------|
+| Exact name | `stash@{0}: On feature/questionnaire-visual-redesign: LC-S1: frontend env example` |
+| Why unrelated | Created on branch `feature/questionnaire-visual-redesign` for LC-S1 frontend env work; LC-S8B branch is `launch-core/lc-s8b-uk-canonical-unit-policy-validation` with docs-only scope |
+| Contents (if known) | LC-S1 frontend environment example changes; not inspected in this remediation (no pop/apply) |
+| Tracked/untracked/ignored | Unknown without pop; message implies frontend env file(s)—typical untracked `.env.example` class |
+| Blocks LC-S8B closure? | **No** — unrelated branch and work package; retained with human awareness |
+
+**Scope confirmation:** Only `docs/audit-papers/LC-S8B_uk_canonical_unit_policy_validation.md` modified in this remediation. No runtime, SSOT, registry, Sentinel, frontend, fixture, or test files touched. `run_work_package.py finish` not re-run per instruction (prior finish COMPLETE; remediation is document amendment on sprint branch).
