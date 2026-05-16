@@ -1,161 +1,175 @@
 {
-  "work_id": "LC-S8B",
-  "status": "HARDENED",
   "bus_version": "1.3.1",
+  "work_id": "LC-S8D",
+  "status": "HARDENED",
   "hardened_utc": "2026-05-16T00:00:00Z",
   "hardened_by": "Claude Code (Sonnet 4.6) — Stage 2 SOP v1.3.1",
   "changes": [
     {
       "check": "Front Matter — work_id",
-      "result": "CONFIRMED: LC-S8B",
+      "result": "CONFIRMED: LC-S8D",
       "citation": "automation_bus/latest_cursor_prompt.md line 2"
     },
     {
       "check": "Front Matter — branch",
-      "result": "CONFIRMED: launch-core/lc-s8b-uk-canonical-unit-policy-validation. Branch does not exist in repo yet — expected. Cursor creates it as Stage 0 before any file is written.",
-      "citation": "automation_bus/latest_cursor_prompt.md line 3; git branch -a (no match)"
+      "result": "CONFIRMED: launch-core/lc-s8d-uk-si-unit-governance-remediation",
+      "citation": "automation_bus/latest_cursor_prompt.md line 3"
     },
     {
       "check": "Front Matter — risk_level HIGH",
-      "result": "CONFIRMED DECLARED. Docs-only sprint; SOP §11 Bypass technically applies (all changes under /docs/). HIGH was retained by GPT for full-approval discipline on a policy document that authorises downstream SSOT implementation. Overcautious but not wrong; no objection.",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4; SOP §11"
+      "result": "CONFIRMED and correct. Sprint touches SSOT, unit registry, scoring policy, Layer B scoring behaviour, and Sentinel — all HIGH triggers per SOP §10.",
+      "citation": "automation_bus/latest_cursor_prompt.md line 4; SOP §10"
     },
     {
-      "check": "Front Matter — execution_model",
-      "result": "CONFIRMED: SINGLE_PHASE",
+      "check": "Front Matter — execution_model TWO_PHASE_START_FINISH",
+      "result": "CONFIRMED",
       "citation": "automation_bus/latest_cursor_prompt.md line 5"
     },
     {
-      "check": "Front Matter — change_type CONTENT",
-      "result": "CONFIRMED and correct. Sprint produces one docs file. No SSOT, no code, no behavioural change. CONTENT is the correct classification. BEHAVIOUR controls do not apply.",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6; scope boundary lines 35–54"
+      "check": "Front Matter — change_type MIXED",
+      "result": "CONFIRMED and correct. Sprint combines SSOT CONTENT changes with BEHAVIOUR changes to scoring policy, unit normalisation, and output generation. MIXED → governed using BEHAVIOUR controls per SOP §4.",
+      "citation": "automation_bus/latest_cursor_prompt.md line 6"
     },
     {
-      "check": "Authority path — architecture/ADR-002-deterministic-analysis-engine.md",
-      "result": "CONFIRMED EXISTS — glob verified at architecture/ADR-002-deterministic-analysis-engine.md",
-      "citation": "architecture/ADR-002-deterministic-analysis-engine.md"
+      "check": "Authority path — docs/audit-papers/LC-S8C_ssot_wide_unit_governance_preflight.md",
+      "result": "CONFIRMED EXISTS — glob verified and content read (§1–§20 including whole-SSOT unit governance table).",
+      "citation": "docs/audit-papers/LC-S8C_ssot_wide_unit_governance_preflight.md"
     },
     {
-      "check": "Authority path — architecture/ADR-001-platform-non-negotiables.md",
-      "result": "CONFIRMED EXISTS — glob verified at architecture/ADR-001-platform-non-negotiables.md",
-      "citation": "architecture/ADR-001-platform-non-negotiables.md"
+      "check": "Authority path — docs/audit-papers/LC-S8B_uk_canonical_unit_policy_validation.md",
+      "result": "CONFIRMED EXISTS — glob verified.",
+      "citation": "docs/audit-papers/LC-S8B_uk_canonical_unit_policy_validation.md"
     },
     {
-      "check": "Authority path — Master_PRD_v5.2.md",
-      "result": "PATH DISCREPANCY — ANNOTATED. Prompt specifies root-level Master_PRD_v5.2.md. File is actually at architecture/Master_PRD_v5.2.md (known relocation per CLAUDE.md §10: 'relocate Master PRD to architecture/'). Cursor must resolve to architecture/Master_PRD_v5.2.md. Not a STOP — equivalent exists at resolved path.",
-      "citation": "architecture/Master_PRD_v5.2.md (glob verified); CLAUDE.md §10 commit note"
+      "check": "Authority path — docs/audit-papers/LC-S8C_pre_sprint_unit_policy_validation_note.md",
+      "result": "CONFIRMED EXISTS — content read in full. §§1–6 provide the STOP gate structure, evidence table, repo impact map, and combined sprint feasibility assessment that governs LC-S8D phases.",
+      "citation": "docs/audit-papers/LC-S8C_pre_sprint_unit_policy_validation_note.md lines 1–174"
     },
     {
       "check": "Authority path — backend/ssot/biomarkers.yaml",
-      "result": "CONFIRMED EXISTS and content read in full (1763 lines). Current SSOT confirmed as the single authority for canonical biomarker units. Content cross-referenced with baseline defect list.",
-      "citation": "backend/ssot/biomarkers.yaml lines 1–1763"
+      "result": "CONFIRMED EXISTS — content read. Phase A markers verified: platelets unit 'K/μL' (line 694), white_blood_cells unit 'K/μL' (line 679), sodium unit 'mEq/L' (line 775), potassium unit 'mEq/L' (line 789), chloride unit 'mEq/L' (line 803). HbA1c unit '%' (line 196), hematocrit unit '%' (line 664), hba1c_pct unit '%' (line 1604).",
+      "citation": "backend/ssot/biomarkers.yaml lines 196, 664, 675–694, 772–803, 1603–1604"
     },
     {
       "check": "Authority path — backend/ssot/units.yaml",
-      "result": "CONFIRMED EXISTS and content read in full (195 lines). Unit definitions, categories, and conversion factors confirmed.",
-      "citation": "backend/ssot/units.yaml lines 1–195"
+      "result": "CONFIRMED EXISTS — content read in full (195 lines). Named unit entries: mg_dL, g_dL, g_L, l_L, percent, U_L, K_uL, uU_mL, mg_L, ng_mL, nmol_L, umol_L. Conversion entries lines 83–176. CRITICAL GAP: mmol/L, 10^9/L, and mEq/L are NOT defined as named unit entries. mmol/L appears only in conversions sub-tree (lines 87–139). 10^9/L is absent entirely. mEq/L is absent from units.yaml (present only in UnitEnum registry.py line 59). Phase A must add these named entries.",
+      "citation": "backend/ssot/units.yaml lines 1–195; absence of mmol_L, 10_9_L, mEq_L named entries confirmed"
+    },
+    {
+      "check": "Authority path — backend/ssot/scoring_policy.yaml",
+      "result": "CONFIRMED EXISTS — content read in full (349 lines). Phase C migration targets confirmed: glucose unit 'mg/dL' (line 55), hba1c unit '%' bands 4.0–15.0 (lines 68–78), total_cholesterol unit 'mg/dL' (line 93), ldl_cholesterol unit 'mg/dL' (line 110), hdl_cholesterol unit 'mg/dL' (line 119), triglycerides unit 'mg/dL' (line 133), creatinine unit 'mg/dL' (line 172), hematocrit unit '%' bands 36–46 (lines 237–247), white_blood_cells unit 'K/μL' (line 249), platelets unit 'K/μL' (line 262).",
+      "citation": "backend/ssot/scoring_policy.yaml lines 55, 68–78, 93, 110, 119, 133, 172, 237–247, 249, 262"
+    },
+    {
+      "check": "Authority path — backend/ssot/biomarker_alias_registry.yaml",
+      "result": "CONFIRMED EXISTS — content read (first 60 lines). Structure confirmed: canonical_id + aliases list per entry.",
+      "citation": "backend/ssot/biomarker_alias_registry.yaml"
+    },
+    {
+      "check": "Authority path — backend/ssot/system_burden_registry.yaml",
+      "result": "CONFIRMED EXISTS — grep verified. hba1c at line 74, hematocrit at line 82, platelets at line 130, white_blood_cells at line 170, hba1c_pct at line 314. Both hba1c AND hba1c_pct are registered — Phase C must address hba1c_pct burden entry as part of deprecation scope.",
+      "citation": "backend/ssot/system_burden_registry.yaml lines 74, 82, 130, 170, 314"
     },
     {
       "check": "Authority path — backend/core/units/registry.py",
-      "result": "CONFIRMED EXISTS and content read in full (503 lines). UnitRegistry, UnitEnum, conversion dispatch, strict set, _units_equivalent, coherence guard all confirmed.",
-      "citation": "backend/core/units/registry.py lines 1–503"
+      "result": "CONFIRMED EXISTS — content read in full (503 lines). UnitEnum, strict conversion sets, _units_equivalent, convert_value, apply_unit_normalisation, value_and_reference_units_coherent_for_numeric_compare all confirmed. HbA1c direction: line 185 converts hba1c '%' → mmol/mol; lines 219–236 convert mmol/mol → '%' (linear IFCC→NGSP). Hematocrit direction: lines 209–216 convert L/L → '%'. mEq/L is in UnitEnum (line 59) but has NO conversion logic in registry.py.",
+      "citation": "backend/core/units/registry.py lines 59, 185–188, 209–216, 219–236"
     },
     {
-      "check": "Authority path — docs/audit-papers/LC-S8_biomarker_unit_range_normalisation_preflight.md",
-      "result": "CONFIRMED EXISTS — glob verified.",
-      "citation": "docs/audit-papers/LC-S8_biomarker_unit_range_normalisation_preflight.md"
+      "check": "Authority path — backend/core/canonical/hba1c_layer_b_arbitration.py",
+      "result": "CONFIRMED EXISTS — content read in full (44 lines). Logic: if both hba1c and hba1c_pct present, keep hba1c only (lines 39–42). If only hba1c_pct, promote to hba1c (lines 39–40). Docstring line 7 states 'Layer B analytical identity is fixed to biomarker id hba1c in % (post unit norm)' — this docstring requires updating when Phase C flips canonical to mmol/mol.",
+      "citation": "backend/core/canonical/hba1c_layer_b_arbitration.py lines 7, 37–43"
     },
     {
-      "check": "Authority path — docs/audit-papers/LC-S8A_uk_canonical_unit_ssot_lockdown_audit.md",
-      "result": "CONFIRMED EXISTS and content read in full. Provides the baseline defect enumeration that LC-S8B must translate into a policy table.",
-      "citation": "docs/audit-papers/LC-S8A_uk_canonical_unit_ssot_lockdown_audit.md lines 1–628"
+      "check": "Authority ambiguity — display_unit_policy.yaml duplicate check",
+      "result": "CONFIRMED CLEAN: display_unit_policy.yaml does NOT exist anywhere in the repo (glob found no matches). Phase D may create backend/ssot/display_unit_policy.yaml as a new file with no authority duplication risk.",
+      "citation": "glob backend/ssot/*.yaml — no display_unit_policy.yaml found"
     },
     {
-      "check": "Baseline reality check — unresolved UK/SI canonical-unit policy issues",
-      "result": "CONFIRMED UNRESOLVED. Direct read of biomarkers.yaml confirms all issues flagged by LC-S8A remain in SSOT: (1) K/μL: platelets line 697, white_blood_cells line 679. (2) g/dL: hemoglobin line 649. (3) %: hematocrit line 664. (4) mg/dL: calcium line 747, corrected_calcium line 762, magnesium line 819. (5) ng/dL: free_t4 line 602. (6) mEq/L: sodium line 775, potassium line 787, chloride line 803. (7) %: hba1c line 196, hba1c_pct line 1604. Sprint is NOT a no-op. Proceed.",
-      "citation": "backend/ssot/biomarkers.yaml lines 196, 602, 649, 664, 679, 697, 747, 762, 775, 787, 803, 819, 1604"
+      "check": "Source cross-ref — Phase A: mEq/L equivalence wiring absent from units.yaml AND registry.py",
+      "result": "CONFIRMED GAP: units.yaml has no mEq/L named unit entry and no mEq/L↔mmol/L conversion block. registry.py _get_conversion_factor() has no sodium/potassium/chloride biomarker branch. _units_equivalent() (lines 89–94) only handles µmol/L variants. test_unit_registry.py line 61–63 (test_identity_for_biomarkers_without_conversion) currently passes sodium 140.0 mEq/L → mEq/L unchanged because sodium is NOT in _STRICT_CONVERSION_BIOMARKERS (lines 74–84) — registry falls through to passthrough. Phase A must add explicit mEq/L↔mmol/L 1:1 equivalence wiring, then add sodium/potassium/chloride to an appropriate equivalence group.",
+      "citation": "backend/core/units/registry.py lines 74–94; backend/tests/unit/test_unit_registry.py lines 59–63"
     },
     {
-      "check": "Source cross-ref — units.yaml missing conversions confirmed",
-      "result": "CONFIRMED. units.yaml contains NO conversion entries for: K/μL ↔ 10^9/L (lines 44–49 define K/μL unit but no conversion block), mg/dL ↔ mmol/L for calcium, mg/dL ↔ mmol/L for magnesium, ng/dL ↔ pmol/L for free_t4, mEq/L ↔ mmol/L for electrolytes. Conversion factors for these pairs are what LC-S8B must evaluate evidence for — they must NOT be invented in the policy doc.",
-      "citation": "backend/ssot/units.yaml lines 44–49 (K/μL defined, no calcium/magnesium/free_t4/mEq/L conversion blocks)"
+      "check": "Source cross-ref — Phase A: 10^9/L not defined in UnitEnum or units.yaml",
+      "result": "CONFIRMED ABSENT: UnitEnum (registry.py lines 42–59) has K_UL = 'K/μL' but no 10^9/L entry. units.yaml K_uL named unit (lines 45–49) references si_equivalent '10³/μL', not '10^9/L'. 10^9/L as a canonical unit token is absent. Phase A must define 10^9/L in units.yaml and add it to UnitEnum (or a string alias set) before registering K/μL ↔ K/uL ↔ 10^9/L equivalence.",
+      "citation": "backend/core/units/registry.py lines 42–59; backend/ssot/units.yaml lines 45–49"
     },
     {
-      "check": "Source cross-ref — registry.py equivalence gaps confirmed",
-      "result": "CONFIRMED. _units_equivalent() at registry.py lines 89–94 handles only µmol/L variants. K/μL ↔ 10^9/L is NOT in the equivalence set. UnitEnum at lines 42–59 does not include 10^9/L, pmol/L (for free_t4), or mmol/L for calcium/magnesium. This is background context for the policy document — not Cursor's task in LC-S8B.",
-      "citation": "backend/core/units/registry.py lines 42–59, 86–94"
+      "check": "Source cross-ref — Phase C HbA1c inversion: multi-file breakage map",
+      "result": "CONFIRMED: Flipping hba1c canonical from '%' to 'mmol/mol' requires coordinated changes across six locations:\n(1) backend/ssot/biomarkers.yaml line 196: unit '%' → 'mmol/mol'\n(2) backend/ssot/scoring_policy.yaml lines 68–78: unit '%', bands 4.0–15.0 → mmol/mol equivalents (~31–104 mmol/mol)\n(3) backend/core/units/registry.py lines 185–188 and 219–236: invert conversion direction (currently mmol/mol→'%'; must become '%'→'mmol/mol' or accept both with mmol/mol as base)\n(4) backend/core/canonical/hba1c_layer_b_arbitration.py line 7 (docstring): update 'in %' to 'in mmol/mol'\n(5) backend/tests/unit/test_unit_registry.py line 50: assert unit == '%' → assert unit == 'mmol/mol'\n(6) backend/tests/unit/test_hba1c_governance.py line 42: currently asserts 48 mmol/mol → ~6.54% (NGSP); after flip must assert '%' input → mmol/mol output",
+      "citation": "backend/ssot/biomarkers.yaml:196; backend/ssot/scoring_policy.yaml:68–78; backend/core/units/registry.py:185–188,219–236; backend/core/canonical/hba1c_layer_b_arbitration.py:7; backend/tests/unit/test_unit_registry.py:50; backend/tests/unit/test_hba1c_governance.py:42"
     },
     {
-      "check": "Scope boundary — forbidden file list",
-      "result": "CONFIRMED EXPLICIT AND ENFORCEABLE. Prompt prohibits changes to: backend/ssot/biomarkers.yaml, backend/ssot/units.yaml, backend/core/units/registry.py, parsers, scoring logic, frontend, fixtures, Sentinel, conversion factors, aliases. STOP conditions cover all cases where implementation work appears necessary. Output is strictly one file: docs/audit-papers/LC-S8B_uk_canonical_unit_policy_validation.md.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 39–54, 384–399"
+      "check": "Source cross-ref — Phase C haematocrit inversion: multi-file breakage map",
+      "result": "CONFIRMED: Flipping hematocrit canonical from '%' to 'L/L' requires:\n(1) backend/ssot/biomarkers.yaml line 664: unit '%' → 'L/L'\n(2) backend/ssot/scoring_policy.yaml lines 235–247: unit '%', bands 36–46 → L/L equivalents (~0.36–0.46)\n(3) backend/core/units/registry.py lines 209–216: currently converts L/L→'%' (factor 100); must invert to '%'→'L/L' as base conversion\n(4) backend/tests/regression/test_lc_s8_biomarker_unit_reference_incoherence_regression.py: tests at lines 146–167 per LC-S8C note §3.2 assume Layer A normalises TO '%'; all hematocrit assertions require replay after inversion.",
+      "citation": "backend/ssot/biomarkers.yaml:664; backend/ssot/scoring_policy.yaml:235–247; backend/core/units/registry.py:209–216; backend/tests/regression/test_lc_s8_biomarker_unit_reference_incoherence_regression.py:146–167"
     },
     {
-      "check": "STOP conditions — completeness review",
-      "result": "CONFIRMED PRESENT AND SUFFICIENT. STOP conditions cover: branch mismatch, unresolvable authority paths, wrong SSOT authority, duplicate unit authority, missing evidence for a row, non-doc changes required, implementation changes needed, invented conversion factors, unresolvable HbA1c policy, any git diff outside the single output file. Comprehensive.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 384–399"
+      "check": "Source cross-ref — Phase C scoring band migration: glucose/lipids/creatinine test breakage",
+      "result": "CONFIRMED: backend/tests/unit/test_scoring_rules.py line 31 asserts glucose_rule.unit == 'mg/dL'. Phase C migrates glucose, total_cholesterol, ldl_cholesterol, hdl_cholesterol, triglycerides (all mg/dL per scoring_policy.yaml lines 55, 93, 110, 119, 133) and creatinine (mg/dL line 172) to UK/SI units. All affected test assertions in test_scoring_rules.py must be updated. Golden before/after test vectors are required per Phase C §Required work item 4.",
+      "citation": "backend/tests/unit/test_scoring_rules.py:31; backend/ssot/scoring_policy.yaml:55,93,110,119,133,172"
     },
     {
-      "check": "Behavioural hardening (Stage 2B) — applicability",
-      "result": "NOT APPLICABLE. change_type is CONTENT. No Intelligence Core components are touched. No behavioural surface area. No regression targets required. BEHAVIOUR controls do not apply per SOP §4.",
-      "citation": "SOP §4; automation_bus/latest_cursor_prompt.md line 6"
+      "check": "Source cross-ref — Phase B hemoglobin: factors present but uncited to primary source",
+      "result": "CONFIRMED: units.yaml lines 154–164 contain g_L_to_g_dL_hemoglobin (factor 0.1) and g_dL_to_g_L_hemoglobin (factor 10.0). LC-S8C pre-sprint note §2.4 confirms these factors exist but are 'not cited to UK lab primary source in LC-S8B'. Phase B for hemoglobin may proceed only if a UK primary-source citation (e.g. NHS/RCPCH lab handbook) is documented in docs/audit-papers/LC-S8D_uk_si_unit_governance_remediation_notes.md before the conversion is implemented. If absent: record PHASE_B_BLOCKED_PENDING_EVIDENCE.",
+      "citation": "backend/ssot/units.yaml lines 154–164; docs/audit-papers/LC-S8C_pre_sprint_unit_policy_validation_note.md §2.4"
     },
     {
-      "check": "Duplicate SSOT authority risk",
-      "result": "CONFIRMED CLEAN. Prompt explicitly prohibits creating a second SSOT. The output policy document is explicitly marked non-runtime-authority in required document structure §13. No authority duplication risk.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 47, 309–313 (non-authority warning required in doc)"
+      "check": "Source cross-ref — Phase B Ca/corrected_Ca/Mg/fT4: conversion factors absent from units.yaml",
+      "result": "CONFIRMED: units.yaml conversions sub-tree (lines 83–176) contains NO entries for calcium, corrected_calcium, magnesium, or free_t4. These biomarkers are not in _STRICT_CONVERSION_BIOMARKERS so registry passthrough applies — but Layer B cannot score them in a migrated unit without conversion. Phase B must record PHASE_B_BLOCKED_PENDING_EVIDENCE for all four unless conversion factors with primary-source citations are attached to the notes file.",
+      "citation": "backend/ssot/units.yaml lines 83–176 (absence confirmed); backend/core/units/registry.py lines 74–84"
     },
     {
-      "check": "Tooling leakage risk",
-      "result": "NO RISK. Only output file is docs/audit-papers/LC-S8B_uk_canonical_unit_policy_validation.md. No .codex/, .vscode/, AGENTS.md, or tooling paths.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 35–37"
+      "check": "Source cross-ref — hba1c_pct KB package signals are out-of-scope for LC-S8D",
+      "result": "CONFIRMED: system_burden_registry.yaml line 314 registers hba1c_pct. LC-S8C note §3.1 identifies knowledge_bus/packages/pkg_kb52d_hba1c_pct_* as a residual signal evaluation risk. The allowed files list in the prompt does NOT include knowledge_bus/packages/. KB signal remapping cannot be executed in LC-S8D. Arbitration layer (hba1c_layer_b_arbitration.py) prevents numeric double-scoring on the ScoringRules path. Record KB signal remap as DEFERRED residual risk in notes file.",
+      "citation": "backend/ssot/system_burden_registry.yaml:314; automation_bus/latest_cursor_prompt.md allowed files (no knowledge_bus/ entry); docs/audit-papers/LC-S8C_pre_sprint_unit_policy_validation_note.md §3.1"
     },
     {
-      "check": "HbA1c — dedicated policy handling enforced",
-      "result": "CONFIRMED. Prompt correctly treats HbA1c as a dedicated policy decision requiring five explicit sub-decisions before any approval. Default decision is NEEDS_POLICY_DECISION unless fully evidenced. Dual-representation de-duplication, canonical direction, and harmonisation code validity must all be resolved in the document.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 233–250"
+      "check": "Required test files — existence check",
+      "result": "CONFIRMED ALL EXIST: backend/tests/unit/test_unit_registry.py (exists), backend/tests/unit/test_scoring_rules.py (exists), backend/tests/unit/test_hba1c_governance.py (exists), backend/tests/regression/test_lc_s8_biomarker_unit_reference_incoherence_regression.py (exists). All four test files referenced in Required validation commands are present — no creation needed, only updates.",
+      "citation": "glob confirmed all four paths"
     },
     {
-      "check": "Haematocrit — value/range coherence guard enforced",
-      "result": "CONFIRMED. Prompt explicitly prohibits: 0.438 %, 0.438 with % label, value in fraction with reference range in percent, value in percent with reference range in fraction. Policy must separate analytical from display canonical.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 254–268"
+      "check": "Forbidden files — verified absent from allowed scope",
+      "result": "CONFIRMED: run_work_package.py, golden_gate_local.py, update_cursor_status.py, latest_gate_evidence.json, latest_gate_output.txt, latest_cursor_status.json are not in the allowed files list. Tooling leakage paths (.codex/, .vscode/, AGENTS.md) explicitly prohibited.",
+      "citation": "automation_bus/latest_cursor_prompt.md lines 163–182"
     },
     {
-      "check": "K/μL equivalence — evidence required before APPROVED_LABEL_EQUIVALENCE_ONLY",
-      "result": "CONFIRMED. Prompt requires validation of numerical equivalence before approving. From LC-S8A: 1 K/μL = 1 × 10^3/μL = 1 × 10^9/L (since μL = 10^-6 L → 10^3/μL = 10^3/10^-6 L = 10^9/L). This is mathematical equivalence. Evidence source must be cited in the policy document (e.g. SI unit definition, BCSH guidelines, UK NEQAS, or equivalent).",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 285–295; LC-S8A §5"
+      "check": "Behavioural hardening (Stage 2B) — scope defined",
+      "result": "CONFIRMED: change_type MIXED. Intelligence Core components affected: (a) unit normalisation in registry.py — base unit direction changes for hba1c and hematocrit; (b) scoring band values in scoring_policy.yaml — numeric ranges change for all Phase C markers; (c) output structure — scoring output unit labels change. Determinism: all changes are deterministic (lookup-based, no LLM). Output structure: same JSON keys, different unit/value fields. Ranking and ordering: stable (band-relative scoring unchanged). No hidden side effects identified beyond the six-file HbA1c coordination and four-file haematocrit coordination documented above.",
+      "citation": "backend/core/units/registry.py; backend/ssot/scoring_policy.yaml; SOP §4 (MIXED uses BEHAVIOUR controls)"
     },
     {
-      "check": "Calcium/magnesium/free_t4 — NEEDS_CONVERSION_FACTOR_VALIDATION default",
-      "result": "CONFIRMED. Prompt explicitly states these are high-risk true conversion areas and default decision is NEEDS_CONVERSION_FACTOR_VALIDATION unless conversion factors are fully evidence-validated. No conversion factors may be invented. This is correctly protective.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 297–305"
-    },
-    {
-      "check": "Prior task findings — inheritance check",
-      "result": "CONFIRMED INDEPENDENT. LC-S8A audit paper is available as an input reference (read in full). LC-S8B must not treat LC-S8A as implementation authority — prompt explicitly states this. Every policy row in the table must cite its own authoritative source. LC-S8A findings may inform which rows to evaluate but cannot be the sole evidence.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 124–136; LC-S8A closing summary §18"
+      "check": "No-op sprint check",
+      "result": "CONFIRMED NOT A NO-OP: Phase A has five unresolved SSOT label drifts (K/μL equivalence unregistered, mEq/L equivalence unregistered). Phase C has confirmed US mg/dL scoring bands while Layer A emits UK/SI units. Phase D display policy file does not exist. Real, substantive work required.",
+      "citation": "backend/ssot/scoring_policy.yaml lines 55,68,172,237; backend/core/units/registry.py lines 74–94"
     }
   ],
   "surfaced_risks": [
     {
-      "risk": "Master_PRD_v5.2.md is at architecture/Master_PRD_v5.2.md (not root). Cursor must resolve to this path for the authority preflight check.",
-      "severity": "ANNOTATED — not a STOP; equivalent exists at resolved path"
+      "risk": "Phase A mmol/L and 10^9/L named units absent from units.yaml — must be added before equivalence logic is wired in registry.py",
+      "severity": "IMPLEMENTATION BLOCKER for Phase A — add named unit entries first"
     },
     {
-      "risk": "LC-S8B policy document must not be treated as implementation authority. The required §13 non-authority warning must be present and explicit. Any downstream sprint (LC-S8C/D/E/F) that cites this document as authority without a fresh governed prompt is a SOP violation.",
-      "severity": "GOVERNANCE — enforce via required document structure"
+      "risk": "HbA1c canonical inversion is a six-file coordinated change (biomarkers.yaml, scoring_policy.yaml, registry.py, hba1c_layer_b_arbitration.py, test_unit_registry.py, test_hba1c_governance.py). Partial update will break tests. Must be executed as a single atomic sub-phase.",
+      "severity": "HIGH — atomic sub-phase required; Phase C STOP if any partial state persists"
     },
     {
-      "risk": "HbA1c dual-representation policy carries the highest downstream complexity. If the policy document casually folds hba1c into generic unit conversion or approves mmol/mol change without resolving all five sub-decisions, it will authorise a downstream sprint that would break scoring fixtures broadly.",
-      "severity": "HIGH — enforce via NEEDS_POLICY_DECISION default"
+      "risk": "Haematocrit canonical inversion is a four-file coordinated change (biomarkers.yaml, scoring_policy.yaml, registry.py, regression test). Scoring bands must be re-banded in L/L (0.36–0.46 range) before SSOT flip. Decision must be recorded in notes file first.",
+      "severity": "HIGH — Phase C STOP until notes file decision is recorded"
     },
     {
-      "risk": "Calcium/magnesium/free_t4 conversion factors must come from governed clinical references (NHS lab directory, NICE, clinical chemistry standards). The LC-S8A audit cited factors (0.2495/4.008, 0.4113/2.431, 12.87/0.0777) as illustrative but flagged confirmation required. The LC-S8B policy document must cite primary sources for these factors before any APPROVED_FOR_IMPLEMENTATION decision.",
-      "severity": "HIGH — NEEDS_CONVERSION_FACTOR_VALIDATION until evidence cited"
+      "risk": "test_scoring_rules.py line 31 asserts glucose unit 'mg/dL' — this plus all lipid/creatinine unit assertions will break on Phase C migration. Golden before/after test vectors required.",
+      "severity": "MEDIUM — expected breakage, must be updated as part of Phase C"
     },
     {
-      "risk": "Haematocrit L/L vs % policy requires careful handling. UK labs report both formats. The policy must resolve whether L/L is treated as an accepted input alias or a distinct analytical canonical. An incoherent decision here (approving both without specifying the canonical direction) will produce the same value/range unit split that the LC-S8 scoring guard was designed to catch.",
-      "severity": "MEDIUM — NEEDS_POLICY_DECISION default appropriate"
+      "risk": "hba1c_pct KB signals (knowledge_bus/packages/pkg_kb52d_hba1c_pct_*) cannot be remapped in this sprint — not in allowed files. Signal evaluation risk remains post-sprint.",
+      "severity": "RESIDUAL — record as DEFERRED in notes file; arbitration prevents numeric double-scoring"
+    },
+    {
+      "risk": "Phase B hemoglobin conversion factors exist in units.yaml but lack primary-source citation. Hemoglobin Phase B can unblock if UK lab handbook citation is added to notes file; otherwise record PHASE_B_BLOCKED_PENDING_EVIDENCE.",
+      "severity": "CONDITIONAL — resolved by evidence attachment at Phase B checkpoint"
     }
   ]
 }
