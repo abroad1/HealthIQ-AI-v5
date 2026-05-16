@@ -101,7 +101,7 @@ def test_lc_s5_fingerprints_stamped_and_matrix_present() -> None:
 
 @pytest.mark.regression
 def test_check2_alcohol_bridge_language_when_moderate_threshold_met() -> None:
-    """CHECK 2 — alcohol / one-carbon bridge language in lead_narrative (orchestrator injection, not matrix fixture)."""
+    """CHECK 2 — alcohol / one-carbon bridge language in body_overview (orchestrator injection, not matrix fixture)."""
     prepared = _prepare_ab_fixture_panel()
     user = {"user_id": "00000000-0000-0000-0000-00000000lc5c2", "age": 45, "gender": "male"}
     lifestyle_inputs = {
@@ -124,19 +124,12 @@ def test_check2_alcohol_bridge_language_when_moderate_threshold_met() -> None:
         fixed_analysis_id="lc-s5-check2-alcohol-bridge",
     )
     assert dto.status == "completed"
-    lead = (dto.narrative_report_v1.lead_narrative if dto.narrative_report_v1 else "") or ""
-    low = lead.lower()
-    assert any(
-        token in low
-        for token in (
-            "alcohol",
-            "macrocytosis",
-            "lifestyle bridge",
-            "methylation",
-            "remethylation",
-            "transsulfuration",
-        )
-    ), f"Expected alcohol/methylation bridge language in lead_narrative; got head: {low[:400]!r}"
+    body = (dto.narrative_report_v1.body_overview if dto.narrative_report_v1 else "") or ""
+    low = body.lower()
+    assert "moderate alcohol" in low or "questionnaire suggests" in low, (
+        f"Expected alcohol lifestyle context in body_overview; got head: {low[:400]!r}"
+    )
+    assert "alcohol_intake_moderate_or_higher_with_one_carbon_lab_coherence" not in low
 
 
 @pytest.mark.regression
@@ -213,11 +206,14 @@ def test_check2_lifestyle_context_narrative_differs_from_baseline() -> None:
         n0 = base.get("narrative") or {}
         n1 = life.get("narrative") or {}
         assert n0 != n1, f"{panel}: lifestyle_context must change narrative fingerprint vs baseline"
-        lead = str((n1.get("lead_narrative_head") or "")).lower()
-        assert any(
-            token in lead
-            for token in ("alcohol", "macrocytosis", "lifestyle", "methylation", "remethylation", "transsulfuration")
-        ), f"{panel}: expected lifestyle bridge language in lead_narrative_head: {lead[:240]!r}"
+        bo = str((n1.get("body_overview_head") or "")).lower()
+        assert "moderate alcohol" in bo or "questionnaire suggests" in bo, (
+            f"{panel}: expected lifestyle context in body_overview_head: {bo[:240]!r}"
+        )
+        slug = "alcohol_intake_moderate_or_higher_with_one_carbon_lab_coherence"
+        for field in ("body_overview_head", "lead_narrative_head", "retail_summary_head"):
+            text = str((n1.get(field) or "")).lower()
+            assert slug not in text, f"{panel}: internal lifestyle slug leaked in {field}"
 
 
 @pytest.mark.regression

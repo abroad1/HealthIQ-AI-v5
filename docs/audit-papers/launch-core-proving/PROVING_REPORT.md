@@ -1,7 +1,7 @@
 # Launch-core proving harness — comparison report
 
-- **Stamp:** `20260516T203932Z`
-- **Git (short):** `b8e77e3`
+- **Stamp:** `20260516T222720Z`
+- **Git (short):** `c8d92bd`
 - **Matrix:** `backend\tests\fixtures\proving\launch_core_matrix.json`
 
 ## Scenario matrix (panels × scenarios)
@@ -41,7 +41,7 @@ Your main finding sits...
 - **retail summary (head):** The ranked lead pattern is **Homocysteine Elevation Context** (at_risk), centred on **Homocysteine**. This is the priority focus for interpretation on this pane...
 - **body overview (head):** Lead ranked finding **Homocysteine Elevation Context** (at_risk) is interpreted alongside the wider deterministic system snapshot below.
 
-Your main finding sits...
+Your questionnaire sug...
 - **clinician primary_concern (head):** Homocysteine Elevation Context: warrants attention on this panel...
 - **IDL enabled patterns:** 4 titles=['', '', '', '']
 
@@ -93,7 +93,7 @@ Your main finding s...
 - **retail summary (head):** The ranked lead pattern is **Homocysteine Elevation Context** (suboptimal), centred on **Homocysteine**. This is the priority focus for interpretation on this p...
 - **body overview (head):** Lead ranked finding **Homocysteine Elevation Context** (suboptimal) is interpreted alongside the wider deterministic system snapshot below.
 
-Your main finding s...
+Your questionnaire ...
 - **clinician primary_concern (head):** Homocysteine Elevation Context: is outside the optimal range on this panel...
 - **IDL enabled patterns:** 2 titles=['', '']
 
@@ -147,5 +147,5 @@ Expect: lifestyle-derived fields present under lifestyle_context; narrative head
 
 ## Artifact paths
 
-- Golden outputs (per run): `docs/audit-papers/launch-core-proving/artifacts/20260516T203932Z/` — written by `run_golden_panel`; omit bulk artefacts from git if desired.
+- Golden outputs (per run): `docs/audit-papers/launch-core-proving/artifacts/20260516T222720Z/` — written by `run_golden_panel`; omit bulk artefacts from git if desired.
 - Latest fingerprints JSON: `docs/audit-papers/launch-core-proving/latest_fingerprints.json`

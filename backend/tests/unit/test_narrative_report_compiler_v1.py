@@ -19,13 +19,17 @@ def test_compiler_no_raise_when_assets_missing(monkeypatch, tmp_path):
 
 
 def test_lifestyle_bridges_surface_when_active():
+    from core.analytics.narrative_report_compiler_v1 import ALCOHOL_ONE_CARBON_LIFESTYLE_BODY_OVERVIEW_V1
+
     meta = {
         "lifestyle_interpretation_bridges_v1": {
             "alcohol_methylation_macrocytosis": {"active": True, "rationale_codes": ["test"]},
         }
     }
     rep = compile_narrative_report_v1(analysis_id="a4", meta=meta, insight_graph={}, idl_bundle=None)
-    assert "Lifestyle bridge" in rep.lead_narrative
+    assert ALCOHOL_ONE_CARBON_LIFESTYLE_BODY_OVERVIEW_V1 in rep.body_overview
+    assert "Lifestyle bridge" not in rep.lead_narrative
+    assert "alcohol_intake_moderate" not in rep.body_overview
 
 
 def _sample_idl_bundle() -> InterpretationDisplayLayerBundleV1:

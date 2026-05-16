@@ -276,7 +276,7 @@ def assemble_lc_s3_sections(
     clarification_paths_block: str,
     lead_yaml_block: str,
     secondary_yaml_block: str,
-    bridge_block: str,
+    alcohol_lifestyle_body_overview: str = "",
     body_overview_for_consumer: str,
     clinician_base_without_consumer_lead: str,
     compiler_meta: Dict[str, Any],
@@ -295,14 +295,16 @@ def assemble_lc_s3_sections(
     retail_summary = _apply_boundary(retail_raw, boundaries)
 
     rc_block = _root_cause_block(payload)
-    lead_narrative_raw = "\n\n".join(
-        p for p in [lead_yaml_block.strip(), rc_block.strip(), bridge_block.strip()] if p
-    )
+    lead_narrative_raw = "\n\n".join(p for p in [lead_yaml_block.strip(), rc_block.strip()] if p)
     lead_narrative = _apply_boundary(lead_narrative_raw, boundaries)
 
     bo_raw = "\n\n".join(
         p
-        for p in [_body_overview_payload_sentence(payload).strip(), body_overview_for_consumer.strip()]
+        for p in [
+            _body_overview_payload_sentence(payload).strip(),
+            alcohol_lifestyle_body_overview.strip(),
+            body_overview_for_consumer.strip(),
+        ]
         if p
     )
     body_overview = _apply_boundary(bo_raw, boundaries)

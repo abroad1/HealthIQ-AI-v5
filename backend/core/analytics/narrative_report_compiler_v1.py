@@ -29,6 +29,14 @@ _ENTITIES_PATH = _REPO_ROOT / "knowledge_bus" / "interpretation_entities_v1" / "
 _PATHWAY_PATH = _REPO_ROOT / "knowledge_bus" / "pathway_explainers_v1" / "pathway_explainers_v1.yaml"
 _FUNCTIONAL_PATH = _REPO_ROOT / "knowledge_bus" / "functional_interpretation_v1" / "functional_interpretation_v1.yaml"
 
+# LC-S9C — governed retail copy for alcohol / one-carbon / homocysteine lifestyle bridge (consumer body overview).
+ALCOHOL_ONE_CARBON_LIFESTYLE_BODY_OVERVIEW_V1 = (
+    "Your questionnaire suggests moderate alcohol intake, which can be relevant when "
+    "interpreting homocysteine because alcohol intake may increase demand on one-carbon "
+    "nutrients such as folate and B vitamins. This does not change your biomarker score, "
+    "but it helps explain why this pathway is worth reviewing."
+)
+
 _LEAD_SIGNAL_HINTS: Set[str] = {
     "signal_homocysteine_high",
     "signal_homocysteine_elevation_context",
@@ -526,27 +534,20 @@ def _functional_section(domain: Mapping[str, Any]) -> str:
     return _join_blocks(parts)
 
 
-def _bridge_lines(meta: Optional[Mapping[str, Any]]) -> List[str]:
+def _alcohol_lifestyle_bridge_active(meta: Optional[Mapping[str, Any]]) -> bool:
     if not meta or not isinstance(meta, dict):
-        return []
+        return False
     bridges = meta.get("lifestyle_interpretation_bridges_v1")
     if not isinstance(bridges, dict):
-        return []
-    lines: List[str] = []
-    for key, title in (
-        ("alcohol_methylation_macrocytosis", "Lifestyle bridge — one-carbon / alcohol context"),
-        ("hydration_activity_renal", "Lifestyle bridge — hydration / activity renal context"),
-        ("fasting_dietary_glycaemic", "Lifestyle bridge — fasting / glycaemic context"),
-    ):
-        block = bridges.get(key)
-        if not isinstance(block, dict):
-            continue
-        if not block.get("active"):
-            continue
-        codes = block.get("rationale_codes") or []
-        code_str = ", ".join(str(c) for c in codes if c)
-        lines.append(f"{title}: active ({code_str}).".strip())
-    return lines
+        return False
+    block = bridges.get("alcohol_methylation_macrocytosis")
+    return isinstance(block, dict) and bool(block.get("active"))
+
+
+def _consumer_alcohol_lifestyle_body_overview(meta: Optional[Mapping[str, Any]]) -> str:
+    if _alcohol_lifestyle_bridge_active(meta):
+        return ALCOHOL_ONE_CARBON_LIFESTYLE_BODY_OVERVIEW_V1
+    return ""
 
 
 def compile_narrative_report_v1(
@@ -645,27 +646,12 @@ def compile_narrative_report_v1(
 
     lead_pathway_block = lead_text
     secondary_pathway_block = secondary_text
-    bridge_block = _join_blocks(_bridge_lines(meta))
-    if narrative_payload_v1 is None:
-        if bridge_block:
-            compiler_meta["lifestyle_bridge_lines"] = bridge_block
-            if lead_pathway_block:
-                lead_text = _join_blocks([lead_pathway_block, bridge_block])
-                compiler_meta["assets_resolved"].append("lifestyle_bridges_appended_to_lead")
-            elif secondary_pathway_block:
-                secondary_text = _join_blocks([secondary_pathway_block, bridge_block])
-                compiler_meta["assets_resolved"].append("lifestyle_bridges_appended_to_secondary")
-            else:
-                lead_text = bridge_block
-                compiler_meta["assets_resolved"].append("lifestyle_bridges_only")
-        else:
-            lead_text = lead_pathway_block
-            secondary_text = secondary_pathway_block
-    else:
-        lead_text = lead_pathway_block
-        secondary_text = secondary_pathway_block
-        if bridge_block:
-            compiler_meta["lifestyle_bridge_lines"] = bridge_block
+    lead_text = lead_pathway_block
+    secondary_text = secondary_pathway_block
+    alcohol_lifestyle_body = _consumer_alcohol_lifestyle_body_overview(meta)
+    if alcohol_lifestyle_body:
+        compiler_meta["lifestyle_alcohol_bridge_active"] = True
+        compiler_meta["assets_resolved"].append("alcohol_lifestyle_body_overview_lc_s9c")
 
     primary_driver = ""
     if insight_graph and isinstance(insight_graph, dict):
@@ -725,7 +711,7 @@ def compile_narrative_report_v1(
             clarification_paths_block=clarification_paths_block,
             lead_yaml_block=lead_text,
             secondary_yaml_block=secondary_text,
-            bridge_block=bridge_block,
+            alcohol_lifestyle_body_overview=alcohol_lifestyle_body,
             body_overview_for_consumer=body_overview_for_consumer,
             clinician_base_without_consumer_lead=clinician_base_without_consumer_lead,
             compiler_meta=compiler_meta,
@@ -739,7 +725,11 @@ def compile_narrative_report_v1(
     else:
         retail_summary = _build_retail_summary(idl_bundle, compiler_meta)
         lead_narrative = lead_text
-        body_overview = body_overview_for_consumer
+        body_overview = (
+            _join_blocks([alcohol_lifestyle_body, body_overview_for_consumer])
+            if alcohol_lifestyle_body
+            else body_overview_for_consumer
+        )
         next_steps_narrative = _collect_next_steps(
             entities_doc=entities_doc,
             domains_by_id=domains_by_id,
