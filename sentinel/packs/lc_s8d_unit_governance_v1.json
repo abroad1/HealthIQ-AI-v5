@@ -38,6 +38,42 @@
       "test_file": "backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py",
       "first_seen": "2026-05"
     },
+    "layer_b_unit_declared": {
+      "description": "Every Layer B scoring-policy biomarker declares a non-empty unit; LC-S8D migrated rows align with SSOT canonical unit.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py",
+      "first_seen": "2026-05"
+    },
+    "input_unit_has_authority": {
+      "description": "Input units must resolve via registry authority (named unit or explicit conversion); unknown units reject.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py",
+      "first_seen": "2026-05"
+    },
+    "biomarker_value_reference_unit_incoherence": {
+      "description": "Scoring rejects numeric compare when value unit and lab reference unit are incoherent.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py",
+      "first_seen": "2026-05",
+      "note": "Complements backend/tests/regression/test_lc_s8_biomarker_unit_reference_incoherence_regression.py"
+    },
+    "frontend_no_unit_repair": {
+      "description": "Frontend must not embed clinical unit conversion constants or repair logic.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py",
+      "first_seen": "2026-05"
+    },
+    "new_biomarker_unit_metadata": {
+      "description": "Biomarkers enrolled in scoring systems must have unit metadata in biomarkers SSOT.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py",
+      "first_seen": "2026-05"
+    },
     "phase_b_blocked_pending_evidence": {
       "description": "True conversions for Ca/Mg/fT4/Hb remain blocked without primary evidence.",
       "guard_type": "status_reporting",
