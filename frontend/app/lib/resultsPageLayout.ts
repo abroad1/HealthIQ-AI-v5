@@ -8,6 +8,7 @@ import type {
 } from '@/types/analysis';
 import { buildBodyOverviewPrimarySentence, extractFirstSentence } from '@/lib/bodyOverviewPrimarySentence';
 import { buildSection3LeadStatement, buildWhatThisMeansBlock, firstSentence } from '@/lib/primaryFindingShaping';
+import { sanitizePrimaryConcernForDisplay } from '@/lib/clinicianPage1Placeholders';
 import { scrubConsumerRetailNarrative } from '@/lib/retailNarrativeSanitize';
 
 export function takeUpToNSentences(text: string, maxSentences: number): string {
@@ -73,7 +74,7 @@ export function pickPhenotypeLabel(
   const hypTitle = clinicianReport?.sections?.root_cause?.hypotheses?.[0]?.title?.trim();
   if (hypTitle) return hypTitle;
   if (primaryDriver?.name?.trim()) return primaryDriver.name.trim();
-  const concern = p1?.primary_concern?.trim();
+  const concern = sanitizePrimaryConcernForDisplay(p1?.primary_concern);
   if (concern) return extractFirstSentence(concern);
   const kf0 = p1?.key_findings?.[0]?.trim();
   if (kf0) return extractFirstSentence(kf0);
@@ -130,7 +131,7 @@ export function formatBiomarkerDisplayName(raw: string): string {
 export function extractPage1ConcernLeadSentence(
   clinicianReport: ClinicianReportV1 | null | undefined
 ): string | null {
-  const concern = (clinicianReport?.sections?.page1?.primary_concern || '').trim();
+  const concern = sanitizePrimaryConcernForDisplay(clinicianReport?.sections?.page1?.primary_concern);
   if (!concern) return null;
   return extractFirstSentence(concern);
 }
@@ -191,7 +192,7 @@ export function deriveSecondaryRankedSignalLine(
   firstIdl: InterpretationDisplayRecordV1 | null | undefined
 ): string | null {
   if (!firstIdl || !clinicianReport?.sections?.page1) return null;
-  const concern = (clinicianReport.sections.page1.primary_concern || '').trim();
+  const concern = sanitizePrimaryConcernForDisplay(clinicianReport.sections.page1.primary_concern);
   if (!concern) return null;
   const concernLead = extractFirstSentence(concern);
   const a = normalizeHeroComparisonKey(heroTitle);

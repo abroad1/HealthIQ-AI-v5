@@ -46,9 +46,10 @@ def _report_v1_with_informational_root_cause_fallback() -> dict:
                     "hypotheses": [
                         {
                             "hypothesis_id": "why_engine_fallback_v1",
-                            "title": "No governed WHY for signal_homocysteine",
+                            "title": "Pattern noted — deeper causal explanation not yet available",
                             "summary": (
-                                "Deep hypothesis (WHY) analysis is not yet available for this marker."
+                                "We identified a pattern on this panel, but governed causal hypotheses "
+                                "are not yet available for this lead."
                             ),
                             "hypothesis_confidence": 0.0,
                             "evidence_for": [],

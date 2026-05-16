@@ -1,5 +1,5 @@
 {
-  "git_short_sha": "a87df29",
+  "git_short_sha": "b8e77e3",
   "matrix_path": "backend\\tests\\fixtures\\proving\\launch_core_matrix.json",
   "runs": {
     "AB__baseline": {
@@ -47,9 +47,9 @@
       },
       "lifestyle_fixture": null,
       "narrative": {
-        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (at_risk) is interpreted alongside the wider deterministic system snapshot below.\n\nPrimary driver system (deterministic arbitration): cardiovascular_4_biomarkers.\n\nCo-supporting systems (deterministic arbitration): cardiovascular, hematological, hepatic, hormonal, immune, metabolic, nutritional, renal, thyroid.\n\nHigh capacity / comparatively calmer systems in this snapshot (governed capacity score \u226590): hematological (100",
+        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (at_risk) is interpreted alongside the wider deterministic system snapshot below.\n\nYour main finding sits in a **Cardiovascular 4 Biomarkers** context \u2014 this is where the panel places most interpretive weight.\n\nRelated systems also noted on this panel: Cardiovascular, Hematological, Hepatic, Hormonal, Immune, Metabolic, Nutritional, Renal, plus 1 other related area.\n\nMost other system groups look broadly stable on this pa",
         "lead_narrative_head": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nfrom rapidly dividing tissues.\n\nDietary a",
-        "retail_summary_head": "The ranked lead pattern is **Homocysteine Elevation Context** (at_risk), centred on **Homocysteine**. Layer B frames this as the priority focus for interpretation.\n\nHomocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.\n\nThis wording stays des"
+        "retail_summary_head": "The ranked lead pattern is **Homocysteine Elevation Context** (at_risk), centred on **Homocysteine**. This is the priority focus for interpretation on this panel.\n\nHomocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.\n\nThis wording stays desc"
       },
       "questionnaire_data": null,
       "scenario_description": "No lifestyle fixture; questionnaire_data omitted (minimal intake).",
@@ -130,12 +130,12 @@
       },
       "lifestyle_fixture": "tests/fixtures/lifestyle_minimal.json",
       "narrative": {
-        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (at_risk) is interpreted alongside the wider deterministic system snapshot below.\n\nPrimary driver system (deterministic arbitration): cardiovascular_4_biomarkers.\n\nCo-supporting systems (deterministic arbitration): autonomic, cardiovascular, hematological, hepatic, hormonal, immune, metabolic, musculoskeletal, nutritional, renal, thyroid.\n\nHigh capacity / comparatively calmer systems in this snapshot (governed capacity sc",
+        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (at_risk) is interpreted alongside the wider deterministic system snapshot below.\n\nYour main finding sits in a **Cardiovascular 4 Biomarkers** context \u2014 this is where the panel places most interpretive weight.\n\nRelated systems also noted on this panel: Autonomic, Cardiovascular, Hematological, Hepatic, Hormonal, Immune, Metabolic, Musculoskeletal, plus 3 other related areas.\n\nMost other system groups look broadly stable o",
         "lead_narrative_head": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nfrom rapidly dividing tissues.\n\nDietary a",
-        "retail_summary_head": "The ranked lead pattern is **Homocysteine Elevation Context** (at_risk), centred on **Homocysteine**. Layer B frames this as the priority focus for interpretation.\n\nHomocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.\n\nThis wording stays des"
+        "retail_summary_head": "The ranked lead pattern is **Homocysteine Elevation Context** (at_risk), centred on **Homocysteine**. This is the priority focus for interpretation on this panel.\n\nHomocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.\n\nThis wording stays desc"
       },
       "questionnaire_data": null,
-      "scenario_description": "Existing SSOT lifestyle fixture; no questionnaire_data.",
+      "scenario_description": "SSOT lifestyle fixture (alcohol_units_per_week=10, moderate+); no questionnaire_data.",
       "signal_state_by_id": {
         "signal_apoa1_cardio_risk": "suboptimal",
         "signal_homocysteine_elevation_context": "at_risk",
@@ -213,9 +213,9 @@
       },
       "lifestyle_fixture": null,
       "narrative": {
-        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (at_risk) is interpreted alongside the wider deterministic system snapshot below.\n\nPrimary driver system (deterministic arbitration): cardiovascular_4_biomarkers.\n\nCo-supporting systems (deterministic arbitration): cardiovascular, hematological, hepatic, hormonal, immune, metabolic, nutritional, renal, thyroid.\n\nHigh capacity / comparatively calmer systems in this snapshot (governed capacity score \u226590): hematological (100",
+        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (at_risk) is interpreted alongside the wider deterministic system snapshot below.\n\nYour main finding sits in a **Cardiovascular 4 Biomarkers** context \u2014 this is where the panel places most interpretive weight.\n\nRelated systems also noted on this panel: Cardiovascular, Hematological, Hepatic, Hormonal, Immune, Metabolic, Nutritional, Renal, plus 1 other related area.\n\nMost other system groups look broadly stable on this pa",
         "lead_narrative_head": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nfrom rapidly dividing tissues.\n\nDietary a",
-        "retail_summary_head": "The ranked lead pattern is **Homocysteine Elevation Context** (at_risk), centred on **Homocysteine**. Layer B frames this as the priority focus for interpretation.\n\nHomocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.\n\nThis wording stays des"
+        "retail_summary_head": "The ranked lead pattern is **Homocysteine Elevation Context** (at_risk), centred on **Homocysteine**. This is the priority focus for interpretation on this panel.\n\nHomocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.\n\nThis wording stays desc"
       },
       "questionnaire_data": {
         "long_term_medications": [
@@ -274,7 +274,7 @@
         },
         {
           "band_label": "stable",
-          "consequence_sentence_head": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action. Statin medication noted \u2014 this may help explain lower LDL-related readings on this panel. Taken from your questionnaire as context o",
+          "consequence_sentence_head": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action. Statin medication noted \u2014 this may help explain lower LDL-related readings on this panel. This is taken from your questionnaire as c",
           "domain_id": "wave1_cardiovascular"
         },
         {
@@ -302,9 +302,9 @@
       },
       "lifestyle_fixture": null,
       "narrative": {
-        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (at_risk) is interpreted alongside the wider deterministic system snapshot below.\n\nPrimary driver system (deterministic arbitration): cardiovascular_4_biomarkers.\n\nCo-supporting systems (deterministic arbitration): cardiovascular, hematological, hepatic, hormonal, immune, metabolic, nutritional, renal, thyroid.\n\nHigh capacity / comparatively calmer systems in this snapshot (governed capacity score \u226590): hematological (100",
+        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (at_risk) is interpreted alongside the wider deterministic system snapshot below.\n\nYour main finding sits in a **Cardiovascular 4 Biomarkers** context \u2014 this is where the panel places most interpretive weight.\n\nRelated systems also noted on this panel: Cardiovascular, Hematological, Hepatic, Hormonal, Immune, Metabolic, Nutritional, Renal, plus 1 other related area.\n\nMost other system groups look broadly stable on this pa",
         "lead_narrative_head": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nfrom rapidly dividing tissues.\n\nDietary a",
-        "retail_summary_head": "The ranked lead pattern is **Homocysteine Elevation Context** (at_risk), centred on **Homocysteine**. Layer B frames this as the priority focus for interpretation.\n\nHomocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.\n\nThis wording stays des"
+        "retail_summary_head": "The ranked lead pattern is **Homocysteine Elevation Context** (at_risk), centred on **Homocysteine**. This is the priority focus for interpretation on this panel.\n\nHomocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.\n\nThis wording stays desc"
       },
       "questionnaire_data": {
         "long_term_medications": [
@@ -387,9 +387,9 @@
       },
       "lifestyle_fixture": null,
       "narrative": {
-        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (suboptimal) is interpreted alongside the wider deterministic system snapshot below.\n\nPrimary driver system (deterministic arbitration): cardiovascular_4_biomarkers.\n\nCo-supporting systems (deterministic arbitration): cardiovascular, hematological, hepatic, hormonal, immune, metabolic, nutritional, renal, thyroid.\n\nHigh capacity / comparatively calmer systems in this snapshot (governed capacity score \u226590): hematological (",
+        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (suboptimal) is interpreted alongside the wider deterministic system snapshot below.\n\nYour main finding sits in a **Cardiovascular 4 Biomarkers** context \u2014 this is where the panel places most interpretive weight.\n\nRelated systems also noted on this panel: Cardiovascular, Hematological, Hepatic, Hormonal, Immune, Metabolic, Nutritional, Renal, plus 1 other related area.\n\nMost other system groups look broadly stable on this",
         "lead_narrative_head": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nfrom rapidly dividing tissues.\n\nDietary a",
-        "retail_summary_head": "The ranked lead pattern is **Homocysteine Elevation Context** (suboptimal), centred on **Homocysteine**. Layer B frames this as the priority focus for interpretation.\n\nHomocysteine Elevation Context is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread.\n\nThis word"
+        "retail_summary_head": "The ranked lead pattern is **Homocysteine Elevation Context** (suboptimal), centred on **Homocysteine**. This is the priority focus for interpretation on this panel.\n\nHomocysteine Elevation Context is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread.\n\nThis wordi"
       },
       "questionnaire_data": null,
       "scenario_description": "No lifestyle fixture; questionnaire_data omitted (minimal intake).",
@@ -466,12 +466,12 @@
       },
       "lifestyle_fixture": "tests/fixtures/lifestyle_minimal.json",
       "narrative": {
-        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (suboptimal) is interpreted alongside the wider deterministic system snapshot below.\n\nPrimary driver system (deterministic arbitration): cardiovascular_4_biomarkers.\n\nCo-supporting systems (deterministic arbitration): autonomic, cardiovascular, hematological, hepatic, hormonal, immune, metabolic, musculoskeletal, nutritional, renal, thyroid.\n\nHigh capacity / comparatively calmer systems in this snapshot (governed capacity",
+        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (suboptimal) is interpreted alongside the wider deterministic system snapshot below.\n\nYour main finding sits in a **Cardiovascular 4 Biomarkers** context \u2014 this is where the panel places most interpretive weight.\n\nRelated systems also noted on this panel: Autonomic, Cardiovascular, Hematological, Hepatic, Hormonal, Immune, Metabolic, Musculoskeletal, plus 3 other related areas.\n\nMost other system groups look broadly stabl",
         "lead_narrative_head": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nfrom rapidly dividing tissues.\n\nDietary a",
-        "retail_summary_head": "The ranked lead pattern is **Homocysteine Elevation Context** (suboptimal), centred on **Homocysteine**. Layer B frames this as the priority focus for interpretation.\n\nHomocysteine Elevation Context is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread.\n\nThis word"
+        "retail_summary_head": "The ranked lead pattern is **Homocysteine Elevation Context** (suboptimal), centred on **Homocysteine**. This is the priority focus for interpretation on this panel.\n\nHomocysteine Elevation Context is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread.\n\nThis wordi"
       },
       "questionnaire_data": null,
-      "scenario_description": "Existing SSOT lifestyle fixture; no questionnaire_data.",
+      "scenario_description": "SSOT lifestyle fixture (alcohol_units_per_week=10, moderate+); no questionnaire_data.",
       "signal_state_by_id": {
         "signal_alp_low": "suboptimal",
         "signal_cortisol_high": "suboptimal",
@@ -545,9 +545,9 @@
       },
       "lifestyle_fixture": null,
       "narrative": {
-        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (suboptimal) is interpreted alongside the wider deterministic system snapshot below.\n\nPrimary driver system (deterministic arbitration): cardiovascular_4_biomarkers.\n\nCo-supporting systems (deterministic arbitration): cardiovascular, hematological, hepatic, hormonal, immune, metabolic, nutritional, renal, thyroid.\n\nHigh capacity / comparatively calmer systems in this snapshot (governed capacity score \u226590): hematological (",
+        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (suboptimal) is interpreted alongside the wider deterministic system snapshot below.\n\nYour main finding sits in a **Cardiovascular 4 Biomarkers** context \u2014 this is where the panel places most interpretive weight.\n\nRelated systems also noted on this panel: Cardiovascular, Hematological, Hepatic, Hormonal, Immune, Metabolic, Nutritional, Renal, plus 1 other related area.\n\nMost other system groups look broadly stable on this",
         "lead_narrative_head": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nfrom rapidly dividing tissues.\n\nDietary a",
-        "retail_summary_head": "The ranked lead pattern is **Homocysteine Elevation Context** (suboptimal), centred on **Homocysteine**. Layer B frames this as the priority focus for interpretation.\n\nHomocysteine Elevation Context is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread.\n\nThis word"
+        "retail_summary_head": "The ranked lead pattern is **Homocysteine Elevation Context** (suboptimal), centred on **Homocysteine**. This is the priority focus for interpretation on this panel.\n\nHomocysteine Elevation Context is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread.\n\nThis wordi"
       },
       "questionnaire_data": {
         "long_term_medications": [
@@ -604,7 +604,7 @@
         },
         {
           "band_label": "strong",
-          "consequence_sentence_head": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action. Statin medication noted \u2014 this may help explain lower LDL-related readings on this panel. Taken from your questionnaire as context o",
+          "consequence_sentence_head": "Accumulating vascular-risk signals warrant cardiometabolic review and lifestyle action. Statin medication noted \u2014 this may help explain lower LDL-related readings on this panel. This is taken from your questionnaire as c",
           "domain_id": "wave1_cardiovascular"
         },
         {
@@ -630,9 +630,9 @@
       },
       "lifestyle_fixture": null,
       "narrative": {
-        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (suboptimal) is interpreted alongside the wider deterministic system snapshot below.\n\nPrimary driver system (deterministic arbitration): cardiovascular_4_biomarkers.\n\nCo-supporting systems (deterministic arbitration): cardiovascular, hematological, hepatic, hormonal, immune, metabolic, nutritional, renal, thyroid.\n\nHigh capacity / comparatively calmer systems in this snapshot (governed capacity score \u226590): hematological (",
+        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (suboptimal) is interpreted alongside the wider deterministic system snapshot below.\n\nYour main finding sits in a **Cardiovascular 4 Biomarkers** context \u2014 this is where the panel places most interpretive weight.\n\nRelated systems also noted on this panel: Cardiovascular, Hematological, Hepatic, Hormonal, Immune, Metabolic, Nutritional, Renal, plus 1 other related area.\n\nMost other system groups look broadly stable on this",
         "lead_narrative_head": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nfrom rapidly dividing tissues.\n\nDietary a",
-        "retail_summary_head": "The ranked lead pattern is **Homocysteine Elevation Context** (suboptimal), centred on **Homocysteine**. Layer B frames this as the priority focus for interpretation.\n\nHomocysteine Elevation Context is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread.\n\nThis word"
+        "retail_summary_head": "The ranked lead pattern is **Homocysteine Elevation Context** (suboptimal), centred on **Homocysteine**. This is the priority focus for interpretation on this panel.\n\nHomocysteine Elevation Context is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread.\n\nThis wordi"
       },
       "questionnaire_data": {
         "long_term_medications": [
@@ -671,5 +671,5 @@
       ]
     }
   },
-  "stamp": "20260512T204616Z"
+  "stamp": "20260516T203932Z"
 }
