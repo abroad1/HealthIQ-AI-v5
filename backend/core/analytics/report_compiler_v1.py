@@ -43,6 +43,22 @@ from core.knowledge.load_confirmatory_tests_registry import load_confirmatory_te
 
 _STATE_RANK = {"at_risk": 4, "suboptimal": 3, "optimal": 2, "unknown": 1}
 
+_ALLOWED_HYPOTHESIS_SAFETY_CLASSES = frozenset(
+    {"monitoring", "clinician_referral", "lifestyle"}
+)
+
+
+def _normalise_hypothesis_safety_class(raw: Any) -> Literal["monitoring", "clinician_referral", "lifestyle"]:
+    """
+    Map legacy/internal root-cause safety_class tokens to clinician_report_v1 HypothesisV1 literals.
+    """
+    token = str(raw or "").strip().lower()
+    if token == "informational":
+        return "monitoring"
+    if token in _ALLOWED_HYPOTHESIS_SAFETY_CLASSES:
+        return token  # type: ignore[return-value]
+    return "monitoring"
+
 # KB-S54B Phase 2a — report-layer ordering under PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY v1.
 TOP_FINDINGS_RANKING_POLICY_VERSION = (
     "PRIMARY_CONCERN_AND_RANKED_AMBIGUITY_POLICY_V1+report-runtime-2a-v1"
@@ -444,7 +460,9 @@ def _normalise_root_cause_finding(
                 evidence_against=evidence_against,
                 missing_data=missing_data,
                 confirmatory_tests=confirmatory_tests,
-                safety_class=str(hypothesis_row.get("safety_class", "monitoring")).strip() or "monitoring",
+                safety_class=_normalise_hypothesis_safety_class(
+                    hypothesis_row.get("safety_class")
+                ),
             )
         )
     return RootCauseFindingV1(
