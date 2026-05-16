@@ -1,5 +1,5 @@
 {
-  "git_short_sha": "b8e77e3",
+  "git_short_sha": "c8d92bd",
   "matrix_path": "backend\\tests\\fixtures\\proving\\launch_core_matrix.json",
   "runs": {
     "AB__baseline": {
@@ -130,7 +130,7 @@
       },
       "lifestyle_fixture": "tests/fixtures/lifestyle_minimal.json",
       "narrative": {
-        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (at_risk) is interpreted alongside the wider deterministic system snapshot below.\n\nYour main finding sits in a **Cardiovascular 4 Biomarkers** context \u2014 this is where the panel places most interpretive weight.\n\nRelated systems also noted on this panel: Autonomic, Cardiovascular, Hematological, Hepatic, Hormonal, Immune, Metabolic, Musculoskeletal, plus 3 other related areas.\n\nMost other system groups look broadly stable o",
+        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (at_risk) is interpreted alongside the wider deterministic system snapshot below.\n\nYour questionnaire suggests moderate alcohol intake, which can be relevant when interpreting homocysteine because alcohol intake may increase demand on one-carbon nutrients such as folate and B vitamins. This does not change your biomarker score, but it helps explain why this pathway is worth reviewing.\n\nYour main finding sits in a **Cardio",
         "lead_narrative_head": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nfrom rapidly dividing tissues.\n\nDietary a",
         "retail_summary_head": "The ranked lead pattern is **Homocysteine Elevation Context** (at_risk), centred on **Homocysteine**. This is the priority focus for interpretation on this panel.\n\nHomocysteine Elevation Context warrants attention on this panel. Your measured homocysteine is the main lab anchor for this thread.\n\nThis wording stays desc"
       },
@@ -466,7 +466,7 @@
       },
       "lifestyle_fixture": "tests/fixtures/lifestyle_minimal.json",
       "narrative": {
-        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (suboptimal) is interpreted alongside the wider deterministic system snapshot below.\n\nYour main finding sits in a **Cardiovascular 4 Biomarkers** context \u2014 this is where the panel places most interpretive weight.\n\nRelated systems also noted on this panel: Autonomic, Cardiovascular, Hematological, Hepatic, Hormonal, Immune, Metabolic, Musculoskeletal, plus 3 other related areas.\n\nMost other system groups look broadly stabl",
+        "body_overview_head": "Lead ranked finding **Homocysteine Elevation Context** (suboptimal) is interpreted alongside the wider deterministic system snapshot below.\n\nYour questionnaire suggests moderate alcohol intake, which can be relevant when interpreting homocysteine because alcohol intake may increase demand on one-carbon nutrients such as folate and B vitamins. This does not change your biomarker score, but it helps explain why this pathway is worth reviewing.\n\nYour main finding sits in a **Car",
         "lead_narrative_head": "The one-carbon (methyl-group) network supplies methyl units for DNA synthesis, neurotransmitter\nmetabolism, phospholipid production, and numerous cellular methylation reactions. It is a\nshared biochemical \u201ccurrency\u201d that links nutrient availability, enzyme cofactors, and demand\nfrom rapidly dividing tissues.\n\nDietary a",
         "retail_summary_head": "The ranked lead pattern is **Homocysteine Elevation Context** (suboptimal), centred on **Homocysteine**. This is the priority focus for interpretation on this panel.\n\nHomocysteine Elevation Context is outside the optimal range on this panel. Your measured homocysteine is the main lab anchor for this thread.\n\nThis wordi"
       },
@@ -671,5 +671,5 @@
       ]
     }
   },
-  "stamp": "20260516T203932Z"
+  "stamp": "20260516T222720Z"
 }
