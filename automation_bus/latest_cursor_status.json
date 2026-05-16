@@ -1,9 +1,10 @@
 {
   "branch": "launch-core/lc-s9b-proving-closeout",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-16T20:42:40Z",
   "cursor_started_utc": "2026-05-16T20:39:02Z",
-  "head_sha": "b8e77e35de4582db60d380abc53f880a059e8523",
+  "head_sha": "1b36c5fced36a4c386a90eae7246ec7452073a9b",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "LC-S9B"
 }
