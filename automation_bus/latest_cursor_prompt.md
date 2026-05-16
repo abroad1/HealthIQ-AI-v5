@@ -1,137 +1,151 @@
 ---
-work_id: FE-S8E
-branch: launch-core/fe-s8e-uploaded-panel-fidelity-rendering
-risk_level: STANDARD
+work_id: LC-S9B
+branch: launch-core/lc-s9b-proving-closeout
+risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# FE-S8E — Uploaded-Panel Fidelity Rendering for Layer C Mode A
+# LC-S9B — Launch-Core Proving Closeout
 
 ## Classification
 
-This is a STANDARD-risk MIXED frontend/display-contract work package.
+This is a HIGH-risk MIXED work package.
 
-Reason: LC-S8D backend unit governance is already passing. This sprint must not alter analytical logic, unit conversion, scoring, canonicalisation, SSOT unit policy, or Layer B behaviour.
+Reason: this sprint may touch launch-core proving harnesses, behavioural checks, frontend/report carriage, fallback copy, report compilation, context/medication visibility, and regression coverage. These surfaces affect emitted output and launch-core trust.
 
-This sprint implements frontend rendering of the already-delivered backend contract for Layer C Mode A uploaded-panel fidelity.
+This sprint is not a broad redesign or WHY Wave 2 expansion.
+
+It is a targeted proving closeout sprint before full Sprint 6 protection.
 
 ## Purpose
 
-Implement the frontend/upload-review presentation layer required by LC-S8D.
+Close the remaining Sprint 5 launch-core human proving gaps identified in LC-S9.
 
-LC-S8D correctly preserves original uploaded biomarker observations in:
+LC-S8D and FE-S8E have already cleared the unit-governance and Layer C Mode A/B blocker. Do not reopen that work.
 
-```text
-meta.upload_panel_observations
-````
+This sprint must determine whether the current launch-core personalised pipeline now passes the Sprint 5 bar, and must make only the minimum targeted corrections required to reach a defensible pass/fail decision.
 
-and exposes display policy metadata in:
+Primary goals:
 
-```text
-meta.display_unit_policy
-```
-
-However, the current frontend dials/results surface renders only canonical analytical `biomarkers[]`, so duplicate-equivalent source observations such as HbA1c `%` are not visible to the user. This creates a user-trust gap: users may think uploaded rows were ignored or lost.
-
-The goal is to show uploaded source observations where appropriate, while preserving the analytical-report rule that equivalent biomarkers are analysed once only.
+1. Refresh launch-core proving harness evidence on current `main`.
+2. Re-run AB/VR launch-core matrix on the current build.
+3. Prove or disprove visible lifestyle payoff.
+4. Prove or disprove visible statin/medication payoff.
+5. Identify active launch-core leads without governed WHY.
+6. Replace unacceptable raw fallback strings on user-facing surfaces with governed, honest fallback copy.
+7. Add or complete binary checks for CHECK 2, CHECK 5, and CHECK 6.
+8. Produce a named human walkthrough pack for final review.
+9. Decide whether Sprint 5 can close as PASS, PASS_WITH_GAPS, or FAIL.
 
 ## Governing context
 
-Read before editing:
+Read these files before editing anything:
 
 ```text
-docs/audit-papers/LC-S8C_ssot_wide_unit_governance_preflight.md
+docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md
+docs/audit-papers/LC-S9_launch_core_human_proving_closeout_review.md
+docs/audit-papers/lc_s5_proving_readiness_preflight_audit.md
+docs/audit-papers/launch-core-proving/PROVING_REPORT.md
+docs/audit-papers/launch-core-proving/latest_fingerprints.json
+docs/audit-papers/LAUNCH_GRADE_ANALYTICAL_GAP_MAP_2026-05.md
+
 docs/audit-papers/LC-S8D_uk_si_unit_governance_remediation_notes.md
-docs/audit-papers/LC-S8D_frontend_layer_c_uat_report.md
+docs/audit-papers/FE-S8E_post_merge_comparison_uat.md
+````
 
-frontend/app/(app)/results/page.tsx
-frontend/app/components/biomarkers/BiomarkerDials.tsx
-frontend/app/types/analysis.ts
-frontend/app/queries/analysisResult.ts
+If any file path differs, locate the actual file and record it in the sprint notes.
 
-backend/app/routes/analysis.py
-backend/core/units/display_policy.py
+## Mandatory architectural boundaries
+
+The launch-core plan remains governing:
+
+* prove the real production path, not demo-only pathways
+* do not broaden the questionnaire
+* do not expand full WHY Wave 2
+* do not build temporary narrative bridges
+* do not add LLM reasoning to the analytical core
+* do not change unit-governance or Phase B conversion state
+* do not reopen LC-S8D or FE-S8E unless a direct regression is proven
+
+Layer B produces governed structured truth.
+
+Layer C may translate or polish governed payloads, but must not invent analytical reasoning.
+
+## Mandatory preflight before editing
+
+Run and record:
+
+```powershell
+git branch --show-current
+git status --short
+git log --oneline -n 5
+```
+
+Then verify:
+
+```powershell
+Test-Path automation_bus/state/work_package_active.json
+```
+
+Read `automation_bus/state/work_package_active.json` and confirm:
+
+* `work_id` is `LC-S9B`
+* branch is `launch-core/lc-s9b-proving-closeout`
+
+If the token is missing or mismatched, STOP:
+
+```text
+Kernel start not executed or work package mismatch.
+```
+
+## Authority preflight
+
+Before modifying files, identify and record the authoritative paths for:
+
+1. launch-core proving harness
+2. AB/VR fixture definitions
+3. questionnaire/profile fixtures
+4. statin/medication/intervention fixture source
+5. lifestyle modifier source
+6. root-cause / WHY compiler or fallback source
+7. report compiler / primary hero payload source
+8. frontend results surface consuming the relevant fields
+9. existing CHECK 2 / CHECK 5 / CHECK 6 logic, if present
+
+STOP if any authority path is ambiguous or duplicated.
+
+Do not create a second authority source.
+
+## Potentially allowed files
+
+Only edit files required to close the LC-S9 gaps.
+
+Potentially allowed:
+
+```text
+backend/core/analytics/**/*
+backend/core/contracts/**/*
+backend/core/pipeline/**/*
+backend/ssot/lifestyle_registry.yaml
+backend/ssot/questionnaire.json
 backend/ssot/display_unit_policy.yaml
+backend/tests/**/*
+
+frontend/app/(app)/results/**/*
+frontend/app/components/**/*
+frontend/app/types/**/*
+frontend/app/lib/**/*
+frontend/tests/**/*
+
+docs/audit-papers/launch-core-proving/**/*
+docs/audit-papers/LC-S9B_launch_core_proving_closeout_notes.md
+docs/audit-papers/LC-S9B_human_walkthrough_pack.md
 ```
 
-LC-S8D UAT found:
+Only touch `backend/ssot/lifestyle_registry.yaml` or `backend/ssot/questionnaire.json` if the sprint proves that visible lifestyle payoff cannot work because the existing governed mapping is incomplete or broken.
 
-* backend analytical payload passes
-* Layer B canonicalisation passes
-* HbA1c is scored once only
-* haematocrit is correctly `L/L`
-* BUN maps to urea, not urate
-* backend preserves `upload_panel_observations`
-* frontend does not yet render uploaded-panel fidelity mode
-
-## Architectural rule
-
-Layer C has two presentation modes.
-
-### Mode A — Uploaded-panel fidelity
-
-Used for:
-
-```text
-biomarker dials
-raw uploaded-results review
-upload/edit confirmation surfaces
-```
-
-Rules:
-
-* Preserve every uploaded biomarker row where safe.
-* If the same canonical biomarker appears in current/canonical and legacy/equivalent units, show both uploaded representations.
-* Visually link or annotate equivalent rows as the same biomarker.
-* Do not imply duplicate-equivalent rows were ignored or lost.
-* Do not perform frontend conversion maths.
-
-### Mode B — Analytical-report mode
-
-Used for:
-
-```text
-personalised observational report
-narrative interpretation
-burden summaries
-signal summaries
-```
-
-Rules:
-
-* Refer to each biomarker once by canonical identity.
-* Use canonical Layer B analytical unit unless governed display policy says otherwise.
-* Do not duplicate equivalent biomarkers in narrative/prose.
-* Do not change report interpretation behaviour in this sprint.
-
-General rule:
-
-```text
-Preserve duplicate-equivalent source observations for uploaded-results fidelity.
-Collapse duplicate-equivalent observations for Layer B analysis and report interpretation.
-```
-
-## Scope
-
-Implement frontend support for Mode A display only.
-
-Allowed files:
-
-```text
-frontend/app/(app)/results/page.tsx
-frontend/app/components/biomarkers/BiomarkerDials.tsx
-frontend/app/types/analysis.ts
-frontend/app/queries/analysisResult.ts
-frontend/app/services/*
-frontend/app/components/*
-backend/tests/* only if needed for contract fixture coverage
-frontend tests if present
-```
-
-Backend code may be read but must not be changed unless a type/contract mismatch prevents frontend rendering and the required change is purely DTO typing or fixture support.
-
-## Forbidden changes
+## Forbidden files and changes
 
 Do not edit:
 
@@ -142,189 +156,346 @@ backend/ssot/scoring_policy.yaml
 backend/core/units/registry.py
 backend/core/scoring/rules.py
 backend/core/canonical/hba1c_layer_b_arbitration.py
-sentinel/*
-automation_bus/*
+backend/scripts/run_work_package.py
+backend/scripts/golden_gate_local.py
+backend/scripts/update_cursor_status.py
+automation_bus/latest_gate_evidence.json
+automation_bus/latest_gate_output.txt
+automation_bus/latest_cursor_status.json
 ```
 
 Do not:
 
-* add frontend conversion constants
-* calculate unit conversions in React/TypeScript
-* alter scoring
-* alter canonical units
-* hide failed biomarkers
-* remove canonical biomarker dials
-* reintroduce `hba1c_pct` as an analytical biomarker
-* add fallback parser logic
+* introduce fallback parsers
+* change canonical units
+* change Phase B unit conversions
+* perform frontend unit conversions
+* broaden medication coverage beyond the bounded statin proving path
+* broaden questionnaire scope
+* add generic placeholder narrative
+* hide failed checks by suppressing outputs
+* treat stale proving artefacts as current evidence
 
-## Required implementation
+## Phase gates
 
-### 1. Extend frontend types
+This sprint has five internal phases.
 
-Update frontend result types so they recognise:
-
-```text
-meta.upload_panel_observations
-meta.display_unit_policy
-```
-
-The type should tolerate absence of these fields for older results.
-
-### 2. Render uploaded-panel fidelity information
-
-On the results page or biomarker dial section, add a clear uploaded-panel fidelity surface.
-
-Acceptable implementation options:
-
-Option A — preferred:
-
-Add a compact “Uploaded panel” or “Uploaded values” section near the biomarker dials showing the original uploaded rows.
-
-Option B:
-
-Within each biomarker dial/card, show an “Uploaded as” line where the uploaded unit differs from the canonical analytical unit.
-
-Option C:
-
-Group equivalent uploaded observations beneath the canonical dial.
-
-Use the least disruptive UI that proves the contract.
-
-### 3. Duplicate-equivalent handling
-
-For this test case, confirm:
-
-* HbA1c canonical dial remains `42 mmol/mol`.
-* HbA1c uploaded `%` row remains visible somewhere in Mode A as `6 %`.
-* It is clearly annotated as an equivalent representation of HbA1c, not a separate scored biomarker.
-* Haematocrit canonical display remains `0.438 L/L`, but uploaded `43.8 %` may be shown as uploaded source observation.
-* Platelets uploaded `K/uL` may be shown as uploaded source observation while analytical value remains `10^9/L`.
-* WBC uploaded `K/uL` may be shown as uploaded source observation while analytical value remains `10^9/L`.
-* Sodium/potassium/chloride uploaded `mEq/L` may be shown while analytical values remain `mmol/L`.
-
-### 4. Renderer-only requirement
-
-Frontend must display values supplied by the API only.
-
-Do not calculate:
+Each phase must update:
 
 ```text
-mg/dL ↔ mmol/L
-% ↔ mmol/mol
-% ↔ L/L
-K/uL ↔ 10^9/L
-mEq/L ↔ mmol/L
+docs/audit-papers/LC-S9B_launch_core_proving_closeout_notes.md
 ```
 
-Any transformation must already exist in backend payload.
+Each phase checkpoint must record:
 
-### 5. Fix small visible label issue if trivial
+* command(s) run
+* files inspected
+* findings
+* failures
+* changes made, if any
+* whether the next phase is safe to enter
 
-If the display-name map is local and safe to update, add a friendly label for:
+---
+
+# Phase 1 — Refresh current proving evidence
+
+## Required work
+
+Run the current launch-core proving harness on the current branch.
+
+Locate and run the canonical harness. Likely candidates include files under:
 
 ```text
-white_blood_cells → White Blood Cells
+docs/audit-papers/launch-core-proving/
+backend/tests/
+scripts/
 ```
 
-Do not widen into a general label-cleanup sprint.
+If no runnable harness exists, STOP and record the exact missing harness path / missing command.
 
-## Test case
-
-Use the existing analysis:
+Refresh or regenerate, as appropriate:
 
 ```text
-http://localhost:3000/results?analysis_id=e4dc8e59-2588-4943-b37b-a299c89f9442
+docs/audit-papers/launch-core-proving/PROVING_REPORT.md
+docs/audit-papers/launch-core-proving/latest_fingerprints.json
 ```
 
-Login:
+Do not manually edit generated evidence unless the harness explicitly writes it.
+
+## Required checks
+
+The refreshed proving evidence must include, or explicitly state absence of:
+
+* AB baseline
+* AB lifestyle_context
+* AB statin_off
+* AB statin_on
+* VR baseline
+* VR lifestyle_context
+* VR statin_off
+* VR statin_on
+
+For each run capture:
+
+* lead finding / primary concern
+* runner-up if present
+* clinician report primary finding
+* retail summary lead
+* narrative body or governed payload summary
+* lifestyle context presence
+* statin/medication intervention presence
+* fingerprints for deterministic comparison
+
+## Phase 1 STOP conditions
+
+STOP if:
+
+* harness cannot be located
+* harness cannot run on current branch
+* regenerated artefacts are non-deterministic across identical inputs
+* AB/VR fixtures are missing
+* statin/lifestyle fixtures are missing
+* the current branch is not the declared LC-S9B branch
+
+---
+
+# Phase 2 — Binary CHECK automation
+
+## Required work
+
+Implement or complete binary checks required by LC-S9:
 
 ```text
-test-user3@example.com
-Subaru@555
+CHECK 2 — lifestyle visible payoff
+CHECK 4 — statin/medication intervention presence and bounded isolation
+CHECK 5 — no band/headline polarity contradiction
+CHECK 6 — primary_concern and retail_summary agree on same lead
 ```
 
-Expected observations:
+If CHECK 4 already exists and passes, document it rather than rewriting it.
 
-* Page loads.
-* API returns 200.
-* Biomarker dials still show canonical analytical values.
-* Uploaded-panel fidelity surface shows original uploaded observations.
-* HbA1c `%` is visible as uploaded/equivalent, not scored independently.
-* No frontend conversion maths is added.
-* No console errors.
-* No failed network calls.
+The checks must operate on the real launch-core proving outputs, not hardcoded demo strings.
 
-## Required validation
+## Expected pass/fail behaviour
 
-Run frontend checks available in the repo, for example:
+CHECK 2 must fail if lifestyle_context produces no user-visible difference.
 
-```powershell
-npm run lint
-npm run typecheck
-npm run test
+CHECK 4 must fail if statin_on/statin_off does not change or caveat at least one relevant user-visible field where the intervention is expected to matter, while preserving analytical invariants where required.
+
+CHECK 5 must fail if any launch-core surface says a marker/system is reassuring while another surface says it is concerning for the same lead without explanation.
+
+CHECK 6 must fail if the hero/primary concern and retail summary disagree on the lead finding.
+
+## Phase 2 STOP conditions
+
+STOP if:
+
+* a check can pass without reading real proving outputs
+* a check depends on stale fingerprints
+* a check is implemented as string theatre rather than contract verification
+* the only way to pass is to hide a problematic surface
+
+---
+
+# Phase 3 — WHY / fallback trust correction
+
+## Required work
+
+Inspect current proving outputs for active lead findings without governed WHY or acceptable fallback.
+
+Specifically check for raw or unacceptable copy such as:
+
+```text
+No governed WHY for signal_...
 ```
 
-If a command does not exist, record that clearly.
+If present on user-facing surfaces, replace with governed, honest fallback copy that:
 
-Run no-conversion scan:
+* does not pretend to know a causal mechanism
+* does not use internal signal IDs
+* explains that the system has detected a pattern but lacks enough governed evidence to provide a deeper causal explanation
+* directs the user to the relevant missing-data or clinician-context framing where appropriate
+* remains deterministic and source-controlled
 
-```powershell
-Select-String -Path frontend/app/**/*.ts,frontend/app/**/*.tsx -Pattern "0.055|0.0555|18.018|38.67|88.4|0.02586|0.01|100|mg_dL|mmol_L|convert" -CaseSensitive:$false
-```
+## Preferred fix hierarchy
 
-Review all hits. Frontend conversion constants are blockers unless they are static copy, tests, or pre-existing unrelated dev tooling.
+1. If a governed WHY asset already exists but is not being loaded, fix the loader/wiring.
+2. If no governed WHY exists and the signal is inside the launch-core lead set, use a governed fallback template.
+3. If the signal is outside the launch-core lead set and should not be surfaced as primary, document and gate it from key launch-core ranking surfaces only if this is already allowed by policy.
 
-Manual browser validation required:
+Do not create new clinical WHY claims in this sprint unless the governed source already exists.
 
-* open the report URL
-* inspect dials/results area
-* confirm uploaded-panel fidelity display
-* confirm HbA1c `%` source row is visible
-* confirm canonical analytical report still collapses HbA1c
-* capture screenshots or concise written observations in the completion report
+## Phase 3 STOP conditions
 
-## Required documentation output
+STOP if:
+
+* fixing the issue requires new clinical research or new WHY asset creation
+* fallback copy would become speculative
+* internal signal IDs remain visible in consumer hero/report surfaces
+* suppression would hide clinically relevant findings without policy authority
+
+---
+
+# Phase 4 — Visible lifestyle/statin payoff verification
+
+## Required work
+
+Using the refreshed harness outputs and browser/API inspection where possible, verify whether:
+
+1. lifestyle_context changes at least one user-visible field compared with baseline
+2. alcohol/lifestyle bridge appears in user-readable language when active
+3. statin_on/statin_off changes or caveats at least one relevant user-visible field
+4. statin behaviour is bounded and does not alter raw biomarker chemistry incorrectly
+5. medication handling remains caveat/modifier-based, not drug-library reasoning
+
+If the behaviour does not visibly differ, implement the smallest correction only if the architecture already supports the modifier but it is not surfaced.
+
+If architecture support is missing, STOP and record a blocker instead of inventing a new modifier system.
+
+## Phase 4 STOP conditions
+
+STOP if:
+
+* lifestyle/stain payoff requires broad questionnaire expansion
+* statin support would require building a broad drug database
+* medication logic changes analytical thresholds without explicit governed authority
+* visibility is created with fake or demo-only copy
+
+---
+
+# Phase 5 — Human walkthrough pack and closeout decision
+
+## Required work
 
 Create:
 
 ```text
-docs/audit-papers/FE-S8E_uploaded_panel_fidelity_uat_notes.md
+docs/audit-papers/LC-S9B_human_walkthrough_pack.md
 ```
 
-Include:
+The pack must allow a named human tester to review:
 
-1. files changed
-2. UI behaviour before
-3. UI behaviour after
-4. how `upload_panel_observations` is rendered
-5. how duplicate-equivalent biomarkers are annotated
-6. confirmation frontend remains renderer-only
-7. validation commands run
-8. browser UAT result
-9. known gaps deferred
+* AB baseline
+* AB lifestyle_context
+* AB statin_off
+* AB statin_on
+* VR baseline
+* VR lifestyle_context
+* VR statin_off
+* VR statin_on
+
+For each scenario include:
+
+* report URL or command to generate report
+* expected lead finding
+* expected visible lifestyle/statin behaviour
+* known acceptable caveats
+* pass/fail checklist
+* screenshots or payload excerpts if available
+* binary CHECK results
+
+## Required final closeout decision
+
+Update:
+
+```text
+docs/audit-papers/LC-S9B_launch_core_proving_closeout_notes.md
+```
+
+with one of:
+
+```text
+SPRINT_5_PASS
+SPRINT_5_PASS_WITH_GAPS
+SPRINT_5_FAIL
+```
+
+If not `SPRINT_5_PASS`, state the exact next blocker and recommended next work package.
+
+## Phase 5 STOP conditions
+
+STOP if:
+
+* human walkthrough cannot be performed because reports cannot be generated
+* the pack lacks enough evidence for human review
+* CHECK 2/4/5/6 are not present or not executable
+* generated evidence is stale or not tied to current commit
+
+---
+
+# Required validation commands
+
+Run relevant targeted tests and harness commands discovered during preflight.
+
+At minimum, run:
+
+```powershell
+python -m pytest backend/tests -q
+```
+
+If full backend tests are too broad or fail due to unrelated known debt, run the smallest targeted launch-core proving/check test suite and document why.
+
+Run frontend validation if frontend files are changed:
+
+```powershell
+npm run type-check
+npm run test
+npm run lint
+```
+
+If commands do not exist or fail due to known environment debt, record the exact output.
+
+Run no-forbidden-unit-regression scan if frontend files are changed:
+
+```powershell
+Select-String -Path frontend/app/**/*.ts,frontend/app/**/*.tsx -Pattern "0.055|0.0555|18.018|38.67|88.4|0.02586|mg_dL|mmol_L|convert" -CaseSensitive:$false
+```
+
+Review all hits.
+
+## Required documentation outputs
+
+Create or update only as justified:
+
+```text
+docs/audit-papers/LC-S9B_launch_core_proving_closeout_notes.md
+docs/audit-papers/LC-S9B_human_walkthrough_pack.md
+docs/audit-papers/launch-core-proving/PROVING_REPORT.md
+docs/audit-papers/launch-core-proving/latest_fingerprints.json
+```
+
+If code changes are made, the notes file must include:
+
+* files changed
+* reason for each change
+* phase mapping
+* tests run
+* before/after evidence
+* residual risk
 
 ## Acceptance criteria
 
-This sprint is complete only if:
+The work package is complete only if:
 
-* frontend consumes `meta.upload_panel_observations`
-* uploaded source observations are visible in the results experience
-* HbA1c `%` appears as uploaded/equivalent when present
-* equivalent rows are not represented as separate analytical findings
-* canonical biomarker dials still use analytical `biomarkers[]`
-* no frontend conversion logic is introduced
-* no backend scoring/unit/canonicalisation files are changed
-* no console/network errors are introduced
-* browser UAT confirms the report still loads
+* current proving artefacts are refreshed or the missing harness is explicitly documented as a blocker
+* CHECK 2, CHECK 4, CHECK 5, and CHECK 6 are implemented or explicitly shown to already exist and pass
+* AB/VR launch-core matrix is evaluated on the current build
+* visible lifestyle payoff is proven or explicitly fails
+* visible statin payoff is proven or explicitly fails
+* user-facing raw fallback strings are removed or explicitly blocked for policy reasons
+* no demo-only narrative is introduced
+* no broad WHY expansion occurs
+* no Phase B unit work occurs
+* a human walkthrough pack is created
+* the final Sprint 5 verdict is explicit
 
 ## Cursor completion requirements
 
-When complete, Cursor must:
+When implementation is complete, Cursor must:
 
-1. Run relevant validation commands.
-2. Complete browser UAT on the specified report.
-3. Update the required documentation note.
-4. Run closure audit:
+1. Run the validation commands relevant to changed files.
+2. Update required documentation outputs.
+3. Run closure audit:
 
 ```powershell
 git branch --show-current
@@ -335,23 +506,30 @@ git diff --cached --name-only
 git stash list
 ```
 
-5. Classify tracked, staged, untracked, tooling, out-of-scope, and stash items.
-6. STOP if unrelated files, tooling leakage, dirty branch ambiguity, or stash ambiguity exists.
-7. If closure is clean, run:
+4. Classify:
+
+   * tracked modified files
+   * staged files
+   * untracked files
+   * tooling files
+   * out-of-scope files
+   * stash entries
+5. STOP if unrelated files, tooling leakage, dirty branch ambiguity, or stash ambiguity exists.
+6. If closure is clean, run:
 
 ```powershell
 python backend/scripts/run_work_package.py finish
 ```
 
-8. Report whether finish completed or failed.
-9. Do not merge.
-10. Do not create `automation_bus/latest_audit_summary.md`.
-11. Do not claim final approval.
+7. Report whether finish completed or failed.
+8. Do not merge.
+9. Do not create `automation_bus/latest_audit_summary.md`.
+10. Do not claim final approval.
 
 ## Explicit non-authority statement
 
-Cursor implements only.
+Cursor implements and reports only.
 
-Cursor may not self-certify architecture correctness, merge readiness, or final approval.
+Cursor may not self-certify Sprint 5 closure, Sprint 6 authorisation, architecture correctness, merge readiness, or final approval.
 
 ````

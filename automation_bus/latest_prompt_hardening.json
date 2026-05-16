@@ -1,5 +1,5 @@
 {
-  "work_id": "FE-S8E",
+  "work_id": "LC-S9B",
   "status": "HARDENED",
   "bus_version": "1.3.1",
   "hardened_utc": "2026-05-16T00:00:00Z",
@@ -7,112 +7,112 @@
   "changes": [
     {
       "check": "Front Matter — all five fields",
-      "result": "PASS — work_id=FE-S8E, branch=launch-core/fe-s8e-uploaded-panel-fidelity-rendering, risk_level=STANDARD, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. All five required fields present.",
+      "result": "PASS — work_id=LC-S9B, branch=launch-core/lc-s9b-proving-closeout, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. All five required fields present.",
       "citation": "automation_bus/latest_cursor_prompt.md lines 2–6"
     },
     {
-      "check": "risk_level STANDARD — justified",
-      "result": "PASS — no Intelligence Core files touched. No backend analytical, scoring, or canonicalisation logic changed. Sprint is frontend rendering only. HIGH triggers (SOP §10) not met. STANDARD correct.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 13–17; SOP §10"
+      "check": "risk_level HIGH — justified",
+      "result": "PASS — Phase 3 requires changes to backend/core/analytics/root_cause_compiler_v1.py (root cause compiler = Intelligence Core per SOP §3). Phase 4 may touch backend/core/analytics/**/* or frontend results surface (emitted output changes). HIGH triggers met: Intelligence Core contact confirmed.",
+      "citation": "automation_bus/latest_cursor_prompt.md lines 11–16; backend/core/analytics/root_cause_compiler_v1.py line 459; SOP §3, §10"
     },
     {
       "check": "change_type MIXED — justified",
-      "result": "PASS — frontend rendering code (BEHAVIOUR surface: display output changes) plus frontend type extension (CONTENT-adjacent: new TS interfaces). MIXED is correct per SOP §4.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 13, 161–166; SOP §4"
+      "result": "PASS — CONTENT (docs, proving artefact regeneration, walkthrough pack, closeout notes) + BEHAVIOUR (root_cause_compiler_v1.py fallback copy change, CHECK 2/5/6 implementation, frontend/backend payoff corrections if required). MIXED correct per SOP §4.",
+      "citation": "automation_bus/latest_cursor_prompt.md lines 11–19; SOP §4"
     },
     {
-      "check": "Authority path — docs/audit-papers/LC-S8C_ssot_wide_unit_governance_preflight.md",
-      "result": "CONFIRMED EXISTS — ls docs/audit-papers/ verified.",
-      "citation": "docs/audit-papers/LC-S8C_ssot_wide_unit_governance_preflight.md (ls verified)"
+      "check": "execution_model TWO_PHASE_START_FINISH — justified",
+      "result": "PASS — HIGH risk MIXED requires kernel start + gate finish. TWO_PHASE_START_FINISH correct.",
+      "citation": "automation_bus/latest_cursor_prompt.md line 5; SOP §3"
     },
     {
-      "check": "Authority path — docs/audit-papers/LC-S8D_uk_si_unit_governance_remediation_notes.md",
-      "result": "CONFIRMED EXISTS — ls docs/audit-papers/ verified.",
-      "citation": "docs/audit-papers/LC-S8D_uk_si_unit_governance_remediation_notes.md (ls verified)"
+      "check": "Authority path — launch-core proving harness",
+      "result": "CONFIRMED EXISTS — backend/tools/launch_core_proving_harness.py (read in full). Imports compile_clinician_report_v1, InterventionAnnotationsV1, run_golden_panel. DEFAULT_MATRIX points to backend/tests/fixtures/proving/launch_core_matrix.json. DEFAULT_OUT_ROOT points to docs/audit-papers/launch-core-proving/. Runnable: python backend/tools/launch_core_proving_harness.py from repo root.",
+      "citation": "backend/tools/launch_core_proving_harness.py lines 22–23, 27–29"
     },
     {
-      "check": "Authority path — docs/audit-papers/LC-S8D_frontend_layer_c_uat_report.md",
-      "result": "CONFIRMED EXISTS — file read in full. Line 1: title confirmed. Lines 32–33: meta.upload_panel_observations present in live API response with 20 uploaded keys including hba1c_pct.",
-      "citation": "docs/audit-papers/LC-S8D_frontend_layer_c_uat_report.md lines 1, 32–33"
+      "check": "Authority path — AB/VR panel fixture definitions",
+      "result": "CONFIRMED EXISTS — backend/tests/fixtures/proving/launch_core_matrix.json (read in full). AB panel: tests/fixtures/panels/ab_full_panel_with_ranges.json (exists, found by directory scan). VR panel: tests/fixtures/panels/vr_full_panel_with_ranges.json (exists, found by directory scan). Four scenarios defined: baseline, lifestyle_context, statin_off, statin_on.",
+      "citation": "backend/tests/fixtures/proving/launch_core_matrix.json lines 4–37; directory scan confirmed both panel paths"
     },
     {
-      "check": "Authority path — frontend/app/(app)/results/page.tsx",
-      "result": "CONFIRMED EXISTS — file read. biomarkerDialData built exclusively from biomarkers[] at lines 486–520. Zero references to upload_panel_observations.",
-      "citation": "frontend/app/(app)/results/page.tsx lines 477, 486–520"
+      "check": "Authority path — lifestyle modifier source",
+      "result": "CONFIRMED EXISTS — backend/tests/fixtures/lifestyle_minimal.json found at exact path referenced in matrix. RISK: the existing test_lc_s5_proving_checks.py docstring (line 8) states alcohol_units_per_week=7 is below the moderate threshold. The lifestyle_context scenario uses this fixture. Stale PROVING_REPORT.md shows narrative_block_differs=False for AB baseline vs AB__lifestyle_context — lifestyle payoff is NOT demonstrated at fixture level. CHECK 2 test bypasses the fixture and uses orchestrator directly with alcohol_units_per_week=10. Cursor must understand this fixture limitation in Phase 4.",
+      "citation": "backend/tests/fixtures/lifestyle_minimal.json (path confirmed); backend/tests/regression/test_lc_s5_proving_checks.py lines 7–8; docs/audit-papers/launch-core-proving/PROVING_REPORT.md lifestyle/context payoff section"
     },
     {
-      "check": "Authority path — frontend/app/components/biomarkers/BiomarkerDials.tsx",
-      "result": "CONFIRMED EXISTS — file read in full. BIOMARKER_NAMES map at lines 36–90. wbc → 'White Blood Cell Count' at line 74. white_blood_cells NOT in BIOMARKER_NAMES map (confirms D5 sprint target).",
-      "citation": "frontend/app/components/biomarkers/BiomarkerDials.tsx lines 36–90"
+      "check": "Authority path — statin/medication fixture source",
+      "result": "CONFIRMED — backend/tests/fixtures/proving/launch_core_matrix.json line 30: statin_on scenario questionnaire_data.long_term_medications = [\"Statins (cholesterol medication)\"]. Exact SSOT label per test_launch_core_proving_harness.py line 11 (imports STATINS_LONG_TERM_MEDICATION_LABEL from core.pipeline.questionnaire_mapper).",
+      "citation": "backend/tests/fixtures/proving/launch_core_matrix.json lines 28–31; backend/tests/unit/test_launch_core_proving_harness.py lines 10–11"
     },
     {
-      "check": "Authority path — frontend/app/types/analysis.ts",
-      "result": "CONFIRMED EXISTS — file read in full. meta typed as Record<string, any> at line 325. No UploadPanelObservation type defined. No upload_panel_observations or display_unit_policy typed fields.",
-      "citation": "frontend/app/types/analysis.ts line 325"
+      "check": "Authority path — root-cause / WHY compiler and fallback source",
+      "result": "CONFIRMED — backend/core/analytics/root_cause_compiler_v1.py line 459: title = f\"No governed WHY for {str(lead.get('signal_id', '')).strip() or 'this signal'}\". Line 460–463: summary contains internal-wording fallback. This is the SINGLE authority source for ungoverned WHY fallback copy. Phase 3 must target this file only — it is Intelligence Core.",
+      "citation": "backend/core/analytics/root_cause_compiler_v1.py lines 459–463"
     },
     {
-      "check": "Authority path — frontend/app/queries/analysisResult.ts",
-      "result": "CONFIRMED EXISTS — file read in full. Single useAnalysisResult hook at line 33. Fetches and returns AnalysisResult. No upload panel logic.",
-      "citation": "frontend/app/queries/analysisResult.ts lines 1–68"
+      "check": "Authority path — report compiler / primary hero payload",
+      "result": "CONFIRMED EXISTS — backend/core/analytics/report_compiler_v1.py (referenced at harness line 27: from core.analytics.report_compiler_v1 import compile_clinician_report_v1). Not read in full; path confirmed by harness import.",
+      "citation": "backend/tools/launch_core_proving_harness.py line 27"
     },
     {
-      "check": "Authority path — backend/app/routes/analysis.py",
-      "result": "CONFIRMED EXISTS — file read. upload_panel_observations built as deep copy of pre-arbitration normalized dict at lines 148–152. Attached to meta at line 201.",
-      "citation": "backend/app/routes/analysis.py lines 148–152, 201"
+      "check": "Authority path — frontend results surface",
+      "result": "CONFIRMED — frontend/app/(app)/results/page.tsx (path confirmed; read in lc_s5 audit at lines 1–864). NarrativeRetailSummaryCard at line 632; body_overview at 668–672; lead_narrative at 682; mock-mode banner at 610–614; defaultOpen at 666. No duplicate authority source for results rendering.",
+      "citation": "docs/audit-papers/lc_s5_proving_readiness_preflight_audit.md §7 (lines 197–244)"
     },
     {
-      "check": "Authority path — backend/core/units/display_policy.py",
-      "result": "CONFIRMED EXISTS — file read in full. build_display_policy_meta() at line 44 returns display_unit_policy_version and presentation_modes.",
-      "citation": "backend/core/units/display_policy.py lines 44–49"
+      "check": "Authority path — existing CHECK 2/5/6 logic",
+      "result": "CONFIRMED EXISTS — backend/tests/regression/test_lc_s5_proving_checks.py (read in full). Contains: test_check2_alcohol_bridge_language_when_moderate_threshold_met (line 103), test_check5_wave1_consumer_domain_band_vs_consequence_consistency (line 143), test_check6_clinician_retail_lead_family_alignment_ab_vr_baseline (line 162). CHECK 4 covered separately by Jest. These tests EXIST — Phase 2 scope is to confirm they pass on the fresh harness run, not to rewrite them from scratch.",
+      "citation": "backend/tests/regression/test_lc_s5_proving_checks.py lines 103–174"
     },
     {
-      "check": "Authority path — backend/ssot/display_unit_policy.yaml",
-      "result": "CONFIRMED EXISTS — file read in full. policy_version: '1.0.0' at line 2. presentation_modes: uploaded_panel_fidelity and analytical_report at lines 5–17. biomarker entries for hba1c (line 20), hematocrit (line 29), urea (line 38), platelets (line 72), white_blood_cells (line 79) at relevant lines.",
-      "citation": "backend/ssot/display_unit_policy.yaml lines 2, 5–17, 20, 29, 38, 72, 79"
+      "check": "Stale fingerprints — confirmed and correctly identified",
+      "result": "CONFIRMED STALE — docs/audit-papers/launch-core-proving/latest_fingerprints.json: git_short_sha='a87df29' (WP2-era). docs/audit-papers/LC-S9_launch_core_human_proving_closeout_review.md line 41 explicitly marks fingerprints STALE, predating LC-S8D/FE-S8E merges. Current HEAD per git status at LC-S9 review time was post-dfba562. Phase 1 (harness refresh) is mandatory BEFORE any Phase 2–5 work. No evidence can be inherited from stale fingerprints.",
+      "citation": "docs/audit-papers/launch-core-proving/latest_fingerprints.json lines 2–3; docs/audit-papers/LC-S9_launch_core_human_proving_closeout_review.md lines 41, 46"
     },
     {
-      "check": "Source cross-ref — upload_panel_observations payload shape",
-      "result": "CONFIRMED — backend/core/canonical/normalize.py lines 244–255: normalize_biomarkers_with_metadata returns { canonical_key: { value: number, unit: string, reference_range: any, reference_profile?: any, timestamp?: string } }. Pre-arbitration, pre-unit-normalisation. Contains hba1c_pct as separate key alongside hba1c.",
-      "citation": "backend/core/canonical/normalize.py lines 244–255"
+      "check": "Kernel token — not yet present",
+      "result": "NOTED — automation_bus/state/work_package_active.json does not exist. Kernel start (python backend/scripts/run_work_package.py start) has not run. Branch launch-core/lc-s9b-proving-closeout must be created and checked out before kernel start. Cursor must verify token presence before modifying any files per SOP Stage 4.",
+      "citation": "automation_bus/state/work_package_active.json (file does not exist — read attempt returned error)"
     },
     {
-      "check": "Source cross-ref — frontend type gap",
-      "result": "CONFIRMED — analysis.ts line 325: meta is untyped Record<string, any>. No UploadPanelObservation interface exists. Sprint must add typed interface with optional fields (backward compatibility for older results without upload_panel_observations).",
-      "citation": "frontend/app/types/analysis.ts line 325"
+      "check": "Behavioural scope — Intelligence Core contact (Phase 3)",
+      "result": "RISK SURFACED — Phase 3 WHY fallback correction targets root_cause_compiler_v1.py:459. This is Intelligence Core (root cause compiler). The permitted fix is SCOPED: change the fallback title (line 459) from 'No governed WHY for signal_...' to a human-readable governed phrase that does not expose internal signal IDs. The summary at lines 460–463 should similarly remove the internal activation/range debug output. DETERMINISM IS PRESERVED: the fallback logic (when WHY is absent) remains the same; only the human-readable strings change. Signal activation, ranking, scoring, and scoring policy are NOT touched. Cursor must not alter the detection logic that routes to this fallback — only the strings emitted.",
+      "citation": "backend/core/analytics/root_cause_compiler_v1.py lines 459–463; automation_bus/latest_cursor_prompt.md Phase 3 fix hierarchy"
     },
     {
-      "check": "Source cross-ref — frontend zero usage of upload_panel_observations",
-      "result": "CONFIRMED — Grep across frontend/**/*.ts and .tsx: zero matches for 'upload_panel_observations'. Gap D1 independently verified.",
-      "citation": "Grep result: no matches in frontend/ tree"
+      "check": "Behavioural scope — lifestyle payoff fixture limitation (Phase 4)",
+      "result": "RISK SURFACED — lifestyle_minimal.json provides alcohol_units_per_week=7, which is below the moderate threshold. The harness lifestyle_context scenario will produce narrative_block_differs=False (confirmed stale report shows this). CHECK 2 correctly bypasses the fixture and uses orchestrator with 10 units. Phase 4 must NOT claim lifestyle visible payoff is proven from the harness lifestyle_context scenario alone. If Phase 4 cannot show visible difference via any pathway, STOP and record blocker. STOP condition applies if lifestyle support requires broad questionnaire expansion.",
+      "citation": "backend/tests/regression/test_lc_s5_proving_checks.py lines 7–8, 115; docs/audit-papers/launch-core-proving/PROVING_REPORT.md lifestyle/context payoff section"
     },
     {
-      "check": "No-conversion pre-scan",
-      "result": "PASS — one grep hit: frontend/app/state/upload.ts line 81 — comment text only ('converting to array'), not unit maths. No other hits. No pre-existing forbidden conversion constants in frontend dial path.",
-      "citation": "frontend/app/state/upload.ts line 81"
+      "check": "Behavioural scope — CHECK 6 hardcoded lead assumption",
+      "result": "RISK SURFACED — test_check6_clinician_retail_lead_family_alignment_ab_vr_baseline() at line 172 hardcodes assertion that both AB and VR baseline primary_concern_head and retail_summary_head contain 'homocysteine'. If the post-LC-S8D/FE-S8E lead changes on fresh run, this test fails. Cursor must re-validate the lead family after Phase 1 harness run and update the CHECK 6 assertion only based on actual fresh fingerprint output — not from the stale fingerprints.",
+      "citation": "backend/tests/regression/test_lc_s5_proving_checks.py lines 162–173"
+    },
+    {
+      "check": "Governing context documents — all required paths exist",
+      "result": "CONFIRMED EXISTS (all 8 listed): docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md, docs/audit-papers/LC-S9_launch_core_human_proving_closeout_review.md, docs/audit-papers/lc_s5_proving_readiness_preflight_audit.md, docs/audit-papers/launch-core-proving/PROVING_REPORT.md, docs/audit-papers/launch-core-proving/latest_fingerprints.json, docs/audit-papers/LAUNCH_GRADE_ANALYTICAL_GAP_MAP_2026-05.md, docs/audit-papers/LC-S8D_uk_si_unit_governance_remediation_notes.md, docs/audit-papers/FE-S8E_post_merge_comparison_uat.md. No path mismatches found.",
+      "citation": "Glob results: docs/audit-papers/**/*.md and docs/planning-papers/**/*.md"
     },
     {
       "check": "Forbidden files — confirmed present, correctly barred",
-      "result": "CONFIRMED — backend/ssot/units.yaml (Glob present), backend/ssot/biomarkers.yaml (referenced in prior hardening), backend/core/canonical/hba1c_layer_b_arbitration.py (imported at analysis.py:45), sentinel/* and automation_bus/* (confirmed present). All correctly excluded from allowed scope.",
-      "citation": "backend/app/routes/analysis.py line 45; Glob verification"
+      "result": "CONFIRMED — backend/ssot/biomarkers.yaml (key SSOT file), backend/ssot/units.yaml (unit governance), backend/ssot/scoring_policy.yaml, backend/core/units/registry.py, backend/core/scoring/rules.py, backend/core/canonical/hba1c_layer_b_arbitration.py, backend/scripts/run_work_package.py, backend/scripts/golden_gate_local.py, backend/scripts/update_cursor_status.py, automation_bus/latest_gate_evidence.json, automation_bus/latest_gate_output.txt, automation_bus/latest_cursor_status.json — all correctly excluded. No scope overlap with Phase 3 fallback fix (root_cause_compiler_v1.py is in backend/core/analytics/, which IS allowed).",
+      "citation": "automation_bus/latest_cursor_prompt.md lines 150–165"
     },
     {
-      "check": "Behavioural scope — no Intelligence Core components touched",
-      "result": "PASS — sprint only adds: (1) TypeScript interface in analysis.ts, (2) uploaded-panel fidelity rendering component or section in results page or BiomarkerDials. No root cause compilers, signal evaluators, pipeline logic, InsightGraph, output assembly, or ranking/filtering logic touched.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 119–131 (allowed files)"
+      "check": "Output structure — determinism risk from Phase 3 change",
+      "result": "ADVISORY — changing the fallback title/summary strings in root_cause_compiler_v1.py:459–463 will alter the RootCauseHypothesisV1 title and summary fields for any lead lacking a governed WHY. This changes the text content of the root cause payload, which flows into the clinician report and potentially the consumer-facing narrative. This IS an intentional output change (that's the point of Phase 3). Cursor must document this as an expected delta in the closeout notes and confirm it does not alter signal_state, ranking, or scoring. The hypothesis_id (_WHY_FALLBACK_HYPOTHESIS_ID) must remain unchanged to preserve Sentinel regression compatibility.",
+      "citation": "backend/core/analytics/root_cause_compiler_v1.py lines 459–481"
     },
     {
-      "check": "Determinism risk — duplicate dial injection",
-      "result": "RISK SURFACED — Cursor must NOT merge upload_panel_observations keys into biomarkerDialData (results/page.tsx lines 486–520). Merging would re-introduce hba1c_pct as a scored analytical dial — explicitly forbidden by prompt line 157. Analytical dials (biomarkers[]) and uploaded-panel fidelity surface must be completely independent.",
-      "citation": "frontend/app/(app)/results/page.tsx lines 486–520; automation_bus/latest_cursor_prompt.md line 157"
-    },
-    {
-      "check": "Advisory — hematocrit / haematocrit spelling in display_unit_policy.yaml",
-      "result": "ADVISORY — display_unit_policy.yaml uses 'hematocrit' (American) at line 29; BiomarkerDials.tsx BIOMARKER_NAMES maps both 'hematocrit' (line 69) and 'haematocrit' (line 70). UAT report uses 'haematocrit' for the analytical key. Cursor should confirm which key appears in upload_panel_observations for the test analysis before applying per-key equivalence annotation. Generic row rendering (show all uploaded rows) avoids this ambiguity safely.",
-      "citation": "backend/ssot/display_unit_policy.yaml line 29; frontend/app/components/biomarkers/BiomarkerDials.tsx lines 69–70; docs/audit-papers/LC-S8D_frontend_layer_c_uat_report.md line 96"
+      "check": "No duplicate authority source",
+      "result": "PASS — single harness tool (launch_core_proving_harness.py), single matrix (launch_core_matrix.json), single proving output directory. No duplicate authority source detected. Prompt correctly prohibits creating a second authority source.",
+      "citation": "backend/tools/launch_core_proving_harness.py lines 22–23; automation_bus/latest_cursor_prompt.md Authority preflight section"
     },
     {
       "check": "Overall verdict",
-      "result": "HARDENED — no blockers. Prompt correctly scoped. All authority paths verified from file content. upload_panel_observations payload shape confirmed from backend source. Forbidden files identified. Determinism risk advisory raised. Cursor may proceed to Stage 3 kernel start on branch launch-core/fe-s8e-uploaded-panel-fidelity-rendering.",
+      "result": "HARDENED — all authority paths verified from file content. No blockers. Risk profile confirmed HIGH/MIXED. Key conditions: (1) Branch must be created and kernel started before any file edits. (2) Phase 1 harness refresh is mandatory before any Phase 2–5 work — stale fingerprints at SHA a87df29 cannot be treated as current evidence. (3) Phase 3 fallback fix scoped to root_cause_compiler_v1.py lines 459–463 string fields only — _WHY_FALLBACK_HYPOTHESIS_ID must remain unchanged. (4) Phase 4 must not claim lifestyle visible payoff from the harness fixture (alcohol=7 below threshold) — use orchestrator-level CHECK 2 evidence only. (5) CHECK 6 hardcoded 'homocysteine' assertion must be re-validated after fresh harness run. Cursor may proceed to Stage 3 kernel start on branch launch-core/lc-s9b-proving-closeout.",
       "citation": "all checks above"
     }
   ]
