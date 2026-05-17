@@ -1,319 +1,158 @@
 ---
-work_id: LC-S8G
-branch: launch-core/lc-s8f-phase-b-uk-si-true-conversions
+work_id: LC-S11A
+branch: launch-core/lc-s11a-trust-blocker-correction
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# LC-S8G — Uploaded-Unit Display Fidelity Contract and SSOT-Wide Guardrail
+# LC-S11A — Launch-Core Trust Blocker Correction
 
 ## Classification
 
-This is a HIGH-risk MIXED blocker-fix sprint on top of the unmerged LC-S8F branch.
+This is a HIGH-risk MIXED correction sprint.
 
-Reason: LC-S8F backend Phase B conversion is correct, but human UAT exposed a customer-facing display contract failure. This sprint may touch backend DTO output, frontend result rendering, TypeScript result types, regression tests, Sentinel/static guardrails, and UAT documentation.
+Reason: this sprint may touch signal logic, scoring behaviour, domain-card narrative gating, legacy output gating, regression tests, Sentinel protections, and launch-core report payload behaviour.
 
-This is not a new feature sprint.
+This is not a product expansion sprint.
 
-This sprint completes the display contract required before LC-S8F can merge.
+This sprint fixes four trust-blocking defects found during LC-S11 forensic human UAT before external human testing can proceed. The forensic audit judged the current launch-core result as `PASS WITH GAPS`, with specific blockers around legacy `insights[]`, unsupported blood sugar narrative, ApoA1 directionality, and low-ALT liver severity. :contentReference[oaicite:0]{index=0}
 
-## Current branch context
+## Purpose
 
-Work on the existing unmerged branch:
+Correct the four bounded trust blockers identified in:
 
 ```text
-launch-core/lc-s8f-phase-b-uk-si-true-conversions
+docs/audit-papers/LC-S11_forensic_human_uat_audit.md
 ````
 
-Do not create a new branch unless explicitly instructed.
+The four defects are:
 
-Do not undo LC-S8F.
+1. Legacy `insights[]` placeholder surface still active.
+2. Blood sugar domain card presents “early impaired sugar and lipid handling” despite no active blood sugar signals.
+3. ApoA1 elevated is being treated as a cardiovascular risk driver.
+4. Low ALT is driving an alarming liver score / “Needs review” state.
 
-Do not alter Layer B canonical UK/SI conversion.
+The goal is to remove false confidence, unsupported narrative, clinically wrong marker directionality, and disproportionate false alarms before external user testing.
 
-## Problem
+## Governing evidence
 
-LC-S8F correctly converts Phase B biomarkers into UK/SI canonical units for Layer B analysis.
-
-However, human UAT found that when a user uploads US/non-UK units, the main customer-facing biomarker dials display the internal UK/SI analytical units back to the user.
-
-That is wrong.
-
-Example:
+Read before editing:
 
 ```text
-Uploaded:
-Calcium 9.4 mg/dL, range 8.6–10.2 mg/dL
-
-Internal analytical:
-Calcium 2.3453 mmol/L, range 2.1457–2.5449 mmol/L
-
-Current main display:
-2.3453 mmol/L
-
-Required main display:
-9.4 mg/dL, range 8.6–10.2 mg/dL
-with optional transparency note: analysed internally as mmol/L
+docs/audit-papers/LC-S11_forensic_human_uat_audit.md
+docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md
+docs/audit-papers/LC-S10B_protection_of_proven_slice_notes.md
+docs/audit-papers/LC-S8F_phase_b_unit_conversion_uat.md
+docs/audit-papers/LC-S8G_uploaded_unit_display_fidelity_notes.md
 ```
 
-The separate “Uploaded panel values” section is not sufficient. The main customer-facing biomarker display must preserve the user’s uploaded unit family where safe and governed.
-
-## Investigation finding
-
-The defect is pre-existing from the FE-S8E Mode A / Mode B split, but exposed by LC-S8F.
-
-Current behaviour:
-
-* main dials render from canonical `biomarkers[]`
-* uploaded source observations are preserved only in `meta.upload_panel_observations`
-* `BiomarkerResult` has no governed per-biomarker `display_value`, `display_unit`, or `display_reference_range`
-* frontend dials have no display override path
-* LC-S8F did not touch frontend, but made the gap visible because Phase B conversions now occur correctly
-
-## Correct architecture
-
-Layer B:
+Also inspect the downloaded/live analysis payload or regenerated equivalent for:
 
 ```text
-Always analyse using canonical UK/SI units.
+analysis_id=c440dfa2-12a1-4e29-95a5-ee07a2397c59
 ```
 
-Customer-facing Layer C / frontend display:
+If the exact analysis is not locally available, use the saved JSON artefact if present, or regenerate an equivalent AB panel output. Do not invent evidence.
 
-```text
-Display the uploaded unit family where safe and governed.
-```
+## Strategic boundaries
 
-Frontend:
+This sprint must not:
 
-```text
-Renderer only.
-No conversion maths.
-No unit inference.
-No hidden calculation.
-Render backend-supplied display fields.
-```
+* broaden WHY Wave 2
+* introduce Gemini/LLM narrative generation
+* redesign the frontend
+* rewrite domain scoring globally
+* add new clinical claims without existing governed support
+* suppress real clinically relevant findings just to improve appearance
+* change unit governance
+* change LC-S8F / LC-S8G display fidelity
+* change lifestyle/statin modifier behaviour
+* create demo-only logic
+* add fallback parser logic
 
-## Required behaviour
+Every change must be tied to one of the four LC-S11A trust blockers.
 
-For each biomarker:
-
-1. Backend keeps analytical fields:
-
-   * canonical analytical value
-   * canonical analytical unit
-   * canonical analytical reference range
-
-2. Backend also emits display fields:
-
-   * `display_value`
-   * `display_unit`
-   * `display_reference_range`
-   * optional `analytical_value`
-   * optional `analytical_unit`
-   * optional `analytical_reference_range`
-   * optional `display_is_uploaded_unit` / `unit_display_mode`
-
-3. Frontend main dials/cards prefer display fields:
-
-   * `display_value ?? value`
-   * `display_unit ?? unit`
-   * `display_reference_range ?? reference_range`
-
-4. If display and analytical units differ, frontend shows a non-technical transparency note supplied or inferable from backend fields, for example:
-
-   * `Analysed internally as mmol/L`
-   * `Analysed internally as pmol/L`
-   * `Analysed internally as g/L`
-
-5. Frontend must not calculate conversions.
-
-6. Uploaded-panel fidelity section remains, but it is not the only place uploaded units appear.
-
-## Display field source rules
-
-Use `meta.upload_panel_observations` or the backend’s equivalent source-observation structure.
-
-### Single uploaded source observation
-
-If a canonical biomarker has one uploaded source observation and that unit is authorised/governed:
-
-* use the uploaded value/unit/range for `display_*`
-* use canonical UK/SI value/unit/range for analytical fields
-
-### UK/SI uploaded source observation
-
-If user uploaded canonical UK/SI unit:
-
-* `display_*` should equal analytical display where appropriate
-* do not add unnecessary conversion notes
-
-### Multiple equivalent uploaded observations
-
-If a canonical biomarker has multiple equivalent uploaded observations, for example HbA1c in both `mmol/mol` and `%`:
-
-* do not duplicate analytical scoring
-* preserve all rows in uploaded-panel fidelity section
-* main dial should use the safest governed display choice:
-
-  * prefer uploaded canonical unit if present
-  * otherwise prefer the primary uploaded source observation
-* document this choice in tests/notes
-
-### Unsupported or unsafe source unit
-
-If uploaded unit is unsupported or not governed:
-
-* do not invent display conversion
-* do not silently score if conversion authority is missing
-* preserve existing unscored/error behaviour
-
-## Phase B UAT cases to fix
-
-Use the two existing human UAT reports where possible:
-
-US/non-UK conversion panel:
-
-```text
-analysis_id=7cc8b2d5-c8f0-4138-ba18-8540eece06a1
-```
-
-UK/SI pass-through panel:
-
-```text
-analysis_id=b24ce358-02e3-4058-a667-34328a4168a2
-```
-
-The earlier brief labels were swapped. Treat:
-
-```text
-7cc8b2d5... = US/non-UK conversion panel
-b24ce358... = UK/SI pass-through panel
-```
-
-## Required examples
-
-### US/non-UK uploaded panel
-
-Main customer-facing display must show:
-
-| Biomarker         | Uploaded display expected        | Internal analytical expected |
-| ----------------- | -------------------------------- | ---------------------------- |
-| Calcium           | `9.4 mg/dL`, RR `8.6–10.2 mg/dL` | `2.3453 mmol/L`              |
-| Corrected calcium | `9.4 mg/dL`, RR `8.6–10.2 mg/dL` | `2.3453 mmol/L`              |
-| Magnesium         | `2.1 mg/dL`, RR `1.7–2.4 mg/dL`  | `0.86394 mmol/L`             |
-| Free T4           | `1.2 ng/dL`, RR `0.8–1.8 ng/dL`  | `15.4452 pmol/L`             |
-| Haemoglobin       | `14.6 g/dL`, RR `13.0–17.5 g/dL` | `146 g/L`                    |
-| Uric acid / urate | `5.8 mg/dL`, RR `3.5–7.2 mg/dL`  | `345.1 µmol/L`               |
-
-### UK/SI pass-through panel
-
-Main customer-facing display must remain:
-
-| Biomarker         | Display expected                     |
-| ----------------- | ------------------------------------ |
-| Haemoglobin       | `144 g/L`, RR `130–175 g/L`          |
-| Uric acid / urate | `440 µmol/L`, RR `220–547 µmol/L`    |
-| Free T4           | `16.8 pmol/L`, RR `12–22 pmol/L`     |
-| Calcium           | `2.33 mmol/L`, RR `2.15–2.57 mmol/L` |
-| Corrected calcium | `2.25 mmol/L`, RR `2.20–2.60 mmol/L` |
-| Magnesium         | `0.89 mmol/L`, RR `0.73–1.06 mmol/L` |
-
-## Mandatory preflight
+## Mandatory preflight before editing
 
 Run and record:
 
 ```powershell
 git branch --show-current
 git status --short
-git log --oneline -n 5
+git log --oneline -n 8
 ```
 
-Confirm you are on:
-
-```text
-launch-core/lc-s8f-phase-b-uk-si-true-conversions
-```
-
-Confirm LC-S8F changes are present.
-
-Confirm the Phase B evidence file is committed:
+Then verify:
 
 ```powershell
-git ls-files --error-unmatch docs/audit-papers/Phase_B_UK_SI_Biomarker_Unit_Evidence_Review.md
+Test-Path automation_bus/state/work_package_active.json
 ```
 
-If the evidence file is not tracked, STOP.
+Read `automation_bus/state/work_package_active.json` and confirm:
+
+* `work_id` is `LC-S11A`
+* branch is `launch-core/lc-s11a-trust-blocker-correction`
+
+If the token is missing or mismatched, STOP:
+
+```text
+Kernel start not executed or work package mismatch.
+```
 
 ## Authority preflight
 
-Before editing, identify and record authoritative paths for:
+Before modifying files, identify and record authoritative paths for:
 
-1. backend analysis result DTO builder
-2. `BiomarkerResult` Python/DTO model if present
-3. frontend `BiomarkerResult` TypeScript type
-4. frontend biomarker dial/card data mapping
-5. uploaded-panel observation structure
-6. display unit policy file
-7. unit registry / conversion authority
-8. Sentinel pack registry
-9. existing FE-S8E uploaded-panel fidelity tests
-10. LC-S8D/LC-S8F unit-governance tests
+1. Legacy `insights[]` generation and frontend/API exposure.
+2. Consumer domain score/card generation.
+3. Blood sugar/metabolic domain card narrative source.
+4. ApoA1 signal definition, directionality, and display/framing.
+5. ALT scoring/status/domain contribution logic.
+6. Domain score aggregation logic.
+7. Sentinel/regression tests protecting launch-core outputs.
+8. JSON/API result DTO path.
+9. Frontend result card/domain-card rendering path.
+10. Knowledge Bus or SSOT assets backing ApoA1, liver, metabolic, and cardiovascular domain logic.
 
-Known likely files:
+STOP if an authority source is ambiguous or duplicated.
 
-```text
-backend/core/dto/builders.py
-frontend/app/types/analysis.ts
-frontend/app/(app)/results/page.tsx
-frontend/app/components/biomarkers/BiomarkerDials.tsx
-frontend/app/lib/uploadPanelFidelity.ts
-backend/ssot/display_unit_policy.yaml
-backend/core/units/registry.py
-backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py
-backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py
-sentinel/packs/lc_s8d_unit_governance_v1.json
-```
-
-STOP if there are multiple competing DTO/display authorities.
+Do not create a second authority source.
 
 ## Potentially allowed files
 
-Only edit files required to implement and protect the display contract:
+Only edit files needed for these four trust blockers.
+
+Potentially allowed:
 
 ```text
-backend/core/dto/builders.py
-backend/core/contracts/**/*
-backend/app/routes/analysis.py only if DTO wiring requires it
+backend/core/analytics/**/*
+backend/core/scoring/**/*
+backend/core/pipeline/**/*
+backend/core/dto/**/*
+backend/app/routes/analysis.py
+
+backend/ssot/**/*
+knowledge_bus/**/* only if correcting existing governed metadata, not broad enrichment
+
+frontend/app/(app)/results/**/*
+frontend/app/components/**/*
+frontend/app/lib/**/*
+frontend/app/types/**/*
+
 backend/tests/unit/**/*
 backend/tests/regression/**/*
-
-frontend/app/types/analysis.ts
-frontend/app/(app)/results/page.tsx
-frontend/app/components/biomarkers/BiomarkerDials.tsx
-frontend/app/lib/**/*
 frontend/tests/**/*
 
-backend/ssot/display_unit_policy.yaml only if needed to declare display policy
 sentinel/packs/**/*
-sentinel/**/*
-
-docs/audit-papers/LC-S8G_uploaded_unit_display_fidelity_notes.md
-docs/audit-papers/LC-S8F_phase_b_unit_conversion_uat.md only if updating UAT interpretation
+docs/audit-papers/LC-S11A_trust_blocker_correction_notes.md
 ```
 
-## Forbidden files and changes
+## Forbidden changes
 
 Do not edit:
 
 ```text
-backend/ssot/biomarkers.yaml
-backend/ssot/units.yaml
-backend/ssot/scoring_policy.yaml
-backend/core/units/registry.py
-backend/core/scoring/rules.py
-frontend code that performs conversion maths
 backend/scripts/run_work_package.py
 backend/scripts/golden_gate_local.py
 backend/scripts/update_cursor_status.py
@@ -322,302 +161,387 @@ automation_bus/latest_gate_output.txt
 automation_bus/latest_cursor_status.json
 ```
 
-Exception:
-
-* You may read these files.
-* Do not modify LC-S8F backend conversion implementation unless a test proves it is broken.
-* The aim is display-contract completion, not conversion changes.
-
 Do not:
 
-* undo LC-S8F
-* change Layer B canonical UK/SI analysis
-* introduce frontend conversion constants
+* alter LC-S8F unit conversion factors
+* alter LC-S8G uploaded-unit display fidelity
+* change haemoglobin/urate/Free T4/calcium/magnesium conversion behaviour
+* introduce generic reference ranges
 * recompute corrected calcium
 * map urate to urea
-* introduce generic/default reference ranges
-* hide uploaded observations
-* suppress biomarkers to pass tests
-* add fallback parser logic
+* add frontend conversion maths
+* remove domain cards wholesale to hide defects
+* delete evidence rather than fixing logic/gating
+* create broad new scoring framework
 
-## Phase 1 — Contract inventory
+## Phase 1 — Investigation and correction plan
 
-Create:
+Create or update:
 
 ```text
-docs/audit-papers/LC-S8G_uploaded_unit_display_fidelity_notes.md
+docs/audit-papers/LC-S11A_trust_blocker_correction_notes.md
 ```
 
 Record:
 
-* current DTO fields
-* current frontend dial fields
-* current uploaded observation fields
-* whether backend has enough data to construct display fields
-* where display fields will be added
-* which tests will protect them
+* current branch / git state
+* files inspected
+* exact authority source for each defect
+* proposed correction
+* planned tests
+* STOP risks
 
 Required table:
 
-| Surface | Current field source | Defect | Fix |
-| ------- | -------------------- | ------ | --- |
+| Defect | Current evidence | Authority source | Proposed fix | Tests |
+| ------ | ---------------- | ---------------- | ------------ | ----- |
 
 Do not implement until this inventory is complete.
 
-## Phase 2 — Backend DTO display contract
+---
 
-Add backend display fields to each biomarker result row.
+# Defect 1 — Gate or remove legacy `insights[]`
 
-Required fields, unless an equivalent existing contract is discovered:
+## Problem
 
-```text
-display_value
-display_unit
-display_reference_range
-analytical_value
-analytical_unit
-analytical_reference_range
-display_is_uploaded_unit
-```
-
-Rules:
-
-* analytical fields reflect canonical Layer B values
-* display fields reflect uploaded source unit/value/range where safe
-* if uploaded source unavailable, display fields fall back to analytical fields
-* if source uploaded range exists, display range uses source uploaded range
-* if source uploaded range is unavailable, do not invent a generic range
-* no clinical interpretation should depend on display fields
-* no scoring should use display fields
-
-STOP if display fields cannot be populated deterministically from stored payload/source observations.
-
-## Phase 3 — Frontend render change
-
-Update main biomarker dial/card rendering so user-facing value/unit/range use display fields first.
-
-Required frontend behaviour:
+The LC-S11 audit found legacy `insights[]` placeholder entries still active, including generic text such as:
 
 ```text
-shown_value = display_value ?? value
-shown_unit = display_unit ?? unit
-shown_range = display_reference_range ?? reference_range
+Metabolic focus: summarise structured signals; review with your clinician
+Cardiovascular focus: summarise structured signals; review with your clinician
+Inflammatory focus: summarise structured signals; review with your clinician
 ```
 
-If display and analytical units differ, show a short transparency note:
+with empty `biomarkers_involved`. The planning paper explicitly required this surface to be removed or gated before launch. 
+
+## Required behaviour
+
+For the launch-core results path:
+
+* legacy placeholder `insights[]` must not be visible to users
+* placeholder insight entries must not be emitted in the public launch-core API response unless explicitly gated off from UI and marked internal
+* no generic “summarise structured signals” text should appear
+* if a compatibility field must remain, it should be empty or explicitly disabled for launch-core path
+* do not replace it with new generic filler
+
+## STOP conditions
+
+STOP if:
+
+* another active frontend surface depends on `insights[]` for real governed content
+* removing/gating it would break backwards compatibility without an agreed DTO strategy
+* the only available fix is to replace placeholder text with another placeholder
+
+## Tests
+
+Add or update tests proving:
+
+* `insights[]` placeholder text is absent from launch-core API payload
+* no frontend surface renders legacy placeholder insight text
+* existing governed narrative/report fields still render
+
+---
+
+# Defect 2 — Suppress unsupported blood sugar narrative
+
+## Problem
+
+The blood sugar domain card shows:
 
 ```text
-Analysed internally as [analytical_unit]
+early impaired sugar and lipid handling
 ```
 
-Rules:
-
-* frontend must not calculate conversions
-* frontend must not infer display units
-* frontend must not contain conversion constants
-* frontend must not lose existing uploaded-panel section
-* frontend must not duplicate equivalent biomarkers as scored findings
-
-## Phase 4 — SSOT-wide uploaded-unit display guardrail
-
-Create or update regression/Sentinel coverage so this problem cannot recur.
-
-This guard must be SSOT-driven, not limited to the six Phase B examples.
-
-Guard concept:
+despite JSON showing:
 
 ```text
-For every biomarker in SSOT with authorised alternative input units / governed conversion paths:
-Layer B may canonicalise internally.
-Main customer-facing display must preserve uploaded value/unit/range where safe.
-Frontend must not perform conversion maths.
+active_signal_ids: []
+primary_idl_record_id: null
 ```
 
-Required dynamic checks:
+HbA1c is optimal, and glucose/insulin are missing. The audit classed this as unsupported narrative / fabricated confidence. 
 
-1. Read biomarker/unit/conversion authority from SSOT/registry where possible.
-2. Identify biomarkers with authorised non-canonical input units.
-3. For each eligible biomarker, assert there is either:
+## Required behaviour
 
-   * an automated display-fidelity test case, or
-   * an explicit documented exclusion with reason.
+If a domain has no active signals and no governed IDL record:
 
-At minimum, the guard must cover:
+* do not present a pattern label implying pathology
+* do not say “early impaired sugar and lipid handling”
+* do not show confident contributor wording unsupported by signals
+* use honest fallback language, for example:
 
 ```text
-calcium
-corrected_calcium
-magnesium
-free_t4
-hemoglobin
-urate
-hba1c / hba1c_pct
-hematocrit
-platelets
-white_blood_cells
-sodium
-potassium
-chloride
-glucose
-total_cholesterol
-ldl_cholesterol
-hdl_cholesterol
-triglycerides
-creatinine
-bun / urea
-vitamin_d
+HbA1c is within range on this panel. Glucose and insulin were not included, so a fuller glycaemic read would require those markers.
 ```
 
-The guard must fail if:
+The exact wording may differ, but it must be:
 
-* a biomarker has an authorised alternative input unit but no display-fidelity coverage
-* main display shows only canonical UK/SI units for a non-UK upload
-* source uploaded range is dropped while display claims uploaded unit
-* value and displayed range are in different unit families
-* frontend conversion constants are added
-* uploaded units appear only in the secondary uploaded-panel section and not in the main customer-facing display
+* governed/deterministic
+* non-alarming
+* evidence-aligned
+* clear that missing glucose/insulin limits interpretation
 
-If full dynamic generation is too large for this sprint, implement the dynamic coverage inventory plus a hard minimum fixture set covering Phase B and previously remediated LC-S8D conversions. Document any explicit exclusions.
+## STOP conditions
 
-## Phase 5 — Tests
+STOP if:
 
-Add or update tests for:
+* fixing this requires broad metabolic WHY expansion
+* there is no clear way to distinguish “no active signals” from “low-risk but sufficiently assessed”
+* the current domain card model cannot represent an honest insufficient-evidence state
 
-### Backend DTO
+## Tests
 
-* US upload produces canonical analytical fields and uploaded display fields
-* UK upload produces analytical/display fields that match
-* source uploaded reference range is preserved in display range
-* analytical reference range remains canonical/internal
-* no generic display range is invented
+Add or update tests proving:
 
-### Frontend rendering
+* metabolic/blood sugar domain with HbA1c optimal and no glucose/insulin does not show “early impaired sugar and lipid handling”
+* no active signal domain does not receive a pattern contributor sentence
+* missing glucose/insulin produces honest limitation wording
+* band/headline polarity remains coherent
 
-* dials prefer display fields
-* dials show uploaded units for US panel
-* dials show analytical transparency note when units differ
-* dials show UK/SI units unchanged for UK panel
-* frontend contains no conversion constants
+---
 
-### Sentinel/regression
+# Defect 3 — Correct ApoA1 directionality / framing
 
-* SSOT-wide or SSOT-inventory guard exists
-* Phase B examples protected
-* LC-S8D examples protected
-* unsupported biomarkers/units do not silently pass
+## Problem
+
+ApoA1 1.73 g/L, slightly above lab max, is flagged as:
+
+```text
+signal_apoa1_cardio_risk
+```
+
+and appears as a cardiovascular risk driver. The audit states elevated ApoA1 is generally protective/reverse-cholesterol-transport related and should not be framed as a negative cardiovascular risk driver. 
+
+## Required behaviour
+
+ApoA1 must not be presented to users as a negative cardiovascular risk driver solely because it is above the lab upper range.
+
+Allowed correction options:
+
+1. Reframe elevated ApoA1 as protective/contextual rather than risk-driving.
+2. Remove elevated ApoA1 from “what’s driving this” negative-risk consumer surface.
+3. Rename/reclassify signal directionality if the existing signal is wrongly defined.
+4. If ApoA1 contributes to a ratio such as ApoB/ApoA1, ensure the risk interpretation comes from the ratio, not elevated ApoA1 alone.
+
+Preferred behaviour:
+
+```text
+Elevated ApoA1 should be treated as favourable/contextual unless a governed combined-risk construct says otherwise.
+```
+
+## STOP conditions
+
+STOP if:
+
+* ApoA1 signal logic is entangled with ApoB/ApoA1 ratio in a way that cannot be safely separated
+* changing ApoA1 would alter a broad lipid scoring framework without sufficient authority
+* there is no governed source supporting the new wording
+
+## Tests
+
+Add or update tests proving:
+
+* elevated ApoA1 alone does not appear as a negative cardiovascular risk driver
+* ApoA1 may appear as favourable/contextual where appropriate
+* ApoB/ApoA1 ratio logic, if present, still behaves correctly
+* lead homocysteine finding remains unchanged
+* cardiovascular domain remains coherent
+
+---
+
+# Defect 4 — Fix low ALT liver false alarm
+
+## Problem
+
+ALT 7 U/L, below a reference range of 10–49 U/L, drives liver score to 5/100 and “Needs review”. The audit classed this as clinically disproportionate because low ALT is generally a weak/non-finding and should not be scored like dangerously high ALT. 
+
+## Required behaviour
+
+ALT below the lower reference bound must not generate an alarming liver score or “critical” severity equivalent to high ALT.
+
+Allowed correction options:
+
+1. Apply direction-aware scoring for ALT:
+
+   * high ALT may be concerning
+   * low ALT should be capped at low/no severity unless governed evidence says otherwise
+2. Suppress low-ALT contribution to liver domain score.
+3. Mark low ALT as informational/low-priority rather than critical.
+4. Keep high ALT behaviour unchanged.
+
+Preferred behaviour:
+
+```text
+Low ALT should not drive a 5/100 liver score or alarming liver “Needs review” card.
+```
+
+## STOP conditions
+
+STOP if:
+
+* ALT scoring is globally range-distance based with no directionality mechanism
+* fixing ALT requires redesigning all enzyme scoring
+* high ALT severity would be weakened unintentionally
+* there is no way to isolate low-bound ALT handling safely
+
+## Tests
+
+Add or update tests proving:
+
+* ALT below lower range does not drive critical/alarming liver score
+* high ALT still triggers appropriate concern
+* liver domain does not show 5/100 “Needs review” solely due to low ALT
+* no unrelated hepatic markers regress
+
+---
+
+# Cross-cutting requirements
+
+## Layer B / Layer C fidelity
+
+For all four fixes:
+
+* Layer C must not invent unsupported interpretation
+* UI wording must be backed by JSON/Layer B truth
+* no internal sprint strings should leak into consumer JSON
+* no raw signal IDs should be user-facing
+* report coherence must improve, not hide findings
+
+## Existing protected behaviours must remain intact
+
+Do not regress:
+
+* LC-S8F Phase B unit conversion
+* LC-S8G uploaded-unit display fidelity
+* LC-S10B CHECK 2/4/5/6
+* homocysteine lead finding
+* alcohol lifestyle bridge
+* statin bounded modifier
+* uploaded-panel fidelity
+* Sentinel no-conversion frontend guard
 
 ## Required validation commands
 
-Run relevant backend tests:
+Run targeted tests for changed areas.
+
+At minimum run:
 
 ```powershell
-python -m pytest backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py -q
+python -m pytest backend/tests/regression/test_lc_s10b_launch_core_protection.py -q
+python -m pytest backend/tests/regression/test_lc_s5_proving_checks.py -q
+python -m pytest backend/tests/regression/test_lc_s8f_phase_b_uk_si_true_conversions.py -q
+python -m pytest backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py -q
 python -m pytest backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py -q
-python -m pytest backend/tests/regression/test_lc_s8_biomarker_unit_reference_incoherence_regression.py -q
-python -m pytest backend/tests/unit/test_unit_registry.py -q
+```
+
+If scoring files are changed, also run:
+
+```powershell
 python -m pytest backend/tests/unit/test_scoring_rules.py -q
 ```
 
-Run new LC-S8G tests explicitly, for example:
+If unit/scoring/domain aggregation code is touched, run relevant broader backend tests and record why selected.
 
-```powershell
-python -m pytest backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py -q
-```
-
-Run frontend validation if frontend files are changed:
+If frontend files are changed, run:
 
 ```powershell
 npm run type-check
 npm run test
 ```
 
-If frontend test infrastructure is limited or broken, record exact output and add the strongest available static/backend regression coverage.
+If frontend test infrastructure is unavailable or noisy, record exact output and rely on backend/API regression tests plus type-check.
 
-Run frontend no-conversion scan:
+## Required new or updated tests
 
-```powershell
-Select-String -Path frontend/app/**/*.ts,frontend/app/**/*.tsx -Pattern "0.2495|0.4114|12.871|59.5|0.055|0.0555|18.018|38.67|88.4|0.02586|mg/dL|g/dL|ng/dL|convert" -CaseSensitive:$false
+Add regression coverage for:
+
+1. `insights[]` placeholder not emitted/rendered on launch-core path.
+2. blood sugar domain with no active signals uses honest insufficient-evidence wording.
+3. elevated ApoA1 does not become a negative cardiovascular risk driver.
+4. low ALT does not produce critical/alarming liver score.
+5. homocysteine lead finding remains intact on AB panel.
+6. no internal sprint-management strings leak into consumer JSON.
+7. no raw signal IDs leak into user-facing fields.
+
+## Sentinel / guardrail update
+
+Add or update Sentinel coverage for these defect classes:
+
+```text
+legacy_insights_placeholder_leakage
+domain_narrative_without_active_signal
+apoa1_directionality_misclassification
+low_alt_false_alarm
+consumer_payload_internal_sprint_string_leakage
 ```
 
-Review all hits. Conversion constants in frontend runtime are blockers unless they are static copy/tests and clearly not calculation logic.
+If a defect is better protected by deterministic regression tests than Sentinel metadata, document the reason. Prefer adding Sentinel metadata where an existing pack pattern is available.
 
 ## Human UAT replay
 
-After implementation, re-check the two existing reports or regenerate equivalent reports:
-
-US/non-UK conversion panel:
+After implementation, replay or regenerate the AB analysis equivalent to:
 
 ```text
-7cc8b2d5-c8f0-4138-ba18-8540eece06a1
+analysis_id=c440dfa2-12a1-4e29-95a5-ee07a2397c59
 ```
 
-UK/SI pass-through panel:
+Check:
 
-```text
-b24ce358-02e3-4058-a667-34328a4168a2
-```
-
-Expected:
-
-* US panel main dials show uploaded US units/ranges
-* US panel also indicates internal analytical UK/SI unit where appropriate
-* UK panel main dials show UK/SI units/ranges
-* uploaded-panel section remains present
-* no frontend conversion maths
+* no placeholder `insights[]` text visible
+* blood sugar domain no longer claims impaired sugar handling without active signals
+* ApoA1 is not shown as a negative risk driver
+* liver domain is not alarmed by low ALT alone
+* homocysteine lead finding remains coherent
+* lifestyle alcohol bridge remains visible
+* units/display labels remain correct
 
 ## Acceptance criteria
 
 This sprint is complete only if:
 
-* backend DTO emits governed display fields
-* frontend main dials use display fields
-* US/non-UK uploaded units display back to the user on main result cards
-* UK/SI uploaded units pass through unchanged
-* Layer B analytical values remain UK/SI canonical
-* scoring/ranking remain based on analytical fields only
-* uploaded-panel fidelity section remains intact
-* reference ranges shown to users match displayed unit family
-* no generic/default ranges are introduced
-* frontend performs no conversion maths
-* SSOT-wide display-fidelity guard or coverage-inventory guard exists
-* Phase B and LC-S8D conversion families are protected
-* human UAT defect is resolved
-* LC-S8F backend conversion remains passing
+* all four trust blockers are corrected
+* no broad scope expansion occurred
+* no LC-S8F/LC-S8G regression occurred
+* no homocysteine lead regression occurred
+* every correction is protected by a deterministic test
+* Sentinel/guardrail metadata is updated or explicitly justified
+* live/replayed AB output is suitable for external human testing
+* implementation notes clearly map each fix to evidence and tests
 
 ## Required documentation output
 
 Create or update:
 
 ```text
-docs/audit-papers/LC-S8G_uploaded_unit_display_fidelity_notes.md
+docs/audit-papers/LC-S11A_trust_blocker_correction_notes.md
 ```
 
-Must include:
+It must include:
 
-1. defect origin
+1. defect inventory
 2. files changed
-3. DTO fields added
-4. frontend rendering change
-5. SSOT-wide guardrail approach
-6. test coverage
-7. UAT replay result
-8. known exclusions or deferred items
-9. final merge recommendation
+3. fix per defect
+4. tests added/updated
+5. Sentinel/guardrail changes
+6. before/after behaviour
+7. residual risks
+8. UAT replay result
+9. final recommendation
 
-This note must map directly to implementation and tests. It is not a passive decision document.
+This document must map directly to implementation and tests. It is not a passive status artefact.
 
 ## Cursor completion requirements
 
 When complete:
 
 1. Run required validation commands.
-2. Update the LC-S8G notes.
+2. Update the LC-S11A notes.
 3. Run closure audit:
 
 ```powershell
 git branch --show-current
 git status --short
-git log --oneline -n 5
+git log --oneline -n 8
 git diff --name-only
 git diff --cached --name-only
 git stash list
@@ -634,17 +558,22 @@ git stash list
 
 5. STOP if unrelated files, tooling leakage, dirty branch ambiguity, or stash ambiguity exists.
 
-6. Do not merge.
+6. If closure is clean, run:
 
-7. Do not create `automation_bus/latest_audit_summary.md`.
+```powershell
+python backend/scripts/run_work_package.py finish
+```
 
-8. Do not claim final approval.
+7. Report whether finish completed or failed.
+8. Do not merge.
+9. Do not create `automation_bus/latest_audit_summary.md`.
+10. Do not claim final approval.
 
 ## Explicit non-authority statement
 
 Cursor implements and reports only.
 
-Cursor may not self-certify architecture correctness, clinical correctness, merge readiness, launch readiness, or final approval.
+Cursor may not self-certify clinical correctness, architecture correctness, external-user readiness, merge readiness, launch readiness, or final approval.
 
 ```
 ```

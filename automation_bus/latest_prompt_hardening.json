@@ -1,89 +1,107 @@
 {
-  "work_id": "LC-S8G",
+  "work_id": "LC-S11A",
   "bus_version": "1.3.1",
   "status": "HARDENED",
   "hardened_utc": "2026-05-17T00:00:00Z",
-  "hardened_by": "Claude Code",
+  "hardened_by": "Claude Code (Stage 2 hardening)",
   "changes": [
     {
       "id": "H1",
-      "severity": "BLOCKER",
-      "description": "BiomarkerScore has extra='forbid' — display fields cannot pass through the orchestrator pipeline. Cursor must populate display fields from upload_panel_observations at the DTO builder call site, not from BiomarkerScore.",
-      "file": "backend/core/models/results.py",
-      "line": "20-23",
-      "citation": "results.py:20–23: model_config = ConfigDict(frozen=True, extra='forbid'). Fields declared: biomarker_name, value, unit, score, percentile, status, range_source, reference_range, reference_profile, lab_band_label, interpretation, biomarker_educational_explainer, contribution_context. No display_value, display_unit, display_reference_range, display_is_uploaded_unit.",
-      "required_action": "Do NOT add display fields to BiomarkerScore. Populate them in analysis_route_biomarker_row() from upload_panel_observations dict. BiomarkerScore is a Layer B analytical object; display fields are Layer C only."
+      "severity": "PASS",
+      "description": "Front matter: all five mandatory fields present and valid.",
+      "file": "automation_bus/latest_cursor_prompt.md",
+      "line": "1-7",
+      "citation": "automation_bus/latest_cursor_prompt.md lines 1-7: work_id=LC-S11A, branch=launch-core/lc-s11a-trust-blocker-correction, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. All five SOP v1.3.1 mandatory fields present."
     },
     {
       "id": "H2",
-      "severity": "BLOCKER",
-      "description": "analysis_route_biomarker_row() signature must be extended to accept upload_panel_observations. The call site in analysis.py:207 must pass this dict. No other call sites confirmed — Cursor must verify before implementing.",
-      "file": "backend/core/dto/builders.py",
-      "line": "116",
-      "citation": "builders.py:116: def analysis_route_biomarker_row(b: BiomarkerScore) -> Dict[str, Any]. analysis.py:207: [analysis_route_biomarker_row(b) for b in dto.biomarkers]. upload_panel_observations is in local scope at analysis.py:148–152, available at line 207.",
-      "required_action": "Change signature to accept optional upload_observations: Optional[Dict[str, Any]] = None. Pass upload_panel_observations from analysis.py:207. Populate display_value, display_unit, display_reference_range, display_is_uploaded_unit from upload_observations[b.biomarker_name] where uploaded unit differs from b.unit. If key absent or unit matches analytical: display fields equal analytical fields. If uploaded reference_range absent: do not invent one."
+      "severity": "CONFIRMED",
+      "description": "Defect 1 (insights[] placeholder): Authority source confirmed. backend/core/insights/synthesis.py lines 330-375, MockLLMClient.generate_insights() InsightGraph branch. Fires when user_prompt contains '**Arbitration summary (stamped):**'. Generates 'summarise structured signals; review with your clinician' with empty biomarkers_involved. Serialised to public API at backend/app/routes/analysis.py lines 231-244. No existing gating.",
+      "file": "backend/core/insights/synthesis.py",
+      "line": "330-375",
+      "citation": "synthesis.py:330-375: InsightGraph path generates placeholder payload with title='{category.title()} focus: summarise structured signals; review with your clinician'. analysis.py:231-244: iterates dto.insights directly into response JSON. CONFIRMED — no gating present."
     },
     {
       "id": "H3",
-      "severity": "REQUIRED",
-      "description": "display_unit_policy.yaml does not cover Phase B biomarkers. Phase 4 SSOT-wide guard requires these entries to be present for coverage inventory to work.",
-      "file": "backend/ssot/display_unit_policy.yaml",
-      "line": "1-85",
-      "citation": "display_unit_policy.yaml read in full. Phase B biomarkers absent: calcium, corrected_calcium, magnesium, free_t4, hemoglobin, urate. Registry confirms conversion authority at registry.py:75–81 (_CALCIUM_BIOMARKERS, _MAGNESIUM_BIOMARKERS, _FREE_T4_BIOMARKERS, _HEMOGLOBIN_BIOMARKERS, _URATE_BIOMARKERS). Allowed per prompt §Potentially allowed files.",
-      "required_action": "Add entries for calcium, corrected_calcium, magnesium, free_t4, hemoglobin, urate with layer_b_unit and uploaded_panel_fidelity sections. Authority is registry.py biomarker group membership and ssot/units.yaml conversion definitions. Presentation metadata only — no scoring or clinical fields."
+      "severity": "CONFIRMED — exact bug location",
+      "description": "Defect 2 (blood sugar unsupported narrative): Authority source confirmed. backend/core/analytics/domain_narrative_wave1.py, met_contributor_primary() approximately lines 477-497. When no active signals and primary_idl is None, function falls back to governed_idl_field('ph_metabolic_early_ir_v1', 'subtitle'). governed_idl_field() reads the YAML field without checking severity_state. ph_metabolic_early_ir_v1 has severity_state='not_observed' in this run but subtitle ('A pattern suggesting early impaired sugar and lipid handling') is returned. Fix: add severity_state != 'not_observed' guard before the governed_idl_field fallback, skipping to 'Your key blood sugar markers are within their reference ranges.' fallback when the record is not_observed.",
+      "file": "backend/core/analytics/domain_narrative_wave1.py",
+      "line": "477-497",
+      "citation": "domain_narrative_wave1.py:471-474: g = governed_idl_field(_ID_IR, 'subtitle') — called unconditionally when no signal match. governed_idl_field() at lines 32-43: reads field from registry without severity_state check. _ID_IR = 'ph_metabolic_early_ir_v1'. IDL record severity_state confirmed as 'not_observed' in analysis JSON. CONFIRMED."
     },
     {
       "id": "H4",
-      "severity": "INFORMATIONAL",
-      "description": "uploadPanelFidelity.ts filter correctly suppresses same-unit rows for UK/SI pass-through panels. This behaviour must be preserved. Main dial display fidelity fix makes this filter safe.",
-      "file": "frontend/app/lib/uploadPanelFidelity.ts",
-      "line": "127-130",
-      "citation": "uploadPanelFidelity.ts:127–130: if (uploadUnit === canonicalUnit) continue. LC-S8F UAT section 8 D2 confirms uploaded panel not visible on b24ce358 pass-through fixture. Expected behaviour — same-unit rows need no fidelity row.",
-      "required_action": "Do not modify uploadPanelFidelity.ts filter logic. Main dial display fidelity is the primary fix for this sprint."
+      "severity": "CONFIRMED — root cause identified",
+      "description": "Defect 3 (ApoA1 directionality): Authority source confirmed. knowledge_bus/packages/pkg_kb45_apoa1_low_cardio_risk/signal_library.yaml. Signal name is 'ApoA1 low cardiovascular context', trigger_direction=low, but activation_config.upper_bound_state='suboptimal' causes the evaluator to fire for elevated ApoA1. Evaluator at backend/core/analytics/signal_evaluator.py lines 153-165 returns upper_bound_state when primary_value > high, with no trigger_direction guard. Fix: set enable_upper_bound=false in activation_config in the signal_library.yaml to prevent firing for above-max values while preserving below-min (low) direction firing. Cursor must confirm the evaluator reads enable_upper_bound before applying.",
+      "file": "knowledge_bus/packages/pkg_kb45_apoa1_low_cardio_risk/signal_library.yaml",
+      "line": "43-46",
+      "citation": "signal_library.yaml:9: signal_id=signal_apoa1_cardio_risk. signal_library.yaml:17: trigger_direction=low. signal_library.yaml:43-46: activation_config: upper_bound_state=suboptimal, enable_lower_bound=true, lower_bound_state=suboptimal. signal_evaluator.py:159-165: upper_bound_state returned when primary_value > high — no trigger_direction guard. ApoA1 value 1.73 > lab max 1.69 -> fires as suboptimal. CONFIRMED root cause."
     },
     {
       "id": "H5",
-      "severity": "INFORMATIONAL",
-      "description": "upload_panel_observations reference range is available pre-normalisation with original uploaded units. Deterministic source for display_reference_range confirmed.",
-      "file": "backend/app/routes/analysis.py",
-      "line": "148-152",
-      "citation": "analysis.py:148–152: upload_panel_observations captured before apply_unit_normalisation() (line 159) and before hba1c arbitration (line 155). Structure includes value, unit, reference_range in original uploaded units. LC-S8F UAT §6 confirms calcium 9.4 mg/dL preserved for 7cc8b2d5 panel.",
-      "required_action": "Use upload_panel_observations[biomarker_name] as display field source at DTO builder stage. Deterministic — no STOP condition."
+      "severity": "CONFIRMED — gap in scoring policy",
+      "description": "Defect 4 (low ALT liver false alarm): Authority confirmed. bio_stats_engine.py lines 24-60 uses symmetric z-score around midpoint — no directional awareness. scoring_policy.yaml has no direction_aware, one_sided, lower_bound_cap, or floor_score field for ALT. ALT=7 with range 10-49 scores ~0.051 (5.1/100). Domain score assembler (domain_score_assembler.py:liv_block) passes this directly to the liver rail. No existing mechanism to cap low-bound violations for ALT. Cursor must inspect the scoring calibration pipeline before choosing the minimal fix point. STOP condition applies if the fix requires redesigning all enzyme scoring globally.",
+      "file": "backend/ssot/scoring_policy.yaml",
+      "line": "N/A — field absent",
+      "citation": "scoring_policy.yaml: read in full — no direction_aware, lower_bound_cap, or floor_score field present for ALT or for liver-class enzymes. bio_stats_engine.py:24-60: symmetric z-score formula. domain_score_assembler.py:liv_block(): base_100 = overall_score from liver rail, which aggregates individual biomarker scores including ALT. CONFIRMED gap — direction-aware scoring mechanism does not exist for ALT."
     },
     {
       "id": "H6",
-      "severity": "INFORMATIONAL",
-      "description": "test_lc_s8g_uploaded_unit_display_fidelity.py does not yet exist. Must be created as the primary regression guard.",
-      "file": "backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py",
-      "line": "N/A",
-      "citation": "Glob: no matching file found. Required by prompt Phase 5.",
-      "required_action": "Create file. Must cover: US upload produces display fields with uploaded unit and uploaded reference_range; UK upload produces display fields matching analytical; no display_reference_range invented when source absent; display_is_uploaded_unit flag correct."
+      "severity": "REQUIRED — bonus correction within scope",
+      "description": "Internal sprint string leak in consumer JSON: backend/core/analytics/domain_score_assembler.py line ~427, cv_block() hardcodes ev['deferred_kb_content'] = 'lipid_dominant_cv_why_it_matters_gap_deferred_sprint'. This key is serialised into the consumer-facing JSON under consumer_domain_scores[0].raw_evidence_refs. Fix: remove this key from the ev dict in cv_block() or relocate it to an internal-only debug structure not serialised to the public API. This is within Defect 1 / consumer JSON hygiene scope.",
+      "file": "backend/core/analytics/domain_score_assembler.py",
+      "line": "427",
+      "citation": "domain_score_assembler.py:427: ev['deferred_kb_content'] = 'lipid_dominant_cv_why_it_matters_gap_deferred_sprint' — hardcoded string in cv_block(). Confirmed present in downloaded consumer analysis JSON under consumer_domain_scores[0].raw_evidence_refs.deferred_kb_content. CONFIRMED leak."
     },
     {
       "id": "H7",
-      "severity": "INFORMATIONAL",
-      "description": "Sentinel pack lc_s8d_unit_governance_v1.json has no uploaded_unit_display_fidelity defect class. Phase 4 requires adding one.",
-      "file": "sentinel/packs/lc_s8d_unit_governance_v1.json",
-      "line": "1-85",
-      "citation": "Read in full. Existing 11 defect classes confirmed. No display-fidelity class present. Allowed per prompt §sentinel/packs/**/*.",
-      "required_action": "Add uploaded_unit_display_fidelity defect class to this pack or create lc_s8g_display_fidelity_v1.json. Class must reference test_lc_s8g_uploaded_unit_display_fidelity.py as test_file and status GUARDED after implementation."
+      "severity": "PATH ERROR — non-blocking",
+      "description": "Test path error in cursor prompt: prompt line 432 specifies 'test_lc_s8f_phase_b_uk_si_true_conversions.py'. Actual file is 'backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py'. File confirmed to exist at the correct path. Cursor must use the actual filename. This does not block execution but Cursor must not attempt to run the named-in-prompt path.",
+      "file": "backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py",
+      "line": "N/A — path correction only",
+      "citation": "Glob confirmed: test_lc_s8f_phase_b_true_conversions.py EXISTS. test_lc_s8f_phase_b_uk_si_true_conversions.py MISSING. Cursor must run: python -m pytest backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py -q"
     },
     {
       "id": "H8",
-      "severity": "INFORMATIONAL",
-      "description": "UAT fixture labels are swapped. LC-S8G prompt correctly identifies the mapping. Cursor must use 7cc8b2d5 as US conversion panel and b24ce358 as UK pass-through panel.",
-      "file": "docs/audit-papers/LC-S8F_phase_b_unit_conversion_uat.md",
-      "line": "42-50",
-      "citation": "UAT §2 confirmed: 7cc8b2d5-c8f0-4138-ba18-8540eece06a1 = US upload -> UK/SI analytical. b24ce358-02e3-4058-a667-34328a4168a2 = UK/SI pass-through. LC-S8G prompt §Phase B UAT cases is correct.",
-      "required_action": "No action needed. Cursor must follow LC-S8G prompt §Phase B UAT cases mapping."
+      "severity": "PASS",
+      "description": "Governing evidence files: all three confirmed at stated paths.",
+      "file": "docs/audit-papers/",
+      "line": "N/A",
+      "citation": "Confirmed: docs/audit-papers/LC-S10B_protection_of_proven_slice_notes.md EXISTS. docs/audit-papers/LC-S8F_phase_b_unit_conversion_uat.md EXISTS. docs/audit-papers/LC-S8G_uploaded_unit_display_fidelity_notes.md EXISTS."
+    },
+    {
+      "id": "H9",
+      "severity": "PASS",
+      "description": "Regression test files: four of five required test files confirmed. Path correction for LC-S8F noted in H7.",
+      "file": "backend/tests/regression/",
+      "line": "N/A",
+      "citation": "Confirmed EXISTS: test_lc_s10b_launch_core_protection.py, test_lc_s5_proving_checks.py, test_lc_s8g_uploaded_unit_display_fidelity.py, test_lc_s8d_unit_governance_sentinel.py, test_lc_s8f_phase_b_true_conversions.py."
+    },
+    {
+      "id": "H10",
+      "severity": "PASS",
+      "description": "Intelligence Core interaction acknowledged. Defect 3 modifies signal_library.yaml consumed by signal_evaluator.py (Intelligence Core). Defect 4 modifies scoring configuration consumed by calibration/scoring engines (Intelligence Core). HIGH risk classification and BEHAVIOUR controls are correctly applied per SOP §3 and §10. Behavioural audit requirements are in scope.",
+      "file": "backend/core/analytics/signal_evaluator.py",
+      "line": "153-174",
+      "citation": "signal_evaluator.py:153-174: _evaluate_lab_range_activation_state() is Intelligence Core per SOP §3. signal_library.yaml modification directly changes evaluator output for ApoA1. CONFIRMED — HIGH risk correctly classified."
+    },
+    {
+      "id": "H11",
+      "severity": "PASS",
+      "description": "Scope boundary: no scope creep detected. All four defects bounded to identified authority files. Forbidden files (run_work_package.py, golden_gate_local.py, update_cursor_status.py) confirmed non-overlapping with correction targets. Prohibited changes list verified against all four defect fixes.",
+      "file": "automation_bus/latest_cursor_prompt.md",
+      "line": "153-172",
+      "citation": "Prompt lines 153-172: forbidden changes list read. No overlap with correction targets. No unit governance, no LC-S8F/S8G changes, no global scoring rewrite, no new clinical claims. PASS."
     }
   ],
   "stop_conditions_checked": {
-    "competing_dto_authorities": false,
-    "display_fields_not_deterministic": false,
-    "phase_b_evidence_file_missing": false,
+    "insights_has_real_governed_content_dependency": false,
+    "blood_sugar_model_cannot_represent_insufficient_evidence": false,
+    "apoa1_entangled_with_ratio_logic_unsafely": false,
+    "alt_fix_requires_global_enzyme_scoring_redesign": "UNRESOLVED — Cursor must inspect calibration pipeline depth before implementing Defect 4. STOP if global redesign required.",
+    "competing_authority_sources_detected": false,
     "forbidden_file_in_scope": false,
-    "verdict": "No STOP conditions triggered. Sprint may proceed."
+    "verdict": "No hard STOP conditions triggered. Defect 4 has a conditional STOP that Cursor must evaluate at Phase 1 investigation. Sprint may proceed to Phase 1."
   },
-  "implementation_order_note": "Phase 1 (inventory doc) first. Phase 2 (backend DTO) requires H1+H2 resolved — extend analysis_route_biomarker_row() signature before any frontend changes. Phase 3 (frontend) depends on Phase 2 complete and TypeScript types updated. Phase 4 (SSOT guard) requires display_unit_policy.yaml update (H3). Phase 5 (tests) must cover all Phase 2 and Phase 3 surface changes."
+  "implementation_order_note": "Phase 1 (investigation doc) first — required table must be complete before any implementation. Defect 1 (insights gating) is lowest blast-radius fix. Defect 2 (blood sugar fallback guard) is a contained single-function change. Defect 3 (ApoA1 signal_library.yaml upper_bound disable) requires verification that the evaluator correctly handles enable_upper_bound=false before modifying. Defect 4 (ALT scoring cap) requires calibration pipeline inspection at Phase 1 before Cursor can determine the minimal safe fix. Bonus H6 (deferred_kb_content removal) should be bundled with Defect 1 consumer JSON cleanup."
 }
