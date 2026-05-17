@@ -105,6 +105,7 @@ const LC_S7_BIOMARKER_LABELS: Record<string, string> = {
   fsh: 'FSH',
   lh: 'LH',
   haemoglobin: 'Haemoglobin',
+  hemoglobin: 'Haemoglobin',
 };
 
 export function formatBiomarkerDisplayName(raw: string): string {

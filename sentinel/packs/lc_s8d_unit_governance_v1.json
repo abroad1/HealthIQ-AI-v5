@@ -80,6 +80,13 @@
       "status": "GUARDED",
       "test_file": "backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py",
       "first_seen": "2026-05"
+    },
+    "uploaded_unit_display_fidelity": {
+      "description": "LC-S8G main biomarker dials preserve uploaded unit family via display_* fields; Layer B stays canonical.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py",
+      "first_seen": "2026-05"
     }
   }
 }

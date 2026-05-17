@@ -20,6 +20,8 @@ const SKIP_UPLOAD_KEYS = new Set(['__unit_normalisation_meta__']);
 const BIOMARKER_DISPLAY_NAMES: Record<string, string> = {
   hba1c: 'HbA1c',
   hba1c_pct: 'HbA1c (%)',
+  hemoglobin: 'Haemoglobin',
+  haemoglobin: 'Haemoglobin',
   hematocrit: 'Haematocrit',
   haematocrit: 'Haematocrit',
   platelets: 'Platelets',
