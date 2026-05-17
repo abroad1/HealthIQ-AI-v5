@@ -75,7 +75,7 @@ Added `sentinel/packs/lc_s10b_launch_core_protection_v1.json` mapping defect cla
 Command: `python backend/tools/launch_core_proving_harness.py`  
 Result: **PASS** (8 matrix runs written)
 
-Fingerprint stamp: see `latest_fingerprints.json` → `git_short_sha` after final commit.
+Fingerprint stamp: `git_short_sha` = `43cd222` in `latest_fingerprints.json` (final harness run on branch tip).
 
 ## Validation commands (Phase 6)
 
