@@ -1,10 +1,9 @@
 {
-  "branch": "launch-core/lc-s10b-protect-proven-launch-core-slice",
+  "branch": "launch-core/lc-s8f-phase-b-uk-si-true-conversions",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-17T08:19:42Z",
-  "cursor_started_utc": "2026-05-17T08:14:44Z",
-  "head_sha": "a04f43522ab549c254c840c59ab718b7d5371797",
+  "cursor_started_utc": "2026-05-17T09:31:38Z",
+  "head_sha": "7d407f5e738801e52006b8c436402ef3ddd52a46",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "LC-S10B"
+  "status": "IN_PROGRESS",
+  "work_id": "LC-S8F"
 }
