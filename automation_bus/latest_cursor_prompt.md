@@ -1,125 +1,226 @@
 ---
-work_id: LC-S8F
+work_id: LC-S8G
 branch: launch-core/lc-s8f-phase-b-uk-si-true-conversions
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# LC-S8F — Phase B UK/SI True Conversion Implementation
+# LC-S8G — Uploaded-Unit Display Fidelity Contract and SSOT-Wide Guardrail
 
 ## Classification
 
-This is a HIGH-risk MIXED implementation sprint.
+This is a HIGH-risk MIXED blocker-fix sprint on top of the unmerged LC-S8F branch.
 
-Reason: this sprint may touch SSOT biomarker units, unit registry data, runtime unit-conversion dispatch, scoring-policy units, reference-range coherence behaviour, regression tests, and Sentinel protections.
+Reason: LC-S8F backend Phase B conversion is correct, but human UAT exposed a customer-facing display contract failure. This sprint may touch backend DTO output, frontend result rendering, TypeScript result types, regression tests, Sentinel/static guardrails, and UAT documentation.
 
-This sprint implements the previously blocked LC-S8C / LC-S8D Phase B UK/SI true-conversion biomarkers after evidence review.
+This is not a new feature sprint.
 
-This sprint must not alter unrelated biomarkers, broaden unit policy, change questionnaire behaviour, alter Layer C narrative logic, add fallback/global reference ranges, or introduce frontend conversion logic.
+This sprint completes the display contract required before LC-S8F can merge.
 
-## Purpose
+## Current branch context
 
-Implement approved UK/SI canonical unit handling for the six Phase B biomarkers previously blocked pending evidence:
+Work on the existing unmerged branch:
 
 ```text
-calcium
-corrected_calcium
-magnesium
-free_t4
-hemoglobin / haemoglobin
-urate / uric_acid
+launch-core/lc-s8f-phase-b-uk-si-true-conversions
 ````
 
-The evidence review approves implementation for all six, with mandatory controls:
+Do not create a new branch unless explicitly instructed.
 
-* use UK/SI canonical units
-* convert uploaded values only through governed backend registry/runtime paths
-* convert uploaded lab-derived reference ranges coherently when source unit differs
-* never substitute generic/global/default reference ranges where lab ranges exist
-* preserve assay/lab-specific reference ranges, especially Free T4
-* do not recompute corrected calcium unless formula and albumin unit are explicit and governed
-* keep urate/uric acid completely separate from urea/BUN
+Do not undo LC-S8F.
 
-## Non-negotiable reference-range policy
+Do not alter Layer B canonical UK/SI conversion.
 
-HealthIQ AI must use lab-derived reference ranges for biomarker interpretation.
+## Problem
 
-```text
-Use lab-derived reference ranges only.
-Do not substitute generic/global/default ranges where the lab has supplied a range.
-Only calculate/reference a derived range when HealthIQ must calculate a ratio or derived marker that the lab did not provide.
-```
+LC-S8F correctly converts Phase B biomarkers into UK/SI canonical units for Layer B analysis.
 
-For this sprint:
+However, human UAT found that when a user uploads US/non-UK units, the main customer-facing biomarker dials display the internal UK/SI analytical units back to the user.
 
-1. If an uploaded value is converted from a non-UK unit into the UK/SI canonical unit, the uploaded lab reference range must be converted by the same governed backend conversion path.
-2. If the uploaded lab provides a UK/SI value and UK/SI reference range, preserve both.
-3. If no lab reference range is supplied, do not invent a universal range for interpretation.
-4. Any fallback display range, if it already exists, must not be treated as interpretation authority.
-5. Free T4 must preserve lab/assay-specific reference ranges.
-6. Corrected calcium must preserve the lab’s corrected-calcium value/range.
-7. Do not calculate corrected calcium from total calcium and albumin unless formula and albumin unit are explicit and already governed.
+That is wrong.
 
-## Evidence-file prerequisite
-
-Before execution, confirm this file exists in the repo and is committed on the work-package branch:
+Example:
 
 ```text
-docs/audit-papers/Phase_B_UK_SI_Biomarker_Unit_Evidence_Review.md
+Uploaded:
+Calcium 9.4 mg/dL, range 8.6–10.2 mg/dL
+
+Internal analytical:
+Calcium 2.3453 mmol/L, range 2.1457–2.5449 mmol/L
+
+Current main display:
+2.3453 mmol/L
+
+Required main display:
+9.4 mg/dL, range 8.6–10.2 mg/dL
+with optional transparency note: analysed internally as mmol/L
 ```
 
-If the file is missing, untracked, unstaged, or only present outside the repo, STOP.
+The separate “Uploaded panel values” section is not sufficient. The main customer-facing biomarker display must preserve the user’s uploaded unit family where safe and governed.
 
-Do not implement from memory or from this prompt alone.
+## Investigation finding
 
-## Governing evidence
+The defect is pre-existing from the FE-S8E Mode A / Mode B split, but exposed by LC-S8F.
 
-Read before editing:
+Current behaviour:
+
+* main dials render from canonical `biomarkers[]`
+* uploaded source observations are preserved only in `meta.upload_panel_observations`
+* `BiomarkerResult` has no governed per-biomarker `display_value`, `display_unit`, or `display_reference_range`
+* frontend dials have no display override path
+* LC-S8F did not touch frontend, but made the gap visible because Phase B conversions now occur correctly
+
+## Correct architecture
+
+Layer B:
 
 ```text
-docs/audit-papers/LC-S8C_ssot_wide_unit_governance_preflight.md
-docs/audit-papers/LC-S8D_uk_si_unit_governance_remediation_notes.md
-docs/audit-papers/Phase_B_UK_SI_Biomarker_Unit_Evidence_Review.md
+Always analyse using canonical UK/SI units.
 ```
 
-The evidence report approves:
-
-| Biomarker                | UK/SI canonical unit | Input alternative | Conversion                |
-| ------------------------ | -------------------- | ----------------- | ------------------------- |
-| Calcium                  | `mmol/L`             | `mg/dL`           | `mmol/L = mg/dL × 0.2495` |
-| Corrected calcium        | `mmol/L`             | `mg/dL`           | `mmol/L = mg/dL × 0.2495` |
-| Magnesium                | `mmol/L`             | `mg/dL`           | `mmol/L = mg/dL × 0.4114` |
-| Free T4                  | `pmol/L`             | `ng/dL`           | `pmol/L = ng/dL × 12.871` |
-| Haemoglobin / Hemoglobin | `g/L`                | `g/dL`            | `g/L = g/dL × 10`         |
-| Urate / Uric acid        | `µmol/L`             | `mg/dL`           | `µmol/L = mg/dL × 59.5`   |
-
-Evidence caveats:
-
-* corrected calcium is formula-derived and albumin-dependent; convert supplied values, do not recompute without explicit governed formula and albumin unit
-* Free T4 conversion is arithmetically approved, but reference-range interpretation is assay/lab-specific
-* urate/uric acid is not urea/BUN
-* lab-supplied ranges override all generic/global ranges
-
-## Real UK lab examples to preserve
-
-Use these as sanity-check expectations and optional fixtures:
+Customer-facing Layer C / frontend display:
 
 ```text
-Haemoglobin (HGB): 144 g/L, range 130–175 g/L
-Uric Acid (Venous): 440 µmol/L, range 220–547 µmol/L
-Free T4 (Venous): 16.8 pmol/L, range 12–22 pmol/L
-Lab note: new reference range commencing 11/09/2024
+Display the uploaded unit family where safe and governed.
 ```
 
-Expected behaviour:
+Frontend:
 
-* these UK values pass through unchanged
-* their lab reference ranges pass through unchanged
-* Free T4 range note does not cause replacement with a generic range
-* no US/default ranges override these lab-derived ranges
+```text
+Renderer only.
+No conversion maths.
+No unit inference.
+No hidden calculation.
+Render backend-supplied display fields.
+```
 
-## Mandatory preflight before editing
+## Required behaviour
+
+For each biomarker:
+
+1. Backend keeps analytical fields:
+
+   * canonical analytical value
+   * canonical analytical unit
+   * canonical analytical reference range
+
+2. Backend also emits display fields:
+
+   * `display_value`
+   * `display_unit`
+   * `display_reference_range`
+   * optional `analytical_value`
+   * optional `analytical_unit`
+   * optional `analytical_reference_range`
+   * optional `display_is_uploaded_unit` / `unit_display_mode`
+
+3. Frontend main dials/cards prefer display fields:
+
+   * `display_value ?? value`
+   * `display_unit ?? unit`
+   * `display_reference_range ?? reference_range`
+
+4. If display and analytical units differ, frontend shows a non-technical transparency note supplied or inferable from backend fields, for example:
+
+   * `Analysed internally as mmol/L`
+   * `Analysed internally as pmol/L`
+   * `Analysed internally as g/L`
+
+5. Frontend must not calculate conversions.
+
+6. Uploaded-panel fidelity section remains, but it is not the only place uploaded units appear.
+
+## Display field source rules
+
+Use `meta.upload_panel_observations` or the backend’s equivalent source-observation structure.
+
+### Single uploaded source observation
+
+If a canonical biomarker has one uploaded source observation and that unit is authorised/governed:
+
+* use the uploaded value/unit/range for `display_*`
+* use canonical UK/SI value/unit/range for analytical fields
+
+### UK/SI uploaded source observation
+
+If user uploaded canonical UK/SI unit:
+
+* `display_*` should equal analytical display where appropriate
+* do not add unnecessary conversion notes
+
+### Multiple equivalent uploaded observations
+
+If a canonical biomarker has multiple equivalent uploaded observations, for example HbA1c in both `mmol/mol` and `%`:
+
+* do not duplicate analytical scoring
+* preserve all rows in uploaded-panel fidelity section
+* main dial should use the safest governed display choice:
+
+  * prefer uploaded canonical unit if present
+  * otherwise prefer the primary uploaded source observation
+* document this choice in tests/notes
+
+### Unsupported or unsafe source unit
+
+If uploaded unit is unsupported or not governed:
+
+* do not invent display conversion
+* do not silently score if conversion authority is missing
+* preserve existing unscored/error behaviour
+
+## Phase B UAT cases to fix
+
+Use the two existing human UAT reports where possible:
+
+US/non-UK conversion panel:
+
+```text
+analysis_id=7cc8b2d5-c8f0-4138-ba18-8540eece06a1
+```
+
+UK/SI pass-through panel:
+
+```text
+analysis_id=b24ce358-02e3-4058-a667-34328a4168a2
+```
+
+The earlier brief labels were swapped. Treat:
+
+```text
+7cc8b2d5... = US/non-UK conversion panel
+b24ce358... = UK/SI pass-through panel
+```
+
+## Required examples
+
+### US/non-UK uploaded panel
+
+Main customer-facing display must show:
+
+| Biomarker         | Uploaded display expected        | Internal analytical expected |
+| ----------------- | -------------------------------- | ---------------------------- |
+| Calcium           | `9.4 mg/dL`, RR `8.6–10.2 mg/dL` | `2.3453 mmol/L`              |
+| Corrected calcium | `9.4 mg/dL`, RR `8.6–10.2 mg/dL` | `2.3453 mmol/L`              |
+| Magnesium         | `2.1 mg/dL`, RR `1.7–2.4 mg/dL`  | `0.86394 mmol/L`             |
+| Free T4           | `1.2 ng/dL`, RR `0.8–1.8 ng/dL`  | `15.4452 pmol/L`             |
+| Haemoglobin       | `14.6 g/dL`, RR `13.0–17.5 g/dL` | `146 g/L`                    |
+| Uric acid / urate | `5.8 mg/dL`, RR `3.5–7.2 mg/dL`  | `345.1 µmol/L`               |
+
+### UK/SI pass-through panel
+
+Main customer-facing display must remain:
+
+| Biomarker         | Display expected                     |
+| ----------------- | ------------------------------------ |
+| Haemoglobin       | `144 g/L`, RR `130–175 g/L`          |
+| Uric acid / urate | `440 µmol/L`, RR `220–547 µmol/L`    |
+| Free T4           | `16.8 pmol/L`, RR `12–22 pmol/L`     |
+| Calcium           | `2.33 mmol/L`, RR `2.15–2.57 mmol/L` |
+| Corrected calcium | `2.25 mmol/L`, RR `2.20–2.60 mmol/L` |
+| Magnesium         | `0.89 mmol/L`, RR `0.73–1.06 mmol/L` |
+
+## Mandatory preflight
 
 Run and record:
 
@@ -127,74 +228,79 @@ Run and record:
 git branch --show-current
 git status --short
 git log --oneline -n 5
+```
+
+Confirm you are on:
+
+```text
+launch-core/lc-s8f-phase-b-uk-si-true-conversions
+```
+
+Confirm LC-S8F changes are present.
+
+Confirm the Phase B evidence file is committed:
+
+```powershell
 git ls-files --error-unmatch docs/audit-papers/Phase_B_UK_SI_Biomarker_Unit_Evidence_Review.md
 ```
 
-Then verify:
-
-```powershell
-Test-Path automation_bus/state/work_package_active.json
-```
-
-Read `automation_bus/state/work_package_active.json` and confirm:
-
-* `work_id` is `LC-S8F`
-* branch is `launch-core/lc-s8f-phase-b-uk-si-true-conversions`
-
-If the token is missing or mismatched, STOP:
-
-```text
-Kernel start not executed or work package mismatch.
-```
+If the evidence file is not tracked, STOP.
 
 ## Authority preflight
 
-Before modifying files, identify and record the authoritative paths for:
+Before editing, identify and record authoritative paths for:
 
-1. biomarker SSOT
-2. unit registry data
-3. runtime unit conversion logic
-4. runtime conversion dispatch in `backend/core/units/registry.py`
-5. scoring policy
-6. alias registry
-7. reference-range normalisation / value-range coherence logic
-8. existing LC-S8D unit-governance Sentinel pack
-9. existing tests for unit registry and scoring
-10. existing tests for value/reference-range incoherence
-11. BUN/urea/urate alias protection
-12. frontend no-conversion Sentinel/static-scan patterns
+1. backend analysis result DTO builder
+2. `BiomarkerResult` Python/DTO model if present
+3. frontend `BiomarkerResult` TypeScript type
+4. frontend biomarker dial/card data mapping
+5. uploaded-panel observation structure
+6. display unit policy file
+7. unit registry / conversion authority
+8. Sentinel pack registry
+9. existing FE-S8E uploaded-panel fidelity tests
+10. LC-S8D/LC-S8F unit-governance tests
 
-STOP if any authority is ambiguous or duplicated.
+Known likely files:
 
-Do not create a second authority source.
+```text
+backend/core/dto/builders.py
+frontend/app/types/analysis.ts
+frontend/app/(app)/results/page.tsx
+frontend/app/components/biomarkers/BiomarkerDials.tsx
+frontend/app/lib/uploadPanelFidelity.ts
+backend/ssot/display_unit_policy.yaml
+backend/core/units/registry.py
+backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py
+backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py
+sentinel/packs/lc_s8d_unit_governance_v1.json
+```
+
+STOP if there are multiple competing DTO/display authorities.
 
 ## Potentially allowed files
 
-Only edit files required for this Phase B conversion implementation.
-
-Potentially allowed:
+Only edit files required to implement and protect the display contract:
 
 ```text
-backend/ssot/biomarkers.yaml
-backend/ssot/units.yaml
-backend/ssot/scoring_policy.yaml
-backend/ssot/biomarker_alias_registry.yaml
+backend/core/dto/builders.py
+backend/core/contracts/**/*
+backend/app/routes/analysis.py only if DTO wiring requires it
+backend/tests/unit/**/*
+backend/tests/regression/**/*
 
-backend/core/units/registry.py
-backend/core/scoring/rules.py
-backend/core/**/* only if required for reference-range coherence
+frontend/app/types/analysis.ts
+frontend/app/(app)/results/page.tsx
+frontend/app/components/biomarkers/BiomarkerDials.tsx
+frontend/app/lib/**/*
+frontend/tests/**/*
 
-backend/tests/unit/test_unit_registry.py
-backend/tests/unit/test_scoring_rules.py
-backend/tests/regression/test_lc_s8_biomarker_unit_reference_incoherence_regression.py
-backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py
-backend/tests/**/* only where directly relevant
+backend/ssot/display_unit_policy.yaml only if needed to declare display policy
+sentinel/packs/**/*
+sentinel/**/*
 
-sentinel/packs/lc_s8d_unit_governance_v1.json
-sentinel/packs/**/* only if adding Phase B protection
-
-docs/audit-papers/Phase_B_UK_SI_Biomarker_Unit_Evidence_Review.md
-docs/audit-papers/LC-S8F_phase_b_true_conversion_implementation_notes.md
+docs/audit-papers/LC-S8G_uploaded_unit_display_fidelity_notes.md
+docs/audit-papers/LC-S8F_phase_b_unit_conversion_uat.md only if updating UAT interpretation
 ```
 
 ## Forbidden files and changes
@@ -202,7 +308,12 @@ docs/audit-papers/LC-S8F_phase_b_true_conversion_implementation_notes.md
 Do not edit:
 
 ```text
-frontend/**
+backend/ssot/biomarkers.yaml
+backend/ssot/units.yaml
+backend/ssot/scoring_policy.yaml
+backend/core/units/registry.py
+backend/core/scoring/rules.py
+frontend code that performs conversion maths
 backend/scripts/run_work_package.py
 backend/scripts/golden_gate_local.py
 backend/scripts/update_cursor_status.py
@@ -211,105 +322,127 @@ automation_bus/latest_gate_output.txt
 automation_bus/latest_cursor_status.json
 ```
 
+Exception:
+
+* You may read these files.
+* Do not modify LC-S8F backend conversion implementation unless a test proves it is broken.
+* The aim is display-contract completion, not conversion changes.
+
 Do not:
 
-* alter Layer C narrative
-* alter launch-core proving harness unless a test path breaks because of unit changes
-* change questionnaire logic
-* change medication/statin logic
-* change LC-S10B protection scope
+* undo LC-S8F
+* change Layer B canonical UK/SI analysis
+* introduce frontend conversion constants
+* recompute corrected calcium
+* map urate to urea
 * introduce generic/default reference ranges
-* recompute corrected calcium without explicit governed formula and albumin unit
-* map urate/uric acid to urea/BUN
-* implement frontend conversion logic
+* hide uploaded observations
+* suppress biomarkers to pass tests
 * add fallback parser logic
-* suppress failing biomarkers to pass tests
 
-## Required implementation
+## Phase 1 — Contract inventory
 
-### 1. SSOT canonical unit updates
-
-Update SSOT canonical units for the approved Phase B biomarkers:
+Create:
 
 ```text
-calcium → mmol/L
-corrected_calcium → mmol/L
-magnesium → mmol/L
-free_t4 → pmol/L
-hemoglobin / haemoglobin → g/L
-urate / uric_acid → µmol/L or existing repo-equivalent umol/L
+docs/audit-papers/LC-S8G_uploaded_unit_display_fidelity_notes.md
 ```
 
-Use the existing canonical biomarker IDs in the repo. Do not create duplicate biomarker IDs.
+Record:
 
-If the repo uses `hemoglobin` as the canonical ID with `haemoglobin` as an alias, preserve that structure.
+* current DTO fields
+* current frontend dial fields
+* current uploaded observation fields
+* whether backend has enough data to construct display fields
+* where display fields will be added
+* which tests will protect them
 
-If the repo uses `urate` as canonical with `uric_acid` as an alias, preserve that structure.
+Required table:
 
-### 2. Unit definition prerequisite
+| Surface | Current field source | Defect | Fix |
+| ------- | -------------------- | ------ | --- |
 
-Before adding any Free T4 conversion, verify both unit tokens are defined in `backend/ssot/units.yaml`:
+Do not implement until this inventory is complete.
+
+## Phase 2 — Backend DTO display contract
+
+Add backend display fields to each biomarker result row.
+
+Required fields, unless an equivalent existing contract is discovered:
 
 ```text
-pmol/L
-ng/dL
+display_value
+display_unit
+display_reference_range
+analytical_value
+analytical_unit
+analytical_reference_range
+display_is_uploaded_unit
 ```
 
-If the repo uses internal unit keys, add or verify coherent entries for:
+Rules:
+
+* analytical fields reflect canonical Layer B values
+* display fields reflect uploaded source unit/value/range where safe
+* if uploaded source unavailable, display fields fall back to analytical fields
+* if source uploaded range exists, display range uses source uploaded range
+* if source uploaded range is unavailable, do not invent a generic range
+* no clinical interpretation should depend on display fields
+* no scoring should use display fields
+
+STOP if display fields cannot be populated deterministically from stored payload/source observations.
+
+## Phase 3 — Frontend render change
+
+Update main biomarker dial/card rendering so user-facing value/unit/range use display fields first.
+
+Required frontend behaviour:
 
 ```text
-pmol_L
-ng_dL
+shown_value = display_value ?? value
+shown_unit = display_unit ?? unit
+shown_range = display_reference_range ?? reference_range
 ```
 
-Do not add a conversion entry that references an undefined unit token.
-
-Free T4 implementation is incomplete unless both the unit definitions and the `ng/dL ↔ pmol/L` conversion are registered and tested.
-
-### 3. Critical runtime conversion dispatch requirement
-
-Adding entries to `backend/ssot/units.yaml` is not sufficient.
-
-Cursor must inspect and update the actual runtime conversion dispatch in:
+If display and analytical units differ, show a short transparency note:
 
 ```text
-backend/core/units/registry.py
+Analysed internally as [analytical_unit]
 ```
 
-The implementation must ensure every Phase B conversion is reachable through the live conversion path, not merely declared in YAML.
+Rules:
 
-The implementation must explicitly handle the current `registry.py` dispatch architecture.
+* frontend must not calculate conversions
+* frontend must not infer display units
+* frontend must not contain conversion constants
+* frontend must not lose existing uploaded-panel section
+* frontend must not duplicate equivalent biomarkers as scored findings
 
-Required `registry.py` work:
+## Phase 4 — SSOT-wide uploaded-unit display guardrail
 
-1. Add or verify `UnitEnum` / runtime unit-token support for:
+Create or update regression/Sentinel coverage so this problem cannot recur.
+
+This guard must be SSOT-driven, not limited to the six Phase B examples.
+
+Guard concept:
 
 ```text
-mg/dL
-mmol/L
-pmol/L
-ng/dL
-g/L
-g/dL
-µmol/L
-umol/L
+For every biomarker in SSOT with authorised alternative input units / governed conversion paths:
+Layer B may canonicalise internally.
+Main customer-facing display must preserve uploaded value/unit/range where safe.
+Frontend must not perform conversion maths.
 ```
 
-2. Add or verify frozen-set / grouping support for each Phase B biomarker group, using the style already present in `registry.py`:
+Required dynamic checks:
 
-```text
-calcium / corrected_calcium
-magnesium
-free_t4
-hemoglobin
-urate / uric_acid
-```
+1. Read biomarker/unit/conversion authority from SSOT/registry where possible.
+2. Identify biomarkers with authorised non-canonical input units.
+3. For each eligible biomarker, assert there is either:
 
-The groups must be used by runtime conversion dispatch, not only by tests.
+   * an automated display-fidelity test case, or
+   * an explicit documented exclusion with reason.
 
-3. Ensure every Phase B biomarker that uses strict unit conversion is included in `_STRICT_CONVERSION_BIOMARKERS` or the repo’s equivalent strict-conversion control set.
-
-At minimum, verify or add:
+At minimum, the guard must cover:
 
 ```text
 calcium
@@ -318,433 +451,167 @@ magnesium
 free_t4
 hemoglobin
 urate
+hba1c / hba1c_pct
+hematocrit
+platelets
+white_blood_cells
+sodium
+potassium
+chloride
+glucose
+total_cholesterol
+ldl_cholesterol
+hdl_cholesterol
+triglycerides
+creatinine
+bun / urea
+vitamin_d
 ```
 
-If aliases such as `uric_acid` or `haemoglobin` are handled before canonicalisation, ensure they resolve safely before conversion.
+The guard must fail if:
 
-4. Add explicit `_get_conversion_factor()` branches, or the repo’s equivalent runtime dispatch branches, for:
+* a biomarker has an authorised alternative input unit but no display-fidelity coverage
+* main display shows only canonical UK/SI units for a non-UK upload
+* source uploaded range is dropped while display claims uploaded unit
+* value and displayed range are in different unit families
+* frontend conversion constants are added
+* uploaded units appear only in the secondary uploaded-panel section and not in the main customer-facing display
 
-```text
-calcium / corrected_calcium: mg/dL ↔ mmol/L using 0.2495
-magnesium: mg/dL ↔ mmol/L using 0.4114
-free_t4: ng/dL ↔ pmol/L using 12.871
-hemoglobin: g/dL ↔ g/L using 10, if not already active
-urate: mg/dL ↔ µmol/L / umol/L using 59.5
-```
+If full dynamic generation is too large for this sprint, implement the dynamic coverage inventory plus a hard minimum fixture set covering Phase B and previously remediated LC-S8D conversions. Document any explicit exclusions.
 
-5. Add tests proving the runtime conversion path is actually called.
+## Phase 5 — Tests
 
-Tests must fail if the implementation falls through to a generic passthrough path.
+Add or update tests for:
 
-STOP if any Phase B conversion is only declared in YAML but not reachable through `registry.py` runtime dispatch.
+### Backend DTO
 
-### 4. Unit registry conversions
+* US upload produces canonical analytical fields and uploaded display fields
+* UK upload produces analytical/display fields that match
+* source uploaded reference range is preserved in display range
+* analytical reference range remains canonical/internal
+* no generic display range is invented
 
-Add or verify governed conversions:
+### Frontend rendering
 
-```text
-calcium: mg/dL ↔ mmol/L using factor 0.2495
-corrected_calcium: mg/dL ↔ mmol/L using factor 0.2495
-magnesium: mg/dL ↔ mmol/L using factor 0.4114
-free_t4: ng/dL ↔ pmol/L using factor 12.871
-hemoglobin: g/dL ↔ g/L using factor 10
-urate: mg/dL ↔ µmol/L using factor 59.5
-```
+* dials prefer display fields
+* dials show uploaded units for US panel
+* dials show analytical transparency note when units differ
+* dials show UK/SI units unchanged for UK panel
+* frontend contains no conversion constants
 
-Conversions must work for:
+### Sentinel/regression
 
-* value
-* lower reference bound
-* upper reference bound
-
-where the uploaded reference range is in the same source unit.
-
-### 5. Haemoglobin conversion status
-
-The `g/dL ↔ g/L` conversion may already exist.
-
-If present and correct:
-
-* do not duplicate it
-* verify it
-* test it
-* document it
-
-### 6. Urate clarification
-
-`urate` may already be recorded as `umol/L`. Treat this as the same unit family as `µmol/L`.
-
-The main implementation work for urate is:
-
-* add/verify `mg/dL ↔ µmol/L` conversion
-* preserve or normalise `umol/L` / `µmol/L` equivalence
-* verify `uric_acid → urate`
-* verify BUN remains mapped to `urea`, not `urate`
-
-This is not the same class of change as calcium, magnesium, Free T4, or haemoglobin. Do not overstate it in notes.
-
-### 7. Reference-range coherence
-
-Add or confirm tests that prove:
-
-* value and reference range are converted coherently
-* converted value and converted reference range end up in the same canonical unit
-* incoherent value/reference families are rejected or marked unscored, not silently scored
-* UK lab-derived ranges pass through unchanged
-* Free T4 lab-specific range is preserved
-* corrected calcium lab range is preserved
-
-Do not use global fallback ranges to score these markers.
-
-### 8. Scoring policy alignment
-
-If these biomarkers are scored, align scoring policy units to the new UK/SI canonical unit only where the score bands are currently defined and safe to migrate.
-
-Before changing any scoring band:
-
-1. confirm the current band source unit
-2. convert the band numerically using the same governed conversion
-3. add before/after test vectors
-4. confirm no polarity drift
-
-If a biomarker has no scoring policy, do not invent one.
-
-If scoring ranges are not lab-derived and the current HealthIQ policy requires lab-derived ranges, do not add generic scoring bands.
-
-### 9. Haemoglobin atomicity requirement
-
-Haemoglobin migration must be atomic.
-
-Do not change `hemoglobin` canonical unit to `g/L` unless all of the following happen in the same sprint:
-
-1. scoring policy unit changes to `g/L`
-2. scoring band values are multiplied by 10
-3. registry conversion supports `g/dL ↔ g/L`
-4. tests prove `14.6 g/dL → 146 g/L`
-5. tests prove UK pass-through `144 g/L` with range `130–175 g/L`
-6. Sentinel/regression protection confirms haemoglobin scoring unit and band scale are aligned
-7. `hemoglobin: "g/L"` is added to `LC_S8D_SSOT_SCORING_UNIT_ALIGNMENT` or the repo’s equivalent Sentinel alignment expectation
-
-STOP if haemoglobin canonical unit and scoring bands would be left in different unit systems.
-
-### 10. Alias protection
-
-Ensure aliases remain correct:
-
-```text
-uric_acid → urate
-urate ≠ urea
-BUN → urea
-blood urea nitrogen → urea
-```
-
-Add or update tests proving:
-
-* `uric_acid` maps to `urate`
-* `BUN` maps to `urea`
-* `uric_acid` never maps to `urea`
-* `BUN` never maps to `urate`
-
-If these aliases already exist correctly, verify and document. Do not recreate unnecessarily.
-
-### 11. Corrected calcium caveat
-
-Implementation must allow conversion of a supplied corrected-calcium value.
-
-Implementation must not calculate corrected calcium from total calcium and albumin unless there is already an explicit governed formula and albumin unit path.
-
-Add a test or documentation note confirming:
-
-```text
-Corrected calcium unit conversion is implemented.
-Corrected calcium recalculation is not implemented in this sprint.
-```
-
-### 12. Free T4 caveat
-
-Implementation must allow `ng/dL → pmol/L` conversion.
-
-Implementation must preserve lab/assay-specific reference ranges.
-
-Add a test using:
-
-```text
-Free T4 16.8 pmol/L, range 12–22 pmol/L
-```
-
-Expected:
-
-* value remains `16.8 pmol/L`
-* range remains `12–22 pmol/L`
-* no generic range replaces it
-
-Add a test using:
-
-```text
-Free T4 1.2 ng/dL
-```
-
-Expected:
-
-```text
-15.45 pmol/L
-```
-
-with converted lab range if an uploaded ng/dL range is supplied.
-
-### 13. Frontend conversion Sentinel/static-scan update
-
-If LC-S8D / LC-S10B frontend no-conversion Sentinel patterns exist, update the relevant forbidden frontend conversion regex/pattern to include the new Phase B factors:
-
-```text
-0.2495
-0.4114
-12.871
-59.5
-```
-
-Specifically inspect and update the repo’s `FORBIDDEN_FRONTEND_CONVERSION_RE` or equivalent frontend no-conversion Sentinel/static-scan pattern.
-
-The purpose is to prevent these conversion constants from appearing in frontend code.
-
-These constants are allowed only in backend registry/tests/docs/Sentinel metadata, not frontend runtime.
-
-Do not edit frontend code.
-
-### 14. Sentinel haemoglobin alignment update
-
-Update `LC_S8D_SSOT_SCORING_UNIT_ALIGNMENT` or the repo’s equivalent Sentinel alignment expectation to include:
-
-```text
-hemoglobin: "g/L"
-```
-
-This must be done if haemoglobin scoring remains active and is migrated to `g/L`.
-
-The Sentinel/regression expectation must protect against haemoglobin canonical unit and scoring-policy unit drifting apart.
-
-## Required test vectors
-
-Implement tests for at least:
-
-| Biomarker         |       Input | Expected UK/SI output |
-| ----------------- | ----------: | --------------------: |
-| Calcium           | `9.4 mg/dL` |         `2.35 mmol/L` |
-| Corrected calcium | `9.4 mg/dL` |         `2.35 mmol/L` |
-| Magnesium         | `2.1 mg/dL` |         `0.86 mmol/L` |
-| Free T4           | `1.2 ng/dL` |        `15.45 pmol/L` |
-| Haemoglobin       | `14.6 g/dL` |             `146 g/L` |
-| Urate / uric acid | `5.8 mg/dL` |        `345.1 µmol/L` |
-
-Use appropriate tolerance for floating-point comparison.
-
-Also test UK pass-through:
-
-| Biomarker   |         Input |            Range | Expected  |
-| ----------- | ------------: | ---------------: | --------- |
-| Haemoglobin |     `144 g/L` |    `130–175 g/L` | unchanged |
-| Uric Acid   |  `440 µmol/L` | `220–547 µmol/L` | unchanged |
-| Free T4     | `16.8 pmol/L` |   `12–22 pmol/L` | unchanged |
-
-## Phase gates
-
-### Phase 1 — Inventory and mapping
-
-Record current state for the six biomarkers:
-
-* current SSOT unit
-* current aliases
-* current registry YAML support
-* current runtime conversion dispatch support
-* current `UnitEnum` / unit-token support
-* current frozen-set / conversion-group support
-* current `_STRICT_CONVERSION_BIOMARKERS` inclusion
-* current scoring policy unit, if any
-* current tests
-* current Sentinel coverage
-* whether conversion already exists or needs implementation
-* whether unit definitions already exist or need creation
-* whether the evidence report is committed in-repo
-
-Output this to:
-
-```text
-docs/audit-papers/LC-S8F_phase_b_true_conversion_implementation_notes.md
-```
-
-Do not implement until inventory is complete.
-
-### Phase 2 — Registry and SSOT conversion
-
-Implement approved unit conversions, runtime conversion dispatch, and SSOT unit alignment.
-
-STOP if:
-
-* any factor differs from approved evidence
-* any conversion references an undefined unit token
-* any conversion is declared in YAML but not reachable in runtime dispatch
-* any Phase B strict conversion biomarker is missing from `_STRICT_CONVERSION_BIOMARKERS` or equivalent control set
-* any conversion requires assay-specific formula beyond approved arithmetic unit conversion
-* any corrected-calcium recomputation is attempted
-* urate/urea alias boundaries are unclear
-
-### Phase 3 — Reference-range coherence
-
-Implement or verify coherent conversion of lab-supplied reference ranges.
-
-STOP if:
-
-* a converted value can be scored against an unconverted range
-* a lab-derived range can be overwritten by a generic range
-* Free T4 reference range can be replaced by a universal range
-* corrected calcium range handling is ambiguous
-
-### Phase 4 — Scoring alignment
-
-Align scoring-policy units only where applicable and safe.
-
-STOP if:
-
-* scoring bands lack clear current unit authority
-* migration would introduce generic ranges contrary to lab-derived-range policy
-* polarity changes unintentionally
-* a biomarker without scoring policy would require inventing new generic bands
-* haemoglobin canonical unit is changed to `g/L` while scoring bands remain numerically in `g/dL`
-* haemoglobin Sentinel scoring-unit alignment is not updated to `g/L`
-
-### Phase 5 — Sentinel and regression protection
-
-Add or update Sentinel/regression protection for:
-
-* Phase B canonical unit drift
-* missing Phase B conversion authority
-* runtime conversion dispatch reachability
-* Phase B factors absent from frontend runtime
-* urate/urea alias separation
-* Free T4 assay/reference-range preservation
-* corrected-calcium no-recompute rule
-* lab-derived range preservation
-* haemoglobin scoring unit/band alignment
-* `FORBIDDEN_FRONTEND_CONVERSION_RE` or equivalent frontend no-conversion pattern includes:
-
-  * `0.2495`
-  * `0.4114`
-  * `12.871`
-  * `59.5`
-* `LC_S8D_SSOT_SCORING_UNIT_ALIGNMENT` or equivalent includes:
-
-  * `hemoglobin: "g/L"`
-
-Do not duplicate existing Sentinel protections unnecessarily.
-
-### Phase 6 — Final validation
-
-Run required test commands and record outputs.
+* SSOT-wide or SSOT-inventory guard exists
+* Phase B examples protected
+* LC-S8D examples protected
+* unsupported biomarkers/units do not silently pass
 
 ## Required validation commands
 
-Run:
-
-```powershell
-python -m pytest backend/tests/unit/test_unit_registry.py -q
-python -m pytest backend/tests/unit/test_scoring_rules.py -q
-python -m pytest backend/tests/regression/test_lc_s8_biomarker_unit_reference_incoherence_regression.py -q
-python -m pytest backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py -q
-python -m pytest backend/tests/unit/test_hba1c_governance.py -q
-```
-
-If a new dedicated Phase B test file is created, run it explicitly, for example:
+Run relevant backend tests:
 
 ```powershell
 python -m pytest backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py -q
+python -m pytest backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py -q
+python -m pytest backend/tests/regression/test_lc_s8_biomarker_unit_reference_incoherence_regression.py -q
+python -m pytest backend/tests/unit/test_unit_registry.py -q
+python -m pytest backend/tests/unit/test_scoring_rules.py -q
 ```
 
-Run a targeted alias scan or test proving:
-
-```text
-BUN → urea
-uric_acid → urate
-BUN ≠ urate
-uric_acid ≠ urea
-```
-
-Run a repository scan for accidental frontend conversion if frontend files are unexpectedly touched or if Sentinel/static scan protection is updated:
+Run new LC-S8G tests explicitly, for example:
 
 ```powershell
-Select-String -Path frontend/app/**/*.ts,frontend/app/**/*.tsx -Pattern "0.2495|0.4114|12.871|59.5|mg/dL|g/dL|ng/dL|convert" -CaseSensitive:$false
+python -m pytest backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py -q
 ```
 
-Frontend changes should not occur.
+Run frontend validation if frontend files are changed:
+
+```powershell
+npm run type-check
+npm run test
+```
+
+If frontend test infrastructure is limited or broken, record exact output and add the strongest available static/backend regression coverage.
+
+Run frontend no-conversion scan:
+
+```powershell
+Select-String -Path frontend/app/**/*.ts,frontend/app/**/*.tsx -Pattern "0.2495|0.4114|12.871|59.5|0.055|0.0555|18.018|38.67|88.4|0.02586|mg/dL|g/dL|ng/dL|convert" -CaseSensitive:$false
+```
+
+Review all hits. Conversion constants in frontend runtime are blockers unless they are static copy/tests and clearly not calculation logic.
+
+## Human UAT replay
+
+After implementation, re-check the two existing reports or regenerate equivalent reports:
+
+US/non-UK conversion panel:
+
+```text
+7cc8b2d5-c8f0-4138-ba18-8540eece06a1
+```
+
+UK/SI pass-through panel:
+
+```text
+b24ce358-02e3-4058-a667-34328a4168a2
+```
+
+Expected:
+
+* US panel main dials show uploaded US units/ranges
+* US panel also indicates internal analytical UK/SI unit where appropriate
+* UK panel main dials show UK/SI units/ranges
+* uploaded-panel section remains present
+* no frontend conversion maths
 
 ## Acceptance criteria
 
 This sprint is complete only if:
 
-* the Phase B evidence report exists and is committed in-repo
-* all six Phase B biomarkers have approved UK/SI canonical unit handling
-* governed conversion factors are implemented exactly
-* required unit definitions exist before conversion entries reference them
-* runtime conversion dispatch actually reaches every Phase B conversion
-* Phase B biomarkers are included in `_STRICT_CONVERSION_BIOMARKERS` or equivalent where required
-* tests prove conversions do not fall through to passthrough behaviour
-* lab-derived reference ranges are preserved
-* converted lab reference ranges are converted coherently with values
-* Free T4 preserves assay/lab-specific reference ranges
-* corrected calcium is not recomputed
-* urate/uric acid remains separate from urea/BUN
-* UK lab examples pass through unchanged
-* haemoglobin scoring bands are migrated to `g/L` if haemoglobin scoring is retained
-* haemoglobin canonical unit and scoring bands are not left in different unit systems
-* haemoglobin Sentinel scoring alignment expects `g/L`
-* scoring policy is aligned only where safe and justified
-* tests cover all approved conversion vectors
-* Sentinel/regression protections are updated
-* frontend no-conversion protection includes Phase B conversion factors
-* no frontend conversion logic is introduced
-* no Phase B global/default reference ranges are introduced
-* no unrelated launch-core behaviours are changed
+* backend DTO emits governed display fields
+* frontend main dials use display fields
+* US/non-UK uploaded units display back to the user on main result cards
+* UK/SI uploaded units pass through unchanged
+* Layer B analytical values remain UK/SI canonical
+* scoring/ranking remain based on analytical fields only
+* uploaded-panel fidelity section remains intact
+* reference ranges shown to users match displayed unit family
+* no generic/default ranges are introduced
+* frontend performs no conversion maths
+* SSOT-wide display-fidelity guard or coverage-inventory guard exists
+* Phase B and LC-S8D conversion families are protected
+* human UAT defect is resolved
+* LC-S8F backend conversion remains passing
 
 ## Required documentation output
 
 Create or update:
 
 ```text
-docs/audit-papers/LC-S8F_phase_b_true_conversion_implementation_notes.md
+docs/audit-papers/LC-S8G_uploaded_unit_display_fidelity_notes.md
 ```
 
-It must include:
+Must include:
 
-1. Phase 1 inventory
-2. Evidence source used
-3. Evidence file committed status
-4. Files changed
-5. Conversion factors implemented
-6. Unit definitions added or verified
-7. `UnitEnum` / unit-token updates
-8. Frozen-set / biomarker-group updates
-9. `_STRICT_CONVERSION_BIOMARKERS` updates
-10. Runtime conversion dispatch changes
-11. Reference-range handling decision
-12. Scoring-policy decision per biomarker
-13. Haemoglobin scoring migration result
-14. Haemoglobin Sentinel scoring-alignment update
-15. Corrected-calcium caveat
-16. Free T4 assay/range caveat
-17. Urate-vs-urea alias protection
-18. Frontend no-conversion Sentinel/static-scan update
-19. Tests run
-20. Sentinel/protection changes
-21. Deferred risks
-22. Final implementation verdict
+1. defect origin
+2. files changed
+3. DTO fields added
+4. frontend rendering change
+5. SSOT-wide guardrail approach
+6. test coverage
+7. UAT replay result
+8. known exclusions or deferred items
+9. final merge recommendation
 
-This document must map directly to implementation and tests. It is not a passive status artefact.
+This note must map directly to implementation and tests. It is not a passive decision document.
 
 ## Cursor completion requirements
 
-When implementation is complete, Cursor must:
+When complete:
 
 1. Run required validation commands.
-2. Update the implementation notes.
+2. Update the LC-S8G notes.
 3. Run closure audit:
 
 ```powershell
@@ -767,21 +634,17 @@ git stash list
 
 5. STOP if unrelated files, tooling leakage, dirty branch ambiguity, or stash ambiguity exists.
 
-6. If closure is clean, run:
+6. Do not merge.
 
-```powershell
-python backend/scripts/run_work_package.py finish
-```
+7. Do not create `automation_bus/latest_audit_summary.md`.
 
-7. Report whether finish completed or failed.
-8. Do not merge.
-9. Do not create `automation_bus/latest_audit_summary.md`.
-10. Do not claim final approval.
+8. Do not claim final approval.
 
 ## Explicit non-authority statement
 
 Cursor implements and reports only.
 
-Cursor may not self-certify clinical correctness, architecture correctness, merge readiness, launch readiness, or final approval.
+Cursor may not self-certify architecture correctness, clinical correctness, merge readiness, launch readiness, or final approval.
 
-````
+```
+```
