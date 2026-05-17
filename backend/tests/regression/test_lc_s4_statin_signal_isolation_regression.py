@@ -116,6 +116,12 @@ def test_statin_on_vs_off_preserves_scoring_body_overview_framing_only():
 
     assert dto_off.intervention_annotations_v1 is None
     assert dto_on.intervention_annotations_v1 is not None
+    on_classes = [
+        r.intervention_class_id
+        for r in (dto_on.intervention_annotations_v1.resolved or [])
+        if getattr(r, "intervention_class_id", None)
+    ]
+    assert "lipid_lowering_statin" in on_classes
 
     body_off = dto_off.narrative_report_v1.body_overview if dto_off.narrative_report_v1 else ""
     body_on = dto_on.narrative_report_v1.body_overview if dto_on.narrative_report_v1 else ""

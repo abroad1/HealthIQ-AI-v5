@@ -1,0 +1,64 @@
+{
+  "pack_version": "1.0.0",
+  "pack_id": "lc_s10b_launch_core_protection_v1",
+  "description": "LC-S10B — Sprint 6 protection for proven launch-core slice (CHECK 2/4/5/6, leakage guards)",
+  "defect_classes": {
+    "launch_core_check2_lifestyle_visible_payoff": {
+      "description": "Lifestyle_context must show plain-English alcohol body_overview; baseline must not; no internal lifestyle slug in user-facing narrative.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s5_proving_checks.py",
+      "first_seen": "2026-05"
+    },
+    "launch_core_check4_statin_lipid_lowering_class": {
+      "description": "statin_on must resolve lipid_lowering_statin; statin_off must not; CV consequence must change without claiming score/ranking changed.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s5_proving_checks.py",
+      "first_seen": "2026-05"
+    },
+    "launch_core_check5_wave1_contradiction": {
+      "description": "Wave 1 band_label vs consequence_sentence_head polarity coherence on proving fingerprints.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s5_proving_checks.py",
+      "first_seen": "2026-05"
+    },
+    "launch_core_check6_lead_alignment": {
+      "description": "Clinician primary concern and retail summary anchor on homocysteine lead family for AB/VR baseline.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s5_proving_checks.py",
+      "first_seen": "2026-05"
+    },
+    "launch_core_user_facing_slug_and_signal_leakage": {
+      "description": "No lifestyle rationale slug, WHY fallback debug, or raw signal_* ids in compact proving user-facing fields.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s10b_launch_core_protection.py",
+      "first_seen": "2026-05"
+    },
+    "statin_signal_isolation": {
+      "description": "Statin context changes narrative framing only; analytical top findings and band labels preserved.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s4_statin_signal_isolation_regression.py",
+      "first_seen": "2026-05"
+    },
+    "unit_governance_lc_s8d": {
+      "description": "UK/SI unit governance, HbA1c identity, haematocrit L/L, BUN→urea, frontend no conversion.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py",
+      "first_seen": "2026-05",
+      "note": "Authoritative pack: sentinel/packs/lc_s8d_unit_governance_v1.json"
+    },
+    "uploaded_panel_fidelity_fe_s8e": {
+      "description": "Layer C Mode A uploaded-panel fidelity — renderer-only, equivalent observations visible, canonical dials unchanged.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "frontend/tests/lib/uploadPanelFidelity.test.ts",
+      "first_seen": "2026-05"
+    }
+  }
+}
