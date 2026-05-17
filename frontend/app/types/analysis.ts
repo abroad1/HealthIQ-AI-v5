@@ -97,6 +97,8 @@ export interface BiomarkerResult {
   analytical_unit?: string | null;
   analytical_reference_range?: BiomarkerReferenceRange | null;
   display_is_uploaded_unit?: boolean;
+  /** LC-S8G — uploaded/source biomarker label when available (e.g. Hemoglobin vs Haemoglobin). */
+  display_label?: string | null;
   analytical_transparency_unit?: string | null;
   score?: number | null;
   percentile?: number | null;

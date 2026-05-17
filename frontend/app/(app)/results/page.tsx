@@ -502,9 +502,12 @@ export default function ResultsPage() {
       const shownUnit = (biomarker.display_unit || biomarker.unit || '').trim();
       const shownRef = biomarker.display_reference_range ?? biomarker.reference_range;
 
+      const displayLabel = biomarker.display_label?.trim() || undefined;
+
       biomarkerDialData[biomarker.biomarker_name] = {
         value: shownValue,
         unit: shownUnit,
+        displayLabel,
         status: biomarker.status ?? undefined,
         score: biomarker.score ?? undefined,
         interpretation: biomarker.interpretation ?? undefined,

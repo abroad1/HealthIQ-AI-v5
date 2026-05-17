@@ -10,6 +10,8 @@ import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Info, ChevronDown
 export interface BiomarkerDialEntry {
   value: number;
   unit: string;
+  /** LC-S8G — prefer uploaded/source label over canonical dial map when set. */
+  displayLabel?: string | null;
   date?: string;
   score?: number;
   interpretation?: string | null;
@@ -339,7 +341,10 @@ export default function BiomarkerDials({ biomarkers, sectionTitle = 'Biomarker e
           const value = hasValue ? d!.value : 0;
           const dialValue = calculateDialValue(value, d?.referenceRange, d?.score);
           const isSel = selectedKey === name;
-          const displayName = BIOMARKER_NAMES[name] || name.replace(/_/g, ' ');
+          const displayName =
+            (d?.displayLabel && String(d.displayLabel).trim()) ||
+            BIOMARKER_NAMES[name] ||
+            name.replace(/_/g, ' ');
           const expandable = hasExpandableLayers(d!);
           const hideRange = shouldSuppressReferenceRange(d?.unit, d?.referenceRange?.unit);
 
