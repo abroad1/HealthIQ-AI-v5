@@ -178,6 +178,14 @@ def test_check4_statin_intervention_and_bounded_framing_from_fingerprints() -> N
         ia_on = fb.get("intervention") or {}
         assert not ia_off.get("present"), f"{off_key}: intervention must be absent when statins off"
         assert ia_on.get("present"), f"{on_key}: intervention must be present when statins on"
+        off_classes = list(ia_off.get("resolved_class_ids") or [])
+        on_classes = list(ia_on.get("resolved_class_ids") or [])
+        assert "lipid_lowering_statin" not in off_classes, (
+            f"{off_key}: lipid_lowering_statin must be absent when statins off (got {off_classes!r})"
+        )
+        assert "lipid_lowering_statin" in on_classes, (
+            f"{on_key}: lipid_lowering_statin must be present when statins on (got {on_classes!r})"
+        )
 
         def _cv_consequence_head(payload: Dict[str, Any]) -> str:
             for row in payload.get("consumer_domain_rows") or []:
@@ -191,6 +199,31 @@ def test_check4_statin_intervention_and_bounded_framing_from_fingerprints() -> N
         assert cv_off != cv_on, (
             f"{panel}: statin on must change cardiovascular consequence framing "
             f"(off={cv_off[:80]!r} on={cv_on[:80]!r})"
+        )
+        cv_on_low = cv_on.lower()
+        assert "statin" in cv_on_low, f"{panel}: statin_on CV consequence must mention statin context"
+        for forbidden in ("score changed", "ranking changed", "scores were changed", "ranking was changed"):
+            assert forbidden not in cv_on_low, (
+                f"{panel}: statin copy must not claim scoring/ranking changed ({forbidden!r})"
+            )
+
+
+_LIFESTYLE_VISIBLE_MARKERS = ("moderate alcohol", "questionnaire suggests")
+_LIFESTYLE_SLUG = "alcohol_intake_moderate_or_higher_with_one_carbon_lab_coherence"
+_NARRATIVE_USER_FIELDS = ("body_overview_head", "lead_narrative_head", "retail_summary_head")
+
+
+@pytest.mark.regression
+def test_check2_baseline_has_no_lifestyle_visible_sentence() -> None:
+    """CHECK 2 — baseline AB/VR must not show LC-S9C alcohol lifestyle body_overview sentence."""
+    data = _load_fingerprints()
+    runs: Dict[str, Any] = data.get("runs") or {}
+    for panel in ("AB", "VR"):
+        base = runs.get(f"{panel}__baseline") or {}
+        assert base, f"Missing baseline for {panel}"
+        bo = str((base.get("narrative") or {}).get("body_overview_head") or "").lower()
+        assert not any(m in bo for m in _LIFESTYLE_VISIBLE_MARKERS), (
+            f"{panel}__baseline: lifestyle sentence must be absent from body_overview_head: {bo[:240]!r}"
         )
 
 
@@ -210,10 +243,9 @@ def test_check2_lifestyle_context_narrative_differs_from_baseline() -> None:
         assert "moderate alcohol" in bo or "questionnaire suggests" in bo, (
             f"{panel}: expected lifestyle context in body_overview_head: {bo[:240]!r}"
         )
-        slug = "alcohol_intake_moderate_or_higher_with_one_carbon_lab_coherence"
-        for field in ("body_overview_head", "lead_narrative_head", "retail_summary_head"):
+        for field in _NARRATIVE_USER_FIELDS:
             text = str((n1.get(field) or "")).lower()
-            assert slug not in text, f"{panel}: internal lifestyle slug leaked in {field}"
+            assert _LIFESTYLE_SLUG not in text, f"{panel}: internal lifestyle slug leaked in {field}"
 
 
 @pytest.mark.regression
