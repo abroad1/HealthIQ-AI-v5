@@ -1,24 +1,24 @@
 {
-  "work_id": "LC-S10B",
-  "status": "HARDENED",
+  "work_id": "LC-S8F",
   "bus_version": "1.3.1",
+  "status": "HARDENED",
   "hardened_utc": "2026-05-17T00:00:00Z",
   "hardened_by": "claude-sonnet-4-6",
   "changes": [
     {
       "check": "Front Matter — all five required fields",
-      "result": "PASS — work_id=LC-S10B, branch=launch-core/lc-s10b-protect-proven-launch-core-slice, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. All five mandatory fields present.",
+      "result": "PASS — work_id=LC-S8F, branch=launch-core/lc-s8f-phase-b-uk-si-true-conversions, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. All five mandatory fields present.",
       "citation": "automation_bus/latest_cursor_prompt.md lines 2–6"
     },
     {
       "check": "risk_level HIGH — justified",
-      "result": "PASS — sprint touches regression tests, proving harness fingerprints, and Sentinel packs that guard Intelligence Core output surfaces. Prompt correctly permits backend/core edits if protection tests expose a real defect in proven behaviour. HIGH is the correct classification per SOP §10: any work interacting with Intelligence Core = HIGH by default.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 13–15, 249; SOP §3, §10"
+      "result": "PASS — sprint touches backend/ssot/biomarkers.yaml, backend/ssot/units.yaml, backend/core/units/registry.py (Intelligence Core unit conversion dispatch), backend/ssot/scoring_policy.yaml (hemoglobin band migration), and Sentinel packs. HIGH is correct per SOP §10: any work touching Intelligence Core = HIGH by default.",
+      "citation": "automation_bus/latest_cursor_prompt.md lines 13–15; SOP §3, §10"
     },
     {
       "check": "change_type MIXED — justified",
-      "result": "PASS — CONTENT (docs/audit-papers/LC-S10B_protection_of_proven_slice_notes.md, fingerprint refresh) + BEHAVIOUR (regression test additions/updates, Sentinel pack promotions, proving harness extension if needed). MIXED correct per SOP §4. MIXED is always governed using BEHAVIOUR controls.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 13–15, 229–250; SOP §4"
+      "result": "PASS — CONTENT (SSOT unit updates in biomarkers.yaml, units.yaml) + BEHAVIOUR (runtime conversion dispatch in registry.py, scoring band migration in scoring_policy.yaml, sentinel/test updates that affect governed output). MIXED correct per SOP §4. MIXED is always governed using BEHAVIOUR controls.",
+      "citation": "automation_bus/latest_cursor_prompt.md lines 13–15; SOP §4"
     },
     {
       "check": "execution_model TWO_PHASE_START_FINISH — justified",
@@ -26,78 +26,83 @@
       "citation": "automation_bus/latest_cursor_prompt.md line 5; SOP §3"
     },
     {
-      "check": "Authority path — launch-core proving harness",
-      "result": "CONFIRMED EXISTS — backend/tools/launch_core_proving_harness.py (path verified by directory scan). Phase 6 command is correct: python backend/tools/launch_core_proving_harness.py.",
-      "citation": "backend/tools/launch_core_proving_harness.py (file confirmed present)"
+      "check": "Authority path — evidence file",
+      "result": "CONFIRMED EXISTS (untracked) — docs/audit-papers/Phase_B_UK_SI_Biomarker_Unit_Evidence_Review.md is present on disk but untracked (git status: '?? docs/audit-papers/Phase_B_UK_SI_Biomarker_Unit_Evidence_Review.md'). Content verified: all six biomarkers approved, conversion factors match prompt exactly (Ca ×0.2495, Mg ×0.4114, fT4 ×12.871, Hb ×10, Urate ×59.5), test vectors match prompt table, caveats match prompt controls. PRE-EXECUTION REQUIREMENT: file must be committed on the sprint branch before run_work_package.py start. Prompt preflight enforces this via 'git ls-files --error-unmatch' which will STOP Cursor if file is untracked.",
+      "citation": "docs/audit-papers/Phase_B_UK_SI_Biomarker_Unit_Evidence_Review.md (read in full); git status --short output"
     },
     {
-      "check": "Authority path — proving fingerprints",
-      "result": "CONFIRMED CURRENT — docs/audit-papers/launch-core-proving/latest_fingerprints.json exists and is FRESH: stamp=20260516T222720Z, git_short_sha=c8d92bd. This matches current HEAD (c8d92bd from git log). Fingerprints are NOT stale — no mandatory harness re-run is required before Phase 2 analysis, though Phase 6 must refresh them after any code changes.",
-      "citation": "docs/audit-papers/launch-core-proving/latest_fingerprints.json lines 2–3 (stamp and sha verified by Python read)"
+      "check": "Authority path — backend/ssot/biomarkers.yaml",
+      "result": "CONFIRMED — current Phase B units: calcium unit: mg/dL (line 747), corrected_calcium unit: mg/dL (line 761), magnesium unit: mg/dL (line 817), free_t4 unit: ng/dL (line 603), hemoglobin unit: g/dL (line 649), urate unit: umol/L (line 1401). All six require SSOT unit change. Existing alias structure: hemoglobin canonical with haemoglobin/hgb/hb aliases; urate canonical with no uric_acid alias in biomarkers.yaml (uric_acid alias is in biomarker_alias_registry.yaml).",
+      "citation": "backend/ssot/biomarkers.yaml lines 599–613, 644–659, 744–771, 814–827, 1400–1422"
     },
     {
-      "check": "Authority path — fingerprint field structure",
-      "result": "CONFIRMED — Per-run keys verified by Python read: ['clinician_page1', 'consumer_band_labels', 'consumer_domain_rows', 'idl', 'intervention', 'lifestyle_fixture', 'narrative', 'questionnaire_data', 'scenario_description', 'signal_state_by_id', 'status', 'top_finding_signal_ids']. Intervention field structure: {'present': bool, 'resolved_class_ids': [str]}. AB__statin_on: resolved_class_ids=['lipid_lowering_statin']. AB__statin_off: resolved_class_ids=[]. All fields required by Phase 2 and Phase 3 CHECKs are present in the fingerprint.",
-      "citation": "docs/audit-papers/launch-core-proving/latest_fingerprints.json — Python read of field keys and intervention sub-structure for AB__statin_on and AB__statin_off"
+      "check": "Authority path — backend/ssot/units.yaml conversions",
+      "result": "CONFIRMED — g/dL↔g/L hemoglobin conversions already present (lines 172–182, factors 10.0 and 0.1). Calcium, magnesium, fT4, urate conversions: absent. pmol/L and ng/dL unit type definitions: absent. Prompt §2 correctly requires these unit type definitions before conversion entries reference them.",
+      "citation": "backend/ssot/units.yaml lines 1–214 (read in full)"
     },
     {
-      "check": "Authority path — CHECK regression test file",
-      "result": "CONFIRMED EXISTS — backend/tests/regression/test_lc_s5_proving_checks.py (read in full). Contains 6 tests: test_lc_s5_fingerprints_stamped_and_matrix_present (line 84), test_check2_alcohol_bridge_language_when_moderate_threshold_met (line 103), test_check5_wave1_consumer_domain_band_vs_consequence_consistency (line 136), test_check4_statin_intervention_and_bounded_framing_from_fingerprints (line 155), test_check2_lifestyle_context_narrative_differs_from_baseline (line 198), test_check6_clinician_retail_lead_family_alignment_ab_vr_baseline (line 220).",
-      "citation": "backend/tests/regression/test_lc_s5_proving_checks.py lines 84–232 (read in full)"
+      "check": "Authority path — backend/core/units/registry.py dispatch architecture",
+      "result": "CONFIRMED — _get_conversion_factor() (lines 166–242) dispatches exclusively via biomarker-group frozen sets defined at lines 64–90. Phase B biomarkers (calcium, corrected_calcium, magnesium, free_t4, urate) are absent from all frozen sets. Lines 294–298: passthrough path silently returns unconverted values for biomarkers not in _STRICT_CONVERSION_BIOMARKERS. _HEMOGLOBIN_BIOMARKERS and its dispatch branches already present (lines 73, 226–233) — hemoglobin conversion is verify-only. UnitEnum (lines 42–61) lacks PMOL_L and NG_DL tokens. Prompt §3 now explicitly addresses all required registry.py changes.",
+      "citation": "backend/core/units/registry.py lines 42–61, 64–90, 166–242, 294–298 (read in full)"
     },
     {
-      "check": "Authority path — unit governance Sentinel test and pack",
-      "result": "CONFIRMED EXISTS — backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py (path confirmed by directory scan). sentinel/packs/lc_s8d_unit_governance_v1.json (read: pack_id=lc_s8d_unit_governance_v1, defect_classes: uk_layer_b_canonical_unit_drift=GUARDED, unknown_unit_not_scored=GUARDED, hba1c_single_analytical_identity=GUARDED test_file=backend/tests/unit/test_hba1c_governance.py, hematocrit_fraction_percent_display=GUARDED). sentinel/packs/escaped_defects_v1.json (path confirmed).",
-      "citation": "sentinel/packs/lc_s8d_unit_governance_v1.json lines 1–30 (partial read); directory scan of sentinel/packs/"
+      "check": "Authority path — backend/ssot/scoring_policy.yaml",
+      "result": "CONFIRMED — hemoglobin scoring present: unit: g/dL, bands optimal 12–16 g/dL through critical 20–25 g/dL (lines 222–234). All band values require ×10 migration to g/L when SSOT unit changes. Calcium, magnesium, free_t4, urate: no scoring policy present. Prompt §8 correctly instructs no invented bands for unmarked biomarkers.",
+      "citation": "backend/ssot/scoring_policy.yaml lines 222–234"
     },
     {
-      "check": "Authority path — test_hba1c_governance.py",
-      "result": "CONFIRMED EXISTS — backend/tests/unit/test_hba1c_governance.py (confirmed by directory scan). This test is registered in the Sentinel pack as protecting hba1c_single_analytical_identity. It is NOT in the Phase 6 required command list. HARDENING NOTE: Cursor must add this file to the Phase 6 validation run alongside test_lc_s8d_unit_governance_sentinel.py.",
-      "citation": "sentinel/packs/lc_s8d_unit_governance_v1.json hba1c_single_analytical_identity.test_file; backend/tests/unit/ directory listing"
+      "check": "Authority path — backend/ssot/biomarker_alias_registry.yaml",
+      "result": "CONFIRMED — uric_acid → urate (line 729) and BUN/Blood Urea Nitrogen → urea (lines 735–738) both correctly separated. No gap. Prompt §10 correctly identifies these as verify-and-document, not recreate.",
+      "citation": "backend/ssot/biomarker_alias_registry.yaml lines 720–749"
     },
     {
-      "check": "Source cross-ref — CHECK 4 intervention class assertion gap",
-      "result": "GAP IDENTIFIED — HARDENING NOTE FOR CURSOR: test_check4_statin_intervention_and_bounded_framing_from_fingerprints() (line 155–194) asserts ia_on.get('present') == True and ia_off.get('present') == False. It does NOT assert that 'lipid_lowering_statin' is in ia_on.get('resolved_class_ids', []). The prompt requirement states: 'statin_on has lipid_lowering_statin'. The fingerprint field resolved_class_ids=['lipid_lowering_statin'] is present and confirmed. Cursor must add this specific class assertion to satisfy the stated protection requirement. Do not create a new test function — add the assertion to the existing test at line 180.",
-      "citation": "backend/tests/regression/test_lc_s5_proving_checks.py lines 177–180; docs/audit-papers/launch-core-proving/latest_fingerprints.json AB__statin_on.intervention (Python read: resolved_class_ids=['lipid_lowering_statin'])"
+      "check": "Authority path — sentinel/packs/lc_s8d_unit_governance_v1.json",
+      "result": "CONFIRMED — pack_id=lc_s8d_unit_governance_v1. phase_b_blocked_pending_evidence defect is status: WARN with test_file pointing to docs (not a test file). This must transition to GUARDED with a proper test_file assigned in Phase 5. Prompt Phase 5 covers this via 'Phase B canonical unit drift' and 'missing Phase B conversion authority' protection requirements.",
+      "citation": "sentinel/packs/lc_s8d_unit_governance_v1.json lines 77–84"
     },
     {
-      "check": "Source cross-ref — WHY fallback leakage protection gap",
-      "result": "GAP IDENTIFIED — HARDENING NOTE FOR CURSOR: Section F requires protection that no user-facing field exposes raw signal_* IDs or WHY fallback copy. Current state: (a) backend/core/analytics/root_cause_compiler_v1.py line 459 now reads 'Pattern noted — deeper causal explanation not yet available' — the LC-S9B fix is applied, the 'No governed WHY for signal_...' string no longer exists in the codebase. (b) No test currently asserts that narrative fields in the proving fingerprints are free of signal_* ID strings or WHY fallback copy. (c) test_slug_leakage_regression.py covers ph_*_v* and backend impl strings in frontend components but does NOT scan for 'signal_' IDs or 'Pattern noted' in narrative text fields. Phase 3 or Phase 5 must add: an assertion in test_lc_s5_proving_checks.py or a new regression test that scans fingerprint narrative fields (body_overview_head, lead_narrative_head, retail_summary_head) for signal_* ID substring leakage and for the WHY fallback title string.",
-      "citation": "backend/core/analytics/root_cause_compiler_v1.py line 459 (read); backend/tests/regression/test_slug_leakage_regression.py lines 44–59 (read); docs/audit-papers/launch-core-proving/latest_fingerprints.json narrative keys (Python read)"
+      "check": "Authority path — backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py",
+      "result": "CONFIRMED — LC_S8D_SSOT_SCORING_UNIT_ALIGNMENT dict (lines 34–45) does not include hemoglobin. FORBIDDEN_FRONTEND_CONVERSION_RE (lines 48–50) does not include Phase B factors (0.2495, 0.4114, 12.871, 59.5). Both gaps are now explicitly addressed in prompt §13 (FORBIDDEN_FRONTEND_CONVERSION_RE) and §14 (LC_S8D_SSOT_SCORING_UNIT_ALIGNMENT hemoglobin: 'g/L').",
+      "citation": "backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py lines 34–50"
     },
     {
-      "check": "Source cross-ref — no frontend unit tests exist",
-      "result": "GAP IDENTIFIED — HARDENING NOTE FOR CURSOR: The prompt's potentially allowed list includes frontend/tests/**/* and Phase 6 instructs 'Run frontend tests if frontend files changed: npm run test'. There are no frontend unit or integration test files outside of node_modules. The only frontend test infrastructure present is e2e (frontend/e2e/) and type-check. Phase 4 frontend protection must rely on Sentinel (lc_s8d_unit_governance_v1.json) + backend regression tests + npm run type-check only. 'npm run test' will produce no meaningful assertions. Cursor must document this in the Phase 1 inventory and protection notes rather than claim frontend test coverage that does not exist.",
-      "citation": "find frontend/app frontend/tests_new frontend/integration -name '*.test.ts' -o -name '*.test.tsx' (no results); directory listing of frontend/"
+      "check": "Source cross-ref — registry.py dispatch blocker (prior hardening run)",
+      "result": "RESOLVED — prior blocker resolved in updated prompt. §3 'Critical runtime conversion dispatch requirement' now explicitly mandates: UnitEnum token additions (§3.1), frozen-set groups per Phase B biomarker group (§3.2), _STRICT_CONVERSION_BIOMARKERS inclusion (§3.3), _get_conversion_factor() dispatch branches per group and direction (§3.4), tests proving runtime path is actually called (§3.5). Phase 2 STOP condition: 'any conversion declared in YAML but not reachable in runtime dispatch.'",
+      "citation": "automation_bus/latest_cursor_prompt.md §3 lines 269–339"
     },
     {
-      "check": "Source cross-ref — governing evidence documents",
-      "result": "CONFIRMED EXISTS — all 10 docs listed in the governing evidence section verified: docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md, docs/audit-papers/LC-S9_launch_core_human_proving_closeout_review.md, docs/audit-papers/LC-S9B_launch_core_proving_closeout_notes.md, docs/audit-papers/LC-S9B_human_walkthrough_pack.md, docs/audit-papers/launch-core-proving/PROVING_REPORT.md, docs/audit-papers/launch-core-proving/latest_fingerprints.json, docs/audit-papers/FE-S8E_post_merge_comparison_uat.md, docs/audit-papers/FE-S8E_uploaded_panel_fidelity_uat_notes.md, docs/audit-papers/LC-S8D_uk_si_unit_governance_remediation_notes.md, docs/audit-papers/LC-S8D_frontend_layer_c_uat_report.md. No path mismatches.",
-      "citation": "directory listing: docs/audit-papers/ and docs/planning-papers/"
+      "check": "Source cross-ref — pmol/L and ng/dL unit definitions (prior hardening run)",
+      "result": "RESOLVED — prior gap resolved. §2 'Unit definition prerequisite' explicitly requires pmol_L and ng_dL entries in units.yaml before conversion entries reference them. Free T4 implementation declared incomplete without both.",
+      "citation": "automation_bus/latest_cursor_prompt.md §2 lines 249–267"
     },
     {
-      "check": "Forbidden files — confirmed present, correctly barred",
-      "result": "CONFIRMED — all forbidden files confirmed in repo: backend/ssot/biomarkers.yaml, backend/ssot/units.yaml, backend/ssot/scoring_policy.yaml, backend/core/units/registry.py, backend/core/scoring/rules.py, backend/core/canonical/hba1c_layer_b_arbitration.py, backend/scripts/run_work_package.py, backend/scripts/golden_gate_local.py, backend/scripts/update_cursor_status.py. Correctly excluded. Protection work (adding test assertions) does not require touching these files.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 253–270; directory scan confirmed all paths"
+      "check": "Source cross-ref — FORBIDDEN_FRONTEND_CONVERSION_RE gap (prior hardening run)",
+      "result": "RESOLVED — prior gap resolved. §13 names FORBIDDEN_FRONTEND_CONVERSION_RE explicitly and lists all four Phase B factors (0.2495, 0.4114, 12.871, 59.5). Phase 5 repeats the requirement with explicit factor list.",
+      "citation": "automation_bus/latest_cursor_prompt.md §13 lines 495–511; Phase 5 lines 628–634"
     },
     {
-      "check": "Determinism — output structure unchanged",
-      "result": "PASS — this is a protection-only sprint. No changes to analytical logic, scoring, ranking, or output assembly are in scope. Regression test additions and Sentinel pack updates are read-only guards. If a protection test exposes a real defect, the defect correction must be classified separately before proceeding. The only permitted output-adjacent change is adding test assertions — these do not alter production output.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 16–20, 249"
+      "check": "Source cross-ref — haemoglobin atomicity and sentinel alignment (prior hardening run)",
+      "result": "RESOLVED — prior gap resolved. §9 'Haemoglobin atomicity requirement' mandates 7 steps including LC_S8D_SSOT_SCORING_UNIT_ALIGNMENT update (step 7). §14 explicitly requires hemoglobin: 'g/L' addition. Phase 4 STOP fires if SSOT unit and scoring bands end up in different unit systems.",
+      "citation": "automation_bus/latest_cursor_prompt.md §9 lines 414–428; §14 lines 514–524; Phase 4 STOP lines 612–613"
     },
     {
-      "check": "No duplicate authority source",
-      "result": "PASS — single proving harness, single fingerprint file, single test file per CHECK, single Sentinel pack per defect class. Prompt correctly prohibits creating a second authority source.",
-      "citation": "automation_bus/latest_cursor_prompt.md Authority preflight section (lines 101–115)"
+      "check": "Source cross-ref — conversion factors verified against evidence file",
+      "result": "CONFIRMED — all six factors in evidence file match prompt table exactly: Ca 0.2495, Mg 0.4114, fT4 12.871, Hb ×10, Urate ×59.5. Test vectors confirmed: 9.4 mg/dL → 2.35 mmol/L, 2.1 mg/dL → 0.86 mmol/L, 1.2 ng/dL → 15.45 pmol/L, 14.6 g/dL → 146 g/L, 5.8 mg/dL → 345.1 µmol/L. Caveats confirmed: corrected calcium formula-derived, fT4 assay-specific, urate/urea separation.",
+      "citation": "docs/audit-papers/Phase_B_UK_SI_Biomarker_Unit_Evidence_Review.md lines 16–21, 122–131"
     },
     {
-      "check": "STOP conditions — confirmed operable",
-      "result": "PASS — token check, branch mismatch, harness non-determinism, ambiguous authority, and unrelated file leakage are all named STOP triggers. Closure audit sequence (lines 471–489) is correct per SOP Stage 4A.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 89–98, 115, 325, 489"
+      "check": "Determinism — preserved",
+      "result": "PASS — conversions are pure arithmetic with governed factors from evidence file. Passthrough risk eliminated by _STRICT_CONVERSION_BIOMARKERS requirement (§3.3) and Phase 2 STOP. Haemoglobin scoring band migration is numeric (×10) with no polarity change. No Intelligence Core analytical logic is altered — only unit conversion dispatch and scoring unit alignment.",
+      "citation": "automation_bus/latest_cursor_prompt.md §3, §9; SOP §3 determinism requirement"
+    },
+    {
+      "check": "Forbidden files — confirmed correctly barred",
+      "result": "PASS — run_work_package.py, golden_gate_local.py, update_cursor_status.py, frontend/**, automation_bus gate files all correctly excluded. No Layer C, questionnaire, statin, or LC-S10B scope creep present.",
+      "citation": "automation_bus/latest_cursor_prompt.md lines 204–226"
     },
     {
       "check": "Overall verdict",
-      "result": "HARDENED — all authority paths verified from file content. No structural blockers. Three hardening notes Cursor must act on: (1) Add 'lipid_lowering_statin' in resolved_class_ids assertion to CHECK 4 test at test_lc_s5_proving_checks.py line 180. (2) Add signal_* ID leakage and WHY fallback string guard to narrative fingerprint fields (Phase 3 or Phase 5). (3) Add test_hba1c_governance.py to Phase 6 required run list. Additionally: document in Phase 1 inventory that no frontend unit tests exist — Phase 4 frontend protection = Sentinel + backend regression only. Fingerprints are current (c8d92bd = HEAD). Cursor may proceed to Stage 3 kernel start on branch launch-core/lc-s10b-protect-proven-launch-core-slice.",
+      "result": "HARDENED — all three blockers from prior hardening run resolved (registry.py dispatch, unit type definitions, FORBIDDEN_FRONTEND_CONVERSION_RE, haemoglobin atomicity). All authority paths verified from file content. No new gaps identified. PRE-EXECUTION REQUIREMENT: docs/audit-papers/Phase_B_UK_SI_Biomarker_Unit_Evidence_Review.md must be committed on sprint branch before run_work_package.py start — prompt preflight enforces this via git ls-files --error-unmatch. Cursor may proceed to Stage 3 kernel start on branch launch-core/lc-s8f-phase-b-uk-si-true-conversions once evidence file is committed.",
       "citation": "all checks above"
     }
   ]

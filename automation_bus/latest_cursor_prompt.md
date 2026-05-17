@@ -1,74 +1,123 @@
 ---
-work_id: LC-S10B
-branch: launch-core/lc-s10b-protect-proven-launch-core-slice
+work_id: LC-S8F
+branch: launch-core/lc-s8f-phase-b-uk-si-true-conversions
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# LC-S10B — Protection of the Proven Launch-Core Slice
+# LC-S8F — Phase B UK/SI True Conversion Implementation
 
 ## Classification
 
-This is a HIGH-risk MIXED protection sprint.
+This is a HIGH-risk MIXED implementation sprint.
 
-Reason: this work may touch regression tests, proving harnesses, Sentinel packs, frontend protection checks, backend launch-core report tests, fingerprint generation, and guardrail logic. These protect launch-core analytical and narrative behaviour.
+Reason: this sprint may touch SSOT biomarker units, unit registry data, runtime unit-conversion dispatch, scoring-policy units, reference-range coherence behaviour, regression tests, and Sentinel protections.
 
-This sprint is protection only.
+This sprint implements the previously blocked LC-S8C / LC-S8D Phase B UK/SI true-conversion biomarkers after evidence review.
 
-It must not expand product scope, add new clinical reasoning, alter scoring, alter units, broaden the questionnaire, or build new user-facing features.
+This sprint must not alter unrelated biomarkers, broaden unit policy, change questionnaire behaviour, alter Layer C narrative logic, add fallback/global reference ranges, or introduce frontend conversion logic.
 
-## Current programme state
+## Purpose
 
-Sprint 5 has been accepted as:
+Implement approved UK/SI canonical unit handling for the six Phase B biomarkers previously blocked pending evidence:
 
 ```text
-SPRINT_5_PASS_WITH_GAPS
+calcium
+corrected_calcium
+magnesium
+free_t4
+hemoglobin / haemoglobin
+urate / uric_acid
 ````
 
-This is sufficient to progress into Sprint 6 protection, but it is not an unconditional launch PASS.
+The evidence review approves implementation for all six, with mandatory controls:
 
-The following workstreams are now considered proven enough to protect:
+* use UK/SI canonical units
+* convert uploaded values only through governed backend registry/runtime paths
+* convert uploaded lab-derived reference ranges coherently when source unit differs
+* never substitute generic/global/default reference ranges where lab ranges exist
+* preserve assay/lab-specific reference ranges, especially Free T4
+* do not recompute corrected calcium unless formula and albumin unit are explicit and governed
+* keep urate/uric acid completely separate from urea/BUN
 
-* LC-S8D — UK/SI unit governance remediation
-* FE-S8E — uploaded-panel fidelity / Layer C Mode A rendering
-* LC-S9B — launch-core proving closeout checks
-* LC-S9C — lifestyle visibility and copy hardening
+## Non-negotiable reference-range policy
 
-The purpose of this sprint is to turn those proven behaviours into durable regression/Sentinel/fingerprint protection so future work cannot silently break them.
-
-## Strategic rule
-
-Do not document status for its own sake.
-
-Do not create passive decision artefacts.
-
-Any knowledge recorded in this sprint must be consumed by tests, Sentinel, harnesses, fingerprints, CI checks, or operational validation.
-
-Audit notes are allowed only to explain what was protected and how.
-
-## Governing evidence to read first
-
-Read these before editing anything:
+HealthIQ AI must use lab-derived reference ranges for biomarker interpretation.
 
 ```text
-docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md
-
-docs/audit-papers/LC-S9_launch_core_human_proving_closeout_review.md
-docs/audit-papers/LC-S9B_launch_core_proving_closeout_notes.md
-docs/audit-papers/LC-S9B_human_walkthrough_pack.md
-
-docs/audit-papers/launch-core-proving/PROVING_REPORT.md
-docs/audit-papers/launch-core-proving/latest_fingerprints.json
-
-docs/audit-papers/FE-S8E_post_merge_comparison_uat.md
-docs/audit-papers/FE-S8E_uploaded_panel_fidelity_uat_notes.md
-
-docs/audit-papers/LC-S8D_uk_si_unit_governance_remediation_notes.md
-docs/audit-papers/LC-S8D_frontend_layer_c_uat_report.md
+Use lab-derived reference ranges only.
+Do not substitute generic/global/default ranges where the lab has supplied a range.
+Only calculate/reference a derived range when HealthIQ must calculate a ratio or derived marker that the lab did not provide.
 ```
 
-If any path differs, locate the actual file and record the real path in the sprint notes.
+For this sprint:
+
+1. If an uploaded value is converted from a non-UK unit into the UK/SI canonical unit, the uploaded lab reference range must be converted by the same governed backend conversion path.
+2. If the uploaded lab provides a UK/SI value and UK/SI reference range, preserve both.
+3. If no lab reference range is supplied, do not invent a universal range for interpretation.
+4. Any fallback display range, if it already exists, must not be treated as interpretation authority.
+5. Free T4 must preserve lab/assay-specific reference ranges.
+6. Corrected calcium must preserve the lab’s corrected-calcium value/range.
+7. Do not calculate corrected calcium from total calcium and albumin unless formula and albumin unit are explicit and already governed.
+
+## Evidence-file prerequisite
+
+Before execution, confirm this file exists in the repo and is committed on the work-package branch:
+
+```text
+docs/audit-papers/Phase_B_UK_SI_Biomarker_Unit_Evidence_Review.md
+```
+
+If the file is missing, untracked, unstaged, or only present outside the repo, STOP.
+
+Do not implement from memory or from this prompt alone.
+
+## Governing evidence
+
+Read before editing:
+
+```text
+docs/audit-papers/LC-S8C_ssot_wide_unit_governance_preflight.md
+docs/audit-papers/LC-S8D_uk_si_unit_governance_remediation_notes.md
+docs/audit-papers/Phase_B_UK_SI_Biomarker_Unit_Evidence_Review.md
+```
+
+The evidence report approves:
+
+| Biomarker                | UK/SI canonical unit | Input alternative | Conversion                |
+| ------------------------ | -------------------- | ----------------- | ------------------------- |
+| Calcium                  | `mmol/L`             | `mg/dL`           | `mmol/L = mg/dL × 0.2495` |
+| Corrected calcium        | `mmol/L`             | `mg/dL`           | `mmol/L = mg/dL × 0.2495` |
+| Magnesium                | `mmol/L`             | `mg/dL`           | `mmol/L = mg/dL × 0.4114` |
+| Free T4                  | `pmol/L`             | `ng/dL`           | `pmol/L = ng/dL × 12.871` |
+| Haemoglobin / Hemoglobin | `g/L`                | `g/dL`            | `g/L = g/dL × 10`         |
+| Urate / Uric acid        | `µmol/L`             | `mg/dL`           | `µmol/L = mg/dL × 59.5`   |
+
+Evidence caveats:
+
+* corrected calcium is formula-derived and albumin-dependent; convert supplied values, do not recompute without explicit governed formula and albumin unit
+* Free T4 conversion is arithmetically approved, but reference-range interpretation is assay/lab-specific
+* urate/uric acid is not urea/BUN
+* lab-supplied ranges override all generic/global ranges
+
+## Real UK lab examples to preserve
+
+Use these as sanity-check expectations and optional fixtures:
+
+```text
+Haemoglobin (HGB): 144 g/L, range 130–175 g/L
+Uric Acid (Venous): 440 µmol/L, range 220–547 µmol/L
+Free T4 (Venous): 16.8 pmol/L, range 12–22 pmol/L
+Lab note: new reference range commencing 11/09/2024
+```
+
+Expected behaviour:
+
+* these UK values pass through unchanged
+* their lab reference ranges pass through unchanged
+* Free T4 range note does not cause replacement with a generic range
+* no US/default ranges override these lab-derived ranges
 
 ## Mandatory preflight before editing
 
@@ -78,6 +127,7 @@ Run and record:
 git branch --show-current
 git status --short
 git log --oneline -n 5
+git ls-files --error-unmatch docs/audit-papers/Phase_B_UK_SI_Biomarker_Unit_Evidence_Review.md
 ```
 
 Then verify:
@@ -88,8 +138,8 @@ Test-Path automation_bus/state/work_package_active.json
 
 Read `automation_bus/state/work_package_active.json` and confirm:
 
-* `work_id` is `LC-S10B`
-* branch is `launch-core/lc-s10b-protect-proven-launch-core-slice`
+* `work_id` is `LC-S8F`
+* branch is `launch-core/lc-s8f-phase-b-uk-si-true-conversions`
 
 If the token is missing or mismatched, STOP:
 
@@ -101,439 +151,600 @@ Kernel start not executed or work package mismatch.
 
 Before modifying files, identify and record the authoritative paths for:
 
-1. launch-core proving harness
-2. launch-core fingerprints
-3. CHECK 2 / 4 / 5 / 6 regression tests
-4. Sentinel pack registry
-5. existing unit-governance Sentinel pack
-6. frontend uploaded-panel fidelity tests or equivalent protection route
-7. root-cause fallback tests
-8. lifestyle-visible-payoff tests
-9. statin bounded-intervention tests
-10. Layer B → Layer C report contract tests
+1. biomarker SSOT
+2. unit registry data
+3. runtime unit conversion logic
+4. runtime conversion dispatch in `backend/core/units/registry.py`
+5. scoring policy
+6. alias registry
+7. reference-range normalisation / value-range coherence logic
+8. existing LC-S8D unit-governance Sentinel pack
+9. existing tests for unit registry and scoring
+10. existing tests for value/reference-range incoherence
+11. BUN/urea/urate alias protection
+12. frontend no-conversion Sentinel/static-scan patterns
 
 STOP if any authority is ambiguous or duplicated.
 
 Do not create a second authority source.
 
-## Additional hardening requirements
-
-### CHECK 4 specificity
-
-CHECK 4 must not only verify that an intervention is present.
-
-It must specifically assert:
-
-```text
-lipid_lowering_statin
-```
-
-is present in the statin_on intervention classes and absent from statin_off.
-
-Required protection:
-
-```text
-statin_off: intervention present = false and lipid_lowering_statin absent
-statin_on: intervention present = true and lipid_lowering_statin present
-```
-
-CHECK 4 must fail unless:
-
-* statin_on contains the specific intervention class `lipid_lowering_statin`
-* statin_off does not contain `lipid_lowering_statin`
-* analytical invariants are preserved
-* cardiovascular consequence sentence visibly changes on statin_on
-* statin copy does not claim scoring or ranking changed
-
-### Frontend protection reality
-
-There are currently no established frontend unit/integration tests outside existing repo tooling.
-
-Do not create a new frontend testing architecture in this sprint unless a direct protection gap cannot otherwise be covered.
-
-For this sprint, frontend protection may be satisfied by:
-
-* existing LC-S8D Sentinel guardrails
-* backend regression tests over payload/contract behaviour
-* no-conversion static scan
-* proving-harness evidence
-* documented browser/UAT evidence already produced by FE-S8E
-
-If frontend files are not changed, do not run `npm run test` merely to create noise.
-
-If frontend files are changed, run available frontend validation commands and document if no test command exists or if existing environment debt prevents execution.
-
-### Fingerprint field dependency
-
-During Phase 2 authority preflight, explicitly confirm that:
-
-```text
-docs/audit-papers/launch-core-proving/latest_fingerprints.json
-```
-
-contains `consumer_domain_rows` for each AB/VR run.
-
-If `consumer_domain_rows` is absent, STOP and report because CHECK 4 and CHECK 5 cannot be properly protected from compact fingerprints alone.
-
-## Proven behaviours to protect
-
-This sprint must protect the behaviours below.
-
-### A. Unit-governance behaviours from LC-S8D
-
-Protect:
-
-* HbA1c has one analytical identity.
-* HbA1c `%` must not be separately scored.
-* HbA1c Layer B uses `mmol/mol`.
-* Haematocrit Layer B uses `L/L`.
-* Haematocrit must never render or score as `0.438 %`.
-* Platelets and WBC treat `K/uL` / `K/μL` as equivalent to `10^9/L`.
-* Sodium, potassium, and chloride treat `mEq/L` as equivalent to `mmol/L`.
-* BUN maps to urea, not urate.
-* Uric acid / urate remains separate from urea.
-* Frontend must not perform unit conversions.
-
-### B. Layer C Mode A from FE-S8E
-
-Protect:
-
-* `meta.upload_panel_observations` is consumed by the frontend.
-* Uploaded source observations are visible.
-* HbA1c `%` appears as uploaded/equivalent when present.
-* Equivalent uploaded observations are not injected into analytical dials.
-* Canonical dials continue to use `biomarkers[]`.
-* Uploaded-panel fidelity remains renderer-only.
-
-### C. Layer C Mode B analytical collapse
-
-Protect:
-
-* equivalent biomarkers collapse for analytical interpretation
-* narrative/report does not duplicate HbA1c `%` and `mmol/mol`
-* analytical surfaces use canonical identity and governed unit
-* uploaded-panel provenance does not contaminate scoring or ranking
-
-### D. Lifestyle-visible payoff from LC-S9C
-
-Protect:
-
-* AB and VR lifestyle_context scenarios show the plain-English alcohol / one-carbon / homocysteine sentence in `body_overview`
-* baseline scenarios do not show that sentence
-* internal slug `alcohol_intake_moderate_or_higher_with_one_carbon_lab_coherence` never appears in user-facing narrative fields
-* lifestyle copy is visible without requiring the user to reach the end of a long lead narrative
-* scoring and ranking are unchanged by the lifestyle copy
-
-### E. Statin bounded modifier behaviour from LC-S9B
-
-Protect:
-
-* statin_off has no intervention object
-* statin_off does not contain `lipid_lowering_statin`
-* statin_on has `lipid_lowering_statin`
-* statin_on/off preserve analytical invariants
-* top findings remain stable
-* signal states remain stable
-* consumer band labels remain stable
-* statin_on visibly changes or caveats the cardiovascular consequence sentence
-* statin copy remains bounded and does not imply scoring was changed
-
-### F. WHY fallback safety
-
-Protect:
-
-* no user-facing field shows `No governed WHY for signal_...`
-* no user-facing field exposes raw `signal_*` IDs
-* fallback title remains plain English:
-  `Pattern noted — deeper causal explanation not yet available`
-* fallback copy remains non-speculative
-* fallback confidence remains unchanged
-* fallback routing/ranking logic is not altered
-
-### G. Launch-core CHECKs
-
-Protect:
-
-* CHECK 2 — lifestyle visible payoff
-* CHECK 4 — statin bounded intervention with specific `lipid_lowering_statin` class assertion
-* CHECK 5 — no band/consequence polarity contradiction
-* CHECK 6 — primary concern and retail summary lead alignment
-
-These must be executable on current proving outputs.
-
-## Explicit non-scope
-
-Do not do any of the following:
-
-* Phase B true unit conversions
-* Phase B evidence gathering
-* broad WHY Wave 2 expansion
-* broad medication ontology
-* questionnaire expansion
-* frontend redesign
-* new clinical claims
-* IDL consumer expansion
-* PDF redesign
-* generic narrative rewrite
-* demo-only logic
-* fake fixture-only shortcuts
-* hiding failed findings
-* suppressing outputs to pass tests
-* adding fallback parser logic
-
 ## Potentially allowed files
 
-Only edit files required for protection.
+Only edit files required for this Phase B conversion implementation.
 
 Potentially allowed:
-
-```text
-backend/tests/regression/**/*
-backend/tests/unit/**/*
-backend/tests/fixtures/**/*
-backend/tools/launch_core_proving_harness.py
-
-sentinel/packs/**/*
-sentinel/**/*
-
-frontend/tests/**/*
-frontend/app/lib/**/*
-frontend/app/components/**/*
-frontend/app/(app)/results/**/*
-
-docs/audit-papers/launch-core-proving/PROVING_REPORT.md
-docs/audit-papers/launch-core-proving/latest_fingerprints.json
-docs/audit-papers/LC-S10B_protection_of_proven_slice_notes.md
-```
-
-Code under `backend/core/**` or `frontend/app/**` may be edited only if a protection test exposes a real defect in the already-proven behaviour. Do not alter behaviour just to make tests easier.
-
-## Forbidden files
-
-Do not edit:
 
 ```text
 backend/ssot/biomarkers.yaml
 backend/ssot/units.yaml
 backend/ssot/scoring_policy.yaml
+backend/ssot/biomarker_alias_registry.yaml
+
 backend/core/units/registry.py
 backend/core/scoring/rules.py
-backend/core/canonical/hba1c_layer_b_arbitration.py
+backend/core/**/* only if required for reference-range coherence
 
+backend/tests/unit/test_unit_registry.py
+backend/tests/unit/test_scoring_rules.py
+backend/tests/regression/test_lc_s8_biomarker_unit_reference_incoherence_regression.py
+backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py
+backend/tests/**/* only where directly relevant
+
+sentinel/packs/lc_s8d_unit_governance_v1.json
+sentinel/packs/**/* only if adding Phase B protection
+
+docs/audit-papers/Phase_B_UK_SI_Biomarker_Unit_Evidence_Review.md
+docs/audit-papers/LC-S8F_phase_b_true_conversion_implementation_notes.md
+```
+
+## Forbidden files and changes
+
+Do not edit:
+
+```text
+frontend/**
 backend/scripts/run_work_package.py
 backend/scripts/golden_gate_local.py
 backend/scripts/update_cursor_status.py
-
 automation_bus/latest_gate_evidence.json
 automation_bus/latest_gate_output.txt
 automation_bus/latest_cursor_status.json
 ```
 
-## Phase 1 — Protection inventory
+Do not:
 
-Create or update:
+* alter Layer C narrative
+* alter launch-core proving harness unless a test path breaks because of unit changes
+* change questionnaire logic
+* change medication/statin logic
+* change LC-S10B protection scope
+* introduce generic/default reference ranges
+* recompute corrected calcium without explicit governed formula and albumin unit
+* map urate/uric acid to urea/BUN
+* implement frontend conversion logic
+* add fallback parser logic
+* suppress failing biomarkers to pass tests
+
+## Required implementation
+
+### 1. SSOT canonical unit updates
+
+Update SSOT canonical units for the approved Phase B biomarkers:
 
 ```text
-docs/audit-papers/LC-S10B_protection_of_proven_slice_notes.md
+calcium → mmol/L
+corrected_calcium → mmol/L
+magnesium → mmol/L
+free_t4 → pmol/L
+hemoglobin / haemoglobin → g/L
+urate / uric_acid → µmol/L or existing repo-equivalent umol/L
 ```
 
-Record:
+Use the existing canonical biomarker IDs in the repo. Do not create duplicate biomarker IDs.
 
-* current branch / git state
-* authority paths found
-* existing tests that already protect each proven behaviour
-* gaps where protection is missing
-* proposed protection mechanism for each gap
+If the repo uses `hemoglobin` as the canonical ID with `haemoglobin` as an alias, preserve that structure.
 
-Do not implement until this inventory is complete.
+If the repo uses `urate` as canonical with `uric_acid` as an alias, preserve that structure.
 
-Required output table:
+### 2. Unit definition prerequisite
 
-| Behaviour | Existing protection | Gap | Planned protection |
-| --------- | ------------------- | --- | ------------------ |
+Before adding any Free T4 conversion, verify both unit tokens are defined in `backend/ssot/units.yaml`:
 
-## Phase 2 — Protect launch-core proving matrix
+```text
+pmol/L
+ng/dL
+```
 
-Ensure the launch-core proving harness and regression tests protect:
+If the repo uses internal unit keys, add or verify coherent entries for:
 
-* AB baseline
-* AB lifestyle_context
-* AB statin_off
-* AB statin_on
-* VR baseline
-* VR lifestyle_context
-* VR statin_off
-* VR statin_on
+```text
+pmol_L
+ng_dL
+```
 
-For each scenario, the protected fingerprint must include enough information to detect drift in:
+Do not add a conversion entry that references an undefined unit token.
 
-* lead finding
-* top findings order
-* primary concern head
-* retail summary head
-* body overview head
-* lead narrative head
-* cardiovascular consequence sentence
-* intervention classes
-* consumer band labels
-* internal fallback leakage
-* `consumer_domain_rows`
+Free T4 implementation is incomplete unless both the unit definitions and the `ng/dL ↔ pmol/L` conversion are registered and tested.
 
-If the existing fingerprints already contain these fields, document and test them.
+### 3. Critical runtime conversion dispatch requirement
 
-If not, extend the harness output minimally.
+Adding entries to `backend/ssot/units.yaml` is not sufficient.
 
-STOP if the harness becomes non-deterministic.
+Cursor must inspect and update the actual runtime conversion dispatch in:
 
-## Phase 3 — Protect CHECK 2 / 4 / 5 / 6
+```text
+backend/core/units/registry.py
+```
 
-Ensure regression tests exist and pass for:
+The implementation must ensure every Phase B conversion is reachable through the live conversion path, not merely declared in YAML.
 
-### CHECK 2 — Lifestyle visible payoff
+The implementation must explicitly handle the current `registry.py` dispatch architecture.
 
-Must assert:
+Required `registry.py` work:
 
-* baseline AB/VR do not include the lifestyle sentence
-* lifestyle_context AB/VR include the plain-English lifestyle sentence in body overview
-* internal lifestyle slug is absent from user-facing fields
-* lifestyle_context narrative/body differs from baseline in a user-visible way
+1. Add or verify `UnitEnum` / runtime unit-token support for:
 
-### CHECK 4 — Statin bounded intervention
+```text
+mg/dL
+mmol/L
+pmol/L
+ng/dL
+g/L
+g/dL
+µmol/L
+umol/L
+```
 
-Must assert:
+2. Add or verify frozen-set / grouping support for each Phase B biomarker group, using the style already present in `registry.py`:
 
-* statin_off has no statin intervention
-* statin_off does not contain `lipid_lowering_statin`
-* statin_on has `lipid_lowering_statin`
-* analytical invariants are preserved between statin_off and statin_on
-* cardiovascular consequence sentence differs on statin_on
-* statin copy does not claim scoring/ranking changed
+```text
+calcium / corrected_calcium
+magnesium
+free_t4
+hemoglobin
+urate / uric_acid
+```
 
-### CHECK 5 — Band/consequence polarity
+The groups must be used by runtime conversion dispatch, not only by tests.
 
-Must assert:
+3. Ensure every Phase B biomarker that uses strict unit conversion is included in `_STRICT_CONVERSION_BIOMARKERS` or the repo’s equivalent strict-conversion control set.
 
-* no reassuring headline contradicts a concerning band
-* no urgent/alarming wording is attached to stable bands
-* launch-core surfaces are internally coherent
+At minimum, verify or add:
 
-### CHECK 6 — Lead alignment
+```text
+calcium
+corrected_calcium
+magnesium
+free_t4
+hemoglobin
+urate
+```
 
-Must assert:
+If aliases such as `uric_acid` or `haemoglobin` are handled before canonicalisation, ensure they resolve safely before conversion.
 
-* primary concern and retail summary point to the same lead family
-* AB/VR baseline remain homocysteine-led unless a future governed change updates the expected fingerprint intentionally
+4. Add explicit `_get_conversion_factor()` branches, or the repo’s equivalent runtime dispatch branches, for:
 
-## Phase 4 — Protect unit and Layer C behaviours
+```text
+calcium / corrected_calcium: mg/dL ↔ mmol/L using 0.2495
+magnesium: mg/dL ↔ mmol/L using 0.4114
+free_t4: ng/dL ↔ pmol/L using 12.871
+hemoglobin: g/dL ↔ g/L using 10, if not already active
+urate: mg/dL ↔ µmol/L / umol/L using 59.5
+```
 
-Ensure regression/Sentinel/frontend-equivalent tests protect:
+5. Add tests proving the runtime conversion path is actually called.
 
-* HbA1c single analytical identity
-* haematocrit `L/L`
-* BUN→urea and urate separation
-* uploaded-panel fidelity section
-* HbA1c `%` visible only as uploaded/equivalent
-* canonical dials from `biomarkers[]`
-* frontend no conversion maths
-* no duplicate equivalent analytical findings
+Tests must fail if the implementation falls through to a generic passthrough path.
 
-If these already exist from LC-S8D/FE-S8E, do not duplicate unnecessarily. Add only missing coverage.
+STOP if any Phase B conversion is only declared in YAML but not reachable through `registry.py` runtime dispatch.
 
-Frontend-specific protection does not require new frontend test infrastructure unless a clear gap cannot be protected through existing Sentinel/backend regression/static scan routes.
+### 4. Unit registry conversions
 
-## Phase 5 — Sentinel promotion
+Add or verify governed conversions:
 
-Review whether any existing placeholder/status checks should become real blockers for the proven slice.
+```text
+calcium: mg/dL ↔ mmol/L using factor 0.2495
+corrected_calcium: mg/dL ↔ mmol/L using factor 0.2495
+magnesium: mg/dL ↔ mmol/L using factor 0.4114
+free_t4: ng/dL ↔ pmol/L using factor 12.871
+hemoglobin: g/dL ↔ g/L using factor 10
+urate: mg/dL ↔ µmol/L using factor 59.5
+```
 
-At minimum, assess:
+Conversions must work for:
 
-* unit-governance Sentinel pack
-* frontend no unit repair
-* WHY fallback leakage
-* lifestyle slug leakage
-* CHECK 2/4/5/6 protection
+* value
+* lower reference bound
+* upper reference bound
 
-If a Sentinel rule can be safely added without creating false positives, add it.
+where the uploaded reference range is in the same source unit.
 
-If not appropriate, document why pytest/regression/static-scan protection is sufficient for this sprint.
+### 5. Haemoglobin conversion status
 
-Do not create broad Sentinel Phase 2.
+The `g/dL ↔ g/L` conversion may already exist.
 
-## Phase 6 — Final proof run
+If present and correct:
 
-Run the refreshed proving harness and targeted test suite.
+* do not duplicate it
+* verify it
+* test it
+* document it
 
-Required commands:
+### 6. Urate clarification
+
+`urate` may already be recorded as `umol/L`. Treat this as the same unit family as `µmol/L`.
+
+The main implementation work for urate is:
+
+* add/verify `mg/dL ↔ µmol/L` conversion
+* preserve or normalise `umol/L` / `µmol/L` equivalence
+* verify `uric_acid → urate`
+* verify BUN remains mapped to `urea`, not `urate`
+
+This is not the same class of change as calcium, magnesium, Free T4, or haemoglobin. Do not overstate it in notes.
+
+### 7. Reference-range coherence
+
+Add or confirm tests that prove:
+
+* value and reference range are converted coherently
+* converted value and converted reference range end up in the same canonical unit
+* incoherent value/reference families are rejected or marked unscored, not silently scored
+* UK lab-derived ranges pass through unchanged
+* Free T4 lab-specific range is preserved
+* corrected calcium lab range is preserved
+
+Do not use global fallback ranges to score these markers.
+
+### 8. Scoring policy alignment
+
+If these biomarkers are scored, align scoring policy units to the new UK/SI canonical unit only where the score bands are currently defined and safe to migrate.
+
+Before changing any scoring band:
+
+1. confirm the current band source unit
+2. convert the band numerically using the same governed conversion
+3. add before/after test vectors
+4. confirm no polarity drift
+
+If a biomarker has no scoring policy, do not invent one.
+
+If scoring ranges are not lab-derived and the current HealthIQ policy requires lab-derived ranges, do not add generic scoring bands.
+
+### 9. Haemoglobin atomicity requirement
+
+Haemoglobin migration must be atomic.
+
+Do not change `hemoglobin` canonical unit to `g/L` unless all of the following happen in the same sprint:
+
+1. scoring policy unit changes to `g/L`
+2. scoring band values are multiplied by 10
+3. registry conversion supports `g/dL ↔ g/L`
+4. tests prove `14.6 g/dL → 146 g/L`
+5. tests prove UK pass-through `144 g/L` with range `130–175 g/L`
+6. Sentinel/regression protection confirms haemoglobin scoring unit and band scale are aligned
+7. `hemoglobin: "g/L"` is added to `LC_S8D_SSOT_SCORING_UNIT_ALIGNMENT` or the repo’s equivalent Sentinel alignment expectation
+
+STOP if haemoglobin canonical unit and scoring bands would be left in different unit systems.
+
+### 10. Alias protection
+
+Ensure aliases remain correct:
+
+```text
+uric_acid → urate
+urate ≠ urea
+BUN → urea
+blood urea nitrogen → urea
+```
+
+Add or update tests proving:
+
+* `uric_acid` maps to `urate`
+* `BUN` maps to `urea`
+* `uric_acid` never maps to `urea`
+* `BUN` never maps to `urate`
+
+If these aliases already exist correctly, verify and document. Do not recreate unnecessarily.
+
+### 11. Corrected calcium caveat
+
+Implementation must allow conversion of a supplied corrected-calcium value.
+
+Implementation must not calculate corrected calcium from total calcium and albumin unless there is already an explicit governed formula and albumin unit path.
+
+Add a test or documentation note confirming:
+
+```text
+Corrected calcium unit conversion is implemented.
+Corrected calcium recalculation is not implemented in this sprint.
+```
+
+### 12. Free T4 caveat
+
+Implementation must allow `ng/dL → pmol/L` conversion.
+
+Implementation must preserve lab/assay-specific reference ranges.
+
+Add a test using:
+
+```text
+Free T4 16.8 pmol/L, range 12–22 pmol/L
+```
+
+Expected:
+
+* value remains `16.8 pmol/L`
+* range remains `12–22 pmol/L`
+* no generic range replaces it
+
+Add a test using:
+
+```text
+Free T4 1.2 ng/dL
+```
+
+Expected:
+
+```text
+15.45 pmol/L
+```
+
+with converted lab range if an uploaded ng/dL range is supplied.
+
+### 13. Frontend conversion Sentinel/static-scan update
+
+If LC-S8D / LC-S10B frontend no-conversion Sentinel patterns exist, update the relevant forbidden frontend conversion regex/pattern to include the new Phase B factors:
+
+```text
+0.2495
+0.4114
+12.871
+59.5
+```
+
+Specifically inspect and update the repo’s `FORBIDDEN_FRONTEND_CONVERSION_RE` or equivalent frontend no-conversion Sentinel/static-scan pattern.
+
+The purpose is to prevent these conversion constants from appearing in frontend code.
+
+These constants are allowed only in backend registry/tests/docs/Sentinel metadata, not frontend runtime.
+
+Do not edit frontend code.
+
+### 14. Sentinel haemoglobin alignment update
+
+Update `LC_S8D_SSOT_SCORING_UNIT_ALIGNMENT` or the repo’s equivalent Sentinel alignment expectation to include:
+
+```text
+hemoglobin: "g/L"
+```
+
+This must be done if haemoglobin scoring remains active and is migrated to `g/L`.
+
+The Sentinel/regression expectation must protect against haemoglobin canonical unit and scoring-policy unit drifting apart.
+
+## Required test vectors
+
+Implement tests for at least:
+
+| Biomarker         |       Input | Expected UK/SI output |
+| ----------------- | ----------: | --------------------: |
+| Calcium           | `9.4 mg/dL` |         `2.35 mmol/L` |
+| Corrected calcium | `9.4 mg/dL` |         `2.35 mmol/L` |
+| Magnesium         | `2.1 mg/dL` |         `0.86 mmol/L` |
+| Free T4           | `1.2 ng/dL` |        `15.45 pmol/L` |
+| Haemoglobin       | `14.6 g/dL` |             `146 g/L` |
+| Urate / uric acid | `5.8 mg/dL` |        `345.1 µmol/L` |
+
+Use appropriate tolerance for floating-point comparison.
+
+Also test UK pass-through:
+
+| Biomarker   |         Input |            Range | Expected  |
+| ----------- | ------------: | ---------------: | --------- |
+| Haemoglobin |     `144 g/L` |    `130–175 g/L` | unchanged |
+| Uric Acid   |  `440 µmol/L` | `220–547 µmol/L` | unchanged |
+| Free T4     | `16.8 pmol/L` |   `12–22 pmol/L` | unchanged |
+
+## Phase gates
+
+### Phase 1 — Inventory and mapping
+
+Record current state for the six biomarkers:
+
+* current SSOT unit
+* current aliases
+* current registry YAML support
+* current runtime conversion dispatch support
+* current `UnitEnum` / unit-token support
+* current frozen-set / conversion-group support
+* current `_STRICT_CONVERSION_BIOMARKERS` inclusion
+* current scoring policy unit, if any
+* current tests
+* current Sentinel coverage
+* whether conversion already exists or needs implementation
+* whether unit definitions already exist or need creation
+* whether the evidence report is committed in-repo
+
+Output this to:
+
+```text
+docs/audit-papers/LC-S8F_phase_b_true_conversion_implementation_notes.md
+```
+
+Do not implement until inventory is complete.
+
+### Phase 2 — Registry and SSOT conversion
+
+Implement approved unit conversions, runtime conversion dispatch, and SSOT unit alignment.
+
+STOP if:
+
+* any factor differs from approved evidence
+* any conversion references an undefined unit token
+* any conversion is declared in YAML but not reachable in runtime dispatch
+* any Phase B strict conversion biomarker is missing from `_STRICT_CONVERSION_BIOMARKERS` or equivalent control set
+* any conversion requires assay-specific formula beyond approved arithmetic unit conversion
+* any corrected-calcium recomputation is attempted
+* urate/urea alias boundaries are unclear
+
+### Phase 3 — Reference-range coherence
+
+Implement or verify coherent conversion of lab-supplied reference ranges.
+
+STOP if:
+
+* a converted value can be scored against an unconverted range
+* a lab-derived range can be overwritten by a generic range
+* Free T4 reference range can be replaced by a universal range
+* corrected calcium range handling is ambiguous
+
+### Phase 4 — Scoring alignment
+
+Align scoring-policy units only where applicable and safe.
+
+STOP if:
+
+* scoring bands lack clear current unit authority
+* migration would introduce generic ranges contrary to lab-derived-range policy
+* polarity changes unintentionally
+* a biomarker without scoring policy would require inventing new generic bands
+* haemoglobin canonical unit is changed to `g/L` while scoring bands remain numerically in `g/dL`
+* haemoglobin Sentinel scoring-unit alignment is not updated to `g/L`
+
+### Phase 5 — Sentinel and regression protection
+
+Add or update Sentinel/regression protection for:
+
+* Phase B canonical unit drift
+* missing Phase B conversion authority
+* runtime conversion dispatch reachability
+* Phase B factors absent from frontend runtime
+* urate/urea alias separation
+* Free T4 assay/reference-range preservation
+* corrected-calcium no-recompute rule
+* lab-derived range preservation
+* haemoglobin scoring unit/band alignment
+* `FORBIDDEN_FRONTEND_CONVERSION_RE` or equivalent frontend no-conversion pattern includes:
+
+  * `0.2495`
+  * `0.4114`
+  * `12.871`
+  * `59.5`
+* `LC_S8D_SSOT_SCORING_UNIT_ALIGNMENT` or equivalent includes:
+
+  * `hemoglobin: "g/L"`
+
+Do not duplicate existing Sentinel protections unnecessarily.
+
+### Phase 6 — Final validation
+
+Run required test commands and record outputs.
+
+## Required validation commands
+
+Run:
 
 ```powershell
-python backend/tools/launch_core_proving_harness.py
-python -m pytest backend/tests/regression/test_lc_s5_proving_checks.py -q
+python -m pytest backend/tests/unit/test_unit_registry.py -q
+python -m pytest backend/tests/unit/test_scoring_rules.py -q
+python -m pytest backend/tests/regression/test_lc_s8_biomarker_unit_reference_incoherence_regression.py -q
 python -m pytest backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py -q
 python -m pytest backend/tests/unit/test_hba1c_governance.py -q
 ```
 
-Run frontend validation only if frontend files are changed:
+If a new dedicated Phase B test file is created, run it explicitly, for example:
 
 ```powershell
-npm run type-check
-npm run test
+python -m pytest backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py -q
 ```
 
-If commands do not exist or fail due to known unrelated debt, record exact output and whether it blocks this sprint.
+Run a targeted alias scan or test proving:
 
-Run frontend no-conversion scan if frontend files are changed:
+```text
+BUN → urea
+uric_acid → urate
+BUN ≠ urate
+uric_acid ≠ urea
+```
+
+Run a repository scan for accidental frontend conversion if frontend files are unexpectedly touched or if Sentinel/static scan protection is updated:
 
 ```powershell
-Select-String -Path frontend/app/**/*.ts,frontend/app/**/*.tsx -Pattern "0.055|0.0555|18.018|38.67|88.4|0.02586|mg_dL|mmol_L|convert" -CaseSensitive:$false
+Select-String -Path frontend/app/**/*.ts,frontend/app/**/*.tsx -Pattern "0.2495|0.4114|12.871|59.5|mg/dL|g/dL|ng/dL|convert" -CaseSensitive:$false
 ```
 
-Review all hits.
+Frontend changes should not occur.
 
 ## Acceptance criteria
 
 This sprint is complete only if:
 
-* launch-core matrix protection exists for AB/VR baseline/lifestyle/statin scenarios
-* `consumer_domain_rows` presence is verified in fingerprints where required by CHECK 4 / CHECK 5
-* CHECK 2 / 4 / 5 / 6 are protected and passing
-* CHECK 4 specifically verifies `lipid_lowering_statin`, not merely generic intervention presence
-* lifestyle visible payoff is protected
-* statin bounded intervention is protected
-* unit-governance behaviours remain protected
-* uploaded-panel fidelity remains protected
-* no internal lifestyle rule slug can leak into user-facing fields
-* no raw `signal_*` / `No governed WHY for signal_...` fallback can leak into user-facing fields
-* proving fingerprints are refreshed on current code
-* Sprint 6 protection notes state exactly what is now protected
-* no feature expansion has occurred
+* the Phase B evidence report exists and is committed in-repo
+* all six Phase B biomarkers have approved UK/SI canonical unit handling
+* governed conversion factors are implemented exactly
+* required unit definitions exist before conversion entries reference them
+* runtime conversion dispatch actually reaches every Phase B conversion
+* Phase B biomarkers are included in `_STRICT_CONVERSION_BIOMARKERS` or equivalent where required
+* tests prove conversions do not fall through to passthrough behaviour
+* lab-derived reference ranges are preserved
+* converted lab reference ranges are converted coherently with values
+* Free T4 preserves assay/lab-specific reference ranges
+* corrected calcium is not recomputed
+* urate/uric acid remains separate from urea/BUN
+* UK lab examples pass through unchanged
+* haemoglobin scoring bands are migrated to `g/L` if haemoglobin scoring is retained
+* haemoglobin canonical unit and scoring bands are not left in different unit systems
+* haemoglobin Sentinel scoring alignment expects `g/L`
+* scoring policy is aligned only where safe and justified
+* tests cover all approved conversion vectors
+* Sentinel/regression protections are updated
+* frontend no-conversion protection includes Phase B conversion factors
+* no frontend conversion logic is introduced
+* no Phase B global/default reference ranges are introduced
+* no unrelated launch-core behaviours are changed
 
 ## Required documentation output
 
 Create or update:
 
 ```text
-docs/audit-papers/LC-S10B_protection_of_proven_slice_notes.md
+docs/audit-papers/LC-S8F_phase_b_true_conversion_implementation_notes.md
 ```
 
 It must include:
 
-1. protection inventory
-2. files changed
-3. tests added/updated
-4. Sentinel changes, if any
-5. proving harness result
-6. refreshed fingerprint stamp/SHA
-7. known deferred gaps
-8. final protection verdict
+1. Phase 1 inventory
+2. Evidence source used
+3. Evidence file committed status
+4. Files changed
+5. Conversion factors implemented
+6. Unit definitions added or verified
+7. `UnitEnum` / unit-token updates
+8. Frozen-set / biomarker-group updates
+9. `_STRICT_CONVERSION_BIOMARKERS` updates
+10. Runtime conversion dispatch changes
+11. Reference-range handling decision
+12. Scoring-policy decision per biomarker
+13. Haemoglobin scoring migration result
+14. Haemoglobin Sentinel scoring-alignment update
+15. Corrected-calcium caveat
+16. Free T4 assay/range caveat
+17. Urate-vs-urea alias protection
+18. Frontend no-conversion Sentinel/static-scan update
+19. Tests run
+20. Sentinel/protection changes
+21. Deferred risks
+22. Final implementation verdict
 
-This document is not a passive status artefact. It must map directly to tests and guards created or verified in this sprint.
+This document must map directly to implementation and tests. It is not a passive status artefact.
 
 ## Cursor completion requirements
 
 When implementation is complete, Cursor must:
 
 1. Run required validation commands.
-2. Update the protection notes.
+2. Update the implementation notes.
 3. Run closure audit:
 
 ```powershell
@@ -553,7 +764,9 @@ git stash list
    * tooling files
    * out-of-scope files
    * stash entries
+
 5. STOP if unrelated files, tooling leakage, dirty branch ambiguity, or stash ambiguity exists.
+
 6. If closure is clean, run:
 
 ```powershell
@@ -567,8 +780,8 @@ python backend/scripts/run_work_package.py finish
 
 ## Explicit non-authority statement
 
-Cursor implements and reports protection only.
+Cursor implements and reports only.
 
-Cursor may not self-certify Sprint 6 completion, launch readiness, architecture correctness, merge readiness, or final approval.
+Cursor may not self-certify clinical correctness, architecture correctness, merge readiness, launch readiness, or final approval.
 
 ````
