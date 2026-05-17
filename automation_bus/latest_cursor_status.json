@@ -1,10 +1,9 @@
 {
-  "branch": "launch-core/lc-s8f-phase-b-uk-si-true-conversions",
+  "branch": "launch-core/lc-s11a-trust-blocker-correction",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-17T10:54:12Z",
-  "cursor_started_utc": "2026-05-17T10:51:55Z",
-  "head_sha": "7a28c89fd7ebd6fe99ff1a4eea1249c3efad342e",
+  "cursor_started_utc": "2026-05-17T13:54:46Z",
+  "head_sha": "fe1e1aed44418744a376d3703f8ae4adc7e26d0b",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "LC-S8G"
+  "status": "IN_PROGRESS",
+  "work_id": "LC-S11A"
 }
