@@ -82,3 +82,40 @@ biomarkers:
       legacy_input_units: ["K/μL", "K/uL"]
     analytical_report:
       display_unit: 10^9/L
+  calcium:
+    layer_b_unit: mmol/L
+    uploaded_panel_fidelity:
+      legacy_input_units: ["mg/dL"]
+    analytical_report:
+      display_unit: mmol/L
+  corrected_calcium:
+    layer_b_unit: mmol/L
+    uploaded_panel_fidelity:
+      legacy_input_units: ["mg/dL"]
+    analytical_report:
+      display_unit: mmol/L
+  magnesium:
+    layer_b_unit: mmol/L
+    uploaded_panel_fidelity:
+      legacy_input_units: ["mg/dL"]
+    analytical_report:
+      display_unit: mmol/L
+  free_t4:
+    layer_b_unit: pmol/L
+    uploaded_panel_fidelity:
+      legacy_input_units: ["ng/dL"]
+    analytical_report:
+      display_unit: pmol/L
+  hemoglobin:
+    layer_b_unit: g/L
+    uploaded_panel_fidelity:
+      legacy_input_units: ["g/dL"]
+    analytical_report:
+      display_unit: g/L
+  urate:
+    layer_b_unit: µmol/L
+    uploaded_panel_fidelity:
+      legacy_input_units: ["mg/dL"]
+      equivalent_canonical_ids: [uric_acid]
+    analytical_report:
+      display_unit: µmol/L

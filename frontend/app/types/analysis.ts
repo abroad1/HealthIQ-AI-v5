@@ -78,19 +78,30 @@ export interface ContributionContextV1 {
   factual_statement: string;
 }
 
+export interface BiomarkerReferenceRange {
+  min: number | null;
+  max: number | null;
+  unit: string;
+  source: string | null;
+}
+
 export interface BiomarkerResult {
   biomarker_name: string;
   value: number | null;
   unit: string;
+  /** LC-S8G — customer-facing display (uploaded unit family when governed). */
+  display_value?: number | null;
+  display_unit?: string | null;
+  display_reference_range?: BiomarkerReferenceRange | null;
+  analytical_value?: number | null;
+  analytical_unit?: string | null;
+  analytical_reference_range?: BiomarkerReferenceRange | null;
+  display_is_uploaded_unit?: boolean;
+  analytical_transparency_unit?: string | null;
   score?: number | null;
   percentile?: number | null;
   status?: string | null;
-  reference_range?: {
-    min: number | null;
-    max: number | null;
-    unit: string;
-    source: string | null;
-  } | null;
+  reference_range?: BiomarkerReferenceRange | null;
   /** Engine/lab mechanics — not retail educational explainer text */
   interpretation?: string | null;
   biomarker_educational_explainer?: BiomarkerEducationalExplainerV1 | null;

@@ -10,6 +10,8 @@ import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Info, ChevronDown
 export interface BiomarkerDialEntry {
   value: number;
   unit: string;
+  /** When display differs from analytical unit (LC-S8G). */
+  analyticalTransparencyUnit?: string | null;
   date?: string;
   score?: number;
   interpretation?: string | null;
@@ -374,6 +376,11 @@ export default function BiomarkerDials({ biomarkers, sectionTitle = 'Biomarker e
                         <p className="text-xs text-amber-800/90 mt-1 leading-snug">
                           Reference range not shown here because the lab units differ from the value row — use your
                           original report or ask your clinician.
+                        </p>
+                      ) : null}
+                      {d?.analyticalTransparencyUnit ? (
+                        <p className="text-xs text-slate-600 mt-1 leading-snug">
+                          Analysed internally as {d.analyticalTransparencyUnit}
                         </p>
                       ) : null}
                       {d?.interpretation ? (

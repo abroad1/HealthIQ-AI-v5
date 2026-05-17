@@ -8,6 +8,7 @@ from datetime import datetime, UTC
 from core.analytics.report_compiler_v1 import compile_clinician_report_v1
 from core.contracts.intervention_annotation_v1 import InterventionAnnotationsV1
 from core.analytics.balanced_systems_presentation_v1 import compile_balanced_systems_v1
+from core.units.display_fidelity_v1 import enrich_biomarker_row_display_fields
 from core.models.biomarker import BiomarkerCluster, BiomarkerInsight
 from core.models.results import AnalysisResult, AnalysisSummary, BiomarkerScore, ClusterHit
 from core.models.insight import Insight, InsightSynthesisResult
@@ -142,6 +143,18 @@ def analysis_route_biomarker_row(b: BiomarkerScore) -> Dict[str, Any]:
     if b.contribution_context is not None:
         row["contribution_context"] = b.contribution_context.model_dump()
     return row
+
+
+def analysis_route_biomarker_row_with_display(
+    b: BiomarkerScore,
+    *,
+    upload_panel: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """API/stored biomarker row with LC-S8G display contract fields."""
+    return enrich_biomarker_row_display_fields(
+        analysis_route_biomarker_row(b),
+        upload_panel=upload_panel,
+    )
 
 
 def extend_cluster_client_dict_from_hit(cluster_dict: Dict[str, Any], cluster: ClusterHit) -> Dict[str, Any]:

@@ -497,18 +497,30 @@ export default function ResultsPage() {
         hasContributionFactual,
         relatedSystemGroupNames,
       });
+      const shownValue =
+        typeof biomarker.display_value === 'number' ? biomarker.display_value : (biomarker.value as number);
+      const shownUnit = (biomarker.display_unit || biomarker.unit || '').trim();
+      const shownRef = biomarker.display_reference_range ?? biomarker.reference_range;
+      const analyticalUnit = (biomarker.analytical_unit || biomarker.unit || '').trim();
+      const showTransparency =
+        biomarker.display_is_uploaded_unit === true ||
+        (!!shownUnit &&
+          !!analyticalUnit &&
+          shownUnit.replace(/\s+/g, '').toLowerCase() !== analyticalUnit.replace(/\s+/g, '').toLowerCase());
+
       biomarkerDialData[biomarker.biomarker_name] = {
-        value: biomarker.value as number,
-        unit: biomarker.unit,
+        value: shownValue,
+        unit: shownUnit,
+        analyticalTransparencyUnit: showTransparency ? analyticalUnit : null,
         status: biomarker.status ?? undefined,
         score: biomarker.score ?? undefined,
         interpretation: biomarker.interpretation ?? undefined,
-        referenceRange: biomarker.reference_range
+        referenceRange: shownRef
           ? {
-              min: biomarker.reference_range.min ?? undefined,
-              max: biomarker.reference_range.max ?? undefined,
-              unit: biomarker.reference_range.unit,
-              source: biomarker.reference_range.source ?? undefined,
+              min: shownRef.min ?? undefined,
+              max: shownRef.max ?? undefined,
+              unit: shownRef.unit,
+              source: shownRef.source ?? undefined,
             }
           : undefined,
         date: created_at,
