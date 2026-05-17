@@ -55,6 +55,8 @@ class UnitEnum(str, Enum):
     NMOL_L = "nmol/L"
     NG_ML = "ng/mL"
     MMOL_MOL = "mmol/mol"
+    PMOL_L = "pmol/L"
+    NG_DL = "ng/dL"
     MEQ_L = "mEq/L"
     TEN_9_L = "10^9/L"
     RATIO = "ratio"
@@ -72,6 +74,10 @@ _CREATININE_BIOMARKERS = frozenset({"creatinine"})
 _VITAMIN_D_BIOMARKERS = frozenset({"vitamin_d"})
 _HEMOGLOBIN_BIOMARKERS = frozenset({"hemoglobin"})
 _HEMATOCRIT_BIOMARKERS = frozenset({"hematocrit"})
+_CALCIUM_BIOMARKERS = frozenset({"calcium", "corrected_calcium"})
+_MAGNESIUM_BIOMARKERS = frozenset({"magnesium"})
+_FREE_T4_BIOMARKERS = frozenset({"free_t4"})
+_URATE_BIOMARKERS = frozenset({"urate"})
 _ELECTROLYTE_BIOMARKERS = frozenset({"sodium", "potassium", "chloride"})
 _COUNT_BIOMARKERS = frozenset({
     "platelets", "white_blood_cells", "neutrophils", "lymphocytes",
@@ -87,6 +93,10 @@ _STRICT_CONVERSION_BIOMARKERS = frozenset().union(
     _VITAMIN_D_BIOMARKERS,
     _HEMOGLOBIN_BIOMARKERS,
     _HEMATOCRIT_BIOMARKERS,
+    _CALCIUM_BIOMARKERS,
+    _MAGNESIUM_BIOMARKERS,
+    _FREE_T4_BIOMARKERS,
+    _URATE_BIOMARKERS,
 )
 
 _UMOL_EQUIVALENTS = frozenset({"µmol/L", "umol/L", "uMol/L"})
@@ -231,6 +241,48 @@ class UnitRegistry:
             c = convs.get("g_dL_to_g_L_hemoglobin", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
                 return float(c.get("factor", 10.0))
+        if biomarker_id in _CALCIUM_BIOMARKERS and from_u == "mg/dL" and to_u == "mmol/L":
+            key = (
+                "mg_dL_to_mmol_L_corrected_calcium"
+                if biomarker_id == "corrected_calcium"
+                else "mg_dL_to_mmol_L_calcium"
+            )
+            c = convs.get(key, {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 0.2495))
+        if biomarker_id in _CALCIUM_BIOMARKERS and from_u == "mmol/L" and to_u == "mg/dL":
+            key = (
+                "mmol_L_to_mg_dL_corrected_calcium"
+                if biomarker_id == "corrected_calcium"
+                else "mmol_L_to_mg_dL_calcium"
+            )
+            c = convs.get(key, {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 4.008016))
+        if biomarker_id in _MAGNESIUM_BIOMARKERS and from_u == "mg/dL" and to_u == "mmol/L":
+            c = convs.get("mg_dL_to_mmol_L_magnesium", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 0.4114))
+        if biomarker_id in _MAGNESIUM_BIOMARKERS and from_u == "mmol/L" and to_u == "mg/dL":
+            c = convs.get("mmol_L_to_mg_dL_magnesium", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 2.430724))
+        if biomarker_id in _FREE_T4_BIOMARKERS and from_u == "ng/dL" and to_u == "pmol/L":
+            c = convs.get("ng_dL_to_pmol_L_free_t4", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 12.871))
+        if biomarker_id in _FREE_T4_BIOMARKERS and from_u == "pmol/L" and to_u == "ng/dL":
+            c = convs.get("pmol_L_to_ng_dL_free_t4", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") == to_u:
+                return float(c.get("factor", 0.077693))
+        if biomarker_id in _URATE_BIOMARKERS and from_u == "mg/dL" and to_u in _UMOL_EQUIVALENTS:
+            c = convs.get("mg_dL_to_umol_L_urate", {})
+            if c.get("from_unit") == from_u and c.get("to_unit") in _UMOL_EQUIVALENTS:
+                return float(c.get("factor", 59.5))
+        if biomarker_id in _URATE_BIOMARKERS and from_u in _UMOL_EQUIVALENTS and to_u == "mg/dL":
+            c = convs.get("umol_L_to_mg_dL_urate", {})
+            if c.get("from_unit") in _UMOL_EQUIVALENTS and c.get("to_unit") == to_u:
+                return float(c.get("factor", 0.016807))
         if biomarker_id in _HEMATOCRIT_BIOMARKERS and from_u == "%" and to_u == "L/L":
             c = convs.get("percent_to_l_L_hematocrit", {})
             if c.get("from_unit") == from_u and c.get("to_unit") == to_u:

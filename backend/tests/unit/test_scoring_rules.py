@@ -197,12 +197,12 @@ class TestScoringRules:
         Test sex adjustments for biomarkers that require them.
         Uses lab reference range (required for lab-provided biomarkers).
         """
-        lab_hemo = {"min": 12.0, "max": 16.0, "unit": "g/dL", "source": "lab"}
+        lab_hemo = {"min": 120.0, "max": 160.0, "unit": "g/L", "source": "lab"}
         score_male, _, _ = self.rules.calculate_biomarker_score(
-            "hemoglobin", 14.0, sex="male", input_reference_range=lab_hemo
+            "hemoglobin", 140.0, sex="male", input_reference_range=lab_hemo, value_unit="g/L"
         )
         score_female, _, _ = self.rules.calculate_biomarker_score(
-            "hemoglobin", 14.0, sex="female", input_reference_range=lab_hemo
+            "hemoglobin", 140.0, sex="female", input_reference_range=lab_hemo, value_unit="g/L"
         )
         assert score_male > 0, "Should have positive score"
         assert score_female > 0, "Should have positive score"

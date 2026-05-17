@@ -74,13 +74,12 @@
       "test_file": "backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py",
       "first_seen": "2026-05"
     },
-    "phase_b_blocked_pending_evidence": {
-      "description": "True conversions for Ca/Mg/fT4/Hb remain blocked without primary evidence.",
-      "guard_type": "status_reporting",
-      "status": "WARN",
-      "test_file": "docs/audit-papers/LC-S8D_uk_si_unit_governance_remediation_notes.md",
-      "first_seen": "2026-05",
-      "note": "Documented blocked rows; no runtime conversion until evidence attached."
+    "phase_b_uk_si_true_conversions": {
+      "description": "LC-S8F Phase B true conversions for Ca, corrected Ca, Mg, Free T4, Hb, urate with lab-range coherence.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py",
+      "first_seen": "2026-05"
     }
   }
 }
