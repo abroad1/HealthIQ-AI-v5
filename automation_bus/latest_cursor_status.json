@@ -1,10 +1,9 @@
 {
-  "branch": "launch-core/lc-s9b-proving-closeout",
+  "branch": "launch-core/lc-s10b-protect-proven-launch-core-slice",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-16T20:42:40Z",
-  "cursor_started_utc": "2026-05-16T20:39:02Z",
-  "head_sha": "1b36c5fced36a4c386a90eae7246ec7452073a9b",
+  "cursor_started_utc": "2026-05-17T08:14:44Z",
+  "head_sha": "982c6d73a2c52f098f523397e86c63ae7adef528",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "LC-S9B"
+  "status": "IN_PROGRESS",
+  "work_id": "LC-S10B"
 }
