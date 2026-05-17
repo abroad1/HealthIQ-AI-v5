@@ -74,6 +74,18 @@ units:
     category: "concentration"
     si_equivalent: "nmol/L"
 
+  pmol_L:
+    name: "pmol/L"
+    description: "Picomoles per liter"
+    category: "concentration"
+    si_equivalent: "pmol/L"
+
+  ng_dL:
+    name: "ng/dL"
+    description: "Nanograms per deciliter"
+    category: "concentration"
+    si_equivalent: "ng/dL"
+
   umol_L:
     name: "µmol/L"
     description: "Micromoles per liter"
@@ -192,6 +204,67 @@ units:
       to_unit: "L/L"
       factor: 0.01
       description: "Hematocrit percent to volume fraction"
+
+    # LC-S8F Phase B — UK/SI true conversions (evidence-approved factors)
+    mg_dL_to_mmol_L_calcium:
+      from_unit: "mg/dL"
+      to_unit: "mmol/L"
+      factor: 0.2495
+      description: "Calcium mass concentration (Phase B)"
+
+    mmol_L_to_mg_dL_calcium:
+      from_unit: "mmol/L"
+      to_unit: "mg/dL"
+      factor: 4.008016
+      description: "Calcium reverse (Phase B)"
+
+    mg_dL_to_mmol_L_corrected_calcium:
+      from_unit: "mg/dL"
+      to_unit: "mmol/L"
+      factor: 0.2495
+      description: "Corrected calcium mass concentration (Phase B; supplied value only)"
+
+    mmol_L_to_mg_dL_corrected_calcium:
+      from_unit: "mmol/L"
+      to_unit: "mg/dL"
+      factor: 4.008016
+      description: "Corrected calcium reverse (Phase B)"
+
+    mg_dL_to_mmol_L_magnesium:
+      from_unit: "mg/dL"
+      to_unit: "mmol/L"
+      factor: 0.4114
+      description: "Magnesium mass concentration (Phase B)"
+
+    mmol_L_to_mg_dL_magnesium:
+      from_unit: "mmol/L"
+      to_unit: "mg/dL"
+      factor: 2.430724
+      description: "Magnesium reverse (Phase B)"
+
+    ng_dL_to_pmol_L_free_t4:
+      from_unit: "ng/dL"
+      to_unit: "pmol/L"
+      factor: 12.871
+      description: "Free T4 mass concentration (Phase B)"
+
+    pmol_L_to_ng_dL_free_t4:
+      from_unit: "pmol/L"
+      to_unit: "ng/dL"
+      factor: 0.077693
+      description: "Free T4 reverse (Phase B)"
+
+    mg_dL_to_umol_L_urate:
+      from_unit: "mg/dL"
+      to_unit: "µmol/L"
+      factor: 59.5
+      description: "Urate / uric acid mass concentration (Phase B)"
+
+    umol_L_to_mg_dL_urate:
+      from_unit: "µmol/L"
+      to_unit: "mg/dL"
+      factor: 0.016807
+      description: "Urate reverse (Phase B)"
 
     # LC-S8D Phase A — 1:1 label equivalences (no numeric rescale)
     K_uL_to_ten_9_L:

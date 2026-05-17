@@ -42,11 +42,13 @@ LC_S8D_SSOT_SCORING_UNIT_ALIGNMENT = {
     "hematocrit": "L/L",
     "platelets": "10^9/L",
     "white_blood_cells": "10^9/L",
+    "hemoglobin": "g/L",
 }
 
 # Clinical conversion factors that must not appear in frontend renderer code.
 FORBIDDEN_FRONTEND_CONVERSION_RE = re.compile(
-    r"(?:\b0\.055(?:555)?\b|\b18\.0(?:18)?\b|\b38\.67\b|\b88\.4\b|\b0\.02586\b|\b0\.01129\b|\b10\.929\b)"
+    r"(?:\b0\.055(?:555)?\b|\b18\.0(?:18)?\b|\b38\.67\b|\b88\.4\b|\b0\.02586\b|\b0\.01129\b|\b10\.929\b"
+    r"|\b0\.2495\b|\b0\.4114\b|\b12\.871\b|\b59\.5\b)"
 )
 
 FRONTEND_UNIT_REPAIR_SCAN_ALLOWLIST = {
@@ -172,7 +174,7 @@ class TestLC_S8DInputUnitHasAuthority:
         reg = UnitRegistry()
         data = reg._load_units()
         named = data.get("units") or {}
-        for key in ("mmol_L", "mEq_L", "ten_9_L"):
+        for key in ("mmol_L", "mEq_L", "ten_9_L", "pmol_L", "ng_dL"):
             assert key in named, f"units.yaml missing named entry {key}"
 
 
@@ -201,14 +203,14 @@ class TestLC_S8DBiomarkerValueReferenceUnitIncoherence:
         rules = ScoringRules()
         score, band, reason = rules.calculate_biomarker_score(
             "hemoglobin",
-            14.0,
+            140.0,
             input_reference_range={
-                "min": 12.0,
-                "max": 18.0,
-                "unit": "g/dL",
+                "min": 120.0,
+                "max": 180.0,
+                "unit": "g/L",
                 "source": "lab",
             },
-            value_unit="g/dL",
+            value_unit="g/L",
         )
         assert reason is None
         assert 0.0 <= score <= 100.0

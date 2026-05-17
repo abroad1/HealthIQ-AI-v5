@@ -600,7 +600,7 @@ biomarkers:
     aliases:
     - free_thyroxine
     - freet4
-    unit: ng/dL
+    unit: pmol/L
     description: Free thyroxine (Free T4)
     category: hormonal
     data_type: numeric
@@ -646,7 +646,7 @@ biomarkers:
     - hgb
     - hb
     - haemoglobin
-    unit: g/dL
+    unit: g/L
     description: Hemoglobin level
     category: cbc
     data_type: numeric
@@ -744,7 +744,7 @@ biomarkers:
   calcium:
     aliases:
     - calcium_(venous)
-    unit: mg/dL
+    unit: mmol/L
     description: Serum calcium level
     category: electrolyte
     data_type: numeric
@@ -758,7 +758,7 @@ biomarkers:
   corrected_calcium:
     aliases:
     - corrected_calcium_(venous)
-    unit: mg/dL
+    unit: mmol/L
     description: Corrected serum calcium level
     category: electrolyte
     data_type: numeric
@@ -814,7 +814,7 @@ biomarkers:
   magnesium:
     aliases:
     - magnesium_(venous)
-    unit: mg/dL
+    unit: mmol/L
     description: Serum magnesium level
     category: electrolyte
     data_type: numeric
@@ -1398,7 +1398,7 @@ biomarkers:
     - medication
     clinical_weight: 0.7
   urate:
-    unit: umol/L
+    unit: µmol/L
     description: Serum uric acid (urate)
     category: Renal / Metabolic
     data_type: numeric

@@ -46,13 +46,13 @@ class TestLC_S8UnitNormalisation:
             }
         )
         row = out["hemoglobin"]
-        assert row["unit"] == "g/dL"
-        assert abs(float(row["value"]) - 14.0) < 1e-5
+        assert row["unit"] == "g/L"
+        assert abs(float(row["value"]) - 140.0) < 1e-5
         ref = row["reference_range"]
         assert ref is not None
-        assert ref["unit"] == "g/dL"
-        assert abs(float(ref["min"]) - 13.5) < 0.02
-        assert abs(float(ref["max"]) - 17.5) < 0.02
+        assert ref["unit"] == "g/L"
+        assert abs(float(ref["min"]) - 135.0) < 0.02
+        assert abs(float(ref["max"]) - 175.0) < 0.02
 
     def test_hematocrit_L_L_two_sided_ref_percent(self):
         out = apply_unit_normalisation(
@@ -89,16 +89,16 @@ class TestLC_S8UnitNormalisation:
             }
         )
         row = out["hemoglobin"]
-        assert row["unit"] == "g/dL"
-        assert abs(float(row["value"]) - 13.5) < 0.02
+        assert row["unit"] == "g/L"
+        assert abs(float(row["value"]) - 135.0) < 0.02
         ref = row["reference_range"]
         assert ref is not None
         assert ref.get("max") is None
-        assert ref["unit"] == "g/dL"
-        assert abs(float(ref["min"]) - 12.0) < 0.02
+        assert ref["unit"] == "g/L"
+        assert abs(float(ref["min"]) - 120.0) < 0.02
 
     def test_hemoglobin_uk_g_L_panel_stays_coherent(self):
-        """144 g/L with 130–175 g/L (UK AB) — both mass concentration in g/L before base g/dL."""
+        """144 g/L with 130–175 g/L (UK AB) — pass-through in canonical g/L base."""
         out = apply_unit_normalisation(
             {
                 "hemoglobin": {
@@ -114,12 +114,12 @@ class TestLC_S8UnitNormalisation:
             }
         )
         row = out["hemoglobin"]
-        assert row["unit"] == "g/dL"
-        assert abs(float(row["value"]) - 14.4) < 0.02
+        assert row["unit"] == "g/L"
+        assert abs(float(row["value"]) - 144.0) < 0.02
         ref = row["reference_range"]
-        assert ref is not None and ref["unit"] == "g/dL"
-        assert abs(float(ref["min"]) - 13.0) < 0.02
-        assert abs(float(ref["max"]) - 17.5) < 0.02
+        assert ref is not None and ref["unit"] == "g/L"
+        assert abs(float(ref["min"]) - 130.0) < 0.02
+        assert abs(float(ref["max"]) - 175.0) < 0.02
 
     def test_hemoglobin_mixed_g_dL_value_g_L_range_converts(self):
         out = apply_unit_normalisation(
@@ -137,11 +137,12 @@ class TestLC_S8UnitNormalisation:
             }
         )
         row = out["hemoglobin"]
-        assert row["unit"] == "g/dL"
+        assert row["unit"] == "g/L"
+        assert abs(float(row["value"]) - 144.0) < 0.02
         ref = row["reference_range"]
-        assert ref is not None and ref["unit"] == "g/dL"
-        assert abs(float(ref["min"]) - 13.0) < 0.02
-        assert abs(float(ref["max"]) - 17.5) < 0.02
+        assert ref is not None and ref["unit"] == "g/L"
+        assert abs(float(ref["min"]) - 130.0) < 0.02
+        assert abs(float(ref["max"]) - 175.0) < 0.02
 
     def test_hematocrit_L_L_homogeneous_range(self):
         out = apply_unit_normalisation(
@@ -186,18 +187,18 @@ class TestLC_S8ScoringCoherence:
         assert band == ScoreRange.CRITICAL
         assert reason == UNSCORED_REASON_UNIT_REFERENCE_RANGE_INCOHERENT
 
-    def test_hemoglobin_coherent_g_dL_scores(self):
+    def test_hemoglobin_coherent_g_L_scores(self):
         rules = ScoringRules()
         score, band, reason = rules.calculate_biomarker_score(
             "hemoglobin",
-            14.0,
+            140.0,
             input_reference_range={
-                "min": 12.0,
-                "max": 18.0,
-                "unit": "g/dL",
+                "min": 120.0,
+                "max": 180.0,
+                "unit": "g/L",
                 "source": "lab",
             },
-            value_unit="g/dL",
+            value_unit="g/L",
         )
         assert reason is None
         assert band != ScoreRange.CRITICAL or score > 0
