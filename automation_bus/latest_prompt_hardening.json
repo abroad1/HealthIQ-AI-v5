@@ -1,109 +1,89 @@
 {
-  "work_id": "LC-S8F",
+  "work_id": "LC-S8G",
   "bus_version": "1.3.1",
   "status": "HARDENED",
   "hardened_utc": "2026-05-17T00:00:00Z",
-  "hardened_by": "claude-sonnet-4-6",
+  "hardened_by": "Claude Code",
   "changes": [
     {
-      "check": "Front Matter — all five required fields",
-      "result": "PASS — work_id=LC-S8F, branch=launch-core/lc-s8f-phase-b-uk-si-true-conversions, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. All five mandatory fields present.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 2–6"
+      "id": "H1",
+      "severity": "BLOCKER",
+      "description": "BiomarkerScore has extra='forbid' — display fields cannot pass through the orchestrator pipeline. Cursor must populate display fields from upload_panel_observations at the DTO builder call site, not from BiomarkerScore.",
+      "file": "backend/core/models/results.py",
+      "line": "20-23",
+      "citation": "results.py:20–23: model_config = ConfigDict(frozen=True, extra='forbid'). Fields declared: biomarker_name, value, unit, score, percentile, status, range_source, reference_range, reference_profile, lab_band_label, interpretation, biomarker_educational_explainer, contribution_context. No display_value, display_unit, display_reference_range, display_is_uploaded_unit.",
+      "required_action": "Do NOT add display fields to BiomarkerScore. Populate them in analysis_route_biomarker_row() from upload_panel_observations dict. BiomarkerScore is a Layer B analytical object; display fields are Layer C only."
     },
     {
-      "check": "risk_level HIGH — justified",
-      "result": "PASS — sprint touches backend/ssot/biomarkers.yaml, backend/ssot/units.yaml, backend/core/units/registry.py (Intelligence Core unit conversion dispatch), backend/ssot/scoring_policy.yaml (hemoglobin band migration), and Sentinel packs. HIGH is correct per SOP §10: any work touching Intelligence Core = HIGH by default.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 13–15; SOP §3, §10"
+      "id": "H2",
+      "severity": "BLOCKER",
+      "description": "analysis_route_biomarker_row() signature must be extended to accept upload_panel_observations. The call site in analysis.py:207 must pass this dict. No other call sites confirmed — Cursor must verify before implementing.",
+      "file": "backend/core/dto/builders.py",
+      "line": "116",
+      "citation": "builders.py:116: def analysis_route_biomarker_row(b: BiomarkerScore) -> Dict[str, Any]. analysis.py:207: [analysis_route_biomarker_row(b) for b in dto.biomarkers]. upload_panel_observations is in local scope at analysis.py:148–152, available at line 207.",
+      "required_action": "Change signature to accept optional upload_observations: Optional[Dict[str, Any]] = None. Pass upload_panel_observations from analysis.py:207. Populate display_value, display_unit, display_reference_range, display_is_uploaded_unit from upload_observations[b.biomarker_name] where uploaded unit differs from b.unit. If key absent or unit matches analytical: display fields equal analytical fields. If uploaded reference_range absent: do not invent one."
     },
     {
-      "check": "change_type MIXED — justified",
-      "result": "PASS — CONTENT (SSOT unit updates in biomarkers.yaml, units.yaml) + BEHAVIOUR (runtime conversion dispatch in registry.py, scoring band migration in scoring_policy.yaml, sentinel/test updates that affect governed output). MIXED correct per SOP §4. MIXED is always governed using BEHAVIOUR controls.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 13–15; SOP §4"
+      "id": "H3",
+      "severity": "REQUIRED",
+      "description": "display_unit_policy.yaml does not cover Phase B biomarkers. Phase 4 SSOT-wide guard requires these entries to be present for coverage inventory to work.",
+      "file": "backend/ssot/display_unit_policy.yaml",
+      "line": "1-85",
+      "citation": "display_unit_policy.yaml read in full. Phase B biomarkers absent: calcium, corrected_calcium, magnesium, free_t4, hemoglobin, urate. Registry confirms conversion authority at registry.py:75–81 (_CALCIUM_BIOMARKERS, _MAGNESIUM_BIOMARKERS, _FREE_T4_BIOMARKERS, _HEMOGLOBIN_BIOMARKERS, _URATE_BIOMARKERS). Allowed per prompt §Potentially allowed files.",
+      "required_action": "Add entries for calcium, corrected_calcium, magnesium, free_t4, hemoglobin, urate with layer_b_unit and uploaded_panel_fidelity sections. Authority is registry.py biomarker group membership and ssot/units.yaml conversion definitions. Presentation metadata only — no scoring or clinical fields."
     },
     {
-      "check": "execution_model TWO_PHASE_START_FINISH — justified",
-      "result": "PASS — HIGH/MIXED requires kernel start + gate finish. TWO_PHASE_START_FINISH is correct.",
-      "citation": "automation_bus/latest_cursor_prompt.md line 5; SOP §3"
+      "id": "H4",
+      "severity": "INFORMATIONAL",
+      "description": "uploadPanelFidelity.ts filter correctly suppresses same-unit rows for UK/SI pass-through panels. This behaviour must be preserved. Main dial display fidelity fix makes this filter safe.",
+      "file": "frontend/app/lib/uploadPanelFidelity.ts",
+      "line": "127-130",
+      "citation": "uploadPanelFidelity.ts:127–130: if (uploadUnit === canonicalUnit) continue. LC-S8F UAT section 8 D2 confirms uploaded panel not visible on b24ce358 pass-through fixture. Expected behaviour — same-unit rows need no fidelity row.",
+      "required_action": "Do not modify uploadPanelFidelity.ts filter logic. Main dial display fidelity is the primary fix for this sprint."
     },
     {
-      "check": "Authority path — evidence file",
-      "result": "CONFIRMED EXISTS (untracked) — docs/audit-papers/Phase_B_UK_SI_Biomarker_Unit_Evidence_Review.md is present on disk but untracked (git status: '?? docs/audit-papers/Phase_B_UK_SI_Biomarker_Unit_Evidence_Review.md'). Content verified: all six biomarkers approved, conversion factors match prompt exactly (Ca ×0.2495, Mg ×0.4114, fT4 ×12.871, Hb ×10, Urate ×59.5), test vectors match prompt table, caveats match prompt controls. PRE-EXECUTION REQUIREMENT: file must be committed on the sprint branch before run_work_package.py start. Prompt preflight enforces this via 'git ls-files --error-unmatch' which will STOP Cursor if file is untracked.",
-      "citation": "docs/audit-papers/Phase_B_UK_SI_Biomarker_Unit_Evidence_Review.md (read in full); git status --short output"
+      "id": "H5",
+      "severity": "INFORMATIONAL",
+      "description": "upload_panel_observations reference range is available pre-normalisation with original uploaded units. Deterministic source for display_reference_range confirmed.",
+      "file": "backend/app/routes/analysis.py",
+      "line": "148-152",
+      "citation": "analysis.py:148–152: upload_panel_observations captured before apply_unit_normalisation() (line 159) and before hba1c arbitration (line 155). Structure includes value, unit, reference_range in original uploaded units. LC-S8F UAT §6 confirms calcium 9.4 mg/dL preserved for 7cc8b2d5 panel.",
+      "required_action": "Use upload_panel_observations[biomarker_name] as display field source at DTO builder stage. Deterministic — no STOP condition."
     },
     {
-      "check": "Authority path — backend/ssot/biomarkers.yaml",
-      "result": "CONFIRMED — current Phase B units: calcium unit: mg/dL (line 747), corrected_calcium unit: mg/dL (line 761), magnesium unit: mg/dL (line 817), free_t4 unit: ng/dL (line 603), hemoglobin unit: g/dL (line 649), urate unit: umol/L (line 1401). All six require SSOT unit change. Existing alias structure: hemoglobin canonical with haemoglobin/hgb/hb aliases; urate canonical with no uric_acid alias in biomarkers.yaml (uric_acid alias is in biomarker_alias_registry.yaml).",
-      "citation": "backend/ssot/biomarkers.yaml lines 599–613, 644–659, 744–771, 814–827, 1400–1422"
+      "id": "H6",
+      "severity": "INFORMATIONAL",
+      "description": "test_lc_s8g_uploaded_unit_display_fidelity.py does not yet exist. Must be created as the primary regression guard.",
+      "file": "backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py",
+      "line": "N/A",
+      "citation": "Glob: no matching file found. Required by prompt Phase 5.",
+      "required_action": "Create file. Must cover: US upload produces display fields with uploaded unit and uploaded reference_range; UK upload produces display fields matching analytical; no display_reference_range invented when source absent; display_is_uploaded_unit flag correct."
     },
     {
-      "check": "Authority path — backend/ssot/units.yaml conversions",
-      "result": "CONFIRMED — g/dL↔g/L hemoglobin conversions already present (lines 172–182, factors 10.0 and 0.1). Calcium, magnesium, fT4, urate conversions: absent. pmol/L and ng/dL unit type definitions: absent. Prompt §2 correctly requires these unit type definitions before conversion entries reference them.",
-      "citation": "backend/ssot/units.yaml lines 1–214 (read in full)"
+      "id": "H7",
+      "severity": "INFORMATIONAL",
+      "description": "Sentinel pack lc_s8d_unit_governance_v1.json has no uploaded_unit_display_fidelity defect class. Phase 4 requires adding one.",
+      "file": "sentinel/packs/lc_s8d_unit_governance_v1.json",
+      "line": "1-85",
+      "citation": "Read in full. Existing 11 defect classes confirmed. No display-fidelity class present. Allowed per prompt §sentinel/packs/**/*.",
+      "required_action": "Add uploaded_unit_display_fidelity defect class to this pack or create lc_s8g_display_fidelity_v1.json. Class must reference test_lc_s8g_uploaded_unit_display_fidelity.py as test_file and status GUARDED after implementation."
     },
     {
-      "check": "Authority path — backend/core/units/registry.py dispatch architecture",
-      "result": "CONFIRMED — _get_conversion_factor() (lines 166–242) dispatches exclusively via biomarker-group frozen sets defined at lines 64–90. Phase B biomarkers (calcium, corrected_calcium, magnesium, free_t4, urate) are absent from all frozen sets. Lines 294–298: passthrough path silently returns unconverted values for biomarkers not in _STRICT_CONVERSION_BIOMARKERS. _HEMOGLOBIN_BIOMARKERS and its dispatch branches already present (lines 73, 226–233) — hemoglobin conversion is verify-only. UnitEnum (lines 42–61) lacks PMOL_L and NG_DL tokens. Prompt §3 now explicitly addresses all required registry.py changes.",
-      "citation": "backend/core/units/registry.py lines 42–61, 64–90, 166–242, 294–298 (read in full)"
-    },
-    {
-      "check": "Authority path — backend/ssot/scoring_policy.yaml",
-      "result": "CONFIRMED — hemoglobin scoring present: unit: g/dL, bands optimal 12–16 g/dL through critical 20–25 g/dL (lines 222–234). All band values require ×10 migration to g/L when SSOT unit changes. Calcium, magnesium, free_t4, urate: no scoring policy present. Prompt §8 correctly instructs no invented bands for unmarked biomarkers.",
-      "citation": "backend/ssot/scoring_policy.yaml lines 222–234"
-    },
-    {
-      "check": "Authority path — backend/ssot/biomarker_alias_registry.yaml",
-      "result": "CONFIRMED — uric_acid → urate (line 729) and BUN/Blood Urea Nitrogen → urea (lines 735–738) both correctly separated. No gap. Prompt §10 correctly identifies these as verify-and-document, not recreate.",
-      "citation": "backend/ssot/biomarker_alias_registry.yaml lines 720–749"
-    },
-    {
-      "check": "Authority path — sentinel/packs/lc_s8d_unit_governance_v1.json",
-      "result": "CONFIRMED — pack_id=lc_s8d_unit_governance_v1. phase_b_blocked_pending_evidence defect is status: WARN with test_file pointing to docs (not a test file). This must transition to GUARDED with a proper test_file assigned in Phase 5. Prompt Phase 5 covers this via 'Phase B canonical unit drift' and 'missing Phase B conversion authority' protection requirements.",
-      "citation": "sentinel/packs/lc_s8d_unit_governance_v1.json lines 77–84"
-    },
-    {
-      "check": "Authority path — backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py",
-      "result": "CONFIRMED — LC_S8D_SSOT_SCORING_UNIT_ALIGNMENT dict (lines 34–45) does not include hemoglobin. FORBIDDEN_FRONTEND_CONVERSION_RE (lines 48–50) does not include Phase B factors (0.2495, 0.4114, 12.871, 59.5). Both gaps are now explicitly addressed in prompt §13 (FORBIDDEN_FRONTEND_CONVERSION_RE) and §14 (LC_S8D_SSOT_SCORING_UNIT_ALIGNMENT hemoglobin: 'g/L').",
-      "citation": "backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py lines 34–50"
-    },
-    {
-      "check": "Source cross-ref — registry.py dispatch blocker (prior hardening run)",
-      "result": "RESOLVED — prior blocker resolved in updated prompt. §3 'Critical runtime conversion dispatch requirement' now explicitly mandates: UnitEnum token additions (§3.1), frozen-set groups per Phase B biomarker group (§3.2), _STRICT_CONVERSION_BIOMARKERS inclusion (§3.3), _get_conversion_factor() dispatch branches per group and direction (§3.4), tests proving runtime path is actually called (§3.5). Phase 2 STOP condition: 'any conversion declared in YAML but not reachable in runtime dispatch.'",
-      "citation": "automation_bus/latest_cursor_prompt.md §3 lines 269–339"
-    },
-    {
-      "check": "Source cross-ref — pmol/L and ng/dL unit definitions (prior hardening run)",
-      "result": "RESOLVED — prior gap resolved. §2 'Unit definition prerequisite' explicitly requires pmol_L and ng_dL entries in units.yaml before conversion entries reference them. Free T4 implementation declared incomplete without both.",
-      "citation": "automation_bus/latest_cursor_prompt.md §2 lines 249–267"
-    },
-    {
-      "check": "Source cross-ref — FORBIDDEN_FRONTEND_CONVERSION_RE gap (prior hardening run)",
-      "result": "RESOLVED — prior gap resolved. §13 names FORBIDDEN_FRONTEND_CONVERSION_RE explicitly and lists all four Phase B factors (0.2495, 0.4114, 12.871, 59.5). Phase 5 repeats the requirement with explicit factor list.",
-      "citation": "automation_bus/latest_cursor_prompt.md §13 lines 495–511; Phase 5 lines 628–634"
-    },
-    {
-      "check": "Source cross-ref — haemoglobin atomicity and sentinel alignment (prior hardening run)",
-      "result": "RESOLVED — prior gap resolved. §9 'Haemoglobin atomicity requirement' mandates 7 steps including LC_S8D_SSOT_SCORING_UNIT_ALIGNMENT update (step 7). §14 explicitly requires hemoglobin: 'g/L' addition. Phase 4 STOP fires if SSOT unit and scoring bands end up in different unit systems.",
-      "citation": "automation_bus/latest_cursor_prompt.md §9 lines 414–428; §14 lines 514–524; Phase 4 STOP lines 612–613"
-    },
-    {
-      "check": "Source cross-ref — conversion factors verified against evidence file",
-      "result": "CONFIRMED — all six factors in evidence file match prompt table exactly: Ca 0.2495, Mg 0.4114, fT4 12.871, Hb ×10, Urate ×59.5. Test vectors confirmed: 9.4 mg/dL → 2.35 mmol/L, 2.1 mg/dL → 0.86 mmol/L, 1.2 ng/dL → 15.45 pmol/L, 14.6 g/dL → 146 g/L, 5.8 mg/dL → 345.1 µmol/L. Caveats confirmed: corrected calcium formula-derived, fT4 assay-specific, urate/urea separation.",
-      "citation": "docs/audit-papers/Phase_B_UK_SI_Biomarker_Unit_Evidence_Review.md lines 16–21, 122–131"
-    },
-    {
-      "check": "Determinism — preserved",
-      "result": "PASS — conversions are pure arithmetic with governed factors from evidence file. Passthrough risk eliminated by _STRICT_CONVERSION_BIOMARKERS requirement (§3.3) and Phase 2 STOP. Haemoglobin scoring band migration is numeric (×10) with no polarity change. No Intelligence Core analytical logic is altered — only unit conversion dispatch and scoring unit alignment.",
-      "citation": "automation_bus/latest_cursor_prompt.md §3, §9; SOP §3 determinism requirement"
-    },
-    {
-      "check": "Forbidden files — confirmed correctly barred",
-      "result": "PASS — run_work_package.py, golden_gate_local.py, update_cursor_status.py, frontend/**, automation_bus gate files all correctly excluded. No Layer C, questionnaire, statin, or LC-S10B scope creep present.",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 204–226"
-    },
-    {
-      "check": "Overall verdict",
-      "result": "HARDENED — all three blockers from prior hardening run resolved (registry.py dispatch, unit type definitions, FORBIDDEN_FRONTEND_CONVERSION_RE, haemoglobin atomicity). All authority paths verified from file content. No new gaps identified. PRE-EXECUTION REQUIREMENT: docs/audit-papers/Phase_B_UK_SI_Biomarker_Unit_Evidence_Review.md must be committed on sprint branch before run_work_package.py start — prompt preflight enforces this via git ls-files --error-unmatch. Cursor may proceed to Stage 3 kernel start on branch launch-core/lc-s8f-phase-b-uk-si-true-conversions once evidence file is committed.",
-      "citation": "all checks above"
+      "id": "H8",
+      "severity": "INFORMATIONAL",
+      "description": "UAT fixture labels are swapped. LC-S8G prompt correctly identifies the mapping. Cursor must use 7cc8b2d5 as US conversion panel and b24ce358 as UK pass-through panel.",
+      "file": "docs/audit-papers/LC-S8F_phase_b_unit_conversion_uat.md",
+      "line": "42-50",
+      "citation": "UAT §2 confirmed: 7cc8b2d5-c8f0-4138-ba18-8540eece06a1 = US upload -> UK/SI analytical. b24ce358-02e3-4058-a667-34328a4168a2 = UK/SI pass-through. LC-S8G prompt §Phase B UAT cases is correct.",
+      "required_action": "No action needed. Cursor must follow LC-S8G prompt §Phase B UAT cases mapping."
     }
-  ]
+  ],
+  "stop_conditions_checked": {
+    "competing_dto_authorities": false,
+    "display_fields_not_deterministic": false,
+    "phase_b_evidence_file_missing": false,
+    "forbidden_file_in_scope": false,
+    "verdict": "No STOP conditions triggered. Sprint may proceed."
+  },
+  "implementation_order_note": "Phase 1 (inventory doc) first. Phase 2 (backend DTO) requires H1+H2 resolved — extend analysis_route_biomarker_row() signature before any frontend changes. Phase 3 (frontend) depends on Phase 2 complete and TypeScript types updated. Phase 4 (SSOT guard) requires display_unit_policy.yaml update (H3). Phase 5 (tests) must cover all Phase 2 and Phase 3 surface changes."
 }
