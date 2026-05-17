@@ -1,5 +1,5 @@
 {
-  "git_short_sha": "982c6d7",
+  "git_short_sha": "3c9b2f1",
   "matrix_path": "backend\\tests\\fixtures\\proving\\launch_core_matrix.json",
   "runs": {
     "AB__baseline": {
@@ -671,5 +671,5 @@
       ]
     }
   },
-  "stamp": "20260517T081551Z"
+  "stamp": "20260517T081712Z"
 }
