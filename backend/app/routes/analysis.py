@@ -37,7 +37,7 @@ class AnalysisStartResponse(BaseModel):
 
 from core.pipeline.orchestrator import AnalysisOrchestrator, UNIT_NORMALISATION_META_KEY
 from core.dto.builders import (
-    analysis_route_biomarker_row,
+    analysis_route_biomarker_row_with_display,
     build_analysis_result_dto,
     extend_cluster_client_dict_from_hit,
 )
@@ -204,7 +204,10 @@ async def start_analysis(
             "meta": meta,
             "replay_manifest": getattr(dto, "replay_manifest", None),
             "derived_markers": dto.derived_markers,
-            "biomarkers": [analysis_route_biomarker_row(b) for b in dto.biomarkers],
+            "biomarkers": [
+                analysis_route_biomarker_row_with_display(b, upload_panel=upload_panel_observations)
+                for b in dto.biomarkers
+            ],
             "clusters": [
                 extend_cluster_client_dict_from_hit(
                     {
