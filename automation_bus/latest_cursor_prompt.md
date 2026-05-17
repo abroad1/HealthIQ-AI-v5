@@ -1,76 +1,74 @@
 ---
-work_id: LC-S9B
-branch: launch-core/lc-s9b-proving-closeout
+work_id: LC-S10B
+branch: launch-core/lc-s10b-protect-proven-launch-core-slice
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# LC-S9B — Launch-Core Proving Closeout
+# LC-S10B — Protection of the Proven Launch-Core Slice
 
 ## Classification
 
-This is a HIGH-risk MIXED work package.
+This is a HIGH-risk MIXED protection sprint.
 
-Reason: this sprint may touch launch-core proving harnesses, behavioural checks, frontend/report carriage, fallback copy, report compilation, context/medication visibility, and regression coverage. These surfaces affect emitted output and launch-core trust.
+Reason: this work may touch regression tests, proving harnesses, Sentinel packs, frontend protection checks, backend launch-core report tests, fingerprint generation, and guardrail logic. These protect launch-core analytical and narrative behaviour.
 
-This sprint is not a broad redesign or WHY Wave 2 expansion.
+This sprint is protection only.
 
-It is a targeted proving closeout sprint before full Sprint 6 protection.
+It must not expand product scope, add new clinical reasoning, alter scoring, alter units, broaden the questionnaire, or build new user-facing features.
 
-## Purpose
+## Current programme state
 
-Close the remaining Sprint 5 launch-core human proving gaps identified in LC-S9.
+Sprint 5 has been accepted as:
 
-LC-S8D and FE-S8E have already cleared the unit-governance and Layer C Mode A/B blocker. Do not reopen that work.
+```text
+SPRINT_5_PASS_WITH_GAPS
+````
 
-This sprint must determine whether the current launch-core personalised pipeline now passes the Sprint 5 bar, and must make only the minimum targeted corrections required to reach a defensible pass/fail decision.
+This is sufficient to progress into Sprint 6 protection, but it is not an unconditional launch PASS.
 
-Primary goals:
+The following workstreams are now considered proven enough to protect:
 
-1. Refresh launch-core proving harness evidence on current `main`.
-2. Re-run AB/VR launch-core matrix on the current build.
-3. Prove or disprove visible lifestyle payoff.
-4. Prove or disprove visible statin/medication payoff.
-5. Identify active launch-core leads without governed WHY.
-6. Replace unacceptable raw fallback strings on user-facing surfaces with governed, honest fallback copy.
-7. Add or complete binary checks for CHECK 2, CHECK 5, and CHECK 6.
-8. Produce a named human walkthrough pack for final review.
-9. Decide whether Sprint 5 can close as PASS, PASS_WITH_GAPS, or FAIL.
+* LC-S8D — UK/SI unit governance remediation
+* FE-S8E — uploaded-panel fidelity / Layer C Mode A rendering
+* LC-S9B — launch-core proving closeout checks
+* LC-S9C — lifestyle visibility and copy hardening
 
-## Governing context
+The purpose of this sprint is to turn those proven behaviours into durable regression/Sentinel/fingerprint protection so future work cannot silently break them.
 
-Read these files before editing anything:
+## Strategic rule
+
+Do not document status for its own sake.
+
+Do not create passive decision artefacts.
+
+Any knowledge recorded in this sprint must be consumed by tests, Sentinel, harnesses, fingerprints, CI checks, or operational validation.
+
+Audit notes are allowed only to explain what was protected and how.
+
+## Governing evidence to read first
+
+Read these before editing anything:
 
 ```text
 docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md
+
 docs/audit-papers/LC-S9_launch_core_human_proving_closeout_review.md
-docs/audit-papers/lc_s5_proving_readiness_preflight_audit.md
+docs/audit-papers/LC-S9B_launch_core_proving_closeout_notes.md
+docs/audit-papers/LC-S9B_human_walkthrough_pack.md
+
 docs/audit-papers/launch-core-proving/PROVING_REPORT.md
 docs/audit-papers/launch-core-proving/latest_fingerprints.json
-docs/audit-papers/LAUNCH_GRADE_ANALYTICAL_GAP_MAP_2026-05.md
+
+docs/audit-papers/FE-S8E_post_merge_comparison_uat.md
+docs/audit-papers/FE-S8E_uploaded_panel_fidelity_uat_notes.md
 
 docs/audit-papers/LC-S8D_uk_si_unit_governance_remediation_notes.md
-docs/audit-papers/FE-S8E_post_merge_comparison_uat.md
-````
+docs/audit-papers/LC-S8D_frontend_layer_c_uat_report.md
+```
 
-If any file path differs, locate the actual file and record it in the sprint notes.
-
-## Mandatory architectural boundaries
-
-The launch-core plan remains governing:
-
-* prove the real production path, not demo-only pathways
-* do not broaden the questionnaire
-* do not expand full WHY Wave 2
-* do not build temporary narrative bridges
-* do not add LLM reasoning to the analytical core
-* do not change unit-governance or Phase B conversion state
-* do not reopen LC-S8D or FE-S8E unless a direct regression is proven
-
-Layer B produces governed structured truth.
-
-Layer C may translate or polish governed payloads, but must not invent analytical reasoning.
+If any path differs, locate the actual file and record the real path in the sprint notes.
 
 ## Mandatory preflight before editing
 
@@ -90,8 +88,8 @@ Test-Path automation_bus/state/work_package_active.json
 
 Read `automation_bus/state/work_package_active.json` and confirm:
 
-* `work_id` is `LC-S9B`
-* branch is `launch-core/lc-s9b-proving-closeout`
+* `work_id` is `LC-S10B`
+* branch is `launch-core/lc-s10b-protect-proven-launch-core-slice`
 
 If the token is missing or mismatched, STOP:
 
@@ -104,48 +102,213 @@ Kernel start not executed or work package mismatch.
 Before modifying files, identify and record the authoritative paths for:
 
 1. launch-core proving harness
-2. AB/VR fixture definitions
-3. questionnaire/profile fixtures
-4. statin/medication/intervention fixture source
-5. lifestyle modifier source
-6. root-cause / WHY compiler or fallback source
-7. report compiler / primary hero payload source
-8. frontend results surface consuming the relevant fields
-9. existing CHECK 2 / CHECK 5 / CHECK 6 logic, if present
+2. launch-core fingerprints
+3. CHECK 2 / 4 / 5 / 6 regression tests
+4. Sentinel pack registry
+5. existing unit-governance Sentinel pack
+6. frontend uploaded-panel fidelity tests or equivalent protection route
+7. root-cause fallback tests
+8. lifestyle-visible-payoff tests
+9. statin bounded-intervention tests
+10. Layer B → Layer C report contract tests
 
-STOP if any authority path is ambiguous or duplicated.
+STOP if any authority is ambiguous or duplicated.
 
 Do not create a second authority source.
 
+## Additional hardening requirements
+
+### CHECK 4 specificity
+
+CHECK 4 must not only verify that an intervention is present.
+
+It must specifically assert:
+
+```text
+lipid_lowering_statin
+```
+
+is present in the statin_on intervention classes and absent from statin_off.
+
+Required protection:
+
+```text
+statin_off: intervention present = false and lipid_lowering_statin absent
+statin_on: intervention present = true and lipid_lowering_statin present
+```
+
+CHECK 4 must fail unless:
+
+* statin_on contains the specific intervention class `lipid_lowering_statin`
+* statin_off does not contain `lipid_lowering_statin`
+* analytical invariants are preserved
+* cardiovascular consequence sentence visibly changes on statin_on
+* statin copy does not claim scoring or ranking changed
+
+### Frontend protection reality
+
+There are currently no established frontend unit/integration tests outside existing repo tooling.
+
+Do not create a new frontend testing architecture in this sprint unless a direct protection gap cannot otherwise be covered.
+
+For this sprint, frontend protection may be satisfied by:
+
+* existing LC-S8D Sentinel guardrails
+* backend regression tests over payload/contract behaviour
+* no-conversion static scan
+* proving-harness evidence
+* documented browser/UAT evidence already produced by FE-S8E
+
+If frontend files are not changed, do not run `npm run test` merely to create noise.
+
+If frontend files are changed, run available frontend validation commands and document if no test command exists or if existing environment debt prevents execution.
+
+### Fingerprint field dependency
+
+During Phase 2 authority preflight, explicitly confirm that:
+
+```text
+docs/audit-papers/launch-core-proving/latest_fingerprints.json
+```
+
+contains `consumer_domain_rows` for each AB/VR run.
+
+If `consumer_domain_rows` is absent, STOP and report because CHECK 4 and CHECK 5 cannot be properly protected from compact fingerprints alone.
+
+## Proven behaviours to protect
+
+This sprint must protect the behaviours below.
+
+### A. Unit-governance behaviours from LC-S8D
+
+Protect:
+
+* HbA1c has one analytical identity.
+* HbA1c `%` must not be separately scored.
+* HbA1c Layer B uses `mmol/mol`.
+* Haematocrit Layer B uses `L/L`.
+* Haematocrit must never render or score as `0.438 %`.
+* Platelets and WBC treat `K/uL` / `K/μL` as equivalent to `10^9/L`.
+* Sodium, potassium, and chloride treat `mEq/L` as equivalent to `mmol/L`.
+* BUN maps to urea, not urate.
+* Uric acid / urate remains separate from urea.
+* Frontend must not perform unit conversions.
+
+### B. Layer C Mode A from FE-S8E
+
+Protect:
+
+* `meta.upload_panel_observations` is consumed by the frontend.
+* Uploaded source observations are visible.
+* HbA1c `%` appears as uploaded/equivalent when present.
+* Equivalent uploaded observations are not injected into analytical dials.
+* Canonical dials continue to use `biomarkers[]`.
+* Uploaded-panel fidelity remains renderer-only.
+
+### C. Layer C Mode B analytical collapse
+
+Protect:
+
+* equivalent biomarkers collapse for analytical interpretation
+* narrative/report does not duplicate HbA1c `%` and `mmol/mol`
+* analytical surfaces use canonical identity and governed unit
+* uploaded-panel provenance does not contaminate scoring or ranking
+
+### D. Lifestyle-visible payoff from LC-S9C
+
+Protect:
+
+* AB and VR lifestyle_context scenarios show the plain-English alcohol / one-carbon / homocysteine sentence in `body_overview`
+* baseline scenarios do not show that sentence
+* internal slug `alcohol_intake_moderate_or_higher_with_one_carbon_lab_coherence` never appears in user-facing narrative fields
+* lifestyle copy is visible without requiring the user to reach the end of a long lead narrative
+* scoring and ranking are unchanged by the lifestyle copy
+
+### E. Statin bounded modifier behaviour from LC-S9B
+
+Protect:
+
+* statin_off has no intervention object
+* statin_off does not contain `lipid_lowering_statin`
+* statin_on has `lipid_lowering_statin`
+* statin_on/off preserve analytical invariants
+* top findings remain stable
+* signal states remain stable
+* consumer band labels remain stable
+* statin_on visibly changes or caveats the cardiovascular consequence sentence
+* statin copy remains bounded and does not imply scoring was changed
+
+### F. WHY fallback safety
+
+Protect:
+
+* no user-facing field shows `No governed WHY for signal_...`
+* no user-facing field exposes raw `signal_*` IDs
+* fallback title remains plain English:
+  `Pattern noted — deeper causal explanation not yet available`
+* fallback copy remains non-speculative
+* fallback confidence remains unchanged
+* fallback routing/ranking logic is not altered
+
+### G. Launch-core CHECKs
+
+Protect:
+
+* CHECK 2 — lifestyle visible payoff
+* CHECK 4 — statin bounded intervention with specific `lipid_lowering_statin` class assertion
+* CHECK 5 — no band/consequence polarity contradiction
+* CHECK 6 — primary concern and retail summary lead alignment
+
+These must be executable on current proving outputs.
+
+## Explicit non-scope
+
+Do not do any of the following:
+
+* Phase B true unit conversions
+* Phase B evidence gathering
+* broad WHY Wave 2 expansion
+* broad medication ontology
+* questionnaire expansion
+* frontend redesign
+* new clinical claims
+* IDL consumer expansion
+* PDF redesign
+* generic narrative rewrite
+* demo-only logic
+* fake fixture-only shortcuts
+* hiding failed findings
+* suppressing outputs to pass tests
+* adding fallback parser logic
+
 ## Potentially allowed files
 
-Only edit files required to close the LC-S9 gaps.
+Only edit files required for protection.
 
 Potentially allowed:
 
 ```text
-backend/core/analytics/**/*
-backend/core/contracts/**/*
-backend/core/pipeline/**/*
-backend/ssot/lifestyle_registry.yaml
-backend/ssot/questionnaire.json
-backend/ssot/display_unit_policy.yaml
-backend/tests/**/*
+backend/tests/regression/**/*
+backend/tests/unit/**/*
+backend/tests/fixtures/**/*
+backend/tools/launch_core_proving_harness.py
 
-frontend/app/(app)/results/**/*
-frontend/app/components/**/*
-frontend/app/types/**/*
-frontend/app/lib/**/*
+sentinel/packs/**/*
+sentinel/**/*
+
 frontend/tests/**/*
+frontend/app/lib/**/*
+frontend/app/components/**/*
+frontend/app/(app)/results/**/*
 
-docs/audit-papers/launch-core-proving/**/*
-docs/audit-papers/LC-S9B_launch_core_proving_closeout_notes.md
-docs/audit-papers/LC-S9B_human_walkthrough_pack.md
+docs/audit-papers/launch-core-proving/PROVING_REPORT.md
+docs/audit-papers/launch-core-proving/latest_fingerprints.json
+docs/audit-papers/LC-S10B_protection_of_proven_slice_notes.md
 ```
 
-Only touch `backend/ssot/lifestyle_registry.yaml` or `backend/ssot/questionnaire.json` if the sprint proves that visible lifestyle payoff cannot work because the existing governed mapping is incomplete or broken.
+Code under `backend/core/**` or `frontend/app/**` may be edited only if a protection test exposes a real defect in the already-proven behaviour. Do not alter behaviour just to make tests easier.
 
-## Forbidden files and changes
+## Forbidden files
 
 Do not edit:
 
@@ -156,75 +319,42 @@ backend/ssot/scoring_policy.yaml
 backend/core/units/registry.py
 backend/core/scoring/rules.py
 backend/core/canonical/hba1c_layer_b_arbitration.py
+
 backend/scripts/run_work_package.py
 backend/scripts/golden_gate_local.py
 backend/scripts/update_cursor_status.py
+
 automation_bus/latest_gate_evidence.json
 automation_bus/latest_gate_output.txt
 automation_bus/latest_cursor_status.json
 ```
 
-Do not:
+## Phase 1 — Protection inventory
 
-* introduce fallback parsers
-* change canonical units
-* change Phase B unit conversions
-* perform frontend unit conversions
-* broaden medication coverage beyond the bounded statin proving path
-* broaden questionnaire scope
-* add generic placeholder narrative
-* hide failed checks by suppressing outputs
-* treat stale proving artefacts as current evidence
-
-## Phase gates
-
-This sprint has five internal phases.
-
-Each phase must update:
+Create or update:
 
 ```text
-docs/audit-papers/LC-S9B_launch_core_proving_closeout_notes.md
+docs/audit-papers/LC-S10B_protection_of_proven_slice_notes.md
 ```
 
-Each phase checkpoint must record:
+Record:
 
-* command(s) run
-* files inspected
-* findings
-* failures
-* changes made, if any
-* whether the next phase is safe to enter
+* current branch / git state
+* authority paths found
+* existing tests that already protect each proven behaviour
+* gaps where protection is missing
+* proposed protection mechanism for each gap
 
----
+Do not implement until this inventory is complete.
 
-# Phase 1 — Refresh current proving evidence
+Required output table:
 
-## Required work
+| Behaviour | Existing protection | Gap | Planned protection |
+| --------- | ------------------- | --- | ------------------ |
 
-Run the current launch-core proving harness on the current branch.
+## Phase 2 — Protect launch-core proving matrix
 
-Locate and run the canonical harness. Likely candidates include files under:
-
-```text
-docs/audit-papers/launch-core-proving/
-backend/tests/
-scripts/
-```
-
-If no runnable harness exists, STOP and record the exact missing harness path / missing command.
-
-Refresh or regenerate, as appropriate:
-
-```text
-docs/audit-papers/launch-core-proving/PROVING_REPORT.md
-docs/audit-papers/launch-core-proving/latest_fingerprints.json
-```
-
-Do not manually edit generated evidence unless the harness explicitly writes it.
-
-## Required checks
-
-The refreshed proving evidence must include, or explicitly state absence of:
+Ensure the launch-core proving harness and regression tests protect:
 
 * AB baseline
 * AB lifestyle_context
@@ -235,217 +365,123 @@ The refreshed proving evidence must include, or explicitly state absence of:
 * VR statin_off
 * VR statin_on
 
-For each run capture:
+For each scenario, the protected fingerprint must include enough information to detect drift in:
 
-* lead finding / primary concern
-* runner-up if present
-* clinician report primary finding
-* retail summary lead
-* narrative body or governed payload summary
-* lifestyle context presence
-* statin/medication intervention presence
-* fingerprints for deterministic comparison
+* lead finding
+* top findings order
+* primary concern head
+* retail summary head
+* body overview head
+* lead narrative head
+* cardiovascular consequence sentence
+* intervention classes
+* consumer band labels
+* internal fallback leakage
+* `consumer_domain_rows`
 
-## Phase 1 STOP conditions
+If the existing fingerprints already contain these fields, document and test them.
 
-STOP if:
+If not, extend the harness output minimally.
 
-* harness cannot be located
-* harness cannot run on current branch
-* regenerated artefacts are non-deterministic across identical inputs
-* AB/VR fixtures are missing
-* statin/lifestyle fixtures are missing
-* the current branch is not the declared LC-S9B branch
+STOP if the harness becomes non-deterministic.
 
----
+## Phase 3 — Protect CHECK 2 / 4 / 5 / 6
 
-# Phase 2 — Binary CHECK automation
+Ensure regression tests exist and pass for:
 
-## Required work
+### CHECK 2 — Lifestyle visible payoff
 
-Implement or complete binary checks required by LC-S9:
+Must assert:
 
-```text
-CHECK 2 — lifestyle visible payoff
-CHECK 4 — statin/medication intervention presence and bounded isolation
-CHECK 5 — no band/headline polarity contradiction
-CHECK 6 — primary_concern and retail_summary agree on same lead
-```
+* baseline AB/VR do not include the lifestyle sentence
+* lifestyle_context AB/VR include the plain-English lifestyle sentence in body overview
+* internal lifestyle slug is absent from user-facing fields
+* lifestyle_context narrative/body differs from baseline in a user-visible way
 
-If CHECK 4 already exists and passes, document it rather than rewriting it.
+### CHECK 4 — Statin bounded intervention
 
-The checks must operate on the real launch-core proving outputs, not hardcoded demo strings.
+Must assert:
 
-## Expected pass/fail behaviour
+* statin_off has no statin intervention
+* statin_off does not contain `lipid_lowering_statin`
+* statin_on has `lipid_lowering_statin`
+* analytical invariants are preserved between statin_off and statin_on
+* cardiovascular consequence sentence differs on statin_on
+* statin copy does not claim scoring/ranking changed
 
-CHECK 2 must fail if lifestyle_context produces no user-visible difference.
+### CHECK 5 — Band/consequence polarity
 
-CHECK 4 must fail if statin_on/statin_off does not change or caveat at least one relevant user-visible field where the intervention is expected to matter, while preserving analytical invariants where required.
+Must assert:
 
-CHECK 5 must fail if any launch-core surface says a marker/system is reassuring while another surface says it is concerning for the same lead without explanation.
+* no reassuring headline contradicts a concerning band
+* no urgent/alarming wording is attached to stable bands
+* launch-core surfaces are internally coherent
 
-CHECK 6 must fail if the hero/primary concern and retail summary disagree on the lead finding.
+### CHECK 6 — Lead alignment
 
-## Phase 2 STOP conditions
+Must assert:
 
-STOP if:
+* primary concern and retail summary point to the same lead family
+* AB/VR baseline remain homocysteine-led unless a future governed change updates the expected fingerprint intentionally
 
-* a check can pass without reading real proving outputs
-* a check depends on stale fingerprints
-* a check is implemented as string theatre rather than contract verification
-* the only way to pass is to hide a problematic surface
+## Phase 4 — Protect unit and Layer C behaviours
 
----
+Ensure regression/Sentinel/frontend-equivalent tests protect:
 
-# Phase 3 — WHY / fallback trust correction
+* HbA1c single analytical identity
+* haematocrit `L/L`
+* BUN→urea and urate separation
+* uploaded-panel fidelity section
+* HbA1c `%` visible only as uploaded/equivalent
+* canonical dials from `biomarkers[]`
+* frontend no conversion maths
+* no duplicate equivalent analytical findings
 
-## Required work
+If these already exist from LC-S8D/FE-S8E, do not duplicate unnecessarily. Add only missing coverage.
 
-Inspect current proving outputs for active lead findings without governed WHY or acceptable fallback.
+Frontend-specific protection does not require new frontend test infrastructure unless a clear gap cannot be protected through existing Sentinel/backend regression/static scan routes.
 
-Specifically check for raw or unacceptable copy such as:
+## Phase 5 — Sentinel promotion
 
-```text
-No governed WHY for signal_...
-```
+Review whether any existing placeholder/status checks should become real blockers for the proven slice.
 
-If present on user-facing surfaces, replace with governed, honest fallback copy that:
+At minimum, assess:
 
-* does not pretend to know a causal mechanism
-* does not use internal signal IDs
-* explains that the system has detected a pattern but lacks enough governed evidence to provide a deeper causal explanation
-* directs the user to the relevant missing-data or clinician-context framing where appropriate
-* remains deterministic and source-controlled
+* unit-governance Sentinel pack
+* frontend no unit repair
+* WHY fallback leakage
+* lifestyle slug leakage
+* CHECK 2/4/5/6 protection
 
-## Preferred fix hierarchy
+If a Sentinel rule can be safely added without creating false positives, add it.
 
-1. If a governed WHY asset already exists but is not being loaded, fix the loader/wiring.
-2. If no governed WHY exists and the signal is inside the launch-core lead set, use a governed fallback template.
-3. If the signal is outside the launch-core lead set and should not be surfaced as primary, document and gate it from key launch-core ranking surfaces only if this is already allowed by policy.
+If not appropriate, document why pytest/regression/static-scan protection is sufficient for this sprint.
 
-Do not create new clinical WHY claims in this sprint unless the governed source already exists.
+Do not create broad Sentinel Phase 2.
 
-## Phase 3 STOP conditions
+## Phase 6 — Final proof run
 
-STOP if:
+Run the refreshed proving harness and targeted test suite.
 
-* fixing the issue requires new clinical research or new WHY asset creation
-* fallback copy would become speculative
-* internal signal IDs remain visible in consumer hero/report surfaces
-* suppression would hide clinically relevant findings without policy authority
-
----
-
-# Phase 4 — Visible lifestyle/statin payoff verification
-
-## Required work
-
-Using the refreshed harness outputs and browser/API inspection where possible, verify whether:
-
-1. lifestyle_context changes at least one user-visible field compared with baseline
-2. alcohol/lifestyle bridge appears in user-readable language when active
-3. statin_on/statin_off changes or caveats at least one relevant user-visible field
-4. statin behaviour is bounded and does not alter raw biomarker chemistry incorrectly
-5. medication handling remains caveat/modifier-based, not drug-library reasoning
-
-If the behaviour does not visibly differ, implement the smallest correction only if the architecture already supports the modifier but it is not surfaced.
-
-If architecture support is missing, STOP and record a blocker instead of inventing a new modifier system.
-
-## Phase 4 STOP conditions
-
-STOP if:
-
-* lifestyle/stain payoff requires broad questionnaire expansion
-* statin support would require building a broad drug database
-* medication logic changes analytical thresholds without explicit governed authority
-* visibility is created with fake or demo-only copy
-
----
-
-# Phase 5 — Human walkthrough pack and closeout decision
-
-## Required work
-
-Create:
-
-```text
-docs/audit-papers/LC-S9B_human_walkthrough_pack.md
-```
-
-The pack must allow a named human tester to review:
-
-* AB baseline
-* AB lifestyle_context
-* AB statin_off
-* AB statin_on
-* VR baseline
-* VR lifestyle_context
-* VR statin_off
-* VR statin_on
-
-For each scenario include:
-
-* report URL or command to generate report
-* expected lead finding
-* expected visible lifestyle/statin behaviour
-* known acceptable caveats
-* pass/fail checklist
-* screenshots or payload excerpts if available
-* binary CHECK results
-
-## Required final closeout decision
-
-Update:
-
-```text
-docs/audit-papers/LC-S9B_launch_core_proving_closeout_notes.md
-```
-
-with one of:
-
-```text
-SPRINT_5_PASS
-SPRINT_5_PASS_WITH_GAPS
-SPRINT_5_FAIL
-```
-
-If not `SPRINT_5_PASS`, state the exact next blocker and recommended next work package.
-
-## Phase 5 STOP conditions
-
-STOP if:
-
-* human walkthrough cannot be performed because reports cannot be generated
-* the pack lacks enough evidence for human review
-* CHECK 2/4/5/6 are not present or not executable
-* generated evidence is stale or not tied to current commit
-
----
-
-# Required validation commands
-
-Run relevant targeted tests and harness commands discovered during preflight.
-
-At minimum, run:
+Required commands:
 
 ```powershell
-python -m pytest backend/tests -q
+python backend/tools/launch_core_proving_harness.py
+python -m pytest backend/tests/regression/test_lc_s5_proving_checks.py -q
+python -m pytest backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py -q
+python -m pytest backend/tests/unit/test_hba1c_governance.py -q
 ```
 
-If full backend tests are too broad or fail due to unrelated known debt, run the smallest targeted launch-core proving/check test suite and document why.
-
-Run frontend validation if frontend files are changed:
+Run frontend validation only if frontend files are changed:
 
 ```powershell
 npm run type-check
 npm run test
-npm run lint
 ```
 
-If commands do not exist or fail due to known environment debt, record the exact output.
+If commands do not exist or fail due to known unrelated debt, record exact output and whether it blocks this sprint.
 
-Run no-forbidden-unit-regression scan if frontend files are changed:
+Run frontend no-conversion scan if frontend files are changed:
 
 ```powershell
 Select-String -Path frontend/app/**/*.ts,frontend/app/**/*.tsx -Pattern "0.055|0.0555|18.018|38.67|88.4|0.02586|mg_dL|mmol_L|convert" -CaseSensitive:$false
@@ -453,48 +489,51 @@ Select-String -Path frontend/app/**/*.ts,frontend/app/**/*.tsx -Pattern "0.055|0
 
 Review all hits.
 
-## Required documentation outputs
-
-Create or update only as justified:
-
-```text
-docs/audit-papers/LC-S9B_launch_core_proving_closeout_notes.md
-docs/audit-papers/LC-S9B_human_walkthrough_pack.md
-docs/audit-papers/launch-core-proving/PROVING_REPORT.md
-docs/audit-papers/launch-core-proving/latest_fingerprints.json
-```
-
-If code changes are made, the notes file must include:
-
-* files changed
-* reason for each change
-* phase mapping
-* tests run
-* before/after evidence
-* residual risk
-
 ## Acceptance criteria
 
-The work package is complete only if:
+This sprint is complete only if:
 
-* current proving artefacts are refreshed or the missing harness is explicitly documented as a blocker
-* CHECK 2, CHECK 4, CHECK 5, and CHECK 6 are implemented or explicitly shown to already exist and pass
-* AB/VR launch-core matrix is evaluated on the current build
-* visible lifestyle payoff is proven or explicitly fails
-* visible statin payoff is proven or explicitly fails
-* user-facing raw fallback strings are removed or explicitly blocked for policy reasons
-* no demo-only narrative is introduced
-* no broad WHY expansion occurs
-* no Phase B unit work occurs
-* a human walkthrough pack is created
-* the final Sprint 5 verdict is explicit
+* launch-core matrix protection exists for AB/VR baseline/lifestyle/statin scenarios
+* `consumer_domain_rows` presence is verified in fingerprints where required by CHECK 4 / CHECK 5
+* CHECK 2 / 4 / 5 / 6 are protected and passing
+* CHECK 4 specifically verifies `lipid_lowering_statin`, not merely generic intervention presence
+* lifestyle visible payoff is protected
+* statin bounded intervention is protected
+* unit-governance behaviours remain protected
+* uploaded-panel fidelity remains protected
+* no internal lifestyle rule slug can leak into user-facing fields
+* no raw `signal_*` / `No governed WHY for signal_...` fallback can leak into user-facing fields
+* proving fingerprints are refreshed on current code
+* Sprint 6 protection notes state exactly what is now protected
+* no feature expansion has occurred
+
+## Required documentation output
+
+Create or update:
+
+```text
+docs/audit-papers/LC-S10B_protection_of_proven_slice_notes.md
+```
+
+It must include:
+
+1. protection inventory
+2. files changed
+3. tests added/updated
+4. Sentinel changes, if any
+5. proving harness result
+6. refreshed fingerprint stamp/SHA
+7. known deferred gaps
+8. final protection verdict
+
+This document is not a passive status artefact. It must map directly to tests and guards created or verified in this sprint.
 
 ## Cursor completion requirements
 
 When implementation is complete, Cursor must:
 
-1. Run the validation commands relevant to changed files.
-2. Update required documentation outputs.
+1. Run required validation commands.
+2. Update the protection notes.
 3. Run closure audit:
 
 ```powershell
@@ -528,8 +567,8 @@ python backend/scripts/run_work_package.py finish
 
 ## Explicit non-authority statement
 
-Cursor implements and reports only.
+Cursor implements and reports protection only.
 
-Cursor may not self-certify Sprint 5 closure, Sprint 6 authorisation, architecture correctness, merge readiness, or final approval.
+Cursor may not self-certify Sprint 6 completion, launch readiness, architecture correctness, merge readiness, or final approval.
 
 ````
