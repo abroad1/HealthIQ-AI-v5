@@ -1,9 +1,10 @@
 {
   "branch": "launch-core/lc-s8f-phase-b-uk-si-true-conversions",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-17T09:35:22Z",
   "cursor_started_utc": "2026-05-17T09:31:38Z",
-  "head_sha": "7d407f5e738801e52006b8c436402ef3ddd52a46",
+  "head_sha": "5b429dbff604452678b996be58c78b7be8952315",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "LC-S8F"
 }
