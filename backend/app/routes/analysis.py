@@ -47,6 +47,7 @@ from core.canonical.errors import CanonicalCollisionError
 from core.context import ContextFactory, ValidationError
 from core.units.registry import apply_unit_normalisation, UnitConversionError, UNIT_REGISTRY_VERSION
 from core.units.display_policy import build_display_policy_meta
+from core.units.display_fidelity_v1 import attach_source_labels_to_upload_panel
 from core.dependencies.analysis_auth import (
     require_analysis_submitter,
     require_analysis_submitter_if_db,
@@ -145,11 +146,14 @@ async def start_analysis(
             )
 
         # LC-S8D Mode A: preserve pre-arbitration upload rows for uploaded-panel fidelity.
-        upload_panel_observations = {
-            k: copy.deepcopy(v)
-            for k, v in normalized.items()
-            if k != UNIT_NORMALISATION_META_KEY
-        }
+        upload_panel_observations = attach_source_labels_to_upload_panel(
+            {
+                k: copy.deepcopy(v)
+                for k, v in normalized.items()
+                if k != UNIT_NORMALISATION_META_KEY
+            },
+            request.biomarkers,
+        )
 
         # KB-HBA1C-GOV1: single Layer B HbA1c id (hba1c) before unit normalisation.
         normalized = arbitrate_hba1c_layer_b_input(normalized)

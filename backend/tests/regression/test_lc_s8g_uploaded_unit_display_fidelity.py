@@ -11,6 +11,7 @@ import pytest
 
 from core.dto.builders import analysis_route_biomarker_row_with_display
 from core.models.results import BiomarkerScore
+from core.units.display_fidelity_v1 import attach_source_labels_to_upload_panel
 from core.units.display_policy import load_display_unit_policy
 from core.units.registry import UnitRegistry, convert_value
 
@@ -109,6 +110,7 @@ class TestLC_S8GDisplayFields:
                 "value": 144.0,
                 "unit": "g/L",
                 "reference_range": {"min": 130.0, "max": 175.0, "unit": "g/L", "source": "lab"},
+                "source_label": "Haemoglobin",
             }
         }
         row = analysis_route_biomarker_row_with_display(
@@ -118,7 +120,61 @@ class TestLC_S8GDisplayFields:
         assert row["display_unit"] == "g/L"
         assert row["display_value"] == pytest.approx(144.0)
         assert row["display_is_uploaded_unit"] is False
+        assert row["display_label"] == "Haemoglobin"
         assert "analytical_transparency_unit" not in row
+
+    def test_us_hemoglobin_display_label_from_raw_upload_key(self):
+        raw = {
+            "Hemoglobin": {
+                "value": 14.6,
+                "unit": "g/dL",
+                "reference_range": {"min": 13.0, "max": 17.5, "unit": "g/dL", "source": "lab"},
+            }
+        }
+        upload_panel = attach_source_labels_to_upload_panel(
+            {
+                "hemoglobin": {
+                    "value": 14.6,
+                    "unit": "g/dL",
+                    "reference_range": {"min": 13.0, "max": 17.5, "unit": "g/dL", "source": "lab"},
+                }
+            },
+            raw,
+        )
+        row = analysis_route_biomarker_row_with_display(
+            _score("hemoglobin", 146.0, "g/L", 130.0, 175.0),
+            upload_panel=upload_panel,
+        )
+        assert row["display_label"] == "Hemoglobin"
+        assert row["display_unit"] == "g/dL"
+        assert float(row["display_value"]) == pytest.approx(14.6, rel=0.01)
+        assert row["display_is_uploaded_unit"] is True
+
+    def test_uk_hemoglobin_display_label_from_raw_upload_key(self):
+        raw = {
+            "Haemoglobin": {
+                "value": 144.0,
+                "unit": "g/L",
+                "reference_range": {"min": 130.0, "max": 175.0, "unit": "g/L", "source": "lab"},
+            }
+        }
+        upload_panel = attach_source_labels_to_upload_panel(
+            {
+                "hemoglobin": {
+                    "value": 144.0,
+                    "unit": "g/L",
+                    "reference_range": {"min": 130.0, "max": 175.0, "unit": "g/L", "source": "lab"},
+                }
+            },
+            raw,
+        )
+        row = analysis_route_biomarker_row_with_display(
+            _score("hemoglobin", 144.0, "g/L", 130.0, 175.0),
+            upload_panel=upload_panel,
+        )
+        assert row["display_label"] == "Haemoglobin"
+        assert row["display_unit"] == "g/L"
+        assert row["display_is_uploaded_unit"] is False
 
     def test_uric_acid_upload_key_maps_to_urate_display(self):
         upload_panel = {

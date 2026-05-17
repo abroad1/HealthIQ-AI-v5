@@ -8,6 +8,7 @@ No conversions performed here — only selects governed upload source rows.
 
 from __future__ import annotations
 
+import copy
 from typing import Any, Dict, List, Mapping, Optional, Tuple
 
 from core.canonical.alias_registry_service import get_alias_registry_service
@@ -43,7 +44,68 @@ def _parse_upload_observation(raw: Any) -> Optional[Dict[str, Any]]:
             "unit": str(ref_raw.get("unit") or unit).strip() or unit,
             "source": ref_raw.get("source", "lab"),
         }
-    return {"value": float(val), "unit": unit, "reference_range": ref_out}
+    out: Dict[str, Any] = {"value": float(val), "unit": unit, "reference_range": ref_out}
+    if isinstance(raw, dict):
+        for field in ("source_label", "display_label", "display_name", "label", "name"):
+            label = raw.get(field)
+            if isinstance(label, str) and label.strip():
+                out["source_label"] = label.strip()
+                break
+    return out
+
+
+def _source_label_from_raw_key(raw_key: str) -> str:
+    """Preserve lab-report wording (Hemoglobin vs Haemoglobin); title-case slug keys only."""
+    key = str(raw_key).strip()
+    if not key or key.startswith("unmapped_"):
+        return ""
+    if "_" in key and key == key.lower():
+        return " ".join(part.capitalize() for part in key.split("_") if part)
+    return key
+
+
+def _source_label_from_raw_value(val: Any) -> Optional[str]:
+    if not isinstance(val, dict):
+        return None
+    for field in ("source_label", "display_label", "display_name", "label", "name"):
+        label = val.get(field)
+        if isinstance(label, str) and label.strip():
+            return label.strip()
+    return None
+
+
+def build_canonical_upload_source_labels(raw_biomarkers: Mapping[str, Any]) -> Dict[str, str]:
+    """Map canonical biomarker id → customer source label from pre-normalise request keys."""
+    labels: Dict[str, str] = {}
+    for raw_key, val in raw_biomarkers.items():
+        if str(raw_key).startswith("unmapped_"):
+            continue
+        cid = _canonical_id_for_upload_key(str(raw_key))
+        if not cid:
+            continue
+        label = _source_label_from_raw_value(val) or _source_label_from_raw_key(str(raw_key))
+        if label:
+            labels[cid] = label
+    return labels
+
+
+def attach_source_labels_to_upload_panel(
+    upload_panel: Dict[str, Any],
+    raw_biomarkers: Mapping[str, Any],
+) -> Dict[str, Any]:
+    """Enrich upload_panel_observations with source_label per governed canonical id."""
+    out = copy.deepcopy(upload_panel)
+    by_canonical = build_canonical_upload_source_labels(raw_biomarkers)
+    for key, obs in out.items():
+        if key in _SKIP_UPLOAD_KEYS or str(key).startswith("unmapped_"):
+            continue
+        if not isinstance(obs, dict):
+            continue
+        cid = _canonical_id_for_upload_key(str(key)) or str(key)
+        label = by_canonical.get(cid)
+        if label:
+            obs["source_label"] = label
+    return out
 
 
 def _canonical_id_for_upload_key(key: str) -> Optional[str]:
@@ -196,6 +258,11 @@ def enrich_biomarker_row_display_fields(
         out["analytical_transparency_unit"] = analytical_unit
     else:
         out.pop("analytical_transparency_unit", None)
+
+    if upload_obs:
+        source_label = upload_obs.get("source_label")
+        if isinstance(source_label, str) and source_label.strip():
+            out["display_label"] = source_label.strip()
 
     return out
 
