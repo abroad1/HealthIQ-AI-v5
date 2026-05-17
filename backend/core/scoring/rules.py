@@ -305,6 +305,10 @@ class ScoringRules:
             min_val = coerce_optional_float(ref.get("min"))
             max_val = coerce_optional_float(ref.get("max"))
             if min_val is not None and max_val is not None and min_val < max_val:
+                # LC-S11A: low ALT below lab lower bound is not clinically alarming.
+                if biomarker_name == "alt" and value < float(min_val):
+                    score, score_range = self._calculate_score_from_has_position(0.05)
+                    return score, score_range, None
                 score, score_range = self._calculate_score_from_range(value, float(min_val), float(max_val))
                 return score, score_range, None
             pos = position_in_one_sided_lab_range(

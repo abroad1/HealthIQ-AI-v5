@@ -19,6 +19,12 @@ _ID_HBA1C = "ph_hba1c_metabolic_stress_v1"
 _ID_IR = "ph_metabolic_early_ir_v1"
 _ID_HEP = "ph_hepatic_alt_inflammatory_v1"
 
+# LC-S11A: honest glycaemic copy when no active blood-sugar signals on the panel.
+_MET_NO_ACTIVE_SIGNAL_CONTRIBUTOR = (
+    "HbA1c is within range on this panel. Glucose and insulin were not included, "
+    "so a fuller glycaemic read would require those markers."
+)
+
 _CV_SIGNAL_PRIORITY: List[str] = [
     "signal_lipid_transport_dysfunction",
     "signal_ldl_cholesterol_high",
@@ -485,15 +491,22 @@ def met_contributor_primary(
         rec = idl_record(by_id, primary_idl)
         if rec and rec.severity_state != "not_observed" and rec.enabled_for_frontend and rec.subtitle:
             return rec.subtitle.strip()
+    if not active_sids:
+        return _MET_NO_ACTIVE_SIGNAL_CONTRIBUTOR
     for pref in ("signal_hba1c", "signal_insulin_resistance", "signal_glucose"):
         for r in sig_rows:
             if not _active(r):
                 continue
             if str(r.get("signal_id", "")).startswith(pref):
                 return governed_signal_line(str(r.get("signal_id", "")), "met")
-    g = governed_idl_field(_ID_IR, "subtitle")
-    if g:
-        return g
+    rec_ir = idl_record(by_id, _ID_IR)
+    if (
+        rec_ir is not None
+        and rec_ir.severity_state != "not_observed"
+        and rec_ir.enabled_for_frontend
+        and rec_ir.subtitle
+    ):
+        return rec_ir.subtitle.strip()
     return "Your key blood sugar markers are within their reference ranges."
 
 

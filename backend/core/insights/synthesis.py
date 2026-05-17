@@ -338,29 +338,10 @@ class MockLLMClient(LLMClient):
         """
         # InsightGraph path: return governed LLMResultV2-shaped JSON (validated live in synthesis).
         if any(m in user_prompt for m in GRAPH_PATH_USER_PROMPT_MARKERS):
-            import hashlib
-
-            prompt_hash = hashlib.md5(
-                f"{system_prompt}\n\n{user_prompt}".encode()
-            ).hexdigest()[:8]
+            # LC-S11A: launch-core must not emit legacy placeholder insight rows.
             payload = {
-                "insights": [
-                    {
-                        "id": f"{category}_translation_{prompt_hash}",
-                        "title": (
-                            f"{category.title()} focus: summarise structured signals; "
-                            "review with your clinician"
-                        ),
-                        "severity": "low",
-                        "evidence": ["structured_case_summary"],
-                        "actions": [
-                            "Discuss documented patterns with a qualified health professional"
-                        ],
-                        "red_flags": [],
-                        "confidence": 0.72,
-                    }
-                ],
-                "tokens_used": 10,
+                "insights": [],
+                "tokens_used": 0,
                 "latency_ms": 0,
             }
             text = json.dumps(payload)

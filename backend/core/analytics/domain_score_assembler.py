@@ -424,7 +424,6 @@ def assemble_consumer_domain_scores_v1(
         _suffix = (intervention_cv_suffix or "").strip()
         _cons_cv = (_cons + " " + _suffix).strip() if _suffix else _cons
         _primary_rec = idl_record(by_id, idl) if idl else None
-        ev["deferred_kb_content"] = "lipid_dominant_cv_why_it_matters_gap_deferred_sprint"
         return ConsumerDomainScoreV1(
             domain_id="wave1_cardiovascular",
             card_schema_version="1.1",

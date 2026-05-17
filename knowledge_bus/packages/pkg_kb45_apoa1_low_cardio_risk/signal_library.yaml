@@ -42,6 +42,7 @@ signals:
   activation_logic: lab_range_exceeded
   activation_config:
     upper_bound_state: suboptimal
+    enable_upper_bound: false
     enable_lower_bound: true
     lower_bound_state: suboptimal
   override_rules:

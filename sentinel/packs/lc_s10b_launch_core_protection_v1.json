@@ -59,6 +59,41 @@
       "status": "GUARDED",
       "test_file": "frontend/tests/lib/uploadPanelFidelity.test.ts",
       "first_seen": "2026-05"
+    },
+    "legacy_insights_placeholder_leakage": {
+      "description": "Launch-core API must not emit legacy insights[] placeholder text ('summarise structured signals').",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s11a_trust_blocker_correction.py",
+      "first_seen": "2026-05"
+    },
+    "domain_narrative_without_active_signal": {
+      "description": "Blood sugar domain must not show early-IR pattern copy when active_signal_ids is empty.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s11a_trust_blocker_correction.py",
+      "first_seen": "2026-05"
+    },
+    "apoa1_directionality_misclassification": {
+      "description": "Elevated ApoA1 alone must not fire signal_apoa1_cardio_risk or appear in wave1_aligned_drivers.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s11a_trust_blocker_correction.py",
+      "first_seen": "2026-05"
+    },
+    "low_alt_false_alarm": {
+      "description": "ALT below lab lower bound must not drive critical liver domain score or review band.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s11a_trust_blocker_correction.py",
+      "first_seen": "2026-05"
+    },
+    "consumer_payload_internal_sprint_string_leakage": {
+      "description": "No internal sprint-management strings in consumer_domain_scores raw_evidence_refs or sentences.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s11a_trust_blocker_correction.py",
+      "first_seen": "2026-05"
     }
   }
 }
