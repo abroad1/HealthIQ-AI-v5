@@ -501,17 +501,10 @@ export default function ResultsPage() {
         typeof biomarker.display_value === 'number' ? biomarker.display_value : (biomarker.value as number);
       const shownUnit = (biomarker.display_unit || biomarker.unit || '').trim();
       const shownRef = biomarker.display_reference_range ?? biomarker.reference_range;
-      const analyticalUnit = (biomarker.analytical_unit || biomarker.unit || '').trim();
-      const showTransparency =
-        biomarker.display_is_uploaded_unit === true ||
-        (!!shownUnit &&
-          !!analyticalUnit &&
-          shownUnit.replace(/\s+/g, '').toLowerCase() !== analyticalUnit.replace(/\s+/g, '').toLowerCase());
 
       biomarkerDialData[biomarker.biomarker_name] = {
         value: shownValue,
         unit: shownUnit,
-        analyticalTransparencyUnit: showTransparency ? analyticalUnit : null,
         status: biomarker.status ?? undefined,
         score: biomarker.score ?? undefined,
         interpretation: biomarker.interpretation ?? undefined,
