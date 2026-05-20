@@ -1,9 +1,9 @@
 {
-  "branch": "launch-core/lc-s11a-trust-blocker-correction",
+  "branch": "scaffold/lc-s12b-core-scaffold-definition",
   "bus_version": "1.2",
-  "cursor_started_utc": "2026-05-17T13:54:46Z",
-  "head_sha": "fe1e1aed44418744a376d3703f8ae4adc7e26d0b",
+  "cursor_started_utc": "2026-05-20T21:08:13Z",
+  "head_sha": "40d02dffbba3826239ab73b310a4649263d8d630",
   "raw_stop_condition": null,
   "status": "IN_PROGRESS",
-  "work_id": "LC-S11A"
+  "work_id": "LC-S12B"
 }
