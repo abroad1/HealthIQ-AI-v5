@@ -1,107 +1,152 @@
 {
-  "work_id": "LC-S11A",
+  "work_id": "LC-S12B",
   "bus_version": "1.3.1",
   "status": "HARDENED",
-  "hardened_utc": "2026-05-17T00:00:00Z",
-  "hardened_by": "Claude Code (Stage 2 hardening)",
+  "hardened_utc": "2026-05-20T00:00:00Z",
+  "hardened_by": "Claude Code (claude-sonnet-4-6)",
+  "blocker_count": 0,
+  "warning_count": 2,
   "changes": [
     {
-      "id": "H1",
-      "severity": "PASS",
-      "description": "Front matter: all five mandatory fields present and valid.",
-      "file": "automation_bus/latest_cursor_prompt.md",
-      "line": "1-7",
-      "citation": "automation_bus/latest_cursor_prompt.md lines 1-7: work_id=LC-S11A, branch=launch-core/lc-s11a-trust-blocker-correction, risk_level=HIGH, execution_model=TWO_PHASE_START_FINISH, change_type=MIXED. All five SOP v1.3.1 mandatory fields present."
+      "check": "Front Matter — work_id",
+      "result": "PASS",
+      "detail": "work_id: LC-S12B present and correctly formed."
     },
     {
-      "id": "H2",
-      "severity": "CONFIRMED",
-      "description": "Defect 1 (insights[] placeholder): Authority source confirmed. backend/core/insights/synthesis.py lines 330-375, MockLLMClient.generate_insights() InsightGraph branch. Fires when user_prompt contains '**Arbitration summary (stamped):**'. Generates 'summarise structured signals; review with your clinician' with empty biomarkers_involved. Serialised to public API at backend/app/routes/analysis.py lines 231-244. No existing gating.",
-      "file": "backend/core/insights/synthesis.py",
-      "line": "330-375",
-      "citation": "synthesis.py:330-375: InsightGraph path generates placeholder payload with title='{category.title()} focus: summarise structured signals; review with your clinician'. analysis.py:231-244: iterates dto.insights directly into response JSON. CONFIRMED — no gating present."
+      "check": "Front Matter — branch",
+      "result": "WARNING",
+      "detail": "branch: scaffold/lc-s12b-core-scaffold-definition. The 'scaffold/' prefix is not listed in CLAUDE.md §13 branch convention (feature/, fix/, docs/, sentinel/, chore/). GPT/human have approved this branch name as part of the scaffold phase. Not a kernel-failure risk. Convention deviation noted for standing record."
     },
     {
-      "id": "H3",
-      "severity": "CONFIRMED — exact bug location",
-      "description": "Defect 2 (blood sugar unsupported narrative): Authority source confirmed. backend/core/analytics/domain_narrative_wave1.py, met_contributor_primary() approximately lines 477-497. When no active signals and primary_idl is None, function falls back to governed_idl_field('ph_metabolic_early_ir_v1', 'subtitle'). governed_idl_field() reads the YAML field without checking severity_state. ph_metabolic_early_ir_v1 has severity_state='not_observed' in this run but subtitle ('A pattern suggesting early impaired sugar and lipid handling') is returned. Fix: add severity_state != 'not_observed' guard before the governed_idl_field fallback, skipping to 'Your key blood sugar markers are within their reference ranges.' fallback when the record is not_observed.",
-      "file": "backend/core/analytics/domain_narrative_wave1.py",
-      "line": "477-497",
-      "citation": "domain_narrative_wave1.py:471-474: g = governed_idl_field(_ID_IR, 'subtitle') — called unconditionally when no signal match. governed_idl_field() at lines 32-43: reads field from registry without severity_state check. _ID_IR = 'ph_metabolic_early_ir_v1'. IDL record severity_state confirmed as 'not_observed' in analysis JSON. CONFIRMED."
+      "check": "Front Matter — risk_level",
+      "result": "PASS",
+      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: STANDARD. Valid SOP v1.3.1 value. Correct for a CONTENT-only documentation sprint that does not touch HIGH-risk paths (backend/core/analytics/, backend/core/pipeline/, backend/ssot/, Sentinel packs, control-plane scripts). Prior BLOCKER resolved."
     },
     {
-      "id": "H4",
-      "severity": "CONFIRMED — root cause identified",
-      "description": "Defect 3 (ApoA1 directionality): Authority source confirmed. knowledge_bus/packages/pkg_kb45_apoa1_low_cardio_risk/signal_library.yaml. Signal name is 'ApoA1 low cardiovascular context', trigger_direction=low, but activation_config.upper_bound_state='suboptimal' causes the evaluator to fire for elevated ApoA1. Evaluator at backend/core/analytics/signal_evaluator.py lines 153-165 returns upper_bound_state when primary_value > high, with no trigger_direction guard. Fix: set enable_upper_bound=false in activation_config in the signal_library.yaml to prevent firing for above-max values while preserving below-min (low) direction firing. Cursor must confirm the evaluator reads enable_upper_bound before applying.",
-      "file": "knowledge_bus/packages/pkg_kb45_apoa1_low_cardio_risk/signal_library.yaml",
-      "line": "43-46",
-      "citation": "signal_library.yaml:9: signal_id=signal_apoa1_cardio_risk. signal_library.yaml:17: trigger_direction=low. signal_library.yaml:43-46: activation_config: upper_bound_state=suboptimal, enable_lower_bound=true, lower_bound_state=suboptimal. signal_evaluator.py:159-165: upper_bound_state returned when primary_value > high — no trigger_direction guard. ApoA1 value 1.73 > lab max 1.69 -> fires as suboptimal. CONFIRMED root cause."
+      "check": "Front Matter — execution_model",
+      "result": "PASS",
+      "detail": "execution_model: TWO_PHASE_START_FINISH is a valid SOP v1.3.1 value."
     },
     {
-      "id": "H5",
-      "severity": "CONFIRMED — gap in scoring policy",
-      "description": "Defect 4 (low ALT liver false alarm): Authority confirmed. bio_stats_engine.py lines 24-60 uses symmetric z-score around midpoint — no directional awareness. scoring_policy.yaml has no direction_aware, one_sided, lower_bound_cap, or floor_score field for ALT. ALT=7 with range 10-49 scores ~0.051 (5.1/100). Domain score assembler (domain_score_assembler.py:liv_block) passes this directly to the liver rail. No existing mechanism to cap low-bound violations for ALT. Cursor must inspect the scoring calibration pipeline before choosing the minimal fix point. STOP condition applies if the fix requires redesigning all enzyme scoring globally.",
-      "file": "backend/ssot/scoring_policy.yaml",
-      "line": "N/A — field absent",
-      "citation": "scoring_policy.yaml: read in full — no direction_aware, lower_bound_cap, or floor_score field present for ALT or for liver-class enzymes. bio_stats_engine.py:24-60: symmetric z-score formula. domain_score_assembler.py:liv_block(): base_100 = overall_score from liver rail, which aggregates individual biomarker scores including ALT. CONFIRMED gap — direction-aware scoring mechanism does not exist for ALT."
+      "check": "Front Matter — change_type",
+      "result": "PASS",
+      "detail": "change_type: CONTENT is correct. Sprint creates two documentation files only. No runtime, backend, frontend, Sentinel, Knowledge Bus, or control-plane assets are modified."
     },
     {
-      "id": "H6",
-      "severity": "REQUIRED — bonus correction within scope",
-      "description": "Internal sprint string leak in consumer JSON: backend/core/analytics/domain_score_assembler.py line ~427, cv_block() hardcodes ev['deferred_kb_content'] = 'lipid_dominant_cv_why_it_matters_gap_deferred_sprint'. This key is serialised into the consumer-facing JSON under consumer_domain_scores[0].raw_evidence_refs. Fix: remove this key from the ev dict in cv_block() or relocate it to an internal-only debug structure not serialised to the public API. This is within Defect 1 / consumer JSON hygiene scope.",
-      "file": "backend/core/analytics/domain_score_assembler.py",
-      "line": "427",
-      "citation": "domain_score_assembler.py:427: ev['deferred_kb_content'] = 'lipid_dominant_cv_why_it_matters_gap_deferred_sprint' — hardcoded string in cv_block(). Confirmed present in downloaded consumer analysis JSON under consumer_domain_scores[0].raw_evidence_refs.deferred_kb_content. CONFIRMED leak."
+      "check": "Stage 2A — Primary authority source exists",
+      "result": "PASS",
+      "citation": "docs/planning-papers/HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md — confirmed present. Content verified: 1300 lines covering seven compressed scaffold sprints (§9), cross-sprint governance (§§5.1–5.3), grade model (§4), architectural principles (§10), KB-WAVE transition (§8). All 15 required prompt sections are traceable to this source."
     },
     {
-      "id": "H7",
-      "severity": "PATH ERROR — non-blocking",
-      "description": "Test path error in cursor prompt: prompt line 432 specifies 'test_lc_s8f_phase_b_uk_si_true_conversions.py'. Actual file is 'backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py'. File confirmed to exist at the correct path. Cursor must use the actual filename. This does not block execution but Cursor must not attempt to run the named-in-prompt path.",
-      "file": "backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py",
-      "line": "N/A — path correction only",
-      "citation": "Glob confirmed: test_lc_s8f_phase_b_true_conversions.py EXISTS. test_lc_s8f_phase_b_uk_si_true_conversions.py MISSING. Cursor must run: python -m pytest backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py -q"
+      "check": "Stage 2A — Supplementary reference: LC-S12A forensic audit",
+      "result": "PASS",
+      "citation": "docs/audit-papers/LC-S12A_forensic_architecture_audit.md — confirmed present."
     },
     {
-      "id": "H8",
-      "severity": "PASS",
-      "description": "Governing evidence files: all three confirmed at stated paths.",
-      "file": "docs/audit-papers/",
-      "line": "N/A",
-      "citation": "Confirmed: docs/audit-papers/LC-S10B_protection_of_proven_slice_notes.md EXISTS. docs/audit-papers/LC-S8F_phase_b_unit_conversion_uat.md EXISTS. docs/audit-papers/LC-S8G_uploaded_unit_display_fidelity_notes.md EXISTS."
+      "check": "Stage 2A — Supplementary reference: transformation plan",
+      "result": "PASS",
+      "citation": "docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md — confirmed present."
     },
     {
-      "id": "H9",
-      "severity": "PASS",
-      "description": "Regression test files: four of five required test files confirmed. Path correction for LC-S8F noted in H7.",
-      "file": "backend/tests/regression/",
-      "line": "N/A",
-      "citation": "Confirmed EXISTS: test_lc_s10b_launch_core_protection.py, test_lc_s5_proving_checks.py, test_lc_s8g_uploaded_unit_display_fidelity.py, test_lc_s8d_unit_governance_sentinel.py, test_lc_s8f_phase_b_true_conversions.py."
+      "check": "Stage 2A — Supplementary reference: LC-S11 UAT audit",
+      "result": "PASS",
+      "citation": "docs/audit-papers/LC-S11_forensic_human_uat_audit.md — confirmed present."
     },
     {
-      "id": "H10",
-      "severity": "PASS",
-      "description": "Intelligence Core interaction acknowledged. Defect 3 modifies signal_library.yaml consumed by signal_evaluator.py (Intelligence Core). Defect 4 modifies scoring configuration consumed by calibration/scoring engines (Intelligence Core). HIGH risk classification and BEHAVIOUR controls are correctly applied per SOP §3 and §10. Behavioural audit requirements are in scope.",
-      "file": "backend/core/analytics/signal_evaluator.py",
-      "line": "153-174",
-      "citation": "signal_evaluator.py:153-174: _evaluate_lab_range_activation_state() is Intelligence Core per SOP §3. signal_library.yaml modification directly changes evaluator output for ApoA1. CONFIRMED — HIGH risk correctly classified."
+      "check": "Stage 2A — Supplementary reference: LC-S11A correction notes",
+      "result": "PASS",
+      "citation": "docs/audit-papers/LC-S11A_trust_blocker_correction_notes.md — confirmed present."
     },
     {
-      "id": "H11",
-      "severity": "PASS",
-      "description": "Scope boundary: no scope creep detected. All four defects bounded to identified authority files. Forbidden files (run_work_package.py, golden_gate_local.py, update_cursor_status.py) confirmed non-overlapping with correction targets. Prohibited changes list verified against all four defect fixes.",
-      "file": "automation_bus/latest_cursor_prompt.md",
-      "line": "153-172",
-      "citation": "Prompt lines 153-172: forbidden changes list read. No overlap with correction targets. No unit governance, no LC-S8F/S8G changes, no global scoring rewrite, no new clinical claims. PASS."
+      "check": "Stage 2A — Supplementary reference: latest_audit_summary.md",
+      "result": "PASS",
+      "citation": "automation_bus/latest_audit_summary.md — confirmed present."
+    },
+    {
+      "check": "Stage 2A — SOP file path accuracy in prompt",
+      "result": "WARNING",
+      "detail": "Prompt 'Also inspect' section references 'AUTOMATION_BUS_SOP_v1.3.1.md' and 'KNOWLEDGE_BUS_SOP_v1.3.md' without path prefix. Actual location is docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md (confirmed present). These are 'if present' optional references for a CONTENT-only sprint. Cursor must resolve to the docs/governance/ path. Low severity — does not block execution."
+    },
+    {
+      "check": "Stage 2A — Duplicate authority check",
+      "result": "PASS",
+      "detail": "No competing final scaffold completion plan found in docs/planning-papers/. Other files confirmed as distinct subjects: market positioning paper, transformation plan, pre-sprint decision packs, statin gate pack. HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md is the unambiguous single authority."
+    },
+    {
+      "check": "Stage 2A — Output file conflicts",
+      "result": "PASS",
+      "detail": "Neither docs/planning-papers/HealthIQ_AI_core_scaffold_completion_definition_v1.md nor docs/audit-papers/LC-S12B_core_scaffold_definition_notes.md currently exists. No overwrite risk."
+    },
+    {
+      "check": "Stage 2A — Forbidden file exposure",
+      "result": "PASS",
+      "detail": "Allowed output: two specific docs/ files only. Forbidden list correctly covers backend/**, frontend/**, knowledge_bus/**, sentinel/**, automation_bus/state/*, control-plane scripts. Scope is correctly bounded."
+    },
+    {
+      "check": "Stage 2B — Behavioural scope (CONTENT sprint)",
+      "result": "NOT_APPLICABLE",
+      "detail": "CONTENT sprint. No Intelligence Core components touched. No DTO, scoring, signal evaluator, root-cause compiler, or pipeline logic involved. Behavioural hardening does not apply."
+    },
+    {
+      "check": "Stage 2B — STOP conditions adequacy",
+      "result": "PASS",
+      "detail": "Prompt includes comprehensive STOP conditions: token missing/mismatch, wrong branch, runtime file required in CONTENT-only sprint, duplicate authority source detected, risk escalation needed, required source missing, material rescoping required, prior scaffold regression failing. Aligned with SOP §7 no-op protection."
+    },
+    {
+      "check": "Stage 2B — Sentinel obligation declared",
+      "result": "PASS",
+      "detail": "Sprint correctly does not require Sentinel update. CONTENT-only planning document; no escaped defect class being fixed. SOP §9 compliant."
+    },
+    {
+      "check": "Source cross-reference — seven-sprint sequence",
+      "result": "PASS",
+      "citation": "Source plan §9 lines 1200–1208: seven-sprint sequence matches prompt §5 exactly. Sprint IDs (LC-S12B through LC-S21/23/23B), names, and [HIGH] risk markers all verified."
+    },
+    {
+      "check": "Source cross-reference — Gates A, B, C",
+      "result": "PASS",
+      "citation": "Source plan Sprint 1 mandatory gates lines 282–330: Gates A, B, C language matches prompt §6. Gate D (cross-sprint guard gate) is a prompt addition extending the source — not contradicted by source material. Appropriate hardening addition."
+    },
+    {
+      "check": "Source cross-reference — grade statement",
+      "result": "PASS",
+      "citation": "Source plan §4 lines 97–116 and §11 lines 1244–1274: 'Scaffold architecture grade: A−, Medical application grade: B+' with 'strategic shorthand, not pass/fail' caveat matches prompt §15 exactly."
+    },
+    {
+      "check": "Source cross-reference — cross-sprint regression policy",
+      "result": "PASS",
+      "citation": "Source plan §5.1 lines 122–153: smoke pack categories and run-before-implementation policy match prompt §8 exactly."
+    },
+    {
+      "check": "Source cross-reference — Sentinel policy",
+      "result": "PASS",
+      "citation": "Source plan §5.2 lines 155–199: Sentinel trigger categories, required section title, and required/not-required framing match prompt §9 exactly."
+    },
+    {
+      "check": "Source cross-reference — Knowledge Bus lifecycle states",
+      "result": "PASS",
+      "citation": "Source plan Sprint 4 Scope B lines 650–695: lifecycle states (draft, validated, runtime-loaded, signal-only, WHY-enabled, frontend-surfaced, Sentinel-protected) and machine-enforced/documented/advisory enforcement classification match prompt §11 exactly."
+    },
+    {
+      "check": "Source cross-reference — DTO contract principles",
+      "result": "PASS",
+      "citation": "Source plan Sprint 4 'Mandatory DTO constraint' lines 733–746: DTO field change requirements (frontend consumer search, TypeScript update, runtime rendering validation, regression test, stale-result compatibility assessment) match prompt §12 exactly."
+    },
+    {
+      "check": "Source cross-reference — defect classification model",
+      "result": "PASS",
+      "citation": "Source plan Sprint 1 Scope lines 263–280: four defect categories (architecture/scaffold defect, missing knowledge asset, frontend presentation issue, clinical content backlog) match prompt §4 table. Prompt adds 'Escaped defect' and 'Governance gap' rows — valid extensions consistent with SOP and source plan §5 governance policy."
+    },
+    {
+      "check": "Source cross-reference — transition criteria to KB-WAVE",
+      "result": "PASS",
+      "detail": "Prompt §14 transition criteria (LC-S12B through LC-S21/23/23B completion, Tier 1 SSOT, scaffold smoke pack green, standing docs) are consistent with source plan sprint sequence. No criteria invented beyond what the source implies."
+    },
+    {
+      "check": "Prior task findings",
+      "result": "NOT_APPLICABLE",
+      "detail": "No prior sprint artefact to inherit. LC-S12B is Sprint 1 of the scaffold phase."
     }
   ],
-  "stop_conditions_checked": {
-    "insights_has_real_governed_content_dependency": false,
-    "blood_sugar_model_cannot_represent_insufficient_evidence": false,
-    "apoa1_entangled_with_ratio_logic_unsafely": false,
-    "alt_fix_requires_global_enzyme_scoring_redesign": "UNRESOLVED — Cursor must inspect calibration pipeline depth before implementing Defect 4. STOP if global redesign required.",
-    "competing_authority_sources_detected": false,
-    "forbidden_file_in_scope": false,
-    "verdict": "No hard STOP conditions triggered. Defect 4 has a conditional STOP that Cursor must evaluate at Phase 1 investigation. Sprint may proceed to Phase 1."
-  },
-  "implementation_order_note": "Phase 1 (investigation doc) first — required table must be complete before any implementation. Defect 1 (insights gating) is lowest blast-radius fix. Defect 2 (blood sugar fallback guard) is a contained single-function change. Defect 3 (ApoA1 signal_library.yaml upper_bound disable) requires verification that the evaluator correctly handles enable_upper_bound=false before modifying. Defect 4 (ALT scoring cap) requires calibration pipeline inspection at Phase 1 before Cursor can determine the minimal safe fix. Bonus H6 (deferred_kb_content removal) should be bundled with Defect 1 consumer JSON cleanup."
+  "verdict": "HARDENED. All five front matter fields valid. Primary authority source verified at correct path with content cross-referenced against all 15 required prompt sections. All supplementary references present. No duplicate authority detected. Output files do not yet exist. Scope correctly bounded to docs/ only. No Intelligence Core interaction. Two standing warnings retained (scaffold/ branch prefix convention deviation; SOP references lack docs/governance/ path prefix) — neither blocks execution. Cursor may proceed to Stage 3 kernel start."
 }

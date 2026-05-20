@@ -1,81 +1,81 @@
 ---
-work_id: LC-S11A
-branch: launch-core/lc-s11a-trust-blocker-correction
-risk_level: HIGH
+work_id: LC-S12B
+branch: scaffold/lc-s12b-core-scaffold-definition
+risk_level: STANDARD
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: CONTENT
 ---
 
-# LC-S11A — Launch-Core Trust Blocker Correction
+# LC-S12B — Core Scaffold Definition, Gates and Execution Governance
 
 ## Classification
 
-This is a HIGH-risk MIXED correction sprint.
+This is a STANDARD-risk CONTENT work package.
 
-Reason: this sprint may touch signal logic, scoring behaviour, domain-card narrative gating, legacy output gating, regression tests, Sentinel protections, and launch-core report payload behaviour.
+Reason: this sprint should create the controlling planning document and supporting governance notes only. It must not modify runtime code, backend logic, frontend logic, tests, Sentinel packs, Knowledge Bus assets, Automation Bus scripts, or application contracts.
 
-This is not a product expansion sprint.
+If any runtime, test, Sentinel, DTO, frontend, backend, Knowledge Bus, pipeline, scoring, signal, unit, or control-plane file appears necessary, STOP and escalate. Do not reclassify yourself.
 
-This sprint fixes four trust-blocking defects found during LC-S11 forensic human UAT before external human testing can proceed. The forensic audit judged the current launch-core result as `PASS WITH GAPS`, with specific blockers around legacy `insights[]`, unsupported blood sugar narrative, ApoA1 directionality, and low-ALT liver severity. :contentReference[oaicite:0]{index=0}
+The `scaffold/` branch prefix is intentional for the scaffold-completion programme. If repo branch naming policy rejects this prefix, STOP and request human/GPT branch-name approval rather than choosing a replacement.
 
 ## Purpose
 
-Correct the four bounded trust blockers identified in:
+Create the controlling scaffold-definition document for the next HealthIQ AI build phase.
+
+This sprint defines what “core scaffold complete” means before HealthIQ AI moves from architecture-building mode into governed intelligence-ingestion mode.
+
+This is not a launch-readiness sprint.
+
+This is not a commercial-readiness sprint.
+
+This is not a frontend redesign sprint.
+
+This is not an implementation sprint.
+
+The goal is to turn the approved scaffold roadmap into a clear, governed, usable reference that future LC-S13 to LC-S23B prompts can cite as controlling authority.
+
+## Authoritative input
+
+Use this saved final plan as the primary source:
 
 ```text
-docs/audit-papers/LC-S11_forensic_human_uat_audit.md
+docs/planning-papers/HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md
 ````
 
-The four defects are:
-
-1. Legacy `insights[]` placeholder surface still active.
-2. Blood sugar domain card presents “early impaired sugar and lipid handling” despite no active blood sugar signals.
-3. ApoA1 elevated is being treated as a cardiovascular risk driver.
-4. Low ALT is driving an alarming liver score / “Needs review” state.
-
-The goal is to remove false confidence, unsupported narrative, clinically wrong marker directionality, and disproportionate false alarms before external user testing.
-
-## Governing evidence
-
-Read before editing:
+Also inspect these documents if present:
 
 ```text
-docs/audit-papers/LC-S11_forensic_human_uat_audit.md
+docs/audit-papers/LC-S12A_forensic_architecture_audit.md
 docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md
-docs/audit-papers/LC-S10B_protection_of_proven_slice_notes.md
-docs/audit-papers/LC-S8F_phase_b_unit_conversion_uat.md
-docs/audit-papers/LC-S8G_uploaded_unit_display_fidelity_notes.md
+docs/audit-papers/LC-S11_forensic_human_uat_audit.md
+docs/audit-papers/LC-S11A_trust_blocker_correction_notes.md
+automation_bus/latest_audit_summary.md
+automation_bus/latest_cursor_status.json
+docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
+docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md
 ```
 
-Also inspect the downloaded/live analysis payload or regenerated equivalent for:
+If any of these are missing, record that in the output notes, but do not fail the sprint unless the final scaffold plan itself is missing.
+
+## Required output
+
+Create:
 
 ```text
-analysis_id=c440dfa2-12a1-4e29-95a5-ee07a2397c59
+docs/planning-papers/HealthIQ_AI_core_scaffold_completion_definition_v1.md
 ```
 
-If the exact analysis is not locally available, use the saved JSON artefact if present, or regenerate an equivalent AB panel output. Do not invent evidence.
+Also create a concise implementation note:
 
-## Strategic boundaries
+```text
+docs/audit-papers/LC-S12B_core_scaffold_definition_notes.md
+```
 
-This sprint must not:
+Do not create additional planning documents unless required.
 
-* broaden WHY Wave 2
-* introduce Gemini/LLM narrative generation
-* redesign the frontend
-* rewrite domain scoring globally
-* add new clinical claims without existing governed support
-* suppress real clinically relevant findings just to improve appearance
-* change unit governance
-* change LC-S8F / LC-S8G display fidelity
-* change lifestyle/statin modifier behaviour
-* create demo-only logic
-* add fallback parser logic
+## Mandatory preflight
 
-Every change must be tied to one of the four LC-S11A trust blockers.
-
-## Mandatory preflight before editing
-
-Run and record:
+Before creating or editing files, run and record:
 
 ```powershell
 git branch --show-current
@@ -91,489 +91,504 @@ Test-Path automation_bus/state/work_package_active.json
 
 Read `automation_bus/state/work_package_active.json` and confirm:
 
-* `work_id` is `LC-S11A`
-* branch is `launch-core/lc-s11a-trust-blocker-correction`
+* `work_id` is `LC-S12B`
+* branch is `scaffold/lc-s12b-core-scaffold-definition`
 
-If the token is missing or mismatched, STOP:
+If the token is missing or mismatched, STOP with:
 
 ```text
 Kernel start not executed or work package mismatch.
 ```
 
-## Authority preflight
-
-Before modifying files, identify and record authoritative paths for:
-
-1. Legacy `insights[]` generation and frontend/API exposure.
-2. Consumer domain score/card generation.
-3. Blood sugar/metabolic domain card narrative source.
-4. ApoA1 signal definition, directionality, and display/framing.
-5. ALT scoring/status/domain contribution logic.
-6. Domain score aggregation logic.
-7. Sentinel/regression tests protecting launch-core outputs.
-8. JSON/API result DTO path.
-9. Frontend result card/domain-card rendering path.
-10. Knowledge Bus or SSOT assets backing ApoA1, liver, metabolic, and cardiovascular domain logic.
-
-STOP if an authority source is ambiguous or duplicated.
-
-Do not create a second authority source.
-
-## Potentially allowed files
-
-Only edit files needed for these four trust blockers.
-
-Potentially allowed:
-
-```text
-backend/core/analytics/**/*
-backend/core/scoring/**/*
-backend/core/pipeline/**/*
-backend/core/dto/**/*
-backend/app/routes/analysis.py
-
-backend/ssot/**/*
-knowledge_bus/**/* only if correcting existing governed metadata, not broad enrichment
-
-frontend/app/(app)/results/**/*
-frontend/app/components/**/*
-frontend/app/lib/**/*
-frontend/app/types/**/*
-
-backend/tests/unit/**/*
-backend/tests/regression/**/*
-frontend/tests/**/*
-
-sentinel/packs/**/*
-docs/audit-papers/LC-S11A_trust_blocker_correction_notes.md
-```
-
-## Forbidden changes
-
-Do not edit:
-
-```text
-backend/scripts/run_work_package.py
-backend/scripts/golden_gate_local.py
-backend/scripts/update_cursor_status.py
-automation_bus/latest_gate_evidence.json
-automation_bus/latest_gate_output.txt
-automation_bus/latest_cursor_status.json
-```
-
-Do not:
-
-* alter LC-S8F unit conversion factors
-* alter LC-S8G uploaded-unit display fidelity
-* change haemoglobin/urate/Free T4/calcium/magnesium conversion behaviour
-* introduce generic reference ranges
-* recompute corrected calcium
-* map urate to urea
-* add frontend conversion maths
-* remove domain cards wholesale to hide defects
-* delete evidence rather than fixing logic/gating
-* create broad new scoring framework
-
-## Phase 1 — Investigation and correction plan
-
-Create or update:
-
-```text
-docs/audit-papers/LC-S11A_trust_blocker_correction_notes.md
-```
-
-Record:
-
-* current branch / git state
-* files inspected
-* exact authority source for each defect
-* proposed correction
-* planned tests
-* STOP risks
-
-Required table:
-
-| Defect | Current evidence | Authority source | Proposed fix | Tests |
-| ------ | ---------------- | ---------------- | ------------ | ----- |
-
-Do not implement until this inventory is complete.
-
----
-
-# Defect 1 — Gate or remove legacy `insights[]`
-
-## Problem
-
-The LC-S11 audit found legacy `insights[]` placeholder entries still active, including generic text such as:
-
-```text
-Metabolic focus: summarise structured signals; review with your clinician
-Cardiovascular focus: summarise structured signals; review with your clinician
-Inflammatory focus: summarise structured signals; review with your clinician
-```
-
-with empty `biomarkers_involved`. The planning paper explicitly required this surface to be removed or gated before launch. 
-
-## Required behaviour
-
-For the launch-core results path:
-
-* legacy placeholder `insights[]` must not be visible to users
-* placeholder insight entries must not be emitted in the public launch-core API response unless explicitly gated off from UI and marked internal
-* no generic “summarise structured signals” text should appear
-* if a compatibility field must remain, it should be empty or explicitly disabled for launch-core path
-* do not replace it with new generic filler
-
-## STOP conditions
-
-STOP if:
-
-* another active frontend surface depends on `insights[]` for real governed content
-* removing/gating it would break backwards compatibility without an agreed DTO strategy
-* the only available fix is to replace placeholder text with another placeholder
-
-## Tests
-
-Add or update tests proving:
-
-* `insights[]` placeholder text is absent from launch-core API payload
-* no frontend surface renders legacy placeholder insight text
-* existing governed narrative/report fields still render
-
----
-
-# Defect 2 — Suppress unsupported blood sugar narrative
-
-## Problem
-
-The blood sugar domain card shows:
-
-```text
-early impaired sugar and lipid handling
-```
-
-despite JSON showing:
-
-```text
-active_signal_ids: []
-primary_idl_record_id: null
-```
-
-HbA1c is optimal, and glucose/insulin are missing. The audit classed this as unsupported narrative / fabricated confidence. 
-
-## Required behaviour
-
-If a domain has no active signals and no governed IDL record:
-
-* do not present a pattern label implying pathology
-* do not say “early impaired sugar and lipid handling”
-* do not show confident contributor wording unsupported by signals
-* use honest fallback language, for example:
-
-```text
-HbA1c is within range on this panel. Glucose and insulin were not included, so a fuller glycaemic read would require those markers.
-```
-
-The exact wording may differ, but it must be:
-
-* governed/deterministic
-* non-alarming
-* evidence-aligned
-* clear that missing glucose/insulin limits interpretation
-
-## STOP conditions
-
-STOP if:
-
-* fixing this requires broad metabolic WHY expansion
-* there is no clear way to distinguish “no active signals” from “low-risk but sufficiently assessed”
-* the current domain card model cannot represent an honest insufficient-evidence state
-
-## Tests
-
-Add or update tests proving:
-
-* metabolic/blood sugar domain with HbA1c optimal and no glucose/insulin does not show “early impaired sugar and lipid handling”
-* no active signal domain does not receive a pattern contributor sentence
-* missing glucose/insulin produces honest limitation wording
-* band/headline polarity remains coherent
-
----
-
-# Defect 3 — Correct ApoA1 directionality / framing
-
-## Problem
-
-ApoA1 1.73 g/L, slightly above lab max, is flagged as:
-
-```text
-signal_apoa1_cardio_risk
-```
-
-and appears as a cardiovascular risk driver. The audit states elevated ApoA1 is generally protective/reverse-cholesterol-transport related and should not be framed as a negative cardiovascular risk driver. 
-
-## Required behaviour
-
-ApoA1 must not be presented to users as a negative cardiovascular risk driver solely because it is above the lab upper range.
-
-Allowed correction options:
-
-1. Reframe elevated ApoA1 as protective/contextual rather than risk-driving.
-2. Remove elevated ApoA1 from “what’s driving this” negative-risk consumer surface.
-3. Rename/reclassify signal directionality if the existing signal is wrongly defined.
-4. If ApoA1 contributes to a ratio such as ApoB/ApoA1, ensure the risk interpretation comes from the ratio, not elevated ApoA1 alone.
-
-Preferred behaviour:
-
-```text
-Elevated ApoA1 should be treated as favourable/contextual unless a governed combined-risk construct says otherwise.
-```
-
-## STOP conditions
-
-STOP if:
-
-* ApoA1 signal logic is entangled with ApoB/ApoA1 ratio in a way that cannot be safely separated
-* changing ApoA1 would alter a broad lipid scoring framework without sufficient authority
-* there is no governed source supporting the new wording
-
-## Tests
-
-Add or update tests proving:
-
-* elevated ApoA1 alone does not appear as a negative cardiovascular risk driver
-* ApoA1 may appear as favourable/contextual where appropriate
-* ApoB/ApoA1 ratio logic, if present, still behaves correctly
-* lead homocysteine finding remains unchanged
-* cardiovascular domain remains coherent
-
----
-
-# Defect 4 — Fix low ALT liver false alarm
-
-## Problem
-
-ALT 7 U/L, below a reference range of 10–49 U/L, drives liver score to 5/100 and “Needs review”. The audit classed this as clinically disproportionate because low ALT is generally a weak/non-finding and should not be scored like dangerously high ALT. 
-
-## Required behaviour
-
-ALT below the lower reference bound must not generate an alarming liver score or “critical” severity equivalent to high ALT.
-
-Allowed correction options:
-
-1. Apply direction-aware scoring for ALT:
-
-   * high ALT may be concerning
-   * low ALT should be capped at low/no severity unless governed evidence says otherwise
-2. Suppress low-ALT contribution to liver domain score.
-3. Mark low ALT as informational/low-priority rather than critical.
-4. Keep high ALT behaviour unchanged.
-
-Preferred behaviour:
-
-```text
-Low ALT should not drive a 5/100 liver score or alarming liver “Needs review” card.
-```
-
-## STOP conditions
-
-STOP if:
-
-* ALT scoring is globally range-distance based with no directionality mechanism
-* fixing ALT requires redesigning all enzyme scoring
-* high ALT severity would be weakened unintentionally
-* there is no way to isolate low-bound ALT handling safely
-
-## Tests
-
-Add or update tests proving:
-
-* ALT below lower range does not drive critical/alarming liver score
-* high ALT still triggers appropriate concern
-* liver domain does not show 5/100 “Needs review” solely due to low ALT
-* no unrelated hepatic markers regress
-
----
-
-# Cross-cutting requirements
-
-## Layer B / Layer C fidelity
-
-For all four fixes:
-
-* Layer C must not invent unsupported interpretation
-* UI wording must be backed by JSON/Layer B truth
-* no internal sprint strings should leak into consumer JSON
-* no raw signal IDs should be user-facing
-* report coherence must improve, not hide findings
-
-## Existing protected behaviours must remain intact
-
-Do not regress:
-
-* LC-S8F Phase B unit conversion
-* LC-S8G uploaded-unit display fidelity
-* LC-S10B CHECK 2/4/5/6
-* homocysteine lead finding
-* alcohol lifestyle bridge
-* statin bounded modifier
-* uploaded-panel fidelity
-* Sentinel no-conversion frontend guard
-
-## Required validation commands
-
-Run targeted tests for changed areas.
-
-At minimum run:
+Then verify the authoritative final scaffold plan exists:
 
 ```powershell
-python -m pytest backend/tests/regression/test_lc_s10b_launch_core_protection.py -q
-python -m pytest backend/tests/regression/test_lc_s5_proving_checks.py -q
-python -m pytest backend/tests/regression/test_lc_s8f_phase_b_uk_si_true_conversions.py -q
-python -m pytest backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py -q
-python -m pytest backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py -q
+Test-Path docs/planning-papers/HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md
 ```
 
-If scoring files are changed, also run:
+If this file is missing, STOP.
+
+## Duplicate authority check
+
+Before writing the new scaffold-definition document, search for competing final scaffold plans.
+
+Check at minimum:
 
 ```powershell
-python -m pytest backend/tests/unit/test_scoring_rules.py -q
+Get-ChildItem docs/planning-papers -Recurse | Where-Object { $_.Name -match "Scaffold|scaffold|Sprint|sprint|Completion|completion" } | Select-Object FullName
 ```
 
-If unit/scoring/domain aggregation code is touched, run relevant broader backend tests and record why selected.
-
-If frontend files are changed, run:
+Also search for likely duplicate references:
 
 ```powershell
-npm run type-check
-npm run test
+Select-String -Path docs/planning-papers/* -Pattern "Core Scaffold Completion", "LC-S12B", "LC-S23B", "scaffold complete" -ErrorAction SilentlyContinue
 ```
 
-If frontend test infrastructure is unavailable or noisy, record exact output and rely on backend/API regression tests plus type-check.
+If duplicate or competing “final” scaffold plans exist, do not choose silently. Record the candidates and STOP for GPT/human authority.
 
-## Required new or updated tests
+If older drafts exist but the saved final plan is clearly the latest authority, record them as non-authoritative and proceed.
 
-Add regression coverage for:
+## Scope
 
-1. `insights[]` placeholder not emitted/rendered on launch-core path.
-2. blood sugar domain with no active signals uses honest insufficient-evidence wording.
-3. elevated ApoA1 does not become a negative cardiovascular risk driver.
-4. low ALT does not produce critical/alarming liver score.
-5. homocysteine lead finding remains intact on AB panel.
-6. no internal sprint-management strings leak into consumer JSON.
-7. no raw signal IDs leak into user-facing fields.
+Create a scaffold-definition document that defines:
 
-## Sentinel / guardrail update
+1. What “core scaffold complete” means.
+2. What is in scope for the scaffold phase.
+3. What is deliberately not in scope.
+4. How to distinguish:
 
-Add or update Sentinel coverage for these defect classes:
+   * scaffold defect
+   * missing knowledge asset
+   * frontend presentation issue
+   * clinical content backlog
+5. The seven compressed scaffold sprints.
+6. The gates that must be enforced across the scaffold phase.
+7. Risk classifications and STOP conditions that must be preserved in later prompts.
+8. Cross-sprint regression expectations.
+9. Sentinel/test-harness expectations.
+10. Knowledge Bus lifecycle expectations.
+11. DTO/payload contract expectations.
+12. Documentation maintenance expectations.
+13. The transition criteria from scaffold-completion mode into KB-WAVE intelligence-ingestion mode.
+
+## Required content for scaffold-definition document
+
+The document must include the following sections.
+
+### 1. Executive statement
+
+State clearly:
+
+* HealthIQ AI is not currently trying to launch.
+* The next phase is scaffold completion.
+* The goal is to complete the machinery so future work becomes governed intelligence ingestion rather than scaffold repair.
+* The saved final roadmap is the controlling strategic plan.
+* This document is the controlling execution definition for LC-S13 to LC-S23B.
+
+### 2. Definition of scaffold complete
+
+Define scaffold complete as the point where HealthIQ AI has:
+
+* deterministic Layer B analytical engine
+* governed signal ingestion pathway
+* governed root-cause / WHY ingestion pathway
+* safe biomarker canonicalisation
+* governed unit handling
+* lab-derived reference range preservation
+* direction-aware biomarker scoring
+* questionnaire/lifestyle propagation pathway
+* structured Layer B → Layer C DTO contract
+* coherent frontend surfacing of governed assets
+* persisted-result replay compatibility
+* stale-result strategy
+* Sentinel protection for escaped defects and scaffold-defining behaviours
+* scalable Knowledge Bus registration process
+* maintainable orchestration phases
+* SSOT metadata completion for active signal biomarkers
+* standing architecture and contributor documentation
+
+### 3. What scaffold complete does not mean
+
+State clearly that scaffold complete does not mean:
+
+* full WHY coverage for all signals
+* all biomarkers fully interpreted
+* all drug interactions complete
+* every disease-context permutation complete
+* final frontend design complete
+* Gemini activated
+* commercial launch ready
+* first-user ready
+* clinician-grade comprehensive coverage
+* all KB-WAVE work complete
+
+### 4. Defect classification model
+
+Create a practical classification table.
+
+Required categories:
+
+| Category                    | Meaning                                                        | Example                                       | Correct response                 |
+| --------------------------- | -------------------------------------------------------------- | --------------------------------------------- | -------------------------------- |
+| Scaffold defect             | Platform machinery fails or cannot carry governed intelligence | lifestyle modifiers compute but never surface | architecture/scaffold sprint     |
+| Missing knowledge asset     | Machinery works but content does not yet exist                 | LDL lacks governed WHY                        | KB-WAVE sprint                   |
+| Frontend presentation issue | Governed content exists but is poorly ordered/visualised       | lead WHY buried below generic card            | product/UI sprint after scaffold |
+| Clinical content backlog    | Needed medical interpretation not yet authored                 | ferritin + CRP interaction missing            | Knowledge Bus/content sprint     |
+| Escaped defect              | Known failure that reached UAT or audit                        | ApoA1 elevated treated as risk                | regression + Sentinel guard      |
+| Governance gap              | Missing rule/approval/contract                                 | no persisted replay strategy                  | scaffold governance sprint       |
+
+### 5. Seven compressed scaffold sprints
+
+Summarise the final sequence exactly:
 
 ```text
-legacy_insights_placeholder_leakage
-domain_narrative_without_active_signal
-apoa1_directionality_misclassification
-low_alt_false_alarm
-consumer_payload_internal_sprint_string_leakage
+Sprint 1 — LC-S12B       — Core Scaffold Definition, Gates and Execution Governance
+Sprint 2 — LC-S13        — Lifestyle Propagation, Coherence Guard and Narrative Language Audit [HIGH]
+Sprint 3 — LC-S14        — Direction-Aware Scoring Framework [HIGH]
+Sprint 4 — LC-S16/17/19  — Knowledge Asset Frontend Surface, KB Framework and Payload Contract [HIGH]
+Sprint 5 — LC-S18        — Root Cause / WHY Registration Generalisation [HIGH]
+Sprint 6 — LC-S20/22     — Persisted Replay, Stale-Result Strategy and Sentinel Phase 2 Scaffold
+Sprint 7 — LC-S21/23/23B — Orchestrator Decomposition, Scaffold Documentation and SSOT Metadata [HIGH / MIXED]
 ```
 
-If a defect is better protected by deterministic regression tests than Sentinel metadata, document the reason. Prefer adding Sentinel metadata where an existing pack pattern is available.
+For each sprint, include:
 
-## Human UAT replay
+* purpose
+* why it matters
+* risk classification
+* key STOP conditions
+* key output
+* Sentinel/test expectation
+* dependency/gate if applicable
 
-After implementation, replay or regenerate the AB analysis equivalent to:
+Do not expand into full implementation prompts. This document is the scaffold definition, not the sprint-by-sprint Cursor prompt library.
+
+### 6. Gate model
+
+Document these gates.
+
+#### Gate A — LC-S12B approval gate
+
+LC-S13 may not start until this LC-S12B scaffold-definition document is reviewed and approved by:
+
+* GPT Head of Product Architecture
+* Claude Code audit
+* Human product owner
+
+Record that approval status must be captured before LC-S13 begins.
+
+#### Gate B — Sprint 4 internal audit-before-implementation gate
+
+Sprint 4 must complete and review the Knowledge Asset Frontend-Surface Audit before implementing or finalising the Knowledge Bus framework and payload-contract hardening elements.
+
+If the audit materially changes the understanding of what is visible, governed, fallback-backed or unsupported, Sprint 4 must STOP and return to GPT/human authority for amended scope.
+
+#### Gate C — Sprint 6 persisted replay fixture gate
+
+Sprint 6 must establish a concrete persisted replay fixture strategy before finalising Sentinel Phase 2 render-level checks.
+
+If Sprint 6 cannot establish a fixture contract, Sentinel Phase 2 scope must be revised by GPT/human authority before implementation continues.
+
+#### Gate D — Cross-sprint guard gate
+
+Every scaffold sprint after LC-S12B must begin by running the current scaffold smoke/regression pack.
+
+If prior scaffold guards fail, the sprint must STOP unless GPT explicitly classifies the failure as unrelated and authorises continuation.
+
+### 7. Global STOP conditions
+
+Define global STOP conditions for all scaffold sprints.
+
+Include:
+
+* work package token missing/mismatch
+* wrong branch
+* dirty branch ambiguity
+* duplicate authority source
+* runtime code required in a CONTENT-only sprint
+* risk level needs escalation
+* required source document missing
+* frontend contract change discovered but not authorised
+* DTO field rename/removal required but not scoped
+* Sentinel requirement identified but not added
+* material rescoping required
+* prior scaffold regression failing
+* scope begins to include launch/commercial/product redesign work
+
+### 8. Cross-sprint regression policy
+
+State:
+
+Every scaffold sprint must begin by running prior scaffold regression/Sentinel guards before implementation.
+
+The smoke pack should grow as each scaffold sprint adds new protections.
+
+Initial categories:
+
+* LC-S8F / LC-S8G unit and display fidelity
+* LC-S10B launch-core protection
+* LC-S11A trust blocker correction
+* LC-S13 lifestyle/coherence guards once created
+* LC-S14 direction-aware scoring guards once created
+* LC-S16/17/19 DTO/KB surfacing guards once created
+* LC-S18 WHY registration guards once created
+* LC-S20/22 persisted replay/render guards once created
+* LC-S21/23/23B orchestrator/documentation/SSOT guards once created
+
+### 9. Sentinel/test-harness policy
+
+State:
+
+Every scaffold sprint must include a section titled:
 
 ```text
-analysis_id=c440dfa2-12a1-4e29-95a5-ee07a2397c59
+Sentinel / test harness obligations
 ```
 
-Check:
-
-* no placeholder `insights[]` text visible
-* blood sugar domain no longer claims impaired sugar handling without active signals
-* ApoA1 is not shown as a negative risk driver
-* liver domain is not alarmed by low ALT alone
-* homocysteine lead finding remains coherent
-* lifestyle alcohol bridge remains visible
-* units/display labels remain correct
-
-## Acceptance criteria
-
-This sprint is complete only if:
-
-* all four trust blockers are corrected
-* no broad scope expansion occurred
-* no LC-S8F/LC-S8G regression occurred
-* no homocysteine lead regression occurred
-* every correction is protected by a deterministic test
-* Sentinel/guardrail metadata is updated or explicitly justified
-* live/replayed AB output is suitable for external human testing
-* implementation notes clearly map each fix to evidence and tests
-
-## Required documentation output
-
-Create or update:
+It must explicitly state either:
 
 ```text
-docs/audit-papers/LC-S11A_trust_blocker_correction_notes.md
+Sentinel update required
+```
+
+or:
+
+```text
+Sentinel update not required because...
+```
+
+Sentinel is required when a defect class is:
+
+* user-facing
+* previously escaped
+* likely to recur
+* cross-layer
+* clinically trust-sensitive
+* related to unit/display/reference-range safety
+* related to internal token or placeholder leakage
+* related to DTO compatibility or persisted replay
+* related to Knowledge Bus asset surfacing
+
+A known escaped-defect class must not be fixed without a regression/Sentinel guard.
+
+### 10. Risk classification model
+
+Create a scaffold risk table.
+
+At minimum:
+
+| Sprint        |                                             Default risk | Reason                                       |
+| ------------- | -------------------------------------------------------: | -------------------------------------------- |
+| LC-S12B       |                                                 STANDARD | CONTENT planning document only               |
+| LC-S13        |                                                     HIGH | lifestyle, DTO/frontend surfacing, Sentinel  |
+| LC-S14        |                                                     HIGH | scoring policy/engine behaviour              |
+| LC-S16/17/19  |                                                     HIGH | DTO/frontend/KB contract                     |
+| LC-S18        |                                                     HIGH | root-cause WHY registration mechanism        |
+| LC-S20/22     | HIGH if API/frontend/Sentinel/persisted DTO work touched | persisted replay and render-level protection |
+| LC-S21/23/23B |                                             HIGH / MIXED | pipeline decomposition plus content/doc work |
+
+State that if a sprint touches `backend/core/analytics/`, `backend/core/pipeline/`, `backend/core/scoring/`, `backend/core/dto/`, `backend/ssot/`, Sentinel packs, or frontend result rendering, the prompt must apply SOP HIGH-risk controls unless explicitly justified.
+
+### 11. Knowledge Bus lifecycle expectations
+
+Define required lifecycle states:
+
+* draft
+* validated
+* runtime-loaded
+* signal-only
+* WHY-enabled
+* frontend-surfaced
+* Sentinel-protected
+
+Define that later LC-S16/17/19 must distinguish:
+
+* machine-enforced now
+* documented now, machine-enforced later
+* advisory only
+
+For:
+
+* orphaned package detection
+* package lifecycle state validity
+* required file presence for WHY-enabled packages
+* signal library schema validity
+* root-cause hypothesis metadata validity
+* asset coverage reporting for active signals
+
+### 12. DTO / Layer B → Layer C contract principles
+
+State:
+
+* frontend must remain renderer, not analyst
+* Layer B must carry structured truth
+* Layer C may present/polish but must not invent unsupported interpretation
+* DTO field classification is governance work
+* DTO field renaming/restructuring/removal must not occur casually
+* any DTO shape change must include frontend consumer search, TypeScript update, runtime rendering validation, regression test and stale-result compatibility assessment
+
+### 13. Documentation standing obligation
+
+State:
+
+The documentation created during scaffold completion becomes standing documentation.
+
+Every future KB-WAVE sprint must update documentation if it introduces or changes:
+
+* combination-case pattern
+* modifier class
+* medication overlay pattern
+* WHY registration pattern
+* DTO field category
+* Sentinel requirement
+* Knowledge Bus lifecycle pattern
+* frontend surfacing pattern
+
+### 14. Transition criteria into KB-WAVE phase
+
+Define what must be true before systematic KB-WAVE intelligence expansion begins:
+
+* LC-S12B approved
+* LC-S13 completed or split/closed
+* LC-S14 direction-aware scoring complete
+* LC-S16/17/19 frontend-surface and KB/DTO contract complete
+* LC-S18 WHY registration generalisation complete or explicitly deferred with mitigation
+* LC-S20/22 persisted replay and Sentinel Phase 2 scaffold complete
+* LC-S21/23/23B complete or explicitly split/closed
+* Tier 1 SSOT metadata complete for active signal biomarkers
+* scaffold smoke pack green
+* standing docs available
+
+### 15. Expected grade after scaffold completion
+
+State:
+
+```text
+Scaffold architecture grade target: A−
+Medical application grade target: B+
+```
+
+Clarify:
+
+* this is strategic shorthand, not pass/fail
+* sprint acceptance is governed by tests, gates, audits and evidence
+* medical application grade becomes A-grade only through later KB-WAVE population
+
+## Required implementation note
+
+Create:
+
+```text
+docs/audit-papers/LC-S12B_core_scaffold_definition_notes.md
 ```
 
 It must include:
 
-1. defect inventory
-2. files changed
-3. fix per defect
-4. tests added/updated
-5. Sentinel/guardrail changes
-6. before/after behaviour
-7. residual risks
-8. UAT replay result
-9. final recommendation
+1. branch and git state
+2. source documents inspected
+3. duplicate authority check result
+4. files created/changed
+5. confirmation no runtime code changed
+6. unresolved issues
+7. recommended approval route for Gate A
+8. whether LC-S13 can be drafted next, subject to approval
 
-This document must map directly to implementation and tests. It is not a passive status artefact.
+## Allowed files
 
-## Cursor completion requirements
+Allowed:
+
+```text
+docs/planning-papers/HealthIQ_AI_core_scaffold_completion_definition_v1.md
+docs/audit-papers/LC-S12B_core_scaffold_definition_notes.md
+```
+
+Read-only:
+
+```text
+docs/planning-papers/HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md
+docs/audit-papers/LC-S12A_forensic_architecture_audit.md
+docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md
+docs/audit-papers/LC-S11_forensic_human_uat_audit.md
+docs/audit-papers/LC-S11A_trust_blocker_correction_notes.md
+automation_bus/latest_audit_summary.md
+automation_bus/latest_cursor_status.json
+docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
+docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md
+```
+
+Forbidden:
+
+```text
+backend/**/*
+frontend/**/*
+knowledge_bus/**/*
+sentinel/**/*
+automation_bus/state/*
+automation_bus/latest_gate_evidence.json
+automation_bus/latest_gate_output.txt
+automation_bus/latest_cursor_status.json
+backend/scripts/run_work_package.py
+backend/scripts/golden_gate_local.py
+backend/scripts/update_cursor_status.py
+```
+
+Do not edit Automation Bus files except through the normal finish command.
+
+## Validation
+
+Because this is a CONTENT-only sprint, validation is mostly file and governance validation.
+
+Run:
+
+```powershell
+git diff --name-only
+git status --short
+```
+
+Confirm only the two allowed output files are changed.
+
+If any other file is modified, STOP.
+
+Check the new scaffold-definition document includes:
+
+* scaffold complete definition
+* not-in-scope definition
+* defect classification model
+* seven compressed sprints
+* gates A-D
+* global STOP conditions
+* cross-sprint regression policy
+* Sentinel/test-harness policy
+* risk classification model
+* Knowledge Bus lifecycle expectations
+* DTO contract principles
+* documentation standing obligation
+* transition criteria to KB-WAVE phase
+* grade statement
+
+## Closure requirements
 
 When complete:
 
-1. Run required validation commands.
-2. Update the LC-S11A notes.
-3. Run closure audit:
+1. Run:
 
 ```powershell
 git branch --show-current
 git status --short
-git log --oneline -n 8
 git diff --name-only
-git diff --cached --name-only
+git log --oneline -n 8
 git stash list
 ```
 
-4. Classify:
+2. Confirm:
 
-   * tracked modified files
-   * staged files
-   * untracked files
-   * tooling files
-   * out-of-scope files
-   * stash entries
+   * only allowed files changed
+   * no runtime files changed
+   * no Automation Bus files manually edited
+   * no untracked unexpected files
+   * no stash ambiguity
 
-5. STOP if unrelated files, tooling leakage, dirty branch ambiguity, or stash ambiguity exists.
-
-6. If closure is clean, run:
+3. Run finish:
 
 ```powershell
 python backend/scripts/run_work_package.py finish
 ```
 
-7. Report whether finish completed or failed.
-8. Do not merge.
-9. Do not create `automation_bus/latest_audit_summary.md`.
-10. Do not claim final approval.
+4. Report whether finish completed or failed.
 
-## Explicit non-authority statement
+5. Do not merge.
 
-Cursor implements and reports only.
+6. Do not create `automation_bus/latest_audit_summary.md`.
 
-Cursor may not self-certify clinical correctness, architecture correctness, external-user readiness, merge readiness, launch readiness, or final approval.
+7. Do not claim final approval.
+
+## Cursor completion statement
+
+Cursor implements the documentation artefacts only.
+
+Cursor may not self-certify scaffold approval, architecture approval, merge readiness, launch readiness, or permission to begin LC-S13.
+
+The output of this sprint must go to Claude Code audit, GPT architectural review, and human approval under Gate A before LC-S13 starts.
 
 ```
 ```
