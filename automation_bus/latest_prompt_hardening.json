@@ -1,8 +1,8 @@
 {
-  "work_id": "LC-S16-17-19",
+  "work_id": "LC-S18",
   "bus_version": "1.3.1",
   "status": "HARDENED",
-  "hardened_utc": "2026-05-23T10:00:00Z",
+  "hardened_utc": "2026-05-23T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6)",
   "blocker_count": 0,
   "warning_count": 1,
@@ -10,17 +10,17 @@
     {
       "check": "Front Matter — work_id",
       "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: LC-S16-17-19. Correctly formed."
+      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: LC-S18. Correctly formed."
     },
     {
       "check": "Front Matter — branch",
       "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: scaffold/lc-s16-17-19-kb-surface-payload-contract. Consistent with scaffold/ prefix convention used in LC-S13 and LC-S14. Branch does not yet exist in git — expected at pre-kernel-start stage. Cursor must create it before Stage 4 file edits."
+      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: scaffold/lc-s18-root-cause-why-registration. Consistent with scaffold/ prefix convention. Branch does not yet exist in git — expected at pre-kernel-start stage. Cursor must create it before Stage 4 file edits."
     },
     {
       "check": "Front Matter — risk_level",
       "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: HIGH. Correct. Sprint enters the Intelligence Core perimeter: backend/core/dto/builders.py (DTO output assembly), backend/core/analytics/** (analytics components read during audit), backend/app/routes/analysis.py (API payload route). All HIGH-risk triggers per SOP §10 apply."
+      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: HIGH. Correct. Sprint directly modifies root_cause_compiler_v1.py which is Intelligence Core (root-cause compilation pipeline). HIGH risk per SOP §10: touches Intelligence Core, modifies behavioural logic, affects output generation."
     },
     {
       "check": "Front Matter — execution_model",
@@ -30,7 +30,7 @@
     {
       "check": "Front Matter — change_type",
       "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: MIXED. Correct. Sprint combines documentation/audit work (CONTENT) with potential bounded DTO hardening changes, test additions, and Sentinel updates that affect output/contract (BEHAVIOUR). MIXED controls apply per SOP §4. MIXED is always governed using BEHAVIOUR controls."
+      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: BEHAVIOUR. Correct. Sprint modifies root-cause registration logic (Intelligence Core compiler). BEHAVIOUR controls apply per SOP §4."
     },
     {
       "check": "Stage 2A — Mandatory authority: scaffold definition document",
@@ -43,95 +43,105 @@
       "citation": "docs/planning-papers/HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md — confirmed present."
     },
     {
-      "check": "Stage 2A — Mandatory authority: prior audit notes (LC-S12B, LC-S13, LC-S14)",
+      "check": "Stage 2A — Mandatory STOP authority: LC-S17 lifecycle framework",
       "result": "PASS",
-      "citation": "docs/audit-papers/LC-S12B_core_scaffold_definition_notes.md — confirmed present. docs/audit-papers/LC-S13_lifestyle_coherence_narrative_notes.md — confirmed present. docs/audit-papers/LC-S14_direction_aware_scoring_notes.md — confirmed present."
+      "citation": "docs/audit-papers/LC-S17_knowledge_bus_lifecycle_framework.md — confirmed present. Prompt STOP condition satisfied (would halt sprint if missing)."
     },
     {
-      "check": "Stage 2A — Mandatory authority: governance SOPs",
+      "check": "Stage 2A — Mandatory authority: LC-S16, LC-S19, combined notes",
       "result": "PASS",
-      "citation": "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md — confirmed present. docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md — confirmed present."
+      "citation": "docs/audit-papers/LC-S16_knowledge_asset_frontend_surface_audit.md — confirmed present. docs/audit-papers/LC-S19_payload_contract_hardening_notes.md — confirmed present. docs/audit-papers/LC-S16_17_19_kb_surface_payload_contract_notes.md — confirmed present."
     },
     {
       "check": "Stage 2A — Optional inspect-if-present authority paths",
       "result": "PASS",
-      "citation": "All four optional paths confirmed present: docs/audit-papers/LC-S12A_forensic_architecture_audit.md, docs/audit-papers/LC-S11_forensic_human_uat_audit.md, docs/audit-papers/LC-S11A_trust_blocker_correction_notes.md, docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md."
+      "citation": "All optional paths confirmed present: docs/audit-papers/LC-S12A_forensic_architecture_audit.md, docs/audit-papers/LC-S13_lifestyle_coherence_narrative_notes.md, docs/audit-papers/LC-S14_direction_aware_scoring_notes.md, docs/audit-papers/LC-S11_forensic_human_uat_audit.md, docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md, docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md."
     },
     {
-      "check": "Stage 2A — DTO authority source",
+      "check": "Stage 2A — Root-cause compiler authority source",
       "result": "PASS",
-      "citation": "backend/core/dto/builders.py — confirmed present. Read lines 1–145. Single DTO authority. build_analysis_result_dto() at line 30 is the canonical payload assembly function. Key fields confirmed in output: analysis_id, biomarkers, clusters, insights, status, created_at, overall_score, primary_driver_system_id, system_capacity_scores, burden_hash, risk_assessment, recommendations, result_version, derived_markers, meta, clinician_report_v1 (line 76), balanced_systems_v1 (line 79), replay_manifest (line 80), interpretation_display_layer_v1 (line 81), narrative_report_v1 (line 82), consumer_domain_scores (line 83), intervention_annotations_v1 (line 84). No duplicate DTO authority detected."
+      "citation": "backend/core/analytics/root_cause_compiler_v1.py — confirmed present and read (lines 1–556). Single registration authority: _ROOT_CAUSE_TARGETS list at line 76. 41 registered targets confirmed (lines 77–118). compile_root_cause_v1 main entrypoint at line 485. Fallback mechanism _compile_why_engine_fallback_finding at line 438. Safety denylist enforcement at lines 540–553. No competing root-cause registration authority detected."
     },
     {
-      "check": "Stage 2A — Frontend TypeScript types",
+      "check": "Stage 2A — KB lifecycle contract authority",
       "result": "PASS",
-      "citation": "frontend/app/types/analysis.ts — confirmed present. Read lines 1–80. Imports generated types from frontend/app/types/generated/openapi.ts (confirmed present). Manually defined types include BiomarkerValue, BiomarkerData, UserProfile, AnalysisRequest, ClusterData, BiomarkerEducationalExplainerV1, SystemEducationalExplainerV1, ContributionContextV1. Generated OpenAPI types include ApiAnalysisStartRequest, ApiAnalysisStartResponse, ApiParseResponse."
+      "citation": "backend/core/knowledge/kb_lifecycle_contract_v1.py — confirmed present and read (lines 1–145). ESTATE_INVENTORY_PATH constant at line 56: 'knowledge_bus/governance/package_estate_KB-S49_v1.yaml'. LIFECYCLE_STATES defined at line 15. PACKAGE_TYPES at line 27. STANDARD_PACKAGE_FILES at line 38. WHY_ENABLED_PACKAGE_FILES at line 46. EXCLUDED_RUNTIME_PACKAGES at line 53. iter_why_enabled_packages at line 137."
     },
     {
-      "check": "Stage 2A — Frontend result surface components",
+      "check": "Stage 2A — Orphan reporter script",
       "result": "PASS",
-      "citation": "frontend/app/components/results/ — confirmed present. 17 components: BalancedSystemsSummary.tsx, ClinicianReportRenderer.tsx, DeterministicNarrativeSurface.tsx, InterpretationPatternsSection.tsx, LayerCInsightSection.tsx, PrimaryFindingAndWhy.tsx, ResultsBodyOverview.tsx, ResultsDisclosureSection.tsx, ResultsHeroBlocks.tsx, ResultsInvestigationSpine.tsx, RootCauseEvidenceSummary.tsx, SystemUnderstandingSection.tsx, Wave1DomainCards.tsx, WhyThisLeadWonSection.tsx. frontend/app/components/insights/: InsightCard.tsx, InsightPanel.tsx, InsightsPanel.tsx. frontend/app/(app)/results/page.tsx — confirmed present."
+      "citation": "backend/scripts/validate_kb_package_estate_orphans_v1.py — confirmed present and read (lines 1–29). Calls detect_orphan_packages from kb_lifecycle_contract_v1. Returns exit code 1 if orphans exist, 0 if clean. Cursor must run this script during Phase 3."
     },
     {
-      "check": "Stage 2A — Knowledge Bus packages present",
+      "check": "Stage 2A — Estate inventory file actual location",
+      "result": "WARNING",
+      "detail": "The prompt (Phase 1, 'Known likely files to inspect' section, line 187) lists 'knowledge_bus/package_estate_KB-S49_v1.yaml' as a likely file to inspect. This path does NOT exist (Test-Path False). The actual file is at 'knowledge_bus/governance/package_estate_KB-S49_v1.yaml' (confirmed present by directory search, and authoritative in kb_lifecycle_contract_v1.py line 56). The runtime code references the correct path — this is a documentation discrepancy in the prompt body only. Cursor must use the authoritative path 'knowledge_bus/governance/package_estate_KB-S49_v1.yaml' during Phase 3 estate drift assessment. The STOP condition (Phase 3) and runtime orphan detection will function correctly as the code uses the correct path."
+    },
+    {
+      "check": "Stage 2A — Hypothesis loader module",
       "result": "PASS",
-      "citation": "knowledge_bus/packages/ — confirmed present. 30+ packages using pkg_* naming convention. knowledge_bus/ directories also include: governance/, interpretation_display_layer_v1/, interpretation_entities_v1/, packages/, registries/, root_cause/, schema/, sentinel/, research/. IDL file at knowledge_bus/interpretation_display_layer_v1/idl_records_v1.yaml — confirmed present."
+      "citation": "backend/core/knowledge/load_root_cause_hypotheses.py — confirmed present. Read lines 1–30. 41 def load_* functions confirmed (count verified via grep). Module uses lru_cache, loads from knowledge_bus/root_cause/hypotheses/. All 41 loaders imported in root_cause_compiler_v1.py lines 33–73 match the 41 entries in _ROOT_CAUSE_TARGETS."
     },
     {
       "check": "Stage 2A — Sentinel packs state",
       "result": "PASS",
-      "citation": "sentinel/packs/ — confirmed present with 3 existing files: escaped_defects_v1.json, lc_s10b_launch_core_protection_v1.json, lc_s8d_unit_governance_v1.json. Sentinel runner at sentinel/sentinel_runner.py confirmed present. 8 new defect classes required by this sprint (frontend_section_not_backed_by_governed_source, knowledge_asset_not_surfaced_when_available, generic_fallback_used_when_governed_asset_exists, consumer_payload_internal_field_leakage, dto_frontend_contract_breakage, raw_signal_or_internal_id_visible, kb_lifecycle_required_file_missing, kb_orphan_package_unreported) must be ADDED — either to an existing pack or a new pack. Existing packs must not be modified unless adding new entries is explicitly authorised."
+      "citation": "sentinel/packs/escaped_defects_v1.json — confirmed present and read (lines 1–159). 17 existing defect classes. 7 new defect classes required by LC-S18 (root_cause_target_not_loaded, why_asset_silent_skip, metadata_malformed_not_failed, why_output_changed_after_registration_migration, new_why_asset_requires_backend_code, orphan_why_asset_auto_loaded, duplicate_why_target_id_not_rejected) — none of these 7 are currently present. Each must point to an active deterministic test per the prompt."
     },
     {
-      "check": "Stage 2A — All 8 cross-sprint regression tests present",
+      "check": "Stage 2A — Cross-sprint regression test files (all 8)",
       "result": "PASS",
-      "citation": "All confirmed present via PowerShell Test-Path: backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py, backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py, backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py, backend/tests/regression/test_lc_s10b_launch_core_protection.py, backend/tests/regression/test_lc_s11a_trust_blocker_correction.py, backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py, backend/tests/regression/test_lc_s14_direction_aware_scoring.py, backend/tests/unit/test_scoring_rules.py."
+      "citation": "All 8 confirmed present via PowerShell Test-Path: backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py, backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py, backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py, backend/tests/regression/test_lc_s10b_launch_core_protection.py, backend/tests/regression/test_lc_s11a_trust_blocker_correction.py, backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py, backend/tests/regression/test_lc_s14_direction_aware_scoring.py, backend/tests/unit/test_scoring_rules.py."
+    },
+    {
+      "check": "Stage 2A — New LC-S18 test file",
+      "result": "PASS",
+      "citation": "backend/tests/regression/test_lc_s18_root_cause_why_registration.py — confirmed absent (Test-Path False). Correct — Cursor must create this file during implementation."
     },
     {
       "check": "Stage 2A — Duplicate authority check",
       "result": "PASS",
-      "detail": "No competing LC-S16-17-19 prompt exists outside latest_cursor_prompt.md. Single DTO authority (dto/builders.py). Single TypeScript type authority (analysis.ts + generated/openapi.ts). No duplicate SSOT or competing DTO builder detected. Forbidden files correctly exclude scoring, unit governance, SSOT biomarkers, Knowledge Bus medical content, and Automation Bus scripts — no risk of cross-contamination."
+      "detail": "No competing LC-S18 prompt exists outside latest_cursor_prompt.md. Single root-cause registration authority (_ROOT_CAUSE_TARGETS in root_cause_compiler_v1.py line 76). Single hypothesis loader module (load_root_cause_hypotheses.py). No duplicate estate inventory path in runtime code — kb_lifecycle_contract_v1.py is the sole authority for ESTATE_INVENTORY_PATH. Forbidden files correctly exclude scoring, unit governance, SSOT biomarkers, Knowledge Bus medical content, and Automation Bus scripts."
     },
     {
-      "check": "Stage 2A — WARNING: generated/openapi.ts type update path",
-      "result": "WARNING",
-      "detail": "frontend/app/types/generated/openapi.ts is present and is the source of ApiAnalysisStartRequest/Response types (imported at analysis.ts line 1 via 'import type { components } from ./generated/openapi'). If any DTO shape changes are made under the bounded hardening gate, Cursor must run 'npm run generate-types' to regenerate this file. The file is covered by the 'potentially allowed' list under frontend/app/types/**/* but regeneration is a build step, not a manual edit. Cursor must verify whether the generate-types script exists and is current before making any DTO shape changes. If the script is absent or broken, TypeScript contract changes are blocked until it is resolved."
-    },
-    {
-      "check": "Stage 2B — Intelligence Core components in scope identified",
+      "check": "Stage 2B — Intelligence Core components in scope",
       "result": "PASS",
-      "detail": "Intelligence Core components in scope for audit (read-only unless bounded hardening gate triggers): (1) backend/core/dto/builders.py — DTO output assembly (Line 30: build_analysis_result_dto); (2) backend/app/routes/analysis.py — API payload route; (3) backend/core/analytics/** — analytics components (arbitration_engine, balanced_systems_presentation_v1, domain_score_assembler, report_compiler_v1, etc.) to be identified in Phase 1 authority inventory; (4) backend/core/pipeline/orchestrator.py — pipeline orchestration. Primary outputs of this sprint are documentation files, not runtime changes."
+      "detail": "Intelligence Core components directly affected: (1) backend/core/analytics/root_cause_compiler_v1.py — _ROOT_CAUSE_TARGETS list (line 76) and compile_root_cause_v1 entrypoint (line 485) are the primary behavioural surface. (2) backend/core/knowledge/load_root_cause_hypotheses.py — hypothesis loaders, potentially read-only but Cursor may add new loader infrastructure if metadata-driven registration proceeds. (3) backend/core/knowledge/kb_lifecycle_contract_v1.py — potentially updated to add WHY-registration metadata validation. (4) backend/scripts/validate_kb_package_estate_orphans_v1.py — may receive enhancements. Risk: any change to _ROOT_CAUSE_TARGETS list directly affects which signals produce governed WHY output."
     },
     {
       "check": "Stage 2B — Behavioural surface area and expected output changes",
       "result": "PASS",
-      "detail": "Expected output changes: NONE unless the Phase 2 audit gate is passed and bounded non-breaking DTO hardening is explicitly required. The sprint's primary outputs are four documentation files plus tests and Sentinel entries. Small non-breaking DTO hygiene changes are allowed ONLY if: frontend consumer impact is fully traced, TypeScript types updated, compatibility documented, regression tests added (prompt Phase 4 Implementation Limits). Any breaking DTO change requires STOP for GPT/human authority. Intentional output changes are bounded and gated."
+      "detail": "Phases 1–4 are documentation/fingerprint/assessment only — zero runtime change expected. Implementation (Phase 5) may change registration mechanism. Expected output: NONE unless Phase 5 proceeds. Core rule (prompt §Core rule): 'Every currently registered root-cause / WHY target that works before this sprint must still load and produce equivalent WHY output after this sprint.' Fallback mechanism (_compile_why_engine_fallback_finding) must remain intact for signals not in the registered list. Before/after fingerprint (Phases 2 and 5) is the contract — any delta is a STOP."
     },
     {
-      "check": "Stage 2B — Regression targets: protected behaviours",
+      "check": "Stage 2B — Regression targets: 41 registered targets + fallback + homocysteine",
       "result": "PASS",
-      "detail": "Protected behaviours explicitly listed and test files confirmed present: LC-S8F/G unit and display fidelity, LC-S8D unit governance sentinel, LC-S10B launch-core protection, LC-S11A trust blockers, LC-S13 lifestyle/coherence/narrative, LC-S14 direction-aware scoring. Homocysteine lead finding is explicitly named as a protected behaviour in the required tests section. All 8 test files confirmed present."
+      "citation": "All 41 targets confirmed in _ROOT_CAUSE_TARGETS (root_cause_compiler_v1.py lines 77–118). signal_homocysteine_high and signal_homocysteine_elevation_context both registered (lines 77–78) — homocysteine lead finding protected. Fallback mechanism at line 438 protects unregistered signals. All prior scaffold/launch-core guards backed by confirmed test files."
     },
     {
-      "check": "Stage 2B — Internal STOP/rescope gate evaluation",
+      "check": "Stage 2B — Mandatory review checkpoint",
       "result": "PASS",
-      "detail": "The Phase 2 material mismatch STOP conditions are well-specified and cover the correct failure modes (majority fallback/boilerplate, fields not in DTO contract, governed assets unreachable, breaking contract changes required, unsupported clinical claims, internal governance string exposure). Cursor may not self-rescope if STOP triggers — must report and wait. This gate is correctly positioned before Phase 3 and Phase 4 implementation."
+      "detail": "Phase 4 mandatory review checkpoint is correctly specified in the prompt. Cursor must STOP after writing the proposed mechanism and report 'LC-S18 proposed WHY registration mechanism ready for architectural review' before implementing any registration behaviour change. Cursor may not self-authorise. This gate is correctly positioned."
     },
     {
-      "check": "Stage 2B — No scope creep paths",
+      "check": "Stage 2B — STOP condition: Phase 3 estate drift",
       "result": "PASS",
-      "detail": "Forbidden files explicitly prohibit: backend/core/scoring/**, backend/core/units/**, backend/ssot/units.yaml, backend/ssot/scoring_policy.yaml, backend/ssot/biomarkers.yaml, knowledge_bus/** (no new medical content), all automation_bus control-plane files, all kernel/gate scripts. The sprint scope is correctly bounded to: audit docs, tests/validators, Sentinel entries, and optionally bounded DTO hygiene under strict gate conditions. No path from authorised work to forbidden files is detectable."
+      "detail": "Phase 3 STOP condition is correctly specified: if auto-discovery would load orphan packages with WHY assets, or if lifecycle state cannot distinguish validated from draft assets, STOP and report whether LC-S18A (estate inventory refresh) is needed. This is a deterministic gate — the orphan reporter script (validate_kb_package_estate_orphans_v1.py) provides the data. Note: reporter exits non-zero if any orphans exist; prior known drift from LC-S16/17/19 (109 packages) must be assessed before triggering STOP."
+    },
+    {
+      "check": "Stage 2B — Scope creep check",
+      "result": "PASS",
+      "detail": "Forbidden files explicitly prohibit: backend/core/scoring/**, backend/core/units/**, backend/ssot/units.yaml, backend/ssot/scoring_policy.yaml, backend/ssot/biomarkers.yaml, all frontend/**, all automation_bus/state/*, automation_bus gate files, kernel/gate scripts. Knowledge Bus files (knowledge_bus/package_estate_KB-S49_v1.yaml, knowledge_bus/packages/**) allowed only if metadata validation absolutely requires non-medical additions AND GPT explicitly approves after Phase 4 review checkpoint. No path from authorised work to forbidden files detectable."
     },
     {
       "check": "Stage 2B — Determinism risk",
       "result": "PASS",
-      "detail": "Primary risk: if any DTO field classification triggers a small hardening change (e.g. field marked internal-only and removed from payload), that change must be deterministic, tested, and frontend-consumer-traced. The prompt's Implementation Limits section (Phase 4) correctly gates this. Audit-phase work (Phases 1-3) carries no determinism risk as it is read-only documentation. Documentation-only lifecycle controls must not be described as gates (correct instruction in prompt Phase 3). No silent output drift risk identified in the current prompt scope."
+      "detail": "Primary risk: if any change to _ROOT_CAUSE_TARGETS list or loader pattern silently drops a target, the before/after fingerprint comparison will catch it. Phase 2 (before-fingerprint) and post-Phase 5 (after-fingerprint) are mandatory and will surface any drift. lru_cache on hypothesis loaders means ordering must remain deterministic. Duplicate target IDs must fail loudly — the prompt requires this explicitly. No silent skip behaviour is allowed."
     },
     {
       "check": "Stage 2B — No-op check: real work exists",
       "result": "PASS",
-      "detail": "Not a no-op sprint. Real work exists: (1) No LC-S16 frontend-surface audit document exists yet (confirmed absent); (2) No LC-S17 Knowledge Bus lifecycle framework document exists; (3) No LC-S19 payload contract hardening notes exist; (4) DTO fields in builders.py are not yet formally classified by the categories required; (5) Knowledge Bus lifecycle states are not yet formally defined in a framework document; (6) 8 new Sentinel defect classes are required and not yet present. Sprint is fully justified."
+      "detail": "Not a no-op sprint. Real work exists: (1) _ROOT_CAUSE_TARGETS is a 41-entry manually maintained list with no validation layer; (2) no before/after fingerprint infrastructure exists; (3) no LC-S18 notes document exists; (4) 7 new Sentinel defect classes are required and absent; (5) no test_lc_s18_root_cause_why_registration.py exists; (6) no WHY-enabled package metadata validation exists. Sprint is fully justified."
     }
   ],
-  "verdict": "HARDENED. All five front matter fields valid. risk_level HIGH and change_type MIXED correctly classified. All seven mandatory authority paths and all four optional paths confirmed present. All eight cross-sprint regression test files confirmed present. DTO authority confirmed singular (builders.py line 30). Frontend surface (17 result components) confirmed present and auditable. Sentinel packs directory has 3 existing files — 8 new defect classes required. One warning recorded: generated/openapi.ts must be regenerated via npm run generate-types if DTO shape changes are made; Cursor must verify script availability before any such change. No blockers. Cursor may proceed to Stage 3 kernel start."
+  "verdict": "HARDENED. All five front matter fields valid. risk_level HIGH and change_type BEHAVIOUR correctly classified for Intelligence Core root-cause compiler work. All mandatory and optional authority paths confirmed present. Root-cause compiler read: 41 registered targets in _ROOT_CAUSE_TARGETS (root_cause_compiler_v1.py lines 76–118), single registration authority, fallback mechanism present. All 8 cross-sprint regression test files confirmed present. Sentinel pack has 17 existing defect classes; 7 new classes required, none currently present. One warning: prompt body (Phase 1 'Known likely files') lists estate inventory at 'knowledge_bus/package_estate_KB-S49_v1.yaml' which does not exist — actual authoritative path is 'knowledge_bus/governance/package_estate_KB-S49_v1.yaml' per kb_lifecycle_contract_v1.py line 56. Runtime code is correct; Cursor must use the authoritative path. No blockers. Cursor may proceed to Stage 3 kernel start."
 }
