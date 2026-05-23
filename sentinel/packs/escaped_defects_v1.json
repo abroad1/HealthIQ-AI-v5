@@ -87,6 +87,73 @@
       "test_file": "backend/tests/regression/test_lc_s8_biomarker_unit_reference_incoherence_regression.py",
       "first_seen": "2026-05",
       "fix_commit": null
+    },
+    "frontend_section_not_backed_by_governed_source": {
+      "description": "LC-S16 — visible results section cannot be traced to a stable DTO field or governed asset path.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "knowledge_asset_not_surfaced_when_available": {
+      "description": "LC-S16 — governed Knowledge Bus or IDL asset available at runtime but not reachable through the frontend consumer contract.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py",
+      "first_seen": "2026-05",
+      "fix_commit": null,
+      "note": "Baseline guard via AB homocysteine governed WHY presence; full surfacing matrix deferred to LC-S18."
+    },
+    "generic_fallback_used_when_governed_asset_exists": {
+      "description": "LC-S16 — generic hero/body fallback copy used when governed narrative or IDL fields are present on the same payload.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py",
+      "first_seen": "2026-05",
+      "fix_commit": null,
+      "note": "Documented in LC-S16 audit; deterministic split-brain guard deferred — covered partially by narrative_compiler_why_surface."
+    },
+    "consumer_payload_internal_field_leakage": {
+      "description": "LC-S19 — internal governance strings, sprint ids, or raw signal_ids appear in consumer-facing DTO text fields.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "dto_frontend_contract_breakage": {
+      "description": "LC-S19 — build_analysis_result_dto root keys drift from frontend AnalysisResult contract.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "raw_signal_or_internal_id_visible": {
+      "description": "LC-S16/19 — raw signal_* ids visible in consumer domain score sentences or retail narrative fields.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "kb_lifecycle_required_file_missing": {
+      "description": "LC-S17 — Knowledge Bus package missing required files for its lifecycle tier (standard three-file floor or WHY-enabled PSI).",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "kb_orphan_package_unreported": {
+      "description": "LC-S17 — package directories on disk diverge from governance inventory without structured orphan reporting.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py",
+      "first_seen": "2026-05",
+      "fix_commit": null,
+      "note": "Reporter flags drift; inventory refresh backlog documented in LC-S17 §13."
     }
   }
 }
