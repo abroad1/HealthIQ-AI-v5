@@ -154,6 +154,63 @@
       "first_seen": "2026-05",
       "fix_commit": null,
       "note": "Reporter flags drift; inventory refresh backlog documented in LC-S17 §13."
+    },
+    "root_cause_target_not_loaded": {
+      "description": "LC-S18 — registered root-cause target fails to load governed hypothesis asset at registry validation.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s18_root_cause_why_registration.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "why_asset_silent_skip": {
+      "description": "LC-S18 — registered target removed or skipped without loud validation failure.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s18_root_cause_why_registration.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "metadata_malformed_not_failed": {
+      "description": "LC-S18 — malformed root-cause registry metadata does not raise RootCauseRegistryValidationError.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s18_root_cause_why_registration.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "why_output_changed_after_registration_migration": {
+      "description": "LC-S18 — hypothesis asset fingerprint drift between before/after registration migration.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s18_root_cause_why_registration.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "new_why_asset_requires_backend_code": {
+      "description": "LC-S18 — adding a WHY-enabled target still requires bespoke compiler table edits instead of validated registry spec.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s18_root_cause_why_registration.py",
+      "first_seen": "2026-05",
+      "fix_commit": null,
+      "note": "Hybrid manual_v1 registry — future metadata-only path deferred; adding a target requires one RootCauseTargetSpec row plus loader/asset, not compiler loop edits."
+    },
+    "orphan_why_asset_auto_loaded": {
+      "description": "LC-S18 — orphan KB package auto-discovered into root-cause registration without inventory validation.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s18_root_cause_why_registration.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "duplicate_why_target_id_not_rejected": {
+      "description": "LC-S18 — duplicate root-cause target signal_id accepted without validation error.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s18_root_cause_why_registration.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
     }
   }
 }
