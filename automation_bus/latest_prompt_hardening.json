@@ -1,26 +1,26 @@
 {
-  "work_id": "LC-S13",
+  "work_id": "LC-S14",
   "bus_version": "1.3.1",
   "status": "HARDENED",
   "hardened_utc": "2026-05-23T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6)",
   "blocker_count": 0,
-  "warning_count": 4,
+  "warning_count": 2,
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: LC-S13. Correctly formed."
+      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: LC-S14. Correctly formed."
     },
     {
       "check": "Front Matter — branch",
-      "result": "WARNING",
-      "detail": "branch: scaffold/lc-s13-lifestyle-coherence-narrative. The 'scaffold/' prefix is not in CLAUDE.md §13 convention but was approved informally for the scaffold phase during LC-S12B hardening. Consistent with LC-S12B branch pattern. Not a kernel-failure risk."
+      "result": "PASS",
+      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: scaffold/lc-s14-direction-aware-scoring. Consistent with LC-S13 'scaffold/' prefix convention approved during the scaffold completion phase."
     },
     {
       "check": "Front Matter — risk_level",
       "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: HIGH. Correct. Sprint touches backend/core/analytics/ (lifestyle_modifier_engine.py, lifestyle_interpretation_bridge_engine.py, lifestyle_registry_loader.py), backend/core/pipeline/ (orchestrator.py, questionnaire_mapper.py), Sentinel packs, and frontend. All HIGH-risk triggers per SOP §10 and CLAUDE.md intelligence core definition."
+      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: HIGH. Correct. Sprint touches backend/core/scoring/rules.py (Intelligence Core — scoring logic), backend/core/scoring/engine.py (output generation pathway), backend/ssot/scoring_policy.yaml (analytical policy authority), and regression tests. All HIGH-risk triggers apply per SOP §10 and CLAUDE.md Intelligence Core definition."
     },
     {
       "check": "Front Matter — execution_model",
@@ -30,103 +30,118 @@
     {
       "check": "Front Matter — change_type",
       "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: MIXED. Correct. Sprint spans backend analytics computation (Scope A), deterministic Sentinel guard additions (Scope B), and frontend/narrative string audit (Scope C). MIXED governs using BEHAVIOUR controls per SOP §4."
+      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: BEHAVIOUR. Correct. Sprint modifies scoring logic in rules.py (removing hardcoded ALT bypass, adding directionality dispatch), adds directionality fields to scoring_policy.yaml, and changes output scores for direction-sensitive markers. This is a BEHAVIOUR change; BEHAVIOUR controls apply per SOP §4."
     },
     {
       "check": "Stage 2A — Primary authority: scaffold definition document",
       "result": "PASS",
-      "citation": "docs/planning-papers/HealthIQ_AI_core_scaffold_completion_definition_v1.md — confirmed present. Verified in this session: file exists, DRAFT status pending Gate A, all 15 sections present per LC-S12B audit."
+      "citation": "docs/planning-papers/HealthIQ_AI_core_scaffold_completion_definition_v1.md — confirmed present (PowerShell Test-Path returned True)."
     },
     {
-      "check": "Stage 2A — Primary authority: scaffold completion plan",
+      "check": "Stage 2A — Primary authority: scaffold completion sprint plan",
       "result": "PASS",
-      "citation": "docs/planning-papers/HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md — confirmed present."
+      "citation": "docs/planning-papers/HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md — confirmed present. LC-S14 content read at lines 493–568: purpose, scope, Sentinel obligations, and acceptance bar all align with the cursor prompt. No scope discrepancy."
     },
     {
-      "check": "Stage 2A — Primary authority: LC-S12B definition notes",
+      "check": "Stage 2A — Controlling audit notes present",
       "result": "PASS",
-      "citation": "docs/audit-papers/LC-S12B_core_scaffold_definition_notes.md — confirmed present."
+      "citation": "docs/audit-papers/LC-S12B_core_scaffold_definition_notes.md — confirmed present. docs/audit-papers/LC-S13_lifestyle_coherence_narrative_notes.md — confirmed present. docs/audit-papers/LC-S12A_forensic_architecture_audit.md — confirmed present. docs/audit-papers/LC-S11A_trust_blocker_correction_notes.md — confirmed present."
     },
     {
-      "check": "Stage 2A — Supplementary references",
+      "check": "Stage 2A — Scoring engine files present",
       "result": "PASS",
-      "citation": "All secondary references confirmed present: docs/audit-papers/LC-S12A_forensic_architecture_audit.md, docs/audit-papers/LC-S11_forensic_human_uat_audit.md, docs/audit-papers/LC-S11A_trust_blocker_correction_notes.md, docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md, docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md, docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md."
+      "citation": "backend/core/scoring/rules.py — confirmed present. backend/core/scoring/engine.py — confirmed present. backend/core/analytics/bio_stats_engine.py — confirmed present. backend/core/analytics/domain_score_assembler.py — confirmed present."
     },
     {
-      "check": "Stage 2A — Forbidden file paths: validity",
+      "check": "Stage 2A — SSOT files present",
       "result": "PASS",
-      "citation": "All forbidden file paths verified present: backend/ssot/scoring_policy.yaml (exists), backend/ssot/units.yaml (exists), backend/core/units/registry.py (exists), backend/core/scoring/rules.py (exists). Correct targets for the forbidden list."
+      "citation": "backend/ssot/scoring_policy.yaml — confirmed present (policy_version: 1.1.0 at line 1). backend/ssot/biomarkers.yaml — confirmed present."
     },
     {
-      "check": "Stage 2A — Regression test file paths",
-      "result": "PASS",
-      "citation": "All five regression tests confirmed present: backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py, test_lc_s8g_uploaded_unit_display_fidelity.py, test_lc_s8d_unit_governance_sentinel.py, test_lc_s10b_launch_core_protection.py, test_lc_s11a_trust_blocker_correction.py."
-    },
-    {
-      "check": "Stage 2A — PATH DISCREPANCY: backend/core/lifestyle/**/*",
+      "check": "Stage 2A — PATH DISCREPANCY: backend/core/scoring/primitives.py",
       "result": "WARNING",
-      "detail": "The 'Potentially allowed backend' section lists backend/core/lifestyle/**/* as an edit target. THIS DIRECTORY DOES NOT EXIST. Actual lifestyle computation code lives at: backend/core/analytics/lifestyle_modifier_engine.py, backend/core/analytics/lifestyle_interpretation_bridge_engine.py, backend/core/analytics/lifestyle_registry_loader.py, backend/core/scoring/overlays.py. Cursor must NOT create backend/core/lifestyle/ as a new directory. Cursor must search for actual lifestyle code in backend/core/analytics/ and backend/core/pipeline/."
+      "detail": "The prompt lists backend/core/scoring/primitives.py as a 'known likely file to inspect'. THIS FILE DOES NOT EXIST. The actual primitives are in backend/core/analytics/primitives.py — confirmed by rules.py lines 12–17 which import position_in_range, position_in_one_sided_lab_range, map_position_to_status, and coerce_optional_float from core.analytics.primitives. Cursor must inspect backend/core/analytics/primitives.py, NOT backend/core/scoring/primitives.py, and must NOT create a new primitives.py under backend/core/scoring/."
     },
     {
-      "check": "Stage 2A — PATH DISCREPANCY: backend/core/questionnaire/**/*",
-      "result": "WARNING",
-      "detail": "The 'Potentially allowed backend' section lists backend/core/questionnaire/**/* as an edit target. THIS DIRECTORY DOES NOT EXIST. Actual questionnaire code lives at: backend/core/pipeline/questionnaire_mapper.py, backend/core/models/questionnaire.py. Cursor must NOT create backend/core/questionnaire/ as a new directory. Cursor must work within backend/core/pipeline/ and backend/core/models/."
-    },
-    {
-      "check": "Stage 2A — confidence_adjustments computation trace",
+      "check": "Stage 2A — ALT bypass confirmed in rules.py",
       "result": "PASS",
-      "citation": "backend/core/pipeline/orchestrator.py lines 1645-1662: confidence_adjustments IS computed from LifestyleModifierEngine.apply() result, specifically from engine_result['adjusted_system_burdens'][s]['confidence_penalty'] per system. Written into lifestyle_artifact and stored in AnalysisResult.lifestyle field (backend/core/models/results.py line 283). The zero-output finding from prior audit is a registry/input activation issue, not an absent computation path. Scope A computation trace must verify whether effective_lifestyle_inputs reach the engine block."
+      "citation": "backend/core/scoring/rules.py lines 309–311: hardcoded bypass 'if biomarker_name == \"alt\" and value < float(min_val): score, score_range = self._calculate_score_from_has_position(0.05); return score, score_range, None'. Comment attributes this to LC-S11A. This is the specific exception the sprint is governed to replace with a directionality policy. Existence and location confirmed."
+    },
+    {
+      "check": "Stage 2A — Directionality field absent from scoring_policy.yaml",
+      "result": "PASS",
+      "citation": "backend/ssot/scoring_policy.yaml read in full (349 lines). No 'direction_class', 'directionality', or equivalent field present anywhere in the file. Policy is entirely symmetric: position_in_range() maps value within [lab_min, lab_max] to 0..1; all below-range and above-range deviations are scored symmetrically by low_noncritical/low_critical and high_noncritical/high_critical curves. This confirms the scaffold gap the sprint is addressing."
+    },
+    {
+      "check": "Stage 2A — SOURCE CROSS-REF: GGT, ALP, ApoA1 absent from scoring_policy.yaml — POLICY EXPANSION REQUIRED",
+      "result": "WARNING",
+      "detail": "The prompt requires directionality coverage for GGT, ALP, ApoA1 as representative markers. These biomarkers exist in backend/ssot/biomarkers.yaml (ggt at line 1423, alp at line 1443, apoa1 at line 159) but are NOT present in backend/ssot/scoring_policy.yaml: (1) the liver system only contains 'alt' and 'ast' — GGT and ALP are absent; (2) the cardiovascular system does not include ApoA1. Directionality policy cannot be applied to markers that are not in the scoring policy. Cursor must therefore add GGT, ALP, and ApoA1 entries (with directionality) to scoring_policy.yaml as part of this sprint. This is within the 'Potentially allowed' list (scoring_policy.yaml, biomarkers.yaml). Cursor must document this policy expansion in the LC-S14 notes file. If Cursor cannot establish consensus policy bands for any of these markers, it must mark them as deferred per prompt §Phase 2 guidance."
+    },
+    {
+      "check": "Stage 2A — scoring_policy.yaml HDL bands — asymmetry already present but not enforced",
+      "result": "PASS",
+      "citation": "backend/ssot/scoring_policy.yaml lines 118–130: hdl_cholesterol bands are already structured with low values as concerning (critical: min 0.0, max 0.26) and high values as optimal (optimal: min 1.55, max 5.17). However, the symmetric position_in_range() used by rules.py will still penalise very high HDL (>5.17) identically to very low HDL. This confirms the 'protective-high' problem is real and must be resolved by the directionality mechanism."
+    },
+    {
+      "check": "Stage 2A — Sentinel packs directory state",
+      "result": "PASS",
+      "citation": "sentinel/packs/ directory exists but is EMPTY — no JSON files present. The five required Sentinel defect classes (direction_sensitive_marker_false_alarm, low_enzyme_false_alarm, protective_high_marker_penalised, hardcoded_biomarker_scoring_exception, scoring_signal_directionality_conflation) must be CREATED from scratch, not updated. No existing pack files conflict."
+    },
+    {
+      "check": "Stage 2A — All regression test files present",
+      "result": "PASS",
+      "citation": "All 7 required regression test files confirmed present: backend/tests/unit/test_scoring_rules.py, backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py, backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py, backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py, backend/tests/regression/test_lc_s10b_launch_core_protection.py, backend/tests/regression/test_lc_s11a_trust_blocker_correction.py, backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py."
+    },
+    {
+      "check": "Stage 2A — Forbidden files: correct targets",
+      "result": "PASS",
+      "citation": "All forbidden files are correctly identified non-targets for this sprint. backend/ssot/units.yaml, backend/core/units/registry.py, narrative/report compilers, lifestyle_consumer_surface_v1.py, knowledge_bus/**, frontend/**, automation_bus/state/*, kernel scripts — none of these need to be touched for directionality policy. Signal libraries explicitly excluded. Prohibition on signal activation changes is consistent with the sprint scope."
     },
     {
       "check": "Stage 2A — Duplicate authority check",
       "result": "PASS",
-      "detail": "No competing LC-S13 prompt exists outside latest_cursor_prompt.md. No duplicate lifestyle or coherence authority source detected."
+      "detail": "No competing LC-S14 prompt exists outside latest_cursor_prompt.md. No duplicate scoring authority source detected. scoring_policy.yaml is the sole SSOT for scoring policy. The 'Potentially allowed' list does not include creating a second scoring policy file."
     },
     {
-      "check": "Stage 2B — Intelligence Core components identified",
+      "check": "Stage 2B — Intelligence Core components in scope identified",
       "result": "PASS",
-      "detail": "Intelligence Core components in scope explicitly identified: (1) backend/core/analytics/lifestyle_modifier_engine.py — adjusts system burden vector; (2) backend/core/analytics/lifestyle_interpretation_bridge_engine.py — fires lifestyle bridges; (3) backend/core/analytics/lifestyle_registry_loader.py — loads SSOT registry into engine; (4) backend/core/pipeline/orchestrator.py — calls engine, builds lifestyle_artifact, writes results.lifestyle; (5) backend/core/pipeline/questionnaire_mapper.py — maps questionnaire inputs to lifestyle factors; (6) Sentinel packs — deterministic guard layer. All HIGH-risk per SOP §10."
+      "detail": "Intelligence Core components affected: (1) backend/core/scoring/rules.py — primary target: remove ALT bypass at lines 309–311, add directionality dispatch; (2) backend/ssot/scoring_policy.yaml — add direction_class fields, add GGT/ALP/ApoA1 entries; (3) backend/core/scoring/engine.py — potential secondary impact if score aggregation needs to respond to directionality; (4) Sentinel packs — new defect class entries. All HIGH-risk. No other Intelligence Core components identified as in-scope."
     },
     {
-      "check": "Stage 2B — Q-1/Q-2 questionnaire dependency — MATERIAL STOP RISK",
-      "result": "WARNING",
-      "detail": "Multiple active questionnaire branches detected in repo: feature/questionnaire-ux-redesign, feature/questionnaire-visual-redesign, feature/questionnaire-schema-wiring, feature/questionnaire-recovery, wp3/questionnaire-rationalisation. CLAUDE.md confirms Q-1/Q-2 redesign is 'in progress'. The prompt's Q-1/Q-2 dependency check is correctly structured (three explicit outcomes). This is a high-probability STOP trigger for Scope A if questionnaire input shape is actively changing. Cursor must complete the Q-1/Q-2 check before touching any questionnaire/lifestyle code and must STOP if outcome 3 applies."
-    },
-    {
-      "check": "Stage 2B — Scope defined and bounded",
+      "check": "Stage 2B — Behavioural surface area and expected output changes",
       "result": "PASS",
-      "detail": "Three scopes explicitly defined: Scope A (lifestyle propagation — trace-first, STOP/split if computation broken), Scope B (coherence guards — deterministic tests + Sentinel), Scope C (narrative language audit — classify and remediate overclaim). Sprint is correctly prohibited from touching: unit conversion, scoring directionality, Knowledge Bus content, SSOT metadata, Automation Bus scripts. No scope creep detected."
+      "detail": "Scores that will intentionally change: (a) low ALT below lab lower bound — currently scores ~borderline (position 0.05 hardcoded); after sprint should be non-alarming per policy; (b) very high HDL/ApoA1 above lab upper bound — currently scored symmetrically as concerning; after sprint should be non-penalised or capped at neutral/informational per policy; (c) low AST/GGT/ALP — should become non-alarming per high-only policy class. Domain/system aggregate scores for liver and cardiovascular systems may shift accordingly for panels containing these edge cases. All changes are intentional and must be documented in the LC-S14 notes file."
     },
     {
-      "check": "Stage 2B — STOP/split condition for Scope A",
+      "check": "Stage 2B — Regression targets: protected behaviours",
       "result": "PASS",
-      "detail": "Prompt correctly requires trace-first before wiring. If confidence_adjustments are not producing meaningful output, Scope A must STOP. Proposed split into LC-S13A (repair) and LC-S13B (surface) is correctly marked as requiring GPT/human authorisation. Scopes B and C may continue independently only if GPT/human approve."
+      "detail": "Protected behaviours explicitly listed in prompt and verified as active test targets: LC-S8F/G unit/display fidelity, LC-S8D unit governance, LC-S10B launch-core protection, LC-S11A trust blockers, LC-S13 lifestyle/coherence/narrative. All test files present (confirmed above). ApoB/ApoA1 ratio interpretation is explicitly protected — ratio logic must remain separate from HDL/ApoA1 individual marker directionality. Homocysteine lead finding is explicitly protected. No test is listed for homocysteine lead specifically; Cursor should run the broader test suite if domain aggregation changes appear."
     },
     {
-      "check": "Stage 2B — Regression targets included",
+      "check": "Stage 2B — No scope creep into signal libraries or Knowledge Bus",
       "result": "PASS",
-      "detail": "Cross-sprint guard preflight explicitly requires: LC-S8F, LC-S8G, LC-S8D, LC-S10B, LC-S11A regression suites before implementation. New LC-S13 test target named: test_lc_s13_lifestyle_coherence_narrative.py. Homocysteine lead finding, uploaded-panel fidelity, and frontend conversion maths absence preserved as regression expectations."
+      "detail": "Sprint correctly prohibits: signal activation changes, Knowledge Bus content, frontend rendering, narrative compilers, unit conversion, lifestyle propagation. Directionality is confined to scoring policy and the rules.py dispatch layer. Signal firing and scoring directionality are explicitly separated. Any finding that these cannot be separated requires STOP for GPT review (correctly specified in prompt Phase 3)."
     },
     {
       "check": "Stage 2B — Determinism risk surfaced",
       "result": "PASS",
-      "detail": "Sprint must not change measured biomarker values, override lab-derived ranges, or introduce frontend conversion maths. Lifestyle modifiers apply only as additive adjustments to system burden vector — not to biomarker truth. Narrative audit scope correctly bounded to overclaim detection, not clinical interpretation. Determinism policy preserved."
+      "detail": "Directionality must be data-driven (policy-file-based), not hardcoded per marker. Missing directionality configuration must use safe default (symmetric) behaviour — not an arbitrary fallback that could drift. Unknown biomarker names must not cause exceptions. Policy file must reject invalid direction class values. All these determinism constraints are explicitly required by the prompt. No silent drift risk identified beyond the policy-expansion warning already flagged."
     },
     {
-      "check": "Stage 2B — Sentinel obligations declared",
+      "check": "Stage 2B — STOP condition: competing scoring authorities",
       "result": "PASS",
-      "detail": "Sentinel update explicitly required. Six defect classes specified: lifestyle_visible_payoff_missing, lifestyle_bridge_internal_code_leakage, domain_band_headline_polarity_contradiction, domain_active_signal_false_claim, mock_mode_personalisation_overclaim, governance_label_user_visible_leakage. Each must point to an active deterministic regression test. Placeholder entries are prohibited."
+      "detail": "Prompt correctly requires STOP if multiple competing scoring authorities are found and the correct one cannot be established. Verified: only one scoring authority source exists (scoring_policy.yaml loaded by core/analytics/scoring_policy_registry.py via load_scoring_policy()). No competing authority exists. STOP condition is not triggered."
     },
     {
-      "check": "Stage 2B — Gate A awareness",
+      "check": "Stage 2B — No-op check: real work exists",
       "result": "PASS",
-      "detail": "LC-S12B audit required Gate A three-party approval (Claude Code PASS, GPT Architecture, Human product owner) before LC-S13. User's request to harden LC-S13 implies Gate A is approved. No structural prompt issue. Noted for standing record."
+      "detail": "Not a no-op sprint. Real defects exist: (1) hardcoded ALT bypass at rules.py:309–311; (2) no directionality framework anywhere in scoring_policy.yaml; (3) GGT/ALP/ApoA1 absent from scoring_policy.yaml despite being in biomarkers SSOT; (4) HDL protective-high not enforced by scoring despite band structure implying low concern. All four items require code and/or SSOT changes. Sprint is justified."
     },
     {
-      "check": "Stage 2B — Output documentation scope",
+      "check": "Stage 2B — Sentinel obligations",
       "result": "PASS",
-      "citation": "docs/audit-papers/LC-S13_lifestyle_coherence_narrative_notes.md does not yet exist. All 12 required items in the implementation note are clearly specified. Output file does not conflict with any existing file."
+      "detail": "Five defect classes required: direction_sensitive_marker_false_alarm, low_enzyme_false_alarm, protective_high_marker_penalised, hardcoded_biomarker_scoring_exception, scoring_signal_directionality_conflation. Each must point to an active deterministic regression test. sentinel/packs/ is currently empty — all five classes are new entries. Placeholder entries are explicitly prohibited. Cursor must not add a class until the backing test exists and passes."
     }
   ],
-  "verdict": "HARDENED. All five front matter fields valid. All primary authority paths confirmed present. All regression test paths confirmed present. risk_level HIGH and change_type MIXED correctly classified. STOP/split logic for Scope A is well-structured. Two path discrepancies in the 'Potentially allowed backend' section are recorded as warnings: backend/core/lifestyle/ and backend/core/questionnaire/ do not exist — Cursor must search for actual code in backend/core/analytics/ and backend/core/pipeline/ respectively, and must not create these directories. Q-1/Q-2 active branches are a high-probability STOP trigger; prompt's dependency check correctly handles this. confidence_adjustments computation is confirmed active in orchestrator.py (lines 1645-1662); zero-output is an input/registry activation issue, not an absent path. Cursor may proceed to Stage 3 kernel start once the two path warnings are acknowledged."
+  "verdict": "HARDENED. All five front matter fields valid. risk_level HIGH and change_type BEHAVIOUR correctly classified. All controlling authority docs present. All seven regression test files confirmed present. Two warnings recorded: (1) PATH DISCREPANCY — backend/core/scoring/primitives.py does not exist; real primitives are at backend/core/analytics/primitives.py; Cursor must NOT create a new file there; (2) POLICY EXPANSION REQUIRED — GGT, ALP, and ApoA1 do not exist in scoring_policy.yaml; they must be added with governed bands and directionality as part of this sprint; if bands cannot be established they must be explicitly deferred with reason. ALT bypass confirmed at rules.py:309–311. Directionality field confirmed absent from scoring_policy.yaml. Sentinel packs/ is empty — all five defect classes must be created, not updated. Cursor may proceed to Stage 3 kernel start after acknowledging both warnings."
 }

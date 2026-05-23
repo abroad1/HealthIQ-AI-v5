@@ -1,38 +1,49 @@
 ---
-work_id: LC-S13
-branch: scaffold/lc-s13-lifestyle-coherence-narrative
+work_id: LC-S14
+branch: scaffold/lc-s14-direction-aware-scoring
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: MIXED
+change_type: BEHAVIOUR
 ---
 
-# LC-S13 — Lifestyle Propagation, Coherence Guard and Narrative Language Audit
+# LC-S14 — Direction-Aware Scoring Framework
 
 ## Classification
 
-This is a HIGH-risk MIXED scaffold sprint.
+This is a HIGH-risk BEHAVIOUR scaffold sprint.
 
-Reason: this sprint may touch backend lifestyle/questionnaire logic, analytics, DTO payloads, frontend results rendering, deterministic narrative surfaces, regression tests, Sentinel packs and documentation.
+Reason: this sprint may touch biomarker scoring behaviour, scoring policy, analytical interpretation of below-range versus above-range deviations, regression tests and Sentinel protections.
 
 This sprint is part of the approved HealthIQ AI core scaffold completion programme.
 
-This is not a launch-readiness sprint.  
+This is not a scoring redesign sprint.  
+This is not a reference-range rewrite sprint.  
+This is not a unit-governance sprint.  
+This is not a Knowledge Bus expansion sprint.  
 This is not a frontend redesign sprint.  
-This is not a Gemini/LLM sprint.  
-This is not a broad questionnaire redesign sprint.  
-This is not a medication-modifier sprint.
+This is not a Gemini/LLM sprint.
 
 ## Purpose
 
-Prove that questionnaire-derived intelligence can travel from structured input to governed user-visible output, while protecting the rendered report from contradictory or misleading deterministic/mock-mode language.
+Replace one-off biomarker scoring exceptions with a governed direction-aware scoring framework.
 
-This sprint has three bounded scopes:
+The goal is to allow HealthIQ AI to safely score biomarkers where high and low deviations have different clinical meaning, without adding bespoke hardcoded exceptions for each biomarker.
 
-1. Lifestyle and questionnaire propagation pathway
-2. Report coherence guard
-3. Narrative language audit
+This sprint directly addresses the scaffold weakness identified in the LC-S12A architecture audit and carried forward into the approved scaffold plan.
 
-The goal is to complete and protect a scaffold pathway, not to add broad lifestyle content.
+## Core rule
+
+Preserve this non-negotiable policy:
+
+```text
+Use lab-derived reference ranges for biomarker interpretation wherever the lab provides them.
+Do not substitute global/default ranges.
+Do not change measured biomarker values.
+Do not change units.
+Do not change signal firing unless explicitly required and approved.
+````
+
+Direction-aware scoring is about how to interpret position relative to the lab range, not about replacing the lab range.
 
 ## Controlling authority
 
@@ -42,15 +53,14 @@ Read before doing anything:
 docs/planning-papers/HealthIQ_AI_core_scaffold_completion_definition_v1.md
 docs/planning-papers/HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md
 docs/audit-papers/LC-S12B_core_scaffold_definition_notes.md
-````
+docs/audit-papers/LC-S13_lifestyle_coherence_narrative_notes.md
+```
 
 Also inspect if present:
 
-```text
+```text id="un4rwh"
 docs/audit-papers/LC-S12A_forensic_architecture_audit.md
-docs/audit-papers/LC-S11_forensic_human_uat_audit.md
 docs/audit-papers/LC-S11A_trust_blocker_correction_notes.md
-docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md
 docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
 docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md
 ```
@@ -61,30 +71,30 @@ If the scaffold definition document is missing, STOP.
 
 Create or update:
 
-```text
-docs/audit-papers/LC-S13_lifestyle_coherence_narrative_notes.md
+```text id="2o2p0e"
+docs/audit-papers/LC-S14_direction_aware_scoring_notes.md
 ```
 
 This document must include:
 
 1. preflight results
-2. lifestyle computation trace
-3. whether `confidence_adjustments` compute meaningful non-zero output
-4. whether lifestyle bridges fire correctly
-5. whether this sprint proceeded normally or required split/STOP
+2. current scoring architecture summary
+3. location and behaviour of the current ALT bypass
+4. directionality policy design
+5. biomarkers covered in this sprint
 6. files changed
-7. coherence guards added
-8. narrative language findings
-9. Sentinel updates
-10. tests run
+7. tests added/updated
+8. Sentinel updates
+9. proof that lab-derived ranges remain authoritative
+10. proof that units/display fidelity are unaffected
 11. residual risks
-12. recommendation for next sprint
+12. recommendation for LC-S15/Sprint 4
 
 ## Mandatory preflight
 
 Run and record:
 
-```powershell
+```powershell id="eim0c0"
 git branch --show-current
 git status --short
 git log --oneline -n 8
@@ -93,24 +103,24 @@ git stash list
 
 Verify work-package token:
 
-```powershell
+```powershell id="evfod5"
 Test-Path automation_bus/state/work_package_active.json
 ```
 
 Read `automation_bus/state/work_package_active.json` and confirm:
 
-* `work_id` is `LC-S13`
-* branch is `scaffold/lc-s13-lifestyle-coherence-narrative`
+* `work_id` is `LC-S14`
+* branch is `scaffold/lc-s14-direction-aware-scoring`
 
 If token is missing or mismatched, STOP:
 
-```text
+```text id="b0ftdf"
 Kernel start not executed or work package mismatch.
 ```
 
 Confirm controlling docs exist:
 
-```powershell
+```powershell id="7ofccl"
 Test-Path docs/planning-papers/HealthIQ_AI_core_scaffold_completion_definition_v1.md
 Test-Path docs/planning-papers/HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md
 ```
@@ -121,14 +131,15 @@ If either is missing, STOP.
 
 Before implementation, run prior scaffold / launch-core protections.
 
-At minimum run the currently available equivalents of:
+At minimum run the current equivalents of:
 
-```powershell
+```powershell id="rqm96f"
 python -m pytest backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py -q
 python -m pytest backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py -q
 python -m pytest backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py -q
 python -m pytest backend/tests/regression/test_lc_s10b_launch_core_protection.py -q
 python -m pytest backend/tests/regression/test_lc_s11a_trust_blocker_correction.py -q
+python -m pytest backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py -q
 ```
 
 If one of these files has a different current name, find the current equivalent and record the substitution.
@@ -137,221 +148,196 @@ If a prior scaffold/launch-core guard fails, STOP unless the failure is already 
 
 Do not proceed while prior protected behaviours are broken.
 
-## Q-1 / Q-2 questionnaire dependency check
+---
 
-Before touching questionnaire/lifestyle code, check whether Q-1/Q-2 questionnaire redesign work is active.
+# Phase 1 — Authority and current-state investigation
 
-Search branch names, docs and recent logs for questionnaire redesign references.
+Before making any changes, identify and record the current authority paths for:
 
-If questionnaire input shape, field names, mapping, or frontend collection flow are actively changing, STOP and report.
+1. biomarker scoring rules
+2. lab-derived reference range scoring
+3. current ALT low-value bypass
+4. score-to-status mapping
+5. domain/system score aggregation if affected
+6. biomarker SSOT metadata
+7. scoring policy YAML or equivalent
+8. signal activation logic
+9. Sentinel packs protecting scoring and launch-core output
+10. tests currently covering ALT, HDL, ApoA1, liver enzymes and lipid markers
 
-Possible outcomes:
+Known likely files to inspect:
 
-1. Q-1/Q-2 is already merged and stable — proceed.
-2. Q-1/Q-2 is active but unrelated to backend mapped DTOs — proceed only using stable backend mapped inputs.
-3. Q-1/Q-2 changes questionnaire shape/mapping — STOP for GPT/human decision.
+```text id="u3k8ms"
+backend/core/scoring/rules.py
+backend/core/scoring/engine.py
+backend/core/scoring/primitives.py
+backend/core/analytics/bio_stats_engine.py
+backend/core/analytics/domain_score_assembler.py
+backend/ssot/scoring_policy.yaml
+backend/ssot/biomarkers.yaml
+backend/tests/unit/test_scoring_rules.py
+backend/tests/regression/test_lc_s11a_trust_blocker_correction.py
+sentinel/packs/lc_s10b_launch_core_protection_v1.json
+```
 
-Do not create parallel incompatible questionnaire assumptions.
+STOP if there are multiple competing scoring authorities and the correct one cannot be established.
+
+## Required current-state findings
+
+Record in `LC-S14_direction_aware_scoring_notes.md`:
+
+* how standard biomarkers are currently scored against lab-derived ranges
+* where derived ratio policy scoring is handled
+* whether scoring is currently symmetric around the lab range
+* exact current ALT bypass behaviour
+* whether bio_stats/system burden calculations are affected by the same asymmetry problem
+* whether high/low direction is currently represented anywhere in SSOT or scoring policy
+* whether signal activation already has directionality controls separate from scoring
 
 ---
 
-# Scope A — Lifestyle propagation pathway
+# Phase 2 — Design the smallest safe policy mechanism
 
-## Problem
+## Required design
 
-The lifestyle/questionnaire layer appears to compute internally but produces little visible user payoff.
+Implement the smallest governed directionality mechanism that replaces hardcoded biomarker-specific exceptions.
 
-Previous audit work also found `lifestyle.confidence_adjustments` was uniformly `0.0` across contrasting lifestyle profiles. That means this may not be only an unwired-output problem; it may also be a dormant or broken computation path.
+The framework must support these direction classes:
 
-## Mandatory lifestyle computation preflight
-
-Before wiring anything to user-facing output, trace the current lifestyle pathway:
-
-```text
-questionnaire input
-→ mapped lifestyle factors
-→ lifestyle modifier engine
-→ confidence adjustments
-→ lifestyle bridges
-→ DTO/meta
-→ user-visible surfaces
+```text id="rp58cd"
+bidirectional_concern
+high_only_concern
+low_only_concern
+protective_high
+protective_low
+informational_low
+informational_high
 ```
 
-Answer explicitly:
+You may choose the exact enum names if they are consistent and documented.
 
-1. Are questionnaire inputs received?
-2. Are they mapped into stable lifestyle factors?
-3. Are lifestyle modifiers computed?
-4. Are `confidence_adjustments` ever non-zero?
-5. Are lifestyle bridges firing?
-6. Is alcohol / one-carbon / methylation bridge firing when expected?
-7. Are outputs present in DTO/meta?
-8. Which outputs are currently visible to the user?
-9. Which outputs are computed but not surfaced?
-10. Which outputs are absent because computation did not happen?
+The policy must be stored in a governed configuration/SSOT/policy location, not hardcoded inside scoring logic.
 
-## STOP / split condition
+Preferred location, if appropriate:
 
-If lifestyle modifiers and confidence adjustments are not computing meaningful internal outputs, Scope A must STOP.
-
-Do not wire broken or meaningless values to the frontend.
-
-If Scope A stops, report whether the work should split into:
-
-```text
-LC-S13A — Lifestyle computation repair
-LC-S13B — Lifestyle surface propagation
+```text id="ovmejv"
+backend/ssot/scoring_policy.yaml
 ```
 
-Scopes B and C may only proceed if they are independent of the failed lifestyle computation path and GPT/human authority approves the split.
+or an equivalent existing scoring policy authority if discovered.
 
-Cursor may not self-authorise this split.
+## Required initial coverage
 
-## Required lifestyle behaviour
+At minimum, cover representative biomarkers:
 
-Same blood panel + different questionnaire profile must produce at least one governed, visible, explainable difference in the output.
-
-Allowed user-visible effects:
-
-* caveat
-* confidence modifier
-* explanation modifier
-* lifestyle-context paragraph
-* next-step priority
-* supporting-context note
-
-Not allowed:
-
-* changing measured biomarker values
-* overriding lab-derived ranges
-* changing biomarker truth
-* claiming causality without governed support
-* generic wellness filler
-* raw internal bridge code
-* lifestyle advice unrelated to the panel
-
-## Minimum fixture expectation
-
-Use or create contrasting profiles for the same panel, for example:
-
-```text
-Profile A: low alcohol, no smoking, normal BMI, good sleep/activity
-Profile B: moderate/high alcohol, smoking, high BMI, poor sleep/stress
+```text id="j5ybxg"
+ALT
+AST
+GGT
+ALP
+HDL cholesterol
+ApoA1
 ```
 
-Expected result:
+Also investigate and document whether these should be included now or deferred:
 
-At least one governed user-visible field differs in a clinically bounded way.
+```text id="s3f0n2"
+ferritin
+transferrin
+CRP
+TSH
+Free T4
+```
 
-The sprint must prove:
+If clinical directionality for a biomarker is uncertain or context-dependent, do not invent policy. Mark it as deferred with reason.
+
+## Required behaviour by marker class
+
+### High-only concern
+
+Example class:
 
 ```text
-Lifestyle intelligence is computed.
-Lifestyle intelligence is surfaced.
+ALT, AST, GGT, ALP where low values are not treated as an alarming clinical concern
 ```
+
+Behaviour:
+
+* above upper lab range may reduce score / trigger concern according to existing scoring rules
+* below lower lab range should not produce critical/alarming score unless explicitly governed
+* below lower lab range may be informational, neutral, or low-severity depending on policy
+* high behaviour must remain intact
+
+### Protective-high
+
+Example class:
+
+```text
+HDL, ApoA1
+```
+
+Behaviour:
+
+* high value should not be penalised as negative risk solely because above upper lab range
+* low value may remain concerning if governed
+* borderline high protective values should not create low scores
+* ApoB/ApoA1 ratio logic must remain separate and unaffected
+
+### Bidirectional concern
+
+Behaviour:
+
+* both low and high deviations may be scored as concerning
+* current symmetric behaviour may remain where clinically appropriate
+
+### Informational-only deviation
+
+Behaviour:
+
+* out-of-range value may be visible but should not create alarming score
+* may affect caveat/explanation if governed
+* should not drive domain “Needs review” alone
 
 ---
 
-# Scope B — Coherence guard
+# Phase 3 — Implementation constraints
 
-## Problem
+## Preserve lab-derived range policy
 
-The rendered report has previously shown contradictions such as a domain card labelled stable/high confidence while the headline says “not a simple all-clear”.
+Do not change the rule that lab-provided ranges are authoritative for standard biomarkers.
 
-This is a scaffold integrity issue, not product polish.
+Do not introduce default/global ranges.
 
-## Required coherence protections
+Do not change range parsing.
 
-Add deterministic tests and Sentinel entries protecting against:
+Do not change units.
 
-* hero finding contradicting body overview
-* domain band contradicting headline/consequence text
-* stable card carrying warning copy without clear context
-* strong / needs-review card lacking supporting evidence
-* domain claiming active signals when none exist
-* active concern copy without active signal
-* raw signal IDs or governance tokens leaking into user-facing prose
-* generic placeholder copy appearing in consumer report
+Do not change uploaded-unit display fidelity.
 
-Known defect class to protect:
+## Preserve signal activation separation
 
-```text
-Card says Stable / High confidence while headline says “not a simple all-clear”.
-```
+Signal activation and biomarker score directionality are related but distinct.
 
-## Required Sentinel defect classes
+Do not change signal libraries or Knowledge Bus assets in this sprint.
 
-Add or update Sentinel entries for:
+Do not change signal firing unless a test proves scoring policy cannot be separated from signal policy. If that happens, STOP for GPT review.
 
-```text
-domain_band_headline_polarity_contradiction
-domain_active_signal_false_claim
-governance_label_user_visible_leakage
-```
+## Preserve existing domain/signal behaviour unless intentionally protected
 
-These must point to deterministic regression tests, not status notes.
+This sprint may change biomarker score/status for direction-sensitive cases such as low ALT or high ApoA1.
 
----
+It must not unexpectedly change:
 
-# Scope C — Narrative language audit
+* homocysteine lead finding
+* LC-S13 lifestyle visibility
+* LC-S11A blood sugar correction
+* LC-S8F/G units/display fidelity
+* ApoB/ApoA1 ratio interpretation
+* unrelated biomarker scores
 
-## Problem
+If broader domain score shifts occur, document and justify them.
 
-Deterministic/mock-mode narrative may use first-person possessive language that implies AI-personalised interpretation beyond what the current deterministic scaffold actually provides.
-
-## Required audit
-
-Search static source strings and generated/runtime prose for:
-
-```text
-"your measured"
-"your cardiovascular"
-"your results"
-"your report"
-"your blood"
-"your panel"
-"AI-personalised"
-"personalised narrative"
-"personalized narrative"
-```
-
-Classify each hit as:
-
-1. acceptable user-addressed explanatory language
-2. deterministic template language that overclaims personalisation
-3. internal governance/runtime label leaking to users
-4. test/documentation-only usage
-
-## Required behaviour
-
-Remove or reframe deterministic template language that overclaims personalisation.
-
-Do not remove useful patient-facing clarity merely because the word “your” appears. The issue is not second-person language by itself; the issue is implying personalised AI interpretation when the output is deterministic template prose.
-
-Acceptable:
-
-```text
-Your uploaded panel includes...
-```
-
-Potentially unacceptable:
-
-```text
-Your measured homocysteine is the main lab anchor...
-```
-
-if presented as personalised AI-style reasoning without clear governance framing.
-
-## Required Sentinel defect classes
-
-Add or update Sentinel entries for:
-
-```text
-mock_mode_personalisation_overclaim
-governance_label_user_visible_leakage
-```
-
-If no runtime user-facing defect remains, still add regression coverage proving the audited class stays clean.
+STOP if domain/system aggregation depends on symmetric z-scores in a way that cannot be safely adjusted within this sprint.
 
 ---
 
@@ -361,44 +347,35 @@ Only edit what is necessary.
 
 Potentially allowed backend:
 
-```text
-backend/core/analytics/**/*
-backend/core/pipeline/**/*
-backend/core/dto/**/*
-backend/core/lifestyle/**/*
-backend/core/questionnaire/**/*
-backend/app/routes/analysis.py
+```text id="8mx1hg"
+backend/core/scoring/**/*
+backend/core/analytics/bio_stats_engine.py
+backend/core/analytics/domain_score_assembler.py
+backend/core/dto/**/* only if needed for score/status visibility
+backend/ssot/scoring_policy.yaml
+backend/ssot/biomarkers.yaml only if adding directionality metadata is clearly the selected governed policy location
 backend/tests/unit/**/*
 backend/tests/regression/**/*
 ```
 
-Potentially allowed frontend:
-
-```text
-frontend/app/(app)/results/**/*
-frontend/app/components/**/*
-frontend/app/lib/**/*
-frontend/app/types/**/*
-frontend/tests/**/*
-```
-
 Potentially allowed Sentinel/docs:
 
-```text
+```text id="kp47a7"
 sentinel/packs/**/*
 sentinel/**/*
-docs/audit-papers/LC-S13_lifestyle_coherence_narrative_notes.md
+docs/audit-papers/LC-S14_direction_aware_scoring_notes.md
 ```
 
 ## Forbidden unless GPT explicitly approves
 
-```text
-backend/ssot/biomarkers.yaml
+```text id="drj09k"
 backend/ssot/units.yaml
-backend/ssot/scoring_policy.yaml
 backend/core/units/registry.py
-backend/core/scoring/rules.py
+backend/core/analytics/narrative_report_compiler_v1.py
+backend/core/analytics/report_compiler_v1.py
+backend/core/analytics/lifestyle_consumer_surface_v1.py
 knowledge_bus/**/*
+frontend/**/*
 automation_bus/state/*
 automation_bus/latest_gate_evidence.json
 automation_bus/latest_gate_output.txt
@@ -408,7 +385,7 @@ backend/scripts/golden_gate_local.py
 backend/scripts/update_cursor_status.py
 ```
 
-Do not modify unit conversion, scoring directionality, Knowledge Bus content, SSOT metadata, or Automation Bus scripts in this sprint.
+Do not modify unit conversion, lifestyle propagation, Knowledge Bus content, frontend rendering, or Automation Bus scripts in this sprint.
 
 If those appear necessary, STOP.
 
@@ -418,37 +395,36 @@ If those appear necessary, STOP.
 
 Add or update deterministic tests for:
 
-## Lifestyle propagation
+## Direction-aware scoring
 
-* contrasting questionnaire profiles produce a visible governed difference
-* alcohol / one-carbon bridge appears in plain English when expected
-* raw bridge rationale codes do not appear in user-facing prose
-* lifestyle modifiers do not change measured biomarker values
-* lifestyle modifiers do not override lab-derived reference ranges
-* if confidence adjustment is expected, non-zero adjustment is visible and explainable
-* if confidence adjustment is not expected, absence is explicitly justified
-
-## Coherence
-
-* stable domain card does not carry warning headline copy unless clearly contextualised
-* no active concern text appears without active signal
-* no domain claims active signals when none exist
-* hero/body/domain sections agree on lead finding polarity
-* no generic placeholder consumer copy appears
-
-## Narrative language
-
-* no mock-mode personalisation overclaim appears in user-facing text
-* no internal governance labels appear in rendered consumer prose
-* no raw signal IDs appear in user-facing sections
+* low ALT does not produce critical/alarming score
+* high ALT remains concerning
+* low AST/GGT/ALP behaviour follows policy
+* high AST/GGT/ALP behaviour remains concerning where appropriate
+* high HDL is not penalised as negative solely because high
+* low HDL remains concerning if governed
+* high ApoA1 is not penalised as negative solely because high
+* low ApoA1 remains concerning if governed
+* bidirectional markers retain current behaviour where policy says bidirectional
+* unknown/unconfigured biomarkers retain safe existing behaviour
 
 ## Regression preservation
 
+* lab-derived ranges remain authoritative
+* no global/default ranges are introduced
+* units unchanged
 * LC-S8F/G unit and display fidelity still passes
 * LC-S11A trust blockers remain fixed
+* LC-S13 lifestyle/coherence/narrative protections still pass
+* ApoB/ApoA1 ratio remains coherent
 * homocysteine lead finding remains intact
-* uploaded-panel fidelity remains intact
-* no frontend conversion maths introduced
+
+## Policy safety
+
+* no hardcoded `biomarker_name == "alt"` bypass remains as the directionality mechanism
+* policy file/schema rejects invalid directionality class
+* missing directionality policy uses safe default behaviour
+* directionality policy is documented and test-covered
 
 ---
 
@@ -458,13 +434,12 @@ Sentinel update is required.
 
 At minimum add/update defect classes:
 
-```text
-lifestyle_visible_payoff_missing
-lifestyle_bridge_internal_code_leakage
-domain_band_headline_polarity_contradiction
-domain_active_signal_false_claim
-mock_mode_personalisation_overclaim
-governance_label_user_visible_leakage
+```text id="9f8bpv"
+direction_sensitive_marker_false_alarm
+low_enzyme_false_alarm
+protective_high_marker_penalised
+hardcoded_biomarker_scoring_exception
+scoring_signal_directionality_conflation
 ```
 
 Each must point to an active deterministic regression test.
@@ -481,51 +456,45 @@ Run relevant targeted tests.
 
 At minimum:
 
-```powershell
+```powershell id="5kiw47"
+python -m pytest backend/tests/unit/test_scoring_rules.py -q
+python -m pytest backend/tests/regression/test_lc_s14_direction_aware_scoring.py -q
 python -m pytest backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py -q
 python -m pytest backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py -q
 python -m pytest backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py -q
 python -m pytest backend/tests/regression/test_lc_s10b_launch_core_protection.py -q
 python -m pytest backend/tests/regression/test_lc_s11a_trust_blocker_correction.py -q
-```
-
-Run the new LC-S13 regression test explicitly, for example:
-
-```powershell
 python -m pytest backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py -q
 ```
 
-If frontend files changed:
+If a listed test file has a different current name, find and run the current equivalent, then record the substitution.
 
-```powershell
-npm run type-check
-npm run test
-```
+If scoring changes affect broader tests, run the relevant broader backend suite and record why.
 
-If Playwright/e2e files are added or changed, run the relevant Playwright command and record exact output.
-
-If any required existing test file name differs, find and run the current equivalent, then record the substitution.
+Do not skip LC-S8F/G or LC-S13 regressions.
 
 ---
 
-# Human/UAT check
+# Optional API/DTO smoke check
 
-If implementation reaches frontend-visible output, generate or reuse two equivalent analyses:
+If easy and already supported by existing tools, run one smoke check of a panel containing:
 
-1. Same blood panel with low-risk lifestyle profile
-2. Same blood panel with higher-risk lifestyle profile
+```text id="0g9hyf"
+low ALT
+high ALT
+high ApoA1
+high HDL
+```
 
-Check rendered output:
+Confirm:
 
-* at least one user-visible governed lifestyle difference appears
-* no raw internal bridge code appears
-* homocysteine lead remains coherent where applicable
-* no stable/warning contradiction appears
-* no mock-mode overclaim appears
-* no internal governance label appears
-* no unit/display regression appears
+* low ALT not alarming
+* high ALT concerning
+* high ApoA1 not penalised solely for being high
+* high HDL not penalised solely for being high
+* values/ranges/units unchanged
 
-If browser-based UAT cannot be completed, document that and provide the exact API/DTO evidence instead. Do not claim frontend UAT passed unless it was actually inspected.
+Do not create frontend UAT work unless required.
 
 ---
 
@@ -533,17 +502,20 @@ If browser-based UAT cannot be completed, document that and provide the exact AP
 
 This sprint is complete only if:
 
-* lifestyle computation path is proven or the sprint correctly STOPs/splits
-* lifestyle surface propagation is implemented only if internal computation is meaningful
-* same panel + different lifestyle profile produces a governed visible difference
-* raw lifestyle bridge codes do not appear in consumer prose
-* report coherence defects are regression/Sentinel guarded
-* deterministic/mock-mode narrative overclaim is audited and corrected/protected
+* the current ALT hardcoded bypass is replaced or rendered unnecessary by governed directionality policy
+* directionality policy is data/policy-driven, not hardcoded per marker in scoring logic
+* high-only, protective-high and bidirectional classes are supported
+* representative markers are covered
+* low ALT / low enzyme false alarms are prevented
+* high enzyme concern remains intact
+* high HDL/ApoA1 are not penalised solely because high
+* lab-derived range policy remains intact
+* units/display fidelity remain intact
+* signal activation remains separate unless explicitly escalated
 * prior scaffold/launch-core guards still pass
-* new Sentinel entries are active and deterministic
-* documentation note clearly records findings and residual risks
+* Sentinel defect classes are active and deterministic
+* notes clearly document residual risks and deferred biomarkers
 * no forbidden files are touched
-* no unit/scoring/Knowledge Bus work is smuggled into this sprint
 
 ---
 
@@ -553,7 +525,7 @@ When complete:
 
 1. Run:
 
-```powershell
+```powershell id="roau96"
 git branch --show-current
 git status --short
 git diff --name-only
@@ -574,7 +546,7 @@ git stash list
 
 4. Run finish:
 
-```powershell
+```powershell id="t4s651"
 python backend/scripts/run_work_package.py finish
 ```
 
