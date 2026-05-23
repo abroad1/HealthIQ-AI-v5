@@ -1,10 +1,9 @@
 {
-  "branch": "scaffold/lc-s12b-core-scaffold-definition",
+  "branch": "scaffold/lc-s13-lifestyle-coherence-narrative",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-20T21:10:41Z",
-  "cursor_started_utc": "2026-05-20T21:08:13Z",
-  "head_sha": "dbb695f7e78215b9cef73bec94acef8c971fc9c8",
+  "cursor_started_utc": "2026-05-23T09:39:11Z",
+  "head_sha": "9f68bc861cef93bc3160a98f195ba79152e9362",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "LC-S12B"
+  "status": "IN_PROGRESS",
+  "work_id": "LC-S13"
 }
