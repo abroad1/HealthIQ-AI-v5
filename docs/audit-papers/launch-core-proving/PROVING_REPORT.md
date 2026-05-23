@@ -1,7 +1,7 @@
 # Launch-core proving harness — comparison report
 
-- **Stamp:** `20260517T081712Z`
-- **Git (short):** `3c9b2f1`
+- **Stamp:** `20260523T100250Z`
+- **Git (short):** `906a9fc`
 - **Matrix:** `backend\tests\fixtures\proving\launch_core_matrix.json`
 
 ## Scenario matrix (panels × scenarios)
@@ -22,8 +22,8 @@
 ### `AB__baseline`
 
 - **status:** completed
-- **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_mcv_high, signal_total_cholesterol_high, signal_apoa1_cardio_risk, signal_ldl_cholesterol_high, signal_ldl_high, signal_transferrin_low, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
-- **consumer band labels:** `['strong', 'stable', 'review']`
+- **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_mcv_high, signal_total_cholesterol_high, signal_ldl_cholesterol_high, signal_ldl_high, signal_transferrin_low, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
+- **consumer band labels:** `['strong', 'stable', 'stable']`
 - **intervention present:** False classes=[]
 - **retail summary (head):** The ranked lead pattern is **Homocysteine Elevation Context** (at_risk), centred on **Homocysteine**. This is the priority focus for interpretation on this pane...
 - **body overview (head):** Lead ranked finding **Homocysteine Elevation Context** (at_risk) is interpreted alongside the wider deterministic system snapshot below.
@@ -35,8 +35,8 @@ Your main finding sits...
 ### `AB__lifestyle_context`
 
 - **status:** completed
-- **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_mcv_high, signal_total_cholesterol_high, signal_apoa1_cardio_risk, signal_ldl_cholesterol_high, signal_ldl_high, signal_transferrin_low, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
-- **consumer band labels:** `['strong', 'stable', 'review']`
+- **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_mcv_high, signal_total_cholesterol_high, signal_ldl_cholesterol_high, signal_ldl_high, signal_transferrin_low, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
+- **consumer band labels:** `['strong', 'stable', 'stable']`
 - **intervention present:** False classes=[]
 - **retail summary (head):** The ranked lead pattern is **Homocysteine Elevation Context** (at_risk), centred on **Homocysteine**. This is the priority focus for interpretation on this pane...
 - **body overview (head):** Lead ranked finding **Homocysteine Elevation Context** (at_risk) is interpreted alongside the wider deterministic system snapshot below.
@@ -48,8 +48,8 @@ Your questionnaire sug...
 ### `AB__statin_off`
 
 - **status:** completed
-- **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_mcv_high, signal_total_cholesterol_high, signal_apoa1_cardio_risk, signal_ldl_cholesterol_high, signal_ldl_high, signal_transferrin_low, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
-- **consumer band labels:** `['strong', 'stable', 'review']`
+- **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_mcv_high, signal_total_cholesterol_high, signal_ldl_cholesterol_high, signal_ldl_high, signal_transferrin_low, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
+- **consumer band labels:** `['strong', 'stable', 'stable']`
 - **intervention present:** False classes=[]
 - **retail summary (head):** The ranked lead pattern is **Homocysteine Elevation Context** (at_risk), centred on **Homocysteine**. This is the priority focus for interpretation on this pane...
 - **body overview (head):** Lead ranked finding **Homocysteine Elevation Context** (at_risk) is interpreted alongside the wider deterministic system snapshot below.
@@ -61,8 +61,8 @@ Your main finding sits...
 ### `AB__statin_on`
 
 - **status:** completed
-- **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_mcv_high, signal_total_cholesterol_high, signal_apoa1_cardio_risk, signal_ldl_cholesterol_high, signal_ldl_high, signal_transferrin_low, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
-- **consumer band labels:** `['strong', 'stable', 'review']`
+- **top findings (order):** `signal_homocysteine_elevation_context, signal_homocysteine_high, signal_mcv_high, signal_total_cholesterol_high, signal_ldl_cholesterol_high, signal_ldl_high, signal_transferrin_low, signal_systemic_inflammation, signal_oxygen_transport_capacity, signal_lipid_transport_dysfunction, signal_vascular_inflammatory_stress, signal_renal_metabolic_stress`
+- **consumer band labels:** `['strong', 'stable', 'stable']`
 - **intervention present:** True classes=['lipid_lowering_statin']
 - **retail summary (head):** The ranked lead pattern is **Homocysteine Elevation Context** (at_risk), centred on **Homocysteine**. This is the priority focus for interpretation on this pane...
 - **body overview (head):** Lead ranked finding **Homocysteine Elevation Context** (at_risk) is interpreted alongside the wider deterministic system snapshot below.
@@ -147,5 +147,5 @@ Expect: lifestyle-derived fields present under lifestyle_context; narrative head
 
 ## Artifact paths
 
-- Golden outputs (per run): `docs/audit-papers/launch-core-proving/artifacts/20260517T081712Z/` — written by `run_golden_panel`; omit bulk artefacts from git if desired.
+- Golden outputs (per run): `docs/audit-papers/launch-core-proving/artifacts/20260523T100250Z/` — written by `run_golden_panel`; omit bulk artefacts from git if desired.
 - Latest fingerprints JSON: `docs/audit-papers/launch-core-proving/latest_fingerprints.json`
