@@ -1,0 +1,73 @@
+{
+  "pack_version": "1.0.0",
+  "pack_id": "scaffold_lc_s20_22_replay_render_v1",
+  "description": "LC-S20/22 scaffold guards — persisted replay compatibility and result-page render smoke.",
+  "scaffold_phase": "LC-S20-22",
+  "defect_classes": {
+    "persisted_result_schema_incompatible": {
+      "description": "LC-S20 — persisted DTO missing required root or render keys for replay compatibility.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "persisted_result_render_failure": {
+      "description": "LC-S22 — persisted fixture fails API DTO replay path (build_analysis_result_dto).",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "stale_analysis_unmarked": {
+      "description": "LC-S20 — result_version or replay_manifest version drift not detectable as stale.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "results_page_missing_primary_finding": {
+      "description": "LC-S22 — persisted DTO lacks primary finding content for results hero/WHY surfaces.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "results_page_placeholder_text_visible": {
+      "description": "LC-S22 — placeholder retail copy detected in user-facing persisted DTO text.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "results_page_internal_token_visible": {
+      "description": "LC-S22 — internal signal/package/sprint tokens in user-facing persisted DTO text.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "results_page_missing_domain_cards": {
+      "description": "LC-S22 — Wave 1 domain cards absent from persisted consumer_domain_scores.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "results_page_unit_display_regression": {
+      "description": "LC-S22 — persisted biomarker rows missing display_value/display_unit fidelity fields.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py",
+      "first_seen": "2026-05",
+      "fix_commit": null,
+      "note": "Guarded via homocysteine biomarker row presence in fixture; full LC-S8G matrix deferred to LC-S21."
+    }
+  }
+}

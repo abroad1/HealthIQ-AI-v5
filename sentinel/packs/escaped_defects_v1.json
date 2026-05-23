@@ -38,11 +38,12 @@
     },
     "persisted_result_replay": {
       "description": "Stale persisted result loaded into current frontend fails to render or renders with schema mismatch.",
-      "guard_type": "status_reporting",
-      "status": "PLACEHOLDER",
-      "test_file": "backend/tests/regression/test_persisted_result_replay_status.py",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py",
       "first_seen": "2026-05",
-      "note": "Full replay harness deferred. Phase 1 reports gap status only."
+      "fix_commit": null,
+      "note": "Promoted LC-S20/22 — persisted replay fixture + compatibility contract replaces Phase-1 placeholder."
     },
     "narrative_compiler_why_surface": {
       "description": "Layer B WHY signals compile but deterministic narrative compiler (Layer C mock path) fails to emit lead/secondary consumer-visible prose for homocysteine leaf or LDL canonical lane.",
