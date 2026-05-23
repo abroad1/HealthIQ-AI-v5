@@ -1,9 +1,10 @@
 {
   "branch": "scaffold/lc-s13-lifestyle-coherence-narrative",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-23T09:50:27Z",
   "cursor_started_utc": "2026-05-23T09:39:11Z",
-  "head_sha": "9f68bc861cef93bc3160a98f195ba79152e9362",
+  "head_sha": "29b26e304c01e1d8b3c3b5b8fe135ebc0e11e294",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "LC-S13"
 }
