@@ -59,13 +59,37 @@ Runtime: `ScoringRules._directionality_position_override()` applies governed pos
 
 ## 5. Biomarkers covered
 
-| Marker | Class |
-|--------|--------|
-| ALT, AST, GGT, ALP | `high_only_concern` |
-| HDL cholesterol, ApoA1 | `protective_high` |
-| All others | `bidirectional_concern` (default) |
+| Marker | Direction class | In `biomarker_directionality.markers` | In `scoring_policy.yaml` `biomarkers` + system lists |
+|--------|-----------------|--------------------------------------|------------------------------------------------------|
+| ALT | `high_only_concern` | Yes | Yes (`liver` system) |
+| AST | `high_only_concern` | Yes | Yes (`liver` system) |
+| GGT | `high_only_concern` | **Yes** | **No** — directionality only |
+| ALP | `high_only_concern` | **Yes** | **No** — directionality only |
+| HDL cholesterol | `protective_high` | Yes | Yes (`cardiovascular` system) |
+| ApoA1 | `protective_high` | **Yes** | **No** — directionality only |
+| All others | `bidirectional_concern` (default) | — | Per existing enrolment |
 
-**Deferred (documented):** ferritin, transferrin, CRP, TSH, Free T4 — context-dependent; no invented policy.
+### GGT, ALP, and ApoA1 — policy coverage vs system enrolment
+
+LC-S14 **does** assign governed direction classes to **GGT**, **ALP**, and **ApoA1** in
+`biomarker_directionality.markers`. `ScoringRules.calculate_biomarker_score()` honours those
+classes whenever a lab reference range is supplied (covered by unit/regression tests).
+
+They are **not** fully enrolled in system/domain aggregation via `scoring_policy.yaml`:
+
+- **GGT** and **ALP** are absent from the top-level `biomarkers:` block and from
+  `systems.*.biomarkers` lists (unlike ALT/AST under `liver`).
+- **ApoA1** is absent from `biomarkers:` and system lists (unlike `hdl_cholesterol` under
+  `cardiovascular`). The derived `apob_apoa1_ratio` remains enrolled separately.
+
+**Accepted disposition (not an LC-S14 blocker):** this is a **deferred SSOT metadata / system
+coverage enrolment** issue. LC-S14 scope was direction-aware **lab-range scoring behaviour**,
+not expanding which markers participate in weighted health-system rollups. Track for a later
+scaffold sprint (SSOT metadata + `systems`/`biomarkers` alignment), alongside clinical review
+of ferritin, transferrin, CRP, TSH, and Free T4 directionality.
+
+**Deferred (clinical directionality, not enrolment):** ferritin, transferrin, CRP, TSH,
+Free T4 — context-dependent; no invented policy.
 
 ---
 
@@ -115,7 +139,19 @@ No changes to `units.yaml`, registry, or frontend. LC-S8F/G regressions pass.
 
 - `bio_stats_engine` / burden vectors may still treat low enzymes symmetrically — out of LC-S14 scoring scope.
 - Policy cache is process-global (`load_scoring_policy`); tests that mutate policy must clear `scoring_policy_registry._policy_cache`.
+- **GGT / ALP / ApoA1 system enrolment** — directionality active at score time; rollup/domain weighting unchanged until SSOT lists are extended (see §5).
 - Broader marker directionality (ferritin, TSH, etc.) deferred to LC-S15/Sprint 4.
+
+---
+
+## 13. Pre-merge proving harness (2026-05-23)
+
+Re-ran `python backend/tools/launch_core_proving_harness.py` after LC-S14.
+
+**Result:** No **material** fingerprint refresh required. All `runs.*` narrative, domain-row,
+and intervention payloads are **byte-identical** to the prior commit; only harness metadata
+(`git_short_sha`, `stamp`) advanced to the current branch HEAD. No proving-artefact commit
+needed for LC-S14 pre-merge closure.
 
 ---
 
