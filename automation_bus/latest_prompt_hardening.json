@@ -1,152 +1,132 @@
 {
-  "work_id": "LC-S12B",
+  "work_id": "LC-S13",
   "bus_version": "1.3.1",
   "status": "HARDENED",
-  "hardened_utc": "2026-05-20T00:00:00Z",
+  "hardened_utc": "2026-05-23T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6)",
   "blocker_count": 0,
-  "warning_count": 2,
+  "warning_count": 4,
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "PASS",
-      "detail": "work_id: LC-S12B present and correctly formed."
+      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: LC-S13. Correctly formed."
     },
     {
       "check": "Front Matter — branch",
       "result": "WARNING",
-      "detail": "branch: scaffold/lc-s12b-core-scaffold-definition. The 'scaffold/' prefix is not listed in CLAUDE.md §13 branch convention (feature/, fix/, docs/, sentinel/, chore/). GPT/human have approved this branch name as part of the scaffold phase. Not a kernel-failure risk. Convention deviation noted for standing record."
+      "detail": "branch: scaffold/lc-s13-lifestyle-coherence-narrative. The 'scaffold/' prefix is not in CLAUDE.md §13 convention but was approved informally for the scaffold phase during LC-S12B hardening. Consistent with LC-S12B branch pattern. Not a kernel-failure risk."
     },
     {
       "check": "Front Matter — risk_level",
       "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: STANDARD. Valid SOP v1.3.1 value. Correct for a CONTENT-only documentation sprint that does not touch HIGH-risk paths (backend/core/analytics/, backend/core/pipeline/, backend/ssot/, Sentinel packs, control-plane scripts). Prior BLOCKER resolved."
+      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: HIGH. Correct. Sprint touches backend/core/analytics/ (lifestyle_modifier_engine.py, lifestyle_interpretation_bridge_engine.py, lifestyle_registry_loader.py), backend/core/pipeline/ (orchestrator.py, questionnaire_mapper.py), Sentinel packs, and frontend. All HIGH-risk triggers per SOP §10 and CLAUDE.md intelligence core definition."
     },
     {
       "check": "Front Matter — execution_model",
       "result": "PASS",
-      "detail": "execution_model: TWO_PHASE_START_FINISH is a valid SOP v1.3.1 value."
+      "citation": "automation_bus/latest_cursor_prompt.md line 5: execution_model: TWO_PHASE_START_FINISH. Valid SOP v1.3.1 value."
     },
     {
       "check": "Front Matter — change_type",
       "result": "PASS",
-      "detail": "change_type: CONTENT is correct. Sprint creates two documentation files only. No runtime, backend, frontend, Sentinel, Knowledge Bus, or control-plane assets are modified."
+      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: MIXED. Correct. Sprint spans backend analytics computation (Scope A), deterministic Sentinel guard additions (Scope B), and frontend/narrative string audit (Scope C). MIXED governs using BEHAVIOUR controls per SOP §4."
     },
     {
-      "check": "Stage 2A — Primary authority source exists",
+      "check": "Stage 2A — Primary authority: scaffold definition document",
       "result": "PASS",
-      "citation": "docs/planning-papers/HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md — confirmed present. Content verified: 1300 lines covering seven compressed scaffold sprints (§9), cross-sprint governance (§§5.1–5.3), grade model (§4), architectural principles (§10), KB-WAVE transition (§8). All 15 required prompt sections are traceable to this source."
+      "citation": "docs/planning-papers/HealthIQ_AI_core_scaffold_completion_definition_v1.md — confirmed present. Verified in this session: file exists, DRAFT status pending Gate A, all 15 sections present per LC-S12B audit."
     },
     {
-      "check": "Stage 2A — Supplementary reference: LC-S12A forensic audit",
+      "check": "Stage 2A — Primary authority: scaffold completion plan",
       "result": "PASS",
-      "citation": "docs/audit-papers/LC-S12A_forensic_architecture_audit.md — confirmed present."
+      "citation": "docs/planning-papers/HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md — confirmed present."
     },
     {
-      "check": "Stage 2A — Supplementary reference: transformation plan",
+      "check": "Stage 2A — Primary authority: LC-S12B definition notes",
       "result": "PASS",
-      "citation": "docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md — confirmed present."
+      "citation": "docs/audit-papers/LC-S12B_core_scaffold_definition_notes.md — confirmed present."
     },
     {
-      "check": "Stage 2A — Supplementary reference: LC-S11 UAT audit",
+      "check": "Stage 2A — Supplementary references",
       "result": "PASS",
-      "citation": "docs/audit-papers/LC-S11_forensic_human_uat_audit.md — confirmed present."
+      "citation": "All secondary references confirmed present: docs/audit-papers/LC-S12A_forensic_architecture_audit.md, docs/audit-papers/LC-S11_forensic_human_uat_audit.md, docs/audit-papers/LC-S11A_trust_blocker_correction_notes.md, docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md, docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md, docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md."
     },
     {
-      "check": "Stage 2A — Supplementary reference: LC-S11A correction notes",
+      "check": "Stage 2A — Forbidden file paths: validity",
       "result": "PASS",
-      "citation": "docs/audit-papers/LC-S11A_trust_blocker_correction_notes.md — confirmed present."
+      "citation": "All forbidden file paths verified present: backend/ssot/scoring_policy.yaml (exists), backend/ssot/units.yaml (exists), backend/core/units/registry.py (exists), backend/core/scoring/rules.py (exists). Correct targets for the forbidden list."
     },
     {
-      "check": "Stage 2A — Supplementary reference: latest_audit_summary.md",
+      "check": "Stage 2A — Regression test file paths",
       "result": "PASS",
-      "citation": "automation_bus/latest_audit_summary.md — confirmed present."
+      "citation": "All five regression tests confirmed present: backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py, test_lc_s8g_uploaded_unit_display_fidelity.py, test_lc_s8d_unit_governance_sentinel.py, test_lc_s10b_launch_core_protection.py, test_lc_s11a_trust_blocker_correction.py."
     },
     {
-      "check": "Stage 2A — SOP file path accuracy in prompt",
+      "check": "Stage 2A — PATH DISCREPANCY: backend/core/lifestyle/**/*",
       "result": "WARNING",
-      "detail": "Prompt 'Also inspect' section references 'AUTOMATION_BUS_SOP_v1.3.1.md' and 'KNOWLEDGE_BUS_SOP_v1.3.md' without path prefix. Actual location is docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md (confirmed present). These are 'if present' optional references for a CONTENT-only sprint. Cursor must resolve to the docs/governance/ path. Low severity — does not block execution."
+      "detail": "The 'Potentially allowed backend' section lists backend/core/lifestyle/**/* as an edit target. THIS DIRECTORY DOES NOT EXIST. Actual lifestyle computation code lives at: backend/core/analytics/lifestyle_modifier_engine.py, backend/core/analytics/lifestyle_interpretation_bridge_engine.py, backend/core/analytics/lifestyle_registry_loader.py, backend/core/scoring/overlays.py. Cursor must NOT create backend/core/lifestyle/ as a new directory. Cursor must search for actual lifestyle code in backend/core/analytics/ and backend/core/pipeline/."
+    },
+    {
+      "check": "Stage 2A — PATH DISCREPANCY: backend/core/questionnaire/**/*",
+      "result": "WARNING",
+      "detail": "The 'Potentially allowed backend' section lists backend/core/questionnaire/**/* as an edit target. THIS DIRECTORY DOES NOT EXIST. Actual questionnaire code lives at: backend/core/pipeline/questionnaire_mapper.py, backend/core/models/questionnaire.py. Cursor must NOT create backend/core/questionnaire/ as a new directory. Cursor must work within backend/core/pipeline/ and backend/core/models/."
+    },
+    {
+      "check": "Stage 2A — confidence_adjustments computation trace",
+      "result": "PASS",
+      "citation": "backend/core/pipeline/orchestrator.py lines 1645-1662: confidence_adjustments IS computed from LifestyleModifierEngine.apply() result, specifically from engine_result['adjusted_system_burdens'][s]['confidence_penalty'] per system. Written into lifestyle_artifact and stored in AnalysisResult.lifestyle field (backend/core/models/results.py line 283). The zero-output finding from prior audit is a registry/input activation issue, not an absent computation path. Scope A computation trace must verify whether effective_lifestyle_inputs reach the engine block."
     },
     {
       "check": "Stage 2A — Duplicate authority check",
       "result": "PASS",
-      "detail": "No competing final scaffold completion plan found in docs/planning-papers/. Other files confirmed as distinct subjects: market positioning paper, transformation plan, pre-sprint decision packs, statin gate pack. HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md is the unambiguous single authority."
+      "detail": "No competing LC-S13 prompt exists outside latest_cursor_prompt.md. No duplicate lifestyle or coherence authority source detected."
     },
     {
-      "check": "Stage 2A — Output file conflicts",
+      "check": "Stage 2B — Intelligence Core components identified",
       "result": "PASS",
-      "detail": "Neither docs/planning-papers/HealthIQ_AI_core_scaffold_completion_definition_v1.md nor docs/audit-papers/LC-S12B_core_scaffold_definition_notes.md currently exists. No overwrite risk."
+      "detail": "Intelligence Core components in scope explicitly identified: (1) backend/core/analytics/lifestyle_modifier_engine.py — adjusts system burden vector; (2) backend/core/analytics/lifestyle_interpretation_bridge_engine.py — fires lifestyle bridges; (3) backend/core/analytics/lifestyle_registry_loader.py — loads SSOT registry into engine; (4) backend/core/pipeline/orchestrator.py — calls engine, builds lifestyle_artifact, writes results.lifestyle; (5) backend/core/pipeline/questionnaire_mapper.py — maps questionnaire inputs to lifestyle factors; (6) Sentinel packs — deterministic guard layer. All HIGH-risk per SOP §10."
     },
     {
-      "check": "Stage 2A — Forbidden file exposure",
+      "check": "Stage 2B — Q-1/Q-2 questionnaire dependency — MATERIAL STOP RISK",
+      "result": "WARNING",
+      "detail": "Multiple active questionnaire branches detected in repo: feature/questionnaire-ux-redesign, feature/questionnaire-visual-redesign, feature/questionnaire-schema-wiring, feature/questionnaire-recovery, wp3/questionnaire-rationalisation. CLAUDE.md confirms Q-1/Q-2 redesign is 'in progress'. The prompt's Q-1/Q-2 dependency check is correctly structured (three explicit outcomes). This is a high-probability STOP trigger for Scope A if questionnaire input shape is actively changing. Cursor must complete the Q-1/Q-2 check before touching any questionnaire/lifestyle code and must STOP if outcome 3 applies."
+    },
+    {
+      "check": "Stage 2B — Scope defined and bounded",
       "result": "PASS",
-      "detail": "Allowed output: two specific docs/ files only. Forbidden list correctly covers backend/**, frontend/**, knowledge_bus/**, sentinel/**, automation_bus/state/*, control-plane scripts. Scope is correctly bounded."
+      "detail": "Three scopes explicitly defined: Scope A (lifestyle propagation — trace-first, STOP/split if computation broken), Scope B (coherence guards — deterministic tests + Sentinel), Scope C (narrative language audit — classify and remediate overclaim). Sprint is correctly prohibited from touching: unit conversion, scoring directionality, Knowledge Bus content, SSOT metadata, Automation Bus scripts. No scope creep detected."
     },
     {
-      "check": "Stage 2B — Behavioural scope (CONTENT sprint)",
-      "result": "NOT_APPLICABLE",
-      "detail": "CONTENT sprint. No Intelligence Core components touched. No DTO, scoring, signal evaluator, root-cause compiler, or pipeline logic involved. Behavioural hardening does not apply."
-    },
-    {
-      "check": "Stage 2B — STOP conditions adequacy",
+      "check": "Stage 2B — STOP/split condition for Scope A",
       "result": "PASS",
-      "detail": "Prompt includes comprehensive STOP conditions: token missing/mismatch, wrong branch, runtime file required in CONTENT-only sprint, duplicate authority source detected, risk escalation needed, required source missing, material rescoping required, prior scaffold regression failing. Aligned with SOP §7 no-op protection."
+      "detail": "Prompt correctly requires trace-first before wiring. If confidence_adjustments are not producing meaningful output, Scope A must STOP. Proposed split into LC-S13A (repair) and LC-S13B (surface) is correctly marked as requiring GPT/human authorisation. Scopes B and C may continue independently only if GPT/human approve."
     },
     {
-      "check": "Stage 2B — Sentinel obligation declared",
+      "check": "Stage 2B — Regression targets included",
       "result": "PASS",
-      "detail": "Sprint correctly does not require Sentinel update. CONTENT-only planning document; no escaped defect class being fixed. SOP §9 compliant."
+      "detail": "Cross-sprint guard preflight explicitly requires: LC-S8F, LC-S8G, LC-S8D, LC-S10B, LC-S11A regression suites before implementation. New LC-S13 test target named: test_lc_s13_lifestyle_coherence_narrative.py. Homocysteine lead finding, uploaded-panel fidelity, and frontend conversion maths absence preserved as regression expectations."
     },
     {
-      "check": "Source cross-reference — seven-sprint sequence",
+      "check": "Stage 2B — Determinism risk surfaced",
       "result": "PASS",
-      "citation": "Source plan §9 lines 1200–1208: seven-sprint sequence matches prompt §5 exactly. Sprint IDs (LC-S12B through LC-S21/23/23B), names, and [HIGH] risk markers all verified."
+      "detail": "Sprint must not change measured biomarker values, override lab-derived ranges, or introduce frontend conversion maths. Lifestyle modifiers apply only as additive adjustments to system burden vector — not to biomarker truth. Narrative audit scope correctly bounded to overclaim detection, not clinical interpretation. Determinism policy preserved."
     },
     {
-      "check": "Source cross-reference — Gates A, B, C",
+      "check": "Stage 2B — Sentinel obligations declared",
       "result": "PASS",
-      "citation": "Source plan Sprint 1 mandatory gates lines 282–330: Gates A, B, C language matches prompt §6. Gate D (cross-sprint guard gate) is a prompt addition extending the source — not contradicted by source material. Appropriate hardening addition."
+      "detail": "Sentinel update explicitly required. Six defect classes specified: lifestyle_visible_payoff_missing, lifestyle_bridge_internal_code_leakage, domain_band_headline_polarity_contradiction, domain_active_signal_false_claim, mock_mode_personalisation_overclaim, governance_label_user_visible_leakage. Each must point to an active deterministic regression test. Placeholder entries are prohibited."
     },
     {
-      "check": "Source cross-reference — grade statement",
+      "check": "Stage 2B — Gate A awareness",
       "result": "PASS",
-      "citation": "Source plan §4 lines 97–116 and §11 lines 1244–1274: 'Scaffold architecture grade: A−, Medical application grade: B+' with 'strategic shorthand, not pass/fail' caveat matches prompt §15 exactly."
+      "detail": "LC-S12B audit required Gate A three-party approval (Claude Code PASS, GPT Architecture, Human product owner) before LC-S13. User's request to harden LC-S13 implies Gate A is approved. No structural prompt issue. Noted for standing record."
     },
     {
-      "check": "Source cross-reference — cross-sprint regression policy",
+      "check": "Stage 2B — Output documentation scope",
       "result": "PASS",
-      "citation": "Source plan §5.1 lines 122–153: smoke pack categories and run-before-implementation policy match prompt §8 exactly."
-    },
-    {
-      "check": "Source cross-reference — Sentinel policy",
-      "result": "PASS",
-      "citation": "Source plan §5.2 lines 155–199: Sentinel trigger categories, required section title, and required/not-required framing match prompt §9 exactly."
-    },
-    {
-      "check": "Source cross-reference — Knowledge Bus lifecycle states",
-      "result": "PASS",
-      "citation": "Source plan Sprint 4 Scope B lines 650–695: lifecycle states (draft, validated, runtime-loaded, signal-only, WHY-enabled, frontend-surfaced, Sentinel-protected) and machine-enforced/documented/advisory enforcement classification match prompt §11 exactly."
-    },
-    {
-      "check": "Source cross-reference — DTO contract principles",
-      "result": "PASS",
-      "citation": "Source plan Sprint 4 'Mandatory DTO constraint' lines 733–746: DTO field change requirements (frontend consumer search, TypeScript update, runtime rendering validation, regression test, stale-result compatibility assessment) match prompt §12 exactly."
-    },
-    {
-      "check": "Source cross-reference — defect classification model",
-      "result": "PASS",
-      "citation": "Source plan Sprint 1 Scope lines 263–280: four defect categories (architecture/scaffold defect, missing knowledge asset, frontend presentation issue, clinical content backlog) match prompt §4 table. Prompt adds 'Escaped defect' and 'Governance gap' rows — valid extensions consistent with SOP and source plan §5 governance policy."
-    },
-    {
-      "check": "Source cross-reference — transition criteria to KB-WAVE",
-      "result": "PASS",
-      "detail": "Prompt §14 transition criteria (LC-S12B through LC-S21/23/23B completion, Tier 1 SSOT, scaffold smoke pack green, standing docs) are consistent with source plan sprint sequence. No criteria invented beyond what the source implies."
-    },
-    {
-      "check": "Prior task findings",
-      "result": "NOT_APPLICABLE",
-      "detail": "No prior sprint artefact to inherit. LC-S12B is Sprint 1 of the scaffold phase."
+      "citation": "docs/audit-papers/LC-S13_lifestyle_coherence_narrative_notes.md does not yet exist. All 12 required items in the implementation note are clearly specified. Output file does not conflict with any existing file."
     }
   ],
-  "verdict": "HARDENED. All five front matter fields valid. Primary authority source verified at correct path with content cross-referenced against all 15 required prompt sections. All supplementary references present. No duplicate authority detected. Output files do not yet exist. Scope correctly bounded to docs/ only. No Intelligence Core interaction. Two standing warnings retained (scaffold/ branch prefix convention deviation; SOP references lack docs/governance/ path prefix) — neither blocks execution. Cursor may proceed to Stage 3 kernel start."
+  "verdict": "HARDENED. All five front matter fields valid. All primary authority paths confirmed present. All regression test paths confirmed present. risk_level HIGH and change_type MIXED correctly classified. STOP/split logic for Scope A is well-structured. Two path discrepancies in the 'Potentially allowed backend' section are recorded as warnings: backend/core/lifestyle/ and backend/core/questionnaire/ do not exist — Cursor must search for actual code in backend/core/analytics/ and backend/core/pipeline/ respectively, and must not create these directories. Q-1/Q-2 active branches are a high-probability STOP trigger; prompt's dependency check correctly handles this. confidence_adjustments computation is confirmed active in orchestrator.py (lines 1645-1662); zero-output is an input/registry activation issue, not an absent path. Cursor may proceed to Stage 3 kernel start once the two path warnings are acknowledged."
 }

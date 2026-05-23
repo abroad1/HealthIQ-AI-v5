@@ -1,89 +1,97 @@
 ---
-work_id: LC-S12B
-branch: scaffold/lc-s12b-core-scaffold-definition
-risk_level: STANDARD
+work_id: LC-S13
+branch: scaffold/lc-s13-lifestyle-coherence-narrative
+risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: CONTENT
+change_type: MIXED
 ---
 
-# LC-S12B — Core Scaffold Definition, Gates and Execution Governance
+# LC-S13 — Lifestyle Propagation, Coherence Guard and Narrative Language Audit
 
 ## Classification
 
-This is a STANDARD-risk CONTENT work package.
+This is a HIGH-risk MIXED scaffold sprint.
 
-Reason: this sprint should create the controlling planning document and supporting governance notes only. It must not modify runtime code, backend logic, frontend logic, tests, Sentinel packs, Knowledge Bus assets, Automation Bus scripts, or application contracts.
+Reason: this sprint may touch backend lifestyle/questionnaire logic, analytics, DTO payloads, frontend results rendering, deterministic narrative surfaces, regression tests, Sentinel packs and documentation.
 
-If any runtime, test, Sentinel, DTO, frontend, backend, Knowledge Bus, pipeline, scoring, signal, unit, or control-plane file appears necessary, STOP and escalate. Do not reclassify yourself.
+This sprint is part of the approved HealthIQ AI core scaffold completion programme.
 
-The `scaffold/` branch prefix is intentional for the scaffold-completion programme. If repo branch naming policy rejects this prefix, STOP and request human/GPT branch-name approval rather than choosing a replacement.
+This is not a launch-readiness sprint.  
+This is not a frontend redesign sprint.  
+This is not a Gemini/LLM sprint.  
+This is not a broad questionnaire redesign sprint.  
+This is not a medication-modifier sprint.
 
 ## Purpose
 
-Create the controlling scaffold-definition document for the next HealthIQ AI build phase.
+Prove that questionnaire-derived intelligence can travel from structured input to governed user-visible output, while protecting the rendered report from contradictory or misleading deterministic/mock-mode language.
 
-This sprint defines what “core scaffold complete” means before HealthIQ AI moves from architecture-building mode into governed intelligence-ingestion mode.
+This sprint has three bounded scopes:
 
-This is not a launch-readiness sprint.
+1. Lifestyle and questionnaire propagation pathway
+2. Report coherence guard
+3. Narrative language audit
 
-This is not a commercial-readiness sprint.
+The goal is to complete and protect a scaffold pathway, not to add broad lifestyle content.
 
-This is not a frontend redesign sprint.
+## Controlling authority
 
-This is not an implementation sprint.
-
-The goal is to turn the approved scaffold roadmap into a clear, governed, usable reference that future LC-S13 to LC-S23B prompts can cite as controlling authority.
-
-## Authoritative input
-
-Use this saved final plan as the primary source:
+Read before doing anything:
 
 ```text
+docs/planning-papers/HealthIQ_AI_core_scaffold_completion_definition_v1.md
 docs/planning-papers/HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md
+docs/audit-papers/LC-S12B_core_scaffold_definition_notes.md
 ````
 
-Also inspect these documents if present:
+Also inspect if present:
 
 ```text
 docs/audit-papers/LC-S12A_forensic_architecture_audit.md
-docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md
 docs/audit-papers/LC-S11_forensic_human_uat_audit.md
 docs/audit-papers/LC-S11A_trust_blocker_correction_notes.md
-automation_bus/latest_audit_summary.md
-automation_bus/latest_cursor_status.json
+docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md
 docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
 docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md
 ```
 
-If any of these are missing, record that in the output notes, but do not fail the sprint unless the final scaffold plan itself is missing.
+If the scaffold definition document is missing, STOP.
 
-## Required output
+## Required output documentation
 
-Create:
-
-```text
-docs/planning-papers/HealthIQ_AI_core_scaffold_completion_definition_v1.md
-```
-
-Also create a concise implementation note:
+Create or update:
 
 ```text
-docs/audit-papers/LC-S12B_core_scaffold_definition_notes.md
+docs/audit-papers/LC-S13_lifestyle_coherence_narrative_notes.md
 ```
 
-Do not create additional planning documents unless required.
+This document must include:
+
+1. preflight results
+2. lifestyle computation trace
+3. whether `confidence_adjustments` compute meaningful non-zero output
+4. whether lifestyle bridges fire correctly
+5. whether this sprint proceeded normally or required split/STOP
+6. files changed
+7. coherence guards added
+8. narrative language findings
+9. Sentinel updates
+10. tests run
+11. residual risks
+12. recommendation for next sprint
 
 ## Mandatory preflight
 
-Before creating or editing files, run and record:
+Run and record:
 
 ```powershell
 git branch --show-current
 git status --short
 git log --oneline -n 8
+git stash list
 ```
 
-Then verify:
+Verify work-package token:
 
 ```powershell
 Test-Path automation_bus/state/work_package_active.json
@@ -91,418 +99,306 @@ Test-Path automation_bus/state/work_package_active.json
 
 Read `automation_bus/state/work_package_active.json` and confirm:
 
-* `work_id` is `LC-S12B`
-* branch is `scaffold/lc-s12b-core-scaffold-definition`
+* `work_id` is `LC-S13`
+* branch is `scaffold/lc-s13-lifestyle-coherence-narrative`
 
-If the token is missing or mismatched, STOP with:
+If token is missing or mismatched, STOP:
 
 ```text
 Kernel start not executed or work package mismatch.
 ```
 
-Then verify the authoritative final scaffold plan exists:
+Confirm controlling docs exist:
 
 ```powershell
+Test-Path docs/planning-papers/HealthIQ_AI_core_scaffold_completion_definition_v1.md
 Test-Path docs/planning-papers/HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md
 ```
 
-If this file is missing, STOP.
+If either is missing, STOP.
 
-## Duplicate authority check
+## Cross-sprint guard preflight
 
-Before writing the new scaffold-definition document, search for competing final scaffold plans.
+Before implementation, run prior scaffold / launch-core protections.
 
-Check at minimum:
-
-```powershell
-Get-ChildItem docs/planning-papers -Recurse | Where-Object { $_.Name -match "Scaffold|scaffold|Sprint|sprint|Completion|completion" } | Select-Object FullName
-```
-
-Also search for likely duplicate references:
+At minimum run the currently available equivalents of:
 
 ```powershell
-Select-String -Path docs/planning-papers/* -Pattern "Core Scaffold Completion", "LC-S12B", "LC-S23B", "scaffold complete" -ErrorAction SilentlyContinue
+python -m pytest backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py -q
+python -m pytest backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py -q
+python -m pytest backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py -q
+python -m pytest backend/tests/regression/test_lc_s10b_launch_core_protection.py -q
+python -m pytest backend/tests/regression/test_lc_s11a_trust_blocker_correction.py -q
 ```
 
-If duplicate or competing “final” scaffold plans exist, do not choose silently. Record the candidates and STOP for GPT/human authority.
+If one of these files has a different current name, find the current equivalent and record the substitution.
 
-If older drafts exist but the saved final plan is clearly the latest authority, record them as non-authoritative and proceed.
+If a prior scaffold/launch-core guard fails, STOP unless the failure is already documented as unrelated and GPT/human authority explicitly permits continuation.
 
-## Scope
+Do not proceed while prior protected behaviours are broken.
 
-Create a scaffold-definition document that defines:
+## Q-1 / Q-2 questionnaire dependency check
 
-1. What “core scaffold complete” means.
-2. What is in scope for the scaffold phase.
-3. What is deliberately not in scope.
-4. How to distinguish:
+Before touching questionnaire/lifestyle code, check whether Q-1/Q-2 questionnaire redesign work is active.
 
-   * scaffold defect
-   * missing knowledge asset
-   * frontend presentation issue
-   * clinical content backlog
-5. The seven compressed scaffold sprints.
-6. The gates that must be enforced across the scaffold phase.
-7. Risk classifications and STOP conditions that must be preserved in later prompts.
-8. Cross-sprint regression expectations.
-9. Sentinel/test-harness expectations.
-10. Knowledge Bus lifecycle expectations.
-11. DTO/payload contract expectations.
-12. Documentation maintenance expectations.
-13. The transition criteria from scaffold-completion mode into KB-WAVE intelligence-ingestion mode.
+Search branch names, docs and recent logs for questionnaire redesign references.
 
-## Required content for scaffold-definition document
+If questionnaire input shape, field names, mapping, or frontend collection flow are actively changing, STOP and report.
 
-The document must include the following sections.
+Possible outcomes:
 
-### 1. Executive statement
+1. Q-1/Q-2 is already merged and stable — proceed.
+2. Q-1/Q-2 is active but unrelated to backend mapped DTOs — proceed only using stable backend mapped inputs.
+3. Q-1/Q-2 changes questionnaire shape/mapping — STOP for GPT/human decision.
 
-State clearly:
+Do not create parallel incompatible questionnaire assumptions.
 
-* HealthIQ AI is not currently trying to launch.
-* The next phase is scaffold completion.
-* The goal is to complete the machinery so future work becomes governed intelligence ingestion rather than scaffold repair.
-* The saved final roadmap is the controlling strategic plan.
-* This document is the controlling execution definition for LC-S13 to LC-S23B.
+---
 
-### 2. Definition of scaffold complete
+# Scope A — Lifestyle propagation pathway
 
-Define scaffold complete as the point where HealthIQ AI has:
+## Problem
 
-* deterministic Layer B analytical engine
-* governed signal ingestion pathway
-* governed root-cause / WHY ingestion pathway
-* safe biomarker canonicalisation
-* governed unit handling
-* lab-derived reference range preservation
-* direction-aware biomarker scoring
-* questionnaire/lifestyle propagation pathway
-* structured Layer B → Layer C DTO contract
-* coherent frontend surfacing of governed assets
-* persisted-result replay compatibility
-* stale-result strategy
-* Sentinel protection for escaped defects and scaffold-defining behaviours
-* scalable Knowledge Bus registration process
-* maintainable orchestration phases
-* SSOT metadata completion for active signal biomarkers
-* standing architecture and contributor documentation
+The lifestyle/questionnaire layer appears to compute internally but produces little visible user payoff.
 
-### 3. What scaffold complete does not mean
+Previous audit work also found `lifestyle.confidence_adjustments` was uniformly `0.0` across contrasting lifestyle profiles. That means this may not be only an unwired-output problem; it may also be a dormant or broken computation path.
 
-State clearly that scaffold complete does not mean:
+## Mandatory lifestyle computation preflight
 
-* full WHY coverage for all signals
-* all biomarkers fully interpreted
-* all drug interactions complete
-* every disease-context permutation complete
-* final frontend design complete
-* Gemini activated
-* commercial launch ready
-* first-user ready
-* clinician-grade comprehensive coverage
-* all KB-WAVE work complete
-
-### 4. Defect classification model
-
-Create a practical classification table.
-
-Required categories:
-
-| Category                    | Meaning                                                        | Example                                       | Correct response                 |
-| --------------------------- | -------------------------------------------------------------- | --------------------------------------------- | -------------------------------- |
-| Scaffold defect             | Platform machinery fails or cannot carry governed intelligence | lifestyle modifiers compute but never surface | architecture/scaffold sprint     |
-| Missing knowledge asset     | Machinery works but content does not yet exist                 | LDL lacks governed WHY                        | KB-WAVE sprint                   |
-| Frontend presentation issue | Governed content exists but is poorly ordered/visualised       | lead WHY buried below generic card            | product/UI sprint after scaffold |
-| Clinical content backlog    | Needed medical interpretation not yet authored                 | ferritin + CRP interaction missing            | Knowledge Bus/content sprint     |
-| Escaped defect              | Known failure that reached UAT or audit                        | ApoA1 elevated treated as risk                | regression + Sentinel guard      |
-| Governance gap              | Missing rule/approval/contract                                 | no persisted replay strategy                  | scaffold governance sprint       |
-
-### 5. Seven compressed scaffold sprints
-
-Summarise the final sequence exactly:
+Before wiring anything to user-facing output, trace the current lifestyle pathway:
 
 ```text
-Sprint 1 — LC-S12B       — Core Scaffold Definition, Gates and Execution Governance
-Sprint 2 — LC-S13        — Lifestyle Propagation, Coherence Guard and Narrative Language Audit [HIGH]
-Sprint 3 — LC-S14        — Direction-Aware Scoring Framework [HIGH]
-Sprint 4 — LC-S16/17/19  — Knowledge Asset Frontend Surface, KB Framework and Payload Contract [HIGH]
-Sprint 5 — LC-S18        — Root Cause / WHY Registration Generalisation [HIGH]
-Sprint 6 — LC-S20/22     — Persisted Replay, Stale-Result Strategy and Sentinel Phase 2 Scaffold
-Sprint 7 — LC-S21/23/23B — Orchestrator Decomposition, Scaffold Documentation and SSOT Metadata [HIGH / MIXED]
+questionnaire input
+→ mapped lifestyle factors
+→ lifestyle modifier engine
+→ confidence adjustments
+→ lifestyle bridges
+→ DTO/meta
+→ user-visible surfaces
 ```
 
-For each sprint, include:
+Answer explicitly:
 
-* purpose
-* why it matters
-* risk classification
-* key STOP conditions
-* key output
-* Sentinel/test expectation
-* dependency/gate if applicable
+1. Are questionnaire inputs received?
+2. Are they mapped into stable lifestyle factors?
+3. Are lifestyle modifiers computed?
+4. Are `confidence_adjustments` ever non-zero?
+5. Are lifestyle bridges firing?
+6. Is alcohol / one-carbon / methylation bridge firing when expected?
+7. Are outputs present in DTO/meta?
+8. Which outputs are currently visible to the user?
+9. Which outputs are computed but not surfaced?
+10. Which outputs are absent because computation did not happen?
 
-Do not expand into full implementation prompts. This document is the scaffold definition, not the sprint-by-sprint Cursor prompt library.
+## STOP / split condition
 
-### 6. Gate model
+If lifestyle modifiers and confidence adjustments are not computing meaningful internal outputs, Scope A must STOP.
 
-Document these gates.
+Do not wire broken or meaningless values to the frontend.
 
-#### Gate A — LC-S12B approval gate
-
-LC-S13 may not start until this LC-S12B scaffold-definition document is reviewed and approved by:
-
-* GPT Head of Product Architecture
-* Claude Code audit
-* Human product owner
-
-Record that approval status must be captured before LC-S13 begins.
-
-#### Gate B — Sprint 4 internal audit-before-implementation gate
-
-Sprint 4 must complete and review the Knowledge Asset Frontend-Surface Audit before implementing or finalising the Knowledge Bus framework and payload-contract hardening elements.
-
-If the audit materially changes the understanding of what is visible, governed, fallback-backed or unsupported, Sprint 4 must STOP and return to GPT/human authority for amended scope.
-
-#### Gate C — Sprint 6 persisted replay fixture gate
-
-Sprint 6 must establish a concrete persisted replay fixture strategy before finalising Sentinel Phase 2 render-level checks.
-
-If Sprint 6 cannot establish a fixture contract, Sentinel Phase 2 scope must be revised by GPT/human authority before implementation continues.
-
-#### Gate D — Cross-sprint guard gate
-
-Every scaffold sprint after LC-S12B must begin by running the current scaffold smoke/regression pack.
-
-If prior scaffold guards fail, the sprint must STOP unless GPT explicitly classifies the failure as unrelated and authorises continuation.
-
-### 7. Global STOP conditions
-
-Define global STOP conditions for all scaffold sprints.
-
-Include:
-
-* work package token missing/mismatch
-* wrong branch
-* dirty branch ambiguity
-* duplicate authority source
-* runtime code required in a CONTENT-only sprint
-* risk level needs escalation
-* required source document missing
-* frontend contract change discovered but not authorised
-* DTO field rename/removal required but not scoped
-* Sentinel requirement identified but not added
-* material rescoping required
-* prior scaffold regression failing
-* scope begins to include launch/commercial/product redesign work
-
-### 8. Cross-sprint regression policy
-
-State:
-
-Every scaffold sprint must begin by running prior scaffold regression/Sentinel guards before implementation.
-
-The smoke pack should grow as each scaffold sprint adds new protections.
-
-Initial categories:
-
-* LC-S8F / LC-S8G unit and display fidelity
-* LC-S10B launch-core protection
-* LC-S11A trust blocker correction
-* LC-S13 lifestyle/coherence guards once created
-* LC-S14 direction-aware scoring guards once created
-* LC-S16/17/19 DTO/KB surfacing guards once created
-* LC-S18 WHY registration guards once created
-* LC-S20/22 persisted replay/render guards once created
-* LC-S21/23/23B orchestrator/documentation/SSOT guards once created
-
-### 9. Sentinel/test-harness policy
-
-State:
-
-Every scaffold sprint must include a section titled:
+If Scope A stops, report whether the work should split into:
 
 ```text
-Sentinel / test harness obligations
+LC-S13A — Lifestyle computation repair
+LC-S13B — Lifestyle surface propagation
 ```
 
-It must explicitly state either:
+Scopes B and C may only proceed if they are independent of the failed lifestyle computation path and GPT/human authority approves the split.
+
+Cursor may not self-authorise this split.
+
+## Required lifestyle behaviour
+
+Same blood panel + different questionnaire profile must produce at least one governed, visible, explainable difference in the output.
+
+Allowed user-visible effects:
+
+* caveat
+* confidence modifier
+* explanation modifier
+* lifestyle-context paragraph
+* next-step priority
+* supporting-context note
+
+Not allowed:
+
+* changing measured biomarker values
+* overriding lab-derived ranges
+* changing biomarker truth
+* claiming causality without governed support
+* generic wellness filler
+* raw internal bridge code
+* lifestyle advice unrelated to the panel
+
+## Minimum fixture expectation
+
+Use or create contrasting profiles for the same panel, for example:
 
 ```text
-Sentinel update required
+Profile A: low alcohol, no smoking, normal BMI, good sleep/activity
+Profile B: moderate/high alcohol, smoking, high BMI, poor sleep/stress
 ```
 
-or:
+Expected result:
+
+At least one governed user-visible field differs in a clinically bounded way.
+
+The sprint must prove:
 
 ```text
-Sentinel update not required because...
+Lifestyle intelligence is computed.
+Lifestyle intelligence is surfaced.
 ```
 
-Sentinel is required when a defect class is:
+---
 
-* user-facing
-* previously escaped
-* likely to recur
-* cross-layer
-* clinically trust-sensitive
-* related to unit/display/reference-range safety
-* related to internal token or placeholder leakage
-* related to DTO compatibility or persisted replay
-* related to Knowledge Bus asset surfacing
+# Scope B — Coherence guard
 
-A known escaped-defect class must not be fixed without a regression/Sentinel guard.
+## Problem
 
-### 10. Risk classification model
+The rendered report has previously shown contradictions such as a domain card labelled stable/high confidence while the headline says “not a simple all-clear”.
 
-Create a scaffold risk table.
+This is a scaffold integrity issue, not product polish.
 
-At minimum:
+## Required coherence protections
 
-| Sprint        |                                             Default risk | Reason                                       |
-| ------------- | -------------------------------------------------------: | -------------------------------------------- |
-| LC-S12B       |                                                 STANDARD | CONTENT planning document only               |
-| LC-S13        |                                                     HIGH | lifestyle, DTO/frontend surfacing, Sentinel  |
-| LC-S14        |                                                     HIGH | scoring policy/engine behaviour              |
-| LC-S16/17/19  |                                                     HIGH | DTO/frontend/KB contract                     |
-| LC-S18        |                                                     HIGH | root-cause WHY registration mechanism        |
-| LC-S20/22     | HIGH if API/frontend/Sentinel/persisted DTO work touched | persisted replay and render-level protection |
-| LC-S21/23/23B |                                             HIGH / MIXED | pipeline decomposition plus content/doc work |
+Add deterministic tests and Sentinel entries protecting against:
 
-State that if a sprint touches `backend/core/analytics/`, `backend/core/pipeline/`, `backend/core/scoring/`, `backend/core/dto/`, `backend/ssot/`, Sentinel packs, or frontend result rendering, the prompt must apply SOP HIGH-risk controls unless explicitly justified.
+* hero finding contradicting body overview
+* domain band contradicting headline/consequence text
+* stable card carrying warning copy without clear context
+* strong / needs-review card lacking supporting evidence
+* domain claiming active signals when none exist
+* active concern copy without active signal
+* raw signal IDs or governance tokens leaking into user-facing prose
+* generic placeholder copy appearing in consumer report
 
-### 11. Knowledge Bus lifecycle expectations
-
-Define required lifecycle states:
-
-* draft
-* validated
-* runtime-loaded
-* signal-only
-* WHY-enabled
-* frontend-surfaced
-* Sentinel-protected
-
-Define that later LC-S16/17/19 must distinguish:
-
-* machine-enforced now
-* documented now, machine-enforced later
-* advisory only
-
-For:
-
-* orphaned package detection
-* package lifecycle state validity
-* required file presence for WHY-enabled packages
-* signal library schema validity
-* root-cause hypothesis metadata validity
-* asset coverage reporting for active signals
-
-### 12. DTO / Layer B → Layer C contract principles
-
-State:
-
-* frontend must remain renderer, not analyst
-* Layer B must carry structured truth
-* Layer C may present/polish but must not invent unsupported interpretation
-* DTO field classification is governance work
-* DTO field renaming/restructuring/removal must not occur casually
-* any DTO shape change must include frontend consumer search, TypeScript update, runtime rendering validation, regression test and stale-result compatibility assessment
-
-### 13. Documentation standing obligation
-
-State:
-
-The documentation created during scaffold completion becomes standing documentation.
-
-Every future KB-WAVE sprint must update documentation if it introduces or changes:
-
-* combination-case pattern
-* modifier class
-* medication overlay pattern
-* WHY registration pattern
-* DTO field category
-* Sentinel requirement
-* Knowledge Bus lifecycle pattern
-* frontend surfacing pattern
-
-### 14. Transition criteria into KB-WAVE phase
-
-Define what must be true before systematic KB-WAVE intelligence expansion begins:
-
-* LC-S12B approved
-* LC-S13 completed or split/closed
-* LC-S14 direction-aware scoring complete
-* LC-S16/17/19 frontend-surface and KB/DTO contract complete
-* LC-S18 WHY registration generalisation complete or explicitly deferred with mitigation
-* LC-S20/22 persisted replay and Sentinel Phase 2 scaffold complete
-* LC-S21/23/23B complete or explicitly split/closed
-* Tier 1 SSOT metadata complete for active signal biomarkers
-* scaffold smoke pack green
-* standing docs available
-
-### 15. Expected grade after scaffold completion
-
-State:
+Known defect class to protect:
 
 ```text
-Scaffold architecture grade target: A−
-Medical application grade target: B+
+Card says Stable / High confidence while headline says “not a simple all-clear”.
 ```
 
-Clarify:
+## Required Sentinel defect classes
 
-* this is strategic shorthand, not pass/fail
-* sprint acceptance is governed by tests, gates, audits and evidence
-* medical application grade becomes A-grade only through later KB-WAVE population
-
-## Required implementation note
-
-Create:
+Add or update Sentinel entries for:
 
 ```text
-docs/audit-papers/LC-S12B_core_scaffold_definition_notes.md
+domain_band_headline_polarity_contradiction
+domain_active_signal_false_claim
+governance_label_user_visible_leakage
 ```
 
-It must include:
+These must point to deterministic regression tests, not status notes.
 
-1. branch and git state
-2. source documents inspected
-3. duplicate authority check result
-4. files created/changed
-5. confirmation no runtime code changed
-6. unresolved issues
-7. recommended approval route for Gate A
-8. whether LC-S13 can be drafted next, subject to approval
+---
 
-## Allowed files
+# Scope C — Narrative language audit
 
-Allowed:
+## Problem
+
+Deterministic/mock-mode narrative may use first-person possessive language that implies AI-personalised interpretation beyond what the current deterministic scaffold actually provides.
+
+## Required audit
+
+Search static source strings and generated/runtime prose for:
 
 ```text
-docs/planning-papers/HealthIQ_AI_core_scaffold_completion_definition_v1.md
-docs/audit-papers/LC-S12B_core_scaffold_definition_notes.md
+"your measured"
+"your cardiovascular"
+"your results"
+"your report"
+"your blood"
+"your panel"
+"AI-personalised"
+"personalised narrative"
+"personalized narrative"
 ```
 
-Read-only:
+Classify each hit as:
+
+1. acceptable user-addressed explanatory language
+2. deterministic template language that overclaims personalisation
+3. internal governance/runtime label leaking to users
+4. test/documentation-only usage
+
+## Required behaviour
+
+Remove or reframe deterministic template language that overclaims personalisation.
+
+Do not remove useful patient-facing clarity merely because the word “your” appears. The issue is not second-person language by itself; the issue is implying personalised AI interpretation when the output is deterministic template prose.
+
+Acceptable:
 
 ```text
-docs/planning-papers/HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md
-docs/audit-papers/LC-S12A_forensic_architecture_audit.md
-docs/planning-papers/healthiq_launch_core_transformation_plan_FINAL.md
-docs/audit-papers/LC-S11_forensic_human_uat_audit.md
-docs/audit-papers/LC-S11A_trust_blocker_correction_notes.md
-automation_bus/latest_audit_summary.md
-automation_bus/latest_cursor_status.json
-docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
-docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md
+Your uploaded panel includes...
 ```
 
-Forbidden:
+Potentially unacceptable:
 
 ```text
-backend/**/*
-frontend/**/*
-knowledge_bus/**/*
+Your measured homocysteine is the main lab anchor...
+```
+
+if presented as personalised AI-style reasoning without clear governance framing.
+
+## Required Sentinel defect classes
+
+Add or update Sentinel entries for:
+
+```text
+mock_mode_personalisation_overclaim
+governance_label_user_visible_leakage
+```
+
+If no runtime user-facing defect remains, still add regression coverage proving the audited class stays clean.
+
+---
+
+# Potentially allowed files
+
+Only edit what is necessary.
+
+Potentially allowed backend:
+
+```text
+backend/core/analytics/**/*
+backend/core/pipeline/**/*
+backend/core/dto/**/*
+backend/core/lifestyle/**/*
+backend/core/questionnaire/**/*
+backend/app/routes/analysis.py
+backend/tests/unit/**/*
+backend/tests/regression/**/*
+```
+
+Potentially allowed frontend:
+
+```text
+frontend/app/(app)/results/**/*
+frontend/app/components/**/*
+frontend/app/lib/**/*
+frontend/app/types/**/*
+frontend/tests/**/*
+```
+
+Potentially allowed Sentinel/docs:
+
+```text
+sentinel/packs/**/*
 sentinel/**/*
+docs/audit-papers/LC-S13_lifestyle_coherence_narrative_notes.md
+```
+
+## Forbidden unless GPT explicitly approves
+
+```text
+backend/ssot/biomarkers.yaml
+backend/ssot/units.yaml
+backend/ssot/scoring_policy.yaml
+backend/core/units/registry.py
+backend/core/scoring/rules.py
+knowledge_bus/**/*
 automation_bus/state/*
 automation_bus/latest_gate_evidence.json
 automation_bus/latest_gate_output.txt
@@ -512,41 +408,146 @@ backend/scripts/golden_gate_local.py
 backend/scripts/update_cursor_status.py
 ```
 
-Do not edit Automation Bus files except through the normal finish command.
+Do not modify unit conversion, scoring directionality, Knowledge Bus content, SSOT metadata, or Automation Bus scripts in this sprint.
 
-## Validation
+If those appear necessary, STOP.
 
-Because this is a CONTENT-only sprint, validation is mostly file and governance validation.
+---
 
-Run:
+# Required tests
 
-```powershell
-git diff --name-only
-git status --short
+Add or update deterministic tests for:
+
+## Lifestyle propagation
+
+* contrasting questionnaire profiles produce a visible governed difference
+* alcohol / one-carbon bridge appears in plain English when expected
+* raw bridge rationale codes do not appear in user-facing prose
+* lifestyle modifiers do not change measured biomarker values
+* lifestyle modifiers do not override lab-derived reference ranges
+* if confidence adjustment is expected, non-zero adjustment is visible and explainable
+* if confidence adjustment is not expected, absence is explicitly justified
+
+## Coherence
+
+* stable domain card does not carry warning headline copy unless clearly contextualised
+* no active concern text appears without active signal
+* no domain claims active signals when none exist
+* hero/body/domain sections agree on lead finding polarity
+* no generic placeholder consumer copy appears
+
+## Narrative language
+
+* no mock-mode personalisation overclaim appears in user-facing text
+* no internal governance labels appear in rendered consumer prose
+* no raw signal IDs appear in user-facing sections
+
+## Regression preservation
+
+* LC-S8F/G unit and display fidelity still passes
+* LC-S11A trust blockers remain fixed
+* homocysteine lead finding remains intact
+* uploaded-panel fidelity remains intact
+* no frontend conversion maths introduced
+
+---
+
+# Required Sentinel / test harness obligations
+
+Sentinel update is required.
+
+At minimum add/update defect classes:
+
+```text
+lifestyle_visible_payoff_missing
+lifestyle_bridge_internal_code_leakage
+domain_band_headline_polarity_contradiction
+domain_active_signal_false_claim
+mock_mode_personalisation_overclaim
+governance_label_user_visible_leakage
 ```
 
-Confirm only the two allowed output files are changed.
+Each must point to an active deterministic regression test.
 
-If any other file is modified, STOP.
+Do not add placeholder Sentinel entries.
 
-Check the new scaffold-definition document includes:
+If a defect class cannot yet be fully guarded, document why and add the strongest available deterministic guard.
 
-* scaffold complete definition
-* not-in-scope definition
-* defect classification model
-* seven compressed sprints
-* gates A-D
-* global STOP conditions
-* cross-sprint regression policy
-* Sentinel/test-harness policy
-* risk classification model
-* Knowledge Bus lifecycle expectations
-* DTO contract principles
-* documentation standing obligation
-* transition criteria to KB-WAVE phase
-* grade statement
+---
 
-## Closure requirements
+# Required validation commands
+
+Run relevant targeted tests.
+
+At minimum:
+
+```powershell
+python -m pytest backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py -q
+python -m pytest backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py -q
+python -m pytest backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py -q
+python -m pytest backend/tests/regression/test_lc_s10b_launch_core_protection.py -q
+python -m pytest backend/tests/regression/test_lc_s11a_trust_blocker_correction.py -q
+```
+
+Run the new LC-S13 regression test explicitly, for example:
+
+```powershell
+python -m pytest backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py -q
+```
+
+If frontend files changed:
+
+```powershell
+npm run type-check
+npm run test
+```
+
+If Playwright/e2e files are added or changed, run the relevant Playwright command and record exact output.
+
+If any required existing test file name differs, find and run the current equivalent, then record the substitution.
+
+---
+
+# Human/UAT check
+
+If implementation reaches frontend-visible output, generate or reuse two equivalent analyses:
+
+1. Same blood panel with low-risk lifestyle profile
+2. Same blood panel with higher-risk lifestyle profile
+
+Check rendered output:
+
+* at least one user-visible governed lifestyle difference appears
+* no raw internal bridge code appears
+* homocysteine lead remains coherent where applicable
+* no stable/warning contradiction appears
+* no mock-mode overclaim appears
+* no internal governance label appears
+* no unit/display regression appears
+
+If browser-based UAT cannot be completed, document that and provide the exact API/DTO evidence instead. Do not claim frontend UAT passed unless it was actually inspected.
+
+---
+
+# Acceptance criteria
+
+This sprint is complete only if:
+
+* lifestyle computation path is proven or the sprint correctly STOPs/splits
+* lifestyle surface propagation is implemented only if internal computation is meaningful
+* same panel + different lifestyle profile produces a governed visible difference
+* raw lifestyle bridge codes do not appear in consumer prose
+* report coherence defects are regression/Sentinel guarded
+* deterministic/mock-mode narrative overclaim is audited and corrected/protected
+* prior scaffold/launch-core guards still pass
+* new Sentinel entries are active and deterministic
+* documentation note clearly records findings and residual risks
+* no forbidden files are touched
+* no unit/scoring/Knowledge Bus work is smuggled into this sprint
+
+---
+
+# Closure requirements
 
 When complete:
 
@@ -560,35 +561,36 @@ git log --oneline -n 8
 git stash list
 ```
 
-2. Confirm:
+2. Classify:
 
-   * only allowed files changed
-   * no runtime files changed
-   * no Automation Bus files manually edited
-   * no untracked unexpected files
-   * no stash ambiguity
+   * tracked modified files
+   * staged files
+   * untracked files
+   * tooling files
+   * out-of-scope files
+   * stash entries
 
-3. Run finish:
+3. STOP if unrelated files, tooling leakage, dirty branch ambiguity, or stash ambiguity exists.
+
+4. Run finish:
 
 ```powershell
 python backend/scripts/run_work_package.py finish
 ```
 
-4. Report whether finish completed or failed.
+5. Report whether finish completed or failed.
 
-5. Do not merge.
+6. Do not merge.
 
-6. Do not create `automation_bus/latest_audit_summary.md`.
+7. Do not create `automation_bus/latest_audit_summary.md`.
 
-7. Do not claim final approval.
+8. Do not claim final approval.
 
 ## Cursor completion statement
 
-Cursor implements the documentation artefacts only.
+Cursor implements and reports only.
 
-Cursor may not self-certify scaffold approval, architecture approval, merge readiness, launch readiness, or permission to begin LC-S13.
-
-The output of this sprint must go to Claude Code audit, GPT architectural review, and human approval under Gate A before LC-S13 starts.
+Cursor may not self-certify clinical correctness, architecture correctness, scaffold completion, merge readiness, launch readiness, or permission to begin the next sprint.
 
 ```
 ```
