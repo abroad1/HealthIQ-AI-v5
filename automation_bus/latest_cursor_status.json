@@ -1,9 +1,10 @@
 {
   "branch": "scaffold/lc-s12b-core-scaffold-definition",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-20T21:10:41Z",
   "cursor_started_utc": "2026-05-20T21:08:13Z",
-  "head_sha": "40d02dffbba3826239ab73b310a4649263d8d630",
+  "head_sha": "dbb695f7e78215b9cef73bec94acef8c971fc9c8",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "LC-S12B"
 }
