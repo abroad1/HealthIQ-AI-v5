@@ -1,10 +1,9 @@
 {
-  "branch": "scaffold/lc-s18-root-cause-why-registration",
+  "branch": "scaffold/lc-s20-22-persisted-replay-sentinel-phase2",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-23T15:11:34Z",
-  "cursor_started_utc": "2026-05-23T15:06:20Z",
-  "head_sha": "bd5f59667f18774ae4745181831884a767290420",
+  "cursor_started_utc": "2026-05-23T20:42:19Z",
+  "head_sha": "2b34ebee7003c331bc895210119ccb7c6138e402",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "LC-S18"
+  "status": "IN_PROGRESS",
+  "work_id": "LC-S20-22"
 }
