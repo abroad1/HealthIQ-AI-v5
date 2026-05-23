@@ -23,19 +23,16 @@ from core.analytics.intervention_annotation_formatter_v1 import (
     format_intervention_annotation_consumer_cv_suffix_v1,
     format_intervention_annotation_narrative_appendix_v1,
 )
+from core.analytics.lifestyle_consumer_surface_v1 import (
+    ALCOHOL_ONE_CARBON_LIFESTYLE_BODY_OVERVIEW_V1,
+    build_lifestyle_consumer_overview_paragraphs_v1,
+    join_lifestyle_consumer_overview_supplement,
+)
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _ENTITIES_PATH = _REPO_ROOT / "knowledge_bus" / "interpretation_entities_v1" / "benchmark_interpretation_entities_v1.yaml"
 _PATHWAY_PATH = _REPO_ROOT / "knowledge_bus" / "pathway_explainers_v1" / "pathway_explainers_v1.yaml"
 _FUNCTIONAL_PATH = _REPO_ROOT / "knowledge_bus" / "functional_interpretation_v1" / "functional_interpretation_v1.yaml"
-
-# LC-S9C — governed retail copy for alcohol / one-carbon / homocysteine lifestyle bridge (consumer body overview).
-ALCOHOL_ONE_CARBON_LIFESTYLE_BODY_OVERVIEW_V1 = (
-    "Your questionnaire suggests moderate alcohol intake, which can be relevant when "
-    "interpreting homocysteine because alcohol intake may increase demand on one-carbon "
-    "nutrients such as folate and B vitamins. This does not change your biomarker score, "
-    "but it helps explain why this pathway is worth reviewing."
-)
 
 _LEAD_SIGNAL_HINTS: Set[str] = {
     "signal_homocysteine_high",
@@ -648,10 +645,13 @@ def compile_narrative_report_v1(
     secondary_pathway_block = secondary_text
     lead_text = lead_pathway_block
     secondary_text = secondary_pathway_block
-    alcohol_lifestyle_body = _consumer_alcohol_lifestyle_body_overview(meta)
-    if alcohol_lifestyle_body:
-        compiler_meta["lifestyle_alcohol_bridge_active"] = True
-        compiler_meta["assets_resolved"].append("alcohol_lifestyle_body_overview_lc_s9c")
+    lifestyle_paragraphs = build_lifestyle_consumer_overview_paragraphs_v1(meta)
+    alcohol_lifestyle_body = join_lifestyle_consumer_overview_supplement(lifestyle_paragraphs)
+    if lifestyle_paragraphs:
+        compiler_meta["lifestyle_consumer_paragraph_count"] = len(lifestyle_paragraphs)
+        if _alcohol_lifestyle_bridge_active(meta):
+            compiler_meta["lifestyle_alcohol_bridge_active"] = True
+        compiler_meta["assets_resolved"].append("lifestyle_consumer_surface_lc_s13")
 
     primary_driver = ""
     if insight_graph and isinstance(insight_graph, dict):

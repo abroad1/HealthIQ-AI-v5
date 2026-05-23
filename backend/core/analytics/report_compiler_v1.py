@@ -289,7 +289,10 @@ def _why_template(signal_id: str, signal_state: str, primary_metric: str) -> str
     metric = str(primary_metric or "").strip().replace("_", " ")
     state_phrase = _state_consumer_phrase(signal_state)
     if metric:
-        text = f"{topic} {state_phrase}. Your measured {metric} is the main lab anchor for this thread."
+        text = (
+            f"{topic} {state_phrase}. The main lab anchor on this panel for this thread is "
+            f"{metric.replace('_', ' ')}."
+        )
     else:
         text = f"{topic} {state_phrase}."
     return text[:200]

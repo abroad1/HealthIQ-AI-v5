@@ -94,6 +94,48 @@
       "status": "GUARDED",
       "test_file": "backend/tests/regression/test_lc_s11a_trust_blocker_correction.py",
       "first_seen": "2026-05"
+    },
+    "domain_band_headline_polarity_contradiction": {
+      "description": "Stable/strong band with high-confidence copy must not use 'not a simple all-clear' headline without active signals or contributor conflict.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py",
+      "first_seen": "2026-05"
+    },
+    "domain_active_signal_false_claim": {
+      "description": "Blood sugar domain must not carry early-IR pattern copy when active_signal_ids is empty.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py",
+      "first_seen": "2026-05"
+    },
+    "governance_label_user_visible_leakage": {
+      "description": "No raw signal_* ids or internal lifestyle bridge slugs in consumer narrative or domain score sentences.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py",
+      "first_seen": "2026-05"
+    },
+    "lifestyle_bridge_internal_code_leakage": {
+      "description": "Active lifestyle bridges must not leak rationale_codes or internal bridge slug strings into consumer narrative or domain sentences.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py",
+      "first_seen": "2026-05"
+    },
+    "lifestyle_visible_payoff_missing": {
+      "description": "Contrasting lifestyle profiles on the same AB panel must surface governed body_overview differences and non-identical system_modifiers.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py",
+      "first_seen": "2026-05"
+    },
+    "mock_mode_personalisation_overclaim": {
+      "description": "Consumer surfaces must not use 'your measured' or AI-personalised narrative overclaim phrases.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py",
+      "first_seen": "2026-05"
     }
   }
 }
