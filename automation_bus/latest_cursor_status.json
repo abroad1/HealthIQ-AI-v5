@@ -1,10 +1,9 @@
 {
-  "branch": "scaffold/lc-s16-17-19-kb-surface-payload-contract",
+  "branch": "scaffold/lc-s18-root-cause-why-registration",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-23T13:04:48Z",
-  "cursor_started_utc": "2026-05-23T12:54:26Z",
-  "head_sha": "73c4f302db9c261b5cdf0f1ea3f57874cf40f118",
+  "cursor_started_utc": "2026-05-23T15:06:20Z",
+  "head_sha": "d13b9ed823892b6889aab670c943d2fb200d9739",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "LC-S16-17-19"
+  "status": "IN_PROGRESS",
+  "work_id": "LC-S18"
 }
