@@ -1,9 +1,10 @@
 {
   "branch": "scaffold/lc-s20-22-persisted-replay-sentinel-phase2",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-23T20:47:27Z",
   "cursor_started_utc": "2026-05-23T20:42:19Z",
-  "head_sha": "2b34ebee7003c331bc895210119ccb7c6138e402",
+  "head_sha": "7c16f3f71842b61b07a34ede3aa4b3e527205036",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "LC-S20-22"
 }
