@@ -1,49 +1,49 @@
 ---
-work_id: LC-S18
-branch: scaffold/lc-s18-root-cause-why-registration
+work_id: LC-S20-22
+branch: scaffold/lc-s20-22-persisted-replay-sentinel-phase2
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
-change_type: BEHAVIOUR
+change_type: MIXED
 ---
 
-# LC-S18 — Root Cause / WHY Registration Generalisation
+# LC-S20/22 — Persisted Replay, Stale-Result Strategy and Sentinel Phase 2 Scaffold
 
 ## Classification
 
-This is a HIGH-risk BEHAVIOUR scaffold sprint.
+This is a HIGH-risk MIXED scaffold sprint.
 
-Reason: this sprint may touch root-cause / WHY registration machinery, Knowledge Bus package loading, hypothesis discovery, runtime validation, regression tests, Sentinel packs, package inventory reporting and scaffold documentation.
+Reason: this sprint may touch persisted result compatibility, replay DTO handling, API/result rendering smoke checks, Sentinel structure, escaped-defect guard organisation, regression tests, and documentation.
 
 This sprint is part of the approved HealthIQ AI core scaffold completion programme.
 
+This is not an analytical logic sprint.  
+This is not a scoring sprint.  
+This is not a unit-governance sprint.  
 This is not a Knowledge Bus content expansion sprint.  
-This is not a new medical signal authoring sprint.  
 This is not a frontend redesign sprint.  
-This is not a DTO restructuring sprint.  
 This is not a Gemini/LLM sprint.  
 This is not a launch-readiness sprint.
 
 ## Purpose
 
-Generalise the root-cause / WHY registration mechanism so future WHY-enabled signals can be added primarily as governed asset work rather than backend code work.
+Ensure stored reports remain compatible and trustworthy after code changes, then extend Sentinel from backend escaped-defect checks into product-level and render-level protection.
 
-The existing root-cause compiler is a strong part of the application. This sprint must preserve that strength while reducing manual registration bottlenecks.
-
-The goal is not to rewrite the WHY engine. The goal is to make registration scalable, deterministic, validated and safe.
-
-## Core rule
-
-Do not change existing WHY output unless explicitly required, tested and approved.
-
-The required outcome is:
+This sprint combines:
 
 ```text
-Every currently registered root-cause / WHY target that works before this sprint must still load and produce equivalent WHY output after this sprint.
+LC-S20 — Persisted Replay Scaffold and Stale-Result Strategy
+LC-S22 — Sentinel Phase 2 Scaffold
 ````
 
-No silent skipping of WHY assets is allowed.
+The sequence is mandatory:
 
-Malformed or incomplete metadata must fail loudly.
+```text
+1. Establish persisted-result replay fixture strategy.
+2. Define stale-result handling policy.
+3. Only then build Sentinel Phase 2 render/API-to-render guards around that strategy.
+```
+
+If a concrete persisted replay fixture strategy cannot be established, STOP before implementing Sentinel Phase 2 render-level checks.
 
 ## Controlling authority
 
@@ -56,6 +56,7 @@ docs/audit-papers/LC-S16_knowledge_asset_frontend_surface_audit.md
 docs/audit-papers/LC-S17_knowledge_bus_lifecycle_framework.md
 docs/audit-papers/LC-S19_payload_contract_hardening_notes.md
 docs/audit-papers/LC-S16_17_19_kb_surface_payload_contract_notes.md
+docs/audit-papers/LC-S18_root_cause_why_registration_generalisation_notes.md
 ```
 
 Also inspect if present:
@@ -64,36 +65,40 @@ Also inspect if present:
 docs/audit-papers/LC-S12A_forensic_architecture_audit.md
 docs/audit-papers/LC-S13_lifestyle_coherence_narrative_notes.md
 docs/audit-papers/LC-S14_direction_aware_scoring_notes.md
-docs/audit-papers/LC-S11_forensic_human_uat_audit.md
 docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
 docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md
 ```
 
-If the scaffold definition document or LC-S17 lifecycle framework is missing, STOP.
+If the scaffold definition document is missing, STOP.
 
 ## Required output documentation
 
-Create or update:
+Create:
 
 ```text
-docs/audit-papers/LC-S18_root_cause_why_registration_generalisation_notes.md
+docs/audit-papers/LC-S20_persisted_replay_stale_result_strategy.md
+docs/audit-papers/LC-S22_sentinel_phase2_scaffold_notes.md
 ```
 
-This document must include:
+Also create one combined implementation note:
+
+```text
+docs/audit-papers/LC-S20_22_persisted_replay_sentinel_phase2_notes.md
+```
+
+The combined implementation note must include:
 
 1. preflight results
-2. current root-cause / WHY registration map
-3. current registered target count discovered at sprint start
-4. fingerprint of current WHY outputs before change
-5. package estate drift findings
-6. proposed registration mechanism
-7. GPT/Claude review checkpoint result before implementation
-8. implementation summary
-9. validation and failure-mode behaviour
-10. tests added/updated
-11. Sentinel updates
-12. residual risks
-13. recommendation for LC-S20/22
+2. prior scaffold guard results
+3. persisted replay current-state assessment
+4. stale-result policy decision
+5. Sentinel Phase 2 structure decision
+6. Sentinel pack rationalisation decision
+7. files changed
+8. tests added/updated
+9. render/API smoke coverage added
+10. residual risks
+11. recommendation for LC-S21/23/23B
 
 ## Mandatory preflight
 
@@ -114,8 +119,8 @@ Test-Path automation_bus/state/work_package_active.json
 
 Read `automation_bus/state/work_package_active.json` and confirm:
 
-* `work_id` is `LC-S18`
-* branch is `scaffold/lc-s18-root-cause-why-registration`
+* `work_id` is `LC-S20-22`
+* branch is `scaffold/lc-s20-22-persisted-replay-sentinel-phase2`
 
 If token is missing or mismatched, STOP:
 
@@ -127,8 +132,8 @@ Confirm controlling docs exist:
 
 ```powershell
 Test-Path docs/planning-papers/HealthIQ_AI_core_scaffold_completion_definition_v1.md
-Test-Path docs/audit-papers/LC-S17_knowledge_bus_lifecycle_framework.md
 Test-Path docs/audit-papers/LC-S19_payload_contract_hardening_notes.md
+Test-Path docs/audit-papers/LC-S18_root_cause_why_registration_generalisation_notes.md
 ```
 
 If any are missing, STOP.
@@ -148,6 +153,7 @@ python -m pytest backend/tests/regression/test_lc_s11a_trust_blocker_correction.
 python -m pytest backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py -q
 python -m pytest backend/tests/regression/test_lc_s14_direction_aware_scoring.py -q
 python -m pytest backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py -q
+python -m pytest backend/tests/regression/test_lc_s18_root_cause_why_registration.py -q
 python -m pytest backend/tests/unit/test_scoring_rules.py -q
 ```
 
@@ -159,211 +165,313 @@ Do not proceed while prior protected behaviours are broken.
 
 ---
 
-# Phase 1 — Current-state authority and target discovery
+# Phase 1 — Current-state inventory
 
-Before making changes, identify and record current authority paths for:
+Before changing anything, identify and record current authority paths for:
 
-1. root-cause compiler
-2. manually registered WHY targets
-3. hypothesis YAML loading
-4. Knowledge Bus package estate inventory
-5. signal library package loading
-6. promoted signal intelligence files
-7. package lifecycle contract created in LC-S16/17/19
-8. orphan package reporter created in LC-S16/17/19
-9. Sentinel packs covering escaped defects
-10. tests covering root-cause / WHY output
+1. persisted analysis storage / retrieval
+2. saved analysis DTO shape
+3. replay manifest generation
+4. result version handling
+5. API route that serves stored results
+6. frontend result-page render path
+7. existing Playwright/e2e framework, if any
+8. Sentinel runner / pack structure
+9. current escaped-defects pack usage
+10. DTO root-key contract from LC-S16/17/19
+11. existing launch-core proving harness
+12. any current stale-result or migration logic
 
 Known likely files to inspect:
 
 ```text
-backend/core/analytics/root_cause_compiler_v1.py
+backend/app/routes/analysis.py
+backend/core/dto/**/*
 backend/core/analytics/**/*
-backend/core/knowledge/kb_lifecycle_contract_v1.py
-backend/scripts/validate_kb_package_estate_orphans_v1.py
-knowledge_bus/packages/**/*
-knowledge_bus/package_estate_KB-S49_v1.yaml
-backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py
-sentinel/packs/escaped_defects_v1.json
+backend/core/pipeline/**/*
+backend/tests/regression/**/*
+backend/tools/launch_core_proving_harness.py
+frontend/app/(app)/results/page.tsx
+frontend/app/types/analysis.ts
+frontend/e2e/**/*
+frontend/tests/**/*
+sentinel/**/*
+sentinel/packs/**/*
+docs/audit-papers/launch-core-proving/latest_fingerprints.json
+docs/audit-papers/launch-core-proving/PROVING_REPORT.md
 ```
 
-STOP if multiple competing root-cause / WHY registration authorities exist and the correct one cannot be established.
-
-## Required current-state findings
-
-Record:
-
-* current registered root-cause target count discovered at sprint start
-* list of current registered targets
-* source file / line range of current registration table
-* current hypothesis YAML paths used by registered targets
-* which targets have governed WHY output
-* which targets rely on fallback
-* which packages are on disk but not in the estate inventory
-* whether the 109-package drift from LC-S16/17/19 still exists
-* whether estate drift affects WHY registration safety
-* whether LC-S18 can safely proceed without regenerating the estate inventory
-
-Do not hardcode an expected target count. Discover it at sprint start.
+STOP if there are multiple competing persisted replay authorities and the correct one cannot be established.
 
 ---
 
-# Phase 2 — Fingerprint existing WHY behaviour
+# Phase 2 — LC-S20 persisted replay and stale-result strategy
 
-Before changing registration logic, create a deterministic fingerprint of existing WHY behaviour.
+## Objective
 
-The fingerprint must include, for every currently registered root-cause target:
+Upgrade persisted-result replay from a weak placeholder/schema check into a real scaffold compatibility contract.
 
-* target ID / signal ID
-* expected hypothesis asset path, if any
-* whether asset loads
-* whether output is governed or fallback
-* concise WHY output fingerprint
-* error state, if any
-
-Store the fingerprint in an audit-safe location, for example:
+A report generated today should either:
 
 ```text
-docs/audit-papers/LC-S18_root_cause_why_registration_before_fingerprint.json
+1. remain renderable and interpretable after future code changes, or
+2. be clearly marked stale / requiring regeneration.
 ```
 
-If no suitable JSON output format exists, create a deterministic markdown/table fingerprint in the LC-S18 notes.
+## Required current-state questions
 
-After implementation, produce the matching after-fingerprint:
+Answer explicitly:
+
+1. Where are analysis results persisted?
+2. What exact DTO is persisted?
+3. What fields are required for result-page rendering?
+4. Is `result_version` meaningful?
+5. Is `replay_manifest` meaningful?
+6. Is there an engine/version stamp?
+7. Can an older result be identified as stale?
+8. Is there a migration path?
+9. Does the frontend distinguish fresh vs stale results?
+10. Is stored JSON immutable historical output or regeneratable analysis?
+
+## Required stale-result policy decision
+
+Define and document one of these policies:
+
+### Option A — Immutable historical report
+
+Stored reports are preserved as generated. New code does not reinterpret old reports unless the user explicitly regenerates.
+
+Required implication:
+
+* old report must continue to render
+* engine version must be visible internally
+* stale warning may be needed if old report predates major scaffold fixes
+
+### Option B — Regeneratable report
+
+Stored raw input is replayed through the current engine to produce updated output.
+
+Required implication:
+
+* raw input and questionnaire context must be preserved
+* regenerated output may differ
+* user-facing distinction between original and regenerated report may be needed
+
+### Option C — Hybrid
+
+Stored reports render as historical artefacts, with optional regeneration if raw input is available.
+
+Required implication:
+
+* persisted report compatibility is still required
+* regeneration capability is explicit and not silent
+
+Preferred unless repo evidence says otherwise:
 
 ```text
-docs/audit-papers/LC-S18_root_cause_why_registration_after_fingerprint.json
+Hybrid: persisted report renders as historical output; regeneration is explicit when raw inputs are available.
 ```
 
-The after-fingerprint must prove equivalent output for all targets present at sprint start.
+Do not silently mutate historical reports.
 
-STOP if you cannot fingerprint current WHY output deterministically.
+## Required persisted replay fixture strategy
+
+Create or identify at least one fixture that represents a stored analysis DTO.
+
+The fixture must include, at minimum:
+
+* analysis_id
+* biomarkers
+* consumer_domain_scores
+* clinician_report_v1
+* narrative_report_v1
+* interpretation_display_layer_v1
+* replay_manifest
+* meta
+* result_version
+
+If no existing fixture is suitable, create a minimal deterministic fixture from a current known-good analysis.
+
+## Required compatibility checks
+
+Add deterministic tests proving:
+
+* persisted DTO has required root keys
+* persisted DTO can be loaded by current backend compatibility path
+* persisted DTO has enough fields for frontend rendering
+* missing critical fields fail clearly or mark stale
+* stale/legacy version is detectable
+* current DTO root-key contract remains compatible with persisted fixture
+
+## Required output
+
+Create:
+
+```text
+docs/audit-papers/LC-S20_persisted_replay_stale_result_strategy.md
+```
+
+Use this structure:
+
+```md
+# LC-S20 — Persisted Replay and Stale-Result Strategy
+
+## 1. Executive verdict
+
+## 2. Current persisted-result architecture
+
+## 3. Stored DTO fields
+
+## 4. Replay manifest assessment
+
+## 5. Result/versioning assessment
+
+## 6. Stale-result policy decision
+
+## 7. Persisted replay fixture strategy
+
+## 8. Compatibility checks added
+
+## 9. Failure behaviour
+
+## 10. Residual risks
+
+## 11. Implications for Sentinel Phase 2
+```
+
+## STOP condition
+
+STOP before Sentinel Phase 2 implementation if:
+
+* no persisted replay fixture can be established
+* current persisted outputs cannot be loaded deterministically
+* result-version/stale-state cannot be detected at all
+* frontend render requirements cannot be mapped to stored DTO fields
+* establishing replay compatibility requires broad DTO restructuring
+
+If STOP triggers, Cursor may not self-rescope. Report findings for GPT/human decision.
 
 ---
 
-# Phase 3 — Package estate drift assessment
+# Phase 3 — LC-S22 Sentinel Phase 2 scaffold
 
-LC-S16/17/19 found that many packages on disk are not represented in the package estate inventory.
+Proceed only after Phase 2 establishes a concrete persisted replay fixture strategy.
 
-Before implementing WHY registration changes, assess the package estate drift.
+## Objective
 
-Run or use:
+Extend Sentinel from backend escaped-defect tracking into product-level, DTO-level and render-level protection.
 
-```powershell
-python backend/scripts/validate_kb_package_estate_orphans_v1.py
-```
+## Required Sentinel structure decision
 
-Record:
+The Sentinel estate is growing.
 
-* number of packages on disk
-* number of packages in estate inventory
-* orphan count
-* whether orphan packages contain WHY-relevant files
-* whether orphan packages contain promoted signal intelligence
-* whether orphan packages should be ignored, inventoried, or blocked from auto-discovery
-
-## STOP condition — estate drift unsafe for auto-discovery
-
-STOP before implementation if:
-
-* auto-discovery would load orphan packages that are not validated
-* orphan packages contain WHY assets that could alter runtime output
-* package lifecycle state cannot distinguish validated vs draft assets
-* estate inventory is too stale to safely support metadata-driven discovery
-
-If STOP triggers, report whether the correct next step is:
+Current known issue:
 
 ```text
-LC-S18A — Package estate inventory refresh and validation
+escaped_defects_v1.json is becoming a broad catch-all pack.
 ```
 
-rather than root-cause registration generalisation.
+Decide and document one of these structures:
 
-Do not silently auto-load unvalidated orphan packages.
+### Option A — Keep single escaped-defects pack
 
----
+Continue adding escaped and scaffold-defining defects to `escaped_defects_v1.json`.
 
-# Phase 4 — Proposed mechanism and review checkpoint
+Must include grouping metadata by sprint/domain.
 
-Before implementation, write a proposed mechanism in the LC-S18 notes.
+### Option B — Introduce scaffold-phase packs
 
-The proposal must answer:
-
-1. Will the new registration be metadata-driven, hybrid, or manual-table-plus-validation?
-2. What metadata is required for a WHY-enabled asset?
-3. How are draft/unvalidated packages excluded?
-4. How are orphan packages handled?
-5. How are malformed assets handled?
-6. How are duplicate target IDs handled?
-7. How are missing hypothesis files handled?
-8. How is deterministic ordering guaranteed?
-9. How does this preserve all current registered targets?
-10. How can a future WHY-enabled signal be added without bespoke backend code?
-
-## Mandatory review checkpoint
-
-After writing the proposed mechanism but before changing runtime registration behaviour, STOP for GPT/human review unless the implementation is purely documentation/test-only.
-
-Report:
+Create separate packs such as:
 
 ```text
-LC-S18 proposed WHY registration mechanism ready for architectural review.
+sentinel/packs/scaffold_lc_s20_22_replay_render_v1.json
+sentinel/packs/scaffold_payload_contract_v1.json
+sentinel/packs/scaffold_why_registry_v1.json
 ```
 
-Cursor may not self-authorise the migration mechanism.
+### Option C — Hybrid
 
-If GPT/human approval is already explicitly provided in the same conversation after reviewing the proposal, proceed.
+Keep `escaped_defects_v1.json` for escaped defects and create new scaffold packs for planned scaffold guards.
 
-If not, stop.
+Preferred:
 
----
+```text
+Hybrid: keep escaped_defects_v1.json for escaped defects; create scaffold-specific packs for planned scaffold behaviours.
+```
 
-# Phase 5 — Implementation requirements
+Do not reorganise existing Sentinel packs destructively unless fully tested.
 
-Proceed only after the review checkpoint is approved.
+## Required Sentinel Phase 2 coverage
 
-## Required behaviour
+Add or prepare deterministic guards for:
 
-The final mechanism must:
+* persisted result schema compatibility
+* persisted result render/API smoke
+* stale analysis unmarked
+* results page missing primary finding
+* results page placeholder text visible
+* results page internal token visible
+* results page unit display regression
+* results page missing domain cards
+* DTO root-key drift
+* Knowledge Bus asset surfacing regression
 
-* preserve every currently registered target
-* preserve current WHY output for all currently registered targets
-* fail loudly on malformed metadata
-* fail loudly on duplicate target IDs
-* fail loudly on missing required files for WHY-enabled assets
-* exclude draft/unvalidated/orphan packages unless explicitly permitted
-* use deterministic ordering
-* support future asset-first registration
-* keep fallback behaviour explicit and detectable
-* avoid silent skip behaviour
+## Required render/API smoke path
 
-## Allowed implementation patterns
+Add at least one smoke path that starts with a persisted or fixture DTO and proves it can support result-page rendering.
 
-Acceptable patterns include:
+Acceptable forms:
 
-1. Hybrid manual table plus metadata validation.
-2. Metadata-driven discovery limited to validated/inventory-listed packages only.
-3. Manual table retained for now, with validator proving it matches metadata.
-4. New registry builder that produces the same target map as the old table.
+1. backend API-to-DTO smoke test if frontend render tools are not available
+2. frontend type/render smoke test if existing frontend test harness supports it
+3. Playwright route smoke if existing Playwright setup is reliable
+4. minimal TypeScript/component render check if frontend test infra exists
 
-Do not remove the old manual path until the new path proves equivalence.
+Do not build a large brittle UI automation suite.
 
-A transitional dual-path mechanism is acceptable if it is deterministic and tested.
+The minimum acceptable Phase 2 guard is:
 
-## Required package metadata expectation
+```text
+A stored/persisted DTO fixture can be loaded and provides all fields required by the result-page contract, with no placeholder/internal-token leakage in user-facing sections.
+```
 
-If metadata-driven registration is introduced, a WHY-enabled package must declare enough information to identify:
+## Required output
 
-* package ID
-* lifecycle state
-* signal ID / target ID
-* hypothesis asset path
-* supported biomarker/system context
-* runtime eligibility
-* validation status
-* display/IDL link where applicable
+Create:
 
-If current packages do not yet have this metadata, do not invent broad metadata content. Implement validation/reporting and defer migration where appropriate.
+```text
+docs/audit-papers/LC-S22_sentinel_phase2_scaffold_notes.md
+```
+
+Use this structure:
+
+```md
+# LC-S22 — Sentinel Phase 2 Scaffold
+
+## 1. Executive verdict
+
+## 2. Existing Sentinel pack assessment
+
+## 3. Chosen Sentinel Phase 2 structure
+
+## 4. Persisted replay fixture dependency
+
+## 5. New/updated defect classes
+
+## 6. Render/API smoke path
+
+## 7. DTO/schema compatibility guards
+
+## 8. Placeholder/internal-token guards
+
+## 9. Unit/display fidelity guards
+
+## 10. Knowledge Bus surfacing guards
+
+## 11. What remains deferred
+
+## 12. Recommended next Sentinel work
+```
 
 ---
 
@@ -374,34 +482,31 @@ Only edit what is necessary.
 Potentially allowed backend:
 
 ```text
-backend/core/analytics/root_cause_compiler_v1.py
+backend/core/dto/**/*
 backend/core/analytics/**/*
-backend/core/knowledge/**/*
-backend/scripts/validate_kb_package_estate_orphans_v1.py
+backend/app/routes/analysis.py
 backend/tests/unit/**/*
 backend/tests/regression/**/*
+backend/tests/fixtures/**/*
+backend/tools/**/*
 ```
 
-Potentially allowed docs:
+Potentially allowed frontend tests only:
 
 ```text
-docs/audit-papers/LC-S18_root_cause_why_registration_generalisation_notes.md
-docs/audit-papers/LC-S18_root_cause_why_registration_before_fingerprint.json
-docs/audit-papers/LC-S18_root_cause_why_registration_after_fingerprint.json
+frontend/tests/**/*
+frontend/e2e/**/*
+frontend/app/types/**/*
 ```
 
-Potentially allowed Sentinel:
+Potentially allowed Sentinel/docs:
 
 ```text
 sentinel/packs/**/*
 sentinel/**/*
-```
-
-Potentially allowed Knowledge Bus files only if metadata validation absolutely requires minimal non-medical metadata additions and GPT has explicitly approved after the review checkpoint:
-
-```text
-knowledge_bus/package_estate_KB-S49_v1.yaml
-knowledge_bus/packages/**/*
+docs/audit-papers/LC-S20_persisted_replay_stale_result_strategy.md
+docs/audit-papers/LC-S22_sentinel_phase2_scaffold_notes.md
+docs/audit-papers/LC-S20_22_persisted_replay_sentinel_phase2_notes.md
 ```
 
 ## Forbidden unless GPT explicitly approves
@@ -412,7 +517,10 @@ backend/core/units/**/*
 backend/ssot/units.yaml
 backend/ssot/scoring_policy.yaml
 backend/ssot/biomarkers.yaml
-frontend/**/*
+knowledge_bus/**/*
+frontend/app/(app)/results/page.tsx
+frontend/app/components/**/*
+frontend/app/lib/**/*
 automation_bus/state/*
 automation_bus/latest_gate_evidence.json
 automation_bus/latest_gate_output.txt
@@ -422,9 +530,7 @@ backend/scripts/golden_gate_local.py
 backend/scripts/update_cursor_status.py
 ```
 
-Do not modify scoring, unit governance, frontend rendering, SSOT biomarker metadata, or Automation Bus scripts in this sprint.
-
-Do not add new medical Knowledge Bus content.
+Do not modify scoring, unit governance, Knowledge Bus content, production frontend rendering, SSOT biomarker metadata, or Automation Bus scripts in this sprint.
 
 If those appear necessary, STOP.
 
@@ -434,30 +540,24 @@ If those appear necessary, STOP.
 
 Add or update deterministic tests for:
 
-## Existing WHY preservation
+## Persisted replay
 
-* every pre-existing registered target still loads
-* every pre-existing registered target produces equivalent WHY output
-* homocysteine / AB baseline governed WHY remains present
-* no registered target silently drops out
-* fallback targets remain explicitly detectable
+* persisted DTO fixture loads
+* required root keys present
+* replay manifest present and parseable
+* result_version present
+* stale/legacy version detectable
+* missing critical fields fail clearly or mark stale
+* DTO fixture satisfies frontend-consumed root-key contract
+* persisted fixture does not leak internal-only fields into user-facing text checks
 
-## Metadata / registry safety
+## Sentinel Phase 2
 
-* malformed metadata fails loudly
-* duplicate target IDs fail loudly
-* missing required WHY file fails loudly
-* draft/unvalidated package is not auto-loaded
-* orphan package is not auto-loaded unless explicitly allowed
-* deterministic ordering is stable
-* new compliant WHY asset can be discovered or validated without bespoke backend code, if migration proceeds
-
-## Package estate drift
-
-* orphan reporter still detects estate drift
-* orphan count/report is deterministic
-* package lifecycle state validity is enforced or clearly reported
-* required WHY-enabled package files are checked
+* Sentinel pack structure validates
+* new defect classes are present and active
+* each new defect class points to an active deterministic test
+* escaped-defects pack is not allowed to silently become unstructured catch-all if new structure is chosen
+* render/API smoke path passes
 
 ## Regression preservation
 
@@ -466,6 +566,7 @@ Add or update deterministic tests for:
 * LC-S13 lifestyle/coherence/narrative protections still pass
 * LC-S14 direction-aware scoring protections still pass
 * LC-S16/17/19 DTO/KB surfacing protections still pass
+* LC-S18 WHY registration protections still pass
 * homocysteine lead finding remains intact
 
 ---
@@ -477,18 +578,21 @@ Sentinel update is required.
 At minimum add/update defect classes:
 
 ```text
-root_cause_target_not_loaded
-why_asset_silent_skip
-metadata_malformed_not_failed
-why_output_changed_after_registration_migration
-new_why_asset_requires_backend_code
-orphan_why_asset_auto_loaded
-duplicate_why_target_id_not_rejected
+persisted_result_schema_incompatible
+persisted_result_render_failure
+stale_analysis_unmarked
+results_page_missing_primary_finding
+results_page_placeholder_text_visible
+results_page_internal_token_visible
+results_page_unit_display_regression
+results_page_missing_domain_cards
 ```
 
 Each must point to an active deterministic regression test, or the strongest available deterministic guard with documented limitation.
 
 Do not add placeholder Sentinel entries.
+
+If the chosen Sentinel Phase 2 structure creates new packs, tests must validate those packs.
 
 ---
 
@@ -507,22 +611,24 @@ python -m pytest backend/tests/regression/test_lc_s11a_trust_blocker_correction.
 python -m pytest backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py -q
 python -m pytest backend/tests/regression/test_lc_s14_direction_aware_scoring.py -q
 python -m pytest backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py -q
+python -m pytest backend/tests/regression/test_lc_s18_root_cause_why_registration.py -q
 python -m pytest backend/tests/unit/test_scoring_rules.py -q
 ```
 
-Run the new LC-S18 tests explicitly, for example:
+Run new LC-S20/22 tests explicitly, for example:
 
 ```powershell
-python -m pytest backend/tests/regression/test_lc_s18_root_cause_why_registration.py -q
+python -m pytest backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py -q
 ```
 
-Run the orphan reporter:
+If frontend test files are changed:
 
 ```powershell
-python backend/scripts/validate_kb_package_estate_orphans_v1.py
+npm run type-check
+npm run test
 ```
 
-If the orphan reporter exits non-zero due to known drift, record the output. Do not treat known pre-existing drift as a test failure unless the sprint changes the drift state or auto-loads unsafe packages.
+If Playwright/e2e files are added or changed, run the relevant Playwright command and record exact output.
 
 If any required existing test file name differs, find and run the current equivalent, then record the substitution.
 
@@ -530,7 +636,7 @@ If any required existing test file name differs, find and run the current equiva
 
 # Optional proving harness check
 
-If runtime WHY output or root-cause payload output changes, run:
+If replay fixtures or result payload compatibility changes could affect launch-core proving output, run:
 
 ```powershell
 python backend/tools/launch_core_proving_harness.py
@@ -546,21 +652,17 @@ If payload fingerprints change, STOP and report before committing unless the cha
 
 This sprint is complete only if:
 
-* current root-cause / WHY target set is discovered dynamically
-* before/after WHY fingerprints are produced
-* all pre-existing registered targets still load
-* all pre-existing registered targets produce equivalent WHY output
-* no silent skip behaviour exists
-* malformed metadata fails loudly
-* duplicate target IDs fail loudly
-* orphan/unvalidated packages are not auto-loaded
-* package estate drift is assessed and documented
-* future WHY-enabled signal registration is more asset-driven or has a concrete validated migration path
-* Sentinel defect classes are active and deterministic
+* persisted replay fixture strategy is established
+* stale-result handling policy is documented
+* persisted DTO compatibility is deterministically tested
+* Sentinel Phase 2 structure decision is documented
+* at least one API/render smoke path is guarded
+* all required Sentinel defect classes are active or limitations documented
+* escaped-defects pack growth is addressed structurally
 * prior scaffold/launch-core guards still pass
-* no new medical Knowledge Bus content is introduced
-* no scoring/unit/frontend changes are smuggled into this sprint
-* residual risks are documented for LC-S20/22 or KB-WAVE phase
+* no production frontend redesign occurs
+* no scoring/unit/Knowledge Bus content work is smuggled into this sprint
+* residual risks are documented for LC-S21/23/23B or KB-WAVE phase
 
 ---
 
