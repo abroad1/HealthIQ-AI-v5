@@ -1,9 +1,10 @@
 {
   "branch": "scaffold/lc-s18-root-cause-why-registration",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-23T15:11:34Z",
   "cursor_started_utc": "2026-05-23T15:06:20Z",
-  "head_sha": "d13b9ed823892b6889aab670c943d2fb200d9739",
+  "head_sha": "bd5f59667f18774ae4745181831884a767290420",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "LC-S18"
 }
