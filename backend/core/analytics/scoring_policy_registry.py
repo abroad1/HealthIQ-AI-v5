@@ -148,6 +148,38 @@ def _validate_policy(raw: Dict[str, Any]) -> None:
                 "scoring_runtime.unscored_reason_missing_lab_reference_range must be a non-empty string"
             )
 
+    directionality = raw.get("biomarker_directionality")
+    if directionality is not None:
+        if not isinstance(directionality, dict):
+            raise ValueError("biomarker_directionality must be a mapping")
+        default_class = str(directionality.get("default_class", "")).strip()
+        allowed = directionality.get("allowed_classes")
+        if not isinstance(allowed, list) or not allowed:
+            raise ValueError("biomarker_directionality.allowed_classes must be a non-empty list")
+        allowed_set = {str(x).strip() for x in allowed if str(x).strip()}
+        if default_class not in allowed_set:
+            raise ValueError(
+                f"biomarker_directionality.default_class '{default_class}' not in allowed_classes"
+            )
+        info_pos = directionality.get("informational_position")
+        prot_pos = directionality.get("protective_in_range_position")
+        if not isinstance(info_pos, (int, float)) or not 0.0 <= float(info_pos) <= 1.0:
+            raise ValueError("biomarker_directionality.informational_position must be in [0, 1]")
+        if not isinstance(prot_pos, (int, float)) or not 0.0 <= float(prot_pos) <= 1.0:
+            raise ValueError("biomarker_directionality.protective_in_range_position must be in [0, 1]")
+        markers = directionality.get("markers")
+        if not isinstance(markers, dict):
+            raise ValueError("biomarker_directionality.markers must be a mapping")
+        for marker_id, spec in markers.items():
+            if not isinstance(spec, dict):
+                raise ValueError(f"biomarker_directionality.markers['{marker_id}'] must be a mapping")
+            dc = str(spec.get("direction_class", "")).strip()
+            if dc not in allowed_set:
+                raise ValueError(
+                    f"biomarker_directionality.markers['{marker_id}'].direction_class "
+                    f"'{dc}' not in allowed_classes"
+                )
+
 
 def load_scoring_policy() -> LoadedScoringPolicy:
     global _policy_cache

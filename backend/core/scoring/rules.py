@@ -56,6 +56,19 @@ UNSCORED_REASON_UNKNOWN_UNIT_NOT_SCORED = "unknown_unit_not_scored"
 
 _HBA1C_IDS = frozenset({"hba1c", "hba1c_pct"})
 
+_DIRECTION_DEFAULT = "bidirectional_concern"
+_DIRECTION_ALLOWED = frozenset(
+    {
+        "bidirectional_concern",
+        "high_only_concern",
+        "low_only_concern",
+        "protective_high",
+        "protective_low",
+        "informational_low",
+        "informational_high",
+    }
+)
+
 
 class ScoreRange(Enum):
     """Score range categories for biomarkers."""
@@ -98,6 +111,7 @@ class ScoringRules:
     def __init__(self):
         self._policy = load_scoring_policy()
         self._rules = self._load_biomarker_rules()
+        self._directionality = self._load_biomarker_directionality()
         self._has_to_score_range = self._build_has_status_map()
         self._score_curve = self._policy.raw.get("score_curve", {})
     
@@ -147,6 +161,90 @@ class ScoringRules:
                 system_weight=float(sys_item.get("system_weight", 0.0)),
             )
         return out
+
+    def _load_biomarker_directionality(self) -> Dict[str, Any]:
+        block = self._policy.raw.get("biomarker_directionality") or {}
+        if not isinstance(block, dict):
+            return {
+                "default_class": _DIRECTION_DEFAULT,
+                "informational_position": 0.05,
+                "protective_in_range_position": 0.75,
+                "markers": {},
+            }
+        markers_raw = block.get("markers") or {}
+        markers: Dict[str, str] = {}
+        if isinstance(markers_raw, dict):
+            for key, spec in markers_raw.items():
+                if isinstance(spec, dict):
+                    dc = str(spec.get("direction_class", "")).strip()
+                    if dc:
+                        markers[str(key)] = dc
+        return {
+            "default_class": str(block.get("default_class", _DIRECTION_DEFAULT)).strip()
+            or _DIRECTION_DEFAULT,
+            "informational_position": float(block.get("informational_position", 0.05)),
+            "protective_in_range_position": float(block.get("protective_in_range_position", 0.75)),
+            "markers": markers,
+        }
+
+    def get_biomarker_direction_class(self, biomarker_name: str) -> str:
+        """Return governed direction class for lab-range scoring (LC-S14)."""
+        markers = self._directionality.get("markers") or {}
+        if isinstance(markers, dict) and biomarker_name in markers:
+            return str(markers[biomarker_name])
+        return str(self._directionality.get("default_class", _DIRECTION_DEFAULT))
+
+    def _directionality_position_override(
+        self,
+        biomarker_name: str,
+        value: float,
+        min_val: Optional[float],
+        max_val: Optional[float],
+    ) -> Optional[float]:
+        """
+        When set, return a HAS position (0..1 style) to score instead of symmetric range position.
+
+        Lab bounds are unchanged; only interpretation of below/above range is adjusted.
+        """
+        direction = self.get_biomarker_direction_class(biomarker_name)
+        if direction not in _DIRECTION_ALLOWED:
+            return None
+        if direction == "bidirectional_concern":
+            return None
+
+        info_pos = float(self._directionality.get("informational_position", 0.05))
+        prot_pos = float(self._directionality.get("protective_in_range_position", 0.75))
+
+        has_low = isinstance(min_val, (int, float))
+        has_high = isinstance(max_val, (int, float))
+        if has_low and has_high and float(min_val) < float(max_val):  # type: ignore[operator]
+            lo = float(min_val)  # type: ignore[arg-type]
+            hi = float(max_val)  # type: ignore[arg-type]
+            if direction == "high_only_concern" and value < lo:
+                return info_pos
+            if direction == "low_only_concern" and value > hi:
+                return info_pos
+            if direction == "protective_high" and value > hi:
+                return prot_pos
+            if direction == "protective_low" and value < lo:
+                return prot_pos
+            if direction == "informational_low" and value < lo:
+                return info_pos
+            if direction == "informational_high" and value > hi:
+                return info_pos
+            return None
+
+        if has_high and not has_low:
+            if direction in ("high_only_concern", "informational_high") and value > float(max_val):  # type: ignore[arg-type]
+                return position_in_one_sided_lab_range(value, None, max_val)
+            if direction in ("protective_high",) and value > float(max_val):  # type: ignore[arg-type]
+                return prot_pos
+        if has_low and not has_high:
+            if direction in ("low_only_concern", "informational_low") and value < float(min_val):  # type: ignore[arg-type]
+                return info_pos
+            if direction in ("protective_low",) and value < float(min_val):  # type: ignore[arg-type]
+                return prot_pos
+        return None
     
     def get_biomarker_rule(self, biomarker_name: str) -> Optional[BiomarkerRule]:
         """
@@ -305,9 +403,11 @@ class ScoringRules:
             min_val = coerce_optional_float(ref.get("min"))
             max_val = coerce_optional_float(ref.get("max"))
             if min_val is not None and max_val is not None and min_val < max_val:
-                # LC-S11A: low ALT below lab lower bound is not clinically alarming.
-                if biomarker_name == "alt" and value < float(min_val):
-                    score, score_range = self._calculate_score_from_has_position(0.05)
+                direction_pos = self._directionality_position_override(
+                    biomarker_name, value, min_val, max_val
+                )
+                if direction_pos is not None:
+                    score, score_range = self._calculate_score_from_has_position(direction_pos)
                     return score, score_range, None
                 score, score_range = self._calculate_score_from_range(value, float(min_val), float(max_val))
                 return score, score_range, None

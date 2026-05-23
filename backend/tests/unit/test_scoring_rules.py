@@ -387,3 +387,9 @@ class TestScoringRules:
                     assert biomarker_rule.borderline_range[1] <= biomarker_rule.high_range[0], "Borderline max should be <= high min"
                     assert biomarker_rule.high_range[1] <= biomarker_rule.very_high_range[0], "High max should be <= very high min"
                     assert biomarker_rule.very_high_range[1] <= biomarker_rule.critical_range[0], "Very high max should be <= critical min"
+
+    def test_lc_s14_direction_class_from_policy(self):
+        """Direction classes are governed by scoring_policy.yaml biomarker_directionality."""
+        assert self.rules.get_biomarker_direction_class("alt") == "high_only_concern"
+        assert self.rules.get_biomarker_direction_class("hdl_cholesterol") == "protective_high"
+        assert self.rules.get_biomarker_direction_class("glucose") == "bidirectional_concern"

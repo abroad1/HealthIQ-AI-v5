@@ -136,6 +136,42 @@
       "status": "GUARDED",
       "test_file": "backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py",
       "first_seen": "2026-05"
+    },
+    "direction_sensitive_marker_false_alarm": {
+      "description": "Direction-governed markers must not false-alarm on clinically benign deviations (e.g. low enzymes).",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s14_direction_aware_scoring.py",
+      "first_seen": "2026-05"
+    },
+    "low_enzyme_false_alarm": {
+      "description": "Low ALT/AST/GGT/ALP below lab lower bound must not produce critical scoring.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s14_direction_aware_scoring.py",
+      "first_seen": "2026-05"
+    },
+    "protective_high_marker_penalised": {
+      "description": "High HDL/ApoA1 above lab upper bound must not be penalised solely for being high.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s14_direction_aware_scoring.py",
+      "first_seen": "2026-05"
+    },
+    "hardcoded_biomarker_scoring_exception": {
+      "description": "No biomarker-specific hardcoded scoring bypass in rules.py; directionality must be policy-driven.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s14_direction_aware_scoring.py",
+      "first_seen": "2026-05"
+    },
+    "scoring_signal_directionality_conflation": {
+      "description": "Lab scoring directionality policy is SSOT-governed and does not require signal-library changes in LC-S14 scope.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s14_direction_aware_scoring.py",
+      "first_seen": "2026-05",
+      "note": "Guards policy load + absence of hardcoded alt bypass; signal firing unchanged by design."
     }
   }
 }

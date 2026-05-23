@@ -1,4 +1,4 @@
-policy_version: "1.1.0"
+policy_version: "1.2.0"
 schema_version: "1.0"
 
 system_execution_order:
@@ -271,6 +271,33 @@ biomarkers:
       high: {min: 450.0, max: 600.0}
       very_high: {min: 600.0, max: 1000.0}
       critical: {min: 1000.0, max: 2000.0}
+
+# LC-S14 — governed lab-range directionality (replaces per-marker hardcoded scoring exceptions).
+biomarker_directionality:
+  default_class: bidirectional_concern
+  informational_position: 0.05
+  protective_in_range_position: 0.75
+  allowed_classes:
+    - bidirectional_concern
+    - high_only_concern
+    - low_only_concern
+    - protective_high
+    - protective_low
+    - informational_low
+    - informational_high
+  markers:
+    alt:
+      direction_class: high_only_concern
+    ast:
+      direction_class: high_only_concern
+    ggt:
+      direction_class: high_only_concern
+    alp:
+      direction_class: high_only_concern
+    hdl_cholesterol:
+      direction_class: protective_high
+    apoa1:
+      direction_class: protective_high
 
 derived_ratios:
   - "tc_hdl_ratio"
