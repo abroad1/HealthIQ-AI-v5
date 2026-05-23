@@ -1,26 +1,26 @@
 {
-  "work_id": "LC-S20-22",
+  "work_id": "LC-S21-23-23B",
   "bus_version": "1.3.1",
   "status": "HARDENED",
   "hardened_utc": "2026-05-23T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6)",
   "blocker_count": 0,
-  "warning_count": 1,
+  "warning_count": 2,
   "changes": [
     {
       "check": "Front Matter — work_id",
       "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: LC-S20-22"
+      "citation": "automation_bus/latest_cursor_prompt.md line 2: work_id: LC-S21-23-23B"
     },
     {
       "check": "Front Matter — branch",
       "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: scaffold/lc-s20-22-persisted-replay-sentinel-phase2"
+      "citation": "automation_bus/latest_cursor_prompt.md line 3: branch: scaffold/lc-s21-23-23b-orchestrator-docs-ssot"
     },
     {
       "check": "Front Matter — risk_level",
       "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: HIGH. Correct — MIXED change_type with Sentinel defect class promotion (affects guard behaviour) and DTO compatibility checks adjacent to Intelligence Core output contract."
+      "citation": "automation_bus/latest_cursor_prompt.md line 4: risk_level: HIGH. Correct — MIXED with Scope A BEHAVIOUR touching Intelligence Core pipeline (orchestrator.py). BEHAVIOUR scope = HIGH by default per SOP §10."
     },
     {
       "check": "Front Matter — execution_model",
@@ -30,123 +30,133 @@
     {
       "check": "Front Matter — change_type",
       "result": "PASS",
-      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: MIXED. Correct — combines fixture/doc authoring (CONTENT) with Sentinel defect class promotion and DTO compatibility guard addition (BEHAVIOUR). MIXED controls apply per SOP §4."
+      "citation": "automation_bus/latest_cursor_prompt.md line 6: change_type: MIXED. Correct — Scope A is BEHAVIOUR (orchestrator phase decomposition), Scopes B/C are CONTENT (docs, SSOT metadata). MIXED controls apply per SOP §4."
     },
     {
       "check": "Stage 2A — Authority path: scaffold completion definition",
       "result": "CONFIRMED",
-      "citation": "docs/planning-papers/HealthIQ_AI_core_scaffold_completion_definition_v1.md — file confirmed present on disk."
+      "citation": "docs/planning-papers/HealthIQ_AI_core_scaffold_completion_definition_v1.md — confirmed present on disk (PowerShell Test-Path: True)."
     },
     {
       "check": "Stage 2A — Authority path: scaffold sprint plan FINAL",
       "result": "CONFIRMED",
-      "citation": "docs/planning-papers/HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md — file confirmed present on disk."
+      "citation": "docs/planning-papers/HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md — confirmed present on disk. Content verified: strategic position and scaffold completion purpose documented at lines 1-40."
     },
     {
-      "check": "Stage 2A — Authority path: LC-S16 audit",
+      "check": "Stage 2A — Authority path: LC-S20/22 combined notes",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/LC-S16_knowledge_asset_frontend_surface_audit.md — file confirmed present on disk."
+      "citation": "docs/audit-papers/LC-S20_22_persisted_replay_sentinel_phase2_notes.md — confirmed present on disk (PowerShell Test-Path: True)."
     },
     {
-      "check": "Stage 2A — Authority path: LC-S17 audit",
+      "check": "Stage 2A — Authority path: LC-S18 WHY registration notes",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/LC-S17_knowledge_bus_lifecycle_framework.md — file confirmed present on disk."
+      "citation": "docs/audit-papers/LC-S18_root_cause_why_registration_generalisation_notes.md — confirmed present on disk. Content verified lines 1-60: 41 registered root-cause targets at sprint start, hybrid manual+validation pattern, fallback WHY path documented (why_engine_fallback_v1), package estate drift ~109 orphan dirs (unchanged), auto-discovery STOP not triggered."
     },
     {
-      "check": "Stage 2A — Authority path: LC-S19 notes",
+      "check": "Stage 2A — Authority path: LC-S20 persisted replay strategy",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/LC-S19_payload_contract_hardening_notes.md — file confirmed present on disk."
+      "citation": "docs/audit-papers/LC-S20_persisted_replay_stale_result_strategy.md — confirmed present on disk (PowerShell Test-Path: True)."
     },
     {
-      "check": "Stage 2A — Authority path: LC-S16/17/19 combined notes",
+      "check": "Stage 2A — Authority path: LC-S22 Sentinel Phase 2 notes",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/LC-S16_17_19_kb_surface_payload_contract_notes.md — file confirmed present on disk."
+      "citation": "docs/audit-papers/LC-S22_sentinel_phase2_scaffold_notes.md — confirmed present on disk (PowerShell Test-Path: True)."
     },
     {
-      "check": "Stage 2A — Authority path: LC-S18 notes",
+      "check": "Stage 2A — Authority path: LC-S16 KB surface audit",
       "result": "CONFIRMED",
-      "citation": "docs/audit-papers/LC-S18_root_cause_why_registration_generalisation_notes.md — file confirmed present on disk."
+      "citation": "docs/audit-papers/LC-S16_knowledge_asset_frontend_surface_audit.md — confirmed present on disk (PowerShell Test-Path: True)."
     },
     {
-      "check": "Stage 2A — Authority path: sentinel runner",
+      "check": "Stage 2A — Authority path: LC-S17 KB lifecycle framework",
       "result": "CONFIRMED",
-      "citation": "sentinel/sentinel_runner.py — file confirmed present on disk."
+      "citation": "docs/audit-papers/LC-S17_knowledge_bus_lifecycle_framework.md — confirmed present on disk (PowerShell Test-Path: True)."
     },
     {
-      "check": "Stage 2A — Authority path: escaped_defects_v1.json",
+      "check": "Stage 2A — Authority path: LC-S19 payload contract notes",
       "result": "CONFIRMED",
-      "citation": "sentinel/packs/escaped_defects_v1.json lines 1-216. Current defect class count: 22. persisted_result_replay entry present at lines 39-46 with guard_type: 'status_reporting', status: 'PLACEHOLDER'. This sprint must promote it to active_deterministic. 8 new defect classes required by prompt (persisted_result_schema_incompatible, persisted_result_render_failure, stale_analysis_unmarked, results_page_missing_primary_finding, results_page_placeholder_text_visible, results_page_internal_token_visible, results_page_unit_display_regression, results_page_missing_domain_cards) — none currently present."
+      "citation": "docs/audit-papers/LC-S19_payload_contract_hardening_notes.md — confirmed present on disk (PowerShell Test-Path: True)."
     },
     {
-      "check": "Stage 2A — Authority path: DTO builder",
+      "check": "Stage 2A — Authority path: orchestrator (Scope A primary target)",
       "result": "CONFIRMED",
-      "citation": "backend/core/dto/builders.py lines 60-87: build_analysis_result_dto() emits 23 root keys: analysis_id, biomarkers, clusters, insights, status, created_at, overall_score, primary_driver_system_id, system_capacity_scores, burden_hash, risk_assessment, recommendations, result_version, derived_markers, meta, clinician_report_v1, balanced_systems_v1, replay_manifest, interpretation_display_layer_v1, narrative_report_v1, consumer_domain_scores, intervention_annotations_v1. clinician_report_v1 is assembled from meta.insight_graph.report_v1 at retrieval time (lines 45-54) — NOT stored raw."
+      "citation": "backend/core/pipeline/orchestrator.py — confirmed present. Single AnalysisOrchestrator class (line 95). 80+ lines of imports covering 30+ analytics module dependencies confirmed at lines 1-93. __init__ initialises stateful objects: normalizer, completeness_validator, gap_analyzer, recommendation_engine, scoring_engine, lifestyle_overlays, questionnaire_mapper, questionnaire_validator, clustering_engine, insight_synthesizer, signal_registry, signal_evaluator (lines 115-129)."
     },
     {
-      "check": "Stage 2A — Authority path: PersistenceService CLIENT_RESULT_SHAPE_V1",
+      "check": "Stage 2A — Authority path: biomarkers.yaml (Scope C primary target)",
       "result": "CONFIRMED",
-      "citation": "backend/services/storage/persistence_service.py line 31: CLIENT_RESULT_SHAPE_V1 = 'client_result_shape_v1'. Line 351: client result stored under this key in AnalysisResult.processing_metadata. Lines 165, 168: result_version and replay_manifest extracted from results_dto and stored as columns. Lines 597, 604: result_version and replay_manifest retrieved from ORM result object on load."
+      "citation": "backend/ssot/biomarkers.yaml — confirmed present. Actual metadata fields enumerated: aliases, unit, description, category, data_type, system, clusters, roles, key_risks_when_high, key_risks_when_low, known_modifiers, clinical_weight. Fields key_risks_when_high (line 14), key_risks_when_low (line 15), known_modifiers (line 16) confirmed present on all Tier 1 biomarkers but all populated as empty lists []."
     },
     {
-      "check": "Stage 2A — Golden run corpus: fields present",
-      "result": "WARNING — architectural split Cursor must surface",
-      "citation": "backend/artifacts/golden_runs/ exists and is non-empty (30+ sprint-named directories). Golden run analysis_result.json top-level keys (sprint14_2_thyroid_immune_mini_fix_b): ['analysis_id', 'biomarkers', 'burden_hash', 'clusters', 'derived_markers', 'insights', 'meta', 'overall_score', 'primary_driver_system_id', 'replay_manifest', 'status', 'system_capacity_scores', 'unmapped_biomarkers']. Fields required by prompt fixture spec (consumer_domain_scores, clinician_report_v1, narrative_report_v1, interpretation_display_layer_v1, result_version) are NOT present in golden runs — these are assembled by build_analysis_result_dto() at retrieval time. Phase 2 fixture must be a snapshot of builder output, not a raw golden run file. Cursor must document this architectural split in Phase 1 current-state inventory before building the fixture."
-    },
-    {
-      "check": "Stage 2A — Phase 1 status test — timestamp filter",
-      "result": "CONFIRMED — scope gap Cursor must inherit",
-      "citation": "backend/tests/regression/test_persisted_result_replay_status.py lines 70-78: timestamp filter regex '^\\d{8}T\\d{6}Z$' will SKIP all existing sprint-named golden run directories. test_golden_run_jsons_have_minimum_fields will always SKIP on current corpus. Phase 2 fixture must use a different location or the test must accept sprint-named directories — Cursor must decide and document this in Phase 2."
-    },
-    {
-      "check": "Stage 2A — Duplicate authority sources",
+      "check": "Stage 2A — Duplicate authority sources check",
       "result": "PASS",
-      "citation": "Single DTO builder authority: backend/core/dto/builders.py. Single persistence authority: backend/services/storage/persistence_service.py. Single Sentinel runner: sentinel/sentinel_runner.py. No competing replay or persistence script detected."
+      "citation": "backend/core/pipeline/: single orchestrator.py confirmed. No competing orchestration entry point detected. backend/ssot/: biomarkers.yaml is the sole SSOT for biomarker metadata. No competing biomarker metadata file detected."
+    },
+    {
+      "check": "Stage 2A — Tier 1 biomarker SSOT presence",
+      "result": "CONFIRMED",
+      "citation": "All 21 Tier 1 biomarkers confirmed present in backend/ssot/biomarkers.yaml as top-level keys: ldl_cholesterol, hdl_cholesterol, apob, apoa1, total_cholesterol, triglycerides, tsh, free_t4, ferritin, transferrin, crp, egfr, creatinine, alt, ast, ggt, alp, homocysteine, vitamin_b12, folate, hba1c. NOTE: prompt lists 'B12' — maps to vitamin_b12 as Tier 1 target. active_b12 is a distinct separate SSOT entry and must not be conflated."
+    },
+    {
+      "check": "Stage 2A — Scope C schema gap: missing metadata fields",
+      "result": "WARNING — Cursor must evaluate and STOP if needed",
+      "citation": "biomarkers.yaml field enumeration confirms no fields named clinical_caveats, common_confounders, interpretation_direction_notes, signal_why_relevance, directionality_caveat exist in current schema. The quality bar at prompt lines 580-588 requires capturing 'interpretation caveats' and 'directionality caveat' which have no direct field equivalents. Per prompt line 524: 'If required fields do not exist, STOP and propose a minimal schema extension before editing.' Cursor must verify during Phase 1 inventory whether these fields are needed and invoke STOP-to-propose-schema-extension if so. This is a conditional STOP, not a pre-execution blocker."
     },
     {
       "check": "Stage 2A — Cross-sprint regression test files",
       "result": "CONFIRMED",
-      "citation": "All 9 cross-sprint files confirmed present on disk: backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py, test_lc_s8g_uploaded_unit_display_fidelity.py, test_lc_s8d_unit_governance_sentinel.py, test_lc_s10b_launch_core_protection.py, test_lc_s11a_trust_blocker_correction.py, test_lc_s13_lifestyle_coherence_narrative.py, test_lc_s14_direction_aware_scoring.py, test_lc_s16_17_19_kb_surface_payload_contract.py, test_lc_s18_root_cause_why_registration.py, backend/tests/unit/test_scoring_rules.py."
+      "citation": "All 10 cross-sprint regression test files confirmed present on disk: test_lc_s8f_phase_b_true_conversions.py, test_lc_s8g_uploaded_unit_display_fidelity.py, test_lc_s8d_unit_governance_sentinel.py, test_lc_s10b_launch_core_protection.py, test_lc_s11a_trust_blocker_correction.py, test_lc_s13_lifestyle_coherence_narrative.py, test_lc_s14_direction_aware_scoring.py, test_lc_s16_17_19_kb_surface_payload_contract.py, test_lc_s18_root_cause_why_registration.py, test_lc_s20_22_persisted_replay_sentinel_phase2.py (all under backend/tests/regression/). backend/tests/unit/test_scoring_rules.py also confirmed present."
     },
     {
-      "check": "Stage 2A — New LC-S20/22 test file",
+      "check": "Stage 2A — New LC-S21/23/23B test file",
       "result": "CONFIRMED ABSENT",
-      "citation": "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py — not present on disk. Cursor must create this file during implementation."
+      "citation": "backend/tests/regression/test_lc_s21_23_23b_orchestrator_docs_ssot.py — not present on disk. Cursor must create this file during implementation."
     },
     {
-      "check": "Stage 2B — Behavioural scope: Sentinel defect class promotion",
-      "result": "SURFACED",
-      "citation": "Promoting persisted_result_replay from status_reporting to active_deterministic changes Sentinel guard behaviour. Adding 8 new defect classes changes what Sentinel reports and fails on. Each new class must point to an active deterministic test before the entry is added to escaped_defects_v1.json — no placeholder entries permitted (prompt line 593)."
+      "check": "Stage 2A — docs/developer-guides directory",
+      "result": "CONFIRMED ABSENT — expected",
+      "citation": "docs/developer-guides/ — confirmed absent (PowerShell Test-Path: False). docs/architecture/ confirmed present. Prompt at line 118 explicitly instructs: 'If these directories do not exist, create them.' Absence is expected and handled."
     },
     {
-      "check": "Stage 2B — Behavioural scope: DTO compatibility guard",
-      "result": "SURFACED",
-      "citation": "New DTO root-key compatibility tests must assert against build_analysis_result_dto() output (builders.py lines 60-87). If any of the 23 DTO root keys are absent from the fixture, the test must fail loudly. Fixture snapshot must be taken from a current known-good run — not hand-invented — to avoid builder drift."
+      "check": "Stage 2A — Sentinel packs",
+      "result": "CONFIRMED",
+      "citation": "sentinel/packs/: 4 existing packs confirmed — escaped_defects_v1.json, lc_s10b_launch_core_protection_v1.json, lc_s8d_unit_governance_v1.json, scaffold_lc_s20_22_replay_render_v1.json. 5 new defect classes required by prompt lines 667-677."
     },
     {
-      "check": "Stage 2B — No Playwright infrastructure available",
-      "result": "SURFACED",
-      "citation": "frontend/e2e/** returns no files — no Playwright suite exists. Prompt explicitly permits backend API-to-DTO smoke test as minimum viable alternative (prompt lines 423-435). Cursor must NOT build Playwright infrastructure in this sprint."
-    },
-    {
-      "check": "Stage 2B — result_version stale-detection feasibility",
+      "check": "Stage 2B — Behavioural scope defined",
       "result": "PASS",
-      "citation": "persistence_service.py lines 165, 359, 597: result_version stored and retrieved. Defaults to '1.0.0' when absent. Golden runs lack this field — stale detection can key off version string comparison or absence. No forbidden-file changes required for stale detection logic in tests."
+      "citation": "Scope A BEHAVIOUR scope explicitly bounded at prompt lines 252-345. Output preservation, call-order preservation, DTO field preservation, replay compatibility all explicitly required. 8 explicit STOP conditions defined at lines 309-319. Split rule at lines 49-63 provides clean escape if STOP triggers — CONTENT scopes B/C proceed independently."
     },
     {
-      "check": "Stage 2B — STOP conditions are sound",
+      "check": "Stage 2B — Regression targets for Scope A",
       "result": "PASS",
-      "citation": "STOP conditions (prompt lines 344-352): no persisted fixture can be established; DTO cannot be loaded deterministically; stale state undetectable; frontend render requirements unmappable; replay requires broad DTO restructuring. All STOP conditions are deterministic and evaluable. Given DTO builder is readable and golden runs exist, none of these STOP conditions should trigger — but Cursor must explicitly verify each during Phase 1."
+      "citation": "Prompt lines 323-335: 8 explicit behaviour-preservation test obligations — orchestrator output unchanged for AB baseline fixture, homocysteine lead intact, LC-S13 lifestyle visible payoff, LC-S14 direction-aware scoring, LC-S18 WHY registry output, LC-S20 persisted replay compatibility, new phase functions inspectable independently, no fingerprint drift without approval."
     },
     {
-      "check": "Stage 2B — Scope creep check",
+      "check": "Stage 2B — Determinism risk: stateful object initialization",
+      "result": "WARNING — Cursor must actively verify",
+      "citation": "backend/core/pipeline/orchestrator.py lines 115-129: AnalysisOrchestrator.__init__ initialises 12 stateful engine objects (ScoringEngine, SignalRegistry, ClusterEngineV2, InsightSynthesizer, etc.). Phase decomposition into named phase modules must not alter construction order, import-time side effects, or scope of these objects. Shared state across phases is the primary determinism risk. Cursor must confirm all stateful objects remain in __init__ or equivalent single-owner scope and are not duplicated or re-instantiated across phase modules."
+    },
+    {
+      "check": "Stage 2B — Proving harness obligation",
       "result": "PASS",
-      "citation": "Forbidden files correctly exclude: backend/core/scoring/**, backend/ssot/*.yaml (scoring_policy, biomarkers, units), knowledge_bus/**, frontend/app/(app)/results/page.tsx, frontend/app/components/**, automation_bus control plane scripts. All fixture and test work stays within allowed paths (backend/tests/**, sentinel/packs/**, docs/audit-papers/). No path from authorised work to forbidden files detectable."
+      "citation": "Prompt lines 339-345: python backend/tools/launch_core_proving_harness.py must be run if decomposition touches output assembly or pipeline call order. Fingerprint changes = STOP before commit. Metadata/stamp-only changes = do not commit proving artefacts."
+    },
+    {
+      "check": "Stage 2B — No scope creep",
+      "result": "PASS",
+      "citation": "Forbidden files at prompt lines 639-655 explicitly exclude: scoring/**, units/**, units.yaml, scoring_policy.yaml, knowledge_bus/**, frontend/**, automation_bus control plane, run_work_package.py, golden_gate_local.py, update_cursor_status.py. Split rule prevents BEHAVIOUR blockage contaminating CONTENT scopes. No path from authorised work to forbidden files detectable."
     },
     {
       "check": "Stage 2B — No-op check: real work exists",
       "result": "PASS",
-      "citation": "Real work present: (1) persisted_result_replay Sentinel class is PLACEHOLDER — must be promoted; (2) 8 new Sentinel classes absent; (3) no DTO fixture for Phase 2 tests; (4) test_lc_s20_22_persisted_replay_sentinel_phase2.py does not exist; (5) LC-S20/22 audit docs do not exist; (6) Phase 1 golden-run timestamp filter means schema sanity test always SKIPs. Sprint is fully justified."
+      "citation": "Real work confirmed: (1) orchestrator.py has no phase-level decomposition — Scope A work is genuine; (2) docs/developer-guides/ does not exist — 7 guides must be created; (3) all Tier 1 biomarker metadata fields are empty lists [] — Scope C population is genuine; (4) test_lc_s21_23_23b_orchestrator_docs_ssot.py does not exist — must be created; (5) 5 new Sentinel defect classes are absent. Sprint is fully justified."
+    },
+    {
+      "check": "Stage 2B — Sentinel defect class obligations",
+      "result": "PASS",
+      "citation": "5 new classes required (prompt lines 667-677): orchestrator_phase_output_changed, pipeline_phase_regression, scaffold_documentation_missing_for_new_pattern, active_signal_biomarker_missing_ssot_metadata, ssot_metadata_unreviewed_for_kb_wave_target. Each must point to an active deterministic test. No placeholder entries. If Scope A splits, Sentinel obligations must adjust and be documented explicitly."
     }
   ],
-  "verdict": "HARDENED. All five front matter fields valid. risk_level HIGH and change_type MIXED correctly classified. All mandatory authority paths confirmed present on disk. Critical architectural fact surfaced: golden run corpus stores raw analytics output — fields consumer_domain_scores, clinician_report_v1, narrative_report_v1, interpretation_display_layer_v1, result_version are assembled by build_analysis_result_dto() at retrieval time and are NOT in golden run files. Phase 2 persisted replay fixture must be a snapshot of builder output, not a raw golden run. Phase 1 test timestamp filter will SKIP all existing sprint-named golden runs — Cursor must address this in Phase 2. No Playwright suite exists — backend API-to-DTO smoke path is the correct minimum viable alternative. One warning: timestamp filter gap in Phase 1 test. Zero blockers. Cursor may proceed to Stage 3 kernel start."
+  "verdict": "HARDENED. All five front matter fields valid. risk_level HIGH and change_type MIXED correctly classified. All 9 mandatory authority paths confirmed present on disk. All 10 cross-sprint regression test files confirmed present. All 21 Tier 1 biomarkers confirmed in SSOT — all metadata fields empty and real population work exists. Orchestrator confirmed as single entry point with complex stateful initialisation — decomposition determinism risk surfaced. Two warnings: (1) Scope C schema gap — clinical_caveats/directionality_caveat fields absent from biomarkers.yaml; Cursor must check and STOP-to-propose-schema-extension if needed during Scope C inventory. (2) Stateful object initialisation in orchestrator.__init__ — phase decomposition must not alter construction order or scope. Zero blockers. Cursor may proceed to Stage 3 kernel start."
 }

@@ -1,62 +1,82 @@
 ---
-work_id: LC-S20-22
-branch: scaffold/lc-s20-22-persisted-replay-sentinel-phase2
+work_id: LC-S21-23-23B
+branch: scaffold/lc-s21-23-23b-orchestrator-docs-ssot
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# LC-S20/22 — Persisted Replay, Stale-Result Strategy and Sentinel Phase 2 Scaffold
+# LC-S21/23/23B — Orchestrator Decomposition, Scaffold Documentation and SSOT Metadata
 
 ## Classification
 
 This is a HIGH-risk MIXED scaffold sprint.
 
-Reason: this sprint may touch persisted result compatibility, replay DTO handling, API/result rendering smoke checks, Sentinel structure, escaped-defect guard organisation, regression tests, and documentation.
-
-This sprint is part of the approved HealthIQ AI core scaffold completion programme.
-
-This is not an analytical logic sprint.  
-This is not a scoring sprint.  
-This is not a unit-governance sprint.  
-This is not a Knowledge Bus content expansion sprint.  
-This is not a frontend redesign sprint.  
-This is not a Gemini/LLM sprint.  
-This is not a launch-readiness sprint.
-
-## Purpose
-
-Ensure stored reports remain compatible and trustworthy after code changes, then extend Sentinel from backend escaped-defect checks into product-level and render-level protection.
+Reason: this sprint may touch backend orchestration / pipeline structure, scaffold documentation, contributor guidance, SSOT biomarker metadata, validators, tests and Sentinel packs.
 
 This sprint combines:
 
 ```text
-LC-S20 — Persisted Replay Scaffold and Stale-Result Strategy
-LC-S22 — Sentinel Phase 2 Scaffold
+LC-S21  — Orchestrator Phase Decomposition
+LC-S23  — Scaffold-Level Documentation and Developer Onboarding
+LC-S23B — SSOT Metadata Completion for Active Signal Biomarkers
 ````
 
-The sequence is mandatory:
+This is part of the approved HealthIQ AI core scaffold completion programme.
+
+This is not an analytical redesign sprint.
+This is not a scoring sprint.
+This is not a unit-governance sprint.
+This is not a Knowledge Bus content expansion sprint.
+This is not a frontend redesign sprint.
+This is not a Gemini/LLM sprint.
+This is not a launch-readiness sprint.
+
+## Core principle
+
+Preserve behaviour.
+
+The orchestrator decomposition must make the pipeline easier to maintain without changing analytical output.
+
+Documentation must describe the real runtime architecture, not an aspirational architecture.
+
+SSOT metadata completion must support future Knowledge Bus authoring, but it must not become runtime interpretation authority unless explicitly wired in a later sprint.
+
+## Important split rule
+
+This sprint contains both BEHAVIOUR work and CONTENT work.
+
+If the orchestrator decomposition becomes risky, blocked, or requires broader architectural redesign, STOP.
+
+Do not let blocked BEHAVIOUR work automatically block separable documentation / SSOT metadata work.
+
+If Scope A blocks, report and request GPT/human authority to either:
 
 ```text
-1. Establish persisted-result replay fixture strategy.
-2. Define stale-result handling policy.
-3. Only then build Sentinel Phase 2 render/API-to-render guards around that strategy.
+1. continue Scope B/C as a CONTENT-only split package
+2. pause all scopes
+3. defer orchestrator decomposition
+4. create a new Automation Bus work package
 ```
 
-If a concrete persisted replay fixture strategy cannot be established, STOP before implementing Sentinel Phase 2 render-level checks.
+Cursor may not self-authorise a split.
 
-## Controlling authority
+---
+
+# Controlling authority
 
 Read before doing anything:
 
 ```text
 docs/planning-papers/HealthIQ_AI_core_scaffold_completion_definition_v1.md
 docs/planning-papers/HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md
+docs/audit-papers/LC-S20_persisted_replay_stale_result_strategy.md
+docs/audit-papers/LC-S22_sentinel_phase2_scaffold_notes.md
+docs/audit-papers/LC-S20_22_persisted_replay_sentinel_phase2_notes.md
+docs/audit-papers/LC-S18_root_cause_why_registration_generalisation_notes.md
 docs/audit-papers/LC-S16_knowledge_asset_frontend_surface_audit.md
 docs/audit-papers/LC-S17_knowledge_bus_lifecycle_framework.md
 docs/audit-papers/LC-S19_payload_contract_hardening_notes.md
-docs/audit-papers/LC-S16_17_19_kb_surface_payload_contract_notes.md
-docs/audit-papers/LC-S18_root_cause_why_registration_generalisation_notes.md
 ```
 
 Also inspect if present:
@@ -71,36 +91,57 @@ docs/governance/KNOWLEDGE_BUS_SOP_v1.3.md
 
 If the scaffold definition document is missing, STOP.
 
-## Required output documentation
+---
+
+# Required output documentation
 
 Create:
 
 ```text
-docs/audit-papers/LC-S20_persisted_replay_stale_result_strategy.md
-docs/audit-papers/LC-S22_sentinel_phase2_scaffold_notes.md
+docs/audit-papers/LC-S21_orchestrator_phase_decomposition_notes.md
+docs/audit-papers/LC-S23_scaffold_documentation_onboarding_notes.md
+docs/audit-papers/LC-S23B_ssot_metadata_completion_notes.md
 ```
+
+Also create or update the following standing scaffold documentation:
+
+```text
+docs/architecture/HealthIQ_AI_runtime_architecture_map_v1.md
+docs/developer-guides/how_to_add_signal_package_v1.md
+docs/developer-guides/how_to_add_why_coverage_v1.md
+docs/developer-guides/how_to_add_lifestyle_modifier_v1.md
+docs/developer-guides/how_to_test_intelligence_asset_v1.md
+docs/developer-guides/healthiq_scaffold_guardrails_v1.md
+docs/developer-guides/scaffold_defect_vs_missing_content_classification_v1.md
+```
+
+If these directories do not exist, create them.
 
 Also create one combined implementation note:
 
 ```text
-docs/audit-papers/LC-S20_22_persisted_replay_sentinel_phase2_notes.md
+docs/audit-papers/LC-S21_23_23B_orchestrator_docs_ssot_notes.md
 ```
 
 The combined implementation note must include:
 
 1. preflight results
 2. prior scaffold guard results
-3. persisted replay current-state assessment
-4. stale-result policy decision
-5. Sentinel Phase 2 structure decision
-6. Sentinel pack rationalisation decision
-7. files changed
-8. tests added/updated
-9. render/API smoke coverage added
-10. residual risks
-11. recommendation for LC-S21/23/23B
+3. orchestrator current-state map
+4. decomposition decision and scope
+5. whether split rule was triggered
+6. documentation files created/updated
+7. SSOT metadata fields completed
+8. Tier 1/Tier 2 biomarker status
+9. files changed
+10. tests added/updated
+11. Sentinel updates
+12. residual risks
+13. final scaffold completion recommendation
 
-## Mandatory preflight
+---
+
+# Mandatory preflight
 
 Run and record:
 
@@ -119,8 +160,8 @@ Test-Path automation_bus/state/work_package_active.json
 
 Read `automation_bus/state/work_package_active.json` and confirm:
 
-* `work_id` is `LC-S20-22`
-* branch is `scaffold/lc-s20-22-persisted-replay-sentinel-phase2`
+* `work_id` is `LC-S21-23-23B`
+* branch is `scaffold/lc-s21-23-23b-orchestrator-docs-ssot`
 
 If token is missing or mismatched, STOP:
 
@@ -132,13 +173,15 @@ Confirm controlling docs exist:
 
 ```powershell
 Test-Path docs/planning-papers/HealthIQ_AI_core_scaffold_completion_definition_v1.md
-Test-Path docs/audit-papers/LC-S19_payload_contract_hardening_notes.md
-Test-Path docs/audit-papers/LC-S18_root_cause_why_registration_generalisation_notes.md
+Test-Path docs/planning-papers/HealthIQ_AI_Core_Scaffold_Completion_Sprint_Plan_FINAL.md
+Test-Path docs/audit-papers/LC-S20_22_persisted_replay_sentinel_phase2_notes.md
 ```
 
 If any are missing, STOP.
 
-## Cross-sprint guard preflight
+---
+
+# Cross-sprint guard preflight
 
 Before implementation, run prior scaffold / launch-core protections.
 
@@ -154,6 +197,7 @@ python -m pytest backend/tests/regression/test_lc_s13_lifestyle_coherence_narrat
 python -m pytest backend/tests/regression/test_lc_s14_direction_aware_scoring.py -q
 python -m pytest backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py -q
 python -m pytest backend/tests/regression/test_lc_s18_root_cause_why_registration.py -q
+python -m pytest backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py -q
 python -m pytest backend/tests/unit/test_scoring_rules.py -q
 ```
 
@@ -167,311 +211,390 @@ Do not proceed while prior protected behaviours are broken.
 
 # Phase 1 — Current-state inventory
 
-Before changing anything, identify and record current authority paths for:
+Before making changes, identify and record current authority paths for:
 
-1. persisted analysis storage / retrieval
-2. saved analysis DTO shape
-3. replay manifest generation
-4. result version handling
-5. API route that serves stored results
-6. frontend result-page render path
-7. existing Playwright/e2e framework, if any
-8. Sentinel runner / pack structure
-9. current escaped-defects pack usage
-10. DTO root-key contract from LC-S16/17/19
-11. existing launch-core proving harness
-12. any current stale-result or migration logic
+1. orchestration entry point
+2. canonicalisation phase
+3. unit normalisation phase
+4. scoring phase
+5. signal evaluation phase
+6. root-cause / WHY phase
+7. IDL/display layer publication
+8. report/narrative assembly
+9. replay/audit manifest generation
+10. DTO builder
+11. scaffold documentation currently available
+12. biomarker SSOT metadata fields
+13. active signal biomarker list
+14. Sentinel packs covering scaffold behaviours
 
 Known likely files to inspect:
 
 ```text
-backend/app/routes/analysis.py
-backend/core/dto/**/*
-backend/core/analytics/**/*
 backend/core/pipeline/**/*
+backend/core/analytics/**/*
+backend/core/dto/**/*
+backend/ssot/biomarkers.yaml
+backend/ssot/scoring_policy.yaml
 backend/tests/regression/**/*
-backend/tools/launch_core_proving_harness.py
-frontend/app/(app)/results/page.tsx
-frontend/app/types/analysis.ts
-frontend/e2e/**/*
-frontend/tests/**/*
-sentinel/**/*
+backend/tests/unit/**/*
 sentinel/packs/**/*
-docs/audit-papers/launch-core-proving/latest_fingerprints.json
-docs/audit-papers/launch-core-proving/PROVING_REPORT.md
+docs/audit-papers/**/*
+docs/planning-papers/**/*
 ```
 
-STOP if there are multiple competing persisted replay authorities and the correct one cannot be established.
+STOP if there are multiple competing orchestrator authorities and the correct one cannot be established.
 
 ---
 
-# Phase 2 — LC-S20 persisted replay and stale-result strategy
+# Scope A — LC-S21 Orchestrator Phase Decomposition
 
 ## Objective
 
-Upgrade persisted-result replay from a weak placeholder/schema check into a real scaffold compatibility contract.
+Make the analytical pipeline maintainable before the Knowledge Bus and signal estate grows further.
 
-A report generated today should either:
+This is a behaviour-preserving decomposition.
 
-```text
-1. remain renderable and interpretable after future code changes, or
-2. be clearly marked stale / requiring regeneration.
-```
+Do not change analytical output.
 
-## Required current-state questions
+## Required current-state mapping
 
-Answer explicitly:
-
-1. Where are analysis results persisted?
-2. What exact DTO is persisted?
-3. What fields are required for result-page rendering?
-4. Is `result_version` meaningful?
-5. Is `replay_manifest` meaningful?
-6. Is there an engine/version stamp?
-7. Can an older result be identified as stale?
-8. Is there a migration path?
-9. Does the frontend distinguish fresh vs stale results?
-10. Is stored JSON immutable historical output or regeneratable analysis?
-
-## Required stale-result policy decision
-
-Define and document one of these policies:
-
-### Option A — Immutable historical report
-
-Stored reports are preserved as generated. New code does not reinterpret old reports unless the user explicitly regenerates.
-
-Required implication:
-
-* old report must continue to render
-* engine version must be visible internally
-* stale warning may be needed if old report predates major scaffold fixes
-
-### Option B — Regeneratable report
-
-Stored raw input is replayed through the current engine to produce updated output.
-
-Required implication:
-
-* raw input and questionnaire context must be preserved
-* regenerated output may differ
-* user-facing distinction between original and regenerated report may be needed
-
-### Option C — Hybrid
-
-Stored reports render as historical artefacts, with optional regeneration if raw input is available.
-
-Required implication:
-
-* persisted report compatibility is still required
-* regeneration capability is explicit and not silent
-
-Preferred unless repo evidence says otherwise:
+Before editing code, produce a current-state map in:
 
 ```text
-Hybrid: persisted report renders as historical output; regeneration is explicit when raw inputs are available.
+docs/audit-papers/LC-S21_orchestrator_phase_decomposition_notes.md
 ```
 
-Do not silently mutate historical reports.
+Include:
 
-## Required persisted replay fixture strategy
+* current entry point
+* current call order
+* current major responsibilities
+* current pain points
+* candidate phase boundaries
+* files that would need to change
+* tests that would prove no behavioural drift
 
-Create or identify at least one fixture that represents a stored analysis DTO.
+## Target phase model
 
-The fixture must include, at minimum:
-
-* analysis_id
-* biomarkers
-* consumer_domain_scores
-* clinician_report_v1
-* narrative_report_v1
-* interpretation_display_layer_v1
-* replay_manifest
-* meta
-* result_version
-
-If no existing fixture is suitable, create a minimal deterministic fixture from a current known-good analysis.
-
-## Required compatibility checks
-
-Add deterministic tests proving:
-
-* persisted DTO has required root keys
-* persisted DTO can be loaded by current backend compatibility path
-* persisted DTO has enough fields for frontend rendering
-* missing critical fields fail clearly or mark stale
-* stale/legacy version is detectable
-* current DTO root-key contract remains compatible with persisted fixture
-
-## Required output
-
-Create:
+Decompose orchestration into named phase modules where safe:
 
 ```text
-docs/audit-papers/LC-S20_persisted_replay_stale_result_strategy.md
+canonicalisation phase
+unit normalisation phase
+scoring phase
+signal evaluation phase
+root-cause phase
+IDL phase
+report assembly phase
+replay/audit phase
 ```
 
-Use this structure:
+The final shape may differ if the real codebase suggests better boundaries, but the notes must explain why.
 
-```md
-# LC-S20 — Persisted Replay and Stale-Result Strategy
+## Required behaviour
 
-## 1. Executive verdict
+* Preserve one high-level orchestration entry point.
+* Preserve output shape.
+* Preserve call order unless there is a clearly documented no-op refactor reason.
+* Preserve all existing DTO fields.
+* Preserve all scoring/signal/root-cause results.
+* Preserve all replay/persisted compatibility behaviour.
+* Add phase-level tests where feasible.
+* Do not move clinical logic into frontend or docs.
 
-## 2. Current persisted-result architecture
+## STOP conditions for Scope A
 
-## 3. Stored DTO fields
+STOP if:
 
-## 4. Replay manifest assessment
+* behaviour preservation cannot be proven
+* output fingerprints change unexpectedly
+* phase boundaries require redesigning analytics rather than moving orchestration structure
+* DTO shape changes are required
+* scoring or signal semantics change
+* unit governance is affected
+* root-cause output changes
+* persisted replay compatibility changes
+* more than a minimal number of core analytics modules require invasive edits
 
-## 5. Result/versioning assessment
+If any STOP condition triggers, invoke the split rule.
 
-## 6. Stale-result policy decision
+## Required tests for Scope A
 
-## 7. Persisted replay fixture strategy
+Add or update deterministic tests proving:
 
-## 8. Compatibility checks added
+* orchestrator output is unchanged for representative AB baseline fixture
+* homocysteine lead remains intact
+* LC-S13 lifestyle visible payoff remains intact
+* LC-S14 direction-aware scoring remains intact
+* LC-S18 WHY registry output remains intact
+* LC-S20 persisted replay compatibility remains intact
+* new phase functions can be invoked or inspected independently where appropriate
+* no output fingerprint drift unless explicitly approved
 
-## 9. Failure behaviour
+## Optional proving harness
 
-## 10. Residual risks
+If orchestrator decomposition touches output assembly or pipeline call order, run:
 
-## 11. Implications for Sentinel Phase 2
+```powershell
+python backend/tools/launch_core_proving_harness.py
 ```
 
-## STOP condition
+If only metadata/stamp changes occur, revert or do not commit metadata-only proving artefacts.
 
-STOP before Sentinel Phase 2 implementation if:
-
-* no persisted replay fixture can be established
-* current persisted outputs cannot be loaded deterministically
-* result-version/stale-state cannot be detected at all
-* frontend render requirements cannot be mapped to stored DTO fields
-* establishing replay compatibility requires broad DTO restructuring
-
-If STOP triggers, Cursor may not self-rescope. Report findings for GPT/human decision.
+If payload fingerprints change, STOP and report before committing unless the change is expected and approved.
 
 ---
 
-# Phase 3 — LC-S22 Sentinel Phase 2 scaffold
-
-Proceed only after Phase 2 establishes a concrete persisted replay fixture strategy.
+# Scope B — LC-S23 Scaffold-Level Documentation and Developer Onboarding
 
 ## Objective
 
-Extend Sentinel from backend escaped-defect tracking into product-level, DTO-level and render-level protection.
+Make the actual runtime architecture understandable to a future developer or content author without requiring chat history.
 
-## Required Sentinel structure decision
+Documentation must describe the real implementation, not a desired future architecture.
 
-The Sentinel estate is growing.
+## Required standing docs
 
-Current known issue:
-
-```text
-escaped_defects_v1.json is becoming a broad catch-all pack.
-```
-
-Decide and document one of these structures:
-
-### Option A — Keep single escaped-defects pack
-
-Continue adding escaped and scaffold-defining defects to `escaped_defects_v1.json`.
-
-Must include grouping metadata by sprint/domain.
-
-### Option B — Introduce scaffold-phase packs
-
-Create separate packs such as:
+Create or update:
 
 ```text
-sentinel/packs/scaffold_lc_s20_22_replay_render_v1.json
-sentinel/packs/scaffold_payload_contract_v1.json
-sentinel/packs/scaffold_why_registry_v1.json
+docs/architecture/HealthIQ_AI_runtime_architecture_map_v1.md
+docs/developer-guides/how_to_add_signal_package_v1.md
+docs/developer-guides/how_to_add_why_coverage_v1.md
+docs/developer-guides/how_to_add_lifestyle_modifier_v1.md
+docs/developer-guides/how_to_test_intelligence_asset_v1.md
+docs/developer-guides/healthiq_scaffold_guardrails_v1.md
+docs/developer-guides/scaffold_defect_vs_missing_content_classification_v1.md
 ```
 
-### Option C — Hybrid
+## Required content
 
-Keep `escaped_defects_v1.json` for escaped defects and create new scaffold packs for planned scaffold guards.
+### Runtime architecture map
 
-Preferred:
+Must cover:
+
+* ingestion
+* canonicalisation
+* units
+* lab-derived reference ranges
+* scoring
+* direction-aware scoring
+* signals
+* Knowledge Bus package lifecycle
+* root-cause / WHY registry
+* lifestyle propagation
+* DTO contract
+* persisted replay
+* frontend rendering boundary
+* Sentinel / regression guard layers
+* Automation Bus workflow
+
+### How to add signal package
+
+Must cover:
+
+* package lifecycle states
+* required files
+* signal-only vs WHY-enabled distinction
+* package estate inventory
+* orphan detection
+* validators/tests
+* Sentinel expectations
+* documentation update obligation
+
+### How to add WHY coverage
+
+Must cover:
+
+* root-cause registry
+* hypothesis asset requirements
+* governed vs fallback WHY
+* fingerprint expectations
+* duplicate/malformed metadata failure
+* how to avoid backend-code coupling where possible
+* LC-S18 hybrid registry state
+
+### How to add lifestyle modifier
+
+Must cover:
+
+* questionnaire mapping
+* lifestyle modifier computation
+* confidence/caveat/explanation limits
+* allowed and forbidden claims
+* visible user-surface requirements
+* Sentinel expectations
+
+### How to test intelligence asset
+
+Must cover:
+
+* unit tests
+* regression tests
+* fixture tests
+* DTO contract checks
+* Sentinel pack updates
+* proving harness use
+* before/after fingerprint expectations
+
+### Guardrails
+
+Must cover:
+
+* no fallback parser
+* no global/default ranges where lab ranges exist
+* no frontend clinical logic
+* no hidden Gemini interpretation
+* no silent mutation of historical persisted reports
+* no raw signal/governance/internal IDs in user text
+* no DTO restructuring without frontend consumer tracing
+* no unvalidated orphan package auto-loading
+* no hardcoded biomarker exceptions where policy should exist
+
+### Scaffold defect vs missing content classification
+
+Must include the categories from LC-S12B:
+
+* scaffold defect
+* missing knowledge asset
+* frontend presentation issue
+* clinical content backlog
+* escaped defect
+* governance gap
+
+## Documentation maintenance obligation
+
+Each guide must include a short standing-maintenance note:
 
 ```text
-Hybrid: keep escaped_defects_v1.json for escaped defects; create scaffold-specific packs for planned scaffold behaviours.
+Future KB-WAVE or scaffold sprints must update this document if they introduce or change the relevant architectural pattern.
 ```
 
-Do not reorganise existing Sentinel packs destructively unless fully tested.
+## Tests / validation for docs
 
-## Required Sentinel Phase 2 coverage
+Add lightweight deterministic checks where feasible:
 
-Add or prepare deterministic guards for:
+* required docs exist
+* docs include required headings
+* docs reference real files/paths where applicable
+* docs do not mention non-existent authority paths as current runtime
 
-* persisted result schema compatibility
-* persisted result render/API smoke
-* stale analysis unmarked
-* results page missing primary finding
-* results page placeholder text visible
-* results page internal token visible
-* results page unit display regression
-* results page missing domain cards
-* DTO root-key drift
-* Knowledge Bus asset surfacing regression
+---
 
-## Required render/API smoke path
+# Scope C — LC-S23B SSOT Metadata Completion for Active Signal Biomarkers
 
-Add at least one smoke path that starts with a persisted or fixture DTO and proves it can support result-page rendering.
+## Objective
 
-Acceptable forms:
+Complete minimum biomarker metadata needed to support governed future WHY authoring.
 
-1. backend API-to-DTO smoke test if frontend render tools are not available
-2. frontend type/render smoke test if existing frontend test harness supports it
-3. Playwright route smoke if existing Playwright setup is reliable
-4. minimal TypeScript/component render check if frontend test infra exists
+This is SSOT metadata work, not runtime interpretation work.
 
-Do not build a large brittle UI automation suite.
+Metadata completion must not alter runtime biomarker interpretation unless already wired by existing code.
 
-The minimum acceptable Phase 2 guard is:
+## Important non-negotiable policy
+
+Do not substitute global/default reference ranges for lab-derived ranges.
+
+Do not use SSOT metadata to override lab-provided ranges.
+
+Do not add speculative clinical claims.
+
+Do not make metadata runtime-authoritative unless explicitly already used by code.
+
+## Current metadata fields to inspect
+
+In:
 
 ```text
-A stored/persisted DTO fixture can be loaded and provides all fields required by the result-page contract, with no placeholder/internal-token leakage in user-facing sections.
+backend/ssot/biomarkers.yaml
 ```
 
-## Required output
+Inspect fields such as:
 
-Create:
+* key risks when high
+* key risks when low
+* known modifiers
+* clinical caveats
+* relevant systems
+* common confounders
+* interpretation direction notes
+* signal/WHY relevance
+
+Use actual field names from the file. Do not invent new field names if equivalent fields already exist.
+
+If required fields do not exist, STOP and propose a minimal schema extension before editing.
+
+## Tier 1 biomarkers — required
+
+Complete metadata for:
 
 ```text
-docs/audit-papers/LC-S22_sentinel_phase2_scaffold_notes.md
+LDL
+HDL
+ApoB
+ApoA1
+total cholesterol
+triglycerides
+TSH
+Free T4
+ferritin
+transferrin
+CRP
+eGFR
+creatinine
+ALT
+AST
+GGT
+ALP
+homocysteine
+B12
+folate
+HbA1c
 ```
 
-Use this structure:
+Use canonical biomarker IDs from `biomarkers.yaml`.
 
-```md
-# LC-S22 — Sentinel Phase 2 Scaffold
+If an item is absent from the SSOT, record it as absent and do not invent a new biomarker unless explicitly approved.
 
-## 1. Executive verdict
+## Tier 2 biomarkers — optional / carry-forward
 
-## 2. Existing Sentinel pack assessment
+Complete only if safe and time allows:
 
-## 3. Chosen Sentinel Phase 2 structure
-
-## 4. Persisted replay fixture dependency
-
-## 5. New/updated defect classes
-
-## 6. Render/API smoke path
-
-## 7. DTO/schema compatibility guards
-
-## 8. Placeholder/internal-token guards
-
-## 9. Unit/display fidelity guards
-
-## 10. Knowledge Bus surfacing guards
-
-## 11. What remains deferred
-
-## 12. Recommended next Sentinel work
+```text
+glucose
+insulin
+cortisol
+creatine kinase
+additional sex hormone markers
 ```
+
+If not completed, record them as carry-forward to KB-WAVE preparation.
+
+## Metadata quality bar
+
+For each Tier 1 biomarker, metadata should support future WHY authoring by capturing:
+
+* high-direction risk/context where clinically relevant
+* low-direction risk/context where clinically relevant
+* known modifiers/confounders
+* relevant systems
+* interpretation caveats
+* directionality caveat where applicable
+* relationship to current or future signal/WHY work
+
+Avoid overclaiming. Use concise, conservative, clinically bounded wording.
+
+## Required validators / tests
+
+Add or update tests/validators proving:
+
+* Tier 1 biomarkers have required metadata fields populated
+* metadata values are not empty placeholders
+* metadata does not include prohibited placeholder strings
+* metadata does not introduce global/default range values
+* metadata does not contradict LC-S14 direction-aware scoring policy for representative markers
+* active signal biomarkers required for early KB-WAVE work have metadata coverage
 
 ---
 
@@ -479,34 +602,38 @@ Use this structure:
 
 Only edit what is necessary.
 
-Potentially allowed backend:
+Potentially allowed backend behaviour files for Scope A:
 
 ```text
-backend/core/dto/**/*
+backend/core/pipeline/**/*
 backend/core/analytics/**/*
-backend/app/routes/analysis.py
+backend/core/dto/**/*
 backend/tests/unit/**/*
 backend/tests/regression/**/*
-backend/tests/fixtures/**/*
-backend/tools/**/*
 ```
 
-Potentially allowed frontend tests only:
+Potentially allowed SSOT files for Scope C:
 
 ```text
-frontend/tests/**/*
-frontend/e2e/**/*
-frontend/app/types/**/*
+backend/ssot/biomarkers.yaml
 ```
 
-Potentially allowed Sentinel/docs:
+Potentially allowed docs:
+
+```text
+docs/architecture/**/*
+docs/developer-guides/**/*
+docs/audit-papers/LC-S21_orchestrator_phase_decomposition_notes.md
+docs/audit-papers/LC-S23_scaffold_documentation_onboarding_notes.md
+docs/audit-papers/LC-S23B_ssot_metadata_completion_notes.md
+docs/audit-papers/LC-S21_23_23B_orchestrator_docs_ssot_notes.md
+```
+
+Potentially allowed Sentinel:
 
 ```text
 sentinel/packs/**/*
 sentinel/**/*
-docs/audit-papers/LC-S20_persisted_replay_stale_result_strategy.md
-docs/audit-papers/LC-S22_sentinel_phase2_scaffold_notes.md
-docs/audit-papers/LC-S20_22_persisted_replay_sentinel_phase2_notes.md
 ```
 
 ## Forbidden unless GPT explicitly approves
@@ -516,11 +643,8 @@ backend/core/scoring/**/*
 backend/core/units/**/*
 backend/ssot/units.yaml
 backend/ssot/scoring_policy.yaml
-backend/ssot/biomarkers.yaml
 knowledge_bus/**/*
-frontend/app/(app)/results/page.tsx
-frontend/app/components/**/*
-frontend/app/lib/**/*
+frontend/**/*
 automation_bus/state/*
 automation_bus/latest_gate_evidence.json
 automation_bus/latest_gate_output.txt
@@ -530,44 +654,9 @@ backend/scripts/golden_gate_local.py
 backend/scripts/update_cursor_status.py
 ```
 
-Do not modify scoring, unit governance, Knowledge Bus content, production frontend rendering, SSOT biomarker metadata, or Automation Bus scripts in this sprint.
+Do not modify scoring, unit governance, Knowledge Bus content, frontend rendering, or Automation Bus scripts in this sprint.
 
 If those appear necessary, STOP.
-
----
-
-# Required tests
-
-Add or update deterministic tests for:
-
-## Persisted replay
-
-* persisted DTO fixture loads
-* required root keys present
-* replay manifest present and parseable
-* result_version present
-* stale/legacy version detectable
-* missing critical fields fail clearly or mark stale
-* DTO fixture satisfies frontend-consumed root-key contract
-* persisted fixture does not leak internal-only fields into user-facing text checks
-
-## Sentinel Phase 2
-
-* Sentinel pack structure validates
-* new defect classes are present and active
-* each new defect class points to an active deterministic test
-* escaped-defects pack is not allowed to silently become unstructured catch-all if new structure is chosen
-* render/API smoke path passes
-
-## Regression preservation
-
-* LC-S8F/G unit and display fidelity still passes
-* LC-S11A trust blockers remain fixed
-* LC-S13 lifestyle/coherence/narrative protections still pass
-* LC-S14 direction-aware scoring protections still pass
-* LC-S16/17/19 DTO/KB surfacing protections still pass
-* LC-S18 WHY registration protections still pass
-* homocysteine lead finding remains intact
 
 ---
 
@@ -575,24 +664,21 @@ Add or update deterministic tests for:
 
 Sentinel update is required.
 
-At minimum add/update defect classes:
+At minimum add or update defect classes:
 
 ```text
-persisted_result_schema_incompatible
-persisted_result_render_failure
-stale_analysis_unmarked
-results_page_missing_primary_finding
-results_page_placeholder_text_visible
-results_page_internal_token_visible
-results_page_unit_display_regression
-results_page_missing_domain_cards
+orchestrator_phase_output_changed
+pipeline_phase_regression
+scaffold_documentation_missing_for_new_pattern
+active_signal_biomarker_missing_ssot_metadata
+ssot_metadata_unreviewed_for_kb_wave_target
 ```
 
-Each must point to an active deterministic regression test, or the strongest available deterministic guard with documented limitation.
+Each must point to an active deterministic regression test or validator.
 
 Do not add placeholder Sentinel entries.
 
-If the chosen Sentinel Phase 2 structure creates new packs, tests must validate those packs.
+If Scope A is split/deferred, adjust Sentinel obligations accordingly and document.
 
 ---
 
@@ -612,31 +698,17 @@ python -m pytest backend/tests/regression/test_lc_s13_lifestyle_coherence_narrat
 python -m pytest backend/tests/regression/test_lc_s14_direction_aware_scoring.py -q
 python -m pytest backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py -q
 python -m pytest backend/tests/regression/test_lc_s18_root_cause_why_registration.py -q
+python -m pytest backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py -q
 python -m pytest backend/tests/unit/test_scoring_rules.py -q
 ```
 
-Run new LC-S20/22 tests explicitly, for example:
+Run the new LC-S21/23/23B tests explicitly, for example:
 
 ```powershell
-python -m pytest backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py -q
+python -m pytest backend/tests/regression/test_lc_s21_23_23b_orchestrator_docs_ssot.py -q
 ```
 
-If frontend test files are changed:
-
-```powershell
-npm run type-check
-npm run test
-```
-
-If Playwright/e2e files are added or changed, run the relevant Playwright command and record exact output.
-
-If any required existing test file name differs, find and run the current equivalent, then record the substitution.
-
----
-
-# Optional proving harness check
-
-If replay fixtures or result payload compatibility changes could affect launch-core proving output, run:
+If orchestrator output could change, run the launch-core proving harness:
 
 ```powershell
 python backend/tools/launch_core_proving_harness.py
@@ -646,23 +718,25 @@ If only metadata/stamp changes occur, revert or do not commit metadata-only prov
 
 If payload fingerprints change, STOP and report before committing unless the change is expected and approved.
 
+If any required existing test file name differs, find and run the current equivalent, then record the substitution.
+
 ---
 
 # Acceptance criteria
 
 This sprint is complete only if:
 
-* persisted replay fixture strategy is established
-* stale-result handling policy is documented
-* persisted DTO compatibility is deterministically tested
-* Sentinel Phase 2 structure decision is documented
-* at least one API/render smoke path is guarded
-* all required Sentinel defect classes are active or limitations documented
-* escaped-defects pack growth is addressed structurally
+* Scope A either completes behaviour-preserving orchestration decomposition or cleanly STOPs/splits
+* orchestrator output is proven unchanged if Scope A changes runtime code
+* scaffold documentation exists and describes actual runtime architecture
+* contributor guides exist and are usable without chat history
+* Tier 1 SSOT metadata is complete or explicit approved exceptions are recorded
+* metadata does not change runtime interpretation unless already wired
+* Sentinel defect classes are active and deterministic
 * prior scaffold/launch-core guards still pass
-* no production frontend redesign occurs
-* no scoring/unit/Knowledge Bus content work is smuggled into this sprint
-* residual risks are documented for LC-S21/23/23B or KB-WAVE phase
+* no scoring/unit/frontend/Knowledge Bus content work is smuggled into this sprint
+* documentation includes standing maintenance obligation
+* residual risks and KB-WAVE transition readiness are documented
 
 ---
 
@@ -709,7 +783,7 @@ python backend/scripts/run_work_package.py finish
 
 Cursor implements and reports only.
 
-Cursor may not self-certify clinical correctness, architecture correctness, scaffold completion, merge readiness, launch readiness, or permission to begin the next sprint.
+Cursor may not self-certify clinical correctness, architecture correctness, scaffold completion, merge readiness, launch readiness, or permission to begin KB-WAVE work.
 
 ```
 ```
