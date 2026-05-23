@@ -15,6 +15,11 @@ UNIT_NORMALISATION_META_KEY = "__unit_normalisation_meta__"
 
 from core.canonical.normalize import BiomarkerNormalizer, normalize_panel
 from core.canonical.resolver import resolve_to_canonical, CanonicalResolver
+from core.pipeline.orchestrator_phases_v1 import (
+    evaluate_signal_evaluation_phase,
+    prepare_scoring_inputs_from_panel,
+    quarantine_unmapped_biomarkers,
+)
 from core.pipeline.context_factory import AnalysisContextFactory
 from core.models.context import AnalysisContext
 from core.models.user import User
@@ -1041,21 +1046,14 @@ class AnalysisOrchestrator:
             # Trace biomarkers received by orchestrator
             print("[TRACE] Orchestrator input biomarkers:", list(biomarkers.keys()))
             
-            # Quarantine unmapped biomarkers before downstream processing
-            unmapped_biomarkers = []
-            filtered_biomarkers = {}
-            alias_service = self.normalizer.alias_service
-            for key, value in biomarkers.items():
-                if key.startswith("unmapped_"):
-                    unmapped_biomarkers.append(key)
-                    continue
-                resolved = alias_service.resolve(key)
-                if resolved.startswith("unmapped_"):
-                    unmapped_biomarkers.append(resolved)
-                    continue
-                filtered_biomarkers[key] = value
-            unmapped_biomarkers = sorted(set(unmapped_biomarkers))
-            skipped_unmapped = len(biomarkers) - len(filtered_biomarkers)
+            # Phase: canonicalisation_quarantine
+            quarantine = quarantine_unmapped_biomarkers(
+                biomarkers,
+                alias_service=self.normalizer.alias_service,
+            )
+            unmapped_biomarkers = quarantine.unmapped_biomarkers
+            filtered_biomarkers = quarantine.filtered_biomarkers
+            skipped_unmapped = quarantine.skipped_unmapped
             logger.info(
                 "Biomarker quarantine: total=%s, canonical=%s, unmapped_skipped=%s",
                 len(biomarkers),
@@ -1063,39 +1061,12 @@ class AnalysisOrchestrator:
                 skipped_unmapped,
             )
 
-            # Step 1: Convert biomarkers to simple format for scoring engine and preserve reference ranges
+            # Phase: scoring_input_preparation
             logger.info("Step 1: Converting biomarkers for scoring")
-            simple_biomarkers = {}
-            input_reference_ranges = {}  # Preserve reference ranges from input
-            input_reference_profiles: Dict[str, Dict[str, Any]] = {}
-            for biomarker_name, biomarker_data in filtered_biomarkers.items():
-                if isinstance(biomarker_data, dict):
-                    simple_biomarkers[biomarker_name] = biomarker_data.get('value', biomarker_data.get('measurement', 0))
-                    # Extract reference range if present and valid
-                    ref_range = biomarker_data.get('reference_range') or biomarker_data.get('referenceRange')
-                    if ref_range and isinstance(ref_range, dict):
-                        min_val = coerce_optional_float(ref_range.get("min"))
-                        max_val = coerce_optional_float(ref_range.get("max"))
-                        has_min = min_val is not None
-                        has_max = max_val is not None
-                        if has_min and has_max and float(min_val) >= float(max_val):
-                            logger.warning(
-                                f"[Orchestrator] Invalid input reference range for {biomarker_name}: "
-                                f"min={min_val}, max={max_val}"
-                            )
-                        elif has_min or has_max:
-                            input_reference_ranges[biomarker_name] = {
-                                "min": float(min_val) if has_min else None,
-                                "max": float(max_val) if has_max else None,
-                                "unit": ref_range.get("unit", ""),
-                                "source": ref_range.get("source", "lab"),
-                            }
-                            logger.debug(f"[Orchestrator] Preserved input reference range for {biomarker_name}: {input_reference_ranges[biomarker_name]}")
-                    ref_profile = biomarker_data.get("reference_profile") or biomarker_data.get("referenceProfile")
-                    if isinstance(ref_profile, dict):
-                        input_reference_profiles[biomarker_name] = dict(ref_profile)
-                else:
-                    simple_biomarkers[biomarker_name] = biomarker_data
+            scoring_inputs = prepare_scoring_inputs_from_panel(filtered_biomarkers, logger=logger)
+            simple_biomarkers = scoring_inputs.simple_biomarkers
+            input_reference_ranges = scoring_inputs.input_reference_ranges
+            input_reference_profiles = scoring_inputs.input_reference_profiles
 
             # Step 1.5: Compute derived markers (RatioRegistry; lab-supplied wins; never overwrite)
             logger.info("Step 1.5: Computing derived markers")
@@ -1279,22 +1250,19 @@ class AnalysisOrchestrator:
                     "inputs_used": inputs_used if source == "computed" else None,
                 }
 
-            # Step 1.6: Evaluate repository-defined signals from biomarkers + derived metrics
-            signal_biomarkers = {k: v for k, v in simple_biomarkers.items() if k != "age"}
-            signal_derived = {
-                rid: data["value"]
-                for rid, data in derived_ratios_meta["ratios"].items()
-                if isinstance(data, dict) and isinstance(data.get("value"), (int, float))
-            }
-            signal_results_raw = self.signal_evaluator.evaluate_all(
-                signal_biomarkers,
-                signal_derived,
-                lab_ranges=input_reference_ranges,
-                reference_profiles=input_reference_profiles,
+            # Step 1.6: Phase signal_evaluation
+            signal_phase = evaluate_signal_evaluation_phase(
+                signal_evaluator=self.signal_evaluator,
+                simple_biomarkers=simple_biomarkers,
+                derived_ratios_meta=derived_ratios_meta,
+                input_reference_ranges=input_reference_ranges,
+                input_reference_profiles=input_reference_profiles,
+                registry_hash_fn=self._get_signal_registry_hash_sha256,
+                utc_now_fn=self._utc_now_iso,
             )
-            signal_results_serialized = [r.model_dump() for r in signal_results_raw]
-            signal_registry_hash_sha256 = self._get_signal_registry_hash_sha256()
-            report_generated_at = self._utc_now_iso()
+            signal_results_serialized = signal_phase.signal_results_serialized
+            signal_registry_hash_sha256 = signal_phase.signal_registry_hash_sha256
+            report_generated_at = signal_phase.report_generated_at
 
             # Step 2: Create analysis context first so questionnaire-derived lifestyle / demographics
             # are merged into user_data before scoring (CONTEXT-HARDENING-A ordering fix).

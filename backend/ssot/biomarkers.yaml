@@ -11,9 +11,16 @@ biomarkers:
     system: cardiovascular
     clusters: []
     roles: []
-    key_risks_when_high: []
-    key_risks_when_low: []
-    known_modifiers: []
+    key_risks_when_high:
+    - cardiovascular_risk
+    - atherosclerotic_disease_context
+    key_risks_when_low:
+    - malnutrition_context
+    - liver_disease_context
+    known_modifiers:
+    - fasting_status
+    - lipid_lowering_therapy
+    - diet
     clinical_weight: 0.6
   ldl_cholesterol:
     aliases:
@@ -27,9 +34,15 @@ biomarkers:
     system: cardiovascular
     clusters: []
     roles: []
-    key_risks_when_high: []
-    key_risks_when_low: []
-    known_modifiers: []
+    key_risks_when_high:
+    - cardiovascular_risk
+    - atherosclerotic_disease_context
+    key_risks_when_low:
+    - genetic_hypobetalipoproteinemia_context
+    known_modifiers:
+    - fasting_status
+    - lipid_lowering_therapy
+    - diet
     clinical_weight: 0.8
   hdl_cholesterol:
     aliases:
@@ -43,9 +56,15 @@ biomarkers:
     system: cardiovascular
     clusters: []
     roles: []
-    key_risks_when_high: []
-    key_risks_when_low: []
-    known_modifiers: []
+    key_risks_when_high:
+    - cardiovascular_risk_context
+    key_risks_when_low:
+    - cardiovascular_risk_context
+    known_modifiers:
+    - lipid_lowering_therapy
+    - exercise
+    - smoking
+    - genetics
     clinical_weight: 0.8
   triglycerides:
     aliases:
@@ -59,9 +78,16 @@ biomarkers:
     system: cardiovascular
     clusters: []
     roles: []
-    key_risks_when_high: []
-    key_risks_when_low: []
-    known_modifiers: []
+    key_risks_when_high:
+    - metabolic_syndrome_context
+    - pancreatitis_risk_context
+    key_risks_when_low:
+    - malnutrition_context
+    known_modifiers:
+    - fasting_status
+    - alcohol
+    - diet
+    - insulin_resistance
     clinical_weight: 0.6
   tc_hdl_ratio:
     aliases: []
@@ -152,9 +178,13 @@ biomarkers:
     system: cardiovascular
     clusters: []
     roles: []
-    key_risks_when_high: []
-    key_risks_when_low: []
-    known_modifiers: []
+    key_risks_when_high:
+    - cardiovascular_risk
+    key_risks_when_low:
+    - malabsorption_context
+    known_modifiers:
+    - lipid_lowering_therapy
+    - insulin_resistance
     clinical_weight: 0.6
   apoa1:
     aliases:
@@ -167,9 +197,14 @@ biomarkers:
     system: cardiovascular
     clusters: []
     roles: []
-    key_risks_when_high: []
-    key_risks_when_low: []
-    known_modifiers: []
+    key_risks_when_high:
+    - cardiovascular_risk_context
+    key_risks_when_low:
+    - cardiovascular_risk_context
+    known_modifiers:
+    - lipid_lowering_therapy
+    - genetics
+    - inflammation
     clinical_weight: 0.6
   glucose:
     aliases:
@@ -200,9 +235,16 @@ biomarkers:
     system: metabolic
     clusters: []
     roles: []
-    key_risks_when_high: []
-    key_risks_when_low: []
-    known_modifiers: []
+    key_risks_when_high:
+    - diabetes_context
+    - cardiovascular_risk_context
+    key_risks_when_low:
+    - hypoglycaemia_context
+    - haemoglobinopathy_context
+    known_modifiers:
+    - anaemia
+    - renal_function
+    - red_cell_turnover
     clinical_weight: 0.8
   insulin:
     aliases:
@@ -287,9 +329,16 @@ biomarkers:
     system: renal
     clusters: []
     roles: []
-    key_risks_when_high: []
-    key_risks_when_low: []
-    known_modifiers: []
+    key_risks_when_high:
+    - kidney_disease_context
+    - dehydration_context
+    key_risks_when_low:
+    - muscle_mass_context
+    known_modifiers:
+    - hydration
+    - muscle_mass
+    - age
+    - sex
     clinical_weight: 0.8
   cystatin_c:
     aliases:
@@ -389,10 +438,13 @@ biomarkers:
     system: hepatic
     clusters: []
     roles: []
-    key_risks_when_high: []
+    key_risks_when_high:
+    - liver_injury_context
     key_risks_when_low: []
     known_modifiers:
     - alcohol
+    - medication
+    - obesity
     clinical_weight: 0.8
   ast:
     aliases:
@@ -405,10 +457,14 @@ biomarkers:
     system: hepatic
     clusters: []
     roles: []
-    key_risks_when_high: []
+    key_risks_when_high:
+    - liver_injury_context
+    - muscle_injury_context
     key_risks_when_low: []
     known_modifiers:
     - alcohol
+    - medication
+    - exercise
     clinical_weight: 0.8
   neutrophils:
     aliases:
@@ -525,9 +581,15 @@ biomarkers:
     system: immune
     clusters: []
     roles: []
-    key_risks_when_high: []
-    key_risks_when_low: []
-    known_modifiers: []
+    key_risks_when_high:
+    - iron_overload_context
+    - inflammation_context
+    key_risks_when_low:
+    - iron_deficiency_context
+    known_modifiers:
+    - inflammation
+    - liver_disease
+    - supplementation
     clinical_weight: 0.6
   fib_4:
     aliases: []
@@ -555,10 +617,14 @@ biomarkers:
     system: immune
     clusters: []
     roles: []
-    key_risks_when_high: []
+    key_risks_when_high:
+    - inflammation_context
+    - infection_context
     key_risks_when_low: []
     known_modifiers:
     - stress
+    - infection
+    - obesity
     clinical_weight: 0.8
   total_ige:
     aliases:
@@ -607,9 +673,14 @@ biomarkers:
     system: thyroid
     clusters: []
     roles: []
-    key_risks_when_high: []
-    key_risks_when_low: []
-    known_modifiers: []
+    key_risks_when_high:
+    - hyperthyroidism_context
+    key_risks_when_low:
+    - hypothyroidism_context
+    known_modifiers:
+    - thyroid_medication
+    - pregnancy
+    - illness
     clinical_weight: 0.5
   tgab:
     aliases:
@@ -637,9 +708,14 @@ biomarkers:
     system: thyroid
     clusters: []
     roles: []
-    key_risks_when_high: []
-    key_risks_when_low: []
-    known_modifiers: []
+    key_risks_when_high:
+    - hypothyroidism_context
+    key_risks_when_low:
+    - hyperthyroidism_context
+    known_modifiers:
+    - thyroid_medication
+    - pregnancy
+    - illness
     clinical_weight: 0.8
   hemoglobin:
     aliases:
@@ -1385,7 +1461,8 @@ biomarkers:
     system: renal
     clusters: []
     roles: []
-    key_risks_when_high: []
+    key_risks_when_high:
+    - hyperfiltration_context
     key_risks_when_low:
     - chronic_kidney_disease
     - cardiovascular_risk
@@ -1628,7 +1705,8 @@ biomarkers:
     system: nutritional
     clusters: []
     roles: []
-    key_risks_when_high: []
+    key_risks_when_high:
+    - supplementation_context
     key_risks_when_low:
     - macrocytic_anaemia
     - neuropathy
@@ -1668,7 +1746,8 @@ biomarkers:
     system: nutritional
     clusters: []
     roles: []
-    key_risks_when_high: []
+    key_risks_when_high:
+    - folate_masking_of_b12_deficiency_context
     key_risks_when_low:
     - macrocytic_anaemia
     - neural_tube_defect_risk

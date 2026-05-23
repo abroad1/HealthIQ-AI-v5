@@ -1,10 +1,9 @@
 {
-  "branch": "scaffold/lc-s20-22-persisted-replay-sentinel-phase2",
+  "branch": "scaffold/lc-s21-23-23b-orchestrator-docs-ssot",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-23T20:47:27Z",
-  "cursor_started_utc": "2026-05-23T20:42:19Z",
-  "head_sha": "7c16f3f71842b61b07a34ede3aa4b3e527205036",
+  "cursor_started_utc": "2026-05-23T21:14:53Z",
+  "head_sha": "39ce997988be23e5a67eb9b99c8e59efb984dfec",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "LC-S20-22"
+  "status": "IN_PROGRESS",
+  "work_id": "LC-S21-23-23B"
 }

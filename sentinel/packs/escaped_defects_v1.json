@@ -212,6 +212,46 @@
       "test_file": "backend/tests/regression/test_lc_s18_root_cause_why_registration.py",
       "first_seen": "2026-05",
       "fix_commit": null
+    },
+    "orchestrator_phase_output_changed": {
+      "description": "LC-S21 — behaviour-preserving orchestrator phase extraction changed AB baseline analytical output fingerprint.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s21_23_23b_orchestrator_docs_ssot.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "pipeline_phase_regression": {
+      "description": "LC-S21 — named pipeline phase helpers or documented phase order regressed.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s21_23_23b_orchestrator_docs_ssot.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "scaffold_documentation_missing_for_new_pattern": {
+      "description": "LC-S23 — required scaffold architecture or developer guide documents missing required headings.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s21_23_23b_orchestrator_docs_ssot.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "active_signal_biomarker_missing_ssot_metadata": {
+      "description": "LC-S23B — Tier 1 active signal biomarkers missing populated SSOT metadata fields.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s21_23_23b_orchestrator_docs_ssot.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "ssot_metadata_unreviewed_for_kb_wave_target": {
+      "description": "LC-S23B — Tier 1 SSOT metadata contains prohibited placeholder strings or invalid empty values.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_lc_s21_23_23b_orchestrator_docs_ssot.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
     }
   }
 }
