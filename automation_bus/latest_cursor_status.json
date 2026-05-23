@@ -1,10 +1,9 @@
 {
-  "branch": "scaffold/lc-s13-lifestyle-coherence-narrative",
+  "branch": "scaffold/lc-s14-direction-aware-scoring",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-23T09:50:27Z",
-  "cursor_started_utc": "2026-05-23T09:39:11Z",
-  "head_sha": "29b26e304c01e1d8b3c3b5b8fe135ebc0e11e294",
+  "cursor_started_utc": "2026-05-23T10:27:30Z",
+  "head_sha": "0740a6e8fc3a492fc5098281bd43e8a2d2547e3f",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "LC-S13"
+  "status": "IN_PROGRESS",
+  "work_id": "LC-S14"
 }
