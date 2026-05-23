@@ -1,9 +1,10 @@
 {
   "branch": "scaffold/lc-s14-direction-aware-scoring",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-23T10:31:10Z",
   "cursor_started_utc": "2026-05-23T10:27:30Z",
-  "head_sha": "0740a6e8fc3a492fc5098281bd43e8a2d2547e3f",
+  "head_sha": "aebb6c1a9e6379c15a7732c80259fd56bb9c9df9",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "LC-S14"
 }
