@@ -1,10 +1,9 @@
 {
-  "branch": "scaffold/lc-s14-direction-aware-scoring",
+  "branch": "scaffold/lc-s16-17-19-kb-surface-payload-contract",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-23T10:31:10Z",
-  "cursor_started_utc": "2026-05-23T10:27:30Z",
-  "head_sha": "aebb6c1a9e6379c15a7732c80259fd56bb9c9df9",
+  "cursor_started_utc": "2026-05-23T12:54:26Z",
+  "head_sha": "6c3bca9043657d423d41e7e4105b5b00de10216d",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "LC-S14"
+  "status": "IN_PROGRESS",
+  "work_id": "LC-S16-17-19"
 }
