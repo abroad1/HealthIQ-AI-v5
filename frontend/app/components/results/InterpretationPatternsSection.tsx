@@ -3,18 +3,18 @@
 import React, { useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import type {
-  InterpretationDisplayLayerBundleV1,
-  InterpretationDisplayRecordV1,
-} from '@/types/analysis';
+import type { InterpretationDisplayLayerBundleV1, InterpretationDisplayRecordV1 } from '@/types/analysis';
+import {
+  formatScientificClassChipLabel,
+  isGenericIdlSupportingSummary,
+  selectSafeIdlPatternRecords,
+} from '@/lib/feR5aIdlPatternGuards';
 
+/** @deprecated Use selectSafeIdlPatternRecords — retained for tests importing this symbol. */
 export function selectVisibleIdlRecords(
   bundle: InterpretationDisplayLayerBundleV1 | null | undefined
 ): InterpretationDisplayRecordV1[] {
-  if (!bundle?.records?.length) return [];
-  return [...bundle.records]
-    .filter((r) => r.enabled_for_frontend === true && r.frontend_allowed_term !== 'clinical_only')
-    .sort((a, b) => a.display_order_priority - b.display_order_priority);
+  return selectSafeIdlPatternRecords(bundle?.records);
 }
 
 function severityBadgeClass(severity: InterpretationDisplayRecordV1['severity_state']): string {
@@ -31,7 +31,6 @@ function severityBadgeClass(severity: InterpretationDisplayRecordV1['severity_st
   }
 }
 
-/** Display API enum as calm chip text — no medical copy invented; mirrors backend tokens. */
 function formatSeverityLabel(severity: InterpretationDisplayRecordV1['severity_state']): string {
   return severity
     .split('_')
@@ -41,31 +40,32 @@ function formatSeverityLabel(severity: InterpretationDisplayRecordV1['severity_s
 
 export interface InterpretationPatternsSectionProps {
   bundle: InterpretationDisplayLayerBundleV1 | null | undefined;
+  /** When true, omit outer section heading (parent journey section owns it). */
+  embedInJourney?: boolean;
 }
 
 /**
- * FE-R8 — Section 5 “Patterns across your body”.
- * Renders only governed IDL fields; no clusters, no inferred taxonomy.
+ * FE-R5A — Section 5 “Patterns across your body” (governed display records only).
  */
-export function InterpretationPatternsSection({ bundle }: InterpretationPatternsSectionProps) {
-  const rows = useMemo(() => selectVisibleIdlRecords(bundle), [bundle]);
+export function InterpretationPatternsSection({
+  bundle,
+  embedInJourney = false,
+}: InterpretationPatternsSectionProps) {
+  const rows = useMemo(() => selectSafeIdlPatternRecords(bundle?.records), [bundle]);
 
   if (!rows.length) {
     return null;
   }
 
-  return (
-    <section
-      className="space-y-4"
-      aria-labelledby="patterns-across-body-heading"
-      data-testid="interpretation-patterns-section"
-    >
-      <h2 id="patterns-across-body-heading" className="text-xl font-semibold text-gray-900">
-        Patterns across your body
-      </h2>
+  const cards = (
+    <div className="grid gap-4 md:grid-cols-1">
+      {rows.map((rec) => {
+        const classChip = formatScientificClassChipLabel(rec.scientific_class);
+        const showSupporting =
+          !!rec.supporting_biomarkers_summary?.trim() &&
+          !isGenericIdlSupportingSummary(rec.supporting_biomarkers_summary);
 
-      <div className="grid gap-4 md:grid-cols-1">
-        {rows.map((rec) => (
+        return (
           <Card
             key={`${rec.internal_id}-${rec.display_order_priority}`}
             className="border-slate-200 shadow-sm"
@@ -79,13 +79,24 @@ export function InterpretationPatternsSection({ bundle }: InterpretationPatterns
                   </CardTitle>
                   <CardDescription className="text-sm text-gray-600 mt-1">{rec.subtitle}</CardDescription>
                 </div>
-                <Badge
-                  variant="outline"
-                  className={`shrink-0 font-normal ${severityBadgeClass(rec.severity_state)}`}
-                  data-testid="idl-severity-chip"
-                >
-                  {formatSeverityLabel(rec.severity_state)}
-                </Badge>
+                <div className="flex flex-wrap gap-2 shrink-0">
+                  {classChip ? (
+                    <Badge
+                      variant="outline"
+                      className="font-normal border-slate-200 bg-slate-50 text-slate-800"
+                      data-testid="idl-scientific-class-chip"
+                    >
+                      {classChip}
+                    </Badge>
+                  ) : null}
+                  <Badge
+                    variant="outline"
+                    className={`font-normal ${severityBadgeClass(rec.severity_state)}`}
+                    data-testid="idl-severity-chip"
+                  >
+                    {formatSeverityLabel(rec.severity_state)}
+                  </Badge>
+                </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-gray-800">
@@ -95,12 +106,14 @@ export function InterpretationPatternsSection({ bundle }: InterpretationPatterns
                 </span>
                 {rec.why_it_matters}
               </p>
-              <p>
-                <span className="text-gray-500 block text-xs uppercase tracking-wide mb-0.5">
-                  Supporting markers
-                </span>
-                {rec.supporting_biomarkers_summary}
-              </p>
+              {showSupporting ? (
+                <p data-testid="idl-supporting-markers">
+                  <span className="text-gray-500 block text-xs uppercase tracking-wide mb-0.5">
+                    Supporting markers
+                  </span>
+                  {rec.supporting_biomarkers_summary}
+                </p>
+              ) : null}
               {rec.supporting_systems_summary ? (
                 <p>
                   <span className="text-gray-500 block text-xs uppercase tracking-wide mb-0.5">
@@ -124,8 +137,37 @@ export function InterpretationPatternsSection({ bundle }: InterpretationPatterns
               ) : null}
             </CardContent>
           </Card>
-        ))}
+        );
+      })}
+    </div>
+  );
+
+  if (embedInJourney) {
+    return (
+      <div className="space-y-4" data-testid="interpretation-patterns-section">
+        <p className="text-sm text-gray-600 leading-relaxed">
+          These patterns summarise how related markers group together on your panel. They support the story above — they
+          are not a diagnosis on their own.
+        </p>
+        {cards}
       </div>
+    );
+  }
+
+  return (
+    <section
+      className="space-y-4"
+      aria-labelledby="patterns-across-body-heading"
+      data-testid="interpretation-patterns-section"
+    >
+      <h2 id="patterns-across-body-heading" className="text-xl font-semibold text-gray-900">
+        Patterns across your body
+      </h2>
+      <p className="text-sm text-gray-600 leading-relaxed">
+        These patterns summarise how related markers group together on your panel. They support the story above — they are
+        not a diagnosis on their own.
+      </p>
+      {cards}
     </section>
   );
 }

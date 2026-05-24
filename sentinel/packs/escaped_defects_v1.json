@@ -484,6 +484,54 @@
       "test_file": "backend/tests/regression/test_fe_r3_evidence_depth_ux_quality.py",
       "first_seen": "2026-05",
       "fix_commit": null
+    },
+    "patterns_section_missing_when_idl_safe": {
+      "description": "FE-R5A — retail journey omits IDL pattern wiring when governed pattern surface is expected.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r5a_limited_idl_pattern_surface.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "patterns_section_wrong_journey_position": {
+      "description": "FE-R5A — patterns section not between uncertainty and marker evidence in retail journey.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r5a_limited_idl_pattern_surface.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "raw_cluster_name_used_as_pattern_label": {
+      "description": "FE-R5A — cluster names or unsafe labels used as consumer pattern card titles.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r5a_limited_idl_pattern_surface.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "unsafe_pattern_taxonomy_visible": {
+      "description": "FE-R5A — raw scientific_class enum or internal taxonomy strings shown to consumers.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r5a_limited_idl_pattern_surface.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "patterns_section_placeholder_visible": {
+      "description": "FE-R5A — placeholder copy shown when no safe IDL pattern records exist.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r5a_limited_idl_pattern_surface.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "fe_r3_marker_evidence_regressed": {
+      "description": "FE-R5A — biomarker evidence removed from main retail journey or hidden in advanced only.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r5a_limited_idl_pattern_surface.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
     }
   }
 }

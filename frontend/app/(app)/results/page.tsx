@@ -19,7 +19,8 @@ import { PrimaryFindingAndWhy } from '@/components/results/PrimaryFindingAndWhy'
 import { WhyThisLeadWonSection } from '@/components/results/WhyThisLeadWonSection';
 import { SystemUnderstandingSection } from '@/components/results/SystemUnderstandingSection';
 import { LayerCInsightSection } from '@/components/results/LayerCInsightSection';
-import { InterpretationPatternsSection, selectVisibleIdlRecords } from '@/components/results/InterpretationPatternsSection';
+import { InterpretationPatternsSection } from '@/components/results/InterpretationPatternsSection';
+import { selectSafeIdlPatternRecords } from '@/lib/feR5aIdlPatternGuards';
 import { ResultsInvestigationSpine } from '@/components/results/ResultsInvestigationSpine';
 import {
   NarrativeLeadAndSupportingSections,
@@ -181,10 +182,16 @@ export default function ResultsPage() {
 
   const keyFindingsOverflow = clinicianReport?.sections?.page1?.key_findings?.slice(1) ?? [];
 
+  const retailIdlPatternRecords = useMemo(
+    () => selectSafeIdlPatternRecords(currentAnalysis?.interpretation_display_layer_v1?.records),
+    [currentAnalysis?.interpretation_display_layer_v1]
+  );
+
+  const showRetailIdlPatterns = retailIdlPatternRecords.length > 0;
+
   const firstIdlRetailLabel = useMemo(() => {
-    const idlRows = selectVisibleIdlRecords(currentAnalysis?.interpretation_display_layer_v1);
-    return idlRows[0]?.retail_display_label?.trim() ?? null;
-  }, [currentAnalysis?.interpretation_display_layer_v1]);
+    return retailIdlPatternRecords[0]?.retail_display_label?.trim() ?? null;
+  }, [retailIdlPatternRecords]);
 
   const phenotypeLabel = useMemo(
     () => pickPhenotypeLabel(clinicianReport, firstIdl, primaryDriver),
@@ -654,8 +661,8 @@ export default function ResultsPage() {
               </h2>
               <p className="text-sm text-slate-600 leading-relaxed">
                 Sections below build on each other: orientation first, then what looks stable, your main finding and why it
-                led, how confident we are, your marker evidence, and suggested follow-up. Open optional sections at the
-                bottom for pattern cards, extra context, or the clinician handoff.
+                led, how confident we are, patterns across your body when available, marker evidence, and suggested
+                follow-up. Open optional sections at the bottom for health domains, extra context, or the clinician handoff.
               </p>
             </div>
             <ResultsPrimaryHero
@@ -724,11 +731,27 @@ export default function ResultsPage() {
             />
           </section>
 
+          {showRetailIdlPatterns ? (
+            <section
+              className="space-y-4"
+              aria-labelledby="fe-r5a-patterns-heading"
+              data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[4]}
+            >
+              <h2 id="fe-r5a-patterns-heading" className="text-xl font-semibold text-gray-900">
+                Patterns across your body
+              </h2>
+              <InterpretationPatternsSection
+                bundle={currentAnalysis?.interpretation_display_layer_v1}
+                embedInJourney
+              />
+            </section>
+          ) : null}
+
           <section
             id={BIOMARKER_DIALS_SECTION_ID}
             className="space-y-4"
             aria-labelledby="biomarkers-heading"
-            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[4]}
+            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[5]}
           >
             <h2 id="biomarkers-heading" className="text-xl font-semibold text-gray-900">
               Marker-level evidence
@@ -744,7 +767,7 @@ export default function ResultsPage() {
           <section
             className="space-y-4"
             aria-labelledby="fe-r2-next-steps-heading"
-            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[5]}
+            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[6]}
           >
             <h2 id="fe-r2-next-steps-heading" className="text-xl font-semibold text-gray-900">
               What to do next
@@ -772,12 +795,11 @@ export default function ResultsPage() {
           </section>
 
           <ResultsDisclosureSection
-            title="Pattern cards and health domains"
-            description="Early pattern view from your interpretation layer and domain scores — supplementary to the main journey above."
+            title="Health domains"
+            description="High-level domain scores — supplementary to the main journey above."
             data-testid="section-patterns-secondary"
             defaultOpen={false}
           >
-            <InterpretationPatternsSection bundle={currentAnalysis?.interpretation_display_layer_v1} />
             <Wave1DomainCards domains={currentAnalysis?.consumer_domain_scores} />
           </ResultsDisclosureSection>
 
@@ -800,7 +822,7 @@ export default function ResultsPage() {
           <ResultsDisclosureSection
             title="Clinician summary"
             description="Professional handoff, export-oriented synthesis, and technical detail for clinical review."
-            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[6]}
+            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[7]}
             defaultOpen={false}
           >
             <ClinicianReportRenderer

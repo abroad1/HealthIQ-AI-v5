@@ -134,10 +134,11 @@ def test_fe_r3_fe_r2_journey_order_preserved() -> None:
     """Sentinel: fe_r2_journey_order_regressed."""
     src = _read(_RESULTS_PAGE)
     assert "FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS" in src
-    marker_idx = src.index("FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[4]")
-    next_idx = src.index("FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[5]")
-    clinician_idx = src.index("FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[6]")
-    assert marker_idx < next_idx < clinician_idx
+    patterns_idx = src.index("FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[4]")
+    marker_idx = src.index("FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[5]")
+    next_idx = src.index("FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[6]")
+    clinician_idx = src.index("FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[7]")
+    assert patterns_idx < marker_idx < next_idx < clinician_idx
     assert "<BiomarkerDials" in src[marker_idx:next_idx]
 
 
@@ -145,5 +146,5 @@ def test_fe_r3_fe_r2_journey_order_preserved() -> None:
 def test_fe_r3_biomarker_evidence_in_retail_journey() -> None:
     src = _read(_RESULTS_PAGE)
     advanced = src.index('data-testid="section-advanced"')
-    marker_journey = src.index("FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[4]")
+    marker_journey = src.index("FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[5]")
     assert marker_journey < advanced
