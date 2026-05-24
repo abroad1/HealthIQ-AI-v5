@@ -1,5 +1,5 @@
 {
-  "work_id": "FE-R4",
+  "work_id": "FE-R5A",
   "bus_version": "1.3.1",
   "status": "HARDENED",
   "hardened_utc": "2026-05-24T00:00:00Z",
@@ -10,111 +10,131 @@
       "field": "Front matter — all 5 required SOP v1.3.1 fields valid",
       "finding": "All five mandatory front matter fields present and correctly valued.",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 2-7: work_id: FE-R4, branch: frontend/fe-r4-patterns-layer-gate, risk_level: STANDARD, execution_model: TWO_PHASE_START_FINISH, change_type: CONTENT"
+        "automation_bus/latest_cursor_prompt.md lines 2-7: work_id: FE-R5A, branch: frontend/fe-r5a-limited-idl-pattern-surface, risk_level: HIGH, execution_model: TWO_PHASE_START_FINISH, change_type: MIXED"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "STANDARD / CONTENT classification correct",
-      "finding": "Sprint creates one documentation audit file only: docs/audit-papers/FE-R4_patterns_layer_gate_and_implementation_decision.md. No executable code, no Intelligence Core interaction, no SSOT/pipeline/analytics files touched. CONTENT = non-executable data / docs-only (SOP §4). STANDARD is conservative for a docs-only sprint (LOW would also be valid) but no HIGH triggers apply — no Intelligence Core, no backend/ssot/, no pipeline files.",
+      "field": "HIGH / MIXED classification correct",
+      "finding": "MIXED is correct: sprint touches frontend code, regression tests, Sentinel packs, and documentation — multiple change surfaces. MIXED is always governed using BEHAVIOUR controls (SOP §4). HIGH is conservative but defensible: sprint modifies the primary consumer retail results journey, which directly affects what users see; Sentinel updates are included. No Intelligence Core backend files are touched — HIGH is not mandated by SOP §10 triggers but is an acceptable conservative classification for a sprint that changes the consumer-visible analytical output surface.",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 9-20: 'This is a STANDARD-risk CONTENT sprint. This is not a frontend implementation sprint. [seven IS-NOT declarations follow]'",
-        "automation_bus/latest_cursor_prompt.md lines 338-343: Allowed files: docs/audit-papers/FE-R4_patterns_layer_gate_and_implementation_decision.md only",
-        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md §4: CONTENT = SSOT updates, YAML modifications, knowledge expansion, non-executable data, docs-only"
+        "automation_bus/latest_cursor_prompt.md lines 9-22: 'This is a HIGH-risk MIXED sprint. Reason: this sprint changes the consumer-facing results journey...'",
+        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md §4: MIXED = any work involving both [CONTENT + BEHAVIOUR]; MIXED is always governed using BEHAVIOUR controls",
+        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md §10: HIGH if touches Intelligence Core, modifies behavioural logic, or affects output generation"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "FE-R1/R2/R3 merge precondition satisfied",
-      "finding": "FE-R1, FE-R2, and FE-R3 are all demonstrably on main. Kernel COMPLETE status commits and implementation commits are present in git log.",
+      "field": "FE-R4 gate — merge precondition authority document present",
+      "finding": "docs/audit-papers/FE-R4_patterns_layer_gate_and_implementation_decision.md is present (271 lines). It issues GO WITH CONDITIONS and explicitly authorises FE-R5A as the next sprint using IDL-only fields. The STOP condition (prompt line 53: 'If the FE-R4 gate document is missing, STOP') is satisfied. Whether FE-R4 is merged to main is a runtime check Cursor must perform; Cursor must STOP if not confirmed.",
       "citations": [
-        "git log main: fb20990 chore(bus): FE-R3 kernel COMPLETE status",
-        "git log main: 2c60f08 feat(fe-r3): deepen biomarker evidence and next-step UX on results journey",
-        "git log main: 5a3beaf chore(bus): FE-R2 kernel COMPLETE status",
-        "git log main: 8411e29 feat(fe-r2): restructure results page into Phase 1 guided journey",
-        "git log main: 2ab7f48 chore(bus): FE-R1 kernel COMPLETE status",
-        "git log main: e483287 fix(fe-r1): sanitize consumer narrative surfaces and guard regressions"
+        "docs/audit-papers/FE-R4_patterns_layer_gate_and_implementation_decision.md line 14: 'GO WITH CONDITIONS'",
+        "docs/audit-papers/FE-R4_patterns_layer_gate_and_implementation_decision.md lines 204-218: 'FE-R5A — Limited IDL Pattern Surface' scope definition",
+        "docs/audit-papers/FE-R4_patterns_layer_gate_and_implementation_decision.md lines 256-261: 'Authorised next step: FE-R5A (IDL retail surfacing)'"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Controlling authority files — all required files present",
-      "finding": "All mandatory authority files listed in the prompt's 'Read before doing anything' block exist in the repository. The two STOP-condition files (v6 recommendation paper and FE-R0 audit) are both present. All four optional 'inspect if present' files are also present.",
+      "field": "Controlling authority files — all 9 required files present",
+      "finding": "All files listed in the 'Read before doing anything' block are present on disk.",
       "citations": [
-        "docs/frontend/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md — PRESENT (STOP condition satisfied)",
-        "docs/audit-papers/FE_R0_results_page_prose_source_trace_audit.md — PRESENT (STOP condition satisfied)",
+        "docs/audit-papers/FE-R4_patterns_layer_gate_and_implementation_decision.md — PRESENT (STOP condition authority)",
+        "docs/frontend/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md — PRESENT",
+        "docs/audit-papers/FE_R0_results_page_prose_source_trace_audit.md — PRESENT",
         "docs/audit-papers/FE-R1_consumer_prose_cleanup_narrative_safety_notes.md — PRESENT",
         "docs/audit-papers/FE-R2_results_journey_restructure_notes.md — PRESENT",
         "docs/audit-papers/FE-R3_evidence_depth_ux_quality_pass_notes.md — PRESENT",
         "docs/architecture/HealthIQ_AI_runtime_architecture_map_v1.md — PRESENT",
         "docs/developer-guides/healthiq_scaffold_guardrails_v1.md — PRESENT",
-        "docs/audit-papers/LC_SCAFFOLD_CLOSEOUT_transition_review.md — PRESENT",
-        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md — PRESENT",
-        "docs/audit-papers/LC-S16_knowledge_asset_frontend_surface_audit.md — PRESENT (optional)",
-        "docs/audit-papers/LC-S17_knowledge_bus_lifecycle_framework.md — PRESENT (optional)",
-        "docs/audit-papers/LC-S19_payload_contract_hardening_notes.md — PRESENT (optional)",
-        "docs/audit-papers/LC-S20_22_persisted_replay_sentinel_phase2_notes.md — PRESENT (optional)"
+        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md — PRESENT"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Cross-sprint guard test files — all present",
-      "finding": "All six regression guard test files named in the prompt's cross-sprint guard preflight block exist in the repository.",
+      "field": "Source cross-ref: InterpretationPatternsSection component",
+      "finding": "Component exists at frontend/app/components/results/InterpretationPatternsSection.tsx. It already implements the correct IDL-only filter via selectVisibleIdlRecords() (enabled_for_frontend === true AND frontend_allowed_term !== 'clinical_only', sorted by display_order_priority). It renders: retail_display_label, subtitle, severity_state chip, why_it_matters, supporting_biomarkers_summary, optional supporting_systems_summary, optional display_caveat, optional user_safe_description. It does NOT currently render scientific_class — if Cursor adds the chip, a component change is required. The component returns null when rows.length === 0 — correct empty-state behaviour.",
       "citations": [
-        "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py — PRESENT",
-        "backend/tests/regression/test_fe_r2_results_journey_restructure.py — PRESENT",
-        "backend/tests/regression/test_fe_r3_evidence_depth_ux_quality.py — PRESENT",
-        "backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py — PRESENT",
-        "backend/tests/regression/test_lc_s18_root_cause_why_registration.py — PRESENT (guards root_cause_compiler_v1 + root_cause_registry_v1)",
-        "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py — PRESENT"
+        "frontend/app/components/results/InterpretationPatternsSection.tsx lines 11-18: selectVisibleIdlRecords filter — enabled_for_frontend + frontend_allowed_term + display_order_priority sort",
+        "frontend/app/components/results/InterpretationPatternsSection.tsx lines 50-55: returns null when rows.length === 0",
+        "frontend/app/components/results/InterpretationPatternsSection.tsx lines 78-116: fields rendered: retail_display_label, subtitle, severity_state, why_it_matters, supporting_biomarkers_summary"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "v6 recommendation paper — Section 5 / Pattern layer content verified",
-      "finding": "The v6 paper's Section 5 content confirms FE-R4's scope is correct. Section 5 is explicitly Phase 2 (paper line 592: 'Phase 2 — existence check gate required before speccing'). Sprint R-7 in the paper (lines 1049-1068) directly maps to FE-R4: gate sprint, research/specification only, no implementation, produces GO/NO-GO/GO-WITH-CONDITIONS. The six required pattern contract fields (clinical name, subtitle, why-it-matters, supporting markers, severity/status, scientific classification) are confirmed in paper lines 382-395. Taxonomy classification types (phenotype, risk construct, syndrome/state, organ-pattern) confirmed in paper lines 329-339.",
+      "field": "Source cross-ref: results page current placement",
+      "finding": "InterpretationPatternsSection is currently placed inside a collapsed ResultsDisclosureSection titled 'Pattern cards and health domains' (defaultOpen={false}) at page.tsx line 780 — NOT in the retail journey. FE-R5A must move it inline into the retail journey between sections [3] (uncertainty) and [4] (marker-evidence). The existing disclosure section also contains Wave1DomainCards — these must remain separate: InterpretationPatternsSection moves to retail; Wave1DomainCards stays in supplementary disclosure per FE-R5A scope.",
       "citations": [
-        "docs/frontend/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md line 52: 'pattern layer (Section 5) is partly grounded in current cluster/system implementation, but a fully governed phenotype-display layer... must be treated as Phase 2, gated behind an explicit existence check'",
-        "docs/frontend/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md line 592: 'Patterns across your body | Phase 2 — existence check gate required before speccing'",
-        "docs/frontend/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md lines 1049-1068: Sprint R-7 specification matches FE-R4 purpose exactly"
+        "frontend/app/(app)/results/page.tsx line 22: import InterpretationPatternsSection",
+        "frontend/app/(app)/results/page.tsx lines 774-782: ResultsDisclosureSection 'Pattern cards and health domains' defaultOpen={false} wrapping both InterpretationPatternsSection and Wave1DomainCards",
+        "frontend/app/(app)/results/page.tsx lines 645-772: FE-R2 retail journey sections [0]-[5], none containing InterpretationPatternsSection"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Target output file — absent (correct pre-sprint state)",
-      "finding": "docs/audit-papers/FE-R4_patterns_layer_gate_and_implementation_decision.md does not yet exist. This is the expected state before kernel start. Cursor must create this file.",
+      "field": "Source cross-ref: FE-R2 journey order constant",
+      "finding": "FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS has 7 entries (indices 0-6): body-overview, working-well, primary-finding, uncertainty, marker-evidence, next-steps, clinician-summary. Inserting the pattern section between uncertainty [3] and marker-evidence [4] requires adding a new entry (e.g. 'fe-r2-journey-patterns') at position 4, shifting marker-evidence to [5], next-steps to [6], clinician-summary to [7]. The FE-R2 regression guard checks this array. Cursor must update this constant and the corresponding FE-R2 test — the prompt's acceptance criterion 'FE-R2 journey order still passes' is the forcing function.",
       "citations": [
-        "Glob docs/audit-papers/FE-R4* — no files found"
+        "frontend/app/lib/feR2ResultsJourneyOrder.ts lines 5-13: FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS — 7 entries, 'fe-r2-journey-marker-evidence' at index 4"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Forbidden file scope — correctly and completely specified",
-      "finding": "The prompt's Forbidden changes block covers all analytical/governed surfaces: backend/**, frontend/**, knowledge_bus/**, sentinel/**, backend/ssot/**, automation_bus/state/*, and all three control-plane scripts. The single allowed output file is documentation only. No scope creep vector exists.",
+      "field": "Source cross-ref: LC-S18 test content verified",
+      "finding": "backend/tests/regression/test_lc_s18_root_cause_why_registration.py exists and tests: root_cause_registry (41 target count), fingerprint stability before/after, compile behaviour for registered and unregistered signals, Sentinel defect class registration (7 classes). This test guards pure backend root-cause registry behaviour with no dependency on frontend or IDL surfacing. It was in FE-R4's guard suite. It is absent from FE-R5A's guard preflight — see Advisory 1.",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 323-343: Forbidden changes block lists all protected paths; Allowed files block names only docs/audit-papers/FE-R4_patterns_layer_gate_and_implementation_decision.md"
+        "backend/tests/regression/test_lc_s18_root_cause_why_registration.py lines 76-78: test_lc_s18_registry_target_count_discovered — asserts len(ROOT_CAUSE_TARGET_SPECS) == 41",
+        "backend/tests/regression/test_lc_s18_root_cause_why_registration.py lines 181-200: Sentinel defect class verification — 7 classes, all pointing to this test file with status GUARDED"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "BEHAVIOUR review — not applicable",
-      "finding": "change_type is CONTENT. No Intelligence Core, no executable code, no output generation logic is touched. Stage 2B behavioural hardening is not applicable per SOP §2B.",
+      "field": "Sentinel pack — current state correct",
+      "finding": "sentinel/packs/escaped_defects_v1.json does not yet contain FE-R5A pattern-section defect classes. This is the correct pre-sprint state. FE-R5A must add the 6 Sentinel defect classes listed in the prompt. No placeholder entries may be written.",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md line 7: change_type: CONTENT",
-        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md §2B: 'BEHAVIOUR/MIXED only'"
+        "sentinel/packs/escaped_defects_v1.json — no pattern-section or fe-r5a defect classes present",
+        "automation_bus/latest_cursor_prompt.md lines 297-308: required Sentinel classes: patterns_section_missing_when_idl_safe, patterns_section_wrong_journey_position, raw_cluster_name_used_as_pattern_label, unsafe_pattern_taxonomy_visible, patterns_section_placeholder_visible, fe_r3_marker_evidence_regressed"
+      ]
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "Behavioural scope defined (Stage 2B)",
+      "finding": "Scope is limited to: moving InterpretationPatternsSection into retail journey, keeping Wave1DomainCards and ClusterSummary in supplementary disclosures, optionally adding scientific_class chip, adding regression tests and Sentinel guards. No backend analytics, DTO, SSOT, Knowledge Bus, or control-plane changes. STOP condition explicit if backend/DTO change appears necessary.",
+      "citations": [
+        "automation_bus/latest_cursor_prompt.md lines 139-161: Implementation scope — IDL-only fields listed explicitly",
+        "automation_bus/latest_cursor_prompt.md lines 255-275: Forbidden unless GPT explicitly approves — backend/core/analytics/**, backend/ssot/**, knowledge_bus/**, DTO files",
+        "automation_bus/latest_cursor_prompt.md line 275: 'If backend/DTO change appears necessary, STOP and recommend PATTERN-C1'"
+      ]
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "Regression targets included (Stage 2B)",
+      "finding": "Regression targets cover: FE-R1 prose safety, FE-R2 journey order, FE-R3 evidence-depth, LC-S16/17/19 payload contract, LC-S20/22 persisted replay, plus new test_fe_r5a_limited_idl_pattern_surface. New test covers journey position, IDL-only rendering, cluster-name exclusion, empty-state omission.",
+      "citations": [
+        "automation_bus/latest_cursor_prompt.md lines 313-322: Required validation commands — 6 pytest suites",
+        "automation_bus/latest_cursor_prompt.md lines 279-293: Required tests — 12 deterministic test assertions listed"
+      ]
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "Determinism risks surfaced (Stage 2B)",
+      "finding": "Key risks are correctly bounded: cluster names must not appear as consumer labels; fallback must be clean omission, not placeholder; scientific_class chip is conditional on consumer-safety; no new clinical interpretation logic. Component selectVisibleIdlRecords filter is already deterministic (sorted by display_order_priority, static YAML values). No randomisation vectors introduced.",
+      "citations": [
+        "automation_bus/latest_cursor_prompt.md lines 194-207: Required safeguards — 9 explicit prohibitions including clusters[].name, raw signal labels, raw internal IDs",
+        "automation_bus/latest_cursor_prompt.md lines 220-223: Fallback — omit cleanly, no placeholder, no cluster fallback",
+        "frontend/app/components/results/InterpretationPatternsSection.tsx lines 11-18: selectVisibleIdlRecords — deterministic filter and sort"
       ]
     },
     {
       "type": "ADVISORY",
-      "field": "Work package token — absent (kernel start not yet run)",
-      "finding": "automation_bus/state/work_package_active.json does not exist. This is expected at hardening time (Stage 2 precedes Stage 3 kernel start). Cursor must verify the token exists and matches work_id FE-R4 and branch frontend/fe-r4-patterns-layer-gate before modifying any file.",
-      "resolution": "Advisory only — not a hardening blocker. Cursor STOP condition (prompt lines 96-104) handles this correctly."
+      "field": "Advisory 1 — LC-S18 guard absent from FE-R5A cross-sprint preflight",
+      "finding": "FE-R4's cross-sprint guard suite included test_lc_s18_root_cause_why_registration.py. FE-R5A's preflight lists only 5 guards and silently omits LC-S18 without explanation. Risk is low (FE-R5A is frontend-only; LC-S18 tests backend root-cause registry exclusively; forbidden-files constraint prevents backend drift). However, the silent drop is unexplained and removes belt-and-suspenders coverage. Cursor should add it to the preflight — or GPT should document the de-scoping reason.",
+      "resolution": "Non-blocking advisory. Cursor may add the guard at its discretion. If execution proceeds without it, the risk is accepted as low given the backend-forbidden constraint."
     },
     {
       "type": "ADVISORY",
-      "field": "Prompt structure — code fence not closed in Phase 1 core question block",
-      "finding": "The core question block at lines 34-39 opens a code fence (```) but the closing fence and 'Controlling authority' heading appear to be fused without a blank line separator (line 39 shows 'Controlling authority' immediately after the fence). This is a formatting irregularity only — Cursor can parse the intent. It is not a substantive defect.",
-      "resolution": "Advisory only — not a blocker. Cursor must read the intent: core question ends at line 39; controlling authority section follows."
+      "field": "Advisory 2 — FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS expansion not explicitly instructed",
+      "finding": "Inserting the pattern section into the retail journey at index 4 requires updating the FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS constant in frontend/app/lib/feR2ResultsJourneyOrder.ts (currently 7 entries) and the corresponding FE-R2 regression test. The prompt does not explicitly name this file or instruct Cursor to update it. Ambiguity could lead to a section added without a canonical test ID, leaving the FE-R2 order guard unable to verify the pattern section's position.",
+      "resolution": "Non-blocking advisory — acceptance criterion 'FE-R2 journey order still passes' is the forcing function. Cursor must expand the constant (8 entries) and update the test. The advisory flags the implementation risk for awareness."
     }
   ]
 }
