@@ -1,5 +1,5 @@
 {
-  "work_id": "FE-R1",
+  "work_id": "FE-R2",
   "bus_version": "1.3.1",
   "status": "HARDENED",
   "hardened_utc": "2026-05-24T00:00:00Z",
@@ -7,125 +7,118 @@
   "changes": [
     {
       "type": "CONFIRMED",
-      "field": "Front matter — all 5 required fields valid",
-      "finding": "All five SOP v1.3.1 mandatory front matter fields present and valid.",
+      "field": "Front matter — all 5 required SOP v1.3.1 fields valid",
+      "finding": "All five mandatory front matter fields present and correctly valued.",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 2-7: work_id: FE-R1, branch: frontend/fe-r1-consumer-prose-cleanup, risk_level: HIGH, execution_model: TWO_PHASE_START_FINISH, change_type: MIXED — all 5 confirmed"
+        "automation_bus/latest_cursor_prompt.md lines 2-7: work_id: FE-R2, branch: frontend/fe-r2-results-journey-restructure, risk_level: HIGH, execution_model: TWO_PHASE_START_FINISH, change_type: MIXED"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Prior Blocker 1 resolved — all file paths corrected",
-      "finding": "All four previously missing file references have been corrected in the amended prompt. All seven analytics files named in 'Known actual files to inspect' and 'Potentially allowed files' now exist in the repository. Confirmed by Bash ls.",
+      "field": "HIGH / MIXED classification correct",
+      "finding": "Sprint restructures the consumer-facing results page and modifies frontend rendering, section ordering, DTO field consumption, and Sentinel packs. Any work changing output generation for retail users is MIXED under SOP §4. HIGH is warranted because the sprint touches the consumer surface layer of the Intelligence Core output (results page renders report_compiler and narrative_compiler fields). Classification is correct.",
       "citations": [
-        "backend/core/analytics/narrative_report_compiler_v1.py — PRESENT",
-        "backend/core/analytics/report_compiler_v1.py — PRESENT (runner-up + confidence fields at lines 538, 684-690)",
-        "backend/core/analytics/domain_narrative_wave1.py — PRESENT",
-        "backend/core/analytics/domain_score_assembler.py — PRESENT (blood sugar tier logic at lines 156, 273; band label at line 87)",
-        "backend/core/analytics/balanced_systems_presentation_v1.py — PRESENT (compile_balanced_systems_v1 at line 88)",
-        "backend/core/analytics/interpretation_display_layer_governance_v1.py — PRESENT (retail_display_label validation at lines 58-72)",
-        "backend/core/analytics/interpretation_display_layer_publish_v1.py — PRESENT (retail_display_label assignment at line 172)"
+        "automation_bus/latest_cursor_prompt.md lines 9-16: 'HIGH-risk MIXED sprint... changes the consumer-facing results-page structure'",
+        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md §3: output assembly mechanisms and their consumer rendering surfaces = Intelligence Core boundary"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Prior Blocker 2 resolved — FE-R0 audit committed to main",
-      "finding": "The FE-R0 audit document is no longer untracked. It has been committed to main and satisfies the prompt's acceptance criterion and STOP precondition.",
+      "field": "FE-R1 merge precondition — FE-R1 is on main",
+      "finding": "FE-R1 is demonstrably merged to main. The required FE-R1 evidence artefacts are present: test file exists, narrative safety notes doc exists, COMPLETE kernel status commit present.",
       "citations": [
-        "git log: 4bb5d49 docs(audit): add FE-R0 results page prose source trace audit",
-        "docs/audit-papers/FE_R0_results_page_prose_source_trace_audit.md — git status clean (no output from git status --short)"
-      ]
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "HIGH/MIXED classification correct",
-      "finding": "Sprint touches Intelligence Core components: narrative_report_compiler_v1.py, report_compiler_v1.py, interpretation_display_layer_publish_v1.py, balanced_systems_presentation_v1.py, domain_score_assembler.py, and optionally scoring_policy.yaml + scoring rules. Under SOP §3 and §10, any work interacting with output assembly mechanisms = HIGH by default. MIXED is correct (both governed SSOT/IDL content and behavioural compiler logic in scope).",
-      "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 13-16: HIGH-risk MIXED, reason explicitly includes 'backend narrative compilers, report compiler output, IDL/display labels...'",
-        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md §3: output assembly mechanisms = Intelligence Core"
+        "git log main: dcd6ff7 docs(FE-R1): record GPT boundary approval",
+        "git log main: 2ab7f48 chore(bus): FE-R1 kernel COMPLETE status",
+        "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py — PRESENT",
+        "docs/audit-papers/FE-R1_consumer_prose_cleanup_narrative_safety_notes.md — PRESENT"
       ]
     },
     {
       "type": "CONFIRMED",
       "field": "Controlling authority files — all present",
-      "finding": "All six mandatory authority files confirmed present.",
+      "finding": "All mandatory and optional authority files referenced in the prompt are present in the repository.",
       "citations": [
-        "docs/audit-papers/FE_R0_results_page_prose_source_trace_audit.md — PRESENT and committed (commit 4bb5d49)",
-        "docs/frontend/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md — PRESENT",
+        "docs/frontend/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md — PRESENT (committed: ba801dd)",
+        "docs/audit-papers/FE_R0_results_page_prose_source_trace_audit.md — PRESENT",
+        "docs/audit-papers/FE-R1_consumer_prose_cleanup_narrative_safety_notes.md — PRESENT",
         "docs/architecture/HealthIQ_AI_runtime_architecture_map_v1.md — PRESENT",
         "docs/developer-guides/healthiq_scaffold_guardrails_v1.md — PRESENT",
         "docs/audit-papers/LC_SCAFFOLD_CLOSEOUT_transition_review.md — PRESENT",
-        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md — PRESENT"
+        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md — PRESENT",
+        "docs/audit-papers/LC-S16_knowledge_asset_frontend_surface_audit.md — PRESENT (optional)",
+        "docs/audit-papers/LC-S19_payload_contract_hardening_notes.md — PRESENT (optional)",
+        "docs/audit-papers/LC-S20_22_persisted_replay_sentinel_phase2_notes.md — PRESENT (optional)"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Phase 1 source fields — all confirmed in actual source files",
-      "finding": "All key narrative fields trace to confirmed compiler sources.",
+      "field": "Cross-sprint guard test files — all present",
+      "finding": "All regression guard test files named in the preflight and validation command blocks exist in the repository.",
       "citations": [
-        "narrative_report_v1.retail_summary — narrative_report_compiler_v1.py line 752",
-        "narrative_report_v1.lead_narrative — narrative_report_compiler_v1.py line 753",
-        "narrative_report_v1.secondary_narratives — narrative_report_compiler_v1.py line 754",
-        "narrative_report_v1.next_steps_narrative — narrative_report_compiler_v1.py line 758",
-        "clinician_report_v1.sections.page1.runner_up_why_not_lead_line — report_compiler_v1.py line 690",
-        "clinician_report_v1.sections.page1.runner_up_topic_line — report_compiler_v1.py line 689",
-        "clinician_report_v1.sections.page1.confidence_and_missing_data — report_compiler_v1.py line 684",
-        "interpretation_display_layer_v1.records[].retail_display_label — interpretation_display_layer_publish_v1.py line 172; governance validation at interpretation_display_layer_governance_v1.py lines 58-72",
-        "balanced_systems_v1 — balanced_systems_presentation_v1.py line 88 (compile_balanced_systems_v1)"
+        "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py — PRESENT",
+        "backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py — PRESENT",
+        "backend/tests/regression/test_lc_s14_direction_aware_scoring.py — PRESENT",
+        "backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py — PRESENT",
+        "backend/tests/regression/test_lc_s18_root_cause_why_registration.py — PRESENT",
+        "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py — PRESENT",
+        "backend/tests/regression/test_lc_s18a_package_estate_inventory.py — PRESENT",
+        "backend/tests/unit/test_scoring_rules.py — PRESENT"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Phase 3G blood sugar card contradiction — source is traceable",
-      "finding": "The blood sugar domain card (100/100, Strong, Limited confidence contradiction) originates in domain_score_assembler.py. The confidence tier function (_metabolic_blood_sugar_confidence_tier at line 273) and band label assignment (_band_label_from_0_100 at line 87) are the candidate sources. Both files are now on the permitted list.",
+      "field": "FE-R2 target test file — Cursor must create",
+      "finding": "backend/tests/regression/test_fe_r2_results_journey_restructure.py does NOT exist. This is expected — the prompt requires Cursor to create it. The prompt test specification covers journey structure, prose safety, DTO/display preservation, and regression preservation. No gap in scope detected.",
       "citations": [
-        "backend/core/analytics/domain_score_assembler.py line 87: _band_label_from_0_100",
-        "backend/core/analytics/domain_score_assembler.py line 156: _is_wave1_blood_sugar",
-        "backend/core/analytics/domain_score_assembler.py line 273: _metabolic_blood_sugar_confidence_tier"
+        "backend/tests/regression/test_fe_r2_results_journey_restructure.py — NOT PRESENT (Cursor must create per automation_bus/latest_cursor_prompt.md lines 418-449)"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Phase 3J ALP critical investigation — primary path is within permitted scope",
-      "finding": "ALP direction_class: high_only_concern confirmed in scoring_policy.yaml line 296. 'Critical' status for scored biomarkers is assigned in backend/core/scoring/rules.py via ScoreRange.CRITICAL (line 80) and the low_critical/high_critical band logic (lines 470-526). Both backend/core/scoring/**/* and backend/ssot/scoring_policy.yaml are on the permitted files list. The investigation path is in scope.",
+      "field": "Frontend results page — target implementation file present",
+      "finding": "The primary implementation target file exists.",
       "citations": [
-        "backend/ssot/scoring_policy.yaml line 295-296: alp: direction_class: high_only_concern",
-        "backend/core/scoring/rules.py line 80: CRITICAL = 'critical'",
-        "backend/core/scoring/rules.py lines 469-526: low_critical and high_critical band scoring logic — this is where ALP 38 U/L may be receiving Critical status despite high_only_concern direction class"
+        "frontend/app/(app)/results/page.tsx — PRESENT"
       ]
     },
     {
       "type": "WARNING",
-      "field": "Phase 3J — criticality.yaml is not on permitted list",
-      "finding": "backend/ssot/criticality.yaml (61 lines) is loaded by backend/core/analytics/criticality.py, which handles missing-marker criticality rather than score-status. This is distinct from the scoring Critical status in rules.py. However, if Phase 3J investigation determines that ALP's Critical label originates from criticality.yaml rather than scoring_policy.yaml band logic, Cursor must STOP and report — criticality.yaml is not on the permitted files list and cannot be modified without GPT authorisation.",
-      "resolution": "Cursor should follow the scoring rules investigation path first (scoring_policy.yaml + backend/core/scoring/rules.py). If the fix cannot be achieved within permitted files, STOP and escalate."
+      "field": "Stale execution token — FE-R1 token not cleared",
+      "finding": "automation_bus/state/work_package_active.json currently contains {work_id: FE-R1, status: STARTED}. FE-R1 is demonstrably COMPLETE on main (kernel COMPLETE commit 2ab7f48 present), but the kernel-managed token file was not deleted on finish. This file is untracked by git (no commit history). Cursor will STOP at the token verification step if work_package_active.json still says FE-R1 when FE-R2 starts. It is not yet known whether run_work_package.py start will overwrite or reject an existing stale token. Resolution must be confirmed by GPT or human before Cursor executes.",
+      "resolution": "Human or GPT must explicitly authorise one of: (a) manually delete work_package_active.json before running start, or (b) confirm that run_work_package.py start overwrites stale tokens. Do not proceed past Stage 3 without confirming this."
+    },
+    {
+      "type": "WARNING",
+      "field": "FE-R2 branch does not exist",
+      "finding": "Branch frontend/fe-r2-results-journey-restructure does not exist locally or remotely. This is expected workflow — Cursor must create it from main as the first Step 0 action before kernel start. The prompt Stage 0 preflight is correctly written to detect this. Not a prompt defect.",
+      "resolution": "Cursor must create the branch from current main before running run_work_package.py start. Stage 0 compliance requires branch to be created first."
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "Stage 2B — Behavioural scope correctly defined",
+      "finding": "The sprint's behavioural scope is frontend rendering order and section visibility. Backend analytical output is explicitly unchanged — forbidden files list excludes all backend/core/analytics/*, backend/core/scoring/*, backend/core/pipeline/*. The determinism risk is surfacing previously hidden DTO fields to retail users; this is intentional and controlled by the section spec. No unintended analytical drift is possible within the defined permitted file set.",
+      "citations": [
+        "automation_bus/latest_cursor_prompt.md lines 491-508: Forbidden unless GPT explicitly approves — backend/core/analytics/**, backend/core/scoring/**, backend/core/pipeline/**, backend/ssot/**, knowledge_bus/**",
+        "automation_bus/latest_cursor_prompt.md lines 476-490: Potentially allowed files — frontend only, backend/tests/regression/**, sentinel/packs/**"
+      ]
     },
     {
       "type": "CONFIRMED",
       "field": "STOP conditions — comprehensive and correct",
-      "finding": "STOP conditions cover: FE-R0 audit missing or untracked, source field not traceable, prior scaffold guard failure, scope creep into pipeline/LLM/KB medical content, medical package content as sole prose source.",
+      "finding": "STOP conditions cover: v6 recommendation paper or FE-R0/FE-R1 artefacts missing; FE-R1 not merged; token missing or mismatched; current page structure cannot be established; prior guard fails; backend clinical/prose compiler changes attempted; scope creep into forbidden files.",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md line 57: 'If FE_R0_results_page_prose_source_trace_audit.md is missing or untracked, STOP before kernel start'",
-        "automation_bus/latest_cursor_prompt.md line 173: 'STOP if the source cannot be traced'",
-        "automation_bus/latest_cursor_prompt.md line 133: 'If a prior guard fails, STOP unless GPT/human authority explicitly authorises continuation'",
-        "automation_bus/latest_cursor_prompt.md lines 484-486: 'If medical package content appears to be the only source of the bad prose, STOP and report'"
+        "automation_bus/latest_cursor_prompt.md line 55: 'If the FE-R0 audit, FE-R1 notes, or v6 recommendation paper are missing, STOP'",
+        "automation_bus/latest_cursor_prompt.md lines 66-68: 'If FE-R1 is not on main, STOP'",
+        "automation_bus/latest_cursor_prompt.md lines 116-119: 'If token is missing or mismatched, STOP'",
+        "automation_bus/latest_cursor_prompt.md line 139: 'If a prior guard fails, STOP unless GPT/human authority explicitly authorises continuation'",
+        "automation_bus/latest_cursor_prompt.md lines 179-180: 'STOP if the current page structure cannot be safely established'"
       ]
     },
     {
       "type": "ADVISORY",
-      "field": "Stage 2B — Compiler prose changes are global, not analysis-scoped",
-      "finding": "Rewriting prose assembly logic in narrative_report_compiler_v1.py and report_compiler_v1.py affects ALL analyses run through the pipeline, not just the reference analysis_id (7aacc734-95cf-4ea5-a19c-0d03d98dd2e9). The regression suite covers named historical guard tests but there is no broad multi-analysis smoke fixture. Cursor should confine changes to the specific toxic patterns identified in FE-R0 and run all regression tests before claiming closure.",
-      "resolution": "Advisory only — does not block this sprint. GPT may wish to add a multi-analysis smoke fixture for FE-R2."
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "Regression test files — all present",
-      "finding": "All regression guard files referenced in the cross-sprint smoke pack confirmed present.",
-      "citations": [
-        "backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py — PRESENT",
-        "backend/tests/regression/test_lc_s18_root_cause_why_registration.py — PRESENT",
-        "backend/tests/regression/test_lc_s18a_package_estate_inventory.py — PRESENT"
-      ]
+      "field": "Sentinel — new defect classes required, no existing fe_r2 pack",
+      "finding": "The prompt requires creation of seven new Sentinel defect classes (retail_results_journey_wrong_order, body_overview_not_first, etc.). No existing sentinel/packs/fe_r2_*.json exists. Cursor must create the new pack. Each class must point to an active deterministic test. The 'No placeholder Sentinel entries' rule applies. This is implementation scope for Cursor, not a prompt defect.",
+      "resolution": "Advisory only. Cursor should create the Sentinel pack as part of the sprint scope."
     }
   ]
 }

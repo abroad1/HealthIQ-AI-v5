@@ -1,43 +1,43 @@
 ---
-work_id: FE-R1
-branch: frontend/fe-r1-consumer-prose-cleanup
+work_id: FE-R2
+branch: frontend/fe-r2-results-journey-restructure
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# FE-R1 — Consumer Prose Cleanup and Narrative Safety
+# FE-R2 — Results Journey Restructure
 
 ## Classification
 
 This is a HIGH-risk MIXED sprint.
 
-Reason: this sprint may touch backend narrative compilers, report compiler output, IDL/display labels, consumer-facing DTO prose, limited frontend rendering guards, regression tests, Sentinel packs, and audit documentation. It directly affects emitted user-facing interpretation.
+Reason: this sprint changes the consumer-facing results-page structure and may touch frontend rendering, DTO field consumption, section ordering, visibility defaults, regression tests, Sentinel packs and audit documentation.
 
-This is not a page redesign sprint.  
-This is not a frontend journey restructure sprint.  
+This is not a backend prose rewrite sprint.  
 This is not a Knowledge Bus expansion sprint.  
 This is not a Gemini/LLM sprint.  
+This is not a clinical logic/scoring/unit sprint.  
 This is not a medication-overlay sprint.  
-This is not a broad UX polish sprint.
+This is not a full visual redesign sprint.  
+This is not a Phase 2 patterns-layer implementation sprint.
 
 ## Purpose
 
-Clean unsafe, incoherent, repetitive, or internal-facing prose from the current retail results page before any page restructuring begins.
+Restructure the current results page into the Phase 1 guided reasoning journey defined in the v6 recommendation paper, now that FE-R1 has cleaned the most unsafe consumer prose.
 
-The FE-R0 audit found that the current page does not match the intended guided reasoning journey and that multiple user-visible text blocks are raw compiler output, raw Knowledge Bus mechanism text, internal labels, repeated template strings, or numerical internal confidence values. :contentReference[oaicite:0]{index=0}
+The goal is to make the page understandable to a retail user by putting existing deterministic assets into the correct narrative order.
 
-The goal of FE-R1 is to make the existing consumer-facing prose safe, readable, non-repetitive, and suitable for a retail user.
-
-This sprint must fix source prose first. Do not simply hide problems in the frontend unless the correct disposition is explicitly “omit from UX”.
+FE-R2 must implement the page journey structure. It must not attempt to solve every prose/content weakness, visual design issue, or future Phase 2 pattern-layer requirement.
 
 ## Controlling authority
 
 Read before doing anything:
 
 ```text
-docs/audit-papers/FE_R0_results_page_prose_source_trace_audit.md
 docs/frontend/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md
+docs/audit-papers/FE_R0_results_page_prose_source_trace_audit.md
+docs/audit-papers/FE-R1_consumer_prose_cleanup_narrative_safety_notes.md
 docs/architecture/HealthIQ_AI_runtime_architecture_map_v1.md
 docs/developer-guides/healthiq_scaffold_guardrails_v1.md
 docs/audit-papers/LC_SCAFFOLD_CLOSEOUT_transition_review.md
@@ -49,36 +49,47 @@ Also inspect if present:
 ```text
 docs/audit-papers/LC-S16_knowledge_asset_frontend_surface_audit.md
 docs/audit-papers/LC-S19_payload_contract_hardening_notes.md
-docs/audit-papers/LC-S13_lifestyle_coherence_narrative_notes.md
-docs/audit-papers/LC-S14_direction_aware_scoring_notes.md
 docs/audit-papers/LC-S20_22_persisted_replay_sentinel_phase2_notes.md
 ```
 
-If `docs/audit-papers/FE_R0_results_page_prose_source_trace_audit.md` is missing or untracked, STOP before kernel start. The FE-R0 audit must be committed to `main` before FE-R1 begins.
+If the FE-R0 audit, FE-R1 notes, or v6 recommendation paper are missing, STOP.
+
+## FE-R1 merge precondition
+
+Before implementation, confirm FE-R1 is merged to `main`.
+
+Evidence may include:
+
+* FE-R1 merge commit on main ancestry
+* `test_fe_r1_consumer_prose_cleanup.py` exists and passes
+* FE-R1 notes exist
+* FE-R1 Sentinel classes exist
+
+If FE-R1 is not on main, STOP. Do not restructure the page on top of pre-FE-R1 prose.
 
 ## Required output documentation
 
 Create:
 
 ```text
-docs/audit-papers/FE-R1_consumer_prose_cleanup_narrative_safety_notes.md
+docs/audit-papers/FE-R2_results_journey_restructure_notes.md
 ```
 
 This document must include:
 
 1. preflight results
-2. FE-R0 audit findings addressed
-3. exact source fields changed
-4. exact frontend-visible prose before/after examples
-5. which issues were fixed at backend/compiler source
-6. which issues were omitted from UX
-7. which issues were deferred
-8. balanced systems investigation result
-9. ALP critical-status investigation result
-10. tests added/updated
-11. Sentinel updates
+2. FE-R1 merge confirmation
+3. current page structure before change
+4. implemented FE-R2 section order
+5. frontend files changed
+6. DTO/API fields consumed by each section
+7. sections moved, removed, collapsed, or retained
+8. explicit list of things not changed
+9. tests added/updated
+10. Sentinel updates
+11. browser/UAT evidence if performed
 12. residual risks
-13. recommendation for FE-R2
+13. recommendation for FE-R3
 
 ## Mandatory preflight
 
@@ -99,8 +110,8 @@ Test-Path automation_bus/state/work_package_active.json
 
 Read `automation_bus/state/work_package_active.json` and confirm:
 
-* `work_id` is `FE-R1`
-* branch is `frontend/fe-r1-consumer-prose-cleanup`
+* `work_id` is `FE-R2`
+* branch is `frontend/fe-r2-results-journey-restructure`
 
 If token is missing or mismatched, STOP:
 
@@ -110,314 +121,330 @@ Kernel start not executed or work package mismatch.
 
 ## Cross-sprint guard preflight
 
-Run the current scaffold smoke pack before implementation.
+Run current FE/scaffold guards before implementation.
 
 At minimum:
 
 ```powershell
-python -m pytest backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py -q
-python -m pytest backend/tests/regression/test_lc_s8g_uploaded_unit_display_fidelity.py -q
-python -m pytest backend/tests/regression/test_lc_s8d_unit_governance_sentinel.py -q
-python -m pytest backend/tests/regression/test_lc_s10b_launch_core_protection.py -q
-python -m pytest backend/tests/regression/test_lc_s11a_trust_blocker_correction.py -q
+python -m pytest backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py -q
 python -m pytest backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py -q
 python -m pytest backend/tests/regression/test_lc_s14_direction_aware_scoring.py -q
 python -m pytest backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py -q
 python -m pytest backend/tests/regression/test_lc_s18_root_cause_why_registration.py -q
 python -m pytest backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py -q
-python -m pytest backend/tests/regression/test_lc_s21_23_23b_orchestrator_docs_ssot.py -q
 python -m pytest backend/tests/regression/test_lc_s18a_package_estate_inventory.py -q
 python -m pytest backend/tests/unit/test_scoring_rules.py -q
 ```
 
 If a prior guard fails, STOP unless GPT/human authority explicitly authorises continuation.
 
-## Phase 1 — Source trace confirmation
+## Phase 1 — Current page structure confirmation
 
-Before editing, confirm the current source of each FE-R0 high-damage text block.
+Before editing, inspect the current results page implementation and document the active section order.
 
-Trace at minimum:
-
-```text
-narrative_report_v1.retail_summary
-narrative_report_v1.lead_narrative
-narrative_report_v1.secondary_narratives
-narrative_report_v1.next_steps_narrative
-clinician_report_v1.sections.page1.runner_up_why_not_lead_line
-clinician_report_v1.sections.page1.runner_up_topic_line
-clinician_report_v1.sections.page1.confidence_and_missing_data
-interpretation_display_layer_v1.records[].retail_display_label
-balanced_systems_v1
-ALP status / severity for ALP 38 U/L
-```
-
-Known actual files to inspect:
+Known likely files:
 
 ```text
-backend/core/analytics/narrative_report_compiler_v1.py
-backend/core/analytics/report_compiler_v1.py
-backend/core/analytics/domain_narrative_wave1.py
-backend/core/analytics/domain_score_assembler.py
-backend/core/analytics/balanced_systems_presentation_v1.py
-backend/core/analytics/interpretation_display_layer_governance_v1.py
-backend/core/analytics/interpretation_display_layer_publish_v1.py
-backend/core/scoring/**/*
-backend/ssot/scoring_policy.yaml
-backend/ssot/biomarkers.yaml
 frontend/app/(app)/results/page.tsx
 frontend/app/components/**/*
 frontend/app/lib/**/*
 frontend/app/types/analysis.ts
+backend/core/dto/**/*
 ```
 
-STOP if the source cannot be traced.
-
-## Phase 2 — Consumer prose safety rules
-
-Implement or enforce consumer prose safety rules.
-
-Consumer-facing prose must not include:
+Confirm where these current sections are rendered:
 
 ```text
-"(governed label)"
-"moderate_by_default"
-"confidence weight"
-"structured ranking only"
-"ranked lead pattern"
-"lab anchor"
-"thread"
-"Functional read —"
-"Prioritised follow-up (governed assets)"
-"Clinician-structured"
-"0.90"
-"0.60"
-"vs 0.90"
-raw signal IDs such as "Lh High", "Alp Low", "Hypercortisolism"
-template phrases like ": is outside the optimal range on this panel"
+Primary hero
+Narrative retail summary
+What's driving this
+Wave1DomainCards
+BalancedSystemsSummary
+PipelineStatus / trust strip
+What this means accordion
+ResultsBodyOverview
+ResultsInvestigationSpine
+InterpretationPatternsSection
+SystemUnderstandingSection
+WhyThisLeadWonSection
+NarrativeLeadAndSupportingSections
+NarrativeLongitudinalAndNextSteps
+PrimaryFindingAndWhy
+Actions
+Advanced & clinician report
+BiomarkerDials
+LayerCInsightSection
+ClinicianReportRenderer
 ```
 
-Do not remove clinically useful content merely because it is technical. The goal is compiler-mediated consumer copy, not dumbed-down generic prose.
+STOP if the current page structure cannot be safely established.
 
-## Phase 3 — Required fixes
+## Phase 2 — Target Phase 1 journey order
 
-### A. `narrative_report_v1.retail_summary`
+Implement the Phase 1 journey order from the v6 recommendation paper.
 
-Rewrite at source so the retail summary:
-
-* does not describe compiler ranking mechanics
-* does not say “The ranked lead pattern is…”
-* does not use “lab anchor” or “thread”
-* does not contain internal safety/meta commentary such as “This wording stays descriptive…”
-* does not duplicate the IDL pattern-card why-it-matters text verbatim
-* is concise enough for a summary card
-* starts with a consumer-readable interpretation
-
-Expected style:
+The target FE-R2 order is:
 
 ```text
-Your main result pattern is centred on raised homocysteine. This can point towards strain in one-carbon / methylation pathways, especially when interpreted alongside B-vitamin and blood-cell context. The wider panel also shows several stable areas, so this should be read as a focused follow-up pattern rather than a sign that the whole panel is off track.
+1. Your body overview
+2. What’s working well
+3. Primary finding and why
+4. Why this lead won / uncertainty
+5. Marker-level evidence
+6. What to do next
+7. Clinician summary
 ```
 
-Do not use that exact wording unless supported by the available data.
+FE-R2 must not implement the full Phase 2 pattern layer.
 
-### B. `narrative_report_v1.lead_narrative`
+The existing `Patterns across your body` section may remain available, but it must not be promoted as a completed Phase 2 phenotype/pattern layer. If retained, label/position it cautiously as an early/current pattern view or keep it secondary.
 
-Rewrite at source so the lead narrative:
+## Required section behaviour
 
-* is compact
-* is not a raw KB mechanism dump
-* does not list all hypotheses with confidence weights
-* does not expose governed labels
-* does not expose internal ranking terms
-* does not duplicate confirmatory tests already shown elsewhere
-* uses 2–4 short paragraphs maximum
-* explains the lead finding in consumer language
+### Section 1 — Your body overview
 
-It may use mechanism/pathway content only after compiler-mediated summarisation.
+Must appear at or near the top of the results page after the page header/disclosure banner.
 
-### C. `narrative_report_v1.secondary_narratives`
+Should include:
 
-Rewrite at source so secondary narratives:
+* short “how to read this page” framing block
+* cleaned FE-R1 primary finding/overview content
+* primary result context
+* calm whole-body orientation
+* no raw compiler/internal strings
+* no biomarker grid
 
-* do not dump long raw lipid transport mechanism text
-* do not list raw internal signal names
-* do not repeat “is outside the optimal range…”
-* do not include “Lh High on Lh”, “Alp Low on Alp”, etc.
-* give a concise consumer explanation of relevant secondary context only
-
-If secondary narrative content cannot be made safe, omit from retail UX and document why.
-
-### D. `narrative_report_v1.next_steps_narrative`
-
-Remove or rewrite internal headers:
+Use existing assets only, such as:
 
 ```text
-Prioritised follow-up (governed assets)
-Functional read —
+clinician_report_v1.sections.page1.primary_concern
+narrative_report_v1.body_overview
+interpretation_display_layer_v1
+consumer_domain_scores
+balanced_systems_v1
 ```
 
-Keep useful follow-up actions, but present them in plain English.
+Do not invent new backend fields.
 
-### E. Runner-up and confidence prose
+### Section 2 — What’s working well
 
-Rewrite at source in `backend/core/analytics/report_compiler_v1.py`:
+Must appear immediately after body overview.
+
+Use:
 
 ```text
-runner_up_why_not_lead_line
+balanced_systems_v1
+consumer_domain_scores fallback only if FE-R1 authorised/implemented it
+```
+
+If there are stable domains/systems, show them clearly.
+
+If no stable systems are genuinely available, fallback copy must be calm and non-dismissive.
+
+Do not fabricate reassurance.
+
+### Section 3 — Primary finding and why
+
+Must appear before uncertainty and before biomarker evidence.
+
+Use:
+
+```text
+top_hypothesis_line if available
+clinician_report_v1.sections.page1
+root_cause_v1 / clinician_report_v1.sections.root_cause
+chains[] if available
+primary finding evidence
+```
+
+Important:
+
+* `chains[]` must not be hidden only behind technical detail if it is consumer-readable.
+* Technical ranking/debug wording must remain hidden.
+* The heading must be retail-friendly.
+* Do not use “Clinician-structured” in the retail flow.
+
+### Section 4 — Why this lead won / uncertainty
+
+Must appear immediately after primary finding and why.
+
+Use:
+
+```text
 runner_up_topic_line
+runner_up_why_not_lead_line
 confidence_and_missing_data
+data_quality.confidence_caveat
 ```
 
-These must not expose raw numerical confidence values such as `0.90 vs 0.90`.
+These should already be consumer-safe from FE-R1.
 
-Consumer-friendly confidence may say:
+Do not expose numerical confidence scores or raw ranking values.
+
+### Section 5 — Marker-level evidence
+
+Move biomarker evidence into the retail journey.
+
+This does not mean all advanced/clinician material becomes retail.
+
+Minimum requirement:
+
+* biomarker evidence must no longer be buried only under `Advanced & clinician report`
+* user should be able to inspect biomarker values/ranges/status as part of the main journey
+* existing display-unit fidelity must remain intact
+* contribution/education expansions may remain basic in FE-R2; deeper work belongs to FE-R3
+
+Use:
 
 ```text
-Several findings were close in priority.
-The panel has enough information to identify a lead pattern, but some confirmatory markers would make the interpretation more specific.
+BiomarkerDials
+biomarkers[]
+display_value/display_unit/display_label
+reference ranges
 ```
 
-Use actual data-driven logic where available.
+Do not introduce frontend calculation logic.
 
-### F. IDL retail labels
+Do not break FE-R1 prose safety.
 
-Fix labels generated through the IDL governance/publish path:
+### Section 6 — What to do next
+
+Bring action/follow-up content into the main journey.
+
+Use existing:
 
 ```text
-backend/core/analytics/interpretation_display_layer_governance_v1.py
-backend/core/analytics/interpretation_display_layer_publish_v1.py
+narrative_report_v1.next_steps_narrative
+confirmatory_tests[]
+actions
+next_steps[]
 ```
 
-Fix labels such as:
+Actions may remain collapsible within this section, but the section itself should not be hidden behind an unrelated accordion.
+
+Do not add generic wellness filler.
+
+### Section 7 — Clinician summary
+
+Keep clinician material separate and lower on the page.
+
+Acceptable:
+
+* collapsed by default
+* clearly labelled as clinician/professional summary
+* export/handoff oriented
+
+Not acceptable:
+
+* injecting clinician-heading language into the retail explanation flow
+* making clinician report the main journey
+
+## Phase 3 — Sections to demote, collapse, or remove from main flow
+
+Review the following and decide whether to keep, move, collapse, or remove:
 
 ```text
-Homocysteine Elevation Context: is outside the optimal range on this panel
-Homocysteine High: is outside the optimal range on this panel
+Wave1DomainCards
+ResultsInvestigationSpine
+SystemUnderstandingSection
+InterpretationPatternsSection
+NarrativeLeadAndSupportingSections
+NarrativeLongitudinalAndNextSteps
+LayerCInsightSection
+PipelineStatus
+Advanced & clinician report
 ```
 
-Consumer labels must be concise and readable.
+Rules:
 
-Example style:
+* Do not delete valuable sections if they are needed for FE-R3/FE-R4.
+* It is acceptable to demote them.
+* It is acceptable to keep them collapsed.
+* It is acceptable to move explanation/orientation content into Section 1.
+* Avoid duplicate headings such as “What this means” inside “What this means”.
+* Do not let the page remain accordion-dominated.
+
+## Phase 4 — Frontend copy changes allowed
+
+Frontend copy may be changed where needed to support the new journey.
+
+Allowed:
+
+* page subtitle
+* section headings
+* section descriptions
+* accordion labels
+* navigation helper text
+* “Advanced” / clinician section labels
+
+Forbidden:
+
+* rewriting clinical interpretation content in frontend
+* adding clinical claims in frontend static copy
+* calculating or inferring clinical meaning in frontend
+* adding new hardcoded medical explanations
+
+## Phase 5 — Browser check
+
+If browser tools are available, inspect:
 
 ```text
-Raised homocysteine pattern
-Homocysteine elevation
-Methylation pathway pattern
+http://localhost:3000/results?analysis_id=7aacc734-95cf-4ea5-a19c-0d03d98dd2e9
 ```
 
-Do not break internal IDs. This is display-label work only.
-
-### G. Domain narrative duplication and contradictions
-
-Inspect and update source where needed:
+Login if required:
 
 ```text
-backend/core/analytics/domain_narrative_wave1.py
-backend/core/analytics/domain_score_assembler.py
+test-user3@example.com
+Subaru@555
 ```
 
-Fix or document:
+Check:
 
-* repeated cardiovascular contributor sentence appearing in hero and domain card
-* blood sugar card contradiction: `100 / 100`, `Strong`, `Limited confidence`, and “active signals to address”
-* any internal signal/cluster labels appearing as consumer anchor text
+* the page opens with body overview / whole-body framing
+* “What’s working well” appears near the top
+* primary finding and why appears before uncertainty
+* biomarker evidence is visible in the main journey
+* actions/next steps are visible in the main journey
+* clinician summary is separate
+* internal strings from FE-R1 remain absent
+* page does not feel like one giant accordion
 
-### H. Duplicate suppression
-
-Prevent the same prose block from appearing in multiple places.
-
-At minimum, deduplicate:
-
-* IDL pattern why-it-matters appearing in both summary and pattern card
-* cardiovascular contributor sentence repeated in hero and domain card
-* confirmatory tests repeated across lead narrative, next steps, and primary finding
-* “is outside the optimal range…” template repetitions
-
-Use source-level suppression where possible. Use frontend omission only where the text is duplicative by design.
-
-### I. Balanced systems investigation
-
-Investigate in:
-
-```text
-backend/core/analytics/balanced_systems_presentation_v1.py
-```
-
-Why `balanced_systems_v1` is empty for the audited analysis despite domain scores of 92, 100, and 94.
-
-Outcome must be one of:
-
-1. fix `balanced_systems_v1` compilation if it is clearly wrong
-2. improve fallback copy if absence is valid
-3. document as deferred if it requires wider scoring/system policy work
-
-Do not fabricate stable-system claims.
-
-### J. ALP critical investigation
-
-Investigate why `ALP 38 U/L` rendered as `Critical`.
-
-Known clue from hardening:
-
-```text
-ALP direction_class: high_only_concern in scoring_policy.yaml strongly suggests ALP 38 U/L being classified as Critical is a scoring/status error.
-```
-
-Outcome must be one of:
-
-1. fix scoring/status classification if the current policy is wrong
-2. document why the current classification is governed and correct
-3. defer with explicit blocker if source cannot be safely changed
-
-Do not silently alter scoring policy without test coverage.
-
-## Phase 4 — Frontend display cleanup only where source cannot be fixed
-
-Frontend changes are allowed only for:
-
-* removing retail-hostile labels such as `Clinician-structured "why" and evidence`
-* avoiding title collision where “What this means” appears twice
-* omitting unsafe source fields if backend cannot make them safe in this sprint
-* adding guards preventing internal tokens from rendering
-
-Do not restructure the whole page in FE-R1. That belongs to FE-R2.
+Do not claim browser UAT passed unless the page was actually inspected.
 
 ## Required tests
 
-Add or update deterministic tests proving:
+Add or update deterministic tests for:
 
-### Prose safety
+### Journey structure
 
-* no user-facing retail prose contains internal labels
-* no user-facing retail prose contains raw confidence weights
-* no user-facing retail prose contains raw numerical ranking comparisons
-* no consumer narrative contains `governed label`
-* no consumer narrative contains `moderate_by_default`
-* no consumer narrative contains `structured ranking only`
-* no consumer narrative contains `Functional read —`
-* no consumer narrative contains raw signal phrases like `Lh High`, `Alp Low`, `Hypercortisolism`
-* no consumer display label contains `: is outside the optimal range on this panel`
+* results page section order matches FE-R2 target order
+* body overview appears before primary finding detail
+* what’s working well appears before strain-heavy evidence
+* uncertainty appears after primary finding
+* biomarker evidence is part of main retail journey
+* clinician summary remains separate/lower/collapsed
 
-### Narrative quality
+### Prose and safety preservation
 
-* `retail_summary` is concise and does not duplicate pattern-card why-it-matters text
-* `lead_narrative` is bounded in length and does not include raw hypothesis dumps
-* `secondary_narratives` is bounded in length and excludes raw internal signal lists
-* next steps omit internal governed-asset headers
-* runner-up/confidence copy is consumer-safe
+* FE-R1 unsafe prose guards still pass
+* no “Clinician-structured” heading appears in retail journey
+* no duplicate “What this means” title collision
+* no internal/governance/debug labels appear in visible section headings
+* no frontend clinical inference added
 
-### Balanced systems / ALP
+### DTO/display preservation
 
-* balanced systems behaviour is covered according to the chosen outcome
-* ALP status behaviour is covered according to the chosen outcome
-* LC-S14 direction-aware scoring remains intact
+* uploaded unit display fidelity remains intact
+* biomarker dials still use display fields where available
+* no frontend conversion maths introduced
+* persisted replay fixture still supports required result surface fields
 
 ### Regression preservation
 
-* LC-S8F/G unit and display fidelity still passes
+* FE-R1 consumer prose cleanup still passes
 * LC-S13 lifestyle/coherence protections still pass
-* LC-S14 direction-aware scoring protections still pass
-* LC-S18 WHY registration protections still pass
+* LC-S14 direction-aware scoring still passes
 * LC-S20/22 persisted replay protections still pass
 * LC-S18A package estate protections still pass
 
@@ -428,15 +455,13 @@ Sentinel update is required.
 Add or update defect classes such as:
 
 ```text
-consumer_prose_internal_label_leakage
-consumer_prose_raw_confidence_weight_visible
-consumer_prose_raw_signal_id_visible
-consumer_narrative_unbounded_mechanism_dump
-consumer_summary_compiler_self_description
-consumer_display_label_template_artifact
-retail_page_duplicate_prose_block
-balanced_systems_false_empty_state
-alp_low_misclassified_critical
+retail_results_journey_wrong_order
+body_overview_not_first
+working_well_section_missing_or_late
+biomarker_evidence_hidden_in_advanced_only
+clinician_language_in_retail_flow
+results_page_accordion_dominated
+duplicate_what_this_means_heading
 ```
 
 Each must point to an active deterministic test or validator.
@@ -446,56 +471,55 @@ No placeholder Sentinel entries.
 ## Potentially allowed files
 
 ```text
-backend/core/analytics/narrative_report_compiler_v1.py
-backend/core/analytics/report_compiler_v1.py
-backend/core/analytics/domain_narrative_wave1.py
-backend/core/analytics/domain_score_assembler.py
-backend/core/analytics/balanced_systems_presentation_v1.py
-backend/core/analytics/interpretation_display_layer_governance_v1.py
-backend/core/analytics/interpretation_display_layer_publish_v1.py
-backend/core/scoring/**/*
-backend/ssot/scoring_policy.yaml
-backend/ssot/biomarkers.yaml
 frontend/app/(app)/results/page.tsx
 frontend/app/components/**/*
 frontend/app/lib/**/*
 frontend/app/types/**/*
+frontend/tests/**/*
 backend/tests/regression/**/*
 backend/tests/unit/**/*
 sentinel/packs/**/*
-docs/audit-papers/FE-R1_consumer_prose_cleanup_narrative_safety_notes.md
+docs/audit-papers/FE-R2_results_journey_restructure_notes.md
+```
+
+Backend runtime files are allowed only if absolutely necessary to expose already-existing DTO fields without changing clinical logic:
+
+```text
+backend/core/dto/**/*
 ```
 
 ## Forbidden unless GPT explicitly approves
 
 ```text
+backend/core/analytics/**/*
+backend/core/scoring/**/*
 backend/core/units/**/*
 backend/core/pipeline/**/*
-knowledge_bus/packages/**/*   # no medical package content edits
-knowledge_bus/governance/package_estate_KB-S49_v1.yaml
-frontend redesign / broad page reorder
+backend/ssot/**/*
+knowledge_bus/**/*
 Gemini / LLM activation
+broad frontend visual redesign unrelated to journey order
 automation_bus/state/*
 backend/scripts/run_work_package.py
 backend/scripts/golden_gate_local.py
 backend/scripts/update_cursor_status.py
 ```
 
-Do not edit medical Knowledge Bus package content in FE-R1.
+Do not modify backend narrative compilers in FE-R2.
 
-If medical package content appears to be the only source of the bad prose, STOP and report. The correct fix may be compiler mediation, not changing the package content.
+If prose is still bad after FE-R1, document it as residual or STOP if it blocks the journey. Do not silently re-open FE-R1 inside FE-R2.
 
 ## Required validation commands
 
-Run targeted tests and relevant scaffold guards.
+Run targeted tests and relevant guards.
 
 At minimum:
 
 ```powershell
 python -m pytest backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py -q
+python -m pytest backend/tests/regression/test_fe_r2_results_journey_restructure.py -q
 python -m pytest backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py -q
 python -m pytest backend/tests/regression/test_lc_s14_direction_aware_scoring.py -q
-python -m pytest backend/tests/regression/test_lc_s18_root_cause_why_registration.py -q
 python -m pytest backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py -q
 python -m pytest backend/tests/regression/test_lc_s18a_package_estate_inventory.py -q
 python -m pytest backend/tests/unit/test_scoring_rules.py -q
@@ -507,35 +531,29 @@ If frontend files changed:
 npm run type-check
 ```
 
-If browser tools are available, inspect the same report after changes:
+If there are existing frontend tests suitable for this page, run them and record exact command/output.
 
-```text
-http://localhost:3000/results?analysis_id=7aacc734-95cf-4ea5-a19c-0d03d98dd2e9
-```
-
-Confirm the 10 most damaging blocks from FE-R0 no longer appear in consumer-facing form.
-
-Do not claim browser UAT passed unless the page was actually inspected.
+Do not run broad unrelated suites unless targeted failures justify it.
 
 ## Acceptance criteria
 
 This sprint is complete only if:
 
-* FE-R0 audit report is committed to main before FE-R1 starts
-* internal labels are removed from consumer-facing narrative fields
-* raw confidence weights and score comparisons are removed from consumer-facing prose
-* raw signal names and template artifacts are removed from display labels
-* retail summary is consumer-readable and concise
-* lead narrative is bounded and compiler-mediated
-* secondary narratives no longer dump raw mechanism text or internal signal lists
-* next steps no longer expose governed-asset/internal headers
-* duplicate prose blocks are reduced or suppressed
-* balanced systems absence is investigated and fixed or documented
-* ALP critical status is investigated and fixed or documented
+* FE-R1 is confirmed merged before FE-R2 starts
+* results page is reorganised into the Phase 1 guided journey
+* body overview appears first in the journey
+* what’s working well appears near the top
+* primary finding and why appears before uncertainty
+* biomarker evidence is visible in the retail journey
+* actions/next steps are visible in the retail journey
+* clinician summary remains separate
+* no broad frontend redesign is smuggled into the sprint
+* no backend clinical/prose compiler changes are made
+* FE-R1 prose safety guards still pass
+* display-unit fidelity is preserved
 * Sentinel guards are active and deterministic
-* no page restructuring is smuggled into this sprint
-* no Knowledge Bus medical content is edited
-* prior scaffold guards still pass
+* browser check is performed if available, or limitation is documented
+* residual risks are recorded for FE-R3
 
 ## Closure requirements
 
@@ -557,19 +575,19 @@ python backend/scripts/run_work_package.py finish
 
 After finish, follow SOP v1.3.1:
 
-* if `automation_bus/latest_cursor_status.json` is the only dirty file and shows kernel-generated COMPLETE status for `FE-R1`, commit it automatically as:
-  `chore(bus): FE-R1 kernel COMPLETE status`
+* if `automation_bus/latest_cursor_status.json` is the only dirty file and shows kernel-generated COMPLETE status for `FE-R2`, commit it automatically as:
+  `chore(bus): FE-R2 kernel COMPLETE status`
 * if any other Automation Bus artefact is dirty, STOP and escalate
 
 Do not merge.
 
-Do not claim FE-R2 readiness. This sprint prepares the page for FE-R2 but does not authorise it.
+Do not claim FE-R3 readiness. This sprint prepares the page for FE-R3 but does not authorise it.
 
 ## Cursor completion statement
 
-Cursor implements consumer prose safety only.
+Cursor implements results journey restructuring only.
 
-Cursor may not self-certify clinical correctness, frontend journey completion, merge readiness, or permission to begin FE-R2.
+Cursor may not self-certify clinical correctness, final UX quality, merge readiness, or permission to begin FE-R3.
 
 ```
 ```
