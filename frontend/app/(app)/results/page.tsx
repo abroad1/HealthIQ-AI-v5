@@ -58,6 +58,7 @@ import {
   resolvePrimaryFindingSeverity,
   resolveHeroPrimaryStory,
 } from '@/lib/resultsPageLayout';
+import { FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS } from '@/lib/feR2ResultsJourneyOrder';
 
 const BIOMARKER_DIALS_SECTION_ID = 'section-biomarker-dials';
 
@@ -578,8 +579,8 @@ export default function ResultsPage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-1">Your results</h1>
               <p className="text-gray-600 max-w-2xl">
-                Start with your primary finding, then open deeper sections for patterns, actions, and the full technical
-                report when you need it.
+                This page walks through your results in order: whole-body context, what looks stable, your main finding,
+                uncertainty, marker evidence, and follow-up — with a separate clinician summary below.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -633,46 +634,79 @@ export default function ResultsPage() {
             </Alert>
           ) : null}
 
-          <ResultsPrimaryHero
-            phenotypeLabel={heroStory.heroTitle}
-            summary={heroSummary}
-            rankedSignalSecondaryLine={heroStory.bridgeExplanation}
-            systemContextLine={heroStory.systemContextLine}
-            severityLabel={heroSeverity.label}
-            severityTone={heroSeverity.tone}
-            onDownloadReport={
-              currentAnalysis?.status === 'completed' && currentAnalysis.analysis_id
-                ? handleDownloadReport
-                : undefined
-            }
-            downloadPending={pdfDownloadPending}
-            downloadError={pdfDownloadError}
-            downloadDisabledReason="Complete an analysis to download your PDF summary."
-          />
+          {/* FE-R2 Phase 1 journey — section order must match FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS */}
+          <section
+            className="space-y-6"
+            aria-labelledby="fe-r2-body-overview-heading"
+            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[0]}
+          >
+            <div className="rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
+              <h2 id="fe-r2-body-overview-heading" className="text-sm font-semibold text-slate-800 mb-1">
+                How to read this page
+              </h2>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Sections below build on each other: orientation first, then what looks stable, your main finding and why it
+                led, how confident we are, your marker evidence, and suggested follow-up. Open optional sections at the
+                bottom for pattern cards, extra context, or the clinician handoff.
+              </p>
+            </div>
+            <ResultsPrimaryHero
+              phenotypeLabel={heroStory.heroTitle}
+              summary={heroSummary}
+              rankedSignalSecondaryLine={heroStory.bridgeExplanation}
+              systemContextLine={heroStory.systemContextLine}
+              severityLabel={heroSeverity.label}
+              severityTone={heroSeverity.tone}
+              onDownloadReport={
+                currentAnalysis?.status === 'completed' && currentAnalysis.analysis_id
+                  ? handleDownloadReport
+                  : undefined
+              }
+              downloadPending={pdfDownloadPending}
+              downloadError={pdfDownloadError}
+              downloadDisabledReason="Complete an analysis to download your PDF summary."
+            />
+            <ResultsBodyOverview
+              clinicianReport={clinicianReport}
+              clusters={clusters}
+              compiledBodyOverview={narrativeReport?.body_overview}
+            />
+            <NarrativeRetailSummaryCard narrative={narrativeReport} />
+          </section>
 
-          <NarrativeRetailSummaryCard narrative={narrativeReport} />
-
-          <ResultsDrivingSignals markers={topDriverMarkers} biomarkerSectionId={BIOMARKER_DIALS_SECTION_ID} />
-
-          <Wave1DomainCards domains={currentAnalysis?.consumer_domain_scores} />
-
-          <section aria-labelledby="system-health-label">
-            <h2 id="system-health-label" className="sr-only">
-              Your system health
+          <section
+            aria-labelledby="fe-r2-working-well-heading"
+            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[1]}
+          >
+            <h2 id="fe-r2-working-well-heading" className="sr-only">
+              What&apos;s working well
             </h2>
             <BalancedSystemsSummary
               balanced={balancedSystems}
-              sectionTitle="Your system health"
+              sectionTitle="What's working well"
               initialVisibleCount={6}
               expandBeyondInitial
               maxItems={4}
             />
           </section>
 
-          <section aria-labelledby="trust-layer">
-            <h2 id="trust-layer" className="sr-only">
-              Data quality
+          <div data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[2]}>
+            <PrimaryFindingAndWhy
+              report={clinicianReport}
+              omitIntroDuplicate
+              showTechnicalDetail={showDetails}
+            />
+          </div>
+
+          <section
+            className="space-y-4"
+            aria-labelledby="fe-r2-uncertainty-heading"
+            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[3]}
+          >
+            <h2 id="fe-r2-uncertainty-heading" className="sr-only">
+              Why this lead won and uncertainty
             </h2>
+            <WhyThisLeadWonSection report={clinicianReport} />
             <PipelineStatus
               dataQuality={clinicianReport?.data_quality}
               confirmatoryTests={clinicianReport?.sections?.confirmatory_tests}
@@ -680,42 +714,32 @@ export default function ResultsPage() {
             />
           </section>
 
-          <ResultsDisclosureSection
-            title="What this means"
-            description="Patterns, context, and the structured interpretation behind the summary above."
-            data-testid="section-what-this-means"
-            defaultOpen
+          <section
+            id={BIOMARKER_DIALS_SECTION_ID}
+            className="space-y-4"
+            aria-labelledby="biomarkers-heading"
+            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[4]}
           >
-            <ResultsBodyOverview
-              clinicianReport={clinicianReport}
-              clusters={clusters}
-              compiledBodyOverview={narrativeReport?.body_overview}
-            />
-            <ResultsInvestigationSpine crossBodyPatternLabel={firstIdlRetailLabel} />
-            <InterpretationPatternsSection bundle={currentAnalysis?.interpretation_display_layer_v1} />
-            <SystemUnderstandingSection
-              balanced={balancedSystems}
-              clusters={clusters}
-              primaryDriver={primaryDriver}
-              idlRetailLabel={firstIdlRetailLabel}
-            />
-            <WhyThisLeadWonSection report={clinicianReport} />
-            <NarrativeLeadAndSupportingSections narrative={narrativeReport} />
-            <NarrativeLongitudinalAndNextSteps narrative={narrativeReport} />
-            <section aria-labelledby="root-cause-heading">
-              <h3 id="root-cause-heading" className="text-sm font-semibold text-slate-800 mb-2">
-                Primary finding — clinical detail
-              </h3>
-              <PrimaryFindingAndWhy report={clinicianReport} omitIntroDuplicate showTechnicalDetail={showDetails} />
-            </section>
-          </ResultsDisclosureSection>
+            <h2 id="biomarkers-heading" className="text-xl font-semibold text-gray-900">
+              Marker-level evidence
+            </h2>
+            <p className="text-sm text-gray-600">
+              Values and reference ranges from your uploaded panel. Expand a marker for brief context when available.
+            </p>
+            <ResultsDrivingSignals markers={topDriverMarkers} biomarkerSectionId={BIOMARKER_DIALS_SECTION_ID} />
+            <BiomarkerDials biomarkers={biomarkerDialData} sectionTitle="All markers on this run" />
+            <UploadedPanelFidelity rows={uploadPanelFidelityRows} />
+          </section>
 
-          <ResultsDisclosureSection
-            title="Actions"
-            description="Follow-ups from your system groups and panel notes. Open the Actions hub for the full list from your latest completed run."
-            data-testid="section-actions"
-            defaultOpen={false}
+          <section
+            className="space-y-4"
+            aria-labelledby="fe-r2-next-steps-heading"
+            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[5]}
           >
+            <h2 id="fe-r2-next-steps-heading" className="text-xl font-semibold text-gray-900">
+              What to do next
+            </h2>
+            <NarrativeLongitudinalAndNextSteps narrative={narrativeReport} />
             <div className="space-y-4">
               <p className="text-sm text-slate-700">
                 <Link
@@ -732,11 +756,51 @@ export default function ResultsPage() {
               </p>
               <ResultsActionCardsBlock actions={actionCards} />
             </div>
+          </section>
+
+          <ResultsDisclosureSection
+            title="Pattern cards and health domains"
+            description="Early pattern view from your interpretation layer and domain scores — supplementary to the main journey above."
+            data-testid="section-patterns-secondary"
+            defaultOpen={false}
+          >
+            <InterpretationPatternsSection bundle={currentAnalysis?.interpretation_display_layer_v1} />
+            <Wave1DomainCards domains={currentAnalysis?.consumer_domain_scores} />
           </ResultsDisclosureSection>
 
           <ResultsDisclosureSection
-            title="Advanced & clinician report"
-            description="Full biomarker dials, system groups, clinician-only synthesis, and the long-form report."
+            title="Additional interpretation context"
+            description="Orientation helpers and longer narrative detail when you want more depth."
+            data-testid="section-interpretation-context"
+            defaultOpen={false}
+          >
+            <ResultsInvestigationSpine crossBodyPatternLabel={firstIdlRetailLabel} />
+            <SystemUnderstandingSection
+              balanced={balancedSystems}
+              clusters={clusters}
+              primaryDriver={primaryDriver}
+              idlRetailLabel={firstIdlRetailLabel}
+            />
+            <NarrativeLeadAndSupportingSections narrative={narrativeReport} />
+          </ResultsDisclosureSection>
+
+          <ResultsDisclosureSection
+            title="Clinician summary"
+            description="Professional handoff, export-oriented synthesis, and technical detail for clinical review."
+            data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[6]}
+            defaultOpen={false}
+          >
+            <ClinicianReportRenderer
+              report={clinicianReport}
+              balancedSystems={balancedSystems}
+              deterministicClinicianSynthesis={narrativeReport?.clinician_synthesis}
+              showTechnicalDetail={showDetails}
+            />
+          </ResultsDisclosureSection>
+
+          <ResultsDisclosureSection
+            title="Advanced analysis"
+            description="Overall score, system groups, optional narrative summaries, and extended technical views."
             data-testid="section-advanced"
             defaultOpen={false}
             onOpenChange={handleAdvancedOpen}
@@ -847,27 +911,12 @@ export default function ResultsPage() {
               <ClusterSummary clusters={clusterSummaries} isLoading={clustersLoading} showDetails={showDetails} />
             </section>
 
-            <section id={BIOMARKER_DIALS_SECTION_ID} aria-labelledby="biomarkers-heading">
-              <h2 id="biomarkers-heading" className="text-xl font-semibold text-gray-900 mb-2">
-                Biomarker evidence
-              </h2>
-              <BiomarkerDials biomarkers={biomarkerDialData} sectionTitle="All markers on this run" />
-              <UploadedPanelFidelity rows={uploadPanelFidelityRows} />
-            </section>
-
             {showInsightsPanelSection ? (
               <div className="space-y-2">
                 <h3 className="text-sm font-semibold text-slate-800">Narrative summaries</h3>
                 <InsightsPanel insights={consumerInsights} narrativeRuntime={narrativeRuntime} />
               </div>
             ) : null}
-
-            <ClinicianReportRenderer
-              report={clinicianReport}
-              balancedSystems={balancedSystems}
-              deterministicClinicianSynthesis={narrativeReport?.clinician_synthesis}
-              showTechnicalDetail={showDetails}
-            />
           </ResultsDisclosureSection>
         </div>
 

@@ -364,6 +364,62 @@
       "test_file": "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py",
       "first_seen": "2026-05",
       "fix_commit": null
+    },
+    "retail_results_journey_wrong_order": {
+      "description": "FE-R2 — results page retail journey sections appear out of v6 Phase 1 order.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r2_results_journey_restructure.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "body_overview_not_first": {
+      "description": "FE-R2 — body overview section is not first in the retail results journey.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r2_results_journey_restructure.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "working_well_section_missing_or_late": {
+      "description": "FE-R2 — what's working well appears after primary finding or is missing from retail journey.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r2_results_journey_restructure.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "biomarker_evidence_hidden_in_advanced_only": {
+      "description": "FE-R2 — BiomarkerDials only inside advanced/clinician disclosure, not main retail journey.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r2_results_journey_restructure.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "clinician_language_in_retail_flow": {
+      "description": "FE-R2 — clinician-structured or clinician-only headings appear in retail journey flow.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r2_results_journey_restructure.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "results_page_accordion_dominated": {
+      "description": "FE-R2 — main retail journey dominated by open accordions instead of linear sections.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r2_results_journey_restructure.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "duplicate_what_this_means_heading": {
+      "description": "FE-R2 — duplicate or accordion-level 'What this means' heading in retail flow.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r2_results_journey_restructure.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
     }
   }
 }

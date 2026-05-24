@@ -16,6 +16,8 @@ export interface ResultsBodyOverviewProps {
   clusters: { severity?: string | null }[];
   /** F-1 — when set, replaces heuristic primary sentence with backend `narrative_report_v1.body_overview`. */
   compiledBodyOverview?: string | null;
+  /** FE-R2 — retail journey section heading. */
+  sectionHeading?: string;
   className?: string;
 }
 
@@ -26,6 +28,7 @@ export function ResultsBodyOverview({
   clinicianReport,
   clusters,
   compiledBodyOverview,
+  sectionHeading = 'Your body overview',
   className = '',
 }: ResultsBodyOverviewProps) {
   const page1 = clinicianReport?.sections?.page1;
@@ -47,7 +50,7 @@ export function ResultsBodyOverview({
         <CardHeader className="pb-2">
           <CardTitle id="body-overview-heading" className="text-xl font-semibold text-gray-900 flex items-center gap-2">
             <LayoutGrid className="h-6 w-6 text-slate-600 shrink-0" aria-hidden />
-            Body overview
+            {sectionHeading}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 pt-0">
