@@ -129,26 +129,20 @@ All artifacts must remain consistent and aligned at all times.
 
 Artifacts are runtime state and are gitignored unless explicitly versioned.
 
-## 5.1 Kernel Status Artifact Versioning Policy
+## 5.1 Kernel Status Artifact Policy
 
-`automation_bus/latest_cursor_status.json` is kernel-owned lifecycle state. Cursor must never manually edit this file.
+`automation_bus/latest_cursor_status.json` is kernel-owned. Cursor must not manually edit it.
 
-However, the kernel may legitimately write this file during:
+If `finish` leaves only this file dirty, and it shows kernel-generated `COMPLETE` status for the active `work_id`, Cursor must commit it automatically as the final closure commit:
 
-- `python backend/scripts/run_work_package.py start`
-- `python backend/scripts/run_work_package.py finish`
+```text
+chore(bus): <work_id> kernel COMPLETE status
+```
 
-Because the repository currently versions this artifact during governed work-package branches, the standard policy is:
-
-- implementation commits must not include `automation_bus/latest_cursor_status.json` unless the work package explicitly modifies Automation Bus behaviour
-- after `finish`, if `automation_bus/latest_cursor_status.json` is the only dirty file and it reflects kernel-generated `COMPLETE` status for the active `work_id`, Cursor must commit it as a separate final bus-status commit
-- the standard commit message is `chore(bus): <work_id> kernel COMPLETE status`
-- if any other Automation Bus artifact is dirty after `finish`, Cursor must STOP and escalate
-- if `latest_cursor_status.json` content does not match the active `work_id`, branch, or expected kernel lifecycle status, Cursor must STOP and escalate
-
-This policy removes the need to decide sprint-by-sprint whether the finish-status snapshot should be committed.
+If any other Automation Bus artifact is dirty, or the status file does not match the active work package, Cursor must STOP and escalate.
 
 ---
+
 
 
 # 6. Post-Implementation Closure Protocol
@@ -282,36 +276,17 @@ Cursor must explicitly state:
 - whether any tooling or out-of-scope files remain
 - whether the repo is ready for merge review
 
-### 6.8.1 Kernel Status Artifact Handling After Finish
+### 6.8.1 Kernel Status Artifact Handling
 
-After `finish`, Cursor must inspect `automation_bus/latest_cursor_status.json` if it appears in `git status --short`.
-
-If all of the following are true:
-
-- `automation_bus/latest_cursor_status.json` is the only dirty file
-- the file content reflects kernel-generated `COMPLETE` status
-- the `work_id` matches the active work package
-- the branch matches the active work package branch
-- no other Automation Bus artifact is dirty
-
-then Cursor must commit it separately using:
+After `finish`, if `automation_bus/latest_cursor_status.json` is the only dirty file and shows kernel-generated `COMPLETE` status for the active `work_id`, Cursor must commit it automatically using:
 
 ```text
 chore(bus): <work_id> kernel COMPLETE status
 ```
 
-After committing, Cursor must re-run:
+Cursor must then re-run `git status --short` and confirm the branch is clean.
 
-```powershell
-git status --short
-git log --oneline -n 5
-```
-
-and confirm the branch is clean before reporting merge readiness.
-
-If any other Automation Bus artifact is dirty, or if `latest_cursor_status.json` does not clearly reflect expected kernel output, Cursor must STOP and escalate.
-
-Cursor must not manually edit `latest_cursor_status.json` to make it match expectations.
+Cursor must STOP if any other Automation Bus artifact is dirty, or if the status file does not match the active work package.
 
 ## 6.9 Local Merge Execution Rule
 
@@ -667,8 +642,6 @@ Cursor must not:
 * Self-certify success
 * Manually modify `latest_cursor_status.json`
 
-Kernel-generated changes to `latest_cursor_status.json` are permitted only through the approved `start` and `finish` commands and must be handled under Section 5.1 and Section 6.8.1.
-
 ---
 
 ## Stage 5 — Kernel Finish
@@ -958,6 +931,3 @@ The system guarantees integrity.
 **Version:** v1.3.1
 **Edition:** Intelligence Governance Edition — Hardening Evidence Standard
 **Status:** LOCKED
-
-```
-```
