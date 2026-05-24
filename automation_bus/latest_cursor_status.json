@@ -1,9 +1,10 @@
 {
   "branch": "frontend/fe-r1-consumer-prose-cleanup",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-24T09:17:14Z",
   "cursor_started_utc": "2026-05-24T09:01:31Z",
-  "head_sha": "439ccf70b667b2ff22f75408e749b47d39ec37fb",
+  "head_sha": "e483287b19dfb9305f91202e27d3bc111c6cbda5",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "FAILED",
   "work_id": "FE-R1"
 }
