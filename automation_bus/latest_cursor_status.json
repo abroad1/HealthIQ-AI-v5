@@ -1,10 +1,9 @@
 {
-  "branch": "frontend/fe-r2-results-journey-restructure",
+  "branch": "frontend/fe-r3-evidence-depth-ux-quality-pass",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-24T12:45:09Z",
-  "cursor_started_utc": "2026-05-24T12:19:54Z",
-  "head_sha": "1c396fcd5959beac211393444fd23645f4189516",
+  "cursor_started_utc": "2026-05-24T14:00:19Z",
+  "head_sha": "88b0846340828b3d19c086c858e8bded4272d347",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "FE-R2"
+  "status": "IN_PROGRESS",
+  "work_id": "FE-R3"
 }
