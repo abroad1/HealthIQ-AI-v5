@@ -23,6 +23,8 @@ export interface PrimaryFindingAndWhyProps {
   omitIntroDuplicate?: boolean;
   /** FE-R3 — omit confirmatory test bullets when the next-steps section surfaces them. */
   omitConfirmatoryInClarify?: boolean;
+  /** FE-R6A — hero lead pattern label when hypothesis title differs. */
+  leadPatternLabel?: string | null;
   /** LC-S7 — evidence chains / raw ranking rationale only when user enables technical detail. */
   showTechnicalDetail?: boolean;
 }
@@ -34,6 +36,7 @@ export function PrimaryFindingAndWhy({
   report,
   omitIntroDuplicate = false,
   omitConfirmatoryInClarify = false,
+  leadPatternLabel = null,
   showTechnicalDetail = false,
 }: PrimaryFindingAndWhyProps) {
   if (!report) {
@@ -99,6 +102,13 @@ export function PrimaryFindingAndWhy({
           </CardTitle>
           {hyp0?.title ? (
             <p className="text-sm font-medium text-indigo-950 pt-1">{scrubConsumerRetailNarrative(hyp0.title)}</p>
+          ) : null}
+          {leadPatternLabel && hyp0?.title && leadPatternLabel.trim().toLowerCase() !== hyp0.title.trim().toLowerCase() ? (
+            <p className="text-sm text-slate-600 pt-1" data-testid="primary-finding-lead-pattern-bridge">
+              Lead pattern on this panel:{' '}
+              <span className="font-medium text-slate-800">{scrubConsumerRetailNarrative(leadPatternLabel)}</span>
+              . The hypothesis below explains how that pattern is being interpreted from your markers.
+            </p>
           ) : null}
         </CardHeader>
         <CardContent className="space-y-6 text-sm text-gray-800">

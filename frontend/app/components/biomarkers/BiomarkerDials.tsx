@@ -5,6 +5,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Info, ChevronDown, ChevronRight } from 'lucide-react';
+import {
+  BIOMARKER_LIMITED_STATE_MESSAGE,
+  retailInterpretationForExpansion,
+  sanitizeBiomarkerInterpretationForRetail,
+} from '@/lib/feR6aRetailCopy';
 
 /** Per-marker model for retail cards + shared / inline detail (FE-VISUALISATION-B2) */
 export interface BiomarkerDialEntry {
@@ -238,13 +243,14 @@ function BiomarkerDetailZones({
   data: BiomarkerDialEntry;
 }) {
   const displayName = BIOMARKER_NAMES[biomarkerKey] || biomarkerKey.replace(/_/g, ' ');
-  const interpretation = data.interpretation?.trim();
   const eduTitle = data.educationalExplainer?.title?.trim();
   const eduBody = data.educationalExplainer?.body?.trim();
   const factual = data.contributionContext?.factual_statement?.trim();
   const patternLine = data.patternRelevanceLine?.trim();
   const hasPatternContext =
     !!(patternLine || factual || (data.relatedSystemGroupNames && data.relatedSystemGroupNames.length > 0));
+  const hasDeeperLayers = !!(eduBody || hasPatternContext);
+  const expansionInterp = retailInterpretationForExpansion(data.interpretation, hasDeeperLayers);
 
   return (
     <div
@@ -253,13 +259,20 @@ function BiomarkerDetailZones({
     >
       <h4 className="text-base font-semibold text-gray-900">{displayName}</h4>
 
-      {interpretation ? (
+      {expansionInterp.showInterpretationBlock && expansionInterp.interpretationText ? (
         <div data-testid="biomarker-detail-interpretation">
           <h5 className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">
             What this result means now
           </h5>
-          <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{interpretation}</p>
+          <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
+            {expansionInterp.interpretationText}
+          </p>
         </div>
+      ) : null}
+      {expansionInterp.showLimitedState ? (
+        <p className="text-sm text-slate-600 leading-relaxed" data-testid="biomarker-detail-limited-state">
+          {BIOMARKER_LIMITED_STATE_MESSAGE}
+        </p>
       ) : null}
 
       {hasPatternContext ? (
@@ -314,13 +327,15 @@ function BiomarkerDetailZones({
 }
 
 function hasExpandableLayers(d: BiomarkerDialEntry): boolean {
-  return !!(
-    (d.interpretation && String(d.interpretation).trim()) ||
+  const hasDeeper = !!(
     (d.educationalExplainer?.body && String(d.educationalExplainer.body).trim()) ||
     (d.contributionContext?.factual_statement && String(d.contributionContext.factual_statement).trim()) ||
     (d.patternRelevanceLine && String(d.patternRelevanceLine).trim()) ||
     (d.relatedSystemGroupNames && d.relatedSystemGroupNames.length > 0)
   );
+  if (hasDeeper) return true;
+  if (sanitizeBiomarkerInterpretationForRetail(d.interpretation)) return true;
+  return !!(d.interpretation && String(d.interpretation).trim());
 }
 
 export default function BiomarkerDials({ biomarkers, sectionTitle = 'Biomarker evidence' }: BiomarkerDialsProps) {
@@ -414,8 +429,10 @@ export default function BiomarkerDials({ biomarkers, sectionTitle = 'Biomarker e
                           original report or ask your clinician.
                         </p>
                       ) : null}
-                      {d?.interpretation ? (
-                        <p className="text-xs text-gray-700 mt-2 leading-relaxed line-clamp-3">{d.interpretation}</p>
+                      {sanitizeBiomarkerInterpretationForRetail(d?.interpretation) ? (
+                        <p className="text-xs text-gray-700 mt-2 leading-relaxed line-clamp-3">
+                          {sanitizeBiomarkerInterpretationForRetail(d?.interpretation)}
+                        </p>
                       ) : null}
                       {d?.date ? (
                         <div className="text-xs text-gray-400 mt-1">{new Date(d.date).toLocaleDateString()}</div>

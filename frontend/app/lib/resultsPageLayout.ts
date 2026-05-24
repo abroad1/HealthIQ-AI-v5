@@ -1,3 +1,4 @@
+import { sanitizeBiomarkerInterpretationForRetail } from '@/lib/feR6aRetailCopy';
 import type {
   BiomarkerResult,
   Cluster,
@@ -386,7 +387,7 @@ function humanizeStatus(status: string | null | undefined): string {
 }
 
 export function oneLineMarkerInterpretation(b: BiomarkerResult): string {
-  const direct = b.interpretation?.trim();
+  const direct = sanitizeBiomarkerInterpretationForRetail(b.interpretation);
   if (direct) return firstSentence(direct);
   const ex = b.biomarker_educational_explainer?.body?.trim();
   if (ex) return firstSentence(ex);

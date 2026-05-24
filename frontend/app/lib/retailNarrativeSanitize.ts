@@ -57,9 +57,23 @@ export function scrubInternalArchitecturePhrases(text: string): string {
 }
 
 /** Full pipeline for default consumer narrative blocks. */
+/** FE-R6A — retail-only strips for fresh UAT defects (presentation layer). */
+export function scrubFeR6aRetailSurfacePhrases(text: string): string {
+  let s = text;
+  s = s.replace(
+    /This is used only to adjust how systems are weighted in the analytical model\s*[—–-]\s*not to alter the lab values on this panel\.?/gi,
+    'Your lifestyle inputs can add context when we interpret how different areas of health relate on this panel.'
+  );
+  s = s.replace(/\s*\(interpretation confidence for this read:[^)]*\)/gi, '');
+  s = s.replace(/\s*interpretation confidence for this read:\s*[^\s.)]+/gi, '');
+  s = s.replace(/Suggested follow-up themes:\s*/gi, '');
+  return s.replace(/\s{2,}/g, ' ').trim();
+}
+
 export function scrubConsumerRetailNarrative(text: string): string {
   const stripped = stripSimpleMarkdownDecorators(text);
   let s = scrubInternalArchitecturePhrases(stripped);
+  s = scrubFeR6aRetailSurfacePhrases(s);
   s = s.replace(/\bsignal_homocysteine_elevation_context\b/gi, 'homocysteine-related pattern');
   s = s.replace(/\bhcy_b12_pattern_v1\b/gi, 'B12–homocysteine pattern');
   return s;

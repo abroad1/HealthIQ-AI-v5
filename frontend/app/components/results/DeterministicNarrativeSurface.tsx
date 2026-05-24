@@ -6,6 +6,8 @@ import { BookOpen, ListChecks, Route, Stethoscope, TrendingUp } from 'lucide-rea
 import type { NarrativeReportV1 } from '@/types/analysis';
 import { cn } from '@/lib/utils';
 import { scrubConsumerRetailNarrative } from '@/lib/retailNarrativeSanitize';
+import { parseNarrativeNextStepParagraphs } from '@/lib/resultsPageLayout';
+import { stripDanglingNextStepsLabels } from '@/lib/feR6aRetailCopy';
 
 function NarrativeProse({
   text,
@@ -121,14 +123,23 @@ export function NarrativeLeadAndSupportingSections({
 /** F-1 — Longitudinal direction + prioritised next steps. */
 export function NarrativeLongitudinalAndNextSteps({
   narrative,
+  nextStepsParagraphs,
   className = '',
 }: {
   narrative?: NarrativeReportV1 | null;
+  /** FE-R6A — pre-parsed/deduped lines; overrides raw narrative next_steps when set. */
+  nextStepsParagraphs?: string[] | null;
   className?: string;
 }) {
   const longitudinal = narrative?.longitudinal_narrative?.trim();
-  const next = narrative?.next_steps_narrative?.trim();
-  if (!longitudinal && !next) return null;
+  const nextRaw = narrative?.next_steps_narrative?.trim();
+  const nextLines =
+    nextStepsParagraphs && nextStepsParagraphs.length > 0
+      ? nextStepsParagraphs
+      : nextRaw
+        ? parseNarrativeNextStepParagraphs(stripDanglingNextStepsLabels(nextRaw))
+        : [];
+  if (!longitudinal && nextLines.length === 0) return null;
 
   return (
     <section className={className} aria-labelledby="deterministic-longitudinal-heading" data-testid="narrative-trend-next">
@@ -153,13 +164,20 @@ export function NarrativeLongitudinalAndNextSteps({
               <NarrativeProse text={longitudinal} />
             </div>
           ) : null}
-          {next ? (
+          {nextLines.length > 0 ? (
             <div className={longitudinal ? 'border-t border-slate-100 pt-4' : ''}>
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2 flex items-center gap-1">
                 <ListChecks className="h-3.5 w-3.5" aria-hidden />
                 Next steps
               </p>
-              <NarrativeProse text={next} />
+              <ul
+                className="list-disc pl-5 space-y-2 text-sm text-slate-800 leading-relaxed"
+                data-testid="narrative-next-steps-list"
+              >
+                {nextLines.map((line, i) => (
+                  <li key={i}>{scrubConsumerRetailNarrative(line)}</li>
+                ))}
+              </ul>
             </div>
           ) : null}
         </CardContent>

@@ -182,11 +182,7 @@ export function ResultsDrivingSignals({ markers, biomarkerSectionId }: ResultsDr
 
 export function ResultsActionCardsBlock({ actions }: { actions: ResultActionCardModel[] }) {
   if (actions.length === 0) {
-    return (
-      <p className="text-sm text-slate-600 border border-dashed border-slate-200 rounded-md px-3 py-3 bg-slate-50/50">
-        No separate checklist of follow-up lines was packaged with this result. The sections below still describe what to discuss next.
-      </p>
-    );
+    return null;
   }
   return (
     <ul className="space-y-3" data-testid="results-action-cards">

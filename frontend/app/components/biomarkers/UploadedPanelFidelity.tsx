@@ -58,9 +58,6 @@ export default function UploadedPanelFidelity({ rows }: UploadedPanelFidelityPro
               {row.equivalenceNote ? (
                 <p className="text-xs text-slate-600 mt-2 leading-relaxed">{row.equivalenceNote}</p>
               ) : null}
-              <p className="text-xs text-slate-500 mt-1 truncate">
-                Linked to {row.linkedCanonicalId.replace(/_/g, ' ')}
-              </p>
             </CardContent>
           </Card>
         ))}

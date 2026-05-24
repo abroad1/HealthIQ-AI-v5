@@ -25,7 +25,6 @@ import { ResultsInvestigationSpine } from '@/components/results/ResultsInvestiga
 import {
   NarrativeLeadAndSupportingSections,
   NarrativeLongitudinalAndNextSteps,
-  NarrativeRetailSummaryCard,
 } from '@/components/results/DeterministicNarrativeSurface';
 import { ResultsBodyOverview } from '@/components/results/ResultsBodyOverview';
 import { ResultsDisclosureSection } from '@/components/results/ResultsDisclosureSection';
@@ -41,6 +40,8 @@ import {
   dedupeActionCardsAgainstNarrative,
   hasGovernedConfirmatoryTests,
 } from '@/lib/feR3NextStepsLayout';
+import { filterNarrativeNextStepsForConfirmatoryDedup } from '@/lib/feR6aRetailCopy';
+import { parseNarrativeNextStepParagraphs } from '@/lib/resultsPageLayout';
 import { AnalysisService } from '@/services/analysis';
 import PipelineStatus from '@/components/pipeline/PipelineStatus';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -227,6 +228,16 @@ export default function ResultsPage() {
   const confirmatoryTestsForJourney = clinicianReport?.sections?.confirmatory_tests ?? [];
 
   const showConfirmatoryInNextSteps = hasGovernedConfirmatoryTests(confirmatoryTestsForJourney);
+
+  const narrativeNextStepsParagraphs = useMemo(() => {
+    const raw = narrativeNextStepsText?.trim();
+    if (!raw) return [] as string[];
+    const names = confirmatoryTestsForJourney.map((t) => t.display_name || '');
+    return filterNarrativeNextStepsForConfirmatoryDedup(
+      parseNarrativeNextStepParagraphs(raw),
+      names
+    );
+  }, [narrativeNextStepsText, confirmatoryTestsForJourney]);
 
   const actionCards = useMemo(() => {
     const built = buildActionCardModels(clusters, currentAnalysis?.recommendations, {
@@ -655,16 +666,6 @@ export default function ResultsPage() {
             aria-labelledby="fe-r2-body-overview-heading"
             data-testid={FE_R2_RESULTS_JOURNEY_SECTION_TEST_IDS[0]}
           >
-            <div className="rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
-              <h2 id="fe-r2-body-overview-heading" className="text-sm font-semibold text-slate-800 mb-1">
-                How to read this page
-              </h2>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Sections below build on each other: orientation first, then what looks stable, your main finding and why it
-                led, how confident we are, patterns across your body when available, marker evidence, and suggested
-                follow-up. Open optional sections at the bottom for health domains, extra context, or the clinician handoff.
-              </p>
-            </div>
             <ResultsPrimaryHero
               phenotypeLabel={heroStory.heroTitle}
               summary={heroSummary}
@@ -685,8 +686,13 @@ export default function ResultsPage() {
               clinicianReport={clinicianReport}
               clusters={clusters}
               compiledBodyOverview={narrativeReport?.body_overview}
+              showPatternGroupBuckets={showDetails}
+              sectionHeading="Your body overview"
             />
-            <NarrativeRetailSummaryCard narrative={narrativeReport} />
+            <p className="text-sm text-slate-600 leading-relaxed max-w-3xl border-l-2 border-slate-200 pl-3">
+              Sections below build on each other: what looks stable, your main finding and why it led, how confident we
+              are, patterns across your body when available, marker evidence, and suggested follow-up.
+            </p>
           </section>
 
           <section
@@ -710,6 +716,7 @@ export default function ResultsPage() {
               report={clinicianReport}
               omitIntroDuplicate
               omitConfirmatoryInClarify={showConfirmatoryInNextSteps}
+              leadPatternLabel={heroStory.heroTitle}
               showTechnicalDetail={showDetails}
             />
           </div>
@@ -772,7 +779,10 @@ export default function ResultsPage() {
             <h2 id="fe-r2-next-steps-heading" className="text-xl font-semibold text-gray-900">
               What to do next
             </h2>
-            <NarrativeLongitudinalAndNextSteps narrative={narrativeReport} />
+            <NarrativeLongitudinalAndNextSteps
+              narrative={narrativeReport}
+              nextStepsParagraphs={narrativeNextStepsParagraphs}
+            />
             {showConfirmatoryInNextSteps ? (
               <ConfirmatoryTestsNextSteps tests={confirmatoryTestsForJourney} />
             ) : null}

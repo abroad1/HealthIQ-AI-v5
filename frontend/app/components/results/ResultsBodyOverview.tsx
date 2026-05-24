@@ -18,6 +18,8 @@ export interface ResultsBodyOverviewProps {
   compiledBodyOverview?: string | null;
   /** FE-R2 — retail journey section heading. */
   sectionHeading?: string;
+  /** FE-R6A — cluster bucket counters contradict lead finding; hide from default retail. */
+  showPatternGroupBuckets?: boolean;
   className?: string;
 }
 
@@ -29,6 +31,7 @@ export function ResultsBodyOverview({
   clusters,
   compiledBodyOverview,
   sectionHeading = 'Your body overview',
+  showPatternGroupBuckets = false,
   className = '',
 }: ResultsBodyOverviewProps) {
   const page1 = clinicianReport?.sections?.page1;
@@ -56,7 +59,7 @@ export function ResultsBodyOverview({
         <CardContent className="space-y-4 pt-0">
           <p className="text-lg font-medium text-gray-900 leading-snug">{primary}</p>
 
-          {hasBuckets ? (
+          {showPatternGroupBuckets && hasBuckets ? (
             <div className="rounded-lg border border-slate-100 bg-slate-50/80 p-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">Pattern groups on this panel</p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">

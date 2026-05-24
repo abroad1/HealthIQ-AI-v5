@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2 } from 'lucide-react';
+import { scrubBalancedSystemsEvidenceLine } from '@/lib/feR6aRetailCopy';
 
 export interface BalancedSystemsV1 {
   intro_line: string;
@@ -81,7 +82,9 @@ export function BalancedSystemsSummary({
           {items.map((it, idx) => (
             <li key={`${it.system_topic}-${idx}`} className="border-l-2 border-emerald-200 pl-3 max-w-prose">
               <p className="font-medium text-emerald-950">{it.system_topic}</p>
-              <p className="text-emerald-900/90 mt-0.5 leading-relaxed">{it.evidence_line}</p>
+              <p className="text-emerald-900/90 mt-0.5 leading-relaxed">
+                {scrubBalancedSystemsEvidenceLine(it.evidence_line)}
+              </p>
               {it.capacity_note ? (
                 <p className="text-emerald-800/80 text-xs mt-1">{it.capacity_note}</p>
               ) : null}

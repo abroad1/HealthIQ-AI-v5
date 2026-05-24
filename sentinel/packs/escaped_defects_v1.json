@@ -532,6 +532,78 @@
       "test_file": "backend/tests/regression/test_fe_r5a_limited_idl_pattern_surface.py",
       "first_seen": "2026-05",
       "fix_commit": null
+    },
+    "fresh_uat_instruction_wrapper_visible": {
+      "description": "FE-R6A — retail hero/body overview nested under How to read this page instruction wrapper.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "fresh_uat_duplicate_summary_visible": {
+      "description": "FE-R6A — duplicate NarrativeRetailSummaryCard in main retail journey.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "fresh_uat_pattern_counter_contradiction": {
+      "description": "FE-R6A — body overview pattern counters contradict lead attention pattern in retail.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "fresh_uat_interpretation_confidence_leak": {
+      "description": "FE-R6A — interpretation confidence for this read visible in retail copy.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "fresh_uat_linked_to_internal_label_visible": {
+      "description": "FE-R6A — Linked to internal field labels visible in uploaded panel retail view.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "fresh_uat_next_steps_rendering_artifact": {
+      "description": "FE-R6A — next steps render as blob or packaged fallback instead of list items.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "fresh_uat_raw_scoring_error_visible": {
+      "description": "FE-R6A — raw unit-alignment Not scored error text visible on biomarker cards.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "fresh_uat_thin_lead_marker_expansion": {
+      "description": "FE-R6A — lead marker expansion shows only scoring line with no consumer-safe limited state.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "fresh_uat_finding_label_mismatch": {
+      "description": "FE-R6A — hero primary finding label diverges from section hypothesis without bridge.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r6a_fresh_uat_defect_cleanup.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
     }
   }
 }
