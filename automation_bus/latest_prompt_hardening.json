@@ -1,110 +1,130 @@
 {
-  "work_id": "LC-S18A",
+  "work_id": "FE-R1",
   "bus_version": "1.3.1",
   "status": "HARDENED",
   "hardened_utc": "2026-05-24T00:00:00Z",
   "hardened_by": "Claude Code (claude-sonnet-4-6)",
   "changes": [
     {
-      "type": "WARNING",
-      "field": "Phase 1 — Known likely files/paths",
-      "finding": "Prompt lists inventory path as 'knowledge_bus/package_estate_KB-S49_v1.yaml'. This path does NOT exist. Actual runtime path (confirmed at backend/core/knowledge/kb_lifecycle_contract_v1.py lines 55-57, ESTATE_INVENTORY_PATH constant) is 'knowledge_bus/governance/package_estate_KB-S49_v1.yaml'. File confirmed present at correct location via Glob. Cursor MUST use the governance sub-path when reading or updating the inventory. Using the Phase 1 hint path would either fail silently or create a duplicate authority source at the wrong location — a non-negotiable violation.",
-      "resolution": "Cursor must derive the inventory path from kb_lifecycle_contract_v1.py:55-57, not from the Phase 1 text. The correct path is 'knowledge_bus/governance/package_estate_KB-S49_v1.yaml'."
-    },
-    {
-      "type": "WARNING",
-      "field": "change_type: CONTENT",
-      "finding": "The sprint scope includes potential modification of backend/core/knowledge/kb_lifecycle_contract_v1.py and backend/scripts/validate_kb_package_estate_orphans_v1.py — both are Python executable code. Under SOP v1.3 definitions, CONTENT covers 'non-executable data, docs-only'. Python code modifications would technically require MIXED. However, neither file touches the Intelligence Core (no signal evaluator, root cause compiler, or analytical pipeline logic interaction), so BEHAVIOUR controls are not triggered. Risk is governance tooling only.",
-      "resolution": "Prompt author is aware. CONTENT classification is accepted with the constraint that no Intelligence Core files are touched. If Cursor finds it must modify kb_lifecycle_contract_v1.py, the change_type risk is contained to governance tooling. Cursor must not extend scope to analytical engine files."
-    },
-    {
-      "type": "ANNOTATION",
-      "field": "KBP-0001 directory",
-      "finding": "Directory 'knowledge_bus/packages/KBP-0001/' exists on disk and uses the legacy KBP naming convention (not pkg_* prefix). The runtime list_package_dirs() function (kb_lifecycle_contract_v1.py:70-77) only counts directories starting with 'pkg_', so KBP-0001 is invisible to the orphan reporter. This sprint does not cover KBP-0001; Cursor should note its existence but not act on it without explicit GPT authority.",
-      "resolution": "Document KBP-0001 as out-of-scope for this sprint's orphan accounting. It should appear in the notes as a governance residual."
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "Mandatory controlling authority files",
-      "finding": "All three files required by the 'STOP if missing' rule are present.",
-      "citations": [
-        "docs/audit-papers/LC_SCAFFOLD_CLOSEOUT_transition_review.md — PRESENT (Glob confirmed)",
-        "docs/audit-papers/LC-S18_root_cause_why_registration_generalisation_notes.md — PRESENT (Glob confirmed, content read at lines 1-60)",
-        "docs/audit-papers/LC-S17_knowledge_bus_lifecycle_framework.md — PRESENT (Glob confirmed)"
-      ]
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "Estate inventory file — correct path and content",
-      "finding": "Package estate inventory is present at the runtime-authoritative path.",
-      "citations": [
-        "knowledge_bus/governance/package_estate_KB-S49_v1.yaml — PRESENT (Glob + Read confirmed)",
-        "backend/core/knowledge/kb_lifecycle_contract_v1.py lines 55-57: ESTATE_INVENTORY_PATH = 'knowledge_bus/governance/package_estate_KB-S49_v1.yaml'",
-        "knowledge_bus/governance/package_estate_KB-S49_v1.yaml lines 1-8: work_id KB-S49, generated_date 2026-03-28, governed_packages_in_inventory: 73, pkg_directories_total: 74 (73 governed + 1 excluded placeholder pkg_example)"
-      ]
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "Drift reality check — no-op protection satisfied",
-      "finding": "Estate drift is real, measurable, and confirmed by independent evidence. Sprint has genuine work to do.",
-      "citations": [
-        "docs/audit-papers/LC-S18_root_cause_why_registration_generalisation_notes.md lines 39-41: ~109 package directories on disk not in inventory, 0 inventory entries missing on disk, measured 2026-05-23",
-        "knowledge_bus/governance/package_estate_KB-S49_v1.yaml lines 1-8: inventory generated_date 2026-03-28 — stale by ~57 days",
-        "Glob on knowledge_bus/packages/*/package_manifest.yaml: returns >73 entries including pkg_kb52c_* batch absent from inventory"
-      ]
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "Phase 1 scripts — present and compatible",
-      "finding": "Both Phase 1 scripts exist and function as described.",
-      "citations": [
-        "backend/core/knowledge/kb_lifecycle_contract_v1.py — PRESENT (Read lines 1-145: LIFECYCLE_STATES, PACKAGE_TYPES, detect_orphan_packages, list_package_dirs, load_estate_inventory_package_ids, classify_package_type all implemented)",
-        "backend/scripts/validate_kb_package_estate_orphans_v1.py — PRESENT (Read lines 1-25: calls detect_orphan_packages(ROOT), emits JSON to stdout, exits 1 if has_orphans)"
-      ]
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "No Intelligence Core interaction",
-      "finding": "Sprint scope does not touch signal_evaluator.py, root_cause_compiler_v1.py, root_cause_registry_v1.py, pipeline logic, InsightGraph, or output assembly. Lifecycle contract is a governance utility only.",
-      "citations": [
-        "backend/core/knowledge/kb_lifecycle_contract_v1.py lines 70-145: governance classification functions only — no analytical logic, no signal activation",
-        "knowledge_bus/governance/package_estate_KB-S49_v1.yaml lines 15-23: stage_1c_intelligence_preflight confirms 'estate_tier_distinction_in_runtime: none_observed'"
-      ]
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "No runtime auto-discovery risk",
-      "finding": "Validator script only reports; it does not load or activate packages. Forbidden file list correctly excludes knowledge_bus/packages/**/* from edits.",
-      "citations": [
-        "backend/scripts/validate_kb_package_estate_orphans_v1.py lines 14-25: detect_orphan_packages returns report only, no package loading or activation",
-        "automation_bus/latest_cursor_prompt.md lines 41-45: 'Do not auto-load orphan packages' — non-negotiable rule"
-      ]
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "LDL/ApoB/lipid packages — KB-WAVE-1 relevance established",
-      "finding": "Lipid-relevant packages exist in multiple tiers on disk, including orphan packages from post-KB-S49 batches. Inventory refresh will materially inform KB-WAVE-1 lipid scoping.",
-      "citations": [
-        "knowledge_bus/governance/package_estate_KB-S49_v1.yaml lines 820-836: pkg_lipid_transport (legacy_thin_pre_v3_context, no PSI)",
-        "knowledge_bus/governance/package_estate_KB-S49_v1.yaml lines 1092-1108: pkg_s24_ldl_high_dyslipidaemia (structured_translation_batch_no_psi)",
-        "Glob: pkg_kb52c_apob_high_atherogenic_particle_excess, pkg_kb52c_apob_apoa1_ratio_high_atherogenic_particle_imbalance visible on disk as unregistered orphans"
-      ]
-    },
-    {
       "type": "CONFIRMED",
       "field": "Front matter — all 5 required fields valid",
-      "finding": "work_id: LC-S18A, branch: kb-wave/lc-s18a-package-estate-inventory-refresh, risk_level: HIGH, execution_model: TWO_PHASE_START_FINISH, change_type: CONTENT — all present and valid per SOP v1.3.1 schema.",
+      "finding": "All five SOP v1.3.1 mandatory front matter fields present and valid.",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 2-7: front matter block (all 5 fields verified)"
+        "automation_bus/latest_cursor_prompt.md lines 2-7: work_id: FE-R1, branch: frontend/fe-r1-consumer-prose-cleanup, risk_level: HIGH, execution_model: TWO_PHASE_START_FINISH, change_type: MIXED — all 5 confirmed"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "STOP conditions — comprehensive",
-      "finding": "STOP conditions cover inventory schema clarity, unvalidated medical content in orphans, runtime loader impact, and LDL/ApoB state. Mandatory preflight includes kernel token verification and cross-sprint guard runner.",
+      "field": "Prior Blocker 1 resolved — all file paths corrected",
+      "finding": "All four previously missing file references have been corrected in the amended prompt. All seven analytics files named in 'Known actual files to inspect' and 'Potentially allowed files' now exist in the repository. Confirmed by Bash ls.",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 201-213: STOP conditions block",
-        "automation_bus/latest_cursor_prompt.md lines 99-149: mandatory preflight and scaffold smoke-pack guard commands"
+        "backend/core/analytics/narrative_report_compiler_v1.py — PRESENT",
+        "backend/core/analytics/report_compiler_v1.py — PRESENT (runner-up + confidence fields at lines 538, 684-690)",
+        "backend/core/analytics/domain_narrative_wave1.py — PRESENT",
+        "backend/core/analytics/domain_score_assembler.py — PRESENT (blood sugar tier logic at lines 156, 273; band label at line 87)",
+        "backend/core/analytics/balanced_systems_presentation_v1.py — PRESENT (compile_balanced_systems_v1 at line 88)",
+        "backend/core/analytics/interpretation_display_layer_governance_v1.py — PRESENT (retail_display_label validation at lines 58-72)",
+        "backend/core/analytics/interpretation_display_layer_publish_v1.py — PRESENT (retail_display_label assignment at line 172)"
+      ]
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "Prior Blocker 2 resolved — FE-R0 audit committed to main",
+      "finding": "The FE-R0 audit document is no longer untracked. It has been committed to main and satisfies the prompt's acceptance criterion and STOP precondition.",
+      "citations": [
+        "git log: 4bb5d49 docs(audit): add FE-R0 results page prose source trace audit",
+        "docs/audit-papers/FE_R0_results_page_prose_source_trace_audit.md — git status clean (no output from git status --short)"
+      ]
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "HIGH/MIXED classification correct",
+      "finding": "Sprint touches Intelligence Core components: narrative_report_compiler_v1.py, report_compiler_v1.py, interpretation_display_layer_publish_v1.py, balanced_systems_presentation_v1.py, domain_score_assembler.py, and optionally scoring_policy.yaml + scoring rules. Under SOP §3 and §10, any work interacting with output assembly mechanisms = HIGH by default. MIXED is correct (both governed SSOT/IDL content and behavioural compiler logic in scope).",
+      "citations": [
+        "automation_bus/latest_cursor_prompt.md lines 13-16: HIGH-risk MIXED, reason explicitly includes 'backend narrative compilers, report compiler output, IDL/display labels...'",
+        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md §3: output assembly mechanisms = Intelligence Core"
+      ]
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "Controlling authority files — all present",
+      "finding": "All six mandatory authority files confirmed present.",
+      "citations": [
+        "docs/audit-papers/FE_R0_results_page_prose_source_trace_audit.md — PRESENT and committed (commit 4bb5d49)",
+        "docs/frontend/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md — PRESENT",
+        "docs/architecture/HealthIQ_AI_runtime_architecture_map_v1.md — PRESENT",
+        "docs/developer-guides/healthiq_scaffold_guardrails_v1.md — PRESENT",
+        "docs/audit-papers/LC_SCAFFOLD_CLOSEOUT_transition_review.md — PRESENT",
+        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md — PRESENT"
+      ]
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "Phase 1 source fields — all confirmed in actual source files",
+      "finding": "All key narrative fields trace to confirmed compiler sources.",
+      "citations": [
+        "narrative_report_v1.retail_summary — narrative_report_compiler_v1.py line 752",
+        "narrative_report_v1.lead_narrative — narrative_report_compiler_v1.py line 753",
+        "narrative_report_v1.secondary_narratives — narrative_report_compiler_v1.py line 754",
+        "narrative_report_v1.next_steps_narrative — narrative_report_compiler_v1.py line 758",
+        "clinician_report_v1.sections.page1.runner_up_why_not_lead_line — report_compiler_v1.py line 690",
+        "clinician_report_v1.sections.page1.runner_up_topic_line — report_compiler_v1.py line 689",
+        "clinician_report_v1.sections.page1.confidence_and_missing_data — report_compiler_v1.py line 684",
+        "interpretation_display_layer_v1.records[].retail_display_label — interpretation_display_layer_publish_v1.py line 172; governance validation at interpretation_display_layer_governance_v1.py lines 58-72",
+        "balanced_systems_v1 — balanced_systems_presentation_v1.py line 88 (compile_balanced_systems_v1)"
+      ]
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "Phase 3G blood sugar card contradiction — source is traceable",
+      "finding": "The blood sugar domain card (100/100, Strong, Limited confidence contradiction) originates in domain_score_assembler.py. The confidence tier function (_metabolic_blood_sugar_confidence_tier at line 273) and band label assignment (_band_label_from_0_100 at line 87) are the candidate sources. Both files are now on the permitted list.",
+      "citations": [
+        "backend/core/analytics/domain_score_assembler.py line 87: _band_label_from_0_100",
+        "backend/core/analytics/domain_score_assembler.py line 156: _is_wave1_blood_sugar",
+        "backend/core/analytics/domain_score_assembler.py line 273: _metabolic_blood_sugar_confidence_tier"
+      ]
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "Phase 3J ALP critical investigation — primary path is within permitted scope",
+      "finding": "ALP direction_class: high_only_concern confirmed in scoring_policy.yaml line 296. 'Critical' status for scored biomarkers is assigned in backend/core/scoring/rules.py via ScoreRange.CRITICAL (line 80) and the low_critical/high_critical band logic (lines 470-526). Both backend/core/scoring/**/* and backend/ssot/scoring_policy.yaml are on the permitted files list. The investigation path is in scope.",
+      "citations": [
+        "backend/ssot/scoring_policy.yaml line 295-296: alp: direction_class: high_only_concern",
+        "backend/core/scoring/rules.py line 80: CRITICAL = 'critical'",
+        "backend/core/scoring/rules.py lines 469-526: low_critical and high_critical band scoring logic — this is where ALP 38 U/L may be receiving Critical status despite high_only_concern direction class"
+      ]
+    },
+    {
+      "type": "WARNING",
+      "field": "Phase 3J — criticality.yaml is not on permitted list",
+      "finding": "backend/ssot/criticality.yaml (61 lines) is loaded by backend/core/analytics/criticality.py, which handles missing-marker criticality rather than score-status. This is distinct from the scoring Critical status in rules.py. However, if Phase 3J investigation determines that ALP's Critical label originates from criticality.yaml rather than scoring_policy.yaml band logic, Cursor must STOP and report — criticality.yaml is not on the permitted files list and cannot be modified without GPT authorisation.",
+      "resolution": "Cursor should follow the scoring rules investigation path first (scoring_policy.yaml + backend/core/scoring/rules.py). If the fix cannot be achieved within permitted files, STOP and escalate."
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "STOP conditions — comprehensive and correct",
+      "finding": "STOP conditions cover: FE-R0 audit missing or untracked, source field not traceable, prior scaffold guard failure, scope creep into pipeline/LLM/KB medical content, medical package content as sole prose source.",
+      "citations": [
+        "automation_bus/latest_cursor_prompt.md line 57: 'If FE_R0_results_page_prose_source_trace_audit.md is missing or untracked, STOP before kernel start'",
+        "automation_bus/latest_cursor_prompt.md line 173: 'STOP if the source cannot be traced'",
+        "automation_bus/latest_cursor_prompt.md line 133: 'If a prior guard fails, STOP unless GPT/human authority explicitly authorises continuation'",
+        "automation_bus/latest_cursor_prompt.md lines 484-486: 'If medical package content appears to be the only source of the bad prose, STOP and report'"
+      ]
+    },
+    {
+      "type": "ADVISORY",
+      "field": "Stage 2B — Compiler prose changes are global, not analysis-scoped",
+      "finding": "Rewriting prose assembly logic in narrative_report_compiler_v1.py and report_compiler_v1.py affects ALL analyses run through the pipeline, not just the reference analysis_id (7aacc734-95cf-4ea5-a19c-0d03d98dd2e9). The regression suite covers named historical guard tests but there is no broad multi-analysis smoke fixture. Cursor should confine changes to the specific toxic patterns identified in FE-R0 and run all regression tests before claiming closure.",
+      "resolution": "Advisory only — does not block this sprint. GPT may wish to add a multi-analysis smoke fixture for FE-R2."
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "Regression test files — all present",
+      "finding": "All regression guard files referenced in the cross-sprint smoke pack confirmed present.",
+      "citations": [
+        "backend/tests/regression/test_lc_s8f_phase_b_true_conversions.py — PRESENT",
+        "backend/tests/regression/test_lc_s18_root_cause_why_registration.py — PRESENT",
+        "backend/tests/regression/test_lc_s18a_package_estate_inventory.py — PRESENT"
       ]
     }
   ]
