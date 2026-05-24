@@ -1,9 +1,10 @@
 {
   "branch": "kb-wave/lc-s18a-package-estate-inventory-refresh",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-24T07:50:26Z",
   "cursor_started_utc": "2026-05-24T07:43:59Z",
-  "head_sha": "7782cc43bcd3f4cc38cd2113932749d09228e153",
+  "head_sha": "351bbfeb8a0519e0c14318fa9d5d1baf3ba88e25",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "LC-S18A"
 }
