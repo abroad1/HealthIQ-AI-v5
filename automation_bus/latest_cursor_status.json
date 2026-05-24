@@ -1,10 +1,9 @@
 {
-  "branch": "frontend/fe-r1-consumer-prose-cleanup",
+  "branch": "frontend/fe-r2-results-journey-restructure",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-24T09:17:14Z",
-  "cursor_started_utc": "2026-05-24T09:01:31Z",
-  "head_sha": "e483287b19dfb9305f91202e27d3bc111c6cbda5",
+  "cursor_started_utc": "2026-05-24T12:19:54Z",
+  "head_sha": "b628b09ae0aba6d54d7760881aef29b14e5ab856",
   "raw_stop_condition": null,
-  "status": "FAILED",
-  "work_id": "FE-R1"
+  "status": "IN_PROGRESS",
+  "work_id": "FE-R2"
 }
