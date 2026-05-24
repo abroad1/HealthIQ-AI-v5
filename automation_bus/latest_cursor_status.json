@@ -1,9 +1,10 @@
 {
   "branch": "frontend/fe-r3-evidence-depth-ux-quality-pass",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-24T14:07:23Z",
   "cursor_started_utc": "2026-05-24T14:00:19Z",
-  "head_sha": "88b0846340828b3d19c086c858e8bded4272d347",
+  "head_sha": "ee6c4f86af1719f74458c31e7f0557c10aa0601c",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "FE-R3"
 }
