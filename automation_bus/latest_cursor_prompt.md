@@ -1,34 +1,40 @@
 ---
-work_id: FE-R2
-branch: frontend/fe-r2-results-journey-restructure
+work_id: FE-R3
+branch: frontend/fe-r3-evidence-depth-ux-quality-pass
 risk_level: HIGH
 execution_model: TWO_PHASE_START_FINISH
 change_type: MIXED
 ---
 
-# FE-R2 — Results Journey Restructure
+# FE-R3 — Evidence Depth and UX Quality Pass
 
 ## Classification
 
 This is a HIGH-risk MIXED sprint.
 
-Reason: this sprint changes the consumer-facing results-page structure and may touch frontend rendering, DTO field consumption, section ordering, visibility defaults, regression tests, Sentinel packs and audit documentation.
+Reason: this sprint changes the consumer-facing results experience by improving biomarker evidence depth, contribution-context surfacing, educational expansion, next-step clarity, duplicate suppression and page quality. It may touch frontend rendering, DTO field consumption, limited backend DTO exposure if required, regression tests, Sentinel packs and audit documentation.
 
-This is not a backend prose rewrite sprint.  
+This is not a backend clinical reasoning sprint.  
 This is not a Knowledge Bus expansion sprint.  
 This is not a Gemini/LLM sprint.  
-This is not a clinical logic/scoring/unit sprint.  
+This is not a scoring/unit-governance sprint.  
 This is not a medication-overlay sprint.  
-This is not a full visual redesign sprint.  
-This is not a Phase 2 patterns-layer implementation sprint.
+This is not the Phase 2 patterns-layer sprint.  
+This is not a broad visual redesign sprint.
 
 ## Purpose
 
-Restructure the current results page into the Phase 1 guided reasoning journey defined in the v6 recommendation paper, now that FE-R1 has cleaned the most unsafe consumer prose.
+Make the newly restructured FE-R2 results journey feel richer, clearer and more useful to a human user.
 
-The goal is to make the page understandable to a retail user by putting existing deterministic assets into the correct narrative order.
+FE-R1 made consumer prose safer.  
+FE-R2 put the results page into the Phase 1 guided journey order.  
+FE-R3 must now improve the depth and quality of the evidence layer without changing clinical logic.
 
-FE-R2 must implement the page journey structure. It must not attempt to solve every prose/content weakness, visual design issue, or future Phase 2 pattern-layer requirement.
+The main goal is:
+
+```text
+When a user reads the page or opens a biomarker, they should understand not only the value, but why the marker matters and how it connects to the wider finding.
+````
 
 ## Controlling authority
 
@@ -38,11 +44,12 @@ Read before doing anything:
 docs/frontend/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md
 docs/audit-papers/FE_R0_results_page_prose_source_trace_audit.md
 docs/audit-papers/FE-R1_consumer_prose_cleanup_narrative_safety_notes.md
+docs/audit-papers/FE-R2_results_journey_restructure_notes.md
 docs/architecture/HealthIQ_AI_runtime_architecture_map_v1.md
 docs/developer-guides/healthiq_scaffold_guardrails_v1.md
 docs/audit-papers/LC_SCAFFOLD_CLOSEOUT_transition_review.md
 docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md
-````
+```
 
 Also inspect if present:
 
@@ -52,44 +59,47 @@ docs/audit-papers/LC-S19_payload_contract_hardening_notes.md
 docs/audit-papers/LC-S20_22_persisted_replay_sentinel_phase2_notes.md
 ```
 
-If the FE-R0 audit, FE-R1 notes, or v6 recommendation paper are missing, STOP.
+If FE-R1 notes, FE-R2 notes, or the v6 recommendation paper are missing, STOP.
 
-## FE-R1 merge precondition
+## FE-R2 merge precondition
 
-Before implementation, confirm FE-R1 is merged to `main`.
+Before implementation, confirm FE-R2 is merged to `main`.
 
 Evidence may include:
 
-* FE-R1 merge commit on main ancestry
-* `test_fe_r1_consumer_prose_cleanup.py` exists and passes
-* FE-R1 notes exist
-* FE-R1 Sentinel classes exist
+* FE-R2 merge commit on main ancestry
+* `test_fe_r2_results_journey_restructure.py` exists and passes
+* FE-R2 notes exist
+* FE-R2 Sentinel classes exist
+* page structure contains the seven FE-R2 journey sections
 
-If FE-R1 is not on main, STOP. Do not restructure the page on top of pre-FE-R1 prose.
+If FE-R2 is not on main, STOP.
 
 ## Required output documentation
 
 Create:
 
 ```text
-docs/audit-papers/FE-R2_results_journey_restructure_notes.md
+docs/audit-papers/FE-R3_evidence_depth_ux_quality_pass_notes.md
 ```
 
 This document must include:
 
 1. preflight results
-2. FE-R1 merge confirmation
-3. current page structure before change
-4. implemented FE-R2 section order
-5. frontend files changed
-6. DTO/API fields consumed by each section
-7. sections moved, removed, collapsed, or retained
-8. explicit list of things not changed
-9. tests added/updated
-10. Sentinel updates
-11. browser/UAT evidence if performed
-12. residual risks
-13. recommendation for FE-R3
+2. FE-R2 merge confirmation
+3. current FE-R2 page-quality baseline
+4. biomarker expansion changes
+5. contribution-context surfacing changes
+6. educational explainer surfacing changes
+7. next-step/action quality changes
+8. duplicate suppression changes
+9. frontend files changed
+10. DTO/API fields consumed or exposed
+11. browser/manual UAT evidence if performed
+12. tests added/updated
+13. Sentinel updates
+14. residual risks
+15. recommendation for FE-R4
 
 ## Mandatory preflight
 
@@ -110,8 +120,8 @@ Test-Path automation_bus/state/work_package_active.json
 
 Read `automation_bus/state/work_package_active.json` and confirm:
 
-* `work_id` is `FE-R2`
-* branch is `frontend/fe-r2-results-journey-restructure`
+* `work_id` is `FE-R3`
+* branch is `frontend/fe-r3-evidence-depth-ux-quality-pass`
 
 If token is missing or mismatched, STOP:
 
@@ -127,10 +137,10 @@ At minimum:
 
 ```powershell
 python -m pytest backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py -q
+python -m pytest backend/tests/regression/test_fe_r2_results_journey_restructure.py -q
 python -m pytest backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py -q
 python -m pytest backend/tests/regression/test_lc_s14_direction_aware_scoring.py -q
 python -m pytest backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py -q
-python -m pytest backend/tests/regression/test_lc_s18_root_cause_why_registration.py -q
 python -m pytest backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py -q
 python -m pytest backend/tests/regression/test_lc_s18a_package_estate_inventory.py -q
 python -m pytest backend/tests/unit/test_scoring_rules.py -q
@@ -138,253 +148,166 @@ python -m pytest backend/tests/unit/test_scoring_rules.py -q
 
 If a prior guard fails, STOP unless GPT/human authority explicitly authorises continuation.
 
-## Phase 1 — Current page structure confirmation
+## Phase 1 — Current FE-R2 quality baseline
 
-Before editing, inspect the current results page implementation and document the active section order.
+Inspect the current FE-R2 results page structure and identify where the following are currently rendered:
+
+```text
+biomarker values
+reference ranges
+display units and uploaded-unit fidelity
+biomarker status
+biomarker short interpretation
+contribution_context
+biomarker_educational_explainer
+confirmatory_tests[]
+actions
+next_steps[]
+narrative_report_v1.next_steps_narrative
+Layer C / body insight features if already rendered
+```
 
 Known likely files:
 
 ```text
 frontend/app/(app)/results/page.tsx
-frontend/app/components/**/*
+frontend/app/components/biomarkers/**/*
+frontend/app/components/results/**/*
 frontend/app/lib/**/*
 frontend/app/types/analysis.ts
 backend/core/dto/**/*
 ```
 
-Confirm where these current sections are rendered:
+STOP if the current source of biomarker expansion or action content cannot be established.
+
+## Phase 2 — Biomarker expansion depth
+
+Implement the v6 paper’s biomarker expansion rule where existing data supports it.
+
+Each expanded biomarker card should, where available, present:
 
 ```text
-Primary hero
-Narrative retail summary
-What's driving this
-Wave1DomainCards
-BalancedSystemsSummary
-PipelineStatus / trust strip
-What this means accordion
-ResultsBodyOverview
-ResultsInvestigationSpine
-InterpretationPatternsSection
-SystemUnderstandingSection
-WhyThisLeadWonSection
-NarrativeLeadAndSupportingSections
-NarrativeLongitudinalAndNextSteps
-PrimaryFindingAndWhy
-Actions
-Advanced & clinician report
-BiomarkerDials
-LayerCInsightSection
-ClinicianReportRenderer
+1. What this result means now
+2. Why this marker matters
+3. How it connects to the wider pattern
 ```
 
-STOP if the current page structure cannot be safely established.
-
-## Phase 2 — Target Phase 1 journey order
-
-Implement the Phase 1 journey order from the v6 recommendation paper.
-
-The target FE-R2 order is:
+Use existing fields only:
 
 ```text
-1. Your body overview
-2. What’s working well
-3. Primary finding and why
-4. Why this lead won / uncertainty
-5. Marker-level evidence
-6. What to do next
-7. Clinician summary
-```
-
-FE-R2 must not implement the full Phase 2 pattern layer.
-
-The existing `Patterns across your body` section may remain available, but it must not be promoted as a completed Phase 2 phenotype/pattern layer. If retained, label/position it cautiously as an early/current pattern view or keep it secondary.
-
-## Required section behaviour
-
-### Section 1 — Your body overview
-
-Must appear at or near the top of the results page after the page header/disclosure banner.
-
-Should include:
-
-* short “how to read this page” framing block
-* cleaned FE-R1 primary finding/overview content
-* primary result context
-* calm whole-body orientation
-* no raw compiler/internal strings
-* no biomarker grid
-
-Use existing assets only, such as:
-
-```text
-clinician_report_v1.sections.page1.primary_concern
-narrative_report_v1.body_overview
-interpretation_display_layer_v1
-consumer_domain_scores
-balanced_systems_v1
-```
-
-Do not invent new backend fields.
-
-### Section 2 — What’s working well
-
-Must appear immediately after body overview.
-
-Use:
-
-```text
-balanced_systems_v1
-consumer_domain_scores fallback only if FE-R1 authorised/implemented it
-```
-
-If there are stable domains/systems, show them clearly.
-
-If no stable systems are genuinely available, fallback copy must be calm and non-dismissive.
-
-Do not fabricate reassurance.
-
-### Section 3 — Primary finding and why
-
-Must appear before uncertainty and before biomarker evidence.
-
-Use:
-
-```text
-top_hypothesis_line if available
-clinician_report_v1.sections.page1
-root_cause_v1 / clinician_report_v1.sections.root_cause
-chains[] if available
-primary finding evidence
-```
-
-Important:
-
-* `chains[]` must not be hidden only behind technical detail if it is consumer-readable.
-* Technical ranking/debug wording must remain hidden.
-* The heading must be retail-friendly.
-* Do not use “Clinician-structured” in the retail flow.
-
-### Section 4 — Why this lead won / uncertainty
-
-Must appear immediately after primary finding and why.
-
-Use:
-
-```text
-runner_up_topic_line
-runner_up_why_not_lead_line
-confidence_and_missing_data
-data_quality.confidence_caveat
-```
-
-These should already be consumer-safe from FE-R1.
-
-Do not expose numerical confidence scores or raw ranking values.
-
-### Section 5 — Marker-level evidence
-
-Move biomarker evidence into the retail journey.
-
-This does not mean all advanced/clinician material becomes retail.
-
-Minimum requirement:
-
-* biomarker evidence must no longer be buried only under `Advanced & clinician report`
-* user should be able to inspect biomarker values/ranges/status as part of the main journey
-* existing display-unit fidelity must remain intact
-* contribution/education expansions may remain basic in FE-R2; deeper work belongs to FE-R3
-
-Use:
-
-```text
-BiomarkerDials
 biomarkers[]
-display_value/display_unit/display_label
-reference ranges
+display_value
+display_unit
+display_label
+reference_range
+status
+interpretation
+contribution_context
+biomarker_educational_explainer
+clusters[] / primary finding context where already available
 ```
 
-Do not introduce frontend calculation logic.
+Required behaviour:
 
-Do not break FE-R1 prose safety.
+* value/range/status remain visible
+* uploaded unit display fidelity remains intact
+* explanation is conditional on available governed fields
+* missing deeper content is omitted cleanly
+* no frontend clinical inference is added
+* no frontend conversion maths is added
 
-### Section 6 — What to do next
+Do not fabricate educational content.
 
-Bring action/follow-up content into the main journey.
+## Phase 3 — Contribution context and pattern relevance
 
-Use existing:
+Surface `contribution_context` more clearly where present.
+
+Acceptable wording pattern:
 
 ```text
-narrative_report_v1.next_steps_narrative
-confirmatory_tests[]
-actions
-next_steps[]
+How this fits the wider pattern
+[contribution_context.factual_statement]
 ```
 
-Actions may remain collapsible within this section, but the section itself should not be hidden behind an unrelated accordion.
-
-Do not add generic wellness filler.
-
-### Section 7 — Clinician summary
-
-Keep clinician material separate and lower on the page.
-
-Acceptable:
-
-* collapsed by default
-* clearly labelled as clinician/professional summary
-* export/handoff oriented
-
-Not acceptable:
-
-* injecting clinician-heading language into the retail explanation flow
-* making clinician report the main journey
-
-## Phase 3 — Sections to demote, collapse, or remove from main flow
-
-Review the following and decide whether to keep, move, collapse, or remove:
-
-```text
-Wave1DomainCards
-ResultsInvestigationSpine
-SystemUnderstandingSection
-InterpretationPatternsSection
-NarrativeLeadAndSupportingSections
-NarrativeLongitudinalAndNextSteps
-LayerCInsightSection
-PipelineStatus
-Advanced & clinician report
-```
+If a biomarker can be safely linked to the primary finding or current pattern using existing DTO/cluster membership, show a short pattern relevance line.
 
 Rules:
 
-* Do not delete valuable sections if they are needed for FE-R3/FE-R4.
-* It is acceptable to demote them.
-* It is acceptable to keep them collapsed.
-* It is acceptable to move explanation/orientation content into Section 1.
-* Avoid duplicate headings such as “What this means” inside “What this means”.
-* Do not let the page remain accordion-dominated.
+* no new backend clinical reasoning
+* no hardcoded medical claims in frontend
+* no invented pattern names
+* no raw internal signal IDs
+* if the link is not clear, omit the pattern relevance line
 
-## Phase 4 — Frontend copy changes allowed
+## Phase 4 — Educational explainer surfacing
 
-Frontend copy may be changed where needed to support the new journey.
+Where `biomarker_educational_explainer` exists, surface it in the biomarker expansion.
+
+The explainer should be:
+
+* clearly separated from this-user interpretation
+* labelled as general marker education
+* not presented as a personalised diagnosis
+* not duplicated elsewhere on the same card
+* collapsed or compact enough to avoid overwhelming the user
+
+If the explainer is absent, do not show placeholder text.
+
+## Phase 5 — Action / next-step quality
+
+Improve the “What to do next” section using existing assets.
+
+Use:
+
+```text
+confirmatory_tests[]
+actions
+next_steps[]
+narrative_report_v1.next_steps_narrative
+safety_class if available
+```
+
+Required behaviour:
+
+* confirmatory tests should show rationale where available
+* actions should be grouped or prioritised if existing fields support it
+* duplicate next steps should be suppressed
+* internal labels must not appear
+* generic wellness filler must not be added
+* clinician-facing recommendations should remain appropriately cautious
+
+Do not create new clinical action logic.
+
+## Phase 6 — Duplicate and density reduction
+
+Reduce obvious duplicated content created by FE-R1/FE-R2 surfacing.
+
+At minimum inspect for duplication between:
+
+```text
+retail summary
+body overview
+primary finding
+pattern card
+next steps
+confirmatory tests
+biomarker expansion
+clinician summary
+```
 
 Allowed:
 
-* page subtitle
-* section headings
-* section descriptions
-* accordion labels
-* navigation helper text
-* “Advanced” / clinician section labels
+* suppress duplicate display in one place
+* collapse repeated content
+* shorten frontend framing copy
+* avoid showing the same rationale twice in one section
 
 Forbidden:
 
-* rewriting clinical interpretation content in frontend
-* adding clinical claims in frontend static copy
-* calculating or inferring clinical meaning in frontend
-* adding new hardcoded medical explanations
+* changing backend clinical content to force deduplication unless explicitly required
+* hiding clinically important warnings without an alternative visible location
 
-## Phase 5 — Browser check
+## Phase 7 — Optional browser/manual check
 
 If browser tools are available, inspect:
 
@@ -401,14 +324,13 @@ Subaru@555
 
 Check:
 
-* the page opens with body overview / whole-body framing
-* “What’s working well” appears near the top
-* primary finding and why appears before uncertainty
-* biomarker evidence is visible in the main journey
-* actions/next steps are visible in the main journey
-* clinician summary is separate
-* internal strings from FE-R1 remain absent
-* page does not feel like one giant accordion
+* biomarker evidence is easy to find
+* expanded biomarker card shows richer content where available
+* contribution context is visible where present
+* education text is useful but not overwhelming
+* next steps feel specific rather than generic
+* no FE-R1 internal prose leaks return
+* no duplicate text blocks dominate the page
 
 Do not claim browser UAT passed unless the page was actually inspected.
 
@@ -416,33 +338,33 @@ Do not claim browser UAT passed unless the page was actually inspected.
 
 Add or update deterministic tests for:
 
-### Journey structure
+### Biomarker evidence depth
 
-* results page section order matches FE-R2 target order
-* body overview appears before primary finding detail
-* what’s working well appears before strain-heavy evidence
-* uncertainty appears after primary finding
-* biomarker evidence is part of main retail journey
-* clinician summary remains separate/lower/collapsed
+* biomarker evidence remains in the main retail journey
+* biomarker expansion includes value/range/status
+* contribution_context is surfaced where available
+* biomarker_educational_explainer is surfaced where available
+* missing educational content omits cleanly without placeholder text
+* display_value/display_unit/display_label are still used correctly
+* no frontend unit conversion maths is introduced
 
-### Prose and safety preservation
+### Action layer quality
+
+* confirmatory_tests rationale is renderable where available
+* action/next-step section does not expose internal labels
+* duplicate next-step lines are suppressed or prevented
+* generic placeholder follow-up text is not shown when governed actions exist
+
+### Prose and journey preservation
 
 * FE-R1 unsafe prose guards still pass
-* no “Clinician-structured” heading appears in retail journey
-* no duplicate “What this means” title collision
-* no internal/governance/debug labels appear in visible section headings
-* no frontend clinical inference added
-
-### DTO/display preservation
-
-* uploaded unit display fidelity remains intact
-* biomarker dials still use display fields where available
-* no frontend conversion maths introduced
-* persisted replay fixture still supports required result surface fields
+* FE-R2 journey order still passes
+* no raw signal/internal IDs appear in biomarker/action sections
+* clinician summary remains separate
+* no Phase 2 pattern-layer claims are introduced
 
 ### Regression preservation
 
-* FE-R1 consumer prose cleanup still passes
 * LC-S13 lifestyle/coherence protections still pass
 * LC-S14 direction-aware scoring still passes
 * LC-S20/22 persisted replay protections still pass
@@ -455,13 +377,14 @@ Sentinel update is required.
 Add or update defect classes such as:
 
 ```text
-retail_results_journey_wrong_order
-body_overview_not_first
-working_well_section_missing_or_late
-biomarker_evidence_hidden_in_advanced_only
-clinician_language_in_retail_flow
-results_page_accordion_dominated
-duplicate_what_this_means_heading
+biomarker_contribution_context_not_surfaced
+biomarker_educational_explainer_not_surfaced
+biomarker_expansion_placeholder_visible
+biomarker_display_unit_regression
+action_rationale_missing_when_available
+next_steps_duplicate_visible
+frontend_clinical_inference_added
+fe_r2_journey_order_regressed
 ```
 
 Each must point to an active deterministic test or validator.
@@ -472,17 +395,18 @@ No placeholder Sentinel entries.
 
 ```text
 frontend/app/(app)/results/page.tsx
-frontend/app/components/**/*
+frontend/app/components/biomarkers/**/*
+frontend/app/components/results/**/*
 frontend/app/lib/**/*
 frontend/app/types/**/*
 frontend/tests/**/*
 backend/tests/regression/**/*
 backend/tests/unit/**/*
 sentinel/packs/**/*
-docs/audit-papers/FE-R2_results_journey_restructure_notes.md
+docs/audit-papers/FE-R3_evidence_depth_ux_quality_pass_notes.md
 ```
 
-Backend runtime files are allowed only if absolutely necessary to expose already-existing DTO fields without changing clinical logic:
+Backend DTO files are allowed only if an already-existing field is present in backend data but not exposed to the frontend type/DTO:
 
 ```text
 backend/core/dto/**/*
@@ -498,16 +422,17 @@ backend/core/pipeline/**/*
 backend/ssot/**/*
 knowledge_bus/**/*
 Gemini / LLM activation
-broad frontend visual redesign unrelated to journey order
+Phase 2 patterns-layer implementation
+frontend visual redesign unrelated to evidence depth
 automation_bus/state/*
 backend/scripts/run_work_package.py
 backend/scripts/golden_gate_local.py
 backend/scripts/update_cursor_status.py
 ```
 
-Do not modify backend narrative compilers in FE-R2.
+Do not modify backend narrative compilers in FE-R3.
 
-If prose is still bad after FE-R1, document it as residual or STOP if it blocks the journey. Do not silently re-open FE-R1 inside FE-R2.
+If the remaining issue is still bad source prose, document it as a residual or STOP if it blocks quality. Do not silently re-open FE-R1 inside FE-R3.
 
 ## Required validation commands
 
@@ -518,6 +443,7 @@ At minimum:
 ```powershell
 python -m pytest backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py -q
 python -m pytest backend/tests/regression/test_fe_r2_results_journey_restructure.py -q
+python -m pytest backend/tests/regression/test_fe_r3_evidence_depth_ux_quality.py -q
 python -m pytest backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py -q
 python -m pytest backend/tests/regression/test_lc_s14_direction_aware_scoring.py -q
 python -m pytest backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py -q
@@ -539,21 +465,21 @@ Do not run broad unrelated suites unless targeted failures justify it.
 
 This sprint is complete only if:
 
-* FE-R1 is confirmed merged before FE-R2 starts
-* results page is reorganised into the Phase 1 guided journey
-* body overview appears first in the journey
-* what’s working well appears near the top
-* primary finding and why appears before uncertainty
-* biomarker evidence is visible in the retail journey
-* actions/next steps are visible in the retail journey
-* clinician summary remains separate
-* no broad frontend redesign is smuggled into the sprint
-* no backend clinical/prose compiler changes are made
+* FE-R2 is confirmed merged before FE-R3 starts
+* biomarker evidence remains in the main retail journey
+* biomarker expansion is richer where governed fields exist
+* contribution_context is surfaced where available
+* biomarker_educational_explainer is surfaced where available
+* missing deeper fields omit cleanly
+* uploaded unit display fidelity is preserved
+* action/next-step section is clearer and less duplicative
+* no frontend clinical inference is introduced
+* no backend analytical/prose compiler changes are made
 * FE-R1 prose safety guards still pass
-* display-unit fidelity is preserved
+* FE-R2 journey order guards still pass
 * Sentinel guards are active and deterministic
-* browser check is performed if available, or limitation is documented
-* residual risks are recorded for FE-R3
+* browser/manual check is performed if available, or limitation is documented
+* residual risks are recorded for FE-R4
 
 ## Closure requirements
 
@@ -575,19 +501,19 @@ python backend/scripts/run_work_package.py finish
 
 After finish, follow SOP v1.3.1:
 
-* if `automation_bus/latest_cursor_status.json` is the only dirty file and shows kernel-generated COMPLETE status for `FE-R2`, commit it automatically as:
-  `chore(bus): FE-R2 kernel COMPLETE status`
+* if `automation_bus/latest_cursor_status.json` is the only dirty file and shows kernel-generated COMPLETE status for `FE-R3`, commit it automatically as:
+  `chore(bus): FE-R3 kernel COMPLETE status`
 * if any other Automation Bus artefact is dirty, STOP and escalate
 
 Do not merge.
 
-Do not claim FE-R3 readiness. This sprint prepares the page for FE-R3 but does not authorise it.
+Do not claim FE-R4 readiness. This sprint prepares the page for FE-R4 but does not authorise it.
 
 ## Cursor completion statement
 
-Cursor implements results journey restructuring only.
+Cursor implements evidence depth and UX quality improvements only.
 
-Cursor may not self-certify clinical correctness, final UX quality, merge readiness, or permission to begin FE-R3.
+Cursor may not self-certify clinical correctness, final UX quality, merge readiness, or permission to begin FE-R4.
 
 ```
 ```

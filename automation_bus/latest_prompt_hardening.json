@@ -1,5 +1,5 @@
 {
-  "work_id": "FE-R2",
+  "work_id": "FE-R3",
   "bus_version": "1.3.1",
   "status": "HARDENED",
   "hardened_utc": "2026-05-24T00:00:00Z",
@@ -10,37 +10,38 @@
       "field": "Front matter — all 5 required SOP v1.3.1 fields valid",
       "finding": "All five mandatory front matter fields present and correctly valued.",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 2-7: work_id: FE-R2, branch: frontend/fe-r2-results-journey-restructure, risk_level: HIGH, execution_model: TWO_PHASE_START_FINISH, change_type: MIXED"
+        "automation_bus/latest_cursor_prompt.md lines 2-7: work_id: FE-R3, branch: frontend/fe-r3-evidence-depth-ux-quality-pass, risk_level: HIGH, execution_model: TWO_PHASE_START_FINISH, change_type: MIXED"
       ]
     },
     {
       "type": "CONFIRMED",
       "field": "HIGH / MIXED classification correct",
-      "finding": "Sprint restructures the consumer-facing results page and modifies frontend rendering, section ordering, DTO field consumption, and Sentinel packs. Any work changing output generation for retail users is MIXED under SOP §4. HIGH is warranted because the sprint touches the consumer surface layer of the Intelligence Core output (results page renders report_compiler and narrative_compiler fields). Classification is correct.",
+      "finding": "Sprint changes consumer-facing output rendering (biomarker cards, evidence depth, action/next-step layout, duplicate suppression). Frontend rendering changes that alter what the user sees from governed DTO fields are MIXED under SOP §4. HIGH is warranted because the consumer results surface is an Intelligence Core output boundary.",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 9-16: 'HIGH-risk MIXED sprint... changes the consumer-facing results-page structure'",
-        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md §3: output assembly mechanisms and their consumer rendering surfaces = Intelligence Core boundary"
+        "automation_bus/latest_cursor_prompt.md lines 9-31: classification block states HIGH-risk MIXED sprint; lists seven explicit IS-NOT declarations bounding scope",
+        "docs/governance/AUTOMATION_BUS_SOP_v1.3.1.md §3: output assembly and consumer rendering of analytical output = Intelligence Core boundary"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "FE-R1 merge precondition — FE-R1 is on main",
-      "finding": "FE-R1 is demonstrably merged to main. The required FE-R1 evidence artefacts are present: test file exists, narrative safety notes doc exists, COMPLETE kernel status commit present.",
+      "field": "FE-R2 merge precondition satisfied",
+      "finding": "FE-R2 is demonstrably on main. All required evidence is present: merge commit, kernel COMPLETE status commit, restructure test file, and FE-R2 audit notes.",
       "citations": [
-        "git log main: dcd6ff7 docs(FE-R1): record GPT boundary approval",
-        "git log main: 2ab7f48 chore(bus): FE-R1 kernel COMPLETE status",
-        "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py — PRESENT",
-        "docs/audit-papers/FE-R1_consumer_prose_cleanup_narrative_safety_notes.md — PRESENT"
+        "git log main: 8411e29 feat(fe-r2): restructure results page into Phase 1 guided journey",
+        "git log main: 5a3beaf chore(bus): FE-R2 kernel COMPLETE status",
+        "backend/tests/regression/test_fe_r2_results_journey_restructure.py — PRESENT",
+        "docs/audit-papers/FE-R2_results_journey_restructure_notes.md — PRESENT"
       ]
     },
     {
       "type": "CONFIRMED",
       "field": "Controlling authority files — all present",
-      "finding": "All mandatory and optional authority files referenced in the prompt are present in the repository.",
+      "finding": "All mandatory and optional authority files referenced in the prompt exist in the repository.",
       "citations": [
-        "docs/frontend/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md — PRESENT (committed: ba801dd)",
+        "docs/frontend/HealthIQ_Final_Results_Journey_Recommendation_Paper_v6.md — PRESENT",
         "docs/audit-papers/FE_R0_results_page_prose_source_trace_audit.md — PRESENT",
         "docs/audit-papers/FE-R1_consumer_prose_cleanup_narrative_safety_notes.md — PRESENT",
+        "docs/audit-papers/FE-R2_results_journey_restructure_notes.md — PRESENT",
         "docs/architecture/HealthIQ_AI_runtime_architecture_map_v1.md — PRESENT",
         "docs/developer-guides/healthiq_scaffold_guardrails_v1.md — PRESENT",
         "docs/audit-papers/LC_SCAFFOLD_CLOSEOUT_transition_review.md — PRESENT",
@@ -53,72 +54,82 @@
     {
       "type": "CONFIRMED",
       "field": "Cross-sprint guard test files — all present",
-      "finding": "All regression guard test files named in the preflight and validation command blocks exist in the repository.",
+      "finding": "Every regression guard test file named in the preflight and validation command blocks exists in the repository.",
       "citations": [
         "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py — PRESENT",
+        "backend/tests/regression/test_fe_r2_results_journey_restructure.py — PRESENT",
         "backend/tests/regression/test_lc_s13_lifestyle_coherence_narrative.py — PRESENT",
         "backend/tests/regression/test_lc_s14_direction_aware_scoring.py — PRESENT",
         "backend/tests/regression/test_lc_s16_17_19_kb_surface_payload_contract.py — PRESENT",
-        "backend/tests/regression/test_lc_s18_root_cause_why_registration.py — PRESENT",
-        "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py — PRESENT",
         "backend/tests/regression/test_lc_s18a_package_estate_inventory.py — PRESENT",
+        "backend/tests/regression/test_lc_s20_22_persisted_replay_sentinel_phase2.py — PRESENT",
         "backend/tests/unit/test_scoring_rules.py — PRESENT"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "FE-R2 target test file — Cursor must create",
-      "finding": "backend/tests/regression/test_fe_r2_results_journey_restructure.py does NOT exist. This is expected — the prompt requires Cursor to create it. The prompt test specification covers journey structure, prose safety, DTO/display preservation, and regression preservation. No gap in scope detected.",
+      "field": "DTO fields — all sprint-critical fields present in frontend type contract",
+      "finding": "Every DTO field named in the prompt's Phase 2–5 expansion rules is declared in frontend/app/types/analysis.ts and already accessed in frontend/app/(app)/results/page.tsx. No new backend DTO boundary work is required.",
       "citations": [
-        "backend/tests/regression/test_fe_r2_results_journey_restructure.py — NOT PRESENT (Cursor must create per automation_bus/latest_cursor_prompt.md lines 418-449)"
+        "frontend/app/types/analysis.ts line 76: content_class: 'contribution_context'",
+        "frontend/app/types/analysis.ts line 93: display_value?: number | null",
+        "frontend/app/types/analysis.ts line 94: display_unit?: string | null",
+        "frontend/app/types/analysis.ts line 101: display_label?: string | null",
+        "frontend/app/types/analysis.ts line 109: biomarker_educational_explainer?: BiomarkerEducationalExplainerV1 | null",
+        "frontend/app/types/analysis.ts line 110: contribution_context?: ContributionContextV1 | null",
+        "frontend/app/types/analysis.ts line 168: confirmatory_tests: ClinicianConfirmatoryTestItem[]",
+        "frontend/app/types/analysis.ts line 272: next_steps_narrative: string",
+        "frontend/app/(app)/results/page.tsx line 492: biomarker.biomarker_educational_explainer — already accessed",
+        "frontend/app/(app)/results/page.tsx line 494: biomarker.contribution_context?.factual_statement — already accessed",
+        "frontend/app/(app)/results/page.tsx line 502: biomarker.display_value — already accessed",
+        "frontend/app/(app)/results/page.tsx line 503: biomarker.display_unit — already accessed",
+        "frontend/app/(app)/results/page.tsx line 506: biomarker.display_label — already accessed",
+        "frontend/app/(app)/results/page.tsx line 712: confirmatory_tests passed to clinician renderer",
+        "frontend/app/(app)/results/page.tsx line 217: narrativeReport?.next_steps_narrative — already accessed"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "Frontend results page — target implementation file present",
-      "finding": "The primary implementation target file exists.",
+      "field": "FE-R3 test file — Cursor must create",
+      "finding": "backend/tests/regression/test_fe_r3_evidence_depth_ux_quality.py does NOT yet exist. This is expected — the prompt requires Cursor to create it. Test specification covers: evidence depth, contribution context, educational explainer, action/next-step quality, duplicate suppression, and regression preservation.",
       "citations": [
-        "frontend/app/(app)/results/page.tsx — PRESENT"
-      ]
-    },
-    {
-      "type": "WARNING",
-      "field": "Stale execution token — FE-R1 token not cleared",
-      "finding": "automation_bus/state/work_package_active.json currently contains {work_id: FE-R1, status: STARTED}. FE-R1 is demonstrably COMPLETE on main (kernel COMPLETE commit 2ab7f48 present), but the kernel-managed token file was not deleted on finish. This file is untracked by git (no commit history). Cursor will STOP at the token verification step if work_package_active.json still says FE-R1 when FE-R2 starts. It is not yet known whether run_work_package.py start will overwrite or reject an existing stale token. Resolution must be confirmed by GPT or human before Cursor executes.",
-      "resolution": "Human or GPT must explicitly authorise one of: (a) manually delete work_package_active.json before running start, or (b) confirm that run_work_package.py start overwrites stale tokens. Do not proceed past Stage 3 without confirming this."
-    },
-    {
-      "type": "WARNING",
-      "field": "FE-R2 branch does not exist",
-      "finding": "Branch frontend/fe-r2-results-journey-restructure does not exist locally or remotely. This is expected workflow — Cursor must create it from main as the first Step 0 action before kernel start. The prompt Stage 0 preflight is correctly written to detect this. Not a prompt defect.",
-      "resolution": "Cursor must create the branch from current main before running run_work_package.py start. Stage 0 compliance requires branch to be created first."
-    },
-    {
-      "type": "CONFIRMED",
-      "field": "Stage 2B — Behavioural scope correctly defined",
-      "finding": "The sprint's behavioural scope is frontend rendering order and section visibility. Backend analytical output is explicitly unchanged — forbidden files list excludes all backend/core/analytics/*, backend/core/scoring/*, backend/core/pipeline/*. The determinism risk is surfacing previously hidden DTO fields to retail users; this is intentional and controlled by the section spec. No unintended analytical drift is possible within the defined permitted file set.",
-      "citations": [
-        "automation_bus/latest_cursor_prompt.md lines 491-508: Forbidden unless GPT explicitly approves — backend/core/analytics/**, backend/core/scoring/**, backend/core/pipeline/**, backend/ssot/**, knowledge_bus/**",
-        "automation_bus/latest_cursor_prompt.md lines 476-490: Potentially allowed files — frontend only, backend/tests/regression/**, sentinel/packs/**"
+        "backend/tests/regression/test_fe_r3_evidence_depth_ux_quality.py — NOT PRESENT (Cursor must create per automation_bus/latest_cursor_prompt.md lines 339-395)"
       ]
     },
     {
       "type": "CONFIRMED",
-      "field": "STOP conditions — comprehensive and correct",
-      "finding": "STOP conditions cover: v6 recommendation paper or FE-R0/FE-R1 artefacts missing; FE-R1 not merged; token missing or mismatched; current page structure cannot be established; prior guard fails; backend clinical/prose compiler changes attempted; scope creep into forbidden files.",
+      "field": "Stage 2B — Behavioural scope correctly defined, determinism risks surfaced",
+      "finding": "Behavioural scope is frontend rendering only: improving how existing governed DTO fields are displayed, suppressing duplicates, surfacing richer conditional content. Backend analytical reasoning, prose compilers, and scoring logic are explicitly forbidden. Determinism risk is conditional rendering on null/absent fields; the prompt correctly specifies 'missing content is omitted cleanly' at every phase — no fabrication or placeholder text permitted. No unintended analytical drift is possible within the permitted file set. Regression targets (8 named test files) are comprehensive.",
       "citations": [
-        "automation_bus/latest_cursor_prompt.md line 55: 'If the FE-R0 audit, FE-R1 notes, or v6 recommendation paper are missing, STOP'",
-        "automation_bus/latest_cursor_prompt.md lines 66-68: 'If FE-R1 is not on main, STOP'",
-        "automation_bus/latest_cursor_prompt.md lines 116-119: 'If token is missing or mismatched, STOP'",
-        "automation_bus/latest_cursor_prompt.md line 139: 'If a prior guard fails, STOP unless GPT/human authority explicitly authorises continuation'",
-        "automation_bus/latest_cursor_prompt.md lines 179-180: 'STOP if the current page structure cannot be safely established'"
+        "automation_bus/latest_cursor_prompt.md lines 212-219: Phase 2 rules — 'explanation is conditional on available governed fields; missing deeper content is omitted cleanly; no frontend clinical inference; no frontend conversion maths'",
+        "automation_bus/latest_cursor_prompt.md lines 235-241: Phase 3 rules — 'no new backend clinical reasoning; no hardcoded medical claims; if link is not clear, omit'",
+        "automation_bus/latest_cursor_prompt.md lines 251-255: Phase 4 rules — 'if explainer is absent, do not show placeholder text'",
+        "automation_bus/latest_cursor_prompt.md lines 415-431: Forbidden files — backend/core/analytics/**, backend/core/scoring/**, backend/core/pipeline/**, backend/ssot/**, knowledge_bus/**, narrative compilers"
+      ]
+    },
+    {
+      "type": "CONFIRMED",
+      "field": "STOP conditions — comprehensive and correctly placed",
+      "finding": "STOP conditions cover: FE-R2 notes or v6 paper missing; FE-R2 not merged; token missing or mismatched; current biomarker expansion source cannot be established; prior guard fails; backend analytical or prose compiler changes attempted.",
+      "citations": [
+        "automation_bus/latest_cursor_prompt.md line 62: 'If FE-R1 notes, FE-R2 notes, or the v6 recommendation paper are missing, STOP'",
+        "automation_bus/latest_cursor_prompt.md line 76: 'If FE-R2 is not on main, STOP'",
+        "automation_bus/latest_cursor_prompt.md lines 126-129: 'If token is missing or mismatched, STOP'",
+        "automation_bus/latest_cursor_prompt.md line 149: 'If a prior guard fails, STOP unless GPT/human authority explicitly authorises continuation'",
+        "automation_bus/latest_cursor_prompt.md line 181: 'STOP if the current source of biomarker expansion or action content cannot be established'"
       ]
     },
     {
       "type": "ADVISORY",
-      "field": "Sentinel — new defect classes required, no existing fe_r2 pack",
-      "finding": "The prompt requires creation of seven new Sentinel defect classes (retail_results_journey_wrong_order, body_overview_not_first, etc.). No existing sentinel/packs/fe_r2_*.json exists. Cursor must create the new pack. Each class must point to an active deterministic test. The 'No placeholder Sentinel entries' rule applies. This is implementation scope for Cursor, not a prompt defect.",
-      "resolution": "Advisory only. Cursor should create the Sentinel pack as part of the sprint scope."
+      "field": "next_steps[] field name vs next_steps_narrative string — field name ambiguity",
+      "finding": "The prompt references 'next_steps[]' as an array in Phase 5 (line 263). The frontend type contract (analysis.ts line 272) and page.tsx (line 217) show this surface is 'next_steps_narrative: string' — a single narrative string under narrative_report_v1, not an array. There is no 'next_steps[]' array field visible in the current type contract. If Cursor attempts to iterate 'next_steps[]' as an array it will fail. The Phase 1 STOP condition ('STOP if the current source...cannot be established') should catch this; Cursor should confirm the actual field shape during Phase 1 baseline inspection before implementing Phase 5.",
+      "resolution": "Advisory only — not a blocker. Cursor must confirm actual field shape during Phase 1 and use the correct field name. If next_steps[] does not exist as an array, use next_steps_narrative as the string source for the next-step section."
+    },
+    {
+      "type": "ADVISORY",
+      "field": "Sentinel — new defect classes required, no existing FE-R3 pack",
+      "finding": "No sentinel/packs/ file covering FE-R3 defect classes exists. Cursor must create one. Eight named defect classes are required. Each must point to an active deterministic test. 'No placeholder Sentinel entries' rule applies.",
+      "resolution": "Advisory only — implementation scope for Cursor, not a prompt defect."
     }
   ]
 }
