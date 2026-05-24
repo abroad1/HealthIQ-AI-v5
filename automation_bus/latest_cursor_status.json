@@ -1,10 +1,9 @@
 {
-  "branch": "frontend/fe-r4-patterns-layer-gate",
+  "branch": "frontend/fe-r5a-limited-idl-pattern-surface",
   "bus_version": "1.2",
-  "cursor_completed_utc": "2026-05-24T14:48:49Z",
-  "cursor_started_utc": "2026-05-24T14:46:27Z",
-  "head_sha": "d0720478219b3371d26875cb96f17db569f40edc",
+  "cursor_started_utc": "2026-05-24T20:39:33Z",
+  "head_sha": "432196c8ba245683cf4df862475639e3ea31a4ec",
   "raw_stop_condition": null,
-  "status": "COMPLETE",
-  "work_id": "FE-R4"
+  "status": "IN_PROGRESS",
+  "work_id": "FE-R5A"
 }
