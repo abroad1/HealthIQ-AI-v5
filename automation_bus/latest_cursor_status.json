@@ -1,9 +1,10 @@
 {
   "branch": "frontend/fe-r5a-limited-idl-pattern-surface",
   "bus_version": "1.2",
+  "cursor_completed_utc": "2026-05-24T20:44:58Z",
   "cursor_started_utc": "2026-05-24T20:39:33Z",
-  "head_sha": "432196c8ba245683cf4df862475639e3ea31a4ec",
+  "head_sha": "3af75558fe6d39850cb316b395109334a282f7a7",
   "raw_stop_condition": null,
-  "status": "IN_PROGRESS",
+  "status": "COMPLETE",
   "work_id": "FE-R5A"
 }
