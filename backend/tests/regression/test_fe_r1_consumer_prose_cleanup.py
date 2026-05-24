@@ -8,6 +8,9 @@ Sentinel defect classes (escaped_defects_v1.json):
   consumer_confidence_raw_numeric_leakage
   consumer_balanced_systems_empty_when_domains_stable
   consumer_biomarker_status_direction_mismatch
+  consumer_prose_raw_signal_id_visible
+  consumer_summary_compiler_self_description
+  retail_page_duplicate_prose_block
 """
 
 from __future__ import annotations
@@ -15,7 +18,7 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 import pytest
 
@@ -39,6 +42,27 @@ _RAW_CONFIDENCE_RE = re.compile(r"\b0\.\d{2}\s+vs\s+0\.\d{2}\b")
 _INTERNAL_SIGNAL_LABEL_RE = re.compile(
     r"\b[A-Z][a-z]+ [Hh]igh on [A-Z][a-z]+\b|\b[A-Z][a-z]+ [Ll]ow on [A-Z][a-z]+\b"
 )
+_RAW_SIGNAL_PHRASES: Tuple[str, ...] = (
+    "Lh High",
+    "Alp Low",
+    "Hypercortisolism",
+)
+_RAW_SIGNAL_SUBOPTIMAL_ON_RE = re.compile(
+    r"\b[A-Z][a-z]+ [Hh]igh \(suboptimal\) on [A-Z][a-z]+\b|"
+    r"\b[A-Z][a-z]+ [Ll]ow \(suboptimal\) on [A-Z][a-z]+\b",
+)
+_RETAIL_SUMMARY_COMPILER_SELF_DESCRIPTION: Tuple[str, ...] = (
+    "ranked lead pattern",
+    "lab anchor",
+    "priority thread",
+    "interpretation thread",
+    "this wording stays descriptive",
+    "does not replace clinician judgement",
+    "structured ranking only",
+    "confidence weight",
+    "moderate_by_default",
+)
+_MIN_DUPLICATE_SENTENCE_CHARS = 72
 
 
 def _prepare_ab_panel() -> Dict[str, Any]:
@@ -106,6 +130,117 @@ def _stored_shape_from_dto(dto: Any) -> Dict[str, Any]:
         "intervention_annotations_v1": ia.model_dump() if hasattr(ia, "model_dump") else ia,
     }
     return build_analysis_result_dto(raw)
+
+
+def _normalize_prose(text: str) -> str:
+    return " ".join(str(text or "").lower().split())
+
+
+def _sentences(text: str) -> List[str]:
+    return [s.strip() for s in re.split(r"[.!?]\s+", str(text or "")) if s.strip()]
+
+
+def _fe_r0_duplicate_prose_surfaces(api: Dict[str, Any]) -> Dict[str, str]:
+    """Surfaces FE-R0 flagged for cross-section duplication on the results page."""
+    surfaces: Dict[str, str] = {}
+
+    nr = api.get("narrative_report_v1")
+    if isinstance(nr, dict):
+        retail_summary = str(nr.get("retail_summary") or "").strip()
+        if retail_summary:
+            surfaces["retail_summary"] = retail_summary
+
+    idl = api.get("interpretation_display_layer_v1")
+    if isinstance(idl, dict):
+        for idx, rec in enumerate(idl.get("records") or []):
+            if not isinstance(rec, dict):
+                continue
+            why = str(rec.get("why_it_matters") or "").strip()
+            if why:
+                surfaces[f"idl_why_it_matters_{idx}"] = why
+
+    cr = api.get("clinician_report_v1")
+    if isinstance(cr, dict):
+        page1 = (cr.get("sections") or {}).get("page1") or {}
+        if isinstance(page1, dict):
+            primary = str(page1.get("primary_concern") or "").strip()
+            if primary:
+                surfaces["hero_primary_concern"] = primary
+
+    for row in api.get("consumer_domain_scores") or []:
+        if not isinstance(row, dict):
+            continue
+        domain_id = str(row.get("domain_id") or "domain").strip()
+        contributor = str(row.get("contributor_sentence") or "").strip()
+        if contributor:
+            surfaces[f"domain_{domain_id}_contributor"] = contributor
+
+    return surfaces
+
+
+def _substantial_sentence_shared(left: str, right: str) -> str | None:
+    left_norm = _normalize_prose(left)
+    right_norm = _normalize_prose(right)
+    if len(left_norm) >= _MIN_DUPLICATE_SENTENCE_CHARS and left_norm in right_norm:
+        return left_norm
+    if len(right_norm) >= _MIN_DUPLICATE_SENTENCE_CHARS and right_norm in left_norm:
+        return right_norm
+    for sent in _sentences(left):
+        sent_norm = _normalize_prose(sent)
+        if len(sent_norm) < _MIN_DUPLICATE_SENTENCE_CHARS:
+            continue
+        if sent_norm in right_norm:
+            return sent_norm
+    for sent in _sentences(right):
+        sent_norm = _normalize_prose(sent)
+        if len(sent_norm) < _MIN_DUPLICATE_SENTENCE_CHARS:
+            continue
+        if sent_norm in left_norm:
+            return sent_norm
+    return None
+
+
+@pytest.mark.regression
+def test_fe_r1_consumer_prose_raw_signal_id_visible() -> None:
+    """Sentinel: consumer_prose_raw_signal_id_visible."""
+    dto = _run_ab_baseline()
+    api = _stored_shape_from_dto(dto)
+    combined = "\n".join(collect_retail_prose_surfaces(api))
+    low = combined.lower()
+    for phrase in _RAW_SIGNAL_PHRASES:
+        assert phrase.lower() not in low, f"raw signal phrase {phrase!r} visible in consumer prose"
+    assert not _RAW_SIGNAL_SUBOPTIMAL_ON_RE.search(combined), "raw (suboptimal) on signal slug visible"
+    assert not _INTERNAL_SIGNAL_LABEL_RE.search(combined), "internal signal label pattern visible"
+
+
+@pytest.mark.regression
+def test_fe_r1_retail_summary_no_compiler_self_description() -> None:
+    """Sentinel: consumer_summary_compiler_self_description."""
+    dto = _run_ab_baseline()
+    api = _stored_shape_from_dto(dto)
+    nr = api.get("narrative_report_v1") or {}
+    retail_summary = str((nr or {}).get("retail_summary") or "")
+    assert retail_summary.strip(), "retail_summary expected on AB baseline"
+    low = retail_summary.lower()
+    for token in _RETAIL_SUMMARY_COMPILER_SELF_DESCRIPTION:
+        assert token not in low, f"compiler self-description {token!r} in retail_summary"
+    assert " thread " not in f" {low} ", "compiler thread language in retail_summary"
+
+
+@pytest.mark.regression
+def test_fe_r1_no_duplicate_prose_across_retail_surfaces() -> None:
+    """Sentinel: retail_page_duplicate_prose_block."""
+    dto = _run_ab_baseline()
+    api = _stored_shape_from_dto(dto)
+    surfaces = _fe_r0_duplicate_prose_surfaces(api)
+    assert "retail_summary" in surfaces, "retail_summary required for duplication guard"
+    keys = list(surfaces.keys())
+    for i, left_key in enumerate(keys):
+        for right_key in keys[i + 1 :]:
+            shared = _substantial_sentence_shared(surfaces[left_key], surfaces[right_key])
+            assert shared is None, (
+                f"duplicate prose between {left_key!r} and {right_key!r}: {shared!r}"
+            )
 
 
 @pytest.mark.regression

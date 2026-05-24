@@ -340,6 +340,30 @@
       "test_file": "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py",
       "first_seen": "2026-05",
       "fix_commit": null
+    },
+    "consumer_prose_raw_signal_id_visible": {
+      "description": "FE-R1 — raw internal signal slug phrases (Lh High, Alp Low, Hypercortisolism, suboptimal-on slugs) visible on consumer prose surfaces.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "consumer_summary_compiler_self_description": {
+      "description": "FE-R1 — narrative_report_v1.retail_summary contains compiler self-description (ranked lead pattern, lab anchor, thread language, internal safety commentary).",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
+    },
+    "retail_page_duplicate_prose_block": {
+      "description": "FE-R1 — the same substantial prose block repeated across retail_summary, IDL pattern cards, hero primary concern, or domain contributor sentences.",
+      "guard_type": "active_deterministic",
+      "status": "GUARDED",
+      "test_file": "backend/tests/regression/test_fe_r1_consumer_prose_cleanup.py",
+      "first_seen": "2026-05",
+      "fix_commit": null
     }
   }
 }

@@ -131,8 +131,8 @@ def build_consumer_retail_summary(
             f"with {metric_label} as the primary marker on this panel."
         ),
         (
-            "This is the priority thread for interpretation here; other areas of the panel "
-            "still matter, but this pattern is the best starting point for follow-up."
+            "Other areas of the panel still matter, but this pattern is the best starting point "
+            "for follow-up with your clinician."
         ),
     ]
     tail = (lead.why_it_matters or "").strip()
